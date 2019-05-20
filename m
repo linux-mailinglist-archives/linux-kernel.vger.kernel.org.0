@@ -2,99 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 652BD2307C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AEF123082
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:37:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732245AbfETJg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:36:59 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41071 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732174AbfETJg7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:36:59 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q16so781289ljj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 02:36:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SVmG+KgAS/L8zReuTwf2tG62bM9a7Io4idy5Ia1ZZIw=;
-        b=CItiLuntAhzOMGH2VJ//VLpv/1cTB8FN7h7gueSZp7+ondzT4GAkchg89CIMQlKFCH
-         +PTP10KnFd3DEk6wgkzuQkb6WmUByoW1S17NW/sqSFxs/pJAl0n1/KOiI5NwUo53VuN/
-         3WhWE0Fo0J0Aw6fOq1nQ8XXjwhj9eeTaEnllHzRAz3S2QVQ8NX0gp02/99F/FWQnHm2o
-         qk7JJ1qPEtuOeMjLcCwP+/Ht+TvyGGm6x5OONe8RshUFKQIwvWXfR4rJ/+NbLE5fz4qO
-         59F+Ga0fmI6oNS5NlIUbmYUQ9/00bX0wh08LL65062trdQZW43TGqsruRXx6pgzJ0AQx
-         IKEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SVmG+KgAS/L8zReuTwf2tG62bM9a7Io4idy5Ia1ZZIw=;
-        b=Oy4leXVmJ2moODaUmQB7M2DJNtKLBQTlIlb/kmt2RceTKjdDdNC0UZ/dhD7vpTYf9k
-         gBceSWlEdm/uTULw8NOytFLNEA6GrkyRrFJk6GrxqR38cIJtbX2bjXSZJEVrbfxMjek4
-         vsUkMBRBCLwbgv19ZOChBOq5iQ7FN/XsZG/U20jBQ6Xb02BIfsaj3N6Itoy+zHVtvIF1
-         +rKpIYOPiv1keFr9d3rqA7uftYYKJJiL5YGPaWrOhtXn5Qb2jwk18WbqCZAcB6YOgqOt
-         f2v6NeybPDdC5uhVwPVa9jq7GxfuRCCY5yGqqpHQGq1Irh0d6qXddVBnFTKFbwtBVFhf
-         dNHw==
-X-Gm-Message-State: APjAAAWAw5liUrDypueBO9L9e/ijsK7xwB0ErBUYCYhzj+3BdsawC/Mp
-        nsk5K6IJqI5MftKJX/61U7b4LqalZWw=
-X-Google-Smtp-Source: APXvYqwaXw2NIta4ydW0the9uuNpiHIG2CIaAvFEtua7oAjOr+r4sGkRe1H8tyT2JKQhRZXwIrjRmg==
-X-Received: by 2002:a2e:9410:: with SMTP id i16mr7604284ljh.152.1558345016801;
-        Mon, 20 May 2019 02:36:56 -0700 (PDT)
-Received: from [192.168.0.199] ([31.173.81.27])
-        by smtp.gmail.com with ESMTPSA id h25sm3594162ljb.80.2019.05.20.02.36.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 02:36:56 -0700 (PDT)
-Subject: Re: [PATCH] of_net: fix of_get_mac_address retval if compiled without
- CONFIG_OF
-To:     =?UTF-8?Q?Petr_=c5=a0tetiar?= <ynezz@true.cz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Mirko Lindner <mlindner@marvell.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1558268324-5596-1-git-send-email-ynezz@true.cz>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <421e4a76-dbd7-73ac-d8cd-af0bcd789a03@cogentembedded.com>
-Date:   Mon, 20 May 2019 12:36:50 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1732267AbfETJhP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:37:15 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:2584 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727720AbfETJhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:37:13 -0400
+Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id E4455BE35A774639F6A0;
+        Mon, 20 May 2019 17:37:11 +0800 (CST)
+Received: from dggeme763-chm.china.huawei.com (10.3.19.109) by
+ DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 20 May 2019 17:37:11 +0800
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ dggeme763-chm.china.huawei.com (10.3.19.109) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Mon, 20 May 2019 17:37:11 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to avoid deadloop if data_flush is on
+Date:   Mon, 20 May 2019 17:36:59 +0800
+Message-ID: <20190520093659.50755-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <1558268324-5596-1-git-send-email-ynezz@true.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-ClientProxiedBy: dggeme708-chm.china.huawei.com (10.1.199.104) To
+ dggeme763-chm.china.huawei.com (10.3.19.109)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+As Hagbard Celine reported:
 
-On 19.05.2019 15:18, Petr Štetiar wrote:
+[  615.697824] INFO: task kworker/u16:5:344 blocked for more than 120 seconds.
+[  615.697825]       Not tainted 5.0.15-gentoo-f2fslog #4
+[  615.697826] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+disables this message.
+[  615.697827] kworker/u16:5   D    0   344      2 0x80000000
+[  615.697831] Workqueue: writeback wb_workfn (flush-259:0)
+[  615.697832] Call Trace:
+[  615.697836]  ? __schedule+0x2c5/0x8b0
+[  615.697839]  schedule+0x32/0x80
+[  615.697841]  schedule_preempt_disabled+0x14/0x20
+[  615.697842]  __mutex_lock.isra.8+0x2ba/0x4d0
+[  615.697845]  ? log_store+0xf5/0x260
+[  615.697848]  f2fs_write_data_pages+0x133/0x320
+[  615.697851]  ? trace_hardirqs_on+0x2c/0xe0
+[  615.697854]  do_writepages+0x41/0xd0
+[  615.697857]  __filemap_fdatawrite_range+0x81/0xb0
+[  615.697859]  f2fs_sync_dirty_inodes+0x1dd/0x200
+[  615.697861]  f2fs_balance_fs_bg+0x2a7/0x2c0
+[  615.697863]  ? up_read+0x5/0x20
+[  615.697865]  ? f2fs_do_write_data_page+0x2cb/0x940
+[  615.697867]  f2fs_balance_fs+0xe5/0x2c0
+[  615.697869]  __write_data_page+0x1c8/0x6e0
+[  615.697873]  f2fs_write_cache_pages+0x1e0/0x450
+[  615.697878]  f2fs_write_data_pages+0x14b/0x320
+[  615.697880]  ? trace_hardirqs_on+0x2c/0xe0
+[  615.697883]  do_writepages+0x41/0xd0
+[  615.697885]  __filemap_fdatawrite_range+0x81/0xb0
+[  615.697887]  f2fs_sync_dirty_inodes+0x1dd/0x200
+[  615.697889]  f2fs_balance_fs_bg+0x2a7/0x2c0
+[  615.697891]  f2fs_write_node_pages+0x51/0x220
+[  615.697894]  do_writepages+0x41/0xd0
+[  615.697897]  __writeback_single_inode+0x3d/0x3d0
+[  615.697899]  writeback_sb_inodes+0x1e8/0x410
+[  615.697902]  __writeback_inodes_wb+0x5d/0xb0
+[  615.697904]  wb_writeback+0x28f/0x340
+[  615.697906]  ? cpumask_next+0x16/0x20
+[  615.697908]  wb_workfn+0x33e/0x420
+[  615.697911]  process_one_work+0x1a1/0x3d0
+[  615.697913]  worker_thread+0x30/0x380
+[  615.697915]  ? process_one_work+0x3d0/0x3d0
+[  615.697916]  kthread+0x116/0x130
+[  615.697918]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  615.697921]  ret_from_fork+0x3a/0x50
 
-> of_get_mac_address prior to commit d01f449c008a ("of_net: add NVMEM
-> support to of_get_mac_address") could return only valid pointer or NULL,
-> after this change it could return only valid pointer or ERR_PTR encoded
-> error value, but I've forget to change the return value of
+There is still deadloop in below condition:
 
-    It's either "I've forgotten" or just "I forgot".
+d A
+- do_writepages
+ - f2fs_write_node_pages
+  - f2fs_balance_fs_bg
+   - f2fs_sync_dirty_inodes
+    - f2fs_write_cache_pages
+     - mutex_lock(&sbi->writepages)	-- lock once
+     - __write_data_page
+      - f2fs_balance_fs_bg
+       - f2fs_sync_dirty_inodes
+        - f2fs_write_data_pages
+         - mutex_lock(&sbi->writepages)	-- lock again
 
-> of_get_mac_address in case where the kernel is compiled without
-> CONFIG_OF, so I'm doing so now.
+Thread A			Thread B
+- do_writepages
+ - f2fs_write_node_pages
+  - f2fs_balance_fs_bg
+   - f2fs_sync_dirty_inodes
+    - .cp_task = current
+				- f2fs_sync_dirty_inodes
+				 - .cp_task = current
+				 - filemap_fdatawrite
+				 - .cp_task = NULL
+    - filemap_fdatawrite
+     - f2fs_write_cache_pages
+      - enter f2fs_balance_fs_bg since .cp_task is NULL
+    - .cp_task = NULL
 
-    Well, better late... :-)
+Change as below to avoid this:
+- add condition to avoid holding .writepages mutex lock in path
+of data flush
+- introduce mutex lock sbi.flush_lock to exclude concurrent data
+flush in background.
 
-> Cc: Mirko Lindner <mlindner@marvell.com>
-> Cc: Stephen Hemminger <stephen@networkplumber.org>
-> Fixes: d01f449c008a ("of_net: add NVMEM support to of_get_mac_address")
-> Reported-by: Octavio Alvarez <octallk1@alvarezp.org>
-> Signed-off-by: Petr Štetiar <ynezz@true.cz>
-[...]
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/data.c    | 3 +++
+ fs/f2fs/f2fs.h    | 1 +
+ fs/f2fs/segment.c | 4 ++++
+ fs/f2fs/super.c   | 1 +
+ 4 files changed, 9 insertions(+)
 
-MBR, Sergei
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index eda4181d2092..923923603a7d 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2262,6 +2262,9 @@ static inline bool __should_serialize_io(struct inode *inode,
+ 		return false;
+ 	if (IS_NOQUOTA(inode))
+ 		return false;
++	/* to avoid deadlock in path of data flush */
++	if (F2FS_I(inode)->cp_task)
++		return false;
+ 	if (wbc->sync_mode != WB_SYNC_ALL)
+ 		return true;
+ 	if (get_dirty_pages(inode) >= SM_I(F2FS_I_SB(inode))->min_seq_blocks)
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 71710e8336f4..832ce03768c7 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1220,6 +1220,7 @@ struct f2fs_sb_info {
+ 	/* for inode management */
+ 	struct list_head inode_list[NR_INODE_TYPE];	/* dirty inode list */
+ 	spinlock_t inode_lock[NR_INODE_TYPE];	/* for dirty inode list lock */
++	struct mutex flush_lock;		/* for flush exclusion */
+ 
+ 	/* for extent tree cache */
+ 	struct radix_tree_root extent_tree_root;/* cache extent cache entries */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index b5f21909356f..23cbca6d6ab6 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -546,9 +546,13 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
+ 		if (test_opt(sbi, DATA_FLUSH)) {
+ 			struct blk_plug plug;
+ 
++			mutex_lock(&sbi->flush_lock);
++
+ 			blk_start_plug(&plug);
+ 			f2fs_sync_dirty_inodes(sbi, FILE_INODE);
+ 			blk_finish_plug(&plug);
++
++			mutex_unlock(&sbi->flush_lock);
+ 		}
+ 		f2fs_sync_fs(sbi->sb, true);
+ 		stat_inc_bg_cp_count(sbi->stat_info);
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 3c71b9a71932..0d2307809bac 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3305,6 +3305,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		INIT_LIST_HEAD(&sbi->inode_list[i]);
+ 		spin_lock_init(&sbi->inode_lock[i]);
+ 	}
++	mutex_init(&sbi->flush_lock);
+ 
+ 	f2fs_init_extent_cache_info(sbi);
+ 
+-- 
+2.18.0.rc1
+
