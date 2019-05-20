@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8BDA235EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 174BF2356C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391187AbfETMlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:41:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47684 "EHLO mail.kernel.org"
+        id S2391052AbfETMfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:35:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390277AbfETMbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:31:12 -0400
+        id S2390429AbfETMfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:35:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 290EA21721;
-        Mon, 20 May 2019 12:31:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D50621479;
+        Mon, 20 May 2019 12:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355471;
-        bh=rzy736CsgS0Y3zt/uwrEMZnuY8Zf2XnsR1lqWDYGqlg=;
+        s=default; t=1558355701;
+        bh=piwKhTcHj4VZCfXF8EKFK2myXkUn0IB9W2vW67NcuNo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l/VW0c5dvt9RSuvvaOe8dCOGZCcuVsH40e4vz8FqzIjWYH6+UJinioVT4VhkVfZ0r
-         yVqXd4BD6sbH98sq3WNvmxG08iIXM5NdzA2IyKG9im92py1Q8sE5+kUZOikshMMxGC
-         hKSVmfEDoOdcvYdYKU594Ze/TW6BmXW9lq9q8fas=
+        b=RcxdenNrew9Dd9LvvF78Leofw1leYmTg3nLWmZM0kaFiRea6SOgIjuKlQ6rGJuUHF
+         7LXY7IBkWmdCtT8eNNN/YsYiLdeLjaYZq7JMlohbN8d119jT6tDSJNKxzJKTAkZsJo
+         lcF2pZsfEm71p5tszjDGp44rMp2KhgauHgs220SI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>
-Subject: [PATCH 5.0 101/123] tty: Dont force RISCV SBI console as preferred console
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.1 094/128] btrfs: Honour FITRIM range constraints during free space trim
 Date:   Mon, 20 May 2019 14:14:41 +0200
-Message-Id: <20190520115251.749150249@linuxfoundation.org>
+Message-Id: <20190520115255.652676201@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +43,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anup Patel <Anup.Patel@wdc.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit f91253a3d005796404ae0e578b3394459b5f9b71 upstream.
+commit c2d1b3aae33605a61cbab445d8ae1c708ccd2698 upstream.
 
-The Linux kernel will auto-disables all boot consoles whenever it
-gets a preferred real console.
+Up until now trimming the freespace was done irrespective of what the
+arguments of the FITRIM ioctl were. For example fstrim's -o/-l arguments
+will be entirely ignored. Fix it by correctly handling those paramter.
+This requires breaking if the found freespace extent is after the end of
+the passed range as well as completing trim after trimming
+fstrim_range::len bytes.
 
-Currently on RISC-V systems, if we have a real console which is not
-RISCV SBI console then boot consoles (such as earlycon=sbi) are not
-auto-disabled when a real console (ttyS0 or ttySIF0) is available.
-This results in duplicate prints at boot-time after kernel starts
-using real console (i.e. ttyS0 or ttySIF0) if "earlycon=" kernel
-parameter was passed by bootloader.
-
-The reason for above issue is that RISCV SBI console always adds
-itself as preferred console which is causing other real consoles
-to be not used as preferred console.
-
-Ideally "console=" kernel parameter passed by bootloaders should
-be the one selecting a preferred real console.
-
-This patch fixes above issue by not forcing RISCV SBI console as
-preferred console.
-
-Fixes: afa6b1ccfad5 ("tty: New RISC-V SBI console driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Anup Patel <anup.patel@wdc.com>
-Reviewed-by: Atish Patra <atish.patra@wdc.com>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Fixes: 499f377f49f0 ("btrfs: iterate over unused chunk space in FITRIM")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/hvc/hvc_riscv_sbi.c |    1 -
- 1 file changed, 1 deletion(-)
+ fs/btrfs/extent-tree.c |   25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
---- a/drivers/tty/hvc/hvc_riscv_sbi.c
-+++ b/drivers/tty/hvc/hvc_riscv_sbi.c
-@@ -53,7 +53,6 @@ device_initcall(hvc_sbi_init);
- static int __init hvc_sbi_console_init(void)
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -11315,9 +11315,9 @@ int btrfs_error_unpin_extent_range(struc
+  * held back allocations.
+  */
+ static int btrfs_trim_free_extents(struct btrfs_device *device,
+-				   u64 minlen, u64 *trimmed)
++				   struct fstrim_range *range, u64 *trimmed)
  {
- 	hvc_instantiate(0, 0, &hvc_sbi_ops);
--	add_preferred_console("hvc", 0, NULL);
+-	u64 start = 0, len = 0;
++	u64 start = range->start, len = 0;
+ 	int ret;
  
- 	return 0;
- }
+ 	*trimmed = 0;
+@@ -11360,8 +11360,8 @@ static int btrfs_trim_free_extents(struc
+ 		if (!trans)
+ 			up_read(&fs_info->commit_root_sem);
+ 
+-		ret = find_free_dev_extent_start(trans, device, minlen, start,
+-						 &start, &len);
++		ret = find_free_dev_extent_start(trans, device, range->minlen,
++						 start, &start, &len);
+ 		if (trans) {
+ 			up_read(&fs_info->commit_root_sem);
+ 			btrfs_put_transaction(trans);
+@@ -11374,6 +11374,16 @@ static int btrfs_trim_free_extents(struc
+ 			break;
+ 		}
+ 
++		/* If we are out of the passed range break */
++		if (start > range->start + range->len - 1) {
++			mutex_unlock(&fs_info->chunk_mutex);
++			ret = 0;
++			break;
++		}
++
++		start = max(range->start, start);
++		len = min(range->len, len);
++
+ 		ret = btrfs_issue_discard(device->bdev, start, len, &bytes);
+ 		mutex_unlock(&fs_info->chunk_mutex);
+ 
+@@ -11383,6 +11393,10 @@ static int btrfs_trim_free_extents(struc
+ 		start += len;
+ 		*trimmed += bytes;
+ 
++		/* We've trimmed enough */
++		if (*trimmed >= range->len)
++			break;
++
+ 		if (fatal_signal_pending(current)) {
+ 			ret = -ERESTARTSYS;
+ 			break;
+@@ -11466,8 +11480,7 @@ int btrfs_trim_fs(struct btrfs_fs_info *
+ 	mutex_lock(&fs_info->fs_devices->device_list_mutex);
+ 	devices = &fs_info->fs_devices->devices;
+ 	list_for_each_entry(device, devices, dev_list) {
+-		ret = btrfs_trim_free_extents(device, range->minlen,
+-					      &group_trimmed);
++		ret = btrfs_trim_free_extents(device, range, &group_trimmed);
+ 		if (ret) {
+ 			dev_failed++;
+ 			dev_ret = ret;
 
 
