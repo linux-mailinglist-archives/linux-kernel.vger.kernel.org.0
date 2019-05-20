@@ -2,110 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AC9B24269
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 23:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A30DB24280
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 23:07:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfETVAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 17:00:18 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40629 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbfETVAP (ORCPT
+        id S1726775AbfETVHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 17:07:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41438 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbfETVHj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 17:00:15 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 1167980472; Mon, 20 May 2019 23:00:03 +0200 (CEST)
-Date:   Mon, 20 May 2019 23:00:12 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, Pavel Machek <pavel@denx.de>,
-        stable@kernel.org, kernel list <linux-kernel@vger.kernel.org>,
-        davem@davemloft.net
-Subject: Re: net: atm: Spectre v1 fix introduced bug in bcb964012d1b in
- -stable
-Message-ID: <20190520210012.GA18021@amd>
-References: <20190520124014.GA5205@amd>
- <20190520140007.GA6397@kroah.com>
- <101e123e-9dfa-7c98-b182-e4ef277560f9@embeddedor.com>
+        Mon, 20 May 2019 17:07:39 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2A27160E5A; Mon, 20 May 2019 21:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1558386458;
+        bh=sWncJZuhv8jI+fIBFRSxi31uAvCtEl1i4p1lxELRFRA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nL//rSHE6KjOz11WOppOfdg1BN3yl8ghHHVhz73xGsT+Lg4VWyhE04fiURkXgMd4/
+         AoXnudMM8SOnS/5QSYsw6qba8/ryRIuWNYjCgtHAjxC0YDcRSgQQY3ZrN+QgEq94RX
+         z2VLyfl88VQK/YnQaQISymEp0VM5ucs888ManETM=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8A6EF6087F;
+        Mon, 20 May 2019 21:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1558386455;
+        bh=sWncJZuhv8jI+fIBFRSxi31uAvCtEl1i4p1lxELRFRA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ofhwcs4UV5Eiw/8Yh2sbqC5v5RszTv9UDRERtPCyHv57GGfii7jR7FIpsvYfSI3ix
+         7jVVXO5LMVHUH3yFV1a9VAI0JM6M2qONikDtYrsbXg6mGqh2iLCBpBkFpu4r/iCpgb
+         /vwVtw1JbtNGZAEDezrF4QMBKcOmKSbWzsZDeUyY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8A6EF6087F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Mon, 20 May 2019 15:07:32 -0600
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 1/4] drm/msm: Fix improper uses of
+ smp_mb__{before,after}_atomic()
+Message-ID: <20190520210732.GF24137@jcrouse1-lnx.qualcomm.com>
+Mail-Followup-To: Andrea Parri <andrea.parri@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <1558373038-5611-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <1558373038-5611-2-git-send-email-andrea.parri@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <101e123e-9dfa-7c98-b182-e4ef277560f9@embeddedor.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1558373038-5611-2-git-send-email-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 20, 2019 at 07:23:55PM +0200, Andrea Parri wrote:
+> These barriers only apply to the read-modify-write operations; in
+> particular, they do not apply to the atomic_set() primitive.
+> 
+> Replace the barriers with smp_mb()s.
+> 
+> Fixes: b1fc2839d2f92 ("drm/msm: Implement preemption for A5XX targets")
+> Cc: stable@vger.kernel.org
+> Reported-by: "Paul E. McKenney" <paulmck@linux.ibm.com>
+> Reported-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> Cc: Rob Clark <robdclark@gmail.com>
+> Cc: Sean Paul <sean@poorly.run>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Jordan Crouse <jcrouse@codeaurora.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: freedreno@lists.freedesktop.org
+> Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
 
---x+6KMIRAuhnl3hBn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'll go ahead and ack this - I'm not super clued in on atomic barriers, but this
+seems to be in the spirit of what we are trying to do to protect the atomic
+value. Rob can disagree, of course.
 
-On Mon 2019-05-20 09:26:45, Gustavo A. R. Silva wrote:
->=20
->=20
-> On 5/20/19 9:00 AM, Greg KH wrote:
-> > On Mon, May 20, 2019 at 02:40:14PM +0200, Pavel Machek wrote:
-> >>
-> >> In lecd_attach, if arg is < 0, it was treated as 0. Spectre v1 fix
-> >> changed that. Bug does not exist in mainline AFAICT.
-> >>
-> >> Signed-off-by: Pavel Machek <pavel@denx.de>
-> >> # for 4.19.y
-> >>
-> >> diff --git a/net/atm/lec.c b/net/atm/lec.c
-> >> index ad4f829193f0..ed279cd912f4 100644
-> >> --- a/net/atm/lec.c
-> >> +++ b/net/atm/lec.c
-> >> @@ -731,7 +731,7 @@ static int lecd_attach(struct atm_vcc *vcc, int ar=
-g)
-> >>  		i =3D arg;
-> >>  	if (arg >=3D MAX_LEC_ITF)
-> >>  		return -EINVAL;
-> >> -	i =3D array_index_nospec(arg, MAX_LEC_ITF);
-> >> +	i =3D array_index_nospec(i, MAX_LEC_ITF);
-> >>  	if (!dev_lec[i]) {
-> >>  		int size;
-> >> =20
-> >=20
-> > Why is this only for 4.19.y?  What is different in Linus's tree that
-> > makes this not needed there?
-> >=20
->=20
-> The only difference is this clean up:
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/?id=3Dfdd1a8103a6df50bdeacd8bb04c3f6976cb9ae41
->=20
-> As Dan says, the code works fine, but the *i* value wasn't being used
-> anymore, so that piece of code was a bit confusing.
+Acked-by: Jordan Crouse <jcrouse@codeaurora.org>
 
-Yep, you are right, code managed to confused me: array_index_nospec
-really returns 0 if it is out of bounds,
+> ---
+>  drivers/gpu/drm/msm/adreno/a5xx_preempt.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c b/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
+> index 3d62310a535fb..ee0820ee0c664 100644
+> --- a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
+> +++ b/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
+> @@ -39,10 +39,10 @@ static inline void set_preempt_state(struct a5xx_gpu *gpu,
+>  	 * preemption or in the interrupt handler so barriers are needed
+>  	 * before...
+>  	 */
+> -	smp_mb__before_atomic();
+> +	smp_mb();
+>  	atomic_set(&gpu->preempt_state, new);
+>  	/* ... and after*/
+> -	smp_mb__after_atomic();
+> +	smp_mb();
+>  }
+>  
+>  /* Write the most recent wptr for the given ring into the hardware */
+> -- 
+> 2.7.4
+> 
 
-(typeof(_i)) (_i & _mask);
-
-because _mask is always 0 or ~0.
-
-Best regards,
-								Pavel
-
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---x+6KMIRAuhnl3hBn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzjFVsACgkQMOfwapXb+vIOdACdFJ1200MBtPQjoH/vzXDK2uDA
-uIMAn0Fu7hzFkA9vMdpWxvRqEjO0FusR
-=nUkY
------END PGP SIGNATURE-----
-
---x+6KMIRAuhnl3hBn--
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
