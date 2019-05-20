@@ -2,85 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED977237F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6B5522B2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 07:38:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731908AbfETNYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 09:24:22 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35852 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731794AbfETNYW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 09:24:22 -0400
-Received: by mail-wm1-f65.google.com with SMTP id j187so13046482wmj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 06:24:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LkbCQ7VLxxV84GOCLiupDk7D4ceZNFha/9g8ZxwaMpc=;
-        b=I+6LT1jPljL1/kHdgpVTtxdN/cVmRqnlHeCcuhm/2wPmXlDeZK9r8Alk5felot5vpn
-         yvNMMG6fab3mENr+PtDxhgEqkK0cy4Ko1HXuDRfwEYOSxAhUI4roMtLpDVhpR6j/PXrH
-         G39/gCaGFGAGjnGcFeE9OW7Nt6j6BxR9QKgOnGjdYgih75XxlTCZuoYFVVhgvolhL699
-         PCaZbHG0oKyvozMhp0/UBuZGappCER615w5/QZBiTEsReSx7Vj7ibdXQD8xaQ7Nt7lOQ
-         +UPSWD+JfnBK/aNd/u/xO5bWi72i8w1OUsksSw4g5hQxNh3LgOc1sFcRmuTxhmTNGg9k
-         gG8g==
-X-Gm-Message-State: APjAAAWjAVKytox2surw6cxhgqV+wJN/Cob1ON5tYG4S78J5Ld18OgLe
-        DvfDqhNDcuVkRMqKVtTLStlhEg==
-X-Google-Smtp-Source: APXvYqyN/mxq9VS6gCeRHYEQS4C+v0zVIO5ujX6L7WbQRPqKuWQjJqWCsc3PGUbWPz/r0G6ILo3xkw==
-X-Received: by 2002:a1c:2dd2:: with SMTP id t201mr30512846wmt.136.1558358660296;
-        Mon, 20 May 2019 06:24:20 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:ac04:eef9:b257:b844? ([2001:b07:6468:f312:ac04:eef9:b257:b844])
-        by smtp.gmail.com with ESMTPSA id x9sm18965416wmf.27.2019.05.20.06.24.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 06:24:19 -0700 (PDT)
-Subject: Re: [PATCH] x86/kvm/pmu: Set AMD's virt PMU version to 1
-To:     Borislav Petkov <bp@alien8.de>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Liran Alon <liran.alon@oracle.com>,
-        Mihai Carabas <mihai.carabas@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86@kernel.org" <x86@kernel.org>
-References: <20190508170248.15271-1-bp@alien8.de>
- <aba3fd5b-e1ba-df66-2414-3f1109b68bbb@amd.com>
- <20190508171450.GG19015@zn.tnic>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <fbb1b27f-6393-6228-5b32-01dcd618253e@redhat.com>
-Date:   Mon, 20 May 2019 15:24:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190508171450.GG19015@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1730172AbfETFiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 01:38:01 -0400
+Received: from mga11.intel.com ([192.55.52.93]:24172 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729493AbfETFiA (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 01:38:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 May 2019 22:38:00 -0700
+X-ExtLoop1: 1
+Received: from skl.sh.intel.com ([10.239.159.132])
+  by fmsmga007.fm.intel.com with ESMTP; 19 May 2019 22:37:58 -0700
+From:   Jin Yao <yao.jin@linux.intel.com>
+To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com
+Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: [PATCH v1 0/9] perf diff: diff cycles at basic block level
+Date:   Mon, 20 May 2019 21:27:47 +0800
+Message-Id: <1558358876-32211-1-git-send-email-yao.jin@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/05/19 19:14, Borislav Petkov wrote:
-> On Wed, May 08, 2019 at 05:08:44PM +0000, Lendacky, Thomas wrote:
->> On 5/8/19 12:02 PM, Borislav Petkov wrote:
->>> From: Borislav Petkov <bp@suse.de>
->>>
->>> After commit:
->>>
->>>   672ff6cff80c ("KVM: x86: Raise #GP when guest vCPU do not support PMU")
->>
->> You should add this commit as a fixes tag. Since that commit went into 5.1
->> it would be worth this fix going into the 5.1 stable tree.
-> 
-> Paolo, Radim, can you do that pls, when applying?
+In some cases small changes in hot loops can show big differences.
+But it's difficult to identify these differences.
 
-Yes, done (and queued the patch).
+perf diff currently can only diff symbols (functions). We can also expand
+it to diff cycles of individual programs blocks as reported by timed LBR.
+This would allow to identify changes in specific code accurately.
 
-Paolo
+With this patch set, for example,
+
+    perf record -b ./div
+    perf record -b ./div
+    perf diff --basic-block
+
+     # Cycles diff  Basic block (start:end)
+     # ...........  .......................
+     #
+              -20   native_write_msr (7fff9a069900:7fff9a06990b)
+               -3   __indirect_thunk_start (7fff9ac02ca0:7fff9ac02ca0)
+                1   __indirect_thunk_start (7fff9ac02cac:7fff9ac02cb0)
+                0   rand@plt (490:490)
+                0   rand (3af60:3af64)
+                0   rand (3af69:3af6d)
+                0   main (4e8:4ea)
+                0   main (4ef:500)
+                0   main (4ef:535)
+                0   compute_flag (640:644)
+                0   compute_flag (649:659)
+                0   __random_r (3ac40:3ac76)
+                0   __random_r (3ac40:3ac88)
+                0   __random_r (3ac90:3ac9c)
+                0   __random (3aac0:3aad2)
+                0   __random (3aae0:3aae7)
+                0   __random (3ab03:3ab0f)
+                0   __random (3ab14:3ab1b)
+                0   __random (3ab28:3ab2e)
+                0   __random (3ab4a:3ab53)
+
+The "basic-block" is a new perf-diff option, which enables the displaying
+of cycles difference of same program basic block amongst two or more
+perf.data. The program basic block is the code block between two branches
+in a function.
+
+Jin Yao (9):
+  perf util: Create block_info structure
+  perf util: Add block_info in hist_entry
+  perf diff: Check if all data files with branch stacks
+  perf diff: Get a list of symbols(functions)
+  perf diff: Use hists to manage basic blocks
+  perf diff: Link same basic blocks among different data files
+  perf diff: Compute cycles diff of basic blocks
+  perf diff: Print the basic block cycles diff
+  perf diff: Documentation --basic-block option
+
+ tools/perf/Documentation/perf-diff.txt |   5 +
+ tools/perf/builtin-diff.c              | 521 ++++++++++++++++++++++++++++++++-
+ tools/perf/util/hist.c                 |  24 +-
+ tools/perf/util/hist.h                 |   6 +
+ tools/perf/util/sort.h                 |   4 +
+ tools/perf/util/symbol.c               |  22 ++
+ tools/perf/util/symbol.h               |  23 ++
+ 7 files changed, 594 insertions(+), 11 deletions(-)
+
+-- 
+2.7.4
 
