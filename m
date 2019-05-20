@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AFC2234B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAD8523798
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390017AbfETMaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:30:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46120 "EHLO mail.kernel.org"
+        id S2389119AbfETMwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:52:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390007AbfETM35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:29:57 -0400
+        id S2387769AbfETMS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:18:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CDAE20645;
-        Mon, 20 May 2019 12:29:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBD1C21019;
+        Mon, 20 May 2019 12:18:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355396;
-        bh=2TRMfZDviT4+xoulx6yedoRHajY+kmB/koE91teu8Ro=;
+        s=default; t=1558354735;
+        bh=W6/X+FsS7lgY0ci9ipL3DN72hdu/rw1yHfoWA9Ns1Uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DZz3Ba05G4fCi7W/CN8xH764Ed663rTGo9pxsATVcKGu/rJ06dtmxQIOPdmcH1f4f
-         N2nxACrhOTvCXNbtqokg23Vii1ZrzhbN7/GlyDmEpxCMslXa/Ld/QRID9ItO9nvzrA
-         0XXp9DsGunVDLfCR4mVXu47qWdZk2Y8cLN2sV3Cg=
+        b=hd9zbMUYtBD66HNLPonM5N85hDP7a8hQgD8Fq2uYgCEQDZVkJ/PeXpXYO0zY+q6GY
+         SmB9XdDZODG80e02iGCeNCg9WvEIFI4QvrbFqP+Abs7c2kApfdCIC7n2VrRPhSzutz
+         NuB+K4hW4ioi0AZZEWWdFXsNtFAf0AeULxhVf+/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gilad Ben-Yossef <gilad@benyossef.com>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Zhang Zhijie <zhangzj@rock-chips.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.0 062/123] crypto: ccree - dont map AEAD key and IV on stack
+Subject: [PATCH 4.14 23/63] crypto: rockchip - update IV buffer to contain the next IV
 Date:   Mon, 20 May 2019 14:14:02 +0200
-Message-Id: <20190520115248.925921091@linuxfoundation.org>
+Message-Id: <20190520115233.577744541@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,120 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gilad Ben-Yossef <gilad@benyossef.com>
+From: Zhang Zhijie <zhangzj@rock-chips.com>
 
-commit e8662a6a5f8f7f2cadc0edb934aef622d96ac3ee upstream.
+commit f0cfd57b43fec65761ca61d3892b983a71515f23 upstream.
 
-The AEAD authenc key and IVs might be passed to us on stack. Copy it to
-a slab buffer before mapping to gurantee proper DMA mapping.
+The Kernel Crypto API request output the next IV data to
+IV buffer for CBC implementation. So the last block data of
+ciphertext should be copid into assigned IV buffer.
 
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: stable@vger.kernel.org # v4.19+
+Reported-by: Eric Biggers <ebiggers@google.com>
+Fixes: 433cd2c617bf ("crypto: rockchip - add crypto driver for rk3288")
+Cc: <stable@vger.kernel.org> # v4.5+
+Signed-off-by: Zhang Zhijie <zhangzj@rock-chips.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/ccree/cc_aead.c       |   11 ++++++++++-
- drivers/crypto/ccree/cc_buffer_mgr.c |   15 ++++++++++++---
- drivers/crypto/ccree/cc_driver.h     |    1 +
- 3 files changed, 23 insertions(+), 4 deletions(-)
+ drivers/crypto/rockchip/rk3288_crypto_ablkcipher.c |   25 +++++++++++++++------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
---- a/drivers/crypto/ccree/cc_aead.c
-+++ b/drivers/crypto/ccree/cc_aead.c
-@@ -424,7 +424,7 @@ static int validate_keys_sizes(struct cc
- /* This function prepers the user key so it can pass to the hmac processing
-  * (copy to intenral buffer or hash in case of key longer than block
-  */
--static int cc_get_plain_hmac_key(struct crypto_aead *tfm, const u8 *key,
-+static int cc_get_plain_hmac_key(struct crypto_aead *tfm, const u8 *authkey,
- 				 unsigned int keylen)
- {
- 	dma_addr_t key_dma_addr = 0;
-@@ -437,6 +437,7 @@ static int cc_get_plain_hmac_key(struct
- 	unsigned int hashmode;
- 	unsigned int idx = 0;
- 	int rc = 0;
-+	u8 *key = NULL;
- 	struct cc_hw_desc desc[MAX_AEAD_SETKEY_SEQ];
- 	dma_addr_t padded_authkey_dma_addr =
- 		ctx->auth_state.hmac.padded_authkey_dma_addr;
-@@ -455,11 +456,17 @@ static int cc_get_plain_hmac_key(struct
- 	}
+--- a/drivers/crypto/rockchip/rk3288_crypto_ablkcipher.c
++++ b/drivers/crypto/rockchip/rk3288_crypto_ablkcipher.c
+@@ -250,9 +250,14 @@ static int rk_set_data_start(struct rk_c
+ 	u8 *src_last_blk = page_address(sg_page(dev->sg_src)) +
+ 		dev->sg_src->offset + dev->sg_src->length - ivsize;
  
- 	if (keylen != 0) {
-+
-+		key = kmemdup(authkey, keylen, GFP_KERNEL);
-+		if (!key)
-+			return -ENOMEM;
-+
- 		key_dma_addr = dma_map_single(dev, (void *)key, keylen,
- 					      DMA_TO_DEVICE);
- 		if (dma_mapping_error(dev, key_dma_addr)) {
- 			dev_err(dev, "Mapping key va=0x%p len=%u for DMA failed\n",
- 				key, keylen);
-+			kzfree(key);
- 			return -ENOMEM;
- 		}
- 		if (keylen > blocksize) {
-@@ -542,6 +549,8 @@ static int cc_get_plain_hmac_key(struct
- 	if (key_dma_addr)
- 		dma_unmap_single(dev, key_dma_addr, keylen, DMA_TO_DEVICE);
+-	/* store the iv that need to be updated in chain mode */
+-	if (ctx->mode & RK_CRYPTO_DEC)
++	/* Store the iv that need to be updated in chain mode.
++	 * And update the IV buffer to contain the next IV for decryption mode.
++	 */
++	if (ctx->mode & RK_CRYPTO_DEC) {
+ 		memcpy(ctx->iv, src_last_blk, ivsize);
++		sg_pcopy_to_buffer(dev->first, dev->src_nents, req->info,
++				   ivsize, dev->total - ivsize);
++	}
  
-+	kzfree(key);
-+
- 	return rc;
+ 	err = dev->load_data(dev, dev->sg_src, dev->sg_dst);
+ 	if (!err)
+@@ -288,13 +293,19 @@ static void rk_iv_copyback(struct rk_cry
+ 	struct ablkcipher_request *req =
+ 		ablkcipher_request_cast(dev->async_req);
+ 	struct crypto_ablkcipher *tfm = crypto_ablkcipher_reqtfm(req);
++	struct rk_cipher_ctx *ctx = crypto_ablkcipher_ctx(tfm);
+ 	u32 ivsize = crypto_ablkcipher_ivsize(tfm);
+ 
+-	if (ivsize == DES_BLOCK_SIZE)
+-		memcpy_fromio(req->info, dev->reg + RK_CRYPTO_TDES_IV_0,
+-			      ivsize);
+-	else if (ivsize == AES_BLOCK_SIZE)
+-		memcpy_fromio(req->info, dev->reg + RK_CRYPTO_AES_IV_0, ivsize);
++	/* Update the IV buffer to contain the next IV for encryption mode. */
++	if (!(ctx->mode & RK_CRYPTO_DEC)) {
++		if (dev->aligned) {
++			memcpy(req->info, sg_virt(dev->sg_dst) +
++				dev->sg_dst->length - ivsize, ivsize);
++		} else {
++			memcpy(req->info, dev->addr_vir +
++				dev->count - ivsize, ivsize);
++		}
++	}
  }
  
---- a/drivers/crypto/ccree/cc_buffer_mgr.c
-+++ b/drivers/crypto/ccree/cc_buffer_mgr.c
-@@ -560,6 +560,7 @@ void cc_unmap_aead_request(struct device
- 	if (areq_ctx->gen_ctx.iv_dma_addr) {
- 		dma_unmap_single(dev, areq_ctx->gen_ctx.iv_dma_addr,
- 				 hw_iv_size, DMA_BIDIRECTIONAL);
-+		kzfree(areq_ctx->gen_ctx.iv);
- 	}
- 
- 	/* Release pool */
-@@ -664,19 +665,27 @@ static int cc_aead_chain_iv(struct cc_dr
- 	struct aead_req_ctx *areq_ctx = aead_request_ctx(req);
- 	unsigned int hw_iv_size = areq_ctx->hw_iv_size;
- 	struct device *dev = drvdata_to_dev(drvdata);
-+	gfp_t flags = cc_gfp_flags(&req->base);
- 	int rc = 0;
- 
- 	if (!req->iv) {
- 		areq_ctx->gen_ctx.iv_dma_addr = 0;
-+		areq_ctx->gen_ctx.iv = NULL;
- 		goto chain_iv_exit;
- 	}
- 
--	areq_ctx->gen_ctx.iv_dma_addr = dma_map_single(dev, req->iv,
--						       hw_iv_size,
--						       DMA_BIDIRECTIONAL);
-+	areq_ctx->gen_ctx.iv = kmemdup(req->iv, hw_iv_size, flags);
-+	if (!areq_ctx->gen_ctx.iv)
-+		return -ENOMEM;
-+
-+	areq_ctx->gen_ctx.iv_dma_addr =
-+		dma_map_single(dev, areq_ctx->gen_ctx.iv, hw_iv_size,
-+			       DMA_BIDIRECTIONAL);
- 	if (dma_mapping_error(dev, areq_ctx->gen_ctx.iv_dma_addr)) {
- 		dev_err(dev, "Mapping iv %u B at va=%pK for DMA failed\n",
- 			hw_iv_size, req->iv);
-+		kzfree(areq_ctx->gen_ctx.iv);
-+		areq_ctx->gen_ctx.iv = NULL;
- 		rc = -ENOMEM;
- 		goto chain_iv_exit;
- 	}
---- a/drivers/crypto/ccree/cc_driver.h
-+++ b/drivers/crypto/ccree/cc_driver.h
-@@ -170,6 +170,7 @@ struct cc_alg_template {
- 
- struct async_gen_req_ctx {
- 	dma_addr_t iv_dma_addr;
-+	u8 *iv;
- 	enum drv_crypto_direction op_type;
- };
- 
+ static void rk_update_iv(struct rk_crypto_info *dev)
 
 
