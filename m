@@ -2,127 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C35042330C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAF2823F70
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:51:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732031AbfETLvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:51:42 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:45077 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731950AbfETLvl (ORCPT
+        id S1726357AbfETRvI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 13:51:08 -0400
+Received: from 11.mo1.mail-out.ovh.net ([188.165.48.29]:44887 "EHLO
+        11.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbfETRvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:51:41 -0400
-Received: by mail-ua1-f65.google.com with SMTP id n7so5121492uap.12
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 04:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2QA4ID8DT7P795dvV4IbuNJhbEACzngsrOuQUiIzl48=;
-        b=XQI1oWu2zpUYgsaQ/BKmDtFAtkL7QlwZSlhGP0jHfv4JXP9XPkOrG6AO1v7CRmmRS+
-         cMoek7w39gEHsJ56mGHwS0GxqwmdiEul7wra6aJBXbGmWbdD/TEAZI+TCV7ql0FrAzvM
-         qidzhvXutng3G1p3Jq5FkEc4ee6Y/GECMo9IbPSvAmVtWCiQhByyWxrjpN2qkaf54VoL
-         M6mlmjMMse4h9Ej4m9sZrr0xBHGBlyilwGysTVFF/xAO2cO5jT3OlVRv9hQuqL8YkzXN
-         WXiTUjzv3huNh2yChkH+AGdf9kjQWIG2fWWlLZ0QpYg2fQjS4GanOt79HNGumghs8AQT
-         dJGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2QA4ID8DT7P795dvV4IbuNJhbEACzngsrOuQUiIzl48=;
-        b=FhNVN5kVznLrORe7UMrV9WAoQInBtGur8weDhFZR1NRXNpMyD4SCqcWHAtTC4PLgHh
-         KJ9yDV2F/sbnoABq1CJlMYx8TUS4y3QPm35Hxl7LWAPxm6GAaQ8UTOEX5hs4uFO/LFjS
-         HZF3muI7VOTZ3k5dr2K75Ww7U5Cov+ZkGt+qyP1j7xoUj7TJI9ggE9zNTJ2zZESxERYH
-         1vMbhOkD6nosZ8orZr6G4VA8YJzqIXSfel9XBpeZ451az8mTRXC9E/9fYsJTHRItWJ2/
-         wHKUPvq/P/2D5FR8/Mg9WB2FGinu0bS6AhumgyKBlhw9HxrwDp6IL/Ddgihs3jkq1NX1
-         uH2Q==
-X-Gm-Message-State: APjAAAWEFYofrQTfHqa1m4pATFrUq2yPdpVQlq7VdZBVf+ewNjrEuglK
-        NGZhdc/6DsO4rvhAqHOLHp1E/4O9KSsaHP3x20jlU2T+
-X-Google-Smtp-Source: APXvYqzKP1TTYuT4qKUW6lm4ts3QEzmB7qd+laniptOPwVAj7agDu/YucD9OFu9MftZ0Ks59Ey4dpklY/KrtAdCSPLM=
-X-Received: by 2002:ab0:5930:: with SMTP id n45mr22358315uad.87.1558353100373;
- Mon, 20 May 2019 04:51:40 -0700 (PDT)
+        Mon, 20 May 2019 13:51:07 -0400
+X-Greylist: delayed 19201 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 13:51:06 EDT
+Received: from player735.ha.ovh.net (unknown [10.109.159.62])
+        by mo1.mail-out.ovh.net (Postfix) with ESMTP id EFCB617951F
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 13:53:30 +0200 (CEST)
+Received: from RCM-web1.webmail.mail.ovh.net (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
+        (Authenticated sender: rafal@milecki.pl)
+        by player735.ha.ovh.net (Postfix) with ESMTPSA id 541335F67566;
+        Mon, 20 May 2019 11:53:18 +0000 (UTC)
 MIME-Version: 1.0
-References: <20190418133913.9122-1-gilad@benyossef.com> <CAOtvUMd9WUZAFgTqVH0U2ZZp8bbHXNg9Ae_ZFvGKJTSKNct8JA@mail.gmail.com>
- <20190517145235.GB10613@kroah.com> <CAOtvUMc++UtTP3fvXofuJA4JpdT86s5gbSx6WRtDK=sWnuUZrg@mail.gmail.com>
- <CAOtvUMcfXHv0UxytEEdGJG5LM-SfyyVHbnbE0RNALMfBD1zuEQ@mail.gmail.com> <20190520093008.GA4476@kroah.com>
-In-Reply-To: <20190520093008.GA4476@kroah.com>
-From:   Gilad Ben-Yossef <gilad@benyossef.com>
-Date:   Mon, 20 May 2019 14:51:27 +0300
-Message-ID: <CAOtvUMeiO9-U=ESWHws+kwNHMR-zS9xdeF8-HOdYYX-hk0qzZQ@mail.gmail.com>
-Subject: Re: [PATCH 00/35] crypto: ccree: features and bug fixes for 5.2
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, stable@vger.kernel.org,
-        Ofir Drang <ofir.drang@arm.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 20 May 2019 13:53:18 +0200
+From:   =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+To:     Weitao Hou <houweitaoo@gmail.com>
+Cc:     arend.vanspriel@broadcom.com, franky.lin@broadcom.com,
+        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
+        wright.feng@cypress.com, kvalo@codeaurora.org, davem@davemloft.net,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] wireless: fix typos in code comments
+In-Reply-To: <20190519032256.19346-1-houweitaoo@gmail.com>
+References: <20190519032256.19346-1-houweitaoo@gmail.com>
+Message-ID: <6cd5d69d936ba2a2033041bcddb206e0@milecki.pl>
+X-Sender: rafal@milecki.pl
+User-Agent: Roundcube Webmail/1.3.9
+X-Originating-IP: 194.187.74.233
+X-Webmail-UserID: rafal@milecki.pl
+X-Ovh-Tracer-Id: 10752907064325344891
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddruddtkedggeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenuc
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2019-05-19 05:22, Weitao Hou wrote:
+> fix lengh to length
+> 
+> Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
+> ---
+>  drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, May 20, 2019 at 12:30 PM Greg KH <gregkh@linuxfoundation.org> wrote=
-:
->
-> On Sun, May 19, 2019 at 11:28:05AM +0300, Gilad Ben-Yossef wrote:
-> > On Sat, May 18, 2019 at 10:36 AM Gilad Ben-Yossef <gilad@benyossef.com>=
- wrote:
-> > >
-> > > Hi
-> > >
-> > > On Fri, May 17, 2019 at 5:52 PM Greg KH <gregkh@linuxfoundation.org> =
-wrote:
-> > > >
-> > > > On Sun, Apr 21, 2019 at 11:52:55AM +0300, Gilad Ben-Yossef wrote:
-> > > > > On Thu, Apr 18, 2019 at 4:39 PM Gilad Ben-Yossef <gilad@benyossef=
-.com> wrote:
-> > > > > >
-> > > > > > A set of new features, mostly support for CryptoCell 713
-> > > > > > features including protected keys, security disable mode and
-> > > > > > new HW revision indetification interface alongside many bug fix=
-es.
-> > > > >
-> > > > > FYI,
-> > > > >
-> > > > > A port of those patches from this patch series which have been ma=
-rked
-> > > > > for stable is available at
-> > > > > https://github.com/gby/linux/tree/4.19-ccree
-> > > >
-> > > > Hm, all I seem to need are 2 patches that failed to apply.  Can you=
- just
-> > > > provide backports for them?
-> > >
-> > > Sure, I'll send them early next week.
-> >
-> > hm...  I've just fetched the latest from
-> > git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git,
-> > rebased that branch against the linux-4.19.y branch and it all went
-> > smooth.
-> >
-> > What am I'm missing? is there some other tree I should be doing this on=
-?
->
-> I do not know, can you just send the 2 patches that I said failed for
-> me?  Those are the only ones that I need here.
->
-> I can't use random github trees, sorry, let's stick to email for patches
-> please.
->
+Please use:
+git log --oneline drivers/net/wireless/broadcom/brcm80211/brcmfmac/
+to see how patches for this drivers were subjected in the past.
 
-Sure, no problem. I thought you tried the github tree and it failed.
-
-I sent the patches now.
-
-Gilad
-
-
---=20
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-values of =CE=B2 will give rise to dom!
+Please resend V2 with a proper prefix instead of "wireless: ".
