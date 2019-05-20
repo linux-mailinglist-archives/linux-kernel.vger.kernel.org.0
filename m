@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF23623458
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE3602340C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389211AbfETMZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:25:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41206 "EHLO mail.kernel.org"
+        id S2388498AbfETMWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:22:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389192AbfETMZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:25:54 -0400
+        id S2388486AbfETMWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:22:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9467C20675;
-        Mon, 20 May 2019 12:25:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B32B20656;
+        Mon, 20 May 2019 12:22:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355154;
-        bh=ZvBc6xseuzdpDAbWQrLLjEtwnUyRl3awfzeV6QFCcPc=;
+        s=default; t=1558354964;
+        bh=vENCxlkEC564e0tIMqMIzm3b6Nb2+zQVTcPaW5XIdUQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WecAPAYQLNtII/01lmGjB/Z5CFoyCTSPAlPB/14PLa+5Mrm01k/G5rfokQVu+ZJqg
-         h4smUImLRojl9prYKIPHNlJIqSoCMdWtG65A/2AGNS9h09WLPTjfeN3W6LrDq7b61b
-         ixjTNNT8RSpkI0PG3BuAZGHmVO5mJ20Q9V7iLFn8=
+        b=HpYajj60sNcMVtaqaNLe4ohHcpaLDz69vR7ItR2dxGihqmpbEsPQI2Uu5r2jgqLdG
+         KsC1LfvPWW8wHqB99EFaR3JI2Qy2C9js8t5gtRGn0sV2ljkCD+ryEDaJrEor3rrd2G
+         e9fXv780OY3ljNE81zQewNoZ7buYj21wMOcVFiEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 5.0 012/123] power: supply: axp288_charger: Fix unchecked return value
-Date:   Mon, 20 May 2019 14:13:12 +0200
-Message-Id: <20190520115245.935063340@linuxfoundation.org>
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.19 007/105] ARM: dts: exynos: Fix audio (microphone) routing on Odroid XU3
+Date:   Mon, 20 May 2019 14:13:13 +0200
+Message-Id: <20190520115247.557577558@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-commit c3422ad5f84a66739ec6a37251ca27638c85b6be upstream.
+commit 9b23e1a3e8fde76e8cc0e366ab1ed4ffb4440feb upstream.
 
-Currently there is no check on platform_get_irq() return value
-in case it fails, hence never actually reporting any errors and
-causing unexpected behavior when using such value as argument
-for function regmap_irq_get_virq().
+The name of CODEC input widget to which microphone is connected through
+the "Headphone" jack is "IN12" not "IN1". This fixes microphone support
+on Odroid XU3.
 
-Fix this by adding a proper check, a message reporting any errors
-and returning *pirq*
-
-Addresses-Coverity-ID: 1443940 ("Improper use of negative value")
-Fixes: 843735b788a4 ("power: axp288_charger: axp288 charger driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: <stable@vger.kernel.org> # v4.14+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/supply/axp288_charger.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/power/supply/axp288_charger.c
-+++ b/drivers/power/supply/axp288_charger.c
-@@ -833,6 +833,10 @@ static int axp288_charger_probe(struct p
- 	/* Register charger interrupts */
- 	for (i = 0; i < CHRG_INTR_END; i++) {
- 		pirq = platform_get_irq(info->pdev, i);
-+		if (pirq < 0) {
-+			dev_err(&pdev->dev, "Failed to get IRQ: %d\n", pirq);
-+			return pirq;
-+		}
- 		info->irq[i] = regmap_irq_get_virq(info->regmap_irqc, pirq);
- 		if (info->irq[i] < 0) {
- 			dev_warn(&info->pdev->dev,
+--- a/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3-audio.dtsi
+@@ -22,7 +22,7 @@
+ 			"Headphone Jack", "HPL",
+ 			"Headphone Jack", "HPR",
+ 			"Headphone Jack", "MICBIAS",
+-			"IN1", "Headphone Jack",
++			"IN12", "Headphone Jack",
+ 			"Speakers", "SPKL",
+ 			"Speakers", "SPKR";
+ 
 
 
