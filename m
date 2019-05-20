@@ -2,90 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53A1A23C00
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:26:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B891C23C2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:31:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392115AbfETP0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:26:01 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46782 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730766AbfETP0B (ORCPT
+        id S2388858AbfETPbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:31:19 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38417 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731262AbfETPbS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:26:01 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t187so6935577pgb.13
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 08:26:01 -0700 (PDT)
+        Mon, 20 May 2019 11:31:18 -0400
+Received: by mail-wm1-f65.google.com with SMTP id t5so12147902wmh.3;
+        Mon, 20 May 2019 08:31:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=AtdQtJeikUe33L23nGWRCANS3+RKC7kzegDcoMmpvfM=;
-        b=AsQfvvwvPdSvQlBqu7MYfLmND64DNmrzYGHUXz18jU9F2uy3D4q3WPQBNmmc5ODkwd
-         d0+878rxkRJ57QT1Tb6r3/rCCopQ8peRCcb5a7bqTHQsJTbVoVX0McIAqtnjlFgMoRN9
-         6qPLLrMo8JZgFkn9P29Y9m++IF0wboffXyOkwH8GN5c0T86HMKs4EF63c+2g2MbLwKWm
-         uTdvRLdVj9T1xaRc2z3ZHaKU1//bvMQR/4Rege5MM+lapZIfg1+tXYbDxuziT1lI5f13
-         LhybyH5gJj8XQ2XfrxqirZRz0dW0XXhc/XuCjjOxbdCE7r0v4UmON+crPBTga4TSh7yd
-         33+A==
+        bh=U14r5RuHwz6CW9kWdqe1Yxv8qr6791SEzbYW5ZFfNqk=;
+        b=X42kXwwsyIepoPQ5+7f0C8mITSC9q9M4R3X6qzcOZJ+6VSrtBKWV3ZYEviRARRlQJ7
+         UzHjPebLhixIVOSb6DT/Ks5hOQjyBSeqOnR/Pc0iiBtpLvXdIdODVy0/sp1pEe51rCOS
+         WWHVhmU6BxArfJMfK1Fqh+5ntdjK84WS0UR++HrqeOd7SEBrkJqHt/uJEkd4eZNsXCPf
+         3LrdntUh6Oh5JlGtwXGyhR/epNkW0eM7fnBi/IvEZogP8tsvVqoVjJRZzb/jdBBr5WLn
+         glyCeIOZMlQUY7KZGZLi9Ce67PklCxkwKyJp37W5N1UEo/ZiLxqqA16zwla+l8dj3NfH
+         UWKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=AtdQtJeikUe33L23nGWRCANS3+RKC7kzegDcoMmpvfM=;
-        b=p/rNJ+AnpGisKFso9Jfj8XQwOBB0qwaofKz1T5Tj8VTHzInkXV3OMIS52Pk7C1Z8S7
-         EEvX6QquqUrT74GLX99hNnYfxLU87fyfJqVCaus3+CoqNfq8zGScweXXDhqOV049bN+z
-         j7ViAlraiOLh4mIng0CyzhSTlxNSyDZVABEGFOMkUuf7NwnNR1l9nhGWCW3131Gvs5Gu
-         LJHNR2nnozqAaG4TnPiMx7KPpilqAON4ZaHzkd26Y7cCvNgDUhmZ27fJA9VxvuR5PdUm
-         1CZ6OMDeYukb2EnHFZ+f/EWTtVY1vShBX8wEGMqUD3+fV+QzphJjLVyMa/eGnQGAO05B
-         PZjw==
-X-Gm-Message-State: APjAAAVK5BxevlAEvmvqyMY5ouipRRnZ2y4tcvNFSgf5GR2eCMivsPrb
-        DWiJDLIasBe81msswrvVovIP+PS2
-X-Google-Smtp-Source: APXvYqwOoiE8PzRaymevnDUYTmM+rMuzOupAGys0f2mg/4kAGWbQy4PZ4gq6FBB938xavkhs7EgVPQ==
-X-Received: by 2002:a62:e117:: with SMTP id q23mr81050039pfh.60.1558365960780;
-        Mon, 20 May 2019 08:26:00 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC.domain.name ([106.51.19.216])
-        by smtp.gmail.com with ESMTPSA id i7sm14718871pfo.19.2019.05.20.08.25.58
+        bh=U14r5RuHwz6CW9kWdqe1Yxv8qr6791SEzbYW5ZFfNqk=;
+        b=B0F1i/Mk4YyKX5j4CxOByeHD4dGEozyFE9C657Rc1Y74/jKOKro8ZO5wUaUJGPOEvg
+         slrs0rxkY/8s5b0SP2L205Cx01faeIP+wgJ1zZupGIDXjQwnNtPzetXAGeN7f8ivTm2h
+         +QPhjVmuzsnFIWlmdFGi/XshpUWY9BhavERX0vzQ8ulKDQxNRw3adMsZ9h/QLXLeu7z1
+         rofQarvsRu71aZo/OYH1aHXBW8UcH45R9L0btGBjlMELrXQz4GPKE/K0M93Pnuz+hzZA
+         MKGJ4YXgMKjBxXJPSfa/iOo74BhONlGDlSIFiD2e+KeLDbfRWa2bPBp0xML5VDgNQY4Q
+         NFnQ==
+X-Gm-Message-State: APjAAAXUdq0Sqt68kEm2eBGfIDAr5CncW1O+hsyU+gd6a2VnlBBD0ewE
+        tv+VZK7Nt/8391Z3dM0G8hhyYI7A
+X-Google-Smtp-Source: APXvYqzBLCxDCKBc93FboPBqTKnxofoRQHsgqJbVB8qp+LrOaxz2zsTmBoFWRhfw3rS0EiN1U5ZXVQ==
+X-Received: by 2002:a1c:7511:: with SMTP id o17mr5112701wmc.39.1558366276038;
+        Mon, 20 May 2019 08:31:16 -0700 (PDT)
+Received: from ubuntu.faroeurope.com (mail.faroeurope.com. [213.61.174.138])
+        by smtp.gmail.com with ESMTPSA id x1sm11666555wrp.35.2019.05.20.08.31.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 08:25:59 -0700 (PDT)
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     miguel.ojeda.sandonis@gmail.com, robin@protonic.nl
-Cc:     linux-kernel@vger.kernel.org, willy@infradead.org,
-        Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH 2/2] auxdisplay/ht16k33.c: Convert to use vm_map_pages_zero()
-Date:   Mon, 20 May 2019 21:00:58 +0530
-Message-Id: <1558366258-3808-1-git-send-email-jrdr.linux@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 20 May 2019 08:31:15 -0700 (PDT)
+From:   Bernd Eckstein <3erndeckstein@gmail.com>
+X-Google-Original-From: Bernd Eckstein <3ernd.Eckstein@gmail.com>
+To:     davem@davemloft.net
+Cc:     linux@roeck-us.net, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        corsac@corsac.net, Oliver.Zweigle@faro.com,
+        3ernd.Eckstein@gmail.com
+Subject: [PATCH] usbnet: ipheth: fix racing condition
+Date:   Mon, 20 May 2019 17:31:09 +0200
+Message-Id: <1558366269-17787-1-git-send-email-3ernd.Eckstein@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While using mmap, the incorrect value of length and vm_pgoff are
-ignored and this driver go ahead with mapping fbdev.buffer
-to user vma.
+Fix a racing condition in ipheth.c that can lead to slow performance.
 
-Convert vm_insert_pages() to use vm_map_pages_zero(). We could later
-"fix" these drivers to behave according to the normal vm_pgoff
-offsetting simply by removing the _zero suffix on the function name
-and if that causes regressions, it gives us an easy way to revert.
+Bug: In ipheth_tx(), netif_wake_queue() may be called on the callback
+ipheth_sndbulk_callback(), _before_ netif_stop_queue() is called.
+When this happens, the queue is stopped longer than it needs to be,
+thus reducing network performance.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Fix: Move netif_stop_queue() in front of usb_submit_urb(). Now the order
+is always correct. In case, usb_submit_urb() fails, the queue is woken up
+again as callback will not fire.
+
+Testing: This racing condition is usually not noticeable, as it has to
+occur very frequently to slowdown the network. The callback from the USB
+is usually triggered slow enough, so the situation does not appear.
+However, on a Ubuntu Linux on VMWare Workstation, running on Windows 10,
+the we loose the race quite often and the following speedup can be noticed:
+
+Without this patch: Download:  4.10 Mbit/s, Upload:  4.01 Mbit/s
+With this patch:    Download: 36.23 Mbit/s, Upload: 17.61 Mbit/s
+
+Signed-off-by: Oliver Zweigle <Oliver.Zweigle@faro.com>
+Signed-off-by: Bernd Eckstein <3ernd.Eckstein@gmail.com>
+
 ---
- drivers/auxdisplay/ht16k33.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/usb/ipheth.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index 21393ec..9c0bb77 100644
---- a/drivers/auxdisplay/ht16k33.c
-+++ b/drivers/auxdisplay/ht16k33.c
-@@ -223,9 +223,9 @@ static int ht16k33_bl_check_fb(struct backlight_device *bl, struct fb_info *fi)
- static int ht16k33_mmap(struct fb_info *info, struct vm_area_struct *vma)
- {
- 	struct ht16k33_priv *priv = info->par;
-+	struct page *pages = virt_to_page(priv->fbdev.buffer);
+diff --git a/drivers/net/usb/ipheth.c b/drivers/net/usb/ipheth.c
+index c247aed..8c01fbf 100644
+--- a/drivers/net/usb/ipheth.c
++++ b/drivers/net/usb/ipheth.c
+@@ -383,17 +383,18 @@ static int ipheth_tx(struct sk_buff *skb, struct net_device *net)
+ 			  dev);
+ 	dev->tx_urb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
  
--	return vm_insert_page(vma, vma->vm_start,
--			      virt_to_page(priv->fbdev.buffer));
-+	return vm_map_pages_zero(vma, &pages, 1);
- }
++	netif_stop_queue(net);
+ 	retval = usb_submit_urb(dev->tx_urb, GFP_ATOMIC);
+ 	if (retval) {
+ 		dev_err(&dev->intf->dev, "%s: usb_submit_urb: %d\n",
+ 			__func__, retval);
+ 		dev->net->stats.tx_errors++;
+ 		dev_kfree_skb_any(skb);
++		netif_wake_queue(net);
+ 	} else {
+ 		dev->net->stats.tx_packets++;
+ 		dev->net->stats.tx_bytes += skb->len;
+ 		dev_consume_skb_any(skb);
+-		netif_stop_queue(net);
+ 	}
  
- static struct fb_ops ht16k33_fb_ops = {
+ 	return NETDEV_TX_OK;
 -- 
-1.9.1
+2.7.4
 
