@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6AB523641
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E74A233EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390581AbfETMoU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:44:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43860 "EHLO mail.kernel.org"
+        id S2388167AbfETMV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:21:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389599AbfETM2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:28:10 -0400
+        id S2387413AbfETMVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:21:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F96E216E3;
-        Mon, 20 May 2019 12:28:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E85820815;
+        Mon, 20 May 2019 12:21:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355289;
-        bh=N/ofm5rj9sNV0irbNixsRv2fu+2poIF2HeRoIMIthLA=;
+        s=default; t=1558354884;
+        bh=RjZ8OXCMB15G5CMO1j9gNDPu9pHkuM/Pdu1KK0RfFRs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RF5cMI1huTl1VOLC84Y9UxBDp4Ef7cBlNT7elcwXIo7EMT0YZMKA8TJnTDNgllOqc
-         GcAWFuggQhA3fOyzJD2z+gGDLFLGTgyxVSh3SIny1f+PA2U7bCW0z1G6uBARQn+9wQ
-         fkW3dg1XSIJ5ytCJZmB8NfJlub/xfRBzq97Pa5lA=
+        b=V4AJRtcjBIKltOHm5gXnEGM5TySQW1wDOOpEsBNv4o1iwnG+RVWRB1DsDrchVdrvT
+         BfsFMQruDzFHMyWQDRG1M+jnqjqoPrz7UWGi7jbmIQm0nJfW9zZhMFWMH3fFoF87wc
+         +9REW70tbrxbBO/F30YzOX5yuy0QRl/jNro04FfA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shirish S <shirish.s@amd.com>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Yazen Ghannam <yazen.ghannam@amd.com>, x86-ml <x86@kernel.org>
-Subject: [PATCH 5.0 022/123] x86/MCE/AMD: Carve out the MC4_MISC thresholding quirk
+        stable@vger.kernel.org,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.19 016/105] arm64: Save and restore OSDLR_EL1 across suspend/resume
 Date:   Mon, 20 May 2019 14:13:22 +0200
-Message-Id: <20190520115246.323227905@linuxfoundation.org>
+Message-Id: <20190520115248.146098415@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,124 +44,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shirish S <Shirish.S@amd.com>
+From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 
-commit 30aa3d26edb0f3d7992757287eec0ca588a5c259 upstream.
+commit 827a108e354db633698f0b4a10c1ffd2b1f8d1d0 upstream.
 
-The MC4_MISC thresholding quirk needs to be applied during S5 -> S0 and
-S3 -> S0 state transitions, which follow different code paths. Carve it
-out into a separate function and call it mce_amd_feature_init() where
-the two code paths of the state transitions converge.
+When the CPU comes out of suspend, the firmware may have modified the OS
+Double Lock Register. Save it in an unused slot of cpu_suspend_ctx, and
+restore it on resume.
 
- [ bp: massage commit message and the carved out function. ]
-
-Signed-off-by: Shirish S <shirish.s@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/1547651417-23583-3-git-send-email-shirish.s@amd.com
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/mce/amd.c  |   36 ++++++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/mce/core.c |   29 -----------------------------
- 2 files changed, 36 insertions(+), 29 deletions(-)
+ arch/arm64/mm/proc.S |   34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
 
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -545,6 +545,40 @@ out:
- 	return offset;
- }
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -70,24 +70,25 @@ ENTRY(cpu_do_suspend)
+ 	mrs	x2, tpidr_el0
+ 	mrs	x3, tpidrro_el0
+ 	mrs	x4, contextidr_el1
+-	mrs	x5, cpacr_el1
+-	mrs	x6, tcr_el1
+-	mrs	x7, vbar_el1
+-	mrs	x8, mdscr_el1
+-	mrs	x9, oslsr_el1
+-	mrs	x10, sctlr_el1
++	mrs	x5, osdlr_el1
++	mrs	x6, cpacr_el1
++	mrs	x7, tcr_el1
++	mrs	x8, vbar_el1
++	mrs	x9, mdscr_el1
++	mrs	x10, oslsr_el1
++	mrs	x11, sctlr_el1
+ alternative_if_not ARM64_HAS_VIRT_HOST_EXTN
+-	mrs	x11, tpidr_el1
++	mrs	x12, tpidr_el1
+ alternative_else
+-	mrs	x11, tpidr_el2
++	mrs	x12, tpidr_el2
+ alternative_endif
+-	mrs	x12, sp_el0
++	mrs	x13, sp_el0
+ 	stp	x2, x3, [x0]
+-	stp	x4, xzr, [x0, #16]
+-	stp	x5, x6, [x0, #32]
+-	stp	x7, x8, [x0, #48]
+-	stp	x9, x10, [x0, #64]
+-	stp	x11, x12, [x0, #80]
++	stp	x4, x5, [x0, #16]
++	stp	x6, x7, [x0, #32]
++	stp	x8, x9, [x0, #48]
++	stp	x10, x11, [x0, #64]
++	stp	x12, x13, [x0, #80]
+ 	ret
+ ENDPROC(cpu_do_suspend)
  
-+/*
-+ * Turn off MC4_MISC thresholding banks on all family 0x15 models since
-+ * they're not supported there.
-+ */
-+void disable_err_thresholding(struct cpuinfo_x86 *c)
-+{
-+	int i;
-+	u64 hwcr;
-+	bool need_toggle;
-+	u32 msrs[] = {
-+		0x00000413, /* MC4_MISC0 */
-+		0xc0000408, /* MC4_MISC1 */
-+	};
-+
-+	if (c->x86 != 0x15)
-+		return;
-+
-+	rdmsrl(MSR_K7_HWCR, hwcr);
-+
-+	/* McStatusWrEn has to be set */
-+	need_toggle = !(hwcr & BIT(18));
-+
-+	if (need_toggle)
-+		wrmsrl(MSR_K7_HWCR, hwcr | BIT(18));
-+
-+	/* Clear CntP bit safely */
-+	for (i = 0; i < ARRAY_SIZE(msrs); i++)
-+		msr_clear_bit(msrs[i], 62);
-+
-+	/* restore old settings */
-+	if (need_toggle)
-+		wrmsrl(MSR_K7_HWCR, hwcr);
-+}
-+
- /* cpu init entry point, called from mce.c with preempt off */
- void mce_amd_feature_init(struct cpuinfo_x86 *c)
- {
-@@ -552,6 +586,8 @@ void mce_amd_feature_init(struct cpuinfo
- 	unsigned int bank, block, cpu = smp_processor_id();
- 	int offset = -1;
+@@ -110,8 +111,8 @@ ENTRY(cpu_do_resume)
+ 	msr	cpacr_el1, x6
  
-+	disable_err_thresholding(c);
-+
- 	for (bank = 0; bank < mca_cfg.banks; ++bank) {
- 		if (mce_flags.smca)
- 			smca_configure(bank, cpu);
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -1612,35 +1612,6 @@ static int __mcheck_cpu_apply_quirks(str
- 		if (c->x86 == 0x15 && c->x86_model <= 0xf)
- 			mce_flags.overflow_recov = 1;
+ 	/* Don't change t0sz here, mask those bits when restoring */
+-	mrs	x5, tcr_el1
+-	bfi	x8, x5, TCR_T0SZ_OFFSET, TCR_TxSZ_WIDTH
++	mrs	x7, tcr_el1
++	bfi	x8, x7, TCR_T0SZ_OFFSET, TCR_TxSZ_WIDTH
  
--		/*
--		 * Turn off MC4_MISC thresholding banks on all models since
--		 * they're not supported there.
--		 */
--		if (c->x86 == 0x15) {
--			int i;
--			u64 hwcr;
--			bool need_toggle;
--			u32 msrs[] = {
--				0x00000413, /* MC4_MISC0 */
--				0xc0000408, /* MC4_MISC1 */
--			};
--
--			rdmsrl(MSR_K7_HWCR, hwcr);
--
--			/* McStatusWrEn has to be set */
--			need_toggle = !(hwcr & BIT(18));
--
--			if (need_toggle)
--				wrmsrl(MSR_K7_HWCR, hwcr | BIT(18));
--
--			/* Clear CntP bit safely */
--			for (i = 0; i < ARRAY_SIZE(msrs); i++)
--				msr_clear_bit(msrs[i], 62);
--
--			/* restore old settings */
--			if (need_toggle)
--				wrmsrl(MSR_K7_HWCR, hwcr);
--		}
- 	}
- 
- 	if (c->x86_vendor == X86_VENDOR_INTEL) {
+ 	msr	tcr_el1, x8
+ 	msr	vbar_el1, x9
+@@ -135,6 +136,7 @@ alternative_endif
+ 	/*
+ 	 * Restore oslsr_el1 by writing oslar_el1
+ 	 */
++	msr	osdlr_el1, x5
+ 	ubfx	x11, x11, #1, #1
+ 	msr	oslar_el1, x11
+ 	reset_pmuserenr_el0 x0			// Disable PMU access from EL0
 
 
