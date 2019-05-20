@@ -2,108 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BDC423164
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 12:34:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA9E423168
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 12:35:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731429AbfETKeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 06:34:44 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50294 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731376AbfETKen (ORCPT
+        id S1731624AbfETKfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 06:35:01 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40524 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731376AbfETKfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 06:34:43 -0400
-Received: by mail-wm1-f68.google.com with SMTP id f204so12746998wme.0
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 03:34:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hJaOf0A2/Xd/g+78Nlk/c2RYeLP2fm2K/KoH/Yw8zbU=;
-        b=ypVliwq7SwcxaYxl4+KiThvD4LBr7BJikL4QOM8mIJ1xCwBblENKpU/2RMOMFrDXhu
-         ZCEZ+yDmJHVEgB2KWcttKNH0OvBVItB+jFrmE7BTTwD7UMwrV7UnHc0PecqPCuAXmcOl
-         w2B8sFUdppF3vAnZ8wUjq65AEXMemnsy26U6g+dAdMiY5pWxP8zvy//xpmBvZesOpLLq
-         R4BfkZlqIvXbOShH6BB+h2YXfWzRxGcjEx2QEiua6ZQLxHMLi+WFyoThOP39eJ9meyvi
-         A41aoqlxNOmH8Yr9WBqjUy42j43/Ff3Ui29P773BgS2uly+rHJXXsYmn/u/nIh+J7VuY
-         /cBg==
+        Mon, 20 May 2019 06:35:00 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 15so8423954wmg.5
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 03:34:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=hJaOf0A2/Xd/g+78Nlk/c2RYeLP2fm2K/KoH/Yw8zbU=;
-        b=D8gTFkFRNW7DIQ7hOV4t/GwC3KnZWg7iuvFvXquYXbaYPkhXpfPwR2VehpUrpOw9Z4
-         3NDnKLHJ/ozQBx42OtJgn7fbjug7ADpFcC3xV0tt+uMSlroVB1KRWTFtqE0lLz92fSwV
-         cupAYtMe0SiEjpd86l3Hi5XkWfLVxh2NNRIHkXj+Fr8zhbDj8kONp4bpBYredbdI1CLF
-         7KbDUeyLohteOLEee4zJxPvxvUEG8nodh4bzeaMEAY+zv5TSH9JHVvr9Soj5hp0lbRoT
-         pWcdb8tKKocGkSpIHae1KiMes+aqewmdSqlJdnjXqPuxaoIXejdY/TzXQjqA4fMZSMOL
-         2Rgg==
-X-Gm-Message-State: APjAAAViyWISWf+jNn+NMm381ls335zOWCz6XJLNFRnoqukEqJGRtoZ1
-        Kdi8WPllIzw66G+Iu8oE10GR+w==
-X-Google-Smtp-Source: APXvYqwX9w3fvgtsddUeORMpPjPJpygGZ2d2dpnnMtIHE7PR28RyVQbZiw+0IFSL0wKLtzL2qxf8yA==
-X-Received: by 2002:a7b:c744:: with SMTP id w4mr20213217wmk.116.1558348481406;
-        Mon, 20 May 2019 03:34:41 -0700 (PDT)
-Received: from localhost.localdomain (139.red-79-146-81.dynamicip.rima-tde.net. [79.146.81.139])
-        by smtp.gmail.com with ESMTPSA id l2sm23451641wmf.16.2019.05.20.03.34.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 03:34:40 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, agross@kernel.org,
-        david.brown@linaro.org, gregkh@linuxfoundation.org
-Cc:     jslaby@suse.com, keescook@chromium.org, anton@enomsg.org,
-        ccross@android.com, tony.luck@intel.com,
-        linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, khasim.mohammed@linaro.org,
-        agsumit@qti.qualcomm.com
-Subject: [PATCH] tty: serial: msm_serial: Fix XON/XOFF
-Date:   Mon, 20 May 2019 12:34:35 +0200
-Message-Id: <20190520103435.30850-1-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        bh=TDeq1R0ZlxS3eYDtruCGOeX8Ha3Jxa2VQZkw5KkPaxY=;
+        b=BRZpdPbCwDQ2OqC+pdmDexHkdOLyTpjhaJ9i/JvF3rLkiusfyWNZgNVksRxyYAxLqa
+         k+D6LMqxXei4AYUNP4yNqpvihY8KQPOFo18oQwcfADnVxFBOUUyAeTesCw+EDfAIUmGT
+         9XmmLMssjerUAcEJ5IhzDtcc4sqqGhqCBpA8QkZ7XtZX0nGtDtwtjhE4brjBoTFqCi9V
+         L7QALMORJv12avOlEKHW5/ZnNE8R00ehSrsPTa7d+F2XVRxLorZuxHGTwn38KhvDiSE6
+         81i5Bt6epnjNxvI1xSwC2LrKvbWeyL9fJKFLI8wW2rDzh5dDwUaBwF7pY4H/8aJQAGpU
+         R55w==
+X-Gm-Message-State: APjAAAUlvk1JIaEqRWcjjCs+VMu0nylbgJnkDprWSuR3SZpFQWSJgYr5
+        lghc0GiBx36bZsbkNeDVe3J0+LXGg5Y=
+X-Google-Smtp-Source: APXvYqwn/wTJt8p+PuqGYx7YYCzZyxsT5ZwMQNjlbn4FMnuwgXauUwZBRMlrQ25Gm7MW5C+8kJe+sQ==
+X-Received: by 2002:a1c:a904:: with SMTP id s4mr16653129wme.92.1558348498438;
+        Mon, 20 May 2019 03:34:58 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:ac04:eef9:b257:b844? ([2001:b07:6468:f312:ac04:eef9:b257:b844])
+        by smtp.gmail.com with ESMTPSA id x6sm25589007wru.36.2019.05.20.03.34.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 03:34:57 -0700 (PDT)
+Subject: Re: [PATCH RESEND 2/4] KVM: X86: Emulate MSR_IA32_MISC_ENABLE MWAIT
+ bit
+To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+References: <1558082990-7822-1-git-send-email-wanpengli@tencent.com>
+ <1558082990-7822-2-git-send-email-wanpengli@tencent.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <e96eecd6-7095-58b3-32a7-2cfde2f2ebcc@redhat.com>
+Date:   Mon, 20 May 2019 12:34:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1558082990-7822-2-git-send-email-wanpengli@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the tty layer requests the uart to throttle, the current code
-executing in msm_serial will trigger "Bad mode in Error Handler" and
-generate an invalid stack frame in pstore before rebooting (that is if
-pstore is indeed configured: otherwise the user shall just notice a
-reboot with no further information dumped to the console).
+On 17/05/19 10:49, Wanpeng Li wrote:
+> MSR IA32_MSIC_ENABLE bit 18, according to SDM:
+> 
+> | When this bit is set to 0, the MONITOR feature flag is not set (CPUID.01H:ECX[bit 3] = 0).
+> | This indicates that MONITOR/MWAIT are not supported.
+> |
+> | Software attempts to execute MONITOR/MWAIT will cause #UD when this bit is 0.
+> |
+> | When this bit is set to 1 (default), MONITOR/MWAIT are supported (CPUID.01H:ECX[bit 3] = 1).
+> 
+> The CPUID.01H:ECX[bit 3] ought to mirror the value of the MSR bit,
+> CPUID.01H:ECX[bit 3] is a better guard than kvm_mwait_in_guest().
+> kvm_mwait_in_guest() affects the behavior of MONITOR/MWAIT, not its
+> guest visibility.
+> 
+> This patch implements toggling of the CPUID bit based on guest writes
+> to the MSR.
 
-This patch replaces the PIO byte accessor with the word accessor
-already used in PIO mode.
+Won't this disable mwait after migration, unless IA32_MISC_ENABLE is set
+correctly by firmware or userspace?  I think you need to hide this
+behind KVM_CAP_DISABLE_QUIRKS.  (Also, what is the reason for this
+change in general besides making behavior closer to real hardware?)
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
----
- drivers/tty/serial/msm_serial.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_serial.c
-index 109096033bb1..23833ad952ba 100644
---- a/drivers/tty/serial/msm_serial.c
-+++ b/drivers/tty/serial/msm_serial.c
-@@ -860,6 +860,7 @@ static void msm_handle_tx(struct uart_port *port)
- 	struct circ_buf *xmit = &msm_port->uart.state->xmit;
- 	struct msm_dma *dma = &msm_port->tx_dma;
- 	unsigned int pio_count, dma_count, dma_min;
-+	char buf[4] = { 0 };
- 	void __iomem *tf;
- 	int err = 0;
- 
-@@ -869,10 +870,12 @@ static void msm_handle_tx(struct uart_port *port)
- 		else
- 			tf = port->membase + UART_TF;
- 
-+		buf[0] = port->x_char;
-+
- 		if (msm_port->is_uartdm)
- 			msm_reset_dm_count(port, 1);
- 
--		iowrite8_rep(tf, &port->x_char, 1);
-+		iowrite32_rep(tf, buf, 1);
- 		port->icount.tx++;
- 		port->x_char = 0;
- 		return;
--- 
-2.21.0
-
+Paolo
