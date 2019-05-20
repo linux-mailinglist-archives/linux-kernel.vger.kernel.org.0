@@ -2,144 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 039B822DA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:05:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA99D22DCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:06:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730628AbfETIFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:05:23 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:40728 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbfETIFX (ORCPT
+        id S1730891AbfETIFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:05:38 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38249 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725772AbfETIFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 04:05:23 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190520080521euoutp010896e16f4f345ac5a18967c069c747d7~gVYnVPm7-2042520425euoutp01i
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 08:05:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190520080521euoutp010896e16f4f345ac5a18967c069c747d7~gVYnVPm7-2042520425euoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1558339521;
-        bh=kbyN3TjyDx8oqa74b4izYV9eIuvgOoK3g1XdrHecRGY=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=LzcDMs6EFgsJFBQrpFGrsqvuvQV9EGN9FB+89CGeQiwRNuM980dA39XU1H+SbQDst
-         QG17gEesI5PDlt68tzkQD8+fcCIiU3JapL8lDsLt7V7PJeU6gpSafKT6QbcK4yGVRu
-         iMpCHqzuV5nSOV7fj9NQMmHfLbONiviRN5qkkj68=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190520080520eucas1p11d8bfb238865f0d54f1d8911fb03a991~gVYmz07Oq2609826098eucas1p1M;
-        Mon, 20 May 2019 08:05:20 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 33.0F.04325.0CF52EC5; Mon, 20
-        May 2019 09:05:20 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190520080520eucas1p10a60f58f21cf785ffe449c213daecdc1~gVYmCBIlQ2358323583eucas1p1Z;
-        Mon, 20 May 2019 08:05:20 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190520080520eusmtrp2f5847286dfd832358321f43a292a3299~gVYmBcNjX0781107811eusmtrp2r;
-        Mon, 20 May 2019 08:05:20 +0000 (GMT)
-X-AuditID: cbfec7f5-b75ff700000010e5-e5-5ce25fc08206
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id D3.15.04140.0CF52EC5; Mon, 20
-        May 2019 09:05:20 +0100 (BST)
-Received: from [106.120.51.74] (unknown [106.120.51.74]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190520080519eusmtip238cfac07af457a6f10ed1f969256f4bb~gVYlq8eCV1233512335eusmtip2W;
-        Mon, 20 May 2019 08:05:19 +0000 (GMT)
-Subject: Re: [PATCH v2] drm/bridge: Remove duplicate header
-To:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        architt@codeaurora.org, Laurent.pinchart@ideasonboard.com,
-        airlied@linux.ie
-Cc:     jrdr.linux@gmail.com, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <4e46d26e-675c-23db-5b5d-5030f64cda56@samsung.com>
-Date:   Mon, 20 May 2019 10:05:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.6.1
+        Mon, 20 May 2019 04:05:36 -0400
+Received: by mail-wm1-f67.google.com with SMTP id t5so10603428wmh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 01:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N5i7/XDpfm3fWH4Ml9uuxM88EMAgEyCkLNLDzAUDSZ0=;
+        b=aN7TKzswvueSwWlYr5KtwQEUDm4FwOzq19jE5z3pv8sUvOak2w8NcLvYczOR7mVdEC
+         P2S3uIzCkjtQ2aotwBcpbuqNF8Cw3Da3lTLAWb0zExra8L3o2umg7W9woO6Xc55C0ZcB
+         dQoN0Lb5efbJMs5Qne9S1n6yybhaXFZy5FvGFUeQ0PUlIm27zEYRMTTFWxf8hhSnqryF
+         9ceGvzS6/zQ0OevUJKDf/3nlg4O9TkUuEl4tQukvHwYnP5ncA78N8Ci4Z+1kJdbTYECf
+         8C5g//rspnOOH0eaE9czErhjwXHfKaf1FO3A6PMEj4quNFYDKeK9rEge9cGMmzlLLtBE
+         +8tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N5i7/XDpfm3fWH4Ml9uuxM88EMAgEyCkLNLDzAUDSZ0=;
+        b=Q3RYsQWciPlNoHMlclOGEpMk81jj5S3/Mzg+NSbCLrqTyXQROjV4NGIV5sBhcWRYsz
+         aCuEynS+0IZu954WR4aV6FxatxpYl9/xubWYG5ZpXrlTffMdVxcC8Feq5ocW037R2RcB
+         7r7cJp4B/NOvKBwHnj+zlNt2TPUeBYPkVtoREWfy8FZkeVuE9/ME42cvypnCXrWVerGA
+         +45OnKBZ3+bdQgQ/2c4Dqrd4QrS5GH6ELq4x+Zx9K1B/XcdM6pcQSKHxzB1AkZ3kmd6j
+         /O6pdZk73MLlT6lZi+/RBfZhkgmVaku+IdAqkJ/mqwrlkXzvNMtnmbdZi4mB1wJgLEzg
+         wiFQ==
+X-Gm-Message-State: APjAAAWyIcZRe/ZiF3Z38ShLgX8pylXJ1LFGZwPKGV/16HYKGBged/Rd
+        1ZCDGXMGcXE3onRbKFFHH8yCOYL0EyyLW2swqGstoA==
+X-Google-Smtp-Source: APXvYqz/x+wplnWtWRAm2caTMk28mJLp0zciA4G0yf9XqQh45uE9rk6iwDlg1+yyxEcWuqSPKpaVVr0N3xBRPIdMPI4=
+X-Received: by 2002:a7b:ce10:: with SMTP id m16mr1909247wmc.10.1558339533772;
+ Mon, 20 May 2019 01:05:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <5cdd8109.1c69fb81.6e003.b84b@mx.google.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIKsWRmVeSWpSXmKPExsWy7djP87oH4h/FGOy9pW7Re+4kk0VTx1tW
-        iytf37NZXLvawGzROXEJu8XlXXPYLC59PMTkwO5xua+XyWPnrLvsHrM7ZrJ6bP/2gNXjfvdx
-        Jo/Pm+QC2KK4bFJSczLLUov07RK4Mo53P2cu+M9ecWjxRrYGxlNsXYycHBICJhLbu5exdjFy
-        cQgJrGCUeD+tgQnC+cIo8e3ya3YI5zOjxOzJb9lhWrp/NUNVLWeUWN79mRHCecsocWHmfVaQ
-        KmEBa4m2zuVg7SICDYwSt7bfB9vILBApMffOAkYQm01AU+Lv5ptgcV4BO4meTfPAVrAIqErM
-        vj8TzBYViJC4f2wDK0SNoMTJmU9YQGxOAUuJZT0bGCFmyktsfzuHGcIWl7j1ZD7YeRIC29gl
-        2k9tY4K420Vi1foHrBC2sMSr41ug/pGR+L9zPlRNvcT9FS3MEM0djBJbN+xkhkhYSxw+fhGo
-        mQNog6bE+l36EGFHiQOnnzGBhCUE+CRuvBWEuIFPYtK26cwQYV6JjjYhiGpFiftnt0INFJdY
-        euEr2wRGpVlIPpuF5JtZSL6ZhbB3ASPLKkbx1NLi3PTUYuO81HK94sTc4tK8dL3k/NxNjMCE
-        dPrf8a87GPf9STrEKMDBqMTD6zH9YYwQa2JZcWXuIUYJDmYlEV5j9fsxQrwpiZVVqUX58UWl
-        OanFhxilOViUxHmrGR5ECwmkJ5akZqemFqQWwWSZODilGhg17k2Uv+2Y84Mr+52r4Hd+uUON
-        QesO/+gJ4rOydHExDZb4yqXhxy1tr6NxtVJrXc+0FOusi2wPcsL35ipt1fm9IDpwp8PaOyYz
-        v1uf3HJP2XvmLRXNKcEn1GXP/FWMqJJMLkoXYHU74uzuw/bx8xXf6qTktL0Sc7dxTz18VOX3
-        FbkNVd4/GJVYijMSDbWYi4oTAVyVth5EAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xe7oH4h/FGDx+yGrRe+4kk0VTx1tW
-        iytf37NZXLvawGzROXEJu8XlXXPYLC59PMTkwO5xua+XyWPnrLvsHrM7ZrJ6bP/2gNXjfvdx
-        Jo/Pm+QC2KL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov0
-        7RL0Mo53P2cu+M9ecWjxRrYGxlNsXYycHBICJhLdv5qZuhi5OIQEljJKfJp3lhEiIS6xe/5b
-        ZghbWOLPtS6wBiGB14wSf5fGgNjCAtYSbZ3L2UGaRQQaGCUabk8Bcjg4mAUiJd6fYYeo72GU
-        OHQvDMRmE9CU+Lv5JtgcXgE7iZ5N88BqWARUJWbfnwlmiwpESJx5v4IFokZQ4uTMJ2A2p4Cl
-        xLKeDWC3MQuoS/yZd4kZwpaX2P52DpQtLnHryXymCYxCs5C0z0LSMgtJyywkLQsYWVYxiqSW
-        Fuem5xYb6RUn5haX5qXrJefnbmIERt+2Yz+37GDsehd8iFGAg1GJh/fDlIcxQqyJZcWVuYcY
-        JTiYlUR4jdXvxwjxpiRWVqUW5ccXleakFh9iNAV6biKzlGhyPjAx5JXEG5oamltYGpobmxub
-        WSiJ83YIHIwREkhPLEnNTk0tSC2C6WPi4JRqYNS82SXQm/AhtK131cZ7Wqkbrj+Xf+5XN6Gu
-        WPUAX+a2X4uanoY7ngvrNPI8LmMMTDSvov7nRdwPvJ59SWzPPYveSerRueZOByZK98fGuem3
-        bZmpsW/Jz9pbG2YbKOwI+590VCf2SfORO3Yf1ouYe+2TlnY4eeqQ28r5eQc2GZ79+fWlb+XN
-        RUosxRmJhlrMRcWJAJkXpBLUAgAA
-X-CMS-MailID: 20190520080520eucas1p10a60f58f21cf785ffe449c213daecdc1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190516152606epcas1p153959c396cb312da9ecc0e164bfcc8d3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190516152606epcas1p153959c396cb312da9ecc0e164bfcc8d3
-References: <CGME20190516152606epcas1p153959c396cb312da9ecc0e164bfcc8d3@epcas1p1.samsung.com>
-        <5cdd8109.1c69fb81.6e003.b84b@mx.google.com>
+References: <20190515063004.3466-1-anup.patel@wdc.com>
+In-Reply-To: <20190515063004.3466-1-anup.patel@wdc.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Mon, 20 May 2019 13:35:22 +0530
+Message-ID: <CAAhSdy3GqjS06QxCtY6OUkBZds4gygQsAkaoaa+sMj3z6qgUBQ@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: defconfig: Enable NO_HZ_IDLE and HIGH_RES_TIMERS
+To:     Anup Patel <Anup.Patel@wdc.com>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.05.2019 17:25, Sabyasachi Gupta wrote:
-> Remove duplicate header which is included twice
+On Wed, May 15, 2019 at 12:00 PM Anup Patel <Anup.Patel@wdc.com> wrote:
 >
-> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-
-
-Queued to drm-misc-next.
-
-
-Regards
-
-Andrzej
-
-
+> This patch enables NO_HZ_IDLE (idle dynamic ticks) and HIGH_RES_TIMERS
+> (hrtimers) in RV32 and RV64 defconfigs.
+>
+> Both of the above options are enabled by default for architectures
+> such as x86, ARM, and ARM64.
+>
+> The idle dynamic ticks helps use save power by stopping timer ticks
+> when the system is idle whereas hrtimers is a much improved timer
+> subsystem compared to the old "timer wheel" based system.
+>
+> This patch is tested on SiFive Unleashed board and QEMU Virt machine.
+>
+> Signed-off-by: Anup Patel <anup.patel@wdc.com>
 > ---
-> v2: rebased the code against drm -next and arranged the headers alphabetically
+>  arch/riscv/configs/defconfig      | 2 ++
+>  arch/riscv/configs/rv32_defconfig | 2 ++
+>  2 files changed, 4 insertions(+)
 >
->  drivers/gpu/drm/bridge/panel.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> index 2fd3461e50ab..f254c352ec57 100644
+> --- a/arch/riscv/configs/defconfig
+> +++ b/arch/riscv/configs/defconfig
+> @@ -1,5 +1,7 @@
+>  CONFIG_SYSVIPC=y
+>  CONFIG_POSIX_MQUEUE=y
+> +CONFIG_NO_HZ_IDLE=y
+> +CONFIG_HIGH_RES_TIMERS=y
+>  CONFIG_IKCONFIG=y
+>  CONFIG_IKCONFIG_PROC=y
+>  CONFIG_CGROUPS=y
+> diff --git a/arch/riscv/configs/rv32_defconfig b/arch/riscv/configs/rv32_defconfig
+> index 1a911ed8e772..d5449ef805a3 100644
+> --- a/arch/riscv/configs/rv32_defconfig
+> +++ b/arch/riscv/configs/rv32_defconfig
+> @@ -1,5 +1,7 @@
+>  CONFIG_SYSVIPC=y
+>  CONFIG_POSIX_MQUEUE=y
+> +CONFIG_NO_HZ_IDLE=y
+> +CONFIG_HIGH_RES_TIMERS=y
+>  CONFIG_IKCONFIG=y
+>  CONFIG_IKCONFIG_PROC=y
+>  CONFIG_CGROUPS=y
+> --
+> 2.17.1
 >
-> diff --git a/drivers/gpu/drm/bridge/panel.c b/drivers/gpu/drm/bridge/panel.c
-> index 38eeaf8..000ba7c 100644
-> --- a/drivers/gpu/drm/bridge/panel.c
-> +++ b/drivers/gpu/drm/bridge/panel.c
-> @@ -9,13 +9,12 @@
->   */
->  
->  #include <drm/drmP.h>
-> -#include <drm/drm_panel.h>
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_connector.h>
->  #include <drm/drm_encoder.h>
->  #include <drm/drm_modeset_helper_vtables.h>
-> -#include <drm/drm_probe_helper.h>
->  #include <drm/drm_panel.h>
-> +#include <drm/drm_probe_helper.h>
->  
->  struct panel_bridge {
->  	struct drm_bridge bridge;
 
+Hi All,
 
+Any comments on this one?
+
+@Palmer, It would be nice to have this in Linux-5.2
+
+Regards,
+Anup
