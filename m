@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AE16233D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0163C236E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:17:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387962AbfETMUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:20:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33580 "EHLO mail.kernel.org"
+        id S2387629AbfETMRp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:17:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731352AbfETMUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:20:13 -0400
+        id S2387611AbfETMRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:17:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A83D320656;
-        Mon, 20 May 2019 12:20:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 908E021726;
+        Mon, 20 May 2019 12:17:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354813;
-        bh=/VTRKwRzf9OpodiBI3QttYqqDO7bWs8BllvLYJybVk0=;
+        s=default; t=1558354661;
+        bh=hJhvb1Dms8MsY1g+rT6DS/w0wdxn/uWL5NtjZwJQrT4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yOjIbrFmax2QNItDPALGHUY9VgGZByi+mZHyAx1KJ2jnM7F124GNo2nlB5EwrJr2m
-         8RScpGBFxC6BPt6JAAl4stKnQb+4nuSMSYqK7DXmZ8tFc+4CrkN3w/WjAw/xlvrBia
-         gyItRzgVnGqruYBdNwYACbpBeOhyE8dYZLX4iL+0=
+        b=DAr2r8Fsk7cub1qOgXWSNoBKZl6pZJQ9NVt/EGNGIWTDprZp9NZtydvaSf7MSxcgJ
+         p7jnGmdVcpQvLL0hGADGymqFjCSek7LcOiKh9xtRnhGv0DByQUahk2UO/jDzUYfXbk
+         VLghhireTN03ueK1mIWXqzaYyL7tCMMiKAwAPOV8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kiran Kolukuluru <kirank@ami.com>,
-        Kamlakant Patel <kamlakantp@marvell.com>,
-        Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.14 51/63] ipmi:ssif: compare block number correctly for multi-part return messages
+        stable@vger.kernel.org, Sriram Rajagopalan <sriramr@arista.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.9 41/44] ext4: zero out the unused memory region in the extent tree block
 Date:   Mon, 20 May 2019 14:14:30 +0200
-Message-Id: <20190520115236.679829363@linuxfoundation.org>
+Message-Id: <20190520115235.768655787@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
+References: <20190520115230.720347034@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +43,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kamlakant Patel <kamlakantp@marvell.com>
+From: Sriram Rajagopalan <sriramr@arista.com>
 
-commit 55be8658c7e2feb11a5b5b33ee031791dbd23a69 upstream.
+commit 592acbf16821288ecdc4192c47e3774a4c48bb64 upstream.
 
-According to ipmi spec, block number is a number that is incremented,
-starting with 0, for each new block of message data returned using the
-middle transaction.
+This commit zeroes out the unused memory region in the buffer_head
+corresponding to the extent metablock after writing the extent header
+and the corresponding extent node entries.
 
-Here, the 'blocknum' is data[0] which always starts from zero(0) and
-'ssif_info->multi_pos' starts from 1.
-So, we need to add +1 to blocknum while comparing with multi_pos.
+This is done to prevent random uninitialized data from getting into
+the filesystem when the extent block is synced.
 
-Fixes: 7d6380cd40f79 ("ipmi:ssif: Fix handling of multi-part return messages").
-Reported-by: Kiran Kolukuluru <kirank@ami.com>
-Signed-off-by: Kamlakant Patel <kamlakantp@marvell.com>
-Message-Id: <1556106615-18722-1-git-send-email-kamlakantp@marvell.com>
-[Also added a debug log if the block numbers don't match.]
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Cc: stable@vger.kernel.org # 4.4
+This fixes CVE-2019-11833.
+
+Signed-off-by: Sriram Rajagopalan <sriramr@arista.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/ipmi/ipmi_ssif.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/ext4/extents.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -703,12 +703,16 @@ static void msg_done_handler(struct ssif
- 			/* End of read */
- 			len = ssif_info->multi_len;
- 			data = ssif_info->data;
--		} else if (blocknum != ssif_info->multi_pos) {
-+		} else if (blocknum + 1 != ssif_info->multi_pos) {
- 			/*
- 			 * Out of sequence block, just abort.  Block
- 			 * numbers start at zero for the second block,
- 			 * but multi_pos starts at one, so the +1.
- 			 */
-+			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
-+				dev_dbg(&ssif_info->client->dev,
-+					"Received message out of sequence, expected %u, got %u\n",
-+					ssif_info->multi_pos - 1, blocknum);
- 			result = -EIO;
- 		} else {
- 			ssif_inc_stat(ssif_info, received_message_parts);
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -1047,6 +1047,7 @@ static int ext4_ext_split(handle_t *hand
+ 	__le32 border;
+ 	ext4_fsblk_t *ablocks = NULL; /* array of allocated blocks */
+ 	int err = 0;
++	size_t ext_size = 0;
+ 
+ 	/* make decision: where to split? */
+ 	/* FIXME: now decision is simplest: at current extent */
+@@ -1138,6 +1139,10 @@ static int ext4_ext_split(handle_t *hand
+ 		le16_add_cpu(&neh->eh_entries, m);
+ 	}
+ 
++	/* zero out unused area in the extent block */
++	ext_size = sizeof(struct ext4_extent_header) +
++		sizeof(struct ext4_extent) * le16_to_cpu(neh->eh_entries);
++	memset(bh->b_data + ext_size, 0, inode->i_sb->s_blocksize - ext_size);
+ 	ext4_extent_block_csum_set(inode, neh);
+ 	set_buffer_uptodate(bh);
+ 	unlock_buffer(bh);
+@@ -1217,6 +1222,11 @@ static int ext4_ext_split(handle_t *hand
+ 				sizeof(struct ext4_extent_idx) * m);
+ 			le16_add_cpu(&neh->eh_entries, m);
+ 		}
++		/* zero out unused area in the extent block */
++		ext_size = sizeof(struct ext4_extent_header) +
++		   (sizeof(struct ext4_extent) * le16_to_cpu(neh->eh_entries));
++		memset(bh->b_data + ext_size, 0,
++			inode->i_sb->s_blocksize - ext_size);
+ 		ext4_extent_block_csum_set(inode, neh);
+ 		set_buffer_uptodate(bh);
+ 		unlock_buffer(bh);
+@@ -1282,6 +1292,7 @@ static int ext4_ext_grow_indepth(handle_
+ 	ext4_fsblk_t newblock, goal = 0;
+ 	struct ext4_super_block *es = EXT4_SB(inode->i_sb)->s_es;
+ 	int err = 0;
++	size_t ext_size = 0;
+ 
+ 	/* Try to prepend new index to old one */
+ 	if (ext_depth(inode))
+@@ -1307,9 +1318,11 @@ static int ext4_ext_grow_indepth(handle_
+ 		goto out;
+ 	}
+ 
++	ext_size = sizeof(EXT4_I(inode)->i_data);
+ 	/* move top-level index/leaf into new block */
+-	memmove(bh->b_data, EXT4_I(inode)->i_data,
+-		sizeof(EXT4_I(inode)->i_data));
++	memmove(bh->b_data, EXT4_I(inode)->i_data, ext_size);
++	/* zero out unused area in the extent block */
++	memset(bh->b_data + ext_size, 0, inode->i_sb->s_blocksize - ext_size);
+ 
+ 	/* set size of new block */
+ 	neh = ext_block_hdr(bh);
 
 
