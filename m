@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90E7123564
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D74D236F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:17:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403782AbfETMez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:34:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52542 "EHLO mail.kernel.org"
+        id S2387732AbfETMSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:18:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403770AbfETMev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:34:51 -0400
+        id S2387725AbfETMSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:18:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D506221479;
-        Mon, 20 May 2019 12:34:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14E36208C3;
+        Mon, 20 May 2019 12:18:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355691;
-        bh=W6/X+FsS7lgY0ci9ipL3DN72hdu/rw1yHfoWA9Ns1Uk=;
+        s=default; t=1558354716;
+        bh=ofEIYAS8+rvPfYlANzMOn0TgjZ0h4w0AB+vYOudGgtE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=grxHO6kPBMvSyyzqdqIW8K7mh4Sz4rvreJeOlQ96SajvqY72p85vFSZ5eIzMvrb75
-         1twVLfI9gOXDMEVdW/AH2f67B/RRuocU9weRIY98n7WVYIzkiqC3/EiX/Q6xHZQfTW
-         jjhZrGMhI8QNSpAq/NoaryVf3IXPQJdBts2YwfJs=
+        b=v81g+zm+KjoM2/7suwioOoBlqz3Wq8LidTX9hB5ALljZzPoRbAm3vA75mQAx9lQYU
+         7SXOALMavJVq1jibTePGaMTqxWkzcxt548vnkNqqr4GdR8iVn3wmXhUZrtecrKCpuf
+         uvb7X9v3tASC4DkVndpiCbtz8J2jKtWhFALUpAXE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Zhang Zhijie <zhangzj@rock-chips.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.1 037/128] crypto: rockchip - update IV buffer to contain the next IV
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 05/63] PCI: hv: Add pci_destroy_slot() in pci_devices_present_work(), if necessary
 Date:   Mon, 20 May 2019 14:13:44 +0200
-Message-Id: <20190520115252.196308700@linuxfoundation.org>
+Message-Id: <20190520115231.834981202@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,68 +46,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhang Zhijie <zhangzj@rock-chips.com>
+[ Upstream commit 340d455699400f2c2c0f9b3f703ade3085cdb501 ]
 
-commit f0cfd57b43fec65761ca61d3892b983a71515f23 upstream.
+When we hot-remove a device, usually the host sends us a PCI_EJECT message,
+and a PCI_BUS_RELATIONS message with bus_rel->device_count == 0.
 
-The Kernel Crypto API request output the next IV data to
-IV buffer for CBC implementation. So the last block data of
-ciphertext should be copid into assigned IV buffer.
+When we execute the quick hot-add/hot-remove test, the host may not send
+us the PCI_EJECT message if the guest has not fully finished the
+initialization by sending the PCI_RESOURCES_ASSIGNED* message to the
+host, so it's potentially unsafe to only depend on the
+pci_destroy_slot() in hv_eject_device_work() because the code path
 
-Reported-by: Eric Biggers <ebiggers@google.com>
-Fixes: 433cd2c617bf ("crypto: rockchip - add crypto driver for rk3288")
-Cc: <stable@vger.kernel.org> # v4.5+
-Signed-off-by: Zhang Zhijie <zhangzj@rock-chips.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+create_root_hv_pci_bus()
+ -> hv_pci_assign_slots()
 
+is not called in this case. Note: in this case, the host still sends the
+guest a PCI_BUS_RELATIONS message with bus_rel->device_count == 0.
+
+In the quick hot-add/hot-remove test, we can have such a race before
+the code path
+
+pci_devices_present_work()
+ -> new_pcichild_device()
+
+adds the new device into the hbus->children list, we may have already
+received the PCI_EJECT message, and since the tasklet handler
+
+hv_pci_onchannelcallback()
+
+may fail to find the "hpdev" by calling
+
+get_pcichild_wslot(hbus, dev_message->wslot.slot)
+
+hv_pci_eject_device() is not called; Later, by continuing execution
+
+create_root_hv_pci_bus()
+ -> hv_pci_assign_slots()
+
+creates the slot and the PCI_BUS_RELATIONS message with
+bus_rel->device_count == 0 removes the device from hbus->children, and
+we end up being unable to remove the slot in
+
+hv_pci_remove()
+ -> hv_pci_remove_slots()
+
+Remove the slot in pci_devices_present_work() when the device
+is removed to address this race.
+
+pci_devices_present_work() and hv_eject_device_work() run in the
+singled-threaded hbus->wq, so there is not a double-remove issue for the
+slot.
+
+We cannot offload hv_pci_eject_device() from hv_pci_onchannelcallback()
+to the workqueue, because we need the hv_pci_onchannelcallback()
+synchronously call hv_pci_eject_device() to poll the channel
+ringbuffer to work around the "hangs in hv_compose_msi_msg()" issue
+fixed in commit de0aa7b2f97d ("PCI: hv: Fix 2 hang issues in
+hv_compose_msi_msg()")
+
+Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot information")
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+[lorenzo.pieralisi@arm.com: rewritten commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
+Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/rockchip/rk3288_crypto_ablkcipher.c |   25 +++++++++++++++------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+ drivers/pci/host/pci-hyperv.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/crypto/rockchip/rk3288_crypto_ablkcipher.c
-+++ b/drivers/crypto/rockchip/rk3288_crypto_ablkcipher.c
-@@ -250,9 +250,14 @@ static int rk_set_data_start(struct rk_c
- 	u8 *src_last_blk = page_address(sg_page(dev->sg_src)) +
- 		dev->sg_src->offset + dev->sg_src->length - ivsize;
+diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
+index a5825bbcded72..f591de23f3d35 100644
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -1824,6 +1824,10 @@ static void pci_devices_present_work(struct work_struct *work)
+ 		hpdev = list_first_entry(&removed, struct hv_pci_dev,
+ 					 list_entry);
+ 		list_del(&hpdev->list_entry);
++
++		if (hpdev->pci_slot)
++			pci_destroy_slot(hpdev->pci_slot);
++
+ 		put_pcichild(hpdev, hv_pcidev_ref_initial);
+ 	}
  
--	/* store the iv that need to be updated in chain mode */
--	if (ctx->mode & RK_CRYPTO_DEC)
-+	/* Store the iv that need to be updated in chain mode.
-+	 * And update the IV buffer to contain the next IV for decryption mode.
-+	 */
-+	if (ctx->mode & RK_CRYPTO_DEC) {
- 		memcpy(ctx->iv, src_last_blk, ivsize);
-+		sg_pcopy_to_buffer(dev->first, dev->src_nents, req->info,
-+				   ivsize, dev->total - ivsize);
-+	}
- 
- 	err = dev->load_data(dev, dev->sg_src, dev->sg_dst);
- 	if (!err)
-@@ -288,13 +293,19 @@ static void rk_iv_copyback(struct rk_cry
- 	struct ablkcipher_request *req =
- 		ablkcipher_request_cast(dev->async_req);
- 	struct crypto_ablkcipher *tfm = crypto_ablkcipher_reqtfm(req);
-+	struct rk_cipher_ctx *ctx = crypto_ablkcipher_ctx(tfm);
- 	u32 ivsize = crypto_ablkcipher_ivsize(tfm);
- 
--	if (ivsize == DES_BLOCK_SIZE)
--		memcpy_fromio(req->info, dev->reg + RK_CRYPTO_TDES_IV_0,
--			      ivsize);
--	else if (ivsize == AES_BLOCK_SIZE)
--		memcpy_fromio(req->info, dev->reg + RK_CRYPTO_AES_IV_0, ivsize);
-+	/* Update the IV buffer to contain the next IV for encryption mode. */
-+	if (!(ctx->mode & RK_CRYPTO_DEC)) {
-+		if (dev->aligned) {
-+			memcpy(req->info, sg_virt(dev->sg_dst) +
-+				dev->sg_dst->length - ivsize, ivsize);
-+		} else {
-+			memcpy(req->info, dev->addr_vir +
-+				dev->count - ivsize, ivsize);
-+		}
-+	}
- }
- 
- static void rk_update_iv(struct rk_crypto_info *dev)
+-- 
+2.20.1
+
 
 
