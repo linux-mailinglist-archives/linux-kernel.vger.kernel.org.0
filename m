@@ -2,233 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A870C23ABB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A612C23ABD
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391998AbfETOoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:44:44 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39925 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391984AbfETOom (ORCPT
+        id S2392020AbfETOpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:45:31 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.228]:39373 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388701AbfETOpa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:44:42 -0400
-Received: by mail-wr1-f66.google.com with SMTP id w8so14944139wrl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:44:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VceX0inl+xJT/Seg5xxtqBb9C3XXmdQzMS78vGAaEms=;
-        b=FcuGOrg5reg1S0l1itKbd/lBbVqFPDu+TpXhYmKxOt4riBJtk788L6qVrB2kNxtIjT
-         wChiwClJr+wp9uSjs+mxOmHyqFBahIdNrjOemwQVoibbcG1ucDEGvhyaULJH486swnpG
-         M7azSxVKQItYeJojw0rwBFxFvde4EN/0byzg0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VceX0inl+xJT/Seg5xxtqBb9C3XXmdQzMS78vGAaEms=;
-        b=IBUDo5QmGImeF+ZSDtXhfQVywzRkjnV4ioYE1eW6SzHmVL9HKpukyTVRrIIS886q1p
-         2ltjWDhkJhsBK1ws1XKsu9EcrCd1K+8+Z6I8dcshihzanPhUoWdyxJc1E+a5W2nmu4sf
-         WV7GTXx9RBQ3UfMGGY0uy/pV7AXIlrxMAxYfB7Ed7LFfz2cou9FzcAPXHz62PHKFbMUj
-         Ne0RaH1JZTjN2sbiOfr2mEOzTAFUnqch6RYPU+bkToS6/lWZ7iA3scaG2wwHvfxMWW+h
-         Y57Qy+onrdZSOUZ4yOdQAGkFX+gVZxjCX51YZgJMwTZJQwgiK3kiop0WkYfVHK0GnOis
-         aw0w==
-X-Gm-Message-State: APjAAAWYUCLJp+wL+/bMswIHCFenxy6eo2VKNcFz7IuxBy8F/8QHaXKm
-        DMGV1Lc5D6Dpcgpkrupuoh0a8Q==
-X-Google-Smtp-Source: APXvYqwUDHLwWvqd8kuS304lx0z2yG9BSoE7TWQycdCiYRe7kl6qYXKvUo5n5KhEpN6Ls7rcR5k6/A==
-X-Received: by 2002:adf:f487:: with SMTP id l7mr47404596wro.127.1558363480523;
-        Mon, 20 May 2019 07:44:40 -0700 (PDT)
-Received: from localhost.localdomain (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id y184sm18241241wmg.7.2019.05.20.07.44.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 May 2019 07:44:39 -0700 (PDT)
-Date:   Mon, 20 May 2019 16:44:37 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-nvdimm@lists.01.org,
-        stefanha@redhat.com, dgilbert@redhat.com, swhiteho@redhat.com
-Subject: Re: [PATCH v2 02/30] fuse: Clear setuid bit even in cache=never path
-Message-ID: <20190520144437.GB24093@localhost.localdomain>
-References: <20190515192715.18000-1-vgoyal@redhat.com>
- <20190515192715.18000-3-vgoyal@redhat.com>
- <20190520144137.GA24093@localhost.localdomain>
+        Mon, 20 May 2019 10:45:30 -0400
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 230E4F931
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 09:45:29 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id SjXdhhHIdiQerSjXdhJSNB; Mon, 20 May 2019 09:45:29 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.71.100] (port=38926 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hSjX0-000dKs-JW; Mon, 20 May 2019 09:45:28 -0500
+Date:   Mon, 20 May 2019 09:44:49 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Hangbin Liu <liuhangbin@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] macvlan: Mark expected switch fall-through
+Message-ID: <20190520144449.GA4843@embeddedor>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="KsGdsel6WgEHnImy"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190520144137.GA24093@localhost.localdomain>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.71.100
+X-Source-L: No
+X-Exim-ID: 1hSjX0-000dKs-JW
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.71.100]:38926
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 14
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
---KsGdsel6WgEHnImy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch fixes the following warning:
 
-On Mon, May 20, 2019 at 04:41:37PM +0200, Miklos Szeredi wrote:
-> On Wed, May 15, 2019 at 03:26:47PM -0400, Vivek Goyal wrote:
-> > If fuse daemon is started with cache=never, fuse falls back to direct IO.
-> > In that write path we don't call file_remove_privs() and that means setuid
-> > bit is not cleared if unpriviliged user writes to a file with setuid bit set.
-> > 
-> > pjdfstest chmod test 12.t tests this and fails.
-> 
-> I think better sulution is to tell the server if the suid bit needs to be
-> removed, so it can do so in a race free way.
-> 
-> Here's the kernel patch, and I'll reply with the libfuse patch.
+drivers/net/macvlan.c: In function ‘macvlan_do_ioctl’:
+drivers/net/macvlan.c:839:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (!net_eq(dev_net(dev), &init_net))
+      ^
+drivers/net/macvlan.c:841:2: note: here
+  case SIOCGHWTSTAMP:
+  ^~~~
 
-Here are the patches for libfuse and passthrough_ll.
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
---KsGdsel6WgEHnImy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="libfuse-add-fuse_write_kill_priv.patch"
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
 
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- include/fuse_common.h |    5 ++++-
- include/fuse_kernel.h |    2 ++
- lib/fuse_lowlevel.c   |   12 ++++++++----
- 3 files changed, 14 insertions(+), 5 deletions(-)
+ drivers/net/macvlan.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/fuse_common.h
-+++ b/include/fuse_common.h
-@@ -64,8 +64,11 @@ struct fuse_file_info {
- 	   May only be set in ->release(). */
- 	unsigned int flock_release : 1;
- 
-+	/* Kill suid and sgid bits on write */
-+	unsigned int write_kill_priv : 1;
-+
- 	/** Padding.  Do not use*/
--	unsigned int padding : 27;
-+	unsigned int padding : 26;
- 
- 	/** File handle.  May be filled in by filesystem in open().
- 	    Available in all other file operations */
---- a/include/fuse_kernel.h
-+++ b/include/fuse_kernel.h
-@@ -304,9 +304,11 @@ struct fuse_file_lock {
-  *
-  * FUSE_WRITE_CACHE: delayed write from page cache, file handle is guessed
-  * FUSE_WRITE_LOCKOWNER: lock_owner field is valid
-+ * FUSE_WRITE_KILL_PRIV: kill suid and sgid bits
-  */
- #define FUSE_WRITE_CACHE	(1 << 0)
- #define FUSE_WRITE_LOCKOWNER	(1 << 1)
-+#define FUSE_WRITE_KILL_PRIV	(1 << 2)
- 
- /**
-  * Read flags
---- a/lib/fuse_lowlevel.c
-+++ b/lib/fuse_lowlevel.c
-@@ -1315,12 +1315,14 @@ static void do_write(fuse_req_t req, fus
- 
- 	memset(&fi, 0, sizeof(fi));
- 	fi.fh = arg->fh;
--	fi.writepage = (arg->write_flags & 1) != 0;
-+	fi.writepage = (arg->write_flags & FUSE_WRITE_CACHE) != 0;
-+	fi.write_kill_priv = (arg->write_flags & FUSE_WRITE_KILL_PRIV) != 0;
- 
- 	if (req->se->conn.proto_minor < 9) {
- 		param = ((char *) arg) + FUSE_COMPAT_WRITE_IN_SIZE;
- 	} else {
--		fi.lock_owner = arg->lock_owner;
-+		if (arg->write_flags & FUSE_WRITE_LOCKOWNER)
-+			fi.lock_owner = arg->lock_owner;
- 		fi.flags = arg->flags;
- 		param = PARAM(arg);
- 	}
-@@ -1345,7 +1347,8 @@ static void do_write_buf(fuse_req_t req,
- 
- 	memset(&fi, 0, sizeof(fi));
- 	fi.fh = arg->fh;
--	fi.writepage = arg->write_flags & 1;
-+	fi.writepage = (arg->write_flags & FUSE_WRITE_CACHE) != 0;
-+	fi.write_kill_priv = (arg->write_flags & FUSE_WRITE_KILL_PRIV) != 0;
- 
- 	if (se->conn.proto_minor < 9) {
- 		bufv.buf[0].mem = ((char *) arg) + FUSE_COMPAT_WRITE_IN_SIZE;
-@@ -1353,7 +1356,8 @@ static void do_write_buf(fuse_req_t req,
- 			FUSE_COMPAT_WRITE_IN_SIZE;
- 		assert(!(bufv.buf[0].flags & FUSE_BUF_IS_FD));
- 	} else {
--		fi.lock_owner = arg->lock_owner;
-+		if (arg->write_flags & FUSE_WRITE_LOCKOWNER)
-+			fi.lock_owner = arg->lock_owner;
- 		fi.flags = arg->flags;
- 		if (!(bufv.buf[0].flags & FUSE_BUF_IS_FD))
- 			bufv.buf[0].mem = PARAM(arg);
+diff --git a/drivers/net/macvlan.c b/drivers/net/macvlan.c
+index 92efa93649f0..61550122b563 100644
+--- a/drivers/net/macvlan.c
++++ b/drivers/net/macvlan.c
+@@ -838,6 +838,7 @@ static int macvlan_do_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 	case SIOCSHWTSTAMP:
+ 		if (!net_eq(dev_net(dev), &init_net))
+ 			break;
++		/* fall through */
+ 	case SIOCGHWTSTAMP:
+ 		if (netif_device_present(real_dev) && ops->ndo_do_ioctl)
+ 			err = ops->ndo_do_ioctl(real_dev, &ifrr, cmd);
+-- 
+2.21.0
 
---KsGdsel6WgEHnImy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="passthrough_ll-kill-suid.patch"
-
----
- example/passthrough_ll.c |   29 ++++++++++++++++++++++++++++-
- 1 file changed, 28 insertions(+), 1 deletion(-)
-
---- a/example/passthrough_ll.c
-+++ b/example/passthrough_ll.c
-@@ -56,6 +56,7 @@
- #include <sys/file.h>
- #include <sys/xattr.h>
- #include <sys/syscall.h>
-+#include <sys/capability.h>
- 
- /* We are re-using pointers to our `struct lo_inode` and `struct
-    lo_dirp` elements as inodes. This means that we must be able to
-@@ -965,6 +966,11 @@ static void lo_write_buf(fuse_req_t req,
- 	(void) ino;
- 	ssize_t res;
- 	struct fuse_bufvec out_buf = FUSE_BUFVEC_INIT(fuse_buf_size(in_buf));
-+	struct __user_cap_header_struct cap_hdr = {
-+		.version = _LINUX_CAPABILITY_VERSION_1,
-+	};
-+	struct __user_cap_data_struct cap_orig;
-+	struct __user_cap_data_struct cap_new;
- 
- 	out_buf.buf[0].flags = FUSE_BUF_IS_FD | FUSE_BUF_FD_SEEK;
- 	out_buf.buf[0].fd = fi->fh;
-@@ -974,7 +980,28 @@ static void lo_write_buf(fuse_req_t req,
- 		fprintf(stderr, "lo_write(ino=%" PRIu64 ", size=%zd, off=%lu)\n",
- 			ino, out_buf.buf[0].size, (unsigned long) off);
- 
-+	if (fi->write_kill_priv) {
-+		res = capget(&cap_hdr, &cap_orig);
-+		if (res == -1) {
-+			fuse_reply_err(req, errno);
-+			return;
-+		}
-+		cap_new = cap_orig;
-+		cap_new.effective &= ~(1 << CAP_FSETID);
-+		res = capset(&cap_hdr, &cap_new);
-+		if (res == -1) {
-+			fuse_reply_err(req, errno);
-+			return;
-+		}
-+	}
-+
- 	res = fuse_buf_copy(&out_buf, in_buf, 0);
-+
-+	if (fi->write_kill_priv) {
-+		if (capset(&cap_hdr, &cap_orig) != 0)
-+			abort();
-+	}
-+
- 	if(res < 0)
- 		fuse_reply_err(req, -res);
- 	else
-@@ -1215,7 +1242,7 @@ static void lo_copy_file_range(fuse_req_
- 	res = copy_file_range(fi_in->fh, &off_in, fi_out->fh, &off_out, len,
- 			      flags);
- 	if (res < 0)
--		fuse_reply_err(req, -errno);
-+		fuse_reply_err(req, errno);
- 	else
- 		fuse_reply_write(req, res);
- }
-
---KsGdsel6WgEHnImy--
