@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 746A8234A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B78E823559
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389846AbfETM3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:29:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45220 "EHLO mail.kernel.org"
+        id S2390963AbfETMei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:34:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389834AbfETM3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:29:12 -0400
+        id S2387431AbfETMeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:34:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFB4020675;
-        Mon, 20 May 2019 12:29:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0627320645;
+        Mon, 20 May 2019 12:34:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355351;
-        bh=RPLq+m8T3vSNN8s9DhNSSyP3IgbA/VzYKO7i2/BFzUE=;
+        s=default; t=1558355670;
+        bh=5QImTVuc0lxp89bL2HI9b6Gh4NBrFme6P7Laz59P0CI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hOiLczp3FqxYZ+hOnkanl5DqPX1NYG81Vce2Xr+U7W+H+fQzm7FaieJ0J5JFzpGe9
-         17W66Ue6C0bye87UEayNFzu+d56bGg8yh+To8bxELadFq3xuqc2ZOuW3MYGDvRjr6A
-         BDV8fwcPtGukgrdtIADooNJyHvYAzV/n6S4nFELA=
+        b=cWgwM5L9X8rxw8dS0J7EB5sDpn/zGMalbwiC/FSZwMQnsVZQgHokUfb0xvBHMDN53
+         6GIIgvqhCU/vIQO3PhIWv5oBJN089aQ1rtEMBmd/7aPqsq4kVYlyN0VyELHXGvmRx4
+         xrSiM9y9kqWeCbgfhefzJ0UglKcBSekYnYZ+roDw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+f584efa0ac7213c226b7@syzkaller.appspotmail.com,
-        Jan Kara <jack@suse.cz>, Barret Rhoden <brho@google.com>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 5.0 086/123] ext4: fix use-after-free race with debug_want_extra_isize
+        stable@vger.kernel.org, Romain Porte <romain.porte@nokia.com>,
+        Pascal Fabreges <pascal.fabreges@nokia.com>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 5.1 079/128] mtd: spi-nor: intel-spi: Avoid crossing 4K address boundary on read/write
 Date:   Mon, 20 May 2019 14:14:26 +0200
-Message-Id: <20190520115250.599899313@linuxfoundation.org>
+Message-Id: <20190520115255.006434205@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,106 +47,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Barret Rhoden <brho@google.com>
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
-commit 7bc04c5c2cc467c5b40f2b03ba08da174a0d5fa7 upstream.
+commit 2b75ebeea6f4937d4d05ec4982c471cef9a29b7f upstream.
 
-When remounting with debug_want_extra_isize, we were not performing the
-same checks that we do during a normal mount.  That allowed us to set a
-value for s_want_extra_isize that reached outside the s_inode_size.
+It was observed that reads crossing 4K address boundary are failing.
 
-Fixes: e2b911c53584 ("ext4: clean up feature test macros with predicate functions")
-Reported-by: syzbot+f584efa0ac7213c226b7@syzkaller.appspotmail.com
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Barret Rhoden <brho@google.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+This limitation is mentioned in Intel documents:
+
+Intel(R) 9 Series Chipset Family Platform Controller Hub (PCH) Datasheet:
+
+"5.26.3 Flash Access
+Program Register Access:
+* Program Register Accesses are not allowed to cross a 4 KB boundary..."
+
+Enhanced Serial Peripheral Interface (eSPI)
+Interface Base Specification (for Client and Server Platforms):
+
+"5.1.4 Address
+For other memory transactions, the address may start or end at any byte
+boundary. However, the address and payload length combination must not
+cross the naturally aligned address boundary of the corresponding Maximum
+Payload Size. It must not cross a 4 KB address boundary."
+
+Avoid this by splitting an operation crossing the boundary into two
+operations.
+
+Fixes: 8afda8b26d01 ("spi-nor: Add support for Intel SPI serial flash controller")
 Cc: stable@vger.kernel.org
+Reported-by: Romain Porte <romain.porte@nokia.com>
+Tested-by: Pascal Fabreges <pascal.fabreges@nokia.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |   58 ++++++++++++++++++++++++++++++++------------------------
- 1 file changed, 34 insertions(+), 24 deletions(-)
+ drivers/mtd/spi-nor/intel-spi.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3514,6 +3514,37 @@ int ext4_calculate_overhead(struct super
- 	return 0;
- }
+--- a/drivers/mtd/spi-nor/intel-spi.c
++++ b/drivers/mtd/spi-nor/intel-spi.c
+@@ -632,6 +632,10 @@ static ssize_t intel_spi_read(struct spi
+ 	while (len > 0) {
+ 		block_size = min_t(size_t, len, INTEL_SPI_FIFO_SZ);
  
-+static void ext4_clamp_want_extra_isize(struct super_block *sb)
-+{
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
-+	struct ext4_super_block *es = sbi->s_es;
++		/* Read cannot cross 4K boundary */
++		block_size = min_t(loff_t, from + block_size,
++				   round_up(from + 1, SZ_4K)) - from;
 +
-+	/* determine the minimum size of new large inodes, if present */
-+	if (sbi->s_inode_size > EXT4_GOOD_OLD_INODE_SIZE &&
-+	    sbi->s_want_extra_isize == 0) {
-+		sbi->s_want_extra_isize = sizeof(struct ext4_inode) -
-+						     EXT4_GOOD_OLD_INODE_SIZE;
-+		if (ext4_has_feature_extra_isize(sb)) {
-+			if (sbi->s_want_extra_isize <
-+			    le16_to_cpu(es->s_want_extra_isize))
-+				sbi->s_want_extra_isize =
-+					le16_to_cpu(es->s_want_extra_isize);
-+			if (sbi->s_want_extra_isize <
-+			    le16_to_cpu(es->s_min_extra_isize))
-+				sbi->s_want_extra_isize =
-+					le16_to_cpu(es->s_min_extra_isize);
-+		}
-+	}
-+	/* Check if enough inode space is available */
-+	if (EXT4_GOOD_OLD_INODE_SIZE + sbi->s_want_extra_isize >
-+							sbi->s_inode_size) {
-+		sbi->s_want_extra_isize = sizeof(struct ext4_inode) -
-+						       EXT4_GOOD_OLD_INODE_SIZE;
-+		ext4_msg(sb, KERN_INFO,
-+			 "required extra inode space not available");
-+	}
-+}
+ 		writel(from, ispi->base + FADDR);
+ 
+ 		val = readl(ispi->base + HSFSTS_CTL);
+@@ -685,6 +689,10 @@ static ssize_t intel_spi_write(struct sp
+ 	while (len > 0) {
+ 		block_size = min_t(size_t, len, INTEL_SPI_FIFO_SZ);
+ 
++		/* Write cannot cross 4K boundary */
++		block_size = min_t(loff_t, to + block_size,
++				   round_up(to + 1, SZ_4K)) - to;
 +
- static void ext4_set_resv_clusters(struct super_block *sb)
- {
- 	ext4_fsblk_t resv_clusters;
-@@ -4388,30 +4419,7 @@ no_journal:
- 	} else if (ret)
- 		goto failed_mount4a;
+ 		writel(to, ispi->base + FADDR);
  
--	/* determine the minimum size of new large inodes, if present */
--	if (sbi->s_inode_size > EXT4_GOOD_OLD_INODE_SIZE &&
--	    sbi->s_want_extra_isize == 0) {
--		sbi->s_want_extra_isize = sizeof(struct ext4_inode) -
--						     EXT4_GOOD_OLD_INODE_SIZE;
--		if (ext4_has_feature_extra_isize(sb)) {
--			if (sbi->s_want_extra_isize <
--			    le16_to_cpu(es->s_want_extra_isize))
--				sbi->s_want_extra_isize =
--					le16_to_cpu(es->s_want_extra_isize);
--			if (sbi->s_want_extra_isize <
--			    le16_to_cpu(es->s_min_extra_isize))
--				sbi->s_want_extra_isize =
--					le16_to_cpu(es->s_min_extra_isize);
--		}
--	}
--	/* Check if enough inode space is available */
--	if (EXT4_GOOD_OLD_INODE_SIZE + sbi->s_want_extra_isize >
--							sbi->s_inode_size) {
--		sbi->s_want_extra_isize = sizeof(struct ext4_inode) -
--						       EXT4_GOOD_OLD_INODE_SIZE;
--		ext4_msg(sb, KERN_INFO, "required extra inode space not"
--			 "available");
--	}
-+	ext4_clamp_want_extra_isize(sb);
- 
- 	ext4_set_resv_clusters(sb);
- 
-@@ -5195,6 +5203,8 @@ static int ext4_remount(struct super_blo
- 		goto restore_opts;
- 	}
- 
-+	ext4_clamp_want_extra_isize(sb);
-+
- 	if ((old_opts.s_mount_opt & EXT4_MOUNT_JOURNAL_CHECKSUM) ^
- 	    test_opt(sb, JOURNAL_CHECKSUM)) {
- 		ext4_msg(sb, KERN_ERR, "changing journal_checksum "
+ 		val = readl(ispi->base + HSFSTS_CTL);
 
 
