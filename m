@@ -2,135 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4881B23F6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4437323F71
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:51:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbfETRty (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 13:49:54 -0400
-Received: from mail-eopbgr710060.outbound.protection.outlook.com ([40.107.71.60]:53248
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725993AbfETRtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 13:49:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s50KHlEh0YeR/8BegMe5D9kKALYNMnsHN0MNS9sKW1U=;
- b=eD/e7hIXZOaH4ThK7GmLtC+JBSGvWEgD4jVVFfMQnER9yXCGP05GkKQgr/sT8OJJIbIiJX2/yl9tZwdZHGJX4kvKvLL/PzSiSHotLNYcINoSkHHwqRi7zYzWR0Y+EhNjWvtENBQBzFt7LA0+m8vtqWYSV8iTdGOkbBdKuXKuDP0=
-Received: from BL0PR1501MB2003.namprd15.prod.outlook.com (52.132.21.33) by
- BL0PR1501MB2147.namprd15.prod.outlook.com (52.132.22.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.20; Mon, 20 May 2019 17:49:50 +0000
-Received: from BL0PR1501MB2003.namprd15.prod.outlook.com
- ([fe80::ec20:2800:8222:be11]) by BL0PR1501MB2003.namprd15.prod.outlook.com
- ([fe80::ec20:2800:8222:be11%7]) with mapi id 15.20.1900.010; Mon, 20 May 2019
- 17:49:50 +0000
-From:   Jon Maloy <jon.maloy@ericsson.com>
-To:     David Miller <davem@davemloft.net>,
-        "hujunwei4@huawei.com" <hujunwei4@huawei.com>
-CC:     "ying.xue@windriver.com" <ying.xue@windriver.com>,
-        "willemdebruijn.kernel@gmail.com" <willemdebruijn.kernel@gmail.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "tipc-discussion@lists.sourceforge.net" 
-        <tipc-discussion@lists.sourceforge.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingfangsen@huawei.com" <mingfangsen@huawei.com>
-Subject: RE: [PATCH v4] tipc: fix modprobe tipc failed after switch order of
- device registration
-Thread-Topic: [PATCH v4] tipc: fix modprobe tipc failed after switch order of
- device registration
-Thread-Index: AQHVDtd4uLOxtiXJT0+923RTkrVFi6Z0Sg8AgAAAktA=
-Date:   Mon, 20 May 2019 17:49:50 +0000
-Message-ID: <BL0PR1501MB20037513418B10ECC341834E9A060@BL0PR1501MB2003.namprd15.prod.outlook.com>
-References: <624f5be3-12b4-cbd4-39e2-5419b976624b@huawei.com>
- <20190520.104554.602275142720021716.davem@davemloft.net>
-In-Reply-To: <20190520.104554.602275142720021716.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jon.maloy@ericsson.com; 
-x-originating-ip: [198.24.6.220]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 74c5a4ea-82a0-4fba-4f44-08d6dd4b8ec5
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BL0PR1501MB2147;
-x-ms-traffictypediagnostic: BL0PR1501MB2147:
-x-microsoft-antispam-prvs: <BL0PR1501MB2147B9838A7A410E819052C39A060@BL0PR1501MB2147.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1227;
-x-forefront-prvs: 004395A01C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(366004)(346002)(376002)(13464003)(199004)(189003)(8676002)(81156014)(81166006)(7736002)(68736007)(305945005)(33656002)(25786009)(6116002)(3846002)(4326008)(110136005)(8936002)(186003)(26005)(86362001)(256004)(2906002)(54906003)(229853002)(66066001)(14444005)(486006)(66556008)(66476007)(66946007)(76116006)(44832011)(73956011)(64756008)(66446008)(71190400001)(71200400001)(446003)(11346002)(74316002)(476003)(478600001)(52536014)(99286004)(2501003)(5660300002)(102836004)(7696005)(14454004)(316002)(6436002)(53936002)(76176011)(6506007)(53546011)(55016002)(9686003)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR1501MB2147;H:BL0PR1501MB2003.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: ericsson.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: z30Bmnkkhixbo2REoet4wYSI1httcYUNfDJ5vR2DafJsZUBa0fzFc5ZoObV4ANHO9snREEuqXVrJgjT0jvodG0sNFFTIaU+sMCvC7ZUfp8cY3dAk2dnaJ8NpglWj4DTYml8kTnXUmSySI92yS4JOZuSYYReuXVuMU5KOQODBagXae8Vbhc+ByaP+iqqYoiHx4pYNXaF0nzNwVNvM47bSncZ35FyxiH0bwxXVlt3NcOzHTbNG/V18qLi7oi16bhOJEqndxqTdFMXH7uX3e87gJPveHJ7ajJV+Mry9pyURgDlTmFWV7m6Feij45ctIvoUAaKmAGFJjCsrt2jA/ZlFLOYtPbQHzD5HmkxcI5R+WJZIcg1o/JwRhhwMKmssL6W6STSZUVniJzMbCd0+1do6W+Qk5X3gRrLovJcPPDu0MuTQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726447AbfETRvc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 13:51:32 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37313 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbfETRvb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 13:51:31 -0400
+Received: by mail-io1-f65.google.com with SMTP id u2so11745842ioc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 10:51:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CzknmS3algkOP4TKdwdGkF2v7Kn89/q/nMaTVG+rIi8=;
+        b=b6gZFxSgX7BPxz6wATO5y49g6szkHUt8pyyQn+7XD7mrpu3cNB6yoRVVd3CQvBlLUD
+         13e0jpbks5gt4rufx6DheFuvjKy6fqoLQe5k+i4NbPXAmU7Py5WTPjzKm3Ye/gfqqtbO
+         IBI1sOcKPkonTGXIdjCADvDpfHTxuG9IzltrrfuTy0D89/1OXk+OJrZL1VGuqvaTb4vX
+         5rl9WKSNT+8OV+7pLttFS9HM5InfGbkOBtqtl67aozzNhRveetBT1WVIZVWEmOs/32gF
+         6fURxoruuPRoibbX8YGJss+ZvWeXxGX45ycH3oJyLFWWDdknweY+owdP0ToMVDLUOI2m
+         ndiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CzknmS3algkOP4TKdwdGkF2v7Kn89/q/nMaTVG+rIi8=;
+        b=K/NI2c2RuUvt1rhsEdgGYPKVfCMSBzU1QE2a4yC0H3fbW0cJpa5/pTw4BswFVAuyU7
+         L5vop8iEzMoscUxF6VPJC2wgb9sXXMKRWfk1m7TuQU9wtTwglhVlfHhbR4moG0FfEZMf
+         Q3yCeXcTR37vxjoKnrlteyT1OtnKtEnNlGUB+TDAjuPyest9v/2eh38+/L56h1Z+9Qzp
+         ww+vHlIPaoeTNmzkS9bFtbidXhakpFiCnaGw2LcnntlnIxb39PVBnOyyntIP519GV1if
+         avnH1A9beQTUD48pNqaKNUcAVXxFGh7Y4I/9l4qCVzoqa5K+9hoGNjuQZ2xegorpKSkT
+         f1Pw==
+X-Gm-Message-State: APjAAAUSLpyTWht4NfgoqlQy41yYOcW1xoet+m8lgWD9aVBohXZGAS8b
+        J3AZSZ6PSeLw8hWU6EXPS/Q3p8IVT0DtNg6uz3c=
+X-Google-Smtp-Source: APXvYqz7OWSIRs2P8CsvaRzfpmv3wagFOUsv/KaVjSLxn86WbbTrU/Nn8C3++YXXQ4BxT3Hh/t66bF6WSl6xDtqiedY=
+X-Received: by 2002:a6b:3b88:: with SMTP id i130mr26971762ioa.21.1558374690717;
+ Mon, 20 May 2019 10:51:30 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74c5a4ea-82a0-4fba-4f44-08d6dd4b8ec5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2019 17:49:50.4866
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR1501MB2147
+References: <1558117914-35807-1-git-send-email-kdasu.kdev@gmail.com>
+ <1558117914-35807-2-git-send-email-kdasu.kdev@gmail.com> <20190520144436.67e42f00@xps13>
+ <CAC=U0a0bZHgM2yQzz5SupRNWcBg7rpqpGh_o9cvSQNNKsSp9Cg@mail.gmail.com> <20190520193432.79cf132f@xps13>
+In-Reply-To: <20190520193432.79cf132f@xps13>
+From:   Kamal Dasu <kdasu.kdev@gmail.com>
+Date:   Mon, 20 May 2019 13:51:19 -0400
+Message-ID: <CAC=U0a2NzK_BS27eGd6i2f8sBxOsEYdg1ZdQNfmf7G3Tdo7bJw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mtd: nand: raw: brcmnand: fallback to detected
+ ecc-strength, ecc-step-size
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     MTD Maling List <linux-mtd@lists.infradead.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed and tested. I found no problems with this.
+On Mon, May 20, 2019 at 1:34 PM Miquel Raynal <miquel.raynal@bootlin.com> w=
+rote:
+>
+> Hi Kamal,
+>
+> Kamal Dasu <kdasu.kdev@gmail.com> wrote on Mon, 20 May 2019 13:31:52
+> -0400:
+>
+> > Will make the changes and send a V2 patch.
+> >
+> > On Mon, May 20, 2019 at 8:44 AM Miquel Raynal <miquel.raynal@bootlin.co=
+m> wrote:
+> > >
+> > > Hi Kamal,
+> > >
+> > > Kamal Dasu <kdasu.kdev@gmail.com> wrote on Fri, 17 May 2019 14:29:55
+> > > -0400:
+> > >
+> > > > This change supports nand-ecc-step-size and nand-ecc-strenght field=
+s in
+> > >
+> > >                                                        strength
+> > >
+> > > > brcmnand dt node to be  optional.
+> > >
+> > >            DT            ^ extra space
+> > >
+> > > > see: Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
+> > > >
+> > > > If both nand-ecc-strength and nand-ecc-step-size are not specified =
+in
+> > > > device tree node for NAND, nand_base driver does detect onfi ext ec=
+c
+> > >
+> > > s/nand_base driver/the raw NAND layer/
+> > > s/onfi/ONFI/
+> > > s/ecc/ECC/
+> > >
+> > > What is "ext"? Please use plain English here.
+> > >
+> > > > info from ONFI extended parameter page for parts using ONFI >=3D 2.=
+1. In
+> > >
+> > > s/info/information/
+> > >
+> > > > case of non-onfi NAND there could be a nand_id table entry with the=
+ ecc
+> > >
+> > > s/ecc/ECC/
+> > >
+> > > > info. If there is a valid  device tree entry for nand-ecc-strength =
+and
+> > > > nand-ecc-step-size fields it still shall override the detected valu=
+es.
+> > > >
+> > > > Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
+> > > > ---
+> > > >  drivers/mtd/nand/raw/brcmnand/brcmnand.c | 10 ++++++++++
+> > > >  1 file changed, 10 insertions(+)
+> > > >
+> > > > diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd=
+/nand/raw/brcmnand/brcmnand.c
+> > > > index ce0b8ff..e967b30 100644
+> > > > --- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> > > > +++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> > > > @@ -2144,6 +2144,16 @@ static int brcmnand_setup_dev(struct brcmnan=
+d_host *host)
+> > > >               return -EINVAL;
+> > > >       }
+> > > >
+> > > > +     if (!(chip->ecc.size > 0 && chip->ecc.strength > 0) &&
+> > >
+> > > Is the case where only size OR strength is valid handled?
+> >
+> > Both strength and need to be valid, else the driver will behave like
+> > before and will fail the probe.
+>
+> Yes, but you do not handle the case when either strength OR size is not
+> valid but the other one is. Is it one purpose?
+>
 
-Reviewed-by: Jon Maloy <jon.maloy@ericsson.com>
+If I understand you want me to use the following check:
 
+if (ecc->mode !=3D NAND_ECC_NONE && (!ecc->size || !ecc->strength)) {
+if (chip->base.eccreq.step_size && chip->base.eccreq.strength) {
+     /* use the base values */
+}
 
-> -----Original Message-----
-> From: netdev-owner@vger.kernel.org <netdev-owner@vger.kernel.org>
-> On Behalf Of David Miller
-> Sent: 20-May-19 13:46
-> To: hujunwei4@huawei.com
-> Cc: Jon Maloy <jon.maloy@ericsson.com>; ying.xue@windriver.com;
-> willemdebruijn.kernel@gmail.com; sfr@canb.auug.org.au;
-> netdev@vger.kernel.org; tipc-discussion@lists.sourceforge.net; linux-
-> kernel@vger.kernel.org; mingfangsen@huawei.com
-> Subject: Re: [PATCH v4] tipc: fix modprobe tipc failed after switch order=
- of
-> device registration
->=20
-> From: hujunwei <hujunwei4@huawei.com>
-> Date: Mon, 20 May 2019 14:43:59 +0800
->=20
-> > From: Junwei Hu <hujunwei4@huawei.com>
 > >
-> > Error message printed:
-> > modprobe: ERROR: could not insert 'tipc': Address family not supported
-> > by protocol.
-> > when modprobe tipc after the following patch: switch order of device
-> > registration, commit 7e27e8d6130c
-> > ("tipc: switch order of device registration to fix a crash")
+> > >
+> > > > +         (chip->base.eccreq.strength > 0 &&
+> > > > +          chip->base.eccreq.step_size > 0)) {
+> > > > +             /* use detected ecc parameters */
+> > >
+> > >                    Use          ECC
+> > >
+> > > > +             chip->ecc.size =3D chip->base.eccreq.step_size;
+> > > > +             chip->ecc.strength =3D chip->base.eccreq.strength;
+> > > > +             pr_info("Using detected nand-ecc-step-size %d, nand-e=
+cc-strength %d\n",
+> > > > +                     chip->ecc.size, chip->ecc.strength);
+> > > > +     }
+> > > > +
+> > > >       switch (chip->ecc.size) {
+> > > >       case 512:
+> > > >               if (chip->ecc.algo =3D=3D NAND_ECC_HAMMING)
+> > >
+> > >
+> > > Thanks,
+> > > Miqu=C3=A8l
 > >
-> > Because sock_create_kern(net, AF_TIPC, ...) called by
-> > tipc_topsrv_create_listener() in the initialization process of
-> > tipc_init_net(), so tipc_socket_init() must be execute before that.
-> > Meanwhile, tipc_net_id need to be initialized when sock_create()
-> > called, and tipc_socket_init() is no need to be called for each namespa=
-ce.
-> >
-> > I add a variable tipc_topsrv_net_ops, and split the
-> > register_pernet_subsys() of tipc into two parts, and split
-> > tipc_socket_init() with initialization of pernet params.
-> >
-> > By the way, I fixed resources rollback error when tipc_bcast_init()
-> > failed in tipc_init_net().
-> >
-> > Fixes: 7e27e8d6130c ("tipc: switch order of device registration to fix
-> > a crash")
-> > Signed-off-by: Junwei Hu <hujunwei4@huawei.com>
-> > Reported-by: Wang Wang <wangwang2@huawei.com>
-> > Reported-by: syzbot+1e8114b61079bfe9cbc5@syzkaller.appspotmail.com
-> > Reviewed-by: Kang Zhou <zhoukang7@huawei.com>
-> > Reviewed-by: Suanming Mou <mousuanming@huawei.com>
->=20
-> Applied.
+> > Kamal
+>
+>
+>
+>
+> Thanks,
+> Miqu=C3=A8l
+
+Kamal
