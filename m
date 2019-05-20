@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA8EE23424
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2882723497
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388687AbfETMXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:23:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38290 "EHLO mail.kernel.org"
+        id S2389727AbfETM2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:28:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388637AbfETMXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:23:42 -0400
+        id S2389099AbfETM2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:28:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C56420675;
-        Mon, 20 May 2019 12:23:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9481B216C4;
+        Mon, 20 May 2019 12:28:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355022;
-        bh=iT4yjMJcKkltvxB7A3R4I/OGGLjYhEBIkJulcqRNo5E=;
+        s=default; t=1558355315;
+        bh=iR/CRwxw8Y9GNxIe6y43msCHgJFVvMtFrS9EgdCBTTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0kc0qPmMYznXmitgw2wDP/t/K+1UMCGsFOFkzxvJldjAgBI/+Z5ok0yPAE4Jq1KVT
-         QOjrNNZKuGNFgYVzLPNBxWxQVuS6MPKtmbve2lZhRUxIWMVJW6NSxqUUUrLooRoXMQ
-         85Fb0KPWOOl1ZrOQOgiV/jm9f9MtUHgiU0AiVjL0=
+        b=LrLoHtowAeggcW71vR5EvulvLIY/xQ02XIktRsA7ZsTYlNi/tn2J81Lyi3K8qyR6P
+         D1OOHDF6TBHPJCeAz/yy2GL1r/PaXBTNuh8nAcd5fAXXKpxOPyr6uqtnDnb8CIwp2C
+         aoz/RqKp6LTcV+yCP48vm40eAgpUIuxlO0TRylOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.19 067/105] ext4: protect journal inodes blocks using block_validity
+        stable@vger.kernel.org, Rajat Jain <rajatja@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.0 073/123] ACPI: PM: Set enable_for_wake for wakeup GPEs during suspend-to-idle
 Date:   Mon, 20 May 2019 14:14:13 +0200
-Message-Id: <20190520115251.802050920@linuxfoundation.org>
+Message-Id: <20190520115249.698856898@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
-References: <20190520115247.060821231@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,101 +43,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Rajat Jain <rajatja@google.com>
 
-commit 345c0dbf3a30872d9b204db96b5857cd00808cae upstream.
+commit 2f844b61db8297a1f7a06adf2eb5c43381f2c183 upstream.
 
-Add the blocks which belong to the journal inode to block_validity's
-system zone so attempts to deallocate or overwrite the journal due a
-corrupted file system where the journal blocks are also claimed by
-another inode.
+I noticed that recently multiple systems (chromebooks) couldn't wake
+from S0ix using LID or Keyboard after updating to a newer kernel. I
+bisected and it turned up commit f941d3e41da7 ("ACPI: EC / PM: Disable
+non-wakeup GPEs for suspend-to-idle"). I checked that the issue got
+fixed if that commit was reverted.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202879
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+I debugged and found that although PNP0C0D:00 (representing the LID)
+is wake capable and should wakeup the system per the code in
+acpi_wakeup_gpe_init() and in drivers/acpi/button.c:
+
+localhost /sys # cat /proc/acpi/wakeup
+Device  S-state   Status   Sysfs node
+LID0      S4    *enabled   platform:PNP0C0D:00
+CREC      S5    *disabled  platform:GOOG0004:00
+                *disabled  platform:cros-ec-dev.1.auto
+                *disabled  platform:cros-ec-accel.0
+                *disabled  platform:cros-ec-accel.1
+                *disabled  platform:cros-ec-gyro.0
+                *disabled  platform:cros-ec-ring.0
+                *disabled  platform:cros-usbpd-charger.2.auto
+                *disabled  platform:cros-usbpd-logger.3.auto
+D015      S3    *enabled   i2c:i2c-ELAN0000:00
+PENH      S3    *enabled   platform:PRP0001:00
+XHCI      S3    *enabled   pci:0000:00:14.0
+GLAN      S4    *disabled
+WIFI      S3    *disabled  pci:0000:00:14.3
+localhost /sys #
+
+On debugging, I found that its corresponding GPE is not being enabled.
+The particular GPE's "gpe_register_info->enable_for_wake" does not
+have any bits set when acpi_enable_all_wakeup_gpes() comes around to
+use it. I looked at code and could not find any other code path that
+should set the bits in "enable_for_wake" bitmask for the wake enabled
+devices for s2idle.  [I do see that it happens for S3 in
+acpi_sleep_prepare()].
+
+Thus I used the same call to enable the GPEs for wake enabled devices,
+and verified that this fixes the regression I was seeing on multiple
+of my devices.
+
+[ rjw: The problem is that commit f941d3e41da7 ("ACPI: EC / PM:
+  Disable non-wakeup GPEs for suspend-to-idle") forgot to add
+  the acpi_enable_wakeup_devices() call for s2idle along with
+  acpi_enable_all_wakeup_gpes(). ]
+
+Fixes: f941d3e41da7 ("ACPI: EC / PM: Disable non-wakeup GPEs for suspend-to-idle")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=203579
+Signed-off-by: Rajat Jain <rajatja@google.com>
+[ rjw: Subject & changelog ]
+Cc: 5.0+ <stable@vger.kernel.org> # 5.0+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/block_validity.c |   48 +++++++++++++++++++++++++++++++++++++++++++++++
- fs/ext4/inode.c          |    4 +++
- 2 files changed, 52 insertions(+)
+ drivers/acpi/sleep.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/ext4/block_validity.c
-+++ b/fs/ext4/block_validity.c
-@@ -137,6 +137,48 @@ static void debug_print_tree(struct ext4
- 	printk(KERN_CONT "\n");
- }
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -977,6 +977,8 @@ static int acpi_s2idle_prepare(void)
+ 	if (acpi_sci_irq_valid())
+ 		enable_irq_wake(acpi_sci_irq);
  
-+static int ext4_protect_reserved_inode(struct super_block *sb, u32 ino)
-+{
-+	struct inode *inode;
-+	struct ext4_sb_info *sbi = EXT4_SB(sb);
-+	struct ext4_map_blocks map;
-+	u32 i = 0, err = 0, num, n;
++	acpi_enable_wakeup_devices(ACPI_STATE_S0);
 +
-+	if ((ino < EXT4_ROOT_INO) ||
-+	    (ino > le32_to_cpu(sbi->s_es->s_inodes_count)))
-+		return -EINVAL;
-+	inode = ext4_iget(sb, ino, EXT4_IGET_SPECIAL);
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
-+	num = (inode->i_size + sb->s_blocksize - 1) >> sb->s_blocksize_bits;
-+	while (i < num) {
-+		map.m_lblk = i;
-+		map.m_len = num - i;
-+		n = ext4_map_blocks(NULL, inode, &map, 0);
-+		if (n < 0) {
-+			err = n;
-+			break;
-+		}
-+		if (n == 0) {
-+			i++;
-+		} else {
-+			if (!ext4_data_block_valid(sbi, map.m_pblk, n)) {
-+				ext4_error(sb, "blocks %llu-%llu from inode %u "
-+					   "overlap system zone", map.m_pblk,
-+					   map.m_pblk + map.m_len - 1, ino);
-+				err = -EFSCORRUPTED;
-+				break;
-+			}
-+			err = add_system_zone(sbi, map.m_pblk, n);
-+			if (err < 0)
-+				break;
-+			i += n;
-+		}
-+	}
-+	iput(inode);
-+	return err;
-+}
-+
- int ext4_setup_system_zone(struct super_block *sb)
+ 	/* Change the configuration of GPEs to avoid spurious wakeup. */
+ 	acpi_enable_all_wakeup_gpes();
+ 	acpi_os_wait_events_complete();
+@@ -1027,6 +1029,8 @@ static void acpi_s2idle_restore(void)
  {
- 	ext4_group_t ngroups = ext4_get_groups_count(sb);
-@@ -171,6 +213,12 @@ int ext4_setup_system_zone(struct super_
- 		if (ret)
- 			return ret;
- 	}
-+	if (ext4_has_feature_journal(sb) && sbi->s_es->s_journal_inum) {
-+		ret = ext4_protect_reserved_inode(sb,
-+				le32_to_cpu(sbi->s_es->s_journal_inum));
-+		if (ret)
-+			return ret;
-+	}
+ 	acpi_enable_all_runtime_gpes();
  
- 	if (test_opt(sb, DEBUG))
- 		debug_print_tree(sbi);
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -399,6 +399,10 @@ static int __check_block_validity(struct
- 				unsigned int line,
- 				struct ext4_map_blocks *map)
- {
-+	if (ext4_has_feature_journal(inode->i_sb) &&
-+	    (inode->i_ino ==
-+	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-+		return 0;
- 	if (!ext4_data_block_valid(EXT4_SB(inode->i_sb), map->m_pblk,
- 				   map->m_len)) {
- 		ext4_error_inode(inode, func, line, map->m_pblk,
++	acpi_disable_wakeup_devices(ACPI_STATE_S0);
++
+ 	if (acpi_sci_irq_valid())
+ 		disable_irq_wake(acpi_sci_irq);
+ 
 
 
