@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FB1223759
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AE16233D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388869AbfETMYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:24:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39382 "EHLO mail.kernel.org"
+        id S2387962AbfETMUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:20:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732672AbfETMYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:24:32 -0400
+        id S1731352AbfETMUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:20:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCD0D20645;
-        Mon, 20 May 2019 12:24:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A83D320656;
+        Mon, 20 May 2019 12:20:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355071;
-        bh=rzy736CsgS0Y3zt/uwrEMZnuY8Zf2XnsR1lqWDYGqlg=;
+        s=default; t=1558354813;
+        bh=/VTRKwRzf9OpodiBI3QttYqqDO7bWs8BllvLYJybVk0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WrWP5j9YWNorfr4d6WWMoWZxxs76BsLOpbQX9pXEF18Y6r737yHwaFigMgM6TqFDi
-         E2MK0jdVvi/nb/y8E2VMlKzCeiDCTgACe6PUGw9SxIEgAVUr7MJZkrxsBm9PRkKsBP
-         MndHECwM8ZPdtOYd1ll3sWtrWDpJ1biqRzco2GDg=
+        b=yOjIbrFmax2QNItDPALGHUY9VgGZByi+mZHyAx1KJ2jnM7F124GNo2nlB5EwrJr2m
+         8RScpGBFxC6BPt6JAAl4stKnQb+4nuSMSYqK7DXmZ8tFc+4CrkN3w/WjAw/xlvrBia
+         gyItRzgVnGqruYBdNwYACbpBeOhyE8dYZLX4iL+0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anup Patel <anup.patel@wdc.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>
-Subject: [PATCH 4.19 084/105] tty: Dont force RISCV SBI console as preferred console
+        stable@vger.kernel.org, Kiran Kolukuluru <kirank@ami.com>,
+        Kamlakant Patel <kamlakantp@marvell.com>,
+        Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 4.14 51/63] ipmi:ssif: compare block number correctly for multi-part return messages
 Date:   Mon, 20 May 2019 14:14:30 +0200
-Message-Id: <20190520115253.075030191@linuxfoundation.org>
+Message-Id: <20190520115236.679829363@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
-References: <20190520115247.060821231@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anup Patel <Anup.Patel@wdc.com>
+From: Kamlakant Patel <kamlakantp@marvell.com>
 
-commit f91253a3d005796404ae0e578b3394459b5f9b71 upstream.
+commit 55be8658c7e2feb11a5b5b33ee031791dbd23a69 upstream.
 
-The Linux kernel will auto-disables all boot consoles whenever it
-gets a preferred real console.
+According to ipmi spec, block number is a number that is incremented,
+starting with 0, for each new block of message data returned using the
+middle transaction.
 
-Currently on RISC-V systems, if we have a real console which is not
-RISCV SBI console then boot consoles (such as earlycon=sbi) are not
-auto-disabled when a real console (ttyS0 or ttySIF0) is available.
-This results in duplicate prints at boot-time after kernel starts
-using real console (i.e. ttyS0 or ttySIF0) if "earlycon=" kernel
-parameter was passed by bootloader.
+Here, the 'blocknum' is data[0] which always starts from zero(0) and
+'ssif_info->multi_pos' starts from 1.
+So, we need to add +1 to blocknum while comparing with multi_pos.
 
-The reason for above issue is that RISCV SBI console always adds
-itself as preferred console which is causing other real consoles
-to be not used as preferred console.
-
-Ideally "console=" kernel parameter passed by bootloaders should
-be the one selecting a preferred real console.
-
-This patch fixes above issue by not forcing RISCV SBI console as
-preferred console.
-
-Fixes: afa6b1ccfad5 ("tty: New RISC-V SBI console driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Anup Patel <anup.patel@wdc.com>
-Reviewed-by: Atish Patra <atish.patra@wdc.com>
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Fixes: 7d6380cd40f79 ("ipmi:ssif: Fix handling of multi-part return messages").
+Reported-by: Kiran Kolukuluru <kirank@ami.com>
+Signed-off-by: Kamlakant Patel <kamlakantp@marvell.com>
+Message-Id: <1556106615-18722-1-git-send-email-kamlakantp@marvell.com>
+[Also added a debug log if the block numbers don't match.]
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Cc: stable@vger.kernel.org # 4.4
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/hvc/hvc_riscv_sbi.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/char/ipmi/ipmi_ssif.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/hvc/hvc_riscv_sbi.c
-+++ b/drivers/tty/hvc/hvc_riscv_sbi.c
-@@ -53,7 +53,6 @@ device_initcall(hvc_sbi_init);
- static int __init hvc_sbi_console_init(void)
- {
- 	hvc_instantiate(0, 0, &hvc_sbi_ops);
--	add_preferred_console("hvc", 0, NULL);
- 
- 	return 0;
- }
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -703,12 +703,16 @@ static void msg_done_handler(struct ssif
+ 			/* End of read */
+ 			len = ssif_info->multi_len;
+ 			data = ssif_info->data;
+-		} else if (blocknum != ssif_info->multi_pos) {
++		} else if (blocknum + 1 != ssif_info->multi_pos) {
+ 			/*
+ 			 * Out of sequence block, just abort.  Block
+ 			 * numbers start at zero for the second block,
+ 			 * but multi_pos starts at one, so the +1.
+ 			 */
++			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
++				dev_dbg(&ssif_info->client->dev,
++					"Received message out of sequence, expected %u, got %u\n",
++					ssif_info->multi_pos - 1, blocknum);
+ 			result = -EIO;
+ 		} else {
+ 			ssif_inc_stat(ssif_info, received_message_parts);
 
 
