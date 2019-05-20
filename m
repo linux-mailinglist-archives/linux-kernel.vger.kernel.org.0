@@ -2,395 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51345244CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 01:54:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31B99244CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 01:54:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbfETXxX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 19:53:23 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:38810 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbfETXxU (ORCPT
+        id S1727691AbfETXxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 19:53:31 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:43661 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727414AbfETXxU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 20 May 2019 19:53:20 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4KNi40n170553;
-        Mon, 20 May 2019 23:52:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id :
- mime-version : date : from : to : cc : subject : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=KwT5CjG8BGz5FfDfRG99bCBkymH8G9vihC6x/vZ96Ng=;
- b=AaOZn/+GEPCRk1lWJoLRwL1KLiFwc8OcrHtbW7sQiFLo6MdChQQlu7OtfKK42zEVCKF6
- R3bTC7dLP5IQ62xVF/OmgUD3KSe1GzfLMwC6unB0/Rqi/+RkZgEBtqeZyd8KYoNR6AMK
- ZUuJ+SxdnLG95lhyDj0NUib7Xer81rsTQg+VIAYoy5vo/YtrsRSLLjQu0m7Sp7jwROol
- 6HvcQfKJgvOc+p2iZeq1ZQ7wToO1B2+Aw2+XuHweuJ2CiKSw6+FCuQrFYQ+kUQJ9/KJZ
- Vmi8r2ltzQy52R9Nmw/hWwM1sJR2vvFRwdRD22i+cBE5WoZhRzU5J5+UKohvAxZRPI11 Mg== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 2sj7jdj8en-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 May 2019 23:52:42 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4KNq0RU188358;
-        Mon, 20 May 2019 23:52:42 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 2sks1xvknr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 20 May 2019 23:52:42 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x4KNqffU189228;
-        Mon, 20 May 2019 23:52:41 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2sks1xvknj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 May 2019 23:52:41 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4KNqerq025360;
-        Mon, 20 May 2019 23:52:40 GMT
-Message-Id: <201905202352.x4KNqerq025360@userv0121.oracle.com>
-Received: from localhost (/10.159.211.99) by default (Oracle Beehive Gateway
- v4.0) with ESMTP ; Mon, 20 May 2019 23:52:39 +0000
+Received: by mail-vs1-f67.google.com with SMTP id d128so10039184vsc.10
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 16:53:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DOow0La3W2Essx5H031uTOWFbAnDcBGJlXVfamcoL3w=;
+        b=Dx4+lU9jqXDtln/17Mrd8EV4Dxp/5zASL+1Y8Niio9Pqb06rC0aI8wedP3ohgziyEW
+         jppEZzDyXiAo/njLuzUnS0cZqB4tlCDf5SInO7A6W3spDccr9FtwpNa39rs9vTjn9Pol
+         gFjx66w14oqATAsCg/4xevDnAIAQo2Q0YzZMa3Njt5yFKOelm+SuxVUsWhk4woonxC/+
+         9D5FC/UAWBXCau72ARfrLZBFx2zGvzGs/3QYXrUb8NFYR9FnDOYRxbwkdocqirkPGsSw
+         AxoIYh3MeUP070fRiIy388VcetefsVsnX0FjFahzGTgGe2zBg5LkCE8dqpCaiB/D65kK
+         79Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DOow0La3W2Essx5H031uTOWFbAnDcBGJlXVfamcoL3w=;
+        b=tPlH4TmljhrNeGmnfpyeEDiCcfTMWVz8tRDJAZ2QEo+ppeEwg0YvJXr8rfyd5top95
+         h5y4rQLkZXHJmyYHjWyd+lC0MG85+nnBIox9ZsfxDix6GNiqGuFCV7uttWqmvSqn17p5
+         7wHwQkf5ejpuZ3lA0W7KByL++0UBabosYbOL1TqObpU+O84UjtT9jEMuhBG2qp5myqzi
+         rA+qXH3UeYg2MI6QcTzfmGIEiCHh75P5yhGYIEv5n3lGt1YLkLdjeS4TQ65ibSPuVqB+
+         PWioQ9aNd6f/UP7xK6RIZ86PjqrPfADYTWxyETRECCCc9kqFjDwgrO9mGmYT+Kdsb8uS
+         J/ag==
+X-Gm-Message-State: APjAAAUfWOm0z94zZj3//SRTcH9jcifjqmvbw1C3AVqrdiCOkKgdq3V2
+        MKKIM8NE2w30afkj9akgsI5XafOKqGu+yEt40sL1Ximf/YIj2Q==
+X-Google-Smtp-Source: APXvYqyR0JsazypV3hCmWgdEzYpNKlJ3PjKF8ENA0Fjbz+eEGES/3XAyQs/kAm4YlbOIpNAtAAzvW9GW3+g1GtceCfY=
+X-Received: by 2002:a67:be17:: with SMTP id x23mr26047761vsq.173.1558396399029;
+ Mon, 20 May 2019 16:53:19 -0700 (PDT)
 MIME-Version: 1.0
-Date:   Mon, 20 May 2019 23:52:40 +0000 (UTC)
-From:   Kris Van Hees <kris.van.hees@oracle.com>
-To:     netdev@vger.kernel.org, bpf@vger.kernel.org,
-        dtrace-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-Cc:     rostedt@goodmis.org, mhiramat@kernel.org, acme@kernel.org,
-        ast@kernel.org, daniel@iogearbox.net
-Subject: [RFC PATCH 09/11] bpf: mark helpers explicitly whether they may
- change the context
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9263 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905200146
+References: <cover.1557160186.git.andreyknvl@google.com> <20190517144931.GA56186@arrakis.emea.arm.com>
+In-Reply-To: <20190517144931.GA56186@arrakis.emea.arm.com>
+From:   Evgenii Stepanov <eugenis@google.com>
+Date:   Mon, 20 May 2019 16:53:07 -0700
+Message-ID: <CAFKCwrj6JEtp4BzhqO178LFJepmepoMx=G+YdC8sqZ3bcBp3EQ@mail.gmail.com>
+Subject: Re: [PATCH v15 00/17] arm64: untag user pointers passed to the kernel
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Andrey Konovalov <andreyknvl@google.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        kvm@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Elliott Hughes <enh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some helpers may update the context.  Right now, various network filter
-helpers may make changes to the packet data.  This is verified by calling
-the bpf_helper_changes_pkt_data() function with the function pointer.
+On Fri, May 17, 2019 at 7:49 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+> Hi Andrey,
+>
+> On Mon, May 06, 2019 at 06:30:46PM +0200, Andrey Konovalov wrote:
+> > One of the alternative approaches to untagging that was considered is to
+> > completely strip the pointer tag as the pointer enters the kernel with
+> > some kind of a syscall wrapper, but that won't work with the countless
+> > number of different ioctl calls. With this approach we would need a custom
+> > wrapper for each ioctl variation, which doesn't seem practical.
+>
+> The more I look at this problem, the less convinced I am that we can
+> solve it in a way that results in a stable ABI covering ioctls(). While
+> for the Android kernel codebase it could be simpler as you don't upgrade
+> the kernel version every 2.5 months, for the mainline kernel this
+> doesn't scale. Any run-time checks are relatively limited in terms of
+> drivers covered. Better static checking would be nice as a long term
+> solution but we didn't get anywhere with the discussion last year.
+>
+> IMO (RFC for now), I see two ways forward:
+>
+> 1. Make this a user space problem and do not allow tagged pointers into
+>    the syscall ABI. A libc wrapper would have to convert structures,
+>    parameters before passing them into the kernel. Note that we can
+>    still support the hardware MTE in the kernel by enabling tagged
+>    memory ranges, saving/restoring tags etc. but not allowing tagged
+>    addresses at the syscall boundary.
+>
+> 2. Similar shim to the above libc wrapper but inside the kernel
+>    (arch/arm64 only; most pointer arguments could be covered with an
+>    __SC_CAST similar to the s390 one). There are two differences from
+>    what we've discussed in the past:
+>
+>    a) this is an opt-in by the user which would have to explicitly call
+>       prctl(). If it returns -ENOTSUPP etc., the user won't be allowed
+>       to pass tagged pointers to the kernel. This would probably be the
+>       responsibility of the C lib to make sure it doesn't tag heap
+>       allocations. If the user did not opt-in, the syscalls are routed
+>       through the normal path (no untagging address shim).
+>
+>    b) ioctl() and other blacklisted syscalls (prctl) will not accept
+>       tagged pointers (to be documented in Vicenzo's ABI patches).
+>
+> It doesn't solve the problems we are trying to address but 2.a saves us
+> from blindly relaxing the ABI without knowing how to easily assess new
+> code being merged (over 500K lines between kernel versions). Existing
+> applications (who don't opt-in) won't inadvertently start using the new
+> ABI which could risk becoming de-facto ABI that we need to support on
+> the long run.
+>
+> Option 1 wouldn't solve the ioctl() problem either and while it makes
+> things simpler for the kernel, I am aware that it's slightly more
+> complicated in user space (but I really don't mind if you prefer option
+> 1 ;)).
+>
+> The tagged pointers (whether hwasan or MTE) should ideally be a
+> transparent feature for the application writer but I don't think we can
+> solve it entirely and make it seamless for the multitude of ioctls().
+> I'd say you only opt in to such feature if you know what you are doing
+> and the user code takes care of specific cases like ioctl(), hence the
+> prctl() proposal even for the hwasan.
+>
+> Comments welcomed.
 
-This function resides in net/core/filter.c and needs to be updated for any
-helper function that modifies packet data.  To allow for other helpers
-(possibly not part of the network filter code) to do the same, this patch
-changes the code from using a central function to list all helpers that
-have this feature to marking each individual helper that may change the
-context data.  This way, whenever a new helper is added that may change
-the content of the context, there is no need to update a hardcoded list of
-functions.
+Any userspace shim approach is problematic for Android because of the
+apps that use raw system calls. AFAIK, all apps written in Go are in
+that camp - I'm not sure how common they are, but getting them all
+recompiled is probably not realistic.
 
-Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
-Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
----
- include/linux/bpf.h    |  1 +
- include/linux/filter.h |  1 -
- kernel/bpf/core.c      |  5 ----
- kernel/bpf/verifier.c  |  2 +-
- net/core/filter.c      | 59 ++++++++++++++++++------------------------
- 5 files changed, 27 insertions(+), 41 deletions(-)
+The way I see it, a patch that breaks handling of tagged pointers is
+not that different from, say, a patch that adds a wild pointer
+dereference. Both are bugs; the difference is that (a) the former
+breaks a relatively uncommon target and (b) it's arguably an easier
+mistake to make. If MTE adoption goes well, (a) will not be the case
+for long.
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index fc3eda0192fb..9e255d5b1062 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -226,6 +226,7 @@ enum bpf_return_type {
- struct bpf_func_proto {
- 	u64 (*func)(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
- 	bool gpl_only;
-+	bool ctx_update;
- 	bool pkt_access;
- 	enum bpf_return_type ret_type;
- 	enum bpf_arg_type arg1_type;
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 7148bab96943..9dacca7d3ef6 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -811,7 +811,6 @@ u64 __bpf_call_base(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
- 
- struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog);
- void bpf_jit_compile(struct bpf_prog *prog);
--bool bpf_helper_changes_pkt_data(void *func);
- 
- static inline bool bpf_dump_raw_ok(void)
- {
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 225b1be766b0..8e9accf90c37 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -2112,11 +2112,6 @@ void __weak bpf_jit_compile(struct bpf_prog *prog)
- {
- }
- 
--bool __weak bpf_helper_changes_pkt_data(void *func)
--{
--	return false;
--}
--
- /* To execute LD_ABS/LD_IND instructions __bpf_prog_run() may call
-  * skb_copy_bits(), so provide a weak definition of it for NET-less config.
-  */
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 5fba4e6f5424..90ae04b4d5c7 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -3283,7 +3283,7 @@ static int check_helper_call(struct bpf_verifier_env *env, int func_id, int insn
- 	}
- 
- 	/* With LD_ABS/IND some JITs save/restore skb from r1. */
--	changes_data = bpf_helper_changes_pkt_data(fn->func);
-+	changes_data = fn->ctx_update;
- 	if (changes_data && fn->arg1_type != ARG_PTR_TO_CTX) {
- 		verbose(env, "kernel subsystem misconfigured func %s#%d: r1 != ctx\n",
- 			func_id_name(func_id), func_id);
-diff --git a/net/core/filter.c b/net/core/filter.c
-index 55bfc941d17a..a9e7d3174d36 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -1693,6 +1693,7 @@ BPF_CALL_5(bpf_skb_store_bytes, struct sk_buff *, skb, u32, offset,
- static const struct bpf_func_proto bpf_skb_store_bytes_proto = {
- 	.func		= bpf_skb_store_bytes,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -1825,6 +1826,7 @@ BPF_CALL_2(bpf_skb_pull_data, struct sk_buff *, skb, u32, len)
- static const struct bpf_func_proto bpf_skb_pull_data_proto = {
- 	.func		= bpf_skb_pull_data,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -1868,6 +1870,7 @@ BPF_CALL_2(sk_skb_pull_data, struct sk_buff *, skb, u32, len)
- static const struct bpf_func_proto sk_skb_pull_data_proto = {
- 	.func		= sk_skb_pull_data,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -1909,6 +1912,7 @@ BPF_CALL_5(bpf_l3_csum_replace, struct sk_buff *, skb, u32, offset,
- static const struct bpf_func_proto bpf_l3_csum_replace_proto = {
- 	.func		= bpf_l3_csum_replace,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -1962,6 +1966,7 @@ BPF_CALL_5(bpf_l4_csum_replace, struct sk_buff *, skb, u32, offset,
- static const struct bpf_func_proto bpf_l4_csum_replace_proto = {
- 	.func		= bpf_l4_csum_replace,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -2145,6 +2150,7 @@ BPF_CALL_3(bpf_clone_redirect, struct sk_buff *, skb, u32, ifindex, u64, flags)
- static const struct bpf_func_proto bpf_clone_redirect_proto = {
- 	.func           = bpf_clone_redirect,
- 	.gpl_only       = false,
-+	.ctx_update	= true,
- 	.ret_type       = RET_INTEGER,
- 	.arg1_type      = ARG_PTR_TO_CTX,
- 	.arg2_type      = ARG_ANYTHING,
-@@ -2337,6 +2343,7 @@ BPF_CALL_4(bpf_msg_pull_data, struct sk_msg *, msg, u32, start,
- static const struct bpf_func_proto bpf_msg_pull_data_proto = {
- 	.func		= bpf_msg_pull_data,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -2468,6 +2475,7 @@ BPF_CALL_4(bpf_msg_push_data, struct sk_msg *, msg, u32, start,
- static const struct bpf_func_proto bpf_msg_push_data_proto = {
- 	.func		= bpf_msg_push_data,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -2636,6 +2644,7 @@ BPF_CALL_4(bpf_msg_pop_data, struct sk_msg *, msg, u32, start,
- static const struct bpf_func_proto bpf_msg_pop_data_proto = {
- 	.func		= bpf_msg_pop_data,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -2738,6 +2747,7 @@ BPF_CALL_3(bpf_skb_vlan_push, struct sk_buff *, skb, __be16, vlan_proto,
- static const struct bpf_func_proto bpf_skb_vlan_push_proto = {
- 	.func           = bpf_skb_vlan_push,
- 	.gpl_only       = false,
-+	.ctx_update	= true,
- 	.ret_type       = RET_INTEGER,
- 	.arg1_type      = ARG_PTR_TO_CTX,
- 	.arg2_type      = ARG_ANYTHING,
-@@ -2759,6 +2769,7 @@ BPF_CALL_1(bpf_skb_vlan_pop, struct sk_buff *, skb)
- static const struct bpf_func_proto bpf_skb_vlan_pop_proto = {
- 	.func           = bpf_skb_vlan_pop,
- 	.gpl_only       = false,
-+	.ctx_update	= true,
- 	.ret_type       = RET_INTEGER,
- 	.arg1_type      = ARG_PTR_TO_CTX,
- };
-@@ -2962,6 +2973,7 @@ BPF_CALL_3(bpf_skb_change_proto, struct sk_buff *, skb, __be16, proto,
- static const struct bpf_func_proto bpf_skb_change_proto_proto = {
- 	.func		= bpf_skb_change_proto,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -3198,6 +3210,7 @@ BPF_CALL_4(bpf_skb_adjust_room, struct sk_buff *, skb, s32, len_diff,
- static const struct bpf_func_proto bpf_skb_adjust_room_proto = {
- 	.func		= bpf_skb_adjust_room,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -3285,6 +3298,7 @@ BPF_CALL_3(bpf_skb_change_tail, struct sk_buff *, skb, u32, new_len,
- static const struct bpf_func_proto bpf_skb_change_tail_proto = {
- 	.func		= bpf_skb_change_tail,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -3303,6 +3317,7 @@ BPF_CALL_3(sk_skb_change_tail, struct sk_buff *, skb, u32, new_len,
- static const struct bpf_func_proto sk_skb_change_tail_proto = {
- 	.func		= sk_skb_change_tail,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -3351,6 +3366,7 @@ BPF_CALL_3(bpf_skb_change_head, struct sk_buff *, skb, u32, head_room,
- static const struct bpf_func_proto bpf_skb_change_head_proto = {
- 	.func		= bpf_skb_change_head,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -3369,6 +3385,7 @@ BPF_CALL_3(sk_skb_change_head, struct sk_buff *, skb, u32, head_room,
- static const struct bpf_func_proto sk_skb_change_head_proto = {
- 	.func		= sk_skb_change_head,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -3403,6 +3420,7 @@ BPF_CALL_2(bpf_xdp_adjust_head, struct xdp_buff *, xdp, int, offset)
- static const struct bpf_func_proto bpf_xdp_adjust_head_proto = {
- 	.func		= bpf_xdp_adjust_head,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -3427,6 +3445,7 @@ BPF_CALL_2(bpf_xdp_adjust_tail, struct xdp_buff *, xdp, int, offset)
- static const struct bpf_func_proto bpf_xdp_adjust_tail_proto = {
- 	.func		= bpf_xdp_adjust_tail,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -3455,6 +3474,7 @@ BPF_CALL_2(bpf_xdp_adjust_meta, struct xdp_buff *, xdp, int, offset)
- static const struct bpf_func_proto bpf_xdp_adjust_meta_proto = {
- 	.func		= bpf_xdp_adjust_meta,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -4987,6 +5007,7 @@ BPF_CALL_4(bpf_lwt_xmit_push_encap, struct sk_buff *, skb, u32, type,
- static const struct bpf_func_proto bpf_lwt_in_push_encap_proto = {
- 	.func		= bpf_lwt_in_push_encap,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -4997,6 +5018,7 @@ static const struct bpf_func_proto bpf_lwt_in_push_encap_proto = {
- static const struct bpf_func_proto bpf_lwt_xmit_push_encap_proto = {
- 	.func		= bpf_lwt_xmit_push_encap,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -5040,6 +5062,7 @@ BPF_CALL_4(bpf_lwt_seg6_store_bytes, struct sk_buff *, skb, u32, offset,
- static const struct bpf_func_proto bpf_lwt_seg6_store_bytes_proto = {
- 	.func		= bpf_lwt_seg6_store_bytes,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -5128,6 +5151,7 @@ BPF_CALL_4(bpf_lwt_seg6_action, struct sk_buff *, skb,
- static const struct bpf_func_proto bpf_lwt_seg6_action_proto = {
- 	.func		= bpf_lwt_seg6_action,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -5188,6 +5212,7 @@ BPF_CALL_3(bpf_lwt_seg6_adjust_srh, struct sk_buff *, skb, u32, offset,
- static const struct bpf_func_proto bpf_lwt_seg6_adjust_srh_proto = {
- 	.func		= bpf_lwt_seg6_adjust_srh,
- 	.gpl_only	= false,
-+	.ctx_update	= true,
- 	.ret_type	= RET_INTEGER,
- 	.arg1_type	= ARG_PTR_TO_CTX,
- 	.arg2_type	= ARG_ANYTHING,
-@@ -5756,40 +5781,6 @@ static const struct bpf_func_proto bpf_tcp_check_syncookie_proto = {
- 
- #endif /* CONFIG_INET */
- 
--bool bpf_helper_changes_pkt_data(void *func)
--{
--	if (func == bpf_skb_vlan_push ||
--	    func == bpf_skb_vlan_pop ||
--	    func == bpf_skb_store_bytes ||
--	    func == bpf_skb_change_proto ||
--	    func == bpf_skb_change_head ||
--	    func == sk_skb_change_head ||
--	    func == bpf_skb_change_tail ||
--	    func == sk_skb_change_tail ||
--	    func == bpf_skb_adjust_room ||
--	    func == bpf_skb_pull_data ||
--	    func == sk_skb_pull_data ||
--	    func == bpf_clone_redirect ||
--	    func == bpf_l3_csum_replace ||
--	    func == bpf_l4_csum_replace ||
--	    func == bpf_xdp_adjust_head ||
--	    func == bpf_xdp_adjust_meta ||
--	    func == bpf_msg_pull_data ||
--	    func == bpf_msg_push_data ||
--	    func == bpf_msg_pop_data ||
--	    func == bpf_xdp_adjust_tail ||
--#if IS_ENABLED(CONFIG_IPV6_SEG6_BPF)
--	    func == bpf_lwt_seg6_store_bytes ||
--	    func == bpf_lwt_seg6_adjust_srh ||
--	    func == bpf_lwt_seg6_action ||
--#endif
--	    func == bpf_lwt_in_push_encap ||
--	    func == bpf_lwt_xmit_push_encap)
--		return true;
--
--	return false;
--}
--
- static const struct bpf_func_proto *
- bpf_base_func_proto(enum bpf_func_id func_id)
- {
--- 
-2.20.1
+This is a bit of a chicken-and-egg problem. In a world where memory
+allocators on one or several popular platforms generate pointers with
+non-zero tags, any such breakage will be caught in testing.
+Unfortunately to reach that state we need the kernel to start
+accepting tagged pointers first, and then hold on for a couple of
+years until userspace catches up.
 
+Perhaps we can start by whitelisting ioctls by driver?
