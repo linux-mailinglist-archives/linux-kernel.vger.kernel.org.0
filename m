@@ -2,178 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DBDC22A6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 05:38:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39B9822A76
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 05:46:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730254AbfETDiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 23:38:01 -0400
-Received: from ozlabs.org ([203.11.71.1]:44407 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730242AbfETDiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 23:38:01 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 456l39564nz9s3q;
-        Mon, 20 May 2019 13:37:57 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1558323477;
-        bh=mQzgKIkGvpMR6uHP9nccj6f4S2zSwaB82iPMnjnCFzw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=C5v1tLbfC62A7AphZVORqj+4pi8LnNAc0AE3TPUsLOHyWnLaNf1GVAhsFZ4kRkzVw
-         hzeA/OVdKR1Y6EH9rj3k9a/uUj0NpigDhoGhbHTwhd28MTlfmrrXWrX//QVyjucWrS
-         /kXTYlvQeqJFToUJ73u5V0DvyaJq7jtjftR4BbJIQP3tNoKt8zj3vVpf/Qhj/dqUBj
-         vVb43zN+k268kqwODDXPTBk7ZPGM4aZ3BdQNpr2u7ljsCl+awL73VWBiTAdnYiG+zi
-         LWroQM7ZR1gOEG6Q8nwtuf9Z9z6ruxI5m119RcZd+C3JfSa5uoQ0A/gL3ipzsgEDdF
-         8yYczOTDKirag==
-Date:   Mon, 20 May 2019 13:37:51 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>
-Subject: linux-next: stats
-Message-ID: <20190520133751.5e47cde8@canb.auug.org.au>
-In-Reply-To: <CAHk-=wgxi6fnxZ+p5Zdqr-i4s=xhOCBJL6s_RauYkjxM2CpXeA@mail.gmail.com>
-References: <CAHk-=wgxi6fnxZ+p5Zdqr-i4s=xhOCBJL6s_RauYkjxM2CpXeA@mail.gmail.com>
+        id S1730288AbfETDqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 23:46:30 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:32935 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730273AbfETDq3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 23:46:29 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 8AAA48365B;
+        Mon, 20 May 2019 15:46:24 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1558323984;
+        bh=Mc4litiz+eviFEgR440Fcubu8b/SJu7ZJd7zHMM0+7c=;
+        h=From:To:Cc:Subject:Date;
+        b=RC6FAw528RK69BdiaJepOf6T3tvImMC263l2jP2Pw3S8Xv4nu/eDehrfL+oRf+RwX
+         ysYrOumxSBfQw079gibiWFwtgPRfluesXn5tPVaNW/MvEz+280Hutl4K2RjZrJOEmW
+         wbp8v4HG4tpdVhg7kT9fwdBPtGY+rfL9bt8PDZbrLw3AkCUQv7h2Xr3qekSvISNQqh
+         c9gARELJdjM/s7FtIazkpKkn7ycfgdHaaHmzbd8Xj+HF98IcqQ7GCRvGDOHeg0NBX2
+         36yApvd8khXBoGgwMt5hJF87Zt1uWQrh5nHJE5BT4SSnvhKpr5w/BIeQej8jJw9HiS
+         giG8JazR2F8mw==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5ce222f60000>; Mon, 20 May 2019 15:46:03 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 0BD0913ED45;
+        Mon, 20 May 2019 15:45:59 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 610801E1E39; Mon, 20 May 2019 15:45:57 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     jon.maloy@ericsson.com, ying.xue@windriver.com,
+        davem@davemloft.net, niveditas98@gmail.com
+Cc:     netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v2] tipc: Avoid copying bytes beyond the supplied data
+Date:   Mon, 20 May 2019 15:45:36 +1200
+Message-Id: <20190520034536.22782-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Dlg4REijNlevxIC6yrJ+w7o"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Dlg4REijNlevxIC6yrJ+w7o
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+TLV_SET is called with a data pointer and a len parameter that tells us
+how many bytes are pointed to by data. When invoking memcpy() we need
+to careful to only copy len bytes.
 
-Hi all,
+Previously we would copy TLV_LENGTH(len) bytes which would copy an extra
+4 bytes past the end of the data pointer which newer GCC versions
+complain about.
 
-As usual, the executive friendly graph is at
-http://neuling.org/linux-next-size.html :-)
+ In file included from test.c:17:
+ In function 'TLV_SET',
+     inlined from 'test' at test.c:186:5:
+ /usr/include/linux/tipc_config.h:317:3:
+ warning: 'memcpy' forming offset [33, 36] is out of the bounds [0, 32]
+ of object 'bearer_name' with type 'char[32]' [-Warray-bounds]
+     memcpy(TLV_DATA(tlv_ptr), data, tlv_len);
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ test.c: In function 'test':
+ test.c::161:10: note:
+ 'bearer_name' declared here
+     char bearer_name[TIPC_MAX_BEARER_NAME];
+          ^~~~~~~~~~~
 
-(No merge commits counted, next-20190507 was the first linux-next after
-the merge window opened.)
+We still want to ensure any padding bytes at the end are initialised, do
+this with a explicit memset() rather than copy bytes past the end of
+data. Apply the same logic to TCM_SET.
 
-Commits in v5.2-rc1 (relative to v5.1):            12064
-Commits in next-20190507:                          11388
-Commits with the same SHA1:                        10638
-Commits with the same patch_id:                      350 (1)
-Commits with the same subject line:                   61 (1)
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
 
-(1) not counting those in the lines above.
+Changes in v2:
+- Ensure padding bytes are initialised in both TLV_SET and TCM_SET
 
-So commits in -rc1 that were in next-20190507:     11049 91%
+ include/uapi/linux/tipc_config.h | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Some breakdown of the list of extra commits (relative to next-20190507)
-in -rc1:
-
-Top ten first word of commit summary:
-
-     58 net
-     46 afs
-     44 perf
-     35 kvm
-     35 drm
-     34 x86
-     34 tools
-     33 documentation
-     25 thermal
-     23 drivers
-
-Top ten authors:
-
-     50 dhowells@redhat.com
-     28 yamada.masahiro@socionext.com
-     28 tstoyanov@vmware.com
-     27 changbin.du@intel.com
-     21 amit.kucheria@linaro.org
-     20 jlayton@kernel.org
-     16 hch@lst.de
-     15 bgolaszewski@baylibre.com
-     14 deller@gmx.de
-     13 yuehaibing@huawei.com
-
-Top ten commiters:
-
-    105 davem@davemloft.net
-     73 acme@redhat.com
-     59 edubezval@gmail.com
-     50 lee.jones@linaro.org
-     50 dhowells@redhat.com
-     42 pbonzini@redhat.com
-     31 yamada.masahiro@socionext.com
-     31 jgg@ziepe.ca
-     31 corbet@lwn.net
-     29 idryomov@gmail.com
-
-There are also 339 commits in next-20190507 that didn't make it into
-v5.2-rc1.
-
-Top ten first word of commit summary:
-
-     27 drm
-     20 xtensa
-     20 mm
-     20 arm
-     19 nvmem
-     19 i2c
-     15 selftests
-     14 ntb
-     11 nfc
-     10 arm64
-
-Top ten authors:
-
-     18 jcmvbkbc@gmail.com
-     17 akpm@linux-foundation.org
-     12 wsa+renesas@sang-engineering.com
-     12 evan.quan@amd.com
-     10 stefan.wahren@i2se.com
-     10 linux@rasmusvillemoes.dk
-      9 zohar@linux.ibm.com
-      9 logang@deltatee.com
-      7 jean-philippe.brucker@arm.com
-      6 tadeusz.struk@intel.com
-
-Some of Andrew's patches are fixes for other patches in his tree (and
-have been merged into those).
-
-Top ten commiters:
-
-    103 sfr@canb.auug.org.au
-     23 jcmvbkbc@gmail.com
-     23 alexander.deucher@amd.com
-     22 srinivas.kandagatla@linaro.org
-     15 wsa@the-dreams.de
-     15 jarkko.sakkinen@linux.intel.com
-     14 jdmason@kudzu.us
-     12 stefan.wahren@i2se.com
-     11 sameo@linux.intel.com
-     11 mst@redhat.com
-
-Those commits by me are from the quilt series (mainly Andrew's mmotm
-tree).
-
+diff --git a/include/uapi/linux/tipc_config.h b/include/uapi/linux/tipc_c=
+onfig.h
+index 4b2c93b1934c..4955e1a9f1bc 100644
+--- a/include/uapi/linux/tipc_config.h
++++ b/include/uapi/linux/tipc_config.h
+@@ -307,8 +307,10 @@ static inline int TLV_SET(void *tlv, __u16 type, voi=
+d *data, __u16 len)
+ 	tlv_ptr =3D (struct tlv_desc *)tlv;
+ 	tlv_ptr->tlv_type =3D htons(type);
+ 	tlv_ptr->tlv_len  =3D htons(tlv_len);
+-	if (len && data)
+-		memcpy(TLV_DATA(tlv_ptr), data, tlv_len);
++	if (len && data) {
++		memcpy(TLV_DATA(tlv_ptr), data, len);
++		memset(TLV_DATA(tlv_ptr) + len, 0, TLV_SPACE(len) - tlv_len);
++	}
+ 	return TLV_SPACE(len);
+ }
+=20
+@@ -405,8 +407,10 @@ static inline int TCM_SET(void *msg, __u16 cmd, __u1=
+6 flags,
+ 	tcm_hdr->tcm_len   =3D htonl(msg_len);
+ 	tcm_hdr->tcm_type  =3D htons(cmd);
+ 	tcm_hdr->tcm_flags =3D htons(flags);
+-	if (data_len && data)
++	if (data_len && data) {
+ 		memcpy(TCM_DATA(msg), data, data_len);
++		memset(TCM_DATA(msg) + data_len, 0, TCM_SPACE(data_len) - msg_len);
++	}
+ 	return TCM_SPACE(data_len);
+ }
+=20
 --=20
-Cheers,
-Stephen Rothwell
+2.21.0
 
---Sig_/Dlg4REijNlevxIC6yrJ+w7o
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlziIQ8ACgkQAVBC80lX
-0GyOQgf/YUoXTvaZGZwRATywOYhHagZDDl2GHSe9N9lJMOxdzSzFdYK0ydsAMk/x
-T9FGQBWSj0FO6UxkQ7vVVpLZ7Xe7MCjkRkkQqqwUqnkqEMkkM7ESQz/uecVSZLCn
-LjqGKIY7ZAO4ZeX64N8tD2wWlhHDkUp8V0rrchT5jO4I9SskfwPDx6+fBn7gTyhk
-m/ld1DcnvT/qT4uAtP3h5H7YY8/7PcisnOALXcmo1FKlsRUsGPjp3yC9+o/SHf3W
-MyeBHGhgYO7R6hG5u5HYsHGmN+8ZGYWQt06rGSLRqMkTmEBtxPNLO/kDylx72our
-WlGXzldIQZjNPXqCgXR47gIYMSqnkQ==
-=uKbi
------END PGP SIGNATURE-----
-
---Sig_/Dlg4REijNlevxIC6yrJ+w7o--
