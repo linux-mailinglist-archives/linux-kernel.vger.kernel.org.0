@@ -2,137 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26C1C23784
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBC362379A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389108AbfETMu0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:50:26 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:40416 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730404AbfETMuY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:50:24 -0400
-Received: by mail-it1-f194.google.com with SMTP id h11so1244198itf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 05:50:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Qx87YI2gjVMlfmpnZTr12jvkaOAAGprsDuNFTZhY9mU=;
-        b=lIwpRk82jVA169lGfPnbVTNNmG3yENbUfBAKq+tGpn8kWVNVKBNmGTnXt301hGMoJS
-         kH+jQGss4CbbxeYSYpZ7IbzEbdhi/iFz0d2K65D9qCpunXtM+HlkmqnkJp9U4xI0H0iX
-         TcUtQoc2d81L3velqghzct5aupzuvpjfhjdAGRg3iGDNEcQIyqLjOaAlJeQM/E0utx7E
-         1QojRPlj2tRGEvHtWzXvlIr2jOH12LfYpfnuZfZ5OX6mNmfD/XhyOe5Va/hCr9O7J31h
-         kkFsMiS1/gTyAGrQJ17oKGupS8RVE2xFOX/J+AcpWiA0m3h9DnjVDvEjDF0zWYG0uh3u
-         DvPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Qx87YI2gjVMlfmpnZTr12jvkaOAAGprsDuNFTZhY9mU=;
-        b=VyewteQHnxfCWWm1MeGFNFr8T8BMcmSkWam+tcp90Ww1Nv8PTiMh8QNiXOpjDmqUAF
-         k5zanMhqnAYe9wNpiDPv6x6B7nfRYqD0g3MMn+L/5tRnjhZZX6sVdelhXIPErDqKhq1O
-         MtbJnj2Z78eKEXIEch0WJEe+eQXxjL1rJodIDJ+CZDe6JVgnEi0+pZqjqDm4mD58RyYr
-         JrGoMoBckRoD2C4sojvOWu9gvVSq+AwYEgzUKvtGJ1BSXhK6dRLotc71l7nFQdXfTGQ1
-         UrHRJ2O4wul/FSJG8m434T1ZSlCU+aupb0vXWufln181MOE2Y15jcTFvvh9ZqG741nkH
-         Q3Sg==
-X-Gm-Message-State: APjAAAXKJrR1//a255CDW0myqwK73j2Y1IE0tVIcIs+2GdJ/xoI8SmLr
-        jjamHmeqqOw/BgjoDenPHz9rgGX5jR8=
-X-Google-Smtp-Source: APXvYqw3eYQFmiU2P80F3YK/n1+jYIrr8BZKprDfqo6BJhP36N/o4ae7Go1mhoVwFjFPnHWLn0T0jA==
-X-Received: by 2002:a05:660c:6c8:: with SMTP id z8mr29501887itk.51.1558356622660;
-        Mon, 20 May 2019 05:50:22 -0700 (PDT)
-Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
-        by smtp.googlemail.com with ESMTPSA id 74sm4796440itk.3.2019.05.20.05.50.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 05:50:21 -0700 (PDT)
-Subject: Re: [PATCH 09/18] soc: qcom: ipa: GSI transactions
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Miller <davem@davemloft.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        syadagir@codeaurora.org, mjavid@codeaurora.org,
-        evgreen@chromium.org, Ben Chan <benchan@google.com>,
-        Eric Caruso <ejcaruso@google.com>, abhishek.esse@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190512012508.10608-1-elder@linaro.org>
- <20190512012508.10608-10-elder@linaro.org>
- <CAK8P3a0eYWN6mMwft5OSu8wQQo=kWh5safGFFNkDCELZJyiMmQ@mail.gmail.com>
- <14a040b6-8187-3fbc-754d-2e267d587858@linaro.org>
- <CAK8P3a37bPRZTHZcrg8KrYRLAhCr9pk8v4yuo_wSyUONs2OysQ@mail.gmail.com>
- <4a34d381-d31d-ea49-d6d3-3c4f632958e3@linaro.org>
- <dcd648f2-5305-04dd-8997-be87a9961fd9@linaro.org>
- <CAK8P3a0FfSvTF8kkQ8pyKFNX9-fSXvtEyMBYTjtM+VOPxMPkWg@mail.gmail.com>
-From:   Alex Elder <elder@linaro.org>
-Message-ID: <d3d4670f-eb8b-7dcf-f91a-1ec1d4d96f67@linaro.org>
-Date:   Mon, 20 May 2019 07:50:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2391354AbfETMw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:52:26 -0400
+Received: from mga01.intel.com ([192.55.52.88]:60527 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387769AbfETMwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:52:21 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 05:52:20 -0700
+X-ExtLoop1: 1
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga006.jf.intel.com with ESMTP; 20 May 2019 05:52:19 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 06C7C20788; Mon, 20 May 2019 15:52:17 +0300 (EEST)
+Date:   Mon, 20 May 2019 15:52:17 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] device property: Add helpers to count items in an
+ array
+Message-ID: <20190520125217.q65fkmqtizb54gnb@paasikivi.fi.intel.com>
+References: <20190520123848.56422-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0FfSvTF8kkQ8pyKFNX9-fSXvtEyMBYTjtM+VOPxMPkWg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520123848.56422-1-andriy.shevchenko@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/20/19 4:25 AM, Arnd Bergmann wrote:
-> On Sun, May 19, 2019 at 7:11 PM Alex Elder <elder@linaro.org> wrote:
->> On 5/17/19 1:44 PM, Alex Elder wrote:
->>> On 5/17/19 1:33 PM, Arnd Bergmann wrote:
->>>> On Fri, May 17, 2019 at 8:08 PM Alex Elder <elder@linaro.org>
->>
->> So it seems that I must *not* apply a volatile qualifier,
->> because doing so restricts the compiler from making the
->> single instruction optimization.
-> 
-> Right, I guess that makes sense.
-> 
->> If I've missed something and you have another suggestion for
->> me to try let me know and I'll try it.
-> 
-> A memcpy() might do the right thing as well. Another idea would
+Hi Andy,
 
-I find memcpy() does the right thing.
+On Mon, May 20, 2019 at 03:38:48PM +0300, Andy Shevchenko wrote:
+> The usual pattern to allocate the necessary space for an array of properties is
+> to count them fist using:
 
-> be a cast to __int128 like
+s/fist/first/
 
-I find that my environment supports 128 bit integers.  But...
+With that,
 
-> #ifdef CONFIG_ARCH_SUPPORTS_INT128
-> typedef __int128 tre128_t;
-> #else
-> typedef struct { __u64 a; __u64 b; } tre128_t;
-> #else
-> 
-> static inline void set_tre(struct gsi_tre *dest_tre, struct gs_tre *src_tre)
-> {
->      *(volatile tre128_t *)dest_tre = *(tre128_t *)src_tre;
-> }
-...this produces two 8-bit assignments.  Could it be because
-it's implemented as two 64-bit values?  I think so.  Dropping
-the volatile qualifier produces a single "stp" instruction.
-
-The only other thing I thought I could do to encourage
-the compiler to do the right thing is define the type (or
-variables) to have 128-bit alignment.  And doing that for
-the original simple assignment didn't change the (desirable)
-outcome, but I don't think it's really necessary in this
-case, considering the single instruction uses two 64-bit
-registers.
-
-I'm going to leave it as it was originally; it's the simplest:
-	*dest_tre = tre;
-
-I added a comment about structuring the code this way with
-the intention of getting the single instruction.  If a different
-compiler produces different result
-
-					-Alex
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 > 
->       Arnd
+>   count = device_property_read_uXX_array(dev, propname, NULL, 0);
+> 
+> Introduce helpers device_property_count_uXX() to count items by supplying hard
+> coded last two parameters to device_property_readXX_array().
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  include/linux/property.h | 44 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index a29369c89e6e..65e31c090f9f 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -144,6 +144,26 @@ static inline int device_property_read_u64(struct device *dev,
+>  	return device_property_read_u64_array(dev, propname, val, 1);
+>  }
+>  
+> +static inline int device_property_count_u8(struct device *dev, const char *propname)
+> +{
+> +	return device_property_read_u8_array(dev, propname, NULL, 0);
+> +}
+> +
+> +static inline int device_property_count_u16(struct device *dev, const char *propname)
+> +{
+> +	return device_property_read_u16_array(dev, propname, NULL, 0);
+> +}
+> +
+> +static inline int device_property_count_u32(struct device *dev, const char *propname)
+> +{
+> +	return device_property_read_u32_array(dev, propname, NULL, 0);
+> +}
+> +
+> +static inline int device_property_count_u64(struct device *dev, const char *propname)
+> +{
+> +	return device_property_read_u64_array(dev, propname, NULL, 0);
+> +}
+> +
+>  static inline bool fwnode_property_read_bool(const struct fwnode_handle *fwnode,
+>  					     const char *propname)
+>  {
+> @@ -174,6 +194,30 @@ static inline int fwnode_property_read_u64(const struct fwnode_handle *fwnode,
+>  	return fwnode_property_read_u64_array(fwnode, propname, val, 1);
+>  }
+>  
+> +static inline int fwnode_property_count_u8(const struct fwnode_handle *fwnode,
+> +					   const char *propname)
+> +{
+> +	return fwnode_property_read_u8_array(fwnode, propname, NULL, 0);
+> +}
+> +
+> +static inline int fwnode_property_count_u16(const struct fwnode_handle *fwnode,
+> +					    const char *propname)
+> +{
+> +	return fwnode_property_read_u16_array(fwnode, propname, NULL, 0);
+> +}
+> +
+> +static inline int fwnode_property_count_u32(const struct fwnode_handle *fwnode,
+> +					    const char *propname)
+> +{
+> +	return fwnode_property_read_u32_array(fwnode, propname, NULL, 0);
+> +}
+> +
+> +static inline int fwnode_property_count_u64(const struct fwnode_handle *fwnode,
+> +					    const char *propname)
+> +{
+> +	return fwnode_property_read_u64_array(fwnode, propname, NULL, 0);
+> +}
+> +
+>  /**
+>   * struct property_entry - "Built-in" device property representation.
+>   * @name: Name of the property.
+> -- 
+> 2.20.1
 > 
 
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
