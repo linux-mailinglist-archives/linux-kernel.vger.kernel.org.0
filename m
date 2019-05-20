@@ -2,107 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99300240DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 21:06:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E44D8240D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 21:05:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbfETTGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 15:06:13 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42897 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfETTGM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 15:06:12 -0400
-Received: by mail-ed1-f66.google.com with SMTP id l25so25387047eda.9
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 12:06:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Ha5skDnnLVo1GJdX/CM9NCe/isDa5RVzOLC2hACwN2I=;
-        b=axsFtOim/WJJUWbZJz8/i03Ph3xHSdnz2DNiFe2Q6ydh5h1ov4vVORzsbiXKu4xf3q
-         T8qv/PEpxWr/0XCWg+dWz8Fbaqo589CjX1+CVNrsRQPm6vq6/RXK4BqJzc9BhtvujQrZ
-         demB+VLNkgwH1e0xE3eug2/mCTuZFgVuDohU1BXXR1t0EH3Y4i/vbvv0uxYEIFLqOCEC
-         TPGQYB4l2GEP/AQW0Gok9TgGpg3Cw1wI6/Ut7kpZeQzBoL8bJ232hzUu8gdtfCfJfWHN
-         EjgU7pK/15Z32ja3bM/p+QKiSiu6Yy0oYnjSC4CtNuX0geMW+vdVUWmEhToZq0HwBiug
-         6bBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Ha5skDnnLVo1GJdX/CM9NCe/isDa5RVzOLC2hACwN2I=;
-        b=nTnIKglAJFzLXqj0WnioMvvjbXPAkt4BsG0OAM+TB5PiYXAyHF/7WBgPQvNBpmWPkZ
-         fHYTsULzfamu0IOZb+FYux3Nety1c/XwPnIWlFpIr09jocJwsTm1ot43wrUyKXLEVkZT
-         OILw7mQNRN9vcrRixnQuMyDLAMVZtSvmU4dN1GasaL9jvwEJQSEpGysE1mkRiRdj8yp/
-         TmGblMm9ab454glE3XnvHI5WG6Qr45BCa8NcSlxwkeHOwFpXctnPwpEdLRZRrmljtxeQ
-         TH6WsIBLmJKSLNTnvplMwSg2Ze8gl/T6VCY1y/8hE0JSO4ttOyh7yfQc2TpKxVMRNHSD
-         DH1w==
-X-Gm-Message-State: APjAAAWKhwD0lwBd6h+27X6TG0qCb3kPbqFUJlE+ynoZf2C2uJYZ+rBq
-        bbfYe4ErcLRx83kz85TROTA=
-X-Google-Smtp-Source: APXvYqyWvFHznLLZAKJYcWfcC8Mw2lOlwRgpCokpiyR1YDPRGyEJ1tL7Kq0aOnmIeJBSNK8fKiOsAQ==
-X-Received: by 2002:a17:906:1303:: with SMTP id w3mr8731735ejb.196.1558379171104;
-        Mon, 20 May 2019 12:06:11 -0700 (PDT)
-Received: from mail.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id 11sm3201967ejv.64.2019.05.20.12.06.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 12:06:10 -0700 (PDT)
-From:   Kamal Dasu <kdasu.kdev@gmail.com>
-To:     linux-mtd@lists.infradead.org
-Cc:     bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Subject: [PATCH v2 2/2] mtd: nand: raw: brcmnand: fallback to detected ecc-strength, ecc-step-size
-Date:   Mon, 20 May 2019 15:05:12 -0400
-Message-Id: <1558379144-28283-2-git-send-email-kdasu.kdev@gmail.com>
-X-Mailer: git-send-email 1.9.0.138.g2de3478
-In-Reply-To: <1558379144-28283-1-git-send-email-kdasu.kdev@gmail.com>
-References: <1558379144-28283-1-git-send-email-kdasu.kdev@gmail.com>
+        id S1726186AbfETTFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 15:05:42 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:40921 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725536AbfETTFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 15:05:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=hr/1iGRppucKUPs7Jd/NpqKBvJMNwEtcN7Vo/hR52/Y=; b=d1TmZCCktRBG0kT3B2zm851Rcq
+        Oq8vGbMMGgpwEBZ9ZdSa5IHBD/v5MLv5h9tM6dI1VVWjQlDc5+N8VGv7b95g762H67pv4Xw0v0852
+        hrkH2UWVrEPyYE7JTy1tlvY2fDG41ksB4Nyk7ShaeXNwLx6lYORQHCHkvryzT9ximM2M=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hSnbJ-0002qk-7O; Mon, 20 May 2019 21:05:33 +0200
+Date:   Mon, 20 May 2019 21:05:33 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, f.fainelli@gmail.com,
+        hkallweit1@gmail.com
+Subject: Re: [PATCH v2 3/5] arm64: dts: meson: g12a: add mdio multiplexer
+Message-ID: <20190520190533.GF22024@lunn.ch>
+References: <20190520131401.11804-1-jbrunet@baylibre.com>
+ <20190520131401.11804-4-jbrunet@baylibre.com>
+ <CAFBinCA_XE86eqCMpEFc3xMZDH8J7wVQPRj7bFZyqDxQx-w-qw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFBinCA_XE86eqCMpEFc3xMZDH8J7wVQPRj7bFZyqDxQx-w-qw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change supports nand-ecc-step-size and nand-ecc-strength fields in
-brcmnand DT node to be optional.
-see: Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
+> > +                               int_mdio: mdio@1 {
+> > +                                       reg = <1>;
+> > +                                       #address-cells = <1>;
+> > +                                       #size-cells = <0>;
+> > +
+> > +                                       internal_ephy: ethernet_phy@8 {
+> > +                                               compatible = "ethernet-phy-id0180.3301",
+> > +                                                            "ethernet-phy-ieee802.3-c22";
+> Based on your comment on v1 of this patch [0] the Ethernet PHY ID is
+> defined by this "mdio-multiplexer" (write arbitrary value to a
+> register then that's the PHY ID which will show up on the bus)
+> I'm fine with explicitly listing the ID which the PHY driver binds to
+> because I don't know a better way.
 
-If both nand-ecc-strength and nand-ecc-step-size are not specified in
-device tree node for NAND, raw NAND layer does detect ECC information by
-reading ONFI extended parameter page for parts using ONFI >= 2.1.
-In case of non-ONFI NAND parts there could be a nand_id table entry with
-ECC information. If there is valid device tree entry for nand-ecc-strength
-and nand-ecc-step-size fields it still shall override the detected values.
+Does reading the ID registers give the correct ID, once you have poked
+registers in the mdio-multiplexer? If so, you don't need this
+compatible string.
 
-Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
----
- drivers/mtd/nand/raw/brcmnand/brcmnand.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+If the read is giving the wrong ID, then yes, you do want this. But
+then please add a comment in the DT blob. This is very unusual, so
+should have some explanation why it is needed.
 
-diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-index ce0b8ff..a4d2057 100644
---- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-+++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-@@ -2144,6 +2144,17 @@ static int brcmnand_setup_dev(struct brcmnand_host *host)
- 		return -EINVAL;
- 	}
- 
-+	if (chip->ecc.mode != NAND_ECC_NONE &&
-+	    (!chip->ecc.size || !chip->ecc.strength)) {
-+		if (chip->base.eccreq.step_size && chip->base.eccreq.strength) {
-+			/* use detected ECC parameters */
-+			chip->ecc.size = chip->base.eccreq.step_size;
-+			chip->ecc.strength = chip->base.eccreq.strength;
-+			pr_info("Using ECC step-size %d, strength %d\n",
-+				chip->ecc.size, chip->ecc.strength);
-+		}
-+	}
-+
- 	switch (chip->ecc.size) {
- 	case 512:
- 		if (chip->ecc.algo == NAND_ECC_HAMMING)
--- 
-1.9.0.138.g2de3478
-
+Thanks
+	Andrew
