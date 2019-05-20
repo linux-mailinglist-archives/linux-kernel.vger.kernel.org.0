@@ -2,163 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 246E4240B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 20:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29C83240BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 20:57:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfETSxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 14:53:52 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34363 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbfETSxw (ORCPT
+        id S1726242AbfETS5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 14:57:43 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33385 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbfETS5m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 14:53:52 -0400
-Received: by mail-pg1-f195.google.com with SMTP id c13so7209958pgt.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 11:53:52 -0700 (PDT)
+        Mon, 20 May 2019 14:57:42 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d9so2831535wrx.0
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 11:57:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=0Y5xZffcfxsczgqrBhOg+JS5L1UKxd5QP3P4VAHztac=;
-        b=BxbmteVs6gOCm4H+YpOin+Uw106QfZfaAwAKPAr4vdWLRuXjkVm3gLBKwhpHLPa/Cb
-         4RqnaoeeCkGSrD+7lcfiV8ZZsE5PVyvqD0NvZJJROf6X7+AoZTvGB63WliRwDXKIsHU+
-         2tjAIVEsexMupLKj1VX0+eAts1ETa6L28Vv84=
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tJAyJXTsyL/aojYOLcoP+1kKW6LofZI8dfFMh+ysm/4=;
+        b=lAFT0NkKin5knk7wwDhCC6gyz6R2KCDj5LnsHxKFMhDnSmoMPQ6lNWKXnRe+AKW7IL
+         mA3z6jSYm51D3ZWuI50171pETabcVWupPE7Ssyon/s/oKbkiCcHdqppUsixA2Tjie4hg
+         0RapWRR0DT7PGYT+vc0mq/kJb7G+n+ogopJoBGJl17D7Y8nYapa+fMDESvu7Xtn9zIgO
+         QfL5d8u28wa6pmlMBUKdql3GeGSTOW6N9YmNsisoIqEGHy3n2aDaKZRspMM8j83Gylz7
+         bg2HLF00xxFw3aGGV265mu9KtkbDBo1RgAwv20CbyuHHwgFku87L3vs6x+Xnj2djfcWQ
+         PbfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0Y5xZffcfxsczgqrBhOg+JS5L1UKxd5QP3P4VAHztac=;
-        b=q7rc6QE4fyZ7PVcIwKiFGMT4IsH3pdr5V4KGGuJrVdkpJ4JDa0B/V+AGOANQpltTB2
-         mxsEEHR9Zi/LokY4p1pTemW/YQZwGicDDj30l44mEyVG1WrFFy/39W0LZvcy+gHtTEfx
-         5wx0TJh89js8ki2D7aHksJ6iB89XSieWMrqQyV8fpYUH/aFUP9+sIeFtbY5nu0nWfb4m
-         IVI0sLrIsAhSxSDYFSfliaUqqEwYiFFDbXVzcgv+eLQwktyI8lOeR96OpW7mLgbiQGdW
-         8vB0Q01Kda5GXBI474Xj2vla2yHH4sMFg1dUqa1mLUD0xb8Qjd+m6j7+DNHnH/47Zm1U
-         N7Bg==
-X-Gm-Message-State: APjAAAWpah81vQ4szxigYaggznCB5qLpeF/ltoX/MrzfgrgYKChf2Gkp
-        d2kex00WDnsD8XIWuLkBoPd56g==
-X-Google-Smtp-Source: APXvYqyH+hxDltRjdzsBXZgwMdnMVNatpks+Z1SrjeidOf8Nz3mq6Nb+a62W9o8wZM3W7vuPdUB10Q==
-X-Received: by 2002:a63:4c54:: with SMTP id m20mr77503041pgl.316.1558378431815;
-        Mon, 20 May 2019 11:53:51 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 129sm21444815pff.140.2019.05.20.11.53.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 May 2019 11:53:50 -0700 (PDT)
-Date:   Mon, 20 May 2019 11:53:49 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [BUG v5.2-rc1] ARM build broken
-Message-ID: <201905201142.CF71598A@keescook>
-References: <4DB08A04-D03A-4441-85DE-64A13E6D709C@goldelico.com>
- <201905200855.391A921AB@keescook>
- <D8F987B2-8F41-46DE-B298-89541D7A9774@goldelico.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tJAyJXTsyL/aojYOLcoP+1kKW6LofZI8dfFMh+ysm/4=;
+        b=TEwyyCE1T3aD7B2YUiDgBIEtBsUAfxDwb8fHo6qKKEzbPmxUYOMMpPoS/B1PPLTzm/
+         C9TSkNU610AYupROIzT0c4dO+K2nrEz46a6Jm1rrjA46DkrcuJOv6qhtFFG/JAiJbQwn
+         t5bbI/ZFVoWs0vLa+TA1yCMAlNyShRayHMUjEG0V9Zv75xX8BQo+0XyM/yx3m4+3nkUi
+         uHJFxg5eWNZOtsMqtV6ODFRL8+EA9dHHi5okeup4mZxiqIqFens/cd0YkFyG0nbc4BbN
+         wHTssAifPKHmpuY+QVOUIxj6yKJiQZI7hkUwIqMV/G3ROASEGqC8qKsB+HA5BKUO6Njo
+         PqGg==
+X-Gm-Message-State: APjAAAUiccjQg0Odz+rzGl2qACy+ji7mJXp02YH+lTcVCYm0WCcSb0ZB
+        bK8CZME5HBdJy+2J+NC3QF1SQo7QxkE=
+X-Google-Smtp-Source: APXvYqwlnt/oummO4IhOP0B74AP6KgvD3t/cquTLPY4eri59+UYWj/Ga3SPL3zo6AKlYtyKZ3db8Jw==
+X-Received: by 2002:a5d:4a92:: with SMTP id o18mr3932140wrq.80.1558378660998;
+        Mon, 20 May 2019 11:57:40 -0700 (PDT)
+Received: from [192.168.1.7] (139.red-79-146-81.dynamicip.rima-tde.net. [79.146.81.139])
+        by smtp.gmail.com with ESMTPSA id n14sm14797489wrt.79.2019.05.20.11.57.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 11:57:40 -0700 (PDT)
+Subject: Re: [PATCH v2] tty: serial: msm_serial: Fix XON/XOFF
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     agross@kernel.org, david.brown@linaro.org,
+        gregkh@linuxfoundation.org, sboyd@kernel.org, jslaby@suse.com,
+        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
+        tony.luck@intel.com, linux-arm-msm@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190520183848.27719-1-jorge.ramirez-ortiz@linaro.org>
+ <20190520185008.GX2085@tuxbook-pro>
+From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <ef705e54-78bb-27e2-5060-31056234dad3@linaro.org>
+Date:   Mon, 20 May 2019 20:57:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D8F987B2-8F41-46DE-B298-89541D7A9774@goldelico.com>
+In-Reply-To: <20190520185008.GX2085@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Adding Chris and Ard, who might have more compiler versions that me...]
-
-On Mon, May 20, 2019 at 07:08:39PM +0200, H. Nikolaus Schaller wrote:
-> > Am 20.05.2019 um 17:59 schrieb Kees Cook <keescook@chromium.org>:
-> > 
-> > On Mon, May 20, 2019 at 05:15:02PM +0200, H. Nikolaus Schaller wrote:
-> >> Hi,
-> >> it seems as if ARM build is broken since ARM now hard enables CONFIG_HAVE_GCC_PLUGINS
-> >> which indirectly enables CONFIG_GCC_PLUGIN_ARM_SSP_PER_TASK. Compiling this breaks
-> >> on my system (Darwin build host) due to conflicts in system headers and Linux headers.
-> >> 
-> >> So how can I turn off all these GCC_PLUGINS?
-> >> 
-> >> The offending patch seems to be
-> >> 
-> >> 	security: Create "kernel hardening" config area
-> >> 
-> >> especially the new "default y" for GCC_PLUGINS. After removing that line from
-> >> scripts/gcc-plugins/Kconfig makes my compile succeed.
-> > 
-> > The intention is to enable it _if_ the plugins are available as part of
-> > the build environment. The "default y" on GCC_PLUGINS is mediated by:
-> >        depends on HAVE_GCC_PLUGINS
+On 5/20/19 20:50, Bjorn Andersson wrote:
+> On Mon 20 May 11:38 PDT 2019, Jorge Ramirez-Ortiz wrote:
 > 
-> HAVE_GCC_PLUGINS has the following description:
+>> When the tty layer requests the uart to throttle, the current code
+>> executing in msm_serial will trigger "Bad mode in Error Handler" and
+>> generate an invalid stack frame in pstore before rebooting (that is if
+>> pstore is indeed configured: otherwise the user shall just notice a
+>> reboot with no further information dumped to the console).
+>>
+>> This patch replaces the PIO byte accessor with the word accessor
+>> already used in PIO mode.
+>>
+>> Fixes: 68252424a7c7 ("tty: serial: msm: Support big-endian CPUs")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+>> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > 
-> 	An arch should select this symbol if it supports building with
->           GCC plugins.
+> You missed Stephen's
 > 
-> So an ARCH (ARM) selects it unconditionally of the build environment.
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+
+argh sorry Stephen. can the maintainer add it when it gets merged or
+shall I post V3?
+
 > 
-> >        depends on PLUGIN_HOSTCC != ""
+> Regards,
+> Bjorn
 > 
-> Well, we have it set to "g++" for ages and it was not a problem.
-> So both conditions are true.
-
-PLUGIN_HOSTCC should have passed the scripts/gcc-plugin.sh test, so
-that's correct. And the result (CONFIG_GCC_PLUGINS) is correct: it
-doesn't enable or disable anything itself.
-
-What you want is to disable CONFIG_STACKPROTECTOR_PER_TASK, which
-is the knob for the feature:
-
-config STACKPROTECTOR_PER_TASK
-        bool "Use a unique stack canary value for each task"
-        depends on GCC_PLUGINS && STACKPROTECTOR && SMP && !XIP_DEFLATED_DATA
-        select GCC_PLUGIN_ARM_SSP_PER_TASK
-        default y
-
-> Build error:
+>> ---
+>>  drivers/tty/serial/msm_serial.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_serial.c
+>> index 109096033bb1..23833ad952ba 100644
+>> --- a/drivers/tty/serial/msm_serial.c
+>> +++ b/drivers/tty/serial/msm_serial.c
+>> @@ -860,6 +860,7 @@ static void msm_handle_tx(struct uart_port *port)
+>>  	struct circ_buf *xmit = &msm_port->uart.state->xmit;
+>>  	struct msm_dma *dma = &msm_port->tx_dma;
+>>  	unsigned int pio_count, dma_count, dma_min;
+>> +	char buf[4] = { 0 };
+>>  	void __iomem *tf;
+>>  	int err = 0;
+>>  
+>> @@ -869,10 +870,12 @@ static void msm_handle_tx(struct uart_port *port)
+>>  		else
+>>  			tf = port->membase + UART_TF;
+>>  
+>> +		buf[0] = port->x_char;
+>> +
+>>  		if (msm_port->is_uartdm)
+>>  			msm_reset_dm_count(port, 1);
+>>  
+>> -		iowrite8_rep(tf, &port->x_char, 1);
+>> +		iowrite32_rep(tf, buf, 1);
+>>  		port->icount.tx++;
+>>  		port->x_char = 0;
+>>  		return;
+>> -- 
+>> 2.21.0
+>>
 > 
->  HOSTCXX -fPIC scripts/gcc-plugins/arm_ssp_per_task_plugin.o - due to: scripts/gcc-plugins/gcc-common.h
-> In file included from scripts/gcc-plugins/arm_ssp_per_task_plugin.c:3:0:
-> scripts/gcc-plugins/gcc-common.h:153:0: warning: "__unused" redefined
-> #define __unused __attribute__((__unused__))
-> ^
 
-Does the following patch fix your build? (I assume that line is just a
-warning, but if not...)
-
-diff --git a/scripts/gcc-plugins/gcc-common.h b/scripts/gcc-plugins/gcc-common.h
-index 552d5efd7cb7..17f06079a712 100644
---- a/scripts/gcc-plugins/gcc-common.h
-+++ b/scripts/gcc-plugins/gcc-common.h
-@@ -150,8 +150,12 @@ void print_gimple_expr(FILE *, gimple, int, int);
- void dump_gimple_stmt(pretty_printer *, gimple, int, int);
- #endif
- 
-+#ifndef __unused
- #define __unused __attribute__((__unused__))
-+#endif
-+#ifndef __visible
- #define __visible __attribute__((visibility("default")))
-+#endif
- 
- #define DECL_NAME_POINTER(node) IDENTIFIER_POINTER(DECL_NAME(node))
- #define DECL_NAME_LENGTH(node) IDENTIFIER_LENGTH(DECL_NAME(node))
-
->  HOSTLLD -shared scripts/gcc-plugins/arm_ssp_per_task_plugin.so - due to target missing
-> Undefined symbols for architecture x86_64:
->  "gen_reg_rtx(machine_mode)", referenced from:
->      (anonymous namespace)::arm_pertask_ssp_rtl_pass::execute() in arm_ssp_per_task_plugin.o
-
-However, this part sounds more like what was fixed with
-259799ea5a9a ("gcc-plugins: arm_ssp_per_task_plugin: Fix for older GCC < 6")
-
-And maybe some additional fixes for 4.9 are needed?
-
-> This is because CONFIG_GCC_PLUGIN_ARM_SSP_PER_TASK became automatically enabled and was never
-> before. So the compiler may lack some library search path for building this plugin (which we
-> did never miss).
-
-Right -- maybe CONFIG_STACKPROTECTOR_PER_TASK doesn't work with old gcc
-4.9.2? I'll see if I can find that compiler version...
-
--- 
-Kees Cook
