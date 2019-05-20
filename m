@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F5A6232BA
+	by mail.lfdr.de (Postfix) with ESMTP id B95FE232BB
 	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:39:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733201AbfETLiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:38:11 -0400
+        id S1733214AbfETLiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:38:13 -0400
 Received: from mga04.intel.com ([192.55.52.120]:48121 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733178AbfETLiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:38:07 -0400
+        id S1733190AbfETLiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 07:38:09 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 04:38:07 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 04:38:09 -0700
 X-ExtLoop1: 1
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.198])
-  by fmsmga004.fm.intel.com with ESMTP; 20 May 2019 04:38:06 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 20 May 2019 04:38:07 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 17/22] perf scripts python: export-to-postgresql.py: Export IPC information
-Date:   Mon, 20 May 2019 14:37:23 +0300
-Message-Id: <20190520113728.14389-18-adrian.hunter@intel.com>
+Subject: [PATCH 18/22] perf scripts python: exported-sql-viewer.py: Add IPC information to the Branch reports
+Date:   Mon, 20 May 2019 14:37:24 +0300
+Message-Id: <20190520113728.14389-19-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190520113728.14389-1-adrian.hunter@intel.com>
 References: <20190520113728.14389-1-adrian.hunter@intel.com>
@@ -33,111 +33,209 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Export cycle and instruction counts on samples and calls tables.
+Enhance the "All branches" and "Selected branches" reports to display IPC
+information if it is available.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- .../scripts/python/export-to-postgresql.py    | 36 ++++++++++++-------
- 1 file changed, 24 insertions(+), 12 deletions(-)
+ .../scripts/python/exported-sql-viewer.py     | 102 ++++++++++++++----
+ 1 file changed, 83 insertions(+), 19 deletions(-)
 
-diff --git a/tools/perf/scripts/python/export-to-postgresql.py b/tools/perf/scripts/python/export-to-postgresql.py
-index b2f481b0d28d..93225c02117e 100644
---- a/tools/perf/scripts/python/export-to-postgresql.py
-+++ b/tools/perf/scripts/python/export-to-postgresql.py
-@@ -394,7 +394,9 @@ if branches:
- 		'to_ip		bigint,'
- 		'branch_type	integer,'
- 		'in_tx		boolean,'
--		'call_path_id	bigint)')
-+		'call_path_id	bigint,'
-+		'insn_count	bigint,'
-+		'cyc_count	bigint)')
- else:
- 	do_query(query, 'CREATE TABLE samples ('
- 		'id		bigint		NOT NULL,'
-@@ -418,7 +420,9 @@ else:
- 		'data_src	bigint,'
- 		'branch_type	integer,'
- 		'in_tx		boolean,'
--		'call_path_id	bigint)')
-+		'call_path_id	bigint,'
-+		'insn_count	bigint,'
-+		'cyc_count	bigint)')
+diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
+index 6fe553258ce5..a607235c8cd9 100755
+--- a/tools/perf/scripts/python/exported-sql-viewer.py
++++ b/tools/perf/scripts/python/exported-sql-viewer.py
+@@ -1369,11 +1369,11 @@ class FetchMoreRecordsBar():
  
- if perf_db_export_calls or perf_db_export_callchains:
- 	do_query(query, 'CREATE TABLE call_paths ('
-@@ -439,7 +443,9 @@ if perf_db_export_calls:
- 		'return_id	bigint,'
- 		'parent_call_path_id	bigint,'
- 		'flags		integer,'
--		'parent_id	bigint)')
-+		'parent_id	bigint,'
-+		'insn_count	bigint,'
-+		'cyc_count	bigint)')
+ class BranchLevelTwoItem():
  
- do_query(query, 'CREATE VIEW machines_view AS '
- 	'SELECT '
-@@ -521,6 +527,9 @@ if perf_db_export_calls:
- 			'return_time,'
- 			'return_time - call_time AS elapsed_time,'
- 			'branch_count,'
-+			'insn_count,'
-+			'cyc_count,'
-+			'CASE WHEN cyc_count=0 THEN CAST(0 AS NUMERIC(20, 2)) ELSE CAST((CAST(insn_count AS FLOAT) / cyc_count) AS NUMERIC(20, 2)) END AS IPC,'
- 			'call_id,'
- 			'return_id,'
- 			'CASE WHEN flags=0 THEN \'\' WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' WHEN flags=6 THEN \'jump\' ELSE CAST ( flags AS VARCHAR(6) ) END AS flags,'
-@@ -546,7 +555,10 @@ do_query(query, 'CREATE VIEW samples_view AS '
- 		'to_sym_offset,'
- 		'(SELECT short_name FROM dsos WHERE id = to_dso_id) AS to_dso_short_name,'
- 		'(SELECT name FROM branch_types WHERE id = branch_type) AS branch_type_name,'
--		'in_tx'
-+		'in_tx,'
-+		'insn_count,'
-+		'cyc_count,'
-+		'CASE WHEN cyc_count=0 THEN CAST(0 AS NUMERIC(20, 2)) ELSE CAST((CAST(insn_count AS FLOAT) / cyc_count) AS NUMERIC(20, 2)) END AS IPC'
- 	' FROM samples')
+-	def __init__(self, row, text, parent_item):
++	def __init__(self, row, col, text, parent_item):
+ 		self.row = row
+ 		self.parent_item = parent_item
+-		self.data = [""] * 8
+-		self.data[7] = text
++		self.data = [""] * (col + 1)
++		self.data[col] = text
+ 		self.level = 2
  
+ 	def getParentItem(self):
+@@ -1405,6 +1405,7 @@ class BranchLevelOneItem():
+ 		self.dbid = data[0]
+ 		self.level = 1
+ 		self.query_done = False
++		self.br_col = len(self.data) - 1
  
-@@ -618,10 +630,10 @@ def trace_begin():
- 	comm_table(0, "unknown")
- 	dso_table(0, 0, "unknown", "unknown", "")
- 	symbol_table(0, 0, 0, 0, 0, "unknown")
--	sample_table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-+	sample_table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
- 	if perf_db_export_calls or perf_db_export_callchains:
- 		call_path_table(0, 0, 0, 0)
--		call_return_table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-+		call_return_table(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+ 	def getChildItem(self, row):
+ 		return self.child_items[row]
+@@ -1485,7 +1486,7 @@ class BranchLevelOneItem():
+ 				while k < 15:
+ 					byte_str += "   "
+ 					k += 1
+-				self.child_items.append(BranchLevelTwoItem(0, byte_str + " " + text, self))
++				self.child_items.append(BranchLevelTwoItem(0, self.br_col, byte_str + " " + text, self))
+ 				self.child_count += 1
+ 			else:
+ 				return
+@@ -1536,16 +1537,37 @@ class BranchRootItem():
+ 	def getData(self, column):
+ 		return ""
  
- unhandled_count = 0
++# Calculate instructions per cycle
++
++def CalcIPC(cyc_cnt, insn_cnt):
++	if cyc_cnt and insn_cnt:
++		ipc = Decimal(float(insn_cnt) / cyc_cnt)
++		ipc = str(ipc.quantize(Decimal(".01"), rounding=ROUND_HALF_UP))
++	else:
++		ipc = "0"
++	return ipc
++
+ # Branch data preparation
  
-@@ -772,11 +784,11 @@ def branch_type_table(branch_type, name, *x):
- 	value = struct.pack(fmt, 2, 4, branch_type, n, name)
- 	branch_type_file.write(value)
+-def BranchDataPrep(query):
+-	data = []
+-	for i in xrange(0, 8):
+-		data.append(query.value(i))
++def BranchDataPrepBr(query, data):
+ 	data.append(tohex(query.value(8)).rjust(16) + " " + query.value(9) + offstr(query.value(10)) +
+ 			" (" + dsoname(query.value(11)) + ")" + " -> " +
+ 			tohex(query.value(12)) + " " + query.value(13) + offstr(query.value(14)) +
+ 			" (" + dsoname(query.value(15)) + ")")
++
++def BranchDataPrepIPC(query, data):
++	insn_cnt = query.value(16)
++	cyc_cnt = query.value(17)
++	ipc = CalcIPC(cyc_cnt, insn_cnt)
++	data.append(insn_cnt)
++	data.append(cyc_cnt)
++	data.append(ipc)
++
++def BranchDataPrep(query):
++	data = []
++	for i in xrange(0, 8):
++		data.append(query.value(i))
++	BranchDataPrepBr(query, data)
+ 	return data
  
--def sample_table(sample_id, evsel_id, machine_id, thread_id, comm_id, dso_id, symbol_id, sym_offset, ip, time, cpu, to_dso_id, to_symbol_id, to_sym_offset, to_ip, period, weight, transaction, data_src, branch_type, in_tx, call_path_id, *x):
-+def sample_table(sample_id, evsel_id, machine_id, thread_id, comm_id, dso_id, symbol_id, sym_offset, ip, time, cpu, to_dso_id, to_symbol_id, to_sym_offset, to_ip, period, weight, transaction, data_src, branch_type, in_tx, call_path_id, insn_cnt, cyc_cnt, *x):
- 	if branches:
--		value = struct.pack("!hiqiqiqiqiqiqiqiqiqiqiiiqiqiqiqiiiBiq", 18, 8, sample_id, 8, evsel_id, 8, machine_id, 8, thread_id, 8, comm_id, 8, dso_id, 8, symbol_id, 8, sym_offset, 8, ip, 8, time, 4, cpu, 8, to_dso_id, 8, to_symbol_id, 8, to_sym_offset, 8, to_ip, 4, branch_type, 1, in_tx, 8, call_path_id)
-+		value = struct.pack("!hiqiqiqiqiqiqiqiqiqiqiiiqiqiqiqiiiBiqiqiq", 20, 8, sample_id, 8, evsel_id, 8, machine_id, 8, thread_id, 8, comm_id, 8, dso_id, 8, symbol_id, 8, sym_offset, 8, ip, 8, time, 4, cpu, 8, to_dso_id, 8, to_symbol_id, 8, to_sym_offset, 8, to_ip, 4, branch_type, 1, in_tx, 8, call_path_id, 8, insn_cnt, 8, cyc_cnt)
- 	else:
--		value = struct.pack("!hiqiqiqiqiqiqiqiqiqiqiiiqiqiqiqiqiqiqiqiiiBiq", 22, 8, sample_id, 8, evsel_id, 8, machine_id, 8, thread_id, 8, comm_id, 8, dso_id, 8, symbol_id, 8, sym_offset, 8, ip, 8, time, 4, cpu, 8, to_dso_id, 8, to_symbol_id, 8, to_sym_offset, 8, to_ip, 8, period, 8, weight, 8, transaction, 8, data_src, 4, branch_type, 1, in_tx, 8, call_path_id)
-+		value = struct.pack("!hiqiqiqiqiqiqiqiqiqiqiiiqiqiqiqiqiqiqiqiiiBiqiqiq", 24, 8, sample_id, 8, evsel_id, 8, machine_id, 8, thread_id, 8, comm_id, 8, dso_id, 8, symbol_id, 8, sym_offset, 8, ip, 8, time, 4, cpu, 8, to_dso_id, 8, to_symbol_id, 8, to_sym_offset, 8, to_ip, 8, period, 8, weight, 8, transaction, 8, data_src, 4, branch_type, 1, in_tx, 8, call_path_id, 8, insn_cnt, 8, cyc_cnt)
- 	sample_file.write(value)
+ def BranchDataPrepWA(query):
+@@ -1555,10 +1577,26 @@ def BranchDataPrepWA(query):
+ 	data.append("{:>19}".format(query.value(1)))
+ 	for i in xrange(2, 8):
+ 		data.append(query.value(i))
+-	data.append(tohex(query.value(8)).rjust(16) + " " + query.value(9) + offstr(query.value(10)) +
+-			" (" + dsoname(query.value(11)) + ")" + " -> " +
+-			tohex(query.value(12)) + " " + query.value(13) + offstr(query.value(14)) +
+-			" (" + dsoname(query.value(15)) + ")")
++	BranchDataPrepBr(query, data)
++	return data
++
++def BranchDataWithIPCPrep(query):
++	data = []
++	for i in xrange(0, 8):
++		data.append(query.value(i))
++	BranchDataPrepIPC(query, data)
++	BranchDataPrepBr(query, data)
++	return data
++
++def BranchDataWithIPCPrepWA(query):
++	data = []
++	data.append(query.value(0))
++	# Workaround pyside failing to handle large integers (i.e. time) in python3 by converting to a string
++	data.append("{:>19}".format(query.value(1)))
++	for i in xrange(2, 8):
++		data.append(query.value(i))
++	BranchDataPrepIPC(query, data)
++	BranchDataPrepBr(query, data)
+ 	return data
  
- def call_path_table(cp_id, parent_id, symbol_id, ip, *x):
-@@ -784,7 +796,7 @@ def call_path_table(cp_id, parent_id, symbol_id, ip, *x):
- 	value = struct.pack(fmt, 4, 8, cp_id, 8, parent_id, 8, symbol_id, 8, ip)
- 	call_path_file.write(value)
+ # Branch data model
+@@ -1572,10 +1610,20 @@ class BranchModel(TreeModel):
+ 		self.event_id = event_id
+ 		self.more = True
+ 		self.populated = 0
++		self.have_ipc = IsSelectable(glb.db, "samples", columns = "insn_count, cyc_count")
++		if self.have_ipc:
++			select_ipc = ", insn_count, cyc_count"
++			prep_fn = BranchDataWithIPCPrep
++			prep_wa_fn = BranchDataWithIPCPrepWA
++		else:
++			select_ipc = ""
++			prep_fn = BranchDataPrep
++			prep_wa_fn = BranchDataPrepWA
+ 		sql = ("SELECT samples.id, time, cpu, comm, pid, tid, branch_types.name,"
+ 			" CASE WHEN in_tx = '0' THEN 'No' ELSE 'Yes' END,"
+ 			" ip, symbols.name, sym_offset, dsos.short_name,"
+ 			" to_ip, to_symbols.name, to_sym_offset, to_dsos.short_name"
++			+ select_ipc +
+ 			" FROM samples"
+ 			" INNER JOIN comms ON comm_id = comms.id"
+ 			" INNER JOIN threads ON thread_id = threads.id"
+@@ -1589,9 +1637,9 @@ class BranchModel(TreeModel):
+ 			" ORDER BY samples.id"
+ 			" LIMIT " + str(glb_chunk_sz))
+ 		if pyside_version_1 and sys.version_info[0] == 3:
+-			prep = BranchDataPrepWA
++			prep = prep_fn
+ 		else:
+-			prep = BranchDataPrep
++			prep = prep_wa_fn
+ 		self.fetcher = SQLFetcher(glb, sql, prep, self.AddSample)
+ 		self.fetcher.done.connect(self.Update)
+ 		self.fetcher.Fetch(glb_chunk_sz)
+@@ -1600,13 +1648,23 @@ class BranchModel(TreeModel):
+ 		return BranchRootItem()
  
--def call_return_table(cr_id, thread_id, comm_id, call_path_id, call_time, return_time, branch_count, call_id, return_id, parent_call_path_id, flags, parent_id, *x):
--	fmt = "!hiqiqiqiqiqiqiqiqiqiqiiiq"
--	value = struct.pack(fmt, 12, 8, cr_id, 8, thread_id, 8, comm_id, 8, call_path_id, 8, call_time, 8, return_time, 8, branch_count, 8, call_id, 8, return_id, 8, parent_call_path_id, 4, flags, 8, parent_id)
-+def call_return_table(cr_id, thread_id, comm_id, call_path_id, call_time, return_time, branch_count, call_id, return_id, parent_call_path_id, flags, parent_id, insn_cnt, cyc_cnt, *x):
-+	fmt = "!hiqiqiqiqiqiqiqiqiqiqiiiqiqiq"
-+	value = struct.pack(fmt, 14, 8, cr_id, 8, thread_id, 8, comm_id, 8, call_path_id, 8, call_time, 8, return_time, 8, branch_count, 8, call_id, 8, return_id, 8, parent_call_path_id, 4, flags, 8, parent_id, 8, insn_cnt, 8, cyc_cnt)
- 	call_file.write(value)
+ 	def columnCount(self, parent=None):
+-		return 8
++		if self.have_ipc:
++			return 11
++		else:
++			return 8
+ 
+ 	def columnHeader(self, column):
+-		return ("Time", "CPU", "Command", "PID", "TID", "Branch Type", "In Tx", "Branch")[column]
++		if self.have_ipc:
++			return ("Time", "CPU", "Command", "PID", "TID", "Branch Type", "In Tx", "Insn Cnt", "Cyc Cnt", "IPC", "Branch")[column]
++		else:
++			return ("Time", "CPU", "Command", "PID", "TID", "Branch Type", "In Tx", "Branch")[column]
+ 
+ 	def columnFont(self, column):
+-		if column != 7:
++		if self.have_ipc:
++			br_col = 10
++		else:
++			br_col = 7
++		if column != br_col:
+ 			return None
+ 		return QFont("Monospace")
+ 
+@@ -2114,10 +2172,10 @@ def GetEventList(db):
+ 
+ # Is a table selectable
+ 
+-def IsSelectable(db, table, sql = ""):
++def IsSelectable(db, table, sql = "", columns = "*"):
+ 	query = QSqlQuery(db)
+ 	try:
+-		QueryExec(query, "SELECT * FROM " + table + " " + sql + " LIMIT 1")
++		QueryExec(query, "SELECT " + columns + " FROM " + table + " " + sql + " LIMIT 1")
+ 	except:
+ 		return False
+ 	return True
+@@ -2854,6 +2912,12 @@ cd xed
+ sudo ./mfile.py --prefix=/usr/local install
+ sudo ldconfig
+ </pre>
++<h3>Instructions per Cycle (IPC)</h3>
++If available, IPC information is displayed in columns 'insn_cnt', 'cyc_cnt' and 'IPC'.
++<p><b>Intel PT note:</b> The information applies to the blocks of code ending with, and including, that branch.
++Due to the granularity of timing information, the number of cycles for some code blocks will not be known.
++In that case, 'insn_cnt', 'cyc_cnt' and 'IPC' are zero, but when 'IPC' is displayed it covers the period
++since the previous displayed 'IPC'.
+ <h3>Find</h3>
+ Ctrl-F displays a Find bar which finds substrings by either an exact match or a regular expression match.
+ Refer to Python documentation for the regular expression syntax.
 -- 
 2.17.1
 
