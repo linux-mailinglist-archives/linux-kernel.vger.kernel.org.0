@@ -2,74 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 483CE22FA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:04:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B0EA23004
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731749AbfETJEc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:04:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33068 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727301AbfETJEc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:04:32 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2691320644;
-        Mon, 20 May 2019 09:04:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558343071;
-        bh=1v1nuxcWvVkGGL35WWUJOcGwdr8fXibrkPbcNDFvVL0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NPOwRyQ8bLcCg+3pJW3uPJDmS6TfkstyMWu4M4AsILKZ5dCJOQpzgR72fm0961qvy
-         6Jy3L8eYoqKg6hXPwXh5j81CL1iGbTQzL32NPTzcdcCO04U6Qa+pBVeziWzm1OOf4j
-         LqSm+oD69YCYQBlyT7SJhf5gKeMcTJfHB/K6r4YI=
-Date:   Mon, 20 May 2019 11:04:29 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     David Ahern <dsahern@gmail.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Thomas Haller <thaller@redhat.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: Re: [PATCH 4.9 41/51] fib_rules: return 0 directly if an exactly
- same rule exists when NLM_F_EXCL not supplied
-Message-ID: <20190520090429.GA25812@kroah.com>
-References: <20190515090616.669619870@linuxfoundation.org>
- <20190515090628.066392616@linuxfoundation.org>
- <20190519154348.GA113991@archlinux-epyc>
- <a36e3204-b52d-0bf0-f956-654189a18156@gmail.com>
+        id S1731483AbfETJRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:17:14 -0400
+Received: from mail.greatforyou.eu ([212.237.4.137]:40327 "EHLO
+        mail.greatforyou.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729598AbfETJRO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:17:14 -0400
+X-Greylist: delayed 547 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 05:17:12 EDT
+Received: by mail.greatforyou.eu (Postfix, from userid 1001)
+        id 3D64C8773A; Mon, 20 May 2019 11:05:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=greatforyou.eu;
+        s=mail; t=1558343242;
+        bh=Ose1Lf6xoZyXlmyNhvfZ0PnQ3bIpVImYbP9/NlfeECg=;
+        h=Date:From:To:Subject:From;
+        b=YCiBuaAuKHhUd89ezluna0l0isYMZaK3QeN9t8InRiMEa9tClU+ziHCPHtgulefHq
+         Pt+yUl2eZZTpmGxbRUlNicPgVnWuTlizpBT+T9AQli+B4YSk5nHrH8i+gBrxLp49Em
+         GlNYcWKXDeToiTTLS4qlU2RKZXRWmiinMrOFUrVQ=
+Received: by mail.greatforyou.eu for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 09:05:18 GMT
+Message-ID: <20190520110232-0.1.6.8qq.0.i1x2e6co9i@greatforyou.eu>
+Date:   Mon, 20 May 2019 09:05:18 GMT
+From:   "Radoslav Dobrev" <radoslav.dobrev@greatforyou.eu>
+To:     <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?Q?=D0=92=D0=B5=D0=BB=D0=B8=D0=BA=D0=B4=D0=B5=D0=BD=D1=81=D0=BA=D0=B8_=D0=B1=D0=BE=D0=BD=D1=83=D1=81=D0=B8?=
+X-Mailer: mail.greatforyou.eu
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a36e3204-b52d-0bf0-f956-654189a18156@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 19, 2019 at 06:29:19PM -0600, David Ahern wrote:
-> On 5/19/19 9:43 AM, Nathan Chancellor wrote:
-> > Hi all,
-> > 
-> > This commit is causing issues on Android devices when Wi-Fi and mobile
-> > data are both enabled. The device will do a soft reboot consistently.
-> > So far, I've had reports on the Pixel 3 XL, OnePlus 6, Pocophone, and
-> > Note 9 and I can reproduce on my OnePlus 6.
-> > 
-> > Sorry for taking so long to report this, I just figured out how to
-> > reproduce it today and I didn't want to report it without that.
-> > 
-> > Attached is a full dmesg and the relevant snippet from Android's logcat.
-> > 
-> > Let me know what I can do to help debug,
-> > Nathan
-> > 
-> 
-> It's a backport problem. err needs to be reset to 0 before the goto.
+=D0=97=D0=B4=D1=80=D0=B0=D0=B2=D0=B5=D0=B9=D1=82=D0=B5,
 
-Ah, I see it, let me go queue up a fix for this.
+=D0=A1=D1=8A=D0=B2=D1=80=D0=B5=D0=BC=D0=B5=D0=BD=D0=BD=D0=B0=D1=82=D0=B0 =
+=D1=81=D0=BE=D1=86=D0=B8=D0=B0=D0=BB=D0=BD=D0=B0 =D0=BF=D1=80=D0=B8=D0=B4=
+=D0=BE=D0=B1=D0=B8=D0=B2=D0=BA=D0=B0 =D0=B2=D0=B0=D1=83=D1=87=D0=B5=D1=80=
+=D0=B8 =D0=B7=D0=B0 =D1=85=D1=80=D0=B0=D0=BD=D0=B0, =D0=BA=D0=BE=D0=B8=D1=
+=82=D0=BE =D0=BC=D0=BE=D0=B3=D0=B0=D1=82 =D0=B4=D0=B0 =D0=B1=D1=8A=D0=B4=D0=
+=B0=D1=82 =D0=B8=D0=B7=D0=BF=D0=BE=D0=BB=D0=B7=D0=B2=D0=B0=D0=BD=D0=B8 =D0=
+=B2 =D1=88=D0=B8=D1=80=D0=BE=D0=BA=D0=B0 =D1=82=D1=8A=D1=80=D0=B3=D0=BE=D0=
+=B2=D1=81=D0=BA=D0=B0 =D0=BC=D1=80=D0=B5=D0=B6=D0=B0 =D0=BE=D1=82 =D1=81=D1=
+=83=D0=BF=D0=B5=D1=80=D0=BC=D0=B0=D1=80=D0=BA=D0=B5=D1=82=D0=B8 =D0=B8 =D0=
+=B7=D0=B0=D0=B2=D0=B5=D0=B4=D0=B5=D0=BD=D0=B8=D1=8F =D0=B7=D0=B0 =D1=85=D1=
+=80=D0=B0=D0=BD=D0=B5=D0=BD=D0=B5 =D0=B2 =D1=81=D1=82=D1=80=D0=B0=D0=BD=D0=
+=B0=D1=82=D0=B0, =D0=B5 =D0=B8=D0=BD=D1=81=D1=82=D1=80=D1=83=D0=BC=D0=B5=D0=
+=BD=D1=82, =D0=BA=D0=BE=D0=B9=D1=82=D0=BE =D0=B5=D1=84=D0=B5=D0=BA=D1=82=D0=
+=B8=D0=B2=D0=BD=D0=BE =D0=BF=D0=BE=D0=B2=D0=B8=D1=88=D0=B0=D0=B2=D0=B0 =D0=
+=B5=D1=84=D0=B8=D0=BA=D0=B0=D1=81=D0=BD=D0=BE=D1=81=D1=82=D1=82=D0=B0 =D0=
+=BD=D0=B0 =D0=BF=D0=B5=D1=80=D1=81=D0=BE=D0=BD=D0=B0=D0=BB=D0=B0.
 
-thanks,
+=D0=98=D0=B7=D0=B1=D0=BE=D1=80=D1=8A=D1=82 =D0=BD=D0=B0 =D0=BD=D0=B0=D1=88=
+=D0=B8=D1=82=D0=B5 =D0=B2=D0=B0=D1=83=D1=87=D0=B5=D1=80=D0=B8 =D0=B7=D0=B0=
+ =D1=85=D1=80=D0=B0=D0=BD=D0=B0 =D0=BA=D0=B0=D1=82=D0=BE =D1=84=D0=BE=D1=80=
+=D0=BC=D0=B0 =D0=BD=D0=B0 =D1=81=D0=BE=D1=86=D0=B8=D0=B0=D0=BB=D0=BD=D0=B0=
+ =D0=BF=D1=80=D0=B8=D0=B4=D0=BE=D0=B1=D0=B8=D0=B2=D0=BA=D0=B0 =D1=81=D0=B0=
+ =D0=B7=D0=B0 =D1=80=D0=B0=D0=B1=D0=BE=D1=82=D0=BE=D0=B4=D0=B0=D1=82=D0=B5=
+=D0=BB=D1=8F =D0=BD=D0=B5 =D1=81=D0=B0=D0=BC=D0=BE =D0=BF=D1=80=D0=B8=D0=B4=
+=D0=BE=D0=B1=D0=B8=D0=B2=D0=B0=D0=BD=D0=B5 =D0=BD=D0=B0 =D0=BF=D1=80=D0=BE=
+=D0=B4=D1=83=D0=BA=D1=82=D0=B8=D0=B2=D0=B5=D0=BD =D0=B8 =D0=BC=D0=BE=D1=82=
+=D0=B8=D0=B2=D0=B8=D1=80=D0=B0=D0=BD =D0=B5=D0=BA=D0=B8=D0=BF, =D0=BD=D0=BE=
+ =D0=B8 =D0=BD=D0=BE=D1=81=D1=8F=D1=82 =D1=84=D0=B8=D0=BD=D0=B0=D0=BD=D1=81=
+=D0=BE=D0=B2=D0=B8 =D0=BE=D0=B1=D0=BB=D0=B0=D0=B3=D0=B8 - =D1=81=D1=82=D0=
+=BE=D0=B9=D0=BD=D0=BE=D1=81=D1=82=D1=82=D0=B0 =D0=BD=D0=B0 =D0=B8=D0=B7=D1=
+=80=D0=B0=D0=B7=D1=85=D0=BE=D0=B4=D0=B2=D0=B0=D0=BD=D0=B8=D1=82=D0=B5 =D1=
+=81=D1=80=D0=B5=D0=B4=D1=81=D1=82=D0=B2=D0=B0 =D0=BD=D0=B5 =D1=81=D0=B5 =D0=
+=BE=D0=B1=D0=BB=D0=B0=D0=B3=D0=B0=D1=82 =D1=81 =D0=B4=D0=B0=D0=BD=D1=8A=D0=
+=BA.
 
-greg k-h
+=D0=A0=D0=B0=D0=B4=D0=B2=D0=B0=D0=BC=D0=B5 =D1=81=D0=B5 =D0=B4=D0=B0 =D0=92=
+=D0=B8 =D0=BF=D1=80=D0=B5=D0=B4=D1=81=D1=82=D0=B0=D0=B2=D0=B8=D0=BC =D0=BE=
+=D1=89=D0=B5 =D0=BF=D0=BE=D0=B2=D0=B5=D1=87=D0=B5 =D0=BF=D1=80=D0=B5=D0=B4=
+=D0=B8=D0=BC=D1=81=D1=82=D0=B2=D0=B0, =D0=BA=D0=BE=D0=B8=D1=82=D0=BE =D0=B1=
+=D0=B8=D1=85=D1=82=D0=B5 =D0=BF=D0=BE=D0=BB=D1=83=D1=87=D0=B8=D0=BB=D0=B8=
+ =D1=81 =D0=BF=D0=BE=D0=BB=D0=B7=D0=B2=D0=B0=D0=BD=D0=B5=D1=82=D0=BE =D0=BD=
+=D0=B0 =D0=BD=D0=B0=D1=88=D0=B8=D1=82=D0=B5 =D0=B2=D0=B0=D1=83=D1=87=D0=B5=
+=D1=80=D0=B8, =D0=BA=D0=B0=D1=82=D0=BE =D0=BD=D0=B0=D0=BF=D1=80=D0=B8=D0=BC=
+=D0=B5=D1=80 =D0=BF=D0=BE=D0=BB=D0=B7=D0=B8=D1=82=D0=B5 =D0=B7=D0=B0 =D1=81=
+=D0=BB=D1=83=D0=B6=D0=B8=D1=82=D0=B5=D0=BB=D0=B8=D1=82=D0=B5 =D0=92=D0=B8=
+ =D0=B8 =D1=89=D0=B5 =D0=92=D0=B8 =D1=80=D0=B0=D0=B7=D0=BA=D0=B0=D0=B6=D0=
+=B0 =D0=B7=D0=B0 =D0=B2=D1=8A=D0=B7=D0=BC=D0=BE=D0=B6=D0=BD=D0=BE=D1=81=D1=
+=82=D0=B8=D1=82=D0=B5 =D0=BF=D1=80=D0=B8 =D1=82=D1=8F=D1=85=D0=BD=D0=BE=D1=
+=82=D0=BE =D0=B8=D0=B7=D0=BF=D0=BE=D0=BB=D0=B7=D0=B2=D0=B0=D0=BD=D0=B5 - =
+=D0=BC=D0=BE=D0=BB=D1=8F, =D0=BE=D0=B1=D0=B0=D0=B4=D0=B5=D1=82=D0=B5 =D1=81=
+=D0=B5.
+
+
+=D0=A0=D0=B0=D0=B4=D0=BE=D1=81=D0=BB=D0=B0=D0=B2 =D0=94=D0=BE=D0=B1=D1=80=
+=D0=B5=D0=B2
+Head of HR Benefit Team
+www.greatforyou.eu
