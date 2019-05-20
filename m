@@ -2,93 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6C9C23A95
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B8E23A9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391841AbfETOle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:41:34 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36986 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389518AbfETOl0 (ORCPT
+        id S2391878AbfETOlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:41:52 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36465 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391890AbfETOlq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:41:26 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e15so14927179wrs.4
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:41:25 -0700 (PDT)
+        Mon, 20 May 2019 10:41:46 -0400
+Received: by mail-wr1-f67.google.com with SMTP id s17so14944528wru.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:41:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eyDz/kU6Wjim2biRU2q8CqgWCCB8KF6iAcPXPEhI4iE=;
-        b=GL1kPF/zUzZXKB5Un27WiEJQ0HNwcqqnlgkMiO94zM4OnjMJI1m+TNzvxK4Yn+Gx/8
-         5O8+gBuLemwUJVEipgg/GahnWgcjh0WLtWb0wr61aGUmUtQopw70+M3+d5YBam07vBvP
-         ooVf8RaJCsspmSiwvNglwLoisdmIU4WgXxqjHO3jt/BzyV0M4bBrMlx7gLFStGfEPh8k
-         FP6DpQyiBbQf80owDtMzoOOv0DRnv/0FMnhZUSG8Dn9+Dwucxn9Xotr9GoZ9AzOJ/Fte
-         a7SJQMwvLQPrdlFVrmy02dW86PGusTvFGXn0n8frBI/zylHHeuBpPZG9eloWHuoydEm6
-         8KPw==
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wIkoBjfIwezg37K8GyVLa4Ib4GG1DfXOe0xDWRIHC9c=;
+        b=Ou8A0T5aNjnqbPlBgwGcea2Jt9WREkncm2pZ2tzBkRLRUyzdHu/788KR2EoEZb9mkK
+         Uc0cJxu+0ZffxR3RKAwpxWA+Pa4RUhS5MdKIHC+QqTBZftrk7zJrl15NN6dttqr5OpMP
+         8xroeKkE6/8JUdYcncxaCbltjgHZuJY1yQojg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eyDz/kU6Wjim2biRU2q8CqgWCCB8KF6iAcPXPEhI4iE=;
-        b=YReZNzZ9H20d86ATyxQFia4novdyqZ1COwgLAOS4ro474XS0bpelik2msKItzWn1bR
-         WudNda8hLNyrsQWAdiK6NwuU352III5Ez39F6ij+pvdOamSwCaBw/+kKro5sAkS6qYO+
-         ml8/ArFKqARCN6OXaagaHReS8ikWdANAuVKqdN/SRhM0Uzq0/JcBseneTmWeOyAqcfdO
-         ybfFloo/JliRKQRZdeeYv0wNMZAloVJREljZNfmgPhq6UVvaaMs//kjc3SX2q4VkH77f
-         8NfEETLSfVFBHxUZCQ6XMKHsyzx0voYp7IAAPXQXhQEWfYfZdm8dVUUCuayeGBgXrfet
-         1NRA==
-X-Gm-Message-State: APjAAAUSd/mox2+XGJMU7poIUzpBodbPrn3PuvDi2L4IA/y98iDpDdnx
-        ckRSRn9o43Q4WBNER/TulVXkPw==
-X-Google-Smtp-Source: APXvYqwNFE1d2hRxTr4yNHyu/Qt22C88efwwzfb2tPMpnZSFiu3ODusoG5pkwtkQFTWj5bADDe/gBw==
-X-Received: by 2002:adf:ec8c:: with SMTP id z12mr36194064wrn.209.1558363284655;
-        Mon, 20 May 2019 07:41:24 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id w3sm6743679wrv.25.2019.05.20.07.41.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 07:41:23 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     linus.walleij@linaro.org
-Cc:     linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 5/5] dt-bindings: gpio: meson8b-gpio: update with SPDX Licence identifier
-Date:   Mon, 20 May 2019 16:41:08 +0200
-Message-Id: <20190520144108.3787-6-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520144108.3787-1-narmstrong@baylibre.com>
-References: <20190520144108.3787-1-narmstrong@baylibre.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wIkoBjfIwezg37K8GyVLa4Ib4GG1DfXOe0xDWRIHC9c=;
+        b=f3ahCJsoIYXTDpceZ7DjHnf1r3ek5aMtCXrGGZz1ahHASMr3vEUTLNo23GTRDU6SCY
+         aczLStldswlTg8tt727yvI9HUeP/c4hPS1VG0arPe2dXrdicqhHi8qy0TWocFNSbuKVb
+         i/7GIb/6sShCKK5pRWWc+5BFMzCc6ebYi040HMugbJ8bHi6N7KI12FuSSRp4Zr8R42yS
+         9jM/h+8gUgofy5tUWeJ2wREV6t63fbHCN+wTPrNgZIkLA838gCjzVbG0ULNYXKKM053/
+         YtPulE7x/FFDq1rfDOOWebsFDSbx4GdCWrU6KokkTrV55pErfZYoRP/0bkhJpe9CvP5n
+         5ZFg==
+X-Gm-Message-State: APjAAAUerfeTeF/7HNO0VxPwYK6DBbuZQJq6ehyTH8SSrocKfCm0iTkL
+        e2DQq5IdWG4q6pPngj35ItBHoQ==
+X-Google-Smtp-Source: APXvYqyUmEWgtNuNz/KLPkSE1Lwvd2WXTdR3OckfDP8fsKM/AbqeGou/Yo4wcQWm5VhE6j5qlpjEbQ==
+X-Received: by 2002:a5d:53c8:: with SMTP id a8mr10213096wrw.152.1558363305299;
+        Mon, 20 May 2019 07:41:45 -0700 (PDT)
+Received: from localhost.localdomain (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id n1sm12945556wmc.19.2019.05.20.07.41.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 May 2019 07:41:44 -0700 (PDT)
+Date:   Mon, 20 May 2019 16:41:37 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-nvdimm@lists.01.org,
+        stefanha@redhat.com, dgilbert@redhat.com, swhiteho@redhat.com
+Subject: Re: [PATCH v2 02/30] fuse: Clear setuid bit even in cache=never path
+Message-ID: <20190520144137.GA24093@localhost.localdomain>
+References: <20190515192715.18000-1-vgoyal@redhat.com>
+ <20190515192715.18000-3-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190515192715.18000-3-vgoyal@redhat.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- include/dt-bindings/gpio/meson8b-gpio.h | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+On Wed, May 15, 2019 at 03:26:47PM -0400, Vivek Goyal wrote:
+> If fuse daemon is started with cache=never, fuse falls back to direct IO.
+> In that write path we don't call file_remove_privs() and that means setuid
+> bit is not cleared if unpriviliged user writes to a file with setuid bit set.
+> 
+> pjdfstest chmod test 12.t tests this and fails.
 
-diff --git a/include/dt-bindings/gpio/meson8b-gpio.h b/include/dt-bindings/gpio/meson8b-gpio.h
-index bf0d76fa0e7b..e75d09b6087b 100644
---- a/include/dt-bindings/gpio/meson8b-gpio.h
-+++ b/include/dt-bindings/gpio/meson8b-gpio.h
-@@ -1,15 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * GPIO definitions for Amlogic Meson8b SoCs
+I think better sulution is to tell the server if the suid bit needs to be
+removed, so it can do so in a race free way.
+
+Here's the kernel patch, and I'll reply with the libfuse patch.
+
+---
+ fs/fuse2/file.c           |    2 ++
+ include/uapi/linux/fuse.h |    3 +++
+ 2 files changed, 5 insertions(+)
+
+--- a/fs/fuse2/file.c
++++ b/fs/fuse2/file.c
+@@ -363,6 +363,8 @@ static ssize_t fuse_send_write(struct fu
+ 		inarg->flags |= O_DSYNC;
+ 	if (iocb->ki_flags & IOCB_SYNC)
+ 		inarg->flags |= O_SYNC;
++	if (!capable(CAP_FSETID))
++		inarg->write_flags |= FUSE_WRITE_KILL_PRIV;
+ 	req->inh.opcode = FUSE_WRITE;
+ 	req->inh.nodeid = ff->nodeid;
+ 	req->inh.len = req->inline_inlen + count;
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -125,6 +125,7 @@
   *
-  * Copyright (C) 2015 Endless Mobile, Inc.
-  * Author: Carlo Caione <carlo@endlessm.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * version 2 as published by the Free Software Foundation.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+  *  7.29
+  *  - add FUSE_NO_OPENDIR_SUPPORT flag
++ *  - add FUSE_WRITE_KILL_PRIV flag
   */
  
- #ifndef _DT_BINDINGS_MESON8B_GPIO_H
--- 
-2.21.0
+ #ifndef _LINUX_FUSE_H
+@@ -318,9 +319,11 @@ struct fuse_file_lock {
+  *
+  * FUSE_WRITE_CACHE: delayed write from page cache, file handle is guessed
+  * FUSE_WRITE_LOCKOWNER: lock_owner field is valid
++ * FUSE_WRITE_KILL_PRIV: kill suid and sgid bits
+  */
+ #define FUSE_WRITE_CACHE	(1 << 0)
+ #define FUSE_WRITE_LOCKOWNER	(1 << 1)
++#define FUSE_WRITE_KILL_PRIV	(1 << 2)
+ 
+ /**
+  * Read flags
+
 
