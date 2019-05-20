@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83AA324166
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 21:45:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1B9524158
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 21:44:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfETToU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 15:44:20 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55840 "EHLO
+        id S1726478AbfETToK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 15:44:10 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37923 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbfETToI (ORCPT
+        with ESMTP id S1726111AbfETToJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 15:44:08 -0400
-Received: by mail-wm1-f66.google.com with SMTP id x64so533468wmb.5;
-        Mon, 20 May 2019 12:44:06 -0700 (PDT)
+        Mon, 20 May 2019 15:44:09 -0400
+Received: by mail-wm1-f66.google.com with SMTP id t5so521221wmh.3;
+        Mon, 20 May 2019 12:44:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=NNG/0jX2tQvBjgyfc63hvEhbSuCoeNSX6UlPy2BEBSQ=;
-        b=auDUl3sSdVbyOeXw5DD5WCYPTNmu1dlib8WeEvITLoBql3UtvBxuvw2y6JUCJzN3QM
-         wVWo6tRt3Q0Qz9i5sdcZ/vnWa6Zylat8exT2pL2yu7565j4oFvXbZ4M8P/5D3j8WApgK
-         2Yb8qJpl9q50Lin7/XMdYrA8+1+GoICQ2Sm0SVzujLBe2lSN5Nn/pmjo29WFINL7NB4q
-         +wKrXaqlE0bEu1I1N/jGeoptuAo+uanT+2OkHuVMHsMorjo5161LG81FBVdgiFkOW5bo
-         Jd7mDml8ngE8uur5Ul0bnpw1c5lo4JXbPFqzR5Hxa7vciJFVBfrBcUWHWFuwrF3MBaS9
-         Ci6A==
+        bh=fbtcwLTT91//XKmC+nVPtkzszNKe+pk1U7NYT699Lrc=;
+        b=bqnP7lv6jn4i1Q/jGxux0ThtCKwf8NtdpmWcAE95aDI+W14w8Kip28zRIk0UnNd8H9
+         uLwKOByCpDXwwQznTYVX3bssmINT2gpSwsbYZ1rL2R1gmwUAPDUmWBsGQbVQzPcinQxB
+         xNYMJxEfvY2sSqcqHpH7Vx/DfEpp8pH6kVd09RmaSHI7rfv11xyghvZOXzuUbOElDYC3
+         PgPwRXIStRlsP7T2dy8TNs86gkFVpGW/dj2my/NPhPbqACLEN3aD6uFczsJj5+rKvnlZ
+         J/DrwtS/iLZyhyS4arHTi3Zzq4tSQbZQxGNFynJz7SAhXAel9FsB2Id3VoiSsq0lQ39Q
+         4q6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NNG/0jX2tQvBjgyfc63hvEhbSuCoeNSX6UlPy2BEBSQ=;
-        b=dfbYygKcp9h4qYuwD0wJAvB1Ma7TYPwju/pxdlxe5UqJMVkcktZeova5Mnj9UQa1Er
-         OJ5uB9LvbuNjkAYFHkT6EtoNd4/mwLBVTEj/KPLPF6+j9Qjhe+gaNZabCskI78qJjUdr
-         0DYasmdq+Sr465rTP2tbaWFODycUsFho77jfi7ZR03aalcqQwe46MZpBSPvx2NFxE+zH
-         m1zX1bV95D3nyjnyoz5AlVcWVb98tdAJXSBlIplsC+6839jUP/BJ9hQXs3QcKO0jgDB7
-         xuYFOu0ATDMvMcV38px9c2vBqfiXp2CxXFLgmTkxQihbePdIa+gT/sq9AoK6XsntKYx+
-         4bNg==
-X-Gm-Message-State: APjAAAUkl3j74s3XZXoOR2uznJQdxoYpavzmb4B/TsWTGOD5bnVHf5HE
-        Vw82SzSwNiPhNPqbPdWbjzA=
-X-Google-Smtp-Source: APXvYqxBL083Bt88/sIpYQeNID/JQmp32Qn9K//NrQQJwjMErFkLuDlMgEaBWN4mSwUuH3Ajk3gpWQ==
-X-Received: by 2002:a1c:67c1:: with SMTP id b184mr644485wmc.12.1558381445895;
-        Mon, 20 May 2019 12:44:05 -0700 (PDT)
+        bh=fbtcwLTT91//XKmC+nVPtkzszNKe+pk1U7NYT699Lrc=;
+        b=lWpEtNOUJVrVzCVDCs20EfdstIdIwCXMAEilOBlm/y3Ha9sMh86ppNOh+B+Imo1MkB
+         7HsmxNca1qSarA9BBcaEfwNUDBtxwnNamhebvcGq5i55eKGZngCupy9LoflIgc047YV5
+         R23aCymXZjGTvv26ZSppXN9Rs8TjAOB3fOuKALj1lrGJoD41eHiTqopNKDHpnnj9nmh/
+         xng3K8xN/XpijiTFVXQPeAsYrBXn3KdUmkev05EjHyV7WTZQUJ+0lpfcqPgYc2m2/mM9
+         F6InulKe2h1wroeB4qOFfl6T+4cs2kIB9pNsS86C/mJ13/qJdPSa/WPr321We+fmO8k1
+         AZ7g==
+X-Gm-Message-State: APjAAAXzGRryIQozHnlnLa0cli6BR7bNcl6Y7pARDcvVLbV5fEW15N5d
+        lY+hNlLdNdQ/nNMAUMDVtMU=
+X-Google-Smtp-Source: APXvYqxIvBEBsiGaewtDr53S3vSH0QaYQdhtkgZBbh05g6PE/3rwce7wCD+fDv/oMZdNDf13BNdexQ==
+X-Received: by 2002:a1c:9d56:: with SMTP id g83mr614737wme.8.1558381446984;
+        Mon, 20 May 2019 12:44:06 -0700 (PDT)
 Received: from blackbox.darklights.net (p200300F133EE71009C356FA1F0E19AF9.dip0.t-ipconnect.de. [2003:f1:33ee:7100:9c35:6fa1:f0e1:9af9])
-        by smtp.googlemail.com with ESMTPSA id p8sm9135352wro.0.2019.05.20.12.44.04
+        by smtp.googlemail.com with ESMTPSA id p8sm9135352wro.0.2019.05.20.12.44.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 12:44:05 -0700 (PDT)
+        Mon, 20 May 2019 12:44:06 -0700 (PDT)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     linux-amlogic@lists.infradead.org, khilman@baylibre.com,
         mjourdan@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 2/5] soc: amlogic: canvas: add support for Meson8, Meson8b and Meson8m2
-Date:   Mon, 20 May 2019 21:43:50 +0200
-Message-Id: <20190520194353.24445-3-martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 3/5] ARM: dts: meson8: add the canvas module
+Date:   Mon, 20 May 2019 21:43:51 +0200
+Message-Id: <20190520194353.24445-4-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190520194353.24445-1-martin.blumenstingl@googlemail.com>
 References: <20190520194353.24445-1-martin.blumenstingl@googlemail.com>
@@ -64,65 +64,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The canvas IP on Meson8, Meson8b and Meson8m2 is mostly identical to the
-one on GXBB and newer. The only known difference so far is that that the
-"endianness" bits are not supported on Meson8m2 and earlier.
+Add the canvas module to Meson8 because it's required for the VPU
+(video output) and video decoders.
 
-Add new compatible strings and a check in meson_canvas_config() to
-validate that the endianness bits cannot be configured on the 32-bit
-SoCs.
+The canvas module is located inside thie "DMC bus" (where also some of
+the memory controller registers are located). The "DMC bus" itself is
+part of the so-called "MMC bus".
+
+Amlogic's vendor kernel has an explicit #define for the "DMC" register
+range on Meson8m2 while there's no such #define for Meson8. However, the
+canvas and memory controller registers on Meson8 are all expressed as
+"0x6000 + actual offset", while Meson8m2 uses "DMC + actual offset".
+Thus it's safe to assume that the DMC bus exists on both SoCs even
+though the registers inside are slightly different.
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/soc/amlogic/meson-canvas.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/meson8.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/soc/amlogic/meson-canvas.c b/drivers/soc/amlogic/meson-canvas.c
-index be95a37c3fec..c655f5f92b12 100644
---- a/drivers/soc/amlogic/meson-canvas.c
-+++ b/drivers/soc/amlogic/meson-canvas.c
-@@ -35,6 +35,7 @@ struct meson_canvas {
- 	void __iomem *reg_base;
- 	spinlock_t lock; /* canvas device lock */
- 	u8 used[NUM_CANVAS];
-+	bool supports_endianness;
- };
+diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+index 40c11b6b217a..6a235275b01f 100644
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -228,6 +228,28 @@
+ 		};
+ 	};
  
- static void canvas_write(struct meson_canvas *canvas, u32 reg, u32 val)
-@@ -86,6 +87,12 @@ int meson_canvas_config(struct meson_canvas *canvas, u8 canvas_index,
- {
- 	unsigned long flags;
- 
-+	if (endian && !canvas->supports_endianness) {
-+		dev_err(canvas->dev,
-+			"Endianness is not supported on this SoC\n");
-+		return -EINVAL;
-+	}
++	mmcbus: bus@c8000000 {
++		compatible = "simple-bus";
++		reg = <0xc8000000 0x8000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0xc8000000 0x8000>;
 +
- 	spin_lock_irqsave(&canvas->lock, flags);
- 	if (!canvas->used[canvas_index]) {
- 		dev_err(canvas->dev,
-@@ -172,6 +179,8 @@ static int meson_canvas_probe(struct platform_device *pdev)
- 	if (IS_ERR(canvas->reg_base))
- 		return PTR_ERR(canvas->reg_base);
- 
-+	canvas->supports_endianness = of_device_get_match_data(dev);
++		dmcbus: bus@6000 {
++			compatible = "simple-bus";
++			reg = <0x6000 0x400>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges = <0x0 0x6000 0x400>;
 +
- 	canvas->dev = dev;
- 	spin_lock_init(&canvas->lock);
- 	dev_set_drvdata(dev, canvas);
-@@ -180,7 +189,10 @@ static int meson_canvas_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id canvas_dt_match[] = {
--	{ .compatible = "amlogic,canvas" },
-+	{ .compatible = "amlogic,meson8-canvas", .data = (void *)false, },
-+	{ .compatible = "amlogic,meson8b-canvas", .data = (void *)false, },
-+	{ .compatible = "amlogic,meson8m2-canvas", .data = (void *)false, },
-+	{ .compatible = "amlogic,canvas", .data = (void *)true, },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, canvas_dt_match);
++			canvas: video-lut@20 {
++				compatible = "amlogic,meson8-canvas",
++					     "amlogic,canvas";
++				reg = <0x20 0x14>;
++			};
++		};
++	};
++
+ 	apb: bus@d0000000 {
+ 		compatible = "simple-bus";
+ 		reg = <0xd0000000 0x200000>;
 -- 
 2.21.0
 
