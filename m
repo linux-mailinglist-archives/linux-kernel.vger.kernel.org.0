@@ -2,145 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76E0D23C5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D20A23C62
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:41:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392230AbfETPkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:40:39 -0400
-Received: from mx0a-00154904.pphosted.com ([148.163.133.20]:47112 "EHLO
-        mx0a-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388841AbfETPki (ORCPT
+        id S2392284AbfETPlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:41:00 -0400
+Received: from mail-ot1-f49.google.com ([209.85.210.49]:44149 "EHLO
+        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388939AbfETPlA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:40:38 -0400
-Received: from pps.filterd (m0170390.ppops.net [127.0.0.1])
-        by mx0a-00154904.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4KFeAtY025207;
-        Mon, 20 May 2019 11:40:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=smtpout1;
- bh=mOjOVxgcejFl/WDind0ZveLYCA7TQeGWu/4jmKsfGS8=;
- b=uS1XjUKAwSpF549rIymaDWLiUJyDk3noc2/xJ/raO/Qu7cQ9HJLFa2WwsouDLrHyZqzX
- LMjMbj3UJ3X0qxAUOBgzvsoA2oRPLo0ILtJ2ihxCxlrTDtVaS/EJCSwdTjvZXXmThzp/
- 5HGvTsJMG2Y/NMjNoEXyv152jCZQdufKhyGvoBMRH301J1BOEpH21bhRGf58UDOiKUaH
- OL1oXK+ot6YBCw89lvp8WA5MIQe9WZv1n3dmqeNAfaQX31kSeWCAIPkHQRkq2a1bJWIR
- jiDWCmxmY2HePN0GUFGnashgYZS2LCtC2oPPgTzRb/kao+Z/u1HnKq/keI8kTKvcxi4b zw== 
-Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
-        by mx0a-00154904.pphosted.com with ESMTP id 2sjd444nv8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 May 2019 11:40:37 -0400
-Received: from pps.filterd (m0142693.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4KFc8n1085318;
-        Mon, 20 May 2019 11:40:37 -0400
-Received: from ausxipps301.us.dell.com (ausxipps301.us.dell.com [143.166.148.223])
-        by mx0a-00154901.pphosted.com with ESMTP id 2skxgxrrkv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 May 2019 11:40:37 -0400
-X-LoopCount0: from 10.166.132.134
-X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
-   d="scan'208";a="340212726"
-From:   <Mario.Limonciello@dell.com>
-To:     <mathewk@chromium.org>, <linux-kernel@vger.kernel.org>
-CC:     <acelan.kao@canonical.com>, <dvhart@infradead.org>,
-        <andy@infradead.org>, <platform-driver-x86@vger.kernel.org>
-Subject: RE: [PATCH] platform/x86: intel-vbtn: Report switch events when event
- wakes device
-Thread-Topic: [PATCH] platform/x86: intel-vbtn: Report switch events when
- event wakes device
-Thread-Index: AQHVDDI6B2xG1URud0uFVvgshAA3U6Z0LBvw
-Date:   Mon, 20 May 2019 15:40:34 +0000
-Message-ID: <d2dac2d720574c58bb0d273809f46cf9@AUSX13MPC105.AMER.DELL.COM>
-References: <20190516215615.261258-1-mathewk@chromium.org>
-In-Reply-To: <20190516215615.261258-1-mathewk@chromium.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 20 May 2019 11:41:00 -0400
+Received: by mail-ot1-f49.google.com with SMTP id g18so13369761otj.11
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 08:40:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5QSUm6/xL4WGvvJmVrGCi+MUsTk2A8AVb5uoylgpYm0=;
+        b=yPev5JIATuPBAUeewEekviqNSsYEYMPVj34Ea7J3VHdDWfkJJm/Lss37NJzZXuSbcC
+         YRWqEDzGwnKyGJ7cfmBUCwLnOU/8qZso7KUyoxCpR1o8jo9s6hM/D8+pnibzSAEiHUth
+         qmci2Y5QYlrrWb6PkGnzvPjqxjjWW/5HxgR5KoDHlQ/Byo2F5xDeeHmYv19+at8R+TMZ
+         tu+Vu2APi20B80NNxCZHFz3fpj9rYA8GEe82GaUHJ8I6t+MvUs+Ar9a+Vgx2EB76jf89
+         ErQzIHthFAPF1mpVWGOYtN71zpeES9K3vrWlKWx5qmwTMgZWKug91Di3ce4BOAyUnJfW
+         dKnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5QSUm6/xL4WGvvJmVrGCi+MUsTk2A8AVb5uoylgpYm0=;
+        b=O6d/tlIuRQ1rkYvSYyIHkd20irjkX681zdrCq8LvrmUFUC8MuYK0THn/GBaGnwJv6d
+         PCBWUUwUddkMvtChvAD6Eq7c0AHNV2pBVWoqVxATq5Nu/nte+6PBaGSyzm3ohhe7MhKF
+         fY03eTCKuNapo/jaS/FX4et1J/2+RzFJl/gm5S0VUwEQXcur9If+iYCHtV68Xv3gp9t1
+         0LVvWTrm2xesG1s7uClHeAgJwDOZxataaFGkT7lI5qgblbVVfaCl7UG+uz7/y+j+QHdQ
+         uzEdL3iGoSpreTaSTqSB/2hkrwDxcWgVXs3/WGPnKYqijjfHcWtrtkkm97c9wR4LOOW8
+         EuuQ==
+X-Gm-Message-State: APjAAAXAZ2QlwstZPN0EMHfG27hs9RSRvE0Spao/FJaN6nRY3dJbqdHg
+        A02nLmREYhCTPzXloWa9tGdnsB0X1V7q2xtN/f4k4A==
+X-Google-Smtp-Source: APXvYqxs3KuEEqHCDOtKW83Hc+3/Eh7qrrFqOEiop9JaJSWQJfM8wgC/rkaym0C4K7iuUNGIYwsqH+mgvaYu198CCOk=
+X-Received: by 2002:a05:6830:1182:: with SMTP id u2mr34065267otq.71.1558366859535;
+ Mon, 20 May 2019 08:40:59 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905200101
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905200101
+References: <155805321833.867447.3864104616303535270.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190517084739.GB20550@quack2.suse.cz> <CAPcyv4iZZCgcC657ZOysBP9=1ejp3jfFj=VETVBPrgmfg7xUEw@mail.gmail.com>
+ <201905170855.8E2E1AC616@keescook> <CAPcyv4g9HpMaifC+Qe2RVbgL_qq9vQvjwr-Jw813xhxcviehYQ@mail.gmail.com>
+ <201905171225.29F9564BA2@keescook> <CAPcyv4iSeUPWFeSZW-dmYz9TnWhqVCx1Y1VjtUv+125_ZSQaYg@mail.gmail.com>
+ <20190520075232.GA30972@quack2.suse.cz>
+In-Reply-To: <20190520075232.GA30972@quack2.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 20 May 2019 08:40:48 -0700
+Message-ID: <CAPcyv4hwiKGDtkT7-r8Ei3kOQBMA3LwDGBNM9H8N6HC5fxi6tw@mail.gmail.com>
+Subject: Re: [PATCH] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
+To:     Jan Kara <jack@suse.cz>
+Cc:     Kees Cook <keescook@chromium.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        stable <stable@vger.kernel.org>, Jeff Moyer <jmoyer@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Smits <jeff.smits@intel.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 20, 2019 at 12:52 AM Jan Kara <jack@suse.cz> wrote:
+>
+> On Sat 18-05-19 21:46:03, Dan Williams wrote:
+> > On Fri, May 17, 2019 at 12:25 PM Kees Cook <keescook@chromium.org> wrote:
+> > > On Fri, May 17, 2019 at 10:28:48AM -0700, Dan Williams wrote:
+> > > > It seems dax_iomap_actor() is not a path where we'd be worried about
+> > > > needing hardened user copy checks.
+> > >
+> > > I would agree: I think the proposed patch makes sense. :)
+> >
+> > Sounds like an acked-by to me.
+>
+> Yeah, if Kees agrees, I'm fine with skipping the checks as well. I just
+> wanted that to be clarified. Also it helped me that you wrote:
+>
+> That routine (dax_iomap_actor()) validates that the logical file offset is
+> within bounds of the file, then it does a sector-to-pfn translation which
+> validates that the physical mapping is within bounds of the block device.
+>
+> That is more specific than "dax_iomap_actor() takes care of necessary
+> checks" which was in the changelog. And the above paragraph helped me
+> clarify which checks in dax_iomap_actor() you think replace those usercopy
+> checks. So I think it would be good to add that paragraph to those
+> copy_from_pmem() functions as a comment just in case we are wondering in
+> the future why we are skipping the checks... Also feel free to add:
+>
+> Acked-by: Jan Kara <jack@suse.cz>
 
-
-> -----Original Message-----
-> From: platform-driver-x86-owner@vger.kernel.org <platform-driver-x86-
-> owner@vger.kernel.org> On Behalf Of Mathew King
-> Sent: Thursday, May 16, 2019 4:56 PM
-> To: linux-kernel@vger.kernel.org
-> Cc: Mathew King; AceLan Kao; Darren Hart; Andy Shevchenko; platform-drive=
-r-
-> x86@vger.kernel.org
-> Subject: [PATCH] platform/x86: intel-vbtn: Report switch events when even=
-t wakes
-> device
->=20
->=20
-> [EXTERNAL EMAIL]
->=20
-> When a switch event, such as tablet mode/laptop mode or docked/undocked,
-> wakes a device make sure that the value of the swich is reported.
-> Without when a device is put in tablet mode from laptop mode when it is
-> suspended or vice versa the device will wake up but mode will be
-> incorrect.
->=20
-> Tested by suspending a device in laptop mode and putting it in tablet
-> mode, the device resumes and is in tablet mode. When suspending the
-> device in tablet mode and putting it in laptop mode the device resumes
-> and is in laptop mode.
->=20
-> Signed-off-by: Mathew King <mathewk@chromium.org>
-
-Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
-
-> ---
->  drivers/platform/x86/intel-vbtn.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/platform/x86/intel-vbtn.c b/drivers/platform/x86/int=
-el-vbtn.c
-> index 06cd7e818ed5..990cc8c20872 100644
-> --- a/drivers/platform/x86/intel-vbtn.c
-> +++ b/drivers/platform/x86/intel-vbtn.c
-> @@ -76,12 +76,15 @@ static void notify_handler(acpi_handle handle, u32 ev=
-ent,
-> void *context)
->  	struct platform_device *device =3D context;
->  	struct intel_vbtn_priv *priv =3D dev_get_drvdata(&device->dev);
->  	unsigned int val =3D !(event & 1); /* Even=3Dpress, Odd=3Drelease */
-> -	const struct key_entry *ke_rel;
-> +	const struct key_entry *ke, *ke_rel;
->  	bool autorelease;
->=20
->  	if (priv->wakeup_mode) {
-> -		if (sparse_keymap_entry_from_scancode(priv->input_dev, event))
-> {
-> +		ke =3D sparse_keymap_entry_from_scancode(priv->input_dev,
-> event);
-> +		if (ke) {
->  			pm_wakeup_hard_event(&device->dev);
-> +			if (ke->type =3D=3D KE_SW)
-> +				sparse_keymap_report_event(priv->input_dev,
-> event, val, 0);
->  			return;
->  		}
->  		goto out_unknown;
-> --
-> 2.21.0.1020.gf2820cf01a-goog
-
+Will do, thanks Jan.
