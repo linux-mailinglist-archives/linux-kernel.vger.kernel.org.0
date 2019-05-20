@@ -2,251 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED09F22A10
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 04:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 730B522A1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 04:57:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbfETCyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 19 May 2019 22:54:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42074 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727087AbfETCyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 19 May 2019 22:54:12 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5DE620644;
-        Mon, 20 May 2019 02:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558320851;
-        bh=+g4e3b9eEUCN0L+u953TbAQRbNQcFr58iPoiy/FcfxQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V05ZVw2Vl7FzAsocbUrTF0YIaxJr6PFjmbgjR7GS4tMvPliBoYP5WRInjHKnqNPrB
-         4jkEWypFuiyKne2/BrJsbMBvv4Clu3rXVwWZSRjHcDpTPrScTOwwTZ58xuc/+YlO+H
-         RFYn6su8hExdGV8Vf1qG6AY4FegxrQJANaKbFhI0=
-Date:   Mon, 20 May 2019 10:53:21 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Pramod Kumar <pramod.kumar_1@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "Michal.Vokac@ysoft.com" <Michal.Vokac@ysoft.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: Re: [PATCH v2 2/3] arm64: dts: nxp: add ls1046a-frwy board support
-Message-ID: <20190520025319.GJ15856@dragon>
-References: <20190510130207.14330-1-pramod.kumar_1@nxp.com>
- <20190510130207.14330-3-pramod.kumar_1@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190510130207.14330-3-pramod.kumar_1@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1729848AbfETC5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 19 May 2019 22:57:31 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:28041 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727087AbfETC5a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 19 May 2019 22:57:30 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x4K2t5bU012494;
+        Mon, 20 May 2019 11:55:06 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x4K2t5bU012494
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1558320907;
+        bh=ItDusmL4vzKNjFPPWLEjK7F5VrZmlSnLB0r8igrrtVc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j+HUgc6Iy3uGJafJBfDatmbcg8XLfKdPcuIRs9zPkSTw6ldfduBQfjSqSj4/J910E
+         hC3M7apPRTEoSERCF1naff7dVejPT951rueWCZkhEMre0wcFYv1daRvIZFpY2NdGeQ
+         0VG0Xrv16XHUgOJjy3mReHruT0bPxbkbS+dw1tXHdA45GIv/ZKKMho/VSGY/BPiFlD
+         Tzyx87MZ53EkJDsIdDzFdVxMyo33KWgjjNcxfJvFbZUTXJZJnhtTxsbM/JT4wKbn6B
+         U9G3B0+PND9MnvcEhCgsrDa8VW6bSGRKaG29O1G0c2hca+s7m+MLK2vcO4k6qKVmIu
+         LC0MGL8WSbmdw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>
+Subject: [PATCH] kbuild: do not check name uniqueness of builtin modules
+Date:   Mon, 20 May 2019 11:54:37 +0900
+Message-Id: <20190520025437.13825-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 01:00:20PM +0000, Pramod Kumar wrote:
-> ls1046afrwy board is based on nxp ls1046a SoC.
-> Board support's 4GB ddr memory, i2c, microSD card,
-> serial console,qspi nor flash,ifc nand flash,qsgmii network interface,
-> usb 3.0 and serdes interface to support two x1gen3 pcie interface.
-> 
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> Signed-off-by: Pramod Kumar <pramod.kumar_1@nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/Makefile        |   1 +
->  .../boot/dts/freescale/fsl-ls1046a-frwy.dts   | 156 ++++++++++++++++++
->  2 files changed, 157 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1046a-frwy.dts
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 13604e558dc1..84ff6995b41e 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-qds.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-rdb.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1043a-qds.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1043a-rdb.dtb
-> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1046a-frwy.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1046a-qds.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1046a-rdb.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1088a-qds.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-frwy.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-frwy.dts
-> new file mode 100644
-> index 000000000000..de0d19c02944
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-frwy.dts
-> @@ -0,0 +1,156 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Device Tree Include file for Freescale Layerscape-1046A family SoC.
-> + *
-> + * Copyright 2019 NXP.
-> + *
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "fsl-ls1046a.dtsi"
-> +
-> +/ {
-> +	model = "LS1046A FRWY Board";
-> +	compatible = "fsl,ls1046a-frwy", "fsl,ls1046a";
-> +
-> +	aliases {
-> +		serial0 = &duart0;
-> +		serial1 = &duart1;
-> +		serial2 = &duart2;
-> +		serial3 = &duart3;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	sb_3v3: regulator-sb3v3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "LT8642SEV-3.3V";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +};
-> +
-> +&duart0 {
-> +	status = "okay";
-> +};
-> +
-> +&duart1 {
-> +	status = "okay";
-> +};
-> +
-> +&duart2 {
-> +	status = "okay";
-> +};
-> +
-> +&duart3 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c0 {
-> +	status = "okay";
-> +
-> +	i2c-mux@77 {
-> +		compatible = "nxp,pca9546";
-> +		reg = <0x77>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		i2c-mux-never-disable;
+I just thought it was a good idea to scan builtin.modules in the name
+uniqueness checking, but Stephen reported a false positive.
 
-Undocumented property?
+ppc64_defconfig produces:
 
-> +
-> +		i2c@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0>;
-> +
-> +			eeprom@52 {
-> +				compatible = "atmel,24c512";
-> +				reg = <0x52>;
-> +			};
-> +
-> +			eeprom@53 {
-> +				compatible = "atmel,24c512";
-> +				reg = <0x53>;
-> +			};
-> +
-> +			power-monitor@40 {
+  warning: same basename if the following are built as modules:
+    arch/powerpc/platforms/powermac/nvram.ko
+    drivers/char/nvram.ko
 
-Sort the nodes in unit-address.
+..., which is a false positive because the former is never built as
+a module as you see in arch/powerpc/platforms/powermac/Makefile:
 
-Shawn
+  # CONFIG_NVRAM is an arch. independent tristate symbol, for pmac32 we really
+  # need this to be a bool.  Cheat here and pretend CONFIG_NVRAM=m is really
+  # CONFIG_NVRAM=y
+  obj-$(CONFIG_NVRAM:m=y)         += nvram.o
 
-> +				compatible = "ti,ina220";
-> +				reg = <0x40>;
-> +				shunt-resistor = <1000>;
-> +			};
-> +
-> +			rtc@51 {
-> +				compatible = "nxp,pcf2129";
-> +				reg = <0x51>;
-> +			};
-> +
-> +			temperature-sensor@4c {
-> +				compatible = "nxp,sa56004";
-> +				reg = <0x4c>;
-> +				vcc-supply = <&sb_3v3>;
-> +			};
-> +
-> +		};
-> +	};
-> +};
-> +
-> +&ifc {
-> +	#address-cells = <2>;
-> +	#size-cells = <1>;
-> +	/* NAND Flash */
-> +	ranges = <0x0 0x0 0x0 0x7e800000 0x00010000>;
-> +	status = "okay";
-> +
-> +	nand@0,0 {
-> +		compatible = "fsl,ifc-nand";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		reg = <0x0 0x0 0x10000>;
-> +	};
-> +
-> +};
-> +
-> +#include "fsl-ls1046-post.dtsi"
-> +
-> +&fman0 {
-> +	ethernet@e0000 {
-> +		phy-handle = <&qsgmii_phy4>;
-> +		phy-connection-type = "qsgmii";
-> +	};
-> +
-> +	ethernet@e8000 {
-> +		phy-handle = <&qsgmii_phy2>;
-> +		phy-connection-type = "qsgmii";
-> +	};
-> +
-> +	ethernet@ea000 {
-> +		phy-handle = <&qsgmii_phy1>;
-> +		phy-connection-type = "qsgmii";
-> +	};
-> +
-> +	ethernet@f2000 {
-> +		phy-handle = <&qsgmii_phy3>;
-> +		phy-connection-type = "qsgmii";
-> +	};
-> +
-> +	mdio@fd000 {
-> +		qsgmii_phy1: ethernet-phy@1c {
-> +			reg = <0x1c>;
-> +		};
-> +
-> +		qsgmii_phy2: ethernet-phy@1d {
-> +			reg = <0x1d>;
-> +		};
-> +
-> +		qsgmii_phy3: ethernet-phy@1e {
-> +			reg = <0x1e>;
-> +		};
-> +
-> +		qsgmii_phy4: ethernet-phy@1f {
-> +			reg = <0x1f>;
-> +		};
-> +	};
-> +};
-> -- 
-> 2.17.1
-> 
+Since we cannot predict how tricky Makefiles are written in wild,
+builtin.modules may potentially contain false positives. I do not
+think it is a big deal as far as kmod is concerned, but false positive
+warnings in the kernel build makes people upset. It is better to not
+do it.
+
+Even without checking builtin.modules, we have enough (and more solid)
+test coverage with allmodconfig.
+
+While I touched this part, I replaced the sed code with neater one
+provided by Stephen.
+
+Link: https://lkml.org/lkml/2019/5/19/120
+Link: https://lkml.org/lkml/2019/5/19/123
+Fixes: 3a48a91901c5 ("kbuild: check uniqueness of module names")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/modules-check.sh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/modules-check.sh b/scripts/modules-check.sh
+index 2f659530e1ec..39e8cb36ba19 100755
+--- a/scripts/modules-check.sh
++++ b/scripts/modules-check.sh
+@@ -6,10 +6,10 @@ set -e
+ # Check uniqueness of module names
+ check_same_name_modules()
+ {
+-	for m in $(sed 's:.*/::' modules.order modules.builtin | sort | uniq -d)
++	for m in $(sed 's:.*/::' modules.order | sort | uniq -d)
+ 	do
+-		echo "warning: same basename if the following are built as modules:" >&2
+-		sed "/\/$m/!d;s:^kernel/:  :" modules.order modules.builtin >&2
++		echo "warning: same module names found:" >&2
++		sed -n "/\/$m/s:^kernel/:  :p" modules.order >&2
+ 	done
+ }
+ 
+-- 
+2.17.1
+
