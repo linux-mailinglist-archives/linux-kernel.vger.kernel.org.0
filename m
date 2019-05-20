@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40EAF233A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1F072341A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387805AbfETMTR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:19:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60416 "EHLO mail.kernel.org"
+        id S2388604AbfETMX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:23:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731278AbfETMTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:19:09 -0400
+        id S2388023AbfETMX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:23:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 303A0208C3;
-        Mon, 20 May 2019 12:19:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8D2820645;
+        Mon, 20 May 2019 12:23:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354748;
-        bh=vlQhOCKTDbcoG8HJYqOyejbiYpKBr5+dhUL0IWXIMtQ=;
+        s=default; t=1558355006;
+        bh=5QImTVuc0lxp89bL2HI9b6Gh4NBrFme6P7Laz59P0CI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SbYrtS0T5Ac+Gq1y3phQXghH7IlwE0G71h6PKdIYUKS5pvr7aNG+WO5wq2wjv8d+H
-         B0Hz7Q/F0j5GW5/YYsygdw0vm8Ql1uPCv4b0GKj/PDYMUuTVCOuCImEybdCxBvWz5Q
-         NqJIotWYV+ro9n4zsDdBhSZd8AkOPQ9RyuN6TZQQ=
+        b=IeraMrATHXBQyuFFuGhMPnnACvG2ch/VM5XiXnvfSduvnPKfCCVb/yzQZiF1ABeDX
+         o9ijt/rVtvcbOq0b6XxwMHUGVCKpEo9mie80+jLVHrf0ZfKDQuhlI4wC4mZ3yYSPY2
+         jyiY2CcHRddbJjduQp4A3wzsm6jJcRqjSRIidUgw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 28/63] ALSA: hda/realtek - EAPD turn on later
-Date:   Mon, 20 May 2019 14:14:07 +0200
-Message-Id: <20190520115234.241055771@linuxfoundation.org>
+        stable@vger.kernel.org, Romain Porte <romain.porte@nokia.com>,
+        Pascal Fabreges <pascal.fabreges@nokia.com>,
+        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 4.19 062/105] mtd: spi-nor: intel-spi: Avoid crossing 4K address boundary on read/write
+Date:   Mon, 20 May 2019 14:14:08 +0200
+Message-Id: <20190520115251.429329643@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +47,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kailang Yang <kailang@realtek.com>
+From: Alexander Sverdlin <alexander.sverdlin@nokia.com>
 
-commit 607ca3bd220f4022e6f5356026b19dafc363863a upstream.
+commit 2b75ebeea6f4937d4d05ec4982c471cef9a29b7f upstream.
 
-Let EAPD turn on after set pin output.
+It was observed that reads crossing 4K address boundary are failing.
 
-[ NOTE: This change is supposed to reduce the possible click noises at
-  (runtime) PM resume.  The functionality should be same (i.e. the
-  verbs are executed correctly) no matter which order is, so this
-  should be safe to apply for all codecs -- tiwai ]
+This limitation is mentioned in Intel documents:
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Intel(R) 9 Series Chipset Family Platform Controller Hub (PCH) Datasheet:
+
+"5.26.3 Flash Access
+Program Register Access:
+* Program Register Accesses are not allowed to cross a 4 KB boundary..."
+
+Enhanced Serial Peripheral Interface (eSPI)
+Interface Base Specification (for Client and Server Platforms):
+
+"5.1.4 Address
+For other memory transactions, the address may start or end at any byte
+boundary. However, the address and payload length combination must not
+cross the naturally aligned address boundary of the corresponding Maximum
+Payload Size. It must not cross a 4 KB address boundary."
+
+Avoid this by splitting an operation crossing the boundary into two
+operations.
+
+Fixes: 8afda8b26d01 ("spi-nor: Add support for Intel SPI serial flash controller")
+Cc: stable@vger.kernel.org
+Reported-by: Romain Porte <romain.porte@nokia.com>
+Tested-by: Pascal Fabreges <pascal.fabreges@nokia.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/mtd/spi-nor/intel-spi.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -781,11 +781,10 @@ static int alc_init(struct hda_codec *co
- 	if (spec->init_hook)
- 		spec->init_hook(codec);
+--- a/drivers/mtd/spi-nor/intel-spi.c
++++ b/drivers/mtd/spi-nor/intel-spi.c
+@@ -632,6 +632,10 @@ static ssize_t intel_spi_read(struct spi
+ 	while (len > 0) {
+ 		block_size = min_t(size_t, len, INTEL_SPI_FIFO_SZ);
  
-+	snd_hda_gen_init(codec);
- 	alc_fix_pll(codec);
- 	alc_auto_init_amp(codec, spec->init_amp);
++		/* Read cannot cross 4K boundary */
++		block_size = min_t(loff_t, from + block_size,
++				   round_up(from + 1, SZ_4K)) - from;
++
+ 		writel(from, ispi->base + FADDR);
  
--	snd_hda_gen_init(codec);
--
- 	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_INIT);
+ 		val = readl(ispi->base + HSFSTS_CTL);
+@@ -685,6 +689,10 @@ static ssize_t intel_spi_write(struct sp
+ 	while (len > 0) {
+ 		block_size = min_t(size_t, len, INTEL_SPI_FIFO_SZ);
  
- 	return 0;
++		/* Write cannot cross 4K boundary */
++		block_size = min_t(loff_t, to + block_size,
++				   round_up(to + 1, SZ_4K)) - to;
++
+ 		writel(to, ispi->base + FADDR);
+ 
+ 		val = readl(ispi->base + HSFSTS_CTL);
 
 
