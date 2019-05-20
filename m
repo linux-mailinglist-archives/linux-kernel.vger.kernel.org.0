@@ -2,146 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7459623F41
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:41:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61F2323F50
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:44:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404027AbfETRlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 13:41:15 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35098 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730952AbfETRlO (ORCPT
+        id S2393042AbfETRoV convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 May 2019 13:44:21 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35519 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393012AbfETRoP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 13:41:14 -0400
-Received: by mail-wr1-f67.google.com with SMTP id m3so2600712wrv.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 10:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=SaB/HyT6/oED/ncLmyVItIP9zgJopLUDhT4V1Cn8C8s=;
-        b=frcPfBLaCkAw55Tyx6V/dkyb1Dmt0u/f01wtgyBsyWUXbf/vOUNITWX7xPXthtq0xl
-         bft0muUuT9iexs2vQ6DlzlFzt4voZf+LvjjC96BVra+o4/eQ/6NNFm6ml2Hf9zFy6YzE
-         JDIAM8DK86IRqaDnt4iGFGaI10ic5qzQ4IzjI2HJBMvBq91Im9WWCtGHe/1I5MMDTDuW
-         tNJjaUtpCSy+KGiqj8wU1HfSUfMf0FgqnY7t6aySQ/vN+w351CycwNdbRsBZbklhCeW3
-         PiQAyp++pVdCmkr8h/Xf6Sx/RdJ37H8FM5mDXNSTsgGvXOIsyd9IntqgI6opnb7PTlAy
-         1bkg==
+        Mon, 20 May 2019 13:44:15 -0400
+Received: by mail-lf1-f66.google.com with SMTP id c17so11007859lfi.2
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 10:44:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SaB/HyT6/oED/ncLmyVItIP9zgJopLUDhT4V1Cn8C8s=;
-        b=im1JMF3e5EM+7HBYeue4mXp4rpr7zYZHrmXd587RolyN7j6mNt0xKoCACL9Sw2/bmn
-         1+MfC0D9YCKbziZI8OlxpAhVJZXMTUbYMrrRoYfBFhkEbZ2+vt6IkiNFavJ9KO1bwfCV
-         5F39FN7huMtfS3erDiGG9NbhzHdMVGtTFLEJNT9PSECogT5lhMqDCn+kH7k8VFIx+nir
-         hkc4ubNhpvjkeA0xP/4Xk7WVmwwk1r+QlKN8G+hf11CWTUhqXyUnRVoXvGfmZ/Z/yXr3
-         NAJFiqHWBI/T0yQw//3pRa9W1artkD0kDK/YX8baBmOz9UBeaDv94GAZXsPrBcVuVTBz
-         wWJg==
-X-Gm-Message-State: APjAAAVIIZ8QtUzIKiAUGnorzMF1+6AsRHLE4JyqsZ8GRgmGhFLxfkSn
-        cr++Sq2u3044GLG4khfsvjBGYKDGk2HmzC3xucY=
-X-Google-Smtp-Source: APXvYqyui4f360e+bz+pu+lDAMTcDkxzvL/eUGo/Z3wwpdBtjdZ27UVuZkcz1Sle0DqxtjFl+Arr1JSFuBerydhsTUw=
-X-Received: by 2002:adf:8bc5:: with SMTP id w5mr3818759wra.132.1558374073011;
- Mon, 20 May 2019 10:41:13 -0700 (PDT)
+        bh=YCwqCrxUh2bH8XiEOdKZb9nS1aVmthT0KjuGZ5SGeWg=;
+        b=WlowGKWVtKwKQESD/83zh+6T6MdhTjpdH19GJ33wSwkob4AjGk4zwdOomKMNlPpdtA
+         acRxDB+x5P/SAodNTroXIOmbP0RqXbz2EydLGOTmfBCjvG8fUBfp+X2X5PazULy0raqI
+         /3hyOJV1FLz+iMnCY1OMh+qFzA9duJxOZK091RXhLi3HWXOJdDNez5AzovxYeSBIvUgo
+         MEi7V4r5xGGUfgN/4+q6PXBTDB7+/V+elLEXBSX3yOL+BilTY+XbC0n30U3udFu7njdG
+         tNhq+3YrViULzihmEXXJWAHXesAMEyqJcLBEgxnOmU9dt+B1TAyaFQMAE523kRi0bLKE
+         BIDw==
+X-Gm-Message-State: APjAAAWRXFqHF47PYWyS9r0h1FOY8eXuyiQEOOSW6I+OrafVq5Kzxw41
+        c22ZLFD/mtv22zd8D7HhUSjuZgK0IHiAe366m20Nag==
+X-Google-Smtp-Source: APXvYqxard7MWA/VNY2/t3WSS/ZAIm1KiPrRmTxGnTYRhlf2mlBOygWYKOFtWov73xjWrfasfr7Un7lha75I7XvLYCg=
+X-Received: by 2002:a19:d612:: with SMTP id n18mr24957983lfg.162.1558374253977;
+ Mon, 20 May 2019 10:44:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <1558082760-4915-1-git-send-email-xiaolinkui@kylinos.cn>
-In-Reply-To: <1558082760-4915-1-git-send-email-xiaolinkui@kylinos.cn>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 20 May 2019 13:41:00 -0400
-Message-ID: <CADnq5_PE-mvW2zwNeHn6prvTQvh-en9E9F7VE-hCS=a8jJWhAQ@mail.gmail.com>
-Subject: Re: [PATCH] gpu: drm: use struct_size() in kmalloc()
-To:     xiaolinkui <xiaolinkui@kylinos.cn>
-Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        xinhui pan <xinhui.pan@amd.com>,
-        "Quan, Evan" <evan.quan@amd.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20190518004639.20648-1-mcroce@redhat.com> <20190518004639.20648-2-mcroce@redhat.com>
+ <20190520165322.GH10244@mini-arch>
+In-Reply-To: <20190520165322.GH10244@mini-arch>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Mon, 20 May 2019 19:43:37 +0200
+Message-ID: <CAGnkfhzEZokRWMtTdbHzy1JZVVEzEPuY2oWL-9LzjRVgG0Y05Q@mail.gmail.com>
+Subject: Re: [PATCH 2/5] libbpf: add missing typedef
+To:     Stanislav Fomichev <sdf@fomichev.me>
+Cc:     xdp-newbies@vger.kernel.org, bpf@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 8:43 AM xiaolinkui <xiaolinkui@kylinos.cn> wrote:
+On Mon, May 20, 2019 at 6:53 PM Stanislav Fomichev <sdf@fomichev.me> wrote:
 >
-> Use struct_size() helper to keep code simple.
+> On 05/18, Matteo Croce wrote:
+> > Sync tools/include/linux/types.h with the UAPI one to fix this build error:
+> >
+> > make -C samples/bpf/../../tools/lib/bpf/ RM='rm -rf' LDFLAGS= srctree=samples/bpf/../../ O=
+> >   HOSTCC  samples/bpf/sock_example
+> > In file included from samples/bpf/sock_example.c:27:
+> > /usr/include/linux/ip.h:102:2: error: unknown type name ‘__sum16’
+> >   102 |  __sum16 check;
+> >       |  ^~~~~~~
+> > make[2]: *** [scripts/Makefile.host:92: samples/bpf/sock_example] Error 1
+> > make[1]: *** [Makefile:1763: samples/bpf/] Error 2
+> >
+> > Signed-off-by: Matteo Croce <mcroce@redhat.com>
+> > ---
+> >  tools/include/linux/types.h | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/tools/include/linux/types.h b/tools/include/linux/types.h
+> > index 154eb4e3ca7c..5266dbfee945 100644
+> > --- a/tools/include/linux/types.h
+> > +++ b/tools/include/linux/types.h
+> > @@ -58,6 +58,9 @@ typedef __u32 __bitwise __be32;
+> >  typedef __u64 __bitwise __le64;
+> >  typedef __u64 __bitwise __be64;
+> >
+> > +typedef __u16 __bitwise __sum16;
+> > +typedef __u32 __bitwise __wsum;
+> If you do that, you should probably remove 'typedef __u16 __sum16;'
+> from test_progs.h:
 >
-> Signed-off-by: xiaolinkui <xiaolinkui@kylinos.cn>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git/tree/tools/testing/selftests/bpf/test_progs.h#n13
+>
+> > +
+> >  typedef struct {
+> >       int counter;
+> >  } atomic_t;
+> > --
+> > 2.21.0
+> >
 
-This patch results in the following build error:
-  DESCEND  objtool
-  CALL    scripts/checksyscalls.sh
-  CHK     include/generated/compile.h
-  CC [M]  drivers/gpu/drm/amd/amdgpu/amdgpu_ras.o
-In file included from ./include/linux/kernel.h:15,
-                 from ./include/linux/list.h:9,
-                 from ./include/linux/wait.h:7,
-                 from ./include/linux/wait_bit.h:8,
-                 from ./include/linux/fs.h:6,
-                 from ./include/linux/debugfs.h:15,
-                 from drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c:24:
-drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c: In function =E2=80=98amdgpu_ras_in=
-it=E2=80=99:
-./include/linux/build_bug.h:16:45: error: negative width in bit-field
-=E2=80=98<anonymous>=E2=80=99
- #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:(-!!(e)); }))
-                                             ^
-./include/linux/compiler.h:349:28: note: in expansion of macro
-=E2=80=98BUILD_BUG_ON_ZERO=E2=80=99
- #define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-                            ^~~~~~~~~~~~~~~~~
-./include/linux/overflow.h:306:30: note: in expansion of macro =E2=80=98__m=
-ust_be_array=E2=80=99
-       sizeof(*(p)->member) + __must_be_array((p)->member),\
-                              ^~~~~~~~~~~~~~~
-drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c:1556:16: note: in expansion of
-macro =E2=80=98struct_size=E2=80=99
-  con =3D kmalloc(struct_size(con, objs, AMDGPU_RAS_BLOCK_COUNT),
-                ^~~~~~~~~~~
-make[4]: *** [scripts/Makefile.build:276:
-drivers/gpu/drm/amd/amdgpu/amdgpu_ras.o] Error 1
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [scripts/Makefile.build:492: drivers/gpu/drm/amd/amdgpu] Error=
- 2
-make[3]: *** Waiting for unfinished jobs....
-make[2]: *** [scripts/Makefile.build:492: drivers/gpu/drm] Error 2
-make[1]: *** [scripts/Makefile.build:492: drivers/gpu] Error 2
-make: *** [Makefile:1042: drivers] Error 2
+Hi,
 
-Alex
+I see test_progs.h only included in tools/testing/selftests/bpf/prog_tests/*,
+so maybe it's unreladed to my change in samples/bpf/.
+Maybe in a different patchset.
 
-
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/am=
-d/amdgpu/amdgpu_ras.c
-> index 22bd21e..4717a64 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-> @@ -1375,8 +1375,7 @@ int amdgpu_ras_init(struct amdgpu_device *adev)
->         if (con)
->                 return 0;
->
-> -       con =3D kmalloc(sizeof(struct amdgpu_ras) +
-> -                       sizeof(struct ras_manager) * AMDGPU_RAS_BLOCK_COU=
-NT,
-> +       con =3D kmalloc(struct_size(con, objs, AMDGPU_RAS_BLOCK_COUNT),
->                         GFP_KERNEL|__GFP_ZERO);
->         if (!con)
->                 return -ENOMEM;
-> --
-> 2.7.4
->
->
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Bye,
+-- 
+Matteo Croce
+per aspera ad upstream
