@@ -2,101 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D33A423266
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:30:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 601072326C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732840AbfETL36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:29:58 -0400
-Received: from mga11.intel.com ([192.55.52.93]:40347 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731225AbfETL35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:29:57 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 04:29:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,491,1549958400"; 
-   d="scan'208";a="173589444"
-Received: from mhauser-mobl.ger.corp.intel.com (HELO localhost) ([10.252.47.244])
-  by fmsmga002.fm.intel.com with ESMTP; 20 May 2019 04:29:46 -0700
-Date:   Mon, 20 May 2019 14:29:45 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190520112945.GA27805@linux.intel.com>
-References: <20190513102926.GD8743@linux.intel.com>
- <20190514104323.GA7591@linux.intel.com>
- <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
- <20190514204527.GC1977@linux.intel.com>
- <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com>
- <20190515013031.GF1977@linux.intel.com>
- <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
- <20190516051622.GC6388@linux.intel.com>
- <CALCETrVx1hgY67mP+73w5rT+eY+APcfS0YJ+XwtTLNz3CbVNMA@mail.gmail.com>
- <20190516224550.GC11204@linux.intel.com>
+        id S1732856AbfETLao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:30:44 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41222 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732850AbfETLam (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 07:30:42 -0400
+Received: by mail-oi1-f194.google.com with SMTP id y10so9674480oia.8;
+        Mon, 20 May 2019 04:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=nyKZfAuaROY2BjFNib6WMeJ7XG4lSb4BAQnu9LjW4yQ=;
+        b=JFaGZzNiBg1xlxHlRz6WI7/41fnkwKy6Cd5nvHzSSi8pSDhT2V7TYwPRt4qou/23tB
+         ZS1byABLyJ2BkGDZ/1FCYzEHCIL+CV80MqN9gEGFPl5PKPI4kgJh4kVYuteGz74evnvD
+         S6Rs6CDMFSB1EtBq1U6mewSejwQhsiD0/XPcwmGDJHRPU0vFjHJo07VR0d8zuUgdhhDv
+         s16Z9keGM1fm8BZTq2M6FtdIgzzFbcu6gOa/B759dhzJPl2ipgAAXIo58iYQycT9s3hS
+         dTPwImjjCCTyo/vgf+c1yJvILO7gaDFt9ABAPzFj+UyOjw+yNzU8/XrDsi9PG0FaxAJF
+         4G6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=nyKZfAuaROY2BjFNib6WMeJ7XG4lSb4BAQnu9LjW4yQ=;
+        b=lig8YaYpBByhCR21T0kGmZB797Cz/78S/EFXk/M+je63Ks78vFPMCqEG11GbaKOrOx
+         bceFQVVFYwDrQlAue8A5np2+m9h7M5ftt0FRZIUih1dQF9rQXoK50chknAMI3hQP1BIE
+         sZGtDFdDUlUQdu84OBf8oqTaYAateP8WLsHCIO4ut1llwQh5Sb6Br3i5r60KdwaObOh7
+         bBJBbyY9mj3fDzsCgLX+D7cQbtFUNN1SBCirZ2JoVwEIcSVz4c+k6yAPBieQSq9z7bpQ
+         GrOHGEU8Fwzo2alTzHcRJNzyasZSG6yaqLczxj1ns7F5c6NpiNUq8EL/NQ17q3tpCZQm
+         cNDQ==
+X-Gm-Message-State: APjAAAXDLeaxmKzkG272rfU6cLHtU59TWQrGUQlEl55i5+w9JeXQd9dY
+        nszmisza+IDO46028r8GIatzHAT57GOAtIVzEt4=
+X-Google-Smtp-Source: APXvYqy+hBIDWN7ld5J5EKHCPKrNI1j9comLjyZhCaZbYTVL4OGVddZSvMuPc1sNUxi24GFPtT/cwcMQhqJLamDnLdk=
+X-Received: by 2002:aca:6208:: with SMTP id w8mr22583932oib.128.1558351841160;
+ Mon, 20 May 2019 04:30:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190516224550.GC11204@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190518224036.29596-1-joao.marques.oliveira@usp.br> <20190519122944.3326e803@archlinux>
+In-Reply-To: <20190519122944.3326e803@archlinux>
+From:   Alexandru Ardelean <ardeleanalex@gmail.com>
+Date:   Mon, 20 May 2019 14:30:29 +0300
+Message-ID: <CA+U=DsrqzW6c1dR68PztzrQ9S7mYD0tZ50GdEdboN0pocVw5SQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: iio: ad7949: switch binding to yaml
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     =?UTF-8?Q?Jo=C3=A3o_Victor_Marques_de_Oliveira?= 
+        <joao.marques.oliveira@usp.br>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Stefan Popa <stefan.popa@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        kernel-usp@googlegroups.com,
+        "Thiago L . A . Miller" <tmiller@mochsl.org.br>,
+        "Osvaldo M . Yasuda" <omyasuda@yahoo.com.br>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 03:45:50PM -0700, Sean Christopherson wrote:
-> On Thu, May 16, 2019 at 02:02:58PM -0700, Andy Lutomirski wrote:
-> > > On May 15, 2019, at 10:16 PM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
-> > > There is a problem here though. Usually the enclave itself is just a
-> > > loader that then loads the application from outside source and creates
-> > > the executable pages from the content.
-> > >
-> > > A great example of this is Graphene that bootstraps unmodified Linux
-> > > applications to an enclave:
-> > >
-> > > https://github.com/oscarlab/graphene
-> > >
-> > 
-> > ISTM you should need EXECMEM or similar to run Graphene, then.
-> 
-> Agreed, Graphene is effectively running arbitrary enclave code.  I'm
-> guessing there is nothing that prevents extending/reworking Graphene to
-> allow generating the enclave ahead of time so as to avoid populating the
-> guts of the enclave at runtime, i.e. it's likely possible to run an
-> unmodified application in an enclave without EXECMEM if that's something
-> Graphene or its users really care about.
+On Sun, May 19, 2019 at 8:29 PM Jonathan Cameron <jic23@kernel.org> wrote:
+>
+> On Sat, 18 May 2019 19:40:36 -0300
+> Jo=C3=A3o Victor Marques de Oliveira         <joao.marques.oliveira@usp.b=
+r> wrote:
+>
+> > Changes switches from old text bindings, to YAML bindings, and also
+> > include adi,reference-select property to specify the source for the
+> > reference voltage signal.
+> >
+> > Signed-off-by: Jo=C3=A3o Victor Marques de Oliveira <joao.marques.olive=
+ira@usp.br>
+> > Signed-off-by: Thiago L. A. Miller <tmiller@mochsl.org.br>
+> > Co-developed-by: Thiago L. A. Miller <tmiller@mochsl.org.br>
+> > Signed-off-by: Osvaldo M. Yasuda <omyasuda@yahoo.com.br>
+> > Co-developed-by: Osvaldo M. Yasuda <omyasuda@yahoo.com.br>
+> > ---
+> > We're adding Charles-Antoine Couret as main dt maintainer since we have
+> > just switched documentation to yaml format.
+>
+> Hmm. I'm not sure it makes sense to list you all as maintainers
+> of this rather simple binding.
+>
+> We also just went through some changes on the reference handling so
+> I think you are based on stale information here.
+>
+> Thanks,
+>
+> Jonathan
+>
+> >
+> >  .../devicetree/bindings/iio/adc/ad7949.txt    | 16 -----
+> >  .../devicetree/bindings/iio/adc/ad7949.yaml   | 71 +++++++++++++++++++
+> >  2 files changed, 71 insertions(+), 16 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/iio/adc/ad7949.tx=
+t
+> >  create mode 100644 Documentation/devicetree/bindings/iio/adc/ad7949.ya=
+ml
 
-I'd guess that also people adding SGX support to containers want
-somewhat similar framework to work on so that you can just wrap a
-container with an enclave.
+Maybe also update the MAINTAINERS file with this.
 
-/Jarkko
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/ad7949.txt b/Doc=
+umentation/devicetree/bindings/iio/adc/ad7949.txt
+> > deleted file mode 100644
+> > index c7f5057356b1..000000000000
+> > --- a/Documentation/devicetree/bindings/iio/adc/ad7949.txt
+> > +++ /dev/null
+> > @@ -1,16 +0,0 @@
+> > -* Analog Devices AD7949/AD7682/AD7689
+> > -
+> > -Required properties:
+> > - - compatible: Should be one of
+> > -     * "adi,ad7949"
+> > -     * "adi,ad7682"
+> > -     * "adi,ad7689"
+> > - - reg: spi chip select number for the device
+> > - - vref-supply: The regulator supply for ADC reference voltage
+> > -
+> > -Example:
+> > -adc@0 {
+> > -     compatible =3D "adi,ad7949";
+> > -     reg =3D <0>;
+> > -     vref-supply =3D <&vdd_supply>;
+> > -};
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/ad7949.yaml b/Do=
+cumentation/devicetree/bindings/iio/adc/ad7949.yaml
+> > new file mode 100644
+> > index 000000000000..111c9e26f8e7
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/adc/ad7949.yaml
+> > @@ -0,0 +1,71 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/adc/ad7949.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +
+
+nitpick: extra line
+
+> > +title: Analog Devices AD7949/AD7682/AD7689
+> > +
+> > +maintainers:
+> > +  - Charles-Antoine Couret <charles-antoine.couret@essensium.com>
+> > +  - Jo=C3=A3o Victor Marques de Oliveira <joao.marques.oliveira@usp.br=
+>
+> > +  - Thiago L. A. Miller <tmiller@mochsl.org.br>
+> > +  - Osvaldo M. Yasuda <omyasuda@yahoo.com.br>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - adi,ad7949
+> > +      - adi,ad7682
+> > +      - adi,ad7689
+> > +
+> > +  reg:
+> > +    description:
+> > +      spi chip select number for the device
+
+this doesn't need a description
+it's a standard property
+
+> > +    maxItems: 1
+> > +
+> > +  vref-supply:
+> > +    description:
+> > +      The regulator supply for ADC reference voltage
+> > +    maxItems: 1
+> > +
+> > +  adi,reference-select:
+> > +    enum: [0, 1, 2, 3, 6, 7]
+> > +    description:
+> > +        Select the reference voltage source to use when converting the=
+ input voltages.
+> > +            0 - Internal 2.5V reference; temperature sensor enabled
+> > +            1 - Internal 4.096V reference; temperature sensor enabled
+> > +            2 - External reference, temperature sensor enabled, no buf=
+fer
+> > +            3 - External reference, temperature sensor enabled, buffer=
+ enabled
+> > +            6 - External reference, temperature sensor disabled, no bu=
+ffer
+> > +            7 - External reference, temperature sensor disabled, buffe=
+r enabled
+> This is changing...
+>
+> > +    maxItems: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - vref-supply
+> > +
+> > +examples:
+> > +  - |
+> > +    spi0 {
+> > +        #address-cells =3D <0x1>;
+> > +        #size-cells =3D <0x0>;
+> > +        adc@0 {
+> > +            compatible =3D "adi,ad7949";
+> > +            reg =3D <0>;
+> > +            adi,reference-select =3D <0>;
+> > +            vref-supply =3D <&vdd_supply>;
+> > +        };
+> > +    };
+
+One example is enough in this case.
+They don't differ much.
+
+> > +  - |
+> > +    spi0 {
+> > +        #address-cells =3D <0x1>;
+> > +        #size-cells =3D <0x0>;
+> > +        adc@0 {
+> > +            compatible =3D "adi,ad7949";
+> > +            reg =3D <0>;
+> > +            adi,reference-select =3D <0>;
+> > +        };
+> > +    };
+>
