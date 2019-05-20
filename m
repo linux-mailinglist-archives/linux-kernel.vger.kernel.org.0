@@ -2,103 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EF0123156
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 12:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C91023166
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 12:34:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731222AbfETKao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 06:30:44 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52860 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730382AbfETKao (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 06:30:44 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y3so12720263wmm.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 03:30:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0PmYvULW8b+vhtRBg4p2Q8VUlpSkSvMV+uikqOEEQ0M=;
-        b=TmodBsiif1DqOIDzY6XTBpa2f+Yy0mvyBXcVLtO1vvY/uVTiilck4eS2+XM6CCgG8Y
-         A3KDVGqEVJ/NkiE5Q6Qxy9Wwj9JorLLE6UNJ7ZfijZXxkk6J2Sq5cssQAh6XJmnxi4Y2
-         nNT5PyAPP3K9d9mfcL8ZPdSKMGID5Yzf5tnv0oMgECSz8N6SQT2KiCiQEOr1pkEOJTOx
-         /1NiHfnnkSZY1g9EH2IlcLxhbZh7yaw9MSQVO4YCUCJjO1fY++GCZ9V+YJiN0ny2/JEo
-         RGVSWrkFQX3DUNK+l80sQpr3kB3YQrY0X/j//2blHdIua9fJU+z63pI0OynKkt8hYelV
-         0ZvA==
-X-Gm-Message-State: APjAAAUAY2ruILbS6yiQGu9NNZ46d1H48DMvK7rAMPtifvlceSYYijnM
-        f9vJr8k318czm7EMbozzabxPlw==
-X-Google-Smtp-Source: APXvYqy8mwAvgC577RNezQmaz8YthJFOSgFun9/nFroItHZdPx2TxQO2lK0CONgi/ac8AFIc3xOCBg==
-X-Received: by 2002:a1c:f910:: with SMTP id x16mr11906527wmh.132.1558348242247;
-        Mon, 20 May 2019 03:30:42 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:ac04:eef9:b257:b844? ([2001:b07:6468:f312:ac04:eef9:b257:b844])
-        by smtp.gmail.com with ESMTPSA id u2sm26308457wra.82.2019.05.20.03.30.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 03:30:41 -0700 (PDT)
-Subject: Re: [PATCH 1/4] KVM: x86: Disable intercept for CORE cstate read
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Liran Alon <liran.alon@oracle.com>
-References: <1558082990-7822-1-git-send-email-wanpengli@tencent.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <7787e0cb-2c46-b5b5-94ea-72c061ea0235@redhat.com>
-Date:   Mon, 20 May 2019 12:30:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1731547AbfETKe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 06:34:57 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7661 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731455AbfETKe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 06:34:57 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 926B8E26C95E4047DF58;
+        Mon, 20 May 2019 18:34:54 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Mon, 20 May 2019
+ 18:34:51 +0800
+Subject: Re: [PATCH] ACPI/IORT: Fix build without CONFIG_IOMMU_API
+To:     Christoph Hellwig <hch@lst.de>, <will.deacon@arm.com>
+CC:     <jean-philippe.brucker@arm.com>, <lorenzo.pieralisi@arm.com>,
+        <linux-acpi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190520065746.17068-1-hch@lst.de>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <dc52ba2d-76d7-ebb1-7284-bdcd71f6e010@huawei.com>
+Date:   Mon, 20 May 2019 18:34:04 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <1558082990-7822-1-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190520065746.17068-1-hch@lst.de>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/05/19 10:49, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On 2019/5/20 14:57, Christoph Hellwig wrote:
+> IOMMU_FWSPEC_PCI_RC_ATS is only defined if CONFIG_IOMMU_API is
+> enabled.
 > 
-> Allow guest reads CORE cstate when exposing host CPU power management capabilities 
-> to the guest. PKG cstate is restricted to avoid a guest to get the whole package 
-> information in multi-tenant scenario.
-
-Hmm, I am not sure about this.  I can see why it can be useful to run
-turbostat in the guest, but is it a good idea to share it with the
-guest, since it counts from machine reset rather than from VM reset?
-
-Maybe it could use a separate bit for KVM_CAP_X86_DISABLE_EXITS?
-
-Thanks,
-
-Paolo
-
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-> Cc: Liran Alon <liran.alon@oracle.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> Fixes: 5702ee24182f ("ACPI/IORT: Check ATS capability in root complex nodes")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->  arch/x86/kvm/vmx/vmx.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  drivers/acpi/arm64/iort.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 771d3bf..b0d6be5 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -6615,6 +6615,12 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
->  	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
->  	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);
->  	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);
-> +	if (kvm_mwait_in_guest(kvm)) {
-> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C1_RES, MSR_TYPE_R);
-> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C3_RESIDENCY, MSR_TYPE_R);
-> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C6_RESIDENCY, MSR_TYPE_R);
-> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_CORE_C7_RESIDENCY, MSR_TYPE_R);
-> +	}
->  	vmx->msr_bitmap_mode = 0;
->  
->  	vmx->loaded_vmcs = &vmx->vmcs01;
-> 
+> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+> index 9058cb084b91..3e542b5d2a2d 100644
+> --- a/drivers/acpi/arm64/iort.c
+> +++ b/drivers/acpi/arm64/iort.c
+> @@ -1074,9 +1074,10 @@ const struct iommu_ops *iort_iommu_configure(struct device *dev)
+>  		info.node = node;
+>  		err = pci_for_each_dma_alias(to_pci_dev(dev),
+>  					     iort_pci_iommu_init, &info);
+> -
+> +#ifdef CONFIG_IOMMU_API
+>  		if (!err && iort_pci_rc_supports_ats(node))
+>  			dev->iommu_fwspec->flags |= IOMMU_FWSPEC_PCI_RC_ATS;
+> +#endif
+>  	} else {
+>  		int i = 0;
+
+This was reported, please refer to this patch from Lorenzo:
+
+https://patchwork.kernel.org/patch/10946845/
+
+Thanks
+Hanjun
 
