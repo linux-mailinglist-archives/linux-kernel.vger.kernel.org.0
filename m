@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66EE6234AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD62B233D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389916AbfETM3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:29:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45638 "EHLO mail.kernel.org"
+        id S1732892AbfETMUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:20:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389300AbfETM3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:29:31 -0400
+        id S1731076AbfETMUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:20:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7508820675;
-        Mon, 20 May 2019 12:29:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEA2120815;
+        Mon, 20 May 2019 12:20:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355369;
-        bh=55R11hn68ok3pmwLcWUc8/u/Khor9f6UQacwivXnHnI=;
+        s=default; t=1558354821;
+        bh=SJ3bvGNHGX5MTf8QAP45iUrPWgiuSOwtd791qLhdx14=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=htAeMNOzelcUcqfUbE0pWi3oRT8z2/gi0SMxcp2LU17Owo6Dh6UZ0k+6bWIiW+uB6
-         p/yUACTpIqBBfCZcLgTjpJwrWl6KR7TYVNXiqTeCovzr05/uZPUKfNhEg5gaQSGViu
-         jV2LOPTkWb2ljKtADE37M/r583qC43yq0XvKgODA=
+        b=tlTgAKljLq1nzELyFxiJEyMrd568F2hvxZyZ6z0XCD1oHsdc4aDREbG2x3Uaga9Ad
+         UCHpAkIz+MgWjegU3X9QzcYymD1WGc0gXPsUR86dUmKmHNKWSr11oOd+Uqt/HVkVMP
+         /rgxnSqZZTG4czXNjzoEzdiS4jCURaHE4/xOvFeI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.0 092/123] Btrfs: send, flush dellaloc in order to avoid data loss
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 53/63] crypto: salsa20 - dont access already-freed walk.iv
 Date:   Mon, 20 May 2019 14:14:32 +0200
-Message-Id: <20190520115251.064159966@linuxfoundation.org>
+Message-Id: <20190520115236.857849617@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,135 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 9f89d5de8631c7930898a601b6612e271aa2261c upstream.
+commit edaf28e996af69222b2cb40455dbb5459c2b875a upstream.
 
-When we set a subvolume to read-only mode we do not flush dellaloc for any
-of its inodes (except if the filesystem is mounted with -o flushoncommit),
-since it does not affect correctness for any subsequent operations - except
-for a future send operation. The send operation will not be able to see the
-delalloc data since the respective file extent items, inode item updates,
-backreferences, etc, have not hit yet the subvolume and extent trees.
+If the user-provided IV needs to be aligned to the algorithm's
+alignmask, then skcipher_walk_virt() copies the IV into a new aligned
+buffer walk.iv.  But skcipher_walk_virt() can fail afterwards, and then
+if the caller unconditionally accesses walk.iv, it's a use-after-free.
 
-Effectively this means data loss, since the send stream will not contain
-any data from existing delalloc. Another problem from this is that if the
-writeback starts and finishes while the send operation is in progress, we
-have the subvolume tree being being modified concurrently which can result
-in send failing unexpectedly with EIO or hitting runtime errors, assertion
-failures or hitting BUG_ONs, etc.
+salsa20-generic doesn't set an alignmask, so currently it isn't affected
+by this despite unconditionally accessing walk.iv.  However this is more
+subtle than desired, and it was actually broken prior to the alignmask
+being removed by commit b62b3db76f73 ("crypto: salsa20-generic - cleanup
+and convert to skcipher API").
 
-Simple reproducer:
+Since salsa20-generic does not update the IV and does not need any IV
+alignment, update it to use req->iv instead of walk.iv.
 
-  $ mkfs.btrfs -f /dev/sdb
-  $ mount /dev/sdb /mnt
-
-  $ btrfs subvolume create /mnt/sv
-  $ xfs_io -f -c "pwrite -S 0xea 0 108K" /mnt/sv/foo
-
-  $ btrfs property set /mnt/sv ro true
-  $ btrfs send -f /tmp/send.stream /mnt/sv
-
-  $ od -t x1 -A d /mnt/sv/foo
-  0000000 ea ea ea ea ea ea ea ea ea ea ea ea ea ea ea ea
-  *
-  0110592
-
-  $ umount /mnt
-  $ mkfs.btrfs -f /dev/sdc
-  $ mount /dev/sdc /mnt
-
-  $ btrfs receive -f /tmp/send.stream /mnt
-  $ echo $?
-  0
-  $ od -t x1 -A d /mnt/sv/foo
-  0000000
-  # ---> empty file
-
-Since this a problem that affects send only, fix it in send by flushing
-dellaloc for all the roots used by the send operation before send starts
-to process the commit roots.
-
-This is a problem that affects send since it was introduced (commit
-31db9f7c23fbf7 ("Btrfs: introduce BTRFS_IOC_SEND for btrfs send/receive"))
-but backporting it to older kernels has some dependencies:
-
-- For kernels between 3.19 and 4.20, it depends on commit 3cd24c698004d2
-  ("btrfs: use tagged writepage to mitigate livelock of snapshot") because
-  the function btrfs_start_delalloc_snapshot() does not exist before that
-  commit. So one has to either pick that commit or replace the calls to
-  btrfs_start_delalloc_snapshot() in this patch with calls to
-  btrfs_start_delalloc_inodes().
-
-- For kernels older than 3.19 it also requires commit e5fa8f865b3324
-  ("Btrfs: ensure send always works on roots without orphans") because
-  it depends on the function ensure_commit_roots_uptodate() which that
-  commits introduced.
-
-- No dependencies for 5.0+ kernels.
-
-A test case for fstests follows soon.
-
-CC: stable@vger.kernel.org # 3.19+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 2407d60872dd ("[CRYPTO] salsa20: Salsa20 stream cipher")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- fs/btrfs/send.c |   36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
 
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -6579,6 +6579,38 @@ commit_trans:
- 	return btrfs_commit_transaction(trans);
- }
+---
+ crypto/salsa20_generic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/crypto/salsa20_generic.c
++++ b/crypto/salsa20_generic.c
+@@ -186,7 +186,7 @@ static int encrypt(struct blkcipher_desc
+ 	blkcipher_walk_init(&walk, dst, src, nbytes);
+ 	err = blkcipher_walk_virt_block(desc, &walk, 64);
  
-+/*
-+ * Make sure any existing dellaloc is flushed for any root used by a send
-+ * operation so that we do not miss any data and we do not race with writeback
-+ * finishing and changing a tree while send is using the tree. This could
-+ * happen if a subvolume is in RW mode, has delalloc, is turned to RO mode and
-+ * a send operation then uses the subvolume.
-+ * After flushing delalloc ensure_commit_roots_uptodate() must be called.
-+ */
-+static int flush_delalloc_roots(struct send_ctx *sctx)
-+{
-+	struct btrfs_root *root = sctx->parent_root;
-+	int ret;
-+	int i;
-+
-+	if (root) {
-+		ret = btrfs_start_delalloc_snapshot(root);
-+		if (ret)
-+			return ret;
-+		btrfs_wait_ordered_extents(root, U64_MAX, 0, U64_MAX);
-+	}
-+
-+	for (i = 0; i < sctx->clone_roots_cnt; i++) {
-+		root = sctx->clone_roots[i].root;
-+		ret = btrfs_start_delalloc_snapshot(root);
-+		if (ret)
-+			return ret;
-+		btrfs_wait_ordered_extents(root, U64_MAX, 0, U64_MAX);
-+	}
-+
-+	return 0;
-+}
-+
- static void btrfs_root_dec_send_in_progress(struct btrfs_root* root)
- {
- 	spin_lock(&root->root_item_lock);
-@@ -6803,6 +6835,10 @@ long btrfs_ioctl_send(struct file *mnt_f
- 			NULL);
- 	sort_clone_roots = 1;
+-	salsa20_ivsetup(ctx, walk.iv);
++	salsa20_ivsetup(ctx, desc->info);
  
-+	ret = flush_delalloc_roots(sctx);
-+	if (ret)
-+		goto out;
-+
- 	ret = ensure_commit_roots_uptodate(sctx);
- 	if (ret)
- 		goto out;
+ 	while (walk.nbytes >= 64) {
+ 		salsa20_encrypt_bytes(ctx, walk.dst.virt.addr,
 
 
