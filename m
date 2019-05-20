@@ -2,87 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B27D23625
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CBE7234D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390492AbfETMn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:43:28 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43999 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389397AbfETM2z (ORCPT
+        id S2390291AbfETMbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:31:16 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:57939 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390275AbfETMbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:28:55 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f25so189909pgv.10;
-        Mon, 20 May 2019 05:28:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=hB3PHyrs53San/vhDwKRpRyPdI0a/I1a2f3pjFTkUE4=;
-        b=Dj6rxER+7wkxWxh9ncQ8235KU6jkkd6A60sumII2etXOJfRWzKRMI+PilghA5nj4EG
-         jRr+1A3Q7sDU1MIUwj5Ln1rQmAzYMjqW0wXbeHqt4fmdseaVwTVi4djbj/JdjOHxFNLR
-         pyamqSgmB1aFeaW4Z9n8kmVJrpWDvw1Gn/4nn8Lw1A7aA3SSsppCi4fWPgJqbclRf4Sl
-         7d6v4T7sX1kRHyCxbwC8lhdpDbY9e3DOsZZvvNdVzKJ+o/XDxhaPYlbxIeGMfuge4vUa
-         ArvAoihzT4Y3V9a1Sw7sbFd9GWzgmA1HCuzhhHJY+2JaYHiwq5IXOugEoKcGvJ+AtYlC
-         VJxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=hB3PHyrs53San/vhDwKRpRyPdI0a/I1a2f3pjFTkUE4=;
-        b=I7sQpabtCwB/Lsz/eCdLSbectA4U2npASBlXeL4ttTNk97BxjFRZoSIdIOHyD75tA6
-         Ujvf3Pt6APhLV2OmgF6/TP6siQ3ZXnYMSFno1mb6xIcmXUE764pcHW09NXPz8FiqSdRm
-         iur64syb55wJDi+dY4dWgHiMfyNaJBibe/nndTpoj0Bm8qWhvgg7ES8QX6IE82tewG1x
-         AGbm5ewEbm72fPARGoezOIOuSlluAmbA+Zme7n/xkLpzsxQrI4Nx6Do+QDpY4F284kFn
-         r5wYIwH+WtETQhVScmBWWpV7OpnlOI4PcZm8IcBi/lhrPWD898YW1eURnuMtf4IAJDom
-         PohA==
-X-Gm-Message-State: APjAAAXmFFMhfddaPAyJYothzyp3XrkhfZgq3VzAISj0kQ5jA16wnhu/
-        PjkVqv9cL6maolktBMZDImI=
-X-Google-Smtp-Source: APXvYqwaLDrWw7c0Fs1bKjKOaDP5fyg9p7qm+2PKXEbMZux7rZ1ZmgUv7+LmqyKVykIc0nPFeA/87Q==
-X-Received: by 2002:a63:7909:: with SMTP id u9mr68890137pgc.223.1558355334363;
-        Mon, 20 May 2019 05:28:54 -0700 (PDT)
-Received: from localhost ([43.224.245.181])
-        by smtp.gmail.com with ESMTPSA id s2sm16226302pfe.105.2019.05.20.05.28.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 05:28:53 -0700 (PDT)
-From:   Weitao Hou <houweitaoo@gmail.com>
-To:     arend.vanspriel@broadcom.com, franky.lin@broadcom.com,
-        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
-        wright.feng@cypress.com, kvalo@codeaurora.org, davem@davemloft.net,
-        houweitaoo@gmail.com, rafal@milecki.pl
-Cc:     linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] brcmfmac: fix typos in code comments
-Date:   Mon, 20 May 2019 20:28:25 +0800
-Message-Id: <20190520122825.981-1-houweitaoo@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        Mon, 20 May 2019 08:31:12 -0400
+Received: from [192.168.178.167] ([109.104.33.162]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MVMuN-1h3E3m0KCl-00SRFw; Mon, 20 May 2019 14:30:53 +0200
+Subject: Re: [RFC v2 5/5] cpufreq: add driver for Raspbery Pi
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     mbrugger@suse.de, sboyd@kernel.org, eric@anholt.net,
+        f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
+        ptesarik@suse.com, linux-rpi-kernel@lists.infradead.org,
+        ssuloev@orpaltech.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
+ <20190520104708.11980-6-nsaenzjulienne@suse.de>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <b23de4a1-e156-e458-d294-4206d87aa394@i2se.com>
+Date:   Mon, 20 May 2019 14:30:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190520104708.11980-6-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:8EPy0TEJACtLRM++yjvBbmbVCw2iG8lr+b2JXdcGP7gvIcA4EEF
+ 56n5p7w6xmP6ibp3AyK5HtXHzKAv9Bq8BsS2bg2iccrymCgCiJAjQ4TkTr7vGZecgfh5pVx
+ hFT+McXrzs0zuDaAwa4gcZC2IHmf/QjzYzdSV0nE1ZKWOFCxpfSuORzsoNbnkSWwGgwXnAk
+ 9AUB7HqT/Rv21BjVmbEKA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:oYIxwR3Gy8w=:WYzhHcJaMcyZ+BIqULb+5H
+ ci6BYAOtjHdDZOMuqgG/ejVx61x9vJMvtKwcYw3PhVtnxd8ZA9wBsdxOkUlpPK27+z915WKKa
+ 3eeBGNa82w2KtxWzBhfLqeP+xdcmQjau0I+c2cWaqVL+wBntXBwbzM8rfvLfQdXv3FUYsH9j8
+ eYr26BuKzVpPA/pYl9KbZVC47cfubAtziM5tnxwSwPRlWrgHP39RrxVyuB2ecxHH49Ge/Rt6K
+ dJA7T/91PuYfMtxRzz+5gZ3aZf6nnpT9NhQbbtCAhtg6YRGx6SL/H36Tdt2emsnD1GlhXlcij
+ OQFyYDLP6lJHTb8iStv6FAzGDTHdNxKETDeTsG9Pmdih9bc29n8mhFYvsIsA/9YsmsffEN4jT
+ SHdd0HPsTrTW4tCcgfbVgTMq+Phfkl+SiAIA0kmNOthusgaDyeyKwvq67+tJpzaxyAmg6ZQIV
+ YfkNYqPQ0hFY6DI1BE54Hpu27Mlh+xltQQdXzzB5yjljibFYwuJNYV3OcR/hV34EOdrlrV6rF
+ wPliF0seMgDjg0NVDBwLfDMmSmPCNMzFh+heKtdH0eeVbq3Riw5LzNbYtmrP0WdeP3/yecUtr
+ 1p5nwjAdlxXQaFI/0Q/TYr8wCFrCHHze2e7j1Afeiwmbk9Kg6TkF/VuJuMlAB+/yr94rbDOGe
+ 0mgpn/IN1+gnN3rGeWR/P/lM5tdgqnXu8jNWrK2ta1i5fmzql4gRS8odH5lc/3GQ6fpsfuQGc
+ CCcxFE/fS+qf0Ojx1BpdZ6fT2n7XQT/vgR/Z9EJx0JWHtmNpQ7Ln9jK/xtg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix lengh to length
+On 20.05.19 12:47, Nicolas Saenz Julienne wrote:
+> Raspberry Pi's firmware offers and interface though which update it's
+> performance requirements. It allows us to request for specific runtime
+> frequencies, which the firmware might or might not respect, depending on
+> the firmware configuration and thermals.
+>
+> As the maximum and minimum frequencies are configurable in the firmware
+> there is no way to know in advance their values. So the Raspberry Pi
+> cpufreq driver queries them, builds an opp frequency table to then
+> launch cpufreq-dt.
+>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+>  drivers/cpufreq/Kconfig.arm           |  8 +++
+>  drivers/cpufreq/Makefile              |  1 +
+>  drivers/cpufreq/raspberrypi-cpufreq.c | 83 +++++++++++++++++++++++++++
+>  3 files changed, 92 insertions(+)
+>  create mode 100644 drivers/cpufreq/raspberrypi-cpufreq.c
+>
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 179a1d302f48..f6eba7ae50d0 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -308,3 +308,11 @@ config ARM_PXA2xx_CPUFREQ
+>  	  This add the CPUFreq driver support for Intel PXA2xx SOCs.
+>  
+>  	  If in doubt, say N.
+> +
+> +config ARM_RASPBERRYPI_CPUFREQ
+> +	tristate "Raspberry Pi cpufreq support"
+> +	depends on RASPBERRYPI_FIRMWARE || COMPILE_TEST
 
-Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
----
-- fix prefix
----
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The driver doesn't really require the firmware driver to compile, how about:
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c
-index 8ea27489734e..edd2f09613d8 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/fwil.c
-@@ -314,7 +314,7 @@ brcmf_create_bsscfg(s32 bsscfgidx, char *name, char *data, u32 datalen,
- 		return brcmf_create_iovar(name, data, datalen, buf, buflen);
- 
- 	prefixlen = strlen(prefix);
--	namelen = strlen(name) + 1; /* lengh of iovar  name + null */
-+	namelen = strlen(name) + 1; /* length of iovar  name + null */
- 	iolen = prefixlen + namelen + sizeof(bsscfgidx_le) + datalen;
- 
- 	if (buflen < iolen) {
--- 
-2.18.0
+select RASPBERRYPI_FIRMWARE
+
+> +	help
+> +	  This adds the CPUFreq driver for Raspberry Pi
+> +
+> +	  If in doubt, say N.
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index 689b26c6f949..02678e9b2ff5 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -84,6 +84,7 @@ obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o
+>  obj-$(CONFIG_ARM_TEGRA186_CPUFREQ)	+= tegra186-cpufreq.o
+>  obj-$(CONFIG_ARM_TI_CPUFREQ)		+= ti-cpufreq.o
+>  obj-$(CONFIG_ARM_VEXPRESS_SPC_CPUFREQ)	+= vexpress-spc-cpufreq.o
+> +obj-$(CONFIG_ARM_RASPBERRYPI_CPUFREQ) 	+= raspberrypi-cpufreq.o
+>  
+>  
+>  ##################################################################################
+> diff --git a/drivers/cpufreq/raspberrypi-cpufreq.c b/drivers/cpufreq/raspberrypi-cpufreq.c
+> new file mode 100644
+> index 000000000000..a85988867d56
+> --- /dev/null
+> +++ b/drivers/cpufreq/raspberrypi-cpufreq.c
+> @@ -0,0 +1,83 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Raspberry Pi cpufreq driver
+> + *
+> + * Copyright (C) 2019, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> + */
+> +
+> +#include <linux/of.h>
+> +#include <linux/clk.h>
+> +#include <linux/cpu.h>
+> +#include <linux/module.h>
+> +#include <linux/pm_opp.h>
+> +#include <linux/cpufreq.h>
+> +#include <linux/platform_device.h>
+> +
+> +static const struct of_device_id machines[] __initconst = {
+> +	{ .compatible = "raspberrypi,3-model-b-plus" },
+> +	{ .compatible = "raspberrypi,3-model-b" },
+> +	{ /* sentinel */ }
+> +};
+> +
+> +static int __init raspberrypi_cpufreq_driver_init(void)
+> +{
+> +	struct platform_device *pdev;
+> +	struct device *cpu_dev;
+> +	struct clk *clk;
+> +	long min, max;
+> +	long rate;
+> +	int ret;
+> +
+> +	if (!of_match_node(machines, of_root))
+> +		return -ENODEV;
+> +
+> +	cpu_dev = get_cpu_device(0);
+> +	if (!cpu_dev) {
+> +		pr_err("Cannot get CPU for cpufreq driver\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	clk = clk_get(cpu_dev, 0);
+
+I suggest use the expected clock ID.
 
