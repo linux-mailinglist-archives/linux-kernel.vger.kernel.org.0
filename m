@@ -2,166 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97BDF23B90
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EED2523B9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:07:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387463AbfETPFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:05:48 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33889 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbfETPFr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:05:47 -0400
-Received: by mail-pf1-f196.google.com with SMTP id n19so7383346pfa.1;
-        Mon, 20 May 2019 08:05:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rKJ5kTZSuGMm/2HLLSWO6tchZr7oIUiwIHVknRGxIHU=;
-        b=DFFPZRfieSKMQoNbbJCynO4C9ofYAqkO//Vr1ugsgNL47DpyGPpAJgCfSoq7K40686
-         Y7s2odYbCVF5CMowkWDns6mUtJwyxjwomvPK62Ai1fGfzAZ6bDEO0vp5mpxSN1VfVQkw
-         QqIgikEldr9Mv2FGZ3UzN1mIlfV8ENg6z8LGRobHVzuV6dvkDlLeQXH0yo2mjt72kms7
-         RKMvL90OJ+WsNCe9qFZSsJTFCRtyq4of31EOPOusgyRYYiRlSPvAETZgi4XgrizN/GYi
-         TM/GjkmhQct/tOE8Ive36X/+sI0A0acndA0povoOB91qiLG5U6EeJrAGUxpzngRfRIs5
-         6NUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rKJ5kTZSuGMm/2HLLSWO6tchZr7oIUiwIHVknRGxIHU=;
-        b=POkC4x9yZLlBe5GmjEFB632b4jk8JWiBMl4wPAjfI9Qg7eC55UWOSSical8bvRbNuT
-         zK4cKQ9eSww6DBWrlLWAsGzAZqOCuBCXh8olkDnlPvP7qDO3wxKWZl/x1DylzRa6kcAT
-         78/DyHIDzZp1YIekiJk1h3tnROrJR3pTDXjA5xJs121qgTecxq3+pKGSfIwOyZ2tob+0
-         JFWW2DkDaJSnt8DSv1zOKjX5Gs4K3Ff6i7og1zIx7HXRCUK6mdhPNzs8Kr2dIYE3drxZ
-         QSql4LqpwUGosNZSKOXelS5CW8aabte9Ygsf4hujd4iC4noNl5EH51aK1O0lKkqnW8NA
-         X5fA==
-X-Gm-Message-State: APjAAAXk9uwLR9O7ARGleIiH893oIcAmw23LjbBt9enC0QfK7HlUDbdW
-        Sgq0nQeoX4rdcbES8lQ4NjM=
-X-Google-Smtp-Source: APXvYqzRsoqBeRY/wkEyhJD6yAUS3XYq7VZA7WQYO0XZtKOmxmQdJe0ecw/gzqmVXri37BYOOfRvVA==
-X-Received: by 2002:a65:4544:: with SMTP id x4mr52855107pgr.323.1558364746528;
-        Mon, 20 May 2019 08:05:46 -0700 (PDT)
-Received: from mail.google.com ([104.238.181.70])
-        by smtp.gmail.com with ESMTPSA id 187sm24722081pfv.174.2019.05.20.08.05.43
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 20 May 2019 08:05:46 -0700 (PDT)
-Date:   Mon, 20 May 2019 23:05:39 +0800
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Changbin Du <changbin.du@gmail.com>, bhelgaas@google.com,
-        corbet@lwn.net, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 00/12] Include linux PCI docs into Sphinx TOC tree
-Message-ID: <20190520150538.hq4jnqeugpucjtwo@mail.google.com>
-References: <20190514144734.19760-1-changbin.du@gmail.com>
- <20190520061014.qtq6tc366pnnqcio@mail.google.com>
- <20190520112350.4679df1c@coco.lan>
+        id S2387964AbfETPGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:06:42 -0400
+Received: from vps.xff.cz ([195.181.215.36]:54742 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727108AbfETPGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 11:06:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1558364799; bh=MOIiLhQ+IjpqYl5yHzKvxPsRQBzGIbHz8ojgz49ajzM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=c739CFNQlY0oMPgSRJ6Gd+ppWrHcU9ifdJ48imf5TZ4akgkyrfOflPcrue9VhteFO
+         ZqNzzuIzVhoyOMOguR3sQcwhxTpxHpUWAU9zheMWLMTve+3VME2HcaUJlM5wcyUB0i
+         NIGfuNVaPkXChDZBBhR7Hb/fH1VvUxQKeMrRAS/E=
+From:   megous@megous.com
+To:     Chen-Yu Tsai <wens@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Ondrej Jirman <megous@megous.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: [PATCH v2 0/3] ARM: sun8i: a83t: Support Camera Sensor Interface controller
+Date:   Mon, 20 May 2019 17:06:34 +0200
+Message-Id: <20190520150637.23557-1-megous@megous.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190520112350.4679df1c@coco.lan>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 11:23:50AM -0300, Mauro Carvalho Chehab wrote:
-> Em Mon, 20 May 2019 06:10:15 +0000
-> Changbin Du <changbin.du@gmail.com> escreveu:
-> 
-> > Bjorn and Jonathan,
-> > Could we consider to merge this serias now? Thanks.
-> 
-> Before merging it, did you check if the renames won't cause broken
-> reference links? There were such breakages with your x86 and acpi
-> patch series. I'm sending the fixes right now, but it would be
-> great if you could run the ./scripts/documentation-file-ref-check
-> script and address any file name change this series would be
-> introducing. There's even a --fix option there that allows
-> to automatically fix them (you need to double-check the results).
->
-I just ran documentation-file-ref-check, and *no* broken reference found in PCI
-documentation. This tool is great!
+From: Ondrej Jirman <megous@megous.com>
 
-> Regards,
-> Mauro
-> 
-> > 
-> > On Tue, May 14, 2019 at 10:47:22PM +0800, Changbin Du wrote:
-> > > Hi all,
-> > > 
-> > > The kernel now uses Sphinx to generate intelligent and beautiful documentation
-> > > from reStructuredText files. I converted most of the Linux PCI docs to rst
-> > > format in this serias.
-> > > 
-> > > For you to preview, please visit below url:
-> > > http://www.bytemem.com:8080/kernel-doc/PCI/index.html
-> > > 
-> > > Thank you!
-> > > 
-> > > v2: trivial style update.
-> > > v3: update titles. (Bjorn Helgaas)
-> > > v4: fix comments from Mauro Carvalho Chehab
-> > > v5: update MAINTAINERS (Joe Perches)
-> > > v6: fix comments.
-> > > 
-> > > Changbin Du (12):
-> > >   Documentation: add Linux PCI to Sphinx TOC tree
-> > >   Documentation: PCI: convert pci.txt to reST
-> > >   Documentation: PCI: convert PCIEBUS-HOWTO.txt to reST
-> > >   Documentation: PCI: convert pci-iov-howto.txt to reST
-> > >   Documentation: PCI: convert MSI-HOWTO.txt to reST
-> > >   Documentation: PCI: convert acpi-info.txt to reST
-> > >   Documentation: PCI: convert pci-error-recovery.txt to reST
-> > >   Documentation: PCI: convert pcieaer-howto.txt to reST
-> > >   Documentation: PCI: convert endpoint/pci-endpoint.txt to reST
-> > >   Documentation: PCI: convert endpoint/pci-endpoint-cfs.txt to reST
-> > >   Documentation: PCI: convert endpoint/pci-test-function.txt to reST
-> > >   Documentation: PCI: convert endpoint/pci-test-howto.txt to reST
-> > > 
-> > >  .../PCI/{acpi-info.txt => acpi-info.rst}      |  15 +-
-> > >  Documentation/PCI/endpoint/index.rst          |  13 +
-> > >  ...-endpoint-cfs.txt => pci-endpoint-cfs.rst} |  99 ++---
-> > >  .../{pci-endpoint.txt => pci-endpoint.rst}    |  92 +++--
-> > >  ...est-function.txt => pci-test-function.rst} |  84 +++--
-> > >  ...{pci-test-howto.txt => pci-test-howto.rst} |  81 ++--
-> > >  Documentation/PCI/index.rst                   |  18 +
-> > >  .../PCI/{MSI-HOWTO.txt => msi-howto.rst}      |  85 +++--
-> > >  ...or-recovery.txt => pci-error-recovery.rst} | 287 +++++++-------
-> > >  .../{pci-iov-howto.txt => pci-iov-howto.rst}  | 161 ++++----
-> > >  Documentation/PCI/{pci.txt => pci.rst}        | 356 ++++++++----------
-> > >  .../{pcieaer-howto.txt => pcieaer-howto.rst}  | 156 +++++---
-> > >  .../{PCIEBUS-HOWTO.txt => picebus-howto.rst}  | 140 ++++---
-> > >  Documentation/index.rst                       |   1 +
-> > >  MAINTAINERS                                   |   4 +-
-> > >  include/linux/mod_devicetable.h               |  19 +
-> > >  include/linux/pci.h                           |  37 ++
-> > >  17 files changed, 938 insertions(+), 710 deletions(-)
-> > >  rename Documentation/PCI/{acpi-info.txt => acpi-info.rst} (96%)
-> > >  create mode 100644 Documentation/PCI/endpoint/index.rst
-> > >  rename Documentation/PCI/endpoint/{pci-endpoint-cfs.txt => pci-endpoint-cfs.rst} (64%)
-> > >  rename Documentation/PCI/endpoint/{pci-endpoint.txt => pci-endpoint.rst} (83%)
-> > >  rename Documentation/PCI/endpoint/{pci-test-function.txt => pci-test-function.rst} (55%)
-> > >  rename Documentation/PCI/endpoint/{pci-test-howto.txt => pci-test-howto.rst} (78%)
-> > >  create mode 100644 Documentation/PCI/index.rst
-> > >  rename Documentation/PCI/{MSI-HOWTO.txt => msi-howto.rst} (88%)
-> > >  rename Documentation/PCI/{pci-error-recovery.txt => pci-error-recovery.rst} (67%)
-> > >  rename Documentation/PCI/{pci-iov-howto.txt => pci-iov-howto.rst} (63%)
-> > >  rename Documentation/PCI/{pci.txt => pci.rst} (68%)
-> > >  rename Documentation/PCI/{pcieaer-howto.txt => pcieaer-howto.rst} (72%)
-> > >  rename Documentation/PCI/{PCIEBUS-HOWTO.txt => picebus-howto.rst} (70%)
-> > > 
-> > > -- 
-> > > 2.20.1
-> > >   
-> > 
-> 
-> 
-> 
-> Thanks,
-> Mauro
+This is a re-send of Chen-Yu's A83T CSI patch series with review tags
+applied and removed address/size cells from csi_in port. Already applied
+patches from v1  were dropped.
+
+The series is ready to be merged:
+
+  Patch 1 and 2 via sunxi tree
+  Patch 3 via media tree
+
+v2:
+- dropped address/size cells from csi_in port
+- added review tags
+
+Please take a look and merge.
+
+Thank you,
+	Ondrej
+
+--------------------------
+Original description:
+
+Hi everyone,
+
+This series adds support for the camera sensor interface controller
+found on the Allwinner A83T SoC. The controller is similar to the one
+found on  the H3, with the addition of a MIPI CSI-2 interface. However,
+this series only supports parallel and BT.656 interfaces, based on the
+existing driver.
+
+Patch 1 adds an undocumented clock parent of the CSI MCLK. This was
+found after finding the default value to sometimes work and sometimes
+not, and then comparing against BSP code.
+
+Patch 2 adds a compatible string for the A83T variant.
+
+Patch 3 adds support for the A83T variant to the existing sun6i-csi
+driver.
+
+Patch 4 adds a device node for the controller, as well as commonly
+used pin muxing options.
+
+Patch 5 adds a pin muxing option for I2C1 on the PE pins, used in
+conjunction with the CSI pins.
+
+Patch 6 provides an example usage of the CSI controller: the Bananapi M3
+with its camera module attached.
+
+Please have a look.
+
+Regards
+ChenYu
+
+Chen-Yu Tsai (3):
+  dt-bindings: media: sun6i-csi: Add compatible string for A83T variant
+  media: sun6i: Support A83T variant
+  ARM: dts: sun8i: a83t: Add device node for CSI (Camera Sensor
+    Interface)
+
+ .../devicetree/bindings/media/sun6i-csi.txt   |  1 +
+ arch/arm/boot/dts/sun8i-a83t.dtsi             | 29 +++++++++++++++++++
+ .../platform/sunxi/sun6i-csi/sun6i_csi.c      |  1 +
+ 3 files changed, 31 insertions(+)
 
 -- 
-Cheers,
-Changbin Du
+2.21.0
+
