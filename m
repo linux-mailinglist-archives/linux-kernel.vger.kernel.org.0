@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 608782346F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAD6B23411
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:42:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388719AbfETM0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:26:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42348 "EHLO mail.kernel.org"
+        id S2388281AbfETMW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:22:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388327AbfETM0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:26:53 -0400
+        id S2388259AbfETMW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:22:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 414A520815;
-        Mon, 20 May 2019 12:26:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB784216C4;
+        Mon, 20 May 2019 12:22:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355212;
-        bh=Z2GfKcHpVHwXI4/sFoV0Z1BGczs685S2OFmpzrq1tw8=;
+        s=default; t=1558354975;
+        bh=kYit0N1s3XyiwEJ9BAPv+JHUmMpjAlox7xrrRbfxqOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ahCD3iuQC8oNhjBc1ibXtzaGRyUwsk4cc0kYZObGMXEsKmUsfKZVPxYmicJvKGWjl
-         C3eZ7+7rXjVhPwCyj73zE9z3F3UG3T7Cjr6a0b+8TrDq1TK3W0sY68nkgLlA26tN9K
-         fLk8eokAVX5F0VNPpyvMOG9OAV0I7YYaKDKoWY2Q=
+        b=1glLL6OoHybrzoQYJsmNTngAa0aUWgfkOp0ATCrznFifzR6itv7gMmSgs5tHL79H+
+         u5C6hMRGqKuY/NHjgCMs+/WgwhKCj4TmEEfY1iIMWxXs3YaK0nawGzKikgJBaG5J6a
+         hh5ZqiUVMWiDyJBywN9XOxRRfLaK9SD9UnEheXmw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>
-Subject: [PATCH 5.0 016/123] arm64: compat: Reduce address limit
-Date:   Mon, 20 May 2019 14:13:16 +0200
-Message-Id: <20190520115246.082431052@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 4.19 011/105] power: supply: axp288_fuel_gauge: Add ACEPC T8 and T11 mini PCs to the blacklist
+Date:   Mon, 20 May 2019 14:13:17 +0200
+Message-Id: <20190520115247.828904395@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115247.060821231@linuxfoundation.org>
+References: <20190520115247.060821231@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit d263119387de9975d2acba1dfd3392f7c5979c18 upstream.
+commit 9274c78305e12c5f461bec15f49c38e0f32ca705 upstream.
 
-Currently, compat tasks running on arm64 can allocate memory up to
-TASK_SIZE_32 (UL(0x100000000)).
+The ACEPC T8 and T11 Cherry Trail Z8350 mini PCs use an AXP288 and as PCs,
+rather then portables, they does not have a battery. Still for some
+reason the AXP288 not only thinks there is a battery, it actually
+thinks it is discharging while the PC is running, slowly going to
+0% full, causing userspace to shutdown the system due to the battery
+being critically low after a while.
 
-This means that mmap() allocations, if we treat them as returning an
-array, are not compliant with the sections 6.5.8 of the C standard
-(C99) which states that: "If the expression P points to an element of
-an array object and the expression Q points to the last element of the
-same array object, the pointer expression Q+1 compares greater than P".
+This commit adds the ACEPC T8 and T11 to the axp288 fuel-gauge driver
+blacklist, so that we stop reporting bogus battery readings on this device.
 
-Redefine TASK_SIZE_32 to address the issue.
-
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: <stable@vger.kernel.org>
-Reported-by: Jann Horn <jannh@google.com>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-[will: fixed typo in comment]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1690852
+Cc: stable@vger.kernel.org
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/include/asm/processor.h |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/power/supply/axp288_fuel_gauge.c |   20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -57,7 +57,15 @@
- #define TASK_SIZE_64		(UL(1) << vabits_user)
- 
- #ifdef CONFIG_COMPAT
-+#ifdef CONFIG_ARM64_64K_PAGES
-+/*
-+ * With CONFIG_ARM64_64K_PAGES enabled, the last page is occupied
-+ * by the compat vectors page.
-+ */
- #define TASK_SIZE_32		UL(0x100000000)
-+#else
-+#define TASK_SIZE_32		(UL(0x100000000) - PAGE_SIZE)
-+#endif /* CONFIG_ARM64_64K_PAGES */
- #define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
- 				TASK_SIZE_32 : TASK_SIZE_64)
- #define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
+--- a/drivers/power/supply/axp288_fuel_gauge.c
++++ b/drivers/power/supply/axp288_fuel_gauge.c
+@@ -696,6 +696,26 @@ intr_failed:
+  */
+ static const struct dmi_system_id axp288_fuel_gauge_blacklist[] = {
+ 	{
++		/* ACEPC T8 Cherry Trail Z8350 mini PC */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "To be filled by O.E.M."),
++			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_SKU, "T8"),
++			/* also match on somewhat unique bios-version */
++			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "1.000"),
++		},
++	},
++	{
++		/* ACEPC T11 Cherry Trail Z8350 mini PC */
++		.matches = {
++			DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "To be filled by O.E.M."),
++			DMI_EXACT_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_SKU, "T11"),
++			/* also match on somewhat unique bios-version */
++			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "1.000"),
++		},
++	},
++	{
+ 		/* Intel Cherry Trail Compute Stick, Windows version */
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "Intel Corporation"),
 
 
