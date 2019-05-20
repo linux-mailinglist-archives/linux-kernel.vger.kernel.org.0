@@ -2,91 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9CC823B51
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:55:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A23E23B55
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:57:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392103AbfETOzq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:55:46 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:40333 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731455AbfETOzo (ORCPT
+        id S1732744AbfETO4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:56:55 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44215 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731455AbfETO4z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:55:44 -0400
-Received: by mail-it1-f194.google.com with SMTP id h11so1953286itf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:55:44 -0700 (PDT)
+        Mon, 20 May 2019 10:56:55 -0400
+Received: by mail-pf1-f196.google.com with SMTP id g9so7339933pfo.11;
+        Mon, 20 May 2019 07:56:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RO2OZsOswAnqzoxA5Kah+EcYVhjoBdIBVPEusFbAhx8=;
-        b=SfuQsulHoheqPTiq+0yTaNEt6guPJO5vtoQAXZ8LFw7P5630C1hIePmqANhr78VgMz
-         RXSgnIKX2w8wiNOA/r9VFOqCc2Bu1XJgujekBCCPYO8DEGs9IgKhUShhiGa35tM5iRbv
-         Erm4439OmvyMIxlRQC9PYG5xziVp7JdQLUV4lGvTvJQ0mxig80VdDtTk9S4xZwvzUNCf
-         5WjA/xsgN/AOhR9o9mJ40COdjTaQ+BEUTmiX+7fgYwPlV2JAH4b9Gqmato1oXiIvxhXZ
-         jbJvRkQznSjlmwf4Uet0FUmNaYSWMfiGDgxxC/4R4H5E+jLoU+c7/yBb/CvEyvbvMrqH
-         uffA==
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=O3kXD3ITk26oSSwgybzR3DA5D7KEBzcJ5ceoicOhdOc=;
+        b=UWOX6NrEQM65f8yYWtG3hrWSu+9eksyHelP7U35bP5SE9k8LSeuZaS0IaJbyV2joDp
+         XeF9a42UIjCEj6E3L86E+N91GPBmgrqxjrK1Y4R6G352RYsyAJBgZk9H4RdOGsUFeKjW
+         a/mFno/1qZyan/M8yy2/0jEeOC38fDIyYHWDLW+6PwPCogj6c9Dzr8eDYXjPXp4HMXRf
+         ByHpwBkeUD2tSezpumbyB7+pnCFr+rDWrthbJT5GYiYiAqMUFC4ZPMyaDcl5BZYKlwRE
+         ikNdp749WVWXMA592QdyJpN5/K02GtR0jOMUdf77PS/AB+9+uA4mGP8eQaA8H++7Nveb
+         Drwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RO2OZsOswAnqzoxA5Kah+EcYVhjoBdIBVPEusFbAhx8=;
-        b=W+5Jk0Y/uRNiylX5qV5Zbv3tj1M/GU38rlNOXCXKCoI4nc2Tukxhl0SLwDH7nBn92H
-         8ZEQHszZdooJlfFKXFxVtFh0hO60qh+T21+lcRUkR+s1rfEpSMX09X5O/4yCHgXwQsBr
-         N11roEIRxIWxI355qPEviO8fT2hKw1Ux8/IDAsEihYSKNgvjUQTFCStalA9VwO6tv6DX
-         /0M3A4caYGNwKHJEQzv1O1/h3LH2JklDkLXBuKhrr35dJ9lzt7JEuvxDLR3AB+2WuTQ4
-         2dTr5Mf6nsHfQGVctrn2hP+kZasa/aUQ+p0gDnDWxgCa2Hj0swPeZldoIQYPwk5iR2Ux
-         fEdQ==
-X-Gm-Message-State: APjAAAV4CJOWbA8APX7ORD6qRauOd1XUs4/R9IZtq1eFJmKetg5I+ClT
-        8wawnStTe2kmlq2tJUmk/jgzYQ==
-X-Google-Smtp-Source: APXvYqypeJLt6TpwEDU4qmkzd+WMK3Vx9kRrxD1fX0sLQmNDlYJDgW7Ki0ExxXNjnH0JE6d2Z1Sq0A==
-X-Received: by 2002:a24:4c4e:: with SMTP id a75mr29422291itb.42.1558364143993;
-        Mon, 20 May 2019 07:55:43 -0700 (PDT)
-Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
-        by smtp.googlemail.com with ESMTPSA id 69sm4206643itl.7.2019.05.20.07.55.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 07:55:43 -0700 (PDT)
-Subject: Re: [PATCH 12/18] soc: qcom: ipa: immediate commands
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Miller <davem@davemloft.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        syadagir@codeaurora.org, mjavid@codeaurora.org,
-        evgreen@chromium.org, Ben Chan <benchan@google.com>,
-        Eric Caruso <ejcaruso@google.com>, abhishek.esse@gmail.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-References: <20190512012508.10608-1-elder@linaro.org>
- <20190512012508.10608-13-elder@linaro.org>
- <CAK8P3a3v2fzSBmYk1vG7sKJ9jnAWGt_u91EuLC7f5jq_PqrKXQ@mail.gmail.com>
- <f92bfb59-07bb-e8c0-c307-cd69da7ccd8a@linaro.org>
- <5d948d74-f739-0cfa-8fae-b15c20fbe7ec@linaro.org>
- <CAK8P3a3161Oc3ALB74LTuDny-aO9E4VGYpmqQSNoDNbj6PhRsQ@mail.gmail.com>
-From:   Alex Elder <elder@linaro.org>
-Message-ID: <d29335f3-75f3-00f6-8ae9-690ef3bffa96@linaro.org>
-Date:   Mon, 20 May 2019 09:55:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=O3kXD3ITk26oSSwgybzR3DA5D7KEBzcJ5ceoicOhdOc=;
+        b=XsT2oNCuzlZXkI/GUcncgCWh2N2gH2H/KA64qcfnssLJrN1+oBESjZlXx1V/+wzoAQ
+         Sq6kpV1b9mfTL/1dUIqdRAZp7GehaVGWOFtI4IK1osprH5iYQx35Z0m1jebLfMbHlq8H
+         H+Z5GvYTfdQmEjlqHxQVb5SWsNnSzCv9pygglbOYxi2dxEaTI/q7ZTYwBTpFXYubF1+E
+         k1HLXzwUS4n622y3vpYNHT+a5mYsvfUcuVj20RfVyMsfk0Hpdht7InpKGJnHj7gk5t43
+         XcmVtUu1C+ezZlQHJIDDo/2zDC2PXvycuC09QECGqWHaYaDgl6EURRzMQoo2my9FH1jc
+         wsXQ==
+X-Gm-Message-State: APjAAAVxF0U4TQZR5MKa1k9OocA58YD0oYiVyqSvIOidM+E8NVjpCQ6t
+        eyy1pwz9JIDCErb7vqH/acY=
+X-Google-Smtp-Source: APXvYqx2hkmlDblKAZscUFiS/KNuLl3PIT6eGhZM/LWHjV/4nRDBV7z+Y/WaRRVZubAjfRObVnJt5A==
+X-Received: by 2002:a62:7608:: with SMTP id r8mr780980pfc.190.1558364214465;
+        Mon, 20 May 2019 07:56:54 -0700 (PDT)
+Received: from localhost (193-116-79-244.tpgi.com.au. [193.116.79.244])
+        by smtp.gmail.com with ESMTPSA id t7sm20650667pfh.156.2019.05.20.07.56.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 20 May 2019 07:56:53 -0700 (PDT)
+Date:   Tue, 21 May 2019 00:55:49 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: PROBLEM: Power9: kernel oops on memory hotunplug from ppc64le
+ guest
+To:     bharata@linux.ibm.com
+Cc:     aneesh.kumar@linux.ibm.com, bharata@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        srikanth <sraithal@linux.vnet.ibm.com>
+References: <16a7a635-c592-27e2-75b4-d02071833278@linux.vnet.ibm.com>
+        <20190518141434.GA22939@in.ibm.com>
+        <878sv1993k.fsf@concordia.ellerman.id.au>
+        <20190520042533.GB22939@in.ibm.com>
+        <1558327521.633yjtl8ki.astroid@bobo.none>
+        <20190520055622.GC22939@in.ibm.com>
+        <1558335484.9inx69a7ea.astroid@bobo.none>
+        <20190520082035.GD22939@in.ibm.com> <20190520142922.GE22939@in.ibm.com>
+In-Reply-To: <20190520142922.GE22939@in.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3161Oc3ALB74LTuDny-aO9E4VGYpmqQSNoDNbj6PhRsQ@mail.gmail.com>
+User-Agent: astroid/0.14.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1558363500.jsgl4a2lfa.astroid@bobo.none>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/20/19 9:50 AM, Arnd Bergmann wrote:
-> Ok, that sounds reasonable, yes. I'm not sure if
-> dma_alloc_coherent() guarantees zero-initialization
-> though, so if that is required, you may have to
-> add a memset().
-I had dma_zalloc_coherent() originally but I think
-Christoph Hellwig posted something recently that
-removed that function, because dma_alloc_coherent()
-always zeroes the underlying memory.
+Bharata B Rao's on May 21, 2019 12:29 am:
+> On Mon, May 20, 2019 at 01:50:35PM +0530, Bharata B Rao wrote:
+>> On Mon, May 20, 2019 at 05:00:21PM +1000, Nicholas Piggin wrote:
+>> > Bharata B Rao's on May 20, 2019 3:56 pm:
+>> > > On Mon, May 20, 2019 at 02:48:35PM +1000, Nicholas Piggin wrote:
+>> > >> >> > git bisect points to
+>> > >> >> >
+>> > >> >> > commit 4231aba000f5a4583dd9f67057aadb68c3eca99d
+>> > >> >> > Author: Nicholas Piggin <npiggin@gmail.com>
+>> > >> >> > Date:   Fri Jul 27 21:48:17 2018 +1000
+>> > >> >> >
+>> > >> >> >     powerpc/64s: Fix page table fragment refcount race vs spec=
+ulative references
+>> > >> >> >
+>> > >> >> >     The page table fragment allocator uses the main page refco=
+unt racily
+>> > >> >> >     with respect to speculative references. A customer observe=
+d a BUG due
+>> > >> >> >     to page table page refcount underflow in the fragment allo=
+cator. This
+>> > >> >> >     can be caused by the fragment allocator set_page_count sto=
+mping on a
+>> > >> >> >     speculative reference, and then the speculative failure ha=
+ndler
+>> > >> >> >     decrements the new reference, and the underflow eventually=
+ pops when
+>> > >> >> >     the page tables are freed.
+>> > >> >> >
+>> > >> >> >     Fix this by using a dedicated field in the struct page for=
+ the page
+>> > >> >> >     table fragment allocator.
+>> > >> >> >
+>> > >> >> >     Fixes: 5c1f6ee9a31c ("powerpc: Reduce PTE table memory was=
+tage")
+>> > >> >> >     Cc: stable@vger.kernel.org # v3.10+
+>> > >> >>=20
+>> > >> >> That's the commit that added the BUG_ON(), so prior to that you =
+won't
+>> > >> >> see the crash.
+>> > >> >=20
+>> > >> > Right, but the commit says it fixes page table page refcount unde=
+rflow by
+>> > >> > introducing a new field &page->pt_frag_refcount. Now we are hitti=
+ng the underflow
+>> > >> > for this pt_frag_refcount.
+>> > >>=20
+>> > >> The fixed underflow is caused by a bug (race on page count) that go=
+t=20
+>> > >> fixed by that patch. You are hitting a different underflow here. It=
+'s
+>> > >> not certain my patch caused it, I'm just trying to reproduce now.
+>> > >=20
+>> > > Ok.
+>> >=20
+>> > Can't reproduce I'm afraid, tried adding and removing 8GB memory from =
+a
+>> > 4GB guest (via host adding / removing memory device), and it just work=
+s.
+>>=20
+>> Boot, add 8G, reboot, remove 8G is the sequence to reproduce.
+>>=20
+>> >=20
+>> > It's likely to be an edge case like an off by one or rounding error
+>> > that just happens to trigger in your config. Might be easiest if you
+>> > could test with a debug patch.
+>>=20
+>> Sure, I will continue debugging.
+>=20
+> When the guest is rebooted after hotplug, the entire memory (which includ=
+es
+> the hotplugged memory) gets remapped again freshly. However at this time
+> since no slab is available yet, pt_frag_refcount never gets initialized a=
+s we
+> never do pte_fragment_alloc() for these mappings. So we right away hit th=
+e
+> underflow during the first unplug itself, it looks like.
 
-+Christoph, who might be able to explain or confirm
+Nice catch, good debugging work.
 
-					-Alex
+> I will check how this can be fixed.
+
+Tricky problem. What do you think? You might be able to make the early=20
+page table allocations in the same pattern as the frag allocations, and=20
+then fill in the struct page metadata when you have those.
+
+Other option may be create a new set of page tables after mm comes up
+to replace the early page tables with. That's a bigger hammer though.
+
+Thanks,
+Nick
+
+=
