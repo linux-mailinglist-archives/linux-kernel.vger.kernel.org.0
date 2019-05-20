@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33BDE23485
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22213236EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:17:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389561AbfETM1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:27:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43314 "EHLO mail.kernel.org"
+        id S2387719AbfETMSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:18:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389527AbfETM1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:27:43 -0400
+        id S1733208AbfETMS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:18:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0CCB20675;
-        Mon, 20 May 2019 12:27:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C64220656;
+        Mon, 20 May 2019 12:18:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355263;
-        bh=Y5gLgaKUCRhk57m/UXAViF0p7JGbNm1P9I90M+EkMGM=;
+        s=default; t=1558354705;
+        bh=cKO9/xSxyH2xpC+xVrRNNnOCL61zENGJ0t5X4aAQJwc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i5+P7mxew/+nKSX5IM/+YsKeMfPT+iX84ANL/33Fw/3gtA9K6RReyj18mHhD5wDgL
-         NuAuJnAicFvKf8JQ/xhha4TZrDg6U2ASn/sFQtS9VPhucsEFahyjTXjjfqQKXhdYDY
-         59kAZaE4upZukj7nuJGVok+YPKeNc+9FZ3Pd5q94=
+        b=cDjCBvVN1bpCdsiAl5w1KhgjkTZw/UfYRnKbMEiBMS5EjPkPh01/J3Oh2l/K5TuK3
+         5CyaYQiR5q1DOSqAb/M/bo0lEt+qml65KAYN/BlSZK6JcWyWnujryhQFowatVWK5Dp
+         fHlBdXSVseVqUB65Segu0iVNz+LLYkomsDRqLS1c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.0 051/123] ALSA: hda/realtek - EAPD turn on later
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 4.14 12/63] power: supply: axp288_charger: Fix unchecked return value
 Date:   Mon, 20 May 2019 14:13:51 +0200
-Message-Id: <20190520115248.128333567@linuxfoundation.org>
+Message-Id: <20190520115232.528988173@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
-References: <20190520115245.439864225@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+References: <20190520115231.137981521@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kailang Yang <kailang@realtek.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 607ca3bd220f4022e6f5356026b19dafc363863a upstream.
+commit c3422ad5f84a66739ec6a37251ca27638c85b6be upstream.
 
-Let EAPD turn on after set pin output.
+Currently there is no check on platform_get_irq() return value
+in case it fails, hence never actually reporting any errors and
+causing unexpected behavior when using such value as argument
+for function regmap_irq_get_virq().
 
-[ NOTE: This change is supposed to reduce the possible click noises at
-  (runtime) PM resume.  The functionality should be same (i.e. the
-  verbs are executed correctly) no matter which order is, so this
-  should be safe to apply for all codecs -- tiwai ]
+Fix this by adding a proper check, a message reporting any errors
+and returning *pirq*
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Addresses-Coverity-ID: 1443940 ("Improper use of negative value")
+Fixes: 843735b788a4 ("power: axp288_charger: axp288 charger driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/power/supply/axp288_charger.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -803,11 +803,10 @@ static int alc_init(struct hda_codec *co
- 	if (spec->init_hook)
- 		spec->init_hook(codec);
- 
-+	snd_hda_gen_init(codec);
- 	alc_fix_pll(codec);
- 	alc_auto_init_amp(codec, spec->init_amp);
- 
--	snd_hda_gen_init(codec);
--
- 	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_INIT);
- 
- 	return 0;
+--- a/drivers/power/supply/axp288_charger.c
++++ b/drivers/power/supply/axp288_charger.c
+@@ -881,6 +881,10 @@ static int axp288_charger_probe(struct p
+ 	/* Register charger interrupts */
+ 	for (i = 0; i < CHRG_INTR_END; i++) {
+ 		pirq = platform_get_irq(info->pdev, i);
++		if (pirq < 0) {
++			dev_err(&pdev->dev, "Failed to get IRQ: %d\n", pirq);
++			return pirq;
++		}
+ 		info->irq[i] = regmap_irq_get_virq(info->regmap_irqc, pirq);
+ 		if (info->irq[i] < 0) {
+ 			dev_warn(&info->pdev->dev,
 
 
