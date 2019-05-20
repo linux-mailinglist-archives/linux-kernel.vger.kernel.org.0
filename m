@@ -2,134 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE4B423AD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96BC823B09
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391637AbfETOru (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:47:50 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45152 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732544AbfETOrt (ORCPT
+        id S2392093AbfETOsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:48:31 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38539 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391899AbfETOs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:47:49 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r76so12696536lja.12
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:47:48 -0700 (PDT)
+        Mon, 20 May 2019 10:48:27 -0400
+Received: by mail-wm1-f68.google.com with SMTP id t5so11993974wmh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 07:48:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lduM1D/30FHnKa/TxamjAn4bdPB0y468JNuwks7lSTQ=;
-        b=ZC0heqctg4mOdx1j9EMHSRagFdJdZJ6b9kHkjDQxtco1Csn3xTmsBYjOmu9YOcA7Q2
-         717eB1oJLOdvSZ3Vbzl9SlvBWMkMynGOxlLvsfSYGXyPmFsJnr+qT48ftsNhXTTVtnjj
-         +E7nwypgTJ0Hh66RUR0VT6tZoIi8XHPj7TBnsX7ru9FfzjfvfmX74muund4krn1SFnsS
-         x9CopEVxxXevkrxfb98W12dtpSPuwb7bCFnwSbsj2//qAXEIRBDRzJShhbNPI/mlnBCR
-         iqrNazpmDZG2NwOrYWo1iDsBcX55HVhBpE/aYqWVIw2JJm1CdU+RxAZ8aajGL3IbsBFG
-         9g5A==
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=N7wB0bhMnAowtyDk7cjOKmaZEhZ6/2E0ef5LypbT5pM=;
+        b=DauQZ4rgS8TTJobEVuVF04IQ8OrrQsWx/7I3dVssObK0ub6Wu5l3OX+dW7klHHK0qm
+         VTzmbSB41r23etZTCBjrd8m+r36Fu5u/KMx97MMxNxqrc49IzLJgxrXuPKJbtCw731N2
+         2I/Or4zAH6edPPIHVOmx0J8f7ho+EcxpE4+E0tEGBsS3gW21YphO/NArsQ/NQg3lEiKL
+         oDh24dU1R+R5HUs2yW4HElupA/gn8GbEgZeLHFFkjPe+prcmClURRdntkwM4xCV3R301
+         oyEP0r/asVzA0N6Yse3cdeLbDHxEh1gQMX/6fsFKeqmxjgm0wnRNCfyORqg0I7sZtKZ1
+         ZpMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lduM1D/30FHnKa/TxamjAn4bdPB0y468JNuwks7lSTQ=;
-        b=O6HPkVW7N0H+olBA27f1GiV4Ra8SvZ+96xUWuN8NdRreAJVO/3J89Pxt8WbRF79keW
-         WDMcYMctnuxoCaDeQwb77ICB5zbCkrjHwuWlMlYveUCm+1ARkvRuedmM2lEFCHE3YGwr
-         K37LNRZb/HKl4sdh6HpD7L3p7LaPW68/ReQsLT5c0WR8p6P7vpCEVTcPxAEZdgdhc//2
-         nIJ8d8JGp+8WIeNdLMk28XNcep+dvnwDRqD5ck63p9hQejs8j7qpAOJEDco2AFQpIYnH
-         QBIw4tEP093t8DMZfugT9MmPtoi4psUqyCtmKKDE7RNm6G08Ph0cfrYlNlhlRXgFtsjx
-         xXuQ==
-X-Gm-Message-State: APjAAAURFGId2aqZiH372Ra1FKnNbi0Y/6tURVE1lSUkFCEkAYMp7ln4
-        T7L+z84oEo5dinD9NVM+qIqyRQ==
-X-Google-Smtp-Source: APXvYqy49HmF/zVtrpBI/4FFwPmxErLVpwCnhMGaASUN4pBhhjDI0xWaYrQSipQDNjEyeHj1TIVEgg==
-X-Received: by 2002:a2e:6c0b:: with SMTP id h11mr2381223ljc.15.1558363667338;
-        Mon, 20 May 2019 07:47:47 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id z3sm3805757ljg.78.2019.05.20.07.47.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 07:47:46 -0700 (PDT)
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
- codec API
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N7wB0bhMnAowtyDk7cjOKmaZEhZ6/2E0ef5LypbT5pM=;
+        b=tV0DG+lkrFfdnGEXJn1GzCY8jkBvuDU1v+P8YeA9HP3hkjfjDfS0Bs/nRmJnvibs5l
+         4JnxglynHQ0hF2oUw7m9PmOfKMVbq/uJxXPT+eYrMaSCqsIQNDkgic5jx1t33PpjCR1p
+         wYAgilbdQf+Dlg0oQY0pRmjomq5H3f3qR2dKvoI/Mr81+5horO0xPBcI9DSmAfR0xixk
+         uVaj5IIURWcGXWaEmg3AN/r5tXRUbwb+rr1MOBfaRZxohfRf2H9oaUPdPxwxuEVGoC2/
+         DD3hinc18jcABIzbNmEipY+YILcOwXszNUw1z+BEUAuMrcw7m4OiOWEa8/9XJWzX1dCr
+         mPJQ==
+X-Gm-Message-State: APjAAAUvSZ9j0Nsdx6/X23Pjii/pUR/oKedfcFBHfuDB13aWxIy4l9og
+        62G2hWmpyBprqyR2pRSSpLrS/g==
+X-Google-Smtp-Source: APXvYqzgUfAfX/fOEqJpAu0H05y9iE6v85VXR9NGZP9lcwztHn9oG8QSJSLuvfJRMuYHnyshwQXXCQ==
+X-Received: by 2002:a1c:6a0e:: with SMTP id f14mr17177633wmc.69.1558363705786;
+        Mon, 20 May 2019 07:48:25 -0700 (PDT)
+Received: from brauner.io ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id z1sm3308970wrl.91.2019.05.20.07.48.24
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 20 May 2019 07:48:25 -0700 (PDT)
+Date:   Mon, 20 May 2019 16:48:23 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
- <20190117162008.25217-11-stanimir.varbanov@linaro.org>
- <60b3efff-31c1-bc04-8af9-deebb8bc013a@xs4all.nl>
- <fe51ae1e-6d2e-36bd-485a-d85520ad2386@linaro.org>
- <CAAFQd5Co3G1J4+HOcjtCb7p3rhLcm+1E=mPr2d=AtdOSuF_eKg@mail.gmail.com>
-Message-ID: <c56930e0-be6f-2ade-fcea-8ee0ff6247ec@linaro.org>
-Date:   Mon, 20 May 2019 17:47:44 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Andrew Morton <akpm@linux-foundation.org>, cyphar@cyphar.com,
+        David Howells <dhowells@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Reshetova, Elena" <elena.reshetova@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Daniel Colascione <dancol@google.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Android Kernel Team <kernel-team@android.com>
+Subject: Re: [PATCH v2 1/2] pid: add pidfd_open()
+Message-ID: <20190520144822.xfaifawi65jus6ng@brauner.io>
+References: <20190520134605.29116-1-christian@brauner.io>
+ <CAK8P3a1cZZ6SQe5mGjhga=MgTvCGF6OKyjvosR8J6z6EpH+rVA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5Co3G1J4+HOcjtCb7p3rhLcm+1E=mPr2d=AtdOSuF_eKg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1cZZ6SQe5mGjhga=MgTvCGF6OKyjvosR8J6z6EpH+rVA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
-
-On 4/24/19 3:39 PM, Tomasz Figa wrote:
-> On Wed, Apr 24, 2019 at 9:15 PM Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
->>
->> Hi Hans,
->>
->> On 2/15/19 3:44 PM, Hans Verkuil wrote:
->>> Hi Stanimir,
->>>
->>> I never paid much attention to this patch series since others were busy
->>> discussing it and I had a lot of other things on my plate, but then I heard
->>> that this patch made G_FMT blocking.
->>
->> OK, another option could be to block REQBUF(CAPTURE) until event from hw
->> is received that the stream is parsed and the resolution is correctly
->> set by application. Just to note that I'd think to this like a temporal
->> solution until gstreamer implements v4l events.
->>
->> Is that looks good to you?
+On Mon, May 20, 2019 at 04:37:03PM +0200, Arnd Bergmann wrote:
+> On Mon, May 20, 2019 at 3:46 PM Christian Brauner <christian@brauner.io> wrote:
+> >
+> > In line with Arnd's recent changes to consolidate syscall numbers across
+> > architectures, I have added the pidfd_open() syscall to all architectures
+> > at the same time.
 > 
-> Hmm, I thought we concluded that gstreamer sets the width and height
-> in OUTPUT queue before querying the CAPTURE queue and so making the
-> driver calculate the CAPTURE format based on what's set on OUTPUT
-> would work fine. Did I miss something?
+> Thanks! I've checked that the ones you have added are all
+> done correctly. However, double-checking that you got all of them,
+> I noticed that you missed mips-o32 and mips-n64. With those added:
+> 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-Nobody is miss something.
-
-First some background about how Venus implements stateful codec API.
-
-The Venus firmware can generate two events "sufficient" and
-"insufficient" buffer requirements (this includes decoder output buffer
-size and internal/scratch buffer sizes). Presently I always set minimum
-possible decoder resolution no matter what the user said, and by that
-way I'm sure that "insufficient" event will always be triggered by the
-firmware (the other reason to take this path is because this is the
-least-common-divider for all supported Venus hw/fw versions thus common
-code in the driver). The reconfiguration (during codec Initialization
-sequence) is made from STREAMON(CAPTURE) context. Now, to make that
-re-configuration happen I need to wait for "insufficient" event from
-firmware in order to know the real coded resolution.
-
-In the case of gstreamer where v4l2_events support is missing I have to
-block (wait for firmware event) REQBUF(CAPTURE) (vb2::queue_setup) or
-STREAMON(CAPTURE) (vb2::start_streaming).
-
-I tried to set the coded resolution to the firmware as-is it set by
-gstreamer but then I cannot receive the "sufficient" event for VP8 and
-VP9 codecs. So I return back to the solution with minimum resolution above.
-
-I'm open for suggestions.
-
--- 
-regards,
-Stan
+Perfect, will plumb mips-o32 and mips-n64 and resend once more with your
+ack added.
+Sidenote: You plan on merging the common syscall tables or will there be
+a script to do this work per-arch in the future?
