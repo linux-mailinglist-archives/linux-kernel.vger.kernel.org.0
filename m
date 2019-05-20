@@ -2,62 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E40C524026
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 20:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F370A238CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:52:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbfETSTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 14:19:40 -0400
-Received: from westpalmbeachmassagegroup.com ([45.35.221.60]:47467 "EHLO
-        wolfgangdigital.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727189AbfETSTj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 14:19:39 -0400
-To:     linux-kernel@vger.kernel.org
-Subject: Print your logo on USB drive
-Message-ID: <2eb053747a25e3162cba8a75e76b7c9e@esquire.com>
-Date:   Mon, 20 May 2019 15:50:53 +0200
-From:   "Heather" <heather@usblogo.space>
-Reply-To: flashdrive@aliyun.com
+        id S2390110AbfETNwT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 09:52:19 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7664 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731648AbfETNwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 09:52:18 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1F7CA5F45FA0FA683575;
+        Mon, 20 May 2019 21:52:16 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Mon, 20 May 2019
+ 21:52:04 +0800
+Subject: Re: [PATCH v2] scsi: libsas: no need to join wide port again in
+ sas_ex_discover_dev()
+To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20190520140600.22861-1-yanaijie@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <hare@suse.com>, <dan.j.williams@intel.com>, <jthumshirn@suse.de>,
+        <hch@lst.de>, <huangdaode@hisilicon.com>,
+        <chenxiang66@hisilicon.com>, <miaoxie@huawei.com>,
+        <zhaohongjiang@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <7b7c51db-15f3-d06b-ba58-8b6ef618f7d2@huawei.com>
+Date:   Mon, 20 May 2019 14:51:57 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190520140600.22861-1-yanaijie@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 20/05/2019 15:06, Jason Yan wrote:
+> Since we are processing events synchronously now, the second call of
+> sas_ex_join_wide_port() in sas_ex_discover_dev() is not needed. There
+> will be no races with other works in disco workqueue. So remove the
+> second sas_ex_join_wide_port().
+>
+> I did not change the return value of 'res' to error when discover failed
+> because we need to continue to discover other phys if one phy discover
+> failed. So let's keep that logic as before and just add a debug log to
+> detect the failure. And directly return if second fanout expander
+> attatched to the parent expander because it has nothing to do after the
+> phy is disabled.
+>
+> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+> ---
 
-I didn’t know if you had received my email from last week?
-
-We manufacture ALL custom LOGO and branded products – over 300,000 to
-choose from.
-
-The most asked about product that we make, is the custom printed USB flash
-drives!
-We can print your logo on them and load your digital images, videos and
-files!
-
-Here is what we include:
--Any size memory you need: 64MB up to 128GB
--We will print your logo on both sides, just ask!
--Very Low Order Minimums
--Need them quickly?  Not a problem, we offer Rush Service
-
-Email over a copy of your logo and we will create a design mock up for you
-at no cost!
-
-Our higher memory sizes are a really good option right now!
-
-Pricing is low right now, so let us know what you need and we will get you
-a quick quote.
-
-We always offer great rates for schools and nonprofits as well.
-
-Let us know what you would like quoted?
-
-Regards,
-
-Heather Millons
-Custom USB Account Manager
+Reviewed-by: John Garry <john.garry@huawei.com>
 
