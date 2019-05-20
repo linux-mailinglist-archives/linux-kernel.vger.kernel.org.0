@@ -2,60 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAA3823CE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 18:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16D4923C27
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:30:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391900AbfETQIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 12:08:02 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:50786 "EHLO deadmen.hmeau.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387973AbfETQIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 12:08:01 -0400
-X-Greylist: delayed 2127 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 12:08:01 EDT
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1hSkH4-00086s-4a; Mon, 20 May 2019 23:32:26 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1hSkGx-00023C-KB; Mon, 20 May 2019 23:32:19 +0800
-Date:   Mon, 20 May 2019 23:32:19 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Anirudh Gupta <anirudhrudr@gmail.com>
-Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Anirudh Gupta <anirudh.gupta@sophos.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] xfrm: Fix xfrm sel prefix length validation
-Message-ID: <20190520153219.oq3se5wvkasgbtkp@gondor.apana.org.au>
-References: <20190520093157.59825-1-anirudh.gupta@sophos.com>
+        id S2388611AbfETPa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:30:29 -0400
+Received: from mga03.intel.com ([134.134.136.65]:62180 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731262AbfETPa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 11:30:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 08:30:27 -0700
+X-ExtLoop1: 1
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga004.jf.intel.com with ESMTP; 20 May 2019 08:30:27 -0700
+Date:   Mon, 20 May 2019 08:33:23 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     Raj Ashok <ashok.raj@intel.com>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH] iommu/vt-d: Fix bind svm with multiple devices
+Message-ID: <20190520083323.1decb496@jacob-builder>
+In-Reply-To: <1557343366-18686-1-git-send-email-jacob.jun.pan@linux.intel.com>
+References: <1557343366-18686-1-git-send-email-jacob.jun.pan@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190520093157.59825-1-anirudh.gupta@sophos.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 03:01:56PM +0530, Anirudh Gupta wrote:
->
-> diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-> index eb8d14389601..fc2a8c08091b 100644
-> --- a/net/xfrm/xfrm_user.c
-> +++ b/net/xfrm/xfrm_user.c
-> @@ -149,7 +149,7 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
->  	int err;
->  
->  	err = -EINVAL;
-> -	switch (p->family) {
-> +	switch (p->sel.family) {
->  	case AF_INET:
->  		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
->  			goto out;
+Hi Joerg & David,
 
-You just removed the only verification of p->family...
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Any feedback on this one? Thanks.
+
+On Wed,  8 May 2019 12:22:46 -0700
+Jacob Pan <jacob.jun.pan@linux.intel.com> wrote:
+
+> If multiple devices try to bind to the same mm/PASID, we need to
+> set up first level PASID entries for all the devices. The current
+> code does not consider this case which results in failed DMA for
+> devices after the first bind.
+> 
+> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Reported-by: Mike Campin <mike.campin@intel.com>
+> ---
+>  drivers/iommu/intel-svm.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+> index 3a4b09a..f3d59d1 100644
+> --- a/drivers/iommu/intel-svm.c
+> +++ b/drivers/iommu/intel-svm.c
+> @@ -357,6 +357,21 @@ int intel_svm_bind_mm(struct device *dev, int
+> *pasid, int flags, struct svm_dev_ }
+>  
+>  		list_add_tail(&svm->list, &global_svm_list);
+> +	} else {
+> +		/*
+> +		 * Binding a new device with existing PASID, need to
+> setup
+> +		 * the PASID entry.
+> +		 */
+> +		spin_lock(&iommu->lock);
+> +		ret = intel_pasid_setup_first_level(iommu, dev,
+> +						mm ? mm->pgd :
+> init_mm.pgd,
+> +						svm->pasid,
+> FLPT_DEFAULT_DID,
+> +						mm ? 0 :
+> PASID_FLAG_SUPERVISOR_MODE);
+> +		spin_unlock(&iommu->lock);
+> +		if (ret) {
+> +			kfree(sdev);
+> +			goto out;
+> +		}
+>  	}
+>  	list_add_rcu(&sdev->list, &svm->devs);
+>  
+
+[Jacob Pan]
