@@ -2,58 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58D5724337
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 23:54:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE8422433D
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 23:56:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbfETVyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 17:54:25 -0400
-Received: from ms.lwn.net ([45.79.88.28]:36360 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725810AbfETVyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 17:54:24 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 23E726A2;
-        Mon, 20 May 2019 21:54:24 +0000 (UTC)
-Date:   Mon, 20 May 2019 15:54:23 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sven Eckelmann <sven@narfation.org>
-Subject: Re: linux-next: Fixes tag needs some work in the jc_docs tree
-Message-ID: <20190520155423.2ad5d16a@lwn.net>
-In-Reply-To: <20190521074435.7a277fd6@canb.auug.org.au>
-References: <20190521074435.7a277fd6@canb.auug.org.au>
-Organization: LWN.net
+        id S1726201AbfETV41 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 17:56:27 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36543 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfETV41 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 17:56:27 -0400
+Received: by mail-lj1-f196.google.com with SMTP id z1so13942617ljb.3
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 14:56:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fQ4KeHf0p+vNIrYYtj0hF0egs+JpVxpzz0DY2WetVec=;
+        b=NPWgBS+H1DcqLncApEZaEOk1dHll5azPVd0ixXvpRlmFqlMhfZmz304tqIbdMwA8yg
+         uVjba8+qaqevsdzt7R5gnbFe5bs3+xpBww/L9XUehLWmm6d7/sXWHd977uKFWKzOMCkH
+         kHshbhnNfTMIPrUdjZ/mhIpg0w2QHKsJFeRYrZaVK6e32ZLSbteQyEE9rjEAowwA+t1s
+         Mug/Oj3QBV0ec/3kt3dG+jtzXbu9ljXxc46/GtS2jVOPh5G0FAgY7FtZMY+vcPXDAHry
+         fDM/qEBVQ6/vbsxVbLR1uPYr56Dd6uT1B0EPPVxU0NipQ8AHcsnUB7rgmbngMee1gvTl
+         p2qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fQ4KeHf0p+vNIrYYtj0hF0egs+JpVxpzz0DY2WetVec=;
+        b=PJ3Td02LliAoFhhMDPO3mFACDBkLPss/vzCh75D0NxkaOExocSkCyzs6oTY3/fo0HS
+         d55d8EKqHbgQpsyeuiCrbllVtZFkhDSC0NeDyvrUV8BLsIoVaLUKA8sD0cBi4x+wt0Tr
+         E4jSvqaisxivqA1IEzS8mJSuuOlNRT5piKbLtUqlBzfeVhD58oRDrsbOelbTh1oQue7U
+         Zh11jXwIxC9SbRbjMe5mjRYQcuQsSIczpZpywnQoTBTjhjsIaQz+BhW6Du/QOaT0K+AO
+         QE0zxZ30XkbSlp3zmY/wp8w3Mn0Xl93wmNoPZJgETHBYV36mx7FON2gppV9aniBGBSob
+         q87Q==
+X-Gm-Message-State: APjAAAVE+zo67NJ5ViUTKiRinAelujLpaqdv6+ekREiPSCXbqgM3uUca
+        IbBuPoNuRV03JQHsWsnahrmKBaI6bqODbowWcgfZRwRRbCk=
+X-Google-Smtp-Source: APXvYqxh21iCFOO2IrTWYQZAbtOsCc3tfRmM9ybuXFfyKPTB0poOeDnP4yUUl0wxpBYSTa8u6LEnFRbCQmfyOjYiaXE=
+X-Received: by 2002:a2e:9192:: with SMTP id f18mr26205190ljg.112.1558389384826;
+ Mon, 20 May 2019 14:56:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+References: <20190516064304.24057-1-olof@lixom.net> <20190516064304.24057-2-olof@lixom.net>
+ <CAHk-=wj7uZ+rLecwEP+U3jRRPWRoB1QVTr8pHzTcmQadE=Ngvg@mail.gmail.com>
+ <CAK8P3a27zgq3c_iWHVfypAc-hLag06Bs=Q2D7bn4i4nVfPQSyw@mail.gmail.com> <CAOesGMgQ9kF08PDzA3LSjsXt-ETB8vAnqo2EjtbKEMJ5UrnJnw@mail.gmail.com>
+In-Reply-To: <CAOesGMgQ9kF08PDzA3LSjsXt-ETB8vAnqo2EjtbKEMJ5UrnJnw@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 20 May 2019 23:56:13 +0200
+Message-ID: <CACRpkdYBYHSgc_WRcCHobSCrLu0nN-Y9i=j7PFKtAPA9PbTwmQ@mail.gmail.com>
+Subject: Re: [GIT PULL 1/4] ARM: SoC platform updates
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        ARM SoC <arm@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 May 2019 07:44:35 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, May 16, 2019 at 7:10 PM Olof Johansson <olof@lixom.net> wrote:
+> On Thu, May 16, 2019 at 8:53 AM Arnd Bergmann <arnd@arndb.de> wrote:
 
-> In commit
-> 
->   9eaa65e8aad5 ("scripts/spdxcheck.py: Add dual license subdirectory")
-> 
-> Fixes tag
-> 
->   Fixes: 99871f2f9a4d ("scripts/spdxcheck.py: Fix path to deprecated licenses")
-> 
-> has these problem(s):
-> 
->   - Target SHA1 does not exist
-> 
-> Did you mean
-> 
-> Fixes: e6d319f68d4d ("scripts/spdxcheck.py: Fix path to deprecated licenses")
+> > > I'm going to remove that #ifdef in my merge, because I do *not* want
+> > > to see new warnings, and it doesn't seem to make any sense.
+> > >
+> > > Maybe that's the wrong resolution, please holler and let me know if
+> > > you want something else.
+> >
+> > As far as I can tell, that is the best fix, thanks for the cleanup!
+>
+> Yeah, this was entirely on me -- it was found and fixed on linux-next,
+> and Linus Walleij sent patches. However, as I was staging these pull
+> requests, I applied them to a branch of fixes that I'm collecting for
+> later this week instead of on top of the one I was sending.
+>
+> Thanks for fixing it up.
 
-Argh, sorry, I should have caught that.  Fixed, thanks.
+Oh well Linus wrote the bug and then Linus fixed it and then Linus
+fixed it.
 
-jon
+What is good to know is that no matter which Linus you use, you will
+always get the right fix.
+
+Yours,
+Linus Walleij
