@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0155823500
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67B8323655
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390542AbfETMcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:32:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49250 "EHLO mail.kernel.org"
+        id S2389454AbfETM1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:27:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390522AbfETMcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:32:22 -0400
+        id S2389432AbfETM1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:27:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBC90204FD;
-        Mon, 20 May 2019 12:32:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D8D9214DA;
+        Mon, 20 May 2019 12:27:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355542;
-        bh=0msjDw4e8JU1SNWYIWYp0Zm3hjgfapzuhX6gELrNtSI=;
+        s=default; t=1558355226;
+        bh=W6/X+FsS7lgY0ci9ipL3DN72hdu/rw1yHfoWA9Ns1Uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HgZgzeGtFvrJdDgyRMwZp1eMtldtWoE5iNSuKTO93V/O6YiR8NL9wHI1y0ka4XhPS
-         ZLanpa8iO2wgPDOVjLkLe+aQt14hhM503DWGnRwVvvLQMYNPBNkCbZtpBam2HE/+sb
-         BLuCORTrTfbfcKHjlNf2ODfGXV4Y2RX0dMk+bcZE=
+        b=cd9r/McMWhmk81W6DE+4Wo8bCralZGbsRgCl0QwkIGGdXf2SxA4RJFBqVByyYkd31
+         zmoiLyc1mRteM7lC6YTIiheAKNCD4HYaUG2F4OfyPsipJ7/jBFmIBuNyy+dYz043hO
+         4Q7TC1O/HArYBnAF9GxgMwKDl5yc1dfthQXBw0Ro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Ondrej=20Mosn=C3=A1=C4=8Dek?= <omosnacek@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Zhang Zhijie <zhangzj@rock-chips.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.1 031/128] crypto: vmx - fix copy-paste error in CTR mode
+Subject: [PATCH 5.0 038/123] crypto: rockchip - update IV buffer to contain the next IV
 Date:   Mon, 20 May 2019 14:13:38 +0200
-Message-Id: <20190520115251.741979733@linuxfoundation.org>
+Message-Id: <20190520115247.256348579@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Axtens <dja@axtens.net>
+From: Zhang Zhijie <zhangzj@rock-chips.com>
 
-commit dcf7b48212c0fab7df69e84fab22d6cb7c8c0fb9 upstream.
+commit f0cfd57b43fec65761ca61d3892b983a71515f23 upstream.
 
-The original assembly imported from OpenSSL has two copy-paste
-errors in handling CTR mode. When dealing with a 2 or 3 block tail,
-the code branches to the CBC decryption exit path, rather than to
-the CTR exit path.
+The Kernel Crypto API request output the next IV data to
+IV buffer for CBC implementation. So the last block data of
+ciphertext should be copid into assigned IV buffer.
 
-This leads to corruption of the IV, which leads to subsequent blocks
-being corrupted.
-
-This can be detected with libkcapi test suite, which is available at
-https://github.com/smuellerDD/libkcapi
-
-Reported-by: Ondrej Mosnáček <omosnacek@gmail.com>
-Fixes: 5c380d623ed3 ("crypto: vmx - Add support for VMS instructions by ASM")
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Tested-by: Michael Ellerman <mpe@ellerman.id.au>
-Tested-by: Ondrej Mosnacek <omosnacek@gmail.com>
+Reported-by: Eric Biggers <ebiggers@google.com>
+Fixes: 433cd2c617bf ("crypto: rockchip - add crypto driver for rk3288")
+Cc: <stable@vger.kernel.org> # v4.5+
+Signed-off-by: Zhang Zhijie <zhangzj@rock-chips.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/vmx/aesp8-ppc.pl |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/rockchip/rk3288_crypto_ablkcipher.c |   25 +++++++++++++++------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
---- a/drivers/crypto/vmx/aesp8-ppc.pl
-+++ b/drivers/crypto/vmx/aesp8-ppc.pl
-@@ -1854,7 +1854,7 @@ Lctr32_enc8x_three:
- 	stvx_u		$out1,$x10,$out
- 	stvx_u		$out2,$x20,$out
- 	addi		$out,$out,0x30
--	b		Lcbc_dec8x_done
-+	b		Lctr32_enc8x_done
+--- a/drivers/crypto/rockchip/rk3288_crypto_ablkcipher.c
++++ b/drivers/crypto/rockchip/rk3288_crypto_ablkcipher.c
+@@ -250,9 +250,14 @@ static int rk_set_data_start(struct rk_c
+ 	u8 *src_last_blk = page_address(sg_page(dev->sg_src)) +
+ 		dev->sg_src->offset + dev->sg_src->length - ivsize;
  
- .align	5
- Lctr32_enc8x_two:
-@@ -1866,7 +1866,7 @@ Lctr32_enc8x_two:
- 	stvx_u		$out0,$x00,$out
- 	stvx_u		$out1,$x10,$out
- 	addi		$out,$out,0x20
--	b		Lcbc_dec8x_done
-+	b		Lctr32_enc8x_done
+-	/* store the iv that need to be updated in chain mode */
+-	if (ctx->mode & RK_CRYPTO_DEC)
++	/* Store the iv that need to be updated in chain mode.
++	 * And update the IV buffer to contain the next IV for decryption mode.
++	 */
++	if (ctx->mode & RK_CRYPTO_DEC) {
+ 		memcpy(ctx->iv, src_last_blk, ivsize);
++		sg_pcopy_to_buffer(dev->first, dev->src_nents, req->info,
++				   ivsize, dev->total - ivsize);
++	}
  
- .align	5
- Lctr32_enc8x_one:
+ 	err = dev->load_data(dev, dev->sg_src, dev->sg_dst);
+ 	if (!err)
+@@ -288,13 +293,19 @@ static void rk_iv_copyback(struct rk_cry
+ 	struct ablkcipher_request *req =
+ 		ablkcipher_request_cast(dev->async_req);
+ 	struct crypto_ablkcipher *tfm = crypto_ablkcipher_reqtfm(req);
++	struct rk_cipher_ctx *ctx = crypto_ablkcipher_ctx(tfm);
+ 	u32 ivsize = crypto_ablkcipher_ivsize(tfm);
+ 
+-	if (ivsize == DES_BLOCK_SIZE)
+-		memcpy_fromio(req->info, dev->reg + RK_CRYPTO_TDES_IV_0,
+-			      ivsize);
+-	else if (ivsize == AES_BLOCK_SIZE)
+-		memcpy_fromio(req->info, dev->reg + RK_CRYPTO_AES_IV_0, ivsize);
++	/* Update the IV buffer to contain the next IV for encryption mode. */
++	if (!(ctx->mode & RK_CRYPTO_DEC)) {
++		if (dev->aligned) {
++			memcpy(req->info, sg_virt(dev->sg_dst) +
++				dev->sg_dst->length - ivsize, ivsize);
++		} else {
++			memcpy(req->info, dev->addr_vir +
++				dev->count - ivsize, ivsize);
++		}
++	}
+ }
+ 
+ static void rk_update_iv(struct rk_crypto_info *dev)
 
 
