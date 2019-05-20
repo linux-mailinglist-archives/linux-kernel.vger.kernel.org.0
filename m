@@ -2,105 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2C59240CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 21:02:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D414F240DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 21:06:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbfETTB7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 15:01:59 -0400
-Received: from mga05.intel.com ([192.55.52.43]:65229 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbfETTB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 15:01:58 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 12:01:58 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by FMSMGA003.fm.intel.com with ESMTP; 20 May 2019 12:01:58 -0700
-Date:   Mon, 20 May 2019 12:01:58 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH 2/2] KVM: x86/pmu: do not mask the value that is written
- to fixed PMUs
-Message-ID: <20190520190158.GE28482@linux.intel.com>
-References: <1558366951-19259-1-git-send-email-pbonzini@redhat.com>
- <1558366951-19259-3-git-send-email-pbonzini@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1558366951-19259-3-git-send-email-pbonzini@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1726366AbfETTGD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 15:06:03 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44587 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfETTGD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 15:06:03 -0400
+Received: by mail-ed1-f65.google.com with SMTP id b8so25376985edm.11;
+        Mon, 20 May 2019 12:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=QLcESIrpuKvmGLuYzNttnrvxoFbU5Wzb2EEq5RaQWcI=;
+        b=bvEQWMOcSw18XS8JoBz0bG4i2ezv+hVW585GGY5YJPSTvmuCLYqn1fNBPYsb8Ymg4B
+         NhpnWTr2rwIvjX0dw1cwM408YbXHiQVGgwh8XbKzbd3prPdn4OQhGfNSeBB5GnR/F3XT
+         64vcExWjTl5djcEgJWho45n+pRl4xeVRK580K6LPTelNw/5aac4JLR2kiUTdGb6wWot8
+         139YRlWWFt8Jg9ySuN8k99GoOKa1SvtYa+MCgMC+9nlfIaCnS9sjFQgdxgEJiQoI8OSp
+         RfiJfH8HZlSqKLfBa+1AiZn+cvrErjtV98LAqy62N580ls1EbNj6xgc5PUOBPrxm79ar
+         yn6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QLcESIrpuKvmGLuYzNttnrvxoFbU5Wzb2EEq5RaQWcI=;
+        b=Y7jf38yWDBXidrly3CM/1q/SWO/ifAFWE5BUIs7ESEbq4ODz16EXmmwF0KT+819x7q
+         1sXV1lxMTlc7v0coHXi8xe0j5lrKvuRCjvY6dQ/acoR3EF0nWPvJwP1Fgy1F/9/ZHkVf
+         49FnfRLR/scCi5gX+7JpvEmXXt9o01cSiUblwFTYA2+ZpBdHtm1AYnb+YkTRZDpBDQ2k
+         1hNZcw0qLqzY3iC521gNX4qEVAriwm/OFfIMD9CQsoju1SZzM/d7b2O4gs0of+ARECQG
+         hD1yTI62cV1lItNg6SHBf43pSd3YZfsqODkMKD9/sSaqydkQ42PgQC2LlyeAQg3B0fsh
+         2rtA==
+X-Gm-Message-State: APjAAAXUR7B4OIU/aGRKXVxxObr3+1tYe2e1tN7z5ejQeC7Q09wnSEiQ
+        lB+ubumf9BxheW5SKvPCfXI=
+X-Google-Smtp-Source: APXvYqy1cvBYRYvUUPBq3x7QnOhRgMyNfx+sQ7tJyAHNBw0AcvHwtSZToEfucyN4dWcRcWP70hRsnA==
+X-Received: by 2002:a50:b487:: with SMTP id w7mr79029009edd.45.1558379161539;
+        Mon, 20 May 2019 12:06:01 -0700 (PDT)
+Received: from mail.broadcom.com ([192.19.231.250])
+        by smtp.gmail.com with ESMTPSA id 11sm3201967ejv.64.2019.05.20.12.05.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 12:06:00 -0700 (PDT)
+From:   Kamal Dasu <kdasu.kdev@gmail.com>
+To:     linux-mtd@lists.infradead.org
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-bindings: mtd: brcmnand: Make nand-ecc-strength and nand-ecc-step-size optional
+Date:   Mon, 20 May 2019 15:05:11 -0400
+Message-Id: <1558379144-28283-1-git-send-email-kdasu.kdev@gmail.com>
+X-Mailer: git-send-email 1.9.0.138.g2de3478
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 05:42:31PM +0200, Paolo Bonzini wrote:
-> According to the SDM, for MSR_IA32_PERFCTR0/1 "the lower-order 32 bits of
-> each MSR may be written with any value, and the high-order 8 bits are
-> sign-extended according to the value of bit 31", but the fixed counters
-> in real hardware appear to be limited to the width of the fixed counters.
-> Fix KVM to do the same.
+nand-ecc-strength and nand-ecc-step-size can be made optional as
+brcmnand driver can support using raw NAND layer detected values.
 
-The section of the SDM you're quoting relates to P6 behavior, which
-predates the architectural perfmons.  Section 18.2.1.1 "Architectural
-Performance Monitoring Version 1 Facilities" has a more relevant blurb
-for the MSR_IA32_PERFCTRx change (slightly modified to eliminate
-embarassing typos in the SDM):
+Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
+---
+ Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  The bit width of an IA32_PMCx MSR is reported using CPUID.0AH:EAXH[23:16].
-  This is the number of valid bits for read operation.  On write operations,
-  the lower-order 32-bits of the MSR may be written with any value, and the
-  high-order bits are sign-extended from the value of bit 31.
+diff --git a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
+index bcda1df..29feaba 100644
+--- a/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
++++ b/Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
+@@ -101,10 +101,10 @@ Required properties:
+                               number (e.g., 0, 1, 2, etc.)
+ - #address-cells            : see partition.txt
+ - #size-cells               : see partition.txt
+-- nand-ecc-strength         : see nand.txt
+-- nand-ecc-step-size        : must be 512 or 1024. See nand.txt
+ 
+ Optional properties:
++- nand-ecc-strength         : see nand.txt
++- nand-ecc-step-size        : must be 512 or 1024. See nand.txt
+ - nand-on-flash-bbt         : boolean, to enable the on-flash BBT for this
+                               chip-select. See nand.txt
+ - brcm,nand-oob-sector-size : integer, to denote the spare area sector size
+-- 
+1.9.0.138.g2de3478
 
-And for the fixed counters, section 18.2.2 "Architectural Performance
-Monitoring Version 2":
-
-  The facilities provided by architectural performance monitoring version 2
-  can be queried from CPUID leaf 0AH by examinng the content of register EDX:
-
-    - Bits 5 through 12 of CPUID.0AH.EDX indicates the bit-width of fixed-
-      function performance counters.  Bits beyond the width of the fixed-
-      function counter are reserved and must be written as zeros.
-
-> 
-> Reported-by: Nadav Amit <nadav.amit@gmail.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> ---
->  arch/x86/kvm/vmx/pmu_intel.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/vmx/pmu_intel.c b/arch/x86/kvm/vmx/pmu_intel.c
-> index b6f5157445fe..a99613a060dd 100644
-> --- a/arch/x86/kvm/vmx/pmu_intel.c
-> +++ b/arch/x86/kvm/vmx/pmu_intel.c
-> @@ -240,11 +240,14 @@ static int intel_pmu_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  		}
->  		break;
->  	default:
-> -		if ((pmc = get_gp_pmc(pmu, msr, MSR_IA32_PERFCTR0)) ||
-> -		    (pmc = get_fixed_pmc(pmu, msr))) {
-> -			if (!msr_info->host_initiated)
-> -				data = (s64)(s32)data;
-> -			pmc->counter += data - pmc_read_counter(pmc);
-> +		if ((pmc = get_gp_pmc(pmu, msr, MSR_IA32_PERFCTR0))) {
-> +			if (msr_info->host_initiated)
-> +				pmc->counter = data;
-> +			else
-> +				pmc->counter = (s32)data;
-> +			return 0;
-> +		} else if ((pmc = get_fixed_pmc(pmu, msr))) {
-> +			pmc->counter = data;
-
-Would it make sense to inject a #GP if the guest attempts to set bits that
-are reserved to be zero, e.g. based on guest CPUID?
-
->  			return 0;
->  		} else if ((pmc = get_gp_pmc(pmu, msr, MSR_P6_EVNTSEL0))) {
->  			if (data == pmc->eventsel)
-> -- 
-> 1.8.3.1
-> 
