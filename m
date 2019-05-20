@@ -2,73 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EA932389C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AFA9238B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:48:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389516AbfETNqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 09:46:34 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36031 "EHLO
+        id S2389782AbfETNs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 09:48:26 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39405 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732626AbfETNqd (ORCPT
+        with ESMTP id S1726169AbfETNs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 09:46:33 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s17so14713154wru.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 06:46:31 -0700 (PDT)
+        Mon, 20 May 2019 09:48:26 -0400
+Received: by mail-wr1-f67.google.com with SMTP id w8so14711346wrl.6
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 06:48:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=DwppfX2HVonqBbct6w8ESqqGFkjlHJaSVDGaAUutfIw=;
-        b=VeaBWLfdRE4tAIxQOoa10LigBDx9tX0zYcuKwEi7o2xHW2ycpfLJehgbTNpS8SHJi2
-         jcXsckEolK5SwcRZA8YxgW2Ai9XqpwR4GpTjiZDhgxPive/lvPiRyiOV+EpUsuIebSq2
-         QAgcXlS8VaU509k27g8lCydLUqIwZSr3krcWSAdGQJu3pkJXlOAFaQlzNVqo6TB9OllP
-         xkA9Q49FWV2v9hBFJknv0jOn++Vh/MwD13DyYWlAFwJbIZq94A0oBcXj1HFBNRSVy8F2
-         /EPyD1Mh21EqOlwyCcSL+nw1omOidf5lwE9JJ5P3rmlwi3V1x4s824hyv6ktcu5KOUUi
-         WvFw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=s5sKOK1wXsgSaMO1AzQH4iq23iqC6NhMcHG8RaO68BM=;
+        b=iUgrk3QarzpnVXXJjcHmm8EhxkcUwGaGt8kISnK9TukpoyYGA7+gj8AGKI592kpAbv
+         LyPCIgD2H5dlq+FoG9Ce5ipLy474xpJi/4kfx9XLzXhcxPSpOSwlmY8w0W0nMXz5S6kT
+         BZAFlZd95pWjB0kW0tYRuWvewdK3ifBRR9y4NLWTmm7oOCzriFSzDyfhV6y0lkYr2yU+
+         sYCyzVQ0jjL2GtVBj+Mweou+I/bWcxrsuI35/UlbSO4eaKe8VqjrWrLMfFM4aHnORKDB
+         B9Amk9hvhTvaITAt/iyJ50t7NrS1mkx+ajlxpCef2Fja9ukBQ6Yq/REKl5GGW25Rnxxr
+         OoaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=DwppfX2HVonqBbct6w8ESqqGFkjlHJaSVDGaAUutfIw=;
-        b=RgcgYy8OVYi72bS+ruKank8S8vgZmMFxsgByPDYgmbXC9Gy9iuRk11iAQmvVa1cybR
-         pMVfxN+qf2G1jPTAjTfQekiiawFN+ZPNMgBbowwCKU1lN4pbAHvuA8SS3VdT/Mwd78Qd
-         hIyC726cQ4xxApCnLG8mdkAjqvIkzy7wjWsjj8vYC+ZQ43AYDj7g+N/D3wR/BDLmBgkG
-         MJs0h4OHioZ5+ff7gm6w08GlWW2qkJoSdYtM4xXsUOJyNM4f4HOhEr9vXcFssNUPXwyA
-         oajD7GxUpsqfZfgX20l1WAT4lwWfWaqec0X2d/BaZV2IzG8Y0kVj4T2YdAKSPWwn7Oml
-         wBjQ==
-X-Gm-Message-State: APjAAAXbxAwnqkmrnyzTHedybTstrAYVDRJWjYIAnO5d0pYx3XWpZ1xW
-        M9YBHdQMbPf9FbHEHhmAwL2xCw==
-X-Google-Smtp-Source: APXvYqwcz/PhprR9leZBWHY7wgs5JlaBvvq4bd1Z9DYed6h7w33RIwhTnHfxoF2B7Sq7j400Oo8IUQ==
-X-Received: by 2002:a5d:4b81:: with SMTP id b1mr21218616wrt.217.1558359990608;
-        Mon, 20 May 2019 06:46:30 -0700 (PDT)
-Received: from localhost.localdomain ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id k17sm14506592wrm.73.2019.05.20.06.46.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 06:46:29 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     jannh@google.com, oleg@redhat.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        arnd@arndb.de
-Cc:     akpm@linux-foundation.org, cyphar@cyphar.com, dhowells@redhat.com,
-        ebiederm@xmission.com, elena.reshetova@intel.com,
-        keescook@chromium.org, luto@amacapital.net, luto@kernel.org,
-        tglx@linutronix.de, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, joel@joelfernandes.org,
-        dancol@google.com, serge@hallyn.com, surenb@google.com,
-        kernel-team@android.com, Christian Brauner <christian@brauner.io>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Subject: [PATCH v2 2/2] tests: add pidfd_open() tests
-Date:   Mon, 20 May 2019 15:46:05 +0200
-Message-Id: <20190520134605.29116-2-christian@brauner.io>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=s5sKOK1wXsgSaMO1AzQH4iq23iqC6NhMcHG8RaO68BM=;
+        b=e441D8SOQXkwEPiID5YHRRzfQVj5L2oC5QbJzdGMJGfS5s8IvatU86yGLFucLtvVR+
+         zrT+WQjB5eS0iqeUxNNKAh9lyJasRRG6xN1DbI8mdSWruf61R42hvMngxyvNInpmhto5
+         YjNs4VcgeiScb5XIpGCauO1wDuPMeU15U1cfJ/cJozvmlQFeMh3pfTwMNHVDoOxROh83
+         xZ9HuRXH8hyDwfKtisLypSh2xXqbUjg2WJ3M1wNADlBjY5lbX7jqnuBJ0NN276ZbCwn2
+         d1nBQMIamXpaYgFhbmofIGemiJCAOC65K35tDme7vVV5zAUvmxi3sMqfmeyyDaEKyoba
+         xKbg==
+X-Gm-Message-State: APjAAAXsznqANzGqEIMb32cv40Jh14IIhZAFS8ikR7xEVldiRLLH5ZCF
+        NL9v3fjHyrcqGmmdXAn/13bX9g==
+X-Google-Smtp-Source: APXvYqyUg6TkbDAAE6FFRfEtGNn0nmbTyFrH10vqBkNAGgn7Q6SzWFWsN+E2yrFIvFJj5Lg9hdGZTg==
+X-Received: by 2002:adf:ef83:: with SMTP id d3mr34485340wro.253.1558360104707;
+        Mon, 20 May 2019 06:48:24 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id h12sm12091358wre.14.2019.05.20.06.48.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 20 May 2019 06:48:24 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] arm64: dts: meson: g12a: add drive strength and hwrng
+Date:   Mon, 20 May 2019 15:48:14 +0200
+Message-Id: <20190520134817.25435-1-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520134605.29116-1-christian@brauner.io>
-References: <20190520134605.29116-1-christian@brauner.io>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,365 +61,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds testing for the new pidfd_open() syscalls. Specifically, we test:
-- that no invalid flags can be passed to pidfd_open()
-- that no invalid pid can be passed to pidfd_open()
-- that a pidfd can be retrieved with pidfd_open()
-- that the retrieved pidfd references the correct pid
+This patchset adds :
+- drive strength for the HDMI DDC and Ethernet pads
+- HWRNG node
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Joel Fernandes (Google) <joel@joelfernandes.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jann Horn <jannh@google.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc: Andy Lutomirsky <luto@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-api@vger.kernel.org
----
-v1: unchanged
-v2:
-- Christian Brauner <christian@brauner.io>:
-  - set number of planned tests via ksft_set_plan()
----
- tools/testing/selftests/pidfd/Makefile        |   2 +-
- tools/testing/selftests/pidfd/pidfd.h         |  57 ++++++
- .../testing/selftests/pidfd/pidfd_open_test.c | 169 ++++++++++++++++++
- tools/testing/selftests/pidfd/pidfd_test.c    |  41 +----
- 4 files changed, 228 insertions(+), 41 deletions(-)
- create mode 100644 tools/testing/selftests/pidfd/pidfd.h
- create mode 100644 tools/testing/selftests/pidfd/pidfd_open_test.c
+Dependencies: 
+- None
 
-diff --git a/tools/testing/selftests/pidfd/Makefile b/tools/testing/selftests/pidfd/Makefile
-index deaf8073bc06..b36c0be70848 100644
---- a/tools/testing/selftests/pidfd/Makefile
-+++ b/tools/testing/selftests/pidfd/Makefile
-@@ -1,6 +1,6 @@
- CFLAGS += -g -I../../../../usr/include/
- 
--TEST_GEN_PROGS := pidfd_test
-+TEST_GEN_PROGS := pidfd_test pidfd_open_test
- 
- include ../lib.mk
- 
-diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-new file mode 100644
-index 000000000000..8452e910463f
---- /dev/null
-+++ b/tools/testing/selftests/pidfd/pidfd.h
-@@ -0,0 +1,57 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __PIDFD_H
-+#define __PIDFD_H
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <sys/mount.h>
-+
-+#include "../kselftest.h"
-+
-+/*
-+ * The kernel reserves 300 pids via RESERVED_PIDS in kernel/pid.c
-+ * That means, when it wraps around any pid < 300 will be skipped.
-+ * So we need to use a pid > 300 in order to test recycling.
-+ */
-+#define PID_RECYCLE 1000
-+
-+/*
-+ * Define a few custom error codes for the child process to clearly indicate
-+ * what is happening. This way we can tell the difference between a system
-+ * error, a test error, etc.
-+ */
-+#define PIDFD_PASS 0
-+#define PIDFD_FAIL 1
-+#define PIDFD_ERROR 2
-+#define PIDFD_SKIP 3
-+#define PIDFD_XFAIL 4
-+
-+int wait_for_pid(pid_t pid)
-+{
-+	int status, ret;
-+
-+again:
-+	ret = waitpid(pid, &status, 0);
-+	if (ret == -1) {
-+		if (errno == EINTR)
-+			goto again;
-+
-+		return -1;
-+	}
-+
-+	if (!WIFEXITED(status))
-+		return -1;
-+
-+	return WEXITSTATUS(status);
-+}
-+
-+
-+#endif /* __PIDFD_H */
-diff --git a/tools/testing/selftests/pidfd/pidfd_open_test.c b/tools/testing/selftests/pidfd/pidfd_open_test.c
-new file mode 100644
-index 000000000000..0377133dd6dc
---- /dev/null
-+++ b/tools/testing/selftests/pidfd/pidfd_open_test.c
-@@ -0,0 +1,169 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <inttypes.h>
-+#include <limits.h>
-+#include <linux/types.h>
-+#include <linux/wait.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <sys/mount.h>
-+#include <sys/prctl.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include "pidfd.h"
-+#include "../kselftest.h"
-+
-+static inline int sys_pidfd_open(pid_t pid, unsigned int flags)
-+{
-+	return syscall(__NR_pidfd_open, pid, flags);
-+}
-+
-+static int safe_int(const char *numstr, int *converted)
-+{
-+	char *err = NULL;
-+	long sli;
-+
-+	errno = 0;
-+	sli = strtol(numstr, &err, 0);
-+	if (errno == ERANGE && (sli == LONG_MAX || sli == LONG_MIN))
-+		return -ERANGE;
-+
-+	if (errno != 0 && sli == 0)
-+		return -EINVAL;
-+
-+	if (err == numstr || *err != '\0')
-+		return -EINVAL;
-+
-+	if (sli > INT_MAX || sli < INT_MIN)
-+		return -ERANGE;
-+
-+	*converted = (int)sli;
-+	return 0;
-+}
-+
-+static int char_left_gc(const char *buffer, size_t len)
-+{
-+	size_t i;
-+
-+	for (i = 0; i < len; i++) {
-+		if (buffer[i] == ' ' ||
-+		    buffer[i] == '\t')
-+			continue;
-+
-+		return i;
-+	}
-+
-+	return 0;
-+}
-+
-+static int char_right_gc(const char *buffer, size_t len)
-+{
-+	int i;
-+
-+	for (i = len - 1; i >= 0; i--) {
-+		if (buffer[i] == ' '  ||
-+		    buffer[i] == '\t' ||
-+		    buffer[i] == '\n' ||
-+		    buffer[i] == '\0')
-+			continue;
-+
-+		return i + 1;
-+	}
-+
-+	return 0;
-+}
-+
-+static char *trim_whitespace_in_place(char *buffer)
-+{
-+	buffer += char_left_gc(buffer, strlen(buffer));
-+	buffer[char_right_gc(buffer, strlen(buffer))] = '\0';
-+	return buffer;
-+}
-+
-+static pid_t get_pid_from_fdinfo_file(int pidfd, const char *key, size_t keylen)
-+{
-+	int ret;
-+	char path[512];
-+	FILE *f;
-+	size_t n = 0;
-+	pid_t result = -1;
-+	char *line = NULL;
-+
-+	snprintf(path, sizeof(path), "/proc/self/fdinfo/%d", pidfd);
-+
-+	f = fopen(path, "re");
-+	if (!f)
-+		return -1;
-+
-+	while (getline(&line, &n, f) != -1) {
-+		char *numstr;
-+
-+		if (strncmp(line, key, keylen))
-+			continue;
-+
-+		numstr = trim_whitespace_in_place(line + 4);
-+		ret = safe_int(numstr, &result);
-+		if (ret < 0)
-+			goto out;
-+
-+		break;
-+	}
-+
-+out:
-+	free(line);
-+	fclose(f);
-+	return result;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	int pidfd = -1, ret = 1;
-+	pid_t pid;
-+
-+	ksft_set_plan(3);
-+
-+	pidfd = sys_pidfd_open(-1, 0);
-+	if (pidfd >= 0) {
-+		ksft_print_msg(
-+			"%s - succeeded to open pidfd for invalid pid -1\n",
-+			strerror(errno));
-+		goto on_error;
-+	}
-+	ksft_test_result_pass("do not allow invalid pid test: passed\n");
-+
-+	pidfd = sys_pidfd_open(getpid(), 1);
-+	if (pidfd >= 0) {
-+		ksft_print_msg(
-+			"%s - succeeded to open pidfd with invalid flag value specified\n",
-+			strerror(errno));
-+		goto on_error;
-+	}
-+	ksft_test_result_pass("do not allow invalid flag test: passed\n");
-+
-+	pidfd = sys_pidfd_open(getpid(), 0);
-+	if (pidfd < 0) {
-+		ksft_print_msg("%s - failed to open pidfd\n", strerror(errno));
-+		goto on_error;
-+	}
-+	ksft_test_result_pass("open a new pidfd test: passed\n");
-+
-+	pid = get_pid_from_fdinfo_file(pidfd, "Pid:", sizeof("Pid:") - 1);
-+	ksft_print_msg("pidfd %d refers to process with pid %d\n", pidfd, pid);
-+
-+	ret = 0;
-+
-+on_error:
-+	if (pidfd >= 0)
-+		close(pidfd);
-+
-+	return !ret ? ksft_exit_pass() : ksft_exit_fail();
-+}
-diff --git a/tools/testing/selftests/pidfd/pidfd_test.c b/tools/testing/selftests/pidfd/pidfd_test.c
-index 5bae1792e3d6..a03387052aa7 100644
---- a/tools/testing/selftests/pidfd/pidfd_test.c
-+++ b/tools/testing/selftests/pidfd/pidfd_test.c
-@@ -14,6 +14,7 @@
- #include <sys/wait.h>
- #include <unistd.h>
- 
-+#include "pidfd.h"
- #include "../kselftest.h"
- 
- static inline int sys_pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
-@@ -62,28 +63,6 @@ static int test_pidfd_send_signal_simple_success(void)
- 	return 0;
- }
- 
--static int wait_for_pid(pid_t pid)
--{
--	int status, ret;
--
--again:
--	ret = waitpid(pid, &status, 0);
--	if (ret == -1) {
--		if (errno == EINTR)
--			goto again;
--
--		return -1;
--	}
--
--	if (ret != pid)
--		goto again;
--
--	if (!WIFEXITED(status))
--		return -1;
--
--	return WEXITSTATUS(status);
--}
--
- static int test_pidfd_send_signal_exited_fail(void)
- {
- 	int pidfd, ret, saved_errno;
-@@ -128,13 +107,6 @@ static int test_pidfd_send_signal_exited_fail(void)
- 	return 0;
- }
- 
--/*
-- * The kernel reserves 300 pids via RESERVED_PIDS in kernel/pid.c
-- * That means, when it wraps around any pid < 300 will be skipped.
-- * So we need to use a pid > 300 in order to test recycling.
-- */
--#define PID_RECYCLE 1000
--
- /*
-  * Maximum number of cycles we allow. This is equivalent to PID_MAX_DEFAULT.
-  * If users set a higher limit or we have cycled PIDFD_MAX_DEFAULT number of
-@@ -143,17 +115,6 @@ static int test_pidfd_send_signal_exited_fail(void)
-  */
- #define PIDFD_MAX_DEFAULT 0x8000
- 
--/*
-- * Define a few custom error codes for the child process to clearly indicate
-- * what is happening. This way we can tell the difference between a system
-- * error, a test error, etc.
-- */
--#define PIDFD_PASS 0
--#define PIDFD_FAIL 1
--#define PIDFD_ERROR 2
--#define PIDFD_SKIP 3
--#define PIDFD_XFAIL 4
--
- static int test_pidfd_send_signal_recycled_pid_fail(void)
- {
- 	int i, ret;
+Neil Armstrong (3):
+  arm64: dts: meson: g12a: add drive-strength hdmi ddc pins
+  arm64: dts: meson: g12a: add drive strength for eth pins
+  arm64: dts: meson: g12a: Add hwrng node
+
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
 -- 
 2.21.0
 
