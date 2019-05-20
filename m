@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF8DA23372
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B516823648
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733290AbfETMQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:16:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57520 "EHLO mail.kernel.org"
+        id S2391284AbfETMoj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:44:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733298AbfETMQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:16:47 -0400
+        id S2389537AbfETM1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:27:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF26E20656;
-        Mon, 20 May 2019 12:16:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93FAF20815;
+        Mon, 20 May 2019 12:27:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354606;
-        bh=nVMnlszG0Mg/hy+jgxq26XNabFL/BiaZI+yWNNiXoks=;
+        s=default; t=1558355266;
+        bh=zJB3qhGxPWCYH21AF6fd26PvFecnkLrlf4xqniCa3DA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dTa3O5cGP+w155x08sTphv/lNB7tzNdc8PnBd6+66h0l1GTXrrHtlC+wVn3M7Ew/S
-         KtQtgPafwyccJei/kDsBf6wwE2OI3q7Fb0waonyQIxoMe/NaQONtmOhm4kWLX+W+mP
-         wePtZn+lAebMZZ/oFqAuq6ztoi3cbGyGn1juUSbI=
+        b=Ntf7D0EJCgGpwk4+dtcoNiTfirc+EKo+ndSUI9NbuCvkmAXAsfoNIxEywRPad3USC
+         jyzvJptdSZb1j9uTD6+UBHaWsGpKmi3xDEk4UAsO3QIbLCFjkzpUO6NBxwbmAkmrHk
+         1dYw+fPi7LMS5xiz2QFthuP+RwH9G8ZoRSRk48Xk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 03/44] PCI: hv: Fix a memory leak in hv_eject_device_work()
+        stable@vger.kernel.org, Jeremy Soller <jeremy@system76.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.0 052/123] ALSA: hdea/realtek - Headset fixup for System76 Gazelle (gaze14)
 Date:   Mon, 20 May 2019 14:13:52 +0200
-Message-Id: <20190520115231.364483225@linuxfoundation.org>
+Message-Id: <20190520115248.191475953@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
-References: <20190520115230.720347034@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 05f151a73ec2b23ffbff706e5203e729a995cdc2 ]
+From: Jeremy Soller <jeremy@system76.com>
 
-When a device is created in new_pcichild_device(), hpdev->refs is set
-to 2 (i.e. the initial value of 1 plus the get_pcichild()).
+commit 80a5052db75131423b67f38b21958555d7d970e4 upstream.
 
-When we hot remove the device from the host, in a Linux VM we first call
-hv_pci_eject_device(), which increases hpdev->refs by get_pcichild() and
-then schedules a work of hv_eject_device_work(), so hpdev->refs becomes
-3 (let's ignore the paired get/put_pcichild() in other places). But in
-hv_eject_device_work(), currently we only call put_pcichild() twice,
-meaning the 'hpdev' struct can't be freed in put_pcichild().
+On the System76 Gazelle (gaze14), there is a headset microphone input
+attached to 0x1a that does not have a jack detect. In order to get it
+working, the pin configuration needs to be set correctly, and the
+ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC fixup needs to be applied. This is
+identical to the patch already applied for the System76 Darter Pro
+(darp5).
 
-Add one put_pcichild() to fix the memory leak.
+Signed-off-by: Jeremy Soller <jeremy@system76.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-The device can also be removed when we run "rmmod pci-hyperv". On this
-path (hv_pci_remove() -> hv_pci_bus_exit() -> hv_pci_devices_present()),
-hpdev->refs is 2, and we do correctly call put_pcichild() twice in
-pci_devices_present_work().
-
-Fixes: 4daace0d8ce8 ("PCI: hv: Add paravirtual PCI front-end for Microsoft Hyper-V VMs")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-[lorenzo.pieralisi@arm.com: commit log rework]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
-Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/host/pci-hyperv.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/pci/hda/patch_realtek.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
-index b4d8ccfd9f7c2..200b415765264 100644
---- a/drivers/pci/host/pci-hyperv.c
-+++ b/drivers/pci/host/pci-hyperv.c
-@@ -1620,6 +1620,7 @@ static void hv_eject_device_work(struct work_struct *work)
- 	spin_unlock_irqrestore(&hpdev->hbus->device_list_lock, flags);
- 
- 	put_pcichild(hpdev, hv_pcidev_ref_childlist);
-+	put_pcichild(hpdev, hv_pcidev_ref_initial);
- 	put_pcichild(hpdev, hv_pcidev_ref_pnp);
- 	put_hvpcibus(hpdev->hbus);
- }
--- 
-2.20.1
-
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6930,6 +6930,8 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x1462, 0xb120, "MSI Cubi MS-B120", ALC283_FIXUP_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1462, 0xb171, "Cubi N 8GL (MS-B171)", ALC283_FIXUP_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1558, 0x1325, "System76 Darter Pro (darp5)", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x1558, 0x8550, "System76 Gazelle (gaze14)", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x1558, 0x8560, "System76 Gazelle (gaze14)", ALC293_FIXUP_SYSTEM76_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x17aa, 0x1036, "Lenovo P520", ALC233_FIXUP_LENOVO_MULTI_CODECS),
+ 	SND_PCI_QUIRK(0x17aa, 0x20f2, "Thinkpad SL410/510", ALC269_FIXUP_SKU_IGNORE),
+ 	SND_PCI_QUIRK(0x17aa, 0x215e, "Thinkpad L512", ALC269_FIXUP_SKU_IGNORE),
 
 
