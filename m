@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C1423576
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69458234CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:43:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391072AbfETMfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:35:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53434 "EHLO mail.kernel.org"
+        id S2390244AbfETMbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:31:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391057AbfETMfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:35:18 -0400
+        id S2390218AbfETMbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:31:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14ACB204FD;
-        Mon, 20 May 2019 12:35:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95ADE20645;
+        Mon, 20 May 2019 12:31:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355717;
-        bh=gDXp1YTVd1ZDb9dpxjABJtOXO5WdHbIWePTo2Hqkyqk=;
+        s=default; t=1558355461;
+        bh=9Lc2Xqg651QpBxUDV8+3G3GlLbdEU1hToyKIoZ7fvQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q3iTn7PJ8lz2fTc7q+uYi9DHnGe2yVduKObXg+9kuqA/HbdD1G6ZjRc3WfsJ3jfFc
-         DHdaNFXBz8kvCcWsp1UBckscVtoBMnpOdWxn5CTLXOOKt5Olnytc4a91MLnBZydlK6
-         CfYPtbLnT2LwZlej418y8LKMDHHVBnhYltLHHwUM=
+        b=eiIJI3eJZ4ZzkkyNg69BqS0NCF3yhdPDqXWYVYzNwu5NtkTaDDERFukQp/u1bX3HC
+         AKDDDQIgK6WKYqNwI9ifJSq1mWSJrhCjc9dZsZ6CQAF/UoxnyNY3KqHAvdZyqaZz2z
+         KcKC1OdrKYy39GTudg27+qp9uiaXyyaJrOQ1UCp4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.1 100/128] bcache: never set KEY_PTRS of journal key to 0 in journal_reclaim()
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.0 107/123] ALSA: hda/realtek - Fixup headphone noise via runtime suspend
 Date:   Mon, 20 May 2019 14:14:47 +0200
-Message-Id: <20190520115255.957450340@linuxfoundation.org>
+Message-Id: <20190520115252.183128858@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
+In-Reply-To: <20190520115245.439864225@linuxfoundation.org>
+References: <20190520115245.439864225@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,96 +43,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Kailang Yang <kailang@realtek.com>
 
-commit 1bee2addc0c8470c8aaa65ef0599eeae96dd88bc upstream.
+commit dad3197da7a3817f27bb24f7fd3c135ffa707202 upstream.
 
-In journal_reclaim() ja->cur_idx of each cache will be update to
-reclaim available journal buckets. Variable 'int n' is used to count how
-many cache is successfully reclaimed, then n is set to c->journal.key
-by SET_KEY_PTRS(). Later in journal_write_unlocked(), a for_each_cache()
-loop will write the jset data onto each cache.
+Dell platform with ALC298.
+system enter to runtime suspend. Headphone had noise.
+Let Headset Mic not shutup will solve this issue.
 
-The problem is, if all jouranl buckets on each cache is full, the
-following code in journal_reclaim(),
+[ Fixed minor coding style issues by tiwai ]
 
-529 for_each_cache(ca, c, iter) {
-530       struct journal_device *ja = &ca->journal;
-531       unsigned int next = (ja->cur_idx + 1) % ca->sb.njournal_buckets;
-532
-533       /* No space available on this device */
-534       if (next == ja->discard_idx)
-535               continue;
-536
-537       ja->cur_idx = next;
-538       k->ptr[n++] = MAKE_PTR(0,
-539                         bucket_to_sector(c, ca->sb.d[ja->cur_idx]),
-540                         ca->sb.nr_this_dev);
-541 }
-542
-543 bkey_init(k);
-544 SET_KEY_PTRS(k, n);
-
-If there is no available bucket to reclaim, the if() condition at line
-534 will always true, and n remains 0. Then at line 544, SET_KEY_PTRS()
-will set KEY_PTRS field of c->journal.key to 0.
-
-Setting KEY_PTRS field of c->journal.key to 0 is wrong. Because in
-journal_write_unlocked() the journal data is written in following loop,
-
-649	for (i = 0; i < KEY_PTRS(k); i++) {
-650-671		submit journal data to cache device
-672	}
-
-If KEY_PTRS field is set to 0 in jouranl_reclaim(), the journal data
-won't be written to cache device here. If system crahed or rebooted
-before bkeys of the lost journal entries written into btree nodes, data
-corruption will be reported during bcache reload after rebooting the
-system.
-
-Indeed there is only one cache in a cache set, there is no need to set
-KEY_PTRS field in journal_reclaim() at all. But in order to keep the
-for_each_cache() logic consistent for now, this patch fixes the above
-problem by not setting 0 KEY_PTRS of journal key, if there is no bucket
-available to reclaim.
-
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/bcache/journal.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ sound/pci/hda/patch_realtek.c |   59 ++++++++++++++++++++++++------------------
+ 1 file changed, 35 insertions(+), 24 deletions(-)
 
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -540,11 +540,11 @@ static void journal_reclaim(struct cache
- 				  ca->sb.nr_this_dev);
- 	}
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -477,12 +477,45 @@ static void alc_auto_setup_eapd(struct h
+ 		set_eapd(codec, *p, on);
+ }
  
--	bkey_init(k);
--	SET_KEY_PTRS(k, n);
--
--	if (n)
-+	if (n) {
-+		bkey_init(k);
-+		SET_KEY_PTRS(k, n);
- 		c->journal.blocks_free = c->sb.bucket_size >> c->block_bits;
-+	}
- out:
- 	if (!journal_full(&c->journal))
- 		__closure_wake_up(&c->journal.wait);
-@@ -671,6 +671,9 @@ static void journal_write_unlocked(struc
- 		ca->journal.seq[ca->journal.cur_idx] = w->data->seq;
- 	}
- 
-+	/* If KEY_PTRS(k) == 0, this jset gets lost in air */
-+	BUG_ON(i == 0);
++static int find_ext_mic_pin(struct hda_codec *codec);
 +
- 	atomic_dec_bug(&fifo_back(&c->journal.pin));
- 	bch_journal_next(&c->journal);
- 	journal_reclaim(c);
++static void alc_headset_mic_no_shutup(struct hda_codec *codec)
++{
++	const struct hda_pincfg *pin;
++	int mic_pin = find_ext_mic_pin(codec);
++	int i;
++
++	/* don't shut up pins when unloading the driver; otherwise it breaks
++	 * the default pin setup at the next load of the driver
++	 */
++	if (codec->bus->shutdown)
++		return;
++
++	snd_array_for_each(&codec->init_pins, i, pin) {
++		/* use read here for syncing after issuing each verb */
++		if (pin->nid != mic_pin)
++			snd_hda_codec_read(codec, pin->nid, 0,
++					AC_VERB_SET_PIN_WIDGET_CONTROL, 0);
++	}
++
++	codec->pins_shutup = 1;
++}
++
+ static void alc_shutup_pins(struct hda_codec *codec)
+ {
+ 	struct alc_spec *spec = codec->spec;
+ 
+-	if (!spec->no_shutup_pins)
+-		snd_hda_shutup_pins(codec);
++	switch (codec->core.vendor_id) {
++	case 0x10ec0286:
++	case 0x10ec0288:
++	case 0x10ec0298:
++		alc_headset_mic_no_shutup(codec);
++		break;
++	default:
++		if (!spec->no_shutup_pins)
++			snd_hda_shutup_pins(codec);
++		break;
++	}
+ }
+ 
+ /* generic shutup callback;
+@@ -2923,27 +2956,6 @@ static int alc269_parse_auto_config(stru
+ 	return alc_parse_auto_config(codec, alc269_ignore, ssids);
+ }
+ 
+-static int find_ext_mic_pin(struct hda_codec *codec);
+-
+-static void alc286_shutup(struct hda_codec *codec)
+-{
+-	const struct hda_pincfg *pin;
+-	int i;
+-	int mic_pin = find_ext_mic_pin(codec);
+-	/* don't shut up pins when unloading the driver; otherwise it breaks
+-	 * the default pin setup at the next load of the driver
+-	 */
+-	if (codec->bus->shutdown)
+-		return;
+-	snd_array_for_each(&codec->init_pins, i, pin) {
+-		/* use read here for syncing after issuing each verb */
+-		if (pin->nid != mic_pin)
+-			snd_hda_codec_read(codec, pin->nid, 0,
+-					AC_VERB_SET_PIN_WIDGET_CONTROL, 0);
+-	}
+-	codec->pins_shutup = 1;
+-}
+-
+ static void alc269vb_toggle_power_output(struct hda_codec *codec, int power_up)
+ {
+ 	alc_update_coef_idx(codec, 0x04, 1 << 11, power_up ? (1 << 11) : 0);
+@@ -7705,7 +7717,6 @@ static int patch_alc269(struct hda_codec
+ 	case 0x10ec0286:
+ 	case 0x10ec0288:
+ 		spec->codec_variant = ALC269_TYPE_ALC286;
+-		spec->shutup = alc286_shutup;
+ 		break;
+ 	case 0x10ec0298:
+ 		spec->codec_variant = ALC269_TYPE_ALC298;
 
 
