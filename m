@@ -2,106 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79CEB23E01
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:05:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9796323E08
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 19:08:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392703AbfETRFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 13:05:32 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41212 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390006AbfETRFb (ORCPT
+        id S2392724AbfETRID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 13:08:03 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41005 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390373AbfETRIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 13:05:31 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z3so7071811pgp.8
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 10:05:31 -0700 (PDT)
+        Mon, 20 May 2019 13:08:02 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f12so6996853plt.8
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 10:08:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4ZOI+jnwXBptD9UIpostnVMZFPCwcvxnpKvL3qurL40=;
-        b=Rg3JGm7cAcDM+AZNutQuRwGkJ3ubXbt1UCwOCgZnkJntyOzhCrWnunCiEjWY7ROSIZ
-         kVmBbyBsGGB57A5oVMp546xpWJgwU/oSoyDYqohN31no/hHulLW0cV3TFXQxHRGm3Arh
-         oZI0B0sNElaQefwHOOurYmhojHza1z+7f0MdJSYwJgf0UX78I0BFmHNhkkyTJP+ysJgA
-         1oq4KvyqLM9FGoFmGF0bhA3gzuw3Xcn/MOZUKRVRWJpoiE+3D/NOeDKnUVfhlEhq8tFr
-         ACelj15Q04D4dmGoY8dB6fOkc4qS2Hmb9f4IVHnDWYoNGwTJItV3oZNqdJ6Lf+b5E2oC
-         /1IA==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=ol97WAmP2eVJA2nRz/+2miX8OAofXhZkUB5qRp3k8dg=;
+        b=t1SUvr49nCz5spS7UjhK4JQ6Apy9p/w/1qE61fOdmFfmMryUBZ+WjIsoDVYyX0YN+x
+         j5og+gJgIsflpdRHMeu4i6xsY2+UzVuGO1IiAwFKq8YNFVdJFLj22bPvRVxM+yAVqLff
+         PAW3c3y2TigXGYgpCjxGUxipPCGGvoOz/MvCTNCPZ+zoHoiu1D+HVg1ssM9mD+mVjUiJ
+         qFpPpLRxtAxloaRyKdKCYeCSth/6Bh8xtBLIJjeKCHHG8MsLiaqMtwh6HoObu3XCANYy
+         hm+mE/IgGQR/lmsIIIq+EWSCEFhG9esI757NdeTwa4gSr1cwKurrdnZp96vRKZn5Hnrh
+         XHaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4ZOI+jnwXBptD9UIpostnVMZFPCwcvxnpKvL3qurL40=;
-        b=tdQ0b/McJPpDZIqnN7SeA5ylS0nv3sgIDtu9QiArsGaXyxBBNhnZ2AACfzBHcyPNae
-         n00zpRy53G2zZN3PkCKqxxX2KU6bFW1Ksrmn5e0Z1nD3Z7i2hwgrVtVrs9zhsaJidrkE
-         AYdSkd/QxDYkmYh65wwIjDHyaOGDXl6HxirjmuJ5E7Cx4MKEoa/ySVnMeOVDpOAf2HWy
-         8uWRorsLyk7bhpXWY2NWPoWXCurOMVOnJAefAMyh9QY5xmDN9it33WB7lZfyc1rUQ3SB
-         G22RG6ARCxZ27X+Jg6z+9Wnyjlfw1lOKVi0sEOIvcOeHzyxJ35nKY97+bTON+Yjq7SHS
-         91sA==
-X-Gm-Message-State: APjAAAVdA255nny5gWJcESo7WD9kqre8UdJBcFFpVoxdjNYcmDsz8NCK
-        GIrNdtUMo6/NvrqPhtZLMwJFdw==
-X-Google-Smtp-Source: APXvYqwYUPMF0FEJQ8SH6f6V9L+pAAf6oW7lozkMuesu1RZqnBX5kL/J9WlcSj5ZD7fx0NEgV+if8A==
-X-Received: by 2002:a63:1045:: with SMTP id 5mr32327108pgq.55.1558371931150;
-        Mon, 20 May 2019 10:05:31 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::3:df5f])
-        by smtp.gmail.com with ESMTPSA id u76sm21219972pgc.84.2019.05.20.10.05.29
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=ol97WAmP2eVJA2nRz/+2miX8OAofXhZkUB5qRp3k8dg=;
+        b=ACVDZNAaUzYLFxYvnKD2kDSy+mbHMv/vcnHfa3x518fJWJisLaG8g9rFgybAwm9+WR
+         WdF2s78ERlJZWiPkIBpfezMBT8wE1YcFHlK1cDYZHk18ZLr7qVFmWn1rKkEZucP79Zgu
+         5C+K12FWbT0QEm+cRWeoB+eDdNZMardf+wWjXYen1333v+AZrU2W8Yj2WlS4VDPr7beb
+         poHwiHcwXCDIg6Haw0xgtUip7O26qLzpnS1yw+6jniELiVgORFBtUbMLUdFtJDG8hjQ3
+         9omD8KZgbO33Vnd5a3xvBePVwbMvErd3EAtDWU/dQAuYcFjaIc43tX0Gk8Tabi2tol4S
+         TjUw==
+X-Gm-Message-State: APjAAAUJ/oLJHoDa9GK5Tvb3F27KBHrie2mNogimJizYBS8gaeM1pk0i
+        tM1rgKTpq15LDz9lVi55MFEWIg==
+X-Google-Smtp-Source: APXvYqw9vVqYpqbwDVINtSfVyNRGl8P4j/ZT8VpIKlzNUAKaBErtJAKSArZb4J9wWyNkS2M6O6Yhxw==
+X-Received: by 2002:a17:902:aa85:: with SMTP id d5mr75933523plr.245.1558372081719;
+        Mon, 20 May 2019 10:08:01 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id 125sm26076542pge.45.2019.05.20.10.08.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 May 2019 10:05:30 -0700 (PDT)
-Date:   Mon, 20 May 2019 13:05:28 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Michal Hocko <mhocko@kernel.org>,
+        Mon, 20 May 2019 10:08:00 -0700 (PDT)
+Date:   Mon, 20 May 2019 10:07:59 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Akinobu Mita <akinobu.mita@gmail.com>
+cc:     Nicolas Boichat <drinkcat@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Chris Down <chris@chrisdown.name>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm, memcg: introduce memory.events.local
-Message-ID: <20190520170528.GC11665@cmpxchg.org>
-References: <20190518001818.193336-1-shakeelb@google.com>
+        Michal Hocko <mhocko@suse.com>, Joe Perches <joe@perches.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-mm@kvack.org, Pekka Enberg <penberg@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm/failslab: By default, do not fail allocations with
+ direct reclaim only
+In-Reply-To: <CAC5umygGsW3Nju-mA-qE8kNBd9SSXeO=YXMkgFsFaceCytoAww@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1905201007170.96074@chino.kir.corp.google.com>
+References: <20190520044951.248096-1-drinkcat@chromium.org> <CAC5umygGsW3Nju-mA-qE8kNBd9SSXeO=YXMkgFsFaceCytoAww@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190518001818.193336-1-shakeelb@google.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 05:18:18PM -0700, Shakeel Butt wrote:
-> The memory controller in cgroup v2 exposes memory.events file for each
-> memcg which shows the number of times events like low, high, max, oom
-> and oom_kill have happened for the whole tree rooted at that memcg.
-> Users can also poll or register notification to monitor the changes in
-> that file. Any event at any level of the tree rooted at memcg will
-> notify all the listeners along the path till root_mem_cgroup. There are
-> existing users which depend on this behavior.
-> 
-> However there are users which are only interested in the events
-> happening at a specific level of the memcg tree and not in the events in
-> the underlying tree rooted at that memcg. One such use-case is a
-> centralized resource monitor which can dynamically adjust the limits of
-> the jobs running on a system. The jobs can create their sub-hierarchy
-> for their own sub-tasks. The centralized monitor is only interested in
-> the events at the top level memcgs of the jobs as it can then act and
-> adjust the limits of the jobs. Using the current memory.events for such
-> centralized monitor is very inconvenient. The monitor will keep
-> receiving events which it is not interested and to find if the received
-> event is interesting, it has to read memory.event files of the next
-> level and compare it with the top level one. So, let's introduce
-> memory.events.local to the memcg which shows and notify for the events
-> at the memcg level.
-> 
-> Now, does memory.stat and memory.pressure need their local versions.
-> IMHO no due to the no internal process contraint of the cgroup v2. The
-> memory.stat file of the top level memcg of a job shows the stats and
-> vmevents of the whole tree. The local stats or vmevents of the top level
-> memcg will only change if there is a process running in that memcg but
-> v2 does not allow that. Similarly for memory.pressure there will not be
-> any process in the internal nodes and thus no chance of local pressure.
-> 
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+On Tue, 21 May 2019, Akinobu Mita wrote:
 
-This looks reasonable to me. Thanks for working out a clear use case
-and also addressing how it compares to the stats and pressure files.
+> > When failslab was originally written, the intention of the
+> > "ignore-gfp-wait" flag default value ("N") was to fail
+> > GFP_ATOMIC allocations. Those were defined as (__GFP_HIGH),
+> > and the code would test for __GFP_WAIT (0x10u).
+> >
+> > However, since then, __GFP_WAIT was replaced by __GFP_RECLAIM
+> > (___GFP_DIRECT_RECLAIM|___GFP_KSWAPD_RECLAIM), and GFP_ATOMIC is
+> > now defined as (__GFP_HIGH|__GFP_ATOMIC|__GFP_KSWAPD_RECLAIM).
+> >
+> > This means that when the flag is false, almost no allocation
+> > ever fails (as even GFP_ATOMIC allocations contain
+> > __GFP_KSWAPD_RECLAIM).
+> >
+> > Restore the original intent of the code, by ignoring calls
+> > that directly reclaim only (___GFP_DIRECT_RECLAIM), and thus,
+> > failing GFP_ATOMIC calls again by default.
+> >
+> > Fixes: 71baba4b92dc1fa1 ("mm, page_alloc: rename __GFP_WAIT to __GFP_RECLAIM")
+> > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> 
+> Good catch.
+> 
+> Reviewed-by: Akinobu Mita <akinobu.mita@gmail.com>
+> 
+> > ---
+> >  mm/failslab.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/mm/failslab.c b/mm/failslab.c
+> > index ec5aad211c5be97..33efcb60e633c0a 100644
+> > --- a/mm/failslab.c
+> > +++ b/mm/failslab.c
+> > @@ -23,7 +23,8 @@ bool __should_failslab(struct kmem_cache *s, gfp_t gfpflags)
+> >         if (gfpflags & __GFP_NOFAIL)
+> >                 return false;
+> >
+> > -       if (failslab.ignore_gfp_reclaim && (gfpflags & __GFP_RECLAIM))
+> > +       if (failslab.ignore_gfp_reclaim &&
+> > +                       (gfpflags & ___GFP_DIRECT_RECLAIM))
+> >                 return false;
+> 
+> Should we use __GFP_DIRECT_RECLAIM instead of ___GFP_DIRECT_RECLAIM?
+> Because I found the following comment in gfp.h
+> 
+> /* Plain integer GFP bitmasks. Do not use this directly. */
+> 
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Yes, we should use the two underscore version instead of the three.
+
+Nicolas, after that's fixed up, feel free to add Acked-by: David Rientjes 
+<rientjes@google.com>.
+
+Thanks!
