@@ -2,31 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1671C22FE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EF5222FC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:08:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731014AbfETJJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:09:49 -0400
-Received: from master.debian.org ([82.195.75.110]:47354 "EHLO
-        master.debian.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbfETJJt (ORCPT
+        id S1731790AbfETJHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:07:13 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44431 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbfETJHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:09:49 -0400
-X-Greylist: delayed 468 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 05:09:47 EDT
-Received: from pabs by master.debian.org with local (Exim 4.89)
-        (envelope-from <pabs@master.debian.org>)
-        id 1hSeAn-0004YE-6T; Mon, 20 May 2019 09:01:33 +0000
-From:   Paul Wise <pabs3@bonedaddy.net>
-To:     Neil Horman <nhorman@tuxdriver.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Paul Wise <pabs3@bonedaddy.net>, Jakub Wilk <jwilk@jwilk.net>
-Subject: [PATCH] coredump: Split pipe command whitespace before expanding template
-Date:   Mon, 20 May 2019 17:01:15 +0800
-Message-Id: <20190520090115.11276-1-pabs3@bonedaddy.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <c8b7ecb8508895bf4adb62a748e2ea2c71854597.camel@bonedaddy.net>
-References: <c8b7ecb8508895bf4adb62a748e2ea2c71854597.camel@bonedaddy.net>
+        Mon, 20 May 2019 05:07:13 -0400
+Received: by mail-pl1-f196.google.com with SMTP id c5so6396618pll.11
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 02:07:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5cW/Ykas8y/ulbRnNYCc1U7OJGD9GTeKEiiivcIo+lE=;
+        b=D19AjoC0eMZThH2guQSI02LbCXWxIu9yFHbIFGyjKVoGdpanTTC1WH7LHFeWV3LN9c
+         d+yGjqnD+B5OyZm2YFjaXIFqcJ595lDsnFX1pVaqXzeFzILB+N3gsgqf8ztcbrMrnWiF
+         9sRtvb5LzYCHUKcbV/RZZSIPazKFf+S+J4nbg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5cW/Ykas8y/ulbRnNYCc1U7OJGD9GTeKEiiivcIo+lE=;
+        b=Ef/wqlJQaYRM939FQuBuF+zLQymwZ0zRniUNo5PiLqYDvcrcUcmF9lU5MiuHjntcVH
+         fhG/X+yxXje4eUNYZrvx+mOmOySbmssnytvwu1wgNvHoMs3EtlU9MrAqWE2ZYMqct+VE
+         6m2K5QTFUbuSwuH4mb6ImUCd/nSb6wh7D8HmR7YX7BRsYrD0RYvKJZExpYK+6qBGt+fQ
+         fywJGnGogmBOKoLp8s5/Gvwb4qJ0s9TKN4pwQ2Qy1mbn3o6Pv+ANIDIUl0+z+R7mUxRy
+         588w117HojylaGhm0Ifplx0sfGvJTMJFkkMELqmS7LutXdO9D3pOqJfNL6U5QfPKiLlu
+         oWQQ==
+X-Gm-Message-State: APjAAAXLnG8kb78t477FNnEVz7lCrmxphTnENELnJsb1nJP6xNLTfoiY
+        OQeX7TPosZzKe6Ilt+BVMePUzQ==
+X-Google-Smtp-Source: APXvYqz8pwdU8mC+t3ZXYb6Q+Pg04mL44SIkX5k3pYjBHVjtKxFYa0Qa7kCCe3U/5VkpdkgVqE12iA==
+X-Received: by 2002:a17:902:2a07:: with SMTP id i7mr76936917plb.125.1558343232148;
+        Mon, 20 May 2019 02:07:12 -0700 (PDT)
+Received: from localhost.localdomain ([183.82.227.193])
+        by smtp.gmail.com with ESMTPSA id d15sm51671614pfm.186.2019.05.20.02.07.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 02:07:11 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     bshah@mykolab.com, Vasily Khoruzhick <anarsoul@gmail.com>,
+        powerpan@qq.com, michael@amarulasolutions.com,
+        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v10 00/11] drm/sun4i: dsi: Fixes/updates (A33 reworked!)
+Date:   Mon, 20 May 2019 14:33:07 +0530
+Message-Id: <20190520090318.27570-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -34,188 +63,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Save the offsets of the start of each argument to avoid having to
-update pointers to each argument after every corename krealloc and
-to avoid having to duplicate the memory for the dump command.
+Most of these issues are reproduced while supporting Allwinner A64
+MIPI-DSI [1] but to confirm it with other SoC this series is reworked
+on A33 since the controller tested it A33 as of now.
 
-Executable names containing spaces were previously being expanded from
-%e or %E and then split in the middle of the filename. This is incorrect
-behaviour since an argument list can represent arguments with spaces.
+Since we don't have proper evidence and documentation for dsi controller
+in Allwinner, these changes are more likely to rely on new working BSP
+codes (even the initial driver written as per this rule).
 
-The splitting could lead to extra arguments being passed to the core dump
-handler that it might have interpreted as options or ignored completely.
+All these fixes/updates are tested in "bananapi,s070wv20-ct16" panel
+on Allwinner A33, the same panel timings are available in panel-simple
+in mainline tree.
 
-Core dump handlers that are not aware of this Linux kernel issue will be
-using %e or %E without considering that it may be split and so they will
-be vulnerable to processes with spaces in their names breaking their
-argument list. If their internals are otherwise well written, such as
-if they are written in shell but quote arguments, they will work better
-after this change than before. If they are not well written, then there
-is a slight chance of breakage depending on the details of the code but
-they will already be fairly broken by the split filenames.
+Changes for v10:
+- reworked previous "Fixes/updates" patches on A33
+- reworked previous A64 DSI fixes on A33
+- added proper detailed commit messages with logs
+- tested on BPI-M2M board.
+Changes for v9:
+- rebase on drm-misc
+- update commit messages
+- add hsync_porch overflow patch
+Changes for v8:
+- rebase on master
+- rework on commit messages
+- rework video start delay
+- include drq changes from previous version
+Changes for v7:
+- rebase on master
+- collect Merlijn Wajer Tested-by credits.
+Changes for v6:
+- fixed all burst mode patches as per previous version comments
+- rebase on master
+- update proper commit message
+- dropped unneeded comments
+- order the patches that make review easy
+Changes for v5, v4, v3, v2:
+- use existing driver code construct for hblk computation
+- create separate function for vblk computation
+- cleanup commit messages
+- update proper commit messages
+- fixed checkpatch warnings/errors
+- use proper return value for tcon0 probe
+- add logic to get tcon0 divider values
+- simplify timings code to support burst mode
+- fix drq computation return values
+- rebase on master
 
-Core dump handlers that are aware of this Linux kernel issue will be
-placing %e or %E as the last item in their core_pattern and then
-aggregating all of the remaining arguments into one, separated by
-spaces. Alternatively they will be obtaining the filename via other
-methods. Both of these will be compatible with the new arrangement.
+Any inputs?
+Jagan.
 
-A side effect from this change is that unknown template types
-(for example %z) result in an empty argument to the dump handler
-instead of the argument being dropped. This is a desired change as:
+[1] https://patchwork.freedesktop.org/series/57834/
 
-It is easier for dump handlers to process empty arguments than dropped
-ones, especially if they are written in shell or don't pass each template
-item with a preceding command-line option in order to differentiate
-between individual template types. Most core_patterns in the wild do not
-use options so they can confuse different template types (especially
-numeric ones) if an earlier one gets dropped in old kernels. If the
-kernel introduces a new template type and a core_pattern uses it, the
-core dump handler might not expect that the argument can be dropped in
-old kernels.
+Jagan Teki (11):
+  drm/sun4i: dsi: Fix TCON DRQ set bits
+  drm/sun4i: dsi: Update start value in video start delay
+  drm/sun4i: dsi: Fix video start delay computation
+  drm/sun4i: tcon: Compute DCLK dividers based on format, lanes
+  drm/sun4i: tcon: Export get tcon0 routine
+  drm/sun4i: dsi: Probe tcon0 during dsi_bind
+  drm/sun4i: dsi: Get tcon0_div at runtime
+  dt-bindings: sun6i-dsi: Add VCC-DSI supply property
+  drm/sun4i: sun6i_mipi_dsi: Add VCC-DSI regulator support
+  [DO NOT MERGE] drm/panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
+  [DO NOT MERGE] ARM: dts: sun8i: bananapi-m2m: Enable Bananapi S070WV20-CT16 DSI panel
 
-For example, this can result in security issues when %d is dropped in old
-kernels. This happened with the corekeeper package in Debian and resulted
-in the interface between corekeeper and Linux having to be rewritten to
-use command-line options to differentiate between template types.
+ .../bindings/display/sunxi/sun6i-dsi.txt      |   1 +
+ arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts  |  40 +++
+ drivers/gpu/drm/panel/Kconfig                 |   9 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../panel/panel-bananapi-s070wv20-icn6211.c   | 293 ++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.c            |   7 +-
+ drivers/gpu/drm/sun4i/sun4i_tcon.h            |   1 +
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        |  46 ++-
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h        |   4 +-
+ 9 files changed, 393 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c
 
-The core_pattern for most core dump handlers is written by the handler
-author who would generally not insert unknown template types so this
-change should be compatible with all the core dump handlers that exist.
-
-Reported-by: Jakub Wilk <jwilk@jwilk.net>
-Reported-in: <20190312145043.jxjoj66kqssptolr@jwilk.net>
-Reported-by: Paul Wise <pabs3@bonedaddy.net>
-Reported-in: <c8b7ecb8508895bf4adb62a748e2ea2c71854597.camel@bonedaddy.net>
-Suggestions-from: Jakub Wilk <jwilk@jwilk.net>
-Signed-off-by: Paul Wise <pabs3@bonedaddy.net>
-See-also: https://bugs.debian.org/924398
-Fixes: commit 74aadce986052f20088c2678f589ea0e8d3a4b59
----
- fs/coredump.c | 45 ++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 40 insertions(+), 5 deletions(-)
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index e42e17e55bfd..40c440efb5f4 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -7,6 +7,7 @@
- #include <linux/stat.h>
- #include <linux/fcntl.h>
- #include <linux/swap.h>
-+#include <linux/ctype.h>
- #include <linux/string.h>
- #include <linux/init.h>
- #include <linux/pagemap.h>
-@@ -187,11 +188,13 @@ static int cn_print_exe_file(struct core_name *cn)
-  * name into corename, which must have space for at least
-  * CORENAME_MAX_SIZE bytes plus one byte for the zero terminator.
-  */
--static int format_corename(struct core_name *cn, struct coredump_params *cprm)
-+static int format_corename(struct core_name *cn, struct coredump_params *cprm,
-+			   size_t **argv, int *argc)
- {
- 	const struct cred *cred = current_cred();
- 	const char *pat_ptr = core_pattern;
- 	int ispipe = (*pat_ptr == '|');
-+	bool was_space = false;
- 	int pid_in_pattern = 0;
- 	int err = 0;
- 
-@@ -201,12 +204,36 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm)
- 		return -ENOMEM;
- 	cn->corename[0] = '\0';
- 
--	if (ispipe)
-+	if (ispipe) {
-+		/* sizeof(core_pattern) / 2 is the maximum number of args. */
-+		int argvs = sizeof(core_pattern) / 2;
-+		(*argvs) = kmalloc_array(argvs, sizeof(**argv), GFP_KERNEL);
-+		if (!(*argv))
-+			return -ENOMEM;
-+		(*argv)[(*argc)++] = 0;
- 		++pat_ptr;
-+	}
- 
- 	/* Repeat as long as we have more pattern to process and more output
- 	   space */
- 	while (*pat_ptr) {
-+		/*
-+		 * Split on spaces before doing template expansion so that
-+		 * %e and %E don't get split if they have spaces in them
-+		 */
-+		if (ispipe) {
-+			if (isspace(*pat_ptr)) {
-+				was_space = true;
-+				pat_ptr++;
-+				continue;
-+			} else if (was_space) {
-+				was_space = false;
-+				err = cn_printf(cn, "%c", '\0');
-+				if (err)
-+					return err;
-+				(*argv)[(*argc)++] = cn->used;
-+			}
-+		}
- 		if (*pat_ptr != '%') {
- 			err = cn_printf(cn, "%c", *pat_ptr++);
- 		} else {
-@@ -546,6 +573,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 	struct cred *cred;
- 	int retval = 0;
- 	int ispipe;
-+	size_t *argv = NULL;
-+	int argc = 0;
- 	struct files_struct *displaced;
- 	/* require nonrelative corefile path and be extra careful */
- 	bool need_suid_safe = false;
-@@ -592,9 +621,10 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 
- 	old_cred = override_creds(cred);
- 
--	ispipe = format_corename(&cn, &cprm);
-+	ispipe = format_corename(&cn, &cprm, &argv, &argc);
- 
- 	if (ispipe) {
-+		int argi;
- 		int dump_count;
- 		char **helper_argv;
- 		struct subprocess_info *sub_info;
-@@ -637,12 +667,16 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 			goto fail_dropcount;
- 		}
- 
--		helper_argv = argv_split(GFP_KERNEL, cn.corename, NULL);
-+		helper_argv = kmalloc_array(argc + 1, sizeof(*helper_argv),
-+					    GFP_KERNEL);
- 		if (!helper_argv) {
- 			printk(KERN_WARNING "%s failed to allocate memory\n",
- 			       __func__);
- 			goto fail_dropcount;
- 		}
-+		for (argi = 0; argi < argc; argi++)
-+			helper_argv[argi] = cn.corename + argv[argi];
-+		helper_argv[argi] = NULL;
- 
- 		retval = -ENOMEM;
- 		sub_info = call_usermodehelper_setup(helper_argv[0],
-@@ -652,7 +686,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 			retval = call_usermodehelper_exec(sub_info,
- 							  UMH_WAIT_EXEC);
- 
--		argv_free(helper_argv);
-+		kfree(helper_argv);
- 		if (retval) {
- 			printk(KERN_INFO "Core dump to |%s pipe failed\n",
- 			       cn.corename);
-@@ -766,6 +800,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 	if (ispipe)
- 		atomic_dec(&core_dump_count);
- fail_unlock:
-+	kfree(argv);
- 	kfree(cn.corename);
- 	coredump_finish(mm, core_dumped);
- 	revert_creds(old_cred);
 -- 
-2.20.1
+2.18.0.321.gffc6fa0e3
 
