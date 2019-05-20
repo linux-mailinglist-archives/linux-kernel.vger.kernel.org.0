@@ -2,160 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F6C922FA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:05:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89BBE22FF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731775AbfETJEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:04:41 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8219 "EHLO huawei.com"
+        id S1731983AbfETJQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:16:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37692 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731763AbfETJEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:04:41 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id CD27E70C92FBE0086081;
-        Mon, 20 May 2019 17:04:38 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 20 May 2019 17:04:29 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH 2/2] hwtracing: stm: fix double-free in stm_source_register_device()
-Date:   Mon, 20 May 2019 17:13:15 +0800
-Message-ID: <20190520091315.27898-2-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190520091315.27898-1-wangkefeng.wang@huawei.com>
-References: <20190520091315.27898-1-wangkefeng.wang@huawei.com>
+        id S1730677AbfETJQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:16:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BE23FAE4B;
+        Mon, 20 May 2019 09:15:59 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id F16311E3C5F; Mon, 20 May 2019 11:15:58 +0200 (CEST)
+Date:   Mon, 20 May 2019 11:15:58 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
+        linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, axboe@kernel.dk, jack@suse.cz,
+        jmoyer@redhat.com, amakhalov@vmware.com, anishs@vmware.com,
+        srivatsab@vmware.com
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+Message-ID: <20190520091558.GC2172@quack2.suse.cz>
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
+ <20190518192847.GB14277@mit.edu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190518192847.GB14277@mit.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If device_add() in stm_source_register_device() fails,
-stm_source_device_release() is called to free src, free
-src again on err path will trigger double free issue.
+On Sat 18-05-19 15:28:47, Theodore Ts'o wrote:
+> On Sat, May 18, 2019 at 08:39:54PM +0200, Paolo Valente wrote:
+> > I've addressed these issues in my last batch of improvements for
+> > BFQ, which landed in the upcoming 5.2. If you give it a try, and
+> > still see the problem, then I'll be glad to reproduce it, and
+> > hopefully fix it for you.
+> 
+> Hi Paolo, I'm curious if you could give a quick summary about what you
+> changed in BFQ?
+> 
+> I was considering adding support so that if userspace calls fsync(2)
+> or fdatasync(2), to attach the process's CSS to the transaction, and
+> then charge all of the journal metadata writes the process's CSS.  If
+> there are multiple fsync's batched into the transaction, the first
+> process which forced the early transaction commit would get charged
+> the entire journal write.  OTOH, journal writes are sequential I/O, so
+> the amount of disk time for writing the journal is going to be
+> relatively small, and especially, the fact that work from other
+> cgroups is going to be minimal, especially if hadn't issued an
+> fsync().
 
-BUG: KASAN: double-free or invalid-free in stm_source_register_device+0xd0/0x1a0 [stm_core]
+But this makes priority-inversion problems with ext4 journal worse, doesn't
+it? If we submit journal commit in blkio cgroup of some random process, it
+may get throttled which then effectively blocks the whole filesystem. Or do
+you want to implement a more complex back-pressure mechanism where you'd
+just account to different blkio cgroup during journal commit and then
+throttle as different point where you are not blocking other tasks from
+progress?
 
-CPU: 1 PID: 8556 Comm: syz-executor.0 Tainted: G         C        5.1.0+ #28
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0xa9/0x10e lib/dump_stack.c:113
- print_address_description+0x65/0x270 mm/kasan/report.c:188
- kasan_report_invalid_free+0x60/0xa0 mm/kasan/report.c:279
- __kasan_slab_free+0x159/0x180 mm/kasan/common.c:430
- slab_free_hook mm/slub.c:1420 [inline]
- slab_free_freelist_hook mm/slub.c:1447 [inline]
- slab_free mm/slub.c:2994 [inline]
- kfree+0xe1/0x270 mm/slub.c:3949
- stm_source_register_device+0xd0/0x1a0 [stm_core]
- stm_heartbeat_init+0xb6/0x1b0 [stm_heartbeat]
- do_one_initcall+0xb9/0x3b5 init/main.c:914
- do_init_module+0xe0/0x330 kernel/module.c:3468
- load_module+0x38eb/0x4270 kernel/module.c:3819
- __do_sys_finit_module+0x162/0x190 kernel/module.c:3909
- do_syscall_64+0x72/0x2a0 arch/x86/entry/common.c:298
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> In the case where you have three cgroups all issuing fsync(2) and they
+> all landed in the same jbd2 transaction thanks to commit batching, in
+> the ideal world we would split up the disk time usage equally across
+> those three cgroups.  But it's probably not worth doing that...
+> 
+> That being said, we probably do need some BFQ support, since in the
+> case where we have multiple processes doing buffered writes w/o fsync,
+> we do charnge the data=ordered writeback to each block cgroup.  Worse,
+> the commit can't complete until the all of the data integrity
+> writebacks have completed.  And if there are N cgroups with dirty
+> inodes, and slice_idle set to 8ms, there is going to be 8*N ms worth
+> of idle time tacked onto the commit time.
 
- ...
+Yeah. At least in some cases, we know there won't be any more IO from a
+particular cgroup in the near future (e.g. transaction commit completing,
+or when the layers above IO scheduler already know which IO they are going
+to submit next) and in that case idling is just a waste of time. But so far
+I haven't decided how should look a reasonably clean interface for this
+that isn't specific to a particular IO scheduler implementation.
 
-Allocated by task 8556:
- save_stack+0x19/0x80 mm/kasan/common.c:71
- set_track mm/kasan/common.c:79 [inline]
- __kasan_kmalloc.constprop.2+0xa0/0xd0 mm/kasan/common.c:489
- stm_source_register_device+0x46/0x1a0 [stm_core]
- stm_heartbeat_init+0xb6/0x1b0 [stm_heartbeat]
- do_one_initcall+0xb9/0x3b5 init/main.c:914
- do_init_module+0xe0/0x330 kernel/module.c:3468
- load_module+0x38eb/0x4270 kernel/module.c:3819
- __do_sys_finit_module+0x162/0x190 kernel/module.c:3909
- do_syscall_64+0x72/0x2a0 arch/x86/entry/common.c:298
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 8556:
- save_stack+0x19/0x80 mm/kasan/common.c:71
- set_track mm/kasan/common.c:79 [inline]
- __kasan_slab_free+0x130/0x180 mm/kasan/common.c:451
- slab_free_hook mm/slub.c:1420 [inline]
- slab_free_freelist_hook mm/slub.c:1447 [inline]
- slab_free mm/slub.c:2994 [inline]
- kfree+0xe1/0x270 mm/slub.c:3949
- device_release+0x46/0x100 drivers/base/core.c:1064
- kobject_cleanup lib/kobject.c:691 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:67 [inline]
- kobject_put+0x1a8/0x220 lib/kobject.c:737
- put_device+0x1b/0x30 drivers/base/core.c:2210
- stm_source_register_device+0xc8/0x1a0 [stm_core]
- stm_heartbeat_init+0xb6/0x1b0 [stm_heartbeat]
- do_one_initcall+0xb9/0x3b5 init/main.c:914
- do_init_module+0xe0/0x330 kernel/module.c:3468
- load_module+0x38eb/0x4270 kernel/module.c:3819
- __do_sys_finit_module+0x162/0x190 kernel/module.c:3909
- do_syscall_64+0x72/0x2a0 arch/x86/entry/common.c:298
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Don't call kfree(src) if device_add() fails to fix it.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- drivers/hwtracing/stm/core.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/hwtracing/stm/core.c b/drivers/hwtracing/stm/core.c
-index 7b2ab7b2cc4d..5ce30f8f8c4f 100644
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -1258,15 +1258,20 @@ int stm_source_register_device(struct device *parent,
- 	src->dev.release = stm_source_device_release;
- 
- 	err = kobject_set_name(&src->dev.kobj, "%s", data->name);
--	if (err)
-+	if (err) {
-+		put_device(&src->dev);
-+		kfree(src);
- 		goto err;
-+	}
- 
- 	pm_runtime_no_callbacks(&src->dev);
- 	pm_runtime_forbid(&src->dev);
- 
- 	err = device_add(&src->dev);
--	if (err)
--		goto err;
-+	if (err) {
-+		put_device(&src->dev);
-+		return err;
-+	}
- 
- 	stm_output_init(&src->output);
- 	spin_lock_init(&src->link_lock);
-@@ -1275,12 +1280,6 @@ int stm_source_register_device(struct device *parent,
- 	data->src = src;
- 
- 	return 0;
--
--err:
--	put_device(&src->dev);
--	kfree(src);
--
--	return err;
- }
- EXPORT_SYMBOL_GPL(stm_source_register_device);
- 
+								Honza
 -- 
-2.20.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
