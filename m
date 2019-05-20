@@ -2,235 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4044C22DE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:07:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F107B22DF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:08:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731197AbfETIGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:06:49 -0400
-Received: from mail-eopbgr1400137.outbound.protection.outlook.com ([40.107.140.137]:11916
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729295AbfETIGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 04:06:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yryBiGKBqVhPFQpDYwy7aZ2GO/tBCyvDyRcx0m3YpbA=;
- b=jTHaV0c9YW4Jigwmdjs9Ay4xK1SlGrvx/f72/RSosX25sldD7dtZmdapD4m6HpXFA2XQffd4vmdypPCICSBBMTZQFKmQLJ504DP2UeFq9qH8wrKZ9eBCBbc4RGXvzPQ2Z4QEbLiHJ8rklErNLl/xnrfZGAHUUISvRrvxiecmbpY=
-Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.242.17) by
- OSBPR01MB3639.jpnprd01.prod.outlook.com (20.178.96.80) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.16; Mon, 20 May 2019 08:06:41 +0000
-Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
- ([fe80::a146:39f0:5df9:11bc]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
- ([fe80::a146:39f0:5df9:11bc%7]) with mapi id 15.20.1900.020; Mon, 20 May 2019
- 08:06:41 +0000
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Li Jun <jun.li@nxp.com>,
-        Badhri Jagan Sridharan <badhri@google.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Min Guo <min.guo@mediatek.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: RE: [PATCH v5 4/6] usb: roles: add API to get usb_role_switch by node
-Thread-Topic: [PATCH v5 4/6] usb: roles: add API to get usb_role_switch by
- node
-Thread-Index: AQHVCjGxbEdsIx4ReU+jIZIOb3TooaZvJLIAgAApPICABAgXgIAAWsCAgAAANlA=
-Date:   Mon, 20 May 2019 08:06:41 +0000
-Message-ID: <OSBPR01MB2103385D996762FA54F8E437B8060@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1557823643-8616-1-git-send-email-chunfeng.yun@mediatek.com>
- <1557823643-8616-5-git-send-email-chunfeng.yun@mediatek.com>
- <20190517103736.GA1490@kuha.fi.intel.com>
- <20190517130511.GA1887@kuha.fi.intel.com>
- <1558319951.10179.352.camel@mhfsdcap03>
- <20190520080359.GC1887@kuha.fi.intel.com>
-In-Reply-To: <20190520080359.GC1887@kuha.fi.intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=biju.das@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c37c384e-a84e-4fe0-48de-08d6dcfa17d8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:OSBPR01MB3639;
-x-ms-traffictypediagnostic: OSBPR01MB3639:
-x-ms-exchange-purlcount: 2
-x-microsoft-antispam-prvs: <OSBPR01MB3639E5645E9BCDBAB136376EB8060@OSBPR01MB3639.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 004395A01C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(366004)(376002)(346002)(396003)(13464003)(199004)(189003)(66446008)(52536014)(8676002)(446003)(8936002)(316002)(55016002)(66476007)(64756008)(86362001)(81166006)(81156014)(66556008)(11346002)(66946007)(76116006)(6246003)(73956011)(6436002)(478600001)(5660300002)(186003)(26005)(2906002)(305945005)(7736002)(6306002)(33656002)(74316002)(229853002)(53546011)(71190400001)(71200400001)(486006)(256004)(110136005)(9686003)(476003)(102836004)(6506007)(7416002)(14454004)(966005)(99286004)(4326008)(76176011)(25786009)(7696005)(66066001)(44832011)(53936002)(3846002)(6116002)(54906003)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB3639;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Ct5GRjf2Gy1//vfbWhJX7sIbDNy9c7zQRXM1XKfjYwbVJyOo8HsD3GEV2wRf3X0mCwPPIsMPKiP18RNAjLh41woSGoK82QInsf8FyjXctxR2TvXeZDVk11hAMplez+jWygW2DQwda3AgJD8KIr6uO7NkyRkc5B/gvIr13rkM+8N6ER3F56dxsTD1E4NFRZxkOlwH1PNbc2f58idgLZemIPeAZCgHk5wW7VlfkatcGOIfU9NisUAp9S9E/k3CP/ofx0iNA5lWPRFwE53+h3VQMrd86BfeeopXm+HKcIemxsJ9BRa++jmBYAWLBhsWD7SJQHz/6L7fm4ktuUh2ixnmOmkTgHUvzvH32xiZAsQgDDO6ASfObHC0ML8Q6ernxmUGW3tT6QOEVslP+dfWgu/ohN+M2R+/sWjirim5Aag8+T0=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1730854AbfETIIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:08:15 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42538 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728105AbfETIIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 04:08:13 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2E7F030832E3;
+        Mon, 20 May 2019 08:08:13 +0000 (UTC)
+Received: from thuth.remote.csb (ovpn-117-9.ams2.redhat.com [10.36.117.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 953DB5C22E;
+        Mon, 20 May 2019 08:08:06 +0000 (UTC)
+Subject: Re: [RFC PATCH 1/4] KVM: selftests: Guard struct kvm_vcpu_events with
+ __KVM_HAVE_VCPU_EVENTS
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Andrew Jones <drjones@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-s390@vger.kernel.org
+References: <20190516111253.4494-1-thuth@redhat.com>
+ <20190516111253.4494-2-thuth@redhat.com>
+ <e8a57340-6f8d-90b8-ad73-c39c19f5c9a4@de.ibm.com>
+From:   Thomas Huth <thuth@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=thuth@redhat.com; keydata=
+ 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
+Organization: Red Hat
+Message-ID: <8fda58ac-0e0c-6576-f492-2a9f9d2a3194@redhat.com>
+Date:   Mon, 20 May 2019 10:08:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c37c384e-a84e-4fe0-48de-08d6dcfa17d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2019 08:06:41.8779
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3639
+In-Reply-To: <e8a57340-6f8d-90b8-ad73-c39c19f5c9a4@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 20 May 2019 08:08:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heikki,
+On 20/05/2019 09.12, Christian Borntraeger wrote:
+> 
+> On 16.05.19 13:12, Thomas Huth wrote:
+>> The struct kvm_vcpu_events code is only available on certain architectures
+>> (arm, arm64 and x86). To be able to compile kvm_util.c also for other
+>> architectures, we've got to fence the code with __KVM_HAVE_VCPU_EVENTS.
+>>
+>> Signed-off-by: Thomas Huth <thuth@redhat.com>
+> Acked-by: Christian Borntraeger <borntraeger@de.ibm.com>
+> 
+> According to the MAINTAINERS patches, you want me to pick these patches. Correct?
 
-> -----Original Message-----
-> From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Sent: Monday, May 20, 2019 9:04 AM
-> To: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> Cc: Rob Herring <robh+dt@kernel.org>; Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org>; Mark Rutland <mark.rutland@arm.com>;
-> Matthias Brugger <matthias.bgg@gmail.com>; Adam Thomson
-> <Adam.Thomson.Opensource@diasemi.com>; Li Jun <jun.li@nxp.com>;
-> Badhri Jagan Sridharan <badhri@google.com>; Hans de Goede
-> <hdegoede@redhat.com>; Andy Shevchenko
-> <andy.shevchenko@gmail.com>; Min Guo <min.guo@mediatek.com>;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> usb@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> mediatek@lists.infradead.org; Biju Das <biju.das@bp.renesas.com>; Linus
-> Walleij <linus.walleij@linaro.org>
-> Subject: Re: [PATCH v5 4/6] usb: roles: add API to get usb_role_switch by
-> node
->=20
-> On Mon, May 20, 2019 at 10:39:11AM +0800, Chunfeng Yun wrote:
-> > Hi,
-> > On Fri, 2019-05-17 at 16:05 +0300, Heikki Krogerus wrote:
-> > > Hi,
-> > >
-> > > On Fri, May 17, 2019 at 01:37:36PM +0300, Heikki Krogerus wrote:
-> > > > On Tue, May 14, 2019 at 04:47:21PM +0800, Chunfeng Yun wrote:
-> > > > > Add fwnode_usb_role_switch_get() to make easier to get
-> > > > > usb_role_switch by fwnode which register it.
-> > > > > It's useful when there is not device_connection registered
-> > > > > between two drivers and only knows the fwnode which register
-> > > > > usb_role_switch.
-> > > > >
-> > > > > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> > > > > Tested-by: Biju Das <biju.das@bp.renesas.com>
-> > > >
-> > > > Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > >
-> > > Hold on. I just noticed Rob's comment on patch 2/6, where he points
-> > > out that you don't need to use device graph since the controller is
-> > > the parent of the connector. Doesn't that mean you don't really need
-> > > this API?
-> > No, I still need it.
-> > The change is about the way how to get fwnode; when use device graph,
-> > get fwnode by of_graph_get_remote_node(); but now will get fwnode by
-> > of_get_parent();
->=20
-> OK, I get that, but I'm still not convinced about if something like this =
-function
-> is needed at all. I also have concerns regarding how you are using the
-> function. I'll explain in comment to the patch 5/6 in this series...
+That would be nice, yes. But if you don't want to be responsible for
+s390x-related KVM selftest patches, please let me know, then I'll drop
+these hunks from the patches again.
 
-FYI, Currently  I am also using this api in my patch series.
-https://patchwork.kernel.org/patch/10944637/
-
-regards,
-Biju
-
-> > > > > ---
-> > > > > v5 changes:
-> > > > >  1. remove linux/of.h suggested by Biju  2. add tested by Biju
-> > > > >
-> > > > > Note: still depends on [1]
-> > > > >  [1]: [v6,08/13] usb: roles: Introduce stubs for the exiting func=
-tions in
-> role.h
-> > > > >       https://patchwork.kernel.org/patch/10909971/
-> > > > >
-> > > > > v4 changes:
-> > > > >   1. use switch_fwnode_match() to find fwnode suggested by Heikki
-> > > > >   2. this patch now depends on [1]
-> > > > >
-> > > > >  [1] [v6,08/13] usb: roles: Introduce stubs for the exiting funct=
-ions in
-> role.h
-> > > > >     https://patchwork.kernel.org/patch/10909971/
-> > > > >
-> > > > > v3 changes:
-> > > > >   1. use fwnodes instead of node suggested by Andy
-> > > > >   2. rebuild the API suggested by Heikki
-> > > > >
-> > > > > v2 no changes
-> > > > > ---
-> > > > >  drivers/usb/roles/class.c | 24 ++++++++++++++++++++++++
-> > > > > include/linux/usb/role.h  |  8 ++++++++
-> > > > >  2 files changed, 32 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/usb/roles/class.c
-> > > > > b/drivers/usb/roles/class.c index f45d8df5cfb8..4a1f09a41ec0
-> > > > > 100644
-> > > > > --- a/drivers/usb/roles/class.c
-> > > > > +++ b/drivers/usb/roles/class.c
-> > > > > @@ -135,6 +135,30 @@ struct usb_role_switch
-> > > > > *usb_role_switch_get(struct device *dev)  }
-> > > > > EXPORT_SYMBOL_GPL(usb_role_switch_get);
-> > > > >
-> > > > > +/**
-> > > > > + * fwnode_usb_role_switch_get - Find USB role switch by it's
-> > > > > +parent fwnode
-> > > > > + * @fwnode: The fwnode that register USB role switch
-> > > > > + *
-> > > > > + * Finds and returns role switch registered by @fwnode. The
-> > > > > +reference count
-> > > > > + * for the found switch is incremented.
-> > > > > + */
-> > > > > +struct usb_role_switch *
-> > > > > +fwnode_usb_role_switch_get(struct fwnode_handle *fwnode) {
-> > > > > +	struct usb_role_switch *sw;
-> > > > > +	struct device *dev;
-> > > > > +
-> > > > > +	dev =3D class_find_device(role_class, NULL, fwnode,
-> switch_fwnode_match);
-> > > > > +	if (!dev)
-> > > > > +		return ERR_PTR(-EPROBE_DEFER);
-> > > > > +
-> > > > > +	sw =3D to_role_switch(dev);
-> > > > > +	WARN_ON(!try_module_get(sw->dev.parent->driver-
-> >owner));
-> > > > > +
-> > > > > +	return sw;
-> > > > > +}
-> > > > > +EXPORT_SYMBOL_GPL(fwnode_usb_role_switch_get);
-> > >
-> > > This function only basically converts the fwnode to usb_role_switch,
-> > > but I would actually prefer that we walked through the device graph
-> > > here instead of expecting the caller to do that.
-> > >
-> > > So this function should probable be called
-> > > fwnode_to_usb_role_switch() and not fwnode_usb_role_switch_get(),
-> > > but I guess you don't need it at all, right?
-> > >
-> > >
-> > > thanks,
-> > >
-> >
->=20
-> --
-> heikki
+ Thomas
