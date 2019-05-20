@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A202722FCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CC4622FD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:08:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731898AbfETJHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:07:51 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41384 "EHLO
+        id S1731923AbfETJH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:07:57 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40383 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbfETJHu (ORCPT
+        with ESMTP id S1726242AbfETJHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:07:50 -0400
-Received: by mail-pg1-f194.google.com with SMTP id z3so6483132pgp.8
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 02:07:50 -0700 (PDT)
+        Mon, 20 May 2019 05:07:55 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d30so6485607pgm.7
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 02:07:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=l8/eiiMRzRHMeJJfg+NtIFfqaA+aEUt7A5oo1QrAYME=;
-        b=izXs0xnF9WrDgcEPHUWlWp9gc4k0omlI5ON8oHnDXGfiCLU6GPTMi1TD53H72OhRJ9
-         07OMMo1ZEK+83bw3/ptHwy7G9/QEAx4InSSgtV6dQkAuKRvQpPcDFEGDovibhbsGZ46q
-         q87tXjbcR5kzwiL8RKIASnKXgb7PvMxBB0tQA=
+        bh=RhhbywtZgL9mTL+/aS2gTie5gz+AOsOECX4GcmEvNm8=;
+        b=r7FvqZFw/gu/2n+1603wdn3ygdOPws+IPKmHzr+7ytlLH74FqNbxJXLgMSH0OHamIK
+         1GA+Ua3+oxWE9TzHS9ArZ45MeQ3PutdmMb9mtkP1VwHF58tBHnNJdJzASpUAarmrwcbt
+         hejMLtxkulq1eWgonL7tep/ehNu3uSZ2CB6PQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=l8/eiiMRzRHMeJJfg+NtIFfqaA+aEUt7A5oo1QrAYME=;
-        b=UJEQZjk7x0SXHQC5HPdvKRGSubSkROQVI13vjxQM5Rau3o2zPA9gWEIsMv5gNdWdke
-         v2L1GtGTenq7zxJ/Le27CI36NREdrPVnkg4tmBjdlTXj3qDAuvFziQ+4YYZyR4cothL2
-         ukX18xNQeuo3FBCirpBhXhJgds6EoUHvGwZ/H6ZsTpygH0cBIStu+KEIbDcQIVVkrZbT
-         HlMYcmINSyz0E5G5pZMJnW6ArcYDPCR4NQllP+KQr7+ZIPRtgSw7Ub6h2wJjuUJaqN6I
-         GQ8ysDDfo4d7zNKQI6MYF4P4S3gV36aw2pZgfTowgbbMGCJEdIfnZua1B/B+XOET/p2L
-         2Imw==
-X-Gm-Message-State: APjAAAVgsI2h4uqh8hFQy1mnJdi0RpJO0wuFHiPPifKGUmQaCQLjp7OQ
-        BwIW4yRufJEZH5frrVq6jqeEzg==
-X-Google-Smtp-Source: APXvYqwLHvSwqQ0wDLSPdTFaZir99tjNhatCm3penvvdzh6SsenDaTxMVKo4xU4l8s1GExXu5p1q5Q==
-X-Received: by 2002:a62:51c2:: with SMTP id f185mr18546991pfb.16.1558343269570;
-        Mon, 20 May 2019 02:07:49 -0700 (PDT)
+        bh=RhhbywtZgL9mTL+/aS2gTie5gz+AOsOECX4GcmEvNm8=;
+        b=FRbMjBoUYX/dDXPTUCK6cphbne65fnFeGyrUDotIewC5NUTZdhrgguw6dR1WRBcYRk
+         16nzphyQqGbXO+X0irtezjeIjziGdshXHsHbkwfAvGGgQ8TvyEnX9sN/SpzuZGC5C7k2
+         6qA7K9eeA0+I64oKCdsWwTbtEaniZ3HjjV32Bn16FQvyBSBsmnqtPRPgoljbYEhE5pDM
+         sJ1kHgxdFq4r40HCql0Ybu3wTWXJV+279CLFyPdm55ZGe6fl7iuKhxIStDuHD57La9Xx
+         IVG9/lDkwztwrqiABn12i3p6Oj+NFPqtay/2QjL11UdHsIfy6HK1KUrmVvP2MZNVFYSv
+         +Czg==
+X-Gm-Message-State: APjAAAWrh90dVC2M8Ob5Zldq9pJSmKFbxdyOkX5PIDuh5lPYVpoOMhtg
+        sx369v6WNslz0GKgMgWdu+g9oA==
+X-Google-Smtp-Source: APXvYqz34UXPxRhzfdNer7tUP6i29zQxwtYM7NMLCp3pv/rNH5nWYiFi2u+2vMjGcD+MakpaE3MtkA==
+X-Received: by 2002:a63:1150:: with SMTP id 16mr74722565pgr.40.1558343274409;
+        Mon, 20 May 2019 02:07:54 -0700 (PDT)
 Received: from localhost.localdomain ([183.82.227.193])
-        by smtp.gmail.com with ESMTPSA id d15sm51671614pfm.186.2019.05.20.02.07.45
+        by smtp.gmail.com with ESMTPSA id d15sm51671614pfm.186.2019.05.20.02.07.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 02:07:49 -0700 (PDT)
+        Mon, 20 May 2019 02:07:53 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -52,9 +52,9 @@ Cc:     bshah@mykolab.com, Vasily Khoruzhick <anarsoul@gmail.com>,
         powerpan@qq.com, michael@amarulasolutions.com,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v10 07/11] drm/sun4i: dsi: Get tcon0_div at runtime
-Date:   Mon, 20 May 2019 14:33:14 +0530
-Message-Id: <20190520090318.27570-8-jagan@amarulasolutions.com>
+Subject: [PATCH v10 08/11] dt-bindings: sun6i-dsi: Add VCC-DSI supply property
+Date:   Mon, 20 May 2019 14:33:15 +0530
+Message-Id: <20190520090318.27570-9-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190520090318.27570-1-jagan@amarulasolutions.com>
 References: <20190520090318.27570-1-jagan@amarulasolutions.com>
@@ -65,56 +65,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tcon0 divider is used while computing drq edge0 for burst mode
-devices, currently driver is using default macro value 4 via
-SUN6I_DSI_TCON_DIV.
+Allwinner MIPI DSI controllers are supplied with SoC DSI
+power rails via VCC-DSI pin.
 
-Unfortunately not all the panel devices are working with this
-default divider value 4, so to make future changes on this divider
-value get the divider from tcon dot clock at runtime instead of
-static macro value.
+Some board still work without supplying this but give more
+faith on datasheet and hardware schematics and document this
+supply property in required property list.
 
+Reviewed-by: Rob Herring <robh@kernel.org>
 Tested-by: Merlijn Wajer <merlijn@wizzup.org>
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 +++++++-
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h | 2 --
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 1f9ed2642a47..5584e9c2f8bd 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -396,9 +396,15 @@ static u16 sun6i_dsi_get_drq_edge0(struct sun6i_dsi *dsi,
- 				   struct drm_display_mode *mode,
- 				   u16 line_num, u16 edge1)
- {
-+	struct sun4i_tcon *tcon = dsi->tcon;
-+	unsigned long dclk_rate, dclk_parent_rate, tcon0_div;
- 	u16 edge0 = edge1;
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+index 6a6cf5de08b0..1cc40663b7a2 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+@@ -21,6 +21,7 @@ Required properties:
+   - phys: phandle to the D-PHY
+   - phy-names: must be "dphy"
+   - resets: phandle to the reset controller driving the encoder
++  - vcc-dsi-supply: the VCC-DSI power supply of the DSI encoder
  
--	edge0 += (mode->hdisplay + 40) * SUN6I_DSI_TCON_DIV / 8;
-+	dclk_rate = clk_get_rate(tcon->dclk);
-+	dclk_parent_rate = clk_get_rate(clk_get_parent(tcon->dclk));
-+	tcon0_div = dclk_parent_rate / dclk_rate;
-+
-+	edge0 += (mode->hdisplay + 40) * tcon0_div / 8;
- 
- 	if (edge0 > line_num)
- 		return edge0 - line_num;
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-index f2826e3ea165..156523859d82 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-@@ -13,8 +13,6 @@
- #include <drm/drm_encoder.h>
- #include <drm/drm_mipi_dsi.h>
- 
--#define SUN6I_DSI_TCON_DIV	4
--
- struct sun6i_dsi {
- 	struct drm_connector	connector;
- 	struct drm_encoder	encoder;
+   - ports: A ports node with endpoint definitions as defined in
+     Documentation/devicetree/bindings/media/video-interfaces.txt. The
 -- 
 2.18.0.321.gffc6fa0e3
 
