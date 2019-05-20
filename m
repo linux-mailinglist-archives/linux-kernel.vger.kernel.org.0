@@ -2,338 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C522623047
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CC3B23053
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:28:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732107AbfETJ0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:26:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39748 "EHLO mx1.suse.de"
+        id S1732132AbfETJ2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:28:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40018 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729357AbfETJ0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:26:52 -0400
+        id S1731436AbfETJ2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:28:04 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DAF8DAE0F;
-        Mon, 20 May 2019 09:26:49 +0000 (UTC)
-From:   Takashi Iwai <tiwai@suse.de>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] firmware: Add support for loading compressed files
-Date:   Mon, 20 May 2019 11:26:47 +0200
-Message-Id: <20190520092647.8622-6-tiwai@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190520092647.8622-1-tiwai@suse.de>
-References: <20190520092647.8622-1-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id AAA62ABD7;
+        Mon, 20 May 2019 09:28:02 +0000 (UTC)
+Date:   Mon, 20 May 2019 11:28:01 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, linux-api@vger.kernel.org
+Subject: Re: [RFC 7/7] mm: madvise support MADV_ANONYMOUS_FILTER and
+ MADV_FILE_FILTER
+Message-ID: <20190520092801.GA6836@dhcp22.suse.cz>
+References: <20190520035254.57579-1-minchan@kernel.org>
+ <20190520035254.57579-8-minchan@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520035254.57579-8-minchan@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the support for loading compressed firmware files.
-The primary motivation is to reduce the storage size; e.g. currently
-the files in /lib/firmware on my machine counts up to 419MB, while
-they can be reduced to 130MB by file compression.
+[cc linux-api]
 
-The patch introduces a new kconfig option CONFIG_FW_LOADER_COMPRESS.
-Even with this option set, the firmware loader still tries to load the
-original firmware file as-is at first, but then falls back to the file
-with ".xz" extension when it's not found, and the decompressed file
-content is returned to the caller of request_firmware().  So, no
-change is needed for the rest.
+On Mon 20-05-19 12:52:54, Minchan Kim wrote:
+> System could have much faster swap device like zRAM. In that case, swapping
+> is extremely cheaper than file-IO on the low-end storage.
+> In this configuration, userspace could handle different strategy for each
+> kinds of vma. IOW, they want to reclaim anonymous pages by MADV_COLD
+> while it keeps file-backed pages in inactive LRU by MADV_COOL because
+> file IO is more expensive in this case so want to keep them in memory
+> until memory pressure happens.
+> 
+> To support such strategy easier, this patch introduces
+> MADV_ANONYMOUS_FILTER and MADV_FILE_FILTER options in madvise(2) like
+> that /proc/<pid>/clear_refs already has supported same filters.
+> They are filters could be Ored with other existing hints using top two bits
+> of (int behavior).
 
-Currently only XZ format is supported.  A caveat is that the kernel XZ
-helper code supports only CRC32 (or none) integrity check type, so
-you'll have to compress the files via xz -C crc32 option.
+madvise operates on top of ranges and it is quite trivial to do the
+filtering from the userspace so why do we need any additional filtering?
 
-Since we can't determine the expanded size immediately, the patch
-re-uses the paged buffer that was used for the user-mode fallback, and
-puts the decompressed content page by page as well as a new kconfig for
-enabling the paged buffer support.
+> Once either of them is set, the hint could affect only the interested vma
+> either anonymous or file-backed.
+> 
+> With that, user could call a process_madvise syscall simply with a entire
+> range(0x0 - 0xFFFFFFFFFFFFFFFF) but either of MADV_ANONYMOUS_FILTER and
+> MADV_FILE_FILTER so there is no need to call the syscall range by range.
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- drivers/base/firmware_loader/Kconfig    |  18 +++++
- drivers/base/firmware_loader/firmware.h |   8 +-
- drivers/base/firmware_loader/main.c     | 135 +++++++++++++++++++++++++++++---
- 3 files changed, 149 insertions(+), 12 deletions(-)
+OK, so here is the reason you want that. The immediate question is why
+cannot the monitor do the filtering from the userspace. Slightly more
+work, all right, but less of an API to expose and that itself is a
+strong argument against.
 
-diff --git a/drivers/base/firmware_loader/Kconfig b/drivers/base/firmware_loader/Kconfig
-index 38f2da6f5c2b..cc86d51d2999 100644
---- a/drivers/base/firmware_loader/Kconfig
-+++ b/drivers/base/firmware_loader/Kconfig
-@@ -26,6 +26,9 @@ config FW_LOADER
- 
- if FW_LOADER
- 
-+config FW_LOADER_PAGED_BUF
-+	bool
-+
- config EXTRA_FIRMWARE
- 	string "Build named firmware blobs into the kernel binary"
- 	help
-@@ -67,6 +70,7 @@ config EXTRA_FIRMWARE_DIR
- 
- config FW_LOADER_USER_HELPER
- 	bool "Enable the firmware sysfs fallback mechanism"
-+	select FW_LOADER_PAGED_BUF
- 	help
- 	  This option enables a sysfs loading facility to enable firmware
- 	  loading to the kernel through userspace as a fallback mechanism
-@@ -151,5 +155,19 @@ config FW_LOADER_USER_HELPER_FALLBACK
- 
- 	  If you are unsure about this, say N here.
- 
-+config FW_LOADER_COMPRESS
-+	bool "Enable compressed firmware support"
-+	select FW_LOADER_PAGED_BUF
-+	select XZ_DEC
-+	help
-+	  This option enables the support for loading compressed firmware
-+	  files. The caller of firmware API receives the decompressed file
-+	  content. The compressed file is loaded as a fallback, only after
-+	  trying to load the raw file at first.
-+
-+	  Currently only XZ-compressed files are supported, and they have to
-+	  be compressed with either none or crc32 integrity check type (the
-+	  -C crc32 option of xz command).
-+
- endif # FW_LOADER
- endmenu
-diff --git a/drivers/base/firmware_loader/firmware.h b/drivers/base/firmware_loader/firmware.h
-index 35f4e58b2d98..7048a41973ed 100644
---- a/drivers/base/firmware_loader/firmware.h
-+++ b/drivers/base/firmware_loader/firmware.h
-@@ -64,12 +64,14 @@ struct fw_priv {
- 	void *data;
- 	size_t size;
- 	size_t allocated_size;
--#ifdef CONFIG_FW_LOADER_USER_HELPER
-+#ifdef CONFIG_FW_LOADER_PAGED_BUF
- 	bool is_paged_buf;
--	bool need_uevent;
- 	struct page **pages;
- 	int nr_pages;
- 	int page_array_size;
-+#endif
-+#ifdef CONFIG_FW_LOADER_USER_HELPER
-+	bool need_uevent;
- 	struct list_head pending_list;
- #endif
- 	const char *fw_name;
-@@ -133,7 +135,7 @@ static inline void fw_state_done(struct fw_priv *fw_priv)
- int assign_fw(struct firmware *fw, struct device *device,
- 	      enum fw_opt opt_flags);
- 
--#ifdef CONFIG_FW_LOADER_USER_HELPER
-+#ifdef CONFIG_FW_LOADER_PAGED_BUF
- void fw_free_paged_buf(struct fw_priv *fw_priv);
- int fw_grow_paged_buf(struct fw_priv *fw_priv, int pages_needed);
- int fw_map_paged_buf(struct fw_priv *fw_priv);
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index 7e12732f4705..b070d6b4f4f1 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -33,6 +33,7 @@
- #include <linux/syscore_ops.h>
- #include <linux/reboot.h>
- #include <linux/security.h>
-+#include <linux/xz.h>
- 
- #include <generated/utsrelease.h>
- 
-@@ -266,7 +267,7 @@ static void free_fw_priv(struct fw_priv *fw_priv)
- 		spin_unlock(&fwc->lock);
- }
- 
--#ifdef CONFIG_FW_LOADER_USER_HELPER
-+#ifdef CONFIG_FW_LOADER_PAGED_BUF
- void fw_free_paged_buf(struct fw_priv *fw_priv)
- {
- 	int i;
-@@ -335,6 +336,98 @@ int fw_map_paged_buf(struct fw_priv *fw_priv)
- }
- #endif
- 
-+/*
-+ * compressed firmware support
-+ */
-+#ifdef CONFIG_FW_LOADER_COMPRESS
-+/* single-shot decompression onto the pre-allocated buffer */
-+static enum xz_ret fw_decompress_single(struct fw_priv *fw_priv,
-+					struct xz_dec *xz_dec,
-+					struct xz_buf *xz_buf)
-+{
-+	enum xz_ret xz_ret;
-+
-+	xz_buf->out_pos = 0;
-+	xz_buf->out = fw_priv->data;
-+	xz_buf->out_size = fw_priv->allocated_size;
-+	xz_ret = xz_dec_run(xz_dec, xz_buf);
-+	fw_priv->size = xz_buf->out_pos;
-+	return xz_ret;
-+}
-+
-+/* decompression on paged buffer and map it */
-+static enum xz_ret fw_decompress_pages(struct fw_priv *fw_priv,
-+				       struct xz_dec *xz_dec,
-+				       struct xz_buf *xz_buf)
-+{
-+	struct page *page;
-+	enum xz_ret xz_ret;
-+
-+	fw_priv->is_paged_buf = true;
-+	fw_priv->size = 0;
-+	do {
-+		if (fw_grow_paged_buf(fw_priv, fw_priv->nr_pages + 1))
-+			return XZ_MEM_ERROR;
-+
-+		page = fw_priv->pages[fw_priv->nr_pages - 1];
-+		xz_buf->out = kmap(page);
-+		xz_buf->out_pos = 0;
-+		xz_buf->out_size = PAGE_SIZE;
-+		xz_ret = xz_dec_run(xz_dec, xz_buf);
-+		kunmap(page);
-+		fw_priv->size += xz_buf->out_pos;
-+	} while (xz_ret == XZ_OK);
-+
-+	if (xz_ret == XZ_STREAM_END) {
-+		if (fw_map_paged_buf(fw_priv))
-+			return XZ_MEM_ERROR;
-+	}
-+
-+	return xz_ret;
-+}
-+
-+static int fw_decompress_buffer(struct device *dev, struct fw_priv *fw_priv,
-+				size_t in_size, const void *in_buffer)
-+{
-+	struct xz_dec *xz_dec;
-+	struct xz_buf xz_buf;
-+	enum xz_ret xz_ret;
-+	bool singleshot = false;
-+
-+	/* if the buffer is pre-allocaed, we can perform in single-shot mode */
-+	if (fw_priv->data)
-+		singleshot = true;
-+
-+	xz_dec = xz_dec_init(singleshot ? XZ_SINGLE : XZ_DYNALLOC, (u32)-1);
-+	if (!xz_dec) {
-+		dev_warn(dev, "f/w decompression init failed\n");
-+		return -ENOMEM;
-+	}
-+
-+	xz_buf.in_size = in_size;
-+	xz_buf.in = in_buffer;
-+	xz_buf.in_pos = 0;
-+	if (singleshot)
-+		xz_ret = fw_decompress_single(fw_priv, xz_dec, &xz_buf);
-+	else
-+		xz_ret = fw_decompress_pages(fw_priv, xz_dec, &xz_buf);
-+	xz_dec_end(xz_dec);
-+
-+	if (xz_ret != XZ_STREAM_END) {
-+		dev_warn(dev, "f/w decompression failed (xz_ret=%d)\n", xz_ret);
-+		return xz_ret == XZ_MEM_ERROR ? -ENOMEM : -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+#else /* CONFIG_FW_LOADER_COMPRESS */
-+static inline int fw_decompress_buffer(struct device *dev,  struct fw_priv *fw,
-+				       size_t in_size, const void *in_buffer)
-+{
-+	return -ENXIO;
-+}
-+#endif /* CONFIG_FW_LOADER_COMPRESS */
-+
- /* direct firmware loading support */
- static char fw_path_para[256];
- static const char * const fw_path[] = {
-@@ -354,7 +447,8 @@ module_param_string(path, fw_path_para, sizeof(fw_path_para), 0644);
- MODULE_PARM_DESC(path, "customized firmware image search path with a higher priority than default path");
- 
- static int
--fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
-+fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
-+			   bool decompress)
- {
- 	loff_t size;
- 	int i, len;
-@@ -362,9 +456,12 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
- 	char *path;
- 	enum kernel_read_file_id id = READING_FIRMWARE;
- 	size_t msize = INT_MAX;
-+	void *buffer = NULL;
-+	const char *suffix = decompress ? ".xz" : "";
- 
- 	/* Already populated data member means we're loading into a buffer */
--	if (fw_priv->data) {
-+	if (!decompress && fw_priv->data) {
-+		buffer = fw_priv->data;
- 		id = READING_FIRMWARE_PREALLOC_BUFFER;
- 		msize = fw_priv->allocated_size;
- 	}
-@@ -378,15 +475,15 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
- 		if (!fw_path[i][0])
- 			continue;
- 
--		len = snprintf(path, PATH_MAX, "%s/%s",
--			       fw_path[i], fw_priv->fw_name);
-+		len = snprintf(path, PATH_MAX, "%s/%s%s",
-+			       fw_path[i], fw_priv->fw_name, suffix);
- 		if (len >= PATH_MAX) {
- 			rc = -ENAMETOOLONG;
- 			break;
- 		}
- 
- 		fw_priv->size = 0;
--		rc = kernel_read_file_from_path(path, &fw_priv->data, &size,
-+		rc = kernel_read_file_from_path(path, &buffer, &size,
- 						msize, id);
- 		if (rc) {
- 			if (rc != -ENOENT)
-@@ -397,8 +494,25 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv)
- 					 path);
- 			continue;
- 		}
--		dev_dbg(device, "direct-loading %s\n", fw_priv->fw_name);
--		fw_priv->size = size;
-+		if (decompress) {
-+			dev_dbg(device, "f/w decompressing %s\n",
-+				fw_priv->fw_name);
-+			rc = fw_decompress_buffer(device, fw_priv, size,
-+						  buffer);
-+			/* discard the superfluous original content */
-+			vfree(buffer);
-+			buffer = NULL;
-+			if (rc) {
-+				fw_free_paged_buf(fw_priv);
-+				continue;
-+			}
-+		} else {
-+			dev_dbg(device, "direct-loading %s\n",
-+				fw_priv->fw_name);
-+			if (!fw_priv->data)
-+				fw_priv->data = buffer;
-+			fw_priv->size = size;
-+		}
- 		fw_state_done(fw_priv);
- 		break;
- 	}
-@@ -645,7 +759,10 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
- 	if (ret <= 0) /* error or already assigned */
- 		goto out;
- 
--	ret = fw_get_filesystem_firmware(device, fw->priv);
-+	ret = fw_get_filesystem_firmware(device, fw->priv, false);
-+	if (IS_ENABLED(CONFIG_FW_LOADER_COMPRESS) && ret == -ENOENT)
-+		ret = fw_get_filesystem_firmware(device, fw->priv, true);
-+
- 	if (ret) {
- 		if (!(opt_flags & FW_OPT_NO_WARN))
- 			dev_warn(device,
+> * from v1r2
+>   * use consistent check with clear_refs to identify anon/file vma - surenb
+> 
+> * from v1r1
+>   * use naming "filter" for new madvise option - dancol
+> 
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
+> ---
+>  include/uapi/asm-generic/mman-common.h |  5 +++++
+>  mm/madvise.c                           | 14 ++++++++++++++
+>  2 files changed, 19 insertions(+)
+> 
+> diff --git a/include/uapi/asm-generic/mman-common.h b/include/uapi/asm-generic/mman-common.h
+> index b8e230de84a6..be59a1b90284 100644
+> --- a/include/uapi/asm-generic/mman-common.h
+> +++ b/include/uapi/asm-generic/mman-common.h
+> @@ -66,6 +66,11 @@
+>  #define MADV_WIPEONFORK 18		/* Zero memory on fork, child only */
+>  #define MADV_KEEPONFORK 19		/* Undo MADV_WIPEONFORK */
+>  
+> +#define MADV_BEHAVIOR_MASK (~(MADV_ANONYMOUS_FILTER|MADV_FILE_FILTER))
+> +
+> +#define MADV_ANONYMOUS_FILTER	(1<<31)	/* works for only anonymous vma */
+> +#define MADV_FILE_FILTER	(1<<30)	/* works for only file-backed vma */
+> +
+>  /* compatibility flags */
+>  #define MAP_FILE	0
+>  
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index f4f569dac2bd..116131243540 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1002,7 +1002,15 @@ static int madvise_core(struct task_struct *tsk, unsigned long start,
+>  	int write;
+>  	size_t len;
+>  	struct blk_plug plug;
+> +	bool anon_only, file_only;
+>  
+> +	anon_only = behavior & MADV_ANONYMOUS_FILTER;
+> +	file_only = behavior & MADV_FILE_FILTER;
+> +
+> +	if (anon_only && file_only)
+> +		return error;
+> +
+> +	behavior = behavior & MADV_BEHAVIOR_MASK;
+>  	if (!madvise_behavior_valid(behavior))
+>  		return error;
+>  
+> @@ -1067,12 +1075,18 @@ static int madvise_core(struct task_struct *tsk, unsigned long start,
+>  		if (end < tmp)
+>  			tmp = end;
+>  
+> +		if (anon_only && vma->vm_file)
+> +			goto next;
+> +		if (file_only && !vma->vm_file)
+> +			goto next;
+> +
+>  		/* Here vma->vm_start <= start < tmp <= (end|vma->vm_end). */
+>  		error = madvise_vma(tsk, vma, &prev, start, tmp,
+>  					behavior, &pages);
+>  		if (error)
+>  			goto out;
+>  		*nr_pages += pages;
+> +next:
+>  		start = tmp;
+>  		if (prev && start < prev->vm_end)
+>  			start = prev->vm_end;
+> -- 
+> 2.21.0.1020.gf2820cf01a-goog
+> 
+
 -- 
-2.16.4
-
+Michal Hocko
+SUSE Labs
