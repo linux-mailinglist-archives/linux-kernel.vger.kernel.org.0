@@ -2,90 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5116F23061
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:31:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4434223065
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:33:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732185AbfETJb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:31:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43488 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730376AbfETJb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:31:29 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B12A20675;
-        Mon, 20 May 2019 09:31:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558344688;
-        bh=9mf5Ph72Tc0vQONuF+weC0PRNahfszSem//nmlEwEtM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Jx3dlP/HD9EcQvKyirrw/LfiOp7/spHQfeXf5nXhRMTQm8EEVyIkHTEjxcy2O3MXb
-         AfvPFPZf8Aa8L2i2rmSOPwOUnrUCCw8evSKYkvc3JrSj4jbAfJKDTmo6GIxQAe16Tm
-         LBhT6qgI7jnq7s42MaQ6n2jEuvpeuSa0HeAOXkRg=
-Date:   Mon, 20 May 2019 11:31:26 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     kbuild test robot <lkp@intel.com>,
-        Matt Sickler <Matt.Sickler@daktronics.com>, kbuild-all@01.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: arch/xtensa/include/asm/uaccess.h:40:22: error: implicit
- declaration of function 'uaccess_kernel'; did you mean 'getname_kernel'?
-Message-ID: <20190520093126.GA15326@kroah.com>
-References: <201905201259.JxEFGvZU%lkp@intel.com>
- <CAMo8BfJnr8j+uqOAMb5FE4ParRYCURqfTdb_1kh0iaqboxpMdg@mail.gmail.com>
+        id S1732215AbfETJdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:33:03 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40483 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729030AbfETJdD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 05:33:03 -0400
+Received: by mail-pg1-f196.google.com with SMTP id d30so6518566pgm.7;
+        Mon, 20 May 2019 02:33:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BikJ1LqRGkhlGlmQU7THI1KaCDjHN3UGQHGSJZ6WA6g=;
+        b=J3MG2YP03SsO1qXFGAn18jiLeOIAZKbuUAmVf8TReg9hr8zgctqHFzViHxpq2gC0tY
+         36pvwXRsbT/4UCMYRnfO9qEMu11ogdiZyszY6xfl3EHJV1shVwKI3pjY3PX2Pl8XcrP+
+         6GPs3ujoS6y+08+8yvK9RK8grOWM9nQL4l4ywllQFmpkpn9rtiCIBAZZiA3PkN/m2rFM
+         j4gyCECQkqM2GMKeRoAlBs2GBWjSrflpZZowYoiSQQ0fXdEtVfZuYLNEFrtzmPI3neUC
+         JWVtug+EtI3GGNZxDbIyyx2rict/Oe5SDrtO/WqbAQ9r7fUxfXeghj8S50Un3VkAkohX
+         3ZGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BikJ1LqRGkhlGlmQU7THI1KaCDjHN3UGQHGSJZ6WA6g=;
+        b=gE/ugULGr0JlST60PrqpdNAGoRrIIUSa0+A5qiYagqJxBjLc7UFFMOjxYDxhkAXQwI
+         KftenFbMSXzvvuxmFjqcleY6oWfPaa+BQnInbDpGMm3N+DVtO4s8HP5+bo5kceaXflZF
+         udQRNJa627W/xpKXGm/8C+s+Qca4zwgERyXl70gB2RsZEW7XyawxMYHR3YAABTYYLhAO
+         XxSY2zZZ6NiJG+Ht3jtuf2lqRxpIQpHmr/YFpTD3EaLRxuTApIJKfnRNXKP8zjp7q3FS
+         W40y0F4IA6grSVSyJsAnCgJzQ3OuPlOtTJAG5PRYkULD/D/y0lWTcAbwMEybIplzvE9m
+         49EA==
+X-Gm-Message-State: APjAAAXotKEhBuUB/+abobMbUVRbL0Pmrx++ryXnbpD12XuqU9q7Z8Gj
+        jdt/wg0x1GV/AN5xTMU6ccQRhLpYp0w=
+X-Google-Smtp-Source: APXvYqyzIU/ujLG3HBRbWQPkBok00jmmEnwQ4j4xgXmrKgCz7JSxOX/jz1RzDyLA8VSktbRK+5tsuw==
+X-Received: by 2002:a63:d016:: with SMTP id z22mr75145505pgf.116.1558344782769;
+        Mon, 20 May 2019 02:33:02 -0700 (PDT)
+Received: from localhost.localdomain ([27.61.168.215])
+        by smtp.googlemail.com with ESMTPSA id f36sm17649707pgb.76.2019.05.20.02.32.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 20 May 2019 02:33:02 -0700 (PDT)
+From:   Anirudh Gupta <anirudhrudr@gmail.com>
+X-Google-Original-From: Anirudh Gupta <anirudh.gupta@sophos.com>
+To:     Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Anirudh Gupta <anirudh.gupta@sophos.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net] xfrm: Fix xfrm sel prefix length validation
+Date:   Mon, 20 May 2019 15:01:56 +0530
+Message-Id: <20190520093157.59825-1-anirudh.gupta@sophos.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMo8BfJnr8j+uqOAMb5FE4ParRYCURqfTdb_1kh0iaqboxpMdg@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 19, 2019 at 10:50:44PM -0700, Max Filippov wrote:
-> Hello,
-> 
-> On Sun, May 19, 2019 at 10:39 PM kbuild test robot <lkp@intel.com> wrote:
-> > Hi Matt,
-> >
-> > FYI, the error/warning still remains.
-> >
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > head:   a188339ca5a396acc588e5851ed7e19f66b0ebd9
-> > commit: 7df95299b94a63ec67a6389fc02dc25019a80ee8 staging: kpc2000: Add DMA driver
-> > date:   4 weeks ago
-> > config: xtensa-allmodconfig (attached as .config)
-> > compiler: xtensa-linux-gcc (GCC) 8.1.0
-> > reproduce:
-> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> >         chmod +x ~/bin/make.cross
-> >         git checkout 7df95299b94a63ec67a6389fc02dc25019a80ee8
-> >         # save the attached .config to linux build tree
-> >         GCC_VERSION=8.1.0 make.cross ARCH=xtensa
-> >
-> > If you fix the issue, kindly add following tag
-> > Reported-by: kbuild test robot <lkp@intel.com>
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >    In file included from drivers/staging/kpc2000/kpc_dma/fileops.c:11:
-> >    arch/xtensa/include/asm/uaccess.h: In function 'clear_user':
-> > >> arch/xtensa/include/asm/uaccess.h:40:22: error: implicit declaration of function 'uaccess_kernel'; did you mean 'getname_kernel'? [-Werror=implicit-function-declaration]
-> >     #define __kernel_ok (uaccess_kernel())
-> >                          ^~~~~~~~~~~~~~
-> 
-> I've posted a fix for this issue here:
->   https://lkml.org/lkml/2019/5/8/956
-> 
-> If there are post merge window pull requests planned for the
-> staging tree please consider including this fix. Alternatively
-> if I could get an ack for this fix I'd submit it in a pull request
-> from the xtensa tree.
+Family of src/dst can be different from family of selector src/dst.
+Use xfrm selector family to validate address prefix length,
+while verifying new sa from userspace.
 
-It's now queued up, sorry, I had to wait for 5.2-rc1 to be released.
+Validated patch with this command:
+ip xfrm state add src 1.1.6.1 dst 1.1.6.2 proto esp spi 4260196 \
+reqid 20004 mode tunnel aead "rfc4106(gcm(aes))" \
+0x1111016400000000000000000000000044440001 128 \
+sel src 1011:1:4::2/128 sel dst 1021:1:4::2/128 dev Port5
 
-thanks,
+Fixes: 07bf7908950a ("xfrm: Validate address prefix lengths in the xfrm selector.")
+Signed-off-by: Anirudh Gupta <anirudh.gupta@sophos.com>
+---
+ net/xfrm/xfrm_user.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index eb8d14389601..fc2a8c08091b 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -149,7 +149,7 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
+ 	int err;
+ 
+ 	err = -EINVAL;
+-	switch (p->family) {
++	switch (p->sel.family) {
+ 	case AF_INET:
+ 		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
+ 			goto out;
+-- 
+2.19.0
+
