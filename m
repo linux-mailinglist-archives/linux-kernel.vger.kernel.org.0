@@ -2,79 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B2423337
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:07:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 140D42333A
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:09:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbfETMHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:07:41 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:54041 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732564AbfETMHl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:07:41 -0400
-X-Originating-IP: 90.88.22.185
-Received: from localhost (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id B57911BF20E;
-        Mon, 20 May 2019 12:07:37 +0000 (UTC)
-Date:   Mon, 20 May 2019 14:07:36 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v3 7/7] drm: Remove users of drm_format_num_planes
-Message-ID: <20190520120736.6ywe64l2oaigktbh@flea>
-References: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1558002671.git-series.maxime.ripard@bootlin.com>
- <c0a78c87cd0410a1819edad2794ad06543c85bb5.1558002671.git-series.maxime.ripard@bootlin.com>
- <20190520112045.GB6789@aptenodytes>
+        id S1732606AbfETMJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:09:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54804 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730921AbfETMJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:09:06 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A04A20656;
+        Mon, 20 May 2019 12:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558354145;
+        bh=wZbHqJjzSCtRrw1EnIKg8CMFLMhBazKLa0vRuT7Cyv4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JU7536XVe6T/VGeJ+j7c7M0xeRuruJCV7FOA+wbNKM/UUluggkO5lRNP8o00D/5mJ
+         S7GIPNbAacX0h6TA67hr3NFAJshjXNqlRYiOJzcH2OBMIwWWKhdV6CMYVqfKhuEqCX
+         vMOGx72sZZKwXC+X5RwqFfLjutGNpeecqZ6XGhfE=
+Date:   Mon, 20 May 2019 14:09:03 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Gilad Ben-Yossef <gilad@benyossef.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, stable@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [STABLE PATCH 1/2] crypto: ccree: zap entire sg on aead request
+ unmap
+Message-ID: <20190520120903.GB13524@kroah.com>
+References: <20190520115025.16457-1-gilad@benyossef.com>
+ <20190520115025.16457-2-gilad@benyossef.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="omouog2ag5tr5q2s"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190520112045.GB6789@aptenodytes>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190520115025.16457-2-gilad@benyossef.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 20, 2019 at 02:50:23PM +0300, Gilad Ben-Yossef wrote:
+> We were trying to be clever zapping out of the cache only the required
+> length out of scatter list on AEAD request completion and getting it
+> wrong.
+> 
+> As Knuth said: "when in douby, use brute force". Zap the whole length of
+> the scatter list.
+> 
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> ---
+>  drivers/crypto/ccree/cc_buffer_mgr.c | 18 ++----------------
+>  1 file changed, 2 insertions(+), 16 deletions(-)
 
---omouog2ag5tr5q2s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This does not apply on top of my latest 4.19 tree with the current
+pending queue applied, nor does it apply to 5.1 or 5.0.
 
-On Mon, May 20, 2019 at 01:20:45PM +0200, Paul Kocialkowski wrote:
-> Hi,
->
-> On Thu 16 May 19, 12:31, Maxime Ripard wrote:
-> > drm_format_info_plane_cpp() basically just returns the cpp array content
-> > found in the drm_format_info structure.
-> >
-> > Since it's pretty trivial, let's remove the function and have the users use
-> > the array directly
->
-> Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+How about waiting a few days and resending after I do the next round of
+stable updates, so you can rebase on top of them easier?
 
-Applied all 7 patches to drm-misc-next, thanks!
-Maxime
+thanks,
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---omouog2ag5tr5q2s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOKYiAAKCRDj7w1vZxhR
-xQQ3AQCwmuWyICKzfQgOtEuXjQnERNJXKUlcT2+4I6UFvOzbpQEA1mQQ+PKTdFJ7
-5c02i7jc4RH+Vxdlxw9S1jewokogoQE=
-=Sv7i
------END PGP SIGNATURE-----
-
---omouog2ag5tr5q2s--
+greg k-h
