@@ -2,96 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A65823BDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:19:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EAAA23BCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389973AbfETPTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:19:00 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54170 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388745AbfETPTA (ORCPT
+        id S2387973AbfETPQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:16:38 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:34656 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730475AbfETPQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:19:00 -0400
-Received: by mail-it1-f196.google.com with SMTP id m141so23506744ita.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 08:18:59 -0700 (PDT)
+        Mon, 20 May 2019 11:16:38 -0400
+Received: by mail-yb1-f194.google.com with SMTP id v78so5838975ybv.1;
+        Mon, 20 May 2019 08:16:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8bDPOW4T9PERtlCKjJ2lAbrC2Btl/gUnBtJeF4+SdEo=;
-        b=M2FGtec4qwOQA9nWt3yNJamKQbZ6wWHEdQ7BldBsOi2SLF2pp3o3HgjfWthzjXcrkt
-         1Hs+/DfFdQxqw0ItBC68YwvtUHfxSDPNMNLezriKfz417YqyxPA0xE315PCzAR3zfJwq
-         sD4QG6ggCau9zHe06mjOfQ/XeYTExSpjEdqb9EfyT8q9xhCfiXdOI7D/5lD6jYqoWhyC
-         KCI0lBwpSXxLHBGlYkTxZ182lmZPVwPKZjKhBCHRAF5RLHL/2mIcGf0eGvTbEPMZTbFy
-         lRnLGTe/ufItgUvJSnsswcjufkJZChaO2cCIaWAhfiTpiBkCBx5/xWGe0JLXpAVpwW/L
-         XZBw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=39pc0LYY2SOLC+Eab1jH/LHKWZC4F4vmwoS5+aTUN+8=;
+        b=FRzFebtGvRzGumqr5/EOZMft8/BWyHD6J6b4Z9ZwYcf9Sle5L3/dS0JH8ZFX9ODkm/
+         cZF4ZKffFotK/pNY52v4dL69ZDldsGJ1oZVQtNMPkHuPjkovD6x3wvOWtx/toYy7SsJ7
+         DOpNjJA6rgc3vK52YLl+aQqPuOs5L2Mcu0rpk70QWwQs5WTExgBaG+TnapM/U9FHgNGM
+         u5wb2zy0aHDXNwvCMkvTzy6K6M8KqpRlrIstB8TMcDkkV83MBWFQVTnWKxH6bpZdlAZb
+         hkGTvHaKocyyQsV9f1UN915n+tYk9S15RMUFJx0ryNZ1zCDAL8a2g3w+Lgahs7JV4dv9
+         pWVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8bDPOW4T9PERtlCKjJ2lAbrC2Btl/gUnBtJeF4+SdEo=;
-        b=T2SoqZALk7iVNH/eh34uoLdCulkXv2YtUfTz2hiVlyjLC74WCIxQCo5L5p/VTNan0W
-         Jv9Zh59cm2FJEHZ1xR/uRBoX7tdUwPGNslequQ+nEbZBUdREFr4LideZ37Fg3qbjfoBz
-         36bGzAgVEGtLMV7IE6nj+q6oB/coAQJD6A6wEYbWG/3J7sBRs8043z80bW/nsf7rmRRw
-         AP37WBAoKVF/5ig/om0DVWcgiqp9/3tjavRp3Ib+YScR+DZ8YLXp7FEyFcezEFz/7dR3
-         oQKbC8jjifwC6U3i2cyqB4n8h80ArsMDHrwT7DvntMFrV/lrSOJz/8TIaEd6UJR6GpGe
-         f5oA==
-X-Gm-Message-State: APjAAAXEaogU8HMlcgkrk1saXOdgOMAlN6wM6jnMCAjc60RMdHPJ+x/Y
-        qf73I92cwkkLlI8to4fXMxHuJA==
-X-Google-Smtp-Source: APXvYqxPeWPsR3qi08xbeYLoNXEOxhRXLPb6AbDnMWGKPpAWkaPEec6V+TrN28W/Fq0LTraaojid4w==
-X-Received: by 2002:a05:660c:107:: with SMTP id w7mr11276557itj.59.1558365539219;
-        Mon, 20 May 2019 08:18:59 -0700 (PDT)
-Received: from localhost (c-75-72-120-115.hsd1.mn.comcast.net. [75.72.120.115])
-        by smtp.gmail.com with ESMTPSA id s8sm5513436iot.55.2019.05.20.08.18.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 20 May 2019 08:18:58 -0700 (PDT)
-From:   Dan Rue <dan.rue@linaro.org>
-To:     dan.rue@linaro.org
-Cc:     linux-kselftest@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: teach kselftest-merge to find nested config files
-Date:   Mon, 20 May 2019 10:16:14 -0500
-Message-Id: <20190520151614.19188-1-dan.rue@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=39pc0LYY2SOLC+Eab1jH/LHKWZC4F4vmwoS5+aTUN+8=;
+        b=GX9UCLo9JhL81le64zPePhagGQCAmzmsb1H2W7A4vQ906OIgRm/kgnSQNwlWDAtkD3
+         K0NhiY3DuSBL2nHijItvtpGpNAbkaIMBreG1jhjIjMQeuNFVOYHch4dZ43qdMUHQ1UgD
+         sld/+ty7egkSXHsMKuKjbRldIkv2gL3RrxugfjNDAhNAzv2/bI/vJyUkagaanrePHce3
+         49xtyd0ZSpmtvcG/Qq74tzLb2d/1qj9O8PIFcVcyWuH3uZPgyLfJBQItiJzZBh7f0Ngx
+         A4v1eZLE+zFItuzAbCoBC80PcjjsPyYP/7jpZLhZqfDS9XMJY4dmmHcl8YHkVnFHojwa
+         ef8w==
+X-Gm-Message-State: APjAAAUTvOC8Vg4UIWTwMGf1jnkWyiHjVQKfA7g8cVayCKphuH7dKujJ
+        7uCacUBLg+6ZpV7QJR/AaNAbbU50b1ESjhAejdOs84TVVIc=
+X-Google-Smtp-Source: APXvYqzow3lQOqwpzptZIX0AC+6atUp95ha3AFYPDLnPZl03o6N6jBbz43DrPfl2QMoZUmG26GkF95me2V3vml881DI=
+X-Received: by 2002:a25:10c2:: with SMTP id 185mr33170384ybq.379.1558365396955;
+ Mon, 20 May 2019 08:16:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190518152355.11134-1-peron.clem@gmail.com> <20190518152355.11134-2-peron.clem@gmail.com>
+ <20190520073529.nxptfbibexrqyzfi@flea> <CAJiuCcdrW7RcEKePCr1DaL-be8dA5oOjvHdxYkiu=h37z2e7tw@mail.gmail.com>
+ <20190520144258.eauhvvwfxuhiczie@flea>
+In-Reply-To: <20190520144258.eauhvvwfxuhiczie@flea>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Mon, 20 May 2019 17:16:25 +0200
+Message-ID: <CAJiuCccUQ0grMo_RC4DN1AfzSPQq14KjUbNpFFvfQ+GBWDvG+w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: watchdog: add Allwinner H6 watchdog
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-watchdog@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current implementation of kselftest-merge only finds config files that
-are one level deep using `$(srctree)/tools/testing/selftests/*/config`.
+On Mon, 20 May 2019 at 16:43, Maxime Ripard <maxime.ripard@bootlin.com> wro=
+te:
+>
+> On Mon, May 20, 2019 at 10:14:10AM +0200, Cl=C3=A9ment P=C3=A9ron wrote:
+> > >
+> > > > +     - "allwinner,sun4i-a10-wdt"
+> > > > +     - "allwinner,sun50i-a64-wdt","allwinner,sun6i-a31-wdt"
+> > > > +     - "allwinner,sun50i-h6-wdt","allwinner,sun50i-a64-wdt",
+> > > > +       "allwinner,sun6i-a31-wdt"
+> > >
+> > > Is there a reason to keep the A64 compatible?
+> >
+> > Yes, A64 and H6 has the exact same memory mapping looking at the datash=
+eet.
+> > So if there is an errata or a new feature for the A64, it should be
+> > also compatible with the H6.
+> > Which is not the case with A31 (WDT_KEY_FIELD is not preset)
+>
+> The thing is, if you use those three compatibles, then you're saying
+> that it's ok for the OS to use first the H6 driver, then the A64
+> driver, and then the A31 driver.
+>
+> If the A31 isn't compatible, then it shouldn't be listed there. And if
+> it is, then you can skip the A64 compatible.
 
-Often, config files are added in nested directories, and do not get
-picked up by kselftest-merge.
+Hi Maxime,
 
-Use `find` to catch all config files under
-`$(srctree)/tools/testing/selftests` instead.
+I'm just supposing that A31 is the version 1.0 of the IP, A64 is the
+version 1.1 and H6 is 1.2.
+And if an issue is found for A64 there is more chance that we will
+have to fix it also for H6.
+But bindings the driver with :
+"allwinner,sun50i-h6-wdt","allwinner,sun50i-a31-wdt" is also fine for
+me.
 
-Signed-off-by: Dan Rue <dan.rue@linaro.org>
----
- Makefile | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index a45f84a7e811..e99e7f9484af 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1228,9 +1228,8 @@ kselftest-clean:
- PHONY += kselftest-merge
- kselftest-merge:
- 	$(if $(wildcard $(objtree)/.config),, $(error No .config exists, config your kernel first!))
--	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh \
--		-m $(objtree)/.config \
--		$(srctree)/tools/testing/selftests/*/config
-+	$(Q)find $(srctree)/tools/testing/selftests -name config | \
-+		xargs $(srctree)/scripts/kconfig/merge_config.sh -m $(objtree)/.config
- 	+$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
- 
- # ---------------------------------------------------------------------------
--- 
-2.21.0
-
+Regards,
+Clement
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
