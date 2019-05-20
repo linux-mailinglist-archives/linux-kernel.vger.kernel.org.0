@@ -2,114 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B891C23C2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8408723C54
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 17:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388858AbfETPbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 11:31:19 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38417 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731262AbfETPbS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 11:31:18 -0400
-Received: by mail-wm1-f65.google.com with SMTP id t5so12147902wmh.3;
-        Mon, 20 May 2019 08:31:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=U14r5RuHwz6CW9kWdqe1Yxv8qr6791SEzbYW5ZFfNqk=;
-        b=X42kXwwsyIepoPQ5+7f0C8mITSC9q9M4R3X6qzcOZJ+6VSrtBKWV3ZYEviRARRlQJ7
-         UzHjPebLhixIVOSb6DT/Ks5hOQjyBSeqOnR/Pc0iiBtpLvXdIdODVy0/sp1pEe51rCOS
-         WWHVhmU6BxArfJMfK1Fqh+5ntdjK84WS0UR++HrqeOd7SEBrkJqHt/uJEkd4eZNsXCPf
-         3LrdntUh6Oh5JlGtwXGyhR/epNkW0eM7fnBi/IvEZogP8tsvVqoVjJRZzb/jdBBr5WLn
-         glyCeIOZMlQUY7KZGZLi9Ce67PklCxkwKyJp37W5N1UEo/ZiLxqqA16zwla+l8dj3NfH
-         UWKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=U14r5RuHwz6CW9kWdqe1Yxv8qr6791SEzbYW5ZFfNqk=;
-        b=B0F1i/Mk4YyKX5j4CxOByeHD4dGEozyFE9C657Rc1Y74/jKOKro8ZO5wUaUJGPOEvg
-         slrs0rxkY/8s5b0SP2L205Cx01faeIP+wgJ1zZupGIDXjQwnNtPzetXAGeN7f8ivTm2h
-         +QPhjVmuzsnFIWlmdFGi/XshpUWY9BhavERX0vzQ8ulKDQxNRw3adMsZ9h/QLXLeu7z1
-         rofQarvsRu71aZo/OYH1aHXBW8UcH45R9L0btGBjlMELrXQz4GPKE/K0M93Pnuz+hzZA
-         MKGJ4YXgMKjBxXJPSfa/iOo74BhONlGDlSIFiD2e+KeLDbfRWa2bPBp0xML5VDgNQY4Q
-         NFnQ==
-X-Gm-Message-State: APjAAAXUdq0Sqt68kEm2eBGfIDAr5CncW1O+hsyU+gd6a2VnlBBD0ewE
-        tv+VZK7Nt/8391Z3dM0G8hhyYI7A
-X-Google-Smtp-Source: APXvYqzBLCxDCKBc93FboPBqTKnxofoRQHsgqJbVB8qp+LrOaxz2zsTmBoFWRhfw3rS0EiN1U5ZXVQ==
-X-Received: by 2002:a1c:7511:: with SMTP id o17mr5112701wmc.39.1558366276038;
-        Mon, 20 May 2019 08:31:16 -0700 (PDT)
-Received: from ubuntu.faroeurope.com (mail.faroeurope.com. [213.61.174.138])
-        by smtp.gmail.com with ESMTPSA id x1sm11666555wrp.35.2019.05.20.08.31.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 20 May 2019 08:31:15 -0700 (PDT)
-From:   Bernd Eckstein <3erndeckstein@gmail.com>
-X-Google-Original-From: Bernd Eckstein <3ernd.Eckstein@gmail.com>
-To:     davem@davemloft.net
-Cc:     linux@roeck-us.net, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        corsac@corsac.net, Oliver.Zweigle@faro.com,
-        3ernd.Eckstein@gmail.com
-Subject: [PATCH] usbnet: ipheth: fix racing condition
-Date:   Mon, 20 May 2019 17:31:09 +0200
-Message-Id: <1558366269-17787-1-git-send-email-3ernd.Eckstein@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        id S2392248AbfETPjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 11:39:08 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40706 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731091AbfETPjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 11:39:08 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B3DDE3D7F03C0B6C5253;
+        Mon, 20 May 2019 23:38:55 +0800 (CST)
+Received: from [127.0.0.1] (10.184.12.158) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Mon, 20 May 2019
+ 23:38:46 +0800
+Subject: Re: [RFC PATCH] KVM: arm/arm64: Enable direct irqfd MSI injection
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>
+CC:     <christoffer.dall@arm.com>, <eric.auger@redhat.com>,
+        <james.morse@arm.com>, <julien.thierry@arm.com>,
+        <suzuki.poulose@arm.com>, <kvmarm@lists.cs.columbia.edu>,
+        <mst@redhat.com>, <pbonzini@redhat.com>, <rkrcmar@redhat.com>,
+        <kvm@vger.kernel.org>, <wanghaibin.wang@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Raslan, KarimAllah" <karahmed@amazon.de>
+References: <1552833373-19828-1-git-send-email-yuzenghui@huawei.com>
+ <86o969z42z.wl-marc.zyngier@arm.com>
+ <20190318133040.1cfad9a4@why.wild-wind.fr.eu.org>
+ <20190515173832.62afdd90@donnerap.cambridge.arm.com>
+ <864l5u7tla.wl-marc.zyngier@arm.com>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <f61ed9f7-2bfc-8d6d-fac7-efc6329e9726@huawei.com>
+Date:   Mon, 20 May 2019 23:31:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
+MIME-Version: 1.0
+In-Reply-To: <864l5u7tla.wl-marc.zyngier@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.12.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix a racing condition in ipheth.c that can lead to slow performance.
+Hi Marc,
 
-Bug: In ipheth_tx(), netif_wake_queue() may be called on the callback
-ipheth_sndbulk_callback(), _before_ netif_stop_queue() is called.
-When this happens, the queue is stopped longer than it needs to be,
-thus reducing network performance.
+On 2019/5/16 15:21, Marc Zyngier wrote:
+> Hi Andre,
+> 
+> On Wed, 15 May 2019 17:38:32 +0100,
+> Andre Przywara <andre.przywara@arm.com> wrote:
+>>
+>> On Mon, 18 Mar 2019 13:30:40 +0000
+>> Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>
+>> Hi,
+>>
+>>> On Sun, 17 Mar 2019 19:35:48 +0000
+>>> Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>>
+>>> [...]
+>>>
+>>>> A first approach would be to keep a small cache of the last few
+>>>> successful translations for this ITS, cache that could be looked-up by
+>>>> holding a spinlock instead. A hit in this cache could directly be
+>>>> injected. Any command that invalidates or changes anything (DISCARD,
+>>>> INV, INVALL, MAPC with V=0, MAPD with V=0, MOVALL, MOVI) should nuke
+>>>> the cache altogether.
+>>>
+>>> And to explain what I meant with this, I've pushed a branch[1] with a
+>>> basic prototype. It is good enough to get a VM to boot, but I wouldn't
+>>> trust it for anything serious just yet.
+>>>
+>>> If anyone feels like giving it a go and check whether it has any
+>>> benefit performance wise, please do so.
+>>
+>> So I took a stab at the performance aspect, and it took me a while to find
+>> something where it actually makes a difference. The trick is to create *a
+>> lot* of interrupts. This is my setup now:
+>> - GICv3 and ITS
+>> - 5.1.0 kernel vs. 5.1.0 plus Marc's rebased "ITS cache" patches on top
+>> - 4 VCPU guest on a 4 core machine
+>> - passing through a M.2 NVMe SSD (or a USB3 controller) to the guest
+>> - running FIO in the guest, with:
+>>    - 4K block size, random reads, queue depth 16, 4 jobs (small)
+>>    - 1M block size, sequential reads, QD 1, 1 job (big)
+>>
+>> For the NVMe disk I see a whopping 19% performance improvement with Marc's
+>> series (for the small blocks). For a SATA SSD connected via USB3.0 I still
+>> see 6% improvement. For NVMe there were 50,000 interrupts per second on
+>> the host, the USB3 setup came only up to 10,000/s. For big blocks (with
+>> IRQs in the low thousands/s) the win is less, but still a measurable
+>> 3%.
+> 
+> Thanks for having a go at this, and identifying the case where it
+> actually matters (I would have hoped that the original reporter would
+> have helped with this, but hey, never mind). The results are pretty
+> impressive (more so than I anticipated), and I wonder whether we could
+> improve things further (50k interrupts/s is not that high -- I get
+> more than 100k on some machines just by playing with their sdcard...).
 
-Fix: Move netif_stop_queue() in front of usb_submit_urb(). Now the order
-is always correct. In case, usb_submit_urb() fails, the queue is woken up
-again as callback will not fire.
+I think the "original reporter" must feel embarrassed now.
+Actually, we had tested your patches (based on about 5.1.0-rc2) but
+failed to see performance improvement. And I stopped to move on, and
+then two months had gone... Oh sorry!
 
-Testing: This racing condition is usually not noticeable, as it has to
-occur very frequently to slowdown the network. The callback from the USB
-is usually triggered slow enough, so the situation does not appear.
-However, on a Ubuntu Linux on VMWare Workstation, running on Windows 10,
-the we loose the race quite often and the following speedup can be noticed:
+We retest your patches on 5.1.0, the result is as below.
 
-Without this patch: Download:  4.10 Mbit/s, Upload:  4.01 Mbit/s
-With this patch:    Download: 36.23 Mbit/s, Upload: 17.61 Mbit/s
+Test setup:
+- GICv3 and ITS (on Taishan 2280, D05)
+- two 4-VCPU guests with vhost-net interface
+- run iperf in guests:
+    - guest1: iperf -s
+    - guest2: iperf -c guest1-IP -t 10
+- pin vcpu threads and vhost threads on the same NUMA node
 
-Signed-off-by: Oliver Zweigle <Oliver.Zweigle@faro.com>
-Signed-off-by: Bernd Eckstein <3ernd.Eckstein@gmail.com>
+Result:
++-----------------+--------------+-----------------------+
+| Result          | interrupts/s | bandwidth (Gbits/sec) |
++-----------------+--------------+-----------------------+
+| 5.1.0           |    25+ k     |    10.6 Gbits/sec     |
++-----------------+--------------+-----------------------+
+| 5.1.0 (patched) |    40+ k     |    10.2 Gbits/sec     |
++-----------------+--------------+-----------------------+
 
----
- drivers/net/usb/ipheth.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+We get "interrupts/s" from /proc/interrupts on iperf server, with stable
+measured results. And we get "bandwidth" directly from iperf, but the
+results are somewhat *instable*. And the results really confused me --
+we received more interrupts but get a slight lower performance, why?
 
-diff --git a/drivers/net/usb/ipheth.c b/drivers/net/usb/ipheth.c
-index c247aed..8c01fbf 100644
---- a/drivers/net/usb/ipheth.c
-+++ b/drivers/net/usb/ipheth.c
-@@ -383,17 +383,18 @@ static int ipheth_tx(struct sk_buff *skb, struct net_device *net)
- 			  dev);
- 	dev->tx_urb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
- 
-+	netif_stop_queue(net);
- 	retval = usb_submit_urb(dev->tx_urb, GFP_ATOMIC);
- 	if (retval) {
- 		dev_err(&dev->intf->dev, "%s: usb_submit_urb: %d\n",
- 			__func__, retval);
- 		dev->net->stats.tx_errors++;
- 		dev_kfree_skb_any(skb);
-+		netif_wake_queue(net);
- 	} else {
- 		dev->net->stats.tx_packets++;
- 		dev->net->stats.tx_bytes += skb->len;
- 		dev_consume_skb_any(skb);
--		netif_stop_queue(net);
- 	}
- 
- 	return NETDEV_TX_OK;
--- 
-2.7.4
+We configure the vhost-net interface with only one queue, so I think we
+can rule out the spin-lock influence. And 'perf lock' confirmed this.
+This is all that I can provide now, sorry if it's useless.
+
+Also, one minor nit in code:
+In vgic_its_cache_translation(), we use vgic_put_irq() to evict the LRU
+cache entry, while we're already holding the lpi_list_lock. A deadlock
+will be caused here. But this is easy to fix.
+
+
+Anyway, we always have enough environments (e.g., D05, D06, ...) to do
+some tests. If you want to do further tests on our boards, please let me
+know :)
+
+
+thanks,
+zenghui
+
+> Could you describe how many interrupt sources each device has? The
+> reason I'm asking is that the cache size is pretty much hardcoded at
+> the moment (4 entries per vcpu), and that could have an impact on
+> performance if we keep evicting entries in the cache (note to self:
+> add some statistics for that).
+> 
+> Another area where we can improve things is that I think the
+> invalidation mechanism is pretty trigger happy (MOVI really doesn't
+> need to invalidate the cache). On the other hand, I'm not sure your
+> guest does too much of that.
+> 
+> Finally, the single cache spin-lock is bound to be a bottleneck of its
+> own at high interrupt rates, and I wonder whether we should move the
+> whole thing over to an RCU friendly data structure (the vgic_irq
+> structure really isn't that friendly). It'd be good to find out how
+> contended that spinlock is on your system.
+> 
+>> Now that I have the setup, I can rerun experiments very quickly (given I
+>> don't loose access to the machine), so let me know if someone needs
+>> further tests.
+> 
+> Another useful data point would be the delta with bare-metal: how much
+> overhead do we have with KVM, with and without this patch series. Oh,
+> and for easier comparison, please write it as a table that we can dump
+> in the cover letter when I actually post the series! ;-)
+> 
+> Thanks,
+> 
+> 	M.
+> 
 
