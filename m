@@ -2,142 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 426202379B
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 924E223701
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:17:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391538AbfETMw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:52:28 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32957 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387725AbfETMSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:18:48 -0400
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 48F69DF4E0C69AB1F29D;
-        Mon, 20 May 2019 13:18:47 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 20 May
- 2019 13:18:45 +0100
-Subject: Re: [PATCH 2/3 v5] add a new template field buf to contain the buffer
-To:     prakhar srivastava <prsriva02@gmail.com>
-CC:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Mimi Zohar" <zohar@linux.ibm.com>, <ebiederm@xmission.com>,
-        <vgoyal@redhat.com>, Prakhar Srivastava <prsriva@microsoft.com>
-References: <20190510223744.10154-1-prsriva02@gmail.com>
- <20190510223744.10154-3-prsriva02@gmail.com>
- <45344b2f-d9ea-f7df-e45f-18037e2ba5ca@huawei.com>
- <CAEFn8qJVvNivP6Lmx+nVewPcHjH=V2OrR_HyHR6nOeuVQW0A4w@mail.gmail.com>
- <ec8ee6f7-3a1d-6498-e009-f85e677b448a@huawei.com>
- <CAEFn8qKgH5FMLaudqTH6W0k7NpSoWV_NHbmiVduaQPbUNF_4Lg@mail.gmail.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <50235394-58da-18a6-c149-c385efa080cc@huawei.com>
-Date:   Mon, 20 May 2019 14:18:52 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S2387830AbfETMTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:19:33 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:50843 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387820AbfETMT1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:19:27 -0400
+Received: from [192.168.178.167] ([109.104.33.162]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MqsL3-1gpFl41RHl-00mrvz; Mon, 20 May 2019 14:19:07 +0200
+Subject: Re: [RFC v2 4/5] dts: bcm2837: add per-cpu clock devices
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        sboyd@kernel.org, eric@anholt.net, ptesarik@suse.com,
+        linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mturquette@baylibre.com, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
+ <20190520104708.11980-5-nsaenzjulienne@suse.de>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <af50c1e9-5f52-e06b-8d0b-c9f72fba1324@i2se.com>
+Date:   Mon, 20 May 2019 14:19:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <CAEFn8qKgH5FMLaudqTH6W0k7NpSoWV_NHbmiVduaQPbUNF_4Lg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+In-Reply-To: <20190520104708.11980-5-nsaenzjulienne@suse.de>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+Content-Language: en-US
+X-Provags-ID: V03:K1:bNR85Xr5Ix+/N8OQzcAK+XY4eUmxwoteVwKocla9a9I7HzkvLcM
+ /uiEboQgspShU1W4QTj7siUuy0oqooMehPTXT7eDhfGc4LVkxMDK8Ve1bX0/mEX0dvWe9cY
+ ZBTCwKlQSXk3lfET5gAOnFazcF6lfCik5yk+iEsANhQDdrD/6+D6LHXfcPesRRjYroYeLA5
+ r4Oi7dFGZg0MqE9xQ+Aeg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6J1Fp4MKs28=:EUhQ8mvrBMpbz/M+ADxWx3
+ r/nxWy6+BZ9mkIz0Jn843As9r2wZB17pO/yhpXhG8Wcd6DfI3VO8BU+joDy00A6lI4nTkkvpb
+ juD4rVnuBJvH8GH0iARDEgvNWwaj2NnvHhllrxCQsaD9F4LkHDbPlcDtCh9tBCLHHvlg2+CMi
+ zo7li5BCz7kfnu6fh4mLkgG7/LlDT5OsIsePWv9qZvbt5oOkfJuRENFOVVFhml8ZKAEf576aV
+ Uh4KmJ9u+g5H2zk1KqHGPfMt5Qgzsioxxjoa/kjddfijnYCtvBznCcemvh/OiGN4uJVZBKjbN
+ dTv81y2YGx47evOYezaPrDgGCmDPICIaregOF4cCz40R1xoKKhF77HqsSDQKXs/WG6CBD+Eo5
+ a2k2IKVKIEpfBK6NCkM4i2pUOU6aLtDYe0L4ocYMu+Y82Qg3GvFYvUYSmiQl3DRZ+TMCJhrNv
+ mdvkgm7848M7em8ysrSzfVwYssutfMW11SojWGyXlgqEN6HeOXSKwbhzz3RnhhbkpKs5tF0Y0
+ XJrrxF4+a5Ym/LrItbxkz53pjRwiOr+QirImQtfP+mA0gHI1DK5IKkMloFOZJWmjX5oavoAdN
+ TRnAretttyb/aSU1GjCjDfUPBYsFoDCfFHHL0soDOkZL0Pq3zjA2QADigHSIquHz60uPPAYWv
+ xmXaDQBQsoL1BguVHzwiFVpiEY1xf904cAZMJEEIRKeWCxWQxM81yyASMd1drUXqPdg096jtA
+ 4wM1Bfs/IbW91rTOPRpHtsyA76i1t7j850Kw3ZzTMdDk643oku66LbG8L0hLRUl59drWFpCcU
+ HtB52UfDRRY9i4xIkEgI15kY27xVxBk1+4VSC1i7DK3ybJD3zSb+QTSnswW/27Q34u0eNWZ23
+ vzkE8vSFO7liN76e2kHw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/18/2019 1:32 AM, prakhar srivastava wrote:
-> On Tue, May 14, 2019 at 6:22 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
->>
->> On 5/14/2019 7:07 AM, prakhar srivastava wrote:
->>> On Mon, May 13, 2019 at 6:48 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
->>>>
->>>> On 5/11/2019 12:37 AM, Prakhar Srivastava wrote:
->>>>> From: Prakhar Srivastava <prsriva02@gmail.com>
->>>>>
->>>>> The buffer(cmdline args) added to the ima log cannot be attested
->>>>> without having the actual buffer. Thus to make the measured buffer
->>>>> available to store/read a new ima template (buf) is added.
->>>>
->>>> Hi Prakhar
->>>>
->>>> please fix the typos. More comments below.
->>>>
->>>>
->>>>> +     buffer_event_data->type = IMA_XATTR_BUFFER;
->>>>> +     buffer_event_data->buf_length = size;
->>>>> +     memcpy(buffer_event_data->buf, buf, size);
->>>>> +
->>>>> +     event_data.xattr_value = (struct evm_ima_xattr_data *)buffer_event_data;
->>>>> +     event_data.xattr_len = alloc_length;
->>>>
->>>> I would prefer that you introduce two new fields in the ima_event_data
->>>> structure. You can initialize them directly with the parameters of
->>>> process_buffer_measurement().
->>> I will make the edits, this will definitely save the kzalloc in this code
->>> path.
->>>>
->>>> ima_write_template_field_data() will make
->>>> a copy.
->>>>
->>> Since event_data->type is used to distinguish what the template field
->>>    should contain.
->>> Removing the type and subsequent check in the template_init,
->>>    buf template fmt will result in the whole event_Data structure
->>> being added to the log, which is not the expected output.
->>> For buffer entries, the buf template fmt will contains the buffer itself.
-> 
->>
->> The purpose of ima_event_data is to pass data to the init method of
->> template fields. Each method takes the data it needs.
->>
->> If you pass event_data->buf and event_data->buf_len to
->> ima_write_template_field_data() this should be fine.
-> 
-> Hi Roberto,
-> I did some testing after making the needed code changes,
-> the output is as expected the buf template field only contains
-> the buf when the ima_event_data.buf is set.
-> 
-> However i just want to double check if adding two new fields to
-> the struct ima_event_data is approach you want me to take?
-> Mimi any concerns?
+Hi Nicolas,
 
-I think it should not be a problem. ima_event_data was introduced to
-pass more information to a function for a new template field, without
-changing the definition of existing functions.
-
-
-> what all tests do i need to run to confirm i am not
-> in-inadvertently breaking some thing else?
-
-ima_event_data is not used for marshaling/unmarshaling. Adding two new
-members to the structure won't change the behavior of existing code.
-
-Roberto
-
-
-> Thanks,
-> Prakhar Srivastava
->>
->> Roberto
->>
->>
->>>>> +      .field_show = ima_show_template_buf},
->>>>
->>>> Please update Documentation/security/IMA-templates.rst
->>> Will update the documentation.
->>>
->>> Thanks,
->>> Prakhar Srivastava
->>>>
->>>> Thanks
->>>>
->>>> Roberto
->>
->> --
->> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
->> Managing Director: Bo PENG, Jian LI, Yanli SHI
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+On 20.05.19 12:47, Nicolas Saenz Julienne wrote:
+> The four CPUs share a same clock source called pllb_arm. The clock can
+> be scaled through the raspberrypi firmware interface.
+do you see a problem with applying this also to bcm2835.dtsi and
+bcm2836.dtsi?
