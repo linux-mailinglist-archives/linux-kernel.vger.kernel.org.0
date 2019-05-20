@@ -2,137 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94442232A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D52B223296
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 13:34:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732192AbfETLec (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 07:34:32 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8222 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727626AbfETLeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 07:34:31 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 711B07BA39250D23F014;
-        Mon, 20 May 2019 19:34:29 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 20 May 2019 19:34:19 +0800
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v2] intel_th: msu: Fix unused variable warning on arm64 platform
-Date:   Mon, 20 May 2019 19:32:53 +0800
-Message-ID: <1558351973-62643-1-git-send-email-zhangshaokun@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        id S1732994AbfETLdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 07:33:07 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:37373 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732957AbfETLdG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 07:33:06 -0400
+X-Originating-IP: 90.88.22.185
+Received: from aptenodytes (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 7FDA81BF20D;
+        Mon, 20 May 2019 11:32:59 +0000 (UTC)
+Date:   Mon, 20 May 2019 13:32:59 +0200
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Emil Velikov <emil.velikov@collabora.com>
+Subject: Re: [PATCH v3 5/7] drm/fourcc: Pass the format_info pointer to
+ drm_format_plane_width/height
+Message-ID: <20190520113258.GC6789@aptenodytes>
+References: <27b0041c7977402df4a087c78d2849ffe51c9f1c.1558002671.git-series.maxime.ripard@bootlin.com>
+ <514af1d489d80b8b1767e3716b663ce5103da6eb.1558002671.git-series.maxime.ripard@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <514af1d489d80b8b1767e3716b663ce5103da6eb.1558002671.git-series.maxime.ripard@bootlin.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_alloc’:
-drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable ‘i’ [-Wunused-variable]
-  int ret = -ENOMEM, i;
-                     ^
-drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_free’:
-drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable ‘i’ [-Wunused-variable]
-  int i;
-      ^
-Fix this compiler warning on arm64 platform.
+Hi,
 
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Suggested-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
----
- drivers/hwtracing/intel_th/msu.c | 40 +++++++++++++++++++++++++++-------------
- 1 file changed, 27 insertions(+), 13 deletions(-)
+On Thu 16 May 19, 12:31, Maxime Ripard wrote:
+> So far, the drm_format_plane_height/width functions were operating on the
+> format's fourcc and was doing a lookup to retrieve the drm_format_info
+> structure and return the cpp.
+> 
+> However, this is inefficient since in most cases, we will have the
+> drm_format_info pointer already available so we shouldn't have to perform a
+> new lookup. Some drm_fourcc functions also already operate on the
+> drm_format_info pointer for that reason, so the API is quite inconsistent
+> there.
+> 
+> Let's follow the latter pattern and remove the extra lookup while being a
+> bit more consistent.
+> 
+> In order to be extra consistent, also rename that function to
+> drm_format_info_plane_cpp and to a static function in the header to match
+> the current policy. The parameters order have also be changed to match the
+> other functions prototype.
 
-diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
-index 81bb54fa3ce8..49e64ca760e6 100644
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -767,6 +767,30 @@ static int __msc_buffer_win_alloc(struct msc_window *win,
- 	return -ENOMEM;
- }
- 
-+#ifdef CONFIG_X86
-+static void msc_buffer_set_uc(struct msc_window *win, unsigned int nr_blocks)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr_blocks; i++)
-+		/* Set the page as uncached */
-+		set_memory_uc((unsigned long)msc_win_block(win, i), 1);
-+}
-+
-+static void msc_buffer_set_wb(struct msc_window *win)
-+{
-+	int i;
-+
-+	for (i = 0; i < win->nr_blocks; i++)
-+		/* Reset the page to write-back */
-+		set_memory_wb((unsigned long)msc_win_block(win, i), 1);
-+}
-+#else /* !X86 */
-+static inline void msc_buffer_set_uc(struct msc_window *win,
-+				     unsigned int nr_blocks) {}
-+static inline void msc_buffer_set_wb(struct msc_window *win) {}
-+#endif /* CONFIG_X86 */
-+
- /**
-  * msc_buffer_win_alloc() - alloc a window for a multiblock mode
-  * @msc:	MSC device
-@@ -780,7 +804,7 @@ static int __msc_buffer_win_alloc(struct msc_window *win,
- static int msc_buffer_win_alloc(struct msc *msc, unsigned int nr_blocks)
- {
- 	struct msc_window *win;
--	int ret = -ENOMEM, i;
-+	int ret = -ENOMEM;
- 
- 	if (!nr_blocks)
- 		return 0;
-@@ -811,11 +835,7 @@ static int msc_buffer_win_alloc(struct msc *msc, unsigned int nr_blocks)
- 	if (ret < 0)
- 		goto err_nomem;
- 
--#ifdef CONFIG_X86
--	for (i = 0; i < ret; i++)
--		/* Set the page as uncached */
--		set_memory_uc((unsigned long)msc_win_block(win, i), 1);
--#endif
-+	msc_buffer_set_uc(win, ret);
- 
- 	win->nr_blocks = ret;
- 
-@@ -860,8 +880,6 @@ static void __msc_buffer_win_free(struct msc *msc, struct msc_window *win)
-  */
- static void msc_buffer_win_free(struct msc *msc, struct msc_window *win)
- {
--	int i;
--
- 	msc->nr_pages -= win->nr_blocks;
- 
- 	list_del(&win->entry);
-@@ -870,11 +888,7 @@ static void msc_buffer_win_free(struct msc *msc, struct msc_window *win)
- 		msc->base_addr = 0;
- 	}
- 
--#ifdef CONFIG_X86
--	for (i = 0; i < win->nr_blocks; i++)
--		/* Reset the page to write-back */
--		set_memory_wb((unsigned long)msc_win_block(win, i), 1);
--#endif
-+	msc_buffer_set_wb(win);
- 
- 	__msc_buffer_win_free(msc, win);
- 
+Same comment about plane being int instead of unsigned int, but I think we
+can fix that later.
+
+Another thing that I find odd is that the division by vsub/hsub is not
+rounded up, but again, it's something independent from your patch.
+
+Reviewed-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+
+Cheers,
+
+Paul
+
+> Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> ---
+>  drivers/gpu/drm/drm_fourcc.c          | 48 +----------------------------
+>  drivers/gpu/drm/meson/meson_overlay.c | 12 +++----
+>  include/drm/drm_fourcc.h              | 46 +++++++++++++++++++++++++--
+>  3 files changed, 50 insertions(+), 56 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
+> index 5f63fc74e265..35b459d186c5 100644
+> --- a/drivers/gpu/drm/drm_fourcc.c
+> +++ b/drivers/gpu/drm/drm_fourcc.c
+> @@ -333,54 +333,6 @@ drm_get_format_info(struct drm_device *dev,
+>  EXPORT_SYMBOL(drm_get_format_info);
+>  
+>  /**
+> - * drm_format_plane_width - width of the plane given the first plane
+> - * @width: width of the first plane
+> - * @format: pixel format
+> - * @plane: plane index
+> - *
+> - * Returns:
+> - * The width of @plane, given that the width of the first plane is @width.
+> - */
+> -int drm_format_plane_width(int width, uint32_t format, int plane)
+> -{
+> -	const struct drm_format_info *info;
+> -
+> -	info = drm_format_info(format);
+> -	if (!info || plane >= info->num_planes)
+> -		return 0;
+> -
+> -	if (plane == 0)
+> -		return width;
+> -
+> -	return width / info->hsub;
+> -}
+> -EXPORT_SYMBOL(drm_format_plane_width);
+> -
+> -/**
+> - * drm_format_plane_height - height of the plane given the first plane
+> - * @height: height of the first plane
+> - * @format: pixel format
+> - * @plane: plane index
+> - *
+> - * Returns:
+> - * The height of @plane, given that the height of the first plane is @height.
+> - */
+> -int drm_format_plane_height(int height, uint32_t format, int plane)
+> -{
+> -	const struct drm_format_info *info;
+> -
+> -	info = drm_format_info(format);
+> -	if (!info || plane >= info->num_planes)
+> -		return 0;
+> -
+> -	if (plane == 0)
+> -		return height;
+> -
+> -	return height / info->vsub;
+> -}
+> -EXPORT_SYMBOL(drm_format_plane_height);
+> -
+> -/**
+>   * drm_format_info_block_width - width in pixels of block.
+>   * @info: pixel format info
+>   * @plane: plane index
+> diff --git a/drivers/gpu/drm/meson/meson_overlay.c b/drivers/gpu/drm/meson/meson_overlay.c
+> index fb8515b2860c..55b3f2f2e608 100644
+> --- a/drivers/gpu/drm/meson/meson_overlay.c
+> +++ b/drivers/gpu/drm/meson/meson_overlay.c
+> @@ -466,8 +466,8 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
+>  		priv->viu.vd1_addr2 = gem->paddr + fb->offsets[2];
+>  		priv->viu.vd1_stride2 = fb->pitches[2];
+>  		priv->viu.vd1_height2 =
+> -			drm_format_plane_height(fb->height,
+> -						fb->format->format, 2);
+> +			drm_format_info_plane_height(fb->format,
+> +						fb->height, 2);
+>  		DRM_DEBUG("plane 2 addr 0x%x stride %d height %d\n",
+>  			 priv->viu.vd1_addr2,
+>  			 priv->viu.vd1_stride2,
+> @@ -478,8 +478,8 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
+>  		priv->viu.vd1_addr1 = gem->paddr + fb->offsets[1];
+>  		priv->viu.vd1_stride1 = fb->pitches[1];
+>  		priv->viu.vd1_height1 =
+> -			drm_format_plane_height(fb->height,
+> -						fb->format->format, 1);
+> +			drm_format_info_plane_height(fb->format,
+> +						fb->height, 1);
+>  		DRM_DEBUG("plane 1 addr 0x%x stride %d height %d\n",
+>  			 priv->viu.vd1_addr1,
+>  			 priv->viu.vd1_stride1,
+> @@ -490,8 +490,8 @@ static void meson_overlay_atomic_update(struct drm_plane *plane,
+>  		priv->viu.vd1_addr0 = gem->paddr + fb->offsets[0];
+>  		priv->viu.vd1_stride0 = fb->pitches[0];
+>  		priv->viu.vd1_height0 =
+> -			drm_format_plane_height(fb->height,
+> -						fb->format->format, 0);
+> +			drm_format_info_plane_height(fb->format,
+> +						fb->height, 0);
+>  		DRM_DEBUG("plane 0 addr 0x%x stride %d height %d\n",
+>  			 priv->viu.vd1_addr0,
+>  			 priv->viu.vd1_stride0,
+> diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
+> index 6b5a82b31bc4..4ef8ccb5d236 100644
+> --- a/include/drm/drm_fourcc.h
+> +++ b/include/drm/drm_fourcc.h
+> @@ -277,6 +277,50 @@ int drm_format_info_plane_cpp(const struct drm_format_info *info, int plane)
+>  	return info->cpp[plane];
+>  }
+>  
+> +/**
+> + * drm_format_info_plane_width - width of the plane given the first plane
+> + * @format: pixel format info
+> + * @width: width of the first plane
+> + * @plane: plane index
+> + *
+> + * Returns:
+> + * The width of @plane, given that the width of the first plane is @width.
+> + */
+> +static inline
+> +int drm_format_info_plane_width(const struct drm_format_info *info, int width,
+> +				int plane)
+> +{
+> +	if (!info || plane >= info->num_planes)
+> +		return 0;
+> +
+> +	if (plane == 0)
+> +		return width;
+> +
+> +	return width / info->hsub;
+> +}
+> +
+> +/**
+> + * drm_format_info_plane_height - height of the plane given the first plane
+> + * @format: pixel format info
+> + * @height: height of the first plane
+> + * @plane: plane index
+> + *
+> + * Returns:
+> + * The height of @plane, given that the height of the first plane is @height.
+> + */
+> +static inline
+> +int drm_format_info_plane_height(const struct drm_format_info *info, int height,
+> +				 int plane)
+> +{
+> +	if (!info || plane >= info->num_planes)
+> +		return 0;
+> +
+> +	if (plane == 0)
+> +		return height;
+> +
+> +	return height / info->vsub;
+> +}
+> +
+>  const struct drm_format_info *__drm_format_info(u32 format);
+>  const struct drm_format_info *drm_format_info(u32 format);
+>  const struct drm_format_info *
+> @@ -285,8 +329,6 @@ drm_get_format_info(struct drm_device *dev,
+>  uint32_t drm_mode_legacy_fb_format(uint32_t bpp, uint32_t depth);
+>  uint32_t drm_driver_legacy_fb_format(struct drm_device *dev,
+>  				     uint32_t bpp, uint32_t depth);
+> -int drm_format_plane_width(int width, uint32_t format, int plane);
+> -int drm_format_plane_height(int height, uint32_t format, int plane);
+>  unsigned int drm_format_info_block_width(const struct drm_format_info *info,
+>  					 int plane);
+>  unsigned int drm_format_info_block_height(const struct drm_format_info *info,
+> -- 
+> git-series 0.9.1
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-2.7.4
-
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
