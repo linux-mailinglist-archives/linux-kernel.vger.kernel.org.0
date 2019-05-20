@@ -2,243 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2A0223932
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:02:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56DB423918
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 16:01:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391207AbfETOBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 10:01:21 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8226 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390963AbfETOBQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 10:01:16 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id C5264D5D5FC9A1680A67;
-        Mon, 20 May 2019 22:01:12 +0800 (CST)
-Received: from HGHY1l002753561.china.huawei.com (10.177.23.164) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 20 May 2019 22:01:06 +0800
-From:   Zhen Lei <thunder.leizhen@huawei.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        John Garry <john.garry@huawei.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        "Martin Schwidefsky" <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "Michael Ellerman" <mpe@ellerman.id.au>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        x86 <x86@kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>
-CC:     Zhen Lei <thunder.leizhen@huawei.com>,
-        Hanjun Guo <guohanjun@huawei.com>
-Subject: [PATCH v7 1/1] iommu: enhance IOMMU dma mode build options
-Date:   Mon, 20 May 2019 21:59:47 +0800
-Message-ID: <20190520135947.14960-2-thunder.leizhen@huawei.com>
-X-Mailer: git-send-email 2.19.2.windows.1
-In-Reply-To: <20190520135947.14960-1-thunder.leizhen@huawei.com>
-References: <20190520135947.14960-1-thunder.leizhen@huawei.com>
+        id S2390955AbfETOBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 10:01:03 -0400
+Received: from relay.sw.ru ([185.231.240.75]:39784 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732639AbfETOAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 10:00:53 -0400
+Received: from [172.16.25.169] (helo=localhost.localdomain)
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1hSipd-00082V-Un; Mon, 20 May 2019 17:00:02 +0300
+Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2 0/7] mm: process_vm_mmap() -- syscall for duplication a
+ process mapping
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     akpm@linux-foundation.org, dan.j.williams@intel.com,
+        ktkhai@virtuozzo.com, mhocko@suse.com, keith.busch@intel.com,
+        kirill.shutemov@linux.intel.com, alexander.h.duyck@linux.intel.com,
+        ira.weiny@intel.com, andreyknvl@google.com, arunks@codeaurora.org,
+        vbabka@suse.cz, cl@linux.com, riel@surriel.com,
+        keescook@chromium.org, hannes@cmpxchg.org, npiggin@gmail.com,
+        mathieu.desnoyers@efficios.com, shakeelb@google.com, guro@fb.com,
+        aarcange@redhat.com, hughd@google.com, jglisse@redhat.com,
+        mgorman@techsingularity.net, daniel.m.jordan@oracle.com,
+        jannh@google.com, kilobyte@angband.pl, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Date:   Mon, 20 May 2019 17:00:01 +0300
+Message-ID: <155836064844.2441.10911127801797083064.stgit@localhost.localdomain>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First, add build option IOMMU_DEFAULT_{LAZY|STRICT}, so that we have the
-opportunity to set {lazy|strict} mode as default at build time. Then put
-the three config options in an choice, make people can only choose one of
-the three at a time.
+v2: Add PVMMAP_FIXED_NOREPLACE flag.
+    Use find_vma_without_flags() and may_mmap_overlapped_region() helpers,
+    so even more code became reused.
+    Syscall number is changed.
+    Fix whitespaces.
 
-The default IOMMU dma modes on each ARCHs have no change.
+    Prohibited a cloning from local to remote process. Only mapping
+    to local process mm is allowed, since I missed initially, that
+    get_unmapped_area() can't be used for remote process. This may
+    be very simply solved by passing @mm argument to all .get_unmapped_area
+    handlers. In this patchset I don't do this, since this gives a lot
+    of cleanup patches, which hides main logic away. I'm going to
+    send them later, as another series, after we finish with this.
 
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+[Summary]
+
+New syscall, which allows to clone a remote process VMA
+into local process VM. The remote process's page table
+entries related to the VMA are cloned into local process's
+page table (in any desired address, which makes this different
+from that happens during fork()). Huge pages are handled
+appropriately.
+
+This allows to improve performance in significant way like
+it's shows in the example below.
+
+[Description] 
+
+This patchset adds a new syscall, which makes possible
+to clone a VMA from a process to current process.
+The syscall supplements the functionality provided
+by process_vm_writev() and process_vm_readv() syscalls,
+and it may be useful in many situation.
+
+For example, it allows to make a zero copy of data,
+when process_vm_writev() was previously used:
+
+	struct iovec local_iov, remote_iov;
+	void *buf;
+
+	buf = mmap(NULL, n * PAGE_SIZE, PROT_READ|PROT_WRITE,
+		   MAP_PRIVATE|MAP_ANONYMOUS, ...);
+	recv(sock, buf, n * PAGE_SIZE, 0);
+
+	local_iov->iov_base = buf;
+	local_iov->iov_len = n * PAGE_SIZE;
+	remove_iov = ...;
+
+	process_vm_writev(pid, &local_iov, 1, &remote_iov, 1 0);
+	munmap(buf, n * PAGE_SIZE);
+
+	(Note, that above completely ignores error handling)
+
+There are several problems with process_vm_writev() in this example:
+
+1)it causes pagefault on remote process memory, and it forces
+  allocation of a new page (if was not preallocated);
+
+2)amount of memory for this example is doubled in a moment --
+  n pages in current and n pages in remote tasks are occupied
+  at the same time;
+
+3)received data has no a chance to be properly swapped for
+  a long time.
+
+The third is the most critical in case of remote process touches
+the data pages some time after process_vm_writev() was made.
+Imagine, node is under memory pressure:
+
+a)kernel moves @buf pages into swap right after recv();
+b)process_vm_writev() reads the data back from swap to pages;
+c)process_vm_writev() allocates duplicate pages in remote
+  process and populates them;
+d)munmap() unmaps @buf;
+e)5 minutes later remote task touches data.
+
+In stages "a" and "b" kernel submits unneeded IO and makes
+system IO throughput worse. To make "b" and "c", kernel
+reclaims memory, and moves pages of some other processes
+to swap, so they have to read pages from swap back. Also,
+unneeded copying of pages is occured, while zero-copy is
+more preferred.
+
+We observe similar problem during online migration of big enough
+containers, when after doubling of container's size, the time
+increases 100 times. The system resides under high IO and
+throwing out of useful cashes.
+
+The proposed syscall aims to introduce an interface, which
+supplements currently existing process_vm_writev() and
+process_vm_readv(), and allows to solve the problem with
+anonymous memory transfer. The above example may be rewritten as:
+
+[Task 1]
+	void *buf;
+
+	buf = mmap(NULL, n * PAGE_SIZE, PROT_READ|PROT_WRITE,
+		   MAP_PRIVATE|MAP_ANONYMOUS, ...);
+	recv(sock, buf, n * PAGE_SIZE, 0);
+
+[Task 2]
+	buf2 = process_vm_mmap(pid_of_task1, buf, n * PAGE_SIZE, NULL, 0);
+
+This creates a copy of VMA related to buf from task1 in task2's VM.
+Task1's page table entries are copied into corresponding page table
+entries of VM of task2.
+
+It is swap-friendly: in case of memory is swapped right after recv(),
+the syscall just copies pagetable entries like we do on fork(),
+so real access to pages does not occurs, and no IO is needed.
+No excess pages are reclaimed, and number of pages is not doubled.
+Also, zero-copy takes a place, and this also reduces overhead.
+
+The patchset does not introduce much new code, since we simply
+reuse existing copy_page_range() and copy_vma() functions.
+We extend copy_vma() to be able merge VMAs in remote task [2/7],
+and teach copy_page_range() to work with different local and
+remote addresses [3/7]. Patch [7/7] introduces the syscall logic,
+which mostly consists of sanity checks. The rest of patches
+are preparations.
+
+This syscall may be used for page servers like in example
+above, for migration (I assume, even virtual machines may
+want something like this), for zero-copy desiring users
+of process_vm_writev() and process_vm_readv(), for debug
+purposes, etc. It requires the same permittions like
+existing proc_vm_xxx() syscalls have.
+
+The tests I used may be obtained here (UPDATED):
+
+[1]https://gist.github.com/tkhai/ce46502fc53580372da35e8c3b7818b9
+[2]https://gist.github.com/tkhai/40bda78e304d2fe0d90863214b9ac5b5
+
+Previous version (RFC):
+[3]https://lore.kernel.org/lkml/CAG48ez0itiEE1x=SXeMbjKvMGkrj7wxjM6c+ZB00LpXAAhqmiw@mail.gmail.com/T/
+
 ---
- arch/ia64/kernel/pci-dma.c                |  2 +-
- arch/powerpc/platforms/powernv/pci-ioda.c |  3 ++-
- arch/s390/pci/pci_dma.c                   |  2 +-
- arch/x86/kernel/pci-dma.c                 |  7 ++---
- drivers/iommu/Kconfig                     | 44 ++++++++++++++++++++++++++-----
- drivers/iommu/amd_iommu_init.c            |  3 ++-
- drivers/iommu/intel-iommu.c               |  2 +-
- drivers/iommu/iommu.c                     |  3 ++-
- 8 files changed, 48 insertions(+), 18 deletions(-)
 
-diff --git a/arch/ia64/kernel/pci-dma.c b/arch/ia64/kernel/pci-dma.c
-index fe988c49f01ce6a..655511dbf3c3b34 100644
---- a/arch/ia64/kernel/pci-dma.c
-+++ b/arch/ia64/kernel/pci-dma.c
-@@ -22,7 +22,7 @@
- int force_iommu __read_mostly;
- #endif
+Kirill Tkhai (7):
+      mm: Add process_vm_mmap() syscall declaration
+      mm: Extend copy_vma()
+      mm: Extend copy_page_range()
+      mm: Export round_hint_to_min()
+      mm: Introduce may_mmap_overlapped_region() helper
+      mm: Introduce find_vma_filter_flags() helper
+      mm: Add process_vm_mmap()
 
--int iommu_pass_through;
-+int iommu_pass_through = IS_ENABLED(CONFIG_IOMMU_DEFAULT_PASSTHROUGH);
 
- static int __init pci_iommu_init(void)
- {
-diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-index 3ead4c237ed0ec9..383e082a9bb985c 100644
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -85,7 +85,8 @@ void pe_level_printk(const struct pnv_ioda_pe *pe, const char *level,
- 	va_end(args);
- }
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl |    2 
+ include/linux/huge_mm.h                |    6 +
+ include/linux/mm.h                     |   14 ++
+ include/linux/mm_types.h               |    2 
+ include/linux/mman.h                   |   14 ++
+ include/linux/syscalls.h               |    5 +
+ include/uapi/asm-generic/mman-common.h |    6 +
+ include/uapi/asm-generic/unistd.h      |    5 +
+ init/Kconfig                           |    9 +-
+ kernel/fork.c                          |    5 +
+ kernel/sys_ni.c                        |    2 
+ mm/huge_memory.c                       |   30 ++++-
+ mm/memory.c                            |  165 +++++++++++++++++++---------
+ mm/mmap.c                              |  186 ++++++++++++++++++++++++++------
+ mm/mremap.c                            |   43 +++++--
+ mm/process_vm_access.c                 |   69 ++++++++++++
+ 17 files changed, 439 insertions(+), 125 deletions(-)
 
--static bool pnv_iommu_bypass_disabled __read_mostly;
-+static bool pnv_iommu_bypass_disabled __read_mostly =
-+			!IS_ENABLED(CONFIG_IOMMU_DEFAULT_PASSTHROUGH);
- static bool pci_reset_phbs __read_mostly;
-
- static int __init iommu_setup(char *str)
-diff --git a/arch/s390/pci/pci_dma.c b/arch/s390/pci/pci_dma.c
-index 9e52d1527f71495..784ad1e0acecfb1 100644
---- a/arch/s390/pci/pci_dma.c
-+++ b/arch/s390/pci/pci_dma.c
-@@ -17,7 +17,7 @@
-
- static struct kmem_cache *dma_region_table_cache;
- static struct kmem_cache *dma_page_table_cache;
--static int s390_iommu_strict;
-+static int s390_iommu_strict = IS_ENABLED(CONFIG_IOMMU_DEFAULT_STRICT);
-
- static int zpci_refresh_global(struct zpci_dev *zdev)
- {
-diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
-index d460998ae828514..fb2bab42a0a3173 100644
---- a/arch/x86/kernel/pci-dma.c
-+++ b/arch/x86/kernel/pci-dma.c
-@@ -43,11 +43,8 @@
-  * It is also possible to disable by default in kernel config, and enable with
-  * iommu=nopt at boot time.
-  */
--#ifdef CONFIG_IOMMU_DEFAULT_PASSTHROUGH
--int iommu_pass_through __read_mostly = 1;
--#else
--int iommu_pass_through __read_mostly;
--#endif
-+int iommu_pass_through __read_mostly =
-+			IS_ENABLED(CONFIG_IOMMU_DEFAULT_PASSTHROUGH);
-
- extern struct iommu_table_entry __iommu_table[], __iommu_table_end[];
-
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index 6f07f3b21816c64..8a1f1793cde76b4 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -74,17 +74,47 @@ config IOMMU_DEBUGFS
- 	  debug/iommu directory, and then populate a subdirectory with
- 	  entries as required.
-
--config IOMMU_DEFAULT_PASSTHROUGH
--	bool "IOMMU passthrough by default"
-+choice
-+	prompt "IOMMU default DMA mode"
- 	depends on IOMMU_API
--        help
--	  Enable passthrough by default, removing the need to pass in
--	  iommu.passthrough=on or iommu=pt through command line. If this
--	  is enabled, you can still disable with iommu.passthrough=off
--	  or iommu=nopt depending on the architecture.
-+	default IOMMU_DEFAULT_PASSTHROUGH if (PPC_POWERNV && PCI)
-+	default IOMMU_DEFAULT_LAZY if (AMD_IOMMU || INTEL_IOMMU || S390_IOMMU)
-+	default IOMMU_DEFAULT_STRICT
-+	help
-+	  This option allows IOMMU DMA mode to be chose at build time, to
-+	  override the default DMA mode of each ARCHs, removing the need to
-+	  pass in kernel parameters through command line. You can still use
-+	  ARCHs specific boot options to override this option again.
-+
-+config IOMMU_DEFAULT_PASSTHROUGH
-+	bool "passthrough"
-+	help
-+	  In this mode, the DMA access through IOMMU without any addresses
-+	  translation. That means, the wrong or illegal DMA access can not
-+	  be caught, no error information will be reported.
-
- 	  If unsure, say N here.
-
-+config IOMMU_DEFAULT_LAZY
-+	bool "lazy"
-+	help
-+	  Support lazy mode, where for every IOMMU DMA unmap operation, the
-+	  flush operation of IOTLB and the free operation of IOVA are deferred.
-+	  They are only guaranteed to be done before the related IOVA will be
-+	  reused.
-+
-+config IOMMU_DEFAULT_STRICT
-+	bool "strict"
-+	help
-+	  For every IOMMU DMA unmap operation, the flush operation of IOTLB and
-+	  the free operation of IOVA are guaranteed to be done in the unmap
-+	  function.
-+
-+	  This mode is safer than the two above, but it maybe slower in some
-+	  high performace scenarios.
-+
-+endchoice
-+
- config OF_IOMMU
-        def_bool y
-        depends on OF && IOMMU_API
-diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
-index ff40ba758cf365e..16c02b08adb4cb2 100644
---- a/drivers/iommu/amd_iommu_init.c
-+++ b/drivers/iommu/amd_iommu_init.c
-@@ -166,7 +166,8 @@ struct ivmd_header {
- 					   to handle */
- LIST_HEAD(amd_iommu_unity_map);		/* a list of required unity mappings
- 					   we find in ACPI */
--bool amd_iommu_unmap_flush;		/* if true, flush on every unmap */
-+bool amd_iommu_unmap_flush = IS_ENABLED(CONFIG_IOMMU_DEFAULT_STRICT);
-+					/* if true, flush on every unmap */
-
- LIST_HEAD(amd_iommu_list);		/* list of all AMD IOMMUs in the
- 					   system */
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 28cb713d728ceef..0c3cc716210f35a 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -362,7 +362,7 @@ static int domain_detach_iommu(struct dmar_domain *domain,
-
- static int dmar_map_gfx = 1;
- static int dmar_forcedac;
--static int intel_iommu_strict;
-+static int intel_iommu_strict = IS_ENABLED(CONFIG_IOMMU_DEFAULT_STRICT);
- static int intel_iommu_superpage = 1;
- static int intel_iommu_sm;
- static int iommu_identity_mapping;
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 109de67d5d727c2..0ec5952ac60e2a3 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -43,7 +43,8 @@
- #else
- static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_DMA;
- #endif
--static bool iommu_dma_strict __read_mostly = true;
-+static bool iommu_dma_strict __read_mostly =
-+			IS_ENABLED(CONFIG_IOMMU_DEFAULT_STRICT);
-
- struct iommu_group {
- 	struct kobject kobj;
 --
-1.8.3
-
-
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
