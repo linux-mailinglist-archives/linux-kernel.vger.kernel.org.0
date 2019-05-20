@@ -2,83 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADA9D22C0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 08:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 232CA22C14
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 08:28:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730764AbfETG2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 02:28:11 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8215 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729725AbfETG2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 02:28:10 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CE9BFC881F498E87A3B8;
-        Mon, 20 May 2019 14:28:07 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 20 May 2019 14:27:57 +0800
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [RESEND PATCH] intel_th: msu: Fix unused variable warning on arm64 platform
-Date:   Mon, 20 May 2019 14:26:37 +0800
-Message-ID: <1558333597-63774-1-git-send-email-zhangshaokun@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        id S1730304AbfETG2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 02:28:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726436AbfETG2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 02:28:53 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA53C206B6;
+        Mon, 20 May 2019 06:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558333733;
+        bh=Ui9uYmuCZCzF+3IjrsAp5TGAHEIpxCDWfcmShxLDVVs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=unf+dZGw5Ovy8YsjD047mOy9G0FONojvb30WZF+p48mVLup09wvY6+RwlSsjlbxsG
+         /aMhdh+PBzxmRpNooEgYocdIhDh/a3DH5gasEwjUR+iL2m+fWe44y89zrfTXDEtfCJ
+         Pxi+N6yBq+BEq0fXqlX7Qv6w++6+OhJDbCSGaV6E=
+Date:   Mon, 20 May 2019 14:27:57 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "tiny.windzz@gmail.com" <tiny.windzz@gmail.com>,
+        "pp@emlix.com" <pp@emlix.com>,
+        "colin.didier@devialet.com" <colin.didier@devialet.com>,
+        "robh@kernel.org" <robh@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "hofrat@osadl.org" <hofrat@osadl.org>,
+        "michael@amarulasolutions.com" <michael@amarulasolutions.com>,
+        "stefan@agner.ch" <stefan@agner.ch>, Abel Vesa <abel.vesa@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH RESEND 1/2] clk: imx: Add common API for masking MMDC
+ handshake
+Message-ID: <20190520062756.GP15856@dragon>
+References: <1557656348-13040-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557656348-13040-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_alloc’:
-drivers/hwtracing/intel_th/msu.c:783:21: warning: unused variable ‘i’ [-Wunused-variable]
-  int ret = -ENOMEM, i;
-                     ^
-drivers/hwtracing/intel_th/msu.c: In function ‘msc_buffer_win_free’:
-drivers/hwtracing/intel_th/msu.c:863:6: warning: unused variable ‘i’ [-Wunused-variable]
-  int i;
-      ^
-Fix this compiler warning on arm64 platform.
+On Sun, May 12, 2019 at 10:24:12AM +0000, Anson Huang wrote:
+> All i.MX6 SoCs need to mask unused MMDC channel's handshake
+> for low power modes, this patch provides common API for masking
+> the MMDC channel passed from caller.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
----
- drivers/hwtracing/intel_th/msu.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
-index 81bb54fa3ce8..833a5a8f13ad 100644
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -780,7 +780,10 @@ static int __msc_buffer_win_alloc(struct msc_window *win,
- static int msc_buffer_win_alloc(struct msc *msc, unsigned int nr_blocks)
- {
- 	struct msc_window *win;
--	int ret = -ENOMEM, i;
-+	int ret = -ENOMEM;
-+#ifdef CONFIG_X86
-+	int i;
-+#endif
- 
- 	if (!nr_blocks)
- 		return 0;
-@@ -860,7 +863,9 @@ static void __msc_buffer_win_free(struct msc *msc, struct msc_window *win)
-  */
- static void msc_buffer_win_free(struct msc *msc, struct msc_window *win)
- {
-+#ifdef CONFIG_X86
- 	int i;
-+#endif
- 
- 	msc->nr_pages -= win->nr_blocks;
- 
--- 
-2.7.4
-
+Applied both, thanks.
