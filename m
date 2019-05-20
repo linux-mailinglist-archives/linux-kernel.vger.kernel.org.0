@@ -2,112 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6186022FB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:07:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17A4522FCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 11:08:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731826AbfETJGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 05:06:45 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:54824 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731816AbfETJGo (ORCPT
+        id S1731911AbfETJHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 05:07:54 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48070 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbfETJHv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 05:06:44 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4K93j0p021634;
-        Mon, 20 May 2019 04:06:30 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail2.cirrus.com (mail2.cirrus.com [141.131.128.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2sjff1t4wc-1;
-        Mon, 20 May 2019 04:06:30 -0500
-Received: from EDIEX01.ad.cirrus.com (unknown [198.61.84.80])
-        by mail2.cirrus.com (Postfix) with ESMTP id ACD60605A6A8;
-        Mon, 20 May 2019 04:06:29 -0500 (CDT)
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 20 May
- 2019 10:06:28 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Mon, 20 May 2019 10:06:28 +0100
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id BC10444;
-        Mon, 20 May 2019 10:06:28 +0100 (BST)
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <lee.jones@linaro.org>
-CC:     <arnd@arndb.de>, <natechancellor@gmail.com>,
-        <ottosabart@seberm.com>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>
-Subject: [PATCH 4/4] mfd: madera: Add supply mapping for MICVDD
-Date:   Mon, 20 May 2019 10:06:28 +0100
-Message-ID: <20190520090628.29061-4-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190520090628.29061-1-ckeepax@opensource.cirrus.com>
-References: <20190520090628.29061-1-ckeepax@opensource.cirrus.com>
+        Mon, 20 May 2019 05:07:51 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 8BC7080450; Mon, 20 May 2019 11:07:39 +0200 (CEST)
+Date:   Mon, 20 May 2019 11:07:49 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Ran Wang <ran.wang_1@nxp.com>
+Cc:     Pavel Machek <pavel@denx.de>, Leo Li <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH V2 3/3] soc: fsl: add RCPM driver
+Message-ID: <20190520090748.GB9748@amd>
+References: <20190517033946.30763-1-ran.wang_1@nxp.com>
+ <20190517033946.30763-3-ran.wang_1@nxp.com>
+ <20190519213844.GH31403@amd>
+ <AM5PR0402MB2865EC5E1EF12C6C1D3C5566F1060@AM5PR0402MB2865.eurprd04.prod.outlook.com>
+ <20190520085647.GA9748@amd>
+ <AM5PR0402MB2865F4574B19761848B001F9F1060@AM5PR0402MB2865.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=366 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905200066
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="8GpibOaaTibBMecb"
+Content-Disposition: inline
+In-Reply-To: <AM5PR0402MB2865F4574B19761848B001F9F1060@AM5PR0402MB2865.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we are relying on the exact match of the regulator name to
-find MICVDD, we should add an explicit supply mapping to allow this to
-be found more reliably.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- drivers/mfd/madera-core.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+--8GpibOaaTibBMecb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
-index 1b78c5c844a81..515283e595aa0 100644
---- a/drivers/mfd/madera-core.c
-+++ b/drivers/mfd/madera-core.c
-@@ -59,7 +59,11 @@ static const struct mfd_cell cs47l35_devs[] = {
- 	{ .name = "madera-irq", },
- 	{ .name = "madera-micsupp", },
- 	{ .name = "madera-gpio", },
--	{ .name = "madera-extcon", },
-+	{
-+		.name = "madera-extcon",
-+		.parent_supplies = cs47l35_supplies,
-+		.num_parent_supplies = 1, /* We only need MICVDD */
-+	},
- 	{
- 		.name = "cs47l35-codec",
- 		.parent_supplies = cs47l35_supplies,
-@@ -83,7 +87,11 @@ static const struct mfd_cell cs47l85_devs[] = {
- 	{ .name = "madera-irq", },
- 	{ .name = "madera-micsupp" },
- 	{ .name = "madera-gpio", },
--	{ .name = "madera-extcon", },
-+	{
-+		.name = "madera-extcon",
-+		.parent_supplies = cs47l85_supplies,
-+		.num_parent_supplies = 1, /* We only need MICVDD */
-+	},
- 	{
- 		.name = "cs47l85-codec",
- 		.parent_supplies = cs47l85_supplies,
-@@ -105,7 +113,11 @@ static const struct mfd_cell cs47l90_devs[] = {
- 	{ .name = "madera-irq", },
- 	{ .name = "madera-micsupp", },
- 	{ .name = "madera-gpio", },
--	{ .name = "madera-extcon", },
-+	{
-+		.name = "madera-extcon",
-+		.parent_supplies = cs47l90_supplies,
-+		.num_parent_supplies = 1, /* We only need MICVDD */
-+	},
- 	{
- 		.name = "cs47l90-codec",
- 		.parent_supplies = cs47l90_supplies,
--- 
-2.11.0
+On Mon 2019-05-20 09:03:50, Ran Wang wrote:
+> Hi Pavel,
+>=20
+> On Monday, May 20, 2019 16:57, Pavel Machek wrote:
+> >=20
+> > Hi!
+> >=20
+> > > > > +static int rcpm_pm_prepare(struct device *dev) {
+> > > > > +	struct device_node *np =3D dev->of_node;
+> > > > > +	struct wakeup_source *ws;
+> > > > > +	struct rcpm *rcpm;
+> > > > > +	u32 value[RCPM_WAKEUP_CELL_MAX_SIZE + 1], tmp;
+> > > > > +	int i, ret;
+> > > > > +
+> > > > > +	rcpm =3D dev_get_drvdata(dev);
+> > > > > +	if (!rcpm)
+> > > > > +		return -EINVAL;
+> > > > > +
+> > > > > +	/* Begin with first registered wakeup source */
+> > > > > +	ws =3D wakeup_source_get_next(NULL);
+> > > > > +	while (ws) {
+> > > >
+> > > > while (ws =3D wakeup_source_get_next(NULL)) ?
+> > >
+> > > Actually, we only pass NULL to wakeup_source_get_next() at very first
+> > > call to get 1st wakeup source. Then in the while loop, we will fetch
+> > > next source but not 1st, that's different. I am afraid your suggestion
+> > > is not quite correct.
+> >=20
+> > Sorry, I seen your next version before seeing this explanation.
+> >=20
+> > You are right, but the current code is "interesting". What about
+> >=20
+> >     ws =3D NULL;
+> >     while (ws =3D wakeup_source_get_next(NULL)) ...
+> >=20
+> > then?
+>=20
+> Did you mean:
+>      ws =3D NULL;
+>      while (ws =3D wakeup_source_get_next(ws)) ...
+>=20
+>    Yes, that will be the same to my original logic, do you recommend to c=
+hange
+> to this? :)
 
+Yes please. It will be less confusing to the reader.
+
+Thanks (and sorry for cross-talk),
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--8GpibOaaTibBMecb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzibmQACgkQMOfwapXb+vJOsgCgqGW6NAUYHlbtL2j5RhCyhuS2
+zxMAn1WDZj1TbQDXI+hk99qNzljFSRtI
+=XWgf
+-----END PGP SIGNATURE-----
+
+--8GpibOaaTibBMecb--
