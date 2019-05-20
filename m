@@ -2,84 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA1E7235BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:45:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 781D323356
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:16:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391361AbfETMhI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:37:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56018 "EHLO mail.kernel.org"
+        id S1732706AbfETMPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:15:51 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:56153 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391338AbfETMgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:36:53 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1732661AbfETMPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:15:50 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BB68204FD;
-        Mon, 20 May 2019 12:36:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558355813;
-        bh=5zCdNk6o7TvfEzmsRexz2WXo2rRTLCTto/KnK33XGaM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vTxIcz9bL0Z3MIM3139zFxb0F3R9Nspo/Bjaci7FDAKtsagOYrEukTJHw1ZVcOkIS
-         sTt6ByYeoT2ozu6nIjTtdc14l+D/3dJwUTKTXYVOrKur0mHm48nxs2KqfewGQqZq1I
-         jZOY/REnpyk5ok4sQTBVqv9PMxSqqsKR8QVFePfo=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Arthur Marsh <arthur.marsh@internode.on.net>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 5.1 128/128] ext4: fix block validity checks for journal inodes using indirect blocks
-Date:   Mon, 20 May 2019 14:15:15 +0200
-Message-Id: <20190520115257.193032813@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
-References: <20190520115249.449077487@linuxfoundation.org>
-User-Agent: quilt/0.66
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 456yXd5b41z9sDn;
+        Mon, 20 May 2019 22:15:45 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1558354548;
+        bh=ETBmQ+Y+GyGiALkiX0vj+AzC1DdCK5qfZ1pG+ZVbdpo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=mumQlepsUvLMzAtjAm0I8cqlF/WYBi67C4W3B8zJjHcy+EvQ0OYqJMzBe6oEayh9z
+         QW7ggmBIl5Tpi0T8cHMjqioPUcFB+LkKfNfUgy9ZW0cBuUBODEWWS14sgs8ZPdgVa9
+         P9oJ1ldnszoOiB9jiwLroNmB0yY1ce5IgJqiXaBqCpfuXi0N3S1kcIZ10Xjlc/5cg2
+         4aaaSJ4PJw81As14pe0Dwtw5Peaw8fsdqD8EwUZxO5N+XQYq22SS6asfgHkA+eHNJA
+         SKzpYH+Tmnyp1+xOuZgnoNwSLtHzUec2kO+iCFXUT79WuTRnxAJMQqcWZdR6Wa//8U
+         LjcgFReypfV7w==
+Date:   Mon, 20 May 2019 22:15:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>
+Subject: linux-next: Fixes tag needs some work in the drm-intel tree
+Message-ID: <20190520221526.0e103916@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/93.yJMrxB2DtnwT3NNY0Pe4"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+--Sig_/93.yJMrxB2DtnwT3NNY0Pe4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-commit 170417c8c7bb2cbbdd949bf5c443c0c8f24a203b upstream.
+Hi all,
 
-Commit 345c0dbf3a30 ("ext4: protect journal inode's blocks using
-block_validity") failed to add an exception for the journal inode in
-ext4_check_blockref(), which is the function used by ext4_get_branch()
-for indirect blocks.  This caused attempts to read from the ext3-style
-journals to fail with:
+In commit
 
-[  848.968550] EXT4-fs error (device sdb7): ext4_get_branch:171: inode #8: block 30343695: comm jbd2/sdb7-8: invalid block
+  0d90ccb70211 ("drm/i915: Delay semaphore submission until the start of th=
+e signaler")
 
-Fix this by adding the missing exception check.
+Fixes tag
 
-Fixes: 345c0dbf3a30 ("ext4: protect journal inode's blocks using block_validity")
-Reported-by: Arthur Marsh <arthur.marsh@internode.on.net>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  Fixes: e88619646971 ("drm/i915: Use HW semaphores for inter-engine synchr=
+oni
 
----
- fs/ext4/block_validity.c |    5 +++++
- 1 file changed, 5 insertions(+)
+has these problem(s):
 
---- a/fs/ext4/block_validity.c
-+++ b/fs/ext4/block_validity.c
-@@ -276,6 +276,11 @@ int ext4_check_blockref(const char *func
- 	__le32 *bref = p;
- 	unsigned int blk;
- 
-+	if (ext4_has_feature_journal(inode->i_sb) &&
-+	    (inode->i_ino ==
-+	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum)))
-+		return 0;
-+
- 	while (bref < p+max) {
- 		blk = le32_to_cpu(*bref++);
- 		if (blk &&
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please don't split Fixes tags across more than one line.
 
 
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/93.yJMrxB2DtnwT3NNY0Pe4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzimmoACgkQAVBC80lX
+0GxWzwf+JJpeqte4AZNmzAlqyodr2d/yBI5DD7IxonPDxwoD/Ilm+eMpi0WIpLe7
+ZES0519Y1Q9WOZXLZyjwLcRyxXMZjBdCjtFsEqBXN76kv75lycG+36jLMRETIf/I
+oJ6cfDd1XPgvY08HvBvexcO9hfABtSWhOuOcN/h8AJBf8YG1nt2fTF4KERXQDLpw
+nvqwKEmaM3y/s8LTUx0oJnQxCUFrfRE1yq4S2M0Ga99Bho84Qvh+wo7I3EMa1HnG
+oOIo3vShLHmNoK4buX5kfqRJhgs/Cqn6P83KQvDcoUjJagEsuSnAqeUMO5y90jmZ
+I1E7mYfhYZpsnDyYGm5Q/srqj9PDjw==
+=vD+z
+-----END PGP SIGNATURE-----
+
+--Sig_/93.yJMrxB2DtnwT3NNY0Pe4--
