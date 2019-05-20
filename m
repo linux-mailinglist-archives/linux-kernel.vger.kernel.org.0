@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5833B233B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:20:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E0A22354C
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:44:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732284AbfETMTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:19:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33138 "EHLO mail.kernel.org"
+        id S2390910AbfETMeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 08:34:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732272AbfETMTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:19:52 -0400
+        id S2390091AbfETMeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:34:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD64320815;
-        Mon, 20 May 2019 12:19:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCBD5204FD;
+        Mon, 20 May 2019 12:34:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558354792;
-        bh=Uvs3clkJNKhmVbhA9rwlfctk+Ze2Df4btxTxQ9DOH5M=;
+        s=default; t=1558355657;
+        bh=iR/CRwxw8Y9GNxIe6y43msCHgJFVvMtFrS9EgdCBTTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nk6ysGLH2bshkMEmoCl5qpA4TvBc47QES2UgEwwDxmasyLnu401W4OWCjmm4dKgMB
-         7SS7eoI3Z1hyINo7Tc/b9DWHKaeOfNwTQVeC/Wi44qKtT9hgjnZXVF/vFvMBf68+vy
-         BoSMyydWyJZv3gNZyvePWur/Bb5hbn/e35dxXRmw=
+        b=lPPKjRZ2hxbesNouZ0Nf2RJA6+LaPpu1TpcwXFdOU+9Mx4lNbdKAYk38rYDZkVt9u
+         7BmRF7qYilfT78BI8V3BA+8AT8V2t3tzaqTtYwiq9YAvOddxXt0xxZcS2ZB0umIF/z
+         f9PXkqoK+f2vU3pjwalIf3p7sRJw6Dafeg+GqjLs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        stable@kernel.org
-Subject: [PATCH 4.14 43/63] ext4: avoid drop reference to iloc.bh twice
+        stable@vger.kernel.org, Rajat Jain <rajatja@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.1 075/128] ACPI: PM: Set enable_for_wake for wakeup GPEs during suspend-to-idle
 Date:   Mon, 20 May 2019 14:14:22 +0200
-Message-Id: <20190520115235.831144044@linuxfoundation.org>
+Message-Id: <20190520115254.805854169@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
-References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115249.449077487@linuxfoundation.org>
+References: <20190520115249.449077487@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +43,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Bian <bianpan2016@163.com>
+From: Rajat Jain <rajatja@google.com>
 
-commit 8c380ab4b7b59c0c602743810be1b712514eaebc upstream.
+commit 2f844b61db8297a1f7a06adf2eb5c43381f2c183 upstream.
 
-The reference to iloc.bh has been dropped in ext4_mark_iloc_dirty.
-However, the reference is dropped again if error occurs during
-ext4_handle_dirty_metadata, which may result in use-after-free bugs.
+I noticed that recently multiple systems (chromebooks) couldn't wake
+from S0ix using LID or Keyboard after updating to a newer kernel. I
+bisected and it turned up commit f941d3e41da7 ("ACPI: EC / PM: Disable
+non-wakeup GPEs for suspend-to-idle"). I checked that the issue got
+fixed if that commit was reverted.
 
-Fixes: fb265c9cb49e("ext4: add ext4_sb_bread() to disambiguate ENOMEM cases")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: stable@kernel.org
+I debugged and found that although PNP0C0D:00 (representing the LID)
+is wake capable and should wakeup the system per the code in
+acpi_wakeup_gpe_init() and in drivers/acpi/button.c:
+
+localhost /sys # cat /proc/acpi/wakeup
+Device  S-state   Status   Sysfs node
+LID0      S4    *enabled   platform:PNP0C0D:00
+CREC      S5    *disabled  platform:GOOG0004:00
+                *disabled  platform:cros-ec-dev.1.auto
+                *disabled  platform:cros-ec-accel.0
+                *disabled  platform:cros-ec-accel.1
+                *disabled  platform:cros-ec-gyro.0
+                *disabled  platform:cros-ec-ring.0
+                *disabled  platform:cros-usbpd-charger.2.auto
+                *disabled  platform:cros-usbpd-logger.3.auto
+D015      S3    *enabled   i2c:i2c-ELAN0000:00
+PENH      S3    *enabled   platform:PRP0001:00
+XHCI      S3    *enabled   pci:0000:00:14.0
+GLAN      S4    *disabled
+WIFI      S3    *disabled  pci:0000:00:14.3
+localhost /sys #
+
+On debugging, I found that its corresponding GPE is not being enabled.
+The particular GPE's "gpe_register_info->enable_for_wake" does not
+have any bits set when acpi_enable_all_wakeup_gpes() comes around to
+use it. I looked at code and could not find any other code path that
+should set the bits in "enable_for_wake" bitmask for the wake enabled
+devices for s2idle.  [I do see that it happens for S3 in
+acpi_sleep_prepare()].
+
+Thus I used the same call to enable the GPEs for wake enabled devices,
+and verified that this fixes the regression I was seeing on multiple
+of my devices.
+
+[ rjw: The problem is that commit f941d3e41da7 ("ACPI: EC / PM:
+  Disable non-wakeup GPEs for suspend-to-idle") forgot to add
+  the acpi_enable_wakeup_devices() call for s2idle along with
+  acpi_enable_all_wakeup_gpes(). ]
+
+Fixes: f941d3e41da7 ("ACPI: EC / PM: Disable non-wakeup GPEs for suspend-to-idle")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=203579
+Signed-off-by: Rajat Jain <rajatja@google.com>
+[ rjw: Subject & changelog ]
+Cc: 5.0+ <stable@vger.kernel.org> # 5.0+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/acpi/sleep.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -849,6 +849,7 @@ static int add_new_gdb(handle_t *handle,
- 	err = ext4_handle_dirty_metadata(handle, NULL, gdb_bh);
- 	if (unlikely(err)) {
- 		ext4_std_error(sb, err);
-+		iloc.bh = NULL;
- 		goto errout;
- 	}
- 	brelse(dind);
+--- a/drivers/acpi/sleep.c
++++ b/drivers/acpi/sleep.c
+@@ -977,6 +977,8 @@ static int acpi_s2idle_prepare(void)
+ 	if (acpi_sci_irq_valid())
+ 		enable_irq_wake(acpi_sci_irq);
+ 
++	acpi_enable_wakeup_devices(ACPI_STATE_S0);
++
+ 	/* Change the configuration of GPEs to avoid spurious wakeup. */
+ 	acpi_enable_all_wakeup_gpes();
+ 	acpi_os_wait_events_complete();
+@@ -1027,6 +1029,8 @@ static void acpi_s2idle_restore(void)
+ {
+ 	acpi_enable_all_runtime_gpes();
+ 
++	acpi_disable_wakeup_devices(ACPI_STATE_S0);
++
+ 	if (acpi_sci_irq_valid())
+ 		disable_irq_wake(acpi_sci_irq);
+ 
 
 
