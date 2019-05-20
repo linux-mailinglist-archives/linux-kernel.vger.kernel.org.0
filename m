@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E51922EC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14B6F22EA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 10:25:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731612AbfETIYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 04:24:10 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39855 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731325AbfETIWh (ORCPT
+        id S1731367AbfETIWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 04:22:40 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37730 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731332AbfETIWi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 04:22:37 -0400
-Received: by mail-ed1-f65.google.com with SMTP id e24so22524613edq.6
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 01:22:35 -0700 (PDT)
+        Mon, 20 May 2019 04:22:38 -0400
+Received: by mail-ed1-f68.google.com with SMTP id w37so22552627edw.4
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 01:22:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=pxqcSYFwHsuvd2Lv/d2TG+VXwZfFZyMIWYgQCzFB2T8=;
-        b=CJE6x2vwqV3LQYmFhtuIPutKZptFzaKYr7k4mX1elPEsoncWPJ/GrDVp2MNooxU1YN
-         xEtL2BegbC/MvQovtXXLHG7jiZdSGkI14MrhieJPhjfjk9EjLkKP/TEOYw1C9UGcG5BG
-         tRpJgocZKYyHG15LmfgCt/u9VTVIi6lSN8Qys=
+        bh=MAPnhxqw8kme2eR+AuVFsaR4pvfjpQV+5x2Qx7ASEQ8=;
+        b=Vh1HQx0v1toKnOC/o4+NxIRAS4qdnL7xFxVmzs7PzaHJK00/mA1zLjPnQywnF9FaNS
+         g2x4y7tGHyJ74sK8N9rCyeIwdUNSDAKgMreZ1nU6PCXGu0t2LLf0qy9PThDq7PyJshfS
+         IkgW0obXAHORtuKJpLYNO1qhGGk1+JvHYHD2Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pxqcSYFwHsuvd2Lv/d2TG+VXwZfFZyMIWYgQCzFB2T8=;
-        b=rrDn0yrFC106gcDJZCLgw/4Jdoma0KHPQwpuc8Gfgn/IXxm6tPDi4coR97cdP6pYaj
-         x/9WSKuK8xK1U8hE9oSjKZ09oqk+/zzKwuAMuMN10EvJdwuhvsBXwoCD5ezn/icHb9oP
-         XV9bRlT8maJoJzlUkpw87EGTr9v6ruca6TY3T8QWLg4rB5dCgS1utGSw4AZgz9uWqn7K
-         EbT5ABtowD9byVRFoH4f3iYqgBlemc1IP9Ej/j6OeocP++bL092mgRnkcjjBNyKK6HoW
-         ZhOeaygM+jschFn6uj1t4MbcSsBY6xgoAOazSsgDr+ChpNQk2DpBq9yMobHkPeiVUnGI
-         PJ1Q==
-X-Gm-Message-State: APjAAAULtEZ3TdE/dT06INLPb8FTyOPjnzMu4v9O8zHIfBH2KuDWz62b
-        F8qKoYCC3tZL8EwksBGJ8iQtVa9q4IE=
-X-Google-Smtp-Source: APXvYqzH5vi4xjbpIabhzI98CxlrdX5ZWZAJwSpnPRN8dmpzTWzU7l5z6Z1WUkTqbCcTD46EZXl8Dg==
-X-Received: by 2002:aa7:d381:: with SMTP id x1mr74213607edq.251.1558340555273;
-        Mon, 20 May 2019 01:22:35 -0700 (PDT)
+        bh=MAPnhxqw8kme2eR+AuVFsaR4pvfjpQV+5x2Qx7ASEQ8=;
+        b=M21dxuRWFV9CJRZ2tdE/PaCH2P9ggK/UEXCnFLLYFPRH6xFZFMLFYPTM1Q3zkrSUTB
+         3Xd/IUNV3KYvPqvKnJTpqZVz6EQU534twQ595HbT6sIkI8n48WGAKaY4J7pKyrivFaV4
+         KoD0V0OuakH+J53iECEOmsn90IfhWrz1gA5BGULa8nu3HR78VB9WAVV9Xbe8y/RhtSQd
+         hmqiK7sO7uFfjww9tfBzNM8wKr8XHRvJUvwJnIE2st76oRo5zH5EAhy5niqw5o4kjv9y
+         KTlunkEIXzKa7tVfjoUHx0ffoqg9FobC3L7nI/VOYm9hthhsSBhRHBgkhiId1TCHlDmf
+         9fkw==
+X-Gm-Message-State: APjAAAXwAnmpdYvaBDjIZgGM9ip7Gf7OhUvUHCd0LbydvU+xibQ3Xdux
+        ZgaV3FG/iOT92tXqe+FShVYTZ4MZ9T0=
+X-Google-Smtp-Source: APXvYqy2pt8n+x8BPHCCQ5cJnXhvOlYkpsAiqSlVjIHsEB/DVOI4Hf/8671bBp3VO5BjCkiPfLabNQ==
+X-Received: by 2002:a50:8bbb:: with SMTP id m56mr74709421edm.230.1558340556427;
+        Mon, 20 May 2019 01:22:36 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id t25sm3021263ejx.8.2019.05.20.01.22.34
+        by smtp.gmail.com with ESMTPSA id t25sm3021263ejx.8.2019.05.20.01.22.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 01:22:34 -0700 (PDT)
+        Mon, 20 May 2019 01:22:35 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     DRI Development <dri-devel@lists.freedesktop.org>
 Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 11/33] fbdev/sh_mobile: remove sh_mobile_lcdc_display_notify
-Date:   Mon, 20 May 2019 10:21:54 +0200
-Message-Id: <20190520082216.26273-12-daniel.vetter@ffwll.ch>
+Subject: [PATCH 12/33] fbdev/omap: sysfs files can't disappear before the device is gone
+Date:   Mon, 20 May 2019 10:21:55 +0200
+Message-Id: <20190520082216.26273-13-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190520082216.26273-1-daniel.vetter@ffwll.ch>
 References: <20190520082216.26273-1-daniel.vetter@ffwll.ch>
@@ -60,113 +60,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's dead code, and removing it avoids me having to understand
-what it's doing with lock_fb_info.
+Which means lock_fb_info can never fail. Remove the error handling.
 
 Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/video/fbdev/sh_mobile_lcdcfb.c | 63 --------------------------
- drivers/video/fbdev/sh_mobile_lcdcfb.h |  5 --
- 2 files changed, 68 deletions(-)
+ .../video/fbdev/omap2/omapfb/omapfb-sysfs.c   | 21 +++++++------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-index dc46be38c970..c5924f5e98c6 100644
---- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
-+++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
-@@ -556,67 +556,6 @@ sh_mobile_lcdc_must_reconfigure(struct sh_mobile_lcdc_chan *ch,
- static int sh_mobile_lcdc_check_var(struct fb_var_screeninfo *var,
- 				    struct fb_info *info);
+diff --git a/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c b/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c
+index 8087a009c54f..bd0d20283372 100644
+--- a/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c
++++ b/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c
+@@ -60,8 +60,7 @@ static ssize_t store_rotate_type(struct device *dev,
+ 	if (rot_type != OMAP_DSS_ROT_DMA && rot_type != OMAP_DSS_ROT_VRFB)
+ 		return -EINVAL;
  
--static int sh_mobile_lcdc_display_notify(struct sh_mobile_lcdc_chan *ch,
--					 enum sh_mobile_lcdc_entity_event event,
--					 const struct fb_videomode *mode,
--					 const struct fb_monspecs *monspec)
--{
--	struct fb_info *info = ch->info;
--	struct fb_var_screeninfo var;
--	int ret = 0;
--
--	switch (event) {
--	case SH_MOBILE_LCDC_EVENT_DISPLAY_CONNECT:
--		/* HDMI plug in */
--		console_lock();
--		if (lock_fb_info(info)) {
--
--
--			ch->display.width = monspec->max_x * 10;
--			ch->display.height = monspec->max_y * 10;
--
--			if (!sh_mobile_lcdc_must_reconfigure(ch, mode) &&
--			    info->state == FBINFO_STATE_RUNNING) {
--				/* First activation with the default monitor.
--				 * Just turn on, if we run a resume here, the
--				 * logo disappears.
--				 */
--				info->var.width = ch->display.width;
--				info->var.height = ch->display.height;
--				sh_mobile_lcdc_display_on(ch);
--			} else {
--				/* New monitor or have to wake up */
--				fb_set_suspend(info, 0);
--			}
--
--
--			unlock_fb_info(info);
--		}
--		console_unlock();
--		break;
--
--	case SH_MOBILE_LCDC_EVENT_DISPLAY_DISCONNECT:
--		/* HDMI disconnect */
--		console_lock();
--		if (lock_fb_info(info)) {
--			fb_set_suspend(info, 1);
--			unlock_fb_info(info);
--		}
--		console_unlock();
--		break;
--
--	case SH_MOBILE_LCDC_EVENT_DISPLAY_MODE:
--		/* Validate a proposed new mode */
--		fb_videomode_to_var(&var, mode);
--		var.bits_per_pixel = info->var.bits_per_pixel;
--		var.grayscale = info->var.grayscale;
--		ret = sh_mobile_lcdc_check_var(&var, info);
--		break;
--	}
--
--	return ret;
--}
--
- /* -----------------------------------------------------------------------------
-  * Format helpers
-  */
-@@ -2540,8 +2479,6 @@ sh_mobile_lcdc_channel_init(struct sh_mobile_lcdc_chan *ch)
- 	unsigned int max_size;
- 	unsigned int i;
+-	if (!lock_fb_info(fbi))
+-		return -ENODEV;
++	lock_fb_info(fbi);
  
--	ch->notify = sh_mobile_lcdc_display_notify;
--
- 	/* Validate the format. */
- 	format = sh_mobile_format_info(cfg->fourcc);
- 	if (format == NULL) {
-diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.h b/drivers/video/fbdev/sh_mobile_lcdcfb.h
-index b8e47a8bd8ab..589400372098 100644
---- a/drivers/video/fbdev/sh_mobile_lcdcfb.h
-+++ b/drivers/video/fbdev/sh_mobile_lcdcfb.h
-@@ -87,11 +87,6 @@ struct sh_mobile_lcdc_chan {
- 	unsigned long base_addr_c;
- 	unsigned int line_size;
+ 	r = 0;
+ 	if (rot_type == ofbi->rotation_type)
+@@ -112,8 +111,7 @@ static ssize_t store_mirror(struct device *dev,
+ 	if (r)
+ 		return r;
  
--	int (*notify)(struct sh_mobile_lcdc_chan *ch,
--		      enum sh_mobile_lcdc_entity_event event,
--		      const struct fb_videomode *mode,
--		      const struct fb_monspecs *monspec);
--
- 	/* Backlight */
- 	struct backlight_device *bl;
- 	unsigned int bl_brightness;
+-	if (!lock_fb_info(fbi))
+-		return -ENODEV;
++	lock_fb_info(fbi);
+ 
+ 	ofbi->mirror = mirror;
+ 
+@@ -149,8 +147,7 @@ static ssize_t show_overlays(struct device *dev,
+ 	ssize_t l = 0;
+ 	int t;
+ 
+-	if (!lock_fb_info(fbi))
+-		return -ENODEV;
++	lock_fb_info(fbi);
+ 	omapfb_lock(fbdev);
+ 
+ 	for (t = 0; t < ofbi->num_overlays; t++) {
+@@ -208,8 +205,7 @@ static ssize_t store_overlays(struct device *dev, struct device_attribute *attr,
+ 	if (buf[len - 1] == '\n')
+ 		len = len - 1;
+ 
+-	if (!lock_fb_info(fbi))
+-		return -ENODEV;
++	lock_fb_info(fbi);
+ 	omapfb_lock(fbdev);
+ 
+ 	if (len > 0) {
+@@ -340,8 +336,7 @@ static ssize_t show_overlays_rotate(struct device *dev,
+ 	ssize_t l = 0;
+ 	int t;
+ 
+-	if (!lock_fb_info(fbi))
+-		return -ENODEV;
++	lock_fb_info(fbi);
+ 
+ 	for (t = 0; t < ofbi->num_overlays; t++) {
+ 		l += snprintf(buf + l, PAGE_SIZE - l, "%s%d",
+@@ -369,8 +364,7 @@ static ssize_t store_overlays_rotate(struct device *dev,
+ 	if (buf[len - 1] == '\n')
+ 		len = len - 1;
+ 
+-	if (!lock_fb_info(fbi))
+-		return -ENODEV;
++	lock_fb_info(fbi);
+ 
+ 	if (len > 0) {
+ 		char *p = (char *)buf;
+@@ -453,8 +447,7 @@ static ssize_t store_size(struct device *dev, struct device_attribute *attr,
+ 
+ 	size = PAGE_ALIGN(size);
+ 
+-	if (!lock_fb_info(fbi))
+-		return -ENODEV;
++	lock_fb_info(fbi);
+ 
+ 	if (display && display->driver->sync)
+ 		display->driver->sync(display);
 -- 
 2.20.1
 
