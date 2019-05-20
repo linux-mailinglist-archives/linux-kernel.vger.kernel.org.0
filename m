@@ -2,94 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74744243F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 01:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6952C24410
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 01:18:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfETXP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 19:15:29 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37908 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbfETXP3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 19:15:29 -0400
-Received: from [10.200.157.26] (unknown [131.107.160.154])
-        by linux.microsoft.com (Postfix) with ESMTPSA id AB7B620B7192;
-        Mon, 20 May 2019 16:15:28 -0700 (PDT)
-From:   Lakshmi <nramas@linux.microsoft.com>
-Subject: Re: [PATCH 0/2] public key: IMA signer logging: Log public key of IMA
- Signature signer in IMA log
-To:     Ken Goldman <kgold@linux.ibm.com>,
-        Linux Integrity <linux-integrity@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Cc:     Balaji Balasubramanyan <balajib@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva@linux.microsoft.com>,
-        jorhand@linux.microsoft.com
-References: <6b69f115-96cf-890a-c92b-0b2b05798357@linux.microsoft.com>
- <750fdb9f-fc9b-24bf-42c3-32156ecdc16f@linux.ibm.com>
- <9c944ba6-f520-96e1-3631-1e21bbc4c327@linux.microsoft.com>
- <0b5ae493-6564-40e9-343b-e6781c229a25@linux.ibm.com>
-Message-ID: <54663a75-a601-ae6c-8068-bc2c3923a948@linux.microsoft.com>
-Date:   Mon, 20 May 2019 16:15:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727208AbfETXSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 19:18:51 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:45225 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727069AbfETXSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 19:18:51 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 457FFh4GMdz9s55;
+        Tue, 21 May 2019 09:18:48 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1558394329;
+        bh=JYol2MzGdH9WwO5vYX2Xr7O0c8+WxkYebEOnFkhaYzk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=mKU0+nJk4Snis4KoTcoYVl0vW/KC+Yb/TQRYbntq/QfkisQbIItSYTV9WKnKrPDrO
+         vzGzVjHTv67bMdA5ht92m1UbMxQX1GZxb6bnsLHSOD+bztgyDa5R6E1JL0zYrI18UR
+         ncm/+aXcnI+3tcbQFK5FJ5AVtrykqh0UIio9g3183NlGK+QejwohJF6fKk2bkFKfUD
+         37qqmr4g4pmIz9lKgR+RMAySfYM+Pzo+vLSvPpZcvdBA+w20/JULb6COPbGFsKIq+B
+         ekDduyVsexUKyYHV1CxtmvW18gE1C9V5iX1isxRCOfoj0EJ8Jv5KKfTBcYhOSq+sXX
+         ndDCQvr92lvdg==
+Date:   Tue, 21 May 2019 09:18:30 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Shawn Guo <shawnguo@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Subject: linux-next: manual merge of the sunxi tree with the imx-mxs tree
+Message-ID: <20190521091830.25a6cc27@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <0b5ae493-6564-40e9-343b-e6781c229a25@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/qOlJ1zMtDwGZkVziBHNfKg3"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/17/19 7:41 AM, Ken Goldman wrote:
+--Sig_/qOlJ1zMtDwGZkVziBHNfKg3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ken,
+Hi all,
 
-Apologize for the delay in responding.
+Today's linux-next merge of the sunxi tree got a conflict in:
 
-> Since a platform typically uses only a few signing keys, 4 bytes makes 
-> the chance of a collision quite small.  The collision would have to be 
-> within the same log, not global.
-> 
-> In that worst case, the verifier would have to try two keys.  It's a
-> slight performance penalty, but does anything break?
+  arch/arm64/configs/defconfig
 
-Problem Statement:
-- If the attestation service has to re-validate the signature reported 
-in the IMA log, the service has to maintain the hash\signature of all 
-the binaries deployed on all the client nodes. This approach will not 
-scale for large cloud deployments.
-- Possibility of collision of "Key Ids" is non-zero
-- In the service if the "Key Id" alone is used to verify using a map of
-"Key Id" to "Signing Key(s)", the service cannot determine if the 
-trusted signing key was indeed used by the client for signature 
-validation (Due to "Key Id" collision issue or malicious signature).
+between commit:
 
-Proposed Solution:
-- The service receives known\trusted signing key(s) from a trusted 
-source (that is different from the client machines)
-- The clients measure the keys in key rings such as IMA, Platform, 
-BuiltIn Trusted, etc. as early as possible in the boot sequence.
-- Leave all IMA measurements the same - i.e., we don't log public keys 
-in the IMA log for each file, but just use what is currently available 
-in IMA.
+  4aaa1c7a05db ("arm64: defconfig: NVMEM_IMX_OCOTP=3Dy for imx8m")
 
-Impact:
-- The service can verify that the keyrings have only known\trusted keys.
-- The service can cross check the "key id" with the key rings measured.
-- The look up of keys using the key id would be simpler and faster on 
-the service side.
-- It can also handle collision of Key Ids.
+from the imx-mxs tree and commit:
 
-Note that the following is a key assumption:
+  296bcfa05640 ("arm64: defconfig: add allwinner sid support")
 
-- Only keys signed by a key in the "BuiltIn Trusted Keyring" can be 
-added to IMA\Platform keyrings.
+from the sunxi tree.
 
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-Thanks,
-  -lakshmi
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/configs/defconfig
+index 33fac4e62a16,f981a882c546..000000000000
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@@ -762,7 -741,7 +762,8 @@@ CONFIG_PHY_TEGRA_XUSB=3D
+  CONFIG_HISI_PMU=3Dy
+  CONFIG_QCOM_L2_PMU=3Dy
+  CONFIG_QCOM_L3_PMU=3Dy
+ +CONFIG_NVMEM_IMX_OCOTP=3Dy
++ CONFIG_NVMEM_SUNXI_SID=3Dy
+  CONFIG_QCOM_QFPROM=3Dy
+  CONFIG_ROCKCHIP_EFUSE=3Dy
+  CONFIG_UNIPHIER_EFUSE=3Dy
+
+--Sig_/qOlJ1zMtDwGZkVziBHNfKg3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzjNcYACgkQAVBC80lX
+0Gz0Kwf9GQoooOHnEQBjKHSRnhPfmUaeVynYsAbKyrvfOZtRhDMf8lSGAdZxErpT
+ULA4PyA+Dgs36+Px4/U+4tKk4mF7xXVpfwPm2oSmu4yVz+C89JkbP8W6Mkke5rgz
+rUk4FvZyC3FcpbTaDenv8e/W27HAc7vOkjUvF2VDludd0AH/Z0dVtZ0gBXFf7W3g
+B46zH/xdPwjrTTlsyH0zbE2p6fVizGY8ySIPyIwX2aADeKScJ6rFlt/9wTOiiFm2
+Dr9i00HuEXVtZbgkikxfcku9GWcaVJgGX/xI7Im37Q/dOleyM9JqWvaSGl9qHL2X
+aqLCaoNlBAXpk5XMKS7N08v+sKc0+Q==
+=jz9e
+-----END PGP SIGNATURE-----
+
+--Sig_/qOlJ1zMtDwGZkVziBHNfKg3--
