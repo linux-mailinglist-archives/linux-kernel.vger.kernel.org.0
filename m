@@ -2,62 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39163237B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 15:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B2F423649
+	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 14:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388304AbfETM46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 08:56:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58430 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728898AbfETM45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 08:56:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2C64AAE45;
-        Mon, 20 May 2019 12:56:56 +0000 (UTC)
-Message-ID: <1558356237.12672.3.camel@suse.com>
-Subject: Re: [RFC v2 3/5] clk: bcm2835: use firmware interface to update pllb
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        stefan.wahren@i2se.com, Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
+        id S2390755AbfETMon convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 20 May 2019 08:44:43 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:44733 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391303AbfETMoj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 08:44:39 -0400
+Received: from xps13 (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 30D24100010;
+        Mon, 20 May 2019 12:44:37 +0000 (UTC)
+Date:   Mon, 20 May 2019 14:44:36 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Kamal Dasu <kdasu.kdev@gmail.com>
+Cc:     linux-mtd@lists.infradead.org,
         bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        sboyd@kernel.org, ptesarik@suse.com,
-        linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mturquette@baylibre.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 20 May 2019 14:43:57 +0200
-In-Reply-To: <20190520104708.11980-4-nsaenzjulienne@suse.de>
-References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
-         <20190520104708.11980-4-nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        linux-kernel@vger.kernel.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH 2/2] mtd: nand: raw: brcmnand: fallback to detected
+ ecc-strength, ecc-step-size
+Message-ID: <20190520144436.67e42f00@xps13>
+In-Reply-To: <1558117914-35807-2-git-send-email-kdasu.kdev@gmail.com>
+References: <1558117914-35807-1-git-send-email-kdasu.kdev@gmail.com>
+        <1558117914-35807-2-git-send-email-kdasu.kdev@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mo, 2019-05-20 at 12:47 +0200, Nicolas Saenz Julienne wrote:
-> + * For more information on the firmware interface check:
-> + * https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface
-> + */
-> +struct bcm2835_firmware_prop {
-> +       u32 id;
-> +       u32 val;
-> +       u32 disable_turbo;
-> +} __packed;
+Hi Kamal,
 
-Hi,
+Kamal Dasu <kdasu.kdev@gmail.com> wrote on Fri, 17 May 2019 14:29:55
+-0400:
 
-technically we are not in arch and those fields have a defined
-endianness.
+> This change supports nand-ecc-step-size and nand-ecc-strenght fields in
 
-	Regards
-		Oliver
+                                                       strength
 
+> brcmnand dt node to be  optional.
+
+           DT            ^ extra space
+
+> see: Documentation/devicetree/bindings/mtd/brcm,brcmnand.txt
+> 
+> If both nand-ecc-strength and nand-ecc-step-size are not specified in
+> device tree node for NAND, nand_base driver does detect onfi ext ecc
+
+s/nand_base driver/the raw NAND layer/
+s/onfi/ONFI/
+s/ecc/ECC/
+
+What is "ext"? Please use plain English here.
+
+> info from ONFI extended parameter page for parts using ONFI >= 2.1. In
+
+s/info/information/
+
+> case of non-onfi NAND there could be a nand_id table entry with the ecc
+
+s/ecc/ECC/
+
+> info. If there is a valid  device tree entry for nand-ecc-strength and
+> nand-ecc-step-size fields it still shall override the detected values.
+> 
+> Signed-off-by: Kamal Dasu <kdasu.kdev@gmail.com>
+> ---
+>  drivers/mtd/nand/raw/brcmnand/brcmnand.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> index ce0b8ff..e967b30 100644
+> --- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> +++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
+> @@ -2144,6 +2144,16 @@ static int brcmnand_setup_dev(struct brcmnand_host *host)
+>  		return -EINVAL;
+>  	}
+>  
+> +	if (!(chip->ecc.size > 0 && chip->ecc.strength > 0) &&
+
+Is the case where only size OR strength is valid handled?
+
+> +	    (chip->base.eccreq.strength > 0 &&
+> +	     chip->base.eccreq.step_size > 0)) {
+> +		/* use detected ecc parameters */
+
+                   Use          ECC
+
+> +		chip->ecc.size = chip->base.eccreq.step_size;
+> +		chip->ecc.strength = chip->base.eccreq.strength;
+> +		pr_info("Using detected nand-ecc-step-size %d, nand-ecc-strength %d\n",
+> +			chip->ecc.size, chip->ecc.strength);
+> +	}
+> +
+>  	switch (chip->ecc.size) {
+>  	case 512:
+>  		if (chip->ecc.algo == NAND_ECC_HAMMING)
+
+
+Thanks,
+Miquèl
