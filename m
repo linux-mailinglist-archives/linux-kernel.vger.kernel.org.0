@@ -2,194 +2,264 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7460F255DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 089FA255E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:44:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728987AbfEUQm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 12:42:59 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34804 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728911AbfEUQm6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 12:42:58 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w7so8719666plz.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 09:42:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WtZw+fdpaZbjOuInBI+L534tlDp+rXop9p/+kf7XV9Y=;
-        b=hFNtdVKEgvRPdSC5PDgOq8ZO64S/5OEgXmRLL+urCT25WMrrztgtN7uEjQhFZ0x1q9
-         472j6PCFOpSu9GCbELpRPLoXI8edMyQZO9oXOOQOa+9qDynglftR9FIBF2samkT3ZMRl
-         sHNelQEizfXadKEq6bQQCkKPxdxLXYjIq0ztKCNXaEOYZ0aDxKy95VjgvSjCPhavUKDZ
-         +PovVhwCZCVANcIkrWpNQS53G5pOdvhUXu1EEYb/M9G+qQAg75c48u5RSg3Lz8TP6JSQ
-         N9oToM2QuyrevbIkGevB/nzQC9E5I4kcBx49z+Zp5GdyivvaLDDlAX5AJ9+4j/bVAoKG
-         ueeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WtZw+fdpaZbjOuInBI+L534tlDp+rXop9p/+kf7XV9Y=;
-        b=PBHLvz84BXdeyx/qwx7sNBEYwt6Fgjn5HxGt1dYgtxO6REQtASxfzEiIUuXlNmTyyS
-         TRPfeH5NCHysBQdl/OgkCMxHudktbiVxkYGGQB6EaB4G4+NIkRzNsv+6IpYqGczPjZSu
-         tmJsrIUM0ZPhLldsQz1k64Wa0cvZeapk+8e3E0nlbrdoSwOjZSKb+mIgW5HyEG4xyKts
-         DKALoUycsMxTxOb2fiwltPQ6mTCJ5K+IaICZEMybKIsbKhGrxtLgFDc0gF9vCjdBoDxs
-         Q7I6vvEuOUfYqASeC4Nm+8hESwZ1miMx6jUCs9MU9BHMpxaUos7IxK6/dtkHIdqQ312F
-         hYCQ==
-X-Gm-Message-State: APjAAAXU546+9pyGpnGVBG5UA2ZeeY2fdazt5B1q4fpnYYq8fq+5XAD3
-        38kop7/4Ughof/mnTEXi8vWrqpJRZzM=
-X-Google-Smtp-Source: APXvYqz6hkQggncGw2amqhWyINM+2IIHUlaiyyx3bhaLSiib6GgTf9AkL4kdRJODyIfrRQHDBRKiyw==
-X-Received: by 2002:a17:902:20ca:: with SMTP id v10mr44805389plg.296.1558456977499;
-        Tue, 21 May 2019 09:42:57 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id t78sm46216148pfa.154.2019.05.21.09.42.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 09:42:56 -0700 (PDT)
-Date:   Tue, 21 May 2019 09:43:24 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     dmitry.torokhov@gmail.com, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, agross@kernel.org,
-        david.brown@linaro.org, hdegoede@redhat.com,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] HID: quirks: Refactor ELAN 400 and 401 handling
-Message-ID: <20190521164324.GA2085@tuxbook-pro>
-References: <20190423160543.9922-1-jeffrey.l.hugo@gmail.com>
- <20190423160605.9970-1-jeffrey.l.hugo@gmail.com>
+        id S1729043AbfEUQoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 12:44:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34298 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728103AbfEUQoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 12:44:12 -0400
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83B4621872
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 16:44:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558457051;
+        bh=qQZm8Nb/SzGNYia6YWo9lmooe1BQu0rQ4dsfiiwy4L0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zpIgXxDCkoO2vVHWlTYLw1c5wyXjd3sIECQdfG1SeUtg/azv7nVZmt5nge5TvMFGf
+         /HflMm9yUHf3EmK+ynkHa4lj7QPGPUSkpCcfalXiSy9ZfBMMleMmq0OHcZXWrkh7D5
+         arfTpmXPHGf9FtxafSrOwRlr9Il24S3QN3O5gHkM=
+Received: by mail-wr1-f52.google.com with SMTP id b18so19346338wrq.12
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 09:44:11 -0700 (PDT)
+X-Gm-Message-State: APjAAAV+CossqlCajKm+RYTnd4R8HEfqjX+C0997OURox2U5h0/NO50+
+        vun6g4Nytlx/o+RrrmsklVcu5zPKY3jmOm69UeMndw==
+X-Google-Smtp-Source: APXvYqyiAsj6k2lelSuLzA8lDaQTA5IuKvejy22iJ5REZyntNBokRByJ8IeZaodL+yAi+2uA4IBjt6XmnPRl80KDcsU=
+X-Received: by 2002:a5d:4a92:: with SMTP id o18mr7798645wrq.80.1558457048163;
+ Tue, 21 May 2019 09:44:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190423160605.9970-1-jeffrey.l.hugo@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <155836064844.2441.10911127801797083064.stgit@localhost.localdomain>
+ <CALCETrU221N6uPmdaj4bRDDsf+Oc5tEfPERuyV24wsYKHn+spA@mail.gmail.com> <9638a51c-4295-924f-1852-1783c7f3e82d@virtuozzo.com>
+In-Reply-To: <9638a51c-4295-924f-1852-1783c7f3e82d@virtuozzo.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 21 May 2019 09:43:56 -0700
+X-Gmail-Original-Message-ID: <CALCETrUMDTGRtLFocw6vnN___7rkb6r82ULehs0=yQO5PZL8MA@mail.gmail.com>
+Message-ID: <CALCETrUMDTGRtLFocw6vnN___7rkb6r82ULehs0=yQO5PZL8MA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] mm: process_vm_mmap() -- syscall for duplication a
+ process mapping
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Keith Busch <keith.busch@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        alexander.h.duyck@linux.intel.com, Weiny Ira <ira.weiny@intel.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        arunks@codeaurora.org, Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Lameter <cl@linux.com>,
+        Rik van Riel <riel@surriel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Roman Gushchin <guro@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        daniel.m.jordan@oracle.com, Jann Horn <jannh@google.com>,
+        Adam Borowski <kilobyte@angband.pl>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 23 Apr 09:06 PDT 2019, Jeffrey Hugo wrote:
+On Tue, May 21, 2019 at 8:52 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>
+> On 21.05.2019 17:43, Andy Lutomirski wrote:
+> > On Mon, May 20, 2019 at 7:01 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+> >>
+> >
+> >> [Summary]
+> >>
+> >> New syscall, which allows to clone a remote process VMA
+> >> into local process VM. The remote process's page table
+> >> entries related to the VMA are cloned into local process's
+> >> page table (in any desired address, which makes this different
+> >> from that happens during fork()). Huge pages are handled
+> >> appropriately.
+> >>
+> >> This allows to improve performance in significant way like
+> >> it's shows in the example below.
+> >>
+> >> [Description]
+> >>
+> >> This patchset adds a new syscall, which makes possible
+> >> to clone a VMA from a process to current process.
+> >> The syscall supplements the functionality provided
+> >> by process_vm_writev() and process_vm_readv() syscalls,
+> >> and it may be useful in many situation.
+> >>
+> >> For example, it allows to make a zero copy of data,
+> >> when process_vm_writev() was previously used:
+> >>
+> >>         struct iovec local_iov, remote_iov;
+> >>         void *buf;
+> >>
+> >>         buf = mmap(NULL, n * PAGE_SIZE, PROT_READ|PROT_WRITE,
+> >>                    MAP_PRIVATE|MAP_ANONYMOUS, ...);
+> >>         recv(sock, buf, n * PAGE_SIZE, 0);
+> >>
+> >>         local_iov->iov_base = buf;
+> >>         local_iov->iov_len = n * PAGE_SIZE;
+> >>         remove_iov = ...;
+> >>
+> >>         process_vm_writev(pid, &local_iov, 1, &remote_iov, 1 0);
+> >>         munmap(buf, n * PAGE_SIZE);
+> >>
+> >>         (Note, that above completely ignores error handling)
+> >>
+> >> There are several problems with process_vm_writev() in this example:
+> >>
+> >> 1)it causes pagefault on remote process memory, and it forces
+> >>   allocation of a new page (if was not preallocated);
+> >
+> > I don't see how your new syscall helps.  You're writing to remote
+> > memory.  If that memory wasn't allocated, it's going to get allocated
+> > regardless of whether you use a write-like interface or an mmap-like
+> > interface.
+>
+> No, the talk is not about just another interface for copying memory.
+> The talk is about borrowing of remote task's VMA and corresponding
+> page table's content. Syscall allows to copy part of page table
+> with preallocated pages from remote to local process. See here:
+>
+> [task1]                                                        [task2]
+>
+> buf = mmap(NULL, n * PAGE_SIZE, PROT_READ|PROT_WRITE,
+>            MAP_PRIVATE|MAP_ANONYMOUS, ...);
+>
+> <task1 populates buf>
+>
+>                                                                buf = process_vm_mmap(pid_of_task1, addr, n * PAGE_SIZE, ...);
+> munmap(buf);
+>
+>
+> process_vm_mmap() copies PTEs related to memory of buf in task1 to task2
+> just like in the way we do during fork syscall.
 
-> There needs to be coordination between hid-quirks and the elan_i2c driver
-> about which devices are handled by what drivers.  Currently, both use
-> whitelists, which results in valid devices being unhandled by default,
-> when they should not be rejected by hid-quirks.  This is quickly becoming
-> an issue.
-> 
-> Since elan_i2c has a maintained whitelist of what devices it will handle,
-> use that to implement a blacklist in hid-quirks so that only the devices
-> that need to be handled by elan_i2c get rejected by hid-quirks, and
-> everything else is handled by default.  The downside is the whitelist and
-> blacklist need to be kept in sync.
-> 
+If I understand this correctly, your intended use is to have one task
+allocate memory and fill it, have the other task clone the VMA, and
+have the first task free the VMA?  If so, that wasn't at all obvious
+from your original email.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Why don't you use splice() instead?  splice() the data to the remote
+task and have the remove task read() it?  All these VMA games will
+result in a lot of flushes, which is bad for performance.  Or,
+depending on your exact constraints, you could map a memfd in both
+tasks instead, which has the same flushing issues but at least has a
+sensible API.
 
-Jiri, the two patches in this series doesn't have a build time
-dependency, so if you take this one through your tree I'll take 2/2
-through arm-soc.
+>
+> There is no copying of buf memory content, unless COW happens. This is
+> the principal difference to process_vm_writev(), which just allocates
+> pages in remote VM.
+>
+> > Keep in mind that, on x86, just the hardware part of a
+> > page fault is very slow -- populating the memory with a syscall
+> > instead of a fault may well be faster.
+>
+> It is not as slow, as disk IO has. Just compare, what happens in case of anonymous
+> pages related to buf of task1 are swapped:
+>
+> 1)process_vm_writev() reads them back into memory;
+>
+> 2)process_vm_mmap() just copies swap PTEs from task1 page table
+>   to task2 page table.
+>
+> Also, for faster page faults one may use huge pages for the mappings.
+> But really, it's funny to think about page faults, when there are
+> disk IO problems I shown.
 
-Regards,
-Bjorn
+What are you doing that is causing *disk* IO in any of this?  I
+suspect your real problem is that you are using far too large of a
+buffer. See below.
 
-> Suggested-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-> ---
->  drivers/hid/hid-quirks.c            | 64 ++++++++++++++++++++++++-----
->  drivers/input/mouse/elan_i2c_core.c |  4 ++
->  2 files changed, 58 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-> index 77ffba48cc73..656485e08eb7 100644
-> --- a/drivers/hid/hid-quirks.c
-> +++ b/drivers/hid/hid-quirks.c
-> @@ -987,17 +987,61 @@ bool hid_ignore(struct hid_device *hdev)
->  		break;
->  	case USB_VENDOR_ID_ELAN:
->  		/*
-> -		 * Many Elan devices have a product id of 0x0401 and are handled
-> -		 * by the elan_i2c input driver. But the ACPI HID ELAN0800 dev
-> -		 * is not (and cannot be) handled by that driver ->
-> -		 * Ignore all 0x0401 devs except for the ELAN0800 dev.
-> +		 * Blacklist of everything that gets handled by the elan_i2c
-> +		 * input driver.  This should be kept in sync with the whitelist
-> +		 * that exists in that driver.  This avoids disabling valid
-> +		 * touchpads and other ELAN devices.
->  		 */
-> -		if (hdev->product == 0x0401 &&
-> -		    strncmp(hdev->name, "ELAN0800", 8) != 0)
-> -			return true;
-> -		/* Same with product id 0x0400 */
-> -		if (hdev->product == 0x0400 &&
-> -		    strncmp(hdev->name, "QTEC0001", 8) != 0)
-> +		if ((hdev->product == 0x0401 || hdev->product == 0x0400) &&
-> +		   (strncmp(hdev->name, "ELAN0000", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0100", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0600", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0601", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0602", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0603", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0604", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0605", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0606", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0607", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0608", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0609", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN060B", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN060C", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN060F", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0610", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0611", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0612", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0613", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0614", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0615", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0616", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0617", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0618", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0619", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN061A", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN061B", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN061C", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN061D", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN061E", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN061F", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0620", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0621", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0622", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0623", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0624", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0625", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0626", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0627", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0628", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0629", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN062A", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN062B", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN062C", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN062D", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0631", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN0632", 8) == 0 ||
-> +		    strncmp(hdev->name, "ELAN1000", 8) == 0 ||
-> +		    strncmp(hdev->name, "elan,ekth3000", 13) == 0))
->  			return true;
->  		break;
->  	}
-> diff --git a/drivers/input/mouse/elan_i2c_core.c b/drivers/input/mouse/elan_i2c_core.c
-> index f9525d6f0bfe..3ded19528cd4 100644
-> --- a/drivers/input/mouse/elan_i2c_core.c
-> +++ b/drivers/input/mouse/elan_i2c_core.c
-> @@ -1332,6 +1332,10 @@ static const struct i2c_device_id elan_id[] = {
->  };
->  MODULE_DEVICE_TABLE(i2c, elan_id);
->  
-> +/*
-> + * when these whtielists get updated, the corresponding blacklist in hid-quirks
-> + * needs to be updated to match.
-> + */
->  #ifdef CONFIG_ACPI
->  static const struct acpi_device_id elan_acpi_id[] = {
->  	{ "ELAN0000", 0 },
-> -- 
-> 2.17.1
-> 
+>
+> >>
+> >> 2)amount of memory for this example is doubled in a moment --
+> >>   n pages in current and n pages in remote tasks are occupied
+> >>   at the same time;
+> >
+> > This seems disingenuous.  If you're writing p pages total in chunks of
+> > n pages, you will use a total of p pages if you use mmap and p+n if
+> > you use write.
+>
+> I didn't understand this sentence because of many ifs, sorry. Could you
+> please explain your thought once again?
+
+You seem to have a function that tries to populate p pages of memory
+with data received from a socket.  It looks like you're doing
+something like this:
+
+void copy_p_pages(size_t p)
+{
+  size_t n = some_value(p);
+  char *buf = malloc(n * PAGE_SIZE);
+  for (int i = 0; i < p; i += n*PAGE_SIZE) {
+    read(fd, buf, n*PAGE_SIZE);  /* check return value, etc */
+    process_vm_writev(write n*PAGE_SIZE bytes to remote process);
+  }
+  free(buf);
+}
+
+If you have a *constant* n (i.e. some_value(p) is just a number like
+16)), then you aren't doubling memory usage.  If you have
+some_value(p) return p, then you are indeed doubling memory usage.  So
+don't do that!
+If buf is getting swapped out, you are very likely doing something
+wrong.  If you're using a 100MB buffer or a 10GB, then I'm not
+surprised you have problems.  Try something reasonable like 128kB. For
+extra fun, you could mlock() that buf, but if you're thrashing on
+access to a 128kB working set, you will probably also get your *code*
+swapped out, in which case you pretty much lose.
+
+
+> > For example, if the remote VMA is MAP_ANONYMOUS, do you get
+> > a CoW copy of it? I assume you don't since the whole point is to
+> > write to remote memory
+>
+> But, no, there *is* COW semantic. We do not copy memory. We copy
+> page table content. This is just the same we have on fork(), when
+> children duplicates parent's VMA and related page table subset,
+> and parent's PTEs lose _PAGE_RW flag.
+
+Then you need to document this very carefully, because other people
+will use your syscall in different ways than you use it.
+
+And, if you are doing CoW like this, then your syscall is basically
+only useful for your really weird use case in which you're using it to
+import an already-populated VMA.  Maybe this is a reasonable feature
+to add to the kernel, but it needs a benchmark against a reasonable
+alternative.
+
+>
+> There is all copy_page_range() code reused for that. Please, see [3/7]
+> for the details.
+
+You can't as users of a syscall to read the nitty gritty mm code to
+figure out what the syscall does from a user's perspective.
+
+> > But there are plenty of other questions.
+> > What happens if the remote VMA is a gate area or other special mapping
+> > (vDSO, vvar area, etc)?  What if the remote memory comes from a driver
+> > that wasn't expecting the mapping to get magically copied to a
+> > different process?
+>
+> In case of someone wants to duplicate such the mappings, we may consider
+> that, and extend the interface in the future for VMA types, which are
+> safe for that.
+
+Do you mean that the code you sent rejects this case?  If so, please
+document it.  In any case, I looked at the code, and it seems to be
+trying to handle MAP_SHARED and MAP_ANONYMOUS.  I don't see where it
+would reject copying a vDSO.
