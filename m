@@ -2,68 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD31E2570A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE0625701
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:49:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729084AbfEURys convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 May 2019 13:54:48 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:51878
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726900AbfEURys (ORCPT
+        id S1729051AbfEURti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 13:49:38 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:34861 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbfEURth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 13:54:48 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id DD7C5B888EE;
-        Tue, 21 May 2019 17:48:57 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id P6W6aiwi9Ql0; Tue, 21 May 2019 17:48:57 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 1C889EE46A6;
-        Tue, 21 May 2019 17:46:53 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ie-QPQ5InbQ0; Tue, 21 May 2019 17:46:53 +0000 (UTC)
-Received: from [100.69.243.100] (unknown [223.237.233.134])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 8F568B86B84;
-        Tue, 21 May 2019 17:46:18 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 21 May 2019 13:49:37 -0400
+Received: by mail-oi1-f196.google.com with SMTP id a132so13515932oib.2;
+        Tue, 21 May 2019 10:49:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Yy3oYPWdeUlJWNni35uRANPHnH/KZjqT8e9g9rhiirM=;
+        b=VkVn705o7OpQFHF9HbuH2HaFLohjO9EUw3hhXGLr+u/78N8WUwIm/rBJBHffrztZdq
+         D+sXQCuVSRDH8pUldl/f0ZVTDRpQf16pGmtJHwNT7TcHo/IcHQbZVzCMnfrDHZOD/7py
+         pwTIgpIwHGr5iEI+LGIGeDsKUUZWMGqmw4ffn/Ct7W7tblfJYpcA2CPdw8zDQAHuPehe
+         jobcU4jXoITVfWwSOIgahxhHRlHyxWdop5/2bO9cWpV/KnacspWfewatTh/EJVMJUC7S
+         p5oca3a4lldAjZSJRVKoC7GXU9HZDyZAqKR1GgO2TT08WomiUPOoVB0V9hgSxBL6PZUh
+         4+Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Yy3oYPWdeUlJWNni35uRANPHnH/KZjqT8e9g9rhiirM=;
+        b=NE0upqXc7ChF3cdUNp86mCszzYlQAMy32DSVCyR5JnhJbZRFr8q2rJ/65GAbW8pWjW
+         LkfuAhCar7SkX1ivQ6IEVBqASnvdKE9nBqT85PqLG53jYXGPpzEx4SApPK5c6mas1FU6
+         TDy6168yN00XHR+rZ3R7AnWvecwZACyGPU4TsAyNEkvdnNfKPRjUj/Q5Uz97hDyK5IFM
+         +znUM9eJrsVZdbuEPGmTyB0uYw/tET4MUJLszHW7OhUx6wQOSzw0hzPkq5v9rCbZN5Zq
+         e1shKqtR/8eU6/Nlc10aWGpQIS4vKD8Def50N3XmiosU8RCPk4cEUY3ophUAGtNkxlYp
+         h4zw==
+X-Gm-Message-State: APjAAAXySGI4zwVJX0hjtNpWHSnrmOuUmKfqPyzpciP0YBE5UORg0ujq
+        enxMKlgs1351loBA5tlub0CfRc3CuR6qgO1v3pI=
+X-Google-Smtp-Source: APXvYqwsTyLWRVtVJGzYLFw570+vGq26/BU5Rlh7Kr1b1kBkg18irFOUv0iHFMKBHXzmvtcX9F3LescfHwPspCkkezo=
+X-Received: by 2002:aca:ed0a:: with SMTP id l10mr4510948oih.39.1558460976843;
+ Tue, 21 May 2019 10:49:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Verifica=C3=A7=C3=A3o_de_conta?=
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   Administrador da conta <exportaciones@minpal.gob.ve>
-Date:   Tue, 21 May 2019 23:16:08 +0530
-Message-Id: <20190521174618.8F568B86B84@smspyt.cancun.gob.mx>
+References: <20190521150130.31684-1-narmstrong@baylibre.com> <20190521150130.31684-3-narmstrong@baylibre.com>
+In-Reply-To: <20190521150130.31684-3-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 21 May 2019 19:49:25 +0200
+Message-ID: <CAFBinCB+DD=hssuswV6M4i1Buv7bs0-6TfPTRVdUrhaprLMb0w@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: meson: g12a: Add support for G12B CPUB clocks
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aviso de segurança:
+Hi Neil,
 
-Esta mensagem é do nosso centro de mensagens do Web Admin para todos os nossos proprietários de contas de e-mail. Estamos eliminando o acesso a todos os nossos clientes de webmail. Sua conta de e-mail será atualizada para uma interface de usuário de webmail nova e melhorada, fornecida pelo nosso Administrador assim que este e-mail for recebido.
+On Tue, May 21, 2019 at 5:02 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Update the Meson G12A Clock driver to support the Amlogic G12B SoC.
+>
+> G12B clock driver is very close, the main differences are :
+> - the clock tree is duplicated for the both clusters, and the
+>   SYS_PLL are swapped between the clusters
+> - G12A has additional clocks like for CSI an other components
+should this also be G12B?
 
-Descontinuaremos o uso de nossas interfaces do webmail Lite, para garantir que seu catálogo de endereços esteja armazenado em nosso banco de dados, clique ou copie e cole o seguinte link em seu navegador e digite seu nome de usuário e senha para atualizar sua conta.
+[...]
+> +static struct clk_regmap g12b_cpub_clk_apb_div = {
+if you also think that it's worth it then please add a comment stating
+that this is called "PCLK_mux" in the datasheet
+same goes for the ATB and AXI clocks below as the naming in the driver
+and datasheet differs
 
-Se o clique não funcionar, copie e cole o URL abaixo em um navegador da web para verificá-lo.
+> +       .data = &(struct clk_regmap_div_data){
+> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
+> +               .shift = 3,
+> +               .width = 3,
+> +               .flags = CLK_DIVIDER_POWER_OF_TWO,
+> +       },
+> +       .hw.init = &(struct clk_init_data){
+> +               .name = "cpub_clk_apb_div",
+> +               .ops = &clk_regmap_divider_ro_ops,
+> +               .parent_names = (const char *[]){ "cpub_clk" },
+> +               .num_parents = 1,
+> +       },
+> +};
+I'm assuming you checked that this is really a power of two divider,
+on the Meson8/8b/8m2 SoCs this is a mux between div[2..8]
+(the same goes for the ATB, AXI and trace div clocks below)
 
-Clique no link http://accountupdatebrodcaster.xtgem.com/ se clicar não funcionar, copie e cole no seu navegador e atualize sua conta para que possamos transferir seus contatos para o nosso novo banco de dados de clientes de webmail.
+> +
+> +static struct clk_regmap g12b_cpub_clk_apb = {
+> +       .data = &(struct clk_regmap_gate_data){
+> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
+> +               .bit_idx = 16,
+the public S922X datasheet calls this "PCLK_dis", does this mean you
+need a flag here?
+  .flags = CLK_GATE_SET_TO_DISABLE,
 
-Todos os emails estarão seguros nesta transição! Todas as suas mensagens antigas estarão lá e você terá novas mensagens não lidas esperando por você. Estavam
-Claro que você vai gostar da nova e melhorada interface de webmail.
+[...]
+> +static struct clk_regmap g12b_cpub_clk_atb = {
+> +       .data = &(struct clk_regmap_gate_data){
+> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
+> +               .bit_idx = 17,
+the public S922X datasheet calls this "ATCLK_clk_dis", does this mean
+you need a flag here?
+  .flags = CLK_GATE_SET_TO_DISABLE,
 
-Se você não cumprir este aviso, retiraremos imediatamente o acesso à sua conta de e-mail.
+[...]
+> +static struct clk_regmap g12b_cpub_clk_axi = {
+> +       .data = &(struct clk_regmap_gate_data){
+> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
+> +               .bit_idx = 18,
+the public S922X datasheet calls this "ACLKM_clk_dis", does this mean
+you need a flag here?
+  .flags = CLK_GATE_SET_TO_DISABLE,
 
-Obrigado por usar nosso webmail.
+[...]
+> +static struct clk_regmap g12b_cpub_clk_trace = {
+> +       .data = &(struct clk_regmap_gate_data){
+> +               .offset = HHI_SYS_CPUB_CLK_CNTL1,
+> +               .bit_idx = 23,
+the public S922X datasheet calls this "Trace_clk_dis", does this mean
+you need a flag here?
+  .flags = CLK_GATE_SET_TO_DISABLE,
 
-=============================================
-Número de registro 65628698L)
-Identificação do cliente 779862
-==============================================
 
-Sinceramente Web Admin.
-E-mail Atendimento ao cliente 46569 Copyright c 2019 E! Inc. (Co
-Reg.No. 65628698L) Todos os direitos reservados.
+Regards
+Martin
