@@ -2,105 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA1F125340
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE18F25357
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728781AbfEUPBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:01:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54320 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728269AbfEUPBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:01:34 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DB08430842A8;
-        Tue, 21 May 2019 15:01:33 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B432704DF;
-        Tue, 21 May 2019 15:01:31 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 34034220A60; Tue, 21 May 2019 11:01:31 -0400 (EDT)
-Date:   Tue, 21 May 2019 11:01:31 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-nvdimm@lists.01.org,
-        stefanha@redhat.com, dgilbert@redhat.com, swhiteho@redhat.com
-Subject: Re: [PATCH v2 02/30] fuse: Clear setuid bit even in cache=never path
-Message-ID: <20190521150131.GB29075@redhat.com>
-References: <20190515192715.18000-1-vgoyal@redhat.com>
- <20190515192715.18000-3-vgoyal@redhat.com>
- <20190520144137.GA24093@localhost.localdomain>
+        id S1728740AbfEUPCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:02:49 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:57302 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727941AbfEUPCs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 11:02:48 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4LF1m6I087549;
+        Tue, 21 May 2019 15:02:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=vcLtAHq/nTW9Yr4n2tyGyq7/C1yAHMDyYIV67B4ge5M=;
+ b=mP1boTbkaPg4Pg7WpNzllBau8SVyylI+z1Sty74BQMcfqMJnPdjAR2zGLYIUSYwFjM2T
+ j02fQdhsgK5LtR4W9C0IhqLjELJ4z7h9V0kiM4SPWZhftu3azQccgMeFjgxy0l1kd5k4
+ XOL8BMmaAcn4ncy2CvJsQfWzOm4po+HedslB8xd0KI7z8Xvd1DGnfvuXA585wcryzGCE
+ ttgdp7K5mdO4rqglDH27XerVDuCij+HuAACzjmSTglGTccgRvOSc7rgRq/EAsmsJ0sDs
+ Oyvdhr/BysiM/cZmjwCSVttoYIMEPkLQ/hFKU54lqvPuruM8GASLslXzrvUMbwBw5vGf kw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2sj9fte2gp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 May 2019 15:02:02 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4LF1UbY077208;
+        Tue, 21 May 2019 15:02:01 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2sks1y8j2t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 May 2019 15:02:01 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4LF20Fm002830;
+        Tue, 21 May 2019 15:02:00 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 21 May 2019 15:01:59 +0000
+Date:   Tue, 21 May 2019 18:01:52 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        devel@lists.orangefs.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] orangefs: remove redundant assignment to variable
+ buffer_index
+Message-ID: <20190521150152.GK31203@kadam>
+References: <20190511132700.4862-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190520144137.GA24093@localhost.localdomain>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 21 May 2019 15:01:34 +0000 (UTC)
+In-Reply-To: <20190511132700.4862-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9263 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905210094
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9264 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905210094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 04:41:37PM +0200, Miklos Szeredi wrote:
-> On Wed, May 15, 2019 at 03:26:47PM -0400, Vivek Goyal wrote:
-> > If fuse daemon is started with cache=never, fuse falls back to direct IO.
-> > In that write path we don't call file_remove_privs() and that means setuid
-> > bit is not cleared if unpriviliged user writes to a file with setuid bit set.
-> > 
-> > pjdfstest chmod test 12.t tests this and fails.
+On Sat, May 11, 2019 at 02:27:00PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> I think better sulution is to tell the server if the suid bit needs to be
-> removed, so it can do so in a race free way.
+> The variable buffer_index is being initialized however this is never
+> read and later it is being reassigned to a new value. The initialization
+> is redundant and hence can be removed.
 > 
-> Here's the kernel patch, and I'll reply with the libfuse patch.
-
-Hi Miklos,
-
-I tested and it works for me.
-
-Vivek
-
-> 
+> Addresses-Coverity: ("Unused Value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  fs/fuse2/file.c           |    2 ++
->  include/uapi/linux/fuse.h |    3 +++
->  2 files changed, 5 insertions(+)
+>  fs/orangefs/file.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> --- a/fs/fuse2/file.c
-> +++ b/fs/fuse2/file.c
-> @@ -363,6 +363,8 @@ static ssize_t fuse_send_write(struct fu
->  		inarg->flags |= O_DSYNC;
->  	if (iocb->ki_flags & IOCB_SYNC)
->  		inarg->flags |= O_SYNC;
-> +	if (!capable(CAP_FSETID))
-> +		inarg->write_flags |= FUSE_WRITE_KILL_PRIV;
->  	req->inh.opcode = FUSE_WRITE;
->  	req->inh.nodeid = ff->nodeid;
->  	req->inh.len = req->inline_inlen + count;
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -125,6 +125,7 @@
->   *
->   *  7.29
->   *  - add FUSE_NO_OPENDIR_SUPPORT flag
-> + *  - add FUSE_WRITE_KILL_PRIV flag
->   */
+> diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
+> index a35c17017210..80f06ee794c5 100644
+> --- a/fs/orangefs/file.c
+> +++ b/fs/orangefs/file.c
+> @@ -52,7 +52,7 @@ ssize_t wait_for_direct_io(enum ORANGEFS_io_type type, struct inode *inode,
+>  	struct orangefs_inode_s *orangefs_inode = ORANGEFS_I(inode);
+>  	struct orangefs_khandle *handle = &orangefs_inode->refn.khandle;
+>  	struct orangefs_kernel_op_s *new_op = NULL;
+> -	int buffer_index = -1;
+> +	int buffer_index;
+>  	ssize_t ret;
+>  	size_t copy_amount;
 >  
->  #ifndef _LINUX_FUSE_H
-> @@ -318,9 +319,11 @@ struct fuse_file_lock {
->   *
->   * FUSE_WRITE_CACHE: delayed write from page cache, file handle is guessed
->   * FUSE_WRITE_LOCKOWNER: lock_owner field is valid
-> + * FUSE_WRITE_KILL_PRIV: kill suid and sgid bits
->   */
->  #define FUSE_WRITE_CACHE	(1 << 0)
->  #define FUSE_WRITE_LOCKOWNER	(1 << 1)
-> +#define FUSE_WRITE_KILL_PRIV	(1 << 2)
->  
->  /**
->   * Read flags
-> 
-> 
+
+There is a second pointless assignment at the end of the function as
+well:
+
+   247  
+   248          ret = new_op->downcall.resp.io.amt_complete;
+   249  
+   250  out:
+   251          if (buffer_index >= 0) {
+   252                  if ((readahead_size) && (type == ORANGEFS_IO_READ)) {
+   253                          /* readpage */
+   254                          *index_return = buffer_index;
+   255                          gossip_debug(GOSSIP_FILE_DEBUG,
+   256                                  "%s: hold on to buffer_index :%d:\n",
+   257                                  __func__, buffer_index);
+   258                  } else {
+   259                          /* O_DIRECT */
+   260                          orangefs_bufmap_put(buffer_index);
+   261                          gossip_debug(GOSSIP_FILE_DEBUG,
+   262                                  "%s(%pU): PUT buffer_index %d\n",
+   263                                  __func__, handle, buffer_index);
+   264                  }
+   265                  buffer_index = -1;
+                        ^^^^^^^^^^^^^^^^^
+
+   266          }
+   267          op_release(new_op);
+   268          return ret;
+   269  }
+
+You often send these patches before they hit linux-next so I had skipped
+reviewing this one when you sent it.  I'm coming back to work today
+after the flu so I was going through my inbox reviewing old unread
+messages...
+
+regards,
+dan carpenter
