@@ -2,91 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0354A25362
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 693432537D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:05:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728786AbfEUPDo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:03:44 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:25802 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728505AbfEUPDo (ORCPT
+        id S1728972AbfEUPFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:05:46 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:34710 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728806AbfEUPFg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:03:44 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4LEuoq6020124;
-        Tue, 21 May 2019 17:03:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : mime-version : content-type :
- content-transfer-encoding; s=STMicroelectronics;
- bh=nq7D1bNWeTgr7MKVNaV3palhDHMi3cg+ormhUszIkDA=;
- b=PpW3x0ymcnUZ/0c0dfYbfMZXrKlhgx/d+/39TwL3UFhz58hr6/EOYLV/Qbsh3vXnnJ5i
- JLgHTmGh2Mk7LtVtTtpXLevTq/GHHs/TXVOp2Rk/1cbpRSwtSnrmw9LrCLS9MpdcRvAU
- v1bZBT50KYk907XY50A0NSfcbsc4zmlvQGXyGCL0kMlqC758Mq8CK6YpqK7sasUTatuE
- +aMAuqcb/BPxaS5Qwulo7rG+L++aENNczIBcHpJAQr2Ki6En8oF7OFUjZgDl+Tczh+Tw
- l6RYbGWu72bhq9oWwaSX+CXez5LsOe6zbrEsekF/UlJJGjrP1S7dZpbP8RIBUUyQootB bw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2sj7742m3c-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 21 May 2019 17:03:26 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 257F23A;
-        Tue, 21 May 2019 15:03:26 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F11662BFE;
-        Tue, 21 May 2019 15:03:25 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by Safex1hubcas22.st.com
- (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 21 May
- 2019 17:03:25 +0200
-Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 21 May 2019 17:03:25
- +0200
-From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
-To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>
-Subject: [PATCH] ARM: dts: stm32: add power supply of rm68200 on stm32mp157c-ev1
-Date:   Tue, 21 May 2019 17:03:18 +0200
-Message-ID: <1558450998-13451-1-git-send-email-yannick.fertre@st.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 21 May 2019 11:05:36 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4LExZW9029675;
+        Tue, 21 May 2019 10:05:03 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2sjefmv1d7-1;
+        Tue, 21 May 2019 10:05:03 -0500
+Received: from EDIEX02.ad.cirrus.com (unknown [198.61.84.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 2243D611C8CE;
+        Tue, 21 May 2019 10:05:03 -0500 (CDT)
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 21 May
+ 2019 16:05:02 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Tue, 21 May 2019 16:05:02 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 79CCE45;
+        Tue, 21 May 2019 16:05:02 +0100 (BST)
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <wsa@the-dreams.de>, <mika.westerberg@linux.intel.com>
+CC:     <jarkko.nikula@linux.intel.com>,
+        <andriy.shevchenko@linux.intel.com>, <linux-i2c@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.tissoires@redhat.com>, <jbroadus@gmail.com>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH 0/5] I2C IRQ Probe Improvements
+Date:   Tue, 21 May 2019 16:04:57 +0100
+Message-ID: <20190521150502.27305-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.201.23.97]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-21_03:,,
- signatures=0
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=925 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905210094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a new property (power-supply) to panel rm68200 (raydium)
-on stm32mp157c-ev1.
+Apologies for the resend adding Andy and Jarkko.
 
-Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
----
- arch/arm/boot/dts/stm32mp157c-ev1.dts | 1 +
- 1 file changed, 1 insertion(+)
+This series attempts to align as much IRQ handling into the
+probe path as possible. Note that I don't have a great setup
+for testing these patches so they are mostly just build tested
+and need careful review and testing before any of them are
+merged.
 
-diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-index 8ef2cb0..50f3263 100644
---- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-@@ -127,6 +127,7 @@
- 		reg = <0>;
- 		reset-gpios = <&gpiof 15 GPIO_ACTIVE_LOW>;
- 		backlight = <&panel_backlight>;
-+		power-supply = <&v3v3>;
- 		status = "okay";
- 
- 		port {
+The series brings the ACPI path inline with the way the device
+tree path handles the IRQ entirely at probe time. However,
+it still leaves any IRQ specified through the board_info as
+being handled at device time. In that case we need to cache
+something from the board_info until probe time, which leaves
+any alternative solution with something basically the same as
+the current handling although perhaps caching more stuff.
+
+Thanks,
+Charles
+
+See previous discussions:
+ - https://lkml.org/lkml/2019/2/15/989
+ - https://www.spinics.net/lists/linux-i2c/msg39541.html
+
+Charles Keepax (5):
+  i2c: acpi: Factor out getting the IRQ from ACPI
+  i2c: acpi: Use available IRQ helper functions
+  i2c: core: Move ACPI IRQ handling to probe time
+  i2c: core: Move ACPI gpio IRQ handling into i2c_acpi_get_irq
+  i2c: core: Tidy up handling of init_irq
+
+ drivers/i2c/i2c-core-acpi.c | 50 ++++++++++++++++++++++++++++++---------------
+ drivers/i2c/i2c-core-base.c | 11 +++++-----
+ drivers/i2c/i2c-core.h      |  9 ++++++++
+ 3 files changed, 48 insertions(+), 22 deletions(-)
+
 -- 
-2.7.4
+2.11.0
 
