@@ -2,89 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5019425714
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:56:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 953BB2570B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:55:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbfEURzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 13:55:55 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:56171 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727898AbfEURzy (ORCPT
+        id S1729173AbfEURy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 13:54:59 -0400
+Received: from caffeine.csclub.uwaterloo.ca ([129.97.134.17]:38971 "EHLO
+        caffeine.csclub.uwaterloo.ca" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729098AbfEURy6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 13:55:54 -0400
-Received: by mail-it1-f195.google.com with SMTP id g24so2046329iti.5
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 10:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jLDbNj8hKOhihnmanHTtFjySrA3DxxDhmX5hUAsmw+o=;
-        b=apCkyJVyJ5bFRQFpxRJZFsNxoG+/opnp07SRfcPSXgWgvUH+EGQEeldHDIWa65YICK
-         qam0sZgU6YgEJX//IAbrcRfPAqxKz+dEDLUTR/VD9kXIF/Gus5tzIXn1GQPDeHvmD/7f
-         CkP5Hvw0SIBfvlsqiykEEgOSNENBEXr2O0udNsrWeHl/bf0ZupafPytTFJZl0+a7DzeV
-         NylV6zObP4e9bcucHNh4tqygOYd7KAVFzCvQ1s1gJMAud24KVZKPV1eBaQQg3dNz/hRP
-         5SktCoMn2iKj2WN3lCQkz0GGed50BCNnRHiwHUTj9WL3B2fXJdHCB+bIdnnUp8D8V51v
-         yxbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jLDbNj8hKOhihnmanHTtFjySrA3DxxDhmX5hUAsmw+o=;
-        b=Cr8lXIDEv4LZkt/V036hWROFzE5X/FRquu5oAxU7OsbcE/cUr1thUGG9XzvdBlDEmq
-         Z2iIn6RNI80m+6SsRAnfy6xATGTJFOW031UhKApiN3dORF/l2CKJ3C3clQ+SV12tOmZ2
-         3qm/mmm2KC0pZjsXxGOnqdHwVQQx+ehVDoUrjPOwzim0p9vVvmLHIFq5psgouZZK/Csz
-         rliNe5ch6H1Sxjax0/qyCwx1tWskxT1Cw+lOpeE0qJf/P4RoYEBWOoNxAHblk6fPbyke
-         YssLLSynjYAMIxFejA72JZAMaCBGrF/QC+Pmb4hWTJTiffyhkytDkmyPanuXzkmdSX+r
-         PipA==
-X-Gm-Message-State: APjAAAWFERchW6um2Qi9tNt0aT89UgPJlB++yCFJC+xOgvC5gz4jRgve
-        /65AuRoGnoRtXYwlS04NABk=
-X-Google-Smtp-Source: APXvYqwxmOUegYH0Yg5h9NSk004Jr4zoAAdGXNe8cm4CmBsUd7SiGjkgKkrTrTcFarnzAl5Z1iBMyQ==
-X-Received: by 2002:a02:a590:: with SMTP id b16mr7518436jam.143.1558461353735;
-        Tue, 21 May 2019 10:55:53 -0700 (PDT)
-Received: from localhost.localdomain ([2607:fea8:7a60:20d:6f1c:3788:87f4:7fe7])
-        by smtp.gmail.com with ESMTPSA id a2sm6718720iok.47.2019.05.21.10.55.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 10:55:52 -0700 (PDT)
-From:   Donald Yandt <donald.yandt@gmail.com>
-To:     peterz@infradead.org
-Cc:     mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        yanmin_zhang@linux.intel.com, linux-kernel@vger.kernel.org,
-        Donald Yandt <donald.yandt@gmail.com>
-Subject: [PATCH perf/core] tools/perf/util/machine: Return NULL instead of null-terminating
-Date:   Tue, 21 May 2019 13:54:53 -0400
-Message-Id: <20190521175453.2446-1-donald.yandt@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 21 May 2019 13:54:58 -0400
+Received: by caffeine.csclub.uwaterloo.ca (Postfix, from userid 20367)
+        id DDF5F460279; Tue, 21 May 2019 13:54:56 -0400 (EDT)
+Date:   Tue, 21 May 2019 13:54:56 -0400
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>
+Subject: Re: [Intel-wired-lan] i40e X722 RSS problem with NAT-Traversal IPsec
+ packets
+Message-ID: <20190521175456.zlkiiov5hry2l4q2@csclub.uwaterloo.ca>
+References: <20190514163443.glfjva3ofqcy7lbg@csclub.uwaterloo.ca>
+ <CAKgT0UdPDyCBsShQVwwE5C8fBKkMcfS6_S5m3T7JP-So9fzVgA@mail.gmail.com>
+ <20190516183407.qswotwyjwtjqfdqm@csclub.uwaterloo.ca>
+ <20190516183705.e4zflbli7oujlbek@csclub.uwaterloo.ca>
+ <CAKgT0UfSa-dM2+7xntK9tB7Zw5N8nDd3U1n4OSK0gbWbkNSKJQ@mail.gmail.com>
+ <CAKgT0Ucd0s_0F5_nwqXknRngwROyuecUt+4bYzWvp1-2cNSg7g@mail.gmail.com>
+ <20190517172317.amopafirjfizlgej@csclub.uwaterloo.ca>
+ <CAKgT0UdM28pSTCsaT=TWqmQwCO44NswS0PqFLAzgs9pmn41VeQ@mail.gmail.com>
+ <20190521151537.xga4aiq3gjtiif4j@csclub.uwaterloo.ca>
+ <CAKgT0UfpZ-ve3Hx26gDkb+YTDHvN3=MJ7NZd2NE7ewF5g=kHHw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0UfpZ-ve3Hx26gDkb+YTDHvN3=MJ7NZd2NE7ewF5g=kHHw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+From:   lsorense@csclub.uwaterloo.ca (Lennart Sorensen)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Return NULL instead of null-terminating version char array when fgets fails due to end-of-file or error.
+On Tue, May 21, 2019 at 09:51:33AM -0700, Alexander Duyck wrote:
+> I think we need to narrow this down a bit more. Let's try forcing the
+> lookup table all to one value and see if traffic is still going to
+> queue 0.
+> 
+> Specifically what we need to is run the following command to try and
+> force all RSS traffic to queue 8, you can verify the result with
+> "ethtool -x":
+> ethtool -X <iface> weight 0 0 0 0 0 0 0 0 1
+> 
+> If that works and the IPSec traffic goes to queue 8 then we are likely
+> looking at some sort of input issue, either in the parsing or the
+> population of things like the input mask that we can then debug
+> further.
+> 
+> If traffic still goes to queue 0 then that tells us the output of the
+> RSS hash and lookup table are being ignored, this would imply either
+> some other filter is rerouting the traffic or is directing us to limit
+> the queue index to 0 bits.
 
-Signed-off-by: Donald Yandt <donald.yandt@gmail.com>
----
- tools/perf/util/machine.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+# ethtool -x eth2
+RX flow hash indirection table for eth2 with 12 RX ring(s):
+    0:      7     7     7     7     7     7     7     7
+    8:      7     7     7     7     7     7     7     7
+   16:      7     7     7     7     7     7     7     7
+   24:      7     7     7     7     7     7     7     7
+   32:      7     7     7     7     7     7     7     7
+...
+  472:      7     7     7     7     7     7     7     7
+  480:      7     7     7     7     7     7     7     7
+  488:      7     7     7     7     7     7     7     7
+  496:      7     7     7     7     7     7     7     7
+  504:      7     7     7     7     7     7     7     7
+RSS hash key:
+0b:1f:ae:ed:60:04:7d:e5:8a:2b:43:3f:1d:ee:6c:99:89:29:94:b0:25:db:c7:4b:fa:da:4d:3f:e8:cc:bc:00:ad:32:01:d6:1c:30:3f:f8:79:3e:f4:48:04:1f:51:d2:5a:39:f0:90
+root@ECA:~# ethtool --show-priv-flags eth2
+Private flags for eth2:
+MFP              : off
+LinkPolling      : off
+flow-director-atr: off
+veb-stats        : off
+hw-atr-eviction  : on
+legacy-rx        : off
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 28a9541c4..6fd877220 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1235,9 +1235,9 @@ static char *get_kernel_version(const char *root_dir)
- 		return NULL;
+All ipsec packets are still hitting queue 0.
 
- 	tmp = fgets(version, sizeof(version), file);
--	if (!tmp)
--		*version = '\0';
- 	fclose(file);
-+	if (!tmp)
-+		return NULL;
+Seems it is completely ignoring RSS for these packets.  That is
+impressively weird.
 
- 	name = strstr(version, prefix);
- 	if (!name)
---
-2.20.1
-
+-- 
+Len Sorensen
