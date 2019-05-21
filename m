@@ -2,131 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F026256F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD31E2570A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:54:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbfEURor (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 13:44:47 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37513 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbfEURoq (ORCPT
+        id S1729084AbfEURys convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 May 2019 13:54:48 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:51878
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1726900AbfEURys (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 13:44:46 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n27so6343856pgm.4
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 10:44:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=606JMBHU1WCSkVE8vEh8jp0Vn08O9hluQpv6YSChqEM=;
-        b=bQVhsZXwJoS8kkAVFoHwkcLXby5dBYqyoeVKoiXPqgc7fmXn1bh8ym5oYjKC4HS7Tj
-         9oCLmvze7JP4BG602rGkjb0Rp6P9Iw+/OkRoeJliB8fgxIRu1qINoBy3cwhjPL+63Tu/
-         OU32v+ugrsYpgf4PkCeaVSWXM3XmJt0AC/wLyUKT6tv6vIUzy8XChksFv5QwqetG3l4l
-         1t+jCnm+4R2NtxtdGjmnXXwDLUdqNqe6PXgjXqdvyUEcYZBIfbQBwf766rewrwLIWjl8
-         b2dhZIJupbfBiYO3AqNNhhnTt8ST4hsQFVj3FO9ObC778Rd86z74h0x9191+G6uv3xka
-         uiFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=606JMBHU1WCSkVE8vEh8jp0Vn08O9hluQpv6YSChqEM=;
-        b=Lx5fJcU+hVJQyCIKcNyrz5uvlam+yFEQ9lXVIH5APSKjFF+eqJmRoKosFaj08HLpKd
-         4C4w9W249BW7U/RgMQfxt017dyZdCP4WNdttCnjwDhYe5q+u1Cd7kmINEUJetbydFbM+
-         BrPIBill+5LGPy+NixOP0I5PEkryjSjX6quJNRP4d6MeX9IZ1EsqfltjnTrWutYnTGn7
-         bdLUKakGD3HapNRhL78prBz8E99D+wCPMP30ZSGqmIpCrP3NGUDDwfsfCzhhszDlHQCp
-         BilG5r1IS9R3Fthd/5Pg3jxAIzZ7+BfWYrwvnaGaK4PEBnT+NuAcOiXHM97nudErXZu2
-         rNbQ==
-X-Gm-Message-State: APjAAAUQ2um/47yZ+Ovx3MmwgSrngJqHuhehxogkXb+ryGRucggYGOGA
-        b4w1GD+HPo7VB3iW+vWrGOmpwg==
-X-Google-Smtp-Source: APXvYqx9jmSTOfoHKfChiJWP6QeuV7uyrYxH5QrdJfyQeoHf+pjwRhSwqdCXVT6bvmqUA2iagFvxog==
-X-Received: by 2002:a63:5166:: with SMTP id r38mr12376011pgl.429.1558460684705;
-        Tue, 21 May 2019 10:44:44 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:bc61:d85d:eb16:9036])
-        by smtp.gmail.com with ESMTPSA id r77sm29853892pgr.93.2019.05.21.10.44.43
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 21 May 2019 10:44:43 -0700 (PDT)
-Date:   Tue, 21 May 2019 10:44:38 -0700
-From:   Benson Leung <bleung@google.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Gwendal Grignou <gwendal@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Takashi Iwai <tiwai@suse.com>, linux-iio@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 00/30] Update cros_ec_commands.h
-Message-ID: <20190521174438.GA2821@google.com>
-References: <20190509211353.213194-1-gwendal@chromium.org>
- <CAPUE2ut4OUhrmbx6n8KCj7+ghXmC9iMnxGN8DMvyvZstznwwng@mail.gmail.com>
- <20190518063949.GY4319@dell>
+        Tue, 21 May 2019 13:54:48 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id DD7C5B888EE;
+        Tue, 21 May 2019 17:48:57 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id P6W6aiwi9Ql0; Tue, 21 May 2019 17:48:57 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 1C889EE46A6;
+        Tue, 21 May 2019 17:46:53 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ie-QPQ5InbQ0; Tue, 21 May 2019 17:46:53 +0000 (UTC)
+Received: from [100.69.243.100] (unknown [223.237.233.134])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 8F568B86B84;
+        Tue, 21 May 2019 17:46:18 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
-Content-Disposition: inline
-In-Reply-To: <20190518063949.GY4319@dell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Verifica=C3=A7=C3=A3o_de_conta?=
+To:     Recipients <exportaciones@minpal.gob.ve>
+From:   Administrador da conta <exportaciones@minpal.gob.ve>
+Date:   Tue, 21 May 2019 23:16:08 +0530
+Message-Id: <20190521174618.8F568B86B84@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Aviso de segurança:
 
---oyUTqETQ0mS9luUI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Esta mensagem é do nosso centro de mensagens do Web Admin para todos os nossos proprietários de contas de e-mail. Estamos eliminando o acesso a todos os nossos clientes de webmail. Sua conta de e-mail será atualizada para uma interface de usuário de webmail nova e melhorada, fornecida pelo nosso Administrador assim que este e-mail for recebido.
 
-Hi Lee,
+Descontinuaremos o uso de nossas interfaces do webmail Lite, para garantir que seu catálogo de endereços esteja armazenado em nosso banco de dados, clique ou copie e cole o seguinte link em seu navegador e digite seu nome de usuário e senha para atualizar sua conta.
 
-On Sat, May 18, 2019 at 07:39:49AM +0100, Lee Jones wrote:
-> On Fri, 17 May 2019, Gwendal Grignou wrote:
->=20
-> > Lee,
-> >=20
-> > I verified and merged the changes on the kernels (3.18, 4.4 and 4.14)
-> > used on chromebook using a squashed version of these patches.
-> > (crrev.com/c/1583322, crrev.com/c/1583385, crrev.com/c/1583321
-> > respectively)
-> > Please let me know if you have any questions.
->=20
-> Is no one else from Chromium going to review?
->=20
-> These seem like quite important changes.
->=20
+Se o clique não funcionar, copie e cole o URL abaixo em um navegador da web para verificá-lo.
 
-I've gone ahead and acked the whole series. Enric and I are OK with this go=
-ing
-in for 5.3, and as Gwendal mentioned, he's landed these changes into our
-production kernels for Chrome OS as well, so this is what we want to sync o=
-n.
+Clique no link http://accountupdatebrodcaster.xtgem.com/ se clicar não funcionar, copie e cole no seu navegador e atualize sua conta para que possamos transferir seus contatos para o nosso novo banco de dados de clientes de webmail.
 
-Let me know if you have any other concerns.
+Todos os emails estarão seguros nesta transição! Todas as suas mensagens antigas estarão lá e você terá novas mensagens não lidas esperando por você. Estavam
+Claro que você vai gostar da nova e melhorada interface de webmail.
 
-Thanks,
-Benson
+Se você não cumprir este aviso, retiraremos imediatamente o acesso à sua conta de e-mail.
 
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
+Obrigado por usar nosso webmail.
 
---oyUTqETQ0mS9luUI
-Content-Type: application/pgp-signature; name="signature.asc"
+=============================================
+Número de registro 65628698L)
+Identificação do cliente 779862
+==============================================
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCXOQ5BgAKCRBzbaomhzOw
-wt8HAP9uU1klLrzkR34L7NbfgwEDQgELzBnyp0zr6eH8FswIUwEAhSZ8hXpksiuJ
-cuKw4zj4F0wocqqx1xPt59u73qeMXgM=
-=Zm0H
------END PGP SIGNATURE-----
-
---oyUTqETQ0mS9luUI--
+Sinceramente Web Admin.
+E-mail Atendimento ao cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos os direitos reservados.
