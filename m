@@ -2,110 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 793BC258DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C7AD258CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:24:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbfEUUaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 16:30:21 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39978 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbfEUUaU (ORCPT
+        id S1727754AbfEUUXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 16:23:53 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36414 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726766AbfEUUXx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 16:30:20 -0400
-Received: by mail-lf1-f66.google.com with SMTP id h13so14102522lfc.7
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 13:30:19 -0700 (PDT)
+        Tue, 21 May 2019 16:23:53 -0400
+Received: by mail-pf1-f194.google.com with SMTP id v80so40027pfa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 13:23:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mwA8SKkNo0NB1BSSFbQlGkhBkIi6dkzdh19hX1ggqqc=;
-        b=E9cuWHFCD4Bgx1lOv97Ctr9bLKO3EjHQDpiZyM5FZUFuOxpsSHENK8V3oPkAEWY2CT
-         4OwJ0l1afyS0KlYgZEStFftLyE7H7JbMd/BnYgfS8lVdq73pcYKuqkBJcrl7o7GLJZCx
-         7466NcnIhfaDTvK1H+iwihEveSzhyKGC/2Zgk=
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=jL1S7zFzjAxE4JNqh4L9FDfG4cAz8JcsD74o794kTBQ=;
+        b=HTDoWsxi7QDqVixev1f6cqXoZsue3n3xEMiTeFWZaXgqKnKMwHNLfC3f+dJJhqMBRw
+         nDQtVaPP/Z0+mQW6Cy9frq6SwMcF66bdeErddgk7YrYR0WJIYRfOZsfwALK2a95aELQF
+         DAIWkjIYzMPYDvGxpWXquPJ9JJRDVKkErl4fs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mwA8SKkNo0NB1BSSFbQlGkhBkIi6dkzdh19hX1ggqqc=;
-        b=sCqgV5ralIFgo+jPntAqg0LYerrTLbRUhMfXkSMRAcP5D2PMbhCnDxbqu9znLDADaU
-         mqpUOLST4T049hTJqO0wfa9roIbPoetsG0FnGTyVzY9o0wlCeZVw358hGOpfslQVEwiJ
-         EA5e34hRSJeTLSE53+/lPF4uz/Wz+Kz7mwhAyJaT1e2LGjY8nW/tvombM+6bEAr6tnM3
-         GmYBnKSc/IAqu4u/j21o9EfqEaLmY5oqYabPBg/+3jBv1+co35qYVuzJsH7BwRqQ4JAC
-         rUHzsobdTvlXpnv20T8EU8RxWjP8gitILQBaOQaUyDjS0zs+5XSvrJXVXoAr1F4vhmgr
-         bpjQ==
-X-Gm-Message-State: APjAAAWlm48nQYMy5tUnzKLytvfTBhF1nm/zVvqyxUlMl7/s4MegpH8X
-        bkxPl9ndNcoVort1MmFr+W++RftLkEQ=
-X-Google-Smtp-Source: APXvYqx3kQDkbyuNGa0rtLiD5482By6GTXhxA2t4K4mH5AxLT8HgG55Csi+UDE7VJVn2pLw2yl0ABw==
-X-Received: by 2002:ac2:5212:: with SMTP id a18mr41295985lfl.166.1558470618654;
-        Tue, 21 May 2019 13:30:18 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id v20sm4920095lfe.11.2019.05.21.13.30.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 13:30:18 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id 14so10011ljj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 13:30:18 -0700 (PDT)
-X-Received: by 2002:a2e:2f03:: with SMTP id v3mr4725518ljv.6.1558470208997;
- Tue, 21 May 2019 13:23:28 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=jL1S7zFzjAxE4JNqh4L9FDfG4cAz8JcsD74o794kTBQ=;
+        b=YBo8EDRHlPh2pSgkMaNUq4KBZw6WW16lRUtEleC1B8hJBBleorasrBCm5HQH1Oubq/
+         OTEq1D53V8azP0q4aiJDKc4slmvhbcRqsZNZStIzr9ORvfa7nqdwUfDUXD/sG5p8PXnL
+         Tq/mnYuMPKHeYCD2HYMlSu8UyYDXUq+Ub2fL0AQaN7eibg72SqPnMGKP4hYkkdwSRqQO
+         1tGl0QG7NI+Fc/GuyW7junY0YYTCFLPRcYYF2kfw+0LqiCTdOPTZW5blcWhq1IK892K/
+         m2l1LBu99uGLS2nWSL9mGymnLMUghsdIBDuo/MhWudVDOYq3H8ViAQlOUlOCRY3btV4F
+         qiEw==
+X-Gm-Message-State: APjAAAU7ic6e57WL00xhTE0Rx7J0z8UzCikVZ+kGEt9Vv4XmVtgJQ4TP
+        ejiBKAwnMmHfNgxd5dV07IZ8/Q==
+X-Google-Smtp-Source: APXvYqxOxJPANXcitp87yHMwwlb908gqPaSxiqSVECmGo+Kntyeadkzvfnc3UlOr5MMFdZisu7CwHg==
+X-Received: by 2002:a63:1061:: with SMTP id 33mr58636901pgq.328.1558470232784;
+        Tue, 21 May 2019 13:23:52 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q75sm32078478pfa.175.2019.05.21.13.23.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 May 2019 13:23:52 -0700 (PDT)
+Date:   Tue, 21 May 2019 13:23:51 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Philippe Mazenauer <philippe.mazenauer@outlook.de>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm: add missing include <linux/elf-randomize.h>
+Message-ID: <201905211323.7064F60D@keescook>
+References: <VI1PR07MB44324E07A6AFE89A920444AFFD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
 MIME-Version: 1.0
-References: <20190521150006.GJ17978@ZenIV.linux.org.uk> <20190521113448.20654-1-christian@brauner.io>
- <28114.1558456227@warthog.procyon.org.uk> <20190521164141.rbehqnghiej3gfua@brauner.io>
-In-Reply-To: <20190521164141.rbehqnghiej3gfua@brauner.io>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 21 May 2019 13:23:13 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgtHm4t71oKbykE=awiVv2H2wCy8yH0L_FsyhHQ5OSO+Q@mail.gmail.com>
-Message-ID: <CAHk-=wgtHm4t71oKbykE=awiVv2H2wCy8yH0L_FsyhHQ5OSO+Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] open: add close_range()
-To:     Christian Brauner <christian@brauner.io>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
-        tkjos@android.com, "Dmitry V. Levin" <ldv@altlinux.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-ia64@vger.kernel.org,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <VI1PR07MB44324E07A6AFE89A920444AFFD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 9:41 AM Christian Brauner <christian@brauner.io> wrote:
->
-> Yeah, you mentioned this before. I do like being able to specify an
-> upper bound to have the ability to place fds strategically after said
-> upper bound.
+On Tue, May 21, 2019 at 03:54:36PM +0000, Philippe Mazenauer wrote:
+> Include corresponding header file <linux/elf-randomize.h> for function
+> arch_randomize_brk().
+> 
+> ../arch/arm/kernel/process.c:325:15: warning: no previous prototype for ‘arch_randomize_brk’ [-Wmissing-prototypes]
+>  unsigned long arch_randomize_brk(struct mm_struct *mm)
+>                ^~~~~~~~~~~~~~~~~~
+> 
+> Signed-off-by: Philippe Mazenauer <philippe.mazenauer@outlook.de>
 
-I suspect that's the case.
+Acked-by: Kees Cook <keescook@chromium.org>
 
-And if somebody really wants to just close everything and uses a large
-upper bound, we can - if we really want to - just compare the upper
-bound to the file table size, and do an optimized case for that. We do
-that upper bound comparison anyway to limit the size of the walk, so
-*if* it's a big deal, that case could then do the whole "shrink
-fdtable" case too.
+> ---
+>  arch/arm/kernel/process.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
+> index 72cc0862a30e..73782012d403 100644
+> --- a/arch/arm/kernel/process.c
+> +++ b/arch/arm/kernel/process.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/init.h>
+>  #include <linux/elfcore.h>
+> +#include <linux/elf-randomize.h>
+>  #include <linux/pm.h>
+>  #include <linux/tick.h>
+>  #include <linux/utsname.h>
+> -- 
+> 2.17.1
+> 
 
-But I don't believe it's worth optimizing for unless somebody really
-has a load where that is shown to be a big deal.   Just do the silly
-and simple loop, and add a cond_resched() in the loop, like
-close_files() does for the "we have a _lot_ of files open" case.
-
-                   Linus
+-- 
+Kees Cook
