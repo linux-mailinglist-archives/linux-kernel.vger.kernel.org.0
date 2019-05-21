@@ -2,158 +2,445 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D22324606
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 04:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B28D245E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 04:17:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbfEUCdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 22:33:03 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51428 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbfEUCdD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 22:33:03 -0400
-Received: by mail-wm1-f66.google.com with SMTP id c77so1226683wmd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 19:33:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Kd6dZtuJ+zXIoXi0n4Wghz44M25gXh6ZLX+Zm5Oue7o=;
-        b=QkcRhCCxjWn7ooDTcuWtWeD4PwQRkjapE24t6b2y2+/FMNepC2urjqAcEfUEeaHLPg
-         BkmnrJJK3srOj91fNZISPcEf1SeroEn26oxUJ/9jYp5OGFrD5QSg431lE5yZiXc3pGJi
-         sbrGI1ooHvbIJXFFa0p0oSs6Xzs8wavTSCmp8gDqW3M519qmd2P9Fckvbf4Sr4Z/2DSF
-         Ob/0wusSyie8A5rvkpy0RcH9SfXztzVdeJax9zlufiHZMS+kH4SjjUxhOtOn4s/5/8Hu
-         /GQL7tuaXn9MtA6bh3UjSxa0CPw5UG3G/7OFL+jkZ7CEEtwyBNRMPLrs1tJFhGhLTaP3
-         2LxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Kd6dZtuJ+zXIoXi0n4Wghz44M25gXh6ZLX+Zm5Oue7o=;
-        b=Dswh2v/LWnIgHfqvbFz3VsRBKd/+YDyPrRLpgWTCNnTyWm5HZX0WxQUxo0ESOKnMxW
-         rVu5bh+SZJDrVvpdzOXytxN4LkIEHDm5OPKI30pedTYntbKL2qRRQc/LWkep5akM0NpF
-         RptQq0MAYqJH4RUBLEv4aK03fwHLVxcAJbJiq3INGZPiencDPJhij2XL8j6EgEPIrwRG
-         yBiZudcu3cgdvgZ6BrJaW8pkUv4lmGm22DXSf+BWUB5kR64yp1XcC3twdqqFE0ogiJiq
-         c7J3RhL3hLvD8AVQ8eS9kanCkalnE5RKXDTkFYE0hHP7mQFQwTFFFLcONxePW6ntFPDK
-         cvJw==
-X-Gm-Message-State: APjAAAWJUwchcgknzrz74J82JrJsn1oNcq0uVsukTJG4Fw0hIFAARsTn
-        3+smIvs1eMGXEP6iRAihDIyY1ws41iJRqtjUZ/Y=
-X-Google-Smtp-Source: APXvYqzU58B+S9LHz4pIUbyimpv6Pckn8KO/PCbUQXILGb6Ru4V304Tj4cXpG8ftONJXo9AShaQy9DZ/k6ldGQYvGIE=
-X-Received: by 2002:a1c:f009:: with SMTP id a9mr1359554wmb.110.1558405981000;
- Mon, 20 May 2019 19:33:01 -0700 (PDT)
+        id S1727636AbfEUCRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 22:17:07 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:8227 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726325AbfEUCRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 22:17:07 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id CCB5A22C494E6D162932;
+        Tue, 21 May 2019 10:17:03 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Tue, 21 May 2019
+ 10:16:56 +0800
+From:   sunqiuyang <sunqiuyang@huawei.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+CC:     <yuchao0@huawei.com>, <sunqiuyang@huawei.com>
+Subject: [PATCH v3 1/1] f2fs: ioctl for removing a range from F2FS
+Date:   Tue, 21 May 2019 10:34:24 +0800
+Message-ID: <20190521023424.19772-1-sunqiuyang@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-References: <1558082760-4915-1-git-send-email-xiaolinkui@kylinos.cn>
- <SN6PR12MB2800A7AEC22121C8704CBB09870B0@SN6PR12MB2800.namprd12.prod.outlook.com>
- <20190520162807.GE21222@phenom.ffwll.local> <SN6PR12MB28007ED8F5C6838F2C25A9D587060@SN6PR12MB2800.namprd12.prod.outlook.com>
-In-Reply-To: <SN6PR12MB28007ED8F5C6838F2C25A9D587060@SN6PR12MB2800.namprd12.prod.outlook.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 20 May 2019 22:32:49 -0400
-Message-ID: <CADnq5_O=PAK3qZJ-kHUX9jQDkmEYOX+iOhOX7gNaaXp+tC7nUg@mail.gmail.com>
-Subject: Re: [PATCH] gpu: drm: use struct_size() in kmalloc()
-To:     "Pan, Xinhui" <Xinhui.Pan@amd.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        xiaolinkui <xiaolinkui@kylinos.cn>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Quan, Evan" <Evan.Quan@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 7:19 PM Pan, Xinhui <Xinhui.Pan@amd.com> wrote:
->
-> Daniel, what you are talking about is totally wrong.
-> 1) AFAIK, only one zero-size array can be in the end of a struct.
-> 2) two struct_size will add up struct itself twice. the sum is wrong then=
-.
->
-> No offense. I can't help feeling lucky that you are in intel.
+From: Qiuyang Sun <sunqiuyang@huawei.com>
 
-Xinhui,
+This ioctl shrinks a given length (aligned to sections) from end of the
+main area. Any cursegs and valid blocks will be moved out before
+invalidating the range.
 
-Please keep things civil.  There is no need for comments like this.
+This feature can be used for adjusting partition sizes online.
 
-Alex
+Changlog v1 ==> v2:
 
->
->
-> =E5=8F=91=E4=BB=B6=E4=BA=BA: Daniel Vetter <daniel.vetter@ffwll.ch> =E4=
-=BB=A3=E8=A1=A8 Daniel Vetter <daniel@ffwll.ch>
-> =E5=8F=91=E9=80=81=E6=97=B6=E9=97=B4: 2019=E5=B9=B45=E6=9C=8821=E6=97=A5 =
-0:28
-> =E6=94=B6=E4=BB=B6=E4=BA=BA: Pan, Xinhui
-> =E6=8A=84=E9=80=81: Deucher, Alexander; Koenig, Christian; Zhou, David(Ch=
-unMing); airlied@linux.ie; daniel@ffwll.ch; Quan, Evan; xiaolinkui; amd-gfx=
-@lists.freedesktop.org; dri-devel@lists.freedesktop.org; linux-kernel@vger.=
-kernel.org
-> =E4=B8=BB=E9=A2=98: Re: [PATCH] gpu: drm: use struct_size() in kmalloc()
->
-> [CAUTION: External Email]
->
-> On Fri, May 17, 2019 at 04:44:30PM +0000, Pan, Xinhui wrote:
-> > I am going to put more members which are also array after this struct,
-> > not only obj[].  Looks like this struct_size did not help on multiple
-> > array case. Thanks anyway.  ________________________________
->
-> You can then add them up, e.g. kmalloc(struct_size()+struct_size(),
-> GFP_KERNEL), so this patch here still looks like a good idea.
->
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
->
-> Cheers, Daniel
->
-> > From: xiaolinkui <xiaolinkui@kylinos.cn>
-> > Sent: Friday, May 17, 2019 4:46:00 PM
-> > To: Deucher, Alexander; Koenig, Christian; Zhou, David(ChunMing); airli=
-ed@linux.ie; daniel@ffwll.ch; Pan, Xinhui; Quan, Evan
-> > Cc: amd-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org; lin=
-ux-kernel@vger.kernel.org; xiaolinkui@kylinos.cn
-> > Subject: [PATCH] gpu: drm: use struct_size() in kmalloc()
-> >
-> > [CAUTION: External Email]
-> >
-> > Use struct_size() helper to keep code simple.
-> >
-> > Signed-off-by: xiaolinkui <xiaolinkui@kylinos.cn>
-> > ---
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/=
-amd/amdgpu/amdgpu_ras.c
-> > index 22bd21e..4717a64 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-> > @@ -1375,8 +1375,7 @@ int amdgpu_ras_init(struct amdgpu_device *adev)
-> >         if (con)
-> >                 return 0;
-> >
-> > -       con =3D kmalloc(sizeof(struct amdgpu_ras) +
-> > -                       sizeof(struct ras_manager) * AMDGPU_RAS_BLOCK_C=
-OUNT,
-> > +       con =3D kmalloc(struct_size(con, objs, AMDGPU_RAS_BLOCK_COUNT),
-> >                         GFP_KERNEL|__GFP_ZERO);
-> >         if (!con)
-> >                 return -ENOMEM;
-> > --
-> > 2.7.4
-> >
-> >
-> >
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Sahitya Tummala:
+ - Add this ioctl for f2fs_compat_ioctl() as well.
+ - Fix debugfs status to reflect the online resize changes.
+ - Fix potential race between online resize path and allocate new data
+   block path or gc path.
+
+Others:
+ - Rename some identifiers.
+ - Add some error handling branches.
+ - Clear sbi->next_victim_seg[BG_GC/FG_GC] in shrinking range.
+
+Changelog v2 ==> v3:
+Implement this interface as ext4's, and change the parameter from shrunk
+bytes to new block count of F2FS.
+
+Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+---
+ fs/f2fs/debug.c   |   7 ++++
+ fs/f2fs/f2fs.h    |   4 ++
+ fs/f2fs/file.c    |  28 ++++++++++++++
+ fs/f2fs/gc.c      | 113 +++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ fs/f2fs/segment.c |  49 +++++++++++++++++------
+ fs/f2fs/segment.h |   1 +
+ fs/f2fs/super.c   |   1 +
+ 7 files changed, 190 insertions(+), 13 deletions(-)
+
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 99e9a5c..7706049 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -27,8 +27,15 @@
+ static void update_general_status(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_stat_info *si = F2FS_STAT(sbi);
++	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
+ 	int i;
+ 
++	/* these will be changed if online resize is done */
++	si->main_area_segs = le32_to_cpu(raw_super->segment_count_main);
++	si->main_area_sections = le32_to_cpu(raw_super->section_count);
++	si->main_area_zones = si->main_area_sections /
++				le32_to_cpu(raw_super->secs_per_zone);
++
+ 	/* validation check of the segment numbers */
+ 	si->hit_largest = atomic64_read(&sbi->read_hit_largest);
+ 	si->hit_cached = atomic64_read(&sbi->read_hit_cached);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index a205d4d..065f917 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -423,6 +423,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+ #define F2FS_IOC_SET_PIN_FILE		_IOW(F2FS_IOCTL_MAGIC, 13, __u32)
+ #define F2FS_IOC_GET_PIN_FILE		_IOR(F2FS_IOCTL_MAGIC, 14, __u32)
+ #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
++#define F2FS_IOC_RESIZE_FS		_IOW(F2FS_IOCTL_MAGIC, 16, __u64)
+ 
+ #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
+ #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
+@@ -1309,6 +1310,7 @@ struct f2fs_sb_info {
+ 	unsigned int segs_per_sec;		/* segments per section */
+ 	unsigned int secs_per_zone;		/* sections per zone */
+ 	unsigned int total_sections;		/* total section count */
++	unsigned int current_total_sections;	/* for shrink resize */
+ 	unsigned int total_node_count;		/* total node block count */
+ 	unsigned int total_valid_node_count;	/* valid node block count */
+ 	loff_t max_file_blocks;			/* max block index of file */
+@@ -3175,6 +3177,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ int f2fs_disable_cp_again(struct f2fs_sb_info *sbi, block_t unusable);
+ void f2fs_release_discard_addrs(struct f2fs_sb_info *sbi);
+ int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
++void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type);
+ void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi);
+ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range);
+ bool f2fs_exist_trim_candidates(struct f2fs_sb_info *sbi,
+@@ -3318,6 +3321,7 @@ int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
+ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
+ 			unsigned int segno);
+ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi);
++int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count);
+ 
+ /*
+  * recovery.c
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index d05ac21..a37a0d4 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3013,6 +3013,31 @@ static int f2fs_ioc_precache_extents(struct file *filp, unsigned long arg)
+ 	return f2fs_precache_extents(file_inode(filp));
+ }
+ 
++static int f2fs_ioc_resize_fs(struct file *filp, unsigned long arg)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(filp));
++	__u64 block_count;
++	int ret;
++
++	if (!capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	if (f2fs_readonly(sbi->sb))
++		return -EROFS;
++
++	if (copy_from_user(&block_count, (__u64 __user *)arg, sizeof(__u64)))
++		return -EFAULT;
++
++	ret = mnt_want_write_file(filp);
++	if (ret)
++		return ret;
++
++	ret = f2fs_resize_fs(sbi, block_count);
++	mnt_drop_write_file(filp);
++
++	return ret;
++}
++
+ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
+@@ -3069,6 +3094,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return f2fs_ioc_set_pin_file(filp, arg);
+ 	case F2FS_IOC_PRECACHE_EXTENTS:
+ 		return f2fs_ioc_precache_extents(filp, arg);
++	case F2FS_IOC_RESIZE_FS:
++		return f2fs_ioc_resize_fs(filp, arg);
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -3182,6 +3209,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	case F2FS_IOC_GET_PIN_FILE:
+ 	case F2FS_IOC_SET_PIN_FILE:
+ 	case F2FS_IOC_PRECACHE_EXTENTS:
++	case F2FS_IOC_RESIZE_FS:
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 963fb45..2dc7ce2 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -311,10 +311,11 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 	struct sit_info *sm = SIT_I(sbi);
+ 	struct victim_sel_policy p;
+ 	unsigned int secno, last_victim;
+-	unsigned int last_segment = MAIN_SEGS(sbi);
++	unsigned int last_segment;
+ 	unsigned int nsearched = 0;
+ 
+ 	mutex_lock(&dirty_i->seglist_lock);
++	last_segment = CUR_MAIN_SECS(sbi) * sbi->segs_per_sec;
+ 
+ 	p.alloc_mode = alloc_mode;
+ 	select_policy(sbi, gc_type, type, &p);
+@@ -404,7 +405,8 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 				sm->last_victim[p.gc_mode] = last_victim + 1;
+ 			else
+ 				sm->last_victim[p.gc_mode] = segno + 1;
+-			sm->last_victim[p.gc_mode] %= MAIN_SEGS(sbi);
++			sm->last_victim[p.gc_mode] %=
++				(CUR_MAIN_SECS(sbi) * sbi->segs_per_sec);
+ 			break;
+ 		}
+ 	}
+@@ -1360,3 +1362,110 @@ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
+ 		SIT_I(sbi)->last_victim[ALLOC_NEXT] =
+ 				GET_SEGNO(sbi, FDEV(0).end_blk) + 1;
+ }
++
++static int free_segment_range(struct f2fs_sb_info *sbi, unsigned int start,
++							unsigned int end)
++{
++	int type;
++	unsigned int segno, next_inuse;
++	struct gc_inode_list gc_list = {
++		.ilist = LIST_HEAD_INIT(gc_list.ilist),
++		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
++	};
++	int err = 0;
++
++	/* Move out cursegs from the target range */
++	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_TYPE; type++) {
++		segno = CURSEG_I(sbi, type)->segno;
++		if (segno >= start && segno <= end)
++			allocate_segment_for_resize(sbi, type);
++	}
++
++	/* do GC to move out valid blocks in the range */
++	mutex_lock(&sbi->gc_mutex);
++	for (segno = start; segno <= end; segno += sbi->segs_per_sec) {
++		do_garbage_collect(sbi, segno, &gc_list, FG_GC);
++		if (get_valid_blocks(sbi, segno, true)) {
++			err = -EAGAIN;
++			break;
++		}
++	}
++
++	mutex_unlock(&sbi->gc_mutex);
++	put_gc_inode(&gc_list);
++
++	if (err)
++		return err;
++
++	err = f2fs_sync_fs(sbi->sb, 1);
++	if (err)
++		return err;
++
++	next_inuse = find_next_inuse(FREE_I(sbi), end + 1, start);
++	if (next_inuse <= end) {
++		f2fs_msg(sbi->sb, KERN_ERR,
++			"segno %u should be free but still inuse!", next_inuse);
++		f2fs_bug_on(sbi, 1);
++	}
++	return err;
++}
++
++int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
++{
++	__u64 old_block_count = F2FS_RAW_SUPER(sbi)->block_count;
++	unsigned int secs;
++	int gc_mode, gc_type;
++	int err = 0;
++
++	if (block_count > old_block_count)
++		return -EINVAL;
++
++	if (block_count == old_block_count)
++		return 0;
++
++	secs = (old_block_count - block_count + BLKS_PER_SEC(sbi) - 1) /
++					BLKS_PER_SEC(sbi);
++	if (secs * BLKS_PER_SEC(sbi) + valid_user_blocks(sbi) +
++		sbi->current_reserved_blocks + sbi->unusable_block_count +
++		F2FS_OPTION(sbi).root_reserved_blocks > sbi->user_block_count)
++		return -ENOSPC;
++
++	mutex_lock(&DIRTY_I(sbi)->seglist_lock);
++	CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi) - secs;
++	for (gc_mode = 0; gc_mode < MAX_GC_POLICY; gc_mode++)
++		if (SIT_I(sbi)->last_victim[gc_mode] >=
++					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec)
++			SIT_I(sbi)->last_victim[gc_mode] = 0;
++	for (gc_type = BG_GC; gc_type <= FG_GC; gc_type++)
++		if (sbi->next_victim_seg[gc_type] >=
++					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec)
++			sbi->next_victim_seg[gc_type] = NULL_SEGNO;
++	mutex_unlock(&DIRTY_I(sbi)->seglist_lock);
++
++	err = free_segment_range(sbi, CUR_MAIN_SECS(sbi) * sbi->segs_per_sec,
++			MAIN_SEGS(sbi) - 1);
++	if (err) {
++		CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi);
++		return err;
++	}
++
++	/* Update FS metadata */
++	SM_I(sbi)->segment_count -= secs * sbi->segs_per_sec;
++	MAIN_SECS(sbi) = CUR_MAIN_SECS(sbi);
++	MAIN_SEGS(sbi) = MAIN_SECS(sbi) * sbi->segs_per_sec;
++	sbi->user_block_count -= secs * BLKS_PER_SEC(sbi);
++	sbi->ckpt->user_block_count = cpu_to_le64(sbi->user_block_count);
++	FREE_I(sbi)->free_sections -= secs;
++	FREE_I(sbi)->free_segments -= secs * sbi->segs_per_sec;
++
++	/* Update superblock */
++	F2FS_RAW_SUPER(sbi)->section_count = cpu_to_le32(MAIN_SECS(sbi));
++	F2FS_RAW_SUPER(sbi)->segment_count = cpu_to_le32(le32_to_cpu(
++		F2FS_RAW_SUPER(sbi)->segment_count) - secs * sbi->segs_per_sec);
++	F2FS_RAW_SUPER(sbi)->segment_count_main = cpu_to_le32(MAIN_SEGS(sbi));
++	F2FS_RAW_SUPER(sbi)->block_count = cpu_to_le32(le32_to_cpu(
++		F2FS_RAW_SUPER(sbi)->block_count) - secs * BLKS_PER_SEC(sbi));
++	err = f2fs_commit_super(sbi, false);
++
++	return err;
++}
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 07e9235..5a68fc0 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2360,7 +2360,7 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+ {
+ 	struct free_segmap_info *free_i = FREE_I(sbi);
+ 	unsigned int segno, secno, zoneno;
+-	unsigned int total_zones = MAIN_SECS(sbi) / sbi->secs_per_zone;
++	unsigned int total_zones = CUR_MAIN_SECS(sbi) / sbi->secs_per_zone;
+ 	unsigned int hint = GET_SEC_FROM_SEG(sbi, *newseg);
+ 	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
+ 	unsigned int left_start = hint;
+@@ -2377,12 +2377,13 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+ 			goto got_it;
+ 	}
+ find_other_zone:
+-	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
+-	if (secno >= MAIN_SECS(sbi)) {
++	secno = find_next_zero_bit(free_i->free_secmap, CUR_MAIN_SECS(sbi),
++									hint);
++	if (secno >= CUR_MAIN_SECS(sbi)) {
+ 		if (dir == ALLOC_RIGHT) {
+ 			secno = find_next_zero_bit(free_i->free_secmap,
+-							MAIN_SECS(sbi), 0);
+-			f2fs_bug_on(sbi, secno >= MAIN_SECS(sbi));
++							CUR_MAIN_SECS(sbi), 0);
++			f2fs_bug_on(sbi, secno >= CUR_MAIN_SECS(sbi));
+ 		} else {
+ 			go_left = 1;
+ 			left_start = hint - 1;
+@@ -2397,8 +2398,8 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+ 			continue;
+ 		}
+ 		left_start = find_next_zero_bit(free_i->free_secmap,
+-							MAIN_SECS(sbi), 0);
+-		f2fs_bug_on(sbi, left_start >= MAIN_SECS(sbi));
++							CUR_MAIN_SECS(sbi), 0);
++		f2fs_bug_on(sbi, left_start >= CUR_MAIN_SECS(sbi));
+ 		break;
+ 	}
+ 	secno = left_start;
+@@ -2651,6 +2652,27 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
+ 	stat_inc_seg_type(sbi, curseg);
+ }
+ 
++void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type)
++{
++	struct curseg_info *curseg = CURSEG_I(sbi, type);
++	unsigned int old_segno = curseg->segno;
++
++	mutex_lock(&curseg->curseg_mutex);
++	if (f2fs_need_SSR(sbi) && get_ssr_segment(sbi, type))
++		change_curseg(sbi, type);
++	else
++		new_curseg(sbi, type, true);
++
++	stat_inc_seg_type(sbi, curseg);
++	mutex_unlock(&curseg->curseg_mutex);
++
++	if (get_valid_blocks(sbi, old_segno, false) == 0)
++		__set_test_and_free(sbi, old_segno);
++	f2fs_msg(sbi->sb, KERN_NOTICE,
++		"For resize: curseg of type %d: %u ==> %u",
++		type, old_segno, curseg->segno);
++}
++
+ void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
+ {
+ 	struct curseg_info *curseg;
+@@ -3753,6 +3775,12 @@ static void remove_sits_in_journal(struct f2fs_sb_info *sbi)
+ 		bool dirtied;
+ 
+ 		segno = le32_to_cpu(segno_in_journal(journal, i));
++		if (segno >= MAIN_SEGS(sbi)) {
++			f2fs_msg(sbi->sb, KERN_NOTICE,
++				"Skip segno %u / %u in jnl!\n",
++				segno, MAIN_SEGS(sbi));
++			continue;
++		}
+ 		dirtied = __mark_sit_entry_dirty(sbi, segno);
+ 
+ 		if (!dirtied)
+@@ -4108,12 +4136,11 @@ static int build_sit_entries(struct f2fs_sb_info *sbi)
+ 
+ 		start = le32_to_cpu(segno_in_journal(journal, i));
+ 		if (start >= MAIN_SEGS(sbi)) {
+-			f2fs_msg(sbi->sb, KERN_ERR,
++			/* This may happen if the FS was once resized. */
++			f2fs_msg(sbi->sb, KERN_NOTICE,
+ 					"Wrong journal entry on segno %u",
+ 					start);
+-			set_sbi_flag(sbi, SBI_NEED_FSCK);
+-			err = -EINVAL;
+-			break;
++			continue;
+ 		}
+ 
+ 		se = &sit_i->sentries[start];
+diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+index 429007b..eaa9782 100644
+--- a/fs/f2fs/segment.h
++++ b/fs/f2fs/segment.h
+@@ -59,6 +59,7 @@
+ 
+ #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
+ #define MAIN_SECS(sbi)	((sbi)->total_sections)
++#define CUR_MAIN_SECS(sbi)	((sbi)->current_total_sections)
+ 
+ #define TOTAL_SEGS(sbi)							\
+ 	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 1f581f0..6c0e9cc 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2843,6 +2843,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+ 	sbi->segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
+ 	sbi->secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
+ 	sbi->total_sections = le32_to_cpu(raw_super->section_count);
++	sbi->current_total_sections = sbi->total_sections;
+ 	sbi->total_node_count =
+ 		(le32_to_cpu(raw_super->segment_count_nat) / 2)
+ 			* sbi->blocks_per_seg * NAT_ENTRY_PER_BLOCK;
+-- 
+1.8.3.1
+
