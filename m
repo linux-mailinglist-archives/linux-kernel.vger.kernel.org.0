@@ -2,69 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C24D24F8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6896251C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:19:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbfEUNCO convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 May 2019 09:02:14 -0400
-Received: from mga01.intel.com ([192.55.52.88]:10098 "EHLO mga01.intel.com"
+        id S1728378AbfEUOTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 10:19:30 -0400
+Received: from mx1.mda.gov.br ([200.198.212.36]:44699 "EHLO mx1.mda.gov.br"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727812AbfEUNCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 09:02:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 06:02:13 -0700
-X-ExtLoop1: 1
-Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.252.2.137])
-  by fmsmga008.fm.intel.com with ESMTP; 21 May 2019 06:02:10 -0700
-Content-Type: text/plain; charset="utf-8"
+        id S1727624AbfEUOTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 10:19:30 -0400
+X-Greylist: delayed 322 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 May 2019 10:19:29 EDT
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mx1.mda.gov.br (Postfix) with ESMTP id 457d6d0knnz26ty;
+        Tue, 21 May 2019 11:14:01 -0300 (-03)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        consultor.mda.gov.br; h=x-mailer:content-transfer-encoding
+        :content-type:content-type:mime-version:subject:subject
+        :message-id:reply-to:from:from:date:date:received:received
+        :received:received:received; s=dkim; t=1558448021; x=1560262422;
+         bh=GK+ZaUeyUWPOc+gVdtqqZRGbTAxC5MObkz5t03YKzHw=; b=5YOSyrOwaggy
+        5e3AA9UAFKZHvUo2qUP71LUBo9B3jaG2OipJEaisJ0xJkVitfaT2c422RlMJdScN
+        LUX18fVBXk5+751dL90jpjd1B/3VCtqHByHiYKKm0qeEJivSr+y1KckvutcqGWxU
+        AEzy6Ng74vrcM8DO7FL/+kJDXY3CG6xwJRAIr7FcX8vuk/5x6auFVFgTFyfpdcwJ
+        hQKHzA8nKwBZaQwYBBKKRIn74ymBoDsWaY9GT9K6qamIBWEzMGNT2fbiG6k9sLmk
+        3MyZ7dJUaGFpFZnJghNRxQhJzRnmDLhRAK3Fu5ZBj+hjy1MW4Wt1an2a1dAiQn+I
+        oh5tonK/9g==
+X-Amavis-Modified: Mail body modified (using disclaimer) - pvl036.mda.gov.br
+X-Virus-Scanned: Scrollout F1 at mda.gov.br
+Received: from mx1.mda.gov.br ([127.0.0.1])
+        by localhost (pvl036.mda.gov.br [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id KntxvX6Qyw8b; Tue, 21 May 2019 11:13:41 -0300 (-03)
+Received: from pvl081.agrario.gov.br (unknown [172.17.0.253])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mda.gov.br (Postfix) with ESMTPS id 457bdC4dZBz272l;
+        Tue, 21 May 2019 10:06:55 -0300 (-03)
+Received: from localhost (localhost [127.0.0.1])
+        by pvl081.agrario.gov.br (Postfix) with ESMTP id 803DBA06DA;
+        Tue, 21 May 2019 10:03:16 -0300 (-03)
+Received: from pvl081.agrario.gov.br ([127.0.0.1])
+        by localhost (pvl081.agrario.gov.br [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id uhxp9c0Kz20P; Tue, 21 May 2019 10:03:16 -0300 (-03)
+Received: from pvl083.agrario.gov.br (pvl083.mda.gov.br [10.10.0.57])
+        by pvl081.agrario.gov.br (Postfix) with ESMTP id D5478A0568;
+        Tue, 21 May 2019 10:03:14 -0300 (-03)
+Date:   Tue, 21 May 2019 10:03:24 -0300 (BRT)
+From:   Wang jianlin <alvani.domiense@consultor.mda.gov.br>
+Reply-To: Wang jianlin <wang-jianlin2@dwandagroup.com>
+Message-ID: <1923333971.1385703.1558443804288.JavaMail.zimbra@consultor.mda.gov.br>
+Subject: =?utf-8?Q?Gr=C3=BC=C3=9Fe_mein_Freund?=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     DRI <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-In-Reply-To: <20190520221526.0e103916@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-References: <20190520221526.0e103916@canb.auug.org.au>
-Message-ID: <155844372974.15761.3182313807995451625@jlahtine-desk.ger.corp.intel.com>
-User-Agent: alot/0.7
-Subject: Re: linux-next: Fixes tag needs some work in the drm-intel tree
-Date:   Tue, 21 May 2019 16:02:09 +0300
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Originating-IP: [10.10.0.110]
+X-Mailer: Zimbra 8.7.11_GA_3800 (ZimbraWebClient - GC73 (Win)/8.7.11_GA_3800)
+Thread-Index: vyHeDk+HuPBdLJF+909jE3IDIk8UMw==
+Thread-Topic: =?utf-8?B?R3LDvMOfZQ==?= mein Freund
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Rothwell (2019-05-20 15:15:38)
-> Hi all,
-> 
-> In commit
-> 
->   0d90ccb70211 ("drm/i915: Delay semaphore submission until the start of the signaler")
-> 
-> Fixes tag
-> 
->   Fixes: e88619646971 ("drm/i915: Use HW semaphores for inter-engine synchroni
-> 
-> has these problem(s):
-> 
->   - Subject has leading but no trailing parentheses
->   - Subject has leading but no trailing quotes
-> 
-> Please don't split Fixes tags across more than one line.
 
-Thanks for the report.
 
-This was a copy'n paste mishap, detected by our tooling (and fixed by
-me) at the time of creating a PR. Unfortunately the check was not being
-enforced by tooling at commit time. We'll fix that.
-
-Regards, Joonas
+Ich beabsichtige, Ihnen einen Teil meines Verm=C3=B6gens als freiwillige fi=
+nanzielle Spende zukommen zu lassen.
+Wang Jianlin
+Wanda Group
