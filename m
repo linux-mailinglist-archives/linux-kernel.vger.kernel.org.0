@@ -2,111 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 018982483F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE1FC24845
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:44:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbfEUGnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 02:43:42 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35039 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726247AbfEUGnm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 02:43:42 -0400
-Received: by mail-qt1-f193.google.com with SMTP id a39so19280684qtk.2
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 23:43:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Gro6bYpyJjEyBjnoN8cxKbYz7QpgKEPbeHJeHV938fM=;
-        b=o70lWBtNq+9lVO/+3WktlfA3Qcx5KEFT3di9wEW7mVBfZ/9MPxVh5FBvU/XhRYmKfT
-         PMgfvDzZuIiyt5Mw7tLRPANDpOZhMIRPRbXkTJGNUWvH3W+piLE6+54p6JWM++F18pCi
-         dPBuoQ+oV8JLzi9kE2idkuTmcrqWj3brLVUNFsF/y6AQpvU20GpeAdARz7Tp75rpK+PW
-         r4+7LxbEUQ2mwADs+F/LNhQWFgY3h2lfZbBlQduNnEiq+0HJf/puBjyKvzHEP+YwKvR6
-         TNDA9U13K2hDxBQeWHJtOSHKSazJl1EtNBtDQBiJnsa9CqmQwqvv74qsvcM5R4o914ok
-         Za6A==
-X-Gm-Message-State: APjAAAXllQ5rMgO0Ap09pr9yCBcsBd6qzWO4mj43Gz4mMqL2mavAkvdg
-        3XP5kFC+c/zc5QhUGI+P9JORzZqi7d6EtB2uR7yo3A==
-X-Google-Smtp-Source: APXvYqxXn1go1qbpDCG2yWak7kaOv1RYHlLtQD7wJZmZnmwbmMBNnw+06Lou9G3h+HjhnOOY/oD7Ff7vM7mbiHjnR+o=
-X-Received: by 2002:ac8:875:: with SMTP id x50mr65243976qth.345.1558421021479;
- Mon, 20 May 2019 23:43:41 -0700 (PDT)
+        id S1726829AbfEUGoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 02:44:02 -0400
+Received: from mail.z3ntu.xyz ([128.199.32.197]:43554 "EHLO mail.z3ntu.xyz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726247AbfEUGoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 02:44:01 -0400
+Received: from [172.27.227.142] (unknown [185.69.244.31])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id C4E31C59C4;
+        Tue, 21 May 2019 06:43:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1558421037; bh=dvaJRPAFRepM6HgXr2hIRVw7xqblQwDjcz3JJFlmUQ8=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From;
+        b=HCR66knYPdrhHpKFMowayhtCwu0h0E7c81aKIrfEcX5IFfDcF0wdgv5h5wxTmIhKh
+         rSeWV2vvL7N/yrBvMF7ztJaMpw0tzAbsWKLDTKwX0uZAe0JQ/Edg1ww5BeXGCz/bz4
+         hgr8yLLrutP/uoHkbey6T/Xku++ah100IHnk+4sA=
+Date:   Tue, 21 May 2019 08:43:45 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190520110742.ykgxwaabzzwovgpl@flea>
+References: <20190518170929.24789-1-luca@z3ntu.xyz> <20190520110742.ykgxwaabzzwovgpl@flea>
 MIME-Version: 1.0
-References: <20190519072711.2592-1-aaron.ma@canonical.com> <20190521051053.GD183429@dtor-ws>
-In-Reply-To: <20190521051053.GD183429@dtor-ws>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 21 May 2019 08:43:29 +0200
-Message-ID: <CAO-hwJ+edn3SD8Z=yc1gOWRsA8_=uPTAHc18PkDhV2y7ackTPw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] Input: elantech - enable middle button support on 2 ThinkPads
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>
-Cc:     Aaron Ma <aaron.ma@canonical.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Autocrypt: addr=luca@z3ntu.xyz; keydata=
+ mQINBFgc0/QBEACzBE9TBfe+O2TARphhmhVgMd2zo3lkvjWdohb9mg9+NvUq7swQR2l8davgwaTN
+ VwDUA9jdzfjp4GShf0VFnqqFGouEc3OMeuHFdtjG4RoYGW+XvEoAcTWgY6glANmMZMi33D+2wnQQ
+ Qziie3LMTQ7Tlpk8at8Ck4ShmmGTmek9LNFq1eHs3IHK5eH0fDA/rYvPxFMmwbHRDjdwtXjZlXBC
+ nxEXK8CJkNG58G+RbtPU0I8Iu02TDOkr9x6KwLT1lJmq03wCkuQEXrDAzo6kkeAMhzWBtBtxTB1M
+ byOZqNlbzEtxOTK9iA74U6POyN//876ESQ87LicFS4mgoyHL0Vt7ro9CSH7Imzv96Ae8HDZqIcBy
+ Bn9YMBswjy4JOsC9JP/oDhr71y40nnrVvgx4ZesJM0PL9J1JYQWJQ22GoinnDwSB11Re51OYsK+l
+ xEqph38N+AjcNYm+l85O/l+BkkULC+0kHWG6wQCv67KyeYCJJhNqJucXj2gXXaKyv2ltWPwHgK6w
+ OAtN9QbimcYV2PUgfx6hl5r7buwc3tefp9ccmtoLq74mgrKiLurHqa4pKCa1uqfhBEN5/Os5tMrX
+ IGa2sRvKHK0Pn7iyJQyuclyOp4r9W+QUw2DENm4n6ovkl7rfriL6ibBgVLcnexdG/8LZRaWFV96G
+ YY3VCcRlz8SCwQARAQABtBtMdWNhIFdlaXNzIDxsdWNhQHozbnR1Lnh5ej6JAj0EEwEIACcFAlgc
+ 0/QCGy8FCQWjmoAFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ+vac9s0tAs3X3BAAo6F00XKQ
+ LAvQl/nTK4+2EHjtFUF0OnUK0rIN1b1l5WMVHFF8njcVqG1Qc7CKyYCS6mN6bbYkXsj3TXy8Vx9R
+ P4ek8UoxEnVXYeayF5D+ke7yCmOJjSEBZVh/meA2jYOnPXEXR7bTT+PNaCTIgS6MucYous3ngiIL
+ kDT9Q09ESjs9xhoqbpBr19fqE9HpuWCaVGi5tt8EQAVq32kfq9DFqanjuaz18/I3VV1fMKWoNZBu
+ qJKveh9oDmkKe32PTVV8ak1tpWYNRhoIL8jZgJkzG8cMPdi6fi8xy7wIaT49py+0rndGF7i79nAx
+ Sq3vlt6dMgcOlMYTZMw1O8Y28eiHm5DCzyPR5FkQvQ1xY2TPTZh9H4zukBLBkctDtccosGwZt3tb
+ uoQ2Nelm12ldf4kdbGmWdSIEgTWLJb8LfiNe4PIPnWU2Ho0EbHs2RBa81Y83NEZpXYWpYLwUafkE
+ 5GG4E6tG1aUU2g/HSf+3BaHYVZ7vv2Zc7DmCkeYS5VyzZvajmVWj4pjPY5RrNbDKWOIIOc5ow+5e
+ eLFX6wHWFlgM3zPr4IU/XqKhDUydx8pyRHEfDUTRJHokP4Ga3DyvfqtfF8zQQwIGbc+D8Tdt9JbM
+ Op7ZhZwmE0J3q5DUuYVXFO9kWT5Rf2QvNNmbBNQnpXXUirwztbKA6BWoygQDVvVgdrQ=
+Subject: Re: [PATCH] arm64: dts: allwinner: a64: Add lradc node
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+CC:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+From:   luca@z3ntu.xyz
+Message-ID: <9B2B83DF-2C91-4DDA-B707-664A792A8BCF@z3ntu.xyz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On May 20, 2019 1:07:42 PM GMT+02:00, Maxime Ripard <maxime=2Eripard@bootli=
+n=2Ecom> wrote:
+>Hi!
+>
+>On Sat, May 18, 2019 at 07:09:30PM +0200, Luca Weiss wrote:
+>> Add a node describing the KEYADC on the A64=2E
+>>
+>> Signed-off-by: Luca Weiss <luca@z3ntu=2Exyz>
+>> ---
+>>  arch/arm64/boot/dts/allwinner/sun50i-a64=2Edtsi | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64=2Edtsi
+>b/arch/arm64/boot/dts/allwinner/sun50i-a64=2Edtsi
+>> index 7734f70e1057=2E=2Edc1bf8c1afb5 100644
+>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64=2Edtsi
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64=2Edtsi
+>> @@ -704,6 +704,13 @@
+>>  			status =3D "disabled";
+>>  		};
+>>
+>> +		lradc: lradc@1c21800 {
+>> +			compatible =3D "allwinner,sun4i-a10-lradc-keys";
+>> +			reg =3D <0x01c21800 0x100>;
+>> +			interrupts =3D <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
+>> +			status =3D "disabled";
+>> +		};
+>> +
+>
+>The controller is pretty different on the A64 compared to the A10=2E The
+>A10 has two channels for example, while the A64 has only one=2E
+>
+>It looks like the one in the A83t though, so you can use that
+>compatible instead=2E
+>
+>Maxime
+>
+>--
+>Maxime Ripard, Bootlin
+>Embedded Linux and Kernel engineering
+>https://bootlin=2Ecom
+
 Hi,
+Looking at the patch for the A83t, the only difference is that it uses a 3=
+/4 instead of a 2/3 voltage divider, nothing is changed with the channels=
+=2E But I'm also not sure which one (or a different one) is used from looki=
+ng at the "A64 User Manual"=2E
 
-On Tue, May 21, 2019 at 7:11 AM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
->
-> Hi Aaron,
->
-> On Sun, May 19, 2019 at 03:27:10PM +0800, Aaron Ma wrote:
-> > Adding 2 new touchpad PNPIDs to enable middle button support.
->
-> Could you add their names in the comments please?
->
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-> > ---
-> >  drivers/input/mouse/elantech.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
-> > index a7f8b1614559..530142b5a115 100644
-> > --- a/drivers/input/mouse/elantech.c
-> > +++ b/drivers/input/mouse/elantech.c
-> > @@ -1189,6 +1189,8 @@ static const char * const middle_button_pnp_ids[] = {
-> >       "LEN2132", /* ThinkPad P52 */
-> >       "LEN2133", /* ThinkPad P72 w/ NFC */
-> >       "LEN2134", /* ThinkPad P72 */
-> > +     "LEN0407",
-
-AFAICT, this one is the Lenovo P53.
-However, having a whitelist of new models is not going to scale IMO.
-
-I was thinking at submitting a patch to enable middle button
-unconditionally, but then I realized that libinput disables middle
-click emulation on touchpads with an actual physical middle button.
-
-And this morning I just realized that we might have a better chance at
-this if we consider the new models to have the physical middle button.
-I know LEN0407 attempts to bind over SMBus, so I would think we can
-reduce the set of whitelist by just checking for
-ETP_NEW_IC_SMBUS_HOST_NOTIFY (patch coming in).
-
-Cheers,
-Benjamin
-
-> > +     "LEN0408",
->
-> These should come first - I'd like to keep the list sorted
-> alphabetically.
->
-> >       NULL
-> >  };
-> >
-> > --
-> > 2.17.1
-> >
->
-> Thanks.
->
-> --
-> Dmitry
+Thanks, Luca
