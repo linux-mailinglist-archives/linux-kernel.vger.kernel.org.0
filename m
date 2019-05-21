@@ -2,64 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59C4024B26
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B98B724AEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 10:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfEUJHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 05:07:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46038 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726391AbfEUJHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 05:07:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 42ADAAD43;
-        Tue, 21 May 2019 09:07:35 +0000 (UTC)
-Message-ID: <1558428877.12672.8.camel@suse.com>
-Subject: Re: [RFC PATCH] usb: host: xhci: allow __GFP_FS in dma allocation
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        Alan Stern <stern@rowland.harvard.edu>
-Cc:     Jaewon Kim <jaewon31.kim@gmail.com>, linux-mm@kvack.org,
-        gregkh@linuxfoundation.org, Jaewon Kim <jaewon31.kim@samsung.com>,
-        m.szyprowski@samsung.com, ytk.lee@samsung.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Date:   Tue, 21 May 2019 10:54:37 +0200
-In-Reply-To: <20190520142331.GA12108@infradead.org>
-References: <20190520101206.GA9291@infradead.org>
-         <Pine.LNX.4.44L0.1905201011490.1498-100000@iolanthe.rowland.org>
-         <20190520142331.GA12108@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726907AbfEUI4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 04:56:33 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38066 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbfEUI4d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 04:56:33 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hT0ZM-0000vb-P9; Tue, 21 May 2019 08:56:24 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Li Yang <leoyang.li@nxp.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] soc: fsl: fix spelling mistake "Firmaware" -> "Firmware"
+Date:   Tue, 21 May 2019 09:56:24 +0100
+Message-Id: <20190521085624.13665-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mo, 2019-05-20 at 07:23 -0700, Christoph Hellwig wrote:
-> On Mon, May 20, 2019 at 10:16:57AM -0400, Alan Stern wrote:
-> > What if the allocation requires the kernel to swap some old pages out 
-> > to the backing store, but the backing store is on the device that the 
-> > driver is managing?  The swap can't take place until the current I/O 
-> > operation is complete (assuming the driver can handle only one I/O 
-> > operation at a time), and the current operation can't complete until 
-> > the old pages are swapped out.  Result: deadlock.
-> > 
-> > Isn't that the whole reason for using GFP_NOIO in the first place?
-> 
-> It is, or rather was.  As it has been incredibly painful to wire
-> up the gfp_t argument through some callstacks, most notably the
-> vmalloc allocator which is used by a lot of the DMA allocators on
-> non-coherent platforms, we now have the memalloc_noio_save and
-> memalloc_nofs_save functions that mark a thread as not beeing to
-> go into I/O / FS reclaim.  So even if you use GFP_KERNEL you will
-> not dip into reclaim with those flags set on the thread.
+From: Colin Ian King <colin.king@canonical.com>
 
-OK, but this leaves a question open. Will the GFP_NOIO actually
-hurt, if it is used after memalloc_noio_save()?
+There is a spelling mistake in a pr_err message. Fix it.
 
-	Regards
-		Oliver
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/soc/fsl/dpaa2-console.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/soc/fsl/dpaa2-console.c b/drivers/soc/fsl/dpaa2-console.c
+index 9168d8ddc932..27243f706f37 100644
+--- a/drivers/soc/fsl/dpaa2-console.c
++++ b/drivers/soc/fsl/dpaa2-console.c
+@@ -73,7 +73,7 @@ static u64 get_mc_fw_base_address(void)
+ 
+ 	mcfbaregs = ioremap(mc_base_addr.start, resource_size(&mc_base_addr));
+ 	if (!mcfbaregs) {
+-		pr_err("could not map MC Firmaware Base registers\n");
++		pr_err("could not map MC Firmware Base registers\n");
+ 		return 0;
+ 	}
+ 
+-- 
+2.20.1
 
