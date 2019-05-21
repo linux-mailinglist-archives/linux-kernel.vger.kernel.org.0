@@ -2,101 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B65B2510C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88CD925116
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:50:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbfEUNt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 09:49:29 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43100 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728051AbfEUNt2 (ORCPT
+        id S1728446AbfEUNuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 09:50:18 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55464 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728075AbfEUNuR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 09:49:28 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hT58w-0007lF-8M; Tue, 21 May 2019 13:49:26 +0000
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-To:     Hans de Goede <hdegoede@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: staging: Add rtl8723bs sdio wifi driver
-Message-ID: <9c766350-db9b-7a88-5655-54d03c8d2703@canonical.com>
-Date:   Tue, 21 May 2019 14:49:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Tue, 21 May 2019 09:50:17 -0400
+Received: by mail-wm1-f68.google.com with SMTP id x64so3077056wmb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 06:50:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=xWUTmh+WZTqntJFjf70zBsFQNnHLTqlLA8TC+YaA8qc=;
+        b=mFHy2QYLg2zPmzuL5FmMSN0vPoR3imQocKrfkxKDqc5v5D7V8Bla1zt+CUb5sHGsJa
+         gN9fm6RM9WH8oe74g7GimRRPvMWkn1qbf58Eaql/OZ/yT4G/fFN1QQhpStQEnWPuOTLK
+         guZdYcaFMhL6oJKXt0foBdlmMfy92wxvs8lMueq4vb7Ynxd3V01VIYutayj8nu8lR1Wg
+         9s9RZcdSACFXMM4wHEYNorGaV/miAueCUh5jcZ2Kj4oG5PxYx/K8+MDoU194OsdXxp6G
+         OvNvRgeX++Z6qE+fE8v6SPbV31SyWFsJA3Awp+AvWhTSdrvfW9KSndGBub/lDFOYpy5Z
+         6LVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xWUTmh+WZTqntJFjf70zBsFQNnHLTqlLA8TC+YaA8qc=;
+        b=GolRZUEVRKaQDaGaRrCQLwwuFbVK9fx21lRncMhjBrw/n78ank0HoimivvO24h4enB
+         XhC+J9iLMn2UQiGtDmhJhcj3nPQEI5/7Ij6JcceCxJQ/l9quND6E7a4mwPbxATjgzu/w
+         EFLFGEF53PeE9xWju08fkmtRwJ5x0I4/rkBVvUGpMQQbDduz3iSXDTdQSX77X7kHLJOX
+         qnRXWC/zprlMuLJgLrsE1j4/jEE+AnbEgdbzMZ0/Xhq6BmnJKnbzT6bFJbOHLGsQtl5G
+         EHPOE750Ld4aftaJCoEwztSyfS7jog199BjPQw1XTqpntfhf6ueuQSaGZNE2taNaWGo+
+         R9aQ==
+X-Gm-Message-State: APjAAAVeNOZRJapcdp9Aq01JNHrSYlSQDgo6yKjzvjPOAS75JDK0dO/G
+        Uyj3KYAcTDnLDhTYwzAW5CQ=
+X-Google-Smtp-Source: APXvYqxABuxlU4i/2wB0qz/CCSgeFtpP9gq0iy0IkjJxeN98/j2ZamWNngHuZDzd8nwyX3TZivTwDg==
+X-Received: by 2002:a7b:cb85:: with SMTP id m5mr3592959wmi.85.1558446616051;
+        Tue, 21 May 2019 06:50:16 -0700 (PDT)
+Received: from localhost.localdomain (ip83.173.mip.uni-hannover.de. [130.75.173.83])
+        by smtp.gmail.com with ESMTPSA id n63sm3541471wmn.38.2019.05.21.06.50.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 May 2019 06:50:15 -0700 (PDT)
+From:   Tianzheng Li <ltz0302@gmail.com>
+To:     rspringer@google.com
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, benchan@chromium.org,
+        toddpoynor@google.com, linux-kernel@i4.cs.fau.de,
+        zhangjie.cnde@gmail.com
+Subject: [PATCH] staging/gasket: Fix string split
+Date:   Tue, 21 May 2019 15:50:12 +0200
+Message-Id: <20190521135012.24887-1-ltz0302@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch removes unnecessary quoted string splits.
+Signed-off-by: Tianzheng Li <ltz0302@gmail.com>
+Signed-off-by: Jie Zhang <zhangjie.cnde@gmail.com>
+---
+ drivers/staging/gasket/gasket_core.c       |  6 ++----
+ drivers/staging/gasket/gasket_ioctl.c      |  3 +--
+ drivers/staging/gasket/gasket_page_table.c | 14 ++++++--------
+ 3 files changed, 9 insertions(+), 14 deletions(-)
 
-static analysis with Coverity has detected an issues in the rtl8723bs
-wifi driver:
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index a445d58fb399..13179f063a61 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -702,8 +702,7 @@ static bool gasket_mmap_has_permissions(struct gasket_dev *gasket_dev,
+ 	if ((vma->vm_flags & VM_WRITE) &&
+ 	    !gasket_owned_by_current_tgid(&gasket_dev->dev_info)) {
+ 		dev_dbg(gasket_dev->dev,
+-			"Attempting to mmap a region for write without owning "
+-			"device.\n");
++			"Attempting to mmap a region for write without owning device.\n");
+ 		return false;
+ 	}
+ 
+@@ -1054,8 +1053,7 @@ static int gasket_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	}
+ 	if (bar_index > 0 && is_coherent_region) {
+ 		dev_err(gasket_dev->dev,
+-			"double matching bar and coherent buffers for address "
+-			"0x%lx\n",
++			"double matching bar and coherent buffers for address 0x%lx\n",
+ 			raw_offset);
+ 		trace_gasket_mmap_exit(bar_index);
+ 		return -EINVAL;
+diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+index 0ca48e688818..7ecfba4f2b06 100644
+--- a/drivers/staging/gasket/gasket_ioctl.c
++++ b/drivers/staging/gasket/gasket_ioctl.c
+@@ -353,8 +353,7 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, void __user *argp)
+ 		 */
+ 		trace_gasket_ioctl_integer_data(arg);
+ 		dev_dbg(gasket_dev->dev,
+-			"Unknown ioctl cmd=0x%x not caught by "
+-			"gasket_is_supported_ioctl\n",
++			"Unknown ioctl cmd=0x%x not caught by gasket_is_supported_ioctl\n",
+ 			cmd);
+ 		retval = -EINVAL;
+ 		break;
+diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
+index d35c4fb19e28..f6d715787da8 100644
+--- a/drivers/staging/gasket/gasket_page_table.c
++++ b/drivers/staging/gasket/gasket_page_table.c
+@@ -237,8 +237,8 @@ int gasket_page_table_init(struct gasket_page_table **ppg_tbl,
+ 	 * hardware register that contains the page table size.
+ 	 */
+ 	if (total_entries == ULONG_MAX) {
+-		dev_dbg(device, "Error reading page table size. "
+-			"Initializing page table with size 0\n");
++		dev_dbg(device,
++			"Error reading page table size. Initializing page table with size 0\n");
+ 		total_entries = 0;
+ 	}
+ 
+@@ -491,8 +491,7 @@ static int gasket_perform_mapping(struct gasket_page_table *pg_tbl,
+ 
+ 			if (ret <= 0) {
+ 				dev_err(pg_tbl->device,
+-					"get user pages failed for addr=0x%lx, "
+-					"offset=0x%lx [ret=%d]\n",
++					"get user pages failed for addr=0x%lx, offset=0x%lx [ret=%d]\n",
+ 					page_addr, offset, ret);
+ 				return ret ? ret : -ENOMEM;
+ 			}
+@@ -779,8 +778,8 @@ static bool gasket_is_extended_dev_addr_bad(struct gasket_page_table *pg_tbl,
+ 
+ 	if (page_lvl0_idx >= pg_tbl->num_extended_entries) {
+ 		dev_err(pg_tbl->device,
+-			"starting level 0 slot at %lu is too large, max is < "
+-			"%u\n", page_lvl0_idx, pg_tbl->num_extended_entries);
++			"starting level 0 slot at %lu is too large, max is < %u\n",
++			page_lvl0_idx, pg_tbl->num_extended_entries);
+ 		return true;
+ 	}
+ 
+@@ -965,8 +964,7 @@ static int gasket_map_extended_pages(struct gasket_page_table *pg_tbl,
+ 	if (ret) {
+ 		dev_addr_end = dev_addr + (num_pages / PAGE_SIZE) - 1;
+ 		dev_err(pg_tbl->device,
+-			"page table slots (%lu,%lu) (@ 0x%lx) to (%lu,%lu) are "
+-			"not available\n",
++			"page table slots (%lu,%lu) (@ 0x%lx) to (%lu,%lu) are not available\n",
+ 			gasket_extended_lvl0_page_idx(pg_tbl, dev_addr),
+ 			dev_addr,
+ 			gasket_extended_lvl1_page_idx(pg_tbl, dev_addr),
+-- 
+2.17.1
 
-File: drivers/staging/rtl8723bs/os_dep/ioctl_linux.c in function
-rtw_dbg_port():
-
-CID 18480: Operands don't affect result (CONSTANT_EXPRESSION_RESULT)
-dead_error_condition: The condition (extra_arg & 7U) > 7U cannot be true.
-
-        if ((extra_arg & 0x07) > 0x07)
-                padapter->driver_ampdu_spacing = 0xFF;
-        else
-                padapter->driver_ampdu_spacing = extra_arg;
-
-
-I'm not sure if the mask is (in)correct or the value it is being
-compared to 0x07 is (in)correct (or both!)
-
-Colin
