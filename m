@@ -2,266 +2,295 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E03F24E26
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:40:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B91224DF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:35:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbfEULkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 07:40:52 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33688 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728062AbfEULkt (ORCPT
+        id S1728016AbfEULfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 07:35:18 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46496 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfEULfS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 07:40:49 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g21so263663plq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 04:40:48 -0700 (PDT)
+        Tue, 21 May 2019 07:35:18 -0400
+Received: by mail-pg1-f194.google.com with SMTP id t187so8439677pgb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 04:35:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Md/SEV623PH8+Ut8zUc7zYx2Wn6pyFc2gwGLva1wC8M=;
-        b=Kg5eAwKuepKyHoZb0HIBpHsOjkWQvVsLqc8VN/0VGDOq5PzBKsxI6IQr7kDH3bEbgs
-         zZWW728d/N9Bayktnz43WT4cIbAqKqGG4stcXL4mZNI8ES5QddufVPmSAuxeP8h85EI0
-         P4Jsl7YCYQfB4KNxPtE1r1FJJ943rbcT0S0la0XuVbmH5sbe4qTS2zoyharGmQ1S6cNn
-         XqxluNBYBUVpO8xiVXLWd2HQmKkM+rxu86S2nPC7PchCjCY7Mlz2A9e2+qbpajUYcvB9
-         aOSugtRc7aWe9b52gavavVVbFhMs5KONMsqn/1YCylCHuC3IrXbWbyqvpjpzp1Aywh8X
-         IFOw==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=y2h8yY1nmbpXT69GC2+fAFJNTD2F5yTSQK2OB0WJFdg=;
+        b=P/+Rf3vLEFCJ9GGi+UiBExXqhQ3XV3vz+RT46PUaPANKnXWspoI2jdiOm0eB/SDebN
+         4SUg/3Z34WR+B+7LZbwJuvsWjT+i/FtsP+sywXUHxaBysgBjhHDwScpwj1/76Q9STasn
+         xM67JkPb+0lckKUhz+xmSVpFCLtyitFjkkxqmT7T+OkFHvHB1ETmf7RG/Mf2fSvQOwXQ
+         CUHTODx09k3UpEoSbhweZR4LuuW4LQY3KAziJqwr1S5EFqhB4eaXWb/RlJTCj4b+4lZ8
+         aG5V/xKICRseiGomI7b9+g+yKS7gaqgHnnNmBYkXP+oS2aRWuCbuAAVQ/3TYZw+3YJKa
+         P5yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Md/SEV623PH8+Ut8zUc7zYx2Wn6pyFc2gwGLva1wC8M=;
-        b=BflWHNncUVoKusvIrP5hAkbJzfnB0nZ7QDXachBzY8eps9mIuIlBc/zQsW/IqV4AVo
-         eXyXVM7EIdrlXb/GoB7YlbPCSsd27uTx+2wkme3VkUP8+i5QEKuvhCclicvMbHOeSdWn
-         h2/gXQbWBzAkGVyLFUAL9pIIEBMosz0QVyKR2MRKnV9jLJGbK/6POCEjyFqaY5zWRwwv
-         YHsOauMr0dW38nTZHPCqatObwyDm7KU1MWHEnX51i2FRs/2zwRbCbvtjkiNxhDrNLTpW
-         zg+3AAWBLPI1hAmsiKHxfTc8FuJTRPg4xgUm5EePWa0vc5DpucLaHUqJmVFGQtFGER8W
-         uIzg==
-X-Gm-Message-State: APjAAAWx606R5dXa4xmcZ0MRrNGwd7cyUR9rd4nzj1+mfAoIlugy8UzV
-        BPOnCGNettv2PKN3hsJ3qe7j0Q==
-X-Google-Smtp-Source: APXvYqzbXBIlQ2z2g72ZEC89uyp74lq3y/Ysp7sahtfrvXFl1YlEL04tAQWbw1P6O9siRCL+PpC15g==
-X-Received: by 2002:a17:902:184:: with SMTP id b4mr55569251plb.2.1558438848409;
-        Tue, 21 May 2019 04:40:48 -0700 (PDT)
-Received: from localhost.localdomain ([208.54.39.182])
-        by smtp.gmail.com with ESMTPSA id s9sm34103515pfa.31.2019.05.21.04.40.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 04:40:47 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Cc:     jannh@google.com, fweimer@redhat.com, oleg@redhat.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org, arnd@arndb.de,
-        shuah@kernel.org, dhowells@redhat.com, tkjos@android.com,
-        ldv@altlinux.org, miklos@szeredi.hu, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        x86@kernel.org, Christian Brauner <christian@brauner.io>
-Subject: [PATCH 2/2] tests: add close_range() tests
-Date:   Tue, 21 May 2019 13:34:48 +0200
-Message-Id: <20190521113448.20654-2-christian@brauner.io>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190521113448.20654-1-christian@brauner.io>
-References: <20190521113448.20654-1-christian@brauner.io>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=y2h8yY1nmbpXT69GC2+fAFJNTD2F5yTSQK2OB0WJFdg=;
+        b=FqeFPgZAeCuD3gA7curkws4qk9EpPtFCh+QJEYAQbB4F7OMSrCGXBWnc8OZeq/tPmV
+         Bk4JvrKu2ZOwhdxIADcUFBOcODnAujqnz4Zk5Z9eQEvUlZcMl3PWgoCq9q4ACowE/SyV
+         BUNfBYq25vm43CoX+NfkIlAyRmjffdWPOT/4JFwxS5s/1WJzNDi4t5gPyXqcJYWk570P
+         SLZwuj+pE7wDeHSIdDYG4z3jp0hGUNAI0SsxlOgrfPG1uTOtNbCMqyVE1zD+SEksH4Fi
+         MjFXgFOInuE+SqKfMLRaPXjmaa4FcQMLEQfouh7Ikh+GvEIsY7MiG4UepSwcHwNPIxgl
+         WSZA==
+X-Gm-Message-State: APjAAAX5X6LfbmmDah4syYQSuRrfT8p9Fkm4wfs5Ogjyn3FE8Kw1KuNy
+        vMrv8ts+9mCo4GoznSCU4KA=
+X-Google-Smtp-Source: APXvYqyxR8EXt9zlV0d3tT3FEX90fHbIHPdhfJMjAqfANtUmS54/DDpKsjUgcdyor60Y9SM0FlNK0A==
+X-Received: by 2002:a63:18e:: with SMTP id 136mr52432280pgb.277.1558438517231;
+        Tue, 21 May 2019 04:35:17 -0700 (PDT)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id a8sm11389752pfk.14.2019.05.21.04.35.12
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 21 May 2019 04:35:16 -0700 (PDT)
+Date:   Tue, 21 May 2019 20:35:10 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleg@redhat.com
+Subject: Re: [RFC 5/7] mm: introduce external memory hinting API
+Message-ID: <20190521113510.GI219653@google.com>
+References: <20190520035254.57579-1-minchan@kernel.org>
+ <20190520035254.57579-6-minchan@kernel.org>
+ <20190521090058.mdx4qecmdbum45t2@brauner.io>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521090058.mdx4qecmdbum45t2@brauner.io>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds basic tests for the new close_range() syscall.
-- test that no invalid flags can be passed
-- test that a range of file descriptors is correctly closed
-- test that a range of file descriptors is correctly closed if there there
-  are already closed file descriptors in the range
-- test that max_fd is correctly capped to the current fdtable maximum
+On Tue, May 21, 2019 at 11:01:01AM +0200, Christian Brauner wrote:
+> Cc: Jann and Oleg too
+> 
+> On Mon, May 20, 2019 at 12:52:52PM +0900, Minchan Kim wrote:
+> > There is some usecase that centralized userspace daemon want to give
+> > a memory hint like MADV_[COOL|COLD] to other process. Android's
+> > ActivityManagerService is one of them.
+> > 
+> > It's similar in spirit to madvise(MADV_WONTNEED), but the information
+> > required to make the reclaim decision is not known to the app. Instead,
+> > it is known to the centralized userspace daemon(ActivityManagerService),
+> > and that daemon must be able to initiate reclaim on its own without
+> > any app involvement.
+> > 
+> > To solve the issue, this patch introduces new syscall process_madvise(2)
+> > which works based on pidfd so it could give a hint to the exeternal
+> > process.
+> > 
+> > int process_madvise(int pidfd, void *addr, size_t length, int advise);
+> > 
+> > All advises madvise provides can be supported in process_madvise, too.
+> > Since it could affect other process's address range, only privileged
+> > process(CAP_SYS_PTRACE) or something else(e.g., being the same UID)
+> > gives it the right to ptrrace the process could use it successfully.
+> > 
+> > Please suggest better idea if you have other idea about the permission.
+> > 
+> > * from v1r1
+> >   * use ptrace capability - surenb, dancol
+> > 
+> > Signed-off-by: Minchan Kim <minchan@kernel.org>
+> > ---
+> >  arch/x86/entry/syscalls/syscall_32.tbl |  1 +
+> >  arch/x86/entry/syscalls/syscall_64.tbl |  1 +
+> >  include/linux/proc_fs.h                |  1 +
+> >  include/linux/syscalls.h               |  2 ++
+> >  include/uapi/asm-generic/unistd.h      |  2 ++
+> >  kernel/signal.c                        |  2 +-
+> >  kernel/sys_ni.c                        |  1 +
+> >  mm/madvise.c                           | 45 ++++++++++++++++++++++++++
+> >  8 files changed, 54 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+> > index 4cd5f982b1e5..5b9dd55d6b57 100644
+> > --- a/arch/x86/entry/syscalls/syscall_32.tbl
+> > +++ b/arch/x86/entry/syscalls/syscall_32.tbl
+> > @@ -438,3 +438,4 @@
+> >  425	i386	io_uring_setup		sys_io_uring_setup		__ia32_sys_io_uring_setup
+> >  426	i386	io_uring_enter		sys_io_uring_enter		__ia32_sys_io_uring_enter
+> >  427	i386	io_uring_register	sys_io_uring_register		__ia32_sys_io_uring_register
+> > +428	i386	process_madvise		sys_process_madvise		__ia32_sys_process_madvise
+> > diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> > index 64ca0d06259a..0e5ee78161c9 100644
+> > --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> > @@ -355,6 +355,7 @@
+> >  425	common	io_uring_setup		__x64_sys_io_uring_setup
+> >  426	common	io_uring_enter		__x64_sys_io_uring_enter
+> >  427	common	io_uring_register	__x64_sys_io_uring_register
+> > +428	common	process_madvise		__x64_sys_process_madvise
+> >  
+> >  #
+> >  # x32-specific system call numbers start at 512 to avoid cache impact
+> > diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+> > index 52a283ba0465..f8545d7c5218 100644
+> > --- a/include/linux/proc_fs.h
+> > +++ b/include/linux/proc_fs.h
+> > @@ -122,6 +122,7 @@ static inline struct pid *tgid_pidfd_to_pid(const struct file *file)
+> >  
+> >  #endif /* CONFIG_PROC_FS */
+> >  
+> > +extern struct pid *pidfd_to_pid(const struct file *file);
+> >  struct net;
+> >  
+> >  static inline struct proc_dir_entry *proc_net_mkdir(
+> > diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> > index e2870fe1be5b..21c6c9a62006 100644
+> > --- a/include/linux/syscalls.h
+> > +++ b/include/linux/syscalls.h
+> > @@ -872,6 +872,8 @@ asmlinkage long sys_munlockall(void);
+> >  asmlinkage long sys_mincore(unsigned long start, size_t len,
+> >  				unsigned char __user * vec);
+> >  asmlinkage long sys_madvise(unsigned long start, size_t len, int behavior);
+> > +asmlinkage long sys_process_madvise(int pid_fd, unsigned long start,
+> > +				size_t len, int behavior);
+> >  asmlinkage long sys_remap_file_pages(unsigned long start, unsigned long size,
+> >  			unsigned long prot, unsigned long pgoff,
+> >  			unsigned long flags);
+> > diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+> > index dee7292e1df6..7ee82ce04620 100644
+> > --- a/include/uapi/asm-generic/unistd.h
+> > +++ b/include/uapi/asm-generic/unistd.h
+> > @@ -832,6 +832,8 @@ __SYSCALL(__NR_io_uring_setup, sys_io_uring_setup)
+> >  __SYSCALL(__NR_io_uring_enter, sys_io_uring_enter)
+> >  #define __NR_io_uring_register 427
+> >  __SYSCALL(__NR_io_uring_register, sys_io_uring_register)
+> > +#define __NR_process_madvise 428
+> > +__SYSCALL(__NR_process_madvise, sys_process_madvise)
+> >  
+> >  #undef __NR_syscalls
+> >  #define __NR_syscalls 428
+> > diff --git a/kernel/signal.c b/kernel/signal.c
+> > index 1c86b78a7597..04e75daab1f8 100644
+> > --- a/kernel/signal.c
+> > +++ b/kernel/signal.c
+> > @@ -3620,7 +3620,7 @@ static int copy_siginfo_from_user_any(kernel_siginfo_t *kinfo, siginfo_t *info)
+> >  	return copy_siginfo_from_user(kinfo, info);
+> >  }
+> >  
+> > -static struct pid *pidfd_to_pid(const struct file *file)
+> > +struct pid *pidfd_to_pid(const struct file *file)
+> >  {
+> >  	if (file->f_op == &pidfd_fops)
+> >  		return file->private_data;
+> > diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+> > index 4d9ae5ea6caf..5277421795ab 100644
+> > --- a/kernel/sys_ni.c
+> > +++ b/kernel/sys_ni.c
+> > @@ -278,6 +278,7 @@ COND_SYSCALL(mlockall);
+> >  COND_SYSCALL(munlockall);
+> >  COND_SYSCALL(mincore);
+> >  COND_SYSCALL(madvise);
+> > +COND_SYSCALL(process_madvise);
+> >  COND_SYSCALL(remap_file_pages);
+> >  COND_SYSCALL(mbind);
+> >  COND_SYSCALL_COMPAT(mbind);
+> > diff --git a/mm/madvise.c b/mm/madvise.c
+> > index 119e82e1f065..af02aa17e5c1 100644
+> > --- a/mm/madvise.c
+> > +++ b/mm/madvise.c
+> > @@ -9,6 +9,7 @@
+> >  #include <linux/mman.h>
+> >  #include <linux/pagemap.h>
+> >  #include <linux/page_idle.h>
+> > +#include <linux/proc_fs.h>
+> >  #include <linux/syscalls.h>
+> >  #include <linux/mempolicy.h>
+> >  #include <linux/page-isolation.h>
+> > @@ -16,6 +17,7 @@
+> >  #include <linux/hugetlb.h>
+> >  #include <linux/falloc.h>
+> >  #include <linux/sched.h>
+> > +#include <linux/sched/mm.h>
+> >  #include <linux/ksm.h>
+> >  #include <linux/fs.h>
+> >  #include <linux/file.h>
+> > @@ -1140,3 +1142,46 @@ SYSCALL_DEFINE3(madvise, unsigned long, start, size_t, len_in, int, behavior)
+> >  {
+> >  	return madvise_core(current, start, len_in, behavior);
+> >  }
+> > +
+> > +SYSCALL_DEFINE4(process_madvise, int, pidfd, unsigned long, start,
+> > +		size_t, len_in, int, behavior)
+> > +{
+> > +	int ret;
+> > +	struct fd f;
+> > +	struct pid *pid;
+> > +	struct task_struct *tsk;
+> > +	struct mm_struct *mm;
+> > +
+> > +	f = fdget(pidfd);
+> > +	if (!f.file)
+> > +		return -EBADF;
+> > +
+> > +	pid = pidfd_to_pid(f.file);
+> 
+> pidfd_to_pid() should not be directly exported since this allows
+> /proc/<pid> fds to be used too. That's something we won't be going
+> forward with. All new syscalls should only allow to operate on pidfds
+> created through CLONE_PIDFD or pidfd_open() (cf. [1]).
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Jann Horn <jannh@google.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Dmitry V. Levin <ldv@altlinux.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Florian Weimer <fweimer@redhat.com>
-Cc: linux-api@vger.kernel.org
----
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/core/.gitignore       |   1 +
- tools/testing/selftests/core/Makefile         |   6 +
- .../testing/selftests/core/close_range_test.c | 128 ++++++++++++++++++
- 4 files changed, 136 insertions(+)
- create mode 100644 tools/testing/selftests/core/.gitignore
- create mode 100644 tools/testing/selftests/core/Makefile
- create mode 100644 tools/testing/selftests/core/close_range_test.c
+Thanks for the information.
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 9781ca79794a..06e57fabbff9 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -4,6 +4,7 @@ TARGETS += bpf
- TARGETS += breakpoints
- TARGETS += capabilities
- TARGETS += cgroup
-+TARGETS += core
- TARGETS += cpufreq
- TARGETS += cpu-hotplug
- TARGETS += drivers/dma-buf
-diff --git a/tools/testing/selftests/core/.gitignore b/tools/testing/selftests/core/.gitignore
-new file mode 100644
-index 000000000000..6e6712ce5817
---- /dev/null
-+++ b/tools/testing/selftests/core/.gitignore
-@@ -0,0 +1 @@
-+close_range_test
-diff --git a/tools/testing/selftests/core/Makefile b/tools/testing/selftests/core/Makefile
-new file mode 100644
-index 000000000000..de3ae68aa345
---- /dev/null
-+++ b/tools/testing/selftests/core/Makefile
-@@ -0,0 +1,6 @@
-+CFLAGS += -g -I../../../../usr/include/ -I../../../../include
-+
-+TEST_GEN_PROGS := close_range_test
-+
-+include ../lib.mk
-+
-diff --git a/tools/testing/selftests/core/close_range_test.c b/tools/testing/selftests/core/close_range_test.c
-new file mode 100644
-index 000000000000..ab10cd205ab9
---- /dev/null
-+++ b/tools/testing/selftests/core/close_range_test.c
-@@ -0,0 +1,128 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <linux/kernel.h>
-+#include <limits.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <unistd.h>
-+
-+#include "../kselftest.h"
-+
-+static inline int sys_close_range(unsigned int fd, unsigned int max_fd,
-+				  unsigned int flags)
-+{
-+	return syscall(__NR_close_range, fd, max_fd, flags);
-+}
-+
-+#ifndef ARRAY_SIZE
-+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-+#endif
-+
-+int main(int argc, char **argv)
-+{
-+	const char *test_name = "close_range";
-+	int i, ret;
-+	int open_fds[100];
-+	int fd_max, fd_mid, fd_min;
-+
-+	ksft_set_plan(7);
-+
-+	for (i = 0; i < ARRAY_SIZE(open_fds); i++) {
-+		int fd;
-+
-+		fd = open("/dev/null", O_RDONLY | O_CLOEXEC);
-+		if (fd < 0) {
-+			if (errno == ENOENT)
-+				ksft_exit_skip(
-+					"%s test: skipping test since /dev/null does not exist\n",
-+					test_name);
-+
-+			ksft_exit_fail_msg(
-+				"%s test: %s - failed to open /dev/null\n",
-+				strerror(errno), test_name);
-+		}
-+
-+		open_fds[i] = fd;
-+	}
-+
-+	fd_min = open_fds[0];
-+	fd_max = open_fds[99];
-+
-+	ret = sys_close_range(fd_min, fd_max, 1);
-+	if (!ret)
-+		ksft_exit_fail_msg(
-+			"%s test: managed to pass invalid flag value\n",
-+			test_name);
-+	ksft_test_result_pass("do not allow invalid flag values for close_range()\n");
-+
-+	fd_mid = open_fds[50];
-+	ret = sys_close_range(fd_min, fd_mid, 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close range of file descriptors from 4 to 50\n",
-+			test_name);
-+	ksft_test_result_pass("close_range() from %d to %d\n", fd_min, fd_mid);
-+
-+	for (i = 0; i <= 50; i++) {
-+		ret = fcntl(open_fds[i], F_GETFL);
-+		if (ret >= 0)
-+			ksft_exit_fail_msg(
-+				"%s test: Failed to close range of file descriptors from 4 to 50\n",
-+				test_name);
-+	}
-+	ksft_test_result_pass("fcntl() verify closed range from %d to %d\n", fd_min, fd_mid);
-+
-+	/* create a couple of gaps */
-+	close(57);
-+	close(78);
-+	close(81);
-+	close(82);
-+	close(84);
-+	close(90);
-+
-+	fd_mid = open_fds[51];
-+	/* Choose slightly lower limit and leave some fds for a later test */
-+	fd_max = open_fds[92];
-+	ret = sys_close_range(fd_mid, fd_max, 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+			test_name);
-+	ksft_test_result_pass("close_range() from %d to %d\n", fd_mid, fd_max);
-+
-+	for (i = 51; i <= 92; i++) {
-+		ret = fcntl(open_fds[i], F_GETFL);
-+		if (ret >= 0)
-+			ksft_exit_fail_msg(
-+				"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+				test_name);
-+	}
-+	ksft_test_result_pass("fcntl() verify closed range from %d to %d\n", fd_mid, fd_max);
-+
-+	fd_mid = open_fds[93];
-+	fd_max = open_fds[99];
-+	/* test that the kernel caps and still closes all fds */
-+	ret = sys_close_range(fd_mid, UINT_MAX, 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+			test_name);
-+	ksft_test_result_pass("close_range() from %d to %d\n", fd_mid, fd_max);
-+
-+	for (i = 93; i < 100; i++) {
-+		ret = fcntl(open_fds[i], F_GETFL);
-+		if (ret >= 0)
-+			ksft_exit_fail_msg(
-+				"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+				test_name);
-+	}
-+	ksft_test_result_pass("fcntl() verify closed range from %d to %d\n", fd_mid, fd_max);
-+
-+	return ksft_exit_pass();
-+}
--- 
-2.21.0
+> 
+> So e.g. please export a simple helper like
+> 
+> struct pid *pidfd_to_pid(const struct file *file)
+> {
+>         if (file->f_op == &pidfd_fops)
+>                 return file->private_data;
+> 
+>         return NULL;
+> }
+> 
+> turning the old pidfd_to_pid() into something like:
+> 
+> static struct pid *__fd_to_pid(const struct file *file)
+> {
+>         struct pid *pid;
+> 
+>         pid = pidfd_to_pid(file);
+>         if (pid)
+>                 return pid;
+> 
+>         return tgid_pidfd_to_pid(file);
+> }
 
+So, I want to clarify what you suggest here.
+
+1. modify pidfd_to_pid as what you described above(ie, return NULL
+instead of returning tgid_pidfd_to_pid(file);
+2. never export pidfd_to_pid
+3. create wrapper __fd_to_pid which calls pidfd_to_pid internally
+4. export __fd_to_pid and use it
+
+Correct?
+
+Thanks.
+
+> 
+> All new syscalls should only be using anon inode pidfds since they can
+> actually have a clean security model built around them in the future.
+> Note, pidfd_open() will be sent out together with making pidfds pollable
+> for the 5.3 merge window.
+> 
+> [1]: https://lore.kernel.org/lkml/20190520155630.21684-1-christian@brauner.io/
+> 
+> Thanks!
+> Christian
