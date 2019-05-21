@@ -2,165 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3044B25435
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:40:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 474FD2542D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbfEUPkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:40:19 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:15059 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728067AbfEUPkS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:40:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1558453217; x=1589989217;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=5B9enZJwF3veiFRzLvmeNGG7DvSS35w6K7vV8jk0rNY=;
-  b=ub+Iqxp1E3xolTbZyTAHaPxBNMwh8fDeL8Hxny8LIMKp56Yzq7ejYZhL
-   xMyrSMILX+bq664eR8CckK7kYxbXFBzXWGZA2ipi4f0bt1bWofCiv50Oz
-   Qied2bI6CiU3AgEdEAsaugQsIpUNqYdoezrstW2mKs8IcgcsCjj9yHb+A
-   s=;
-X-IronPort-AV: E=Sophos;i="5.60,495,1549929600"; 
-   d="scan'208";a="767022279"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2b-baacba05.us-west-2.amazon.com) ([10.124.125.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 May 2019 15:40:14 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
-        by email-inbound-relay-2b-baacba05.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id x4LFeBCx117178
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 21 May 2019 15:40:12 GMT
-Received: from EX13D08UEE003.ant.amazon.com (10.43.62.118) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 21 May 2019 15:39:59 +0000
-Received: from EX13MTAUWA001.ant.amazon.com (10.43.160.58) by
- EX13D08UEE003.ant.amazon.com (10.43.62.118) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 21 May 2019 15:39:59 +0000
-Received: from uc2253769c0055c.ant.amazon.com (10.28.85.98) by
- mail-relay.amazon.com (10.43.160.118) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Tue, 21 May 2019 15:39:54 +0000
-From:   Sam Caccavale <samcacc@amazon.de>
-CC:     <samcacc@amazon.de>, <samcaccavale@gmail.com>,
-        <nmanthey@amazon.de>, <wipawel@amazon.de>, <dwmw@amazon.co.uk>,
-        <mpohlack@amazon.de>, <graf@amazon.de>, <karahmed@amazon.de>,
-        <andrew.cooper3@citrix.com>, <JBeulich@suse.com>,
-        <pbonzini@redhat.com>, <rkrcmar@redhat.com>, <tglx@linutronix.de>,
-        <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
-        <paullangton4@gmail.com>, <anirudhkaushik@google.com>,
-        <x86@kernel.org>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] Demonstrating unit testing via simple-harness
-Date:   Tue, 21 May 2019 17:39:24 +0200
-Message-ID: <20190521153924.15110-4-samcacc@amazon.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190521153924.15110-1-samcacc@amazon.de>
-References: <20190521153924.15110-1-samcacc@amazon.de>
-MIME-Version: 1.0
-Content-Type: text/plain
-To:     unlisted-recipients:; (no To-header on input)
+        id S1728552AbfEUPjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:39:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43682 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728137AbfEUPjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 11:39:37 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADF16208C3;
+        Tue, 21 May 2019 15:39:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558453176;
+        bh=V6RrFwC69vaGpD6uEs9hsF3W8vWzKq46UtR2el3xg2Q=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=NmweJBMKKPipUrO/xWliYq0PkG/2OYdsLDjTVv8k0+OPHFju09ddOLrwncFVN/Vxd
+         Ye33Irohwzu07m2KuSY7kb7BVShTSMvE1ZK80k0tVHSFHyyfb+n4JGDFLsbFhGjRPY
+         apf0eeVB36OB/y9MPimGNf3g4oUvlg966FMjkErw=
+Date:   Wed, 22 May 2019 00:39:32 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 0/2] Enable new kprobe event at boot
+Message-Id: <20190522003932.34367dcae6d9de27e254e174@kernel.org>
+In-Reply-To: <20190521093317.7d698f79@gandalf.local.home>
+References: <155842537599.4253.14690293652007233645.stgit@devnote2>
+        <20190521093317.7d698f79@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simple-harness.c uses inline asm support to generate asm and then has the
-emulator emulate this code.  This may be useful as a form of testing for
-the emulator.
+On Tue, 21 May 2019 09:33:17 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
----
- tools/fuzz/x86_instruction_emulation/Makefile |  7 ++-
- .../simple-harness.c                          | 49 +++++++++++++++++++
- 2 files changed, 54 insertions(+), 2 deletions(-)
- create mode 100644 tools/fuzz/x86_instruction_emulation/simple-harness.c
+> On Tue, 21 May 2019 16:56:16 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Note that 'trace_event=' option enables trace event at very early
+> > timing, but the events added by 'kprobe_event=' are enabled right
+> > before enabling device drivers at this point. It is enough for
+> > tracing device driver initialization etc.
+> 
+> Nice!
+> 
+> I wonder if we can have this called before the trace_event boot is
+> analyzed. Then have the kprobe_event work more like the kprobe_events
+> file, and not enable the kprobes but only create them. If you want to
+> enable them you do a trace_event=kprobes as well.
 
-diff --git a/tools/fuzz/x86_instruction_emulation/Makefile b/tools/fuzz/x86_instruction_emulation/Makefile
-index d2854a332605..bb29149ae0f7 100644
---- a/tools/fuzz/x86_instruction_emulation/Makefile
-+++ b/tools/fuzz/x86_instruction_emulation/Makefile
-@@ -43,7 +43,10 @@ LOCAL_OBJS := emulator_ops.o stubs.o
- afl-harness: afl-harness.o $(LOCAL_OBJS) $(KERNEL_OBJS)
- 	@$(CC) -v $(KBUILD_CFLAGS) $(LOCAL_OBJS) $(KERNEL_OBJS) $< $(INCLUDES) -Istubs.h -o $@ -no-pie
- 
--all: afl-harness
-+simple-harness: simple-harness.o $(LOCAL_OBJS) $(KERNEL_OBJS)
-+	@$(CC) -v $(KBUILD_CFLAGS) $(LOCAL_OBJS) $(KERNEL_OBJS) $< $(INCLUDES) -Istubs.h -o $@ -no-pie
-+
-+all: afl-harness simple-harness
- 
- .PHONY: fuzz_deps
- fuzz_deps:
-@@ -54,4 +57,4 @@ fuzz_deps:
- 
- .PHONY: clean
- clean:
--	$(RM) -r *.o afl-harness
-+	$(RM) -r *.o afl-harness simple-harness
-diff --git a/tools/fuzz/x86_instruction_emulation/simple-harness.c b/tools/fuzz/x86_instruction_emulation/simple-harness.c
-new file mode 100644
-index 000000000000..9601aafb9423
---- /dev/null
-+++ b/tools/fuzz/x86_instruction_emulation/simple-harness.c
-@@ -0,0 +1,49 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <assert.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include "emulator_ops.h"
-+#include <asm/kvm_emulate.h>
-+
-+extern void foo(void)
-+{
-+	asm volatile("__start:mov $0xdeadbeef, %rax;"
-+		     "xor %rax, %rax;"
-+		     "__end:");
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	extern unsigned char __start;
-+	extern unsigned char __end;
-+	struct state *state = create_emulator();
-+	int rc;
-+
-+	/* Ensures the emulator is in a valid state. */
-+	initialize_emulator(state);
-+
-+	/* Provide the emulator with instructions to emulate. */
-+	state->data = &__start;
-+	state->data_available = &__end - &__start;
-+
-+	/* Execute mov $0xdeadbeef, %rax */
-+	rc = step_emulator(state);
-+	/* Check that the emulator succeeded. */
-+	assert(rc == X86EMUL_CONTINUE);
-+	/* Check that 0xdeadbeef was moved to rax. */
-+	assert(state->ctxt._regs[REGS_RAX] == 0xdeadbeef);
-+
-+	/* Execute xor %rax, %rax */
-+	rc = step_emulator(state);
-+	/* Check that the emulator succeeded. */
-+	assert(rc == X86EMUL_CONTINUE);
-+	/* Check that xoring rax with itself cleared rax. */
-+	assert(state->ctxt._regs[REGS_RAX] == 0);
-+
-+	/* Free the emulator. */
-+	free_emulator(state);
-+
-+	return 0;
-+}
+Yeah, I considered that, but there are several reasons to not to do that.
+- trace_event seems enabled very early point than kprobes itself.(but this can
+  be fixable)
+- if user specifies kprobes at boot, he/she wants to enable that point at boot.
+- it is redundant to specify kprobe_event= and trace_event=, especially command
+  line size is very limited.
+
+> Perhaps we could enable kprobes at early init?
+
+It should be possible, I will try to find what blocks it. I guess after we
+switch early_text_poke() to text_poke(), we can use kprobes on x86. But
+for other archs, I need to investigate more.
+
+> What do you think? Or is there something else in kprobes that prevents
+> such an early enabling of it?
+
+As I pointed above, I think we should enable it if user specify it. That's
+less typing :). Anyway I'll recheck early kprobe availablity.
+
+Thank you,
+
+
 -- 
-2.17.1
-
-
-
-
-Amazon Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrer: Christian Schlaeger, Ralf Herbrich
-Ust-ID: DE 289 237 879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
-
-
+Masami Hiramatsu <mhiramat@kernel.org>
