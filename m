@@ -2,84 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AAFF24940
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 09:45:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A7124949
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 09:47:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbfEUHp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 03:45:28 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36888 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfEUHp1 (ORCPT
+        id S1727039AbfEUHrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 03:47:45 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:43597 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbfEUHrn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 03:45:27 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 7so1756562wmo.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 00:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7W2uW0GKbANg0YRRJwfDi3S83JuyE8bC4TgR386g+ig=;
-        b=Ztqxpie7c7XA0ZxhayhLFU5YfLTiyHUepsEAmGYq+FUlQAfXb3LwgAtRxGq3DBMLDp
-         sAAXnOa9PYGcZ2g3jo2609OGB/QROfchy98+Lz36qwm1cKApYb3XTOi+Fp9cR8bVxbXX
-         QV+o57b8E7XeETrpYw4/yQsK5KmNqLoEwQFrC4dJdS3WKZ6c1N5mTanXGuLa48ZI4/Ju
-         kuXzRua9Q0TL1j1xdYisI51IrpaRbwBKzlhgJLH1nVvULMnfAGM+/MOoxzlW5IpXIvk7
-         nD1ATrlT7CCZu3wOLugC1MEkaGYXRLATx+0g0WSbNuhvwOd2J1mwx5rEy2A8ApafFmxY
-         7ImQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7W2uW0GKbANg0YRRJwfDi3S83JuyE8bC4TgR386g+ig=;
-        b=ovTKTpJcmMuGCU938JwjAV6MdFzSqP/vi9NX5IUkUePiDNrS8VohM9HK3xlemuXmdT
-         8NHXSQt4FB/nyaJp37IYGB4uLrhMUlLEyIjMmZ8fUnQcMtjYGWwxtK581svOAHo/i5wm
-         ahTlrP8d907RhKalS2HAqbf8YSt7dg8x6s8NCun0x6lO5wm0xz8aZf7IHrTKLy99EO+c
-         UJHEnf21DSQAL5S041xp0llcSrSxqAkQPMGVs8+J0UTcuTEWrhUZ8RUzEghZDqijHTJY
-         3fH9s6cDxd5aKheGtfGM4ZVEPMpAHr0JHoS2x2Ziz/d7PMAvOGESZq9nqRHlFh4Bzv8N
-         Z1Rg==
-X-Gm-Message-State: APjAAAXOf5L74C6+YCwBuuBINX+4/4M/cCjHqwICmw06PPZflwnzAPIl
-        ow7QN+WukMvsBbtwF1hjRPWq9IVJRQNfHQ==
-X-Google-Smtp-Source: APXvYqyxfn6nygtboQpBoFArmbb8LvGA5vlw84HB75QJRhHbSdB1cLdCnbsbPzvasZc5W/5o+FBHzg==
-X-Received: by 2002:a1c:9e8e:: with SMTP id h136mr2140540wme.29.1558424725333;
-        Tue, 21 May 2019 00:45:25 -0700 (PDT)
-Received: from [10.1.203.87] (nat-wifi.sssup.it. [193.205.81.22])
-        by smtp.googlemail.com with ESMTPSA id u7sm6381826wmg.25.2019.05.21.00.45.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 00:45:24 -0700 (PDT)
-Subject: Re: [PATCH] clocksource: timer-meson6: update with SPDX Licence
- identifier
-To:     Neil Armstrong <narmstrong@baylibre.com>, tglx@linutronix.de
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190520140007.29042-1-narmstrong@baylibre.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <4262cc03-51eb-67fd-b899-61a2ed03dffa@linaro.org>
-Date:   Tue, 21 May 2019 09:45:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 21 May 2019 03:47:43 -0400
+X-Originating-IP: 90.88.22.185
+Received: from localhost (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 2CB2F240004;
+        Tue, 21 May 2019 07:47:24 +0000 (UTC)
+Date:   Tue, 21 May 2019 09:47:23 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>, daniel.lezcano@linaro.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, bjorn.andersson@linaro.org,
+        mchehab+samsung@kernel.org, paulmck@linux.ibm.com,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        linux-pm@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Jagan Teki <jagan@amarulasolutions.com>, andy.gross@linaro.org,
+        rui.zhang@intel.com, devicetree <devicetree@vger.kernel.org>,
+        marc.w.gonzalez@free.fr, edubezval@gmail.com,
+        enric.balletbo@collabora.com, Rob Herring <robh+dt@kernel.org>,
+        Jonathan.Cameron@huawei.com,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 2/3] thermal: sun50i: add thermal driver for h6
+Message-ID: <20190521074723.s3hcrnpc5pkdreqe@flea>
+References: <20190512082614.9045-1-tiny.windzz@gmail.com>
+ <20190512082614.9045-3-tiny.windzz@gmail.com>
+ <20190512133930.t5txssl7mou2gljt@flea>
+ <CA+E=qVe82xXPBXpgyLgt2ME6EjGMWWMVvD5eU-b3ntQk_okMdg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190520140007.29042-1-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uzo2p4ihnuoqkun5"
+Content-Disposition: inline
+In-Reply-To: <CA+E=qVe82xXPBXpgyLgt2ME6EjGMWWMVvD5eU-b3ntQk_okMdg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/05/2019 16:00, Neil Armstrong wrote:
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
 
-Applied, thanks.
+--uzo2p4ihnuoqkun5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  -- Daniel
+On Fri, May 17, 2019 at 12:21:57PM -0700, Vasily Khoruzhick wrote:
+> On Sun, May 12, 2019 at 6:39 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > +static int tsens_get_temp(void *data, int *temp)
+> > > +{
+> > > +     struct tsensor *s = data;
+> > > +     struct tsens_device *tmdev = s->tmdev;
+> > > +     int val;
+> > > +
+> > > +     regmap_read(tmdev->regmap, tmdev->chip->temp_data_base +
+> > > +                 0x4 * s->id, &val);
+> > > +
+> > > +     if (unlikely(val == 0))
+> > > +             return -EBUSY;
+> >
+> > I'm not sure why a val equals to 0 would be associated with EBUSY?
+>
+> First few reads of temp data return 0, and in case of H6 (and A64) it
+> means max temperature, so kernel does emergency shutdown. I used
+> -ETIMEDOUT as a workaround in my tree, but it's not appropriate here
+> either. Any suggestions are welcome.
 
+If we can use the interrupts and wait for a value to be converted
+before we read, then we should do that.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> > Also, it's not in a fast path, so you can drop the unlikely. Chances
+> > are it's not that unlikely anyway.
+>
+> As I said earlier, it's just few samples after start up.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+That's not really my point though. unlikely is tricky to get right,
+because the compiler has his own meaning of what exactly unlikely
+means statistically to be able to do the right branching
+optimisations.
 
+However, this particular real case scenario might not have the same
+probability, which might result in a poor optimisation choice due to
+the unlikely being there.
+
+Moreover, this probability can evolve in the future. For example,
+let's assume that we enable dynamic PM in the driver. Starting from
+there, most of the reads become "first" reads, and your unlikely case
+becomes the likely one.
+
+My point was that, because of this, and because of the fact that it's
+really not a hot path, we should just drop it.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--uzo2p4ihnuoqkun5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOOtCwAKCRDj7w1vZxhR
+xagHAQDdykPbWKdDic/RhsfGFYna5RZkWIPRvdVdikshfRJofQEAoFj6rDEFv4qd
+usQ5po0YFvhjL3xoWPQb0PQV4k9yLwI=
+=oWJX
+-----END PGP SIGNATURE-----
+
+--uzo2p4ihnuoqkun5--
