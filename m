@@ -2,74 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AD7F256AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C5D3256B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:28:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729167AbfEUR1a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 13:27:30 -0400
-Received: from mga02.intel.com ([134.134.136.20]:63150 "EHLO mga02.intel.com"
+        id S1729196AbfEUR1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 13:27:55 -0400
+Received: from foss.arm.com ([217.140.101.70]:39342 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728103AbfEUR1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 13:27:30 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 10:27:29 -0700
-X-ExtLoop1: 1
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by fmsmga008.fm.intel.com with ESMTP; 21 May 2019 10:27:27 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hT8Xu-0001rC-JH; Tue, 21 May 2019 20:27:26 +0300
-Date:   Tue, 21 May 2019 20:27:26 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     wsa@the-dreams.de, mika.westerberg@linux.intel.com,
-        jarkko.nikula@linux.intel.com, linux-i2c@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        benjamin.tissoires@redhat.com, jbroadus@gmail.com,
-        patches@opensource.cirrus.com
-Subject: Re: [PATCH 4/5] i2c: core: Move ACPI gpio IRQ handling into
- i2c_acpi_get_irq
-Message-ID: <20190521172726.GO9224@smile.fi.intel.com>
-References: <20190521150502.27305-1-ckeepax@opensource.cirrus.com>
- <20190521150502.27305-5-ckeepax@opensource.cirrus.com>
+        id S1726900AbfEUR1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 13:27:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59CE0374;
+        Tue, 21 May 2019 10:27:54 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC5113F718;
+        Tue, 21 May 2019 10:27:51 -0700 (PDT)
+Subject: Re: Device obligation to write into a DMA_FROM_DEVICE streaming DMA
+ mapping
+To:     Horia Geanta <horia.geanta@nxp.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <VI1PR0402MB348537CB86926B3E6D1DBE0A98070@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <584b54f6-bd12-d036-35e6-23eb2dabe811@arm.com>
+Date:   Tue, 21 May 2019 18:27:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521150502.27305-5-ckeepax@opensource.cirrus.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <VI1PR0402MB348537CB86926B3E6D1DBE0A98070@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 04:05:01PM +0100, Charles Keepax wrote:
-> It makes sense to contain all the ACPI IRQ handling in a single helper
-> function.
+On 21/05/2019 18:14, Horia Geanta wrote:
+> Hi,
+> 
+> Is it mandatory for a device to write data in an area DMA mapped DMA_FROM_DEVICE?
+> Can't the device just "ignore" that mapping - i.e. not write anything - and
+> driver should expect original data to be found in that location (since it was
+> not touched / written to by the device)?
+> [Let's leave cache coherency aside, and consider "original data" to be in RAM.]
+> 
+> I am asking this since I am seeing what seems to be an inconsistent behavior /
+> semantics between cases when swiotlb bouncing is used and when it's not.
+> 
+> Specifically, the context is:
+> 1. driver prepares a scatterlist with several entries and performs a
+> dma_map_sg() with direction FROM_DEVICE
+> 2. device decides there's no need to write into the buffer pointed by first
+> scatterlist entry and skips it (writing into subsequent buffers)
+> 3. driver is notified the device finished processing and dma unmaps the scatterlist
+> 
+> When swiotlb bounce is used, the buffer pointed to by first scatterlist entry is
+> corrupted. That's because swiotlb implementation expects the device to write
+> something into that buffer, however the device logic is "whatever was previously
+> in that buffer should be used" (2. above).
+> 
+> For FROM_DEVICE direction:
+> -swiotlb_tbl_map_single() does not copy data from original location to swiotlb
+> 	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
+> 	    (dir == DMA_TO_DEVICE || dir == DMA_BIDIRECTIONAL))
+> 		swiotlb_bounce(orig_addr, tlb_addr, size, DMA_TO_DEVICE);
+> -swiotlb_tbl_unmap_single() copies data from swiotlb to original location
+> 	if (orig_addr != INVALID_PHYS_ADDR &&
+> 	    !(attrs & DMA_ATTR_SKIP_CPU_SYNC) &&
+> 	    ((dir == DMA_FROM_DEVICE) || (dir == DMA_BIDIRECTIONAL)))
+> 		swiotlb_bounce(orig_addr, tlb_addr, size, DMA_FROM_DEVICE);
+> and when device did not write anything (as in current situation), it overwrites
+> original data with zeros
+> 
+> In case swiotlb bounce is not used and device does not write into the
+> FROM_DEVICE streaming DMA maping, the original data is available.
+> 
+> Could you please clarify whether:
+> -I am missing something obvious OR
+> -the DMA API documentation should be updated - to mandate for device writes into
+> FROM_DEVICE mappings) OR
+> -the swiotlb implementation should be updated - to copy data from original
+> location irrespective of DMA mapping direction?
 
-> Note that this one is somewhat interesting, it seems the search
-> through the resource list is done against the companion device
-> of the adapter but the GPIO search is done against the companion
-> device of the client. It feels to me like these really should
-> be done on the same device, and certainly this is what SPI
-> does (both against the equivalent of the adapter). Perhaps
-> someone with more ACPI knowledge than myself could comment?
+Hmm, that certainly feels like a bug in SWIOTLB - it seems reasonable in 
+principle for a device to only partially update a mapped buffer before a 
+sync/unmap, so I'd say it probably should be filling the bounce buffer 
+with the original data at the start, regardless of direction.
 
-It would be interesting to see the path how you come to this conclusion.
-
->  	acpi_dev_free_resource_list(&resource_list);
->  
-> +	if (*irq < 0)
-> +		*irq = acpi_dev_gpio_irq_get(ACPI_COMPANION(&client->dev), 0);
-
-I think adev here is what we may use here.
-
-You may put assert here and see if it happens when you test your series.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Robin.
