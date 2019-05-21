@@ -2,95 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6957A254C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:03:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E19C254E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:07:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbfEUQDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 12:03:50 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46126 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728936AbfEUQDq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 12:03:46 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r7so19216949wrr.13;
-        Tue, 21 May 2019 09:03:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hGVC97kr/8/BngU9FjmbWaxR7LHVSKdzb8qIb3rfhLw=;
-        b=HRRHLDE1UdIMVLXhwmTlkWpovX6rwrEXPgpyKoOZuazWMIopdAk4WZP0WUYOA3XTgv
-         vQxe4ruWmBTcZJ4wCOqsdA/7mq37vXaU/eCoqqgnI/abpOR0Uu1ny4UDdtz6hV5lu3Cr
-         awd1tgjLmydezd0eSTlv5xZlJOerP4Y7+98cXdJrzEVoL4TmL7kcZ9mKvq4oj6y28ahb
-         uRIEZVH5wTF0UWExYRcZxojFsjmPrlS6zTGDFxDs1nxv2oeTGakE7+a47GIZ4Iu0KthH
-         3jf65+ePC+f3evSjgiHaXfaR8C7FTuOTSSvkGe/WaAnHoV/RzggAAqhPMFE7dzcMGLLd
-         KvAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hGVC97kr/8/BngU9FjmbWaxR7LHVSKdzb8qIb3rfhLw=;
-        b=kzpF1o5CsMjrbFzS7qEGkt4GbSc/n/OZ2CXB/OR/99UrMbQoShTrIAopXQ7GcGfrHZ
-         7dGHm+AxBmP1ni6CLKAiflIBKtbtGvFpDgU2N4qp72J7vOh+ZiKJ751LfwPe2/IaYxRW
-         CW1HhzGF7gBXhyf4n6Mz5NfcfeYteRfkkjP76F2DaqmvV2qUYWF1zjm0Nfp5ENb5PRDU
-         YLH2avfhzxoKFXooEKBu/ErYOyhBrofnKXyQCPE9eG0Z69qmLfwyM82ZTHxgbOLK9rZB
-         dnuBkiSn3lZ9OWFDdjOLlNsQyL9psLf0wvQm2QZaNdBupEW9JoyfWF6ZDKP6Vt5C0+Cn
-         ng3w==
-X-Gm-Message-State: APjAAAUjl8aE+zJGa2WTQCApxi1ybmT+cU76zELftuS6FeXopA9lIV9k
-        HmZQvIkZxrytSpVt+XI01rc=
-X-Google-Smtp-Source: APXvYqwsJuVrNQzCHOQhxugVzCWj6HJBBTOVQD6czAHbkhVTt9RaLaBMKvGnLoVMuS7+6erE1Vtuuw==
-X-Received: by 2002:adf:c149:: with SMTP id w9mr40235573wre.40.1558454623694;
-        Tue, 21 May 2019 09:03:43 -0700 (PDT)
-Received: from localhost.localdomain (18.189-60-37.rdns.acropolistelecom.net. [37.60.189.18])
-        by smtp.gmail.com with ESMTPSA id g11sm6853811wrq.89.2019.05.21.09.03.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 09:03:43 -0700 (PDT)
-From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v4 5/5] arm64: defconfig: enable sunxi watchdog
-Date:   Tue, 21 May 2019 18:03:30 +0200
-Message-Id: <20190521160330.28402-6-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190521160330.28402-1-peron.clem@gmail.com>
-References: <20190521160330.28402-1-peron.clem@gmail.com>
+        id S1728309AbfEUQHp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 12:07:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:37874 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727044AbfEUQHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 12:07:45 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAF7F15A2;
+        Tue, 21 May 2019 09:07:44 -0700 (PDT)
+Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A22B3F718;
+        Tue, 21 May 2019 09:07:42 -0700 (PDT)
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Subject: Re: [RFC/PATCH 0/4] Initial support for modular IOMMU drivers
+To:     "Isaac J. Manjarres" <isaacm@codeaurora.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     kernel-team@android.com, robin.murphy@arm.com, joro@8bytes.org,
+        will.deacon@arm.com, lmark@codeaurora.org, robh+dt@kernel.org,
+        bhelgaas@google.com, frowand.list@gmail.com, pratikp@codeaurora.org
+References: <1558118857-16912-1-git-send-email-isaacm@codeaurora.org>
+Message-ID: <2379c1cf-be1b-503f-7dbc-51110650e91f@arm.com>
+Date:   Tue, 21 May 2019 17:07:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1558118857-16912-1-git-send-email-isaacm@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SUNXI_WATCHDOG option is required to make the
-watchdog available on Allwinner H6.
+Hi Isaac,
 
-Enable this option as a module.
+On 17/05/2019 19:47, Isaac J. Manjarres wrote:
+> This series adds initial support for being able to use the ARM
+> SMMU driver as a loadable kernel module. The series also adds
+> to the IOMMU framework, so that it can defer probing for devices
+> that depend on an IOMMU driver that may be a loadable module.
+> 
+> The primary reason behind these changes is that having the ARM
+> SMMU driver as a module allows for the same kernel image to be
+> used across different platforms. For example, if one platform
+> contains an IOMMU that implements one version of the ARM SMMU
+> specification, and another platform simply does not have an
+> IOMMU, the only way that these platforms can share the same
+> kernel image is if the ARM SMMU driver is compiled into the
+> kernel image.
+> 
+> This solution is not scalable, as it will lead to bloating the
+> kernel image with support for several future versions of the
+> SMMU specification to maintain a common kernel image that works
+> across all platforms. Having the ARM SMMU driver as a module allows
+> for a common kernel image to be supported across all platforms,
+> while yielding a smaller kernel image size, since the correct
+> SMMU driver can be loaded at runtime, if necessary.
 
-Signed-off-by: Clément Péron <peron.clem@gmail.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+It can also be useful if IOMMU drivers want to rely on components that
+distros usually build as modules. I have that problem with virtio-iommu,
+where the whole virtio transport is usually modular.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4d583514258c..fc51dd4decb1 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -420,6 +420,7 @@ CONFIG_UNIPHIER_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_ARM_SP805_WATCHDOG=y
- CONFIG_S3C2410_WATCHDOG=y
-+CONFIG_SUNXI_WATCHDOG=m
- CONFIG_IMX2_WDT=y
- CONFIG_MESON_GXBB_WATCHDOG=m
- CONFIG_MESON_WATCHDOG=m
--- 
-2.17.1
+> Patchset Summary:
+> 
+> 1. Since the ARM SMMU driver depends on symbols being exported from
+> several subsystems, the first three patches are dedicated to exporting
+> the necessary symbols.
+> 
+> 2. Similar to how the pinctrl framework handles deferring probes,
+> the subsequent patch makes it so that the IOMMU framework will defer
+> probes indefinitely if there is a chance that the IOMMU driver that a
+> device is waiting for is a module. Otherwise, it upholds the current
+> behavior of stopping probe deferrals once all of the builtin drivers
+> have finished probing.
+> 
+> The ARM SMMU driver currently has support for the deprecated
+> "mmu-masters" binding, which relies on the notion of initcall
+> ordering for setting the bus ops to ensure that all SMMU devices
+> have been bound to the driver. This poses a problem with
+> making the driver a module, as there is no such notion with
+> loadable modules. Will support for this be completely deprecated?
+> If not, might it be useful to leverage the device tree ordering,
+> and assign a property to the last SMMU device, and set the bus ops
+> at that point? Or perhaps have some deferred timer based approach
+> to know when to set the bus ops? 
+
+Another problem is module unloading: if the user calls rmmod on an IOMMU
+module, we have to ensure that endpoints aren't performing DMA anymore.
+It could be solved by declaring consumers of an IOMMU with
+device_link_add(), so that device drivers are unbound before the IOMMU
+module is unloaded.
+
+Thanks,
+Jean
+
+> 
+> Thanks,
+> Isaac
+> 
+> Isaac J. Manjarres (4):
+>   of: Export of_phandle_iterator_args() to modules
+>   PCI: Export PCI ACS and DMA searching functions to modules
+>   iommu: Export core IOMMU functions to kernel modules
+>   iommu: Add probe deferral support for IOMMU kernel modules
+> 
+>  drivers/iommu/iommu-sysfs.c | 3 +++
+>  drivers/iommu/iommu.c       | 6 ++++++
+>  drivers/iommu/of_iommu.c    | 8 ++++++--
+>  drivers/of/base.c           | 1 +
+>  drivers/pci/pci.c           | 1 +
+>  drivers/pci/search.c        | 1 +
+>  6 files changed, 18 insertions(+), 2 deletions(-)
+> 
 
