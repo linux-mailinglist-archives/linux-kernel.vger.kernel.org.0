@@ -2,148 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63CB52451F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 02:38:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B81624522
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 02:39:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfEUAiV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 20:38:21 -0400
-Received: from ozlabs.org ([203.11.71.1]:47515 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726913AbfEUAiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 20:38:21 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 457H1N1YFtz9s9T;
-        Tue, 21 May 2019 10:38:15 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1558399098;
-        bh=IcmSxkyhyheY63x0Sqljy/UD2XTdhq+M+ULqA85IMVQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=X8iM6w02bCD//+TQlz+bmuk+7UeIDmbe3w2UuDhZ5Y8JSt7TeyY0//XXUslTIRL3L
-         9drDsVuuGiTGR77pwrePkP7SoxX+Q8oVEjtZ0V6GxyZW34uULqMZ89fI50MsgBPPs8
-         Dvop7iVlNMrIm776un8j9DCOovmC/FRwBfNVN6l64lDqBaBngM/+PSB75Oxw0oIQ6B
-         bkgp48zpUOttwDnLRoo/fbl64bQZBz+IxQz22c9oL06wBW1AzbN27edFt+jsuRur6h
-         NRVH+0lTtwTRTn0/f8d+G5iRzQ+GJLTXbx8C1ynJ+wgx55ueqdgHQVuRiC7jx55wLc
-         T+8AJBQJzaXpQ==
-Date:   Tue, 21 May 2019 10:38:15 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexdeucher@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        xinhui pan <xinhui.pan@amd.com>,
-        Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-Subject: linux-next: manual merge of the drm-misc tree with the amdgpu tree
-Message-ID: <20190521103815.21dcb0ba@canb.auug.org.au>
+        id S1727455AbfEUAjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 20:39:24 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54240 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726586AbfEUAjY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 20:39:24 -0400
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4L0S56l028300;
+        Mon, 20 May 2019 17:38:45 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=E3+cLSVQNP4p25wZAs7M154LsdZMQ5nxvcwFvwkF7vA=;
+ b=VYSChcHGvoes0aoHcuoyIWkJa98s0Lw6pyTkZms7n4RKfOV8ThxKfoTSR1NLZnjwHuA7
+ 4FH3nhtzfrCG4/NDm1MIakVc68YqpIROcUIXOmsdtabEFXzdLitGSMUtODonzFAuvtkK
+ M3DQTdxuZyil9qiekFKPBfewi9OhnqAI5MI= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2skusdtf1h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 20 May 2019 17:38:45 -0700
+Received: from prn-hub05.TheFacebook.com (2620:10d:c081:35::129) by
+ prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Mon, 20 May 2019 17:38:44 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.29) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Mon, 20 May 2019 17:38:44 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E3+cLSVQNP4p25wZAs7M154LsdZMQ5nxvcwFvwkF7vA=;
+ b=Lpxvp1lM86qlDs6r95jZcMFZ0d8iGkyYmH7giaFCbaBKGAWOyaOX7NhJh2hyXLvNGr11y5TPa8cFfg2eXB7HfOjc+7qQqaVhd8/a+wIKRHkGZutgy7QjG3o8QMVdOa2DDbjtTG44I47V4m6AcfYAhRAsX3o1gq8ZWcxJfj853EA=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB3030.namprd15.prod.outlook.com (20.178.238.91) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.17; Tue, 21 May 2019 00:38:40 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::d4f6:b485:69ee:fd9a]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::d4f6:b485:69ee:fd9a%7]) with mapi id 15.20.1900.020; Tue, 21 May 2019
+ 00:38:40 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     "Tobin C. Harding" <tobin@kernel.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@ftp.linux.org.uk>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        Pekka Enberg <penberg@cs.helsinki.fi>,
+        "David Rientjes" <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Christopher Lameter <cl@linux.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Waiman Long <longman@redhat.com>,
+        "Tycho Andersen" <tycho@tycho.ws>, Theodore Ts'o <tytso@mit.edu>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Chinner <david@fromorbit.com>,
+        Nick Piggin <npiggin@gmail.com>,
+        Rik van Riel <riel@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v5 03/16] slub: Sort slab cache list
+Thread-Topic: [RFC PATCH v5 03/16] slub: Sort slab cache list
+Thread-Index: AQHVDs62IV4Zydo66E+iHqIO5Pdo5qZ0vW8A
+Date:   Tue, 21 May 2019 00:38:40 +0000
+Message-ID: <20190521003835.GB21811@tower.DHCP.thefacebook.com>
+References: <20190520054017.32299-1-tobin@kernel.org>
+ <20190520054017.32299-4-tobin@kernel.org>
+In-Reply-To: <20190520054017.32299-4-tobin@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR14CA0005.namprd14.prod.outlook.com
+ (2603:10b6:300:ae::15) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:152::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::3:a985]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 70c0967b-98c8-44cd-25cf-08d6dd84ab7c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR15MB3030;
+x-ms-traffictypediagnostic: BYAPR15MB3030:
+x-microsoft-antispam-prvs: <BYAPR15MB30307E13ABD855F4D387D23CBE070@BYAPR15MB3030.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2887;
+x-forefront-prvs: 0044C17179
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(376002)(346002)(396003)(199004)(189003)(6116002)(7736002)(8676002)(81166006)(81156014)(4326008)(66946007)(73956011)(64756008)(186003)(66476007)(66556008)(68736007)(66446008)(6436002)(53936002)(9686003)(6486002)(6246003)(99286004)(6512007)(7416002)(305945005)(446003)(316002)(6916009)(8936002)(46003)(102836004)(229853002)(76176011)(54906003)(52116002)(486006)(25786009)(476003)(2906002)(11346002)(33656002)(386003)(6506007)(14454004)(256004)(71200400001)(86362001)(71190400001)(478600001)(1076003)(5660300002)(4744005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3030;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 4s+SYJPSmiJ7nXYS5W4A3hnVp7aVbFPYyJbjP1TFSqIoKDGJQgHciWYFBrFvNzAUgySmic9Mv2MTMg0OLmiX8cNilaXRRmzYCnc09FqqhZH+ONyDzTSHnsjRoDkYirOUepqEdIGj2LmxYw6ngRqMU8nH6nV+luREC7o55arAdrMnqG5QLm7/9OGXX/EMqcV6HV+QJons4uiGp9Vgm+7BIH7jvfV9svnHD3bmg1dwTTuQhnxstF+YXvzEnJ8lFuNzLnzh4+M8elynSCGoHe7t43wRrnahpsL+ctMjIr4uTDaHWLA/lrvLJmG2cjkLq+8V1CSAgpl/bhj4ldGgsDe5eEItXoM+fWIlIPxws27p7q6ryj9Eq5G5nviPUQ8+eEJvYOShEMPyTiSQVkpVmVbskqxw6qp1KdK1dxW3nJ41JIQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7DA0F6E4E77DF64B87BF2DF516986776@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/F+2zI99WB3E_l/eAI8=GZdg"; protocol="application/pgp-signature"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70c0967b-98c8-44cd-25cf-08d6dd84ab7c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 00:38:40.5953
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3030
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/F+2zI99WB3E_l/eAI8=GZdg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 20, 2019 at 03:40:04PM +1000, Tobin C. Harding wrote:
+> It is advantageous to have all defragmentable slabs together at the
+> beginning of the list of slabs so that there is no need to scan the
+> complete list. Put defragmentable caches first when adding a slab cache
+> and others last.
+>=20
+> Co-developed-by: Christoph Lameter <cl@linux.com>
+> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 
-Hi all,
-
-Today's linux-next merge of the drm-misc tree got a conflict in:
-
-  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-
-between commit:
-
-  56965ce261af ("drm/amdgpu: cancel late_init_work before gpu reset")
-
-from the amdgpu tree and commit:
-
-  1d721ed679db ("drm/amdgpu: Avoid HW reset if guilty job already signaled.=
-")
-
-from the drm-misc tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index c9024f92e203,b9371ec5e04f..000000000000
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@@ -3614,28 -3538,27 +3595,28 @@@ int amdgpu_device_gpu_recover(struct am
- =20
-  	dev_info(adev->dev, "GPU reset begin!\n");
- =20
- +	cancel_delayed_work_sync(&adev->late_init_work);
-+ 	hive =3D amdgpu_get_xgmi_hive(adev, false);
- =20
-  	/*
-- 	 * In case of XGMI hive disallow concurrent resets to be triggered
-- 	 * by different nodes. No point also since the one node already executing
-- 	 * reset will also reset all the other nodes in the hive.
-+ 	 * Here we trylock to avoid chain of resets executing from
-+ 	 * either trigger by jobs on different adevs in XGMI hive or jobs on
-+ 	 * different schedulers for same device while this TO handler is running.
-+ 	 * We always reset all schedulers for device and all devices for XGMI
-+ 	 * hive so that should take care of them too.
-  	 */
-- 	hive =3D amdgpu_get_xgmi_hive(adev, 0);
-- 	if (hive && adev->gmc.xgmi.num_physical_nodes > 1 &&
-- 	    !mutex_trylock(&hive->reset_lock))
-+=20
-+ 	if (hive && !mutex_trylock(&hive->reset_lock)) {
-+ 		DRM_INFO("Bailing on TDR for s_job:%llx, hive: %llx as another already =
-in progress",
-+ 			 job->base.id, hive->hive_id);
-  		return 0;
-+ 	}
- =20
-  	/* Start with adev pre asic reset first for soft reset check.*/
-- 	amdgpu_device_lock_adev(adev);
-- 	r =3D amdgpu_device_pre_asic_reset(adev,
-- 					 job,
-- 					 &need_full_reset);
-- 	if (r) {
-- 		/*TODO Should we stop ?*/
-- 		DRM_ERROR("GPU pre asic reset failed with err, %d for drm dev, %s ",
-- 			  r, adev->ddev->unique);
-- 		adev->asic_reset_res =3D r;
-+ 	if (!amdgpu_device_lock_adev(adev, !hive)) {
-+ 		DRM_INFO("Bailing on TDR for s_job:%llx, as another already in progress=
-",
-+ 					 job->base.id);
-+ 		return 0;
-  	}
- =20
-  	/* Build list of devices to reset */
-
---Sig_/F+2zI99WB3E_l/eAI8=GZdg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzjSHcACgkQAVBC80lX
-0Gwk+Af/bWXFQKn3v8vCeqqNO+4DfcXDlz579wmq2ctkdCwkYkmOnnfIKTrthi3Q
-sKr2F+qc+132SCjhAQHPIuAE8zDFW9XasdKkdd36VJtrqaRitmWA8qvWkz8Riy5R
-DHIAsy3W4evd19zi0X4Zbc8vPQewGdunLH1cvi9FOC1zr4/+nX+Zq5NV4LGfvZTf
-ehr0AIxCxfAM3Dw9FYHtv0EdcFAF/m+LnKKLiZ5VJgS+XAM3/4q6swy/YMsHr0S5
-yg+NgdmdjFvEqd+MZk68Fsb0LmIAMMS78ZRbMvVlRcG8ZaaGdDubaL4mHCp8hQV3
-oWaF6GPjbv0+C0kDh6KDFYyzAPRHhQ==
-=KYAk
------END PGP SIGNATURE-----
-
---Sig_/F+2zI99WB3E_l/eAI8=GZdg--
+Reviewed-by: Roman Gushchin <guro@fb.com>
