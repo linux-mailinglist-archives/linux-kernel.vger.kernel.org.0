@@ -2,131 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5642A252DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1167025309
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728841AbfEUOwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 10:52:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48020 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728316AbfEUOwe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 10:52:34 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7DA1D60E5A; Tue, 21 May 2019 14:52:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1558450352;
-        bh=SrPfq8MUViUv+XabaPgjbbiYPwSPr5D7GfKJjGwPG+I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=gi979lmu16tGOEOTilt7ENiKg7rFcuOTfFLuR+c4mUCM/Erh3fSjEoeQnjmPvTwlH
-         dJV0V8+OWwXaZsrnn64uinhEM20+yhbMBCFwI3fegy/pObPwt0G7/y4A38x63Rxop4
-         /pUn38KW6NJodHSvOO0+TFpZmOteK5IPy8aMExiM=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728552AbfEUOxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 10:53:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58434 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727941AbfEUOxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 10:53:36 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id ED10D6021C;
-        Tue, 21 May 2019 14:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1558450351;
-        bh=SrPfq8MUViUv+XabaPgjbbiYPwSPr5D7GfKJjGwPG+I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=I8ukjk4VvZ1URFh1a1CnLlOUQgcflGA2KQX4W7UDU0PS4dhXqM/Fw0r195XSmtXEc
-         OFC9lEihjflZtu/u2C+5Zl3hMUNX6d/m9Y8yGmDJvKAyvNU6M+VBgPne5tcXM82ixH
-         hV8zbiK6KoKwcZX2VEUvx8q8vXpEUlDNeLO1fqU4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ED10D6021C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v4 0/6] MSM8998 Multimedia Clock Controller
-To:     sboyd@kernel.org
-Cc:     david.brown@linaro.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
-        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1558449843-19971-1-git-send-email-jhugo@codeaurora.org>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <933023a0-10fd-fedf-6715-381dae174ad9@codeaurora.org>
-Date:   Tue, 21 May 2019 08:52:28 -0600
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F269208C3;
+        Tue, 21 May 2019 14:53:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558450416;
+        bh=AjUIu/ylmOl1CFi7JWDOg4hBOHxxuVBfcLwEBhgOb04=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2LL4MO6xFmvTJU8dsdLggafCdcnhpALUcbLH7G5g2ZEFKhyziOLQL5060cX4VFo2A
+         7rcfVmUp6Kc7ndLsp+8aq4Ixh/s2zULsYzKiMSyaDRIzNtilOPiACwlOfqGSfWI2Ok
+         Hdg4RQduSz5p4xRxeZRib2kaMQJ7qFNqTe724Fvk=
+Date:   Tue, 21 May 2019 16:53:33 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Esben Haabendal <esben@haabendal.dk>
+Cc:     linux-serial@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Enrico Weigelt <lkml@metux.net>, Jiri Slaby <jslaby@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        He Zhe <zhe.he@windriver.com>, Marek Vasut <marex@denx.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        Paul Burton <paul.burton@mips.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resend] serial: 8250: Add support for using
+ platform_device resources
+Message-ID: <20190521145333.GA3491@kroah.com>
+References: <20190430140416.4707-1-esben@geanix.com>
+ <20190521113426.16790-1-esben@geanix.com>
+ <20190521131131.GA19685@kroah.com>
+ <878suzn9wx.fsf@haabendal.dk>
 MIME-Version: 1.0
-In-Reply-To: <1558449843-19971-1-git-send-email-jhugo@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878suzn9wx.fsf@haabendal.dk>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/21/2019 8:44 AM, Jeffrey Hugo wrote:
-> The multimedia clock controller (mmcc) is the main clock controller for
-> the multimedia subsystem and is required to enable things like display and
-> camera.
+On Tue, May 21, 2019 at 04:45:34PM +0200, Esben Haabendal wrote:
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> 
+> > On Tue, May 21, 2019 at 01:34:26PM +0200, Esben Haabendal wrote:
+> >> Allow getting memory resource (mapbase or iobase) as well as irq from
+> >> platform_device resources.
+> >> 
+> >> The UPF_DEV_RESOURCES flag must be set for devices where platform_device
+> >> resources are to be used.  When not set, driver behaves as before.
+> >
+> > Nothing actually sets this flag in this patch, so I can't take this as
+> > you are adding new features that no one uses :(
+> >
+> > Where is the driver that sets this?
+> 
+> It sits here.
 
-Stephen, I think this series is good to go, and I have display/gpu stuff 
-I'm polishing that will depend on this.  Would you kindly pickup patches 
-1, 3, 4, and 5 for 5.3?  I can work with Bjorn to pick up patches 2 and 6.
+Where is "here"?
 
-> 
-> v4:
-> -fix makefile to use correct config item
-> -pick up tags
-> -fix ordering of clocks and clock-names in dt
-> -drop MODULE_ALIAS
-> -wait for xo in mmcc since that was found to be useful in some debug configs
-> 
-> v3:
-> -Rebase onto linux-next to get the final version of the clk parent rewrite
-> series
-> -Moved the bindings header to the bindings patch per Rob
-> -Made xo manditory for GCC to work around the lack of clk orphan probe defer
-> to avoid the uart console glitch
-> 
-> v2:
-> -Rebased on the "Rewrite clk parent handling" series and updated to the clk init
-> mechanisms introduced there.
-> -Marked XO clk as CLK_IGNORE_UNUSED to avoid the concern about the XO going away
-> "incorrectly" during late init
-> -Corrected the name of the XO clock to "xo"
-> -Dropped the fake XO clock in GCC to prevent a namespace conflict
-> -Fully enumerated the external clocks (DSI PLLs, etc) in the DT binding
-> -Cleaned up the weird newlines in the added DT node
-> -Added DT header file to msm8998 DT for future clients
-> 
-> Jeffrey Hugo (6):
->    dt-bindings: clock: Document external clocks for MSM8998 gcc
->    arm64: dts: msm8998: Add xo clock to gcc node
->    clk: qcom: smd: Add XO clock for MSM8998
->    dt-bindings: clock: Add support for the MSM8998 mmcc
->    clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver
->    arm64: dts: qcom: msm8998: Add mmcc node
-> 
->   .../devicetree/bindings/clock/qcom,gcc.txt    |   10 +
->   .../devicetree/bindings/clock/qcom,mmcc.txt   |   21 +
->   arch/arm64/boot/dts/qcom/msm8998.dtsi         |   16 +
->   drivers/clk/qcom/Kconfig                      |    9 +
->   drivers/clk/qcom/Makefile                     |    1 +
->   drivers/clk/qcom/clk-smd-rpm.c                |   24 +-
->   drivers/clk/qcom/gcc-msm8998.c                |   29 +-
->   drivers/clk/qcom/mmcc-msm8998.c               | 2915 +++++++++++++++++
->   include/dt-bindings/clock/qcom,mmcc-msm8998.h |  210 ++
->   9 files changed, 3214 insertions(+), 21 deletions(-)
->   create mode 100644 drivers/clk/qcom/mmcc-msm8998.c
->   create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8998.h
-> 
+> It is a rather big and clunky mfd driver, not ready for
+> upstreaming in its current form.  I hope to get around to clean it up.
+> But it is for a very specific hardware that is really available or
+> usable for anybody else.  Does it make sense to spend effort on
+> submitting such a driver?
 
+I can not take kernel apis/features being added for no in-kernel user,
+that's just how Linux kernel development works.  I'll be glad to review
+this if we have an actual user for this code, but it also needs to be
+submitted at the same time.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+That's how we have always worked, nothing new here :)
+
+thanks,
+
+greg k-h
