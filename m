@@ -2,187 +2,365 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B8CA2564D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DCDF25648
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:02:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729051AbfEUREH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 13:04:07 -0400
-Received: from relay.sw.ru ([185.231.240.75]:40934 "EHLO relay.sw.ru"
+        id S1728862AbfEURCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 13:02:16 -0400
+Received: from mga04.intel.com ([192.55.52.120]:30576 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728175AbfEUREG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 13:04:06 -0400
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1hT8B8-0007hs-43; Tue, 21 May 2019 20:03:54 +0300
-Subject: Re: [PATCH v2 0/7] mm: process_vm_mmap() -- syscall for duplication a
- process mapping
-To:     Jann Horn <jannh@google.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Keith Busch <keith.busch@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Weiny Ira <ira.weiny@intel.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        arunks@codeaurora.org, Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Lameter <cl@linux.com>,
-        Rik van Riel <riel@surriel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Roman Gushchin <guro@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        daniel.m.jordan@oracle.com, Adam Borowski <kilobyte@angband.pl>,
-        Linux API <linux-api@vger.kernel.org>,
+        id S1728175AbfEURCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 13:02:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 10:02:15 -0700
+X-ExtLoop1: 1
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by fmsmga001.fm.intel.com with ESMTP; 21 May 2019 10:02:15 -0700
+Date:   Tue, 21 May 2019 10:05:12 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     iommu@lists.linux-foundation.org,
         LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-References: <155836064844.2441.10911127801797083064.stgit@localhost.localdomain>
- <CALCETrU221N6uPmdaj4bRDDsf+Oc5tEfPERuyV24wsYKHn+spA@mail.gmail.com>
- <9638a51c-4295-924f-1852-1783c7f3e82d@virtuozzo.com>
- <CAG48ez2BcVCwYGmAo4MwZ2crZ9f7=qKrORcN=fYz=K5xP2xfgQ@mail.gmail.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <069c90d6-924b-fa97-90d7-7d74f8785d9b@virtuozzo.com>
-Date:   Tue, 21 May 2019 20:03:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v3 03/16] iommu: Add I/O ASID allocator
+Message-ID: <20190521100512.2d6ccf5a@jacob-builder>
+In-Reply-To: <faf475ce-8645-9d05-663d-8d090cd4ac05@redhat.com>
+References: <1556922737-76313-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1556922737-76313-4-git-send-email-jacob.jun.pan@linux.intel.com>
+        <faf475ce-8645-9d05-663d-8d090cd4ac05@redhat.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez2BcVCwYGmAo4MwZ2crZ9f7=qKrORcN=fYz=K5xP2xfgQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.05.2019 19:20, Jann Horn wrote:
-> On Tue, May 21, 2019 at 5:52 PM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->> On 21.05.2019 17:43, Andy Lutomirski wrote:
->>> On Mon, May 20, 2019 at 7:01 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>>> New syscall, which allows to clone a remote process VMA
->>>> into local process VM. The remote process's page table
->>>> entries related to the VMA are cloned into local process's
->>>> page table (in any desired address, which makes this different
->>>> from that happens during fork()). Huge pages are handled
->>>> appropriately.
-> [...]
->>>> There are several problems with process_vm_writev() in this example:
->>>>
->>>> 1)it causes pagefault on remote process memory, and it forces
->>>>   allocation of a new page (if was not preallocated);
->>>
->>> I don't see how your new syscall helps.  You're writing to remote
->>> memory.  If that memory wasn't allocated, it's going to get allocated
->>> regardless of whether you use a write-like interface or an mmap-like
->>> interface.
->>
->> No, the talk is not about just another interface for copying memory.
->> The talk is about borrowing of remote task's VMA and corresponding
->> page table's content. Syscall allows to copy part of page table
->> with preallocated pages from remote to local process. See here:
->>
->> [task1]                                                        [task2]
->>
->> buf = mmap(NULL, n * PAGE_SIZE, PROT_READ|PROT_WRITE,
->>            MAP_PRIVATE|MAP_ANONYMOUS, ...);
->>
->> <task1 populates buf>
->>
->>                                                                buf = process_vm_mmap(pid_of_task1, addr, n * PAGE_SIZE, ...);
->> munmap(buf);
->>
->>
->> process_vm_mmap() copies PTEs related to memory of buf in task1 to task2
->> just like in the way we do during fork syscall.
->>
->> There is no copying of buf memory content, unless COW happens. This is
->> the principal difference to process_vm_writev(), which just allocates
->> pages in remote VM.
->>
->>> Keep in mind that, on x86, just the hardware part of a
->>> page fault is very slow -- populating the memory with a syscall
->>> instead of a fault may well be faster.
->>
->> It is not as slow, as disk IO has. Just compare, what happens in case of anonymous
->> pages related to buf of task1 are swapped:
->>
->> 1)process_vm_writev() reads them back into memory;
->>
->> 2)process_vm_mmap() just copies swap PTEs from task1 page table
->>   to task2 page table.
->>
->> Also, for faster page faults one may use huge pages for the mappings.
->> But really, it's funny to think about page faults, when there are
->> disk IO problems I shown.
-> [...]
->>> That only doubles the amount of memory if you let n
->>> scale linearly with p, which seems unlikely.
->>>
->>>>
->>>> 3)received data has no a chance to be properly swapped for
->>>>   a long time.
->>>
->>> ...
->>>
->>>> a)kernel moves @buf pages into swap right after recv();
->>>> b)process_vm_writev() reads the data back from swap to pages;
->>>
->>> If you're under that much memory pressure and thrashing that badly,
->>> your performance is going to be awful no matter what you're doing.  If
->>> you indeed observe this behavior under normal loads, then this seems
->>> like a VM issue that should be addressed in its own right.
->>
->> I don't think so. Imagine: a container migrates from one node to another.
->> The nodes are the same, say, every of them has 4GB of RAM.
->>
->> Before the migration, the container's tasks used 4GB of RAM and 8GB of swap.
->> After the page server on the second node received the pages, we want these
->> pages become swapped as soon as possible, and we don't want to read them from
->> swap to pass a read consumer.
+On Tue, 21 May 2019 11:41:52 +0200
+Auger Eric <eric.auger@redhat.com> wrote:
+
+> Hi,
 > 
-> But you don't have to copy that memory into the container's tasks all
-> at once, right? Can't you, every time you've received a few dozen
-> kilobytes of data or whatever, shove them into the target task? That
-> way you don't have problems with swap because the time before the data
-> has arrived in its final VMA is tiny.
+> On 5/4/19 12:32 AM, Jacob Pan wrote:
+> > From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> > 
+> > Some devices might support multiple DMA address spaces, in
+> > particular those that have the PCI PASID feature. PASID (Process
+> > Address Space ID) allows to share process address spaces with
+> > devices (SVA), partition a device into VM-assignable entities (VFIO
+> > mdev) or simply provide multiple DMA address space to kernel
+> > drivers. Add a global PASID allocator usable by different drivers
+> > at the same time. Name it I/O ASID to avoid confusion with ASIDs
+> > allocated by arch code, which are usually a separate ID space.
+> > 
+> > The IOASID space is global. Each device can have its own PASID
+> > space, but by convention the IOMMU ended up having a global PASID
+> > space, so that with SVA, each mm_struct is associated to a single
+> > PASID.
+> > 
+> > The allocator is primarily used by IOMMU subsystem but in rare
+> > occasions drivers would like to allocate PASIDs for devices that
+> > aren't managed by an IOMMU, using the same ID space as IOMMU.
+> > 
+> > Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Link: https://lkml.org/lkml/2019/4/26/462
+> > ---
+> >  drivers/iommu/Kconfig  |   6 +++
+> >  drivers/iommu/Makefile |   1 +
+> >  drivers/iommu/ioasid.c | 140
+> > +++++++++++++++++++++++++++++++++++++++++++++++++
+> > include/linux/ioasid.h |  67 +++++++++++++++++++++++ 4 files
+> > changed, 214 insertions(+) create mode 100644 drivers/iommu/ioasid.c
+> >  create mode 100644 include/linux/ioasid.h
+> > 
+> > diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> > index 6f07f3b..75e7f97 100644
+> > --- a/drivers/iommu/Kconfig
+> > +++ b/drivers/iommu/Kconfig
+> > @@ -2,6 +2,12 @@
+> >  config IOMMU_IOVA
+> >  	tristate
+> >  
+> > +config IOASID
+> > +	bool
+> > +	help
+> > +	  Enable the I/O Address Space ID allocator. A single ID
+> > space shared
+> > +	  between different users.
+> > +
+> >  # IOMMU_API always gets selected by whoever wants it.
+> >  config IOMMU_API
+> >  	bool
+> > diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+> > index 8c71a15..0efac6f 100644
+> > --- a/drivers/iommu/Makefile
+> > +++ b/drivers/iommu/Makefile
+> > @@ -7,6 +7,7 @@ obj-$(CONFIG_IOMMU_DMA) += dma-iommu.o
+> >  obj-$(CONFIG_IOMMU_IO_PGTABLE) += io-pgtable.o
+> >  obj-$(CONFIG_IOMMU_IO_PGTABLE_ARMV7S) += io-pgtable-arm-v7s.o
+> >  obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE) += io-pgtable-arm.o
+> > +obj-$(CONFIG_IOASID) += ioasid.o
+> >  obj-$(CONFIG_IOMMU_IOVA) += iova.o
+> >  obj-$(CONFIG_OF_IOMMU)	+= of_iommu.o
+> >  obj-$(CONFIG_MSM_IOMMU) += msm_iommu.o
+> > diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
+> > new file mode 100644
+> > index 0000000..99f5e0a
+> > --- /dev/null
+> > +++ b/drivers/iommu/ioasid.c
+> > @@ -0,0 +1,140 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * I/O Address Space ID allocator. There is one global IOASID
+> > space, split into
+> > + * subsets. Users create a subset with DECLARE_IOASID_SET, then
+> > allocate and
+> > + * free IOASIDs with ioasid_alloc and ioasid_free.
+> > + */
+> > +#include <linux/xarray.h>
+> > +#include <linux/ioasid.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/spinlock.h>
+> > +
+> > +struct ioasid_data {
+> > +	ioasid_t id;
+> > +	struct ioasid_set *set;
+> > +	void *private;
+> > +	struct rcu_head rcu;
+> > +};
+> > +
+> > +static DEFINE_XARRAY_ALLOC(ioasid_xa);
+> > +
+> > +/**
+> > + * ioasid_set_data - Set private data for an allocated ioasid
+> > + * @ioasid: the ID to set data
+> > + * @data:   the private data
+> > + *
+> > + * For IOASID that is already allocated, private data can be set
+> > + * via this API. Future lookup can be done via ioasid_find.
+> > + */
+> > +int ioasid_set_data(ioasid_t ioasid, void *data)
+> > +{
+> > +	struct ioasid_data *ioasid_data;
+> > +	int ret = 0;
+> > +
+> > +	ioasid_data = xa_load(&ioasid_xa, ioasid);
+> > +	if (ioasid_data)
+> > +		ioasid_data->private = data;
+> > +	else
+> > +		ret = -ENOENT;
+> > +
+> > +	/* getter may use the private data */
+> > +	synchronize_rcu();
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(ioasid_set_data);
+> > +
+> > +/**
+> > + * ioasid_alloc - Allocate an IOASID
+> > + * @set: the IOASID set
+> > + * @min: the minimum ID (inclusive)
+> > + * @max: the maximum ID (inclusive)
+> > + * @private: data private to the caller
+> > + *
+> > + * Allocate an ID between @min and @max (or %0 and %INT_MAX).
+> > Return the
+> > + * allocated ID on success, or INVALID_IOASID on failure. The
+> > @private pointer
+> > + * is stored internally and can be retrieved with ioasid_find().
+> > + */
+> > +ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min,
+> > ioasid_t max,
+> > +		      void *private)
+> > +{
+> > +	int id = INVALID_IOASID;
+> > +	struct ioasid_data *data;
+> > +
+> > +	data = kzalloc(sizeof(*data), GFP_KERNEL);
+> > +	if (!data)
+> > +		return INVALID_IOASID;
+> > +
+> > +	data->set = set;
+> > +	data->private = private;
+> > +
+> > +	if (xa_alloc(&ioasid_xa, &id, data, XA_LIMIT(min, max),
+> > GFP_KERNEL)) {
+> > +		pr_err("Failed to alloc ioasid from %d to %d\n",
+> > min, max);
+> > +		goto exit_free;
+> > +	}
+> > +	data->id = id;
+> > +
+> > +exit_free:
+> > +	if (id < 0 || id == INVALID_IOASID) {
+> > +		kfree(data);
+> > +		return INVALID_IOASID;
+> > +	}
+> > +	return id;
+> > +}
+> > +EXPORT_SYMBOL_GPL(ioasid_alloc);
+> > +
+> > +/**
+> > + * ioasid_free - Free an IOASID
+> > + * @ioasid: the ID to remove
+> > + */
+> > +void ioasid_free(ioasid_t ioasid)
+> > +{
+> > +	struct ioasid_data *ioasid_data;
+> > +
+> > +	ioasid_data = xa_erase(&ioasid_xa, ioasid);
+> > +
+> > +	kfree_rcu(ioasid_data, rcu);
+> > +}
+> > +EXPORT_SYMBOL_GPL(ioasid_free);
+> > +
+> > +/**
+> > + * ioasid_find - Find IOASID data
+> > + * @set: the IOASID set
+> > + * @ioasid: the IOASID to find
+> > + * @getter: function to call on the found object
+> > + *
+> > + * The optional getter function allows to take a reference to the
+> > found object
+> > + * under the rcu lock. The function can also check if the object
+> > is still valid:
+> > + * if @getter returns false, then the object is invalid and NULL
+> > is returned.
+> > + *
+> > + * If the IOASID has been allocated for this set, return the
+> > private pointer
+> > + * passed to ioasid_alloc. Private data can be NULL if not set.
+> > Return an error
+> > + * if the IOASID is not found or not belong to the set.
+> > + */
+> > +void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
+> > +		  bool (*getter)(void *))
+> > +{
+> > +	void *priv = NULL;
+> > +	struct ioasid_data *ioasid_data;
+> > +
+> > +	rcu_read_lock();
+> > +	ioasid_data = xa_load(&ioasid_xa, ioasid);
+> > +	if (!ioasid_data) {
+> > +		priv = ERR_PTR(-ENOENT);
+> > +		goto unlock;
+> > +	}
+> > +	if (set && ioasid_data->set != set) {
+> > +		/* data found but does not belong to the set */
+> > +		priv = ERR_PTR(-EACCES);
+> > +		goto unlock;
+> > +	}
+> > +	/* Now IOASID and its set is verified, we can return the
+> > private data */
+> > +	priv = ioasid_data->private;
+> > +	if (getter && !getter(priv))
+> > +		priv = NULL;
+> > +unlock:
+> > +	rcu_read_unlock();
+> > +
+> > +	return priv;
+> > +}
+> > +EXPORT_SYMBOL_GPL(ioasid_find);
+> > diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
+> > new file mode 100644
+> > index 0000000..41de5e4
+> > --- /dev/null
+> > +++ b/include/linux/ioasid.h
+> > @@ -0,0 +1,67 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef __LINUX_IOASID_H
+> > +#define __LINUX_IOASID_H
+> > +
+> > +#define INVALID_IOASID ((ioasid_t)-1)
+> > +typedef unsigned int ioasid_t;
+> > +typedef int (*ioasid_iter_t)(ioasid_t ioasid, void *private, void
+> > *data);  
+> not used as reported during v2 review:
+> https://lkml.org/lkml/2019/4/25/341
+> 
+I missed it, thanks.
+> Thanks
+> 
+> Eric
+> > +typedef ioasid_t (*ioasid_alloc_fn_t)(ioasid_t min, ioasid_t max,
+> > void *data); +typedef void (*ioasid_free_fn_t)(ioasid_t ioasid,
+> > void *data); +
+> > +struct ioasid_set {
+> > +	int dummy;
+> > +};
+> > +
+> > +struct ioasid_allocator {
+> > +	ioasid_alloc_fn_t alloc;
+> > +	ioasid_free_fn_t free;
+> > +	void *pdata;
+> > +	struct list_head list;
+> > +};
+> > +
+> > +#define DECLARE_IOASID_SET(name) struct ioasid_set name = { 0 }
+> > +
+> > +#ifdef CONFIG_IOASID
+> > +ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min,
+> > ioasid_t max,
+> > +		      void *private);
+> > +void ioasid_free(ioasid_t ioasid);
+> > +
+> > +void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
+> > +		  bool (*getter)(void *));
+> > +int ioasid_register_allocator(struct ioasid_allocator *allocator);
+> > +void ioasid_unregister_allocator(struct ioasid_allocator
+> > *allocator); +
+> > +int ioasid_set_data(ioasid_t ioasid, void *data);
+> > +
+> > +#else /* !CONFIG_IOASID */
+> > +static inline ioasid_t ioasid_alloc(struct ioasid_set *set,
+> > ioasid_t min,
+> > +				    ioasid_t max, void *private)
+> > +{
+> > +	return INVALID_IOASID;
+> > +}
+> > +
+> > +static inline void ioasid_free(ioasid_t ioasid)
+> > +{
+> > +}
+> > +
+> > +static inline void *ioasid_find(struct ioasid_set *set, ioasid_t
+> > ioasid,
+> > +				bool (*getter)(void *))
+> > +{
+> > +	return NULL;
+> > +}
+> > +static inline int ioasid_register_allocator(struct
+> > ioasid_allocator *allocator) +{
+> > +	return -ENODEV;
+> > +}
+> > +
+> > +static inline void ioasid_unregister_allocator(struct
+> > ioasid_allocator *allocator) +{
+> > +}
+> > +
+> > +static inline int ioasid_set_data(ioasid_t ioasid, void *data)
+> > +{
+> > +	return -ENODEV;
+> > +}
+> > +
+> > +#endif /* CONFIG_IOASID */
+> > +#endif /* __LINUX_IOASID_H */
+> >   
 
-We try to maintain online migration with as small downtime as possible,
-and the container on source node is completely stopped at the very end.
-Memory of container tasks is copied in background without container
-completely stop, and _PAGE_SOFT_DIRTY is used to track dirty pages.
-
-Container may create any new processes during the migration, and these
-processes may contain any memory mappings.
-
-Imagine the situation. We migrate a big web server with a lot of processes,
-and some of children processes have the same COW mapping as parent has.
-In case of all memory dump is available at the moment of the grand parent
-web server process creation, we populate the mapping in parent, and all
-the children may inherit the mapping in case of they want after fork.
-COW works here. But in case of some processes are created before all memory
-is available on destination node, we can't do such the COW inheritance.
-This will be the reason, the memory consumed by container grows many
-times after the migration. So, the only solution is to create process
-tree after memory is available and all mappings are known.
-
-It's on of the examples. But believe me, there are a lot of another reasons,
-why process tree should be created only after all process tree is freezed,
-and no new tasks on source are possible. PGID and SSID inheritance, for
-example. All of this requires special order of tasks creation. In case of
-you try to restore process tree with correct namespaces and especial in
-case of many user namespaces in a container, you will just see like a hell
-will open before your eyes, and we never can think about this.
-
-So, no, we can't create any task before the whole process tree is knows.
-Believe me, the reason is heavy and serious.
-
-Kirill
-
+[Jacob Pan]
