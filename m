@@ -2,129 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B04D824630
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 05:05:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0F024623
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 04:55:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbfEUDFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 23:05:30 -0400
-Received: from pb-smtp21.pobox.com ([173.228.157.53]:58692 "EHLO
-        pb-smtp21.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727059AbfEUDFa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 23:05:30 -0400
-X-Greylist: delayed 582 seconds by postgrey-1.27 at vger.kernel.org; Mon, 20 May 2019 23:05:27 EDT
-Received: from pb-smtp21.pobox.com (unknown [127.0.0.1])
-        by pb-smtp21.pobox.com (Postfix) with ESMTP id 395A973621;
-        Mon, 20 May 2019 22:55:45 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
-        :cc:subject:in-reply-to:message-id:references:mime-version
-        :content-type; s=sasl; bh=5IkeaPHh8sPETFmUsbaciy9gu1U=; b=BN09u2
-        8FXJ0eYwUSeuRd8WTABQyJAkn6bPn+2kHZ48zhnfwPne5GrP+VEI9CTQIeQYj4a2
-        cZzSQwGjCCW4Nw/ufU1zQ3R/yxpJRCvwc4QfK1OIcTdgsTj7gYXb7tveeFVcaysi
-        vmxY6v9tFb6G7gEtPVlEj5z81RJNm2V9KSRT0=
-Received: from pb-smtp21.sea.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp21.pobox.com (Postfix) with ESMTP id 31A9A73620;
-        Mon, 20 May 2019 22:55:45 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=wjDQmrdsvtMdPiENTi3BGsvVWTilWEcuxFbWktouuw4=; b=e8JKVkqKVSJ86IfuEs+AeAwavRXtDCtN4ud4wr6uVByl6DbLKaILR9M7lskU2A+iDwMylVUp/q+VoOGr1LEA/qMJS2kMV7YL22nk5HcOXA/eA3U7RLA/EoTrOh5T8+QeYRzkviCYXlpMfcbZwISwMMgub4i3H9WdvC2Pw5gWJ0A=
-Received: from yoda.home (unknown [70.82.130.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp21.pobox.com (Postfix) with ESMTPSA id 27FBB7361F;
-        Mon, 20 May 2019 22:55:42 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTPSA id 38EE62DA01F4;
-        Mon, 20 May 2019 22:55:40 -0400 (EDT)
-Date:   Mon, 20 May 2019 22:55:40 -0400 (EDT)
-From:   Nicolas Pitre <nico@fluxnic.net>
-To:     Gen Zhang <blackgod016574@gmail.com>
-cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] vt: Fix a missing-check bug in drivers/tty/vt/vt.c
-In-Reply-To: <20190521022940.GA4858@zhanggen-UX430UQ>
-Message-ID: <nycvar.YSQ.7.76.1905202242410.1558@knanqh.ubzr>
-References: <20190521022940.GA4858@zhanggen-UX430UQ>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        id S1727732AbfEUCzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 22:55:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56246 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726039AbfEUCzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 20 May 2019 22:55:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 448EB341;
+        Mon, 20 May 2019 19:55:46 -0700 (PDT)
+Received: from [10.162.42.136] (p8cg001049571a15.blr.arm.com [10.162.42.136])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8091A3F718;
+        Mon, 20 May 2019 19:55:42 -0700 (PDT)
+Subject: Re: [RFC 0/7] introduce memory hinting API for external process
+To:     Tim Murray <timmurray@google.com>
+Cc:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>
+References: <20190520035254.57579-1-minchan@kernel.org>
+ <dbe801f0-4bbe-5f6e-9053-4b7deb38e235@arm.com>
+ <CAEe=Sxka3Q3vX+7aWUJGKicM+a9Px0rrusyL+5bB1w4ywF6N4Q@mail.gmail.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <1754d0ef-6756-d88b-f728-17b1fe5d5b07@arm.com>
+Date:   Tue, 21 May 2019 08:25:55 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID: EBF69648-7B73-11E9-933C-8D86F504CC47-78420484!pb-smtp21.pobox.com
+In-Reply-To: <CAEe=Sxka3Q3vX+7aWUJGKicM+a9Px0rrusyL+5bB1w4ywF6N4Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 May 2019, Gen Zhang wrote:
 
-> In function con_init(), the pointer variable vc_cons[currcons].d, vc and
-> vc->vc_screenbuf is allocated a memory space via kzalloc(). And they are
-> used in the following codes.
-> However, when there is a memory allocation error, kzalloc() can fail.
-> Thus null pointer (vc_cons[currcons].d, vc and vc->vc_screenbuf)
-> dereference may happen. And it will cause the kernel to crash. Therefore,
-> we should check return value and handle the error.
-> Further,the loop condition MIN_NR_CONSOLES is defined as 1 in
-> include/uapi/linux/vt.h. So there is no need to unwind the loop.
 
-But what if someone changes that define? It won't be obvious that some 
-code did rely on it to be defined to 1.
-
-> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+On 05/20/2019 10:29 PM, Tim Murray wrote:
+> On Sun, May 19, 2019 at 11:37 PM Anshuman Khandual
+> <anshuman.khandual@arm.com> wrote:
+>>
+>> Or Is the objective here is reduce the number of processes which get killed by
+>> lmkd by triggering swapping for the unused memory (user hinted) sooner so that
+>> they dont get picked by lmkd. Under utilization for zram hardware is a concern
+>> here as well ?
 > 
-> ---
-> diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-> index fdd12f8..b756609 100644
-> --- a/drivers/tty/vt/vt.c
-> +++ b/drivers/tty/vt/vt.c
-> @@ -3350,10 +3350,14 @@ static int __init con_init(void)
->  
->  	for (currcons = 0; currcons < MIN_NR_CONSOLES; currcons++) {
->  		vc_cons[currcons].d = vc = kzalloc(sizeof(struct vc_data), GFP_NOWAIT);
-> +		if (!vc_cons[currcons].d || !vc)
+> The objective is to avoid some instances of memory pressure by
+> proactively swapping pages that userspace knows to be cold before
+> those pages reach the end of the LRUs, which in turn can prevent some
+> apps from being killed by lmk/lmkd. As soon as Android userspace knows
+> that an application is not being used and is only resident to improve
+> performance if the user returns to that app, we can kick off
+> process_madvise on that process's pages (or some portion of those
+> pages) in a power-efficient way to reduce memory pressure long before
+> the system hits the free page watermark. This allows the system more
+> time to put pages into zram versus waiting for the watermark to
+> trigger kswapd, which decreases the likelihood that later memory
+> allocations will cause enough pressure to trigger a kill of one of
+> these apps.
 
-Both vc_cons[currcons].d and vc are assigned the same value on the 
-previous line. You don't have to test them both.
+So this opens up bit of LRU management to user space hints. Also because the app
+in itself wont know about the memory situation of the entire system, new system
+call needs to be called from an external process.
 
-> +			goto err_vc;
->  		INIT_WORK(&vc_cons[currcons].SAK_work, vc_SAK);
->  		tty_port_init(&vc->port);
->  		visual_init(vc, currcons, 1);
->  		vc->vc_screenbuf = kzalloc(vc->vc_screenbuf_size, GFP_NOWAIT);
-> +		if (!vc->vc_screenbuf)
-> +			goto err_vc_screenbuf;
->  		vc_init(vc, vc->vc_rows, vc->vc_cols,
->  			currcons || !vc->vc_sw->con_save_screen);
->  	}
-> @@ -3375,6 +3379,14 @@ static int __init con_init(void)
->  	register_console(&vt_console_driver);
->  #endif
->  	return 0;
-> +err_vc:
-> +	console_unlock();
-> +	return -ENOMEM;
-> +err_vc_screenbuf:
-> +	console_unlock();
-> +	kfree(vc);
-> +	vc_cons[currcons].d = NULL;
-> +	return -ENOMEM;
-
-As soon as you release the lock, another thread could come along and 
-start using the memory pointed by vc_cons[currcons].d you're about to 
-free here. This is unlikely for an initcall, but still.
-
-You should consider this ordering instead:
-
-err_vc_screenbuf:
-	kfree(vc);
-	vc_cons[currcons].d = NULL;
-err_vc:
-	console_unlock();
-	return -ENOMEM;
-
-
->  }
->  console_initcall(con_init);
->  
->  ---
 > 
+>> Swapping out memory into zram wont increase the latency for a hot start ? Or
+>> is it because as it will prevent a fresh cold start which anyway will be slower
+>> than a slow hot start. Just being curious.
+> 
+> First, not all swapped pages will be reloaded immediately once an app
+> is resumed. We've found that an app's working set post-process_madvise
+> is significantly smaller than what an app allocates when it first
+> launches (see the delta between pswpin and pswpout in Minchan's
+> results). Presumably because of this, faulting to fetch from zram does
+
+pswpin      417613    1392647     975034     233.00
+pswpout    1274224    2661731    1387507     108.00
+
+IIUC the swap-in ratio is way higher in comparison to that of swap out. Is that
+always the case ? Or it tend to swap out from an active area of the working set
+which faulted back again.
+
+> not seem to introduce a noticeable hot start penalty, not does it
+> cause an increase in performance problems later in the app's
+> lifecycle. I've measured with and without process_madvise, and the
+> differences are within our noise bounds. Second, because we're not
+
+That is assuming that post process_madvise() working set for the application is
+always smaller. There is another challenge. The external process should ideally
+have the knowledge of active areas of the working set for an application in
+question for it to invoke process_madvise() correctly to prevent such scenarios.
+
+> preemptively evicting file pages and only making them more likely to
+> be evicted when there's already memory pressure, we avoid the case
+> where we process_madvise an app then immediately return to the app and
+> reload all file pages in the working set even though there was no
+> intervening memory pressure. Our initial version of this work evicted
+
+That would be the worst case scenario which should be avoided. Memory pressure
+must be a parameter before actually doing the swap out. But pages if know to be
+inactive/cold can be marked high priority to be swapped out.
+
+> file pages preemptively and did cause a noticeable slowdown (~15%) for
+> that case; this patch set avoids that slowdown. Finally, the benefit
+> from avoiding cold starts is huge. The performance improvement from
+> having a hot start instead of a cold start ranges from 3x for very
+> small apps to 50x+ for larger apps like high-fidelity games.
+
+Is there any other real world scenario apart from this app based ecosystem where
+user hinted LRU management might be helpful ? Just being curious. Thanks for the
+detailed explanation. I will continue looking into this series.
