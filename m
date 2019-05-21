@@ -2,131 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD7BF25463
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:47:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64FFE2547B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:51:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbfEUPrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:47:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42456 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728212AbfEUPrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:47:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B497EAE1F;
-        Tue, 21 May 2019 15:47:05 +0000 (UTC)
-Message-ID: <a142b72b828a798610d885d81189dd21b1870d78.camel@suse.de>
-Subject: Re: [RFC v2 3/5] clk: bcm2835: use firmware interface to update pllb
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Cc:     linux-pm@vger.kernel.org, sboyd@kernel.org,
-        viresh.kumar@linaro.org, mturquette@baylibre.com,
-        ptesarik@suse.com, rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        mbrugger@suse.de, linux-rpi-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        ssuloev@orpaltech.com
-Date:   Tue, 21 May 2019 17:47:03 +0200
-In-Reply-To: <6383b357-3f7e-f031-f59f-61c598e44763@i2se.com>
-References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
-         <20190520104708.11980-4-nsaenzjulienne@suse.de>
-         <ebc78880-418f-f507-021c-41295113e041@i2se.com>
-         <6383b357-3f7e-f031-f59f-61c598e44763@i2se.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-zPUlS9r+c6dQNQzC21+7"
-User-Agent: Evolution 3.32.2 
+        id S1728337AbfEUPvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:51:41 -0400
+Received: from mga02.intel.com ([134.134.136.20]:55893 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727941AbfEUPvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 11:51:41 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 08:51:40 -0700
+X-ExtLoop1: 1
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
+  by orsmga005.jf.intel.com with ESMTP; 21 May 2019 08:51:40 -0700
+Date:   Tue, 21 May 2019 08:51:40 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+Message-ID: <20190521155140.GE22089@linux.intel.com>
+References: <20190514104323.GA7591@linux.intel.com>
+ <CALCETrVbgTCnPo=PAq0-KoaRwt--urrPzn==quAJ8wodCpkBkw@mail.gmail.com>
+ <20190514204527.GC1977@linux.intel.com>
+ <CALCETrX6aL367mMJh5+Y1Seznfu-AvhPV6P7GkWF4Dhu0GV8cw@mail.gmail.com>
+ <20190515013031.GF1977@linux.intel.com>
+ <CALCETrXf8mSK45h7sTK5Wf+pXLVn=Bjsc_RLpgO-h-qdzBRo5Q@mail.gmail.com>
+ <20190517000331.GD11204@linux.intel.com>
+ <CALCETrWxw7xALE0kmiYBzomaSMAeXEVq-7rX7xeqPtDPeDQiCA@mail.gmail.com>
+ <20190520114105.GD27805@linux.intel.com>
+ <20190521151836.GA4843@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521151836.GA4843@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 21, 2019 at 06:19:37PM +0300, Jarkko Sakkinen wrote:
+> On Mon, May 20, 2019 at 02:41:05PM +0300, Jarkko Sakkinen wrote:
+> > On Thu, May 16, 2019 at 05:26:15PM -0700, Andy Lutomirski wrote:
+> > > Is userspace actually requred to mmap() the enclave prior to EADDing things?
+> > 
+> > Nope, not since v20. Here is what I wrote about API to the kernel
+> > documentation:
+> > 
+> > "The enclave life-cycle starts by opening `/dev/sgx/enclave`. After this
+> > there is already a data structure inside kernel tracking the enclave
+> > that is initially uncreated. After this a set of ioctl's can be used to
+> > create, populate and initialize the enclave.
+> > 
+> > You can close (if you want) the fd after you've mmap()'d. As long as the
+> > file is open the enclave stays alive so you might want to do that after
+> > you don't need it anymore. Even munmap() won't destruct the enclave if
+> > the file is open.  Neither will closing the fd as long as you have
+> > mmap() done over the fd (even if it does not across the range defined in
+> > SECS)."
+> > 
+> > Enclave can be created and initialized without doing a single mmap()
+> > call.
+> 
+> We could even disallow mmap() before EINIT done. The way enclave
+> management internally works right now is quite robust and completely
+> detached from requiring process address space for anything.
 
---=-zPUlS9r+c6dQNQzC21+7
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Except that mmap() is more or less required to guarantee that ELRANGE
+established by ECREATE is available.  And we want to disallow mmap() as
+soon as the first EADD is done so that userspace can't remap the enclave's
+VMAs via munmap()->mmap() and gain execute permissions to pages that were
+EADD'd as NX.
 
-Hi Stefan, thanks for your comments!
-
-On Tue, 2019-05-21 at 14:40 +0200, Stefan Wahren wrote:
-> Hi Nicolas,
->=20
-> On 20.05.19 14:11, Stefan Wahren wrote:
-> > Hi Nicolas,
-> >=20
-> > the following comments applies only in case Eric is fine with the whole
-> > approach.
-> >=20
-> > On 20.05.19 12:47, Nicolas Saenz Julienne wrote:
-> > > Raspberry Pi's firmware, which runs in a dedicated processor, keeps
-> > maybe we should clarify that the firmware is running in the VPU
-> > > track of the board's temperature and voltage. It's resposible for
-> > > scaling the CPU frequency whenever it deems the device reached an uns=
-afe
-> > > state. On top of that the firmware provides an interface which allows
-> > > Linux to to query the clock's state or change it's frequency.
-> > I think this requires a separate update of the devicetree binding.
-> > > Being the sole user of the bcm2835 clock driver, this integrates the
-> > > firmware interface into the clock driver and adds a first user: the C=
-PU
-> > > pll, also known as 'pllb'.
-> > Please verify that the kernel still works (and this clock driver probe)
-> > under the following conditions:
-> >=20
-> > - CONFIG_RASPBERRYPI_FIRMWARE=3Dn
-> > - CONFIG_RASPBERRYPI_FIRMWARE=3Dm
-> > - older DTBs without patch #1
-> i thought about this and the case this driver would return
-> -EPROBE_DEFER. The clock driver is too essential for doing such a thing.
-> So i think the best solution would be to move these changes into a
-> separate driver which should be register by the clock driver (similiar
-> to vchiq). This also avoid the need of a new device tree binding.
-
-I understand your concerns.
-
-Wouldn't you prefer registering the device trough the device tree? I'd go w=
-ith
-the same approach as the firmware touchscreen driver, which is registered a=
-fter
-the firmware's probe trough dt's 'simple-bus'. That said, it's not a strong=
-ly
-held opinion, I'm happy with whatever solution as long as it works.
-
-I get from your comments that you'd like the register based version of 'pll=
-b'
-and 'pllb_arm' to be loaded if for some reason the firmware isn't available=
-. Is
-that right? The main problem I see with this is the duplication of 'pllb' a=
-nd
-'pllb_arm'. Both drivers will create the same clock device through differen=
-t
-interfaces. Any suggestions on how to deal with that? If not I can simply
-remove 'pllb' and 'pllb_arm' from clk-bcm2835.c.
-
-Regards,
-Nicolas
-
-
---=-zPUlS9r+c6dQNQzC21+7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlzkHXcACgkQlfZmHno8
-x/58Pwf+J/igXfZ06sc7Gr74B5NqVdWqbVe+23xD1sjLpwUKTfWtUJAnbRuk8LOt
-+XgjgwGqFMQHMRLpibxSSqUZrXT+TNh1SiicBzJ9KWNbz42xRcvek4A8sgBDTeUs
-l6EVVtCNw+g8nPnT95arGKZ3xEIVAGdsg8tASLoyqbcNOJNb8r2QoXmsdK5oGQ/C
-TsgPRiwPvc9TvvqDSkojXxMgEfxfh8pNcYTQ8KFs/HKFOrM+C7hny7s3q02r/xhA
-Clhqd5Ur2BlhxvgOflW5i9eMeugVL1+g7pZUplzddVC1JA4U3KMD+RVZxXKhzg2S
-srJIknJIKqm1VdajX7OLqqjUae1Dkw==
-=kanr
------END PGP SIGNATURE-----
-
---=-zPUlS9r+c6dQNQzC21+7--
-
+Actually, conceptually it's probably more intuitive to disallow mmap() at
+ECREATE, i.e. the act of creating an enclave pins the associated virtual
+address range until the enclave is destroyed.
