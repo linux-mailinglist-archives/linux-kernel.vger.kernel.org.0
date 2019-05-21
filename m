@@ -2,147 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 374F2248D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 09:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6634A24890
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:58:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfEUHTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 03:19:47 -0400
-Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:57311 "EHLO
-        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725809AbfEUHTq (ORCPT
+        id S1727302AbfEUG6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 02:58:38 -0400
+Received: from twhmllg4.macronix.com ([122.147.135.202]:45413 "EHLO
+        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbfEUG6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 03:19:46 -0400
-Received: from c-73-193-85-113.hsd1.wa.comcast.net ([73.193.85.113] helo=srivatsab-a01.vmware.com)
-        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
-        (Exim 4.82)
-        (envelope-from <srivatsa@csail.mit.edu>)
-        id 1hSz3h-000Bpw-PS; Tue, 21 May 2019 03:19:37 -0400
-Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
- controller
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        jmoyer@redhat.com, Theodore Ts'o <tytso@mit.edu>,
-        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
-References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
- <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
- <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
- <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
- <238e14ff-68d1-3b21-a291-28de4f2d77af@csail.mit.edu>
- <6EB6C9D2-E774-48FA-AC95-BC98D97645D0@linaro.org>
-From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-Message-ID: <f2141868-e882-c60d-8bb0-88d2dba53a74@csail.mit.edu>
-Date:   Tue, 21 May 2019 00:19:29 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <6EB6C9D2-E774-48FA-AC95-BC98D97645D0@linaro.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 21 May 2019 02:58:38 -0400
+Received: from localhost.localdomain ([172.17.195.96])
+        by TWHMLLG4.macronix.com with ESMTP id x4L6vvQc093632;
+        Tue, 21 May 2019 14:57:57 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+From:   Mason Yang <masonccyang@mxic.com.tw>
+To:     broonie@kernel.org, marek.vasut@gmail.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        lee.jones@linaro.org, sergei.shtylyov@cogentembedded.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        Mason Yang <masonccyang@mxic.com.tw>, miquel.raynal@bootlin.com
+Subject: [PATCH v13 0/3] mfd: Add Renesas R-Car Gen3 RPC-IF MFD & SPI driver
+Date:   Tue, 21 May 2019 15:19:31 +0800
+Message-Id: <1558423174-10748-1-git-send-email-masonccyang@mxic.com.tw>
+X-Mailer: git-send-email 1.9.1
+X-MAIL: TWHMLLG4.macronix.com x4L6vvQc093632
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/20/19 11:23 PM, Paolo Valente wrote:
-> 
-> 
->> Il giorno 21 mag 2019, alle ore 00:45, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
->>
->> On 5/20/19 3:19 AM, Paolo Valente wrote:
->>>
->>>
->>>> Il giorno 18 mag 2019, alle ore 22:50, Srivatsa S. Bhat <srivatsa@csail.mit.edu> ha scritto:
->>>>
->>>> On 5/18/19 11:39 AM, Paolo Valente wrote:
->>>>> I've addressed these issues in my last batch of improvements for BFQ,
->>>>> which landed in the upcoming 5.2. If you give it a try, and still see
->>>>> the problem, then I'll be glad to reproduce it, and hopefully fix it
->>>>> for you.
->>>>>
->>>>
->>>> Hi Paolo,
->>>>
->>>> Thank you for looking into this!
->>>>
->>>> I just tried current mainline at commit 72cf0b07, but unfortunately
->>>> didn't see any improvement:
->>>>
->>>> dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflag=dsync
->>>>
->>>> With mq-deadline, I get:
->>>>
->>>> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 3.90981 s, 1.3 MB/s
->>>>
->>>> With bfq, I get:
->>>> 5120000 bytes (5.1 MB, 4.9 MiB) copied, 84.8216 s, 60.4 kB/s
->>>>
->>>
->>> Hi Srivatsa,
->>> thanks for reproducing this on mainline.  I seem to have reproduced a
->>> bonsai-tree version of this issue.  Before digging into the block
->>> trace, I'd like to ask you for some feedback.
->>>
->>> First, in my test, the total throughput of the disk happens to be
->>> about 20 times as high as that enjoyed by dd, regardless of the I/O
->>> scheduler.  I guess this massive overhead is normal with dsync, but
->>> I'd like know whether it is about the same on your side.  This will
->>> help me understand whether I'll actually be analyzing about the same
->>> problem as yours.
->>>
->>
->> Do you mean to say the throughput obtained by dd'ing directly to the
->> block device (bypassing the filesystem)?
-> 
-> No no, I mean simply what follows.
-> 
-> 1) in one terminal:
-> [root@localhost tmp]# dd if=/dev/zero of=/root/test.img bs=512 count=10000 oflag=dsync
-> 10000+0 record dentro
-> 10000+0 record fuori
-> 5120000 bytes (5,1 MB, 4,9 MiB) copied, 14,6892 s, 349 kB/s
-> 
-> 2) In a second terminal, while the dd is in progress in the first
-> terminal:
-> $ iostat -tmd /dev/sda 3
-> Linux 5.1.0+ (localhost.localdomain) 	20/05/2019 	_x86_64_	(2 CPU)
-> 
-> ...
-> 20/05/2019 11:40:17
-> Device             tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
-> sda            2288,00         0,00         9,77          0         29
-> 
-> 20/05/2019 11:40:20
-> Device             tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
-> sda            2325,33         0,00         9,93          0         29
-> 
-> 20/05/2019 11:40:23
-> Device             tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
-> sda            2351,33         0,00        10,05          0         30
-> ...
-> 
-> As you can see, the overall throughput (~10 MB/s) is more than 20
-> times as high as the dd throughput (~350 KB/s).  But the dd is the
-> only source of I/O.
-> 
-> Do you also see such a huge difference?
-> 
-Ah, I see what you mean. Yes, I get a huge difference as well:
+Hi,
 
-I/O scheduler    dd throughput    Total throughput (via iostat)
--------------    -------------    -----------------------------
+v13 patch including:
+1) rename mfd to ddata for SPI driver.
+2) Patch RPC-IF devicetree for SPI and HyperFlash.
 
-mq-deadline
-    or              1.6 MB/s               50 MB/s (30x)
-  kyber
+v12 patch including:
+1) add back "wbuf" in dts example.
+2) RPC-IF replace rpc-if in dts.
 
-   bfq               60 KB/s                1 MB/s (16x)
+v11 patch including:
+1) Patch mfd include header file.
+2) mfd coding style.
+3) add back wbuf description in dts.
 
+v10 patch including:
+1) Address range for > 64M byte flash.
+2) Removed dirmap_write due to WBUF 256 bytes transfer issue.
+3) Dummy bytes setting according to spi-nor.c layer.
 
-Regards,
-Srivatsa
-VMware Photon OS
+v9 patch is for RPC MFD driver and RPC SPI driver.
+
+v8 patch including:
+1) Supported SoC-specific values in DTS.
+2) Rename device node name as flash.
+
+v7 patch is according to Geert and Sergei's comments:
+1) Add all R-Car Gen3 model in dts.
+2) patch rpc-if child node search.
+3) minror coding style.
+
+v6 patch is accroding to Geert, Marek and Sergei's comments:
+1) spi_controller for new code.
+2) "renesas,rcar-gen3-rpc" instead of "renesas,r8a77995-rpc."
+3) patch external address read mode w/o u64 readq().
+4) patch dts for write buffer & drop "renesas,rpc-mode".
+5) coding style and so on.
+
+v5 patch is accroding to Sergei's comments:
+1) Read 6 bytes ID from Sergei's patch.
+2) regmap_update_bits().
+3) C++ style comment.
+
+v4 patch is according to Sergei's comments including:
+1) Drop soc_device_match().
+2) Drop unused RPC registers.
+3) Use ilog2() instead of fls().
+4) Patch read 6 bytes ID w/ one command.
+5) Coding style and so on.
+
+v3 patch is according to Marek and Geert's comments including:
+1) soc_device_mach() to set up RPC_PHYCNT_STRTIM.
+2) get_unaligned().
+3) rpc-mode for rpi-spi-flash or rpc-hyperflash.
+4) coding style and so on.
+
+v2 patch including:
+1) remove RPC clock enable/dis-able control,
+2) patch run time PM.
+3) add RPC module software reset,
+4) add regmap.
+5) other coding style and so on.
+
+thanks for your review.
+
+best regards,
+Mason
+
+Mason Yang (3):
+  mfd: Add Renesas R-Car Gen3 RPC-IF MFD driver
+  spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
+  dt-bindings: mfd: Document Renesas R-Car Gen3 RPC-IF controller
+    bindings
+
+ .../devicetree/bindings/mfd/renesas-rpc-if.txt     |  65 +++
+ drivers/mfd/Kconfig                                |   9 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/renesas-rpc.c                          | 125 +++++
+ drivers/spi/Kconfig                                |   6 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-renesas-rpc.c                      | 573 +++++++++++++++++++++
+ include/linux/mfd/renesas-rpc.h                    | 141 +++++
+ 8 files changed, 921 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/renesas-rpc-if.txt
+ create mode 100644 drivers/mfd/renesas-rpc.c
+ create mode 100644 drivers/spi/spi-renesas-rpc.c
+ create mode 100644 include/linux/mfd/renesas-rpc.h
+
+-- 
+1.9.1
+
