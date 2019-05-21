@@ -2,96 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A01EE25AE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 01:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2935E25AEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 01:42:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbfEUXdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 19:33:20 -0400
-Received: from dcvr.yhbt.net ([64.71.152.64]:59806 "EHLO dcvr.yhbt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726017AbfEUXdU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 19:33:20 -0400
-Received: from localhost (dcvr.yhbt.net [127.0.0.1])
-        by dcvr.yhbt.net (Postfix) with ESMTP id 7D2A61F462;
-        Tue, 21 May 2019 23:33:19 +0000 (UTC)
-Date:   Tue, 21 May 2019 23:33:19 +0000
-From:   Eric Wong <e@80x24.org>
+        id S1727294AbfEUXl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 19:41:57 -0400
+Received: from mail-pg1-f180.google.com ([209.85.215.180]:40267 "EHLO
+        mail-pg1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbfEUXl4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 19:41:56 -0400
+Received: by mail-pg1-f180.google.com with SMTP id d30so293730pgm.7
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 16:41:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UIVbNO6kM29eP8tdUg5nALQrURuRgSVSPOc4rYESuyA=;
+        b=EwtB56xPBXef1Scj4BOm6zW0gz/V1ykUnA5UYLd+ex1NQqm1IKwGZoRzXdw9BJrcm3
+         TwDmIy4RKrnpi03f+smdwJsf8FUQikr9sylnvl3MQv/mAGm7836ow4q0A8ZDpnKe9EYR
+         ZX3mnzUT+ayn7G6uSqOJk+2WxVhcEY7qosLnI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UIVbNO6kM29eP8tdUg5nALQrURuRgSVSPOc4rYESuyA=;
+        b=I+WqztsW35ukHEBpmsx3KjjPwd0ciY3nOtSPchx2EMR3n5oVE+a+pwcBjvpDccKfiV
+         2PFB/MkEOybnyCE/U8bYHp7vzJcBZ5GuiqrYppID18yX4nuf4mEj1qPwEDrD3FwWrudb
+         a20t5TU4qRBMzXK7NZZzWoMGUL4wPYUhFQHIF4Q265wg6afUh0JWGLsJm+aidVkxuDjO
+         hVzoBQRxPAWrGTx/iCb2Mj7wHtkBRitXsl6hO/6HefoPTjjdZ87AHLHS/KxAWyD2wpCN
+         KRnZKrYFVkbI1oOm2pzRYHwHgUBWnl/K/gkqfhLZt/x7TkxGYMsdNxr+79lrgbLqYxkD
+         HD0A==
+X-Gm-Message-State: APjAAAU9jV4arV/OuE0G/85pSRDT/o1K2AIYHhT69snyGq1ESGSWF/R/
+        4E7bc9vMhLiNXcYuamyir4pAjQ==
+X-Google-Smtp-Source: APXvYqyY2ppUrAcaTZTMttZ9jki2HrpraquhdPxHFsma5+6jAUayb6QNLSEp9HANijofl2KGe0wk8A==
+X-Received: by 2002:aa7:9e9a:: with SMTP id p26mr59469609pfq.176.1558482116033;
+        Tue, 21 May 2019 16:41:56 -0700 (PDT)
+Received: from drinkcat2.tpe.corp.google.com ([2401:fa00:1:b:d8b7:33af:adcb:b648])
+        by smtp.gmail.com with ESMTPSA id s77sm44111026pfa.63.2019.05.21.16.41.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 May 2019 16:41:55 -0700 (PDT)
+From:   Nicolas Boichat <drinkcat@chromium.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        arnd@arndb.de, dbueso@suse.de, axboe@kernel.dk, dave@stgolabs.net,
-        jbaron@akamai.com, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, omar.kilani@gmail.com, tglx@linutronix.de,
-        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH 1/1] signal: Adjust error codes according to
- restore_user_sigmask()
-Message-ID: <20190521233319.GA17957@dcvr>
-References: <20190507043954.9020-1-deepa.kernel@gmail.com>
- <20190521092551.fwtb6recko3tahwj@dcvr>
- <20190521152748.6b4cd70cf83a1183caa6aae7@linux-foundation.org>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts/decode_stacktrace: Look for modules with .ko.debug extension
+Date:   Wed, 22 May 2019 07:41:48 +0800
+Message-Id: <20190521234148.64060-1-drinkcat@chromium.org>
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521152748.6b4cd70cf83a1183caa6aae7@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew Morton <akpm@linux-foundation.org> wrote:
-> On Tue, 21 May 2019 09:25:51 +0000 Eric Wong <e@80x24.org> wrote:
-> 
-> > Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> > > For all the syscalls that receive a sigmask from the userland,
-> > > the user sigmask is to be in effect through the syscall execution.
-> > > At the end of syscall, sigmask of the current process is restored
-> > > to what it was before the switch over to user sigmask.
-> > > But, for this to be true in practice, the sigmask should be restored
-> > > only at the the point we change the saved_sigmask. Anything before
-> > > that loses signals. And, anything after is just pointless as the
-> > > signal is already lost by restoring the sigmask.
-> > > 
-> > > The inherent issue was detected because of a regression caused by
-> > > 854a6ed56839a.
-> > > The patch moved the signal_pending() check closer to restoring of the
-> > > user sigmask. But, it failed to update the error code accordingly.
-> > > 
-> > > Detailed issue discussion permalink:
-> > > https://lore.kernel.org/linux-fsdevel/20190427093319.sgicqik2oqkez3wk@dcvr/
-> > > 
-> > > Note that the patch returns interrupted errors (EINTR, ERESTARTNOHAND,
-> > > etc) only when there is no other error. If there is a signal and an error
-> > > like EINVAL, the syscalls return -EINVAL rather than the interrupted
-> > > error codes.
-> > > 
-> > > The sys_io_uring_enter() seems to be returning success when there is
-> > > a signal and the queue is not empty. This seems to be a bug. I will
-> > > follow up with a separate patch for that.
-> > > 
-> > > Reported-by: Eric Wong <e@80x24.org>
-> > > Fixes: 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal: Add restore_user_sigmask()")
-> > > Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> > > Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
-> 
-> (top-posting fixed).
-> 
-> > It's been 2 weeks and this fix hasn't appeared in mmots / mmotm.
-> > I also noticed it's missing Cc: for stable@ (below)
-> 
-> Why is a -stable backport needed?  I see some talk above about lost
-> signals but it is unclear whether these are being observed after fixing
-> the regression caused by 854a6ed56839a.
+In Chromium OS kernel builds, we split the debug information as
+.ko.debug files, and that's what decode_stacktrace.sh needs to use.
 
-I guess Deepa's commit messages wasn't clear...
-I suggest prepending this as the first paragraph to Deepa's
-original message:
+Relax objfile matching rule to allow any .ko* file to be matched.
 
-  This fixes a bug introduced with 854a6ed56839a which caused
-  EINTR to not be reported to userspace on epoll_pwait.  Failure
-  to report EINTR to userspace caused problems with user code
-  which relies on EINTR to run signal handlers.
+Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+---
+ scripts/decode_stacktrace.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> IOW, can we please have a changelog which has a clear and complete
-> description of the user-visible effects of the change.
-> 
-> And please Cc Oleg.
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index bcdd45df3f5127a..c851c1eb16f9cf7 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -28,7 +28,7 @@ parse_symbol() {
+ 		local objfile=${modcache[$module]}
+ 	else
+ 		[[ $modpath == "" ]] && return
+-		local objfile=$(find "$modpath" -name $module.ko -print -quit)
++		local objfile=$(find "$modpath" -name $module.ko* -print -quit)
+ 		[[ $objfile == "" ]] && return
+ 		modcache[$module]=$objfile
+ 	fi
+-- 
+2.21.0.1020.gf2820cf01a-goog
+
