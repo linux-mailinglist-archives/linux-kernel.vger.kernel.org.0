@@ -2,124 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03444248F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 09:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A493024911
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 09:37:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbfEUH2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 03:28:41 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:24169 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbfEUH2l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 03:28:41 -0400
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x4L7SZOc014671
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 16:28:36 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x4L7SZOc014671
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1558423716;
-        bh=0IneFBogau5aTVTnVikpfnfxhfGGg+m93gGHEDBBT2M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QHRkxn0FpgpJZytlIwzPKDd3Ewp7E96EMiaXKx04L5m20+rs2i+/xzPh9P4Bn3AGP
-         dSAH2Tp/Y0B5hFIftuFoSYre1GsGB+N02T2RlttHQjOfgVts9R3tRy7I9CnIebiN6r
-         d2Y7jufk26xmCn9rAW1di/3tO5jVXS61BrO8xrCpXS0txhn4+g6PNHUFEwi4oGaBTW
-         6a5mO8qI7MlnjDOhC1XaXJEn22JFnIZprf4eGjbDI3iWMTAf4E4fQS5D/x4AxhkfP1
-         nsveLUyoPyTqHlgLtgb+LOx+dRwKwVtCmewTYD/yfeUtRAmK/AH7TpfrEMk02KS7jS
-         50hvs4K3ITXaA==
-X-Nifty-SrcIP: [209.85.222.43]
-Received: by mail-ua1-f43.google.com with SMTP id 7so875002uah.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 00:28:35 -0700 (PDT)
-X-Gm-Message-State: APjAAAUk9AS9LqpADk537INXRaACtBaOO5Q7x4YbwtMZyRFRbuzuXl7n
-        rjRN1Ix9lYymsMp37X7rnK/9Fqedb38ehz7njzc=
-X-Google-Smtp-Source: APXvYqznP8e8GHshxPJUqQetjFmjBhvHA7Y6dMmw1D+/xm5qDgis9mpan+zseql9QUlQ9+O+cjn+NxLo59SYDBiSIYI=
-X-Received: by 2002:a9f:24a3:: with SMTP id 32mr15884042uar.109.1558423714533;
- Tue, 21 May 2019 00:28:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190521061659.6073-1-yamada.masahiro@socionext.com> <16d967dd-9f8f-4e9e-97fd-3f9761e5d97c@c-s.fr>
-In-Reply-To: <16d967dd-9f8f-4e9e-97fd-3f9761e5d97c@c-s.fr>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 21 May 2019 16:27:58 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQNp+wsvNK84oYcGwR24=Kf=_N8WJdyZ2aUL9T3qDsVsA@mail.gmail.com>
-Message-ID: <CAK7LNAQNp+wsvNK84oYcGwR24=Kf=_N8WJdyZ2aUL9T3qDsVsA@mail.gmail.com>
-Subject: Re: [PATCH] powerpc/mm: mark more tlb functions as __always_inline
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1726642AbfEUHhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 03:37:12 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4506 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726006AbfEUHhM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 03:37:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 00:37:11 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com ([10.239.159.136])
+  by orsmga005.jf.intel.com with ESMTP; 21 May 2019 00:37:09 -0700
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     joro@8bytes.org, dwmw2@infradead.org
+Cc:     ashok.raj@intel.com, jacob.jun.pan@linux.intel.com,
+        Kevin Tian <kevin.tian@intel.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Dave Jiang <dave.jiang@intel.com>
+Subject: [PATCH 1/2] iommu/vt-d: Fix lock inversion between iommu->lock and device_domain_lock
+Date:   Tue, 21 May 2019 15:30:15 +0800
+Message-Id: <20190521073016.27525-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 3:54 PM Christophe Leroy
-<christophe.leroy@c-s.fr> wrote:
->
->
->
-> Le 21/05/2019 =C3=A0 08:16, Masahiro Yamada a =C3=A9crit :
-> > With CONFIG_OPTIMIZE_INLINING enabled, Laura Abbott reported error
-> > with gcc 9.1.1:
-> >
-> >    arch/powerpc/mm/book3s64/radix_tlb.c: In function '_tlbiel_pid':
-> >    arch/powerpc/mm/book3s64/radix_tlb.c:104:2: warning: asm operand 3 p=
-robably doesn't match constraints
-> >      104 |  asm volatile(PPC_TLBIEL(%0, %4, %3, %2, %1)
-> >          |  ^~~
-> >    arch/powerpc/mm/book3s64/radix_tlb.c:104:2: error: impossible constr=
-aint in 'asm'
-> >
-> > Fixing _tlbiel_pid() is enough to address the warning above, but I
-> > inlined more functions to fix all potential issues.
-> >
-> > To meet the 'i' (immediate) constraint for the asm operands, functions
-> > propagating propagated 'ric' must be always inlined.
-> >
-> > Fixes: 9012d011660e ("compiler: allow all arches to enable CONFIG_OPTIM=
-IZE_INLINING")
-> > Reported-by: Laura Abbott <labbott@redhat.com>
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> >
-> >   arch/powerpc/mm/book3s64/hash_native.c |  8 +++--
-> >   arch/powerpc/mm/book3s64/radix_tlb.c   | 44 +++++++++++++++----------=
+From: Dave Jiang <dave.jiang@intel.com>
+
+Lockdep debug reported lock inversion related with the iommu code
+caused by dmar_insert_one_dev_info() grabbing the iommu->lock and
+the device_domain_lock out of order versus the code path in
+iommu_flush_dev_iotlb(). Expanding the scope of the iommu->lock and
+reversing the order of lock acquisition fixes the issue.
+
+[   76.238180] dsa_bus wq0.0: dsa wq wq0.0 disabled
+[   76.248706]
+[   76.250486] ========================================================
+[   76.257113] WARNING: possible irq lock inversion dependency detected
+[   76.263736] 5.1.0-rc5+ #162 Not tainted
+[   76.267854] --------------------------------------------------------
+[   76.274485] systemd-journal/521 just changed the state of lock:
+[   76.280685] 0000000055b330f5 (device_domain_lock){..-.}, at: iommu_flush_dev_iotlb.part.63+0x29/0x90
+[   76.290099] but this lock took another, SOFTIRQ-unsafe lock in the past:
+[   76.297093]  (&(&iommu->lock)->rlock){+.+.}
+[   76.297094]
+[   76.297094]
+[   76.297094] and interrupts could create inverse lock ordering between them.
+[   76.297094]
+[   76.314257]
+[   76.314257] other info that might help us debug this:
+[   76.321448]  Possible interrupt unsafe locking scenario:
+[   76.321448]
+[   76.328907]        CPU0                    CPU1
+[   76.333777]        ----                    ----
+[   76.338642]   lock(&(&iommu->lock)->rlock);
+[   76.343165]                                local_irq_disable();
+[   76.349422]                                lock(device_domain_lock);
+[   76.356116]                                lock(&(&iommu->lock)->rlock);
+[   76.363154]   <Interrupt>
+[   76.366134]     lock(device_domain_lock);
+[   76.370548]
+[   76.370548]  *** DEADLOCK ***
+
+Fixes: 745f2586e78e ("iommu/vt-d: Simplify function get_domain_for_dev()")
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel-iommu.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index a209199f3af6..91f4912c09c6 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2512,6 +2512,7 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 		}
+ 	}
+ 
++	spin_lock(&iommu->lock);
+ 	spin_lock_irqsave(&device_domain_lock, flags);
+ 	if (dev)
+ 		found = find_domain(dev);
+@@ -2527,17 +2528,16 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 
+ 	if (found) {
+ 		spin_unlock_irqrestore(&device_domain_lock, flags);
++		spin_unlock(&iommu->lock);
+ 		free_devinfo_mem(info);
+ 		/* Caller must free the original domain */
+ 		return found;
+ 	}
+ 
+-	spin_lock(&iommu->lock);
+ 	ret = domain_attach_iommu(domain, iommu);
+-	spin_unlock(&iommu->lock);
 -
-> >   2 files changed, 30 insertions(+), 22 deletions(-)
-> >
-> > diff --git a/arch/powerpc/mm/book3s64/hash_native.c b/arch/powerpc/mm/b=
-ook3s64/hash_native.c
-> > index aaa28fd918fe..bc2c35c0d2b1 100644
-> > --- a/arch/powerpc/mm/book3s64/hash_native.c
-> > +++ b/arch/powerpc/mm/book3s64/hash_native.c
-> > @@ -60,9 +60,11 @@ static inline void tlbiel_hash_set_isa206(unsigned i=
-nt set, unsigned int is)
-> >    * tlbiel instruction for hash, set invalidation
-> >    * i.e., r=3D1 and is=3D01 or is=3D10 or is=3D11
-> >    */
-> > -static inline void tlbiel_hash_set_isa300(unsigned int set, unsigned i=
-nt is,
-> > -                                     unsigned int pid,
-> > -                                     unsigned int ric, unsigned int pr=
-s)
-> > +static __always_inline void tlbiel_hash_set_isa300(unsigned int set,
-> > +                                                unsigned int is,
-> > +                                                unsigned int pid,
-> > +                                                unsigned int ric,
-> > +                                                unsigned int prs)
->
-> Please don't split the line more than it is.
->
-> powerpc accepts lines up to 90 chars, see arch/powerpc/tools/checkpatch.p=
-l
+ 	if (ret) {
+ 		spin_unlock_irqrestore(&device_domain_lock, flags);
++		spin_unlock(&iommu->lock);
+ 		free_devinfo_mem(info);
+ 		return NULL;
+ 	}
+@@ -2547,6 +2547,7 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 	if (dev)
+ 		dev->archdata.iommu = info;
+ 	spin_unlock_irqrestore(&device_domain_lock, flags);
++	spin_unlock(&iommu->lock);
+ 
+ 	/* PASID table is mandatory for a PCI device in scalable mode. */
+ 	if (dev && dev_is_pci(dev) && sm_supported(iommu)) {
+-- 
+2.17.1
 
-Ugh, I did not know this. Horrible.
-
-The Linux coding style should be global in the kernel tree.
-No subsystem should adopts its own coding style.
-
-
---=20
-Best Regards
-Masahiro Yamada
