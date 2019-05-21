@@ -2,97 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D589624F1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 14:43:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 663FC24F20
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 14:46:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbfEUMnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 08:43:14 -0400
-Received: from outbound-smtp15.blacknight.com ([46.22.139.232]:50523 "EHLO
-        outbound-smtp15.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726344AbfEUMnN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 08:43:13 -0400
-Received: from mail.blacknight.com (unknown [81.17.254.16])
-        by outbound-smtp15.blacknight.com (Postfix) with ESMTPS id B674F1C1C4C
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 13:43:11 +0100 (IST)
-Received: (qmail 31860 invoked from network); 21 May 2019 12:43:11 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.225.79])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 21 May 2019 12:43:11 -0000
-Date:   Tue, 21 May 2019 13:43:10 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Justin Piszcz <jpiszcz@lucidpixels.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Subject: Re: 5.1 and 5.1.1: BUG: unable to handle kernel paging request at
- ffffea0002030000
-Message-ID: <20190521124310.GM18914@techsingularity.net>
-References: <CAO9zADzXTQpv5cGp61BzsVPvWQz5xbSJv_N71jBa3zopr7CB=Q@mail.gmail.com>
- <20190520115608.GK18914@techsingularity.net>
- <CAO9zADzz9QJ9Rp_Acy5GRggfYZzDwYYNWhCvPc9XHd+G=gS5zw@mail.gmail.com>
+        id S1728091AbfEUMqW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 08:46:22 -0400
+Received: from mail-eopbgr150043.outbound.protection.outlook.com ([40.107.15.43]:41956
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726344AbfEUMqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 08:46:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LCjIquD9DNq8D+A3/WjkFMtjQubFKnvBsIiNQxx7ZmM=;
+ b=VWHSb85x/an56akxcZYhaYtCvSJCFvJ6wE6bZhM0XF/W0BQlvVVPkIsrOdf29UukuStNg48T06omb1wMfaZyutPcdu7hRxKklLVb0dnhAvgm9drenHcnU2LdTQLvv1QWaWN02gaSWnrYkb1KsFtzMA6lRx9UXxPebwD1X2HlGXI=
+Received: from VI1PR0402MB3519.eurprd04.prod.outlook.com (52.134.4.24) by
+ VI1PR0402MB3664.eurprd04.prod.outlook.com (52.134.15.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.18; Tue, 21 May 2019 12:45:36 +0000
+Received: from VI1PR0402MB3519.eurprd04.prod.outlook.com
+ ([fe80::2417:67da:c1aa:29f3]) by VI1PR0402MB3519.eurprd04.prod.outlook.com
+ ([fe80::2417:67da:c1aa:29f3%7]) with mapi id 15.20.1900.020; Tue, 21 May 2019
+ 12:45:36 +0000
+From:   Jacky Bai <ping.bai@nxp.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH v4 2/2] driver: clocksource: Add nxp system counter timer
+ driver support
+Thread-Topic: [PATCH v4 2/2] driver: clocksource: Add nxp system counter timer
+ driver support
+Thread-Index: AQHVD6VyGxyzK/K+Ck6OWhJMa/LQ6aZ1WusAgAAZ3gCAAAsDgIAAAf1Q
+Date:   Tue, 21 May 2019 12:45:36 +0000
+Message-ID: <VI1PR0402MB3519E48F01380A3DE9FEC01487070@VI1PR0402MB3519.eurprd04.prod.outlook.com>
+References: <20190521072355.12928-1-ping.bai@nxp.com>
+ <20190521072355.12928-2-ping.bai@nxp.com>
+ <5823cd07-312b-600c-1b78-dc5bff2a12eb@linaro.org>
+ <VI1PR0402MB3519B14C5AF93F246907F03A87070@VI1PR0402MB3519.eurprd04.prod.outlook.com>
+ <bc03b0c8-52cf-58e1-e7b3-bb1f2345c05b@linaro.org>
+In-Reply-To: <bc03b0c8-52cf-58e1-e7b3-bb1f2345c05b@linaro.org>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ping.bai@nxp.com; 
+x-originating-ip: [117.81.146.122]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0f959f2e-5d57-47f2-5755-08d6ddea38e5
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3664;
+x-ms-traffictypediagnostic: VI1PR0402MB3664:
+x-microsoft-antispam-prvs: <VI1PR0402MB3664C559FE13D67D3D985F3C87070@VI1PR0402MB3664.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0044C17179
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(39860400002)(136003)(366004)(189003)(199004)(13464003)(446003)(11346002)(6116002)(476003)(478600001)(3846002)(99286004)(14454004)(66946007)(6636002)(2906002)(33656002)(81156014)(81166006)(8676002)(486006)(2501003)(8936002)(7696005)(66066001)(66446008)(52536014)(71200400001)(71190400001)(6246003)(9686003)(316002)(229853002)(76176011)(74316002)(68736007)(102836004)(256004)(53936002)(14444005)(5660300002)(54906003)(7736002)(110136005)(66556008)(86362001)(53546011)(6506007)(64756008)(26005)(186003)(76116006)(55016002)(73956011)(25786009)(66476007)(4326008)(6436002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3664;H:VI1PR0402MB3519.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: mGCKtR/TED+94kIAvEB/+z5pfvucuoO/caAKeHAxNW6vX7W7H50AVXxmNs+8Aw7YJi11F2GOODYa19B5NtOc/+kI7pNNQYCuNGSFksWtpqQ1AR3SqVmW1OurUNuJeh6xnS8mR7nZAW+c/udn+j3ceLqHiA+m99TxFG7tOe0HEOGWunSfO6vhDusSiNc6IGRyaypO9Pd3VVyoeJw/p1lwHaMvqnUhqk/P7QlT/bG21f4eppwoXm+xeDfO7KSFB2zYLT4EEYRkj0wfoD3pCvqB9BNVdZ5d7ULp47WWev6006atVBtZ0aifmPw+XmaoriQu+LeQX5ErJhtq78412AnKDeOp6o3OYSVsYT0HREwmhgo79ntfyvXhn9gympTm1ydx5JM9FDlLFmIaCD19rRHKsFeYbF7Ha+/cytDH23Epf58=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <CAO9zADzz9QJ9Rp_Acy5GRggfYZzDwYYNWhCvPc9XHd+G=gS5zw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f959f2e-5d57-47f2-5755-08d6ddea38e5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 12:45:36.4944
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3664
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 05:01:06AM -0400, Justin Piszcz wrote:
-> On Mon, May 20, 2019 at 7:56 AM Mel Gorman <mgorman@techsingularity.net> wrote:
-> >
-> > On Sun, May 12, 2019 at 04:27:45AM -0400, Justin Piszcz wrote:
-> > > Hello,
-> > >
-> > > I've turned off zram/zswap and I am still seeing the following during
-> > > periods of heavy I/O, I am returning to 5.0.xx in the meantime.
-> > >
-> > > Kernel: 5.1.1
-> > > Arch: x86_64
-> > > Dist: Debian x86_64
-> > >
-> > > [29967.019411] BUG: unable to handle kernel paging request at ffffea0002030000
-> > > [29967.019414] #PF error: [normal kernel read fault]
-> > > [29967.019415] PGD 103ffee067 P4D 103ffee067 PUD 103ffed067 PMD 0
-> > > [29967.019417] Oops: 0000 [#1] SMP PTI
-> > > [29967.019419] CPU: 10 PID: 77 Comm: khugepaged Tainted: G
-> > >    T 5.1.1 #4
-> > > [29967.019420] Hardware name: Supermicro X9SRL-F/X9SRL-F, BIOS 3.2 01/16/2015
-> > > [29967.019424] RIP: 0010:isolate_freepages_block+0xb9/0x310
-> > > [29967.019425] Code: 24 28 48 c1 e0 06 40 f6 c5 1f 48 89 44 24 20 49
-> > > 8d 45 79 48 89 44 24 18 44 89 f0 4d 89 ee 45 89 fd 41 89 c7 0f 84 ef
-> > > 00 00 00 <48> 8b 03 41 83 c4 01 a9 00 00 01 00 75 0c 48 8b 43 08 a8 01
-> > > 0f 84
-> >
-> > If you have debugging symbols installed, can you translate the faulting
-> > address with the following?
-> >
-> > ADDR=`nm /path/to/vmlinux-or-debuginfo-file | grep "t isolate_freepages_block\$" | awk '{print $1}'`
-> > addr2line -i -e vmlinux `printf "0x%lX" $((0x$ADDR+0xb9))`
-> 
-> Another event this morning, this occurred when copying a single ~25GB
-> backup file from one block device device (3ware HW RAID) to a SW
-> RAID-1 (mdadm):
-> 
-> With this event, it was a fault and khugepaged is not stuck at 100%
-> but this may be related as the stack trace is similar where
-> compaction_alloc is utilizing most of the CPU:
-> https://lkml.org/lkml/2019/5/9/225
-> 
-> # ADDR=`nm /usr/src/linux/vmlinux | grep "t isolate_freepages_block\$"
-> | awk '{print $1}'`
-> # echo $ADDR
-> ffffffff812274f0
-> # addr2line -i -e /usr/src/linux/vmlinux `printf "0x%lX" $((0x$ADDR+0x83d))`
-> compaction.c:?
-> # addr2line -i -e /usr/src/linux/vmlinux `printf "0x%lX" $((0x$ADDR+0x8d0))`
-> compaction.c:?
-> 
-
-Please use the offset 0xb9
-
-addr2line -i -e /usr/src/linux/vmlinux `printf "0x%lX" $((0x$ADDR+0xb9))
-
--- 
-Mel Gorman
-SUSE Labs
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRGFuaWVsIExlemNhbm8g
+W21haWx0bzpkYW5pZWwubGV6Y2Fub0BsaW5hcm8ub3JnXQ0KPiBTZW50OiBUdWVzZGF5LCBNYXkg
+MjEsIDIwMTkgODoyMCBQTQ0KPiBUbzogSmFja3kgQmFpIDxwaW5nLmJhaUBueHAuY29tPjsgdGds
+eEBsaW51dHJvbml4LmRlOyByb2JoK2R0QGtlcm5lbC5vcmc7DQo+IHNoYXduZ3VvQGtlcm5lbC5v
+cmc7IG1hcmsucnV0bGFuZEBhcm0uY29tOyBBaXNoZW5nIERvbmcNCj4gPGFpc2hlbmcuZG9uZ0Bu
+eHAuY29tPg0KPiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2
+Z2VyLmtlcm5lbC5vcmc7IGRsLWxpbnV4LWlteA0KPiA8bGludXgtaW14QG54cC5jb20+DQo+IFN1
+YmplY3Q6IFJlOiBbUEFUQ0ggdjQgMi8yXSBkcml2ZXI6IGNsb2Nrc291cmNlOiBBZGQgbnhwIHN5
+c3RlbSBjb3VudGVyIHRpbWVyDQo+IGRyaXZlciBzdXBwb3J0DQo+IA0KPiBPbiAyMS8wNS8yMDE5
+IDE0OjAxLCBKYWNreSBCYWkgd3JvdGU6DQo+ID4NCj4gPj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdl
+LS0tLS0NCj4gPj4gRnJvbTogRGFuaWVsIExlemNhbm8gW21haWx0bzpkYW5pZWwubGV6Y2Fub0Bs
+aW5hcm8ub3JnXQ0KPiA+PiBTZW50OiBUdWVzZGF5LCBNYXkgMjEsIDIwMTkgNjowOCBQTQ0KPiA+
+PiBUbzogSmFja3kgQmFpIDxwaW5nLmJhaUBueHAuY29tPjsgdGdseEBsaW51dHJvbml4LmRlOw0K
+PiA+PiByb2JoK2R0QGtlcm5lbC5vcmc7IHNoYXduZ3VvQGtlcm5lbC5vcmc7IG1hcmsucnV0bGFu
+ZEBhcm0uY29tOw0KPiA+PiBBaXNoZW5nIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiA+
+PiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5l
+bC5vcmc7DQo+ID4+IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+DQo+ID4+IFN1Ympl
+Y3Q6IFJlOiBbUEFUQ0ggdjQgMi8yXSBkcml2ZXI6IGNsb2Nrc291cmNlOiBBZGQgbnhwIHN5c3Rl
+bQ0KPiA+PiBjb3VudGVyIHRpbWVyIGRyaXZlciBzdXBwb3J0DQo+ID4+DQo+ID4+IE9uIDIxLzA1
+LzIwMTkgMDk6MTgsIEphY2t5IEJhaSB3cm90ZToNCj4gPj4+IEZyb206IEJhaSBQaW5nIDxwaW5n
+LmJhaUBueHAuY29tPg0KPiA+Pj4NCj4gPj4+IFRoZSBzeXN0ZW0gY291bnRlciAoc3lzX2N0cikg
+aXMgYSBwcm9ncmFtbWFibGUgc3lzdGVtIGNvdW50ZXIgd2hpY2gNCj4gPj4+IHByb3ZpZGVzIGEg
+c2hhcmVkIHRpbWUgYmFzZSB0byB0aGUgQ29ydGV4IEExNSwgQTcsIEE1MyBldGMgY29yZXMuDQo+
+ID4+PiBJdCBpcyBpbnRlbmRlZCBmb3IgdXNlIGluIGFwcGxpY2F0aW9ucyB3aGVyZSB0aGUgY291
+bnRlciBpcyBhbHdheXMNCj4gPj4+IHBvd2VyZWQgb24gYW5kIHN1cHBvcnRzIG11bHRpcGxlLCB1
+bnJlbGF0ZWQgY2xvY2tzLiBUaGUgc3lzX2N0cg0KPiA+Pj4gaGFyZHdhcmUNCj4gPj4+IHN1cHBv
+cnRzOg0KPiA+Pj4gIC0gNTYtYml0IGNvdW50ZXIgd2lkdGggKHJvbGwtb3ZlciB0aW1lIGdyZWF0
+ZXIgdGhhbiA0MCB5ZWFycykNCj4gPj4NCj4gPj4gVGhlIGJlbmVmaXQgb2YgdXNpbmcgbW9yZSB0
+aGFuIDMyYml0cyBvbiBhIDMyYml0cyBzeXN0ZW0gaXMgbm90IHByb3Zlbi4NCj4gPj4NCj4gPg0K
+PiA+IEl0IGlzIG1haW5seSB1c2VkIG9uIDY0Yml0IEFSTXY4IHN5c3RlbS4NCj4gDQo+IE9oLCBv
+ay4gRmFpciBlbm91Z2guDQo+IA0KPiA+DQo+ID4+IFRoZSBmdW5jdGlvbiB0byByZWFkIGFuZCBi
+dWlsZCB0aGUgNTZiaXRzIHZhbHVlIGNhbiBoYXZlIGEgdmVyeQ0KPiA+PiBzaWduaWZpY2FudCBp
+bXBhY3Qgb24gdGhlIHBlcmZvcm1hbmNlIG9mIHlvdXIgcGxhdGZvcm0uDQo+ID4+DQo+ID4+IFVz
+aW5nIGEgMzJiaXRzIGNvdW50ZXIgY2FuIGJlIGVub3VnaCBpZiBpdCBkb2VzIG5vdCB3cmFwIHRv
+byBmYXN0Lg0KPiA+Pg0KPiA+PiBDYW4geW91IGNvbnNpZGVyIGEgMzIgYml0cyBjb3VudGVyID8N
+Cj4gPg0KPiA+IHRoaXMgY291bnRlciBpcyBBUk12OCBhcmNoIHRpbWVyJ3MgY291bnRlciBzb3Vy
+Y2UuIEFzIGl0IGFsc28gaGFzDQo+ID4gdGltZXIgZnVuY3Rpb24sIHNvIEkgY2hvb3NlIGl0IHRv
+IGFjdCBhcyBhIGJyb2FkY2FzdCB0aW1lciBmb3IgY3B1aWRsZS4gVGhlDQo+IHRpbWVyIGludGVy
+cnVwdCBjYW4gb25seSBiZSB0cmlnZ2VyZWQgd2hlbiAnY29tcGFyZVs1NTowXSA8PSBjb3VudGVy
+WzU1OjBdJy4NCj4gPiBTbyB5b3UgbWVhbiB0aGF0IG9ubHkgdXNlIHRoZSBsb3dlciAzMmJpdCB0
+byBpbXBsZW1lbnQgdGhpcyB0aW1lcj8gSWYgc28sIEkNCj4gY2FuIGNoYW5nZSB0byB1c2Ugb25s
+eSB0aGUgbG93ZXIgMzJiaXQuDQo+IA0KPiBJTU8gaXQgaXMgcHJlZmVyYWJsZSBidXQgeW91IGRl
+Y2lkZSAocHJvYmFibHkgY29tcGFyZSB3aXRoIGhvdyBsb25nIGl0IHRha2VzDQo+IHRvIHdyYXAg
+d2hlbiAzMmJpdHMpLg0KPiANCg0KTm9ybWFsbHksIGl0IGlzIGRyaXZlbiBieSBmaXhlZCA4TUh6
+IGNsb2NrLiAzMmJpdCBoYXMgcmlzaywgd2hlbiB0aGUgbG93ZXIgMzJiaXQgd3JhcHBlZCwNCnRo
+ZW4gdGhlICdjb3VudGVyIHZhbHVlID49IGNvbXBhcmUgdmFsdWUnIGlzIHRydWUgaWYgb25seSB1
+c2UgMzJiaXQgZm9yIHRpbWVyLCB0aGVuIElSUSB3aWxsDQpQZW5kaW5nIGFsbCB0aGUgdGltZS4g
+SSB3aWxsIGtlZXAgdXNlIHRoZSB3aG9sZSA1NmJpdC4NCg0KPiANCj4gDQoNCg==
