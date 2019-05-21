@@ -2,90 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBFBB24688
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 06:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BDE72468B
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 06:06:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725997AbfEUEEQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 00:04:16 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:43888 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725283AbfEUEEQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 00:04:16 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id x4L43VVg010681;
-        Tue, 21 May 2019 13:03:32 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x4L43VVg010681
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1558411413;
-        bh=ih2ZgqObaUdBXIDdXtMeo+bCR3hhcOxpcDhp2NN3U6o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=yLwaFzBsZMFY3pUDNfsPLXeEG1WjIBeu6gW7czqLdlKBc2OL/weJLUrEwe740+eCh
-         U71t8T5NMJLw+aVWa238Y1vQnbt2+eZSESUNdLizoO49WjGeibChXqnZW+eMR/BMR5
-         xnQuj36WWvepgundBru/xONXsknEloGGu1T3E3QmddgjyUC00u3nlPfvAcsDP4cXmX
-         hqxZOOC+Ie5BZvEuROyHw7jJ3MzprY78OWoD9SDyBsVHeVvlw23/4BaWQGLyYnBoW6
-         mvk8+4SaQeonazNpeO8wBE+Q2CDo4fsmiyGMsi3GU4d/09hvEMXh2WAXg4i/HLo1nK
-         T603/ikgWFlvA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] MIPS: remove a space after -I to cope with header search paths for VDSO
-Date:   Tue, 21 May 2019 13:03:27 +0900
-Message-Id: <20190521040327.432-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726391AbfEUEGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 00:06:43 -0400
+Received: from foss.arm.com ([217.140.101.70]:56610 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725283AbfEUEGm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 00:06:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 241F7341;
+        Mon, 20 May 2019 21:06:42 -0700 (PDT)
+Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.42.136])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 92ED33F575;
+        Mon, 20 May 2019 21:06:39 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Steve Capper <steve.capper@arm.com>,
+        Suzuki Poulose <suzuki.poulose@arm.com>,
+        James Morse <james.morse@arm.com>
+Subject: [PATCH] arm64/mm: Move PTE_VALID from SW defined to HW page table entry definitions
+Date:   Tue, 21 May 2019 09:36:27 +0530
+Message-Id: <1558411587-19042-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 9cc342f6c4a0 ("treewide: prefix header search paths with
-$(srctree)/") caused a build error for MIPS VDSO.
+PTE_VALID signifies that the last level page table entry is valid and it is
+MMU recognized while walking the page table. This is not a software defined
+PTE bit and should not be listed like one. Just move it to appropriate
+header file.
 
-  CC      arch/mips/vdso/gettimeofday.o
-In file included from ../arch/mips/vdso/vdso.h:26,
-                 from ../arch/mips/vdso/gettimeofday.c:11:
-../arch/mips/include/asm/page.h:12:10: fatal error: spaces.h: No such file or directory
- #include <spaces.h>
-          ^~~~~~~~~~
-
-The cause of the error is a missing space after the compiler flag -I .
-
-Kbuild used to have a global restriction "no space after -I", but
-commit 48f6e3cf5bc6 ("kbuild: do not drop -I without parameter") got
-rid of it. Having a space after -I is no longer a big deal as far as
-Kbuild is concerned.
-
-It is still a big deal for MIPS because arch/mips/vdso/Makefile
-filters the header search paths, like this:
-
-  ccflags-vdso := \
-          $(filter -I%,$(KBUILD_CFLAGS)) \
-
-..., which relies on the assumption that there is no space after -I .
-
-Fixes: 9cc342f6c4a0 ("treewide: prefix header search paths with $(srctree)/")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Steve Capper <steve.capper@arm.com>
+Cc: Suzuki Poulose <suzuki.poulose@arm.com>
+Cc: James Morse <james.morse@arm.com>
 ---
+ arch/arm64/include/asm/pgtable-hwdef.h | 1 +
+ arch/arm64/include/asm/pgtable-prot.h  | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
- arch/mips/pnx833x/Platform | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/mips/pnx833x/Platform b/arch/mips/pnx833x/Platform
-index 6b1a847d593f..287260669551 100644
---- a/arch/mips/pnx833x/Platform
-+++ b/arch/mips/pnx833x/Platform
-@@ -1,5 +1,5 @@
- # NXP STB225
- platform-$(CONFIG_SOC_PNX833X)	+= pnx833x/
--cflags-$(CONFIG_SOC_PNX833X)	+= -I $(srctree)/arch/mips/include/asm/mach-pnx833x
-+cflags-$(CONFIG_SOC_PNX833X)	+= -I$(srctree)/arch/mips/include/asm/mach-pnx833x
- load-$(CONFIG_NXP_STB220)	+= 0xffffffff80001000
- load-$(CONFIG_NXP_STB225)	+= 0xffffffff80001000
+diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+index a69259c..974f011 100644
+--- a/arch/arm64/include/asm/pgtable-hwdef.h
++++ b/arch/arm64/include/asm/pgtable-hwdef.h
+@@ -153,6 +153,7 @@
+ /*
+  * Level 3 descriptor (PTE).
+  */
++#define PTE_VALID		(_AT(pteval_t, 1) << 0)
+ #define PTE_TYPE_MASK		(_AT(pteval_t, 3) << 0)
+ #define PTE_TYPE_FAULT		(_AT(pteval_t, 0) << 0)
+ #define PTE_TYPE_PAGE		(_AT(pteval_t, 3) << 0)
+diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
+index 986e41c..38c7148 100644
+--- a/arch/arm64/include/asm/pgtable-prot.h
++++ b/arch/arm64/include/asm/pgtable-prot.h
+@@ -24,7 +24,6 @@
+ /*
+  * Software defined PTE bits definition.
+  */
+-#define PTE_VALID		(_AT(pteval_t, 1) << 0)
+ #define PTE_WRITE		(PTE_DBM)		 /* same as DBM (51) */
+ #define PTE_DIRTY		(_AT(pteval_t, 1) << 55)
+ #define PTE_SPECIAL		(_AT(pteval_t, 1) << 56)
 -- 
-2.17.1
+2.7.4
 
