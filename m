@@ -2,74 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4C8A256A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 576C4256A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:26:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729135AbfEUR0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 13:26:49 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40822 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfEUR0t (ORCPT
+        id S1728933AbfEUR0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 13:26:13 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37403 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbfEUR0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 13:26:49 -0400
-Received: by mail-oi1-f195.google.com with SMTP id r136so13426979oie.7;
-        Tue, 21 May 2019 10:26:48 -0700 (PDT)
+        Tue, 21 May 2019 13:26:13 -0400
+Received: by mail-pf1-f194.google.com with SMTP id a23so1304084pff.4
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 10:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eJOLO6+fT4P+SCiRyBPi4+7nDWuVS/cC7SMFnlO8FSc=;
-        b=n8lCd1SP0iIV23NZM5l7ia3aHOMNEtqfLvquCPcDPsnqwrEWFZ6vl9vMTQd1JRdQeW
-         UXnFXy2vE1aEiifYnBqCVNna1rQH8K42SPgJjgyioDfJUNT92VDuAJx4Cr+reAYATiDn
-         UOuJaaZ4PYi0cMSNKj5rrruCriHDjB/stgLnUu1+LH4TivLCmw89/aIaQ9nmfOekILtW
-         wDNFBJWclJkOjPCeBpIj6bCh4YxXb5j7KtRis7iP3uU8QnIYH+JMtCgbPO15VZR60Tc2
-         iHq6G+NRKM4NCrdZtpcARpKhCG9mABICAJd3F/9bTuTDbBcQd/cCUzhKfrtYVrHLU6jx
-         S+HQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ji0VdzU5OHK1F6Sbp+YSXpK8rtBxFsIqpzSG7ymRqzo=;
+        b=R8RGyzYX+KVy8m3zJtD+38A1CQR4ZeKD7IZ8knX4UBdcazCt+USKTWOEB5MTkdw/Fd
+         f7WTG412wUr9M4tY1MwLdCYXU6mls6g0h6SjAl87o5Sbg45Q6T+ILmFXeg1SiNZF+J2+
+         ms3TSb7ib9ND/W7bLRjuENhi8gH2ZooMHWYrdw2pkJMTOeCyXMNp4xWd+c+GCHg5LgO6
+         odQztXqLSb63vlLYPkqUvg/k5+WXoxmJE0alaqzhkDfeCD4L5vvTLe49ZQGxICd2tXUL
+         Tr7hW4wirXJwpclHYlkq2VP7GHXvJ5Y1PFcsWqwgS14g5h+A8XLIgwtj9Dw8OhyMQrIu
+         mc8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eJOLO6+fT4P+SCiRyBPi4+7nDWuVS/cC7SMFnlO8FSc=;
-        b=G55Z6/kHkUsEDzWZyMKi3w/rmRYXTVpfVI/jiWY4DQb9OyOPBmcckzuHVNn8YluDZj
-         rqKkKBh+i+AKljCWDRUTIehHtIzguwjQdYVJ1hTd7BsvQiSacLaWNjAaz5zVgUF+8O+F
-         vNzkeQIGNlFTz8T5ZsiM+0DkP+bAn/64OK4AHhkiFbBpL11EKnIJOKs8yMunM3adXPBH
-         sxJ2PeOODDTfr4+Tv+r6HrX0lJIT9DdPlUjNOnTJiBVZixM6WslIS/7Z5ZNDN9hrqk7y
-         j3ewRG3N42eXjvQSfhyen/aN1Feo+AqEIh2AIvHAivdYxS/ykv/cBr02xijAIjAwDdbJ
-         +yeQ==
-X-Gm-Message-State: APjAAAUsSxAKNpebtKNJIKhRUkvCK0Igd3uCXKhP8AqigwfC6xfFWVKU
-        /nqzwUKHpCgBdChL0fhD2CkeBFiuwD5kziAynoM=
-X-Google-Smtp-Source: APXvYqyxdi56Ueg7EALlUk1Ep4gxIoClF1dtxww572zKOE3qzb9zruGzNqp+lYbXuSuglCifRABlgvwxXURBaXVflsA=
-X-Received: by 2002:aca:ed0a:: with SMTP id l10mr4436854oih.39.1558459608028;
- Tue, 21 May 2019 10:26:48 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ji0VdzU5OHK1F6Sbp+YSXpK8rtBxFsIqpzSG7ymRqzo=;
+        b=RIIMjEskUWW9xtqc2JQ0/m/JmNxAgeQPIxNdIHuoaJIdwxhoR08Jf4cTuctybbIK7f
+         u6MgJJ3zJOm45XRYnmouFl9j48zFUqvbmngvh6DXG3oBjrOZfCIvR/Jhzixi5BgIaLRs
+         NUKZLIVAuPYmNeMp1tTrjOznzC6OEa96eawiU1XBwHeGzSZKpxgV9q3fEkSHh2QFJZkf
+         lkbS9qaCXuMMERd5GU/ZYsAB1agwH9jL3JER+wKpYKeAhGSX0k/DBDiLclgkQSqrvpP2
+         V398QOo7SfT64AJgJnu36QtrXInqYEK9XBhLlfFuL/CFJpgBNHq3mjc3Jo6E2wLs4PUO
+         hDzA==
+X-Gm-Message-State: APjAAAWRYHYpExtE5hLhh72JQL9v3yjnpxLyvwYfXvRVkYpMNXkkc03V
+        1CwTfDyqMO8zAdyYSMru+uUiVA==
+X-Google-Smtp-Source: APXvYqxHPRhrUt8LyBPdVgl0BaXABlTIZ1JBG/HpULhXJEwb7w0zzAA5be0uaHu+Y/y1a/7Kx3iCuQ==
+X-Received: by 2002:a63:ea42:: with SMTP id l2mr81880080pgk.19.1558459572511;
+        Tue, 21 May 2019 10:26:12 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id k192sm21751525pga.20.2019.05.21.10.26.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 May 2019 10:26:11 -0700 (PDT)
+Date:   Tue, 21 May 2019 10:26:39 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, agross@kernel.org, david.brown@linaro.org,
+        jcrouse@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: qcom_spmi: Document PM8005 regulators
+Message-ID: <20190521172639.GB2085@tuxbook-pro>
+References: <20190521164932.14265-1-jeffrey.l.hugo@gmail.com>
+ <20190521165244.14321-1-jeffrey.l.hugo@gmail.com>
 MIME-Version: 1.0
-References: <20190521151952.2779-1-narmstrong@baylibre.com> <20190521151952.2779-3-narmstrong@baylibre.com>
-In-Reply-To: <20190521151952.2779-3-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 21 May 2019 19:26:37 +0200
-Message-ID: <CAFBinCCvoq0xkoCCiOqh7YHegZB4SJBjDMJTxEknDXogWiXUxw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] dt-bindings: arm: amlogic: add Odroid-N2 binding
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     khilman@baylibre.com, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521165244.14321-1-jeffrey.l.hugo@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 5:19 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Add compatible for the Amlogic G12B (S922X) SoC based Odroid-N2 SBC
-> from HardKernel.
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Tue 21 May 09:52 PDT 2019, Jeffrey Hugo wrote:
+
+> Document the dt bindings for the PM8005 regulators which are usually used
+> for VDD of standalone blocks on a SoC like the GPU.
+> 
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 > ---
-> Rob, Martin,
->
-> I converted the patch you acked in yaml, I kept the Reviewed-by,
-> is it ok for you ?
-yes, looks fine to me as well
+>  .../devicetree/bindings/regulator/qcom,spmi-regulator.txt     | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> index 406f2e570c50..ba94bc2d407a 100644
+> --- a/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> +++ b/Documentation/devicetree/bindings/regulator/qcom,spmi-regulator.txt
+> @@ -4,6 +4,7 @@ Qualcomm SPMI Regulators
+>  	Usage: required
+>  	Value type: <string>
+>  	Definition: must be one of:
+> +			"qcom,pm8005-regulators"
+>  			"qcom,pm8841-regulators"
+>  			"qcom,pm8916-regulators"
+>  			"qcom,pm8941-regulators"
+> @@ -120,6 +121,9 @@ The regulator node houses sub-nodes for each regulator within the device. Each
+>  sub-node is identified using the node's name, with valid values listed for each
+>  of the PMICs below.
+>  
+> +pm8005:
+> +	s1, s2, s3, s4
+> +
+>  pm8841:
+>  	s1, s2, s3, s4, s5, s6, s7, s8
+>  
+> -- 
+> 2.17.1
+> 
