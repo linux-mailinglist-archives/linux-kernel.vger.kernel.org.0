@@ -2,161 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD54625943
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14A4E25951
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:45:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbfEUUlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 16:41:14 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44684 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727913AbfEUUkk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 16:40:40 -0400
-Received: by mail-pl1-f194.google.com with SMTP id c5so8953081pll.11
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 13:40:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VmjDYig5cOfeJzpmuRnE4YbNJQ8zuwD2EO9PKFuRqCg=;
-        b=ZoN3w9z3uD8ECaFrH1mWGfcXbdL2H57DFbX418kzrKyjv83IjiPRGWXJIdemvMzk9r
-         LkE+onb3hP+uPA5KQMc/BtXm2bk4ZHMT06ZG/59w5HqfIarSuJfbz0UD9W7TdgNSiHIB
-         CYqGb7kaaeQyzZXVIZwccQCYkLZ3uUPQ5JHHA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VmjDYig5cOfeJzpmuRnE4YbNJQ8zuwD2EO9PKFuRqCg=;
-        b=OWqosuM2a9TqEuXbgAIM2yk7wHujpOws51ve+/11BmOFBqANLyRuJnHG8a5sgGNWef
-         aONgRQ6asZUXJKaIDyYpZ5rfD+L7ty8rz1ohKG1VfWHPyMagBtFkQNEOYBOrxZ6Xq1PN
-         phqlE21VwmGr0Pr70K8APX2CRWsH6nJ+deA2jDaM3vDYSZxIJnVpQtCzl7YcPjM2DY+N
-         Hov0OxSiZXLK3aq8P+TYmuU2wbXoMmGMCQbsvqBFKfSO9lRRVIHQ1QRqSpRRnIV9TYZa
-         H83GGBpPFjtSDYN/PLdsZzg6RfRZQCbdpNZiy5qOWvbbI0pQG2Hph7m1H1Du53UCfiGA
-         h88w==
-X-Gm-Message-State: APjAAAV+yya0DcZRL5cGl27vkJYB3WP4bccaQ2TBmp0qdajRbgHv+O1Q
-        0zSllfVN7crsy5v0aDUApliuzQ==
-X-Google-Smtp-Source: APXvYqzcoa60DP1BCRfYNNgykS/fRPS1E7bZ8Eb21n8ia+/CEeccKQvQRrIXVo4G+UKTFG8KapwAEg==
-X-Received: by 2002:a17:902:e7:: with SMTP id a94mr60595135pla.182.1558471239758;
-        Tue, 21 May 2019 13:40:39 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c76sm41508742pfc.43.2019.05.21.13.40.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 13:40:39 -0700 (PDT)
-Date:   Tue, 21 May 2019 13:40:38 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Colin Ian King <colin.king@canonical.com>
-Cc:     mcgrof@kernel.org, linux-kernel@vger.kernel.org,
-        Weitao Hou <houweitaoo@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] kernel: fix typos and some coding style in comments
-Message-ID: <201905211338.D073AB64@keescook>
-References: <20190521050937.4370-1-houweitaoo@gmail.com>
+        id S1727963AbfEUUml (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 16:42:41 -0400
+Received: from mga05.intel.com ([192.55.52.43]:18009 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727222AbfEUUmk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 16:42:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 13:42:40 -0700
+X-ExtLoop1: 1
+Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
+  by FMSMGA003.fm.intel.com with ESMTP; 21 May 2019 13:42:40 -0700
+Date:   Tue, 21 May 2019 13:42:40 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v3 4/6] x86/MCE: Make number of MCA banks per_cpu
+Message-ID: <20190521204239.GA11029@agluck-desk>
+References: <20190430203206.104163-1-Yazen.Ghannam@amd.com>
+ <20190430203206.104163-5-Yazen.Ghannam@amd.com>
+ <20190518112530.GA26276@zn.tnic>
+ <SN6PR12MB2639571E33EBC7342A0607F8F8070@SN6PR12MB2639.namprd12.prod.outlook.com>
+ <20190521202902.GC7793@cz.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190521050937.4370-1-houweitaoo@gmail.com>
+In-Reply-To: <20190521202902.GC7793@cz.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 01:09:37PM +0800, Weitao Hou wrote:
-> fix lenght to length
+On Tue, May 21, 2019 at 10:29:02PM +0200, Borislav Petkov wrote:
 > 
-> Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
-
-Acked-by: Kees Cook <keescook@chromium.org>
-
-I've aimed this at akpm... Colin, who normally takes your spelling
-fix patches? (It looks like your split them up normally? That seems
-silly here...)
-
--Kees
-
-> ---
-> Changes in v3:
-> - fix all other same typos with git grep
-> ---
->  .../devicetree/bindings/usb/s3c2410-usb.txt    |  2 +-
->  .../wireless/mediatek/mt76/mt76x02_usb_core.c  |  2 +-
->  kernel/sysctl.c                                | 18 +++++++++---------
->  sound/soc/qcom/qdsp6/q6asm.c                   |  2 +-
->  4 files changed, 12 insertions(+), 12 deletions(-)
+> Can we do instead:
 > 
-> diff --git a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-> index e45b38ce2986..26c85afd0b53 100644
-> --- a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-> +++ b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
-> @@ -4,7 +4,7 @@ OHCI
->  
->  Required properties:
->   - compatible: should be "samsung,s3c2410-ohci" for USB host controller
-> - - reg: address and lenght of the controller memory mapped region
-> + - reg: address and length of the controller memory mapped region
->   - interrupts: interrupt number for the USB OHCI controller
->   - clocks: Should reference the bus and host clocks
->   - clock-names: Should contain two strings
-> diff --git a/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c b/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c
-> index 6b89f7eab26c..e0f5e6202a27 100644
-> --- a/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c
-> +++ b/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c
-> @@ -53,7 +53,7 @@ int mt76x02u_skb_dma_info(struct sk_buff *skb, int port, u32 flags)
->  	pad = round_up(skb->len, 4) + 4 - skb->len;
->  
->  	/* First packet of a A-MSDU burst keeps track of the whole burst
-> -	 * length, need to update lenght of it and the last packet.
-> +	 * length, need to update length of it and the last packet.
->  	 */
->  	skb_walk_frags(skb, iter) {
->  		last = iter;
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 943c89178e3d..f78f725f225e 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -187,17 +187,17 @@ extern int no_unaligned_warning;
->   * enum sysctl_writes_mode - supported sysctl write modes
->   *
->   * @SYSCTL_WRITES_LEGACY: each write syscall must fully contain the sysctl value
-> - * 	to be written, and multiple writes on the same sysctl file descriptor
-> - * 	will rewrite the sysctl value, regardless of file position. No warning
-> - * 	is issued when the initial position is not 0.
-> + *	to be written, and multiple writes on the same sysctl file descriptor
-> + *	will rewrite the sysctl value, regardless of file position. No warning
-> + *	is issued when the initial position is not 0.
->   * @SYSCTL_WRITES_WARN: same as above but warn when the initial file position is
-> - * 	not 0.
-> + *	not 0.
->   * @SYSCTL_WRITES_STRICT: writes to numeric sysctl entries must always be at
-> - * 	file position 0 and the value must be fully contained in the buffer
-> - * 	sent to the write syscall. If dealing with strings respect the file
-> - * 	position, but restrict this to the max length of the buffer, anything
-> - * 	passed the max lenght will be ignored. Multiple writes will append
-> - * 	to the buffer.
-> + *	file position 0 and the value must be fully contained in the buffer
-> + *	sent to the write syscall. If dealing with strings respect the file
-> + *	position, but restrict this to the max length of the buffer, anything
-> + *	passed the max length will be ignored. Multiple writes will append
-> + *	to the buffer.
->   *
->   * These write modes control how current file position affects the behavior of
->   * updating sysctl values through the proc interface on each write.
-> diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
-> index 4f85cb19a309..e8141a33a55e 100644
-> --- a/sound/soc/qcom/qdsp6/q6asm.c
-> +++ b/sound/soc/qcom/qdsp6/q6asm.c
-> @@ -1194,7 +1194,7 @@ EXPORT_SYMBOL_GPL(q6asm_open_read);
->   * q6asm_write_async() - non blocking write
->   *
->   * @ac: audio client pointer
-> - * @len: lenght in bytes
-> + * @len: length in bytes
->   * @msw_ts: timestamp msw
->   * @lsw_ts: timestamp lsw
->   * @wflags: flags associated with write
-> -- 
-> 2.18.0
+> -static DEFINE_PER_CPU_READ_MOSTLY(struct mce_bank *, mce_banks_array);
+> +static DEFINE_PER_CPU_READ_MOSTLY(struct mce_bank, mce_banks_array[MAX_NR_BANKS]);
+> 
+> which should be something like 9*32 = 288 bytes per CPU.
 > 
 
--- 
-Kees Cook
+Where did you get the "9" from?  struct mce_bank looks to
+be over 50 bytes.
+
+Still only 1.5K per cpu though.
+
+-Tony
