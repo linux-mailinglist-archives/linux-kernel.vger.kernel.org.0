@@ -2,67 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE05A24FDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:11:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57BB525017
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbfEUNLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 09:11:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51456 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbfEUNLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 09:11:33 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA77620856;
-        Tue, 21 May 2019 13:11:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558444293;
-        bh=PswCI7qaEh7te+WzS2oP8fteQs8KoBFwCF8/BdVQ8Cw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NzLJV1RaZC8MshHxDBTshU7//9I8vU3RdIHJuIP9aN8FzCHsfhNnYC26m/PHnsimt
-         jRXq4FBdoFgvF+3kA+jnUCFEpGpAEe2wQSUoSZSAJWStyO9Fi1xMPdWt8GGBF4OmAH
-         b7s+/Y2Lw6fQRDI+D7lsYUdTghpWTrC2pQRnrdiU=
+        id S1728293AbfEUNYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 09:24:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39896 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727044AbfEUNYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 09:24:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3EA72ADCB;
+        Tue, 21 May 2019 13:24:30 +0000 (UTC)
+Message-ID: <1558444291.12672.23.camel@suse.com>
+Subject: Re: [RFC PATCH] usb: host: xhci: allow __GFP_FS in dma allocation
+From:   Oliver Neukum <oneukum@suse.com>
+To:     Alan Stern <stern@rowland.harvard.edu>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Jaewon Kim <jaewon31.kim@gmail.com>, linux-mm@kvack.org,
+        gregkh@linuxfoundation.org, Jaewon Kim <jaewon31.kim@samsung.com>,
+        m.szyprowski@samsung.com, ytk.lee@samsung.com,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 Date:   Tue, 21 May 2019 15:11:31 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Esben Haabendal <esben@geanix.com>
-Cc:     linux-serial@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Enrico Weigelt <lkml@metux.net>, Jiri Slaby <jslaby@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        He Zhe <zhe.he@windriver.com>, Marek Vasut <marex@denx.de>,
-        Douglas Anderson <dianders@chromium.org>,
-        Paul Burton <paul.burton@mips.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH resend] serial: 8250: Add support for using
- platform_device resources
-Message-ID: <20190521131131.GA19685@kroah.com>
-References: <20190430140416.4707-1-esben@geanix.com>
- <20190521113426.16790-1-esben@geanix.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521113426.16790-1-esben@geanix.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <Pine.LNX.4.44L0.1905201011490.1498-100000@iolanthe.rowland.org>
+References: <Pine.LNX.4.44L0.1905201011490.1498-100000@iolanthe.rowland.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 01:34:26PM +0200, Esben Haabendal wrote:
-> Allow getting memory resource (mapbase or iobase) as well as irq from
-> platform_device resources.
+On Mo, 2019-05-20 at 10:16 -0400, Alan Stern wrote:
+> On Mon, 20 May 2019, Christoph Hellwig wrote:
 > 
-> The UPF_DEV_RESOURCES flag must be set for devices where platform_device
-> resources are to be used.  When not set, driver behaves as before.
+> > GFP_KERNEL if you can block, GFP_ATOMIC if you can't for a good reason,
+> > that is the allocation is from irq context or under a spinlock.  If you
+> > think you have a case where you think you don't want to block, but it
+> > is not because of the above reasons we need to have a chat about the
+> > details.
+> 
+> What if the allocation requires the kernel to swap some old pages out 
+> to the backing store, but the backing store is on the device that the 
+> driver is managing?  The swap can't take place until the current I/O 
+> operation is complete (assuming the driver can handle only one I/O 
+> operation at a time), and the current operation can't complete until 
+> the old pages are swapped out.  Result: deadlock.
+> 
+> Isn't that the whole reason for using GFP_NOIO in the first place?
 
-Nothing actually sets this flag in this patch, so I can't take this as
-you are adding new features that no one uses :(
+Hi,
 
-Where is the driver that sets this?
+lookig at this it seems to me that we are in danger of a deadlock
 
-thanks,
+- during reset - devices cannot do IO while being reset
+	covered by the USB layer in usb_reset_device
+- resume & restore - devices cannot do IO while suspended
+	covered by driver core in rpm_callback
+- disconnect - a disconnected device cannot do IO
+	is this a theoretical case or should I do something to
+	the driver core?
 
-greg k-h
+How about changing configurations on USB?
+
+	Regards
+		Oliver
+
