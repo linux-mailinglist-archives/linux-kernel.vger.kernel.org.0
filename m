@@ -2,121 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C54A524897
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99A25248E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 09:24:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfEUG6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 02:58:41 -0400
-Received: from twhmllg4.macronix.com ([122.147.135.202]:45415 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727117AbfEUG6j (ORCPT
+        id S1726927AbfEUHYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 03:24:22 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:22820 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726006AbfEUHYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 02:58:39 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id x4L6vvQf093632;
-        Tue, 21 May 2019 14:57:59 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     broonie@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        bbrezillon@kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        lee.jones@linaro.org, sergei.shtylyov@cogentembedded.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        Mason Yang <masonccyang@mxic.com.tw>, miquel.raynal@bootlin.com
-Subject: [PATCH v13 3/3] dt-bindings: mfd: Document Renesas R-Car Gen3 RPC-IF controller bindings
-Date:   Tue, 21 May 2019 15:19:34 +0800
-Message-Id: <1558423174-10748-4-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1558423174-10748-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1558423174-10748-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG4.macronix.com x4L6vvQf093632
+        Tue, 21 May 2019 03:24:21 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x4L7MHPr022832;
+        Tue, 21 May 2019 16:22:18 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x4L7MHPr022832
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1558423338;
+        bh=hr8joM8Sc+Aak3eFwsotPo0Y8ZJsP4u2qZKEifJpDSc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=l7CH3GZim9h0bMC3eGO7MyWPnzOAA8KNC8BCQDA1nQrXefb54KVJjgCD16vYHYF0F
+         nSZLR5oes9Eg9Dw9BlAjPhLWfv9XTP4c4pEzm+NuMnU5gt70hwb9+AW/x+pxfEOEZR
+         JMQgWpV6iF+kUEMGyFwS9L8UQPpZpA6PFtr2+7ygfw/hcYNSohDHv46+pxpgHvzWXP
+         66IeVxSAK8J7Odoj6PvUODZsZNWL9/Eco9y+CEgJrGlmSsdlBFHGjANZrEm6sOC9bb
+         2rnNYxZ4b6X0+fkF3ihTg2SGpbkhm8kMrQm8IXvzoOfvR1qMXxhf/araMXvjhtQB1f
+         yd8HskED0bItA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org
+Cc:     "H . Peter Anvin" <hpa@zytor.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] x86/io_delay: break instead of fallthrough in switch statement
+Date:   Tue, 21 May 2019 16:22:10 +0900
+Message-Id: <20190521072211.21014-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
+The current code is fine since 'case CONFIG_IO_DELAY_TYPE_NONE'
+does nothing, but scripts/checkpatch.pl complains about this:
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+  warning: Possible switch case/default not preceded by break or fallthrough comment
+
+I like break statement better than a fallthrough comment here.
+It avoids the warning and clarify the code.
+
+No behavior change is intended.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- .../devicetree/bindings/mfd/renesas-rpc-if.txt     | 65 ++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/renesas-rpc-if.txt
 
-diff --git a/Documentation/devicetree/bindings/mfd/renesas-rpc-if.txt b/Documentation/devicetree/bindings/mfd/renesas-rpc-if.txt
-new file mode 100644
-index 0000000..20ec85b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/renesas-rpc-if.txt
-@@ -0,0 +1,65 @@
-+Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
-+---------------------------------------------------------
-+
-+RPC-IF supports both SPI NOR and HyperFlash (CFI-compliant flash)
-+
-+Required properties:
-+- compatible: should be an SoC-specific compatible value, followed by
-+		"renesas,rcar-gen3-rpc" as a fallback.
-+		supported SoC-specific values are:
-+		"renesas,r8a77995-rpc"	(R-Car D3)
-+- reg: should contain three register areas:
-+	first for RPC-IF registers,
-+	second for the direct mapping read mode and
-+	third for the write buffer area.
-+- reg-names: should contain "regs", "dirmap" and "wbuf"
-+- clocks: should contain 1 entries for the module's clock
-+- clock-names: should contain "rpc"
-+- power-domains: should contain system-controller(sysc) for power-domain-cell
-+- resets: should contain clock pulse generator(cpg) for reset-cell,
-+	  power-domain-cell and clock-cell
-+- #address-cells: should be 1
-+- #size-cells: should be 0
-+
-+Example:
-+- SPI mode:
-+
-+	rpc: spi@ee200000 {
-+		compatible = "renesas,r8a77995-rpc", "renesas,rcar-gen3-rpc";
-+		reg = <0 0xee200000 0 0x200>, <0 0x08000000 0 0x4000000>,
-+		      <0 0xee208000 0 0x100>;
-+		reg-names = "regs", "dirmap", "wbuf";
-+		clocks = <&cpg CPG_MOD 917>;
-+		clock-names = "rpc";
-+		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+		resets = <&cpg 917>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		flash@0 {
-+			compatible = "jedec,spi-nor";
-+			reg = <0>;
-+			spi-max-frequency = <40000000>;
-+			spi-tx-bus-width = <1>;
-+			spi-rx-bus-width = <1>;
-+		};
-+	};
-+
-+- HF mode:
-+	rpc: spi@ee200000 {
-+		compatible = "renesas,r8a77995-rpc", "renesas,rcar-gen3-rpc";
-+		reg = <0 0xee200000 0 0x200>, <0 0x08000000 0 0x4000000>,
-+		      <0 0xee208000 0 0x100>;
-+		reg-names = "regs", "dirmap", "wbuf";
-+		clocks = <&cpg CPG_MOD 917>;
-+		clock-names = "rpc";
-+		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+		resets = <&cpg 917>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		flash@0 {
-+			compatible = "cypress,hyperflash", "cfi-flash";
-+			reg = <0>;
-+		};
-+	};
+ arch/x86/kernel/io_delay.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/kernel/io_delay.c b/arch/x86/kernel/io_delay.c
+index 805b7a341aca..3dc874d5d43b 100644
+--- a/arch/x86/kernel/io_delay.c
++++ b/arch/x86/kernel/io_delay.c
+@@ -39,6 +39,7 @@ void native_io_delay(void)
+ 		 * are shorter until calibrated):
+ 		 */
+ 		udelay(2);
++		break;
+ 	case CONFIG_IO_DELAY_TYPE_NONE:
+ 		break;
+ 	}
 -- 
-1.9.1
+2.17.1
 
