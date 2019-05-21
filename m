@@ -2,115 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB2D5247EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D6AA247F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:18:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727898AbfEUGRr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 02:17:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52082 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725885AbfEUGRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 02:17:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B91BCAD47;
-        Tue, 21 May 2019 06:17:44 +0000 (UTC)
-Date:   Tue, 21 May 2019 08:17:43 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Minchan Kim <minchan@kernel.org>
+        id S1727967AbfEUGSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 02:18:54 -0400
+Received: from ozlabs.org ([203.11.71.1]:59621 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725835AbfEUGSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 02:18:54 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 457QZM4WLCz9s1c;
+        Tue, 21 May 2019 16:18:51 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1558419531;
+        bh=SuBwJKDTGP7KYtBjVkNbXLyRMgBwO02+o7PQrSVQYg0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=KwRqgmL7WS8FBV1q/vQLp0uA51cdrtFglwxqCAW0lihEoluD8qKRVmzmrROBP+UCq
+         eyPz60XZBUTPTKHzAYA/oL3tL5qhtJdFjSRUHtFwioHE7qg5nz0jPNhcgXlmVlknb7
+         fIiJUwvIPeAyOfl1GCAh9r+INQspc+o2umqoG4ylMr2whXP0xFzokNBa2Oz2qYFxHS
+         38B9q9831PyKw9CZhN+UEsAO/nnnDfBCvZU1VXtWNScFw2DK5S26J5tjdPH/2j71eS
+         Uj/oAzGwqVdd9eTg1Gmk9TNOMzyL3z0KhDE53Ee6xyWqoKXVR3toW9LpCFtsFRh3eZ
+         who9iIWZkngDQ==
+Date:   Tue, 21 May 2019 16:18:51 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>, linux-api@vger.kernel.org
-Subject: Re: [RFC 5/7] mm: introduce external memory hinting API
-Message-ID: <20190521061743.GC32329@dhcp22.suse.cz>
-References: <20190520035254.57579-1-minchan@kernel.org>
- <20190520035254.57579-6-minchan@kernel.org>
- <20190520091829.GY6836@dhcp22.suse.cz>
- <20190521024107.GF10039@google.com>
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for May 21
+Message-ID: <20190521161851.49dbcf95@canb.auug.org.au>
+In-Reply-To: <CAK7LNARngiQTT2-Y0pFFbENiqAHsy0_6AvWsMRhL9Fqwo=gb-A@mail.gmail.com>
+References: <20190521151402.19f22667@canb.auug.org.au>
+        <CAK7LNARngiQTT2-Y0pFFbENiqAHsy0_6AvWsMRhL9Fqwo=gb-A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521024107.GF10039@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Hg6h6SYoJ4msJF0GufiSt7s"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 21-05-19 11:41:07, Minchan Kim wrote:
-> On Mon, May 20, 2019 at 11:18:29AM +0200, Michal Hocko wrote:
-> > [Cc linux-api]
-> > 
-> > On Mon 20-05-19 12:52:52, Minchan Kim wrote:
-> > > There is some usecase that centralized userspace daemon want to give
-> > > a memory hint like MADV_[COOL|COLD] to other process. Android's
-> > > ActivityManagerService is one of them.
-> > > 
-> > > It's similar in spirit to madvise(MADV_WONTNEED), but the information
-> > > required to make the reclaim decision is not known to the app. Instead,
-> > > it is known to the centralized userspace daemon(ActivityManagerService),
-> > > and that daemon must be able to initiate reclaim on its own without
-> > > any app involvement.
-> > 
-> > Could you expand some more about how this all works? How does the
-> > centralized daemon track respective ranges? How does it synchronize
-> > against parallel modification of the address space etc.
-> 
-> Currently, we don't track each address ranges because we have two
-> policies at this moment:
-> 
-> 	deactive file pages and reclaim anonymous pages of the app.
-> 
-> Since the daemon has a ability to let background apps resume(IOW, process
-> will be run by the daemon) and both hints are non-disruptive stabilty point
-> of view, we are okay for the race.
+--Sig_/Hg6h6SYoJ4msJF0GufiSt7s
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fair enough but the API should consider future usecases where this might
-be a problem. So we should really think about those potential scenarios
-now. If we are ok with that, fine, but then we should be explicit and
-document it that way. Essentially say that any sort of synchronization
-is supposed to be done by monitor. This will make the API less usable
-but maybe that is enough.
- 
-> > > To solve the issue, this patch introduces new syscall process_madvise(2)
-> > > which works based on pidfd so it could give a hint to the exeternal
-> > > process.
-> > > 
-> > > int process_madvise(int pidfd, void *addr, size_t length, int advise);
-> > 
-> > OK, this makes some sense from the API point of view. When we have
-> > discussed that at LSFMM I was contemplating about something like that
-> > except the fd would be a VMA fd rather than the process. We could extend
-> > and reuse /proc/<pid>/map_files interface which doesn't support the
-> > anonymous memory right now. 
-> > 
-> > I am not saying this would be a better interface but I wanted to mention
-> > it here for a further discussion. One slight advantage would be that
-> > you know the exact object that you are operating on because you have a
-> > fd for the VMA and we would have a more straightforward way to reject
-> > operation if the underlying object has changed (e.g. unmapped and reused
-> > for a different mapping).
-> 
-> I agree your point. If I didn't miss something, such kinds of vma level
-> modify notification doesn't work even file mapped vma at this moment.
-> For anonymous vma, I think we could use userfaultfd, pontentially.
-> It would be great if someone want to do with disruptive hints like
-> MADV_DONTNEED.
-> 
-> I'd like to see it further enhancement after landing address range based
-> operation via limiting hints process_madvise supports to non-disruptive
-> only(e.g., MADV_[COOL|COLD]) so that we could catch up the usercase/workload
-> when someone want to extend the API.
+Hi Masahiro,
 
-So do you think we want both interfaces (process_madvise and madvisefd)?
--- 
-Michal Hocko
-SUSE Labs
+On Tue, 21 May 2019 14:48:21 +0900 Masahiro Yamada <yamada.masahiro@socione=
+xt.com> wrote:
+>
+> FYI.
+> Commit 15e57a12d4df3c662f6cceaec6d1efa98a3d70f8
+> is equivalent to commit ecebc5ce59a003163eb608ace38a01d7ffeb0a95
+> which is already in the mainline.
+>=20
+> The former should be dropped, shouldn't it?
+
+I have dropped it.  I assume andrew will take it out of his patch queue in =
+due course.
+
+Andrew, this is:
+
+  15e57a12d4df ("kdb: det rid of broken attempt to print CCVERSION in kdb s=
+ummary")
+
+I dropped most (all?) of the rest that you have sent to Linus, but this
+hit Linus' tree via another tree.
+
+BTW, Masahiro, please trim your quoting to just the relevant bits,
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Hg6h6SYoJ4msJF0GufiSt7s
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzjmEsACgkQAVBC80lX
+0GxBjAf+Lfpbc1nCiMviu5YVgp/1C8ZUE1lBN4B1Pv6eDB6RUy7EoKd09Owr9/a8
+jF0hEcwGtB8zx2lUIvxfwFnZAJomRD4Yif1TNHI5yyuf1hH45ddjI+4ZkmTIBmN/
+vkJHDEq4sYgUxcy8RSVWhYufYC4DRAI/kXnjbqOkc7T1gzLDzOiswsMyw047YkPi
+QJgoRQg4rDFLZCGJjO/3MqIWIx3y2lsZS0Tm+gxHRBqL1YTpR8AviunwXkhwmJAJ
+QhBshQssvkRdF+YyxJMfHG2wZxHbT2FJOYGvk6VVRLPrOPlFfwRB5Iy3N5BQ1W6K
+JWLADeQK2USVxFrG2L0XSkrjW6rPyA==
+=kCQP
+-----END PGP SIGNATURE-----
+
+--Sig_/Hg6h6SYoJ4msJF0GufiSt7s--
