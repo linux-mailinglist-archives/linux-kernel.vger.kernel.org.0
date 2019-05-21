@@ -2,219 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24FA224A62
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 10:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6738224A57
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 10:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfEUI3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 04:29:32 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45533 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbfEUI3c (ORCPT
+        id S1726971AbfEUI2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 04:28:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43554 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbfEUI2t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 04:29:32 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4L8SDAD3090919
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 21 May 2019 01:28:14 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4L8SDAD3090919
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1558427294;
-        bh=rRW28Cvkz9pK3Rig70/BespMV5RETILakf+L5oAJcQI=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=EZRJDf3ZDAvKZK1/Wc+38hH4SVLSQDvIqnEPL7DPTh9ygDoRnF8sEhb7hYeA/j/YG
-         Q0nPuekGbL2zI1Bu4OkGyawgray4vbyMEhgGkf0r7sZ7+Zhlc+6jBVktyfE+qAhdzC
-         us2jwXNPldfKQrrB3d/QdxVxEwyM1Kt3/7xSi5M6QE1KwKyUrG90jPYAwBU5zN9XIY
-         f6+0VMPqjqgF0O9+v0EkvXaElJA7FbPzlraPlQxVad9KjZ2ZWSlZbFfxV6d6Gqabi5
-         u7NAlR0khVlNYSZxZWHJZO2Ylw7aY/E+7obEHNhrTOBmsTvtE/TUN4YmWCXdECALBh
-         l9HSDjEqMdQuQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4L8SDV93090907;
-        Tue, 21 May 2019 01:28:13 -0700
-Date:   Tue, 21 May 2019 01:28:13 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Stephane Eranian <tipbot@zytor.com>
-Message-ID: <tip-23e3983a466cd540ffdd2bbc6e0c51e31934f941@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        vincent.weaver@maine.edu, acme@redhat.com,
-        torvalds@linux-foundation.org, hpa@zytor.com,
-        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        eranian@google.com, peterz@infradead.org, jolsa@redhat.com
-Reply-To: tglx@linutronix.de, mingo@kernel.org, peterz@infradead.org,
-          eranian@google.com, linux-kernel@vger.kernel.org,
-          vincent.weaver@maine.edu, acme@redhat.com, jolsa@redhat.com,
-          torvalds@linux-foundation.org, hpa@zytor.com,
-          alexander.shishkin@linux.intel.com
-In-Reply-To: <20190521005246.423-1-eranian@google.com>
-References: <20190521005246.423-1-eranian@google.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/x86/intel/ds: Fix EVENT vs. UEVENT PEBS
- constraints
-Git-Commit-ID: 23e3983a466cd540ffdd2bbc6e0c51e31934f941
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 21 May 2019 04:28:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dzgDZjQNK4+WfEDvGGwqugQnmKy730vEONl7eH1nok4=; b=HBJ7MsNn+aPvz98REpWd9DgMm
+        dmnQ22k0MVUdI1ghk5enllEkjxUbxymVaLD7NVE6XpFXuVuv4deanC9rt+7COcMZ/bSTF3cHs6XrG
+        EeZg8OP2FHkZjEbwkKC1aTNGB4Ls0/51AIQzi3f/1Uci5dQ16U1VCCzTGWzYbCKXJmEwGKkHgrvK5
+        EoXiYMJYKCyp/V8tyOXRvKhNzvYGACLupH4EflRc6z6y3dqh4E2dd9Tw/PbH2SBxltIIjqpv96KkO
+        f46PoXLEVplgIBXtbi95kuZgzMTGZdJsCqab99Yadc2yzaoJ544SH8krtRYiN4SSqSQlm+px8h5ZO
+        VZdh3LauA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hT08c-0005iu-QJ; Tue, 21 May 2019 08:28:46 +0000
+Date:   Tue, 21 May 2019 01:28:46 -0700
+From:   'Christoph Hellwig' <hch@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     'Christoph Hellwig' <hch@infradead.org>,
+        kanchan <joshi.k@samsung.com>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        prakash.v@samsung.com, anshul@samsung.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH v5 0/7] Extend write-hint framework, and add write-hint
+ for Ext4 journal
+Message-ID: <20190521082846.GA11024@infradead.org>
+References: <CGME20190425112347epcas2p1f7be48b8f0d2203252b8c9dd510c1b61@epcas2p1.samsung.com>
+ <1556191202-3245-1-git-send-email-joshi.k@samsung.com>
+ <20190510170249.GA26907@infradead.org>
+ <00fb01d50c71$dd358e50$97a0aaf0$@samsung.com>
+ <20190520142719.GA15705@infradead.org>
+ <20190521082528.GA17709@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190521082528.GA17709@quack2.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  23e3983a466cd540ffdd2bbc6e0c51e31934f941
-Gitweb:     https://git.kernel.org/tip/23e3983a466cd540ffdd2bbc6e0c51e31934f941
-Author:     Stephane Eranian <eranian@google.com>
-AuthorDate: Mon, 20 May 2019 17:52:46 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 21 May 2019 10:25:29 +0200
+On Tue, May 21, 2019 at 10:25:28AM +0200, Jan Kara wrote:
+> performance benefits for some drives. After all you can just think about it
+> like RWH_WRITE_LIFE_JOURNAL type of hint available for the kernel...
 
-perf/x86/intel/ds: Fix EVENT vs. UEVENT PEBS constraints
+Except that it actuallys adds a parallel insfrastructure.  A
+RWH_WRITE_LIFE_JOURNAL would be much more palatable, but someone needs
+to explain how that is:
 
-This patch fixes an bug revealed by the following commit:
-
-  6b89d4c1ae85 ("perf/x86/intel: Fix INTEL_FLAGS_EVENT_CONSTRAINT* masking")
-
-That patch modified INTEL_FLAGS_EVENT_CONSTRAINT() to only look at the event code
-when matching a constraint. If code+umask were needed, then the
-INTEL_FLAGS_UEVENT_CONSTRAINT() macro was needed instead.
-This broke with some of the constraints for PEBS events.
-
-Several of them, including the one used for cycles:p, cycles:pp, cycles:ppp
-fell in that category and caused the event to be rejected in PEBS mode.
-In other words, on some platforms a cmdline such as:
-
-  $ perf top -e cycles:pp
-
-would fail with -EINVAL.
-
-This patch fixes this bug by properly using INTEL_FLAGS_UEVENT_CONSTRAINT()
-when needed in the PEBS constraint tables.
-
-Reported-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Stephane Eranian <eranian@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: kan.liang@intel.com
-Link: http://lkml.kernel.org/r/20190521005246.423-1-eranian@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/events/intel/ds.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 7a9f5dac5abe..7acc526b4ad2 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -684,7 +684,7 @@ struct event_constraint intel_core2_pebs_event_constraints[] = {
- 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x1fc7, 0x1), /* SIMD_INST_RETURED.ANY */
- 	INTEL_FLAGS_EVENT_CONSTRAINT(0xcb, 0x1),    /* MEM_LOAD_RETIRED.* */
- 	/* INST_RETIRED.ANY_P, inv=1, cmask=16 (cycles:p). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108000c0, 0x01),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108000c0, 0x01),
- 	EVENT_CONSTRAINT_END
- };
- 
-@@ -693,7 +693,7 @@ struct event_constraint intel_atom_pebs_event_constraints[] = {
- 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x00c5, 0x1), /* MISPREDICTED_BRANCH_RETIRED */
- 	INTEL_FLAGS_EVENT_CONSTRAINT(0xcb, 0x1),    /* MEM_LOAD_RETIRED.* */
- 	/* INST_RETIRED.ANY_P, inv=1, cmask=16 (cycles:p). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108000c0, 0x01),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108000c0, 0x01),
- 	/* Allow all events as PEBS with no flags */
- 	INTEL_ALL_EVENT_CONSTRAINT(0, 0x1),
- 	EVENT_CONSTRAINT_END
-@@ -701,7 +701,7 @@ struct event_constraint intel_atom_pebs_event_constraints[] = {
- 
- struct event_constraint intel_slm_pebs_event_constraints[] = {
- 	/* INST_RETIRED.ANY_P, inv=1, cmask=16 (cycles:p). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108000c0, 0x1),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108000c0, 0x1),
- 	/* Allow all events as PEBS with no flags */
- 	INTEL_ALL_EVENT_CONSTRAINT(0, 0x1),
- 	EVENT_CONSTRAINT_END
-@@ -726,7 +726,7 @@ struct event_constraint intel_nehalem_pebs_event_constraints[] = {
- 	INTEL_FLAGS_EVENT_CONSTRAINT(0xcb, 0xf),    /* MEM_LOAD_RETIRED.* */
- 	INTEL_FLAGS_EVENT_CONSTRAINT(0xf7, 0xf),    /* FP_ASSIST.* */
- 	/* INST_RETIRED.ANY_P, inv=1, cmask=16 (cycles:p). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108000c0, 0x0f),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108000c0, 0x0f),
- 	EVENT_CONSTRAINT_END
- };
- 
-@@ -743,7 +743,7 @@ struct event_constraint intel_westmere_pebs_event_constraints[] = {
- 	INTEL_FLAGS_EVENT_CONSTRAINT(0xcb, 0xf),    /* MEM_LOAD_RETIRED.* */
- 	INTEL_FLAGS_EVENT_CONSTRAINT(0xf7, 0xf),    /* FP_ASSIST.* */
- 	/* INST_RETIRED.ANY_P, inv=1, cmask=16 (cycles:p). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108000c0, 0x0f),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108000c0, 0x0f),
- 	EVENT_CONSTRAINT_END
- };
- 
-@@ -752,7 +752,7 @@ struct event_constraint intel_snb_pebs_event_constraints[] = {
- 	INTEL_PLD_CONSTRAINT(0x01cd, 0x8),    /* MEM_TRANS_RETIRED.LAT_ABOVE_THR */
- 	INTEL_PST_CONSTRAINT(0x02cd, 0x8),    /* MEM_TRANS_RETIRED.PRECISE_STORES */
- 	/* UOPS_RETIRED.ALL, inv=1, cmask=16 (cycles:p). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108001c2, 0xf),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108001c2, 0xf),
-         INTEL_EXCLEVT_CONSTRAINT(0xd0, 0xf),    /* MEM_UOP_RETIRED.* */
-         INTEL_EXCLEVT_CONSTRAINT(0xd1, 0xf),    /* MEM_LOAD_UOPS_RETIRED.* */
-         INTEL_EXCLEVT_CONSTRAINT(0xd2, 0xf),    /* MEM_LOAD_UOPS_LLC_HIT_RETIRED.* */
-@@ -767,9 +767,9 @@ struct event_constraint intel_ivb_pebs_event_constraints[] = {
-         INTEL_PLD_CONSTRAINT(0x01cd, 0x8),    /* MEM_TRANS_RETIRED.LAT_ABOVE_THR */
- 	INTEL_PST_CONSTRAINT(0x02cd, 0x8),    /* MEM_TRANS_RETIRED.PRECISE_STORES */
- 	/* UOPS_RETIRED.ALL, inv=1, cmask=16 (cycles:p). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108001c2, 0xf),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108001c2, 0xf),
- 	/* INST_RETIRED.PREC_DIST, inv=1, cmask=16 (cycles:ppp). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108001c0, 0x2),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108001c0, 0x2),
- 	INTEL_EXCLEVT_CONSTRAINT(0xd0, 0xf),    /* MEM_UOP_RETIRED.* */
- 	INTEL_EXCLEVT_CONSTRAINT(0xd1, 0xf),    /* MEM_LOAD_UOPS_RETIRED.* */
- 	INTEL_EXCLEVT_CONSTRAINT(0xd2, 0xf),    /* MEM_LOAD_UOPS_LLC_HIT_RETIRED.* */
-@@ -783,9 +783,9 @@ struct event_constraint intel_hsw_pebs_event_constraints[] = {
- 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x01c0, 0x2), /* INST_RETIRED.PRECDIST */
- 	INTEL_PLD_CONSTRAINT(0x01cd, 0xf),    /* MEM_TRANS_RETIRED.* */
- 	/* UOPS_RETIRED.ALL, inv=1, cmask=16 (cycles:p). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108001c2, 0xf),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108001c2, 0xf),
- 	/* INST_RETIRED.PREC_DIST, inv=1, cmask=16 (cycles:ppp). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108001c0, 0x2),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108001c0, 0x2),
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_NA(0x01c2, 0xf), /* UOPS_RETIRED.ALL */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_XLD(0x11d0, 0xf), /* MEM_UOPS_RETIRED.STLB_MISS_LOADS */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_XLD(0x21d0, 0xf), /* MEM_UOPS_RETIRED.LOCK_LOADS */
-@@ -806,9 +806,9 @@ struct event_constraint intel_bdw_pebs_event_constraints[] = {
- 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x01c0, 0x2), /* INST_RETIRED.PRECDIST */
- 	INTEL_PLD_CONSTRAINT(0x01cd, 0xf),    /* MEM_TRANS_RETIRED.* */
- 	/* UOPS_RETIRED.ALL, inv=1, cmask=16 (cycles:p). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108001c2, 0xf),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108001c2, 0xf),
- 	/* INST_RETIRED.PREC_DIST, inv=1, cmask=16 (cycles:ppp). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108001c0, 0x2),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108001c0, 0x2),
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_NA(0x01c2, 0xf), /* UOPS_RETIRED.ALL */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_LD(0x11d0, 0xf), /* MEM_UOPS_RETIRED.STLB_MISS_LOADS */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_LD(0x21d0, 0xf), /* MEM_UOPS_RETIRED.LOCK_LOADS */
-@@ -829,9 +829,9 @@ struct event_constraint intel_bdw_pebs_event_constraints[] = {
- struct event_constraint intel_skl_pebs_event_constraints[] = {
- 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x1c0, 0x2),	/* INST_RETIRED.PREC_DIST */
- 	/* INST_RETIRED.PREC_DIST, inv=1, cmask=16 (cycles:ppp). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108001c0, 0x2),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108001c0, 0x2),
- 	/* INST_RETIRED.TOTAL_CYCLES_PS (inv=1, cmask=16) (cycles:p). */
--	INTEL_FLAGS_EVENT_CONSTRAINT(0x108000c0, 0x0f),
-+	INTEL_FLAGS_UEVENT_CONSTRAINT(0x108000c0, 0x0f),
- 	INTEL_PLD_CONSTRAINT(0x1cd, 0xf),		      /* MEM_TRANS_RETIRED.* */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_LD(0x11d0, 0xf), /* MEM_INST_RETIRED.STLB_MISS_LOADS */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_ST(0x12d0, 0xf), /* MEM_INST_RETIRED.STLB_MISS_STORES */
+ a) different from RWH_WRITE_LIFE_SHORT
+ b) would not apply to a log/journal maintained in userspace that works
+    exactly the same
