@@ -2,75 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4517C248F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 09:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 694B224907
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 09:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbfEUH0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 03:26:54 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32959 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725997AbfEUH0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 03:26:54 -0400
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id A6F2ABF97D3015593510;
-        Tue, 21 May 2019 08:26:52 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 21 May
- 2019 08:26:45 +0100
-Subject: Re: [PATCH 3/4] ima: don't ignore INTEGRITY_UNKNOWN EVM status
-To:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
-        <mjg59@google.com>
-CC:     <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        <stable@vger.kernel.org>
-References: <20190516161257.6640-1-roberto.sassu@huawei.com>
- <20190516161257.6640-3-roberto.sassu@huawei.com>
- <1558387212.4039.77.camel@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <e81b761c-9133-a432-4d06-3cfe57e29e4b@huawei.com>
-Date:   Tue, 21 May 2019 09:26:53 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <1558387212.4039.77.camel@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+        id S1726766AbfEUHeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 03:34:24 -0400
+Received: from mga02.intel.com ([134.134.136.20]:28295 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726011AbfEUHeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 03:34:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 00:34:23 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com ([10.239.159.136])
+  by orsmga005.jf.intel.com with ESMTP; 21 May 2019 00:34:22 -0700
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/1] iommu: Use right function to get group for device
+Date:   Tue, 21 May 2019 15:27:35 +0800
+Message-Id: <20190521072735.27401-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/20/2019 11:20 PM, Mimi Zohar wrote:
-> On Thu, 2019-05-16 at 18:12 +0200, Roberto Sassu wrote:
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index 52e6fbb042cc..80e1c233656b 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -1588,6 +1588,9 @@
->>   			Format: { "off" | "enforce" | "fix" | "log" }
->>   			default: "enforce"
->>   
->> +	ima_appraise_req_evm
->> +			[IMA] require EVM for appraisal with file digests.
-> 
-> As much as possible we want to limit the number of new boot command
-> line options as possible.  Is there a reason for not extending
-> "ima_appraise=" with "require-evm" or "enforce-evm"?
+The iommu_group_get_for_dev() will allocate a group for a
+device if it isn't in any group. This isn't the use case
+in iommu_request_dm_for_dev(). Let's use iommu_group_get()
+instead.
 
-ima-appraise= can be disabled with CONFIG_IMA_APPRAISE_BOOTPARAM, which
-probably is done when the system is in production.
+Fixes: d290f1e70d85a ("iommu: Introduce iommu_request_dm_for_dev()")
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/iommu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Should I allow to use ima-appraise=require-evm even if
-CONFIG_IMA_APPRAISE_BOOTPARAM=n?
-
-Thanks
-
-Roberto
-
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 67ee6623f9b2..3fa025f849e9 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1915,9 +1915,9 @@ int iommu_request_dm_for_dev(struct device *dev)
+ 	int ret;
+ 
+ 	/* Device must already be in a group before calling this function */
+-	group = iommu_group_get_for_dev(dev);
+-	if (IS_ERR(group))
+-		return PTR_ERR(group);
++	group = iommu_group_get(dev);
++	if (!group)
++		return -EINVAL;
+ 
+ 	mutex_lock(&group->mutex);
+ 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+2.17.1
+
