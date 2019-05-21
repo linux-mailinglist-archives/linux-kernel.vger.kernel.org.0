@@ -2,156 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DA7125020
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5460A25029
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:27:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbfEUN07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 09:26:59 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36239 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbfEUN06 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 09:26:58 -0400
-Received: by mail-wm1-f65.google.com with SMTP id j187so2905167wmj.1;
-        Tue, 21 May 2019 06:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qrp/cCOlFJCvzIc4gQMAUxLU+7cAYh9D4Zth3uCG30U=;
-        b=BGix0mkl0u5OQfGkGTujOD8MfOHzU4MYEmrQ2i+91eBnAXKE0bhRFBSfYaAgzMeOlI
-         9ONIZrQ/YPo+0QNPpjlrSCzqMAu8ynnOKpefspeJHrh6Kwk5hL9ph5wXS5wa/qQDnTft
-         MaN4qXXsIdqL4HSiXkY8mE675oJIwjj9wSW6YJVX0I6xQK0+EUkbRkLADENVvpD0T3bl
-         nNhivqvhlkH+3twPkmVCNr/OaW4yC6DO/ChzmVK3xovROhCMNbqwQx48r54i+bWgDk3U
-         lAmQd727iyPDH+t/wg8/fepVOzlr54pQ6k3rScOMSLLO1LYYT7ETgWGWtCqyKwfKcya9
-         ikWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qrp/cCOlFJCvzIc4gQMAUxLU+7cAYh9D4Zth3uCG30U=;
-        b=eoHPfnM/ddBqK/QpGyxRh1RzHzXwquMTRgn4rPlISO3bHPgVdqoWvo4lhEzKlDMfV5
-         en7lv91SVEC+ZiOPlPPz9EEfTgZeIiOIW+q7GKHhNaEYrMcAobzkTdrFdRKG9x04yuJu
-         Zl8kZexzFz3YFfiAcvWySL6Uh0Esil6FuwxKkOGZAJ66CRySyozfSGWOKbIghf6JoNyS
-         0y6WMjl5OTqC52jzCMoAcHxv9smwqx4fdGKQni35un2QasbmMO8q/GUuC0cmVMEf9KY5
-         SE4YAIzDZgJnrnqZTT5Eex5U+jWVJyWkBsH5NPCbab7XCyd7TU1v8eWJebaPSVH2zvhs
-         q/0A==
-X-Gm-Message-State: APjAAAWh+cb4dg2bUKsjzljBrW/sJqqN7eezxPvKAmexsJkzglSpDloi
-        EY7L5k3poQDTCvVNIgS539ReJ/vWdPD+NSj3pKM=
-X-Google-Smtp-Source: APXvYqzvGLXTpCYDjBTmFlxpnFdDs/GZX8wN3Yik3u04wGLJ1U4Jbdm4OYibVzfWSGgFLb4l674d8SHtW41xH+KCxlk=
-X-Received: by 2002:a1c:e443:: with SMTP id b64mr3433813wmh.71.1558445216111;
- Tue, 21 May 2019 06:26:56 -0700 (PDT)
+        id S1728269AbfEUN1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 09:27:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35176 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726750AbfEUN1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 09:27:30 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EDEF43082E58;
+        Tue, 21 May 2019 13:27:24 +0000 (UTC)
+Received: from plouf.redhat.com (ovpn-116-49.ams2.redhat.com [10.36.116.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4D33E60F8D;
+        Tue, 21 May 2019 13:27:20 +0000 (UTC)
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        KT Liao <kt.liao@emc.com.tw>, Rob Herring <robh+dt@kernel.org>,
+        Aaron Ma <aaron.ma@canonical.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH v2 00/10] Fix Elan I2C touchpads in latest generation from Lenovo
+Date:   Tue, 21 May 2019 15:27:02 +0200
+Message-Id: <20190521132712.2818-1-benjamin.tissoires@redhat.com>
 MIME-Version: 1.0
-References: <1555943870-15353-1-git-send-email-manish.narani@xilinx.com> <1555943870-15353-4-git-send-email-manish.narani@xilinx.com>
-In-Reply-To: <1555943870-15353-4-git-send-email-manish.narani@xilinx.com>
-From:   Paul Thomas <pthomas8589@gmail.com>
-Date:   Tue, 21 May 2019 09:26:44 -0400
-Message-ID: <CAD56B7dw4kTRuXeKXyT6KbEP9E=B=KqpamL14d96LjGgAfrbGQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] arm64: zynqmp: DT: Add Xilinx AMS node
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        michal.simek@xilinx.com, Jisheng.Zhang@synaptics.com,
-        olof@lixom.net, dinguyen@kernel.org, amit.kucheria@linaro.org,
-        stefan.popa@analog.com, dmurphy@ti.com, marcus.folkesson@gmail.com,
-        tmaimon77@gmail.com, ricardo@ribalda.com, xc-racer2@live.ca,
-        contact@artur-rojek.eu, geert@linux-m68k.org,
-        smohanad@codeaurora.org, charles-antoine.couret@essensium.com,
-        stefan@agner.ch, max.krummenacher@toradex.com,
-        lee.jones@linaro.org, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 21 May 2019 13:27:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Manish,
+Hi,
 
-Thank you for posting this! It is very much needed in the mainline
-kernel, nice work.
+This is the v2 from https://lkml.org/lkml/2018/10/12/633
 
-On Mon, Apr 22, 2019 at 10:54 AM Manish Narani <manish.narani@xilinx.com> wrote:
->
-> The Xilinx AMS includes an ADC as well as on-chip sensors that can be
-> used to sample external and monitor on-die operating conditions, such as
-> temperature and supply voltage levels.
->
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> index 9aa6734..f776913 100644
-> --- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> @@ -625,5 +625,31 @@
->                         reg = <0x0 0xfd4d0000 0x0 0x1000>;
->                         timeout-sec = <10>;
->                 };
-> +
-> +               xilinx_ams: ams@ffa50000 {
-> +                       compatible = "xlnx,zynqmp-ams";
-> +                       status = "disabled";
-> +                       interrupt-parent = <&gic>;
-> +                       interrupts = <0 56 4>;
-> +                       interrupt-names = "ams-irq";
-> +                       reg = <0x0 0xffa50000 0x0 0x800>;
-> +                       reg-names = "ams-base";
-> +                       #address-cells = <1>;
-> +                       #size-cells = <1>;
-> +                       #io-channel-cells = <1>;
-> +                       ranges = <0 0 0xffa50800 0x800>;
-> +
-> +                       ams_ps: ams-ps@0,0 {
-> +                               compatible = "xlnx,zynqmp-ams-ps";
-> +                               status = "disabled";
-> +                               reg = <0 0x400>;
-> +                       };
-> +
-> +                       ams_pl: ams-pl@1,0 {
-> +                               compatible = "xlnx,zynqmp-ams-pl";
-> +                               status = "disabled";
-> +                               reg = <0x400 0x400>;
-> +                       };
-> +               };
->         };
->  };
-> --
-> 2.1.1
->
-I tested this with an older 4.18 kernel, and with a slightly different
-devicetree (shown below) it seems to be working.
+So I initially thought it would be easy to integrate the suggested changes
+in the v1, but it turns our that the changes to have the touchscreen-width
+and height parameters were quite hard to do.
 
-        xilinx_ams: ams@ffa50000 {
-                compatible = "xlnx,zynqmp-ams";
-                status = "okay";
-                interrupt-parent = <&gic>;
-                interrupts = <0 56 4>;
-                interrupt-names = "ams-irq";
-                reg = <0x0 0xffa50000 0x0 0x800>;
-                reg-names = "ams-base";
+I finally postponed the issue by blacklisting the 2 laptops we knew were
+not working and tried to devote more time to understand both drivers more.
 
-                #address-cells = <2>;
-                #size-cells = <2>;
-                ranges;
+But it s the time where Lenovo is preparing the new models, and guess what,
+they suffer from the same symptoms.
 
-                ams_ps: ams_ps@ffa50800 {
-                        compatible = "xlnx,zynqmp-ams-ps";
-                        reg = <0x0 0xffa50800 0x0 0x400>;
-                };
+So I took a few time to work on this and finally got my head around the
+width and height problem. Once I got it, it was simple clear, but this also
+means we can not really rely on a device tree property for that.
 
-                ams_pl: ams_pl@ffa50c00 {
-                        compatible = "xlnx,zynqmp-ams-pl";
-                        reg = <0x0 0xffa50c00 0x0 0x400>;
-                };
+So in the elan* drivers, the "traces" are simply how many antennas there
+are on each axis. Which means that if a trace of 4 is reported in the
+events, it means it is simply seen by 4 antennas. So the computation of the
+width/height is the following: we take how many antennas there are, we
+subtract one to have the number of holes between the antennas, and we
+divide the number of unit we have in the axis by the value we just
+computed.
+This gives a rough 4mm on the P52, in both directions.
 
-Also I needed to have the clock defined "clocks = <&clk 70>;".
+And once you get that, you can just realize that the unit of the width and
+height are just the same than the X and Y coordinates, so we can apply the
+same resolution.
 
-For the temperatures I get in_temp0_raw, in_temp1_raw and in_temp2 do
-these correspond to channels 7,8 & 21 in the devicetree documentation?
+So, in the end, that means that elan_i2c needs the information, or it will
+not be able to convert the number of crossed antennas into a size, but this
+is something specific to this touchpad.
 
-thanks,
-Paul
+So here come, 7 months later the v2 on the subject.
+
+Cheers,
+Benjamin
+
+Benjamin Tissoires (10):
+  Input: elantech - query the min/max information beforehand too
+  Input: elantech - add helper function elantech_is_buttonpad()
+  Input: elantech - detect middle button based on firmware version
+  dt-bindings: add more optional properties for elan_i2c touchpads
+  Input: elan_i2c - do not query the info if they are provided
+  Input: elantech/SMBus - export all capabilities from the PS/2 node
+  Input: elan_i2c - handle physical middle button
+  Input: elan_i2c - export true width/height
+  Input: elan_i2c - correct the width/size base value
+  Input: elantech: remove P52 from SMBus blacklist
+
+ .../devicetree/bindings/input/elan_i2c.txt    |  11 +
+ drivers/input/mouse/elan_i2c_core.c           |  85 +++--
+ drivers/input/mouse/elantech.c                | 318 ++++++++++--------
+ drivers/input/mouse/elantech.h                |   8 +
+ 4 files changed, 251 insertions(+), 171 deletions(-)
+
+-- 
+2.21.0
+
