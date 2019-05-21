@@ -2,189 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BD7425503
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02711254F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:11:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729051AbfEUQLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 12:11:23 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40928 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728994AbfEUQLR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 12:11:17 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f10so3873742wre.7;
-        Tue, 21 May 2019 09:11:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ip1Ip/bBaI3oGl08+c/jPOf0AEvNzRwc1Jgyw/gygxk=;
-        b=h+NTyOQl+TEZLatjt6/a4g2R3AMJacJWXFbf2ZmYrIGSFQCJi4uPljnwGSwgmmGSXh
-         q+dpQUWud2oF76sb6BcbO5jnr/hX3M+t2lyopkcBTBo4zTkdZy1e+2qt+fzrMJ9zTofB
-         aNReptxCaUUZiuLivNOiJlF6U2eWDnpacZ+APXCdXzFQcfHNVF+QQaHhauHH53xiECI6
-         mhH/uPN2t54FSMwNEL+0ki3T1hOCvQkochF3w7oMvtDXDvpCJnwbboa0KJBiJCrTSAA9
-         PLx83f6WUo1tjNIJjNkeNLzwfPMLQADkQqUiUP3Ga5iaUjDId+FULk5SV1wSczYgTf5p
-         acVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ip1Ip/bBaI3oGl08+c/jPOf0AEvNzRwc1Jgyw/gygxk=;
-        b=DRmjwgixnJKCqLUsslvuNJavLbI6N7xowuTGlS6CYhDsl8VjJ2KeS15wDEADRL5sZV
-         7s5k9fNA2NsYCIlhNRMpsWuRz7UYuwNcwYmaaZAdpkJFczcMs9kfPJSVid5thg/trQpq
-         Fb0BY2Vq6bl7TyoTturzuJrLqx6tzeYCwBtQiO1OAw3a12O2rZ85D1NB3SnkXWl5KDpJ
-         sjA4MGX5gZ8YKGdn1GB8uVP2DjugiygUeOEsqOI+YPTM81puLKybi2cQsf812l2Y0ghT
-         RUrVu30KAHyYeDIyDDswhezd7dOfoCCAWxM03OkmSOc9/cTyZgBeruXnb/b/sp0000FX
-         CIrA==
-X-Gm-Message-State: APjAAAX9NLC+v3mgXC4qUW5ig6QaCZcYyQmqp1Y7jzROkW8Lsko3KAay
-        uudUyH/XZs7nD75fiR+ENAk=
-X-Google-Smtp-Source: APXvYqy20A9dEOCcgXXitDLonYuo4h0Gko7h5PXdbB6eJStF5KSNRpJPD3LRRJAFRt/SXZ1+Ym8Efg==
-X-Received: by 2002:adf:e80a:: with SMTP id o10mr22701577wrm.79.1558455075148;
-        Tue, 21 May 2019 09:11:15 -0700 (PDT)
-Received: from localhost.localdomain (18.189-60-37.rdns.acropolistelecom.net. [37.60.189.18])
-        by smtp.gmail.com with ESMTPSA id n63sm3891094wmn.38.2019.05.21.09.11.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 09:11:14 -0700 (PDT)
-From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Steven Price <steven.price@arm.com>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v6 6/6] arm64: dts: allwinner: Add mali GPU supply for H6 boards
-Date:   Tue, 21 May 2019 18:11:02 +0200
-Message-Id: <20190521161102.29620-7-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190521161102.29620-1-peron.clem@gmail.com>
-References: <20190521161102.29620-1-peron.clem@gmail.com>
+        id S1728850AbfEUQLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 12:11:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47782 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728067AbfEUQLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 12:11:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D22D7ADE1;
+        Tue, 21 May 2019 16:11:07 +0000 (UTC)
+Date:   Tue, 21 May 2019 18:11:05 +0200
+From:   Oscar Salvador <osalvador@suse.de>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: reorder memory-hotplug documentation
+Message-ID: <20190521161101.GA2372@linux>
+References: <1557822213-19058-1-git-send-email-rppt@linux.ibm.com>
+ <43092504-a95f-374d-f3db-b961dd8ac428@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <43092504-a95f-374d-f3db-b961dd8ac428@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable and add supply to the Mali GPU node on all the
-H6 boards.
+On Tue, May 21, 2019 at 12:41:50PM +0200, David Hildenbrand wrote:
+> > +Future Work
+> > +===========
+> > +
+> > +  - allowing memory hot-add to ZONE_MOVABLE. maybe we need some switch like
+> > +    sysctl or new control file.
+> 
+> ... that already works if I am not completely missing the point here
 
-Regarding the datasheet the maximum time for supply to reach
-its voltage is 32ms.
+It does.
 
-Signed-off-by: Clément Péron <peron.clem@gmail.com>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts | 6 ++++++
- arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts  | 6 ++++++
- arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi   | 6 ++++++
- arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts    | 6 ++++++
- 4 files changed, 24 insertions(+)
+> > +  - support HugeTLB page migration and offlining.
+> 
+> ... I remember that Oscar was doing something in that area, Oscar?
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-index 0dc33c90dd60..fe36c6588d8e 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-beelink-gs1.dts
-@@ -70,6 +70,11 @@
- 	status = "okay";
- };
- 
-+&gpu {
-+	mali-supply = <&reg_dcdcc>;
-+	status = "okay";
-+};
-+
- &hdmi {
- 	status = "okay";
- };
-@@ -206,6 +211,7 @@
- 			};
- 
- 			reg_dcdcc: dcdcc {
-+				regulator-enable-ramp-delay = <32000>;
- 				regulator-min-microvolt = <810000>;
- 				regulator-max-microvolt = <1080000>;
- 				regulator-name = "vdd-gpu";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-index 17d496990108..ea4866b0fa7a 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-@@ -58,6 +58,11 @@
- 	status = "okay";
- };
- 
-+&gpu {
-+	mali-supply = <&reg_dcdcc>;
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	vmmc-supply = <&reg_cldo1>;
- 	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>; /* PF6 */
-@@ -165,6 +170,7 @@
- 			};
- 
- 			reg_dcdcc: dcdcc {
-+				regulator-enable-ramp-delay = <32000>;
- 				regulator-min-microvolt = <810000>;
- 				regulator-max-microvolt = <1080000>;
- 				regulator-name = "vdd-gpu";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-index 62e27948a3fa..ec770f07aa82 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-@@ -55,6 +55,11 @@
- 	status = "okay";
- };
- 
-+&gpu {
-+	mali-supply = <&reg_dcdcc>;
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	vmmc-supply = <&reg_cldo1>;
- 	cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
-@@ -163,6 +168,7 @@
- 			};
- 
- 			reg_dcdcc: dcdcc {
-+				regulator-enable-ramp-delay = <32000>;
- 				regulator-min-microvolt = <810000>;
- 				regulator-max-microvolt = <1080000>;
- 				regulator-name = "vdd-gpu";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-index 4802902e128f..625a29a25c52 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-@@ -85,6 +85,11 @@
- 	status = "okay";
- };
- 
-+&gpu {
-+	mali-supply = <&reg_dcdcc>;
-+	status = "okay";
-+};
-+
- &hdmi {
- 	status = "okay";
- };
-@@ -215,6 +220,7 @@
- 			};
- 
- 			reg_dcdcc: dcdcc {
-+				regulator-enable-ramp-delay = <32000>;
- 				regulator-min-microvolt = <810000>;
- 				regulator-max-microvolt = <1080000>;
- 				regulator-name = "vdd-gpu";
+Yes, in general offlinining on hugetlb pages was already working, but we did not
+allow to offline 1GB-hugetlb pages on x86_64.
+I removed that limitation with
+("commit: 10eeadf3045c mm,memory_hotplug: unlock 1GB-hugetlb on x86_64") , so now
+offlining on hugetlb pages should be fully operative.
+
+> I'd vote for removing the future work part, this is pretty outdated.
+
+Instead of removing it, I would rather make it consistent with the present.
+E.g:
+
+- Move page handling from memory-hotremove to offline stage
+- Enable a way to allocate vmemmap pages from hot-added memory
+etc.
+
+
 -- 
-2.17.1
-
+Oscar Salvador
+SUSE L3
