@@ -2,365 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DCDF25648
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA1D25652
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:06:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728862AbfEURCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 13:02:16 -0400
-Received: from mga04.intel.com ([192.55.52.120]:30576 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728175AbfEURCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 13:02:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 10:02:15 -0700
-X-ExtLoop1: 1
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by fmsmga001.fm.intel.com with ESMTP; 21 May 2019 10:02:15 -0700
-Date:   Tue, 21 May 2019 10:05:12 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v3 03/16] iommu: Add I/O ASID allocator
-Message-ID: <20190521100512.2d6ccf5a@jacob-builder>
-In-Reply-To: <faf475ce-8645-9d05-663d-8d090cd4ac05@redhat.com>
-References: <1556922737-76313-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1556922737-76313-4-git-send-email-jacob.jun.pan@linux.intel.com>
-        <faf475ce-8645-9d05-663d-8d090cd4ac05@redhat.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728959AbfEURGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 13:06:51 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46712 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728271AbfEURGv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 13:06:51 -0400
+Received: by mail-oi1-f194.google.com with SMTP id 203so13341730oid.13
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 10:06:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DepsFwsb9lkjjmxtM22xms6DJ95kq6d7Pbuq4OqECAc=;
+        b=TcSWYAwICafV+txluRy/7vKaRAad1DAY1lz4mpihseezFMb5NRnxsZD+8iDVu3FZB6
+         pi5Hw9qEADP/3/GqCwLtF0grO5aJw9lps5WmJNEyCOqLMZ8B+j+9PO3XlO+FUXNRcrSD
+         9hZ+Mk5f5Di1ZhVWW86yzuiGlVVa4qKbvBuLdIeAYI1CByBBJes3EdcNqQSevN+e0b5Y
+         An+BrCC1DwZl8Uh2vLBt0XKtvl1b5B8gQQ8fhhRvTjtmDCf9+RiAYTjBJhWdRrhVusx9
+         ZGWcMMc3Vuq44PfJXwPYNeNFmnk179KaDz6ysOPshDmfndG2FpPgcr8AyPvyoxPFCUv+
+         XDeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DepsFwsb9lkjjmxtM22xms6DJ95kq6d7Pbuq4OqECAc=;
+        b=BFosk2ykGhyvxMH2hBKYiEZUszQGivvlMPNhb15K/y2UUqpW9cmHDt4EuzrCYo2zxl
+         URqBvwTtMEvdRedq09NefAbNgRCSDo5MXnPfEKnhnR1hyReVk0Wq117n8pCaIEqYY0dY
+         zW/ux4FD7/fq+SfGYLDXu3JtuazGfGIvCv1d7tvtEc1pQGu+61F/wjbS6O+AWApi7krX
+         Gs7AsrPG9OpH9ek8bD0N4zv3m0RUxikYWQJa//0+JUtPlBLjFOHTtzBP9rHIr5vDTv/N
+         RvcoXM2+3LKyC9EfOo7A00METXydhQAGnrEfJA1Zn5r0I4fjwG0WRNY26uNffu+quhDY
+         oxHg==
+X-Gm-Message-State: APjAAAWRwbyhq7txicVQAki7CliGGnlQmYoOAxvd0vO7jtf45AK81ofR
+        sRwpr9bh08IeeguQ2gw59Hh7MJFAyNpN7ebwDtg=
+X-Google-Smtp-Source: APXvYqyhQAU5DIWDIgucQiRsTp1XPcJJXtZurXWE5faQ1ZKAc6K7EtB1j84FC/R0B3u6rDgmNnou1SxGphHWrYAKouY=
+X-Received: by 2002:aca:580b:: with SMTP id m11mr1637263oib.169.1558458410830;
+ Tue, 21 May 2019 10:06:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190521145116.24378-1-TheSven73@gmail.com> <20190521151059.GM31203@kadam>
+ <CAGngYiXLN-oT_b9d1kRyBrrFMALhKO-KnuwXB0MjVq0NFc01Xw@mail.gmail.com>
+ <20190521154241.GB15818@kroah.com> <CAGngYiU_iK5=swD_DA5PcOeYFT0zTrdQ+30Db0YrahuEukEP_A@mail.gmail.com>
+ <20190521162451.GA19139@kroah.com> <CAGngYiUSgtAXL+utPHz79OEbvrL6_TD9Wfkc6396E9vwQHCFKw@mail.gmail.com>
+In-Reply-To: <CAGngYiUSgtAXL+utPHz79OEbvrL6_TD9Wfkc6396E9vwQHCFKw@mail.gmail.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Tue, 21 May 2019 13:06:40 -0400
+Message-ID: <CAGngYiVZguWhbU_zvczVK3Xgb96nCFsTD-Zkvg8-S1rUVjTypA@mail.gmail.com>
+Subject: Re: [PATCH] staging: fieldbus: anybuss: force address space conversion
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 May 2019 11:41:52 +0200
-Auger Eric <eric.auger@redhat.com> wrote:
+On Tue, May 21, 2019 at 12:53 PM Sven Van Asbroeck <thesven73@gmail.com> wrote:
+>
+> On Tue, May 21, 2019 at 12:24 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > what is so odd about this code that makes you have to jump through
+> > strange hoops that no other driver has to?
+> >
+>
+> Basically because it creates a regmap which accesses __iomem memory,
+> instead of i2c/spi.
+>
 
-> Hi,
-> 
-> On 5/4/19 12:32 AM, Jacob Pan wrote:
-> > From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> > 
-> > Some devices might support multiple DMA address spaces, in
-> > particular those that have the PCI PASID feature. PASID (Process
-> > Address Space ID) allows to share process address spaces with
-> > devices (SVA), partition a device into VM-assignable entities (VFIO
-> > mdev) or simply provide multiple DMA address space to kernel
-> > drivers. Add a global PASID allocator usable by different drivers
-> > at the same time. Name it I/O ASID to avoid confusion with ASIDs
-> > allocated by arch code, which are usually a separate ID space.
-> > 
-> > The IOASID space is global. Each device can have its own PASID
-> > space, but by convention the IOMMU ended up having a global PASID
-> > space, so that with SVA, each mm_struct is associated to a single
-> > PASID.
-> > 
-> > The allocator is primarily used by IOMMU subsystem but in rare
-> > occasions drivers would like to allocate PASIDs for devices that
-> > aren't managed by an IOMMU, using the same ID space as IOMMU.
-> > 
-> > Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Link: https://lkml.org/lkml/2019/4/26/462
-> > ---
-> >  drivers/iommu/Kconfig  |   6 +++
-> >  drivers/iommu/Makefile |   1 +
-> >  drivers/iommu/ioasid.c | 140
-> > +++++++++++++++++++++++++++++++++++++++++++++++++
-> > include/linux/ioasid.h |  67 +++++++++++++++++++++++ 4 files
-> > changed, 214 insertions(+) create mode 100644 drivers/iommu/ioasid.c
-> >  create mode 100644 include/linux/ioasid.h
-> > 
-> > diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> > index 6f07f3b..75e7f97 100644
-> > --- a/drivers/iommu/Kconfig
-> > +++ b/drivers/iommu/Kconfig
-> > @@ -2,6 +2,12 @@
-> >  config IOMMU_IOVA
-> >  	tristate
-> >  
-> > +config IOASID
-> > +	bool
-> > +	help
-> > +	  Enable the I/O Address Space ID allocator. A single ID
-> > space shared
-> > +	  between different users.
-> > +
-> >  # IOMMU_API always gets selected by whoever wants it.
-> >  config IOMMU_API
-> >  	bool
-> > diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-> > index 8c71a15..0efac6f 100644
-> > --- a/drivers/iommu/Makefile
-> > +++ b/drivers/iommu/Makefile
-> > @@ -7,6 +7,7 @@ obj-$(CONFIG_IOMMU_DMA) += dma-iommu.o
-> >  obj-$(CONFIG_IOMMU_IO_PGTABLE) += io-pgtable.o
-> >  obj-$(CONFIG_IOMMU_IO_PGTABLE_ARMV7S) += io-pgtable-arm-v7s.o
-> >  obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE) += io-pgtable-arm.o
-> > +obj-$(CONFIG_IOASID) += ioasid.o
-> >  obj-$(CONFIG_IOMMU_IOVA) += iova.o
-> >  obj-$(CONFIG_OF_IOMMU)	+= of_iommu.o
-> >  obj-$(CONFIG_MSM_IOMMU) += msm_iommu.o
-> > diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
-> > new file mode 100644
-> > index 0000000..99f5e0a
-> > --- /dev/null
-> > +++ b/drivers/iommu/ioasid.c
-> > @@ -0,0 +1,140 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * I/O Address Space ID allocator. There is one global IOASID
-> > space, split into
-> > + * subsets. Users create a subset with DECLARE_IOASID_SET, then
-> > allocate and
-> > + * free IOASIDs with ioasid_alloc and ioasid_free.
-> > + */
-> > +#include <linux/xarray.h>
-> > +#include <linux/ioasid.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/spinlock.h>
-> > +
-> > +struct ioasid_data {
-> > +	ioasid_t id;
-> > +	struct ioasid_set *set;
-> > +	void *private;
-> > +	struct rcu_head rcu;
-> > +};
-> > +
-> > +static DEFINE_XARRAY_ALLOC(ioasid_xa);
-> > +
-> > +/**
-> > + * ioasid_set_data - Set private data for an allocated ioasid
-> > + * @ioasid: the ID to set data
-> > + * @data:   the private data
-> > + *
-> > + * For IOASID that is already allocated, private data can be set
-> > + * via this API. Future lookup can be done via ioasid_find.
-> > + */
-> > +int ioasid_set_data(ioasid_t ioasid, void *data)
-> > +{
-> > +	struct ioasid_data *ioasid_data;
-> > +	int ret = 0;
-> > +
-> > +	ioasid_data = xa_load(&ioasid_xa, ioasid);
-> > +	if (ioasid_data)
-> > +		ioasid_data->private = data;
-> > +	else
-> > +		ret = -ENOENT;
-> > +
-> > +	/* getter may use the private data */
-> > +	synchronize_rcu();
-> > +
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(ioasid_set_data);
-> > +
-> > +/**
-> > + * ioasid_alloc - Allocate an IOASID
-> > + * @set: the IOASID set
-> > + * @min: the minimum ID (inclusive)
-> > + * @max: the maximum ID (inclusive)
-> > + * @private: data private to the caller
-> > + *
-> > + * Allocate an ID between @min and @max (or %0 and %INT_MAX).
-> > Return the
-> > + * allocated ID on success, or INVALID_IOASID on failure. The
-> > @private pointer
-> > + * is stored internally and can be retrieved with ioasid_find().
-> > + */
-> > +ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min,
-> > ioasid_t max,
-> > +		      void *private)
-> > +{
-> > +	int id = INVALID_IOASID;
-> > +	struct ioasid_data *data;
-> > +
-> > +	data = kzalloc(sizeof(*data), GFP_KERNEL);
-> > +	if (!data)
-> > +		return INVALID_IOASID;
-> > +
-> > +	data->set = set;
-> > +	data->private = private;
-> > +
-> > +	if (xa_alloc(&ioasid_xa, &id, data, XA_LIMIT(min, max),
-> > GFP_KERNEL)) {
-> > +		pr_err("Failed to alloc ioasid from %d to %d\n",
-> > min, max);
-> > +		goto exit_free;
-> > +	}
-> > +	data->id = id;
-> > +
-> > +exit_free:
-> > +	if (id < 0 || id == INVALID_IOASID) {
-> > +		kfree(data);
-> > +		return INVALID_IOASID;
-> > +	}
-> > +	return id;
-> > +}
-> > +EXPORT_SYMBOL_GPL(ioasid_alloc);
-> > +
-> > +/**
-> > + * ioasid_free - Free an IOASID
-> > + * @ioasid: the ID to remove
-> > + */
-> > +void ioasid_free(ioasid_t ioasid)
-> > +{
-> > +	struct ioasid_data *ioasid_data;
-> > +
-> > +	ioasid_data = xa_erase(&ioasid_xa, ioasid);
-> > +
-> > +	kfree_rcu(ioasid_data, rcu);
-> > +}
-> > +EXPORT_SYMBOL_GPL(ioasid_free);
-> > +
-> > +/**
-> > + * ioasid_find - Find IOASID data
-> > + * @set: the IOASID set
-> > + * @ioasid: the IOASID to find
-> > + * @getter: function to call on the found object
-> > + *
-> > + * The optional getter function allows to take a reference to the
-> > found object
-> > + * under the rcu lock. The function can also check if the object
-> > is still valid:
-> > + * if @getter returns false, then the object is invalid and NULL
-> > is returned.
-> > + *
-> > + * If the IOASID has been allocated for this set, return the
-> > private pointer
-> > + * passed to ioasid_alloc. Private data can be NULL if not set.
-> > Return an error
-> > + * if the IOASID is not found or not belong to the set.
-> > + */
-> > +void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
-> > +		  bool (*getter)(void *))
-> > +{
-> > +	void *priv = NULL;
-> > +	struct ioasid_data *ioasid_data;
-> > +
-> > +	rcu_read_lock();
-> > +	ioasid_data = xa_load(&ioasid_xa, ioasid);
-> > +	if (!ioasid_data) {
-> > +		priv = ERR_PTR(-ENOENT);
-> > +		goto unlock;
-> > +	}
-> > +	if (set && ioasid_data->set != set) {
-> > +		/* data found but does not belong to the set */
-> > +		priv = ERR_PTR(-EACCES);
-> > +		goto unlock;
-> > +	}
-> > +	/* Now IOASID and its set is verified, we can return the
-> > private data */
-> > +	priv = ioasid_data->private;
-> > +	if (getter && !getter(priv))
-> > +		priv = NULL;
-> > +unlock:
-> > +	rcu_read_unlock();
-> > +
-> > +	return priv;
-> > +}
-> > +EXPORT_SYMBOL_GPL(ioasid_find);
-> > diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
-> > new file mode 100644
-> > index 0000000..41de5e4
-> > --- /dev/null
-> > +++ b/include/linux/ioasid.h
-> > @@ -0,0 +1,67 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef __LINUX_IOASID_H
-> > +#define __LINUX_IOASID_H
-> > +
-> > +#define INVALID_IOASID ((ioasid_t)-1)
-> > +typedef unsigned int ioasid_t;
-> > +typedef int (*ioasid_iter_t)(ioasid_t ioasid, void *private, void
-> > *data);  
-> not used as reported during v2 review:
-> https://lkml.org/lkml/2019/4/25/341
-> 
-I missed it, thanks.
-> Thanks
-> 
-> Eric
-> > +typedef ioasid_t (*ioasid_alloc_fn_t)(ioasid_t min, ioasid_t max,
-> > void *data); +typedef void (*ioasid_free_fn_t)(ioasid_t ioasid,
-> > void *data); +
-> > +struct ioasid_set {
-> > +	int dummy;
-> > +};
-> > +
-> > +struct ioasid_allocator {
-> > +	ioasid_alloc_fn_t alloc;
-> > +	ioasid_free_fn_t free;
-> > +	void *pdata;
-> > +	struct list_head list;
-> > +};
-> > +
-> > +#define DECLARE_IOASID_SET(name) struct ioasid_set name = { 0 }
-> > +
-> > +#ifdef CONFIG_IOASID
-> > +ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min,
-> > ioasid_t max,
-> > +		      void *private);
-> > +void ioasid_free(ioasid_t ioasid);
-> > +
-> > +void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
-> > +		  bool (*getter)(void *));
-> > +int ioasid_register_allocator(struct ioasid_allocator *allocator);
-> > +void ioasid_unregister_allocator(struct ioasid_allocator
-> > *allocator); +
-> > +int ioasid_set_data(ioasid_t ioasid, void *data);
-> > +
-> > +#else /* !CONFIG_IOASID */
-> > +static inline ioasid_t ioasid_alloc(struct ioasid_set *set,
-> > ioasid_t min,
-> > +				    ioasid_t max, void *private)
-> > +{
-> > +	return INVALID_IOASID;
-> > +}
-> > +
-> > +static inline void ioasid_free(ioasid_t ioasid)
-> > +{
-> > +}
-> > +
-> > +static inline void *ioasid_find(struct ioasid_set *set, ioasid_t
-> > ioasid,
-> > +				bool (*getter)(void *))
-> > +{
-> > +	return NULL;
-> > +}
-> > +static inline int ioasid_register_allocator(struct
-> > ioasid_allocator *allocator) +{
-> > +	return -ENODEV;
-> > +}
-> > +
-> > +static inline void ioasid_unregister_allocator(struct
-> > ioasid_allocator *allocator) +{
-> > +}
-> > +
-> > +static inline int ioasid_set_data(ioasid_t ioasid, void *data)
-> > +{
-> > +	return -ENODEV;
-> > +}
-> > +
-> > +#endif /* CONFIG_IOASID */
-> > +#endif /* __LINUX_IOASID_H */
-> >   
-
-[Jacob Pan]
+Wait a second... doesn't devm_regmap_init_mmio() do exactly that ?!
+How could I overlook this :( :(
