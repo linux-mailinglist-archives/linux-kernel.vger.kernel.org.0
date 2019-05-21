@@ -2,101 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C7AD258CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B87D258D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:28:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfEUUXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 16:23:53 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36414 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbfEUUXx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 16:23:53 -0400
-Received: by mail-pf1-f194.google.com with SMTP id v80so40027pfa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 13:23:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=jL1S7zFzjAxE4JNqh4L9FDfG4cAz8JcsD74o794kTBQ=;
-        b=HTDoWsxi7QDqVixev1f6cqXoZsue3n3xEMiTeFWZaXgqKnKMwHNLfC3f+dJJhqMBRw
-         nDQtVaPP/Z0+mQW6Cy9frq6SwMcF66bdeErddgk7YrYR0WJIYRfOZsfwALK2a95aELQF
-         DAIWkjIYzMPYDvGxpWXquPJ9JJRDVKkErl4fs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=jL1S7zFzjAxE4JNqh4L9FDfG4cAz8JcsD74o794kTBQ=;
-        b=YBo8EDRHlPh2pSgkMaNUq4KBZw6WW16lRUtEleC1B8hJBBleorasrBCm5HQH1Oubq/
-         OTEq1D53V8azP0q4aiJDKc4slmvhbcRqsZNZStIzr9ORvfa7nqdwUfDUXD/sG5p8PXnL
-         Tq/mnYuMPKHeYCD2HYMlSu8UyYDXUq+Ub2fL0AQaN7eibg72SqPnMGKP4hYkkdwSRqQO
-         1tGl0QG7NI+Fc/GuyW7junY0YYTCFLPRcYYF2kfw+0LqiCTdOPTZW5blcWhq1IK892K/
-         m2l1LBu99uGLS2nWSL9mGymnLMUghsdIBDuo/MhWudVDOYq3H8ViAQlOUlOCRY3btV4F
-         qiEw==
-X-Gm-Message-State: APjAAAU7ic6e57WL00xhTE0Rx7J0z8UzCikVZ+kGEt9Vv4XmVtgJQ4TP
-        ejiBKAwnMmHfNgxd5dV07IZ8/Q==
-X-Google-Smtp-Source: APXvYqxOxJPANXcitp87yHMwwlb908gqPaSxiqSVECmGo+Kntyeadkzvfnc3UlOr5MMFdZisu7CwHg==
-X-Received: by 2002:a63:1061:: with SMTP id 33mr58636901pgq.328.1558470232784;
-        Tue, 21 May 2019 13:23:52 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q75sm32078478pfa.175.2019.05.21.13.23.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 13:23:52 -0700 (PDT)
-Date:   Tue, 21 May 2019 13:23:51 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Philippe Mazenauer <philippe.mazenauer@outlook.de>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] arm: add missing include <linux/elf-randomize.h>
-Message-ID: <201905211323.7064F60D@keescook>
-References: <VI1PR07MB44324E07A6AFE89A920444AFFD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
+        id S1727376AbfEUU2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 16:28:33 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:46270 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726766AbfEUU2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 16:28:33 -0400
+Received: from cz.tnic (unknown [165.204.77.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CB3441EC0513;
+        Tue, 21 May 2019 22:28:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1558470511;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=nWtU54S/AlDT7qsEIiPBtbUXaUC/TQ5AZRXgMuRXRY0=;
+        b=bab7/AkoSjJQEgR3rABmbMdDtzPvBurqhLi2+Tc0eUhxqIwlT4oE8T2WsndzhrrnTJ/+kI
+        wVQaC7zAdmWBgt8D5hf6EJK4PbBWKAfqnX1QNZIfiwapmuIu8Hd+fACXZw/5KcR7d26BcG
+        eJYxuh7AKx/93AEX+xH5GpNZy0VzSiU=
+Date:   Tue, 21 May 2019 22:29:02 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v3 4/6] x86/MCE: Make number of MCA banks per_cpu
+Message-ID: <20190521202902.GC7793@cz.tnic>
+References: <20190430203206.104163-1-Yazen.Ghannam@amd.com>
+ <20190430203206.104163-5-Yazen.Ghannam@amd.com>
+ <20190518112530.GA26276@zn.tnic>
+ <SN6PR12MB2639571E33EBC7342A0607F8F8070@SN6PR12MB2639.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <VI1PR07MB44324E07A6AFE89A920444AFFD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
+In-Reply-To: <SN6PR12MB2639571E33EBC7342A0607F8F8070@SN6PR12MB2639.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 03:54:36PM +0000, Philippe Mazenauer wrote:
-> Include corresponding header file <linux/elf-randomize.h> for function
-> arch_randomize_brk().
-> 
-> ../arch/arm/kernel/process.c:325:15: warning: no previous prototype for ‘arch_randomize_brk’ [-Wmissing-prototypes]
->  unsigned long arch_randomize_brk(struct mm_struct *mm)
->                ^~~~~~~~~~~~~~~~~~
-> 
-> Signed-off-by: Philippe Mazenauer <philippe.mazenauer@outlook.de>
+On Tue, May 21, 2019 at 05:52:42PM +0000, Ghannam, Yazen wrote:
+> This message comes from ___might_sleep() which checks the
+> system_state.
+>
+> On CPU0, system_state=SYSTEM_BOOTING.
+>
+> On every other CPU, system_state=SYSTEM_SCHEDULING, and that's the
+> only system_state where the message is shown.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Right, the check in ___might_sleep().
 
-> ---
->  arch/arm/kernel/process.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
-> index 72cc0862a30e..73782012d403 100644
-> --- a/arch/arm/kernel/process.c
-> +++ b/arch/arm/kernel/process.c
-> @@ -23,6 +23,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/init.h>
->  #include <linux/elfcore.h>
-> +#include <linux/elf-randomize.h>
->  #include <linux/pm.h>
->  #include <linux/tick.h>
->  #include <linux/utsname.h>
-> -- 
-> 2.17.1
-> 
+> Changing GFP_KERNEL to GFP_ATOMIC seems to be a fix. Is this
+> appropriate? Or do you think there's something else we could try?
+
+From: Documentation/core-api/memory-allocation.rst
+
+  * If you think that accessing memory reserves is justified and the kernel
+    will be stressed unless allocation succeeds, you may use ``GFP_ATOMIC``.
+
+
+I don't think the MCA banks representation justifies accessing memory
+reserves.
+
+Can we do instead:
+
+-static DEFINE_PER_CPU_READ_MOSTLY(struct mce_bank *, mce_banks_array);
++static DEFINE_PER_CPU_READ_MOSTLY(struct mce_bank, mce_banks_array[MAX_NR_BANKS]);
+
+which should be something like 9*32 = 288 bytes per CPU.
+
+Unless you have a better idea...
+
+Thx.
 
 -- 
-Kees Cook
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply. Srsly.
