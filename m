@@ -2,113 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6936B259CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 23:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 787EC259D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 23:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbfEUVRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 17:17:30 -0400
-Received: from ms.lwn.net ([45.79.88.28]:42970 "EHLO ms.lwn.net"
+        id S1728042AbfEUVSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 17:18:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726907AbfEUVR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 17:17:28 -0400
-Received: from meer.lwn.net (localhost [127.0.0.1])
-        by ms.lwn.net (Postfix) with ESMTPA id C75FEA78;
-        Tue, 21 May 2019 21:17:27 +0000 (UTC)
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     linux-doc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Markus Heiser <markus.heiser@darmarit.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 2/2] doc: Cope with the deprecation of AutoReporter
-Date:   Tue, 21 May 2019 15:17:14 -0600
-Message-Id: <20190521211714.1395-3-corbet@lwn.net>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190521211714.1395-1-corbet@lwn.net>
-References: <20190521211714.1395-1-corbet@lwn.net>
+        id S1727156AbfEUVSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 17:18:00 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15AE32182B;
+        Tue, 21 May 2019 21:17:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558473479;
+        bh=sO7tsMO1dfbZAmsHGSTl+WO/0jX0F6m8LrfVkLA/Lhc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EyiR7NAn3vzSlQJVG+H81BwJeskPuhc3Ay/zpUnKqEXv+sQoQRLvlMw5KxNKjyu48
+         U2PrZ4GkhRBBX9QTdS1VpuYHACDq4PRW5iwSPxInmCcker9RPrY9u68+1vJTc86GZo
+         Pb50jnOgkopQAwwE42y209RaTiOQuLKOJnCVpmwU=
+Date:   Tue, 21 May 2019 16:17:57 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, kishon@ti.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, mperttunen@nvidia.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V7 04/15] PCI: dwc: Move config space capability search
+ API
+Message-ID: <20190521211757.GF57618@google.com>
+References: <20190517123846.3708-1-vidyas@nvidia.com>
+ <20190517123846.3708-5-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190517123846.3708-5-vidyas@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AutoReporter is going away; recent versions of sphinx emit a warning like:
+On Fri, May 17, 2019 at 06:08:35PM +0530, Vidya Sagar wrote:
+> Move PCIe config space capability search API to common DesignWare file
+> as this can be used by both host and ep mode codes.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> ---
+> Changes since [v6]:
+> * Exported dw_pcie_find_capability() API
+> 
+> Changes since [v5]:
+> * None
+> 
+> Changes since [v4]:
+> * Removed redundant APIs in pcie-designware-ep.c file after moving them
+>   to pcie-designware.c file based on Bjorn's comments.
+> 
+> Changes since [v3]:
+> * Rebased to linux-next top of the tree
+> 
+> Changes since [v2]:
+> * None
+> 
+> Changes since [v1]:
+> * Removed dw_pcie_find_next_ext_capability() API from here and made a
+>   separate patch for that
+> 
+>  .../pci/controller/dwc/pcie-designware-ep.c   | 37 +----------------
+>  drivers/pci/controller/dwc/pcie-designware.c  | 40 +++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-designware.h  |  2 +
+>  3 files changed, 44 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 2bf5a35c0570..65f479250087 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -40,39 +40,6 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
+>  	__dw_pcie_ep_reset_bar(pci, bar, 0);
+>  }
+>  
+> -static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+> -			      u8 cap)
+> -{
+> -	u8 cap_id, next_cap_ptr;
+> -	u16 reg;
+> -
+> -	if (!cap_ptr)
+> -		return 0;
+> -
+> -	reg = dw_pcie_readw_dbi(pci, cap_ptr);
+> -	cap_id = (reg & 0x00ff);
+> -
+> -	if (cap_id > PCI_CAP_ID_MAX)
+> -		return 0;
+> -
+> -	if (cap_id == cap)
+> -		return cap_ptr;
+> -
+> -	next_cap_ptr = (reg & 0xff00) >> 8;
+> -	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+> -}
+> -
+> -static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
+> -{
+> -	u8 next_cap_ptr;
+> -	u16 reg;
+> -
+> -	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
+> -	next_cap_ptr = (reg & 0x00ff);
+> -
+> -	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+> -}
+> -
+>  static int dw_pcie_ep_write_header(struct pci_epc *epc, u8 func_no,
+>  				   struct pci_epf_header *hdr)
+>  {
+> @@ -612,9 +579,9 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>  		dev_err(dev, "Failed to reserve memory for MSI/MSI-X\n");
+>  		return -ENOMEM;
+>  	}
+> -	ep->msi_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSI);
+> +	ep->msi_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSI);
+>  
+> -	ep->msix_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSIX);
+> +	ep->msix_cap = dw_pcie_find_capability(pci, PCI_CAP_ID_MSIX);
+>  
+>  	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
+>  	if (offset) {
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index 83cdd2ce2486..8f53ce63d17e 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -14,6 +14,46 @@
+>  
+>  #include "pcie-designware.h"
+>  
+> +/*
+> + * These APIs are different from standard pci_find_*capability() APIs in the
+> + * sense that former can only be used post device enumeration as they require
+> + * 'struct pci_dev *' pointer whereas these APIs require 'struct dw_pcie *'
+> + * pointer and can be used before link up also.
 
-  /stuff/k/git/kernel/Documentation/sphinx/kerneldoc.py:125:
-      RemovedInSphinx20Warning: AutodocReporter is now deprecated.
-      Use sphinx.util.docutils.switch_source_input() instead.
+I think this comment is slightly misleading because it suggests the
+reason we need these DW interfaces is because we're doing something
+before a pci_dev pointer is available.
 
-Make the switch.  But switch_source_input() only showed up in 1.7, so we
-have to do ugly version checks to keep things working in older versions.
----
- Documentation/sphinx/kerneldoc.py | 38 ++++++++++++++++++++++++-------
- 1 file changed, 30 insertions(+), 8 deletions(-)
+But these DW interfaces are used on devices that will *never* have a
+pci_dev pointer because they are not PCI devices.  They're used on
+host controller devices, which have a PCIe link on the downstream
+side, but the host controller driver operates them using their
+upstream, non-PCI interfaces.  Logically, I think they would be
+considered parts of Root Complexes, not Root Ports.
 
-diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
-index e8891e63e001..d3216f7b4170 100644
---- a/Documentation/sphinx/kerneldoc.py
-+++ b/Documentation/sphinx/kerneldoc.py
-@@ -37,7 +37,17 @@ import glob
- from docutils import nodes, statemachine
- from docutils.statemachine import ViewList
- from docutils.parsers.rst import directives, Directive
--from sphinx.ext.autodoc import AutodocReporter
-+
-+#
-+# AutodocReporter is only good up to Sphinx 1.7
-+#
-+import sphinx
-+
-+Use_SSI = sphinx.__version__[:3] >= '1.7'
-+if Use_SSI:
-+    from sphinx.util.docutils import switch_source_input
-+else:
-+    from sphinx.ext.autodoc import AutodocReporter
- 
- import kernellog
- 
-@@ -125,13 +135,7 @@ class KernelDocDirective(Directive):
-                     lineoffset += 1
- 
-             node = nodes.section()
--            buf = self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter
--            self.state.memo.reporter = AutodocReporter(result, self.state.memo.reporter)
--            self.state.memo.title_styles, self.state.memo.section_level = [], 0
--            try:
--                self.state.nested_parse(result, 0, node, match_titles=1)
--            finally:
--                self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter = buf
-+            self.do_parse(result, node)
- 
-             return node.children
- 
-@@ -140,6 +144,24 @@ class KernelDocDirective(Directive):
-                            (" ".join(cmd), str(e)))
-             return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
- 
-+    def do_parse(self, result, node):
-+        if Use_SSI:
-+            save = self.state.memo.title_styles, self.state.memo.section_level
-+            try:
-+                with switch_source_input(self.state, result):
-+                    self.state.nested_parse(result, 0, node, match_titles=1)
-+            finally:
-+                self.state.memo.title_styles, self.state.memo.section_level = save
-+        else:
-+            save = self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter
-+            self.state.memo.reporter = AutodocReporter(result, self.state.memo.reporter)
-+            self.state.memo.title_styles, self.state.memo.section_level = [], 0
-+            try:
-+                self.state.nested_parse(result, 0, node, match_titles=1)
-+            finally:
-+                self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter = save
-+
-+
- def setup(app):
-     app.add_config_value('kerneldoc_bin', None, 'env')
-     app.add_config_value('kerneldoc_srctree', None, 'env')
--- 
-2.21.0
+There's actually no reason why that upstream interface should look
+anything like PCI; it doesn't need to organize registers into
+capability lists at all.  It might be convenient for the hardware to
+do that and share things with a Root Port device, which *is* a PCI
+device, but it's not required.
 
+It also really has nothing to do with whether the link is up.  This
+code operates on hardware that is upstream from the link, so we can
+reach it regardless of the link.
+
+> + */
+> +static u8 __dw_pcie_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+> +				  u8 cap)
+> +{
+> +	u8 cap_id, next_cap_ptr;
+> +	u16 reg;
+> +
+> +	if (!cap_ptr)
+> +		return 0;
+> +
+> +	reg = dw_pcie_readw_dbi(pci, cap_ptr);
+> +	cap_id = (reg & 0x00ff);
+> +
+> +	if (cap_id > PCI_CAP_ID_MAX)
+> +		return 0;
+> +
+> +	if (cap_id == cap)
+> +		return cap_ptr;
+> +
+> +	next_cap_ptr = (reg & 0xff00) >> 8;
+> +	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
+> +}
+> +
+> +u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
+> +{
+> +	u8 next_cap_ptr;
+> +	u16 reg;
+> +
+> +	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
+> +	next_cap_ptr = (reg & 0x00ff);
+> +
+> +	return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
+> +}
+> +EXPORT_SYMBOL_GPL(dw_pcie_find_capability);
+> +
+>  int dw_pcie_read(void __iomem *addr, int size, u32 *val)
+>  {
+>  	if (!IS_ALIGNED((uintptr_t)addr, size)) {
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 14762e262758..6cb978132469 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -251,6 +251,8 @@ struct dw_pcie {
+>  #define to_dw_pcie_from_ep(endpoint)   \
+>  		container_of((endpoint), struct dw_pcie, ep)
+>  
+> +u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap);
+> +
+>  int dw_pcie_read(void __iomem *addr, int size, u32 *val);
+>  int dw_pcie_write(void __iomem *addr, int size, u32 val);
+>  
+> -- 
+> 2.17.1
+> 
