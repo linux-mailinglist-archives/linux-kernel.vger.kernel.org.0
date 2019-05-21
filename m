@@ -2,71 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 755122489E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 09:00:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0324924882
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:57:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbfEUHAz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 03:00:55 -0400
-Received: from protonic.xs4all.nl ([83.163.252.89]:47279 "EHLO protonic.nl"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725809AbfEUHAz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 03:00:55 -0400
-X-Greylist: delayed 374 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 May 2019 03:00:54 EDT
-Received: from erd987 (erd987.prtnl [192.168.237.3])
-        by sparta (Postfix) with ESMTP id 1FD2344A00B2;
-        Tue, 21 May 2019 08:56:16 +0200 (CEST)
-Date:   Tue, 21 May 2019 08:55:47 +0200
-From:   Robin van der Gracht <robin@protonic.nl>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     miguel.ojeda.sandonis@gmail.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org
-Subject: Re: [PATCH 2/2] auxdisplay/ht16k33.c: Convert to use
- vm_map_pages_zero()
-Message-ID: <20190521085547.58e1650c@erd987>
-In-Reply-To: <1558366258-3808-1-git-send-email-jrdr.linux@gmail.com>
-References: <1558366258-3808-1-git-send-email-jrdr.linux@gmail.com>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726425AbfEUG5Z convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 May 2019 02:57:25 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:57086 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726028AbfEUG5Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 02:57:24 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 16623319-1500050 
+        for multiple; Tue, 21 May 2019 07:56:58 +0100
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+To:     Dongli Zhang <dongli.zhang@oracle.com>,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <1558413639-22568-1-git-send-email-dongli.zhang@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, dongli.zhang@oracle.com
+References: <1558413639-22568-1-git-send-email-dongli.zhang@oracle.com>
+Message-ID: <155842181579.23981.15462387194555705539@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [PATCH 1/1] drm/i915: remove unused IO_TLB_SEGPAGES which should be
+ defined by swiotlb
+Date:   Tue, 21 May 2019 07:56:55 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 20 May 2019 21:00:58 +0530
-Souptick Joarder <jrdr.linux@gmail.com> wrote:
+Quoting Dongli Zhang (2019-05-21 05:40:39)
+> This patch removes IO_TLB_SEGPAGES which is no longer used since
+> commit 5584f1b1d73e ("drm/i915: fix i915 running as dom0 under Xen").
+> 
+> As the define of both IO_TLB_SEGSIZE and IO_TLB_SHIFT are from swiotlb,
+> IO_TLB_SEGPAGES should be defined on swiotlb side if it is required in the
+> future.
 
-> While using mmap, the incorrect value of length and vm_pgoff are
-> ignored and this driver go ahead with mapping fbdev.buffer
-> to user vma.
-> 
-> Convert vm_insert_pages() to use vm_map_pages_zero(). We could later
-> "fix" these drivers to behave according to the normal vm_pgoff
-> offsetting simply by removing the _zero suffix on the function name
-> and if that causes regressions, it gives us an easy way to revert.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
->  drivers/auxdisplay/ht16k33.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-> index 21393ec..9c0bb77 100644
-> --- a/drivers/auxdisplay/ht16k33.c
-> +++ b/drivers/auxdisplay/ht16k33.c
-> @@ -223,9 +223,9 @@ static int ht16k33_bl_check_fb(struct backlight_device *bl, struct fb_info *fi)
->  static int ht16k33_mmap(struct fb_info *info, struct vm_area_struct *vma)
->  {
->  	struct ht16k33_priv *priv = info->par;
-> +	struct page *pages = virt_to_page(priv->fbdev.buffer);
->  
-> -	return vm_insert_page(vma, vma->vm_start,
-> -			      virt_to_page(priv->fbdev.buffer));
-> +	return vm_map_pages_zero(vma, &pages, 1);
->  }
->  
->  static struct fb_ops ht16k33_fb_ops = {
+It would be wise to refer to
 
-Acked-by: Robin van der Gracht <robin@protonic.nl>
+commit 5584f1b1d73e9cc95092734c316e467c6c4468f9
+Author: Juergen Gross <jgross@suse.com>
+Date:   Thu Feb 2 10:47:11 2017 +0100
+
+    drm/i915: fix i915 running as dom0 under Xen
+
+so the reader can have the history to trawl through.
+
+References: 5584f1b1d73e ("drm/i915: fix i915 running as dom0 under Xen")
+> Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+-Chris
