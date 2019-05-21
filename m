@@ -2,65 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1D1F24CBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0503624CC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:32:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbfEUKbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 06:31:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47430 "EHLO mail.kernel.org"
+        id S1727708AbfEUKci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 06:32:38 -0400
+Received: from verein.lst.de ([213.95.11.211]:59186 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbfEUKbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 06:31:22 -0400
-Received: from localhost (unknown [49.207.56.136])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C20FE21743;
-        Tue, 21 May 2019 10:31:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558434681;
-        bh=mb4gcRCdlc4t1BxrH1KDO67uUQe97itsvMsgFVRR+oI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1T3azC+0XgH3xEp8zysLMOSu8S++YutNokP4axowBzBYutjJuCkzQ7/lP7XAaYOlW
-         Snz0V6hyebzOKq70E2UHDr5QECQvx96Tszf1olmuzgFudaQ7kHEldkcMOj8WN96mF8
-         MlGCXvuGWzq8EJexNscqQiGDglTT3tQZ38Y/WuxQ=
-Date:   Tue, 21 May 2019 16:01:17 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Cc:     agross@kernel.org, david.brown@linaro.org,
-        gregkh@linuxfoundation.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, jslaby@suse.com, keescook@chromium.org,
-        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
-        linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tty: serial: msm_serial: Fix XON/XOFF
-Message-ID: <20190521103117.GD15118@vkoul-mobl>
-References: <20190520183848.27719-1-jorge.ramirez-ortiz@linaro.org>
+        id S1726448AbfEUKch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 06:32:37 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id B230C68AFE; Tue, 21 May 2019 12:32:14 +0200 (CEST)
+Date:   Tue, 21 May 2019 12:32:14 +0200
+From:   "hch@lst.de" <hch@lst.de>
+To:     Fredrik Noring <noring@nocrew.org>
+Cc:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Robin Murphy <robin.murphy@arm.com>, "hch@lst.de" <hch@lst.de>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "marex@denx.de" <marex@denx.de>,
+        "JuergenUrban@gmx.de" <JuergenUrban@gmx.de>,
+        Leo Li <leoyang.li@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 0/3] prerequisites for device reserved local mem
+ rework
+Message-ID: <20190521103214.GB1973@lst.de>
+References: <9d34015d-c219-179b-3141-4b0de3530ac3@arm.com> <20190514182931.GA2559@sx9> <0e5f3b86-7a80-eec7-691b-34a123194208@nxp.com> <20190515162858.GB17162@sx9> <ed63c117-610c-ea49-f45e-727be220745f@nxp.com> <20190516151548.GB53952@sx9> <5fa97254-3038-6fe7-a7e7-a267262049c6@nxp.com> <20190517174159.GA32450@sx9> <3c8897e9-218e-3fff-1735-816ffd30e908@nxp.com> <20190520154156.GA3664@sx9>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190520183848.27719-1-jorge.ramirez-ortiz@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190520154156.GA3664@sx9>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-05-19, 20:38, Jorge Ramirez-Ortiz wrote:
-> When the tty layer requests the uart to throttle, the current code
-> executing in msm_serial will trigger "Bad mode in Error Handler" and
-> generate an invalid stack frame in pstore before rebooting (that is if
-> pstore is indeed configured: otherwise the user shall just notice a
-> reboot with no further information dumped to the console).
-> 
-> This patch replaces the PIO byte accessor with the word accessor
-> already used in PIO mode.
-> 
-> Fixes: 68252424a7c7 ("tty: serial: msm: Support big-endian CPUs")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On Mon, May 20, 2019 at 05:41:56PM +0200, Fredrik Noring wrote:
+> 2. A device address is supplied as phys_addr_t phys to gen_pool_add_virt().
+>    This seems to work in this particular DMA application, but there will be
+>    problems if someone does phys_to_virt() or suchlike. Can this be improved
+>    or clearly explained? gen_pool_virt_to_phys() searches in address ranges,
+>    for example, so it appears the implementation uses phys quite carefully.
 
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
-
--- 
-~Vinod
+Well, it is a physical address, but not one that has a kernel mapping.
+So phys_addr_t seems right here, but an additional comment explaining it
+is not in the kernel mapping never hurts.
