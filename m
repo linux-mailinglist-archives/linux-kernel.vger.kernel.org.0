@@ -2,72 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57BB525017
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6877E24FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728293AbfEUNYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 09:24:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39896 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727044AbfEUNYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 09:24:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3EA72ADCB;
-        Tue, 21 May 2019 13:24:30 +0000 (UTC)
-Message-ID: <1558444291.12672.23.camel@suse.com>
-Subject: Re: [RFC PATCH] usb: host: xhci: allow __GFP_FS in dma allocation
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Alan Stern <stern@rowland.harvard.edu>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     Jaewon Kim <jaewon31.kim@gmail.com>, linux-mm@kvack.org,
-        gregkh@linuxfoundation.org, Jaewon Kim <jaewon31.kim@samsung.com>,
-        m.szyprowski@samsung.com, ytk.lee@samsung.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Date:   Tue, 21 May 2019 15:11:31 +0200
-In-Reply-To: <Pine.LNX.4.44L0.1905201011490.1498-100000@iolanthe.rowland.org>
-References: <Pine.LNX.4.44L0.1905201011490.1498-100000@iolanthe.rowland.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728190AbfEUNPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 09:15:34 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:42776 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726740AbfEUNPe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 09:15:34 -0400
+Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id x4LDDYAd004855;
+        Tue, 21 May 2019 22:13:34 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x4LDDYAd004855
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1558444415;
+        bh=ahqbC92DL/pM+EvNd4RugG8jQvrt9otxZH6g7EH9AdY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=byDN3URgP1aFiKBf13O4eB3IcCRmRHdS4w/Vsk71gfIMjCTpQlM9x+pTrWYxKD6xD
+         V9VH0X04qL3lZtOUfsrhQBsiJk6csDQXXVUjQ5+uCPagVEG7fWaXK52ua2aETjKK0M
+         XJBCDyN1+HfIrqq14MuJoUdVthou2qSoYfOre6SZViNDt8nEYf7GoZg7rNW8Dw2tNh
+         YYah8oMxK2FXgGkEVEphUKIna2of4Et7E+xJuLal9Z4afYm3hMxjRQeL9FQlOvFsdX
+         svjA5A9a8iW0Z2C/nqYiS0rqRctgK33ezsq1t3T5mDDH55zWryW003qi4NZml1meAb
+         PH79Wg2BhesJA==
+X-Nifty-SrcIP: [126.125.154.139]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] powerpc/mm: mark more tlb functions as __always_inline
+Date:   Tue, 21 May 2019 22:13:24 +0900
+Message-Id: <1558444404-12254-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mo, 2019-05-20 at 10:16 -0400, Alan Stern wrote:
-> On Mon, 20 May 2019, Christoph Hellwig wrote:
-> 
-> > GFP_KERNEL if you can block, GFP_ATOMIC if you can't for a good reason,
-> > that is the allocation is from irq context or under a spinlock.  If you
-> > think you have a case where you think you don't want to block, but it
-> > is not because of the above reasons we need to have a chat about the
-> > details.
-> 
-> What if the allocation requires the kernel to swap some old pages out 
-> to the backing store, but the backing store is on the device that the 
-> driver is managing?  The swap can't take place until the current I/O 
-> operation is complete (assuming the driver can handle only one I/O 
-> operation at a time), and the current operation can't complete until 
-> the old pages are swapped out.  Result: deadlock.
-> 
-> Isn't that the whole reason for using GFP_NOIO in the first place?
+With CONFIG_OPTIMIZE_INLINING enabled, Laura Abbott reported error
+with gcc 9.1.1:
 
-Hi,
+  arch/powerpc/mm/book3s64/radix_tlb.c: In function '_tlbiel_pid':
+  arch/powerpc/mm/book3s64/radix_tlb.c:104:2: warning: asm operand 3 probably doesn't match constraints
+    104 |  asm volatile(PPC_TLBIEL(%0, %4, %3, %2, %1)
+        |  ^~~
+  arch/powerpc/mm/book3s64/radix_tlb.c:104:2: error: impossible constraint in 'asm'
 
-lookig at this it seems to me that we are in danger of a deadlock
+Fixing _tlbiel_pid() is enough to address the warning above, but I
+inlined more functions to fix all potential issues.
 
-- during reset - devices cannot do IO while being reset
-	covered by the USB layer in usb_reset_device
-- resume & restore - devices cannot do IO while suspended
-	covered by driver core in rpm_callback
-- disconnect - a disconnected device cannot do IO
-	is this a theoretical case or should I do something to
-	the driver core?
+To meet the "i" (immediate) constraint for the asm operands, functions
+propagating "ric" must be always inlined.
 
-How about changing configurations on USB?
+Fixes: 9012d011660e ("compiler: allow all arches to enable CONFIG_OPTIMIZE_INLINING")
+Reported-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-	Regards
-		Oliver
+Changes in v2:
+  - Do not split lines
+
+ arch/powerpc/mm/book3s64/hash_native.c |  2 +-
+ arch/powerpc/mm/book3s64/radix_tlb.c   | 32 ++++++++++++++++----------------
+ 2 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/arch/powerpc/mm/book3s64/hash_native.c b/arch/powerpc/mm/book3s64/hash_native.c
+index aaa28fd..c854151 100644
+--- a/arch/powerpc/mm/book3s64/hash_native.c
++++ b/arch/powerpc/mm/book3s64/hash_native.c
+@@ -60,7 +60,7 @@ static inline void tlbiel_hash_set_isa206(unsigned int set, unsigned int is)
+  * tlbiel instruction for hash, set invalidation
+  * i.e., r=1 and is=01 or is=10 or is=11
+  */
+-static inline void tlbiel_hash_set_isa300(unsigned int set, unsigned int is,
++static __always_inline void tlbiel_hash_set_isa300(unsigned int set, unsigned int is,
+ 					unsigned int pid,
+ 					unsigned int ric, unsigned int prs)
+ {
+diff --git a/arch/powerpc/mm/book3s64/radix_tlb.c b/arch/powerpc/mm/book3s64/radix_tlb.c
+index 4d84136..4d3dc10 100644
+--- a/arch/powerpc/mm/book3s64/radix_tlb.c
++++ b/arch/powerpc/mm/book3s64/radix_tlb.c
+@@ -29,7 +29,7 @@
+  * tlbiel instruction for radix, set invalidation
+  * i.e., r=1 and is=01 or is=10 or is=11
+  */
+-static inline void tlbiel_radix_set_isa300(unsigned int set, unsigned int is,
++static __always_inline void tlbiel_radix_set_isa300(unsigned int set, unsigned int is,
+ 					unsigned int pid,
+ 					unsigned int ric, unsigned int prs)
+ {
+@@ -150,8 +150,8 @@ static __always_inline void __tlbie_lpid(unsigned long lpid, unsigned long ric)
+ 	trace_tlbie(lpid, 0, rb, rs, ric, prs, r);
+ }
+ 
+-static inline void __tlbiel_lpid_guest(unsigned long lpid, int set,
+-				unsigned long ric)
++static __always_inline void __tlbiel_lpid_guest(unsigned long lpid, int set,
++						unsigned long ric)
+ {
+ 	unsigned long rb,rs,prs,r;
+ 
+@@ -167,8 +167,8 @@ static inline void __tlbiel_lpid_guest(unsigned long lpid, int set,
+ }
+ 
+ 
+-static inline void __tlbiel_va(unsigned long va, unsigned long pid,
+-			       unsigned long ap, unsigned long ric)
++static __always_inline void __tlbiel_va(unsigned long va, unsigned long pid,
++					unsigned long ap, unsigned long ric)
+ {
+ 	unsigned long rb,rs,prs,r;
+ 
+@@ -183,8 +183,8 @@ static inline void __tlbiel_va(unsigned long va, unsigned long pid,
+ 	trace_tlbie(0, 1, rb, rs, ric, prs, r);
+ }
+ 
+-static inline void __tlbie_va(unsigned long va, unsigned long pid,
+-			      unsigned long ap, unsigned long ric)
++static __always_inline void __tlbie_va(unsigned long va, unsigned long pid,
++				       unsigned long ap, unsigned long ric)
+ {
+ 	unsigned long rb,rs,prs,r;
+ 
+@@ -199,8 +199,8 @@ static inline void __tlbie_va(unsigned long va, unsigned long pid,
+ 	trace_tlbie(0, 0, rb, rs, ric, prs, r);
+ }
+ 
+-static inline void __tlbie_lpid_va(unsigned long va, unsigned long lpid,
+-			      unsigned long ap, unsigned long ric)
++static __always_inline void __tlbie_lpid_va(unsigned long va, unsigned long lpid,
++					    unsigned long ap, unsigned long ric)
+ {
+ 	unsigned long rb,rs,prs,r;
+ 
+@@ -239,7 +239,7 @@ static inline void fixup_tlbie_lpid(unsigned long lpid)
+ /*
+  * We use 128 set in radix mode and 256 set in hpt mode.
+  */
+-static inline void _tlbiel_pid(unsigned long pid, unsigned long ric)
++static __always_inline void _tlbiel_pid(unsigned long pid, unsigned long ric)
+ {
+ 	int set;
+ 
+@@ -341,7 +341,7 @@ static inline void _tlbie_lpid(unsigned long lpid, unsigned long ric)
+ 	asm volatile("eieio; tlbsync; ptesync": : :"memory");
+ }
+ 
+-static inline void _tlbiel_lpid_guest(unsigned long lpid, unsigned long ric)
++static __always_inline void _tlbiel_lpid_guest(unsigned long lpid, unsigned long ric)
+ {
+ 	int set;
+ 
+@@ -381,8 +381,8 @@ static inline void __tlbiel_va_range(unsigned long start, unsigned long end,
+ 		__tlbiel_va(addr, pid, ap, RIC_FLUSH_TLB);
+ }
+ 
+-static inline void _tlbiel_va(unsigned long va, unsigned long pid,
+-			      unsigned long psize, unsigned long ric)
++static __always_inline void _tlbiel_va(unsigned long va, unsigned long pid,
++				       unsigned long psize, unsigned long ric)
+ {
+ 	unsigned long ap = mmu_get_ap(psize);
+ 
+@@ -413,8 +413,8 @@ static inline void __tlbie_va_range(unsigned long start, unsigned long end,
+ 		__tlbie_va(addr, pid, ap, RIC_FLUSH_TLB);
+ }
+ 
+-static inline void _tlbie_va(unsigned long va, unsigned long pid,
+-			      unsigned long psize, unsigned long ric)
++static __always_inline void _tlbie_va(unsigned long va, unsigned long pid,
++				      unsigned long psize, unsigned long ric)
+ {
+ 	unsigned long ap = mmu_get_ap(psize);
+ 
+@@ -424,7 +424,7 @@ static inline void _tlbie_va(unsigned long va, unsigned long pid,
+ 	asm volatile("eieio; tlbsync; ptesync": : :"memory");
+ }
+ 
+-static inline void _tlbie_lpid_va(unsigned long va, unsigned long lpid,
++static __always_inline void _tlbie_lpid_va(unsigned long va, unsigned long lpid,
+ 			      unsigned long psize, unsigned long ric)
+ {
+ 	unsigned long ap = mmu_get_ap(psize);
+-- 
+2.7.4
 
