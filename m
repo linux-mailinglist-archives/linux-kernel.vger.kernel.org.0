@@ -2,252 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38ECD2490B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 09:35:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29D4424918
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 09:38:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfEUHfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 03:35:16 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:3346 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726227AbfEUHfP (ORCPT
+        id S1726907AbfEUHiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 03:38:24 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:44452 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726006AbfEUHiY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 03:35:15 -0400
-X-UUID: 4a52d235df804a5ca0fb31ee7171f658-20190521
-X-UUID: 4a52d235df804a5ca0fb31ee7171f658-20190521
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1524086201; Tue, 21 May 2019 15:35:06 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 21 May
- 2019 15:35:05 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 21 May 2019 15:35:04 +0800
-Message-ID: <1558424104.10179.365.camel@mhfsdcap03>
-Subject: RE: [PATCH v5 4/6] usb: roles: add API to get usb_role_switch by
- node
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Biju Das <biju.das@bp.renesas.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-CC:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Li Jun <jun.li@nxp.com>,
-        Badhri Jagan Sridharan <badhri@google.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Min Guo <min.guo@mediatek.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 21 May 2019 15:35:04 +0800
-In-Reply-To: <OSBPR01MB2103C4C8920C40E42BC1B2A9B8060@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1557823643-8616-1-git-send-email-chunfeng.yun@mediatek.com>
-         <1557823643-8616-5-git-send-email-chunfeng.yun@mediatek.com>
-         <20190517103736.GA1490@kuha.fi.intel.com>
-         <20190517130511.GA1887@kuha.fi.intel.com>
-         <1558319951.10179.352.camel@mhfsdcap03>
-         <20190520080359.GC1887@kuha.fi.intel.com>
-         <OSBPR01MB2103385D996762FA54F8E437B8060@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-         <20190520083601.GE1887@kuha.fi.intel.com>
-         <OSBPR01MB2103C4C8920C40E42BC1B2A9B8060@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 21 May 2019 03:38:24 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4L7VAiP003069;
+        Tue, 21 May 2019 09:38:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=VO62M0H+Pp6PuHe4pwdgIh9u2uQFEKGsAdpei4nIXQM=;
+ b=WOZMqST6Q+Cbk+rRQt5qd7OyxYoG4vgoyOT1cv3TjQMD1V+RmQfS8fNp/cdCGduWP3sK
+ sSeLo1axEdDF1nsjR5NWrW4G6n/IGIHqc8y+mt5ZkjFbLX67KyZhr8PY8x5XDabJQTF2
+ QVKbosocLnIOUkA2SCuLix9piKZjk4HAeItiOoFTpC+ZFOuNxtDHY/8SE0ECmdAR2hhq
+ D7sE/lsmp+sMU39CsyxG/O0KiF3oFYWEbg+pKA6VHqd39t3r1MaZX0cT4jjlVqoX5wmS
+ X102+33jF34intAYJLv5itfafcPGRT/TjdDI/aSy2z8KFIdgGsJq1Mql7SeSkMXZG/n9 1g== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2sj8xg7tsr-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 21 May 2019 09:38:10 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 79C1731;
+        Tue, 21 May 2019 07:38:09 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 16F6515E9;
+        Tue, 21 May 2019 07:38:09 +0000 (GMT)
+Received: from [10.48.0.237] (10.75.127.46) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 21 May
+ 2019 09:38:08 +0200
+Subject: Re: [PATCH V2 0/5] mmc: mmci: add busy detect for stm32 sdmmc variant
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1556264798-18540-1-git-send-email-ludovic.Barre@st.com>
+ <CAPDyKFqbn=UcbwoH_z+yjrjvHQZaMtmsD=n0yrBV7DAK5VRJEQ@mail.gmail.com>
+ <74b91eb4-e5a3-38b2-f732-29cdd058eb6a@st.com>
+ <CAPDyKFoURwnai1hbCbO+Uh6+hc7A4dYHjWkqeFAEgMQET-BzwA@mail.gmail.com>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <e884b614-14d4-1cae-5b77-c6aacabb764a@st.com>
+Date:   Tue, 21 May 2019 09:38:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <CAPDyKFoURwnai1hbCbO+Uh6+hc7A4dYHjWkqeFAEgMQET-BzwA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-21_01:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Mon, 2019-05-20 at 09:45 +0000, Biju Das wrote:
+hi Ulf
+
+Just a "gentleman ping" about the rest of series.
+"mmc: mmci: add busy detect for stm32 sdmmc variant"
+
+Regards
+Ludo
+
+On 5/3/19 3:29 PM, Ulf Hansson wrote:
+> On Tue, 30 Apr 2019 at 14:06, Ludovic BARRE <ludovic.barre@st.com> wrote:
+>>
+>>
+>>
+>> On 4/30/19 1:13 PM, Ulf Hansson wrote:
+>>> On Fri, 26 Apr 2019 at 09:46, Ludovic Barre <ludovic.Barre@st.com> wrote:
+>>>>
+>>>> From: Ludovic Barre <ludovic.barre@st.com>
+>>>>
+>>>> This patch series adds busy detect for stm32 sdmmc variant.
+>>>> Some adaptations are required:
+>>>> -Avoid to check and poll busy status when is not expected.
+>>>> -Clear busy status bit if busy_detect_flag and busy_detect_mask are
+>>>>    different.
+>>>> -Add hardware busy timeout with MMCIDATATIMER register.
+>>>>
+>>>> V2:
+>>>> -mmci_cmd_irq cleanup in separate patch.
+>>>> -simplify the busy_detect_flag exclude
+>>>> -replace sdmmc specific comment in
+>>>> "mmc: mmci: avoid fake busy polling in mmci_irq"
+>>>> to focus on common behavior
+>>>>
+>>>> Ludovic Barre (5):
+>>>>     mmc: mmci: cleanup mmci_cmd_irq for busy detect feature
+>>>>     mmc: mmci: avoid fake busy polling in mmci_irq
+>>>>     mmc: mmci: fix clear of busy detect status
+>>>>     mmc: mmci: add hardware busy timeout feature
+>>>>     mmc: mmci: add busy detect for stm32 sdmmc variant
+>>>>
+>>>>    drivers/mmc/host/mmci.c | 61 ++++++++++++++++++++++++++++++++++++++-----------
+>>>>    drivers/mmc/host/mmci.h |  3 +++
+>>>>    2 files changed, 51 insertions(+), 13 deletions(-)
+>>>>
+>>>> --
+>>>> 2.7.4
+>>>>
+>>>
+>>> Ludovic, just wanted to let you know that I am reviewing and testing
+>>> this series.
+>>>
+>>> However, while running some tests on Ux500 for validating the busy
+>>> detection code, even without your series applied, I encounter some odd
+>>> behaviors. I am looking into the problem to understand better and will
+>>> let you know as soon as I have some more data to share.
+>>
+>> Oops, don't hesitate to share your status, if I could help.
 > 
-> Hi Heikki,
+> Thanks! Good and bad news here, then.
 > 
-> Thanks for the feedback.
+> I now understand what is going on - and there is certainly room for
+> improvements here, but more importantly the actual mmci busy detection
+> works as expected.
 > 
-> > Subject: Re: [PATCH v5 4/6] usb: roles: add API to get usb_role_switch by
-> > node
-> > 
-> > On Mon, May 20, 2019 at 08:06:41AM +0000, Biju Das wrote:
-> > > Hi Heikki,
-> > >
-> > > > Subject: Re: [PATCH v5 4/6] usb: roles: add API to get
-> > > > usb_role_switch by node
-> > > >
-> > > > On Mon, May 20, 2019 at 10:39:11AM +0800, Chunfeng Yun wrote:
-> > > > > Hi,
-> > > > > On Fri, 2019-05-17 at 16:05 +0300, Heikki Krogerus wrote:
-> > > > > > Hi,
-> > > > > >
-> > > > > > On Fri, May 17, 2019 at 01:37:36PM +0300, Heikki Krogerus wrote:
-> > > > > > > On Tue, May 14, 2019 at 04:47:21PM +0800, Chunfeng Yun wrote:
-> > > > > > > > Add fwnode_usb_role_switch_get() to make easier to get
-> > > > > > > > usb_role_switch by fwnode which register it.
-> > > > > > > > It's useful when there is not device_connection registered
-> > > > > > > > between two drivers and only knows the fwnode which register
-> > > > > > > > usb_role_switch.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> > > > > > > > Tested-by: Biju Das <biju.das@bp.renesas.com>
-> > > > > > >
-> > > > > > > Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > > > > >
-> > > > > > Hold on. I just noticed Rob's comment on patch 2/6, where he
-> > > > > > points out that you don't need to use device graph since the
-> > > > > > controller is the parent of the connector. Doesn't that mean you
-> > > > > > don't really need this API?
-> > > > > No, I still need it.
-> > > > > The change is about the way how to get fwnode; when use device
-> > > > > graph, get fwnode by of_graph_get_remote_node(); but now will get
-> > > > > fwnode by of_get_parent();
-> > > >
-> > > > OK, I get that, but I'm still not convinced about if something like
-> > > > this function is needed at all. I also have concerns regarding how
-> > > > you are using the function. I'll explain in comment to the patch 5/6 in this
-> > series...
-> > >
-> > > FYI, Currently  I am also using this api in my patch series.
-> > > https://patchwork.kernel.org/patch/10944637/
-> > 
-> > Yes, and I have the same question for you I jusb asked in comment I added
-> > to the patch 5/6 of this series. Why isn't usb_role_switch_get() enough?
+> When it comes to improvements, the main issue I have found is how we
+> treat DATA WRITES. In many cases we simply don't use the HW busy
+> detection at all, but instead rely on the mmc core to send CMD13 in a
+> loop to poll. Well, then if the polling would have consisted of a
+> couple of CMD13s that wouldn't be an issue, but my observations is
+> rather that the numbers of CMD13 sent to poll is in the range or
+> hundreds/thousands - per each WRITE request!
 > 
-> Currently no issue. It will work with this api as well, since the port node is part of controller node.
-> For eg:-
-> https://patchwork.kernel.org/patch/10944627/
+> I am going to send a patch (or two) that improves the behavior. It
+> might even involve changing parts in core layer, not sure how the end
+> result will look like yet.
 > 
-> However if any one adds port node inside the connector node, then this api may won't work as expected.
-> Currently I get below error
+> In any case, I have applied patch 1 and patch2 for next, as the tests
+> turned out well at my side. I also took the liberty of updating some
+> of the comments/changelogs, please have look and tell if there is
+> something you want to change.
 > 
-> [    2.299703] OF: graph: no port node found in /soc/i2c@e6500000/hd3ss3220@47
+> I will continue with the rest of series next week.
 > 
-> For eg:-
+> Kind regards
+> Uffe
 > 
-> 	hd3ss3220@47 {
-> 		compatible = "ti,hd3ss3220";
-> 		...
-> 		....
-> 		usb_con: connector {
->                                      ....
->                                      ....
-> 			port {
-> 				hd3ss3220_ep: endpoint@0 {
-> 					reg = <0>;
-> 					remote-endpoint = <&usb3peri_role_switch>;
-> 				};
-> 			};
-> 		};
-> 	};
-> 
-> Regards,
-> Biju
-
-I tested 3 cases:
-
-case 1:
-
-connector {
-    compatible = "linux,typeb-conn-gpio", "usb-b-connector";
-    label = "micro-USB";
-    type = "micro";
-    id-gpios = <&pio 12 GPIO_ACTIVE_HIGH>;
-    vbus-supply = <&usb_p0_vbus>;
-
-    port {
-        bconn_ep: endpoint@0 {
-            remote-endpoint = <&usb_role_sw>;
-        };
-    };
-};
-
-&mtu3 {
-    usb-role-switch;
-
-    port {
-        usb_role_sw: endpoint@0 {
-            remote-endpoint = <&bconn_ep>;
-        };
-    };
-};
-
-the driver of connector could use usb_role_switch_get(dev) to get
-mtu3's USB Role Switch. (dev is the device of connector)
-
-case 2:
-
-&mtu3 {
-    usb-role-switch;
-
-    connector {
-        compatible = "linux,typeb-conn-gpio", "usb-b-connector";
-        label = "micro-USB";
-        type = "micro";
-        id-gpios = <&pio 12 GPIO_ACTIVE_HIGH>;
-        vbus-supply = <&usb_p0_vbus>;
-    };
-};
-
-the driver of connector using usb_role_switch_get(dev) failed to get
-mtu3's USB Role Switch.
-error log:
-#OF: graph: no port node found in /usb@11271000/connector
-this is because connector hasn't child node connected to remote
-endpoint which register USB Role Switch
-
-case 3:
-
-rsw_iddig: role_sw_iddig {
-    compatible = "linux,typeb-conn-gpio";
-    status = "okay";
-
-    connector {
-        compatible = "usb-b-connector";
-        label = "micro-USB";
-        type = "micro";
-        id-gpios = <&pio 12 GPIO_ACTIVE_HIGH>;
-        vbus-supply = <&usb_p0_vbus>;
-
-        port {
-            bconn_ep: endpoint@0 {
-                remote-endpoint = <&usb_role_sw>;
-            };
-        };
-    };
-};
-
-&mtu3 {
-    usb-role-switch;
-
-    port {
-        usb_role_sw: endpoint@0 {
-            remote-endpoint = <&bconn_ep>;
-        };
-    };
-};
-
-
-the driver of connector using usb_role_switch_get(dev) also failed to
-get mtu3's USB Role Switch. Because usb_role_switch_get() only search
-its child nodes (connector node), but not child's child (port node)
-This case is the same as Biju's
-
-Usually type-c is similar with case 3;
-the next version v6 of this series will use case 2 as Rob suggested,
-see [v5, 2/6]
-
-for case 2, will need the new API fwnode_usb_role_switch_get();
-for case 3, use the new API, or need modify usb_role_switch_get();
-
-
