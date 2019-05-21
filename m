@@ -2,66 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1522025593
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7313E255A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:31:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728928AbfEUQah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 12:30:37 -0400
-Received: from mail.us.es ([193.147.175.20]:39054 "EHLO mail.us.es"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728753AbfEUQah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 12:30:37 -0400
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id 38B3615C10F
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 18:30:34 +0200 (CEST)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 29CF5DA70F
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 18:30:34 +0200 (CEST)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id 0DD43DA717; Tue, 21 May 2019 18:30:34 +0200 (CEST)
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
-X-Spam-Level: 
-X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
-        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id F037FDA705;
-        Tue, 21 May 2019 18:30:31 +0200 (CEST)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Tue, 21 May 2019 18:30:31 +0200 (CEST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (unknown [31.4.195.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id B0BDC4265A32;
-        Tue, 21 May 2019 18:30:31 +0200 (CEST)
-Date:   Tue, 21 May 2019 18:30:30 +0200
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     davem@davemloft.net, wensong@linux-vs.org, horms@verge.net.au,
-        ja@ssi.bg, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org
-Subject: Re: [PATCH v2] ipvs: Fix use-after-free in ip_vs_in
-Message-ID: <20190521163030.ly3mnllygtmfnx5d@salvia>
-References: <alpine.LFD.2.21.1905171015040.2233@ja.home.ssi.bg>
- <20190517143149.17016-1-yuehaibing@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190517143149.17016-1-yuehaibing@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729060AbfEUQbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 12:31:13 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47383 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728005AbfEUQbM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 12:31:12 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1hT7fR-00027I-1U; Tue, 21 May 2019 16:31:09 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     bhelgaas@google.com, rafael.j.wysocki@intel.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] PCI / PM: Don't runtime suspend when device only supports wakeup from D0
+Date:   Wed, 22 May 2019 00:31:04 +0800
+Message-Id: <20190521163104.15759-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 10:31:49PM +0800, YueHaibing wrote:
-> BUG: KASAN: use-after-free in ip_vs_in.part.29+0xe8/0xd20 [ip_vs]
-> Read of size 4 at addr ffff8881e9b26e2c by task sshd/5603
+There's an xHC device that doesn't wake when a USB device gets plugged
+to its USB port. The driver's own runtime suspend callback was called,
+PME signaling was enabled, but it stays at PCI D0.
 
-Applied, thanks.
+A PCI device can be runtime suspended to D0 when it supports D0 PME and
+its _S0W reports D0. Theoratically this should work, but as [1]
+specifies, D0 doesn't have wakeup capability.
+
+To avoid this problematic situation, we should avoid runtime suspend if
+D0 is the only state that can wake up the device.
+
+[1] https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/device-working-state-d0
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/pci/pci-driver.c | 5 +++++
+ drivers/pci/pci.c        | 2 +-
+ include/linux/pci.h      | 3 +++
+ 3 files changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index cae630fe6387..15a6310c5d7b 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -1251,6 +1251,11 @@ static int pci_pm_runtime_suspend(struct device *dev)
+ 		return 0;
+ 	}
+ 
++	if (pci_target_state(pci_dev, device_can_wakeup(dev)) == PCI_D0) {
++		dev_dbg(dev, "D0 doesn't have wakeup capability\n");
++		return -EBUSY;
++	}
++
+ 	pci_dev->state_saved = false;
+ 	if (pm && pm->runtime_suspend) {
+ 		error = pm->runtime_suspend(dev);
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 8abc843b1615..ceee6efbbcfe 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -2294,7 +2294,7 @@ EXPORT_SYMBOL(pci_wake_from_d3);
+  * If the platform can't manage @dev, return the deepest state from which it
+  * can generate wake events, based on any available PME info.
+  */
+-static pci_power_t pci_target_state(struct pci_dev *dev, bool wakeup)
++pci_power_t pci_target_state(struct pci_dev *dev, bool wakeup)
+ {
+ 	pci_power_t target_state = PCI_D3hot;
+ 
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 4a5a84d7bdd4..91e8dc4d04aa 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1188,6 +1188,7 @@ bool pci_pme_capable(struct pci_dev *dev, pci_power_t state);
+ void pci_pme_active(struct pci_dev *dev, bool enable);
+ int pci_enable_wake(struct pci_dev *dev, pci_power_t state, bool enable);
+ int pci_wake_from_d3(struct pci_dev *dev, bool enable);
++pci_power_t pci_target_state(struct pci_dev *dev, bool wakeup);
+ int pci_prepare_to_sleep(struct pci_dev *dev);
+ int pci_back_from_sleep(struct pci_dev *dev);
+ bool pci_dev_run_wake(struct pci_dev *dev);
+@@ -1672,6 +1673,8 @@ static inline int pci_set_power_state(struct pci_dev *dev, pci_power_t state)
+ { return 0; }
+ static inline int pci_wake_from_d3(struct pci_dev *dev, bool enable)
+ { return 0; }
++pci_power_t pci_target_state(struct pci_dev *dev, bool wakeup)
++{ return PCI_D0; }
+ static inline pci_power_t pci_choose_state(struct pci_dev *dev,
+ 					   pm_message_t state)
+ { return PCI_D0; }
+-- 
+2.17.1
+
