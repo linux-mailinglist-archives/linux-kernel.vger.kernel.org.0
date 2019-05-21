@@ -2,148 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C79422591B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD54625943
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:45:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbfEUUkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 16:40:21 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43844 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727341AbfEUUkU (ORCPT
+        id S1728310AbfEUUlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 16:41:14 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44684 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727913AbfEUUkk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 16:40:20 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z5so9900lji.10;
-        Tue, 21 May 2019 13:40:19 -0700 (PDT)
+        Tue, 21 May 2019 16:40:40 -0400
+Received: by mail-pl1-f194.google.com with SMTP id c5so8953081pll.11
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 13:40:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=85X1q9FFhREECXDD2QJfVWU7IM8u4t7MWuEU1Zy1brk=;
-        b=aXTYNU09ZejTperCr9pkAs0tgeih9kMpaGws7kJIAMBgmsZHqvDFKMzL1pDhMB/jF2
-         RjiQ0ReEEMTIcoe1e22x8RU6cxDwZbaUvR/ptyWYx2/OU8sLjv3ODXf1Xdqq8z1bFI/t
-         sDJ55XePWL6nJdTG+TWGSsGcy/6bWiwaexkYsEqblA2fJNx85gIHCuOhnONnnIi2pKWs
-         vCMtM9EB7eibQe2K470fcLlJzTbywHiW/G6MaSpVCrnm0ujgIz4vEOUL2VoxTSeKE4DR
-         oJCh8eP899sGmyou4P6aUxZvj+uPOz+FS1LBkjfhe7XNHIu8j2N8z9NZO7fM5so73Peu
-         Nd0A==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=VmjDYig5cOfeJzpmuRnE4YbNJQ8zuwD2EO9PKFuRqCg=;
+        b=ZoN3w9z3uD8ECaFrH1mWGfcXbdL2H57DFbX418kzrKyjv83IjiPRGWXJIdemvMzk9r
+         LkE+onb3hP+uPA5KQMc/BtXm2bk4ZHMT06ZG/59w5HqfIarSuJfbz0UD9W7TdgNSiHIB
+         CYqGb7kaaeQyzZXVIZwccQCYkLZ3uUPQ5JHHA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=85X1q9FFhREECXDD2QJfVWU7IM8u4t7MWuEU1Zy1brk=;
-        b=onv27KC+nvNp9ogcVEj9zPoVAS1kV+VK3goz6LE1Ak8p1huc9ID1GmMchB/g7WQJG+
-         1QR3lAsS5+EAzwCdIzLShNesh8tS6V5dZISBlPVamcju/7Jqo5RthB8Mb7Bo1yXggIoG
-         ghbmS0K7tnB7FZ2zkWEMu56mBLat4Z4jrbXFOJGfBf6RXNMazPPis6u2JpNDxiIIAytv
-         0qVHsUTypU8gkNv8sx0S4/CQjqLJAdHgbDZKu7Ik/vzSHHIqAixnOA0dx/zAlqp7NeVj
-         rktMXflbi0zDSwCp3wMYnSQPVDpEQrN2qwmfPqPcH9Pi2KaHiurYRqziranpbOR9HH73
-         QqdQ==
-X-Gm-Message-State: APjAAAUKpuzslZ9Fark02tE6jws/4sgjB6PUvFE3+mQizLrr3w5kpqC4
-        ml4zRTedbDK/nAnts/WQ31o/+LHxKZg=
-X-Google-Smtp-Source: APXvYqxC+WMoiiwCEUF4a/IDbNP9n3kqAc+VLG6h/a6t1nki/IkRRcEJAohziIJrV8q512hpDC/mkg==
-X-Received: by 2002:a2e:4701:: with SMTP id u1mr37163319lja.38.1558471218147;
-        Tue, 21 May 2019 13:40:18 -0700 (PDT)
-Received: from [192.168.1.17] (dkv215.neoplus.adsl.tpnet.pl. [83.24.25.215])
-        by smtp.gmail.com with ESMTPSA id u2sm4605326ljd.97.2019.05.21.13.40.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 13:40:17 -0700 (PDT)
-Subject: Re: [PATCH v4 6/6] leds: lm36274: Introduce the TI LM36274 LED driver
-To:     Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
-Cc:     lee.jones@linaro.org, rdunlap@infradead.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190507201159.13940-1-dmurphy@ti.com>
- <20190507201159.13940-7-dmurphy@ti.com>
- <77f1ed5b-bfd2-510c-edd5-1b702f2d1d45@gmail.com>
- <8d126925-9e71-dba4-eb88-50fd6e6c06d8@ti.com>
- <a7cb6628-e501-b580-f714-0e5de78ea39c@gmail.com>
- <d0c49197-984d-5cd8-032a-27d9c5ca6d29@ti.com>
- <97ff2f48-9ec0-06f1-b667-56fcdef8bf03@gmail.com>
- <65c656cd-1b16-0960-fbeb-8172087b88f2@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <f16b7eb7-411a-cac4-f8ec-b34a7731166c@gmail.com>
-Date:   Tue, 21 May 2019 22:40:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=VmjDYig5cOfeJzpmuRnE4YbNJQ8zuwD2EO9PKFuRqCg=;
+        b=OWqosuM2a9TqEuXbgAIM2yk7wHujpOws51ve+/11BmOFBqANLyRuJnHG8a5sgGNWef
+         aONgRQ6asZUXJKaIDyYpZ5rfD+L7ty8rz1ohKG1VfWHPyMagBtFkQNEOYBOrxZ6Xq1PN
+         phqlE21VwmGr0Pr70K8APX2CRWsH6nJ+deA2jDaM3vDYSZxIJnVpQtCzl7YcPjM2DY+N
+         Hov0OxSiZXLK3aq8P+TYmuU2wbXoMmGMCQbsvqBFKfSO9lRRVIHQ1QRqSpRRnIV9TYZa
+         H83GGBpPFjtSDYN/PLdsZzg6RfRZQCbdpNZiy5qOWvbbI0pQG2Hph7m1H1Du53UCfiGA
+         h88w==
+X-Gm-Message-State: APjAAAV+yya0DcZRL5cGl27vkJYB3WP4bccaQ2TBmp0qdajRbgHv+O1Q
+        0zSllfVN7crsy5v0aDUApliuzQ==
+X-Google-Smtp-Source: APXvYqzcoa60DP1BCRfYNNgykS/fRPS1E7bZ8Eb21n8ia+/CEeccKQvQRrIXVo4G+UKTFG8KapwAEg==
+X-Received: by 2002:a17:902:e7:: with SMTP id a94mr60595135pla.182.1558471239758;
+        Tue, 21 May 2019 13:40:39 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c76sm41508742pfc.43.2019.05.21.13.40.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 May 2019 13:40:39 -0700 (PDT)
+Date:   Tue, 21 May 2019 13:40:38 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Colin Ian King <colin.king@canonical.com>
+Cc:     mcgrof@kernel.org, linux-kernel@vger.kernel.org,
+        Weitao Hou <houweitaoo@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] kernel: fix typos and some coding style in comments
+Message-ID: <201905211338.D073AB64@keescook>
+References: <20190521050937.4370-1-houweitaoo@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <65c656cd-1b16-0960-fbeb-8172087b88f2@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521050937.4370-1-houweitaoo@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/21/19 9:41 PM, Dan Murphy wrote:
-> Jacek
+On Tue, May 21, 2019 at 01:09:37PM +0800, Weitao Hou wrote:
+> fix lenght to length
 > 
-> On 5/21/19 1:46 PM, Jacek Anaszewski wrote:
->> Dan,
->>
->> On 5/21/19 8:25 PM, Dan Murphy wrote:
->>> Jacek
->>>
->>> On 5/21/19 12:40 PM, Jacek Anaszewski wrote:
->>>> On 5/20/19 11:19 PM, Dan Murphy wrote:
->>>>> Jacek
->>>>>
->>>>> On 5/20/19 2:54 PM, Jacek Anaszewski wrote:
->>>>>> Hi Dan,
->>>>>>
->>>>>> On 5/7/19 10:11 PM, Dan Murphy wrote:
->>>>>>> Introduce the LM36274 LED driver.  This driver uses the ti-lmu
->>>>>>> MFD driver to probe this LED driver.  The driver configures only the
->>>>>>> LED registers and enables the outputs according to the config file.
->>>>>>>
->>>>>>> The driver utilizes the TI LMU (Lighting Management Unit) LED common
->>>>>>> framework to set the brightness bits.
->>>>>>>
->>>>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>>>>>> ---
->>>>>>>      drivers/leds/Kconfig        |   7 ++
->>>>>>>      drivers/leds/Makefile       |   1 +
->>>>>>>      drivers/leds/leds-lm36274.c | 174 ++++++++++++++++++++++++++++++++++++
->>>>>>>      3 files changed, 182 insertions(+)
->>>>>>>      create mode 100644 drivers/leds/leds-lm36274.c
->>>>>>>
->>>>>>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->>>>>>> index 255fdd5e8491..db83a3feca01 100644
->>>>>>> --- a/drivers/leds/Kconfig
->>>>>>> +++ b/drivers/leds/Kconfig
->>>>>>> @@ -791,6 +791,13 @@ config LEDS_LM3697
->>>>>>>            Say Y to enable the LM3697 LED driver for TI LMU devices.
->>>>>>>            This supports the LED device LM3697.
->>>>>>>      +config LEDS_LM36274
->>>>>>> +    tristate "LED driver for LM36274"
->>>>>>> +    depends on LEDS_TI_LMU_COMMON
->>>>>>
->>>>>> Shouldn't we have "depends on MFD_TI_LMU" as well here?
->>>>>>
->>>>>
->>>>> Actually the LEDS_TI_LMU_COMMON flag should depend on MFD_TI_LMU.
->>>>> Then it would inherit that dependency.
->>>>
->>>> LEDS_TI_LMU_COMMON does not seem too have any dependency on MFD_TI_LMU,
->>>> and it would be incorrect to require enabling MFD_TI_LMU for all drivers
->>>> depending on TI_LMU_COMMON, that can be probed on their own, like
->>>> leds-lm3697.c .
->>>>
->>>
->>> Correct.
->>>
->>> I can update the Kconfigs unless you want to ammend the commits.
->>
->> I added "depends on MFD_TI_LMU" to "config LEDS_LM36274".
->> Please verify your patch sets pushed to [0].
->>
+> Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+I've aimed this at akpm... Colin, who normally takes your spelling
+fix patches? (It looks like your split them up normally? That seems
+silly here...)
+
+-Kees
+
+> ---
+> Changes in v3:
+> - fix all other same typos with git grep
+> ---
+>  .../devicetree/bindings/usb/s3c2410-usb.txt    |  2 +-
+>  .../wireless/mediatek/mt76/mt76x02_usb_core.c  |  2 +-
+>  kernel/sysctl.c                                | 18 +++++++++---------
+>  sound/soc/qcom/qdsp6/q6asm.c                   |  2 +-
+>  4 files changed, 12 insertions(+), 12 deletions(-)
 > 
-> Pulled
-> Built
-> tested
-> verified
+> diff --git a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+> index e45b38ce2986..26c85afd0b53 100644
+> --- a/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+> +++ b/Documentation/devicetree/bindings/usb/s3c2410-usb.txt
+> @@ -4,7 +4,7 @@ OHCI
+>  
+>  Required properties:
+>   - compatible: should be "samsung,s3c2410-ohci" for USB host controller
+> - - reg: address and lenght of the controller memory mapped region
+> + - reg: address and length of the controller memory mapped region
+>   - interrupts: interrupt number for the USB OHCI controller
+>   - clocks: Should reference the bus and host clocks
+>   - clock-names: Should contain two strings
+> diff --git a/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c b/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c
+> index 6b89f7eab26c..e0f5e6202a27 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c
+> +++ b/drivers/net/wireless/mediatek/mt76/mt76x02_usb_core.c
+> @@ -53,7 +53,7 @@ int mt76x02u_skb_dma_info(struct sk_buff *skb, int port, u32 flags)
+>  	pad = round_up(skb->len, 4) + 4 - skb->len;
+>  
+>  	/* First packet of a A-MSDU burst keeps track of the whole burst
+> -	 * length, need to update lenght of it and the last packet.
+> +	 * length, need to update length of it and the last packet.
+>  	 */
+>  	skb_walk_frags(skb, iter) {
+>  		last = iter;
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 943c89178e3d..f78f725f225e 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -187,17 +187,17 @@ extern int no_unaligned_warning;
+>   * enum sysctl_writes_mode - supported sysctl write modes
+>   *
+>   * @SYSCTL_WRITES_LEGACY: each write syscall must fully contain the sysctl value
+> - * 	to be written, and multiple writes on the same sysctl file descriptor
+> - * 	will rewrite the sysctl value, regardless of file position. No warning
+> - * 	is issued when the initial position is not 0.
+> + *	to be written, and multiple writes on the same sysctl file descriptor
+> + *	will rewrite the sysctl value, regardless of file position. No warning
+> + *	is issued when the initial position is not 0.
+>   * @SYSCTL_WRITES_WARN: same as above but warn when the initial file position is
+> - * 	not 0.
+> + *	not 0.
+>   * @SYSCTL_WRITES_STRICT: writes to numeric sysctl entries must always be at
+> - * 	file position 0 and the value must be fully contained in the buffer
+> - * 	sent to the write syscall. If dealing with strings respect the file
+> - * 	position, but restrict this to the max length of the buffer, anything
+> - * 	passed the max lenght will be ignored. Multiple writes will append
+> - * 	to the buffer.
+> + *	file position 0 and the value must be fully contained in the buffer
+> + *	sent to the write syscall. If dealing with strings respect the file
+> + *	position, but restrict this to the max length of the buffer, anything
+> + *	passed the max length will be ignored. Multiple writes will append
+> + *	to the buffer.
+>   *
+>   * These write modes control how current file position affects the behavior of
+>   * updating sysctl values through the proc interface on each write.
+> diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
+> index 4f85cb19a309..e8141a33a55e 100644
+> --- a/sound/soc/qcom/qdsp6/q6asm.c
+> +++ b/sound/soc/qcom/qdsp6/q6asm.c
+> @@ -1194,7 +1194,7 @@ EXPORT_SYMBOL_GPL(q6asm_open_read);
+>   * q6asm_write_async() - non blocking write
+>   *
+>   * @ac: audio client pointer
+> - * @len: lenght in bytes
+> + * @len: length in bytes
+>   * @msw_ts: timestamp msw
+>   * @lsw_ts: timestamp lsw
+>   * @wflags: flags associated with write
+> -- 
+> 2.18.0
 > 
-> Good to go
-Thanks! Merged.
 
 -- 
-Best regards,
-Jacek Anaszewski
+Kees Cook
