@@ -2,124 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 298E92500E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:23:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33D8825018
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:24:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbfEUNXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 09:23:30 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39102 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbfEUNX2 (ORCPT
+        id S1728298AbfEUNYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 09:24:38 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34156 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727044AbfEUNYh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 09:23:28 -0400
-Received: by mail-wr1-f67.google.com with SMTP id w8so18620466wrl.6
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 06:23:26 -0700 (PDT)
+        Tue, 21 May 2019 09:24:37 -0400
+Received: by mail-ot1-f67.google.com with SMTP id l17so16318790otq.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 06:24:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zPeZPlO76ltnQqvYGINFToUvBJmXqM645QmEt4Hw6Rc=;
-        b=BUu5zjdtN4tz3uDq/7UpOx4K4hUQVJBWS+eEuFLdpi6Rmwdp0HavCUwLV8syhoRhBs
-         uutuEJthT54zEPxESFMYXggKMqpF+e9kjCS2KXB6a8V8DjwFSU/ukGJ+bjlCRLwN7Itn
-         NioFIdnrRyEyEXF9J8PaDiZ1BKte4njCTV4UqMcQIxHCp36wZKBXLuGaTuzR077IIyGB
-         sh/VNZyNC9dytmpNSG0A/cuTGl76M/BtkEN2Bj2PP9spj3uzju6GRwQbZsYefL3l1zFQ
-         DUpnJfPzQ1HZROA8RvSmOKB1jZ+QySIxvLrPIvBwJ5t1t+aSsSSgiGJe52BZXhX2b2t5
-         /pjA==
+        d=digitalocean.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IRqM/fo2M22HfK1yd2xZk4oUzdYSt76QFJebCVErlJY=;
+        b=UTQUhcEX7/X5ApzqT2hbojHbZQM4ASXo3x2bK9x2oa0mob9do0b6nZc5qWBspjeBD4
+         Uic7YfUS4IZ7NGgvj+A9XZRPZ4NMo1CWIYbe5F9PNcVN996kQs5eW7c0XmJlyKTCi7lo
+         3xdDtsBhoYlQoyMbfvmNExpxJXnIyOVw+FDpY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zPeZPlO76ltnQqvYGINFToUvBJmXqM645QmEt4Hw6Rc=;
-        b=jD26rNd36IaQfOvXn+T6MhUA3crEvzUQqBpIIgDXOIoOeBW3ZuCblsBN6+rTqGnPLz
-         XS6xRHcuDtUCzX1mFtZxLQnRmReHyUmelAV06lnMd9q30pEtLkdzQ8qWa2/xvF/ni9OV
-         7b9ve5PykUB4uybXWLuoAqJzfSkmb1sYZOiVbscSucYV29s081MnQx3TNU0PqV+oflbx
-         iWdHEx8UNMX44kOH+XyYZIhoCyO5G0K+JcWgB7izKqo3sVsA6lsV7/TjAo2cVh7d04wv
-         oD46f/ISLyyAmy6waBHxSONmcsMb5u1mThV0J9iFJgJ9UHVk3z83U/5FQqGP8DYhf7mP
-         W5dg==
-X-Gm-Message-State: APjAAAXpu3QdnTVzljem7gDF/yZaxAEMk6NKbjb+oEoL4ULeSQrlVvMv
-        co2qfGFqKlSyJw96v94cv8X0Xw==
-X-Google-Smtp-Source: APXvYqx9Vd+T8JFd9e9hzlyFLebVljF2D14aArNe6wO+D4nzJaWpMCXvLevCthzGrMSyj5JSdNW7NA==
-X-Received: by 2002:adf:e344:: with SMTP id n4mr26865746wrj.192.1558445005993;
-        Tue, 21 May 2019 06:23:25 -0700 (PDT)
-Received: from brauner.io (p548C9938.dip0.t-ipconnect.de. [84.140.153.56])
-        by smtp.gmail.com with ESMTPSA id a15sm5483898wrw.49.2019.05.21.06.23.23
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 21 May 2019 06:23:24 -0700 (PDT)
-Date:   Tue, 21 May 2019 15:23:23 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        jannh@google.com, oleg@redhat.com, tglx@linutronix.de,
-        torvalds@linux-foundation.org, arnd@arndb.de, shuah@kernel.org,
-        dhowells@redhat.com, tkjos@android.com, ldv@altlinux.org,
-        miklos@szeredi.hu, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH 1/2] open: add close_range()
-Message-ID: <20190521132252.y5wt7d7o4bdjns4e@brauner.io>
-References: <20190521113448.20654-1-christian@brauner.io>
- <87tvdoau12.fsf@oldenburg2.str.redhat.com>
- <20190521130438.q3u4wvve7p6md6cm@brauner.io>
- <87h89o9cng.fsf@oldenburg2.str.redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IRqM/fo2M22HfK1yd2xZk4oUzdYSt76QFJebCVErlJY=;
+        b=hqldxMZUmv7lCERKPOGFNcS2EPPzzoVo/54oZ+sdGk4CtZYHN+rzUVBy3AaBZ3e1NC
+         ERq9HnECAaOkkR/69LmI27ItUb5wUZg8d4QhEGvbL5fATMpf31SBcu5bjWnjhDhRXU+Y
+         MdiNQSWZYfJVEr5wnHhu6uT2cBl6IgMfHrJOmi5LoyV71eyuqbRzQlriug5/b2+u/Ihj
+         sBJsGi6+aIjHvDGHlw57GQBupGEdie3qjGMaVBB2VEp51SXZdGMnsdKKVaIMdOIMtncn
+         fVkYe/m2wmSfm0m5u3B5Yh0lTsHAj7IYec94IouH6pW5hI2xi2ug7avmLtV85LtEIqPF
+         r2Xw==
+X-Gm-Message-State: APjAAAV6lIFhli/wqm+CNn9zziYHwFhHhP8D6ub3NG76wOrU8Gz93s5w
+        C/JS7VlUU0ppoX+XJpSCUQSRTjhzIGbP4YghLzykQw==
+X-Google-Smtp-Source: APXvYqxz+Op98WpP0iRUy6MkWY6kShi4rUCR0VitlHaRC510/Ii1oV/MfZjUS0Hm81MGNLdWZa+3EfTXcaP7vsFCwvg=
+X-Received: by 2002:a9d:538b:: with SMTP id w11mr3702166otg.154.1558445076881;
+ Tue, 21 May 2019 06:24:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87h89o9cng.fsf@oldenburg2.str.redhat.com>
-User-Agent: NeoMutt/20180716
+References: <cover.1556025155.git.vpillai@digitalocean.com>
+ <edd4c014e69b68b90160766c6049f2ed922793c7.1556025155.git.vpillai@digitalocean.com>
+ <CAERHkrtZo0BQg_u9ZPNY_Rk2JY4YT8d5NDRKFQMWeYyAviVShA@mail.gmail.com>
+ <20190520130454.GA677@pauld.bos.csb> <CANaguZA1Ujahr78wt4pxnLzR_in47_EXvxMQLWrP4NS3mpP91g@mail.gmail.com>
+ <CAERHkrtaEEO69ZsDfy8mcU=H_gTFRuTeoKTC0Bc1pUeD7Z3fqw@mail.gmail.com>
+In-Reply-To: <CAERHkrtaEEO69ZsDfy8mcU=H_gTFRuTeoKTC0Bc1pUeD7Z3fqw@mail.gmail.com>
+From:   Vineeth Pillai <vpillai@digitalocean.com>
+Date:   Tue, 21 May 2019 09:24:25 -0400
+Message-ID: <CANaguZAhbd5VarCJDo6ehOz-hf_gBzgJcetxphC1V5aZtuTc-g@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 13/17] sched: Add core wide task selection and scheduling.
+To:     Aubrey Li <aubrey.intel@gmail.com>
+Cc:     Phil Auld <pauld@redhat.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Aaron Lu <aaron.lwe@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 03:10:11PM +0200, Florian Weimer wrote:
-> * Christian Brauner:
-> 
-> >> Solaris has an fdwalk function:
-> >> 
-> >>   <https://docs.oracle.com/cd/E88353_01/html/E37843/closefrom-3c.html>
-> >> 
-> >> So a different way to implement this would expose a nextfd system call
-> >
-> > Meh. If nextfd() then I would like it to be able to:
-> > - get the nextfd(fd) >= fd
-> > - get highest open fd e.g. nextfd(-1)
-> 
-> The highest open descriptor isn't istering for fdwalk because nextfd
-> would just fail.
+> > Please try this and see how it compares with the vanilla v2. I think its
+> > time for a v3 now and we shall be posting it soon after some more
+> > testing and benchmarking.
+>
+> Is there any potential change between pre v3 and v3? I prefer working
+> based on v3 so that everyone are on the same page.
+>
+Makes sense, testing can wait until v3 is posted. I don't expect many
+changes from above, but its better to test on the posted v3.
 
-Sure. I was thinking about other usecases. For example, sometimes in
-userspace you want to do the following:
-save_fd = dup(fd, <well-known-number-at-the-end-of-the-range);
-close_range(3, (save_fd - 1));
-
-Which brings me to another point. So even if we don't do close_range() I
-would like libc to maybe give us something like close_range() for such
-scenarios.
-
-> 
-> > But then I wonder if nextfd() needs to be a syscall and isn't just
-> > either:
-> > fcntl(fd, F_GET_NEXT)?
-> > or
-> > prctl(PR_GET_NEXT)?
-> 
-> I think the fcntl route is a bit iffy because you might need it to get
-> the *first* valid descriptor.
-> 
-> >> to userspace, so that we can use that to implement both fdwalk and
-> >> closefrom.  But maybe fdwalk is just too obscure, given the existence of
-> >> /proc.
-> >
-> > Yeah we probably don't need fdwalk.
-> 
-> Agreed.  Just wanted to bring it up for completeness.  I certainly don't
-> want to derail the implementation of close_range.
-> 
-> Thanks,
-> Florian
+Thanks,
