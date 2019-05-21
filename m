@@ -2,107 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D39024B1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:03:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9026524B32
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:10:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727353AbfEUJDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 05:03:13 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53200 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726692AbfEUJDM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 05:03:12 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y3so2093292wmm.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 02:03:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gYAhmVJgkHA+N2QnfUw5rqlqXxgQ3j6KVbsfq1tlZMM=;
-        b=UFZ36oLKvX+AyXAL5nBQnC1qDCWWRrbfH0PozmB8HyvyoDlKvokj7BmHtKfsRST0eM
-         eybFag24qHXOs0w22rgVTfxJ4hpMkJN0U/gNSlD/03mQA7xEqfhgnfJMUQByxWq6q4K1
-         ketUdVCeKml9tZk15s7E51XrcBBA56Iezl5+6KY7rNL+J7StZgjFMHtLove61AyuUhST
-         Gt1tROiyikHmf7H4OqCWa6iQ0JC/XEhMgSGrXLg6poSr2n2SUlILi5JfXPuUKp21zlnk
-         s5WrepjFiqFxyyG4Sta1RKTDrS6hLSVgH5tiH9nuqcswNcg1ObyqHamwSu4a1BYf6KWS
-         9grA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gYAhmVJgkHA+N2QnfUw5rqlqXxgQ3j6KVbsfq1tlZMM=;
-        b=jak0X1wCJ813R/4aneSaNNAC3fPCU73AX/wmECzMerM9a1mJRg04j05FzBaO+001og
-         SPSZPE8La/hSrbxFnV/xX+01OZGJi3FA/s15KM6IpOZ02vhIPjwblTeTmapFwjPbUsfY
-         kRNU3ZQKeZ8/xw1MIPK7DRey2Rgffm2xzN/OrJ1evuZ4YqqtRsjP5lbPRoM3pU3biqB4
-         P3EskgbGhMpsdT7ZBpM9Wo1cP+g0DW2Q1fPMpCfeGMdcuAhyLxWA5rHiJW/AFmkhvTaV
-         FW50/vBWJR/yWWEa2cTZuc+Kjj9eC1tee2PCxOQ9wC3jPUsIqv9mr0tkrseSaaeHTTwB
-         IW7A==
-X-Gm-Message-State: APjAAAURoJ5ZjCuJLf7VdOKUttZrKga5Sd553i+N1RBo7dkYtMUyt2Xv
-        4JJ5bYUXVZeyUQbo5kvudq5zwQ==
-X-Google-Smtp-Source: APXvYqzQFUH3mqLm/FE4fhZMNjE0sMSpeNtW+zoz6zvRZGpviSrxRVUCwwBB+AeiucqksJdT2sXCLQ==
-X-Received: by 2002:a1c:f415:: with SMTP id z21mr2480549wma.100.1558429390261;
-        Tue, 21 May 2019 02:03:10 -0700 (PDT)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id j28sm35898692wrd.64.2019.05.21.02.03.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 02:03:09 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 2/2] gpio: max732x: use devm_gpiochip_add_data()
-Date:   Tue, 21 May 2019 11:03:06 +0200
-Message-Id: <20190521090306.28113-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190521090306.28113-1-brgl@bgdev.pl>
-References: <20190521090306.28113-1-brgl@bgdev.pl>
+        id S1727400AbfEUJKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 05:10:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53482 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726296AbfEUJKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 05:10:30 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE554216B7;
+        Tue, 21 May 2019 09:10:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558429829;
+        bh=5eimA3Q9OUTmM31pznO3gTNnUoFriuH+fFfnLbnqfV4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=z2unVTByqNDXvX4+U8BwDCAriO8HtbjBLTjRjRNjABJU8WXJd1Zs+ULKUWj7i0vLp
+         qZGfeQiD8o7ip/oYtM+mqgQ2kOlXYQOzNdLb3NeWDl/jJ+NkGMzR4HKk+ZOPcMJCQr
+         J7QYEIhA8+T7h5iCAt82CoaUTo/rN+8Ogog0bCUo=
+Date:   Tue, 21 May 2019 17:09:34 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "ccaione@baylibre.com" <ccaione@baylibre.com>,
+        "angus@akkea.ca" <angus@akkea.ca>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V2] arm64: dts: imx8mq: Add gpio alias
+Message-ID: <20190521090933.GE15856@dragon>
+References: <1558426216-14026-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1558426216-14026-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, May 21, 2019 at 08:15:26AM +0000, Anson Huang wrote:
+> Add i.MX8MQ GPIO alias for kernel GPIO driver usage.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-We can simplify the code a bit with a resource managed variant of
-gpiochip_add_data().
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/gpio/gpio-max732x.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
-index 7fd1bdfe00e5..42c9b6ce4227 100644
---- a/drivers/gpio/gpio-max732x.c
-+++ b/drivers/gpio/gpio-max732x.c
-@@ -698,15 +698,13 @@ static int max732x_probe(struct i2c_client *client,
- 			return ret;
- 	}
- 
--	ret = gpiochip_add_data(&chip->gpio_chip, chip);
-+	ret = devm_gpiochip_add_data(&client->dev, &chip->gpio_chip, chip);
- 	if (ret)
- 		return ret;
- 
- 	ret = max732x_irq_setup(chip, id);
--	if (ret) {
--		gpiochip_remove(&chip->gpio_chip);
-+	if (ret)
- 		return ret;
--	}
- 
- 	if (pdata && pdata->setup) {
- 		ret = pdata->setup(client, chip->gpio_chip.base,
-@@ -736,8 +734,6 @@ static int max732x_remove(struct i2c_client *client)
- 		}
- 	}
- 
--	gpiochip_remove(&chip->gpio_chip);
--
- 	return 0;
- }
- 
--- 
-2.21.0
-
+Applied, thanks.
