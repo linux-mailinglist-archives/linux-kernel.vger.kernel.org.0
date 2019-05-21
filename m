@@ -2,86 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A310D250E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:44:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D46C42508C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:37:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbfEUNoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 09:44:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51204 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728240AbfEUNoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 09:44:03 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AF6A26EB84;
-        Tue, 21 May 2019 13:43:53 +0000 (UTC)
-Received: from dhcp201-121.englab.pnq.redhat.com (ovpn-116-97.sin2.redhat.com [10.67.116.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B7C91001F5D;
-        Tue, 21 May 2019 13:43:21 +0000 (UTC)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, dm-devel@redhat.com
-Cc:     dan.j.williams@intel.com, zwisler@kernel.org,
-        vishal.l.verma@intel.com, dave.jiang@intel.com, mst@redhat.com,
-        jasowang@redhat.com, willy@infradead.org, rjw@rjwysocki.net,
-        hch@infradead.org, lenb@kernel.org, jack@suse.cz, tytso@mit.edu,
-        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
-        lcapitulino@redhat.com, kwolf@redhat.com, imammedo@redhat.com,
-        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
-        stefanha@redhat.com, aarcange@redhat.com, david@redhat.com,
-        david@fromorbit.com, cohuck@redhat.com,
-        xiaoguangrong.eric@gmail.com, pagupta@redhat.com,
-        pbonzini@redhat.com, yuval.shaia@oracle.com, kilobyte@angband.pl,
-        jstaron@google.com, rdunlap@infradead.org, snitzer@redhat.com
-Subject: [PATCH v10 7/7] xfs: disable map_sync for async flush
-Date:   Tue, 21 May 2019 19:07:13 +0530
-Message-Id: <20190521133713.31653-8-pagupta@redhat.com>
-In-Reply-To: <20190521133713.31653-1-pagupta@redhat.com>
-References: <20190521133713.31653-1-pagupta@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 21 May 2019 13:44:03 +0000 (UTC)
+        id S1728240AbfEUNh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 09:37:27 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37055 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727534AbfEUNh0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 09:37:26 -0400
+Received: by mail-oi1-f193.google.com with SMTP id f4so12804634oib.4
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 06:37:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H+BSjdKHMeiIAULb/QyaUOTkRt09BUDaEnpHHqHJQHo=;
+        b=oYE7JAF3d5Xd55jYiP+FFNL6Ut3yy6uqIgip8mEGC8oTz1+IvRYcsGTOaUU5j8VFyi
+         qlIZN4YmYuLrs5eY9gkBjWkzNagvcbXivOL+g55DksVqlPngfPyWIjsECXhDpaTdLVRa
+         LltBxjxk+TjU9uoUpHMSUpwVOz7Qcw67t+Fhk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H+BSjdKHMeiIAULb/QyaUOTkRt09BUDaEnpHHqHJQHo=;
+        b=igB6E7f9bJoPCTOyE8Mc6hDuzzxLomgCA/uVsvYxRg+ER0y13LRdiY/0imH3TUuxE1
+         sgDICq2t3Vcq9akPGiaqsz89rDRaJJ+Zd+uxh9QtBzgRXrvL9CAdlVx1j1YlcU1lBgIg
+         8TG0qwn+lviBmuUpzDTePHmnuSRQLBi0fz55+D5c5R7xNk4qWUPPPNWZRNjeRSXx5nc/
+         22nQBgofEZGrueJWox9rLOJVyeuAvlu8DODfa7z43/0DnPFxC6xVXSRCn/+q28IwNano
+         hfoulTYPNprkdi85veWNbCMo4SV0on1ttVk3qURgo/eszI7yI+2MGBnz7CQylJGJH36u
+         3DJA==
+X-Gm-Message-State: APjAAAV3AbuMsBEsK19kb83ogFENq6NOwUto+V+L/IX+L0uA9lpGHPh4
+        pW7mI8dd6pXJ3TIR9rbmaBy6+FpVt2A=
+X-Google-Smtp-Source: APXvYqzB6fHrcTq3SMQEx5DdNBNDnC3OyvicOdBPVuItA6SdsZf6uKzxVY/iKXBiLy/UESFc7WCSZg==
+X-Received: by 2002:aca:7511:: with SMTP id q17mr3479862oic.138.1558445845574;
+        Tue, 21 May 2019 06:37:25 -0700 (PDT)
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com. [209.85.210.51])
+        by smtp.gmail.com with ESMTPSA id 23sm7617100otc.77.2019.05.21.06.37.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 May 2019 06:37:24 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id 66so16379396otq.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 06:37:24 -0700 (PDT)
+X-Received: by 2002:a9d:58c5:: with SMTP id s5mr19522642oth.153.1558445844462;
+ Tue, 21 May 2019 06:37:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190520224124.153005-1-mathewk@chromium.org>
+In-Reply-To: <20190520224124.153005-1-mathewk@chromium.org>
+From:   Jett Rink <jettrink@chromium.org>
+Date:   Tue, 21 May 2019 07:37:13 -0600
+X-Gmail-Original-Message-ID: <CAK+PMK47_OE-BgOYD_TD0kwxD4RG+nS9Wstg4ydUy7yV9nVmHQ@mail.gmail.com>
+Message-ID: <CAK+PMK47_OE-BgOYD_TD0kwxD4RG+nS9Wstg4ydUy7yV9nVmHQ@mail.gmail.com>
+Subject: Re: [PATCH v2] platform/x86: intel-vbtn: Report switch events when
+ event wakes device
+To:     Mathew King <mathewk@chromium.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        AceLan Kao <acelan.kao@canonical.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org, Mario.Limonciello@dell.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dont support 'MAP_SYNC' with non-DAX files and DAX files
-with asynchronous dax_device. Virtio pmem provides
-asynchronous host page cache flush mechanism. We don't
-support 'MAP_SYNC' with virtio pmem and xfs.
+On Mon, May 20, 2019 at 4:41 PM Mathew King <mathewk@chromium.org> wrote:
+>
+> When a switch event, such as tablet mode/laptop mode or docked/undocked,
+> wakes a device make sure that the value of the swich is reported.
+> Without when a device is put in tablet mode from laptop mode when it is
+> suspended or vice versa the device will wake up but mode will be
+> incorrect.
+>
+> Tested by suspending a device in laptop mode and putting it in tablet
+> mode, the device resumes and is in tablet mode. When suspending the
+> device in tablet mode and putting it in laptop mode the device resumes
+> and is in laptop mode.
+>
+> Signed-off-by: Mathew King <mathewk@chromium.org>
+>
+> ---
+> Changes in v2:
+>   - Added comment explaining why switch events are reported
+>   - Format so that checkpatch is happy
+> ---
+>  drivers/platform/x86/intel-vbtn.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/platform/x86/intel-vbtn.c b/drivers/platform/x86/intel-vbtn.c
+> index 06cd7e818ed5..a0d0cecff55f 100644
+> --- a/drivers/platform/x86/intel-vbtn.c
+> +++ b/drivers/platform/x86/intel-vbtn.c
+> @@ -76,12 +76,24 @@ static void notify_handler(acpi_handle handle, u32 event, void *context)
+>         struct platform_device *device = context;
+>         struct intel_vbtn_priv *priv = dev_get_drvdata(&device->dev);
+>         unsigned int val = !(event & 1); /* Even=press, Odd=release */
+> -       const struct key_entry *ke_rel;
+> +       const struct key_entry *ke, *ke_rel;
+>         bool autorelease;
+>
+>         if (priv->wakeup_mode) {
+> -               if (sparse_keymap_entry_from_scancode(priv->input_dev, event)) {
+> +               ke = sparse_keymap_entry_from_scancode(priv->input_dev, event);
+> +               if (ke) {
+>                         pm_wakeup_hard_event(&device->dev);
+> +
+> +                       /*
+> +                        * Switch events like tablet mode will wake the device
+> +                        * and report the new switch position to the input
+> +                        * subsystem.
+> +                        */
+Thanks for adding the comment; This looks good to me.
 
-Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
----
- fs/xfs/xfs_file.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+> +                       if (ke->type == KE_SW)
+> +                               sparse_keymap_report_event(priv->input_dev,
+> +                                                          event,
+> +                                                          val,
+> +                                                          0);
+>                         return;
+>                 }
+>                 goto out_unknown;
+> --
+> 2.21.0.1020.gf2820cf01a-goog
+>
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index a7ceae90110e..f17652cca5ff 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -1203,11 +1203,14 @@ xfs_file_mmap(
- 	struct file	*filp,
- 	struct vm_area_struct *vma)
- {
-+	struct dax_device 	*dax_dev;
-+
-+	dax_dev = xfs_find_daxdev_for_inode(file_inode(filp));
- 	/*
--	 * We don't support synchronous mappings for non-DAX files. At least
--	 * until someone comes with a sensible use case.
-+	 * We don't support synchronous mappings for non-DAX files and
-+	 * for DAX files if underneath dax_device is not synchronous.
- 	 */
--	if (!IS_DAX(file_inode(filp)) && (vma->vm_flags & VM_SYNC))
-+	if (!daxdev_mapping_supported(vma, dax_dev))
- 		return -EOPNOTSUPP;
- 
- 	file_accessed(filp);
--- 
-2.20.1
-
+Reviewed-by: Jett Rink <jettrink@chromium.org>
