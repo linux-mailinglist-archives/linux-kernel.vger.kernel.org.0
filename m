@@ -2,88 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 474FD2542D
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F214B25437
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:41:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728552AbfEUPjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:39:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43682 "EHLO mail.kernel.org"
+        id S1728903AbfEUPlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:41:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51982 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728137AbfEUPjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:39:37 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728289AbfEUPlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 11:41:11 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADF16208C3;
-        Tue, 21 May 2019 15:39:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558453176;
-        bh=V6RrFwC69vaGpD6uEs9hsF3W8vWzKq46UtR2el3xg2Q=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NmweJBMKKPipUrO/xWliYq0PkG/2OYdsLDjTVv8k0+OPHFju09ddOLrwncFVN/Vxd
-         Ye33Irohwzu07m2KuSY7kb7BVShTSMvE1ZK80k0tVHSFHyyfb+n4JGDFLsbFhGjRPY
-         apf0eeVB36OB/y9MPimGNf3g4oUvlg966FMjkErw=
-Date:   Wed, 22 May 2019 00:39:32 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 0/2] Enable new kprobe event at boot
-Message-Id: <20190522003932.34367dcae6d9de27e254e174@kernel.org>
-In-Reply-To: <20190521093317.7d698f79@gandalf.local.home>
-References: <155842537599.4253.14690293652007233645.stgit@devnote2>
-        <20190521093317.7d698f79@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id 7524F30BB532;
+        Tue, 21 May 2019 15:41:05 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EE28453786;
+        Tue, 21 May 2019 15:41:00 +0000 (UTC)
+Date:   Tue, 21 May 2019 11:40:59 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 4/4] mm, notifier: Add a lockdep map for
+ invalidate_range_start
+Message-ID: <20190521154059.GC3836@redhat.com>
+References: <20190520213945.17046-1-daniel.vetter@ffwll.ch>
+ <20190520213945.17046-4-daniel.vetter@ffwll.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190520213945.17046-4-daniel.vetter@ffwll.ch>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 21 May 2019 15:41:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 May 2019 09:33:17 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Tue, 21 May 2019 16:56:16 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Mon, May 20, 2019 at 11:39:45PM +0200, Daniel Vetter wrote:
+> This is a similar idea to the fs_reclaim fake lockdep lock. It's
+> fairly easy to provoke a specific notifier to be run on a specific
+> range: Just prep it, and then munmap() it.
 > 
-> > Note that 'trace_event=' option enables trace event at very early
-> > timing, but the events added by 'kprobe_event=' are enabled right
-> > before enabling device drivers at this point. It is enough for
-> > tracing device driver initialization etc.
+> A bit harder, but still doable, is to provoke the mmu notifiers for
+> all the various callchains that might lead to them. But both at the
+> same time is really hard to reliable hit, especially when you want to
+> exercise paths like direct reclaim or compaction, where it's not
+> easy to control what exactly will be unmapped.
 > 
-> Nice!
+> By introducing a lockdep map to tie them all together we allow lockdep
+> to see a lot more dependencies, without having to actually hit them
+> in a single challchain while testing.
 > 
-> I wonder if we can have this called before the trace_event boot is
-> analyzed. Then have the kprobe_event work more like the kprobe_events
-> file, and not enable the kprobes but only create them. If you want to
-> enable them you do a trace_event=kprobes as well.
+> Aside: Since I typed this to test i915 mmu notifiers I've only rolled
+> this out for the invaliate_range_start callback. If there's
+> interest, we should probably roll this out to all of them. But my
+> undestanding of core mm is seriously lacking, and I'm not clear on
+> whether we need a lockdep map for each callback, or whether some can
+> be shared.
 
-Yeah, I considered that, but there are several reasons to not to do that.
-- trace_event seems enabled very early point than kprobes itself.(but this can
-  be fixable)
-- if user specifies kprobes at boot, he/she wants to enable that point at boot.
-- it is redundant to specify kprobe_event= and trace_event=, especially command
-  line size is very limited.
+I need to read more on lockdep but it is legal to have mmu notifier
+invalidation within each other. For instance when you munmap you
+might split a huge pmd and it will trigger a second invalidate range
+while the munmap one is not done yet. Would that trigger the lockdep
+here ?
 
-> Perhaps we could enable kprobes at early init?
+Worst case i can think of is 2 invalidate_range_start chain one after
+the other. I don't think you can triggers a 3 levels nesting but maybe.
 
-It should be possible, I will try to find what blocks it. I guess after we
-switch early_text_poke() to text_poke(), we can use kprobes on x86. But
-for other archs, I need to investigate more.
-
-> What do you think? Or is there something else in kprobes that prevents
-> such an early enabling of it?
-
-As I pointed above, I think we should enable it if user specify it. That's
-less typing :). Anyway I'll recheck early kprobe availablity.
-
-Thank you,
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Cheers,
+Jérôme
