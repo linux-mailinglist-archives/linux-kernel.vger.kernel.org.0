@@ -2,60 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A34D2480F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0CC92481A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:32:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbfEUG3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 02:29:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55458 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbfEUG3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 02:29:14 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC7B8217D8;
-        Tue, 21 May 2019 06:29:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558420154;
-        bh=bN37WpgUZd6TY579JnL+mvLtP9wubXMAhz5jf7nWpRo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WqkXl/djcwAkRr+JrG4uDcfEphZStfHScyT0pZzJZpJ5EKWYh1uejyuKH9N/6ANCJ
-         ylSAc0/7CeY4BABS5i52904oi1dgWmm54U+LFtFL4sAgKzeUideHAyqT2Nw+oahAxw
-         O1AeKxFnZeiWyhADcJr708rtrKleL+KEASpfzFis=
-Date:   Tue, 21 May 2019 08:29:11 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Weitao Hou <houweitaoo@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: fix typos in code comments
-Message-ID: <20190521062911.GA5791@kroah.com>
-References: <20190519035542.22094-1-houweitaoo@gmail.com>
+        id S1727947AbfEUGc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 02:32:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53844 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725924AbfEUGcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 02:32:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 57D8FAE1D;
+        Tue, 21 May 2019 06:32:22 +0000 (UTC)
+Date:   Tue, 21 May 2019 08:32:21 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, linux-api@vger.kernel.org
+Subject: Re: [RFC 0/7] introduce memory hinting API for external process
+Message-ID: <20190521063221.GF32329@dhcp22.suse.cz>
+References: <20190520035254.57579-1-minchan@kernel.org>
+ <20190520164605.GA11665@cmpxchg.org>
+ <20190521043950.GJ10039@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190519035542.22094-1-houweitaoo@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190521043950.GJ10039@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 19, 2019 at 11:55:42AM +0800, Weitao Hou wrote:
-> fix lenght to length
+[Cc linux-api]
+
+On Tue 21-05-19 13:39:50, Minchan Kim wrote:
+> On Mon, May 20, 2019 at 12:46:05PM -0400, Johannes Weiner wrote:
+> > On Mon, May 20, 2019 at 12:52:47PM +0900, Minchan Kim wrote:
+> > > - Approach
+> > > 
+> > > The approach we chose was to use a new interface to allow userspace to
+> > > proactively reclaim entire processes by leveraging platform information.
+> > > This allowed us to bypass the inaccuracy of the kernel’s LRUs for pages
+> > > that are known to be cold from userspace and to avoid races with lmkd
+> > > by reclaiming apps as soon as they entered the cached state. Additionally,
+> > > it could provide many chances for platform to use much information to
+> > > optimize memory efficiency.
+> > > 
+> > > IMHO we should spell it out that this patchset complements MADV_WONTNEED
+> > > and MADV_FREE by adding non-destructive ways to gain some free memory
+> > > space. MADV_COLD is similar to MADV_WONTNEED in a way that it hints the
+> > > kernel that memory region is not currently needed and should be reclaimed
+> > > immediately; MADV_COOL is similar to MADV_FREE in a way that it hints the
+> > > kernel that memory region is not currently needed and should be reclaimed
+> > > when memory pressure rises.
+> > 
+> > I agree with this approach and the semantics. But these names are very
+> > vague and extremely easy to confuse since they're so similar.
+> > 
+> > MADV_COLD could be a good name, but for deactivating pages, not
+> > reclaiming them - marking memory "cold" on the LRU for later reclaim.
+> > 
+> > For the immediate reclaim one, I think there is a better option too:
+> > In virtual memory speak, putting a page into secondary storage (or
+> > ensuring it's already there), and then freeing its in-memory copy, is
+> > called "paging out". And that's what this flag is supposed to do. So
+> > how about MADV_PAGEOUT?
+> > 
+> > With that, we'd have:
+> > 
+> > MADV_FREE: Mark data invalid, free memory when needed
+> > MADV_DONTNEED: Mark data invalid, free memory immediately
+> > 
+> > MADV_COLD: Data is not used for a while, free memory when needed
+> > MADV_PAGEOUT: Data is not used for a while, free memory immediately
+> > 
+> > What do you think?
 > 
-> Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
-> ---
->  Documentation/devicetree/bindings/usb/s3c2410-usb.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> There are several suggestions until now. Thanks, Folks!
+> 
+> For deactivating:
+> 
+> - MADV_COOL
+> - MADV_RECLAIM_LAZY
+> - MADV_DEACTIVATE
+> - MADV_COLD
+> - MADV_FREE_PRESERVE
+> 
+> 
+> For reclaiming:
+> 
+> - MADV_COLD
+> - MADV_RECLAIM_NOW
+> - MADV_RECLAIMING
+> - MADV_PAGEOUT
+> - MADV_DONTNEED_PRESERVE
+> 
+> It seems everybody doesn't like MADV_COLD so want to go with other.
+> For consisteny of view with other existing hints of madvise, -preserve
+> postfix suits well. However, originally, I don't like the naming FREE
+> vs DONTNEED from the beginning. They were easily confused.
+> I prefer PAGEOUT to RECLAIM since it's more likely to be nuance to
+> represent reclaim with memory pressure and is supposed to paged-in
+> if someone need it later. So, it imply PRESERVE.
+> If there is not strong against it, I want to go with MADV_COLD and
+> MADV_PAGEOUT.
+> 
+> Other opinion?
 
-You sent 2 different patches that do different things, yet have
-identical subject lines :(
-
-Please fix that up and resend these as a patch series, with unique
-subjects.
-
-thanks,
-
-greg k-h
+I do not really care strongly. I am pretty sure we will have a lot of
+suggestions because people tend to be good at arguing about that...
+Anyway, unlike DONTNEED/FREE we do not have any other OS to implement
+these features, right? So we shouldn't be tight to existing names.
+On the other hand I kinda like the reference to the existing names but
+DEACTIVATE/PAGEOUT seem a good fit to me as well. Unless there is way
+much better name suggested I would go with one of those. Up to you.
+-- 
+Michal Hocko
+SUSE Labs
