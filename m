@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5716824CDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:36:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1252424CE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:37:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727821AbfEUKgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 06:36:40 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44655 "EHLO
+        id S1727802AbfEUKgj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 06:36:39 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42819 "EHLO
         mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727541AbfEUKgf (ORCPT
+        with ESMTP id S1727715AbfEUKgi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 06:36:35 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b8so28604356edm.11
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 03:36:34 -0700 (PDT)
+        Tue, 21 May 2019 06:36:38 -0400
+Received: by mail-ed1-f67.google.com with SMTP id l25so28604839eda.9
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 03:36:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version;
-        bh=g5+rFA36lwuazIudpaXXvHQFCY1jZEBw2F/UUKE3ovM=;
-        b=ixN224lgVGMch1UvnqJALU3FR4WjcJnUYyZIYhVg4KRlN6zMKL4ehITlDDRzCIN3Z3
-         1PGGYCZWUIiqVfme5IEvxsha5b1DFH6Oj+VTM62DwTQugE7FwglTOPqzaK9tMSHgotmV
-         c394jiGeITKeV589a6aoAA19mSAs9Q63WNbsZdyMOBvl+dMppXitczCmA0x0EvKPnYtZ
-         FG4i+UV8XftXodQknnLFWEzqTQRVzH/iuhnkCzVUKVJxunDaGcVG7vpjacFRqDdB0bVO
-         +76UswYCNljkiyVtmO7iyAwZkPzDAYWS+OlGpXPMzmLlC/PnmEvqv50+bYwYWR10an9E
-         AU6Q==
-X-Gm-Message-State: APjAAAX1knhizesi/RoqPrGMIlmJoIe2Lv+QwR4XHhf+C/y8Ub8TDI1G
-        RlXDF/F66K5ekG+B0XhJa9FwVqFRNuczZeP4gfLuYZBAqGJTsv+kRmKDUh/JF5a9HFIBQy2r5Tr
-        Z63Y5cSBhObL/VCB/
-X-Google-Smtp-Source: APXvYqxl2DSayF5AxGHApfnVwCqMXNZzKr/pm83PpOr142/+wqSpO8m+LjGWdsy0o8mJwheCqi8M9g==
-X-Received: by 2002:a50:a5fb:: with SMTP id b56mr81501952edc.262.1558434993795;
-        Tue, 21 May 2019 03:36:33 -0700 (PDT)
+        bh=odw0Br10pd/FID0oLpxhs9oyem6lxu+oPFxMjbKBkEQ=;
+        b=cOjMTKYz7SArJMq/Tu/+r5YWlJCR0KjKMCwBsSYiOHb5+u1PiYi6tBhp6VBkdXHykR
+         gqNKw08IMSbFq8sZT1419KDhAA9koYW8vlXRwLLCTfYEb2LkERfzkdxSiE22H+JvDz+v
+         SiD6hr2VnvHEaxKk37zSjxl8GQbnNHOvGjnbFhjFDxCH1xEIIxyTrCy9aAWzrkM2XNaZ
+         eyaeZuRFQ+479rT83LrDddSw8/NEjoJ5h0tmNdLRa4fSjFDvTb8TFiZXe7dEzDjWzein
+         Wz6bVBUU5uKeVkydHfEilLMfiHbH7gtF3x0sVlEM1xNY6MPy3QTMhht71qjI4ZXufkU0
+         ItsA==
+X-Gm-Message-State: APjAAAX/vpHoIAtOFONO264XfFOsr6LdZFgWIoEJIg199ATDhLi/qKs7
+        bYUIVLZTt53Eq6NSBC+bmzDXp9BjQCuY8pfrmRQQW3FPuuFx4Fdb2m3Qn3hGj8LmzKv9LUZrh9r
+        eCAXe2/Hkh3TYV+JLR1En7S61
+X-Google-Smtp-Source: APXvYqybcyoaWgALzKgHnX9qkZKOL1y9QhO/tydUl9gFPtCPfkc2n+gdnaHhGjgsCSNAwAtctNFBuA==
+X-Received: by 2002:a17:906:90c6:: with SMTP id v6mr40526940ejw.111.1558434996456;
+        Tue, 21 May 2019 03:36:36 -0700 (PDT)
 Received: from localhost ([194.105.145.90])
-        by smtp.gmail.com with ESMTPSA id c49sm6303644eda.58.2019.05.21.03.36.33
+        by smtp.gmail.com with ESMTPSA id ay6sm3507075ejb.20.2019.05.21.03.36.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 03:36:33 -0700 (PDT)
+        Tue, 21 May 2019 03:36:35 -0700 (PDT)
 From:   Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
 To:     Fabio Estevam <festevam@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
         Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Igor Opaniuk <igor.opaniuk@toradex.com>,
         Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Subject: [PATCH v1 1/6] ASoC: sgtl5000: Fix definition of VAG Ramp Control
-Date:   Tue, 21 May 2019 13:36:14 +0300
-Message-Id: <20190521103619.4707-2-oleksandr.suvorov@toradex.com>
+Subject: [PATCH v1 2/6] ASoC: sgtl5000: add ADC mute control
+Date:   Tue, 21 May 2019 13:36:15 +0300
+Message-Id: <20190521103619.4707-3-oleksandr.suvorov@toradex.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190521103619.4707-1-oleksandr.suvorov@toradex.com>
 References: <20190521103619.4707-1-oleksandr.suvorov@toradex.com>
@@ -54,42 +54,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGTL5000_SMALL_POP is a bit mask, not a value. Usage of
-correct definition makes device probing code more clear.
+This control mute/unmute the ADC input of SGTL5000
+using its CHIP_ANA_CTRL register.
 
 Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
 ---
 
- sound/soc/codecs/sgtl5000.c | 2 +-
- sound/soc/codecs/sgtl5000.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/sgtl5000.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git sound/soc/codecs/sgtl5000.c sound/soc/codecs/sgtl5000.c
-index a6a4748c97f9..5e49523ee0b6 100644
+index 5e49523ee0b6..bb58c997c691 100644
 --- sound/soc/codecs/sgtl5000.c
 +++ sound/soc/codecs/sgtl5000.c
-@@ -1296,7 +1296,7 @@ static int sgtl5000_probe(struct snd_soc_component *component)
+@@ -556,6 +556,7 @@ static const struct snd_kcontrol_new sgtl5000_snd_controls[] = {
+ 			SGTL5000_CHIP_ANA_ADC_CTRL,
+ 			8, 1, 0, capture_6db_attenuate),
+ 	SOC_SINGLE("Capture ZC Switch", SGTL5000_CHIP_ANA_CTRL, 1, 1, 0),
++	SOC_SINGLE("Capture Switch", SGTL5000_CHIP_ANA_CTRL, 0, 1, 1),
  
- 	/* enable small pop, introduce 400ms delay in turning off */
- 	snd_soc_component_update_bits(component, SGTL5000_CHIP_REF_CTRL,
--				SGTL5000_SMALL_POP, 1);
-+				SGTL5000_SMALL_POP, SGTL5000_SMALL_POP);
- 
- 	/* disable short cut detector */
- 	snd_soc_component_write(component, SGTL5000_CHIP_SHORT_CTRL, 0);
-diff --git sound/soc/codecs/sgtl5000.h sound/soc/codecs/sgtl5000.h
-index 18cae08bbd3a..a4bf4bca95bf 100644
---- sound/soc/codecs/sgtl5000.h
-+++ sound/soc/codecs/sgtl5000.h
-@@ -273,7 +273,7 @@
- #define SGTL5000_BIAS_CTRL_MASK			0x000e
- #define SGTL5000_BIAS_CTRL_SHIFT		1
- #define SGTL5000_BIAS_CTRL_WIDTH		3
--#define SGTL5000_SMALL_POP			1
-+#define SGTL5000_SMALL_POP			0x0001
- 
- /*
-  * SGTL5000_CHIP_MIC_CTRL
+ 	SOC_DOUBLE_TLV("Headphone Playback Volume",
+ 			SGTL5000_CHIP_ANA_HP_CTRL,
 -- 
 2.20.1
 
