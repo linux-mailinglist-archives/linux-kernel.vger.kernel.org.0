@@ -2,156 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A49CC25384
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:07:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A8682538D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbfEUPHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:07:46 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51261 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728316AbfEUPHq (ORCPT
+        id S1728876AbfEUPJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:09:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60498 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728357AbfEUPJu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:07:46 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c77so3371715wmd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 08:07:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=xW3NTsczgih5h5jOq9JBzpApEgnkf4EsVSIC2Sl+bb8=;
-        b=OWzXshpD66HZNTSJ+nPTmCS7NW8XW6pBYFO8eVBZklc+XXcv6cUBi1MrJFtNf1ak/p
-         FMBm64fq8ivogk32hmxpMmaHOKCOZCQ+QQ38+ctAczOzP9kZgZptdad/3tTaqzzIjrS9
-         cIlqy6JQlePFeOxudBMfZA+HIg2jL0hp8q9gPneqS9LdWCZXZeiV7SHvVLAKs003lAbb
-         vjQBknOyMEHpw8GcGcpO1HnQehMzWVtNVeYnc62rmqAnFXBqERbnfU0Ihy7jxzVH3CJX
-         0IThlOpsB1EDfjedV/Jv23NRT7nIKbkq+avuKMfjtGUyDwvZf3WSdsVEO1LkoLA2bVpi
-         KhNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xW3NTsczgih5h5jOq9JBzpApEgnkf4EsVSIC2Sl+bb8=;
-        b=YkaM9614LhO2Dy3aA2BOGba3Qatsea86Kv3G4GoGW5UZjrvqSr/l73IwJgILUNkSdO
-         j9Sslk0pc5Uceab9OQh4pbvL7fPkJSjcbxIG5DCR/l6Hxp3WHyhdawbB9b704x705Cbn
-         GfUbbPGtsEbmDJaNCON/uXpUQdx937NmUUJA3B79Kc1cob7pNdqFGi84CFh+t7rLjH55
-         jr6uEqChK3qgzoiTYo7nzNRe39vb5A5+mNOtvAPEYJqNMO9iyj3sjFIS00dnCB/5p9RJ
-         Ii2xARG+299QYzr5847X6pT4JtUWjLcPja2QmeMNkDCFdyx0L1X9bDYHukOg7pea/6hw
-         LLJA==
-X-Gm-Message-State: APjAAAV6nawz3WuPWvApRLkTh2edz3fF64OnPACBUhOeTK/qV4ZaCrCL
-        jVnBDBDoMS/NV32cZRvenHk=
-X-Google-Smtp-Source: APXvYqyfzyrneNtZwdopu3igH/ZDJAw81OSEEH+Jm+kOX7ayIuQtDxtpMZPgB5s8d2GjRWBLk5ywMQ==
-X-Received: by 2002:a1c:254:: with SMTP id 81mr3717119wmc.151.1558451264183;
-        Tue, 21 May 2019 08:07:44 -0700 (PDT)
-Received: from localhost.localdomain (ip179248.wh.uni-hannover.de. [130.75.179.248])
-        by smtp.gmail.com with ESMTPSA id v5sm43046172wra.83.2019.05.21.08.07.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 08:07:43 -0700 (PDT)
-From:   Tianzheng Li <ltz0302@gmail.com>
-To:     rspringer@google.com
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        gregkh@linuxfoundation.org, benchan@chromium.org,
-        toddpoynor@google.com, linux-kernel@i4.cs.fau.de,
-        zhangjie.cnde@gmail.com
-Subject: [PATCH] staging/gasket: Fix string split
-Date:   Tue, 21 May 2019 17:07:28 +0200
-Message-Id: <20190521150728.25501-1-ltz0302@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 21 May 2019 11:09:50 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4LF3aEp022456
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 11:09:49 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2smkn1r90k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 11:09:48 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <linuxram@us.ibm.com>;
+        Tue, 21 May 2019 16:09:47 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 21 May 2019 16:09:42 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4LF9fb857606362
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 May 2019 15:09:41 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A194A52051;
+        Tue, 21 May 2019 15:09:40 +0000 (GMT)
+Received: from ram.ibm.com (unknown [9.85.154.252])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 9D4715204F;
+        Tue, 21 May 2019 15:09:37 +0000 (GMT)
+Date:   Tue, 21 May 2019 08:09:35 -0700
+From:   Ram Pai <linuxram@us.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Anshuman Khandual <anshuman.linux@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <20190521044912.1375-1-bauerman@linux.ibm.com>
+ <20190521044912.1375-3-bauerman@linux.ibm.com>
+ <20190521051326.GC29120@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521051326.GC29120@lst.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19052115-0016-0000-0000-0000027E06E9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19052115-0017-0000-0000-000032DAF3D4
+Message-Id: <20190521150935.GB8402@ram.ibm.com>
+Subject: Re:  Re: [RFC PATCH 02/12] powerpc: Add support for adding an ESM blob to
+ the zImage wrapper
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-21_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905210094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes unnecessary quoted string splits.
+On Tue, May 21, 2019 at 07:13:26AM +0200, Christoph Hellwig wrote:
+> On Tue, May 21, 2019 at 01:49:02AM -0300, Thiago Jung Bauermann wrote:
+> > From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > 
+> > For secure VMs, the signing tool will create a ticket called the "ESM blob"
+> > for the Enter Secure Mode ultravisor call with the signatures of the kernel
+> > and initrd among other things.
+> > 
+> > This adds support to the wrapper script for adding that blob via the "-e"
+> > option to the zImage.pseries.
+> > 
+> > It also adds code to the zImage wrapper itself to retrieve and if necessary
+> > relocate the blob, and pass its address to Linux via the device-tree, to be
+> > later consumed by prom_init.
+> 
+> Where does the "BLOB" come from?  How is it licensed and how can we
+> satisfy the GPL with it?
 
-Signed-off-by: Tianzheng Li <ltz0302@gmail.com>
-Signed-off-by: Jie Zhang <zhangjie.cnde@gmail.com>
----
- drivers/staging/gasket/gasket_core.c       |  6 ++----
- drivers/staging/gasket/gasket_ioctl.c      |  3 +--
- drivers/staging/gasket/gasket_page_table.c | 14 ++++++--------
- 3 files changed, 9 insertions(+), 14 deletions(-)
+The "BLOB" is not a piece of code. Its just a piece of data that gets
+generated by our build tools. This data contains the
+signed hash of the kernel, initrd, and kernel command line parameters.
+Also it contains any information that the creator the the BLOB wants to
+be made available to anyone needing it, inside the
+secure-virtual-machine. All of this is integrity-protected and encrypted
+to safegaurd it when at rest and at runtime.
+ 
+Bottomline -- Blob is data, and hence no licensing implication. And due
+to some reason, even data needs to have licensing statement, we can
+make it available to have no conflicts with GPL.
 
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index a445d58fb399..13179f063a61 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -702,8 +702,7 @@ static bool gasket_mmap_has_permissions(struct gasket_dev *gasket_dev,
- 	if ((vma->vm_flags & VM_WRITE) &&
- 	    !gasket_owned_by_current_tgid(&gasket_dev->dev_info)) {
- 		dev_dbg(gasket_dev->dev,
--			"Attempting to mmap a region for write without owning "
--			"device.\n");
-+			"Attempting to mmap a region for write without owning device.\n");
- 		return false;
- 	}
- 
-@@ -1054,8 +1053,7 @@ static int gasket_mmap(struct file *filp, struct vm_area_struct *vma)
- 	}
- 	if (bar_index > 0 && is_coherent_region) {
- 		dev_err(gasket_dev->dev,
--			"double matching bar and coherent buffers for address "
--			"0x%lx\n",
-+			"double matching bar and coherent buffers for address 0x%lx\n",
- 			raw_offset);
- 		trace_gasket_mmap_exit(bar_index);
- 		return -EINVAL;
-diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
-index 0ca48e688818..7ecfba4f2b06 100644
---- a/drivers/staging/gasket/gasket_ioctl.c
-+++ b/drivers/staging/gasket/gasket_ioctl.c
-@@ -353,8 +353,7 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, void __user *argp)
- 		 */
- 		trace_gasket_ioctl_integer_data(arg);
- 		dev_dbg(gasket_dev->dev,
--			"Unknown ioctl cmd=0x%x not caught by "
--			"gasket_is_supported_ioctl\n",
-+			"Unknown ioctl cmd=0x%x not caught by gasket_is_supported_ioctl\n",
- 			cmd);
- 		retval = -EINVAL;
- 		break;
-diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index d35c4fb19e28..f6d715787da8 100644
---- a/drivers/staging/gasket/gasket_page_table.c
-+++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -237,8 +237,8 @@ int gasket_page_table_init(struct gasket_page_table **ppg_tbl,
- 	 * hardware register that contains the page table size.
- 	 */
- 	if (total_entries == ULONG_MAX) {
--		dev_dbg(device, "Error reading page table size. "
--			"Initializing page table with size 0\n");
-+		dev_dbg(device,
-+			"Error reading page table size. Initializing page table with size 0\n");
- 		total_entries = 0;
- 	}
- 
-@@ -491,8 +491,7 @@ static int gasket_perform_mapping(struct gasket_page_table *pg_tbl,
- 
- 			if (ret <= 0) {
- 				dev_err(pg_tbl->device,
--					"get user pages failed for addr=0x%lx, "
--					"offset=0x%lx [ret=%d]\n",
-+					"get user pages failed for addr=0x%lx, offset=0x%lx [ret=%d]\n",
- 					page_addr, offset, ret);
- 				return ret ? ret : -ENOMEM;
- 			}
-@@ -779,8 +778,8 @@ static bool gasket_is_extended_dev_addr_bad(struct gasket_page_table *pg_tbl,
- 
- 	if (page_lvl0_idx >= pg_tbl->num_extended_entries) {
- 		dev_err(pg_tbl->device,
--			"starting level 0 slot at %lu is too large, max is < "
--			"%u\n", page_lvl0_idx, pg_tbl->num_extended_entries);
-+			"starting level 0 slot at %lu is too large, max is < %u\n",
-+			page_lvl0_idx, pg_tbl->num_extended_entries);
- 		return true;
- 	}
- 
-@@ -965,8 +964,7 @@ static int gasket_map_extended_pages(struct gasket_page_table *pg_tbl,
- 	if (ret) {
- 		dev_addr_end = dev_addr + (num_pages / PAGE_SIZE) - 1;
- 		dev_err(pg_tbl->device,
--			"page table slots (%lu,%lu) (@ 0x%lx) to (%lu,%lu) are "
--			"not available\n",
-+			"page table slots (%lu,%lu) (@ 0x%lx) to (%lu,%lu) are not available\n",
- 			gasket_extended_lvl0_page_idx(pg_tbl, dev_addr),
- 			dev_addr,
- 			gasket_extended_lvl1_page_idx(pg_tbl, dev_addr),
+
 -- 
-2.17.1
+Ram Pai
 
