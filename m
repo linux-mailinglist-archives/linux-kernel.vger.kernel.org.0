@@ -2,155 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AEA12536A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:05:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A49CC25384
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:07:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbfEUPFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:05:22 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45764 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbfEUPFV (ORCPT
+        id S1728832AbfEUPHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:07:46 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51261 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728316AbfEUPHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:05:21 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b18so18967717wrq.12
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 08:05:20 -0700 (PDT)
+        Tue, 21 May 2019 11:07:46 -0400
+Received: by mail-wm1-f68.google.com with SMTP id c77so3371715wmd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 08:07:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=eJeaQpqmTrI1tGNmxY3CrSOcsSb6wdxlc9iqK0FMa/Y=;
-        b=o/RnosTyL0Cx3Zxh/td2nWqjfqIbiQC6UDEFsow5E/rJp0AM5uIMVO6zUGLs85DUy7
-         snHWYSpyQdzMN5TpmzRZ8maOMkOYLNQBCzSXk+nXxrRsShxZT1vtUXoREk6I3YxN8/fe
-         hvy/gaNoFiMd685lo39FIX2BpYd0n5JwrTCMQDEN4uvvZLD+4wJfBd1mexMqQcaKl4qo
-         lMrLzTQh61RaiS1eyqPExNDqcBpvwX3fEmQZ9804pE092STEizDDa1fDO6UlZlVtIuUV
-         U6CMoPP4qLGTN2jgv3dOABsxBES4yVPWHbnOIGUmXoBDqYIiHpB86kc3NM9VHhZX938j
-         02QQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=xW3NTsczgih5h5jOq9JBzpApEgnkf4EsVSIC2Sl+bb8=;
+        b=OWzXshpD66HZNTSJ+nPTmCS7NW8XW6pBYFO8eVBZklc+XXcv6cUBi1MrJFtNf1ak/p
+         FMBm64fq8ivogk32hmxpMmaHOKCOZCQ+QQ38+ctAczOzP9kZgZptdad/3tTaqzzIjrS9
+         cIlqy6JQlePFeOxudBMfZA+HIg2jL0hp8q9gPneqS9LdWCZXZeiV7SHvVLAKs003lAbb
+         vjQBknOyMEHpw8GcGcpO1HnQehMzWVtNVeYnc62rmqAnFXBqERbnfU0Ihy7jxzVH3CJX
+         0IThlOpsB1EDfjedV/Jv23NRT7nIKbkq+avuKMfjtGUyDwvZf3WSdsVEO1LkoLA2bVpi
+         KhNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=eJeaQpqmTrI1tGNmxY3CrSOcsSb6wdxlc9iqK0FMa/Y=;
-        b=od0kAj8EwL8Q4G3f6HVQJ0fMr63rFY6D+Elw4y4dSe4rZ/vmmt9e7QTbaMgEfwuEhw
-         Cs/aAQvnhJm0DXCuag0xyyD7sjLMvj1Sp3bxFXb8ABM19Sk4mp9cXBSskl+gkqjBIRmO
-         7sLigNy1JdzZpNLoVHfTI97DQ7ajizlEa/z5Uio3xPz5gW1z+B4RVXFbLC/dkWaSGMM7
-         VDM/IY6zJFFPGrwBspvJMf+zIHvtEp/31ri1z2x7rg+TCUdLvI/DbxgBUNr4EHmbOLS1
-         UAmm9N2cRRZUlIQeXkL5Pvm0adEqffdtXk3uPi1ySmz0e5JnLYYM7rYmFqI7+Uj3hZg8
-         3VWA==
-X-Gm-Message-State: APjAAAWyw+jFgApJFkNcTPi4RiHs/npQNUbPKqcp3BBoU/M0e3f9epi0
-        WcxHfghmpN+5qH/SHTqvrNhQ2stTD/Wm4w==
-X-Google-Smtp-Source: APXvYqwHL4I/kUrnRxsNNYqmLFUNw/C5VhUy0eI8DaYGfmrZxRCu2psHcYCynl2pNvyIEoRPS+1GvA==
-X-Received: by 2002:adf:e311:: with SMTP id b17mr379687wrj.11.1558451119147;
-        Tue, 21 May 2019 08:05:19 -0700 (PDT)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id f2sm4231282wme.12.2019.05.21.08.05.18
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xW3NTsczgih5h5jOq9JBzpApEgnkf4EsVSIC2Sl+bb8=;
+        b=YkaM9614LhO2Dy3aA2BOGba3Qatsea86Kv3G4GoGW5UZjrvqSr/l73IwJgILUNkSdO
+         j9Sslk0pc5Uceab9OQh4pbvL7fPkJSjcbxIG5DCR/l6Hxp3WHyhdawbB9b704x705Cbn
+         GfUbbPGtsEbmDJaNCON/uXpUQdx937NmUUJA3B79Kc1cob7pNdqFGi84CFh+t7rLjH55
+         jr6uEqChK3qgzoiTYo7nzNRe39vb5A5+mNOtvAPEYJqNMO9iyj3sjFIS00dnCB/5p9RJ
+         Ii2xARG+299QYzr5847X6pT4JtUWjLcPja2QmeMNkDCFdyx0L1X9bDYHukOg7pea/6hw
+         LLJA==
+X-Gm-Message-State: APjAAAV6nawz3WuPWvApRLkTh2edz3fF64OnPACBUhOeTK/qV4ZaCrCL
+        jVnBDBDoMS/NV32cZRvenHk=
+X-Google-Smtp-Source: APXvYqyfzyrneNtZwdopu3igH/ZDJAw81OSEEH+Jm+kOX7ayIuQtDxtpMZPgB5s8d2GjRWBLk5ywMQ==
+X-Received: by 2002:a1c:254:: with SMTP id 81mr3717119wmc.151.1558451264183;
+        Tue, 21 May 2019 08:07:44 -0700 (PDT)
+Received: from localhost.localdomain (ip179248.wh.uni-hannover.de. [130.75.179.248])
+        by smtp.gmail.com with ESMTPSA id v5sm43046172wra.83.2019.05.21.08.07.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 08:05:18 -0700 (PDT)
-Subject: Re: [PATCH 0/3] clk: meson: add support for Amlogic G12A
-To:     jbrunet@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190521150130.31684-1-narmstrong@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <d0f0262b-f8b9-fcfb-58e0-8083baf07ff4@baylibre.com>
-Date:   Tue, 21 May 2019 17:05:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190521150130.31684-1-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 21 May 2019 08:07:43 -0700 (PDT)
+From:   Tianzheng Li <ltz0302@gmail.com>
+To:     rspringer@google.com
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        gregkh@linuxfoundation.org, benchan@chromium.org,
+        toddpoynor@google.com, linux-kernel@i4.cs.fau.de,
+        zhangjie.cnde@gmail.com
+Subject: [PATCH] staging/gasket: Fix string split
+Date:   Tue, 21 May 2019 17:07:28 +0200
+Message-Id: <20190521150728.25501-1-ltz0302@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/05/2019 17:01, Neil Armstrong wrote:
-> The Amlogic G12B SoC is very similar with the G12A SoC, sharing
-> most of the features and architecture.
-> G12B clock tree is very close, the main differences are :
-> - SYS_PLL is used for the second cluster (otherwise used fir the first on G12a)
-> - SYS_PLL1 is used for the first cluster (instead of SYS_PLL on G12a)
-> - A duplicate CPU tree is added for the second cluster
-> - G12A has additional clocks like for CSI an other components, not handled yet
-> 
-> Dependencies :
-> - Patch 1, 3 : None
-> - Patch 2 : Depends on Guillaume's Temperature sensor Clock patches at [1]
-> 
-> This patchset is a spinoff of the v2 Odroid-N2 megapatchset at [2]
-> 
-> Changes since original pathset :
-> - Added missing sys1_pll div16, cpub div16 and cpub atb/axi/ahb/trace clocks
-> - Rewrote "This patch .." in commit messages
-> 
-> [1] https://lkml.kernel.org/r/20190412100221.26740-1-glaroque@baylibre.com
-> [2] https://lkml.kernel.org/r/20190423091503.10847-1-narmstrong@baylibre.com
-> 
-> Neil Armstrong (3):
->   dt-bindings: clk: meson: add g12b periph clock controller bindings
->   clk: meson: g12a: Add support for G12B CPUB clocks
->   clk: meson: g12a: mark fclk_div3 as critical
-> 
->  .../bindings/clock/amlogic,gxbb-clkc.txt      |   1 +
->  drivers/clk/meson/g12a.c                      | 659 ++++++++++++++++++
->  drivers/clk/meson/g12a.h                      |  33 +-
->  3 files changed, 692 insertions(+), 1 deletion(-)
-> 
+This patch removes unnecessary quoted string splits.
 
-The subject is wrong, it should be "clk: meson: add support for Amlogic G12B"
+Signed-off-by: Tianzheng Li <ltz0302@gmail.com>
+Signed-off-by: Jie Zhang <zhangjie.cnde@gmail.com>
+---
+ drivers/staging/gasket/gasket_core.c       |  6 ++----
+ drivers/staging/gasket/gasket_ioctl.c      |  3 +--
+ drivers/staging/gasket/gasket_page_table.c | 14 ++++++--------
+ 3 files changed, 9 insertions(+), 14 deletions(-)
 
-Neil
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index a445d58fb399..13179f063a61 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -702,8 +702,7 @@ static bool gasket_mmap_has_permissions(struct gasket_dev *gasket_dev,
+ 	if ((vma->vm_flags & VM_WRITE) &&
+ 	    !gasket_owned_by_current_tgid(&gasket_dev->dev_info)) {
+ 		dev_dbg(gasket_dev->dev,
+-			"Attempting to mmap a region for write without owning "
+-			"device.\n");
++			"Attempting to mmap a region for write without owning device.\n");
+ 		return false;
+ 	}
+ 
+@@ -1054,8 +1053,7 @@ static int gasket_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	}
+ 	if (bar_index > 0 && is_coherent_region) {
+ 		dev_err(gasket_dev->dev,
+-			"double matching bar and coherent buffers for address "
+-			"0x%lx\n",
++			"double matching bar and coherent buffers for address 0x%lx\n",
+ 			raw_offset);
+ 		trace_gasket_mmap_exit(bar_index);
+ 		return -EINVAL;
+diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+index 0ca48e688818..7ecfba4f2b06 100644
+--- a/drivers/staging/gasket/gasket_ioctl.c
++++ b/drivers/staging/gasket/gasket_ioctl.c
+@@ -353,8 +353,7 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, void __user *argp)
+ 		 */
+ 		trace_gasket_ioctl_integer_data(arg);
+ 		dev_dbg(gasket_dev->dev,
+-			"Unknown ioctl cmd=0x%x not caught by "
+-			"gasket_is_supported_ioctl\n",
++			"Unknown ioctl cmd=0x%x not caught by gasket_is_supported_ioctl\n",
+ 			cmd);
+ 		retval = -EINVAL;
+ 		break;
+diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
+index d35c4fb19e28..f6d715787da8 100644
+--- a/drivers/staging/gasket/gasket_page_table.c
++++ b/drivers/staging/gasket/gasket_page_table.c
+@@ -237,8 +237,8 @@ int gasket_page_table_init(struct gasket_page_table **ppg_tbl,
+ 	 * hardware register that contains the page table size.
+ 	 */
+ 	if (total_entries == ULONG_MAX) {
+-		dev_dbg(device, "Error reading page table size. "
+-			"Initializing page table with size 0\n");
++		dev_dbg(device,
++			"Error reading page table size. Initializing page table with size 0\n");
+ 		total_entries = 0;
+ 	}
+ 
+@@ -491,8 +491,7 @@ static int gasket_perform_mapping(struct gasket_page_table *pg_tbl,
+ 
+ 			if (ret <= 0) {
+ 				dev_err(pg_tbl->device,
+-					"get user pages failed for addr=0x%lx, "
+-					"offset=0x%lx [ret=%d]\n",
++					"get user pages failed for addr=0x%lx, offset=0x%lx [ret=%d]\n",
+ 					page_addr, offset, ret);
+ 				return ret ? ret : -ENOMEM;
+ 			}
+@@ -779,8 +778,8 @@ static bool gasket_is_extended_dev_addr_bad(struct gasket_page_table *pg_tbl,
+ 
+ 	if (page_lvl0_idx >= pg_tbl->num_extended_entries) {
+ 		dev_err(pg_tbl->device,
+-			"starting level 0 slot at %lu is too large, max is < "
+-			"%u\n", page_lvl0_idx, pg_tbl->num_extended_entries);
++			"starting level 0 slot at %lu is too large, max is < %u\n",
++			page_lvl0_idx, pg_tbl->num_extended_entries);
+ 		return true;
+ 	}
+ 
+@@ -965,8 +964,7 @@ static int gasket_map_extended_pages(struct gasket_page_table *pg_tbl,
+ 	if (ret) {
+ 		dev_addr_end = dev_addr + (num_pages / PAGE_SIZE) - 1;
+ 		dev_err(pg_tbl->device,
+-			"page table slots (%lu,%lu) (@ 0x%lx) to (%lu,%lu) are "
+-			"not available\n",
++			"page table slots (%lu,%lu) (@ 0x%lx) to (%lu,%lu) are not available\n",
+ 			gasket_extended_lvl0_page_idx(pg_tbl, dev_addr),
+ 			dev_addr,
+ 			gasket_extended_lvl1_page_idx(pg_tbl, dev_addr),
+-- 
+2.17.1
+
