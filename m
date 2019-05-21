@@ -2,105 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7274324D92
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 121E224DA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:11:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727765AbfEULIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 07:08:18 -0400
-Received: from mail-eopbgr140057.outbound.protection.outlook.com ([40.107.14.57]:45219
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726042AbfEULIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 07:08:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pE2EU3lgODu82kcoAcc0br0fi3b8mMOu/pFJv/daZAM=;
- b=P9CRLOfaf/9D20p7GTkPHyG1erR619Au5zZG0si8QGTJxObJ2N/Ym7tbvhhGc5GQHwjMwGj1YsTE14Co6vIlpjxj/wg3kRkvADPRvn5fo10uzZqzc8tBkomCTSoe84lpGIVQFcFgS4OwE4TxgppfGRdKHos67ltCxRoFRtIgJV0=
-Received: from VI1PR04MB5134.eurprd04.prod.outlook.com (20.177.50.159) by
- VI1PR04MB4477.eurprd04.prod.outlook.com (20.177.53.213) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.17; Tue, 21 May 2019 11:08:14 +0000
-Received: from VI1PR04MB5134.eurprd04.prod.outlook.com
- ([fe80::8d0e:de86:9b49:b40]) by VI1PR04MB5134.eurprd04.prod.outlook.com
- ([fe80::8d0e:de86:9b49:b40%7]) with mapi id 15.20.1900.020; Tue, 21 May 2019
- 11:08:14 +0000
-From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "marex@denx.de" <marex@denx.de>, Leo Li <leoyang.li@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "noring@nocrew.org" <noring@nocrew.org>,
-        "JuergenUrban@gmx.de" <JuergenUrban@gmx.de>
-Subject: Re: [PATCH v4 2/3] usb: host: ohci-sm501: init genalloc for local
- memory
-Thread-Topic: [PATCH v4 2/3] usb: host: ohci-sm501: init genalloc for local
- memory
-Thread-Index: AQHVC918CMHW2f+9DkGhkpqP1i9ONKZ1a1IAgAAH6YA=
-Date:   Tue, 21 May 2019 11:08:14 +0000
-Message-ID: <dac48dcd-c676-4161-e38b-11bbcf8d2a8f@nxp.com>
-References: <20190516114721.27694-1-laurentiu.tudor@nxp.com>
- <20190516114721.27694-3-laurentiu.tudor@nxp.com>
- <20190521103954.GC1973@lst.de>
-In-Reply-To: <20190521103954.GC1973@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=laurentiu.tudor@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 18f38b4d-b2e4-49a9-76d3-08d6dddc9e88
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4477;
-x-ms-traffictypediagnostic: VI1PR04MB4477:
-x-microsoft-antispam-prvs: <VI1PR04MB4477D45F5808669A8E728A28EC070@VI1PR04MB4477.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0044C17179
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(396003)(376002)(39860400002)(136003)(54094003)(189003)(199004)(446003)(6116002)(11346002)(86362001)(2616005)(476003)(53936002)(7736002)(305945005)(44832011)(3846002)(6916009)(186003)(486006)(91956017)(76116006)(8676002)(102836004)(14444005)(256004)(8936002)(36756003)(26005)(73956011)(66446008)(64756008)(66946007)(4326008)(81166006)(81156014)(5660300002)(2906002)(76176011)(66066001)(25786009)(99286004)(6246003)(31696002)(54906003)(6506007)(53546011)(316002)(66476007)(31686004)(478600001)(229853002)(14454004)(71200400001)(68736007)(6486002)(6436002)(66556008)(71190400001)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4477;H:VI1PR04MB5134.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: JaC15F4tI7aYwMjn1swp8JKmgFta/PuV2fePErmKzoRoV7gkNV7noJVtHbV9c/1AGH6bj9yE/YooeGRMjIGgU3xZx9u4AKjbT7tYdFwMWie2cmSdQ5L2r7vJ4bh2FpxUcQWnCi4IZeyf8ufqkzr6rJwxP9GjRmVvfVfmeZc84ImkIvr5zXwDEtBn+CDi7TOCDnw+nYMCMCac/cnpv/0/+DkZO7xJLJb0A9rqyFnUNVbT9JdUrAS+t8tov9pwsjGfgE6zdC7Hq60JMi1Ca2YbIvd+NcLj6WKP7yLzCpR45WamYAC+u6Tv6SaffQnoaEz9ecAyPe8kjCVeokSFMHVa0qJChjq0sN/vPlJ0MmpFa8vKGI5CDB9wWTo0ZuTRdun7c/GVylXkEdLATm4AhJVQsiu8I9w+Ob+uxJtLuM3tplM=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <424B790242CB6D4F8A25AD6DA5878354@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727571AbfEULLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 07:11:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54054 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726042AbfEULLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 07:11:06 -0400
+Received: from localhost (unknown [223.186.130.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19BDF2081C;
+        Tue, 21 May 2019 11:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558437065;
+        bh=ATO0mafowpmS9lD2uJVlmt4JcavGsNrwrYgrfOLt7bg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bD29SWe1toCHHRKmxc1/VKp/HxszwXcFJ8pAR41Jds9NGDnY/ixUY65YKHffhKlMc
+         64B4hRD0lZL9Z+vtUaZ0fb5DZ7JcubCdye8vRDxnEBpaxDK6w2/cte69FA6+LYG1pQ
+         Z/vnK0IFGJWk4aFuA0GP98Ofr4NSJ5W9vuXS7ENg=
+Date:   Tue, 21 May 2019 16:40:58 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/4] soc: qcom: Add AOSS QMP driver
+Message-ID: <20190521111058.GG15118@vkoul-mobl>
+References: <20190501043734.26706-1-bjorn.andersson@linaro.org>
+ <20190501043734.26706-3-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18f38b4d-b2e4-49a9-76d3-08d6dddc9e88
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 11:08:14.0291
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4477
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190501043734.26706-3-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDIxLjA1LjIwMTkgMTM6MzksIENocmlzdG9waCBIZWxsd2lnIHdyb3RlOg0KPiBPbiBU
-aHUsIE1heSAxNiwgMjAxOSBhdCAwMjo0NzoyMFBNICswMzAwLCBsYXVyZW50aXUudHVkb3JAbnhw
-LmNvbSB3cm90ZToNCj4+ICsJaGNkLT5sb2NhbG1lbV9wb29sID0gZGV2bV9nZW5fcG9vbF9jcmVh
-dGUoZGV2LCBQQUdFX1NISUZULA0KPj4gKwkJCQkJCSAgZGV2X3RvX25vZGUoZGV2KSwNCj4+ICsJ
-CQkJCQkgICJvaGNpLXNtNTAxIik7DQo+PiArCWlmIChJU19FUlIoaGNkLT5sb2NhbG1lbV9wb29s
-KSkgew0KPj4gKwkJcmV0dmFsID0gUFRSX0VSUihoY2QtPmxvY2FsbWVtX3Bvb2wpOw0KPj4gKwkJ
-Z290byBlcnI1Ow0KPj4gKwl9DQo+PiArDQo+PiArCWxvY2FsX21lbSA9IGRldm1faW9yZW1hcChk
-ZXYsIG1lbS0+c3RhcnQsIHJlc291cmNlX3NpemUobWVtKSk7DQo+PiArCWlmICghbG9jYWxfbWVt
-KSB7DQo+PiArCQlyZXR2YWwgPSAtRU5PTUVNOw0KPj4gKwkJZ290byBlcnI1Ow0KPj4gKwl9DQo+
-PiArDQo+PiArCXJldHZhbCA9IGdlbl9wb29sX2FkZF92aXJ0KGhjZC0+bG9jYWxtZW1fcG9vbCwN
-Cj4+ICsJCQkJICAgKHVuc2lnbmVkIGxvbmcpbG9jYWxfbWVtLA0KPj4gKwkJCQkgICBtZW0tPnN0
-YXJ0IC0gbWVtLT5wYXJlbnQtPnN0YXJ0LA0KPj4gKwkJCQkgICByZXNvdXJjZV9zaXplKG1lbSks
-DQo+PiArCQkJCSAgIGRldl90b19ub2RlKGRldikpOw0KPiANCj4gSSB3b25kZXIgaWYgaGF2aW5n
-IGEgaGVscGVyIGZvciB0aGVzZSBvcGVyYXRpb25zIHdvdWxkIGJlIHVzZWZ1bCwNCj4gZXhwbGFp
-bmluZyB3aGF0IHdlIGRvIGhlcmUuICBUaGF0IGlzIGNyZWF0ZSBhIHBvb2wgZm9yIGEgcmVzb3Vy
-Y2UsDQo+IHdoZXJlIHRoZSB2aXJ0dWFsIGFkZHJlc3MgaXMgdGhlIGlvcmVtYXAgb2Ygc2FpZCBy
-ZXNvdXJjZS4gIFdlDQo+IGNvdWxkIGFsc28gbWFrZSB0aGF0IGEgbWFuYWdlZCBBUEkgc28gdGhh
-dCB5b3UgY2FuIGdldCByaWQgb2YgdGhlDQo+IGNsZWFudXAgcGF0aC4NCg0KVGhpcyBpcyBjbG9z
-ZSB0byB3aGF0IEkndmUgYWxyZWFkeSBwcmVwYXJlZCBpbiB0aGUgbmV4dCBzcGluLiBJdCdzIGEg
-bmV3IA0KdXNiIGhjZCBhcGkgc28gaXQncyBub3QgYXMgYWJzdHJhY3QgYXMgeW91ciBpZGVhLiBJ
-IHRoaW5rIHdlIGNhbiBkaXNjdXNzIA0Kb24gaXQgYWZ0ZXIgSSdsbCBzZW5kIGl0Lg0KDQotLS0N
-CkJlc3QgUmVnYXJkcywgTGF1cmVudGl1
+On 30-04-19, 21:37, Bjorn Andersson wrote:
+
+> +#include <linux/clk-provider.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <dt-bindings/power/qcom-aoss-qmp.h>
+
+I would have preferred this as first one, but this is fine too :)
+
+> +/* Linux-side offsets */
+> +#define QMP_DESC_MCORE_LINK_STATE	0x24
+> +#define QMP_DESC_MCORE_LINK_STATE_ACK	0x28
+> +#define QMP_DESC_MCORE_CH_STATE		0x2c
+> +#define QMP_DESC_MCORE_CH_STATE_ACK	0x30
+> +#define QMP_DESC_MCORE_MBOX_SIZE	0x34
+> +#define QMP_DESC_MCORE_MBOX_OFFSET	0x38
+> +
+> +#define QMP_STATE_UP	0x0000ffff
+
+I prefer using GENMASK(15, 0)
+
+> +#define QMP_STATE_DOWN	0xffff0000
+
+GENMASK(31, 16)?
+
+> +/**
+> + * struct qmp - driver state for QMP implementation
+> + * @msgram: iomem referencing the message RAM used for communication
+> + * @dev: reference to QMP device
+> + * @mbox_client: mailbox client used to ring the doorbell on transmit
+> + * @mbox_chan: mailbox channel used to ring the doorbell on transmit
+> + * @offset: offset within @msgram where messages should be written
+> + * @size: maximum size of the messages to be transmitted
+> + * @event: wait_queue for synchronization with the IRQ
+> + * @tx_lock: provides syncrhonization between multiple callers of qmp_send()
+
+/s/syncrhonization/synchronization
+
+> +int qmp_send(struct qmp *qmp, const void *data, size_t len)
+> +{
+> +	int ret;
+> +
+> +	if (WARN_ON(len + sizeof(u32) > qmp->size))
+> +		return -EINVAL;
+> +
+> +	if (WARN_ON(len % sizeof(u32)))
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&qmp->tx_lock);
+> +
+> +	/* The message RAM only implements 32-bit accesses */
+> +	__iowrite32_copy(qmp->msgram + qmp->offset + sizeof(u32),
+> +			 data, len / sizeof(u32));
+> +	writel(len, qmp->msgram + qmp->offset);
+> +	qmp_kick(qmp);
+> +
+> +	ret = wait_event_interruptible_timeout(qmp->event,
+> +					       qmp_message_empty(qmp), HZ);
+> +	if (!ret) {
+> +		dev_err(qmp->dev, "ucore did not ack channel\n");
+> +		ret = -ETIMEDOUT;
+> +
+> +		/* Clear message from buffer */
+> +		writel(0, qmp->msgram + qmp->offset);
+> +	} else {
+> +		ret = 0;
+
+Isn't this redundant?
+
+> +	}
+> +
+> +	mutex_unlock(&qmp->tx_lock);
+> +
+> +	return ret;
+> +}
+-- 
+~Vinod
