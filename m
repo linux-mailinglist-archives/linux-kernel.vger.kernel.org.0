@@ -2,210 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E382548E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:53:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E33D25499
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:53:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728734AbfEUPxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:53:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42206 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728114AbfEUPxX (ORCPT
+        id S1728994AbfEUPxn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:53:43 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:42800 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727969AbfEUPxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:53:23 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4LFqVqB022181
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 11:53:22 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2smjn3d4rm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 11:53:22 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 21 May 2019 16:53:19 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 21 May 2019 16:53:14 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4LFrDfK42074180
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 May 2019 15:53:14 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D560811C058;
-        Tue, 21 May 2019 15:53:13 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3132311C05B;
-        Tue, 21 May 2019 15:53:12 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.204.239])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 21 May 2019 15:53:12 +0000 (GMT)
-Date:   Tue, 21 May 2019 18:53:10 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Serge Semin <fancer.lancer@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Huacai Chen <chenhc@lemote.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Juergen Gross <jgross@suse.com>, linux-mips@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Atsushi Nemoto <anemo@mba.ocn.ne.jp>
-Subject: Re: [PATCH 04/12] mips: Reserve memory for the kernel image resources
-References: <20190423224748.3765-1-fancer.lancer@gmail.com>
- <20190423224748.3765-5-fancer.lancer@gmail.com>
- <CAMuHMdWPmL5Z86cgJ4N-U-3XKr4ys8Y7U85okDcXYEu7z4ybaw@mail.gmail.com>
+        Tue, 21 May 2019 11:53:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1558454010; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=r1Dp4uuhmo7lgnj7+O9kBAJP9eIUmY611ADs6zhWI5w=;
+        b=CKuOJ1qTrDaIipRX830HNqH96QeAJ6lzn9Gi88QEmd2JAG81quHT8tzSJL60hlEjR2T/vf
+        Aob/tbuDy/Si5c7cWzZgxaIRd7e1u91BTaD0CJtcJvbbqm+iC5/SS5Sle85V/klWB9NEud
+        mOy03C+fg2jgZgUEnOlYb2v4zWBHSWE=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     od@zcrc.me, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/4] watchdog: jz4740: Use register names from <linux/mfd/ingenic-tcu.h>
+Date:   Tue, 21 May 2019 17:53:10 +0200
+Message-Id: <20190521155313.19326-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWPmL5Z86cgJ4N-U-3XKr4ys8Y7U85okDcXYEu7z4ybaw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19052115-0020-0000-0000-0000033F04C8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052115-0021-0000-0000-00002191E561
-Message-Id: <20190521155309.GB24470@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-21_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905210099
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+Use the macros from <linux/mfd/ingenic-tcu.h> instead of declaring our
+own.
 
-On Tue, May 21, 2019 at 04:56:39PM +0200, Geert Uytterhoeven wrote:
-> Hi Serge,
-> 
-> On Wed, Apr 24, 2019 at 12:50 AM Serge Semin <fancer.lancer@gmail.com> wrote:
-> > The reserved_end variable had been used by the bootmem_init() code
-> > to find a lowest limit of memory available for memmap blob. The original
-> > code just tried to find a free memory space higher than kernel was placed.
-> > This limitation seems justified for the memmap ragion search process, but
-> > I can't see any obvious reason to reserve the unused space below kernel
-> > seeing some platforms place it much higher than standard 1MB. Moreover
-> > the RELOCATION config enables it to be loaded at any memory address.
-> > So lets reserve the memory occupied by the kernel only, leaving the region
-> > below being free for allocations. After doing this we can now discard the
-> > code freeing a space between kernel _text and VMLINUX_LOAD_ADDRESS symbols
-> > since it's going to be free anyway (unless marked as reserved by
-> > platforms).
-> >
-> > Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-> 
-> This is now commit b93ddc4f9156205e ("mips: Reserve memory for the kernel
-> image resources") in v5.2-rc1, which causes rbtx4927 to crash during boot:
-> 
->     VFS: Mounted root (nfs filesystem) on device 0:13.
->     devtmpfs: mounted
->     BUG: Bad page state in process swapper  pfn:00001
->     page:804b7820 refcount:0 mapcount:-128 mapping:00000000 index:0x1
->     flags: 0x0()
->     raw: 00000000 00000100 00000200 00000000 00000001 00000000 ffffff7f 00000000
->     page dumped because: nonzero mapcount
->     Modules linked in:
->     CPU: 0 PID: 1 Comm: swapper Not tainted
-> 5.2.0-rc1-rbtx4927-00468-g3c05ea3d4077b756-dirty #137
->     Stack : 00000000 10008400 8040dd2c 87c1b974 8044af63 8040dd2c
-> 00000001 804a3490
->             00000001 81000000 0030f231 80148558 00000003 10008400
-> 87c1dd80 7599ee13
->             00000000 00000000 804b0000 00000000 00000007 00000000
-> 00000085 00000000
->             62722d31 00000084 804b0000 39347874 00000000 804b7820
-> 8040cef8 81000010
->             00000001 00000007 00000001 81000000 00000008 8021de24
-> 00000000 804a0000
->             ...
->     Call Trace:
->     [<8010adec>] show_stack+0x74/0x104
->     [<801a5e44>] bad_page+0x130/0x138
->     [<801a654c>] free_pcppages_bulk+0x17c/0x3b0
->     [<801a789c>] free_unref_page+0x40/0x68
->     [<801120f4>] free_init_pages+0xec/0x104
->     [<803bdde8>] free_initmem+0x10/0x58
->     [<803bdb8c>] kernel_init+0x20/0x100
->     [<801057c8>] ret_from_kernel_thread+0x14/0x1c
->     Disabling lock debugging due to kernel taint
->     BUG: Bad page state in process swapper  pfn:00002
->     [...]
-> 
-> CONFIG_RELOCATABLE is not set, so the only relevant part is the
-> change quoted below.
-> 
-> > --- a/arch/mips/kernel/setup.c
-> > +++ b/arch/mips/kernel/setup.c
-> > @@ -371,7 +371,6 @@ static void __init bootmem_init(void)
-> >
-> >  static void __init bootmem_init(void)
-> >  {
-> > -       unsigned long reserved_end;
-> >         phys_addr_t ramstart = PHYS_ADDR_MAX;
-> >         int i;
-> >
-> > @@ -382,10 +381,10 @@ static void __init bootmem_init(void)
-> >          * will reserve the area used for the initrd.
-> >          */
-> >         init_initrd();
-> > -       reserved_end = (unsigned long) PFN_UP(__pa_symbol(&_end));
-> >
-> > -       memblock_reserve(PHYS_OFFSET,
-> > -                        (reserved_end << PAGE_SHIFT) - PHYS_OFFSET);
-> > +       /* Reserve memory occupied by kernel. */
-> > +       memblock_reserve(__pa_symbol(&_text),
-> > +                       __pa_symbol(&_end) - __pa_symbol(&_text));
-> >
-> >         /*
-> >          * max_low_pfn is not a number of pages. The number of pages
-> 
-> With some debug code added:
-> 
->     Determined physical RAM map:
->      memory: 08000000 @ 00000000 (usable)
->     bootmem_init:390: PHYS_OFFSET = 0x0
->     bootmem_init:391: __pa_symbol(&_text) = 0x100000
->     bootmem_init:392: __pa_symbol(&_end) = 0x4b77c8
->     bootmem_init:393: PFN_UP(__pa_symbol(&_end)) = 0x4b8
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/watchdog/jz4740_wdt.c | 39 ++++++++++++++---------------------
+ 1 file changed, 16 insertions(+), 23 deletions(-)
 
-Have you tried adding memblock=debug to the command line?
-Not sure it'll help, but still :)
+diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
+index d1bc7cbd4f2b..51be321c775a 100644
+--- a/drivers/watchdog/jz4740_wdt.c
++++ b/drivers/watchdog/jz4740_wdt.c
+@@ -13,6 +13,7 @@
+  *
+  */
  
-> Hence the old code reserved 1 MiB extra at the beginning.
-> 
-> Note that the new code also dropped the rounding up of the memory block
-> size to a multiple of PAGE_SIZE. I'm not sure the latter actually
-> matters or not.
-
-I'd say that bad page state for pfn 1 is caused by "freeing" the first 1M.
-
-> Do you have a clue? Thanks!
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> 
-
++#include <linux/mfd/ingenic-tcu.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/types.h>
+@@ -28,23 +29,16 @@
+ 
+ #include <asm/mach-jz4740/timer.h>
+ 
+-#define JZ_REG_WDT_TIMER_DATA     0x0
+-#define JZ_REG_WDT_COUNTER_ENABLE 0x4
+-#define JZ_REG_WDT_TIMER_COUNTER  0x8
+-#define JZ_REG_WDT_TIMER_CONTROL  0xC
+-
+ #define JZ_WDT_CLOCK_PCLK 0x1
+ #define JZ_WDT_CLOCK_RTC  0x2
+ #define JZ_WDT_CLOCK_EXT  0x4
+ 
+-#define JZ_WDT_CLOCK_DIV_SHIFT   3
+-
+-#define JZ_WDT_CLOCK_DIV_1    (0 << JZ_WDT_CLOCK_DIV_SHIFT)
+-#define JZ_WDT_CLOCK_DIV_4    (1 << JZ_WDT_CLOCK_DIV_SHIFT)
+-#define JZ_WDT_CLOCK_DIV_16   (2 << JZ_WDT_CLOCK_DIV_SHIFT)
+-#define JZ_WDT_CLOCK_DIV_64   (3 << JZ_WDT_CLOCK_DIV_SHIFT)
+-#define JZ_WDT_CLOCK_DIV_256  (4 << JZ_WDT_CLOCK_DIV_SHIFT)
+-#define JZ_WDT_CLOCK_DIV_1024 (5 << JZ_WDT_CLOCK_DIV_SHIFT)
++#define JZ_WDT_CLOCK_DIV_1    (0 << TCU_TCSR_PRESCALE_LSB)
++#define JZ_WDT_CLOCK_DIV_4    (1 << TCU_TCSR_PRESCALE_LSB)
++#define JZ_WDT_CLOCK_DIV_16   (2 << TCU_TCSR_PRESCALE_LSB)
++#define JZ_WDT_CLOCK_DIV_64   (3 << TCU_TCSR_PRESCALE_LSB)
++#define JZ_WDT_CLOCK_DIV_256  (4 << TCU_TCSR_PRESCALE_LSB)
++#define JZ_WDT_CLOCK_DIV_1024 (5 << TCU_TCSR_PRESCALE_LSB)
+ 
+ #define DEFAULT_HEARTBEAT 5
+ #define MAX_HEARTBEAT     2048
+@@ -72,7 +66,7 @@ static int jz4740_wdt_ping(struct watchdog_device *wdt_dev)
+ {
+ 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+ 
+-	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
++	writew(0x0, drvdata->base + TCU_REG_WDT_TCNT);
+ 	return 0;
+ }
+ 
+@@ -95,18 +89,17 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+ 			break;
+ 		}
+ 		timeout_value >>= 2;
+-		clock_div += (1 << JZ_WDT_CLOCK_DIV_SHIFT);
++		clock_div += (1 << TCU_TCSR_PRESCALE_LSB);
+ 	}
+ 
+-	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
+-	writew(clock_div, drvdata->base + JZ_REG_WDT_TIMER_CONTROL);
++	writeb(0x0, drvdata->base + TCU_REG_WDT_TCER);
++	writew(clock_div, drvdata->base + TCU_REG_WDT_TCSR);
+ 
+-	writew((u16)timeout_value, drvdata->base + JZ_REG_WDT_TIMER_DATA);
+-	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
+-	writew(clock_div | JZ_WDT_CLOCK_RTC,
+-		drvdata->base + JZ_REG_WDT_TIMER_CONTROL);
++	writew((u16)timeout_value, drvdata->base + TCU_REG_WDT_TDR);
++	writew(0x0, drvdata->base + TCU_REG_WDT_TCNT);
++	writew(clock_div | JZ_WDT_CLOCK_RTC, drvdata->base + TCU_REG_WDT_TCSR);
+ 
+-	writeb(0x1, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
++	writeb(0x1, drvdata->base + TCU_REG_WDT_TCER);
+ 
+ 	wdt_dev->timeout = new_timeout;
+ 	return 0;
+@@ -124,7 +117,7 @@ static int jz4740_wdt_stop(struct watchdog_device *wdt_dev)
+ {
+ 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+ 
+-	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
++	writeb(0x0, drvdata->base + TCU_REG_WDT_TCER);
+ 	jz4740_timer_disable_watchdog();
+ 
+ 	return 0;
 -- 
-Sincerely yours,
-Mike.
+2.21.0.593.g511ec345e18
 
