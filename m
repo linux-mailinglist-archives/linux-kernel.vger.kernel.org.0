@@ -2,164 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C4FE25987
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:53:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 540C82598E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:55:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbfEUUxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 16:53:39 -0400
-Received: from mail.efficios.com ([167.114.142.138]:42768 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727981AbfEUUxi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 16:53:38 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 0CED31E60DB;
-        Tue, 21 May 2019 16:53:37 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id oFFC6i6eKUdy; Tue, 21 May 2019 16:53:36 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 502281E60D1;
-        Tue, 21 May 2019 16:53:36 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 502281E60D1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1558472016;
-        bh=y7ZGb/2b1DpJ83bp4T+kqmqo/UvZADZeuz55KVArwbs=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=qt97iU0uYz9FReccOYv8m20uBpg49YIn66yLpj7BiPCPnh3+ZTH2cmWNnGbML5oTM
-         u5gI3t8vvjGB7vNTqGxNftYjPHF4N6RjDhI4/+Uh+Bp9e3TNtz7Am1yB71JLQyoZK/
-         N0wB9WwKMQp9QWFY19Dhx2X60bM9agOOWdJ5hPBv/Sb15Jyt/6qpCVxNX9ap/OqXh9
-         zwDerX2K+5kkkGFpzBx1JY4ceZ105b0m2Ma6jK9g61KfdIer7r5DNFgcfwwXbf+2c5
-         VFCyu6qMhC68H90UL1tP6Fm5kOeb3r2m6KuJOmjd08oV2NvxrXg9Ng7iTw3nzXkqaY
-         IHBulhV6tqvNA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id LowytUWnVUmg; Tue, 21 May 2019 16:53:36 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 341971E60C8;
-        Tue, 21 May 2019 16:53:36 -0400 (EDT)
-Date:   Tue, 21 May 2019 16:53:36 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Michael Jeanson <mjeanson@efficios.com>
-Cc:     lttng-dev <lttng-dev@lists.lttng.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        rostedt <rostedt@goodmis.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1045726286.6695.1558472016130.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20190521203314.8577-4-mjeanson@efficios.com>
-References: <20190521203314.8577-1-mjeanson@efficios.com> <20190521203314.8577-4-mjeanson@efficios.com>
-Subject: Re: [PATCH lttng-modules 4/5] fix: mm: move recent_rotated pages
- calculation to shrink_inactive_list() (v5.2)
+        id S1728145AbfEUUya (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 16:54:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41386 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727341AbfEUUy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 16:54:29 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6232C217F9;
+        Tue, 21 May 2019 20:54:28 +0000 (UTC)
+Date:   Tue, 21 May 2019 16:54:26 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Kris Van Hees <kris.van.hees@oracle.com>
+Cc:     dtrace-devel@oss.oracle.com, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        daniel@iogearbox.net, acme@kernel.org, mhiramat@kernel.org,
+        ast@kernel.org
+Subject: Re: [RFC PATCH 00/11] bpf, trace, dtrace: DTrace BPF program type
+ implementation and sample use
+Message-ID: <20190521165426.096af6fd@gandalf.local.home>
+In-Reply-To: <20190521204848.GJ2422@oracle.com>
+References: <201905202347.x4KNl0cs030532@aserv0121.oracle.com>
+        <20190521204848.GJ2422@oracle.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF66 (Linux)/8.8.12_GA_3794)
-Thread-Topic: move recent_rotated pages calculation to shrink_inactive_list() (v5.2)
-Thread-Index: SUdRvQeX+1mub2ju/ncsTEVsJhgEbw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On May 21, 2019, at 4:33 PM, Michael Jeanson mjeanson@efficios.com wrote:
+On Tue, 21 May 2019 16:48:48 -0400
+Kris Van Hees <kris.van.hees@oracle.com> wrote:
 
-> See upstream commit:
-> 
->  commit 886cf1901db962cee5f8b82b9b260079a5e8a4eb
->  Author: Kirill Tkhai <ktkhai@virtuozzo.com>
->  Date:   Mon May 13 17:16:51 2019 -0700
-> 
->    mm: move recent_rotated pages calculation to shrink_inactive_list()
-> 
->    Patch series "mm: Generalize putback functions"]
-> 
->    putback_inactive_pages() and move_active_pages_to_lru() are almost
->    similar, so this patchset merges them ina single function.
-> 
->    This patch (of 4):
-> 
->    The patch moves the calculation from putback_inactive_pages() to
->    shrink_inactive_list().  This makes putback_inactive_pages() looking more
->    similar to move_active_pages_to_lru().
-> 
->    To do that, we account activated pages in reclaim_stat::nr_activate.
->    Since a page may change its LRU type from anon to file cache inside
->    shrink_page_list() (see ClearPageSwapBacked()), we have to account pages
->    for the both types.  So, nr_activate becomes an array.
-> 
->    Previously we used nr_activate to account PGACTIVATE events, but now we
->    account them into pgactivate variable (since they are about number of
->    pages in general, not about sum of hpage_nr_pages).
-> 
-> Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
-> ---
-> instrumentation/events/lttng-module/mm_vmscan.h | 3 ++-
-> 1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/instrumentation/events/lttng-module/mm_vmscan.h
-> b/instrumentation/events/lttng-module/mm_vmscan.h
-> index 417472c..3f9ffde 100644
-> --- a/instrumentation/events/lttng-module/mm_vmscan.h
-> +++ b/instrumentation/events/lttng-module/mm_vmscan.h
-> @@ -625,7 +625,8 @@ LTTNG_TRACEPOINT_EVENT(mm_vmscan_lru_shrink_inactive,
-> 		ctf_integer(unsigned long, nr_writeback, stat->nr_writeback)
-> 		ctf_integer(unsigned long, nr_congested, stat->nr_congested)
-> 		ctf_integer(unsigned long, nr_immediate, stat->nr_immediate)
-> -		ctf_integer(unsigned long, nr_activate, stat->nr_activate)
-> +		ctf_integer(unsigned long, nr_activate0, stat->nr_activate[0])
-> +		ctf_integer(unsigned long, nr_activate1, stat->nr_activate[1])
+> As suggested, I resent the patch set as replies to the cover letter post
+> to support threaded access to the patches.
 
-This patch is for lttng-modules, but I'm adding Kirill Tkhai (author of the Linux
-kernel commit causing the need for this change in lttng-modules) and Steven Rostedt
-in CC, because I feel they might want to join this discussion naming of
-userspace-visible TRACE_EVENT() fields.
+Note, you should also have added a v2 in the subject:
 
-Based on the upstream Linux commit, it looks like only the TP_printk() has
-sane names for event fields, but could really improve on the naming for the
-binary version of those fields:
+[RFC PATCH 00/11 v2] ...
 
--       TP_printk("nid=%d nr_scanned=%ld nr_reclaimed=%ld nr_dirty=%ld nr_writeback=%ld nr_congested=%ld nr_immediate=%ld nr_activate=%ld nr_ref_keep=%ld nr_unmap_fail=%ld priority=%d flags=%s",
-+       TP_printk("nid=%d nr_scanned=%ld nr_reclaimed=%ld nr_dirty=%ld nr_writeback=%ld nr_congested=%ld nr_immediate=%ld nr_activate_anon=%d nr_activate_file=%d nr_ref_keep=%ld nr_unmap_fail=%ld priority=%d flags=%s",
-                __entry->nid,
-                __entry->nr_scanned, __entry->nr_reclaimed,
-                __entry->nr_dirty, __entry->nr_writeback,
-                __entry->nr_congested, __entry->nr_immediate,
--               __entry->nr_activate, __entry->nr_ref_keep,
--               __entry->nr_unmap_fail, __entry->priority,
-+               __entry->nr_activate0, __entry->nr_activate1,
-+               __entry->nr_ref_keep, __entry->nr_unmap_fail,
-+               __entry->priority,
-                show_reclaim_flags(__entry->reclaim_flags))
- );
+The next one should have v3.
 
-So I recommend we do the following in lttng-modules:
+Cheers,
 
-Rename the field nr_activate0 to nr_activate_anon,
-Rename the field nr_activate1 to nr_activate_file.
-
-So users can make something out of those tracepoints without digging
-into the kernel source code.
-
-Even if Steven and Kirill end up choosing to change the name of those
-fields upstream in trace-event, it won't have any impact on lttng-modules.
-
-It would make sense to change those newly introduced exposed names in the
-upstream kernel as well though.
-
-Thanks,
-
-Mathieu
-
-
-> 		ctf_integer(unsigned long, nr_ref_keep, stat->nr_ref_keep)
-> 		ctf_integer(unsigned long, nr_unmap_fail, stat->nr_unmap_fail)
-> 		ctf_integer(int, priority, priority)
-> --
-> 2.17.1
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+-- Steve
