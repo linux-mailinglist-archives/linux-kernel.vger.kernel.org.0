@@ -2,114 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A5924B16
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E58424B18
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbfEUJDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 05:03:11 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:55518 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbfEUJDL (ORCPT
+        id S1727261AbfEUJDM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 05:03:12 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53199 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfEUJDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 21 May 2019 05:03:11 -0400
-Received: by mail-it1-f194.google.com with SMTP id g24so3676913iti.5
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 02:03:10 -0700 (PDT)
+Received: by mail-wm1-f66.google.com with SMTP id y3so2093219wmm.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 02:03:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5R288mKF0GeHgJxCPpIdKCMHA/0CyoeQ5qge6u2tdDc=;
+        b=pp8mOjd7Mqs7yfAH43C6eB3d9rmh5jCVdEhDqU+Aug0+WajfS82ikNUV0LIXbA7tvR
+         GiEy7Q8pt8JgbacuMahdKch3HK6U286+qD0Aba9TVrFSpnIfFveJ96qnzZ2zO2kX8dt1
+         wi5xQcY/HMjYR9AhAUvRBXqw1Jhm6+mqmOSJlW41wQm2OcEwu0gauPLqZJMoP1wgnrAA
+         JFa0/dqis26Zwlg+wkVoYUaJReioOvFd7MY+BbyIBEdCh6kD7kWv2pgqTLFgAt7pUQC/
+         9+mAFIHrmYIahtfh+3vb13EqZYNILpT9bI4rwKAKNcknH25HW5ulQ20HEZHTEXKHRRJM
+         K7/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/+o3MggDFa5h86+zTYSOS2v1g0Pwh3ExeN5LLHg8kpM=;
-        b=LvlQ1EHGOJ4PML3+MkBw2hi4csjNfgONV4ChUORxa8Gt3gPLIqWDr6hTNLBz9XT3wE
-         DRRqwDINrY9Kdf+5rKrQDXftplOQ9aKA3d4BOrgBM4tfZuz+VwhY3pbH0yhOzV4TeoGZ
-         Hx3ckXDtXSzVZQ2ZEznb8SzBlWmENRdWudlPVqZ2t8epnzjtXBhNb+7aQjV3MPtJzRsR
-         BU5qKYTjos22asjR0jRqSJKT3av1LST+JOaEHv1FywmlCQXf11tUku7jzH2aToEXXim9
-         nq07SVoy7TN5lVSlzB1hgTkfJGCFIdhnTHm74L3Zb8t/21xCGxvbtVREoH5AyYscL+Hu
-         0GuA==
-X-Gm-Message-State: APjAAAXmY7SAUqFNl1msZWqUN9rV9kUh/ZOPAx1eiOeXV0j/dhgrykcZ
-        Wd1LGv4uoKsHNa4ykxDSy9y+mPbSZVUk3VIegj/0DA==
-X-Google-Smtp-Source: APXvYqx6/3duGjSKVU51wlNci+m1IvtUM+dSUVqcFGB7rGWF5JLBFlHDnLLy8ordPh0Anh/n4sL9BxhUc4JSTx6a+bM=
-X-Received: by 2002:a24:2e8c:: with SMTP id i134mr2897433ita.9.1558429390460;
- Tue, 21 May 2019 02:03:10 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5R288mKF0GeHgJxCPpIdKCMHA/0CyoeQ5qge6u2tdDc=;
+        b=kdIDC0J9cQ5IAcVaaPnyFTVj4fNq/wMfrRr6SjyAYAvIuYWpA05xycSzLsT9xdyT18
+         Z8LZB50l65c3ZJo/5ORoDQvl2FjD3oM7F292BrlRBuYVolHCUdBGek33Z3SvtjCN9GmH
+         aULiSIpbgIU6N4xpeRY8h/hv/sMCIMAncwjxZbQNwH+bHFEe1x5HuTwAH24nbnp0+oWA
+         SN9EaEjXCdX6t0klUxLTYjSPhp75Kr1O63FpRLgrhTWS7AFQu8zJIRA/2omOumqBycAQ
+         Ppp4goLijxY2sU6CbFzj7GdHyE0kRRLhpBjkbZD2q3osNLp3jfkJHY3QMm3tdb0t0AN9
+         aKaw==
+X-Gm-Message-State: APjAAAW93l0tvzFpB84oQcyqW5hPW+LXPOucfU3QiggBcBXrg+UVOMEf
+        /7YSkYKauw+MmVnCYOPtizQfxA==
+X-Google-Smtp-Source: APXvYqyYRmwwb6Ur91PzaPTRyj5uJeV4urFJ2olz107d6M1dE6T9hSGdHqM0jQjQDKlGiWhJgCMxFA==
+X-Received: by 2002:a7b:cd0e:: with SMTP id f14mr2414832wmj.127.1558429389238;
+        Tue, 21 May 2019 02:03:09 -0700 (PDT)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id j28sm35898692wrd.64.2019.05.21.02.03.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 May 2019 02:03:08 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 1/2] gpio: max732x: use i2c_new_dummy_device()
+Date:   Tue, 21 May 2019 11:03:05 +0200
+Message-Id: <20190521090306.28113-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190424092944.30481-2-bhe@redhat.com> <20190429002318.GA25400@MiWiFi-R3L-srv>
- <20190429135536.GC2324@zn.tnic> <20190513014248.GA16774@MiWiFi-R3L-srv>
- <20190513070725.GA20105@zn.tnic> <20190513073254.GB16774@MiWiFi-R3L-srv>
- <20190513075006.GB20105@zn.tnic> <20190513080210.GC16774@MiWiFi-R3L-srv>
- <20190515051717.GA13703@jeru.linux.bs1.fc.nec.co.jp> <20190515065843.GA24212@zn.tnic>
- <20190515070942.GA17154@jeru.linux.bs1.fc.nec.co.jp>
-In-Reply-To: <20190515070942.GA17154@jeru.linux.bs1.fc.nec.co.jp>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Tue, 21 May 2019 17:02:59 +0800
-Message-ID: <CACPcB9cyiPc8JYmt1QhYNipSsJ5z3wTOJ90LS5LTx4YqwaG8rA@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI systab
- and ACPI tables
-To:     Junichi Nomura <j-nomura@ce.jp.nec.com>,
-        Borislav Petkov <bp@alien8.de>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Baoquan He <bhe@redhat.com>,
-        "dyoung@redhat.com" <dyoung@redhat.com>,
-        "fanc.fnst@cn.fujitsu.com" <fanc.fnst@cn.fujitsu.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 3:10 PM Junichi Nomura <j-nomura@ce.jp.nec.com> wrote:
->
-> On 5/15/19 3:58 PM, Borislav Petkov wrote:
-> > On Wed, May 15, 2019 at 05:17:19AM +0000, Junichi Nomura wrote:
-> >> Hi Kairui,
-> >>
-> >> On 5/13/19 5:02 PM, Baoquan He wrote:
-> >>> On 05/13/19 at 09:50am, Borislav Petkov wrote:
-> >>>> On Mon, May 13, 2019 at 03:32:54PM +0800, Baoquan He wrote:
-> >>>> So we're going to try it again this cycle and if there's no fallout, it
-> >>>> will go upstream. If not, it will have to be fixed. The usual thing.
-> >>>>
-> >>>> And I don't care if Kairui's patch fixes this one problem - judging by
-> >>>> the fragility of this whole thing, it should be hammered on one more
-> >>>> cycle on as many boxes as possible to make sure there's no other SNAFUs.
-> >>>>
-> >>>> So go test it on more machines instead. I've pushed it here:
-> >>>>
-> >>>> https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=next-merge-window
-> >>>
-> >>> Pingfan has got a machine to reproduce the kexec breakage issue, and
-> >>> applying these two patches fix it. He planned to paste the test result.
-> >>> I will ask him to try this branch if he has time, or I can get his
-> >>> machine to test.
-> >>>
-> >>> Junichi, also have a try on Boris's branch in NEC's test environment?
-> >>
-> >> while the patch set works on most of the machines I'm testing around,
-> >> I found kexec(1) fails to load kernel on a few machines if this patch
-> >> is applied.  Those machines don't have IORES_DESC_ACPI_TABLES region
-> >> and have ACPI tables in IORES_DESC_ACPI_NV_STORAGE region instead.
-> >
-> > Why? What kind of machines are those?
->
-> I don't know.  They are just general purpose Xeon-based servers
-> and not some special purpose machines.  So I guess there are other
-> such machines in the wild.
->
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Hi, I think it's reasonable to update the patch to include the
-NV_STORAGE regions as well, most likely the firmware only provided
-NV_STORAGE region? Can you help confirm if the e820 didn't contain
-ACPI data, and only ACPI NVS?
+We now have a resource managed version of i2c_new_dummy_device() that
+also returns an actual error code instead of a NULL-pointer. Use it
+in the max732x GPIO driver and simplify code in the process.
 
-I had a try with this update patch, it worked and didn't break anything.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/gpio/gpio-max732x.c | 37 ++++++++++++++-----------------------
+ 1 file changed, 14 insertions(+), 23 deletions(-)
 
-Hi Boris, would you prefer to just fold Junichi update patch into the
-previous one or I should send an updated patch?
+diff --git a/drivers/gpio/gpio-max732x.c b/drivers/gpio/gpio-max732x.c
+index f03cb0ba7726..7fd1bdfe00e5 100644
+--- a/drivers/gpio/gpio-max732x.c
++++ b/drivers/gpio/gpio-max732x.c
+@@ -652,12 +652,12 @@ static int max732x_probe(struct i2c_client *client,
+ 	case 0x60:
+ 		chip->client_group_a = client;
+ 		if (nr_port > 8) {
+-			c = i2c_new_dummy(client->adapter, addr_b);
+-			if (!c) {
++			c = devm_i2c_new_dummy_device(&client->dev,
++						      client->adapter, addr_b);
++			if (IS_ERR(c)) {
+ 				dev_err(&client->dev,
+ 					"Failed to allocate I2C device\n");
+-				ret = -ENODEV;
+-				goto out_failed;
++				return PTR_ERR(c);
+ 			}
+ 			chip->client_group_b = chip->client_dummy = c;
+ 		}
+@@ -665,12 +665,12 @@ static int max732x_probe(struct i2c_client *client,
+ 	case 0x50:
+ 		chip->client_group_b = client;
+ 		if (nr_port > 8) {
+-			c = i2c_new_dummy(client->adapter, addr_a);
+-			if (!c) {
++			c = devm_i2c_new_dummy_device(&client->dev,
++						      client->adapter, addr_a);
++			if (IS_ERR(c)) {
+ 				dev_err(&client->dev,
+ 					"Failed to allocate I2C device\n");
+-				ret = -ENODEV;
+-				goto out_failed;
++				return PTR_ERR(c);
+ 			}
+ 			chip->client_group_a = chip->client_dummy = c;
+ 		}
+@@ -678,36 +678,34 @@ static int max732x_probe(struct i2c_client *client,
+ 	default:
+ 		dev_err(&client->dev, "invalid I2C address specified %02x\n",
+ 				client->addr);
+-		ret = -EINVAL;
+-		goto out_failed;
++		return -EINVAL;
+ 	}
+ 
+ 	if (nr_port > 8 && !chip->client_dummy) {
+ 		dev_err(&client->dev,
+ 			"Failed to allocate second group I2C device\n");
+-		ret = -ENODEV;
+-		goto out_failed;
++		return -ENODEV;
+ 	}
+ 
+ 	mutex_init(&chip->lock);
+ 
+ 	ret = max732x_readb(chip, is_group_a(chip, 0), &chip->reg_out[0]);
+ 	if (ret)
+-		goto out_failed;
++		return ret;
+ 	if (nr_port > 8) {
+ 		ret = max732x_readb(chip, is_group_a(chip, 8), &chip->reg_out[1]);
+ 		if (ret)
+-			goto out_failed;
++			return ret;
+ 	}
+ 
+ 	ret = gpiochip_add_data(&chip->gpio_chip, chip);
+ 	if (ret)
+-		goto out_failed;
++		return ret;
+ 
+ 	ret = max732x_irq_setup(chip, id);
+ 	if (ret) {
+ 		gpiochip_remove(&chip->gpio_chip);
+-		goto out_failed;
++		return ret;
+ 	}
+ 
+ 	if (pdata && pdata->setup) {
+@@ -719,10 +717,6 @@ static int max732x_probe(struct i2c_client *client,
+ 
+ 	i2c_set_clientdata(client, chip);
+ 	return 0;
+-
+-out_failed:
+-	i2c_unregister_device(chip->client_dummy);
+-	return ret;
+ }
+ 
+ static int max732x_remove(struct i2c_client *client)
+@@ -744,9 +738,6 @@ static int max732x_remove(struct i2c_client *client)
+ 
+ 	gpiochip_remove(&chip->gpio_chip);
+ 
+-	/* unregister any dummy i2c_client */
+-	i2c_unregister_device(chip->client_dummy);
+-
+ 	return 0;
+ }
+ 
+-- 
+2.21.0
 
-
---
-Best Regards,
-Kairui Song
