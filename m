@@ -2,99 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F4B624815
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:32:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AD7F24820
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:35:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbfEUGcX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 02:32:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56120 "EHLO mail.kernel.org"
+        id S1727979AbfEUGfQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 02:35:16 -0400
+Received: from olimex.com ([184.105.72.32]:59132 "EHLO olimex.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725835AbfEUGcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 02:32:23 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31ADE2173C;
-        Tue, 21 May 2019 06:24:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558419873;
-        bh=ZshP8rr+U+KG2zbDeHbOGcRJBSaS1gDqRvgJbWlilIc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A/egFiqsIZW1N0Uw03GJahczQcAmMMW9SO+vfStlvHvrDZjM7cGIVPKKLe4N5mY0M
-         lwacbLuTBuecVsR/mbQCVWmIDUc53d+Aidtm8iQPEinHj7s9Xu9e9WJNXRgwZDX/bU
-         tNXboyHWpBw1E+2X4UTGvZwcFHedzHhOoRtz5QzA=
-Date:   Tue, 21 May 2019 08:24:30 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Cc:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Nishad Kamdar <nishadkamdar@gmail.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Forest Bond <forest@alittletooquiet.net>,
-        Ojaswin Mujoo <ojaswin25111998@gmail.com>
-Subject: Re: [PATCH 6/7] staging: vt6656: clean-up registers initialization
- error path
-Message-ID: <20190521062430.GA13860@kroah.com>
-References: <20190520163844.1225-1-quentin.deslandes@itdev.co.uk>
- <20190520163844.1225-7-quentin.deslandes@itdev.co.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190520163844.1225-7-quentin.deslandes@itdev.co.uk>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S1725835AbfEUGfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 02:35:16 -0400
+X-Greylist: delayed 585 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 May 2019 02:35:15 EDT
+Received: from localhost.localdomain ([94.155.250.134])
+        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
+        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 23:25:11 -0700
+From:   Stefan Mavrodiev <stefan@olimex.com>
+To:     Heiko Stuebner <heiko@sntech.de>, Lee Jones <lee.jones@linaro.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Stefan Mavrodiev <stefan@olimex.com>
+Subject: [PATCH v2 0/2] mfd: rk808: Fix pointers and poweroff
+Date:   Tue, 21 May 2019 09:24:47 +0300
+Message-Id: <20190521062449.29410-1-stefan@olimex.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 04:39:04PM +0000, Quentin Deslandes wrote:
-> Avoid discarding function's return code during register initialization.
-> Handle it instead and return 0 on success or a negative errno value on
-> error.
-> 
-> Signed-off-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-> ---
->  drivers/staging/vt6656/main_usb.c | 163 ++++++++++++++++++------------
->  1 file changed, 96 insertions(+), 67 deletions(-)
-> 
-> diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-> index 5fd845cbdd52..8ed96e8eedbe 100644
-> --- a/drivers/staging/vt6656/main_usb.c
-> +++ b/drivers/staging/vt6656/main_usb.c
-> @@ -109,33 +109,38 @@ static void vnt_set_options(struct vnt_private *priv)
->   */
->  static int vnt_init_registers(struct vnt_private *priv)
->  {
-> +	int ret = 0;
+This patch is actually follow-up to:
+  [PATCH 1/1] mfd: rk808: Prepare rk8085 for poweroff
 
-Minor nit here, no need to set this to 0 as you instantly set it with
-this call:
+The patchset fixes poweroff function for boards with RK8085 PMU.
+During the preparation of v2 possible wrong pointer access was
+spot (pm_power_off), so one more patch was introduced in the series.
 
->  	struct vnt_cmd_card_init *init_cmd = &priv->init_command;
->  	struct vnt_rsp_card_init *init_rsp = &priv->init_response;
->  	u8 antenna;
->  	int ii;
-> -	int status = STATUS_SUCCESS;
->  	u8 tmp;
->  	u8 calib_tx_iq = 0, calib_tx_dc = 0, calib_rx_iq = 0;
->  
->  	dev_dbg(&priv->usb->dev, "---->INIbInitAdapter. [%d][%d]\n",
->  		DEVICE_INIT_COLD, priv->packet_type);
->  
-> -	if (!vnt_check_firmware_version(priv)) {
-> -		if (vnt_download_firmware(priv) == true) {
-> -			if (vnt_firmware_branch_to_sram(priv) == false) {
-> -				dev_dbg(&priv->usb->dev,
-> -					" vnt_firmware_branch_to_sram fail\n");
-> -				return false;
-> -			}
-> -		} else {
-> -			dev_dbg(&priv->usb->dev, "FIRMWAREbDownload fail\n");
-> -			return false;
-> +	ret = vnt_check_firmware_version(priv);
+Stefan Mavrodiev (2):
+  mfd: rk808: Check pm_power_off pointer
+  mfd: rk808: Prepare rk805 for poweroff
 
-You can fix that up in a later patch :)
+ drivers/mfd/rk808.c       | 42 +++++++++++++++++++++++++++++++++------
+ include/linux/mfd/rk808.h |  2 ++
+ 2 files changed, 38 insertions(+), 6 deletions(-)
 
-At first glance, these all look really good, thanks for doing this work.
+-- 
+2.17.1
 
-greg k-h
