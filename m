@@ -2,97 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D558724B6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3782724B59
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbfEUJ03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 05:26:29 -0400
-Received: from alexa-out-tai-01.qualcomm.com ([103.229.16.226]:52564 "EHLO
-        alexa-out-tai-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726242AbfEUJ02 (ORCPT
+        id S1726448AbfEUJVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 05:21:09 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51169 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726006AbfEUJVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 05:26:28 -0400
-X-Greylist: delayed 366 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 May 2019 05:26:27 EDT
-Received: from ironmsg03-tai.qualcomm.com ([10.249.140.8])
-  by alexa-out-tai-01.qualcomm.com with ESMTP; 21 May 2019 17:20:20 +0800
-X-IronPort-AV: E=McAfee;i="5900,7806,9263"; a="29754389"
-Received: from c-fan-gv.ap.qualcomm.com (HELO c-fan-gv) ([10.231.253.105])
-  by ironmsg03-tai.qualcomm.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 May 2019 17:20:08 +0800
-From:   Tengfei Fan <tengfeif@codeaurora.org>
-To:     catalin.marinas@arm.com, will.deacon@arm.com
-Cc:     mark.rutland@arm.com, marc.zyngier@arm.com,
-        anshuman.khandual@arm.com, andreyknvl@google.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tengfei@codeaurora.org, Tengfei Fan <tengfeif@codeaurora.org>
-Subject: [PATCH] arm64: break while loop if task had been rescheduled
-Date:   Tue, 21 May 2019 17:20:04 +0800
-Message-Id: <1558430404-4840-1-git-send-email-tengfeif@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 21 May 2019 05:21:09 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1hT0xH-00004w-P8; Tue, 21 May 2019 11:21:07 +0200
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1hT0xH-0002Ya-4r; Tue, 21 May 2019 11:21:07 +0200
+Date:   Tue, 21 May 2019 11:21:07 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+        linux-mtd@lists.infradead.org
+Subject: Re: nvmem creates multiple devices with the same name
+Message-ID: <20190521092107.zpdkkhaanzruhqui@pengutronix.de>
+References: <20190521085641.i6g5aijwa5zbolah@pengutronix.de>
+ <a9ccac90-7b2f-41da-2ca9-ca3bba52781b@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a9ccac90-7b2f-41da-2ca9-ca3bba52781b@linaro.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 11:11:48 up 3 days, 15:30, 49 users,  load average: 0.10, 0.18, 0.16
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While printing a task's backtrace and this task isn't
-current task, it is possible that task's fp and fp+8
-have the same value, so cannot break the while loop.
-This can break while loop if this task had been
-rescheduled during print this task's backtrace.
+On Tue, May 21, 2019 at 10:02:32AM +0100, Srinivas Kandagatla wrote:
+> 
+> 
+> On 21/05/2019 09:56, Sascha Hauer wrote:
+> > . Are there any suggestions how to register the nvmem devices
+> > with a different name?
+> 
+> struct nvmem_config provides id field for this purpose, this will be used by
+> nvmem to set the device name space along with name field.
 
-Signed-off-by: Tengfei Fan <tengfeif@codeaurora.org>
----
- arch/arm64/kernel/traps.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+There's no way for a caller to know a unique name/id combination.
+The mtd layer could initialize the id field with the mtd number, but
+that would still not guarantee that another caller, like an EEPROM
+driver or such, doesn't use the same name/id combination.
 
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 2975598..9df6e02 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -103,6 +103,9 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
- {
- 	struct stackframe frame;
- 	int skip = 0;
-+	long cur_state = 0;
-+	unsigned long cur_sp = 0;
-+	unsigned long cur_fp = 0;
- 
- 	pr_debug("%s(regs = %p tsk = %p)\n", __func__, regs, tsk);
- 
-@@ -127,6 +130,9 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
- 		 */
- 		frame.fp = thread_saved_fp(tsk);
- 		frame.pc = thread_saved_pc(tsk);
-+		cur_state = tsk->state;
-+		cur_sp = thread_saved_sp(tsk);
-+		cur_fp = frame.fp;
- 	}
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
- 	frame.graph = 0;
-@@ -134,6 +140,23 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
- 
- 	printk("Call trace:\n");
- 	do {
-+		if (tsk != current && (cur_state != tsk->state
-+			/*
-+			 * We would not be printing backtrace for the task
-+			 * that has changed state from uninterruptible to
-+			 * running before hitting the do-while loop but after
-+			 * saving the current state. If task is in running
-+			 * state before saving the state, then we may print
-+			 * wrong call trace or end up in infinite while loop
-+			 * if *(fp) and *(fp+8) are same. While the situation
-+			 * will stop print when that task schedule out.
-+			 */
-+			|| cur_sp != thread_saved_sp(tsk)
-+			|| cur_fp != thread_saved_fp(tsk))) {
-+			printk("The task:%s had been rescheduled!\n",
-+				tsk->comm);
-+			break;
-+		}
- 		/* skip until specified stack frame */
- 		if (!skip) {
- 			dump_backtrace_entry(frame.pc);
+Sascha
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
