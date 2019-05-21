@@ -2,92 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9857125ACB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 01:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8A4A25AE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 01:33:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbfEUXbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 19:31:21 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:1183 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727790AbfEUXbU (ORCPT
+        id S1728203AbfEUXdh convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 May 2019 19:33:37 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36699 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727453AbfEUXdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 19:31:20 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ce48a480001>; Tue, 21 May 2019 16:31:20 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 21 May 2019 16:31:19 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 21 May 2019 16:31:19 -0700
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 21 May
- 2019 23:31:18 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 21 May 2019 23:31:18 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.174]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5ce48a460005>; Tue, 21 May 2019 16:31:18 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC:     <jckuo@nvidia.com>, <talho@nvidia.com>, <josephl@nvidia.com>,
-        <skomatineni@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH V1 12/12] arm64: tegra: enable wake from deep sleep on RTC alarm.
-Date:   Tue, 21 May 2019 16:31:23 -0700
-Message-ID: <1558481483-22254-13-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
-References: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 21 May 2019 19:33:36 -0400
+Received: by mail-lf1-f67.google.com with SMTP id y10so235629lfl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 16:33:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=EWNs7FuLz+EBZGJHO+hMowOuxfAj3IDqhoBMiSjNTxE=;
+        b=TrsL/8bmAQxXEQIFKRjdnxzYbsGgMDahop6IsQ9gHNdvXSSxAIbR1LDE6uFjlhNPt2
+         FofgUGDRdchaC7EY+/6LF9BkQNnCCFmVyyqiJEkYivlZMvWxdVq9ghwA2vLuLBNlkIIe
+         M3tAXwMC/jOm/zkAl7sYmHPzJOwluHUqUDd0k37quK7aXVpP6NjNsc5vyRKOEuNQAplk
+         KHUQsVEU4rfVWHFp04ucGk7xxWfMfZd4MFj8NtW5bAeuA4g+ianLiY5rhm2CW4iUSJpR
+         +9fyb2sSaZlhx1yq4r0KvKcatxOAbu2S/yItFf3QjZ3fxC8w7/XAH+iVRhUwfRmX5Rtx
+         5I2A==
+X-Gm-Message-State: APjAAAXAAs1ItMfsICDWShyS0/I2Ln0akugX4tkZ6RVeWxT8vHEW+4a4
+        NdzunkvQa0WS6ljDJWM+F20iuQns26bA8tqIJR7AWQ==
+X-Google-Smtp-Source: APXvYqxFOiQvAinejUQ5bQ+2ojPr4fXIqRhnzNKwRhVX51VwyZMoF/JudQtgNeOShJ06lSXqL67pZtMOqVe6jVwhGe0=
+X-Received: by 2002:a19:a50b:: with SMTP id o11mr28367269lfe.2.1558481613710;
+ Tue, 21 May 2019 16:33:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1558481480; bh=0l4gC+Qj0JmgYVzpD51BKCVjV4o0qtIe+OiFzC2IyHA=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=pdt5MZBns4+ceXvILOGcVnbdVCbXXruvt8Ivg02qDNzL3ohJttqjXz9PSUadVtnYu
-         RtysGhBViJw/q/9DFqZIzNZXUFC0Fm/f5qZnoBiYkimLa2Hb/5d+4XPBsevvjwdHZg
-         mo3VMzUnzyFN/VhoEW9WrbqYOAh0Z0XMU/BMjNCPM7zZJpE2m2T6EdnpCQZ2hoMIFV
-         Ma7SwSfaGtKO/OkaCnMDce4PEtj7FOyxH8pnSx5KwmRgODLINjcB7nQXtko8mU0ONI
-         h49YWOkx0085rPlDk+HtmB8SDt1lY4+VYXHflPz5A4vWRZLhagkvLq+guxAIng5v3K
-         T5nM7976tebHA==
+References: <20190518004639.20648-1-mcroce@redhat.com> <CAGnkfhxt=nq-JV+D5Rrquvn8BVOjHswEJmuVVZE78p9HvAg9qQ@mail.gmail.com>
+ <20190520133830.1ac11fc8@cakuba.netronome.com> <dfb6cf40-81f4-237e-9a43-646077e020f7@iogearbox.net>
+ <CAGnkfhxZPXUvBemRxAFfoq+y-UmtdQH=dvnyeLBJQo43U2=sTg@mail.gmail.com> <20190521100648.1ce9b5be@cakuba.netronome.com>
+In-Reply-To: <20190521100648.1ce9b5be@cakuba.netronome.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Wed, 22 May 2019 01:32:57 +0200
+Message-ID: <CAGnkfhzkRXF6WDYj9W2sffuLSYys_zbv9QekfuZWvc4VBCMKUA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] samples/bpf: fix test_lru_dist build
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        xdp-newbies@vger.kernel.org, bpf@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch updates device tree for RTC and PMC to allow system wake
-from deep sleep on RTC alarm.
+On Tue, May 21, 2019 at 7:07 PM Jakub Kicinski
+<jakub.kicinski@netronome.com> wrote:
+>
+> On Tue, 21 May 2019 17:36:17 +0200, Matteo Croce wrote:
+> > On Tue, May 21, 2019 at 5:21 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
+> > >
+> > > On 05/20/2019 10:38 PM, Jakub Kicinski wrote:
+> > > > On Mon, 20 May 2019 19:46:27 +0200, Matteo Croce wrote:
+> > > >> On Sat, May 18, 2019 at 2:46 AM Matteo Croce <mcroce@redhat.com> wrote:
+> > > >>>
+> > > >>> Fix the following error by removing a duplicate struct definition:
+> > > >>
+> > > >> Hi all,
+> > > >>
+> > > >> I forget to send a cover letter for this series, but basically what I
+> > > >> wanted to say is that while patches 1-3 are very straightforward,
+> > > >> patches 4-5 are a bit rough and I accept suggstions to make a cleaner
+> > > >> work.
+> > > >
+> > > > samples depend on headers being locally installed:
+> > > >
+> > > > make headers_install
+> > > >
+> > > > Are you intending to change that?
+> > >
+> > > +1, Matteo, could you elaborate?
+> > >
+> > > On latest bpf tree, everything compiles just fine:
+> > >
+> > > [root@linux bpf]# make headers_install
+> > > [root@linux bpf]# make -C samples/bpf/
+> > > make: Entering directory '/home/darkstar/trees/bpf/samples/bpf'
+> > > make -C ../../ /home/darkstar/trees/bpf/samples/bpf/ BPF_SAMPLES_PATH=/home/darkstar/trees/bpf/samples/bpf
+> > > make[1]: Entering directory '/home/darkstar/trees/bpf'
+> > >   CALL    scripts/checksyscalls.sh
+> > >   CALL    scripts/atomic/check-atomics.sh
+> > >   DESCEND  objtool
+> > > make -C /home/darkstar/trees/bpf/samples/bpf/../../tools/lib/bpf/ RM='rm -rf' LDFLAGS= srctree=/home/darkstar/trees/bpf/samples/bpf/../../ O=
+> > >   HOSTCC  /home/darkstar/trees/bpf/samples/bpf/test_lru_dist
+> > >   HOSTCC  /home/darkstar/trees/bpf/samples/bpf/sock_example
+> > >
+> >
+> > Hi all,
+> >
+> > I have kernel-headers installed from master, but yet the samples fail to build:
+> >
+> > matteo@turbo:~/src/linux/samples/bpf$ rpm -q kernel-headers
+> > kernel-headers-5.2.0_rc1-38.x86_64
+> >
+> > matteo@turbo:~/src/linux/samples/bpf$ git describe HEAD
+> > v5.2-rc1-97-g5bdd9ad875b6
+> >
+> > matteo@turbo:~/src/linux/samples/bpf$ make
+> > make -C ../../ /home/matteo/src/linux/samples/bpf/
+> > BPF_SAMPLES_PATH=/home/matteo/src/linux/samples/bpf
+> > make[1]: Entering directory '/home/matteo/src/linux'
+> >   CALL    scripts/checksyscalls.sh
+> >   CALL    scripts/atomic/check-atomics.sh
+> >   DESCEND  objtool
+> > make -C /home/matteo/src/linux/samples/bpf/../../tools/lib/bpf/ RM='rm
+> > -rf' LDFLAGS= srctree=/home/matteo/src/linux/samples/bpf/../../ O=
+> >   HOSTCC  /home/matteo/src/linux/samples/bpf/test_lru_dist
+> > /home/matteo/src/linux/samples/bpf/test_lru_dist.c:39:8: error:
+> > redefinition of ‘struct list_head’
+> >    39 | struct list_head {
+> >       |        ^~~~~~~~~
+> > In file included from /home/matteo/src/linux/samples/bpf/test_lru_dist.c:9:
+> > ./tools/include/linux/types.h:69:8: note: originally defined here
+> >    69 | struct list_head {
+> >       |        ^~~~~~~~~
+> > make[2]: *** [scripts/Makefile.host:90:
+> > /home/matteo/src/linux/samples/bpf/test_lru_dist] Error 1
+> > make[1]: *** [Makefile:1762: /home/matteo/src/linux/samples/bpf/] Error 2
+> > make[1]: Leaving directory '/home/matteo/src/linux'
+> > make: *** [Makefile:231: all] Error 2
+> >
+> > Am I missing something obvious?
+>
+> Yes ;)  Samples use a local installation of headers in $objtree/usr (I
+> think, maybe $srctree/usr).  So you need to do make headers_install in
+> your kernel source tree, otherwise the include path from tools/ takes
+> priority over your global /usr/include and causes these issues.  I had
+> this path in my tree for some time, but I don't like enough to post it:
+>
+> commit 35fb614049e93d46af708c0eaae6601df54017b3
+> Author: Jakub Kicinski <jakub.kicinski@netronome.com>
+> Date:   Mon Dec 3 15:00:24 2018 -0800
+>
+>     bpf: maybe warn ppl about hrds_install
+>
+>     Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+>
+> diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
+> index 4f0a1cdbfe7c..f79a4ed2f9f7 100644
+> --- a/samples/bpf/Makefile
+> +++ b/samples/bpf/Makefile
+> @@ -208,6 +208,15 @@ HOSTCC = $(CROSS_COMPILE)gcc
+>  CLANG_ARCH_ARGS = -target $(ARCH)
+>  endif
+>
+> +HDR_PROBE := $(shell echo "\#include <linux/types.h>\n struct list_head { int a; }; int main() { return 0; }" | \
+> +       gcc $(KBUILD_HOSTCFLAGS) -x c - -o /dev/null 2>/dev/null && \
+> +       echo okay)
+> +
+> +ifeq ($(HDR_PROBE),)
+> +$(warning Detected possible issues with include path.)
+> +$(warning Please install kernel headers locally (make headers_install))
+> +endif
+> +
+>  BTF_LLC_PROBE := $(shell $(LLC) -march=bpf -mattr=help 2>&1 | grep dwarfris)
+>  BTF_PAHOLE_PROBE := $(shell $(BTF_PAHOLE) --help 2>&1 | grep BTF)
+>  BTF_OBJCOPY_PROBE := $(shell $(LLVM_OBJCOPY) --help 2>&1 | grep -i 'usage.*llvm')
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Hi Jakub,
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index a550c0a4d572..cf5c215efb04 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -763,7 +763,8 @@
- 	rtc@7000e000 {
- 		compatible = "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
- 		reg = <0x0 0x7000e000 0x0 0x100>;
--		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-parent = <&pmc>;
- 		clocks = <&tegra_car TEGRA210_CLK_RTC>;
- 		clock-names = "rtc";
- 	};
-@@ -773,6 +774,8 @@
- 		reg = <0x0 0x7000e400 0x0 0x400>;
- 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
- 
- 		powergates {
- 			pd_audio: aud {
+I see now, It worked, thanks. This is a bit error prone IMHO, if you
+ever think about sending this patch, consider it ACKed by me.
+
+Thanks,
 -- 
-2.7.4
-
+Matteo Croce
+per aspera ad upstream
