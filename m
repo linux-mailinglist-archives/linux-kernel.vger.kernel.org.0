@@ -2,98 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC0FC25955
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:45:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 177D625964
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:48:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbfEUUof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 16:44:35 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34704 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbfEUUof (ORCPT
+        id S1727983AbfEUUq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 16:46:57 -0400
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:56030 "EHLO
+        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727222AbfEUUqy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 16:44:35 -0400
-Received: by mail-pl1-f194.google.com with SMTP id w7so9003219plz.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 13:44:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=WZpCy0cB1bZa8seHm6gN3ZiBpJveEfAdis7kvbr7t7o=;
-        b=QRFcfqqNp4YMTP3CQzPbdPpxYh+8zMOXGy5xbr1EL7hkl0AYpuQ8/XvENLgbeYRrgl
-         oKjIPQqb2AboKFjkY2XZbVdZb/25rCRQGAGFoK0/bM7ZVfM9nj6oD9/sWzCG7bIPqX2L
-         qvGY6vZ6VO2v9qDpMr/MQim8OodhxbF8CnPNo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=WZpCy0cB1bZa8seHm6gN3ZiBpJveEfAdis7kvbr7t7o=;
-        b=VhlRoQ/DbI2vBD5H3nEam5t13bJJa3QWNtFAV7keSXTy5YUTqg33QCVNLU3L0qzmsM
-         yMWvwLklmkN/SYVA4KN5UbMAm2rwV7D5+3d1RfgVAXDwETVZuLoR9m+4k//5zEZTbi54
-         4MxTl/4R5AQfADLj2b6iJfgUuZg6tihL3xlah7y5cGUNi9mSylG34Kdq2lL225953Ijz
-         AqNcdbfdB8YCb85T0d2Y/iQAG2XQ5mtO1hgqCE3yc9O/lw/xR4qt45YL+/L6fSc6YbGE
-         H+YP+qatW+uMdwqBfcni4933Va+kLbKCAvxwJzB93pXdXpC+wErK2OdByGaljbVoJCyj
-         72jg==
-X-Gm-Message-State: APjAAAUo3hzs2LIq/1O/IsET8R5d3VFlQFHMsX40CW7H3zD2uxLTwaRk
-        3Jz0hlJklGTqR3obc8v48P2kmQ==
-X-Google-Smtp-Source: APXvYqxNcJp0AUDpl6c0V6HvBquRuHrZtPgRLqzonNg7Nu2zy+jXkzhAGbWdqum3DJfGKA6q14iEcQ==
-X-Received: by 2002:a17:902:100a:: with SMTP id b10mr82707198pla.239.1558471474521;
-        Tue, 21 May 2019 13:44:34 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 37sm26555753pgn.21.2019.05.21.13.44.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 13:44:34 -0700 (PDT)
-Date:   Tue, 21 May 2019 13:44:33 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Gen Zhang <blackgod016574@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] consolemap: Fix a memory leaking bug in
- drivers/tty/vt/consolemap.c
-Message-ID: <201905211342.DE554F0D@keescook>
-References: <20190521092935.GA2297@zhanggen-UX430UQ>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521092935.GA2297@zhanggen-UX430UQ>
+        Tue, 21 May 2019 16:46:54 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id CF965A0186;
+        Tue, 21 May 2019 22:46:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1558471611; i=@fjfi.cvut.cz;
+        bh=PX+ooY/jKEW+YUjaFub5T7cSqX+w0C8o4lgdq9z1QgM=;
+        h=From:To:Cc:Subject:Date;
+        b=pxeeB5plHLDPoTzIFr5oPaoVfwZPxEe4BFdbptW5UUPD7wHf0yHh+Hvu4Rf7TgdA3
+         05v5UUbzbWQgVLwnnAUuJvQ4CtiOFtUuPmwz4DDk/kskPtPLyXXhqcEsPQeHMToeZC
+         8PFTmyyyOxq2HoNa2PunvRNM2osC2Dt1XvDyDzMs=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id alyg8UxzqtnM; Tue, 21 May 2019 22:46:47 +0200 (CEST)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 2DF76A004A;
+        Tue, 21 May 2019 22:46:47 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 2DF76A004A
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id DD0A96004D; Tue, 21 May 2019 22:46:46 +0200 (CEST)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Subject: [PATCH v2 0/3] block: sed-opal: add support for shadow MBR done flag and write
+Date:   Tue, 21 May 2019 22:46:43 +0200
+Message-Id: <1558471606-25139-1-git-send-email-zub@linux.fjfi.cvut.cz>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 05:29:35PM +0800, Gen Zhang wrote:
-> In function con_insert_unipair(), when allocation for p2 and p1[n]
-> fails, ENOMEM is returned, but previously allocated p1 is not freed, 
-> remains as leaking memory. Thus we should free p1 as well when this
-> allocation fails.
-> 
-> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> 
-> ---
-> diff --git a/drivers/tty/vt/consolemap.c b/drivers/tty/vt/consolemap.c
-> index b28aa0d..47fbd73 100644
-> --- a/drivers/tty/vt/consolemap.c
-> +++ b/drivers/tty/vt/consolemap.c
-> @@ -489,7 +489,10 @@ con_insert_unipair(struct uni_pagedir *p, u_short unicode, u_short fontpos)
->  	p2 = p1[n = (unicode >> 6) & 0x1f];
->  	if (!p2) {
->  		p2 = p1[n] = kmalloc_array(64, sizeof(u16), GFP_KERNEL);
-> -		if (!p2) return -ENOMEM;
-> +		if (!p2) {
-> +			kfree(p1);
-> +			return -ENOMEM;
-> +		}
+This patch series extends SED Opal support: it adds IOCTL for setting the shadow
+MBR done flag which can be useful for unlocking an Opal disk on boot and it adds
+IOCTL for writing to the shadow MBR.
 
-This doesn't look safe to me: p->uni_pgdir[n] will still have a handle
-to the freed memory, won't it?
+This applies on current master.
 
-(And please direct these patches to Greg, as he's the current
-maintainer; I'm happy to stay CCed, of course.)
+I successfully tested toggling the MBR done flag and writing the shadow MBR
+using some tools I hacked together[1] with a Samsung SSD 850 EVO drive.
 
--Kees
+Changes from v1:
+* PATCH 2/3: remove check with access_ok, just rely on copy_from_user as
+suggested in [2] (I tested passing data == 0 and I got the expected EFAULT)
 
->  		memset(p2, 0xff, 64*sizeof(u16)); /* No glyphs for the characters (yet) */
->  	}
->  
+[1] https://gitlab.com/zub2/opalctl
+[2] https://lore.kernel.org/lkml/20190501134833.GB24132@infradead.org/
+
+Jonas Rabenstein (3):
+  block: sed-opal: add ioctl for done-mark of shadow mbr
+  block: sed-opal: ioctl for writing to shadow mbr
+  block: sed-opal: check size of shadow mbr
+
+ block/opal_proto.h            |  16 ++++
+ block/sed-opal.c              | 157 +++++++++++++++++++++++++++++++++-
+ include/linux/sed-opal.h      |   2 +
+ include/uapi/linux/sed-opal.h |  20 +++++
+ 4 files changed, 193 insertions(+), 2 deletions(-)
 
 -- 
-Kees Cook
+2.20.1
+
