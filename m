@@ -2,121 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 866FB25260
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1127A25264
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:43:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbfEUOnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 10:43:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728256AbfEUOnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 10:43:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55F0021743;
-        Tue, 21 May 2019 14:43:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558449801;
-        bh=CjiBRV0KckUnW7Mknwmgco2QEa8JWeLW/S4VvJH8+D4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AVgioXlFw5pOPCAd/UjFET4MlbCEk0CFtZPTIOpxDQ4UcrOUQxrCdaE5FKkzweBHh
-         xVBTlQmQKGA+qimMoRdVRgi7pycMXn9oVuVLJOXhciC40Hv/oAypuIzoEtZw3UDBXg
-         RTe96lLoGwGm57ajuvWEI6O57AIE3W4Mr6aGgnDc=
-Date:   Tue, 21 May 2019 16:43:19 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Esben Haabendal <esben@haabendal.dk>
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-serial@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh R <vigneshr@ti.com>, Tony Lindgren <tony@atomide.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] serial: 8250: Add support for 8250/16550 as MFD
- function
-Message-ID: <20190521144319.GA28747@kroah.com>
-References: <87bm05mpmx.fsf@haabendal.dk>
- <20190514104741.GO4319@dell>
- <20190514122618.GA18859@kroah.com>
- <87imudky2o.fsf@haabendal.dk>
- <20190521100904.GA13612@kroah.com>
- <87pnocm59v.fsf@haabendal.dk>
- <20190521111817.GA24911@kroah.com>
- <87lfz0m3ge.fsf@haabendal.dk>
- <20190521125651.GA6264@kroah.com>
- <87h89nnajr.fsf@haabendal.dk>
+        id S1728581AbfEUOnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 10:43:39 -0400
+Received: from a9-114.smtp-out.amazonses.com ([54.240.9.114]:38116 "EHLO
+        a9-114.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728053AbfEUOnj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 10:43:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1558449818;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=ugj1TnF91z5+PBr8jQIJ7x5EpDifHr/zSRpWbpp1ovs=;
+        b=BQ+JycJdcpCjIkVBFXG/uI/HVL5jFnPpTJt1wuepkBL/uNGFdX/hN68BkswpWFGW
+        mg/FuCt9SExcgAO0Eslvkkk3XzdUBUdiRTWU+zp5YFpHW7RGAhGngcQtn5shOZF0VN/
+        nOqFCUJNNa5hHtr4UGwVSyLKP9qAjIfWUg7eWWug=
+Date:   Tue, 21 May 2019 14:43:38 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        =?ISO-8859-15?Q?Christian_K=F6nig?= <christian.koenig@amd.com>,
+        =?ISO-8859-15?Q?J=E9r=F4me_Glisse?= <jglisse@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wei Wang <wvw@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH] kernel.h: Add non_block_start/end()
+In-Reply-To: <20190521100611.10089-1-daniel.vetter@ffwll.ch>
+Message-ID: <0100016adad909d8-e6c9c310-36e0-4bdd-80fd-5df1a1660041-000000@email.amazonses.com>
+References: <20190521100611.10089-1-daniel.vetter@ffwll.ch>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h89nnajr.fsf@haabendal.dk>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2019.05.21-54.240.9.114
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 04:31:52PM +0200, Esben Haabendal wrote:
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
-> 
-> > On Tue, May 21, 2019 at 01:50:25PM +0200, Esben Haabendal wrote:
-> >> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
-> >> 
-> >> > On Tue, May 21, 2019 at 01:11:08PM +0200, Esben Haabendal wrote:
-> >> >> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
-> >> >> 
-> >> >> >> I will try ad hold back with this thread until you get back to it.
-> >> >> >
-> >> >> > Ok, I have no idea what is going on here, sorry.  This is a really long
-> >> >> > and meandering thread, and I can't even find the original patches in my
-> >> >> > queue.
-> >> >> >
-> >> >> > So can you resend things and we can start over?  :)
-> >> >> 
-> >> >> Will do.
-> >> >> 
-> >> >> > But note, using a mfd for a uart seems VERY odd to me...
-> >> >> 
-> >> >> Ok.  In my case, I have a pcie card with an fpga which includes 5 uart
-> >> >> ports, 3 ethernet interfaces and a number of custom IP blocks.
-> >> >> I believe that an mfd driver for that pcie card in that case.
-> >> >
-> >> > I believe you need to fix that fpga to expose individual pci devices
-> >> > such that you can properly bind the individual devices to the expected
-> >> > drivers :)
-> >> 
-> >> Well, that is really out-of-scope of what I am doing here.
-> >
-> > Not really, if you have control over the fpga firmware (and odds are you
-> > do), just fix that and instantly your device works with all kernels, no
-> > need to change anything.
-> >
-> > Why not do this?
-> 
-> Because I do not have control over fpga firmware.
+On Tue, 21 May 2019, Daniel Vetter wrote:
 
-Who does?  Why did they create it this way if it can not be accessed by
-an operating system as-is?  Has it passed the PCI tests?  Do you have a
-link to where you can get this crazy device?
+> In some special cases we must not block, but there's not a
+> spinlock, preempt-off, irqs-off or similar critical section already
+> that arms the might_sleep() debug checks. Add a non_block_start/end()
+> pair to annotate these.
 
-> >> > Seriously, who makes such a broken fpga device that goes against the PCI
-> >> > spec that way?  Well, not so much as "goes against it", as "ignores all
-> >> > of the proper ideas of the past 20 years for working with PCI devices".
-> >> 
-> >> Might be.  But that is the firmware I have to work with here, and I
-> >> still hope we can find a good solution for implementing a driver without
-> >> having to maintain out-of-tree patches.
-> >
-> > As this hardware will not work on any operating system as-is, why not
-> > fix the firmware to keep from having to support a one-off device that no
-> > one else would be crazy enough to create?  :)
-> 
-> Clearly, someone has been crazy enough.  Hopefully, we can be smart
-> enough to make Linux fit to it.
+Just putting preempt on/off around these is not sufficient?
 
-Sometimes you need to go tell the hardware/firmware people not to do
-foolish things.  You can not always fix their problems in software.
-Please push back on this.
+If not and you need to add another type of critical section then would
+this not need to be added to the preempt counters? See
+include/linux/preempt.h? Looks like there are sufficient bits left to put
+the counter in there.
 
-thanks,
 
-greg k-h
