@@ -2,124 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3445D24D43
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A8724D3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:52:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbfEUKwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 06:52:43 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:48317 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727060AbfEUKwU (ORCPT
+        id S1727920AbfEUKwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 06:52:33 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40921 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727817AbfEUKw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 06:52:20 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190521105219euoutp02b05c9b08a1d03a60be3c740ac8c68c67~grTrdA_6I1480014800euoutp02N
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 10:52:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190521105219euoutp02b05c9b08a1d03a60be3c740ac8c68c67~grTrdA_6I1480014800euoutp02N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1558435939;
-        bh=a4rhZ7HDvqEXTse02KOkCIPOpiX/GoXFahUQjVRjFLg=;
-        h=From:Subject:To:Cc:Date:References:From;
-        b=NcJ+cu+aKZ3+h5RKQrrpUzr0mvBakOdHXoTYYtfxF609Eqv5N1Hq3heFaFm0fh2ue
-         VqxXojXBwlTfohpZlVBgeciVnvatgkSCgS+Asv/O8xtuRLa0i84KjiP2nkR6XD0DFr
-         WYeMXfZGd+8uIbNGoTbsK8ze1nmOqMFXuYYbM17U=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190521105218eucas1p223bcb596e0f5151933429035226d649c~grTqvaKul3024630246eucas1p2B;
-        Tue, 21 May 2019 10:52:18 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id CE.05.04298.268D3EC5; Tue, 21
-        May 2019 11:52:18 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190521105217eucas1p19796d2969c1a568fecb0750818226241~grTp_qUlh0212202122eucas1p1L;
-        Tue, 21 May 2019 10:52:17 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190521105217eusmtrp10af3bb8c9b7bf448b194ab3dfa026eef~grTpvH-dp1584715847eusmtrp1S;
-        Tue, 21 May 2019 10:52:17 +0000 (GMT)
-X-AuditID: cbfec7f2-f13ff700000010ca-79-5ce3d86229b6
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id DA.F4.04140.168D3EC5; Tue, 21
-        May 2019 11:52:17 +0100 (BST)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190521105217eusmtip13906abf5ab5422044daf75a93ee3213b~grTpZV8cU2619726197eusmtip1F;
-        Tue, 21 May 2019 10:52:17 +0000 (GMT)
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2] video: fbdev: atmel_lcdfb: add COMPILE_TEST support
-To:     Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-ID: <f9d56fc1-3e02-9716-b764-82e9600e5919@samsung.com>
-Date:   Tue, 21 May 2019 12:52:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.6.1
+        Tue, 21 May 2019 06:52:26 -0400
+Received: by mail-wr1-f67.google.com with SMTP id f10so2637361wre.7;
+        Tue, 21 May 2019 03:52:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HRbTjVTN8OoB545citX2qhVa2c0AvJYcHqIgYxkmq9A=;
+        b=gkkqBAtxeAPYYG/Bk54hkH9W9k40R8uawvVI3nn1dXeSJIdx/0BCghDn7ppDeHy6kc
+         1x4Kj9pDY90TqhbyxR++oZHu8pwSewYJrFIxFsz9FdXkXh+jIniud+n3yXsT6VL3l5Eo
+         UGQ/KSJ4OvIGeCP/jH/8MXWbg/0mnp9LSdquQwLKvvosZZn4c2re21swy87R4nDoA1H6
+         dMD9CsR71iXzoaUsfgtnS2dh+3mcASZHM/OsAZC8tqFPbzhwB8TzayFS8SnvKWoeoytB
+         U6klf3SUPvPyHoT8EABXmdCYtoaLA0kiRvJw8nmMR0O+ZD3ty8UJL6sUYET3+6ATBAPL
+         lnyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HRbTjVTN8OoB545citX2qhVa2c0AvJYcHqIgYxkmq9A=;
+        b=QfuWyoyieRcxxR/SIBw9CPAzN/6AfBITL/0S3murF2JY2sp9uCZamdmBJAwm+EW5hZ
+         SArvSV0wu94NRP+ulAVM82K2pr6PLl8rZbjzK5XWhf6zRXbcErLq/N+jYK6Il/eQFd7S
+         8pYirZ7QRcOvDui1/alUlaPj0J/UWLvPSDzw0R3fyPybb08VlCLqFc5Md3wdlVeGUfKB
+         1+hTX/vBKbXZqbIycXmBGZsOnEZR8scmrf7bGJ5+uixTVOEKYeFqrrS//uOrHOIZgcKJ
+         4b96moBg4L5CxLPAk1k787+G4osnsApvUK6gWFGxgu9EnX1I9w7CVXDmAPTIdgF/jwGl
+         DAeQ==
+X-Gm-Message-State: APjAAAVrgo4KDb7qH67zOJlEjNsDRmFzqbNRCsO8zt6T1e+SIUfwLZV8
+        2IU/MFdPAD+TVaVC0MBjMsA=
+X-Google-Smtp-Source: APXvYqxpXXLjrUYm+9Ks93ImeKkcYxcdmkZsVwnotPqTe6hEInxRQZ9jQBFI3jur5GF4T/OAdMh/zg==
+X-Received: by 2002:adf:cc8e:: with SMTP id p14mr34392325wrj.82.1558435944596;
+        Tue, 21 May 2019 03:52:24 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id a22sm2545601wma.41.2019.05.21.03.52.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 May 2019 03:52:23 -0700 (PDT)
+Date:   Tue, 21 May 2019 12:52:22 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, mperttunen@nvidia.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V7 10/15] dt-bindings: PHY: P2U: Add Tegra194 P2U block
+Message-ID: <20190521105222.GJ29166@ulmo>
+References: <20190517123846.3708-1-vidyas@nvidia.com>
+ <20190517123846.3708-11-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djP87pJNx7HGFz7LmLR/m4Zu8WVr+/Z
-        LDY9vsZqcaLvA6vF5V1z2CxerL3OarF980JmB3aPeWuqPe53H2fy2Lyk3uPOj6WMHp83yQWw
-        RnHZpKTmZJalFunbJXBlbL62kqVgNlvFmy8rmBsYZ7N2MXJySAiYSJy8d5Spi5GLQ0hgBaPE
-        8msTmCGcL4wSO9dNZAGpEhL4zCjRdtAPpmPh+ensEPHljBLHbopBNLxllDjw6TfYWDYBK4mJ
-        7asYQWxhAXeJOY33gFZwcIgI6Ev86VIEqWcW+MQo0T5rLVgNr4CdxNRzO9hAbBYBVYnJP6aB
-        zREViJC4f2wDK0SNoMTJmU/ADmIWEJe49WQ+E4QtL7H97RywqyUEprNLnF54ixniUheJL22v
-        2CFsYYlXx7dA2TISpyf3sEA0rGOU+NvxAqp7OzAAJv9jg6iyljh8/CIryNnMApoS63fpQ4Qd
-        JV48/MkIEpYQ4JO48VYQ4gg+iUnbpjNDhHklOtqEIKrVJDYs28AGs7Zr50qo0zwk3qz4xz6B
-        UXEWktdmIXltFpLXZiHcsICRZRWjeGppcW56arFhXmq5XnFibnFpXrpecn7uJkZg+jn97/in
-        HYxfLyUdYhTgYFTi4c2Y8ihGiDWxrLgy9xCjBAezkgjv6VNAId6UxMqq1KL8+KLSnNTiQ4zS
-        HCxK4rzVDA+ihQTSE0tSs1NTC1KLYLJMHJxSDYzsulFGexkWLFRn4yw+x3/z5KOqUqcapTi7
-        GPYDdezTA5ds7teOvLG2+NrbMP+lfz5omq6M8mubu+HUg4WbWvY8k34Yd/1vRLWNkd3TdL39
-        F/09vOTy3wRZhfpM3jUnnv91xffGx++2iXxuLepr/BbHk2rSdShL6rBVmNa88BkNsqfWPuxt
-        V1JiKc5INNRiLipOBAA6lT9SOwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsVy+t/xu7qJNx7HGLxskLdof7eM3eLK1/ds
-        FpseX2O1ONH3gdXi8q45bBYv1l5ntdi+eSGzA7vHvDXVHve7jzN5bF5S73Hnx1JGj8+b5AJY
-        o/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyNl9b
-        yVIwm63izZcVzA2Ms1m7GDk5JARMJBaen87excjFISSwlFHi26ajjF2MHEAJGYnj68sgaoQl
-        /lzrYoOoec0osaN1AxNIgk3ASmJi+ypGEFtYwF1iTuM9JpBeEQF9iT9diiD1zAKfGCV+PW8H
-        q+EVsJOYem4HG4jNIqAqMfnHNLAjRAUiJM68X8ECUSMocXLmEzCbWUBd4s+8S8wQtrjErSfz
-        mSBseYntb+cwT2AUmIWkZRaSlllIWmYhaVnAyLKKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMj
-        MH62Hfu5ZQdj17vgQ4wCHIxKPLwZUx7FCLEmlhVX5h5ilOBgVhLhPX0KKMSbklhZlVqUH19U
-        mpNafIjRFOihicxSosn5wNjOK4k3NDU0t7A0NDc2NzazUBLn7RA4GCMkkJ5YkpqdmlqQWgTT
-        x8TBKdXA2Ljyua/uNWaHaZsOxvNvPSk/e5V3/nYjS4dyhT0Cse97nmYk6N9JOO78O9ljWm4m
-        L8+a4/XcGtHrf0/ROz8pfOf9T04dS3+tVp+rtnv1br5FAvOYQhMkFkxdt44ht599/vbkoLnq
-        6SY1Ly0uXPO41/pxukmOxP0J1l9VrcoNZAOLc4032ZpqKbEUZyQaajEXFScCADhftqO1AgAA
-X-CMS-MailID: 20190521105217eucas1p19796d2969c1a568fecb0750818226241
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190521105217eucas1p19796d2969c1a568fecb0750818226241
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190521105217eucas1p19796d2969c1a568fecb0750818226241
-References: <CGME20190521105217eucas1p19796d2969c1a568fecb0750818226241@eucas1p1.samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yhze8HlyfmXt1APY"
+Content-Disposition: inline
+In-Reply-To: <20190517123846.3708-11-vidyas@nvidia.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add COMPILE_TEST support to atmel_lcdfb driver for better compile
-testing coverage.
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-v2: add missing HAVE_CLK && HAS IOMEM dependencies
+--yhze8HlyfmXt1APY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/video/fbdev/Kconfig |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Fri, May 17, 2019 at 06:08:41PM +0530, Vidya Sagar wrote:
+> Add support for Tegra194 P2U (PIPE to UPHY) module block which is a glue
+> module instantiated one for each PCIe lane between Synopsys DesignWare co=
+re
+> based PCIe IP and Universal PHY block.
+>=20
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> Changes since [v6]:
+> * None
+>=20
+> Changes since [v5]:
+> * Added Sob
+> * Changed node name from "p2u@xxxxxxxx" to "phy@xxxxxxxx"
+>=20
+> Changes since [v4]:
+> * None
+>=20
+> Changes since [v3]:
+> * None
+>=20
+> Changes since [v2]:
+> * Changed node label to reflect new format that includes either 'hsio' or
+>   'nvhs' in its name to reflect which UPHY brick they belong to
+>=20
+> Changes since [v1]:
+> * This is a new patch in v2 series
+>=20
+>  .../bindings/phy/phy-tegra194-p2u.txt         | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/phy-tegra194-p2=
+u.txt
 
-Index: b/drivers/video/fbdev/Kconfig
-===================================================================
---- a/drivers/video/fbdev/Kconfig
-+++ b/drivers/video/fbdev/Kconfig
-@@ -856,7 +856,8 @@ config FB_S1D13XXX
- 
- config FB_ATMEL
- 	tristate "AT91 LCD Controller support"
--	depends on FB && OF && HAVE_FB_ATMEL
-+	depends on FB && OF && HAVE_CLK && HAS_IOMEM
-+	depends on HAVE_FB_ATMEL || COMPILE_TEST
- 	select FB_BACKLIGHT
- 	select FB_CFB_FILLRECT
- 	select FB_CFB_COPYAREA
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--yhze8HlyfmXt1APY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzj2GYACgkQ3SOs138+
+s6GkRBAAsTNXxZRflg9TNJMUocJhYJyNf2p2I3MYeL/Es4lheCSur4dpFNxLS4d4
+8ovi/gHEn583zazth7fZmKLKRA1uowxBAY3GIeOwHDUjUPUM4EoskrdGiIHqyb1Q
+RwheHqBMllkYHAUoqNYKAMqW6HScTa2rp6cRs/MoK2KEGK1lK2gutkLSx81RwVcN
+A4hDk+lJBT7cBgAiF+qbl/S/5K6JA/4ZAJWFIj5reM13zItYRg2X8ybijky1enbX
+kGhxxq5IphzpFPEOQxEDjKu+0XtnKZkh9Uc9zgWZeniV+GNQWNu/KdznSrh88hgU
+qiCF1Oneyu638SdA6sBGLqD4MC/Lkz80oJmtYlCAwdkHuUM4NmpLMn7MbXt1ztdG
+v8FvlB9j98nL4fRSB5cUhryuFACwCRmO/oZ873PfHSmcaku6OHjTrYEGqO+wM3UK
+ejpHA4w5kWmE9PSNvuBee3InEwvIRiBGCio5es1G0OH1NDUmoxCdv4uif+cHm+DB
+sQdkoV/9/XKEk2qU9uYr7gPcO9pm0X/aqa5nRV5Nj8QO9yUMqI8AyWGgqUP922gm
+CC7w7PYMch9sjOvNKdZZ5GjdRrUrTh6D7qpr8IfZ3ryxmzBE0o2Kqi1Rx6C5OBOr
+5f1joAV9ke0zZ8c0923NrFnKAdo6FeB2epvM1qyTQUBM7V0QyNA=
+=n2S2
+-----END PGP SIGNATURE-----
+
+--yhze8HlyfmXt1APY--
