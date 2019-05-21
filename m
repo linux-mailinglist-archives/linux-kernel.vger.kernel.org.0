@@ -2,135 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 128E024D85
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:04:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC0D524D89
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:04:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbfEULEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 07:04:02 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44321 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726692AbfEULEB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 07:04:01 -0400
-Received: by mail-io1-f67.google.com with SMTP id f22so13518363iol.11
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 04:04:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tVZ1tFnofzDOshXJ55p2YIxYyc5VRLW0cEuiG1ZNDek=;
-        b=ihR4sLB+Kcp5BjrhDZHbUHYi2I33+G3zsEL7+TLDz8Y7qWAJ6TdjzbQk2F+OSvOM1A
-         GLIa2qJAZhBQZ9VZwMjjj3E45vPjlkcUCpN6i/oYE7jp19uqCloRgvG1a6iAmErAWRgE
-         Qebj/ChBVrQbBUZg0ohqVfL9DyqylRQYV9NQNal9pXz9TXgpd8sF8qjgc21GP7N6zHeG
-         FYb1QS5bhZgssSibeUx/tIQkitHUx5vKhoE2slQG2BN9Wmt2paYn5C4O2aKpZelG1qwW
-         AwPwcL8iGMce28BZ/P2CtfAQNd9d3mCbLhtcxCDemp2dZnA6XZEwzQ1NEAMpidVJjVuo
-         6mtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tVZ1tFnofzDOshXJ55p2YIxYyc5VRLW0cEuiG1ZNDek=;
-        b=DcCC2NDXXGiXxh2YSSuLfB6QNjaIk2dwZvNsxNcHIjjWSBa6VkU242saA8UP2nMfcz
-         io7D58aTOM/HU/d//Jm44KbCGMzuAS3shIM4VQG++21ZKa62yLVhahXDkWz8/Q+ZJWwS
-         n8SCTSGAg++S9O6wB+7ZRQVn+EIt1QOcDbxvxpfOnXnH3N0HJp9/j2E4LOf8UW39l+/U
-         aZP0sgj943AkNKJ8l2z9aP2UlEfQ2wDG64hktD03GRjjknujq5+DaVEv7of9uVdN2SfX
-         uhVGjfYhp04xP2w0TH/h4DakhY0V+m7uTjD3zaYRvA5vTMSKpsFIA3bEJrdkc7qRKn1w
-         pM5g==
-X-Gm-Message-State: APjAAAUQiywKdGjE/64bxSO1R9DW1FF4LlqiKq9RJ2ijG/4CHn7PRQD9
-        fh3OXdZb4x2xPBGlbfSMC4zJcSa8Qzc=
-X-Google-Smtp-Source: APXvYqzdS1QKhqlxQQboe9Y8ZH8ImzRkyRKdPGltO8YHoy6eE3kbPG+Qdn9Y/EsptD5mGgIiV7tFqw==
-X-Received: by 2002:a6b:da11:: with SMTP id x17mr1436692iob.78.1558436639911;
-        Tue, 21 May 2019 04:03:59 -0700 (PDT)
-Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
-        by smtp.googlemail.com with ESMTPSA id q24sm6851957ioh.31.2019.05.21.04.03.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 04:03:59 -0700 (PDT)
-Subject: Re: [PATCH 1/8] net: qualcomm: rmnet: fix struct rmnet_map_header
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
-        arnd@arndb.de, david.brown@linaro.org, agross@kernel.org,
-        davem@davemloft.net, ilias.apalodimas@linaro.org,
-        cpratapa@codeaurora.org, syadagir@codeaurora.org,
-        evgreen@chromium.org, benchan@google.com, ejcaruso@google.com,
-        netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190520135354.18628-1-elder@linaro.org>
- <20190520135354.18628-2-elder@linaro.org>
- <b0edef36555877350cfbab2248f8baac@codeaurora.org>
- <81fd1e01-b8e3-f86a-fcc9-2bcbc51bd679@linaro.org>
- <d90f8ccdc1f76f9166f269eb71a14f7f@codeaurora.org>
- <cd839826-639d-2419-0941-333055e26e37@linaro.org>
- <20190521030712.GY2085@tuxbook-pro>
-From:   Alex Elder <elder@linaro.org>
-Message-ID: <25b1d768-d492-08a7-b1ab-d3d022b01bc9@linaro.org>
-Date:   Tue, 21 May 2019 06:03:58 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190521030712.GY2085@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8
+        id S1727950AbfEULER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 07:04:17 -0400
+Received: from mail-eopbgr60071.outbound.protection.outlook.com ([40.107.6.71]:59774
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727251AbfEULEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 07:04:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oDM52TrHThP77ijg+n8fbhynIoUF2T9ddT0capVhIos=;
+ b=Cr96dR/ff+p7dBekCjQZuph7rAByqCw/RxRWPSiXs4BV7GRGLwJKTvqcpmjWfz9+7gR+0D98dZyJ3Kmjbvdt9li/7NRXwap2xzgjBYPF/Pttd8XQOfuxKjBXGkYEkxuGXLUHqJrAagD7YfNneaQ6FCTtbjkiPc4Kz8eUhHNP9FQ=
+Received: from VI1PR04MB5134.eurprd04.prod.outlook.com (20.177.50.159) by
+ VI1PR04MB3262.eurprd04.prod.outlook.com (10.170.231.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.16; Tue, 21 May 2019 11:04:12 +0000
+Received: from VI1PR04MB5134.eurprd04.prod.outlook.com
+ ([fe80::8d0e:de86:9b49:b40]) by VI1PR04MB5134.eurprd04.prod.outlook.com
+ ([fe80::8d0e:de86:9b49:b40%7]) with mapi id 15.20.1900.020; Tue, 21 May 2019
+ 11:04:12 +0000
+From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     "hch@lst.de" <hch@lst.de>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "marex@denx.de" <marex@denx.de>, Leo Li <leoyang.li@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "noring@nocrew.org" <noring@nocrew.org>,
+        "JuergenUrban@gmx.de" <JuergenUrban@gmx.de>
+Subject: Re: [PATCH v4 1/3] USB: use genalloc for USB HCs with local memory
+Thread-Topic: [PATCH v4 1/3] USB: use genalloc for USB HCs with local memory
+Thread-Index: AQHVC917qUD5l71fnkeLasY+jBJde6Z1Q2GAgAAuuoA=
+Date:   Tue, 21 May 2019 11:04:12 +0000
+Message-ID: <e71c7f9d-2299-827d-821f-591e134f4a8f@nxp.com>
+References: <20190516114721.27694-1-laurentiu.tudor@nxp.com>
+ <20190516114721.27694-2-laurentiu.tudor@nxp.com>
+ <20190521081657.GA10639@kroah.com>
+In-Reply-To: <20190521081657.GA10639@kroah.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=laurentiu.tudor@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7314dd37-1266-49e3-f6d5-08d6dddc0e6a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB3262;
+x-ms-traffictypediagnostic: VI1PR04MB3262:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <VI1PR04MB32624C8A9985E5E7B5F23D39EC070@VI1PR04MB3262.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0044C17179
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(366004)(136003)(396003)(346002)(199004)(189003)(476003)(2616005)(486006)(6512007)(6306002)(256004)(14444005)(6916009)(53546011)(6506007)(446003)(11346002)(8676002)(102836004)(81156014)(81166006)(8936002)(229853002)(36756003)(6486002)(31696002)(5660300002)(86362001)(71200400001)(71190400001)(6436002)(305945005)(7736002)(4326008)(66446008)(64756008)(66946007)(66476007)(478600001)(76116006)(316002)(73956011)(6116002)(3846002)(66556008)(91956017)(14454004)(68736007)(6246003)(45080400002)(76176011)(44832011)(31686004)(26005)(25786009)(966005)(53936002)(2906002)(66066001)(186003)(99286004)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3262;H:VI1PR04MB5134.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: y8lWGr7eyZC1aLIQ2LSm9yh4cFt5rz6UPS7gCmORt0OkvFhVmPefCZlPbRevE++8yfRQNRDSo8T4eFx2u3AMXj6A12vr6Ae3j3zC2C1fOjPZOEyc873w/aDZ7MQPLQ8/rfy9eV3Ouj5XNe6V+SZMxRp/Jgn48eczU2EtNJq/M8M/k00i5u/FTrdjtEHsuHcPUwyzgASNLqswdImhqei2VTrjADy/9Nx3Gm+ID5BdvMHvFqnDM6WndqTsLkvd7E+jhxhk+pfxwy+IcLnK+ESmH9UBT6nkrTMQgyU6l3brAIKDRPefEipELdy0f22q+HLoVAjMdrs/N7Rzx7J3gxM+yVTRRR4+uII7IEniJ8lp4YncJEgxTQmpe2nGyEnZZ3gmeaYyN1tdkkCbz3jUoAYv+mMH0XrtqiSvVxc7BxuEmWI=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <ED71632D14E7E245BB97A0643D2A4976@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7314dd37-1266-49e3-f6d5-08d6dddc0e6a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 11:04:12.2839
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3262
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/20/19 10:07 PM, Bjorn Andersson wrote:
-> On Mon 20 May 19:30 PDT 2019, Alex Elder wrote:
-> 
->> On 5/20/19 8:32 PM, Subash Abhinov Kasiviswanathan wrote:
->>>>
->>>> If you are telling me that the command/data flag resides at bit
->>>> 7 of the first byte, I will update the field masks in a later
->>>> patch in this series to reflect that.
->>>>
->>>
->>> Higher order bit is Command / Data.
->>
->> So what this means is that to get the command/data bit we use:
->>
->> 	first_byte & 0x80
->>
->> If that is correct I will remove this patch from the series and
->> will update the subsequent patches so bit 7 is the command bit,
->> bit 6 is reserved, and bits 0-5 are the pad length.
->>
->> I will post a v2 of the series with these changes, and will
->> incorporate Bjorn's "Reviewed-by".
->>
-> 
-> But didn't you say that your testing show that the current bit order is
-> wrong?
-
-I did say that, but it seems I may have been misinterpreting
-what the documentation said, namely that "bit 0" in the network
-data stream is actually the high-order bit in the first byte.
-
-I did definitely see that bit 7 (0x80) in the first byte was the
-one selected by the "cd_bit" C bit-field originally, and I believed
-that was wrong.
-
-The other thing I can say is that I never see that bit set in my
-use of the rmnet driver for IPA.  On top of that, the pad_len
-value is 0.  Given that, either bit order works, because the
-whole first byte is 0 either way.  So it turns out the testing
-I am able to do is not adequate to verify the change.
-
-I am hoping that Subash has an environment in which QMAP
-commands (with the appropriate bit set) are actually used.
-
-I'm going to wait a bit for him to confirm that, but at this
-time my plan is to do as I said above--remove this patch and
-adjust the ones that follow accordingly.
-
-					-Alex
-
-> I still like the cleanup, if nothing else just to clarify and clearly
-> document the actual content of this header.
-> 
-> Regards,
-> Bjorn
-> 
-
+DQoNCk9uIDIxLjA1LjIwMTkgMTE6MTYsIEdyZWcgS0ggd3JvdGU6DQo+IE9uIFRodSwgTWF5IDE2
+LCAyMDE5IGF0IDAyOjQ3OjE5UE0gKzAzMDAsIGxhdXJlbnRpdS50dWRvckBueHAuY29tIHdyb3Rl
+Og0KPj4gRnJvbTogTGF1cmVudGl1IFR1ZG9yIDxsYXVyZW50aXUudHVkb3JAbnhwLmNvbT4NCj4+
+DQo+PiBGb3IgSENzIHRoYXQgaGF2ZSBsb2NhbCBtZW1vcnksIHJlcGxhY2UgdGhlIGN1cnJlbnQg
+RE1BIEFQSSB1c2FnZQ0KPj4gd2l0aCBhIGdlbmFsbG9jIGdlbmVyaWMgYWxsb2NhdG9yIHRvIG1h
+bmFnZSB0aGUgbWFwcGluZ3MgZm9yIHRoZXNlDQo+PiBkZXZpY2VzLg0KPj4gVGhpcyBpcyBpbiBw
+cmVwYXJhdGlvbiBmb3IgZHJvcHBpbmcgdGhlIGV4aXN0aW5nICJjb2hlcmVudCIgZG1hDQo+PiBt
+ZW0gZGVjbGFyYXRpb24gQVBJcy4gQ3VycmVudCBpbXBsZW1lbnRhdGlvbiB3YXMgcmVseWluZyBv
+biBhIHNob3J0DQo+PiBjaXJjdWl0IGluIHRoZSBETUEgQVBJIHRoYXQgaW4gdGhlIGVuZCwgd2Fz
+IGFjdGluZyBhcyBhbiBhbGxvY2F0b3INCj4+IGZvciB0aGVzZSB0eXBlIG9mIGRldmljZXMuDQo+
+Pg0KPj4gRm9yIGNvbnRleHQsIHNlZSB0aHJlYWQgaGVyZTogaHR0cHM6Ly9ldXIwMS5zYWZlbGlu
+a3MucHJvdGVjdGlvbi5vdXRsb29rLmNvbS8/dXJsPWh0dHBzJTNBJTJGJTJGbGttbC5vcmclMkZs
+a21sJTJGMjAxOSUyRjQlMkYyMiUyRjM1NyZhbXA7ZGF0YT0wMiU3QzAxJTdDbGF1cmVudGl1LnR1
+ZG9yJTQwbnhwLmNvbSU3Q2Y1MjQyZmIyOGQxNTRmZjk2NTMyMDhkNmRkYzRiNDFjJTdDNjg2ZWEx
+ZDNiYzJiNGM2ZmE5MmNkOTljNWMzMDE2MzUlN0MwJTdDMCU3QzYzNjk0MDIzNDIzNzUyNDQ5OSZh
+bXA7c2RhdGE9S0VFVVAxS0glMkJhcmFXY1ZLb2dlWUJ6cmF1aCUyRkZUekdqU3hqayUyQnVOb3pq
+QSUzRCZhbXA7cmVzZXJ2ZWQ9MA0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IExhdXJlbnRpdSBUdWRv
+ciA8bGF1cmVudGl1LnR1ZG9yQG54cC5jb20+DQo+PiAtLS0NCj4+ICAgZHJpdmVycy91c2IvY29y
+ZS9idWZmZXIuYyAgIHwgMTUgKysrKysrKysrKystLS0tDQo+PiAgIGRyaXZlcnMvdXNiL2hvc3Qv
+b2hjaS1oY2QuYyB8IDIzICsrKysrKysrKysrKysrKysrKy0tLS0tDQo+PiAgIGluY2x1ZGUvbGlu
+dXgvdXNiL2hjZC5oICAgICB8ICAzICsrKw0KPj4gICAzIGZpbGVzIGNoYW5nZWQsIDMyIGluc2Vy
+dGlvbnMoKyksIDkgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNi
+L2NvcmUvYnVmZmVyLmMgYi9kcml2ZXJzL3VzYi9jb3JlL2J1ZmZlci5jDQo+PiBpbmRleCBmNjQx
+MzQyY2RlYzAuLjIyYThmM2Y1Njc5YiAxMDA2NDQNCj4+IC0tLSBhL2RyaXZlcnMvdXNiL2NvcmUv
+YnVmZmVyLmMNCj4+ICsrKyBiL2RyaXZlcnMvdXNiL2NvcmUvYnVmZmVyLmMNCj4+IEBAIC0xNiw2
+ICsxNiw3IEBADQo+PiAgICNpbmNsdWRlIDxsaW51eC9pby5oPg0KPj4gICAjaW5jbHVkZSA8bGlu
+dXgvZG1hLW1hcHBpbmcuaD4NCj4+ICAgI2luY2x1ZGUgPGxpbnV4L2RtYXBvb2wuaD4NCj4+ICsj
+aW5jbHVkZSA8bGludXgvZ2VuYWxsb2MuaD4NCj4+ICAgI2luY2x1ZGUgPGxpbnV4L3VzYi5oPg0K
+Pj4gICAjaW5jbHVkZSA8bGludXgvdXNiL2hjZC5oPg0KPj4gICANCj4+IEBAIC0xMjQsMTAgKzEy
+NSwxMiBAQCB2b2lkICpoY2RfYnVmZmVyX2FsbG9jKA0KPj4gICAJaWYgKHNpemUgPT0gMCkNCj4+
+ICAgCQlyZXR1cm4gTlVMTDsNCj4+ICAgDQo+PiArCWlmIChoY2QtPmRyaXZlci0+ZmxhZ3MgJiBI
+Q0RfTE9DQUxfTUVNKQ0KPj4gKwkJcmV0dXJuIGdlbl9wb29sX2RtYV9hbGxvYyhoY2QtPmxvY2Fs
+bWVtX3Bvb2wsIHNpemUsIGRtYSk7DQo+IA0KPiBEb2VzIHRoaXMgcGF0Y2ggbm93IGJyZWFrIHRo
+aW5ncz8gIGhjZC0+bG9jYWxtZW1fcG9vbCBhdCB0aGlzIHBvaW50IGluDQo+IHRpbWUgaXMgTlVM
+TCwgc28gdGhpcyBjYWxsIHdpbGwgZmFpbC4gIFRoZXJlJ3Mgbm8gY2hhbmNlIGZvciBhbnkgaG9z
+dA0KPiBjb250cm9sbGVyIGRyaXZlciB0byBhY3R1YWxseSBzZXQgdXAgdGhpcyBwb29sIGluIHRo
+aXMgcGF0Y2gsIHNvIGlzDQo+IGJpc2VjdGlvbiBicm9rZW4/DQoNClVuZm9ydHVuYXRlbHksIHll
+cy4gSSBjb3VsZCBsdW1wIHRoZSBwYXRjaGVzIHRvZ2V0aGVyIGJ1dCBJIHRoaW5rIA0KQ2hyaXN0
+b3BoIHN1Z2dlc3Rpb24gaXMgbXVjaCBiZXR0ZXIuDQoNCj4gSSB0aGluayB5b3UgZml4IHRoaXMg
+dXAgaW4gbGF0ZXIgcGF0Y2hlcywgcmlnaHQ/DQoNCkNvcnJlY3QuIFRoZSBsYXN0IDIgcGF0Y2hl
+cyB1cGRhdGUgdGhlIGRyaXZlci4NCg0KPiBBbmQgaWYgc28sIHdoeSBkbyB3ZSBldmVuIG5lZWQg
+SENEX0xPQ0FMX01FTSBhbnltb3JlPyAgQ2FuJ3Qgd2UganVzdA0KPiB0ZXN0IGZvciB0aGUgcHJl
+c2VuY2Ugb2YgaGNkLT5sb2NhbG1lbV9wb29sIGluIG9yZGVyIHRvIGRldGVybWluZSB3aGljaA0K
+PiBhbGxvY2F0aW9uIG1ldGhvZCB0byB1c2U/DQoNClN1cmUuIFRoZXJlIGFyZSBhIGZldyBtb3Jl
+IHBsYWNlcyB0aGF0IG5lZWQgdXBkYXRlcyBidXQgbm8gYmlnIGRlYWwuDQoNCi0tLQ0KQmVzdCBS
+ZWdhcmRzLCBMYXVyZW50aXU=
