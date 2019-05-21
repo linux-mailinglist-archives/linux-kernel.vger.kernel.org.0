@@ -2,71 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E700825272
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38EC125277
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728670AbfEUOop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 10:44:45 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33974 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727534AbfEUOon (ORCPT
+        id S1728474AbfEUOpi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 10:45:38 -0400
+Received: from mailrelay3-1.pub.mailoutpod1-cph3.one.com ([46.30.210.184]:61011
+        "EHLO mailrelay3-1.pub.mailoutpod1-cph3.one.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728053AbfEUOpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 10:44:43 -0400
-Received: by mail-pg1-f195.google.com with SMTP id c13so8717275pgt.1
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 07:44:43 -0700 (PDT)
+        Tue, 21 May 2019 10:45:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=20boaGcuTy2P/q/l6C6tvbRVOXzptyGwu2wWe12RiuQ=;
-        b=s+OBR2IKJQaoUQq9TkWY3iZcIs8e6aYEI+r9wKvUEcT6UD/19KTdDki3T0NaS/oTlM
-         +AUNS/lE8i4+X3nMObC/Upl34o0z9IlyvRG0n4jyNjZFynpQi/uD3z1Z9bJ3kZo16giQ
-         MNN9d/C2fQPFOeT54uoP1ys/ZyhVBmjq9jTpCe3LIi4CRhkRY+4cptVb3DdmWhdxZYGb
-         2g0jKE4pArWrk05EE5w72g/dRPpSAPDInuTQ0R3ygjGVRXeK8/g3w6ihdS7zoPG9f4K9
-         W1JIirwgP/gPga5Goqo5K/COqR4A3ngSLo8IhdDzo/fnMdqPzvGvR8ZGCzMD5xmpBTrB
-         TYrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=20boaGcuTy2P/q/l6C6tvbRVOXzptyGwu2wWe12RiuQ=;
-        b=mi0YdWHZ7e+rczVA4Y/kUukFkBpuBe7KN2ETVNzkAPSy7Kfp7aZ+wbSmy2/GJ7CDxk
-         rQo10y7nwf2dzO4wmf3egdkOMAp16G6nJZTxO/UIkK/0JwvTn0sScnHqsDRapiZ+7vSG
-         LEtvm84sstN9DbvrCfGvMH46lvoKUtOQE5/537z/9frQcziyhl9gWr1cNzyqTJ/UI26p
-         1zelklkigKnBGnjY1zFgGIFauH9xRlQeUHUP4gduKzHgjyhT07/YST22KfgIS/2kfkhs
-         FGbukzuAxYKquFrEDygIEvANysNYKpdOiTPozI9A1/ZNgsYz+pN8vpFeCvlqYiJYvP95
-         zzYQ==
-X-Gm-Message-State: APjAAAVg2kHjc/L+Kkrwqr6YHqO5Q9LwksfqdF20pyoF+0ONwHqzWHZn
-        NWSwfHC203jJspxJBGnATfA0gV5ZMMbToSX3Y7zz+A==
-X-Google-Smtp-Source: APXvYqyA+fanBPthrAZNEO/42AAbNH+ShAhflMTvjT9+edDFR0bIUpIat8IciWUEhLHFshzc8I4kS1LFJgVULD5dpK4=
-X-Received: by 2002:aa7:8652:: with SMTP id a18mr85823169pfo.167.1558449882753;
- Tue, 21 May 2019 07:44:42 -0700 (PDT)
+        d=haabendal.dk; s=20140924;
+        h=content-type:mime-version:message-id:in-reply-to:date:references:subject:cc:
+         to:from:from;
+        bh=yF1kMxbfKY3mIBf7ir1NBO1NbSFFsSvtntMmQyMq9Aw=;
+        b=ZhV6rE2WAMz9SU9zP8bAHcLFgqC1u4PEToUb2Q5BR3ZghoTPLhTZyvTVIZgCSHa/4OI6avgNyHblE
+         kedcV520GR18HmJzOw54xadc3hRSfzE9KlTr9ti2HXlTqi03WA8tGtxgzuiB32LngZtvGakwk7EnXR
+         SbBHEL7Ngbmh6BXM=
+X-HalOne-Cookie: 2a52dc17793368b569374440271801bbe3f97668
+X-HalOne-ID: 172c70b3-7bd7-11e9-a0e1-d0431ea8bb03
+Received: from localhost (unknown [193.163.1.7])
+        by mailrelay3.pub.mailoutpod1-cph3.one.com (Halon) with ESMTPSA
+        id 172c70b3-7bd7-11e9-a0e1-d0431ea8bb03;
+        Tue, 21 May 2019 14:45:35 +0000 (UTC)
+From:   Esben Haabendal <esben@haabendal.dk>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-serial@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
+        Enrico Weigelt <lkml@metux.net>, Jiri Slaby <jslaby@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darwin Dingel <darwin.dingel@alliedtelesis.co.nz>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        He Zhe <zhe.he@windriver.com>, Marek Vasut <marex@denx.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        Paul Burton <paul.burton@mips.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resend] serial: 8250: Add support for using platform_device resources
+References: <20190430140416.4707-1-esben@geanix.com>
+        <20190521113426.16790-1-esben@geanix.com>
+        <20190521131131.GA19685@kroah.com>
+Date:   Tue, 21 May 2019 16:45:34 +0200
+In-Reply-To: <20190521131131.GA19685@kroah.com> (Greg Kroah-Hartman's message
+        of "Tue, 21 May 2019 15:11:31 +0200")
+Message-ID: <878suzn9wx.fsf@haabendal.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-References: <20190521142009.7331-1-TheSven73@gmail.com> <20190521143730.GJ31203@kadam>
-In-Reply-To: <20190521143730.GJ31203@kadam>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Tue, 21 May 2019 10:44:31 -0400
-Message-ID: <CAGngYiUagiM1qhiZyZ_BVACib-Mfk1wniq-CxZAC21F5Zni1wQ@mail.gmail.com>
-Subject: Re: [PATCH v3] staging: fieldbus: core: fix ->poll() annotation
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Oscar Gomez Fuente <oscargomezf@gmail.com>,
-        devel@driverdev.osuosl.org, Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 10:37 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
->
-> If you're resending someone's patch, you have to add your own Signed off
-> by line as well.  Everyone who touches a patch has to sign that they
-> didn't add any of SCO's all powerful UnixWare source code into the
-> patch.
->
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
 
-Thank you Dan, that's very useful to know !
+> On Tue, May 21, 2019 at 01:34:26PM +0200, Esben Haabendal wrote:
+>> Allow getting memory resource (mapbase or iobase) as well as irq from
+>> platform_device resources.
+>> 
+>> The UPF_DEV_RESOURCES flag must be set for devices where platform_device
+>> resources are to be used.  When not set, driver behaves as before.
+>
+> Nothing actually sets this flag in this patch, so I can't take this as
+> you are adding new features that no one uses :(
+>
+> Where is the driver that sets this?
 
-Sven
+It sits here.  It is a rather big and clunky mfd driver, not ready for
+upstreaming in its current form.  I hope to get around to clean it up.
+But it is for a very specific hardware that is really available or
+usable for anybody else.  Does it make sense to spend effort on
+submitting such a driver?
+
+/Esben
