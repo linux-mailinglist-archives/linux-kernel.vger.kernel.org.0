@@ -2,242 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20EBD24CAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7671924CB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:29:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbfEUK2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 06:28:54 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41094 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726466AbfEUK2y (ORCPT
+        id S1727791AbfEUK3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 06:29:08 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33563 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbfEUK3I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 06:28:54 -0400
-Received: by mail-lf1-f66.google.com with SMTP id d8so12637385lfb.8;
-        Tue, 21 May 2019 03:28:52 -0700 (PDT)
+        Tue, 21 May 2019 06:29:08 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c66so1995093wme.0;
+        Tue, 21 May 2019 03:29:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language;
-        bh=mpYXtdsUWNbeccAIywEl4UaSAhjl4gBKJ90NkZlAKFw=;
-        b=mxi3uyzHog1AqUJCb2xTatuk6bjh6QFENd50GvwbRhU+suirammKro2Gxn8c19UWJm
-         3X4fnIOEcU5WMYJiFomcyn2UkT0zLVtppjypSesmUpidS2gl5uJZ2laclG10u/kv8nES
-         7kjBa3bhP3lp4wpnbbXNHA1fWJIB4oxaQlToNKr4YinlXOTB3Hz3uGOyZtGZAOx6NCsC
-         NXVTq+YGh3c3Gxq7jmBdIpfxHcRiS3rp5zIjktB49DiEdR78N3KO/tE/f7UQhyNLiX6K
-         TDeqdc8W0BoLAHoVXJK7j8UX9EfssqgO3et7BQA1JibXQTziBgJHcDEr87ikJMdP0oUI
-         w1xg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=i0as0vN7D4i2ID/z1L3403i8uDeXi4TTz+AjZfb51fM=;
+        b=SnrP67dbJsJ5V/2SMxKmpCWHPheHYf3g6WgtG7WT71f6kpPPXZwA+A5+5Nd3RsOrp1
+         Eqxp6unRSFoqJaHdU7UsA7xY/OSljTB8gN8xFw/REQdXGIS7ymFcqUivgkHfsN4QNqJO
+         sp+SqLTbkhWI+yVRiiFJndtjdQ31C1wGDR0MIC4DbWfNXu2G2bOsnM/Sy5SvZrLfBpsu
+         wk4RIzfJWuGXf+PvLQCg7VaQf4LS111TUgf1Lmw8+2qQ8g/gu/Wmh1bQOCX8PxtOEvB8
+         YDwZJGPBR6V6119l5vXPhRDj2rPbSFbwqUHfraY6r9x4hizhSFic9McgKdX9QdAs9xVe
+         7wkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language;
-        bh=mpYXtdsUWNbeccAIywEl4UaSAhjl4gBKJ90NkZlAKFw=;
-        b=PD6wIsAgK6Ipk2iJFbbtQVN86Yn6A+ij62lxPdGW2rCSlh9JF8mw/XveQa8DaAj6Jn
-         AH7HGAiFWopP9HpgndfrG2tBtsm7WR4OtVm1StQlOkYcCUnpXQrOChZ5vgw5fzg5mkyM
-         iCI7Wd0jfkjTDINnThK8BuRvmjehvfNmZoYVyvgj3Zr9pVwupkPeabgNGvYmSpsQnqTm
-         Glcilx5VJ4ZBk1KutCP95lPW0OJmWrLIOiFgEneuzsGFEkRpmJkUNUyIgGgr0YJLsfhE
-         9aGmbZ/Fh0TNKvcV5UKZT1VR8rl/5qUYgoICc0JWDkVVFuu78LMIrQE55Uh1wK5h/97n
-         3X1g==
-X-Gm-Message-State: APjAAAXFups4/i3nHHgbjV+y+T4J8rk0LB3bXvZv/PstfR5kXXmUWlLY
-        YRHvtTgG78jZ9nfTml7bgqc=
-X-Google-Smtp-Source: APXvYqyxPJbnSyCXfS1uLADdjWVLErha9YuAb8d/3tZPiV9maoDIZv0yZlIGHwPo4n2XSTm3jg51aw==
-X-Received: by 2002:ac2:51de:: with SMTP id u30mr32843332lfm.42.1558434531477;
-        Tue, 21 May 2019 03:28:51 -0700 (PDT)
-Received: from elitebook.lan (ip-194-187-74-233.konfederacka.maverick.com.pl. [194.187.74.233])
-        by smtp.googlemail.com with ESMTPSA id v2sm4283760ljg.6.2019.05.21.03.28.49
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 03:28:50 -0700 (PDT)
-From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Subject: ARM router NAT performance affected by random/unrelated commits
-To:     Network Development <netdev@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     linux-block@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Jo-Philipp Wich <jo@mein.io>, John Crispin <john@phrozen.org>
-Message-ID: <9a9ba4c9-3cb7-eb64-4aac-d43b59224442@gmail.com>
-Date:   Tue, 21 May 2019 12:28:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=i0as0vN7D4i2ID/z1L3403i8uDeXi4TTz+AjZfb51fM=;
+        b=mv3GJjm3WsAfnQfjrPGFCY2y/ZTx+If5cMrbOWadndGnJ1xHXxApccTPr+9WL2rCaP
+         6uxHcDpZ/s/eVN1Tl3JFtqmoVgqkAwiz6dvD7cGWPDIpMuASB4TVphJqyO1VE1d4256x
+         BEuBDfd3izG6aQTJJkH2+ePBt1YA2TqvDqLyyYl6YM+w4s8wAg5fFgAnv5XJB0Ygmoam
+         qrGhN+66c83aP0exYTkAOMJkDZgI8itr4/19W8eLN4sHU48LPzxpVFBRmeWt4MfKxX8H
+         XfKiHMBHEr7lD9SpM5rsanpQrvZ1j2vOyrTxYy5rEJOcglVS1VyP/S9Q1vBfrcNk8y68
+         zZ5Q==
+X-Gm-Message-State: APjAAAUd5pi8ZxPhNReopFZwBK+nsms9z8iftEfhDgXxKAW2LEvKbgs/
+        +lpyICMxqaDBUwuLSghUSy0=
+X-Google-Smtp-Source: APXvYqzFY2W87G2XKblwh9OOAK6rHD5rjloo7s4t8aFeVEtSUWaJ/9tLang+7WHGIvY7iFcgQ7pUbQ==
+X-Received: by 2002:a1c:c104:: with SMTP id r4mr2834393wmf.133.1558434545301;
+        Tue, 21 May 2019 03:29:05 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id t6sm5239538wmt.34.2019.05.21.03.29.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 May 2019 03:29:04 -0700 (PDT)
+Date:   Tue, 21 May 2019 12:29:03 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, mperttunen@nvidia.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kthota@nvidia.com,
+        mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V7 03/15] PCI: dwc: Perform dbi regs write lock towards
+ the end
+Message-ID: <20190521102903.GC29166@ulmo>
+References: <20190517123846.3708-1-vidyas@nvidia.com>
+ <20190517123846.3708-4-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------1044F4275EEC14C287F51DC5"
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ZmUaFz6apKcXQszQ"
+Content-Disposition: inline
+In-Reply-To: <20190517123846.3708-4-vidyas@nvidia.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------1044F4275EEC14C287F51DC5
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Hi,
+--ZmUaFz6apKcXQszQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I work on home routers based on Broadcom's Northstar SoCs. Those devices
-have ARM Cortex-A9 and most of them are dual-core.
+On Fri, May 17, 2019 at 06:08:34PM +0530, Vidya Sagar wrote:
+> Remove multiple write enable and disable sequences of dbi registers as
+> Tegra194 implements writes to BAR-0 register (offset: 0x10) controlled by
+> DBI write-lock enable bit thereby not allowing any further writes to BAR-0
+> register in config space to take place. Hence enabling write permission at
+> the start of function and disabling the same only towards the end.
+>=20
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+> Changes since [v6]:
+> * None
+>=20
+> Changes since [v5]:
+> * Moved write enable to the beginning of the API and write disable to the=
+ end
+>=20
+> Changes since [v4]:
+> * None
+>=20
+> Changes since [v3]:
+> * None
+>=20
+> Changes since [v2]:
+> * None
+>=20
+> Changes since [v1]:
+> * None
+>=20
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
 
-As for home routers, my main concern is network performance. That CPU
-isn't powerful enough to handle gigabit traffic so all kind of
-optimizations do matter. I noticed some unexpected changes in NAT
-performance when switching between kernels.
+Looks good to me:
 
-My hardware is BCM47094 SoC (dual core ARM) with integrated network
-controller and external BCM53012 switch.
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-Relevant setup:
-* SoC network controller is wired to the hardware switch
-* Switch passes 802.1q frames with VID 1 to four LAN ports
-* Switch passes 802.1q frames with VID 2 to WAN port
-* Linux does NAT for LAN (eth0.1) to WAN (eth0.2)
-* Linux uses pfifo and "echo 2 > rps_cpus"
-* Ryzen 5 PRO 2500U (x86_64) laptop connected to a LAN port
-* Intel i7-2670QM laptop connected to a WAN port
+Thierry
 
-*****
+>=20
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/=
+pci/controller/dwc/pcie-designware-host.c
+> index f93252d0da5b..d3156446ff27 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -628,6 +628,12 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+>  	u32 val, ctrl, num_ctrls;
+>  	struct dw_pcie *pci =3D to_dw_pcie_from_pp(pp);
+> =20
+> +	/*
+> +	 * Enable DBI read-only registers for writing/updating configuration.
+> +	 * Write permission gets disabled towards the end of this function.
+> +	 */
+> +	dw_pcie_dbi_ro_wr_en(pci);
+> +
+>  	dw_pcie_setup(pci);
+> =20
+>  	if (!pp->ops->msi_host_init) {
+> @@ -650,12 +656,10 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+>  	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_1, 0x00000000);
+> =20
+>  	/* Setup interrupt pins */
+> -	dw_pcie_dbi_ro_wr_en(pci);
+>  	val =3D dw_pcie_readl_dbi(pci, PCI_INTERRUPT_LINE);
+>  	val &=3D 0xffff00ff;
+>  	val |=3D 0x00000100;
+>  	dw_pcie_writel_dbi(pci, PCI_INTERRUPT_LINE, val);
+> -	dw_pcie_dbi_ro_wr_dis(pci);
+> =20
+>  	/* Setup bus numbers */
+>  	val =3D dw_pcie_readl_dbi(pci, PCI_PRIMARY_BUS);
+> @@ -687,15 +691,13 @@ void dw_pcie_setup_rc(struct pcie_port *pp)
+> =20
+>  	dw_pcie_wr_own_conf(pp, PCI_BASE_ADDRESS_0, 4, 0);
+> =20
+> -	/* Enable write permission for the DBI read-only register */
+> -	dw_pcie_dbi_ro_wr_en(pci);
+>  	/* Program correct class for RC */
+>  	dw_pcie_wr_own_conf(pp, PCI_CLASS_DEVICE, 2, PCI_CLASS_BRIDGE_PCI);
+> -	/* Better disable write permission right after the update */
+> -	dw_pcie_dbi_ro_wr_dis(pci);
+> =20
+>  	dw_pcie_rd_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, &val);
+>  	val |=3D PORT_LOGIC_SPEED_CHANGE;
+>  	dw_pcie_wr_own_conf(pp, PCIE_LINK_WIDTH_SPEED_CONTROL, 4, val);
+> +
+> +	dw_pcie_dbi_ro_wr_dis(pci);
+>  }
+>  EXPORT_SYMBOL_GPL(dw_pcie_setup_rc);
+> --=20
+> 2.17.1
+>=20
 
-I found a very nice example of commit that does /nothing/ yet it affects
-NAT performance: 9316a9ed6895 ("blk-mq: provide helper for setting up an
-SQ queue and tag set")
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9316a9ed6895c4ad2f0cde171d486f80c55d8283
-All it does is exporting an unused symbol (function).
+--ZmUaFz6apKcXQszQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Let me share some numbers (I use iperf for testing):
+-----BEGIN PGP SIGNATURE-----
 
-git reset --hard v4.19
-git am OpenWrt-mtd-chages.patch
-[  3]  0.0-30.0 sec  2.60 GBytes   745 Mbits/sec
-[  3]  0.0-30.0 sec  2.60 GBytes   745 Mbits/sec
-[  3]  0.0-30.0 sec  2.60 GBytes   744 Mbits/sec
-[  3]  0.0-30.0 sec  2.59 GBytes   742 Mbits/sec
-[  3]  0.0-30.0 sec  2.59 GBytes   740 Mbits/sec
-[  3]  0.0-30.0 sec  2.59 GBytes   740 Mbits/sec
-[  3]  0.0-30.0 sec  2.58 GBytes   738 Mbits/sec
-[  3]  0.0-30.0 sec  2.58 GBytes   738 Mbits/sec
-[  3]  0.0-30.0 sec  2.58 GBytes   738 Mbits/sec
-[  3]  0.0-30.0 sec  2.57 GBytes   735 Mbits/sec
-Average: 741 Mb/s
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzj0u8ACgkQ3SOs138+
+s6EJCxAAnfv9ugCWZBC133ybiQYMaRJDUdLgGhyHZVX1/ZdmY5GToImZM6vjRujM
+WlozE5s76t1gP0g6h1EhQqKoayUTSpKsqYHN8/H6SqPOZNlJLxELi2ZeIj66fcAC
+/CahfKX4LFBR1Nb8QESoVaKPz0luor5SfwJmZsxHJTbfI+kXgs/4CYfXuhI3mRRU
+NHSNushq/sxYks4IXV9oaMq4G8VVcmzGilKTiU65mYaQLYmFUpvkYLnBZlsig7qT
+wYx1X34PPcO1/hg+dy55Kb2+TPU+tiMbIWKhhD/7efmoTobK77eNe3kcvylMier5
+h6rzvmY8Vg2yJUlz498PO/0Vt6KTDC09fbTIQCELwak64CEfdIaR1K+gUXAp2YaL
+lgjJFZtMpwGd8/DiC3gaIaiJQaYEMYj0cVyE+zpvDYTrue7l4ohkQjoyE/VbFhv+
+PkIvP49aEiu0cm6FOEn1o64d7rzuXHUAK14ePYB5zmaovQ+7dEnS8NTo7cxAB5TB
+EqkeWiHLrC32T/q0S01MO07/+3uX4sRUByRUgCjxPcgI2pJQM28SzxoQDGiozdYC
+DiQW/JxNkL8+VWvPaZxBW6ywShWqzfXk9j8XoNOs0GLoArxiokfBjpigxJpF//Fs
+CxDzv0ERBk2rPlTXg3GitfuOjs7H1wdZzHjJmLwfaQx1oPPaHL4=
+=ZY4e
+-----END PGP SIGNATURE-----
 
-git reset --hard v4.19
-git am OpenWrt-mtd-chages.patch
-git cherry-pick -x 9316a9ed6895
-[  3]  0.0-30.0 sec  2.73 GBytes   780 Mbits/sec
-[  3]  0.0-30.0 sec  2.72 GBytes   777 Mbits/sec
-[  3]  0.0-30.0 sec  2.71 GBytes   775 Mbits/sec
-[  3]  0.0-30.0 sec  2.70 GBytes   773 Mbits/sec
-[  3]  0.0-30.0 sec  2.70 GBytes   771 Mbits/sec
-[  3]  0.0-30.0 sec  2.69 GBytes   771 Mbits/sec
-[  3]  0.0-30.0 sec  2.69 GBytes   771 Mbits/sec
-[  3]  0.0-30.0 sec  2.69 GBytes   770 Mbits/sec
-[  3]  0.0-30.0 sec  2.69 GBytes   769 Mbits/sec
-[  3]  0.0-30.0 sec  2.68 GBytes   768 Mbits/sec
-Average: 773 Mb/s
-
-As you can see cherry-picking (on top of Linux 4.19) a single commit
-that does /nothing/ can improve NAT performance by 4,5%.
-
-*****
-
-I was hoping to learn something from profiling kernel with the "perf"
-tool. Eanbling CONFIG_PERF_EVENTS resulted in smaller NAT performance
-gain: 741 Mb/s → 750 Mb/s. I tried it anyway.
-
-Without cherry-picking I got:
-+    9,04%  swapper          [kernel.kallsyms]  [k] v7_dma_inv_range
-+    5,54%  swapper          [kernel.kallsyms]  [k] __irqentry_text_end
-+    5,12%  swapper          [kernel.kallsyms]  [k] l2c210_inv_range
-+    4,30%  ksoftirqd/1      [kernel.kallsyms]  [k] v7_dma_clean_range
-+    4,02%  swapper          [kernel.kallsyms]  [k] bcma_host_soc_read32
-+    3,13%  swapper          [kernel.kallsyms]  [k] arch_cpu_idle
-+    2,88%  ksoftirqd/1      [kernel.kallsyms]  [k] __netif_receive_skb_core
-+    2,51%  ksoftirqd/1      [kernel.kallsyms]  [k] l2c210_clean_range
-+    1,88%  ksoftirqd/1      [kernel.kallsyms]  [k] fib_table_lookup
-(741 Mb/s while *not* running perf)
-
-With cherry-picked 9316a9ed6895 I got:
-+    9,16%  swapper          [kernel.kallsyms]  [k] v7_dma_inv_range
-+    5,64%  swapper          [kernel.kallsyms]  [k] __irqentry_text_end
-+    5,05%  swapper          [kernel.kallsyms]  [k] l2c210_inv_range
-+    4,25%  ksoftirqd/1      [kernel.kallsyms]  [k] v7_dma_clean_range
-+    4,10%  swapper          [kernel.kallsyms]  [k] bcma_host_soc_read32
-+    3,35%  ksoftirqd/1      [kernel.kallsyms]  [k] __netif_receive_skb_core
-+    3,17%  swapper          [kernel.kallsyms]  [k] arch_cpu_idle
-+    2,49%  ksoftirqd/1      [kernel.kallsyms]  [k] l2c210_clean_range
-+    2,03%  ksoftirqd/1      [kernel.kallsyms]  [k] fib_table_lookup
-(750 Mb/s while *not* running perf)
-
-Changes seem quite minimal and I'm not sure if they tell what is causing
-that NAT performance change at all.
-
-*****
-
-I also tried running cachestat but didn't get anything interesting:
-Counting cache functions... Output every 1 seconds.
-TIME         HITS   MISSES  DIRTIES    RATIO   BUFFERS_MB   CACHE_MB
-10:06:59     1020        5        0    99.5%            0          2
-10:07:00     1029        0        0   100.0%            0          2
-10:07:01     1013        0        0   100.0%            0          2
-10:07:02     1029        0        0   100.0%            0          2
-10:07:03     1029        0        0   100.0%            0          2
-10:07:04      997        0        0   100.0%            0          2
-10:07:05     1013        0        0   100.0%            0          2
-(I started iperf at 10:07:00).
-
-*****
-
-There were more situations with such unexpected performance changes.
-Another example: cherry-picking 5b0890a97204 ("flow_dissector: Parse
-batman-adv unicast headers")
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=5b0890a97204627d75a333fc30f29f737e2bfad6
-to some Linux 4.14.x release was lowering NAT performance by 55 Mb/s.
-
-The tricky part is there aren't any ETH_P_BATMAN packets in my traffic.
-Extra tests revealed that any __skb_flow_dissect() modification was
-lowering my NAT performance (e.g. commenting out ETH_P_TIPC or
-ETH_P_FCOE switch cases).
-
-*****
-
-I would like every kernel to provide a maximum NAT performance, no
-matter what random commits it contains.
-
-Suffering from such a random changes makes it also really hard to notice
-a real performance regression.
-
-Do you have any idea what is causing those performance changes? Can I
-provide any extra info to help debugging this?
-
---------------1044F4275EEC14C287F51DC5
-Content-Type: text/plain; charset=UTF-8;
- name="openwrt-mtd-patches.txt"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment;
- filename="openwrt-mtd-patches.txt"
-
-MDQ3LXY0LjIxLW10ZC1rZWVwLW9yaWdpbmFsLWZsYWdzLWZvci1ldmVyeS1zdHJ1Y3QtbXRk
-X2luZm8ucGF0Y2gKMDQ4LXY0LjIxLW10ZC1pbXByb3ZlLWNhbGN1bGF0aW5nLXBhcnRpdGlv
-bi1ib3VuZGFyaWVzLXdoZW4tY2gucGF0Y2gKMDgwLXY1LjEtMDAwMS1iY21hLWtlZXAtYS1k
-aXJlY3QtcG9pbnRlci10by10aGUtc3RydWN0LWRldmljZS5wYXRjaAowODAtdjUuMS0wMDAy
-LWJjbWEtdXNlLWRldl8tcHJpbnRpbmctZnVuY3Rpb25zLnBhdGNoCjA5NS1BbGxvdy1jbGFz
-cy1lLWFkZHJlc3MtYXNzaWdubWVudC12aWEtaWZjb25maWctaW9jdGwucGF0Y2gKCjE0MC1q
-ZmZzMi11c2UtLnJlbmFtZTItYW5kLWFkZC1SRU5BTUVfV0hJVEVPVVQtc3VwcG9ydC5wYXRj
-aAoxNDEtamZmczItYWRkLVJFTkFNRV9FWENIQU5HRS1zdXBwb3J0LnBhdGNoCjQwMC1tdGQt
-YWRkLXJvb3Rmcy1zcGxpdC1zdXBwb3J0LnBhdGNoCjQwMS1tdGQtYWRkLXN1cHBvcnQtZm9y
-LWRpZmZlcmVudC1wYXJ0aXRpb24tcGFyc2VyLXR5cGVzLnBhdGNoCjQwMi1tdGQtdXNlLXR5
-cGVkLW10ZC1wYXJzZXJzLWZvci1yb290ZnMtYW5kLWZpcm13YXJlLXNwbGl0LnBhdGNoCjQw
-My1tdGQtaG9vay1tdGRzcGxpdC10by1LYnVpbGQucGF0Y2gKNDA0LW10ZC1hZGQtbW9yZS1o
-ZWxwZXItZnVuY3Rpb25zLnBhdGNoCjQzMS1tdGQtYmNtNDd4eHBhcnQtY2hlY2stZm9yLWJh
-ZC1ibG9ja3Mtd2hlbi1jYWxjdWxhdGluLnBhdGNoCjQzMi1tdGQtYmNtNDd4eHBhcnQtZGV0
-ZWN0LVRfTWV0ZXItcGFydGl0aW9uLnBhdGNoCjQ4MC1tdGQtc2V0LXJvb3Rmcy10by1iZS1y
-b290LWRldi5wYXRjaAo0OTAtdWJpLWF1dG8tYXR0YWNoLW10ZC1kZXZpY2UtbmFtZWQtdWJp
-LW9yLWRhdGEtb24tYm9vdC5wYXRjaAo0OTEtdWJpLWF1dG8tY3JlYXRlLXViaWJsb2NrLWRl
-dmljZS1mb3Itcm9vdGZzLnBhdGNoCjQ5Mi10cnktYXV0by1tb3VudGluZy11YmkwLXJvb3Rm
-cy1pbi1pbml0LWRvX21vdW50cy5jLnBhdGNoCjQ5My11Ymktc2V0LVJPT1RfREVWLXRvLXVi
-aWJsb2NrLXJvb3Rmcy1pZi11bnNldC5wYXRjaAo1MzAtamZmczJfbWFrZV9sem1hX2F2YWls
-YWJsZS5wYXRjaAo1MzItamZmczJfZW9mZGV0ZWN0LnBhdGNoCjUwMC12NC4yMC11Ymlmcy1G
-aXgtZGVmYXVsdC1jb21wcmVzc2lvbi1zZWxlY3Rpb24taW4tdWJpZnMucGF0Y2gKNTUzLXVi
-aWZzLUFkZC1vcHRpb24tdG8tY3JlYXRlLVVCSS1GUy12ZXJzaW9uLTQtb24tZW1wdHkucGF0
-Y2gKCjcwMC1zd2NvbmZpZ19zd2l0Y2hfZHJpdmVycy5wYXRjaAo3MDItcGh5X2FkZF9hbmVn
-X2RvbmVfZnVuY3Rpb24ucGF0Y2gKNzIxLXBoeV9wYWNrZXRzLnBhdGNoCjc3My1iZ21hYy1h
-ZGQtc3JhYi1zd2l0Y2gucGF0Y2gKOTEwLWtvYmplY3RfdWV2ZW50LnBhdGNoCjkxMS1rb2Jq
-ZWN0X2FkZF9icm9hZGNhc3RfdWV2ZW50LnBhdGNoCg==
---------------1044F4275EEC14C287F51DC5--
+--ZmUaFz6apKcXQszQ--
