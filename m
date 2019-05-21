@@ -2,92 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B17E24E8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 14:02:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C1EF24E98
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 14:03:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728146AbfEUMCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 08:02:40 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:40264 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727251AbfEUMCj (ORCPT
+        id S1728194AbfEUMDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 08:03:45 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:45888 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728045AbfEUMDp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 08:02:39 -0400
-Received: by mail-qk1-f193.google.com with SMTP id q197so10834436qke.7;
-        Tue, 21 May 2019 05:02:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FFHpERDGAM7rYKa/XXAMVPCU2p7ieNvbmiVwbMmHz6o=;
-        b=J7csQ2EyXN5MA9+ERyPqulTgBOzYTO3OU25CWnCnnnR249XtZCaYgiQtWYUcnFhyd0
-         NsylALsY1NZ6yOwJJQAykAOTNE16ecjiLSMKVq4sqH1WPLD2MG6pz0jQYKZ7N5oVKEYG
-         ieCXNLD7tjey47F589gYEMjBBuucwfZs4uKcQkYt7pS92sEbfU7UQ63NsNLyzw5f+WjJ
-         n0SlKgptlDL2m93jtg/KxB0aesQ75EB44wbUeqLfS8VrDAjQue5KZXxMUjvsh0qgEz7d
-         lwaLW4B+hpQiV4ZlWe166NJgQ1OHDcgaK7qBIYsI0M9UiOEeWmOCImdQQDCediybjsgb
-         kZCQ==
-X-Gm-Message-State: APjAAAVVn7U3BK7wAlRJBedJ99LlZjEDpu8mgbJ6BZqQ2TzCYB0LxOVW
-        DuqBiMT/iV7jz6N1zVj09RWla0VhraHe3Y8QdKE=
-X-Google-Smtp-Source: APXvYqz+JNxFrC1K8efOBIeJxisvtNkhhdYJVswIOoiVcFFJwa08OrBzOczrjY+m5IfqdGqcpIBYRLgf3CiTps9SNfc=
-X-Received: by 2002:a05:620a:1085:: with SMTP id g5mr46695715qkk.182.1558440159035;
- Tue, 21 May 2019 05:02:39 -0700 (PDT)
+        Tue, 21 May 2019 08:03:45 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4LBwx54123998;
+        Tue, 21 May 2019 12:02:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=TZYqrfFAU+1Y5NvFpYrOWNNOjV39r1AmCN+iJWl6phE=;
+ b=5UoPeIhp+Fc2/NcSF86S1fKiYqMWKcw4TMoE9iBwYIjYmhOcvIVsqBYBfXewzTLzEJMo
+ 5COM6F8+KtTzwnB2AcROwv75BgFX7Wnhztfucx3Fr3eTf38kAJ3ucZY7UsGe+f/AuPck
+ I/yN3zfYBVwnv2JqHwXi2FZpIG676cP5cdaeekZJTKTL/laGWsYdRnYtBhmJ/meHmQER
+ FXUIflumM/14L9hMRWtFRFMqLRKa+Y9wkpXrAtoo3tOpNPiTy34sLI21cyihGYH5btlG
+ sdyg81EIRE/bHZzFdm9QPBRADFsbaDU6ptMR/fHRdL5v4kmmmnLc1V4c3A+cFtT37Mye 1g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2sjapqcpn9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 May 2019 12:02:53 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4LC2109025847;
+        Tue, 21 May 2019 12:02:53 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2sm046xeyv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 May 2019 12:02:53 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4LC2ocm027898;
+        Tue, 21 May 2019 12:02:50 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 21 May 2019 12:02:50 +0000
+To:     Douglas Gilbert <dgilbert@interlog.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Waiman Long <longman@redhat.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: ses: Fix out-of-bounds memory access in ses_enclosure_data_process()
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190501180535.26718-1-longman@redhat.com>
+        <1fd39969-4413-2f11-86b2-729787680efa@redhat.com>
+        <1558363938.3742.1.camel@linux.ibm.com>
+        <3385cf54-7b6c-3f28-e037-f0d4037368eb@redhat.com>
+        <1558367212.3742.10.camel@linux.ibm.com> <yq1zhnh8625.fsf@oracle.com>
+        <c14d427c-1d17-fc8f-672d-d612851abcc1@interlog.com>
+Date:   Tue, 21 May 2019 08:02:48 -0400
+In-Reply-To: <c14d427c-1d17-fc8f-672d-d612851abcc1@interlog.com> (Douglas
+        Gilbert's message of "Mon, 20 May 2019 17:53:08 -0400")
+Message-ID: <yq1h89o6mmv.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-References: <1558383565-11821-1-git-send-email-eajames@linux.ibm.com> <1558383565-11821-3-git-send-email-eajames@linux.ibm.com>
-In-Reply-To: <1558383565-11821-3-git-send-email-eajames@linux.ibm.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 21 May 2019 14:02:22 +0200
-Message-ID: <CAK8P3a2HSOsw33VhAk4Z8ARiYn4jG68Ec7fynKbrFWUNDo37Wg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] drivers/soc: Add Aspeed XDMA Engine Driver
-To:     Eddie James <eajames@linux.ibm.com>
-Cc:     linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9263 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905210075
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9263 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905210075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 10:19 PM Eddie James <eajames@linux.ibm.com> wrote:
-> diff --git a/include/uapi/linux/aspeed-xdma.h b/include/uapi/linux/aspeed-xdma.h
-> new file mode 100644
-> index 0000000..2a4bd13
-> --- /dev/null
-> +++ b/include/uapi/linux/aspeed-xdma.h
-> @@ -0,0 +1,26 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +/* Copyright IBM Corp 2019 */
-> +
-> +#ifndef _UAPI_LINUX_ASPEED_XDMA_H_
-> +#define _UAPI_LINUX_ASPEED_XDMA_H_
-> +
-> +#include <linux/types.h>
-> +
-> +/*
-> + * aspeed_xdma_op
-> + *
-> + * upstream: boolean indicating the direction of the DMA operation; upstream
-> + *           means a transfer from the BMC to the host
-> + *
-> + * host_addr: the DMA address on the host side, typically configured by PCI
-> + *            subsystem
-> + *
-> + * len: the size of the transfer in bytes; it should be a multiple of 16 bytes
-> + */
-> +struct aspeed_xdma_op {
-> +       __u32 upstream;
-> +       __u64 host_addr;
-> +       __u32 len;
-> +};
-> +
-> +#endif /* _UAPI_LINUX_ASPEED_XDMA_H_ */
 
-If this is a user space interface, please remove the holes in the
-data structure.
+Doug,
 
-I don't see how this is actually used in this patch, maybe you meant
-the definition to be part of another patch?
+>> I am collecting "bad" SES pages from these devices. I have added
+>> support for RECEIVE DIAGNOSTICS to scsi_debug and added a bunch of
+>> deliberately broken SES pages so we could debug this
+>
+> Patches ??
 
-    Arnd
+I have included the plumbing below. However, I need to synthesize the
+contents of the pages with problems. I can't share the ones I have
+received from customers so I removed the arrays from the patch.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
+
+From 968dfc5cd498d2ea6e77801cc9b9183a1a28b35d Mon Sep 17 00:00:00 2001
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Date: Thu, 28 Mar 2019 22:29:13 -0400
+Subject: [PATCH] scsi: scsi_debug: Implement support for Receive Diagnostics
+ command
+
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 2740a90501a0..db8745a7000e 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -356,7 +356,8 @@ enum sdeb_opcode_index {
+ 	SDEB_I_WRITE_SAME = 26,		/* 10, 16 */
+ 	SDEB_I_SYNC_CACHE = 27,		/* 10, 16 */
+ 	SDEB_I_COMP_WRITE = 28,
+-	SDEB_I_LAST_ELEMENT = 29,	/* keep this last (previous + 1) */
++	SDEB_I_RECV_DIAG = 29,
++	SDEB_I_LAST_ELEMENT = 30,	/* keep this last (previous + 1) */
+ };
+ 
+ 
+@@ -367,8 +368,8 @@ static const unsigned char opcode_ind_arr[256] = {
+ 	SDEB_I_READ, 0, SDEB_I_WRITE, 0, 0, 0, 0, 0,
+ 	0, 0, SDEB_I_INQUIRY, 0, 0, SDEB_I_MODE_SELECT, SDEB_I_RESERVE,
+ 	    SDEB_I_RELEASE,
+-	0, 0, SDEB_I_MODE_SENSE, SDEB_I_START_STOP, 0, SDEB_I_SEND_DIAG,
+-	    SDEB_I_ALLOW_REMOVAL, 0,
++	0, 0, SDEB_I_MODE_SENSE, SDEB_I_START_STOP, SDEB_I_RECV_DIAG,
++	SDEB_I_SEND_DIAG, SDEB_I_ALLOW_REMOVAL, 0,
+ /* 0x20; 0x20->0x3f: 10 byte cdbs */
+ 	0, 0, 0, 0, 0, SDEB_I_READ_CAPACITY, 0, 0,
+ 	SDEB_I_READ, 0, SDEB_I_WRITE, 0, 0, 0, 0, SDEB_I_VERIFY,
+@@ -433,6 +434,7 @@ static int resp_write_same_16(struct scsi_cmnd *, struct sdebug_dev_info *);
+ static int resp_comp_write(struct scsi_cmnd *, struct sdebug_dev_info *);
+ static int resp_write_buffer(struct scsi_cmnd *, struct sdebug_dev_info *);
+ static int resp_sync_cache(struct scsi_cmnd *, struct sdebug_dev_info *);
++static int resp_recv_diag(struct scsi_cmnd *, struct sdebug_dev_info *);
+ 
+ /*
+  * The following are overflow arrays for cdbs that "hit" the same index in
+@@ -613,8 +615,9 @@ static const struct opcode_info_t opcode_info_arr[SDEB_I_LAST_ELEMENT + 1] = {
+ 	{0, 0x89, 0, F_D_OUT | FF_MEDIA_IO, resp_comp_write, NULL,
+ 	    {16,  0xf8, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0, 0,
+ 	     0, 0xff, 0x3f, 0xc7} },		/* COMPARE AND WRITE */
+-
+-/* 29 */
++	{0, 0x1c, 0, FF_RESPOND | F_D_IN, resp_recv_diag, NULL, /* RECV DIAG */
++	    {6,  0x1, 0xff, 0xff, 0xff, 0xc7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} },
++/* 30 */
+ 	{0xff, 0, 0, 0, NULL, NULL,		/* terminating element */
+ 	    {0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} },
+ };
+@@ -1516,7 +1519,7 @@ static int resp_inquiry(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
+ 	arr[5] = (int)have_dif_prot;	/* PROTECT bit */
+ 	if (sdebug_vpd_use_hostno == 0)
+ 		arr[5] |= 0x10; /* claim: implicit TPGS */
+-	arr[6] = 0x10; /* claim: MultiP */
++	arr[6] = 0x10 | 0x40; /* claim: MultiP */
+ 	/* arr[6] |= 0x40; ... claim: EncServ (enclosure services) */
+ 	arr[7] = 0xa; /* claim: LINKED + CMDQUE */
+ 	memcpy(&arr[8], sdebug_inq_vendor_id, 8);
+@@ -3597,6 +3600,36 @@ static int resp_sync_cache(struct scsi_cmnd *scp,
+ 	return res;
+ }
+ 
++static unsigned char diag0[] = {
++	0x00, 0x00, 0x00, 0x07, 0x00, 0x01, 0x02, 0x06, 0x07, 0x0a, 0xa0, 0x00,
++};
++#define DIAG0_LEN 12
++
++
++static int resp_recv_diag(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
++{
++	unsigned char *cmd = scp->cmnd;
++
++	switch(cmd[2]) {
++	case 0:
++		return fill_from_dev_buffer(scp, diag0, DIAG0_LEN);
++	case 1:
++		return fill_from_dev_buffer(scp, diag1, DIAG1_LEN);
++	case 2:
++		return fill_from_dev_buffer(scp, diag2, DIAG2_LEN);
++	case 6:
++		return fill_from_dev_buffer(scp, diag6, DIAG6_LEN);
++	case 7:
++		return fill_from_dev_buffer(scp, diag7, DIAG7_LEN);
++	case 0xa:
++		return fill_from_dev_buffer(scp, diaga, DIAGA_LEN);
++	case 0xa0:
++		return fill_from_dev_buffer(scp, diaga0, DIAGA0_LEN);
++	}
++
++	return DID_ERROR << 16;
++}
++
+ #define RL_BUCKET_ELEMS 8
+ 
+ /* Even though each pseudo target has a REPORT LUNS "well known logical unit"
