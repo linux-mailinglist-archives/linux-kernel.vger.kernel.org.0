@@ -2,100 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05F7D25908
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BA6625911
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbfEUUdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 16:33:19 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38842 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727376AbfEUUdQ (ORCPT
+        id S1727560AbfEUUgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 16:36:23 -0400
+Received: from mail-pf1-f181.google.com ([209.85.210.181]:32778 "EHLO
+        mail-pf1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727046AbfEUUgX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 16:33:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=sByoT6kwfKLoPmlh4sQ+/u/QxYVQA9jsGiWj5JWD1SM=; b=f3XaqYoGdLaB
-        ybUEFKseMeFobiIM7fzIQlSMs/ybCgbCVR8b76Zt07g3B0IThZZR0pLRh2Ew6lDESywUKnA5tp3Wp
-        du6nRwo+6Xy64RLWs/iJtbEuWJJa7MuW1eLWMn+DVPHTlE8/y3WtYd2JbR94p4RipWS/u2022DpuR
-        UMJoc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hTBRg-00022i-Gk; Tue, 21 May 2019 20:33:12 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A48CA1126D18; Tue, 21 May 2019 21:33:09 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Christoph Niedermaier <cniedermaier@dh-electronics.com>
-Cc:     broonie@kernel.org, cniedermaier@dh-electronics.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: spidev: Add dhcom-board to compatibility list" to the spi tree
-In-Reply-To: <20190516110149.6165-1-cniedermaier@dh-electronics.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190521203309.A48CA1126D18@debutante.sirena.org.uk>
-Date:   Tue, 21 May 2019 21:33:09 +0100 (BST)
+        Tue, 21 May 2019 16:36:23 -0400
+Received: by mail-pf1-f181.google.com with SMTP id z28so62348pfk.0
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 13:36:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3pdMnlQMpicFeAISSl6SetG7UCP7qGuD4qS0DzjL6Ug=;
+        b=gz+qpT90Axv83cbkiouFZO1oIr+TkgmvDpdd25B+7DFd4tz5+TpHPwWQSpH5dIyb48
+         6a5ygg2J2pfSVZ0gkGrs3KDAZdD6B53AZkOtT2VS3oXt4a0PZzQCNNrgn46n1vqVDz6n
+         7izNaMXDzVIN+Zk6mjfNav/BljVWZg5/fR038=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=3pdMnlQMpicFeAISSl6SetG7UCP7qGuD4qS0DzjL6Ug=;
+        b=f11TCS1RzF/bTW3z1Unmda2uj6m2QsCsBWFrQLYZo5gpFi14JJl3PBzHoF8t5KcvNE
+         DcQhflATao7L04J0qVVOWQJIrIC/E2w/Sp4kZY7NTp3Jo97aWVkjKCFrc9BWa0U2uVdc
+         vmNJ4lQB/Yi1J1jPDPfyLWfMIO+xc3m60STllZkbbVkR2XKNr9hn7P+ISSgKatfmihRT
+         xzVO1OwRU7MjMrCXl5I0k8ZdzQMGth4dzCCVf4h+oyyXb+M4a2UnzpEDlJ1GcEmZh2y6
+         iZE5PRc7l+lrEtIJY/p85iEfs8+EveO/a54M0J6tAP6AZgtEt6qPyIA0tyDYbTvxA1LJ
+         C43w==
+X-Gm-Message-State: APjAAAXTQGacWhL/qkJeW28haL6vlUdSW9faHentC0gQ08Ug9TtXy3UG
+        YwxSmphFP7cyIaU5LrXbWejQbQ==
+X-Google-Smtp-Source: APXvYqxg4xHpBGsoG+5Yv4eVbvoY3I3a0Q5ah6TcNSDyscIN30dOKmqFEvR6rVFugfZjW0rqWiWnlg==
+X-Received: by 2002:a63:1d02:: with SMTP id d2mr85270351pgd.26.1558470982599;
+        Tue, 21 May 2019 13:36:22 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c14sm22949968pgl.43.2019.05.21.13.36.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 May 2019 13:36:22 -0700 (PDT)
+Date:   Tue, 21 May 2019 13:36:21 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [BUG v5.2-rc1] ARM build broken
+Message-ID: <201905211331.E0D1EDC0@keescook>
+References: <4DB08A04-D03A-4441-85DE-64A13E6D709C@goldelico.com>
+ <201905200855.391A921AB@keescook>
+ <D8F987B2-8F41-46DE-B298-89541D7A9774@goldelico.com>
+ <201905201142.CF71598A@keescook>
+ <3610cb7ca542479d8eb124e9c9dd6796@svr-chch-ex1.atlnz.lc>
+ <A22646AB-300F-4E0A-95DE-06633C2A2986@goldelico.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <A22646AB-300F-4E0A-95DE-06633C2A2986@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Tue, May 21, 2019 at 01:23:36PM +0200, H. Nikolaus Schaller wrote:
+> >>>  HOSTLLD -shared scripts/gcc-plugins/arm_ssp_per_task_plugin.so - due to target missing
+> >>> Undefined symbols for architecture x86_64:
+> >>>  "gen_reg_rtx(machine_mode)", referenced from:
+> >>>      (anonymous namespace)::arm_pertask_ssp_rtl_pass::execute() in arm_ssp_per_task_plugin.o
 
-   spi: spidev: Add dhcom-board to compatibility list
+Are you seeing this error still, even after the fix I sent? Perhaps I
+misunderstood that it solves all of the build issues?
 
-has been applied to the spi tree at
+> That seems to be a significant assumption about the build infrastructure
+> which now became permanently enabled by the "default y" for GCC_PLUGINS.
+> 
+> I am not sure what the right way forward is. Probably for me it is to find
+> out if I can fix my cross-toolchain. Or if the kernel should better check
+> if gcc-plugins can really be built, if they are automatically enabled.
+> Or keep all gcc-plugins disabled until explicitly configured for?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
+Right, that seems to be the case: it seems that the gcc plugin build
+sanity detection script is not working in your environment. You can
+check it directly.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Here's the bits from the Kconfig (though I added --show-error for you,
+in case that's useful):
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+preferred-plugin-hostcc := $(if-success,[ $(gcc-version) -ge 40800 ],$(HOSTCXX),$(HOSTCC))
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+scripts/gcc-plugin.sh --show-error "$(preferred-plugin-hostcc)" "$(HOSTCXX)" "$(CC)"
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+I'm not sure what your kernel build picks for gcc-version, HOSTCXX
+HOSTCC and CC...
 
-Thanks,
-Mark
-
-From 9783da2384c5623d376e4641bbce9339be1001eb Mon Sep 17 00:00:00 2001
-From: Christoph Niedermaier <cniedermaier@dh-electronics.com>
-Date: Thu, 16 May 2019 13:01:49 +0200
-Subject: [PATCH] spi: spidev: Add dhcom-board to compatibility list
-
-Prepare to use devices on the external SPI interface
-on a DH electronics Development Board.
-
-Signed-off-by: Christoph Niedermaier <cniedermaier@dh-electronics.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spidev.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index ce9142d87f41..df4c0a9b34dd 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -672,6 +672,7 @@ static const struct of_device_id spidev_dt_ids[] = {
- 	{ .compatible = "ge,achc" },
- 	{ .compatible = "semtech,sx1301" },
- 	{ .compatible = "lwn,bk4" },
-+	{ .compatible = "dh,dhcom-board" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, spidev_dt_ids);
 -- 
-2.20.1
-
+Kees Cook
