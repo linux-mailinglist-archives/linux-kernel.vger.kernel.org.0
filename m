@@ -2,67 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F180C2481F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:34:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D3D124826
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:35:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727930AbfEUGeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 02:34:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54210 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726047AbfEUGeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 02:34:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3D7E5AEC6;
-        Tue, 21 May 2019 06:34:23 +0000 (UTC)
-Date:   Tue, 21 May 2019 08:34:21 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>, linux-api@vger.kernel.org
-Subject: Re: [RFC 0/7] introduce memory hinting API for external process
-Message-ID: <20190521063421.GG32329@dhcp22.suse.cz>
-References: <20190520035254.57579-1-minchan@kernel.org>
- <20190521014452.GA6738@bombadil.infradead.org>
+        id S1728031AbfEUGfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 02:35:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43994 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbfEUGfw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 02:35:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=y2HthqbKJ5tpIQEWIxiqJg+rxHqmp9am5kD1f26lsGM=; b=r+RQQXmPtMb9GvZG+TsBzrBlz
+        N0EIkBZvrgxm+kw+U8wNUgd7iL9+WhQ14Qwf/evHOLeYF3ogmE39f5blqOI+LuTTyhsxWO1/rCKKv
+        /UB5XtWSjObMUM60A4jsZDRyi0TVSzzrluMlCWFZ7nyWa1AGoA5FMehOkZr7b8QttqMOSTvjGQkaY
+        2zFCntwYULG4h9cZIWhjqUnLmLkg5yXtmmSYJmNI3dTYdcrgUOQPnp9eqQ6TRpz4zl6vNTCyhIHDZ
+        vStEx8BOOTR5uzOC/VL8MW1uwtbCQ9+qRe52n3rW3ecr9iOq2vLidiTQUamwoys16XsO6NIxFU8UP
+        3jmK4qX6A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hSyNL-00052s-Kj; Tue, 21 May 2019 06:35:51 +0000
+Date:   Mon, 20 May 2019 23:35:51 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Paul Walmsley <paul@pwsan.com>,
+        Wesley Terpstra <wesley@sifive.com>
+Subject: Re: [PATCH] riscv: include generic support for MSI irqdomains
+Message-ID: <20190521063551.GA5959@infradead.org>
+References: <20190520182528.10627-1-paul.walmsley@sifive.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190521014452.GA6738@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190520182528.10627-1-paul.walmsley@sifive.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[linux-api]
-
-On Mon 20-05-19 18:44:52, Matthew Wilcox wrote:
-> On Mon, May 20, 2019 at 12:52:47PM +0900, Minchan Kim wrote:
-> > IMHO we should spell it out that this patchset complements MADV_WONTNEED
-> > and MADV_FREE by adding non-destructive ways to gain some free memory
-> > space. MADV_COLD is similar to MADV_WONTNEED in a way that it hints the
-> > kernel that memory region is not currently needed and should be reclaimed
-> > immediately; MADV_COOL is similar to MADV_FREE in a way that it hints the
-> > kernel that memory region is not currently needed and should be reclaimed
-> > when memory pressure rises.
+On Mon, May 20, 2019 at 11:25:28AM -0700, Paul Walmsley wrote:
+> Some RISC-V systems include PCIe host controllers that support PCIe
+> message-signaled interrupts.  For this to work on Linux, we need to
+> enable PCI_MSI_IRQ_DOMAIN and define struct msi_alloc_info.  Support
+> for the latter is enabled by including the architecture-generic msi.h
+> include.
 > 
-> Do we tear down page tables for these ranges?  That seems like a good
-> way of reclaiming potentially a substantial amount of memory.
+> Based on a patch from Wesley Terpstra <wesley@sifive.com>:
+> 
+> https://github.com/riscv/riscv-linux/commit/7d55f38fb79f459d2e88bcee7e147796400cafa8
+> 
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> Cc: Wesley Terpstra <wesley@sifive.com>
 
-I do not think we can in general because this is a non-destructive
-operation. So at least we cannot tear down anonymous ptes (they will
-turn into swap entries).
+Well, this is very much Wes' patch as-is.  It should probably be
+attributed to him and you should ask for his signoff.
 
--- 
-Michal Hocko
-SUSE Labs
+Otherwise this looks fine:
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
