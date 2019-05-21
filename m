@@ -2,101 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD3D24E05
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59DA324E06
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:39:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbfEULjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 07:39:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37156 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726692AbfEULjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 07:39:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F1FFEADFA;
-        Tue, 21 May 2019 11:39:33 +0000 (UTC)
-Message-ID: <46004f242c2618a185445630580116c772455613.camel@suse.de>
-Subject: Re: [RFC v2 3/5] clk: bcm2835: use firmware interface to update pllb
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Oliver Neukum <oneukum@suse.com>, stefan.wahren@i2se.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Cc:     mbrugger@suse.de, viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        sboyd@kernel.org, ptesarik@suse.com,
-        linux-rpi-kernel@lists.infradead.org, ssuloev@orpaltech.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mturquette@baylibre.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 21 May 2019 13:39:31 +0200
-In-Reply-To: <1558356237.12672.3.camel@suse.com>
-References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
-         <20190520104708.11980-4-nsaenzjulienne@suse.de>
-         <1558356237.12672.3.camel@suse.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-cEa8KPU0g/Abd6RRg7/R"
-User-Agent: Evolution 3.32.2 
+        id S1728040AbfEULjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 07:39:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41304 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726692AbfEULji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 07:39:38 -0400
+Received: from localhost (unknown [106.51.107.214])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 528C520862;
+        Tue, 21 May 2019 11:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558438778;
+        bh=ReFAdyWrKRD7BGj/7Cy0+dRZJceMz9zOiOfU+eJeyaM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Vx8LHB/5pSK8emSZW8au9utY1uOslIxXWXlYmw/rRUwtCJ3sOJa7rFKFksAoARXy9
+         drVF3MhAjyk/dTAf7SvbppmuPgRcmF570wfSXQodW+Om2KCaYn7fr+g5fcf/A4AC62
+         wZJxi25ZSIlodYbPj1s0Z2hD5Y/jZ+k0tIHU6X48=
+Date:   Tue, 21 May 2019 17:09:33 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org, agross@kernel.org,
+        david.brown@linaro.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, rnayak@codeaurora.org,
+        marc.w.gonzalez@free.fr
+Subject: Re: [PATCH v4 1/9] soc: qcom: rpmpd: fixup rpmpd set performance
+ state
+Message-ID: <20190521113933.GJ15118@vkoul-mobl>
+References: <20190513102015.26551-1-sibis@codeaurora.org>
+ <20190513102015.26551-2-sibis@codeaurora.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190513102015.26551-2-sibis@codeaurora.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 13-05-19, 15:50, Sibi Sankar wrote:
+> Remoteproc q6v5-mss calls set_performace_state with INT_MAX on
 
---=-cEa8KPU0g/Abd6RRg7/R
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+s/performace/performance
 
-Hi Oliver, thanks for the review.
+> rpmpd. This is currently ignored since it is greater than the
+> max supported state. Fixup rpmpd state to max if the required
+> state is greater than all the supported states.
+> 
+> Fixes: 075d3db8d10d ("soc: qcom: rpmpd: Add support for get/set performance state")
+> 
+> Reviewed-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  drivers/soc/qcom/rpmpd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
+> index 005326050c23..235d01870dd8 100644
+> --- a/drivers/soc/qcom/rpmpd.c
+> +++ b/drivers/soc/qcom/rpmpd.c
+> @@ -226,7 +226,7 @@ static int rpmpd_set_performance(struct generic_pm_domain *domain,
+>  	struct rpmpd *pd = domain_to_rpmpd(domain);
+>  
+>  	if (state > MAX_RPMPD_STATE)
+> -		goto out;
+> +		state = MAX_RPMPD_STATE;
+>  
+>  	mutex_lock(&rpmpd_lock);
+>  
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
 
-On Mon, 2019-05-20 at 14:43 +0200, Oliver Neukum wrote:
-> On Mo, 2019-05-20 at 12:47 +0200, Nicolas Saenz Julienne wrote:
-> > + * For more information on the firmware interface check:
-> > + * https://github.com/raspberrypi/firmware/wiki/Mailbox-property-inter=
-face
-> > + */
-> > +struct bcm2835_firmware_prop {
-> > +       u32 id;
-> > +       u32 val;
-> > +       u32 disable_turbo;
-> > +} __packed;
->=20
-> Hi,
->=20
-> technically we are not in arch and those fields have a defined
-> endianness.
->=20
-
-Well I set it as packed since it's 'sent' through a memory mapped firmware
-interface. Hence the need for the structure format to be fixed. So I guesse=
-d
-we're safer with it, as I'm not 100% sure what the different compilers are
-going to do with it (although it's very likely it'll stay the same). BTW th=
-is
-will be built both for arm & arm64.
-
-Regards,
-Nicolas
-
-
---=-cEa8KPU0g/Abd6RRg7/R
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlzj43MACgkQlfZmHno8
-x/4swQf/ZO31nuk1cd9h0edi7kTrZyY6O60vgTBA1GZt/PM8nP82e0m7LYXaDdY2
-UIDyPklgdDR2Lhy0rvroVAGIL8tFgkTRTJ6zbUxUcItWSawQraXQNIcQlpDupxpd
-WCy25NhYQhAuC3sn7djLogWr4ECLJMQcOHHNhh+rUr9Li0Mp5aRP/+QV1vh3sdN4
-5AG5GMwl33WdNBjS52R8+XpqvpRDQjIz30eu2o2D3qdNZx4Q8yH15Rn8V2B0ggmV
-DHZp731xIkZv68U3NXFRmyiwFelo26lSt4bGON4G2HBTXbsw7wqQ42euR/k0vmAo
-qKqRuMJidrvdLD5ABg3jPne3CI3Xpg==
-=Eo7y
------END PGP SIGNATURE-----
-
---=-cEa8KPU0g/Abd6RRg7/R--
-
+-- 
+~Vinod
