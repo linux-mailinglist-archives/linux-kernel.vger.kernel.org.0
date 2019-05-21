@@ -2,132 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CFC72570F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:55:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5019425714
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:56:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729209AbfEURzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 13:55:09 -0400
-Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:52602 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729179AbfEURzI (ORCPT
+        id S1729238AbfEURzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 13:55:55 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:56171 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727898AbfEURzy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 13:55:08 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 8089CC01AB;
-        Tue, 21 May 2019 17:55:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1558461314; bh=j4xujey4oHXPlAqqw8enUk4zgpaPtQQZ7GJiAvqvb5U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=eloylbcnJ5MpMfQi3KVwoX5gi5BDGCqQPL8z4WMUQcXQHnMQOVApwjnTEeFez0qmB
-         d6NJqsP0wb5smfnJ6XhiXvzisPlCWIokP2AMecXdPzgRaR6QHo++0d3Bs51SiGYiIu
-         j8ZP/V2gni2nGmExJZoWo+wD9oCoajeM9sVFCDS39xXEjX+4MfhmVFe2e60wuDqSA0
-         11/9hUwL1yvzUafjjGSken9CgX8TXK5P+reyKlRZvLPnuZyY3IFcyOTdthXuSBQvOi
-         8hFyqFec8nE4WhXEBYeIVzn0F14im7y4r6ZbTlWAbp9NT0Nz51JjHe2lTJvcdB6i5f
-         24PZOehyvdr2w==
-Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.8.106])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 240D6A0067;
-        Tue, 21 May 2019 17:55:03 +0000 (UTC)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v3] ARC: [plat-hsdk]: Add support of Vivante GPU
-Date:   Tue, 21 May 2019 20:54:39 +0300
-Message-Id: <20190521175439.15723-1-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.5
+        Tue, 21 May 2019 13:55:54 -0400
+Received: by mail-it1-f195.google.com with SMTP id g24so2046329iti.5
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 10:55:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jLDbNj8hKOhihnmanHTtFjySrA3DxxDhmX5hUAsmw+o=;
+        b=apCkyJVyJ5bFRQFpxRJZFsNxoG+/opnp07SRfcPSXgWgvUH+EGQEeldHDIWa65YICK
+         qam0sZgU6YgEJX//IAbrcRfPAqxKz+dEDLUTR/VD9kXIF/Gus5tzIXn1GQPDeHvmD/7f
+         CkP5Hvw0SIBfvlsqiykEEgOSNENBEXr2O0udNsrWeHl/bf0ZupafPytTFJZl0+a7DzeV
+         NylV6zObP4e9bcucHNh4tqygOYd7KAVFzCvQ1s1gJMAud24KVZKPV1eBaQQg3dNz/hRP
+         5SktCoMn2iKj2WN3lCQkz0GGed50BCNnRHiwHUTj9WL3B2fXJdHCB+bIdnnUp8D8V51v
+         yxbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jLDbNj8hKOhihnmanHTtFjySrA3DxxDhmX5hUAsmw+o=;
+        b=Cr8lXIDEv4LZkt/V036hWROFzE5X/FRquu5oAxU7OsbcE/cUr1thUGG9XzvdBlDEmq
+         Z2iIn6RNI80m+6SsRAnfy6xATGTJFOW031UhKApiN3dORF/l2CKJ3C3clQ+SV12tOmZ2
+         3qm/mmm2KC0pZjsXxGOnqdHwVQQx+ehVDoUrjPOwzim0p9vVvmLHIFq5psgouZZK/Csz
+         rliNe5ch6H1Sxjax0/qyCwx1tWskxT1Cw+lOpeE0qJf/P4RoYEBWOoNxAHblk6fPbyke
+         YssLLSynjYAMIxFejA72JZAMaCBGrF/QC+Pmb4hWTJTiffyhkytDkmyPanuXzkmdSX+r
+         PipA==
+X-Gm-Message-State: APjAAAWFERchW6um2Qi9tNt0aT89UgPJlB++yCFJC+xOgvC5gz4jRgve
+        /65AuRoGnoRtXYwlS04NABk=
+X-Google-Smtp-Source: APXvYqwxmOUegYH0Yg5h9NSk004Jr4zoAAdGXNe8cm4CmBsUd7SiGjkgKkrTrTcFarnzAl5Z1iBMyQ==
+X-Received: by 2002:a02:a590:: with SMTP id b16mr7518436jam.143.1558461353735;
+        Tue, 21 May 2019 10:55:53 -0700 (PDT)
+Received: from localhost.localdomain ([2607:fea8:7a60:20d:6f1c:3788:87f4:7fe7])
+        by smtp.gmail.com with ESMTPSA id a2sm6718720iok.47.2019.05.21.10.55.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 May 2019 10:55:52 -0700 (PDT)
+From:   Donald Yandt <donald.yandt@gmail.com>
+To:     peterz@infradead.org
+Cc:     mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        yanmin_zhang@linux.intel.com, linux-kernel@vger.kernel.org,
+        Donald Yandt <donald.yandt@gmail.com>
+Subject: [PATCH perf/core] tools/perf/util/machine: Return NULL instead of null-terminating
+Date:   Tue, 21 May 2019 13:54:53 -0400
+Message-Id: <20190521175453.2446-1-donald.yandt@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HSDK board has built-in Vivante GPU IP which works perfectly fine
-with Etnaviv driver, so let's use it.
+Return NULL instead of null-terminating version char array when fgets fails due to end-of-file or error.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Donald Yandt <donald.yandt@gmail.com>
 ---
-Changes v2->v3:
- * Rebase onto latest kernel. No functional change intended.
+ tools/perf/util/machine.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes v1->v2:
- * Add clock inputs to etnaviv device tree node (reported by Lucas Stach)
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 28a9541c4..6fd877220 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1235,9 +1235,9 @@ static char *get_kernel_version(const char *root_dir)
+ 		return NULL;
 
- arch/arc/boot/dts/hsdk.dts      | 29 +++++++++++++++++++++++++++++
- arch/arc/configs/hsdk_defconfig |  2 +-
- 2 files changed, 30 insertions(+), 1 deletion(-)
+ 	tmp = fgets(version, sizeof(version), file);
+-	if (!tmp)
+-		*version = '\0';
+ 	fclose(file);
++	if (!tmp)
++		return NULL;
 
-diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
-index 7425bb0f2d1b..32b3974ae4e2 100644
---- a/arch/arc/boot/dts/hsdk.dts
-+++ b/arch/arc/boot/dts/hsdk.dts
-@@ -167,6 +167,24 @@
- 			#clock-cells = <0>;
- 		};
- 
-+		gpu_core_clk: gpu-core-clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <400000000>;
-+			#clock-cells = <0>;
-+		};
-+
-+		gpu_dma_clk: gpu-dma-clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <400000000>;
-+			#clock-cells = <0>;
-+		};
-+
-+		gpu_cfg_clk: gpu-cfg-clk {
-+			compatible = "fixed-clock";
-+			clock-frequency = <200000000>;
-+			#clock-cells = <0>;
-+		};
-+
- 		dmac_core_clk: dmac-core-clk {
- 			compatible = "fixed-clock";
- 			clock-frequency = <400000000>;
-@@ -252,6 +270,17 @@
- 			};
- 		};
- 
-+		gpu_3d: gpu@90000 {
-+			compatible = "vivante,gc";
-+			reg = <0x90000 0x4000>;
-+			clocks = <&gpu_dma_clk>,
-+				 <&gpu_cfg_clk>,
-+				 <&gpu_core_clk>,
-+				 <&gpu_core_clk>;
-+			clock-names = "bus", "reg", "core", "shader";
-+			interrupts = <28>;
-+		};
-+
- 		dmac: dmac@80000 {
- 			compatible = "snps,axi-dma-1.01a";
- 			reg = <0x80000 0x400>;
-diff --git a/arch/arc/configs/hsdk_defconfig b/arch/arc/configs/hsdk_defconfig
-index 0e5fd29ed238..643b58be022d 100644
---- a/arch/arc/configs/hsdk_defconfig
-+++ b/arch/arc/configs/hsdk_defconfig
-@@ -53,6 +53,7 @@ CONFIG_GPIO_DWAPB=y
- CONFIG_DRM=y
- # CONFIG_DRM_FBDEV_EMULATION is not set
- CONFIG_DRM_UDL=y
-+CONFIG_DRM_ETNAVIV=y
- CONFIG_FB=y
- CONFIG_FRAMEBUFFER_CONSOLE=y
- CONFIG_USB_EHCI_HCD=y
-@@ -64,7 +65,6 @@ CONFIG_MMC=y
- CONFIG_MMC_SDHCI=y
- CONFIG_MMC_SDHCI_PLTFM=y
- CONFIG_MMC_DW=y
--# CONFIG_IOMMU_SUPPORT is not set
- CONFIG_EXT3_FS=y
- CONFIG_VFAT_FS=y
- CONFIG_TMPFS=y
--- 
-2.14.5
+ 	name = strstr(version, prefix);
+ 	if (!name)
+--
+2.20.1
 
