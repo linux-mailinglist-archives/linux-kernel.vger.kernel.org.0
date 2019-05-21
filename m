@@ -2,155 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A22724598
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 03:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E0F82459E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 03:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbfEUB05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 21:26:57 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39247 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727043AbfEUB04 (ORCPT
+        id S1727540AbfEUB3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 21:29:43 -0400
+Received: from twhmllg4.macronix.com ([211.75.127.132]:55746 "EHLO
+        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727043AbfEUB3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 21:26:56 -0400
-Received: by mail-pl1-f193.google.com with SMTP id g9so7556645plm.6
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 18:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=q5tudNQ9cSMh3fCrTxG8NdksCakwJg8DbWSQrWyIrTI=;
-        b=DLIH2eCPL/TbrcrBJeS072RZfACT/OHayR/cqOaUp7jstN6cQtTJ2IEb2WSwA905Yu
-         CbztJl76ysh8fRQywqbHQMTK4Rtqu2TV+LgMStlkUkwDn4fgj109EcDjDtosETfHillX
-         pAjdbYgfJtj0PofpNUmu9de9BVwPaZ6FWCF4NrS6UB4R2FgmYMg6DFxcPpyMVltTUWf6
-         1QvvaVsF5RCkX2nLqQFkXPI/4Ia/PTK4vdvU6FjwFgyo5LvCfhUcqE6RfsJ//mYo5vgp
-         zn0yh4FxQMYMqrVG7Uz48HqxvkW8oi1wqdHSvAJdr88NARk0dpExcyT1I9jxgVTaC5O/
-         m0Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=q5tudNQ9cSMh3fCrTxG8NdksCakwJg8DbWSQrWyIrTI=;
-        b=G/r0knRdE8ew60KYEZOwW/+qq5+CzExaSNCQx6hGLiJLCSYkcuxun9uG89Ag/bwAuY
-         RoARuwLnl1HBoADmkoa/MxB1PlUFGWA8ybxMrOl7U2Wi99YVaY3hwuv/qVvJlbCB09Fq
-         aiAb9GBbA+RRrrgwl37AzuHSXcFT8IUPT1Yh0QoQDXIx4gAs2A76qo8yzcQGo3rl3LWd
-         KM5CQ1esc8HEObXo2oyqzEw6wn5LZRWeO5LjMtxw7F2JiG8a/PuHYv+BGlKQOf7WGqVn
-         nBfJQk32lcgiWyup8WfQHX4LAA60uwE/K7/pgfy/hohffk/2ikozRT/LvUR8dyGJSyTP
-         lRzQ==
-X-Gm-Message-State: APjAAAXLWdNfgalubcVGpv/o7KoBICW5JW3d0UFaCu1HKLPqmyASek8i
-        Ewge51hfWa/46wMUH6d7/s8=
-X-Google-Smtp-Source: APXvYqwrSyAyALFyw9JHfY/nrm7OEjpxF4Wqstkj8FkkR4Th/leZJbMdZSinz1oSvJWv54bKmZF/tA==
-X-Received: by 2002:a17:902:ba8d:: with SMTP id k13mr65556652pls.52.1558402016072;
-        Mon, 20 May 2019 18:26:56 -0700 (PDT)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id a8sm9209871pfk.14.2019.05.20.18.26.51
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 20 May 2019 18:26:54 -0700 (PDT)
-Date:   Tue, 21 May 2019 10:26:49 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Oleksandr Natalenko <oleksandr@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>
-Subject: Re: [RFC 4/7] mm: factor out madvise's core functionality
-Message-ID: <20190521012649.GE10039@google.com>
-References: <20190520035254.57579-1-minchan@kernel.org>
- <20190520035254.57579-5-minchan@kernel.org>
- <20190520142633.x5d27gk454qruc4o@butterfly.localdomain>
+        Mon, 20 May 2019 21:29:43 -0400
+Received: from twhfmnt1.mxic.com.tw (twhfm1p2.macronix.com [172.17.20.92])
+        by TWHMLLG4.macronix.com with ESMTP id x4L1SY4I018677;
+        Tue, 21 May 2019 09:28:34 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.macronix.com [172.17.14.55])
+        by Forcepoint Email with ESMTP id BC4C22738DACF419C5FA;
+        Tue, 21 May 2019 09:28:34 +0800 (CST)
+In-Reply-To: <CAMuHMdU5a2qXVG52Creftp4wR_nnwB9xk=jFeiOWUO0vJSyV0w@mail.gmail.com>
+References: <1556092536-17095-1-git-send-email-masonccyang@mxic.com.tw> <20190507125730.GD29524@dell> <OF08A5650B.8AE8977C-ON482583F4.000E5B1E-482583F4.000F7215@mxic.com.tw> <d229b19e-351c-c576-b5c4-716d10dad1a0@gmail.com> <20190508061119.GB7627@dell> <OFE86674B9.06D723A0-ON482583F5.000AD50C-482583F5.000BA075@mxic.com.tw> <a05cff8f-7df2-1938-c0e7-f9366bece607@cogentembedded.com> <OFB19BCE91.6EBBAA77-ON482583F6.000234E2-482583F6.00061290@mxic.com.tw> <CAMuHMdUP8KU3Dbv6cwOvrY0hWOcm1xqVcsi20+GvazYMDLGGZg@mail.gmail.com> <OFD932ABFC.E3FFCEB8-ON482583F9.003412B1-482583F9.0034D5CA@mxic.com.tw> <b51d1cb7-b3b5-208f-ab4c-145ecb57805d@cogentembedded.com> <44bc8f0a-cbdc-db4a-9a46-b8bae5cc37a2@cogentembedded.com> <OF5AF00898.3CE87C9
+ <CAMuHMdU5a2qXVG52Creftp4wR_nnwB9xk=jFeiOWUO0vJSyV0w@mail.gmail.com>
+To:     "Geert Uytterhoeven" <geert@linux-m68k.org>
+Cc:     "Boris Brezillon" <bbrezillon@kernel.org>,
+        "Mark Brown" <broonie@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "Simon Horman" <horms@verge.net.au>, juliensu@mxic.com.tw,
+        "Lee Jones" <lee.jones@linaro.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "Linux-Renesas" <linux-renesas-soc@vger.kernel.org>,
+        "linux-spi" <linux-spi@vger.kernel.org>,
+        "Marek Vasut" <marek.vasut@gmail.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        "Miquel Raynal" <miquel.raynal@bootlin.com>,
+        "Rob Herring" <robh@kernel.org>,
+        "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>,
+        zhengxunli@mxic.com.tw
+Subject: Re: [PATCH v12 3/3] dt-bindings: mfd: Document Renesas R-Car Gen3 RPC-IF
+ MFD bindings
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190520142633.x5d27gk454qruc4o@butterfly.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-KeepSent: 6A21896F:72833899-48258401:0007B494;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OF6A21896F.72833899-ON48258401.0007B494-48258401.00081C05@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Tue, 21 May 2019 09:28:35 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2019/05/21 AM 09:28:34,
+        Serialize complete at 2019/05/21 AM 09:28:34
+Content-Type: text/plain; charset="US-ASCII"
+X-MAIL: TWHMLLG4.macronix.com x4L1SY4I018677
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oleksandr,
 
-On Mon, May 20, 2019 at 04:26:33PM +0200, Oleksandr Natalenko wrote:
-> Hi.
+Hi Geert,
+
 > 
-> On Mon, May 20, 2019 at 12:52:51PM +0900, Minchan Kim wrote:
-> > This patch factor out madvise's core functionality so that upcoming
-> > patch can reuse it without duplication.
-> > 
-> > It shouldn't change any behavior.
-> > 
-> > Signed-off-by: Minchan Kim <minchan@kernel.org>
-> > ---
-> >  mm/madvise.c | 168 +++++++++++++++++++++++++++------------------------
-> >  1 file changed, 89 insertions(+), 79 deletions(-)
-> > 
-> > diff --git a/mm/madvise.c b/mm/madvise.c
-> > index 9a6698b56845..119e82e1f065 100644
-> > --- a/mm/madvise.c
-> > +++ b/mm/madvise.c
-> > @@ -742,7 +742,8 @@ static long madvise_dontneed_single_vma(struct vm_area_struct *vma,
-> >  	return 0;
-> >  }
-> >  
-> > -static long madvise_dontneed_free(struct vm_area_struct *vma,
-> > +static long madvise_dontneed_free(struct task_struct *tsk,
-> > +				  struct vm_area_struct *vma,
-> >  				  struct vm_area_struct **prev,
-> >  				  unsigned long start, unsigned long end,
-> >  				  int behavior)
-> > @@ -754,8 +755,8 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
-> >  	if (!userfaultfd_remove(vma, start, end)) {
-> >  		*prev = NULL; /* mmap_sem has been dropped, prev is stale */
-> >  
-> > -		down_read(&current->mm->mmap_sem);
-> > -		vma = find_vma(current->mm, start);
-> > +		down_read(&tsk->mm->mmap_sem);
-> > +		vma = find_vma(tsk->mm, start);
-> >  		if (!vma)
-> >  			return -ENOMEM;
-> >  		if (start < vma->vm_start) {
-> > @@ -802,7 +803,8 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
-> >   * Application wants to free up the pages and associated backing store.
-> >   * This is effectively punching a hole into the middle of a file.
-> >   */
-> > -static long madvise_remove(struct vm_area_struct *vma,
-> > +static long madvise_remove(struct task_struct *tsk,
-> > +				struct vm_area_struct *vma,
-> >  				struct vm_area_struct **prev,
-> >  				unsigned long start, unsigned long end)
-> >  {
-> > @@ -836,13 +838,13 @@ static long madvise_remove(struct vm_area_struct *vma,
-> >  	get_file(f);
-> >  	if (userfaultfd_remove(vma, start, end)) {
-> >  		/* mmap_sem was not released by userfaultfd_remove() */
-> > -		up_read(&current->mm->mmap_sem);
-> > +		up_read(&tsk->mm->mmap_sem);
-> >  	}
-> >  	error = vfs_fallocate(f,
-> >  				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-> >  				offset, end - start);
-> >  	fput(f);
-> > -	down_read(&current->mm->mmap_sem);
-> > +	down_read(&tsk->mm->mmap_sem);
-> >  	return error;
-> >  }
-> >  
-> > @@ -916,12 +918,13 @@ static int madvise_inject_error(int behavior,
-> >  #endif
+> On Mon, May 20, 2019 at 9:24 AM <masonccyang@mxic.com.tw> wrote:
+> > > >>>   - clocks: should contain 1 entries for the module's clock
+> > > >>>   - clock-names: should contain "rpc"
+> > > >>
+> > > >>    I suspect we'd need the RPC/RPCD2 clocks mentioned as well 
+(not
+> > sure
+> > > > yet)...
+> > > >
+> > > > Need it ?
+> > >
+> > >    You seem to call clk_get_rate() on the module clock, I doubt 
+that's
+> > > correct topologically...
+> >
+> > I think it's correct but just like Geert mentioned that there is no 
+any
+> > patch
+> > in drivers/clk/renesas/r8a77995-cpg-mssr.c adding RPC-related clocks.
+> >
+> >
+> > I patched dt-bindings/clock/r8a77995-cpg-mssr.h for some simple 
+testing
+> >
+> > -#define R8A77995_CLK_RPC               29
+> > -#define R8A77995_CLK_RPCD2             30
+> > +#define R8A77995_CLK_RPC               31
+> > +#define R8A77995_CLK_RPCD2             32
 > 
-> What about madvise_inject_error() and get_user_pages_fast() in it
-> please?
+> That change doesn't make sense to me...
+> 
+> > by clk_prepare_enable() & clk_disable_unprepare() with CPG_MOD 917
+> > on D3 draak board, it is working fine.
+> 
+> ... and is not sufficient to allow the above two calls.
+> 
+> Besides, making explicit clk_prepare_enable() calls bypasses Runtime PM
+> and the automatic disabling of unused clocks, thus hiding bugs related 
+to
+> Runtime PM.  Which is probably why your driver doesn't work for 
+Sergei...
+> 
 
-Good point. Maybe, there more places where assume context is "current" so
-I'm thinking to limit hints we could allow from external process.
-It would be better for maintainance point of view in that we could know
-the workload/usecases when someone ask new advises from external process
-without making every hints works both contexts.
+Got it, thanks for your explanation.
 
-Thanks.
+best regards,
+Mason
+
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information 
+and/or personal data, which is protected by applicable laws. Please be 
+reminded that duplication, disclosure, distribution, or use of this e-mail 
+(and/or its attachments) or any part thereof is prohibited. If you receive 
+this e-mail in error, please notify us immediately and delete this mail as 
+well as its attachment(s) from your system. In addition, please be 
+informed that collection, processing, and/or use of personal data is 
+prohibited unless expressly permitted by personal data protection laws. 
+Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
+
+
+============================================================================
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
