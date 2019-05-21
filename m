@@ -2,92 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C538E25449
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A09225440
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:43:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728337AbfEUPpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:45:51 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44730 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728091AbfEUPpv (ORCPT
+        id S1728789AbfEUPnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:43:18 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:59164 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727941AbfEUPnS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:45:51 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c5so8606741pll.11
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 08:45:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DCgLiR019LUQfhnXl76ud5P8ct/eu8hvw0HpmgFMVXQ=;
-        b=rfl6geACXaznE893Xv6EgsaoZwgicisSZNkTyws+FFmrjw0cygFwzOxsanbZMxvOf7
-         6nSazz6qkCSgtzpNrz//Z0sti/qux5BfsEeQpe+9GbUFQ4F7Dmk2r0FnoE/WPfRXN90k
-         8RRBaIX56/CJcvv0P1a5qYQ1bFdsoK2JKwlFNG+uJDsWnxUChFVNBCQvAXr0vq4KGSph
-         JuAiFZCdMhxHo3BqWgWC3bsYnHIJhGI7oCzQKzV+gVv1tTbiJ9kaSZR453A4nFGOR1+e
-         q8xc6+uuS8Hm84nvH19ohB3e+sXPemZlk/aeTiv3iKYhyfTJWvEpqn/jfzhFmFW28wgf
-         xcvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DCgLiR019LUQfhnXl76ud5P8ct/eu8hvw0HpmgFMVXQ=;
-        b=JJFzuGeUqfKpJAeVMh5jKQn/wuNLbxuAVx1atLnA2S1yd5Cv/1lvpH4WGl7rlwrpBj
-         ZrcPjpMVI/giahrzk6UglHxXSXOxjGIqcyZaXCWYYkjvTIwR00qDNUK79JuCNbKNFH4s
-         yKDHhrCHpQJqenwzAdnUwRz7SKon5fN5CGjR60h4FsxjZCuLy2EKhtJ8zzwIU7g2hps5
-         ZZyowI1ZhOFOqc9tAkLtGEhE9dETlELbRmNthWsOBUK8KbeEoECONSG08YAAxMRhs7Ql
-         XsCAfYoerOZyERFYsVbq3VGpX+ebL30qxluGZW8vthJ4mud+wAB6k+V5hAQeVagATe/g
-         84/w==
-X-Gm-Message-State: APjAAAUFY3neGI3oIWC7IaxdaFgfXesEEP2kIrRsV6pC59IgCu1nCnVr
-        Qf6iTfTVFqxUvUuhgPd/+qqyBQ==
-X-Google-Smtp-Source: APXvYqy660k6G3n/CoK0UJH2aQhhfLekgKFUK4qr3XL++igjtjitHM44q7FxegqNyS4YiSWiviy6/A==
-X-Received: by 2002:a17:902:848c:: with SMTP id c12mr34232829plo.17.1558453550759;
-        Tue, 21 May 2019 08:45:50 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::2:6169])
-        by smtp.gmail.com with ESMTPSA id 127sm26255492pfc.159.2019.05.21.08.45.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 08:45:49 -0700 (PDT)
-Date:   Tue, 21 May 2019 11:45:48 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     ying.huang@intel.com, mhocko@suse.com, mgorman@techsingularity.net,
-        kirill.shutemov@linux.intel.com, josef@toxicpanda.com,
-        hughd@google.com, shakeelb@google.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [v3 PATCH 1/2] mm: vmscan: remove double slab pressure by
- inc'ing sc->nr_scanned
-Message-ID: <20190521154548.GA3687@cmpxchg.org>
-References: <1558431642-52120-1-git-send-email-yang.shi@linux.alibaba.com>
+        Tue, 21 May 2019 11:43:18 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4LFh2nH060385;
+        Tue, 21 May 2019 10:43:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1558453383;
+        bh=BebSjCfBsCHEUo8I5RDowvI6IDOnbTWjcg7QUO5FfrM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=h0zR2Ex78soeWXHccWYN5lSFojeRjqGReAnhHKRzbOM/jJdQomnfQg7SW6BdB9boI
+         ZGYWJvAsuY6yUSt7rZ0LqqvfiVUk6bZSnZZ7AkPrzZXYXaODNtzPlgX3jL6zyBPT3U
+         krs8Ghev7wAggZb8m1p7KLQSAQQ4bgZUIFoUkSXU=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4LFh2UO126742
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 21 May 2019 10:43:02 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 21
+ May 2019 10:43:02 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 21 May 2019 10:43:01 -0500
+Received: from [158.218.117.39] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4LFh0dS006810;
+        Tue, 21 May 2019 10:43:01 -0500
+Subject: Re: [PATCH] hsr: fix don't prune the master node from the node_db
+To:     Andreas Oetken <andreas.oetken@siemens.com>
+CC:     <andreas@oetken.name>, Arvid Brodin <arvid.brodin@alten.se>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190521105241.16234-1-andreas.oetken@siemens.com>
+From:   Murali Karicheri <m-karicheri2@ti.com>
+Message-ID: <88831c42-41f1-b56a-e0ac-21788292a903@ti.com>
+Date:   Tue, 21 May 2019 11:46:43 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1558431642-52120-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190521105241.16234-1-andreas.oetken@siemens.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 05:40:41PM +0800, Yang Shi wrote:
-> The commit 9092c71bb724 ("mm: use sc->priority for slab shrink targets")
-> has broken up the relationship between sc->nr_scanned and slab pressure.
-> The sc->nr_scanned can't double slab pressure anymore.  So, it sounds no
-> sense to still keep sc->nr_scanned inc'ed.  Actually, it would prevent
-> from adding pressure on slab shrink since excessive sc->nr_scanned would
-> prevent from scan->priority raise.
-> 
-> The bonnie test doesn't show this would change the behavior of
-> slab shrinkers.
-> 
-> 				w/		w/o
-> 			  /sec    %CP      /sec      %CP
-> Sequential delete: 	3960.6    94.6    3997.6     96.2
-> Random delete: 	2518      63.8    2561.6     64.6
-> 
-> The slight increase of "/sec" without the patch would be caused by the
-> slight increase of CPU usage.
-> 
-> Cc: Josef Bacik <josef@toxicpanda.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Hi Andreas,
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+On 05/21/2019 06:52 AM, Andreas Oetken wrote:
+> Don't prune master node in the hsr_prune_nodes function.
+> Neither time_in[HSR_PT_SLAVE_A], nor time_in[HSR_PT_SLAVE_B],
+> will ever be updated by hsr_register_frame_in for the master port.
+> Thus the master node will be repeatedly pruned leading to
+> repeated packet loss.
+> This bug never appeared because the hsr_prune_nodes function
+> was only called once. Since commit 5150b45fd355
+> ("net: hsr: Fix node prune function for forget time expiry") this issue
+> is fixed unvealing the issue described above.
+> 
+> Signed-off-by: Andreas Oetken <andreas.oetken@siemens.com>
+> ---
+>   net/hsr/hsr_framereg.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
+> index 9af16cb68f76..317cddda494e 100644
+> --- a/net/hsr/hsr_framereg.c
+> +++ b/net/hsr/hsr_framereg.c
+> @@ -387,6 +387,14 @@ void hsr_prune_nodes(struct timer_list *t)
+>   
+>   	rcu_read_lock();
+>   	list_for_each_entry_rcu(node, &hsr->node_db, mac_list) {
+> +		/* Don't prune own node. Neither time_in[HSR_PT_SLAVE_A]
+> +		 * nor time_in[HSR_PT_SLAVE_B], will ever be updated for
+> +		 * the master port. Thus the master node will be repeatedly
+> +		 * pruned leading to packet loss.
+> +		 */
+> +		if (hsr_addr_is_self(hsr, node->MacAddressA))
+This gives me a compilation issue in the latest master branch
+
+   AR      drivers/base/regmap/built-in.a
+   AR      drivers/base/built-in.a
+net/hsr/hsr_framereg.c: In function ‘hsr_prune_nodes’:
+net/hsr/hsr_framereg.c:373:35: error: ‘struct hsr_node’ has no member 
+named ‘MacAddressA’; did you mean ‘macaddress_A’?
+    if (hsr_addr_is_self(hsr, node->MacAddressA))
+                                    ^~~~~~~~~~~
+                                    macaddress_A
+   CC      net/core/gen_stats.o
+scripts/Makefile.build:278: recipe for target 'net/hsr/hsr_framereg.o' 
+failed
+
+Could you address it and re-send?
+
+Thanks
+
+Murali
+> +			continue;
+> +
+>   		/* Shorthand */
+>   		time_a = node->time_in[HSR_PT_SLAVE_A];
+>   		time_b = node->time_in[HSR_PT_SLAVE_B];
+> 
+
