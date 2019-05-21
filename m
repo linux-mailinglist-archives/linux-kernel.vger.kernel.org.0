@@ -2,189 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8BCE25716
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CFC72570F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:55:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729250AbfEUR4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 13:56:01 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:9450 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728175AbfEUR4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 13:56:01 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 457k2l0XyYz9txsZ;
-        Tue, 21 May 2019 19:55:59 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=A6sdd7VZ; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id D8j8zh3LvLfO; Tue, 21 May 2019 19:55:59 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 457k2k6Vgjz9txsY;
-        Tue, 21 May 2019 19:55:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1558461358; bh=rPRJB17D3wA1CcMFmT+QLbr4H/GkCMjO8jlqLd5EAXY=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=A6sdd7VZ6YXmMK8C3m5hleP1Rq4YYgrehXYedp67BnOsg2KWTDgHOEu8VyTYHVy8e
-         884T8xkn7OA7BJCb1lGJRF2SI62gVukwuxL6qtjPyp9lSzHMwMY9q1ZeBjwhQC0h+A
-         CJmpESWlTLRV/P5uIMgVe8NocOPt96iwG/20Z/Vg=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id DBD878B815;
-        Tue, 21 May 2019 19:55:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id JJXzrbF143zy; Tue, 21 May 2019 19:55:58 +0200 (CEST)
-Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 795D58B811;
-        Tue, 21 May 2019 19:55:58 +0200 (CEST)
-Subject: Re: [PATCH v1 02/15] crypto: talitos - rename alternative AEAD algos.
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1558445259.git.christophe.leroy@c-s.fr>
- <1449c1a24e2e06ac6c8c2e1b7f73feedfd51894c.1558445259.git.christophe.leroy@c-s.fr>
-Message-ID: <3ac55e59-a75c-0b9a-be24-148007bb522e@c-s.fr>
-Date:   Tue, 21 May 2019 17:54:21 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1449c1a24e2e06ac6c8c2e1b7f73feedfd51894c.1558445259.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1729209AbfEURzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 13:55:09 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:52602 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729179AbfEURzI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 13:55:08 -0400
+Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 8089CC01AB;
+        Tue, 21 May 2019 17:55:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1558461314; bh=j4xujey4oHXPlAqqw8enUk4zgpaPtQQZ7GJiAvqvb5U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=eloylbcnJ5MpMfQi3KVwoX5gi5BDGCqQPL8z4WMUQcXQHnMQOVApwjnTEeFez0qmB
+         d6NJqsP0wb5smfnJ6XhiXvzisPlCWIokP2AMecXdPzgRaR6QHo++0d3Bs51SiGYiIu
+         j8ZP/V2gni2nGmExJZoWo+wD9oCoajeM9sVFCDS39xXEjX+4MfhmVFe2e60wuDqSA0
+         11/9hUwL1yvzUafjjGSken9CgX8TXK5P+reyKlRZvLPnuZyY3IFcyOTdthXuSBQvOi
+         8hFyqFec8nE4WhXEBYeIVzn0F14im7y4r6ZbTlWAbp9NT0Nz51JjHe2lTJvcdB6i5f
+         24PZOehyvdr2w==
+Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.8.106])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 240D6A0067;
+        Tue, 21 May 2019 17:55:03 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH v3] ARC: [plat-hsdk]: Add support of Vivante GPU
+Date:   Tue, 21 May 2019 20:54:39 +0300
+Message-Id: <20190521175439.15723-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe & Andy
+HSDK board has built-in Vivante GPU IP which works perfectly fine
+with Etnaviv driver, so let's use it.
 
-On 05/21/2019 01:34 PM, Christophe Leroy wrote:
-> The talitos driver has two ways to perform AEAD depending on the
-> HW capability. Some HW support both. It is needed to give them
-> different names to distingish which one it is for instance when
-> a test fails.
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> Fixes: 7405c8d7ff97 ("crypto: talitos - templates for AEAD using HMAC_SNOOP_NO_AFEU")
-> Cc: stable@vger.kernel.org
-> ---
->   drivers/crypto/talitos.c | 16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-> index f443cbe7da80..6f8bc6467706 100644
-> --- a/drivers/crypto/talitos.c
-> +++ b/drivers/crypto/talitos.c
-> @@ -2356,7 +2356,7 @@ static struct talitos_alg_template driver_algs[] = {
->   			.base = {
->   				.cra_name = "authenc(hmac(sha1),cbc(aes))",
->   				.cra_driver_name = "authenc-hmac-sha1-"
-> -						   "cbc-aes-talitos",
-> +						   "cbc-aes-talitos-hsna",
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+---
+Changes v2->v3:
+ * Rebase onto latest kernel. No functional change intended.
 
-checkpatch reports the following warning on the above:
+Changes v1->v2:
+ * Add clock inputs to etnaviv device tree node (reported by Lucas Stach)
 
-WARNING: quoted string split across lines
-#27: FILE: drivers/crypto/talitos.c:2359:
-  				.cra_driver_name = "authenc-hmac-sha1-"
-+						   "cbc-aes-talitos-hsna",
+ arch/arc/boot/dts/hsdk.dts      | 29 +++++++++++++++++++++++++++++
+ arch/arc/configs/hsdk_defconfig |  2 +-
+ 2 files changed, 30 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
+index 7425bb0f2d1b..32b3974ae4e2 100644
+--- a/arch/arc/boot/dts/hsdk.dts
++++ b/arch/arc/boot/dts/hsdk.dts
+@@ -167,6 +167,24 @@
+ 			#clock-cells = <0>;
+ 		};
+ 
++		gpu_core_clk: gpu-core-clk {
++			compatible = "fixed-clock";
++			clock-frequency = <400000000>;
++			#clock-cells = <0>;
++		};
++
++		gpu_dma_clk: gpu-dma-clk {
++			compatible = "fixed-clock";
++			clock-frequency = <400000000>;
++			#clock-cells = <0>;
++		};
++
++		gpu_cfg_clk: gpu-cfg-clk {
++			compatible = "fixed-clock";
++			clock-frequency = <200000000>;
++			#clock-cells = <0>;
++		};
++
+ 		dmac_core_clk: dmac-core-clk {
+ 			compatible = "fixed-clock";
+ 			clock-frequency = <400000000>;
+@@ -252,6 +270,17 @@
+ 			};
+ 		};
+ 
++		gpu_3d: gpu@90000 {
++			compatible = "vivante,gc";
++			reg = <0x90000 0x4000>;
++			clocks = <&gpu_dma_clk>,
++				 <&gpu_cfg_clk>,
++				 <&gpu_core_clk>,
++				 <&gpu_core_clk>;
++			clock-names = "bus", "reg", "core", "shader";
++			interrupts = <28>;
++		};
++
+ 		dmac: dmac@80000 {
+ 			compatible = "snps,axi-dma-1.01a";
+ 			reg = <0x80000 0x400>;
+diff --git a/arch/arc/configs/hsdk_defconfig b/arch/arc/configs/hsdk_defconfig
+index 0e5fd29ed238..643b58be022d 100644
+--- a/arch/arc/configs/hsdk_defconfig
++++ b/arch/arc/configs/hsdk_defconfig
+@@ -53,6 +53,7 @@ CONFIG_GPIO_DWAPB=y
+ CONFIG_DRM=y
+ # CONFIG_DRM_FBDEV_EMULATION is not set
+ CONFIG_DRM_UDL=y
++CONFIG_DRM_ETNAVIV=y
+ CONFIG_FB=y
+ CONFIG_FRAMEBUFFER_CONSOLE=y
+ CONFIG_USB_EHCI_HCD=y
+@@ -64,7 +65,6 @@ CONFIG_MMC=y
+ CONFIG_MMC_SDHCI=y
+ CONFIG_MMC_SDHCI_PLTFM=y
+ CONFIG_MMC_DW=y
+-# CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_EXT3_FS=y
+ CONFIG_VFAT_FS=y
+ CONFIG_TMPFS=y
+-- 
+2.14.5
 
-But when I fixes the patch as follows, I get another warning:
-
-@@ -2355,8 +2355,7 @@ static struct talitos_alg_template driver_algs[] = {
-  		.alg.aead = {
-  			.base = {
-  				.cra_name = "authenc(hmac(sha1),cbc(aes))",
--				.cra_driver_name = "authenc-hmac-sha1-"
--						   "cbc-aes-talitos",
-+				.cra_driver_name = "authenc-hmac-sha1-cbc-aes-talitos-hsna",
-  				.cra_blocksize = AES_BLOCK_SIZE,
-  				.cra_flags = CRYPTO_ALG_ASYNC,
-  			},
-
-
-
-WARNING: line over 80 characters
-#28: FILE: drivers/crypto/talitos.c:2358:
-+				.cra_driver_name = "authenc-hmac-sha1-cbc-aes-talitos-hsna",
-
-
-So, how should this be fixed ?
-
-Thanks
-Christophe
-
->   				.cra_blocksize = AES_BLOCK_SIZE,
->   				.cra_flags = CRYPTO_ALG_ASYNC,
->   			},
-> @@ -2401,7 +2401,7 @@ static struct talitos_alg_template driver_algs[] = {
->   				.cra_name = "authenc(hmac(sha1),"
->   					    "cbc(des3_ede))",
->   				.cra_driver_name = "authenc-hmac-sha1-"
-> -						   "cbc-3des-talitos",
-> +						   "cbc-3des-talitos-hsna",
->   				.cra_blocksize = DES3_EDE_BLOCK_SIZE,
->   				.cra_flags = CRYPTO_ALG_ASYNC,
->   			},
-> @@ -2444,7 +2444,7 @@ static struct talitos_alg_template driver_algs[] = {
->   			.base = {
->   				.cra_name = "authenc(hmac(sha224),cbc(aes))",
->   				.cra_driver_name = "authenc-hmac-sha224-"
-> -						   "cbc-aes-talitos",
-> +						   "cbc-aes-talitos-hsna",
->   				.cra_blocksize = AES_BLOCK_SIZE,
->   				.cra_flags = CRYPTO_ALG_ASYNC,
->   			},
-> @@ -2489,7 +2489,7 @@ static struct talitos_alg_template driver_algs[] = {
->   				.cra_name = "authenc(hmac(sha224),"
->   					    "cbc(des3_ede))",
->   				.cra_driver_name = "authenc-hmac-sha224-"
-> -						   "cbc-3des-talitos",
-> +						   "cbc-3des-talitos-hsna",
->   				.cra_blocksize = DES3_EDE_BLOCK_SIZE,
->   				.cra_flags = CRYPTO_ALG_ASYNC,
->   			},
-> @@ -2532,7 +2532,7 @@ static struct talitos_alg_template driver_algs[] = {
->   			.base = {
->   				.cra_name = "authenc(hmac(sha256),cbc(aes))",
->   				.cra_driver_name = "authenc-hmac-sha256-"
-> -						   "cbc-aes-talitos",
-> +						   "cbc-aes-talitos-hsna",
->   				.cra_blocksize = AES_BLOCK_SIZE,
->   				.cra_flags = CRYPTO_ALG_ASYNC,
->   			},
-> @@ -2577,7 +2577,7 @@ static struct talitos_alg_template driver_algs[] = {
->   				.cra_name = "authenc(hmac(sha256),"
->   					    "cbc(des3_ede))",
->   				.cra_driver_name = "authenc-hmac-sha256-"
-> -						   "cbc-3des-talitos",
-> +						   "cbc-3des-talitos-hsna",
->   				.cra_blocksize = DES3_EDE_BLOCK_SIZE,
->   				.cra_flags = CRYPTO_ALG_ASYNC,
->   			},
-> @@ -2706,7 +2706,7 @@ static struct talitos_alg_template driver_algs[] = {
->   			.base = {
->   				.cra_name = "authenc(hmac(md5),cbc(aes))",
->   				.cra_driver_name = "authenc-hmac-md5-"
-> -						   "cbc-aes-talitos",
-> +						   "cbc-aes-talitos-hsna",
->   				.cra_blocksize = AES_BLOCK_SIZE,
->   				.cra_flags = CRYPTO_ALG_ASYNC,
->   			},
-> @@ -2749,7 +2749,7 @@ static struct talitos_alg_template driver_algs[] = {
->   			.base = {
->   				.cra_name = "authenc(hmac(md5),cbc(des3_ede))",
->   				.cra_driver_name = "authenc-hmac-md5-"
-> -						   "cbc-3des-talitos",
-> +						   "cbc-3des-talitos-hsna",
->   				.cra_blocksize = DES3_EDE_BLOCK_SIZE,
->   				.cra_flags = CRYPTO_ALG_ASYNC,
->   			},
-> 
