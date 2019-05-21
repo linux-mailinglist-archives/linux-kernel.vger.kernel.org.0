@@ -2,59 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F232505B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08E0B25068
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:34:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728311AbfEUNdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 09:33:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58876 "EHLO mail.kernel.org"
+        id S1728374AbfEUNeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 09:34:08 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:51174 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728053AbfEUNdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 09:33:21 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 117F9217D7;
-        Tue, 21 May 2019 13:33:19 +0000 (UTC)
-Date:   Tue, 21 May 2019 09:33:17 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 0/2] Enable new kprobe event at boot
-Message-ID: <20190521093317.7d698f79@gandalf.local.home>
-In-Reply-To: <155842537599.4253.14690293652007233645.stgit@devnote2>
-References: <155842537599.4253.14690293652007233645.stgit@devnote2>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727986AbfEUNeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 09:34:08 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 457cDY6p7wz9v1nn;
+        Tue, 21 May 2019 15:34:05 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=v5L0ne9l; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id n2tkmpse9POB; Tue, 21 May 2019 15:34:05 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 457cDY5mh8z9v1nh;
+        Tue, 21 May 2019 15:34:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1558445645; bh=4k6PLmXdY0SvqmTbZLBIzVnywVWKh7ktdtBKLg7zhR0=;
+        h=From:Subject:To:Cc:Date:From;
+        b=v5L0ne9l7IeJ6j1RlEtDlB3tznGmL91nYxqqzqAQ9628UCkLw7a61V7lU7BlOMeaI
+         b0O1Pfn3sC/WTzObfEfPlukMzbiQDm5GZ/6SBtxI8+0WZYgmM+uRDgWxmfFVG8vyhS
+         VJTPMoNWaUD4+epVtwrFHblur8GZGQQvo7qCoHJ0=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 455248B80D;
+        Tue, 21 May 2019 15:34:07 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 45QZsARu0znr; Tue, 21 May 2019 15:34:07 +0200 (CEST)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0F4598B803;
+        Tue, 21 May 2019 15:34:07 +0200 (CEST)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id A260268458; Tue, 21 May 2019 13:34:06 +0000 (UTC)
+Message-Id: <cover.1558445259.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v1 00/15] Fixing selftests failure on Talitos driver
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, horia.geanta@nxp.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 21 May 2019 13:34:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 May 2019 16:56:16 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Several test failures have popped up following recent changes to crypto
+selftests.
 
-> Note that 'trace_event=' option enables trace event at very early
-> timing, but the events added by 'kprobe_event=' are enabled right
-> before enabling device drivers at this point. It is enough for
-> tracing device driver initialization etc.
+This series fixes (most of) them.
 
-Nice!
+The last three patches are trivial cleanups.
 
-I wonder if we can have this called before the trace_event boot is
-analyzed. Then have the kprobe_event work more like the kprobe_events
-file, and not enable the kprobes but only create them. If you want to
-enable them you do a trace_event=kprobes as well.
+Christophe Leroy (15):
+  crypto: talitos - fix skcipher failure due to wrong output IV
+  crypto: talitos - rename alternative AEAD algos.
+  crypto: talitos - reduce max key size for SEC1
+  crypto: talitos - check AES key size
+  crypto: talitos - fix CTR alg blocksize
+  crypto: talitos - check data blocksize in ablkcipher.
+  crypto: talitos - fix ECB algs ivsize
+  crypto: talitos - Do not modify req->cryptlen on decryption.
+  crypto: talitos - HMAC SNOOP NO AFEU mode requires SW icv checking.
+  crypto: talitos - properly handle split ICV.
+  crypto: talitos - Align SEC1 accesses to 32 bits boundaries.
+  crypto: talitos - fix AEAD processing.
+  Revert "crypto: talitos - export the talitos_submit function"
+  crypto: talitos - use IS_ENABLED() in has_ftr_sec1()
+  crypto: talitos - use SPDX-License-Identifier
 
-Perhaps we could enable kprobes at early init?
+ drivers/crypto/talitos.c | 281 ++++++++++++++++++++++-------------------------
+ drivers/crypto/talitos.h |  45 ++------
+ 2 files changed, 139 insertions(+), 187 deletions(-)
 
-What do you think? Or is there something else in kprobes that prevents
-such an early enabling of it?
+-- 
+2.13.3
 
--- Steve
