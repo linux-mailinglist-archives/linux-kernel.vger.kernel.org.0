@@ -2,101 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33736252B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:50:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3F142537F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:07:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbfEUOuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 10:50:50 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:58885 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727969AbfEUOuu (ORCPT
+        id S1728707AbfEUPG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:06:58 -0400
+Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25909 "EHLO
+        sender1.zoho.com.cn" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728137AbfEUPG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 10:50:50 -0400
-X-Originating-IP: 90.88.22.185
-Received: from localhost (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 033AB60006;
-        Tue, 21 May 2019 14:50:47 +0000 (UTC)
-Date:   Tue, 21 May 2019 16:50:47 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: Convert vendor prefixes to json-schema
-Message-ID: <20190521145047.dyfvrzxviqchmxp2@flea>
-References: <20190510194018.28206-1-robh@kernel.org>
- <20190520131846.tqx7h7sjyw6sgka5@flea>
- <CAL_JsqLbuuO9YHYwTXV5ZEGOjzZHgVsWD=TCYk4cYpm0v1zHkQ@mail.gmail.com>
- <CAL_JsqKAP85+KnQtq-xaOdX-BetB0pA7+LT8vd6w=Yz4VWnQJg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="chpalzxqydzs6tku"
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKAP85+KnQtq-xaOdX-BetB0pA7+LT8vd6w=Yz4VWnQJg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+        Tue, 21 May 2019 11:06:57 -0400
+X-Greylist: delayed 906 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 May 2019 11:06:56 EDT
+ARC-Seal: i=1; a=rsa-sha256; t=1558450267; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=O7d9Goh6Y9LEtfymcrLS8ajfUA6VuEjoRMXBsU2olounmbYXYjus34onw2nbVxj48+AHYOPwL3J85GaOB2FrOPdBgTbqHDJQc3x5Epdoecsha0jb0LYfco9DrdAQhRv90SjIcRZSEoPreorUyZ9Xu1DdpfFSM0eioiW0vSRZpxk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1558450267; h=Cc:Date:From:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=FnT1Xjc63AzR8n87E9oTWWxjhdggTkl7tAy4ISAQisE=; 
+        b=Qntt2/4eyQjUKnUuiIxdRQcBw4DNL1HzKvZHftPfFwo2fX1CYmJaFOAv2+GSYkKWnBPGi270CMrehw8/woSDplrJaqmOW2m2iL/HqZGO7QWd3zm/PHpblCQHnhDmNbFUivKNxV+zxOXj0zUjzEuEGWWJTcBZeco9YLFT5V11AGY=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=zoho.com.cn;
+        spf=pass  smtp.mailfrom=cgxu519@zoho.com.cn;
+        dmarc=pass header.from=<cgxu519@zoho.com.cn> header.from=<cgxu519@zoho.com.cn>
+Received: from localhost.localdomain (113.116.50.65 [113.116.50.65]) by mx.zoho.com.cn
+        with SMTPS id 155845026352175.05708036921328; Tue, 21 May 2019 22:51:03 +0800 (CST)
+From:   Chengguang Xu <cgxu519@zoho.com.cn>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-kernel@vger.kernel.org, Chengguang Xu <cgxu519@zoho.com.cn>
+Subject: [PATCH] qnx6: convert mount option checking code to test_opt()
+Date:   Tue, 21 May 2019 22:50:55 +0800
+Message-Id: <20190521145055.26800-1-cgxu519@zoho.com.cn>
+X-Mailer: git-send-email 2.17.2
+X-ZohoCNMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Convert mount option checking code to test_opt() in
+qnx6_show_options().
 
---chpalzxqydzs6tku
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Chengguang Xu <cgxu519@zoho.com.cn>
+---
+ fs/qnx6/inode.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On Mon, May 20, 2019 at 04:23:20PM -0500, Rob Herring wrote:
-> On Mon, May 20, 2019 at 11:35 AM Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Mon, May 20, 2019 at 8:18 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > Hi Rob,
-> > >
-> > > On Fri, May 10, 2019 at 02:40:18PM -0500, Rob Herring wrote:
-> > > > Convert the vendor prefix registry to a schema. This will enable checking
-> > > > that new vendor prefixes are added (in addition to the less than perfect
-> > > > checkpatch.pl check) and will also check against adding other prefixes
-> > > > which are not vendors.
-> > > >
-> > > > Converted vendor-prefixes.txt using the following sed script:
-> > > >
-> > > > sed -e 's/\([a-zA-Z0-9\-]*\)[[:space:]]*\([a-zA-Z0-9].*\)/  "^\1,\.\*\":\n    description: \2/'
-> > > >
-> > > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > > ---
-> > > > As vendor prefix updates come in via multiple trees, I plan to merge
-> > > > this before -rc1 to avoid cross tree conflicts.
-> > >
-> > > I just tried this with the 5.2-rc1 release, and this very
-> > > significantly slows down the validation.
-> > >
-> > > With a dtbs_check run on (arm's) sunxi_defconfig, on my core-i5 with 4
-> > > threads, I go from 1.30 minutes to more than 12.
-> >
-> > Indeed. 6 min to 45 min for allmodconfig. However, it's only 5 min to
-> > run checks with only this file. I'd expect a more linear hit. Maybe
-> > we're exceeding some cache size and thrashing.
->
-> Looks like the problem is a cache. The python regex cache. Changing
-> re._MAXCACHE from 512 to 4096 fixes the problem. I can set this in the
-> dtschema lib.
+diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
+index 59cf45f6be49..c3a80700e7a6 100644
+--- a/fs/qnx6/inode.c
++++ b/fs/qnx6/inode.c
+@@ -46,9 +46,8 @@ static const struct super_operations qnx6_sops = {
+ static int qnx6_show_options(struct seq_file *seq, struct dentry *root)
+ {
+ 	struct super_block *sb = root->d_sb;
+-	struct qnx6_sb_info *sbi = QNX6_SB(sb);
+ 
+-	if (sbi->s_mount_opt & QNX6_MOUNT_MMI_FS)
++	if (test_opt(sb, MMI_FS))
+ 		seq_puts(seq, ",mmi_fs");
+ 	return 0;
+ }
+-- 
+2.17.2
 
-Awesome, thanks!
-Maxime
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---chpalzxqydzs6tku
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOQQRwAKCRDj7w1vZxhR
-xdQuAP439mUERuocEuZCT95DT2OAX3WDau0S9oAgoQyBNYQh4gEAlvtU2tFlk5CI
-wEVaeMJC4qe2gEhqPEta9eBgwK33NQM=
-=JAGU
------END PGP SIGNATURE-----
-
---chpalzxqydzs6tku--
