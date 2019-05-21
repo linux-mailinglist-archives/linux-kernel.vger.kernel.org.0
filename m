@@ -2,88 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 765A6247E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:16:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F544247D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:12:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbfEUGPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 02:15:54 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36128 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbfEUGPx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 02:15:53 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d21so7913170plr.3
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 23:15:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4R0Z1avkl5DcwArAEdYF5RKsOqx23+ElfNwQfhlhU8U=;
-        b=rWBEaPbOv0Ze4QP+zKqhgDJLjfQzgBZRlveZ5KKv6jzAPxoKfCAc9mSKLdMx/9jL3v
-         nFmY67X/QCW8SlSFYYtgtr2TOtMrAz6nEGWK5x5dVRjLFh50dq7JDUw3s7bj6SzJ/E8I
-         Himrhy2bu8WjqyccmLGj1r/JBcUBmkSVcN5j03XkSzrLQHubwWAiU/iwEml7Aezz4Rfq
-         iZrUP6ztMtgo70T0vL607ynlVJImepQp5080ijDfWbjzF7kV/qvfOP6gDITJnzPftl63
-         g1SpLgLn40kDNPNGJq5iNOEPcyabqIhbNJdrg+RJCt1/gxr4Zr+zuxsJQoz/T8vnXL2R
-         LJ2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=4R0Z1avkl5DcwArAEdYF5RKsOqx23+ElfNwQfhlhU8U=;
-        b=CNEO7b2fCW9MR3rg6YpTiFaOp6wcLvRBLgOhE45YyU7bg5AyOTFru3Xus9eWrFhjLY
-         q3cAgHUjk+fAb5kAWiSXG6pPy8WWT07aHO1xtvhzXDJSyQDgBBiucTMNXHJjD6njnY8i
-         eRLypXoRudKd410Zp+VadFD0cpVyg+Wtbmf8O0Fxy0TGWD9BFVi8OShFKI6atBlqrt2e
-         T3QziWrIHBdJkTcU76aslEchbGOFMrxaPxax0CV7uIypm6bpLBBBiTXQYEYkIZCrfehZ
-         /qg5Q+P6S06doCxKb0/icy05mu//YQ9ZsTi8oSJ1F6vsk5EU2vO1wU/wCkQDw3Ze6Wow
-         wChA==
-X-Gm-Message-State: APjAAAU+Jk/fWQrD3H+qrMw3AOgfKtamKmilq1DXREwelWXbfdd8D34g
-        hP/hMYYPr0lD0f1AEvKd46vezw==
-X-Google-Smtp-Source: APXvYqwBHHtyco4N8WF7epFmyuDSFE9c1OUeIL1j1jNgX30UzSph1JCCf5VP/WOjybTewBj76jSwkA==
-X-Received: by 2002:a17:902:1cb:: with SMTP id b69mr54576811plb.158.1558419352754;
-        Mon, 20 May 2019 23:15:52 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id k9sm23064259pfa.180.2019.05.20.23.15.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 20 May 2019 23:15:52 -0700 (PDT)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>
-Subject: [PATCH 2/2] clk: sprd: Add check for return value of sprd_clk_regmap_init()
-Date:   Tue, 21 May 2019 14:09:52 +0800
-Message-Id: <20190521060952.2949-3-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190521060952.2949-1-zhang.chunyan@linaro.org>
-References: <20190521060952.2949-1-zhang.chunyan@linaro.org>
+        id S1727864AbfEUGMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 02:12:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725798AbfEUGMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 02:12:41 -0400
+Received: from localhost (unknown [106.201.107.13])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDFC920863;
+        Tue, 21 May 2019 06:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558419160;
+        bh=4VC9bKP9QU7iVDFMtdo9WoMzmY1tJYqXCWxT9T/NUpY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lJzLTxcVnQlcC8g5MlkXWsEtukxQJremgG+7zcGYuVRwfHSSl/CjVbwp62oapFxjZ
+         RB3v+k7IXX6G0ix1zRMQJ2OvmqFFR1LCVcZnUWQFvAHionw5nVJu6KU8/EW2X/ujcW
+         XyM9/dqc3r3hrt7uRZc5BRuGjG8gjJF0yevCkmSg=
+Date:   Tue, 21 May 2019 11:42:36 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Robin Gong <yibin.gong@nxp.com>
+Cc:     "robh@kernel.org" <robh@kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "plyatov@gmail.com" <plyatov@gmail.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: Re: Re: [PATCH v3 11/14] dmaengine: imx-sdma: fix ecspi1 rx dma
+ not work on i.mx8mm
+Message-ID: <20190521061236.GA15118@vkoul-mobl>
+References: <VI1PR04MB4543DEEC702531ED69616B8C89070@VI1PR04MB4543.eurprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <VI1PR04MB4543DEEC702531ED69616B8C89070@VI1PR04MB4543.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sprd_clk_regmap_init() doesn't always return success, adding check
-for its return value should make the code more strong.
+On 21-05-19, 05:41, Robin Gong wrote:
+> > -----Original Message-----
+> > From: Vinod Koul <vkoul@kernel.org>
+> > Sent: 2019年5月21日 13:13
+> > 
+> > On 21-05-19, 04:58, Robin Gong wrote:
+> > > > -----Original Message-----
+> > > > From: Vinod Koul <vkoul@kernel.org>
+> > > > Sent: 2019年5月21日 12:18
+> > > >
+> > > > On 07-05-19, 09:16, Robin Gong wrote:
+> > > > > Because the number of ecspi1 rx event on i.mx8mm is 0, the
+> > > > > condition check ignore such special case without dma channel
+> > > > > enabled, which caused
+> > > > > ecspi1 rx works failed. Actually, no need to check event_id0,
+> > > > > checking
+> > > > > event_id1 is enough for DEV_2_DEV case because it's so lucky that
+> > > > > event_id1 never be 0.
+> > > >
+> > > > Well is that by chance or design that event_id1 will be never 0?
+> > > >
+> > > That's by chance. DEV_2_DEV is just for Audio case and non-zero for
+> > event_id1 on current i.MX family.
+> > 
+> > Then it wont be fgood to rely on chance :)
+> Yes, I knew that. May I create another independent patch for event_id1 since that's potential issue is not related with this ecspi patch set?
 
-Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
----
- drivers/clk/sprd/sc9860-clk.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Sure a patch should change one thing but I think it should come before
+this one. The log for this should be fixed up as well
 
-diff --git a/drivers/clk/sprd/sc9860-clk.c b/drivers/clk/sprd/sc9860-clk.c
-index 9980ab55271b..1ed45b4f2fe8 100644
---- a/drivers/clk/sprd/sc9860-clk.c
-+++ b/drivers/clk/sprd/sc9860-clk.c
-@@ -2031,7 +2031,9 @@ static int sc9860_clk_probe(struct platform_device *pdev)
- 	}
- 
- 	desc = match->data;
--	sprd_clk_regmap_init(pdev, desc);
-+	ret = sprd_clk_regmap_init(pdev, desc);
-+	if (ret)
-+		return ret;
- 
- 	return sprd_clk_probe(&pdev->dev, desc->hw_clks);
- }
 -- 
-2.17.1
-
+~Vinod
