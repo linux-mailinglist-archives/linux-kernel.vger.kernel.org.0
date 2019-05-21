@@ -2,166 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D008024FB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8972524FBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbfEUNEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 09:04:45 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32981 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728271AbfEUNEo (ORCPT
+        id S1728088AbfEUNHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 09:07:21 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:42330 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727044AbfEUNHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 09:04:44 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d9so5571692wrx.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 06:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=UoeHu3yoNUcPPl9PKQVlxSlKB7SL3/RQXELHWxMzhXU=;
-        b=XJSG1EyPYqVFv06qjxl82rQK6DnXz+zzZ5SuDKstpUJiXRNS8tQ5JU13/0R23pzYo8
-         CBflOikG7l96+4gPyOlywhufFiPRmoYNDl41896XQ/0MJatuwnRejMHB6TDC98rsUSsk
-         2AmSYFgAwYwyiIa3Uw0OG4PN7UgonE+wdbkLG/dhBH8kdQoOGpBbAw+wyKcjrVvNwBmM
-         VMKMZI30ibz9pqFsG/Cn36t1s2Pm2QH0dtNNkeKYHL7aO5r+71RV9j9Ohu/+y3mncQUm
-         NMgjzNYEt1ik5sf8wphXNVOj5VnbG86Jclu6wpcMm3hVcqUXQ13o2yCTql/kibMeVk3R
-         6GZQ==
+        Tue, 21 May 2019 09:07:21 -0400
+Received: by mail-ua1-f68.google.com with SMTP id e9so6587467uar.9;
+        Tue, 21 May 2019 06:07:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=UoeHu3yoNUcPPl9PKQVlxSlKB7SL3/RQXELHWxMzhXU=;
-        b=IAg6FzfHqGrHmEoutBv9Q8cfOgQK1LMsyliQfkkrztVyHmcOEIMUiqMOts40PDtmee
-         jAtM7GFXNOtGLGvS5Gl1sTr3iVywQWcjCoRi11oQyLy5Aax5UFagpr8A/sRWw64cJmE5
-         GwSfvt1EatQ5cFF0jp0yeoJCRz/2PuRJdSbSCk/8qdUljivDSt/6N9NgOJjdWMYjZqQp
-         b4xEVFgT/lYleM8TfLsUMufK5pZklZA81I8HWtK8D96sMmhu3sMi6g48R/TJ5DZRBCJO
-         qJ/HA2rCDsdO+bBAGdXavmtOxUwJswrNe7/UIO4LZPzljJWD1y+6/Ly9roHUB/17FFXb
-         P1oA==
-X-Gm-Message-State: APjAAAXjzk+1XfaDcpiTvtvrggKp+8mHjEYRdthaiCmhkePe94K5BysY
-        4GcA7TbKdjGDg8uPn8vNGC08ug==
-X-Google-Smtp-Source: APXvYqxG2D4TpRJtgA1by9C5SwilBq6kPP4Jw28l+Fw52p05f/l2TsKOiCci80kJtWr6XsY8G818bQ==
-X-Received: by 2002:a5d:6b12:: with SMTP id v18mr34420146wrw.306.1558443882738;
-        Tue, 21 May 2019 06:04:42 -0700 (PDT)
-Received: from brauner.io (p548C9938.dip0.t-ipconnect.de. [84.140.153.56])
-        by smtp.gmail.com with ESMTPSA id x64sm5789182wmg.17.2019.05.21.06.04.41
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 21 May 2019 06:04:42 -0700 (PDT)
-Date:   Tue, 21 May 2019 15:04:39 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        jannh@google.com, oleg@redhat.com, tglx@linutronix.de,
-        torvalds@linux-foundation.org, arnd@arndb.de, shuah@kernel.org,
-        dhowells@redhat.com, tkjos@android.com, ldv@altlinux.org,
-        miklos@szeredi.hu, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH 1/2] open: add close_range()
-Message-ID: <20190521130438.q3u4wvve7p6md6cm@brauner.io>
-References: <20190521113448.20654-1-christian@brauner.io>
- <87tvdoau12.fsf@oldenburg2.str.redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9zdMKMq6YtEJcAmlQV2agBqhGjgcY71RbSkdU/Um18Y=;
+        b=qC1pmOKJLrPxvbs5uWxUquS1d16CTi0asKi9/eQNiTV5z/S1Ip1ltRprrHUWL2XKNr
+         a3FfEM4avx5+RmkBwIA9L98W0IyKPeiwySXW7A2ZNJeFJ3NJzOpVLTTcNNRlhItyccGb
+         BvaFnGp7VnCXVrJcWIvWPmT75HZo4M2aRMG+2CTBDjZ/4CLlI5vvbsZwIeyVcwhYTvr1
+         l7PiKKoGT9OyirczJzWkdKCBcaD7yqupSnzI878mTYz2V3cj481HzeudwWW8AVx1sOPS
+         g8kOrav3Hu12nt44/AiLWlkr5ox0kqMNWIX7M9HkdSE8RbVF38EL+PqKPmWC0uRsYWTr
+         6VHw==
+X-Gm-Message-State: APjAAAWZNtEyCtNYos6/9FJxcQzCoeuJvpam88FdbQy5ymvA2hmrKYzX
+        2G51mxinvw/NHoFucEZ6WA1vzWiOE7MlXqchm7I=
+X-Google-Smtp-Source: APXvYqwk86c0hOBvUvXgwVC5HhHHgKfiCpYrw7PY71h9R+NjlgSuR31+RKZOh67So1NHcZxoXJw+Sjkim3xtMudQ18M=
+X-Received: by 2002:ab0:2bc6:: with SMTP id s6mr4471903uar.86.1558444040004;
+ Tue, 21 May 2019 06:07:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87tvdoau12.fsf@oldenburg2.str.redhat.com>
-User-Agent: NeoMutt/20180716
+References: <git-mailbomb-linux-master-23bfaa594002f4bba085e0a1ae3c9847b988d816@kernel.org>
+In-Reply-To: <git-mailbomb-linux-master-23bfaa594002f4bba085e0a1ae3c9847b988d816@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 21 May 2019 15:07:08 +0200
+Message-ID: <CAMuHMdXH4A96CUuSkmnL8RVubRyd9eswz9VPqBsDqXGbNCWncw@mail.gmail.com>
+Subject: Re: net: phy: improve pause mode reporting in phy_print_status
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 02:09:29PM +0200, Florian Weimer wrote:
-> * Christian Brauner:
-> 
-> > +/**
-> > + * __close_range() - Close all file descriptors in a given range.
-> > + *
-> > + * @fd:     starting file descriptor to close
-> > + * @max_fd: last file descriptor to close
-> > + *
-> > + * This closes a range of file descriptors. All file descriptors
-> > + * from @fd up to and including @max_fd are closed.
-> > + */
-> > +int __close_range(struct files_struct *files, unsigned fd, unsigned max_fd)
-> > +{
-> > +	unsigned int cur_max;
-> > +
-> > +	if (fd > max_fd)
-> > +		return -EINVAL;
-> > +
-> > +	rcu_read_lock();
-> > +	cur_max = files_fdtable(files)->max_fds;
-> > +	rcu_read_unlock();
-> > +
-> > +	/* cap to last valid index into fdtable */
-> > +	if (max_fd >= cur_max)
-> > +		max_fd = cur_max - 1;
-> > +
-> > +	while (fd <= max_fd)
-> > +		__close_fd(files, fd++);
-> > +
-> > +	return 0;
-> > +}
-> 
-> This seems rather drastic.  How long does this block in kernel mode?
-> Maybe it's okay as long as the maximum possible value for cur_max stays
-> around 4 million or so.
+Hi Heiner,
 
-That's probably valid concern when you reach very high numbers though I
-wonder how relevant this is in practice.
-Also, you would only be blocking yourself I imagine, i.e. you can't DOS
-another task with this unless your multi-threaded.
+On Wed, May 8, 2019 at 8:02 AM Linux Kernel Mailing List
+<linux-kernel@vger.kernel.org> wrote:
+> Commit:     23bfaa594002f4bba085e0a1ae3c9847b988d816
+> Parent:     5db9c74042e3c2168b1f1104d691063f5b662a8b
+> Refname:    refs/heads/master
+> Web:        https://git.kernel.org/torvalds/c/23bfaa594002f4bba085e0a1ae3c9847b988d816
+> Author:     Heiner Kallweit <hkallweit1@gmail.com>
+> AuthorDate: Sun May 5 19:03:51 2019 +0200
+> Committer:  David S. Miller <davem@davemloft.net>
+> CommitDate: Tue May 7 12:40:39 2019 -0700
+>
+>     net: phy: improve pause mode reporting in phy_print_status
+>
+>     So far we report symmetric pause only, and we don't consider the local
+>     pause capabilities. Let's properly consider local and remote
+>     capabilities, and report also asymmetric pause.
+>
+>     Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+>     Signed-off-by: David S. Miller <davem@davemloft.net>
 
-> 
-> Solaris has an fdwalk function:
-> 
->   <https://docs.oracle.com/cd/E88353_01/html/E37843/closefrom-3c.html>
-> 
-> So a different way to implement this would expose a nextfd system call
+Due to this commit, I see the folllowing change on Renesas development
+boards using either the sh_eth or ravb Ethernet driver:
 
-Meh. If nextfd() then I would like it to be able to:
-- get the nextfd(fd) >= fd
-- get highest open fd e.g. nextfd(-1)
+    -sh-eth ee700000.ethernet eth0: Link is Up - 100Mbps/Full - flow
+control rx/tx
+    +sh-eth ee700000.ethernet eth0: Link is Up - 100Mbps/Full - flow control off
 
-But then I wonder if nextfd() needs to be a syscall and isn't just
-either:
-fcntl(fd, F_GET_NEXT)?
-or
-prctl(PR_GET_NEXT)?
+and
 
-Technically, one could also do:
+    -ravb e6800000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
+    +ravb e6800000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
 
-fd_range(unsigned fd, unsigend end_fd, unsigned flags);
+Adding debug prints reveals that:
 
-fd_range(3, 50, FD_RANGE_CLOSE);
+    phydev->autoneg = 1
+    phydev->pause = 1
+    phydev->asym_pause = 0 or 1 (depending on the board)
+    local_pause = 0
+    local_asym_pause = 0
 
-/* return highest fd within the range [3, 50] */
-fd_range(3, 50, FD_RANGE_NEXT);
+Is this expected behavior?
 
-/* return highest fd */
-fd_range(3, UINT_MAX, FD_RANGE_NEXT);
+Thanks!
 
-This syscall could also reasonably be extended.
+Gr{oetje,eeting}s,
 
-> to userspace, so that we can use that to implement both fdwalk and
-> closefrom.  But maybe fdwalk is just too obscure, given the existence of
-> /proc.
+                        Geert
 
-Yeah we probably don't need fdwalk.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> 
-> I'll happily implement closefrom on top of close_range in glibc (plus
-> fallback for older kernels based on /proc—with an abort in case that
-> doesn't work because the RLIMIT_NOFILE hack is unreliable
-> unfortunately).
-> 
-> Thanks,
-> Florian
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
