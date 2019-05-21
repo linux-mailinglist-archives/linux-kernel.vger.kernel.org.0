@@ -2,125 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B65EE24825
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:35:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB22E24807
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:26:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbfEUGfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 02:35:39 -0400
-Received: from olimex.com ([184.105.72.32]:33921 "EHLO olimex.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725835AbfEUGfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 02:35:38 -0400
-Received: from localhost.localdomain ([94.155.250.134])
-        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 23:25:34 -0700
-From:   Stefan Mavrodiev <stefan@olimex.com>
-To:     Heiko Stuebner <heiko@sntech.de>, Lee Jones <lee.jones@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH v2 2/2] mfd: rk808: Prepare rk805 for poweroff
-Date:   Tue, 21 May 2019 09:24:49 +0300
-Message-Id: <20190521062449.29410-3-stefan@olimex.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190521062449.29410-1-stefan@olimex.com>
-References: <20190521062449.29410-1-stefan@olimex.com>
+        id S1726344AbfEUG0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 02:26:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53092 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725798AbfEUG0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 02:26:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7FB96AE08;
+        Tue, 21 May 2019 06:26:29 +0000 (UTC)
+Date:   Tue, 21 May 2019 08:26:28 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, linux-api@vger.kernel.org
+Subject: Re: [RFC 7/7] mm: madvise support MADV_ANONYMOUS_FILTER and
+ MADV_FILE_FILTER
+Message-ID: <20190521062628.GE32329@dhcp22.suse.cz>
+References: <20190520035254.57579-1-minchan@kernel.org>
+ <20190520035254.57579-8-minchan@kernel.org>
+ <20190520092801.GA6836@dhcp22.suse.cz>
+ <20190521025533.GH10039@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521025533.GH10039@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RK805 has SLEEP signal, which can put the device into SLEEP or OFF
-mode. The default is SLEEP mode.
+On Tue 21-05-19 11:55:33, Minchan Kim wrote:
+> On Mon, May 20, 2019 at 11:28:01AM +0200, Michal Hocko wrote:
+> > [cc linux-api]
+> > 
+> > On Mon 20-05-19 12:52:54, Minchan Kim wrote:
+> > > System could have much faster swap device like zRAM. In that case, swapping
+> > > is extremely cheaper than file-IO on the low-end storage.
+> > > In this configuration, userspace could handle different strategy for each
+> > > kinds of vma. IOW, they want to reclaim anonymous pages by MADV_COLD
+> > > while it keeps file-backed pages in inactive LRU by MADV_COOL because
+> > > file IO is more expensive in this case so want to keep them in memory
+> > > until memory pressure happens.
+> > > 
+> > > To support such strategy easier, this patch introduces
+> > > MADV_ANONYMOUS_FILTER and MADV_FILE_FILTER options in madvise(2) like
+> > > that /proc/<pid>/clear_refs already has supported same filters.
+> > > They are filters could be Ored with other existing hints using top two bits
+> > > of (int behavior).
+> > 
+> > madvise operates on top of ranges and it is quite trivial to do the
+> > filtering from the userspace so why do we need any additional filtering?
+> > 
+> > > Once either of them is set, the hint could affect only the interested vma
+> > > either anonymous or file-backed.
+> > > 
+> > > With that, user could call a process_madvise syscall simply with a entire
+> > > range(0x0 - 0xFFFFFFFFFFFFFFFF) but either of MADV_ANONYMOUS_FILTER and
+> > > MADV_FILE_FILTER so there is no need to call the syscall range by range.
+> > 
+> > OK, so here is the reason you want that. The immediate question is why
+> > cannot the monitor do the filtering from the userspace. Slightly more
+> > work, all right, but less of an API to expose and that itself is a
+> > strong argument against.
+> 
+> What I should do if we don't have such filter option is to enumerate all of
+> vma via /proc/<pid>/maps and then parse every ranges and inode from string,
+> which would be painful for 2000+ vmas.
 
-However, when the kernel performs power-off (actually the ATF) the
-device will not go fully off and this will result in higher power
-consumption and inability to wake the device with RTC alarm.
-
-The solution is to enable pm_power_off_prepare function, which will
-configure SLEEP pin for OFF function.
-
-Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
----
-Changes for v2:
- - Move pm_pwroff_prep_fn to header
- - Check pm_power_off_prepare before make it NULL
-
- drivers/mfd/rk808.c       | 29 +++++++++++++++++++++++++++++
- include/linux/mfd/rk808.h |  1 +
- 2 files changed, 30 insertions(+)
-
-diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
-index c0b179792bbf..fb6cdf900899 100644
---- a/drivers/mfd/rk808.c
-+++ b/drivers/mfd/rk808.c
-@@ -387,6 +387,24 @@ static void rk805_device_shutdown(void)
- 		dev_err(&rk808_i2c_client->dev, "power off error!\n");
- }
- 
-+static void rk805_device_shutdown_prepare(void)
-+{
-+	int ret;
-+	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
-+
-+	if (!rk808) {
-+		dev_warn(&rk808_i2c_client->dev,
-+			 "have no rk805, so do nothing here\n");
-+		return;
-+	}
-+
-+	ret = regmap_update_bits(rk808->regmap,
-+				 RK805_GPIO_IO_POL_REG,
-+				 SLP_SD_MSK, SHUTDOWN_FUN);
-+	if (ret)
-+		dev_err(&rk808_i2c_client->dev, "power off error!\n");
-+}
-+
- static void rk808_device_shutdown(void)
- {
- 	int ret;
-@@ -475,6 +493,7 @@ static int rk808_probe(struct i2c_client *client,
- 		cells = rk805s;
- 		nr_cells = ARRAY_SIZE(rk805s);
- 		rk808->pm_pwroff_fn = rk805_device_shutdown;
-+		rk808->pm_pwroff_prep_fn = rk805_device_shutdown_prepare;
- 		break;
- 	case RK808_ID:
- 		rk808->regmap_cfg = &rk808_regmap_config;
-@@ -550,6 +569,12 @@ static int rk808_probe(struct i2c_client *client,
- 		pm_power_off = rk808->pm_pwroff_fn;
- 	}
- 
-+	if (pm_off && !pm_power_off_prepare) {
-+		if (!rk808_i2c_client)
-+			rk808_i2c_client = client;
-+		pm_power_off_prepare = rk808->pm_pwroff_prep_fn;
-+	}
-+
- 	return 0;
- 
- err_irq:
-@@ -566,6 +591,10 @@ static int rk808_remove(struct i2c_client *client)
- 	if (rk808->pm_pwroff_fn && pm_power_off == rk808->pm_pwroff_fn)
- 		pm_power_off = NULL;
- 
-+	if (rk808->pm_pwroff_prep_fn &&
-+	    pm_power_off_prepare == rk808->pm_pwroff_prep_fn)
-+		pm_power_off_prepare = NULL;
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-index 8b5d68a7bb9c..ec928173e507 100644
---- a/include/linux/mfd/rk808.h
-+++ b/include/linux/mfd/rk808.h
-@@ -454,5 +454,6 @@ struct rk808 {
- 	const struct regmap_config	*regmap_cfg;
- 	const struct regmap_irq_chip	*regmap_irq_chip;
- 	void				(*pm_pwroff_fn)(void);
-+	void				(*pm_pwroff_prep_fn)(void);
- };
- #endif /* __LINUX_REGULATOR_RK808_H */
+Painful is not an argument to add a new user API. If the existing API
+suits the purpose then it should be used. If it is not usable, we can
+think of a different way.
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
