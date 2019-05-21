@@ -2,76 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB09224B12
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58A5924B16
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:03:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726941AbfEUJCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 05:02:35 -0400
-Received: from mail-wr1-f54.google.com ([209.85.221.54]:44820 "EHLO
-        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbfEUJCf (ORCPT
+        id S1727141AbfEUJDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 05:03:11 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:55518 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbfEUJDL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 05:02:35 -0400
-Received: by mail-wr1-f54.google.com with SMTP id w13so6867901wru.11
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 02:02:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6vXRpcR8hUy/z236jHDc62nRnBJfz6oPwUw/X75saOc=;
-        b=aXbZOCmdi0RuzZZYueJKuRuzHc9qm6+e8qV7RidheapqjMsHvZ+WEt2p5bqrquTIVh
-         iF7mj9TJ1vHbYR9Iy8zIfIcroqjGd+yWWiuXOi8A/tvDh7EMByRwz4RWNQU8uucMtkTm
-         91DeVuszQAd9D7JpcEQETJC6205zorp0zrito0Mn7RYRggKVuVRXZi7POCFm1CrdD2Jz
-         BztcP0cTLDmN9hWJokghJizBOXif4kCobFcHHsli8dn3VDQQl78IaIycZql0hMj9avW9
-         oOJALNTgfkX4+xiad4VNprAjvJyF7s5+pObDUfEANfYGqKg8IbD6RD1p+8dLXEQjVoD0
-         3YCA==
+        Tue, 21 May 2019 05:03:11 -0400
+Received: by mail-it1-f194.google.com with SMTP id g24so3676913iti.5
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 02:03:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6vXRpcR8hUy/z236jHDc62nRnBJfz6oPwUw/X75saOc=;
-        b=GJnGgK0BBM7cW17aADLFWVM1YjZdUKsQlbdUL+raJfACIYvssKGHlopWY0GbLUoZAd
-         s100zef3OjvQ095+1gBp2Q5s3YBcaNKuvkkpzpd0kKzhqtI3o5xJ5Tb/GOqym6qMH0Gs
-         AV4H2ON8AjaX+9qk87KAvIyEaxSyXGy6VLCKiiYJwJ6xsBCY6IEgklJAmLC8Tjm8msRU
-         N/K9ms0/E32LWwJehh8YhRZWjbNi42f1qPpykJag50dowKqQPoTgpEssFjRm+uj4Oq3o
-         7oHkoUHkpb5soWsfLc2s5489QW3Z9wUtLgbcnUsgkidMZbDZuk8eMNUdkf5/RaHbZEqC
-         zzdg==
-X-Gm-Message-State: APjAAAVledi8f8G0C4tbETwSAr0MNv7OWiTaRWMVno/rLvslyM1V1u0y
-        Dw+41LbtgvC9tnzQWzCtis4kMA==
-X-Google-Smtp-Source: APXvYqwHbKy6XrNMrf0bXWw/znNxyjKmOYV/fT85nkOTssBGYNlZ75SwruRwpJ6LEmr0CwrFTNRKEg==
-X-Received: by 2002:a5d:4a44:: with SMTP id v4mr4275934wrs.84.1558429354138;
-        Tue, 21 May 2019 02:02:34 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id 20sm3143604wmj.36.2019.05.21.02.02.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 02:02:33 -0700 (PDT)
-Subject: Re: nvmem creates multiple devices with the same name
-To:     Sascha Hauer <s.hauer@pengutronix.de>, linux-kernel@vger.kernel.org
-Cc:     kernel@pengutronix.de, linux-mtd@lists.infradead.org
-References: <20190521085641.i6g5aijwa5zbolah@pengutronix.de>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <a9ccac90-7b2f-41da-2ca9-ca3bba52781b@linaro.org>
-Date:   Tue, 21 May 2019 10:02:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/+o3MggDFa5h86+zTYSOS2v1g0Pwh3ExeN5LLHg8kpM=;
+        b=LvlQ1EHGOJ4PML3+MkBw2hi4csjNfgONV4ChUORxa8Gt3gPLIqWDr6hTNLBz9XT3wE
+         DRRqwDINrY9Kdf+5rKrQDXftplOQ9aKA3d4BOrgBM4tfZuz+VwhY3pbH0yhOzV4TeoGZ
+         Hx3ckXDtXSzVZQ2ZEznb8SzBlWmENRdWudlPVqZ2t8epnzjtXBhNb+7aQjV3MPtJzRsR
+         BU5qKYTjos22asjR0jRqSJKT3av1LST+JOaEHv1FywmlCQXf11tUku7jzH2aToEXXim9
+         nq07SVoy7TN5lVSlzB1hgTkfJGCFIdhnTHm74L3Zb8t/21xCGxvbtVREoH5AyYscL+Hu
+         0GuA==
+X-Gm-Message-State: APjAAAXmY7SAUqFNl1msZWqUN9rV9kUh/ZOPAx1eiOeXV0j/dhgrykcZ
+        Wd1LGv4uoKsHNa4ykxDSy9y+mPbSZVUk3VIegj/0DA==
+X-Google-Smtp-Source: APXvYqx6/3duGjSKVU51wlNci+m1IvtUM+dSUVqcFGB7rGWF5JLBFlHDnLLy8ordPh0Anh/n4sL9BxhUc4JSTx6a+bM=
+X-Received: by 2002:a24:2e8c:: with SMTP id i134mr2897433ita.9.1558429390460;
+ Tue, 21 May 2019 02:03:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190521085641.i6g5aijwa5zbolah@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190424092944.30481-2-bhe@redhat.com> <20190429002318.GA25400@MiWiFi-R3L-srv>
+ <20190429135536.GC2324@zn.tnic> <20190513014248.GA16774@MiWiFi-R3L-srv>
+ <20190513070725.GA20105@zn.tnic> <20190513073254.GB16774@MiWiFi-R3L-srv>
+ <20190513075006.GB20105@zn.tnic> <20190513080210.GC16774@MiWiFi-R3L-srv>
+ <20190515051717.GA13703@jeru.linux.bs1.fc.nec.co.jp> <20190515065843.GA24212@zn.tnic>
+ <20190515070942.GA17154@jeru.linux.bs1.fc.nec.co.jp>
+In-Reply-To: <20190515070942.GA17154@jeru.linux.bs1.fc.nec.co.jp>
+From:   Kairui Song <kasong@redhat.com>
+Date:   Tue, 21 May 2019 17:02:59 +0800
+Message-ID: <CACPcB9cyiPc8JYmt1QhYNipSsJ5z3wTOJ90LS5LTx4YqwaG8rA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI systab
+ and ACPI tables
+To:     Junichi Nomura <j-nomura@ce.jp.nec.com>,
+        Borislav Petkov <bp@alien8.de>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Baoquan He <bhe@redhat.com>,
+        "dyoung@redhat.com" <dyoung@redhat.com>,
+        "fanc.fnst@cn.fujitsu.com" <fanc.fnst@cn.fujitsu.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 15, 2019 at 3:10 PM Junichi Nomura <j-nomura@ce.jp.nec.com> wrote:
+>
+> On 5/15/19 3:58 PM, Borislav Petkov wrote:
+> > On Wed, May 15, 2019 at 05:17:19AM +0000, Junichi Nomura wrote:
+> >> Hi Kairui,
+> >>
+> >> On 5/13/19 5:02 PM, Baoquan He wrote:
+> >>> On 05/13/19 at 09:50am, Borislav Petkov wrote:
+> >>>> On Mon, May 13, 2019 at 03:32:54PM +0800, Baoquan He wrote:
+> >>>> So we're going to try it again this cycle and if there's no fallout, it
+> >>>> will go upstream. If not, it will have to be fixed. The usual thing.
+> >>>>
+> >>>> And I don't care if Kairui's patch fixes this one problem - judging by
+> >>>> the fragility of this whole thing, it should be hammered on one more
+> >>>> cycle on as many boxes as possible to make sure there's no other SNAFUs.
+> >>>>
+> >>>> So go test it on more machines instead. I've pushed it here:
+> >>>>
+> >>>> https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=next-merge-window
+> >>>
+> >>> Pingfan has got a machine to reproduce the kexec breakage issue, and
+> >>> applying these two patches fix it. He planned to paste the test result.
+> >>> I will ask him to try this branch if he has time, or I can get his
+> >>> machine to test.
+> >>>
+> >>> Junichi, also have a try on Boris's branch in NEC's test environment?
+> >>
+> >> while the patch set works on most of the machines I'm testing around,
+> >> I found kexec(1) fails to load kernel on a few machines if this patch
+> >> is applied.  Those machines don't have IORES_DESC_ACPI_TABLES region
+> >> and have ACPI tables in IORES_DESC_ACPI_NV_STORAGE region instead.
+> >
+> > Why? What kind of machines are those?
+>
+> I don't know.  They are just general purpose Xeon-based servers
+> and not some special purpose machines.  So I guess there are other
+> such machines in the wild.
+>
+
+Hi, I think it's reasonable to update the patch to include the
+NV_STORAGE regions as well, most likely the firmware only provided
+NV_STORAGE region? Can you help confirm if the e820 didn't contain
+ACPI data, and only ACPI NVS?
+
+I had a try with this update patch, it worked and didn't break anything.
+
+Hi Boris, would you prefer to just fold Junichi update patch into the
+previous one or I should send an updated patch?
 
 
-On 21/05/2019 09:56, Sascha Hauer wrote:
-> . Are there any suggestions how to register the nvmem devices
-> with a different name?
-
-struct nvmem_config provides id field for this purpose, this will be 
-used by nvmem to set the device name space along with name field.
-
---srini
+--
+Best Regards,
+Kairui Song
