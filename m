@@ -2,394 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C39724BF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:46:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96C6524C1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:01:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfEUJqw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 May 2019 05:46:52 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:35805 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbfEUJqv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 05:46:51 -0400
-X-Originating-IP: 90.88.22.185
-Received: from xps13 (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id B16F920005;
-        Tue, 21 May 2019 09:46:44 +0000 (UTC)
-Date:   Tue, 21 May 2019 11:46:44 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v4 0/4] Add device links to clocks
-Message-ID: <20190521114644.7000a751@xps13>
-In-Reply-To: <155502565678.20095.10517989462650657961@swboyd.mtv.corp.google.com>
-References: <20190108161940.4814-1-miquel.raynal@bootlin.com>
-        <155502565678.20095.10517989462650657961@swboyd.mtv.corp.google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727408AbfEUKA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 06:00:58 -0400
+Received: from mail.myocard.eu ([80.211.34.180]:38009 "EHLO mail.myocard.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726705AbfEUKA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 06:00:58 -0400
+X-Greylist: delayed 310 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 May 2019 06:00:57 EDT
+Received: by mail.myocard.eu (Postfix, from userid 1001)
+        id DD812873EF; Tue, 21 May 2019 11:55:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=myocard.eu; s=mail;
+        t=1558432544; bh=xqqTtMIwrdiA7dqnQhoAQdMueQWzOyOSooCPJrKxKOw=;
+        h=Date:From:To:Subject:From;
+        b=POdBuySQtYS/cJDIQaq4K7frGO9xDhTIITatjg5fm1CCv4tj3uItSQAGmSR38a7Hu
+         PIWT9bfx42LpXleutq0N9Z0VITCvs4E5v+FMpj5ISg4Vo0567k/B0TyweHXR+pC8sE
+         BaFaMGuu4Dc0aGBDTePOTrNpehjAx4kCSOppOgzs=
+Received: by mail.myocard.eu for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 09:55:39 GMT
+Message-ID: <20190521115508-0.1.7.aue.0.si2949og9p@myocard.eu>
+Date:   Tue, 21 May 2019 09:55:39 GMT
+From:   "Radoslav Dobrev" <radoslav.dobrev@myocard.eu>
+To:     <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?Q?=D0=92=D0=B5=D0=BB=D0=B8=D0=BA=D0=B4=D0=B5=D0=BD=D1=81=D0=BA=D0=B8_=D0=B1=D0=BE=D0=BD=D1=83=D1=81=D0=B8?=
+X-Mailer: mail.myocard.eu
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+=D0=A3=D0=B2=D0=B0=D0=B6=D0=B0=D0=B5=D0=BC=D0=B8 =D0=93=D0=BE=D1=81=D0=BF=
+=D0=BE=D0=B4=D0=B8=D0=BD=D0=B5/=D0=93=D0=BE=D1=81=D0=BF=D0=BE=D0=B6=D0=BE=
+,
 
-Stephen Boyd <sboyd@kernel.org> wrote on Thu, 11 Apr 2019 16:34:16
--0700:
+=D0=A1=D1=8A=D0=B2=D1=80=D0=B5=D0=BC=D0=B5=D0=BD=D0=BD=D0=B0=D1=82=D0=B0 =
+=D1=81=D0=BE=D1=86=D0=B8=D0=B0=D0=BB=D0=BD=D0=B0 =D0=BF=D1=80=D0=B8=D0=B4=
+=D0=BE=D0=B1=D0=B8=D0=B2=D0=BA=D0=B0 =D0=B2=D0=B0=D1=83=D1=87=D0=B5=D1=80=
+=D0=B8 =D0=B7=D0=B0 =D1=85=D1=80=D0=B0=D0=BD=D0=B0, =D0=BA=D0=BE=D0=B8=D1=
+=82=D0=BE =D0=BC=D0=BE=D0=B3=D0=B0=D1=82 =D0=B4=D0=B0 =D0=B1=D1=8A=D0=B4=D0=
+=B0=D1=82 =D0=B8=D0=B7=D0=BF=D0=BE=D0=BB=D0=B7=D0=B2=D0=B0=D0=BD=D0=B8 =D0=
+=B2 =D1=88=D0=B8=D1=80=D0=BE=D0=BA=D0=B0 =D1=82=D1=8A=D1=80=D0=B3=D0=BE=D0=
+=B2=D1=81=D0=BA=D0=B0 =D0=BC=D1=80=D0=B5=D0=B6=D0=B0 =D0=BE=D1=82 =D1=81=D1=
+=83=D0=BF=D0=B5=D1=80=D0=BC=D0=B0=D1=80=D0=BA=D0=B5=D1=82=D0=B8 =D0=B8 =D0=
+=B7=D0=B0=D0=B2=D0=B5=D0=B4=D0=B5=D0=BD=D0=B8=D1=8F =D0=B7=D0=B0 =D1=85=D1=
+=80=D0=B0=D0=BD=D0=B5=D0=BD=D0=B5 =D0=B2 =D1=81=D1=82=D1=80=D0=B0=D0=BD=D0=
+=B0=D1=82=D0=B0, =D0=B5 =D0=B8=D0=BD=D1=81=D1=82=D1=80=D1=83=D0=BC=D0=B5=D0=
+=BD=D1=82, =D0=BA=D0=BE=D0=B9=D1=82=D0=BE =D0=B5=D1=84=D0=B5=D0=BA=D1=82=D0=
+=B8=D0=B2=D0=BD=D0=BE =D0=BF=D0=BE=D0=B2=D0=B8=D1=88=D0=B0=D0=B2=D0=B0 =D0=
+=B5=D1=84=D0=B8=D0=BA=D0=B0=D1=81=D0=BD=D0=BE=D1=81=D1=82=D1=82=D0=B0 =D0=
+=BD=D0=B0 =D0=BF=D0=B5=D1=80=D1=81=D0=BE=D0=BD=D0=B0=D0=BB=D0=B0.
 
-> Quoting Miquel Raynal (2019-01-08 08:19:36)
-> > Hello,
-> > 
-> > While working on suspend to RAM feature, I ran into troubles multiple
-> > times when clocks where not suspending/resuming at the desired time. I
-> > had a look at the core and I think the same logic as in the
-> > regulator's core may be applied here to (very easily) fix this issue:
-> > using device links.
-> > 
-> > The only additional change I had to do was to always (when available)
-> > populate the device entry of the core clock structure so that it could
-> > be used later. This is the purpose of patch 1. Patch 2 actually adds
-> > support for device links.
-> > 
-> > Here is a step-by-step explanation of how links are managed, following
-> > Maxime Ripard's suggestion.
-> > 
-> > 
-> > The order of probe has no importance because the framework already
-> > handles orphaned clocks so let's be simple and say there are two root
-> > clocks, not depending on anything, that are probed first: xtal0 and
-> > xtal1. None of these clocks have a parent, there is no device link in
-> > the game, yet.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +----------------+            +----------------+
-> > 
-> > Then, a peripheral clock periph0 is probed. His parent is xtal1. The
-> > clock_register_*() call will run __clk_init_parent() and a link between
-> > periph0's core and xtal1's core will be created and stored in
-> > periph0's core->parent_clk_link entry.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +----------------+            +-------^--------+
-> >                                          |
-> >                                          |
-> >                           +--------------+
-> >                           |   ->parent_clk_link
-> >                           |
-> >                   +----------------+
-> >                   |                |
-> >                   |                |
-> >                   |  periph0 core  |
-> >                   |                |
-> >                   |                |
-> >                   +-------^^-------+
-> >                           ||
-> >                           ||
-> >                   +----------------+
-> >                   |                |
-> >                   |  periph0 clk 0 |
-> >                   |                |
-> >                   +----------------+
-> > 
-> > Then, device0 is probed and "get" the periph0 clock. clk_get() will be
-> > called and a struct clk will be instantiated for device0 (called in
-> > the figure clk 1). A link between device0 and the new clk 1 instance of
-> > periph0 will be created and stored in the clk->consumer_link entry.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +----------------+            +-------^--------+
-> >                                          |
-> >                                          |
-> >                           +--------------+
-> >                           |   ->parent_clk_link
-> >                           |
-> >                   +----------------+
-> >                   |                |
-> >                   |                |
-> >                   |  periph0 core  |
-> >                   |                <-------------+
-> >                   |                <-------------|
-> >                   +-------^^-------+            ||
-> >                           ||                    ||
-> >                           ||                    ||
-> >                   +----------------+    +----------------+
-> >                   |                |    |                |
-> >                   |  periph0 clk 0 |    |  periph0 clk 1 |
-> >                   |                |    |                |
-> >                   +----------------+    +----------------+
-> >                                                 |
-> >                                                 | ->consumer_link
-> >                                                 |
-> >                                                 |
-> >                                                 |
-> >                                         +-------v--------+
-> >                                         |    device0     |
-> >                                         +----------------+
-> > 
-> > Right now, device0 is linked to periph0, itself linked to xtal1 so
-> > everything is fine.
-> > 
-> > Now let's get some fun: the new parent of periph0 is xtal1. The process
-> > will call clk_reparent(), periph0's core->parent_clk_link will be
-> > destroyed and a new link to xtal1 will be setup and stored. The
-> > situation is now that device0 is linked to periph0 and periph0 is
-> > linked to xtal1, so the dependency between device0 and xtal1 is still
-> > clear.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +-------^--------+            +----------------+
-> >            |
-> >            |                           \ /
-> >            +----------------------------x  
-> >       ->parent_clk_link   |            / \  
-> >                           |
-> >                   +----------------+
-> >                   |                |
-> >                   |                |
-> >                   |  periph0 core  |
-> >                   |                <-------------+
-> >                   |                <-------------|
-> >                   +-------^^-------+            ||
-> >                           ||                    ||
-> >                           ||                    ||
-> >                   +----------------+    +----------------+
-> >                   |                |    |                |
-> >                   |  periph0 clk 0 |    |  periph0 clk 1 |
-> >                   |                |    |                |
-> >                   +----------------+    +----------------+
-> >                                                 |
-> >                                                 | ->consumer_link
-> >                                                 |
-> >                                                 |
-> >                                                 |
-> >                                         +-------v--------+
-> >                                         |    device0     |
-> >                                         +----------------+
-> > 
-> > I assume periph0 cannot be removed while there are devices using it,
-> > same for xtal0.
-> > 
-> > What can happen is that device0 'put' the clock periph0. The relevant
-> > link is deleted and the clk instance dropped.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +-------^--------+            +----------------+
-> >            |
-> >            |                           \ /
-> >            +----------------------------x  
-> >       ->parent_clk_link   |            / \  
-> >                           |
-> >                   +----------------+
-> >                   |                |
-> >                   |                |
-> >                   |  periph0 core  |
-> >                   |                |
-> >                   |                |
-> >                   +-------^^-------+
-> >                           ||
-> >                           ||
-> >                   +----------------+
-> >                   |                |
-> >                   |  periph0 clk 0 |
-> >                   |                |
-> >                   +----------------+
-> > 
-> > Now we can unregister periph0: link with the parent will be destroyed
-> > and the clock may be safely removed.
-> > 
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |                |            |                |
-> >    |   xtal0 core   |            |   xtal1 core   |
-> >    |                |            |                |
-> >    |                |            |                |
-> >    +-------^^-------+            +-------^^-------+
-> >            ||                            ||
-> >            ||                            ||
-> >    +----------------+            +----------------+
-> >    |                |            |                |
-> >    |   xtal0 clk    |            |   xtal1 clk    |
-> >    |                |            |                |
-> >    +----------------+            +----------------+
-> > 
-> > 
-> > This is my understanding of the common clock framework and how links
-> > can be added to it.
-> > 
-> > As a result, here are the links created during the boot of an
-> > ESPRESSObin:
-> >   
-> 
-> Sorry this patch series is taking way too long to get merged. It's
-> already mid-April!
-> 
-> So I still have some of the original questions I had from before, mostly
-> around circular parent chains between clk providers. For example, there
-> are clk providers that both provide clks to other providers and consume
-> clks from those providers. Does device links work gracefully here?
-> 
-> Just speaking from my own qcom experience, I can point to the PCIe PHY
-> that's a provider of a clk to GCC and a consumer of a clk in GCC. In
-> block diagram form this is:
-> 
-> 
->       PCIE PHY                        GCC
->    +--------------+          +-------------------------+
->    |              |          |                         |
->    |     PHY clk ->----------+---- gcc_pipe_clk ---+   |
->    |              |          |                     |   |
->    |              |          |                     |   |
->    | pci_pipe_clk <----------|---------------------+   |
->    |              |          |                         |
->    +--------------+          +-------------------------+
-> 
-> The end result is that the PCIe PHY is a clk controller that provides
-> the PHY clk to GCC's gcc_pipe_clk and then it gets the same clk signal
-> back from GCC and uses it on the PCIe PHY's pci_pipe_clk input.
-> 
-> So is this is a problem?
-> 
+=D0=A2=D0=BE=D0=B2=D0=B0 =D1=81=D0=B5 =D0=BF=D0=BE=D1=82=D0=B2=D1=8A=D1=80=
+=D0=B6=D0=B4=D0=B0=D0=B2=D0=B0 =D0=B8 =D0=BE=D1=82 =D0=BF=D1=80=D0=BE=D1=83=
+=D1=87=D0=B2=D0=B0=D0=BD=D0=B5=D1=82=D0=BE =D0=BD=D0=B0 =D0=A1=D0=B2=D0=B5=
+=D1=82=D0=BE=D0=B2=D0=BD=D0=B0=D1=82=D0=B0 =D0=B7=D0=B4=D1=80=D0=B0=D0=B2=
+=D0=BD=D0=B0 =D0=BE=D1=80=D0=B3=D0=B0=D0=BD=D0=B8=D0=B7=D0=B0=D1=86=D0=B8=
+=D1=8F (=D0=A1=D0=97=D0=9E), =D0=BA=D0=BE=D0=B5=D1=82=D0=BE =D0=BF=D0=BE=D0=
+=BA=D0=B0=D0=B7=D0=B2=D0=B0, =D1=87=D0=B5 =D1=81=D0=BB=D1=83=D0=B6=D0=B8=D1=
+=82=D0=B5=D0=BB, =D0=BA=D0=BE=D0=B9=D1=82=D0=BE =D0=BF=D0=BE=D0=BB=D1=83=D1=
+=87=D0=B0=D0=B2=D0=B0 =D0=B4=D0=BE=D0=BF=D0=BB=D0=B0=D1=89=D0=B0=D0=BD=D0=
+=B5 =D0=B7=D0=B0 =D1=85=D1=80=D0=B0=D0=BD=D0=B0, =D0=B5 =D0=BF=D0=BE-=D0=B5=
+=D1=84=D0=B5=D0=BA=D1=82=D0=B8=D0=B2=D0=B5=D0=BD =D1=81 20%, =D0=B0  =D0=BE=
+=D1=82=D1=81=D1=8A=D1=81=D1=82=D0=B2=D0=B8=D1=8F=D1=82=D0=B0 =D0=BC=D1=83=
+ =D0=BD=D0=B0=D0=BC=D0=B0=D0=BB=D1=8F=D0=B2=D0=B0=D1=82 =D1=81 27%.
 
-It's now my turn to get back on this topic.
+=D0=98=D0=B7=D0=B1=D0=BE=D1=80=D1=8A=D1=82 =D0=BD=D0=B0 =D0=BD=D0=B0=D1=88=
+=D0=B8=D1=82=D0=B5 =D0=B2=D0=B0=D1=83=D1=87=D0=B5=D1=80=D0=B8 =D0=B7=D0=B0=
+ =D1=85=D1=80=D0=B0=D0=BD=D0=B0 =D0=BA=D0=B0=D1=82=D0=BE =D1=84=D0=BE=D1=80=
+=D0=BC=D0=B0 =D0=BD=D0=B0 =D1=81=D0=BE=D1=86=D0=B8=D0=B0=D0=BB=D0=BD=D0=B0=
+ =D0=BF=D1=80=D0=B8=D0=B4=D0=BE=D0=B1=D0=B8=D0=B2=D0=BA=D0=B0 =D0=B5 =D1=80=
+=D0=B0=D0=B2=D0=BD=D0=BE=D0=B7=D0=BD=D0=B0=D1=87=D0=BD=D0=BE =D0=BD=D0=B5=
+ =D1=81=D0=B0=D0=BC=D0=BE =D0=BD=D0=B0 =D0=BF=D1=80=D0=BE=D0=B4=D1=83=D0=BA=
+=D1=82=D0=B8=D0=B2=D0=B5=D0=BD =D0=B8 =D0=BC=D0=BE=D1=82=D0=B8=D0=B2=D0=B8=
+=D1=80=D0=B0=D0=BD =D0=B5=D0=BA=D0=B8=D0=BF =D0=B7=D0=B0 =D1=80=D0=B0=D0=B1=
+=D0=BE=D1=82=D0=BE=D0=B4=D0=B0=D1=82=D0=B5=D0=BB=D1=8F, =D0=BD=D0=BE =D0=B8=
+ =D1=84=D0=B8=D0=BD=D0=B0=D0=BD=D1=81=D0=BE=D0=B2=D0=BE =D0=BE=D0=B1=D0=BB=
+=D0=B5=D0=BA=D1=87=D0=B5=D0=BD=D0=B8=D0=B5 - =D1=81=D1=82=D0=BE=D0=B9=D0=BD=
+=D0=BE=D1=81=D1=82=D1=82=D0=B0 =D0=BD=D0=B0 =D0=B8=D0=B7=D1=80=D0=B0=D0=B7=
+=D1=85=D0=BE=D0=B4=D0=B2=D0=B0=D0=BD=D0=B8=D1=82=D0=B5 =D1=81=D1=80=D0=B5=
+=D0=B4=D1=81=D1=82=D0=B2=D0=B0 =D0=BD=D0=B5 =D1=81=D0=B5 =D0=BE=D0=B1=D0=BB=
+=D0=B0=D0=B3=D0=B0 =D1=81 =D0=B4=D0=B0=D0=BD=D1=8A=D0=BA.
 
-I just put my noise back into this and for what I understand of the
-clk subsystem, I think the situation you describe could be pictured
-like this:
+=D0=96=D0=B5=D0=BB=D0=B0=D0=B5=D1=82=D0=B5 =D0=BB=D0=B8 =D0=B4=D0=B0 =D0=92=
+=D0=B8 =D0=BF=D1=80=D0=B5=D0=B4=D0=BE=D1=81=D1=82=D0=B0=D0=B2=D1=8F =D0=BF=
+=D0=BE=D0=B2=D0=B5=D1=87=D0=B5 =D0=B8=D0=BD=D1=84=D0=BE=D1=80=D0=BC=D0=B0=
+=D1=86=D0=B8=D1=8F =D0=BE=D1=82=D0=BD=D0=BE=D1=81=D0=BD=D0=BE =D0=B2=D0=B0=
+=D1=83=D1=87=D0=B5=D1=80=D0=B8=D1=82=D0=B5 =D0=B7=D0=B0 =D1=85=D1=80=D0=B0=
+=D0=BD=D0=B0 =D0=B7=D0=B0 =D1=81=D0=BB=D1=83=D0=B6=D0=B8=D1=82=D0=B5=D0=BB=
+=D0=B8?
 
 
-         +---------------+
-         |               |
-         |               |
-         | PCIe PHY      |
-         |               |
-         |               |
-         +-----^^--------+
-               ||
-               ||
-         +---------------+
-         |               |
-         | pcie_pipe_clk |
-         |               |
-         +------^--------+
-                |
-                | ->parent_clk_link
-                |
-                |
-         +---------------+
-         |               |
-         |               |
-         | GCC           |
-         |               |
-         |               |
-         +------^^-------+
-                ||
-                ||
-         +---------------+
-         |               |
-         | gcc_pipe_clk  |
-         |               |
-         +------^--------+
-                |
-                | ->parent_clk_link
-                |
-                |
-         +---------------+
-         |               |
-         |               |
-         | PCIe PHY      |
-         |               |
-         |               |
-         +------^^-------+
-                ||
-                ||
-         +---------------+
-         |               |
-         | phy_clk       |
-         |               |
-         +---------------+
-
-
-IMHO the fact that the first and third blocks are the same does not
-interfere with device links.
-
-Honestly, I cannot be 100% sure it won't break on qcom designs, maybe
-the best would be to have someone to test. I don't have the relevant
-hardware. Do you? It would be really helpful!
-
-There is an entire PCIe series blocked, waiting for these device links
-to be merged so it would help a lot if someone could test.
-
-Thank you very much,
-Miquèl
+=D0=A0=D0=B0=D0=B4=D0=BE=D1=81=D0=BB=D0=B0=D0=B2 =D0=94=D0=BE=D0=B1=D1=80=
+=D0=B5=D0=B2
+Head of HR Benefit Team
+www.myocard.eu
