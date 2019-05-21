@@ -2,133 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 220D324CF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:38:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5DA224CF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:38:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbfEUKi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 06:38:29 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37605 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727408AbfEUKi2 (ORCPT
+        id S1727857AbfEUKip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 06:38:45 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33809 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbfEUKip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 06:38:28 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e15so18013618wrs.4;
-        Tue, 21 May 2019 03:38:27 -0700 (PDT)
+        Tue, 21 May 2019 06:38:45 -0400
+Received: by mail-lf1-f65.google.com with SMTP id v18so12701783lfi.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 03:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5cHZAThEhwYXg0mdwF8qSQfljsG3YRHFcTgp/N5AQao=;
-        b=qkXnY8AKr9vUsT95SCGCcXRgoMuebbIIgTalyt6CCBhB7kw2gOcWMYB17h4wjCtjxe
-         /VeYphbYeG1vkS5JGAOZfn8xicSlANIH/2gIc0WVz7a7MUjLRrJS6g/77vlvAaha4F7+
-         xHmfOBxlmIV+674x1v7O4wnulkYfHlTfh/VwYJOhj7WixVc/B1oP9AKrDn4ihC5cx17l
-         ye6yP6LZmalDEj3DUkyYvxuzfRbiAYUy/PC1OFXL6OzKkABpUQagVfSSlU/8Y/9Zcuq1
-         2rYUy96MCpCR9rx7A+3NmDcJKlx+zyZy3pCsgSG68PB9mAUx7rN3E/hkfnBWpowbVUL0
-         b0Nw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/HwzJ2AjXIeE5fsfrwG3gSV+GvTQIpLldaXWuHgQcN8=;
+        b=SwS6BxofMQlJ3KtGeWkkXfv/uPret6RUl6uR040BI+WLU+WR6kyKSpqkXu1Kcq3w5u
+         fB/CVBMtuWPU1Mkgqpy5KSQXGXxUgL1uFCehYHHIwCUv/NUwxt8TIvML08vluYQwYvWh
+         OtN8oq2AnpE3fiDxhG9SjY4u8cuXNnUv2F/1OXXrtbIl1Ak6GV1NuvmK+5GKwHeaHlbt
+         GGup96HZjBaFdmCdYsAGn3FRH3MZhi6HVfQ/bxRdW/MidCnWyLAZEf1n9RAJyYF0RbAO
+         FxIm2zscCgEgj7aa9LXIpkS9VOqwBPJ1WCGK8C6VN8qF9WkLz1/P5akbowS9fXHB/IxH
+         NrbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5cHZAThEhwYXg0mdwF8qSQfljsG3YRHFcTgp/N5AQao=;
-        b=ZsNJCvb7R7EGaspOeuL6vZaDRdicVg7x6EveSRUXKNhitL6AVLxWOuaSCgiTbakqYi
-         2ck7BHJlMw3vSKY569gUpwZdNy/n1ODmcK/zIOoSIhcD0WsNTwpu4oDPuO1pd3uGkkdH
-         xxFmqOyW64+w4mnwkMhlNo4P/RifQgDDGiD3rm4RjYZXxcwm3J+VQekovGApHx7NS9AT
-         dPMhjESt/BLwi0h3HXopgy4CB4YwjgfhQKrokfida7Ovf6lXXgYSQ/23GVyjZX62+8Ut
-         P96rgpIFNL9iO7oOatfFiRnxkHzKIIGTAwgY69fOxnf2wrK1oqMgurzak4qgEL6NVYFf
-         LHww==
-X-Gm-Message-State: APjAAAW4EIEpyjZvM558d6j8egEFJUoGoKhv4y8u2NrJsiIBG6IeyzHo
-        Dg+mR/uF5RbOTSGrPSQiEBw=
-X-Google-Smtp-Source: APXvYqzZKh2+vlDE2a1Mrz0XQxxaUOnMxe2hSuwIkeRzhNSIVh2DUrUxliLVNc217oqmX8bwpz643A==
-X-Received: by 2002:a5d:4b07:: with SMTP id v7mr21489249wrq.106.1558435106456;
-        Tue, 21 May 2019 03:38:26 -0700 (PDT)
-Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
-        by smtp.gmail.com with ESMTPSA id i9sm1529322wmf.43.2019.05.21.03.38.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 03:38:25 -0700 (PDT)
-Date:   Tue, 21 May 2019 12:38:24 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, jonathanh@nvidia.com, kishon@ti.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, mperttunen@nvidia.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kthota@nvidia.com,
-        mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V7 07/15] PCI: dwc: Add support to enable CDM register
- check
-Message-ID: <20190521103824.GG29166@ulmo>
-References: <20190517123846.3708-1-vidyas@nvidia.com>
- <20190517123846.3708-8-vidyas@nvidia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/HwzJ2AjXIeE5fsfrwG3gSV+GvTQIpLldaXWuHgQcN8=;
+        b=hN7v+RAUZ6FVzO7QYCrYTlfVMWwlqfO9tC65JnP0aGSquGef5BTGUIrcc6q3MVTqYO
+         PqZyoEJlT7I9QWKs0ak/mntaFN5XBUY+kGAASbLOvspSZvkM9M1r/P1tVgzV0lxERHj9
+         ySfuN8XDPv9e72QpFViCbt2fiRj/y4r3XlftLBcdB/mhPWgx3qvvFxTjB/kwtYP+w2ZQ
+         eCpoQ/I+AkxqHtj8rIhIKu6Ag20zrL3FDiRe7wjclXdc4SziZtAdxBGuerPvCn+3COSg
+         fdIjQBI/91TDnuVD1y/Rga8edo4sYhK46I+Al43eC1Nwbn4DSadgkViZqFEKCeTZVAWU
+         ijqA==
+X-Gm-Message-State: APjAAAWzgMFn3LxnC2PXZF0rH13ErQQJQ1RYp6iaihLKIxJatsW7rzfe
+        vT2ys1G/8ipFpNlQ9bYpoCTM+8GljZPTM8tmrxT+lFq3YVI=
+X-Google-Smtp-Source: APXvYqyBfQ0MOaJ6vL3o7YaTQiEePRTO5JQIELaO+d1PWWZJ3440xMJR4l0YWpbbNf5nhBHv7lRxlbin2oq1KpgIKEw=
+X-Received: by 2002:a19:f80d:: with SMTP id a13mr25505147lff.78.1558435123624;
+ Tue, 21 May 2019 03:38:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rV8arf8D5Dod9UkK"
-Content-Disposition: inline
-In-Reply-To: <20190517123846.3708-8-vidyas@nvidia.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190520115231.137981521@linuxfoundation.org>
+In-Reply-To: <20190520115231.137981521@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 21 May 2019 16:08:31 +0530
+Message-ID: <CA+G9fYvuMxinio=Uxq7=aoqLH7a7Twgsnha9GrNzWF-sZZBsuA@mail.gmail.com>
+Subject: Re: [PATCH 4.14 00/63] 4.14.121-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 20 May 2019 at 17:49, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.14.121 release.
+> There are 63 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed 22 May 2019 11:50:54 AM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.14.121-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
---rV8arf8D5Dod9UkK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-On Fri, May 17, 2019 at 06:08:38PM +0530, Vidya Sagar wrote:
-> Add support to enable CDM (Configuration Dependent Module) register check
-> for any data corruption based on the device-tree flag 'snps,enable-cdm-ch=
-eck'.
->=20
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
-> Changes since [v6]:
-> * Changed "enable-cdm-check" to "snps,enable-cdm-check"
->=20
-> Changes since [v5]:
-> * None
->=20
-> Changes since [v4]:
-> * None
->=20
-> Changes since [v3]:
-> * None
->=20
-> Changes since [v2]:
-> * Changed code and commit description to reflect change in flag from
->   'cdm-check' to 'enable-cdm-check'
->=20
-> Changes since [v1]:
-> * This is a new patch in v2 series
->=20
->  drivers/pci/controller/dwc/pcie-designware.c | 7 +++++++
->  drivers/pci/controller/dwc/pcie-designware.h | 9 +++++++++
->  2 files changed, 16 insertions(+)
+Summary
+------------------------------------------------------------------------
 
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+kernel: 4.14.121-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.14.y
+git commit: ffedd7fd95e8d03834094434754a33dbc060770d
+git describe: v4.14.120-64-gffedd7fd95e8
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
+ild/v4.14.120-64-gffedd7fd95e8
 
---rV8arf8D5Dod9UkK
-Content-Type: application/pgp-signature; name="signature.asc"
+No regressions (compared to build v4.14.120)
 
------BEGIN PGP SIGNATURE-----
+No fixes (compared to build v4.14.120)
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzj1SAACgkQ3SOs138+
-s6FzehAAj26+Vd/E7W30W6r5t7V5VvOWhcFf3Jmp59yLidN65C8DRR41Qhw7YEyK
-/2glrrtwu+zYgwWKSDLqCrfiQ+DhsYH+XP6S8t/YVwRN6uMF9IcYK216kVu2vAS0
-ielsNNQOzGWWOWZPzhNZMpApcyeD7X+MyNGpaEfE0ddLHTxmnhDj4V2jOH1d5Ax7
-1hnpU64dNMX0eH0zjA746QXoAhtrwtGwSBMQMkxEhkGmt0UKJFKabWXgvk3zhZX3
-8U6Beasycz9+hkm0GEpyXcb+S30lVxQWen+i5ZvyfhHQ7+RsREY/SQu1go997YEs
-yLsYeRtsd3wNliiJu1l4PNhJY9bI1i1OthM+NuH08cbAHBm9s0+eTX/Ko4s0gf3n
-ICptVCYsVN6o6QkKnj14uWpbZ0Z2vQ4VeP4bs6vqy7sGruFWGuA9iZ85MQe+bEjU
-AcaosScNT/X3g7TRgVQTGuZixEpGJg2Llv4fbYdkA3JRDiJxw2ewSxoLGpZnlGM2
-Toodt5B961wBAOfv3p2gXTPqliyDJwCYGYkt8uTuSMiwfn3GyQSamFQWuLz8uRrA
-LFiU26ht43GDUFhwjXCYJ1uIZRoyzl7HuM+WxySx2hYevDz3L4EdGiJf6qe8SBHH
-RYMmHHYHxRbwR3Mfpm+sBCQgIFKDokaptNjuxiMkwVlgtGuW8hc=
-=GXch
------END PGP SIGNATURE-----
+Ran 23544 total tests in the following environments and test suites.
 
---rV8arf8D5Dod9UkK--
+Environments
+--------------
+- dragonboard-410c - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
