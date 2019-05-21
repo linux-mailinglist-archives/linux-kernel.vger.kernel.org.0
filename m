@@ -2,106 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE30B2557C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:24:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CEC925586
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:24:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbfEUQYe convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 May 2019 12:24:34 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47260 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfEUQYd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 12:24:33 -0400
-Received: from mail-pg1-f199.google.com ([209.85.215.199])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1hT7Z0-0001Zw-Px
-        for linux-kernel@vger.kernel.org; Tue, 21 May 2019 16:24:30 +0000
-Received: by mail-pg1-f199.google.com with SMTP id 21so3346836pgl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 09:24:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=f4cWlqI1jUt2yNrVL6MD7H0kVA2/rVI2x02kwXGnxEI=;
-        b=mJ12bTDp+fmbdJ5h9LO6QXrXEMkCyO6K8Sqm1frEr6/Sq4NvOtnJX5R3fTu3ee0vX/
-         b6xO+Ren+yFkQ1KAPH4+KkQVNaSVbOURkPskHKXjjyc4dw7bRFeLbVaQ3KgQcTRwO4Ru
-         jolj2cWKIeItgwDXAd55Rn6x6lT2JkO6eNxlJY5HWYQ1kJl+Wqc5DuZdEIbolm/EFZDW
-         1Y7O68bQPRugMlmRL8Prstp04Wsl8oOyCrkNN0z0W+bebpWnZEc3jdTALtRFkvuJWy9C
-         5A+sUP3sGE+opaDm12yL6c1ngk9MUSfd3GTnRKheZmDsatdkxaEqaZaAvSfe80yB1J4g
-         3U+Q==
-X-Gm-Message-State: APjAAAUmugJJtwlntQxIZj/jyV0xSv5k7r2e+H1DHa+ksDUJLJaa0Xs2
-        ku2O4zyEGIvG9UyVv1+6/nrLn8wgxONoCTXehK0/nO3HAbNrq8dbzmkIIUprlTzvQWPVQbzpiJi
-        dPLspi+wmcvBP/A9whEW1d7ZwJ0s5naUEIrCRIvV6fw==
-X-Received: by 2002:a62:14d6:: with SMTP id 205mr88663378pfu.4.1558455869557;
-        Tue, 21 May 2019 09:24:29 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqy0icQMTSNtq9BqYzHs17GjjnPoz2+R7usA4YqD3bB20+3eE7xxYWkuGE+Tly2KDyXI6Dt6Cg==
-X-Received: by 2002:a62:14d6:: with SMTP id 205mr88663344pfu.4.1558455869288;
-        Tue, 21 May 2019 09:24:29 -0700 (PDT)
-Received: from [192.168.1.220] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id g83sm38252903pfb.158.2019.05.21.09.24.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 09:24:27 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH] HID: Increase maximum report size allowed by
- hid_field_extract()
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CAO-hwJKctsp9=ZJuJB6YRtA+RHuv1NJ+9cWp9hub8oATh1MXCA@mail.gmail.com>
-Date:   Wed, 22 May 2019 00:24:24 +0800
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        =?utf-8?Q?Ronald_Tschal=C3=A4r?= <ronald@innovation.ch>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <1B225693-9307-46E2-B468-1529B1FF03CD@canonical.com>
-References: <20190308051117.21899-1-kai.heng.feng@canonical.com>
- <CAO-hwJLDuMZuqKiawnkq3YxL6T9SqNGqQ1Q_Vs=kMKmsx6SD0w@mail.gmail.com>
- <08CA35F5-1ADC-4C55-ACF5-04B19CC77A25@canonical.com>
- <nycvar.YFH.7.76.1905092130010.17054@cbobk.fhfr.pm>
- <CAO-hwJKctsp9=ZJuJB6YRtA+RHuv1NJ+9cWp9hub8oATh1MXCA@mail.gmail.com>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-X-Mailer: Apple Mail (2.3445.104.11)
+        id S1728998AbfEUQYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 12:24:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55814 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727969AbfEUQYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 12:24:54 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2122D208C3;
+        Tue, 21 May 2019 16:24:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558455893;
+        bh=1yav93c3s0CW0jwkGaIeXDoQbXwlBhxXytODTxJWX1g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rU6JQUoAvmja5YUK1L4lvVwie2IZyU7NF60VS2zSzfNmgakQiG6qX7emwLvpL1GUi
+         dSPzCVfyMUzWcUHboAOMZdiGyLg7FSmy48Kf/G/s827BBRmiQdeuGRZLyTFVeDC6AQ
+         ckdScagWlx0dbweEf00MmdEjEzPzRSX33M/4/sVY=
+Date:   Tue, 21 May 2019 18:24:51 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH] staging: fieldbus: anybuss: force address space
+ conversion
+Message-ID: <20190521162451.GA19139@kroah.com>
+References: <20190521145116.24378-1-TheSven73@gmail.com>
+ <20190521151059.GM31203@kadam>
+ <CAGngYiXLN-oT_b9d1kRyBrrFMALhKO-KnuwXB0MjVq0NFc01Xw@mail.gmail.com>
+ <20190521154241.GB15818@kroah.com>
+ <CAGngYiU_iK5=swD_DA5PcOeYFT0zTrdQ+30Db0YrahuEukEP_A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGngYiU_iK5=swD_DA5PcOeYFT0zTrdQ+30Db0YrahuEukEP_A@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> On May 21, 2019, at 9:58 PM, Benjamin Tissoires <benjamin.tissoires@redhat.com> wrote:
+On Tue, May 21, 2019 at 11:53:15AM -0400, Sven Van Asbroeck wrote:
+> On Tue, May 21, 2019 at 11:42 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > Ick, if you are using __force, almost always something is wrong.
+> >
 > 
-> On Thu, May 9, 2019 at 9:30 PM Jiri Kosina <jikos@kernel.org> wrote:
->> 
->> On Fri, 26 Apr 2019, Kai-Heng Feng wrote:
->> 
->>>> Ronald (Cc-ed) raised quite a good point:
->>>> what's the benefit of removing the error message if this function (and
->>>> __extract) can only report an unsigned 32 bits value?
->>> 
->>> I didn’t spot this, sorry.
->>> 
->>>> 
->>>> My take is we should revert 94a9992f7dbdfb28976b upstream and think at
->>>> a better solution.
->>> 
->>> I think using a new fix to replace it will be a better approach, as it at
->>> least partially solves the issue.
->> 
->> Guys, did this fall in between cracks? Is anyone planning to send a fixup?
->> 
+> What if I create a separate structure for the regmap context ?
 > 
-> Kai-Heng, have you been able to work on that?
-
-Sorry, I haven’t been able to work on this.
-
-Please revert the commit and possibly use *_once() macro to reduce the noise.
-
-Kai-Heng
-
+> struct anybus_regmap_context {
+>         void __iomem *base;
+> };
 > 
-> Cheers,
-> Benjamin
+> Then just store the base pointer inside the struct, and pass the struct
+> as the regmap context:
+> 
+> ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> ctx->base = base;
+> devm_regmap_init(..., ctx);
+> 
+> static int write_reg_bus(void *context, unsigned int reg,
+>                   unsigned int val)
+> {
+>         struct anybus_regmap_context *ctx = context;
+>         <now access ctx->base>
+> }
 
+Ick, no.
+
+> Penalty is an additional dynamic pointer-size
+> allocation. Pro: it'll be formally correct ?
+
+what is so odd about this code that makes you have to jump through
+strange hoops that no other driver has to?
+
+Just set your pointer types up properly to start with, and all should be
+fine.  Why are you trying to cast anything here?
+
+thanks,
+
+greg k-h
