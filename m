@@ -2,98 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69644251C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3449251F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:28:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbfEUOUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 10:20:14 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42493 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727534AbfEUOUO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 10:20:14 -0400
-Received: by mail-io1-f67.google.com with SMTP id g16so14060948iom.9
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 07:20:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Q1andz6G42MN5WlN0t4f5hbDfxStL/K8hK98k6OKJJY=;
-        b=CHC4PF3M62d4QI3/P8InHsH6i0+ClTgutpCwfaKLG8+dJl/qduMVqN9ejzBNghDbkT
-         1NKgFXga6yUkQNXyD886S4IF35e9jN38JqF9Lzp7Q1d0hVipIcBF6JQP+1IYyD6h/TmB
-         BA5iZ0/7JonUSrN6MoXVbxoJS/g6vK8x3SC7g4D91DRp2HRsNCtoIz0sqKtgNLFuDiTl
-         5DN5cKYpnvPQV+J2kFINli0EsbxkHjsX+7CKUy3BO7DW9IfKDyrdep0KJdLq5iADCZTJ
-         kB1AlRtMP3WmjQwKAnSAevh1ABM5fWeNB0AINYkZ8ioEQ21yaLKZoZ8hzGSay0320AkN
-         Uoug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Q1andz6G42MN5WlN0t4f5hbDfxStL/K8hK98k6OKJJY=;
-        b=QC908igsrNojd+xkYojFe4KIiWI10o1n5AuVE4HhJJRhunKlKGQOSCr6OXumN9eXpB
-         Ize89h1wNPbforsO5BzeDcUQsP+Pz/W3LtmyoUYPGOPFHExVooZgCZV1SujY7hk2BMC7
-         sR/vm0uRAT0n8tT6eKCZltUbhHUq7Zdbkb/DU4kcaFiYyzgrSlkkP62YjDCj/VGX0iF1
-         AMsuM3I4cRwI88XVPaQH1PlTo7bY0gn4FYbtFXAI5CM/VE77sWs0YgTCXyCnidhRxOLq
-         yg611x+da1+jx42m0DhJjRzsysUsDyeyqgHdwgy1UPzuISmnVT8W2xkGn0hcPxVuo8qY
-         LKOQ==
-X-Gm-Message-State: APjAAAWiogfbqXPdIipRdi9fkCrRtpdzZjQtg4ug9yeeyp2Pc+qCOWHM
-        PFL/AEedWIgFD7mZkFcBQQU=
-X-Google-Smtp-Source: APXvYqwtyHGX8IC/jfGZ0uUS4Gi8VVwcgEcNozPhlks5OV9EXtD3UwdiNBncn/2q/asawtGzu4vfXA==
-X-Received: by 2002:a6b:f70b:: with SMTP id k11mr3587023iog.148.1558448413605;
-        Tue, 21 May 2019 07:20:13 -0700 (PDT)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id u5sm4393045iob.7.2019.05.21.07.20.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 07:20:13 -0700 (PDT)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
-To:     Oscar Gomez Fuente <oscargomezf@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3] staging: fieldbus: core: fix ->poll() annotation
-Date:   Tue, 21 May 2019 10:20:09 -0400
-Message-Id: <20190521142009.7331-1-TheSven73@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728527AbfEUO2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 10:28:02 -0400
+Received: from mail2.skidata.com ([91.230.2.91]:32652 "EHLO mail2.skidata.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726750AbfEUO2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 10:28:01 -0400
+X-Greylist: delayed 428 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 May 2019 10:28:00 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=skidata.com; i=@skidata.com; q=dns/txt; s=selector1;
+  t=1558448903; x=1589984903;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tZprcqh9LXoNlxO8gu2/EPEJEdKFxz91AfnZIELZi24=;
+  b=JGoE6XbuYBoVl0P6cwUeUVyz5qAnahyEDot1GFFYag6twOIni4MrlZVV
+   VLtwoQR3gZZA1XII77FnhRGJc29iMvv3zG3wUEtFTDCXxFLGaltSxnRkf
+   9AyYPQkr7TzJcjTBCg5VFIqfBQ/lXUBewfRlTtp4gOWPiV/sjpaeN1ims
+   4A7g+4U3qh4zTAeY5vbqWUvBoqGt8vB4wjltm9Zw0LSkh2zKACMaOgoKL
+   gJrbWlP06/DGV1aFFXUSN1Rf7Ke7FzE83XZRox2e/LTMjvKyehUK7zBdB
+   mFABFeesdxvtBYyocteObWHstG114D5OUaea9IF0t/K8QmihftQfPVDrz
+   Q==;
+IronPort-SDR: R9oJvERd0WsFqarg5Vu7T2H4biQbG7n/GQ2SjYFPrZgZiM+UnwDlsvITezDtGFRkpWH5YYwm42
+ 4C5HdUYQcmtpiFDkQeHKjSbBAnnTl3S2czdi+0AJnxUMgfvn91cFGfkgbVw3K8iy+Yjyd0kgka
+ RSA2GgjO+H3FIiJcSbZWbA0a9FXQYW4KvxRpHcZ5S0S4fQGvqp/R8o6Yj45z0LFMYtngq0GJjt
+ 02neaZoH0kDPZe1asN/q5H/922IOUINggRacKHjqYrMIr8vWuvk8jMbGeoglubhzJYxyxcqaui
+ i58=
+X-IronPort-AV: E=Sophos;i="5.60,495,1549926000"; 
+   d="scan'208";a="2150343"
+From:   Richard Leitner <richard.leitner@skidata.com>
+To:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>
+CC:     <linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Richard Leitner <richard.leitner@skidata.com>
+Subject: [PATCH 0/3] rtc: s35390a: uie_unsupported and minor fixes
+Date:   Tue, 21 May 2019 16:20:21 +0200
+Message-ID: <20190521142024.25894-1-richard.leitner@skidata.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [192.168.111.252]
+X-ClientProxiedBy: sdex6srv.skidata.net (192.168.111.84) To
+ sdex5srv.skidata.net (192.168.111.83)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oscar Gomez Fuente <oscargomezf@gmail.com>
+As the s35390a does only support per-minute based alarms we have to
+set the uie_unsupported flag. Otherwise it delays for 10sec and 
+fails afterwards with modern hwclock versions.
 
-->poll() functions should return __poll_t, but the fieldbus
-core's poll() does not. This generates a sparse warning.
+Furthermore some other minor changes are made.
 
-Fix the ->poll() return value, and use recommended __poll_t
-constants (EPOLLxxx).
+All patches were tested on an i.MX6 platform.
 
-Signed-off-by: Oscar Gomez Fuente <oscargomezf@gmail.com>
----
- drivers/staging/fieldbus/dev_core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Richard Leitner (3):
+  rtc: s35390a: clarify INT2 pin output modes
+  rtc: s35390a: set uie_unsupported
+  rtc: s35390a: introduce struct device in probe
 
-diff --git a/drivers/staging/fieldbus/dev_core.c b/drivers/staging/fieldbus/dev_core.c
-index 60b85140675a..f6f5b92ba914 100644
---- a/drivers/staging/fieldbus/dev_core.c
-+++ b/drivers/staging/fieldbus/dev_core.c
-@@ -211,16 +211,16 @@ static ssize_t fieldbus_write(struct file *filp, const char __user *buf,
- 	return fbdev->write_area(fbdev, buf, size, offset);
- }
- 
--static unsigned int fieldbus_poll(struct file *filp, poll_table *wait)
-+static __poll_t fieldbus_poll(struct file *filp, poll_table *wait)
- {
- 	struct fb_open_file *of = filp->private_data;
- 	struct fieldbus_dev *fbdev = of->fbdev;
--	unsigned int mask = POLLIN | POLLRDNORM | POLLOUT | POLLWRNORM;
-+	__poll_t mask = EPOLLIN | EPOLLRDNORM | EPOLLOUT | EPOLLWRNORM;
- 
- 	poll_wait(filp, &fbdev->dc_wq, wait);
- 	/* data changed ? */
- 	if (fbdev->dc_event != of->dc_event)
--		mask |= POLLPRI | POLLERR;
-+		mask |= EPOLLPRI | EPOLLERR;
- 	return mask;
- }
- 
+ drivers/rtc/rtc-s35390a.c | 43 +++++++++++++++++++++------------------
+ 1 file changed, 23 insertions(+), 20 deletions(-)
+
 -- 
-2.17.1
+2.20.1
 
