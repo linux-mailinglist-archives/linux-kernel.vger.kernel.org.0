@@ -2,124 +2,351 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81BB124F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 14:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADE2524F3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 14:51:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbfEUMvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 08:51:01 -0400
-Received: from mail-eopbgr30072.outbound.protection.outlook.com ([40.107.3.72]:46662
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727044AbfEUMvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 08:51:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WX+B1XPU8Uj+Estbi0WpXCgbgJrpyoC40UivxMNAfQ0=;
- b=ezqOs1QNw9RhhewhAdF+kZS+OF1GFuI6AoGEUqYErsHSmfwLMPD8QO1NAu0rs9RD/8asj4u76n1UjHYSJIsMjz4ECAz/iByOczZGVF2u0k4RCXMHludG2r7hkgr1JD4EaBoieU5rgt13LbOgL+81dmvI0sLJXnWAXB5oKRL2k2s=
-Received: from DB7PR08MB3865.eurprd08.prod.outlook.com (20.178.84.149) by
- DB7PR08MB3468.eurprd08.prod.outlook.com (20.176.238.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.18; Tue, 21 May 2019 12:50:58 +0000
-Received: from DB7PR08MB3865.eurprd08.prod.outlook.com
- ([fe80::1c44:4e1b:c1e1:543e]) by DB7PR08MB3865.eurprd08.prod.outlook.com
- ([fe80::1c44:4e1b:c1e1:543e%7]) with mapi id 15.20.1900.020; Tue, 21 May 2019
- 12:50:58 +0000
-From:   Raphael Gault <Raphael.Gault@arm.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Julien Thierry <Julien.Thierry@arm.com>
-Subject: Re: [RFC V2 00/16] objtool: Add support for Arm64
-Thread-Topic: [RFC V2 00/16] objtool: Add support for Arm64
-Thread-Index: AQHVC9NuTdVCDaa9ZEK795yYRfBvDKZtz9WAgAfALQA=
-Date:   Tue, 21 May 2019 12:50:57 +0000
-Message-ID: <26692833-0e5b-cfe0-0ffd-c2c2f0815935@arm.com>
-References: <20190516103655.5509-1-raphael.gault@arm.com>
- <20190516142917.nuhh6dmfiufxqzls@treble>
-In-Reply-To: <20190516142917.nuhh6dmfiufxqzls@treble>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0010.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:62::22) To DB7PR08MB3865.eurprd08.prod.outlook.com
- (2603:10a6:10:32::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Raphael.Gault@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [217.140.106.53]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2bac8ef6-c30a-479c-dfad-08d6ddeaf82f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB7PR08MB3468;
-x-ms-traffictypediagnostic: DB7PR08MB3468:
-x-microsoft-antispam-prvs: <DB7PR08MB3468758FA32DA72D354D550BED070@DB7PR08MB3468.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0044C17179
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(136003)(366004)(376002)(40434004)(199004)(189003)(54014002)(478600001)(305945005)(8676002)(81166006)(81156014)(14454004)(72206003)(6512007)(316002)(8936002)(66066001)(7736002)(66946007)(66446008)(66476007)(73956011)(71200400001)(71190400001)(6436002)(64756008)(66556008)(6916009)(36756003)(99286004)(102836004)(6116002)(54906003)(2906002)(3846002)(486006)(86362001)(2616005)(446003)(26005)(14444005)(5024004)(11346002)(31696002)(44832011)(476003)(256004)(186003)(31686004)(53936002)(6486002)(25786009)(5660300002)(229853002)(52116002)(53546011)(76176011)(6506007)(386003)(4326008)(6246003)(68736007)(10944002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR08MB3468;H:DB7PR08MB3865.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 5yUjSRvVTsHz2zohfBstl5qD4AjV0iAvAGz5daTDDi71Yhjtm5+9thFdTAc8EdWJuoD0XtQd9yDGheI/Lyvm/37+Sssa4HQvGvpmyHUao3I1zA4HyPLZw/7us4VHnypGZ9t6+aqR80voTjDZQNZ9votFnpnGgOz807f1CxD4vUc/x2s1SN4SF7IxaIOVq62XPRnJUKEGUiRMoQfdDkWLj8a8na1H9Wj84X4MJm2CjpKvBbhX6Xu3emd4r63Su2pxB1zZqJdBSPOnb1eqmIw+Ka6tM8g9KWSGRtreJB7LVRxJfbkySgOSDIrHcGioJRh3Lm6UXyrItcGQ1/8EQzvWGllclbyXQmefDr9Z9HfgtqDWutHJEWH/hVYLDmApdxFIos7KctLcxwPbody3xi6lB2OEoiyCKof8GrVSFqY8zXQ=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3B927C8926921641BAA5042413FC236B@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1728175AbfEUMv0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 08:51:26 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:56221 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbfEUMvX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 08:51:23 -0400
+X-Originating-IP: 90.88.22.185
+Received: from localhost.localdomain (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 8C4BF1C0002;
+        Tue, 21 May 2019 12:51:15 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v5 0/4] Hello,
+Date:   Tue, 21 May 2019 14:51:09 +0200
+Message-Id: <20190521125114.20357-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2bac8ef6-c30a-479c-dfad-08d6ddeaf82f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 12:50:57.9154
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3468
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgSm9zaCwNCg0KVGhhbmtzIGZvciBvZmZlcmluZyB5b3VyIGhlbHAgYW5kIHNvcnJ5IGZvciB0
-aGUgbGF0ZSBhbnN3ZXIuDQoNCk15IHVuZGVyc3RhbmRpbmcgaXMgdGhhdCBhIHRhYmxlIG9mIG9m
-ZnNldHMgaXMgYnVpbHQgYnkgR0NDLCB0aG9zZQ0Kb2Zmc2V0cyBiZWluZyBzY2FsZWQgYnkgNCBi
-ZWZvcmUgYWRkaW5nIHRoZW0gdG8gdGhlIGJhc2UgbGFiZWwuDQpJIGJlbGlldmUgdGhlIG9mZnNl
-dHMgYXJlIHN0b3JlZCBpbiB0aGUgLnJvZGF0YSBzZWN0aW9uLiBUbyBmaW5kIHRoZQ0Kc2l6ZSBv
-ZiB0aGF0IHRhYmxlLCBpdCBpcyBuZWVkZWQgdG8gZmluZCBhIGNvbXBhcmlzb24sIHdoaWNoIGNh
-biBiZQ0Kb3B0aW1pemVkIG91dCBhcHByZW50bHkuIEluIHRoYXQgY2FzZSB0aGUgZW5kIG9mIHRo
-ZSBhcnJheSBjYW4gYmUgZm91bmQNCmJ5IGxvY2F0aW5nIGxhYmVscyBwb2ludGluZyB0byBkYXRh
-IGJlaGluZCBpdCAod2hpY2ggaXMgbm90IDEwMCUgc2FmZSkuDQoNCk9uIDUvMTYvMTkgMzoyOSBQ
-TSwgSm9zaCBQb2ltYm9ldWYgd3JvdGU6DQo+IE9uIFRodSwgTWF5IDE2LCAyMDE5IGF0IDExOjM2
-OjM5QU0gKzAxMDAsIFJhcGhhZWwgR2F1bHQgd3JvdGU6DQo+PiBOb3Rld29ydGh5IHBvaW50czoN
-Cj4+ICogSSBzdGlsbCBoYXZlbid0IGZpZ3VyZWQgb3V0IGhvdyB0byBkZXRlY3Qgc3dpdGNoLXRh
-YmxlcyBvbiBhcm02NC4gSQ0KPj4gaGF2ZSBhIGJldHRlciB1bmRlcnN0YW5kaW5nIG9mIHRoZW0g
-YnV0IHN0aWxsIGhhdmVuJ3QgaW1wbGVtZW50ZWQgY2hlY2tzDQo+PiBhcyBpdCBkb2Vzbid0IGxv
-b2sgdHJpdmlhbCBhdCBhbGwuDQo+DQo+IFN3aXRjaCB0YWJsZXMgd2VyZSB0cmlja3kgdG8gZ2V0
-IHJpZ2h0IG9uIHg4Ni4gIElmIHlvdSBzaGFyZSBhbiBleGFtcGxlDQo+IChvciBldmVuIGp1c3Qg
-YSAubyBmaWxlKSBJIGNhbiB0YWtlIGEgbG9vay4gIEhvcGVmdWxseSB0aGV5J3JlIHNvbWV3aGF0
-DQo+IHNpbWlsYXIgdG8geDg2IHN3aXRjaCB0YWJsZXMuICBPdGhlcndpc2Ugd2UgbWF5IHdhbnQg
-dG8gY29uc2lkZXIgYQ0KPiBkaWZmZXJlbnQgYXBwcm9hY2ggKGZvciBleGFtcGxlIG1heWJlIGEg
-R0NDIHBsdWdpbiBjb3VsZCBoZWxwIGFubm90YXRlDQo+IHRoZW0pLg0KPg0KDQpUaGUgY2FzZSB3
-aGljaCBtYWRlIG1lIHJlYWxpemUgdGhlIGlzc3VlIGlzIHRoZSBvbmUgb2YNCmFyY2gvYXJtNjQv
-a2VybmVsL21vZHVsZS5vOmFwcGx5X3JlbG9jYXRlX2FkZDoNCg0KYGBgDQpXaGF0IHNlZW1zIHRv
-IGhhcHBlbiBpbiB0aGUgY2FzZSBvZiBtb2R1bGUubyBpczoNCiAgMzM0OiAgIDkwMDAwMDE1ICAg
-ICAgICBhZHJwICAgIHgyMSwgMCA8ZG9fcmVsb2M+DQp3aGljaCByZXRyaWV2ZXMgdGhlIGxvY2F0
-aW9uIG9mIGFuIG9mZnNldCBpbiB0aGUgcm9kYXRhIHNlY3Rpb24sIGFuZCBhDQpiaXQgbGF0ZXIg
-d2UgZG8gc29tZSBleHRyYSBjb21wdXRhdGlvbiB3aXRoIGl0IGluIG9yZGVyIHRvIGNvbXB1dGUg
-dGhlDQpqdW1wIGRlc3RpbmF0aW9uOg0KICAzZTA6ICAgNzg2MjVhYTAgICAgICAgIGxkcmggICAg
-dzAsIFt4MjEsIHcyLCB1eHR3ICMxXQ0KICAzZTQ6ICAgMTAwMDAwNjEgICAgICAgIGFkciAgICAg
-eDEsIDNmMCA8YXBwbHlfcmVsb2NhdGVfYWRkKzB4Zjg+DQogIDNlODogICA4YjIwYTgyMCAgICAg
-ICAgYWRkICAgICB4MCwgeDEsIHcwLCBzeHRoICMyDQogIDNlYzogICBkNjFmMDAwMCAgICAgICAg
-YnIgICAgICB4MA0KYGBgDQoNClBsZWFzZSBrZWVwIGluIG1pbmQgdGhhdCB0aGUgYWN0dWFsIG9m
-ZnNldHMgbWlnaHQgdmFyeS4NCg0KSSdtIGhhcHB5IHRvIHByb3ZpZGUgbW9yZSBkZXRhaWxzIGFi
-b3V0IHdoYXQgSSBoYXZlIGlkZW50aWZpZWQgaWYgeW91DQp3YW50IG1lIHRvLg0KDQpUaGFua3Ms
-DQoNCi0tDQpSYXBoYWVsIEdhdWx0DQpJTVBPUlRBTlQgTk9USUNFOiBUaGUgY29udGVudHMgb2Yg
-dGhpcyBlbWFpbCBhbmQgYW55IGF0dGFjaG1lbnRzIGFyZSBjb25maWRlbnRpYWwgYW5kIG1heSBh
-bHNvIGJlIHByaXZpbGVnZWQuIElmIHlvdSBhcmUgbm90IHRoZSBpbnRlbmRlZCByZWNpcGllbnQs
-IHBsZWFzZSBub3RpZnkgdGhlIHNlbmRlciBpbW1lZGlhdGVseSBhbmQgZG8gbm90IGRpc2Nsb3Nl
-IHRoZSBjb250ZW50cyB0byBhbnkgb3RoZXIgcGVyc29uLCB1c2UgaXQgZm9yIGFueSBwdXJwb3Nl
-LCBvciBzdG9yZSBvciBjb3B5IHRoZSBpbmZvcm1hdGlvbiBpbiBhbnkgbWVkaXVtLiBUaGFuayB5
-b3UuDQo=
+While working on suspend to RAM feature, I ran into troubles multiple
+times when clocks where not suspending/resuming at the desired time. I
+had a look at the core and I think the same logic as in the
+regulator's core may be applied here to (very easily) fix this issue:
+using device links.
+
+The only additional change I had to do was to always (when available)
+populate the device entry of the core clock structure so that it could
+be used later. This is the purpose of patch 1. Patch 2 actually adds
+support for device links.
+
+Here is a step-by-step explanation of how links are managed, following
+Maxime Ripard's suggestion.
+
+
+The order of probe has no importance because the framework already
+handles orphaned clocks so let's be simple and say there are two root
+clocks, not depending on anything, that are probed first: xtal0 and
+xtal1. None of these clocks have a parent, there is no device link in
+the game, yet.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +----------------+            +----------------+
+
+Then, a peripheral clock periph0 is probed. His parent is xtal1. The
+clock_register_*() call will run __clk_init_parent() and a link between
+periph0's core and xtal1's core will be created and stored in
+periph0's core->parent_clk_link entry.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +----------------+            +-------^--------+
+                                         |
+                                         |
+                          +--------------+
+                          |   ->parent_clk_link
+                          |
+                  +----------------+
+                  |                |
+                  |                |
+                  |  periph0 core  |
+                  |                |
+                  |                |
+                  +-------^^-------+
+                          ||
+                          ||
+                  +----------------+
+                  |                |
+                  |  periph0 clk 0 |
+                  |                |
+                  +----------------+
+
+Then, device0 is probed and "get" the periph0 clock. clk_get() will be
+called and a struct clk will be instantiated for device0 (called in
+the figure clk 1). A link between device0 and the new clk 1 instance of
+periph0 will be created and stored in the clk->consumer_link entry.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +----------------+            +-------^--------+
+                                         |
+                                         |
+                          +--------------+
+                          |   ->parent_clk_link
+                          |
+                  +----------------+
+                  |                |
+                  |                |
+                  |  periph0 core  |
+                  |                <-------------+
+                  |                <-------------|
+                  +-------^^-------+            ||
+                          ||                    ||
+                          ||                    ||
+                  +----------------+    +----------------+
+                  |                |    |                |
+                  |  periph0 clk 0 |    |  periph0 clk 1 |
+                  |                |    |                |
+                  +----------------+    +----------------+
+                                                |
+                                                | ->consumer_link
+                                                |
+                                                |
+                                                |
+                                        +-------v--------+
+                                        |    device0     |
+                                        +----------------+
+
+Right now, device0 is linked to periph0, itself linked to xtal1 so
+everything is fine.
+
+Now let's get some fun: the new parent of periph0 is xtal1. The process
+will call clk_reparent(), periph0's core->parent_clk_link will be
+destroyed and a new link to xtal1 will be setup and stored. The
+situation is now that device0 is linked to periph0 and periph0 is
+linked to xtal1, so the dependency between device0 and xtal1 is still
+clear.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +-------^--------+            +----------------+
+           |
+           |                           \ /
+           +----------------------------x
+      ->parent_clk_link   |            / \
+                          |
+                  +----------------+
+                  |                |
+                  |                |
+                  |  periph0 core  |
+                  |                <-------------+
+                  |                <-------------|
+                  +-------^^-------+            ||
+                          ||                    ||
+                          ||                    ||
+                  +----------------+    +----------------+
+                  |                |    |                |
+                  |  periph0 clk 0 |    |  periph0 clk 1 |
+                  |                |    |                |
+                  +----------------+    +----------------+
+                                                |
+                                                | ->consumer_link
+                                                |
+                                                |
+                                                |
+                                        +-------v--------+
+                                        |    device0     |
+                                        +----------------+
+
+I assume periph0 cannot be removed while there are devices using it,
+same for xtal0.
+
+What can happen is that device0 'put' the clock periph0. The relevant
+link is deleted and the clk instance dropped.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +-------^--------+            +----------------+
+           |
+           |                           \ /
+           +----------------------------x
+      ->parent_clk_link   |            / \
+                          |
+                  +----------------+
+                  |                |
+                  |                |
+                  |  periph0 core  |
+                  |                |
+                  |                |
+                  +-------^^-------+
+                          ||
+                          ||
+                  +----------------+
+                  |                |
+                  |  periph0 clk 0 |
+                  |                |
+                  +----------------+
+
+Now we can unregister periph0: link with the parent will be destroyed
+and the clock may be safely removed.
+
+   +----------------+            +----------------+
+   |                |            |                |
+   |                |            |                |
+   |   xtal0 core   |            |   xtal1 core   |
+   |                |            |                |
+   |                |            |                |
+   +-------^^-------+            +-------^^-------+
+           ||                            ||
+           ||                            ||
+   +----------------+            +----------------+
+   |                |            |                |
+   |   xtal0 clk    |            |   xtal1 clk    |
+   |                |            |                |
+   +----------------+            +----------------+
+
+
+This is my understanding of the common clock framework and how links
+can be added to it.
+
+As a result, here are the links created during the boot of an
+ESPRESSObin:
+
+----->8-----
+marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-tbg-clock d0013200.tbg: Dropping the link to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a consumer to d0013200.tbg
+marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a consumer to d0013800.pinctrl:xtal-clk
+marvell-armada-3700-periph-clock d0018000.sb-periph-clk: Linked as a consumer to d0013200.tbg
+mvneta d0030000.ethernet: Linked as a consumer to d0018000.sb-periph-clk
+xhci-hcd d0058000.usb: Linked as a consumer to d0018000.sb-periph-clk
+xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
+xenon-sdhci d00d0000.sdhci: Dropping the link to d0013000.nb-periph-clk
+mvebu-uart d0012000.serial: Linked as a consumer to d0013800.pinctrl:xtal-clk
+advk-pcie d0070000.pcie: Linked as a consumer to d0018000.sb-periph-clk
+xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
+xenon-sdhci d00d0000.sdhci: Linked as a consumer to regulator.1
+cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
+cpu cpu0: Dropping the link to d0013000.nb-periph-clk
+cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
+-----8<-----
+
+Thanks,
+Miquèl
+
+Changes since v4:
+=================
+* Rebased on top of v5.2-rc1.
+
+Changes since v3:
+=================
+* Rebased on top of Stephen's 'clk-parent-rewrite' branch. Stephen
+  already updated and took the patch 'clk: core: clarify the check for
+  runtime PM' so it is not present in this series anymore.
+* Updated the code to fit with the new core. Kept the helpers that
+  were added to clk/clk.c (turning them static) for more readability.
+* While working on clocks, I discovered a typo in an a3700-tbg driver
+  error message. A patch has been added to correct this typo.
+
+Changes since v2:
+=================
+* Fixed compilation issue when not using the common clock framework:
+  removed the static keyword in front of clk_link/unlink_consumer()
+  dummy definitions in clkdev.c.
+
+Changes since v1:
+=================
+* Add clock->clock links, not only device->clock links.
+* Helpers renamed:
+  > clk_{link,unlink}_hierarchy()
+  > clk_{link,unlink}_consumer()
+* Add two patches to pass a "struct device" to the clock registration
+  helper. This way device links may work between clocks themselves
+  (otherwise the link is not created).
+
+
+Miquel Raynal (4):
+  clk: core: link consumer with clock driver
+  clk: mvebu: armada-37xx-tbg: fix error message
+  clk: mvebu: armada-37xx-tbg: fill the device entry when registering
+    the clocks
+  clk: mvebu: armada-37xx-xtal: fill the device entry when registering
+    the clock
+
+ drivers/clk/clk.c                    | 50 +++++++++++++++++++++++++++-
+ drivers/clk/mvebu/armada-37xx-tbg.c  |  8 +++--
+ drivers/clk/mvebu/armada-37xx-xtal.c |  3 +-
+ 3 files changed, 56 insertions(+), 5 deletions(-)
+
+-- 
+2.19.1
+
