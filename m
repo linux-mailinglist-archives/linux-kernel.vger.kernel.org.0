@@ -2,158 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C74092533E
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:00:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF14125343
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbfEUPAt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:00:49 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45115 "EHLO
+        id S1728809AbfEUPBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:01:36 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38306 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728748AbfEUPAs (ORCPT
+        with ESMTP id S1728784AbfEUPBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:00:48 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b18so18947030wrq.12;
-        Tue, 21 May 2019 08:00:47 -0700 (PDT)
+        Tue, 21 May 2019 11:01:36 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d18so19025618wrs.5
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 08:01:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vyK/mPyRJOdcHJJCImc+aiGr+T+jcqi6u6xDwEP/lVw=;
-        b=qIrsm3PA+ie9ByYZGnDHhdENmckxt9Wn3Zpm4I9oeebpgQYv3j29+6DT+BIQKOnrjx
-         9cgi6T39TSV04E4Lhu7Adq4u/Lo4LYGJj7+yuFpd+cF6ioNsrJi48uY0I/TM7jTidbfa
-         L3hlrWXDR4FqeTYnK7uDOoZ5MO8xMLecI+Fs2QahMVsfX+DE7uqvl+DLe1w3PR+yoWOy
-         iaCVsFp3VpXqsQk4a++yW0wPZg7bVR9XxeP+5XLbs4fmdpE89Q4dZFObo/Lf3m87iEa/
-         +q7kzTtPMnVhpMpROlp4DsWcdsH4s5NsTNwt+4QgUwJ3hz6/H/DVhZ05jWJST+PptrTd
-         yvHA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BF2CDs8GJndud+tJOwAui4kXWvWdLcOJYF5JUOigmaI=;
+        b=j+UCJZlmQX3NC+lUmPI+K/5t1BBpvYyat/5tw8TlJITObCeJXzQv5JA3sYpUsJjKi5
+         w7QG2E6DoLMRMlQR9I1PQ+FTWxIK4jC9vRYueXaSWq2I+tzmzCGUWS+KHHWDCa3QJuEr
+         OGurZvGKMb4DkUlJExtPXFAlxEgUCSFf37sanZKDY6pp47RMTBQTa6i1EAFzad8uboxa
+         NqVMRVjvthtOrN0UM2vSPys/bdXWr3CBldD6JiBNPPcMxZJg75gRQ23oyuNUXCBjoT3g
+         yJu7UO3DoOrpup1u8QmDD/elHa4U80tLW3pb4wT+Y4TwQk2MFMrUUKBOt82qR840O2dK
+         ipyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vyK/mPyRJOdcHJJCImc+aiGr+T+jcqi6u6xDwEP/lVw=;
-        b=fBbhvteaUrAGtDr6s9resNbkjejaoO3RaeUqGPzyFSuWucvZ+Qd7TzMKveFMHDCApd
-         lXJvu9Nn5QNiU4WxJO+Br+Be65s8RBrTgkrC7brUlosez8o3U7mHwueM2PRRFiFF98qR
-         zA8Lra2uFzXlXh/Nwtm+JvEKvZyJSb/gXyRx1ALjhFspddCTt0UWs9UrJIm+rO/KWx8j
-         HgfSOe5ViTHXN3/80GABv78a7gKc6w9NQIE/zEhMAl39ZEcpxug0DSmm5EL4H8Oku0zn
-         7ZCnc8V8DCEI+q6YosTcKcJcrt7GCFf23TREmHq7YoccHRmZsPITENTybKrU064QbHG5
-         mWCg==
-X-Gm-Message-State: APjAAAV1AbK3Tlnq5hW0DA6IQq1HhbTsWAMdOwYyDhXgcPvZuxthDqA+
-        8vJJHFaXbH2e9wiSILuHTP4=
-X-Google-Smtp-Source: APXvYqwiC5nPtcRDsTzuXv+IiYZ2EjEjqlmSAdKy4NhHJ3M5HUK029K3c5V+FHD/e2eb0BRkOjxWeQ==
-X-Received: by 2002:adf:83c5:: with SMTP id 63mr20838465wre.33.1558450846486;
-        Tue, 21 May 2019 08:00:46 -0700 (PDT)
-Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
-        by smtp.gmail.com with ESMTPSA id u2sm32242993wra.82.2019.05.21.08.00.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 08:00:45 -0700 (PDT)
-Date:   Tue, 21 May 2019 17:00:44 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: phy: tegra-xusb: List PLL power supplies
-Message-ID: <20190521150044.GA7098@ulmo>
-References: <20190425153444.6281-1-thierry.reding@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BF2CDs8GJndud+tJOwAui4kXWvWdLcOJYF5JUOigmaI=;
+        b=jkiAYI/KBV2I0+Fo5jC6CNTgW/nC580QuS+qJSUWEAbe9RY63pptxkrBzX5VOHPeXR
+         nShcOLWTTw1cwfcU6BFmvXDaRJqlBsh8ZIrdDwxJxScbKA6wNzoslXe33YCGAhTezbKs
+         AodhxRhCuaWuAJTzC9nbxvQZXsXPVsW6NhbdIlOXRDPxn+JDM9j7fVo/V+WVU10ii/tg
+         A/XJT3nxCNtHgYS25CB8pKPNkaOp/PglkqMoPuguKx66CIevZ2njf9oAHAgoIyx8rqa5
+         Apj05n3+1ZTbLp7irwns7/CJW4bNLG8cYSJtxHpZRnAHYC7cgq7xLZuJj5AkfdEW5zwf
+         bJkg==
+X-Gm-Message-State: APjAAAV0AVUIUdW6DmTDujGR5gyslncgE4tp5jbGuKTwCptETBzP8kBR
+        PSflwIIeXxMr+JGUi/IsV/yY7Q==
+X-Google-Smtp-Source: APXvYqzc/ULB/4zVvRVJIncLQNslSLkrcgQiE0igOHAgUp0J6NZfXBnW15l5WJWrBOBUyVM9G9e7Sg==
+X-Received: by 2002:adf:cc8e:: with SMTP id p14mr35315046wrj.82.1558450893970;
+        Tue, 21 May 2019 08:01:33 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b194sm3407505wmb.23.2019.05.21.08.01.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 21 May 2019 08:01:32 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] clk: meson: add support for Amlogic G12A
+Date:   Tue, 21 May 2019 17:01:27 +0200
+Message-Id: <20190521150130.31684-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-Content-Disposition: inline
-In-Reply-To: <20190425153444.6281-1-thierry.reding@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The Amlogic G12B SoC is very similar with the G12A SoC, sharing
+most of the features and architecture.
+G12B clock tree is very close, the main differences are :
+- SYS_PLL is used for the second cluster (otherwise used fir the first on G12a)
+- SYS_PLL1 is used for the first cluster (instead of SYS_PLL on G12a)
+- A duplicate CPU tree is added for the second cluster
+- G12A has additional clocks like for CSI an other components, not handled yet
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Dependencies :
+- Patch 1, 3 : None
+- Patch 2 : Depends on Guillaume's Temperature sensor Clock patches at [1]
 
-On Thu, Apr 25, 2019 at 05:34:42PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
-> These power supplies provide power for various PLLs that are set up and
-> driven by the XUSB pad controller. These power supplies were previously
-> improperly added to the PCIe and XUSB controllers, but depending on the
-> driver probe order, power to the PLLs will not be supplied soon enough
-> and cause initialization to fail.
->=20
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> This was previously reviewed here:
->=20
->     https://patchwork.ozlabs.org/patch/1077153/
->=20
->  .../bindings/phy/nvidia,tegra124-xusb-padctl.txt     | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+This patchset is a spinoff of the v2 Odroid-N2 megapatchset at [2]
 
-Hi Kishon,
+Changes since original pathset :
+- Added missing sys1_pll div16, cpub div16 and cpub atb/axi/ahb/trace clocks
+- Rewrote "This patch .." in commit messages
 
-do you have any comments on this series. It's fairly straightforward but
-is required in order to make XUSB work properly on Jetson Nano for which
-support was merged in v5.2-rc1.
+[1] https://lkml.kernel.org/r/20190412100221.26740-1-glaroque@baylibre.com
+[2] https://lkml.kernel.org/r/20190423091503.10847-1-narmstrong@baylibre.com
 
-Thanks,
-Thierry
+Neil Armstrong (3):
+  dt-bindings: clk: meson: add g12b periph clock controller bindings
+  clk: meson: g12a: Add support for G12B CPUB clocks
+  clk: meson: g12a: mark fclk_div3 as critical
 
->=20
-> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-p=
-adctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padc=
-tl.txt
-> index daedb15f322e..9fb682e47c29 100644
-> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.t=
-xt
-> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.t=
-xt
-> @@ -42,6 +42,18 @@ Required properties:
->  - reset-names: Must include the following entries:
->    - "padctl"
-> =20
-> +For Tegra124:
-> +- avdd-pll-utmip-supply: UTMI PLL power supply. Must supply 1.8 V.
-> +- avdd-pll-erefe-supply: PLLE reference PLL power supply. Must supply 1.=
-05 V.
-> +- avdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
-> +- hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 3.3=
- V.
-> +
-> +For Tegra210:
-> +- avdd-pll-utmip-supply: UTMI PLL power supply. Must supply 1.8 V.
-> +- avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1=
-=2E05 V.
-> +- dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
-> +- hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8=
- V.
-> +
->  For Tegra186:
->  - avdd-pll-erefeut-supply: UPHY brick and reference clock as well as UTM=
-I PHY
->    power supply. Must supply 1.8 V.
-> --=20
-> 2.21.0
->=20
+ .../bindings/clock/amlogic,gxbb-clkc.txt      |   1 +
+ drivers/clk/meson/g12a.c                      | 659 ++++++++++++++++++
+ drivers/clk/meson/g12a.h                      |  33 +-
+ 3 files changed, 692 insertions(+), 1 deletion(-)
 
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.21.0
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzkEpwACgkQ3SOs138+
-s6GifhAAoCiCcvnoALjMNw+bcAVupWuDb+KWFF59YbxHzUKtctPi36CiVZrsdKqO
-l3p+Mp23SKd/F/NlNDuU6n0HHSCYCOT/o1Fyy8bF1B056wPomE39k4RxZ/bmdp2D
-VHsLW66+WajZf/cYYAY7m8koEL8Nk2h2kJS7rDZ6dKQWxnx0NUNJyxH1HLLsk2d+
-egRa8aeaPFvMEFsHDgX+Ux6/kRglG/pXfe+eulrR9DJzKeISBKc3SC43iYisll9t
-Z+r28EO1jOWemRr9s0ezjorVw/JApiijSe5B1czBFnGd/1PN7IwPeNjsgFaZ2IS5
-QTdP1r5Mot9v3Rkv3nlxApI0YmpeewqNXgUf86MJuu/TTEqGuiZjf4Afse0MNiJx
-z7vBiWhESttcvbB4qVVUyC/lEadJuUAADxAdgUQFGb1UoMCHkF7CdPQuhgNFvMi3
-tvDv6W/I3s24fZkQ3U9smc5lLYAAR/zqlz3lG3c4mkpBuF1BneiINa4mfusJ6LzB
-T0TdAe8AtP6Vk3A4jNG0zEdiXKp66uTHwaBj2AxIJMm623a5WJPesNf5HAvTV4q7
-zT3nJxH/KG5iZNPjEK/I7+XWFzpOaD956tojDFQ5qv+MuSKakkp/rUqPoz+BHsJO
-99cCv4ObZHJmzVRj7+FjetkLR6euXlUDm2dxu2geowjPKXfAbJU=
-=u4HU
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
