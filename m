@@ -2,149 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 279AA246F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 06:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D264A246EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 06:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbfEUEj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 00:39:58 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40690 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726042AbfEUEj5 (ORCPT
+        id S1727371AbfEUEhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 00:37:34 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:39696 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbfEUEhe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 00:39:57 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d30so7890122pgm.7
-        for <linux-kernel@vger.kernel.org>; Mon, 20 May 2019 21:39:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=QQkwhZ+FrBt0iCq5K6YROwDY4dt6/xx+/myXpnuTWx4=;
-        b=QO5rQwSX4v25HATvAZksTfI6EjXr31E65ISg3wa7Rgi+45wh+Nc67s/QBio/bGiCxj
-         XpXtutx7gPssH+Xd9sCjEzvAXWl+YYTuoMcSfqUB6YdCsqDiXmbCW/gEzauJ473iqGp+
-         +kVbmM7thyPsWxY6WFV9RGiW3WLCVx/uv3vQHpy3NPuH/7R1CrZmIljMx9pvsxRuXkbc
-         7SoMfs2fQkMEeDeNLJ3eNAzSQy4VDAMh4OrN9FQMY+8f8ARo/KGLQ7dX4UID1aDS3epb
-         DbYbiaD39kGowIZ66+bRqNKIIsPg3h3p+/6PQAr9RDHCrsN+XINT4BdkIBXTqVSEWNnl
-         OcGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=QQkwhZ+FrBt0iCq5K6YROwDY4dt6/xx+/myXpnuTWx4=;
-        b=YHQpkg3rUWJdYbXOkw/7ElyDBuKAwvwOpyO32AjzoTb91eIsBgM2sUtFfL4ZdG7wxH
-         /ZGUWDLhk0GWBBQC8L8FESXSuLTL4/aWqnqBibHpcsrfUFD3ri7sCJVw+KA0HDiaZuON
-         jAPCYls8SRNPFMsnlcnUDZ7isVWGx9JW5GL/5wLkmvwO02r/AZs4qMpR8lNx/vAGCqw4
-         xpjKYtksHslOHtRaBwYdz3qeWRA9VSyJVDf+L7wb9jCcjKJZzoUWcDbrs3a8cBjAGuYb
-         BPTaZrx8ScECo3/MTNhCUHVdzDOdJoWclLxQZatIVE8G6reUQnrIgO2icDenOcQgH2rr
-         E4CA==
-X-Gm-Message-State: APjAAAXTM/sHzhGHGyvYhMsmP9Hsp0qQVkqgii+lqDh+EYDgcK5/YWH6
-        HuAhECJhuiseLQo5wWEzrbU=
-X-Google-Smtp-Source: APXvYqyhPph8JUAv8OXabcKgL76/7+E4blBN6RjxyY6+rf84o1rFnhmanK/CfaV5snMHaIbjmb0bnA==
-X-Received: by 2002:a63:c64c:: with SMTP id x12mr78971864pgg.379.1558413596600;
-        Mon, 20 May 2019 21:39:56 -0700 (PDT)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id w12sm29519966pfj.41.2019.05.20.21.39.52
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 20 May 2019 21:39:55 -0700 (PDT)
-Date:   Tue, 21 May 2019 13:39:50 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>
-Subject: Re: [RFC 0/7] introduce memory hinting API for external process
-Message-ID: <20190521043950.GJ10039@google.com>
-References: <20190520035254.57579-1-minchan@kernel.org>
- <20190520164605.GA11665@cmpxchg.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190520164605.GA11665@cmpxchg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 21 May 2019 00:37:34 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4L4Ylh1150285;
+        Tue, 21 May 2019 04:37:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=LocLl8jGFL6tj5/xpWQWzeKqZ8xj2DlD6pSYk/0CDQE=;
+ b=YXQBVdGTKDHPYrt6PKbsI0O3rI3JPVcdXuVB9uWQeIFLOKHh8iEefXDi7IlvHOH//B8k
+ ObQoV3/3vErQqdaV/Lu/t8msw48YOZ4RIvHLQgY7TT0qqPYB2TPb8PjKpnt1izluIvD3
+ aueINDxQimvkZGnmLKZ0/tgDvtbMZezC0L6lpDN2eEEjd7dxlzewoU18YNuUJHY0UWp1
+ TmtpIMshloXiwSZAwj4s9BBNGlj/Sdy0VHx/EPBE74w4e/OX36c1E4BrO8rM9xMFD9Er
+ 0H9U148JZprI2LDqzsotlu9LCvqU7q713RRjDgTQ/qOqUfsvs9PuNvMzqfSfBkYGFLRU GQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2sj9ftascb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 May 2019 04:37:26 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4L4a1Wl183631;
+        Tue, 21 May 2019 04:37:25 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2sm046rgtc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 May 2019 04:37:25 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4L4bLIH030062;
+        Tue, 21 May 2019 04:37:21 GMT
+Received: from linux.cn.oracle.com (/10.182.69.106)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 21 May 2019 04:37:21 +0000
+From:   Dongli Zhang <dongli.zhang@oracle.com>
+To:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        airlied@linux.ie, daniel@ffwll.ch, dongli.zhang@oracle.com
+Subject: [PATCH 1/1] drm/i915: remove unused IO_TLB_SEGPAGES which should be defined by swiotlb
+Date:   Tue, 21 May 2019 12:40:39 +0800
+Message-Id: <1558413639-22568-1-git-send-email-dongli.zhang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9263 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905210029
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9263 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905210029
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 12:46:05PM -0400, Johannes Weiner wrote:
-> On Mon, May 20, 2019 at 12:52:47PM +0900, Minchan Kim wrote:
-> > - Approach
-> > 
-> > The approach we chose was to use a new interface to allow userspace to
-> > proactively reclaim entire processes by leveraging platform information.
-> > This allowed us to bypass the inaccuracy of the kernel’s LRUs for pages
-> > that are known to be cold from userspace and to avoid races with lmkd
-> > by reclaiming apps as soon as they entered the cached state. Additionally,
-> > it could provide many chances for platform to use much information to
-> > optimize memory efficiency.
-> > 
-> > IMHO we should spell it out that this patchset complements MADV_WONTNEED
-> > and MADV_FREE by adding non-destructive ways to gain some free memory
-> > space. MADV_COLD is similar to MADV_WONTNEED in a way that it hints the
-> > kernel that memory region is not currently needed and should be reclaimed
-> > immediately; MADV_COOL is similar to MADV_FREE in a way that it hints the
-> > kernel that memory region is not currently needed and should be reclaimed
-> > when memory pressure rises.
-> 
-> I agree with this approach and the semantics. But these names are very
-> vague and extremely easy to confuse since they're so similar.
-> 
-> MADV_COLD could be a good name, but for deactivating pages, not
-> reclaiming them - marking memory "cold" on the LRU for later reclaim.
-> 
-> For the immediate reclaim one, I think there is a better option too:
-> In virtual memory speak, putting a page into secondary storage (or
-> ensuring it's already there), and then freeing its in-memory copy, is
-> called "paging out". And that's what this flag is supposed to do. So
-> how about MADV_PAGEOUT?
-> 
-> With that, we'd have:
-> 
-> MADV_FREE: Mark data invalid, free memory when needed
-> MADV_DONTNEED: Mark data invalid, free memory immediately
-> 
-> MADV_COLD: Data is not used for a while, free memory when needed
-> MADV_PAGEOUT: Data is not used for a while, free memory immediately
-> 
-> What do you think?
+This patch removes IO_TLB_SEGPAGES which is no longer used since
+commit 5584f1b1d73e ("drm/i915: fix i915 running as dom0 under Xen").
 
-There are several suggestions until now. Thanks, Folks!
+As the define of both IO_TLB_SEGSIZE and IO_TLB_SHIFT are from swiotlb,
+IO_TLB_SEGPAGES should be defined on swiotlb side if it is required in the
+future.
 
-For deactivating:
+Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+---
+ drivers/gpu/drm/i915/i915_gem_internal.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-- MADV_COOL
-- MADV_RECLAIM_LAZY
-- MADV_DEACTIVATE
-- MADV_COLD
-- MADV_FREE_PRESERVE
-
-
-For reclaiming:
-
-- MADV_COLD
-- MADV_RECLAIM_NOW
-- MADV_RECLAIMING
-- MADV_PAGEOUT
-- MADV_DONTNEED_PRESERVE
-
-It seems everybody doesn't like MADV_COLD so want to go with other.
-For consisteny of view with other existing hints of madvise, -preserve
-postfix suits well. However, originally, I don't like the naming FREE
-vs DONTNEED from the beginning. They were easily confused.
-I prefer PAGEOUT to RECLAIM since it's more likely to be nuance to
-represent reclaim with memory pressure and is supposed to paged-in
-if someone need it later. So, it imply PRESERVE.
-If there is not strong against it, I want to go with MADV_COLD and
-MADV_PAGEOUT.
-
-Other opinion?
+diff --git a/drivers/gpu/drm/i915/i915_gem_internal.c b/drivers/gpu/drm/i915/i915_gem_internal.c
+index ab627ed..2166217 100644
+--- a/drivers/gpu/drm/i915/i915_gem_internal.c
++++ b/drivers/gpu/drm/i915/i915_gem_internal.c
+@@ -28,9 +28,6 @@
+ #define QUIET (__GFP_NORETRY | __GFP_NOWARN)
+ #define MAYFAIL (__GFP_RETRY_MAYFAIL | __GFP_NOWARN)
+ 
+-/* convert swiotlb segment size into sensible units (pages)! */
+-#define IO_TLB_SEGPAGES (IO_TLB_SEGSIZE << IO_TLB_SHIFT >> PAGE_SHIFT)
+-
+ static void internal_free_pages(struct sg_table *st)
+ {
+ 	struct scatterlist *sg;
+-- 
+2.7.4
 
