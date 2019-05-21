@@ -2,131 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B81624522
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 02:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93EB424534
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 02:44:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbfEUAjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 20:39:24 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54240 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726586AbfEUAjY (ORCPT
+        id S1727426AbfEUAoW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 20 May 2019 20:44:22 -0400
+Received: from web1.siteocity.com ([67.227.147.204]:47490 "EHLO
+        web1.siteocity.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726928AbfEUAoW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 20:39:24 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4L0S56l028300;
-        Mon, 20 May 2019 17:38:45 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=E3+cLSVQNP4p25wZAs7M154LsdZMQ5nxvcwFvwkF7vA=;
- b=VYSChcHGvoes0aoHcuoyIWkJa98s0Lw6pyTkZms7n4RKfOV8ThxKfoTSR1NLZnjwHuA7
- 4FH3nhtzfrCG4/NDm1MIakVc68YqpIROcUIXOmsdtabEFXzdLitGSMUtODonzFAuvtkK
- M3DQTdxuZyil9qiekFKPBfewi9OhnqAI5MI= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2skusdtf1h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 20 May 2019 17:38:45 -0700
-Received: from prn-hub05.TheFacebook.com (2620:10d:c081:35::129) by
- prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1713.5; Mon, 20 May 2019 17:38:44 -0700
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.29) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
- via Frontend Transport; Mon, 20 May 2019 17:38:44 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E3+cLSVQNP4p25wZAs7M154LsdZMQ5nxvcwFvwkF7vA=;
- b=Lpxvp1lM86qlDs6r95jZcMFZ0d8iGkyYmH7giaFCbaBKGAWOyaOX7NhJh2hyXLvNGr11y5TPa8cFfg2eXB7HfOjc+7qQqaVhd8/a+wIKRHkGZutgy7QjG3o8QMVdOa2DDbjtTG44I47V4m6AcfYAhRAsX3o1gq8ZWcxJfj853EA=
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
- BYAPR15MB3030.namprd15.prod.outlook.com (20.178.238.91) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.17; Tue, 21 May 2019 00:38:40 +0000
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::d4f6:b485:69ee:fd9a]) by BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::d4f6:b485:69ee:fd9a%7]) with mapi id 15.20.1900.020; Tue, 21 May 2019
- 00:38:40 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     "Tobin C. Harding" <tobin@kernel.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@ftp.linux.org.uk>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        Pekka Enberg <penberg@cs.helsinki.fi>,
-        "David Rientjes" <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Christopher Lameter <cl@linux.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Andreas Dilger <adilger@dilger.ca>,
-        Waiman Long <longman@redhat.com>,
-        "Tycho Andersen" <tycho@tycho.ws>, Theodore Ts'o <tytso@mit.edu>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Chinner <david@fromorbit.com>,
-        Nick Piggin <npiggin@gmail.com>,
-        Rik van Riel <riel@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v5 03/16] slub: Sort slab cache list
-Thread-Topic: [RFC PATCH v5 03/16] slub: Sort slab cache list
-Thread-Index: AQHVDs62IV4Zydo66E+iHqIO5Pdo5qZ0vW8A
-Date:   Tue, 21 May 2019 00:38:40 +0000
-Message-ID: <20190521003835.GB21811@tower.DHCP.thefacebook.com>
-References: <20190520054017.32299-1-tobin@kernel.org>
- <20190520054017.32299-4-tobin@kernel.org>
-In-Reply-To: <20190520054017.32299-4-tobin@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR14CA0005.namprd14.prod.outlook.com
- (2603:10b6:300:ae::15) To BYAPR15MB2631.namprd15.prod.outlook.com
- (2603:10b6:a03:152::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::3:a985]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 70c0967b-98c8-44cd-25cf-08d6dd84ab7c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR15MB3030;
-x-ms-traffictypediagnostic: BYAPR15MB3030:
-x-microsoft-antispam-prvs: <BYAPR15MB30307E13ABD855F4D387D23CBE070@BYAPR15MB3030.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2887;
-x-forefront-prvs: 0044C17179
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(376002)(346002)(396003)(199004)(189003)(6116002)(7736002)(8676002)(81166006)(81156014)(4326008)(66946007)(73956011)(64756008)(186003)(66476007)(66556008)(68736007)(66446008)(6436002)(53936002)(9686003)(6486002)(6246003)(99286004)(6512007)(7416002)(305945005)(446003)(316002)(6916009)(8936002)(46003)(102836004)(229853002)(76176011)(54906003)(52116002)(486006)(25786009)(476003)(2906002)(11346002)(33656002)(386003)(6506007)(14454004)(256004)(71200400001)(86362001)(71190400001)(478600001)(1076003)(5660300002)(4744005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3030;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4s+SYJPSmiJ7nXYS5W4A3hnVp7aVbFPYyJbjP1TFSqIoKDGJQgHciWYFBrFvNzAUgySmic9Mv2MTMg0OLmiX8cNilaXRRmzYCnc09FqqhZH+ONyDzTSHnsjRoDkYirOUepqEdIGj2LmxYw6ngRqMU8nH6nV+luREC7o55arAdrMnqG5QLm7/9OGXX/EMqcV6HV+QJons4uiGp9Vgm+7BIH7jvfV9svnHD3bmg1dwTTuQhnxstF+YXvzEnJ8lFuNzLnzh4+M8elynSCGoHe7t43wRrnahpsL+ctMjIr4uTDaHWLA/lrvLJmG2cjkLq+8V1CSAgpl/bhj4ldGgsDe5eEItXoM+fWIlIPxws27p7q6ryj9Eq5G5nviPUQ8+eEJvYOShEMPyTiSQVkpVmVbskqxw6qp1KdK1dxW3nJ41JIQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7DA0F6E4E77DF64B87BF2DF516986776@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 20 May 2019 20:44:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=felipegasper.com; s=default; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=r2i5+1pUFCcKjhYHJxSLjKHwT9pE8J0ZbmazSsNsPlc=; b=svz0F+hmYNBm1IVqpMTHsGzT1W
+        1leCToQFdxA8Uzj0f/hUfX1vp8d6R2I+C0yXg0FbcXakAjcqzxSMbVBAz3GvQaNXFjQCKO0NRUKyz
+        0qAxKlbiTRzc8IfGTIxGpXM0u1Rqt7JjoXb977BEwsrWvsgpF1yw2FNxX9Vmcmb8/qd3FObOv7VHm
+        y+SGpwu4jMhJe3BJkoP3EZIWDwvApkA+fC8jz/GCwSj8fHjt1VC0VwHMApQoWMNaBhZt1dU4dWNMR
+        7ugLn9PU8DUMorpbFeUf46BuYvqh/YTFSg6RKuOY8sDqDKbE0jkBBFt1wXXKrHhL38oA3wAS1A7sU
+        hiw2Rc1g==;
+Received: from fgasper by web1.siteocity.com with local (Exim 4.92)
+        (envelope-from <fgasper@web1.siteocity.com>)
+        id 1hSst9-0006aW-Jq; Mon, 20 May 2019 19:44:20 -0500
+From:   Felipe Gasper <felipe@felipegasper.com>
+To:     davem@davemloft.net, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-api@vger.kernel.org
+Cc:     Felipe Gasper <felipe@felipegasper.com>
+Subject: [PATCH v4] net: Add UNIX_DIAG_UID to Netlink UNIX socket diagnostics.
+Date:   Mon, 20 May 2019 19:43:51 -0500
+Message-Id: <20190521004351.23706-1-felipe@felipegasper.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70c0967b-98c8-44cd-25cf-08d6dd84ab7c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 00:38:40.5953
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3030
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Transfer-Encoding: 8bit
+X-OutGoing-Spam-Status: No, score=0.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - web1.siteocity.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [1438 994] / [47 12]
+X-AntiAbuse: Sender Address Domain - web1.siteocity.com
+X-Get-Message-Sender-Via: web1.siteocity.com: authenticated_id: fgasper/from_h
+X-Authenticated-Sender: web1.siteocity.com: felipe@felipegasper.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: /home/fgasper
+X-From-Rewrite: unmodified, already matched
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 03:40:04PM +1000, Tobin C. Harding wrote:
-> It is advantageous to have all defragmentable slabs together at the
-> beginning of the list of slabs so that there is no need to scan the
-> complete list. Put defragmentable caches first when adding a slab cache
-> and others last.
->=20
-> Co-developed-by: Christoph Lameter <cl@linux.com>
-> Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+This adds the ability for Netlink to report a socket's UID along with the
+other UNIX diagnostic information that is already available. This will
+allow diagnostic tools greater insight into which users control which
+socket.
 
-Reviewed-by: Roman Gushchin <guro@fb.com>
+To test this, do the following as a non-root user:
+
+    unshare -U -r bash
+    nc -l -U user.socket.$$ &
+
+.. and verify from within that same session that Netlink UNIX socket
+diagnostics report the socket's UID as 0. Also verify that Netlink UNIX
+socket diagnostics report the socket's UID as the user's UID from an
+unprivileged process in a different session. Verify the same from
+a root process.
+
+Signed-off-by: Felipe Gasper <felipe@felipegasper.com>
+
+diff --git a/include/uapi/linux/unix_diag.h b/include/uapi/linux/unix_diag.h
+index 5c502fd..a198857 100644
+--- a/include/uapi/linux/unix_diag.h
++++ b/include/uapi/linux/unix_diag.h
+@@ -20,6 +20,7 @@ struct unix_diag_req {
+ #define UDIAG_SHOW_ICONS	0x00000008	/* show pending connections */
+ #define UDIAG_SHOW_RQLEN	0x00000010	/* show skb receive queue len */
+ #define UDIAG_SHOW_MEMINFO	0x00000020	/* show memory info of a socket */
++#define UDIAG_SHOW_UID		0x00000040	/* show socket's UID */
+ 
+ struct unix_diag_msg {
+ 	__u8	udiag_family;
+@@ -40,6 +41,7 @@ enum {
+ 	UNIX_DIAG_RQLEN,
+ 	UNIX_DIAG_MEMINFO,
+ 	UNIX_DIAG_SHUTDOWN,
++	UNIX_DIAG_UID,
+ 
+ 	__UNIX_DIAG_MAX,
+ };
+diff --git a/net/unix/diag.c b/net/unix/diag.c
+index 3183d9b..e40f348 100644
+--- a/net/unix/diag.c
++++ b/net/unix/diag.c
+@@ -4,9 +4,11 @@
+ #include <linux/unix_diag.h>
+ #include <linux/skbuff.h>
+ #include <linux/module.h>
++#include <linux/uidgid.h>
+ #include <net/netlink.h>
+ #include <net/af_unix.h>
+ #include <net/tcp_states.h>
++#include <net/sock.h>
+ 
+ static int sk_diag_dump_name(struct sock *sk, struct sk_buff *nlskb)
+ {
+@@ -110,6 +112,12 @@ static int sk_diag_show_rqlen(struct sock *sk, struct sk_buff *nlskb)
+ 	return nla_put(nlskb, UNIX_DIAG_RQLEN, sizeof(rql), &rql);
+ }
+ 
++static int sk_diag_dump_uid(struct sock *sk, struct sk_buff *nlskb)
++{
++	uid_t uid = from_kuid_munged(sk_user_ns(nlskb->sk), sock_i_uid(sk));
++	return nla_put(nlskb, UNIX_DIAG_UID, sizeof(uid_t), &uid);
++}
++
+ static int sk_diag_fill(struct sock *sk, struct sk_buff *skb, struct unix_diag_req *req,
+ 		u32 portid, u32 seq, u32 flags, int sk_ino)
+ {
+@@ -156,6 +164,10 @@ static int sk_diag_fill(struct sock *sk, struct sk_buff *skb, struct unix_diag_r
+ 	if (nla_put_u8(skb, UNIX_DIAG_SHUTDOWN, sk->sk_shutdown))
+ 		goto out_nlmsg_trim;
+ 
++	if ((req->udiag_show & UDIAG_SHOW_UID) &&
++	    sk_diag_dump_uid(sk, skb))
++		goto out_nlmsg_trim;
++
+ 	nlmsg_end(skb, nlh);
+ 	return 0;
+ 
