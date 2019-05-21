@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5101325AD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 01:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5BFE25AD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 01:31:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbfEUXbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 19:31:40 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:1185 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727857AbfEUXbU (ORCPT
+        id S1728130AbfEUXb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 19:31:28 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8294 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727733AbfEUXbV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 19:31:20 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ce48a480002>; Tue, 21 May 2019 16:31:20 -0700
+        Tue, 21 May 2019 19:31:21 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ce48a470000>; Tue, 21 May 2019 16:31:19 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 21 May 2019 16:31:19 -0700
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 21 May 2019 16:31:18 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 21 May 2019 16:31:19 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 21 May
+        by hqpgpgate102.nvidia.com on Tue, 21 May 2019 16:31:18 -0700
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 21 May
  2019 23:31:18 +0000
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 21 May
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 21 May
  2019 23:31:18 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
  Transport; Tue, 21 May 2019 23:31:18 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.174]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5ce48a460002>; Tue, 21 May 2019 16:31:18 -0700
+        id <B5ce48a460003>; Tue, 21 May 2019 16:31:18 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
 CC:     <jckuo@nvidia.com>, <talho@nvidia.com>, <josephl@nvidia.com>,
         <skomatineni@nvidia.com>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH V1 09/12] soc/tegra: pmc: add pmc wake support for tegra210
-Date:   Tue, 21 May 2019 16:31:20 -0700
-Message-ID: <1558481483-22254-10-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V1 10/12] gpio: tegra: implement wake event support for Tegra210 and prior GPIO
+Date:   Tue, 21 May 2019 16:31:21 -0700
+Message-ID: <1558481483-22254-11-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
 References: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
@@ -45,206 +45,196 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1558481480; bh=EGzg//fs3ursuMZgmQQJDJoMO5TQLcKMV2B9LujRDZs=;
+        t=1558481479; bh=ExiJeA8xgoubQVl+RE6ANcLUd8QRDyP6miirB8jIpLk=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=kXnsnr1R4XVAvIf8VpUxzrtUT6stmSiEb+BGv+3jojEg8f86okzSi4+tfYgr1j2PP
-         fEZ6oubzZfgrrDDwh0NvL4KHan1OsvTEUrByDIIxzK7tYzQy1v6g9wx5cGrqdFkcQf
-         RKIkiJPsE+0YLLhkkmysRd7RaD5NRrei+ZEZaUtxip0qYnq0bg0IYlmfRX3622/O8Z
-         rWjsXeOZKiKMZXxxQ0f8zGHesTEp6lIAaTE+NTDCaXm+dC3H3EAFvovceimOYpxW27
-         2ogpyvba5zj0e6uhp1W2pgY3Oqn3geGBeOUnw1Iw4EpCsGXrED8bWAPaZb9TajtUYa
-         6HqYpVIUVTRaQ==
+        b=g/JEyZalwv/EMUZ4iImIObKXvQGg5wqbH34xV2dNhmyFZ1k3lIMRhVfNZeEMFijec
+         nGWc6S2XroJ5Cc0eZe/wRMHQL9ynW0I7C1T8hrrW4sL3zyQR4Kcm1/mAsRxAblUMwS
+         WTq/+EpKv4G3tSSFyK9hbpWBWD1972TY1ITNz3rMd/PrXu4MWeJJrhiEw+k+Alj3sP
+         MvF8CpONd5G1FkVyWA0euGHR1zg4iGlOqvDBGVbqLmjvBgPTh7ZLKtj60ANqfPhbhz
+         uyZSiLtksB+C4kLg/mXfj0MMdoCicJpwhWusQR8vsyacfMZJhwxLzzhRFgPmiqpnT/
+         FCU0KbUehch8w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements PMC wakeup sequence for Tegra210 and defines
-common used wake events of RTC alarm and power key.
+The GPIO controller doesn't have any controls to enable the system to
+wake up from low power states based on activity on GPIO pins. An extra
+hardware block that is part of the power management controller (PMC)
+contains these controls. In order for the GPIO controller to be able
+to cooperate with the PMC, obtain a reference to the PMC's IRQ domain
+and make it a parent to the GPIO controller's IRQ domain. This way the
+PMC gets an opportunity to program the additional registers required
+to enable wakeup sources on suspend.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 120 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 120 insertions(+)
+ drivers/gpio/gpio-tegra.c | 109 +++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 103 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index f77ce4b827e3..5e68e1de1780 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -57,6 +57,7 @@
- #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
- #include <dt-bindings/gpio/tegra186-gpio.h>
- #include <dt-bindings/gpio/tegra194-gpio.h>
-+#include <dt-bindings/gpio/tegra-gpio.h>
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 6d9b6906b9d0..d57e33050d0c 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -32,6 +32,8 @@
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pm.h>
  
- #define PMC_CNTRL			0x0
- #define  PMC_CNTRL_INTR_POLARITY	BIT(17) /* inverts INTR polarity */
-@@ -66,6 +67,12 @@
- #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
- #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
- #define  PMC_CNTRL_MAIN_RST		BIT(4)
-+#define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
++#include <dt-bindings/interrupt-controller/arm-gic.h>
 +
-+#define PMC_WAKE_MASK			0x0c
-+#define PMC_WAKE_LEVEL			0x10
-+#define PMC_WAKE_STATUS			0x14
-+#define PMC_SW_WAKE_STATUS		0x18
- 
- #define DPD_SAMPLE			0x020
- #define  DPD_SAMPLE_ENABLE		BIT(0)
-@@ -96,6 +103,11 @@
- 
- #define PMC_SCRATCH41			0x140
- 
-+#define PMC_WAKE2_MASK			0x160
-+#define PMC_WAKE2_LEVEL			0x164
-+#define PMC_WAKE2_STATUS		0x168
-+#define PMC_SW_WAKE2_STATUS		0x16c
-+
- #define PMC_SENSOR_CTRL			0x1b0
- #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
- #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
-@@ -1917,6 +1929,65 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
- 	.alloc = tegra_pmc_irq_alloc,
- };
- 
-+static inline void clear_pmc_sw_wake_status(void)
-+{
-+	tegra_pmc_writel(pmc, 0, PMC_SW_WAKE_STATUS);
-+	if (tegra_get_chip_id() != TEGRA20)
-+		tegra_pmc_writel(pmc, 0, PMC_SW_WAKE2_STATUS);
-+}
-+
-+static inline void clear_pmc_wake_status(void)
-+{
-+	u32 reg;
-+
-+	reg = tegra_pmc_readl(pmc, PMC_WAKE_STATUS);
-+	if (reg)
-+		tegra_pmc_writel(pmc, reg, PMC_WAKE_STATUS);
-+	if (tegra_get_chip_id() != TEGRA20) {
-+		reg = tegra_pmc_readl(pmc, PMC_WAKE2_STATUS);
-+		if (reg)
-+			tegra_pmc_writel(pmc, reg, PMC_WAKE2_STATUS);
-+	}
-+}
-+
-+static int tegra210_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
-+{
-+	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
-+	unsigned int offset, bit;
-+	u32 pmc_wake_mask_reg;
-+	u32 value;
-+
-+	if (data->hwirq < 0)
-+		return 0;
-+
-+	offset = data->hwirq / 32;
-+	bit = data->hwirq % 32;
-+
-+	clear_pmc_sw_wake_status();
-+
-+	/* enable PMC wake */
-+	value = tegra_pmc_readl(pmc, PMC_CNTRL);
-+	value |= PMC_CNTRL_LATCH_WAKEUPS;
-+	tegra_pmc_writel(pmc, value, PMC_CNTRL);
-+	usleep_range(110, 120);
-+
-+	value &= ~PMC_CNTRL_LATCH_WAKEUPS;
-+	tegra_pmc_writel(pmc, value, PMC_CNTRL);
-+	usleep_range(110, 120);
-+
-+	clear_pmc_wake_status();
-+
-+	pmc_wake_mask_reg = (offset) ? PMC_WAKE2_MASK : PMC_WAKE_MASK;
-+	value = tegra_pmc_readl(pmc, pmc_wake_mask_reg);
-+	if (on)
-+		value |= 1 << bit;
-+	else
-+		value &= ~(1 << bit);
-+	tegra_pmc_writel(pmc, value, pmc_wake_mask_reg);
-+
-+	return 0;
-+}
-+
- static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+ #define GPIO_BANK(x)		((x) >> 5)
+ #define GPIO_PORT(x)		(((x) >> 3) & 0x3)
+ #define GPIO_BIT(x)		((x) & 0x7)
+@@ -275,8 +277,22 @@ static int tegra_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+ static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
  {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
-@@ -1948,6 +2019,46 @@ static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
++	struct irq_domain *domain = tgi->irq_domain;
++
++	if (!gpiochip_irqchip_irq_valid(chip, offset))
++		return -ENXIO;
++
++	if (irq_domain_is_hierarchy(domain)) {
++		struct irq_fwspec spec;
++
++		spec.fwnode = domain->fwnode;
++		spec.param_count = 2;
++		spec.param[0] = offset;
++		spec.param[1] = IRQ_TYPE_NONE;
++		return irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, &spec);
++	}
+ 
+-	return irq_find_mapping(tgi->irq_domain, offset);
++	return irq_find_mapping(domain, offset);
  }
  
-+static int tegra210_pmc_irq_set_type(struct irq_data *data, unsigned int type)
-+{
-+	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
-+	unsigned int offset, bit;
-+	u32 pmc_wake_lvl_reg;
-+	u32 value;
-+
-+	if (data->hwirq < 0)
+ static void tegra_gpio_irq_ack(struct irq_data *d)
+@@ -365,7 +381,10 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+ 		irq_set_handler_locked(d, handle_edge_irq);
+ 
+-	return 0;
++	if (d->parent_data)
++		return irq_chip_set_type_parent(d, type);
++	else
 +		return 0;
-+
-+	offset = data->hwirq / 32;
-+	bit = data->hwirq % 32;
-+
-+	pmc_wake_lvl_reg = (offset) ? PMC_WAKE2_LEVEL : PMC_WAKE_LEVEL;
-+	value = tegra_pmc_readl(pmc, pmc_wake_lvl_reg);
-+
-+	switch (type) {
-+	case IRQ_TYPE_EDGE_RISING:
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		value |= 1 << bit;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_FALLING:
-+	case IRQ_TYPE_LEVEL_LOW:
-+		value &= ~(1 << bit);
-+		break;
-+
-+	case IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING:
-+		value ^= 1 << bit;
-+		break;
-+
-+	default:
+ }
+ 
+ static void tegra_gpio_irq_shutdown(struct irq_data *d)
+@@ -566,10 +585,79 @@ static const struct dev_pm_ops tegra_gpio_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
+ };
+ 
++static int tegra_gpio_irq_domain_translate(struct irq_domain *domain,
++					   struct irq_fwspec *fwspec,
++					   unsigned long *hwirq,
++					   unsigned int *type)
++{
++	if (WARN_ON(fwspec->param_count < 2))
 +		return -EINVAL;
-+	}
 +
-+	tegra_pmc_writel(pmc, value, pmc_wake_lvl_reg);
++	*type = fwspec->param[1] & IRQ_TYPE_SENSE_MASK;
++	*hwirq = fwspec->param[0];
 +
 +	return 0;
 +}
 +
- static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
-@@ -2535,6 +2646,11 @@ static const struct pinctrl_pin_desc tegra210_pin_descs[] = {
- 	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
- };
- 
-+static const struct tegra_wake_event tegra210_wake_events[] = {
-+	TEGRA_WAKE_GPIO("power", 24, 0, 189), /*TEGRA_GPIO(X, 5)*/
-+	TEGRA_WAKE_IRQ("rtc", 16, 2),
++static int tegra_gpio_irq_domain_alloc(struct irq_domain *domain,
++				       unsigned int virq,
++				       unsigned int num_irqs, void *data)
++{
++	struct tegra_gpio_info *tgi = gpiochip_get_data(domain->host_data);
++	struct irq_fwspec *fwspec = data;
++	struct irq_fwspec spec;
++	struct tegra_gpio_bank *bank;
++	unsigned long hwirq;
++	unsigned int type;
++	int err = 0;
++
++	if (WARN_ON(fwspec->param_count < 2))
++		return -EINVAL;
++
++	if (!irq_domain_get_of_node(domain->parent))
++		return -EINVAL;
++
++	err = tegra_gpio_irq_domain_translate(domain, fwspec, &hwirq, &type);
++	if (err)
++		return err;
++
++	bank = &tgi->bank_info[GPIO_BANK(hwirq)];
++	err = irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
++					    &tgi->ic, bank);
++
++	if (err < 0)
++		return err;
++
++	spec.fwnode = domain->parent->fwnode;
++	spec.param_count = 3;
++	spec.param[0] = GIC_SPI;
++	spec.param[1] = fwspec->param[0];
++	spec.param[2] = fwspec->param[1];
++
++	return irq_domain_alloc_irqs_parent(domain, virq, 1, &spec);
++}
++
++static const struct irq_domain_ops tegra_gpio_irq_domain_ops = {
++	.translate = tegra_gpio_irq_domain_translate,
++	.alloc = tegra_gpio_irq_domain_alloc,
 +};
 +
- static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.num_powergates = ARRAY_SIZE(tegra210_powergates),
- 	.powergates = tegra210_powergates,
-@@ -2552,10 +2668,14 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-+	.pmc_irq_set_wake = tegra210_pmc_irq_set_wake,
-+	.pmc_irq_set_type = tegra210_pmc_irq_set_type,
- 	.reset_sources = tegra210_reset_sources,
- 	.num_reset_sources = ARRAY_SIZE(tegra210_reset_sources),
- 	.reset_levels = NULL,
- 	.num_reset_levels = 0,
-+	.num_wake_events = ARRAY_SIZE(tegra210_wake_events),
-+	.wake_events = tegra210_wake_events,
- };
++static const struct of_device_id tegra_pmc_of_match[] = {
++	{ .compatible = "nvidia,tegra210-pmc" },
++	{ .compatible = "nvidia,tegra132-pmc" },
++	{ .compatible = "nvidia,tegra124-pmc" },
++	{ .compatible = "nvidia,tegra114-pmc" },
++	{ .compatible = "nvidia,tegra30-pmc" },
++	{ .compatible = "nvidia,tegra20-pmc" },
++	{ }
++};
++
+ static int tegra_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_gpio_info *tgi;
+ 	struct tegra_gpio_bank *bank;
++	struct device_node *np;
++	struct irq_domain *parent_domain = NULL;
+ 	unsigned int gpio, i, j;
+ 	int ret;
  
- #define TEGRA186_IO_PAD_TABLE(_pad)					     \
+@@ -612,8 +700,15 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	tgi->ic.irq_set_type		= tegra_gpio_irq_set_type;
+ 	tgi->ic.irq_shutdown		= tegra_gpio_irq_shutdown;
+ #ifdef CONFIG_PM_SLEEP
+-	tgi->ic.irq_set_wake		= tegra_gpio_irq_set_wake;
++	tgi->ic.irq_set_wake		= irq_chip_set_wake_parent;
+ #endif
++	np = of_find_matching_node(NULL, tegra_pmc_of_match);
++	if (np) {
++		parent_domain = irq_find_host(np);
++		of_node_put(np);
++		if (!parent_domain)
++			return -EPROBE_DEFER;
++	}
+ 
+ 	platform_set_drvdata(pdev, tgi);
+ 
+@@ -625,9 +720,11 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	if (!tgi->bank_info)
+ 		return -ENOMEM;
+ 
+-	tgi->irq_domain = irq_domain_add_linear(pdev->dev.of_node,
+-						tgi->gc.ngpio,
+-						&irq_domain_simple_ops, NULL);
++	tgi->irq_domain = irq_domain_add_hierarchy(parent_domain, 0,
++						   tgi->gc.ngpio,
++						   pdev->dev.of_node,
++						   &tegra_gpio_irq_domain_ops,
++						   &tgi->gc);
+ 	if (!tgi->irq_domain)
+ 		return -ENODEV;
+ 
 -- 
 2.7.4
 
