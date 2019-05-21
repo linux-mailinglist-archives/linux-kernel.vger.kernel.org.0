@@ -2,64 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FCE124864
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9460B2486A
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 08:51:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbfEUGuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 02:50:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56762 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726193AbfEUGuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 02:50:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5C37FAF70;
-        Tue, 21 May 2019 06:50:01 +0000 (UTC)
-Date:   Tue, 21 May 2019 08:50:00 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Oleksandr Natalenko <oleksandr@redhat.com>
-Cc:     Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>
-Subject: Re: [RFC 4/7] mm: factor out madvise's core functionality
-Message-ID: <20190521065000.GH32329@dhcp22.suse.cz>
-References: <20190520035254.57579-1-minchan@kernel.org>
- <20190520035254.57579-5-minchan@kernel.org>
- <20190520142633.x5d27gk454qruc4o@butterfly.localdomain>
- <20190521012649.GE10039@google.com>
- <20190521063628.x2npirvs75jxjilx@butterfly.localdomain>
+        id S1726881AbfEUGvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 02:51:21 -0400
+Received: from uho.ysoft.cz ([81.19.3.130]:46984 "EHLO uho.ysoft.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725920AbfEUGvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 02:51:20 -0400
+Received: from [10.1.8.111] (unknown [10.1.8.111])
+        by uho.ysoft.cz (Postfix) with ESMTP id 01578A0321;
+        Tue, 21 May 2019 08:51:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+        s=20160406-ysoft-com; t=1558421478;
+        bh=yKuLFO5c0pIATImt1F6opFt/j/RZIkm+UdT3+v1Lrt8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=V+Aq01Nl//1U31g13yaQWyymSWwTobre2xlitCsrsCLZXLyl5vJROlWjekK48eMNw
+         pcOAeytozucET5skYDo8acxUTUsVUsxrtcHbs1k+pxRTopzLHfmg16/y+Wt+9AMhmg
+         ddh3AXsxTAPWVi6wLW/pb+GIU7oT2J8HS+oD3Vz8=
+Subject: Re: [RFC PATCH v2 0/4] Input: mpr121-polled: Add polled driver for
+ MPR121
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <1558098773-47416-1-git-send-email-michal.vokac@ysoft.com>
+ <20190521053705.GI183429@dtor-ws>
+From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+Message-ID: <ef172b24-cd27-5bb0-d8b1-718f835d0647@ysoft.com>
+Date:   Tue, 21 May 2019 08:51:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521063628.x2npirvs75jxjilx@butterfly.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190521053705.GI183429@dtor-ws>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 21-05-19 08:36:28, Oleksandr Natalenko wrote:
-[...]
-> Regarding restricting the hints, I'm definitely interested in having
-> remote MADV_MERGEABLE/MADV_UNMERGEABLE. But, OTOH, doing it via remote
-> madvise() introduces another issue with traversing remote VMAs reliably.
-> IIUC, one can do this via userspace by parsing [s]maps file only, which
-> is not very consistent, and once some range is parsed, and then it is
-> immediately gone, a wrong hint will be sent.
+On 21. 05. 19 7:37, Dmitry Torokhov wrote:
+> Hi Michal,
 > 
-> Isn't this a problem we should worry about?
+> On Fri, May 17, 2019 at 03:12:49PM +0200, Michal Vokáč wrote:
+>> Hi,
+>>
+>> I have to deal with a situation where we have a custom i.MX6 based
+>> platform in production that uses the MPR121 touchkey controller.
+>> Unfortunately the chip is connected using only the I2C interface.
+>> The interrupt line is not used. Back in 2015 (Linux v3.14), my
+>> colleague modded the existing mpr121_touchkey.c driver to use polling
+>> instead of interrupt.
+>>
+>> For quite some time yet I am in a process of updating the product from
+>> the ancient Freescale v3.14 kernel to the latest mainline and pushing
+>> any needed changes upstream. The DT files for our imx6dl-yapp4 platform
+>> already made it into v5.1-rc.
+>>
+>> I rebased and updated our mpr121 patch to the latest mainline.
+>> It is created as a separate driver, similarly to gpio_keys_polled.
+>>
+>> The I2C device is quite susceptible to ESD. An ESD test quite often
+>> causes reset of the chip or some register randomly changes its value.
+>> The [PATCH 3/4] adds a write-through register cache. With the cache
+>> this state can be detected and the device can be re-initialied.
+>>
+>> The main question is: Is there any chance that such a polled driver
+>> could be accepted? Is it correct to implement it as a separate driver
+>> or should it be done as an option in the existing driver? I can not
+>> really imagine how I would do that though..
+>>
+>> There are also certain worries that the MPR121 chip may no longer be
+>> available in nonspecifically distant future. In case of EOL I will need
+>> to add a polled driver for an other touchkey chip. May it be already
+>> in mainline or a completely new one.
+> 
+> I think that my addition of input_polled_dev was ultimately a wrong
+> thing to do. I am looking into enabling polling mode for regular input
+> devices as we then can enable polling mode in existing drivers.
 
-See http://lkml.kernel.org/r/20190520091829.GY6836@dhcp22.suse.cz
+OK, that sounds good. Especially when one needs to switch from one chip
+to another that is already in tree, the need for a whole new polling
+driver is eliminated.
 
--- 
-Michal Hocko
-SUSE Labs
+I am still quite a novice in all kernel areas as I literally jump from
+one subsystem to another to fix issues related to our platform. Anyway,
+do you see any opportunity to help with that work?
+
+> As far as gpio-keys vs gpio-key-polled, I feel that the capabilities of
+> polling driver is sufficiently different from interrupt-driven one, so
+> we will likely keep them separate.
+
+OK, understand.
+
+Thank you,
+Michal
