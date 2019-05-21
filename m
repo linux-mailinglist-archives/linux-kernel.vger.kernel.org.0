@@ -2,121 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C54324BC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:36:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD87124BD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:39:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbfEUJgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 05:36:00 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33043 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727779AbfEUJf5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 05:35:57 -0400
-Received: by mail-pg1-f196.google.com with SMTP id h17so8318966pgv.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 02:35:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=dTr1UCKgplI1VGB/ZytO9oL3rPosZf7DuDvgJME+3jg=;
-        b=AIHFm7Hp4l+4xNPyW1cX8dxq1awTwXVWdpBPVIR3sn4SXcSKSHlVgGImRIW5bXDUa4
-         lo0tOlSuFOBUL1R3fbgd7cJUHoMk3my3qscAJTjjlf/AViZ3Vv/IgzxGSayFt4cE7Uu2
-         0yWa5KvdgnE3+HdLj8ccnl1VQk3XVLm0yogjlk4FzbxrTC6hy9u35nLQCSB1cl/ytpsd
-         AyPweRXFYA029GowWgM4Ql7lqa32mdbC2QzGMEhwG3atEB8r1k6aNOXYlrFd2IWMEY7F
-         yCU6/Fy2CcxuhHznLygRhUT09LrZukpgH9Ftt7fSNGiz7zcuSZqAYVm6a2dVYdDQE1Lf
-         s2UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=dTr1UCKgplI1VGB/ZytO9oL3rPosZf7DuDvgJME+3jg=;
-        b=GLhlmhCjIvz4/5kxABjNiM6vDK4Z4vYamaAjjEsqs9kAl31gVi7v0LL7J/vRh0/3ks
-         kGgRFOrnYJoP/KR0+aVo/SkyhoGGVkD/AcBG24o+Lmg4qraGcB56BSc518Dp3BHfEPev
-         MPvUhQ9kDXEnzlhelHUNcIU/4b5XhazPH7WRKfXVZR3bfHj8bY1uZ7iOILkg5kd9yEFJ
-         zvcWSlW1P8zy7dHzc5SFCdzeKyPKEDthLCwArhsGP5VvhpkHUFyeFiSjaUSD7D+muPR1
-         zijDmSskreAD4WX2QG2QJ/x5WraUxqESAle0kz/KVt6Dz8DL07WjCyPuy6mFNa0L3Vwu
-         Tz4w==
-X-Gm-Message-State: APjAAAUoh2icCa/837sNmGEkDLnH8SbsXujipOKs2Z+XrXP+nW6w1MRT
-        bRD5qIpbE+7Yyzk0yQXT5VVKyanHt90BiQ==
-X-Google-Smtp-Source: APXvYqzQdvlEjQclsKdTI02SGo59gbciI+RW4++t5Gve8xz66BCTyu7A7ZIpVyC7VmIiuxCVrOmnzw==
-X-Received: by 2002:a63:4c06:: with SMTP id z6mr80149345pga.296.1558431356498;
-        Tue, 21 May 2019 02:35:56 -0700 (PDT)
-Received: from localhost ([49.248.189.249])
-        by smtp.gmail.com with ESMTPSA id q20sm22215653pgq.66.2019.05.21.02.35.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 02:35:55 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, agross@kernel.org,
-        niklas.cassel@linaro.org, marc.w.gonzalez@free.fr,
-        sibis@codeaurora.org, daniel.lezcano@linaro.org,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Li Yang <leoyang.li@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-Cc:     devicetree@vger.kernel.org
-Subject: [PATCH v2 9/9] arm64: dts: msm8996: Add proper capacity scaling for the cpus
-Date:   Tue, 21 May 2019 15:05:19 +0530
-Message-Id: <5224535a7ef5b257e3baa698991bf6deeefccc36.1558430617.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1558430617.git.amit.kucheria@linaro.org>
-References: <cover.1558430617.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1558430617.git.amit.kucheria@linaro.org>
-References: <cover.1558430617.git.amit.kucheria@linaro.org>
+        id S1727137AbfEUJix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 05:38:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32840 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726259AbfEUJiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 05:38:52 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2ACE821479;
+        Tue, 21 May 2019 09:38:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558431531;
+        bh=DdIv1DA6LGbOnPVWvG4pWPp2UIabk717qQ4GREpPO/g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G1Nqh8qCMqLn9yatKZMlXJDnUMNo+WOmLTpVYwILhkAac/0I7uFlZoP4NOcplcDrA
+         6gu5XYwa2lLedMfBtgO2MjX638Z5nxlLBEB9yPJqw37CKaLM+iO7SSJ+HBykALE1lI
+         1vYYJURYmXMGfIEE4nPcYSOyOmiCIf9qfzGdjXIE=
+Date:   Tue, 21 May 2019 11:38:49 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Theodore Ts'o <tytso@mit.edu>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        Arthur Marsh <arthur.marsh@internode.on.net>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Theodore Ts'o <tytso@mit.edu>
+Subject: ext4 regression (was Re: [PATCH 4.19 000/105] 4.19.45-stable review)
+Message-ID: <20190521093849.GA9806@kroah.com>
+References: <20190520115247.060821231@linuxfoundation.org>
+ <20190520222342.wtsjx227c6qbkuua@xps.therub.org>
+ <20190521085956.GC31445@kroah.com>
+ <CA+G9fYvHmUimtwszwo=9fDQLn+MNh8Vq3UGPaPUdhH=dEKzqxg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYvHmUimtwszwo=9fDQLn+MNh8Vq3UGPaPUdhH=dEKzqxg@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-msm8996 features 4 cpus - 2 in each cluster. However, all cpus implement
-the same microarchitecture and the two clusters only differ in the
-maximum frequency attainable by the CPUs.
+On Tue, May 21, 2019 at 02:58:58PM +0530, Naresh Kamboju wrote:
+> On Tue, 21 May 2019 at 14:30, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, May 20, 2019 at 05:23:42PM -0500, Dan Rue wrote:
+> > > On Mon, May 20, 2019 at 02:13:06PM +0200, Greg Kroah-Hartman wrote:
+> > > > This is the start of the stable review cycle for the 4.19.45 release.
+> > > > There are 105 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > >
+> > > > Responses should be made by Wed 22 May 2019 11:50:49 AM UTC.
+> > > > Anything received after that time might be too late.
+> > >
+> > > We're seeing an ext4 issue previously reported at
+> > > https://lore.kernel.org/lkml/20190514092054.GA6949@osiris.
+> > >
+> > > [ 1916.032087] EXT4-fs error (device sda): ext4_find_extent:909: inode #8: comm jbd2/sda-8: pblk 121667583 bad header/extent: invalid extent entries - magic f30a, entries 8, max 340(340), depth 0(0)
+> > > [ 1916.073840] jbd2_journal_bmap: journal block not found at offset 4455 on sda-8
+> > > [ 1916.081071] Aborting journal on device sda-8.
+> > > [ 1916.348652] EXT4-fs error (device sda): ext4_journal_check_start:61: Detected aborted journal
+> > > [ 1916.357222] EXT4-fs (sda): Remounting filesystem read-only
+> > >
+> > > This is seen on 4.19-rc, 5.0-rc, mainline, and next. We don't have data
+> > > for 5.1-rc yet, which is presumably also affected in this RC round.
+> > >
+> > > We only see this on x86_64 and i386 devices - though our hardware setups
+> > > vary so it could be coincidence.
+> > >
+> > > I have to run out now, but I'll come back and work on a reproducer and
+> > > bisection later tonight and tomorrow.
+> > >
+> > > Here is an example test run; link goes to the spot in the ltp syscalls
+> > > test where the disk goes into read-only mode.
+> > > https://lkft.validation.linaro.org/scheduler/job/735468#L8081
+> >
+> > Odd, I keep hearing rumors of ext4 issues right now, but nothing
+> > actually solid that I can point to.  Any help you can provide here would
+> > be great.
+> >
+> 
+> git bisect helped me to land on this commit,
+> 
+> # git bisect bad
+> e8fd3c9a5415f9199e3fc5279e0f1dfcc0a80ab2 is the first bad commit
+> commit e8fd3c9a5415f9199e3fc5279e0f1dfcc0a80ab2
+> Author: Theodore Ts'o <tytso@mit.edu>
+> Date:   Tue Apr 9 23:37:08 2019 -0400
+> 
+>     ext4: protect journal inode's blocks using block_validity
+> 
+>     commit 345c0dbf3a30872d9b204db96b5857cd00808cae upstream.
+> 
+>     Add the blocks which belong to the journal inode to block_validity's
+>     system zone so attempts to deallocate or overwrite the journal due a
+>     corrupted file system where the journal blocks are also claimed by
+>     another inode.
+> 
+>     Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202879
+>     Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+>     Cc: stable@kernel.org
+>     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> :040000 040000 b8b6ce2577d60c65021e5cc1c3a38b32e0cbb2ff
+> 747c67b159b33e4e1da414b1d33567a5da9ae125 M fs
 
-Add capacity-dmips-mhz property to allow the topology code to determine
-the actual capacity by taking into account the highest frequency for
-each CPU.
+Ah, many thanks for this bisection.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Suggested-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+Ted, any ideas here?  Should I drop this from the stable trees, and you
+revert it from Linus's?  Or something else?
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 4f2fb7885f39..e0e8f30ce11a 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -96,6 +96,7 @@
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			capacity-dmips-mhz = <1024>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 			      compatible = "cache";
-@@ -109,6 +110,7 @@
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			capacity-dmips-mhz = <1024>;
- 			next-level-cache = <&L2_0>;
- 		};
- 
-@@ -118,6 +120,7 @@
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			capacity-dmips-mhz = <1024>;
- 			next-level-cache = <&L2_1>;
- 			L2_1: l2-cache {
- 			      compatible = "cache";
-@@ -131,6 +134,7 @@
- 			reg = <0x0 0x101>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			capacity-dmips-mhz = <1024>;
- 			next-level-cache = <&L2_1>;
- 		};
- 
--- 
-2.17.1
+Note, I do also have 170417c8c7bb ("ext4: fix block validity checks for
+journal inodes using indirect blocks") in the trees, which was supposed
+to fix the problem with this patch, am I missing another one as well?
 
+(side note, it was mean not to mark 170417c8c7bb for stable, when the
+patch it was fixing was marked for stable, I'm lucky I caught it...)
+
+thanks,
+
+greg k-h
