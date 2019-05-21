@@ -2,103 +2,240 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9CA924E97
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 14:03:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A797F24E9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 14:04:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728181AbfEUMDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 08:03:40 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:54096 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726750AbfEUMDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 08:03:38 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 85B36206B9;
-        Tue, 21 May 2019 14:03:36 +0200 (CEST)
-Received: from [192.168.108.49] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 79B1C1FF2B;
-        Tue, 21 May 2019 14:03:36 +0200 (CEST)
-Subject: Re: [PATCH v2 7/9] arm64: dts: qcom: msm8998: Add PSCI cpuidle low
- power states
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-References: <cover.1558430617.git.amit.kucheria@linaro.org>
- <49cf5d94beb9af9ef4e78d4c52f3b0ad20b7c63f.1558430617.git.amit.kucheria@linaro.org>
-Cc:     MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andy Gross <agross@kernel.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <a7514c68-d2d3-ce9e-bc4b-f484bb5bf3cf@free.fr>
-Date:   Tue, 21 May 2019 14:03:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728215AbfEUMEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 08:04:11 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45482 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728004AbfEUMEK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 08:04:10 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i21so8478551pgi.12
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 05:04:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=fAlHmuMbdO8StoGutrHp7Q7+AaRsIB6i9bHojawbKSQ=;
+        b=Jqwp5Bh2k8ImU2IAGBXDj9eAbWh5j0TMCbkio/odjenlXtIpFkWsY/NBHDXQwyb8xB
+         nHca3JG+JwQtJwLxx3sLZ3n03Dzmmjc82RoY8tiNFNoj4deTQujBIvcLwRdFCfM3DrHf
+         o7/YtqCGyr/wYzwKlCxBUG7WcO473Ti4JprbVIzy309mYsRkacFZ8ZCrrlXxu8Pu9gQs
+         FA5PCchneXWWmdst9WPKHbipQgUxN9PXFoN+w7L2mCntaip7U59+4Lpp6sS9I+F2hp5x
+         V1tUWuHsrHIo02mZESjyM34QnWoVx9jK/5tbY31m9ggwn1SmLgXOaSRS33Sy2LAF84dk
+         Me2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=fAlHmuMbdO8StoGutrHp7Q7+AaRsIB6i9bHojawbKSQ=;
+        b=Ur2W8ogXSXclxCS6iDmeINnBBY6YAvXAzXo86VvlmBhD+uV8pf8cdnM4SvfIMZuIhB
+         fjnN7eEStKRkzgiASu5eacRKBhPFMAyxmqi+F59FcIia6NQUzdmrDgJyrcJ+TI9x4suZ
+         8crljGFE+2qOX5pSEI5L4CkIpXMKO42E4kbj391FR6l/9LXYZ+VULcc8E+xIwszZoIR7
+         Zo+CC7byebqI74hlkmqvAA9VgK2WBRNBOd4uf4lcz4QVqWZPP3KfJyyKOm+K0deSlMzs
+         VF3WwYNDoUp5W5D7yq/kVnrtsIs08pEJX1SMYs0Uy97YiStq+fovW9QSXPT26DseSG1a
+         7KdQ==
+X-Gm-Message-State: APjAAAVImkMdk76Lem44+lsPdW+ioFAjZDkmwog4sVnYanTcKnJRjGJc
+        s3P3aRAXZn0LY02WzjgKs6M+Iw==
+X-Google-Smtp-Source: APXvYqx/G6fkfM7rAhQsB9TFz3mFGfk4yyD9fx+XxerNFGhCM72t2R7k3PLxcE/ZnoOoTWYebwmTZQ==
+X-Received: by 2002:a63:8949:: with SMTP id v70mr82230358pgd.196.1558440249114;
+        Tue, 21 May 2019 05:04:09 -0700 (PDT)
+Received: from [25.170.31.42] ([208.54.39.182])
+        by smtp.gmail.com with ESMTPSA id j64sm38526910pfb.126.2019.05.21.05.04.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 May 2019 05:04:08 -0700 (PDT)
+Date:   Tue, 21 May 2019 14:04:00 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190521114120.GJ219653@google.com>
+References: <20190520035254.57579-1-minchan@kernel.org> <20190521084158.s5wwjgewexjzrsm6@brauner.io> <20190521110552.GG219653@google.com> <20190521113029.76iopljdicymghvq@brauner.io> <20190521114120.GJ219653@google.com>
 MIME-Version: 1.0
-In-Reply-To: <49cf5d94beb9af9ef4e78d4c52f3b0ad20b7c63f.1558430617.git.amit.kucheria@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Tue May 21 14:03:36 2019 +0200 (CEST)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC 0/7] introduce memory hinting API for external process
+To:     Minchan Kim <minchan@kernel.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleksandr@redhat.com
+From:   Christian Brauner <christian@brauner.io>
+Message-ID: <E01B155E-2FB4-4411-8725-3A3D7ADBE1D9@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/05/2019 11:35, Amit Kucheria wrote:
+On May 21, 2019 1:41:20 PM GMT+02:00, Minchan Kim <minchan@kernel=2Eorg> wr=
+ote:
+>On Tue, May 21, 2019 at 01:30:32PM +0200, Christian Brauner wrote:
+>> On Tue, May 21, 2019 at 08:05:52PM +0900, Minchan Kim wrote:
+>> > On Tue, May 21, 2019 at 10:42:00AM +0200, Christian Brauner wrote:
+>> > > On Mon, May 20, 2019 at 12:52:47PM +0900, Minchan Kim wrote:
+>> > > > - Background
+>> > > >=20
+>> > > > The Android terminology used for forking a new process and
+>starting an app
+>> > > > from scratch is a cold start, while resuming an existing app is
+>a hot start=2E
+>> > > > While we continually try to improve the performance of cold
+>starts, hot
+>> > > > starts will always be significantly less power hungry as well
+>as faster so
+>> > > > we are trying to make hot start more likely than cold start=2E
+>> > > >=20
+>> > > > To increase hot start, Android userspace manages the order that
+>apps should
+>> > > > be killed in a process called ActivityManagerService=2E
+>ActivityManagerService
+>> > > > tracks every Android app or service that the user could be
+>interacting with
+>> > > > at any time and translates that into a ranked list for lmkd(low
+>memory
+>> > > > killer daemon)=2E They are likely to be killed by lmkd if the
+>system has to
+>> > > > reclaim memory=2E In that sense they are similar to entries in
+>any other cache=2E
+>> > > > Those apps are kept alive for opportunistic performance
+>improvements but
+>> > > > those performance improvements will vary based on the memory
+>requirements of
+>> > > > individual workloads=2E
+>> > > >=20
+>> > > > - Problem
+>> > > >=20
+>> > > > Naturally, cached apps were dominant consumers of memory on the
+>system=2E
+>> > > > However, they were not significant consumers of swap even
+>though they are
+>> > > > good candidate for swap=2E Under investigation, swapping out only
+>begins
+>> > > > once the low zone watermark is hit and kswapd wakes up, but the
+>overall
+>> > > > allocation rate in the system might trip lmkd thresholds and
+>cause a cached
+>> > > > process to be killed(we measured performance swapping out vs=2E
+>zapping the
+>> > > > memory by killing a process=2E Unsurprisingly, zapping is 10x
+>times faster
+>> > > > even though we use zram which is much faster than real storage)
+>so kill
+>> > > > from lmkd will often satisfy the high zone watermark, resulting
+>in very
+>> > > > few pages actually being moved to swap=2E
+>> > > >=20
+>> > > > - Approach
+>> > > >=20
+>> > > > The approach we chose was to use a new interface to allow
+>userspace to
+>> > > > proactively reclaim entire processes by leveraging platform
+>information=2E
+>> > > > This allowed us to bypass the inaccuracy of the kernel=E2=80=99s =
+LRUs
+>for pages
+>> > > > that are known to be cold from userspace and to avoid races
+>with lmkd
+>> > > > by reclaiming apps as soon as they entered the cached state=2E
+>Additionally,
+>> > > > it could provide many chances for platform to use much
+>information to
+>> > > > optimize memory efficiency=2E
+>> > > >=20
+>> > > > IMHO we should spell it out that this patchset complements
+>MADV_WONTNEED
+>> > > > and MADV_FREE by adding non-destructive ways to gain some free
+>memory
+>> > > > space=2E MADV_COLD is similar to MADV_WONTNEED in a way that it
+>hints the
+>> > > > kernel that memory region is not currently needed and should be
+>reclaimed
+>> > > > immediately; MADV_COOL is similar to MADV_FREE in a way that it
+>hints the
+>> > > > kernel that memory region is not currently needed and should be
+>reclaimed
+>> > > > when memory pressure rises=2E
+>> > > >=20
+>> > > > To achieve the goal, the patchset introduce two new options for
+>madvise=2E
+>> > > > One is MADV_COOL which will deactive activated pages and the
+>other is
+>> > > > MADV_COLD which will reclaim private pages instantly=2E These new
+>options
+>> > > > complement MADV_DONTNEED and MADV_FREE by adding
+>non-destructive ways to
+>> > > > gain some free memory space=2E MADV_COLD is similar to
+>MADV_DONTNEED in a way
+>> > > > that it hints the kernel that memory region is not currently
+>needed and
+>> > > > should be reclaimed immediately; MADV_COOL is similar to
+>MADV_FREE in a way
+>> > > > that it hints the kernel that memory region is not currently
+>needed and
+>> > > > should be reclaimed when memory pressure rises=2E
+>> > > >=20
+>> > > > This approach is similar in spirit to madvise(MADV_WONTNEED),
+>but the
+>> > > > information required to make the reclaim decision is not known
+>to the app=2E
+>> > > > Instead, it is known to a centralized userspace daemon, and
+>that daemon
+>> > > > must be able to initiate reclaim on its own without any app
+>involvement=2E
+>> > > > To solve the concern, this patch introduces new syscall -
+>> > > >=20
+>> > > > 	struct pr_madvise_param {
+>> > > > 		int size;
+>> > > > 		const struct iovec *vec;
+>> > > > 	}
+>> > > >=20
+>> > > > 	int process_madvise(int pidfd, ssize_t nr_elem, int *behavior,
+>> > > > 				struct pr_madvise_param *restuls,
+>> > > > 				struct pr_madvise_param *ranges,
+>> > > > 				unsigned long flags);
+>> > > >=20
+>> > > > The syscall get pidfd to give hints to external process and
+>provides
+>> > > > pair of result/ranges vector arguments so that it could give
+>several
+>> > > > hints to each address range all at once=2E
+>> > > >=20
+>> > > > I guess others have different ideas about the naming of syscall
+>and options
+>> > > > so feel free to suggest better naming=2E
+>> > >=20
+>> > > Yes, all new syscalls making use of pidfds should be named
+>> > > pidfd_<action>=2E So please make this pidfd_madvise=2E
+>> >=20
+>> > I don't have any particular preference but just wondering why pidfd
+>is
+>> > so special to have it as prefix of system call name=2E
+>>=20
+>> It's a whole new API to address processes=2E We already have
+>> clone(CLONE_PIDFD) and pidfd_send_signal() as you have seen since you
+>> exported pidfd_to_pid()=2E And we're going to have pidfd_open()=2E Your
+>> syscall works only with pidfds so it's tied to this api as well so it
+>> should follow the naming scheme=2E This also makes life easier for
+>> userspace and is consistent=2E
+>
+>Okay=2E I will change the API name at next revision=2E
+>Thanks=2E
 
-> Add device bindings for cpuidle states for cpu devices.
-> 
-> Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/msm8998.dtsi | 50 +++++++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> index 3fd0769fe648..54810980fcf9 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> @@ -78,6 +78,7 @@
->  			compatible = "arm,armv8";
->  			reg = <0x0 0x0>;
->  			enable-method = "psci";
-> +			cpu-idle-states = <&LITTLE_CPU_SLEEP_0 &LITTLE_CPU_SLEEP_1>;
->  			efficiency = <1024>;
->  			next-level-cache = <&L2_0>;
->  			L2_0: l2-cache {
+Thanks!
+Fwiw, there's been a similar patch by Oleksandr for pidfd_madvise I stumbl=
+ed upon a few days back:
+https://gitlab=2Ecom/post-factum/pf-kernel/commit/0595f874a53fa898739ac315=
+ddf208554d9dc897
 
+He wanted to be cc'ed but I forgot=2E
 
-NB: this patch does not apply cleanly to v5.2-rc1  ;-)
+Christian
 
-86f93c93dd50 arm64: dts: msm8998: efficiency is not valid property
-
-commit 86f93c93dd5005f0aeb8ce84c2113e21a6006c7d
-Author:     Amit Kucheria <amit.kucheria@linaro.org>
-AuthorDate: Fri Mar 29 15:42:08 2019 +0530
-Commit:     Andy Gross <agross@kernel.org>
-CommitDate: Tue Apr 9 23:08:17 2019 -0500
-
-After manually fixing up the trivial conflict, the DTB builds without errors.
-
-I then enable
-+CONFIG_CPU_IDLE=y
-+CONFIG_ARM_CPUIDLE=y
-
-(because I'm using a board-specific tiny defconfig)
-
-And... the system starts to boot, hangs a few seconds, then silently reboots:
-
-scsi 0:0:0:3: Direct-Access     SAMSUNG  KLUBG4G1CE-B0B1  0800 PQ: 0 ANSI: 6
-sd 0:0:0:1: [sdb] 16384-byte physical blocks
-sd 0:0:0:2: [sdc] 2048 4096-byte logical blocks: (8.39 MB/8.00 MiB)
-sd 0:0:0:2: [sdc] 16384-byte physical blocks
-
-Format: Log Type - Time(microsec) - Message - Optional Info
-Log Type: B - Since Boot(Power On Reset),  D - Delta,  S - Statistic
-S - QC_IMAGE_VERSION_STRING=BOOT.XF.1.2.2-00157-M8998LZB-1
-S - IMAGE_VARIANT_STRING=Msm8998LA
-
-
-Looks like the "helpful" behavior of the secure OS...
-
-Regards.
