@@ -2,74 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4409024D93
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A753424D44
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:53:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbfEULIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 07:08:22 -0400
-Received: from david.siemens.de ([192.35.17.14]:55994 "EHLO david.siemens.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726042AbfEULIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 07:08:21 -0400
-X-Greylist: delayed 905 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 May 2019 07:08:20 EDT
-Received: from mail2.siemens.de (mail2.siemens.de [139.25.208.11])
-        by david.siemens.de (8.15.2/8.15.2) with ESMTPS id x4LAr51R025424
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 May 2019 12:53:05 +0200
-Received: from pluscontrol-debian-server.ppmd.SIEMENS.NET (pluscontrol-debian-server.ppmd.siemens.net [146.254.63.6])
-        by mail2.siemens.de (8.15.2/8.15.2) with ESMTP id x4LAr2dW031303;
-        Tue, 21 May 2019 12:53:02 +0200
-From:   Andreas Oetken <andreas.oetken@siemens.com>
-Cc:     andreas@oetken.name, Andreas Oetken <andreas.oetken@siemens.com>,
-        Arvid Brodin <arvid.brodin@alten.se>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] hsr: fix don't prune the master node from the node_db
-Date:   Tue, 21 May 2019 12:52:41 +0200
-Message-Id: <20190521105241.16234-1-andreas.oetken@siemens.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727946AbfEUKxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 06:53:03 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46627 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbfEUKxD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 06:53:03 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y11so8860033pfm.13
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 03:53:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2Sic2O7wb52L5CR9NZn4I8czhdSoXaChDb/juZvSzjk=;
+        b=kqar2URpzHjwHZxhz9FhJySyjNcvp48Yvzwkmxf2VubqeURESj6Vff0i/jsIthS7y9
+         fPRjulw8tqg5W/oB23bfQ6UFnd8nscb2aa5s8AAzR6x2gUQbSsbmCcBbB7K1Uh/hzbiv
+         ZeoxCNKSzYQ80A1lxxKgGkbjkN61+GLe0vQUUtixqAl/tDRPbShOiB0e1oWE/ejNmBFv
+         dqBUvs9CRSKIAN4+yxm1aYazKW+oNgGlzkPpuhdWb4Z3w7wGKiYDfQlj3WlYFi/as9VJ
+         VFMSyRQc0lXkd32xUqS1qV7HC6vxnJFGeLEI1qV1TDkfxSHCiLUZ0ohK/bMC56iKFykQ
+         9XTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2Sic2O7wb52L5CR9NZn4I8czhdSoXaChDb/juZvSzjk=;
+        b=JMfnlsuXu8JIfhQJG9u8+YXWZMO2sSOMRNHzdbhtbgl3foV+FHe+Co61lgM1Wkdkj5
+         MTcS6KGGUhvx7EzSpyhU2+YUWLrHXDoeTg3YqlJhUBQXfv7HGCMca5+k1oZmMX1GQbaT
+         r9PJKe2voPG638Ey5ECcvrXRrrzFu40wK4WhC0pRx/0SVle+u/eE8eYPPvNijtcPuAuy
+         vH8OfMPFaQBulr89qTms5ictAZOAdXuKml/exb0c/vNhNpvO40HIMYiABBZu7ZcABFFC
+         +iT+7dOPdRfmfHx4qCel3RpHO18R5leHIf3slqFrFg/ToInZWXLLwFh4FE7J2DOjxRVG
+         Yohw==
+X-Gm-Message-State: APjAAAVFjTynL2lGRMXVM8OPpzEj4x2FxYWPSWSecSa+Uh7cCsr2W0sm
+        ax07f4ivYMlmjo5xAbUFB7w=
+X-Google-Smtp-Source: APXvYqzWwsWL/43VXabxfdXeVLd95/lm6etnN5YVFlIWX66F8XbYX0NSYXLCPcewwlk31OvvzN3rhw==
+X-Received: by 2002:a63:ba5a:: with SMTP id l26mr80865856pgu.183.1558435982668;
+        Tue, 21 May 2019 03:53:02 -0700 (PDT)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id j64sm37602676pfb.126.2019.05.21.03.52.58
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 21 May 2019 03:53:01 -0700 (PDT)
+Date:   Tue, 21 May 2019 19:52:56 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Oleksandr Natalenko <oleksandr@redhat.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>
+Subject: Re: [RFC 4/7] mm: factor out madvise's core functionality
+Message-ID: <20190521105256.GF219653@google.com>
+References: <20190520035254.57579-1-minchan@kernel.org>
+ <20190520035254.57579-5-minchan@kernel.org>
+ <20190520142633.x5d27gk454qruc4o@butterfly.localdomain>
+ <20190521012649.GE10039@google.com>
+ <20190521063628.x2npirvs75jxjilx@butterfly.localdomain>
+ <20190521065000.GH32329@dhcp22.suse.cz>
+ <20190521070638.yhn3w4lpohwcqbl3@butterfly.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521070638.yhn3w4lpohwcqbl3@butterfly.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't prune master node in the hsr_prune_nodes function.
-Neither time_in[HSR_PT_SLAVE_A], nor time_in[HSR_PT_SLAVE_B],
-will ever be updated by hsr_register_frame_in for the master port.
-Thus the master node will be repeatedly pruned leading to
-repeated packet loss.
-This bug never appeared because the hsr_prune_nodes function
-was only called once. Since commit 5150b45fd355
-("net: hsr: Fix node prune function for forget time expiry") this issue
-is fixed unvealing the issue described above.
+On Tue, May 21, 2019 at 09:06:38AM +0200, Oleksandr Natalenko wrote:
+> Hi.
+> 
+> On Tue, May 21, 2019 at 08:50:00AM +0200, Michal Hocko wrote:
+> > On Tue 21-05-19 08:36:28, Oleksandr Natalenko wrote:
+> > [...]
+> > > Regarding restricting the hints, I'm definitely interested in having
+> > > remote MADV_MERGEABLE/MADV_UNMERGEABLE. But, OTOH, doing it via remote
+> > > madvise() introduces another issue with traversing remote VMAs reliably.
+> > > IIUC, one can do this via userspace by parsing [s]maps file only, which
+> > > is not very consistent, and once some range is parsed, and then it is
+> > > immediately gone, a wrong hint will be sent.
+> > > 
+> > > Isn't this a problem we should worry about?
+> > 
+> > See http://lkml.kernel.org/r/20190520091829.GY6836@dhcp22.suse.cz
+> 
+> Oh, thanks for the pointer.
+> 
+> Indeed, for my specific task with remote KSM I'd go with map_files
+> instead. This doesn't solve the task completely in case of traversal
+> through all the VMAs in one pass, but makes it easier comparing to a
+> remote syscall.
 
-Signed-off-by: Andreas Oetken <andreas.oetken@siemens.com>
----
- net/hsr/hsr_framereg.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+I'm wondering how map_files can solve your concern exactly if you have
+a concern about the race of vma unmap/remap even there are anonymous
+vma which map_files doesn't support.
 
-diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
-index 9af16cb68f76..317cddda494e 100644
---- a/net/hsr/hsr_framereg.c
-+++ b/net/hsr/hsr_framereg.c
-@@ -387,6 +387,14 @@ void hsr_prune_nodes(struct timer_list *t)
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(node, &hsr->node_db, mac_list) {
-+		/* Don't prune own node. Neither time_in[HSR_PT_SLAVE_A]
-+		 * nor time_in[HSR_PT_SLAVE_B], will ever be updated for
-+		 * the master port. Thus the master node will be repeatedly
-+		 * pruned leading to packet loss.
-+		 */
-+		if (hsr_addr_is_self(hsr, node->MacAddressA))
-+			continue;
-+
- 		/* Shorthand */
- 		time_a = node->time_in[HSR_PT_SLAVE_A];
- 		time_b = node->time_in[HSR_PT_SLAVE_B];
--- 
-2.20.1
-
+> 
+> -- 
+>   Best regards,
+>     Oleksandr Natalenko (post-factum)
+>     Senior Software Maintenance Engineer
