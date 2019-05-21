@@ -2,149 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9870250B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:40:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB2CC250D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:43:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbfEUNkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 09:40:08 -0400
-Received: from mail-it1-f197.google.com ([209.85.166.197]:52946 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728420AbfEUNkG (ORCPT
+        id S1728508AbfEUNnB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 09:43:01 -0400
+Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:44476 "EHLO
+        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728470AbfEUNnB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 09:40:06 -0400
-Received: by mail-it1-f197.google.com with SMTP id z128so745970itb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 06:40:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=K4ds8cMxo1iXc8WzeVkbAabvNASPap6txWxba5dr+7A=;
-        b=C+ccJ2E56elu+c+145f5uZhBhXyF+GV2yLGy+MUbqJAVRZN5toWAMBHujd1/pbZTYn
-         Y4P6zO9w4hW8n3R0gMwzvvWMBGGW2NEFz567/qmKXPAqWWPgZW5h9bMWloONKCGe+JZQ
-         e7a3N9JaPU8RwvXwTO4yO6TRBgkiKygmaDyAPB21So23VpAeQ4Qpl1mSyp5bJrR9127f
-         Y7uq42YRU7B1MIPWPujuEiDtB/iiaeh4Veuj/h+fWDHM3+6jYlrKbjMpaNPMceE3PSDq
-         XaiFmdtIwspN6hFuMz55Hlk9d+zQA1Fwsl0XR35ipUARXTrqEncyUrCq/VX3S4z7e6Ii
-         T9Tg==
-X-Gm-Message-State: APjAAAVuNnIi7ExMOMKsgq1o1Vq2KOCG5QaxOCSKJuHXDF4650zBgnCi
-        hs4JK5eNpTvZdEQdlk+szAgvotLCRIPG8ReEE2tAWOnKI7y0
-X-Google-Smtp-Source: APXvYqzspuOvi+vHsplGaSP0d+7NSlzKcyTf0DIR7haZL8LBBYvCtkq00YtKlZWtSNX6rVfsX7qkJ0CBxbpY3JHqwNrOhhQ2pJdL
+        Tue, 21 May 2019 09:43:01 -0400
+Received: from pps.filterd (m0170395.ppops.net [127.0.0.1])
+        by mx0b-00154904.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4LDZeuu018642;
+        Tue, 21 May 2019 09:42:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=smtpout1;
+ bh=pp6tPZXyuLLxq41a6rBWLh75d04HggU+65CWIRK9yUQ=;
+ b=OT+b5hcID7XbtGgl2Qu/tbZ5vz1ny5Hfvjv+4j0BuQucSCoBa7cTYQtEny8GGjZPqpyk
+ 80Vv1CCvwv94XNZ9lKK0jOK7abc+EJCv1/285tAJ3yGNUr2GRIN7BDav0uB2TvwZymMW
+ p/ltmidcihb4YW+IjdmOPtMB9pDueo3oCBmeUxHcpvJopwaGDTHXuRwj50P9GJzF6ao9
+ Mk6hY+vmYQXZOJPdOeZ8DEkcAo86RKMF5B4lcy1qBh5sQbO3HGx8qjnFvD7/smvgh7cE
+ mOSMIJz7eTOF71m/roMZP5m/3dHw1Rufq3+CZxLJgjhvATwXwU1YzyWySKxp4uAX/Ym9 gg== 
+Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
+        by mx0b-00154904.pphosted.com with ESMTP id 2sjeqnr559-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 May 2019 09:42:59 -0400
+Received: from pps.filterd (m0133268.ppops.net [127.0.0.1])
+        by mx0a-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4LDc9i2177251;
+        Tue, 21 May 2019 09:42:58 -0400
+Received: from ausc60pc101.us.dell.com (ausc60pc101.us.dell.com [143.166.85.206])
+        by mx0a-00154901.pphosted.com with ESMTP id 2sjc9qkyxr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 May 2019 09:42:57 -0400
+X-LoopCount0: from 10.166.132.128
+X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
+   d="scan'208";a="1408349857"
+From:   <Mario.Limonciello@dell.com>
+To:     <jettrink@chromium.org>, <mathewk@chromium.org>
+CC:     <linux-kernel@vger.kernel.org>, <acelan.kao@canonical.com>,
+        <andy@infradead.org>, <dvhart@infradead.org>,
+        <platform-driver-x86@vger.kernel.org>
+Subject: RE: [PATCH v2] platform/x86: intel-vbtn: Report switch events when
+ event wakes device
+Thread-Topic: [PATCH v2] platform/x86: intel-vbtn: Report switch events when
+ event wakes device
+Thread-Index: AQHVD103f4iXW1gb802WUHY84GHNT6Z16a+A//+tbXA=
+Date:   Tue, 21 May 2019 13:42:00 +0000
+Message-ID: <a7a23cbea93d46b48f7c9bd4e4cd4314@AUSX13MPC105.AMER.DELL.COM>
+References: <20190520224124.153005-1-mathewk@chromium.org>
+ <CAK+PMK47_OE-BgOYD_TD0kwxD4RG+nS9Wstg4ydUy7yV9nVmHQ@mail.gmail.com>
+In-Reply-To: <CAK+PMK47_OE-BgOYD_TD0kwxD4RG+nS9Wstg4ydUy7yV9nVmHQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b2c7:: with SMTP id b190mr10910519iof.14.1558446005778;
- Tue, 21 May 2019 06:40:05 -0700 (PDT)
-Date:   Tue, 21 May 2019 06:40:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009382e7058965fc65@google.com>
-Subject: memory leak in llc_ui_sendmsg
-From:   syzbot <syzbot+31c16aa4202dace3812e@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, edumazet@google.com,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, penguin-kernel@I-love.SAKURA.ne.jp,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-21_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905210087
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905210087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    f49aa1de Merge tag 'for-5.2-rc1-tag' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=117ba18aa00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61dd9e15a761691d
-dashboard link: https://syzkaller.appspot.com/bug?extid=31c16aa4202dace3812e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137f3d9ca00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156389f8a00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+31c16aa4202dace3812e@syzkaller.appspotmail.com
-
-udit(1558395599.193:36): avc:  denied  { map } for  pid=7045  
-comm="syz-executor641" path="/root/syz-executor641959542" dev="sda1"  
-ino=1426 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
-tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-executing program
-executing program
-executing program
-BUG: memory leak
-unreferenced object 0xffff888116270800 (size 224):
-   comm "syz-executor641", pid 7047, jiffies 4294947360 (age 13.860s)
-   hex dump (first 32 bytes):
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-     00 20 e1 2a 81 88 ff ff 00 40 3d 2a 81 88 ff ff  . .*.....@=*....
-   backtrace:
-     [<000000004d41b4cc>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<000000004d41b4cc>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<000000004d41b4cc>] slab_alloc_node mm/slab.c:3269 [inline]
-     [<000000004d41b4cc>] kmem_cache_alloc_node+0x153/0x2a0 mm/slab.c:3579
-     [<00000000506a5965>] __alloc_skb+0x6e/0x210 net/core/skbuff.c:198
-     [<000000001ba5a161>] alloc_skb include/linux/skbuff.h:1058 [inline]
-     [<000000001ba5a161>] alloc_skb_with_frags+0x5f/0x250  
-net/core/skbuff.c:5327
-     [<0000000047d9c78b>] sock_alloc_send_pskb+0x269/0x2a0  
-net/core/sock.c:2225
-     [<000000003828fe54>] sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2242
-     [<00000000e34d94f9>] llc_ui_sendmsg+0x10a/0x540 net/llc/af_llc.c:933
-     [<00000000de2de3fb>] sock_sendmsg_nosec net/socket.c:652 [inline]
-     [<00000000de2de3fb>] sock_sendmsg+0x54/0x70 net/socket.c:671
-     [<000000008fe16e7a>] __sys_sendto+0x148/0x1f0 net/socket.c:1964
-     [<000000005b17a3ac>] __do_sys_sendto net/socket.c:1976 [inline]
-     [<000000005b17a3ac>] __se_sys_sendto net/socket.c:1972 [inline]
-     [<000000005b17a3ac>] __x64_sys_sendto+0x2a/0x30 net/socket.c:1972
-     [<0000000094b2fa53>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-     [<00000000ea5a7233>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-BUG: memory leak
-unreferenced object 0xffff88812274ac00 (size 512):
-   comm "syz-executor641", pid 7047, jiffies 4294947360 (age 13.860s)
-   hex dump (first 32 bytes):
-     08 c2 03 00 00 00 00 00 69 63 65 73 2f 76 69 72  ........ices/vir
-     74 75 61 6c 2f 74 74 79 2f 74 74 79 71 37 00 41  tual/tty/ttyq7.A
-   backtrace:
-     [<000000009abfb07f>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<000000009abfb07f>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<000000009abfb07f>] slab_alloc_node mm/slab.c:3269 [inline]
-     [<000000009abfb07f>] kmem_cache_alloc_node_trace+0x15b/0x2a0  
-mm/slab.c:3597
-     [<000000001e6bdec9>] __do_kmalloc_node mm/slab.c:3619 [inline]
-     [<000000001e6bdec9>] __kmalloc_node_track_caller+0x38/0x50  
-mm/slab.c:3634
-     [<00000000dcf4f208>] __kmalloc_reserve.isra.0+0x40/0xb0  
-net/core/skbuff.c:142
-     [<0000000081158459>] __alloc_skb+0xa0/0x210 net/core/skbuff.c:210
-     [<000000001ba5a161>] alloc_skb include/linux/skbuff.h:1058 [inline]
-     [<000000001ba5a161>] alloc_skb_with_frags+0x5f/0x250  
-net/core/skbuff.c:5327
-     [<0000000047d9c78b>] sock_alloc_send_pskb+0x269/0x2a0  
-net/core/sock.c:2225
-     [<000000003828fe54>] sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2242
-     [<00000000e34d94f9>] llc_ui_sendmsg+0x10a/0x540 net/llc/af_llc.c:933
-     [<00000000de2de3fb>] sock_sendmsg_nosec net/socket.c:652 [inline]
-     [<00000000de2de3fb>] sock_sendmsg+0x54/0x70 net/socket.c:671
-     [<000000008fe16e7a>] __sys_sendto+0x148/0x1f0 net/socket.c:1964
-     [<000000005b17a3ac>] __do_sys_sendto net/socket.c:1976 [inline]
-     [<000000005b17a3ac>] __se_sys_sendto net/socket.c:1972 [inline]
-     [<000000005b17a3ac>] __x64_sys_sendto+0x2a/0x30 net/socket.c:1972
-     [<0000000094b2fa53>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-     [<00000000ea5a7233>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-executing program
-executing program
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKZXR0IFJpbmsgPGpldHRyaW5r
+QGNocm9taXVtLm9yZz4NCj4gU2VudDogVHVlc2RheSwgTWF5IDIxLCAyMDE5IDg6MzcgQU0NCj4g
+VG86IE1hdGhldyBLaW5nDQo+IENjOiBsaW51eC1rZXJuZWw7IEFjZUxhbiBLYW87IEFuZHkgU2hl
+dmNoZW5rbzsgRGFycmVuIEhhcnQ7IHBsYXRmb3JtLWRyaXZlci0NCj4geDg2QHZnZXIua2VybmVs
+Lm9yZzsgTGltb25jaWVsbG8sIE1hcmlvDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjJdIHBsYXRm
+b3JtL3g4NjogaW50ZWwtdmJ0bjogUmVwb3J0IHN3aXRjaCBldmVudHMgd2hlbiBldmVudA0KPiB3
+YWtlcyBkZXZpY2UNCj4gDQo+IA0KPiBbRVhURVJOQUwgRU1BSUxdDQo+IA0KPiBPbiBNb24sIE1h
+eSAyMCwgMjAxOSBhdCA0OjQxIFBNIE1hdGhldyBLaW5nIDxtYXRoZXdrQGNocm9taXVtLm9yZz4N
+Cj4gd3JvdGU6DQo+ID4NCj4gPiBXaGVuIGEgc3dpdGNoIGV2ZW50LCBzdWNoIGFzIHRhYmxldCBt
+b2RlL2xhcHRvcCBtb2RlIG9yIGRvY2tlZC91bmRvY2tlZCwNCj4gPiB3YWtlcyBhIGRldmljZSBt
+YWtlIHN1cmUgdGhhdCB0aGUgdmFsdWUgb2YgdGhlIHN3aWNoIGlzIHJlcG9ydGVkLg0KPiA+IFdp
+dGhvdXQgd2hlbiBhIGRldmljZSBpcyBwdXQgaW4gdGFibGV0IG1vZGUgZnJvbSBsYXB0b3AgbW9k
+ZSB3aGVuIGl0IGlzDQo+ID4gc3VzcGVuZGVkIG9yIHZpY2UgdmVyc2EgdGhlIGRldmljZSB3aWxs
+IHdha2UgdXAgYnV0IG1vZGUgd2lsbCBiZQ0KPiA+IGluY29ycmVjdC4NCj4gPg0KPiA+IFRlc3Rl
+ZCBieSBzdXNwZW5kaW5nIGEgZGV2aWNlIGluIGxhcHRvcCBtb2RlIGFuZCBwdXR0aW5nIGl0IGlu
+IHRhYmxldA0KPiA+IG1vZGUsIHRoZSBkZXZpY2UgcmVzdW1lcyBhbmQgaXMgaW4gdGFibGV0IG1v
+ZGUuIFdoZW4gc3VzcGVuZGluZyB0aGUNCj4gPiBkZXZpY2UgaW4gdGFibGV0IG1vZGUgYW5kIHB1
+dHRpbmcgaXQgaW4gbGFwdG9wIG1vZGUgdGhlIGRldmljZSByZXN1bWVzDQo+ID4gYW5kIGlzIGlu
+IGxhcHRvcCBtb2RlLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTWF0aGV3IEtpbmcgPG1hdGhl
+d2tAY2hyb21pdW0ub3JnPg0KPiA+DQo+ID4gLS0tDQo+ID4gQ2hhbmdlcyBpbiB2MjoNCj4gPiAg
+IC0gQWRkZWQgY29tbWVudCBleHBsYWluaW5nIHdoeSBzd2l0Y2ggZXZlbnRzIGFyZSByZXBvcnRl
+ZA0KPiA+ICAgLSBGb3JtYXQgc28gdGhhdCBjaGVja3BhdGNoIGlzIGhhcHB5DQo+ID4gLS0tDQo+
+ID4gIGRyaXZlcnMvcGxhdGZvcm0veDg2L2ludGVsLXZidG4uYyB8IDE2ICsrKysrKysrKysrKysr
+LS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0p
+DQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9wbGF0Zm9ybS94ODYvaW50ZWwtdmJ0bi5j
+IGIvZHJpdmVycy9wbGF0Zm9ybS94ODYvaW50ZWwtdmJ0bi5jDQo+ID4gaW5kZXggMDZjZDdlODE4
+ZWQ1Li5hMGQwY2VjZmY1NWYgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9wbGF0Zm9ybS94ODYv
+aW50ZWwtdmJ0bi5jDQo+ID4gKysrIGIvZHJpdmVycy9wbGF0Zm9ybS94ODYvaW50ZWwtdmJ0bi5j
+DQo+ID4gQEAgLTc2LDEyICs3NiwyNCBAQCBzdGF0aWMgdm9pZCBub3RpZnlfaGFuZGxlcihhY3Bp
+X2hhbmRsZSBoYW5kbGUsIHUzMg0KPiBldmVudCwgdm9pZCAqY29udGV4dCkNCj4gPiAgICAgICAg
+IHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKmRldmljZSA9IGNvbnRleHQ7DQo+ID4gICAgICAgICBz
+dHJ1Y3QgaW50ZWxfdmJ0bl9wcml2ICpwcml2ID0gZGV2X2dldF9kcnZkYXRhKCZkZXZpY2UtPmRl
+dik7DQo+ID4gICAgICAgICB1bnNpZ25lZCBpbnQgdmFsID0gIShldmVudCAmIDEpOyAvKiBFdmVu
+PXByZXNzLCBPZGQ9cmVsZWFzZSAqLw0KPiA+IC0gICAgICAgY29uc3Qgc3RydWN0IGtleV9lbnRy
+eSAqa2VfcmVsOw0KPiA+ICsgICAgICAgY29uc3Qgc3RydWN0IGtleV9lbnRyeSAqa2UsICprZV9y
+ZWw7DQo+ID4gICAgICAgICBib29sIGF1dG9yZWxlYXNlOw0KPiA+DQo+ID4gICAgICAgICBpZiAo
+cHJpdi0+d2FrZXVwX21vZGUpIHsNCj4gPiAtICAgICAgICAgICAgICAgaWYgKHNwYXJzZV9rZXlt
+YXBfZW50cnlfZnJvbV9zY2FuY29kZShwcml2LT5pbnB1dF9kZXYsIGV2ZW50KSkgew0KPiA+ICsg
+ICAgICAgICAgICAgICBrZSA9IHNwYXJzZV9rZXltYXBfZW50cnlfZnJvbV9zY2FuY29kZShwcml2
+LT5pbnB1dF9kZXYsIGV2ZW50KTsNCj4gPiArICAgICAgICAgICAgICAgaWYgKGtlKSB7DQo+ID4g
+ICAgICAgICAgICAgICAgICAgICAgICAgcG1fd2FrZXVwX2hhcmRfZXZlbnQoJmRldmljZS0+ZGV2
+KTsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgLyoNCj4gPiArICAgICAgICAg
+ICAgICAgICAgICAgICAgKiBTd2l0Y2ggZXZlbnRzIGxpa2UgdGFibGV0IG1vZGUgd2lsbCB3YWtl
+IHRoZSBkZXZpY2UNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgKiBhbmQgcmVwb3J0IHRo
+ZSBuZXcgc3dpdGNoIHBvc2l0aW9uIHRvIHRoZSBpbnB1dA0KPiA+ICsgICAgICAgICAgICAgICAg
+ICAgICAgICAqIHN1YnN5c3RlbS4NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgKi8NCj4g
+VGhhbmtzIGZvciBhZGRpbmcgdGhlIGNvbW1lbnQ7IFRoaXMgbG9va3MgZ29vZCB0byBtZS4NCj4g
+DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgaWYgKGtlLT50eXBlID09IEtFX1NXKQ0KPiA+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3BhcnNlX2tleW1hcF9yZXBvcnRfZXZl
+bnQocHJpdi0+aW5wdXRfZGV2LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgZXZlbnQsDQo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB2YWwsDQo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAwKTsN
+Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm47DQo+ID4gICAgICAgICAgICAgICAg
+IH0NCj4gPiAgICAgICAgICAgICAgICAgZ290byBvdXRfdW5rbm93bjsNCj4gPiAtLQ0KPiA+IDIu
+MjEuMC4xMDIwLmdmMjgyMGNmMDFhLWdvb2cNCj4gPg0KPiANCj4gUmV2aWV3ZWQtYnk6IEpldHQg
+UmluayA8amV0dHJpbmtAY2hyb21pdW0ub3JnPg0KDQpSZXZpZXdlZC1ieTogTWFyaW8gTGltb25j
+aWVsbG8gPG1hcmlvLmxpbW9uY2llbGxvQGRlbGwuY29tPg0K
