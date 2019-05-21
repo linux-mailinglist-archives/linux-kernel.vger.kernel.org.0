@@ -2,113 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C593725445
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:44:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB4C825451
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:46:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbfEUPoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:44:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59284 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728323AbfEUPoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:44:21 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 53D0AC05E760;
-        Tue, 21 May 2019 15:44:15 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3DA9D17F34;
-        Tue, 21 May 2019 15:44:13 +0000 (UTC)
-Date:   Tue, 21 May 2019 11:44:11 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Rientjes <rientjes@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 1/4] mm: Check if mmu notifier callbacks are allowed to
- fail
-Message-ID: <20190521154411.GD3836@redhat.com>
-References: <20190520213945.17046-1-daniel.vetter@ffwll.ch>
+        id S1728691AbfEUPqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:46:21 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9932 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728571AbfEUPqV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 11:46:21 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4LFbDtR021412;
+        Tue, 21 May 2019 17:46:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=YLY8K4JAd9i9hkG4XK+nEONRnmj7dXy3ssCpW/hpiHg=;
+ b=fsRoIo34yyhwhQKEdr3dXtKsVh1WJDXghsUyYmymUgDp6ooQroQ6lGwGbrcx70nVuUSc
+ bpNuqvPhPy3KWactK5mZN+lG7xulo2jJwx2LEmgY4wBIUTa7nvMaHPFPrkAXXAAM94S6
+ mFq7tCMJrUMfVEDzPs7yjy1DDSMjCGe3oZWxMIuh88hRB5ucBW0O0qdO60sNEB96/hXb
+ UUzgA92guS6WIGzvp9vrs8DGyoZRMxXE6ADQC3QMR9IO/m9WD3zUphDm4LTrs3DweLnt
+ rloxCf1gHObadLs8cOG0SET+aSx3Nr4MbTYhKiuC/Qd3QitYuHbLxBjA3chFyu2Bmve4 IQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2sj7h0tkvu-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 21 May 2019 17:46:07 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 090E138;
+        Tue, 21 May 2019 15:46:07 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DD2C72CE6;
+        Tue, 21 May 2019 15:46:06 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.46) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 21 May
+ 2019 17:46:06 +0200
+Received: from localhost (10.201.23.31) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 21 May 2019 17:46:06
+ +0200
+From:   Erwan Le Ray <erwan.leray@st.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre Torgue" <alexandre.torgue@st.com>
+CC:     <linux-serial@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Erwan Le Ray" <erwan.leray@st.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>
+Subject: [PATCH 0/7] usart various fixes for STM32
+Date:   Tue, 21 May 2019 17:45:40 +0200
+Message-ID: <1558453547-22866-1-git-send-email-erwan.leray@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190520213945.17046-1-daniel.vetter@ffwll.ch>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 21 May 2019 15:44:20 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.31]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-21_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 11:39:42PM +0200, Daniel Vetter wrote:
-> Just a bit of paranoia, since if we start pushing this deep into
-> callchains it's hard to spot all places where an mmu notifier
-> implementation might fail when it's not allowed to.
-> 
-> Inspired by some confusion we had discussing i915 mmu notifiers and
-> whether we could use the newly-introduced return value to handle some
-> corner cases. Until we realized that these are only for when a task
-> has been killed by the oom reaper.
-> 
-> An alternative approach would be to split the callback into two
-> versions, one with the int return value, and the other with void
-> return value like in older kernels. But that's a lot more churn for
-> fairly little gain I think.
-> 
-> Summary from the m-l discussion on why we want something at warning
-> level: This allows automated tooling in CI to catch bugs without
-> humans having to look at everything. If we just upgrade the existing
-> pr_info to a pr_warn, then we'll have false positives. And as-is, no
-> one will ever spot the problem since it's lost in the massive amounts
-> of overall dmesg noise.
-> 
-> v2: Drop the full WARN_ON backtrace in favour of just a pr_warn for
-> the problematic case (Michal Hocko).
-> 
-> v3: Rebase on top of Glisse's arg rework.
-> 
-> v4: More rebase on top of Glisse reworking everything.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: "Christian König" <christian.koenig@amd.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> Cc: linux-mm@kvack.org
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Reviewed-by: Christian König <christian.koenig@amd.com>
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+This series delivers fixes in various uart functions of stm32-usart
+driver.
 
-Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+Erwan Le Ray (7):
+  serial: stm32: fix word length configuration
+  serial: stm32: fix rx error handling
+  serial: stm32: fix rx data length when parity enabled
+  serial: stm32: fix transmit_chars when tx is stopped
+  serial: stm32: Add support of TC bit status check
+  serial: stm32: fix wakeup source initialization
+  serial: stm32: fix the get_irq error case
 
-> ---
->  mm/mmu_notifier.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-> index ee36068077b6..c05e406a7cd7 100644
-> --- a/mm/mmu_notifier.c
-> +++ b/mm/mmu_notifier.c
-> @@ -181,6 +181,9 @@ int __mmu_notifier_invalidate_range_start(struct mmu_notifier_range *range)
->  				pr_info("%pS callback failed with %d in %sblockable context.\n",
->  					mn->ops->invalidate_range_start, _ret,
->  					!mmu_notifier_range_blockable(range) ? "non-" : "");
-> +				if (!mmu_notifier_range_blockable(range))
-> +					pr_warn("%pS callback failure not allowed\n",
-> +						mn->ops->invalidate_range_start);
->  				ret = _ret;
->  			}
->  		}
-> -- 
-> 2.20.1
-> 
+ drivers/tty/serial/stm32-usart.c | 221 ++++++++++++++++++++++++++-------------
+ drivers/tty/serial/stm32-usart.h |  14 +--
+ 2 files changed, 152 insertions(+), 83 deletions(-)
+
+-- 
+1.9.1
+
