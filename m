@@ -2,147 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77F60257B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 20:44:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87A4A257AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 20:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729298AbfEUSoi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 14:44:38 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:44544 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727969AbfEUSoh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 14:44:37 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4LIcXvZ101084;
-        Tue, 21 May 2019 18:43:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=TNyL8LpIbOB4LoFMqrfRxE8ZeFvo438h9vL46i7IfL8=;
- b=ElKbZ4czVRuis3YinIVdhot4CeceOrkC7Uc5X51zATLnYt6VqBqdIy1f3Xrg9dsnKMtk
- s47WaZXBw0tMWP9P8zzJ5ohYPqM+kb/dD36WWvclhVDioQOx8ge/zBqQVgAMSTeY3bwC
- 7uu0l6h8q8EqMKT27pVkm5X40BLCymj68q2HgqoOnph+kBC5E7uIAaa9TV7uDgmYIbuz
- Yn5BwFU8D2zy52lyWqjEWOE3pMSe7hiEQTDncUwbJ7Iml/EQl7+MAfYeik0+wbAzpZZm
- ywFLL0x4ElJS+B+pNk3BnDeMBnlL2X4QGtXsMEc8Fa29aXeHGMc+5JgmC5Et5OlUKFYQ BA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2sjapqf9pt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 May 2019 18:43:45 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4LIfUgm051904;
-        Tue, 21 May 2019 18:41:44 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 2sks1yc2cm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 21 May 2019 18:41:44 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x4LIfi04052401;
-        Tue, 21 May 2019 18:41:44 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2sks1yc2cc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 May 2019 18:41:44 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4LIfept013238;
-        Tue, 21 May 2019 18:41:41 GMT
-Received: from localhost (/10.159.211.99)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 21 May 2019 18:41:40 +0000
-Date:   Tue, 21 May 2019 14:41:37 -0400
-From:   Kris Van Hees <kris.van.hees@oracle.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Kris Van Hees <kris.van.hees@oracle.com>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, dtrace-devel@oss.oracle.com,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, acme@kernel.org, ast@kernel.org,
-        daniel@iogearbox.net, peterz@infradead.org
-Subject: Re: [RFC PATCH 00/11] bpf, trace, dtrace: DTrace BPF program type
- implementation and sample use
-Message-ID: <20190521184137.GH2422@oracle.com>
-References: <201905202347.x4KNl0cs030532@aserv0121.oracle.com>
- <20190521175617.ipry6ue7o24a2e6n@ast-mbp.dhcp.thefacebook.com>
+        id S1729170AbfEUSnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 14:43:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33698 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727969AbfEUSnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 14:43:12 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B4A020862;
+        Tue, 21 May 2019 18:43:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558464191;
+        bh=L96gEwhzXS8dH76O3LoMeL1+YYnNfRATLa7ZW46Bgpw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=rSOf6TJR+EkwkNLjOUJe0ei0k40QHpSAzC8q98LT1tfx5vNIzZzEB8CTXEtbSw4gA
+         yH96MX+btZpGrqyqsT3TQo/3RevmwXX4mQAiFnsF7IDCQSbWGm++YUC2rXW3c2HWYW
+         t+psVXKLJCCNY/JLTFfMLmUjpKCFIqeWjAiLarfY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521175617.ipry6ue7o24a2e6n@ast-mbp.dhcp.thefacebook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9264 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905210115
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190520021702.3531-1-peng.fan@nxp.com>
+References: <20190520021702.3531-1-peng.fan@nxp.com>
+Subject: Re: [PATCH V3] clk: imx: imx8mm: fix int pll clk gate
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+User-Agent: alot/0.8.1
+Date:   Tue, 21 May 2019 11:43:10 -0700
+Message-Id: <20190521184311.6B4A020862@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 10:56:18AM -0700, Alexei Starovoitov wrote:
-> On Mon, May 20, 2019 at 11:47:00PM +0000, Kris Van Hees wrote:
-> > 
-> >     2. bpf: add BPF_PROG_TYPE_DTRACE
-> > 
-> > 	This patch adds BPF_PROG_TYPE_DTRACE as a new BPF program type, without
-> > 	actually providing an implementation.  The actual implementation is
-> > 	added in patch 4 (see below).  We do it this way because the
-> > 	implementation is being added to the tracing subsystem as a component
-> > 	that I would be happy to maintain (if merged) whereas the declaration
-> > 	of the program type must be in the bpf subsystem.  Since the two
-> > 	subsystems are maintained by different people, we split the
-> > 	implementing patches across maintainer boundaries while ensuring that
-> > 	the kernel remains buildable between patches.
-> 
-> None of these kernel patches are necessary for what you want to achieve.
+Quoting Peng Fan (2019-05-19 19:03:19)
+> To Frac pll, the gate shift is 13, however to Int PLL the gate shift
+> is 11.
+>=20
+> Cc: <stable@vger.kernel.org>
+> Fixes: ba5625c3e27 ("clk: imx: Add clock driver support for imx8mm")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
+> ---
 
-I disagree.  The current support for BPF programs for probes associates a
-specific BPF program type with a specific set of probes, which means that I
-cannot write BPF programs based on a more general concept of a 'DTrace probe'
-and provide functionality based on that.  It also means that if I have a D
-clause (DTrace probe action code associated with probes) that is to be executed
-for a list of probes of different types, I need to duplicate the program
-because I cannot cross program type boundaries.
+Applied to clk-fixes
 
-By implementing a program type for DTrace, and making it possible for
-tail-calls to be made from various probe-specific program types to the DTrace
-program type, I can accomplish what I described above.  More details are in
-the cover letter and the commit messages of the individual patches.
-
-The reasons for these patches is because I cannot do the same with the existing
-implementation.  Yes, I can do some of it or use some workarounds to accomplish
-kind of the same thing, but at the expense of not being able to do what I need
-to do but rather do some kind of best effort alternative.  That is not the goal
-here.
-
-> Feel free to add tools/dtrace/ directory and maintain it though.
-
-Thank you.
-
-> The new dtrace_buffer doesn't need to replicate existing bpf+kernel functionality
-> and no changes are necessary in kernel/events/ring_buffer.c either.
-> tools/dtrace/ user space component can use either per-cpu array map
-> or hash map as a buffer to store arbitrary data into and use
-> existing bpf_perf_event_output() to send it to user space via perf ring buffer.
-> 
-> See, for example, how bpftrace does that.
-
-When using bpf_perf_event_output() you need to construct the sample first,
-and then send it off to user space using the perf ring-buffer.  That is extra
-work that is unnecessary.  Also, storing arbitrary data from userspace in maps
-is not relevant here because this is about data that is generated at the level
-of the kernel and sent to userspace as part of the probe action that is
-executed when the probe fires.
-
-Bpftrace indeed uses maps and ways to construct the sample and then uses the
-perf ring-buffer to pass data to userspace.  And that is not the way DTrace
-works and that is not the mechanism that we need here,  So, while this may be
-satisfactory for bpftrace, it is not for DTrace.  We need more fine-grained
-control over how we write data to the buffer (doing direct stores from BPF
-code) and without the overhead of constructing a complete sample that can just
-be handed over to bpf_perf_event_output().
-
-Also, please note that I am not duplicating any kernel functionality when it
-comes to buffer handling, and in fact, I found it very easy to be able to
-tap into the perf event ring-buffer implementation and add a feature that I
-need for DTrace.  That was a very pleasant experience for sure!
-
-Kris
