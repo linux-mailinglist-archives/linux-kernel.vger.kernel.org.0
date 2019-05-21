@@ -2,100 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90F4B250AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:40:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9870250B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 15:40:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbfEUNj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 09:39:59 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35311 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728176AbfEUNj5 (ORCPT
+        id S1728589AbfEUNkI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 09:40:08 -0400
+Received: from mail-it1-f197.google.com ([209.85.166.197]:52946 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728420AbfEUNkG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 09:39:57 -0400
-Received: by mail-lf1-f67.google.com with SMTP id c17so13160192lfi.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 06:39:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=DGZ7ZHyxHghlyk00GjOL+Su8tQVyBxRwxWt505Mwkr8=;
-        b=UUsV50XWdVARTWvdiywE4LnO/Bgl22uVqIvj5DiL4yTqSSX691QJuUM5FH7mGHFNYk
-         Q0+0Bk1dY9Y5jYUMp6VxvQCJ668wo7gKKnk7wKdAbO6uXmyxdHg1D3dyjo/e1Z67HVYz
-         ek1VF3gFyvtiDXkBXE/5DNTwuCl20PqPvKDr8=
+        Tue, 21 May 2019 09:40:06 -0400
+Received: by mail-it1-f197.google.com with SMTP id z128so745970itb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 06:40:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DGZ7ZHyxHghlyk00GjOL+Su8tQVyBxRwxWt505Mwkr8=;
-        b=t8aGu7jKNXCDQXG0Urx9ku5lwt2ekjbfamE1MCEHwEJEKHvy4RsHVL4LJ33RG7Yq8W
-         ofoJgP2cLxdhwwzk8fFHf57aBOPEGB4YxT62I+ydFVxk5XA3MdRneCmmLGVc7Eb+0mWt
-         JOlv+Qi+EFiT4vdWMIoKvgHQJiM/7GgEXreLa0F7thBlTCJ8zd+MgNHWfxFF/CFbNLyZ
-         HTdAbmAoqbR9v8Zejf8fZtUBNahq+0GnxmQy+H7vPSzbwgG49erL1ZXnirI23appMMsz
-         jCWTGuvYl/nH6X4GatoG7ezH0m7Ju7jeALaf2hR7xY+Qupka6Sq/2kL2jFfIuG8NEbPW
-         lnyw==
-X-Gm-Message-State: APjAAAUxMI6Os6XaIwgkfX/BTB/iUeURVbg+imh0KP5ytTC1eI1qGr4z
-        f3udLSIlsXmnHG0+ezTnWR1K1w==
-X-Google-Smtp-Source: APXvYqy9VOBSFXKLfNL+Ppcf03Ojn4u3dT2Srf4sf8eVcsyswZbIav8iH9LKu3NFIr4da9Rx00Vw+w==
-X-Received: by 2002:ac2:5490:: with SMTP id t16mr2238952lfk.154.1558445996105;
-        Tue, 21 May 2019 06:39:56 -0700 (PDT)
-Received: from [172.16.11.26] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id r26sm4706723lfa.62.2019.05.21.06.39.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 06:39:55 -0700 (PDT)
-Subject: Re: [PATCH 1/2] open: add close_range()
-To:     Christian Brauner <christian@brauner.io>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-References: <20190521113448.20654-1-christian@brauner.io>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <82d34133-e174-efc3-48ed-332304028595@rasmusvillemoes.dk>
-Date:   Tue, 21 May 2019 15:39:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=K4ds8cMxo1iXc8WzeVkbAabvNASPap6txWxba5dr+7A=;
+        b=C+ccJ2E56elu+c+145f5uZhBhXyF+GV2yLGy+MUbqJAVRZN5toWAMBHujd1/pbZTYn
+         Y4P6zO9w4hW8n3R0gMwzvvWMBGGW2NEFz567/qmKXPAqWWPgZW5h9bMWloONKCGe+JZQ
+         e7a3N9JaPU8RwvXwTO4yO6TRBgkiKygmaDyAPB21So23VpAeQ4Qpl1mSyp5bJrR9127f
+         Y7uq42YRU7B1MIPWPujuEiDtB/iiaeh4Veuj/h+fWDHM3+6jYlrKbjMpaNPMceE3PSDq
+         XaiFmdtIwspN6hFuMz55Hlk9d+zQA1Fwsl0XR35ipUARXTrqEncyUrCq/VX3S4z7e6Ii
+         T9Tg==
+X-Gm-Message-State: APjAAAVuNnIi7ExMOMKsgq1o1Vq2KOCG5QaxOCSKJuHXDF4650zBgnCi
+        hs4JK5eNpTvZdEQdlk+szAgvotLCRIPG8ReEE2tAWOnKI7y0
+X-Google-Smtp-Source: APXvYqzspuOvi+vHsplGaSP0d+7NSlzKcyTf0DIR7haZL8LBBYvCtkq00YtKlZWtSNX6rVfsX7qkJ0CBxbpY3JHqwNrOhhQ2pJdL
 MIME-Version: 1.0
-In-Reply-To: <20190521113448.20654-1-christian@brauner.io>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:b2c7:: with SMTP id b190mr10910519iof.14.1558446005778;
+ Tue, 21 May 2019 06:40:05 -0700 (PDT)
+Date:   Tue, 21 May 2019 06:40:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009382e7058965fc65@google.com>
+Subject: memory leak in llc_ui_sendmsg
+From:   syzbot <syzbot+31c16aa4202dace3812e@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, edumazet@google.com,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, penguin-kernel@I-love.SAKURA.ne.jp,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/05/2019 13.34, Christian Brauner wrote:
+Hello,
 
-> The performance is striking. For good measure, comparing the following
-> simple close_all_fds() userspace implementation that is essentially just
-> glibc's version in [6]:
-> 
-> static int close_all_fds(void)
-> {
->         DIR *dir;
->         struct dirent *direntp;
-> 
->         dir = opendir("/proc/self/fd");
->         if (!dir)
->                 return -1;
-> 
->         while ((direntp = readdir(dir))) {
->                 int fd;
->                 if (strcmp(direntp->d_name, ".") == 0)
->                         continue;
->                 if (strcmp(direntp->d_name, "..") == 0)
->                         continue;
->                 fd = atoi(direntp->d_name);
->                 if (fd == 0 || fd == 1 || fd == 2)
->                         continue;
->                 close(fd);
->         }
-> 
->         closedir(dir); /* cannot fail */
->         return 0;
-> }
+syzbot found the following crash on:
 
-Before anybody copy-pastes this, please note that it lacks a check for
-fd == dirfd(dir). If all of /proc/self/fd is returned in the first
-getdents() syscall one won't notice, but...
+HEAD commit:    f49aa1de Merge tag 'for-5.2-rc1-tag' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=117ba18aa00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61dd9e15a761691d
+dashboard link: https://syzkaller.appspot.com/bug?extid=31c16aa4202dace3812e
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137f3d9ca00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=156389f8a00000
 
-Rasmus
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+31c16aa4202dace3812e@syzkaller.appspotmail.com
+
+udit(1558395599.193:36): avc:  denied  { map } for  pid=7045  
+comm="syz-executor641" path="/root/syz-executor641959542" dev="sda1"  
+ino=1426 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
+tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
+executing program
+executing program
+executing program
+BUG: memory leak
+unreferenced object 0xffff888116270800 (size 224):
+   comm "syz-executor641", pid 7047, jiffies 4294947360 (age 13.860s)
+   hex dump (first 32 bytes):
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+     00 20 e1 2a 81 88 ff ff 00 40 3d 2a 81 88 ff ff  . .*.....@=*....
+   backtrace:
+     [<000000004d41b4cc>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:55 [inline]
+     [<000000004d41b4cc>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<000000004d41b4cc>] slab_alloc_node mm/slab.c:3269 [inline]
+     [<000000004d41b4cc>] kmem_cache_alloc_node+0x153/0x2a0 mm/slab.c:3579
+     [<00000000506a5965>] __alloc_skb+0x6e/0x210 net/core/skbuff.c:198
+     [<000000001ba5a161>] alloc_skb include/linux/skbuff.h:1058 [inline]
+     [<000000001ba5a161>] alloc_skb_with_frags+0x5f/0x250  
+net/core/skbuff.c:5327
+     [<0000000047d9c78b>] sock_alloc_send_pskb+0x269/0x2a0  
+net/core/sock.c:2225
+     [<000000003828fe54>] sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2242
+     [<00000000e34d94f9>] llc_ui_sendmsg+0x10a/0x540 net/llc/af_llc.c:933
+     [<00000000de2de3fb>] sock_sendmsg_nosec net/socket.c:652 [inline]
+     [<00000000de2de3fb>] sock_sendmsg+0x54/0x70 net/socket.c:671
+     [<000000008fe16e7a>] __sys_sendto+0x148/0x1f0 net/socket.c:1964
+     [<000000005b17a3ac>] __do_sys_sendto net/socket.c:1976 [inline]
+     [<000000005b17a3ac>] __se_sys_sendto net/socket.c:1972 [inline]
+     [<000000005b17a3ac>] __x64_sys_sendto+0x2a/0x30 net/socket.c:1972
+     [<0000000094b2fa53>] do_syscall_64+0x76/0x1a0  
+arch/x86/entry/common.c:301
+     [<00000000ea5a7233>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+BUG: memory leak
+unreferenced object 0xffff88812274ac00 (size 512):
+   comm "syz-executor641", pid 7047, jiffies 4294947360 (age 13.860s)
+   hex dump (first 32 bytes):
+     08 c2 03 00 00 00 00 00 69 63 65 73 2f 76 69 72  ........ices/vir
+     74 75 61 6c 2f 74 74 79 2f 74 74 79 71 37 00 41  tual/tty/ttyq7.A
+   backtrace:
+     [<000000009abfb07f>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:55 [inline]
+     [<000000009abfb07f>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<000000009abfb07f>] slab_alloc_node mm/slab.c:3269 [inline]
+     [<000000009abfb07f>] kmem_cache_alloc_node_trace+0x15b/0x2a0  
+mm/slab.c:3597
+     [<000000001e6bdec9>] __do_kmalloc_node mm/slab.c:3619 [inline]
+     [<000000001e6bdec9>] __kmalloc_node_track_caller+0x38/0x50  
+mm/slab.c:3634
+     [<00000000dcf4f208>] __kmalloc_reserve.isra.0+0x40/0xb0  
+net/core/skbuff.c:142
+     [<0000000081158459>] __alloc_skb+0xa0/0x210 net/core/skbuff.c:210
+     [<000000001ba5a161>] alloc_skb include/linux/skbuff.h:1058 [inline]
+     [<000000001ba5a161>] alloc_skb_with_frags+0x5f/0x250  
+net/core/skbuff.c:5327
+     [<0000000047d9c78b>] sock_alloc_send_pskb+0x269/0x2a0  
+net/core/sock.c:2225
+     [<000000003828fe54>] sock_alloc_send_skb+0x32/0x40 net/core/sock.c:2242
+     [<00000000e34d94f9>] llc_ui_sendmsg+0x10a/0x540 net/llc/af_llc.c:933
+     [<00000000de2de3fb>] sock_sendmsg_nosec net/socket.c:652 [inline]
+     [<00000000de2de3fb>] sock_sendmsg+0x54/0x70 net/socket.c:671
+     [<000000008fe16e7a>] __sys_sendto+0x148/0x1f0 net/socket.c:1964
+     [<000000005b17a3ac>] __do_sys_sendto net/socket.c:1976 [inline]
+     [<000000005b17a3ac>] __se_sys_sendto net/socket.c:1972 [inline]
+     [<000000005b17a3ac>] __x64_sys_sendto+0x2a/0x30 net/socket.c:1972
+     [<0000000094b2fa53>] do_syscall_64+0x76/0x1a0  
+arch/x86/entry/common.c:301
+     [<00000000ea5a7233>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+executing program
+executing program
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
