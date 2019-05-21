@@ -2,92 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD34925719
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:56:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 478672577F
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 20:23:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729261AbfEUR4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 13:56:21 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45885 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfEUR4V (ORCPT
+        id S1729205AbfEUSXD convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 May 2019 14:23:03 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:42128
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1727969AbfEUSXD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 13:56:21 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i21so8935983pgi.12;
-        Tue, 21 May 2019 10:56:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FbUU/EROxa+2gIry4MHohDpJnUD0iabB83okgZNIc04=;
-        b=A9l63JLobrODFKSiZjPIwZQwRFFUX/GwQzTZ02aEzGt3720G+1fRDJpZmxQH9KWP/t
-         oXuT/hzpOTcCJAgBGHN63EmpNPuI3lcNWXJ7gO+i72zueZSPTi+X+AoyX6WPAurrOExa
-         IHxk+dneIbgnWAYF7bZr2xjb0TGwtqmTk26VMK68efrkSIrm67ziYaz8XCey733yfORK
-         3blPoWofHrXEgHwt2x0pBRBgbgPJmi6IhnvZBukzfSs/zNffyTtnyz9vLu3/pq24S/i4
-         lMW2j3pyeLVb1jhTamJC51XNc6dhDaFkQulDMtqkbgdy3RSSXWuIDubblJoHDhz89Hl8
-         DqIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FbUU/EROxa+2gIry4MHohDpJnUD0iabB83okgZNIc04=;
-        b=ZaAzbNBhzBfT2aexHpqDFAWLx135LPtFbXIgmCEMXrb1nxWslkBnLMmLUTH95E57Sj
-         CCmDduoNsIle7oiiLRmkVkgRPpfpJCKnDDqbjL3zYyXI/ufXYSlzpu3AEkMCgH7Dp08m
-         j7NFa30RdxpJUHvk/OrmAjYv63CmxB5fAmHuLmeH48XhzCS7oLzJwAmYfIz6deNZ9OsY
-         D9LLq4YzdvOwdcwXDZwXtgmbDABrtrNxLbEB1rmZ9VKYJne+99giL71A/7qOE/e0V5Pn
-         TFIkiW5Q0vwLePXVZCIVQVY5Bl861+Vhavh/9kT2XH+YmDOTSf8AlK62lglaDmkASKj6
-         R5lA==
-X-Gm-Message-State: APjAAAWnAYjpaDzM6NPEVLy6pVPHzZ/B4IB7L8sm+1cSUmmJEShTWBBk
-        j8Q/I9ey5FCcgLIHKSkyt2VLbW5S
-X-Google-Smtp-Source: APXvYqwr6le7YzXOZE6He2lQYhAYaDm+QCOjOj/OX5MLAxhb48XQUgkTIPzNV6vdjmNTb4OXp4eUlg==
-X-Received: by 2002:a62:1b85:: with SMTP id b127mr61348467pfb.165.1558461380471;
-        Tue, 21 May 2019 10:56:20 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::1:1eff])
-        by smtp.gmail.com with ESMTPSA id i12sm26796352pfd.33.2019.05.21.10.56.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 10:56:19 -0700 (PDT)
-Date:   Tue, 21 May 2019 10:56:18 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Kris Van Hees <kris.van.hees@oracle.com>
-Cc:     netdev@vger.kernel.org, bpf@vger.kernel.org,
-        dtrace-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org, mhiramat@kernel.org, acme@kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, peterz@infradead.org
-Subject: Re: [RFC PATCH 00/11] bpf, trace, dtrace: DTrace BPF program type
- implementation and sample use
-Message-ID: <20190521175617.ipry6ue7o24a2e6n@ast-mbp.dhcp.thefacebook.com>
-References: <201905202347.x4KNl0cs030532@aserv0121.oracle.com>
+        Tue, 21 May 2019 14:23:03 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 0A8B7BA0991;
+        Tue, 21 May 2019 17:57:22 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Vsk7WhQPDlQC; Tue, 21 May 2019 17:57:21 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 4BDCBBA0EFA;
+        Tue, 21 May 2019 17:57:20 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id wDx28ywlhZJH; Tue, 21 May 2019 17:57:20 +0000 (UTC)
+Received: from [100.69.243.100] (unknown [223.237.233.134])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id A1DE3BA0EDA;
+        Tue, 21 May 2019 17:57:11 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201905202347.x4KNl0cs030532@aserv0121.oracle.com>
-User-Agent: NeoMutt/20180223
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Verifica=C3=A7=C3=A3o_de_conta?=
+To:     Recipients <exportaciones@minpal.gob.ve>
+From:   Administrador da conta <exportaciones@minpal.gob.ve>
+Date:   Tue, 21 May 2019 23:27:02 +0530
+Message-Id: <20190521175711.A1DE3BA0EDA@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 11:47:00PM +0000, Kris Van Hees wrote:
-> 
->     2. bpf: add BPF_PROG_TYPE_DTRACE
-> 
-> 	This patch adds BPF_PROG_TYPE_DTRACE as a new BPF program type, without
-> 	actually providing an implementation.  The actual implementation is
-> 	added in patch 4 (see below).  We do it this way because the
-> 	implementation is being added to the tracing subsystem as a component
-> 	that I would be happy to maintain (if merged) whereas the declaration
-> 	of the program type must be in the bpf subsystem.  Since the two
-> 	subsystems are maintained by different people, we split the
-> 	implementing patches across maintainer boundaries while ensuring that
-> 	the kernel remains buildable between patches.
+Aviso de segurança:
 
-None of these kernel patches are necessary for what you want to achieve.
-Feel free to add tools/dtrace/ directory and maintain it though.
+Esta mensagem é do nosso centro de mensagens do Web Admin para todos os nossos proprietários de contas de e-mail. Estamos eliminando o acesso a todos os nossos clientes de webmail. Sua conta de e-mail será atualizada para uma interface de usuário de webmail nova e melhorada, fornecida pelo nosso Administrador assim que este e-mail for recebido.
 
-The new dtrace_buffer doesn't need to replicate existing bpf+kernel functionality
-and no changes are necessary in kernel/events/ring_buffer.c either.
-tools/dtrace/ user space component can use either per-cpu array map
-or hash map as a buffer to store arbitrary data into and use
-existing bpf_perf_event_output() to send it to user space via perf ring buffer.
+Descontinuaremos o uso de nossas interfaces do webmail Lite, para garantir que seu catálogo de endereços esteja armazenado em nosso banco de dados, clique ou copie e cole o seguinte link em seu navegador e digite seu nome de usuário e senha para atualizar sua conta.
 
-See, for example, how bpftrace does that.
+Se o clique não funcionar, copie e cole o URL abaixo em um navegador da web para verificá-lo.
 
+Clique no link http://accountupdatebrodcaster.xtgem.com/ se clicar não funcionar, copie e cole no seu navegador e atualize sua conta para que possamos transferir seus contatos para o nosso novo banco de dados de clientes de webmail.
+
+Todos os emails estarão seguros nesta transição! Todas as suas mensagens antigas estarão lá e você terá novas mensagens não lidas esperando por você. Estavam
+Claro que você vai gostar da nova e melhorada interface de webmail.
+
+Se você não cumprir este aviso, retiraremos imediatamente o acesso à sua conta de e-mail.
+
+Obrigado por usar nosso webmail.
+
+=============================================
+Número de registro 65628698L)
+Identificação do cliente 779862
+==============================================
+
+Sinceramente Web Admin.
+E-mail Atendimento ao cliente 46569 Copyright c 2019 E! Inc. (Co
+Reg.No. 65628698L) Todos os direitos reservados.
