@@ -2,68 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 478672577F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 20:23:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7623F25720
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 19:57:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729205AbfEUSXD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 21 May 2019 14:23:03 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:42128
-        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1727969AbfEUSXD (ORCPT
+        id S1729221AbfEUR5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 13:57:35 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43171 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728055AbfEUR5f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 14:23:03 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 0A8B7BA0991;
-        Tue, 21 May 2019 17:57:22 +0000 (UTC)
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Vsk7WhQPDlQC; Tue, 21 May 2019 17:57:21 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 4BDCBBA0EFA;
-        Tue, 21 May 2019 17:57:20 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
-Received: from smspyt.cancun.gob.mx ([127.0.0.1])
-        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id wDx28ywlhZJH; Tue, 21 May 2019 17:57:20 +0000 (UTC)
-Received: from [100.69.243.100] (unknown [223.237.233.134])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id A1DE3BA0EDA;
-        Tue, 21 May 2019 17:57:11 +0000 (UTC)
-Content-Type: text/plain; charset="iso-8859-1"
+        Tue, 21 May 2019 13:57:35 -0400
+Received: by mail-lj1-f195.google.com with SMTP id z5so16665682lji.10
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 10:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=13iR66s35EeUhXp2Ectoi0OYdgpCcLBjgrRmPgISBoM=;
+        b=uH9I6b0JCQbUYvD1LQ/glpe/cwjIy5fEvVhCo7mSI3nnWN8qaC32ctzL3bx4y9FHx1
+         8b6JffttjvceV7oO33hEAchiQ141RYZOda/yElKfLKngnwq7bfAIT8x1KuEn9d8sZAYm
+         ArSJM9+nF6Zm+FJdKPJtCR4kBp/zvoi/e2Rqc+DZAlxoQLLHBSA18HY6yUjTMAWRUX38
+         WyPhja20hFXrXImDxpdjqmJTjoSwPIR54QrpmJE3SYs488Csl26LxlYhI5g8PNBDAVuw
+         RSQ6ZxhJJqT0VbQ1ZfvEeaXUdXasb0L1jbiXU11exgVIx0Lv+whO/t376N1UiGC9ID/i
+         S4DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=13iR66s35EeUhXp2Ectoi0OYdgpCcLBjgrRmPgISBoM=;
+        b=RtER0HOuE+bu16o/5Eu5mg2sz5XKmFPuZwwFRZeni7ehhj2dFhoptSH7zj9LQapJqW
+         mr+oNj3NIgr/UZASed3rxxnV7cRSvpPmPVmJtAuMaTmf3u7SnfbbbpYwujAKVa0RgyD2
+         dcRFTru/zNfWopXgnCnM35BNqGp0VgYBDdekZYiltaag+UuBTPWxDEx1b9Oe98313Ecy
+         5T03tY9jaNuFuzBaRHGDupPH4rBUT5wDrNl5P2qmYdu8qt79NycOn94U5UUC8OtkfysV
+         L04MShI/S5Pbk4HXh0xBrWaStfPqhG+TyJuD+l0wgdyiJhqD4hdDQaRWkmCFYuSQmXUP
+         +0nw==
+X-Gm-Message-State: APjAAAUxG8bklbu04lmlZnfzOKkbqCXftCKfELpQiIBKRyYPAQsN/crc
+        A3vv9ZU521Z0lixuJujsEzCLqbkiaEAh6VNDhOmOIhYe+Yg=
+X-Google-Smtp-Source: APXvYqxoVhtW6+H2OrjfsFNbhD7UYzdFtNxwmWLYrzO83Xt+JIlW+jv9qAzgJgpe0LduUYpYcryZKFWuLW7FD/A8aw8=
+X-Received: by 2002:a2e:7411:: with SMTP id p17mr26016219ljc.24.1558461453024;
+ Tue, 21 May 2019 10:57:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Verifica=C3=A7=C3=A3o_de_conta?=
-To:     Recipients <exportaciones@minpal.gob.ve>
-From:   Administrador da conta <exportaciones@minpal.gob.ve>
-Date:   Tue, 21 May 2019 23:27:02 +0530
-Message-Id: <20190521175711.A1DE3BA0EDA@smspyt.cancun.gob.mx>
+References: <20190520115247.060821231@linuxfoundation.org> <20190520222342.wtsjx227c6qbkuua@xps.therub.org>
+ <20190521085956.GC31445@kroah.com> <CA+G9fYvHmUimtwszwo=9fDQLn+MNh8Vq3UGPaPUdhH=dEKzqxg@mail.gmail.com>
+ <20190521093849.GA9806@kroah.com> <CA+G9fYveeg_FMsL31aunJ2A9XLYk908Y1nSFw4kwkFk3h3uEiA@mail.gmail.com>
+ <20190521162142.GA2591@mit.edu>
+In-Reply-To: <20190521162142.GA2591@mit.edu>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 21 May 2019 23:27:21 +0530
+Message-ID: <CA+G9fYunxonkqmkhz+zmZYuMTfyRMVBxn6PkTFfjd8tTT+bzHQ@mail.gmail.com>
+Subject: Re: ext4 regression (was Re: [PATCH 4.19 000/105] 4.19.45-stable review)
+To:     "Theodore Ts'o" <tytso@mit.edu>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        Arthur Marsh <arthur.marsh@internode.on.net>,
+        Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     ltp@lists.linux.it, Jan Stancek <jstancek@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aviso de segurança:
+On Tue, 21 May 2019 at 21:52, Theodore Ts'o <tytso@mit.edu> wrote:
+>
+> On Tue, May 21, 2019 at 03:58:15PM +0530, Naresh Kamboju wrote:
+> > > Ted, any ideas here?  Should I drop this from the stable trees, and you
+> > > revert it from Linus's?  Or something else?
+>
+> It's safe to drop this from the stable trees while we investigate.  It
+> was always borderline for stable anyway.  (See below).
+>
+> > >
+> > > Note, I do also have 170417c8c7bb ("ext4: fix block validity checks for
+> > > journal inodes using indirect blocks") in the trees, which was supposed
+> > > to fix the problem with this patch, am I missing another one as well?
+> >
+> > FYI,
+> > I have applied fix patch 170417c8c7bb ("ext4: fix block validity checks for
+> >  journal inodes using indirect blocks") but did not fix this problem.
+>
+> Hmm... are you _sure_?  This bug was reported to me versus the
+> mainline, and the person who reported it confirmed that it did fix the
+> problem, he was seeing, and the symptoms are identical to yours.  Can
+> you double check, please?  I can't reproduce it either with that patch applied.
 
-Esta mensagem é do nosso centro de mensagens do Web Admin para todos os nossos proprietários de contas de e-mail. Estamos eliminando o acesso a todos os nossos clientes de webmail. Sua conta de e-mail será atualizada para uma interface de usuário de webmail nova e melhorada, fornecida pelo nosso Administrador assim que este e-mail for recebido.
+This bug is specific to x86_64 and i386.
 
-Descontinuaremos o uso de nossas interfaces do webmail Lite, para garantir que seu catálogo de endereços esteja armazenado em nosso banco de dados, clique ou copie e cole o seguinte link em seu navegador e digite seu nome de usuário e senha para atualizar sua conta.
+Steps to reproduce is,
+running LTP three test cases in sequence on x86 device.
+# cd ltp/runtest
+# cat syscalls ( only three test case)
+open12 open12
+madvise06 madvise06
+poll02 poll02
+#
 
-Se o clique não funcionar, copie e cole o URL abaixo em um navegador da web para verificá-lo.
+as Dan referring to,
 
-Clique no link http://accountupdatebrodcaster.xtgem.com/ se clicar não funcionar, copie e cole no seu navegador e atualize sua conta para que possamos transferir seus contatos para o nosso novo banco de dados de clientes de webmail.
+LTP is run using '/opt/ltp/runltp -d /scratch -f syscalls', where the
+syscalls file has been replaced with three test case names, and
+/scratch is an ext4 SATA drive. /scratch is created using 'mkfs -t ext4
+/dev/disk/by-id/ata-TOSHIBA_MG03ACA100_37O9KGKWF' and mounted to
+/scratch.
 
-Todos os emails estarão seguros nesta transição! Todas as suas mensagens antigas estarão lá e você terá novas mensagens não lidas esperando por você. Estavam
-Claro que você vai gostar da nova e melhorada interface de webmail.
+Please find full test log,
+https://lkft.validation.linaro.org/scheduler/job/738661#L1356
 
-Se você não cumprir este aviso, retiraremos imediatamente o acesso à sua conta de e-mail.
+And you notice dmesg log,
+[   53.897001] EXT4-fs error (device sda): ext4_find_extent:909: inode
+#8: comm jbd2/sda-8: pblk 121667583 bad header/extent: invalid extent
+entries - magic f30a, entries 8, max 340(340), depth 0(0)
+[   53.931430] jbd2_journal_bmap: journal block not found at offset 49 on sda-8
+[   53.938480] Aborting journal on device sda-8.
+[   55.431382] EXT4-fs error (device sda):
+ext4_journal_check_start:61: Detected aborted journal
+[   55.439947] EXT4-fs (sda): Remounting filesystem read-only
 
-Obrigado por usar nosso webmail.
-
-=============================================
-Número de registro 65628698L)
-Identificação do cliente 779862
-==============================================
-
-Sinceramente Web Admin.
-E-mail Atendimento ao cliente 46569 Copyright c 2019 E! Inc. (Co
-Reg.No. 65628698L) Todos os direitos reservados.
+- Naresh
