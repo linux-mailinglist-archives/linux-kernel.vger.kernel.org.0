@@ -2,205 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCA1725167
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C442D25175
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:06:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728578AbfEUOCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 10:02:45 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:33010 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726750AbfEUOCo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 10:02:44 -0400
-Received: (qmail 1899 invoked by uid 2102); 21 May 2019 10:02:43 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 21 May 2019 10:02:43 -0400
-Date:   Tue, 21 May 2019 10:02:43 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-cc:     linux-usb@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Oliver Neukum <oneukum@suse.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] signal/usb: Replace kill_pid_info_as_cred with
- kill_pid_usb_asyncio
-In-Reply-To: <877eakou9o.fsf@xmission.com>
-Message-ID: <Pine.LNX.4.44L0.1905211000310.1634-100000@iolanthe.rowland.org>
+        id S1728397AbfEUOGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 10:06:14 -0400
+Received: from mail-oln040092071021.outbound.protection.outlook.com ([40.92.71.21]:47107
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726750AbfEUOGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 10:06:13 -0400
+Received: from DB5EUR03FT032.eop-EUR03.prod.protection.outlook.com
+ (10.152.20.55) by DB5EUR03HT196.eop-EUR03.prod.protection.outlook.com
+ (10.152.20.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1900.16; Tue, 21 May
+ 2019 14:06:05 +0000
+Received: from VI1PR07MB4432.eurprd07.prod.outlook.com (10.152.20.54) by
+ DB5EUR03FT032.mail.protection.outlook.com (10.152.20.162) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1900.16 via Frontend Transport; Tue, 21 May 2019 14:06:05 +0000
+Received: from VI1PR07MB4432.eurprd07.prod.outlook.com
+ ([fe80::91f:b1bb:a60a:fdc3]) by VI1PR07MB4432.eurprd07.prod.outlook.com
+ ([fe80::91f:b1bb:a60a:fdc3%7]) with mapi id 15.20.1922.013; Tue, 21 May 2019
+ 14:06:05 +0000
+From:   Philippe Mazenauer <philippe.mazenauer@outlook.de>
+CC:     Philippe Mazenauer <philippe.mazenauer@outlook.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Robin Murphy" <robin.murphy@arm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Laura Abbott <labbott@redhat.com>,
+        "Wolfram Sang (Renesas)" <wsa+renesas@sang-engineering.com>,
+        Thierry Reding <treding@nvidia.com>,
+        "Kees Cook" <keescook@chromium.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        "Souptick Joarder" <jrdr.linux@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH] arm: mm: make functions static
+Thread-Topic: [PATCH] arm: mm: make functions static
+Thread-Index: AQHVD95UHd2wkdrwnU2lxr/COaONRw==
+Date:   Tue, 21 May 2019 14:06:05 +0000
+Message-ID: <VI1PR07MB443201D1B671A91954303FBAFD070@VI1PR07MB4432.eurprd07.prod.outlook.com>
+Accept-Language: de-CH, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR17CA0063.namprd17.prod.outlook.com
+ (2603:10b6:300:93::25) To VI1PR07MB4432.eurprd07.prod.outlook.com
+ (2603:10a6:802:67::17)
+x-incomingtopheadermarker: OriginalChecksum:DCF5842D9BA2BD81011D5098F50580B6CD51F9AD7DE2815A3953E11EB1BD26DE;UpperCasedChecksum:5B0B27C373F52E56C70D753D543F0CA6C6DAB5128CACF0AD959D99BBF591181F;SizeAsReceived:7846;Count:47
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-tmn:  [XOPQls4JtjWjdUYOfVUsiWj61tikXdcx]
+x-microsoft-original-message-id: <20190521140535.76782-1-philippe.mazenauer@outlook.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 47
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(5050001)(7020095)(20181119110)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:DB5EUR03HT196;
+x-ms-traffictypediagnostic: DB5EUR03HT196:
+x-microsoft-antispam-message-info: wHY/AcF1H/asL5WmDKp8L+ReQ92ZJZUMbpsBhLOI8VoQ1pw6O0mIqPZDYwM/YNjEWXFon1MtUAbOcIaEfCCQkTo2N6o3R/buKpKLicVQoWxkk3XNsu9YJrsnIRCZmhjAEAz3ojFSiySHsl8oVh4STZ/Y+1wlb1D0s7gN3TQPykkMPvPkjToCAya+m5E74i5m
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3B0F72B3E6324E47949C00AEC83C2873@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bb33838-e194-4c7e-2446-08d6ddf576e0
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 14:06:05.7386
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5EUR03HT196
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 May 2019, Eric W. Biederman wrote:
-
-> The usb support for asyncio encoded one of it's values in the wrong
-> field.  It should have used si_value but instead used si_addr which is
-> not present in the _rt union member of struct siginfo.
-> 
-> The practical result of this is that on a 64bit big endian kernel
-> when delivering a signal to a 32bit process the si_addr field
-> is set to NULL, instead of the expected pointer value.
-> 
-> This issue can not be fixed in copy_siginfo_to_user32 as the usb
-> usage of the the _sigfault (aka si_addr) member of the siginfo
-> union when SI_ASYNCIO is set is incompatible with the POSIX and
-> glibc usage of the _rt member of the siginfo union.
-> 
-> Therefore replace kill_pid_info_as_cred with kill_pid_usb_asyncio a
-> dedicated function for this one specific case.  There are no other
-> users of kill_pid_info_as_cred so this specialization should have no
-> impact on the amount of code in the kernel.  Have kill_pid_usb_asyncio
-> take instead of a siginfo_t which is difficult and error prone, 3
-> arguments, a signal number, an errno value, and an address enconded as
-> a sigval_t.  The encoding of the address as a sigval_t allows the
-> code that reads the userspace request for a signal to handle this
-> compat issue along with all of the other compat issues.
-> 
-> Add BUILD_BUG_ONs in kernel/signal.c to ensure that we can now place
-> the pointer value at the in si_pid (instead of si_addr).  That is the
-> code now verifies that si_pid and si_addr always occur at the same
-> location.  Further the code veries that for native structures a value
-> placed in si_pid and spilling into si_uid will appear in userspace in
-> si_addr (on a byte by byte copy of siginfo or a field by field copy of
-> siginfo).  The code also verifies that for a 64bit kernel and a 32bit
-> userspace the 32bit pointer will fit in si_pid.
-> 
-> I have used the usbsig.c program below written by Alan Stern and
-> slightly tweaked by me to run on a big endian machine to verify the
-> issue exists (on sparc64) and to confirm the patch below fixes the issue.
-> 
-> /* usbsig.c -- test USB async signal delivery */
-> 
-> static struct usbdevfs_urb urb;
-> static struct usbdevfs_disconnectsignal ds;
-> static volatile sig_atomic_t done = 0;
-> 
-> void urb_handler(int sig, siginfo_t *info , void *ucontext)
-> {
-> 	printf("Got signal %d, signo %d errno %d code %d addr: %p urb: %p\n",
-> 	       sig, info->si_signo, info->si_errno, info->si_code,
-> 	       info->si_addr, &urb);
-> 
-> 	printf("%s\n", (info->si_addr == &urb) ? "Good" : "Bad");
-> }
-> 
-> void ds_handler(int sig, siginfo_t *info , void *ucontext)
-> {
-> 	printf("Got signal %d, signo %d errno %d code %d addr: %p ds: %p\n",
-> 	       sig, info->si_signo, info->si_errno, info->si_code,
-> 	       info->si_addr, &ds);
-> 
-> 	printf("%s\n", (info->si_addr == &ds) ? "Good" : "Bad");
-> 	done = 1;
-> }
-> 
-> int main(int argc, char **argv)
-> {
-> 	char *devfilename;
-> 	int fd;
-> 	int rc;
-> 	struct sigaction act;
-> 	struct usb_ctrlrequest *req;
-> 	void *ptr;
-> 	char buf[80];
-> 
-> 	if (argc != 2) {
-> 		fprintf(stderr, "Usage: usbsig device-file-name\n");
-> 		return 1;
-> 	}
-> 
-> 	devfilename = argv[1];
-> 	fd = open(devfilename, O_RDWR);
-> 	if (fd == -1) {
-> 		perror("Error opening device file");
-> 		return 1;
-> 	}
-> 
-> 	act.sa_sigaction = urb_handler;
-> 	sigemptyset(&act.sa_mask);
-> 	act.sa_flags = SA_SIGINFO;
-> 
-> 	rc = sigaction(SIGUSR1, &act, NULL);
-> 	if (rc == -1) {
-> 		perror("Error in sigaction");
-> 		return 1;
-> 	}
-> 
-> 	act.sa_sigaction = ds_handler;
-> 	sigemptyset(&act.sa_mask);
-> 	act.sa_flags = SA_SIGINFO;
-> 
-> 	rc = sigaction(SIGUSR2, &act, NULL);
-> 	if (rc == -1) {
-> 		perror("Error in sigaction");
-> 		return 1;
-> 	}
-> 
-> 	memset(&urb, 0, sizeof(urb));
-> 	urb.type = USBDEVFS_URB_TYPE_CONTROL;
-> 	urb.endpoint = USB_DIR_IN | 0;
-> 	urb.buffer = buf;
-> 	urb.buffer_length = sizeof(buf);
-> 	urb.signr = SIGUSR1;
-> 
-> 	req = (struct usb_ctrlrequest *) buf;
-> 	req->bRequestType = USB_DIR_IN | USB_TYPE_STANDARD | USB_RECIP_DEVICE;
-> 	req->bRequest = USB_REQ_GET_DESCRIPTOR;
-> 	req->wValue = htole16(USB_DT_DEVICE << 8);
-> 	req->wIndex = htole16(0);
-> 	req->wLength = htole16(sizeof(buf) - sizeof(*req));
-
-In fact, these values are supposed to be in host-endian order, not 
-necessarily little-endian.  The USB core converts them if necessary.
-
-> 	rc = ioctl(fd, USBDEVFS_SUBMITURB, &urb);
-> 	if (rc == -1) {
-> 		perror("Error in SUBMITURB ioctl");
-> 		return 1;
-> 	}
-> 
-> 	rc = ioctl(fd, USBDEVFS_REAPURB, &ptr);
-> 	if (rc == -1) {
-> 		perror("Error in REAPURB ioctl");
-> 		return 1;
-> 	}
-> 
-> 	memset(&ds, 0, sizeof(ds));
-> 	ds.signr = SIGUSR2;
-> 	ds.context = &ds;
-> 	rc = ioctl(fd, USBDEVFS_DISCSIGNAL, &ds);
-> 	if (rc == -1) {
-> 		perror("Error in DISCSIGNAL ioctl");
-> 		return 1;
-> 	}
-> 
-> 	printf("Waiting for usb disconnect\n");
-> 	while (!done) {
-> 		sleep(1);
-> 	}
-> 
-> 	close(fd);
-> 	return 0;
-> }
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linux-usb@vger.kernel.org
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Oliver Neukum <oneukum@suse.com>
-> Fixes: v2.3.39
-> Cc: stable@vger.kernel.org
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
-> 
-> I managed to wrestle a sparc64 qemu to the ground so I could verify this
-> bug exists and the patch below fixes it.
-> 
-> Can I get an Ack from the usb side of things?
-
-Give me some time to review the description and the changes.
-
-Alan Stern
-
+TWFrZSBmdW5jdGlvbnMgX19hcm1faW9tbXVfZnJlZV9hdHRycygpLCBhcm1faW9tbXVfZnJlZV9h
+dHRycygpLA0KYXJtX2NvaGVyZW50X2lvbW11X2ZyZWVfYXR0cnMoKSwgYXJtX2NvaGVyZW50X2lv
+bW11X21hcF9zZygpLA0KYXJtX2lvbW11X21hcF9zZygpLCBhcm1fY29oZXJlbnRfaW9tbXVfdW5t
+YXBfc2coKSwgYXJtX2lvbW11X3VubWFwX3NnKCksDQphcm1faW9tbXVfc3luY19zZ19mb3JfY3B1
+KCkgYW5kIGFybV9pb21tdV9zeW5jX3NnX2Zvcl9kZXZpY2UoKSBzdGF0aWMsDQphcyB0aGV5IGFy
+ZSBvbmx5IHJlZmVyZW5jZWQgaW4gdGhpcyBmaWxlLg0KDQouLi9hcmNoL2FybS9tbS9kbWEtbWFw
+cGluZy5jOjE2MTY6Njogd2FybmluZzogbm8gcHJldmlvdXMgcHJvdG90eXBlIGZvciDigJhfX2Fy
+bV9pb21tdV9mcmVlX2F0dHJz4oCZIFstV21pc3NpbmctcHJvdG90eXBlc10NCiB2b2lkIF9fYXJt
+X2lvbW11X2ZyZWVfYXR0cnMoc3RydWN0IGRldmljZSAqZGV2LCBzaXplX3Qgc2l6ZSwgdm9pZCAq
+Y3B1X2FkZHIsDQogICAgICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+DQouLi9hcmNoL2FybS9tbS9k
+bWEtbWFwcGluZy5jOjE2NDI6Njogd2FybmluZzogbm8gcHJldmlvdXMgcHJvdG90eXBlIGZvciDi
+gJhhcm1faW9tbXVfZnJlZV9hdHRyc+KAmSBbLVdtaXNzaW5nLXByb3RvdHlwZXNdDQogdm9pZCBh
+cm1faW9tbXVfZnJlZV9hdHRycyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHNpemVfdCBzaXplLA0KICAg
+ICAgXn5+fn5+fn5+fn5+fn5+fn5+fn4NCi4uL2FyY2gvYXJtL21tL2RtYS1tYXBwaW5nLmM6MTY0
+ODo2OiB3YXJuaW5nOiBubyBwcmV2aW91cyBwcm90b3R5cGUgZm9yIOKAmGFybV9jb2hlcmVudF9p
+b21tdV9mcmVlX2F0dHJz4oCZIFstV21pc3NpbmctcHJvdG90eXBlc10NCiB2b2lkIGFybV9jb2hl
+cmVudF9pb21tdV9mcmVlX2F0dHJzKHN0cnVjdCBkZXZpY2UgKmRldiwgc2l6ZV90IHNpemUsDQog
+ICAgICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fg0KLi4vYXJjaC9hcm0vbW0vZG1hLW1h
+cHBpbmcuYzoxNzcyOjU6IHdhcm5pbmc6IG5vIHByZXZpb3VzIHByb3RvdHlwZSBmb3Ig4oCYYXJt
+X2NvaGVyZW50X2lvbW11X21hcF9zZ+KAmSBbLVdtaXNzaW5nLXByb3RvdHlwZXNdDQogaW50IGFy
+bV9jb2hlcmVudF9pb21tdV9tYXBfc2coc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qgc2NhdHRl
+cmxpc3QgKnNnLA0KICAgICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+DQouLi9hcmNoL2FybS9t
+bS9kbWEtbWFwcGluZy5jOjE3OTA6NTogd2FybmluZzogbm8gcHJldmlvdXMgcHJvdG90eXBlIGZv
+ciDigJhhcm1faW9tbXVfbWFwX3Nn4oCZIFstV21pc3NpbmctcHJvdG90eXBlc10NCiBpbnQgYXJt
+X2lvbW11X21hcF9zZyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBzY2F0dGVybGlzdCAqc2cs
+DQogICAgIF5+fn5+fn5+fn5+fn5+fn4NCi4uL2FyY2gvYXJtL21tL2RtYS1tYXBwaW5nLmM6MTgy
+Mzo2OiB3YXJuaW5nOiBubyBwcmV2aW91cyBwcm90b3R5cGUgZm9yIOKAmGFybV9jb2hlcmVudF9p
+b21tdV91bm1hcF9zZ+KAmSBbLVdtaXNzaW5nLXByb3RvdHlwZXNdDQogdm9pZCBhcm1fY29oZXJl
+bnRfaW9tbXVfdW5tYXBfc2coc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qgc2NhdHRlcmxpc3Qg
+KnNnLA0KICAgICAgXn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+DQouLi9hcmNoL2FybS9tbS9k
+bWEtbWFwcGluZy5jOjE4NDA6Njogd2FybmluZzogbm8gcHJldmlvdXMgcHJvdG90eXBlIGZvciDi
+gJhhcm1faW9tbXVfdW5tYXBfc2figJkgWy1XbWlzc2luZy1wcm90b3R5cGVzXQ0KIHZvaWQgYXJt
+X2lvbW11X3VubWFwX3NnKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHNjYXR0ZXJsaXN0ICpz
+ZywgaW50IG5lbnRzLA0KICAgICAgXn5+fn5+fn5+fn5+fn5+fn5+DQouLi9hcmNoL2FybS9tbS9k
+bWEtbWFwcGluZy5jOjE4NTQ6Njogd2FybmluZzogbm8gcHJldmlvdXMgcHJvdG90eXBlIGZvciDi
+gJhhcm1faW9tbXVfc3luY19zZ19mb3JfY3B14oCZIFstV21pc3NpbmctcHJvdG90eXBlc10NCiB2
+b2lkIGFybV9pb21tdV9zeW5jX3NnX2Zvcl9jcHUoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qg
+c2NhdHRlcmxpc3QgKnNnLA0KICAgICAgXn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fg0KLi4vYXJj
+aC9hcm0vbW0vZG1hLW1hcHBpbmcuYzoxODcyOjY6IHdhcm5pbmc6IG5vIHByZXZpb3VzIHByb3Rv
+dHlwZSBmb3Ig4oCYYXJtX2lvbW11X3N5bmNfc2dfZm9yX2RldmljZeKAmSBbLVdtaXNzaW5nLXBy
+b3RvdHlwZXNdDQogdm9pZCBhcm1faW9tbXVfc3luY19zZ19mb3JfZGV2aWNlKHN0cnVjdCBkZXZp
+Y2UgKmRldiwgc3RydWN0IHNjYXR0ZXJsaXN0ICpzZywNCiAgICAgIF5+fn5+fn5+fn5+fn5+fn5+
+fn5+fn5+fn5+fn4NCg0KU2lnbmVkLW9mZi1ieTogUGhpbGlwcGUgTWF6ZW5hdWVyIDxwaGlsaXBw
+ZS5tYXplbmF1ZXJAb3V0bG9vay5kZT4NCi0tLQ0KIGFyY2gvYXJtL21tL2RtYS1tYXBwaW5nLmMg
+fCAzMCArKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0NCiAxIGZpbGUgY2hhbmdlZCwgMTUg
+aW5zZXJ0aW9ucygrKSwgMTUgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9hcmNoL2FybS9t
+bS9kbWEtbWFwcGluZy5jIGIvYXJjaC9hcm0vbW0vZG1hLW1hcHBpbmcuYw0KaW5kZXggMGE3NTA1
+OGMxMWYzLi41MzBiNjIzNWEyNzAgMTAwNjQ0DQotLS0gYS9hcmNoL2FybS9tbS9kbWEtbWFwcGlu
+Zy5jDQorKysgYi9hcmNoL2FybS9tbS9kbWEtbWFwcGluZy5jDQpAQCAtMTYxMyw4ICsxNjEzLDkg
+QEAgc3RhdGljIGludCBhcm1fY29oZXJlbnRfaW9tbXVfbW1hcF9hdHRycyhzdHJ1Y3QgZGV2aWNl
+ICpkZXYsDQogICogZnJlZSBhIHBhZ2UgYXMgZGVmaW5lZCBieSB0aGUgYWJvdmUgbWFwcGluZy4N
+CiAgKiBNdXN0IG5vdCBiZSBjYWxsZWQgd2l0aCBJUlFzIGRpc2FibGVkLg0KICAqLw0KLXZvaWQg
+X19hcm1faW9tbXVfZnJlZV9hdHRycyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHNpemVfdCBzaXplLCB2
+b2lkICpjcHVfYWRkciwNCi0JZG1hX2FkZHJfdCBoYW5kbGUsIHVuc2lnbmVkIGxvbmcgYXR0cnMs
+IGludCBjb2hlcmVudF9mbGFnKQ0KK3N0YXRpYyB2b2lkIF9fYXJtX2lvbW11X2ZyZWVfYXR0cnMo
+c3RydWN0IGRldmljZSAqZGV2LCBzaXplX3Qgc2l6ZSwNCisJCXZvaWQgKmNwdV9hZGRyLCBkbWFf
+YWRkcl90IGhhbmRsZSwgdW5zaWduZWQgbG9uZyBhdHRycywNCisJCWludCBjb2hlcmVudF9mbGFn
+KQ0KIHsNCiAJc3RydWN0IHBhZ2UgKipwYWdlczsNCiAJc2l6ZSA9IFBBR0VfQUxJR04oc2l6ZSk7
+DQpAQCAtMTYzOSwxMyArMTY0MCwxMyBAQCB2b2lkIF9fYXJtX2lvbW11X2ZyZWVfYXR0cnMoc3Ry
+dWN0IGRldmljZSAqZGV2LCBzaXplX3Qgc2l6ZSwgdm9pZCAqY3B1X2FkZHIsDQogCV9faW9tbXVf
+ZnJlZV9idWZmZXIoZGV2LCBwYWdlcywgc2l6ZSwgYXR0cnMpOw0KIH0NCiANCi12b2lkIGFybV9p
+b21tdV9mcmVlX2F0dHJzKHN0cnVjdCBkZXZpY2UgKmRldiwgc2l6ZV90IHNpemUsDQorc3RhdGlj
+IHZvaWQgYXJtX2lvbW11X2ZyZWVfYXR0cnMoc3RydWN0IGRldmljZSAqZGV2LCBzaXplX3Qgc2l6
+ZSwNCiAJCSAgICB2b2lkICpjcHVfYWRkciwgZG1hX2FkZHJfdCBoYW5kbGUsIHVuc2lnbmVkIGxv
+bmcgYXR0cnMpDQogew0KIAlfX2FybV9pb21tdV9mcmVlX2F0dHJzKGRldiwgc2l6ZSwgY3B1X2Fk
+ZHIsIGhhbmRsZSwgYXR0cnMsIE5PUk1BTCk7DQogfQ0KIA0KLXZvaWQgYXJtX2NvaGVyZW50X2lv
+bW11X2ZyZWVfYXR0cnMoc3RydWN0IGRldmljZSAqZGV2LCBzaXplX3Qgc2l6ZSwNCitzdGF0aWMg
+dm9pZCBhcm1fY29oZXJlbnRfaW9tbXVfZnJlZV9hdHRycyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHNp
+emVfdCBzaXplLA0KIAkJICAgIHZvaWQgKmNwdV9hZGRyLCBkbWFfYWRkcl90IGhhbmRsZSwgdW5z
+aWduZWQgbG9uZyBhdHRycykNCiB7DQogCV9fYXJtX2lvbW11X2ZyZWVfYXR0cnMoZGV2LCBzaXpl
+LCBjcHVfYWRkciwgaGFuZGxlLCBhdHRycywgQ09IRVJFTlQpOw0KQEAgLTE3NjksNyArMTc3MCw3
+IEBAIHN0YXRpYyBpbnQgX19pb21tdV9tYXBfc2coc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qg
+c2NhdHRlcmxpc3QgKnNnLCBpbnQgbmVudHMsDQogICogcG9zc2libGUpIGFuZCB0YWdnZWQgd2l0
+aCB0aGUgYXBwcm9wcmlhdGUgZG1hIGFkZHJlc3MgYW5kIGxlbmd0aC4gVGhleSBhcmUNCiAgKiBv
+YnRhaW5lZCB2aWEgc2dfZG1hX3thZGRyZXNzLGxlbmd0aH0uDQogICovDQotaW50IGFybV9jb2hl
+cmVudF9pb21tdV9tYXBfc2coc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qgc2NhdHRlcmxpc3Qg
+KnNnLA0KK3N0YXRpYyBpbnQgYXJtX2NvaGVyZW50X2lvbW11X21hcF9zZyhzdHJ1Y3QgZGV2aWNl
+ICpkZXYsIHN0cnVjdCBzY2F0dGVybGlzdCAqc2csDQogCQlpbnQgbmVudHMsIGVudW0gZG1hX2Rh
+dGFfZGlyZWN0aW9uIGRpciwgdW5zaWduZWQgbG9uZyBhdHRycykNCiB7DQogCXJldHVybiBfX2lv
+bW11X21hcF9zZyhkZXYsIHNnLCBuZW50cywgZGlyLCBhdHRycywgdHJ1ZSk7DQpAQCAtMTc4Nyw3
+ICsxNzg4LDcgQEAgaW50IGFybV9jb2hlcmVudF9pb21tdV9tYXBfc2coc3RydWN0IGRldmljZSAq
+ZGV2LCBzdHJ1Y3Qgc2NhdHRlcmxpc3QgKnNnLA0KICAqIHRhZ2dlZCB3aXRoIHRoZSBhcHByb3By
+aWF0ZSBkbWEgYWRkcmVzcyBhbmQgbGVuZ3RoLiBUaGV5IGFyZSBvYnRhaW5lZCB2aWENCiAgKiBz
+Z19kbWFfe2FkZHJlc3MsbGVuZ3RofS4NCiAgKi8NCi1pbnQgYXJtX2lvbW11X21hcF9zZyhzdHJ1
+Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBzY2F0dGVybGlzdCAqc2csDQorc3RhdGljIGludCBhcm1f
+aW9tbXVfbWFwX3NnKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHNjYXR0ZXJsaXN0ICpzZywN
+CiAJCWludCBuZW50cywgZW51bSBkbWFfZGF0YV9kaXJlY3Rpb24gZGlyLCB1bnNpZ25lZCBsb25n
+IGF0dHJzKQ0KIHsNCiAJcmV0dXJuIF9faW9tbXVfbWFwX3NnKGRldiwgc2csIG5lbnRzLCBkaXIs
+IGF0dHJzLCBmYWxzZSk7DQpAQCAtMTgyMCw4ICsxODIxLDggQEAgc3RhdGljIHZvaWQgX19pb21t
+dV91bm1hcF9zZyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBzY2F0dGVybGlzdCAqc2csDQog
+ICogVW5tYXAgYSBzZXQgb2Ygc3RyZWFtaW5nIG1vZGUgRE1BIHRyYW5zbGF0aW9ucy4gIEFnYWlu
+LCBDUFUgYWNjZXNzDQogICogcnVsZXMgY29uY2VybmluZyBjYWxscyBoZXJlIGFyZSB0aGUgc2Ft
+ZSBhcyBmb3IgZG1hX3VubWFwX3NpbmdsZSgpLg0KICAqLw0KLXZvaWQgYXJtX2NvaGVyZW50X2lv
+bW11X3VubWFwX3NnKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHNjYXR0ZXJsaXN0ICpzZywN
+Ci0JCWludCBuZW50cywgZW51bSBkbWFfZGF0YV9kaXJlY3Rpb24gZGlyLA0KK3N0YXRpYyB2b2lk
+IGFybV9jb2hlcmVudF9pb21tdV91bm1hcF9zZyhzdHJ1Y3QgZGV2aWNlICpkZXYsDQorCQlzdHJ1
+Y3Qgc2NhdHRlcmxpc3QgKnNnLCBpbnQgbmVudHMsIGVudW0gZG1hX2RhdGFfZGlyZWN0aW9uIGRp
+ciwNCiAJCXVuc2lnbmVkIGxvbmcgYXR0cnMpDQogew0KIAlfX2lvbW11X3VubWFwX3NnKGRldiwg
+c2csIG5lbnRzLCBkaXIsIGF0dHJzLCB0cnVlKTsNCkBAIC0xODM3LDkgKzE4MzgsOCBAQCB2b2lk
+IGFybV9jb2hlcmVudF9pb21tdV91bm1hcF9zZyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBz
+Y2F0dGVybGlzdCAqc2csDQogICogVW5tYXAgYSBzZXQgb2Ygc3RyZWFtaW5nIG1vZGUgRE1BIHRy
+YW5zbGF0aW9ucy4gIEFnYWluLCBDUFUgYWNjZXNzDQogICogcnVsZXMgY29uY2VybmluZyBjYWxs
+cyBoZXJlIGFyZSB0aGUgc2FtZSBhcyBmb3IgZG1hX3VubWFwX3NpbmdsZSgpLg0KICAqLw0KLXZv
+aWQgYXJtX2lvbW11X3VubWFwX3NnKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHNjYXR0ZXJs
+aXN0ICpzZywgaW50IG5lbnRzLA0KLQkJCWVudW0gZG1hX2RhdGFfZGlyZWN0aW9uIGRpciwNCi0J
+CQl1bnNpZ25lZCBsb25nIGF0dHJzKQ0KK3N0YXRpYyB2b2lkIGFybV9pb21tdV91bm1hcF9zZyhz
+dHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBzY2F0dGVybGlzdCAqc2csDQorCQlpbnQgbmVudHMs
+IGVudW0gZG1hX2RhdGFfZGlyZWN0aW9uIGRpciwgdW5zaWduZWQgbG9uZyBhdHRycykNCiB7DQog
+CV9faW9tbXVfdW5tYXBfc2coZGV2LCBzZywgbmVudHMsIGRpciwgYXR0cnMsIGZhbHNlKTsNCiB9
+DQpAQCAtMTg1MSw4ICsxODUxLDggQEAgdm9pZCBhcm1faW9tbXVfdW5tYXBfc2coc3RydWN0IGRl
+dmljZSAqZGV2LCBzdHJ1Y3Qgc2NhdHRlcmxpc3QgKnNnLCBpbnQgbmVudHMsDQogICogQG5lbnRz
+OiBudW1iZXIgb2YgYnVmZmVycyB0byBtYXAgKHJldHVybmVkIGZyb20gZG1hX21hcF9zZykNCiAg
+KiBAZGlyOiBETUEgdHJhbnNmZXIgZGlyZWN0aW9uIChzYW1lIGFzIHdhcyBwYXNzZWQgdG8gZG1h
+X21hcF9zZykNCiAgKi8NCi12b2lkIGFybV9pb21tdV9zeW5jX3NnX2Zvcl9jcHUoc3RydWN0IGRl
+dmljZSAqZGV2LCBzdHJ1Y3Qgc2NhdHRlcmxpc3QgKnNnLA0KLQkJCWludCBuZW50cywgZW51bSBk
+bWFfZGF0YV9kaXJlY3Rpb24gZGlyKQ0KK3N0YXRpYyB2b2lkIGFybV9pb21tdV9zeW5jX3NnX2Zv
+cl9jcHUoc3RydWN0IGRldmljZSAqZGV2LA0KKwkJc3RydWN0IHNjYXR0ZXJsaXN0ICpzZywgaW50
+IG5lbnRzLCBlbnVtIGRtYV9kYXRhX2RpcmVjdGlvbiBkaXIpDQogew0KIAlzdHJ1Y3Qgc2NhdHRl
+cmxpc3QgKnM7DQogCWludCBpOw0KQEAgLTE4NjksOCArMTg2OSw4IEBAIHZvaWQgYXJtX2lvbW11
+X3N5bmNfc2dfZm9yX2NwdShzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBzY2F0dGVybGlzdCAq
+c2csDQogICogQG5lbnRzOiBudW1iZXIgb2YgYnVmZmVycyB0byBtYXAgKHJldHVybmVkIGZyb20g
+ZG1hX21hcF9zZykNCiAgKiBAZGlyOiBETUEgdHJhbnNmZXIgZGlyZWN0aW9uIChzYW1lIGFzIHdh
+cyBwYXNzZWQgdG8gZG1hX21hcF9zZykNCiAgKi8NCi12b2lkIGFybV9pb21tdV9zeW5jX3NnX2Zv
+cl9kZXZpY2Uoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3Qgc2NhdHRlcmxpc3QgKnNnLA0KLQkJ
+CWludCBuZW50cywgZW51bSBkbWFfZGF0YV9kaXJlY3Rpb24gZGlyKQ0KK3N0YXRpYyB2b2lkIGFy
+bV9pb21tdV9zeW5jX3NnX2Zvcl9kZXZpY2Uoc3RydWN0IGRldmljZSAqZGV2LA0KKwkJc3RydWN0
+IHNjYXR0ZXJsaXN0ICpzZywgaW50IG5lbnRzLCBlbnVtIGRtYV9kYXRhX2RpcmVjdGlvbiBkaXIp
+DQogew0KIAlzdHJ1Y3Qgc2NhdHRlcmxpc3QgKnM7DQogCWludCBpOw0KLS0gDQoyLjE3LjENCg0K
