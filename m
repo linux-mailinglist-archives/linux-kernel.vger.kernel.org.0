@@ -2,168 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4555525960
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:48:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1220D2596C
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbfEUUqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 16:46:54 -0400
-Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:55980 "EHLO
-        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbfEUUqx (ORCPT
+        id S1727913AbfEUUs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 16:48:27 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:34150 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727222AbfEUUs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 16:46:53 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id C3155A019D;
-        Tue, 21 May 2019 22:46:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1558471609; i=@fjfi.cvut.cz;
-        bh=Ewz4Cx3eumLyMlBi7bHCQ+lT3KA4ioOvPuDlLh675V4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=tZN9fEbR4cB/Ggixtd4CmV+OlmJgjU3qfVAhPtBw48HLfbFErLmZOa0i2S64u4s+E
-         PwGhOk2d+h2Drw/ExQGtgqFy9RptW3jWOw1YCPsAJ3/0lf4+GyRZnQLxgzRLDv20pm
-         MoCuwGatIyooKRP0fwTa2LH62GCD2RoTA8AlmC8s=
-X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
-Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
-        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id uzcayCuTh4R9; Tue, 21 May 2019 22:46:47 +0200 (CEST)
-Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 85783A018E;
-        Tue, 21 May 2019 22:46:47 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 85783A018E
-Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id 557CE6004E; Tue, 21 May 2019 22:46:47 +0200 (CEST)
-From:   David Kozub <zub@linux.fjfi.cvut.cz>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Subject: [PATCH v2 3/3] block: sed-opal: check size of shadow mbr
-Date:   Tue, 21 May 2019 22:46:46 +0200
-Message-Id: <1558471606-25139-4-git-send-email-zub@linux.fjfi.cvut.cz>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1558471606-25139-1-git-send-email-zub@linux.fjfi.cvut.cz>
-References: <1558471606-25139-1-git-send-email-zub@linux.fjfi.cvut.cz>
+        Tue, 21 May 2019 16:48:26 -0400
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4LKjEG6010429
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 13:48:25 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=gXtQ5o2xO00nWLwMn6/HQC5ELcxFd8dno/KGqwEyWn4=;
+ b=hi11wg5dkOis8h1p5ZcRZQDM4LnYRuRMbWj9yu/hc3Pp+DO2keB416WzwuKcAwB3oUmt
+ P0CDVW+h2iPceAUyITp9Vy8vRGvy5/Xol/Vg+w27VfDNvU9jf/e/lLQSfuwu9kmZHD9p
+ 2PhqNSepVrj0Hshx5eHDhZtKJh3RPacyEoc= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2smp0wrmb5-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 13:48:25 -0700
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
+ Tue, 21 May 2019 13:48:18 -0700
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id C8DF762E2BFE; Tue, 21 May 2019 13:48:16 -0700 (PDT)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
+CC:     <kernel-team@fb.com>, Song Liu <songliubraving@fb.com>,
+        Kairui Song <kasong@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH] perf/x86: always include regs->ip in callchain
+Date:   Tue, 21 May 2019 13:48:13 -0700
+Message-ID: <20190521204813.1167784-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-21_05:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Commit d15d356887e7 removes regs->ip for !perf_hw_regs(regs) case. This
+breaks tests like test_stacktrace_map from selftests/bpf/tests_prog.
 
-Check whether the shadow mbr does fit in the provided space on the
-target. Also a proper firmware should handle this case and return an
-error we may prevent problems or even damage with crappy firmwares.
+This patch adds regs->ip back.
 
-Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
-Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
-Reviewed-by: Jon Derrick <jonathan.derrick@intel.com>
+Fixes: d15d356887e7 ("perf/x86: Make perf callchains work without CONFIG_FRAME_POINTER")
+Cc: Kairui Song <kasong@redhat.com>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- block/opal_proto.h | 16 ++++++++++++++++
- block/sed-opal.c   | 39 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
+ arch/x86/events/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/block/opal_proto.h b/block/opal_proto.h
-index d9a05ad02eb5..466ec7be16ef 100644
---- a/block/opal_proto.h
-+++ b/block/opal_proto.h
-@@ -98,6 +98,7 @@ enum opal_uid {
- 	OPAL_ENTERPRISE_BANDMASTER0_UID,
- 	OPAL_ENTERPRISE_ERASEMASTER_UID,
- 	/* tables */
-+	OPAL_TABLE_TABLE,
- 	OPAL_LOCKINGRANGE_GLOBAL,
- 	OPAL_LOCKINGRANGE_ACE_RDLOCKED,
- 	OPAL_LOCKINGRANGE_ACE_WRLOCKED,
-@@ -152,6 +153,21 @@ enum opal_token {
- 	OPAL_STARTCOLUMN = 0x03,
- 	OPAL_ENDCOLUMN = 0x04,
- 	OPAL_VALUES = 0x01,
-+	/* table table */
-+	OPAL_TABLE_UID = 0x00,
-+	OPAL_TABLE_NAME = 0x01,
-+	OPAL_TABLE_COMMON = 0x02,
-+	OPAL_TABLE_TEMPLATE = 0x03,
-+	OPAL_TABLE_KIND = 0x04,
-+	OPAL_TABLE_COLUMN = 0x05,
-+	OPAL_TABLE_COLUMNS = 0x06,
-+	OPAL_TABLE_ROWS = 0x07,
-+	OPAL_TABLE_ROWS_FREE = 0x08,
-+	OPAL_TABLE_ROW_BYTES = 0x09,
-+	OPAL_TABLE_LASTID = 0x0A,
-+	OPAL_TABLE_MIN = 0x0B,
-+	OPAL_TABLE_MAX = 0x0C,
-+
- 	/* authority table */
- 	OPAL_PIN = 0x03,
- 	/* locking tokens */
-diff --git a/block/sed-opal.c b/block/sed-opal.c
-index c13ac0ebd5e0..87300918eae2 100644
---- a/block/sed-opal.c
-+++ b/block/sed-opal.c
-@@ -130,6 +130,8 @@ static const u8 opaluid[][OPAL_UID_LENGTH] = {
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index f315425d8468..7b8a9eb4d5fd 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2402,9 +2402,9 @@ perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *re
+ 		return;
+ 	}
  
- 	/* tables */
- 
-+	[OPAL_TABLE_TABLE]
-+		{ 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01 },
- 	[OPAL_LOCKINGRANGE_GLOBAL] =
- 		{ 0x00, 0x00, 0x08, 0x02, 0x00, 0x00, 0x00, 0x01 },
- 	[OPAL_LOCKINGRANGE_ACE_RDLOCKED] =
-@@ -1131,6 +1133,29 @@ static int generic_get_column(struct opal_dev *dev, const u8 *table,
- 	return finalize_and_send(dev, parse_and_check_status);
- }
- 
-+/*
-+ * see TCG SAS 5.3.2.3 for a description of the available columns
-+ *
-+ * the result is provided in dev->resp->tok[4]
-+ */
-+static int generic_get_table_info(struct opal_dev *dev, enum opal_uid table,
-+				  u64 column)
-+{
-+	u8 uid[OPAL_UID_LENGTH];
-+	const unsigned int half = OPAL_UID_LENGTH/2;
-+
-+	/* sed-opal UIDs can be split in two halves:
-+	 *  first:  actual table index
-+	 *  second: relative index in the table
-+	 * so we have to get the first half of the OPAL_TABLE_TABLE and use the
-+	 * first part of the target table as relative index into that table
-+	 */
-+	memcpy(uid, opaluid[OPAL_TABLE_TABLE], half);
-+	memcpy(uid+half, opaluid[table], half);
-+
-+	return generic_get_column(dev, uid, column);
-+}
-+
- static int gen_key(struct opal_dev *dev, void *data)
- {
- 	u8 uid[OPAL_UID_LENGTH];
-@@ -1546,6 +1571,20 @@ static int write_shadow_mbr(struct opal_dev *dev, void *data)
- 	u64 len;
- 	int err = 0;
- 
-+	/* do we fit in the available shadow mbr space? */
-+	err = generic_get_table_info(dev, OPAL_MBR, OPAL_TABLE_ROWS);
-+	if (err) {
-+		pr_debug("MBR: could not get shadow size\n");
-+		return err;
-+	}
-+
-+	len = response_get_u64(&dev->parsed, 4);
-+	if (shadow->size > len || shadow->offset > len - shadow->size) {
-+		pr_debug("MBR: does not fit in shadow (%llu vs. %llu)\n",
-+			 shadow->offset + shadow->size, len);
-+		return -ENOSPC;
-+	}
-+
- 	/* do the actual transmission(s) */
- 	src = (u8 __user *)(uintptr_t)shadow->data;
- 	while (off < shadow->size) {
++	if (perf_callchain_store(entry, regs->ip))
++		return;
+ 	if (perf_hw_regs(regs)) {
+-		if (perf_callchain_store(entry, regs->ip))
+-			return;
+ 		unwind_start(&state, current, regs, NULL);
+ 	} else {
+ 		unwind_start(&state, current, NULL, (void *)regs->sp);
 -- 
-2.20.1
+2.17.1
 
