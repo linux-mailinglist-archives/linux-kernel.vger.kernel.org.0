@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B822725504
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D1D7254FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:11:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729071AbfEUQL2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 12:11:28 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33853 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728957AbfEUQLP (ORCPT
+        id S1729030AbfEUQLT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 12:11:19 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36251 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728968AbfEUQLP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 21 May 2019 12:11:15 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f8so12904122wrt.1;
-        Tue, 21 May 2019 09:11:13 -0700 (PDT)
+Received: by mail-wr1-f66.google.com with SMTP id s17so19305076wru.3;
+        Tue, 21 May 2019 09:11:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uWjp5N7/2gycMhkjj4F7Je3PI1NUTqU00O1ySy3vSNY=;
-        b=mBYZazpRj6EVU7E58MdMi7y+AJ+HedRo3jJJlcg9GWps2CdOi9yPkeRg9EXQZMZ4w0
-         lHyOVHvQG/bLCCwVRejE/7v04UpUP4UNkRSoaITOErYNy7bzb4VrnNwAyPY400UzjMIm
-         izWERToMX4dzCYvZS7q6lhOmCb5swJ9Npb9pmBtTO4UqvMD73p7YaSOqPmcIuIIRS127
-         HaB7/2461amKirTxJ9/9fSDjuy4xeFxCfkA/tMLFaytIcbIjoUhUlLL2E1booh329WNV
-         yagjPAkc1KFlf0HzEennc6ozheuvQABWQgPSgZG/NsrQrg32jV46+A96j/6cedbM2qp4
-         4SgA==
+        bh=Btaw5CgxhYac28zaC8EYgFvIIeyjC0ToJx7hPAKP9QY=;
+        b=B/jtMfdcj/dmaTXVPTvxgNcwlKCsgqy9ZhcgBVcfw/M8F+FPXVO9xN/dsc8qjR+qGX
+         wlT8gSuqfvPrYaFZO9iBZFczHY0DerEBjxIaTywINIhQtH4FH+wv19g2c5/kWbwmQtJT
+         X2Z1EZJr7BLY9iXwP+T4K/wju0vwaB8a6BNRhraKUMsnEOuxptYmFWbk6dvX8lJSc9sH
+         vq8tf5kmrs+CVMIdAsHJfgaFAsnHwVKuXD2M2XhWIse8GTOBt+S/JoylD8jY/AfQkmAo
+         2E6fSN28+1qgWz5XWqDSYu9H6l5NyiG8hDop7DeLyGEiP9MydI1kne0gnBENOh10PhDc
+         8OCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uWjp5N7/2gycMhkjj4F7Je3PI1NUTqU00O1ySy3vSNY=;
-        b=kVQD8sG60ygwUMGzYC9+TvFHUczwopO6B4Uglbybaysudq/BCTsY50oICY6EhnK86u
-         bBu69+0tkPWsoXNLe2Yx2F/gbh3vw9KD9nIgHY2/gnL7SGqiLXmV63I5f0Ole/Eq1e5d
-         kTHGIZn3AOKyRMsgd5luT7JTI2BwC0KPY7SdCzVbTobHzgLhHv8Nh7pXNwHI6CSnhx4d
-         JM273O7BW5MJXVT3lDE9HTboeT0Zm92fSzpZYoyxa4moxBfwMS7hCjI88ZIaXz4c/ls6
-         vTuqwkBJFsW1ToXZc5DXUldfhBrOUqCTdbi1hD7BzlMvoIkcb7Oq2Ct7USwb+dfo2UzX
-         xPvA==
-X-Gm-Message-State: APjAAAU5oFBymdzLw3dbQeUr4g6WROX2q38mcFA9L/gEt8xCDCk9hztf
-        1ReU2b8d8L2mzAEuHn+ZPBU=
-X-Google-Smtp-Source: APXvYqzyKZ0rTYgJlTdwuX2CPB9g3HFvHZgguGxqods3XjUbGjAvqDQc2M25Gwzjc4EFEDphnvB5Pw==
-X-Received: by 2002:adf:dfd0:: with SMTP id q16mr18856873wrn.235.1558455073159;
-        Tue, 21 May 2019 09:11:13 -0700 (PDT)
+        bh=Btaw5CgxhYac28zaC8EYgFvIIeyjC0ToJx7hPAKP9QY=;
+        b=J7ZAidd1EArBHoNFY4MDL1bUO/sFEmmFIi6vUmR7nmzJPOAzyaMRteYMbW3hcF2//o
+         SFqJaYl02E/8IIFmvyxo1mxWbcK/nUI2Vl9mmmEmUoGnPjvtaOSliJEWa85peqW/SvH7
+         UHrF2+mp0i9dBudFXEkqeAex3CKdjPvIF+ciInv82HqFZigomL5GrbrphUHBGHZu4MpU
+         HPN90XnYbXw964/nb7AySdgz4Z1QTwAsBfFM6j+ktEAmiSxgQ45cRDdQ6pTrysbCLyWk
+         wxAaIgVEPBP0UGHkRMCXpEvHiCTS4cWMG2u1nzNBZjlM0v7dNFwv5ljnwZcGRwirWa24
+         /qSg==
+X-Gm-Message-State: APjAAAVDRc0+EpGlGHwAzmh/rdk3zHwjs4dwfqRixOPO+mjDdui82YIA
+        wfn7dEoBPBFOZU7zWPfu+tY=
+X-Google-Smtp-Source: APXvYqwVGxivnAT1rOZ1NLI0pVzHPTuwtsi/68dewsIH9xOuVl2rdWSn1rWNqkO1JUH72ACvEdzDJQ==
+X-Received: by 2002:adf:f811:: with SMTP id s17mr19122623wrp.72.1558455074155;
+        Tue, 21 May 2019 09:11:14 -0700 (PDT)
 Received: from localhost.localdomain (18.189-60-37.rdns.acropolistelecom.net. [37.60.189.18])
-        by smtp.gmail.com with ESMTPSA id n63sm3891094wmn.38.2019.05.21.09.11.11
+        by smtp.gmail.com with ESMTPSA id n63sm3891094wmn.38.2019.05.21.09.11.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 21 May 2019 09:11:12 -0700 (PDT)
+        Tue, 21 May 2019 09:11:13 -0700 (PDT)
 From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
 To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
@@ -61,9 +61,9 @@ Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         iommu@lists.linux-foundation.org,
         =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v6 4/6] dt-bindings: gpu: mali-midgard: Add H6 mali gpu compatible
-Date:   Tue, 21 May 2019 18:11:00 +0200
-Message-Id: <20190521161102.29620-5-peron.clem@gmail.com>
+Subject: [PATCH v6 5/6] arm64: dts: allwinner: Add ARM Mali GPU node for H6
+Date:   Tue, 21 May 2019 18:11:01 +0200
+Message-Id: <20190521161102.29620-6-peron.clem@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190521161102.29620-1-peron.clem@gmail.com>
 References: <20190521161102.29620-1-peron.clem@gmail.com>
@@ -75,44 +75,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This add the H6 mali compatible in the dt-bindings to later support
-specific implementation.
+Add the mali gpu node to the H6 device-tree.
 
 Signed-off-by: Clément Péron <peron.clem@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/gpu/arm,mali-midgard.txt         | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
-index 2e8bbce35695..4bf17e1cf555 100644
---- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
-@@ -15,6 +15,7 @@ Required properties:
-     + "arm,mali-t860"
-     + "arm,mali-t880"
-   * which must be preceded by one of the following vendor specifics:
-+    + "allwinner,sun50i-h6-mali"
-     + "amlogic,meson-gxm-mali"
-     + "rockchip,rk3288-mali"
-     + "rockchip,rk3399-mali"
-@@ -49,9 +50,15 @@ Vendor-specific bindings
- ------------------------
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index 16c5c3d0fd81..6aad06095c40 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -157,6 +157,20 @@
+ 			allwinner,sram = <&ve_sram 1>;
+ 		};
  
- The Mali GPU is integrated very differently from one SoC to
--another. In order to accomodate those differences, you have the option
-+another. In order to accommodate those differences, you have the option
- to specify one more vendor-specific compatible, among:
- 
-+- "allwinner,sun50i-h6-mali"
-+  Required properties:
-+  - clocks : phandles to core and bus clocks
-+  - clock-names : must contain "core" and "bus"
-+  - resets: phandle to GPU reset line
++		gpu: gpu@1800000 {
++			compatible = "allwinner,sun50i-h6-mali",
++				     "arm,mali-t720";
++			reg = <0x01800000 0x4000>;
++			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "job", "mmu", "gpu";
++			clocks = <&ccu CLK_GPU>, <&ccu CLK_BUS_GPU>;
++			clock-names = "core", "bus";
++			resets = <&ccu RST_BUS_GPU>;
++			status = "disabled";
++		};
 +
- - "amlogic,meson-gxm-mali"
-   Required properties:
-   - resets : Should contain phandles of :
+ 		syscon: syscon@3000000 {
+ 			compatible = "allwinner,sun50i-h6-system-control",
+ 				     "allwinner,sun50i-a64-system-control";
 -- 
 2.17.1
 
