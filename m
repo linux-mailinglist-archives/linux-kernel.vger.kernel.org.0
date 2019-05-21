@@ -2,191 +2,441 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 994D8251F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66CFE25220
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:31:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728462AbfEUO1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 10:27:45 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:56469 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbfEUO1o (ORCPT
+        id S1728467AbfEUObv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 10:31:51 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44938 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728332AbfEUObu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 10:27:44 -0400
-X-Originating-IP: 90.88.22.185
-Received: from localhost (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id A52961C000A;
-        Tue, 21 May 2019 14:27:34 +0000 (UTC)
-Date:   Tue, 21 May 2019 16:27:34 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Frank Lee <tiny.windzz@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        bjorn.andersson@linaro.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        paulmck@linux.ibm.com, stefan.wahren@i2se.com,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Andy Gross <andy.gross@linaro.org>, rui.zhang@intel.com,
-        devicetree@vger.kernel.org, marc.w.gonzalez@free.fr,
-        Eduardo Valentin <edubezval@gmail.com>,
-        enric.balletbo@collabora.com, robh+dt@kernel.org,
-        Jonathan.Cameron@huawei.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        olof@lixom.net, David Miller <davem@davemloft.net>
-Subject: Re: [PATCH 2/3] thermal: sun50i: add thermal driver for h6
-Message-ID: <20190521142734.fvhdomqhuntpop52@flea>
-References: <20190512082614.9045-1-tiny.windzz@gmail.com>
- <20190512082614.9045-3-tiny.windzz@gmail.com>
- <20190512133930.t5txssl7mou2gljt@flea>
- <CAEExFWvcMbiCJ4HD0UAtv1P6AuBJ=oUdmhu886BNZhrRz483Ug@mail.gmail.com>
- <20190517073634.izdmba3yqvxviyg3@flea>
- <CAEExFWtNhTqLR+v3o6vn0Y4L65i_XsrEeiex6DNLEPEkhseCjA@mail.gmail.com>
- <20190521080515.qlni2lnmcwh7itl7@flea>
- <20190521102721.5hgks6guzlhubj6d@core.my.home>
+        Tue, 21 May 2019 10:31:50 -0400
+Received: by mail-qt1-f196.google.com with SMTP id f24so20675125qtk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 07:31:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=PyrGJVaDIDa8mPCeaWnN0LHsz5UJOyZm9YX3+HrlLJE=;
+        b=aWKTwUmgpBFUh6N1mK0ydwpN0IMSzV8KFBCGc9S9QEgq2U6sboJ+AzaiUVzTIxCciv
+         hvSN1dJ8Pxms1H3dAAV8uZIYhC6QSbluSEw923wvF8x3AftWbeSYJsmVOys3xbnHHl3j
+         F79TxMhwdcHbaJvNqNb9hb4cR5Z0+rJKqFNz33Jt9kTFO9NuM8Ag5gJKqP7r6cujZA5Y
+         kLc0u17+nwbBpRHvKwwxXZksGC6F5kJC+Tbq97vIPHI0Jjh0VQvHOD2xZOAV9F0hIW7c
+         GvhxWIpUltgZjMNNwafxnN1W+ztT3O2Zow9NrZwW9THRyXzYmiQTnJnf0nMWQ2ZTwytD
+         LJgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=PyrGJVaDIDa8mPCeaWnN0LHsz5UJOyZm9YX3+HrlLJE=;
+        b=tn3inswHcYQyn8PSDfX0emomExFRciEOZq+lUxB9dJSoYifb4xJkT0rcS3ILwMr3TR
+         J7k2wzUip9sSW5m/GGe+IXy8qNfa0NxrPO5DAkAJBogwBkmKQ349MgN3eA1RP84jxRfM
+         5iiqJxzcljJO+aGK4wSpoZy4e54IhJO+vYfyzrWlEjN82Fc8hsvEELhQwzPblYCeNy6x
+         m1WWuwCWeWOiJHwSx4OD51iurLFh64Y7H29PQFVuqhNciu5qHsOCCv1Ga5OsvbD1bhjO
+         nEoHz9zEXRwS93H6XOGtm523dJoed/PnIY/KZEWglFuUgxtJCoSoCOectIFwEWbZ/5FF
+         uy5w==
+X-Gm-Message-State: APjAAAXZtGfjDDJciQV4wM+1W9LF5amKmIVC/ew4VjGPECFzuGdIWL2i
+        QlT16oONYYEUr0oqGIjf/5c/Zp9nd8U=
+X-Google-Smtp-Source: APXvYqznmeTbRfvbVfhyCQazVtnh+RM5RRICrQnjMja4GPu1+E6Fbw6oty1lE1j7VVDaksgBFgRLqw==
+X-Received: by 2002:a0c:8b6f:: with SMTP id d47mr18658733qvc.32.1558449109339;
+        Tue, 21 May 2019 07:31:49 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id x23sm8460011qto.20.2019.05.21.07.31.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 21 May 2019 07:31:48 -0700 (PDT)
+Date:   Tue, 21 May 2019 10:31:48 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Andrzej Hajda <a.hajda@samsung.com>
+Cc:     Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH v4 03/11] drm: Add atomic variants for bridge
+ enable/disable
+Message-ID: <20190521143148.GB17077@art_vandelay>
+References: <20190508160920.144739-1-sean@poorly.run>
+ <CGME20190508160937epcas2p36170c1528618f4a187506e704f729951@epcas2p3.samsung.com>
+ <20190508160920.144739-4-sean@poorly.run>
+ <04aef058-fd7f-d37f-de84-6d05a66341bd@samsung.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mvmiwnrklxk7dcbu"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190521102721.5hgks6guzlhubj6d@core.my.home>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <04aef058-fd7f-d37f-de84-6d05a66341bd@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---mvmiwnrklxk7dcbu
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, May 21, 2019 at 12:27:21PM +0200, Ond=C5=99ej Jirman wrote:
-> On Tue, May 21, 2019 at 10:05:15AM +0200, Maxime Ripard wrote:
-> > On Sat, May 18, 2019 at 01:27:39AM +0800, Frank Lee wrote:
-> > > On Fri, May 17, 2019 at 3:36 PM Maxime Ripard <maxime.ripard@bootlin.=
-com> wrote:
-> > > >
-> > > > On Fri, May 17, 2019 at 01:51:56AM +0800, Frank Lee wrote:
-> > > > > > > +struct sun50i_thermal_chip {
-> > > > > > > +     int     sensor_num;
-> > > > > > > +     int     offset;
-> > > > > > > +     int     scale;
-> > > > > > > +     int     ft_deviation;
-> > > > > > > +     int     temp_calib_base;
-> > > > > > > +     int     temp_data_base;
-> > > > > > > +     int     (*enable)(struct tsens_device *tmdev);
-> > > > > > > +     int     (*disable)(struct tsens_device *tmdev);
-> > > > > > > +};
-> > > > > >
-> > > > > > I'm not super fond of having a lot of quirks that are not neede=
-d. If
-> > > > > > we ever need those quirks when adding support for a new SoC, th=
-en
-> > > > > > yeah, we should totally have some, but only when and if it's ne=
-eded.
-> > > > > >
-> > > > > > Otherwise, the driver is more complicated for no particular rea=
-son.
-> > > > >
-> > > > > This is unavoidable because of the difference in soc.
-> > > >
-> > > > I know, but this isn't my point.
-> > > >
-> > > > My point is that at this time of the driver development, we don't k=
-now
-> > > > what is going to be needed to support all of those SoCs.
-> > > >
-> > > > Some of the parameters you added might not be needed, some paramete=
-rs
-> > > > might be missing, we don't know. So let's keep it simple for now.
-> > > >
-> > > > > > > +static int tsens_probe(struct platform_device *pdev)
-> > > > > > > +{
-> > > > > > > +     struct tsens_device *tmdev;
-> > > > > > > +     struct device *dev =3D &pdev->dev;
-> > > > > > > +     int ret;
-> > > > > > > +
-> > > > > > > +     tmdev =3D devm_kzalloc(dev, sizeof(*tmdev), GFP_KERNEL);
-> > > > > > > +     if (!tmdev)
-> > > > > > > +             return -ENOMEM;
-> > > > > > > +
-> > > > > > > +     tmdev->dev =3D dev;
-> > > > > > > +     tmdev->chip =3D of_device_get_match_data(&pdev->dev);
-> > > > > > > +     if (!tmdev->chip)
-> > > > > > > +             return -EINVAL;
-> > > > > > > +
-> > > > > > > +     ret =3D tsens_init(tmdev);
-> > > > > > > +     if (ret)
-> > > > > > > +             return ret;
-> > > > > > > +
-> > > > > > > +     ret =3D tsens_register(tmdev);
-> > > > > > > +     if (ret)
-> > > > > > > +             return ret;
-> > > > > > > +
-> > > > > > > +     ret =3D tmdev->chip->enable(tmdev);
-> > > > > > > +     if (ret)
-> > > > > > > +             return ret;
-> > > > > > >
-> > > > > > > +     platform_set_drvdata(pdev, tmdev);
-> > > > > >
-> > > > > > Your registration should be the very last thing you do. Otherwi=
-se, you
-> > > > > > have a small window where the get_temp callback can be called, =
-but the
-> > > > > > driver will not be functional yet.
-> > > > >
-> > > > > No. Anyway, ths data qcquisition is ms level.
-> > > >
-> > > > That's kind of irrelevant. There's nothing preventing get_temp to be
-> > > > called right away.
-> > >
-> > > As Ond=C5=99ej said,
-> > >
-> > > Registration after enabling will lead to call tz update on non-regist=
-ered tz
-> > > from an interrupt handler.
+On Tue, May 21, 2019 at 10:58:06AM +0200, Andrzej Hajda wrote:
+> On 08.05.2019 18:09, Sean Paul wrote:
+> > From: Sean Paul <seanpaul@chromium.org>
 > >
-> > I'm probably missing something but you're not using the interrupts, so
-> > how could an interrupt handler call it?
+> > This patch adds atomic variants for all of
+> > pre_enable/enable/disable/post_disable bridge functions. These will be
+> > called from the appropriate atomic helper functions. If the bridge
+> > driver doesn't implement the atomic version of the function, we will
+> > fall back to the vanilla implementation.
 > >
-> > Also, other drivers seem to be doing that just fine (mtk_thermal for
-> > example), so surely there's a way?
->
-> Last version is using the interrupts.
->
-> Drivers do it in various ways. For example imx_thermal (and others like
-> hisi_thermal) does it the suggested way. It enables interrupts after ther=
-mal
-> zone registration, so that IRQ handler doesn't get invoked before the tzd=
- is
-> registered.
+> > Note that some drivers call drm_bridge_disable directly, and these cases
+> > are not covered. It's up to the driver to decide whether to implement
+> > both atomic_disable and disable, or if it's not necessary.
+> >
+> > Changes in v3:
+> > - Added to the patchset
+> > Changes in v4:
+> > - Fix up docbook references (Daniel)
+> >
+> > Link to v3: https://patchwork.freedesktop.org/patch/msgid/20190502194956.218441-4-sean@poorly.run
+> >
+> > Cc: Daniel Vetter <daniel@ffwll.ch>
+> > Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> 
+> 
+> In general patch looks OK, ie. it correctly mimics old behavior with
+> added atomic state.
+> 
+> However I have mixed feelings about it, because of the whole idea that
+> order of enabling/disabling bridges in the chain is the same for all
+> bridge chains is just incorrect. It depends on link types between
+> bridges, there are also multi-in/out bridges which does not fit at all
+> in this model. Due to this lack of flexibility developers either
+> explicitly avoids drm_bridge->next chaining in favor of custom
+> solutions, or worse they forcibly try to fit into this model by either
+> violating hw specs, either by introducing hacks into the drivers.
+> 
+> The simplest solution for this would be to just let parent bridge calls
+> children's callbacks explicitly (as exynos_drm_dsi and vc4_dsi do).
 
-Enabling the interrupts after the registration makes sense, yes, but
-filling the device private pointer with the private structure,
-enabling the clocks, setting up the controller and so on can be done
-before.
+Yeah, I completely agree that the bridge chaining is worn out. I also agree that
+letting the parent call the child would alleviate some of this. However I do
+worry that relying on the driver to order the calls correctly might be too much
+to ask. I think the pattern for handling this type of thing is to add bridge
+helper functions that allow drivers to override the default behavior when a
+tricky situation arises. This would allow us to break down the bridge midlayer
+and more tightly integrate it into the atomic world.
 
-Maxime
+> 
+> But since it is not a blocker I will left it up to you :) :
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+That said, agree that it's out of scope for this project. If you like the above,
+I can add a TODO item to the list in a follow-up patch.
 
---mvmiwnrklxk7dcbu
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> 
+> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOQK1gAKCRDj7w1vZxhR
-xaQIAQCkBPqHwCa6/NpbfkPd6mG52czynrHCcU7cjXcL596AWwEA3MeGcwawbKsZ
-o97K9dmQ8waHGYenijOIsp37ffbo/Aw=
-=G2Q2
------END PGP SIGNATURE-----
+Thank you!
 
---mvmiwnrklxk7dcbu--
+Sean
+
+> 
+> 
+> Regards
+> 
+> Andrzej
+> 
+> 
+> > ---
+> >  drivers/gpu/drm/drm_atomic_helper.c |   8 +-
+> >  drivers/gpu/drm/drm_bridge.c        | 110 ++++++++++++++++++++++++++++
+> >  include/drm/drm_bridge.h            | 106 +++++++++++++++++++++++++++
+> >  3 files changed, 220 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> > index ccf01831f265..e8b7187a8494 100644
+> > --- a/drivers/gpu/drm/drm_atomic_helper.c
+> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> > @@ -995,7 +995,7 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
+> >  		 * Each encoder has at most one connector (since we always steal
+> >  		 * it away), so we won't call disable hooks twice.
+> >  		 */
+> > -		drm_bridge_disable(encoder->bridge);
+> > +		drm_atomic_bridge_disable(encoder->bridge, old_state);
+> >  
+> >  		/* Right function depends upon target state. */
+> >  		if (funcs) {
+> > @@ -1009,7 +1009,7 @@ disable_outputs(struct drm_device *dev, struct drm_atomic_state *old_state)
+> >  				funcs->dpms(encoder, DRM_MODE_DPMS_OFF);
+> >  		}
+> >  
+> > -		drm_bridge_post_disable(encoder->bridge);
+> > +		drm_atomic_bridge_post_disable(encoder->bridge, old_state);
+> >  	}
+> >  
+> >  	for_each_oldnew_crtc_in_state(old_state, crtc, old_crtc_state, new_crtc_state, i) {
+> > @@ -1308,7 +1308,7 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
+> >  		 * Each encoder has at most one connector (since we always steal
+> >  		 * it away), so we won't call enable hooks twice.
+> >  		 */
+> > -		drm_bridge_pre_enable(encoder->bridge);
+> > +		drm_atomic_bridge_pre_enable(encoder->bridge, old_state);
+> >  
+> >  		if (funcs) {
+> >  			if (funcs->atomic_enable)
+> > @@ -1319,7 +1319,7 @@ void drm_atomic_helper_commit_modeset_enables(struct drm_device *dev,
+> >  				funcs->commit(encoder);
+> >  		}
+> >  
+> > -		drm_bridge_enable(encoder->bridge);
+> > +		drm_atomic_bridge_enable(encoder->bridge, old_state);
+> >  	}
+> >  
+> >  	drm_atomic_helper_commit_writebacks(dev, old_state);
+> > diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> > index 138b2711d389..cba537c99e43 100644
+> > --- a/drivers/gpu/drm/drm_bridge.c
+> > +++ b/drivers/gpu/drm/drm_bridge.c
+> > @@ -352,6 +352,116 @@ void drm_bridge_enable(struct drm_bridge *bridge)
+> >  }
+> >  EXPORT_SYMBOL(drm_bridge_enable);
+> >  
+> > +/**
+> > + * drm_atomic_bridge_disable - disables all bridges in the encoder chain
+> > + * @bridge: bridge control structure
+> > + * @state: atomic state being committed
+> > + *
+> > + * Calls &drm_bridge_funcs.atomic_disable (falls back on
+> > + * &drm_bridge_funcs.disable) op for all the bridges in the encoder chain,
+> > + * starting from the last bridge to the first. These are called before calling
+> > + * &drm_encoder_helper_funcs.atomic_disable
+> > + *
+> > + * Note: the bridge passed should be the one closest to the encoder
+> > + */
+> > +void drm_atomic_bridge_disable(struct drm_bridge *bridge,
+> > +			       struct drm_atomic_state *state)
+> > +{
+> > +	if (!bridge)
+> > +		return;
+> > +
+> > +	drm_atomic_bridge_disable(bridge->next, state);
+> > +
+> > +	if (bridge->funcs->atomic_disable)
+> > +		bridge->funcs->atomic_disable(bridge, state);
+> > +	else if (bridge->funcs->disable)
+> > +		bridge->funcs->disable(bridge);
+> > +}
+> > +EXPORT_SYMBOL(drm_atomic_bridge_disable);
+> > +
+> > +/**
+> > + * drm_atomic_bridge_post_disable - cleans up after disabling all bridges in the
+> > + *				    encoder chain
+> > + * @bridge: bridge control structure
+> > + * @state: atomic state being committed
+> > + *
+> > + * Calls &drm_bridge_funcs.atomic_post_disable (falls back on
+> > + * &drm_bridge_funcs.post_disable) op for all the bridges in the encoder chain,
+> > + * starting from the first bridge to the last. These are called after completing
+> > + * &drm_encoder_helper_funcs.atomic_disable
+> > + *
+> > + * Note: the bridge passed should be the one closest to the encoder
+> > + */
+> > +void drm_atomic_bridge_post_disable(struct drm_bridge *bridge,
+> > +				    struct drm_atomic_state *state)
+> > +{
+> > +	if (!bridge)
+> > +		return;
+> > +
+> > +	if (bridge->funcs->atomic_post_disable)
+> > +		bridge->funcs->atomic_post_disable(bridge, state);
+> > +	else if (bridge->funcs->post_disable)
+> > +		bridge->funcs->post_disable(bridge);
+> > +
+> > +	drm_atomic_bridge_post_disable(bridge->next, state);
+> > +}
+> > +EXPORT_SYMBOL(drm_atomic_bridge_post_disable);
+> > +
+> > +/**
+> > + * drm_atomic_bridge_pre_enable - prepares for enabling all bridges in the
+> > + *				  encoder chain
+> > + * @bridge: bridge control structure
+> > + * @state: atomic state being committed
+> > + *
+> > + * Calls &drm_bridge_funcs.atomic_pre_enable (falls back on
+> > + * &drm_bridge_funcs.pre_enable) op for all the bridges in the encoder chain,
+> > + * starting from the last bridge to the first. These are called before calling
+> > + * &drm_encoder_helper_funcs.atomic_enable
+> > + *
+> > + * Note: the bridge passed should be the one closest to the encoder
+> > + */
+> > +void drm_atomic_bridge_pre_enable(struct drm_bridge *bridge,
+> > +				  struct drm_atomic_state *state)
+> > +{
+> > +	if (!bridge)
+> > +		return;
+> > +
+> > +	drm_atomic_bridge_pre_enable(bridge->next, state);
+> > +
+> > +	if (bridge->funcs->atomic_pre_enable)
+> > +		bridge->funcs->atomic_pre_enable(bridge, state);
+> > +	else if (bridge->funcs->pre_enable)
+> > +		bridge->funcs->pre_enable(bridge);
+> > +}
+> > +EXPORT_SYMBOL(drm_atomic_bridge_pre_enable);
+> > +
+> > +/**
+> > + * drm_atomic_bridge_enable - enables all bridges in the encoder chain
+> > + * @bridge: bridge control structure
+> > + * @state: atomic state being committed
+> > + *
+> > + * Calls &drm_bridge_funcs.atomic_enable (falls back on
+> > + * &drm_bridge_funcs.enable) op for all the bridges in the encoder chain,
+> > + * starting from the first bridge to the last. These are called after completing
+> > + * &drm_encoder_helper_funcs.atomic_enable
+> > + *
+> > + * Note: the bridge passed should be the one closest to the encoder
+> > + */
+> > +void drm_atomic_bridge_enable(struct drm_bridge *bridge,
+> > +			      struct drm_atomic_state *state)
+> > +{
+> > +	if (!bridge)
+> > +		return;
+> > +
+> > +	if (bridge->funcs->atomic_enable)
+> > +		bridge->funcs->atomic_enable(bridge, state);
+> > +	else if (bridge->funcs->enable)
+> > +		bridge->funcs->enable(bridge);
+> > +
+> > +	drm_atomic_bridge_enable(bridge->next, state);
+> > +}
+> > +EXPORT_SYMBOL(drm_atomic_bridge_enable);
+> > +
+> >  #ifdef CONFIG_OF
+> >  /**
+> >   * of_drm_find_bridge - find the bridge corresponding to the device node in
+> > diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> > index d4428913a4e1..322801884814 100644
+> > --- a/include/drm/drm_bridge.h
+> > +++ b/include/drm/drm_bridge.h
+> > @@ -237,6 +237,103 @@ struct drm_bridge_funcs {
+> >  	 * The enable callback is optional.
+> >  	 */
+> >  	void (*enable)(struct drm_bridge *bridge);
+> > +
+> > +	/**
+> > +	 * @atomic_pre_enable:
+> > +	 *
+> > +	 * This callback should enable the bridge. It is called right before
+> > +	 * the preceding element in the display pipe is enabled. If the
+> > +	 * preceding element is a bridge this means it's called before that
+> > +	 * bridge's @atomic_pre_enable or @pre_enable function. If the preceding
+> > +	 * element is a &drm_encoder it's called right before the encoder's
+> > +	 * &drm_encoder_helper_funcs.atomic_enable hook.
+> > +	 *
+> > +	 * The display pipe (i.e. clocks and timing signals) feeding this bridge
+> > +	 * will not yet be running when this callback is called. The bridge must
+> > +	 * not enable the display link feeding the next bridge in the chain (if
+> > +	 * there is one) when this callback is called.
+> > +	 *
+> > +	 * Note that this function will only be invoked in the context of an
+> > +	 * atomic commit. It will not be invoked from &drm_bridge_pre_enable. It
+> > +	 * would be prudent to also provide an implementation of @pre_enable if
+> > +	 * you are expecting driver calls into &drm_bridge_pre_enable.
+> > +	 *
+> > +	 * The @atomic_pre_enable callback is optional.
+> > +	 */
+> > +	void (*atomic_pre_enable)(struct drm_bridge *bridge,
+> > +				  struct drm_atomic_state *state);
+> > +
+> > +	/**
+> > +	 * @atomic_enable:
+> > +	 *
+> > +	 * This callback should enable the bridge. It is called right after
+> > +	 * the preceding element in the display pipe is enabled. If the
+> > +	 * preceding element is a bridge this means it's called after that
+> > +	 * bridge's @atomic_enable or @enable function. If the preceding element
+> > +	 * is a &drm_encoder it's called right after the encoder's
+> > +	 * &drm_encoder_helper_funcs.atomic_enable hook.
+> > +	 *
+> > +	 * The bridge can assume that the display pipe (i.e. clocks and timing
+> > +	 * signals) feeding it is running when this callback is called. This
+> > +	 * callback must enable the display link feeding the next bridge in the
+> > +	 * chain if there is one.
+> > +	 *
+> > +	 * Note that this function will only be invoked in the context of an
+> > +	 * atomic commit. It will not be invoked from &drm_bridge_enable. It
+> > +	 * would be prudent to also provide an implementation of @enable if
+> > +	 * you are expecting driver calls into &drm_bridge_enable.
+> > +	 *
+> > +	 * The enable callback is optional.
+> > +	 */
+> > +	void (*atomic_enable)(struct drm_bridge *bridge,
+> > +			      struct drm_atomic_state *state);
+> > +	/**
+> > +	 * @atomic_disable:
+> > +	 *
+> > +	 * This callback should disable the bridge. It is called right before
+> > +	 * the preceding element in the display pipe is disabled. If the
+> > +	 * preceding element is a bridge this means it's called before that
+> > +	 * bridge's @atomic_disable or @disable vfunc. If the preceding element
+> > +	 * is a &drm_encoder it's called right before the
+> > +	 * &drm_encoder_helper_funcs.atomic_disable hook.
+> > +	 *
+> > +	 * The bridge can assume that the display pipe (i.e. clocks and timing
+> > +	 * signals) feeding it is still running when this callback is called.
+> > +	 *
+> > +	 * Note that this function will only be invoked in the context of an
+> > +	 * atomic commit. It will not be invoked from &drm_bridge_disable. It
+> > +	 * would be prudent to also provide an implementation of @disable if
+> > +	 * you are expecting driver calls into &drm_bridge_disable.
+> > +	 *
+> > +	 * The disable callback is optional.
+> > +	 */
+> > +	void (*atomic_disable)(struct drm_bridge *bridge,
+> > +			       struct drm_atomic_state *state);
+> > +
+> > +	/**
+> > +	 * @atomic_post_disable:
+> > +	 *
+> > +	 * This callback should disable the bridge. It is called right after the
+> > +	 * preceding element in the display pipe is disabled. If the preceding
+> > +	 * element is a bridge this means it's called after that bridge's
+> > +	 * @atomic_post_disable or @post_disable function. If the preceding
+> > +	 * element is a &drm_encoder it's called right after the encoder's
+> > +	 * &drm_encoder_helper_funcs.atomic_disable hook.
+> > +	 *
+> > +	 * The bridge must assume that the display pipe (i.e. clocks and timing
+> > +	 * signals) feeding it is no longer running when this callback is
+> > +	 * called.
+> > +	 *
+> > +	 * Note that this function will only be invoked in the context of an
+> > +	 * atomic commit. It will not be invoked from &drm_bridge_post_disable.
+> > +	 * It would be prudent to also provide an implementation of
+> > +	 * @post_disable if you are expecting driver calls into
+> > +	 * &drm_bridge_post_disable.
+> > +	 *
+> > +	 * The post_disable callback is optional.
+> > +	 */
+> > +	void (*atomic_post_disable)(struct drm_bridge *bridge,
+> > +				    struct drm_atomic_state *state);
+> >  };
+> >  
+> >  /**
+> > @@ -314,6 +411,15 @@ void drm_bridge_mode_set(struct drm_bridge *bridge,
+> >  void drm_bridge_pre_enable(struct drm_bridge *bridge);
+> >  void drm_bridge_enable(struct drm_bridge *bridge);
+> >  
+> > +void drm_atomic_bridge_disable(struct drm_bridge *bridge,
+> > +			       struct drm_atomic_state *state);
+> > +void drm_atomic_bridge_post_disable(struct drm_bridge *bridge,
+> > +				    struct drm_atomic_state *state);
+> > +void drm_atomic_bridge_pre_enable(struct drm_bridge *bridge,
+> > +				  struct drm_atomic_state *state);
+> > +void drm_atomic_bridge_enable(struct drm_bridge *bridge,
+> > +			      struct drm_atomic_state *state);
+> > +
+> >  #ifdef CONFIG_DRM_PANEL_BRIDGE
+> >  struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
+> >  					u32 connector_type);
+> 
+> 
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
