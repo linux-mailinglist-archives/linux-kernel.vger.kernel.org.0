@@ -2,72 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3FA125A0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 23:39:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B2D925A17
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 23:42:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbfEUVjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 17:39:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57652 "EHLO mail.kernel.org"
+        id S1727734AbfEUVlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 17:41:40 -0400
+Received: from mga11.intel.com ([192.55.52.93]:32413 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727222AbfEUVjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 17:39:05 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5E62217F9;
-        Tue, 21 May 2019 21:39:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558474744;
-        bh=/E2M/zM6R7+VpJ4MhZxa0lwH2AQ/HgsCo6xHt+0dCGs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PwHD0pwIPkIfaju6hnIxU56GLE7PcZmdt4s02dI9PAvFKibbhdGoQ3f3jeHxVlRDJ
-         +HmKW6z44JaF+gRY16MTniwsdHSsCOW25q0fwn3IY07meW0G0yw6iTBZFsXLFOoLix
-         VCWif9SJwKG/URJ7DzXCeSEJP2uZAG2KAGmWxJ3Q=
-Subject: Re: [PATCH 4.9 00/44] 4.9.178-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1726907AbfEUVlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 17:41:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 14:41:38 -0700
+X-ExtLoop1: 1
+Received: from otc-icl-cdi-210.jf.intel.com ([10.54.55.28])
+  by orsmga006.jf.intel.com with ESMTP; 21 May 2019 14:41:38 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, acme@kernel.org, mingo@redhat.com,
         linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190520115230.720347034@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <d517b2e2-7234-47f1-4403-499de8fefdd4@kernel.org>
-Date:   Tue, 21 May 2019 15:39:03 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190520115230.720347034@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Cc:     tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 0/9] TopDown metrics support for Icelake
+Date:   Tue, 21 May 2019 14:40:46 -0700
+Message-Id: <20190521214055.31060-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/20/19 6:13 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.178 release.
-> There are 44 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed 22 May 2019 11:50:58 AM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.178-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Compiled and booted on my test system. No dmesg regressions.
+Icelake has support for measuring the level 1 TopDown metrics
+directly in hardware. This is implemented by an additional METRICS
+register, and a new Fixed Counter 3 that measures pipeline SLOTS.
 
-thanks,
--- Shuah
+Four TopDown metric events as separate perf events, which map to
+internal METRICS register, are exposed. They are topdown-retiring,
+topdown-bad-spec, topdown-fe-bound and topdown-be-bound.
+Those events do not exist in hardware, but can be allocated by the
+scheduler. We use a special 0xff event code, which is reserved for
+software. The value of TopDown metric events can be calculated by
+multiplying the METRICS (percentage) register with SLOTS fixed counter.
+
+New in Icelake
+- Do not require generic counters. This allows to collect TopDown always
+  in addition to other events.
+- Measuring TopDown per thread/process instead of only per core
+
+Limitation
+- To get accurate result and avoid reading the METRICS register multiple
+  times, the TopDown metrics events and SLOTS event have to be in the
+  same group.
+- METRICS and SLOTS registers have to be cleared after each read by SW.
+  That is to prevent the lose of precision and a known side effect of
+  METRICS register.
+- Cannot do sampling read SLOTS and TopDown metric events
+
+Please refer SDM Vol3, 18.3.9.3 Performance Metrics for the details of
+TopDown metrics.
+
+Andi Kleen (7):
+  perf/core: Support a REMOVE transaction
+  perf/x86/intel: Basic support for metrics counters
+  perf/x86/intel: Support overflows on SLOTS
+  perf/x86/intel: Set correct weight for TopDown metrics events
+  perf/x86/intel: Export new TopDown metrics events for Icelake
+  perf, tools, stat: Support new per thread TopDown metrics
+  perf, tools: Add documentation for topdown metrics
+
+Kan Liang (2):
+  perf/x86/intel: Support hardware TopDown metrics
+  perf/x86/intel: Disable sampling read slots and topdown
+
+ arch/x86/events/core.c                 |  63 ++++++--
+ arch/x86/events/intel/core.c           | 284 +++++++++++++++++++++++++++++++--
+ arch/x86/events/perf_event.h           |  31 ++++
+ arch/x86/include/asm/msr-index.h       |   3 +
+ arch/x86/include/asm/perf_event.h      |  30 ++++
+ include/linux/perf_event.h             |   7 +
+ kernel/events/core.c                   |   5 +
+ tools/perf/Documentation/perf-stat.txt |   9 +-
+ tools/perf/Documentation/topdown.txt   | 223 ++++++++++++++++++++++++++
+ tools/perf/builtin-stat.c              |  24 +++
+ tools/perf/util/stat-shadow.c          |  89 +++++++++++
+ tools/perf/util/stat.c                 |   4 +
+ tools/perf/util/stat.h                 |   8 +
+ 13 files changed, 754 insertions(+), 26 deletions(-)
+ create mode 100644 tools/perf/Documentation/topdown.txt
+
+-- 
+2.14.5
 
