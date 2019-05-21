@@ -2,166 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F38BF245FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 04:30:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0BA825BF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 04:30:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbfEUCaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 22:30:30 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:9611 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727613AbfEUCaa (ORCPT
+        id S1728227AbfEVC34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 22:29:56 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42324 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbfEVC34 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 22:30:30 -0400
-X-UUID: aaf9d9b149044d459b9dfb05ac2c860e-20190521
-X-UUID: aaf9d9b149044d459b9dfb05ac2c860e-20190521
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1668941089; Tue, 21 May 2019 10:30:23 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 21 May 2019 10:30:21 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 21 May 2019 10:30:21 +0800
-Message-ID: <1558405821.25526.2.camel@mtksdaap41>
-Subject: Re: [PATCH v7 08/12] soc: mediatek: cmdq: change the type of input
- parameter
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-CC:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        "YT Shen" <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <ginny.chen@mediatek.com>
-Date:   Tue, 21 May 2019 10:30:21 +0800
-In-Reply-To: <20190521011108.40428-9-bibby.hsieh@mediatek.com>
-References: <20190521011108.40428-1-bibby.hsieh@mediatek.com>
-         <20190521011108.40428-9-bibby.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: E88ADBB64ED6F6756962BB9AC0D0364B8ABFDF368B7F2FE8B55D8484F273F8A92000:8
-X-MTK:  N
+        Tue, 21 May 2019 22:29:56 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4M2T0FR038593;
+        Wed, 22 May 2019 02:29:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=ZXUeQYgZB3O0V7HnlxDvOw49BMFt48EfbIn16aNTl/g=;
+ b=pzLjNCWji1W1SDF9Bw9C/ZEezK9tc+A83lNgJZbqCd02orKUVbRCZ6qlapXr3wUJEjWW
+ yLGMlFypDraEnHBeGQ9uzFJpoLUMciJGWWBWytfD26rCDCEcH8OtgPkLg0im6fI+cWt3
+ BqvzhIaHlvsiXoPR/KNtJt/gJM/M5STmS02611bN5GjX6Hv1LQV2EW3iIZMRQHL2irDk
+ WLTKbu8N2tA/IOBxz44m/x7nNsoV0lGg4Oe5Rs83FF9aYup0Z8N0NR0QmTUNlDDo5InV
+ +f0mDTzN3f6jUNTmvXopZ2NJCKyUsy9y39NETflGe5gjn9l1Se6pqsc/++3Mc0ZI66xL BA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2smsk58rtk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 May 2019 02:29:00 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4M2SDh1017840;
+        Wed, 22 May 2019 02:28:59 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2smsgsawm3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 May 2019 02:28:59 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4M2SphF018805;
+        Wed, 22 May 2019 02:28:51 GMT
+Received: from z2.cn.oracle.com (/10.182.69.87)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 22 May 2019 02:28:50 +0000
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc:     paulmck@linux.ibm.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+        joel@joelfernandes.org, corbet@lwn.net, tglx@linutronix.de,
+        mingo@kernel.org, gregkh@linuxfoundation.org,
+        keescook@chromium.org, srinivas.eeda@oracle.com,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Subject: [PATCH v3] doc: kernel-parameters.txt: fix documentation of nmi_watchdog parameter
+Date:   Tue, 21 May 2019 10:32:08 +0800
+Message-Id: <1558405928-29449-1-git-send-email-zhenzhong.duan@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9264 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905220015
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9264 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905220015
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Bibby:
+The default behavior of hardlockup depends on the config of
+CONFIG_BOOTPARAM_HARDLOCKUP_PANIC.
 
-On Tue, 2019-05-21 at 09:11 +0800, Bibby Hsieh wrote:
-> According to the cmdq hardware design, the subsys is u8,
-> the offset is u16 and the event id is u16.
-> This patch changes the type of subsys, offset and event id
-> to the correct type.
+Fix the description of nmi_watchdog to make it clear.
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
+Suggested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-doc@vger.kernel.org
+---
+ v3: add Suggested-by and Acked-by
+ v2: fix description using words suggested by Steven Rostedt
 
-> 
-> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-cmdq-helper.c | 10 +++++-----
->  include/linux/soc/mediatek/mtk-cmdq.h  | 10 +++++-----
->  2 files changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-> index 082b8978651e..7aa0517ff2f3 100644
-> --- a/drivers/soc/mediatek/mtk-cmdq-helper.c
-> +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-> @@ -136,7 +136,7 @@ static int cmdq_pkt_append_command(struct cmdq_pkt *pkt, enum cmdq_code code,
->  	return 0;
->  }
->  
-> -int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 subsys, u32 offset, u32 value)
-> +int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32 value)
->  {
->  	u32 arg_a = (offset & CMDQ_ARG_A_WRITE_MASK) |
->  		    (subsys << CMDQ_SUBSYS_SHIFT);
-> @@ -145,8 +145,8 @@ int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 subsys, u32 offset, u32 value)
->  }
->  EXPORT_SYMBOL(cmdq_pkt_write);
->  
-> -int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 subsys,
-> -			u32 offset, u32 value, u32 mask)
-> +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys,
-> +			u16 offset, u32 value, u32 mask)
->  {
->  	u32 offset_mask = offset;
->  	int err = 0;
-> @@ -161,7 +161,7 @@ int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 subsys,
->  }
->  EXPORT_SYMBOL(cmdq_pkt_write_mask);
->  
-> -int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event)
-> +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u16 event)
->  {
->  	u32 arg_b;
->  
-> @@ -181,7 +181,7 @@ int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event)
->  }
->  EXPORT_SYMBOL(cmdq_pkt_wfe);
->  
-> -int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u32 event)
-> +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u16 event)
->  {
->  	if (event >= CMDQ_MAX_EVENT)
->  		return -EINVAL;
-> diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-> index 39d813dde4b4..9618debb9ceb 100644
-> --- a/include/linux/soc/mediatek/mtk-cmdq.h
-> +++ b/include/linux/soc/mediatek/mtk-cmdq.h
-> @@ -66,7 +66,7 @@ void cmdq_pkt_destroy(struct cmdq_pkt *pkt);
->   *
->   * Return: 0 for success; else the error code is returned
->   */
-> -int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 subsys, u32 offset, u32 value);
-> +int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32 value);
->  
->  /**
->   * cmdq_pkt_write_mask() - append write command with mask to the CMDQ packet
-> @@ -78,8 +78,8 @@ int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 subsys, u32 offset, u32 value);
->   *
->   * Return: 0 for success; else the error code is returned
->   */
-> -int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 subsys,
-> -			u32 offset, u32 value, u32 mask);
-> +int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys,
-> +			u16 offset, u32 value, u32 mask);
->  
->  /**
->   * cmdq_pkt_wfe() - append wait for event command to the CMDQ packet
-> @@ -88,7 +88,7 @@ int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 subsys,
->   *
->   * Return: 0 for success; else the error code is returned
->   */
-> -int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event);
-> +int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u16 event);
->  
->  /**
->   * cmdq_pkt_clear_event() - append clear event command to the CMDQ packet
-> @@ -97,7 +97,7 @@ int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event);
->   *
->   * Return: 0 for success; else the error code is returned
->   */
-> -int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u32 event);
-> +int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u16 event);
->  
->  /**
->   * cmdq_pkt_flush_async() - trigger CMDQ to asynchronously execute the CMDQ
+ Documentation/admin-guide/kernel-parameters.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 08df588..b9d4358 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2805,8 +2805,9 @@
+ 			0 - turn hardlockup detector in nmi_watchdog off
+ 			1 - turn hardlockup detector in nmi_watchdog on
+ 			When panic is specified, panic when an NMI watchdog
+-			timeout occurs (or 'nopanic' to override the opposite
+-			default). To disable both hard and soft lockup detectors,
++			timeout occurs (or 'nopanic' to not panic on an NMI
++			watchdog, if CONFIG_BOOTPARAM_HARDLOCKUP_PANIC is set)
++			To disable both hard and soft lockup detectors,
+ 			please see 'nowatchdog'.
+ 			This is useful when you use a panic=... timeout and
+ 			need the box quickly up again.
+-- 
+1.8.3.1
 
