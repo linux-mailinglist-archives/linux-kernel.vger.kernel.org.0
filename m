@@ -2,64 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BAA224A77
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 10:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEDB924A82
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 10:35:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfEUIdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 04:33:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56274 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726006AbfEUIdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 04:33:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7017BAB9D;
-        Tue, 21 May 2019 08:33:50 +0000 (UTC)
-From:   Andreas Schwab <schwab@suse.de>
-To:     Sagar Shrikant Kadam <sagar.kadam@sifive.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peter@korsgaard.com,
-        andrew@lunn.ch, palmer@sifive.com, paul.walmsley@sifive.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] i2c-ocores: sifive: add polling mode workaround for FU540-C000 SoC.
-References: <1558361478-4381-1-git-send-email-sagar.kadam@sifive.com>
-        <1558361478-4381-4-git-send-email-sagar.kadam@sifive.com>
-X-Yow:  I can see you GUYS an' GALS need a LOT of HELP...You're all very
- STUPID!!  I used to be STUPID, too..before I started watching UHF-TV!!
-Date:   Tue, 21 May 2019 10:33:48 +0200
-In-Reply-To: <1558361478-4381-4-git-send-email-sagar.kadam@sifive.com> (Sagar
-        Shrikant Kadam's message of "Mon, 20 May 2019 19:41:18 +0530")
-Message-ID: <mvm7eakjjf7.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        id S1726969AbfEUIfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 04:35:14 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44305 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbfEUIfO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 04:35:14 -0400
+Received: by mail-ot1-f65.google.com with SMTP id g18so15550080otj.11
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 01:35:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Zhesb/W9XipgqrrNPLPqdvD2/za82zT6LyixgGoAM9s=;
+        b=g8+Nl3k3OmDRuhKnSDZ37atwAn9xDqShtEIgKkznYcwmj+Zel0rTQe6B+bM7VVqTg6
+         HftrbAok5EBMpmqmEzsERSjy5C2VBa4UqvgS0MANQiWbirTmoYJHLvaDE6Jp7AdU7/9S
+         PBOV0OKabhqHvwZyjvdsKEJPtubnCVxFQjp9/cmsDxFOyq03txxbSuDPZ1UfnnABV29f
+         oW6MJug9tmEdAuvq5xAjLP/7k5WUxUi45x5BafEHdBjLryz/mwl8ny+KBbUHB7DxgocO
+         uOtcFo/PY9TTGrIo5ykqyZDnTBQ3BC9Rq3JqT3MpcO6iP7VzQd3v9DiytY2FSSwGnm7H
+         +38w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Zhesb/W9XipgqrrNPLPqdvD2/za82zT6LyixgGoAM9s=;
+        b=HRLi1K8kaB9jhrWwQ9ODzBakxNXo3BWawy+qExC5uF2U9+g1xVHTIYjpJ39ALvcMqe
+         90pZ+Smml5wjOTB1Es6yW1DIjRA78we9BbDv70YfAnrcnUtkTVU5hGfyVE62YMPPBb1g
+         jXUwr7Ok1qI6QTcZDFLgIplpRrWymsQyIyU5bjJRzjtTFt4jVPXHRGN02Ho4DDb4/Ipy
+         ZHOZ6HxpByro4qYWump+U8F8+2JdY6FfdM3S71FLlys/yPmdctElNhbvYGNAhVx9oVHG
+         T3B7ebmaF4sEK1Ntj0oI47V11HIuDM9iDR4fXFnZM6FDo12Db9vgUgAb+IOMzdy1W7RE
+         Lizg==
+X-Gm-Message-State: APjAAAW9s32LHjDR2gkVNHEMG9qwwIBCLsCx6tuw+AMy3IC9nIYVArTm
+        fAvtyWqOZhnlcaj3uy/tsiBlgU8ZaPVORB1eWt4=
+X-Google-Smtp-Source: APXvYqz3hpBMsWdirjkxZ8tRVzOfXjig/h3dw4rm3JyHPeypK3C2UNCfDy6OzMjDYsO+eF9M1hj183BMkseb63C8G8o=
+X-Received: by 2002:a9d:10d:: with SMTP id 13mr19056614otu.14.1558427713459;
+ Tue, 21 May 2019 01:35:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <cover.1558146549.git.gneukum1@gmail.com> <20190520083026.GA13877@kroah.com>
+ <CA+T6rvENoDXbUWEi4C5kXxsdamkZKVP19MwzEuxs0qC=ckMyeQ@mail.gmail.com>
+In-Reply-To: <CA+T6rvENoDXbUWEi4C5kXxsdamkZKVP19MwzEuxs0qC=ckMyeQ@mail.gmail.com>
+From:   Geordan Neukum <gneukum1@gmail.com>
+Date:   Tue, 21 May 2019 08:34:52 +0000
+Message-ID: <CA+T6rvHrhTQLL_WCAPbj9nXngH2NCoW+kMXgGpGWB7+rLfYEOw@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Updates to staging driver: kpc_i2c
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mai 20 2019, Sagar Shrikant Kadam <sagar.kadam@sifive.com> wrote:
-
-> The i2c-ocore driver already has a polling mode interface.But it needs
-> a workaround for FU540 Chipset on HiFive unleashed board (RevA00).
-> There is an erratum in FU540 chip that prevents interrupt driven i2c
-> transfers from working, and also the I2C controller's interrupt bit
-> cannot be cleared if set, due to this the existing i2c polling mode
-> interface added in mainline earlier doesn't work, and CPU stall's
-> infinitely, when-ever i2c transfer is initiated.
+> On Mon, May 20, 2019 at 10:30:26AM +0200, Greg Kroah-Hartman wrote:
 >
-> Ref:previous polling mode support in mainline
+> All now queued up.  I'll rebase my patches that move this file on top of
+> yours, as kbuild found some problems with mine, and I'll resend them to
+> the list.
 >
-> 	commit 69c8c0c0efa8 ("i2c: ocores: add polling interface")
->
-> The workaround / fix under OCORES_FLAG_BROKEN_IRQ is particularly for
-> FU540-COOO SoC.
+> Thanks.
 
-After commit dd7dbf0eb090 this no longer fits.
+** Same content as last reply, just realized that I had configured my
+** email client to do something wrong. Resend for readability's sake.
 
-Andreas.
+Additionally, I plan on trying to clean up that driver a bit more. Should I
+base my future patches off of the staging tree so that I'll have the
+"latest" driver as my basepoint? I don't want to cause any headaches
+for anyone in the future.
 
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+Apologies, if I missed something obvious on the newbies wiki.
+Assuming that I did not, I will certainly go ahead and try to document
+this case either on or as a link from the "sending your first patch"
+page.
+
+Cheers,
+Geordan
