@@ -2,118 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A09225440
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD7BF25463
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:47:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728789AbfEUPnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:43:18 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:59164 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727941AbfEUPnS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:43:18 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4LFh2nH060385;
-        Tue, 21 May 2019 10:43:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1558453383;
-        bh=BebSjCfBsCHEUo8I5RDowvI6IDOnbTWjcg7QUO5FfrM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=h0zR2Ex78soeWXHccWYN5lSFojeRjqGReAnhHKRzbOM/jJdQomnfQg7SW6BdB9boI
-         ZGYWJvAsuY6yUSt7rZ0LqqvfiVUk6bZSnZZ7AkPrzZXYXaODNtzPlgX3jL6zyBPT3U
-         krs8Ghev7wAggZb8m1p7KLQSAQQ4bgZUIFoUkSXU=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4LFh2UO126742
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 21 May 2019 10:43:02 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 21
- May 2019 10:43:02 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 21 May 2019 10:43:01 -0500
-Received: from [158.218.117.39] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4LFh0dS006810;
-        Tue, 21 May 2019 10:43:01 -0500
-Subject: Re: [PATCH] hsr: fix don't prune the master node from the node_db
-To:     Andreas Oetken <andreas.oetken@siemens.com>
-CC:     <andreas@oetken.name>, Arvid Brodin <arvid.brodin@alten.se>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190521105241.16234-1-andreas.oetken@siemens.com>
-From:   Murali Karicheri <m-karicheri2@ti.com>
-Message-ID: <88831c42-41f1-b56a-e0ac-21788292a903@ti.com>
-Date:   Tue, 21 May 2019 11:46:43 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1728992AbfEUPrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:47:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42456 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728212AbfEUPrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 11:47:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B497EAE1F;
+        Tue, 21 May 2019 15:47:05 +0000 (UTC)
+Message-ID: <a142b72b828a798610d885d81189dd21b1870d78.camel@suse.de>
+Subject: Re: [RFC v2 3/5] clk: bcm2835: use firmware interface to update pllb
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>
+Cc:     linux-pm@vger.kernel.org, sboyd@kernel.org,
+        viresh.kumar@linaro.org, mturquette@baylibre.com,
+        ptesarik@suse.com, rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        mbrugger@suse.de, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        ssuloev@orpaltech.com
+Date:   Tue, 21 May 2019 17:47:03 +0200
+In-Reply-To: <6383b357-3f7e-f031-f59f-61c598e44763@i2se.com>
+References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
+         <20190520104708.11980-4-nsaenzjulienne@suse.de>
+         <ebc78880-418f-f507-021c-41295113e041@i2se.com>
+         <6383b357-3f7e-f031-f59f-61c598e44763@i2se.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-zPUlS9r+c6dQNQzC21+7"
+User-Agent: Evolution 3.32.2 
 MIME-Version: 1.0
-In-Reply-To: <20190521105241.16234-1-andreas.oetken@siemens.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
 
-On 05/21/2019 06:52 AM, Andreas Oetken wrote:
-> Don't prune master node in the hsr_prune_nodes function.
-> Neither time_in[HSR_PT_SLAVE_A], nor time_in[HSR_PT_SLAVE_B],
-> will ever be updated by hsr_register_frame_in for the master port.
-> Thus the master node will be repeatedly pruned leading to
-> repeated packet loss.
-> This bug never appeared because the hsr_prune_nodes function
-> was only called once. Since commit 5150b45fd355
-> ("net: hsr: Fix node prune function for forget time expiry") this issue
-> is fixed unvealing the issue described above.
-> 
-> Signed-off-by: Andreas Oetken <andreas.oetken@siemens.com>
-> ---
->   net/hsr/hsr_framereg.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
-> index 9af16cb68f76..317cddda494e 100644
-> --- a/net/hsr/hsr_framereg.c
-> +++ b/net/hsr/hsr_framereg.c
-> @@ -387,6 +387,14 @@ void hsr_prune_nodes(struct timer_list *t)
->   
->   	rcu_read_lock();
->   	list_for_each_entry_rcu(node, &hsr->node_db, mac_list) {
-> +		/* Don't prune own node. Neither time_in[HSR_PT_SLAVE_A]
-> +		 * nor time_in[HSR_PT_SLAVE_B], will ever be updated for
-> +		 * the master port. Thus the master node will be repeatedly
-> +		 * pruned leading to packet loss.
-> +		 */
-> +		if (hsr_addr_is_self(hsr, node->MacAddressA))
-This gives me a compilation issue in the latest master branch
+--=-zPUlS9r+c6dQNQzC21+7
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-   AR      drivers/base/regmap/built-in.a
-   AR      drivers/base/built-in.a
-net/hsr/hsr_framereg.c: In function ‘hsr_prune_nodes’:
-net/hsr/hsr_framereg.c:373:35: error: ‘struct hsr_node’ has no member 
-named ‘MacAddressA’; did you mean ‘macaddress_A’?
-    if (hsr_addr_is_self(hsr, node->MacAddressA))
-                                    ^~~~~~~~~~~
-                                    macaddress_A
-   CC      net/core/gen_stats.o
-scripts/Makefile.build:278: recipe for target 'net/hsr/hsr_framereg.o' 
-failed
+Hi Stefan, thanks for your comments!
 
-Could you address it and re-send?
+On Tue, 2019-05-21 at 14:40 +0200, Stefan Wahren wrote:
+> Hi Nicolas,
+>=20
+> On 20.05.19 14:11, Stefan Wahren wrote:
+> > Hi Nicolas,
+> >=20
+> > the following comments applies only in case Eric is fine with the whole
+> > approach.
+> >=20
+> > On 20.05.19 12:47, Nicolas Saenz Julienne wrote:
+> > > Raspberry Pi's firmware, which runs in a dedicated processor, keeps
+> > maybe we should clarify that the firmware is running in the VPU
+> > > track of the board's temperature and voltage. It's resposible for
+> > > scaling the CPU frequency whenever it deems the device reached an uns=
+afe
+> > > state. On top of that the firmware provides an interface which allows
+> > > Linux to to query the clock's state or change it's frequency.
+> > I think this requires a separate update of the devicetree binding.
+> > > Being the sole user of the bcm2835 clock driver, this integrates the
+> > > firmware interface into the clock driver and adds a first user: the C=
+PU
+> > > pll, also known as 'pllb'.
+> > Please verify that the kernel still works (and this clock driver probe)
+> > under the following conditions:
+> >=20
+> > - CONFIG_RASPBERRYPI_FIRMWARE=3Dn
+> > - CONFIG_RASPBERRYPI_FIRMWARE=3Dm
+> > - older DTBs without patch #1
+> i thought about this and the case this driver would return
+> -EPROBE_DEFER. The clock driver is too essential for doing such a thing.
+> So i think the best solution would be to move these changes into a
+> separate driver which should be register by the clock driver (similiar
+> to vchiq). This also avoid the need of a new device tree binding.
 
-Thanks
+I understand your concerns.
 
-Murali
-> +			continue;
-> +
->   		/* Shorthand */
->   		time_a = node->time_in[HSR_PT_SLAVE_A];
->   		time_b = node->time_in[HSR_PT_SLAVE_B];
-> 
+Wouldn't you prefer registering the device trough the device tree? I'd go w=
+ith
+the same approach as the firmware touchscreen driver, which is registered a=
+fter
+the firmware's probe trough dt's 'simple-bus'. That said, it's not a strong=
+ly
+held opinion, I'm happy with whatever solution as long as it works.
+
+I get from your comments that you'd like the register based version of 'pll=
+b'
+and 'pllb_arm' to be loaded if for some reason the firmware isn't available=
+. Is
+that right? The main problem I see with this is the duplication of 'pllb' a=
+nd
+'pllb_arm'. Both drivers will create the same clock device through differen=
+t
+interfaces. Any suggestions on how to deal with that? If not I can simply
+remove 'pllb' and 'pllb_arm' from clk-bcm2835.c.
+
+Regards,
+Nicolas
+
+
+--=-zPUlS9r+c6dQNQzC21+7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlzkHXcACgkQlfZmHno8
+x/58Pwf+J/igXfZ06sc7Gr74B5NqVdWqbVe+23xD1sjLpwUKTfWtUJAnbRuk8LOt
++XgjgwGqFMQHMRLpibxSSqUZrXT+TNh1SiicBzJ9KWNbz42xRcvek4A8sgBDTeUs
+l6EVVtCNw+g8nPnT95arGKZ3xEIVAGdsg8tASLoyqbcNOJNb8r2QoXmsdK5oGQ/C
+TsgPRiwPvc9TvvqDSkojXxMgEfxfh8pNcYTQ8KFs/HKFOrM+C7hny7s3q02r/xhA
+Clhqd5Ur2BlhxvgOflW5i9eMeugVL1+g7pZUplzddVC1JA4U3KMD+RVZxXKhzg2S
+srJIknJIKqm1VdajX7OLqqjUae1Dkw==
+=kanr
+-----END PGP SIGNATURE-----
+
+--=-zPUlS9r+c6dQNQzC21+7--
 
