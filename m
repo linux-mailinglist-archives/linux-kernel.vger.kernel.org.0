@@ -2,67 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3F142537F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:07:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 201F6252B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 16:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728707AbfEUPG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:06:58 -0400
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25909 "EHLO
-        sender1.zoho.com.cn" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728137AbfEUPG5 (ORCPT
+        id S1728711AbfEUOvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 10:51:22 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:51741 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727969AbfEUOvW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:06:57 -0400
-X-Greylist: delayed 906 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 May 2019 11:06:56 EDT
-ARC-Seal: i=1; a=rsa-sha256; t=1558450267; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=O7d9Goh6Y9LEtfymcrLS8ajfUA6VuEjoRMXBsU2olounmbYXYjus34onw2nbVxj48+AHYOPwL3J85GaOB2FrOPdBgTbqHDJQc3x5Epdoecsha0jb0LYfco9DrdAQhRv90SjIcRZSEoPreorUyZ9Xu1DdpfFSM0eioiW0vSRZpxk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1558450267; h=Cc:Date:From:Message-ID:Subject:To:ARC-Authentication-Results; 
-        bh=FnT1Xjc63AzR8n87E9oTWWxjhdggTkl7tAy4ISAQisE=; 
-        b=Qntt2/4eyQjUKnUuiIxdRQcBw4DNL1HzKvZHftPfFwo2fX1CYmJaFOAv2+GSYkKWnBPGi270CMrehw8/woSDplrJaqmOW2m2iL/HqZGO7QWd3zm/PHpblCQHnhDmNbFUivKNxV+zxOXj0zUjzEuEGWWJTcBZeco9YLFT5V11AGY=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=zoho.com.cn;
-        spf=pass  smtp.mailfrom=cgxu519@zoho.com.cn;
-        dmarc=pass header.from=<cgxu519@zoho.com.cn> header.from=<cgxu519@zoho.com.cn>
-Received: from localhost.localdomain (113.116.50.65 [113.116.50.65]) by mx.zoho.com.cn
-        with SMTPS id 155845026352175.05708036921328; Tue, 21 May 2019 22:51:03 +0800 (CST)
-From:   Chengguang Xu <cgxu519@zoho.com.cn>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-kernel@vger.kernel.org, Chengguang Xu <cgxu519@zoho.com.cn>
-Subject: [PATCH] qnx6: convert mount option checking code to test_opt()
-Date:   Tue, 21 May 2019 22:50:55 +0800
-Message-Id: <20190521145055.26800-1-cgxu519@zoho.com.cn>
-X-Mailer: git-send-email 2.17.2
-X-ZohoCNMailClient: External
+        Tue, 21 May 2019 10:51:22 -0400
+Received: by mail-it1-f194.google.com with SMTP id m3so5477054itl.1
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 07:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=jgJdmE1Zbg3qhV5EulwxdNH0JzQK7bdAiz1rSW14UKM=;
+        b=WLJvXkfSurKA/hBm3R5otskQBCeCLH/GjbB6e/+cMCGYo/+WSP8B3eESzP/FhbL6/X
+         Tg30c0WtnWkYjdW0ZuYhirOU66gcStN0rqX9J5j49YQ3DgCqKyXGVgsuJP4pN4kG/uJy
+         1Rqqp0whbHK7nb5tmW5Bp9KL+ZqcjZ1dvlv3ySoBNz1GJimIqb7/ACcGi+bat+x+OmNn
+         FoWuJTCo0qPiRk3yq2CAGyyA+N232lW3CgpAOfiPX2Iej37gH0LGYMx5bBREdaZcvEzV
+         RZjqBRDqMaqSLiplo4t6EfPQm+gAnNZyelO00Ep+eKb2YT/NzGzyCEORB0VpkGrMpwVY
+         Woyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=jgJdmE1Zbg3qhV5EulwxdNH0JzQK7bdAiz1rSW14UKM=;
+        b=SlRUD/yKQ4H1oBjzUfLriOpRUWe6XeoOIvcfRA5Im8lcYCW/vRY4V+LU+2YR98iY5V
+         riKH/3HMdf7/5llp3mAkDH1J/ovoakRIrYnxEtYNBaER6PL+U1tpjnr38LVdugBgvpXo
+         Vvz5HDeCXxPOfcCyhg1i5E2QsDitV+eGWpwplppmNCv3Y3NsB83xGT5SJgBuwCXN2piO
+         AnsuMkYCBxZf6NImV7guSxwDTwTDC/vLiSsQb1bcm+ZZimTUF2pWU49Q9ZyAI5VCGqXP
+         7UtzAq6ZMQoxh7zyQgkBokFPjtVgX3PIV3hEjylPXIhikUnJ9gJjCxtfiSxDLuWixMSf
+         DTDA==
+X-Gm-Message-State: APjAAAWuE8V0J58Zm0qSxWEOEqbpPYZCx4F0AqC5rKs69VrUwJThgmyX
+        FfxEsB95Rbw/uaCSkqEds7LYR36c
+X-Google-Smtp-Source: APXvYqy+tWqthA1EUdSvG0qJ/9jqC5fB3CtGEZkCu/3tOdCJ4/YM6d1DWzdmTLf2kCnR5aizdavl4A==
+X-Received: by 2002:a24:7610:: with SMTP id z16mr4114515itb.3.1558450281188;
+        Tue, 21 May 2019 07:51:21 -0700 (PDT)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id m67sm1666083itc.22.2019.05.21.07.51.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 21 May 2019 07:51:20 -0700 (PDT)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH] staging: fieldbus: anybuss: force address space conversion
+Date:   Tue, 21 May 2019 10:51:16 -0400
+Message-Id: <20190521145116.24378-1-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert mount option checking code to test_opt() in
-qnx6_show_options().
+The regmap's context (stored as 'void *') consists of a pointer to
+__iomem. Mixing __iomem and non-__iomem addresses generates
+sparse warnings.
 
-Signed-off-by: Chengguang Xu <cgxu519@zoho.com.cn>
+Fix by using __force when converting to/from 'void __iomem *' and
+the regmap's context.
+
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
 ---
- fs/qnx6/inode.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/fieldbus/anybuss/arcx-anybus.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/qnx6/inode.c b/fs/qnx6/inode.c
-index 59cf45f6be49..c3a80700e7a6 100644
---- a/fs/qnx6/inode.c
-+++ b/fs/qnx6/inode.c
-@@ -46,9 +46,8 @@ static const struct super_operations qnx6_sops = {
- static int qnx6_show_options(struct seq_file *seq, struct dentry *root)
+diff --git a/drivers/staging/fieldbus/anybuss/arcx-anybus.c b/drivers/staging/fieldbus/anybuss/arcx-anybus.c
+index a167fb68e355..8126e5535ada 100644
+--- a/drivers/staging/fieldbus/anybuss/arcx-anybus.c
++++ b/drivers/staging/fieldbus/anybuss/arcx-anybus.c
+@@ -114,7 +114,7 @@ static void export_reset_1(struct device *dev, bool assert)
+ static int read_reg_bus(void *context, unsigned int reg,
+ 			unsigned int *val)
  {
- 	struct super_block *sb = root->d_sb;
--	struct qnx6_sb_info *sbi = QNX6_SB(sb);
+-	void __iomem *base = context;
++	void __iomem *base = (__force void __iomem *)context;
  
--	if (sbi->s_mount_opt & QNX6_MOUNT_MMI_FS)
-+	if (test_opt(sb, MMI_FS))
- 		seq_puts(seq, ",mmi_fs");
+ 	*val = readb(base + reg);
  	return 0;
+@@ -123,7 +123,7 @@ static int read_reg_bus(void *context, unsigned int reg,
+ static int write_reg_bus(void *context, unsigned int reg,
+ 			 unsigned int val)
+ {
+-	void __iomem *base = context;
++	void __iomem *base = (__force void __iomem *)context;
+ 
+ 	writeb(val, base + reg);
+ 	return 0;
+@@ -153,7 +153,7 @@ static struct regmap *create_parallel_regmap(struct platform_device *pdev,
+ 	base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(base))
+ 		return ERR_CAST(base);
+-	return devm_regmap_init(dev, NULL, base, &regmap_cfg);
++	return devm_regmap_init(dev, NULL, (__force void *)base, &regmap_cfg);
  }
+ 
+ static struct anybuss_host *
 -- 
-2.17.2
-
+2.17.1
 
