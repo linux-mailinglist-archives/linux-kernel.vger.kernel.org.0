@@ -2,95 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D264A246EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 06:37:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2557F246FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 06:44:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727371AbfEUEhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 00:37:34 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:39696 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbfEUEhe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 00:37:34 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4L4Ylh1150285;
-        Tue, 21 May 2019 04:37:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=LocLl8jGFL6tj5/xpWQWzeKqZ8xj2DlD6pSYk/0CDQE=;
- b=YXQBVdGTKDHPYrt6PKbsI0O3rI3JPVcdXuVB9uWQeIFLOKHh8iEefXDi7IlvHOH//B8k
- ObQoV3/3vErQqdaV/Lu/t8msw48YOZ4RIvHLQgY7TT0qqPYB2TPb8PjKpnt1izluIvD3
- aueINDxQimvkZGnmLKZ0/tgDvtbMZezC0L6lpDN2eEEjd7dxlzewoU18YNuUJHY0UWp1
- TmtpIMshloXiwSZAwj4s9BBNGlj/Sdy0VHx/EPBE74w4e/OX36c1E4BrO8rM9xMFD9Er
- 0H9U148JZprI2LDqzsotlu9LCvqU7q713RRjDgTQ/qOqUfsvs9PuNvMzqfSfBkYGFLRU GQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2sj9ftascb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 May 2019 04:37:26 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4L4a1Wl183631;
-        Tue, 21 May 2019 04:37:25 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2sm046rgtc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 May 2019 04:37:25 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4L4bLIH030062;
-        Tue, 21 May 2019 04:37:21 GMT
-Received: from linux.cn.oracle.com (/10.182.69.106)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 21 May 2019 04:37:21 +0000
-From:   Dongli Zhang <dongli.zhang@oracle.com>
-To:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org, jani.nikula@linux.intel.com,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch, dongli.zhang@oracle.com
-Subject: [PATCH 1/1] drm/i915: remove unused IO_TLB_SEGPAGES which should be defined by swiotlb
-Date:   Tue, 21 May 2019 12:40:39 +0800
-Message-Id: <1558413639-22568-1-git-send-email-dongli.zhang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9263 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905210029
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9263 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905210029
+        id S1726511AbfEUEoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 00:44:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725379AbfEUEoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 00:44:16 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CE39216B7;
+        Tue, 21 May 2019 04:44:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558413855;
+        bh=lGaK0V78KG/uyMP7JCcQnQx4fQ3zJplP/kcPwEjE55s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qu7Z3yPt2CoJXN1IZW1PMKeRr97ec00QRJ47UP0YVlZPfAGVDnuQZwg5yz6yxKjtl
+         lcAAZ6z1b9XnW6i+lBq1LPmpOXDMZQAiUJvPouyKWDkOUo6GcV+iR9XwzubxR8kb0e
+         uKXB9+YDkLCAAlZR5n39J76FmWPVak90izzBtKbQ=
+Date:   Tue, 21 May 2019 12:43:22 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+Subject: Re: linux-next: build failure after merge of the imx-mxs tree
+Message-ID: <20190521044321.GX15856@dragon>
+References: <20190521083756.4c8aee8a@canb.auug.org.au>
+ <DB3PR0402MB39165C5944880EA0B0A37F91F5070@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB3PR0402MB39165C5944880EA0B0A37F91F5070@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes IO_TLB_SEGPAGES which is no longer used since
-commit 5584f1b1d73e ("drm/i915: fix i915 running as dom0 under Xen").
+On Tue, May 21, 2019 at 02:16:47AM +0000, Anson Huang wrote:
+> Hi, Stephen/Shawn
+> 	I realized this issue last week when I updated my Linux-next tree (NOT sure why I did NOT meet such issue when I did the patch), so I resent the patch series of adding head file "io.h" to fix this issue, please apply below V2 patch series instead, sorry for the inconvenience.
+> 
+> https://patchwork.kernel.org/patch/10944681/
 
-As the define of both IO_TLB_SEGSIZE and IO_TLB_SHIFT are from swiotlb,
-IO_TLB_SEGPAGES should be defined on swiotlb side if it is required in the
-future.
+Okay, fixed.  Sorry for the breakage, Stephen.
 
-Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
----
- drivers/gpu/drm/i915/i915_gem_internal.c | 3 ---
- 1 file changed, 3 deletions(-)
+Shawn
 
-diff --git a/drivers/gpu/drm/i915/i915_gem_internal.c b/drivers/gpu/drm/i915/i915_gem_internal.c
-index ab627ed..2166217 100644
---- a/drivers/gpu/drm/i915/i915_gem_internal.c
-+++ b/drivers/gpu/drm/i915/i915_gem_internal.c
-@@ -28,9 +28,6 @@
- #define QUIET (__GFP_NORETRY | __GFP_NOWARN)
- #define MAYFAIL (__GFP_RETRY_MAYFAIL | __GFP_NOWARN)
- 
--/* convert swiotlb segment size into sensible units (pages)! */
--#define IO_TLB_SEGPAGES (IO_TLB_SEGSIZE << IO_TLB_SHIFT >> PAGE_SHIFT)
--
- static void internal_free_pages(struct sg_table *st)
- {
- 	struct scatterlist *sg;
--- 
-2.7.4
-
+> > -----Original Message-----
+> > From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> > Sent: Tuesday, May 21, 2019 6:38 AM
+> > To: Shawn Guo <shawnguo@kernel.org>
+> > Cc: Linux Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel Mailing
+> > List <linux-kernel@vger.kernel.org>; Anson Huang <anson.huang@nxp.com>;
+> > Aisheng Dong <aisheng.dong@nxp.com>
+> > Subject: linux-next: build failure after merge of the imx-mxs tree
+> > 
+> > Hi Shawn,
+> > 
+> > After merging the imx-mxs tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> > 
+> > drivers/clk/imx/clk.c: In function 'imx_mmdc_mask_handshake':
+> > drivers/clk/imx/clk.c:20:8: error: implicit declaration of function
+> > 'readl_relaxed'; did you mean 'xchg_relaxed'? [-Werror=implicit-function-
+> > declaration]
+> >   reg = readl_relaxed(ccm_base + CCM_CCDR);
+> >         ^~~~~~~~~~~~~
+> >         xchg_relaxed
+> > drivers/clk/imx/clk.c:22:2: error: implicit declaration of function
+> > 'writel_relaxed'; did you mean 'xchg_relaxed'? [-Werror=implicit-function-
+> > declaration]
+> >   writel_relaxed(reg, ccm_base + CCM_CCDR);
+> >   ^~~~~~~~~~~~~~
+> >   xchg_relaxed
+> > 
+> > Caused by commit
+> > 
+> >   0dc6b492b6e0 ("clk: imx: Add common API for masking MMDC handshake")
+> > 
+> > I have used the imx-mxs tree from next-20190520 for today.
+> > 
+> > --
+> > Cheers,
+> > Stephen Rothwell
