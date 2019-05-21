@@ -2,160 +2,279 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E33624CBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A31A24CC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 12:33:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbfEUKcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 06:32:31 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46932 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbfEUKcb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 06:32:31 -0400
-Received: by mail-pf1-f194.google.com with SMTP id y11so8834642pfm.13;
-        Tue, 21 May 2019 03:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iEpABD/nsZz33E7K8kq0g1PtAPqQkfDdFrRiuwAA8wE=;
-        b=ra87JvwgK/Zau+lFTPoxO3sEsrDEs7bq3v+sP8khYi/R1y9BVFkLV0dtEgBCALl1RC
-         BvmEvtF2rbLRX5/jiSCOP+edg7XsEcCiVRRFaSnESZebX/VPzbmKlp/+aunsJ/v8Parl
-         zrcdnW3a1IXgZk6c//4kQeR8tFYRhFUXYriqNaXMoWw0cDaMocbQgQA6Pcp4kd7G6HQZ
-         T7MzDB7FhNfA6dyV0HLfz9g77EKMvjmYfEfy+E8AK6V/3RY2BW+5nn/dAdXYqXCi5hNU
-         GBnMuqUhUnCSndbZX3Cg8l2DiU5iNOqkoMiMEqqSEluqMbZtYAdXTUJe05W+pf9dG8o8
-         xwuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iEpABD/nsZz33E7K8kq0g1PtAPqQkfDdFrRiuwAA8wE=;
-        b=M1qf4PnE59X4Ks0v+Ip4tNWXtKroOkGRkHepQPuqx7YH4hDdbq/f7lW570UgNggHvC
-         7UXXRM4Gbz3hRptdfIksVdkBg7XjYt+TNMAZftBB0glvUDNfIQDrDfKRq4Bma23S8TPe
-         4ZHC4+U4sAl81Cm7RZJrTcW4KrA+lxKNO8fY5ECbNJ8cCk++CkgW+/N436k7n8mwBCg+
-         EBX0qgcBS26XrAxH6o06zbwkLjKD8UXNsoSOCHeOJmhNtJZCsHwurnYROCx9ilNwCald
-         +2KsikznCdZveHhKM4NFdt2I5W2FSTy8vzyb6f9yyResyNvpVrkJ2WTITBvTa2GlEIEV
-         j9JQ==
-X-Gm-Message-State: APjAAAUst2pd93CFF0oQNHbC1yzCls9ihtCVLMnWzaOfLiuXmM7LLfSy
-        A1kVPawk+HTVALX6v6Xcb1s=
-X-Google-Smtp-Source: APXvYqwiCEhrh1gNZKYql1ciR0mfuAlQeUIx5uOvluMiBVcOnNC/dxSyCtOOCo7BXHPxdLEX8zMfmQ==
-X-Received: by 2002:a63:1212:: with SMTP id h18mr31397904pgl.266.1558434750297;
-        Tue, 21 May 2019 03:32:30 -0700 (PDT)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id k6sm24835382pfi.86.2019.05.21.03.32.26
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 21 May 2019 03:32:29 -0700 (PDT)
-Date:   Tue, 21 May 2019 19:32:23 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>, linux-api@vger.kernel.org
-Subject: Re: [RFC 5/7] mm: introduce external memory hinting API
-Message-ID: <20190521103223.GD219653@google.com>
-References: <20190520035254.57579-1-minchan@kernel.org>
- <20190520035254.57579-6-minchan@kernel.org>
- <20190520091829.GY6836@dhcp22.suse.cz>
- <20190521024107.GF10039@google.com>
- <20190521061743.GC32329@dhcp22.suse.cz>
+        id S1727723AbfEUKdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 06:33:12 -0400
+Received: from mga06.intel.com ([134.134.136.31]:22182 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726006AbfEUKdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 06:33:11 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 May 2019 03:33:10 -0700
+X-ExtLoop1: 1
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 21 May 2019 03:33:05 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 21 May 2019 13:33:04 +0300
+Date:   Tue, 21 May 2019 13:33:04 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Li Jun <jun.li@nxp.com>,
+        Badhri Jagan Sridharan <badhri@google.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Min Guo <min.guo@mediatek.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v5 4/6] usb: roles: add API to get usb_role_switch by node
+Message-ID: <20190521103304.GJ1887@kuha.fi.intel.com>
+References: <1557823643-8616-1-git-send-email-chunfeng.yun@mediatek.com>
+ <1557823643-8616-5-git-send-email-chunfeng.yun@mediatek.com>
+ <20190517103736.GA1490@kuha.fi.intel.com>
+ <20190517130511.GA1887@kuha.fi.intel.com>
+ <1558319951.10179.352.camel@mhfsdcap03>
+ <20190520080359.GC1887@kuha.fi.intel.com>
+ <OSBPR01MB2103385D996762FA54F8E437B8060@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <20190520083601.GE1887@kuha.fi.intel.com>
+ <OSBPR01MB2103C4C8920C40E42BC1B2A9B8060@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <1558424104.10179.365.camel@mhfsdcap03>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190521061743.GC32329@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1558424104.10179.365.camel@mhfsdcap03>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 08:17:43AM +0200, Michal Hocko wrote:
-> On Tue 21-05-19 11:41:07, Minchan Kim wrote:
-> > On Mon, May 20, 2019 at 11:18:29AM +0200, Michal Hocko wrote:
-> > > [Cc linux-api]
+On Tue, May 21, 2019 at 03:35:04PM +0800, Chunfeng Yun wrote:
+> Hi,
+> On Mon, 2019-05-20 at 09:45 +0000, Biju Das wrote:
+> > 
+> > Hi Heikki,
+> > 
+> > Thanks for the feedback.
+> > 
+> > > Subject: Re: [PATCH v5 4/6] usb: roles: add API to get usb_role_switch by
+> > > node
 > > > 
-> > > On Mon 20-05-19 12:52:52, Minchan Kim wrote:
-> > > > There is some usecase that centralized userspace daemon want to give
-> > > > a memory hint like MADV_[COOL|COLD] to other process. Android's
-> > > > ActivityManagerService is one of them.
-> > > > 
-> > > > It's similar in spirit to madvise(MADV_WONTNEED), but the information
-> > > > required to make the reclaim decision is not known to the app. Instead,
-> > > > it is known to the centralized userspace daemon(ActivityManagerService),
-> > > > and that daemon must be able to initiate reclaim on its own without
-> > > > any app involvement.
+> > > On Mon, May 20, 2019 at 08:06:41AM +0000, Biju Das wrote:
+> > > > Hi Heikki,
+> > > >
+> > > > > Subject: Re: [PATCH v5 4/6] usb: roles: add API to get
+> > > > > usb_role_switch by node
+> > > > >
+> > > > > On Mon, May 20, 2019 at 10:39:11AM +0800, Chunfeng Yun wrote:
+> > > > > > Hi,
+> > > > > > On Fri, 2019-05-17 at 16:05 +0300, Heikki Krogerus wrote:
+> > > > > > > Hi,
+> > > > > > >
+> > > > > > > On Fri, May 17, 2019 at 01:37:36PM +0300, Heikki Krogerus wrote:
+> > > > > > > > On Tue, May 14, 2019 at 04:47:21PM +0800, Chunfeng Yun wrote:
+> > > > > > > > > Add fwnode_usb_role_switch_get() to make easier to get
+> > > > > > > > > usb_role_switch by fwnode which register it.
+> > > > > > > > > It's useful when there is not device_connection registered
+> > > > > > > > > between two drivers and only knows the fwnode which register
+> > > > > > > > > usb_role_switch.
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> > > > > > > > > Tested-by: Biju Das <biju.das@bp.renesas.com>
+> > > > > > > >
+> > > > > > > > Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> > > > > > >
+> > > > > > > Hold on. I just noticed Rob's comment on patch 2/6, where he
+> > > > > > > points out that you don't need to use device graph since the
+> > > > > > > controller is the parent of the connector. Doesn't that mean you
+> > > > > > > don't really need this API?
+> > > > > > No, I still need it.
+> > > > > > The change is about the way how to get fwnode; when use device
+> > > > > > graph, get fwnode by of_graph_get_remote_node(); but now will get
+> > > > > > fwnode by of_get_parent();
+> > > > >
+> > > > > OK, I get that, but I'm still not convinced about if something like
+> > > > > this function is needed at all. I also have concerns regarding how
+> > > > > you are using the function. I'll explain in comment to the patch 5/6 in this
+> > > series...
+> > > >
+> > > > FYI, Currently  I am also using this api in my patch series.
+> > > > https://patchwork.kernel.org/patch/10944637/
 > > > 
-> > > Could you expand some more about how this all works? How does the
-> > > centralized daemon track respective ranges? How does it synchronize
-> > > against parallel modification of the address space etc.
+> > > Yes, and I have the same question for you I jusb asked in comment I added
+> > > to the patch 5/6 of this series. Why isn't usb_role_switch_get() enough?
 > > 
-> > Currently, we don't track each address ranges because we have two
-> > policies at this moment:
+> > Currently no issue. It will work with this api as well, since the port node is part of controller node.
+> > For eg:-
+> > https://patchwork.kernel.org/patch/10944627/
 > > 
-> > 	deactive file pages and reclaim anonymous pages of the app.
+> > However if any one adds port node inside the connector node, then this api may won't work as expected.
+> > Currently I get below error
 > > 
-> > Since the daemon has a ability to let background apps resume(IOW, process
-> > will be run by the daemon) and both hints are non-disruptive stabilty point
-> > of view, we are okay for the race.
+> > [    2.299703] OF: graph: no port node found in /soc/i2c@e6500000/hd3ss3220@47
+> > 
+> > For eg:-
+> > 
+> > 	hd3ss3220@47 {
+> > 		compatible = "ti,hd3ss3220";
+> > 		...
+> > 		....
+> > 		usb_con: connector {
+> >                                      ....
+> >                                      ....
+> > 			port {
+> > 				hd3ss3220_ep: endpoint@0 {
+> > 					reg = <0>;
+> > 					remote-endpoint = <&usb3peri_role_switch>;
+> > 				};
+> > 			};
+> > 		};
+> > 	};
+> > 
+> > Regards,
+> > Biju
 > 
-> Fair enough but the API should consider future usecases where this might
-> be a problem. So we should really think about those potential scenarios
-> now. If we are ok with that, fine, but then we should be explicit and
-> document it that way. Essentially say that any sort of synchronization
-> is supposed to be done by monitor. This will make the API less usable
-> but maybe that is enough.
-
-Okay, I will add more about that in the description.
-
->  
-> > > > To solve the issue, this patch introduces new syscall process_madvise(2)
-> > > > which works based on pidfd so it could give a hint to the exeternal
-> > > > process.
-> > > > 
-> > > > int process_madvise(int pidfd, void *addr, size_t length, int advise);
-> > > 
-> > > OK, this makes some sense from the API point of view. When we have
-> > > discussed that at LSFMM I was contemplating about something like that
-> > > except the fd would be a VMA fd rather than the process. We could extend
-> > > and reuse /proc/<pid>/map_files interface which doesn't support the
-> > > anonymous memory right now. 
-> > > 
-> > > I am not saying this would be a better interface but I wanted to mention
-> > > it here for a further discussion. One slight advantage would be that
-> > > you know the exact object that you are operating on because you have a
-> > > fd for the VMA and we would have a more straightforward way to reject
-> > > operation if the underlying object has changed (e.g. unmapped and reused
-> > > for a different mapping).
-> > 
-> > I agree your point. If I didn't miss something, such kinds of vma level
-> > modify notification doesn't work even file mapped vma at this moment.
-> > For anonymous vma, I think we could use userfaultfd, pontentially.
-> > It would be great if someone want to do with disruptive hints like
-> > MADV_DONTNEED.
-> > 
-> > I'd like to see it further enhancement after landing address range based
-> > operation via limiting hints process_madvise supports to non-disruptive
-> > only(e.g., MADV_[COOL|COLD]) so that we could catch up the usercase/workload
-> > when someone want to extend the API.
+> I tested 3 cases:
 > 
-> So do you think we want both interfaces (process_madvise and madvisefd)?
+> case 1:
+> 
+> connector {
+>     compatible = "linux,typeb-conn-gpio", "usb-b-connector";
+>     label = "micro-USB";
+>     type = "micro";
+>     id-gpios = <&pio 12 GPIO_ACTIVE_HIGH>;
+>     vbus-supply = <&usb_p0_vbus>;
+> 
+>     port {
+>         bconn_ep: endpoint@0 {
+>             remote-endpoint = <&usb_role_sw>;
+>         };
+>     };
+> };
+> 
+> &mtu3 {
+>     usb-role-switch;
+> 
+>     port {
+>         usb_role_sw: endpoint@0 {
+>             remote-endpoint = <&bconn_ep>;
+>         };
+>     };
+> };
+> 
+> the driver of connector could use usb_role_switch_get(dev) to get
+> mtu3's USB Role Switch. (dev is the device of connector)
+> 
+> case 2:
+> 
+> &mtu3 {
+>     usb-role-switch;
+> 
+>     connector {
+>         compatible = "linux,typeb-conn-gpio", "usb-b-connector";
+>         label = "micro-USB";
+>         type = "micro";
+>         id-gpios = <&pio 12 GPIO_ACTIVE_HIGH>;
+>         vbus-supply = <&usb_p0_vbus>;
+>     };
+> };
+> 
+> the driver of connector using usb_role_switch_get(dev) failed to get
+> mtu3's USB Role Switch.
+> error log:
+> #OF: graph: no port node found in /usb@11271000/connector
+> this is because connector hasn't child node connected to remote
+> endpoint which register USB Role Switch
+> 
+> case 3:
+> 
+> rsw_iddig: role_sw_iddig {
+>     compatible = "linux,typeb-conn-gpio";
+>     status = "okay";
+> 
+>     connector {
+>         compatible = "usb-b-connector";
+>         label = "micro-USB";
+>         type = "micro";
+>         id-gpios = <&pio 12 GPIO_ACTIVE_HIGH>;
+>         vbus-supply = <&usb_p0_vbus>;
+> 
+>         port {
+>             bconn_ep: endpoint@0 {
+>                 remote-endpoint = <&usb_role_sw>;
+>             };
+>         };
+>     };
+> };
+> 
+> &mtu3 {
+>     usb-role-switch;
+> 
+>     port {
+>         usb_role_sw: endpoint@0 {
+>             remote-endpoint = <&bconn_ep>;
+>         };
+>     };
+> };
+> 
+> 
+> the driver of connector using usb_role_switch_get(dev) also failed to
+> get mtu3's USB Role Switch. Because usb_role_switch_get() only search
+> its child nodes (connector node), but not child's child (port node)
+> This case is the same as Biju's
+> 
+> Usually type-c is similar with case 3;
+> the next version v6 of this series will use case 2 as Rob suggested,
+> see [v5, 2/6]
+> 
+> for case 2, will need the new API fwnode_usb_role_switch_get();
 
-What I have in mind is to extend process_madvise later like this
+Thanks for the explanation.
 
-struct pr_madvise_param {
-    int size;                       /* the size of this structure */
-    union {
-    	const struct iovec __user *vec; /* address range array */
-	int fd;				/* supported from 6.0 */
-    }
-}
+In this case, if I understood this correctly, the USB controller, which
+is also the role switch, is the parent of the connector. So shouldn't
+we simply consider that in the current API?
 
-with introducing new hint Or-able PR_MADV_RANGE_FD, so that process_madvise
-can go with fd instead of address range.
+diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
+index f45d8df5cfb8..2f898167b99a 100644
+--- a/drivers/usb/roles/class.c
++++ b/drivers/usb/roles/class.c
+@@ -125,6 +125,13 @@ struct usb_role_switch *usb_role_switch_get(struct device *dev)
+ {
+        struct usb_role_switch *sw;
+
++       /*
++        * Simplest case is that a connector is looking for the controller,
++        * which is its parent.
++        */
++       if (device_property_present(dev->parent, "usb-role-switch"))
++               return to_role_switch(dev->parent);
++
+        sw = device_connection_find_match(dev, "usb-role-switch", NULL,
+                                          usb_role_switch_match);
+
+
+> for case 3, use the new API, or need modify usb_role_switch_get();
+
+I did not completely understand this case, but isn't it the same as
+case 2 in the end, after you change it as Rob suggested?
+
+
+thanks,
+
+-- 
+heikki
