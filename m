@@ -2,101 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D072534A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:01:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA1F125340
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 17:01:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728864AbfEUPBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 11:01:41 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38314 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728829AbfEUPBj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 11:01:39 -0400
-Received: by mail-wr1-f65.google.com with SMTP id d18so19025905wrs.5
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 08:01:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hya6Oxcm01Zg9a8B2aUxovEoEemSR2xPIYhlXd2pWtI=;
-        b=dBhRX0gXkRK36yhJmJO4jLCKNM+dhSO4r2g9ikQxmWnfmxRYoiQtKvh9ZbxkouX2gl
-         +cx5mgkB2z2xQN6uLO58FuFN144F7NSwgNEDQUFXZtOAq1+m4ZKCRWuid+5L7KYsE2gf
-         m+69+L163qwh7+ASSreFa6vR2pQ9RSwuCMNwjaXibFleucsR1CUVcjN3UlJC7S141rN0
-         TpK9VEzSQfhy1GHT5w05aYURLxpZNEqr3gwkBRykRVlZOQXWtjEF/v8MLR4gNnSWJS2u
-         jPTJgvreHMn5Y9LI3Ie1nhF2GVJIQdoF/5W+LzEmlEIWLuwEApUiB2sKrcesRUa4wjDU
-         kJGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hya6Oxcm01Zg9a8B2aUxovEoEemSR2xPIYhlXd2pWtI=;
-        b=EcoCWrc6AkckSgtvp+HNdDq7uKVQJzSPIFWa9dqkd+bOjYyj/dokWez4RR5jTRm40l
-         HAVfdN/hEXHnG1g7zqbWWtAjdnPdO4lUrx8Dc3ZdnlOj078beKYlE+VM1fIZXRERMSsL
-         z4gGbT9cjTTBTEvGjg9k/MHb7IgUPwJyT62AEsHtKuyMZTalMFfnMa/76A46b4mQnlL6
-         n8He850Clk5WM6j2eOozEWgho2+ISjmvS2RaQzpwGkKq9pLiDoIHA/+BobiB2nbeXQT3
-         tgyeMbaX5uTsanT9msifZcPIbcuVvdhLlADIp2zf3URkc5i6KVN0MuKUUINbxFWZmwNd
-         zUAw==
-X-Gm-Message-State: APjAAAWhMdm4p/2Q+6/TYQKjaMEhqkj4Pypx8TMI9OWFJCrjt7PgPwHb
-        zc9hMxBUoChb5VhqJFu+vqFgkg==
-X-Google-Smtp-Source: APXvYqwXgQlgZURhNNRL21mnF9cPN0R/YHRg8kmGR1/Zp2hUWtmqvfEbm6g5T64mtoUraVddL9g3OA==
-X-Received: by 2002:adf:e90e:: with SMTP id f14mr13436681wrm.166.1558450897467;
-        Tue, 21 May 2019 08:01:37 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id b194sm3407505wmb.23.2019.05.21.08.01.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 21 May 2019 08:01:36 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 3/3] clk: meson: g12a: mark fclk_div3 as critical
-Date:   Tue, 21 May 2019 17:01:30 +0200
-Message-Id: <20190521150130.31684-4-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190521150130.31684-1-narmstrong@baylibre.com>
-References: <20190521150130.31684-1-narmstrong@baylibre.com>
+        id S1728781AbfEUPBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 11:01:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54320 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728269AbfEUPBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 11:01:34 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DB08430842A8;
+        Tue, 21 May 2019 15:01:33 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B432704DF;
+        Tue, 21 May 2019 15:01:31 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 34034220A60; Tue, 21 May 2019 11:01:31 -0400 (EDT)
+Date:   Tue, 21 May 2019 11:01:31 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-nvdimm@lists.01.org,
+        stefanha@redhat.com, dgilbert@redhat.com, swhiteho@redhat.com
+Subject: Re: [PATCH v2 02/30] fuse: Clear setuid bit even in cache=never path
+Message-ID: <20190521150131.GB29075@redhat.com>
+References: <20190515192715.18000-1-vgoyal@redhat.com>
+ <20190515192715.18000-3-vgoyal@redhat.com>
+ <20190520144137.GA24093@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520144137.GA24093@localhost.localdomain>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 21 May 2019 15:01:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Amlogic Meson G12b platform, the fclk_div3 seems to be necessary for
-the system to operate correctly.
+On Mon, May 20, 2019 at 04:41:37PM +0200, Miklos Szeredi wrote:
+> On Wed, May 15, 2019 at 03:26:47PM -0400, Vivek Goyal wrote:
+> > If fuse daemon is started with cache=never, fuse falls back to direct IO.
+> > In that write path we don't call file_remove_privs() and that means setuid
+> > bit is not cleared if unpriviliged user writes to a file with setuid bit set.
+> > 
+> > pjdfstest chmod test 12.t tests this and fails.
+> 
+> I think better sulution is to tell the server if the suid bit needs to be
+> removed, so it can do so in a race free way.
+> 
+> Here's the kernel patch, and I'll reply with the libfuse patch.
 
-Disabling it cause the entire system to freeze, including peripherals.
+Hi Miklos,
 
-Let's mark this clock as critical, fixing boot on G12b platforms.
+I tested and it works for me.
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/g12a.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Vivek
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 81cb38ac3c85..575e58752aff 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -1244,6 +1244,16 @@ static struct clk_regmap g12a_fclk_div3 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "fclk_div3_div" },
- 		.num_parents = 1,
-+		/*
-+		 * This clock is used by the resident firmware and is required
-+		 * by the platform to operate correctly.
-+		 * Until the following condition are met, we need this clock to
-+		 * be marked as critical:
-+		 * a) Mark the clock used by a firmware resource, if possible
-+		 * b) CCF has a clock hand-off mechanism to make the sure the
-+		 *    clock stays on until the proper driver comes along
-+		 */
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
- 
--- 
-2.21.0
-
+> 
+> ---
+>  fs/fuse2/file.c           |    2 ++
+>  include/uapi/linux/fuse.h |    3 +++
+>  2 files changed, 5 insertions(+)
+> 
+> --- a/fs/fuse2/file.c
+> +++ b/fs/fuse2/file.c
+> @@ -363,6 +363,8 @@ static ssize_t fuse_send_write(struct fu
+>  		inarg->flags |= O_DSYNC;
+>  	if (iocb->ki_flags & IOCB_SYNC)
+>  		inarg->flags |= O_SYNC;
+> +	if (!capable(CAP_FSETID))
+> +		inarg->write_flags |= FUSE_WRITE_KILL_PRIV;
+>  	req->inh.opcode = FUSE_WRITE;
+>  	req->inh.nodeid = ff->nodeid;
+>  	req->inh.len = req->inline_inlen + count;
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -125,6 +125,7 @@
+>   *
+>   *  7.29
+>   *  - add FUSE_NO_OPENDIR_SUPPORT flag
+> + *  - add FUSE_WRITE_KILL_PRIV flag
+>   */
+>  
+>  #ifndef _LINUX_FUSE_H
+> @@ -318,9 +319,11 @@ struct fuse_file_lock {
+>   *
+>   * FUSE_WRITE_CACHE: delayed write from page cache, file handle is guessed
+>   * FUSE_WRITE_LOCKOWNER: lock_owner field is valid
+> + * FUSE_WRITE_KILL_PRIV: kill suid and sgid bits
+>   */
+>  #define FUSE_WRITE_CACHE	(1 << 0)
+>  #define FUSE_WRITE_LOCKOWNER	(1 << 1)
+> +#define FUSE_WRITE_KILL_PRIV	(1 << 2)
+>  
+>  /**
+>   * Read flags
+> 
+> 
