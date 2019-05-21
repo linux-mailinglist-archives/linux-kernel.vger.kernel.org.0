@@ -2,87 +2,277 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A1ED24B06
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:00:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 126FA24B0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 11:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbfEUI77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 04:59:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726289AbfEUI77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 04:59:59 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F112521019;
-        Tue, 21 May 2019 08:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558429198;
-        bh=x2txS7THJ/jBJV//3EMAJkSBNNOz38X4KjsVyAnhXbk=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=ew4tLmbmotAgpQjV+fNEjPc/ciP624arxTYzgxJsLp5p5jkTp2ReHb+hjY/n1cfCs
-         SYEetbeK0fa32deeRRi4YuP5AYq7/I4JVjuuIn0kZORxUmi99el1aoVWfUpedvx8Or
-         /0Wxujb52We2XULIIBpyEOqYUiyahDeGF5wjLeMw=
-Date:   Tue, 21 May 2019 10:59:56 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        linux-ext4@vger.kernel.org,
-        Arthur Marsh <arthur.marsh@internode.on.net>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH 4.19 000/105] 4.19.45-stable review
-Message-ID: <20190521085956.GC31445@kroah.com>
-References: <20190520115247.060821231@linuxfoundation.org>
- <20190520222342.wtsjx227c6qbkuua@xps.therub.org>
+        id S1727222AbfEUJBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 05:01:13 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46034 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726006AbfEUJBM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 05:01:12 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i21so8235908pgi.12
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 02:01:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VXa8qKXM8vx5w5jhb1hWXGT+1/HaN8aUWabF6nAwG1s=;
+        b=ap4moqJQoZSVJnMxAJFA2Gd3/lgQpTrOdJPzRObXTro1kOAgVtt4jWtT8AIudv19/H
+         lxz3hqeX/rhdO+/P8gIqTFBmbdvDqc9UPfxW3qM91M2NJPKmmdWNMJs0faLyWBIfteGN
+         +/2JfEl57rlNZgyLn+VowUFpUEOnFsaPanJVATse+mTSHOVCOxNJdiLdeJ5ZpVqEpEnn
+         tXLh/cGNaLhGR0mNlBaRiVEP3qySDLYSMY6GXnVMnPVUKDKM/5xN+wCF35NVFryIv0eL
+         Rb4YO1KPcNruH1PoHC13d7F/4xmF1JTKNdjfTMAtW9J+OffwY4gLCo9f7Eiq3hW6OysP
+         KcMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VXa8qKXM8vx5w5jhb1hWXGT+1/HaN8aUWabF6nAwG1s=;
+        b=V3Qlfu8KE9opgsQlb9rLxTxVSeMAPmzFKx0QI2VmZHvUZQnwalCKTYIPVXRrfMjR//
+         uvz7vOy2oCnehdVN0mfLSI4wZxOiler69AQ0ihezDLsEaF9ft04UBzy2C6ggtpU2fDcO
+         Bd8wmtlq+ZaC14IzhLfo8GrCGVk7wDgIFTVYT5arAKJUu7/IHAnvPGGrF7ZAG2S9oHaR
+         EUdKH5oRaWufPUWj6orQxX7Zeb2bBoEZx7YrS2c/H4PhnXtdOL8tBa49PebGzmCB/nMQ
+         5l5JkMb5OoLjE33skAtrbIBD60IAddplnQyInIG24yYFdofY7J0irDZFJsvkOpMUV0xI
+         GcIg==
+X-Gm-Message-State: APjAAAXjpkULhSlTC8qi68dkd/u2aGjO51mfasTKKlfIpjZazjKLPSeK
+        EZU9i0c6o+BNhpMuojgIZUvD4Q==
+X-Google-Smtp-Source: APXvYqwiPEuTQW24lNgrLxshbki5jYwjBJyGemSdADvmx+PDINAmtZ98NXEPyAhz0SpDdxyA9y4qmQ==
+X-Received: by 2002:a62:e10f:: with SMTP id q15mr85381949pfh.56.1558429271893;
+        Tue, 21 May 2019 02:01:11 -0700 (PDT)
+Received: from brauner.io ([208.54.39.182])
+        by smtp.gmail.com with ESMTPSA id f36sm21146595pgb.76.2019.05.21.02.01.04
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 21 May 2019 02:01:10 -0700 (PDT)
+Date:   Tue, 21 May 2019 11:01:01 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Daniel Colascione <dancol@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, jannh@google.com,
+        oleg@redhat.com
+Subject: Re: [RFC 5/7] mm: introduce external memory hinting API
+Message-ID: <20190521090058.mdx4qecmdbum45t2@brauner.io>
+References: <20190520035254.57579-1-minchan@kernel.org>
+ <20190520035254.57579-6-minchan@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190520222342.wtsjx227c6qbkuua@xps.therub.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190520035254.57579-6-minchan@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 05:23:42PM -0500, Dan Rue wrote:
-> On Mon, May 20, 2019 at 02:13:06PM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.19.45 release.
-> > There are 105 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed 22 May 2019 11:50:49 AM UTC.
-> > Anything received after that time might be too late.
-> 
-> We're seeing an ext4 issue previously reported at
-> https://lore.kernel.org/lkml/20190514092054.GA6949@osiris.
-> 
-> [ 1916.032087] EXT4-fs error (device sda): ext4_find_extent:909: inode #8: comm jbd2/sda-8: pblk 121667583 bad header/extent: invalid extent entries - magic f30a, entries 8, max 340(340), depth 0(0)
-> [ 1916.073840] jbd2_journal_bmap: journal block not found at offset 4455 on sda-8
-> [ 1916.081071] Aborting journal on device sda-8.
-> [ 1916.348652] EXT4-fs error (device sda): ext4_journal_check_start:61: Detected aborted journal
-> [ 1916.357222] EXT4-fs (sda): Remounting filesystem read-only
-> 
-> This is seen on 4.19-rc, 5.0-rc, mainline, and next. We don't have data
-> for 5.1-rc yet, which is presumably also affected in this RC round.
-> 
-> We only see this on x86_64 and i386 devices - though our hardware setups
-> vary so it could be coincidence.
-> 
-> I have to run out now, but I'll come back and work on a reproducer and
-> bisection later tonight and tomorrow.
-> 
-> Here is an example test run; link goes to the spot in the ltp syscalls
-> test where the disk goes into read-only mode.
-> https://lkft.validation.linaro.org/scheduler/job/735468#L8081
+Cc: Jann and Oleg too
 
-Odd, I keep hearing rumors of ext4 issues right now, but nothing
-actually solid that I can point to.  Any help you can provide here would
-be great.
+On Mon, May 20, 2019 at 12:52:52PM +0900, Minchan Kim wrote:
+> There is some usecase that centralized userspace daemon want to give
+> a memory hint like MADV_[COOL|COLD] to other process. Android's
+> ActivityManagerService is one of them.
+> 
+> It's similar in spirit to madvise(MADV_WONTNEED), but the information
+> required to make the reclaim decision is not known to the app. Instead,
+> it is known to the centralized userspace daemon(ActivityManagerService),
+> and that daemon must be able to initiate reclaim on its own without
+> any app involvement.
+> 
+> To solve the issue, this patch introduces new syscall process_madvise(2)
+> which works based on pidfd so it could give a hint to the exeternal
+> process.
+> 
+> int process_madvise(int pidfd, void *addr, size_t length, int advise);
+> 
+> All advises madvise provides can be supported in process_madvise, too.
+> Since it could affect other process's address range, only privileged
+> process(CAP_SYS_PTRACE) or something else(e.g., being the same UID)
+> gives it the right to ptrrace the process could use it successfully.
+> 
+> Please suggest better idea if you have other idea about the permission.
+> 
+> * from v1r1
+>   * use ptrace capability - surenb, dancol
+> 
+> Signed-off-by: Minchan Kim <minchan@kernel.org>
+> ---
+>  arch/x86/entry/syscalls/syscall_32.tbl |  1 +
+>  arch/x86/entry/syscalls/syscall_64.tbl |  1 +
+>  include/linux/proc_fs.h                |  1 +
+>  include/linux/syscalls.h               |  2 ++
+>  include/uapi/asm-generic/unistd.h      |  2 ++
+>  kernel/signal.c                        |  2 +-
+>  kernel/sys_ni.c                        |  1 +
+>  mm/madvise.c                           | 45 ++++++++++++++++++++++++++
+>  8 files changed, 54 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+> index 4cd5f982b1e5..5b9dd55d6b57 100644
+> --- a/arch/x86/entry/syscalls/syscall_32.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
+> @@ -438,3 +438,4 @@
+>  425	i386	io_uring_setup		sys_io_uring_setup		__ia32_sys_io_uring_setup
+>  426	i386	io_uring_enter		sys_io_uring_enter		__ia32_sys_io_uring_enter
+>  427	i386	io_uring_register	sys_io_uring_register		__ia32_sys_io_uring_register
+> +428	i386	process_madvise		sys_process_madvise		__ia32_sys_process_madvise
+> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> index 64ca0d06259a..0e5ee78161c9 100644
+> --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -355,6 +355,7 @@
+>  425	common	io_uring_setup		__x64_sys_io_uring_setup
+>  426	common	io_uring_enter		__x64_sys_io_uring_enter
+>  427	common	io_uring_register	__x64_sys_io_uring_register
+> +428	common	process_madvise		__x64_sys_process_madvise
+>  
+>  #
+>  # x32-specific system call numbers start at 512 to avoid cache impact
+> diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+> index 52a283ba0465..f8545d7c5218 100644
+> --- a/include/linux/proc_fs.h
+> +++ b/include/linux/proc_fs.h
+> @@ -122,6 +122,7 @@ static inline struct pid *tgid_pidfd_to_pid(const struct file *file)
+>  
+>  #endif /* CONFIG_PROC_FS */
+>  
+> +extern struct pid *pidfd_to_pid(const struct file *file);
+>  struct net;
+>  
+>  static inline struct proc_dir_entry *proc_net_mkdir(
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index e2870fe1be5b..21c6c9a62006 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -872,6 +872,8 @@ asmlinkage long sys_munlockall(void);
+>  asmlinkage long sys_mincore(unsigned long start, size_t len,
+>  				unsigned char __user * vec);
+>  asmlinkage long sys_madvise(unsigned long start, size_t len, int behavior);
+> +asmlinkage long sys_process_madvise(int pid_fd, unsigned long start,
+> +				size_t len, int behavior);
+>  asmlinkage long sys_remap_file_pages(unsigned long start, unsigned long size,
+>  			unsigned long prot, unsigned long pgoff,
+>  			unsigned long flags);
+> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+> index dee7292e1df6..7ee82ce04620 100644
+> --- a/include/uapi/asm-generic/unistd.h
+> +++ b/include/uapi/asm-generic/unistd.h
+> @@ -832,6 +832,8 @@ __SYSCALL(__NR_io_uring_setup, sys_io_uring_setup)
+>  __SYSCALL(__NR_io_uring_enter, sys_io_uring_enter)
+>  #define __NR_io_uring_register 427
+>  __SYSCALL(__NR_io_uring_register, sys_io_uring_register)
+> +#define __NR_process_madvise 428
+> +__SYSCALL(__NR_process_madvise, sys_process_madvise)
+>  
+>  #undef __NR_syscalls
+>  #define __NR_syscalls 428
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 1c86b78a7597..04e75daab1f8 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -3620,7 +3620,7 @@ static int copy_siginfo_from_user_any(kernel_siginfo_t *kinfo, siginfo_t *info)
+>  	return copy_siginfo_from_user(kinfo, info);
+>  }
+>  
+> -static struct pid *pidfd_to_pid(const struct file *file)
+> +struct pid *pidfd_to_pid(const struct file *file)
+>  {
+>  	if (file->f_op == &pidfd_fops)
+>  		return file->private_data;
+> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+> index 4d9ae5ea6caf..5277421795ab 100644
+> --- a/kernel/sys_ni.c
+> +++ b/kernel/sys_ni.c
+> @@ -278,6 +278,7 @@ COND_SYSCALL(mlockall);
+>  COND_SYSCALL(munlockall);
+>  COND_SYSCALL(mincore);
+>  COND_SYSCALL(madvise);
+> +COND_SYSCALL(process_madvise);
+>  COND_SYSCALL(remap_file_pages);
+>  COND_SYSCALL(mbind);
+>  COND_SYSCALL_COMPAT(mbind);
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 119e82e1f065..af02aa17e5c1 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/mman.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/page_idle.h>
+> +#include <linux/proc_fs.h>
+>  #include <linux/syscalls.h>
+>  #include <linux/mempolicy.h>
+>  #include <linux/page-isolation.h>
+> @@ -16,6 +17,7 @@
+>  #include <linux/hugetlb.h>
+>  #include <linux/falloc.h>
+>  #include <linux/sched.h>
+> +#include <linux/sched/mm.h>
+>  #include <linux/ksm.h>
+>  #include <linux/fs.h>
+>  #include <linux/file.h>
+> @@ -1140,3 +1142,46 @@ SYSCALL_DEFINE3(madvise, unsigned long, start, size_t, len_in, int, behavior)
+>  {
+>  	return madvise_core(current, start, len_in, behavior);
+>  }
+> +
+> +SYSCALL_DEFINE4(process_madvise, int, pidfd, unsigned long, start,
+> +		size_t, len_in, int, behavior)
+> +{
+> +	int ret;
+> +	struct fd f;
+> +	struct pid *pid;
+> +	struct task_struct *tsk;
+> +	struct mm_struct *mm;
+> +
+> +	f = fdget(pidfd);
+> +	if (!f.file)
+> +		return -EBADF;
+> +
+> +	pid = pidfd_to_pid(f.file);
 
-thanks,
+pidfd_to_pid() should not be directly exported since this allows
+/proc/<pid> fds to be used too. That's something we won't be going
+forward with. All new syscalls should only allow to operate on pidfds
+created through CLONE_PIDFD or pidfd_open() (cf. [1]).
 
-greg k-h
+So e.g. please export a simple helper like
+
+struct pid *pidfd_to_pid(const struct file *file)
+{
+        if (file->f_op == &pidfd_fops)
+                return file->private_data;
+
+        return NULL;
+}
+
+turning the old pidfd_to_pid() into something like:
+
+static struct pid *__fd_to_pid(const struct file *file)
+{
+        struct pid *pid;
+
+        pid = pidfd_to_pid(file);
+        if (pid)
+                return pid;
+
+        return tgid_pidfd_to_pid(file);
+}
+
+All new syscalls should only be using anon inode pidfds since they can
+actually have a clean security model built around them in the future.
+Note, pidfd_open() will be sent out together with making pidfds pollable
+for the 5.3 merge window.
+
+[1]: https://lore.kernel.org/lkml/20190520155630.21684-1-christian@brauner.io/
+
+Thanks!
+Christian
