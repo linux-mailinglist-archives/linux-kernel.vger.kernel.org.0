@@ -2,80 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4097424245
-	for <lists+linux-kernel@lfdr.de>; Mon, 20 May 2019 22:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D68A24723
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 06:56:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbfETUzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 20 May 2019 16:55:05 -0400
-Received: from mga01.intel.com ([192.55.52.88]:25739 "EHLO mga01.intel.com"
+        id S1727697AbfEUEzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 00:55:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725978AbfETUzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 20 May 2019 16:55:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 May 2019 13:55:04 -0700
-X-ExtLoop1: 1
-Received: from wvoon-ilbpg2.png.intel.com ([10.88.227.88])
-  by orsmga008.jf.intel.com with ESMTP; 20 May 2019 13:55:01 -0700
-From:   Weifeng Voon <weifeng.voon@intel.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jose Abreu <joabreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Ong Boon Leong <boon.leong.ong@intel.com>,
-        Tan Tee Min <tee.min.tan@intel.com>,
-        Weifeng Voon <weifeng.voon@intel.com>
-Subject: [PATCH net] net: stmmac: fix ethtool flow control not able to get/set
-Date:   Tue, 21 May 2019 12:55:42 +0800
-Message-Id: <1558414542-28550-1-git-send-email-weifeng.voon@intel.com>
-X-Mailer: git-send-email 1.9.1
+        id S1725924AbfEUEzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 00:55:50 -0400
+Received: from localhost (unknown [106.201.107.13])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C368621019;
+        Tue, 21 May 2019 04:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558414549;
+        bh=WBJrD9GaZl+jSOXfgGg0LbfrV5nlbencvl5nJfs2+us=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eEI7Qwbe6xpupT9LEYUiSFePR/A/OFpT7HMo0owwh0xRc+OhLbZwKqnXDqRjXpB+C
+         DTo10uNmzPg8GL9XUEK3of4HUSUJJJ2rVbuu5cQ2XjY5O/Qif/yPFJfbLPbtTolH2I
+         oVGJ73M7h4PJPg2zVBJm+FFND1HsBQ2Eq9/YuC/M=
+Date:   Tue, 21 May 2019 10:25:45 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] dmaengine: tegra-apb: Handle DMA_PREP_INTERRUPT flag
+ properly
+Message-ID: <20190521045545.GP15118@vkoul-mobl>
+References: <20190505181235.14798-1-digetx@gmail.com>
+ <287d7e67-1572-b4f2-d4bb-b1f02f534d47@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <287d7e67-1572-b4f2-d4bb-b1f02f534d47@nvidia.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Tan, Tee Min" <tee.min.tan@intel.com>
+On 08-05-19, 10:24, Jon Hunter wrote:
+> 
+> On 05/05/2019 19:12, Dmitry Osipenko wrote:
+> > The DMA_PREP_INTERRUPT flag means that descriptor's callback should be
+> > invoked upon transfer completion and that's it. For some reason driver
+> > completely disables the hardware interrupt handling, leaving channel in
+> > unusable state if transfer is issued with the flag being unset. Note
+> > that there are no occurrences in the relevant drivers that do not set
+> > the flag, hence this patch doesn't fix any actual bug and merely fixes
+> > potential problem.
+> > 
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> 
+> >From having a look at this, I am guessing that we have never really
+> tested the case where DMA_PREP_INTERRUPT flag is not set because as you
+> mentioned it does not look like this will work at all!
 
-Currently ethtool was not able to get/set the flow control due to a
-missing "!". It will always return -EOPNOTSUPP even the device is
-flow control supported.
+That is a fair argument
+> 
+> Is there are use-case you are looking at where you don't set the
+> DMA_PREP_INTERRUPT flag?
+> 
+> If not I am wondering if we should even bother supporting this and warn
+> if it is not set. AFAICT it does not appear to be mandatory, but maybe
+> Vinod can comment more on this.
 
-This patch fixes the condition check for ethtool flow control get/set
-function for ETHTOOL_LINK_MODE_Asym_Pause_BIT.
+This is supposed to be used in the cases where you submit a bunch of
+descriptors and selectively dont want an interrupt in few cases...
 
-Fixes: 3c1bcc8614db (“net: ethernet: Convert phydev advertize and supported from u32 to link mode”)
-Signed-off-by: Tan, Tee Min <tee.min.tan@intel.com>
-Reviewed-by: Ong Boon Leong <boon.leong.ong@intel.com>
-Signed-off-by: Voon, Weifeng <weifeng.voon@intel.com@intel.com>
+Is this such a case?
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
-index 3c749c3..e09522c 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ethtool.c
-@@ -460,7 +460,7 @@ static void stmmac_ethtool_gregs(struct net_device *dev,
- 	} else {
- 		if (!linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT,
- 				       netdev->phydev->supported) ||
--		    linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-+		    !linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
- 				      netdev->phydev->supported))
- 			return;
- 	}
-@@ -491,7 +491,7 @@ static void stmmac_ethtool_gregs(struct net_device *dev,
- 	} else {
- 		if (!linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT,
- 				       phy->supported) ||
--		    linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
-+		    !linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
- 				      phy->supported))
- 			return -EOPNOTSUPP;
- 	}
--- 
-1.9.1
-
+Thanks
+~Vinod
