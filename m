@@ -2,93 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E89E424D7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:02:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E96B224D86
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfEULCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 07:02:15 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33484 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbfEULCP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 07:02:15 -0400
-Received: by mail-lj1-f196.google.com with SMTP id w1so15492208ljw.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 04:02:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JiOuebsbWgjEjp0a4XhtJdVmmGWnCnRTxg69qCcOtsY=;
-        b=ZvRBIPtfv2tQxLEbXHDCKUrcnh/NVGQfK3ADpUqQQBHq1gYARpxa+eRJtDdzIgJu00
-         kldlfPB4RQNBEqY7t9xCcYTx60nZQBUNINx3FuZLkV4uQquWRRo0ZPQVLb4Gmk2L8dfh
-         USl8OwxlE0Lwfu33/W2BA31HSvaLTnOEeLrf1CWKLuutF2ytufBEwqs16ms8qN0neyLc
-         +KOZj1m8EZx3foz/XKFg3yT3ele5AQZCLu7ZTBo9lCedes1ZgP7k8FK8ofFAumM/oNfz
-         MuSoRVwe5VBd9AnIjHJGGJFnPOxeYVrX8VYOq1+YDhFfQguqeHkycLU5DZGaPjTGM2s/
-         c3LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JiOuebsbWgjEjp0a4XhtJdVmmGWnCnRTxg69qCcOtsY=;
-        b=Uz0ce6iGmPdLqP44obEf79R7BWUDeHoJBokCpshAq04geX3+VEY8jhs8cpg6IVcukB
-         au9n688J4TA6ACH5dzHblxZLNpyDWs5OIWrGiemXulaDWc3UoPG6MW9GaiVv639CJdF7
-         x/J11Zu1/LNo8W37Meqtza4sc5zVUD91UyZ9ogdEkMsO6uBY1hh599DMXJRSt7aO++bx
-         btEaaDVepHvuN33qJfTBswin2d9KbSijN6/Hgl1hroN8LMe2PSbRggEL+/XQysZLepmL
-         AjkOWBLBgCK8oL3dRe3qN7VjfIs6/Vy5WkDWjsTEmIkr0nlf2OxiRPRI4vNASqX1xOqw
-         mvzA==
-X-Gm-Message-State: APjAAAUFMVsfhzQa4y/pyVn+N7ibFzdX/pwUz1dZtfViJOX3MGtvm/fG
-        xRWXEJ7bSxI+6PtGJZcC0p6bWeoBdajU/iKf1hacEQ==
-X-Google-Smtp-Source: APXvYqwWehMJJXjGsP0Bc9f4SddpS0xg17Ozs3s2XazkB+UlZqZ2pxY6LcgfzktZnCGe51S0yfCdqoJ2EF6kI7Lo3Ns=
-X-Received: by 2002:a2e:2b58:: with SMTP id q85mr41770277lje.179.1558436532542;
- Tue, 21 May 2019 04:02:12 -0700 (PDT)
+        id S1727869AbfEULEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 07:04:08 -0400
+Received: from mail-eopbgr30061.outbound.protection.outlook.com ([40.107.3.61]:28132
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726242AbfEULEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 07:04:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/JCKRJ/rZ5z3f2Y54LW83v4tUbvidtizOVuCM8lLLss=;
+ b=ISrC8fdRNh5Kkj54KhALQM+u1ftNtZ9XKkFq6pUzGTspr4eGrdnJtdQbUJcuo4eUbsigHUmtQHL2JM7yrTVxyi2Oj8w8MKf6r9xPihLb8CDD7g36ADeQXJzM4EPOAXi+YVAdnaUKzkbvr9WrydUvPGaxA9cvljSeB2ZfuqQ0lN0=
+Received: from AM0PR04MB6434.eurprd04.prod.outlook.com (20.179.252.215) by
+ AM0PR04MB5235.eurprd04.prod.outlook.com (20.177.41.222) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.18; Tue, 21 May 2019 11:03:57 +0000
+Received: from AM0PR04MB6434.eurprd04.prod.outlook.com
+ ([fe80::19be:75a:9fe:7cec]) by AM0PR04MB6434.eurprd04.prod.outlook.com
+ ([fe80::19be:75a:9fe:7cec%7]) with mapi id 15.20.1900.020; Tue, 21 May 2019
+ 11:03:57 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Anson Huang <anson.huang@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 1/2] soc: imx: soc-imx8: Avoid unnecessary of_node_put()
+ in error handling
+Thread-Topic: [PATCH 1/2] soc: imx: soc-imx8: Avoid unnecessary of_node_put()
+ in error handling
+Thread-Index: AQHVD7YvdNtmZ2uz6UeyYdwfC+FzEA==
+Date:   Tue, 21 May 2019 11:03:57 +0000
+Message-ID: <AM0PR04MB6434C99FC1B4F12477F94064EE070@AM0PR04MB6434.eurprd04.prod.outlook.com>
+References: <1558430013-18346-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 08b4d7ba-1115-4e59-1d18-08d6dddc05b4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB5235;
+x-ms-traffictypediagnostic: AM0PR04MB5235:
+x-microsoft-antispam-prvs: <AM0PR04MB5235967920BB3111B1C45F64EE070@AM0PR04MB5235.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0044C17179
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(136003)(39860400002)(346002)(366004)(199004)(189003)(486006)(6246003)(6116002)(2906002)(102836004)(8676002)(14454004)(186003)(44832011)(305945005)(26005)(229853002)(9686003)(7736002)(86362001)(316002)(476003)(53546011)(76176011)(6506007)(256004)(25786009)(2501003)(3846002)(7696005)(478600001)(6436002)(66556008)(446003)(54906003)(64756008)(4326008)(66476007)(110136005)(33656002)(73956011)(66446008)(66946007)(76116006)(52536014)(53936002)(74316002)(99286004)(81156014)(8936002)(55016002)(4744005)(5660300002)(66066001)(71190400001)(81166006)(71200400001)(68736007)(91956017);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5235;H:AM0PR04MB6434.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 9VFXH3YvISyNLG4GB6VTwK9Bl4++Tb/xNUdFRmvhR4Gbh1/pWIxWP4xtbR0RBly5pwnNfIv6KNpCG/gdRCT+QkG3OgsVSJIYsbBRGrgs5xngq2fPbnuuPzNMKT6YugoK+KR8BuaYLQyluG0y1GyJiaYa8AGLOV8d2h3I2HvB3RcJB2J2QMPSW2XY/NgijiDbFJ2t5nym7GZZ4+QNWaKoCGMHdxTfoCYzAR2r9csBKX0e6I9/lR12sMxJoc01Cs4Z6zQVN6Xn7+x+4PA15Il3hUy+WICdVXdf+PzQZUWys3fSS3YLbSQrL6OPLViZvGig1IdNahjFT35Pff42M9YYafYYfhD53OVJA2U7z1x08Ur9v+UlqGae/eKeER5lnixtLpAIw6MhfIl3G2+sbnHX2nUlXKFuR3v0q6ULOhPrZP4=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190517154256.255696-1-darekm@google.com> <c0007b51-5e9f-4788-b860-d0623e21013b@xs4all.nl>
-In-Reply-To: <c0007b51-5e9f-4788-b860-d0623e21013b@xs4all.nl>
-From:   Dariusz Marcinkiewicz <darekm@google.com>
-Date:   Tue, 21 May 2019 13:02:01 +0200
-Message-ID: <CALFZZQHqg1oNXOoMJGhSxOuXc-a1AqJL23GAW2oUGk8h9X9Fbw@mail.gmail.com>
-Subject: Re: [PATCH v6 1/3] media: cec: expose HDMI connector to CEC dev mapping
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, hans.verkuil@cisco.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08b4d7ba-1115-4e59-1d18-08d6dddc05b4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 11:03:57.6798
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5235
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 12:25 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> It's a bit unusual since it uses the Synopsys bridge, but not the Synopsys
-> CEC driver (it has its own meson cec driver).
->
-> The first thing I noticed is that I did not get any connector info.
-> I think that the root cause of that is that you forgot that there are
-> several drm drivers that call cec_notifier_get() instead of cec_notifier_get_conn().
->
-> I think all those calls to cec_notifier_get() in drm drivers should be replaced
-> by cec_notifier_get_conn() where the second argument is NULL, but the third argument
-> should contain valid connector info.
->
-> A quick grep gives me the following drivers that need work:
->
-> drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> drivers/gpu/drm/exynos/exynos_hdmi.c
-> drivers/gpu/drm/i2c/tda998x_drv.c
-> drivers/gpu/drm/sti/sti_hdmi.c
-> drivers/gpu/drm/tegra/output.c
->
-I am afraid that just replacing cec_notifier_get with
-cec_notifier_get_conn won't necessarily make this information
-available, as, e.g. looking at tegra, those would also require some
-reshuffling of the code so that notifier is created once connector is
-initialized. Btw. I've updated dw-hdmi.c and tda998x_drv.c to use
-cec_notifier_get_conn, so at least those 2 will be covered.
-
-
-> The second thing I noticed is that patch 2 gave me a new kernel warning, but
-> I'll do some more testing for that and reply to patch 2/3 once I know more.
->
-I hope this is fixed in v7.
-
-Thank you for your testing and best regards!
+On 5/21/2019 12:18 PM, Anson Huang wrote:=0A=
+> of_node_put() is called after of_match_node() successfully called,=0A=
+> then in the following error handling, of_node_put() is called again=0A=
+> which is unnecessary, this patch adjusts the location of of_node_put()=0A=
+> to avoid such scenario.=0A=
+> =0A=
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>=0A=
+=0A=
+For both:=0A=
+=0A=
+Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>=0A=
+=0A=
+I was thinking that maybe you could of_node_put as soon as you were done =
+=0A=
+with it but the model is read straight into soc_dev_attr so just freeing =
+=0A=
+everything at the end makes more sense.=0A=
