@@ -2,78 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60AB024F3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 14:51:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0C1524F51
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 14:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728198AbfEUMv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 08:51:29 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:54115 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728176AbfEUMv1 (ORCPT
+        id S1728169AbfEUMy2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 08:54:28 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47184 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbfEUMy2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 08:51:27 -0400
-X-Originating-IP: 90.88.22.185
-Received: from localhost.localdomain (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 2C2041C0019;
-        Tue, 21 May 2019 12:51:24 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v5 4/4] clk: mvebu: armada-37xx-xtal: fill the device entry when registering the clock
-Date:   Tue, 21 May 2019 14:51:13 +0200
-Message-Id: <20190521125114.20357-5-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190521125114.20357-1-miquel.raynal@bootlin.com>
-References: <20190521125114.20357-1-miquel.raynal@bootlin.com>
+        Tue, 21 May 2019 08:54:28 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 18467283ECE;
+        Tue, 21 May 2019 13:54:26 +0100 (BST)
+Date:   Tue, 21 May 2019 14:53:22 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Helen Koike <helen.koike@collabora.com>
+Cc:     linux-media@vger.kernel.org, hverkuil-cisco@xs4all.nl,
+        kernel@collabora.com, ezequiel.garcia@collabora.com,
+        andrealmeid@collabora.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: vimc: fix component match compare
+Message-ID: <20190521145322.5ef21cf7@collabora.com>
+In-Reply-To: <20190517172011.13257-1-helen.koike@collabora.com>
+References: <20190517172011.13257-1-helen.koike@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So far the clk_hw_register_fixed_factor() call was not providing any
-device structure. While doing so is harmless for regular use, the
-missing device structure may be a problem for suspend to RAM support.
+On Fri, 17 May 2019 14:20:11 -0300
+Helen Koike <helen.koike@collabora.com> wrote:
 
-Since, device links have been added to clocks, links created during
-probe will enforce the suspend/resume orders. When the device is
-missing during the registration, no link can be established, hence the
-order between parent and child clocks are not enforced.
+> If the system has other devices being registered in the component
+> framework, the compare function will be called with a device that
+> doesn't belong to vimc.
+> This device is not necessarily a platform_device, nor have a
+> platform_data (which causes a NULL pointer dereference error) and if it
+> does have a pdata, it is not necessarily type of struct vimc_platform_data.
+> So casting to any of these types is wrong.
+> 
+> Instead of expecting a given pdev with a given pdata, just expect for
+> the device it self. vimc-core is the one who creates them, we know in
+> advance exactly which object to expect in the match.
+> 
+> Fixes: 4a29b7090749 ("[media] vimc: Subdevices as modules")
+> Signed-off-by: Helen Koike <helen.koike@collabora.com>
 
-Adding the device structure here will create a link between the XTAL
-clock (this one) and the four TBG clocks that are derived from it.
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Tested-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- drivers/clk/mvebu/armada-37xx-xtal.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
-index e9e306d4e9af..0e74bcd83d1a 100644
---- a/drivers/clk/mvebu/armada-37xx-xtal.c
-+++ b/drivers/clk/mvebu/armada-37xx-xtal.c
-@@ -57,7 +57,8 @@ static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
- 		rate = 25000000;
- 
- 	of_property_read_string_index(np, "clock-output-names", 0, &xtal_name);
--	xtal_hw = clk_hw_register_fixed_rate(NULL, xtal_name, NULL, 0, rate);
-+	xtal_hw = clk_hw_register_fixed_rate(&pdev->dev, xtal_name, NULL, 0,
-+					     rate);
- 	if (IS_ERR(xtal_hw))
- 		return PTR_ERR(xtal_hw);
- 	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, xtal_hw);
--- 
-2.19.1
+> 
+> ---
+> 
+>  drivers/media/platform/vimc/vimc-core.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vimc/vimc-core.c b/drivers/media/platform/vimc/vimc-core.c
+> index 3aa62d7e3d0e..23992affd01f 100644
+> --- a/drivers/media/platform/vimc/vimc-core.c
+> +++ b/drivers/media/platform/vimc/vimc-core.c
+> @@ -244,10 +244,7 @@ static void vimc_comp_unbind(struct device *master)
+>  
+>  static int vimc_comp_compare(struct device *comp, void *data)
+>  {
+> -	const struct platform_device *pdev = to_platform_device(comp);
+> -	const char *name = data;
+> -
+> -	return !strcmp(pdev->dev.platform_data, name);
+> +	return comp == data;
+>  }
+>  
+>  static struct component_match *vimc_add_subdevs(struct vimc_device *vimc)
+> @@ -277,7 +274,7 @@ static struct component_match *vimc_add_subdevs(struct vimc_device *vimc)
+>  		}
+>  
+>  		component_match_add(&vimc->pdev.dev, &match, vimc_comp_compare,
+> -				    (void *)vimc->pipe_cfg->ents[i].name);
+> +				    &vimc->subdevs[i]->dev);
+>  	}
+>  
+>  	return match;
 
