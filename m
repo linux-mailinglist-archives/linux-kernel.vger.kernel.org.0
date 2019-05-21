@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 386CA25AD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 01:32:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9857125ACB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 01:31:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbfEUXbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 19:31:48 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:8292 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727493AbfEUXbU (ORCPT
+        id S1728050AbfEUXbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 19:31:21 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:1183 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727790AbfEUXbU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 21 May 2019 19:31:20 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ce48a460001>; Tue, 21 May 2019 16:31:18 -0700
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ce48a480001>; Tue, 21 May 2019 16:31:20 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 21 May 2019 16:31:18 -0700
+  Tue, 21 May 2019 16:31:19 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 21 May 2019 16:31:18 -0700
-Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL104.nvidia.com
+        by hqpgpgate101.nvidia.com on Tue, 21 May 2019 16:31:19 -0700
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL104.nvidia.com
  (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 21 May
  2019 23:31:18 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 21 May 2019 23:31:17 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 21 May 2019 23:31:18 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.174]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5ce48a460004>; Tue, 21 May 2019 16:31:18 -0700
+        id <B5ce48a460005>; Tue, 21 May 2019 16:31:18 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
 CC:     <jckuo@nvidia.com>, <talho@nvidia.com>, <josephl@nvidia.com>,
         <skomatineni@nvidia.com>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH V1 11/12] soc/tegra: pmc: configure tegra deep sleep control settings
-Date:   Tue, 21 May 2019 16:31:22 -0700
-Message-ID: <1558481483-22254-12-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V1 12/12] arm64: tegra: enable wake from deep sleep on RTC alarm.
+Date:   Tue, 21 May 2019 16:31:23 -0700
+Message-ID: <1558481483-22254-13-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
 References: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
@@ -42,122 +42,52 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1558481478; bh=/J/3Ez25wTlkLCMS6Rzj4KYTeU+OuYLp1sYDTC4EZwg=;
+        t=1558481480; bh=0l4gC+Qj0JmgYVzpD51BKCVjV4o0qtIe+OiFzC2IyHA=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=maCKIs6jHHyFnDLGCcYHesQHi3BHGJ3Y7FkR62Rki7Wiqhw/w0gU0mcDSfl/F8jrn
-         K9bTVMXXjNUH1cXWmD0wxk2aNlHm0/5+eCtqbDNMOtva4/cwkB6+U/Q5uzdu8V5UWb
-         WqbR/QP62r41Qu1KtKUCBxkc9Bfv2xuAV7tRTPr9pE4w2TQj0yiBYtBv++otBl3Ayo
-         qJ+Sz+EpbjQpHYq0/Fj04sBtmGk5lV+2mik0IVM222dM+Rceutci9e9DCS33szaHZU
-         VTbyPx23F58eoLoRH8fGdyXEQ6Xy8wn/BnQ1fhqb3YKGKPtNZTabWCsWicxMjo0Rmm
-         S7964imysn+4g==
+        b=pdt5MZBns4+ceXvILOGcVnbdVCbXXruvt8Ivg02qDNzL3ohJttqjXz9PSUadVtnYu
+         RtysGhBViJw/q/9DFqZIzNZXUFC0Fm/f5qZnoBiYkimLa2Hb/5d+4XPBsevvjwdHZg
+         mo3VMzUnzyFN/VhoEW9WrbqYOAh0Z0XMU/BMjNCPM7zZJpE2m2T6EdnpCQZ2hoMIFV
+         Ma7SwSfaGtKO/OkaCnMDce4PEtj7FOyxH8pnSx5KwmRgODLINjcB7nQXtko8mU0ONI
+         h49YWOkx0085rPlDk+HtmB8SDt1lY4+VYXHflPz5A4vWRZLhagkvLq+guxAIng5v3K
+         T5nM7976tebHA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra210 and prior Tegra chips have power request signal polarity,
-deep sleep entry and wake related timings which are platform specific
-that should be configured before entering into deep sleep.
-
-Below are the timings specific configurations for deep sleep and wake.
-- Core rail power-on stabilization timer
-- OSC clock stabilization timer after SOC rail power is stabilized.
-- Core power off time is the minimum wake delay to keep the system
-in deep sleep state irrespective of any quick wake event.
-
-These values depends on the discharge time of regulators and turn OFF
-time of the PMIC to allow the complete system to finish entering into
-deep sleep state.
-
-These values vary based on the platform design and are specified
-through the device tree.
-
-This patch has implementation to configure these configurations which
-are must to have for deep sleep state.
+This patch updates device tree for RTC and PMC to allow system wake
+from deep sleep on RTC alarm.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi |  7 +++++++
- drivers/soc/tegra/pmc.c                        | 18 ++++++++++++++++++
- 2 files changed, 25 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index 4dcd0d36189a..7ac5e55a30aa 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -266,6 +266,13 @@
- 
- 	pmc@7000e400 {
- 		nvidia,invert-interrupt;
-+		nvidia,suspend-mode = <0>;
-+		nvidia,cpu-pwr-good-time = <0>;
-+		nvidia,cpu-pwr-off-time = <0>;
-+		nvidia,core-pwr-good-time = <4587 3876>;
-+		nvidia,core-pwr-off-time = <39065>;
-+		nvidia,core-power-req-active-high;
-+		nvidia,sys-clock-req-active-high;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index a550c0a4d572..cf5c215efb04 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -763,7 +763,8 @@
+ 	rtc@7000e000 {
+ 		compatible = "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
+ 		reg = <0x0 0x7000e000 0x0 0x100>;
+-		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
++		interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-parent = <&pmc>;
+ 		clocks = <&tegra_car TEGRA210_CLK_RTC>;
+ 		clock-names = "rtc";
  	};
+@@ -773,6 +774,8 @@
+ 		reg = <0x0 0x7000e400 0x0 0x400>;
+ 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+ 		clock-names = "pclk", "clk32k_in";
++		#interrupt-cells = <2>;
++		interrupt-controller;
  
- 	/* eMMC */
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 5e68e1de1780..8d225962d136 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -66,6 +66,7 @@
- #define  PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
- #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
- #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
-+#define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
- #define  PMC_CNTRL_MAIN_RST		BIT(4)
- #define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
- 
-@@ -98,6 +99,8 @@
- 
- #define PMC_CPUPWRGOOD_TIMER		0xc8
- #define PMC_CPUPWROFF_TIMER		0xcc
-+#define PMC_COREPWRGOOD_TIMER		0x3c
-+#define PMC_COREPWROFF_TIMER		0xe0
- 
- #define PMC_PWR_DET_VALUE		0xe4
- 
-@@ -2293,6 +2296,7 @@ static const struct tegra_pmc_regs tegra20_pmc_regs = {
- static void tegra20_pmc_init(struct tegra_pmc *pmc)
- {
- 	u32 value;
-+	unsigned long osc, pmu, off;
- 
- 	/* Always enable CPU power request */
- 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
-@@ -2306,6 +2310,11 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
- 	else
- 		value |= PMC_CNTRL_SYSCLK_POLARITY;
- 
-+	if (pmc->corereq_high)
-+		value &= ~PMC_CNTRL_PWRREQ_POLARITY;
-+	else
-+		value |= PMC_CNTRL_PWRREQ_POLARITY;
-+
- 	/* configure the output polarity while the request is tristated */
- 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
- 
-@@ -2313,6 +2322,15 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
- 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
- 	value |= PMC_CNTRL_SYSCLK_OE;
- 	tegra_pmc_writel(pmc, value, PMC_CNTRL);
-+
-+	osc = DIV_ROUND_UP_ULL(pmc->core_osc_time * 8192, 1000000);
-+	pmu = DIV_ROUND_UP_ULL(pmc->core_pmu_time * 32768, 1000000);
-+	off = DIV_ROUND_UP_ULL(pmc->core_off_time * 32768, 1000000);
-+	if (osc && pmu)
-+		tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
-+				 PMC_COREPWRGOOD_TIMER);
-+	if (off)
-+		tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
- }
- 
- static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
+ 		powergates {
+ 			pd_audio: aud {
 -- 
 2.7.4
 
