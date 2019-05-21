@@ -2,43 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE6DE258FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61F5625902
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 22:35:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbfEUUdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 16:33:00 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38264 "EHLO
+        id S1728036AbfEUUdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 16:33:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38616 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727428AbfEUUc7 (ORCPT
+        with ESMTP id S1727376AbfEUUdI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 16:32:59 -0400
+        Tue, 21 May 2019 16:33:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=NroV3N1vJpd6DZ4DRQosf/gwRkeYD5eyKfv4NsTZWn0=; b=RPDaCjlCbz/v
-        cUKM5iO9XPYzdRBGIj22IbikbB00PudC+BrqAz0xLKLvAyXLO1rxocbP3u8IhdvSjIfALlfybFDKn
-        7ZLR5eFXTwFyzJaT5BqlBrcy/ou1yerLY5rtw9dxmo5dSiuwMlzyBzKz5A9U1N0W0oAPk30VRGeRf
-        ATPkM=;
+        List-Archive; bh=WYXLR7ZS6jDTWKfU4LheraNWdGPA7/wxWnPkHZQHF5k=; b=HQtwaysftys3
+        IKkP1WzONpOu/70j3HEIS3i9HRBiKl7J0b/OBN+qE6M8SNvr3Cji9uxdl5nH01HjSvmZD8BK3ioid
+        WJs8crY6S8+sfZDb6Pz7W4HjnLeMKDDvGCt7q5bXF+l6M52U5Istb/UUgGy1i/SwmbcmFFfBDDnWM
+        BizYw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hTBRI-0001yj-04; Tue, 21 May 2019 20:32:48 +0000
+        id 1hTBRX-000221-Nj; Tue, 21 May 2019 20:33:03 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B277E1126D1B; Tue, 21 May 2019 21:32:41 +0100 (BST)
+        id CDEFC1126D16; Tue, 21 May 2019 21:32:59 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: simple-card: Fix configuration of DAI format" to the asoc tree
-In-Reply-To: <1558029086-18024-1-git-send-email-jonathanh@nvidia.com>
+To:     Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc:     broonie@kernel.org, Charles Keepax <ckeepax@opensource.cirrus.com>,
+        devicetree@vger.kernel.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        mark.rutland@arm.com, patches@opensource.cirrus.com,
+        robh+dt@kernel.org
+Subject: Applied "regulator: arizona-ldo1: Add support for Cirrus Logic Madera codecs" to the regulator tree
+In-Reply-To: <20190521100439.27383-2-ckeepax@opensource.cirrus.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190521203241.B277E1126D1B@debutante.sirena.org.uk>
-Date:   Tue, 21 May 2019 21:32:41 +0100 (BST)
+Message-Id: <20190521203259.CDEFC1126D16@debutante.sirena.org.uk>
+Date:   Tue, 21 May 2019 21:32:59 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -46,11 +47,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: simple-card: Fix configuration of DAI format
+   regulator: arizona-ldo1: Add support for Cirrus Logic Madera codecs
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -71,62 +72,163 @@ to this mail.
 Thanks,
 Mark
 
-From 069d037aea98ffa64c26d4b1dc958fb8f39f5c2b Mon Sep 17 00:00:00 2001
-From: Jon Hunter <jonathanh@nvidia.com>
-Date: Thu, 16 May 2019 18:51:26 +0100
-Subject: [PATCH] ASoC: simple-card: Fix configuration of DAI format
+From 1f5f11e7370c6a55da1a37351b0cfb5f86f0cb6d Mon Sep 17 00:00:00 2001
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+Date: Tue, 21 May 2019 11:04:38 +0100
+Subject: [PATCH] regulator: arizona-ldo1: Add support for Cirrus Logic Madera
+ codecs
 
-When configuring a codec to be both bit-clock and frame-master, it was
-found that the codec was always configured as bit-clock and frame-slave.
-Looking at the simple_dai_link_of() function there appears to be two
-problems with the configuration of the DAI format, which are ...
+This adds a new driver identity "madera-ldo1" and probe function
+so that this driver can be used to control the LDO1 regulator on
+some Cirrus Logic Madera codecs.
 
-1. The function asoc_simple_parse_daifmt() is called before the function
-   asoc_simple_parse_codec() and this means that the device-tree node
-   for the codec has not been parsed yet, which is needed by the
-   function asoc_simple_parse_daifmt() to determine who is the codec.
-2. The phandle passed to asoc_simple_parse_daifmt() is the phandle to
-   the 'codec' node and not the phandle of the actual codec defined by
-   the 'sound-dai' property under the 'codec' node.
-
-Fix the above by moving the call to asoc_simple_parse_daifmt() after the
-the call to asoc_simple_parse_codec() and pass the phandle for the codec
-to asoc_simple_parse_daifmt().
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/generic/simple-card.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/regulator/Kconfig        |  8 +--
+ drivers/regulator/arizona-ldo1.c | 83 +++++++++++++++++++++++++++++++-
+ 2 files changed, 86 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 9b568f578bcd..c2c8dcbcf795 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -283,11 +283,6 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
- 	codec_dai		=
- 	dai_props->codec_dai	= &priv->dais[li->dais++];
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 5e3a9e6547b0..5827aace014b 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -135,12 +135,12 @@ config REGULATOR_AB8500
+ 	  signal AB8500 PMIC
  
--	ret = asoc_simple_parse_daifmt(dev, node, codec,
--				       prefix, &dai_link->dai_fmt);
--	if (ret < 0)
--		goto dai_link_of_err;
--
- 	simple_parse_mclk_fs(top, cpu, codec, dai_props, prefix);
+ config REGULATOR_ARIZONA_LDO1
+-	tristate "Wolfson Arizona class devices LDO1"
+-	depends on MFD_ARIZONA
++	tristate "Cirrus Madera and Wolfson Arizona class devices LDO1"
++	depends on MFD_ARIZONA || MFD_MADERA
+ 	depends on SND_SOC
+ 	help
+-	  Support for the LDO1 regulators found on Wolfson Arizona class
+-	  devices.
++	  Support for the LDO1 regulators found on Cirrus Logic Madera codecs
++	  and Wolfson Microelectronic Arizona codecs.
  
- 	ret = asoc_simple_parse_cpu(cpu, dai_link, &single_cpu);
-@@ -298,6 +293,11 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
- 	if (ret < 0)
- 		goto dai_link_of_err;
+ config REGULATOR_ARIZONA_MICSUPP
+ 	tristate "Wolfson Arizona class devices MICSUPP"
+diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
+index e4bc7b1e5ccd..1a3d7b720f5e 100644
+--- a/drivers/regulator/arizona-ldo1.c
++++ b/drivers/regulator/arizona-ldo1.c
+@@ -25,6 +25,10 @@
+ #include <linux/mfd/arizona/pdata.h>
+ #include <linux/mfd/arizona/registers.h>
  
-+	ret = asoc_simple_parse_daifmt(dev, node, dai_link->codecs->of_node,
-+				       prefix, &dai_link->dai_fmt);
-+	if (ret < 0)
-+		goto dai_link_of_err;
++#include <linux/mfd/madera/core.h>
++#include <linux/mfd/madera/pdata.h>
++#include <linux/mfd/madera/registers.h>
 +
- 	ret = asoc_simple_parse_platform(plat, dai_link);
- 	if (ret < 0)
- 		goto dai_link_of_err;
+ struct arizona_ldo1 {
+ 	struct regulator_dev *regulator;
+ 	struct regmap *regmap;
+@@ -158,6 +162,31 @@ static const struct regulator_init_data arizona_ldo1_wm5110 = {
+ 	.num_consumer_supplies = 1,
+ };
+ 
++static const struct regulator_desc madera_ldo1 = {
++	.name = "LDO1",
++	.supply_name = "LDOVDD",
++	.type = REGULATOR_VOLTAGE,
++	.ops = &arizona_ldo1_ops,
++
++	.vsel_reg = MADERA_LDO1_CONTROL_1,
++	.vsel_mask = MADERA_LDO1_VSEL_MASK,
++	.min_uV = 900000,
++	.uV_step = 25000,
++	.n_voltages = 13,
++	.enable_time = 3000,
++
++	.owner = THIS_MODULE,
++};
++
++static const struct regulator_init_data madera_ldo1_default = {
++	.constraints = {
++		.min_uV = 1200000,
++		.max_uV = 1200000,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++	},
++	.num_consumer_supplies = 1,
++};
++
+ static int arizona_ldo1_of_get_pdata(struct arizona_ldo1_pdata *pdata,
+ 				     struct regulator_config *config,
+ 				     const struct regulator_desc *desc,
+@@ -320,6 +349,32 @@ static int arizona_ldo1_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int madera_ldo1_probe(struct platform_device *pdev)
++{
++	struct madera *madera = dev_get_drvdata(pdev->dev.parent);
++	struct arizona_ldo1 *ldo1;
++	bool external_dcvdd;
++	int ret;
++
++	ldo1 = devm_kzalloc(&pdev->dev, sizeof(*ldo1), GFP_KERNEL);
++	if (!ldo1)
++		return -ENOMEM;
++
++	ldo1->regmap = madera->regmap;
++
++	ldo1->init_data = madera_ldo1_default;
++
++	ret = arizona_ldo1_common_init(pdev, ldo1, &madera_ldo1,
++				       &madera->pdata.ldo1,
++				       &external_dcvdd);
++	if (ret)
++		return ret;
++
++	madera->internal_dcvdd = !external_dcvdd;
++
++	return 0;
++}
++
+ static struct platform_driver arizona_ldo1_driver = {
+ 	.probe = arizona_ldo1_probe,
+ 	.remove = arizona_ldo1_remove,
+@@ -328,10 +383,36 @@ static struct platform_driver arizona_ldo1_driver = {
+ 	},
+ };
+ 
+-module_platform_driver(arizona_ldo1_driver);
++static struct platform_driver madera_ldo1_driver = {
++	.probe = madera_ldo1_probe,
++	.remove = arizona_ldo1_remove,
++	.driver		= {
++		.name	= "madera-ldo1",
++	},
++};
++
++static struct platform_driver * const madera_ldo1_drivers[] = {
++	&arizona_ldo1_driver,
++	&madera_ldo1_driver,
++};
++
++static int __init arizona_ldo1_init(void)
++{
++	return platform_register_drivers(madera_ldo1_drivers,
++					 ARRAY_SIZE(madera_ldo1_drivers));
++}
++module_init(arizona_ldo1_init);
++
++static void __exit madera_ldo1_exit(void)
++{
++	platform_unregister_drivers(madera_ldo1_drivers,
++				    ARRAY_SIZE(madera_ldo1_drivers));
++}
++module_exit(madera_ldo1_exit);
+ 
+ /* Module information */
+ MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");
+ MODULE_DESCRIPTION("Arizona LDO1 driver");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:arizona-ldo1");
++MODULE_ALIAS("platform:madera-ldo1");
 -- 
 2.20.1
 
