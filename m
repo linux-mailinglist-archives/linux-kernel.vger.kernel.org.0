@@ -2,173 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55FFE2556A
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ECE225575
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 18:22:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728337AbfEUQUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 12:20:44 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33083 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfEUQUn (ORCPT
+        id S1728839AbfEUQW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 12:22:26 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38435 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727965AbfEUQW0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 12:20:43 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 66so16926558otq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 09:20:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BW3bQNoDviAamFC+RcRIIS02hInnMbbXec0nwAshfyk=;
-        b=BIsbOTpu8o1r4oR1eExX7HB2wuf7SF+K+1MHv2XnAvbhBJK94bjaX5xD3Wz00KmoNf
-         O34+uTz4vJ6ALRoh77myvTmXrWYWdqo+HxwNwrLbQCMBmPdAin6qfsGIqtkCARvPA2N6
-         YOltAYKFOJqAnUMjA+r4baJ5pwlRpjQxbG27SvDbEShhPUNuPwMTC6ttd6WH1js0k1VQ
-         sWsDtK5uUOPUUxD18R5Ixsq3x+A5W3nSQ/xZrxdVfvLlKfdbl6oBBgOrdBipX5gL0o7T
-         +QQjXpZXtRhp7swD84820UmczIkTD/SPRl8g02G3iC6olxH7wcg/yWVEkGkWfYpnUig5
-         K7kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BW3bQNoDviAamFC+RcRIIS02hInnMbbXec0nwAshfyk=;
-        b=r3dFSIZHSCC1y3P3Jk+mbXcYHfupp5sb6GQmmDunz2eKpxSORYzSD21W54Xg6bTBu4
-         W7orA8KgDHDKyWPJSOImOFGK5yRjyjfPe7x/NEpHf89WjTJ+3px7V+Js8FgnusZPW2Af
-         3iI9nyJV+rQi3dOnUCVnUU0XrtuPooV1y877tuimXUfK9wQ8ErxnyTLSK8sdvhWP/ILA
-         AEN+4Nkwv4c16AB+itQnRnd/qfE0K7mdu6QyRc6AZpwJRdkzR9umqoZIULKasRvirI/G
-         qSwDOPiDxWOIe7AYN26++tvWWJx/aS9yBBtqfosVARL5OktW6QeN/L0S1O4upa+JEiwC
-         86zw==
-X-Gm-Message-State: APjAAAVPs/7fkriGyBSWyVcLYMF3m9Mq9XCPFqFkHF37V5hgBhkN4WpY
-        FJCAWZAVtW2ESGq/CaG/yw7NwglYk+/zA22/Q5UeGw==
-X-Google-Smtp-Source: APXvYqxHnjO0O+EyjFF0Z4zORdD2l9Rk3gkQ77tzlptApyPkz1WpeDUvMdq02nYzFbXQN+tda0ZsRLQKk/6mLvObkI8=
-X-Received: by 2002:a9d:7f8b:: with SMTP id t11mr38337otp.110.1558455642667;
- Tue, 21 May 2019 09:20:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <155836064844.2441.10911127801797083064.stgit@localhost.localdomain>
- <CALCETrU221N6uPmdaj4bRDDsf+Oc5tEfPERuyV24wsYKHn+spA@mail.gmail.com> <9638a51c-4295-924f-1852-1783c7f3e82d@virtuozzo.com>
-In-Reply-To: <9638a51c-4295-924f-1852-1783c7f3e82d@virtuozzo.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 21 May 2019 18:20:16 +0200
-Message-ID: <CAG48ez2BcVCwYGmAo4MwZ2crZ9f7=qKrORcN=fYz=K5xP2xfgQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/7] mm: process_vm_mmap() -- syscall for duplication a
- process mapping
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
+        Tue, 21 May 2019 12:22:26 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4LGLhkx018523
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 May 2019 12:21:44 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id DDB01420481; Tue, 21 May 2019 12:21:42 -0400 (EDT)
+Date:   Tue, 21 May 2019 12:21:42 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Keith Busch <keith.busch@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Weiny Ira <ira.weiny@intel.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        arunks@codeaurora.org, Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Lameter <cl@linux.com>,
-        Rik van Riel <riel@surriel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Roman Gushchin <guro@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        daniel.m.jordan@oracle.com, Adam Borowski <kilobyte@angband.pl>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>,
+        linux-ext4@vger.kernel.org,
+        Arthur Marsh <arthur.marsh@internode.on.net>,
+        Richard Weinberger <richard.weinberger@gmail.com>
+Subject: Re: ext4 regression (was Re: [PATCH 4.19 000/105] 4.19.45-stable
+ review)
+Message-ID: <20190521162142.GA2591@mit.edu>
+Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>, Shuah Khan <shuah@kernel.org>,
+        patches@kernelci.org, Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>, linux-ext4@vger.kernel.org,
+        Arthur Marsh <arthur.marsh@internode.on.net>,
+        Richard Weinberger <richard.weinberger@gmail.com>
+References: <20190520115247.060821231@linuxfoundation.org>
+ <20190520222342.wtsjx227c6qbkuua@xps.therub.org>
+ <20190521085956.GC31445@kroah.com>
+ <CA+G9fYvHmUimtwszwo=9fDQLn+MNh8Vq3UGPaPUdhH=dEKzqxg@mail.gmail.com>
+ <20190521093849.GA9806@kroah.com>
+ <CA+G9fYveeg_FMsL31aunJ2A9XLYk908Y1nSFw4kwkFk3h3uEiA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYveeg_FMsL31aunJ2A9XLYk908Y1nSFw4kwkFk3h3uEiA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 5:52 PM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> On 21.05.2019 17:43, Andy Lutomirski wrote:
-> > On Mon, May 20, 2019 at 7:01 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
-> >> New syscall, which allows to clone a remote process VMA
-> >> into local process VM. The remote process's page table
-> >> entries related to the VMA are cloned into local process's
-> >> page table (in any desired address, which makes this different
-> >> from that happens during fork()). Huge pages are handled
-> >> appropriately.
-[...]
-> >> There are several problems with process_vm_writev() in this example:
-> >>
-> >> 1)it causes pagefault on remote process memory, and it forces
-> >>   allocation of a new page (if was not preallocated);
-> >
-> > I don't see how your new syscall helps.  You're writing to remote
-> > memory.  If that memory wasn't allocated, it's going to get allocated
-> > regardless of whether you use a write-like interface or an mmap-like
-> > interface.
->
-> No, the talk is not about just another interface for copying memory.
-> The talk is about borrowing of remote task's VMA and corresponding
-> page table's content. Syscall allows to copy part of page table
-> with preallocated pages from remote to local process. See here:
->
-> [task1]                                                        [task2]
->
-> buf = mmap(NULL, n * PAGE_SIZE, PROT_READ|PROT_WRITE,
->            MAP_PRIVATE|MAP_ANONYMOUS, ...);
->
-> <task1 populates buf>
->
->                                                                buf = process_vm_mmap(pid_of_task1, addr, n * PAGE_SIZE, ...);
-> munmap(buf);
->
->
-> process_vm_mmap() copies PTEs related to memory of buf in task1 to task2
-> just like in the way we do during fork syscall.
->
-> There is no copying of buf memory content, unless COW happens. This is
-> the principal difference to process_vm_writev(), which just allocates
-> pages in remote VM.
->
-> > Keep in mind that, on x86, just the hardware part of a
-> > page fault is very slow -- populating the memory with a syscall
-> > instead of a fault may well be faster.
->
-> It is not as slow, as disk IO has. Just compare, what happens in case of anonymous
-> pages related to buf of task1 are swapped:
->
-> 1)process_vm_writev() reads them back into memory;
->
-> 2)process_vm_mmap() just copies swap PTEs from task1 page table
->   to task2 page table.
->
-> Also, for faster page faults one may use huge pages for the mappings.
-> But really, it's funny to think about page faults, when there are
-> disk IO problems I shown.
-[...]
-> > That only doubles the amount of memory if you let n
-> > scale linearly with p, which seems unlikely.
-> >
-> >>
-> >> 3)received data has no a chance to be properly swapped for
-> >>   a long time.
-> >
-> > ...
-> >
-> >> a)kernel moves @buf pages into swap right after recv();
-> >> b)process_vm_writev() reads the data back from swap to pages;
-> >
-> > If you're under that much memory pressure and thrashing that badly,
-> > your performance is going to be awful no matter what you're doing.  If
-> > you indeed observe this behavior under normal loads, then this seems
-> > like a VM issue that should be addressed in its own right.
->
-> I don't think so. Imagine: a container migrates from one node to another.
-> The nodes are the same, say, every of them has 4GB of RAM.
->
-> Before the migration, the container's tasks used 4GB of RAM and 8GB of swap.
-> After the page server on the second node received the pages, we want these
-> pages become swapped as soon as possible, and we don't want to read them from
-> swap to pass a read consumer.
+On Tue, May 21, 2019 at 03:58:15PM +0530, Naresh Kamboju wrote:
+> > Ted, any ideas here?  Should I drop this from the stable trees, and you
+> > revert it from Linus's?  Or something else?
 
-But you don't have to copy that memory into the container's tasks all
-at once, right? Can't you, every time you've received a few dozen
-kilobytes of data or whatever, shove them into the target task? That
-way you don't have problems with swap because the time before the data
-has arrived in its final VMA is tiny.
+It's safe to drop this from the stable trees while we investigate.  It
+was always borderline for stable anyway.  (See below).
+
+> >
+> > Note, I do also have 170417c8c7bb ("ext4: fix block validity checks for
+> > journal inodes using indirect blocks") in the trees, which was supposed
+> > to fix the problem with this patch, am I missing another one as well?
+> 
+> FYI,
+> I have applied fix patch 170417c8c7bb ("ext4: fix block validity checks for
+>  journal inodes using indirect blocks") but did not fix this problem.
+
+Hmm... are you _sure_?  This bug was reported to me versus the
+mainline, and the person who reported it confirmed that it did fix the
+problem, he was seeing, and the symptoms are identical to yours.  Can
+you double check, please?  I can't reproduce it either with that patch applied.
+
+> > (side note, it was mean not to mark 170417c8c7bb for stable, when the
+> > patch it was fixing was marked for stable, I'm lucky I caught it...)
+
+Sorry, I had forgotten that I had marked 345c0dbf3a30 for stable;
+that's why I didn't mark 170417c8c7bb for stable.  345c0dbf3a30 fixes
+a crash triggered by a specially crafted (corrupted) file system, and
+I had thought I had decided it wasn't important enough for stable; I
+think what happened is I shrugged and said, "oh well, Sasha's
+automated ML system is going to pick it for stable anyway, so I might
+just mark it for stable anyway" --- and I forgot I had landed that
+way.
+
+						- Ted
