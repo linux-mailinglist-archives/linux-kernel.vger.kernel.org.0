@@ -2,97 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7838424A03
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 10:17:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A84924A08
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 10:17:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbfEUIRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 04:17:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbfEUIRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 04:17:00 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 039D820863;
-        Tue, 21 May 2019 08:16:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558426620;
-        bh=thn2H1f9CIZ6hWQVZADteKdDowyl9OcvTM0UA5T1Cos=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AXonSeynjqm7rjrNJvtMKR2Sw1dDLR0BC/RAfEMSZ3bKhjZg9cXDulpAycKaMTvyl
-         AvPxuo9RTEcJoFSiiQxTOfKJozijpnIhsj+HFjIkzuVb/8aC93gzmRr1o2NleOtOSB
-         tiX4abrS1L/eoX+S+0pWJCSWOVlnuQbRgv58+w5M=
-Date:   Tue, 21 May 2019 10:16:57 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     laurentiu.tudor@nxp.com
-Cc:     hch@lst.de, stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
-        marex@denx.de, leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
-        robin.murphy@arm.com, noring@nocrew.org, JuergenUrban@gmx.de
-Subject: Re: [PATCH v4 1/3] USB: use genalloc for USB HCs with local memory
-Message-ID: <20190521081657.GA10639@kroah.com>
-References: <20190516114721.27694-1-laurentiu.tudor@nxp.com>
- <20190516114721.27694-2-laurentiu.tudor@nxp.com>
+        id S1726917AbfEUIRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 04:17:08 -0400
+Received: from mail-eopbgr20080.outbound.protection.outlook.com ([40.107.2.80]:18407
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726829AbfEUIRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 04:17:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qEyyS8ol+HkDpt3Ef1dA2HWrDspdUA7/D/lLX0vQjUo=;
+ b=SpfLpmN3jBb1Alxvco4tZRPPWZCtPmMi7XLAPEK9Nj0oPvQszAn4bk2Ve6DSrSkmSM+Piy+ATIkZ5dSzmVqe0ZNXqwQtvxSJzST1bisjhcpmxTiAER9V1aCIAYEFLSKTDFlTrklOkNzUOkWgn7U7QlvVFj3MeC50QYlGebQKlzo=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3755.eurprd04.prod.outlook.com (52.134.71.155) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.17; Tue, 21 May 2019 08:17:03 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::5835:e874:bd94:fec]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::5835:e874:bd94:fec%5]) with mapi id 15.20.1900.020; Tue, 21 May 2019
+ 08:17:02 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH V2] arm64: dts: imx8qxp: Add gpio alias
+Thread-Topic: [PATCH V2] arm64: dts: imx8qxp: Add gpio alias
+Thread-Index: AQHVD62RzvRMKJqLaE6z8I6tTELPJg==
+Date:   Tue, 21 May 2019 08:17:02 +0000
+Message-ID: <1558426311-14082-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR04CA0068.apcprd04.prod.outlook.com
+ (2603:1096:202:15::12) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e749f0be-a302-4e65-7a89-08d6ddc4b2f8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3755;
+x-ms-traffictypediagnostic: DB3PR0402MB3755:
+x-microsoft-antispam-prvs: <DB3PR0402MB375528A6EE25645FD1008D09F5070@DB3PR0402MB3755.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1850;
+x-forefront-prvs: 0044C17179
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(136003)(346002)(366004)(39860400002)(189003)(199004)(4744005)(478600001)(6486002)(7736002)(186003)(2906002)(102836004)(86362001)(68736007)(66066001)(305945005)(25786009)(81166006)(14454004)(4326008)(2201001)(6506007)(50226002)(386003)(53936002)(8936002)(6512007)(66476007)(66556008)(64756008)(66446008)(73956011)(66946007)(5660300002)(2501003)(256004)(99286004)(110136005)(6436002)(476003)(71190400001)(71200400001)(36756003)(8676002)(3846002)(6116002)(316002)(2616005)(81156014)(52116002)(26005)(486006)(921003)(32563001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3755;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 5hl1vKUivANKZkIa2ceJ0ZoeBSJWa41XNHFHhfGaBC8juAY3w7HOO8lV+/keJh9iLfP3aoBGiz9mIVk4NPyAYKe4eMwGJ1atOAwTXjf7MWVIry1Dbi9RIYmaF6aba2Io3D+Vl8/Oz74eMZgDO627ZTZtQkff07LdUiElnJbszzEo+N7fZwpA8wRC8BNwHQrh0g1k6ok6DTMAXOoVjgU674PTYKuwa2l0rWAKA/W4G/m3kOjoV5drW7Uwk8P/DKFKF1pCDfO0X7TYI0cHmru+fF3pz5/NTnmWJdvKQ8uHhu7tG+YbLCoh4UK8WLfOnZIIMt22+pXNODH/ihIjUtLKa/AeidbzWhIjbXDQBJhetrHAMLWkVSFPnxkiPsfpfYH88ewbGh8cZhVPffwuoS6lYUEMwfxkNOSmYRwMaRDb1ck=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <A2CABE59647ECC4090163A08D8073540@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190516114721.27694-2-laurentiu.tudor@nxp.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e749f0be-a302-4e65-7a89-08d6ddc4b2f8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 May 2019 08:17:02.7918
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3755
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 02:47:19PM +0300, laurentiu.tudor@nxp.com wrote:
-> From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> 
-> For HCs that have local memory, replace the current DMA API usage
-> with a genalloc generic allocator to manage the mappings for these
-> devices.
-> This is in preparation for dropping the existing "coherent" dma
-> mem declaration APIs. Current implementation was relying on a short
-> circuit in the DMA API that in the end, was acting as an allocator
-> for these type of devices.
-> 
-> For context, see thread here: https://lkml.org/lkml/2019/4/22/357
-> 
-> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-> ---
->  drivers/usb/core/buffer.c   | 15 +++++++++++----
->  drivers/usb/host/ohci-hcd.c | 23 ++++++++++++++++++-----
->  include/linux/usb/hcd.h     |  3 +++
->  3 files changed, 32 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/usb/core/buffer.c b/drivers/usb/core/buffer.c
-> index f641342cdec0..22a8f3f5679b 100644
-> --- a/drivers/usb/core/buffer.c
-> +++ b/drivers/usb/core/buffer.c
-> @@ -16,6 +16,7 @@
->  #include <linux/io.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/dmapool.h>
-> +#include <linux/genalloc.h>
->  #include <linux/usb.h>
->  #include <linux/usb/hcd.h>
->  
-> @@ -124,10 +125,12 @@ void *hcd_buffer_alloc(
->  	if (size == 0)
->  		return NULL;
->  
-> +	if (hcd->driver->flags & HCD_LOCAL_MEM)
-> +		return gen_pool_dma_alloc(hcd->localmem_pool, size, dma);
+Add i.MX8QXP GPIO alias for kernel GPIO driver usage.
 
-Does this patch now break things?  hcd->localmem_pool at this point in
-time is NULL, so this call will fail.  There's no chance for any host
-controller driver to actually set up this pool in this patch, so is
-bisection broken?
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+Changes since V1:
+	- keep the list alphabetically sorted, no content change.
+---
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-I think you fix this up in later patches, right?
+diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/d=
+ts/freescale/imx8qxp.dtsi
+index b17c22e..9f52da6 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+@@ -17,6 +17,14 @@
+ 	#size-cells =3D <2>;
+=20
+ 	aliases {
++		gpio0 =3D &lsio_gpio0;
++		gpio1 =3D &lsio_gpio1;
++		gpio2 =3D &lsio_gpio2;
++		gpio3 =3D &lsio_gpio3;
++		gpio4 =3D &lsio_gpio4;
++		gpio5 =3D &lsio_gpio5;
++		gpio6 =3D &lsio_gpio6;
++		gpio7 =3D &lsio_gpio7;
+ 		mmc0 =3D &usdhc1;
+ 		mmc1 =3D &usdhc2;
+ 		mmc2 =3D &usdhc3;
+--=20
+2.7.4
 
-And if so, why do we even need HCD_LOCAL_MEM anymore?  Can't we just
-test for the presence of hcd->localmem_pool in order to determine which
-allocation method to use?
-
-thanks,
-
-greg k-h
