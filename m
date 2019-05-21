@@ -2,173 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D21B324D8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD42424D95
+	for <lists+linux-kernel@lfdr.de>; Tue, 21 May 2019 13:08:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbfEULGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 07:06:00 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38349 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbfEULGA (ORCPT
+        id S1727936AbfEULI1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 07:08:27 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43648 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727898AbfEULI0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 07:06:00 -0400
-Received: by mail-pg1-f195.google.com with SMTP id j26so8423969pgl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 04:05:59 -0700 (PDT)
+        Tue, 21 May 2019 07:08:26 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r4so18074259wro.10
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 04:08:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=KOZb8yQcjy+VjCqxduvm6OD6AUx3NXKhaQcxseL+T4k=;
-        b=CA08YdMIhOU/VrYm5k9zPXXxOIVVirvReQ8Y2vIbgjyvR/my+aC7evfjsYLMswEKYu
-         2WAIX7SPn9ewBv3dRf5ErbnWeoH3xnY9J8WBoppqqmKLckLRXJgjedKaZkx8GNdOUFQU
-         dDtuCcAcSjT/ENaln53Wnl7gArCEAukOPQ5ksWGjz8LdjWv9eLudbpaBY1RHZ47ZY0jD
-         lr5tYJNYv77s6nCydHZUSzJAvSZftVRePPQnEgENa+BRrGzYNVdqv78HJd97q5qtcmSF
-         K3cjY0TWfVcUl0KewMvxp6yT85emXsT3Ydg4x3M0GvNpBMbIGCwl/a1huFd0FZFA+p6m
-         +pUg==
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mBS6HWr/GffYzp43R5kVqhTrERprItS/d4aXOx6tYbU=;
+        b=qs55+I47fIDia0uwHqXxnq4cQTewSNeUP/6omcb5+qs0nKaYk7oGY6NYOOl8ofDFc6
+         OUXvM97JqwtXQwpndLn4H0GRVozTLlSlIJHbGzQOwbI14jhyNOdbr1Zs2EwTVOZBDcyb
+         FGcc2nUSDR18jboyFEO6tk/UOxJUEYJsVgv0s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=KOZb8yQcjy+VjCqxduvm6OD6AUx3NXKhaQcxseL+T4k=;
-        b=iLvyp/CY3mD8IN9KTG8JzNnF9XAFaFvs9332nARsRvoqNVjGrlrmF2AUC3LO3kRJbG
-         LRD42IDljhCUDFVgEWd5ZrP6HglbucIVV5KFZvE4gFchu9m/o23cJfTi/926gsWpBh7N
-         Ju0WteOwywGBA3dkvt79iIX5emyqnkAbhT7C0g8SlRhVNRx6zJafpMQUYS/+MyQbJIiL
-         pjjA9ueHPjQb5WX5au1COMo7SHZtQ6BwZPIywR85CCklAk4n+6FTKm4EIjUb7JAEjPER
-         NCXtymt/aP+rTNjsbGq1XWY601EbR3w9DXjzSTz16CK5ag6t5fT5itWsN+TL/deQCXJZ
-         VI4w==
-X-Gm-Message-State: APjAAAVJDmBsSKJTccX/2dBd1+OLrsMxrT2nsTokON+Ai6hRiai/4v+6
-        y2Oiis3CvSza5QvIElVC3kU=
-X-Google-Smtp-Source: APXvYqxlqlFPB+NUCI72RbnbT2TM6iFMigkYLu0cELmj7et0/QOSGQxsMk8DSdijr03Yep9LS5ijzw==
-X-Received: by 2002:a62:87c6:: with SMTP id i189mr88245711pfe.65.1558436759441;
-        Tue, 21 May 2019 04:05:59 -0700 (PDT)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id x7sm15581305pfm.82.2019.05.21.04.05.55
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 21 May 2019 04:05:58 -0700 (PDT)
-Date:   Tue, 21 May 2019 20:05:52 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>, jannh@google.com
-Subject: Re: [RFC 0/7] introduce memory hinting API for external process
-Message-ID: <20190521110552.GG219653@google.com>
-References: <20190520035254.57579-1-minchan@kernel.org>
- <20190521084158.s5wwjgewexjzrsm6@brauner.io>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mBS6HWr/GffYzp43R5kVqhTrERprItS/d4aXOx6tYbU=;
+        b=YD8Zvibb0VPfC8IcHm1ZN+ScjLnV4KkVP9aRxEQEph4g5tXh2WAUwxz9HkB5Lhln2U
+         OnbQfRBS5/ev5KGQIKIkrFghDGbd43oNFWlDX8f7u5B3DxiRLhNqbCyXrHmjxDZltfOq
+         xoRc1Esv26nQYMgHKshdPhycVVyc8uHIGoGyZ+VrzYkgbf4Xr1bDgFh3m/Q+pLPG92B5
+         qR5DccsgsjQeNYn/qEbWSJTDmkrmKi2u22BhAcI43gLXW641eyLGufj2mY1QrrkXLdeU
+         sn52XZpJXhvIzF4yM7RrDIg0mbyZeLSCryh6JidbSh6MuRYj8uc34Up4UnX2xGD+0kY7
+         /IGg==
+X-Gm-Message-State: APjAAAWLwCuZL29mfm9dseh+pAKoBjijd5w5TiB4aiLlDw9ra8XBhlLA
+        cmw5o3Y8OGm5X1Z+dpazoOfmsNav36z/v5GS12wM5Q==
+X-Google-Smtp-Source: APXvYqzVlWiHrmG++c18iLZr+/EeWm5l0AOZnhEmmkXMdNCxfOZ6cpmzHxti9dv2vFcXgV4vwIgiEhUsPm77NDcpFoE=
+X-Received: by 2002:adf:8189:: with SMTP id 9mr47758810wra.71.1558436903636;
+ Tue, 21 May 2019 04:08:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190521084158.s5wwjgewexjzrsm6@brauner.io>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190418141658.10868-1-jagan@amarulasolutions.com>
+ <20190418145641.q23tupopz2czjzc5@flea> <CAOf5uwn8CtRs8cx0KC-bxNoRP4TiDrHi8F83QfjsZhueLDYFJg@mail.gmail.com>
+ <20190521081001.zjq3gnlvyuyexz6m@flea>
+In-Reply-To: <20190521081001.zjq3gnlvyuyexz6m@flea>
+From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date:   Tue, 21 May 2019 13:08:09 +0200
+Message-ID: <CAOf5uwnhXjur=2NezCydaCxP5d33S+AwdD9WTDtp2EUJr4UTgg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: allwinner: a64-oceanic-5205-5inmfd: Enable CAN
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 10:42:00AM +0200, Christian Brauner wrote:
-> On Mon, May 20, 2019 at 12:52:47PM +0900, Minchan Kim wrote:
-> > - Background
-> > 
-> > The Android terminology used for forking a new process and starting an app
-> > from scratch is a cold start, while resuming an existing app is a hot start.
-> > While we continually try to improve the performance of cold starts, hot
-> > starts will always be significantly less power hungry as well as faster so
-> > we are trying to make hot start more likely than cold start.
-> > 
-> > To increase hot start, Android userspace manages the order that apps should
-> > be killed in a process called ActivityManagerService. ActivityManagerService
-> > tracks every Android app or service that the user could be interacting with
-> > at any time and translates that into a ranked list for lmkd(low memory
-> > killer daemon). They are likely to be killed by lmkd if the system has to
-> > reclaim memory. In that sense they are similar to entries in any other cache.
-> > Those apps are kept alive for opportunistic performance improvements but
-> > those performance improvements will vary based on the memory requirements of
-> > individual workloads.
-> > 
-> > - Problem
-> > 
-> > Naturally, cached apps were dominant consumers of memory on the system.
-> > However, they were not significant consumers of swap even though they are
-> > good candidate for swap. Under investigation, swapping out only begins
-> > once the low zone watermark is hit and kswapd wakes up, but the overall
-> > allocation rate in the system might trip lmkd thresholds and cause a cached
-> > process to be killed(we measured performance swapping out vs. zapping the
-> > memory by killing a process. Unsurprisingly, zapping is 10x times faster
-> > even though we use zram which is much faster than real storage) so kill
-> > from lmkd will often satisfy the high zone watermark, resulting in very
-> > few pages actually being moved to swap.
-> > 
-> > - Approach
-> > 
-> > The approach we chose was to use a new interface to allow userspace to
-> > proactively reclaim entire processes by leveraging platform information.
-> > This allowed us to bypass the inaccuracy of the kernel’s LRUs for pages
-> > that are known to be cold from userspace and to avoid races with lmkd
-> > by reclaiming apps as soon as they entered the cached state. Additionally,
-> > it could provide many chances for platform to use much information to
-> > optimize memory efficiency.
-> > 
-> > IMHO we should spell it out that this patchset complements MADV_WONTNEED
-> > and MADV_FREE by adding non-destructive ways to gain some free memory
-> > space. MADV_COLD is similar to MADV_WONTNEED in a way that it hints the
-> > kernel that memory region is not currently needed and should be reclaimed
-> > immediately; MADV_COOL is similar to MADV_FREE in a way that it hints the
-> > kernel that memory region is not currently needed and should be reclaimed
-> > when memory pressure rises.
-> > 
-> > To achieve the goal, the patchset introduce two new options for madvise.
-> > One is MADV_COOL which will deactive activated pages and the other is
-> > MADV_COLD which will reclaim private pages instantly. These new options
-> > complement MADV_DONTNEED and MADV_FREE by adding non-destructive ways to
-> > gain some free memory space. MADV_COLD is similar to MADV_DONTNEED in a way
-> > that it hints the kernel that memory region is not currently needed and
-> > should be reclaimed immediately; MADV_COOL is similar to MADV_FREE in a way
-> > that it hints the kernel that memory region is not currently needed and
-> > should be reclaimed when memory pressure rises.
-> > 
-> > This approach is similar in spirit to madvise(MADV_WONTNEED), but the
-> > information required to make the reclaim decision is not known to the app.
-> > Instead, it is known to a centralized userspace daemon, and that daemon
-> > must be able to initiate reclaim on its own without any app involvement.
-> > To solve the concern, this patch introduces new syscall -
-> > 
-> > 	struct pr_madvise_param {
-> > 		int size;
-> > 		const struct iovec *vec;
-> > 	}
-> > 
-> > 	int process_madvise(int pidfd, ssize_t nr_elem, int *behavior,
-> > 				struct pr_madvise_param *restuls,
-> > 				struct pr_madvise_param *ranges,
-> > 				unsigned long flags);
-> > 
-> > The syscall get pidfd to give hints to external process and provides
-> > pair of result/ranges vector arguments so that it could give several
-> > hints to each address range all at once.
-> > 
-> > I guess others have different ideas about the naming of syscall and options
-> > so feel free to suggest better naming.
-> 
-> Yes, all new syscalls making use of pidfds should be named
-> pidfd_<action>. So please make this pidfd_madvise.
+Hi Maxime
 
-I don't have any particular preference but just wondering why pidfd is
-so special to have it as prefix of system call name.
+On Tue, May 21, 2019 at 10:10 AM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+>
+> On Tue, May 21, 2019 at 08:47:02AM +0200, Michael Nazzareno Trimarchi wrote:
+> > > > +     };
+> > > > +
+> > > >  };
+> > > >
+> > > >  &ehci0 {
+> > > > @@ -77,6 +95,31 @@
+> > > >       status = "okay";
+> > > >  };
+> > > >
+> > > > +&pio {
+> > > > +     can_pins: can-pins {
+> > > > +             pins = "PD6",                   /* RX_BUF1_CAN0 */
+> > > > +                    "PD7";                   /* RX_BUF0_CAN0 */
+> > > > +             function = "gpio_in";
+> > > > +     };
+> > > > +};
+> > >
+> > > That isn't needed. What are they used for, you're not tying them to
+> > > anything?
+> >
+> > Mux of their function is correct. They are connected in the schematics
+> > but not used right now.
+>
+> Then describe the whole thing or don't?
+>
 
-> 
-> Please make sure to Cc me on this in the future as I'm maintaining
-> pidfds. Would be great to have Jann on this too since he's been touching
-> both mm and parts of the pidfd stuff with me.
+Ok
 
-Sure!
+> And that's kind of missing my point. If that pin group isn't related
+> to any device, the pin muxing will not be changed. So that group, in
+> itself, has strictly no effect.
+>
+> Moreover, you don't need a pin group in the first place to mux pins in
+> GPIOs, the GPIO API will make sure that is the case when you request
+> it.
+
+This is correct on sunxi. Is this valid for sunxi or in general in all the SoC?
+Anyway make sense to have pins configured and place in the right
+state, just suppose if the
+booting stage is wrong or anything that make those pins in the wrong
+configuration
+
+>
+> > I can garantee that kernel wlll always configurred in the right way
+> > and if I want I can export in userspace
+> > for debug purpose
+
+Correct if you start to use it but if you want them right configured
+the right place
+is in the default state e/o initstate if this can be a problem of the hardware
+
+Default state: the state the pinctrl handle shall be put
+ *      into as default, usually this means the pins are up and ready to
+ *      be used by the device driver. This state is commonly used by
+ *      hogs to configure muxing and pins at boot, and also as a state
+ *      to go into when returning from sleep and idle in
+ *      .pm_runtime_resume() or ordinary .resume() for example.
+
+Now the pins are connected to the canbus as should be and they are
+configured and usually
+put in the right state.
+
++               compatible = "microchip,mcp2515";
++               reg = <0>;
++               spi-max-frequency = <10000000>;
++               pinctrl-names = "default";
++               pinctrl-0 = <&can_pins>;
+
+>
+> Yes, because the API does it, not your change
+>
+
+Do you prefer to drop the pinmux? or update the commit message
+
+> Maxime
+>
+> --
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+
+
+
+-- 
+| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
+| COO  -  Founder                                      Cruquiuskade 47 |
+| +31(0)851119172                                 Amsterdam 1018 AM NL |
+|                  [`as] http://www.amarulasolutions.com               |
