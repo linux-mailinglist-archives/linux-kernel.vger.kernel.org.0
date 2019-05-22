@@ -2,133 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5190126C03
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:32:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B445C26BD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:30:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387695AbfEVTb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:31:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733262AbfEVTbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:31:52 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 591DE20879;
-        Wed, 22 May 2019 19:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558553512;
-        bh=m14Ykdj1Ir6/Td5+vHich4bJb57BhL9vvKhniOqUwl4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T6ruSV6FD4dUtdOKA3iYtFQz0UbxUuiDukz1tZlOkkDsHDYW7pXCFtOz3WmxrFGDX
-         1oui1S2m3wt2kP36710ao/lJCcXtoC5uD7Ke6vfeYI3o2h5qs7bP1H8cT6f3/18NPu
-         Fzqt9Vrfi+37j2CmALm5Q0aWesbfz3xBgk9xgLAM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 16/92] at76c50x-usb: Don't register led_trigger if usb_register_driver failed
+        id S1732412AbfEVTaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:30:18 -0400
+Received: from mail-qt1-f175.google.com ([209.85.160.175]:32931 "EHLO
+        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733185AbfEVTaP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:30:15 -0400
+Received: by mail-qt1-f175.google.com with SMTP id m32so3870465qtf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:30:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=XXMtmfD06zcDwQx0hvcfJIux8aKRhVdW16i73453GEM=;
+        b=ELELxw7VjTwqNjvY99Fi8KemSTL6yTDX2IVCt6P/+ATzrcEsJyK42hxgn/Y+ckigru
+         YH0ydn+bot1cCzh3kqvCecM44RyL0cYkncX7YuaaRgiecpU2HvzBMZV9vmVs4nhXIaCx
+         8qqPRtILZRspj5B6KumSwHJH2qV80l395Ws5o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=XXMtmfD06zcDwQx0hvcfJIux8aKRhVdW16i73453GEM=;
+        b=GW3wQhupcWV1Sh1HsbIIp4IaQIfFPHLB0xH3OXhv3HAo55rrwb86J2gghH/QZM5VS2
+         arlsA20ruuggWEp50Ijprur0V17DDP7+HdRYMhe5XgYyKk0KpuWY3l+43qJBe8olx/jp
+         RDPU9x36U+Hlk4pGPZDeES4YmT7WJoTKWnKaG82C27IE5zFW6eqaT7MMncK6O4WUE2Vs
+         Ky31wXxEv3up7ZycCgSfEmOrpappQE9Iv4MHmHcXEE0SglG6cUbECOWkt4zW7DGrWLnk
+         AJts5d1YgVJJOA5J9Eb1nP6MTUYLeyjVi4Yj+MseTy8kf4IFN36buNiSIvpVluPXSA/e
+         NrRw==
+X-Gm-Message-State: APjAAAUmMPSNLj7F7n7QR4z/O1EOyRIn4VA8vULPYCjpDfsg5GxH3ODf
+        jX4z0UyIJL3Gn//2ahdX4fV5toi4cCu+Pg==
+X-Google-Smtp-Source: APXvYqy0LcxyTKzrA7fqyviU2+zlg0lfX+n6mqhBPOkMDXwp7Mr7KYwA7k/OZixZxbRYh6T9e2XKqg==
+X-Received: by 2002:a0c:d909:: with SMTP id p9mr60283913qvj.42.1558553413979;
+        Wed, 22 May 2019 12:30:13 -0700 (PDT)
+Received: from chatter.i7.local (192-0-228-88.cpe.teksavvy.com. [192.0.228.88])
+        by smtp.gmail.com with ESMTPSA id j29sm11466999qki.39.2019.05.22.12.30.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 22 May 2019 12:30:13 -0700 (PDT)
 Date:   Wed, 22 May 2019 15:30:11 -0400
-Message-Id: <20190522193127.27079-16-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190522193127.27079-1-sashal@kernel.org>
-References: <20190522193127.27079-1-sashal@kernel.org>
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Subject: PSA: Do not use "Reported-By" without reporter's approval
+Message-ID: <20190522193011.GB21412@chatter.i7.local>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+Hello, all:
 
-[ Upstream commit 09ac2694b0475f96be895848687ebcbba97eeecf ]
+It is common courtesy to include this tagline when submitting patches: 
 
-Syzkaller report this:
+Reported-By: J. Doe <jdoe@example.com>
 
-[ 1213.468581] BUG: unable to handle kernel paging request at fffffbfff83bf338
-[ 1213.469530] #PF error: [normal kernel read fault]
-[ 1213.469530] PGD 237fe4067 P4D 237fe4067 PUD 237e60067 PMD 1c868b067 PTE 0
-[ 1213.473514] Oops: 0000 [#1] SMP KASAN PTI
-[ 1213.473514] CPU: 0 PID: 6321 Comm: syz-executor.0 Tainted: G         C        5.1.0-rc3+ #8
-[ 1213.473514] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-[ 1213.473514] RIP: 0010:strcmp+0x31/0xa0
-[ 1213.473514] Code: 00 00 00 00 fc ff df 55 53 48 83 ec 08 eb 0a 84 db 48 89 ef 74 5a 4c 89 e6 48 89 f8 48 89 fa 48 8d 6f 01 48 c1 e8 03 83 e2 07 <42> 0f b6 04 28 38 d0 7f 04 84 c0 75 50 48 89 f0 48 89 f2 0f b6 5d
-[ 1213.473514] RSP: 0018:ffff8881f2b7f950 EFLAGS: 00010246
-[ 1213.473514] RAX: 1ffffffff83bf338 RBX: ffff8881ea6f7240 RCX: ffffffff825350c6
-[ 1213.473514] RDX: 0000000000000000 RSI: ffffffffc1ee19c0 RDI: ffffffffc1df99c0
-[ 1213.473514] RBP: ffffffffc1df99c1 R08: 0000000000000001 R09: 0000000000000004
-[ 1213.473514] R10: 0000000000000000 R11: ffff8881de353f00 R12: ffff8881ee727900
-[ 1213.473514] R13: dffffc0000000000 R14: 0000000000000001 R15: ffffffffc1eeaaf0
-[ 1213.473514] FS:  00007fa66fa01700(0000) GS:ffff8881f7200000(0000) knlGS:0000000000000000
-[ 1213.473514] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1213.473514] CR2: fffffbfff83bf338 CR3: 00000001ebb9e005 CR4: 00000000007606f0
-[ 1213.473514] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 1213.473514] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 1213.473514] PKRU: 55555554
-[ 1213.473514] Call Trace:
-[ 1213.473514]  led_trigger_register+0x112/0x3f0
-[ 1213.473514]  led_trigger_register_simple+0x7a/0x110
-[ 1213.473514]  ? 0xffffffffc1c10000
-[ 1213.473514]  at76_mod_init+0x77/0x1000 [at76c50x_usb]
-[ 1213.473514]  do_one_initcall+0xbc/0x47d
-[ 1213.473514]  ? perf_trace_initcall_level+0x3a0/0x3a0
-[ 1213.473514]  ? kasan_unpoison_shadow+0x30/0x40
-[ 1213.473514]  ? kasan_unpoison_shadow+0x30/0x40
-[ 1213.473514]  do_init_module+0x1b5/0x547
-[ 1213.473514]  load_module+0x6405/0x8c10
-[ 1213.473514]  ? module_frob_arch_sections+0x20/0x20
-[ 1213.473514]  ? kernel_read_file+0x1e6/0x5d0
-[ 1213.473514]  ? find_held_lock+0x32/0x1c0
-[ 1213.473514]  ? cap_capable+0x1ae/0x210
-[ 1213.473514]  ? __do_sys_finit_module+0x162/0x190
-[ 1213.473514]  __do_sys_finit_module+0x162/0x190
-[ 1213.473514]  ? __ia32_sys_init_module+0xa0/0xa0
-[ 1213.473514]  ? __mutex_unlock_slowpath+0xdc/0x690
-[ 1213.473514]  ? wait_for_completion+0x370/0x370
-[ 1213.473514]  ? vfs_write+0x204/0x4a0
-[ 1213.473514]  ? do_syscall_64+0x18/0x450
-[ 1213.473514]  do_syscall_64+0x9f/0x450
-[ 1213.473514]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[ 1213.473514] RIP: 0033:0x462e99
-[ 1213.473514] Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-[ 1213.473514] RSP: 002b:00007fa66fa00c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-[ 1213.473514] RAX: ffffffffffffffda RBX: 000000000073bf00 RCX: 0000000000462e99
-[ 1213.473514] RDX: 0000000000000000 RSI: 0000000020000300 RDI: 0000000000000003
-[ 1213.473514] RBP: 00007fa66fa00c70 R08: 0000000000000000 R09: 0000000000000000
-[ 1213.473514] R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa66fa016bc
-[ 1213.473514] R13: 00000000004bcefa R14: 00000000006f6fb0 R15: 0000000000000004
+Please ask the reporter's permission before doing so (even if they'd 
+submitted a public bugzilla report or sent a report to the mailing 
+list). They need to understand and agree that:
 
-If usb_register failed, no need to call led_trigger_register_simple.
+- their name and email address will become a permanent, non-excisable 
+  part of the Linux Kernel git history
+- their name and email address will be stored on multiple public 
+  archival copies of the linux kernel mailing list, collected and 
+  managed by different legal entities
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 1264b951463a ("at76c50x-usb: add driver")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/wireless/at76c50x-usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+With or without GDPR laws, this is something the reporter needs to be 
+aware of and they need to be okay with it, as a matter of courtesy.
 
-diff --git a/drivers/net/wireless/at76c50x-usb.c b/drivers/net/wireless/at76c50x-usb.c
-index dab25136214a4..da14eca2aa2c8 100644
---- a/drivers/net/wireless/at76c50x-usb.c
-+++ b/drivers/net/wireless/at76c50x-usb.c
-@@ -2582,8 +2582,8 @@ static int __init at76_mod_init(void)
- 	if (result < 0)
- 		printk(KERN_ERR DRIVER_NAME
- 		       ": usb_register failed (status %d)\n", result);
--
--	led_trigger_register_simple("at76_usb-tx", &ledtrig_tx);
-+	else
-+		led_trigger_register_simple("at76_usb-tx", &ledtrig_tx);
- 	return result;
- }
- 
--- 
-2.20.1
-
+-K
