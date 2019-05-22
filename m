@@ -2,104 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D407D26DE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8937E26DF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:46:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731648AbfEVTpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:45:30 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42226 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729923AbfEVTp1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:45:27 -0400
-Received: by mail-pl1-f196.google.com with SMTP id go2so1555064plb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=xu8Xfz1//w2ZzNsfNUbcmqz00XlQNm2CX6twe7k5oB4=;
-        b=SpL/qYsNz/7q6yoXxeofhfKWNOeNxFM1wJhkF4xMyF+ND93xkfki/hHZGqtDiecjIq
-         y3DDItEF+vWU5Weezwz+uASTJ8v8ibnAJOLjqf6UvHIEYtY0/dADtQvD23ldraYPKZw1
-         Rm32W/+3NgSUAGEFyEp4C3PD7eqEaUlg1i89S+la0C5kj9IP+2anERQj9IHdC2nO9ReQ
-         m+fvLw318OegoJ+pxP0vvH6oB5+WGfztfIHn8uOG+7E4tIqcstc2paaL7/mnukMkj25Q
-         KodbhaLgeJxTW1sY7k3WHz1a8iyZJZKmla7Fg/HdyUYH6LNJL0dKVQix6snM7q/fsMbm
-         jxvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=xu8Xfz1//w2ZzNsfNUbcmqz00XlQNm2CX6twe7k5oB4=;
-        b=kyk4AO/lymb9wd8y9yD/XSj5zO+xtWNZarEcH0PYsX8NZqDreXUuE7eetdYybDKCXz
-         0cz//Ljye4BumgJimKfU4dSx0gzHr4cW9NhMBk3L45txHXqbIKpz4J8AQtMqicXJTGcY
-         10yOMuGNjTCGNLdTk7trFj4ErE+Ec4pAVXCSPRjCGZ3U95GSk+Jff6HYQrBWG6ew2yvt
-         K8Mm0/cS+tfZ7e0nNVDWevMO+Fv4HHq9ih/yBH5o+h0seVBlBbsXHFUs87bzSlhRw7tt
-         PxYkMf+b9LZKeLoP+lH9iCEebOs4BA6KfdDE2M4XnXBnHUZhSw96bAyCCCPzyi4prfsf
-         +izA==
-X-Gm-Message-State: APjAAAUSBLsJ4m0cK0N5+iP5IeswfAg0jTjCwXVU2gnV3oKsVHldJwtz
-        3VqotdrP0DPpRBrJmWEawWU=
-X-Google-Smtp-Source: APXvYqxJl7eiZaUNXlyUGE1f1J9ER3gIBLLVf+MUPh3VvOxDZh0pS0eJUedewgdXa8RgYUhJuy0rkA==
-X-Received: by 2002:a17:902:b095:: with SMTP id p21mr40903202plr.270.1558554326511;
-        Wed, 22 May 2019 12:45:26 -0700 (PDT)
-Received: from bharath12345-Inspiron-5559 ([103.110.42.31])
-        by smtp.gmail.com with ESMTPSA id v16sm11490421pfc.26.2019.05.22.12.45.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 12:45:25 -0700 (PDT)
-Date:   Thu, 23 May 2019 01:15:19 +0530
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     ericvh@gmail.com, asmadeus@codewreck.org, lucho@ionkov.net
-Cc:     linux-kernel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux.bhar@gmail.com
-Subject: [PATCH v2] 9p/cache.c: Fix memory leak in
- v9fs_cache_session_get_cookie
-Message-ID: <20190522194519.GA5313@bharath12345-Inspiron-5559>
+        id S2387842AbfEVTpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:45:42 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:43775 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387826AbfEVTpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:45:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=XNbOGS4rvkgdUZMHxmhjwr36ofxZ/LCzsygeLRYsvOg=; b=ZDl33/CAORcP7yl3ULlzFAQI8L
+        JOJdOn2+59ezvFK21YTIlmlziHliJKAvIV1dqoBczKcThUkRms3/jx7OJSNEKejqWgnGB92gCidUb
+        /yMZQQkxp14fp+ZmkJx0s4hl1yK44PjIQ1AUMKXgcUNOGjwFiKH37iwAZ4N2HT09W3sM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hTXB3-0003JC-Ds; Wed, 22 May 2019 21:45:29 +0200
+Date:   Wed, 22 May 2019 21:45:29 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Sagar Shrikant Kadam <sagar.kadam@sifive.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peter@korsgaard.com,
+        palmer@sifive.com, paul.walmsley@sifive.com,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 3/3] i2c-ocores: sifive: add polling mode workaround
+ for FU540-C000 SoC.
+Message-ID: <20190522194529.GJ7281@lunn.ch>
+References: <1558515574-11155-1-git-send-email-sagar.kadam@sifive.com>
+ <1558515574-11155-4-git-send-email-sagar.kadam@sifive.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1558515574-11155-4-git-send-email-sagar.kadam@sifive.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v9fs_cache_session_get_cookie assigns a random cachetag to v9ses->cachetag,
-if the cachetag is not assigned previously.
+On Wed, May 22, 2019 at 02:29:34PM +0530, Sagar Shrikant Kadam wrote:
+> The i2c-ocore driver already has a polling mode interface.But it needs
+> a workaround for FU540 Chipset on HiFive unleashed board (RevA00).
+> There is an erratum in FU540 chip that prevents interrupt driven i2c
+> transfers from working, and also the I2C controller's interrupt bit
+> cannot be cleared if set, due to this the existing i2c polling mode
+> interface added in mainline earlier doesn't work, and CPU stall's
+> infinitely, when-ever i2c transfer is initiated.
+> 
+> Ref:
+> 	commit dd7dbf0eb090 ("i2c: ocores: refactor setup for polling")
+> 
+> The workaround / fix under OCORES_FLAG_BROKEN_IRQ is particularly for
+> FU540-COOO SoC.
+> 
+> The polling function identifies a SiFive device based on the device node
+> and enables the workaround.
+> 
+> Signed-off-by: Sagar Shrikant Kadam <sagar.kadam@sifive.com>
 
-v9fs_random_cachetag allocates memory to v9ses->cachetag with kmalloc and uses
-scnprintf to fill it up with a cachetag.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-But if scnprintf fails, v9ses->cachetag is not freed in the current
-code causing a memory leak.
-
-Fix this by freeing v9ses->cachetag it v9fs_random_cachetag fails.
-
-This was reported by syzbot, the link to the report is below:
-https://syzkaller.appspot.com/bug?id=f012bdf297a7a4c860c38a88b44fbee43fd9bbf3
-
-Reported-by: syzbot+3a030a73b6c1e9833815@syzkaller.appspotmail.com
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-
----
-Changes since v2
-	- Made v9ses->cachetag NULL after freeing to avoid any
-	  side effects.
----
- fs/9p/cache.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/9p/cache.c b/fs/9p/cache.c
-index 9eb3470..baf72da 100644
---- a/fs/9p/cache.c
-+++ b/fs/9p/cache.c
-@@ -66,6 +66,8 @@ void v9fs_cache_session_get_cookie(struct v9fs_session_info *v9ses)
- 	if (!v9ses->cachetag) {
- 		if (v9fs_random_cachetag(v9ses) < 0) {
- 			v9ses->fscache = NULL;
-+			kfree(v9ses->cachetag);
-+			v9ses->cachetag = NULL; 
- 			return;
- 		}
- 	}
--- 
-2.7.4
-
+    Andrew
