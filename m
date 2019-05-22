@@ -2,163 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47B0626B62
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:26:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94E1026ABE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:21:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732003AbfEVT0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:26:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48008 "EHLO mail.kernel.org"
+        id S1729710AbfEVTVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:21:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731989AbfEVT03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:26:29 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728615AbfEVTVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:21:16 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CBD720879;
-        Wed, 22 May 2019 19:26:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 523F120879;
+        Wed, 22 May 2019 19:21:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558553188;
-        bh=MQ7GBJGYsRs7x477zz5+ZEI8vXsdtgdGw+AwAxkTOqQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xjMs+iCVFAZJFQQ0mbgTW7us4mxG/ZYlw3x9y0nySj93/ZmRAhW/OvOYTsCWEamHk
-         JSoQX3qp6c/2Cj55+BbuGrrd6lrKVwSuFtZ7bk1ZyHS4nO80TMknozYtZKSiEHvjYm
-         NdenPxfU0JFn+xNQoLWrsU+f41UyzPU2Kp+lkWYA=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.0 103/317] clk: rockchip: undo several noc and special clocks as critical on rk3288
-Date:   Wed, 22 May 2019 15:20:04 -0400
-Message-Id: <20190522192338.23715-103-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
-References: <20190522192338.23715-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        s=default; t=1558552875;
+        bh=YbWw5jCdlVSPKASk0Am85SMF0LzLvtSiYq/4581+xHE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=wlA5IMAkbdJJK84FwgfTk9vb9mKRpiUrE0gdmAYhRNeZdEZWLa1O+1TqMzYFFDkfR
+         m8FRQRwg28nthhrzfBj+wuGjErUBKAjaQqkxYOpUwt4Yv2Q5F1PzzdjoWN+gmExmTD
+         OETzWa9p/CSYA14EHx9WnsYDpghD4UP96mMh+maQ=
+Date:   Wed, 22 May 2019 12:21:13 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Borislav Petkov <bp@suse.de>
+Subject: Re: [PATCH] mm/gup: continue VM_FAULT_RETRY processing event for
+ pre-faults
+Message-Id: <20190522122113.a2edc8aba32f0fad189bae21@linux-foundation.org>
+In-Reply-To: <1557844195-18882-1-git-send-email-rppt@linux.ibm.com>
+References: <1557844195-18882-1-git-send-email-rppt@linux.ibm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+On Tue, 14 May 2019 17:29:55 +0300 Mike Rapoport <rppt@linux.ibm.com> wrote:
 
-[ Upstream commit f4033db5b84ebe4b32c25ba2ed65ab20b628996a ]
+> When get_user_pages*() is called with pages = NULL, the processing of
+> VM_FAULT_RETRY terminates early without actually retrying to fault-in all
+> the pages.
+> 
+> If the pages in the requested range belong to a VMA that has userfaultfd
+> registered, handle_userfault() returns VM_FAULT_RETRY *after* user space
+> has populated the page, but for the gup pre-fault case there's no actual
+> retry and the caller will get no pages although they are present.
+> 
+> This issue was uncovered when running post-copy memory restore in CRIU
+> after commit d9c9ce34ed5c ("x86/fpu: Fault-in user stack if
+> copy_fpstate_to_sigframe() fails").
+> 
+> After this change, the copying of FPU state to the sigframe switched from
+> copy_to_user() variants which caused a real page fault to get_user_pages()
+> with pages parameter set to NULL.
 
-This is mostly a revert of commit 55bb6a633c33 ("clk: rockchip: mark
-noc and some special clk as critical on rk3288") except that we're
-keeping "pmu_hclk_otg0" as critical still.
+You're saying that argument buf_fx in copy_fpstate_to_sigframe() is NULL?
 
-NOTE: turning these clocks off doesn't seem to do a whole lot in terms
-of power savings (checking the power on the logic rail).  It appears
-to save maybe 1-2mW.  ...but still it seems like we should turn the
-clocks off if they aren't needed.
+If so was that expected by the (now cc'ed) developers of
+d9c9ce34ed5c8923 ("x86/fpu: Fault-in user stack if
+copy_fpstate_to_sigframe() fails")?
 
-About "pmu_hclk_otg0" (the one clock from the original commit we're
-still keeping critical) from an email thread:
+It seems rather odd.  copy_fpregs_to_sigframe() doesn't look like it's
+expecting a NULL argument.
 
-> pmu ahb clock
->
-> Function: Clock to pmu module when hibernation and/or ADP is
-> enabled. Must be greater than or equal to 30 MHz.
->
-> If the SOC design does not support hibernation/ADP function, only have
-> hclk_otg, this clk can be switched according to the usage of otg.
-> If the SOC design support hibernation/ADP, has two clocks, hclk_otg and
-> pmu_hclk_otg0.
-> Hclk_otg belongs to the closed part of otg logic, which can be switched
-> according to the use of otg.
->
-> pmu_hclk_otg0 belongs to the always on part.
->
-> As for whether pmu_hclk_otg0 can be turned off when otg is not in use,
-> we have not tested. IC suggest make pmu_hclk_otg0 always on.
+Also, I wonder if copy_fpstate_to_sigframe() would be better using
+fault_in_pages_writeable() rather than get_user_pages_unlocked().  That
+seems like it operates at a more suitable level and I guess it will fix
+this issue also.
 
-For the rest of the clocks:
+> In post-copy mode of CRIU, the destination memory is managed with
+> userfaultfd and lack of the retry for pre-fault case in get_user_pages()
+> causes a crash of the restored process.
+> 
+> Making the pre-fault behavior of get_user_pages() the same as the "normal"
+> one fixes the issue.
 
-atclk: No documentation about this clock other than that it goes to
-the CPU.  CPU functions fine without it on.  Maybe needed for JTAG?
+Should this be backported into -stable trees?
 
-jtag: Presumably this clock is only needed if you're debugging with
-JTAG.  It doesn't seem like it makes sense to waste power for every
-rk3288 user.  In any case to do JTAG you'd need private patches to
-adjust the pinctrl the mux the JTAG out anyway.
+> Fixes: d9c9ce34ed5c ("x86/fpu: Fault-in user stack if copy_fpstate_to_sigframe() fails")
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 
-pclk_dbg, pclk_core_niu: On veyron Chromebooks we turn these two
-clocks on only during kernel panics in order to access some coresight
-registers.  Since nothing in the upstream kernel does this we should
-be able to leave them off safely.  Maybe also needed for JTAG?
-
-hsicphy12m_xin12m: There is no indication of why this clock would need
-to be turned on for boards that don't use HSIC.
-
-pclk_ddrupctl[0-1], pclk_publ0[0-1]: On veyron Chromebooks we turn
-these 4 clocks on only when doing DDR transitions and they are off
-otherwise.  I see no reason why they'd need to be on in the upstream
-kernel which doesn't support DDRFreq.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Elaine Zhang <zhangqing@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/rockchip/clk-rk3288.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index 5a67b7869960e..f3bbcdfa88ead 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -313,13 +313,13 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE_NOMUX(0, "aclk_core_mp", "armclk", CLK_IGNORE_UNUSED,
- 			RK3288_CLKSEL_CON(0), 4, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
- 			RK3288_CLKGATE_CON(12), 6, GFLAGS),
--	COMPOSITE_NOMUX(0, "atclk", "armclk", CLK_IGNORE_UNUSED,
-+	COMPOSITE_NOMUX(0, "atclk", "armclk", 0,
- 			RK3288_CLKSEL_CON(37), 4, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
- 			RK3288_CLKGATE_CON(12), 7, GFLAGS),
- 	COMPOSITE_NOMUX(0, "pclk_dbg_pre", "armclk", CLK_IGNORE_UNUSED,
- 			RK3288_CLKSEL_CON(37), 9, 5, DFLAGS | CLK_DIVIDER_READ_ONLY,
- 			RK3288_CLKGATE_CON(12), 8, GFLAGS),
--	GATE(0, "pclk_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
-+	GATE(0, "pclk_dbg", "pclk_dbg_pre", 0,
- 			RK3288_CLKGATE_CON(12), 9, GFLAGS),
- 	GATE(0, "cs_dbg", "pclk_dbg_pre", CLK_IGNORE_UNUSED,
- 			RK3288_CLKGATE_CON(12), 10, GFLAGS),
-@@ -647,7 +647,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	INVERTER(SCLK_HSADC, "sclk_hsadc", "sclk_hsadc_out",
- 			RK3288_CLKSEL_CON(22), 7, IFLAGS),
- 
--	GATE(0, "jtag", "ext_jtag", CLK_IGNORE_UNUSED,
-+	GATE(0, "jtag", "ext_jtag", 0,
- 			RK3288_CLKGATE_CON(4), 14, GFLAGS),
- 
- 	COMPOSITE_NODIV(SCLK_USBPHY480M_SRC, "usbphy480m_src", mux_usbphy480m_p, 0,
-@@ -656,7 +656,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE_NODIV(SCLK_HSICPHY480M, "sclk_hsicphy480m", mux_hsicphy480m_p, 0,
- 			RK3288_CLKSEL_CON(29), 0, 2, MFLAGS,
- 			RK3288_CLKGATE_CON(3), 6, GFLAGS),
--	GATE(0, "hsicphy12m_xin12m", "xin12m", CLK_IGNORE_UNUSED,
-+	GATE(0, "hsicphy12m_xin12m", "xin12m", 0,
- 			RK3288_CLKGATE_CON(13), 9, GFLAGS),
- 	DIV(0, "hsicphy12m_usbphy", "sclk_hsicphy480m", 0,
- 			RK3288_CLKSEL_CON(11), 8, 6, DFLAGS),
-@@ -837,11 +837,6 @@ static const char *const rk3288_critical_clocks[] __initconst = {
- 	"pclk_alive_niu",
- 	"pclk_pd_pmu",
- 	"pclk_pmu_niu",
--	"pclk_core_niu",
--	"pclk_ddrupctl0",
--	"pclk_publ0",
--	"pclk_ddrupctl1",
--	"pclk_publ1",
- 	"pmu_hclk_otg0",
- };
- 
--- 
-2.20.1
 
