@@ -2,115 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2958E25EE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 09:58:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4973E25ECE
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 09:48:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728735AbfEVH6Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 03:58:16 -0400
-Received: from mail.windriver.com ([147.11.1.11]:52566 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727453AbfEVH6P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 03:58:15 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id x4M7vurP026148
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Wed, 22 May 2019 00:57:56 -0700 (PDT)
-Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 22 May
- 2019 00:57:55 -0700
-Subject: Re: [PATCH v2] tipc: Avoid copying bytes beyond the supplied data
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        <jon.maloy@ericsson.com>, <davem@davemloft.net>,
-        <niveditas98@gmail.com>
-CC:     <netdev@vger.kernel.org>, <tipc-discussion@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <20190520034536.22782-1-chris.packham@alliedtelesis.co.nz>
-From:   Ying Xue <ying.xue@windriver.com>
-Message-ID: <2830aab3-3fa9-36d2-5646-d5e4672ae263@windriver.com>
-Date:   Wed, 22 May 2019 15:47:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728635AbfEVHsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 03:48:45 -0400
+Received: from ozlabs.org ([203.11.71.1]:34805 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726358AbfEVHsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 03:48:45 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4584WY4Rrnz9s6w;
+        Wed, 22 May 2019 17:48:41 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1558511322;
+        bh=TuZ9NVlBYOOA0MoB3qMJofvJa3RIuTnzGFA8ICtVWVA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nI2nqIhThg2UHDDsoFD2x7fy7OET3ebPz4yL7Uo5LKh2zL49FxQVmq5Pbg9r1Xz58
+         PNoBQL4LVAoc81bQ6YzSAf18VCrt90fqY9yoi4Vdk0IZR1OvqcNgzGezdNX2uAKifN
+         xZWdYj42nmhtAGRdNgp7fl4IxZFYkgqg5Amo/Dal039JmUt/D4mcCu74Kp3e9XkENn
+         iPFw38GXY3KQejdx4io0BmVC3MJ1PPkctK3GgWm2WPXjAgv9cuc4ZYlb7hmk1h3iUh
+         z0CEIadD6kO54z9WAOok+nIZwf3KQD2ynzjw6Es30QxjljuxT7DY8fIvIAJVk2Q1nd
+         Iv3BVwyZw/IIA==
+Date:   Wed, 22 May 2019 17:48:33 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Christian Brauner <christian@brauner.io>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: Re: linux-next: manual merge of the pidfd tree with Linus' tree
+Message-ID: <20190522174725.6bfd51bd@canb.auug.org.au>
+In-Reply-To: <20190522055235.GC13702@kroah.com>
+References: <20190522110115.7350be3e@canb.auug.org.au>
+        <20190522055235.GC13702@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20190520034536.22782-1-chris.packham@alliedtelesis.co.nz>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.224.155.90]
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/lvAN8G0u2K3BD/3rFho2.e2"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/20/19 11:45 AM, Chris Packham wrote:
-> TLV_SET is called with a data pointer and a len parameter that tells us
-> how many bytes are pointed to by data. When invoking memcpy() we need
-> to careful to only copy len bytes.
-> 
-> Previously we would copy TLV_LENGTH(len) bytes which would copy an extra
-> 4 bytes past the end of the data pointer which newer GCC versions
-> complain about.
-> 
->  In file included from test.c:17:
->  In function 'TLV_SET',
->      inlined from 'test' at test.c:186:5:
->  /usr/include/linux/tipc_config.h:317:3:
->  warning: 'memcpy' forming offset [33, 36] is out of the bounds [0, 32]
->  of object 'bearer_name' with type 'char[32]' [-Warray-bounds]
->      memcpy(TLV_DATA(tlv_ptr), data, tlv_len);
->      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->  test.c: In function 'test':
->  test.c::161:10: note:
->  'bearer_name' declared here
->      char bearer_name[TIPC_MAX_BEARER_NAME];
->           ^~~~~~~~~~~
-> 
-> We still want to ensure any padding bytes at the end are initialised, do
-> this with a explicit memset() rather than copy bytes past the end of
-> data. Apply the same logic to TCM_SET.
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+--Sig_/lvAN8G0u2K3BD/3rFho2.e2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Ying Xue <ying.xue@windriver.com>
+Hi Greg,
 
+On Wed, 22 May 2019 07:52:35 +0200 Greg Kroah-Hartman <gregkh@linuxfoundati=
+on.org> wrote:
+>
+> Sorry, you are going to get a number of these types of minor conflicts
+> now.  That's the problem of touching thousands of files :(
 
-But please make the same changes in usr/include/linux/tipc_config.h
+Yeah, I expected that one I saw the commits.  At least is is just after
+-rc1, hopefully most maintainers will start their -next branches after
+today :-)
 
-> ---
-> 
-> Changes in v2:
-> - Ensure padding bytes are initialised in both TLV_SET and TCM_SET
-> 
->  include/uapi/linux/tipc_config.h | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/uapi/linux/tipc_config.h b/include/uapi/linux/tipc_config.h
-> index 4b2c93b1934c..4955e1a9f1bc 100644
-> --- a/include/uapi/linux/tipc_config.h
-> +++ b/include/uapi/linux/tipc_config.h
-> @@ -307,8 +307,10 @@ static inline int TLV_SET(void *tlv, __u16 type, void *data, __u16 len)
->  	tlv_ptr = (struct tlv_desc *)tlv;
->  	tlv_ptr->tlv_type = htons(type);
->  	tlv_ptr->tlv_len  = htons(tlv_len);
-> -	if (len && data)
-> -		memcpy(TLV_DATA(tlv_ptr), data, tlv_len);
-> +	if (len && data) {
-> +		memcpy(TLV_DATA(tlv_ptr), data, len);
-> +		memset(TLV_DATA(tlv_ptr) + len, 0, TLV_SPACE(len) - tlv_len);
-> +	}
->  	return TLV_SPACE(len);
->  }
->  
-> @@ -405,8 +407,10 @@ static inline int TCM_SET(void *msg, __u16 cmd, __u16 flags,
->  	tcm_hdr->tcm_len   = htonl(msg_len);
->  	tcm_hdr->tcm_type  = htons(cmd);
->  	tcm_hdr->tcm_flags = htons(flags);
-> -	if (data_len && data)
-> +	if (data_len && data) {
->  		memcpy(TCM_DATA(msg), data, data_len);
-> +		memset(TCM_DATA(msg) + data_len, 0, TCM_SPACE(data_len) - msg_len);
-> +	}
->  	return TCM_SPACE(data_len);
->  }
->  
-> 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/lvAN8G0u2K3BD/3rFho2.e2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzk/tEACgkQAVBC80lX
+0Gytgwf/bM3rn1I53Z1gozufwkAcj4PNOkJZ+4AxQXyFSR5FeznDmcWBByYIjOmW
+7KgoP5dudN5bYcOfhgugtORTjJu54x3P3iSgdDYzoZRvK0Sk8irR/SlfoBd8Brsc
+iiqBXBicqQQGrus+zTLdtHvr7bXbX0weTxCUV4Xj91jUSa6oD9f+JskwuvGCV1zt
+fxmo+N8BTmPFZ79PjTKkZR+nAZacDm34fEKBlIIJvrpjpG5BYKlFNwf6c5Q89vb7
+lq3DAnLISW/gZ6QfEWMMdczQ24qvrLxZm6LApOLZ1KxMy+SNzTT/i9ejIqvITJxD
+dm7z1TtvrBzveZnAGVWiXDpbDTJk/w==
+=MWyJ
+-----END PGP SIGNATURE-----
+
+--Sig_/lvAN8G0u2K3BD/3rFho2.e2--
