@@ -2,69 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8937E26DF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:46:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D28926E50
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:49:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387842AbfEVTpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:45:42 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:43775 "EHLO vps0.lunn.ch"
+        id S2387865AbfEVTrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:47:51 -0400
+Received: from mga01.intel.com ([192.55.52.88]:47986 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387826AbfEVTpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:45:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=XNbOGS4rvkgdUZMHxmhjwr36ofxZ/LCzsygeLRYsvOg=; b=ZDl33/CAORcP7yl3ULlzFAQI8L
-        JOJdOn2+59ezvFK21YTIlmlziHliJKAvIV1dqoBczKcThUkRms3/jx7OJSNEKejqWgnGB92gCidUb
-        /yMZQQkxp14fp+ZmkJx0s4hl1yK44PjIQ1AUMKXgcUNOGjwFiKH37iwAZ4N2HT09W3sM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hTXB3-0003JC-Ds; Wed, 22 May 2019 21:45:29 +0200
-Date:   Wed, 22 May 2019 21:45:29 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Sagar Shrikant Kadam <sagar.kadam@sifive.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, peter@korsgaard.com,
-        palmer@sifive.com, paul.walmsley@sifive.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 3/3] i2c-ocores: sifive: add polling mode workaround
- for FU540-C000 SoC.
-Message-ID: <20190522194529.GJ7281@lunn.ch>
-References: <1558515574-11155-1-git-send-email-sagar.kadam@sifive.com>
- <1558515574-11155-4-git-send-email-sagar.kadam@sifive.com>
+        id S1731090AbfEVTrs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:47:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 May 2019 12:47:47 -0700
+X-ExtLoop1: 1
+Received: from cjpowell-mobl.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.251.154.39])
+  by fmsmga008.fm.intel.com with ESMTP; 22 May 2019 12:47:46 -0700
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
+        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v2 00/15] soundwire: corrections to ACPI/DisCo/Intel support
+Date:   Wed, 22 May 2019 14:47:16 -0500
+Message-Id: <20190522194732.25704-1-pierre-louis.bossart@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1558515574-11155-4-git-send-email-sagar.kadam@sifive.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 02:29:34PM +0530, Sagar Shrikant Kadam wrote:
-> The i2c-ocore driver already has a polling mode interface.But it needs
-> a workaround for FU540 Chipset on HiFive unleashed board (RevA00).
-> There is an erratum in FU540 chip that prevents interrupt driven i2c
-> transfers from working, and also the I2C controller's interrupt bit
-> cannot be cleared if set, due to this the existing i2c polling mode
-> interface added in mainline earlier doesn't work, and CPU stall's
-> infinitely, when-ever i2c transfer is initiated.
-> 
-> Ref:
-> 	commit dd7dbf0eb090 ("i2c: ocores: refactor setup for polling")
-> 
-> The workaround / fix under OCORES_FLAG_BROKEN_IRQ is particularly for
-> FU540-COOO SoC.
-> 
-> The polling function identifies a SiFive device based on the device node
-> and enables the workaround.
-> 
-> Signed-off-by: Sagar Shrikant Kadam <sagar.kadam@sifive.com>
+Now that we are done with cleanups, we can start fixing the code with
+actual semantic or functional changes.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+This patchset corrects issues with Intel BIOS and hardware properties
+that prevented a successful init, aligns the code with the MIPI DisCo
+spec, adds rate-limiting for frequent errors and adds checks on number
+of links and PDIs.
 
-    Andrew
+With all these changes, the hardware can be initialized correctly and
+modules can be added/removed without issues on WhiskyLake and
+IceLake.
+
+Parts of this code was initially written by my Intel colleagues Vinod
+Koul, Sanyog Kale, Shreyas Nc and Hardik Shah, who are either no
+longer with Intel or no longer involved in SoundWire development. When
+relevant, I explictly added a note in commit messages to give them
+credit for their hard work, but I removed their signed-off-by tags to
+avoid email bounces and avoid spamming them forever with SoundWire
+patches.
+
+Changes since v2:
+Feedback from Vinod:
+1. improve the SoundWire controller search without magic values
+2. split patches as needed
+Other additions
+rate-limiting to avoid flooding dmesg logs
+provide better Slave status on errors
+more checks on links and PDIs
+
+Pierre-Louis Bossart (15):
+  soundwire: intel: filter SoundWire controller device search
+  soundwire: mipi_disco: fix master/link error
+  soundwire: add port-related definitions
+  soundwire: remove master data port properties
+  soundwire: mipi-disco: remove master_count property for masters
+  soundwire: rename 'freq' fields
+  soundwire: mipi-disco: fix clock stop modes
+  soundwire: clarify comment
+  soundwire: rename/clarify MIPI DisCo properties
+  soundwire: cadence_master: use rate_limited dynamic debug
+  soundwire: cadence_master: log Slave status mask on errors
+  soundwire: cadence_master: check the number of bidir PDIs
+  soundwire: Intel: add log for number of PCM and PDM PDIs
+  soundwire: fix typo in comments
+  soundwire: intel_init: add checks on link numbers
+
+ drivers/soundwire/bus.c            |  6 +-
+ drivers/soundwire/cadence_master.c | 29 +++++-----
+ drivers/soundwire/intel.c          | 17 ++++--
+ drivers/soundwire/intel.h          |  2 +-
+ drivers/soundwire/intel_init.c     | 25 ++++++++-
+ drivers/soundwire/mipi_disco.c     | 35 ++++++------
+ drivers/soundwire/stream.c         |  8 +--
+ include/linux/soundwire/sdw.h      | 88 +++++++++++++++++++++++-------
+ 8 files changed, 147 insertions(+), 63 deletions(-)
+
+-- 
+2.20.1
+
