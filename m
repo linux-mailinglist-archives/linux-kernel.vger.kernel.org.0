@@ -2,150 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A8D825F4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 10:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0939425F63
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 10:23:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728819AbfEVITe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 04:19:34 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33707 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728600AbfEVITc (ORCPT
+        id S1728635AbfEVIWx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 04:22:53 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44121 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbfEVIWx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 04:19:32 -0400
-Received: by mail-wm1-f67.google.com with SMTP id c66so4119063wme.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 01:19:31 -0700 (PDT)
+        Wed, 22 May 2019 04:22:53 -0400
+Received: by mail-lf1-f67.google.com with SMTP id n134so979000lfn.11
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 01:22:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wm7USqdu+jHYGWfH9S7SpMuameCsVZ9veEzhXK92UAo=;
-        b=JZjKCDCBSttnMb0+fn138fsCpqGDGVoOKzPgaU2mAoTZrx++Uerj2qFFt7Lq+L7q6A
-         ANii67poZ7jScEk2s3V4T8O76prygpZJP71t4AeDerVqJpMWUa2bA7WPshdbtPBKiKCy
-         B95OpFp/w7DD79nEoymu6uHIQ32w+PBa5NmM193gxIL4MT43X5BfiTtLlmFY/14FbCwh
-         jtx10k8/mnjiqzE6GexW2WRcnLTsJsrwYuhqL6WNe+lA0qptdQtDzNpEiBgTgBMVHdcm
-         JVEnoTK3FLpQVfgQWSy72jGZyNID2cnZ1uSaRuWgVxt8dYP1bVjWscp/m+rqK0jMkyrv
-         btig==
+        d=brauner.io; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=m4JEalCIglmSi8asd0GswElo01+07VAIE94yc//5CSY=;
+        b=KMEggWfKkR3sBMob8FbBK3AkPY0Qn4wLBU1yAM0kOqN5gKbp7l4OR3rxcZCe1Ov1Ye
+         uED7haoNqzLbV39Qaj2z/pOqC3lVob2FBEWPQyBmcQJX1WVPrnZqCGBi//2l7ms8rLXv
+         +0+tBjPhna2s7pUUqEpZfT71jdxWJ8iPP3fJhloXDk+nX0Ufjanfb3bbxhnJW/jGf07H
+         3UWg0mYN+wHNOckgclt+Yj6aG3vssyp7F86XCh/IySq5+IYFBEJzZAQ6dVsQdei2r5EE
+         mvEQPxdad4w3p93NQApykF9saCcvOzUKnpwqj3xC6v7ijNc3aJVs7zN9kuqnXuBzBxu1
+         y5yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wm7USqdu+jHYGWfH9S7SpMuameCsVZ9veEzhXK92UAo=;
-        b=bCQNP5vbgYb7I3k8BEMGww6k9PJiKwBjuu4huSlauiOeFKEIdQsIaqO78IJqXau5Wg
-         MI58UYJrME48+TpeHdBCczKvf/LLxQT2Zx9ZHPZYpqYMAtkY8hdPW9cOUsH5tvgO7mHL
-         Y+aWUmr4530vxYOPyqLnf3MtwnNxHlWHAm6u2xt+cggJlRxXhp6XWWFQB9dGfuhyprU0
-         Zn2Yc9H9zR+tPM3BpeV8vXU/aEFVVEswEkUplWz1tYpEYEGGpZHJSYUo50ybVSzZIbWu
-         djCoCwjxUKUMV3PpcxavaKz8R3qJH/QCv+2eTNqTEr0DJcshyTYVLbQgA92qUwejEibh
-         /Vtg==
-X-Gm-Message-State: APjAAAWY021pepfgNVx2EbBS2Wpt5ky7baon+35APAl30clr4tz+VrO9
-        RbbxA2mxEQNy6qvJbDqHpOuH2JkYJH/4pw==
-X-Google-Smtp-Source: APXvYqxjLZytVFJILZeHk5UQVBKybXMi9/eW9XaTxhyiW3F+6M1upnZ0tBsOLRxV/JKsXWxtf9dGWA==
-X-Received: by 2002:a1c:cb0e:: with SMTP id b14mr6125266wmg.61.1558513170535;
-        Wed, 22 May 2019 01:19:30 -0700 (PDT)
-Received: from [10.1.203.87] (nat-wifi.sssup.it. [193.205.81.22])
-        by smtp.googlemail.com with ESMTPSA id o4sm6530168wmo.20.2019.05.22.01.19.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 01:19:29 -0700 (PDT)
-Subject: Re: [PATCH] ARM: dts: at91sam9261ek: remove unused chosen nodes
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190408151155.20279-1-alexandre.belloni@bootlin.com>
- <2f831f1b-c87d-48bd-cf02-2ebb334b964c@linaro.org>
-Message-ID: <1aa65857-7638-b78f-8cde-cc5c968555cc@linaro.org>
-Date:   Wed, 22 May 2019 10:19:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=m4JEalCIglmSi8asd0GswElo01+07VAIE94yc//5CSY=;
+        b=dQ+Sns7Mi6LdxSAfpIXHnV08WVBubYGYx1CXOBV4n9eCunewRw8WL4H/4SWlyniMW/
+         z6rgzFh8SFzICp4LIw2JlG/tx0YODdUjfcbJ9zIBuU5+FMoS7l1k+SArEXcLGa+H+4Og
+         k9HJPMRPnlJM4vnPSuXqDKhvndk27hoiM0DfUBfI3Ir1iVs8VEVdVvYZ+XYGqaEd637e
+         MsKWAEQ7w6qgkESL8oAGfRlKhrsxlJACoP0YF6B8KYZcyPbg9D1++iW6e+32OE3oa7gB
+         2i3BjNxlFk6SJZqLdy+F5l1KClslhZdDWUFe5zimeNmo5YhMqxYbNECcfbHjT8WBtPGE
+         eEoA==
+X-Gm-Message-State: APjAAAWHt0P+4b+J7RicLecmp8OOwGJ8gmVAxuH9APO2XylGYHrC6T5f
+        5Ltw2R4VTxbPSQeKv15K4ZvB/owxafTzeWvPxR6XnA==
+X-Google-Smtp-Source: APXvYqw9OPOwrmLIkGIU0Xy3co7TwRd7WwgYVENZTQrjpSNRDD9FLuWiCbXB17r/o1f6TgOoNhgJ68m6pD96JCSigLo=
+X-Received: by 2002:ac2:5606:: with SMTP id v6mr5522539lfd.129.1558513370602;
+ Wed, 22 May 2019 01:22:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <2f831f1b-c87d-48bd-cf02-2ebb334b964c@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190520035254.57579-1-minchan@kernel.org> <20190521084158.s5wwjgewexjzrsm6@brauner.io>
+ <20190521110552.GG219653@google.com> <20190521113029.76iopljdicymghvq@brauner.io>
+ <20190521113911.2rypoh7uniuri2bj@brauner.io> <CAKOZuesjDcD3EM4PS7aO7yTa3KZ=FEzMP63MR0aEph4iW1NCYQ@mail.gmail.com>
+In-Reply-To: <CAKOZuesjDcD3EM4PS7aO7yTa3KZ=FEzMP63MR0aEph4iW1NCYQ@mail.gmail.com>
+From:   Christian Brauner <christian@brauner.io>
+Date:   Wed, 22 May 2019 10:22:39 +0200
+Message-ID: <CAHrFyr6iuoZ-r6e57zp1rz7b=Ee0Vko+syuUKW2an+TkAEz_iA@mail.gmail.com>
+Subject: Re: [RFC 0/7] introduce memory hinting API for external process
+To:     Daniel Colascione <dancol@google.com>,
+        Minchan Kim <minchan@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 22, 2019 at 7:12 AM Daniel Colascione <dancol@google.com> wrote=
+:
+>
+> On Tue, May 21, 2019 at 4:39 AM Christian Brauner <christian@brauner.io> =
+wrote:
+> >
+> > On Tue, May 21, 2019 at 01:30:29PM +0200, Christian Brauner wrote:
+> > > On Tue, May 21, 2019 at 08:05:52PM +0900, Minchan Kim wrote:
+> > > > On Tue, May 21, 2019 at 10:42:00AM +0200, Christian Brauner wrote:
+> > > > > On Mon, May 20, 2019 at 12:52:47PM +0900, Minchan Kim wrote:
+> > > > > > - Background
+> > > > > >
+> > > > > > The Android terminology used for forking a new process and star=
+ting an app
+> > > > > > from scratch is a cold start, while resuming an existing app is=
+ a hot start.
+> > > > > > While we continually try to improve the performance of cold sta=
+rts, hot
+> > > > > > starts will always be significantly less power hungry as well a=
+s faster so
+> > > > > > we are trying to make hot start more likely than cold start.
+> > > > > >
+> > > > > > To increase hot start, Android userspace manages the order that=
+ apps should
+> > > > > > be killed in a process called ActivityManagerService. ActivityM=
+anagerService
+> > > > > > tracks every Android app or service that the user could be inte=
+racting with
+> > > > > > at any time and translates that into a ranked list for lmkd(low=
+ memory
+> > > > > > killer daemon). They are likely to be killed by lmkd if the sys=
+tem has to
+> > > > > > reclaim memory. In that sense they are similar to entries in an=
+y other cache.
+> > > > > > Those apps are kept alive for opportunistic performance improve=
+ments but
+> > > > > > those performance improvements will vary based on the memory re=
+quirements of
+> > > > > > individual workloads.
+> > > > > >
+> > > > > > - Problem
+> > > > > >
+> > > > > > Naturally, cached apps were dominant consumers of memory on the=
+ system.
+> > > > > > However, they were not significant consumers of swap even thoug=
+h they are
+> > > > > > good candidate for swap. Under investigation, swapping out only=
+ begins
+> > > > > > once the low zone watermark is hit and kswapd wakes up, but the=
+ overall
+> > > > > > allocation rate in the system might trip lmkd thresholds and ca=
+use a cached
+> > > > > > process to be killed(we measured performance swapping out vs. z=
+apping the
+> > > > > > memory by killing a process. Unsurprisingly, zapping is 10x tim=
+es faster
+> > > > > > even though we use zram which is much faster than real storage)=
+ so kill
+> > > > > > from lmkd will often satisfy the high zone watermark, resulting=
+ in very
+> > > > > > few pages actually being moved to swap.
+> > > > > >
+> > > > > > - Approach
+> > > > > >
+> > > > > > The approach we chose was to use a new interface to allow users=
+pace to
+> > > > > > proactively reclaim entire processes by leveraging platform inf=
+ormation.
+> > > > > > This allowed us to bypass the inaccuracy of the kernel=E2=80=99=
+s LRUs for pages
+> > > > > > that are known to be cold from userspace and to avoid races wit=
+h lmkd
+> > > > > > by reclaiming apps as soon as they entered the cached state. Ad=
+ditionally,
+> > > > > > it could provide many chances for platform to use much informat=
+ion to
+> > > > > > optimize memory efficiency.
+> > > > > >
+> > > > > > IMHO we should spell it out that this patchset complements MADV=
+_WONTNEED
+> > > > > > and MADV_FREE by adding non-destructive ways to gain some free =
+memory
+> > > > > > space. MADV_COLD is similar to MADV_WONTNEED in a way that it h=
+ints the
+> > > > > > kernel that memory region is not currently needed and should be=
+ reclaimed
+> > > > > > immediately; MADV_COOL is similar to MADV_FREE in a way that it=
+ hints the
+> > > > > > kernel that memory region is not currently needed and should be=
+ reclaimed
+> > > > > > when memory pressure rises.
+> > > > > >
+> > > > > > To achieve the goal, the patchset introduce two new options for=
+ madvise.
+> > > > > > One is MADV_COOL which will deactive activated pages and the ot=
+her is
+> > > > > > MADV_COLD which will reclaim private pages instantly. These new=
+ options
+> > > > > > complement MADV_DONTNEED and MADV_FREE by adding non-destructiv=
+e ways to
+> > > > > > gain some free memory space. MADV_COLD is similar to MADV_DONTN=
+EED in a way
+> > > > > > that it hints the kernel that memory region is not currently ne=
+eded and
+> > > > > > should be reclaimed immediately; MADV_COOL is similar to MADV_F=
+REE in a way
+> > > > > > that it hints the kernel that memory region is not currently ne=
+eded and
+> > > > > > should be reclaimed when memory pressure rises.
+> > > > > >
+> > > > > > This approach is similar in spirit to madvise(MADV_WONTNEED), b=
+ut the
+> > > > > > information required to make the reclaim decision is not known =
+to the app.
+> > > > > > Instead, it is known to a centralized userspace daemon, and tha=
+t daemon
+> > > > > > must be able to initiate reclaim on its own without any app inv=
+olvement.
+> > > > > > To solve the concern, this patch introduces new syscall -
+> > > > > >
+> > > > > >         struct pr_madvise_param {
+> > > > > >                 int size;
+> > > > > >                 const struct iovec *vec;
+> > > > > >         }
+> > > > > >
+> > > > > >         int process_madvise(int pidfd, ssize_t nr_elem, int *be=
+havior,
+> > > > > >                                 struct pr_madvise_param *restul=
+s,
+> > > > > >                                 struct pr_madvise_param *ranges=
+,
+> > > > > >                                 unsigned long flags);
+> > > > > >
+> > > > > > The syscall get pidfd to give hints to external process and pro=
+vides
+> > > > > > pair of result/ranges vector arguments so that it could give se=
+veral
+> > > > > > hints to each address range all at once.
+> > > > > >
+> > > > > > I guess others have different ideas about the naming of syscall=
+ and options
+> > > > > > so feel free to suggest better naming.
+> > > > >
+> > > > > Yes, all new syscalls making use of pidfds should be named
+> > > > > pidfd_<action>. So please make this pidfd_madvise.
+> > > >
+> > > > I don't have any particular preference but just wondering why pidfd=
+ is
+> > > > so special to have it as prefix of system call name.
+> > >
+> > > It's a whole new API to address processes. We already have
+> > > clone(CLONE_PIDFD) and pidfd_send_signal() as you have seen since you
+> > > exported pidfd_to_pid(). And we're going to have pidfd_open(). Your
+> > > syscall works only with pidfds so it's tied to this api as well so it
+> > > should follow the naming scheme. This also makes life easier for
+> > > userspace and is consistent.
+> >
+> > This is at least my reasoning. I'm not going to make this a whole big
+> > pedantic argument. If people have really strong feelings about not usin=
+g
+> > this prefix then fine. But if syscalls can be grouped together and have
+> > consistent naming this is always a big plus.
+>
+> My hope has been that pidfd use becomes normalized enough that
+> prefixing "pidfd_" to pidfd-accepting system calls becomes redundant.
+> We write write(), not fd_write(), right? :-) pidfd_open() makes sense
+> because the primary purpose of this system call is to operate on a
+> pidfd, but I think process_madvise() is fine.
 
-Hi Rob,
+This madvise syscall just operates on pidfds. It would make sense to
+name it process_madvise() if were to operate both on pid_t and int pidfd.
+Giving specific names to system calls won't stop it from becoming
+normalized. The fact that people built other system calls around it
+is enough proof of that. :)
+For userspace pidfd_madvise is nicer and it clearly expresses
+that it only accepts pidfds.
+So please, Minchan make it pidfd_madvise() in the next version. :)
 
-a gentle ping ... ;)
-
-On 08/04/2019 18:30, Daniel Lezcano wrote:
-> 
-> Hi Rob,
-> 
-> the following patch has been pushed in 2016 by commit 51f0aeb2d21f1.
-> 
-> Being able to specify which timer should act as a clocksource or a
-> clockevent is often requested. Doing this from the driver itself forces
-> to do some assumption in the timer definition ordering in the DT.
-> 
-> That impacts badly the resulting code and its self-encapsulation.
-> 
->  - There is one node and the driver hardcodes the value and initializes
-> a clocksource and a clockevent
-> 
->  - There are several nodes, one for the clocksource and one for the
-> clockevent, and the driver assumes the order of the node in the DT
-> 
->  - There are several nodes and multiple channels and those are used for
-> PWM. It is impossible to know which one are used for PWM or for the
-> clocksource or for the clockevent
-> 
-> For example with STM32, we should be able to specify which timer to use.
-> There are 16 timers IIRC, they can be used for PWM, clocksource or
-> clockevent. Half is 16 bits, other half is 32 bits, depending on the
-> destination of the platform we can be interested to use one or another
-> without recompiling a kernel but just the DT.
-> 
-> We need a way to specify which timer to be used from the DT. The patch
-> below sounded like a good way to characterize the nodes as they belong
-> to the 'chosen' node and we stay to a 'linux' thing.
-> 
-> What do you think ?
-> 
-> 
-> On 08/04/2019 17:11, Alexandre Belloni wrote:
->> The chosen clocksource and clockevent bindings have never been accepted and
->> parsed, remove them.
->>
->> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
->> ---
->>  arch/arm/boot/dts/at91sam9261ek.dts | 8 --------
->>  1 file changed, 8 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/at91sam9261ek.dts b/arch/arm/boot/dts/at91sam9261ek.dts
->> index a57f2d435dca..11ed55d8a87d 100644
->> --- a/arch/arm/boot/dts/at91sam9261ek.dts
->> +++ b/arch/arm/boot/dts/at91sam9261ek.dts
->> @@ -15,14 +15,6 @@
->>  	chosen {
->>  		bootargs = "rootfstype=ubifs ubi.mtd=5 root=ubi0:rootfs rw";
->>  		stdout-path = "serial0:115200n8";
->> -
->> -		clocksource {
->> -			timer = <&timer0>;
->> -		};
->> -
->> -		clockevent {
->> -			timer = <&timer1>;
->> -		};
->>  	};
->>  
->>  	memory {
->>
-> 
-> 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Christian
