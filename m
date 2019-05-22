@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1F2A26808
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 18:21:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1584326815
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 18:21:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730105AbfEVQVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 12:21:11 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:49360 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730063AbfEVQVJ (ORCPT
+        id S1730155AbfEVQVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 12:21:21 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:59370 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730040AbfEVQVI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 12:21:09 -0400
+        Wed, 22 May 2019 12:21:08 -0400
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4MGKdev102267;
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4MGKdI2037691;
         Wed, 22 May 2019 11:20:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
         s=ti-com-17Q1; t=1558542039;
-        bh=VCnEYJi1HcEwa5Iq6WKWhniPEkwL4k0FanrWfiqf6K0=;
+        bh=NHGPWtIBtgCaIRfzn2pY4Joyz5HN6po2SvcIC4DkkMU=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Mf/P/3FrkUIXW+4ewz5KuRrQNOyEVulTEvST+4lJY0UrfaqaTtyGv1adilwWDWgK3
-         e9FmQgBOxYd0v5uH1mX1lfQNxaTHTczQ3NuqPLMlYEK2cFefsYDiSH2V+i6cAbbGxQ
-         nkswLRTNCwaPTYS0Jejs7+ZqqCWn+gmjC/0IYIZE=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4MGKdxC099357
+        b=V8dAIqL5X+4hefMSssRkIut7wYFjJgbloh2SRmA3cR+POQ6fJ+qEzPAfZ+NP6nNEv
+         pxe/i9D7N7Pd1xHiQxMZbeRBvWXsAQhRazuFYrVaonambtOeQTcr+wQKl0dXOtlAeD
+         GW3lwzAjZuQdeAzQqjuoaxECxDRFT/bAeR1uyv1M=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4MGKdLk099362
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
         Wed, 22 May 2019 11:20:39 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 22
  May 2019 11:20:38 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
  Frontend Transport; Wed, 22 May 2019 11:20:38 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4MGKcsX122870;
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4MGKcW6126463;
         Wed, 22 May 2019 11:20:38 -0500
 From:   Nishanth Menon <nm@ti.com>
 To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
@@ -50,10 +50,11 @@ CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Tony Lindgren <tony@atomide.com>,
         Russell King <linux@armlinux.org.uk>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
-Subject: [PATCH 1/6] dt-bindings: arm: ti: Add bindings for J721E SoC
-Date:   Wed, 22 May 2019 11:19:16 -0500
-Message-ID: <20190522161921.20750-2-nm@ti.com>
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Vignesh R <vigneshr@ti.com>
+Subject: [PATCH 2/6] dt-bindings: serial: 8250_omap: Add compatible for J721E UART controller
+Date:   Wed, 22 May 2019 11:19:17 -0500
+Message-ID: <20190522161921.20750-3-nm@ti.com>
 X-Mailer: git-send-email 2.21.0.777.g83232e38648b
 In-Reply-To: <20190522161921.20750-1-nm@ti.com>
 References: <20190522161921.20750-1-nm@ti.com>
@@ -66,62 +67,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The J721E SoC belongs to the K3 Multicore SoC architecture platform,
-providing advanced system integration to enable lower system costs
-of automotive applications such as infotainment, cluster, premium
-Audio, Gateway, industrial and a range of broad market applications.
-This SoC is designed around reducing the system cost by eliminating
-the need of an external system MCU and is targeted towards ASIL-B/C
-certification/requirements in addition to allowing complex software
-and system use-cases.
+J721e uses a UART controller that is compatible with AM654 UART.
+Introduce a specific compatible to help handle the differences if
+necessary.
 
-Some highlights of this SoC are:
-* Dual Cortex-A72s in a single cluster, three clusters of lockstep
-  capable dual Cortex-R5F MCUs, Deep-learning Matrix Multiply Accelerator(MMA),
-  C7x floating point Vector DSP, Two C66x floating point DSPs.
-* 3D GPU PowerVR Rogue 8XE GE8430
-* Vision Processing Accelerator (VPAC) with image signal processor and Depth
-  and Motion Processing Accelerator (DMPAC)
-* Two Gigabit Industrial Communication Subsystems (ICSSG), each with dual
-  PRUs and dual RTUs
-* Two CSI2.0 4L RX plus one CSI2.0 4L TX, one eDP/DP, One DSI Tx, and
-  up to two DPI interfaces.
-* Integrated Ethernet switch supporting up to a total of 8 external ports in
-  addition to legacy Ethernet switch of up to 2 ports.
-* System MMU (SMMU) Version 3.0 and advanced virtualisation
-  capabilities.
-* Upto 4 PCIe-GEN3 controllers, 2 USB3.0 Dual-role device subsystems,
-  16 MCANs, 12 McASP, eMMC and SD, UFS, OSPI/HyperBus memory controller, QSPI,
-  I3C and I2C, eCAP/eQEP, eHRPWM, MLB among other peripherals.
-* Two hardware accelerator block containing AES/DES/SHA/MD5 called SA2UL
-  management.
-* Configurable L3 Cache and IO-coherent architecture with high data throughput
-  capable distributed DMA architecture under NAVSS
-* Centralized System Controller for Security, Power, and Resource
-  Management (DMSC)
-
-See J721E Technical Reference Manual (SPRUIL1, May 2019)
-for further details: http://www.ti.com/lit/pdf/spruil1
-
+Cc: Sekhar Nori <nsekhar@ti.com>
+Cc: Vignesh R <vigneshr@ti.com>
 Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
- Documentation/devicetree/bindings/arm/ti/k3.txt | 3 +++
- 1 file changed, 3 insertions(+)
+NOTE:
+ - If Greg is ok, we can pick up the uart compatibility via the k3 tree,
+   else, I can spawn it off the series into it's own patch, but it
+   seemed better in a logical order.
 
-diff --git a/Documentation/devicetree/bindings/arm/ti/k3.txt b/Documentation/devicetree/bindings/arm/ti/k3.txt
-index 6a059cabb2da..333e7256126a 100644
---- a/Documentation/devicetree/bindings/arm/ti/k3.txt
-+++ b/Documentation/devicetree/bindings/arm/ti/k3.txt
-@@ -13,6 +13,9 @@ architecture it uses, using one of the following compatible values:
- - AM654
-   compatible = "ti,am654";
+ Documentation/devicetree/bindings/serial/omap_serial.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/serial/omap_serial.txt b/Documentation/devicetree/bindings/serial/omap_serial.txt
+index 0a9b5444f4e6..dcba86b0a0d0 100644
+--- a/Documentation/devicetree/bindings/serial/omap_serial.txt
++++ b/Documentation/devicetree/bindings/serial/omap_serial.txt
+@@ -1,6 +1,7 @@
+ OMAP UART controller
  
-+- J721E
-+  compatible = "ti,j721e";
-+
- Boards
- ------
- 
+ Required properties:
++- compatible : should be "ti,j721e-uart", "ti,am654-uart" for J721E controllers
+ - compatible : should be "ti,am654-uart" for AM654 controllers
+ - compatible : should be "ti,omap2-uart" for OMAP2 controllers
+ - compatible : should be "ti,omap3-uart" for OMAP3 controllers
 -- 
 2.21.0.777.g83232e38648b
 
