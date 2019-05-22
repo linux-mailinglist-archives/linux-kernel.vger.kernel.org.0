@@ -2,53 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 602012679E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 18:01:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78A00267A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 18:02:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729931AbfEVQAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 12:00:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45572 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729430AbfEVQAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 12:00:21 -0400
-Subject: Re: [GIT PULL] arm64: First round of fixes for -rc2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558540820;
-        bh=J3PVro+tz2J/mbQeKKrLnaYAPBOBsv0SCaa0LR4beHo=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=2TBjCpcWH97BGuwRPp4pu4Euue4R9o1GoAtLspzNQAAD9y4fzEh/QG8eZPih4U2Fj
-         4QORouZbOFCDmSMdjeTtMQVzyQwpVtWywvPbrlqMeNXTMzivmlWTV7NjhF/cNUQz7p
-         Az/TV/QBcFyzUrrK5L0WuHKK2j80/O1i5XSVpIYo=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190522131102.GC7876@fuggles.cambridge.arm.com>
-References: <20190522131102.GC7876@fuggles.cambridge.arm.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190522131102.GC7876@fuggles.cambridge.arm.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
- tags/arm64-fixes
-X-PR-Tracked-Commit-Id: 7a0a93c51799edc45ee57c6cc1679aa94f1e03d5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 54dee406374ce8adb352c48e175176247cb8db7c
-Message-Id: <155854082049.3461.9141870673021713606.pr-tracker-bot@kernel.org>
-Date:   Wed, 22 May 2019 16:00:20 +0000
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com
+        id S1729884AbfEVQBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 12:01:13 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41620 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727975AbfEVQBN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 12:01:13 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g12so2905863wro.8
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 09:01:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fuynlKhllfIeQm52cXMWcD0lUs6CispzZaQZtwuYuAg=;
+        b=Xt/t8fO/1a/GpjPYTtXUr5AFRVjDBYkZmO5Ma1d5Z4Y7booTaJs+tYhgg7B1Hhhv5M
+         RQg5GVXm9Sk6FUf1hmMBWGrEmSWDPyAivd8s6isQZ0ZrwZk9/3n/ypCKK6lE8tlQmyYf
+         yIzxa0rS3JKH84++TLbteyVEjEWHRwAJL/hA//PRCYGdXj6YSGbMXXfzt16FLkUs5wOR
+         rUtyGvhrdu4a+ppko+BiMNLr8W7BBuhX+I9ikxYy4JgrPOngOJ20vo3YHVtSKknC+EHZ
+         lrK2WsWl+oc+9k7kAcEFYMtBgOcVBhlvDYJ+ggv1EdfN5Wfp4ppRdMe4qZrSXrKiyr1w
+         F2bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fuynlKhllfIeQm52cXMWcD0lUs6CispzZaQZtwuYuAg=;
+        b=pByG4rJKFZrh+wkvd65U52m9agKm6K34PaKW/gHc2hNI7XwLEWkofzSKnoOF1IxPhY
+         0VAXcO/usNXku5jJkJ95nfjjYRwFWfrxQrxXjYSH3mNac24IA99PrF9Qep8+lF6ShjRh
+         37d98hiq8GWI3t/yuIbl0IpnQPKyu3zFPvz0UnrjEQm3abchSeqHVXR8gxPEPai6x8O7
+         3ygcM37kX5b4E+dLt3RIm07B1SLTOTP6KN9GCpXGdcI/mN0Agg6BTK9BsN2zOmh7r7Le
+         udY7OTmoc94iS5ISftGf6C1UuSnSW68Q5YfRCB6fdqIMprNDrbeRuGa7ZCicJfuUwwo/
+         IM9Q==
+X-Gm-Message-State: APjAAAW4cTz1Y0UJKhf1JeIhGptwF6hm6i/AsvJb4jc1uhjt3XRcMpIK
+        ZNNkP2ua9UN1XkGVW8fNj9IwJA==
+X-Google-Smtp-Source: APXvYqzeqkgWRWxY32f4i08YJhohV1p2HVc+Y20YULwQSETBfkni16XErxYOS6q6dHcenp/CA5kJew==
+X-Received: by 2002:a5d:4cd0:: with SMTP id c16mr28980251wrt.20.1558540871772;
+        Wed, 22 May 2019 09:01:11 -0700 (PDT)
+Received: from brauner.io ([185.197.132.10])
+        by smtp.gmail.com with ESMTPSA id y17sm22149428wrp.70.2019.05.22.09.01.10
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 22 May 2019 09:01:11 -0700 (PDT)
+Date:   Wed, 22 May 2019 18:01:09 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, Jann Horn <jannh@google.com>
+Subject: Re: [RFC 0/7] introduce memory hinting API for external process
+Message-ID: <20190522160108.l5i7t4lkfy3tyx3z@brauner.io>
+References: <20190521110552.GG219653@google.com>
+ <20190521113029.76iopljdicymghvq@brauner.io>
+ <20190521113911.2rypoh7uniuri2bj@brauner.io>
+ <CAKOZuesjDcD3EM4PS7aO7yTa3KZ=FEzMP63MR0aEph4iW1NCYQ@mail.gmail.com>
+ <CAHrFyr6iuoZ-r6e57zp1rz7b=Ee0Vko+syuUKW2an+TkAEz_iA@mail.gmail.com>
+ <CAKOZueupb10vmm-bmL0j_b__qsC9ZrzhzHgpGhwPVUrfX0X-Og@mail.gmail.com>
+ <20190522145216.jkimuudoxi6pder2@brauner.io>
+ <CAKOZueu837QGDAGat-tdA9J1qtKaeuQ5rg0tDyEjyvd_hjVc6g@mail.gmail.com>
+ <20190522154823.hu77qbjho5weado5@brauner.io>
+ <CAKOZuev97fTvmXhEkjb7_RfDvjki4UoPw+QnVOsSAg0RB8RyMQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAKOZuev97fTvmXhEkjb7_RfDvjki4UoPw+QnVOsSAg0RB8RyMQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 22 May 2019 14:11:02 +0100:
+On Wed, May 22, 2019 at 08:57:47AM -0700, Daniel Colascione wrote:
+> On Wed, May 22, 2019 at 8:48 AM Christian Brauner <christian@brauner.io> wrote:
+> >
+> > On Wed, May 22, 2019 at 08:17:23AM -0700, Daniel Colascione wrote:
+> > > On Wed, May 22, 2019 at 7:52 AM Christian Brauner <christian@brauner.io> wrote:
+> > > > I'm not going to go into yet another long argument. I prefer pidfd_*.
+> > >
+> > > Ok. We're each allowed our opinion.
+> > >
+> > > > It's tied to the api, transparent for userspace, and disambiguates it
+> > > > from process_vm_{read,write}v that both take a pid_t.
+> > >
+> > > Speaking of process_vm_readv and process_vm_writev: both have a
+> > > currently-unused flags argument. Both should grow a flag that tells
+> > > them to interpret the pid argument as a pidfd. Or do you support
+> > > adding pidfd_vm_readv and pidfd_vm_writev system calls? If not, why
+> > > should process_madvise be called pidfd_madvise while process_vm_readv
+> > > isn't called pidfd_vm_readv?
+> >
+> > Actually, you should then do the same with process_madvise() and give it
+> > a flag for that too if that's not too crazy.
+> 
+> I don't know what you mean. My gut feeling is that for the sake of
+> consistency, process_madvise, process_vm_readv, and process_vm_writev
+> should all accept a first argument interpreted as either a numeric PID
+> or a pidfd depending on a flag --- ideally the same flag. Is that what
+> you have in mind?
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/54dee406374ce8adb352c48e175176247cb8db7c
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Yes. For the sake of consistency they should probably all default to
+interpret as pid and if say PROCESS_{VM_}PIDFD is passed as flag
+interpret as pidfd.
