@@ -2,94 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C23DE25C1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 05:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8882025C28
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 05:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbfEVDUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 23:20:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56044 "EHLO mx1.redhat.com"
+        id S1728373AbfEVD3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 23:29:04 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:45326 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727733AbfEVDUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 23:20:36 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3BCDE308338E;
-        Wed, 22 May 2019 03:20:36 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-78.pek2.redhat.com [10.72.12.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 187D962660;
-        Wed, 22 May 2019 03:20:32 +0000 (UTC)
-Date:   Wed, 22 May 2019 11:20:29 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        bp@alien8.de, hpa@zytor.com, kirill.shutemov@linux.intel.com,
-        x86@kernel.org
-Subject: Re: [PATCH v4 2/3] x86/kexec/64: Error out if try to jump to old
- 4-level kernel from 5-level kernel
-Message-ID: <20190522032029.GB31269@dhcp-128-65.nay.redhat.com>
-References: <20190509013644.1246-1-bhe@redhat.com>
- <20190509013644.1246-3-bhe@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190509013644.1246-3-bhe@redhat.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 22 May 2019 03:20:36 +0000 (UTC)
+        id S1728085AbfEVD3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 23:29:04 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0631520001C;
+        Wed, 22 May 2019 05:29:02 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6C203200008;
+        Wed, 22 May 2019 05:28:59 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DBD8D402E0;
+        Wed, 22 May 2019 11:28:55 +0800 (SGT)
+From:   Peng Ma <peng.ma@nxp.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com
+Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Ma <peng.ma@nxp.com>
+Subject: [V3 1/2] dmaengine: fsl-qdma: fixed the source/destination descriptor format
+Date:   Wed, 22 May 2019 03:21:02 +0000
+Message-Id: <20190522032103.13713-1-peng.ma@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/09/19 at 09:36am, Baoquan He wrote:
-> If the running kernel has 5-level paging activated, the 5-level paging
-> mode is preserved across kexec. If the kexec'ed kernel does not contain
-> support for handling active 5-level paging mode in the decompressor, the
-> decompressor will crash with #GP.
-> 
-> Prevent this situation at load time. If 5-level paging is active, check the
-> xloadflags whether the kexec kernel can handle 5-level paging at least in
-> the decompressor. If not, reject the load attempt and print out error
-> message.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  arch/x86/kernel/kexec-bzimage64.c | 5 +++++
+CMD of Source/Destination descriptor format should be lower of
+struct fsl_qdma_engine number data address.
 
-How about the userspace kexec-tools?  It needs a similar detection, but
-I'm not sure how to detect paging mode, maybe some sysfs entry or
-vmcoreinfo in /proc/vmcore
+Signed-off-by: Peng Ma <peng.ma@nxp.com>
+---
+changed for V3:
+	- Delete macro to simplify code.
 
+ drivers/dma/fsl-qdma.c |   18 ++++++++++--------
+ 1 files changed, 10 insertions(+), 8 deletions(-)
 
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 22f60dd26460..858cc892672f 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -321,6 +321,11 @@ static int bzImage64_probe(const char *buf, unsigned long len)
->  		return ret;
->  	}
->  
-> +	if (!(header->xloadflags & XLF_5LEVEL) && pgtable_l5_enabled()) {
-> +		pr_err("Can not jump to old 4-level kernel from 5-level kernel.\n");
+diff --git a/drivers/dma/fsl-qdma.c b/drivers/dma/fsl-qdma.c
+index aa1d0ae..da8fdf5 100644
+--- a/drivers/dma/fsl-qdma.c
++++ b/drivers/dma/fsl-qdma.c
+@@ -113,6 +113,7 @@
+ /* Field definition for Descriptor offset */
+ #define QDMA_CCDF_STATUS		20
+ #define QDMA_CCDF_OFFSET		20
++#define QDMA_SDDF_CMD(x)		(((u64)(x)) << 32)
+ 
+ /* Field definition for safe loop count*/
+ #define FSL_QDMA_HALT_COUNT		1500
+@@ -341,6 +342,7 @@ static void fsl_qdma_free_chan_resources(struct dma_chan *chan)
+ static void fsl_qdma_comp_fill_memcpy(struct fsl_qdma_comp *fsl_comp,
+ 				      dma_addr_t dst, dma_addr_t src, u32 len)
+ {
++	u32 cmd;
+ 	struct fsl_qdma_format *sdf, *ddf;
+ 	struct fsl_qdma_format *ccdf, *csgf_desc, *csgf_src, *csgf_dest;
+ 
+@@ -369,14 +371,14 @@ static void fsl_qdma_comp_fill_memcpy(struct fsl_qdma_comp *fsl_comp,
+ 	/* This entry is the last entry. */
+ 	qdma_csgf_set_f(csgf_dest, len);
+ 	/* Descriptor Buffer */
+-	sdf->data =
+-		cpu_to_le64(FSL_QDMA_CMD_RWTTYPE <<
+-			    FSL_QDMA_CMD_RWTTYPE_OFFSET);
+-	ddf->data =
+-		cpu_to_le64(FSL_QDMA_CMD_RWTTYPE <<
+-			    FSL_QDMA_CMD_RWTTYPE_OFFSET);
+-	ddf->data |=
+-		cpu_to_le64(FSL_QDMA_CMD_LWC << FSL_QDMA_CMD_LWC_OFFSET);
++	cmd = cpu_to_le32(FSL_QDMA_CMD_RWTTYPE <<
++			  FSL_QDMA_CMD_RWTTYPE_OFFSET);
++	sdf->data = QDMA_SDDF_CMD(cmd);
++
++	cmd = cpu_to_le32(FSL_QDMA_CMD_RWTTYPE <<
++			  FSL_QDMA_CMD_RWTTYPE_OFFSET);
++	cmd |= cpu_to_le32(FSL_QDMA_CMD_LWC << FSL_QDMA_CMD_LWC_OFFSET);
++	ddf->data = QDMA_SDDF_CMD(cmd);
+ }
+ 
+ /*
+-- 
+1.7.1
 
-4-level kernel sounds not very clear, maybe something like below?
-
-"5-level paging enabled, can not kexec into an old kernel without 5-level
-paging facility"?
-
-> +		return ret;
-> +	}
-> +
->  	/* I've got a bzImage */
->  	pr_debug("It's a relocatable bzImage64\n");
->  	ret = 0;
-> -- 
-> 2.17.2
-> 
-
-Thanks
-Dave
