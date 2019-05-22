@@ -2,126 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28BEB25DDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 08:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF98025DE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 08:10:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728518AbfEVGCf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 02:02:35 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.165]:13458 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725802AbfEVGCe (ORCPT
+        id S1728482AbfEVGJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 02:09:59 -0400
+Received: from goliath.siemens.de ([192.35.17.28]:45408 "EHLO
+        goliath.siemens.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbfEVGJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 02:02:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1558504952;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=HaM1fLUcrOxJUkby0OQgU1BJd7GEKZONAdYyOG73K3k=;
-        b=dGVH7LpbEGdBZMAcnkmuR9YGqghD5N4H8faZzJocCpWp1A6bL7WzqjhyHSUEa9onr0
-        7wJ7RuFGLPtsc/k3kLJ05xtoxDCkuzn7clBQvW0MrvzG1d+4y+1tPDLVsG3y4Fuq1M0W
-        7He/OKTVIuvOAiI6OYixr05HSMc9Aqj9czp/D1q4Xs8gcBWF+SQ8C3+av+pn7NIw7dzq
-        7c2mmQ0C2ap+OrO6Rv1qOZ5hzLkcgOgVdc8xo2tu2WzNj3RKuOFURyfLP+0SloHV00bt
-        ubNFzkQ3jCchm2+2iBAyO1gUeXibyONv43sPe0mbdqPh6d5expV5d1/MD7DYmZQeh96t
-        ZI9w==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHmAgw43oE44="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 44.18 DYNA|AUTH)
-        with ESMTPSA id j04dc1v4M62IKiO
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 22 May 2019 08:02:18 +0200 (CEST)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [BUG v5.2-rc1] ARM build broken
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <201905211331.E0D1EDC0@keescook>
-Date:   Wed, 22 May 2019 08:02:17 +0200
-Cc:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2A1D2458-0130-474B-A092-6A6CDFB8CA8B@goldelico.com>
-References: <4DB08A04-D03A-4441-85DE-64A13E6D709C@goldelico.com> <201905200855.391A921AB@keescook> <D8F987B2-8F41-46DE-B298-89541D7A9774@goldelico.com> <201905201142.CF71598A@keescook> <3610cb7ca542479d8eb124e9c9dd6796@svr-chch-ex1.atlnz.lc> <A22646AB-300F-4E0A-95DE-06633C2A2986@goldelico.com> <201905211331.E0D1EDC0@keescook>
-To:     Kees Cook <keescook@chromium.org>
-X-Mailer: Apple Mail (2.3124)
+        Wed, 22 May 2019 02:09:59 -0400
+Received: from mail1.siemens.de (mail1.siemens.de [139.23.33.14])
+        by goliath.siemens.de (8.15.2/8.15.2) with ESMTPS id x4M69h2m009749
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 May 2019 08:09:44 +0200
+Received: from pluscontrol-debian-server.ppmd.SIEMENS.NET (pluscontrol-debian-server.ppmd.siemens.net [146.254.63.6])
+        by mail1.siemens.de (8.15.2/8.15.2) with ESMTP id x4M69fhU012177;
+        Wed, 22 May 2019 08:09:41 +0200
+From:   Andreas Oetken <andreas.oetken@siemens.com>
+Cc:     andreas@oetken.name, m-karicheri2@ti.com, a-kramer@ti.com,
+        Andreas Oetken <andreas.oetken@siemens.com>,
+        Arvid Brodin <arvid.brodin@alten.se>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] hsr: fix don't prune the master node from the node_db
+Date:   Wed, 22 May 2019 08:07:46 +0200
+Message-Id: <20190522060746.30074-1-andreas.oetken@siemens.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kees,
+Don't prune master node in the hsr_prune_nodes function.
+Neither time_in[HSR_PT_SLAVE_A], nor time_in[HSR_PT_SLAVE_B],
+will ever be updated by hsr_register_frame_in for the master port.
+Thus the master node will be repeatedly pruned leading to
+repeated packet loss.
+This bug never appeared because the hsr_prune_nodes function
+was only called once. Since commit 5150b45fd355
+("net: hsr: Fix node prune function for forget time expiry") this issue
+is fixed unvealing the issue described above.
 
-> Am 21.05.2019 um 22:36 schrieb Kees Cook <keescook@chromium.org>:
->=20
-> On Tue, May 21, 2019 at 01:23:36PM +0200, H. Nikolaus Schaller wrote:
->>>>> HOSTLLD -shared scripts/gcc-plugins/arm_ssp_per_task_plugin.so - =
-due to target missing
->>>>> Undefined symbols for architecture x86_64:
->>>>> "gen_reg_rtx(machine_mode)", referenced from:
->>>>>     (anonymous namespace)::arm_pertask_ssp_rtl_pass::execute() in =
-arm_ssp_per_task_plugin.o
->=20
-> Are you seeing this error still, even after the fix I sent?
+Signed-off-by: Andreas Oetken <andreas.oetken@siemens.com>
+---
+ net/hsr/hsr_framereg.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Yes.
-
-> Perhaps I
-> misunderstood that it solves all of the build issues?
-
-There was a compiler warning and a linker error. The patch only fixes =
-the compiler warning.
-
->=20
->> That seems to be a significant assumption about the build =
-infrastructure
->> which now became permanently enabled by the "default y" for =
-GCC_PLUGINS.
->>=20
->> I am not sure what the right way forward is. Probably for me it is to =
-find
->> out if I can fix my cross-toolchain. Or if the kernel should better =
-check
->> if gcc-plugins can really be built, if they are automatically =
-enabled.
->> Or keep all gcc-plugins disabled until explicitly configured for?
->=20
-> Right, that seems to be the case: it seems that the gcc plugin build
-> sanity detection script is not working in your environment. You can
-> check it directly.
->=20
-> Here's the bits from the Kconfig (though I added --show-error for you,
-> in case that's useful):
->=20
-> preferred-plugin-hostcc :=3D $(if-success,[ $(gcc-version) -ge 40800 =
-],$(HOSTCXX),$(HOSTCC))
->=20
-> scripts/gcc-plugin.sh --show-error "$(preferred-plugin-hostcc)" =
-"$(HOSTCXX)" "$(CC)"
->=20
-> I'm not sure what your kernel build picks for gcc-version, HOSTCXX
-> HOSTCC and CC...
-
-It turns out that HOSTCC and HOSTCXX are a gcc-4.9.4 installed through =
-MacPorts.
-And CC is the self-bootstrapped cross-gcc-4.9.2 toolchain for arm.
-
-The problem is likely that they do not know of each other, i.e. the =
-required
-include and library search paths. Therefore HOSTCXX can't build plugins =
-compatible
-with CC because it does not even know its existence. Or the gcc-4.9.4 =
-from MacPorts
-is missing the gcc-plugin library to link against which would explain =
-the HOSTLLD
-error message as well.
-
-This seems not to be found by the tests of scripts/gcc-plugin.sh. I have =
-to check why...
-
-BR and thanks,
-Nikolaus
+diff --git a/net/hsr/hsr_framereg.c b/net/hsr/hsr_framereg.c
+index 9fa9abd83018..2d7a19750436 100644
+--- a/net/hsr/hsr_framereg.c
++++ b/net/hsr/hsr_framereg.c
+@@ -365,6 +365,14 @@ void hsr_prune_nodes(struct timer_list *t)
+ 
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(node, &hsr->node_db, mac_list) {
++		/* Don't prune own node. Neither time_in[HSR_PT_SLAVE_A]
++		 * nor time_in[HSR_PT_SLAVE_B], will ever be updated for
++		 * the master port. Thus the master node will be repeatedly
++		 * pruned leading to packet loss.
++		 */
++		if (hsr_addr_is_self(hsr, node->macaddress_A))
++			continue;
++
+ 		/* Shorthand */
+ 		time_a = node->time_in[HSR_PT_SLAVE_A];
+ 		time_b = node->time_in[HSR_PT_SLAVE_B];
+-- 
+2.20.1
 
