@@ -2,111 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0945326134
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 12:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A3B2611C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 12:01:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbfEVKBf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 06:01:35 -0400
-Received: from mail-eopbgr00044.outbound.protection.outlook.com ([40.107.0.44]:13764
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728852AbfEVKBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 06:01:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CoY2my2cxZrdmgh7yx7DhKszJb02zyXz9XuhYE5MPU0=;
- b=ftZ4B9r0L+neZmT7aI8HMdVXcha3h8ONV613ndUNsp0aPGhIQirvgKPT7Qso/cl14hlCGNe3J34cJ3Tk0GQT6sVKldlj6Z4F0S0u5oeRWQVdiposEYrW9k091PXw2jYbX83VuwaYZ/22tK9Lxu88A44oQO+xHkbFggqJtufUtc8=
-Received: from VI1PR04MB4543.eurprd04.prod.outlook.com (20.177.55.90) by
- VI1PR04MB3149.eurprd04.prod.outlook.com (10.170.229.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.18; Wed, 22 May 2019 10:01:03 +0000
-Received: from VI1PR04MB4543.eurprd04.prod.outlook.com
- ([fe80::5062:df97:a70b:93f8]) by VI1PR04MB4543.eurprd04.prod.outlook.com
- ([fe80::5062:df97:a70b:93f8%7]) with mapi id 15.20.1900.020; Wed, 22 May 2019
- 10:01:03 +0000
-From:   Robin Gong <yibin.gong@nxp.com>
-To:     "robh@kernel.org" <robh@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "plyatov@gmail.com" <plyatov@gmail.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
-CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: [PATCH v4 14/14] arm64: defconfig: Enable SDMA on i.mx8mq/8mm
-Thread-Topic: [PATCH v4 14/14] arm64: defconfig: Enable SDMA on i.mx8mq/8mm
-Thread-Index: AQHVEIVEOHCp3qYurEufxlsdSFFt/w==
-Date:   Wed, 22 May 2019 10:01:03 +0000
-Message-ID: <1558548188-1155-15-git-send-email-yibin.gong@nxp.com>
-References: <1558548188-1155-1-git-send-email-yibin.gong@nxp.com>
-In-Reply-To: <1558548188-1155-1-git-send-email-yibin.gong@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR04CA0045.apcprd04.prod.outlook.com
- (2603:1096:202:14::13) To VI1PR04MB4543.eurprd04.prod.outlook.com
- (2603:10a6:803:6d::26)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yibin.gong@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c0d43ad0-1bb2-4918-98f1-08d6de9c6638
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB3149;
-x-ms-traffictypediagnostic: VI1PR04MB3149:
-x-microsoft-antispam-prvs: <VI1PR04MB31497DFF1ED3CA4BDCABB08D89000@VI1PR04MB3149.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:949;
-x-forefront-prvs: 0045236D47
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(199004)(189003)(2501003)(446003)(11346002)(2616005)(186003)(68736007)(26005)(5660300002)(476003)(86362001)(71190400001)(50226002)(54906003)(110136005)(66066001)(76176011)(486006)(4326008)(7736002)(52116002)(2201001)(4744005)(71200400001)(36756003)(6512007)(99286004)(7416002)(386003)(8676002)(6506007)(305945005)(53936002)(81166006)(66446008)(25786009)(64756008)(81156014)(6436002)(256004)(6486002)(102836004)(14454004)(73956011)(8936002)(498600001)(2906002)(66946007)(66476007)(66556008)(6116002)(3846002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3149;H:VI1PR04MB4543.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: fN+8mbVaioLkJvmGgy3/Q0QJ1iqAjGSWEJwZ6hkvMQJSQyPyp2j6jBJgNnN+cULqEAAHrESKbiXpc9P4rS9U8N/fbiSrO2aGvVEHJ3qEa6bUN0BQmVbnKMJ5n/OWc0X1UAOliUv6cuALP3brMM3rmxBVe+9WZFrEyxj603oSZzwgvXHu2btcysExL0PUsyY17WtH2tn+9OJGMlGMz2w8eXZRALmpZUqINZXNTSvAiYPypdNOql3WhZzWtdMmJIYPjgpYmJ4+BNbHnUVc+5wPkGGDCNTOpPQPAqWHXjfaqgA8vfAC4soQuTqK9plDAnjeEFS7JkD2fhQ4tiXUHVzSrk4eiu7ItWlvF02si2Y00aY+CTivvHnxpd0NJsEPSWRimG3M7OUOnpWPVnKqu3Nm5lov360CJafrUm+xBsxcuPA=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0d43ad0-1bb2-4918-98f1-08d6de9c6638
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2019 10:01:03.6670
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3149
+        id S1729390AbfEVKBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 06:01:09 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:23941 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728406AbfEVKBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 06:01:09 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4587SL4VkZz9v2M2;
+        Wed, 22 May 2019 12:01:06 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=qqOlTXMN; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id htw2hqspO0bf; Wed, 22 May 2019 12:01:06 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4587SL3TkDz9v2M1;
+        Wed, 22 May 2019 12:01:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1558519266; bh=pOJgHp/KMoeYEIwsOCZddIB2aTQYV+vwh0CSHycpDpI=;
+        h=From:Subject:To:Cc:Date:From;
+        b=qqOlTXMNNHJOMdk1N0HS5Hzpjr/2y4ypZNow5W/PI1QnLs7xTU5AODc1lbH+yW2YQ
+         4sE+CEJBwutOJwezWalBSKhSPl0OETTs8Qdl/cHuf7CvaUOTtcsf5OQ3d+mF1hdRn5
+         mbkCkumtsx09O8bpHrNBhw6w1FgIKFul1ZKY43uU=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 932128B82C;
+        Wed, 22 May 2019 12:01:07 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id g2u_VzR4Vwh9; Wed, 22 May 2019 12:01:07 +0200 (CEST)
+Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 644268B823;
+        Wed, 22 May 2019 12:01:07 +0200 (CEST)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 2B677684F2; Wed, 22 May 2019 10:01:07 +0000 (UTC)
+Message-Id: <cf280b7ab1f513f03d3908ac9ad194e819f170f5.1558519026.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] net: phy: lxt: Add suspend/resume support to LXT971 and
+ LXT973.
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Date:   Wed, 22 May 2019 10:01:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RW5hYmxlIFNETUEgc3VwcG9ydCBvbiBpLm14OG1xLzhtbSBjaGlwcywgaW5jbHVkaW5nIGVuYWJs
-aW5nDQpDT05GSUdfRldfTE9BREVSX1VTRVJfSEVMUEVSL0NPTkZJR19GV19MT0FERVJfVVNFUl9I
-RUxQRVJfRkFMTEJBQ0sNCmZvciBmaXJtd2FyZSBsb2FkZWQgYnkgdWRldi4NCg0KU2lnbmVkLW9m
-Zi1ieTogUm9iaW4gR29uZyA8eWliaW4uZ29uZ0BueHAuY29tPg0KLS0tDQogYXJjaC9hcm02NC9j
-b25maWdzL2RlZmNvbmZpZyB8IDMgKysrDQogMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygr
-KQ0KDQpkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9jb25maWdzL2RlZmNvbmZpZyBiL2FyY2gvYXJt
-NjQvY29uZmlncy9kZWZjb25maWcNCmluZGV4IGMxMmM1MDUuLjJmZmVhMzAgMTAwNjQ0DQotLS0g
-YS9hcmNoL2FybTY0L2NvbmZpZ3MvZGVmY29uZmlnDQorKysgYi9hcmNoL2FybTY0L2NvbmZpZ3Mv
-ZGVmY29uZmlnDQpAQCAtMTk4LDYgKzE5OCw4IEBAIENPTkZJR19QQ0lFX0hJU0lfU1RCPXkNCiBD
-T05GSUdfVUVWRU5UX0hFTFBFUl9QQVRIPSIvc2Jpbi9ob3RwbHVnIg0KIENPTkZJR19ERVZUTVBG
-Uz15DQogQ09ORklHX0RFVlRNUEZTX01PVU5UPXkNCitDT05GSUdfRldfTE9BREVSX1VTRVJfSEVM
-UEVSPXkNCitDT05GSUdfRldfTE9BREVSX1VTRVJfSEVMUEVSX0ZBTExCQUNLPXkNCiBDT05GSUdf
-SElTSUxJQ09OX0xQQz15DQogQ09ORklHX1NJTVBMRV9QTV9CVVM9eQ0KIENPTkZJR19NVEQ9eQ0K
-QEAgLTYzMCw2ICs2MzIsNyBAQCBDT05GSUdfUlRDX0RSVl9JTVhfU0M9bQ0KIENPTkZJR19SVENf
-RFJWX1hHRU5FPXkNCiBDT05GSUdfRE1BREVWSUNFUz15DQogQ09ORklHX0RNQV9CQ00yODM1PW0N
-CitDT05GSUdfSU1YX1NETUE9eQ0KIENPTkZJR19LM19ETUE9eQ0KIENPTkZJR19NVl9YT1I9eQ0K
-IENPTkZJR19NVl9YT1JfVjI9eQ0KLS0gDQoyLjcuNA0KDQo=
+All LXT PHYs implement the standard "power down" bit 11 of
+BMCR, so this patch adds support using the generic
+genphy_{suspend,resume} functions.
+
+LXT970 is left aside because all registers get cleared upon
+"power down" exit.
+
+Fixes: 0f0ca340e57b ("phy: power management support")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ drivers/net/phy/lxt.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/net/phy/lxt.c b/drivers/net/phy/lxt.c
+index 314486288119..356bd6472f49 100644
+--- a/drivers/net/phy/lxt.c
++++ b/drivers/net/phy/lxt.c
+@@ -262,6 +262,8 @@ static struct phy_driver lxt97x_driver[] = {
+ 	/* PHY_BASIC_FEATURES */
+ 	.ack_interrupt	= lxt971_ack_interrupt,
+ 	.config_intr	= lxt971_config_intr,
++	.suspend	= genphy_suspend,
++	.resume		= genphy_resume,
+ }, {
+ 	.phy_id		= 0x00137a10,
+ 	.name		= "LXT973-A2",
+@@ -271,6 +273,8 @@ static struct phy_driver lxt97x_driver[] = {
+ 	.probe		= lxt973_probe,
+ 	.config_aneg	= lxt973_config_aneg,
+ 	.read_status	= lxt973a2_read_status,
++	.suspend	= genphy_suspend,
++	.resume		= genphy_resume,
+ }, {
+ 	.phy_id		= 0x00137a10,
+ 	.name		= "LXT973",
+@@ -279,6 +283,8 @@ static struct phy_driver lxt97x_driver[] = {
+ 	.flags		= 0,
+ 	.probe		= lxt973_probe,
+ 	.config_aneg	= lxt973_config_aneg,
++	.suspend	= genphy_suspend,
++	.resume		= genphy_resume,
+ } };
+ 
+ module_phy_driver(lxt97x_driver);
+-- 
+2.13.3
+
