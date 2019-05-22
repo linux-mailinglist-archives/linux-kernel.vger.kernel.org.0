@@ -2,187 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0C8C27303
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 01:37:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 108652728F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 00:46:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbfEVXhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 19:37:41 -0400
-Received: from outgoing4.flk.host-h.net ([188.40.0.90]:40251 "EHLO
-        outgoing4.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726215AbfEVXhl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 19:37:41 -0400
-X-Greylist: delayed 2659 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 May 2019 19:37:40 EDT
-Received: from www31.flk1.host-h.net ([188.40.1.173])
-        by antispam1-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.89)
-        (envelope-from <justin.swartz@risingedge.co.za>)
-        id 1hTa6n-0000bT-Bw; Thu, 23 May 2019 00:53:18 +0200
-Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
-        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <justin.swartz@risingedge.co.za>)
-        id 1hTa6c-0007fD-EJ; Thu, 23 May 2019 00:53:06 +0200
-From:   Justin Swartz <justin.swartz@risingedge.co.za>
-To:     Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/rockchip: dw_hdmi: add basic rk3228 support
-Date:   Wed, 22 May 2019 22:46:29 +0000
-Message-Id: <20190522224631.25164-1-justin.swartz@risingedge.co.za>
-X-Mailer: git-send-email 2.11.0
-X-Authenticated-Sender: justin.swartz@risingedge.co.za
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25457/Wed May 22 09:57:31 2019)
-X-Originating-IP: 188.40.1.173
-X-SpamExperts-Domain: risingedge.co.za
-X-SpamExperts-Username: 
-Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.000718690605145)
-X-Recommended-Action: accept
-X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0fHWENUdqj+4JDN3TQDP3eCpSDasLI4SayDByyq9LIhVur86TwL7jsv5
- m6+fjp/sxETNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3K7uDjV/sFUXQr+CDrNQuIHgQg
- mAX8Bxy/iUu0ThNZg0h/RxVysY5Ye6+GGw0VqdJD7ren9RtRNyYim5e3GD8LGfWrcbYvelpuN/Pk
- qhBpvAyWwieZyauFYqHkIbFa+ipF21HJWO60ZqrvKy/1AXUV5oXt6ymoFHaG7BQtEYvFCSo5O9aO
- OPCZx1b2uMC/zMc3aAOV7ICS29ZskdEzgnmWc6FyCw2oLKHJClAYHcXyktNZ2XmZE6Ulo3Sg6/fH
- CWNxoaEnuBtnt6GUDDzwi0xE9ujBdjBi/EW6wTMO5aPWRLvv8qeRWs1kOo/p5GKJkWYAO3Aa5n+U
- cgHka3/viXjzcoj1m7f+vTE4JStv6WwSOoIjjjxJx7TjfIl9lT02e+bLG5tY/17Am1+3t6saIBBg
- jLL9CBTChXJpl1nl23cKb/28qAHF3ayYxbGdFos0fpCN/Zqe7k8tOuyC0ezetWWw8nL3mjAyuRnY
- YfqoF0qwBaWr31abV7tmT2g84edke3MdOkNjooab3HXOpUJdeB9FrcmwwJhZoFj1JrH8+3dIKm8T
- aJbF/DJ9xG35AyqkelXaj1B5NGYLZCD5qc9WTEIS3cJCoM1jZKVSdLKiMKeae175VNiXOYUQ+bYR
- OTnFZniyHwlqvaI+zok/BsKQK4gft9MTokp23oPCMeUu86GfQl/coNq5LDsD+gmtrHR34ik+dbYb
- 9IXfYGRpVS/0hA4MwqmkYLLjcD7HaYjxiQBclDtVrfG8Zd+nzbonxrsMSs4uYqsuNEW45+y/2kiU
- pWy9c+XovTjsJstHtBoNlKIuslv0d6pyfV7QOE1hL9j5OVSXNVTcvF4bYNCxBEiOkhGolglPmh6a
- ILJqM6WsXf7aQnmpO2ydeyFd1pMxtzaLrgiAa1jZ449c5QOSXHeR3E0E19yXIdNHJDPRcm8rLb1r
- h0PyzIaTXD+uKJkHA4nFPinpYeLTxNigHOV5GQgWJq64bnCnflZnbjDB2+RGRgaXth0ZHRqQruFr
- G/GlTGRDUHWt54s410cgWo1fMD6i15+WgVsQdC9uGg5IeWmPBYt4N47WgJgyTfy73B/Plf7FmTDV
- qY+pQN3pVbMWvtuGUnEh3DwJWw42swm4bO6gacpMpzKjPCVKQvBNmkphbV+6LqpSOVpogBsPfG5h
- jLRjd6kxWF4VLgIZIkTm0juO6rHlP/TihjA708Lg3Y2gXyaf+rItBxw1SWz0NFi7GeT33MAvp0E4
- hZvaIK8zWrz4lb7RoCsWna0PdfWBYPgYUN6vj8NApCcRaz+idK1HZy9Txmtmp2+U8T3Kfj7tHuHD
- vXqVSlU=
-X-Report-Abuse-To: spam@antispammaster.host-h.net
+        id S1729662AbfEVWqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 18:46:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37616 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727121AbfEVWqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 18:46:33 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EE313C130719;
+        Wed, 22 May 2019 22:46:32 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-142.rdu2.redhat.com [10.10.121.142])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D65CE604CD;
+        Wed, 22 May 2019 22:46:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 4/6] keys: Cache result of request_key*() temporarily in
+ task_struct
+From:   David Howells <dhowells@redhat.com>
+To:     keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 22 May 2019 23:46:31 +0100
+Message-ID: <155856519116.11737.1068301045476906776.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155856516286.11737.11196637682919902718.stgit@warthog.procyon.org.uk>
+References: <155856516286.11737.11196637682919902718.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 22 May 2019 22:46:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like the RK3328, RK322x SoCs offer a Synopsis DesignWare HDMI transmitter
-and an Innosilicon HDMI PHY.
+If a filesystem uses keys to hold authentication tokens, then it needs a
+token for each VFS operation that might perform an authentication check -
+either by passing it to the server, or using to perform a check based on
+authentication data cached locally.
 
-Add a new dw_hdmi_plat_data struct, rk3228_hdmi_drv_data.
-Assign a set of mostly generic rk3228_hdmi_phy_ops functions.
-Add dw_hdmi_rk3228_setup_hpd() to enable the HDMI HPD and DDC lines.
+For open files this isn't a problem, since the key should be cached in the
+file struct since it represents the subject performing operations on that
+file descriptor.
 
-Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
+During pathwalk, however, there isn't anywhere to cache the key, except
+perhaps in the nameidata struct - but that isn't exposed to the
+filesystems.  Further, a pathwalk can incur a lot of operations, calling
+one or more of the following, for instance:
+
+	->lookup()
+	->permission()
+	->d_revalidate()
+	->d_automount()
+	->get_acl()
+	->getxattr()
+
+on each dentry/inode it encounters - and each one may need to call
+request_key().  And then, at the end of pathwalk, it will call the actual
+operation:
+
+	->mkdir()
+	->mknod()
+	->getattr()
+	->open()
+	...
+
+which may need to go and get the token again.
+
+However, it is very likely that all of the operations on a single
+dentry/inode - and quite possibly a sequence of them - will all want to use
+the same authentication token, which suggests that caching it would be a
+good idea.
+
+To this end:
+
+ (1) Make it so that a positive result of request_key() and co. that didn't
+     require upcalling to userspace is cached temporarily in task_struct.
+
+ (2) The cache is 1 deep, so a new result displaces the old one.
+
+ (3) The key is released by exit and by notify-resume.
+
+ (4) The cache is cleared in a newly forked process.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
- .../bindings/display/rockchip/dw_hdmi-rockchip.txt |  1 +
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        | 53 ++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
-index 39143424a..703503103 100644
---- a/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
-+++ b/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
-@@ -12,6 +12,7 @@ following device-specific properties.
- Required properties:
+ include/linux/sched.h       |    5 +++++
+ include/linux/tracehook.h   |    5 +++++
+ kernel/cred.c               |    9 +++++++++
+ security/keys/request_key.c |   33 +++++++++++++++++++++++++++++++++
+ 4 files changed, 52 insertions(+)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 11837410690f..e5f18857dd53 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -831,6 +831,11 @@ struct task_struct {
+ 	/* Effective (overridable) subjective task credentials (COW): */
+ 	const struct cred __rcu		*cred;
  
- - compatible: should be one of the following:
-+		"rockchip,rk3228-dw-hdmi"
- 		"rockchip,rk3288-dw-hdmi"
- 		"rockchip,rk3328-dw-hdmi"
- 		"rockchip,rk3399-dw-hdmi"
-diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index 4cdc9f86c..182a852af 100644
---- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -23,6 +23,14 @@
- #include "rockchip_drm_drv.h"
- #include "rockchip_drm_vop.h"
- 
-+#define RK3228_GRF_SOC_CON2		0x0408
-+#define RK3228_HDMI_SDAIN_MSK		BIT(14)
-+#define RK3228_HDMI_SCLIN_MSK		BIT(13)
-+#define RK3228_GRF_SOC_CON6		0x0418
-+#define RK3228_HDMI_HPD_VSEL		BIT(6)
-+#define RK3228_HDMI_SDA_VSEL		BIT(5)
-+#define RK3228_HDMI_SCL_VSEL		BIT(4)
++#ifdef CONFIG_KEYS
++	/* Cached requested key. */
++	struct key			*cached_requested_key;
++#endif
 +
- #define RK3288_GRF_SOC_CON6		0x025C
- #define RK3288_HDMI_LCDC_SEL		BIT(4)
- #define RK3328_GRF_SOC_CON2		0x0408
-@@ -325,6 +333,25 @@ static void dw_hdmi_rockchip_genphy_disable(struct dw_hdmi *dw_hdmi, void *data)
- 	phy_power_off(hdmi->phy);
+ 	/*
+ 	 * executable name, excluding path.
+ 	 *
+diff --git a/include/linux/tracehook.h b/include/linux/tracehook.h
+index df20f8bdbfa3..ef497a94086c 100644
+--- a/include/linux/tracehook.h
++++ b/include/linux/tracehook.h
+@@ -187,6 +187,11 @@ static inline void tracehook_notify_resume(struct pt_regs *regs)
+ 	if (unlikely(current->task_works))
+ 		task_work_run();
+ 
++	if (unlikely(current->cached_requested_key)) {
++		key_put(current->cached_requested_key);
++		current->cached_requested_key = NULL;
++	}
++
+ 	mem_cgroup_handle_over_high();
+ 	blkcg_maybe_throttle_current();
+ }
+diff --git a/kernel/cred.c b/kernel/cred.c
+index 3bd40de9e192..20e0cd54aad2 100644
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -174,6 +174,11 @@ void exit_creds(struct task_struct *tsk)
+ 	validate_creds(cred);
+ 	alter_cred_subscribers(cred, -1);
+ 	put_cred(cred);
++
++#ifdef CONFIG_KEYS
++	key_put(current->cached_requested_key);
++	current->cached_requested_key = NULL;
++#endif
  }
  
-+static void dw_hdmi_rk3228_setup_hpd(struct dw_hdmi *dw_hdmi, void *data)
+ /**
+@@ -327,6 +332,10 @@ int copy_creds(struct task_struct *p, unsigned long clone_flags)
+ 	struct cred *new;
+ 	int ret;
+ 
++#ifdef CONFIG_KEYS
++	p->cached_requested_key = NULL;
++#endif
++
+ 	if (
+ #ifdef CONFIG_KEYS
+ 		!p->cred->thread_keyring &&
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index 59a4e533e76a..855de14974c3 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -22,6 +22,27 @@
+ 
+ #define key_negative_timeout	60	/* default timeout on a negative key's existence */
+ 
++static struct key *check_cached_key(struct keyring_search_context *ctx)
 +{
-+	struct rockchip_hdmi *hdmi = (struct rockchip_hdmi *)data;
++	struct key *key = current->cached_requested_key;
 +
-+	dw_hdmi_phy_setup_hpd(dw_hdmi, data);
-+
-+	regmap_write(hdmi->regmap,
-+		RK3228_GRF_SOC_CON6,
-+		HIWORD_UPDATE(RK3228_HDMI_HPD_VSEL | RK3228_HDMI_SDA_VSEL |
-+			      RK3228_HDMI_SCL_VSEL,
-+			      RK3228_HDMI_HPD_VSEL | RK3228_HDMI_SDA_VSEL |
-+			      RK3228_HDMI_SCL_VSEL));
-+
-+	regmap_write(hdmi->regmap,
-+		RK3228_GRF_SOC_CON2,
-+		HIWORD_UPDATE(RK3228_HDMI_SDAIN_MSK | RK3228_HDMI_SCLIN_MSK,
-+			      RK3228_HDMI_SDAIN_MSK | RK3228_HDMI_SCLIN_MSK));
++	if (key &&
++	    ctx->match_data.cmp(key, &ctx->match_data) &&
++	    !(key->flags & ((1 << KEY_FLAG_INVALIDATED) |
++			    (1 << KEY_FLAG_REVOKED))))
++		return key_get(key);
++	return NULL;
 +}
 +
- static enum drm_connector_status
- dw_hdmi_rk3328_read_hpd(struct dw_hdmi *dw_hdmi, void *data)
- {
-@@ -370,6 +397,29 @@ static void dw_hdmi_rk3328_setup_hpd(struct dw_hdmi *dw_hdmi, void *data)
- 			      RK3328_HDMI_HPD_IOE));
- }
++static void cache_requested_key(struct key *key)
++{
++	struct task_struct *t = current;
++
++	key_put(t->cached_requested_key);
++	t->cached_requested_key = key_get(key);
++	set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
++}
++
+ /**
+  * complete_request_key - Complete the construction of a key.
+  * @authkey: The authorisation key.
+@@ -557,6 +578,10 @@ struct key *request_key_and_link(struct key_type *type,
+ 		}
+ 	}
  
-+static const struct dw_hdmi_phy_ops rk3228_hdmi_phy_ops = {
-+	.init		= dw_hdmi_rockchip_genphy_init,
-+	.disable	= dw_hdmi_rockchip_genphy_disable,
-+	.read_hpd	= dw_hdmi_phy_read_hpd,
-+	.update_hpd	= dw_hdmi_phy_update_hpd,
-+	.setup_hpd	= dw_hdmi_rk3228_setup_hpd,
-+};
++	key = check_cached_key(&ctx);
++	if (key)
++		return key;
 +
-+static struct rockchip_hdmi_chip_data rk3228_chip_data = {
-+	.lcdsel_grf_reg = -1,
-+};
+ 	/* search all the process keyrings for a key */
+ 	rcu_read_lock();
+ 	key_ref = search_process_keyrings_rcu(&ctx);
+@@ -582,6 +607,9 @@ struct key *request_key_and_link(struct key_type *type,
+ 				goto error_free;
+ 			}
+ 		}
 +
-+static const struct dw_hdmi_plat_data rk3228_hdmi_drv_data = {
-+	.mode_valid = dw_hdmi_rockchip_mode_valid,
-+	.mpll_cfg = rockchip_mpll_cfg,
-+	.cur_ctr = rockchip_cur_ctr,
-+	.phy_config = rockchip_phy_config,
-+	.phy_data = &rk3228_chip_data,
-+	.phy_ops = &rk3228_hdmi_phy_ops,
-+	.phy_name = "inno_dw_hdmi_phy2",
-+	.phy_force_vendor = true,
-+};
-+
- static struct rockchip_hdmi_chip_data rk3288_chip_data = {
- 	.lcdsel_grf_reg = RK3288_GRF_SOC_CON6,
- 	.lcdsel_big = HIWORD_UPDATE(0, RK3288_HDMI_LCDC_SEL),
-@@ -422,6 +472,9 @@ static const struct dw_hdmi_plat_data rk3399_hdmi_drv_data = {
- };
++		/* Only cache the key on immediate success */
++		cache_requested_key(key);
+ 	} else if (PTR_ERR(key_ref) != -EAGAIN) {
+ 		key = ERR_CAST(key_ref);
+ 	} else  {
+@@ -781,6 +809,10 @@ struct key *request_key_rcu(struct key_type *type, const char *description)
  
- static const struct of_device_id dw_hdmi_rockchip_dt_ids[] = {
-+	{ .compatible = "rockchip,rk3228-dw-hdmi",
-+	  .data = &rk3228_hdmi_drv_data
-+	},
- 	{ .compatible = "rockchip,rk3288-dw-hdmi",
- 	  .data = &rk3288_hdmi_drv_data
- 	},
--- 
-2.11.0
+ 	kenter("%s,%s", type->name, description);
+ 
++	key = check_cached_key(&ctx);
++	if (key)
++		return key;
++
+ 	/* search all the process keyrings for a key */
+ 	key_ref = search_process_keyrings_rcu(&ctx);
+ 	if (IS_ERR(key_ref)) {
+@@ -789,6 +821,7 @@ struct key *request_key_rcu(struct key_type *type, const char *description)
+ 			key = ERR_PTR(-ENOKEY);
+ 	} else {
+ 		key = key_ref_to_ptr(key_ref);
++		cache_requested_key(key);
+ 	}
+ 
+ 	kleave(" = %p", key);
 
