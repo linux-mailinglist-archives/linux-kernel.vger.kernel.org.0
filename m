@@ -2,112 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F02D26949
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 19:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E79C026953
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 19:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729018AbfEVRow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 13:44:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36548 "EHLO mail.kernel.org"
+        id S1729491AbfEVRpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 13:45:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36730 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727984AbfEVRov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 13:44:51 -0400
-Received: from localhost (unknown [104.132.1.68])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727984AbfEVRpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 13:45:24 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC5C121019;
-        Wed, 22 May 2019 17:44:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558547090;
-        bh=WGpxkLS3O1W5xJkPVT6OtlO6L0fjxSCDqpvjxfdM6e8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SzL7buq0bAzafVDhOU8P3wAUmBGyHpJpmx/A+Wg9G+RBjrePwONfrzYdaLTQ6n0ke
-         xz8NKrRO3GWrfZTLu5+xIfiqvqPnf6DQ0cVkiooeJc32eSX+rfY8IFuTtOPMSTssKH
-         1IWqBJr6jhO9FgvLdW5ERpUg+ZbExknEYZH5aPHs=
-Date:   Wed, 22 May 2019 10:44:48 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 1/2] Revert "f2fs: don't clear
- CP_QUOTA_NEED_FSCK_FLAG"
-Message-ID: <20190522174448.GA81051@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190521180625.10562-1-jaegeuk@kernel.org>
- <8e9a4cac-c81b-11ce-0a5a-c6f5caf716c4@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 86DFB3084039;
+        Wed, 22 May 2019 17:45:24 +0000 (UTC)
+Received: from treble (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 697CA54389;
+        Wed, 22 May 2019 17:45:20 +0000 (UTC)
+Date:   Wed, 22 May 2019 12:45:17 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Alexei Starovoitov <ast@fb.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Kairui Song <kasong@redhat.com>,
+        Song Liu <songliubraving@fb.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
+Subject: Re: Getting empty callchain from perf_callchain_kernel()
+Message-ID: <20190522174517.pbdopvookggen3d7@treble>
+References: <3CD3EE63-0CD2-404A-A403-E11DCF2DF8D9@fb.com>
+ <20190517074600.GJ2623@hirez.programming.kicks-ass.net>
+ <20190517081057.GQ2650@hirez.programming.kicks-ass.net>
+ <CACPcB9cB5n1HOmZcVpusJq8rAV5+KfmZ-Lxv3tgsSoy7vNrk7w@mail.gmail.com>
+ <20190517091044.GM2606@hirez.programming.kicks-ass.net>
+ <CACPcB9cpNp5CBqoRs+XMCwufzAFa8Pj-gbmj9fb+g5wVdue=ig@mail.gmail.com>
+ <20190522140233.GC16275@worktop.programming.kicks-ass.net>
+ <ab047883-69f6-1175-153f-5ad9462c6389@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8e9a4cac-c81b-11ce-0a5a-c6f5caf716c4@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <ab047883-69f6-1175-153f-5ad9462c6389@fb.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 22 May 2019 17:45:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/22, Chao Yu wrote:
-> On 2019-5-22 2:06, Jaegeuk Kim wrote:
-> > This reverts commit fb40d618b03978b7cc5820697894461f4a2af98b.
-> > 
-> > The original patch introduced # of fsck triggers.
-> 
-> How about pointing out the old issue has been fixed with below patch:
-> 
-> f2fs-tools: fix to check total valid block count before block allocation
-> 
-> Otherwise, user should keep kernel commit "f2fs: don't clear
-> CP_QUOTA_NEED_FSCK_FLAG".
+On Wed, May 22, 2019 at 02:49:07PM +0000, Alexei Starovoitov wrote:
+> The one that is broken is prog_tests/stacktrace_map.c
+> There we attach bpf to standard tracepoint where
+> kernel suppose to collect pt_regs before calling into bpf.
+> And that's what bpf_get_stackid_tp() is doing.
+> It passes pt_regs (that was collected before any bpf)
+> into bpf_get_stackid() which calls get_perf_callchain().
+> Same thing with kprobes, uprobes.
 
-Actually, that didn't fix my testing issue, but I found we were not using
-error control for quota_sysfile. Now I've seen no issue with the below patch.
+Is it trying to unwind through ___bpf_prog_run()?
 
-From e1b7de7050fd87b7c20e033b062b1cc6505679d3 Mon Sep 17 00:00:00 2001
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Date: Mon, 20 May 2019 16:17:56 -0700
-Subject: [PATCH] f2fs: link f2fs quota ops for sysfile
+If so, that would at least explain why ORC isn't working.  Objtool
+currently ignores that function because it can't follow the jump table.
 
-This patch reverts:
-commit fb40d618b039 ("f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG").
-
-We were missing error handlers used in f2fs quota ops.
-
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/checkpoint.c | 6 ++----
- fs/f2fs/super.c      | 5 +----
- 2 files changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index d0539ddad6e2..89825261d474 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1317,10 +1317,8 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
- 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
--	/*
--	 * TODO: we count on fsck.f2fs to clear this flag until we figure out
--	 * missing cases which clear it incorrectly.
--	 */
-+	else
-+		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
- 
- 	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
- 		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 856f9081c599..34f2adf191ed 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3169,10 +3169,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 
- #ifdef CONFIG_QUOTA
- 	sb->dq_op = &f2fs_quota_operations;
--	if (f2fs_sb_has_quota_ino(sbi))
--		sb->s_qcop = &dquot_quotactl_sysfile_ops;
--	else
--		sb->s_qcop = &f2fs_quotactl_ops;
-+	sb->s_qcop = &f2fs_quotactl_ops;
- 	sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP | QTYPE_MASK_PRJ;
- 
- 	if (f2fs_sb_has_quota_ino(sbi)) {
 -- 
-2.19.0.605.g01d371f741-goog
-
+Josh
