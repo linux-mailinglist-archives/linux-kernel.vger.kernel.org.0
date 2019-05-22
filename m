@@ -2,92 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D557725BE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 04:11:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D686425BEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 04:23:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbfEVCKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 22:10:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36232 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727294AbfEVCKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 22:10:52 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 157A6217D7;
-        Wed, 22 May 2019 02:10:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558491051;
-        bh=1ih48PI12kkUWV1gxUVEAlub4RsQgr7FS/vJ1I+lyVA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KIGFNpsDdLIOqnE7XDF5rYo0tqQY9FfacESF9YLB4BPT4od6Lx5POSWD/pxhrNCaR
-         BW4MvmqV471h3ck5LHF2z+9/OEZDNUkx7X+Q2qbEI2Dxl3wk+mxwFqhLm8KAZqf5ZB
-         X6Z7JKA9ePiZfYMjNNaurLH1DEAuFC+nrdqNbKnc=
-Date:   Tue, 21 May 2019 19:10:50 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Marco Elver <elver@google.com>, kbuild-all@01.org,
-        aryabinin@virtuozzo.com, dvyukov@google.com, glider@google.com,
-        andreyknvl@google.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH] mm/kasan: Print frame description for stack bugs
-Message-Id: <20190521191050.b8ddb9bb660d13330896529e@linux-foundation.org>
-In-Reply-To: <201905190408.ieVAcUi7%lkp@intel.com>
-References: <20190517131046.164100-1-elver@google.com>
-        <201905190408.ieVAcUi7%lkp@intel.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728314AbfEVCXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 22:23:40 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35252 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbfEVCXk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 22:23:40 -0400
+Received: by mail-lj1-f196.google.com with SMTP id h11so595589ljb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 19:23:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FoATy8oZsskl8ARNANZmhlDNjVNkchw4y2fRYzB5sLg=;
+        b=PVPFHzryLgdl317MtVFNF4zHtZ9oKN1Vd1ljsQiqgKDbN6uztGOCkcuaO1VMftuRnl
+         VutoyZXPws6YtnCNpjj9ORtgriTRvWLuXp/nIUG2YEUsBp4CfNtxNUOv5zggwq0JxNyz
+         JBXDPdq3cVwXGcV6Ubb3Blx2+t1YYDNbK9njZwcTI90V69psWIQ4514/glNSAUPL5X21
+         gtxk6nQ3MxfjVWV7isrI/fSN7QLV9ZkhGslrh+IVoTnIFM9OlaDbJdKz+b8iQLJrbn4w
+         fhjDX/9ncQqEvq8vus8mrlUzoUtFL0s/hPPOIfe8IYhh8vKKzsSAevcW55XIjoEBbiZO
+         hMcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FoATy8oZsskl8ARNANZmhlDNjVNkchw4y2fRYzB5sLg=;
+        b=g5UVpKDs9mSociL6Hvavv8O9yePRf5O1CaH9uPQueuyqhpVGkCdhjx5i7qxiJcyNl1
+         truYA2oi6FyQzoCjKTh9n/JSwGE3ufwhtUzbZCVTgifTudigzfmuOMQi5IsoAbCXtYff
+         jDsITNEUFiUHyXbwEYmmBQz+drnVWxLXRgdNOIU0U9Na9GCA730BRZ3CzJh3hDmX+b7D
+         KC6jEDr2O0cB4k80VUff0FoFoztnw/AJwQDFUk+WDlecaqMCBy9reAg5rmfAemxbimbf
+         JTAv0YVOoWcE2XCdgotoLAN9xkHCsbfL2VI5JbX/ZgBFS0XfBieRdZPN440ZJhA3kUr1
+         /D3A==
+X-Gm-Message-State: APjAAAXUdiWq3GhRRBxD6K9oMJaTHUzlYL46vQgqqd/u55P+OSq961V3
+        6ruWB+9D7MpwwXVxTgPoihQQw60gZHmg3lUtzzoa
+X-Google-Smtp-Source: APXvYqy8jWokTyif6KzOybi3pSR8WmhOtchqhgdhvt7RrSGFTqkGrmdUyolCs+vmB7F+uW4cl7gy9HWttXA8XM5+5fI=
+X-Received: by 2002:a2e:1412:: with SMTP id u18mr8759792ljd.197.1558491817982;
+ Tue, 21 May 2019 19:23:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <67828806f9d2bf0f1e98e24afa58af55c8c8678f.1557358701.git.rgb@redhat.com>
+In-Reply-To: <67828806f9d2bf0f1e98e24afa58af55c8c8678f.1557358701.git.rgb@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 21 May 2019 22:23:27 -0400
+Message-ID: <CAHC9VhQ2X_iVO658JP5GgUy8rsr_LnqeJNeQTiWKnQxaCUUFKw@mail.gmail.com>
+Subject: Re: [PATCH ghak111 V2] audit: deliver signal_info regarless of syscall
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        sgrubb@redhat.com, omosnace@redhat.com,
+        Eric Paris <eparis@parisplace.org>, ebiederm@xmission.com,
+        oleg@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 19 May 2019 04:48:21 +0800 kbuild test robot <lkp@intel.com> wrote:
+On Fri, May 10, 2019 at 12:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>
+> When a process signals the audit daemon (shutdown, rotate, resume,
+> reconfig) but syscall auditing is not enabled, we still want to know the
+> identity of the process sending the signal to the audit daemon.
+>
+> Move audit_signal_info() out of syscall auditing to general auditing but
+> create a new function audit_signal_info_syscall() to take care of the
+> syscall dependent parts for when syscall auditing is enabled.
+>
+> Please see the github kernel audit issue
+> https://github.com/linux-audit/audit-kernel/issues/111
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+> Changelog:
+> v2:
+> - change patch title to avoid siginfo_t confusion
+> - change return value to "0" from AUDIT_OFF
+> - use dummy functions instead of macros in header files
+>
+> Compile/boot/test auditsyscall enable/disable, audit disable,
+> auditsyscall enable/selinux disable.
+>
+>  include/linux/audit.h |  9 +++++++++
+>  kernel/audit.c        | 27 +++++++++++++++++++++++++++
+>  kernel/audit.h        |  8 ++++++--
+>  kernel/auditsc.c      | 19 +++----------------
+>  kernel/signal.c       |  2 +-
+>  5 files changed, 46 insertions(+), 19 deletions(-)
 
-> Hi Marco,
-> 
-> Thank you for the patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on linus/master]
-> [also build test WARNING on v5.1 next-20190517]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Marco-Elver/mm-kasan-Print-frame-description-for-stack-bugs/20190519-040214
-> config: xtensa-allyesconfig (attached as .config)
-> compiler: xtensa-linux-gcc (GCC) 8.1.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=8.1.0 make.cross ARCH=xtensa 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
+Merged into audit/next, thanks.
 
-This, I assume?
-
---- a/mm/kasan/report.c~mm-kasan-print-frame-description-for-stack-bugs-fix
-+++ a/mm/kasan/report.c
-@@ -230,7 +230,7 @@ static void print_decoded_frame_descr(co
- 		return;
- 
- 	pr_err("\n");
--	pr_err("this frame has %zu %s:\n", num_objects,
-+	pr_err("this frame has %lu %s:\n", num_objects,
- 	       num_objects == 1 ? "object" : "objects");
- 
- 	while (num_objects--) {
-@@ -257,7 +257,7 @@ static void print_decoded_frame_descr(co
- 		strreplace(token, ':', '\0');
- 
- 		/* Finally, print object information. */
--		pr_err(" [%zu, %zu) '%s'", offset, offset + size, token);
-+		pr_err(" [%lu, %lu) '%s'", offset, offset + size, token);
- 	}
- }
- 
-_
-
+-- 
+paul moore
+www.paul-moore.com
