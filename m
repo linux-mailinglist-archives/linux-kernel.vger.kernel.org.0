@@ -2,88 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86BE426DAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:43:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43ADA26DE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:45:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732808AbfEVTnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:43:43 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:37834 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729616AbfEVTnc (ORCPT
+        id S1733112AbfEVTpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:45:13 -0400
+Received: from smtprelay0164.hostedemail.com ([216.40.44.164]:47657 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731413AbfEVTpL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:43:32 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hTX93-00050n-IX; Wed, 22 May 2019 21:43:25 +0200
-Date:   Wed, 22 May 2019 21:43:24 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Mike Rapoport <rppt@linux.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>
-Subject: Re: [PATCH] mm/gup: continue VM_FAULT_RETRY processing event for
- pre-faults
-Message-ID: <20190522194322.5k52docwgp5zkdcj@linutronix.de>
-References: <1557844195-18882-1-git-send-email-rppt@linux.ibm.com>
- <20190522122113.a2edc8aba32f0fad189bae21@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190522122113.a2edc8aba32f0fad189bae21@linux-foundation.org>
-User-Agent: NeoMutt/20180716
+        Wed, 22 May 2019 15:45:11 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 4EEC218224D70;
+        Wed, 22 May 2019 19:45:10 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1538:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:2892:2902:3138:3139:3140:3141:3142:3350:3622:3865:3867:3868:3871:3872:4321:5007:9010:10004:10400:10848:11232:11658:11914:12740:12760:12895:13069:13161:13229:13311:13357:13439:14180:14181:14659:14721:21080:21627:30054:30060:30075:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
+X-HE-Tag: curve67_2d0c89522f351
+X-Filterd-Recvd-Size: 1329
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 22 May 2019 19:45:09 +0000 (UTC)
+Message-ID: <7b7287463e830fa8d981dc440f8165622cbc628e.camel@perches.com>
+Subject: Re: PSA: Do not use "Reported-By" without reporter's approval
+From:   Joe Perches <joe@perches.com>
+To:     Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 22 May 2019 12:45:06 -0700
+In-Reply-To: <20190522193011.GB21412@chatter.i7.local>
+References: <20190522193011.GB21412@chatter.i7.local>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-22 12:21:13 [-0700], Andrew Morton wrote:
-> On Tue, 14 May 2019 17:29:55 +0300 Mike Rapoport <rppt@linux.ibm.com> wrote:
+On Wed, 2019-05-22 at 15:30 -0400, Konstantin Ryabitsev wrote:
+> Hello, all:
 > 
-> > When get_user_pages*() is called with pages = NULL, the processing of
-> > VM_FAULT_RETRY terminates early without actually retrying to fault-in all
-> > the pages.
-> > 
-> > If the pages in the requested range belong to a VMA that has userfaultfd
-> > registered, handle_userfault() returns VM_FAULT_RETRY *after* user space
-> > has populated the page, but for the gup pre-fault case there's no actual
-> > retry and the caller will get no pages although they are present.
-> > 
-> > This issue was uncovered when running post-copy memory restore in CRIU
-> > after commit d9c9ce34ed5c ("x86/fpu: Fault-in user stack if
-> > copy_fpstate_to_sigframe() fails").
-> > 
-> > After this change, the copying of FPU state to the sigframe switched from
-> > copy_to_user() variants which caused a real page fault to get_user_pages()
-> > with pages parameter set to NULL.
+> It is common courtesy to include this tagline when submitting patches: 
 > 
-> You're saying that argument buf_fx in copy_fpstate_to_sigframe() is NULL?
-
-buf_fx is user stack pointer and it should not be NULL.
-
-> If so was that expected by the (now cc'ed) developers of
-> d9c9ce34ed5c8923 ("x86/fpu: Fault-in user stack if
-> copy_fpstate_to_sigframe() fails")?
+> Reported-By: J. Doe <jdoe@example.com>
 > 
-> It seems rather odd.  copy_fpregs_to_sigframe() doesn't look like it's
-> expecting a NULL argument.
+> Please ask the reporter's permission before doing so (even if they'd 
+> submitted a public bugzilla report or sent a report to the mailing 
+> list).
 
-exactly, this is not expected.
+I disagree with this.
 
-> Also, I wonder if copy_fpstate_to_sigframe() would be better using
-> fault_in_pages_writeable() rather than get_user_pages_unlocked().  That
-> seems like it operates at a more suitable level and I guess it will fix
-> this issue also.
+If the report is public, and lists like vger are public,
+then using a Reported-by: and/or a Link: are simply useful
+history and tracking information.
 
-It looks, like fault_in_pages_writeable() would work. If this is the
-recommendation from the MM department than I can switch to that.
 
-> > In post-copy mode of CRIU, the destination memory is managed with
-> > userfaultfd and lack of the retry for pre-fault case in get_user_pages()
-> > causes a crash of the restored process.
-> > 
-> > Making the pre-fault behavior of get_user_pages() the same as the "normal"
-> > one fixes the issue.
-> 
-> Should this be backported into -stable trees?
-
-Sebastian
