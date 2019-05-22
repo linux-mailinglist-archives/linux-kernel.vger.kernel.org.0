@@ -2,76 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E58C726E49
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFAD226E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387987AbfEVTsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:48:11 -0400
-Received: from mga01.intel.com ([192.55.52.88]:48025 "EHLO mga01.intel.com"
+        id S1732595AbfEVTrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:47:55 -0400
+Received: from nautica.notk.org ([91.121.71.147]:40778 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387965AbfEVTsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:48:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 May 2019 12:48:08 -0700
-X-ExtLoop1: 1
-Received: from cjpowell-mobl.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.251.154.39])
-  by fmsmga008.fm.intel.com with ESMTP; 22 May 2019 12:48:07 -0700
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v2 15/15] soundwire: intel_init: add checks on link numbers
-Date:   Wed, 22 May 2019 14:47:31 -0500
-Message-Id: <20190522194732.25704-16-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190522194732.25704-1-pierre-louis.bossart@linux.intel.com>
-References: <20190522194732.25704-1-pierre-louis.bossart@linux.intel.com>
+        id S1732565AbfEVTru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:47:50 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id EC896C009; Wed, 22 May 2019 21:47:48 +0200 (CEST)
+Date:   Wed, 22 May 2019 21:47:33 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Bharath Vedartham <linux.bhar@gmail.com>
+Cc:     ericvh@gmail.com, lucho@ionkov.net, linux-kernel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net
+Subject: Re: [PATCH v2] 9p/cache.c: Fix memory leak in
+ v9fs_cache_session_get_cookie
+Message-ID: <20190522194733.GA4766@nautica>
+References: <20190522194519.GA5313@bharath12345-Inspiron-5559>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190522194519.GA5313@bharath12345-Inspiron-5559>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add mask to correctly read the SoundWire SHIM LCAP register. Only bits
-2..0 are meaningful, the rest is about link synchronization and stream
-channel mapping. Without this mask, the hardware information would
-always be larger than whatever the BIOS would report.
+Bharath Vedartham wrote on Thu, May 23, 2019:
+> v9fs_cache_session_get_cookie assigns a random cachetag to v9ses->cachetag,
+> if the cachetag is not assigned previously.
+> 
+> v9fs_random_cachetag allocates memory to v9ses->cachetag with kmalloc and uses
+> scnprintf to fill it up with a cachetag.
+> 
+> But if scnprintf fails, v9ses->cachetag is not freed in the current
+> code causing a memory leak.
+> 
+> Fix this by freeing v9ses->cachetag it v9fs_random_cachetag fails.
+> 
+> This was reported by syzbot, the link to the report is below:
+> https://syzkaller.appspot.com/bug?id=f012bdf297a7a4c860c38a88b44fbee43fd9bbf3
+> 
+> Reported-by: syzbot+3a030a73b6c1e9833815@syzkaller.appspotmail.com
+> Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
 
-Also trap the case with zero links.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- drivers/soundwire/intel_init.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks!
 
-diff --git a/drivers/soundwire/intel_init.c b/drivers/soundwire/intel_init.c
-index 771a53a5c033..70637a0383d2 100644
---- a/drivers/soundwire/intel_init.c
-+++ b/drivers/soundwire/intel_init.c
-@@ -81,6 +81,7 @@ static struct sdw_intel_ctx
- 
- 	/* Check SNDWLCAP.LCOUNT */
- 	caps = ioread32(res->mmio_base + SDW_SHIM_BASE + SDW_SHIM_LCAP);
-+	caps &= GENMASK(2, 0);
- 
- 	/* Check HW supported vs property value and use min of two */
- 	count = min_t(u8, caps, count);
-@@ -90,6 +91,9 @@ static struct sdw_intel_ctx
- 		dev_err(&adev->dev, "Link count %d exceeds max %d\n",
- 			count, SDW_MAX_LINKS);
- 		return NULL;
-+	} else if (!count) {
-+		dev_warn(&adev->dev, "No SoundWire links detected\n");
-+		return NULL;
- 	}
- 
- 	dev_dbg(&adev->dev, "Creating %d SDW Link devices\n", count);
+I'm on limited internet right now but will run tests and queue this up tomorrow
+
 -- 
-2.20.1
-
+Dominique
