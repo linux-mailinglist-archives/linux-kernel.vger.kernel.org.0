@@ -2,84 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF27925D0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 06:52:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6712F25D52
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 07:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbfEVEwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 00:52:01 -0400
-Received: from mail-vs1-f52.google.com ([209.85.217.52]:43128 "EHLO
-        mail-vs1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbfEVEwA (ORCPT
+        id S1728370AbfEVFGc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 01:06:32 -0400
+Received: from knopi.disroot.org ([178.21.23.139]:56596 "EHLO
+        knopi.disroot.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727976AbfEVFGb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 00:52:00 -0400
-Received: by mail-vs1-f52.google.com with SMTP id d128so602121vsc.10
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 21:52:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zM2tRxvUf7NSwKdxRr5bB44PMs0jXxiNemDXs7iz74s=;
-        b=EHT9JbHp1/Wa9RK9jVA4OK5kq2Umqvo7DXotXmfDEtVX21PiUHOUZ7autAocu1Z3DI
-         6ZRzqyXAzb53gUg4yp/9LcfDmApaECzDSf9bA/g+e11hacYU5wNPzj15Auf5iJplAEtJ
-         wZeJSYFMKDpxZEjRnn6nJNQ1Slzdsq0eQQ8ufZoihNbert9VvIhORIZzgty3g3W+bE25
-         T3DmsGv84wTy2AsU5rwySyDsgDziJjHHyl+mkLCG9iem3r/ql3ytMZslrTQPrdotdQ7p
-         RY9dGGRkvsixSFKzdHePNcTAiXJOMlQXS6jGUd0Y6QcTaO76OQ0naSFaKcI1KonGInxP
-         csKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zM2tRxvUf7NSwKdxRr5bB44PMs0jXxiNemDXs7iz74s=;
-        b=OA+8tQJlPhdnxto6fml6qAr8zasj33ZF+VtSNyC87jjkTlgstWMVIN0vDBHR754YuA
-         8CSavccolGJyfFVNgJFwjZCuAJAmpBEd2MDcQ5zvMeF/lP3Vecp+3qQz/amVk7QnhrnG
-         XtrzosOQBUTHP1a0Cv2XDE9eNS1gBlUG4o8qT159nmzHCbmKR8OBjWgE25KJ6zjKunNi
-         7M8a5pznSJOkC1l5D6VYjr5fnAgstZHSH/eIdFjric2dS16C39x9ahORaZWdhGBlclNj
-         iSQe87EomI/QJVKGgoe0Xl4kR0xe7AaAPdeYjAM9pJd4bfOSj4LhHP5aAQyfPiSnMXE8
-         dedQ==
-X-Gm-Message-State: APjAAAVE83V6KD5omTmx3PceoOKOYo3HwwnZO1izTwjqKBzR1frzcHP9
-        BzZOKaB/GjIkjNj/EF+XnZTUGoEtWPe2mVyldVJhbw==
-X-Google-Smtp-Source: APXvYqzzpsKJ4iLQ7BqaYnxLEeUZsLQq9FfHMG3CB4djAfIFwCnnOLRgOAk2mwGbLwgnxYcQMlY4DKeohWMasNEvt+c=
-X-Received: by 2002:a05:6102:247:: with SMTP id a7mr16894374vsq.229.1558500719859;
- Tue, 21 May 2019 21:51:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <1558445574-16471-1-git-send-email-sagar.kadam@sifive.com>
- <1558445574-16471-2-git-send-email-sagar.kadam@sifive.com> <20190521135625.GN22024@lunn.ch>
-In-Reply-To: <20190521135625.GN22024@lunn.ch>
-From:   Sagar Kadam <sagar.kadam@sifive.com>
-Date:   Wed, 22 May 2019 10:21:47 +0530
-Message-ID: <CAARK3HmAYjnBH6Aa_R_uKQPs5JAdBAEt1=dvPz1mLmGaKKpP9w@mail.gmail.com>
-Subject: Re: [PATCH v6 1/3] dt-bindings: i2c: extend existing opencore bindings.
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, peter@korsgaard.com,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Wed, 22 May 2019 01:06:31 -0400
+X-Greylist: delayed 600 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 May 2019 01:06:30 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by disroot.org (Postfix) with ESMTP id 7EF9131B3E;
+        Wed, 22 May 2019 06:56:29 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at disroot.org
+Received: from knopi.disroot.org ([127.0.0.1])
+        by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id wdt2zU0bTsSf; Wed, 22 May 2019 06:56:28 +0200 (CEST)
+From:   Danct12 <danct12@disroot.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+        t=1558500988; bh=cUyYO5S5sXr4QZV6EMFJnvjOOFs7PlhMXBPFHuuXFXI=;
+        h=From:To:Cc:Subject:Date;
+        b=N8sblq5odSB28YVBuhxZSc1YI5GeEf1w+YhsCnR+W28uNwz3JaG69YkhrSpUXxDh7
+         uURWqqXX5Xrk1GfBc0gs03Nly8Dat71ynS572ntNd5O+8tZxBIToswPmeJ7mp5qW5B
+         2vKTN3FYLx7kM6Y+64EPuf7CUnJv5SMJX2RMgIGuWloUGT1zady3rk3PMkKYVSMRXn
+         8CbHeyLjG7Sw9t3xB3saG/upsSUSQyEVqPeH00WY7DSVnfUTJm8OzcwvGqLaxcruJk
+         tCtLw2aK9uSYD8ALabmheixk6S9TH8vIe6ywM2nPYzAO2yrAY5VuXhmrO9VhTzlJkU
+         QwH+fbIhtHp5g==
+To:     hdegoede@redhat.com
+Cc:     Danct12 <danct12@disroot.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH] input: silead: Add MSSL0017 to acpi_device_id.
+Date:   Wed, 22 May 2019 11:54:55 +0700
+Message-Id: <20190522045455.15769-1-danct12@disroot.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On Chuwi Hi10 Plus, the Silead device id is MSSL0017.
 
-On Tue, May 21, 2019 at 7:26 PM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> >  Required properties:
-> > -- compatible      : "opencores,i2c-ocores" or "aeroflexgaisler,i2cmst"
-> > +- compatible      : "opencores,i2c-ocores",
-> > +                 "aeroflexgaisler,i2cmst",
-> > +                    "sifive,fu540-c000-i2c","sifive,i2c0".
-> > +                 For Opencore based I2C IP block reimplemented in
->
-> It looks like there are some tabs vs space issues here.
+Signed-off-by: Danct12 <danct12@disroot.org>
+---
+ drivers/input/touchscreen/silead.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Ohh. It was not catched in checkpatch.pl. I will update it.
+diff --git a/drivers/input/touchscreen/silead.c b/drivers/input/touchscreen/silead.c
+index 09241d4cdebc..06f0eb04a8fd 100644
+--- a/drivers/input/touchscreen/silead.c
++++ b/drivers/input/touchscreen/silead.c
+@@ -617,6 +617,7 @@ static const struct acpi_device_id silead_ts_acpi_match[] = {
+ 	{ "MSSL1680", 0 },
+ 	{ "MSSL0001", 0 },
+ 	{ "MSSL0002", 0 },
++	{ "MSSL0017", 0 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, silead_ts_acpi_match);
+-- 
+2.21.0
 
-Thanks,
-Sagar Kadam
-
-
->    Andrew
