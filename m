@@ -2,123 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 689CF266AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 17:10:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66B5A266AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 17:10:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729866AbfEVPKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 11:10:00 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:32921 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729838AbfEVPJ5 (ORCPT
+        id S1729882AbfEVPKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 11:10:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38360 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729856AbfEVPJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 11:09:57 -0400
-Received: by mail-lj1-f193.google.com with SMTP id w1so2467962ljw.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 08:09:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HFExWlr1uO9x+HQMZPCc0rJnteE0HEqVX28pJUGOwfI=;
-        b=ruSnW7UoKugOt8Wk1U1vu2eypYhGi77d8sGeCoBp0oSFU+eDgdC9MwQtjOXVfQNXuV
-         6KJdjb33wUXIuVd6jL6/hrMIkIwfRg6u25wtb98ZvjDdRkC8gQ5YNKjlKIERjDCtgBpF
-         YTMccV5Ssgz03q4pn1PtYWTiu9ac7xUwgjKnVrljLksEI+e5xpoedgjRRhXPKAg0jQd7
-         bphzSaFhRjZD4d1D9guADzeRVcCpyJyuiNn/S7k2cEay/j2r19+H6JHZF1iVQFe7KZYI
-         wIiDn56+llj1MsRwEDWcT2FNWLpU0Kj75jessgu3OTtCThc/G7QGX3XDY0oUaBgCEhVl
-         VxPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=HFExWlr1uO9x+HQMZPCc0rJnteE0HEqVX28pJUGOwfI=;
-        b=df9MeLznKzYnF6tkfzFvvW4OarszpdzcDBp4hsUJdpDOOCGkxGYzXy0Eh8kShhLTHL
-         4ovysGdHqEUv1e2JCnVJeObJZ8IT7TH2m3FaSXlXCQIYjOkrkBbgwMLFnulMJldynqaE
-         cg+bp3l3yLDG38VmgKpLbcJoiZ0vrDQ5Jty0NH4dfkpm2K6YPrANbVYU9C1aGe0ykMaZ
-         PpSIcrUa7g69Pkyz0S4htEUhbiz0Yvzk3dyi+Nk8uCVxTqITxpMOs4Xs/lwxyj6LgpSQ
-         DjgY0j5lbxSp3nEOPqshAjs80ftLAT77wIJKP9jJJ0rPovwUYHGGyt0dwOu3+Z7Yh3al
-         bDJA==
-X-Gm-Message-State: APjAAAUh0tFIwhKa/REebn469q5uUM0dpi7BLYibJpFib48GXG3TNl1K
-        a1r+1L7zmU5rAXJj9cnnvEU=
-X-Google-Smtp-Source: APXvYqxhdEDHSoE2NHR+WwYFSvC801p+AYV2zVp/M5sMm0EjyGz/P8bAl+KcSdmxXbpFBa/oszd+gQ==
-X-Received: by 2002:a2e:9d09:: with SMTP id t9mr12001686lji.151.1558537794729;
-        Wed, 22 May 2019 08:09:54 -0700 (PDT)
-Received: from pc636.semobile.internal ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id t22sm5303615lje.58.2019.05.22.08.09.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 08:09:53 -0700 (PDT)
-From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Roman Gushchin <guro@fb.com>, Uladzislau Rezki <urezki@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4/4] mm/vmap: move BUG_ON() check to the unlink_va()
-Date:   Wed, 22 May 2019 17:09:39 +0200
-Message-Id: <20190522150939.24605-4-urezki@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190522150939.24605-1-urezki@gmail.com>
-References: <20190522150939.24605-1-urezki@gmail.com>
+        Wed, 22 May 2019 11:09:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FEpLTp6t9Bj8cEZnHYwVHtekMHW40hqnqkWrqhgRy+w=; b=QEF+xA3x6vvUPujuP05sXLntB
+        0qvtE9Bn/WTayOl8HqiYAfphd/jJWWP6QKE4USd2xYeKvHr6Le15YeRKNcFL3uJzvIs6WGZn//JRY
+        gLKB3mBWGGOX3jaREH1K5eGZuh7PjnWIC5qtY7HQwwHR7yP6YXNdoQWG8jtR5z7vwZvy6gij8LEez
+        q3b8aeHNn0hnobvFBvVaDwYJukRnXn21FwfvhSCe3tF+QPqkpYA2DDWZui9PUmGAyf69QU1fVfhyA
+        z25C8ODYNMWQaPQndCv19GIigt28GmabipvGE28egqs5SMCZ2CzEQU7vvPKPalvnYkg+2AgQtCvh3
+        Me2W2fjlw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hTSsQ-00058J-7f; Wed, 22 May 2019 15:09:58 +0000
+Date:   Wed, 22 May 2019 08:09:58 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     sunqiuyang <sunqiuyang@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, yuchao0@huawei.com
+Subject: Re: [PATCH v4 1/1] f2fs: ioctl for removing a range from F2FS
+Message-ID: <20190522150958.GC6738@bombadil.infradead.org>
+References: <20190522040530.37886-1-sunqiuyang@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190522040530.37886-1-sunqiuyang@huawei.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the BUG_ON()/RB_EMPTY_NODE() check under unlink_va()
-function, it means if an empty node gets freed it is a BUG
-thus is considered as faulty behaviour.
+On Wed, May 22, 2019 at 12:05:30PM +0800, sunqiuyang wrote:
+> +static int f2fs_ioc_resize_fs(struct file *filp, unsigned long arg)
+> +{
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(filp));
+> +	__u64 block_count;
+> +	int ret;
+> +
+> +	if (!capable(CAP_SYS_ADMIN))
+> +		return -EPERM;
+> +
+> +	if (f2fs_readonly(sbi->sb))
+> +		return -EROFS;
+> +
+> +	if (copy_from_user(&block_count, (__u64 __user *)arg, sizeof(__u64)))
+> +		return -EFAULT;
 
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- mm/vmalloc.c | 24 +++++++++---------------
- 1 file changed, 9 insertions(+), 15 deletions(-)
-
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 89b8f44e8837..47f7e7e83e23 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -533,20 +533,16 @@ link_va(struct vmap_area *va, struct rb_root *root,
- static __always_inline void
- unlink_va(struct vmap_area *va, struct rb_root *root)
- {
--	/*
--	 * During merging a VA node can be empty, therefore
--	 * not linked with the tree nor list. Just check it.
--	 */
--	if (!RB_EMPTY_NODE(&va->rb_node)) {
--		if (root == &free_vmap_area_root)
--			rb_erase_augmented(&va->rb_node,
--				root, &free_vmap_area_rb_augment_cb);
--		else
--			rb_erase(&va->rb_node, root);
-+	BUG_ON(RB_EMPTY_NODE(&va->rb_node));
- 
--		list_del(&va->list);
--		RB_CLEAR_NODE(&va->rb_node);
--	}
-+	if (root == &free_vmap_area_root)
-+		rb_erase_augmented(&va->rb_node,
-+			root, &free_vmap_area_rb_augment_cb);
-+	else
-+		rb_erase(&va->rb_node, root);
-+
-+	list_del(&va->list);
-+	RB_CLEAR_NODE(&va->rb_node);
- }
- 
- #if DEBUG_AUGMENT_PROPAGATE_CHECK
-@@ -1190,8 +1186,6 @@ EXPORT_SYMBOL_GPL(unregister_vmap_purge_notifier);
- 
- static void __free_vmap_area(struct vmap_area *va)
- {
--	BUG_ON(RB_EMPTY_NODE(&va->rb_node));
--
- 	/*
- 	 * Remove from the busy tree/list.
- 	 */
--- 
-2.11.0
+You can just call get_user() here.
 
