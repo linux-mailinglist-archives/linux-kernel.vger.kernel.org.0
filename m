@@ -2,115 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F318826B09
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:23:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4233C26AAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:17:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730169AbfEVTXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:23:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730924AbfEVTXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:23:34 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B367217D4;
-        Wed, 22 May 2019 19:23:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558553013;
-        bh=dwcs9Y0vxroOP9WzRELD7LmuEjDjG77KIt901BZw2uw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FB1qJLCdiHFSxjoDPT0Lxd7zGxTCdRZBbEcuWbJt8LZDklF46bSwlnw6ca9Cwl6yt
-         LAHpdqI3djxtzRrPMhfy2JHYoJMqfKKknsW4e8/qX0uYVTzeNy9cfOfbpdHbqmKxba
-         1d8wMvJD7O7lCkQvZ/0L9+bGjfTKhWJM5Z5N9/Wc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Johan Hovold <johan@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.1 077/375] USB: serial: fix initial-termios handling
-Date:   Wed, 22 May 2019 15:16:17 -0400
-Message-Id: <20190522192115.22666-77-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190522192115.22666-1-sashal@kernel.org>
-References: <20190522192115.22666-1-sashal@kernel.org>
+        id S1729670AbfEVTRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:17:01 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37959 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729003AbfEVTRB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:17:01 -0400
+Received: by mail-pl1-f194.google.com with SMTP id f97so1527821plb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:17:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=xjRRu/ivm7yiZ1o3qLhgJ4zcxl0tGsUkhCktbB4oPNk=;
+        b=kmr3ha07KpLkWeRssggZMzNfIFypCwymg1J4nTFghrFy8RSWvb3aiGxfhwvabLkGM+
+         U1zIRTCWWooqE6joJmhCmD9bcMLrg4tJ3Feh87C6AYzeItu0W+3nJFE59XHF/M+mk/Ff
+         s6zQOjHxfMsMPrYqQmVzLCH5g0jfXAX3IfYnQfMWZeHWM3rNVJfh3UnMb5ump5GBBLJS
+         jRUbPqFdOYrutU6esuhD6YokgysymCKp9gN/2lXVmMr6Ea2T4e9+wQIoh8pd9mxhEZcB
+         2Pgnr2z/Cq5ZbP7cmsoDiY4RFV4NTDqjgV8u35XKsria13ZFThv0oDq6Q80bkJl8M8Iv
+         o4zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=xjRRu/ivm7yiZ1o3qLhgJ4zcxl0tGsUkhCktbB4oPNk=;
+        b=X4RmeNFQxyYEX1cd2+mg+QInm7ct8h7mcIht467CuBEAynIoyeMBghAseRix+b0nat
+         1UfpuWRVT9UlkMb3i1IWpcE/lo04kWr7x1WC5dj60kb6KT9qQbQRzJYUNEEPwdG+J08k
+         x6dX/gOsXkke/s51XoxySvhEZ+qJt8sNv+myRLGa4cftCU7zKJL8A8QVcQm8Qsc35VNZ
+         lacG8ubjicO45xT6dkkh8YsHKeLPvGxC8l79T/Q3kaOyJ924iPyiWG74P4HSDSjT2q6m
+         MqT44z4QHH8/c8H14Ok079MdSVbp05xvjs8+ZWaylSmFICmiWXWb8Wxgy26MrVHS6mqr
+         aA3A==
+X-Gm-Message-State: APjAAAWTTKHGTgZxJPjsbgqmc2aYjoHXPSQ+1ko0oTxH7xWWeqjZlbe0
+        ENKu67AWzlqim6DxdoXE6poYCbhb
+X-Google-Smtp-Source: APXvYqxL3L0PS2t9QZj3d3yI+U1/rV4N9iz0LNF8aUN431cwGdSl5qdl5xQOwa0BHj4AsTmmTEFNmQ==
+X-Received: by 2002:a17:902:aa97:: with SMTP id d23mr92521131plr.313.1558552620844;
+        Wed, 22 May 2019 12:17:00 -0700 (PDT)
+Received: from bharath12345-Inspiron-5559 ([103.110.42.33])
+        by smtp.gmail.com with ESMTPSA id l68sm38347744pfb.20.2019.05.22.12.16.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 May 2019 12:17:00 -0700 (PDT)
+Date:   Thu, 23 May 2019 00:46:55 +0530
+From:   Bharath Vedartham <linux.bhar@gmail.com>
+To:     ericvh@gmail.com, lucho@ionkov.net, asmadeus@codewreck.org
+Cc:     v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: [PATCH] 9p/cache.c: Fix memory leak in v9fs_cache_session_get_cookie
+Message-ID: <20190522191655.GA4657@bharath12345-Inspiron-5559>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+v9fs_cache_session_get_cookie assigns a random cachetag to
+v9ses->cachetag, if the cachetag is not assigned previously.
 
-[ Upstream commit 579bebe5dd522580019e7b10b07daaf500f9fb1e ]
+v9fs_random_cachetag allocates memory to v9ses->cachetag with kmalloc
+and uses scnprintf to fill it up with a cachetag.
 
-The USB-serial driver init_termios callback is used to override the
-default initial terminal settings provided by USB-serial core.
+But if scnprintf fails, v9ses->cachetag is not freed in the current code causing a memory leak.
 
-After a bug was fixed in the original implementation introduced by
-commit fe1ae7fdd2ee ("tty: USB serial termios bits"), the init_termios
-callback was no longer called just once on first use as intended but
-rather on every (first) open.
+Fix this by freeing v9ses->cachetag it v9fs_random_cachetag fails.
 
-This specifically meant that the terminal settings saved on (final)
-close were ignored when reopening a port for drivers overriding the
-initial settings.
+This was reported by syzbot, the link to the report is below:
+https://syzkaller.appspot.com/bug?id=f012bdf297a7a4c860c38a88b44fbee43fd9bbf3
 
-Also update the outdated function header referring to the creation of
-termios objects.
-
-Fixes: 7e29bb4b779f ("usb-serial: fix termios initialization logic")
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: syzbot+3a030a73b6c1e9833815@syzkaller.appspotmail.com 
+Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
 ---
- drivers/usb/serial/usb-serial.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ fs/9p/cache.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/serial/usb-serial.c b/drivers/usb/serial/usb-serial.c
-index 7e89efbf2c284..676c296103a2f 100644
---- a/drivers/usb/serial/usb-serial.c
-+++ b/drivers/usb/serial/usb-serial.c
-@@ -164,9 +164,9 @@ void usb_serial_put(struct usb_serial *serial)
-  * @driver: the driver (USB in our case)
-  * @tty: the tty being created
-  *
-- * Create the termios objects for this tty.  We use the default
-+ * Initialise the termios structure for this tty.  We use the default
-  * USB serial settings but permit them to be overridden by
-- * serial->type->init_termios.
-+ * serial->type->init_termios on first open.
-  *
-  * This is the first place a new tty gets used.  Hence this is where we
-  * acquire references to the usb_serial structure and the driver module,
-@@ -178,6 +178,7 @@ static int serial_install(struct tty_driver *driver, struct tty_struct *tty)
- 	int idx = tty->index;
- 	struct usb_serial *serial;
- 	struct usb_serial_port *port;
-+	bool init_termios;
- 	int retval = -ENODEV;
- 
- 	port = usb_serial_port_get_by_minor(idx);
-@@ -192,14 +193,16 @@ static int serial_install(struct tty_driver *driver, struct tty_struct *tty)
- 	if (retval)
- 		goto error_get_interface;
- 
-+	init_termios = (driver->termios[idx] == NULL);
-+
- 	retval = tty_standard_install(driver, tty);
- 	if (retval)
- 		goto error_init_termios;
- 
- 	mutex_unlock(&serial->disc_mutex);
- 
--	/* allow the driver to update the settings */
--	if (serial->type->init_termios)
-+	/* allow the driver to update the initial settings */
-+	if (init_termios && serial->type->init_termios)
- 		serial->type->init_termios(tty);
- 
- 	tty->driver_data = port;
+diff --git a/fs/9p/cache.c b/fs/9p/cache.c
+index 9eb3470..4463b91 100644
+--- a/fs/9p/cache.c
++++ b/fs/9p/cache.c
+@@ -66,6 +66,7 @@ void v9fs_cache_session_get_cookie(struct v9fs_session_info *v9ses)
+ 	if (!v9ses->cachetag) {
+ 		if (v9fs_random_cachetag(v9ses) < 0) {
+ 			v9ses->fscache = NULL;
++			kfree(v9ses->cachetag);
+ 			return;
+ 		}
+ 	}
 -- 
-2.20.1
+2.7.4
 
