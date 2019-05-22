@@ -2,163 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1DEC26077
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 11:27:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9C1E26081
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 11:30:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbfEVJ0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 05:26:54 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:58228 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728584AbfEVJ0x (ORCPT
+        id S1728693AbfEVJab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 05:30:31 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39411 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728406AbfEVJab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 05:26:53 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07611752|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.136347-0.00582676-0.857826;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07447;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=5;RT=5;SR=0;TI=SMTPD_---.EbUK8s2_1558517210;
-Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.EbUK8s2_1558517210)
-          by smtp.aliyun-inc.com(10.147.42.135);
-          Wed, 22 May 2019 17:26:50 +0800
-From:   Mao Han <han_mao@c-sky.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Guo Ren <ren_guo@c-sky.com>, Mao Han <han_mao@c-sky.com>,
-        Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org
-Subject: [PATCH 5/5] csky: Fixup some error count in 810 & 860.
-Date:   Wed, 22 May 2019 17:25:32 +0800
-Message-Id: <b6bcb805f569441a04776e24f20d5121ad762d91.1558516765.git.han_mao@c-sky.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1558516765.git.han_mao@c-sky.com>
-References: <cover.1558516765.git.han_mao@c-sky.com>
-In-Reply-To: <cover.1558516765.git.han_mao@c-sky.com>
-References: <cover.1558516765.git.han_mao@c-sky.com>
+        Wed, 22 May 2019 05:30:31 -0400
+Received: by mail-wm1-f67.google.com with SMTP id n25so1416389wmk.4
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 02:30:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=+VK7fLshFfrAgd2rmmiVLNHyPAHPZZGXsuVy0XdS+Zc=;
+        b=p1vVrT54TqP7Tv92KeSNxtCIKuVh2was82RL9sqlsEHAdDh2H92mU+5C8DI7g4nWA9
+         i3gl7B3ndoe5+0YE0YsQh97LdUGeRyA+qKuVr5IxMCSdyTmWj88ezs+VPsiQSidfaUOx
+         nMwyYdFrAY59hOb8Z70FDRyo6llGJNl1RnZaQjrFuGtBibmnjtPtJcqWMQBzAKGJi/yY
+         w90y0HTNXO0xxbADc/H1ZIfStFB8ee25hmcLtJs5/3Rwiyv8rZau4N9xonQVjuERSZ9g
+         5zA4zplXyKSdEUdqJDu/8K+MjKIv7rFTsGhQd76J7EIAPwSf8VO3O6ukvm1/MoxXQZxN
+         yNMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=+VK7fLshFfrAgd2rmmiVLNHyPAHPZZGXsuVy0XdS+Zc=;
+        b=oZ7S3LPGduP005yM7GTtosRiedLY0FNbtqNFRYks3SDw5ihXCxvqF/FQYX0tuXMKoo
+         l6jTpRjpfu0QH8gcfPqMhn2O6QwXp9bs4UkjEdqWFyHPihkHcMOs1Von9ta76jDuoP7v
+         cvus+RjlkwlmWc0JrE1rWv6IGatawZgoxaYPWtSrhxUkM/6a2qHtCockX+P2s5yM396B
+         CFgyKEL1t5B6apbkzYjh8/9xN9BD68KEle6CeTQ1wQPnTnh8DohHYMpLiSXh+XRGg03I
+         lZNDhoA7Uu0hAVE5PLgfcrf/UAqH73zLi1oAFPm76vDzFKeXvI2aJYyBm4q6nKKmYKNI
+         e2sA==
+X-Gm-Message-State: APjAAAUVfSRfL398IX/CWU/LoIhBKcc8U6FQVJDNI+kiJd2Jcos4Ykub
+        gCYRdYFsWfWAL2AXOy7qLMZqPQ==
+X-Google-Smtp-Source: APXvYqwWvQYOAuut9pW+SWIr2WhinP84EdHxdOWjWpQnLL2IrrpfL3/E5WtmX1qrlrUmJEKNMHencA==
+X-Received: by 2002:a1c:7503:: with SMTP id o3mr7066267wmc.28.1558517429034;
+        Wed, 22 May 2019 02:30:29 -0700 (PDT)
+Received: from dell ([2.27.167.43])
+        by smtp.gmail.com with ESMTPSA id g17sm21322431wrr.65.2019.05.22.02.30.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 22 May 2019 02:30:28 -0700 (PDT)
+Date:   Wed, 22 May 2019 10:30:26 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Amelie DELAUNAY <amelie.delaunay@st.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "kbuild-all@01.org" <kbuild-all@01.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] pinctrl: stmfx: Fix compile issue when CONFIG_OF_GPIO is
+ not defined
+Message-ID: <20190522093026.GG4574@dell>
+References: <1558338735-8444-1-git-send-email-amelie.delaunay@st.com>
+ <20190522054833.GB4574@dell>
+ <eb8425ec-989a-9701-7fee-61bd1d2b93c1@st.com>
+ <20190522084133.GF4574@dell>
+ <bc1b5f1d-23b0-141d-f58f-b54ac303fe20@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bc1b5f1d-23b0-141d-f58f-b54ac303fe20@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
+On Wed, 22 May 2019, Amelie DELAUNAY wrote:
 
-ck810 pmu only support event with index 0-8 and 0xd; ck860 only
-support event 1~4, 0xa~0x1b. So do not register unsupport event
-to hardware cache event, which may leader to unknown behavior.
+> On 5/22/19 10:41 AM, Lee Jones wrote:
+> > On Wed, 22 May 2019, Amelie DELAUNAY wrote:
+> >> On 5/22/19 7:48 AM, Lee Jones wrote:
+> >>> On Mon, 20 May 2019, Amelie Delaunay wrote:
+> >>>
+> >>>> When CONFIG_GPIO_OF is not defined, struct gpio_chip 'of_node' member does
+> >>>> not exist:
+> >>>> drivers/pinctrl/pinctrl-stmfx.c: In function 'stmfx_pinctrl_probe':
+> >>>> drivers/pinctrl/pinctrl-stmfx.c:652:17: error: 'struct gpio_chip' has no member named 'of_node'
+> >>>>        pctl->gpio_chip.of_node = np;
+> >>>>
+> >>>> Fixes: 1490d9f841b1 ("pinctrl: Add STMFX GPIO expander Pinctrl/GPIO driver")
+> >>>> Reported-by: kbuild test robot <lkp@intel.com>
+> >>>> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> >>>> ---
+> >>>>    drivers/pinctrl/pinctrl-stmfx.c | 2 ++
+> >>>>    1 file changed, 2 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
+> >>>> index eba872c..bb64aa0 100644
+> >>>> --- a/drivers/pinctrl/pinctrl-stmfx.c
+> >>>> +++ b/drivers/pinctrl/pinctrl-stmfx.c
+> >>>> @@ -648,7 +648,9 @@ static int stmfx_pinctrl_probe(struct platform_device *pdev)
+> >>>>    	pctl->gpio_chip.base = -1;
+> >>>>    	pctl->gpio_chip.ngpio = pctl->pctl_desc.npins;
+> >>>>    	pctl->gpio_chip.can_sleep = true;
+> >>>> +#ifdef CONFIG_OF_GPIO
+> >>>>    	pctl->gpio_chip.of_node = np;
+> >>>> +#endif
+> >>>
+> >>> This is pretty ugly.  Will STMFX ever be used without OF support?  If
+> >>> not, it might be better to place this restriction on the driver as a
+> >>> whole.
+> >>>
+> >>> Incidentally, why is this blanked out in the structure definition?
+> >>> Even 'struct device' doesn't do this.
+> >>>
+> >> config PINCTRL_STMFX
+> >> 	tristate "STMicroelectronics STMFX GPIO expander pinctrl driver"
+> >> 	depends on I2C
+> >> 	depends on OF || COMPILE_TEST
+> >> 	select GENERIC_PINCONF
+> >> 	select GPIOLIB_IRQCHIP
+> >> 	select MFD_STMFX
+> >>
+> >> The issue is due to COMPILE_TEST: would "depends on OF || (OF &&
+> >> COMPILE_TEST)" be better ?
+> > 
+> > Linus would be in a better position to respond, but from what I can
+> > see, maybe:
+> > 
+> >    depends on OF || (OF_GPIO && COMPILE_TEST)
+> > 
+> > Although, I'm unsure why other COMPILE_TESTs haven't highlighted this
+> > issue.  Perhaps because they have all been locked down to a particular
+> > arch:
+> > 
+> > $ grep COMPILE_TEST -- drivers/pinctrl/Kconfig
+> > 	bool "Support pin multiplexing controllers" if COMPILE_TEST
+> > 	bool "Support pin configuration controllers" if COMPILE_TEST
+> > 	depends on OF && (ARCH_DAVINCI_DA850 || COMPILE_TEST)
+> > 	depends on OF && (ARCH_DIGICOLOR || COMPILE_TEST)
+> > 	depends on OF && (ARCH_LPC18XX || COMPILE_TEST)
+> > 	depends on ARCH_R7S72100 || COMPILE_TEST
+> > 	depends on ARCH_R7S9210 || COMPILE_TEST
+> > 	depends on ARCH_RZN1 || COMPILE_TEST
+> > 	depends on MIPS || COMPILE_TEST
+> > 
+> > What about adding this to your Kconfig entry:
+> > 
+> >    select OF_GPIO
+> > 
+> 
+> Yes COMPILE_TEST is combined with arch when depending on OF. But STMFX 
+> isn't arch dependent, it is just OF and I2C dependent.
+> 
+> Randy also see a build error in pinctrl-stmfx.c when CONFIG_OF is not 
+> set/enabled (randconfig):
+> 
+> ../drivers/pinctrl/pinctrl-stmfx.c:409:20: error: 
+> ‘pinconf_generic_dt_node_to_map_pin’ undeclared here (not in a function)
+>    .dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
+> 
+> OF_GPIO depends on OF.
+> 
+> So either
+>      depends on OF || (OF && COMPILE_TEST)
+> or
+>      depends on OF || (OF_GPIO && COMPILE_TEST)
+> 
+> and
+> 
+>      select OF_GPIO
+> 
+> What is the prettiest way ?
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Signed-off-by: Mao Han <han_mao@c-sky.com>
-CC: Guo Ren <guoren@kernel.org>
-CC: linux-csky@vger.kernel.org
----
- arch/csky/kernel/perf_event.c | 60 ++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 54 insertions(+), 6 deletions(-)
+I'll leave the final call up to Linus.
 
-diff --git a/arch/csky/kernel/perf_event.c b/arch/csky/kernel/perf_event.c
-index 2ea9083..b105d55 100644
---- a/arch/csky/kernel/perf_event.c
-+++ b/arch/csky/kernel/perf_event.c
-@@ -735,6 +735,20 @@ static const int csky_pmu_hw_map[PERF_COUNT_HW_MAX] = {
- #define CACHE_OP_UNSUPPORTED	0xffff
- static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
- 	[C(L1D)] = {
-+#ifdef CONFIG_CPU_CK810
-+		[C(OP_READ)] = {
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
-+		},
-+		[C(OP_WRITE)] = {
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
-+		},
-+		[C(OP_PREFETCH)] = {
-+			[C(RESULT_ACCESS)]	= 0x5,
-+			[C(RESULT_MISS)]	= 0x6,
-+		},
-+#else
- 		[C(OP_READ)] = {
- 			[C(RESULT_ACCESS)]	= 0x14,
- 			[C(RESULT_MISS)]	= 0x15,
-@@ -744,9 +758,10 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
- 			[C(RESULT_MISS)]	= 0x17,
- 		},
- 		[C(OP_PREFETCH)] = {
--			[C(RESULT_ACCESS)]	= 0x5,
--			[C(RESULT_MISS)]	= 0x6,
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
- 		},
-+#endif
- 	},
- 	[C(L1I)] = {
- 		[C(OP_READ)] = {
-@@ -763,6 +778,20 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
- 		},
- 	},
- 	[C(LL)] = {
-+#ifdef CONFIG_CPU_CK810
-+		[C(OP_READ)] = {
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
-+		},
-+		[C(OP_WRITE)] = {
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
-+		},
-+		[C(OP_PREFETCH)] = {
-+			[C(RESULT_ACCESS)]	= 0x7,
-+			[C(RESULT_MISS)]	= 0x8,
-+		},
-+#else
- 		[C(OP_READ)] = {
- 			[C(RESULT_ACCESS)]	= 0x18,
- 			[C(RESULT_MISS)]	= 0x19,
-@@ -772,29 +801,48 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
- 			[C(RESULT_MISS)]	= 0x1b,
- 		},
- 		[C(OP_PREFETCH)] = {
--			[C(RESULT_ACCESS)]	= 0x7,
--			[C(RESULT_MISS)]	= 0x8,
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
- 		},
-+#endif
- 	},
- 	[C(DTLB)] = {
-+#ifdef CONFIG_CPU_CK810
- 		[C(OP_READ)] = {
--			[C(RESULT_ACCESS)]	= 0x5,
--			[C(RESULT_MISS)]	= 0xb,
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
- 		},
- 		[C(OP_WRITE)] = {
- 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
- 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
- 		},
-+#else
-+		[C(OP_READ)] = {
-+			[C(RESULT_ACCESS)]	= 0x14,
-+			[C(RESULT_MISS)]	= 0xb,
-+		},
-+		[C(OP_WRITE)] = {
-+			[C(RESULT_ACCESS)]	= 0x16,
-+			[C(RESULT_MISS)]	= 0xb,
-+		},
-+#endif
- 		[C(OP_PREFETCH)] = {
- 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
- 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
- 		},
- 	},
- 	[C(ITLB)] = {
-+#ifdef CONFIG_CPU_CK810
-+		[C(OP_READ)] = {
-+			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
-+			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
-+		},
-+#else
- 		[C(OP_READ)] = {
- 			[C(RESULT_ACCESS)]	= 0x3,
- 			[C(RESULT_MISS)]	= 0xa,
- 		},
-+#endif
- 		[C(OP_WRITE)] = {
- 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
- 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
 -- 
-2.7.4
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
