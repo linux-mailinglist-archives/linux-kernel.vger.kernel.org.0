@@ -2,107 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1F282605F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 11:21:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05ED42606D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 11:24:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728965AbfEVJVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 05:21:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49162 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728547AbfEVJVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 05:21:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0E3CFADEC;
-        Wed, 22 May 2019 09:21:13 +0000 (UTC)
-Date:   Wed, 22 May 2019 11:21:11 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Pavel Machek <pavel@denx.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Jiri Kosina <jkosina@suse.cz>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Josh Snyder <joshs@netflix.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dave Chinner <david@fromorbit.com>,
-        Kevin Easton <kevin@guarana.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Daniel Gruss <daniel@gruss.cc>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Subject: Re: [PATCH 4.19 053/105] mm/mincore.c: make mincore() more
- conservative
-Message-ID: <20190522092111.GD32329@dhcp22.suse.cz>
-References: <20190520115247.060821231@linuxfoundation.org>
- <20190520115250.721190520@linuxfoundation.org>
- <20190522085741.GB8174@amd>
+        id S1728964AbfEVJYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 05:24:32 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:36098 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727946AbfEVJYc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 05:24:32 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4M9OGtK174736;
+        Wed, 22 May 2019 09:24:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=9IPMfVTY25vatSS0rekM5Mp3zOdIvyjUj7a4OsqASVQ=;
+ b=sdwyQq62FkEtrx+6BlhW7QBH5p8j/so8Jz/mLtkvu2Wlz8H9nih0TtC/ezTKs/w5dIlI
+ t3SjNHfv2m4BcLnYitOPUmznD3nM68aRMP2TBSazrVMqOHBzRTdawDrLxZPUqX01Ja3b
+ 5q4aMGBHfBoex7Sukj94hgNYD5RUyctBtaynGjO/eIdc7ZyIOu+hdVQ8FUy5qHNJKvYW
+ peJC2p5Rv89YwkQPJTWCU0ec7+OUieMWBiVby7MYvszJ8/IA9G6fGutKVraoNYKt5/iY
+ XlB1GAILsQKN30J+858GaN2Xl9SJkSZLd8qOElYY372XORezRwfMkbXTPTspF1ro19Kb pA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2130.oracle.com with ESMTP id 2smsk5aewc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 May 2019 09:24:22 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4M9OBWw193984;
+        Wed, 22 May 2019 09:24:21 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2smsh1gaq4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 May 2019 09:24:21 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4M9OLjb018487;
+        Wed, 22 May 2019 09:24:21 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 22 May 2019 09:24:20 +0000
+Date:   Wed, 22 May 2019 12:24:12 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Whitmore <johnfwhitmore@gmail.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Richard Smith <richardsmith@google.com>
+Subject: Re: [PATCH] staging: rtl8192u: Remove an unnecessary NULL check
+Message-ID: <20190522092412.GR31203@kadam>
+References: <20190521174221.124459-1-natechancellor@gmail.com>
+ <CAKwvOdmgpx0+d905PdRqUFeg8Fj8zf3mrWVOho_dajvEWvam9w@mail.gmail.com>
+ <CAKwvOdmpHOMwVM+d_W3eeu3xC+nZqBTO_hx9Wf1z10yivxSe7A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190522085741.GB8174@amd>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKwvOdmpHOMwVM+d_W3eeu3xC+nZqBTO_hx9Wf1z10yivxSe7A@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9264 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905220068
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9264 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905220069
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 22-05-19 10:57:41, Pavel Machek wrote:
-> Hi!
-> 
-> > commit 134fca9063ad4851de767d1768180e5dede9a881 upstream.
-> > 
-> > The semantics of what mincore() considers to be resident is not
-> > completely clear, but Linux has always (since 2.3.52, which is when
-> > mincore() was initially done) treated it as "page is available in page
-> > cache".
-> > 
-> > That's potentially a problem, as that [in]directly exposes
-> > meta-information about pagecache / memory mapping state even about
-> > memory not strictly belonging to the process executing the syscall,
-> > opening possibilities for sidechannel attacks.
-> > 
-> > Change the semantics of mincore() so that it only reveals pagecache
-> > information for non-anonymous mappings that belog to files that the
-> > calling process could (if it tried to) successfully open for writing;
-> > otherwise we'd be including shared non-exclusive mappings, which
-> > 
-> >  - is the sidechannel
-> > 
-> >  - is not the usecase for mincore(), as that's primarily used for data,
-> >    not (shared) text
-> 
-> ...
-> 
-> > @@ -189,8 +205,13 @@ static long do_mincore(unsigned long add
-> >  	vma = find_vma(current->mm, addr);
-> >  	if (!vma || addr < vma->vm_start)
-> >  		return -ENOMEM;
-> > -	mincore_walk.mm = vma->vm_mm;
-> >  	end = min(vma->vm_end, addr + (pages << PAGE_SHIFT));
-> > +	if (!can_do_mincore(vma)) {
-> > +		unsigned long pages = DIV_ROUND_UP(end - addr, PAGE_SIZE);
-> > +		memset(vec, 1, pages);
-> > +		return pages;
-> > +	}
-> > +	mincore_walk.mm = vma->vm_mm;
-> >  	err = walk_page_range(addr, end, &mincore_walk);
-> 
-> We normally return errors when we deny permissions; but this one just
-> returns success and wrong data.
-> 
-> Could we return -EPERM there? If not, should it at least get a
-> comment?
+On Tue, May 21, 2019 at 03:57:46PM -0700, Nick Desaulniers wrote:
+> > > -       if (param->u.wpa_ie.len > MAX_WPA_IE_LEN ||
+> > > -           (param->u.wpa_ie.len && !param->u.wpa_ie.data))
+> >
+> > Right so, the types in this expression:
+> >
+> > param: struct ieee_param*
+> > param->u: *anonymous union*
+> > param->u.wpa_ie: *anonymous struct*
+> > param->u.wpa_ie.len: u32
+> > param->u.wpa_ie.data: u8 [0]
+> > as defined in drivers/staging/rtl8192u/ieee80211/ieee80211.h#L295
+> > https://github.com/ClangBuiltLinux/linux/blob/9c7db5004280767566e91a33445bf93aa479ef02/drivers/staging/rtl8192u/ieee80211/ieee80211.h#L295-L322
+> >
+> > so this is a tricky case, because in general array members can never
+> > themselves be NULL,
 
-This was a deliberate decision AFAIR. We cannot return failure because
-this could lead to an unexpected userspace failure. We are pretendeing
-that those pages are present because that is the safest option -
-e.g. consider an application which tries to refault until the page is
-present...
 
-Worth a comment? Probably yes, care to send a patch?
--- 
-Michal Hocko
-SUSE Labs
+Unless they array was the first struct member, obviously.
+
+
+> >  and usually I trust -Wpointer-bool-conversion, but
+> > this is a special case because of the flexible array member:
+
+Nah.  It's the same thing.  That patch is fine.
+
+regards,
+dan carpenter
+
