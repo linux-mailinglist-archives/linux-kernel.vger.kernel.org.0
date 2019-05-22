@@ -2,561 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A08D2728C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 00:46:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0C8C27303
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 01:37:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729619AbfEVWq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 18:46:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38760 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727121AbfEVWq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 18:46:26 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E85DB307D847;
-        Wed, 22 May 2019 22:46:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-142.rdu2.redhat.com [10.10.121.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ADFF317258;
-        Wed, 22 May 2019 22:46:24 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 3/6] keys: Move the RCU locks outwards from the keyring
- search functions
-From:   David Howells <dhowells@redhat.com>
-To:     keyrings@vger.kernel.org
-Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 22 May 2019 23:46:24 +0100
-Message-ID: <155856518400.11737.14995788929532159946.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155856516286.11737.11196637682919902718.stgit@warthog.procyon.org.uk>
-References: <155856516286.11737.11196637682919902718.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 22 May 2019 22:46:26 +0000 (UTC)
+        id S1728600AbfEVXhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 19:37:41 -0400
+Received: from outgoing4.flk.host-h.net ([188.40.0.90]:40251 "EHLO
+        outgoing4.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfEVXhl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 19:37:41 -0400
+X-Greylist: delayed 2659 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 May 2019 19:37:40 EDT
+Received: from www31.flk1.host-h.net ([188.40.1.173])
+        by antispam1-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.89)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1hTa6n-0000bT-Bw; Thu, 23 May 2019 00:53:18 +0200
+Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
+        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1hTa6c-0007fD-EJ; Thu, 23 May 2019 00:53:06 +0200
+From:   Justin Swartz <justin.swartz@risingedge.co.za>
+To:     Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/rockchip: dw_hdmi: add basic rk3228 support
+Date:   Wed, 22 May 2019 22:46:29 +0000
+Message-Id: <20190522224631.25164-1-justin.swartz@risingedge.co.za>
+X-Mailer: git-send-email 2.11.0
+X-Authenticated-Sender: justin.swartz@risingedge.co.za
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25457/Wed May 22 09:57:31 2019)
+X-Originating-IP: 188.40.1.173
+X-SpamExperts-Domain: risingedge.co.za
+X-SpamExperts-Username: 
+Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.000718690605145)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0fHWENUdqj+4JDN3TQDP3eCpSDasLI4SayDByyq9LIhVur86TwL7jsv5
+ m6+fjp/sxETNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3K7uDjV/sFUXQr+CDrNQuIHgQg
+ mAX8Bxy/iUu0ThNZg0h/RxVysY5Ye6+GGw0VqdJD7ren9RtRNyYim5e3GD8LGfWrcbYvelpuN/Pk
+ qhBpvAyWwieZyauFYqHkIbFa+ipF21HJWO60ZqrvKy/1AXUV5oXt6ymoFHaG7BQtEYvFCSo5O9aO
+ OPCZx1b2uMC/zMc3aAOV7ICS29ZskdEzgnmWc6FyCw2oLKHJClAYHcXyktNZ2XmZE6Ulo3Sg6/fH
+ CWNxoaEnuBtnt6GUDDzwi0xE9ujBdjBi/EW6wTMO5aPWRLvv8qeRWs1kOo/p5GKJkWYAO3Aa5n+U
+ cgHka3/viXjzcoj1m7f+vTE4JStv6WwSOoIjjjxJx7TjfIl9lT02e+bLG5tY/17Am1+3t6saIBBg
+ jLL9CBTChXJpl1nl23cKb/28qAHF3ayYxbGdFos0fpCN/Zqe7k8tOuyC0ezetWWw8nL3mjAyuRnY
+ YfqoF0qwBaWr31abV7tmT2g84edke3MdOkNjooab3HXOpUJdeB9FrcmwwJhZoFj1JrH8+3dIKm8T
+ aJbF/DJ9xG35AyqkelXaj1B5NGYLZCD5qc9WTEIS3cJCoM1jZKVSdLKiMKeae175VNiXOYUQ+bYR
+ OTnFZniyHwlqvaI+zok/BsKQK4gft9MTokp23oPCMeUu86GfQl/coNq5LDsD+gmtrHR34ik+dbYb
+ 9IXfYGRpVS/0hA4MwqmkYLLjcD7HaYjxiQBclDtVrfG8Zd+nzbonxrsMSs4uYqsuNEW45+y/2kiU
+ pWy9c+XovTjsJstHtBoNlKIuslv0d6pyfV7QOE1hL9j5OVSXNVTcvF4bYNCxBEiOkhGolglPmh6a
+ ILJqM6WsXf7aQnmpO2ydeyFd1pMxtzaLrgiAa1jZ449c5QOSXHeR3E0E19yXIdNHJDPRcm8rLb1r
+ h0PyzIaTXD+uKJkHA4nFPinpYeLTxNigHOV5GQgWJq64bnCnflZnbjDB2+RGRgaXth0ZHRqQruFr
+ G/GlTGRDUHWt54s410cgWo1fMD6i15+WgVsQdC9uGg5IeWmPBYt4N47WgJgyTfy73B/Plf7FmTDV
+ qY+pQN3pVbMWvtuGUnEh3DwJWw42swm4bO6gacpMpzKjPCVKQvBNmkphbV+6LqpSOVpogBsPfG5h
+ jLRjd6kxWF4VLgIZIkTm0juO6rHlP/TihjA708Lg3Y2gXyaf+rItBxw1SWz0NFi7GeT33MAvp0E4
+ hZvaIK8zWrz4lb7RoCsWna0PdfWBYPgYUN6vj8NApCcRaz+idK1HZy9Txmtmp2+U8T3Kfj7tHuHD
+ vXqVSlU=
+X-Report-Abuse-To: spam@antispammaster.host-h.net
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the RCU locks outwards from the keyring search functions so that a
-request_key_rcu() function can be provided that searches for keys without
-sleeping and without attempting to construct new keys.  This new function
-must be invoked with the RCU read lock held.
+Like the RK3328, RK322x SoCs offer a Synopsis DesignWare HDMI transmitter
+and an Innosilicon HDMI PHY.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
+Add a new dw_hdmi_plat_data struct, rk3228_hdmi_drv_data.
+Assign a set of mostly generic rk3228_hdmi_phy_ops functions.
+Add dw_hdmi_rk3228_setup_hpd() to enable the HDMI HPD and DDC lines.
+
+Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
 ---
+ .../bindings/display/rockchip/dw_hdmi-rockchip.txt |  1 +
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c        | 53 ++++++++++++++++++++++
+ 2 files changed, 54 insertions(+)
 
- Documentation/security/keys/core.rst        |    8 ++++
- Documentation/security/keys/request-key.rst |   11 +++++
- include/keys/request_key_auth-type.h        |    1 
- include/linux/key.h                         |    3 +
- security/keys/internal.h                    |    6 +--
- security/keys/keyring.c                     |   16 ++++---
- security/keys/proc.c                        |    4 +-
- security/keys/process_keys.c                |   41 ++++++++----------
- security/keys/request_key.c                 |   52 +++++++++++++++++++++++
- security/keys/request_key_auth.c            |   60 ++++++++++++++++-----------
- 10 files changed, 141 insertions(+), 61 deletions(-)
-
-diff --git a/Documentation/security/keys/core.rst b/Documentation/security/keys/core.rst
-index 9521c4207f01..3b812be5ea1e 100644
---- a/Documentation/security/keys/core.rst
-+++ b/Documentation/security/keys/core.rst
-@@ -1121,6 +1121,14 @@ payload contents" for more information.
-     If intr is true, then the wait can be interrupted by a signal, in which
-     case error ERESTARTSYS will be returned.
+diff --git a/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
+index 39143424a..703503103 100644
+--- a/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
++++ b/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
+@@ -12,6 +12,7 @@ following device-specific properties.
+ Required properties:
  
-+ *  To search for a key under RCU conditions, call::
+ - compatible: should be one of the following:
++		"rockchip,rk3228-dw-hdmi"
+ 		"rockchip,rk3288-dw-hdmi"
+ 		"rockchip,rk3328-dw-hdmi"
+ 		"rockchip,rk3399-dw-hdmi"
+diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+index 4cdc9f86c..182a852af 100644
+--- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+@@ -23,6 +23,14 @@
+ #include "rockchip_drm_drv.h"
+ #include "rockchip_drm_vop.h"
+ 
++#define RK3228_GRF_SOC_CON2		0x0408
++#define RK3228_HDMI_SDAIN_MSK		BIT(14)
++#define RK3228_HDMI_SCLIN_MSK		BIT(13)
++#define RK3228_GRF_SOC_CON6		0x0418
++#define RK3228_HDMI_HPD_VSEL		BIT(6)
++#define RK3228_HDMI_SDA_VSEL		BIT(5)
++#define RK3228_HDMI_SCL_VSEL		BIT(4)
 +
-+	struct key *request_key_rcu(const struct key_type *type,
-+				    const char *description);
-+
-+    which is similar to request_key() except that it does not check for keys
-+    that are under construction and it will not call out to userspace to
-+    construct a key if it can't find a match.
- 
-  *  When it is no longer required, the key should be released using::
- 
-diff --git a/Documentation/security/keys/request-key.rst b/Documentation/security/keys/request-key.rst
-index 600ad67d1707..2147f5ffb40f 100644
---- a/Documentation/security/keys/request-key.rst
-+++ b/Documentation/security/keys/request-key.rst
-@@ -36,6 +36,11 @@ or::
- 					     	   size_t callout_len,
- 						   void *aux);
- 
-+or::
-+
-+	struct key *request_key_rcu(const struct key_type *type,
-+				    const char *description);
-+
- Or by userspace invoking the request_key system call::
- 
- 	key_serial_t request_key(const char *type,
-@@ -57,6 +62,10 @@ The two async in-kernel calls may return keys that are still in the process of
- being constructed.  The two non-async ones will wait for construction to
- complete first.
- 
-+The *_rcu() call is like the in-kernel request_key() call, except that it
-+doesn't check for keys that are under construction and doesn't attempt to
-+construct missing keys.
-+
- The userspace interface links the key to a keyring associated with the process
- to prevent the key from going away, and returns the serial number of the key to
- the caller.
-@@ -148,7 +157,7 @@ The Search Algorithm
- 
- A search of any particular keyring proceeds in the following fashion:
- 
--  1) When the key management code searches for a key (keyring_search_aux) it
-+  1) When the key management code searches for a key (keyring_search_rcu) it
-      firstly calls key_permission(SEARCH) on the keyring it's starting with,
-      if this denies permission, it doesn't search further.
- 
-diff --git a/include/keys/request_key_auth-type.h b/include/keys/request_key_auth-type.h
-index a726dd3f1dc6..2a046062bb42 100644
---- a/include/keys/request_key_auth-type.h
-+++ b/include/keys/request_key_auth-type.h
-@@ -18,6 +18,7 @@
-  * Authorisation record for request_key().
-  */
- struct request_key_auth {
-+	struct rcu_head		rcu;
- 	struct key		*target_key;
- 	struct key		*dest_keyring;
- 	const struct cred	*cred;
-diff --git a/include/linux/key.h b/include/linux/key.h
-index 612e1cf84049..3604a554df99 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -274,6 +274,9 @@ extern struct key *request_key(struct key_type *type,
- 			       const char *description,
- 			       const char *callout_info);
- 
-+extern struct key *request_key_rcu(struct key_type *type,
-+				   const char *description);
-+
- extern struct key *request_key_with_auxdata(struct key_type *type,
- 					    const char *description,
- 					    const void *callout_info,
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 821819b4ee13..fd75b051d02a 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -135,11 +135,11 @@ struct keyring_search_context {
- 
- extern bool key_default_cmp(const struct key *key,
- 			    const struct key_match_data *match_data);
--extern key_ref_t keyring_search_aux(key_ref_t keyring_ref,
-+extern key_ref_t keyring_search_rcu(key_ref_t keyring_ref,
- 				    struct keyring_search_context *ctx);
- 
--extern key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx);
--extern key_ref_t search_process_keyrings(struct keyring_search_context *ctx);
-+extern key_ref_t search_cred_keyrings_rcu(struct keyring_search_context *ctx);
-+extern key_ref_t search_process_keyrings_rcu(struct keyring_search_context *ctx);
- 
- extern struct key *find_keyring_by_name(const char *name, bool uid_keyring);
- 
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index df3144f9c1aa..a086abba47a6 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -835,7 +835,7 @@ static bool search_nested_keyrings(struct key *keyring,
+ #define RK3288_GRF_SOC_CON6		0x025C
+ #define RK3288_HDMI_LCDC_SEL		BIT(4)
+ #define RK3328_GRF_SOC_CON2		0x0408
+@@ -325,6 +333,25 @@ static void dw_hdmi_rockchip_genphy_disable(struct dw_hdmi *dw_hdmi, void *data)
+ 	phy_power_off(hdmi->phy);
  }
  
- /**
-- * keyring_search_aux - Search a keyring tree for a key matching some criteria
-+ * keyring_search_rcu - Search a keyring tree for a matching key under RCU
-  * @keyring_ref: A pointer to the keyring with possession indicator.
-  * @ctx: The keyring search context.
-  *
-@@ -847,7 +847,9 @@ static bool search_nested_keyrings(struct key *keyring,
-  * addition, the LSM gets to forbid keyring searches and key matches.
-  *
-  * The search is performed as a breadth-then-depth search up to the prescribed
-- * limit (KEYRING_SEARCH_MAX_DEPTH).
-+ * limit (KEYRING_SEARCH_MAX_DEPTH).  The caller must hold the RCU read lock to
-+ * prevent keyrings from being destroyed or rearranged whilst they are being
-+ * searched.
-  *
-  * Keys are matched to the type provided and are then filtered by the match
-  * function, which is given the description to use in any way it sees fit.  The
-@@ -866,7 +868,7 @@ static bool search_nested_keyrings(struct key *keyring,
-  * In the case of a successful return, the possession attribute from
-  * @keyring_ref is propagated to the returned key reference.
-  */
--key_ref_t keyring_search_aux(key_ref_t keyring_ref,
-+key_ref_t keyring_search_rcu(key_ref_t keyring_ref,
- 			     struct keyring_search_context *ctx)
- {
- 	struct key *keyring;
-@@ -888,11 +890,9 @@ key_ref_t keyring_search_aux(key_ref_t keyring_ref,
- 			return ERR_PTR(err);
- 	}
- 
--	rcu_read_lock();
- 	ctx->now = ktime_get_real_seconds();
- 	if (search_nested_keyrings(keyring, ctx))
- 		__key_get(key_ref_to_ptr(ctx->result));
--	rcu_read_unlock();
- 	return ctx->result;
- }
- 
-@@ -902,7 +902,7 @@ key_ref_t keyring_search_aux(key_ref_t keyring_ref,
-  * @type: The type of keyring we want to find.
-  * @description: The name of the keyring we want to find.
-  *
-- * As keyring_search_aux() above, but using the current task's credentials and
-+ * As keyring_search_rcu() above, but using the current task's credentials and
-  * type's default matching function and preferred search method.
-  */
- key_ref_t keyring_search(key_ref_t keyring,
-@@ -928,7 +928,9 @@ key_ref_t keyring_search(key_ref_t keyring,
- 			return ERR_PTR(ret);
- 	}
- 
--	key = keyring_search_aux(keyring, &ctx);
-+	rcu_read_lock();
-+	key = keyring_search_rcu(keyring, &ctx);
-+	rcu_read_unlock();
- 
- 	if (type->match_free)
- 		type->match_free(&ctx.match_data);
-diff --git a/security/keys/proc.c b/security/keys/proc.c
-index 78ac305d715e..f081dceae3b9 100644
---- a/security/keys/proc.c
-+++ b/security/keys/proc.c
-@@ -179,7 +179,9 @@ static int proc_keys_show(struct seq_file *m, void *v)
- 	 * skip if the key does not indicate the possessor can view it
- 	 */
- 	if (key->perm & KEY_POS_VIEW) {
--		skey_ref = search_my_process_keyrings(&ctx);
-+		rcu_read_lock();
-+		skey_ref = search_cred_keyrings_rcu(&ctx);
-+		rcu_read_unlock();
- 		if (!IS_ERR(skey_ref)) {
- 			key_ref_put(skey_ref);
- 			key_ref = make_key_ref(key, 1);
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index ba5d3172cafe..fb31b408e294 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -318,7 +318,8 @@ void key_fsgid_changed(struct cred *new_cred)
- 
- /*
-  * Search the process keyrings attached to the supplied cred for the first
-- * matching key.
-+ * matching key under RCU conditions (the caller must be holding the RCU read
-+ * lock).
-  *
-  * The search criteria are the type and the match function.  The description is
-  * given to the match function as a parameter, but doesn't otherwise influence
-@@ -337,7 +338,7 @@ void key_fsgid_changed(struct cred *new_cred)
-  * In the case of a successful return, the possession attribute is set on the
-  * returned key reference.
-  */
--key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
-+key_ref_t search_cred_keyrings_rcu(struct keyring_search_context *ctx)
- {
- 	key_ref_t key_ref, ret, err;
- 	const struct cred *cred = ctx->cred;
-@@ -355,7 +356,7 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
- 
- 	/* search the thread keyring first */
- 	if (cred->thread_keyring) {
--		key_ref = keyring_search_aux(
-+		key_ref = keyring_search_rcu(
- 			make_key_ref(cred->thread_keyring, 1), ctx);
- 		if (!IS_ERR(key_ref))
- 			goto found;
-@@ -373,7 +374,7 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
- 
- 	/* search the process keyring second */
- 	if (cred->process_keyring) {
--		key_ref = keyring_search_aux(
-+		key_ref = keyring_search_rcu(
- 			make_key_ref(cred->process_keyring, 1), ctx);
- 		if (!IS_ERR(key_ref))
- 			goto found;
-@@ -394,7 +395,7 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
- 
- 	/* search the session keyring */
- 	if (cred->session_keyring) {
--		key_ref = keyring_search_aux(
-+		key_ref = keyring_search_rcu(
- 			make_key_ref(cred->session_keyring, 1), ctx);
- 
- 		if (!IS_ERR(key_ref))
-@@ -415,7 +416,7 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
- 	}
- 	/* or search the user-session keyring */
- 	else if (READ_ONCE(cred->user->session_keyring)) {
--		key_ref = keyring_search_aux(
-+		key_ref = keyring_search_rcu(
- 			make_key_ref(READ_ONCE(cred->user->session_keyring), 1),
- 			ctx);
- 		if (!IS_ERR(key_ref))
-@@ -448,16 +449,16 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
-  * the keys attached to the assumed authorisation key using its credentials if
-  * one is available.
-  *
-- * Return same as search_my_process_keyrings().
-+ * The caller must be holding the RCU read lock.
-+ *
-+ * Return same as search_cred_keyrings_rcu().
-  */
--key_ref_t search_process_keyrings(struct keyring_search_context *ctx)
-+key_ref_t search_process_keyrings_rcu(struct keyring_search_context *ctx)
- {
- 	struct request_key_auth *rka;
- 	key_ref_t key_ref, ret = ERR_PTR(-EACCES), err;
- 
--	might_sleep();
--
--	key_ref = search_my_process_keyrings(ctx);
-+	key_ref = search_cred_keyrings_rcu(ctx);
- 	if (!IS_ERR(key_ref))
- 		goto found;
- 	err = key_ref;
-@@ -472,24 +473,17 @@ key_ref_t search_process_keyrings(struct keyring_search_context *ctx)
- 	    ) {
- 		const struct cred *cred = ctx->cred;
- 
--		/* defend against the auth key being revoked */
--		down_read(&cred->request_key_auth->sem);
--
--		if (key_validate(ctx->cred->request_key_auth) == 0) {
-+		if (key_validate(cred->request_key_auth) == 0) {
- 			rka = ctx->cred->request_key_auth->payload.data[0];
- 
-+			//// was search_process_keyrings() [ie. recursive]
- 			ctx->cred = rka->cred;
--			key_ref = search_process_keyrings(ctx);
-+			key_ref = search_cred_keyrings_rcu(ctx);
- 			ctx->cred = cred;
- 
--			up_read(&cred->request_key_auth->sem);
--
- 			if (!IS_ERR(key_ref))
- 				goto found;
--
- 			ret = key_ref;
--		} else {
--			up_read(&cred->request_key_auth->sem);
- 		}
- 	}
- 
-@@ -504,7 +498,6 @@ key_ref_t search_process_keyrings(struct keyring_search_context *ctx)
- found:
- 	return key_ref;
- }
--
- /*
-  * See if the key we're looking at is the target key.
-  */
-@@ -693,7 +686,9 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
- 		ctx.index_key.desc_len		= strlen(key->description);
- 		ctx.match_data.raw_data		= key;
- 		kdebug("check possessed");
--		skey_ref = search_process_keyrings(&ctx);
-+		rcu_read_lock();
-+		skey_ref = search_process_keyrings_rcu(&ctx);
-+		rcu_read_unlock();
- 		kdebug("possessed=%p", skey_ref);
- 
- 		if (!IS_ERR(skey_ref)) {
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 807c32b2c736..59a4e533e76a 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -382,7 +382,9 @@ static int construct_alloc_key(struct keyring_search_context *ctx,
- 	 * waited for locks */
- 	mutex_lock(&key_construction_mutex);
- 
--	key_ref = search_process_keyrings(ctx);
-+	rcu_read_lock();
-+	key_ref = search_process_keyrings_rcu(ctx);
-+	rcu_read_unlock();
- 	if (!IS_ERR(key_ref))
- 		goto key_already_present;
- 
-@@ -556,7 +558,9 @@ struct key *request_key_and_link(struct key_type *type,
- 	}
- 
- 	/* search all the process keyrings for a key */
--	key_ref = search_process_keyrings(&ctx);
-+	rcu_read_lock();
-+	key_ref = search_process_keyrings_rcu(&ctx);
-+	rcu_read_unlock();
- 
- 	if (!IS_ERR(key_ref)) {
- 		if (dest_keyring) {
-@@ -747,3 +751,47 @@ struct key *request_key_async_with_auxdata(struct key_type *type,
- 				    callout_len, aux, NULL, KEY_ALLOC_IN_QUOTA);
- }
- EXPORT_SYMBOL(request_key_async_with_auxdata);
-+
-+/**
-+ * request_key_rcu - Request key from RCU-read-locked context
-+ * @type: The type of key we want.
-+ * @description: The name of the key we want.
-+ *
-+ * Request a key from a context that we may not sleep in (such as RCU-mode
-+ * pathwalk).  Keys under construction are ignored.
-+ *
-+ * Return a pointer to the found key if successful, -ENOKEY if we couldn't find
-+ * a key or some other error if the key found was unsuitable or inaccessible.
-+ */
-+struct key *request_key_rcu(struct key_type *type, const char *description)
++static void dw_hdmi_rk3228_setup_hpd(struct dw_hdmi *dw_hdmi, void *data)
 +{
-+	struct keyring_search_context ctx = {
-+		.index_key.type		= type,
-+		.index_key.description	= description,
-+		.index_key.desc_len	= strlen(description),
-+		.cred			= current_cred(),
-+		.match_data.cmp		= key_default_cmp,
-+		.match_data.raw_data	= description,
-+		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
-+		.flags			= (KEYRING_SEARCH_DO_STATE_CHECK |
-+					   KEYRING_SEARCH_SKIP_EXPIRED),
-+	};
-+	struct key *key;
-+	key_ref_t key_ref;
++	struct rockchip_hdmi *hdmi = (struct rockchip_hdmi *)data;
 +
-+	kenter("%s,%s", type->name, description);
++	dw_hdmi_phy_setup_hpd(dw_hdmi, data);
 +
-+	/* search all the process keyrings for a key */
-+	key_ref = search_process_keyrings_rcu(&ctx);
-+	if (IS_ERR(key_ref)) {
-+		key = ERR_CAST(key_ref);
-+		if (PTR_ERR(key_ref) == -EAGAIN)
-+			key = ERR_PTR(-ENOKEY);
-+	} else {
-+		key = key_ref_to_ptr(key_ref);
-+	}
++	regmap_write(hdmi->regmap,
++		RK3228_GRF_SOC_CON6,
++		HIWORD_UPDATE(RK3228_HDMI_HPD_VSEL | RK3228_HDMI_SDA_VSEL |
++			      RK3228_HDMI_SCL_VSEL,
++			      RK3228_HDMI_HPD_VSEL | RK3228_HDMI_SDA_VSEL |
++			      RK3228_HDMI_SCL_VSEL));
 +
-+	kleave(" = %p", key);
-+	return key;
-+}
-+EXPORT_SYMBOL(request_key_rcu);
-diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index ec5226557023..99ed7a8a273d 100644
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -58,7 +58,7 @@ static void request_key_auth_free_preparse(struct key_preparsed_payload *prep)
- static int request_key_auth_instantiate(struct key *key,
- 					struct key_preparsed_payload *prep)
- {
--	key->payload.data[0] = (struct request_key_auth *)prep->data;
-+	rcu_assign_keypointer(key, (struct request_key_auth *)prep->data);
- 	return 0;
- }
- 
-@@ -68,7 +68,7 @@ static int request_key_auth_instantiate(struct key *key,
- static void request_key_auth_describe(const struct key *key,
- 				      struct seq_file *m)
- {
--	struct request_key_auth *rka = get_request_key_auth(key);
-+	struct request_key_auth *rka = dereference_key_rcu(key);
- 
- 	seq_puts(m, "key:");
- 	seq_puts(m, key->description);
-@@ -83,7 +83,7 @@ static void request_key_auth_describe(const struct key *key,
- static long request_key_auth_read(const struct key *key,
- 				  char __user *buffer, size_t buflen)
- {
--	struct request_key_auth *rka = get_request_key_auth(key);
-+	struct request_key_auth *rka = dereference_key_locked(key);
- 	size_t datalen;
- 	long ret;
- 
-@@ -102,23 +102,6 @@ static long request_key_auth_read(const struct key *key,
- 	return ret;
- }
- 
--/*
-- * Handle revocation of an authorisation token key.
-- *
-- * Called with the key sem write-locked.
-- */
--static void request_key_auth_revoke(struct key *key)
--{
--	struct request_key_auth *rka = get_request_key_auth(key);
--
--	kenter("{%d}", key->serial);
--
--	if (rka->cred) {
--		put_cred(rka->cred);
--		rka->cred = NULL;
--	}
--}
--
- static void free_request_key_auth(struct request_key_auth *rka)
- {
- 	if (!rka)
-@@ -131,16 +114,43 @@ static void free_request_key_auth(struct request_key_auth *rka)
- 	kfree(rka);
- }
- 
-+/*
-+ * Dispose of the request_key_auth record under RCU conditions
-+ */
-+static void request_key_auth_rcu_disposal(struct rcu_head *rcu)
-+{
-+	struct request_key_auth *rka =
-+		container_of(rcu, struct request_key_auth, rcu);
-+
-+	free_request_key_auth(rka);
++	regmap_write(hdmi->regmap,
++		RK3228_GRF_SOC_CON2,
++		HIWORD_UPDATE(RK3228_HDMI_SDAIN_MSK | RK3228_HDMI_SCLIN_MSK,
++			      RK3228_HDMI_SDAIN_MSK | RK3228_HDMI_SCLIN_MSK));
 +}
 +
-+/*
-+ * Handle revocation of an authorisation token key.
-+ *
-+ * Called with the key sem write-locked.
-+ */
-+static void request_key_auth_revoke(struct key *key)
-+{
-+	struct request_key_auth *rka = dereference_key_locked(key);
-+
-+	kenter("{%d}", key->serial);
-+	rcu_assign_keypointer(key, NULL);
-+	call_rcu(&rka->rcu, request_key_auth_rcu_disposal);
-+}
-+
- /*
-  * Destroy an instantiation authorisation token key.
-  */
- static void request_key_auth_destroy(struct key *key)
+ static enum drm_connector_status
+ dw_hdmi_rk3328_read_hpd(struct dw_hdmi *dw_hdmi, void *data)
  {
--	struct request_key_auth *rka = get_request_key_auth(key);
-+	struct request_key_auth *rka = rcu_access_pointer(key->payload.rcu_data0);
- 
- 	kenter("{%d}", key->serial);
--
--	free_request_key_auth(rka);
-+	if (rka) {
-+		rcu_assign_keypointer(key, NULL);
-+		call_rcu(&rka->rcu, request_key_auth_rcu_disposal);
-+	}
+@@ -370,6 +397,29 @@ static void dw_hdmi_rk3328_setup_hpd(struct dw_hdmi *dw_hdmi, void *data)
+ 			      RK3328_HDMI_HPD_IOE));
  }
  
- /*
-@@ -249,7 +259,9 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
++static const struct dw_hdmi_phy_ops rk3228_hdmi_phy_ops = {
++	.init		= dw_hdmi_rockchip_genphy_init,
++	.disable	= dw_hdmi_rockchip_genphy_disable,
++	.read_hpd	= dw_hdmi_phy_read_hpd,
++	.update_hpd	= dw_hdmi_phy_update_hpd,
++	.setup_hpd	= dw_hdmi_rk3228_setup_hpd,
++};
++
++static struct rockchip_hdmi_chip_data rk3228_chip_data = {
++	.lcdsel_grf_reg = -1,
++};
++
++static const struct dw_hdmi_plat_data rk3228_hdmi_drv_data = {
++	.mode_valid = dw_hdmi_rockchip_mode_valid,
++	.mpll_cfg = rockchip_mpll_cfg,
++	.cur_ctr = rockchip_cur_ctr,
++	.phy_config = rockchip_phy_config,
++	.phy_data = &rk3228_chip_data,
++	.phy_ops = &rk3228_hdmi_phy_ops,
++	.phy_name = "inno_dw_hdmi_phy2",
++	.phy_force_vendor = true,
++};
++
+ static struct rockchip_hdmi_chip_data rk3288_chip_data = {
+ 	.lcdsel_grf_reg = RK3288_GRF_SOC_CON6,
+ 	.lcdsel_big = HIWORD_UPDATE(0, RK3288_HDMI_LCDC_SEL),
+@@ -422,6 +472,9 @@ static const struct dw_hdmi_plat_data rk3399_hdmi_drv_data = {
+ };
  
- 	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
- 
--	authkey_ref = search_process_keyrings(&ctx);
-+	rcu_read_lock();
-+	authkey_ref = search_process_keyrings_rcu(&ctx);
-+	rcu_read_unlock();
- 
- 	if (IS_ERR(authkey_ref)) {
- 		authkey = ERR_CAST(authkey_ref);
+ static const struct of_device_id dw_hdmi_rockchip_dt_ids[] = {
++	{ .compatible = "rockchip,rk3228-dw-hdmi",
++	  .data = &rk3228_hdmi_drv_data
++	},
+ 	{ .compatible = "rockchip,rk3288-dw-hdmi",
+ 	  .data = &rk3288_hdmi_drv_data
+ 	},
+-- 
+2.11.0
 
