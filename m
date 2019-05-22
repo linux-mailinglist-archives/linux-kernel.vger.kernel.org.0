@@ -2,102 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9DB727306
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 01:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C066A2730A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 01:54:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbfEVXqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 19:46:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38822 "EHLO mx1.redhat.com"
+        id S1728027AbfEVXyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 19:54:07 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:49535 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbfEVXqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 19:46:38 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726218AbfEVXyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 19:54:06 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5F88630832E6;
-        Wed, 22 May 2019 23:46:38 +0000 (UTC)
-Received: from treble (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ECC1660857;
-        Wed, 22 May 2019 23:46:36 +0000 (UTC)
-Date:   Wed, 22 May 2019 18:46:35 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Alexei Starovoitov <ast@fb.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Kairui Song <kasong@redhat.com>,
-        Song Liu <songliubraving@fb.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
-Subject: Re: Getting empty callchain from perf_callchain_kernel()
-Message-ID: <20190522234635.a47bettklcf5gt7c@treble>
-References: <3CD3EE63-0CD2-404A-A403-E11DCF2DF8D9@fb.com>
- <20190517074600.GJ2623@hirez.programming.kicks-ass.net>
- <20190517081057.GQ2650@hirez.programming.kicks-ass.net>
- <CACPcB9cB5n1HOmZcVpusJq8rAV5+KfmZ-Lxv3tgsSoy7vNrk7w@mail.gmail.com>
- <20190517091044.GM2606@hirez.programming.kicks-ass.net>
- <CACPcB9cpNp5CBqoRs+XMCwufzAFa8Pj-gbmj9fb+g5wVdue=ig@mail.gmail.com>
- <20190522140233.GC16275@worktop.programming.kicks-ass.net>
- <ab047883-69f6-1175-153f-5ad9462c6389@fb.com>
- <20190522174517.pbdopvookggen3d7@treble>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 458TxP6JLxz9s55;
+        Thu, 23 May 2019 09:54:01 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1558569243;
+        bh=4Ie1TzLXQj8FI5hKG+wwp2NDJHkk7TzCx/TL7beKews=;
+        h=Date:From:To:Cc:Subject:From;
+        b=W45yq2L2Kflk4ySOTn67aogaWM+73l8VU19rLtVoJexA84dXjXZhLtzn3OnZL0Pu3
+         BcUQOTd9k4xgaMtcOSj3wpDzEW1QnaH4zqw3/y0sWRkR8GYz8+iTfQgGHjL+czT2zR
+         bfTdjRMMwhDOscBSX/mTir2fFQpGylg/xE0MrVGw4D1WSonE0cAtcIoTivsOoTbvmV
+         qttFnoDDh0ql8AQAm6CfR057fVCX+Lq7psr45pF530RhndZ+apC2SwvkJAJdwR5qYg
+         r/5vRg+HThw++3LGpYilhnHuL0VuPRpy0b246vLqdKmxVQvH5FcEBdW9PEeM4ZSIqD
+         zt3+HPT1U5s3A==
+Date:   Thu, 23 May 2019 09:53:41 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        Uma Shankar <uma.shankar@intel.com>,
+        Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Subject: linux-next: manual merge of the drm-misc tree with the drm-intel
+ tree
+Message-ID: <20190523095341.728a79b7@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190522174517.pbdopvookggen3d7@treble>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 22 May 2019 23:46:38 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XP=lWq5qsA1xog0vpv4kTbS"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 12:45:17PM -0500, Josh Poimboeuf wrote:
-> On Wed, May 22, 2019 at 02:49:07PM +0000, Alexei Starovoitov wrote:
-> > The one that is broken is prog_tests/stacktrace_map.c
-> > There we attach bpf to standard tracepoint where
-> > kernel suppose to collect pt_regs before calling into bpf.
-> > And that's what bpf_get_stackid_tp() is doing.
-> > It passes pt_regs (that was collected before any bpf)
-> > into bpf_get_stackid() which calls get_perf_callchain().
-> > Same thing with kprobes, uprobes.
-> 
-> Is it trying to unwind through ___bpf_prog_run()?
-> 
-> If so, that would at least explain why ORC isn't working.  Objtool
-> currently ignores that function because it can't follow the jump table.
+--Sig_/XP=lWq5qsA1xog0vpv4kTbS
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Here's a tentative fix (for ORC, at least).  I'll need to make sure this
-doesn't break anything else.
+Hi all,
 
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index 242a643af82f..1d9a7cc4b836 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -1562,7 +1562,6 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
- 		BUG_ON(1);
- 		return 0;
- }
--STACK_FRAME_NON_STANDARD(___bpf_prog_run); /* jump table */
- 
- #define PROG_NAME(stack_size) __bpf_prog_run##stack_size
- #define DEFINE_BPF_PROG_RUN(stack_size) \
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 172f99195726..2567027fce95 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1033,13 +1033,6 @@ static struct rela *find_switch_table(struct objtool_file *file,
- 		if (text_rela->type == R_X86_64_PC32)
- 			table_offset += 4;
- 
--		/*
--		 * Make sure the .rodata address isn't associated with a
--		 * symbol.  gcc jump tables are anonymous data.
--		 */
--		if (find_symbol_containing(rodata_sec, table_offset))
--			continue;
--
- 		rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
- 		if (rodata_rela) {
- 			/*
+Today's linux-next merge of the drm-misc tree got a conflict in:
+
+  drivers/gpu/drm/drm_atomic_uapi.c
+
+between commit:
+
+  585b000de23b ("drm: move content protection property to mode_config")
+
+from the drm-intel tree and commit:
+
+  fbb5d0353c62 ("drm: Add HDR source metadata property")
+
+from the drm-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/drm_atomic_uapi.c
+index 4131e669785a,125605ff45af..000000000000
+--- a/drivers/gpu/drm/drm_atomic_uapi.c
++++ b/drivers/gpu/drm/drm_atomic_uapi.c
+@@@ -814,7 -823,10 +823,10 @@@ drm_atomic_connector_get_property(struc
+  		*val =3D state->colorspace;
+  	} else if (property =3D=3D connector->scaling_mode_property) {
+  		*val =3D state->scaling_mode;
++ 	} else if (property =3D=3D config->hdr_output_metadata_property) {
++ 		*val =3D state->hdr_output_metadata ?
++ 			state->hdr_output_metadata->base.id : 0;
+ -	} else if (property =3D=3D connector->content_protection_property) {
+ +	} else if (property =3D=3D config->content_protection_property) {
+  		*val =3D state->content_protection;
+  	} else if (property =3D=3D config->writeback_fb_id_property) {
+  		/* Writeback framebuffer is one-shot, write and forget */
+
+--Sig_/XP=lWq5qsA1xog0vpv4kTbS
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzl4QUACgkQAVBC80lX
+0GxSWwf+MTWafkXTbuoTHRn6ceiKD4K1BQsTENaQOxEaubqh5y9mLJZFPSonoirH
+a/7tG2u3KTKKMI4fqHLWvnyHVUn7piAf7IU+rTFYHc1Mrfj8wYJzc8CbrS0AbQ14
+840CxOiUewJJtziqeL4KGIrkQXD7KmQYtc/CgYN1OImZc9L344VS919941yEz8ad
+MEEBPraKYvn4eYAVBhNmRGJR2H8/DSoprmJ26bCC/usFBLOI+Ux8yjIie1AF+Ev9
+AKxufmlfLF22L7tIXnPLbAm6xe2SpjerAYK8hCHAp1Uv5swqsXj1TxFuIa0Bo87w
+PmCWifWI4YNoD2JqY57vP2pS9eEWFQ==
+=bwN4
+-----END PGP SIGNATURE-----
+
+--Sig_/XP=lWq5qsA1xog0vpv4kTbS--
