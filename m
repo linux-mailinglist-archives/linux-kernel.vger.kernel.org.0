@@ -2,94 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE99526FB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:59:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E64326FC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:59:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732200AbfEVT6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:58:10 -0400
-Received: from mail-pg1-f170.google.com ([209.85.215.170]:35684 "EHLO
-        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730645AbfEVT6I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:58:08 -0400
-Received: by mail-pg1-f170.google.com with SMTP id t1so1854404pgc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:58:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ti2gujd26XzQoLiTeDe8/05EiKdhekJsO0rEj6y07qw=;
-        b=YVVvBPJSZWF2y52mZXCQ82X6XtwoE27KpQxN2e1+7/BLzpnkKzo4WfwtQlpW4DxZXC
-         Z67wKIzeAiyJA1pQH5QV2tdY2eDnlhXJfsKd3LGeC8QvCUp05Qk2VaQAwwV5omSmetaF
-         okHRkhvoLrJ4mQhv0koADAwvUFNggZR4F8Fpk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ti2gujd26XzQoLiTeDe8/05EiKdhekJsO0rEj6y07qw=;
-        b=dP70ReinqtFWEVUFSe+r4FR9r5Y4Ai376KGb6E1BjkjLUFgnyd5e29VGClNpkqrg43
-         vBmJg5yyBye2PSsoU+ozNxjRoEEFZ0nSqbnBAavThJeqmLYCewpYqKf59YFcvsUbYUo2
-         LPBhv+8asDkok+2Wildg6Rfau3L2WQp0a/j1SEqbCnXLYOLycRTtqzcW9QXUbdWP6sp6
-         5KXZ9SM9nyRywR1MDUK3CrbsOyRdH61+bp/8Rg/ARcDw49sCCImfcy8/L8YDHlmhZ20Q
-         2BKjOkWB8lF7Ov/hhaDrycK4kytlG4uX6yUO0TddIMP+Mn5mG3W/1vHYZJ/3Ddxe6LOw
-         P0Cw==
-X-Gm-Message-State: APjAAAWMwk1eMR2sGZB7xqQswssRFtSc2e5wpt0WuvSXHzRffPtdOJW9
-        qQCTmCYcYk5DyP1RuyunPScjoIBmYUdTmw==
-X-Google-Smtp-Source: APXvYqz4z3TuF7/ac+bExwZ2wU5kfchxpPVjwEREHBi7Mnvkm90pW5uwHRz4gWEmk2BfdPUU6stZzQ==
-X-Received: by 2002:a65:5c8c:: with SMTP id a12mr92237071pgt.452.1558555087658;
-        Wed, 22 May 2019 12:58:07 -0700 (PDT)
-Received: from chatter.i7.local (192-0-228-88.cpe.teksavvy.com. [192.0.228.88])
-        by smtp.gmail.com with ESMTPSA id n1sm24742643pgv.15.2019.05.22.12.58.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 22 May 2019 12:58:06 -0700 (PDT)
-Date:   Wed, 22 May 2019 15:58:04 -0400
-From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: PSA: Do not use "Reported-By" without reporter's approval
-Message-ID: <20190522195804.GC21412@chatter.i7.local>
-References: <20190522193011.GB21412@chatter.i7.local>
- <7b7287463e830fa8d981dc440f8165622cbc628e.camel@perches.com>
+        id S1731347AbfEVT6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:58:48 -0400
+Received: from mga06.intel.com ([134.134.136.31]:43062 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729565AbfEVT6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:58:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 May 2019 12:58:41 -0700
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 22 May 2019 12:58:39 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1hTXNm-00073h-Ry; Thu, 23 May 2019 03:58:38 +0800
+Date:   Thu, 23 May 2019 03:58:15 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Geordan Neukum <gneukum1@gmail.com>
+Cc:     kbuild-all@01.org, devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: kpc2000: kpc_i2c: fix platform_no_drv_owner.cocci
+ warnings
+Message-ID: <20190522195815.GA49400@lkp-kbuild22>
+References: <201905230355.OQnavbXj%lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7b7287463e830fa8d981dc440f8165622cbc628e.camel@perches.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <201905230355.OQnavbXj%lkp@intel.com>
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 12:45:06PM -0700, Joe Perches wrote:
->> It is common courtesy to include this tagline when submitting 
->> patches:
->>
->> Reported-By: J. Doe <jdoe@example.com>
->>
->> Please ask the reporter's permission before doing so (even if they'd
->> submitted a public bugzilla report or sent a report to the mailing
->> list).
->
->I disagree with this.
->
->If the report is public, and lists like vger are public,
->then using a Reported-by: and/or a Link: are simply useful
->history and tracking information.
+From: kbuild test robot <lkp@intel.com>
 
-I'm perfectly fine with Link:, however Reported-By: usually has the 
-person's name and email address (i.e. PII data per GDPR definition). If 
-that person submitted the bug report via bugzilla.kernel.org or a 
-similar resource, their expectation is that they can delete their 
-account should they choose to to do so. However, if the patch containing 
-Reported-By is committed to git, their PII becomes permanently and 
-immutably recorded for any reasonable meaning of the word "forever."
+drivers/staging/kpc2000/kpc2000_i2c.c:652:3-8: No need to set .owner here. The core will do it.
 
-Now, I'm pretty sure that a request to rebase git history to edit a 
-commit message would be considered "unreasonable" under GDPR provisions, 
-but a) it still eats up valuable time handling such requests and b) it's 
-a consequence reporters are not aware of when they submit bug reports.  
-So, my request to ask for permission before using "Reported-By" is not 
-coming from any legal position, but from the perspective of courtesy to 
-people submitting those reports.
+ Remove .owner field if calls are used which set it automatically
 
--K
+Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
+
+Fixes: 43ad38191816 ("staging: kpc2000: kpc_i2c: add static qual to local symbols in kpc_i2c.c")
+CC: Geordan Neukum <gneukum1@gmail.com>
+Signed-off-by: kbuild test robot <lkp@intel.com>
+---
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git staging-next
+head:   43ad38191816a6b77cc4bd8222353320a71a1d2d
+commit: 43ad38191816a6b77cc4bd8222353320a71a1d2d [106/106] staging: kpc2000: kpc_i2c: add static qual to local symbols in kpc_i2c.c
+
+ kpc2000_i2c.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/drivers/staging/kpc2000/kpc2000_i2c.c
++++ b/drivers/staging/kpc2000/kpc2000_i2c.c
+@@ -649,7 +649,6 @@ static struct platform_driver i2c_plat_d
+ 	.remove     = pi2c_remove,
+ 	.driver     = {
+ 		.name   = KP_DRIVER_NAME_I2C,
+-		.owner  = THIS_MODULE,
+ 	},
+ };
+ 
