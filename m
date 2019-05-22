@@ -2,86 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D73726B37
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2671226ABC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:19:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730790AbfEVTZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:25:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46488 "EHLO mail.kernel.org"
+        id S1729826AbfEVTTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:19:23 -0400
+Received: from namei.org ([65.99.196.166]:33844 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731506AbfEVTZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:25:11 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3511E217D7;
-        Wed, 22 May 2019 19:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558553111;
-        bh=kY6nnKcNmJPO49Acu53z4ErLu6Vs+4a1pFHpsxCrX80=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u2/GRW88fz2HKRNHHjg7qnOcvwr/JZcwbGq/9NNdDuUYu9MTy5FobAvYZlipwRLk9
-         obO/q+eEUiIVU9Fid5X/E3tRCoqfkCp8VNAU03IsLHlK3u/OAY+PYrDk3YrLlBDaBb
-         FZaweMVUsOgVmHnOeAZ3CaV8mF2vQm8PUMjf2MK4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sven Van Asbroeck <thesven73@gmail.com>,
-        Sven Van Asbroeck <TheSven73@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.0 053/317] rtc: 88pm860x: prevent use-after-free on device remove
-Date:   Wed, 22 May 2019 15:19:14 -0400
-Message-Id: <20190522192338.23715-53-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
-References: <20190522192338.23715-1-sashal@kernel.org>
+        id S1728615AbfEVTTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:19:23 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x4MJJFlT023718;
+        Wed, 22 May 2019 19:19:15 GMT
+Date:   Thu, 23 May 2019 05:19:15 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+cc:     Andy Lutomirski <luto@kernel.org>,
+        Matthew Garrett <mjg59@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Turn lockdown into an LSM
+In-Reply-To: <14ed1f30-a1d0-f973-5c8c-241337c8fc09@tycho.nsa.gov>
+Message-ID: <alpine.LRH.2.21.1905230457000.18826@namei.org>
+References: <20190521224013.3782-1-matthewgarrett@google.com> <alpine.LRH.2.21.1905221203070.3967@namei.org> <CACdnJuuTR=Ut4giPKC=kdxgY9yPv8+3PZyEzuxvON3Jr_92XnQ@mail.gmail.com> <CALCETrVow8U=xhQdJt8kSMX16Lf0Mstf3+QxY4iz4DHVp=PYWA@mail.gmail.com>
+ <14ed1f30-a1d0-f973-5c8c-241337c8fc09@tycho.nsa.gov>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Van Asbroeck <thesven73@gmail.com>
+On Wed, 22 May 2019, Stephen Smalley wrote:
 
-[ Upstream commit f22b1ba15ee5785aa028384ebf77dd39e8e47b70 ]
+> That seems to violate the intent of lockdown as I understood it, and 
+> turns security_is_locked_down() into a finer-grained capable() call. 
+> Also, if I understand correctly, this could only be done if one were to 
+> disable the lockdown module in the lsm list, since the security 
+> framework will return non-zero (i.e. the operation is locked down) if 
+> any module that implements the hook returns non-zero; LSM is 
+> "restrictive". At that point SELinux or the other LSM would be the sole 
+> arbiter of lockdown decisions. SELinux or the other LSM also wouldn't 
+> have access to the kernel_locked_down level unless that was exported in 
+> some manner from the lockdown module.  Not sure how to compose these.
 
-The device's remove() attempts to shut down the delayed_work scheduled
-on the kernel-global workqueue by calling flush_scheduled_work().
+Right, I was envisaging the LSM replacing the default.
 
-Unfortunately, flush_scheduled_work() does not prevent the delayed_work
-from re-scheduling itself. The delayed_work might run after the device
-has been removed, and touch the already de-allocated info structure.
-This is a potential use-after-free.
+i.e. the default is tristate OR fine grained LSM policy.
 
-Fix by calling cancel_delayed_work_sync() during remove(): this ensures
-that the delayed work is properly cancelled, is no longer running, and
-is not able to re-schedule itself.
+They could in theory be composed restrictively, but this is likely not 
+useful given the coarse grained default policy.  All the LSM could do is 
+either further restrict none or integrity.
 
-This issue was detected with the help of Coccinelle.
+We'd need to figure out how to avoid confusing users in the case where 
+multiple LSMs are registered for the hooks, possibly by having the 
+lockdown LSM gate this and update the securityfs lockdown node with 
+something like "lsm:smack".
 
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/rtc/rtc-88pm860x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-88pm860x.c b/drivers/rtc/rtc-88pm860x.c
-index 01ffc0ef8033f..fbcf13bbbd8d1 100644
---- a/drivers/rtc/rtc-88pm860x.c
-+++ b/drivers/rtc/rtc-88pm860x.c
-@@ -414,7 +414,7 @@ static int pm860x_rtc_remove(struct platform_device *pdev)
- 	struct pm860x_rtc_info *info = platform_get_drvdata(pdev);
- 
- #ifdef VRTC_CALIBRATION
--	flush_scheduled_work();
-+	cancel_delayed_work_sync(&info->calib_work);
- 	/* disable measurement */
- 	pm860x_set_bits(info->i2c, PM8607_MEAS_EN2, MEAS2_VRTC, 0);
- #endif	/* VRTC_CALIBRATION */
 -- 
-2.20.1
+James Morris
+<jmorris@namei.org>
 
