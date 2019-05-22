@@ -2,39 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 347C426665
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 16:57:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 165DF2617D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 12:12:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729642AbfEVO52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 10:57:28 -0400
-Received: from 11.mo7.mail-out.ovh.net ([87.98.173.157]:39736 "EHLO
-        11.mo7.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728450AbfEVO52 (ORCPT
+        id S1729029AbfEVKMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 06:12:51 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38094 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728625AbfEVKMu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 10:57:28 -0400
-X-Greylist: delayed 16200 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 May 2019 10:57:26 EDT
-Received: from player715.ha.ovh.net (unknown [10.108.42.119])
-        by mo7.mail-out.ovh.net (Postfix) with ESMTP id 6D41211DCD6
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:11:44 +0200 (CEST)
-Received: from bealr.fr (unknown [176.178.90.37])
-        (Authenticated sender: ml@bealr.fr)
-        by player715.ha.ovh.net (Postfix) with ESMTPSA id 3BE965FB9C6A
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 10:11:44 +0000 (UTC)
-To:     linux-kernel@vger.kernel.org
-From:   Romain BEAL <ml@bealr.fr>
-Subject: IMX6 error binding ipu on vdic
-Message-ID: <bd1184c2-6d5a-a12b-f0e6-55537f6965b6@bealr.fr>
-Date:   Wed, 22 May 2019 12:11:44 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        Wed, 22 May 2019 06:12:50 -0400
+Received: by mail-ed1-f65.google.com with SMTP id w11so3038003edl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 03:12:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UOism6/WliJKlizbO03ANyTQDbU6zepiLVCCA7yr4no=;
+        b=EAS95erR7zgHxD4l5HzxyFuQQ8ARELbdgIvHR0nzpi4iGxU06B2BuetVQBOljGGcbY
+         0G/Rt9R4gwLCV0ZOBbIFAU+Snu0oDyKF/K1ecxjXW+7+dh19pdu2Qn4ldIDDush7aFtz
+         IJ4rxWlD1jJBXsBDQFEqqB4QLqWiFTPm2ahYJqA/N9Rq5pYgGNWMEoTTq15LYCThaLaq
+         mnUpETDx0S51EmtOhsSjchICziOAEtk6cohh70Q67W63BFsWtf2Vri/gJFFq9qZxXdqC
+         jBGbE9LwcTB3iaELva2bdBdKOrNyzbWl7ppno5FxD+enIBk59BS3brq2Tw/wd1626J2C
+         LnAg==
+X-Gm-Message-State: APjAAAVGcG9FQV9Zvg8cO7bEVB5eDk12kbDJczhty9k6Iro9NVke4+tS
+        QG0u0Rjb/v2xruoGxiFSRczX6CbClzU=
+X-Google-Smtp-Source: APXvYqzNhVaVxR8CohHDUn6M+ULJOxCah+OGJx2vJUGm8rsFFDe+YEXiuua+IT83U0iTKfsg0KunhA==
+X-Received: by 2002:a17:906:6c1:: with SMTP id v1mr13388705ejb.266.1558519969205;
+        Wed, 22 May 2019 03:12:49 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id u1sm2617873ejz.92.2019.05.22.03.12.48
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 May 2019 03:12:48 -0700 (PDT)
+Subject: Re: [PATCH] input: silead: Add MSSL0017 to acpi_device_id.
+To:     Danct12 <danct12@disroot.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190522045455.15769-1-danct12@disroot.org>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <6c18472f-bedd-6e6d-121c-8a311495c3c3@redhat.com>
+Date:   Wed, 22 May 2019 12:12:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <20190522045455.15769-1-danct12@disroot.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 2332864608621626647
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduuddrudduvddgvdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenuc
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -42,70 +58,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-Tested on gateworks ventana and variscite dart platform :
-Unable to bind ipu1_csi0 on ipu1_vdic AND ipu2_csi1 on ipu2_vdic.
+On 22-05-19 06:54, Danct12 wrote:
+> On Chuwi Hi10 Plus, the Silead device id is MSSL0017.
+> 
+> Signed-off-by: Danct12 <danct12@disroot.org>
 
-Steps to reproduce on ventana board :
+Patch looks good to me:
 
-$ media_ctl -p
-- entity 53: ipu1_csi0 (3 pads, 4 links)
-              type V4L2 subdev subtype Unknown flags 0
-              device node name /dev/v4l-subdev8
-         pad0: Sink
-                 [fmt:UYVY8_2X8/640x480@1/30 field:none 
-colorspace:smpte170m xfer:709 ycbcr:601 quantization:lim-range
-                  crop.bounds:(0,0)/640x480
-                  crop:(0,0)/640x480
-                  compose.bounds:(0,0)/640x480
-                  compose:(0,0)/640x480]
-                 <- "ipu1_csi0_mux":5 []
-         pad1: Source
-                 [fmt:AYUV8_1X32/640x480@1/30 field:none 
-colorspace:smpte170m xfer:709 ycbcr:601 quantization:lim-range]
-                 -> "ipu1_ic_prp":0 []
-                 -> "ipu1_vdic":0 []
-         pad2: Source
-                 [fmt:AYUV8_1X32/640x480@1/30 field:none 
-colorspace:smpte170m xfer:709 ycbcr:601 quantization:lim-range]
-                 -> "ipu1_csi0 capture":0 []
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
 
 
-- entity 1: ipu1_vdic (3 pads, 3 links)
-             type V4L2 subdev subtype Unknown flags 0
-             device node name /dev/v4l-subdev0
-         pad0: Sink
-                 [fmt:AYUV8_1X32/640x480@1/30 field:none 
-colorspace:smpte170m xfer:709 ycbcr:601 quantization:lim-range]
-                 <- "ipu1_csi0":1 []
-                 <- "ipu1_csi1":1 []
-         pad1: Sink
-                 [fmt:UYVY8_2X8/640x480@1/30 field:none 
-colorspace:smpte170m xfer:709 ycbcr:601 quantization:lim-range]
-         pad2: Source
-                 [fmt:AYUV8_1X32/640x480@1/60 field:none 
-colorspace:smpte170m xfer:709 ycbcr:601 quantization:lim-range]
-                 -> "ipu1_ic_prp":0 []
-
-
-
-$ media-ctl -l "'ipu1_csi0':1 -> 'ipu1_vdic':0[1]" -v
-Opening media device /dev/media0
-Enumerating entities
-Found 19 entities
-Enumerating pads and links
-Setting up link 53:1 -> 1:0 [1]
-Opening media device /dev/media0
-media_setup_link: Unable to setup link (Invalid argument)
-
-  'ipu1_csi0':1 -> 'ipu1_vdic':0[1]
-                                  ^
-Unable to parse link: Invalid argument (22)
-
-
-Others links works great.
-The ipu -> vdic bind worked on 4.14
-
-Is it a kernel bug?
-
----
-Romain BEAL
+> ---
+>   drivers/input/touchscreen/silead.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/input/touchscreen/silead.c b/drivers/input/touchscreen/silead.c
+> index 09241d4cdebc..06f0eb04a8fd 100644
+> --- a/drivers/input/touchscreen/silead.c
+> +++ b/drivers/input/touchscreen/silead.c
+> @@ -617,6 +617,7 @@ static const struct acpi_device_id silead_ts_acpi_match[] = {
+>   	{ "MSSL1680", 0 },
+>   	{ "MSSL0001", 0 },
+>   	{ "MSSL0002", 0 },
+> +	{ "MSSL0017", 0 },
+>   	{ }
+>   };
+>   MODULE_DEVICE_TABLE(acpi, silead_ts_acpi_match);
+> 
