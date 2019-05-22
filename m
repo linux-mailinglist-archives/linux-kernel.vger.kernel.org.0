@@ -2,87 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48DC3263F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:39:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2E41263FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:47:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729337AbfEVMjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 08:39:36 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38681 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728438AbfEVMjg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 08:39:36 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b76so1271638pfb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 05:39:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=dc7HIox1GsMuz4SBq4z5Y4Rf5G0I0yZOZzYD3qgtYkk=;
-        b=bJ0iQKw1WpVz5o+fAWQbVQTRvyqZj/6Mirn0lL9A+ptZB/CHbOT2FixTnj4fc/NfrK
-         0JAhbnGR9zUz4Fo1hnQ+GrtTo7OEfzVNY36Fwan0FSE6Kc3c535Ny13OG4ZKPC2RJhKW
-         UhEpSp+NxC41s4Y9m+5Re0Ain+tENvUL6HfhP44K/gZiahcp94gVoH49moHpv14ffiQM
-         KX+A99qSVDYJGv1m0/JaC9ztwdqkmN6cLO87sVlG4hTTlulR1f4k8ouVCMxMeyoT/AaL
-         ZH4ckKIkO96lt0dRYoNO2AfOLRCy2qHasKE5gTdRrjIm/1QLfnFIaYLlZCA7jZAJ1O0r
-         oyOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=dc7HIox1GsMuz4SBq4z5Y4Rf5G0I0yZOZzYD3qgtYkk=;
-        b=F1zDPHUdiJlrDvb/eB9RyZ/UdnmIftaQFdIZdLHnQK7FrFpaEMFIvr6atFuhbM96nd
-         4f8P1X4UEPNCGfvgNc0JBJbVw3nX9uJRN+Vo1WRuqsk5dNj705WBVn4gTzh8uvi0XHd/
-         M/PziBxfBOIt1IDQDN1UfvoEoroPtCYJEEvTu4bIu9buym7/cY9sWRZBgWAotUlX//U5
-         /HijrmRco1FKBJOA5cErMj0cEe7M//ZAKUQyXZCN74axkFUZ5g6czqbTl3YKFudFsGap
-         v/1oWMUAs66lAxPYJO/WuzjRVwIT5WCwqca9pdrIyDrklDU8OnpB1hHHFgO2q/lBWin7
-         qmHQ==
-X-Gm-Message-State: APjAAAVPm6ZLbps3AjOtGLJOxewUqZZB0cdcACPyoJT34TWX3cra2FBX
-        M/Jw+KKZSj+3flyGOrkxlHxhgRYsO/2TyA==
-X-Google-Smtp-Source: APXvYqxqnL4m4W21i3wMRJGnCrMhpbAjue2VzlAFhr3P/pr64Je+zpBUV1ERw25chi2BkyvOo31N9w==
-X-Received: by 2002:a62:164f:: with SMTP id 76mr96965718pfw.172.1558528775567;
-        Wed, 22 May 2019 05:39:35 -0700 (PDT)
-Received: from zhanggen-UX430UQ ([66.42.35.75])
-        by smtp.gmail.com with ESMTPSA id p16sm7830380pff.35.2019.05.22.05.39.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 05:39:35 -0700 (PDT)
-Date:   Wed, 22 May 2019 20:39:20 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     sean@poorly.run
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm_edid-load: Fix a missing-check bug in
- drivers/gpu/drm/drm_edid_load.c
-Message-ID: <20190522123920.GB6772@zhanggen-UX430UQ>
+        id S1729198AbfEVMq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 08:46:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39736 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728468AbfEVMqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 08:46:55 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD1E821773;
+        Wed, 22 May 2019 12:46:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558529215;
+        bh=4U9I/NIQVI//8jEbd8ZkohshHTF1sn59PS/Bq9njMLo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AudOvINVOGb4x2bKnHS0cL/0I2MQxsxZE0I1RGx+QCjXy8AgPOMX/H5z7/buVmllm
+         YkOmvkLJwOYL39HC4UDzkQBw6bB/PlYXxH1eyMZePkHjE1Iz1vXav5ennBIQogRzQp
+         nQqso7OYwuKP2oQP4DsBFyS/tZHic/LM81X+f4o8=
+Date:   Wed, 22 May 2019 14:46:52 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Geordan Neukum <gneukum1@gmail.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Matt Sickler <Matt.Sickler@daktronics.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH 3/6] staging: kpc2000: kpc_i2c: newline fixups to meet
+ linux style guide
+Message-ID: <20190522124652.GB22148@kroah.com>
+References: <cover.1558526487.git.gneukum1@gmail.com>
+ <1c1b8428a502e79f19af7bc2a98787ecc6a1ed5a.1558526487.git.gneukum1@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1c1b8428a502e79f19af7bc2a98787ecc6a1ed5a.1558526487.git.gneukum1@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In drm_load_edid_firmware(), fwstr is allocated by kstrdup(). And fwstr
-is dereferenced in the following codes. However, memory allocation 
-functions such as kstrdup() may fail and returns NULL. Dereferencing 
-this null pointer may cause the kernel go wrong. Thus we should check 
-this kstrdup() operation.
-Further, if kstrdup() returns NULL, we should return ERR_PTR(-ENOMEM) to
-the caller site.
+On Wed, May 22, 2019 at 12:13:59PM +0000, Geordan Neukum wrote:
+> The linux coding style document states:
+> 
+>   1) That braces should not be used where a single single statement
+>      will do. Therefore all instances of single block statements
+>      wrapped in braces that do not meet the qualifications of any
+>      of the exceptions to the rule should be fixed up.
+> 
+>   2) That the declaration of variables local to a given function
+>      should be immediately followed by a blank newline. Therefore,
+>      the single instance of this in kpc2000_i2c.c should be fixed
+>      up.
 
-Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+This really should be 2 different patches, but given that this file is
+so messy, I'll take it for now :)
 
----
-diff --git a/drivers/gpu/drm/drm_edid_load.c b/drivers/gpu/drm/drm_edid_load.c
-index a491509..a0e107a 100644
---- a/drivers/gpu/drm/drm_edid_load.c
-+++ b/drivers/gpu/drm/drm_edid_load.c
-@@ -290,6 +290,8 @@ struct edid *drm_load_edid_firmware(struct drm_connector *connector)
- 	 * the last one found one as a fallback.
- 	 */
- 	fwstr = kstrdup(edid_firmware, GFP_KERNEL);
-+	if (!fwstr)
-+		return ERR_PTR(-ENOMEM);
- 	edidstr = fwstr;
- 
- 	while ((edidname = strsep(&edidstr, ","))) {
----
+thanks,
+
+greg k-h
