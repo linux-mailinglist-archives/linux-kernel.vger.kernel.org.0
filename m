@@ -2,98 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7C2D27145
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 22:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D0E2714B
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 23:00:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730469AbfEVU7T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 16:59:19 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43224 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730372AbfEVU7R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 16:59:17 -0400
-Received: by mail-lj1-f196.google.com with SMTP id z5so3390422lji.10
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 13:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nikanor-nu.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uqCPCoACDLrIdM2VOYCKs6C/ASVTEPrZ/Yn9ydg742c=;
-        b=WzoZBkJGbm5qEiA84+al1JaNL937RHDrIzHIaDa+oIzzgavjzI3SIWy1BnK3DnnZjr
-         yS7hceBfhWvsTxQdJSwWfu82DMyyBpIZlrjUQjWn4FbNHpWFI3vEkMYZxISorNAsP22H
-         s6v2VJ+BfyEFYA8/AMmCtLEinMpOfkUi//ygzs5lgCCVG7hfSJPKSvAC4b+SrK8l1hiH
-         Hc7qcVm6oAg/xMY6sOcSTNldk+Uql19kWIbjwNAMYp497mCWBV7iRyErNNgDtTgepBSS
-         g2S+jOALtneoHm8KCcDcAqjW1FrQncom+ufUWBuipr2rtwPUVujnmQW+A+TBywLkolnz
-         b2yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uqCPCoACDLrIdM2VOYCKs6C/ASVTEPrZ/Yn9ydg742c=;
-        b=ZC90T7am4EzgyrCul1jOu3rpdg6vTgxxTp6JZc81cR9RVDl5NuedHuvVxm8fq5sUWu
-         vplMmrkWKHFLYwiXNgkZavIXdPcKwOvTcD16P94uJkUt6W4FLUf0pnOJJnvud21R9jYF
-         ct9yQt0GhyMG3R1w1FOyJmmzvteGADtapeI7ZU05lukPdg0tnUJDQcsChFjM+i3YM2lL
-         0F9DVp9wPx9sK0AulecbIJKU1VxrJQpiLQCaAHLOiD8E/GYqulQRZQPLyZ7KimyVl7sz
-         cnBFKHMl/sHfLKIKsYP2i3xI7p3/LUWYPgv0Nr13Sx66hMOkRMTsQ4ki8SrQoav2ZXIr
-         TtLQ==
-X-Gm-Message-State: APjAAAVjQF7Wv01e0yS2WBXiw3fp7+F3tHjkUnHa8eBfIRM/5KDvDjrh
-        KuNND58JabQo8k36pzq2pyK6CQ==
-X-Google-Smtp-Source: APXvYqxdqwcnA4Gt04dhqh8/LTKwWjx/XQP8Sw0q0xNbi8DWVzr6YGYmpbMRVZ39CmrD3Ty60zI1SA==
-X-Received: by 2002:a2e:8796:: with SMTP id n22mr35380065lji.75.1558558755267;
-        Wed, 22 May 2019 13:59:15 -0700 (PDT)
-Received: from dev.nikanor.nu (78-72-133-4-no161.tbcn.telia.com. [78.72.133.4])
-        by smtp.gmail.com with ESMTPSA id e12sm5506518lfb.70.2019.05.22.13.59.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 13:59:14 -0700 (PDT)
-From:   =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
-To:     gregkh@linuxfoundation.org
-Cc:     jeremy@azazel.net, dan.carpenter@oracle.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
-Subject: [PATCH 6/6] staging: kpc2000: remove invalid spaces in cell_probe.c
-Date:   Wed, 22 May 2019 22:58:49 +0200
-Message-Id: <20190522205849.17444-7-simon@nikanor.nu>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190522205849.17444-1-simon@nikanor.nu>
-References: <20190522205849.17444-1-simon@nikanor.nu>
+        id S1730262AbfEVVAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 17:00:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41854 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729686AbfEVVAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 17:00:40 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FF2121019;
+        Wed, 22 May 2019 21:00:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558558839;
+        bh=DAAiD6IH0KlDghAVNPmVbeERdOtKivo01YxuNAw7Lv4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NMu4b6BJ6eGOg5zZMYjFoMJPEjwWgJzXYlUFNL/cVGdMfzr6eLQQV4fTw0oerv/D+
+         RP2brANDVsvcMxhzfOECmHSJFZ8Ghm4KstXuGdGVc+DEa3jtgRa2btaLFFe575w+TH
+         4i9jAAXLgNkFwSgCIMEOX1dAXlJtDolPRrkjQVhw=
+Date:   Wed, 22 May 2019 16:00:38 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Isaac J. Manjarres" <isaacm@codeaurora.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+        frowand.list@gmail.com, joro@8bytes.org, robin.murphy@arm.com,
+        will.deacon@arm.com, kernel-team@android.com,
+        pratikp@codeaurora.org, lmark@codeaurora.org
+Subject: Re: [RFC/PATCH 2/4] PCI: Export PCI ACS and DMA searching functions
+ to modules
+Message-ID: <20190522210038.GE79339@google.com>
+References: <1558118857-16912-1-git-send-email-isaacm@codeaurora.org>
+ <1558118857-16912-3-git-send-email-isaacm@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1558118857-16912-3-git-send-email-isaacm@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes checkpatch.pl error "space prohibited before/after that
-parenthesis".
+On Fri, May 17, 2019 at 11:47:35AM -0700, Isaac J. Manjarres wrote:
+> IOMMU drivers that can be compiled as modules may
+> want to use pci_for_each_dma_alias() and pci_request_acs(),
+> so export those functions.
+> 
+> Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
 
-Signed-off-by: Simon Sandström <simon@nikanor.nu>
----
- drivers/staging/kpc2000/kpc2000/cell_probe.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
-diff --git a/drivers/staging/kpc2000/kpc2000/cell_probe.c b/drivers/staging/kpc2000/kpc2000/cell_probe.c
-index 7d4986502013..98a7a3194519 100644
---- a/drivers/staging/kpc2000/kpc2000/cell_probe.c
-+++ b/drivers/staging/kpc2000/kpc2000/cell_probe.c
-@@ -388,7 +388,7 @@ static int  kp2000_setup_dma_controller(struct kp2000_device *pcard)
- 
- 	// S2C Engines
- 	for (i = 0 ; i < 32 ; i++) {
--		capabilities_reg = readq( pcard->dma_bar_base + KPC_DMA_S2C_BASE_OFFSET + (KPC_DMA_ENGINE_SIZE * i) );
-+		capabilities_reg = readq(pcard->dma_bar_base + KPC_DMA_S2C_BASE_OFFSET + (KPC_DMA_ENGINE_SIZE * i));
- 		if (capabilities_reg & ENGINE_CAP_PRESENT_MASK) {
- 			err = create_dma_engine_core(pcard, (KPC_DMA_S2C_BASE_OFFSET + (KPC_DMA_ENGINE_SIZE * i)), i,  pcard->pdev->irq);
- 			if (err)
-@@ -397,7 +397,7 @@ static int  kp2000_setup_dma_controller(struct kp2000_device *pcard)
- 	}
- 	// C2S Engines
- 	for (i = 0 ; i < 32 ; i++) {
--		capabilities_reg = readq( pcard->dma_bar_base + KPC_DMA_C2S_BASE_OFFSET + (KPC_DMA_ENGINE_SIZE * i) );
-+		capabilities_reg = readq(pcard->dma_bar_base + KPC_DMA_C2S_BASE_OFFSET + (KPC_DMA_ENGINE_SIZE * i));
- 		if (capabilities_reg & ENGINE_CAP_PRESENT_MASK) {
- 			err = create_dma_engine_core(pcard, (KPC_DMA_C2S_BASE_OFFSET + (KPC_DMA_ENGINE_SIZE * i)), 32 + i,  pcard->pdev->irq);
- 			if (err)
--- 
-2.20.1
-
+> ---
+>  drivers/pci/pci.c    | 1 +
+>  drivers/pci/search.c | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 766f577..3f354c1 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3124,6 +3124,7 @@ void pci_request_acs(void)
+>  {
+>  	pci_acs_enable = 1;
+>  }
+> +EXPORT_SYMBOL_GPL(pci_request_acs);
+>  
+>  static const char *disable_acs_redir_param;
+>  
+> diff --git a/drivers/pci/search.c b/drivers/pci/search.c
+> index 2b5f720..cf9ede9 100644
+> --- a/drivers/pci/search.c
+> +++ b/drivers/pci/search.c
+> @@ -111,6 +111,7 @@ int pci_for_each_dma_alias(struct pci_dev *pdev,
+>  
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL_GPL(pci_for_each_dma_alias);
+>  
+>  static struct pci_bus *pci_do_find_bus(struct pci_bus *bus, unsigned char busnr)
+>  {
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
