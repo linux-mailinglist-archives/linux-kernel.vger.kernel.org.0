@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27FB0265B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 16:28:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23DAE265B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 16:28:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbfEVO2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 10:28:02 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:42240 "EHLO inva020.nxp.com"
+        id S1729543AbfEVO2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 10:28:14 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:42302 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728881AbfEVO14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728491AbfEVO14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 22 May 2019 10:27:56 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B8AE41A0099;
-        Wed, 22 May 2019 16:27:53 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 544671A000F;
+        Wed, 22 May 2019 16:27:54 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ABE501A000F;
-        Wed, 22 May 2019 16:27:53 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 47F8D1A01D8;
+        Wed, 22 May 2019 16:27:54 +0200 (CEST)
 Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.13])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 2C353205ED;
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id BC475205ED;
         Wed, 22 May 2019 16:27:53 +0200 (CEST)
 From:   laurentiu.tudor@nxp.com
 To:     hch@lst.de, stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
@@ -26,9 +26,9 @@ To:     hch@lst.de, stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
 Cc:     leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
         robin.murphy@arm.com, noring@nocrew.org, JuergenUrban@gmx.de,
         Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v6 3/5] usb: host: ohci-sm501: init genalloc for local memory
-Date:   Wed, 22 May 2019 17:27:46 +0300
-Message-Id: <20190522142748.10078-4-laurentiu.tudor@nxp.com>
+Subject: [PATCH v6 4/5] usb: host: ohci-tmio: init genalloc for local memory
+Date:   Wed, 22 May 2019 17:27:47 +0300
+Message-Id: <20190522142748.10078-5-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190522142748.10078-1-laurentiu.tudor@nxp.com>
 References: <20190522142748.10078-1-laurentiu.tudor@nxp.com>
@@ -49,98 +49,54 @@ For context, see thread here: https://lkml.org/lkml/2019/4/22/357
 
 Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 ---
- drivers/usb/host/ohci-sm501.c | 47 +++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 27 deletions(-)
+ drivers/usb/host/ohci-tmio.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/usb/host/ohci-sm501.c b/drivers/usb/host/ohci-sm501.c
-index c26228c25f99..b710e100aec9 100644
---- a/drivers/usb/host/ohci-sm501.c
-+++ b/drivers/usb/host/ohci-sm501.c
-@@ -110,40 +110,18 @@ static int ohci_hcd_sm501_drv_probe(struct platform_device *pdev)
- 		goto err0;
+diff --git a/drivers/usb/host/ohci-tmio.c b/drivers/usb/host/ohci-tmio.c
+index f88a0370659f..3b84ce0c3f29 100644
+--- a/drivers/usb/host/ohci-tmio.c
++++ b/drivers/usb/host/ohci-tmio.c
+@@ -224,11 +224,6 @@ static int ohci_hcd_tmio_drv_probe(struct platform_device *dev)
+ 		goto err_ioremap_regs;
  	}
  
--	/* The sm501 chip is equipped with local memory that may be used
--	 * by on-chip devices such as the video controller and the usb host.
--	 * This driver uses dma_declare_coherent_memory() to make sure
--	 * usb allocations with dma_alloc_coherent() allocate from
--	 * this local memory. The dma_handle returned by dma_alloc_coherent()
--	 * will be an offset starting from 0 for the first local memory byte.
--	 *
--	 * So as long as data is allocated using dma_alloc_coherent() all is
--	 * fine. This is however not always the case - buffers may be allocated
--	 * using kmalloc() - so the usb core needs to be told that it must copy
--	 * data into our local memory if the buffers happen to be placed in
--	 * regular memory. The HCD_LOCAL_MEM flag does just that.
--	 */
+-	ret = dma_declare_coherent_memory(&dev->dev, sram->start, sram->start,
+-				resource_size(sram));
+-	if (ret)
+-		goto err_dma_declare;
 -
--	retval = dma_declare_coherent_memory(dev, mem->start,
--					 mem->start - mem->parent->start,
--					 resource_size(mem));
--	if (retval) {
--		dev_err(dev, "cannot declare coherent memory\n");
--		goto err1;
--	}
--
- 	/* allocate, reserve and remap resources for registers */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (res == NULL) {
- 		dev_err(dev, "no resource definition for registers\n");
- 		retval = -ENOENT;
--		goto err2;
-+		goto err1;
- 	}
+ 	if (cell->enable) {
+ 		ret = cell->enable(dev);
+ 		if (ret)
+@@ -239,6 +234,11 @@ static int ohci_hcd_tmio_drv_probe(struct platform_device *dev)
+ 	ohci = hcd_to_ohci(hcd);
+ 	ohci_hcd_init(ohci);
  
- 	hcd = usb_create_hcd(driver, &pdev->dev, dev_name(&pdev->dev));
- 	if (!hcd) {
- 		retval = -ENOMEM;
--		goto err2;
-+		goto err1;
- 	}
- 
- 	hcd->rsrc_start = res->start;
-@@ -164,6 +142,24 @@ static int ohci_hcd_sm501_drv_probe(struct platform_device *pdev)
- 
- 	ohci_hcd_init(hcd_to_ohci(hcd));
- 
-+	/* The sm501 chip is equipped with local memory that may be used
-+	 * by on-chip devices such as the video controller and the usb host.
-+	 * This driver uses genalloc so that usb allocations with
-+	 * gen_pool_dma_alloc() allocate from this local memory. The dma_handle
-+	 * returned by gen_pool_dma_alloc() will be an offset starting from 0
-+	 * for the first local memory byte.
-+	 *
-+	 * So as long as data is allocated using gen_pool_dma_alloc() all is
-+	 * fine. This is however not always the case - buffers may be allocated
-+	 * using kmalloc() - so the usb core needs to be told that it must copy
-+	 * data into our local memory if the buffers happen to be placed in
-+	 * regular memory. The HCD_LOCAL_MEM flag does just that.
-+	 */
++	ret = usb_hcd_setup_local_mem(hcd, sram->start, sram->start,
++				      resource_size(sram));
++	if (ret < 0)
++		goto err_enable;
 +
-+	if (usb_hcd_setup_local_mem(hcd, mem->start,
-+				    mem->start - mem->parent->start,
-+				    resource_size(mem)) < 0)
-+		goto err5;
- 	retval = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (retval)
- 		goto err5;
-@@ -181,8 +177,6 @@ static int ohci_hcd_sm501_drv_probe(struct platform_device *pdev)
- 	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
- err3:
+ 	ret = usb_add_hcd(hcd, irq, 0);
+ 	if (ret)
+ 		goto err_add_hcd;
+@@ -254,8 +254,6 @@ static int ohci_hcd_tmio_drv_probe(struct platform_device *dev)
+ 	if (cell->disable)
+ 		cell->disable(dev);
+ err_enable:
+-	dma_release_declared_memory(&dev->dev);
+-err_dma_declare:
+ 	iounmap(hcd->regs);
+ err_ioremap_regs:
+ 	iounmap(tmio->ccr);
+@@ -276,7 +274,6 @@ static int ohci_hcd_tmio_drv_remove(struct platform_device *dev)
+ 	tmio_stop_hc(dev);
+ 	if (cell->disable)
+ 		cell->disable(dev);
+-	dma_release_declared_memory(&dev->dev);
+ 	iounmap(hcd->regs);
+ 	iounmap(tmio->ccr);
  	usb_put_hcd(hcd);
--err2:
--	dma_release_declared_memory(dev);
- err1:
- 	release_mem_region(mem->start, resource_size(mem));
- err0:
-@@ -197,7 +191,6 @@ static int ohci_hcd_sm501_drv_remove(struct platform_device *pdev)
- 	usb_remove_hcd(hcd);
- 	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
- 	usb_put_hcd(hcd);
--	dma_release_declared_memory(&pdev->dev);
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
- 	if (mem)
- 		release_mem_region(mem->start, resource_size(mem));
 -- 
 2.17.1
 
