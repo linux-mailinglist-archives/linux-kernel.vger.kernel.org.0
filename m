@@ -2,97 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D686425BEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 04:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1053C25BF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 04:33:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbfEVCXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 22:23:40 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35252 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726466AbfEVCXk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 22:23:40 -0400
-Received: by mail-lj1-f196.google.com with SMTP id h11so595589ljb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 19:23:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FoATy8oZsskl8ARNANZmhlDNjVNkchw4y2fRYzB5sLg=;
-        b=PVPFHzryLgdl317MtVFNF4zHtZ9oKN1Vd1ljsQiqgKDbN6uztGOCkcuaO1VMftuRnl
-         VutoyZXPws6YtnCNpjj9ORtgriTRvWLuXp/nIUG2YEUsBp4CfNtxNUOv5zggwq0JxNyz
-         JBXDPdq3cVwXGcV6Ubb3Blx2+t1YYDNbK9njZwcTI90V69psWIQ4514/glNSAUPL5X21
-         gtxk6nQ3MxfjVWV7isrI/fSN7QLV9ZkhGslrh+IVoTnIFM9OlaDbJdKz+b8iQLJrbn4w
-         fhjDX/9ncQqEvq8vus8mrlUzoUtFL0s/hPPOIfe8IYhh8vKKzsSAevcW55XIjoEBbiZO
-         hMcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FoATy8oZsskl8ARNANZmhlDNjVNkchw4y2fRYzB5sLg=;
-        b=g5UVpKDs9mSociL6Hvavv8O9yePRf5O1CaH9uPQueuyqhpVGkCdhjx5i7qxiJcyNl1
-         truYA2oi6FyQzoCjKTh9n/JSwGE3ufwhtUzbZCVTgifTudigzfmuOMQi5IsoAbCXtYff
-         jDsITNEUFiUHyXbwEYmmBQz+drnVWxLXRgdNOIU0U9Na9GCA730BRZ3CzJh3hDmX+b7D
-         KC6jEDr2O0cB4k80VUff0FoFoztnw/AJwQDFUk+WDlecaqMCBy9reAg5rmfAemxbimbf
-         JTAv0YVOoWcE2XCdgotoLAN9xkHCsbfL2VI5JbX/ZgBFS0XfBieRdZPN440ZJhA3kUr1
-         /D3A==
-X-Gm-Message-State: APjAAAXUdiWq3GhRRBxD6K9oMJaTHUzlYL46vQgqqd/u55P+OSq961V3
-        6ruWB+9D7MpwwXVxTgPoihQQw60gZHmg3lUtzzoa
-X-Google-Smtp-Source: APXvYqy8jWokTyif6KzOybi3pSR8WmhOtchqhgdhvt7RrSGFTqkGrmdUyolCs+vmB7F+uW4cl7gy9HWttXA8XM5+5fI=
-X-Received: by 2002:a2e:1412:: with SMTP id u18mr8759792ljd.197.1558491817982;
- Tue, 21 May 2019 19:23:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <67828806f9d2bf0f1e98e24afa58af55c8c8678f.1557358701.git.rgb@redhat.com>
-In-Reply-To: <67828806f9d2bf0f1e98e24afa58af55c8c8678f.1557358701.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 21 May 2019 22:23:27 -0400
-Message-ID: <CAHC9VhQ2X_iVO658JP5GgUy8rsr_LnqeJNeQTiWKnQxaCUUFKw@mail.gmail.com>
-Subject: Re: [PATCH ghak111 V2] audit: deliver signal_info regarless of syscall
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        sgrubb@redhat.com, omosnace@redhat.com,
-        Eric Paris <eparis@parisplace.org>, ebiederm@xmission.com,
-        oleg@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+        id S1728281AbfEVCdO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 22:33:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41738 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727208AbfEVCdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 22:33:14 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5302B2173C;
+        Wed, 22 May 2019 02:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558492393;
+        bh=stsomyQrXg2oFOXmpSx06uL2yS8uJMmKpQW0CHbxwiU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=S9s7o5FgX4z/u7+WIrJ4i4+Qxe4jXFBy3y5hH0XzwyZgwDhA92N2D+Qji5lMGhvct
+         ALiCiNedjpmNN/4R0cPv4AmY+Vx6Ho0GShjq1voZmi5rbAp8MhNOGAnhK4UEhHH7uC
+         q6RDy4zNqynWhzrlKoTS0fuaO0iCWzj2oi/N6fUU=
+Date:   Tue, 21 May 2019 19:33:12 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Roman Penyaev <rpenyaev@suse.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Azat Khuzhin <azat@libevent.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 13/13] epoll: implement epoll_create2() syscall
+Message-Id: <20190521193312.42a3fdda1774b1922730e459@linux-foundation.org>
+In-Reply-To: <41b847c48ccbe0c406bd54c16fbc1bf0@suse.de>
+References: <20190516085810.31077-1-rpenyaev@suse.de>
+        <20190516085810.31077-14-rpenyaev@suse.de>
+        <CAK8P3a2-fN_BHEnEHvf4X9Ysy4t0_SnJetQLvFU1kFa3OtM0fQ@mail.gmail.com>
+        <41b847c48ccbe0c406bd54c16fbc1bf0@suse.de>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 12:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
->
-> When a process signals the audit daemon (shutdown, rotate, resume,
-> reconfig) but syscall auditing is not enabled, we still want to know the
-> identity of the process sending the signal to the audit daemon.
->
-> Move audit_signal_info() out of syscall auditing to general auditing but
-> create a new function audit_signal_info_syscall() to take care of the
-> syscall dependent parts for when syscall auditing is enabled.
->
-> Please see the github kernel audit issue
-> https://github.com/linux-audit/audit-kernel/issues/111
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
-> Changelog:
-> v2:
-> - change patch title to avoid siginfo_t confusion
-> - change return value to "0" from AUDIT_OFF
-> - use dummy functions instead of macros in header files
->
-> Compile/boot/test auditsyscall enable/disable, audit disable,
-> auditsyscall enable/selinux disable.
->
->  include/linux/audit.h |  9 +++++++++
->  kernel/audit.c        | 27 +++++++++++++++++++++++++++
->  kernel/audit.h        |  8 ++++++--
->  kernel/auditsc.c      | 19 +++----------------
->  kernel/signal.c       |  2 +-
->  5 files changed, 46 insertions(+), 19 deletions(-)
+On Thu, 16 May 2019 12:20:50 +0200 Roman Penyaev <rpenyaev@suse.de> wrote:
 
-Merged into audit/next, thanks.
+> On 2019-05-16 12:03, Arnd Bergmann wrote:
+> > On Thu, May 16, 2019 at 10:59 AM Roman Penyaev <rpenyaev@suse.de> 
+> > wrote:
+> >> 
+> >> epoll_create2() is needed to accept EPOLL_USERPOLL flags
+> >> and size, i.e. this patch wires up polling from userspace.
+> > 
+> > Could you add the system call to all syscall*.tbl files at the same 
+> > time here?
+> 
+> For all other archs, you mean?  Sure.  But what is the rule of thumb?
+> Sometimes people tend to add to the most common x86 and other tables
+> are left untouched, but then you commit the rest, e.g.
+> 
+> commit 39036cd2727395c3369b1051005da74059a85317
+> Author: Arnd Bergmann <arnd@arndb.de>
+> Date:   Thu Feb 28 13:59:19 2019 +0100
+> 
+>      arch: add pidfd and io_uring syscalls everywhere
+> 
 
--- 
-paul moore
-www.paul-moore.com
+I thought the preferred approach was to wire up the architectures on
+which the submitter has tested the syscall, then allow the arch
+maintainers to enable the syscall independently?
+
+And to help them in this, provide a test suite for the new syscall
+under tools/testing/selftests/.
+
+https://github.com/rouming/test-tools/blob/master/userpolled-epoll.c
+will certainly help but I do think it would be better to move the test
+into the kernel tree to keep it maintained and so that many people run
+it in their various setups on an ongoing basis.
+
+
