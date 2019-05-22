@@ -2,289 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54A872684E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 18:32:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC3AB26859
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 18:34:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730029AbfEVQcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 12:32:11 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46100 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728527AbfEVQcK (ORCPT
+        id S1730107AbfEVQeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 12:34:04 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:55158 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728527AbfEVQeE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 12:32:10 -0400
-Received: by mail-lf1-f66.google.com with SMTP id l26so2154307lfh.13
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 09:32:08 -0700 (PDT)
+        Wed, 22 May 2019 12:34:04 -0400
+Received: by mail-it1-f194.google.com with SMTP id h20so4590956itk.4;
+        Wed, 22 May 2019 09:34:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qThinqX735sf8pV9gEurKexsu6v0KDCesOpmYS6C1nU=;
-        b=LfaGikSQzkfp3MTtTD2riyljAlYtgygqiQ76isa3QiDIAdNTkg9Psw2gEp57lgcaC9
-         hXjQYzoyg9a+kq67pScg7J/emNvgOW+2y1jaoct/Ur1ocYSI/5NGNGEnCvBMlFnuc8qM
-         lqKrn9Z35znXep5iHwzzV/gWqSWLC03boR0VrVXI/ZZAxTHijH+tSNR77NkL0BQmma0J
-         UlJBJA2OYAQDSaD24DiicMLJe5rNn8y7PyzLUjbfBzxl+K90QZJntGOyARexDhDr8VY9
-         s5FIGIA2dcOxR+igryXgPdS8i7Ypz9fLC10KN/KPb79JvSeIzU9NX9xqEZI5E8OhqCPa
-         86lg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SYqk2Fyyr6LmcYSZXyKPZozb0V8mVmcU+MqGFmXtesU=;
+        b=EnejOOKTBmL2BlIj1iVCbUs6tCYpLWz1FqnAYz4QlaNH/CDgDAPV+0zb/QKkBWKYA5
+         A8tpKMtc1p4D4ap4xptHACvXOT6yQMgiHBHTg5KNBo+bnZ5v91g2IS2iBJS/p2NWQjMX
+         zPepruQ5lfMaHoCVGh3yX1YZK3aoZbvK0FJ92RxaYXMdDiL3xy8gPA3XfcwnknKglvaY
+         QYkk0pwRy4og5PeLb/5Vct0Fhq8Qiehy6BQdrbpKE05/LlmCo+kH96Thksw+VrOPMqJc
+         FrG0sbHtNBw0H8sQFl0HsVFPohKBaArN8F8LjaMvYfwVz5l11De5EQqoDoRsmTG0+Pu4
+         Sd7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=qThinqX735sf8pV9gEurKexsu6v0KDCesOpmYS6C1nU=;
-        b=DRuvem3zy33DyulEVYnp7ch15c0M/uJNGWwQ2GGd5T8zxaZYe/ZuV6XShwInLrE4co
-         WWel7RXIg7bshv/7mFHSKhlI8g8ZeNp/45jEYkrx+wZojYulKC8IfAsvI7qgLk9+qbou
-         ZhSSNnDhpX6HLwGPsoefc7vUW1lKXRch607waaiZVwVBVYcS4UA0SwmoT1Omt1oqMb3m
-         sSEgPkE5gSlJ+MkpCS6bbRyk8++QvB5XWq9s/H2Fd2/ffgnoIkfpRCyliAQFLORCllp6
-         oUdaxNOxQfMJs1WqNXPJGW5qdYT5N691ECr8OSoT0W2t4t1DVDx4v9P3Em4goJd+6gUS
-         pzww==
-X-Gm-Message-State: APjAAAWX2mHCsv9X9LLtT79eYWaym78ATUKbPER3OGryIk+iQF53TcaM
-        chyH5CuQPeUNavlC5Z+afdC29w==
-X-Google-Smtp-Source: APXvYqz93Mn96ebEH/DifbwBhBmr7sSu/xHP7uqRK6cUNes/iTbCorNF+sUo3nfTvqTFfsHOIWVLUA==
-X-Received: by 2002:ac2:4213:: with SMTP id y19mr35566420lfh.66.1558542727839;
-        Wed, 22 May 2019 09:32:07 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.81.14])
-        by smtp.gmail.com with ESMTPSA id x16sm5367958lji.3.2019.05.22.09.32.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 09:32:07 -0700 (PDT)
-Subject: Re: [PATCH v12 3/3] dt-bindings: mfd: Document Renesas R-Car Gen3
- RPC-IF MFD bindings
-To:     masonccyang@mxic.com.tw, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Lee Jones <lee.jones@linaro.org>
-Cc:     Boris Brezillon <bbrezillon@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh@kernel.org>, zhengxunli@mxic.com.tw,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-References: <1556092536-17095-1-git-send-email-masonccyang@mxic.com.tw>
- <20190424212356.GA27103@bogus>
- <65853dc2-6f3c-1494-7e72-54877797cdd2@gmail.com>
- <20190507125730.GD29524@dell>
- <OF08A5650B.8AE8977C-ON482583F4.000E5B1E-482583F4.000F7215@mxic.com.tw>
- <d229b19e-351c-c576-b5c4-716d10dad1a0@gmail.com> <20190508061119.GB7627@dell>
- <OFE86674B9.06D723A0-ON482583F5.000AD50C-482583F5.000BA075@mxic.com.tw>
- <a05cff8f-7df2-1938-c0e7-f9366bece607@cogentembedded.com>
- <OFB19BCE91.6EBBAA77-ON482583F6.000234E2-482583F6.00061290@mxic.com.tw>
- <CAMuHMdUP8KU3Dbv6cwOvrY0hWOcm1xqVcsi20+GvazYMDLGGZg@mail.gmail.com>
- <OFD932ABFC.E3FFCEB8-ON482583F9.003412B1-482583F9.0034D5CA@mxic.com.tw>
- <b51d1cb7-b3b5-208f-ab4c-145ecb57805d@cogentembedded.com> <OFAD9AA573.86373
- <44bc8f0a-cbdc-db4a-9a46-b8bae5cc37a2@cogentembedded.com>
- <OF5AF00898.3CE87C98-ON48258400.00259B16-48258400.0028A4F5@mxic.com.tw>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <5e718d9f-3aeb-c2ef-0723-400497b2b98f@cogentembedded.com>
-Date:   Wed, 22 May 2019 19:32:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SYqk2Fyyr6LmcYSZXyKPZozb0V8mVmcU+MqGFmXtesU=;
+        b=G3W/c474JxcWVSn9HqzK95xKBoj1IuW1AlLul0RxofRJcSJ91yFwktSsWmzgrULYbB
+         4ajhWIJrO8OymcnfcaIFEkatFI5TSnUmxspo848ihGGyebhpaPvcN4OA7l3HOih4FxeR
+         Si7BF54cKx5idXjaK/qFl9gk2PGN6/OXe57M3WYZHzDywidhrBpKYoS3vY0CuiTnsYKf
+         3gwOAUDPcmfzZ9L3AR2bS1SBMMVqPrjX9ww2NnVfkRIR/J/hyiwoP73H9cu1qM/quOWh
+         IKOJzLOmm/WvUvqbg0nRC3un/HhilNlQfqYB/8ZYTeHYPV4dJy6jA87rOx8XsSj8Dyh/
+         uvxw==
+X-Gm-Message-State: APjAAAVHZkAwNA35zaQekc60SeG3/pljUorovua8YN89XH21YMA7rcTy
+        VD1fqUcAsgaLrlU8wFMBukfKdnwz35okb9O2y8Y=
+X-Google-Smtp-Source: APXvYqzx1GpMAk7cc3ITinEA5P2E12bTc1XlVEEYUciPFZl4sgsaeYO+0z3aVfQA2t/M3DEgJww4EDZQ4gRIG/tkhPQ=
+X-Received: by 2002:a24:e084:: with SMTP id c126mr8884976ith.124.1558542842726;
+ Wed, 22 May 2019 09:34:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <OF5AF00898.3CE87C98-ON48258400.00259B16-48258400.0028A4F5@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190522150505.GA4915@redhat.com> <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
+ <20190522161407.GB4915@redhat.com>
+In-Reply-To: <20190522161407.GB4915@redhat.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Wed, 22 May 2019 09:33:50 -0700
+Message-ID: <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, dbueso@suse.de, axboe@kernel.dk,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/20/2019 10:23 AM, masonccyang@mxic.com.tw wrote:
+On Wed, May 22, 2019 at 9:14 AM Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> On 05/22, Deepa Dinamani wrote:
+> >
+> > -Deepa
+> >
+> > > On May 22, 2019, at 8:05 AM, Oleg Nesterov <oleg@redhat.com> wrote:
+> > >
+> > >> On 05/21, Deepa Dinamani wrote:
+> > >>
+> > >> Note that this patch returns interrupted errors (EINTR, ERESTARTNOHAND,
+> > >> etc) only when there is no other error. If there is a signal and an error
+> > >> like EINVAL, the syscalls return -EINVAL rather than the interrupted
+> > >> error codes.
+> > >
+> > > Ugh. I need to re-check, but at first glance I really dislike this change.
+> > >
+> > > I think we can fix the problem _and_ simplify the code. Something like below.
+> > > The patch is obviously incomplete, it changes only only one caller of
+> > > set_user_sigmask(), epoll_pwait() to explain what I mean.
+> > > restore_user_sigmask() should simply die. Although perhaps another helper
+> > > makes sense to add WARN_ON(test_tsk_restore_sigmask() && !signal_pending).
+> >
+> > restore_user_sigmask() was added because of all the variants of these
+> > syscalls we added because of y2038 as noted in commit message:
+> >
+> >   signal: Add restore_user_sigmask()
+> >
+> >     Refactor the logic to restore the sigmask before the syscall
+> >     returns into an api.
+> >     This is useful for versions of syscalls that pass in the
+> >     sigmask and expect the current->sigmask to be changed during
+> >     the execution and restored after the execution of the syscall.
+> >
+> >     With the advent of new y2038 syscalls in the subsequent patches,
+> >     we add two more new versions of the syscalls (for pselect, ppoll
+> >     and io_pgetevents) in addition to the existing native and compat
+> >     versions. Adding such an api reduces the logic that would need to
+> >     be replicated otherwise.
+>
+> Again, I need to re-check, will continue tomorrow. But so far I am not sure
+> this helper can actually help.
+>
+> > > --- a/fs/eventpoll.c
+> > > +++ b/fs/eventpoll.c
+> > > @@ -2318,19 +2318,19 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct epoll_event __user *, events,
+> > >        size_t, sigsetsize)
+> > > {
+> > >    int error;
+> > > -    sigset_t ksigmask, sigsaved;
+> > >
+> > >    /*
+> > >     * If the caller wants a certain signal mask to be set during the wait,
+> > >     * we apply it here.
+> > >     */
+> > > -    error = set_user_sigmask(sigmask, &ksigmask, &sigsaved, sigsetsize);
+> > > +    error = set_user_sigmask(sigmask, sigsetsize);
+> > >    if (error)
+> > >        return error;
+> > >
+> > >    error = do_epoll_wait(epfd, events, maxevents, timeout);
+> > >
+> > > -    restore_user_sigmask(sigmask, &sigsaved);
+> > > +    if (error != -EINTR)
+> >
+> > As you address all the other syscalls this condition becomes more and
+> > more complicated.
+>
+> May be.
+>
+> > > --- a/include/linux/sched/signal.h
+> > > +++ b/include/linux/sched/signal.h
+> > > @@ -416,7 +416,6 @@ void task_join_group_stop(struct task_struct *task);
+> > > static inline void set_restore_sigmask(void)
+> > > {
+> > >    set_thread_flag(TIF_RESTORE_SIGMASK);
+> > > -    WARN_ON(!test_thread_flag(TIF_SIGPENDING));
+> >
+> > So you always want do_signal() to be called?
+>
+> Why do you think so? No. This is just to avoid the warning, because with the
+> patch I sent set_restore_sigmask() is called "in advance".
+>
+> > You will have to check each architecture's implementation of
+> > do_signal() to check if that has any side effects.
+>
+> I don't think so.
 
->>>>> -------------------------------------------------------------->
->>>>>
->>>>> Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
->>>>> ---------------------------------------------------------
->>>>>
->>>>>   RPC-IF supports both SPI NOR and HyperFlash (CFI-compliant flash)
->>>>>
->>>>>   Required properties:
->>>>>   - compatible: should be an SoC-specific compatible value, followed 
-> 
->>> by
->>>>>                   "renesas,rcar-gen3-rpc" as a fallback.
->>>>>                   supported SoC-specific values are:
->>>>>                   "renesas,r8a77995-rpc"  (R-Car D3)
->>>>>   - reg: should contain three register areas:
->>>>>           first for the base address of RPC-IF registers,
->>>>
->>>>    I'd drop "the base address" here.
->>>
->>> okay.
->>>
->>>>>           second for the direct mapping read mode and
->>>>>           third for the write buffer area.
->>>>>   - reg-names: should contain "regs", "dirmap" and "wbuf"
->>>>>   - clocks: should contain 1 entries for the module's clock
->>>>>   - clock-names: should contain "rpc"
->>>>
->>>>    I suspect we'd need the RPC/RPCD2 clocks mentioned as well (not 
-> sure 
->>> yet)...
->>>
->>> Need it ?
->>
->>    You seem to call clk_get_rate() on the module clock, I doubt that's
->> correct topologically...
+Why not?
 
-   clk_set_rate(), sorry.
+> > Although this is not what the patch is solving.
+>
+> Sure. But you know, after I tried to read the changelog, I am not sure
+> I understand what exactly you are trying to fix. Could you please explain
+> this part
+>
+>         The behavior
+>         before 854a6ed56839a was that the signals were dropped after the error
+>         code was decided. This resulted in lost signals but the userspace did not
+>         notice it
+>
+> ? I fail to understand it, sorry. It looks as if the code was already buggy before
+> that commit and it could miss a signal or something like this, but I do not see how.
 
-> 
-> I think it's correct but just like Geert mentioned that there is no any 
-> patch
-> in drivers/clk/renesas/r8a77995-cpg-mssr.c adding RPC-related clocks.
-> 
-> 
-> I patched dt-bindings/clock/r8a77995-cpg-mssr.h for some simple testing
-> 
-> -#define R8A77995_CLK_RPC               29
-> -#define R8A77995_CLK_RPCD2             30
-> +#define R8A77995_CLK_RPC               31
-> +#define R8A77995_CLK_RPCD2             32
+Did you read the explanation pointed to in the commit text? :
 
-   Hm, what does this do?
+https://lore.kernel.org/linux-fsdevel/20190427093319.sgicqik2oqkez3wk@dcvr/
 
-> by clk_prepare_enable() & clk_disable_unprepare() with CPG_MOD 917 
-> on D3 draak board, it is working fine.
+Let me know what part you don't understand and I can explain more.
 
->>>>>   - SPI mode:git
->>>>>
->>>>>           rpc: rpc-if@ee200000 {
->>>>
->>>>    The node names should be generic, based on the device class. And in 
->>>> this
->>>> case I'd like to use "spi@ee200000" as otherwise dtc keeps bitching like 
->>>> below:
->>>
->>> okay, patch to
->>>
->>> rpc_if: spi@<...>
->>
->>    That, or just keep the node label.
-> 
-> okay.
-> 
->>>>>   - HF mode:
->>>>>           rpc: rpc-if@ee200000 {
->>>>
->>>>    Again, spi@<...>.
->>>
->>> what about rpc_if: hf@<...>
->>
->>    Can't change the node name, as it's declared in the .dtsi files, not *.dts
->> ones. And "spi" works for the HF case as well -- no complaints from dtc. 
-> :-)
+It would be better to understand the isssue before we start discussing the fix.
 
-   Maybe it's possible using the "name" prop, don't know...
-
-> okay,
->  
-> Patch DTS to
-> ===============================================================> 
-> +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
-> +---------------------------------------------------------
-> +
-> +RPC-IF supports both SPI NOR and HyperFlash (CFI-compliant flash)
-> +
-> +Required properties:
-> +- compatible: should be an SoC-specific compatible value, followed by
-> +                                "renesas,rcar-gen3-rpc" as a fallback.
-> +                                supported SoC-specific values are:
-> +                                "renesas,r8a77995-rpc"          (R-Car 
-> D3)
-> +- reg: should contain three register areas:
-> +                first for RPC-IF registers,
-> +                second for the direct mapping read mode and
-> +                third for the write buffer area.
-> +- reg-names: should contain "regs", "dirmap" and "wbuf"
-> +- clocks: should contain 1 entries for the module's clock
-
-   1 entry (clock node phandle and specifier).
-
-> +- clock-names: should contain "rpc"
-> +- power-domains: should contain system-controller(sysc) for 
-> power-domain-cell
-
-   What's "power-domain-cell"? I know "#power-domain-cells". I'd like this
-to be "the power domain node's phandle and specifier".
-
-> +- resets: should contain clock pulse generator(cpg) for reset-cell,
-
-   It's "#reset-cells" again. I'd like this to be "the reset node's phandle
-and specifier".
-
-> +                  power-domain-cell and clock-cell
-
-   Why mntion clock-cell at all here?
-
-> +- #address-cells: should be 1
-> +- #size-cells: should be 0
-> +
-> +Example:
-> +- SPI mode:
-> +
-> +                rpc: spi@ee200000 {
-> +                                compatible = "renesas,r8a77995-rpc", 
-> "renesas,rcar-gen3-rpc";
-> +                                reg = <0 0xee200000 0 0x200>, <0 
-> 0x08000000 0 0x4000000>,
-> +                                      <0 0xee208000 0 0x100>;
-> +                                reg-names = "regs", "dirmap", "wbuf";
-> +                                clocks = <&cpg CPG_MOD 917>;
-> +                                clock-names = "rpc";
-> +                                power-domains = <&sysc 
-> R8A77995_PD_ALWAYS_ON>;
-> +                                resets = <&cpg 917>;
-> +                                #address-cells = <1>;
-> +                                #size-cells = <0>;
-> +
-> +                                flash@0 {
-> +                                                compatible = 
-> "jedec,spi-nor";
-> +                                                reg = <0>;
-> +                                                spi-max-frequency = 
-> <40000000>;
-> +                                                spi-tx-bus-width = <1>;
-> +                                                spi-rx-bus-width = <1>;
-> +                                };
-> +                };
-> +
-> +- HF mode:
-
-   HyperFlash, please.
-
-> +                rpc: spi@ee200000 {
-> +                                compatible = "renesas,r8a77995-rpc", 
-> "renesas,rcar-gen3-rpc";
-> +                                reg = <0 0xee200000 0 0x200>, <0 
-> 0x08000000 0 0x4000000>,
-> +                                      <0 0xee208000 0 0x100>;
-> +                                reg-names = "regs", "dirmap", "wbuf";
-> +                                clocks = <&cpg CPG_MOD 917>;
-> +                                clock-names = "rpc";
-> +                                power-domains = <&sysc 
-> R8A77995_PD_ALWAYS_ON>;
-> +                                resets = <&cpg 917>;
-> +                                #address-cells = <1>;
-> +                                #size-cells = <0>;
-
-   And I don't think duplicating the same device node is a good idea...
-
-> +                                flash@0 {
-> +                                                compatible = 
-> "cypress,hyperflash", "cfi-flash";
-> +                                                reg = <0>;
-> +                                };
-> +                };
-> ===============================================================<
-> 
-> thanks & best regards,
-> Mason
-[...]
-
-MBR, Sergei
+-Deepa
