@@ -2,112 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 182C5264AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 15:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83F90264B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 15:26:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729730AbfEVNZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 09:25:43 -0400
-Received: from smtp1.goneo.de ([85.220.129.30]:50018 "EHLO smtp1.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729126AbfEVNZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 09:25:42 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp1.goneo.de (Postfix) with ESMTP id 9E9E123F9C5;
-        Wed, 22 May 2019 15:25:38 +0200 (CEST)
-X-Virus-Scanned: by goneo
-X-Spam-Flag: NO
-X-Spam-Score: -2.754
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.754 tagged_above=-999 tests=[ALL_TRUSTED=-1,
-        AWL=0.146, BAYES_00=-1.9] autolearn=ham
-Received: from smtp1.goneo.de ([127.0.0.1])
-        by localhost (smtp1.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id dK085gI_J9hg; Wed, 22 May 2019 15:25:37 +0200 (CEST)
-Received: from [192.168.1.127] (host-091-097-246-171.ewe-ip-backbone.de [91.97.246.171])
-        by smtp1.goneo.de (Postfix) with ESMTPSA id 3B50524129B;
-        Wed, 22 May 2019 15:25:37 +0200 (CEST)
-Subject: Re: [PATCH RFC 0/2] docs: Deal with some Sphinx deprecation warnings
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190521211714.1395-1-corbet@lwn.net> <87d0kb7xf6.fsf@intel.com>
- <20190522071909.050bb227@coco.lan>
-From:   Markus Heiser <markus.heiser@darmarit.de>
-Message-ID: <39b12927-9bf9-a304-4108-8f471a204f89@darmarit.de>
-Date:   Wed, 22 May 2019 15:25:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        id S1729753AbfEVNZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 09:25:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51378 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729126AbfEVNZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 09:25:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26F9615AB;
+        Wed, 22 May 2019 06:25:46 -0700 (PDT)
+Received: from [10.1.26.184] (unknown [10.1.26.184])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA7E43F73F;
+        Wed, 22 May 2019 06:25:44 -0700 (PDT)
+Subject: Re: [PATCH] swiotlb: sync buffer when mapping FROM_DEVICE
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com
+References: <20190522072018.10660-1-horia.geanta@nxp.com>
+ <20190522123243.GA26390@lst.de>
+ <6cbe5470-16a6-17e9-337d-6ba18b16b6e8@arm.com>
+ <20190522130921.GA26874@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <fdfd7318-7999-1fe6-01b6-ae1fb7ba8c30@arm.com>
+Date:   Wed, 22 May 2019 14:25:38 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190522071909.050bb227@coco.lan>
+In-Reply-To: <20190522130921.GA26874@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-22.05.19 um 12:19 schrieb Mauro Carvalho Chehab:
-> Em Wed, 22 May 2019 10:36:45 +0300
-> Jani Nikula <jani.nikula@linux.intel.com> escreveu:
-> 
->> On Tue, 21 May 2019, Jonathan Corbet <corbet@lwn.net> wrote:
->>> The Sphinx folks are deprecating some interfaces in the upcoming 2.0
->>> release; one immediate result of that is a bunch of warnings that show up
->>> when building with 1.8.  These two patches make those warnings go away,
->>> but at a cost:
->>>
->>>   - It introduces a couple of Sphinx version checks, which are always
->>>     ugly, but the alternative would be to stop supporting versions
->>>     before 1.7.  For now, I think we can carry that cruft.
+On 2019-05-22 2:09 pm, Christoph Hellwig wrote:
+> On Wed, May 22, 2019 at 01:50:47PM +0100, Robin Murphy wrote:
+>> Would that work out any different from the existing DMA_ATTR_SKIP_CPU_SYNC?
 >>
->> Frankly, I'd just require Sphinx 1.7+, available even in Debian stable
->> through stretch-backports.
+>> If drivers are prepared to handle this issue from their end, they can
+>> already do so for single mappings by using that attr along with explicit
+>> partial syncs via dma_sync_single(). For page/sg mappings we'd still have
+>> the problem of identifying what part of "partial" actually matters, and
+>> probably having to add some additional new sync operations to cope.
 > 
-> We can raise the bar and force a 1.7 or even 1.8 (Fedora 30 comes
-> with version 1.8.4), but I would prefer to keep support older versions,
-> at least while we don't depend on some new features introduced after
-> the version we're using, and while our extensions won't require a major
-> rework due to a new version.
+> Except that the same optimization we are tripping over here is also
+> present in dma_sync_* - dma_sync_*_to_device with DMA_FROM_DEVICE is a
+> no-op in swiotlb.
 
-Lets use 1.7 :
+Sure, but that should be irrelevant since the effective problem here is 
+in the sync_*_for_cpu direction, and it's the unmap which nobbles the 
+buffer. If the driver does this:
 
-- no need for Use_SSI wrapper
-- new log should work with 1.7 [1] --> no need for kernellog.py and
-   additional imports, instead include on top of python modules ::
+	dma_map_single(whole buffer);
+	<device writes to part of buffer>
+	dma_unmap_single(whole buffer);
+	<contents of rest of buffer now undefined>
 
-     from sphinx.util import logging
-     logger = logging.getLogger('kerneldoc')
+then it could instead do this and be happy:
 
-[1] 
-https://github.com/sphinx-doc/sphinx/commit/6d4e6454093953943e79d4db6efeb17390870e62
+	dma_map_single(whole buffer, SKIP_CPU_SYNC);
+	<device writes to part of buffer>
+	dma_sync_single_for_cpu(updated part of buffer);
+	dma_unmap_single(whole buffer, SKIP_CPU_SYNC);
+	<contents of rest of buffer still valid>
 
-
-BTW we can drop other (old) sphinx-version issues e.g.
-Documentation/conf.py  which fails with version 2.0:
-
-diff --git a/Documentation/conf.py b/Documentation/conf.py
-index 72647a38b5c2..ba82715b6715 100644
---- a/Documentation/conf.py
-+++ b/Documentation/conf.py
-@@ -34,13 +34,7 @@ needs_sphinx = '1.3'
-  # Add any Sphinx extension module names here, as strings. They can be
-  # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-  # ones.
--extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain', 
-'kfigure', 'sphinx.ext.ifconfig']
--
--# The name of the math extension changed on Sphinx 1.4
--if major == 1 and minor > 3:
--    extensions.append("sphinx.ext.imgmath")
--else:
--    extensions.append("sphinx.ext.pngmath")
-+extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain', 
-'kfigure', 'sphinx.ext.ifconfig', 'sphinx.ext.imgmath']
-
-  # Add any paths that contain templates here, relative to this directory.
-  templates_path = ['_templates']
-
--- Markus --
-
+Robin.
