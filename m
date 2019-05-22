@@ -2,85 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21B1026B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:24:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D01C26AB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:18:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731077AbfEVTX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:23:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731029AbfEVTXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:23:54 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97230217D7;
-        Wed, 22 May 2019 19:23:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558553033;
-        bh=r4EtqetRWJlSKq7Cu5r6i4y2EfulVoRIH/P+h7Ui8AA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F6H7KdtNM0H51+cUncoONca2L2VYVFzbqrxBL6D2jFQl2OnYIAUubjUHe8iOPUTiQ
-         uq50/DKOraqBD1SHhf6vcxvd3rg+KSGPHuxinCUeUoSjlTc3J6H3caGrhkQ5NMK30I
-         L8cDefOPObxuyLMbnNrOepkL80GOFUyLRrOoCvQ0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yonghong Song <yhs@fb.com>, Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.0 011/317] selftests/bpf: set RLIMIT_MEMLOCK properly for test_libbpf_open.c
-Date:   Wed, 22 May 2019 15:18:32 -0400
-Message-Id: <20190522192338.23715-11-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
-References: <20190522192338.23715-1-sashal@kernel.org>
+        id S1729795AbfEVTSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:18:39 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37243 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728615AbfEVTSi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:18:38 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 7so3356633wmo.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:18:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:user-agent:date
+         :message-id:mime-version;
+        bh=oMdcno1bN7UGFXmlvdsH86j5M8DSKBM+CBX05MLBto4=;
+        b=IiHh0OkjSBhfeEaplOxktSUxiYE6QnxnBWhAnRpE+MfxpLOpFOmxtbpEOeQC7+Gn3d
+         StdAwsHQOC5dtEQofdiP+h3EiWwWNjcVtQoOOGu6woXz5s7vKdugOPyxHdDXSHySSOqB
+         nP8Xwa1vEktW6I1veR341reZCVR3xswoiN16Chzh5tLTx0sTXlMbdG4intN0XDRaXMNy
+         xxSWtkhkj4h7m4hE25rTekhhjjIwDmJXS9uImPQI83vibg7paTg7QUoI8iltmNQXeE1M
+         SO+hxzfHVw41Ybgq0SzLg/23yF3FWgALlMQMfDxujKMxxQ5BoIdCDbA7Cb/4AAaUF2wP
+         bKuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references
+         :user-agent:date:message-id:mime-version;
+        bh=oMdcno1bN7UGFXmlvdsH86j5M8DSKBM+CBX05MLBto4=;
+        b=T4GFgQjQ19Qsnb3geZ9xqguyTXTzKtW4EZHk+1c+C+iqxkFGK3I5EnLSBtnDx6egCI
+         IAognjOysligb/Qg3qpz9KyimB3phJgZ4IckxqT3ioRq9eQGvzR7WNN8X5ZXiAkOYL5J
+         S/mjsfflPxP5KyehdFhFcfMeymM4GUrUQq6zYhDB86S5LFiJNG/JKQ18b2nwnSoJP1pr
+         tbJEplXOL/VfoLoF8nVcw2BWgfnjDQLYheDQNaQJfhBh9RBZcQC+Xv0TwU7i7uGICh5I
+         xJSPZzsKcYv+qLgCJevyJMIsvhrwueQawlXjv95FSwR8Enks6S3dDcZNx39aFI/2HFeO
+         eMXQ==
+X-Gm-Message-State: APjAAAW9h/7IIFfUjlmpoNbydb+BvZz1c6GWazc5rFmsCOaN+SpJpXMh
+        j1xkEFKo+1sTGSiIQZzIG4eKFA==
+X-Google-Smtp-Source: APXvYqwJkoMFDjSKM1Xceo+2NVH2eEaNn1h+0mvTxstEwWDLuXSNqLr+xgh+7QN1+3tmDHssAXHjNg==
+X-Received: by 2002:a1c:40c6:: with SMTP id n189mr8955328wma.65.1558552716735;
+        Wed, 22 May 2019 12:18:36 -0700 (PDT)
+Received: from localhost ([2a01:cb1d:12c:8800:1e45:34e8:9e5f:f03])
+        by smtp.gmail.com with ESMTPSA id y40sm47697179wrd.96.2019.05.22.12.18.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 May 2019 12:18:35 -0700 (PDT)
+From:   Loys Ollivier <lollivier@baylibre.com>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-kernel@vger.kernel.org, Atish Patra <atish.patra@wdc.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Paul Walmsley <paul@pwsan.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>
+Subject: Re: [PATCH 1/6] arch: riscv: add support for building DTB files from DT source data
+In-Reply-To: <20190411084304.5072-2-paul.walmsley@sifive.com> (Paul Walmsley's
+        message of "Thu, 11 Apr 2019 01:42:59 -0700")
+References: <20190411084304.5072-2-paul.walmsley@sifive.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+Date:   Wed, 22 May 2019 21:18:33 +0200
+Message-ID: <868suyb8mu.fsf@baylibre.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonghong Song <yhs@fb.com>
+On Thu 11 Apr 2019 at 01:42, Paul Walmsley <paul.walmsley@sifive.com> wrote:
 
-[ Upstream commit 6cea33701eb024bc6c920ab83940ee22afd29139 ]
+> Similar to ARM64, add support for building DTB files from DT source
+> data for RISC-V boards.
+>
+> This patch starts with the infrastructure needed for SiFive boards.
+> Boards from other vendors would add support here in a similar form.
+>
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> Cc: Palmer Dabbelt <palmer@sifive.com>
+> Cc: Albert Ou <aou@eecs.berkeley.edu>
 
-Test test_libbpf.sh failed on my development server with failure
-  -bash-4.4$ sudo ./test_libbpf.sh
-  [0] libbpf: Error in bpf_object__probe_name():Operation not permitted(1).
-      Couldn't load basic 'r0 = 0' BPF program.
-  test_libbpf: failed at file test_l4lb.o
-  selftests: test_libbpf [FAILED]
-  -bash-4.4$
+Tested-by: Loys Ollivier <lollivier@baylibre.com>
 
-The reason is because my machine has 64KB locked memory by default which
-is not enough for this program to get locked memory.
-Similar to other bpf selftests, let us increase RLIMIT_MEMLOCK
-to infinity, which fixed the issue.
+Tested the whole patch series using FSBL+BBL.
+Did basic boot testing and uart validation.
 
-Signed-off-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/testing/selftests/bpf/test_libbpf_open.c | 2 ++
- 1 file changed, 2 insertions(+)
+The actual testing process is quite cumbersome.
+One needs to rebuild the BBL to update the dtb loaded.
 
-diff --git a/tools/testing/selftests/bpf/test_libbpf_open.c b/tools/testing/selftests/bpf/test_libbpf_open.c
-index 8fcd1c076add0..cbd55f5f8d598 100644
---- a/tools/testing/selftests/bpf/test_libbpf_open.c
-+++ b/tools/testing/selftests/bpf/test_libbpf_open.c
-@@ -11,6 +11,8 @@ static const char *__doc__ =
- #include <bpf/libbpf.h>
- #include <getopt.h>
- 
-+#include "bpf_rlimit.h"
-+
- static const struct option long_options[] = {
- 	{"help",	no_argument,		NULL, 'h' },
- 	{"debug",	no_argument,		NULL, 'D' },
--- 
-2.20.1
+Would you have an idea of the delta between bbl and u-boot ?
+I tried booting the same kernel + dtb with U-Boot but ran into
+errors related to plic.
 
+Loys
