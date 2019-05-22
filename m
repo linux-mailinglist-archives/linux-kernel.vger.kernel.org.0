@@ -2,85 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A303726190
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 12:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E54926197
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 12:19:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729122AbfEVKRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 06:17:55 -0400
-Received: from relay.sw.ru ([185.231.240.75]:44776 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728406AbfEVKRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 06:17:55 -0400
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1hTOJi-0002Zw-Fh; Wed, 22 May 2019 13:17:50 +0300
-Subject: [PATCH v2] mm: Rename mm_vmscan_lru_shrink_inactive trace event
- variables
-To:     akpm@linux-foundation.org, mjeanson@efficios.com,
-        rostedt@goodmis.org, lttng-dev@lists.lttng.org,
-        linux-kernel@vger.kernel.org
-References: <155851455676.7870.1951762540769724271.stgit@localhost.localdomain>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <9b9a8da4-556a-8972-cf87-071ce5099ad0@virtuozzo.com>
-Date:   Wed, 22 May 2019 13:17:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1729051AbfEVKTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 06:19:22 -0400
+Received: from casper.infradead.org ([85.118.1.10]:51686 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728424AbfEVKTV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 06:19:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=MNNWQkMpAeP5cdL0iBQSICJkN4ZWR11nVvJgfc6zMgU=; b=iNFlpcrN1RcMAP1iO9D+A4S/Ag
+        Zdb4xTBd5u2hyuKpRMdb1cBJ2KS3URlwrQ79ofcRaMCLyOaPEY4p1YVeTPAPSBi9QGWl1dDCnwW/O
+        /fMS7VXOzwbus5RYrWpOh9Hgtsof93tLpwnoaPUrWYh29iMHbzBh43bvqRpdzD5CAumypchvCZEXK
+        JYN8Mca7dBM+1GucZlfls2sald9v6iDlohzoERJWaj9pEn6hXF23fCstUVdRU1g2V3zA5cSv2oxT7
+        McC4bzthb3qv4iEsiVfwdhx05Nb+62YhxmAgzDZ7F41flsimsXAMMhFVsAjLlWMrX6lbn24lFqboM
+        zYHD2v9g==;
+Received: from [179.182.168.126] (helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hTOL6-00062F-7v; Wed, 22 May 2019 10:19:16 +0000
+Date:   Wed, 22 May 2019 07:19:09 -0300
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Markus Heiser <markus.heiser@darmarit.de>
+Subject: Re: [PATCH RFC 0/2] docs: Deal with some Sphinx deprecation
+ warnings
+Message-ID: <20190522071909.050bb227@coco.lan>
+In-Reply-To: <87d0kb7xf6.fsf@intel.com>
+References: <20190521211714.1395-1-corbet@lwn.net>
+        <87d0kb7xf6.fsf@intel.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <155851455676.7870.1951762540769724271.stgit@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename nr_activate{0,1} into nr_activate{anon,file} since this
-is exported into userspace, e.g., it's shown here:
+Em Wed, 22 May 2019 10:36:45 +0300
+Jani Nikula <jani.nikula@linux.intel.com> escreveu:
 
-/sys/kernel/debug/tracing/events/vmscan/mm_vmscan_lru_shrink_inactive/format
+> On Tue, 21 May 2019, Jonathan Corbet <corbet@lwn.net> wrote:
+> > The Sphinx folks are deprecating some interfaces in the upcoming 2.0
+> > release; one immediate result of that is a bunch of warnings that show up
+> > when building with 1.8.  These two patches make those warnings go away,
+> > but at a cost:
+> >
+> >  - It introduces a couple of Sphinx version checks, which are always
+> >    ugly, but the alternative would be to stop supporting versions
+> >    before 1.7.  For now, I think we can carry that cruft.  
+> 
+> Frankly, I'd just require Sphinx 1.7+, available even in Debian stable
+> through stretch-backports.
 
-v2: Changed suggested person (sorry, Mathieu :))
+We can raise the bar and force a 1.7 or even 1.8 (Fedora 30 comes
+with version 1.8.4), but I would prefer to keep support older versions,
+at least while we don't depend on some new features introduced after
+the version we're using, and while our extensions won't require a major
+rework due to a new version.
+> 
+> >  - The second patch causes the build to fail horribly on newer
+> >    Sphinx installations.  The change to switch_source_input() seems
+> >    to make the parser much more finicky, increasing warnings and
+> >    eventually failing the build altogether.  In particular, it will
+> >    scream about problems in .rst files that are not included in the
+> >    TOC tree at all.  The complaints appear to be legitimate, but it's
+> >    a bunch of stuff to clean up.  
 
-Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
----
- include/trace/events/vmscan.h |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+There is a flag to cleanup the warning about a file not included at
+a TOC tree (:orphan:), but it will still try to parse it. There's also
+a conf.py way of doing it. For example, you can exclude an entire dir:
 
-diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
-index a5ab2973e8dc..c316279715f4 100644
---- a/include/trace/events/vmscan.h
-+++ b/include/trace/events/vmscan.h
-@@ -348,8 +348,8 @@ TRACE_EVENT(mm_vmscan_lru_shrink_inactive,
- 		__field(unsigned long, nr_writeback)
- 		__field(unsigned long, nr_congested)
- 		__field(unsigned long, nr_immediate)
--		__field(unsigned int, nr_activate0)
--		__field(unsigned int, nr_activate1)
-+		__field(unsigned int, nr_activate_anon)
-+		__field(unsigned int, nr_activate_file)
- 		__field(unsigned long, nr_ref_keep)
- 		__field(unsigned long, nr_unmap_fail)
- 		__field(int, priority)
-@@ -364,8 +364,8 @@ TRACE_EVENT(mm_vmscan_lru_shrink_inactive,
- 		__entry->nr_writeback = stat->nr_writeback;
- 		__entry->nr_congested = stat->nr_congested;
- 		__entry->nr_immediate = stat->nr_immediate;
--		__entry->nr_activate0 = stat->nr_activate[0];
--		__entry->nr_activate1 = stat->nr_activate[1];
-+		__entry->nr_activate_anon = stat->nr_activate[0];
-+		__entry->nr_activate_file = stat->nr_activate[1];
- 		__entry->nr_ref_keep = stat->nr_ref_keep;
- 		__entry->nr_unmap_fail = stat->nr_unmap_fail;
- 		__entry->priority = priority;
-@@ -377,7 +377,7 @@ TRACE_EVENT(mm_vmscan_lru_shrink_inactive,
- 		__entry->nr_scanned, __entry->nr_reclaimed,
- 		__entry->nr_dirty, __entry->nr_writeback,
- 		__entry->nr_congested, __entry->nr_immediate,
--		__entry->nr_activate0, __entry->nr_activate1,
-+		__entry->nr_activate_anon, __entry->nr_activate_file,
- 		__entry->nr_ref_keep, __entry->nr_unmap_fail,
- 		__entry->priority,
- 		show_reclaim_flags(__entry->reclaim_flags))
+	exclude_patterns = ['includes/*.rst']
+
+But using exclude_patterns will likely be too messy.
+
+> I can understand Sphinx complaining that a file is not included in a TOC
+> tree, but I don't understand why it goes on to parse them anyway.
+
+Yeah, this is, IMHO, a very bad behavior.
+
+> 
+> BR,
+> Jani.
+> 
+> 
+> >
+> > I've tested these with 1.4 and 1.8, but not various versions in between.
+> >
+> > Jonathan Corbet (2):
+> >   doc: Cope with Sphinx logging deprecations
+> >   doc: Cope with the deprecation of AutoReporter
+> >
+> >  Documentation/sphinx/kerneldoc.py | 48 ++++++++++++++++++++++++-------
+> >  Documentation/sphinx/kernellog.py | 28 ++++++++++++++++++
+> >  Documentation/sphinx/kfigure.py   | 38 +++++++++++++-----------
+> >  3 files changed, 87 insertions(+), 27 deletions(-)
+> >  create mode 100644 Documentation/sphinx/kernellog.py  
+> 
+
+
+
+Thanks,
+Mauro
