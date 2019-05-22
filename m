@@ -2,146 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36CB125D4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 07:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E10A825D65
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 07:12:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbfEVFGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 01:06:11 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38451 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725796AbfEVFGL (ORCPT
+        id S1726596AbfEVFMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 01:12:07 -0400
+Received: from mail-ua1-f50.google.com ([209.85.222.50]:44697 "EHLO
+        mail-ua1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfEVFMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 01:06:11 -0400
-Received: from callcc.thunk.org ([66.31.38.53])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4M55BVA020853
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 May 2019 01:05:12 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 61574420481; Wed, 22 May 2019 01:05:11 -0400 (EDT)
-Date:   Wed, 22 May 2019 01:05:11 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        linux-ext4@vger.kernel.org,
-        Arthur Marsh <arthur.marsh@internode.on.net>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        ltp@lists.linux.it, Jan Stancek <jstancek@redhat.com>
-Subject: Re: ext4 regression (was Re: [PATCH 4.19 000/105] 4.19.45-stable
- review)
-Message-ID: <20190522050511.GB4943@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>, Shuah Khan <shuah@kernel.org>,
-        patches@kernelci.org, Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>, linux-ext4@vger.kernel.org,
-        Arthur Marsh <arthur.marsh@internode.on.net>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        ltp@lists.linux.it, Jan Stancek <jstancek@redhat.com>
-References: <20190520115247.060821231@linuxfoundation.org>
- <20190520222342.wtsjx227c6qbkuua@xps.therub.org>
- <20190521085956.GC31445@kroah.com>
- <CA+G9fYvHmUimtwszwo=9fDQLn+MNh8Vq3UGPaPUdhH=dEKzqxg@mail.gmail.com>
- <20190521093849.GA9806@kroah.com>
- <CA+G9fYveeg_FMsL31aunJ2A9XLYk908Y1nSFw4kwkFk3h3uEiA@mail.gmail.com>
- <20190521162142.GA2591@mit.edu>
- <CA+G9fYunxonkqmkhz+zmZYuMTfyRMVBxn6PkTFfjd8tTT+bzHQ@mail.gmail.com>
+        Wed, 22 May 2019 01:12:07 -0400
+Received: by mail-ua1-f50.google.com with SMTP id p13so409095uaa.11
+        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 22:12:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=9cSHLpfk2ut/G7daeeu1vHKOr/f5bhaXmSC+S8dDp1M=;
+        b=NOi/c1/BZL0A1MVfXBT4OMbxgq+TQemvctfYgkP3g9iiscfCUdMH6vSQ7H52vQJzHO
+         DRZUIY1ZmZ0g2qEGRNSSekNSlq7LKKncp4KHqYeLAKreov879Fuw28YUYpf7hiSmjDm3
+         fbVeq9wzHEIwB1Mk8tx5gNrXjWsiCKGqCeffC2cqOozfiRTfOlp2TkeOKm0j3M4VPaJY
+         m9IVvtmC6e1oxxn/Y6cO5Cm2EfWQAFdVXJdsIBzJeiKEwI4qXQkshYjX5a5eHJaYIbON
+         2DDqK/SLsWzJDrG/puzEK7ZI3rKEkMzCPvwyHD0XnouepO/vuKEigV4541uUAlTp1g6B
+         1OEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9cSHLpfk2ut/G7daeeu1vHKOr/f5bhaXmSC+S8dDp1M=;
+        b=lxJYUyYX9VwXUw84Scu6l0UAbN13FPEAtmy7WcZkXRIEWWFan1rlyM7e3+OfChV/tN
+         KJG3faA/2qTg+is4w1pdlPhZ+uX650AuvcDyEWlZWoLZRVb56qJMqxNtNF0DXKnNVdoT
+         1+pPB1aKfbt+33Q6CLXJzKANmXMRCExpOjpOph07Z+l5ajn2DN3ef3c9vzMul9aNlxms
+         MicbShDMXqZ+fZYxEUsKu9/m63ykrJW/vvgbNdfCbdUXQ5tyP2F0D/GtdqQI4kVmqi+v
+         BQ5MmoImnLnzXMw0q0dMWgLggwIcgnhdQYSEOZ0YNjLY8SYRmv5NrcdFVLlICQ6J3k9Q
+         1g9A==
+X-Gm-Message-State: APjAAAXBSxFRciB/goMmfAaQfKJ1ojEZMmeNJLE2dRSRjiqNx2egHUdX
+        riCHA1sbRQ1VdN8Q0h94gMqQy6D00YBZNZflntjllEfucxM=
+X-Google-Smtp-Source: APXvYqy8+dYZRe6z0Nwha0PQyg+QYkW6/ymoocZj4J2VwOSqdTfwW7boSafeq0W2BM0JYFNKSl7I/6pdfZ4d/zaIRd8=
+X-Received: by 2002:ab0:1529:: with SMTP id o38mr21734487uae.30.1558501925277;
+ Tue, 21 May 2019 22:12:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYunxonkqmkhz+zmZYuMTfyRMVBxn6PkTFfjd8tTT+bzHQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190520035254.57579-1-minchan@kernel.org> <20190521084158.s5wwjgewexjzrsm6@brauner.io>
+ <20190521110552.GG219653@google.com> <20190521113029.76iopljdicymghvq@brauner.io>
+ <20190521113911.2rypoh7uniuri2bj@brauner.io>
+In-Reply-To: <20190521113911.2rypoh7uniuri2bj@brauner.io>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Tue, 21 May 2019 22:11:53 -0700
+Message-ID: <CAKOZuesjDcD3EM4PS7aO7yTa3KZ=FEzMP63MR0aEph4iW1NCYQ@mail.gmail.com>
+Subject: Re: [RFC 0/7] introduce memory hinting API for external process
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>, Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 11:27:21PM +0530, Naresh Kamboju wrote:
-> Steps to reproduce is,
-> running LTP three test cases in sequence on x86 device.
-> # cd ltp/runtest
-> # cat syscalls ( only three test case)
-> open12 open12
-> madvise06 madvise06
-> poll02 poll02
-> #
-> 
-> as Dan referring to,
-> 
-> LTP is run using '/opt/ltp/runltp -d /scratch -f syscalls', where the
-> syscalls file has been replaced with three test case names, and
-> /scratch is an ext4 SATA drive. /scratch is created using 'mkfs -t ext4
-> /dev/disk/by-id/ata-TOSHIBA_MG03ACA100_37O9KGKWF' and mounted to
-> /scratch.
+On Tue, May 21, 2019 at 4:39 AM Christian Brauner <christian@brauner.io> wr=
+ote:
+>
+> On Tue, May 21, 2019 at 01:30:29PM +0200, Christian Brauner wrote:
+> > On Tue, May 21, 2019 at 08:05:52PM +0900, Minchan Kim wrote:
+> > > On Tue, May 21, 2019 at 10:42:00AM +0200, Christian Brauner wrote:
+> > > > On Mon, May 20, 2019 at 12:52:47PM +0900, Minchan Kim wrote:
+> > > > > - Background
+> > > > >
+> > > > > The Android terminology used for forking a new process and starti=
+ng an app
+> > > > > from scratch is a cold start, while resuming an existing app is a=
+ hot start.
+> > > > > While we continually try to improve the performance of cold start=
+s, hot
+> > > > > starts will always be significantly less power hungry as well as =
+faster so
+> > > > > we are trying to make hot start more likely than cold start.
+> > > > >
+> > > > > To increase hot start, Android userspace manages the order that a=
+pps should
+> > > > > be killed in a process called ActivityManagerService. ActivityMan=
+agerService
+> > > > > tracks every Android app or service that the user could be intera=
+cting with
+> > > > > at any time and translates that into a ranked list for lmkd(low m=
+emory
+> > > > > killer daemon). They are likely to be killed by lmkd if the syste=
+m has to
+> > > > > reclaim memory. In that sense they are similar to entries in any =
+other cache.
+> > > > > Those apps are kept alive for opportunistic performance improveme=
+nts but
+> > > > > those performance improvements will vary based on the memory requ=
+irements of
+> > > > > individual workloads.
+> > > > >
+> > > > > - Problem
+> > > > >
+> > > > > Naturally, cached apps were dominant consumers of memory on the s=
+ystem.
+> > > > > However, they were not significant consumers of swap even though =
+they are
+> > > > > good candidate for swap. Under investigation, swapping out only b=
+egins
+> > > > > once the low zone watermark is hit and kswapd wakes up, but the o=
+verall
+> > > > > allocation rate in the system might trip lmkd thresholds and caus=
+e a cached
+> > > > > process to be killed(we measured performance swapping out vs. zap=
+ping the
+> > > > > memory by killing a process. Unsurprisingly, zapping is 10x times=
+ faster
+> > > > > even though we use zram which is much faster than real storage) s=
+o kill
+> > > > > from lmkd will often satisfy the high zone watermark, resulting i=
+n very
+> > > > > few pages actually being moved to swap.
+> > > > >
+> > > > > - Approach
+> > > > >
+> > > > > The approach we chose was to use a new interface to allow userspa=
+ce to
+> > > > > proactively reclaim entire processes by leveraging platform infor=
+mation.
+> > > > > This allowed us to bypass the inaccuracy of the kernel=E2=80=99s =
+LRUs for pages
+> > > > > that are known to be cold from userspace and to avoid races with =
+lmkd
+> > > > > by reclaiming apps as soon as they entered the cached state. Addi=
+tionally,
+> > > > > it could provide many chances for platform to use much informatio=
+n to
+> > > > > optimize memory efficiency.
+> > > > >
+> > > > > IMHO we should spell it out that this patchset complements MADV_W=
+ONTNEED
+> > > > > and MADV_FREE by adding non-destructive ways to gain some free me=
+mory
+> > > > > space. MADV_COLD is similar to MADV_WONTNEED in a way that it hin=
+ts the
+> > > > > kernel that memory region is not currently needed and should be r=
+eclaimed
+> > > > > immediately; MADV_COOL is similar to MADV_FREE in a way that it h=
+ints the
+> > > > > kernel that memory region is not currently needed and should be r=
+eclaimed
+> > > > > when memory pressure rises.
+> > > > >
+> > > > > To achieve the goal, the patchset introduce two new options for m=
+advise.
+> > > > > One is MADV_COOL which will deactive activated pages and the othe=
+r is
+> > > > > MADV_COLD which will reclaim private pages instantly. These new o=
+ptions
+> > > > > complement MADV_DONTNEED and MADV_FREE by adding non-destructive =
+ways to
+> > > > > gain some free memory space. MADV_COLD is similar to MADV_DONTNEE=
+D in a way
+> > > > > that it hints the kernel that memory region is not currently need=
+ed and
+> > > > > should be reclaimed immediately; MADV_COOL is similar to MADV_FRE=
+E in a way
+> > > > > that it hints the kernel that memory region is not currently need=
+ed and
+> > > > > should be reclaimed when memory pressure rises.
+> > > > >
+> > > > > This approach is similar in spirit to madvise(MADV_WONTNEED), but=
+ the
+> > > > > information required to make the reclaim decision is not known to=
+ the app.
+> > > > > Instead, it is known to a centralized userspace daemon, and that =
+daemon
+> > > > > must be able to initiate reclaim on its own without any app invol=
+vement.
+> > > > > To solve the concern, this patch introduces new syscall -
+> > > > >
+> > > > >         struct pr_madvise_param {
+> > > > >                 int size;
+> > > > >                 const struct iovec *vec;
+> > > > >         }
+> > > > >
+> > > > >         int process_madvise(int pidfd, ssize_t nr_elem, int *beha=
+vior,
+> > > > >                                 struct pr_madvise_param *restuls,
+> > > > >                                 struct pr_madvise_param *ranges,
+> > > > >                                 unsigned long flags);
+> > > > >
+> > > > > The syscall get pidfd to give hints to external process and provi=
+des
+> > > > > pair of result/ranges vector arguments so that it could give seve=
+ral
+> > > > > hints to each address range all at once.
+> > > > >
+> > > > > I guess others have different ideas about the naming of syscall a=
+nd options
+> > > > > so feel free to suggest better naming.
+> > > >
+> > > > Yes, all new syscalls making use of pidfds should be named
+> > > > pidfd_<action>. So please make this pidfd_madvise.
+> > >
+> > > I don't have any particular preference but just wondering why pidfd i=
+s
+> > > so special to have it as prefix of system call name.
+> >
+> > It's a whole new API to address processes. We already have
+> > clone(CLONE_PIDFD) and pidfd_send_signal() as you have seen since you
+> > exported pidfd_to_pid(). And we're going to have pidfd_open(). Your
+> > syscall works only with pidfds so it's tied to this api as well so it
+> > should follow the naming scheme. This also makes life easier for
+> > userspace and is consistent.
+>
+> This is at least my reasoning. I'm not going to make this a whole big
+> pedantic argument. If people have really strong feelings about not using
+> this prefix then fine. But if syscalls can be grouped together and have
+> consistent naming this is always a big plus.
 
-I'm still having trouble reproducing the problem.  I've followed the
-above exactly, and it doesn't trigger on my system.  I think I know
-what is happening, but even given my theory, I'm still not able to
-trigger it.  So, I'm not 100% sure this is the appropriate fix.  If
-you can reproduce it, can you see if this patch, applied on top of the
-Linus's tip, fixes the problem for you?
-
-					- Ted
-
-commit 3ad7621bfff343b16d59ed418f6d4420d4ec3e63
-Author: Theodore Ts'o <tytso@mit.edu>
-Date:   Tue May 21 17:01:01 2019 -0400
-
-    ext4: don't perform block validity checks on the journal inode
-    
-    Since the journal inode is already checked when we added it to the
-    block validity's system zone, if we check it again, we'll just trigger
-    a failure.
-    
-    This was causing failures like this:
-    
-    [   53.897001] EXT4-fs error (device sda): ext4_find_extent:909: inode
-    #8: comm jbd2/sda-8: pblk 121667583 bad header/extent: invalid extent entries - magic f30a, entries 8, max 340(340), depth 0(0)
-    [   53.931430] jbd2_journal_bmap: journal block not found at offset 49 on sda-8
-    [   53.938480] Aborting journal on device sda-8.
-    
-    ... but only if the system was under enough memory pressure that
-    logical->physical mapping for the journal inode gets pushed out of the
-    extent cache.  (This is why it wasn't noticed earlier.)
-    
-    Fixes: 345c0dbf3a30 ("ext4: protect journal inode's blocks using block_validity")
-    Reported-by: Dan Rue <dan.rue@linaro.org>
-    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index f2c62e2a0c98..d40ed940001e 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -518,10 +518,14 @@ __read_extent_tree_block(const char *function, unsigned int line,
- 	}
- 	if (buffer_verified(bh) && !(flags & EXT4_EX_FORCE_CACHE))
- 		return bh;
--	err = __ext4_ext_check(function, line, inode,
--			       ext_block_hdr(bh), depth, pblk);
--	if (err)
--		goto errout;
-+	if (!ext4_has_feature_journal(inode->i_sb) ||
-+	    (inode->i_ino !=
-+	     le32_to_cpu(EXT4_SB(inode->i_sb)->s_es->s_journal_inum))) {
-+		err = __ext4_ext_check(function, line, inode,
-+				       ext_block_hdr(bh), depth, pblk);
-+		if (err)
-+			goto errout;
-+	}
- 	set_buffer_verified(bh);
- 	/*
- 	 * If this is a leaf block, cache all of its entries
+My hope has been that pidfd use becomes normalized enough that
+prefixing "pidfd_" to pidfd-accepting system calls becomes redundant.
+We write write(), not fd_write(), right? :-) pidfd_open() makes sense
+because the primary purpose of this system call is to operate on a
+pidfd, but I think process_madvise() is fine.
