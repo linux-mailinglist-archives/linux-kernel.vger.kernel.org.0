@@ -2,85 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F7B26A5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB5C226A4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 20:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729711AbfEVTAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:00:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728533AbfEVTAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:00:43 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C222520868;
-        Wed, 22 May 2019 18:54:52 +0000 (UTC)
-Date:   Wed, 22 May 2019 14:54:50 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH] RDMA/mlx5: Use DIV_ROUND_UP_ULL macro to allow 32 bit to
- build
-Message-ID: <20190522145450.25ff483d@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729580AbfEVS5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 14:57:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49848 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728533AbfEVS5g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 14:57:36 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4MIuxjq019273
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 14:57:35 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2snc22g8tj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 14:57:35 -0400
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <kgold@linux.ibm.com>;
+        Wed, 22 May 2019 19:57:34 +0100
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 22 May 2019 19:57:31 +0100
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4MIvUDL38338724
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 May 2019 18:57:30 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7D5DB6A054;
+        Wed, 22 May 2019 18:57:30 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DC0596A04F;
+        Wed, 22 May 2019 18:57:29 +0000 (GMT)
+Received: from [9.2.202.76] (unknown [9.2.202.76])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 22 May 2019 18:57:29 +0000 (GMT)
+Subject: Re: [PATCH 0/2] public key: IMA signer logging: Log public key of IMA
+ Signature signer in IMA log
+To:     Lakshmi <nramas@linux.microsoft.com>,
+        Linux Integrity <linux-integrity@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Cc:     Balaji Balasubramanyan <balajib@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva@linux.microsoft.com>,
+        jorhand@linux.microsoft.com
+References: <6b69f115-96cf-890a-c92b-0b2b05798357@linux.microsoft.com>
+ <750fdb9f-fc9b-24bf-42c3-32156ecdc16f@linux.ibm.com>
+ <9c944ba6-f520-96e1-3631-1e21bbc4c327@linux.microsoft.com>
+ <0b5ae493-6564-40e9-343b-e6781c229a25@linux.ibm.com>
+ <54663a75-a601-ae6c-8068-bc2c3923a948@linux.microsoft.com>
+From:   Ken Goldman <kgold@linux.ibm.com>
+Date:   Wed, 22 May 2019 14:57:28 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <54663a75-a601-ae6c-8068-bc2c3923a948@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19052218-0020-0000-0000-00000EEECF45
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011144; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01207093; UDB=6.00633905; IPR=6.00988068;
+ MB=3.00027007; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-22 18:57:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19052218-0021-0000-0000-000065ED7215
+Message-Id: <b1a2edc1-45c7-7a9f-7a77-e252b2f85a64@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-22_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905220132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 5/20/2019 7:15 PM, Lakshmi wrote:
+> On 5/17/19 7:41 AM, Ken Goldman wrote:
+> 
+> Hi Ken,
+> 
+> Apologize for the delay in responding.
+> 
+>> Since a platform typically uses only a few signing keys, 4 bytes makes 
+>> the chance of a collision quite small.  The collision would have to be 
+>> within the same log, not global.
+>>
+>> In that worst case, the verifier would have to try two keys.  It's a
+>> slight performance penalty, but does anything break?
+> 
+> Problem Statement:
+> - If the attestation service has to re-validate the signature reported 
+> in the IMA log, the service has to maintain the hash\signature of all 
+> the binaries deployed on all the client nodes. This approach will not 
+> scale for large cloud deployments.
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+1 - How is your solution - including a public key with each event - 
+related to this issue?
 
-When testing 32 bit x86, my build failed with:
+2 - I don't understand how a large cloud affects scale.  Wouldn't the 
+verifier would typically be checking known machines - those of their 
+enterprise - not every machine on the cloud?
 
-  ERROR: "__udivdi3" [drivers/infiniband/hw/mlx5/mlx5_ib.ko] undefined!
+Can't we assume a typical attestation use case has a fairly locked down 
+OS with a limited number of applications.
 
-It appears that a few non-ULL roundup() calls were made, which uses a
-normal division against a 64 bit number. This is fine for x86_64, but
-on 32 bit x86, it causes the compiler to look for a helper function
-__udivdi3, which we do not have in the kernel, and thus fails to build.
+> - Possibility of collision of "Key Ids" is non-zero
+> - In the service if the "Key Id" alone is used to verify using a map of
+> "Key Id" to "Signing Key(s)", the service cannot determine if the 
+> trusted signing key was indeed used by the client for signature 
+> validation (Due to "Key Id" collision issue or malicious signature).
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
-diff --git a/drivers/infiniband/hw/mlx5/cmd.c b/drivers/infiniband/hw/mlx5/cmd.c
-index e3ec79b8f7f5..f080df9934e8 100644
---- a/drivers/infiniband/hw/mlx5/cmd.c
-+++ b/drivers/infiniband/hw/mlx5/cmd.c
-@@ -190,7 +190,7 @@ int mlx5_cmd_alloc_sw_icm(struct mlx5_dm *dm, int type, u64 length,
- 			  u16 uid, phys_addr_t *addr, u32 *obj_id)
- {
- 	struct mlx5_core_dev *dev = dm->dev;
--	u32 num_blocks = DIV_ROUND_UP(length, MLX5_SW_ICM_BLOCK_SIZE(dev));
-+	u32 num_blocks = DIV_ROUND_UP_ULL(length, MLX5_SW_ICM_BLOCK_SIZE(dev));
- 	u32 out[MLX5_ST_SZ_DW(general_obj_out_cmd_hdr)] = {};
- 	u32 in[MLX5_ST_SZ_DW(create_sw_icm_in)] = {};
- 	unsigned long *block_map;
-@@ -266,7 +266,7 @@ int mlx5_cmd_dealloc_sw_icm(struct mlx5_dm *dm, int type, u64 length,
- 			    u16 uid, phys_addr_t addr, u32 obj_id)
- {
- 	struct mlx5_core_dev *dev = dm->dev;
--	u32 num_blocks = DIV_ROUND_UP(length, MLX5_SW_ICM_BLOCK_SIZE(dev));
-+	u32 num_blocks = DIV_ROUND_UP_ULL(length, MLX5_SW_ICM_BLOCK_SIZE(dev));
- 	u32 out[MLX5_ST_SZ_DW(general_obj_out_cmd_hdr)] = {};
- 	u32 in[MLX5_ST_SZ_DW(general_obj_in_cmd_hdr)] = {};
- 	unsigned long *block_map;
-diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-index abac70ad5c7c..40d4c5f7ea43 100644
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -2344,7 +2344,7 @@ static int handle_alloc_dm_sw_icm(struct ib_ucontext *ctx,
- 	/* Allocation size must a multiple of the basic block size
- 	 * and a power of 2.
- 	 */
--	act_size = roundup(attr->length, MLX5_SW_ICM_BLOCK_SIZE(dm_db->dev));
-+	act_size = DIV_ROUND_UP_ULL(attr->length, MLX5_SW_ICM_BLOCK_SIZE(dm_db->dev));
- 	act_size = roundup_pow_of_two(act_size);
- 
- 	dm->size = act_size;
+Like I said, it should be rare.  In the worst case, can't the service 
+tell by trying both keys?
+
+> 
+> Proposed Solution:
+> - The service receives known\trusted signing key(s) from a trusted 
+> source (that is different from the client machines)
+> - The clients measure the keys in key rings such as IMA, Platform, 
+> BuiltIn Trusted, etc. as early as possible in the boot sequence.
+> - Leave all IMA measurements the same - i.e., we don't log public keys 
+> in the IMA log for each file, but just use what is currently available 
+> in IMA.
+
+I thought your solution was to change the IMA measurements, adding the 
+public key to each entry with a new template?  Did I misunderstand, or 
+do you have a new proposal?
+
+> 
+> Impact:
+> - The service can verify that the keyrings have only known\trusted keys.
+
+If the service already has trusted keys from a trusted source, why do 
+they have to come from the client at all?
+
+> - The service can cross check the "key id" with the key rings measured.
+> - The look up of keys using the key id would be simpler and faster on 
+> the service side.
+> - It can also handle collision of Key Ids.
+
+How does this solve the collision issue?  If there are two keys with the 
+same key ID, isn't there still a collision?
+
+> 
+> Note that the following is a key assumption:
+> 
+> - Only keys signed by a key in the "BuiltIn Trusted Keyring" can be 
+> added to IMA\Platform keyrings.
+
+I understand how the client keyring is used in IMA to check file
+signatures, but how is that related to the attestation service?
+
+> 
+> 
+> Thanks,
+>   -lakshmi
+> 
+
