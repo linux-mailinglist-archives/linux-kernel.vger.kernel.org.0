@@ -2,218 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2D526ED8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6FE926CFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:39:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732519AbfEVTwd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:52:33 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39857 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731846AbfEVT0D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:26:03 -0400
-Received: by mail-ot1-f65.google.com with SMTP id r7so3165491otn.6
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:26:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ewqKT8bg+GlNvY1OOB7hliqi09oPFaNl8uDtycn8IEs=;
-        b=XAvqPPZEoSxSai//AanqhMiByOerVUTFMO73VF3TBU/mQxESN3HSR5+8AFmpT1Fne/
-         5awv4yOF0Jjtj0irCoAW2zAZmqpXdykPyR9hf3GhWeWF//j9JuyFWMjHwJDxG/K2udT8
-         njAD5vUNkb+1XkiCPrEUKygr9MUdswUEUsqoRRmvjUCd4XaCWPEIvxbPNtrevCnVIchU
-         bFS2XIiaAHK616aAazWSdLCFwlMmu39L0xxxY/LjwPNNkIJT23VbgOHNpZZkwtqoX5RW
-         ZvbA9fDYAGlWWZDW9m//S37TJr/H+nR8pacFLxUbbofKyNkSBgG4XSFxKzFpRxrHDlVs
-         VKhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ewqKT8bg+GlNvY1OOB7hliqi09oPFaNl8uDtycn8IEs=;
-        b=AiJChAYCq3Ox7f0BUH5MHBRmFs0sGDOx6lmqB07q//2EUmHzO8uIKJ3ATfliwLTItm
-         cG+ObsM02hZ6OcyryzcLWK48NrpSfKMgqjZUJSJ24cP9ZWBC+Gv12Lkne0HgclVOtUpY
-         DzpfrXC+a/63+GKtjH9B181dASO/Ddhba+DWFn+6l93TZTwF5eneAFPgXYZnPTeHrQk3
-         ni5f64+SMjccU96VntsIzj5yFPKLCyBvT+ZfFg87KNoqu+z8S926m7Bj5QDLdkGYDIFQ
-         McedBDoRh6u/49UzM3+L1II1Go79t0GLhBxQ+C1ewMsdswqz6P2BiCvq3EW9gdJsLj6A
-         z5og==
-X-Gm-Message-State: APjAAAXQ/WmLg33Qo74ycV5XMSqp6LyTMGgU0GXZX+8f/5oAIAuo0Qaq
-        ahCDM2SquMLnemIq0e81U5pq2A==
-X-Google-Smtp-Source: APXvYqwF1jORb8TOhDGfqbcMG9dQkinGDO6QrFqO1Wiq5VBykQAkW6XmyAVRZb76ov2DZIPk+Jz8MA==
-X-Received: by 2002:a9d:4a84:: with SMTP id i4mr45623913otf.148.1558553162179;
-        Wed, 22 May 2019 12:26:02 -0700 (PDT)
-Received: from [192.168.1.5] (072-182-052-210.res.spectrum.com. [72.182.52.210])
-        by smtp.googlemail.com with ESMTPSA id x64sm9746168oia.32.2019.05.22.12.26.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 12:26:01 -0700 (PDT)
-Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-To:     hpa@zytor.com, Roberto Sassu <roberto.sassu@huawei.com>,
-        Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, arnd@arndb.de,
-        james.w.mcmechan@gmail.com, niveditas98@gmail.com
-References: <20190517165519.11507-1-roberto.sassu@huawei.com>
- <20190517165519.11507-3-roberto.sassu@huawei.com>
- <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
- <20190517210219.GA5998@rani.riverdale.lan>
- <d48f35a1-aab1-2f20-2e91-5e81a84b107f@zytor.com>
- <20190517221731.GA11358@rani.riverdale.lan>
- <7bdca169-7a01-8c55-40e4-a832e876a0e5@huawei.com>
- <9C5B9F98-2067-43D3-B149-57613F38DCD4@zytor.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <3839583c-5466-6573-3048-0da7e6778c88@landley.net>
-Date:   Wed, 22 May 2019 14:26:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2387539AbfEVTiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:38:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53094 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733032AbfEVT3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:29:54 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5240A20879;
+        Wed, 22 May 2019 19:29:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558553394;
+        bh=2dpJVVjUM81EBe6QhbWbjJ73RcoPBXUoDjYWQjKmyxU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uo2cmpaFr91xiw+M06UMdj9xnYo7MSCdjKuw/T1nhwN4VhlGsUIkQps6u5WU30aYg
+         han3XuJl1qM4NUpb97RdLhBp1DI1GGxrIYwJwEhQKTZ+cgmwZ86uDvoNA50HfCkiK/
+         17CCOoKjoK2v3pwjiv/giYL/Izc4qwrb1F5g4DzU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Farhan Ali <alifm@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 049/167] vfio-ccw: Release any channel program when releasing/removing vfio-ccw mdev
+Date:   Wed, 22 May 2019 15:26:44 -0400
+Message-Id: <20190522192842.25858-49-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190522192842.25858-1-sashal@kernel.org>
+References: <20190522192842.25858-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <9C5B9F98-2067-43D3-B149-57613F38DCD4@zytor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Farhan Ali <alifm@linux.ibm.com>
 
+[ Upstream commit b49bdc8602b7c9c7a977758bee4125683f73e59f ]
 
-On 5/22/19 11:17 AM, hpa@zytor.com wrote:
-> On May 20, 2019 2:39:46 AM PDT, Roberto Sassu <roberto.sassu@huawei.com> wrote:
->> On 5/18/2019 12:17 AM, Arvind Sankar wrote:
->>> On Fri, May 17, 2019 at 02:47:31PM -0700, H. Peter Anvin wrote:
->>>> On 5/17/19 2:02 PM, Arvind Sankar wrote:
->>>>> On Fri, May 17, 2019 at 01:18:11PM -0700, hpa@zytor.com wrote:
->>>>>>
->>>>>> Ok... I just realized this does not work for a modular initramfs,
->> composed at load time from multiple files, which is a very real
->> problem. Should be easy enough to deal with: instead of one large file,
->> use one companion file per source file, perhaps something like
->> filename..xattrs (suggesting double dots to make it less likely to
->> conflict with a "real" file.) No leading dot, as it makes it more
->> likely that archivers will sort them before the file proper.
->>>>> This version of the patch was changed from the previous one exactly
->> to deal with this case --
->>>>> it allows for the bootloader to load multiple initramfs archives,
->> each
->>>>> with its own .xattr-list file, and to have that work properly.
->>>>> Could you elaborate on the issue that you see?
->>>>>
->>>>
->>>> Well, for one thing, how do you define "cpio archive", each with its
->> own
->>>> .xattr-list file? Second, that would seem to depend on the ordering,
->> no,
->>>> in which case you depend critically on .xattr-list file following
->> the
->>>> files, which most archivers won't do.
->>>>
->>>> Either way it seems cleaner to have this per file; especially if/as
->> it
->>>> can be done without actually mucking up the format.
->>>>
->>>> I need to run, but I'll post a more detailed explanation of what I
->> did
->>>> in a little bit.
->>>>
->>>> 	-hpa
->>>>
->>> Not sure what you mean by how do I define it? Each cpio archive will
->>> contain its own .xattr-list file with signatures for the files within
->>> it, that was the idea.
->>>
->>> You need to review the code more closely I think -- it does not
->> depend
->>> on the .xattr-list file following the files to which it applies.
->>>
->>> The code first extracts .xattr-list as though it was a regular file.
->> If
->>> a later dupe shows up (presumably from a second archive, although the
->>> patch will actually allow a second one in the same archive), it will
->>> then process the existing .xattr-list file and apply the attributes
->>> listed within it. It then will proceed to read the second one and
->>> overwrite the first one with it (this is the normal behaviour in the
->>> kernel cpio parser). At the end once all the archives have been
->>> extracted, if there is an .xattr-list file in the rootfs it will be
->>> parsed (it would've been the last one encountered, which hasn't been
->>> parsed yet, just extracted).
->>>
->>> Regarding the idea to use the high 16 bits of the mode field in
->>> the header that's another possibility. It would just require
->> additional
->>> support in the program that actually creates the archive though,
->> which
->>> the current patch doesn't.
->>
->> Yes, for adding signatures for a subset of files, no changes to the ram
->> disk generator are necessary. Everything is done by a custom module. To
->> support a generic use case, it would be necessary to modify the
->> generator to execute getfattr and the awk script after files have been
->> placed in the temporary directory.
->>
->> If I understood the new proposal correctly, it would be task for cpio
->> to
->> read file metadata after the content and create a new record for each
->> file with mode 0x18000, type of metadata encoded in the file name and
->> metadata as file content. I don't know how easy it would be to modify
->> cpio. Probably the amount of changes would be reasonable.
+When releasing the vfio-ccw mdev, we currently do not release
+any existing channel program and its pinned pages. This can
+lead to the following warning:
 
-I could make toybox cpio do it in a weekend, and could probably throw a patch at
-usr/gen_init_cpio.c while I'm at it. I prototyped something like that a couple
-years ago, it's not hard.
+[1038876.561565] WARNING: CPU: 2 PID: 144727 at drivers/vfio/vfio_iommu_type1.c:1494 vfio_sanity_check_pfn_list+0x40/0x70 [vfio_iommu_type1]
 
-The real question is scripts/gen_initramfs_list.sh and the text format it
-produces. We can currently generate cpio files with different ownership and
-permissions than the host system can represent (when not building as root, on a
-filesystem that may not support xattrs or would get unhappy about conflicting
-selinux annotations). We work around it by having the metadata represented
-textually in the initramfs_list file gen_initramfs_list.sh produces and
-gen_init_cpio.c consumes.
+....
 
-xattrs are a terrible idea the Macintosh invented so Finder could remember where
-you moved a file's icon in its folder without having to modify the file, and
-then things like OS/2 copied it and Windows picked it up from there and went "Of
-course, this is a security mechanism!" and... sigh.
+1038876.561921] Call Trace:
+[1038876.561935] ([<00000009897fb870>] 0x9897fb870)
+[1038876.561949]  [<000003ff8013bf62>] vfio_iommu_type1_detach_group+0xda/0x2f0 [vfio_iommu_type1]
+[1038876.561965]  [<000003ff8007b634>] __vfio_group_unset_container+0x64/0x190 [vfio]
+[1038876.561978]  [<000003ff8007b87e>] vfio_group_put_external_user+0x26/0x38 [vfio]
+[1038876.562024]  [<000003ff806fc608>] kvm_vfio_group_put_external_user+0x40/0x60 [kvm]
+[1038876.562045]  [<000003ff806fcb9e>] kvm_vfio_destroy+0x5e/0xd0 [kvm]
+[1038876.562065]  [<000003ff806f63fc>] kvm_put_kvm+0x2a4/0x3d0 [kvm]
+[1038876.562083]  [<000003ff806f655e>] kvm_vm_release+0x36/0x48 [kvm]
+[1038876.562098]  [<00000000003c2dc4>] __fput+0x144/0x228
+[1038876.562113]  [<000000000016ee82>] task_work_run+0x8a/0xd8
+[1038876.562125]  [<000000000014c7a8>] do_exit+0x5d8/0xd90
+[1038876.562140]  [<000000000014d084>] do_group_exit+0xc4/0xc8
+[1038876.562155]  [<000000000015c046>] get_signal+0x9ae/0xa68
+[1038876.562169]  [<0000000000108d66>] do_signal+0x66/0x768
+[1038876.562185]  [<0000000000b9e37e>] system_call+0x1ea/0x2d8
+[1038876.562195] 2 locks held by qemu-system-s39/144727:
+[1038876.562205]  #0: 00000000537abaf9 (&container->group_lock){++++}, at: __vfio_group_unset_container+0x3c/0x190 [vfio]
+[1038876.562230]  #1: 00000000670008b5 (&iommu->lock){+.+.}, at: vfio_iommu_type1_detach_group+0x36/0x2f0 [vfio_iommu_type1]
+[1038876.562250] Last Breaking-Event-Address:
+[1038876.562262]  [<000003ff8013aa24>] vfio_sanity_check_pfn_list+0x3c/0x70 [vfio_iommu_type1]
+[1038876.562272] irq event stamp: 4236481
+[1038876.562287] hardirqs last  enabled at (4236489): [<00000000001cee7a>] console_unlock+0x6d2/0x740
+[1038876.562299] hardirqs last disabled at (4236496): [<00000000001ce87e>] console_unlock+0xd6/0x740
+[1038876.562311] softirqs last  enabled at (4234162): [<0000000000b9fa1e>] __do_softirq+0x556/0x598
+[1038876.562325] softirqs last disabled at (4234153): [<000000000014e4cc>] irq_exit+0xac/0x108
+[1038876.562337] ---[ end trace 6c96d467b1c3ca06 ]---
 
-This is "data that is not data", it's metadata of unbounded size. It seems like
-it should go in gen_initramfs_list.sh but as what, keyword=value pairs that
-might have embedded newlines in them? A base64 encoding? Something else?
+Similarly we do not free the channel program when we are removing
+the vfio-ccw device. Let's fix this by resetting the device and freeing
+the channel program and pinned pages in the release path. For the remove
+path we can just quiesce the device, since in the remove path the mediated
+device is going away for good and so we don't need to do a full reset.
 
->> The kernel will behave in a similar way. It will call do_readxattrs()
->> in
->> do_copy() for each file. Since the only difference between the current
->> and the new proposal would be two additional calls to do_readxattrs()
->> in
->> do_name() and unpack_to_rootfs(), maybe we could support both.
->>
->> Roberto
-> 
-> The nice thing with explicit metadata is that it doesn't have to contain the filename per se, and each file is self-contained. There is a reason why each cpio header starts with the magic number: each cpio record is formally independent and can be processed in isolation.  The TRAILER!!! thing is a huge wart in the format, although in practice TRAILER!!! always has a mode of 0 and so can be distinguished from an actual file.
+Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+Message-Id: <ae9f20dc8873f2027f7b3c5d2aaa0bdfe06850b8.1554756534.git.alifm@linux.ibm.com>
+Acked-by: Eric Farman <farman@linux.ibm.com>
+Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/s390/cio/vfio_ccw_ops.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Not adding the requirement that the cpio.gz must be generated as root from a
-filesystem with the same users and selinux rules as the target system would be nice.
+diff --git a/drivers/s390/cio/vfio_ccw_ops.c b/drivers/s390/cio/vfio_ccw_ops.c
+index 41eeb57d68a3d..560013c8d2a48 100644
+--- a/drivers/s390/cio/vfio_ccw_ops.c
++++ b/drivers/s390/cio/vfio_ccw_ops.c
+@@ -130,11 +130,12 @@ static int vfio_ccw_mdev_remove(struct mdev_device *mdev)
+ 
+ 	if ((private->state != VFIO_CCW_STATE_NOT_OPER) &&
+ 	    (private->state != VFIO_CCW_STATE_STANDBY)) {
+-		if (!vfio_ccw_mdev_reset(mdev))
++		if (!vfio_ccw_sch_quiesce(private->sch))
+ 			private->state = VFIO_CCW_STATE_STANDBY;
+ 		/* The state will be NOT_OPER on error. */
+ 	}
+ 
++	cp_free(&private->cp);
+ 	private->mdev = NULL;
+ 	atomic_inc(&private->avail);
+ 
+@@ -158,6 +159,14 @@ static void vfio_ccw_mdev_release(struct mdev_device *mdev)
+ 	struct vfio_ccw_private *private =
+ 		dev_get_drvdata(mdev_parent_dev(mdev));
+ 
++	if ((private->state != VFIO_CCW_STATE_NOT_OPER) &&
++	    (private->state != VFIO_CCW_STATE_STANDBY)) {
++		if (!vfio_ccw_mdev_reset(mdev))
++			private->state = VFIO_CCW_STATE_STANDBY;
++		/* The state will be NOT_OPER on error. */
++	}
++
++	cp_free(&private->cp);
+ 	vfio_unregister_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
+ 				 &private->nb);
+ }
+-- 
+2.20.1
 
-> The use of mode 0x18000 for metadata allows for optional backwards compatibility for extraction; for encoding this can be handled with very simple postprocessing.
-
-The representation within the cpio file was never a huge deal to me. 0x18000
-sounds fine for that.
-
-> So my suggestion would be to have mode 0x18000 indicate extended file metadata, with the filename of the form:
-> 
-> optional_filename!XXXXX!
-> 
-> ... where XXXXX indicates the type of metadata (e.g. !XATTR!). The optional_filename prefix allows an unaware decoder to extract to a well-defined name; simple postprocessing would be able to either remove (for size) or add (for compatibility) this prefix. It would be an error for this prefix, if present, to not match the name of the previous file.
-
-I'd suggest METADATA!!! to look like TRAILER!!!. (METADATA!!!XXXXX! if you
-really think a keyword=value pair store is _not_ universal and we're going to
-invent entire new _categories_ of this side channel nonsense.)
-
-And extracting conflicting filenames is presumably already covered, it either
-replaces or the new one fails to create the file and the extractor moves on.
-(You need a working error recovery path that skips the right amount of data so
-you can handle the next file properly, but you should have that anyway.)
-
-Rob
