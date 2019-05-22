@@ -2,103 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C64D726F3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2606E26F87
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:57:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732061AbfEVTzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:55:35 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41857 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730197AbfEVTzb (ORCPT
+        id S1732445AbfEVT52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:57:28 -0400
+Received: from sonic303-9.consmr.mail.bf2.yahoo.com ([74.6.131.48]:46034 "EHLO
+        sonic303-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731273AbfEVT5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:55:31 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q17so1869182pfq.8;
-        Wed, 22 May 2019 12:55:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dkz+uMfQ4vVtX4Z57u9xC58rrVWkexD1pHBhDv3CnWw=;
-        b=HvudDPF+KevQPPLS50w5VVfYbTyT/HSSccgs7KNEDiQlGjjGVza2G1drC4CnVs+CcJ
-         K2WQk3HlAiAiK7afohlFEfA7AmqIsaVgAEOb/bSfWVKDDnXCAaJzofoV15AGCWxN6UbC
-         wU60jUxa/ajyydKuvPWfILaGtLw7J25wuxlFfSpdELB0YHwA3v/NCE6BQsOVBzc2dky/
-         Aeb8EvG8EnI6Xwzx3V+dvOodQz1+jxAKvxPsaJwBrq5xzUX1ENgbt42IC3NE2T1OBVYp
-         u9AgscgfhH2vNiCQCKMtlrbj4WMghTu8RuMmZV2v5rvP4fGyM+PdThKoOAA9ad+orqQM
-         0pGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dkz+uMfQ4vVtX4Z57u9xC58rrVWkexD1pHBhDv3CnWw=;
-        b=pCf3Wd6KgnBpoNYz8d6JYt2ZboL1hqmdiVufxpIfck1cjSrGxIiluuDlXb+u6ut7/s
-         9kh2BQqCqHu88DpRoxK25uJQ9yp3Kbta1UJAjmJMxcrv3Gtiq4NLeTjBbb0rwvG2PkWY
-         3TRgLPDk77i7OWvqCLaGuxoWLP1MrigWvHLgJRe7Xxgv/fYk8YuL+H/Ig/jwzI73o0La
-         84VJHKxnT7tmcfmjHw4OxnFwVg+AsGQyTC6vddb4G0zqSbAmmi7Il5HRfclmGcPciAkQ
-         ekkvpIzF8ybyjSogFu2lXoCPDWHgiPXilkiebQnJZP6SpI177y6R09+0cOEGSZ6g+hNY
-         q9Ng==
-X-Gm-Message-State: APjAAAUM2halQ+f2U0DdRgYQjfpxf5gC1j74b70NiJ7lgggdPYBnMn3s
-        EflODPgW0Y56bMUSzST5i0oMzSbH
-X-Google-Smtp-Source: APXvYqzuFNwwqWce3oARO3MYbQ8QDsnhxBa3bPsJce9d8mfJhpoeRGDAkM1CNEoTvjLbDrHsL1Pbjw==
-X-Received: by 2002:a63:7413:: with SMTP id p19mr89950878pgc.259.1558554930988;
-        Wed, 22 May 2019 12:55:30 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::6565])
-        by smtp.gmail.com with ESMTPSA id x18sm32697904pfj.17.2019.05.22.12.55.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 12:55:30 -0700 (PDT)
-Date:   Wed, 22 May 2019 12:55:27 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Kris Van Hees <kris.van.hees@oracle.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, dtrace-devel@oss.oracle.com,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        mhiramat@kernel.org, acme@kernel.org, ast@kernel.org,
-        daniel@iogearbox.net
-Subject: Re: [RFC PATCH 00/11] bpf, trace, dtrace: DTrace BPF program type
- implementation and sample use
-Message-ID: <20190522195526.mayamzc7gstqzcpr@ast-mbp.dhcp.thefacebook.com>
-References: <201905202347.x4KNl0cs030532@aserv0121.oracle.com>
- <20190521175617.ipry6ue7o24a2e6n@ast-mbp.dhcp.thefacebook.com>
- <20190522142531.GE16275@worktop.programming.kicks-ass.net>
- <20190522182215.GO2422@oracle.com>
+        Wed, 22 May 2019 15:57:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1558555039; bh=lxUK78hbg598LYlSBwDY5EGORMzFcW2ess5/JaNr0AU=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=PcfrbUBeS+bOnSQWry2tGvdZWAb24XDqo6aMGXsrRALklApn2d4k24HSjwJw89TijRRXDpYBJeJlL7wFnQVo1gkuftT3uOo7FAQi8f0ZGpMLgSE1fjxi/x3ueHjZeUuTxzPCHEHBbycHZLk63xH6zG6DhJBuh9PabpnJKn9nODk92CC/Jv2kvpBqV1QF++Bib3RRG1koA6si6d1Y6gI95ON8hcGgyCq1Y0shjzfXsgm4wb7Cg3vnZZYyOvZDZjFzf/5Y6p7NRU18c+R07pmTh9RFi3KMJe/YvylYJJ9GYtkt7CPS3ptafvSyijotN15LolI+YjwFGcA8WmKe8UwLOg==
+X-YMail-OSG: 6jV9iIYVM1kyO4mEtN.FQz.IwSkedBG6_Cl759TxAMFN7pTfy3UMOYZdazIGuWz
+ ZdPjt1.264z_CnqLEWbVfwlEKOX8cyVpU11WMNo8ELWJxyr4GNaQTwLJZCzIkaGtSrUvWlMruFij
+ .IiN7FPvFbqqYzqWeW5DrAx.i5o_gnprk8Bu3BKFJ9XTtpXKQYe0zrv9j1d0E9NF8ZfB_G4xqIql
+ axoGUoTrpH0O2PTkVNjHAxwHYBAZOsF64fFma_RFt.R_9wCnKUouHGK3QQHs.h6TjpPfBIEUApA2
+ kayKvzOBr.tgBEaz3d7PsUKMLIJ5lF76qvUs4H915rBY_PZKzIk6MVmKtHa.l.C67vOclT.nT132
+ C62VZWE2MtMK_btgLKsSNXIRi8JiBt8dQspjjPGYtAASmwoFkJlov9EHo.7YnLsEMAxv9ahjVcym
+ Bno6.05yC2sqOhM8B_AQbvoZ_djd8I7EVGOCylM3it4A_Kc5QaIRgRTnOj5CYeCqd.YtqfCvNVNW
+ jM9.cZF4sWyZQFgrkuCmeAQcPuUVgCIEQYeJGnvgbNQpkuRJBumx565iiyRhVSoGu3LgcKh_uxfg
+ Sr1O9MBsUSSp7oXZvypjd9igasfeS4jX4AcnpujpBWYJP1kYXuKHXEeCMVTKH3X185GKf6z7DyoK
+ E6.fNAx2ruj3KaM2g6X3NVKY6sJXP4.7K7D2gUEaY2_8vQIqJW1Ai0WZHsDZc8jCVIP9REtjOQBr
+ ZMB67jYITqDVTE6QMYidVGaRo0z2ktSQ_uGVATf3a8YZKHzcTQZp2NLXo3Mqs68Vg.Awa0E.gQSe
+ UfiBS5EHEk_FjwXBb3fhpCmnWbn2S7SPJbt9UZbeDAyGUn.D8u_5z6nyecMjVTYXPUmEeqAQDx5z
+ h8YyU3q4KTqztQpRr6TB9fZo_iEMOXOGg_l8la5SBVO.Tbhnz.BpvoF3c6pywZTwCrv52v4bhuHO
+ x.cu5Pdq_gvM6IlsgcmTUg7.cu6yHmIv3Jq26HJl157Z2HFRwvIrz1Qfco8g_aAVrxnvjcqWLdKp
+ bLRivyJewEkGvjkGDDloCyPxM4EHSWREy62QrOjj68VGN6_8bxWcFo5Ky_9OM87KKuzU5d2XyKJ0
+ 7cV5U2VP7WdHUeZMkU8smFol1WA0oo6DnqIm9iNWCHuP7wl_BYc3vc4t4UDrChLu3Ho1ljQPDSLh
+ WPUoVioO4L90d_Xu9ez3bMIaXJmKvySdig2fQfmyqTPPq4qVKwOIWCDaGaPbLIYiXNMVEjYe2kKS
+ KtjJJykP5Q.dNDk10.f0-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Wed, 22 May 2019 19:57:19 +0000
+Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
+          by smtp403.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID adb4da5c904a17c8b2b4ab09cd681d07;
+          Wed, 22 May 2019 19:57:15 +0000 (UTC)
+Subject: Re: [RFC] Turn lockdown into an LSM
+To:     James Morris <jmorris@namei.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Matthew Garrett <mjg59@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190521224013.3782-1-matthewgarrett@google.com>
+ <alpine.LRH.2.21.1905221203070.3967@namei.org>
+ <CACdnJuuTR=Ut4giPKC=kdxgY9yPv8+3PZyEzuxvON3Jr_92XnQ@mail.gmail.com>
+ <CALCETrVow8U=xhQdJt8kSMX16Lf0Mstf3+QxY4iz4DHVp=PYWA@mail.gmail.com>
+ <14ed1f30-a1d0-f973-5c8c-241337c8fc09@tycho.nsa.gov>
+ <alpine.LRH.2.21.1905230457000.18826@namei.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <8b33a96f-160d-8e5d-4335-db2445cbe37a@schaufler-ca.com>
+Date:   Wed, 22 May 2019 12:57:13 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190522182215.GO2422@oracle.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <alpine.LRH.2.21.1905230457000.18826@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 02:22:15PM -0400, Kris Van Hees wrote:
-> On Wed, May 22, 2019 at 04:25:32PM +0200, Peter Zijlstra wrote:
-> > On Tue, May 21, 2019 at 10:56:18AM -0700, Alexei Starovoitov wrote:
-> > 
-> > > and no changes are necessary in kernel/events/ring_buffer.c either.
-> > 
-> > Let me just NAK them on the principle that I don't see them in my inbox.
-> 
-> My apologies for failing to include you on the Cc for the patches.  That was
-> an oversight on my end and certainly not intentional.
-> 
-> > Let me further NAK it for adding all sorts of garbage to the code --
-> > we're not going to do gaps and stay_in_page nonsense.
-> 
-> Could you give some guidance in terms of an alternative?  The ring buffer code
-> provides both non-contiguous page allocation support and a vmalloc-based
-> allocation, and the vmalloc version certainly would avoid the entire gap and
-> page boundary stuff.  But since the allocator is chosen at build time based on
-> the arch capabilities, there is no way to select a specific memory allocator.
-> I'd be happy to use an alternative approach that allows direct writing into
-> the ring buffer.
+On 5/22/2019 12:19 PM, James Morris wrote:
+> On Wed, 22 May 2019, Stephen Smalley wrote:
+>
+>> That seems to violate the intent of lockdown as I understood it, and 
+>> turns security_is_locked_down() into a finer-grained capable() call. 
+>> Also, if I understand correctly, this could only be done if one were to 
+>> disable the lockdown module in the lsm list, since the security 
+>> framework will return non-zero (i.e. the operation is locked down) if 
+>> any module that implements the hook returns non-zero; LSM is 
+>> "restrictive". At that point SELinux or the other LSM would be the sole 
+>> arbiter of lockdown decisions. SELinux or the other LSM also wouldn't 
+>> have access to the kernel_locked_down level unless that was exported in 
+>> some manner from the lockdown module.  Not sure how to compose these.
+> Right, I was envisaging the LSM replacing the default.
+>
+> i.e. the default is tristate OR fine grained LSM policy.
+>
+> They could in theory be composed restrictively, but this is likely not 
+> useful given the coarse grained default policy.  All the LSM could do is 
+> either further restrict none or integrity.
+>
+> We'd need to figure out how to avoid confusing users in the case where 
+> multiple LSMs are registered for the hooks, possibly by having the 
+> lockdown LSM gate this and update the securityfs lockdown node with 
+> something like "lsm:smack".
 
-You do not _need_ direct write from bpf prog.
-dtrace language doesn't mandate direct write.
-'direct write into ring buffer form bpf prog' is an interesting idea and
-may be nice performance optimization, but in no way it's a blocker for dtrace scripts.
-Also it's far from clear that it actually brings performance benefits.
-Letting bpf progs write directly into ring buffer comes with
-a lot of corner cases. It's something to carefully analyze.
-I suggest to proceed with user space dtrace conversion to bpf
-without introducing kernel changes.
+The way I'd propose dealing with multiple LSMs using the
+securityfs interface is the same as I'm proposing for
+/proc/.../attr/current and SO_PEERSEC. A new interface
+/proc/self/attr/display contains the name of the LSM that
+the current process will see when looking at process or
+security attributes that are "shared". Writing to display
+is unprivileged and changes which LSM you get information
+for.
+
+Adornments like "lsm:smack" often require modification of
+programs that fear change. The same would be true of a prctl().
+The "display" file approach is no harder for applications that
+are getting modified and much easier for scripts.
 
