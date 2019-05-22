@@ -2,86 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4973E25ECE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 09:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD4AD25EDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 09:56:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728635AbfEVHsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 03:48:45 -0400
-Received: from ozlabs.org ([203.11.71.1]:34805 "EHLO ozlabs.org"
+        id S1728680AbfEVH4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 03:56:41 -0400
+Received: from mail2.skidata.com ([91.230.2.91]:60680 "EHLO mail2.skidata.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbfEVHsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 03:48:45 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4584WY4Rrnz9s6w;
-        Wed, 22 May 2019 17:48:41 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1558511322;
-        bh=TuZ9NVlBYOOA0MoB3qMJofvJa3RIuTnzGFA8ICtVWVA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nI2nqIhThg2UHDDsoFD2x7fy7OET3ebPz4yL7Uo5LKh2zL49FxQVmq5Pbg9r1Xz58
-         PNoBQL4LVAoc81bQ6YzSAf18VCrt90fqY9yoi4Vdk0IZR1OvqcNgzGezdNX2uAKifN
-         xZWdYj42nmhtAGRdNgp7fl4IxZFYkgqg5Amo/Dal039JmUt/D4mcCu74Kp3e9XkENn
-         iPFw38GXY3KQejdx4io0BmVC3MJ1PPkctK3GgWm2WPXjAgv9cuc4ZYlb7hmk1h3iUh
-         z0CEIadD6kO54z9WAOok+nIZwf3KQD2ynzjw6Es30QxjljuxT7DY8fIvIAJVk2Q1nd
-         Iv3BVwyZw/IIA==
-Date:   Wed, 22 May 2019 17:48:33 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Christian Brauner <christian@brauner.io>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: Re: linux-next: manual merge of the pidfd tree with Linus' tree
-Message-ID: <20190522174725.6bfd51bd@canb.auug.org.au>
-In-Reply-To: <20190522055235.GC13702@kroah.com>
-References: <20190522110115.7350be3e@canb.auug.org.au>
-        <20190522055235.GC13702@kroah.com>
+        id S1728159AbfEVH4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 03:56:40 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 May 2019 03:56:39 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=skidata.com; i=@skidata.com; q=dns/txt; s=selector1;
+  t=1558511822; x=1590047822;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=LJnYEKn5WOXECQB3sJrCxae4KRfYfQTS/G+vasBSN0I=;
+  b=dhSvzPENaIXPQ37kr5wOb5EcbT/sO8fSLvlTkzYG+s8gNEMhM6VfEVoi
+   fsqe20QodQjryMPX/KVAk5+PgLfl4LQiYYhKwgR/RDnM0mUnQyhCwS3MA
+   7PaEL5Uy45uYwRZcLMQUNovVR7lqK6MJL4/+CK5kijP2UsMiSZWyCPmaQ
+   f1Z+TSoLrOkqRbJqXBRpYAe/lXOIa8ojVx8q3U44/+fDISRnbxwoKJDSn
+   L8L3fAOR4U6LWL3FSM9Wrg0LRiOy2nVXa9ow6/Zt8FiV12jdePdG8gTjf
+   26QV/T1gxOsRTCaq4lgoaTtzhn5sQph6f2Q36bu8UxEeH3ZTIcUzU57hi
+   g==;
+IronPort-SDR: bHCkSqeNf+P5/1K1T9SeqcdO2jZ6RfDMFEkkWOvgFfGljXlAsK+mN7cPZD4UPrEWry9Y4CrCq7
+ 3tHDsDTiMdjl+Z5GVlvF1QuaQPIxQtrePu4/DFbImMH9kOnaXY1lsM6lQKqGgmP7WjV+zbCvlQ
+ oqim7Yp3D5rgQkHq+QwJfGyIX8PzPOs7lW1+LkA/ypuwEKe8WwyccERlirEDygjN73wm1Nacw5
+ yN17Dee6VRl5xOFVTagixJm998xZT8Qrp51Thvt6Q2LxB/plIa3THv3LCwDIGZZnfXUMKeVuUZ
+ 4UE=
+X-IronPort-AV: E=Sophos;i="5.60,498,1549926000"; 
+   d="scan'208";a="2151447"
+Subject: Re: [PATCH 1/3] rtc: s35390a: clarify INT2 pin output modes
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     <a.zummo@towertech.it>, <linux-rtc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190521142024.25894-1-richard.leitner@skidata.com>
+ <20190521142024.25894-2-richard.leitner@skidata.com>
+ <20190521155424.GH3274@piout.net>
+From:   Richard Leitner <richard.leitner@skidata.com>
+Message-ID: <16bd943f-ccae-c3a5-59d3-b429c12c8155@skidata.com>
+Date:   Wed, 22 May 2019 09:49:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/lvAN8G0u2K3BD/3rFho2.e2"; protocol="application/pgp-signature"
+In-Reply-To: <20190521155424.GH3274@piout.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.111.252]
+X-ClientProxiedBy: sdex4srv.skidata.net (192.168.111.82) To
+ sdex5srv.skidata.net (192.168.111.83)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/lvAN8G0u2K3BD/3rFho2.e2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 21/05/2019 17:54, Alexandre Belloni wrote:
+> Hello,
+> 
+> This seems good to me but...
+> 
+> On 21/05/2019 16:20:22+0200, Richard Leitner wrote:
 
-Hi Greg,
+>> --- a/drivers/rtc/rtc-s35390a.c
+>> +++ b/drivers/rtc/rtc-s35390a.c
+>> @@ -45,12 +45,13 @@
+>>   /* flag for STATUS2 */
+>>   #define S35390A_FLAG_TEST	0x01
+>>   
+>> -#define S35390A_INT2_MODE_MASK		0xF0
+>> -
+>> +/* INT2 pin output mode */
+>> +#define S35390A_INT2_MODE_MASK		0x0E
+>>   #define S35390A_INT2_MODE_NOINTR	0x00
+>> -#define S35390A_INT2_MODE_FREQ		0x10
+>> -#define S35390A_INT2_MODE_ALARM		0x40
+>> -#define S35390A_INT2_MODE_PMIN_EDG	0x20
+>> +#define S35390A_INT2_MODE_ALARM		0x02 /* INT2AE */
+>> +#define S35390A_INT2_MODE_PMIN_EDG	0x04 /* INT2ME */
+>> +#define S35390A_INT2_MODE_FREQ		0x08 /* INT2FE */
+>> +#define S35390A_INT2_MODE_PMIN		0x0C /* INT2ME | INT2FE */
+>>   
+> 
+> While you are at it you may as well use BIT().
 
-On Wed, 22 May 2019 07:52:35 +0200 Greg Kroah-Hartman <gregkh@linuxfoundati=
-on.org> wrote:
->
-> Sorry, you are going to get a number of these types of minor conflicts
-> now.  That's the problem of touching thousands of files :(
+Sure, will change that for v2.
 
-Yeah, I expected that one I saw the commits.  At least is is just after
--rc1, hopefully most maintainers will start their -next branches after
-today :-)
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/lvAN8G0u2K3BD/3rFho2.e2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzk/tEACgkQAVBC80lX
-0Gytgwf/bM3rn1I53Z1gozufwkAcj4PNOkJZ+4AxQXyFSR5FeznDmcWBByYIjOmW
-7KgoP5dudN5bYcOfhgugtORTjJu54x3P3iSgdDYzoZRvK0Sk8irR/SlfoBd8Brsc
-iiqBXBicqQQGrus+zTLdtHvr7bXbX0weTxCUV4Xj91jUSa6oD9f+JskwuvGCV1zt
-fxmo+N8BTmPFZ79PjTKkZR+nAZacDm34fEKBlIIJvrpjpG5BYKlFNwf6c5Q89vb7
-lq3DAnLISW/gZ6QfEWMMdczQ24qvrLxZm6LApOLZ1KxMy+SNzTT/i9ejIqvITJxD
-dm7z1TtvrBzveZnAGVWiXDpbDTJk/w==
-=MWyJ
------END PGP SIGNATURE-----
-
---Sig_/lvAN8G0u2K3BD/3rFho2.e2--
+regards;Richard.L
