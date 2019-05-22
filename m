@@ -2,71 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C02726D98
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:43:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86BE426DAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:43:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732975AbfEVTnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:43:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732148AbfEVTnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:43:08 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 096B720856;
-        Wed, 22 May 2019 19:43:06 +0000 (UTC)
-Date:   Wed, 22 May 2019 15:43:05 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] RDMA/mlx5: Use DIV_ROUND_UP_ULL macro to allow 32 bit
- to build
-Message-ID: <20190522154305.615d1d76@gandalf.local.home>
-In-Reply-To: <20190522192821.GG6054@ziepe.ca>
-References: <20190522145450.25ff483d@gandalf.local.home>
-        <20190522192821.GG6054@ziepe.ca>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1732808AbfEVTnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:43:43 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:37834 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729616AbfEVTnc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:43:32 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hTX93-00050n-IX; Wed, 22 May 2019 21:43:25 +0200
+Date:   Wed, 22 May 2019 21:43:24 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>
+Subject: Re: [PATCH] mm/gup: continue VM_FAULT_RETRY processing event for
+ pre-faults
+Message-ID: <20190522194322.5k52docwgp5zkdcj@linutronix.de>
+References: <1557844195-18882-1-git-send-email-rppt@linux.ibm.com>
+ <20190522122113.a2edc8aba32f0fad189bae21@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190522122113.a2edc8aba32f0fad189bae21@linux-foundation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 May 2019 16:28:21 -0300
-Jason Gunthorpe <jgg@ziepe.ca> wrote:
-
-> On Wed, May 22, 2019 at 02:54:50PM -0400, Steven Rostedt wrote:
-> > 
-> > From: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > 
-> > When testing 32 bit x86, my build failed with:
-> > 
-> >   ERROR: "__udivdi3" [drivers/infiniband/hw/mlx5/mlx5_ib.ko] undefined!
-> > 
-> > It appears that a few non-ULL roundup() calls were made, which uses a
-> > normal division against a 64 bit number. This is fine for x86_64, but
-> > on 32 bit x86, it causes the compiler to look for a helper function
-> > __udivdi3, which we do not have in the kernel, and thus fails to build.
-> > 
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > ---  
+On 2019-05-22 12:21:13 [-0700], Andrew Morton wrote:
+> On Tue, 14 May 2019 17:29:55 +0300 Mike Rapoport <rppt@linux.ibm.com> wrote:
 > 
-> Do you like this version better?
+> > When get_user_pages*() is called with pages = NULL, the processing of
+> > VM_FAULT_RETRY terminates early without actually retrying to fault-in all
+> > the pages.
+> > 
+> > If the pages in the requested range belong to a VMA that has userfaultfd
+> > registered, handle_userfault() returns VM_FAULT_RETRY *after* user space
+> > has populated the page, but for the gup pre-fault case there's no actual
+> > retry and the caller will get no pages although they are present.
+> > 
+> > This issue was uncovered when running post-copy memory restore in CRIU
+> > after commit d9c9ce34ed5c ("x86/fpu: Fault-in user stack if
+> > copy_fpstate_to_sigframe() fails").
+> > 
+> > After this change, the copying of FPU state to the sigframe switched from
+> > copy_to_user() variants which caused a real page fault to get_user_pages()
+> > with pages parameter set to NULL.
 > 
-> https://patchwork.kernel.org/patch/10950913/
+> You're saying that argument buf_fx in copy_fpstate_to_sigframe() is NULL?
+
+buf_fx is user stack pointer and it should not be NULL.
+
+> If so was that expected by the (now cc'ed) developers of
+> d9c9ce34ed5c8923 ("x86/fpu: Fault-in user stack if
+> copy_fpstate_to_sigframe() fails")?
 > 
+> It seems rather odd.  copy_fpregs_to_sigframe() doesn't look like it's
+> expecting a NULL argument.
 
-Honestly, I don't care ;-)
+exactly, this is not expected.
 
-As long as it is correct and doesn't break my builds. I really prefer
-if these kinds of things don't make it into Linus's tree to begin with.
-I'm surprised the zero-day bot didn't catch this. Because this is
-something that it normally does.
+> Also, I wonder if copy_fpstate_to_sigframe() would be better using
+> fault_in_pages_writeable() rather than get_user_pages_unlocked().  That
+> seems like it operates at a more suitable level and I guess it will fix
+> this issue also.
 
--- Steve
+It looks, like fault_in_pages_writeable() would work. If this is the
+recommendation from the MM department than I can switch to that.
+
+> > In post-copy mode of CRIU, the destination memory is managed with
+> > userfaultfd and lack of the retry for pre-fault case in get_user_pages()
+> > causes a crash of the restored process.
+> > 
+> > Making the pre-fault behavior of get_user_pages() the same as the "normal"
+> > one fixes the issue.
+> 
+> Should this be backported into -stable trees?
+
+Sebastian
