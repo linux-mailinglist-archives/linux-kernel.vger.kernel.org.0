@@ -2,65 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BAF725EB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 09:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB76425EB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 09:33:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728568AbfEVHfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 03:35:25 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:42433 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725801AbfEVHfZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 03:35:25 -0400
-Received: by mail-qt1-f193.google.com with SMTP id j53so1175421qta.9
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 00:35:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=45UZxQiFbq2zrCxPgxX4tICqpmAKAWmhy8nY0NTFEHI=;
-        b=UNYACKTHiF2cYn+NOm3CyXNCAsEEv1AIX+KDY8LRZUWz/URwVwlKoybJmvdmtME84f
-         6NhOUFhZb+dePnAkmj6LbcTgwXuiKcEoEv1rw9V9kAiabavoRf80T6z1EY+X+uY7bRIo
-         FuMb+VPhqloGLQm1ndJUZHxCx3iFfXd7BHocSorcRNmbsYR916AR/ozmVUzieAzyfitq
-         swEeWkhVlS8jX3wuHSXCI9Yk+eQOaZO2GONEzUUTegVbNlrrjpAVA/IIyr2OjTfi27xs
-         WI+xDNdohXx/pwvcqfn3B/EzqJqYunxbnBhhXX94486bryKjVRNVQU0AZiIg4dvPezZ1
-         KoKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=45UZxQiFbq2zrCxPgxX4tICqpmAKAWmhy8nY0NTFEHI=;
-        b=osbceOYYFk1pYe2IMxqMBpdRGC55izZAv5DAULXkkenr+Aqvz9b/uWZyKjwh4m0iNA
-         u0LYugIK2jAjdVayYU3JDaB6wjdrXnA8lr/1BfuYHL0oK4y0hFH3FF/U1GO4X4JfKTe1
-         7FCkUsoyz7/zBFTxjzCV2U6cIdAtsLLHz9iKh11D/SIk/YcFZFQb8m4FJSEdoonYcFAl
-         6loLweOPripiBVTDm35Ev4qL8ozvUh+0MsUfleC1RMJLAGXPufqm9HT3sfzew+m6hLjt
-         IFtFcITuDKOQ5F0fQnhcJCxybTt4n4dc0MaAGoCapGS47xBqfsjTR6M6N4X5wkJfRTNo
-         hEhQ==
-X-Gm-Message-State: APjAAAUwi9N2Lt8zLwxVhQ9Go6wCHDbwVofRYiWmDoOegi1Lz+fUsRBf
-        yiWSWUNc/D0OLXpOot6bVyIh2dF1HlzH40HQrqU=
-X-Google-Smtp-Source: APXvYqw+fM3YzGl9hjW4q7BWTPnNwgw1c8e0gg5J0T+WAAq1zXsSJX6oBpyp4QSiUZDF59CDuE07RYp5WiHbdXLYa/Q=
-X-Received: by 2002:a0c:aecd:: with SMTP id n13mr61816818qvd.182.1558510523680;
- Wed, 22 May 2019 00:35:23 -0700 (PDT)
+        id S1728533AbfEVHd3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 03:33:29 -0400
+Received: from mga04.intel.com ([192.55.52.120]:39940 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725796AbfEVHd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 03:33:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 May 2019 00:33:28 -0700
+X-ExtLoop1: 1
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 22 May 2019 00:33:26 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Markus Heiser <markus.heiser@darmarit.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH RFC 0/2] docs: Deal with some Sphinx deprecation warnings
+In-Reply-To: <20190521211714.1395-1-corbet@lwn.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190521211714.1395-1-corbet@lwn.net>
+Date:   Wed, 22 May 2019 10:36:45 +0300
+Message-ID: <87d0kb7xf6.fsf@intel.com>
 MIME-Version: 1.0
-Reply-To: ste1959bury@gmail.com
-Received: by 2002:aed:3ba3:0:0:0:0:0 with HTTP; Wed, 22 May 2019 00:35:23
- -0700 (PDT)
-From:   Steven Utonbury <stev1959bury@gmail.com>
-Date:   Wed, 22 May 2019 00:35:23 -0700
-X-Google-Sender-Auth: LG_w-STXhUp4pjKOeZimph6kniQ
-Message-ID: <CAFd1H1-e4qbR_1H3kz3m05QBpgxmDBvBj2jqoo74BsZg2KZb+w@mail.gmail.com>
-Subject: =?UTF-8?B?16nXnNeV150=?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-16nXnNeV150sDQoNCtee16bXpNeUINec16nXnteV16Ig157XnteaINei15wg15TXk9eV15Ai15wg
-16nXnNeX16rXmSDXnNeaINen15XXk9edINec15vXnyDXnNeS15HXmSDXlNeU16TXp9eT15Qg16nX
-oNei16nXlSDXkdeR16DXpyDXm9eQ158NCtei15wg15nXk9eZINeU15zXp9eV15cg16nXnNeZINee
-15DXldeX16gsINeQ16DXmSDXpteo15nXmiDXnNeq16og15zXmiDXkNeqINeU157XmdeT16Ig16LX
-nCDXkNeZ15og15zXlNep15nXkiDXnteY16jXlCDXlteVLg0K15DXoNeQINeg16HXlCDXnNeX15bX
-ldeoINeQ15zXmS4NCg0K15HXkdeo15vXlA0K16HXmNeZ15HXnw0K
+On Tue, 21 May 2019, Jonathan Corbet <corbet@lwn.net> wrote:
+> The Sphinx folks are deprecating some interfaces in the upcoming 2.0
+> release; one immediate result of that is a bunch of warnings that show up
+> when building with 1.8.  These two patches make those warnings go away,
+> but at a cost:
+>
+>  - It introduces a couple of Sphinx version checks, which are always
+>    ugly, but the alternative would be to stop supporting versions
+>    before 1.7.  For now, I think we can carry that cruft.
+
+Frankly, I'd just require Sphinx 1.7+, available even in Debian stable
+through stretch-backports.
+
+>  - The second patch causes the build to fail horribly on newer
+>    Sphinx installations.  The change to switch_source_input() seems
+>    to make the parser much more finicky, increasing warnings and
+>    eventually failing the build altogether.  In particular, it will
+>    scream about problems in .rst files that are not included in the
+>    TOC tree at all.  The complaints appear to be legitimate, but it's
+>    a bunch of stuff to clean up.
+
+I can understand Sphinx complaining that a file is not included in a TOC
+tree, but I don't understand why it goes on to parse them anyway.
+
+BR,
+Jani.
+
+
+>
+> I've tested these with 1.4 and 1.8, but not various versions in between.
+>
+> Jonathan Corbet (2):
+>   doc: Cope with Sphinx logging deprecations
+>   doc: Cope with the deprecation of AutoReporter
+>
+>  Documentation/sphinx/kerneldoc.py | 48 ++++++++++++++++++++++++-------
+>  Documentation/sphinx/kernellog.py | 28 ++++++++++++++++++
+>  Documentation/sphinx/kfigure.py   | 38 +++++++++++++-----------
+>  3 files changed, 87 insertions(+), 27 deletions(-)
+>  create mode 100644 Documentation/sphinx/kernellog.py
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
