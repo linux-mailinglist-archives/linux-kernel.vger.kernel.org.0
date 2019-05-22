@@ -2,96 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0C2A26E6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:49:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A6CA26BCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:30:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387937AbfEVTtx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:49:53 -0400
-Received: from mga05.intel.com ([192.55.52.43]:43391 "EHLO mga05.intel.com"
+        id S1733153AbfEVTaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:30:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732116AbfEVT0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:26:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 May 2019 12:26:46 -0700
-X-ExtLoop1: 1
-Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
-  by orsmga002.jf.intel.com with ESMTP; 22 May 2019 12:26:48 -0700
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.79]) by
- ORSMSX102.amr.corp.intel.com ([169.254.3.72]) with mapi id 14.03.0415.000;
- Wed, 22 May 2019 12:26:47 -0700
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "davem@davemloft.net" <davem@davemloft.net>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mroos@linux.ee" <mroos@linux.ee>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "namit@vmware.com" <namit@vmware.com>,
-        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
-Subject: Re: [PATCH v2] vmalloc: Fix issues with flush flag
-Thread-Topic: [PATCH v2] vmalloc: Fix issues with flush flag
-Thread-Index: AQHVD0ezpbXySuUS5EinefGl750kkaZ0/uwAgAALkwCAAAiygIAAGYEAgAADqwCAAA0vgIAABnMAgAAEjYCAApkWgIAAHb0A
-Date:   Wed, 22 May 2019 19:26:47 +0000
-Message-ID: <01a23900329e605fcd41ad8962cfd8f2d9b1fa44.camel@intel.com>
-References: <a43f9224e6b245ade4b587a018c8a21815091f0f.camel@intel.com>
-         <20190520.184336.743103388474716249.davem@davemloft.net>
-         <339ef85d984f329aa66f29fa80781624e6e4aecc.camel@intel.com>
-         <20190522.104019.40493905027242516.davem@davemloft.net>
-In-Reply-To: <20190522.104019.40493905027242516.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.30.1 (3.30.1-1.fc29) 
-x-originating-ip: [10.254.91.116]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8DA560705D778D4A9D23CAF3ED2AB2FC@intel.com>
-Content-Transfer-Encoding: base64
+        id S1730762AbfEVTaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:30:05 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42DB821473;
+        Wed, 22 May 2019 19:30:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558553404;
+        bh=wZ0jozuRaDrYGCz/VJ43+6fxZgy24T+t1zY1SZi5jwg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dWlDti1Z8nSTcsYXvG6hQpaFY50/3yHHwo7b7JcJgnbnYMlv4Gtwgcem2//rRgtm1
+         iAP2vcbKceg6l/nZTqxpLs32evaseGxutfZ5Ep+GJjLGCgqEbIAFzMHypWY5/CVYAG
+         u9GOT9mpC1juReIQghMOdaX2st49P0nsalU7xGXk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, luto@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 053/167] mm/uaccess: Use 'unsigned long' to placate UBSAN warnings on older GCC versions
+Date:   Wed, 22 May 2019 15:26:48 -0400
+Message-Id: <20190522192842.25858-53-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190522192842.25858-1-sashal@kernel.org>
+References: <20190522192842.25858-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE5LTA1LTIyIGF0IDEwOjQwIC0wNzAwLCBEYXZpZCBNaWxsZXIgd3JvdGU6DQo+
-IEZyb206ICJFZGdlY29tYmUsIFJpY2sgUCIgPHJpY2sucC5lZGdlY29tYmVAaW50ZWwuY29tPg0K
-PiBEYXRlOiBUdWUsIDIxIE1heSAyMDE5IDAxOjU5OjU0ICswMDAwDQo+IA0KPiA+IE9uIE1vbiwg
-MjAxOS0wNS0yMCBhdCAxODo0MyAtMDcwMCwgRGF2aWQgTWlsbGVyIHdyb3RlOg0KPiA+ID4gRnJv
-bTogIkVkZ2Vjb21iZSwgUmljayBQIiA8cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+DQo+ID4g
-PiBEYXRlOiBUdWUsIDIxIE1heSAyMDE5IDAxOjIwOjMzICswMDAwDQo+ID4gPiANCj4gPiA+ID4g
-U2hvdWxkIGl0IGhhbmRsZSBleGVjdXRpbmcgYW4gdW5tYXBwZWQgcGFnZSBncmFjZWZ1bGx5PyBC
-ZWNhdXNlDQo+ID4gPiA+IHRoaXMNCj4gPiA+ID4gY2hhbmdlIGlzIGNhdXNpbmcgdGhhdCB0byBo
-YXBwZW4gbXVjaCBlYXJsaWVyLiBJZiBzb21ldGhpbmcgd2FzDQo+ID4gPiA+IHJlbHlpbmcNCj4g
-PiA+ID4gb24gYSBjYWNoZWQgdHJhbnNsYXRpb24gdG8gZXhlY3V0ZSBzb21ldGhpbmcgaXQgY291
-bGQgZmluZCB0aGUNCj4gPiA+ID4gbWFwcGluZw0KPiA+ID4gPiBkaXNhcHBlYXIuDQo+ID4gPiAN
-Cj4gPiA+IERvZXMgdGhpcyB3b3JrIGJ5IG5vdCBtYXBwaW5nIGFueSBrZXJuZWwgbWFwcGluZ3Mg
-YXQgdGhlDQo+ID4gPiBiZWdpbm5pbmcsDQo+ID4gPiBhbmQgdGhlbiBmaWxsaW5nIGluIHRoZSBC
-UEYgbWFwcGluZ3MgaW4gcmVzcG9uc2UgdG8gZmF1bHRzPw0KPiA+IE5vLCBub3RoaW5nIHRvbyBm
-YW5jeS4gSXQganVzdCBmbHVzaGVzIHRoZSB2bSBtYXBwaW5nIGltbWVkaWF0bHkgaW4NCj4gPiB2
-ZnJlZSBmb3IgZXhlY3V0ZSAoYW5kIFJPKSBtYXBwaW5ncy4gVGhlIG9ubHkgdGhpbmcgdGhhdCBo
-YXBwZW5zDQo+ID4gYXJvdW5kDQo+ID4gYWxsb2NhdGlvbiB0aW1lIGlzIHNldHRpbmcgb2YgYSBu
-ZXcgZmxhZyB0byB0ZWxsIHZtYWxsb2MgdG8gZG8gdGhlDQo+ID4gZmx1c2guDQo+ID4gDQo+ID4g
-VGhlIHByb2JsZW0gYmVmb3JlIHdhcyB0aGF0IHRoZSBwYWdlcyB3b3VsZCBiZSBmcmVlZCBiZWZv
-cmUgdGhlDQo+ID4gZXhlY3V0ZQ0KPiA+IG1hcHBpbmcgd2FzIGZsdXNoZWQuIFNvIHRoZW4gd2hl
-biB0aGUgcGFnZXMgZ290IHJlY3ljbGVkLCByYW5kb20sDQo+ID4gc29tZXRpbWVzIGNvbWluZyBm
-cm9tIHVzZXJzcGFjZSwgZGF0YSB3b3VsZCBiZSBtYXBwZWQgYXMgZXhlY3V0YWJsZQ0KPiA+IGlu
-DQo+ID4gdGhlIGtlcm5lbCBieSB0aGUgdW4tZmx1c2hlZCB0bGIgZW50cmllcy4NCj4gDQo+IElm
-IEkgYW0gdG8gdW5kZXJzdGFuZCB0aGluZ3MgY29ycmVjdGx5LCB0aGVyZSB3YXMgYSBjYXNlIHdo
-ZXJlICdlbmQnDQo+IGNvdWxkIGJlIHNtYWxsZXIgdGhhbiAnc3RhcnQnIHdoZW4gZG9pbmcgYSBy
-YW5nZSBmbHVzaC4gIFRoYXQgd291bGQNCj4gZGVmaW5pdGVseSBraWxsIHNvbWUgb2YgdGhlIHNw
-YXJjNjQgVExCIGZsdXNoIHJvdXRpbmVzLg0KDQpPaywgdGhhbmtzLg0KDQpUaGUgcGF0Y2ggYXQg
-dGhlIGJlZ2lubmluZyBvZiB0aGlzIHRocmVhZCBkb2Vzbid0IGhhdmUgdGhhdCBiZWhhdmlvcg0K
-dGhvdWdoIGFuZCBpdCBhcHBhcmVudGx5IHN0aWxsIGh1bmcuIEkgYXNrZWQgaWYgTWVlbGlzIGNv
-dWxkIHRlc3Qgd2l0aA0KdGhpcyBmZWF0dXJlIGRpc2FibGVkIGFuZCBERUJVR19QQUdFQUxMT0Mg
-b24sIHNpbmNlIGl0IGZsdXNoZXMgb24gZXZlcnkNCnZmcmVlIGFuZCBpcyBub3QgbmV3IGxvZ2lj
-LCBhbmQgYWxzbyB3aXRoIGEgcGF0Y2ggdGhhdCBsb2dzIGV4YWN0IFRMQg0KZmx1c2ggcmFuZ2Vz
-IGFuZCBmYXVsdCBhZGRyZXNzZXMgb24gdG9wIG9mIHRoZSBrZXJuZWwgaGF2aW5nIHRoaXMNCmlz
-c3VlLiBIb3BlZnVsbHkgdGhhdCB3aWxsIHNoZWQgc29tZSBsaWdodC4NCg0KU29ycnkgZm9yIGFs
-bCB0aGUgbm9pc2UgYW5kIHNwZWN1bGF0aW9uIG9uIHRoaXMuIEl0IGhhcyBiZWVuIGRpZmZpY3Vs
-dA0KdG8gZGVidWcgcmVtb3RlbHkgd2l0aCBhIHRlc3RlciBhbmQgZGV2ZWxvcGVyIGluIGRpZmZl
-cmVudCB0aW1lIHpvbmVzLg0KDQoNCg==
+From: Peter Zijlstra <peterz@infradead.org>
+
+[ Upstream commit 29da93fea3ea39ab9b12270cc6be1b70ef201c9e ]
+
+Randy reported objtool triggered on his (GCC-7.4) build:
+
+  lib/strncpy_from_user.o: warning: objtool: strncpy_from_user()+0x315: call to __ubsan_handle_add_overflow() with UACCESS enabled
+  lib/strnlen_user.o: warning: objtool: strnlen_user()+0x337: call to __ubsan_handle_sub_overflow() with UACCESS enabled
+
+This is due to UBSAN generating signed-overflow-UB warnings where it
+should not. Prior to GCC-8 UBSAN ignored -fwrapv (which the kernel
+uses through -fno-strict-overflow).
+
+Make the functions use 'unsigned long' throughout.
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: luto@kernel.org
+Link: http://lkml.kernel.org/r/20190424072208.754094071@infradead.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ lib/strncpy_from_user.c | 5 +++--
+ lib/strnlen_user.c      | 4 ++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
+index b53e1b5d80f42..e304b54c9c7dd 100644
+--- a/lib/strncpy_from_user.c
++++ b/lib/strncpy_from_user.c
+@@ -23,10 +23,11 @@
+  * hit it), 'max' is the address space maximum (and we return
+  * -EFAULT if we hit it).
+  */
+-static inline long do_strncpy_from_user(char *dst, const char __user *src, long count, unsigned long max)
++static inline long do_strncpy_from_user(char *dst, const char __user *src,
++					unsigned long count, unsigned long max)
+ {
+ 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
+-	long res = 0;
++	unsigned long res = 0;
+ 
+ 	/*
+ 	 * Truncate 'max' to the user-specified limit, so that
+diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
+index 60d0bbda8f5e5..184f80f7bacfa 100644
+--- a/lib/strnlen_user.c
++++ b/lib/strnlen_user.c
+@@ -28,7 +28,7 @@
+ static inline long do_strnlen_user(const char __user *src, unsigned long count, unsigned long max)
+ {
+ 	const struct word_at_a_time constants = WORD_AT_A_TIME_CONSTANTS;
+-	long align, res = 0;
++	unsigned long align, res = 0;
+ 	unsigned long c;
+ 
+ 	/*
+@@ -42,7 +42,7 @@ static inline long do_strnlen_user(const char __user *src, unsigned long count,
+ 	 * Do everything aligned. But that means that we
+ 	 * need to also expand the maximum..
+ 	 */
+-	align = (sizeof(long) - 1) & (unsigned long)src;
++	align = (sizeof(unsigned long) - 1) & (unsigned long)src;
+ 	src -= align;
+ 	max += align;
+ 
+-- 
+2.20.1
+
