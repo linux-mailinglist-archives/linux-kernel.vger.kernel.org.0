@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01BDC2662C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 16:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1CA22662A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 16:46:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbfEVOqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 10:46:31 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51196 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729375AbfEVOqb (ORCPT
+        id S1729636AbfEVOqU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 10:46:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35962 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729621AbfEVOqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 10:46:31 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4MEhx2x019188
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 10:46:30 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2sn6ttnd68-1
+        Wed, 22 May 2019 10:46:18 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4MEhtij053426
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 10:46:17 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sn85es43u-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 10:46:25 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 10:46:17 -0400
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Wed, 22 May 2019 15:46:14 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 22 May 2019 15:46:15 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 22 May 2019 15:46:11 +0100
+        Wed, 22 May 2019 15:46:12 +0100
 Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4MEkAlf48169212
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4MEkB0j49545378
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 May 2019 14:46:10 GMT
+        Wed, 22 May 2019 14:46:12 GMT
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7A17011C064;
-        Wed, 22 May 2019 14:46:10 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id D5BE311C05B;
+        Wed, 22 May 2019 14:46:11 +0000 (GMT)
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3E09811C05B;
-        Wed, 22 May 2019 14:46:10 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 99DFD11C052;
+        Wed, 22 May 2019 14:46:11 +0000 (GMT)
 Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
         by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 22 May 2019 14:46:10 +0000 (GMT)
+        Wed, 22 May 2019 14:46:11 +0000 (GMT)
 From:   Thomas Richter <tmricht@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         acme@kernel.org
 Cc:     brueckner@linux.vnet.ibm.com, heiko.carstens@de.ibm.com,
         Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH 2/3] perf record: Fix kallsym map size for s390
-Date:   Wed, 22 May 2019 16:46:00 +0200
+Subject: [PATCH 3/3] perf record: Fix s390 missing module symbol and warning for non-root users
+Date:   Wed, 22 May 2019 16:46:01 +0200
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190522144601.50763-1-tmricht@linux.ibm.com>
 References: <20190522144601.50763-1-tmricht@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19052214-0028-0000-0000-00000370590B
+x-cbid: 19052214-0012-0000-0000-0000031E547A
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052214-0029-0000-0000-0000243007BC
-Message-Id: <20190522144601.50763-3-tmricht@linux.ibm.com>
+x-cbparentid: 19052214-0013-0000-0000-000021570A1E
+Message-Id: <20190522144601.50763-4-tmricht@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-22_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -67,175 +67,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On s390 command
+Command 'perf record' and 'perf report' on a system without kernel
+debuginfo packages uses /proc/kallsyms and /proc/modules to find
+addresses for kernel and module symbols. On x86 this works for root
+and non-root users.
 
-   [root@m35lp76 perf]#./perf record -e cycles -- find ~
+On s390, when invoked as non-root user, many of the following warnings
+are shown and module symbols are missing:
 
-creates a perf.data file with a strange PERF_RECORD_MMAP for kallsyms:
+    proc/{kallsyms,modules} inconsistency while looking for
+        "[sha1_s390]" module!
 
-   [root@m35lp76 perf]# ./perf report -D | fgrep kernel.kallsyms
-   0 0x128 [0x50]: PERF_RECORD_MMAP -1/0:
-            [0x100000(0x3ff7ff027f0) @ 0x100000]: x [kernel.kallsyms]_text
-   [root@m35lp76 perf]#
+Command 'perf record' creates a list of module start addresses by
+parsing the output of /proc/modules and creates a PERF_RECORD_MMAP
+record for the kernel and each module. The following function call
+sequence is executed:
 
-The size of the kernel is 0x3ff7ff027f0 bytes which is simply wrong.
-It is the difference between the kernel's _end symbol and the first module:
+  machine__create_kernel_maps
+    machine__create_module
+      modules__parse
+        machine__create_module --> for each line in /proc/modules
+          arch__fix_module_text_start
 
-  [root@m35lp76 perf]# cat /proc/kallsyms |sort| les
-  0000000002472000 B __bss_stop
-  0000000002472000 B _end
-  000003ff800027f0 T qdio_stop_irq        [qdio]
-  000003ff80002898 t qdio_do_eqbs [qdio]
+Function arch__fix_module_text_start() is s390 specific. It opens
+file /sys/module/<name>/sections/.text to extract the module's .text
+section start address. On s390 the module loader prepends a header
+before the first section, whereas on x86 the module's text section
+address is identical the the module's load address.
 
-The root cause is the following function sequence:
-  cmd__record
-    __cmd_record
-      perf_session__new
-        perf_session__create_kernel_maps
-          machine__create_kernel_maps
-            machine__get_running_kernel_start
-            machine__update_kernel_mmap
-            machine__set_kernel_mmap;
+However module section files are root readable only. For non-root the
+read operation fails and machine__create_module() returns an error.
+Command perf record does not generate any PERF_RECORD_MMAP record
+for loaded modules. Later command perf report complains about missing
+module maps.
 
-Machine__get_running_kernel_start() searches /proc/kallsyms for the
-start symbol and then calls machine__update_kernel_mmap() with ~0ULL
-for the kernel's end address.
-It relies on machine__set_kernel_mmap() to find the next map, which is
-usually a module and then uses the first module's start address as
-kernel end address.
-This works nicely on x86 and similar plattforms but not on s390.
+To fix this function arch__fix_module_text_start() always returns
+success. For root users there is no change, for non-root users
+the module's load address is used as module's text start address
+(the prepended header then counts as part of the text section).
 
-On s390 the kernel starts at address 0x10000 and modules are loaded
-at kernel virtual address space somewhere around 0x3ff xxxx xxxx,
-leaving a huge gap.
-
-To fix this function machine__create_kernel_maps() also searches for
-symbol _end as BSS symbol and if this symbol is found, use this
-symbol's address a kernel end in machine__update_kernel_mmap().
-Otherwise fall back to the previous method and use the first
-kernel module's load address (as before).
+This enable non-root users to use module symbols and avoid the
+warning when perf report is executed.
 
 Output before:
-  [root@m35lp76 perf]# ./perf record -e cycles -- find ~
-  [root@m35lp76 perf]# ./perf report -D | fgrep kernel.kallsyms
-  0 0x128 [0x50]: PERF_RECORD_MMAP -1/0:
-                [0x100000(0x3ff7ff027f0) @ 0x100000]:
-                x [kernel.kallsyms]_text
-  [root@m35lp76 perf]#
+ [tmricht@m83lp54 perf]$ ./perf report -D | fgrep MMAP
+ 0 0x168 [0x50]: PERF_RECORD_MMAP ... x [kernel.kallsyms]_text
 
 Output after:
-  [root@m35lp76 perf]# ./perf record -e cycles -- find ~
-  [root@m35lp76 perf]# ./perf report -D | fgrep kernel.kallsyms
-  0 0x128 [0x50]: PERF_RECORD_MMAP -1/0:
-                [0x100000(0x2372000) @ 0x100000]:
-                x [kernel.kallsyms]_text
-  [root@m35lp76 perf]#
+ [tmricht@m83lp54 perf]$ ./perf report -D | fgrep MMAP
+ 0 0x168 [0x50]: PERF_RECORD_MMAP ... x [kernel.kallsyms]_text
+ 0 0x1b8 [0x98]: PERF_RECORD_MMAP ... x /lib/modules/.../autofs4.ko.xz
+ 0 0x250 [0xa8]: PERF_RECORD_MMAP ... x /lib/modules/.../sha_common.ko.xz
+ 0 0x2f8 [0x98]: PERF_RECORD_MMAP ... x /lib/modules/.../des_generic.ko.xz
 
 Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
 Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
 ---
- tools/perf/util/event.c   |  4 ++--
- tools/perf/util/machine.c | 29 +++++++++++++++++++++++------
- 2 files changed, 25 insertions(+), 8 deletions(-)
+ tools/perf/arch/s390/util/machine.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index d1ad6c419724..96b4cbdb655e 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -876,11 +876,11 @@ static int find_symbol_cb(void *arg, const char *name, char type,
- 	/*
- 	 * Must be a function or at least an alias, as in PARISC64, where "_text" is
- 	 * an 'A' to the same address as "_stext".
-+	 * When searching for symbol _end allow symbol type 'B'.
- 	 */
- 	if (!(kallsyms__is_function(type) ||
--	      type == 'A') || strcmp(name, args->name))
-+	      type == 'A' || type == 'B') || strcmp(name, args->name))
- 		return 0;
--
- 	args->start = start;
- 	return 1;
- }
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 28a9541c4835..c278c1fe6dd3 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -918,13 +918,18 @@ void machine__get_kallsyms_filename(struct machine *machine, char *buf,
- }
+diff --git a/tools/perf/arch/s390/util/machine.c b/tools/perf/arch/s390/util/machine.c
+index 0b2054007314..a19690a17291 100644
+--- a/tools/perf/arch/s390/util/machine.c
++++ b/tools/perf/arch/s390/util/machine.c
+@@ -5,16 +5,19 @@
+ #include "util.h"
+ #include "machine.h"
+ #include "api/fs/fs.h"
++#include "debug.h"
  
- const char *ref_reloc_sym_names[] = {"_text", "_stext", NULL};
-+static const char *const ref_sym_endnames[] = {"_end", NULL};
- 
- /* Figure out the start address of kernel map from /proc/kallsyms.
-  * Returns the name of the start symbol in *symbol_name. Pass in NULL as
-  * symbol_name if it's not that important.
-+ *
-+ * Get kernel end address for kernel map from /proc/kallsyms by
-+ * searching for symbol _end.
-  */
- static int machine__get_running_kernel_start(struct machine *machine,
--					     const char **symbol_name, u64 *start)
-+					     const char **symbol_name,
-+					     u64 *start, u64 *kernel_end)
+ int arch__fix_module_text_start(u64 *start, const char *name)
  {
- 	char filename[PATH_MAX];
- 	int i, err = -1;
-@@ -949,6 +954,16 @@ static int machine__get_running_kernel_start(struct machine *machine,
- 		*symbol_name = name;
++	u64 m_start = *start;
+ 	char path[PATH_MAX];
  
- 	*start = addr;
-+
-+	/* Get kernel end address and store it when found */
-+	for (i = 0; (name = ref_sym_endnames[i]) != NULL; i++) {
-+		err = kallsyms__get_function_start(filename, name, &addr);
-+		if (!err) {
-+			*kernel_end = addr;
-+			break;
-+		}
+ 	snprintf(path, PATH_MAX, "module/%.*s/sections/.text",
+ 				(int)strlen(name) - 2, name + 1);
+-
+-	if (sysfs__read_ull(path, (unsigned long long *)start) < 0)
+-		return -1;
++	if (sysfs__read_ull(path, (unsigned long long *)start) < 0) {
++		pr_debug2("Using module %s start:%#lx\n", path, m_start);
++		*start = m_start;
 +	}
-+
+ 
  	return 0;
  }
- 
-@@ -1441,7 +1456,7 @@ int machine__create_kernel_maps(struct machine *machine)
- 	struct dso *kernel = machine__get_kernel(machine);
- 	const char *name = NULL;
- 	struct map *map;
--	u64 addr = 0;
-+	u64 addr = 0, e_addr = 0;
- 	int ret;
- 
- 	if (kernel == NULL)
-@@ -1460,7 +1475,7 @@ int machine__create_kernel_maps(struct machine *machine)
- 				 "continuing anyway...\n", machine->pid);
- 	}
- 
--	if (!machine__get_running_kernel_start(machine, &name, &addr)) {
-+	if (!machine__get_running_kernel_start(machine, &name, &addr, &e_addr)) {
- 		if (name &&
- 		    map__set_kallsyms_ref_reloc_sym(machine->vmlinux_map, name, addr)) {
- 			machine__destroy_kernel_maps(machine);
-@@ -1472,15 +1487,17 @@ int machine__create_kernel_maps(struct machine *machine)
- 		 * we have a real start address now, so re-order the kmaps
- 		 * assume it's the last in the kmaps
- 		 */
--		machine__update_kernel_mmap(machine, addr, ~0ULL);
-+		machine__update_kernel_mmap(machine, addr, e_addr ?: ~0ULL);
- 	}
- 
- 	if (machine__create_extra_kernel_maps(machine, kernel))
- 		pr_debug("Problems creating extra kernel maps, continuing anyway...\n");
- 
--	/* update end address of the kernel map using adjacent module address */
-+	/* update end address of the kernel map using adjacent module address
-+	 * only when the kernel end could not be determined.
-+	 */
- 	map = map__next(machine__kernel_map(machine));
--	if (map)
-+	if (!e_addr && map)
- 		machine__set_kernel_mmap(machine, addr, map->start);
- out_put:
- 	dso__put(kernel);
 -- 
 2.19.1
 
