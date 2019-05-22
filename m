@@ -2,246 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A25265AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 16:28:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D32F6265B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 16:28:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729475AbfEVO2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 10:28:00 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:42074 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729326AbfEVO14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 10:27:56 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E627420002F;
-        Wed, 22 May 2019 16:27:54 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D7D2620009F;
-        Wed, 22 May 2019 16:27:54 +0200 (CEST)
-Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.13])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 584BB205ED;
-        Wed, 22 May 2019 16:27:54 +0200 (CEST)
-From:   laurentiu.tudor@nxp.com
-To:     hch@lst.de, stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, marex@denx.de
-Cc:     leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
-        robin.murphy@arm.com, noring@nocrew.org, JuergenUrban@gmx.de,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v6 5/5] USB: drop HCD_LOCAL_MEM flag
-Date:   Wed, 22 May 2019 17:27:48 +0300
-Message-Id: <20190522142748.10078-6-laurentiu.tudor@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190522142748.10078-1-laurentiu.tudor@nxp.com>
-References: <20190522142748.10078-1-laurentiu.tudor@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729555AbfEVO2p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 10:28:45 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36820 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728388AbfEVO2p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 10:28:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OXmLc8bSIMLSQIDMwLhc+SaxU3Xuanb61bHQ8Mozh7o=; b=qmZLcTK8t7jPXa0FqM0B9E5MO
+        wDrieXAdFArXgdtkDHZ4mCXR1lV0Q/8uRyaAu4qo8VgqfFcZP7/hOOOL0vB5jf5l+BPbbz9zGjBQ6
+        co/VRh2OA1pANEq6vc8joBOa70B/q9kt2Kik0LB+Ne4BIXOzOz/F5dkZXXrRue8sxjTJA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hTSER-0004Un-9o; Wed, 22 May 2019 14:28:39 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id DFE3911226BC; Wed, 22 May 2019 15:28:37 +0100 (BST)
+Date:   Wed, 22 May 2019 15:28:37 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>, lgirdwood@gmail.com,
+        agross@kernel.org, david.brown@linaro.org,
+        bjorn.andersson@linaro.org, jcrouse@codeaurora.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Subject: Re: [PATCH 2/3] regulator: qcom_spmi: Add support for PM8005
+Message-ID: <20190522142837.GE8582@sirena.org.uk>
+References: <20190521164932.14265-1-jeffrey.l.hugo@gmail.com>
+ <20190521165315.14379-1-jeffrey.l.hugo@gmail.com>
+ <20190521185054.GD16633@sirena.org.uk>
+ <51caaee4-dfc9-5b5a-07c7-b1406c178ca3@codeaurora.org>
+ <20190522110107.GB8582@sirena.org.uk>
+ <4e5bdf77-3141-bff6-e5b9-a81a5c73b4e4@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="maH1Gajj2nflutpK"
+Content-Disposition: inline
+In-Reply-To: <4e5bdf77-3141-bff6-e5b9-a81a5c73b4e4@codeaurora.org>
+X-Cookie: Does the name Pavlov ring a bell?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-With the addition of the local memory allocator, the HCD_LOCAL_MEM
-flag can be dropped and the checks against it replaced with a check
-for the localmem_pool ptr being initialized.
+--maH1Gajj2nflutpK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Tested-by: Fredrik Noring <noring@nocrew.org>
----
- drivers/usb/core/buffer.c      |  8 +++-----
- drivers/usb/core/hcd.c         | 15 ++++++---------
- drivers/usb/host/ehci-hcd.c    |  2 +-
- drivers/usb/host/fotg210-hcd.c |  2 +-
- drivers/usb/host/ohci-hcd.c    |  2 +-
- drivers/usb/host/ohci-sm501.c  |  5 +++--
- drivers/usb/host/ohci-tmio.c   |  2 +-
- drivers/usb/host/uhci-hcd.c    |  2 +-
- include/linux/usb/hcd.h        |  1 -
- 9 files changed, 17 insertions(+), 22 deletions(-)
+On Wed, May 22, 2019 at 08:16:38AM -0600, Jeffrey Hugo wrote:
+> On 5/22/2019 5:01 AM, Mark Brown wrote:
+> > On Tue, May 21, 2019 at 05:16:06PM -0600, Jeffrey Hugo wrote:
 
-diff --git a/drivers/usb/core/buffer.c b/drivers/usb/core/buffer.c
-index d2064ad7ad14..1359b78a624e 100644
---- a/drivers/usb/core/buffer.c
-+++ b/drivers/usb/core/buffer.c
-@@ -68,7 +68,7 @@ int hcd_buffer_create(struct usb_hcd *hcd)
- 
- 	if (!IS_ENABLED(CONFIG_HAS_DMA) ||
- 	    (!is_device_dma_capable(hcd->self.sysdev) &&
--	     !(hcd->driver->flags & HCD_LOCAL_MEM)))
-+	     !hcd->localmem_pool))
- 		return 0;
- 
- 	for (i = 0; i < HCD_BUFFER_POOLS; i++) {
-@@ -130,8 +130,7 @@ void *hcd_buffer_alloc(
- 
- 	/* some USB hosts just use PIO */
- 	if (!IS_ENABLED(CONFIG_HAS_DMA) ||
--	    (!is_device_dma_capable(bus->sysdev) &&
--	     !(hcd->driver->flags & HCD_LOCAL_MEM))) {
-+	    !is_device_dma_capable(bus->sysdev)) {
- 		*dma = ~(dma_addr_t) 0;
- 		return kmalloc(size, mem_flags);
- 	}
-@@ -162,8 +161,7 @@ void hcd_buffer_free(
- 	}
- 
- 	if (!IS_ENABLED(CONFIG_HAS_DMA) ||
--	    (!is_device_dma_capable(bus->sysdev) &&
--	     !(hcd->driver->flags & HCD_LOCAL_MEM))) {
-+	    !is_device_dma_capable(bus->sysdev)) {
- 		kfree(addr);
- 		return;
- 	}
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index 1aad11f4142c..b65785fae11a 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -1347,14 +1347,14 @@ EXPORT_SYMBOL_GPL(usb_hcd_unlink_urb_from_ep);
-  * using regular system memory - like pci devices doing bus mastering.
-  *
-  * To support host controllers with limited dma capabilities we provide dma
-- * bounce buffers. This feature can be enabled using the HCD_LOCAL_MEM flag.
-+ * bounce buffers. This feature can be enabled by initializing
-+ * hcd->localmem_pool using usb_hcd_setup_local_mem().
-  * For this to work properly the host controller code must first use the
-  * function dma_declare_coherent_memory() to point out which memory area
-  * that should be used for dma allocations.
-  *
-- * The HCD_LOCAL_MEM flag then tells the usb code to allocate all data for
-- * dma using dma_alloc_coherent() which in turn allocates from the memory
-- * area pointed out with dma_declare_coherent_memory().
-+ * The initialized hcd->localmem_pool then tells the usb code to allocate all
-+ * data for dma using the genalloc API.
-  *
-  * So, to summarize...
-  *
-@@ -1364,9 +1364,6 @@ EXPORT_SYMBOL_GPL(usb_hcd_unlink_urb_from_ep);
-  *   (a) "normal" kernel memory is no good, and
-  *   (b) there's not enough to share
-  *
-- * - The only *portable* hook for such stuff in the
-- *   DMA framework is dma_declare_coherent_memory()
-- *
-  * - So we use that, even though the primary requirement
-  *   is that the memory be "local" (hence addressable
-  *   by that device), not "coherent".
-@@ -1533,7 +1530,7 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
- 						urb->setup_dma))
- 				return -EAGAIN;
- 			urb->transfer_flags |= URB_SETUP_MAP_SINGLE;
--		} else if (hcd->driver->flags & HCD_LOCAL_MEM) {
-+		} else if (hcd->localmem_pool) {
- 			ret = hcd_alloc_coherent(
- 					urb->dev->bus, mem_flags,
- 					&urb->setup_dma,
-@@ -1603,7 +1600,7 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
- 				else
- 					urb->transfer_flags |= URB_DMA_MAP_SINGLE;
- 			}
--		} else if (hcd->driver->flags & HCD_LOCAL_MEM) {
-+		} else if (hcd->localmem_pool) {
- 			ret = hcd_alloc_coherent(
- 					urb->dev->bus, mem_flags,
- 					&urb->transfer_dma,
-diff --git a/drivers/usb/host/ehci-hcd.c b/drivers/usb/host/ehci-hcd.c
-index cdafa97f632d..9da7e22848c9 100644
---- a/drivers/usb/host/ehci-hcd.c
-+++ b/drivers/usb/host/ehci-hcd.c
-@@ -559,7 +559,7 @@ static int ehci_init(struct usb_hcd *hcd)
- 	ehci->command = temp;
- 
- 	/* Accept arbitrarily long scatter-gather lists */
--	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
-+	if (!hcd->localmem_pool)
- 		hcd->self.sg_tablesize = ~0;
- 
- 	/* Prepare for unlinking active QHs */
-diff --git a/drivers/usb/host/fotg210-hcd.c b/drivers/usb/host/fotg210-hcd.c
-index 0da68df259c8..5d74ff61fa4c 100644
---- a/drivers/usb/host/fotg210-hcd.c
-+++ b/drivers/usb/host/fotg210-hcd.c
-@@ -4995,7 +4995,7 @@ static int hcd_fotg210_init(struct usb_hcd *hcd)
- 	fotg210->command = temp;
- 
- 	/* Accept arbitrarily long scatter-gather lists */
--	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
-+	if (!hcd->localmem_pool)
- 		hcd->self.sg_tablesize = ~0;
- 	return 0;
- }
-diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
-index b200b19b44fa..5801858d867e 100644
---- a/drivers/usb/host/ohci-hcd.c
-+++ b/drivers/usb/host/ohci-hcd.c
-@@ -448,7 +448,7 @@ static int ohci_init (struct ohci_hcd *ohci)
- 	struct usb_hcd *hcd = ohci_to_hcd(ohci);
- 
- 	/* Accept arbitrarily long scatter-gather lists */
--	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
-+	if (!hcd->localmem_pool)
- 		hcd->self.sg_tablesize = ~0;
- 
- 	if (distrust_firmware)
-diff --git a/drivers/usb/host/ohci-sm501.c b/drivers/usb/host/ohci-sm501.c
-index b710e100aec9..c158cda9e4b9 100644
---- a/drivers/usb/host/ohci-sm501.c
-+++ b/drivers/usb/host/ohci-sm501.c
-@@ -49,7 +49,7 @@ static const struct hc_driver ohci_sm501_hc_driver = {
- 	 * generic hardware linkage
- 	 */
- 	.irq =			ohci_irq,
--	.flags =		HCD_USB11 | HCD_MEMORY | HCD_LOCAL_MEM,
-+	.flags =		HCD_USB11 | HCD_MEMORY,
- 
- 	/*
- 	 * basic lifecycle operations
-@@ -153,7 +153,8 @@ static int ohci_hcd_sm501_drv_probe(struct platform_device *pdev)
- 	 * fine. This is however not always the case - buffers may be allocated
- 	 * using kmalloc() - so the usb core needs to be told that it must copy
- 	 * data into our local memory if the buffers happen to be placed in
--	 * regular memory. The HCD_LOCAL_MEM flag does just that.
-+	 * regular memory. A non-null hcd->localmem_pool initialized by the
-+	 * the call to usb_hcd_setup_local_mem() below does just that.
- 	 */
- 
- 	if (usb_hcd_setup_local_mem(hcd, mem->start,
-diff --git a/drivers/usb/host/ohci-tmio.c b/drivers/usb/host/ohci-tmio.c
-index 3b84ce0c3f29..d5a293a707b6 100644
---- a/drivers/usb/host/ohci-tmio.c
-+++ b/drivers/usb/host/ohci-tmio.c
-@@ -153,7 +153,7 @@ static const struct hc_driver ohci_tmio_hc_driver = {
- 
- 	/* generic hardware linkage */
- 	.irq =			ohci_irq,
--	.flags =		HCD_USB11 | HCD_MEMORY | HCD_LOCAL_MEM,
-+	.flags =		HCD_USB11 | HCD_MEMORY,
- 
- 	/* basic lifecycle operations */
- 	.start =		ohci_tmio_start,
-diff --git a/drivers/usb/host/uhci-hcd.c b/drivers/usb/host/uhci-hcd.c
-index 98deb5f64268..03bc59755123 100644
---- a/drivers/usb/host/uhci-hcd.c
-+++ b/drivers/usb/host/uhci-hcd.c
-@@ -581,7 +581,7 @@ static int uhci_start(struct usb_hcd *hcd)
- 
- 	hcd->uses_new_polling = 1;
- 	/* Accept arbitrarily long scatter-gather lists */
--	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
-+	if (!hcd->localmem_pool)
- 		hcd->self.sg_tablesize = ~0;
- 
- 	spin_lock_init(&uhci->lock);
-diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
-index 127560a4bfa0..bab27ccc8ff5 100644
---- a/include/linux/usb/hcd.h
-+++ b/include/linux/usb/hcd.h
-@@ -256,7 +256,6 @@ struct hc_driver {
- 
- 	int	flags;
- #define	HCD_MEMORY	0x0001		/* HC regs use memory (else I/O) */
--#define	HCD_LOCAL_MEM	0x0002		/* HC needs local memory */
- #define	HCD_SHARED	0x0004		/* Two (or more) usb_hcds share HW */
- #define	HCD_USB11	0x0010		/* USB 1.1 */
- #define	HCD_USB2	0x0020		/* USB 2.0 */
--- 
-2.17.1
+> > > I'm open to suggestions.  Apparently there are two register common register
+> > > schemes - the old one and the new one.  PMIC designs after some random point
+> > > in time are all the new register scheme per the documentation I see.
 
+> > > As far as I an aware, the FT426 design is the first design to be added to
+> > > this driver to make use of the new scheme, but I expect more to be supported
+> > > in future, thus I'm reluctant to make these ft426 specific in the name.
+
+> > If there's a completely new register map why are these even in the same
+> > driver?
+
+> Its not completely new, its a derivative of the old scheme.  Of the 104
+> registers, approximately 5 have been modified, therefore the new scheme is
+> 95% compatible with the old one.  Duplicating a 1883 line driver to handle a
+> change in 5% of the register space seems less than ideal. Particularly
+> considering your previous comments seem to indicate that you feel its pretty
+> trivial to handle the quirks associated with the changes in this driver.
+
+Ah, so it's not a completely new scheme but rather just a couple of
+registers that have changed.  Sharing the driver is fine then.  Ideally
+there would be some documentation from the vendor about this, a mention
+of IP revisions or some such.  If not what the DT bindings do for names
+is use the first chip things were found in.
+
+--maH1Gajj2nflutpK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzlXJUACgkQJNaLcl1U
+h9C+ZQf/TqQlF1ddY6Pa7ieCP0TCY5fWm5JoIZlTG/2Rm+N9ucuHg0yY69ufYHfx
+2/um2JJBej0FYI2l20kRcV+D5Mgzi9fr7bM2HHWc0eMUpDcSgxAsPE5yMPwTELwt
+u59c+J7YyFL4I0ZZsLvFl/tLvf+eEAOgluj/wjMHXbE6rjjwujGnz7MTljY50EQB
++z/EfHzhJQj93txkYaEYmIdAUWLIqzgMlxYvfcvqU3/5af3FAyk43ytzT19MB3Ty
++rC6IkooIfmgFJnRfCjbxu6igpsVl6vTGgRwL9UnLOz86RK4yhvrQ9zdlgYoWViK
+4aIBU4bxP1MI3uscDoP+YyNoKjE7Yw==
+=yQnz
+-----END PGP SIGNATURE-----
+
+--maH1Gajj2nflutpK--
