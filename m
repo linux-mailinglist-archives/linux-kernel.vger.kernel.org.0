@@ -2,87 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2887A25EDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 09:55:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E16B25FAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 10:40:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbfEVHzH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 03:55:07 -0400
-Received: from mail-wm1-f46.google.com ([209.85.128.46]:53213 "EHLO
-        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728159AbfEVHzG (ORCPT
+        id S1728869AbfEVIkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 04:40:19 -0400
+Received: from kadath.azazel.net ([81.187.231.250]:42622 "EHLO
+        kadath.azazel.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726552AbfEVIkT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 03:55:06 -0400
-Received: by mail-wm1-f46.google.com with SMTP id y3so1119040wmm.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 00:55:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=ry1vtEMs73ySB4IEwRFPk9gg/6GEvmW81gAJ82XtyKU=;
-        b=cCC2AIeEsfYLIRfiGfOtmJBhJPhWGBOUCheRj8Cgesibj5/WKA3xQ4h2sfT2LmYxZ5
-         RxyiDIwu82X7Rx8mCWmjhJvXEOTwTB0pEZZN9B2izYYOQj2dLPiTET+uT+ke/nxLIADh
-         EiJbqIrarynTrYwvZOzkQO2iADLd6Ea+LcgXQxj34pwlmCwtPEBPz+JNtVCiw9JQKTfI
-         ErmBg4JOWIeVtmMN9SXAYEfwbp+9p3oxyIaTG+Bx60TDGK2sQZoakwlmeVKIUeP/RvAd
-         bUYxFxnzNXVFcs73iI3N0BgmNWyA47dkgmpZBVdOI4DoqS/fHOpz77RAYw5Z2hJEdubq
-         q51A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=ry1vtEMs73ySB4IEwRFPk9gg/6GEvmW81gAJ82XtyKU=;
-        b=GUV3NYa0q3zflM1x9p2z3OYCsL4Lj5OcAkWOEXOxVexUiftVZJzBL0UF2FCT1X6kXD
-         v3kpiXEGOtjBPzQ626jkuuFjWqMSaFCWT7D9LkBCMpuC8tSmdDT0emiVNModZarIz3fI
-         5EjhqMHWkdUUR+aDVAT0boIR+SX92s/fJk7ZE3TdpSZ3ArD1On1rFDR79YFwHNgxFt7y
-         LwHYfuRu/csvhXuG3nBhUFzNoC9L+bNxOVdtHPxlMXV+VX6M6/ryStzEaC2LMmIocmxb
-         WKdNjfy/01/hkWv9RxX2HxUjg5qTox8C8mHOm6xAzlkS5rxdY/5HigJnrOOwdKwoqfvh
-         Ohng==
-X-Gm-Message-State: APjAAAVRxvtfJqum5AcxjW6QfCU4mBJhFeSnqgc/d+ZcqLpVsz36iIYl
-        kUe59RIUHKhXIEBlQC5FbcwU1PWgiborRA==
-X-Google-Smtp-Source: APXvYqxtKsUWUjbxbtXDH2OVSGWICDMPDDqQOpSsKeXv/wcmBemF7E9KFHMvbtMalq9XHlWPXsBAuQ==
-X-Received: by 2002:a1c:1d46:: with SMTP id d67mr6032224wmd.98.1558511704748;
-        Wed, 22 May 2019 00:55:04 -0700 (PDT)
-Received: from HUAWEI-nova-2-351a175292c.fritz.box ([212.91.227.56])
-        by smtp.gmail.com with ESMTPSA id y40sm44784272wrd.96.2019.05.22.00.55.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 00:55:04 -0700 (PDT)
-Date:   Wed, 22 May 2019 09:55:00 +0200
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190522174725.6bfd51bd@canb.auug.org.au>
-References: <20190522110115.7350be3e@canb.auug.org.au> <20190522055235.GC13702@kroah.com> <20190522174725.6bfd51bd@canb.auug.org.au>
+        Wed, 22 May 2019 04:40:19 -0400
+X-Greylist: delayed 2571 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 May 2019 04:40:19 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=azazel.net;
+         s=20190108; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=G/En3bk+2yjBN1OlAPMBLUMv2j8iGWc8pYHVEqKjRvk=; b=F0BCeGBvaK40XFQmcuTdNLbkXy
+        EVpcjKizrH8GOKcY9BRWWnM0/pXY3vFqZE/lF2FtudhSWWl/DXy5mRIy/XDtYFrDfe6BT3XPVvvUR
+        CB373mpkXUcN5lkws2TXyJpRM7feAawBb+mOBDXU0vtzBIrXO5/7MV0wjp16iFD3JqwOPRhXOItJx
+        O0xb1aUqeHLUS6ZscwrHNxuUIKYzvnhfWjhmOa7hG5tB/dniiK903VRyBVgcYrpdKMuYPPakkQkhX
+        cAv3PetOTzNQSTHAFY5+P3iqUJNhcf8FkwqnaLSQtG2hO64BE+Y9WoFACn5l5gkXiG0ShiNZvwV+I
+        wSxm0UKw==;
+Received: from ulthar.dreamlands ([192.168.96.2] helo=azazel.net)
+        by kadath.azazel.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <jeremy@azazel.net>)
+        id 1hTM7h-0000A1-C4; Wed, 22 May 2019 08:57:17 +0100
+Date:   Wed, 22 May 2019 08:57:16 +0100
+From:   Jeremy Sowden <jeremy@azazel.net>
+To:     Fabio Lima <fabiolima39@gmail.com>
+Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, lkcamp@lists.libreplanetbr.org
+Subject: Re: [PATCH] staging: rtl8723bs: Add missing blank lines
+Message-ID: <20190522075716.GA16243@azazel.net>
+References: <20190522004655.20138-1-fabiolima39@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: linux-next: manual merge of the pidfd tree with Linus' tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-From:   Christian Brauner <christian@brauner.io>
-Message-ID: <CEB120FD-547A-4D92-92AE-43E6AF8E767B@brauner.io>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+Content-Disposition: inline
+In-Reply-To: <20190522004655.20138-1-fabiolima39@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 192.168.96.2
+X-SA-Exim-Mail-From: jeremy@azazel.net
+X-SA-Exim-Scanned: No (on kadath.azazel.net); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 22, 2019 9:48:33 AM GMT+02:00, Stephen Rothwell <sfr@canb=2Eauug=2Eo=
-rg=2Eau> wrote:
->Hi Greg,
->
->On Wed, 22 May 2019 07:52:35 +0200 Greg Kroah-Hartman
-><gregkh@linuxfoundation=2Eorg> wrote:
->>
->> Sorry, you are going to get a number of these types of minor
->conflicts
->> now=2E  That's the problem of touching thousands of files :(
->
->Yeah, I expected that one I saw the commits=2E  At least is is just after
->-rc1, hopefully most maintainers will start their -next branches after
->today :-)
 
-I can just rebase if that helps you out=2E
+--EeQfGwPcQSOJBaQU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Christian
+On 2019-05-21, at 21:46:55 -0300, Fabio Lima wrote:
+> This patch resolves the following warning from checkpatch.pl
+> WARNING: Missing a blank line after declarations
+>
+> Signed-off-by: Fabio Lima <fabiolima39@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_debug.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_debug.c b/drivers/staging/rtl8723bs/core/rtw_debug.c
+> index 9f8446ccf..853362381 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_debug.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_debug.c
+> @@ -382,6 +382,7 @@ ssize_t proc_set_roam_tgt_addr(struct file *file, const char __user *buffer, siz
+>  	if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp))) {
+>
+>  		int num = sscanf(tmp, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", addr, addr+1, addr+2, addr+3, addr+4, addr+5);
+> +
+>  		if (num == 6)
+>  			memcpy(adapter->mlmepriv.roam_tgt_addr, addr, ETH_ALEN);
+>
+> @@ -1348,6 +1349,7 @@ int proc_get_btcoex_dbg(struct seq_file *m, void *v)
+>  	struct net_device *dev = m->private;
+>  	struct adapter *padapter;
+>  	char buf[512] = {0};
+> +
+>  	padapter = (struct adapter *)rtw_netdev_priv(dev);
+>
+>  	rtw_btcoex_GetDBG(padapter, buf, 512);
+> --
+> 2.11.0
+
+Looks good to me.
+
+J.
+
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEZ8d+2N/NBLDbUxIF0Z7UzfnX9sMFAlzlANUACgkQ0Z7UzfnX
+9sPLkQ/+Ont4TYXB8nKa47x1cKKjE8M0Jucl5n4n1+kOPZ13aM3g2vCAxPLpQ3ii
+XcS1u3cJVw928v0ZNIb8UD9v0oJMXu6wYcIupTPwCVb8wd26Ull3k/8RoORuaTzi
+gFKkSkyB8osSLWK1EsUcF3zTLm/rMFNXAOjAo40z6fKw4DDsRm9X74jMY4O52IzR
+o/IbfENqe7XPMC8b+zg5py/HgI89+zqBK2jnLyUV5X1tXNvYpPZpqonAndwee6ME
+xUegqgQ+RbcKCVBloXbHCpyEU4pwbRlHS8CsuJwyHRoMlcG+ktpLj+59NxQ02Ya8
+FPEMoiRsLVm3tJZfkO8GIai702ZdWh4piaukJQHX87C+2F33tzts0MRfWuN3Pmtq
+Vbkoetf5/DOlLiXBXyYKCHNe4+5HaEYPtDSOlH5x4+8IUMiG/PMrIa+o1+2xmc3c
+njGM2OMScTWZWTEs+RX8z/QsNCuRj26VRw45XSWSATwpv8ZxnfeCqcrv/rDD0umg
+sh0WLCHIXEIZoqGPRlkTvZbqfGCT29PTJyDlRT3xAC6i0eLx3ZdQP5LokaTiepN/
+vgI3lCbycP23QlBmwbitpZ3Ep33dQiimnfcPw2lP7pvZOyYWiDTZB5S2M6PMIp9V
+qCclrb5N8/U0IswlNJFtCWZApPdFL2faZvaNbW19zSDE+iDFpeQ=
+=mWNx
+-----END PGP SIGNATURE-----
+
+--EeQfGwPcQSOJBaQU--
