@@ -2,91 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18A0F266B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 17:12:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61968266BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 17:12:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729834AbfEVPMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 11:12:14 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:36941 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729630AbfEVPMO (ORCPT
+        id S1729829AbfEVPMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 11:12:42 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38560 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729159AbfEVPMl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 11:12:14 -0400
-Received: by mail-ua1-f66.google.com with SMTP id t18so990771uar.4
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 08:12:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
-        b=ftgebqZxYXwCvKhP1I1wkuHqyxdl+yAZtg4Wg6pHnk937Q/68EGgYRaYm3JSzevOwC
-         nepkOTWHjJ4vRRDmNaLdB2GGCQCXoDbh+5eiTWMi9Jt47BM2Pq4v7VDoZwPknmsAaeWC
-         dLqeX5W/Jx1uSt2OPrWq5UWJdU/3WW5aKGvSRrCm/fLhw79WQiJMpYUNKJhPzktNYb8Q
-         wjfHHHhgG/REPaEN4YHe4oxdavG6ZK6RQYQRN7ymFISA/7nsLw3bCOsvvTNifIqH1zE4
-         6m6F3EXNAZMxwxjwzPbuybGbhOPErnDnTrOFtcedXRFp1RZduXX7Oz5LRqx0xSToJLeY
-         hNlA==
+        Wed, 22 May 2019 11:12:41 -0400
+Received: by mail-oi1-f196.google.com with SMTP id u199so1876435oie.5;
+        Wed, 22 May 2019 08:12:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
-        b=QyrsgWLooFJK474txLPSrklqUvAe+Q9xXDl9THFRlGZwHPGntWuhD7X0Tm3CCXBphl
-         VHXGonBi9lTeyuaDg3tNIA3ALsRljF04rO7vVbKwLRgl1xx3i2YeEn4uEkRcO/8QoUPe
-         7A+1VDhseWxcd9P7bPmNzNooi+gCO0oCsmK2IUWKJLqD1fRMfWZYSQ3ezggu5PTmoVTm
-         qfygCiRdop2yZqt3mNrDlINUvH/3n96QvjWyiPd/pXWeaEriRVIpbxKMaYd5QidTDAiB
-         L2Je1OcPqgyChr+HLG9Iycl42bqNhA8VSuNAofBMGZHvNUFQDVY/poES9thh9Vp65Z8m
-         fgHg==
-X-Gm-Message-State: APjAAAW88p6Z/QuJPToIpPbbAx6X0HLi8ldR5cC8QKjWjNCP9LKK0YH8
-        xnV/g54x5/3qlOUyU/z3ikukSbY02/EDbAOI0og=
-X-Google-Smtp-Source: APXvYqwMcKz9zDLc4Yx0LesOA3XkHl4j+0qCCOf9hAZI3nHIzaOFkkpolDGAYnaNoijHpewOymme4pa8T65pkj6mGiM=
-X-Received: by 2002:ab0:644d:: with SMTP id j13mr14573960uap.98.1558537933015;
- Wed, 22 May 2019 08:12:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZvZ/Z9P3tq4Qk/f3lvJYbii/kSuP8i21CYwYXU54vt4=;
+        b=l+FvUDsYoeABexJD/pugCeI/SomugXQ6pFWu7PJD+pKsgbm+oVV8gFms+20EZsqinm
+         kOmN2uMkqUmNh1PmSy9gyQrwNkf3SFjlMZegcP7JKtS+V58Wl7cW/hUKP/j1vVVuNzh/
+         8wL6Uoru7qdhOxKuFaOXYtgJF1no/Be1MGg5vwdjMjmNlBTZItGSf8DPVNhuHFmDkZK5
+         InITJjD2Kn6JwrH2xHXoM4PQxr6+1a92vHdR9QenAtEuMVp5fyVL8X/vOTEmGz80bRM2
+         DgVemTLatdyuMXFpwmiLxGdczRcsLjsD+oJaovRKGAaxsfDJcNA8GCwzdvSUAJnmvyqy
+         hCaA==
+X-Gm-Message-State: APjAAAWmb/O9ygtP8k+BmVFuLK1igSqZnQv0bx4gjG4E9qcVqGj/Kz4U
+        TNZYw35jxFjg1CMwyNf/zrCrsOU=
+X-Google-Smtp-Source: APXvYqzB/u8EsswyyPjrl0040B6L99NyH8CWlM34/gU5VUFzx3TvVGAVYjD5VwhDfXQnSDcmbQsASA==
+X-Received: by 2002:aca:5ed7:: with SMTP id s206mr7282343oib.122.1558537960561;
+        Wed, 22 May 2019 08:12:40 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id k83sm321026oia.10.2019.05.22.08.12.39
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 22 May 2019 08:12:39 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, Joe Perches <joe@perches.com>
+Subject: [PATCH] checkpatch.pl: Update DT vendor prefix check
+Date:   Wed, 22 May 2019 10:12:38 -0500
+Message-Id: <20190522151238.25176-1-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Received: by 2002:a67:8a88:0:0:0:0:0 with HTTP; Wed, 22 May 2019 08:12:12
- -0700 (PDT)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <missdonnahistory@gmail.com>
-Date:   Wed, 22 May 2019 17:12:12 +0200
-Message-ID: <CACROPfGkCKj=+c0drNdu-PMOmFBkncpy06__S6egq_S6KxY=ww@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mijn naam is Eddy William. Ik ben van beroep advocaat. Ik wil je aanbieden
-nabestaanden van mijn cli=C3=ABnt. Je ervaart de som van ($ 14,2 miljoen)
-dollars die mijn cli=C3=ABnt voor zijn overlijden op de bank heeft achterge=
-laten.
+In commit 8122de54602e ("dt-bindings: Convert vendor prefixes to
+json-schema"), vendor-prefixes.txt has been converted to a DT schema.
+Update the checkpatch.pl DT check to extract vendor prefixes from the new
+vendor-prefixes.yaml file.
 
-Mijn klant is een burger van jouw land die stierf in auto-ongeluk met zijn =
-vrouw
-en alleen zoon. Ik krijg 50% van het totale fonds en 50% wel
-voor jou zijn.
+Fixes: 8122de54602e ("dt-bindings: Convert vendor prefixes to json-schema")
+Cc: Joe Perches <joe@perches.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ scripts/checkpatch.pl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Neem hier voor meer informatie contact op met mijn priv=C3=A9mail:
-eddywilliam0002@gmail.com
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index bb28b178d929..073051a4471b 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3027,7 +3027,7 @@ sub process {
+ 			my @compats = $rawline =~ /\"([a-zA-Z0-9\-\,\.\+_]+)\"/g;
+ 
+ 			my $dt_path = $root . "/Documentation/devicetree/bindings/";
+-			my $vp_file = $dt_path . "vendor-prefixes.txt";
++			my $vp_file = $dt_path . "vendor-prefixes.yaml";
+ 
+ 			foreach my $compat (@compats) {
+ 				my $compat2 = $compat;
+@@ -3042,7 +3042,7 @@ sub process {
+ 
+ 				next if $compat !~ /^([a-zA-Z0-9\-]+)\,/;
+ 				my $vendor = $1;
+-				`grep -Eq "^$vendor\\b" $vp_file`;
++				`grep -oE "\\"\\^[a-zA-Z0-9]+" $vp_file | grep -q "$vendor"`;
+ 				if ( $? >> 8 ) {
+ 					WARN("UNDOCUMENTED_DT_STRING",
+ 					     "DT compatible string vendor \"$vendor\" appears un-documented -- check $vp_file\n" . $herecurr);
+-- 
+2.20.1
 
-Bij voorbaat hartelijk dank,
-Eddy William,
-
-
-
-Hello
-
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($14.2 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-
-Please contact my private email here for more details:eddywilliam0002@gmail=
-.com
-
-Many thanks in advance,
-Mr.Eddy William,
