@@ -2,104 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2606E26F87
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:57:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE99526FB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:59:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732445AbfEVT52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:57:28 -0400
-Received: from sonic303-9.consmr.mail.bf2.yahoo.com ([74.6.131.48]:46034 "EHLO
-        sonic303-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731273AbfEVT5U (ORCPT
+        id S1732200AbfEVT6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:58:10 -0400
+Received: from mail-pg1-f170.google.com ([209.85.215.170]:35684 "EHLO
+        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730645AbfEVT6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:57:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1558555039; bh=lxUK78hbg598LYlSBwDY5EGORMzFcW2ess5/JaNr0AU=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=PcfrbUBeS+bOnSQWry2tGvdZWAb24XDqo6aMGXsrRALklApn2d4k24HSjwJw89TijRRXDpYBJeJlL7wFnQVo1gkuftT3uOo7FAQi8f0ZGpMLgSE1fjxi/x3ueHjZeUuTxzPCHEHBbycHZLk63xH6zG6DhJBuh9PabpnJKn9nODk92CC/Jv2kvpBqV1QF++Bib3RRG1koA6si6d1Y6gI95ON8hcGgyCq1Y0shjzfXsgm4wb7Cg3vnZZYyOvZDZjFzf/5Y6p7NRU18c+R07pmTh9RFi3KMJe/YvylYJJ9GYtkt7CPS3ptafvSyijotN15LolI+YjwFGcA8WmKe8UwLOg==
-X-YMail-OSG: 6jV9iIYVM1kyO4mEtN.FQz.IwSkedBG6_Cl759TxAMFN7pTfy3UMOYZdazIGuWz
- ZdPjt1.264z_CnqLEWbVfwlEKOX8cyVpU11WMNo8ELWJxyr4GNaQTwLJZCzIkaGtSrUvWlMruFij
- .IiN7FPvFbqqYzqWeW5DrAx.i5o_gnprk8Bu3BKFJ9XTtpXKQYe0zrv9j1d0E9NF8ZfB_G4xqIql
- axoGUoTrpH0O2PTkVNjHAxwHYBAZOsF64fFma_RFt.R_9wCnKUouHGK3QQHs.h6TjpPfBIEUApA2
- kayKvzOBr.tgBEaz3d7PsUKMLIJ5lF76qvUs4H915rBY_PZKzIk6MVmKtHa.l.C67vOclT.nT132
- C62VZWE2MtMK_btgLKsSNXIRi8JiBt8dQspjjPGYtAASmwoFkJlov9EHo.7YnLsEMAxv9ahjVcym
- Bno6.05yC2sqOhM8B_AQbvoZ_djd8I7EVGOCylM3it4A_Kc5QaIRgRTnOj5CYeCqd.YtqfCvNVNW
- jM9.cZF4sWyZQFgrkuCmeAQcPuUVgCIEQYeJGnvgbNQpkuRJBumx565iiyRhVSoGu3LgcKh_uxfg
- Sr1O9MBsUSSp7oXZvypjd9igasfeS4jX4AcnpujpBWYJP1kYXuKHXEeCMVTKH3X185GKf6z7DyoK
- E6.fNAx2ruj3KaM2g6X3NVKY6sJXP4.7K7D2gUEaY2_8vQIqJW1Ai0WZHsDZc8jCVIP9REtjOQBr
- ZMB67jYITqDVTE6QMYidVGaRo0z2ktSQ_uGVATf3a8YZKHzcTQZp2NLXo3Mqs68Vg.Awa0E.gQSe
- UfiBS5EHEk_FjwXBb3fhpCmnWbn2S7SPJbt9UZbeDAyGUn.D8u_5z6nyecMjVTYXPUmEeqAQDx5z
- h8YyU3q4KTqztQpRr6TB9fZo_iEMOXOGg_l8la5SBVO.Tbhnz.BpvoF3c6pywZTwCrv52v4bhuHO
- x.cu5Pdq_gvM6IlsgcmTUg7.cu6yHmIv3Jq26HJl157Z2HFRwvIrz1Qfco8g_aAVrxnvjcqWLdKp
- bLRivyJewEkGvjkGDDloCyPxM4EHSWREy62QrOjj68VGN6_8bxWcFo5Ky_9OM87KKuzU5d2XyKJ0
- 7cV5U2VP7WdHUeZMkU8smFol1WA0oo6DnqIm9iNWCHuP7wl_BYc3vc4t4UDrChLu3Ho1ljQPDSLh
- WPUoVioO4L90d_Xu9ez3bMIaXJmKvySdig2fQfmyqTPPq4qVKwOIWCDaGaPbLIYiXNMVEjYe2kKS
- KtjJJykP5Q.dNDk10.f0-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Wed, 22 May 2019 19:57:19 +0000
-Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp403.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID adb4da5c904a17c8b2b4ab09cd681d07;
-          Wed, 22 May 2019 19:57:15 +0000 (UTC)
-Subject: Re: [RFC] Turn lockdown into an LSM
-To:     James Morris <jmorris@namei.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Matthew Garrett <mjg59@google.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190521224013.3782-1-matthewgarrett@google.com>
- <alpine.LRH.2.21.1905221203070.3967@namei.org>
- <CACdnJuuTR=Ut4giPKC=kdxgY9yPv8+3PZyEzuxvON3Jr_92XnQ@mail.gmail.com>
- <CALCETrVow8U=xhQdJt8kSMX16Lf0Mstf3+QxY4iz4DHVp=PYWA@mail.gmail.com>
- <14ed1f30-a1d0-f973-5c8c-241337c8fc09@tycho.nsa.gov>
- <alpine.LRH.2.21.1905230457000.18826@namei.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <8b33a96f-160d-8e5d-4335-db2445cbe37a@schaufler-ca.com>
-Date:   Wed, 22 May 2019 12:57:13 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 22 May 2019 15:58:08 -0400
+Received: by mail-pg1-f170.google.com with SMTP id t1so1854404pgc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:58:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ti2gujd26XzQoLiTeDe8/05EiKdhekJsO0rEj6y07qw=;
+        b=YVVvBPJSZWF2y52mZXCQ82X6XtwoE27KpQxN2e1+7/BLzpnkKzo4WfwtQlpW4DxZXC
+         Z67wKIzeAiyJA1pQH5QV2tdY2eDnlhXJfsKd3LGeC8QvCUp05Qk2VaQAwwV5omSmetaF
+         okHRkhvoLrJ4mQhv0koADAwvUFNggZR4F8Fpk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ti2gujd26XzQoLiTeDe8/05EiKdhekJsO0rEj6y07qw=;
+        b=dP70ReinqtFWEVUFSe+r4FR9r5Y4Ai376KGb6E1BjkjLUFgnyd5e29VGClNpkqrg43
+         vBmJg5yyBye2PSsoU+ozNxjRoEEFZ0nSqbnBAavThJeqmLYCewpYqKf59YFcvsUbYUo2
+         LPBhv+8asDkok+2Wildg6Rfau3L2WQp0a/j1SEqbCnXLYOLycRTtqzcW9QXUbdWP6sp6
+         5KXZ9SM9nyRywR1MDUK3CrbsOyRdH61+bp/8Rg/ARcDw49sCCImfcy8/L8YDHlmhZ20Q
+         2BKjOkWB8lF7Ov/hhaDrycK4kytlG4uX6yUO0TddIMP+Mn5mG3W/1vHYZJ/3Ddxe6LOw
+         P0Cw==
+X-Gm-Message-State: APjAAAWMwk1eMR2sGZB7xqQswssRFtSc2e5wpt0WuvSXHzRffPtdOJW9
+        qQCTmCYcYk5DyP1RuyunPScjoIBmYUdTmw==
+X-Google-Smtp-Source: APXvYqz4z3TuF7/ac+bExwZ2wU5kfchxpPVjwEREHBi7Mnvkm90pW5uwHRz4gWEmk2BfdPUU6stZzQ==
+X-Received: by 2002:a65:5c8c:: with SMTP id a12mr92237071pgt.452.1558555087658;
+        Wed, 22 May 2019 12:58:07 -0700 (PDT)
+Received: from chatter.i7.local (192-0-228-88.cpe.teksavvy.com. [192.0.228.88])
+        by smtp.gmail.com with ESMTPSA id n1sm24742643pgv.15.2019.05.22.12.58.06
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 22 May 2019 12:58:06 -0700 (PDT)
+Date:   Wed, 22 May 2019 15:58:04 -0400
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: PSA: Do not use "Reported-By" without reporter's approval
+Message-ID: <20190522195804.GC21412@chatter.i7.local>
+References: <20190522193011.GB21412@chatter.i7.local>
+ <7b7287463e830fa8d981dc440f8165622cbc628e.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1905230457000.18826@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <7b7287463e830fa8d981dc440f8165622cbc628e.camel@perches.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/22/2019 12:19 PM, James Morris wrote:
-> On Wed, 22 May 2019, Stephen Smalley wrote:
+On Wed, May 22, 2019 at 12:45:06PM -0700, Joe Perches wrote:
+>> It is common courtesy to include this tagline when submitting 
+>> patches:
+>>
+>> Reported-By: J. Doe <jdoe@example.com>
+>>
+>> Please ask the reporter's permission before doing so (even if they'd
+>> submitted a public bugzilla report or sent a report to the mailing
+>> list).
 >
->> That seems to violate the intent of lockdown as I understood it, and 
->> turns security_is_locked_down() into a finer-grained capable() call. 
->> Also, if I understand correctly, this could only be done if one were to 
->> disable the lockdown module in the lsm list, since the security 
->> framework will return non-zero (i.e. the operation is locked down) if 
->> any module that implements the hook returns non-zero; LSM is 
->> "restrictive". At that point SELinux or the other LSM would be the sole 
->> arbiter of lockdown decisions. SELinux or the other LSM also wouldn't 
->> have access to the kernel_locked_down level unless that was exported in 
->> some manner from the lockdown module.  Not sure how to compose these.
-> Right, I was envisaging the LSM replacing the default.
+>I disagree with this.
 >
-> i.e. the default is tristate OR fine grained LSM policy.
->
-> They could in theory be composed restrictively, but this is likely not 
-> useful given the coarse grained default policy.  All the LSM could do is 
-> either further restrict none or integrity.
->
-> We'd need to figure out how to avoid confusing users in the case where 
-> multiple LSMs are registered for the hooks, possibly by having the 
-> lockdown LSM gate this and update the securityfs lockdown node with 
-> something like "lsm:smack".
+>If the report is public, and lists like vger are public,
+>then using a Reported-by: and/or a Link: are simply useful
+>history and tracking information.
 
-The way I'd propose dealing with multiple LSMs using the
-securityfs interface is the same as I'm proposing for
-/proc/.../attr/current and SO_PEERSEC. A new interface
-/proc/self/attr/display contains the name of the LSM that
-the current process will see when looking at process or
-security attributes that are "shared". Writing to display
-is unprivileged and changes which LSM you get information
-for.
+I'm perfectly fine with Link:, however Reported-By: usually has the 
+person's name and email address (i.e. PII data per GDPR definition). If 
+that person submitted the bug report via bugzilla.kernel.org or a 
+similar resource, their expectation is that they can delete their 
+account should they choose to to do so. However, if the patch containing 
+Reported-By is committed to git, their PII becomes permanently and 
+immutably recorded for any reasonable meaning of the word "forever."
 
-Adornments like "lsm:smack" often require modification of
-programs that fear change. The same would be true of a prctl().
-The "display" file approach is no harder for applications that
-are getting modified and much easier for scripts.
+Now, I'm pretty sure that a request to rebase git history to edit a 
+commit message would be considered "unreasonable" under GDPR provisions, 
+but a) it still eats up valuable time handling such requests and b) it's 
+a consequence reporters are not aware of when they submit bug reports.  
+So, my request to ask for permission before using "Reported-By" is not 
+coming from any legal position, but from the perspective of courtesy to 
+people submitting those reports.
 
+-K
