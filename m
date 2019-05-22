@@ -2,147 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15F9A26E36
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:47:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EC5026E09
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:46:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387463AbfEVTr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:47:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731228AbfEVT1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:27:20 -0400
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5163217D9;
-        Wed, 22 May 2019 19:27:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558553240;
-        bh=hlAVIiOpRcQkmn1FUyVhG2T73UvpIg1zkjRYmBGZFbY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=iJ9rpfbd2rv6v3D4lAjk3XAx6LiuJ1QwweDrobD9sc2Rq9jjukvgLxtf9Z6bsyYvl
-         h7svq0ygKqIntZoPr6aG5/rmJQzL4gL6dXYn/n/Kgb8bOsMZ2oq3/B6kedC79uwqyK
-         z6dhugAon3gLUC97OTzeg0GfrOQs/ZoISnlsFDLg=
-Received: by mail-qt1-f169.google.com with SMTP id i26so3809871qtr.10;
-        Wed, 22 May 2019 12:27:19 -0700 (PDT)
-X-Gm-Message-State: APjAAAVU/2A1WRw+JkuA+ygz+g9tfuhON6rfRTxfaNZbETtqXhEYT5D3
-        wRTuXO/eoPm246JV1OBFHBfyv5nI1nNaDIy4Mw==
-X-Google-Smtp-Source: APXvYqy+PeJM7o3ppEVTbfv/xeDCVQT0aKFYAppgCGRW5RshOFOrnfI1FkipG2N2RO8u2GCiHsgMEikYAzbvgjw3ptY=
-X-Received: by 2002:ac8:7688:: with SMTP id g8mr48798907qtr.224.1558553239094;
- Wed, 22 May 2019 12:27:19 -0700 (PDT)
+        id S2387608AbfEVTqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:46:24 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:50654 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732405AbfEVT1u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:27:50 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4MJRjqw079732;
+        Wed, 22 May 2019 14:27:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1558553265;
+        bh=mb9DtpGK++v8kJ0PeDAjLnaIBJtP4888+bgXxUdkl88=;
+        h=From:To:CC:Subject:Date;
+        b=ta1jPaeU4FnSNZVQlH51XLxYFchglSs8CoDqyl1FdasyFYosfISgT6H2Du21gRtZ2
+         UIXRspA2dPO5w+Op2h2VNu2nuSVOhIY9uOBsHUIH2JgUTAn3PNQyjh2w/GOdwejE/k
+         zwaR9N1QMgEN2iCwFuDRHXWlB8gRKeNU1s90SedU=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4MJRj3O031994
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 May 2019 14:27:45 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 22
+ May 2019 14:27:44 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 22 May 2019 14:27:44 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4MJRid2096385;
+        Wed, 22 May 2019 14:27:44 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>
+CC:     <lee.jones@linaro.org>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v4 0/6] LM36274 Introduction
+Date:   Wed, 22 May 2019 14:27:27 -0500
+Message-ID: <20190522192733.13422-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.21.0.5.gaeb582a983
 MIME-Version: 1.0
-References: <20190521161102.29620-1-peron.clem@gmail.com>
-In-Reply-To: <20190521161102.29620-1-peron.clem@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 22 May 2019 14:27:07 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+86nNEBzjbf_GLWWrAN91jwU+JQ7zrEoFaT_dxUzVv4A@mail.gmail.com>
-Message-ID: <CAL_Jsq+86nNEBzjbf_GLWWrAN91jwU+JQ7zrEoFaT_dxUzVv4A@mail.gmail.com>
-Subject: Re: [PATCH v6 0/6] Allwinner H6 Mali GPU support
-To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Steven Price <steven.price@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 11:11 AM Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.=
-com> wrote:
->
-> Hi,
->
-> The Allwinner H6 has a Mali-T720 MP2 which should be supported by
-> the new panfrost driver. This series fix two issues and introduce the
-> dt-bindings but a simple benchmark show that it's still NOT WORKING.
->
-> I'm pushing it in case someone want to continue the work.
->
-> This has been tested with Mesa3D 19.1.0-RC2 and a GPU bitness patch[1].
->
-> One patch is from Icenowy Zheng where I changed the order as required
-> by Rob Herring[2].
->
-> Thanks,
-> Clement
->
-> [1] https://gitlab.freedesktop.org/kszaq/mesa/tree/panfrost_64_32
-> [2] https://patchwork.kernel.org/patch/10699829/
->
->
-> [  345.204813] panfrost 1800000.gpu: mmu irq status=3D1
-> [  345.209617] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
-> 0x0000000002400400
-> [  345.209617] Reason: TODO
-> [  345.209617] raw fault status: 0x800002C1
-> [  345.209617] decoded fault status: SLAVE FAULT
-> [  345.209617] exception type 0xC1: TRANSLATION_FAULT_LEVEL1
-> [  345.209617] access type 0x2: READ
-> [  345.209617] source id 0x8000
-> [  345.729957] panfrost 1800000.gpu: gpu sched timeout, js=3D0,
-> status=3D0x8, head=3D0x2400400, tail=3D0x2400400, sched_job=3D000000009e2=
-04de9
-> [  346.055876] panfrost 1800000.gpu: mmu irq status=3D1
-> [  346.060680] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
-> 0x0000000002C00A00
-> [  346.060680] Reason: TODO
-> [  346.060680] raw fault status: 0x810002C1
-> [  346.060680] decoded fault status: SLAVE FAULT
-> [  346.060680] exception type 0xC1: TRANSLATION_FAULT_LEVEL1
-> [  346.060680] access type 0x2: READ
-> [  346.060680] source id 0x8100
-> [  346.561955] panfrost 1800000.gpu: gpu sched timeout, js=3D1,
-> status=3D0x8, head=3D0x2c00a00, tail=3D0x2c00a00, sched_job=3D00000000b55=
-a9a85
-> [  346.573913] panfrost 1800000.gpu: mmu irq status=3D1
-> [  346.578707] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
-> 0x0000000002C00B80
->
-> Change in v5:
->  - Remove fix indent
->
-> Changes in v4:
->  - Add bus_clock probe
->  - Fix sanity check in io-pgtable
->  - Add vramp-delay
->  - Merge all boards into one patch
->  - Remove upstreamed Neil A. patch
->
-> Change in v3 (Thanks to Maxime Ripard):
->  - Reauthor Icenowy for her path
->
-> Changes in v2 (Thanks to Maxime Ripard):
->  - Drop GPU OPP Table
->  - Add clocks and clock-names in required
->
-> Cl=C3=A9ment P=C3=A9ron (5):
->   drm: panfrost: add optional bus_clock
->   iommu: io-pgtable: fix sanity check for non 48-bit mali iommu
->   dt-bindings: gpu: mali-midgard: Add H6 mali gpu compatible
->   arm64: dts: allwinner: Add ARM Mali GPU node for H6
->   arm64: dts: allwinner: Add mali GPU supply for H6 boards
->
-> Icenowy Zheng (1):
->   dt-bindings: gpu: add bus clock for Mali Midgard GPUs
+Hello
 
-I've applied patches 1 and 3 to drm-misc. I was going to do patch 4
-too, but it doesn't apply.
+This is patch set v4 for the LM36274.  There were no changes made
+to this patch set except to rebase this on top of the latest TI LMU common code
+patchset.
 
-Patch 2 can go in via the iommu tree and the rest via the allwinner tree.
+This patch set was rebased on the series at:
+https://lore.kernel.org/patchwork/project/lkml/list/?series=393071
 
-Rob
+Dan
+
+Dan Murphy (6):
+  regulator: lm363x: Make the gpio register enable flexible
+  dt-bindings: mfd: Add lm36274 bindings to ti-lmu
+  mfd: ti-lmu: Add LM36274 support to the ti-lmu
+  regulator: lm363x: Add support for LM36274
+  dt-bindings: leds: Add LED bindings for the LM36274
+  leds: lm36274: Introduce the TI LM36274 LED driver
+
+ .../devicetree/bindings/leds/leds-lm36274.txt |  82 +++++++++
+ .../devicetree/bindings/mfd/ti-lmu.txt        |  54 ++++++
+ drivers/leds/Kconfig                          |   7 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-lm36274.c                   | 174 ++++++++++++++++++
+ drivers/mfd/Kconfig                           |   5 +-
+ drivers/mfd/ti-lmu.c                          |  14 ++
+ drivers/regulator/Kconfig                     |   2 +-
+ drivers/regulator/lm363x-regulator.c          |  56 +++++-
+ include/linux/mfd/ti-lmu-register.h           |  23 +++
+ include/linux/mfd/ti-lmu.h                    |   4 +
+ 11 files changed, 416 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.txt
+ create mode 100644 drivers/leds/leds-lm36274.c
+
+-- 
+2.21.0.5.gaeb582a983
+
