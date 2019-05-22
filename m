@@ -2,93 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D01C26AB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E9A826B18
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbfEVTSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:18:39 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37243 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728615AbfEVTSi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:18:38 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 7so3356633wmo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:18:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:user-agent:date
-         :message-id:mime-version;
-        bh=oMdcno1bN7UGFXmlvdsH86j5M8DSKBM+CBX05MLBto4=;
-        b=IiHh0OkjSBhfeEaplOxktSUxiYE6QnxnBWhAnRpE+MfxpLOpFOmxtbpEOeQC7+Gn3d
-         StdAwsHQOC5dtEQofdiP+h3EiWwWNjcVtQoOOGu6woXz5s7vKdugOPyxHdDXSHySSOqB
-         nP8Xwa1vEktW6I1veR341reZCVR3xswoiN16Chzh5tLTx0sTXlMbdG4intN0XDRaXMNy
-         xxSWtkhkj4h7m4hE25rTekhhjjIwDmJXS9uImPQI83vibg7paTg7QUoI8iltmNQXeE1M
-         SO+hxzfHVw41Ybgq0SzLg/23yF3FWgALlMQMfDxujKMxxQ5BoIdCDbA7Cb/4AAaUF2wP
-         bKuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references
-         :user-agent:date:message-id:mime-version;
-        bh=oMdcno1bN7UGFXmlvdsH86j5M8DSKBM+CBX05MLBto4=;
-        b=T4GFgQjQ19Qsnb3geZ9xqguyTXTzKtW4EZHk+1c+C+iqxkFGK3I5EnLSBtnDx6egCI
-         IAognjOysligb/Qg3qpz9KyimB3phJgZ4IckxqT3ioRq9eQGvzR7WNN8X5ZXiAkOYL5J
-         S/mjsfflPxP5KyehdFhFcfMeymM4GUrUQq6zYhDB86S5LFiJNG/JKQ18b2nwnSoJP1pr
-         tbJEplXOL/VfoLoF8nVcw2BWgfnjDQLYheDQNaQJfhBh9RBZcQC+Xv0TwU7i7uGICh5I
-         xJSPZzsKcYv+qLgCJevyJMIsvhrwueQawlXjv95FSwR8Enks6S3dDcZNx39aFI/2HFeO
-         eMXQ==
-X-Gm-Message-State: APjAAAW9h/7IIFfUjlmpoNbydb+BvZz1c6GWazc5rFmsCOaN+SpJpXMh
-        j1xkEFKo+1sTGSiIQZzIG4eKFA==
-X-Google-Smtp-Source: APXvYqwJkoMFDjSKM1Xceo+2NVH2eEaNn1h+0mvTxstEwWDLuXSNqLr+xgh+7QN1+3tmDHssAXHjNg==
-X-Received: by 2002:a1c:40c6:: with SMTP id n189mr8955328wma.65.1558552716735;
-        Wed, 22 May 2019 12:18:36 -0700 (PDT)
-Received: from localhost ([2a01:cb1d:12c:8800:1e45:34e8:9e5f:f03])
-        by smtp.gmail.com with ESMTPSA id y40sm47697179wrd.96.2019.05.22.12.18.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 12:18:35 -0700 (PDT)
-From:   Loys Ollivier <lollivier@baylibre.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-kernel@vger.kernel.org, Atish Patra <atish.patra@wdc.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Paul Walmsley <paul@pwsan.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Subject: Re: [PATCH 1/6] arch: riscv: add support for building DTB files from DT source data
-In-Reply-To: <20190411084304.5072-2-paul.walmsley@sifive.com> (Paul Walmsley's
-        message of "Thu, 11 Apr 2019 01:42:59 -0700")
-References: <20190411084304.5072-2-paul.walmsley@sifive.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-Date:   Wed, 22 May 2019 21:18:33 +0200
-Message-ID: <868suyb8mu.fsf@baylibre.com>
+        id S1731091AbfEVTYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:24:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44888 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731054AbfEVTX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:23:56 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 090EA21872;
+        Wed, 22 May 2019 19:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558553035;
+        bh=SXkz2rRTYygGWZhwmXK4TDRIYfU0p6emAJwWwaDRWIA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KcyGbPSCedoRZeGWwlTEtAKVkVv/rnLbjr5RpY9JikTsyh14LRCg+BtZzBGyZ8rpL
+         7f0Krc4k475eXTN/RuVACtoKPf40H6VEMuKv5WLRvejXXARdZvqjjnpAmrBMsf1EuA
+         53SArFgtWXOXh5KK0qp+A73FHA6wHkpN6Z0bExJc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.0 012/317] bpftool: exclude bash-completion/bpftool from .gitignore pattern
+Date:   Wed, 22 May 2019 15:18:33 -0400
+Message-Id: <20190522192338.23715-12-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
+References: <20190522192338.23715-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 11 Apr 2019 at 01:42, Paul Walmsley <paul.walmsley@sifive.com> wrote:
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-> Similar to ARM64, add support for building DTB files from DT source
-> data for RISC-V boards.
->
-> This patch starts with the infrastructure needed for SiFive boards.
-> Boards from other vendors would add support here in a similar form.
->
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
+[ Upstream commit a7d006714724de4334c5e3548701b33f7b12ca96 ]
 
-Tested-by: Loys Ollivier <lollivier@baylibre.com>
+tools/bpf/bpftool/.gitignore has the "bpftool" pattern, which is
+intended to ignore the following build artifact:
 
-Tested the whole patch series using FSBL+BBL.
-Did basic boot testing and uart validation.
+  tools/bpf/bpftool/bpftool
 
-The actual testing process is quite cumbersome.
-One needs to rebuild the BBL to update the dtb loaded.
+However, the .gitignore entry is effective not only for the current
+directory, but also for any sub-directories.
 
-Would you have an idea of the delta between bbl and u-boot ?
-I tried booting the same kernel + dtb with U-Boot but ran into
-errors related to plic.
+So, from the point of .gitignore grammar, the following check-in file
+is also considered to be ignored:
 
-Loys
+  tools/bpf/bpftool/bash-completion/bpftool
+
+As the manual gitignore(5) says "Files already tracked by Git are not
+affected", this is not a problem as far as Git is concerned.
+
+However, Git is not the only program that parses .gitignore because
+.gitignore is useful to distinguish build artifacts from source files.
+
+For example, tar(1) supports the --exclude-vcs-ignore option. As of
+writing, this option does not work perfectly, but it intends to create
+a tarball excluding files specified by .gitignore.
+
+So, I believe it is better to fix this issue.
+
+You can fix it by prefixing the pattern with a slash; the leading slash
+means the specified pattern is relative to the current directory.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Quentin Monnet <quentin.monnet@netronome.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/bpf/bpftool/.gitignore | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/bpf/bpftool/.gitignore b/tools/bpf/bpftool/.gitignore
+index 67167e44b7266..8248b8dd89d4b 100644
+--- a/tools/bpf/bpftool/.gitignore
++++ b/tools/bpf/bpftool/.gitignore
+@@ -1,5 +1,5 @@
+ *.d
+-bpftool
++/bpftool
+ bpftool*.8
+ bpf-helpers.*
+ FEATURE-DUMP.bpftool
+-- 
+2.20.1
+
