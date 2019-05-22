@@ -2,81 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 389F92634C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 13:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DFA72643A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 15:02:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbfEVL5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 07:57:03 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48864 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727464AbfEVL5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 07:57:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9F0680D;
-        Wed, 22 May 2019 04:57:01 -0700 (PDT)
-Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D80033F575;
-        Wed, 22 May 2019 04:56:55 -0700 (PDT)
-Date:   Wed, 22 May 2019 12:56:53 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Subject: Re: [PATCH v15 07/17] mm, arm64: untag user pointers in mm/gup.c
-Message-ID: <20190522115652.nf2r5j6xydywmccw@mbp>
-References: <cover.1557160186.git.andreyknvl@google.com>
- <d234cd71774f35229bdfc0a793c34d6712b73093.1557160186.git.andreyknvl@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d234cd71774f35229bdfc0a793c34d6712b73093.1557160186.git.andreyknvl@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1729356AbfEVNBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 09:01:55 -0400
+Received: from mfdf018.ocn.ad.jp ([153.128.50.74]:47501 "EHLO
+        mfdf018.ocn.ad.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727975AbfEVNBz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 09:01:55 -0400
+X-Greylist: delayed 3759 seconds by postgrey-1.27 at vger.kernel.org; Wed, 22 May 2019 09:01:54 EDT
+Received: from mogw1117.ocn.ad.jp (mogw1117.ocn.ad.jp [153.149.229.18])
+        by mfdf018.ocn.ad.jp (Postfix) with ESMTP id 5EF8AB833F4;
+        Wed, 22 May 2019 20:59:14 +0900 (JST)
+Received: from mf-smf-ucb027c1 (mf-smf-ucb027c1.ocn.ad.jp [153.153.66.169])
+        by mogw1117.ocn.ad.jp (Postfix) with ESMTP id A477010024B;
+        Wed, 22 May 2019 20:59:11 +0900 (JST)
+Received: from ocn-vc-mts-106c1.ocn.ad.jp ([153.138.237.145])
+        by mf-smf-ucb027c1 with ESMTP
+        id TPtRhMACBSCYXTPtnh03nk; Wed, 22 May 2019 20:59:11 +0900
+Received: from smtp.ocn.ne.jp ([153.149.227.134])
+        by ocn-vc-mts-106c1.ocn.ad.jp with ESMTP
+        id TPtnhgZNHygxgTPtnh4pgH; Wed, 22 May 2019 20:59:11 +0900
+Received: from localhost (p1677051-ipngn9301funabasi.chiba.ocn.ne.jp [118.0.44.51])
+        by smtp.ocn.ne.jp (Postfix) with ESMTPA;
+        Wed, 22 May 2019 20:59:11 +0900 (JST)
+Date:   Wed, 22 May 2019 20:59:07 +0900 (JST)
+Message-Id: <20190522.205907.488743218624330444.anemo@mba.ocn.ne.jp>
+To:     geert@linux-m68k.org
+Cc:     fancer.lancer@gmail.com, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, rppt@linux.ibm.com, macro@linux-mips.org,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: TXx9: Fix boot crash in free_initmem()
+From:   Atsushi Nemoto <anemo@mba.ocn.ne.jp>
+In-Reply-To: <20190522081535.16583-1-geert@linux-m68k.org>
+References: <20190522081535.16583-1-geert@linux-m68k.org>
+X-Fingerprint: 6ACA 1623 39BD 9A94 9B1A  B746 CA77 FE94 2874 D52F
+X-Pgp-Public-Key: http://wwwkeys.pgp.net:11371/pks/lookup?op=get&search=0x2874D52F
+X-Mailer: Mew version 6.7 on Emacs 24.5 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 06:30:53PM +0200, Andrey Konovalov wrote:
-> This patch is a part of a series that extends arm64 kernel ABI to allow to
-> pass tagged user pointers (with the top byte set to something else other
-> than 0x00) as syscall arguments.
+On Wed, 22 May 2019 10:15:35 +0200, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On rbtx4927:
+...
+> As of commit b93ddc4f9156205e ("mips: Reserve memory for the kernel
+> image resources"), bootmem_init() no longer reserves the memory below
+> the kernel, while prom_free_prom_memory() still frees it.
 > 
-> mm/gup.c provides a kernel interface that accepts user addresses and
-> manipulates user pages directly (for example get_user_pages, that is used
-> by the futex syscall). Since a user can provided tagged addresses, we need
-> to handle this case.
+> Fix this by reverting commit b6263ff2d6e58cc2 ("MIPS: TXx9: Implement
+> prom_free_prom_memory").
 > 
-> Add untagging to gup.c functions that use user addresses for vma lookups.
-> 
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> Suggested-by: Serge Semin <fancer.lancer@gmail.com>
+> Fixes: b93ddc4f9156205e ("mips: Reserve memory for the kernel image resources")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Thank you for fixing this.  It looks OK for me.
+
+Reviewed-by: Atsushi Nemoto <anemo@mba.ocn.ne.jp>
+
+---
+Atsushi Nemoto
