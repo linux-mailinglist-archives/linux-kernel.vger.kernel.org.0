@@ -2,211 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4FBE26ACE
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:22:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3791127051
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 22:03:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbfEVTVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:21:38 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46489 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729929AbfEVTVb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:21:31 -0400
-Received: by mail-pg1-f196.google.com with SMTP id o11so1603567pgm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:21:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NP4JWkHqbCIs5rs8MQbZ/rJv31PHu50+VP85AcMzbbU=;
-        b=GFshwxVjgFyTBuVsTzhm7IUt1UjnhWPD0MinKNguPB3el83BFNud8bHr5plz3emii+
-         cTc7Cjy2KfiVySMa4vl3S45MUDV6ughBv+eP5o9C9KIg6ntk97RzOYluREumaUsuEfOH
-         SjJgP3hh0ohPvQPPbSdKkfRYeqkQoVWPqO5e4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NP4JWkHqbCIs5rs8MQbZ/rJv31PHu50+VP85AcMzbbU=;
-        b=kLKsKaxPI/280HTpItPtC6lxniQirEciigTIfbes1W3fatqTXR31wmu8ZIBncwSv5A
-         m4v7B7/yrwOX2xWsHdEc+jMIabESN0tEAaz+nGla+q0FAhkYq0bLI138CK68s0WFMmkY
-         RwtNBtu1yJRNrAJeO0nG1WRe5ISZQ2qJgfLiMi89hhl3kJy1+io9oDbrU1m5og7zfOhy
-         K5iL9bvciBw48siHrFUymFePlmzGJpwn8yjapp30OxG8JjEjDNpGblYzPjzf2KL9EuPA
-         Nf5YWK+NKUzITQCVkYLOm7L6s3YM1EpWHs04w2isNCh6VnnwwzxSK9jwLSj1JfAJAPpl
-         YHxg==
-X-Gm-Message-State: APjAAAUE0ImXtVmia7kwFpr/ehZ00Qj3HmXFR/sViV1OXwoG00HD1OSi
-        ysj2DdN2QpYIDTnRdPMDU0lksQ==
-X-Google-Smtp-Source: APXvYqzNjksdiGtBA2K0Yn7lD7hXz0a3WOc+KaCHe5Lfb///NUHl50P+zldmTZ4Tu8MFGQvOw+1qnw==
-X-Received: by 2002:a62:6456:: with SMTP id y83mr32990581pfb.71.1558552889913;
-        Wed, 22 May 2019 12:21:29 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x10sm37135797pfj.136.2019.05.22.12.21.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 May 2019 12:21:28 -0700 (PDT)
-Date:   Wed, 22 May 2019 12:21:27 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     enh <enh@google.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Evgenii Stepanov <eugenis@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        kvm@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Subject: Re: [PATCH v15 00/17] arm64: untag user pointers passed to the kernel
-Message-ID: <201905221157.A9BAB1F296@keescook>
-References: <cover.1557160186.git.andreyknvl@google.com>
- <20190517144931.GA56186@arrakis.emea.arm.com>
- <CAFKCwrj6JEtp4BzhqO178LFJepmepoMx=G+YdC8sqZ3bcBp3EQ@mail.gmail.com>
- <20190521182932.sm4vxweuwo5ermyd@mbp>
- <201905211633.6C0BF0C2@keescook>
- <20190522101110.m2stmpaj7seezveq@mbp>
- <CAJgzZoosKBwqXRyA6fb8QQSZXFqfHqe9qO9je5TogHhzuoGXJQ@mail.gmail.com>
+        id S1731369AbfEVUDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 16:03:07 -0400
+Received: from nautica.notk.org ([91.121.71.147]:49794 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730075AbfEVTVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:21:46 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id E8FC1C009; Wed, 22 May 2019 21:21:44 +0200 (CEST)
+Date:   Wed, 22 May 2019 21:21:29 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Bharath Vedartham <linux.bhar@gmail.com>
+Cc:     ericvh@gmail.com, lucho@ionkov.net,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p/cache.c: Fix memory leak in
+ v9fs_cache_session_get_cookie
+Message-ID: <20190522192129.GA30941@nautica>
+References: <20190522191655.GA4657@bharath12345-Inspiron-5559>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJgzZoosKBwqXRyA6fb8QQSZXFqfHqe9qO9je5TogHhzuoGXJQ@mail.gmail.com>
+In-Reply-To: <20190522191655.GA4657@bharath12345-Inspiron-5559>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 08:30:21AM -0700, enh wrote:
-> On Wed, May 22, 2019 at 3:11 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > On Tue, May 21, 2019 at 05:04:39PM -0700, Kees Cook wrote:
-> > > I just want to make sure I fully understand your concern about this
-> > > being an ABI break, and I work best with examples. The closest situation
-> > > I can see would be:
-> > >
-> > > - some program has no idea about MTE
-> >
-> > Apart from some libraries like libc (and maybe those that handle
-> > specific device ioctls), I think most programs should have no idea about
-> > MTE. I wouldn't expect programmers to have to change their app just
-> > because we have a new feature that colours heap allocations.
-
-Right -- things should Just Work from the application perspective.
-
-> obviously i'm biased as a libc maintainer, but...
+Bharath Vedartham wrote on Thu, May 23, 2019:
+> v9fs_cache_session_get_cookie assigns a random cachetag to
+> v9ses->cachetag, if the cachetag is not assigned previously.
 > 
-> i don't think it helps to move this to libc --- now you just have an
-> extra dependency where to have a guaranteed working system you need to
-> update your kernel and libc together. (or at least update your libc to
-> understand new ioctls etc _before_ you can update your kernel.)
-
-I think (hope?) we've all agreed that we shouldn't pass this off to
-userspace. At the very least, it reduces the utility of MTE, and at worst
-it complicates userspace when this is clearly a kernel/architecture issue.
-
+> v9fs_random_cachetag allocates memory to v9ses->cachetag with kmalloc
+> and uses scnprintf to fill it up with a cachetag.
 > 
-> > > - malloc() starts returning MTE-tagged addresses
-> > > - program doesn't break from that change
-> > > - program uses some syscall that is missing untagged_addr() and fails
-> > > - kernel has now broken userspace that used to work
-> >
-> > That's one aspect though probably more of a case of plugging in a new
-> > device (graphics card, network etc.) and the ioctl to the new device
-> > doesn't work.
-
-I think MTE will likely be rather like NX/PXN and SMAP/PAN: there will
-be glitches, and we can disable stuff either via CONFIG or (as is more
-common now) via a kernel commandline with untagged_addr() containing a
-static branch, etc. But I actually don't think we need to go this route
-(see below...)
-
-> > The other is that, assuming we reach a point where the kernel entirely
-> > supports this relaxed ABI, can we guarantee that it won't break in the
-> > future. Let's say some subsequent kernel change (some refactoring)
-> > misses out an untagged_addr(). This renders a previously TBI/MTE-capable
-> > syscall unusable. Can we rely only on testing?
-> >
-> > > The trouble I see with this is that it is largely theoretical and
-> > > requires part of userspace to collude to start using a new CPU feature
-> > > that tickles a bug in the kernel. As I understand the golden rule,
-> > > this is a bug in the kernel (a missed ioctl() or such) to be fixed,
-> > > not a global breaking of some userspace behavior.
-> >
-> > Yes, we should follow the rule that it's a kernel bug but it doesn't
-> > help the user that a newly installed kernel causes user space to no
-> > longer reach a prompt. Hence the proposal of an opt-in via personality
-> > (for MTE we would need an explicit opt-in by the user anyway since the
-> > top byte is no longer ignored but checked against the allocation tag).
+> But if scnprintf fails, v9ses->cachetag is not freed in the current code causing a memory leak.
 > 
-> but realistically would this actually get used in this way? or would
-> any given system either be MTE or non-MTE. in which case a kernel
-> configuration option would seem to make more sense. (because either
-> way, the hypothetical user basically needs to recompile the kernel to
-> get back on their feet. or all of userspace.)
+> Fix this by freeing v9ses->cachetag it v9fs_random_cachetag fails.
+> 
+> This was reported by syzbot, the link to the report is below:
+> https://syzkaller.appspot.com/bug?id=f012bdf297a7a4c860c38a88b44fbee43fd9bbf3
+> 
+> Reported-by: syzbot+3a030a73b6c1e9833815@syzkaller.appspotmail.com 
+> Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+> ---
+>  fs/9p/cache.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/9p/cache.c b/fs/9p/cache.c
+> index 9eb3470..4463b91 100644
+> --- a/fs/9p/cache.c
+> +++ b/fs/9p/cache.c
+> @@ -66,6 +66,7 @@ void v9fs_cache_session_get_cookie(struct v9fs_session_info *v9ses)
+>  	if (!v9ses->cachetag) {
+>  		if (v9fs_random_cachetag(v9ses) < 0) {
+>  			v9ses->fscache = NULL;
+> +			kfree(v9ses->cachetag);
 
-Right: the point is to design things so that we do our best to not break
-userspace that is using the new feature (which I think this series has
-done well). But supporting MTE/TBI is just like supporting PAN: if someone
-refactors a driver and swaps a copy_from_user() to a memcpy(), it's going
-to break under PAN. There will be the same long tail of these bugs like
-any other, but my sense is that they are small and rare. But I agree:
-they're going to be pretty weird bugs to track down. The final result,
-however, will be excellent annotation in the kernel for where userspace
-addresses get used and people make assumptions about them.
+I would also reset v9ses->cachetag to NULL just in case,
+v9fs_cache_session_get_cookie will use v9ses->cachetag as it is if it is
+not null and you were leaving an invalid pointer there
 
-The sooner we get the series landed and gain QEMU support (or real
-hardware), the faster we can hammer out these missed corner-cases.
-What's the timeline for either of those things, BTW?
+I do not see any reason it could be called multiple times but
+v9fs_cache_session_get_cookie does not return any error (void function)
+so something later on could try to use that cachetag incorrectly later
+on
 
-> > > I feel like I'm missing something about this being seen as an ABI
-> > > break. The kernel already fails on userspace addresses that have high
-> > > bits set -- are there things that _depend_ on this failure to operate?
-> >
-> > It's about providing a relaxed ABI which allows non-zero top byte and
-> > breaking it later inadvertently without having something better in place
-> > to analyse the kernel changes.
-
-It sounds like the question is how to switch a process in or out of this
-ABI (but I don't think that's the real issue: I think it's just a matter
-of whether or not a process uses tags at all). Doing it at the prctl()
-level doesn't make sense to me, except maybe to detect MTE support or
-something. ("Should I tag allocations?") And that state is controlled
-by the kernel: the kernel does it or it doesn't.
-
-If a process wants to not tag, that's also up to the allocator where
-it can decide not to ask the kernel, and just not tag. Nothing breaks in
-userspace if a process is NOT tagging and untagged_addr() exists or is
-missing. This, I think, is the core way this doesn't trip over the
-golden rule: an old system image will run fine (because it's not
-tagging). A *new* system may encounter bugs with tagging because it's a
-new feature: this is The Way Of Things. But we don't break old userspace
-because old userspace isn't using tags.
-
-So the agreement appears to be between the kernel and the allocator.
-Kernel says "I support this" or not. Telling the allocator to not tag if
-something breaks sounds like an entirely userspace decision, yes?
-
+Thanks,
 -- 
-Kees Cook
+Dominique
