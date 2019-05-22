@@ -2,96 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B0FE25DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 07:53:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8704925DDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 08:02:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728491AbfEVFx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 01:53:28 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34862 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbfEVFx1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 01:53:27 -0400
-Received: by mail-wm1-f65.google.com with SMTP id q15so778684wmj.0
-        for <linux-kernel@vger.kernel.org>; Tue, 21 May 2019 22:53:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=5gjsqjo7IX+MYjphdtIkAMMrTXCVUSggkJvGSotJJTQ=;
-        b=nSudSti3cbNq95ZgFSRAecS+O+iIU59MPEEHCRSVybrADbuZzF5mtNDtpEcL7L4jDG
-         Gf2k3iVfd09ImO2tUauH5r78a1zIQCy/yZhwx4YCUEfytpwf5TrHPC0C5EjZpvU7Tx1e
-         GIsjjkObImxGfY4Z/eqY7Z2npXSGGSEfzsM29qYIVx+haNOP9fMk6BoppQE6peAjmKG1
-         I6VrmS5zC9uQdJ2C5QV1x+AJ2kqL5JgdkWgHolDkckJRu+IdYvX2atO2zp21hTxH5eQW
-         Ik5Fn1RalD1gDMXJYyKQjL823oybPJay4I5m7RyRy2EXVUEb29QDjg0BlcYTTAT7wjEJ
-         OByg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=5gjsqjo7IX+MYjphdtIkAMMrTXCVUSggkJvGSotJJTQ=;
-        b=CG+cGfWB05uT06odh7h2t1kw6rfTNLwC0We9ww61xTFO/eFMxP+FptxXd6LtJtDEXU
-         UikioC9H+YMU4sd6Iy5nI2BR2ZraCvXMHqtZJdztAqdoALysDQjTZMXiYXCgykOYoLUN
-         gNVwPhGABfwYOZFUoKND4Y2BxMdVyQ6SkaU5xcPnd7MoEUKLAqBqpFf1nmoETD7DM2R4
-         uqwG6sc4JdC+EI6rXN9vwEHVxfPgqxLUHgLQSIpHYm5vUWZB48T9Sg2bCv2h6erlj4Ah
-         Y0ye0zrnKkGRNKcx/5wQiou8jb2svdSy9awh2OjLvhAw1orLVqz2JaxrYVMoDYEiP4bB
-         i7fw==
-X-Gm-Message-State: APjAAAWfv+T7CAwTcPcxIKRSh2DpPrlHEmyIlvZkuRl6if/f7q5HDZtX
-        6V/5zzDtXUx0Oh0i98mB65CwWw==
-X-Google-Smtp-Source: APXvYqw0VeHmbRFUaVBdAsWdfo5a4BUlWDZQeqyEOri4Oo8A4cuG+M7gb+hFRspLGJE99Uxe95GC7Q==
-X-Received: by 2002:a1c:f111:: with SMTP id p17mr5741383wmh.62.1558504405746;
-        Tue, 21 May 2019 22:53:25 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id y4sm3465996wmj.20.2019.05.21.22.53.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 21 May 2019 22:53:25 -0700 (PDT)
-Date:   Wed, 22 May 2019 06:53:23 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Fabien Lahoudere <fabien.lahoudere@collabora.com>
-Cc:     Gwendal Grignou <gwendal@chromium.org>,
-        enric.balletbo@collabora.com, bleung@chromium.org,
-        groeck@chromium.org, jic23@kernel.org, broonie@kernel.org,
-        cychiang@chromium.org, tiwai@suse.com, linux-iio@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [alsa-devel] [PATCH v3 00/30] Update cros_ec_commands.h
-Message-ID: <20190522055323.GD4574@dell>
-References: <20190509211353.213194-1-gwendal@chromium.org>
- <2741579da03893d2d4e7ad7f5fc42a506a82f380.camel@collabora.com>
+        id S1728445AbfEVGBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 02:01:50 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:41248 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725802AbfEVGBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 02:01:50 -0400
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 88021516CC;
+        Wed, 22 May 2019 08:01:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id gLwQp6ocrRCj; Wed, 22 May 2019 08:01:27 +0200 (CEST)
+Subject: Re: [PATCH] mtd: cfi_cmdset_0002: dynamically determine the max
+ sectors
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, miquel.raynal@bootlin.com, richard@nod.at,
+        vigneshr@ti.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190522000628.13073-1-chris.packham@alliedtelesis.co.nz>
+From:   Stefan Roese <sr@denx.de>
+Message-ID: <e4fb784f-ea00-6281-409c-d440ce13eb50@denx.de>
+Date:   Wed, 22 May 2019 08:01:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2741579da03893d2d4e7ad7f5fc42a506a82f380.camel@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190522000628.13073-1-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 May 2019, Fabien Lahoudere wrote:
-
-> Le jeudi 09 mai 2019 à 14:13 -0700, Gwendal Grignou a écrit :
-> > The interface between CrosEC embedded controller and the host,
-> > described by cros_ec_commands.h, as diverged from what the embedded
-> > controller really support.
-> > 
-> > The source of thruth is at
-> > https://chromium.googlesource.com/chromiumos/platform/ec/+/master/include/ec_commands.h
-> > 
-> > That include file is converted to remove ACPI and Embedded only code.
+On 22.05.19 02:06, Chris Packham wrote:
+> Because PPB unlocking unlocks the whole chip cfi_ppb_unlock() needs to
+> remember the locked status for each sector so it can re-lock the
+> unaddressed sectors. Dynamically calculate the maximum number of sectors
+> rather than using a hardcoded value that is too small for larger chips.
 > 
-> Hi, 
+> Tested with Spansion S29GL01GS11TFI flash device.
 > 
-> I reviewed patches of the series and they looks good to me.
-> 
-> Reviewed-by: Fabien Lahoudere <fabien.lahoudere@collabora.com>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-Thanks Fabien.
+This hardcoded limit always annoyed me at that time, so thanks for
+"fixing" this:
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Reviewed-by: Stefan Roese <sr@denx.de>
+
+Thanks,
+Stefan
