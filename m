@@ -2,149 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1924926062
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 11:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C48926059
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 11:21:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbfEVJV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 05:21:56 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1077 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726552AbfEVJV4 (ORCPT
+        id S1728898AbfEVJVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 05:21:13 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35226 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728547AbfEVJVN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 05:21:56 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4M9J7Yc008406;
-        Wed, 22 May 2019 11:20:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=cbRUlYKyYqlMPBP2eufD0fAfJgyCiNdhHTZsYhUdgTo=;
- b=m3OWHlGtGtdUxP8GNy0cxzXkBGLwafL/BIb4z+hbLCGLUeTTE56LB4Sw+K97jY2CedHT
- pniqmUTZ+6NTYxHujQ5qZCL+Gp1AVpMT7SkP27ar/Fo85YBRchNayYKa5Q43NfUDvlQe
- jUKLH+0QIqlHFa07gNbSJRkHbq2+9I0KDRrwM7bkDkm/Qvn4uaZbBLSXi9BGlXwsTvC/
- VyxxEFVrQveZkiqMH78cJebV+Yg1V6g8rMl+dFLYm+jIhjwaRJKAq0zyuRqbjMzGW/gp
- 2TX2pgXJDtXSSfFzk3C3nZMpX5jkazOvHXX8FKnJlywq7ms1N2ch53NTapI+9AuIDStT RA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2sj7tu79ad-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 22 May 2019 11:20:19 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id ED1069C;
-        Wed, 22 May 2019 09:20:17 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C4BD81587;
-        Wed, 22 May 2019 09:20:17 +0000 (GMT)
-Received: from SFHDAG3NODE2.st.com (10.75.127.8) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 22 May
- 2019 11:20:17 +0200
-Received: from SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96]) by
- SFHDAG3NODE2.st.com ([fe80::b82f:1ce:8854:5b96%20]) with mapi id
- 15.00.1347.000; Wed, 22 May 2019 11:20:17 +0200
-From:   Amelie DELAUNAY <amelie.delaunay@st.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "kbuild-all@01.org" <kbuild-all@01.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] pinctrl: stmfx: Fix compile issue when CONFIG_OF_GPIO is
- not defined
-Thread-Topic: [PATCH] pinctrl: stmfx: Fix compile issue when CONFIG_OF_GPIO is
- not defined
-Thread-Index: AQHVDuDxK6HzwnJUFE6SYGi4rooWzqZ2hLKAgAAnAgCAAAlUgIAACtCA
-Date:   Wed, 22 May 2019 09:20:17 +0000
-Message-ID: <bc1b5f1d-23b0-141d-f58f-b54ac303fe20@st.com>
-References: <1558338735-8444-1-git-send-email-amelie.delaunay@st.com>
- <20190522054833.GB4574@dell> <eb8425ec-989a-9701-7fee-61bd1d2b93c1@st.com>
- <20190522084133.GF4574@dell>
-In-Reply-To: <20190522084133.GF4574@dell>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7B8402086AAA3E40B40F9BE22CCF8FB7@st.com>
-Content-Transfer-Encoding: base64
+        Wed, 22 May 2019 05:21:13 -0400
+Received: by mail-ot1-f65.google.com with SMTP id n14so1448065otk.2;
+        Wed, 22 May 2019 02:21:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p/fnSZedKvA8Iqi6ZZvsXLPVwAkY8qUX0ojVQgRr2ec=;
+        b=B4nCp9iwVFmDlnlJC3mpp9Nenucc4SJmlDyRV13lkG5kBZSrddXzsrURuvUQIeThZY
+         Ehr3MLMmqeImqAVXm4MVg0w+eWo9Vbs/sZQtaZxZqpoe1koxkysbIkrSQNECIM6dhiR1
+         fPDWm+O1vLzIkp7SM/gQTHak4gmNG++ugA69j6+h0mykjcXAdT+0wfLmGIQkbfJL1ZLY
+         lSrceY8mHFRckl2VDgcEnKlVGibVKvsbCKciGAT+h2MWb4aDM0maoW/w3UCOIpRNMAHP
+         6IlquCcvhUtV8EmXlQirw1K9rFuLYoItJjR3xubziMDu4IQKBebuob/lMpClAq6MK/3x
+         ruyw==
+X-Gm-Message-State: APjAAAVwfxxPYnQ0T+NNzYp61+mgMiw/KoaLOtEw7UuaE9M+ITn2zuta
+        Y4RyMgMaYU2kayeYYgAZZd0n/YjBPU4NAfCFuUk=
+X-Google-Smtp-Source: APXvYqyobpJ63a1iTpV/Vmzl3T4jPFpgqUHVdSsARI3lZgekWUpzNXifpDBaSAjDG4knVag0MFU8Mr62nKwVypF3Ci8=
+X-Received: by 2002:a9d:6195:: with SMTP id g21mr4768otk.179.1558516871479;
+ Wed, 22 May 2019 02:21:11 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-22_04:,,
- signatures=0
+References: <20190521145141.9813-1-paul@crapouillou.net> <20190521145141.9813-10-paul@crapouillou.net>
+In-Reply-To: <20190521145141.9813-10-paul@crapouillou.net>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Wed, 22 May 2019 11:21:00 +0200
+Message-ID: <CA+7wUsxe4DLmAGNnnXZ3UokguMJ0cOGtu=opQpuAPvN_SH4KUw@mail.gmail.com>
+Subject: Re: [PATCH v12 09/13] MIPS: jz4740: Add DTS nodes for the TCU drivers
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gNS8yMi8xOSAxMDo0MSBBTSwgTGVlIEpvbmVzIHdyb3RlOg0KPiBPbiBXZWQsIDIyIE1heSAy
-MDE5LCBBbWVsaWUgREVMQVVOQVkgd3JvdGU6DQo+PiBPbiA1LzIyLzE5IDc6NDggQU0sIExlZSBK
-b25lcyB3cm90ZToNCj4+PiBPbiBNb24sIDIwIE1heSAyMDE5LCBBbWVsaWUgRGVsYXVuYXkgd3Jv
-dGU6DQo+Pj4NCj4+Pj4gV2hlbiBDT05GSUdfR1BJT19PRiBpcyBub3QgZGVmaW5lZCwgc3RydWN0
-IGdwaW9fY2hpcCAnb2Zfbm9kZScgbWVtYmVyIGRvZXMNCj4+Pj4gbm90IGV4aXN0Og0KPj4+PiBk
-cml2ZXJzL3BpbmN0cmwvcGluY3RybC1zdG1meC5jOiBJbiBmdW5jdGlvbiAnc3RtZnhfcGluY3Ry
-bF9wcm9iZSc6DQo+Pj4+IGRyaXZlcnMvcGluY3RybC9waW5jdHJsLXN0bWZ4LmM6NjUyOjE3OiBl
-cnJvcjogJ3N0cnVjdCBncGlvX2NoaXAnIGhhcyBubyBtZW1iZXIgbmFtZWQgJ29mX25vZGUnDQo+
-Pj4+ICAgICAgICBwY3RsLT5ncGlvX2NoaXAub2Zfbm9kZSA9IG5wOw0KPj4+Pg0KPj4+PiBGaXhl
-czogMTQ5MGQ5Zjg0MWIxICgicGluY3RybDogQWRkIFNUTUZYIEdQSU8gZXhwYW5kZXIgUGluY3Ry
-bC9HUElPIGRyaXZlciIpDQo+Pj4+IFJlcG9ydGVkLWJ5OiBrYnVpbGQgdGVzdCByb2JvdCA8bGtw
-QGludGVsLmNvbT4NCj4+Pj4gU2lnbmVkLW9mZi1ieTogQW1lbGllIERlbGF1bmF5IDxhbWVsaWUu
-ZGVsYXVuYXlAc3QuY29tPg0KPj4+PiAtLS0NCj4+Pj4gICAgZHJpdmVycy9waW5jdHJsL3BpbmN0
-cmwtc3RtZnguYyB8IDIgKysNCj4+Pj4gICAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
-KQ0KPj4+Pg0KPj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtc3RtZngu
-YyBiL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLXN0bWZ4LmMNCj4+Pj4gaW5kZXggZWJhODcyYy4u
-YmI2NGFhMCAxMDA2NDQNCj4+Pj4gLS0tIGEvZHJpdmVycy9waW5jdHJsL3BpbmN0cmwtc3RtZngu
-Yw0KPj4+PiArKysgYi9kcml2ZXJzL3BpbmN0cmwvcGluY3RybC1zdG1meC5jDQo+Pj4+IEBAIC02
-NDgsNyArNjQ4LDkgQEAgc3RhdGljIGludCBzdG1meF9waW5jdHJsX3Byb2JlKHN0cnVjdCBwbGF0
-Zm9ybV9kZXZpY2UgKnBkZXYpDQo+Pj4+ICAgIAlwY3RsLT5ncGlvX2NoaXAuYmFzZSA9IC0xOw0K
-Pj4+PiAgICAJcGN0bC0+Z3Bpb19jaGlwLm5ncGlvID0gcGN0bC0+cGN0bF9kZXNjLm5waW5zOw0K
-Pj4+PiAgICAJcGN0bC0+Z3Bpb19jaGlwLmNhbl9zbGVlcCA9IHRydWU7DQo+Pj4+ICsjaWZkZWYg
-Q09ORklHX09GX0dQSU8NCj4+Pj4gICAgCXBjdGwtPmdwaW9fY2hpcC5vZl9ub2RlID0gbnA7DQo+
-Pj4+ICsjZW5kaWYNCj4+Pg0KPj4+IFRoaXMgaXMgcHJldHR5IHVnbHkuICBXaWxsIFNUTUZYIGV2
-ZXIgYmUgdXNlZCB3aXRob3V0IE9GIHN1cHBvcnQ/ICBJZg0KPj4+IG5vdCwgaXQgbWlnaHQgYmUg
-YmV0dGVyIHRvIHBsYWNlIHRoaXMgcmVzdHJpY3Rpb24gb24gdGhlIGRyaXZlciBhcyBhDQo+Pj4g
-d2hvbGUuDQo+Pj4NCj4+PiBJbmNpZGVudGFsbHksIHdoeSBpcyB0aGlzIGJsYW5rZWQgb3V0IGlu
-IHRoZSBzdHJ1Y3R1cmUgZGVmaW5pdGlvbj8NCj4+PiBFdmVuICdzdHJ1Y3QgZGV2aWNlJyBkb2Vz
-bid0IGRvIHRoaXMuDQo+Pj4NCj4+IGNvbmZpZyBQSU5DVFJMX1NUTUZYDQo+PiAJdHJpc3RhdGUg
-IlNUTWljcm9lbGVjdHJvbmljcyBTVE1GWCBHUElPIGV4cGFuZGVyIHBpbmN0cmwgZHJpdmVyIg0K
-Pj4gCWRlcGVuZHMgb24gSTJDDQo+PiAJZGVwZW5kcyBvbiBPRiB8fCBDT01QSUxFX1RFU1QNCj4+
-IAlzZWxlY3QgR0VORVJJQ19QSU5DT05GDQo+PiAJc2VsZWN0IEdQSU9MSUJfSVJRQ0hJUA0KPj4g
-CXNlbGVjdCBNRkRfU1RNRlgNCj4+DQo+PiBUaGUgaXNzdWUgaXMgZHVlIHRvIENPTVBJTEVfVEVT
-VDogd291bGQgImRlcGVuZHMgb24gT0YgfHwgKE9GICYmDQo+PiBDT01QSUxFX1RFU1QpIiBiZSBi
-ZXR0ZXIgPw0KPiANCj4gTGludXMgd291bGQgYmUgaW4gYSBiZXR0ZXIgcG9zaXRpb24gdG8gcmVz
-cG9uZCwgYnV0IGZyb20gd2hhdCBJIGNhbg0KPiBzZWUsIG1heWJlOg0KPiANCj4gICAgZGVwZW5k
-cyBvbiBPRiB8fCAoT0ZfR1BJTyAmJiBDT01QSUxFX1RFU1QpDQo+IA0KPiBBbHRob3VnaCwgSSdt
-IHVuc3VyZSB3aHkgb3RoZXIgQ09NUElMRV9URVNUcyBoYXZlbid0IGhpZ2hsaWdodGVkIHRoaXMN
-Cj4gaXNzdWUuICBQZXJoYXBzIGJlY2F1c2UgdGhleSBoYXZlIGFsbCBiZWVuIGxvY2tlZCBkb3du
-IHRvIGEgcGFydGljdWxhcg0KPiBhcmNoOg0KPiANCj4gJCBncmVwIENPTVBJTEVfVEVTVCAtLSBk
-cml2ZXJzL3BpbmN0cmwvS2NvbmZpZw0KPiAJYm9vbCAiU3VwcG9ydCBwaW4gbXVsdGlwbGV4aW5n
-IGNvbnRyb2xsZXJzIiBpZiBDT01QSUxFX1RFU1QNCj4gCWJvb2wgIlN1cHBvcnQgcGluIGNvbmZp
-Z3VyYXRpb24gY29udHJvbGxlcnMiIGlmIENPTVBJTEVfVEVTVA0KPiAJZGVwZW5kcyBvbiBPRiAm
-JiAoQVJDSF9EQVZJTkNJX0RBODUwIHx8IENPTVBJTEVfVEVTVCkNCj4gCWRlcGVuZHMgb24gT0Yg
-JiYgKEFSQ0hfRElHSUNPTE9SIHx8IENPTVBJTEVfVEVTVCkNCj4gCWRlcGVuZHMgb24gT0YgJiYg
-KEFSQ0hfTFBDMThYWCB8fCBDT01QSUxFX1RFU1QpDQo+IAlkZXBlbmRzIG9uIEFSQ0hfUjdTNzIx
-MDAgfHwgQ09NUElMRV9URVNUDQo+IAlkZXBlbmRzIG9uIEFSQ0hfUjdTOTIxMCB8fCBDT01QSUxF
-X1RFU1QNCj4gCWRlcGVuZHMgb24gQVJDSF9SWk4xIHx8IENPTVBJTEVfVEVTVA0KPiAJZGVwZW5k
-cyBvbiBNSVBTIHx8IENPTVBJTEVfVEVTVA0KPiANCj4gV2hhdCBhYm91dCBhZGRpbmcgdGhpcyB0
-byB5b3VyIEtjb25maWcgZW50cnk6DQo+IA0KPiAgICBzZWxlY3QgT0ZfR1BJTw0KPiANCg0KWWVz
-IENPTVBJTEVfVEVTVCBpcyBjb21iaW5lZCB3aXRoIGFyY2ggd2hlbiBkZXBlbmRpbmcgb24gT0Yu
-IEJ1dCBTVE1GWCANCmlzbid0IGFyY2ggZGVwZW5kZW50LCBpdCBpcyBqdXN0IE9GIGFuZCBJMkMg
-ZGVwZW5kZW50Lg0KDQpSYW5keSBhbHNvIHNlZSBhIGJ1aWxkIGVycm9yIGluIHBpbmN0cmwtc3Rt
-ZnguYyB3aGVuIENPTkZJR19PRiBpcyBub3QgDQpzZXQvZW5hYmxlZCAocmFuZGNvbmZpZyk6DQoN
-Ci4uL2RyaXZlcnMvcGluY3RybC9waW5jdHJsLXN0bWZ4LmM6NDA5OjIwOiBlcnJvcjogDQrigJhw
-aW5jb25mX2dlbmVyaWNfZHRfbm9kZV90b19tYXBfcGlu4oCZIHVuZGVjbGFyZWQgaGVyZSAobm90
-IGluIGEgZnVuY3Rpb24pDQogICAuZHRfbm9kZV90b19tYXAgPSBwaW5jb25mX2dlbmVyaWNfZHRf
-bm9kZV90b19tYXBfcGluLA0KDQpPRl9HUElPIGRlcGVuZHMgb24gT0YuDQoNClNvIGVpdGhlcg0K
-ICAgICBkZXBlbmRzIG9uIE9GIHx8IChPRiAmJiBDT01QSUxFX1RFU1QpDQpvcg0KICAgICBkZXBl
-bmRzIG9uIE9GIHx8IChPRl9HUElPICYmIENPTVBJTEVfVEVTVCkNCg0KYW5kDQoNCiAgICAgc2Vs
-ZWN0IE9GX0dQSU8NCg0KDQpXaGF0IGlzIHRoZSBwcmV0dGllc3Qgd2F5ID8NCg0KPj4+PiAgICAJ
-cGN0bC0+Z3Bpb19jaGlwLm5lZWRfdmFsaWRfbWFzayA9IHRydWU7DQo+Pj4+ICAgIA0KPj4+PiAg
-ICAJcmV0ID0gZGV2bV9ncGlvY2hpcF9hZGRfZGF0YShwY3RsLT5kZXYsICZwY3RsLT5ncGlvX2No
-aXAsIHBjdGwpOw0KPj4+DQo+IA==
+On Tue, May 21, 2019 at 4:52 PM Paul Cercueil <paul@crapouillou.net> wrote:
+>
+> Add DTS nodes for the JZ4780, JZ4770 and JZ4740 devicetree files.
+>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+>
+> Notes:
+>     v5: New patch
+>
+>     v6: Fix register lengths in watchdog/pwm nodes
+>
+>     v7: No change
+>
+>     v8: - Fix wrong start address for PWM node
+>         - Add system timer and clocksource sub-nodes
+>
+>     v9: Drop timer and clocksource sub-nodes
+>
+>     v10-v11: No change
+>
+>     v12: Drop PWM/watchdog/OST sub-nodes, for now.
+>
+>  arch/mips/boot/dts/ingenic/jz4740.dtsi | 22 ++++++++++++++++++++++
+>  arch/mips/boot/dts/ingenic/jz4770.dtsi | 21 +++++++++++++++++++++
+>  arch/mips/boot/dts/ingenic/jz4780.dtsi | 21 +++++++++++++++++++++
+>  3 files changed, 64 insertions(+)
+>
+> diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+> index 2beb78a62b7d..807d9702d4cf 100644
+> --- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+> @@ -53,6 +53,28 @@
+>                 clock-names = "rtc";
+>         };
+>
+> +       tcu: timer@10002000 {
+> +               compatible = "ingenic,jz4740-tcu";
+> +               reg = <0x10002000 0x1000>;
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges = <0x0 0x10002000 0x1000>;
+> +
+> +               #clock-cells = <1>;
+> +
+> +               clocks = <&cgu JZ4740_CLK_RTC
+> +                         &cgu JZ4740_CLK_EXT
+> +                         &cgu JZ4740_CLK_PCLK
+> +                         &cgu JZ4740_CLK_TCU>;
+> +               clock-names = "rtc", "ext", "pclk", "tcu";
+> +
+> +               interrupt-controller;
+> +               #interrupt-cells = <1>;
+> +
+> +               interrupt-parent = <&intc>;
+> +               interrupts = <23 22 21>;
+> +       };
+> +
+>         rtc_dev: rtc@10003000 {
+>                 compatible = "ingenic,jz4740-rtc";
+>                 reg = <0x10003000 0x40>;
+> diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+> index 49ede6c14ff3..70932fd90902 100644
+> --- a/arch/mips/boot/dts/ingenic/jz4770.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+> @@ -46,6 +46,27 @@
+>                 #clock-cells = <1>;
+>         };
+>
+> +       tcu: timer@10002000 {
+> +               compatible = "ingenic,jz4770-tcu";
+> +               reg = <0x10002000 0x1000>;
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges = <0x0 0x10002000 0x1000>;
+> +
+> +               #clock-cells = <1>;
+> +
+> +               clocks = <&cgu JZ4770_CLK_RTC
+> +                         &cgu JZ4770_CLK_EXT
+> +                         &cgu JZ4770_CLK_PCLK>;
+> +               clock-names = "rtc", "ext", "pclk";
+> +
+> +               interrupt-controller;
+> +               #interrupt-cells = <1>;
+> +
+> +               interrupt-parent = <&intc>;
+> +               interrupts = <27 26 25>;
+> +       };
+> +
+>         pinctrl: pin-controller@10010000 {
+>                 compatible = "ingenic,jz4770-pinctrl";
+>                 reg = <0x10010000 0x600>;
+> diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+> index b03cdec56de9..495082ce7fc5 100644
+> --- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
+> +++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+> @@ -46,6 +46,27 @@
+>                 #clock-cells = <1>;
+>         };
+>
+> +       tcu: timer@10002000 {
+
+With W=1, I see:
+
+../arch/mips/boot/dts/ingenic/jz4780.dtsi:64.22-83.4: Warning
+(unique_unit_address): /timer@10002000: duplicate unit-address (also
+used in node /watchdog@1000
+2000)
+
+
+> +               compatible = "ingenic,jz4770-tcu";
+> +               reg = <0x10002000 0x1000>;
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges = <0x0 0x10002000 0x1000>;
+> +
+> +               #clock-cells = <1>;
+> +
+> +               clocks = <&cgu JZ4780_CLK_RTCLK
+> +                         &cgu JZ4780_CLK_EXCLK
+> +                         &cgu JZ4780_CLK_PCLK>;
+> +               clock-names = "rtc", "ext", "pclk";
+> +
+> +               interrupt-controller;
+> +               #interrupt-cells = <1>;
+> +
+> +               interrupt-parent = <&intc>;
+> +               interrupts = <27 26 25>;
+> +       };
+> +
+>         rtc_dev: rtc@10003000 {
+>                 compatible = "ingenic,jz4780-rtc";
+>                 reg = <0x10003000 0x4c>;
+> --
+> 2.21.0.593.g511ec345e18
+>
