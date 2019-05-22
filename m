@@ -2,163 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B72F325C25
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 05:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3898825C2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 05:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728421AbfEVD02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 23:26:28 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:54643 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727733AbfEVD01 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 23:26:27 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TSM5PZQ_1558495581;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TSM5PZQ_1558495581)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 22 May 2019 11:26:22 +0800
-Subject: Re: [v3 PATCH 2/2] mm: vmscan: correct some vmscan counters for THP
- swapout
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     hannes@cmpxchg.org, mhocko@suse.com, mgorman@techsingularity.net,
-        kirill.shutemov@linux.intel.com, josef@toxicpanda.com,
-        hughd@google.com, shakeelb@google.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1558431642-52120-1-git-send-email-yang.shi@linux.alibaba.com>
- <1558431642-52120-2-git-send-email-yang.shi@linux.alibaba.com>
- <87ftp7cmds.fsf@yhuang-dev.intel.com>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <200a8dc9-f9cd-e039-fefe-1971271e27c3@linux.alibaba.com>
-Date:   Wed, 22 May 2019 11:26:17 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <87ftp7cmds.fsf@yhuang-dev.intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1728487AbfEVD3N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 21 May 2019 23:29:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56236 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727733AbfEVD3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 21 May 2019 23:29:12 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5DEB93688B;
+        Wed, 22 May 2019 03:29:12 +0000 (UTC)
+Received: from xz-x1.nay.redhat.com (dhcp-15-205.nay.redhat.com [10.66.15.205])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7F6177C489;
+        Wed, 22 May 2019 03:29:08 +0000 (UTC)
+From:   Peter Xu <peterx@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     peterx@redhat.com, Frederic Weisbecker <fweisbec@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] tick/sched: Drop duplicated tick_sched.inidle
+Date:   Wed, 22 May 2019 11:29:06 +0800
+Message-Id: <20190522032906.11963-1-peterx@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 22 May 2019 03:29:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+It is set before entering idle and cleared when quitting idle, though
+it seems to be a complete duplicate of tick_sched.idle_active.  We
+should probably be able to use any one of them to replace the other.
 
+CC: Frederic Weisbecker <fweisbec@gmail.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ingo Molnar <mingo@kernel.org>
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ kernel/time/tick-sched.c | 11 ++++-------
+ kernel/time/tick-sched.h |  3 +--
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
-On 5/22/19 9:23 AM, Huang, Ying wrote:
-> Yang Shi <yang.shi@linux.alibaba.com> writes:
->
->> Since commit bd4c82c22c36 ("mm, THP, swap: delay splitting THP after
->> swapped out"), THP can be swapped out in a whole.  But, nr_reclaimed
->> and some other vm counters still get inc'ed by one even though a whole
->> THP (512 pages) gets swapped out.
->>
->> This doesn't make too much sense to memory reclaim.  For example, direct
->> reclaim may just need reclaim SWAP_CLUSTER_MAX pages, reclaiming one THP
->> could fulfill it.  But, if nr_reclaimed is not increased correctly,
->> direct reclaim may just waste time to reclaim more pages,
->> SWAP_CLUSTER_MAX * 512 pages in worst case.
->>
->> And, it may cause pgsteal_{kswapd|direct} is greater than
->> pgscan_{kswapd|direct}, like the below:
->>
->> pgsteal_kswapd 122933
->> pgsteal_direct 26600225
->> pgscan_kswapd 174153
->> pgscan_direct 14678312
->>
->> nr_reclaimed and nr_scanned must be fixed in parallel otherwise it would
->> break some page reclaim logic, e.g.
->>
->> vmpressure: this looks at the scanned/reclaimed ratio so it won't
->> change semantics as long as scanned & reclaimed are fixed in parallel.
->>
->> compaction/reclaim: compaction wants a certain number of physical pages
->> freed up before going back to compacting.
->>
->> kswapd priority raising: kswapd raises priority if we scan fewer pages
->> than the reclaim target (which itself is obviously expressed in order-0
->> pages). As a result, kswapd can falsely raise its aggressiveness even
->> when it's making great progress.
->>
->> Other than nr_scanned and nr_reclaimed, some other counters, e.g.
->> pgactivate, nr_skipped, nr_ref_keep and nr_unmap_fail need to be fixed
->> too since they are user visible via cgroup, /proc/vmstat or trace
->> points, otherwise they would be underreported.
->>
->> When isolating pages from LRUs, nr_taken has been accounted in base
->> page, but nr_scanned and nr_skipped are still accounted in THP.  It
->> doesn't make too much sense too since this may cause trace point
->> underreport the numbers as well.
->>
->> So accounting those counters in base page instead of accounting THP as
->> one page.
->>
->> This change may result in lower steal/scan ratio in some cases since
->> THP may get split during page reclaim, then a part of tail pages get
->> reclaimed instead of the whole 512 pages, but nr_scanned is accounted
->> by 512, particularly for direct reclaim.  But, this should be not a
->> significant issue.
->>
->> Cc: "Huang, Ying" <ying.huang@intel.com>
->> Cc: Johannes Weiner <hannes@cmpxchg.org>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Mel Gorman <mgorman@techsingularity.net>
->> Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
->> Cc: Hugh Dickins <hughd@google.com>
->> Cc: Shakeel Butt <shakeelb@google.com>
->> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
->> ---
->> v3: Removed Shakeel's Reviewed-by since the patch has been changed significantly
->>      Switched back to use compound_order per Matthew
->>      Fixed more counters per Johannes
->> v2: Added Shakeel's Reviewed-by
->>      Use hpage_nr_pages instead of compound_order per Huang Ying and William Kucharski
->>
->>   mm/vmscan.c | 40 ++++++++++++++++++++++++++++------------
->>   1 file changed, 28 insertions(+), 12 deletions(-)
->>
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index b65bc50..1044834 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -1250,7 +1250,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->>   		case PAGEREF_ACTIVATE:
->>   			goto activate_locked;
->>   		case PAGEREF_KEEP:
->> -			stat->nr_ref_keep++;
->> +			stat->nr_ref_keep += (1 << compound_order(page));
->>   			goto keep_locked;
->>   		case PAGEREF_RECLAIM:
->>   		case PAGEREF_RECLAIM_CLEAN:
->> @@ -1294,6 +1294,17 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->>   						goto activate_locked;
->>   				}
->>   
->> +				/*
->> +				 * Account all tail pages when THP is added
->> +				 * into swap cache successfully.
->> +				 * The head page has been accounted at the
->> +				 * first place.
->> +				 */
->> +				if (PageTransHuge(page))
->> +					sc->nr_scanned +=
->> +						((1 << compound_order(page)) -
->> +							1);
->> +
-> The "if" here could be changed to "else if" because if add_to_swap()
-> fails we don't need to call PageTransHuge() here.  But this isn't a big
-> deal.
-
-This could be moved to the beginning according to Johannes.
-
->
-> You have analyzed the code and found that nr_dirty, nr_unqueued_dirty,
-> nr_congested and nr_writeback are file cache related and not impacted by
-> THP swap out.  How about add your findings in the patch description?
-
-Yes, sure. Will add in v4.
-
->
-> Best Regards,
-> Huang, Ying
->
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index f4ee1a3428ae..6bb5ad03e962 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -137,7 +137,7 @@ static void tick_sched_do_timer(struct tick_sched *ts, ktime_t now)
+ 	if (tick_do_timer_cpu == cpu)
+ 		tick_do_update_jiffies64(now);
+ 
+-	if (ts->inidle)
++	if (ts->idle_active)
+ 		ts->got_idle_tick = 1;
+ }
+ 
+@@ -534,7 +534,6 @@ static void tick_nohz_stop_idle(struct tick_sched *ts, ktime_t now)
+ {
+ 	update_ts_time_stats(smp_processor_id(), ts, now, NULL);
+ 	ts->idle_active = 0;
+-
+ 	sched_clock_idle_wakeup_event();
+ }
+ 
+@@ -999,7 +998,6 @@ void tick_nohz_idle_enter(void)
+ 
+ 	WARN_ON_ONCE(ts->timer_expires_base);
+ 
+-	ts->inidle = 1;
+ 	tick_nohz_start_idle(ts);
+ 
+ 	local_irq_enable();
+@@ -1017,7 +1015,7 @@ void tick_nohz_irq_exit(void)
+ {
+ 	struct tick_sched *ts = this_cpu_ptr(&tick_cpu_sched);
+ 
+-	if (ts->inidle)
++	if (ts->idle_active)
+ 		tick_nohz_start_idle(ts);
+ 	else
+ 		tick_nohz_full_update_tick(ts);
+@@ -1067,7 +1065,7 @@ ktime_t tick_nohz_get_sleep_length(ktime_t *delta_next)
+ 	ktime_t now = ts->idle_entrytime;
+ 	ktime_t next_event;
+ 
+-	WARN_ON_ONCE(!ts->inidle);
++	WARN_ON_ONCE(!ts->idle_active);
+ 
+ 	*delta_next = ktime_sub(dev->next_event, now);
+ 
+@@ -1163,10 +1161,9 @@ void tick_nohz_idle_exit(void)
+ 
+ 	local_irq_disable();
+ 
+-	WARN_ON_ONCE(!ts->inidle);
++	WARN_ON_ONCE(!ts->idle_active);
+ 	WARN_ON_ONCE(ts->timer_expires_base);
+ 
+-	ts->inidle = 0;
+ 	idle_active = ts->idle_active;
+ 	tick_stopped = ts->tick_stopped;
+ 
+diff --git a/kernel/time/tick-sched.h b/kernel/time/tick-sched.h
+index 4fb06527cf64..ae9335d019f0 100644
+--- a/kernel/time/tick-sched.h
++++ b/kernel/time/tick-sched.h
+@@ -31,7 +31,7 @@ enum tick_nohz_mode {
+  * @idle_active:	Indicator that the CPU is actively in the tick idle mode;
+  *			it is resetted during irq handling phases.
+  * @do_timer_lst:	CPU was the last one doing do_timer before going idle
+- * @got_idle_tick:	Tick timer function has run with @inidle set
++ * @got_idle_tick:	Tick timer function has run with @idle_active set
+  * @last_tick:		Store the last tick expiry time when the tick
+  *			timer is modified for nohz sleeps. This is necessary
+  *			to resume the tick timer operation in the timeline
+@@ -55,7 +55,6 @@ struct tick_sched {
+ 	unsigned long			check_clocks;
+ 	enum tick_nohz_mode		nohz_mode;
+ 
+-	unsigned int			inidle		: 1;
+ 	unsigned int			tick_stopped	: 1;
+ 	unsigned int			idle_active	: 1;
+ 	unsigned int			do_timer_last	: 1;
+-- 
+2.17.1
 
