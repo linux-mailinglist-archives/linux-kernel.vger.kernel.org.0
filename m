@@ -2,94 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8931D26816
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 18:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6AD026827
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 18:25:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730172AbfEVQVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 12:21:23 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:45632 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730043AbfEVQVI (ORCPT
+        id S1730032AbfEVQZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 12:25:20 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39730 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729475AbfEVQZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 12:21:08 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4MGKdj8073724;
-        Wed, 22 May 2019 11:20:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1558542039;
-        bh=apO8eMVnfKkUjdfUlHR78LYsKxvNCJinYTTRGC5uokA=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Au+LhdClQtcdLTU94xmr6Z2ZbL4zUdQHQgTNb0plovZp3Yjt/+QBjiEnIORL+IF8S
-         piyH6nLpmvzuvXNeUQP5//eSoSiVEyP+YEDVqqMVp0GID/eQVf9TbHY9RwyG+cSvk/
-         z0UGLKMqBvCkRZz7Yh6ezacxVk6wOtFPUYBAA/AQ=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4MGKdqe080391
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 22 May 2019 11:20:39 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 22
- May 2019 11:20:38 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 22 May 2019 11:20:39 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4MGKcWF126469;
-        Wed, 22 May 2019 11:20:38 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
-Subject: [PATCH 6/6] arm64: defconfig: Enable TI's J721E SoC platform
-Date:   Wed, 22 May 2019 11:19:21 -0500
-Message-ID: <20190522161921.20750-7-nm@ti.com>
-X-Mailer: git-send-email 2.21.0.777.g83232e38648b
-In-Reply-To: <20190522161921.20750-1-nm@ti.com>
-References: <20190522161921.20750-1-nm@ti.com>
+        Wed, 22 May 2019 12:25:20 -0400
+Received: by mail-wm1-f65.google.com with SMTP id n25so2857854wmk.4
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 09:25:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OWGOVdMecY70uPThuN9Z8RHD52HpQ5FIVR/nn5jAdfI=;
+        b=vmezZTYs//lLcUcn9Z2DSFVgsemU319BFV8a/+s4QFULfj+oV1MkrsVnARJSVUcyn7
+         2I+wVuPvs2tzsECElLxCGkqQzkEqht1LnNWCseU2XQt1puHVkJnfN0pagtJLjeV+JiZS
+         w7/AoGnhzoewNRIHjyHsiSGerFiIqHMxJUr9O53Yhn5RrZSBVe+rJhktHXli/9xmjrE4
+         nAve702w/sZnEWEb7+6h6AZX5/2M136TSuszdl9VG9aHweEnp1ii2wsJ3PHq3iLN5ZpZ
+         MCYZYvdJB2SLROSmcFAqJfskNvtQzLsRVIx62tE73OuP+POEIfb6yfrK30MFGOyNliXl
+         zj9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OWGOVdMecY70uPThuN9Z8RHD52HpQ5FIVR/nn5jAdfI=;
+        b=Kb6Yl1hdxlUKwkY/9nFFu2K5mAM4s/O7Qqw2mGfMOgTMUKm+D3CTvT3se8+WfRLf4/
+         n4p5gISiFPhQStkiHyjZNrRx0xeDL9V1dm85/WDW1OviPCGnJfyxBSGa68fz5DXs0L8L
+         BFdkHhmDFUCsTf0MbBSw1kKzmpvkDi7jlsUFkMcNj/6LZIzxlNsZzkLPE4Xpq7wFiqsw
+         sl6DNnPG3mxoZWrTJM6dCGVDQGDf7jsUvhj/vktbSeon76f46OMAiln6UuIlj0fRTNSK
+         L1mblqCieKfSkoDHedkWhy+ryDa+Wc6oAzEaxVuBBJhQZfGVXiuIYVucbYmWzuM6Kfrm
+         toBg==
+X-Gm-Message-State: APjAAAUIzhi0SRiAlvEuXJ3QkYOXDiGZq0q2xYSyayhghCjY+ka1KdOr
+        0+JGOM8/rAmN3k9YQDfua/BtwA==
+X-Google-Smtp-Source: APXvYqx3cV+KcaZgMn/uTRwxQMjy04ngPuH6R/wzSryVgaFWXel2dzT3vOZoSzw8BdI52xi8p/n+gQ==
+X-Received: by 2002:a1c:6a08:: with SMTP id f8mr8032679wmc.81.1558542318259;
+        Wed, 22 May 2019 09:25:18 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id c14sm20390656wrt.45.2019.05.22.09.25.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 May 2019 09:25:17 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     vkoul@kernel.org
+Cc:     sanyog.r.kale@intel.com, pierre-louis.bossart@linux.intel.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH] soundwire: stream: fix out of boundary access on port properties
+Date:   Wed, 22 May 2019 17:24:43 +0100
+Message-Id: <20190522162443.5780-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable J721E SoC support from TI.
+Assigning local iterator to array element and using it again for
+indexing would cross the array boundary.
+Fix this by directly referring array element without using the local
+variable.
 
-Signed-off-by: Nishanth Menon <nm@ti.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
+ drivers/soundwire/stream.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-NOTE:
- - I will resubmit this patch (defconfig update) separately once again once
-   patches 1-7 hit the next tree or for 5.3-rc2 which ever is convenient.
-
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4d583514258c..83a509dc247d 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -696,6 +696,7 @@ CONFIG_ARCH_TEGRA_210_SOC=y
- CONFIG_ARCH_TEGRA_186_SOC=y
- CONFIG_ARCH_TEGRA_194_SOC=y
- CONFIG_ARCH_K3_AM6_SOC=y
-+CONFIG_ARCH_K3_J721E_SOC=y
- CONFIG_SOC_TI=y
- CONFIG_TI_SCI_PM_DOMAINS=y
- CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND=y
+diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
+index d01060dbee96..544925ff0b40 100644
+--- a/drivers/soundwire/stream.c
++++ b/drivers/soundwire/stream.c
+@@ -1406,9 +1406,7 @@ struct sdw_dpn_prop *sdw_get_slave_dpn_prop(struct sdw_slave *slave,
+ 	}
+ 
+ 	for (i = 0; i < num_ports; i++) {
+-		dpn_prop = &dpn_prop[i];
+-
+-		if (dpn_prop->num == port_num)
++		if (dpn_prop[i].num == port_num)
+ 			return &dpn_prop[i];
+ 	}
+ 
 -- 
-2.21.0.777.g83232e38648b
+2.21.0
 
