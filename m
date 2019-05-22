@@ -2,213 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8778271A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 23:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5444271B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 23:30:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730404AbfEVV3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 17:29:44 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:34148 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730098AbfEVV3n (ORCPT
+        id S1730573AbfEVVaR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 17:30:17 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36703 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730555AbfEVVaO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 17:29:43 -0400
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4MLTKnr017953
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 14:29:42 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=oWJf7cQOKKWH9XnWp98rNtUGVh0Vr3ojGQm1Eckr864=;
- b=ObCODhVoYkE0fermI/ngGHncdOj/bZ1KJQvPtXO2lKwAVeEw6AFn7ZID7mrDK7NNawrn
- oHhfgH2ugS5NmzQo9SUt1wvg3N7fYyT1KGxD4286inJN6ALGsKfW9/INq5CBKWUBZCZa
- MPFP6mHMxSdJy7EvSD54mtQj5lhrnvw8cQ0= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2sncpwredj-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 14:29:42 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 22 May 2019 14:29:41 -0700
-Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 65B671251A29C; Wed, 22 May 2019 14:29:39 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Roman Gushchin <guro@fb.com>
-Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
-To:     <bpf@vger.kernel.org>
-CC:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        <netdev@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-        <kernel-team@fb.com>, <cgroups@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Roman Gushchin <guro@fb.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH bpf-next 4/4] selftests/bpf: add auto-detach test
-Date:   Wed, 22 May 2019 14:29:32 -0700
-Message-ID: <20190522212932.2646247-5-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190522212932.2646247-1-guro@fb.com>
-References: <20190522212932.2646247-1-guro@fb.com>
-X-FB-Internal: Safe
+        Wed, 22 May 2019 17:30:14 -0400
+Received: by mail-pf1-f193.google.com with SMTP id v80so2008963pfa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 14:30:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=2TF5wBqEPfwtII57G09NFjtSOT12Df/ulltyqul+I94=;
+        b=c3fd0VNHS3cYGt7G8Sp7oGuQYSCSl9nUiKz4FKDIdBvSerPKMwG0ATynQ9uHD8Ix1M
+         wl7zZ1VRMKgx+UMw1dFR3DEIH2gN3AjoJtfN6Vp1UvzDGpl8jCGTsWLqOWV/GwOV/Joy
+         E/c8qwIDZbBYucklsCw5E4Ieo1MjJa3LBoG8s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=2TF5wBqEPfwtII57G09NFjtSOT12Df/ulltyqul+I94=;
+        b=UGhfxbAg4yWZJ86JyXxNxexwmLjuds14ywGbve0TVSoyl/xOjw6DFKnlTvtjLIlLd7
+         JLBrhxaIj+uUF8M4tV6orUFOJ6Uv4RMlqcxPR3zb/m12iecdDP5wCEhy/psQzT0xEOZv
+         cVbunwtGRpNFAHmqWVbV5f1s84+GbN3AT8Uhfl7ZU2WChWNh93vPoAlEZ9XIeeKdjvBB
+         EsDxSmJIdM/8JXmy6VctUbrQI2Vld9j0OPjXfk7ny0bf8BfHQDPik2H+4yltiCALml0N
+         9lY25pt4R3REo4KaIawjSyBEYZPlWX285+GdX6III43m/LdWtgOGHZCzXFU1U9rFKTV6
+         nk5Q==
+X-Gm-Message-State: APjAAAUZXfv8R88R/qgK44Bf9cazoOBTcHMt3ub0E109jQx8xrAb8A32
+        4Vf9s/jM8atWJZNDPN7IDTqkSg==
+X-Google-Smtp-Source: APXvYqwGE8AikMohimZx119rGA4H9lW54C3uhROo02kUeuAING4Gdsj67jSdqEUttHH1Ci2yIOoMjg==
+X-Received: by 2002:a62:86c4:: with SMTP id x187mr15083928pfd.34.1558560613248;
+        Wed, 22 May 2019 14:30:13 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d186sm26750721pgc.58.2019.05.22.14.30.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 22 May 2019 14:30:12 -0700 (PDT)
+Date:   Wed, 22 May 2019 14:30:11 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: onenand_base: Avoid fall-through warnings
+Message-ID: <201905221403.642AF6092@keescook>
+References: <20190522180446.GA30082@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-22_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=38 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=351 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905220149
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190522180446.GA30082@embeddedor>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a kselftest to cover bpf auto-detachment functionality.
-The test creates a cgroup, associates some resources with it,
-attaches a couple of bpf programs and deletes the cgroup.
+Sorry for being late to speaking up on this. I missed something in the
+code the first time I read the thread, that now stood out to me. Notes
+below...
 
-Then it checks that bpf programs are going away in 5 seconds.
+On Wed, May 22, 2019 at 01:04:46PM -0500, Gustavo A. R. Silva wrote:
+> diff --git a/drivers/mtd/nand/onenand/onenand_base.c b/drivers/mtd/nand/onenand/onenand_base.c
+> index f41d76248550..6cf4df9f8c01 100644
+> --- a/drivers/mtd/nand/onenand/onenand_base.c
+> +++ b/drivers/mtd/nand/onenand/onenand_base.c
+> @@ -3280,12 +3280,14 @@ static void onenand_check_features(struct mtd_info *mtd)
 
-Expected output:
-  $ ./test_cgroup_attach
-  #override:PASS
-  #multi:PASS
-  #autodetach:PASS
-  test_cgroup_attach:PASS
+Reverse-order review, second hunk first:
 
-On a kernel without auto-detaching:
-  $ ./test_cgroup_attach
-  #override:PASS
-  #multi:PASS
-  #autodetach:FAIL
-  test_cgroup_attach:FAIL
+>  	case ONENAND_DEVICE_DENSITY_2Gb:
+>  		/* 2Gb DDP does not have 2 plane */
+>  		if (!ONENAND_IS_DDP(this))
+>  			this->options |= ONENAND_HAS_2PLANE;
+>  		this->options |= ONENAND_HAS_UNLOCK_ALL;
+> +		/* Fall through - ? */
+>  
+>  	case ONENAND_DEVICE_DENSITY_1Gb:
+>  		/* A-Die has all block unlock */
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
----
- .../selftests/bpf/test_cgroup_attach.c        | 108 +++++++++++++++++-
- 1 file changed, 107 insertions(+), 1 deletion(-)
+So, I think the ONENAND_DEVICE_DENSITY_2Gb should be a "break". Though,
+actually, it doesn't matter:
 
-diff --git a/tools/testing/selftests/bpf/test_cgroup_attach.c b/tools/testing/selftests/bpf/test_cgroup_attach.c
-index 93d4fe295e7d..36441fd0f392 100644
---- a/tools/testing/selftests/bpf/test_cgroup_attach.c
-+++ b/tools/testing/selftests/bpf/test_cgroup_attach.c
-@@ -456,9 +456,115 @@ static int test_multiprog(void)
- 	return rc;
- }
- 
-+static int test_autodetach(void)
-+{
-+	__u32 prog_cnt = 4, attach_flags;
-+	int allow_prog[2] = {0};
-+	__u32 prog_ids[2] = {0};
-+	int cg = 0, i, rc = -1;
-+	void *ptr = NULL;
-+	int attempts;
-+
-+
-+	for (i = 0; i < ARRAY_SIZE(allow_prog); i++) {
-+		allow_prog[i] = prog_load_cnt(1, 1 << i);
-+		if (!allow_prog[i])
-+			goto err;
-+	}
-+
-+	if (setup_cgroup_environment())
-+		goto err;
-+
-+	/* create a cgroup, attach two programs and remember their ids */
-+	cg = create_and_get_cgroup("/cg_autodetach");
-+	if (cg < 0)
-+		goto err;
-+
-+	if (join_cgroup("/cg_autodetach"))
-+		goto err;
-+
-+	for (i = 0; i < ARRAY_SIZE(allow_prog); i++) {
-+		if (bpf_prog_attach(allow_prog[i], cg, BPF_CGROUP_INET_EGRESS,
-+				    BPF_F_ALLOW_MULTI)) {
-+			log_err("Attaching prog[%d] to cg:egress", i);
-+			goto err;
-+		}
-+	}
-+
-+	/* make sure that programs are attached and run some traffic */
-+	assert(bpf_prog_query(cg, BPF_CGROUP_INET_EGRESS, 0, &attach_flags,
-+			      prog_ids, &prog_cnt) == 0);
-+	assert(system(PING_CMD) == 0);
-+
-+	/* allocate some memory (4Mb) to pin the original cgroup */
-+	ptr = malloc(4 * (1 << 20));
-+	if (!ptr)
-+		goto err;
-+
-+	/* close programs and cgroup fd */
-+	for (i = 0; i < ARRAY_SIZE(allow_prog); i++) {
-+		close(allow_prog[i]);
-+		allow_prog[i] = 0;
-+	}
-+
-+	close(cg);
-+	cg = 0;
-+
-+	/* leave the cgroup and remove it. don't detach programs */
-+	cleanup_cgroup_environment();
-+
-+	/* programs must stay pinned by the allocated memory */
-+	for (i = 0; i < ARRAY_SIZE(prog_ids); i++) {
-+		int fd = bpf_prog_get_fd_by_id(prog_ids[i]);
-+
-+		if (fd < 0)
-+			goto err;
-+		close(fd);
-+	}
-+
-+	/* wait for the asynchronous auto-detachment.
-+	 * wait for no more than 5 sec and give up.
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(prog_ids); i++) {
-+		for (attempts = 5; attempts >= 0; attempts--) {
-+			int fd = bpf_prog_get_fd_by_id(prog_ids[i]);
-+
-+			if (fd < 0)
-+				break;
-+
-+			/* don't leave the fd open */
-+			close(fd);
-+
-+			if (!attempts)
-+				goto err;
-+
-+			sleep(1);
-+		}
-+	}
-+
-+	rc = 0;
-+err:
-+	for (i = 0; i < ARRAY_SIZE(allow_prog); i++)
-+		if (allow_prog[i] > 0)
-+			close(allow_prog[i]);
-+	if (cg)
-+		close(cg);
-+	free(ptr);
-+	cleanup_cgroup_environment();
-+	if (!rc)
-+		printf("#autodetach:PASS\n");
-+	else
-+		printf("#autodetach:FAIL\n");
-+	return rc;
-+}
-+
- int main(int argc, char **argv)
- {
--	int (*tests[])(void) = {test_foo_bar, test_multiprog};
-+	int (*tests[])(void) = {
-+		test_foo_bar,
-+		test_multiprog,
-+		test_autodetach,
-+	};
- 	int errors = 0;
- 	int i;
- 
+        case ONENAND_DEVICE_DENSITY_2Gb:
+                /* 2Gb DDP does not have 2 plane */
+                if (!ONENAND_IS_DDP(this))
+                        this->options |= ONENAND_HAS_2PLANE;
+                this->options |= ONENAND_HAS_UNLOCK_ALL;
+
+        case ONENAND_DEVICE_DENSITY_1Gb:
+                /* A-Die has all block unlock */
+                if (process)
+                        this->options |= ONENAND_HAS_UNLOCK_ALL;
+                break;
+
+Falling through from ONENAND_DEVICE_DENSITY_2Gb to
+ONENAND_DEVICE_DENSITY_1Gb will actually have no side-effects:
+ONENAND_HAS_UNLOCK_ALL was unconditionally set in ..._2Gb, so there is
+no reason to fall through to ..._1Gb. (But falling through is harmless.)
+
+Now the first hunk:
+
+>  			if ((this->version_id & 0xf) == 0xe)
+>  				this->options |= ONENAND_HAS_NOP_1;
+>  		}
+> +		/* Fall through - ? */
+>  
+
+        case ONENAND_DEVICE_DENSITY_4Gb:
+                if (ONENAND_IS_DDP(this))
+                        this->options |= ONENAND_HAS_2PLANE;
+                else if (numbufs == 1) {
+                        this->options |= ONENAND_HAS_4KB_PAGE;
+                        this->options |= ONENAND_HAS_CACHE_PROGRAM;
+                        /*
+                         * There are two different 4KiB pagesize chips
+                         * and no way to detect it by H/W config values.
+                         *
+                         * To detect the correct NOP for each chips,
+                         * It should check the version ID as workaround.
+                         *
+                         * Now it has as following
+                         * KFM4G16Q4M has NOP 4 with version ID 0x0131
+                         * KFM4G16Q5M has NOP 1 with versoin ID 0x013e
+                         */
+                        if ((this->version_id & 0xf) == 0xe)
+                                this->options |= ONENAND_HAS_NOP_1;
+                }
+
+Falling through from ONENAND_DEVICE_DENSITY_4Gb to
+ONENAND_DEVICE_DENSITY_2Gb looks like it would mean that
+ONENAND_HAS_2PLANE would be unconditionally set for ...4Gb, which seems
+very strange to expect:
+
+                if (ONENAND_IS_DDP(this))
+                        this->options |= ONENAND_HAS_2PLANE;
+...
+                if (!ONENAND_IS_DDP(this))
+                        this->options |= ONENAND_HAS_2PLANE;
+
+However! This happens later:
+
+        if (ONENAND_IS_4KB_PAGE(this))
+                this->options &= ~ONENAND_HAS_2PLANE;
+
+i.e. falling through to ...2Gb (which sets ONENAND_HAS_2PLANE) has no
+effect because when ONENAND_HAS_2PLANE isn't set (numbufs == 1), it gets
+_cleared_ by the above code due to ONENAND_HAS_4KB_PAGE getting set:
+
+#define ONENAND_IS_4KB_PAGE(this) \
+        (this->options & ONENAND_HAS_4KB_PAGE)
+
+
+Unfortunately, though, it's less clear about ONENAND_HAS_UNLOCK_ALL,
+which is getting set unconditionally for ...4Gb currently (due to the
+fallthrough to ...2Gb). However, this happens later:
+
+        if (FLEXONENAND(this)) {
+                this->options &= ~ONENAND_HAS_CONT_LOCK;
+                this->options |= ONENAND_HAS_UNLOCK_ALL;
+        }
+...
+#define FLEXONENAND(this) \
+        (this->device_id & DEVICE_IS_FLEXONENAND)
+
+So it's possible this fall through has no effect (are all 4Gb density
+devices also FLEXONENAND devices?)
+
+Setting a "break" after 4Gb may remove ONENAND_HAS_UNLOCK_ALL in the
+!FLEXONENAND(this) case. Does anyone have real hardware to test with?
+
+Thoughts?
+
 -- 
-2.20.1
-
+Kees Cook
