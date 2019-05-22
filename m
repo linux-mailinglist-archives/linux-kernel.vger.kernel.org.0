@@ -2,274 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DC9626A95
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:10:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD23126AC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:21:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729739AbfEVTK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:10:27 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41481 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729381AbfEVTK1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:10:27 -0400
-Received: by mail-io1-f65.google.com with SMTP id a17so2775364iot.8
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:10:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JztsDPKwVSjjzVFJxCnAodsoYM1sI9+w+KE4psvk3Tw=;
-        b=OIpjo6GeYzLO9N7JZmCf7oLec+d5SKY9HgnRArn+FaQkKjL1vhpuJpfXCRPnVfQPD2
-         MsBN8zEHotlPHM/SJawlWqqjUHs8UdjfgKyXX9tmINOAmFqKZfgN5U5cDKgni9SJCvFX
-         +ws2LZ8ykSECyBD2fuq4DWKDuMk7aXfkqahIs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JztsDPKwVSjjzVFJxCnAodsoYM1sI9+w+KE4psvk3Tw=;
-        b=oLCwvG/DPYGoLVkIiclMjHPCwqHk6Nd0SwKUT7ioOnM6kgGxTxfEWpjqBMNykXafW8
-         qKHOWrc8a+WZ3lgzupZCpMKUR3cII3nkEBxhWrAkAS/2pBKIHDFWfxdcTT5QN8fhljF9
-         GxrplReJJF9sG13AM+w+r9Erd/T9ibEmD3CD1Lpb/YFUdYf01IV71b0cTqrHCUPJtrAk
-         oSljewGwAqpdRnDBsFWNOhADS9TGtp1HUpWI3sHaKxewB2MLxj4W6LqYio5Zq8/IZ0sk
-         KRYarHe81tIHBn7pgV1vpVWlAWXeQXKCmw/8KPH7DOG0PVFJ+gvH77wUTpudfZiWeAMW
-         GmNg==
-X-Gm-Message-State: APjAAAUvX2PxCUP8f2t3B5XiQcAJS3MrhmRDxIULQYhk/54Pp5wX3x2B
-        MLwtcpFPjc39s442vFgeDNegPn73i1GeMWPmyQjG3g==
-X-Google-Smtp-Source: APXvYqw9xWV+KzCJMKkerL3ddFMxInfh9UTBZXl4EYmy+vLwEW6vBMFfst9vJjUYfqb7/Gl5QP1VJGxDKw+tLkerHIA=
-X-Received: by 2002:a6b:e502:: with SMTP id y2mr34613621ioc.149.1558552225816;
- Wed, 22 May 2019 12:10:25 -0700 (PDT)
+        id S1729794AbfEVTVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:21:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41666 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728615AbfEVTVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:21:18 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0A2221473;
+        Wed, 22 May 2019 19:21:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558552877;
+        bh=b3pnOJlavVTSMLrhfhWYxt52OURL4r336/7ktnNmvMU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PlixEF4CxgQGNSweQt8/coqg8ojaOM9oB4bBFTRgfmqje53doDLyMIQ27dyp3glp0
+         I19MXb80ucwlK4uUyjrzDBnZpZ5X7qDt06hxxPrnNqDpf4x+bkcdvmD0/CUnidosLU
+         ffFJhstru/frrjjE6a8peZ5LRt3uwSCOHThVt1yc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, cluster-devel@redhat.com
+Subject: [PATCH AUTOSEL 5.1 001/375] gfs2: Fix lru_count going negative
+Date:   Wed, 22 May 2019 15:15:01 -0400
+Message-Id: <20190522192115.22666-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <9d5dbba798410321177efa5d8a562105ff8cf429.1558533743.git.fabien.lahoudere@collabora.com>
-In-Reply-To: <9d5dbba798410321177efa5d8a562105ff8cf429.1558533743.git.fabien.lahoudere@collabora.com>
-From:   Gwendal Grignou <gwendal@chromium.org>
-Date:   Wed, 22 May 2019 12:10:14 -0700
-Message-ID: <CAPUE2uu-FEqk0iTQK3cBRQX+2dZZnqqnAeoJUK-dGAJYRKiftw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] iio: common: cros_ec_sensors: support protocol v3 message
-To:     Fabien Lahoudere <fabien.lahoudere@collabora.com>
-Cc:     kernel@collabora.com, Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>, linux-iio@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove CROS_EC_FIFO_SIZE and "u32 fifo_max_event_count;" from the
-driver/iio/ code. This code is for a driver - cros-ec-sensor-ring -
-that is not upstreamable. [see
-http://lkml.iu.edu/hypermail/linux/kernel/1607.2/01335.html]. The EC
-interface is fine though, we are working on a new version of the
-driver that can be merged.
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-Gwendal.
+[ Upstream commit 7881ef3f33bb80f459ea6020d1e021fc524a6348 ]
 
-On Wed, May 22, 2019 at 7:10 AM Fabien Lahoudere
-<fabien.lahoudere@collabora.com> wrote:
->
-> Version 3 of the EC protocol provides min and max frequencies and fifo
-> size for EC sensors.
->
-> Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.com>
-> ---
->  .../cros_ec_sensors/cros_ec_sensors_core.c    | 98 ++++++++++++++++++-
->  .../linux/iio/common/cros_ec_sensors_core.h   |  7 ++
->  include/linux/mfd/cros_ec_commands.h          | 21 ++++
->  3 files changed, 125 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> index 719a0df5aeeb..d5c8b4714ad6 100644
-> --- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> +++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-> @@ -19,12 +19,84 @@
->  #include <linux/slab.h>
->  #include <linux/platform_device.h>
->
-> +/*
-> + * Hard coded to the first device to support sensor fifo.  The EC has a 2048
-> + * byte fifo and will trigger an interrupt when fifo is 2/3 full.
-> + */
-> +#define CROS_EC_FIFO_SIZE (2048 * 2 / 3)
-> +
->  static char *cros_ec_loc[] = {
->         [MOTIONSENSE_LOC_BASE] = "base",
->         [MOTIONSENSE_LOC_LID] = "lid",
->         [MOTIONSENSE_LOC_MAX] = "unknown",
->  };
->
-> +static void get_default_min_max_freq_and_fifo_size(enum motionsensor_type type,
-> +                                                  u32 *min_freq,
-> +                                                  u32 *max_freq,
-> +                                                  u32 *max_fifo_events)
-> +{
-> +       /* we don't know fifo size, set to size previously used by sensor HAL */
-> +       *max_fifo_events = CROS_EC_FIFO_SIZE;
-> +
-> +       switch (type) {
-> +       case MOTIONSENSE_TYPE_ACCEL:
-> +       case MOTIONSENSE_TYPE_GYRO:
-> +               *min_freq = 12500;
-> +               *max_freq = 100000;
-> +               break;
-> +       case MOTIONSENSE_TYPE_MAG:
-> +               *min_freq = 5000;
-> +               *max_freq = 25000;
-> +               break;
-> +       case MOTIONSENSE_TYPE_PROX:
-> +       case MOTIONSENSE_TYPE_LIGHT:
-> +               *min_freq = 100;
-> +               *max_freq = 50000;
-> +               break;
-> +       case MOTIONSENSE_TYPE_BARO:
-> +               *min_freq = 250;
-> +               *max_freq = 20000;
-> +               break;
-> +       case MOTIONSENSE_TYPE_ACTIVITY:
-> +       default:
-> +               *max_fifo_events = 0;
-> +               *min_freq = 0;
-> +               *max_freq = 0;
-> +               break;
-> +       }
-> +}
-> +
-> +static int cros_ec_get_host_cmd_version_mask(struct cros_ec_device *ec_dev,
-> +                                            u16 cmd_offset, u16 cmd, u32 *mask)
-> +{
-> +       struct {
-> +               struct cros_ec_command msg;
-> +               union {
-> +                       struct ec_params_get_cmd_versions params;
-> +                       struct ec_response_get_cmd_versions resp;
-> +               };
-> +       } __packed buf;
-> +       struct ec_params_get_cmd_versions *params = &buf.params;
-> +       struct ec_response_get_cmd_versions *resp = &buf.resp;
-> +       struct cros_ec_command *msg = &buf.msg;
-> +       int ret;
-> +
-> +       memset(&buf, 0, sizeof(buf));
-> +       msg->command = EC_CMD_GET_CMD_VERSIONS + cmd_offset;
-> +       msg->insize = sizeof(*resp);
-> +       msg->outsize = sizeof(*params);
-> +       params->cmd = cmd;
-> +       ret = cros_ec_cmd_xfer_status(ec_dev, msg);
-> +       if (ret >= 0) {
-> +               if (msg->result == EC_RES_SUCCESS)
-> +                       *mask = resp->version_mask;
-> +               else
-> +                       *mask = 0;
-> +       }
-> +       return ret;
-> +}
-> +
->  int cros_ec_sensors_core_init(struct platform_device *pdev,
->                               struct iio_dev *indio_dev,
->                               bool physical_device)
-> @@ -33,6 +105,8 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
->         struct cros_ec_sensors_core_state *state = iio_priv(indio_dev);
->         struct cros_ec_dev *ec = dev_get_drvdata(pdev->dev.parent);
->         struct cros_ec_sensor_platform *sensor_platform = dev_get_platdata(dev);
-> +       u32 ver_mask;
-> +       int ret;
->
->         platform_set_drvdata(pdev, indio_dev);
->
-> @@ -47,8 +121,16 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
->
->         mutex_init(&state->cmd_lock);
->
-> +       /* determine what version of MOTIONSENSE CMD EC has */
-> +       ret = cros_ec_get_host_cmd_version_mask(state->ec,
-> +                                               ec->cmd_offset,
-> +                                               EC_CMD_MOTION_SENSE_CMD,
-> +                                               &ver_mask);
-> +       if (ret < 0 || ver_mask == 0)
-> +               return -ENODEV;
-> +
->         /* Set up the host command structure. */
-> -       state->msg->version = 2;
-> +       state->msg->version = fls(ver_mask) - 1;
->         state->msg->command = EC_CMD_MOTION_SENSE_CMD + ec->cmd_offset;
->         state->msg->outsize = sizeof(struct ec_params_motion_sense);
->
-> @@ -66,6 +148,20 @@ int cros_ec_sensors_core_init(struct platform_device *pdev,
->                 }
->                 state->type = state->resp->info.type;
->                 state->loc = state->resp->info.location;
-> +               if (state->msg->version < 3) {
-> +                       get_default_min_max_freq_and_fifo_size(
-> +                                       state->resp->info.type,
-> +                                       &state->min_freq,
-> +                                       &state->max_freq,
-> +                                       &state->fifo_max_event_count);
-> +               } else {
-> +                       state->min_freq =
-> +                               state->resp->info_3.min_frequency;
-> +                       state->max_freq =
-> +                               state->resp->info_3.max_frequency;
-> +                       state->fifo_max_event_count =
-> +                               state->resp->info_3.fifo_max_event_count;
-> +               }
->         }
->
->         return 0;
-> diff --git a/include/linux/iio/common/cros_ec_sensors_core.h b/include/linux/iio/common/cros_ec_sensors_core.h
-> index ce16445411ac..4742a9637a85 100644
-> --- a/include/linux/iio/common/cros_ec_sensors_core.h
-> +++ b/include/linux/iio/common/cros_ec_sensors_core.h
-> @@ -78,6 +78,13 @@ struct cros_ec_sensors_core_state {
->                                     unsigned long scan_mask, s16 *data);
->
->         int curr_sampl_freq;
-> +
-> +       /* Min and Max Sampling Frequency in mHz */
-> +       u32 min_freq;
-> +       u32 max_freq;
-> +
-> +       /* event fifo size represented in number of events */
-> +       u32 fifo_max_event_count;
->  };
->
->  /**
-> diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-> index dcec96f01879..27d71cbf22f1 100644
-> --- a/include/linux/mfd/cros_ec_commands.h
-> +++ b/include/linux/mfd/cros_ec_commands.h
-> @@ -1744,6 +1744,27 @@ struct ec_response_motion_sense {
->                         uint8_t chip;
->                 } info;
->
-> +               /* Used for MOTIONSENSE_CMD_INFO version 3 */
-> +               struct __ec_todo_unpacked {
-> +                       /* Should be element of enum motionsensor_type. */
-> +                       uint8_t type;
-> +
-> +                       /* Should be element of enum motionsensor_location. */
-> +                       uint8_t location;
-> +
-> +                       /* Should be element of enum motionsensor_chip. */
-> +                       uint8_t chip;
-> +
-> +                       /* Minimum sensor sampling frequency */
-> +                       uint32_t min_frequency;
-> +
-> +                       /* Maximum sensor sampling frequency */
-> +                       uint32_t max_frequency;
-> +
-> +                       /* Max number of sensor events that could be in fifo */
-> +                       uint32_t fifo_max_event_count;
-> +               } info_3;
-> +
->                 /* Used for MOTIONSENSE_CMD_DATA */
->                 struct ec_response_motion_sensor_data data;
->
-> --
-> 2.20.1
->
+Under certain conditions, lru_count may drop below zero resulting in
+a large amount of log spam like this:
+
+vmscan: shrink_slab: gfs2_dump_glock+0x3b0/0x630 [gfs2] \
+    negative objects to delete nr=-1
+
+This happens as follows:
+1) A glock is moved from lru_list to the dispose list and lru_count is
+   decremented.
+2) The dispose function calls cond_resched() and drops the lru lock.
+3) Another thread takes the lru lock and tries to add the same glock to
+   lru_list, checking if the glock is on an lru list.
+4) It is on a list (actually the dispose list) and so it avoids
+   incrementing lru_count.
+5) The glock is moved to lru_list.
+5) The original thread doesn't dispose it because it has been re-added
+   to the lru list but the lru_count has still decreased by one.
+
+Fix by checking if the LRU flag is set on the glock rather than checking
+if the glock is on some list and rearrange the code so that the LRU flag
+is added/removed precisely when the glock is added/removed from lru_list.
+
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/gfs2/glock.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+index d32964cd11176..e4f6d39500bcc 100644
+--- a/fs/gfs2/glock.c
++++ b/fs/gfs2/glock.c
+@@ -183,15 +183,19 @@ static int demote_ok(const struct gfs2_glock *gl)
+ 
+ void gfs2_glock_add_to_lru(struct gfs2_glock *gl)
+ {
++	if (!(gl->gl_ops->go_flags & GLOF_LRU))
++		return;
++
+ 	spin_lock(&lru_lock);
+ 
+-	if (!list_empty(&gl->gl_lru))
+-		list_del_init(&gl->gl_lru);
+-	else
++	list_del(&gl->gl_lru);
++	list_add_tail(&gl->gl_lru, &lru_list);
++
++	if (!test_bit(GLF_LRU, &gl->gl_flags)) {
++		set_bit(GLF_LRU, &gl->gl_flags);
+ 		atomic_inc(&lru_count);
++	}
+ 
+-	list_add_tail(&gl->gl_lru, &lru_list);
+-	set_bit(GLF_LRU, &gl->gl_flags);
+ 	spin_unlock(&lru_lock);
+ }
+ 
+@@ -201,7 +205,7 @@ static void gfs2_glock_remove_from_lru(struct gfs2_glock *gl)
+ 		return;
+ 
+ 	spin_lock(&lru_lock);
+-	if (!list_empty(&gl->gl_lru)) {
++	if (test_bit(GLF_LRU, &gl->gl_flags)) {
+ 		list_del_init(&gl->gl_lru);
+ 		atomic_dec(&lru_count);
+ 		clear_bit(GLF_LRU, &gl->gl_flags);
+@@ -1159,8 +1163,7 @@ void gfs2_glock_dq(struct gfs2_holder *gh)
+ 		    !test_bit(GLF_DEMOTE, &gl->gl_flags))
+ 			fast_path = 1;
+ 	}
+-	if (!test_bit(GLF_LFLUSH, &gl->gl_flags) && demote_ok(gl) &&
+-	    (glops->go_flags & GLOF_LRU))
++	if (!test_bit(GLF_LFLUSH, &gl->gl_flags) && demote_ok(gl))
+ 		gfs2_glock_add_to_lru(gl);
+ 
+ 	trace_gfs2_glock_queue(gh, 0);
+@@ -1456,6 +1459,7 @@ __acquires(&lru_lock)
+ 		if (!spin_trylock(&gl->gl_lockref.lock)) {
+ add_back_to_lru:
+ 			list_add(&gl->gl_lru, &lru_list);
++			set_bit(GLF_LRU, &gl->gl_flags);
+ 			atomic_inc(&lru_count);
+ 			continue;
+ 		}
+@@ -1463,7 +1467,6 @@ __acquires(&lru_lock)
+ 			spin_unlock(&gl->gl_lockref.lock);
+ 			goto add_back_to_lru;
+ 		}
+-		clear_bit(GLF_LRU, &gl->gl_flags);
+ 		gl->gl_lockref.count++;
+ 		if (demote_ok(gl))
+ 			handle_callback(gl, LM_ST_UNLOCKED, 0, false);
+@@ -1498,6 +1501,7 @@ static long gfs2_scan_glock_lru(int nr)
+ 		if (!test_bit(GLF_LOCK, &gl->gl_flags)) {
+ 			list_move(&gl->gl_lru, &dispose);
+ 			atomic_dec(&lru_count);
++			clear_bit(GLF_LRU, &gl->gl_flags);
+ 			freed++;
+ 			continue;
+ 		}
+-- 
+2.20.1
+
