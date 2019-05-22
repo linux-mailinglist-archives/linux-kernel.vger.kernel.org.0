@@ -2,18 +2,18 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AE2A27110
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 22:51:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD4F27118
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 22:51:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730296AbfEVUu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 16:50:58 -0400
+        id S1730489AbfEVUvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 16:51:22 -0400
 Received: from ms.lwn.net ([45.79.88.28]:49340 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729848AbfEVUu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 16:50:57 -0400
+        id S1730247AbfEVUu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 16:50:58 -0400
 Received: from meer.lwn.net (localhost [127.0.0.1])
-        by ms.lwn.net (Postfix) with ESMTPA id D9DC0128A;
-        Wed, 22 May 2019 20:50:56 +0000 (UTC)
+        by ms.lwn.net (Postfix) with ESMTPA id 54C0BAB5;
+        Wed, 22 May 2019 20:50:57 +0000 (UTC)
 From:   Jonathan Corbet <corbet@lwn.net>
 To:     linux-doc@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -21,10 +21,12 @@ Cc:     linux-kernel@vger.kernel.org,
         Markus Heiser <markus.heiser@darmarit.de>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Oleksandr Natalenko <oleksandr@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 2/8] doc: Cope with the deprecation of AutoReporter
-Date:   Wed, 22 May 2019 14:50:28 -0600
-Message-Id: <20190522205034.25724-3-corbet@lwn.net>
+        Jonathan Corbet <corbet@lwn.net>,
+        Keith Busch <keith.busch@intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH 3/8] docs: fix numaperf.rst and add it to the doc tree
+Date:   Wed, 22 May 2019 14:50:29 -0600
+Message-Id: <20190522205034.25724-4-corbet@lwn.net>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190522205034.25724-1-corbet@lwn.net>
 References: <20190522205034.25724-1-corbet@lwn.net>
@@ -35,79 +37,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AutoReporter is going away; recent versions of sphinx emit a warning like:
+Commit 13bac55ef7ae ("doc/mm: New documentation for memory performance")
+added numaperf.rst, but did not add it to the TOC tree.  There was also an
+incorrectly marked literal block leading to this warning sequence:
 
-  /stuff/k/git/kernel/Documentation/sphinx/kerneldoc.py:125:
-      RemovedInSphinx20Warning: AutodocReporter is now deprecated.
-      Use sphinx.util.docutils.switch_source_input() instead.
+  numaperf.rst:24: WARNING: Unexpected indentation.
+  numaperf.rst:24: WARNING: Inline substitution_reference start-string without end-string.
+  numaperf.rst:25: WARNING: Block quote ends without a blank line; unexpected unindent.
 
-Make the switch.  But switch_source_input() only showed up in 1.7, so we
-have to do ugly version checks to keep things working in older versions.
+Fix the block and add the file to the document tree.
 
+Fixes: 13bac55ef7ae ("doc/mm: New documentation for memory performance")
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- Documentation/sphinx/kerneldoc.py | 34 +++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
+ Documentation/admin-guide/mm/index.rst    | 1 +
+ Documentation/admin-guide/mm/numaperf.rst | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/sphinx/kerneldoc.py b/Documentation/sphinx/kerneldoc.py
-index 200c8aa4a04f..1159405cb920 100644
---- a/Documentation/sphinx/kerneldoc.py
-+++ b/Documentation/sphinx/kerneldoc.py
-@@ -37,7 +37,17 @@ import glob
- from docutils import nodes, statemachine
- from docutils.statemachine import ViewList
- from docutils.parsers.rst import directives, Directive
--from sphinx.ext.autodoc import AutodocReporter
-+
-+#
-+# AutodocReporter is only good up to Sphinx 1.7
-+#
-+import sphinx
-+
-+Use_SSI = sphinx.__version__[:3] >= '1.7'
-+if Use_SSI:
-+    from sphinx.util.docutils import switch_source_input
-+else:
-+    from sphinx.ext.autodoc import AutodocReporter
+diff --git a/Documentation/admin-guide/mm/index.rst b/Documentation/admin-guide/mm/index.rst
+index 8edb35f11317..ddf8d8d33377 100644
+--- a/Documentation/admin-guide/mm/index.rst
++++ b/Documentation/admin-guide/mm/index.rst
+@@ -31,6 +31,7 @@ the Linux memory management.
+    ksm
+    memory-hotplug
+    numa_memory_policy
++   numaperf
+    pagemap
+    soft-dirty
+    transhuge
+diff --git a/Documentation/admin-guide/mm/numaperf.rst b/Documentation/admin-guide/mm/numaperf.rst
+index b79f70c04397..c067ed145158 100644
+--- a/Documentation/admin-guide/mm/numaperf.rst
++++ b/Documentation/admin-guide/mm/numaperf.rst
+@@ -15,7 +15,7 @@ characteristics.  Some memory may share the same node as a CPU, and others
+ are provided as memory only nodes. While memory only nodes do not provide
+ CPUs, they may still be local to one or more compute nodes relative to
+ other nodes. The following diagram shows one such example of two compute
+-nodes with local memory and a memory only node for each of compute node:
++nodes with local memory and a memory only node for each of compute node::
  
- import kernellog
- 
-@@ -125,13 +135,7 @@ class KernelDocDirective(Directive):
-                     lineoffset += 1
- 
-             node = nodes.section()
--            buf = self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter
--            self.state.memo.reporter = AutodocReporter(result, self.state.memo.reporter)
--            self.state.memo.title_styles, self.state.memo.section_level = [], 0
--            try:
--                self.state.nested_parse(result, 0, node, match_titles=1)
--            finally:
--                self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter = buf
-+            self.do_parse(result, node)
- 
-             return node.children
- 
-@@ -140,6 +144,20 @@ class KernelDocDirective(Directive):
-                            (" ".join(cmd), str(e)))
-             return [nodes.error(None, nodes.paragraph(text = "kernel-doc missing"))]
- 
-+    def do_parse(self, result, node):
-+        if Use_SSI:
-+            with switch_source_input(self.state, result):
-+                self.state.nested_parse(result, 0, node, match_titles=1)
-+        else:
-+            save = self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter
-+            self.state.memo.reporter = AutodocReporter(result, self.state.memo.reporter)
-+            self.state.memo.title_styles, self.state.memo.section_level = [], 0
-+            try:
-+                self.state.nested_parse(result, 0, node, match_titles=1)
-+            finally:
-+                self.state.memo.title_styles, self.state.memo.section_level, self.state.memo.reporter = save
-+
-+
- def setup(app):
-     app.add_config_value('kerneldoc_bin', None, 'env')
-     app.add_config_value('kerneldoc_srctree', None, 'env')
+  +------------------+     +------------------+
+  | Compute Node 0   +-----+ Compute Node 1   |
 -- 
 2.21.0
 
