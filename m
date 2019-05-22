@@ -2,209 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 326D2262EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 13:26:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB47B26321
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 13:42:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729145AbfEVLZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 07:25:57 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:55126 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728638AbfEVLZ4 (ORCPT
+        id S1729092AbfEVLmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 07:42:31 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:39476 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727464AbfEVLma (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 07:25:56 -0400
-Received: from localhost.localdomain (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id E5254260D66;
-        Wed, 22 May 2019 12:25:54 +0100 (BST)
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     George Spelvin <lkml@sdf.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Abramov <st5pub@yandex.ru>, kernel@collabora.com,
-        Boris Brezillon <boris.brezillon@collabora.com>
-Subject: [PATCH] lib/sort: Add the sort_r() variant
-Date:   Wed, 22 May 2019 13:25:50 +0200
-Message-Id: <20190522112550.31814-1-boris.brezillon@collabora.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 22 May 2019 07:42:30 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4MBgN6c001466;
+        Wed, 22 May 2019 06:42:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1558525343;
+        bh=NTmfaLoNBH7n2rGU4kwdBrnd2VyxykrQMpqDjEGnUe0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Vw5nbhd9JHw9F6HA71TDoAh3QzTD8rr2yrWrk5Rivt1AdoqJ/yd1FTbqT4PUil9bT
+         sY1zdiJbQ15eIY3nutEN25gOgrCsjDc4oEoWcrG5dWuCFnWr4hiid1jN89bVWnb+K0
+         TOMJOTpHdafawUxCiaLtn6zWGt0SNExnNxefJzXU=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4MBgNpZ033773
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 May 2019 06:42:23 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 22
+ May 2019 06:42:23 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 22 May 2019 06:42:23 -0500
+Received: from [10.250.90.63] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4MBgNdJ016927;
+        Wed, 22 May 2019 06:42:23 -0500
+Subject: Re: [PATCH][V2] leds: TI LMU: fix u8 variable comparisons with less
+ than zero
+To:     Colin King <colin.king@canonical.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, <linux-leds@vger.kernel.org>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190522101745.21828-1-colin.king@canonical.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <aa5698f5-9604-ec9c-3f6f-7fc7a6cdbca7@ti.com>
+Date:   Wed, 22 May 2019 06:42:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190522101745.21828-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some users might need extra context to compare 2 elements. This patch
-adds the sort_r() which is similar to the qsort_r() variant of qsort().
 
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
----
-Hello,
 
-A few more details about this patch.
+On 5/22/19 5:17 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The u8 variables ramp_ups and ramp_downs are being compared to less
+> than zero, this will always be false.  Fix this by making the ramp
+> variables ints.
+> 
+> Addresses-Coverity: ("Unsigned compared against 0")
+> Fixes: 9a8e66ebeaa2 ("leds: TI LMU: Add common code for TI LMU devices")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+> 
+> V2: make u8 vars ints rather than removing the comparison. Thanks once
+> more to Dan Carpenter for spotting my clearly stupid V1 version and
+> correcting my mistake.
+> 
+> ---
+>  drivers/leds/leds-ti-lmu-common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/leds/leds-ti-lmu-common.c b/drivers/leds/leds-ti-lmu-common.c
+> index adc7293004f1..c9ab40d5a6ba 100644
+> --- a/drivers/leds/leds-ti-lmu-common.c
+> +++ b/drivers/leds/leds-ti-lmu-common.c
+> @@ -84,7 +84,7 @@ static int ti_lmu_common_convert_ramp_to_index(unsigned int usec)
+>  int ti_lmu_common_set_ramp(struct ti_lmu_bank *lmu_bank)
+>  {
+>  	struct regmap *regmap = lmu_bank->regmap;
+> -	u8 ramp, ramp_up, ramp_down;
+> +	int ramp, ramp_up, ramp_down;
+>  
+>  	if (lmu_bank->ramp_up_usec == 0 && lmu_bank->ramp_down_usec == 0) {
+>  		ramp_up = 0;
+> 
 
-Even though I post it as a standalone patch, I do intend to use it in
-a real driver (v4l2 driver), just didn't want to have it burried in a
-huge patch series.
-
-Note that sort() and sort_r() are now implemented as wrappers around
-do_sort() so that most of the code can be shared. I initially went for
-a solution that implemented sort() as a wrapper around sort_r() (which
-basically contained the do_sort() logic without the cmp_func arg)
-but realized this was adding one extra indirect call (the compare func
-wrapper), which I know are being chased.
-
-There's another option, but I'm pretty sure other people already
-considered it and thought it was not a good idea as it would make
-the code size grow: move the code to sort.h as inline funcs/macros so
-that the compiler can optimize things out and replace the indirect
-cmp_func() calls by direct ones. I just tried it, and it makes my .o
-file grow by 576 bytes, given that we currently have 122 users of
-this function, that makes the kernel code grow by ~70k (that's kind
-of a max estimate since not all users will be compiled in).
-
-Please let me know if you think we shouldn't expose the sort_r() func
-and I'll just implement a private version in my driver.
-
-Regards,
-
-Boris
----
- include/linux/sort.h |  5 +++
- lib/sort.c           | 85 ++++++++++++++++++++++++++++++++------------
- 2 files changed, 67 insertions(+), 23 deletions(-)
-
-diff --git a/include/linux/sort.h b/include/linux/sort.h
-index 2b99a5dd073d..61b96d0ebc44 100644
---- a/include/linux/sort.h
-+++ b/include/linux/sort.h
-@@ -4,6 +4,11 @@
- 
- #include <linux/types.h>
- 
-+void sort_r(void *base, size_t num, size_t size,
-+	    int (*cmp)(const void *, const void *, const void *),
-+	    void (*swap)(void *, void *, int),
-+	    const void *priv);
-+
- void sort(void *base, size_t num, size_t size,
- 	  int (*cmp)(const void *, const void *),
- 	  void (*swap)(void *, void *, int));
-diff --git a/lib/sort.c b/lib/sort.c
-index 50855ea8c262..5db5602e52ee 100644
---- a/lib/sort.c
-+++ b/lib/sort.c
-@@ -167,27 +167,21 @@ static size_t parent(size_t i, unsigned int lsbit, size_t size)
- 	return i / 2;
- }
- 
--/**
-- * sort - sort an array of elements
-- * @base: pointer to data to sort
-- * @num: number of elements
-- * @size: size of each element
-- * @cmp_func: pointer to comparison function
-- * @swap_func: pointer to swap function or NULL
-- *
-- * This function does a heapsort on the given array.  You may provide
-- * a swap_func function if you need to do something more than a memory
-- * copy (e.g. fix up pointers or auxiliary data), but the built-in swap
-- * avoids a slow retpoline and so is significantly faster.
-- *
-- * Sorting time is O(n log n) both on average and worst-case. While
-- * quicksort is slightly faster on average, it suffers from exploitable
-- * O(n*n) worst-case behavior and extra memory requirements that make
-- * it less suitable for kernel use.
-- */
--void sort(void *base, size_t num, size_t size,
--	  int (*cmp_func)(const void *, const void *),
--	  void (*swap_func)(void *, void *, int size))
-+static int do_cmp(int (*cmp_func_r)(const void *, const void *, const void *),
-+		  int (*cmp_func)(const void *, const void *),
-+		  const void *a, const void *b, const void *priv)
-+{
-+	if (cmp_func)
-+		return cmp_func(a, b);
-+
-+	return cmp_func_r(a, b, priv);
-+}
-+
-+static void do_sort(void *base, size_t num, size_t size,
-+		    int (*cmp_func_r)(const void *, const void *, const void *),
-+		    int (*cmp_func)(const void *, const void *),
-+		    void (*swap_func)(void *, void *, int size),
-+		    const void *priv)
- {
- 	/* pre-scale counters for performance */
- 	size_t n = num * size, a = (num/2) * size;
-@@ -235,12 +229,12 @@ void sort(void *base, size_t num, size_t size,
- 		 * average, 3/4 worst-case.)
- 		 */
- 		for (b = a; c = 2*b + size, (d = c + size) < n;)
--			b = cmp_func(base + c, base + d) >= 0 ? c : d;
-+			b = do_cmp(cmp_func_r, cmp_func, base + c, base + d, priv) >= 0 ? c : d;
- 		if (d == n)	/* Special case last leaf with no sibling */
- 			b = c;
- 
- 		/* Now backtrack from "b" to the correct location for "a" */
--		while (b != a && cmp_func(base + a, base + b) >= 0)
-+		while (b != a && do_cmp(cmp_func_r, cmp_func, base + a, base + b, priv) >= 0)
- 			b = parent(b, lsbit, size);
- 		c = b;			/* Where "a" belongs */
- 		while (b != a) {	/* Shift it into place */
-@@ -249,4 +243,49 @@ void sort(void *base, size_t num, size_t size,
- 		}
- 	}
- }
-+
-+/**
-+ * sort - sort an array of elements
-+ * @base: pointer to data to sort
-+ * @num: number of elements
-+ * @size: size of each element
-+ * @cmp_func: pointer to comparison function
-+ * @swap_func: pointer to swap function or NULL
-+ *
-+ * This function does a heapsort on the given array. You may provide a
-+ * swap_func function optimized to your element type.
-+ *
-+ * Sorting time is O(n log n) both on average and worst-case. While
-+ * qsort is about 20% faster on average, it suffers from exploitable
-+ * O(n*n) worst-case behavior and extra memory requirements that make
-+ * it less suitable for kernel use.
-+ */
-+void sort(void *base, size_t num, size_t size,
-+	  int (*cmp_func)(const void *, const void *),
-+	  void (*swap_func)(void *, void *, int size))
-+{
-+	return do_sort(base, num, size, NULL, cmp_func, swap_func, NULL);
-+}
- EXPORT_SYMBOL(sort);
-+
-+/**
-+ * sort_r - sort an array of elements
-+ * @base: pointer to data to sort
-+ * @num: number of elements
-+ * @size: size of each element
-+ * @cmp_func: pointer to comparison function
-+ * @swap_func: pointer to swap function or NULL
-+ * @priv: private data passed to the compare function
-+ *
-+ * Same as sort() except it takes an extra private argument and pass it back
-+ * to the compare function. Particularly useful when some extra context is
-+ * needed to do the comparison.
-+ */
-+void sort_r(void *base, size_t num, size_t size,
-+	    int (*cmp_func)(const void *, const void *, const void *),
-+	    void (*swap_func)(void *, void *, int size),
-+	    const void *priv)
-+{
-+	return do_sort(base, num, size, cmp_func, NULL, swap_func, priv);
-+}
-+EXPORT_SYMBOL(sort_r);
--- 
-2.20.1
-
+Reviewed-by: Dan Murphy <dmurphy@ti.com>
