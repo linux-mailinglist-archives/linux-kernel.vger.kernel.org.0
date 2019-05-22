@@ -2,32 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 441D9265AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 16:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8B4265B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 16:28:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729433AbfEVO15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 10:27:57 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:41960 "EHLO inva021.nxp.com"
+        id S1729500AbfEVO2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 10:28:01 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:42224 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728761AbfEVO1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 10:27:55 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8DAB9200090;
-        Wed, 22 May 2019 16:27:52 +0200 (CEST)
+        id S1728835AbfEVO14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 10:27:56 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 29B851A002A;
+        Wed, 22 May 2019 16:27:53 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7FCAE20002F;
-        Wed, 22 May 2019 16:27:52 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1C2061A000F;
+        Wed, 22 May 2019 16:27:53 +0200 (CEST)
 Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.13])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 096B1205ED;
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8FD43205ED;
         Wed, 22 May 2019 16:27:52 +0200 (CEST)
 From:   laurentiu.tudor@nxp.com
 To:     hch@lst.de, stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
         linux-usb@vger.kernel.org, marex@denx.de
 Cc:     leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
-        robin.murphy@arm.com, noring@nocrew.org, JuergenUrban@gmx.de
-Subject: [PATCH v6 1/5] lib/genalloc.c: Add gen_pool_dma_zalloc() for zeroed DMA allocations
-Date:   Wed, 22 May 2019 17:27:44 +0300
-Message-Id: <20190522142748.10078-2-laurentiu.tudor@nxp.com>
+        robin.murphy@arm.com, noring@nocrew.org, JuergenUrban@gmx.de,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Subject: [PATCH v6 2/5] USB: use genalloc for USB HCs with local memory
+Date:   Wed, 22 May 2019 17:27:45 +0300
+Message-Id: <20190522142748.10078-3-laurentiu.tudor@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190522142748.10078-1-laurentiu.tudor@nxp.com>
 References: <20190522142748.10078-1-laurentiu.tudor@nxp.com>
@@ -37,82 +38,286 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fredrik Noring <noring@nocrew.org>
+From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-gen_pool_dma_zalloc() is a zeroed memory variant of gen_pool_dma_alloc().
-Document return values of both, and indicate NULL as a "%NULL" constant.
+For HCs that have local memory, replace the current DMA API usage
+with a genalloc generic allocator to manage the mappings for these
+devices. To help users, introduce a new HCD API,
+usb_hcd_setup_local_mem() that will setup up the genalloc backing
+up the device local memory. It will be used in subsequent patches.
+This is in preparation for dropping the existing "coherent" dma
+mem declaration APIs. Current implementation was relying on a short
+circuit in the DMA API that in the end, was acting as an allocator
+for these type of devices.
 
+For context, see thread here: https://lkml.org/lkml/2019/4/22/357
+
+Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 Signed-off-by: Fredrik Noring <noring@nocrew.org>
 Tested-by: Fredrik Noring <noring@nocrew.org>
 ---
- include/linux/genalloc.h |  1 +
- lib/genalloc.c           | 29 ++++++++++++++++++++++++++++-
- 2 files changed, 29 insertions(+), 1 deletion(-)
+ drivers/usb/core/buffer.c   |  9 +++++++++
+ drivers/usb/core/hcd.c      | 36 ++++++++++++++++++++++++++++++++++++
+ drivers/usb/host/ohci-hcd.c | 23 ++++++++++++++++++-----
+ drivers/usb/host/ohci-mem.c | 35 +++++++++++++++++++++++++++++++----
+ drivers/usb/host/ohci.h     |  2 ++
+ include/linux/usb/hcd.h     |  5 +++++
+ 6 files changed, 101 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/genalloc.h b/include/linux/genalloc.h
-index dd0a452373e7..6c62eeca754f 100644
---- a/include/linux/genalloc.h
-+++ b/include/linux/genalloc.h
-@@ -121,6 +121,7 @@ extern unsigned long gen_pool_alloc_algo(struct gen_pool *, size_t,
- 		genpool_algo_t algo, void *data);
- extern void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size,
- 		dma_addr_t *dma);
-+void *gen_pool_dma_zalloc(struct gen_pool *pool, size_t size, dma_addr_t *dma);
- extern void gen_pool_free(struct gen_pool *, unsigned long, size_t);
- extern void gen_pool_for_each_chunk(struct gen_pool *,
- 	void (*)(struct gen_pool *, struct gen_pool_chunk *, void *), void *);
-diff --git a/lib/genalloc.c b/lib/genalloc.c
-index 7e85d1e37a6e..5db43476a19b 100644
---- a/lib/genalloc.c
-+++ b/lib/genalloc.c
-@@ -337,12 +337,14 @@ EXPORT_SYMBOL(gen_pool_alloc_algo);
-  * gen_pool_dma_alloc - allocate special memory from the pool for DMA usage
-  * @pool: pool to allocate from
-  * @size: number of bytes to allocate from the pool
-- * @dma: dma-view physical address return value.  Use NULL if unneeded.
-+ * @dma: dma-view physical address return value.  Use %NULL if unneeded.
-  *
-  * Allocate the requested number of bytes from the specified pool.
-  * Uses the pool allocation function (with first-fit algorithm by default).
-  * Can not be used in NMI handler on architectures without
-  * NMI-safe cmpxchg implementation.
-+ *
-+ * Return: virtual address of the allocated memory, or %NULL on failure
-  */
- void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
- {
-@@ -362,6 +364,31 @@ void *gen_pool_dma_alloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
- }
- EXPORT_SYMBOL(gen_pool_dma_alloc);
+diff --git a/drivers/usb/core/buffer.c b/drivers/usb/core/buffer.c
+index f641342cdec0..d2064ad7ad14 100644
+--- a/drivers/usb/core/buffer.c
++++ b/drivers/usb/core/buffer.c
+@@ -16,6 +16,7 @@
+ #include <linux/io.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmapool.h>
++#include <linux/genalloc.h>
+ #include <linux/usb.h>
+ #include <linux/usb/hcd.h>
  
-+/**
-+ * gen_pool_dma_zalloc - allocate special zeroed memory from the pool for
-+ * DMA usage
-+ * @pool: pool to allocate from
-+ * @size: number of bytes to allocate from the pool
-+ * @dma: dma-view physical address return value.  Use %NULL if unneeded.
-+ *
-+ * Allocate the requested number of zeroed bytes from the specified pool.
-+ * Uses the pool allocation function (with first-fit algorithm by default).
-+ * Can not be used in NMI handler on architectures without
-+ * NMI-safe cmpxchg implementation.
-+ *
-+ * Return: virtual address of the allocated zeroed memory, or %NULL on failure
-+ */
-+void *gen_pool_dma_zalloc(struct gen_pool *pool, size_t size, dma_addr_t *dma)
+@@ -124,6 +125,9 @@ void *hcd_buffer_alloc(
+ 	if (size == 0)
+ 		return NULL;
+ 
++	if (hcd->localmem_pool)
++		return gen_pool_dma_alloc(hcd->localmem_pool, size, dma);
++
+ 	/* some USB hosts just use PIO */
+ 	if (!IS_ENABLED(CONFIG_HAS_DMA) ||
+ 	    (!is_device_dma_capable(bus->sysdev) &&
+@@ -152,6 +156,11 @@ void hcd_buffer_free(
+ 	if (!addr)
+ 		return;
+ 
++	if (hcd->localmem_pool) {
++		gen_pool_free(hcd->localmem_pool, (unsigned long)addr, size);
++		return;
++	}
++
+ 	if (!IS_ENABLED(CONFIG_HAS_DMA) ||
+ 	    (!is_device_dma_capable(bus->sysdev) &&
+ 	     !(hcd->driver->flags & HCD_LOCAL_MEM))) {
+diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+index 94d22551fc1b..1aad11f4142c 100644
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@ -29,6 +29,8 @@
+ #include <linux/workqueue.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/types.h>
++#include <linux/genalloc.h>
++#include <linux/io.h>
+ 
+ #include <linux/phy/phy.h>
+ #include <linux/usb.h>
+@@ -3039,6 +3041,40 @@ usb_hcd_platform_shutdown(struct platform_device *dev)
+ }
+ EXPORT_SYMBOL_GPL(usb_hcd_platform_shutdown);
+ 
++int usb_hcd_setup_local_mem(struct usb_hcd *hcd, phys_addr_t phys_addr,
++			    dma_addr_t dma, size_t size)
 +{
-+	void *vaddr = gen_pool_dma_alloc(pool, size, dma);
++	int err;
++	void __iomem *local_mem;
 +
-+	if (vaddr)
-+		memset(vaddr, 0, size);
++	hcd->localmem_pool = devm_gen_pool_create(hcd->self.sysdev, PAGE_SHIFT,
++						  dev_to_node(hcd->self.sysdev),
++						  dev_name(hcd->self.sysdev));
++	if (IS_ERR(hcd->localmem_pool))
++		return PTR_ERR(hcd->localmem_pool);
 +
-+	return vaddr;
++	local_mem = devm_memremap(hcd->self.sysdev, phys_addr,
++				  size, MEMREMAP_WC);
++	if (!local_mem)
++		return -ENOMEM;
++
++	/*
++	 * Here we pass a dma_addr_t but the arg type is a phys_addr_t.
++	 * It's not backed by system memory and thus there's no kernel mapping
++	 * for it.
++	 */
++	err = gen_pool_add_virt(hcd->localmem_pool, (unsigned long)local_mem,
++				dma, size, dev_to_node(hcd->self.sysdev));
++	if (err < 0) {
++		dev_err(hcd->self.sysdev, "gen_pool_add_virt failed with %d\n",
++			err);
++		return err;
++	}
++
++	return 0;
 +}
-+EXPORT_SYMBOL(gen_pool_dma_zalloc);
++EXPORT_SYMBOL_GPL(usb_hcd_setup_local_mem);
 +
- /**
-  * gen_pool_free - free allocated special memory back to the pool
-  * @pool: pool to free to
+ /*-------------------------------------------------------------------------*/
+ 
+ #if IS_ENABLED(CONFIG_USB_MON)
+diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
+index 210181fd98d2..b200b19b44fa 100644
+--- a/drivers/usb/host/ohci-hcd.c
++++ b/drivers/usb/host/ohci-hcd.c
+@@ -40,6 +40,7 @@
+ #include <linux/dmapool.h>
+ #include <linux/workqueue.h>
+ #include <linux/debugfs.h>
++#include <linux/genalloc.h>
+ 
+ #include <asm/io.h>
+ #include <asm/irq.h>
+@@ -505,8 +506,15 @@ static int ohci_init (struct ohci_hcd *ohci)
+ 	timer_setup(&ohci->io_watchdog, io_watchdog_func, 0);
+ 	ohci->prev_frame_no = IO_WATCHDOG_OFF;
+ 
+-	ohci->hcca = dma_alloc_coherent (hcd->self.controller,
+-			sizeof(*ohci->hcca), &ohci->hcca_dma, GFP_KERNEL);
++	if (hcd->localmem_pool)
++		ohci->hcca = gen_pool_dma_alloc(hcd->localmem_pool,
++						sizeof(*ohci->hcca),
++						&ohci->hcca_dma);
++	else
++		ohci->hcca = dma_alloc_coherent(hcd->self.controller,
++						sizeof(*ohci->hcca),
++						&ohci->hcca_dma,
++						GFP_KERNEL);
+ 	if (!ohci->hcca)
+ 		return -ENOMEM;
+ 
+@@ -990,9 +998,14 @@ static void ohci_stop (struct usb_hcd *hcd)
+ 	remove_debug_files (ohci);
+ 	ohci_mem_cleanup (ohci);
+ 	if (ohci->hcca) {
+-		dma_free_coherent (hcd->self.controller,
+-				sizeof *ohci->hcca,
+-				ohci->hcca, ohci->hcca_dma);
++		if (hcd->localmem_pool)
++			gen_pool_free(hcd->localmem_pool,
++				      (unsigned long)ohci->hcca,
++				      sizeof(*ohci->hcca));
++		else
++			dma_free_coherent(hcd->self.controller,
++					  sizeof(*ohci->hcca),
++					  ohci->hcca, ohci->hcca_dma);
+ 		ohci->hcca = NULL;
+ 		ohci->hcca_dma = 0;
+ 	}
+diff --git a/drivers/usb/host/ohci-mem.c b/drivers/usb/host/ohci-mem.c
+index 3965ac0341eb..4afe27cc7e46 100644
+--- a/drivers/usb/host/ohci-mem.c
++++ b/drivers/usb/host/ohci-mem.c
+@@ -36,6 +36,13 @@ static void ohci_hcd_init (struct ohci_hcd *ohci)
+ 
+ static int ohci_mem_init (struct ohci_hcd *ohci)
+ {
++	/*
++	 * HCs with local memory allocate from localmem_pool so there's
++	 * no need to create the below dma pools.
++	 */
++	if (ohci_to_hcd(ohci)->localmem_pool)
++		return 0;
++
+ 	ohci->td_cache = dma_pool_create ("ohci_td",
+ 		ohci_to_hcd(ohci)->self.controller,
+ 		sizeof (struct td),
+@@ -84,8 +91,12 @@ td_alloc (struct ohci_hcd *hc, gfp_t mem_flags)
+ {
+ 	dma_addr_t	dma;
+ 	struct td	*td;
++	struct usb_hcd	*hcd = ohci_to_hcd(hc);
+ 
+-	td = dma_pool_zalloc (hc->td_cache, mem_flags, &dma);
++	if (hcd->localmem_pool)
++		td = gen_pool_dma_zalloc(hcd->localmem_pool, sizeof(*td), &dma);
++	else
++		td = dma_pool_zalloc(hc->td_cache, mem_flags, &dma);
+ 	if (td) {
+ 		/* in case hc fetches it, make it look dead */
+ 		td->hwNextTD = cpu_to_hc32 (hc, dma);
+@@ -99,6 +110,7 @@ static void
+ td_free (struct ohci_hcd *hc, struct td *td)
+ {
+ 	struct td	**prev = &hc->td_hash [TD_HASH_FUNC (td->td_dma)];
++	struct usb_hcd	*hcd = ohci_to_hcd(hc);
+ 
+ 	while (*prev && *prev != td)
+ 		prev = &(*prev)->td_hash;
+@@ -106,7 +118,12 @@ td_free (struct ohci_hcd *hc, struct td *td)
+ 		*prev = td->td_hash;
+ 	else if ((td->hwINFO & cpu_to_hc32(hc, TD_DONE)) != 0)
+ 		ohci_dbg (hc, "no hash for td %p\n", td);
+-	dma_pool_free (hc->td_cache, td, td->td_dma);
++
++	if (hcd->localmem_pool)
++		gen_pool_free(hcd->localmem_pool, (unsigned long)td,
++			      sizeof(*td));
++	else
++		dma_pool_free(hc->td_cache, td, td->td_dma);
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -117,8 +134,12 @@ ed_alloc (struct ohci_hcd *hc, gfp_t mem_flags)
+ {
+ 	dma_addr_t	dma;
+ 	struct ed	*ed;
++	struct usb_hcd	*hcd = ohci_to_hcd(hc);
+ 
+-	ed = dma_pool_zalloc (hc->ed_cache, mem_flags, &dma);
++	if (hcd->localmem_pool)
++		ed = gen_pool_dma_zalloc(hcd->localmem_pool, sizeof(*ed), &dma);
++	else
++		ed = dma_pool_zalloc(hc->ed_cache, mem_flags, &dma);
+ 	if (ed) {
+ 		INIT_LIST_HEAD (&ed->td_list);
+ 		ed->dma = dma;
+@@ -129,6 +150,12 @@ ed_alloc (struct ohci_hcd *hc, gfp_t mem_flags)
+ static void
+ ed_free (struct ohci_hcd *hc, struct ed *ed)
+ {
+-	dma_pool_free (hc->ed_cache, ed, ed->dma);
++	struct usb_hcd	*hcd = ohci_to_hcd(hc);
++
++	if (hcd->localmem_pool)
++		gen_pool_free(hcd->localmem_pool, (unsigned long)ed,
++			      sizeof(*ed));
++	else
++		dma_pool_free(hc->ed_cache, ed, ed->dma);
+ }
+ 
+diff --git a/drivers/usb/host/ohci.h b/drivers/usb/host/ohci.h
+index ef4813bfc5bf..b015b00774b2 100644
+--- a/drivers/usb/host/ohci.h
++++ b/drivers/usb/host/ohci.h
+@@ -385,6 +385,8 @@ struct ohci_hcd {
+ 
+ 	/*
+ 	 * memory management for queue data structures
++	 *
++	 * @td_cache and @ed_cache are %NULL if &usb_hcd.localmem_pool is used.
+ 	 */
+ 	struct dma_pool		*td_cache;
+ 	struct dma_pool		*ed_cache;
+diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
+index bb57b5af4700..127560a4bfa0 100644
+--- a/include/linux/usb/hcd.h
++++ b/include/linux/usb/hcd.h
+@@ -216,6 +216,9 @@ struct usb_hcd {
+ #define	HC_IS_RUNNING(state) ((state) & __ACTIVE)
+ #define	HC_IS_SUSPENDED(state) ((state) & __SUSPEND)
+ 
++	/* memory pool for HCs having local memory, or %NULL */
++	struct gen_pool         *localmem_pool;
++
+ 	/* more shared queuing code would be good; it should support
+ 	 * smarter scheduling, handle transaction translators, etc;
+ 	 * input size of periodic table to an interrupt scheduler.
+@@ -461,6 +464,8 @@ extern int usb_add_hcd(struct usb_hcd *hcd,
+ 		unsigned int irqnum, unsigned long irqflags);
+ extern void usb_remove_hcd(struct usb_hcd *hcd);
+ extern int usb_hcd_find_raw_port_number(struct usb_hcd *hcd, int port1);
++int usb_hcd_setup_local_mem(struct usb_hcd *hcd, phys_addr_t phys_addr,
++			    dma_addr_t dma, size_t size);
+ 
+ struct platform_device;
+ extern void usb_hcd_platform_shutdown(struct platform_device *dev);
 -- 
 2.17.1
 
