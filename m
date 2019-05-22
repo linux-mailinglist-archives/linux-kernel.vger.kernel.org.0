@@ -2,208 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1306F2718D
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 23:23:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CDFB27198
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 23:27:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730477AbfEVVXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 17:23:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46270 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729483AbfEVVXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 17:23:04 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 505C481F0D;
-        Wed, 22 May 2019 21:23:03 +0000 (UTC)
-Received: from krava (ovpn-204-104.brq.redhat.com [10.40.204.104])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 824EF600C0;
-        Wed, 22 May 2019 21:23:00 +0000 (UTC)
-Date:   Wed, 22 May 2019 23:22:59 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Stanislav Fomichev <sdf@fomichev.me>,
-        Song Liu <songliubraving@fb.com>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH 08/12] perf tools: Preserve eBPF maps when loading kcore
-Message-ID: <20190522212259.GA11325@krava>
-References: <20190508132010.14512-1-jolsa@kernel.org>
- <20190508132010.14512-9-jolsa@kernel.org>
- <20190522160657.GF30271@kernel.org>
+        id S1730165AbfEVV1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 17:27:03 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44938 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728761AbfEVV1D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 17:27:03 -0400
+Received: by mail-wr1-f67.google.com with SMTP id w13so3868464wru.11
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 14:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gPM/jVZtGO2/RgT9Pi90b9WxpAcXAmjN4dUeTd5rlc0=;
+        b=l4uVaRKKyhOj6q8UAKaPAPsHBuT94pMVw7A9dKSHMy5YOm42zxlYYfjLIYzck9FmTv
+         fzTQOPjh2PkrGZikx2x296/rTWPPbh5GdpImItlwd8d8xkJVIkSc5JhMDe6HrLbw09JS
+         4449DXkARWg8JSqIZ1Fpl2wqzyES7uNfiuw2sJSoN9fTdGkPXQQXro/H6NC+C6hfA14R
+         OTw+sEBZJugdPZN3U2nQRSZRQCaThk+ZSwC2oLi6P+xt+u8pSfwrs5GbPoPkUe+YZbd/
+         GfL8QZDRP+sqalPutnO63lgpRrwiFFM5nRk8+6Veu30Olh8zHQU0IOF04BK7Y1jo/Q1R
+         HNOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gPM/jVZtGO2/RgT9Pi90b9WxpAcXAmjN4dUeTd5rlc0=;
+        b=dpAwotq0l8OLn2ewgTbhNhDZEV+NFf7O24vf+HvABeoWtvdwaZ1tnmN8JTId3FTSL5
+         FEDdzciTaRpAuAPMf4NKkX+f68WfI4IWsaH03bfKF/IHVJYlwo1p3vogkaMkJYVm68pR
+         QP8S55/xoMM9RVl5HyVgNR7PIaXJEi/7RHbJgYvebAQEYP0infFmmHQ6k1gAUK5ymMQM
+         tQw7s6CndKA80z+zzUqapJca1WsYh7o9Wduze/tRNDCrrghtkFJkXV8cGsRDiOk2h/SP
+         tLx7MHNN+W4qe7Y7y+HLpf5Okhpsv4EBnyAnXjy7UjgBCq9VgF50Ca5kCry8O1Gm4s5X
+         QJnQ==
+X-Gm-Message-State: APjAAAV9PawT+TOzY9HqS/+JxsDSuFWzAyqGd2PPhoSfNjBw4liLobC5
+        cUYqE/mUowUgl1v3eLjGQSgL8L7yeK1efMxOePVUJXWk5b4=
+X-Google-Smtp-Source: APXvYqy1HLPgU0D13o/8TkRWOMOKejvjfwnw+2WACNEYNIbz5sOD1C5mnszzqR+Xj8MfEhBGYWzqiRFtNIavxuQn9EY=
+X-Received: by 2002:adf:db81:: with SMTP id u1mr27305113wri.296.1558560420784;
+ Wed, 22 May 2019 14:27:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190522160657.GF30271@kernel.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 22 May 2019 21:23:03 +0000 (UTC)
+References: <20190522000753.13300-1-chris.packham@alliedtelesis.co.nz>
+ <20190522000753.13300-2-chris.packham@alliedtelesis.co.nz>
+ <CAFLxGvy2c9KV1CyoFaD76jvThfPiotqfoeNchqjGcDp+uHie7Q@mail.gmail.com> <0c59bcd6c866429cb9727f787b7f61ce@svr-chch-ex1.atlnz.lc>
+In-Reply-To: <0c59bcd6c866429cb9727f787b7f61ce@svr-chch-ex1.atlnz.lc>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Wed, 22 May 2019 23:26:48 +0200
+Message-ID: <CAFLxGvwRnBtscaJDQ4qYGpQt87+amKYb4vBJvtt-3BmsOorL_g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mtd: concat: implement _is_locked mtd operation
+To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 01:06:57PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Wed, May 08, 2019 at 03:20:06PM +0200, Jiri Olsa escreveu:
-> > We need to preserve eBPF maps even if they are
-> > covered by kcore, because we need to access
-> > eBPF dso for source data.
-> 
-> So, I reordered this one with the previous, as to get the output you
-> added to 07/12 we need what is in 08/12, and they are otherwise
-> completely independent, right?
+On Wed, May 22, 2019 at 11:06 PM Chris Packham
+<Chris.Packham@alliedtelesis.co.nz> wrote:
+>
+> On 23/05/19 8:44 AM, Richard Weinberger wrote:
+> > On Wed, May 22, 2019 at 2:08 AM Chris Packham
+> > <chris.packham@alliedtelesis.co.nz> wrote:
+> >>
+> >> Add an implementation of the _is_locked operation for concatenated mtd
+> >> devices. As with concat_lock/concat_unlock this can simply use the
+> >> common helper and pass mtd_is_locked as the operation.
+> >>
+> >> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> >> ---
+> >>   drivers/mtd/mtdconcat.c | 6 ++++++
+> >>   1 file changed, 6 insertions(+)
+> >>
+> >> diff --git a/drivers/mtd/mtdconcat.c b/drivers/mtd/mtdconcat.c
+> >> index 9514cd2db63c..0e919f3423af 100644
+> >> --- a/drivers/mtd/mtdconcat.c
+> >> +++ b/drivers/mtd/mtdconcat.c
+> >> @@ -496,6 +496,11 @@ static int concat_unlock(struct mtd_info *mtd, loff_t ofs, uint64_t len)
+> >>          return __concat_xxlock(mtd, ofs, len, mtd_unlock);
+> >>   }
+> >>
+> >> +static int concat_is_locked(struct mtd_info *mtd, loff_t ofs, uint64_t len)
+> >> +{
+> >> +       return __concat_xxlock(mtd, ofs, len, mtd_is_locked);
+> >> +}
+> >
+> > Hmm, here you start abusing your own new API. :(
+>
+> Abusing because xxlock is a poor choice of name? I initially had a third
+> copy of the logic from lock/unlock which is what lead me to do the
+> cleanup first. mtd_lock(), mtd_unlock() and mtd_is_locked() all work the
+> same way namely given an offset and a length either lock, unlock or
+> return the status of the len/erasesz blocks at ofs.
 
-right
+Well, for unlock/lock it is just a loop which applies an operation to
+a given range on all submtds.
+But as soon an operation returns non-zero, the loop stops and returns
+that error.
+This makes sense for unlock/lock.
 
-jirka
+Now you abuse this as "apply a random mtd operation to a given range".
+So, giving it a proper name is the first step. Step two is figuring
+for what kind
+of mtd operations it makes sense and is correct.
 
-> 
-> - Arnaldo
->  
-> > Adding map_groups__merge_in function to do that.
-> > It merges map into map_groups by splitting the
-> > new map within the existing map regions.
-> > 
-> > Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
-> > Link: http://lkml.kernel.org/n/tip-mlu13e9zl6rbsz4fa00x7mfa@git.kernel.org
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  tools/perf/util/symbol.c | 97 ++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 93 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-> > index 5cbad55cd99d..29780fcd049c 100644
-> > --- a/tools/perf/util/symbol.c
-> > +++ b/tools/perf/util/symbol.c
-> > @@ -1166,6 +1166,85 @@ static int kcore_mapfn(u64 start, u64 len, u64 pgoff, void *data)
-> >  	return 0;
-> >  }
-> >  
-> > +/*
-> > + * Merges map into map_groups by splitting the new map
-> > + * within the existing map regions.
-> > + */
-> > +static int map_groups__merge_in(struct map_groups *kmaps, struct map *new_map)
-> > +{
-> > +	struct map *old_map;
-> > +	LIST_HEAD(merged);
-> > +
-> > +	for (old_map = map_groups__first(kmaps); old_map;
-> > +	     old_map = map_groups__next(old_map)) {
-> > +
-> > +		/* no overload with this one */
-> > +		if (new_map->end < old_map->start ||
-> > +		    new_map->start >= old_map->end)
-> > +			continue;
-> > +
-> > +		if (new_map->start < old_map->start) {
-> > +			/*
-> > +			 * |new......
-> > +			 *       |old....
-> > +			 */
-> > +			if (new_map->end < old_map->end) {
-> > +				/*
-> > +				 * |new......|     -> |new..|
-> > +				 *       |old....| ->       |old....|
-> > +				 */
-> > +				new_map->end = old_map->start;
-> > +			} else {
-> > +				/*
-> > +				 * |new.............| -> |new..|       |new..|
-> > +				 *       |old....|    ->       |old....|
-> > +				 */
-> > +				struct map *m = map__clone(new_map);
-> > +
-> > +				if (!m)
-> > +					return -ENOMEM;
-> > +
-> > +				m->end = old_map->start;
-> > +				list_add_tail(&m->node, &merged);
-> > +				new_map->start = old_map->end;
-> > +			}
-> > +		} else {
-> > +			/*
-> > +			 *      |new......
-> > +			 * |old....
-> > +			 */
-> > +			if (new_map->end < old_map->end) {
-> > +				/*
-> > +				 *      |new..|   -> x
-> > +				 * |old.........| -> |old.........|
-> > +				 */
-> > +				map__put(new_map);
-> > +				new_map = NULL;
-> > +				break;
-> > +			} else {
-> > +				/*
-> > +				 *      |new......| ->         |new...|
-> > +				 * |old....|        -> |old....|
-> > +				 */
-> > +				new_map->start = old_map->end;
-> > +			}
-> > +		}
-> > +	}
-> > +
-> > +	while (!list_empty(&merged)) {
-> > +		old_map = list_entry(merged.next, struct map, node);
-> > +		list_del_init(&old_map->node);
-> > +		map_groups__insert(kmaps, old_map);
-> > +		map__put(old_map);
-> > +	}
-> > +
-> > +	if (new_map) {
-> > +		map_groups__insert(kmaps, new_map);
-> > +		map__put(new_map);
-> > +	}
-> > +	return 0;
-> > +}
-> > +
-> >  static int dso__load_kcore(struct dso *dso, struct map *map,
-> >  			   const char *kallsyms_filename)
-> >  {
-> > @@ -1222,7 +1301,12 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
-> >  	while (old_map) {
-> >  		struct map *next = map_groups__next(old_map);
-> >  
-> > -		if (old_map != map)
-> > +		/*
-> > +		 * We need to preserve eBPF maps even if they are
-> > +		 * covered by kcore, because we need to access
-> > +		 * eBPF dso for source data.
-> > +		 */
-> > +		if (old_map != map && !__map__is_bpf_prog(old_map))
-> >  			map_groups__remove(kmaps, old_map);
-> >  		old_map = next;
-> >  	}
-> > @@ -1256,11 +1340,16 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
-> >  			map_groups__remove(kmaps, map);
-> >  			map_groups__insert(kmaps, map);
-> >  			map__put(map);
-> > +			map__put(new_map);
-> >  		} else {
-> > -			map_groups__insert(kmaps, new_map);
-> > +			/*
-> > +			 * Merge kcore map into existing maps,
-> > +			 * and ensure that current maps (eBPF)
-> > +			 * stay intact.
-> > +			 */
-> > +			if (map_groups__merge_in(kmaps, new_map))
-> > +				goto out_err;
-> >  		}
-> > -
-> > -		map__put(new_map);
-> >  	}
-> >  
-> >  	if (machine__is(machine, "x86_64")) {
-> > -- 
-> > 2.20.1
-> 
-> -- 
-> 
-> - Arnaldo
+> >
+> > Did you verify that the unlock/lock-functions deal correctly with all
+> > semantics from mtd_is_locked?
+> > i.e. mtd_is_locked() with len = 0 returns 1 for spi-nor.
+> >
+>
+> I believe so. I've only got access to a parallel NOR flash system that
+> uses concatenation and that seems sane  (is mtdconcat able to work with
+> spi memories?). The concat_is_locked() should just reflect what the
+> underlying mtd device driver returns.
+
+mtdconcat *should* work with any mtd. But I never used it much, I see
+it more as legacy
+code.
+
+What happens if one submtd is locked and another not?
+Does concat_is_locked() return something sane then?
+I'd expect it to return true if at least one submtd is locked and 0
+of no submtd is locked.
+
+If the loop and return code handling in __concat_xxlock() can take care of that,
+awesome. Then all you need is giving it a better name. :-)
+
+-- 
+Thanks,
+//richard
