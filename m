@@ -2,129 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34F5C2649F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 15:26:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 182C5264AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 15:26:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbfEVNZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 09:25:00 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:43550 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729324AbfEVNY6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 09:24:58 -0400
-Received: by mail-qk1-f193.google.com with SMTP id z6so1407236qkl.10
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 06:24:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kBm7CzoksUwyOFgIhlh2koB6RWJMt3y60LWutVLCKxc=;
-        b=I43GncLOsLgZZ6Z1ceTPPeqMRHXX+uuAHOUdNgwg9ZyDkQxweuC+B0L7vn1B7kzrKd
-         HvYuxpvaezwbXoF/gDivh3iaYlL9tJu2IFLJ5S2xJ/SxieX2R6nPGq3fEyO5RpHs5nFS
-         BCOHkQZHlqd7XWOugTfU/EKqFAJ6PB7zpbAxOLsRpgmTczdbCJj1p1PWCRhTT1rgBYtH
-         hE24D42VO7T679/WFvIvSJM8zc3CdYJ11RoYW4Y4QeKnENMVngI4NUX0c0eZf/neKOK6
-         4ZmmU1gx5jly/IeqH9p6GBtmVQCKOjLdMlpQRSuSJPatoVvQ+OP7fnQ4RrARX8m4/Ghk
-         nbsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kBm7CzoksUwyOFgIhlh2koB6RWJMt3y60LWutVLCKxc=;
-        b=oZLuRRRZKA7bR0+bEQd4zST4a1OIV1nq4mrPebCnZpCPvpJ7hkrpOT+UuIv81fVQdw
-         HuTxHHXbayRFWw92pRU7IX5A/1wtreQribyR1+Ud6YZz1KpvXNMTA2GR9Jrj4LjGbPNg
-         3fdRdrXeVxeaj1i5/gkw1NUBaCxSy3CFuVEtoEe0KFWkJCBCN5/DB2KBfOaA8YXt5rL4
-         CICeIARywvG3UoyCpNcUcFib0UL9SzIk0k7kOEOWlUtweUq2zXJfuxgI/IEs3KXDbsbw
-         uFtPyw+8Y/qJL/Sx9DqJho5Vvrm1qTROC3MBJZFSBh+Wlxl/CX5FWX+wbVRcL478pBnR
-         xhpA==
-X-Gm-Message-State: APjAAAW6ce+etxrI1suFqCRURf7yU41kmv0k2vkLEiQA4dmI6o9ac5Sy
-        VVGeU1UBzwCNTHYYY/F2lY4=
-X-Google-Smtp-Source: APXvYqwaP+YaiqTZzXCKMt+W599TEAO/X6CAT7WEP5gJqWc91DYoxg7JjJevu0P4/Itqx/eONuRqXw==
-X-Received: by 2002:ae9:ed45:: with SMTP id c66mr65795054qkg.86.1558531497138;
-        Wed, 22 May 2019 06:24:57 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([187.65.94.38])
-        by smtp.gmail.com with ESMTPSA id q10sm10938442qkm.12.2019.05.22.06.24.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 22 May 2019 06:24:56 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 7754C404A1; Wed, 22 May 2019 10:24:24 -0300 (-03)
-Date:   Wed, 22 May 2019 10:24:24 -0300
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-        Krister Johansen <kjlx@templeofstupid.com>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>
-Subject: Re: [PATCH 3/3] perf top: Enable --namespaces option
-Message-ID: <20190522132424.GD30271@kernel.org>
-References: <20190522053250.207156-1-namhyung@kernel.org>
- <20190522053250.207156-4-namhyung@kernel.org>
+        id S1729730AbfEVNZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 09:25:43 -0400
+Received: from smtp1.goneo.de ([85.220.129.30]:50018 "EHLO smtp1.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729126AbfEVNZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 09:25:42 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp1.goneo.de (Postfix) with ESMTP id 9E9E123F9C5;
+        Wed, 22 May 2019 15:25:38 +0200 (CEST)
+X-Virus-Scanned: by goneo
+X-Spam-Flag: NO
+X-Spam-Score: -2.754
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.754 tagged_above=-999 tests=[ALL_TRUSTED=-1,
+        AWL=0.146, BAYES_00=-1.9] autolearn=ham
+Received: from smtp1.goneo.de ([127.0.0.1])
+        by localhost (smtp1.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id dK085gI_J9hg; Wed, 22 May 2019 15:25:37 +0200 (CEST)
+Received: from [192.168.1.127] (host-091-097-246-171.ewe-ip-backbone.de [91.97.246.171])
+        by smtp1.goneo.de (Postfix) with ESMTPSA id 3B50524129B;
+        Wed, 22 May 2019 15:25:37 +0200 (CEST)
+Subject: Re: [PATCH RFC 0/2] docs: Deal with some Sphinx deprecation warnings
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190521211714.1395-1-corbet@lwn.net> <87d0kb7xf6.fsf@intel.com>
+ <20190522071909.050bb227@coco.lan>
+From:   Markus Heiser <markus.heiser@darmarit.de>
+Message-ID: <39b12927-9bf9-a304-4108-8f471a204f89@darmarit.de>
+Date:   Wed, 22 May 2019 15:25:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190522053250.207156-4-namhyung@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190522071909.050bb227@coco.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, May 22, 2019 at 02:32:50PM +0900, Namhyung Kim escreveu:
-> Since perf record already have the option, let's have it for perf top
-> as well.
-
-I'm applying, but I wonder if this shouldn't be the default...
-
-- Arnaldo
- 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/Documentation/perf-top.txt | 5 +++++
->  tools/perf/builtin-top.c              | 5 +++++
->  2 files changed, 10 insertions(+)
+22.05.19 um 12:19 schrieb Mauro Carvalho Chehab:
+> Em Wed, 22 May 2019 10:36:45 +0300
+> Jani Nikula <jani.nikula@linux.intel.com> escreveu:
 > 
-> diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
-> index 44d89fb9c788..cfea87c6f38e 100644
-> --- a/tools/perf/Documentation/perf-top.txt
-> +++ b/tools/perf/Documentation/perf-top.txt
-> @@ -262,6 +262,11 @@ Default is to monitor all CPUS.
->  	The number of threads to run when synthesizing events for existing processes.
->  	By default, the number of threads equals to the number of online CPUs.
->  
-> +--namespaces::
-> +	Record events of type PERF_RECORD_NAMESPACES and display it with the
-> +	'cgroup_id' sort key.
-> +
-> +
->  INTERACTIVE PROMPTING KEYS
->  --------------------------
->  
-> diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-> index 3648ef576996..6651377fd762 100644
-> --- a/tools/perf/builtin-top.c
-> +++ b/tools/perf/builtin-top.c
-> @@ -1208,6 +1208,9 @@ static int __cmd_top(struct perf_top *top)
->  
->  	init_process_thread(top);
->  
-> +	if (opts->record_namespaces)
-> +		top->tool.namespace_events = true;
-> +
->  	ret = perf_event__synthesize_bpf_events(top->session, perf_event__process,
->  						&top->session->machines.host,
->  						&top->record_opts);
-> @@ -1500,6 +1503,8 @@ int cmd_top(int argc, const char **argv)
->  	OPT_BOOLEAN(0, "force", &symbol_conf.force, "don't complain, do it"),
->  	OPT_UINTEGER(0, "num-thread-synthesize", &top.nr_threads_synthesize,
->  			"number of thread to run event synthesize"),
-> +	OPT_BOOLEAN(0, "namespaces", &opts->record_namespaces,
-> +		    "Record namespaces events"),
->  	OPT_END()
->  	};
->  	struct perf_evlist *sb_evlist = NULL;
-> -- 
-> 2.21.0.1020.gf2820cf01a-goog
+>> On Tue, 21 May 2019, Jonathan Corbet <corbet@lwn.net> wrote:
+>>> The Sphinx folks are deprecating some interfaces in the upcoming 2.0
+>>> release; one immediate result of that is a bunch of warnings that show up
+>>> when building with 1.8.  These two patches make those warnings go away,
+>>> but at a cost:
+>>>
+>>>   - It introduces a couple of Sphinx version checks, which are always
+>>>     ugly, but the alternative would be to stop supporting versions
+>>>     before 1.7.  For now, I think we can carry that cruft.
+>>
+>> Frankly, I'd just require Sphinx 1.7+, available even in Debian stable
+>> through stretch-backports.
+> 
+> We can raise the bar and force a 1.7 or even 1.8 (Fedora 30 comes
+> with version 1.8.4), but I would prefer to keep support older versions,
+> at least while we don't depend on some new features introduced after
+> the version we're using, and while our extensions won't require a major
+> rework due to a new version.
 
--- 
+Lets use 1.7 :
 
-- Arnaldo
+- no need for Use_SSI wrapper
+- new log should work with 1.7 [1] --> no need for kernellog.py and
+   additional imports, instead include on top of python modules ::
+
+     from sphinx.util import logging
+     logger = logging.getLogger('kerneldoc')
+
+[1] 
+https://github.com/sphinx-doc/sphinx/commit/6d4e6454093953943e79d4db6efeb17390870e62
+
+
+BTW we can drop other (old) sphinx-version issues e.g.
+Documentation/conf.py  which fails with version 2.0:
+
+diff --git a/Documentation/conf.py b/Documentation/conf.py
+index 72647a38b5c2..ba82715b6715 100644
+--- a/Documentation/conf.py
++++ b/Documentation/conf.py
+@@ -34,13 +34,7 @@ needs_sphinx = '1.3'
+  # Add any Sphinx extension module names here, as strings. They can be
+  # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
+  # ones.
+-extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain', 
+'kfigure', 'sphinx.ext.ifconfig']
+-
+-# The name of the math extension changed on Sphinx 1.4
+-if major == 1 and minor > 3:
+-    extensions.append("sphinx.ext.imgmath")
+-else:
+-    extensions.append("sphinx.ext.pngmath")
++extensions = ['kerneldoc', 'rstFlatTable', 'kernel_include', 'cdomain', 
+'kfigure', 'sphinx.ext.ifconfig', 'sphinx.ext.imgmath']
+
+  # Add any paths that contain templates here, relative to this directory.
+  templates_path = ['_templates']
+
+-- Markus --
+
