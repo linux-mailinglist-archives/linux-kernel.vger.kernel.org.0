@@ -2,66 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2671226ABC
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70A2826F39
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:55:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729826AbfEVTTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:19:23 -0400
-Received: from namei.org ([65.99.196.166]:33844 "EHLO namei.org"
+        id S1731777AbfEVTza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:55:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728615AbfEVTTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:19:23 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x4MJJFlT023718;
-        Wed, 22 May 2019 19:19:15 GMT
-Date:   Thu, 23 May 2019 05:19:15 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-cc:     Andy Lutomirski <luto@kernel.org>,
-        Matthew Garrett <mjg59@google.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] Turn lockdown into an LSM
-In-Reply-To: <14ed1f30-a1d0-f973-5c8c-241337c8fc09@tycho.nsa.gov>
-Message-ID: <alpine.LRH.2.21.1905230457000.18826@namei.org>
-References: <20190521224013.3782-1-matthewgarrett@google.com> <alpine.LRH.2.21.1905221203070.3967@namei.org> <CACdnJuuTR=Ut4giPKC=kdxgY9yPv8+3PZyEzuxvON3Jr_92XnQ@mail.gmail.com> <CALCETrVow8U=xhQdJt8kSMX16Lf0Mstf3+QxY4iz4DHVp=PYWA@mail.gmail.com>
- <14ed1f30-a1d0-f973-5c8c-241337c8fc09@tycho.nsa.gov>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1731514AbfEVTZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:25:12 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 593742173C;
+        Wed, 22 May 2019 19:25:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558553112;
+        bh=3WjJSY7vZLVqoeVZv6ccOG1TIWOYqs8oAQ8eRPMkcSo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OX4JX16BFHVs7RTqD4OMiffgUYJmGkeW7O5Aar+heuyzPZQ/ChWpIXt1VxVZqoTID
+         PeBwpT/TEfr9Duk4uK2vJiLh8vXCDu1E5FiknM6RF9f3jAltlqTdpjzfR607aphSAK
+         EAV0/q7cSfiJ1EIN5IbaOH2y6nXyn1shV32yB2fk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Fabien Dessenne <fabien.dessenne@st.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rtc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.0 054/317] rtc: stm32: manage the get_irq probe defer case
+Date:   Wed, 22 May 2019 15:19:15 -0400
+Message-Id: <20190522192338.23715-54-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190522192338.23715-1-sashal@kernel.org>
+References: <20190522192338.23715-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 May 2019, Stephen Smalley wrote:
+From: Fabien Dessenne <fabien.dessenne@st.com>
 
-> That seems to violate the intent of lockdown as I understood it, and 
-> turns security_is_locked_down() into a finer-grained capable() call. 
-> Also, if I understand correctly, this could only be done if one were to 
-> disable the lockdown module in the lsm list, since the security 
-> framework will return non-zero (i.e. the operation is locked down) if 
-> any module that implements the hook returns non-zero; LSM is 
-> "restrictive". At that point SELinux or the other LSM would be the sole 
-> arbiter of lockdown decisions. SELinux or the other LSM also wouldn't 
-> have access to the kernel_locked_down level unless that was exported in 
-> some manner from the lockdown module.  Not sure how to compose these.
+[ Upstream commit cf612c5949aca2bd81a1e28688957c8149ea2693 ]
 
-Right, I was envisaging the LSM replacing the default.
+Manage the -EPROBE_DEFER error case for the wake IRQ.
 
-i.e. the default is tristate OR fine grained LSM policy.
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Acked-by: Amelie Delaunay <amelie.delaunay@st.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/rtc/rtc-stm32.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-They could in theory be composed restrictively, but this is likely not 
-useful given the coarse grained default policy.  All the LSM could do is 
-either further restrict none or integrity.
-
-We'd need to figure out how to avoid confusing users in the case where 
-multiple LSMs are registered for the hooks, possibly by having the 
-lockdown LSM gate this and update the securityfs lockdown node with 
-something like "lsm:smack".
-
-
+diff --git a/drivers/rtc/rtc-stm32.c b/drivers/rtc/rtc-stm32.c
+index c5908cfea2340..8e6c9b3bcc29a 100644
+--- a/drivers/rtc/rtc-stm32.c
++++ b/drivers/rtc/rtc-stm32.c
+@@ -788,11 +788,14 @@ static int stm32_rtc_probe(struct platform_device *pdev)
+ 	ret = device_init_wakeup(&pdev->dev, true);
+ 	if (rtc->data->has_wakeirq) {
+ 		rtc->wakeirq_alarm = platform_get_irq(pdev, 1);
+-		if (rtc->wakeirq_alarm <= 0)
+-			ret = rtc->wakeirq_alarm;
+-		else
++		if (rtc->wakeirq_alarm > 0) {
+ 			ret = dev_pm_set_dedicated_wake_irq(&pdev->dev,
+ 							    rtc->wakeirq_alarm);
++		} else {
++			ret = rtc->wakeirq_alarm;
++			if (rtc->wakeirq_alarm == -EPROBE_DEFER)
++				goto err;
++		}
+ 	}
+ 	if (ret)
+ 		dev_warn(&pdev->dev, "alarm can't wake up the system: %d", ret);
 -- 
-James Morris
-<jmorris@namei.org>
+2.20.1
 
