@@ -2,197 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B20226679
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 17:02:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C300926697
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 17:05:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729753AbfEVPCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 11:02:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53200 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729159AbfEVPCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 11:02:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4733380D;
-        Wed, 22 May 2019 08:02:44 -0700 (PDT)
-Received: from e111045-lin.cambridge.arm.com (apickardsiphone.cambridge.arm.com [10.1.30.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF30E3F718;
-        Wed, 22 May 2019 08:02:41 -0700 (PDT)
-From:   Ard Biesheuvel <ard.biesheuvel@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     marc.zyngier@arm.com, james.morse@arm.com, will.deacon@arm.com,
-        guillaume.gardet@arm.com, mark.rutland@arm.com, mingo@kernel.org,
-        jeyu@kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, x86@kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@arm.com>
-Subject: [PATCH] module/ksymtab: use 64-bit relative reference for target symbol
-Date:   Wed, 22 May 2019 16:02:39 +0100
-Message-Id: <20190522150239.19314-1-ard.biesheuvel@arm.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729774AbfEVPFe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 11:05:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33736 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728466AbfEVPFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 11:05:34 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EA27B3082B1F;
+        Wed, 22 May 2019 15:05:12 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id A4FB4611A0;
+        Wed, 22 May 2019 15:05:08 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 22 May 2019 17:05:10 +0200 (CEST)
+Date:   Wed, 22 May 2019 17:05:06 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        viro@zeniv.linux.org.uk, arnd@arndb.de, dbueso@suse.de,
+        axboe@kernel.dk, dave@stgolabs.net, e@80x24.org, jbaron@akamai.com,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        omar.kilani@gmail.com, tglx@linutronix.de, stable@vger.kernel.org
+Subject: Re: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Message-ID: <20190522150505.GA4915@redhat.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190522032144.10995-1-deepa.kernel@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 22 May 2019 15:05:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit
+On 05/21, Deepa Dinamani wrote:
+>
+> Note that this patch returns interrupted errors (EINTR, ERESTARTNOHAND,
+> etc) only when there is no other error. If there is a signal and an error
+> like EINVAL, the syscalls return -EINVAL rather than the interrupted
+> error codes.
 
-  7290d5809571 ("module: use relative references for __ksymtab entries")
+Ugh. I need to re-check, but at first glance I really dislike this change.
 
-updated the ksymtab handling of some KASLR capable architectures
-so that ksymtab entries are emitted as pairs of 32-bit relative
-references. This reduces the size of the entries, but more
-importantly, it gets rid of statically assigned absolute
-addresses, which require fixing up at boot time if the kernel
-is self relocating (which takes a 24 byte RELA entry for each
-member of the ksymtab struct).
+I think we can fix the problem _and_ simplify the code. Something like below.
+The patch is obviously incomplete, it changes only only one caller of
+set_user_sigmask(), epoll_pwait() to explain what I mean.
 
-Since ksymtab entries are always part of the same module as the
-symbol they export (or of the core kernel), it was assumed at the
-time that a 32-bit relative reference is always sufficient to
-capture the offset between a ksymtab entry and its target symbol.
+restore_user_sigmask() should simply die. Although perhaps another helper
+makes sense to add WARN_ON(test_tsk_restore_sigmask() && !signal_pending).
 
-Unfortunately, this is not always true: in the case of per-CPU
-variables, a per-CPU variable's base address (which usually differs
-from the actual address of any of its per-CPU copies) could be at
-an arbitrary offset from the ksymtab entry, and so it may be out
-of range for a 32-bit relative reference.
+Oleg.
 
-To make matters worse, we identified an issue in the arm64 module
-loader, where the overflow check applied to 32-bit place relative
-relocations uses the range that is specified in the AArch64 psABI,
-which is documented as having a 'blind spot' unless you explicitly
-narrow the range to match the signed vs unsigned interpretation of
-the relocation target [0]. This means that, in some cases, code
-importing those per-CPU variables from other modules may obtain a
-bogus reference and corrupt unrelated data.
 
-So let's fix this issue by switching to a 64-bit place relative
-reference on 64-bit architectures for the ksymtab entry's target
-symbol. This uses a bit more memory in the entry itself, which is
-unfortunate, but it preserves the original intent, which was to
-make the value invariant under runtime relocation of the core
-kernel.
-
-[0] https://lore.kernel.org/linux-arm-kernel/20190521125707.6115-1-ard.biesheuvel@arm.com
-
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: <stable@vger.kernel.org> # v4.19+
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@arm.com>
----
-
-Note that the name 'CONFIG_HAVE_ARCH_PREL32_RELOCATIONS' is no longer
-entirely accurate after this patch, so I will follow up with a patch
-to rename it to CONFIG_HAVE_ARCH_PREL_RELOCATIONS, but that doesn't
-require a backport to -stable so I have omitted it here.
-
-Also note that for x86, this patch depends on b40a142b12b5 ("x86: Add
-support for 64-bit place relative relocations"), which will need to
-be backported to v4.19 (from v4.20) if this patch is applied to
--stable.
-
- include/asm-generic/export.h |  9 +++++++--
- include/linux/compiler.h     |  9 +++++++++
- include/linux/export.h       | 14 ++++++++++----
- kernel/module.c              |  2 +-
- 4 files changed, 27 insertions(+), 7 deletions(-)
-
-diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
-index 294d6ae785d4..4d658b1e4707 100644
---- a/include/asm-generic/export.h
-+++ b/include/asm-generic/export.h
-@@ -4,7 +4,7 @@
- #ifndef KSYM_FUNC
- #define KSYM_FUNC(x) x
- #endif
--#ifdef CONFIG_64BIT
-+#if defined(CONFIG_64BIT) && !defined(CONFIG_HAVE_ARCH_PREL32_RELOCATIONS)
- #ifndef KSYM_ALIGN
- #define KSYM_ALIGN 8
- #endif
-@@ -19,7 +19,12 @@
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 4a0e98d..85f56e4 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -2318,19 +2318,19 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct epoll_event __user *, events,
+ 		size_t, sigsetsize)
+ {
+ 	int error;
+-	sigset_t ksigmask, sigsaved;
  
- .macro __put, val, name
- #ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
--	.long	\val - ., \name - .
-+#ifdef CONFIG_64BIT
-+	.quad	\val - .
-+#else
-+	.long	\val - .
-+#endif
-+	.long	\name - .
- #elif defined(CONFIG_64BIT)
- 	.quad	\val, \name
- #else
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 8aaf7cd026b0..33c65ebb7cfe 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -305,6 +305,15 @@ static inline void *offset_to_ptr(const int *off)
- 	return (void *)((unsigned long)off + *off);
+ 	/*
+ 	 * If the caller wants a certain signal mask to be set during the wait,
+ 	 * we apply it here.
+ 	 */
+-	error = set_user_sigmask(sigmask, &ksigmask, &sigsaved, sigsetsize);
++	error = set_user_sigmask(sigmask, sigsetsize);
+ 	if (error)
+ 		return error;
+ 
+ 	error = do_epoll_wait(epfd, events, maxevents, timeout);
+ 
+-	restore_user_sigmask(sigmask, &sigsaved);
++	if (error != -EINTR)
++		restore_saved_sigmask();
+ 
+ 	return error;
+ }
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index e412c09..1e82ae0 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -416,7 +416,6 @@ void task_join_group_stop(struct task_struct *task);
+ static inline void set_restore_sigmask(void)
+ {
+ 	set_thread_flag(TIF_RESTORE_SIGMASK);
+-	WARN_ON(!test_thread_flag(TIF_SIGPENDING));
  }
  
-+/**
-+ * loffset_to_ptr - convert a relative memory offset to an absolute pointer
-+ * @off:	the address of the signed long offset value
-+ */
-+static inline void *loffset_to_ptr(const long *off)
-+{
-+	return (void *)((unsigned long)off + *off);
-+}
-+
- #endif /* __ASSEMBLY__ */
- 
- /* Compile time object size, -1 for unknown */
-diff --git a/include/linux/export.h b/include/linux/export.h
-index fd8711ed9ac4..8f805b9f1c25 100644
---- a/include/linux/export.h
-+++ b/include/linux/export.h
-@@ -43,6 +43,12 @@ extern struct module __this_module;
- 
- #ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
- #include <linux/compiler.h>
-+#ifdef CONFIG_64BIT
-+#define __KSYMTAB_REL	".quad "
-+#else
-+#define __KSYMTAB_REL	".long "
-+#endif
-+
- /*
-  * Emit the ksymtab entry as a pair of relative references: this reduces
-  * the size by half on 64-bit architectures, and eliminates the need for
-@@ -52,16 +58,16 @@ extern struct module __this_module;
- #define __KSYMTAB_ENTRY(sym, sec)					\
- 	__ADDRESSABLE(sym)						\
- 	asm("	.section \"___ksymtab" sec "+" #sym "\", \"a\"	\n"	\
--	    "	.balign	8					\n"	\
-+	    "	.balign	4					\n"	\
- 	    "__ksymtab_" #sym ":				\n"	\
--	    "	.long	" #sym "- .				\n"	\
-+	    __KSYMTAB_REL #sym "- .				\n"	\
- 	    "	.long	__kstrtab_" #sym "- .			\n"	\
- 	    "	.previous					\n")
- 
- struct kernel_symbol {
--	int value_offset;
-+	long value_offset;
- 	int name_offset;
--};
-+} __packed;
- #else
- #define __KSYMTAB_ENTRY(sym, sec)					\
- 	static const struct kernel_symbol __ksymtab_##sym		\
-diff --git a/kernel/module.c b/kernel/module.c
-index 6e6712b3aaf5..43efd46feeee 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -541,7 +541,7 @@ static bool check_exported_symbol(const struct symsearch *syms,
- static unsigned long kernel_symbol_value(const struct kernel_symbol *sym)
+ static inline void clear_tsk_restore_sigmask(struct task_struct *tsk)
+@@ -447,7 +446,6 @@ static inline bool test_and_clear_restore_sigmask(void)
+ static inline void set_restore_sigmask(void)
  {
- #ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
--	return (unsigned long)offset_to_ptr(&sym->value_offset);
-+	return (unsigned long)loffset_to_ptr(&sym->value_offset);
- #else
- 	return sym->value;
+ 	current->restore_sigmask = true;
+-	WARN_ON(!test_thread_flag(TIF_SIGPENDING));
+ }
+ static inline void clear_tsk_restore_sigmask(struct task_struct *tsk)
+ {
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index 9702016..887cea6 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -273,8 +273,7 @@ extern int group_send_sig_info(int sig, struct kernel_siginfo *info,
+ 			       struct task_struct *p, enum pid_type type);
+ extern int __group_send_sig_info(int, struct kernel_siginfo *, struct task_struct *);
+ extern int sigprocmask(int, sigset_t *, sigset_t *);
+-extern int set_user_sigmask(const sigset_t __user *usigmask, sigset_t *set,
+-	sigset_t *oldset, size_t sigsetsize);
++extern int set_user_sigmask(const sigset_t __user *umask, size_t sigsetsize);
+ extern void restore_user_sigmask(const void __user *usigmask,
+ 				 sigset_t *sigsaved);
+ extern void set_current_blocked(sigset_t *);
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 227ba17..76f4f9a 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2801,19 +2801,21 @@ EXPORT_SYMBOL(sigprocmask);
+  * This is useful for syscalls such as ppoll, pselect, io_pgetevents and
+  * epoll_pwait where a new sigmask is passed from userland for the syscalls.
+  */
+-int set_user_sigmask(const sigset_t __user *usigmask, sigset_t *set,
+-		     sigset_t *oldset, size_t sigsetsize)
++int set_user_sigmask(const sigset_t __user *umask, size_t sigsetsize)
+ {
+-	if (!usigmask)
++	sigset_t *kmask;
++
++	if (!umask)
+ 		return 0;
+ 
+ 	if (sigsetsize != sizeof(sigset_t))
+ 		return -EINVAL;
+-	if (copy_from_user(set, usigmask, sizeof(sigset_t)))
++	if (copy_from_user(kmask, umask, sizeof(sigset_t)))
+ 		return -EFAULT;
+ 
+-	*oldset = current->blocked;
+-	set_current_blocked(set);
++	set_restore_sigmask();
++	current->saved_sigmask = current->blocked;
++	set_current_blocked(kmask);
+ 
+ 	return 0;
+ }
+@@ -2840,39 +2842,6 @@ int set_compat_user_sigmask(const compat_sigset_t __user *usigmask,
+ EXPORT_SYMBOL(set_compat_user_sigmask);
  #endif
--- 
-2.17.1
+ 
+-/*
+- * restore_user_sigmask:
+- * usigmask: sigmask passed in from userland.
+- * sigsaved: saved sigmask when the syscall started and changed the sigmask to
+- *           usigmask.
+- *
+- * This is useful for syscalls such as ppoll, pselect, io_pgetevents and
+- * epoll_pwait where a new sigmask is passed in from userland for the syscalls.
+- */
+-void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
+-{
+-
+-	if (!usigmask)
+-		return;
+-	/*
+-	 * When signals are pending, do not restore them here.
+-	 * Restoring sigmask here can lead to delivering signals that the above
+-	 * syscalls are intended to block because of the sigmask passed in.
+-	 */
+-	if (signal_pending(current)) {
+-		current->saved_sigmask = *sigsaved;
+-		set_restore_sigmask();
+-		return;
+-	}
+-
+-	/*
+-	 * This is needed because the fast syscall return path does not restore
+-	 * saved_sigmask when signals are not pending.
+-	 */
+-	set_current_blocked(sigsaved);
+-}
+-EXPORT_SYMBOL(restore_user_sigmask);
+-
+ /**
+  *  sys_rt_sigprocmask - change the list of currently blocked signals
+  *  @how: whether to add, remove, or set signals
 
