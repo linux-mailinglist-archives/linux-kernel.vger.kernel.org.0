@@ -2,100 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AD91262E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 13:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C1B0262E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 13:19:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729263AbfEVLT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 07:19:27 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:34607 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728690AbfEVLT0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 07:19:26 -0400
-Received: by mail-io1-f65.google.com with SMTP id g84so1530455ioa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 04:19:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=bWYGvF7gCxRat98U3IClOMsOqN8VU0HUIGscnhYjrfg=;
-        b=h8zvX4hVi4C+buBGBjaYFsPaJHkbDuAb/rk/6DrbKMcWRnMs6m60WPUxR8JKf/PlDO
-         H3QabUUqMvyQtHks9Vk3sIU4p3akHXvAGgJBC8HqTrVmP290rEdNzZsjJi+3AJpC+ZAC
-         zRlJoKUAhjJWtMwgD456KgBGZzoMY1QXi0fVAbNzrJeQAZHA7bYOOVK1yUFoRZlByyQy
-         yxH2/0PmChENoFrNRWN/T8Fl+OMpKTp/CfQyrUuvHwf0ydiDuA0g0F5F+HoHYuvie2rm
-         8GV+rE8K6i7D9aVWtOE8Xl7shC/DrSCfCmzf2lBxmvP3O32paPK6H8jRMJ5sCcvEYZP9
-         Momg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=bWYGvF7gCxRat98U3IClOMsOqN8VU0HUIGscnhYjrfg=;
-        b=pbBgNGEJ4TiRrGRCkjOcIEQHRosV/CH3BGaFwE7/95O2ofHZlWTYi6Frf3WUJXIcPv
-         zGlCk9t1/ljf/oPRkNTjKV6+YSfVLQJ0BS8oyp4B+sZTmWGcjpHMtOQEqe3jT0bWQQjG
-         kK33/auCD/KlM2fBtZVyjKIu53vMZq8WSA2JUw7DNDZKZUGiG3zu+pojoLdpK7QPAB7/
-         vTktVoA0U5hWX2huROUk09Eiufjt0qvZbbovCaEp3mca/NJ/ZWcfuAxzGpTy0kTikli6
-         cjnp4hG6MDc3baKou5u03tS8xOlW0b7nj7BRGOH/fzMftSBlsTyP0SH828QtV3qktsNk
-         pRkw==
-X-Gm-Message-State: APjAAAXnIhz9w9EmbcTgyXTsVW1KU9aAw+PFNp8sOcK98EUPajFc1vKW
-        ZHbrejECYUf5EqPV4I2OCge6xNrAorBfdF/apV8=
-X-Google-Smtp-Source: APXvYqw5ZGw7Kh+D7ulRFSeIxki1a9QPTjDag1glQMiOcR5awJ3q/3Og9/WmcqROvbVT0lajxB+jPp+6hVmKkKI+Scg=
-X-Received: by 2002:a5d:8043:: with SMTP id b3mr48484094ior.115.1558523965996;
- Wed, 22 May 2019 04:19:25 -0700 (PDT)
+        id S1729326AbfEVLTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 07:19:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34948 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728690AbfEVLTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 07:19:33 -0400
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11D43217F9;
+        Wed, 22 May 2019 11:19:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558523973;
+        bh=qwtW/C0ND279cga+/JzpAwdoziP7mcxRZFf1CtvPlWc=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=p/3qZGEJQm3OLjdeNppLFjp73LTflIQtPcEpbT174J/9IPQB/U2d8Xn+K1Vzt1DK9
+         5YuZYVBgoiH59Sm+8D/BC0GQJAAKJoSjA5xNeWcbw7gBWTjwq942vzfTCI3LXDJtLl
+         D/lT8EyOCIKOj7jSfRssYrbHhKLdagwp/bhkAxLI=
+Date:   Wed, 22 May 2019 13:19:30 +0200 (CEST)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: logitech-hidpp: HID: make const array consumer_rdesc_start
+ static
+In-Reply-To: <20190510131722.5023-1-colin.king@canonical.com>
+Message-ID: <nycvar.YFH.7.76.1905221319220.1962@cbobk.fhfr.pm>
+References: <20190510131722.5023-1-colin.king@canonical.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:a02:5842:0:0:0:0:0 with HTTP; Wed, 22 May 2019 04:19:25
- -0700 (PDT)
-Reply-To: benardzo1u@gmail.com
-From:   "Dr. Bernard Zoungrana" <roselylaboso@gmail.com>
-Date:   Wed, 22 May 2019 04:19:25 -0700
-Message-ID: <CA+uq6STOt_MF=7ONcc+Cnq4ra_g9YJj3rg4jQUXqRSTGy7H3Ag@mail.gmail.com>
-Subject: Your urgent message is needed immediately.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Partner,
+On Fri, 10 May 2019, Colin King wrote:
 
-I am Dr. Benard Zoungrana,Managing Director of (BOA) Bank Of Africa .I
-write you this proposal in good faith hoping that I will rely on you
-in a business transaction that require absolute confidentiality and of
-great interest and benefit to our both families.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Don't populate the array consumer_rdesc_start on the stack but instead
+> make it static. Makes the object code smaller by 88 bytes.
+> 
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>   59155	   9840	    448	  69443	  10f43	drivers/hid/hid-logitech-hidpp.o
+> 
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>   59003	   9904	    448	  69355	  10eeb	drivers/hid/hid-logitech-hidpp.o
+> 
+> (gcc version 8.3.0, amd64)
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/hid/hid-logitech-hidpp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+> index 72fc9c0566db..df960491e473 100644
+> --- a/drivers/hid/hid-logitech-hidpp.c
+> +++ b/drivers/hid/hid-logitech-hidpp.c
+> @@ -2862,7 +2862,7 @@ static u8 *hidpp10_consumer_keys_report_fixup(struct hidpp_device *hidpp,
+>  					      u8 *_rdesc, unsigned int *rsize)
+>  {
+>  	/* Note 0 terminated so we can use strnstr to search for this. */
+> -	const char consumer_rdesc_start[] = {
+> +	static const char consumer_rdesc_start[] = {
+>  		0x05, 0x0C,	/* USAGE_PAGE (Consumer Devices)       */
+>  		0x09, 0x01,	/* USAGE (Consumer Control)            */
+>  		0xA1, 0x01,	/* COLLECTION (Application)            */
 
-In 1999,one Mr. Raymond Beck, is an American, a physician and
-industrialist, he died without having any beneficiary to his assets
-including his account here in Burkina Faso which he opened in a Bank
-of Africa in the year 1994 as his personal savings for the purpose of
-expansion and development of his company before his untimely death in
-1999, made a fixed deposit for 36 months, valued at $50,500,000.00
-with my bank. I was his account officer before I rose to the position
-of Managing Director. Sadly Mr. Raymond Beck was among the death
-victims in the 1999 plane crash that left over 47 people dead while he
-was on business trip.
+Applied, thanks Colin.
 
-Since the last quarter of 2010 until today, the management of my bank
-has been finding means to reach him so as ascertain if he will roll
-over the Deposit or have the contract sum withdrawn. When I discovered
-that this will happen, I have tried to think up a procedure to
-preserve this fund and use the proceeds for business.
+-- 
+Jiri Kosina
+SUSE Labs
 
-Some directors here have been trying to find out from me the
-information about this account and the owner, but I have kept it
-closed because, I know that if they become aware that Mr. Raymond Beck
-is late, they will corner the funds for themselves. Therefore, am
-seeking your co-operation to present you as the one to benefit from
-his fund at his death, so that my bank headquarters will pay the funds
-to you. I have done enough inside bank arrangement and you only have
-to put in your details into the information network in the bank
-computers and reflect you as his next of kin.
-
-If you concur with this proposal, I intend for you to retain 40% of
-the funds while 50% shall be for me while 10% will be for expenses
-both parties might have incurred during the process of transferring of
-the fund to your account. Kindly forward your response to me.
-
-
-Best Regards
-Dr. Benard Zoungrana
-Managing Director (Head of Wealth and Investment Management)
-Email: benardzo1u@gmail.com
