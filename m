@@ -2,480 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D64E425C4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 05:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DA4725C90
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 06:13:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbfEVDr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 21 May 2019 23:47:56 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58302 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727733AbfEVDrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 21 May 2019 23:47:55 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1135721428D5CDF964;
-        Wed, 22 May 2019 11:47:51 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 22 May 2019
- 11:47:43 +0800
-From:   sunqiuyang <sunqiuyang@huawei.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <yuchao0@huawei.com>, <sunqiuyang@huawei.com>
-Subject: [PATCH v4 1/1] f2fs: ioctl for removing a range from F2FS
-Date:   Wed, 22 May 2019 12:05:30 +0800
-Message-ID: <20190522040530.37886-1-sunqiuyang@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1726390AbfEVEN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 00:13:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:41078 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbfEVEN5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 00:13:57 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4M48hlI102267;
+        Wed, 22 May 2019 04:13:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=7HRLf3BezHIqpaBxypsQao+m1vPiNXUpQpY3syHj0HM=;
+ b=F3ITnOwBRBNFjjwlXqS2iWI7UihpJa261STrq83+L0e0JA40p0Gsrv2zf1iCyk579Yg5
+ MsXg6WTyVXj6w5BMB2O65fdrKRWIEUVVr5m9VnRRzgiT7EQAgd6yWsADbFWgYNk9/4hX
+ 4DRQAJnUHHd+i2MAoEVBHSaISYbcEQGaSxFcfoOvhhiRZgRbUOv9xrg6o+rD+k7uuCOo
+ CRJwoNpq1O9DRaxOaZK/YcoitgPKtSCcRbc6mVvTGNRLlJ/kmDMpCdH3J/mEBc0kX2jo
+ MobRhHy1YwFt9YOoiZL+LlVpsE/K/u83g+aOj2jDwjZ2P/oKzlWyIfsmtGFzf22ucs9E gA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2smsk5918c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 May 2019 04:13:02 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4M4BeEl158656;
+        Wed, 22 May 2019 04:13:02 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by userp3020.oracle.com with ESMTP id 2smsgum05e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 May 2019 04:13:01 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x4M4D1hx161149;
+        Wed, 22 May 2019 04:13:01 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2smsgum050-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 22 May 2019 04:13:01 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4M4CvbY010025;
+        Wed, 22 May 2019 04:12:58 GMT
+Received: from localhost (/10.159.211.99)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 22 May 2019 04:12:56 +0000
+Date:   Wed, 22 May 2019 00:12:53 -0400
+From:   Kris Van Hees <kris.van.hees@oracle.com>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Kris Van Hees <kris.van.hees@oracle.com>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, dtrace-devel@oss.oracle.com,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        mhiramat@kernel.org, acme@kernel.org, ast@kernel.org,
+        daniel@iogearbox.net, peterz@infradead.org
+Subject: Re: [RFC PATCH 00/11] bpf, trace, dtrace: DTrace BPF program type
+ implementation and sample use
+Message-ID: <20190522041253.GM2422@oracle.com>
+References: <201905202347.x4KNl0cs030532@aserv0121.oracle.com>
+ <20190521175617.ipry6ue7o24a2e6n@ast-mbp.dhcp.thefacebook.com>
+ <20190521184137.GH2422@oracle.com>
+ <20190521205533.evfszcjvdouby7vp@ast-mbp.dhcp.thefacebook.com>
+ <20190521213648.GK2422@oracle.com>
+ <20190521232618.xyo6w3e6nkwu3h5v@ast-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521232618.xyo6w3e6nkwu3h5v@ast-mbp.dhcp.thefacebook.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9264 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905220028
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qiuyang Sun <sunqiuyang@huawei.com>
+On Tue, May 21, 2019 at 04:26:19PM -0700, Alexei Starovoitov wrote:
+> On Tue, May 21, 2019 at 05:36:49PM -0400, Kris Van Hees wrote:
+> > On Tue, May 21, 2019 at 01:55:34PM -0700, Alexei Starovoitov wrote:
+> > > On Tue, May 21, 2019 at 02:41:37PM -0400, Kris Van Hees wrote:
+> > > > On Tue, May 21, 2019 at 10:56:18AM -0700, Alexei Starovoitov wrote:
+> > > > > On Mon, May 20, 2019 at 11:47:00PM +0000, Kris Van Hees wrote:
+> > > > > > 
+> > > > > >     2. bpf: add BPF_PROG_TYPE_DTRACE
+> > > > > > 
+> > > > > > 	This patch adds BPF_PROG_TYPE_DTRACE as a new BPF program type, without
+> > > > > > 	actually providing an implementation.  The actual implementation is
+> > > > > > 	added in patch 4 (see below).  We do it this way because the
+> > > > > > 	implementation is being added to the tracing subsystem as a component
+> > > > > > 	that I would be happy to maintain (if merged) whereas the declaration
+> > > > > > 	of the program type must be in the bpf subsystem.  Since the two
+> > > > > > 	subsystems are maintained by different people, we split the
+> > > > > > 	implementing patches across maintainer boundaries while ensuring that
+> > > > > > 	the kernel remains buildable between patches.
+> > > > > 
+> > > > > None of these kernel patches are necessary for what you want to achieve.
+> > > > 
+> > > > I disagree.  The current support for BPF programs for probes associates a
+> > > > specific BPF program type with a specific set of probes, which means that I
+> > > > cannot write BPF programs based on a more general concept of a 'DTrace probe'
+> > > > and provide functionality based on that.  It also means that if I have a D
+> > > > clause (DTrace probe action code associated with probes) that is to be executed
+> > > > for a list of probes of different types, I need to duplicate the program
+> > > > because I cannot cross program type boundaries.
+> > > 
+> > > tracepoint vs kprobe vs raw_tracepoint vs perf event work on different input.
+> > > There is no common denominator to them that can serve as single 'generic' context.
+> > > We're working on the concept of bpf libraries where different bpf program
+> > > with different types can call single bpf function with arbitrary arguments.
+> > > This concept already works in bpf2bpf calls. We're working on extending it
+> > > to different program types.
+> > > You're more then welcome to help in that direction,
+> > > but type casting of tracepoint into kprobe is no go.
+> > 
+> > I am happy to hear about the direction you are going in adding functionality.
+> > Please note though that I am not type casting tracepoint into kprobe or
+> > anything like that.  I am making it possible to transfer execution from
+> > tracepoint, kprobe, raw-tracepoint, perf event, etc into a BPF program of
+> > a different type (BPF_PROG_TYPE_DTRACE) which operates as a general probe
+> > action execution program type.  It provides functionality that is used to
+> > implement actions to be executed when a probe fires, independent of the
+> > actual probe type that fired.
+> > 
+> > What you describe seems to me to be rather equivalent to what I already
+> > implement in my patch.
+> 
+> except they're not.
+> you're converting to one new prog type only that no one else can use.
+> Whereas bpf infra is aiming to be as generic as possible and
+> fit networking, tracing, security use case all at once.
 
-This ioctl shrinks a given length (aligned to sections) from end of the
-main area. Any cursegs and valid blocks will be moved out before
-invalidating the range.
+Two points here...  the patch that implements cross-prog type tail-call support
+is not specific to *any* specific prog type.  Each prog type can specify which
+(if any) prog types is can receive calls from (and it can implement context
+conversion code to carry any relevant info from the caller context into the
+context for the callee).  There is nothing in that patch that is specific to
+DTrace or any other prog type.
 
-This feature can be used for adjusting partition sizes online.
---
-Changlog v1 ==> v2:
+Then I also introduce a new prog type (not tied to any specific probe type) to
+provide the ability to execute programs in a probe type independent context,
+and it makes use of the cross-prog-type tail-call support in order to be able
+to invoke programs in that probe-independent context from probe-specific BPF
+programs.  And there is nothing that prevents anyone from using that new prog
+type as well - it is available for use just like any other prog type that
+already exists.
 
-Sahitya Tummala:
- - Add this ioctl for f2fs_compat_ioctl() as well.
- - Fix debugfs status to reflect the online resize changes.
- - Fix potential race between online resize path and allocate new data
-   block path or gc path.
+But I am confused...  the various probes you mentioned a few emails back
+(kprobe, tracepoint, raw_tracepoint, perf event) each have their own BPF
+program type associated with them (raw_tracepoint has two program types
+serving it), which doesn't sound very generic.  But you are objecting to the
+introduction of a generic prog type that can be used to execute programs
+regardless of the probe type that caused the invocation because the bpf
+infrastructure is aimed at being as generic as possible.
 
-Others:
- - Rename some identifiers.
- - Add some error handling branches.
- - Clear sbi->next_victim_seg[BG_GC/FG_GC] in shrinking range.
---
-Changelog v2 ==> v3:
-Implement this interface as ext4's, and change the parameter from shrunk
-bytes to new block count of F2FS.
---
-Changelog v3 ==> v4:
- - During resizing, force to empty sit_journal and forbid adding new
-   entries to it, in order to avoid invalid segno in journal after resize.
- - Reduce sbi->user_block_count before resize starts.
- - Commit the updated superblock first, and then update in-memory metadata
-   only when the former succeeds.
- - Target block count must align to sections.
+Could you elaborate on why you believe my patches are not adding generic
+features?  I can certainly agree that the DTrace-specific portions are less
+generic (although they are certainly available for anyone to use), but I
+don't quite understand why the new features are deemed non-generic and why
+you believe no one else can use this?
 
-Signed-off-by: Qiuyang Sun <sunqiuyang@huawei.com>
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
----
- fs/f2fs/debug.c   |   7 +++
- fs/f2fs/f2fs.h    |   6 +++
- fs/f2fs/file.c    |  28 +++++++++++
- fs/f2fs/gc.c      | 137 +++++++++++++++++++++++++++++++++++++++++++++++++++++-
- fs/f2fs/segment.c |  43 +++++++++++++----
- fs/f2fs/segment.h |   1 +
- fs/f2fs/super.c   |   3 ++
- 7 files changed, 214 insertions(+), 11 deletions(-)
+> > > > The reasons for these patches is because I cannot do the same with the existing
+> > > > implementation.  Yes, I can do some of it or use some workarounds to accomplish
+> > > > kind of the same thing, but at the expense of not being able to do what I need
+> > > > to do but rather do some kind of best effort alternative.  That is not the goal
+> > > > here.
+> > > 
+> > > what you call 'workaround' other people call 'feature'.
+> > > The kernel community doesn't accept extra code into the kernel
+> > > when user space can do the same.
+> > 
+> > Sure, but userspace cannot do the same because in the case of DTrace much
+> > of this needs to execute at the kernel level within the context of the probe
+> > firing, because once you get back to userspace, the system has moved on.  We
+> > need to capture information and perform processing of that information at the
+> > time of probe firing.  I am spending quite a lot of my time in the design of
+> > DTrace based on BPF and other kernel features to avoid adding more to the
+> > kernel than is really needed, to certainly also to avoid duplicating code.
+> > 
+> > But I am not designing and implementing a new tracer - I am making an
+> > existing one available based on existing features (as much as possible).  So,
+> > something that comes close but doesn't quite do what we need is not a
+> > solution.
+> 
+> Your patches disagree with your words.
+> This dtrace buffer is a redundant feature.
+> per-cpu array plus perf_event_output achieve _exactly_ the same.
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 99e9a5c..7706049 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -27,8 +27,15 @@
- static void update_general_status(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_stat_info *si = F2FS_STAT(sbi);
-+	struct f2fs_super_block *raw_super = F2FS_RAW_SUPER(sbi);
- 	int i;
- 
-+	/* these will be changed if online resize is done */
-+	si->main_area_segs = le32_to_cpu(raw_super->segment_count_main);
-+	si->main_area_sections = le32_to_cpu(raw_super->section_count);
-+	si->main_area_zones = si->main_area_sections /
-+				le32_to_cpu(raw_super->secs_per_zone);
-+
- 	/* validation check of the segment numbers */
- 	si->hit_largest = atomic64_read(&sbi->read_hit_largest);
- 	si->hit_cached = atomic64_read(&sbi->read_hit_cached);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a205d4d..fc53d37 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -423,6 +423,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
- #define F2FS_IOC_SET_PIN_FILE		_IOW(F2FS_IOCTL_MAGIC, 13, __u32)
- #define F2FS_IOC_GET_PIN_FILE		_IOR(F2FS_IOCTL_MAGIC, 14, __u32)
- #define F2FS_IOC_PRECACHE_EXTENTS	_IO(F2FS_IOCTL_MAGIC, 15)
-+#define F2FS_IOC_RESIZE_FS		_IOW(F2FS_IOCTL_MAGIC, 16, __u64)
- 
- #define F2FS_IOC_SET_ENCRYPTION_POLICY	FS_IOC_SET_ENCRYPTION_POLICY
- #define F2FS_IOC_GET_ENCRYPTION_POLICY	FS_IOC_GET_ENCRYPTION_POLICY
-@@ -1309,6 +1310,9 @@ struct f2fs_sb_info {
- 	unsigned int segs_per_sec;		/* segments per section */
- 	unsigned int secs_per_zone;		/* sections per zone */
- 	unsigned int total_sections;		/* total section count */
-+	unsigned int current_total_sections;	/* for shrink resize */
-+	bool resizing;
-+	struct mutex resize_mutex;
- 	unsigned int total_node_count;		/* total node block count */
- 	unsigned int total_valid_node_count;	/* valid node block count */
- 	loff_t max_file_blocks;			/* max block index of file */
-@@ -3175,6 +3179,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- int f2fs_disable_cp_again(struct f2fs_sb_info *sbi, block_t unusable);
- void f2fs_release_discard_addrs(struct f2fs_sb_info *sbi);
- int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra);
-+void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type);
- void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi);
- int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range);
- bool f2fs_exist_trim_candidates(struct f2fs_sb_info *sbi,
-@@ -3318,6 +3323,7 @@ int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
- int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
- 			unsigned int segno);
- void f2fs_build_gc_manager(struct f2fs_sb_info *sbi);
-+int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count);
- 
- /*
-  * recovery.c
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index d05ac21..a37a0d4 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3013,6 +3013,31 @@ static int f2fs_ioc_precache_extents(struct file *filp, unsigned long arg)
- 	return f2fs_precache_extents(file_inode(filp));
- }
- 
-+static int f2fs_ioc_resize_fs(struct file *filp, unsigned long arg)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(file_inode(filp));
-+	__u64 block_count;
-+	int ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (f2fs_readonly(sbi->sb))
-+		return -EROFS;
-+
-+	if (copy_from_user(&block_count, (__u64 __user *)arg, sizeof(__u64)))
-+		return -EFAULT;
-+
-+	ret = mnt_want_write_file(filp);
-+	if (ret)
-+		return ret;
-+
-+	ret = f2fs_resize_fs(sbi, block_count);
-+	mnt_drop_write_file(filp);
-+
-+	return ret;
-+}
-+
- long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
-@@ -3069,6 +3094,8 @@ long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return f2fs_ioc_set_pin_file(filp, arg);
- 	case F2FS_IOC_PRECACHE_EXTENTS:
- 		return f2fs_ioc_precache_extents(filp, arg);
-+	case F2FS_IOC_RESIZE_FS:
-+		return f2fs_ioc_resize_fs(filp, arg);
- 	default:
- 		return -ENOTTY;
- 	}
-@@ -3182,6 +3209,7 @@ long f2fs_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case F2FS_IOC_GET_PIN_FILE:
- 	case F2FS_IOC_SET_PIN_FILE:
- 	case F2FS_IOC_PRECACHE_EXTENTS:
-+	case F2FS_IOC_RESIZE_FS:
- 		break;
- 	default:
- 		return -ENOIOCTLCMD;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 963fb45..273ca08 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -311,10 +311,11 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 	struct sit_info *sm = SIT_I(sbi);
- 	struct victim_sel_policy p;
- 	unsigned int secno, last_victim;
--	unsigned int last_segment = MAIN_SEGS(sbi);
-+	unsigned int last_segment;
- 	unsigned int nsearched = 0;
- 
- 	mutex_lock(&dirty_i->seglist_lock);
-+	last_segment = CUR_MAIN_SECS(sbi) * sbi->segs_per_sec;
- 
- 	p.alloc_mode = alloc_mode;
- 	select_policy(sbi, gc_type, type, &p);
-@@ -404,7 +405,8 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
- 				sm->last_victim[p.gc_mode] = last_victim + 1;
- 			else
- 				sm->last_victim[p.gc_mode] = segno + 1;
--			sm->last_victim[p.gc_mode] %= MAIN_SEGS(sbi);
-+			sm->last_victim[p.gc_mode] %=
-+				(CUR_MAIN_SECS(sbi) * sbi->segs_per_sec);
- 			break;
- 		}
- 	}
-@@ -1360,3 +1362,134 @@ void f2fs_build_gc_manager(struct f2fs_sb_info *sbi)
- 		SIT_I(sbi)->last_victim[ALLOC_NEXT] =
- 				GET_SEGNO(sbi, FDEV(0).end_blk) + 1;
- }
-+
-+static int free_segment_range(struct f2fs_sb_info *sbi, unsigned int start,
-+							unsigned int end)
-+{
-+	int type;
-+	unsigned int segno, next_inuse;
-+	struct gc_inode_list gc_list = {
-+		.ilist = LIST_HEAD_INIT(gc_list.ilist),
-+		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
-+	};
-+	int err = 0;
-+
-+	/* Move out cursegs from the target range */
-+	for (type = CURSEG_HOT_DATA; type < NR_CURSEG_TYPE; type++) {
-+		segno = CURSEG_I(sbi, type)->segno;
-+		if (segno >= start && segno <= end)
-+			allocate_segment_for_resize(sbi, type);
-+	}
-+
-+	/* do GC to move out valid blocks in the range */
-+	mutex_lock(&sbi->gc_mutex);
-+	for (segno = start; segno <= end; segno += sbi->segs_per_sec) {
-+		do_garbage_collect(sbi, segno, &gc_list, FG_GC);
-+		if (get_valid_blocks(sbi, segno, true)) {
-+			err = -EAGAIN;
-+			break;
-+		}
-+	}
-+
-+	mutex_unlock(&sbi->gc_mutex);
-+	put_gc_inode(&gc_list);
-+
-+	if (err)
-+		return err;
-+
-+	err = f2fs_sync_fs(sbi->sb, 1);
-+	if (err)
-+		return err;
-+
-+	next_inuse = find_next_inuse(FREE_I(sbi), end + 1, start);
-+	if (next_inuse <= end) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"segno %u should be free but still inuse!", next_inuse);
-+		f2fs_bug_on(sbi, 1);
-+	}
-+	return err;
-+}
-+
-+int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
-+{
-+	__u64 old_block_count, shrunk_blocks;
-+	unsigned int secs;
-+	int gc_mode, gc_type;
-+	int err = 0;
-+
-+	old_block_count = le64_to_cpu(F2FS_RAW_SUPER(sbi)->block_count);
-+	if (block_count > old_block_count)
-+		return -EINVAL;
-+
-+	/* new fs size should align to section size */
-+	if (block_count % BLKS_PER_SEC(sbi))
-+		return -EINVAL;
-+
-+	if (block_count == old_block_count)
-+		return 0;
-+
-+	shrunk_blocks = old_block_count - block_count;
-+	secs = shrunk_blocks / BLKS_PER_SEC(sbi);
-+	spin_lock(&sbi->stat_lock);
-+	if (shrunk_blocks + valid_user_blocks(sbi) +
-+		sbi->current_reserved_blocks + sbi->unusable_block_count +
-+		F2FS_OPTION(sbi).root_reserved_blocks > sbi->user_block_count)
-+		err = -ENOSPC;
-+	else
-+		sbi->user_block_count -= shrunk_blocks;
-+	spin_unlock(&sbi->stat_lock);
-+	if (err)
-+		return err;
-+
-+	mutex_lock(&sbi->resize_mutex);
-+	sbi->resizing = true;
-+	mutex_lock(&DIRTY_I(sbi)->seglist_lock);
-+	CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi) - secs;
-+	for (gc_mode = 0; gc_mode < MAX_GC_POLICY; gc_mode++)
-+		if (SIT_I(sbi)->last_victim[gc_mode] >=
-+					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec)
-+			SIT_I(sbi)->last_victim[gc_mode] = 0;
-+	for (gc_type = BG_GC; gc_type <= FG_GC; gc_type++)
-+		if (sbi->next_victim_seg[gc_type] >=
-+					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec)
-+			sbi->next_victim_seg[gc_type] = NULL_SEGNO;
-+	mutex_unlock(&DIRTY_I(sbi)->seglist_lock);
-+
-+	err = free_segment_range(sbi, CUR_MAIN_SECS(sbi) * sbi->segs_per_sec,
-+			MAIN_SEGS(sbi) - 1);
-+	if (err) {
-+		CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi);
-+		sbi->user_block_count += shrunk_blocks;
-+		goto out;
-+	}
-+
-+	/* Update superblock */
-+	F2FS_RAW_SUPER(sbi)->section_count = cpu_to_le32(CUR_MAIN_SECS(sbi));
-+	F2FS_RAW_SUPER(sbi)->segment_count = cpu_to_le32(le32_to_cpu(
-+		F2FS_RAW_SUPER(sbi)->segment_count) - secs * sbi->segs_per_sec);
-+	F2FS_RAW_SUPER(sbi)->segment_count_main = cpu_to_le32(
-+					CUR_MAIN_SECS(sbi) * sbi->segs_per_sec);
-+	F2FS_RAW_SUPER(sbi)->block_count =
-+				cpu_to_le64(old_block_count - shrunk_blocks);
-+	mutex_lock(&sbi->gc_mutex);
-+	err = f2fs_commit_super(sbi, false);
-+	mutex_unlock(&sbi->gc_mutex);
-+	if (err) {
-+		CUR_MAIN_SECS(sbi) = MAIN_SECS(sbi);
-+		sbi->user_block_count += shrunk_blocks;
-+		goto out;
-+	}
-+
-+	/* Update FS metadata */
-+	SM_I(sbi)->segment_count -= secs * sbi->segs_per_sec;
-+	MAIN_SECS(sbi) = CUR_MAIN_SECS(sbi);
-+	MAIN_SEGS(sbi) = MAIN_SECS(sbi) * sbi->segs_per_sec;
-+	F2FS_CKPT(sbi)->user_block_count = cpu_to_le64(sbi->user_block_count);
-+	FREE_I(sbi)->free_sections -= secs;
-+	FREE_I(sbi)->free_segments -= secs * sbi->segs_per_sec;
-+
-+out:
-+	sbi->resizing = false;
-+	mutex_unlock(&sbi->resize_mutex);
-+	return err;
-+}
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 07e9235..2857465 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2360,7 +2360,7 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- {
- 	struct free_segmap_info *free_i = FREE_I(sbi);
- 	unsigned int segno, secno, zoneno;
--	unsigned int total_zones = MAIN_SECS(sbi) / sbi->secs_per_zone;
-+	unsigned int total_zones = CUR_MAIN_SECS(sbi) / sbi->secs_per_zone;
- 	unsigned int hint = GET_SEC_FROM_SEG(sbi, *newseg);
- 	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
- 	unsigned int left_start = hint;
-@@ -2377,12 +2377,13 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- 			goto got_it;
- 	}
- find_other_zone:
--	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
--	if (secno >= MAIN_SECS(sbi)) {
-+	secno = find_next_zero_bit(free_i->free_secmap, CUR_MAIN_SECS(sbi),
-+									hint);
-+	if (secno >= CUR_MAIN_SECS(sbi)) {
- 		if (dir == ALLOC_RIGHT) {
- 			secno = find_next_zero_bit(free_i->free_secmap,
--							MAIN_SECS(sbi), 0);
--			f2fs_bug_on(sbi, secno >= MAIN_SECS(sbi));
-+							CUR_MAIN_SECS(sbi), 0);
-+			f2fs_bug_on(sbi, secno >= CUR_MAIN_SECS(sbi));
- 		} else {
- 			go_left = 1;
- 			left_start = hint - 1;
-@@ -2397,8 +2398,8 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- 			continue;
- 		}
- 		left_start = find_next_zero_bit(free_i->free_secmap,
--							MAIN_SECS(sbi), 0);
--		f2fs_bug_on(sbi, left_start >= MAIN_SECS(sbi));
-+							CUR_MAIN_SECS(sbi), 0);
-+		f2fs_bug_on(sbi, left_start >= CUR_MAIN_SECS(sbi));
- 		break;
- 	}
- 	secno = left_start;
-@@ -2651,6 +2652,29 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
- 	stat_inc_seg_type(sbi, curseg);
- }
- 
-+void allocate_segment_for_resize(struct f2fs_sb_info *sbi, int type)
-+{
-+	struct curseg_info *curseg = CURSEG_I(sbi, type);
-+	unsigned int old_segno = curseg->segno;
-+
-+	down_read(&SM_I(sbi)->curseg_lock);
-+	mutex_lock(&curseg->curseg_mutex);
-+	if (f2fs_need_SSR(sbi) && get_ssr_segment(sbi, type))
-+		change_curseg(sbi, type);
-+	else
-+		new_curseg(sbi, type, true);
-+
-+	stat_inc_seg_type(sbi, curseg);
-+	mutex_unlock(&curseg->curseg_mutex);
-+	up_read(&SM_I(sbi)->curseg_lock);
-+
-+	if (get_valid_blocks(sbi, old_segno, false) == 0)
-+		__set_test_and_free(sbi, old_segno);
-+	f2fs_msg(sbi->sb, KERN_NOTICE,
-+		"For resize: curseg of type %d: %u ==> %u",
-+		type, old_segno, curseg->segno);
-+}
-+
- void f2fs_allocate_new_segments(struct f2fs_sb_info *sbi)
- {
- 	struct curseg_info *curseg;
-@@ -3774,7 +3798,7 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	struct f2fs_journal *journal = curseg->journal;
- 	struct sit_entry_set *ses, *tmp;
- 	struct list_head *head = &SM_I(sbi)->sit_entry_set;
--	bool to_journal = true;
-+	bool to_journal = !sbi->resizing;
- 	struct seg_entry *se;
- 
- 	down_write(&sit_i->sentry_lock);
-@@ -3793,7 +3817,8 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	 * entries, remove all entries from journal and add and account
- 	 * them in sit entry set.
- 	 */
--	if (!__has_cursum_space(journal, sit_i->dirty_sentries, SIT_JOURNAL))
-+	if (!__has_cursum_space(journal, sit_i->dirty_sentries, SIT_JOURNAL) ||
-+								sbi->resizing)
- 		remove_sits_in_journal(sbi);
- 
- 	/*
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 429007b..eaa9782 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -59,6 +59,7 @@
- 
- #define MAIN_SEGS(sbi)	(SM_I(sbi)->main_segments)
- #define MAIN_SECS(sbi)	((sbi)->total_sections)
-+#define CUR_MAIN_SECS(sbi)	((sbi)->current_total_sections)
- 
- #define TOTAL_SEGS(sbi)							\
- 	(SM_I(sbi) ? SM_I(sbi)->segment_count : 				\
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1f581f0..c6201f0 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2843,6 +2843,8 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
- 	sbi->segs_per_sec = le32_to_cpu(raw_super->segs_per_sec);
- 	sbi->secs_per_zone = le32_to_cpu(raw_super->secs_per_zone);
- 	sbi->total_sections = le32_to_cpu(raw_super->section_count);
-+	sbi->current_total_sections = sbi->total_sections;
-+	sbi->resizing = false;
- 	sbi->total_node_count =
- 		(le32_to_cpu(raw_super->segment_count_nat) / 2)
- 			* sbi->blocks_per_seg * NAT_ENTRY_PER_BLOCK;
-@@ -3296,6 +3298,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	mutex_init(&sbi->gc_mutex);
- 	mutex_init(&sbi->writepages);
- 	mutex_init(&sbi->cp_mutex);
-+	mutex_init(&sbi->resize_mutex);
- 	init_rwsem(&sbi->node_write);
- 	init_rwsem(&sbi->node_change);
- 
--- 
-1.8.3.1
+How can it be exactly the same when the per-cpu array plus perf_event_output
+approach relies on memory to be allocated in the per-cpu array to be used as
+scratch space for constructing the sample, and then that sample data gets
+copied from the per-cpu array memory into the memory that was allocated for
+the perf ring-buffer?  And my patch provides a way to write the data directly
+into the perf ring-buffer, without the need for a scratch area to be allocated,
+and without needing to copy the data from one memory chunk into another.
 
+> > > > > Feel free to add tools/dtrace/ directory and maintain it though.
+> > > > 
+> > > > Thank you.
+> > > > 
+> > > > > The new dtrace_buffer doesn't need to replicate existing bpf+kernel functionality
+> > > > > and no changes are necessary in kernel/events/ring_buffer.c either.
+> > > > > tools/dtrace/ user space component can use either per-cpu array map
+> > > > > or hash map as a buffer to store arbitrary data into and use
+> > > > > existing bpf_perf_event_output() to send it to user space via perf ring buffer.
+> > > > > 
+> > > > > See, for example, how bpftrace does that.
+> > > > 
+> > > > When using bpf_perf_event_output() you need to construct the sample first,
+> > > > and then send it off to user space using the perf ring-buffer.  That is extra
+> > > > work that is unnecessary.  Also, storing arbitrary data from userspace in maps
+> > > > is not relevant here because this is about data that is generated at the level
+> > > > of the kernel and sent to userspace as part of the probe action that is
+> > > > executed when the probe fires.
+> > > > 
+> > > > Bpftrace indeed uses maps and ways to construct the sample and then uses the
+> > > > perf ring-buffer to pass data to userspace.  And that is not the way DTrace
+> > > > works and that is not the mechanism that we need here,  So, while this may be
+> > > > satisfactory for bpftrace, it is not for DTrace.  We need more fine-grained
+> > > > control over how we write data to the buffer (doing direct stores from BPF
+> > > > code) and without the overhead of constructing a complete sample that can just
+> > > > be handed over to bpf_perf_event_output().
+> > > 
+> > > I think we're not on the same page vs how bpftrace and bpf_perf_event_output work.
+> > > What you're proposing in these patches is _slower_ than existing mechanism.
+> > 
+> > How can it be slower?  Is a sequence of BPF store instructions, writing
+> > directly to memory in the ring-buffer slower than using BPF store instructions
+> > to write data into a temporary location from which data is then copied into
+> > the ring-buffer by bpf_perf_event_output()?
+> > 
+> > Other than this, my implementation uses exactly the same functions at the
+> > perf ring-buffer level as bpf_perf_event_output() does.  In my case, the
+> > buffer reserve work is done with one helper, and the final commit is done
+> > with another helper.  So yes, I use two helper calls vs one helper call if
+> > you use bpf_perf_event_output() but as I mention above, I avoid the creation
+> > and copying of the sample data.
+> 
+> What stops you from using per-cpu array and perf_event_output?
+> No 'reserve' call necessary. lookup from per-cpu array gives a pointer
+> to large buffer that can be feed into perf_event_output.
+> It's also faster for small buffers and has no issues with multi-page.
+> No hacks on perf side necessary.
+
+Please see my comments above.  And please note that aside from the overhead of
+making one extra helper call (buffer_reserve), my implementation uses the very
+functions that are used to implement perf_event_output.  The only difference
+is that the first half of perf_event_output (reserving the needed space in the
+ring-buffer - not something I came up with - it already gets done for every
+write operation to the ring-buffer) gets done from buffer_reserve, and the last
+part (recording the new head in the ring-buffer so userspace can see it) is
+done form buffer_commit.  Yes, there is a little bit of extra code involved
+because the ring-buffer is usually comprised of non-contiguous pages, but
+that extra code is minimal.  The real difference with just using
+perf_event_output is that perf_event_output copies a chunk of data from a
+given memory location into the ring-buffer whereas my implementation places
+the data into the ring-buffer directly using BPF store instructions.
+
+The DTrace userspace implementation has an established format in which the
+probe data is expected to be found in the buffer.  My proposed (minimal)
+extension to the perf ring-buffer code makes it possible to write data into
+the ring-buffer in the expected format.  This is not possible by simply using
+perf_event_output because that adds a header to the sample data.
+
+> > > > Also, please note that I am not duplicating any kernel functionality when it
+> > > > comes to buffer handling, and in fact, I found it very easy to be able to
+> > > > tap into the perf event ring-buffer implementation and add a feature that I
+> > > > need for DTrace.  That was a very pleasant experience for sure!
+> > > 
+> > > Let's agree to disagree. All I see is a code duplication and lack of understanding
+> > > of existing bpf features.
+> > 
+> > Could you point out to me where you believe I am duplicating code?  I'd really
+> > like to address that.
+> 
+> see above.
