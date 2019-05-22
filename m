@@ -2,77 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FD5B263E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:33:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B3B5263EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:35:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbfEVMdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 08:33:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34616 "EHLO mail.kernel.org"
+        id S1729290AbfEVMfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 08:35:03 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:45732 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728914AbfEVMdB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 08:33:01 -0400
-Received: from [192.168.0.101] (unknown [49.77.233.32])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7A992173C;
-        Wed, 22 May 2019 12:32:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558528380;
-        bh=7Zt5mFnKGpFUyLLmEh/OXRYTSOMLrj8rJD3n8swXUfc=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=yzHOC2O3R3OLQEJrB35Gcz5qtnVVlhR47yFsPcd3k7fR5yL45kUjGxl3MHQS5iDXH
-         uloVw3UG3yfi3Lw/d+McYNFtiWcmoXaPQFfxIuTAD9dPF94q7UstM+gMvJLO3qrzCM
-         BGx6VhaB0BJap+z14TJDaTUAdAhanwaS8DjKZMaM=
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: allow ssr block allocation during
- checkpoint=disable period
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20190521180625.10562-1-jaegeuk@kernel.org>
- <20190521180625.10562-2-jaegeuk@kernel.org>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <add17fa8-f381-844b-abf2-17182a00232a@kernel.org>
-Date:   Wed, 22 May 2019 20:32:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1728438AbfEVMfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 08:35:02 -0400
+Received: from we0524.dip.tu-dresden.de ([141.76.178.12] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hTQSR-0000lq-OK; Wed, 22 May 2019 14:34:59 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Enric Balletbo Serra <eballetbo@gmail.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        huangtao@rock-chips.com, Linux PM list <linux-pm@vger.kernel.org>,
+        xxx@rock-chips.com, xf@rock-chips.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Doug Anderson <dianders@chromium.org>, vicencb@gmail.com
+Subject: Re: [PATCH v3 1/3] thermal: rockchip: fix up the tsadc pinctrl setting error
+Date:   Wed, 22 May 2019 14:34:58 +0200
+Message-ID: <1805430.MCm2xJzUXA@phil>
+In-Reply-To: <f0581341-126a-5733-3c4b-8e6f67bfc32e@linaro.org>
+References: <1556618986-18923-1-git-send-email-zhangqing@rock-chips.com> <2174314.1vfUlvne1O@phil> <f0581341-126a-5733-3c4b-8e6f67bfc32e@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20190521180625.10562-2-jaegeuk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-5-22 2:06, Jaegeuk Kim wrote:
-> This patch allows to use ssr during checkpoint is disabled.
+Am Mittwoch, 22. Mai 2019, 14:30:16 CEST schrieb Daniel Lezcano:
+> On 22/05/2019 14:27, Heiko Stuebner wrote:
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/gc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> [ ... ]
 > 
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 963fb4571fd9..1e029da26053 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -387,7 +387,8 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
->  			goto next;
->  		/* Don't touch checkpointed data */
->  		if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED) &&
-> -					get_ckpt_valid_blocks(sbi, segno)))
-> +					get_ckpt_valid_blocks(sbi, segno) &&
-> +					p.alloc_mode != SSR))
-
-p.alloc_mode == LFS will be more straightforward. :)
-
-Anyway,
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
->  			goto next;
->  		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
->  			goto next;
+> >> As this change is now in mainline and is causing veyron to hang I'd
+> >> suggest reverting this change for now. Even fixing the root cause
+> >> (maybe the one I pointed above) after this patch we will have the
+> >> thermal driver to fail because "gpio" and "otpout" states are not
+> >> defined nor documented (a change on this will need some reviews and
+> >> acks and time I guess).
+> > 
+> > I definitly agree here. Handling + checking the binding change
+> > as well as needed fallback code is definitly not material for -rc-kernels
+> > so we should just revert for now and let Elaine fix the issues for 5.3.
+> > 
+> > Anyone volunteering for sending a revert-patch to Eduardo? :-)
 > 
+> I can't right now :/
+
+ok, I'll do the revert patch then, so that we get this sorted.
+
+
+Heiko
+
+
