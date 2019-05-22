@@ -2,78 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65FE726A6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD4F026A7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:05:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729739AbfEVTCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:02:31 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:56520 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1728615AbfEVTCa (ORCPT
+        id S1729790AbfEVTFK convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 22 May 2019 15:05:10 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58919 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729596AbfEVTFI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:02:30 -0400
-Received: (qmail 10222 invoked by uid 2102); 22 May 2019 15:02:29 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 22 May 2019 15:02:29 -0400
-Date:   Wed, 22 May 2019 15:02:29 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-cc:     linux-usb@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Oliver Neukum <oneukum@suse.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] signal/usb: Replace kill_pid_info_as_cred with
- kill_pid_usb_asyncio
-In-Reply-To: <877eakou9o.fsf@xmission.com>
-Message-ID: <Pine.LNX.4.44L0.1905221459170.1410-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Wed, 22 May 2019 15:05:08 -0400
+Received: from mail-pl1-f200.google.com ([209.85.214.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1hTWXz-0001vu-DG
+        for linux-kernel@vger.kernel.org; Wed, 22 May 2019 19:05:07 +0000
+Received: by mail-pl1-f200.google.com with SMTP id b69so1895412plb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:05:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=czfXF4X+WzadjYZP7hUsAFz3lA9BYtuDgy22wPY8BdM=;
+        b=JrvyWfcSe9m1dXc/PJCv5LgofgRO4+cyCRRR2b0AmD+W1Q46HKn+4i2RkWzi+e5qS1
+         c616zGlJyh2Khu1z2AtzKfNzplA/ihexpuKHmbLVnsGOvY/sBTqt5IA8LfN921qlMtID
+         aq6BF1LQ/XUM8SUNThsyj+4XkYjGSJ3KvfMBlHX5Gr9IRGtjLm4NqDbCq60G/8ntSWtT
+         lvzuUNwTN6hjBiVB1pReQmrSsx7b0y5/sAnuJL1MGdVsC+67VTKYBfm0ywmGqfV9ZU8h
+         bQAGk4oSTkGPY91IwyeF8CMSNpg08Azw7B6KH3o09iWZUcdFHozMyyCjhQz4N0vMZdQ5
+         qRIQ==
+X-Gm-Message-State: APjAAAWQxh8+AnRMLEHkuWoK3FmZWD7c002g9/7H+VGzdKTbcY7/WOQ7
+        dkkHNStHtAp4FHq4NRznBCzaPJjVFdOK2dHOs4pzlXhMtlTkf8b4s9gRCvVuVLpy4+vi2PCmU9U
+        zQB4GLeMlHFCuA4ZjyDYFu6XTm0FF8gqFJlGX1PUmqg==
+X-Received: by 2002:a17:902:9a4c:: with SMTP id x12mr21885951plv.298.1558551906123;
+        Wed, 22 May 2019 12:05:06 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwICiuaHiG2EomDuE5aveWHHAOjp0PRky8IYbMLukmRtN+STI+JHnlJPa1KkQOBxiMrcxBL6Q==
+X-Received: by 2002:a17:902:9a4c:: with SMTP id x12mr21885926plv.298.1558551905870;
+        Wed, 22 May 2019 12:05:05 -0700 (PDT)
+Received: from [192.168.1.220] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id i27sm53077607pfk.162.2019.05.22.12.05.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 May 2019 12:05:05 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH] PCI / PM: Don't runtime suspend when device only supports
+ wakeup from D0
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20190522185339.pfo5xeopyz2i5iem@wunner.de>
+Date:   Thu, 23 May 2019 03:05:08 +0800
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        linux-usb@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <850CC1CD-2043-4C32-8BB1-5F5BAC1DDF55@canonical.com>
+References: <20190522181157.GC79339@google.com>
+ <Pine.LNX.4.44L0.1905221433310.1410-100000@iolanthe.rowland.org>
+ <20190522185339.pfo5xeopyz2i5iem@wunner.de>
+To:     Lukas Wunner <lukas@wunner.de>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 May 2019, Eric W. Biederman wrote:
 
-> The usb support for asyncio encoded one of it's values in the wrong
-> field.  It should have used si_value but instead used si_addr which is
-> not present in the _rt union member of struct siginfo.
-> 
-> The practical result of this is that on a 64bit big endian kernel
-> when delivering a signal to a 32bit process the si_addr field
-> is set to NULL, instead of the expected pointer value.
-> 
-> This issue can not be fixed in copy_siginfo_to_user32 as the usb
-> usage of the the _sigfault (aka si_addr) member of the siginfo
-> union when SI_ASYNCIO is set is incompatible with the POSIX and
-> glibc usage of the _rt member of the siginfo union.
-> 
-> Therefore replace kill_pid_info_as_cred with kill_pid_usb_asyncio a
-> dedicated function for this one specific case.  There are no other
-> users of kill_pid_info_as_cred so this specialization should have no
-> impact on the amount of code in the kernel.  Have kill_pid_usb_asyncio
-> take instead of a siginfo_t which is difficult and error prone, 3
-> arguments, a signal number, an errno value, and an address enconded as
-> a sigval_t.  The encoding of the address as a sigval_t allows the
-> code that reads the userspace request for a signal to handle this
-> compat issue along with all of the other compat issues.
-> 
-> Add BUILD_BUG_ONs in kernel/signal.c to ensure that we can now place
-> the pointer value at the in si_pid (instead of si_addr).  That is the
-> code now verifies that si_pid and si_addr always occur at the same
-> location.  Further the code veries that for native structures a value
-> placed in si_pid and spilling into si_uid will appear in userspace in
-> si_addr (on a byte by byte copy of siginfo or a field by field copy of
-> siginfo).  The code also verifies that for a 64bit kernel and a 32bit
-> userspace the 32bit pointer will fit in si_pid.
 
-Okay, I have gone through this.  Although I still don't really
-understand the detailed issues concerning the layout of the data fields
-(probably hopeless without seeing a diagram), the USB portions of the
-patch look good and do what the patch description says.
+> On May 23, 2019, at 2:53 AM, Lukas Wunner <lukas@wunner.de> wrote:
+> 
+> On Wed, May 22, 2019 at 02:39:56PM -0400, Alan Stern wrote:
+>> According to Kai, PME signalling doesn't work in D0 -- or at least, it
+>> is _documented_ not to work in D0 -- even though it is enabled and the
+>> device claims to support it.
+>> 
+>> In any case, I don't really see any point in "runtime suspending" a 
+>> device while leaving it in D0.  We might as well just leave it alone.
+> 
+> There may be devices whose drivers are able to reduce power consumption
+> through some device-specific means when runtime suspending, even though
+> the device remains in PCI_D0.  The patch would cause a power regression
+> for those.
+> 
+> In particular, pci_target_state() returns PCI_D0 if the device lacks the
+> PM capability.
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+So an explicit device_can_wakeup() check before calling pci_target_state()
+is needed to avoid the case you described.
 
-Alan Stern
+I’ll add this in patch v2.
+
+Kai-Heng
+
+> 
+> Thanks,
+> 
+> Lukas
 
