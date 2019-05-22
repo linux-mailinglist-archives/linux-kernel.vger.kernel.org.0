@@ -2,112 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D36926CD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15F9A26E36
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:47:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732901AbfEVThf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:37:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53688 "EHLO mail.kernel.org"
+        id S2387463AbfEVTr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:47:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733194AbfEVTaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:30:16 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S1731228AbfEVT1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 15:27:20 -0400
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C0D8217D7;
-        Wed, 22 May 2019 19:30:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5163217D9;
+        Wed, 22 May 2019 19:27:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558553415;
-        bh=sggYvIFTjVwlhubVJZzr4XZFhH5kkvKII9OXtKTlSPo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V70evVROENHgfIw93Qr/C0tUiSGP0Gx6LK1eE4VeHRtmTjY/16WjVUKyfNR+SL5KN
-         C6//ZE/sn3jFX1XYlV8gYbQ/43w7OBv6slmXUoVLh5LOs57967m2+tGgb0aIMP+IJM
-         ++RyEOnLniwclgI4jGAHNLwoeHVMRA3Xdvgih3Y4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Shuah Khan <shuah@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 061/167] media: au0828: stop video streaming only when last user stops
-Date:   Wed, 22 May 2019 15:26:56 -0400
-Message-Id: <20190522192842.25858-61-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190522192842.25858-1-sashal@kernel.org>
-References: <20190522192842.25858-1-sashal@kernel.org>
+        s=default; t=1558553240;
+        bh=hlAVIiOpRcQkmn1FUyVhG2T73UvpIg1zkjRYmBGZFbY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iJ9rpfbd2rv6v3D4lAjk3XAx6LiuJ1QwweDrobD9sc2Rq9jjukvgLxtf9Z6bsyYvl
+         h7svq0ygKqIntZoPr6aG5/rmJQzL4gL6dXYn/n/Kgb8bOsMZ2oq3/B6kedC79uwqyK
+         z6dhugAon3gLUC97OTzeg0GfrOQs/ZoISnlsFDLg=
+Received: by mail-qt1-f169.google.com with SMTP id i26so3809871qtr.10;
+        Wed, 22 May 2019 12:27:19 -0700 (PDT)
+X-Gm-Message-State: APjAAAVU/2A1WRw+JkuA+ygz+g9tfuhON6rfRTxfaNZbETtqXhEYT5D3
+        wRTuXO/eoPm246JV1OBFHBfyv5nI1nNaDIy4Mw==
+X-Google-Smtp-Source: APXvYqy+PeJM7o3ppEVTbfv/xeDCVQT0aKFYAppgCGRW5RshOFOrnfI1FkipG2N2RO8u2GCiHsgMEikYAzbvgjw3ptY=
+X-Received: by 2002:ac8:7688:: with SMTP id g8mr48798907qtr.224.1558553239094;
+ Wed, 22 May 2019 12:27:19 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20190521161102.29620-1-peron.clem@gmail.com>
+In-Reply-To: <20190521161102.29620-1-peron.clem@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 22 May 2019 14:27:07 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+86nNEBzjbf_GLWWrAN91jwU+JQ7zrEoFaT_dxUzVv4A@mail.gmail.com>
+Message-ID: <CAL_Jsq+86nNEBzjbf_GLWWrAN91jwU+JQ7zrEoFaT_dxUzVv4A@mail.gmail.com>
+Subject: Re: [PATCH v6 0/6] Allwinner H6 Mali GPU support
+To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Steven Price <steven.price@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+On Tue, May 21, 2019 at 11:11 AM Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.=
+com> wrote:
+>
+> Hi,
+>
+> The Allwinner H6 has a Mali-T720 MP2 which should be supported by
+> the new panfrost driver. This series fix two issues and introduce the
+> dt-bindings but a simple benchmark show that it's still NOT WORKING.
+>
+> I'm pushing it in case someone want to continue the work.
+>
+> This has been tested with Mesa3D 19.1.0-RC2 and a GPU bitness patch[1].
+>
+> One patch is from Icenowy Zheng where I changed the order as required
+> by Rob Herring[2].
+>
+> Thanks,
+> Clement
+>
+> [1] https://gitlab.freedesktop.org/kszaq/mesa/tree/panfrost_64_32
+> [2] https://patchwork.kernel.org/patch/10699829/
+>
+>
+> [  345.204813] panfrost 1800000.gpu: mmu irq status=3D1
+> [  345.209617] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
+> 0x0000000002400400
+> [  345.209617] Reason: TODO
+> [  345.209617] raw fault status: 0x800002C1
+> [  345.209617] decoded fault status: SLAVE FAULT
+> [  345.209617] exception type 0xC1: TRANSLATION_FAULT_LEVEL1
+> [  345.209617] access type 0x2: READ
+> [  345.209617] source id 0x8000
+> [  345.729957] panfrost 1800000.gpu: gpu sched timeout, js=3D0,
+> status=3D0x8, head=3D0x2400400, tail=3D0x2400400, sched_job=3D000000009e2=
+04de9
+> [  346.055876] panfrost 1800000.gpu: mmu irq status=3D1
+> [  346.060680] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
+> 0x0000000002C00A00
+> [  346.060680] Reason: TODO
+> [  346.060680] raw fault status: 0x810002C1
+> [  346.060680] decoded fault status: SLAVE FAULT
+> [  346.060680] exception type 0xC1: TRANSLATION_FAULT_LEVEL1
+> [  346.060680] access type 0x2: READ
+> [  346.060680] source id 0x8100
+> [  346.561955] panfrost 1800000.gpu: gpu sched timeout, js=3D1,
+> status=3D0x8, head=3D0x2c00a00, tail=3D0x2c00a00, sched_job=3D00000000b55=
+a9a85
+> [  346.573913] panfrost 1800000.gpu: mmu irq status=3D1
+> [  346.578707] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
+> 0x0000000002C00B80
+>
+> Change in v5:
+>  - Remove fix indent
+>
+> Changes in v4:
+>  - Add bus_clock probe
+>  - Fix sanity check in io-pgtable
+>  - Add vramp-delay
+>  - Merge all boards into one patch
+>  - Remove upstreamed Neil A. patch
+>
+> Change in v3 (Thanks to Maxime Ripard):
+>  - Reauthor Icenowy for her path
+>
+> Changes in v2 (Thanks to Maxime Ripard):
+>  - Drop GPU OPP Table
+>  - Add clocks and clock-names in required
+>
+> Cl=C3=A9ment P=C3=A9ron (5):
+>   drm: panfrost: add optional bus_clock
+>   iommu: io-pgtable: fix sanity check for non 48-bit mali iommu
+>   dt-bindings: gpu: mali-midgard: Add H6 mali gpu compatible
+>   arm64: dts: allwinner: Add ARM Mali GPU node for H6
+>   arm64: dts: allwinner: Add mali GPU supply for H6 boards
+>
+> Icenowy Zheng (1):
+>   dt-bindings: gpu: add bus clock for Mali Midgard GPUs
 
-[ Upstream commit f604f0f5afb88045944567f604409951b5eb6af8 ]
+I've applied patches 1 and 3 to drm-misc. I was going to do patch 4
+too, but it doesn't apply.
 
-If the application was streaming from both videoX and vbiX, and streaming
-from videoX was stopped, then the vbi streaming also stopped.
+Patch 2 can go in via the iommu tree and the rest via the allwinner tree.
 
-The cause being that stop_streaming for video stopped the subdevs as well,
-instead of only doing that if dev->streaming_users reached 0.
-
-au0828_stop_vbi_streaming was also wrong since it didn't stop the subdevs
-at all when dev->streaming_users reached 0.
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Tested-by: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/media/usb/au0828/au0828-video.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
-index 9342402b92f76..7cd2daf869895 100644
---- a/drivers/media/usb/au0828/au0828-video.c
-+++ b/drivers/media/usb/au0828/au0828-video.c
-@@ -839,9 +839,9 @@ int au0828_start_analog_streaming(struct vb2_queue *vq, unsigned int count)
- 			return rc;
- 		}
- 
-+		v4l2_device_call_all(&dev->v4l2_dev, 0, video, s_stream, 1);
-+
- 		if (vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
--			v4l2_device_call_all(&dev->v4l2_dev, 0, video,
--						s_stream, 1);
- 			dev->vid_timeout_running = 1;
- 			mod_timer(&dev->vid_timeout, jiffies + (HZ / 10));
- 		} else if (vq->type == V4L2_BUF_TYPE_VBI_CAPTURE) {
-@@ -861,10 +861,11 @@ static void au0828_stop_streaming(struct vb2_queue *vq)
- 
- 	dprintk(1, "au0828_stop_streaming called %d\n", dev->streaming_users);
- 
--	if (dev->streaming_users-- == 1)
-+	if (dev->streaming_users-- == 1) {
- 		au0828_uninit_isoc(dev);
-+		v4l2_device_call_all(&dev->v4l2_dev, 0, video, s_stream, 0);
-+	}
- 
--	v4l2_device_call_all(&dev->v4l2_dev, 0, video, s_stream, 0);
- 	dev->vid_timeout_running = 0;
- 	del_timer_sync(&dev->vid_timeout);
- 
-@@ -893,8 +894,10 @@ void au0828_stop_vbi_streaming(struct vb2_queue *vq)
- 	dprintk(1, "au0828_stop_vbi_streaming called %d\n",
- 		dev->streaming_users);
- 
--	if (dev->streaming_users-- == 1)
-+	if (dev->streaming_users-- == 1) {
- 		au0828_uninit_isoc(dev);
-+		v4l2_device_call_all(&dev->v4l2_dev, 0, video, s_stream, 0);
-+	}
- 
- 	spin_lock_irqsave(&dev->slock, flags);
- 	if (dev->isoc_ctl.vbi_buf != NULL) {
--- 
-2.20.1
-
+Rob
