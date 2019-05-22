@@ -2,314 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D2562637F
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:11:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8E2526386
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:12:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbfEVMLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 08:11:34 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:47682 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727975AbfEVMLe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 08:11:34 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id A2CA7510CB;
-        Wed, 22 May 2019 14:11:31 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id Tb6jwR8FzFPy; Wed, 22 May 2019 14:11:19 +0200 (CEST)
-From:   Stefan Roese <sr@denx.de>
-To:     linux-serial@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 2/2] tty/serial/8250: use mctrl_gpio helpers
-Date:   Wed, 22 May 2019 14:11:17 +0200
-Message-Id: <20190522121117.14347-2-sr@denx.de>
-In-Reply-To: <20190522121117.14347-1-sr@denx.de>
-References: <20190522121117.14347-1-sr@denx.de>
+        id S1729326AbfEVMMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 08:12:48 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34604 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727975AbfEVMMs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 08:12:48 -0400
+Received: by mail-wm1-f68.google.com with SMTP id j187so4577071wma.1;
+        Wed, 22 May 2019 05:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jYJ/nfLJmC0TO4NxJBMrWMFh/gFCCFsSv70Uxc0987w=;
+        b=PyqOX/4ULp2JocPc9hXbAAKRX5O4NlZPPJ7z4JLHjvsemaFkFJISs8BQYk+BJUCYCs
+         bCM+VvhjF+99wgiQmtejmA04Ubb+d13qBUlgu+Y+y4l3Cva8Ra97LTzF/UALFa1rWs0m
+         6nv6qaAP4MIS0yYK6K7TzelyUxRHzczYV2oE0bySqNJXh7EoQXYV3D3uQUTGb3IuHbA/
+         fsGYCSjw8aYIaUO18h1ZEUdOrprgO2ofPVHUt6U7AWxNywJZvWo92Lwc6EJ3eFujmiAy
+         A+jYIeNZyNT+3n7uQPYI2LU73S9qKYAC7hcUzPsr6C9Bz7Xlc7HnXAK39mHILdakBas1
+         AjAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jYJ/nfLJmC0TO4NxJBMrWMFh/gFCCFsSv70Uxc0987w=;
+        b=Eqxery9mpOE92lk5tFw5oXurCvuuKy6lVYUhFLqgCTYYzBdcT0eeEV5jRbpf5yv6RO
+         LpDtvH7Rj7QQWu7t2H3C8+Jav1x8z9rHq2unI2KXj2auWes1rLpIqRM2IsNliMeL73/G
+         ploSdUvh8QKZttx12nN7lPZw6Evqm+Ju2TyBZvAe4kvK+G84bWtY9vd51C4vqi7W9KRC
+         Aehl1aXo6rUVSmOCQzNoGm0AEchEi6QVCdbKQ7oP4qiTsMxomcHQn80FLbQf0LLuie/o
+         ANKF/1p2SBe95WL1b/hZhbdP/g39M+C30nHJPdcy2m4iKe06nTgCAY3oyGDxLlDsHQbw
+         Twyg==
+X-Gm-Message-State: APjAAAW5/SGJFhjXU750Xmd3MXL/XUg/a85xdoKBJpxoMLUm+2B3Vcug
+        SNvkaEAL3JWwEQ0k0M4oMBSrzL7XlcU=
+X-Google-Smtp-Source: APXvYqxmKP+GGWbxBpsL8AStwplVS0GJXZdRxJt5kLUNJD4wOC2fq/RqLj35RRPrRqjGcpcZAHY04Q==
+X-Received: by 2002:a7b:c458:: with SMTP id l24mr7147520wmi.53.1558527165510;
+        Wed, 22 May 2019 05:12:45 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id k8sm12373106wrp.74.2019.05.22.05.12.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 22 May 2019 05:12:44 -0700 (PDT)
+Date:   Wed, 22 May 2019 14:12:43 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, jckuo@nvidia.com, talho@nvidia.com,
+        josephl@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V1 01/12] irqchip: tegra: do not disable COP IRQ during
+ suspend
+Message-ID: <20190522121243.GG30938@ulmo>
+References: <1558481483-22254-1-git-send-email-skomatineni@nvidia.com>
+ <1558481483-22254-2-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PyMzGVE0NRonI6bs"
+Content-Disposition: inline
+In-Reply-To: <1558481483-22254-2-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yegor Yefremov <yegorslists@googlemail.com>
 
-This patch permits the usage for GPIOs to control
-the CTS/RTS/DTR/DSR/DCD/RI signals.
+--PyMzGVE0NRonI6bs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Stefan Roese <sr@denx.de>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: Yegor Yefremov <yegorslists@googlemail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
-Please note that this patch was already applied before [1]. And later
-reverted [2] because it introduced problems on some x86 based boards
-(ACPI GPIO related). Here a detailed description of the issue at that
-time:
+On Tue, May 21, 2019 at 04:31:12PM -0700, Sowjanya Komatineni wrote:
+> BPMP-lite still need IRQ function to finish SC7 suspend sequence for
+> Tegra210.
+>=20
+> This patch has fix for leaving the COP IRQ enabled for Tegra210 during
+> interrupt controller suspend operation.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/irqchip/irq-tegra.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
+> index 0abc0cd1c32e..1882373fa1fd 100644
+> --- a/drivers/irqchip/irq-tegra.c
+> +++ b/drivers/irqchip/irq-tegra.c
+> @@ -53,18 +53,24 @@ static unsigned int num_ictlrs;
+> =20
+>  struct tegra_ictlr_soc {
+>  	unsigned int num_ictlrs;
+> +	bool has_bpmpl;
 
-https://lkml.org/lkml/2016/8/9/357
-http://www.spinics.net/lists/linux-serial/msg23071.html
+Maybe spell out "has_bpmp_lite" to avoid potential confusion.
 
-This is a re-send of the original patch that was applied at that time.
-With patch 1/2 from this series this issue should be fixed now (please
-note that I can't test it on such an x86 platform causing these
-problems).
+>  };
+> =20
+> +static const struct tegra_ictlr_soc *soc;
+> +
 
-Andy (or Mika), perhaps it would be possible for you to test this
-patch again, now with patch 1/2 of this series applied as well?
-That would be really helpful.
+Can you make this a field in struct tegra_ictlr_info to avoid having too
+many global variables?
 
-Thanks,
-Stefan
+>  static const struct tegra_ictlr_soc tegra20_ictlr_soc =3D {
+>  	.num_ictlrs =3D 4,
+> +	.has_bpmpl =3D false,
+>  };
+> =20
+>  static const struct tegra_ictlr_soc tegra30_ictlr_soc =3D {
+>  	.num_ictlrs =3D 5,
+> +	.has_bpmpl =3D false,
+>  };
+> =20
+>  static const struct tegra_ictlr_soc tegra210_ictlr_soc =3D {
+>  	.num_ictlrs =3D 6,
+> +	.has_bpmpl =3D true,
+>  };
+> =20
+>  static const struct of_device_id ictlr_matches[] =3D {
+> @@ -157,7 +163,8 @@ static int tegra_ictlr_suspend(void)
+>  		lic->cop_iep[i] =3D readl_relaxed(ictlr + ICTLR_COP_IEP_CLASS);
+> =20
+>  		/* Disable COP interrupts */
+> -		writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+> +		if (!soc->has_bpmpl)
+> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
 
-[1] 4ef03d328769 ("tty/serial/8250: use mctrl_gpio helpers")
-[2] 5db4f7f80d16 ("Revert "tty/serial/8250: use mctrl_gpio helpers"")
+Maybe adjust the comment to explain. It may not immediately be obvious
+to anyone how BPMP-lite is related to COP.
 
- .../devicetree/bindings/serial/8250.txt       | 19 ++++++++++
- drivers/tty/serial/8250/8250.h                | 35 ++++++++++++++++++-
- drivers/tty/serial/8250/8250_core.c           |  9 +++++
- drivers/tty/serial/8250/8250_omap.c           | 31 +++++++++-------
- drivers/tty/serial/8250/8250_port.c           |  7 +++-
- drivers/tty/serial/8250/Kconfig               |  1 +
- include/linux/serial_8250.h                   |  1 +
- 7 files changed, 88 insertions(+), 15 deletions(-)
+> =20
+>  		/* Disable CPU interrupts */
+>  		writel_relaxed(~0ul, ictlr + ICTLR_CPU_IER_CLR);
+> @@ -286,7 +293,6 @@ static int __init tegra_ictlr_init(struct device_node=
+ *node,
+>  {
+>  	struct irq_domain *parent_domain, *domain;
+>  	const struct of_device_id *match;
+> -	const struct tegra_ictlr_soc *soc;
 
-diff --git a/Documentation/devicetree/bindings/serial/8250.txt b/Documentation/devicetree/bindings/serial/8250.txt
-index 3cba12f855b7..20d351f268ef 100644
---- a/Documentation/devicetree/bindings/serial/8250.txt
-+++ b/Documentation/devicetree/bindings/serial/8250.txt
-@@ -53,6 +53,9 @@ Optional properties:
-   programmable TX FIFO thresholds.
- - resets : phandle + reset specifier pairs
- - overrun-throttle-ms : how long to pause uart rx when input overrun is encountered.
-+- {rts,cts,dtr,dsr,rng,dcd}-gpios: specify a GPIO for RTS/CTS/DTR/DSR/RI/DCD
-+  line respectively. It will use specified GPIO instead of the peripheral
-+  function pin for the UART feature. If unsure, don't specify this property.
- 
- Note:
- * fsl,ns16550:
-@@ -74,3 +77,19 @@ Example:
- 		interrupts = <10>;
- 		reg-shift = <2>;
- 	};
-+
-+Example for OMAP UART using GPIO-based modem control signals:
-+
-+	uart4: serial@49042000 {
-+		compatible = "ti,omap3-uart";
-+		reg = <0x49042000 0x400>;
-+		interrupts = <80>;
-+		ti,hwmods = "uart4";
-+		clock-frequency = <48000000>;
-+		cts-gpios = <&gpio3 5 GPIO_ACTIVE_LOW>;
-+		rts-gpios = <&gpio3 6 GPIO_ACTIVE_LOW>;
-+		dtr-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
-+		dsr-gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
-+		dcd-gpios = <&gpio1 14 GPIO_ACTIVE_LOW>;
-+		rng-gpios = <&gpio1 15 GPIO_ACTIVE_LOW>;
-+	};
-diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/8250/8250.h
-index ebfb0bd5bef5..e59625bdb007 100644
---- a/drivers/tty/serial/8250/8250.h
-+++ b/drivers/tty/serial/8250/8250.h
-@@ -11,6 +11,8 @@
- #include <linux/serial_reg.h>
- #include <linux/dmaengine.h>
- 
-+#include "../serial_mctrl_gpio.h"
-+
- struct uart_8250_dma {
- 	int (*tx_dma)(struct uart_8250_port *p);
- 	int (*rx_dma)(struct uart_8250_port *p);
-@@ -141,12 +143,43 @@ void serial8250_em485_destroy(struct uart_8250_port *p);
- 
- static inline void serial8250_out_MCR(struct uart_8250_port *up, int value)
- {
-+	int mctrl_gpio = 0;
-+
- 	serial_out(up, UART_MCR, value);
-+
-+	if (value & UART_MCR_RTS)
-+		mctrl_gpio |= TIOCM_RTS;
-+	if (value & UART_MCR_DTR)
-+		mctrl_gpio |= TIOCM_DTR;
-+
-+	mctrl_gpio_set(up->gpios, mctrl_gpio);
- }
- 
- static inline int serial8250_in_MCR(struct uart_8250_port *up)
- {
--	return serial_in(up, UART_MCR);
-+	int mctrl, mctrl_gpio = 0;
-+
-+	mctrl = serial_in(up, UART_MCR);
-+
-+	/* save current MCR values */
-+	if (mctrl & UART_MCR_RTS)
-+		mctrl_gpio |= TIOCM_RTS;
-+	if (mctrl & UART_MCR_DTR)
-+		mctrl_gpio |= TIOCM_DTR;
-+
-+	mctrl_gpio = mctrl_gpio_get_outputs(up->gpios, &mctrl_gpio);
-+
-+	if (mctrl_gpio & TIOCM_RTS)
-+		mctrl |= UART_MCR_RTS;
-+	else
-+		mctrl &= ~UART_MCR_RTS;
-+
-+	if (mctrl_gpio & TIOCM_DTR)
-+		mctrl |= UART_MCR_DTR;
-+	else
-+		mctrl &= ~UART_MCR_DTR;
-+
-+	return mctrl;
- }
- 
- #if defined(__alpha__) && !defined(CONFIG_PCI)
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index e441221e04b9..ec0c5448c192 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -982,6 +982,8 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
- 
- 	uart = serial8250_find_match_or_unused(&up->port);
- 	if (uart && uart->port.type != PORT_8250_CIR) {
-+		struct mctrl_gpios *gpios;
-+
- 		if (uart->port.dev)
- 			uart_remove_one_port(&serial8250_reg, &uart->port);
- 
-@@ -1016,6 +1018,13 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
- 		if (up->port.flags & UPF_FIXED_TYPE)
- 			uart->port.type = up->port.type;
- 
-+		gpios = mctrl_gpio_init(&uart->port, 0);
-+		if (IS_ERR(gpios)) {
-+			if (PTR_ERR(gpios) != -ENOSYS)
-+				return PTR_ERR(gpios);
-+		} else
-+			uart->gpios = gpios;
-+
- 		serial8250_set_defaults(uart);
- 
- 		/* Possibly override default I/O functions.  */
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index 0a8316632d75..562ac73d9f2f 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -141,18 +141,21 @@ static void omap8250_set_mctrl(struct uart_port *port, unsigned int mctrl)
- 
- 	serial8250_do_set_mctrl(port, mctrl);
- 
--	/*
--	 * Turn off autoRTS if RTS is lowered and restore autoRTS setting
--	 * if RTS is raised
--	 */
--	lcr = serial_in(up, UART_LCR);
--	serial_out(up, UART_LCR, UART_LCR_CONF_MODE_B);
--	if ((mctrl & TIOCM_RTS) && (port->status & UPSTAT_AUTORTS))
--		priv->efr |= UART_EFR_RTS;
--	else
--		priv->efr &= ~UART_EFR_RTS;
--	serial_out(up, UART_EFR, priv->efr);
--	serial_out(up, UART_LCR, lcr);
-+	if (IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(up->gpios,
-+						UART_GPIO_RTS))) {
-+		/*
-+		 * Turn off autoRTS if RTS is lowered and restore autoRTS
-+		 * setting if RTS is raised
-+		 */
-+		lcr = serial_in(up, UART_LCR);
-+		serial_out(up, UART_LCR, UART_LCR_CONF_MODE_B);
-+		if ((mctrl & TIOCM_RTS) && (port->status & UPSTAT_AUTORTS))
-+			priv->efr |= UART_EFR_RTS;
-+		else
-+			priv->efr &= ~UART_EFR_RTS;
-+		serial_out(up, UART_EFR, priv->efr);
-+		serial_out(up, UART_LCR, lcr);
-+	}
- }
- 
- /*
-@@ -453,7 +456,9 @@ static void omap_8250_set_termios(struct uart_port *port,
- 	priv->efr = 0;
- 	up->port.status &= ~(UPSTAT_AUTOCTS | UPSTAT_AUTORTS | UPSTAT_AUTOXOFF);
- 
--	if (termios->c_cflag & CRTSCTS && up->port.flags & UPF_HARD_FLOW) {
-+	if (termios->c_cflag & CRTSCTS && up->port.flags & UPF_HARD_FLOW
-+		&& IS_ERR_OR_NULL(mctrl_gpio_to_gpiod(up->gpios,
-+							UART_GPIO_RTS))) {
- 		/* Enable AUTOCTS (autoRTS is enabled when RTS is raised) */
- 		up->port.status |= UPSTAT_AUTOCTS | UPSTAT_AUTORTS;
- 		priv->efr |= UART_EFR_CTS;
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index 2304a84eee3b..220a78287d88 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -1662,6 +1662,8 @@ static void serial8250_disable_ms(struct uart_port *port)
- 	if (up->bugs & UART_BUG_NOMSR)
- 		return;
- 
-+	mctrl_gpio_disable_ms(up->gpios);
-+
- 	up->ier &= ~UART_IER_MSI;
- 	serial_port_out(port, UART_IER, up->ier);
- }
-@@ -1674,6 +1676,8 @@ static void serial8250_enable_ms(struct uart_port *port)
- 	if (up->bugs & UART_BUG_NOMSR)
- 		return;
- 
-+	mctrl_gpio_enable_ms(up->gpios);
-+
- 	up->ier |= UART_IER_MSI;
- 
- 	serial8250_rpm_get(up);
-@@ -1959,7 +1963,8 @@ unsigned int serial8250_do_get_mctrl(struct uart_port *port)
- 		ret |= TIOCM_DSR;
- 	if (status & UART_MSR_CTS)
- 		ret |= TIOCM_CTS;
--	return ret;
-+
-+	return mctrl_gpio_get(up->gpios, &ret);
- }
- EXPORT_SYMBOL_GPL(serial8250_do_get_mctrl);
- 
-diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
-index 296115f6a4d8..509f6a3bb9ff 100644
---- a/drivers/tty/serial/8250/Kconfig
-+++ b/drivers/tty/serial/8250/Kconfig
-@@ -8,6 +8,7 @@ config SERIAL_8250
- 	tristate "8250/16550 and compatible serial support"
- 	depends on !S390
- 	select SERIAL_CORE
-+	select SERIAL_MCTRL_GPIO if GPIOLIB
- 	---help---
- 	  This selects whether you want to include the driver for the standard
- 	  serial ports.  The standard answer is Y.  People who might say N
-diff --git a/include/linux/serial_8250.h b/include/linux/serial_8250.h
-index 5a655ba8d273..14cd763baf78 100644
---- a/include/linux/serial_8250.h
-+++ b/include/linux/serial_8250.h
-@@ -114,6 +114,7 @@ struct uart_8250_port {
- 						 *   if no_console_suspend
- 						 */
- 	unsigned char		probe;
-+	struct mctrl_gpios	*gpios;
- #define UART_PROBE_RSA	(1 << 0)
- 
- 	/*
--- 
-2.21.0
+As mentioned above, perhaps keep this here and assign this to lic->soc
+later on so that we have only a single global variable.
 
+Thierry
+
+>  	unsigned int i;
+>  	int err;
+> =20
+> --=20
+> 2.7.4
+>=20
+
+--PyMzGVE0NRonI6bs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlzlPLgACgkQ3SOs138+
+s6FoVxAAookjMpqnfDG8CiztrIQhY+NnonposNlGzUzMMfITDrIXCPxZikwnX0R5
+Fk+HZ0QBMLlstRckRGmlZVy30odomy2zJjs4jtpfzSRWT21CRQsS/QaJCtQEXcVk
+DQAz7llb8GneFENSJouMasmRvcwxPw0Myxe2em/pPV9T7LF7J2tHKtaLZgooukgs
++hy0W7J4iRadjrOdB3iB6kiTvjzUO/KYrhmKWJardD+DFkB/BY/qXHhzcuQU5U//
+oFRF4d+b1sso/vbQMrKQistPSUuFH0NPgVy5izBMII+raawK9nXQT1kJRQsivzuB
+i6X2nk5csj+QLleuUEtWA5RQ/Z5O5xT/vzorns17oYpx7lBYHQzLJZDhKHi1a7w4
+BqaUwfA2Uj0Gq1V5gQx52jW/4wQLHtLInE/QPd2dODMO0nYVKcU5aGc4w5a+i9n2
+UMABedHzNDUH7u5MiIY8TgXCV5hePHrNJJvdv25uh0eXjBt680IKWtM1QcTTRifK
+7FoVaJA8sukrlw7iufYlK4hNhteFPT5MIMyKo4SK45BIjT+ElKMxNBLDQr29lFD/
+jN8yFV5MEk5bJMk6skAyAs1ja00OnhSs5aT9HNXftjUlq/k0B4kCXWDgKx5T+4+D
+l+oecslt/E41gZdJ5X1A6F1adulcHzlzHWLMSZrqvG8uEd+4NYE=
+=kbZY
+-----END PGP SIGNATURE-----
+
+--PyMzGVE0NRonI6bs--
