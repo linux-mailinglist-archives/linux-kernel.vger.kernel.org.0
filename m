@@ -2,73 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B064263AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:19:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A63D263B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:20:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729396AbfEVMTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 08:19:51 -0400
-Received: from mail-ot1-f46.google.com ([209.85.210.46]:34547 "EHLO
-        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728438AbfEVMTv (ORCPT
+        id S1729298AbfEVMUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 08:20:55 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42079 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728971AbfEVMUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 08:19:51 -0400
-Received: by mail-ot1-f46.google.com with SMTP id l17so1870288otq.1
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 05:19:51 -0700 (PDT)
+        Wed, 22 May 2019 08:20:55 -0400
+Received: by mail-wr1-f66.google.com with SMTP id l2so2047079wrb.9
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 05:20:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2ZhTk2acfpx8r4rFg+ynBi2h7n1lFX/B8oA8Vc1vWH4=;
+        b=KlvSGTvJ/VQA3qnYedKHobnQk8JkvV/4dnosj/hXZhcKYODa8MUB36fNKdt5ac2m15
+         /K5HRObcXkfT5oE73OIczs4h3yyFlnwNWpV0eIwpKeDQyqNXMBey1y4Kj+Gd6lt40yqb
+         Sskay6gQq9Do8FehTN8k+XFjwK3e4xkSLOZfv6X1Ik0hV+S/+NsFuVkJ5LFlkBRO5qTR
+         6W6Hd+nx6WMOg0TXQl/51Rtg5OgYxSjAWczXesMFFyA6BOmJ7gVGE5KvPLZTuTKX8atI
+         lw7A8PWcrPsN0G44hYBUtjWhFlfUSGQcRZKWwQP/5SaHhD2FXApIP+I5Omxfs/VSxdcy
+         UsTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=qR0MaKhITKtU6hBO20rUhBwrXuT23cfT9o9u+4k7qjw=;
-        b=spBHVLpJoJSrfgn3nUNCYQmtEDq64i2mVsTWou/KPrAVUU2bJSmc5ybzI0g/10rGdg
-         EUTY1XGRMPh5JKXeNQpkGLUtE6DzkDCgXZji5ELYUgbLyVzd2ETMWNRy9prIij8b83BG
-         CGMXEg4Xttl16+o0Zvx1GvaN01m+0Z9XtSV3rmK8KCpvYMM5LoNzpeUHdPLQqLNPVfSy
-         lL9BMN9WbDQrT9w0KRi9p9yhpjp4WXrzXLidVHbrpqR7zfOz2Pu88C6NM1SuSbEbLfxd
-         E2rJcplGs7Qos/ZntUGs00GdzhWymqiu6VfwYvvwaYJVSgo1wgoWnLAtlGcYFg3PfKyY
-         hjrA==
-X-Gm-Message-State: APjAAAVVOA+UF7J7nM/MCAcaKPyjh+xxL4p6M7UTqUQzJHTCzmgyjjds
-        lyNoKhQ5SxdB4RnWVgJbjg/iKQLbWYjS89QMg309pw==
-X-Google-Smtp-Source: APXvYqwDcWks8Ve32hEDwrgPlUaxWsbEp7qMwRFloclbktCS4gJ7NdKb2on86R3g9M+yYiMVnHNT87opgcNI0pRCrS8=
-X-Received: by 2002:a9d:63c1:: with SMTP id e1mr20475056otl.341.1558527590980;
- Wed, 22 May 2019 05:19:50 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2ZhTk2acfpx8r4rFg+ynBi2h7n1lFX/B8oA8Vc1vWH4=;
+        b=sbioeIBQuOcjA4HIzlL0xFKKnMZ+uWfQPOVpr0tWSXUnK5fW4QtDtXaupusUKnIjwX
+         FpD+QIwnYBevO3fCkwFgV26moDT2JPPDIkgb1+fOmCWuU0+qlWbgZywdEelxccaFSNq7
+         9Ut+t6gqq5skX2xraKwlZ4TV6WNTcpdNujcWr2gXQFzQdQf08efIa4W4x3vNH8dchwBe
+         qb/nupEw03/xPLp+gXaUZKNV57VgchBdgFsecQdGGXPTw6N8KdBYtAJmkja8YAe+lh2M
+         4b/ZUvTyqomXSccvOAt69GYaxb4iw1fcdPFtClxpPPZszJlZHCgbn2FTFtBBGaDZzm4V
+         NnNA==
+X-Gm-Message-State: APjAAAXaJvWqNmLEUBOOa6KoEnBsbdU6Zt4r6T+ZOIxLakQ0UWmYas9m
+        lzPmBElM/wZXNjtUjQc/bw0WEw==
+X-Google-Smtp-Source: APXvYqwvz7JWD2HEdR5e4BkwVZV1oZMtKMC3nGM56TpQlUOa698nuBsd11/iLMyslPitIHxG5t1plA==
+X-Received: by 2002:a5d:6a8c:: with SMTP id s12mr22488097wru.326.1558527652486;
+        Wed, 22 May 2019 05:20:52 -0700 (PDT)
+Received: from [10.1.203.87] (nat-wifi.sssup.it. [193.205.81.22])
+        by smtp.googlemail.com with ESMTPSA id z8sm22338145wrs.84.2019.05.22.05.20.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 May 2019 05:20:51 -0700 (PDT)
+Subject: Re: [PATCH v3 1/3] thermal: rockchip: fix up the tsadc pinctrl
+ setting error
+To:     Elaine Zhang <zhangqing@rock-chips.com>, heiko@sntech.de
+Cc:     rui.zhang@intel.com, edubezval@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com
+References: <1556618986-18923-1-git-send-email-zhangqing@rock-chips.com>
+ <1556618986-18923-2-git-send-email-zhangqing@rock-chips.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <1d1063a5-3ec8-f430-febe-7e1471cd1812@linaro.org>
+Date:   Wed, 22 May 2019 14:20:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Wed, 22 May 2019 14:19:39 +0200
-Message-ID: <CAHc6FU71Yp9Y8ZDrJnJ3AAQazW8-WpTCLCHWYu-+JQ2tTu4Ymg@mail.gmail.com>
-Subject: [GIT PULL] gfs2: Fix sign extension bug in gfs2_update_stats
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     cluster-devel <cluster-devel@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1556618986-18923-2-git-send-email-zhangqing@rock-chips.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
 
-could you please pull the following gfs2 fix?
+Elaine,
 
-Thanks,
-Andreas
+are you taking care of the issue related to this patch. If not fixed, it
+will be reverted.
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+On 30/04/2019 12:09, Elaine Zhang wrote:
+> Explicitly use the pinctrl to set/unset the right mode
+> instead of relying on the pinctrl init mode.
+> And it requires setting the tshut polarity before select pinctrl.
+> 
+> When the temperature sensor mode is set to 0, it will automatically
+> reset the board via the Clock-Reset-Unit (CRU) if the over temperature
+> threshold is reached. However, when the pinctrl initializes, it does a
+> transition to "otp_out" which may lead the SoC restart all the time.
+> 
+> "otp_out" IO may be connected to the RESET circuit on the hardware.
+> If the IO is in the wrong state, it will trigger RESET.
+> (similar to the effect of pressing the RESET button)
+> which will cause the soc to restart all the time.
+> 
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  drivers/thermal/rockchip_thermal.c | 36 +++++++++++++++++++++++++++++++++---
+>  1 file changed, 33 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+> index 9c7643d62ed7..6dc7fc516abf 100644
+> --- a/drivers/thermal/rockchip_thermal.c
+> +++ b/drivers/thermal/rockchip_thermal.c
+> @@ -172,6 +172,9 @@ struct rockchip_thermal_data {
+>  	int tshut_temp;
+>  	enum tshut_mode tshut_mode;
+>  	enum tshut_polarity tshut_polarity;
+> +	struct pinctrl *pinctrl;
+> +	struct pinctrl_state *gpio_state;
+> +	struct pinctrl_state *otp_state;
+>  };
+>  
+>  /**
+> @@ -1242,6 +1245,8 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
+>  		return error;
+>  	}
+>  
+> +	thermal->chip->control(thermal->regs, false);
+> +
+>  	error = clk_prepare_enable(thermal->clk);
+>  	if (error) {
+>  		dev_err(&pdev->dev, "failed to enable converter clock: %d\n",
+> @@ -1267,6 +1272,30 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
+>  	thermal->chip->initialize(thermal->grf, thermal->regs,
+>  				  thermal->tshut_polarity);
+>  
+> +	if (thermal->tshut_mode == TSHUT_MODE_GPIO) {
+> +		thermal->pinctrl = devm_pinctrl_get(&pdev->dev);
+> +		if (IS_ERR(thermal->pinctrl)) {
+> +			dev_err(&pdev->dev, "failed to find thermal pinctrl\n");
+> +			return PTR_ERR(thermal->pinctrl);
+> +		}
+> +
+> +		thermal->gpio_state = pinctrl_lookup_state(thermal->pinctrl,
+> +							   "gpio");
+> +		if (IS_ERR_OR_NULL(thermal->gpio_state)) {
+> +			dev_err(&pdev->dev, "failed to find thermal gpio state\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		thermal->otp_state = pinctrl_lookup_state(thermal->pinctrl,
+> +							  "otpout");
+> +		if (IS_ERR_OR_NULL(thermal->otp_state)) {
+> +			dev_err(&pdev->dev, "failed to find thermal otpout state\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		pinctrl_select_state(thermal->pinctrl, thermal->otp_state);
+> +	}
+> +
+>  	for (i = 0; i < thermal->chip->chn_num; i++) {
+>  		error = rockchip_thermal_register_sensor(pdev, thermal,
+>  						&thermal->sensors[i],
+> @@ -1337,8 +1366,8 @@ static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
+>  
+>  	clk_disable(thermal->pclk);
+>  	clk_disable(thermal->clk);
+> -
+> -	pinctrl_pm_select_sleep_state(dev);
+> +	if (thermal->tshut_mode == TSHUT_MODE_GPIO)
+> +		pinctrl_select_state(thermal->pinctrl, thermal->gpio_state);
+>  
+>  	return 0;
+>  }
+> @@ -1383,7 +1412,8 @@ static int __maybe_unused rockchip_thermal_resume(struct device *dev)
+>  	for (i = 0; i < thermal->chip->chn_num; i++)
+>  		rockchip_thermal_toggle_sensor(&thermal->sensors[i], true);
+>  
+> -	pinctrl_pm_select_default_state(dev);
+> +	if (thermal->tshut_mode == TSHUT_MODE_GPIO)
+> +		pinctrl_select_state(thermal->pinctrl, thermal->otp_state);
+>  
+>  	return 0;
+>  }
+> 
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git
-tags/gfs2-5.1.fixes2
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-for you to fetch changes up to 5a5ec83d6ac974b12085cd99b196795f14079037:
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-  gfs2: Fix sign extension bug in gfs2_update_stats (2019-05-22 14:09:44 +0200)
-
-----------------------------------------------------------------
-Fix a gfs2 sign extension bug introduced in v4.3.
-
-----------------------------------------------------------------
-Andreas Gruenbacher (1):
-      gfs2: Fix sign extension bug in gfs2_update_stats
-
- fs/gfs2/lock_dlm.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
