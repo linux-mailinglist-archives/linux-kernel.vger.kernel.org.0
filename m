@@ -2,69 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3432A26FF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 22:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3EA026FFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 22:00:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731992AbfEVUAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 16:00:25 -0400
-Received: from smtprelay0074.hostedemail.com ([216.40.44.74]:56989 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731063AbfEVUAV (ORCPT
+        id S1731240AbfEVUAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 16:00:38 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:45481 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730417AbfEVUAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 16:00:21 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 23506837F24A;
-        Wed, 22 May 2019 20:00:20 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:2892:2902:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3871:3872:3874:4250:4321:5007:6117:6691:9010:10004:10400:10432:10433:10848:11232:11658:11914:12663:12740:12760:12895:13069:13072:13221:13229:13311:13357:13439:14096:14097:14181:14659:14721:14777:19903:19997:21080:21326:21433:21451:21627:21819:30003:30022:30029:30054:30060:30075:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:33,LUA_SUMMARY:none
-X-HE-Tag: peace94_1fea29cb36c22
-X-Filterd-Recvd-Size: 1820
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 22 May 2019 20:00:19 +0000 (UTC)
-Message-ID: <05f565be52179acd1128b51a6e0cf055882ce78b.camel@perches.com>
-Subject: Re: PSA: Do not use "Reported-By" without reporter's approval
-From:   Joe Perches <joe@perches.com>
-To:     Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Wed, 22 May 2019 13:00:17 -0700
-In-Reply-To: <20190522195804.GC21412@chatter.i7.local>
-References: <20190522193011.GB21412@chatter.i7.local>
-         <7b7287463e830fa8d981dc440f8165622cbc628e.camel@perches.com>
-         <20190522195804.GC21412@chatter.i7.local>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 22 May 2019 16:00:36 -0400
+Received: by mail-yb1-f194.google.com with SMTP id e128so1331355ybc.12;
+        Wed, 22 May 2019 13:00:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C0nqHgtmLn6G5z3RJOs6vtscGJVqhj3bMBlmrel04/w=;
+        b=UwrWn/u8rZGHhLI1P6V35RgRkAPjVS/PxkAM7CyXBT57jgKfWPjOpICtY0LSDJ69R5
+         BR1pjI85gspBLojZnrGuHIoT7C1QYhMFQ8AzeX5PQxmtBJwl53tIIfhleT7WoP6SGPW3
+         jPdv59bh5Sa2ThqPAQ4OBK6GDwS6g8LbujSzQM3Tuw0ktnD94bnRHaBYgMKwC2kKWQQ6
+         5kzL/+N3o/Ng1GSLrlzTGO3gpwnvWtcdyUy9AFrcbALi0/YbADrfxNK2CgiEaggfncgI
+         tXzBRPf8wMX+N0XQhCjZ8BSZ0iVGeiFVdqV5bElUz8JFoV2ZwwYG9j8045SyZEvu8bbm
+         X2wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C0nqHgtmLn6G5z3RJOs6vtscGJVqhj3bMBlmrel04/w=;
+        b=OS6lK7/kXFyxq3Ltpi1R3wYqOD8HRQGktQYRmsLpm8PK5veUAP+7c6kgqgTq5iFzX/
+         EQA8/B1XAlHUX359aLo5JSZ4xe++Jc1Vsizj6XiHHSTmrCLy35PdnfFOYaP7fMTIlvKG
+         RU7ntNsgLyxx0JNOhw3gUpuFbqoiqJneOmMyQ8jil5QyQkacdkuczX+XgI7AJd0dxo7j
+         J3PWhgevfmzZbmOUG0h5rQC+58UiFxLa11BfbPUW+lZ56q8HBmtzeRAz03vQTEVGHtUE
+         MGbhlYTuWynjRkX6xC+7BaK5FlWEZK1jKK4MJ0cnJrj6om2hWfA+ZziNvAwrjnDNe/C5
+         Ji5A==
+X-Gm-Message-State: APjAAAUd8LYFYKlq/vy8TuSVKMja1eyo/RIbje4Ancdvu5wrmeoSTfVh
+        WtbG84EWh8hl/V0D2zd6elwMVnFETXjHfcplciRaehUE
+X-Google-Smtp-Source: APXvYqwdAn8/163JIv01+5q5jhQOxY8oXTq/RXsrw1M8Va4VH8MacySFCdZpVj8OETAqO7j5G2cNQQLwLLLgipcKhts=
+X-Received: by 2002:a25:7a41:: with SMTP id v62mr19992787ybc.14.1558555235261;
+ Wed, 22 May 2019 13:00:35 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190522163150.16849-1-christian@brauner.io> <CAOQ4uxjV=7=FXuyccBK9Pu1B7o-w-pbc1FQXJxY4q6z8E93KOg@mail.gmail.com>
+ <EB97EF04-D44F-4320-ACDC-C536EED03BA4@brauner.io>
+In-Reply-To: <EB97EF04-D44F-4320-ACDC-C536EED03BA4@brauner.io>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 22 May 2019 23:00:22 +0300
+Message-ID: <CAOQ4uxhodqVw0DVfcvXYH5vBf4LKcv7t388ZwXeZPBTcEMzGSw@mail.gmail.com>
+Subject: Re: [PATCH] fanotify: remove redundant capable(CAP_SYS_ADMIN)s
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-05-22 at 15:58 -0400, Konstantin Ryabitsev wrote:
-> On Wed, May 22, 2019 at 12:45:06PM -0700, Joe Perches wrote:
-> > > It is common courtesy to include this tagline when submitting 
-> > > patches:
-> > > 
-> > > Reported-By: J. Doe <jdoe@example.com>
-> > > 
-> > > Please ask the reporter's permission before doing so (even if they'd
-> > > submitted a public bugzilla report or sent a report to the mailing
-> > > list).
-> > 
-> > I disagree with this.
-> > 
-> > If the report is public, and lists like vger are public,
-> > then using a Reported-by: and/or a Link: are simply useful
-> > history and tracking information.
-> 
-> I'm perfectly fine with Link:, however Reported-By: usually has the 
-> person's name and email address (i.e. PII data per GDPR definition).
+On Wed, May 22, 2019 at 9:57 PM Christian Brauner <christian@brauner.io> wrote:
+>
+> On May 22, 2019 8:29:37 PM GMT+02:00, Amir Goldstein <amir73il@gmail.com> wrote:
+> >On Wed, May 22, 2019 at 7:32 PM Christian Brauner
+> ><christian@brauner.io> wrote:
+> >>
+> >> This removes two redundant capable(CAP_SYS_ADMIN) checks from
+> >> fanotify_init().
+> >> fanotify_init() guards the whole syscall with capable(CAP_SYS_ADMIN)
+> >at the
+> >> beginning. So the other two capable(CAP_SYS_ADMIN) checks are not
+> >needed.
+> >
+> >It's intentional:
+> >
+> >commit e7099d8a5a34d2876908a9fab4952dabdcfc5909
+> >Author: Eric Paris <eparis@redhat.com>
+> >Date:   Thu Oct 28 17:21:57 2010 -0400
+> >
+> >    fanotify: limit the number of marks in a single fanotify group
+> >
+> >There is currently no limit on the number of marks a given fanotify
+> >group
+> >can have.  Since fanotify is gated on CAP_SYS_ADMIN this was not seen
+> >as
+> >a serious DoS threat.  This patch implements a default of 8192, the
+> >same as
+> >inotify to work towards removing the CAP_SYS_ADMIN gating and
+> >eliminating
+> >    the default DoS'able status.
+> >
+> >    Signed-off-by: Eric Paris <eparis@redhat.com>
+> >
+> >There idea is to eventually remove the gated CAP_SYS_ADMIN.
+> >There is no reason that fanotify could not be used by unprivileged
+> >users
+> >to setup inotify style watch on an inode or directories children, see:
+> >https://patchwork.kernel.org/patch/10668299/
+> >
+> >>
+> >> Fixes: 5dd03f55fd2 ("fanotify: allow userspace to override max queue
+> >depth")
+> >> Fixes: ac7e22dcfaf ("fanotify: allow userspace to override max
+> >marks")
+> >
+> >Fixes is used to tag bug fixes for stable.
+> >There is no bug.
+> >
+> >Thanks,
+> >Amir.
+>
+> Interesting. When do you think the gate can be removed?
 
-So?
+Nobody is working on this AFAIK.
+What I posted was a simple POC, but I have no use case for this.
+In the patchwork link above, Jan has listed the prerequisites for
+removing the gate.
 
-Like I wrote, if that report came from a public list, that
-report _also_ contained the person's name and email address.
+One of the prerequisites is FAN_REPORT_FID, which is now merged.
+When events gets reported with fid instead of fd, unprivileged user
+(hopefully) cannot use fid for privilege escalation.
 
+> I was looking into switching from inotify to fanotify but since it's not usable from
+> non-initial userns it's a no-no
+> since we support nested workloads.
 
+One of Jan's questions was what is the benefit of using inotify-compatible
+fanotify vs. using inotify.
+So what was the reason you were looking into switching from inotify to fanotify?
+Is it because of mount/filesystem watch? Because making those available for
+unprivileged user sounds risky...
+
+Thanks,
+Amir.
