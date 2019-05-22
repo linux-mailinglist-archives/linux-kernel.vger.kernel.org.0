@@ -2,71 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 796FD26370
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:07:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B02F82636E
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:07:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729290AbfEVMHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 08:07:50 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:37195 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728584AbfEVMHu (ORCPT
+        id S1729221AbfEVMHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 08:07:41 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:55878 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728584AbfEVMHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 08:07:50 -0400
-X-Originating-IP: 92.137.69.152
-Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 31F87E000A;
-        Wed, 22 May 2019 12:07:45 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Felipe Balbi <balbi@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        James Grant <jamesg@zaltys.org>
-Subject: [PATCH v2] usb: gadget: udc: lpc32xx: allocate descriptor with GFP_ATOMIC
-Date:   Wed, 22 May 2019 14:07:36 +0200
-Message-Id: <20190522120736.5521-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.21.0
+        Wed, 22 May 2019 08:07:41 -0400
+Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
+        with ESMTP id S23992796AbfEVMHinZXz7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org> + 1 other);
+        Wed, 22 May 2019 14:07:38 +0200
+Date:   Wed, 22 May 2019 13:07:38 +0100 (BST)
+From:   "Maciej W. Rozycki" <macro@linux-mips.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+cc:     Serge Semin <fancer.lancer@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Atsushi Nemoto <anemo@mba.ocn.ne.jp>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MIPS: TXx9: Fix boot crash in free_initmem()
+In-Reply-To: <20190522081535.16583-1-geert@linux-m68k.org>
+Message-ID: <alpine.LFD.2.21.1905221301430.25412@eddie.linux-mips.org>
+References: <20190522081535.16583-1-geert@linux-m68k.org>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gadget drivers may queue request in interrupt context. This would lead to
-a descriptor allocation in that context. In that case we would hit
-BUG_ON(in_interrupt()) in __get_vm_area_node.
+On Wed, 22 May 2019, Geert Uytterhoeven wrote:
 
-Also remove the unnecessary cast.
+> Looks like arch/mips/dec/prom/memory.c needs a similar but more
+> complicated fix, due to declance handling?
 
-Tested-by: James Grant <jamesg@zaltys.org>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
+ Thanks for the heads-up!  I think the declance hack should go away.  It 
+should have gone long ago, but ISTR there used to be a problem with making 
+such a large contiguous physical memory allocation in the modular case.  
+Maybe it's not anymore these days.  I'll look into it when I get a chance 
+to poke at hardware, which I have no access to at the moment.
 
-Changes in v2:
- - remove unnecessary cast as pointed by Joe Perches
- - Collected tested-by
-
- drivers/usb/gadget/udc/lpc32xx_udc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
-index d8f1c60793ed..2719194ebf42 100644
---- a/drivers/usb/gadget/udc/lpc32xx_udc.c
-+++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
-@@ -937,8 +937,7 @@ static struct lpc32xx_usbd_dd_gad *udc_dd_alloc(struct lpc32xx_udc *udc)
- 	dma_addr_t			dma;
- 	struct lpc32xx_usbd_dd_gad	*dd;
- 
--	dd = (struct lpc32xx_usbd_dd_gad *) dma_pool_alloc(
--			udc->dd_cache, (GFP_KERNEL | GFP_DMA), &dma);
-+	dd = dma_pool_alloc(udc->dd_cache, GFP_ATOMIC | GFP_DMA, &dma);
- 	if (dd)
- 		dd->this_dma = dma;
- 
--- 
-2.21.0
-
+  Maciej
