@@ -2,115 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA26F267F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 18:19:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9534126814
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 18:21:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730093AbfEVQSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 12:18:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59405 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728638AbfEVQSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 12:18:55 -0400
-Received: from [IPv6:2607:fb90:3635:972:9c5a:d1ae:8e8f:2fe7] ([IPv6:2607:fb90:3635:972:9c5a:d1ae:8e8f:2fe7])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x4MGIdpA3692384
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Wed, 22 May 2019 09:18:40 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x4MGIdpA3692384
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1558541921;
-        bh=luHnu8/JMpI0wULaC++B/hvrgAGxTmtVWSgg46F+QLk=;
-        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
-        b=xs/vEushcxReVdh/8g68Ic5EU0WidpTQJoNKzhKXTrehDSUxqizAS16k/S4DuKB1E
-         IIHyOkuW1wZfO09+WE/+XDKVAYVNgKzmzYsRiBPvP5ee//WRZhhTEGa/fhMhtRhWPW
-         kMuvzHcRcrKLGJ/HCparWiKhvDJ43vD4x+x71+8gj78HgvtqfOhFs5jtJkViqnyDNV
-         EmWwfqu/gQXCyD7SEqyfRavhklH+YjMptpT5RuCONJIjjV77bncOv+K3eFjyEZUvsg
-         QTEwDixFxXfgNGsPNMtmxIISM9jACHD2Uwyzh5Ga7+M5CtoqIM6MrVgW1pEqAcxz5E
-         owufomrAHnACQ==
-Date:   Wed, 22 May 2019 09:18:36 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <a0afd58f-c682-66b5-7478-c405a179d72a@landley.net>
-References: <20190517165519.11507-1-roberto.sassu@huawei.com> <20190517165519.11507-3-roberto.sassu@huawei.com> <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com> <69ef1f55-9fc1-7ee0-371f-3dbc77551dc0@zytor.com> <a0afd58f-c682-66b5-7478-c405a179d72a@landley.net>
+        id S1730141AbfEVQVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 12:21:20 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49362 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730067AbfEVQVJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 12:21:09 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4MGKdr8102263;
+        Wed, 22 May 2019 11:20:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1558542039;
+        bh=Gpb1vaUdYj+cDL8YzUJEgAabIosE4tzV3esirEzT5bc=;
+        h=From:To:CC:Subject:Date;
+        b=hJkryzLGiqUHyZsDkaWVfinO/co2x5l0xtABReY1fM9yvC2pLvFu68aNHRfIE+j6m
+         3F7pCq5vpxFYQFEzOAVSxEvQdhG1wqbQ5LEZp6+UwLGDUFHKJpfFRz0gEYZNs2fwoK
+         Gk5/RUivXFH7r8IUST5s9Bwwqi6WT76wgNQHdpao=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4MGKdFP099352
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 May 2019 11:20:39 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 22
+ May 2019 11:20:38 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 22 May 2019 11:20:38 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4MGKceh104530;
+        Wed, 22 May 2019 11:20:38 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
+Subject: [PATCH 0/6] arm64: Initial support Texas Instrument's J721E Platform
+Date:   Wed, 22 May 2019 11:19:15 -0500
+Message-ID: <20190522161921.20750-1-nm@ti.com>
+X-Mailer: git-send-email 2.21.0.777.g83232e38648b
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
-To:     Rob Landley <rob@landley.net>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        viro@zeniv.linux.org.uk
-CC:     linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
-        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
-        takondra@cisco.com, kamensky@cisco.com, arnd@arndb.de,
-        james.w.mcmechan@gmail.com, niveditas98@gmail.com
-From:   hpa@zytor.com
-Message-ID: <FAF78781-2684-4482-9D4D-445B91C15E97@zytor.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 17, 2019 7:16:04 PM PDT, Rob Landley <rob@landley=2Enet> wrote:
->On 5/17/19 4:41 PM, H=2E Peter Anvin wrote:
->> On 5/17/19 1:18 PM, hpa@zytor=2Ecom wrote:
->>>
->>> Ok=2E=2E=2E I just realized this does not work for a modular initramfs=
-,
->composed at load time from multiple files, which is a very real
->problem=2E Should be easy enough to deal with: instead of one large file,
->use one companion file per source file, perhaps something like
->filename=2E=2Exattrs (suggesting double dots to make it less likely to
->conflict with a "real" file=2E) No leading dot, as it makes it more
->likely that archivers will sort them before the file proper=2E
->>>
->>> A side benefit is that the format can be simpler as there is no need
->to encode the filename=2E
->>>
->>> A technically cleaner solution still, but which would need archiver
->modifications, would be to encode the xattrs as an optionally nameless
->file (just an empty string) with a new file mode value, immediately
->following the original file=2E The advantage there is that the archiver
->itself could support xattrs and other extended metadata (which has been
->requested elsewhere); the disadvantage obviously is that that it
->requires new support in the archiver=2E However, at least it ought to be
->simpler since it is still a higher protocol level than the cpio archive
->itself=2E
->>>
->>> There's already one special case in cpio, which is the
->"!!!TRAILER!!!" filename; although I don't think it is part of the
->formal spec, to the extent there is one, I would expect that in
->practice it is always encoded with a mode of 0, which incidentally
->could be used to unbreak the case where such a filename actually
->exists=2E So one way to support such extended metadata would be to set
->mode to 0 and use the filename to encode the type of metadata=2E I wonder
->how existing GNU or BSD cpio (the BSD one is better maintained these
->days) would deal with reading such a file; it would at least not be a
->regression if it just read it still, possibly with warnings=2E It could
->also be possible to use bits 17:16 in the mode, which are traditionally
->always zero (mode_t being 16 bits), but I believe are present in most
->or all of the cpio formats for historical reasons=2E It might be accepted
->better by existing implementations to use one of these high bits
->combined with S_IFREG, I dont know=2E
->>
->>=20
->> Correction: it's just !!!TRAILER!!!=2E
->
->We documented it as "TRAILER!!!" without leading !!!, and that its
->purpose is to
->flush hardlinks:
->
->https://www=2Ekernel=2Eorg/doc/Documentation/early-userspace/buffer-forma=
-t=2Etxt
->
->That's what toybox cpio has been producing=2E Kernel consumes it just
->fine=2E Just
->checked busybox cpio and that's what they're producing as well=2E=2E=2E
->
->Rob
+Hi,
 
-Yes, TRAILER!!! is correct=2E Somehow I managed to get it wrong twice=2E
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+This series adds support for the latest new SoC, J721E, from Texas Instruments.
+
+The series is an based off v5.2-rc1 and has the following driver
+dependencies for a successful boot:
+1.  https://lore.kernel.org/lkml/20190429131533.25122-1-afd@ti.com (for newer firmware)
+2.  https://lore.kernel.org/linux-arm-kernel/1555093342-428-1-git-send-email-t-kristo@ti.com/
+    - Clock IDs cannot be guarenteed to be sequential, has to be
+      discovered from hardware description in dts
+    - Clock IDs on this massive chip also exceeds 255, so, the support
+      for the same is expected in follow on patches.
+
+The full series is available here (including dependencies):
+https://github.com/nmenon/linux-2.6-playground/commits/upstream/v5.2-rc1/j7es-base-v1
+
+Boot Log: https://pastebin.ubuntu.com/p/j3NtfF8FQr/
+
+NOTE:
+ - If Greg is ok, we can pick up the uart compatibility via the k3 tree,
+   else, I can spawn it off the series.
+ - I will resubmit patch 6 (defconfig update) separately once again once
+   patches 1-5 hit the next tree or for 5.3-rc2 which ever is convenient.
+
+The J721E SoC belongs to the K3 Multicore SoC architecture platform
+for automotive applications such as infotainment, cluster, premium
+Audio, Gateway, industrial and a range of broad market applications.
+This SoC is designed around reducing the system cost by eliminating
+the need of an external system MCU and is targeted towards ASIL-B/C
+certification/requirements in addition to allowing complex software
+and system use-cases.
+
+The Linux development follows AM654 in most of the configurations, but
+adds new capabilities (details in follow on patches).
+
+See J721E Technical Reference Manual (SPRUIL1, May 2019)
+for further details: http://www.ti.com/lit/pdf/spruil1
+
+Nishanth Menon (6):
+  dt-bindings: arm: ti: Add bindings for J721E SoC
+  dt-bindings: serial: 8250_omap: Add compatible for J721E UART
+    controller
+  arm64: dts: ti: Add Support for J721E SoC
+  soc: ti: Add Support for J721E SoC config option
+  arm64: dts: ti: Add support for J721E Common Processor Board
+  arm64: defconfig: Enable TI's J721E SoC platform
+
+ .../devicetree/bindings/arm/ti/k3.txt         |   3 +
+ .../bindings/serial/omap_serial.txt           |   1 +
+ arch/arm64/boot/dts/ti/Makefile               |   2 +
+ .../dts/ti/k3-j721e-common-proc-board.dts     |  50 +++++
+ arch/arm64/boot/dts/ti/k3-j721e-main.dtsi     | 202 ++++++++++++++++++
+ .../boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      |  72 +++++++
+ arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi   |  29 +++
+ arch/arm64/boot/dts/ti/k3-j721e.dtsi          | 176 +++++++++++++++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/soc/ti/Kconfig                        |   5 +
+ 10 files changed, 541 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi
+ create mode 100644 arch/arm64/boot/dts/ti/k3-j721e.dtsi
+
+-- 
+2.21.0.777.g83232e38648b
+
