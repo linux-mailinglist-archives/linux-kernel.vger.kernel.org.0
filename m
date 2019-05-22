@@ -2,74 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 302F825FBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 10:44:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B259225FC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 10:50:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbfEVIoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 04:44:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47566 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727946AbfEVIoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 04:44:21 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0DCDC3082E42;
-        Wed, 22 May 2019 08:44:21 +0000 (UTC)
-Received: from kamzik.brq.redhat.com (ovpn-204-233.brq.redhat.com [10.40.204.233])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 33C00600C6;
-        Wed, 22 May 2019 08:44:14 +0000 (UTC)
-Date:   Wed, 22 May 2019 10:44:09 +0200
-From:   Andrew Jones <drjones@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Thomas Huth <thuth@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [RFC PATCH 0/4] KVM selftests for s390x
-Message-ID: <20190522084409.qz5hs7lqj65qg6x5@kamzik.brq.redhat.com>
-References: <20190516111253.4494-1-thuth@redhat.com>
- <b412e591-3983-ebef-510b-43f9b7be4147@redhat.com>
- <9423ba89-b10e-5e6e-3cc8-8088f3088233@redhat.com>
- <4d94124e-00f6-aa65-3a4a-bd8910480329@redhat.com>
+        id S1728752AbfEVIuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 04:50:00 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41991 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728501AbfEVIt7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 04:49:59 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id EAC9D80375; Wed, 22 May 2019 10:49:46 +0200 (CEST)
+Date:   Wed, 22 May 2019 10:49:56 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH 4.19 046/105] crypto: ccree - dont map MAC key on stack
+Message-ID: <20190522084956.GA8174@amd>
+References: <20190520115247.060821231@linuxfoundation.org>
+ <20190520115250.198221588@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
 Content-Disposition: inline
-In-Reply-To: <4d94124e-00f6-aa65-3a4a-bd8910480329@redhat.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 22 May 2019 08:44:21 +0000 (UTC)
+In-Reply-To: <20190520115250.198221588@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 01:43:06PM +0200, Paolo Bonzini wrote:
-> On 20/05/19 13:30, Thomas Huth wrote:
-> >> No objections at all, though it would be like to have ucall plumbed in
-> >> from the beginning.
-> > I'm still looking at the ucall interface ... what I don't quite get yet
-> > is the question why the ucall_type there is selectable during runtime?
-> > 
-> > Are there plans to have test that could either use UCALL_PIO or
-> > UCALL_MMIO? If not, what about moving ucall_init() and ucall() to
-> > architecture specific code in tools/testing/selftests/kvm/lib/aarch64/
-> > and tools/testing/selftests/kvm/lib/x86_64 instead, and to remove the
-> > ucall_type stuff again (so that x86 is hard-wired to PIO and aarch64
-> > is hard-wired to MMIO)? ... then I could add a DIAG-based ucall
-> > on s390x more easily, I think.
-> 
-> Yes, that would work.  I think Andrew wanted the flexibility to use MMIO
-> on x86, but it's not really necessary to have it.
 
-If the flexibility isn't necessary, then I agree that it'll be nicer to
-put the ucall_init() in arch setup code, avoiding the need to remember
-it in each unit test.
+--6c2NcOVqGQ03X4Wi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> The MAC hash key might be passed to us on stack. Copy it to
+> a slab buffer before mapping to gurantee proper DMA mapping.
+>=20
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> Cc: stable@vger.kernel.org # v4.19+
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>=20
+> ---
+>  drivers/crypto/ccree/cc_hash.c |   24 +++++++++++++++++++++---
+>  1 file changed, 21 insertions(+), 3 deletions(-)
+>=20
+> --- a/drivers/crypto/ccree/cc_hash.c
+> +++ b/drivers/crypto/ccree/cc_hash.c
+> @@ -64,6 +64,7 @@ struct cc_hash_alg {
+>  struct hash_key_req_ctx {
+>  	u32 keylen;
+>  	dma_addr_t key_dma_addr;
+> +	u8 *key;
+>  };
+> =20
+>  /* hash per-session context */
+
+AFAICT, key is used just as a local variable in cc_hash_setkey() and
+cc_xcbc_setkey() functions. Could we make it local variable to save a
+bit of memory (and make code less confusing)?
 
 Thanks,
-drew
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--6c2NcOVqGQ03X4Wi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzlDTQACgkQMOfwapXb+vIQ0QCcDSSdcT4Tv7b1+R4FFx0y7il2
+IVsAnis8HV7aeF0xFoyRUiImbljnMOKD
+=UK2z
+-----END PGP SIGNATURE-----
+
+--6c2NcOVqGQ03X4Wi--
