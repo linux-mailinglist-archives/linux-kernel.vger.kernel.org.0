@@ -2,118 +2,304 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6FB726122
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 12:01:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 354F726139
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 12:02:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729402AbfEVKBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 06:01:30 -0400
-Received: from mail-eopbgr00044.outbound.protection.outlook.com ([40.107.0.44]:13764
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728406AbfEVKB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 06:01:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n6sqrqxqwTiZ4tbyJIcnvRvAcZq7pQfaNREQf2oUNJU=;
- b=P9bdUFm9Xh6g4lFidqcCBEvsLuVmRknWle3E+Js7RNKfrv/Ntu4HPgCrM16nIkMDznMADns6vvIn+91HfT+YM6fyklkeZbmHXmDzOoC9T5iqOmhs5MJPYJpd29gdv1Fh03m5v3RVMuavGgAXw3BaP6EJOh8Nv65pzpL80aTiHxA=
-Received: from VI1PR04MB4543.eurprd04.prod.outlook.com (20.177.55.90) by
- VI1PR04MB3149.eurprd04.prod.outlook.com (10.170.229.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1900.18; Wed, 22 May 2019 10:00:50 +0000
-Received: from VI1PR04MB4543.eurprd04.prod.outlook.com
- ([fe80::5062:df97:a70b:93f8]) by VI1PR04MB4543.eurprd04.prod.outlook.com
- ([fe80::5062:df97:a70b:93f8%7]) with mapi id 15.20.1900.020; Wed, 22 May 2019
- 10:00:50 +0000
-From:   Robin Gong <yibin.gong@nxp.com>
-To:     "robh@kernel.org" <robh@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "plyatov@gmail.com" <plyatov@gmail.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
-CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: [PATCH v4 12/14] ARM: dts: imx6ul: add dma support on ecspi
-Thread-Topic: [PATCH v4 12/14] ARM: dts: imx6ul: add dma support on ecspi
-Thread-Index: AQHVEIU83qMigGqUGE6I8nfFNPDIVQ==
-Date:   Wed, 22 May 2019 10:00:50 +0000
-Message-ID: <1558548188-1155-13-git-send-email-yibin.gong@nxp.com>
-References: <1558548188-1155-1-git-send-email-yibin.gong@nxp.com>
-In-Reply-To: <1558548188-1155-1-git-send-email-yibin.gong@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR04CA0045.apcprd04.prod.outlook.com
- (2603:1096:202:14::13) To VI1PR04MB4543.eurprd04.prod.outlook.com
- (2603:10a6:803:6d::26)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yibin.gong@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: aa041148-5ce4-4bfe-e04c-08d6de9c5e5d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB3149;
-x-ms-traffictypediagnostic: VI1PR04MB3149:
-x-microsoft-antispam-prvs: <VI1PR04MB31492FFCA87BCD36D2B6271F89000@VI1PR04MB3149.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:330;
-x-forefront-prvs: 0045236D47
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(199004)(189003)(2501003)(446003)(11346002)(2616005)(186003)(68736007)(26005)(5660300002)(476003)(86362001)(71190400001)(50226002)(54906003)(110136005)(66066001)(76176011)(486006)(4326008)(7736002)(52116002)(2201001)(71200400001)(36756003)(6512007)(99286004)(7416002)(386003)(8676002)(6506007)(305945005)(53936002)(81166006)(66446008)(25786009)(64756008)(81156014)(6436002)(256004)(6486002)(102836004)(14454004)(73956011)(8936002)(498600001)(2906002)(66946007)(66476007)(14444005)(66556008)(6116002)(3846002)(921003)(32563001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3149;H:VI1PR04MB4543.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 3ZMxYNrsqSdtPnHRridgmTzAbN9a6QLjf25dMBkv8KT7YscG0mP4mMoXwwBrAXeXMnXqSErlnn7UFxzOLlV3cGift+Ptx/232jVipD65zW4t8ryeIgtkWkZbr7XCYclldyC4da38ej7HRat5PWPHtuWYkljieUSYaVNugZ8LwIy+q7gqjj5SzhWAnUC7IU1eCGUUK7cU695gANaNtNUwZ/HlH7MIxGGe2OjGBNbG+HaM7ecmGQGHhiIeHg+rRoHk2Iv1s0HEIFncxxZQRSNwk1P78wF3VwPBBueTilFuApUvmuRorlwyv+cgjyvt3vxHWL8CYqQk6Zb7Ics9RjJ9fhmUUDLNKsFJ8Aw+TGU+jzdgOxRrq51diCUGUhywPspwUzt2NIRo+czwTonJFnnT9DV/linIlWMiuO3+CflVQCo=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa041148-5ce4-4bfe-e04c-08d6de9c5e5d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2019 10:00:50.6544
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3149
+        id S1729271AbfEVKCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 06:02:02 -0400
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:50820 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728965AbfEVKCA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 06:02:00 -0400
+Received: by mail-qk1-f201.google.com with SMTP id p4so1751172qkj.17
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 03:02:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=YHDO2phcBlcC8egLCS1LoSqogxMYR/g87S2UaCiOpn4=;
+        b=mwa0/Ji2fwq1sL7J2eSSr4vCq9PNV3hbM11Qg1tdKLGQ5d7+nG9aVi4Fat+xUhdPTe
+         KY7ytt6yyj8b6NQOtQNVNpbL7t5GFXr43RK9T4LDARNewa5CgXHUcwdRsMEapBDkilU2
+         nCDcjWwPutBaBP9ZW1Ucu7OHU2UTN6f4oDjElZLJwyQs2zdDMlLzgt+bbl93IfPWTK3H
+         DvmpPrgIm2KGNJeacgV2alsgCg2w8lFOfOycBx3okBz31SbMZNbebe5tVcSvOpAXgfD0
+         x9/g/QZHgoQxxB3LOcFKBwgp78ELoWNPKqD3MdxdLEKAcQMix6hXScjcJlCc8tekGVBn
+         6RaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=YHDO2phcBlcC8egLCS1LoSqogxMYR/g87S2UaCiOpn4=;
+        b=nGl2w40kC0O03kF4g8NUUIV4Cv4KBkKMIF4LNTXi5wgU1+mIqQ+2BMWA+VToxwBLzg
+         xpeWYiBCh1ayZ4BZypJjSXKbMEFbOuW5RVolqgQGmQ+P1M00dXAT8Ejfp5xNjEkhFvLw
+         +nhB+9zyi4sLgmd8IV7BmSBpapVL+JEPyRuuM8OcfgOJ5miF5MC7lHDfaExLse08HovW
+         5NqCU0GiN5QP+M1bMCrrwoC6r1hxpsHMMdaP+EizAv1U6UDWlecOJf94OxYgpeP4xnc7
+         qDo7zOzBEBz6SFdd6+sWxREV+fUN5+cK314+49Lp2ZrUGkNvpGxHVX0is8ssXfWLXucG
+         EjMA==
+X-Gm-Message-State: APjAAAU/yvOgZUmzPJjimAyfpGUvmzRVHKE9lAXjD7zBkyF0++NxMAcW
+        WeIFeZaX0ue+UZo/+pmyeDRQbW/+Vw==
+X-Google-Smtp-Source: APXvYqx/VaQ5jlC/Ooy3ieBuu8+ppktY0rK3DL633eMh4j8i6rRO3/+v8ktj4Xm073TLE+hG9+z/3PdezQ==
+X-Received: by 2002:a37:4cc9:: with SMTP id z192mr59997831qka.198.1558519319575;
+ Wed, 22 May 2019 03:01:59 -0700 (PDT)
+Date:   Wed, 22 May 2019 12:00:50 +0200
+Message-Id: <20190522100048.146841-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
+Subject: [PATCH v3] mm/kasan: Print frame description for stack bugs
+From:   Marco Elver <elver@google.com>
+To:     aryabinin@virtuozzo.com, dvyukov@google.com, glider@google.com,
+        andreyknvl@google.com, akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kasan-dev@googlegroups.com, Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkIGRtYSBzdXBwb3J0IG9uIGVjc3BpLg0KDQpTaWduZWQtb2ZmLWJ5OiBSb2JpbiBHb25nIDx5
-aWJpbi5nb25nQG54cC5jb20+DQotLS0NCiBhcmNoL2FybS9ib290L2R0cy9pbXg2dWwuZHRzaSB8
-IDggKysrKysrKysNCiAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspDQoNCmRpZmYgLS1n
-aXQgYS9hcmNoL2FybS9ib290L2R0cy9pbXg2dWwuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2lt
-eDZ1bC5kdHNpDQppbmRleCBiYmYwMTBjLi44ODBiOWVlIDEwMDY0NA0KLS0tIGEvYXJjaC9hcm0v
-Ym9vdC9kdHMvaW14NnVsLmR0c2kNCisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2lteDZ1bC5kdHNp
-DQpAQCAtMjI2LDYgKzIyNiw4IEBADQogCQkJCQljbG9ja3MgPSA8JmNsa3MgSU1YNlVMX0NMS19F
-Q1NQSTE+LA0KIAkJCQkJCSA8JmNsa3MgSU1YNlVMX0NMS19FQ1NQSTE+Ow0KIAkJCQkJY2xvY2st
-bmFtZXMgPSAiaXBnIiwgInBlciI7DQorCQkJCQlkbWFzID0gPCZzZG1hIDMgNyAxPiwgPCZzZG1h
-IDQgNyAyPjsNCisJCQkJCWRtYS1uYW1lcyA9ICJyeCIsICJ0eCI7DQogCQkJCQlzdGF0dXMgPSAi
-ZGlzYWJsZWQiOw0KIAkJCQl9Ow0KIA0KQEAgLTIzOCw2ICsyNDAsOCBAQA0KIAkJCQkJY2xvY2tz
-ID0gPCZjbGtzIElNWDZVTF9DTEtfRUNTUEkyPiwNCiAJCQkJCQkgPCZjbGtzIElNWDZVTF9DTEtf
-RUNTUEkyPjsNCiAJCQkJCWNsb2NrLW5hbWVzID0gImlwZyIsICJwZXIiOw0KKwkJCQkJZG1hcyA9
-IDwmc2RtYSA1IDcgMT4sIDwmc2RtYSA2IDcgMj47DQorCQkJCQlkbWEtbmFtZXMgPSAicngiLCAi
-dHgiOw0KIAkJCQkJc3RhdHVzID0gImRpc2FibGVkIjsNCiAJCQkJfTsNCiANCkBAIC0yNTAsNiAr
-MjU0LDggQEANCiAJCQkJCWNsb2NrcyA9IDwmY2xrcyBJTVg2VUxfQ0xLX0VDU1BJMz4sDQogCQkJ
-CQkJIDwmY2xrcyBJTVg2VUxfQ0xLX0VDU1BJMz47DQogCQkJCQljbG9jay1uYW1lcyA9ICJpcGci
-LCAicGVyIjsNCisJCQkJCWRtYXMgPSA8JnNkbWEgNyA3IDE+LCA8JnNkbWEgOCA3IDI+Ow0KKwkJ
-CQkJZG1hLW5hbWVzID0gInJ4IiwgInR4IjsNCiAJCQkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQog
-CQkJCX07DQogDQpAQCAtMjYyLDYgKzI2OCw4IEBADQogCQkJCQljbG9ja3MgPSA8JmNsa3MgSU1Y
-NlVMX0NMS19FQ1NQSTQ+LA0KIAkJCQkJCSA8JmNsa3MgSU1YNlVMX0NMS19FQ1NQSTQ+Ow0KIAkJ
-CQkJY2xvY2stbmFtZXMgPSAiaXBnIiwgInBlciI7DQorCQkJCQlkbWFzID0gPCZzZG1hIDkgNyAx
-PiwgPCZzZG1hIDEwIDcgMj47DQorCQkJCQlkbWEtbmFtZXMgPSAicngiLCAidHgiOw0KIAkJCQkJ
-c3RhdHVzID0gImRpc2FibGVkIjsNCiAJCQkJfTsNCiANCi0tIA0KMi43LjQNCg0K
+This adds support for printing stack frame description on invalid stack
+accesses. The frame description is embedded by the compiler, which is
+parsed and then pretty-printed.
+
+Currently, we can only print the stack frame info for accesses to the
+task's own stack, but not accesses to other tasks' stacks.
+
+Example of what it looks like:
+
+[   17.924050] page dumped because: kasan: bad access detected
+[   17.924908]
+[   17.925153] addr ffff8880673ef98a is located in stack of task insmod/2008 at offset 106 in frame:
+[   17.926542]  kasan_stack_oob+0x0/0xf5 [test_kasan]
+[   17.927932]
+[   17.928206] this frame has 2 objects:
+[   17.928783]  [32, 36) 'i'
+[   17.928784]  [96, 106) 'stack_array'
+[   17.929216]
+[   17.930031] Memory state around the buggy address:
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198435
+Signed-off-by: Marco Elver <elver@google.com>
+---
+
+Changes since v2:
+- Comment about why line number is stripped.
+- Add BUILD_BUG_ON(CONFIG_STACK_GROWSUP).
+
+Changes since v1:
+- Fix types in printf (%zu -> %lu).
+- Prefer 'unsigned long', to ensure offset/points are pointer sized, as
+  emitted by ASAN instrumentation.
+
+Change-Id: I4836cde103052991ac8871796a45b4c977c9e2e7
+---
+ mm/kasan/kasan.h  |   5 ++
+ mm/kasan/report.c | 165 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 170 insertions(+)
+
+diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
+index 3ce956efa0cb..1979db4763e2 100644
+--- a/mm/kasan/kasan.h
++++ b/mm/kasan/kasan.h
+@@ -43,6 +43,11 @@
+ 
+ #define KASAN_ALLOCA_REDZONE_SIZE	32
+ 
++/*
++ * Stack frame marker (compiler ABI).
++ */
++#define KASAN_CURRENT_STACK_FRAME_MAGIC 0x41B58AB3
++
+ /* Don't break randconfig/all*config builds */
+ #ifndef KASAN_ABI_VERSION
+ #define KASAN_ABI_VERSION 1
+diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+index 03a443579386..0e5f965f1882 100644
+--- a/mm/kasan/report.c
++++ b/mm/kasan/report.c
+@@ -28,6 +28,7 @@
+ #include <linux/types.h>
+ #include <linux/kasan.h>
+ #include <linux/module.h>
++#include <linux/sched/task_stack.h>
+ 
+ #include <asm/sections.h>
+ 
+@@ -181,6 +182,168 @@ static inline bool init_task_stack_addr(const void *addr)
+ 			sizeof(init_thread_union.stack));
+ }
+ 
++static bool __must_check tokenize_frame_descr(const char **frame_descr,
++					      char *token, size_t max_tok_len,
++					      unsigned long *value)
++{
++	const char *sep = strchr(*frame_descr, ' ');
++
++	if (sep == NULL)
++		sep = *frame_descr + strlen(*frame_descr);
++
++	if (token != NULL) {
++		const size_t tok_len = sep - *frame_descr;
++
++		if (tok_len + 1 > max_tok_len) {
++			pr_err("KASAN internal error: frame description too long: %s\n",
++			       *frame_descr);
++			return false;
++		}
++
++		/* Copy token (+ 1 byte for '\0'). */
++		strlcpy(token, *frame_descr, tok_len + 1);
++	}
++
++	/* Advance frame_descr past separator. */
++	*frame_descr = sep + 1;
++
++	if (value != NULL && kstrtoul(token, 10, value)) {
++		pr_err("KASAN internal error: not a valid number: %s\n", token);
++		return false;
++	}
++
++	return true;
++}
++
++static void print_decoded_frame_descr(const char *frame_descr)
++{
++	/*
++	 * We need to parse the following string:
++	 *    "n alloc_1 alloc_2 ... alloc_n"
++	 * where alloc_i looks like
++	 *    "offset size len name"
++	 * or "offset size len name:line".
++	 */
++
++	char token[64];
++	unsigned long num_objects;
++
++	if (!tokenize_frame_descr(&frame_descr, token, sizeof(token),
++				  &num_objects))
++		return;
++
++	pr_err("\n");
++	pr_err("this frame has %lu %s:\n", num_objects,
++	       num_objects == 1 ? "object" : "objects");
++
++	while (num_objects--) {
++		unsigned long offset;
++		unsigned long size;
++
++		/* access offset */
++		if (!tokenize_frame_descr(&frame_descr, token, sizeof(token),
++					  &offset))
++			return;
++		/* access size */
++		if (!tokenize_frame_descr(&frame_descr, token, sizeof(token),
++					  &size))
++			return;
++		/* name length (unused) */
++		if (!tokenize_frame_descr(&frame_descr, NULL, 0, NULL))
++			return;
++		/* object name */
++		if (!tokenize_frame_descr(&frame_descr, token, sizeof(token),
++					  NULL))
++			return;
++
++		/* Strip line number; without filename it's not very helpful. */
++		strreplace(token, ':', '\0');
++
++		/* Finally, print object information. */
++		pr_err(" [%lu, %lu) '%s'", offset, offset + size, token);
++	}
++}
++
++static bool __must_check get_address_stack_frame_info(const void *addr,
++						      unsigned long *offset,
++						      const char **frame_descr,
++						      const void **frame_pc)
++{
++	unsigned long aligned_addr;
++	unsigned long mem_ptr;
++	const u8 *shadow_bottom;
++	const u8 *shadow_ptr;
++	const unsigned long *frame;
++
++	BUILD_BUG_ON(IS_ENABLED(CONFIG_STACK_GROWSUP));
++
++	/*
++	 * NOTE: We currently only support printing frame information for
++	 * accesses to the task's own stack.
++	 */
++	if (!object_is_on_stack(addr))
++		return false;
++
++	aligned_addr = round_down((unsigned long)addr, sizeof(long));
++	mem_ptr = round_down(aligned_addr, KASAN_SHADOW_SCALE_SIZE);
++	shadow_ptr = kasan_mem_to_shadow((void *)aligned_addr);
++	shadow_bottom = kasan_mem_to_shadow(end_of_stack(current));
++
++	while (shadow_ptr >= shadow_bottom && *shadow_ptr != KASAN_STACK_LEFT) {
++		shadow_ptr--;
++		mem_ptr -= KASAN_SHADOW_SCALE_SIZE;
++	}
++
++	while (shadow_ptr >= shadow_bottom && *shadow_ptr == KASAN_STACK_LEFT) {
++		shadow_ptr--;
++		mem_ptr -= KASAN_SHADOW_SCALE_SIZE;
++	}
++
++	if (shadow_ptr < shadow_bottom)
++		return false;
++
++	frame = (const unsigned long *)(mem_ptr + KASAN_SHADOW_SCALE_SIZE);
++	if (frame[0] != KASAN_CURRENT_STACK_FRAME_MAGIC) {
++		pr_err("KASAN internal error: frame info validation failed; invalid marker: %lu\n",
++		       frame[0]);
++		return false;
++	}
++
++	*offset = (unsigned long)addr - (unsigned long)frame;
++	*frame_descr = (const char *)frame[1];
++	*frame_pc = (void *)frame[2];
++
++	return true;
++}
++
++static void print_address_stack_frame(const void *addr)
++{
++	unsigned long offset;
++	const char *frame_descr;
++	const void *frame_pc;
++
++	if (IS_ENABLED(CONFIG_KASAN_SW_TAGS))
++		return;
++
++	if (!get_address_stack_frame_info(addr, &offset, &frame_descr,
++					  &frame_pc))
++		return;
++
++	/*
++	 * get_address_stack_frame_info only returns true if the given addr is
++	 * on the current task's stack.
++	 */
++	pr_err("\n");
++	pr_err("addr %px is located in stack of task %s/%d at offset %lu in frame:\n",
++	       addr, current->comm, task_pid_nr(current), offset);
++	pr_err(" %pS\n", frame_pc);
++
++	if (!frame_descr)
++		return;
++
++	print_decoded_frame_descr(frame_descr);
++}
++
+ static void print_address_description(void *addr)
+ {
+ 	struct page *page = addr_to_page(addr);
+@@ -204,6 +367,8 @@ static void print_address_description(void *addr)
+ 		pr_err("The buggy address belongs to the page:\n");
+ 		dump_page(page, "kasan: bad access detected");
+ 	}
++
++	print_address_stack_frame(addr);
+ }
+ 
+ static bool row_is_guilty(const void *row, const void *guilty)
+-- 
+2.21.0.1020.gf2820cf01a-goog
+
