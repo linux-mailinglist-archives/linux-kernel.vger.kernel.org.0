@@ -2,106 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80A3B2611C
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 12:01:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE52826126
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 12:01:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbfEVKBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 06:01:09 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:23941 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728406AbfEVKBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 06:01:09 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4587SL4VkZz9v2M2;
-        Wed, 22 May 2019 12:01:06 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=qqOlTXMN; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id htw2hqspO0bf; Wed, 22 May 2019 12:01:06 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4587SL3TkDz9v2M1;
-        Wed, 22 May 2019 12:01:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1558519266; bh=pOJgHp/KMoeYEIwsOCZddIB2aTQYV+vwh0CSHycpDpI=;
-        h=From:Subject:To:Cc:Date:From;
-        b=qqOlTXMNNHJOMdk1N0HS5Hzpjr/2y4ypZNow5W/PI1QnLs7xTU5AODc1lbH+yW2YQ
-         4sE+CEJBwutOJwezWalBSKhSPl0OETTs8Qdl/cHuf7CvaUOTtcsf5OQ3d+mF1hdRn5
-         mbkCkumtsx09O8bpHrNBhw6w1FgIKFul1ZKY43uU=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 932128B82C;
-        Wed, 22 May 2019 12:01:07 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id g2u_VzR4Vwh9; Wed, 22 May 2019 12:01:07 +0200 (CEST)
-Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 644268B823;
-        Wed, 22 May 2019 12:01:07 +0200 (CEST)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 2B677684F2; Wed, 22 May 2019 10:01:07 +0000 (UTC)
-Message-Id: <cf280b7ab1f513f03d3908ac9ad194e819f170f5.1558519026.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] net: phy: lxt: Add suspend/resume support to LXT971 and
- LXT973.
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Date:   Wed, 22 May 2019 10:01:07 +0000 (UTC)
+        id S1729448AbfEVKBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 06:01:36 -0400
+Received: from outgoing-stata.csail.mit.edu ([128.30.2.210]:48279 "EHLO
+        outgoing-stata.csail.mit.edu" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729414AbfEVKBe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 06:01:34 -0400
+Received: from c-73-193-85-113.hsd1.wa.comcast.net ([73.193.85.113] helo=srivatsab-a01.vmware.com)
+        by outgoing-stata.csail.mit.edu with esmtpsa (TLS1.2:RSA_AES_128_CBC_SHA1:128)
+        (Exim 4.82)
+        (envelope-from <srivatsa@csail.mit.edu>)
+        id 1hTO3s-000DFW-EO; Wed, 22 May 2019 06:01:28 -0400
+Subject: Re: CFQ idling kills I/O performance on ext4 with blkio cgroup
+ controller
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, cgroups@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        jmoyer@redhat.com, Theodore Ts'o <tytso@mit.edu>,
+        amakhalov@vmware.com, anishs@vmware.com, srivatsab@vmware.com
+References: <8d72fcf7-bbb4-2965-1a06-e9fc177a8938@csail.mit.edu>
+ <1812E450-14EF-4D5A-8F31-668499E13652@linaro.org>
+ <46c6a4be-f567-3621-2e16-0e341762b828@csail.mit.edu>
+ <07D11833-8285-49C2-943D-E4C1D23E8859@linaro.org>
+ <A0DFE635-EFEC-4670-AD70-5D813E170BEE@linaro.org>
+ <5B6570A2-541A-4CF8-98E0-979EA6E3717D@linaro.org>
+ <2CB39B34-21EE-4A95-A073-8633CF2D187C@linaro.org>
+ <FC24E25F-4578-454D-AE2B-8D8D352478D8@linaro.org>
+ <0e3fdf31-70d9-26eb-7b42-2795d4b03722@csail.mit.edu>
+ <F5E29C98-6CC4-43B8-994D-0B5354EECBF3@linaro.org>
+ <686D6469-9DE7-4738-B92A-002144C3E63E@linaro.org>
+From:   "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
+Message-ID: <01d55216-5718-767a-e1e6-aadc67b632f4@csail.mit.edu>
+Date:   Wed, 22 May 2019 03:01:24 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <686D6469-9DE7-4738-B92A-002144C3E63E@linaro.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All LXT PHYs implement the standard "power down" bit 11 of
-BMCR, so this patch adds support using the generic
-genphy_{suspend,resume} functions.
+On 5/22/19 2:09 AM, Paolo Valente wrote:
+> 
+> First, thank you very much for testing my patches, and, above all, for
+> sharing those huge traces!
+> 
+> According to the your traces, the residual 20% lower throughput that you
+> record is due to the fact that the BFQ injection mechanism takes a few
+> hundredths of seconds to stabilize, at the beginning of the workload.
+> During that setup time, the throughput is equal to the dreadful ~60-90 KB/s
+> that you see without this new patch.  After that time, there
+> seems to be no loss according to the trace.
+> 
+> The problem is that a loss lasting only a few hundredths of seconds is
+> however not negligible for a write workload that lasts only 3-4
+> seconds.  Could you please try writing a larger file?
+> 
 
-LXT970 is left aside because all registers get cleared upon
-"power down" exit.
+I tried running dd for longer (about 100 seconds), but still saw around
+1.4 MB/s throughput with BFQ, and between 1.5 MB/s - 1.6 MB/s with
+mq-deadline and noop. But I'm not too worried about that difference.
 
-Fixes: 0f0ca340e57b ("phy: power management support")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- drivers/net/phy/lxt.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> In addition, I wanted to ask you whether you measured BFQ throughput
+> with traces disabled.  This may make a difference.
+> 
 
-diff --git a/drivers/net/phy/lxt.c b/drivers/net/phy/lxt.c
-index 314486288119..356bd6472f49 100644
---- a/drivers/net/phy/lxt.c
-+++ b/drivers/net/phy/lxt.c
-@@ -262,6 +262,8 @@ static struct phy_driver lxt97x_driver[] = {
- 	/* PHY_BASIC_FEATURES */
- 	.ack_interrupt	= lxt971_ack_interrupt,
- 	.config_intr	= lxt971_config_intr,
-+	.suspend	= genphy_suspend,
-+	.resume		= genphy_resume,
- }, {
- 	.phy_id		= 0x00137a10,
- 	.name		= "LXT973-A2",
-@@ -271,6 +273,8 @@ static struct phy_driver lxt97x_driver[] = {
- 	.probe		= lxt973_probe,
- 	.config_aneg	= lxt973_config_aneg,
- 	.read_status	= lxt973a2_read_status,
-+	.suspend	= genphy_suspend,
-+	.resume		= genphy_resume,
- }, {
- 	.phy_id		= 0x00137a10,
- 	.name		= "LXT973",
-@@ -279,6 +283,8 @@ static struct phy_driver lxt97x_driver[] = {
- 	.flags		= 0,
- 	.probe		= lxt973_probe,
- 	.config_aneg	= lxt973_config_aneg,
-+	.suspend	= genphy_suspend,
-+	.resume		= genphy_resume,
- } };
- 
- module_phy_driver(lxt97x_driver);
--- 
-2.13.3
+The above result (1.4 MB/s) was obtained with traces disabled.
 
+> After trying writing a larger file, you can try with low_latency on.
+> On my side, it causes results to become a little unstable across
+> repetitions (which is expected).
+> 
+With low_latency on, I get between 60 KB/s - 100 KB/s.
+
+Regards,
+Srivatsa
+VMware Photon OS
