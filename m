@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AD4F27118
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 22:51:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFAC027115
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 22:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730489AbfEVUvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 16:51:22 -0400
-Received: from ms.lwn.net ([45.79.88.28]:49340 "EHLO ms.lwn.net"
+        id S1730388AbfEVUvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 16:51:04 -0400
+Received: from ms.lwn.net ([45.79.88.28]:49324 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730247AbfEVUu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730292AbfEVUu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 22 May 2019 16:50:58 -0400
 Received: from meer.lwn.net (localhost [127.0.0.1])
-        by ms.lwn.net (Postfix) with ESMTPA id 54C0BAB5;
+        by ms.lwn.net (Postfix) with ESMTPA id CD9A812B3;
         Wed, 22 May 2019 20:50:57 +0000 (UTC)
 From:   Jonathan Corbet <corbet@lwn.net>
 To:     linux-doc@vger.kernel.org
@@ -21,12 +21,10 @@ Cc:     linux-kernel@vger.kernel.org,
         Markus Heiser <markus.heiser@darmarit.de>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Oleksandr Natalenko <oleksandr@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Keith Busch <keith.busch@intel.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH 3/8] docs: fix numaperf.rst and add it to the doc tree
-Date:   Wed, 22 May 2019 14:50:29 -0600
-Message-Id: <20190522205034.25724-4-corbet@lwn.net>
+        Jonathan Corbet <corbet@lwn.net>, George Spelvin <lkml@sdf.org>
+Subject: [PATCH 4/8] lib/list_sort: fix kerneldoc build error
+Date:   Wed, 22 May 2019 14:50:30 -0600
+Message-Id: <20190522205034.25724-5-corbet@lwn.net>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190522205034.25724-1-corbet@lwn.net>
 References: <20190522205034.25724-1-corbet@lwn.net>
@@ -37,50 +35,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 13bac55ef7ae ("doc/mm: New documentation for memory performance")
-added numaperf.rst, but did not add it to the TOC tree.  There was also an
-incorrectly marked literal block leading to this warning sequence:
+Commit 043b3f7b6388 ("lib/list_sort: simplify and remove
+MAX_LIST_LENGTH_BITS") added some useful kerneldoc info, but also broke the
+docs build:
 
-  numaperf.rst:24: WARNING: Unexpected indentation.
-  numaperf.rst:24: WARNING: Inline substitution_reference start-string without end-string.
-  numaperf.rst:25: WARNING: Block quote ends without a blank line; unexpected unindent.
+  ./lib/list_sort.c:128: WARNING: Definition list ends without a blank line; unexpected unindent.
+  ./lib/list_sort.c:161: WARNING: Unexpected indentation.
+  ./lib/list_sort.c:162: WARNING: Block quote ends without a blank line; unexpected unindent.
 
-Fix the block and add the file to the document tree.
+Fix the offending literal block and make the error go away.
 
-Fixes: 13bac55ef7ae ("doc/mm: New documentation for memory performance")
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
+Fixes: 043b3f7b6388 ("lib/list_sort: simplify and remove MAX_LIST_LENGTH_BITS")
+Cc: George Spelvin <lkml@sdf.org>
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- Documentation/admin-guide/mm/index.rst    | 1 +
- Documentation/admin-guide/mm/numaperf.rst | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ lib/list_sort.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/mm/index.rst b/Documentation/admin-guide/mm/index.rst
-index 8edb35f11317..ddf8d8d33377 100644
---- a/Documentation/admin-guide/mm/index.rst
-+++ b/Documentation/admin-guide/mm/index.rst
-@@ -31,6 +31,7 @@ the Linux memory management.
-    ksm
-    memory-hotplug
-    numa_memory_policy
-+   numaperf
-    pagemap
-    soft-dirty
-    transhuge
-diff --git a/Documentation/admin-guide/mm/numaperf.rst b/Documentation/admin-guide/mm/numaperf.rst
-index b79f70c04397..c067ed145158 100644
---- a/Documentation/admin-guide/mm/numaperf.rst
-+++ b/Documentation/admin-guide/mm/numaperf.rst
-@@ -15,7 +15,7 @@ characteristics.  Some memory may share the same node as a CPU, and others
- are provided as memory only nodes. While memory only nodes do not provide
- CPUs, they may still be local to one or more compute nodes relative to
- other nodes. The following diagram shows one such example of two compute
--nodes with local memory and a memory only node for each of compute node:
-+nodes with local memory and a memory only node for each of compute node::
- 
-  +------------------+     +------------------+
-  | Compute Node 0   +-----+ Compute Node 1   |
+diff --git a/lib/list_sort.c b/lib/list_sort.c
+index 06e900c5587b..712ed1f4eb64 100644
+--- a/lib/list_sort.c
++++ b/lib/list_sort.c
+@@ -120,7 +120,8 @@ static void merge_final(void *priv, cmp_func cmp, struct list_head *head,
+  * The latter offers a chance to save a few cycles in the comparison
+  * (which is used by e.g. plug_ctx_cmp() in block/blk-mq.c).
+  *
+- * A good way to write a multi-word comparison is
++ * A good way to write a multi-word comparison is::
++ *
+  *	if (a->high != b->high)
+  *		return a->high > b->high;
+  *	if (a->middle != b->middle)
 -- 
 2.21.0
 
