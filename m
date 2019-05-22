@@ -2,102 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 980A225EF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 10:02:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 324EA25EF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 10:04:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbfEVICv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 04:02:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36390 "EHLO mail.kernel.org"
+        id S1728547AbfEVIEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 04:04:23 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:43316 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725850AbfEVICv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 04:02:51 -0400
-Received: from devnote2 (unknown [103.5.140.153])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A38F620675;
-        Wed, 22 May 2019 08:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558512170;
-        bh=gTRI1Bg4lUob35KpxtT/5afpOlFMrO+atplmEw7kLO4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lIheQecSSeJysne56ux1DlRA34GOEN+h8/Ix5eKHJnz2843/pXa2AxD/trcWm8myw
-         /wpPOETQWHLQWnzGZTPoEYk2RCSilWGpy0nygDeOyBns6ugTxvEx4dPXJm5t1wSAiL
-         +/UqW89k5Jr3glkAL5f1Nd/Vz334SdiQf+ifBJQo=
-Date:   Wed, 22 May 2019 17:02:46 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 0/2] Enable new kprobe event at boot
-Message-Id: <20190522170246.1746819966139953deed1a03@kernel.org>
-In-Reply-To: <20190522163021.b8d08103dd5df01b2e472e46@kernel.org>
-References: <155842537599.4253.14690293652007233645.stgit@devnote2>
-        <20190521093317.7d698f79@gandalf.local.home>
-        <20190522003932.34367dcae6d9de27e254e174@kernel.org>
-        <20190522163021.b8d08103dd5df01b2e472e46@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726278AbfEVIEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 04:04:23 -0400
+Received: from we0524.dip.tu-dresden.de ([141.76.178.12] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hTMEX-00080Q-GY; Wed, 22 May 2019 10:04:21 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     briannorris@chromium.org, ryandcase@chromium.org, mka@chromium.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: rockchip: Mark that the rk3288 timer might stop in suspend
+Date:   Wed, 22 May 2019 10:04:20 +0200
+Message-ID: <1654629.mRIXxtDvp3@phil>
+In-Reply-To: <20190521234933.153953-1-dianders@chromium.org>
+References: <20190521234933.153953-1-dianders@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 May 2019 16:30:21 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
-
-> On Wed, 22 May 2019 00:39:32 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Am Mittwoch, 22. Mai 2019, 01:49:33 CEST schrieb Douglas Anderson:
+> This is similar to commit e6186820a745 ("arm64: dts: rockchip: Arch
+> counter doesn't tick in system suspend").  Specifically on the rk3288
+> it can be seen that the timer stops ticking in suspend if we end up
+> running through the "osc_disable" path in rk3288_slp_mode_set().  In
+> that path the 24 MHz clock will turn off and the timer stops.
 > 
-> > > Perhaps we could enable kprobes at early init?
-> > 
-> > It should be possible, I will try to find what blocks it. I guess after we
-> > switch early_text_poke() to text_poke(), we can use kprobes on x86. But
-> > for other archs, I need to investigate more.
+> To test this, I ran this on a Chrome OS filesystem:
+>   before=$(date); \
+>   suspend_stress_test -c1 --suspend_min=30 --suspend_max=31; \
+>   echo ${before}; date
 > 
-> OK, I just follow the kernel init related to kprobes
+> ...and I found that unless I plug in a device that requests USB wakeup
+> to be active that the two calls to "date" would show that fewer than
+> 30 seconds passed.
 > 
-> start_kernel()
->  -> trace_init()
->  -> rcu_init_nohz()
->  -> perf_event_init()
->  -> arch_call_rest_init()
->    -> rest_init()
->      -> rcu_scheduler_starting()
->      -> kernel_thread(kernel_init)
-> kernel_init()
->  -> kernel_init_freeable()
->    -> wait_for_completion(&kthreadd_done);
->    -> workqueue_init()
->    -> smp_init()
->    -> do_basic_setup()
->      -> do_initcalls()
->        -> do_initcall_level()
->          (in subsys-level)
->          -> init_kprobes()
+> NOTE: deep suspend (where the 24 MHz clock gets disabled) isn't
+> supported yet on upstream Linux so this was tested on a downstream
+> kernel.
 > 
-> Since optprobe uses workqueue, we can not move it before workqueue_init().
-> (but maybe we can disable it in early stage)
-> Also, since kprobes depends on rcu, I guess we can not move it before
-> rcu_scheduler_starting().
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-It seems rcu is not initialized yet at this point. It is initialized fully
-at core_initcall.
+applied for 5.3
 
-> for kretprobe, we need to get the possible cpus, we need a fix if we move
-> it before before smp_init().
-> However, there is no reason we need to run it in subsys level. We can
-> move init_kprobes() in core or pure level safely.
 
-Also, I missed ftrace (function tracer) is initialized at core_initcall().
-So we can move init_kprobes() at postcore_initcall() safely.
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
