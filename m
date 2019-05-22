@@ -2,79 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E29126410
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:54:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61B6826417
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 14:54:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbfEVMyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 08:54:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56812 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728794AbfEVMyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 08:54:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5D8F0ACAC;
-        Wed, 22 May 2019 12:54:10 +0000 (UTC)
+        id S1729407AbfEVMyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 08:54:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:49970 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728761AbfEVMyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 08:54:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0364880D;
+        Wed, 22 May 2019 05:54:36 -0700 (PDT)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C32D23F575;
+        Wed, 22 May 2019 05:54:34 -0700 (PDT)
+Date:   Wed, 22 May 2019 13:54:29 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     jean-philippe.brucker@arm.com, lorenzo.pieralisi@arm.com,
+        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ACPI/IORT: Fix build without CONFIG_IOMMU_API
+Message-ID: <20190522125429.GA7876@fuggles.cambridge.arm.com>
+References: <20190520065746.17068-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 22 May 2019 14:54:09 +0200
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Eric Wong <e@80x24.org>
-Cc:     Azat Khuzhin <azat@libevent.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 05/13] epoll: offload polling to a work in case of epfd
- polled from userspace
-In-Reply-To: <20190521075114.if4urjezominbojj@dcvr>
-References: <20190516085810.31077-1-rpenyaev@suse.de>
- <20190516085810.31077-6-rpenyaev@suse.de>
- <20190521075114.if4urjezominbojj@dcvr>
-Message-ID: <7fced5a4f9468a273b6acb0ca0fdcfb1@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520065746.17068-1-hch@lst.de>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-21 09:51, Eric Wong wrote:
-> Roman Penyaev <rpenyaev@suse.de> wrote:
->> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
->> index 81da4571f1e0..9d3905c0afbf 100644
->> --- a/fs/eventpoll.c
->> +++ b/fs/eventpoll.c
->> @@ -44,6 +44,7 @@
->>  #include <linux/seq_file.h>
->>  #include <linux/compat.h>
->>  #include <linux/rculist.h>
->> +#include <linux/workqueue.h>
->>  #include <net/busy_poll.h>
->> 
->>  /*
->> @@ -185,6 +186,9 @@ struct epitem {
->> 
->>  	/* The structure that describe the interested events and the source 
->> fd */
->>  	struct epoll_event event;
->> +
->> +	/* Work for offloading event callback */
->> +	struct work_struct work;
->>  };
->> 
->>  /*
+Hi Christoph,
+
+On Mon, May 20, 2019 at 08:57:46AM +0200, Christoph Hellwig wrote:
+> IOMMU_FWSPEC_PCI_RC_ATS is only defined if CONFIG_IOMMU_API is
+> enabled.
 > 
-> Can we avoid the size regression for existing epoll users?
+> Fixes: 5702ee24182f ("ACPI/IORT: Check ATS capability in root complex nodes")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/acpi/arm64/iort.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+> index 9058cb084b91..3e542b5d2a2d 100644
+> --- a/drivers/acpi/arm64/iort.c
+> +++ b/drivers/acpi/arm64/iort.c
+> @@ -1074,9 +1074,10 @@ const struct iommu_ops *iort_iommu_configure(struct device *dev)
+>  		info.node = node;
+>  		err = pci_for_each_dma_alias(to_pci_dev(dev),
+>  					     iort_pci_iommu_init, &info);
+> -
+> +#ifdef CONFIG_IOMMU_API
+>  		if (!err && iort_pci_rc_supports_ats(node))
+>  			dev->iommu_fwspec->flags |= IOMMU_FWSPEC_PCI_RC_ATS;
+> +#endif
 
-Yeah, ->next, ->rdllink, ->ws are not used for user polling, so can hold 
-work
-struct and co (or pointer on container which holds work struct, if work 
-struct
-is huge).
+Cheers, although there's an alternative fix from Lorenzo that I'll send up
+for -rc2.
 
---
-Roman
+Sorry for the delay; been having email issues this week.
 
+Will
