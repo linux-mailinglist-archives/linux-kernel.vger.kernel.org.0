@@ -2,75 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DCC126569
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 16:10:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C97982656C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 16:12:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729409AbfEVOKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 10:10:36 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56052 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728457AbfEVOKg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 10:10:36 -0400
-Received: from laptop.home (unknown [IPv6:2a01:cb19:8ad6:900:42dd:dd1c:19ee:7c60])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: aragua)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 2DDC327E5F5;
-        Wed, 22 May 2019 15:10:34 +0100 (BST)
-From:   Fabien Lahoudere <fabien.lahoudere@collabora.com>
-Cc:     kernel@collabora.com,
-        Fabien Lahoudere <fabien.lahoudere@collabora.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] docs: iio: add precision about sampling_frequency_available
-Date:   Wed, 22 May 2019 16:09:54 +0200
-Message-Id: <aa050f1c188769a2a135face0d02b24a8ce76589.1558533743.git.fabien.lahoudere@collabora.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <9d5dbba798410321177efa5d8a562105ff8cf429.1558533743.git.fabien.lahoudere@collabora.com>
-References: <9d5dbba798410321177efa5d8a562105ff8cf429.1558533743.git.fabien.lahoudere@collabora.com>
+        id S1728674AbfEVOMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 10:12:00 -0400
+Received: from mga09.intel.com ([134.134.136.24]:55169 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726770AbfEVOMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 10:12:00 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 May 2019 07:11:59 -0700
+X-ExtLoop1: 1
+Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.6])
+  by orsmga004.jf.intel.com with ESMTP; 22 May 2019 07:11:58 -0700
+Date:   Wed, 22 May 2019 22:12:18 +0800
+From:   kernel test robot <rong.a.chen@intel.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
+Subject: Re: [ubsan] f0996bc297: netperf.Throughput_total_tps -7.6% regression
+Message-ID: <20190522141218.GI19312@shao2-debian>
+References: <20190520053851.GY31424@shao2-debian>
+ <4834add1-711e-b441-1956-1ab2b2d89353@virtuozzo.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4834add1-711e-b441-1956-1ab2b2d89353@virtuozzo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The documentation give some exemple on what format can be expected
-from sampling_frequency_available sysfs attribute
+On Mon, May 20, 2019 at 12:50:30PM +0300, Andrey Ryabinin wrote:
+> 
+> 
+> On 5/20/19 8:38 AM, kernel test robot wrote:
+> > Greeting,
+> > 
+> > FYI, we noticed a -7.6% regression of netperf.Throughput_total_tps due to commit:
+> > 
+> > 
+> > commit: f0996bc2978e02d2ea898101462b960f6119b18f ("ubsan: Fix nasty -Wbuiltin-declaration-mismatch GCC-9 warnings")
+> > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> > 
+> 
+> This can't be right. First of all the commit makes changes only lib/ubsan.c which is compiled only when CONFIG_UBSAN=y.
+> In your config:
+> # CONFIG_UBSAN is not set 
+> 
+> But even in the case of enabled UBSAN that commit doesn't change the generated machine code at all.
 
-Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.com>
----
- Documentation/ABI/testing/sysfs-bus-iio | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Hi,
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index 6aef7dbbde44..680451695422 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -61,8 +61,11 @@ What:		/sys/bus/iio/devices/triggerX/sampling_frequency_available
- KernelVersion:	2.6.35
- Contact:	linux-iio@vger.kernel.org
- Description:
--		When the internal sampling clock can only take a small
--		discrete set of values, this file lists those available.
-+		When the internal sampling clock can only take a specific set of
-+		frequencies, we can specify the available values with:
-+		- a small discrete set of values like "0 2 4 6 8"
-+		- a range with minimum, step and maximum frequencies like
-+		  "[min step max]"
- 
- What:		/sys/bus/iio/devices/iio:deviceX/oversampling_ratio
- KernelVersion:	2.6.38
--- 
-2.20.1
+Sorry for bringing you inconvenience. We retested the commit and
+couldn't reproduce the regression, please ignore the invalid report.
 
+Best Regards,
+Rong Chen
