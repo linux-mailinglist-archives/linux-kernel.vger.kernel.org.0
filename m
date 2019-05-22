@@ -2,167 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 456AF272AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 01:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63155272B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 01:07:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbfEVXDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 19:03:52 -0400
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:35878 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727734AbfEVXDv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 19:03:51 -0400
-Received: by mail-vk1-f194.google.com with SMTP id l199so934192vke.3
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 16:03:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=083fICcLHdIZzVNufU25syYhE84WJwTKtiHOZtf8SA0=;
-        b=R1whbY0DRJvYeo6WDezCnq6bV0i36te0/v1SFgHuDKDfWdFfZ1uqlfu6C2/257hQWf
-         13OBZbWoVT2d4n1OkMyYTaJdzzdNJVODvxD7ax/78bOTFn0UZG6rkpjhsDxguOSNWQSW
-         /pem354o3ayyWSPYKkkwbewRgzXJsoaUxgC/ouAEGxy6liid3L/+YVw/SLmKu4nN5deA
-         sI1HZSYq1Jfkv/d/KsZmiH7dePki/Ktib/+2n6rc/FESU7nQ1RBKbd2tskxVzb2WzGm/
-         +2fOWm+jMAJ/JCuclmW37/f6kDPw2o5cg4ErXP4x4jo4xyXhp8lPR9gvbLshZk81RzVf
-         ErKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=083fICcLHdIZzVNufU25syYhE84WJwTKtiHOZtf8SA0=;
-        b=iD86zPdHDoEvtqSAHsDAbC5KQEAr3zyXxABw8DAagoZv4g5I7WxwfTzLRK8WrxUq++
-         eplZVurKF2TuhpsGvH2CX9Yub2DgeaGzTvhrvV5bY1jfI0HSVYALIvX3FE1aIP3K9QYg
-         NMARCP+IMARJ2RLKhouTl2rfDWTifW1uhqciVzxA0qbUiAuGAqGBDcEmrOYw8uCMZMcL
-         qmn9vyxR47TVWR31OlKBM8EDfHfa/46mYqGQOiJjQDsWu1Ls786giu1+Kgp6WdWEYdwX
-         KQdDZvzgaEd2GoM5WbLmmH5Nea463ucCkWF9DMlCg12j1H8aU3Gqv6fEg4gXpgaxVDWg
-         v8CA==
-X-Gm-Message-State: APjAAAU7QxY/QxWCE78qXbgtyaYVFYwSIyRZUrWij25J2Cxcuyxe/z17
-        54M9MnHXtHKjW1uAQtf0+ejAYfHmsclrxoea9L0PUg==
-X-Google-Smtp-Source: APXvYqxPKtiNPawqkCkuPCNw0GStvO0zt/hmYPvT2nokhB6CEYZVKos9gwheEkiU5Yy2rN1PLFcfrDl2WDUSCoUDbnM=
-X-Received: by 2002:a1f:4ec6:: with SMTP id c189mr128107vkb.17.1558566229772;
- Wed, 22 May 2019 16:03:49 -0700 (PDT)
+        id S1728511AbfEVXHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 19:07:07 -0400
+Received: from mail-eopbgr1320120.outbound.protection.outlook.com ([40.107.132.120]:28592
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726553AbfEVXHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 19:07:06 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=testarcselector01; d=microsoft.com; cv=none;
+ b=H/NJATreM3Kj7pqN1Zm9z/iUCepe6fppNm00Aiv5G1NevI9h9pkerJM+dS5aUK7SYAKExl5za1Rjbj/le10XsPhKoAVbXRtuqrfBFEsX/rpwTK2VEnYxjRlxKYR3nuPZt+b8QcCAmmeZFdPj+GUsH2fDm3uUKavvJ1dRMw1EpiU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=testarcselector01;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8ohhHm/ag12nqxVYbgVhKCgv0n0DKG2fNfSyB4WZ1BM=;
+ b=b2LUUC6Q0bB2NXLgF45sE1CVW5V2BrHDNcJF1mGx2ERRrZg1hyI+IVf9JTLRY9pULs+nEaMVlkSMrKDQYkXQzlNcmw+X4pf695yJ6YtSCYhb4B08bTzpyruI25QZS24a6Ph1xxFee+6/lGB3A+BsgqXP4xLeLAAGOH9b1UVC0Vc=
+ARC-Authentication-Results: i=1; test.office365.com
+ 1;spf=none;dmarc=none;dkim=none;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8ohhHm/ag12nqxVYbgVhKCgv0n0DKG2fNfSyB4WZ1BM=;
+ b=kRlowZprFxQec7guKFgG7ai7r5cHDbLBW8P2kUhMRasZLOjPFj7TErqU5dOiiLBSZPPyBv2ZnhjePys+eqfQ4JAk5ZlauiM4VtXswHyzGVRz823+gU540HYx5jqxIvWmfh3aHDZ89lkFfe9sSb59NEDLtHhkj85oSjELjFPufjE=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0186.APCP153.PROD.OUTLOOK.COM (10.170.187.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.6; Wed, 22 May 2019 23:06:57 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::d896:4219:e493:b04]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::d896:4219:e493:b04%3]) with mapi id 15.20.1943.007; Wed, 22 May 2019
+ 23:06:57 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     Sunil Muthuswamy <sunilmut@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Kelley <mikelley@microsoft.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next] hv_sock: perf: Allow the socket buffer size
+ options to influence the actual socket buffers
+Thread-Topic: [PATCH net-next] hv_sock: perf: Allow the socket buffer size
+ options to influence the actual socket buffers
+Thread-Index: AdUQ8PsjFNIw2dWyQTKbqbtYd11NLgAATdkA
+Date:   Wed, 22 May 2019 23:06:57 +0000
+Message-ID: <PU1P153MB016989C5FDF71E7CB1EC6BB9BF000@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+References: <BN6PR21MB04652168EAE5D6D7D39BD4AAC0000@BN6PR21MB0465.namprd21.prod.outlook.com>
+In-Reply-To: <BN6PR21MB04652168EAE5D6D7D39BD4AAC0000@BN6PR21MB0465.namprd21.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-05-22T23:06:55.7008782Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=15a9214a-c30a-44ca-afda-bbf5be6c9efe;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:a:f13e:15cc:fc47:db6b]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 40b7f5b1-15f9-4157-92c6-08d6df0a30a8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0186;
+x-ms-traffictypediagnostic: PU1P153MB0186:
+x-microsoft-antispam-prvs: <PU1P153MB01865DA2E239B3B0C300102BBF000@PU1P153MB0186.APCP153.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:2657;
+x-forefront-prvs: 0045236D47
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(346002)(376002)(396003)(136003)(199004)(189003)(46003)(53936002)(486006)(476003)(11346002)(446003)(99286004)(76176011)(76116006)(66556008)(6436002)(52536014)(33656002)(7696005)(66476007)(66946007)(14454004)(73956011)(64756008)(66446008)(102836004)(229853002)(4326008)(22452003)(6506007)(6246003)(71190400001)(186003)(316002)(25786009)(71200400001)(10290500003)(1511001)(5660300002)(256004)(478600001)(68736007)(6116002)(8990500004)(10090500001)(110136005)(54906003)(4744005)(8936002)(86362001)(9686003)(55016002)(81156014)(74316002)(6636002)(2906002)(81166006)(7736002)(8676002)(305945005)(86612001);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0186;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: L7cVqxRX0Sb4+iO1VjGPKpOgfKuJpcIIxq35jdGwUOHnT0xV/Ysm080rzooLWFEcq8FZ+1pAKhlsXsU5eSm+Qce5l1fcK5Y/0A4HZPYWNGm8bO6dvIsVC506g81qCxMaOcUuoeUgk4hH0qAd2rH2nzzgPKrSyj5KWDbufDRG+mSZXSx39BbkTmfPSF2i4A3aUufy2x6aKsR2m3KUcqK9MynfgSx1xjHFNxp+UdUfIz6Rzq1aAkzc3PniwFH3M1+J8HB2fzwo8LmSp58MlIHp0Yw2+sILQMb7gjGm0bktc3T5v4YUtHPwoaKZuCiXLb0diX00YHE1H6/u1hfo4JPGDmGi5Lr6XkmyQ2w/1OFbc7hd23MwOc8qIr/C+OjlD9nn884qvFIvXM9GerxG1BoKS2pyBKtN6C7pg6ltlyarLi4=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <cover.1557160186.git.andreyknvl@google.com> <20190517144931.GA56186@arrakis.emea.arm.com>
- <CAFKCwrj6JEtp4BzhqO178LFJepmepoMx=G+YdC8sqZ3bcBp3EQ@mail.gmail.com>
- <20190521182932.sm4vxweuwo5ermyd@mbp> <201905211633.6C0BF0C2@keescook>
- <20190522101110.m2stmpaj7seezveq@mbp> <CAJgzZoosKBwqXRyA6fb8QQSZXFqfHqe9qO9je5TogHhzuoGXJQ@mail.gmail.com>
- <20190522163527.rnnc6t4tll7tk5zw@mbp> <201905221316.865581CF@keescook>
-In-Reply-To: <201905221316.865581CF@keescook>
-From:   Evgenii Stepanov <eugenis@google.com>
-Date:   Wed, 22 May 2019 16:03:36 -0700
-Message-ID: <CAFKCwrjOjdJAbcABp3qxwyYy+hgfyQirvmqGkDSJVJe5pSz0Uw@mail.gmail.com>
-Subject: Re: [PATCH v15 00/17] arm64: untag user pointers passed to the kernel
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>, enh <enh@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        kvm@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40b7f5b1-15f9-4157-92c6-08d6df0a30a8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2019 23:06:57.3937
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: decui@microsoft.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0186
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 1:47 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Wed, May 22, 2019 at 05:35:27PM +0100, Catalin Marinas wrote:
-> > The two hard requirements I have for supporting any new hardware feature
-> > in Linux are (1) a single kernel image binary continues to run on old
-> > hardware while making use of the new feature if available and (2) old
-> > user space continues to run on new hardware while new user space can
-> > take advantage of the new feature.
->
-> Agreed! And I think the series meets these requirements, yes?
->
-> > For MTE, we just can't enable it by default since there are applications
-> > who use the top byte of a pointer and expect it to be ignored rather
-> > than failing with a mismatched tag. Just think of a hwasan compiled
-> > binary where TBI is expected to work and you try to run it with MTE
-> > turned on.
->
-> Ah! Okay, here's the use-case I wasn't thinking of: the concern is TBI
-> conflicting with MTE. And anything that starts using TBI suddenly can't
-> run in the future because it's being interpreted as MTE bits? (Is that
-> the ABI concern? I feel like we got into the weeds about ioctl()s and
-> one-off bugs...)
->
-> So there needs to be some way to let the kernel know which of three
-> things it should be doing:
-> 1- leaving userspace addresses as-is (present)
-> 2- wiping the top bits before using (this series)
-> 3- wiping the top bits for most things, but retaining them for MTE as
->    needed (the future)
->
-> I expect MTE to be the "default" in the future. Once a system's libc has
-> grown support for it, everything will be trying to use MTE. TBI will be
-> the special case (but TBI is effectively a prerequisite).
->
-> AFAICT, the only difference I see between 2 and 3 will be the tag handling
-> in usercopy (all other places will continue to ignore the top bits). Is
-> that accurate?
->
-> Is "1" a per-process state we want to keep? (I assume not, but rather it
-> is available via no TBI/MTE CONFIG or a boot-time option, if at all?)
->
-> To choose between "2" and "3", it seems we need a per-process flag to
-> opt into TBI (and out of MTE). For userspace, how would a future binary
-> choose TBI over MTE? If it's a library issue, we can't use an ELF bit,
-> since the choice may be "late" after ELF load (this implies the need
-> for a prctl().) If it's binary-only ("built with HWKASan") then an ELF
-> bit seems sufficient. And without the marking, I'd expect the kernel to
-> enforce MTE when there are high bits.
->
-> > I would also expect the C library or dynamic loader to check for the
-> > presence of a HWCAP_MTE bit before starting to tag memory allocations,
-> > otherwise it would get SIGILL on the first MTE instruction it tries to
-> > execute.
->
-> I've got the same question as Elliot: aren't MTE instructions just NOP
-> to older CPUs? I.e. if the CPU (or kernel) don't support it, it just
-> gets entirely ignored: checking is only needed to satisfy curiosity
-> or behavioral expectations.
+> From: Sunil Muthuswamy <sunilmut@microsoft.com>
+> Sent: Wednesday, May 22, 2019 3:56 PM
+> ...
+> Currently, the hv_sock buffer size is static and can't scale to the
+> bandwidth requirements of the application. This change allows the
+> applications to influence the socket buffer sizes using the SO_SNDBUF and
+> the SO_RCVBUF socket options.
+>  ...
+>=20
+> Signed-off-by: Sunil Muthuswamy <sunilmut@microsoft.com>
 
-MTE instructions are not NOP. Most of them have side effects (changing
-register values, zeroing memory).
-This only matters for stack tagging, though. Heap tagging is a runtime
-decision in the allocator.
+Reviewed-by: Dexuan Cui <decui@microsoft.com>
 
-If an image needs to run on old hardware, it will have to do heap tagging only.
+The patch looks good. Thanks, Sunil!
 
-> To me, the conflict seems to be using TBI in the face of expecting MTE to
-> be the default state of the future. (But the internal changes needed
-> for TBI -- this series -- is a prereq for MTE.)
->
-> --
-> Kees Cook
+Thanks,
+-- Dexuan
