@@ -2,153 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC6F826676
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 17:01:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2FF62667C
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 17:03:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729749AbfEVPBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 11:01:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54214 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727975AbfEVPBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 11:01:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 260D8B009;
-        Wed, 22 May 2019 15:01:44 +0000 (UTC)
-Subject: Re: [PATCH] proc/meminfo: add MemKernel counter
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-References: <155853600919.381.8172097084053782598.stgit@buzz>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <529aa7fd-2dc2-6979-4ea0-d40dfc7e3fde@suse.cz>
-Date:   Wed, 22 May 2019 17:01:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1729772AbfEVPCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 11:02:48 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44369 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729517AbfEVPCp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 11:02:45 -0400
+Received: by mail-io1-f66.google.com with SMTP id f22so2081615iol.11;
+        Wed, 22 May 2019 08:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vDrBocZqF5A9uvIRjwm8TlVuWA42reD9PHLLFCTbFI8=;
+        b=KTZrZjLxDXab0dPMxFWXRl0eNy5ybOtX4eJo2UN5GMYS9KUvUQzE+BJ2oOkdLIs3Zj
+         Jp2RILHcGS16ekSnEUBvKzm2hFcfnHE5Jr7612tdepE6cVhQ0m68o8JTg25/p2aYQOO3
+         p9O7BC1ztcFxnGtwkZEwfAymH20dUnw0+/jFdte++fufR7JCWA21iKVnfocFpy8AbGzb
+         eCPr1cAtcv2kqlo6rOh+ztAYbJcfnkL40ep1dNVnLYbmCic+1UqqhP8s+EvnZBvbAdHl
+         RjLZyllNq3Utg6BZ11E+o5dyeu0yMlVy4v5JwWmfsm/Y+MuDgJV8yr3kBvfqx6dlWS2r
+         wTXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vDrBocZqF5A9uvIRjwm8TlVuWA42reD9PHLLFCTbFI8=;
+        b=gwzNcI4UghOVZnd+8z/xYlEiNPUzVVc7TITTn+eTO9/vC2fWXMlhMqt5cvDkoQQafh
+         7FqGkNuFS4lUqZrLSqnvw9Bev0eLTGJA/QWullivfuFC4XbRKQ6Npli25RdRIl8gRpAF
+         3NhEILf5bXJXgR0fhNP8486WFvQuJELuS63kT8z7D1JNk3S5AMy6UsAowpH/tp0z1KyC
+         GTWvyfH4kaiSzhrI6SZBtBI3boZ4HN96anK9UZrHiKTPVoq0AolhCvas0j5raEW5TSFw
+         f1ZKJyMEEThJFRIKfPcjgY0pwC/vJ3rt2LUjV/6pnXmr5a9u56jUYTuc+8BqKuoILWKm
+         g3vA==
+X-Gm-Message-State: APjAAAWC30H602ggBUAXIsZ459surKefIwSKpZlzol1x4LaO5mTGa+hI
+        O2Qmc9l57oNxXD8ZzCDcRySdjfzYVaTI4Y6psvzFtkrWsbQ=
+X-Google-Smtp-Source: APXvYqzLGNbsta34sjAK5yPAwpIwFYJUcC4AaRk6875xUEBJ05MhRdbGMYpQSWHnZpUcyA82CQZxP98IIXCSFC3pQV8=
+X-Received: by 2002:a6b:b7ce:: with SMTP id h197mr26284954iof.169.1558537364407;
+ Wed, 22 May 2019 08:02:44 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <155853600919.381.8172097084053782598.stgit@buzz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190522120736.5521-1-alexandre.belloni@bootlin.com>
+In-Reply-To: <20190522120736.5521-1-alexandre.belloni@bootlin.com>
+From:   Sylvain Lemieux <slemieux.tyco@gmail.com>
+Date:   Wed, 22 May 2019 11:02:32 -0400
+Message-ID: <CA+rxa6oabqMLAUyXVX-tvrAkpNDXVQ7KqiEqSf73J1HXwY-e5A@mail.gmail.com>
+Subject: Re: [PATCH v2] usb: gadget: udc: lpc32xx: allocate descriptor with GFP_ATOMIC
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Felipe Balbi <balbi@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, James Grant <jamesg@zaltys.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/22/19 4:40 PM, Konstantin Khlebnikov wrote:
-> Some kinds of kernel allocations are not accounted or not show in meminfo.
-> For example vmalloc allocations are tracked but overall size is not shown
+Acked-by: Sylvain Lemieux <slemieux.tyco@gmail.com>
 
-I think Roman's vmalloc patch [1] is on its way?
-
-> for performance reasons. There is no information about network buffers.
-
-xfs buffers can also occupy a lot, from my experience
-
-> In most cases detailed statistics is not required. At first place we need
-> information about overall kernel memory usage regardless of its structure.
-> 
-> This patch estimates kernel memory usage by subtracting known sizes of
-> free, anonymous, hugetlb and caches from total memory size: MemKernel =
-> MemTotal - MemFree - Buffers - Cached - SwapCached - AnonPages - Hugetlb.
-> 
-> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-
-I've tried this once in [2]. The name was Unaccounted and one of the objections
-was that people would get worried. Yours is a bit better, perhaps MemKernMisc
-would be even more descriptive? Michal Hocko worried about maintainability, that
-we forget something, but I don't think that's a big issue.
-
-Vlastimil
-
-[1] https://lore.kernel.org/linux-mm/20190514235111.2817276-2-guro@fb.com/T/#u
-[2] https://lore.kernel.org/linux-mm/20161020121149.9935-1-vbabka@suse.cz/T/#u
-
+On Wed, May 22, 2019 at 8:07 AM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+>
+> Gadget drivers may queue request in interrupt context. This would lead to
+> a descriptor allocation in that context. In that case we would hit
+> BUG_ON(in_interrupt()) in __get_vm_area_node.
+>
+> Also remove the unnecessary cast.
+>
+> Tested-by: James Grant <jamesg@zaltys.org>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > ---
->  Documentation/filesystems/proc.txt |    5 +++++
->  fs/proc/meminfo.c                  |   20 +++++++++++++++-----
->  2 files changed, 20 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-> index 66cad5c86171..a0ab7f273ea0 100644
-> --- a/Documentation/filesystems/proc.txt
-> +++ b/Documentation/filesystems/proc.txt
-> @@ -860,6 +860,7 @@ varies by architecture and compile options.  The following is from a
->  
->  MemTotal:     16344972 kB
->  MemFree:      13634064 kB
-> +MemKernel:      862600 kB
->  MemAvailable: 14836172 kB
->  Buffers:          3656 kB
->  Cached:        1195708 kB
-> @@ -908,6 +909,10 @@ MemAvailable: An estimate of how much memory is available for starting new
->                page cache to function well, and that not all reclaimable
->                slab will be reclaimable, due to items being in use. The
->                impact of those factors will vary from system to system.
-> +   MemKernel: The sum of all kinds of kernel memory allocations: Slab,
-> +              Vmalloc, Percpu, KernelStack, PageTables, socket buffers,
-> +              and some other untracked allocations. Does not include
-> +              MemFree, Buffers, Cached, SwapCached, AnonPages, Hugetlb.
->       Buffers: Relatively temporary storage for raw disk blocks
->                shouldn't get tremendously large (20MB or so)
->        Cached: in-memory cache for files read from the disk (the
-> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-> index 568d90e17c17..b27d56dd619a 100644
-> --- a/fs/proc/meminfo.c
-> +++ b/fs/proc/meminfo.c
-> @@ -39,17 +39,27 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
->  	long available;
->  	unsigned long pages[NR_LRU_LISTS];
->  	unsigned long sreclaimable, sunreclaim;
-> +	unsigned long anon_pages, file_pages, swap_cached;
-> +	long kernel_pages;
->  	int lru;
->  
->  	si_meminfo(&i);
->  	si_swapinfo(&i);
->  	committed = percpu_counter_read_positive(&vm_committed_as);
->  
-> -	cached = global_node_page_state(NR_FILE_PAGES) -
-> -			total_swapcache_pages() - i.bufferram;
-> +	anon_pages = global_node_page_state(NR_ANON_MAPPED);
-> +	file_pages = global_node_page_state(NR_FILE_PAGES);
-> +	swap_cached = total_swapcache_pages();
-> +
-> +	cached = file_pages - swap_cached - i.bufferram;
->  	if (cached < 0)
->  		cached = 0;
->  
-> +	kernel_pages = i.totalram - i.freeram - anon_pages - file_pages -
-> +		       hugetlb_total_pages();
-> +	if (kernel_pages < 0)
-> +		kernel_pages = 0;
-> +
->  	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
->  		pages[lru] = global_node_page_state(NR_LRU_BASE + lru);
->  
-> @@ -60,9 +70,10 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
->  	show_val_kb(m, "MemTotal:       ", i.totalram);
->  	show_val_kb(m, "MemFree:        ", i.freeram);
->  	show_val_kb(m, "MemAvailable:   ", available);
-> +	show_val_kb(m, "MemKernel:      ", kernel_pages);
->  	show_val_kb(m, "Buffers:        ", i.bufferram);
->  	show_val_kb(m, "Cached:         ", cached);
-> -	show_val_kb(m, "SwapCached:     ", total_swapcache_pages());
-> +	show_val_kb(m, "SwapCached:     ", swap_cached);
->  	show_val_kb(m, "Active:         ", pages[LRU_ACTIVE_ANON] +
->  					   pages[LRU_ACTIVE_FILE]);
->  	show_val_kb(m, "Inactive:       ", pages[LRU_INACTIVE_ANON] +
-> @@ -92,8 +103,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
->  		    global_node_page_state(NR_FILE_DIRTY));
->  	show_val_kb(m, "Writeback:      ",
->  		    global_node_page_state(NR_WRITEBACK));
-> -	show_val_kb(m, "AnonPages:      ",
-> -		    global_node_page_state(NR_ANON_MAPPED));
-> +	show_val_kb(m, "AnonPages:      ", anon_pages);
->  	show_val_kb(m, "Mapped:         ",
->  		    global_node_page_state(NR_FILE_MAPPED));
->  	show_val_kb(m, "Shmem:          ", i.sharedram);
-> 
-
+>
+> Changes in v2:
+>  - remove unnecessary cast as pointed by Joe Perches
+>  - Collected tested-by
+>
+>  drivers/usb/gadget/udc/lpc32xx_udc.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
+> index d8f1c60793ed..2719194ebf42 100644
+> --- a/drivers/usb/gadget/udc/lpc32xx_udc.c
+> +++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
+> @@ -937,8 +937,7 @@ static struct lpc32xx_usbd_dd_gad *udc_dd_alloc(struct lpc32xx_udc *udc)
+>         dma_addr_t                      dma;
+>         struct lpc32xx_usbd_dd_gad      *dd;
+>
+> -       dd = (struct lpc32xx_usbd_dd_gad *) dma_pool_alloc(
+> -                       udc->dd_cache, (GFP_KERNEL | GFP_DMA), &dma);
+> +       dd = dma_pool_alloc(udc->dd_cache, GFP_ATOMIC | GFP_DMA, &dma);
+>         if (dd)
+>                 dd->this_dma = dma;
+>
+> --
+> 2.21.0
+>
