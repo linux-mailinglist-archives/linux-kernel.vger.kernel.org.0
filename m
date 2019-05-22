@@ -2,93 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A923126E2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:47:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD0D26DA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:43:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387760AbfEVTqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:46:44 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39979 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732380AbfEVT1p (ORCPT
+        id S2387521AbfEVTnX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:43:23 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:38302 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731580AbfEVT2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:27:45 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u17so1835130pfn.7;
-        Wed, 22 May 2019 12:27:44 -0700 (PDT)
+        Wed, 22 May 2019 15:28:23 -0400
+Received: by mail-qt1-f195.google.com with SMTP id l3so3837837qtj.5
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 12:28:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6HMpFkYMLAkJcnVu/PqYynDR+iNuf0Dhku5h2gLjvOk=;
-        b=p6eYoj7X129vSeuFFybTFfzZFwJjIRgE1o2MFLjWEL4dDUC8AOFzc8M82xgTFh2PGg
-         qZPoEGurlVnGRRA6IGQ1fRItBghPRbkwei9a3OVtmevX6D70IqGZjWeE+/TMGdIcn4/D
-         M+2dKrktd0yUIvGmGDyCks1w1o2klhVIbD6/eYtuEpSxoYiUzYuB/vNq0tMVBb7vFCsf
-         QVcKplC3uQ+0YmZy7WdCxRKe+J450QxSqmMrUtamjTcfngLc/CL4vyHbsnbiogU0s6xo
-         hha5oDSA/zJJ0ctY+B48By+45LFen3dgF7BnOEma1xx8I7DyLL41ePFwewxMZYM0ClRO
-         GQ7Q==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3ZfKtMBwc5tkohkSpbvb3b5f3Ko8Dw0ybXpSQh5gt/E=;
+        b=Ua7JRmVg/PPLyjYi4zwoj4WunekYxL3tW795MlxsVvKdjcveG8GFMEG8wA/t/Opq58
+         7xNTL6iMvk6B3aKn6J6SvcJkKT11Q0a/HG+sGy6SZsikPtB/+ZylHjb/ddJodsrkPzf+
+         OWA3bjYid2hKY949LckGkjXCuCv5Nn4+ilz3f2KCJbwzgSBhj1eUUb+lXoskoJWlUtZW
+         d6uu4kVuXHiWGfya2X3zvyy9B5spYamL9cqhiKjzr/yuiduBoDjoJ/7QIvFRX2U6DSJp
+         5nQf7bimXoUDj6zDHNVPZE/BBaZhteVMTgwqoZ9fUWw+M8BPtUVMqAy45tBDyMQzSetZ
+         Oj7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6HMpFkYMLAkJcnVu/PqYynDR+iNuf0Dhku5h2gLjvOk=;
-        b=AaYIQEdKmpm8Jw75bYE1JUDSCuLcJ3WV/HAWWaXlo7nH6QFcwX5ivqZvISzzZf5dVn
-         lePN70DmN7KytyBKo5oDpC7VPEphZwsddMgETsc2KcCHOR0BHkAvsvdGQsG2AkTJE7cY
-         YeS2NGYIUNxX4PLwqZKUWySpnAZRfajejM8bTeLr9StWMxLg+MZiZWqjdBPPrOmxGtET
-         ox/CfDwlmm+HRD1zvjgpaL+UcYzZ5Ft1e1axLFuHgKV64Rgimf30RjVwqfT9Pd+pVcn0
-         wNsfHr9Xg8TCAtxxclGH1CtD9NspIatJ01OBWVhiUcta7D4aWDLOTSr92hlSwjRq8VyG
-         Drow==
-X-Gm-Message-State: APjAAAWQeWnQbtrFkVSs/YJO3TFKVi0j0Wx/wX2nxijqptJCOQEIsfBd
-        oh0ksuSqWtOnwSQeESzS0P2YhweC
-X-Google-Smtp-Source: APXvYqy0+W6pCtcQ81NLeFLQ34/AenkcgMa4SwKkkt1YemhDIVil3IDNXhAoy1wgnKjNjU5wTtCW3Q==
-X-Received: by 2002:a63:465b:: with SMTP id v27mr91368935pgk.38.1558553263948;
-        Wed, 22 May 2019 12:27:43 -0700 (PDT)
-Received: from ?IPv6:2601:282:800:fd80:f892:82c5:66c:c52c? ([2601:282:800:fd80:f892:82c5:66c:c52c])
-        by smtp.googlemail.com with ESMTPSA id u20sm33577328pfm.145.2019.05.22.12.27.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 12:27:43 -0700 (PDT)
-Subject: Re: [PATCH AUTOSEL 5.0 095/317] mlxsw: spectrum_router: Prevent ipv6
- gateway with v4 route via replace and append
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-References: <20190522192338.23715-1-sashal@kernel.org>
- <20190522192338.23715-95-sashal@kernel.org>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <a953cd53-c396-f20d-73b4-9e06ada0e3ad@gmail.com>
-Date:   Wed, 22 May 2019 13:27:41 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3ZfKtMBwc5tkohkSpbvb3b5f3Ko8Dw0ybXpSQh5gt/E=;
+        b=ksKgU01TMCxFi/XMYqA3ut65P6cayMNg0KwV1Qlzv8k3A0DSmnTYtMiPj2uzMOSWjG
+         C4xh6WA5ZnygViI+1xf4/IgMYqkEG/LyLV21xKhu7rLyG9C9JwuZer7gXF3LEt00LbF5
+         kcx5FWHySo+YrxG+ke2hucyyUZ5VSlt64peQe3bhAQpO6lcD42gcM5Uf6Vgao4WOFFhL
+         EzZSYv/fXLE8KTBw8fiy/6e0vnhqKwuRqdFL5OOpWloQdIwmCiLx1Oy+N8nx+WN82eW6
+         d1Z0H/VE+dG7r9+gkVICZLSG5EKFgEFhHsPEXnLRhfIRKymIq0TYrgK8JWc49nM4sVXS
+         Sy6g==
+X-Gm-Message-State: APjAAAUO2Ck7OeirIwMjB/lneKTA3rxSNv9/E50Ub8kMEzCfZ5Kry/pa
+        YMJ/ucN2pjGrlH6/yMYcO/xUmg==
+X-Google-Smtp-Source: APXvYqzc1EkjVofK2ryq+qApOiRQDBnphGTKYrTx1+vwOy/VyDTwLBbYuBZjYqsGlyXiaiM/UHb2cw==
+X-Received: by 2002:aed:3a87:: with SMTP id o7mr23450420qte.310.1558553302565;
+        Wed, 22 May 2019 12:28:22 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-49-251.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.49.251])
+        by smtp.gmail.com with ESMTPSA id l47sm13161288qtk.22.2019.05.22.12.28.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 22 May 2019 12:28:22 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hTWuT-0005oy-IJ; Wed, 22 May 2019 16:28:21 -0300
+Date:   Wed, 22 May 2019 16:28:21 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Leon Romanovsky <leon@kernel.org>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] RDMA/mlx5: Use DIV_ROUND_UP_ULL macro to allow 32 bit to
+ build
+Message-ID: <20190522192821.GG6054@ziepe.ca>
+References: <20190522145450.25ff483d@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <20190522192338.23715-95-sashal@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190522145450.25ff483d@gandalf.local.home>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/22/19 1:19 PM, Sasha Levin wrote:
-> From: David Ahern <dsahern@gmail.com>
+On Wed, May 22, 2019 at 02:54:50PM -0400, Steven Rostedt wrote:
 > 
-> [ Upstream commit 7973d9e76727aa42f0824f5569e96248a572d50b ]
+> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > 
-> mlxsw currently does not support v6 gateways with v4 routes. Commit
-> 19a9d136f198 ("ipv4: Flag fib_info with a fib_nh using IPv6 gateway")
-> prevents a route from being added, but nothing stops the replace or
-> append. Add a catch for them too.
->     $ ip  ro add 172.16.2.0/24 via 10.99.1.2
->     $ ip  ro replace 172.16.2.0/24 via inet6 fe80::202:ff:fe00:b dev swp1s0
->     Error: mlxsw_spectrum: IPv6 gateway with IPv4 route is not supported.
->     $ ip  ro append 172.16.2.0/24 via inet6 fe80::202:ff:fe00:b dev swp1s0
->     Error: mlxsw_spectrum: IPv6 gateway with IPv4 route is not supported.
+> When testing 32 bit x86, my build failed with:
 > 
-> Signed-off-by: David Ahern <dsahern@gmail.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>   ERROR: "__udivdi3" [drivers/infiniband/hw/mlx5/mlx5_ib.ko] undefined!
+> 
+> It appears that a few non-ULL roundup() calls were made, which uses a
+> normal division against a 64 bit number. This is fine for x86_64, but
+> on 32 bit x86, it causes the compiler to look for a helper function
+> __udivdi3, which we do not have in the kernel, and thus fails to build.
+> 
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > ---
->  drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
 
-Not needed for 5.0. IPv6 nexthops with an IPv4 gateway is a 5.2 feature.
+Do you like this version better?
+
+https://patchwork.kernel.org/patch/10950913/
+
+Jason
