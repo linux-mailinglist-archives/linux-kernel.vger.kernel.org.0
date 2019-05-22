@@ -2,113 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A620526CBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:37:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4164826D1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 22 May 2019 21:40:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387632AbfEVThH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 15:37:07 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:40032 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731471AbfEVThF (ORCPT
+        id S1732932AbfEVTjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 15:39:23 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:42886 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730499AbfEVTjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 15:37:05 -0400
-Received: from [10.200.157.26] (unknown [131.107.160.154])
-        by linux.microsoft.com (Postfix) with ESMTPSA id E438020B7186;
-        Wed, 22 May 2019 12:37:03 -0700 (PDT)
-Subject: Re: [PATCH 0/2] public key: IMA signer logging: Log public key of IMA
- Signature signer in IMA log
-To:     Ken Goldman <kgold@linux.ibm.com>,
-        Linux Integrity <linux-integrity@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Cc:     Balaji Balasubramanyan <balajib@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva@linux.microsoft.com>,
-        jorhand@linux.microsoft.com
-References: <6b69f115-96cf-890a-c92b-0b2b05798357@linux.microsoft.com>
- <750fdb9f-fc9b-24bf-42c3-32156ecdc16f@linux.ibm.com>
- <9c944ba6-f520-96e1-3631-1e21bbc4c327@linux.microsoft.com>
- <0b5ae493-6564-40e9-343b-e6781c229a25@linux.ibm.com>
- <54663a75-a601-ae6c-8068-bc2c3923a948@linux.microsoft.com>
- <b1a2edc1-45c7-7a9f-7a77-e252b2f85a64@linux.ibm.com>
-From:   Lakshmi <nramas@linux.microsoft.com>
-Message-ID: <2bf6f51f-a55b-9f7d-0e50-25d92fc95e8b@linux.microsoft.com>
-Date:   Wed, 22 May 2019 12:37:03 -0700
+        Wed, 22 May 2019 15:39:20 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4MJdGYU019877;
+        Wed, 22 May 2019 14:39:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1558553956;
+        bh=tVnRlstl7Mo/U/69hUYQHMBs9wUpC3OGi4TdChwiOds=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=fR1Gex2n0/fUaqP5qx4+vDJ7f+Zm9QEzvkzu+pFhsQz8SxpTcr0gIA3ZCBhoojgaK
+         xjz8csMK9Sb0dM7KApU/VGKW850ylqc4qxbbkqV+8c84+Uktz6a8tGw03IEvENFkoD
+         I8ZJmGE1kaHYib/tnrtXwqgVXdFOE/GW++92snzw=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4MJdGoA022863
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 22 May 2019 14:39:16 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 22
+ May 2019 14:39:16 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 22 May 2019 14:39:16 -0500
+Received: from [10.250.90.63] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4MJdFbJ046989;
+        Wed, 22 May 2019 14:39:15 -0500
+Subject: Re: [PATCH v4 0/6] LM36274 Introduction
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>
+CC:     <lee.jones@linaro.org>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190522192733.13422-1-dmurphy@ti.com>
+ <6501a8b5-8068-4c9d-6b51-ef00fa72c6d5@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <2a8a9fa5-9338-bb17-e273-b1e0278a566d@ti.com>
+Date:   Wed, 22 May 2019 14:39:05 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <b1a2edc1-45c7-7a9f-7a77-e252b2f85a64@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <6501a8b5-8068-4c9d-6b51-ef00fa72c6d5@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/22/19 11:57 AM, Ken Goldman wrote:
+Jacek
 
+On 5/22/19 2:37 PM, Jacek Anaszewski wrote:
+> Hi Dan,
 > 
-> 1 - How is your solution - including a public key with each event - 
-> related to this issue?
-This a change from my earlier proposal. In the new proposal I am making 
-the public key is not included with each event. The data included in 
-each IMA event does not change. For instance, when IMA signature 
-validation is selected (ima-sig template, for instance), each event will 
-have the IMA signature (which includes the 4 Byte Key Identifier and the 
-Signature)
-
-> 2 - I don't understand how a large cloud affects scale.  Wouldn't the 
-> verifier would typically be checking known machines - those of their 
-> enterprise - not every machine on the cloud?
+> On 5/22/19 9:27 PM, Dan Murphy wrote:
+>> Hello
+>>
+>> This is patch set v4 for the LM36274.  There were no changes made
+>> to this patch set except to rebase this on top of the latest TI LMU common code
+>> patchset.
 > 
-> Can't we assume a typical attestation use case has a fairly locked down 
-> OS with a limited number of applications.
-Yes - the attestation service (verifier) will be attesting only client 
-machines known to the enterprise. But such clients could be running 
-different versions of the OS and the kernel modules.
-We cannot assume that this would be a limited set. Therefore, 
-maintaining the hash\signature of all such components, for all versions 
-of the components, and re-validating that in the service is not a 
-scalable solution.
-
-Instead, we want the IMA sub-system on the clients to do the signature 
-validation (As it is done today). In addition to that, the clients will 
-log the public keys from keyrings such as IMA, Platform, and BuiltIn 
-Trusted Keys - this will be done only once and not in each IMA event 
-(This is a change from my earlier proposal).
-
-Using this data the service will verify that the clients used only 
-trusted key(s) for signature validation.
-
+> Why the rebase was needed? leds-lm36274.c was already including
+> leds-ti-lmu-common.h.
 > 
-> Like I said, it should be rare.  In the worst case, can't the service 
-> tell by trying both keys?If the service is validating the signature again it can try all the 
-keys. But we don't want to take that approach - instead we want to 
-verify the keys used by the client.
 
-> 
-> I thought your solution was to change the IMA measurements, adding the 
-> public key to each entry with a new template?  Did I misunderstand, or 
-> do you have a new proposal?
-I have a new proposal as described above. Sorry if I had confused you.
+I just resent the patchset.
 
+This was the cover letter in the series I sent originally.
 
-> How does this solve the collision issue?  If there are two keys with the 
-> same key ID, isn't there still a collision?
-Like I have said above, the client will log all the keys from the 
-relevant keyrings (IMA, Platform, etc.) The service will verify that 
-they are all known\trusted keys - which gives the assurance that the IMA 
-signature validation done by the client was performed using trusted 
-signing key(s).
+Dan
 
-
-> I understand how the client keyring is used in IMA to check file
-> signatures, but how is that related to the attestation service?
-In my new proposal, the keys in the client keyrings will be logged in 
-the IMA log. The attestation service will verify that they are 
-known\trusted keys.
-
-Thanks,
-  -lakshmi
+<snip>
