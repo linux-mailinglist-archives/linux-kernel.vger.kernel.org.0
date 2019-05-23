@@ -2,117 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC39528AD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFC4328B15
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388985AbfEWTre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:47:34 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38920 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388912AbfEWTrb (ORCPT
+        id S2387701AbfEWTxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:53:25 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54076 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387433AbfEWTxY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:47:31 -0400
-Received: by mail-qt1-f195.google.com with SMTP id y42so8220604qtk.6
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=k6jEOw1s8FeruI8avosu7qbsQ0qwz52OhsgSY45eojI=;
-        b=RslugHZP7bdpXCoWjNFMFQd+0DDkcFEtYA5UVOgDxkZL8DRCyAf3elcV7gyLZv/N3r
-         Au3nZzEUorYMt3KTRDl7iv9fLmChs7tw2dtFGtlmc/DBiS0nlVYvpkwT6Dfudk9xbuyz
-         29strAD1fMKYdTpCqzwPqg55vYFzEm91Y+tKBVbSs0faM+hj/8TQ66RkpRoR1Y2OLu78
-         iwOrAgEuvBQAVVKO1yr4ctVHMPrpTFGPva06945X7+4ck5IWhcPXK6FPL/djJP49AdSu
-         /sKVmxWjm/MJ5+sSVv3VJd6I8c9VlS2/Xre1Ku7275dhaawiX2LkVSmNlfEM/zlDsEso
-         kIzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k6jEOw1s8FeruI8avosu7qbsQ0qwz52OhsgSY45eojI=;
-        b=QYkL1CM0F2JqhYLoPpN0I6sAiYkAAC4SudQfnDeEdpCK2PAbtsGHdS6tGFsXV7OQdk
-         AMJRd/8a+YNU0khWqpRxTznx15f/+mw2CvfG+Cc+kOSRKRGI93jd9X1d7ltiB1IjxP55
-         8w6gFte1bO2s8DBdBIbQHI2/zen/SWz9dPhgI0uysBCYWnWYQ8dmtqsw8Ny9Yi3sRPlh
-         sCPCFw1/8qdPAwti2I1LXrocb0KI4C1/t+ayiY8scxGU4ZA/jO9+fcuRv9Lns0InFyqn
-         9whb3sLHyH56yOqmGyL1eC+3HhPVdkXbduSdQhKNhjhOaGE2KQICQKkjjU9dqYh4wed7
-         Fqtw==
-X-Gm-Message-State: APjAAAW6oAoGkKL0Cz4XPHjJUcWHlD7/avYXxB3rVFDK8QDP500WPEoS
-        YKm5qgNYl88s3IrsYfn0eWm+UjW4GOw=
-X-Google-Smtp-Source: APXvYqzCzj5/rvv5QLN90xyskSXQNfrkyAflWRkMk+WUpYMqTxgGusHxjvpYNMQcvWYnz5eNYA9f8Q==
-X-Received: by 2002:ac8:3658:: with SMTP id n24mr83121461qtb.354.1558640850167;
-        Thu, 23 May 2019 12:47:30 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-49-251.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.49.251])
-        by smtp.gmail.com with ESMTPSA id n190sm159698qkb.83.2019.05.23.12.47.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 May 2019 12:47:29 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hTtgX-000173-14; Thu, 23 May 2019 16:47:29 -0300
-Date:   Thu, 23 May 2019 16:47:29 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>,
-        Moni Shoua <monis@mellanox.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Kaike Wan <kaike.wan@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>
-Subject: Re: [PATCH v4 0/1] Use HMM for ODP v4
-Message-ID: <20190523194729.GJ12159@ziepe.ca>
-References: <20190522235737.GD15389@ziepe.ca>
- <20190523150432.GA5104@redhat.com>
- <20190523154149.GB12159@ziepe.ca>
- <20190523155207.GC5104@redhat.com>
- <20190523163429.GC12159@ziepe.ca>
- <20190523173302.GD5104@redhat.com>
- <20190523175546.GE12159@ziepe.ca>
- <20190523182458.GA3571@redhat.com>
- <20190523191038.GG12159@ziepe.ca>
- <20190523193959.GA5658@redhat.com>
+        Thu, 23 May 2019 15:53:24 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4NJlR6F187003
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 15:53:23 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2sp1yqg6du-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 15:53:23 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <farosas@linux.ibm.com>;
+        Thu, 23 May 2019 20:53:22 +0100
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 23 May 2019 20:53:18 +0100
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4NJrHRk31982062
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 May 2019 19:53:17 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6D59B112065;
+        Thu, 23 May 2019 19:53:17 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4E10E112062;
+        Thu, 23 May 2019 19:53:16 +0000 (GMT)
+Received: from farosas.linux.ibm.com.br.ibm.com (unknown [9.86.26.96])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 23 May 2019 19:53:16 +0000 (GMT)
+From:   Fabiano Rosas <farosas@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jan Kiszka <jan.kiszka@siemens.com>,
+        Kieran Bingham <kbingham@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Jackie Liu <liuyun01@kylinos.cn>
+Subject: [PATCH] scripts/gdb: Fix invocation when CONFIG_COMMON_CLK is not set
+Date:   Thu, 23 May 2019 16:53:11 -0300
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190523193959.GA5658@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19052319-0072-0000-0000-000004326D81
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011150; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000286; SDB=6.01207584; UDB=6.00634204; IPR=6.00988564;
+ MB=3.00027022; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-23 19:53:20
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19052319-0073-0000-0000-00004C562D62
+Message-Id: <20190523195313.24701-1-farosas@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-23_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=15 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=828 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905230128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 03:39:59PM -0400, Jerome Glisse wrote:
-> On Thu, May 23, 2019 at 04:10:38PM -0300, Jason Gunthorpe wrote:
-> > 
-> > On Thu, May 23, 2019 at 02:24:58PM -0400, Jerome Glisse wrote:
-> > > I can not take mmap_sem in range_register, the READ_ONCE is fine and
-> > > they are no race as we do take a reference on the hmm struct thus
-> > 
-> > Of course there are use after free races with a READ_ONCE scheme, I
-> > shouldn't have to explain this.
-> 
-> Well i can not think of anything again here the mm->hmm can not
-> change while driver is calling hmm_range_register() 
+CLK_GET_RATE_NOCACHE depends on CONFIG_COMMON_CLK. Importing
+constants.py when CONFIG_COMMON_CLK is not defined causes:
 
-Oh of course! It is so confusing because the new code makes it look like
-it could be changing...
+  (gdb) lx-symbols
+  (...)
+    File "scripts/gdb/linux/proc.py", line 15, in <module>
+      from linux import constants
+    File "scripts/gdb/linux/constants.py", line 2, in <module>
+      LX_CLK_GET_RATE_NOCACHE = gdb.parse_and_eval("CLK_GET_RATE_NOCACHE")
+  gdb.error: No symbol "CLK_GET_RATE_NOCACHE" in current context.
 
-> so if you want i can remove the READ_ONCE() this does not change
-> anything.
+Fixes: e7e6f462c1be ("scripts/gdb: print cached rate in lx-clk-summary")
+Signed-off-by: Fabiano Rosas <farosas@linux.ibm.com>
+---
+ scripts/gdb/linux/constants.py.in | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Please just write it as:
-  
-  /* The caller must hold a valid struct hmm_mirror to call this api,
-   * and a valid hmm_mirror guarantees mm->hmm is valid.
-   */
-  range->hmm = mm->hmm;
-  kref_get(&range->hmm->kref);
+diff --git a/scripts/gdb/linux/constants.py.in b/scripts/gdb/linux/constants.py.in
+index 1d73083da6cb..2efbec6b6b8d 100644
+--- a/scripts/gdb/linux/constants.py.in
++++ b/scripts/gdb/linux/constants.py.in
+@@ -40,7 +40,8 @@
+ import gdb
+ 
+ /* linux/clk-provider.h */
+-LX_GDBPARSED(CLK_GET_RATE_NOCACHE)
++if IS_BUILTIN(CONFIG_COMMON_CLK):
++    LX_GDBPARSED(CLK_GET_RATE_NOCACHE)
+ 
+ /* linux/fs.h */
+ LX_VALUE(SB_RDONLY)
+-- 
+2.20.1
 
-All the READ_ONCE/kref_get_not_zero/!hmm just obfuscates the reality
-that hmm is non-NULL and constant here or the caller is using the API
-wrong.
-
-kref_get will reliably oops or WARN_ON if it is misused which is a
-fine amount of debugging.
-
-Jason
