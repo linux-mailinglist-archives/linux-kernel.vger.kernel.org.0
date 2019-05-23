@@ -2,91 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2699327E91
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBFC427E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730757AbfEWNqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 09:46:30 -0400
-Received: from www62.your-server.de ([213.133.104.62]:51730 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729902AbfEWNqa (ORCPT
+        id S1730836AbfEWNsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:48:36 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43174 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730684AbfEWNsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 09:46:30 -0400
-Received: from [88.198.220.132] (helo=sslproxy03.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hTo3A-0003BO-4A; Thu, 23 May 2019 15:46:28 +0200
-Received: from [178.197.249.12] (helo=linux.home)
-        by sslproxy03.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hTo39-0008Tu-N1; Thu, 23 May 2019 15:46:27 +0200
-Subject: Re: [PATCH 4.19 144/187] selftests/bpf: skip verifier tests for
- unsupported program types
-To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc:     "sashal@kernel.org" <sashal@kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "sdf@google.com" <sdf@google.com>
-References: <20190404084603.119654039@linuxfoundation.org>
- <20190404084609.946908305@linuxfoundation.org>
- <16ec5436310b0df657a4898e3d15ccc3b9aab8e2.camel@nokia.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <47a9ede3-bef8-7ae1-6353-b954b6e7f7af@iogearbox.net>
-Date:   Thu, 23 May 2019 15:46:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Thu, 23 May 2019 09:48:36 -0400
+Received: by mail-pl1-f195.google.com with SMTP id gn7so2783965plb.10;
+        Thu, 23 May 2019 06:48:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+gf6TK/DBZkbbPD59gjM5EzSFnmu0bkE4KJafULy65Y=;
+        b=rnsqyg44lH8m7taWbuklaTCCz+35oJR/l6Qvu3nboiWywtVJszAN5r1JZZHNf22TlL
+         EC6rzSjYQa/QR0ivyeZMdANgKAjULdQ8jZm65iQGs+q82LE2KLJ5xf+OjAK4S7BR91Es
+         b5zTbN82WIaV6D95qOmUz/zqRV7tuLDrhiG4juw5hDWhRZyiifIizk4b+8z67j38wZKR
+         roz6c8S7JRou1K+Hp2d8pEigq64HClfp+59fhiSKhLvwcIhL+H00WgbMyFXI9TPHSfoD
+         ZXrtrGkrt/NwdtN+K0dNuzbfEX4sRH8aTyhUQJBSLp3RtWGgpvzEhwJlbNbAH95jHOjo
+         K+7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+gf6TK/DBZkbbPD59gjM5EzSFnmu0bkE4KJafULy65Y=;
+        b=AeTmkADzHbtVlUbypbQ0DsRaKOyI5KwW387d/01TKDiAQNf3Inkq8FVyDIvI0HdtJS
+         U059whISItvkzcK5wSPV1T/l8KGPXLGohlfGuF0GpcQhl/7ikV5qfEaoraWpfGAlLg3E
+         +VpclBQQbHObMXT6MSFtqF9G7m1NO5dwA8aMxkdm/EsSJ6eih6+vBBax49vlKQOWjtbz
+         fPdSzqkiRGEma36BDyVQMXRwOihitChga+qDVUMAlR0n8s/uF9EkaSZ2QGnRpfqWuJF2
+         uq6pQHZgwbR4GDCsWy/IbAHzMOHlPaCDia5GFxmu5Ovxr0Q63YbFA1um9x53wzIAzBgT
+         nFYA==
+X-Gm-Message-State: APjAAAXqRDl9ZEW/hYnx5C6AcWh/tjPMEwygoD8CVAw9buYye4/v4irW
+        HTl/af+Gbnb5HIaVb/SU6Cw=
+X-Google-Smtp-Source: APXvYqwKUTsNLMMZr3WT+JsRYI+XStFLzKHLL4taI1RlLURXHZmDRyhRh2+PrNYZ032j2fi3xT6L8g==
+X-Received: by 2002:a17:902:728f:: with SMTP id d15mr24384602pll.167.1558619315442;
+        Thu, 23 May 2019 06:48:35 -0700 (PDT)
+Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
+        by smtp.gmail.com with ESMTPSA id y191sm2667986pfb.179.2019.05.23.06.48.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 May 2019 06:48:34 -0700 (PDT)
+Date:   Thu, 23 May 2019 06:48:32 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     "Y.b. Lu" <yangbo.lu@nxp.com>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v2, 0/4] ENETC: support hardware timestamping
+Message-ID: <20190523134832.xzupnwvhhlljtoyh@localhost>
+References: <20190523023451.2933-1-yangbo.lu@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <16ec5436310b0df657a4898e3d15ccc3b9aab8e2.camel@nokia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25458/Thu May 23 09:58:32 2019)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190523023451.2933-1-yangbo.lu@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23/2019 12:27 PM, Rantala, Tommi T. (Nokia - FI/Espoo) wrote:
-> On Thu, 2019-04-04 at 10:48 +0200, Greg Kroah-Hartman wrote:
->> 4.19-stable review patch.  If anyone has any objections, please let
->> me know.
->>
->> ------------------
->>
->> [ Upstream commit 8184d44c9a577a2f1842ed6cc844bfd4a9981d8e ]
->>
->> Use recently introduced bpf_probe_prog_type() to skip tests in the
->> test_verifier() if bpf_verify_program() fails. The skipped test is
->> indicated in the output.
-> 
-> Hi, this patch added in 4.19.34 causes test_verifier build failure, as
-> bpf_probe_prog_type() is not available:
-> 
-> gcc -Wall -O2 -I../../../include/uapi -I../../../lib -I../../../lib/bpf
-> -I../../../../include/generated -DHAVE_GENHDR
-> -I../../../include    test_verifier.c /root/linux-
-> 4.19.44/tools/testing/selftests/bpf/libbpf.a -lcap -lelf -lrt -lpthread
-> -o /root/linux-4.19.44/tools/testing/selftests/bpf/test_verifier
-> test_verifier.c: In function ‘do_test_single’:
-> test_verifier.c:12775:22: warning: implicit declaration of function
-> ‘bpf_probe_prog_type’; did you mean ‘bpf_program__set_type’? [-
-> Wimplicit-function-declaration]
->   if (fd_prog < 0 && !bpf_probe_prog_type(prog_type, 0)) {
->                       ^~~~~~~~~~~~~~~~~~~
->                       bpf_program__set_type
-> /usr/bin/ld: /tmp/ccEtyLhk.o: in function `do_test_single':
-> test_verifier.c:(.text+0xa19): undefined reference to
-> `bpf_probe_prog_type'
-> collect2: error: ld returned 1 exit status
-> make[1]: *** [../lib.mk:152: /root/linux-
-> 4.19.44/tools/testing/selftests/bpf/test_verifier] Error 1
+On Thu, May 23, 2019 at 02:33:24AM +0000, Y.b. Lu wrote:
+> This patch-set is to support hardware timestamping for ENETC
+> and also to add ENETC 1588 timer device tree node for ls1028a.
 
-Looks like this kselftest one got auto-selected for stable? It's not
-strictly needed, so totally fine to drop.
+Please, in the future, summarize the changes from the last series in
+the cover letter.  It helps the reviewers to focus.
 
 Thanks,
-Daniel
+Richard
