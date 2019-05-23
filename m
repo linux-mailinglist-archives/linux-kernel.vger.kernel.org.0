@@ -2,138 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87EE128AB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C7832874E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389675AbfEWTo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:44:59 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.107]:17793 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389131AbfEWTQM (ORCPT
+        id S2389488AbfEWTRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:17:55 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37836 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389454AbfEWTRg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:16:12 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 6EA441BAAE
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 14:16:10 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id TtCEhFKcm2qH7TtCEhUDBK; Thu, 23 May 2019 14:16:10 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.47.159] (port=55194 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hTtCB-0043Zg-MW; Thu, 23 May 2019 14:16:07 -0500
-Date:   Thu, 23 May 2019 14:16:06 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v2] mtd: onenand_base: Avoid fall-through warnings
-Message-ID: <20190523191606.GA9838@embeddedor>
+        Thu, 23 May 2019 15:17:36 -0400
+Received: by mail-qt1-f193.google.com with SMTP id o7so8117338qtp.4
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Pm+Vx0dhObnzybiaJozRDpH0LoNYUiVOhc6EGMjBZwU=;
+        b=O0RCPEGvWXVRXRZ7y88skUaFHv3isN4h6Tr6VLsss0em/c8A1IncniPr014w2Ci4io
+         9rBOKNHmm68kYI6ygpwlm+QtR16oXFPy2bhxS9CwKHFqrIfMtEWctvqEZ4eVLH4Cn7TJ
+         HOeZtmCGjBcvBSU18syidFL3Um1gGyCpWXeJsZC2Nvpz7PwdjRmaH9U2HY3sw2gtM83U
+         WGdsqtqNuVbxSdeTfdP4MztNl8z1hsbkujcQdJiIBLEMbySogRMR8przLBmtfBbirVh8
+         fc9baIPJgppq8UkcxW/nJPwGb+5dwFFa4fUBYQGfezP1UVVzSkaq/4vRP8kXOph9tKhv
+         tF2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Pm+Vx0dhObnzybiaJozRDpH0LoNYUiVOhc6EGMjBZwU=;
+        b=f0xMvVWbbw3D0Numv2fp5vVEQhJBphO8cf8/2qwwGU82un4BgaRgwnmK3N1qzf45vn
+         cgYg0VKq+f8mPBvsNzRHaaum91hRMCUnG8bnzhMMIDhzaRwMNAmoC8iOKk1zEveZrvKh
+         7rtrtpxXak1hW1vymLZRdkB8Fb4xa1IzO5f4b072Im0+3mh1CCHENgF6pABcT23kX61I
+         8Rl3bPLUFWPwy6WWxWjAldN9TgEGU9KyfWH9KKGdbL/iiAnWl+4At2gQ9vkzw2uIAgmJ
+         tZVU958Il3UAYXBdeXZil8wdS9KQqBAWu4G4FYrFlNgV/Nmi/TXYoo7xmuC+a84rJCHd
+         4HgQ==
+X-Gm-Message-State: APjAAAWltBe9r7QvoUn9SWPq/MNd1p88DMQDj/7fzPYMfybaNszV3trN
+        PjLSZzHh3BK4PAIUcqCmjGFrag==
+X-Google-Smtp-Source: APXvYqyby6SPIf9lPMNL5yZPBW7JhGUYjZjNDXWEHEzHk702uXmsFYcPFIXfDXhIH78qusR4hcmSJg==
+X-Received: by 2002:a0c:9acb:: with SMTP id k11mr59015856qvf.85.1558639055850;
+        Thu, 23 May 2019 12:17:35 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-49-251.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.49.251])
+        by smtp.gmail.com with ESMTPSA id q24sm139016qtq.58.2019.05.23.12.17.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 May 2019 12:17:35 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hTtDa-0000kS-RM; Thu, 23 May 2019 16:17:34 -0300
+Date:   Thu, 23 May 2019 16:17:34 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        "john.hubbard@gmail.com" <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Christian Benvenuti <benve@cisco.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 1/1] infiniband/mm: convert put_page() to put_user_page*()
+Message-ID: <20190523191734.GH12159@ziepe.ca>
+References: <20190523072537.31940-1-jhubbard@nvidia.com>
+ <20190523072537.31940-2-jhubbard@nvidia.com>
+ <20190523172852.GA27175@iweiny-DESK2.sc.intel.com>
+ <20190523173222.GH12145@mellanox.com>
+ <fa6d7d7c-13a3-0586-6384-768ebb7f0561@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <fa6d7d7c-13a3-0586-6384-768ebb7f0561@nvidia.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.47.159
-X-Source-L: No
-X-Exim-ID: 1hTtCB-0043Zg-MW
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.47.159]:55194
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NOTICE THAT:
+On Thu, May 23, 2019 at 10:46:38AM -0700, John Hubbard wrote:
+> On 5/23/19 10:32 AM, Jason Gunthorpe wrote:
+> > On Thu, May 23, 2019 at 10:28:52AM -0700, Ira Weiny wrote:
+> > > > @@ -686,8 +686,8 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
+> > > >   			 * ib_umem_odp_map_dma_single_page().
+> > > >   			 */
+> > > >   			if (npages - (j + 1) > 0)
+> > > > -				release_pages(&local_page_list[j+1],
+> > > > -					      npages - (j + 1));
+> > > > +				put_user_pages(&local_page_list[j+1],
+> > > > +					       npages - (j + 1));
+> > > 
+> > > I don't know if we discussed this before but it looks like the use of
+> > > release_pages() was not entirely correct (or at least not necessary) here.  So
+> > > I think this is ok.
+> > 
+> > Oh? John switched it from a put_pages loop to release_pages() here:
+> > 
+> > commit 75a3e6a3c129cddcc683538d8702c6ef998ec589
+> > Author: John Hubbard <jhubbard@nvidia.com>
+> > Date:   Mon Mar 4 11:46:45 2019 -0800
+> > 
+> >      RDMA/umem: minor bug fix in error handling path
+> >      1. Bug fix: fix an off by one error in the code that cleans up if it fails
+> >         to dma-map a page, after having done a get_user_pages_remote() on a
+> >         range of pages.
+> >      2. Refinement: for that same cleanup code, release_pages() is better than
+> >         put_page() in a loop.
+> > 
+> > And now we are going to back something called put_pages() that
+> > implements the same for loop the above removed?
+> > 
+> > Seems like we are going in circles?? John?
+> > 
+> 
+> put_user_pages() is meant to be a drop-in replacement for release_pages(),
+> so I made the above change as an interim step in moving the callsite from
+> a loop, to a single call.
+> 
+> And at some point, it may be possible to find a way to optimize put_user_pages()
+> in a similar way to the batching that release_pages() does, that was part
+> of the plan for this.
+> 
+> But I do see what you mean: in the interim, maybe put_user_pages() should
+> just be calling release_pages(), how does that change sound?
 
-"...we don't know whether we need fallthroughs or breaks here and this
-is just a change to avoid having new warnings when switching to
--Wimplicit-fallthrough but this change might be entirely wrong."[1]
+It would have made it more consistent.. But it seems this isn't a
+functional problem in this patch
 
-See the original thread of discussion here:
-
-https://lore.kernel.org/patchwork/patch/1036251/
-
-So, in preparation to enabling -Wimplicit-fallthrough, this patch silences
-the following warnings:
-
-drivers/mtd/nand/onenand/onenand_base.c: In function ‘onenand_check_features’:
-drivers/mtd/nand/onenand/onenand_base.c:3264:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   if (ONENAND_IS_DDP(this))
-      ^
-drivers/mtd/nand/onenand/onenand_base.c:3284:2: note: here
-  case ONENAND_DEVICE_DENSITY_2Gb:
-  ^~~~
-drivers/mtd/nand/onenand/onenand_base.c:3288:17: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   this->options |= ONENAND_HAS_UNLOCK_ALL;
-drivers/mtd/nand/onenand/onenand_base.c:3290:2: note: here
-  case ONENAND_DEVICE_DENSITY_1Gb:
-  ^~~~
-
-Warning level 3 was used: -Wimplicit-fallthrough=3
-
-Also, notice that this patch doesn't change any functionality. See the
-most recent thread of discussion here:
-
-https://lore.kernel.org/patchwork/patch/1077395/
-
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-[1] https://lore.kernel.org/lkml/20190509085318.34a9d4be@xps13/
-
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Suggested-by: Boris Brezillon <boris.brezillon@collabora.com>
-Suggested-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v2:
- - Add breaks instead of fall-through markings without altering any
-   functionality.
- - Update changelog text.
-
- drivers/mtd/nand/onenand/onenand_base.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/mtd/nand/onenand/onenand_base.c b/drivers/mtd/nand/onenand/onenand_base.c
-index f41d76248550..fd0da5c347db 100644
---- a/drivers/mtd/nand/onenand/onenand_base.c
-+++ b/drivers/mtd/nand/onenand/onenand_base.c
-@@ -3280,12 +3280,15 @@ static void onenand_check_features(struct mtd_info *mtd)
- 			if ((this->version_id & 0xf) == 0xe)
- 				this->options |= ONENAND_HAS_NOP_1;
- 		}
-+		this->options |= ONENAND_HAS_UNLOCK_ALL;
-+		break;
- 
- 	case ONENAND_DEVICE_DENSITY_2Gb:
- 		/* 2Gb DDP does not have 2 plane */
- 		if (!ONENAND_IS_DDP(this))
- 			this->options |= ONENAND_HAS_2PLANE;
- 		this->options |= ONENAND_HAS_UNLOCK_ALL;
-+		break;
- 
- 	case ONENAND_DEVICE_DENSITY_1Gb:
- 		/* A-Die has all block unlock */
--- 
-2.21.0
-
+Jason
