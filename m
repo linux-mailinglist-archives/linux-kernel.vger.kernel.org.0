@@ -2,166 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6465427748
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 09:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF8727754
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 09:40:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730650AbfEWHiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 03:38:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39228 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726310AbfEWHit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 03:38:49 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8E482075E;
-        Thu, 23 May 2019 07:38:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558597128;
-        bh=PDeQ/R6EFXXI6bmG+2plkabUTkZx6Xpn/gVapHNA3DQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A7DoqJN2tSJu1utHXlZ/Uk9R23K9mhPPKEIMvUAwL23Qfy5vM6Xr98X0r923XXkRE
-         wy7k9kJcj2h3C5v20tYNfAQ34HDISe6d248XLL5gQ+D32V1phD/sXMaBTIvhRxu0hf
-         8SRKuiWIwfdzus11Ls+EacvJN1RcPhaRs1MbU2Ko=
-Date:   Thu, 23 May 2019 15:37:45 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>
-Cc:     Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        xiaobo.xie@nxp.com, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        yangbo.lu@nxp.com, jiafei.pan@nxp.com,
-        Ashish Kumar <Ashish.Kumar@nxp.com>
-Subject: Re: [PATCH v2] arm64: dts: ls1028a: Add esdhc node in dts
-Message-ID: <20190523073744.GG9261@dragon>
-References: <20190515040046.9230-1-yinbo.zhu@nxp.com>
+        id S1729793AbfEWHkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 03:40:43 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38090 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbfEWHkm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 03:40:42 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w11so7841298edl.5;
+        Thu, 23 May 2019 00:40:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zcZNWFhbFfJQ2YJR3RMy8RLxv+am/SNxNspWdV0HcRU=;
+        b=WJgOnXWV6JxEmkuW571Jm37iXdg2fMseX9Gb360qIjIELLTpfWU4RgeBnnQUOkFQ0N
+         +3604ODdXPNm7x/UfWXN6sv0EiNFm8VJXhj76/BhFIKLpBNZki+as3XYYjNuEuX6k+o4
+         44Qx1u3eugQZBwK/TMsUbtyEiVC8kQ6qwl7Nmngtt2bcDqNyOlIrOY5TyZDzyF/QzFtf
+         S4dwondUSOxLXJtdpSJp0ev3ztO2bvBfsioS8ygpeiB/Ij9OCCx++gtKeFw32nknTrJH
+         GY5z85g/alWZxT9gUjq/RPE0xcFltSGFiWmoE8grC8C1YaIbwR7x/vGSV4IJSc/2JKrv
+         JfvA==
+X-Gm-Message-State: APjAAAWifBWpgwuoaNhvaYvkrp9sBfPa9Y4ZXZBnrQNWtvPNQRMb+yvt
+        LoksjBjgdmv4FwQgPnQBnGfZSBC0J6M=
+X-Google-Smtp-Source: APXvYqyNo1obK6qBe/RD1c8dTSTX7tKWXxb1kI8uBmOZLIQwkqMT20s7l5OyiPDPCsKXCZ137nJpmw==
+X-Received: by 2002:a17:906:d513:: with SMTP id ge19mr31631084ejb.222.1558597240431;
+        Thu, 23 May 2019 00:40:40 -0700 (PDT)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
+        by smtp.gmail.com with ESMTPSA id x40sm7662198edx.52.2019.05.23.00.40.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 00:40:39 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id e15so5060828wrs.4;
+        Thu, 23 May 2019 00:40:39 -0700 (PDT)
+X-Received: by 2002:adf:dfc4:: with SMTP id q4mr1789132wrn.201.1558597238896;
+ Thu, 23 May 2019 00:40:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190515040046.9230-1-yinbo.zhu@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20190523065013.2719D68B05@newverein.lst.de> <20190523065352.8FD7668B05@newverein.lst.de>
+In-Reply-To: <20190523065352.8FD7668B05@newverein.lst.de>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 23 May 2019 15:40:25 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66+1+goJfnY7nWTGN2fupqMUm5o+gkPdUW6nxcwQEDwog@mail.gmail.com>
+Message-ID: <CAGb2v66+1+goJfnY7nWTGN2fupqMUm5o+gkPdUW6nxcwQEDwog@mail.gmail.com>
+Subject: Re: [PATCH 3/6] drm/bridge: extract some Analogix I2C DP common code
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Harald Geyer <harald@ccbib.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 12:00:46PM +0800, Yinbo Zhu wrote:
-> From: Ashish Kumar <Ashish.Kumar@nxp.com>
-> 
-> This patch is to add esdhc node and enable SD UHS-I,
-> eMMC HS200 for ls1028ardb/ls1028aqds board.
-> 
-> Signed-off-by: Ashish Kumar <Ashish.Kumar@nxp.com>
-> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+On Thu, May 23, 2019 at 2:54 PM Torsten Duwe <duwe@lst.de> wrote:
+>
+> From: Icenowy Zheng <icenowy@aosc.io>
+>
+> Some code can be shared within different DP bridges by Analogix.
+>
+> Extract them to a new module.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
 > ---
-> Change in v2:
-> 		Update the patch title
-> 		Add a commont in dts code
-> 
->  arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts |    8 ++++++
->  arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts |   13 ++++++++++
->  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi    |   27 +++++++++++++++++++++
->  3 files changed, 48 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-> index 14c79f4..180e5d2 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-> @@ -42,6 +42,14 @@
->  	status = "okay";
->  };
->  
-> +&esdhc {
-> +	status = "okay";
-> +};
-> +
-> +&esdhc1 {
-> +	status = "okay";
-> +};
-> +
->  &i2c0 {
->  	status = "okay";
->  
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-> index f86b054..1bfaf42 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
-> @@ -30,6 +30,19 @@
->  	};
->  };
->  
-> +&esdhc {
-> +	status = "okay";
+>  drivers/gpu/drm/bridge/analogix/Kconfig            |   4 +
+>  drivers/gpu/drm/bridge/analogix/Makefile           |   2 +
+>  drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c | 146 +-----------------
+>  .../gpu/drm/bridge/analogix/analogix-i2c-dptx.c    | 169 +++++++++++++++++++++
+>  .../gpu/drm/bridge/analogix/analogix-i2c-dptx.h    |   2 +
+>  5 files changed, 178 insertions(+), 145 deletions(-)
+>  create mode 100644 drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
+>
 
-We usually put 'status' at the end of property list.
+...
 
-> +	sd-uhs-sdr104;
-> +	sd-uhs-sdr50;
-> +	sd-uhs-sdr25;
-> +	sd-uhs-sdr12;
-> +	};
+>  static int anx78xx_set_hpd(struct anx78xx *anx78xx)
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
+> new file mode 100644
+> index 000000000000..9cb30962032e
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
+> @@ -0,0 +1,169 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright(c) 2017 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * Based on analogix-anx78xx.c, which is:
+> + *   Copyright(c) 2016, Analogix Semiconductor. All rights reserved.
 
-Bad indentation.
+If this was simple code movement, then the original copyright still applies.
+A different copyright notice should not be used. I suppose the same applies
+to the module author.
 
-> +
-> +&esdhc1 {
-> +	status = "okay";
-> +	mmc-hs200-1_8v;
-> +	};
-> +
->  &i2c0 {
->  	status = "okay";
->  
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> index 2896bbc..5c7546f 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> @@ -274,6 +274,33 @@
->  			status = "disabled";
->  		};
->  
-> +		esdhc: esdhc@2140000 {
-
-'mmc' for node name, and the node should be sorted in unit-address.
-
-> +			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
-> +			reg = <0x0 0x2140000 0x0 0x10000>;
-> +			interrupts = <0 28 0x4>; /* Level high type */
-
-interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-
-> +			clock-frequency = <0>; /* fixed up by bootloader */
-> +			clocks = <&clockgen 2 1>;
-> +			voltage-ranges = <1800 1800 3300 3300>;
-> +			sdhci,auto-cmd12;
-> +			little-endian;
-> +			bus-width = <4>;
-> +			status = "disabled";
-> +		};
-> +
-> +		esdhc1: esdhc@2150000 {
-> +			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
-> +			reg = <0x0 0x2150000 0x0 0x10000>;
-> +			interrupts = <0 63 0x4>; /* Level high type */
-> +			clock-frequency = <0>; /* fixed up by bootloader */
-> +			clocks = <&clockgen 2 1>;
-> +			voltage-ranges = <1800 1800 3300 3300>;
-> +			sdhci,auto-cmd12;
-> +			broken-cd;
-
-Shouldn't this one be a board level property?
-
-Shawn
-
-> +			little-endian;
-> +			bus-width = <4>;
-> +			status = "disabled";
-> +		};
-> +
->  		sata: sata@3200000 {
->  			compatible = "fsl,ls1028a-ahci";
->  			reg = <0x0 0x3200000 0x0 0x10000>,
-> -- 
-> 1.7.1
-> 
+ChenYu
