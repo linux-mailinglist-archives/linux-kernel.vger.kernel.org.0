@@ -2,171 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B16327873
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 10:51:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BA342787C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 10:52:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729820AbfEWIvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 04:51:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55230 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726230AbfEWIvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 04:51:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B42A7ADD8;
-        Thu, 23 May 2019 08:51:09 +0000 (UTC)
-Message-ID: <c756c54d5e924d61b8ec6eccecf9bfdce7c2b543.camel@suse.de>
-Subject: Re: [RFC v2 3/5] clk: bcm2835: use firmware interface to update pllb
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Cc:     linux-arm-kernel@lists.infradead.org, ptesarik@suse.com,
-        sboyd@kernel.org, viresh.kumar@linaro.org, mturquette@baylibre.com,
-        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, mbrugger@suse.de, ssuloev@orpaltech.com
-Date:   Thu, 23 May 2019 10:51:07 +0200
-In-Reply-To: <1599901940.259900.1558475026379@email.ionos.de>
-References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
-         <20190520104708.11980-4-nsaenzjulienne@suse.de>
-         <ebc78880-418f-f507-021c-41295113e041@i2se.com>
-         <6383b357-3f7e-f031-f59f-61c598e44763@i2se.com>
-         <a142b72b828a798610d885d81189dd21b1870d78.camel@suse.de>
-         <1599901940.259900.1558475026379@email.ionos.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-rttIxA1wzU/XwAkxrIx0"
-User-Agent: Evolution 3.32.2 
+        id S1730192AbfEWIwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 04:52:14 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42232 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfEWIwO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 04:52:14 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l2so5297344wrb.9
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 01:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=j+i/6YHpLYa0VRON5YtxYPlWNbeZJcsk8UufzzybxG8=;
+        b=on9kVxqnE4XL9gvdkGUX2lnqH+HDfMFx1fmgPPhEHMLh6fLl/qMVTqq0jyIU4/zk3M
+         y7YSJbcxD91+NnS+VGobBAu9oIIllM+Rvh6RrpTXngDXu2RBlSNjIRrjjwsYU4288n4R
+         zUmjrS1VsLFV93LbAPHzTV7s0QxGGhiBSoKi6y1LOUJ33YP7h4SuM36zK6MAZqkLr+Ta
+         ynjHcXlIGcck8mXnnZZ9Xptdc+uSZeNf6jzyVjTjBW1VPOK9Vz7ioWG3tK9klx/C+QJE
+         HzALoy6aCD9QkWLWhOjXICOwGUhtN2g/TQiP+OXFWkX1J/rsMKCeP8EzJnR3scxtjR4R
+         Hnxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=j+i/6YHpLYa0VRON5YtxYPlWNbeZJcsk8UufzzybxG8=;
+        b=otKjOI3zSvAUfM1miIsKDP47TNXuioJpNPUghRR8AbutvrACYqsXnROAtIcWWYcYrW
+         FHE9dsm4kotvhR/pB49AnZsmThOWIqOdzHONpDqDAIpP0nPKqrYl39d+sZlrd3DyG/Y6
+         zny0Y+8NoYNdFUXobUPwHuc67v3HCVastpqqfI2Y5cD833iou5xXyHqIvQPiZJoqqydm
+         nLSL8FHeaCoKc/3yianqEOV8WsZh93tvjcFQlMu+k21mRDxhBUejvDCAdQbFkSjw3nGN
+         xsF8uCtfo8LPNHDxp+3p114ak+S3I+m5XOcVw1xdMAbCUyqKFg0+MrB7YoqUWowwo1ps
+         Jk/Q==
+X-Gm-Message-State: APjAAAULFSHCqzMpw/HEu3CFSb6obXAmlTl6SxqL/I0wp5zQsQBdKLSa
+        2bLhL6EE2a/gErqCiQJmNvvbaw==
+X-Google-Smtp-Source: APXvYqwVf7vgNc882DGvmr22eEnXmPhOY+Dm37Awq0EvbkD2CxA4UYuZbiq2u9/BDdvPo7hxsg3PVA==
+X-Received: by 2002:adf:ce89:: with SMTP id r9mr10093854wrn.300.1558601532706;
+        Thu, 23 May 2019 01:52:12 -0700 (PDT)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id i25sm10949054wmb.46.2019.05.23.01.52.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 01:52:12 -0700 (PDT)
+Subject: Re: [PATCH] nvmem: Broaden the selection of NVMEM_SNVS_LPGPR
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, shawnguo@kernel.org,
+        linux-imx@nxp.com, kernel@pengutronix.de
+References: <20190523001502.20105-1-festevam@gmail.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <a17e4954-7cc0-2774-3070-6c0554c7cb95@linaro.org>
+Date:   Thu, 23 May 2019 09:52:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <20190523001502.20105-1-festevam@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-rttIxA1wzU/XwAkxrIx0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2019-05-21 at 23:43 +0200, Stefan Wahren wrote:
-> > Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 21. Mai 2019 um =
-17:47
-> > geschrieben:
-> >=20
-> >=20
-> > Hi Stefan, thanks for your comments!
-> >=20
-> > On Tue, 2019-05-21 at 14:40 +0200, Stefan Wahren wrote:
-> > > Hi Nicolas,
-> > >=20
-> > > On 20.05.19 14:11, Stefan Wahren wrote:
-> > > > Hi Nicolas,
-> > > >=20
-> > > > the following comments applies only in case Eric is fine with the w=
-hole
-> > > > approach.
-> > > >=20
-> > > > On 20.05.19 12:47, Nicolas Saenz Julienne wrote:
-> > > > > Raspberry Pi's firmware, which runs in a dedicated processor, kee=
-ps
-> > > > maybe we should clarify that the firmware is running in the VPU
-> > > > > track of the board's temperature and voltage. It's resposible for
-> > > > > scaling the CPU frequency whenever it deems the device reached an
-> > > > > unsafe
-> > > > > state. On top of that the firmware provides an interface which al=
-lows
-> > > > > Linux to to query the clock's state or change it's frequency.
-> > > > I think this requires a separate update of the devicetree binding.
-> > > > > Being the sole user of the bcm2835 clock driver, this integrates =
-the
-> > > > > firmware interface into the clock driver and adds a first user: t=
-he
-> > > > > CPU
-> > > > > pll, also known as 'pllb'.
-> > > > Please verify that the kernel still works (and this clock driver pr=
-obe)
-> > > > under the following conditions:
-> > > >=20
-> > > > - CONFIG_RASPBERRYPI_FIRMWARE=3Dn
-> > > > - CONFIG_RASPBERRYPI_FIRMWARE=3Dm
-> > > > - older DTBs without patch #1
-> > > i thought about this and the case this driver would return
-> > > -EPROBE_DEFER. The clock driver is too essential for doing such a thi=
-ng.
-> > > So i think the best solution would be to move these changes into a
-> > > separate driver which should be register by the clock driver (similia=
-r
-> > > to vchiq). This also avoid the need of a new device tree binding.
-> >=20
-> > I understand your concerns.
-> >=20
-> > Wouldn't you prefer registering the device trough the device tree? I'd =
-go
-> > with
-> > the same approach as the firmware touchscreen driver, which is register=
-ed
-> > after
-> > the firmware's probe trough dt's 'simple-bus'. That said, it's not a
-> > strongly
-> > held opinion, I'm happy with whatever solution as long as it works.
->=20
-> A devicetree binding always introduce some kind of inflexibility. In case
-> someone finds a better solution later things can get really messy. A rece=
-nt
-> example is the clock handling for i2c-bcm2835.
+On 23/05/2019 01:15, Fabio Estevam wrote:
+> The SNVS LPGR IP block is also found on other i.MX SoCs that
+> are not covered by the current SOC_IMX6 || SOC_IMX7D logic.
+> 
+> One example is the i.MX7ULP.
+> 
+> To avoid keep expanding the SoC logic selection, make it broader
+> by using the more generic ARCH_MXC symbol instead.
+> 
+> Signed-off-by: Fabio Estevam <festevam@gmail.com>
+> ---
+>   drivers/nvmem/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Fair enough.
-
-> > I get from your comments that you'd like the register based version of
-> > 'pllb'
-> > and 'pllb_arm' to be loaded if for some reason the firmware isn't avail=
-able.
-> > Is
-> > that right?=20
->=20
-> This wasn't my intention. I would prefer a simple approch here (no handov=
-er).=20
->=20
-> > The main problem I see with this is the duplication of 'pllb' and
-> > 'pllb_arm'. Both drivers will create the same clock device through diff=
-erent
-> > interfaces. Any suggestions on how to deal with that? If not I can simp=
-ly
-> > remove 'pllb' and 'pllb_arm' from clk-bcm2835.c.
->=20
-> Yes. So even if this driver is disabled, there shouldn't be a regression.=
- Or
-> did i miss something?
-
-No, there shoudn't be any regressions as these clocks are not being used at=
- the
-moment.
-
-I'll send a follow-up series soon :)
-
-Regrads,
-Nicolas
+Applied!
 
 
---=-rttIxA1wzU/XwAkxrIx0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlzmXvsACgkQlfZmHno8
-x/5grgf8DaKHj4n6xgx7Eziw8ZvWeoGXlEqp0jORn3i0LMRCmP3NfeQjeI6JKcqk
-cr+LKsKAOdKqi+LSK5E97AD+dhifsZBkQWdXiiWmlqTALBoRx9jug+Bz5hcXQWSP
-GEc7b3ptWKWhdHCkNYDPUMs/2QECyhvdzS64cqzxyWVitzkue3oucEuHBB0zKEVS
-d4O3HJXxgFhUE0hyBEmlaPm94mBq9wIywm01Ifj2Lmzb/gXrM8mYfyZoxW9jM7tl
-2bXiN04WcM6kSq+J4t+3v+baNCP6YlHDnDU7scJ2grPkydirg+E5O87YrKJ0RGys
-okD9UnL1HYEPsLM94xjqSw+H5f2sgQ==
-=kYhp
------END PGP SIGNATURE-----
-
---=-rttIxA1wzU/XwAkxrIx0--
-
+Thanks,
+srini
