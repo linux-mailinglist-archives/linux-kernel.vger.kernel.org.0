@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17023288C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89FA1286C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403763AbfEWT2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:28:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41032 "EHLO mail.kernel.org"
+        id S1731749AbfEWTMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:12:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403755AbfEWT2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:28:25 -0400
+        id S1731662AbfEWTMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:12:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 948E92184E;
-        Thu, 23 May 2019 19:28:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4902620863;
+        Thu, 23 May 2019 19:12:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639705;
-        bh=5UCojV3+1l9pwyt7QHyOjN9adHUxg59F+wBeuWKbW/s=;
+        s=default; t=1558638753;
+        bh=uXz03w78aA3rYqMCK+FEZpxXyWqYSb745R7NBDYLeu0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CUyFIApXntihnnoE5dkDscZEcnqxu0WGl1nR1KmBcfA7jVARXC99I1TD0Mf2iTYIV
-         OCjQSzXwFddFp1qX99LIXHl1q1Quxa0VbkRVRPbtYvLgyalOV84p5UIZIeQ0CX0WGT
-         QGz2RPK/gAteepBYSueeSYN05ZbE9E1iE1dcRRDI=
+        b=H8DArxltmN+CGyKeApgCnM0fupShfccQt4DfmtFNilq2ts4FnqlqpWBWpbTQEuMNr
+         /QxZBJotRYjrWMp3hYzlUQwTnyb1cERNb8/oqINWVXaHTcXpYt6BbHftuPnnmMLwOZ
+         CrHUskCcgEbNskFK5MWgb3MOCYhxdX7qdAviqWdk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 5.1 048/122] phy: ti-pipe3: fix missing bit-wise or operator when assigning val
+        stable@vger.kernel.org,
+        =?UTF-8?q?Stefan=20M=C3=A4tje?= <stefan.maetje@esd.eu>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.14 52/77] PCI: Work around Pericom PCIe-to-PCI bridge Retrain Link erratum
 Date:   Thu, 23 May 2019 21:06:10 +0200
-Message-Id: <20190523181711.050745052@linuxfoundation.org>
+Message-Id: <20190523181727.245765389@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +45,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Stefan Mätje <stefan.maetje@esd.eu>
 
-commit e6577cb5103b7ca7c0204c0c86ef4af8aa6288f6 upstream.
+commit 4ec73791a64bab25cabf16a6067ee478692e506d upstream.
 
-There seems to be a missing bit-wise or operator when setting val,
-fix this by adding it in.
+Due to an erratum in some Pericom PCIe-to-PCI bridges in reverse mode
+(conventional PCI on primary side, PCIe on downstream side), the Retrain
+Link bit needs to be cleared manually to allow the link training to
+complete successfully.
 
-Fixes: 2796ceb0c18a ("phy: ti-pipe3: Update pcie phy settings")
-Cc: stable@vger.kernel.org # v4.19+
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+If it is not cleared manually, the link training is continuously restarted
+and no devices below the PCI-to-PCIe bridge can be accessed.  That means
+drivers for devices below the bridge will be loaded but won't work and may
+even crash because the driver is only reading 0xffff.
+
+See the Pericom Errata Sheet PI7C9X111SLB_errata_rev1.2_102711.pdf for
+details.  Devices known as affected so far are: PI7C9X110, PI7C9X111SL,
+PI7C9X130.
+
+Add a new flag, clear_retrain_link, in struct pci_dev.  Quirks for affected
+devices set this bit.
+
+Note that pcie_retrain_link() lives in aspm.c because that's currently the
+only place we use it, but this erratum is not specific to ASPM, and we may
+retrain links for other reasons in the future.
+
+Signed-off-by: Stefan Mätje <stefan.maetje@esd.eu>
+[bhelgaas: apply regardless of CONFIG_PCIEASPM]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/phy/ti/phy-ti-pipe3.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/pcie/aspm.c |    9 +++++++++
+ drivers/pci/quirks.c    |   17 +++++++++++++++++
+ include/linux/pci.h     |    2 ++
+ 3 files changed, 28 insertions(+)
 
---- a/drivers/phy/ti/phy-ti-pipe3.c
-+++ b/drivers/phy/ti/phy-ti-pipe3.c
-@@ -303,7 +303,7 @@ static void ti_pipe3_calibrate(struct ti
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -220,6 +220,15 @@ static bool pcie_retrain_link(struct pci
+ 	pcie_capability_read_word(parent, PCI_EXP_LNKCTL, &reg16);
+ 	reg16 |= PCI_EXP_LNKCTL_RL;
+ 	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
++	if (parent->clear_retrain_link) {
++		/*
++		 * Due to an erratum in some devices the Retrain Link bit
++		 * needs to be cleared again manually to allow the link
++		 * training to succeed.
++		 */
++		reg16 &= ~PCI_EXP_LNKCTL_RL;
++		pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
++	}
  
- 	val = ti_pipe3_readl(phy->phy_rx, PCIEPHYRX_ANA_PROGRAMMABILITY);
- 	val &= ~(INTERFACE_MASK | LOSD_MASK | MEM_PLLDIV);
--	val = (0x1 << INTERFACE_SHIFT | 0xA << LOSD_SHIFT);
-+	val |= (0x1 << INTERFACE_SHIFT | 0xA << LOSD_SHIFT);
- 	ti_pipe3_writel(phy->phy_rx, PCIEPHYRX_ANA_PROGRAMMABILITY, val);
+ 	/* Wait for link training end. Break out after waiting for timeout */
+ 	start_jiffies = jiffies;
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -2085,6 +2085,23 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_IN
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x10f4, quirk_disable_aspm_l0s);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x1508, quirk_disable_aspm_l0s);
  
- 	val = ti_pipe3_readl(phy->phy_rx, PCIEPHYRX_DIGITAL_MODES);
++/*
++ * Some Pericom PCIe-to-PCI bridges in reverse mode need the PCIe Retrain
++ * Link bit cleared after starting the link retrain process to allow this
++ * process to finish.
++ *
++ * Affected devices: PI7C9X110, PI7C9X111SL, PI7C9X130.  See also the
++ * Pericom Errata Sheet PI7C9X111SLB_errata_rev1.2_102711.pdf.
++ */
++static void quirk_enable_clear_retrain_link(struct pci_dev *dev)
++{
++	dev->clear_retrain_link = 1;
++	pci_info(dev, "Enable PCIe Retrain Link quirk\n");
++}
++DECLARE_PCI_FIXUP_HEADER(0x12d8, 0xe110, quirk_enable_clear_retrain_link);
++DECLARE_PCI_FIXUP_HEADER(0x12d8, 0xe111, quirk_enable_clear_retrain_link);
++DECLARE_PCI_FIXUP_HEADER(0x12d8, 0xe130, quirk_enable_clear_retrain_link);
++
+ static void fixup_rev1_53c810(struct pci_dev *dev)
+ {
+ 	u32 class = dev->class;
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -350,6 +350,8 @@ struct pci_dev {
+ 	unsigned int	hotplug_user_indicators:1; /* SlotCtl indicators
+ 						      controlled exclusively by
+ 						      user sysfs */
++	unsigned int	clear_retrain_link:1;	/* Need to clear Retrain Link
++						   bit manually */
+ 	unsigned int	d3_delay;	/* D3->D0 transition time in ms */
+ 	unsigned int	d3cold_delay;	/* D3cold->D0 transition time in ms */
+ 
 
 
