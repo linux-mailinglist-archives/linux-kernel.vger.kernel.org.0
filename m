@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1258028A8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F0032879C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389179AbfEWTQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:16:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50882 "EHLO mail.kernel.org"
+        id S2389449AbfEWTVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:21:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389144AbfEWTQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:16:16 -0400
+        id S2389520AbfEWTVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:21:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A2FF21841;
-        Thu, 23 May 2019 19:16:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6A89217D7;
+        Thu, 23 May 2019 19:21:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638976;
-        bh=5UCojV3+1l9pwyt7QHyOjN9adHUxg59F+wBeuWKbW/s=;
+        s=default; t=1558639274;
+        bh=WvP96BCSKZf3JJUOFKLAgwBKF3BH3RagTLnxSEgUhNw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kEHcYYHtBwQDsR2vLEHPj8igyvqFVbSL3MavPuXyoKEekIjr3IcmZiz45YRke6IZp
-         DM6xwasRZMkDxY4BzwHBQzqwgqKUmY+Jsp7nfxhxYeWZrUAWP0ivG+aRVZW/NaREOj
-         /Ude+vjrQoYhqHBslyxeCP43iBcBPeV6MclsSxZY=
+        b=LeAMEwCPR8Q1DnxE/OFrDD7aI/dBfH1XbtnYbFjccW/J8KUOGJ9SNuYA2TbyxxkN6
+         tMHOleMnvu7AV1oe34KN6pMmBtiIrCWh5Krbui4LaYJ+wXKl4FTeoidX6FD9DB+e6k
+         JfhkASZVDTPrxVKDF3DlgwcY6nSOQKQP1Q0VJKS4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 4.19 033/114] phy: ti-pipe3: fix missing bit-wise or operator when assigning val
+        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 5.0 044/139] media: ov6650: Fix sensor possibly not detected on probe
 Date:   Thu, 23 May 2019 21:05:32 +0200
-Message-Id: <20190523181734.791120488@linuxfoundation.org>
+Message-Id: <20190523181726.423917035@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-commit e6577cb5103b7ca7c0204c0c86ef4af8aa6288f6 upstream.
+commit 933c1320847f5ed6b61a7d10f0a948aa98ccd7b0 upstream.
 
-There seems to be a missing bit-wise or operator when setting val,
-fix this by adding it in.
+After removal of clock_start() from before soc_camera_init_i2c() in
+soc_camera_probe() by commit 9aea470b399d ("[media] soc-camera: switch
+I2C subdevice drivers to use v4l2-clk") introduced in v3.11, the ov6650
+driver could no longer probe the sensor successfully because its clock
+was no longer turned on in advance.  The issue was initially worked
+around by adding that missing clock_start() equivalent to OMAP1 camera
+interface driver - the only user of this sensor - but a propoer fix
+should be rather implemented in the sensor driver code itself.
 
-Fixes: 2796ceb0c18a ("phy: ti-pipe3: Update pcie phy settings")
-Cc: stable@vger.kernel.org # v4.19+
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Fix the issue by inserting a delay between the clock is turned on and
+the sensor I2C registers are read for the first time.
+
+Tested on Amstrad Delta with now out of tree but still locally
+maintained omap1_camera host driver.
+
+Fixes: 9aea470b399d ("[media] soc-camera: switch I2C subdevice drivers to use v4l2-clk")
+
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/phy/ti/phy-ti-pipe3.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/ov6650.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/phy/ti/phy-ti-pipe3.c
-+++ b/drivers/phy/ti/phy-ti-pipe3.c
-@@ -303,7 +303,7 @@ static void ti_pipe3_calibrate(struct ti
+--- a/drivers/media/i2c/ov6650.c
++++ b/drivers/media/i2c/ov6650.c
+@@ -814,6 +814,8 @@ static int ov6650_video_probe(struct i2c
+ 	if (ret < 0)
+ 		return ret;
  
- 	val = ti_pipe3_readl(phy->phy_rx, PCIEPHYRX_ANA_PROGRAMMABILITY);
- 	val &= ~(INTERFACE_MASK | LOSD_MASK | MEM_PLLDIV);
--	val = (0x1 << INTERFACE_SHIFT | 0xA << LOSD_SHIFT);
-+	val |= (0x1 << INTERFACE_SHIFT | 0xA << LOSD_SHIFT);
- 	ti_pipe3_writel(phy->phy_rx, PCIEPHYRX_ANA_PROGRAMMABILITY, val);
- 
- 	val = ti_pipe3_readl(phy->phy_rx, PCIEPHYRX_DIGITAL_MODES);
++	msleep(20);
++
+ 	/*
+ 	 * check and show product ID and manufacturer ID
+ 	 */
 
 
