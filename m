@@ -2,43 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11CBF2891F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEF8D28945
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392207AbfEWTa4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:30:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44450 "EHLO mail.kernel.org"
+        id S2392141AbfEWTcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:32:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392192AbfEWTav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:30:51 -0400
+        id S2391703AbfEWTax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:30:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A808020879;
-        Thu, 23 May 2019 19:30:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0D932133D;
+        Thu, 23 May 2019 19:30:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639850;
-        bh=+t0u5GOucS63bRMTYhnfoDgwbCZ7hpJlC0pSSCGnqdA=;
+        s=default; t=1558639853;
+        bh=UzqSZtW2KajiKLccwmz24NY1Imd9fAY7yZ/3SJfDf2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dZGsfRO2rRI0hBylfHkvqO43wy2ApuhZlRAajdyMR67ZpTbeuCPEGL3qZS5QK8yyM
-         eOTOFxMKEHcHT9NkqsCOsJdmx+S3S9Rh5F6y9++uBMW5GubfVEMFwD9/RjaxsSN+gE
-         RAyUjOPbDyoPd6lBDB5R7qrdpFyBoA73OS77TAUY=
+        b=rNevLWMLQgoyC6ZM27gIj+ct6+rsCw801cdCbzIAYDoX8T4QetbAOhYHmevAYQH8V
+         FlL0Ame6E/9lPzOf+yisFnjsGp8uUc8dpQiSP48ySdi8QKt+yYNrvIzKI/Oxx/Bkx6
+         36fSyT+HpZm5bzZq9VVXD7kx1JFSoFkGbz8hJYMA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 5.1 099/122] PCI: rcar: Add the initialization of PCIe link in resume_noirq()
-Date:   Thu, 23 May 2019 21:07:01 +0200
-Message-Id: <20190523181718.354018681@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Stefan=20M=C3=A4tje?= <stefan.maetje@esd.eu>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 5.1 100/122] PCI: Factor out pcie_retrain_link() function
+Date:   Thu, 23 May 2019 21:07:02 +0200
+Message-Id: <20190523181718.501169582@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
 References: <20190523181705.091418060@linuxfoundation.org>
@@ -51,91 +45,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+From: Stefan Mätje <stefan.maetje@esd.eu>
 
-commit be20bbcb0a8cb5597cc62b3e28d275919f3431df upstream.
+commit 86fa6a344209d9414ea962b1f1ac6ade9dd7563a upstream.
 
-Reestablish the PCIe link very early in the resume process in case it
-went down to prevent PCI accesses from hanging the bus. Such accesses
-can happen early in the PCI resume process, as early as the
-SUSPEND_RESUME_NOIRQ step, thus the link must be reestablished in the
-driver resume_noirq() callback.
+Factor out pcie_retrain_link() to use for Pericom Retrain Link quirk.  No
+functional change intended.
 
-Fixes: e015f88c368d ("PCI: rcar: Add support for R-Car H3 to pcie-rcar")
-Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-[lorenzo.pieralisi@arm.com: reformatted commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: stable@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Stefan Mätje <stefan.maetje@esd.eu>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/pcie-rcar.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/pci/pcie/aspm.c |   40 ++++++++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
 
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -46,6 +46,7 @@
- 
- /* Transfer control */
- #define PCIETCTLR		0x02000
-+#define  DL_DOWN		BIT(3)
- #define  CFINIT			1
- #define PCIETSTR		0x02004
- #define  DATA_LINK_ACTIVE	1
-@@ -94,6 +95,7 @@
- #define MACCTLR			0x011058
- #define  SPEED_CHANGE		BIT(24)
- #define  SCRAMBLE_DISABLE	BIT(27)
-+#define PMSR			0x01105c
- #define MACS2R			0x011078
- #define MACCGSPSETR		0x011084
- #define  SPCNGRSN		BIT(31)
-@@ -1130,6 +1132,7 @@ static int rcar_pcie_probe(struct platfo
- 	pcie = pci_host_bridge_priv(bridge);
- 
- 	pcie->dev = dev;
-+	platform_set_drvdata(pdev, pcie);
- 
- 	err = pci_parse_request_of_pci_ranges(dev, &pcie->resources, NULL);
- 	if (err)
-@@ -1221,10 +1224,28 @@ err_free_bridge:
- 	return err;
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -196,6 +196,29 @@ static void pcie_clkpm_cap_init(struct p
+ 	link->clkpm_capable = (blacklist) ? 0 : capable;
  }
  
-+static int rcar_pcie_resume_noirq(struct device *dev)
++static bool pcie_retrain_link(struct pcie_link_state *link)
 +{
-+	struct rcar_pcie *pcie = dev_get_drvdata(dev);
++	struct pci_dev *parent = link->pdev;
++	unsigned long start_jiffies;
++	u16 reg16;
 +
-+	if (rcar_pci_read_reg(pcie, PMSR) &&
-+	    !(rcar_pci_read_reg(pcie, PCIETCTLR) & DL_DOWN))
-+		return 0;
++	pcie_capability_read_word(parent, PCI_EXP_LNKCTL, &reg16);
++	reg16 |= PCI_EXP_LNKCTL_RL;
++	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
 +
-+	/* Re-establish the PCIe link */
-+	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
-+	return rcar_pcie_wait_for_dl(pcie);
++	/* Wait for link training end. Break out after waiting for timeout */
++	start_jiffies = jiffies;
++	for (;;) {
++		pcie_capability_read_word(parent, PCI_EXP_LNKSTA, &reg16);
++		if (!(reg16 & PCI_EXP_LNKSTA_LT))
++			break;
++		if (time_after(jiffies, start_jiffies + LINK_RETRAIN_TIMEOUT))
++			break;
++		msleep(1);
++	}
++	return !(reg16 & PCI_EXP_LNKSTA_LT);
 +}
 +
-+static const struct dev_pm_ops rcar_pcie_pm_ops = {
-+	.resume_noirq = rcar_pcie_resume_noirq,
-+};
-+
- static struct platform_driver rcar_pcie_driver = {
- 	.driver = {
- 		.name = "rcar-pcie",
- 		.of_match_table = rcar_pcie_of_match,
-+		.pm = &rcar_pcie_pm_ops,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = rcar_pcie_probe,
+ /*
+  * pcie_aspm_configure_common_clock: check if the 2 ends of a link
+  *   could use common clock. If they are, configure them to use the
+@@ -205,7 +228,6 @@ static void pcie_aspm_configure_common_c
+ {
+ 	int same_clock = 1;
+ 	u16 reg16, parent_reg, child_reg[8];
+-	unsigned long start_jiffies;
+ 	struct pci_dev *child, *parent = link->pdev;
+ 	struct pci_bus *linkbus = parent->subordinate;
+ 	/*
+@@ -263,21 +285,7 @@ static void pcie_aspm_configure_common_c
+ 		reg16 &= ~PCI_EXP_LNKCTL_CCC;
+ 	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
+ 
+-	/* Retrain link */
+-	reg16 |= PCI_EXP_LNKCTL_RL;
+-	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
+-
+-	/* Wait for link training end. Break out after waiting for timeout */
+-	start_jiffies = jiffies;
+-	for (;;) {
+-		pcie_capability_read_word(parent, PCI_EXP_LNKSTA, &reg16);
+-		if (!(reg16 & PCI_EXP_LNKSTA_LT))
+-			break;
+-		if (time_after(jiffies, start_jiffies + LINK_RETRAIN_TIMEOUT))
+-			break;
+-		msleep(1);
+-	}
+-	if (!(reg16 & PCI_EXP_LNKSTA_LT))
++	if (pcie_retrain_link(link))
+ 		return;
+ 
+ 	/* Training failed. Restore common clock configurations */
 
 
