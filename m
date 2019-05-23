@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31DCB287C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48A9D2868E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390606AbfEWTXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:23:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33104 "EHLO mail.kernel.org"
+        id S2387820AbfEWTK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:10:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389839AbfEWTW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:22:59 -0400
+        id S2387789AbfEWTKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:10:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1E6D20868;
-        Thu, 23 May 2019 19:22:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3061C217D7;
+        Thu, 23 May 2019 19:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639379;
-        bh=9tqMZWqEHULiuOWDI2seNvJ1xyybwcMj/Ewo4lbLsvc=;
+        s=default; t=1558638621;
+        bh=zMokBmG2SiKr56AHDr4LskiULYRSW7ptbdGvkBWruxw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pbK+70YFQE70L4nrEyr8Mu2NVpwsbc0QjsovXbah7lNrNtm+vLBTobnmGiOVHC2d4
-         YzAx6jv4bH/5IId4CcmCTvCPPp+oHiKVc1ona4wuLXCaIt78lEzNqlLH49S+sA5+ls
-         /v4so7uEpHmrAEx1XOQAvX30BCGx/DV1DfplEwH0=
+        b=AvVOGvixZJkd7ZD/RCWRrjixe/1phTotUiVk2Xp3jttW/vJI6iCnoherNfXOdhdhB
+         H/r5jAKRcRjgFUAfb48cARgdvKZROkBxXeT5E0JZwdPXM7U4Y81RcMZsbNyedo8fk6
+         bx9uOKs5Nw3hiUaH5Fle9MvKo8W3T1Vfo1yKs/GM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yifeng Li <tomli@tomli.me>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 5.0 083/139] fbdev: sm712fb: use 1024x768 by default on non-MIPS, fix garbled display
+        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 47/53] KVM: arm/arm64: Ensure vcpu target is unset on reset failure
 Date:   Thu, 23 May 2019 21:06:11 +0200
-Message-Id: <20190523181731.621894743@linuxfoundation.org>
+Message-Id: <20190523181718.436163153@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
+References: <20190523181710.981455400@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,124 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yifeng Li <tomli@tomli.me>
+[ Upstream commit 811328fc3222f7b55846de0cd0404339e2e1e6d7 ]
 
-commit 4ed7d2ccb7684510ec5f7a8f7ef534bc6a3d55b2 upstream.
+A failed KVM_ARM_VCPU_INIT should not set the vcpu target,
+as the vcpu target is used by kvm_vcpu_initialized() to
+determine if other vcpu ioctls may proceed. We need to set
+the target before calling kvm_reset_vcpu(), but if that call
+fails, we should then unset it and clear the feature bitmap
+while we're at it.
 
-Loongson MIPS netbooks use 1024x600 LCD panels, which is the original
-target platform of this driver, but nearly all old x86 laptops have
-1024x768. Lighting 768 panels using 600's timings would partially
-garble the display. Since it's not possible to distinguish them reliably,
-we change the default to 768, but keep 600 as-is on MIPS.
-
-Further, earlier laptops, such as IBM Thinkpad 240X, has a 800x600 LCD
-panel, this driver would probably garbled those display. As we don't
-have one for testing, the original behavior of the driver is kept as-is,
-but the problem has been documented is the comments.
-
-Signed-off-by: Yifeng Li <tomli@tomli.me>
-Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Teddy Wang <teddy.wang@siliconmotion.com>
-Cc: <stable@vger.kernel.org>  # v4.4+
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Andrew Jones <drjones@redhat.com>
+[maz: Simplified patch, completed commit message]
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/sm712.h   |    7 +++--
- drivers/video/fbdev/sm712fb.c |   53 +++++++++++++++++++++++++++++++-----------
- 2 files changed, 44 insertions(+), 16 deletions(-)
+ arch/arm/kvm/arm.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/video/fbdev/sm712.h
-+++ b/drivers/video/fbdev/sm712.h
-@@ -15,9 +15,10 @@
- 
- #define FB_ACCEL_SMI_LYNX 88
- 
--#define SCREEN_X_RES      1024
--#define SCREEN_Y_RES      600
--#define SCREEN_BPP        16
-+#define SCREEN_X_RES          1024
-+#define SCREEN_Y_RES_PC       768
-+#define SCREEN_Y_RES_NETBOOK  600
-+#define SCREEN_BPP            16
- 
- #define dac_reg	(0x3c8)
- #define dac_val	(0x3c9)
---- a/drivers/video/fbdev/sm712fb.c
-+++ b/drivers/video/fbdev/sm712fb.c
-@@ -1463,6 +1463,43 @@ static u_long sm7xx_vram_probe(struct sm
- 	return 0;  /* unknown hardware */
- }
- 
-+static void sm7xx_resolution_probe(struct smtcfb_info *sfb)
-+{
-+	/* get mode parameter from smtc_scr_info */
-+	if (smtc_scr_info.lfb_width != 0) {
-+		sfb->fb->var.xres = smtc_scr_info.lfb_width;
-+		sfb->fb->var.yres = smtc_scr_info.lfb_height;
-+		sfb->fb->var.bits_per_pixel = smtc_scr_info.lfb_depth;
-+		goto final;
-+	}
-+
-+	/*
-+	 * No parameter, default resolution is 1024x768-16.
-+	 *
-+	 * FIXME: earlier laptops, such as IBM Thinkpad 240X, has a 800x600
-+	 * panel, also see the comments about Thinkpad 240X above.
-+	 */
-+	sfb->fb->var.xres = SCREEN_X_RES;
-+	sfb->fb->var.yres = SCREEN_Y_RES_PC;
-+	sfb->fb->var.bits_per_pixel = SCREEN_BPP;
-+
-+#ifdef CONFIG_MIPS
-+	/*
-+	 * Loongson MIPS netbooks use 1024x600 LCD panels, which is the original
-+	 * target platform of this driver, but nearly all old x86 laptops have
-+	 * 1024x768. Lighting 768 panels using 600's timings would partially
-+	 * garble the display, so we don't want that. But it's not possible to
-+	 * distinguish them reliably.
-+	 *
-+	 * So we change the default to 768, but keep 600 as-is on MIPS.
-+	 */
-+	sfb->fb->var.yres = SCREEN_Y_RES_NETBOOK;
-+#endif
-+
-+final:
-+	big_pixel_depth(sfb->fb->var.bits_per_pixel, smtc_scr_info.lfb_depth);
-+}
-+
- static int smtcfb_pci_probe(struct pci_dev *pdev,
- 			    const struct pci_device_id *ent)
+diff --git a/arch/arm/kvm/arm.c b/arch/arm/kvm/arm.c
+index a670c70f4def9..dfc00a5bdc10d 100644
+--- a/arch/arm/kvm/arm.c
++++ b/arch/arm/kvm/arm.c
+@@ -801,7 +801,7 @@ int kvm_vm_ioctl_irq_line(struct kvm *kvm, struct kvm_irq_level *irq_level,
+ static int kvm_vcpu_set_target(struct kvm_vcpu *vcpu,
+ 			       const struct kvm_vcpu_init *init)
  {
-@@ -1508,19 +1545,6 @@ static int smtcfb_pci_probe(struct pci_d
+-	unsigned int i;
++	unsigned int i, ret;
+ 	int phys_target = kvm_target_cpu();
  
- 	sm7xx_init_hw();
+ 	if (init->target != phys_target)
+@@ -836,9 +836,14 @@ static int kvm_vcpu_set_target(struct kvm_vcpu *vcpu,
+ 	vcpu->arch.target = phys_target;
  
--	/* get mode parameter from smtc_scr_info */
--	if (smtc_scr_info.lfb_width != 0) {
--		sfb->fb->var.xres = smtc_scr_info.lfb_width;
--		sfb->fb->var.yres = smtc_scr_info.lfb_height;
--		sfb->fb->var.bits_per_pixel = smtc_scr_info.lfb_depth;
--	} else {
--		/* default resolution 1024x600 16bit mode */
--		sfb->fb->var.xres = SCREEN_X_RES;
--		sfb->fb->var.yres = SCREEN_Y_RES;
--		sfb->fb->var.bits_per_pixel = SCREEN_BPP;
--	}
--
--	big_pixel_depth(sfb->fb->var.bits_per_pixel, smtc_scr_info.lfb_depth);
- 	/* Map address and memory detection */
- 	mmio_base = pci_resource_start(pdev, 0);
- 	pci_read_config_byte(pdev, PCI_REVISION_ID, &sfb->chip_rev_id);
-@@ -1582,6 +1606,9 @@ static int smtcfb_pci_probe(struct pci_d
- 		goto failed_fb;
- 	}
+ 	/* Now we know what it is, we can reset it. */
+-	return kvm_reset_vcpu(vcpu);
+-}
++	ret = kvm_reset_vcpu(vcpu);
++	if (ret) {
++		vcpu->arch.target = -1;
++		bitmap_zero(vcpu->arch.features, KVM_VCPU_MAX_FEATURES);
++	}
  
-+	/* probe and decide resolution */
-+	sm7xx_resolution_probe(sfb);
-+
- 	/* can support 32 bpp */
- 	if (sfb->fb->var.bits_per_pixel == 15)
- 		sfb->fb->var.bits_per_pixel = 16;
++	return ret;
++}
+ 
+ static int kvm_arch_vcpu_ioctl_vcpu_init(struct kvm_vcpu *vcpu,
+ 					 struct kvm_vcpu_init *init)
+-- 
+2.20.1
+
 
 
