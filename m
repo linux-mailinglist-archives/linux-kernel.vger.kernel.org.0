@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6078D286DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE738286E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388643AbfEWTNw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:13:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47734 "EHLO mail.kernel.org"
+        id S2388655AbfEWTOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:14:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387801AbfEWTNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:13:43 -0400
+        id S2388311AbfEWTNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:13:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73F2A20863;
-        Thu, 23 May 2019 19:13:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5007720863;
+        Thu, 23 May 2019 19:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638822;
-        bh=wDrD/fDJJ7TXM+EKX2yzv/zboJ9hPm4L6LJm/+znrbU=;
+        s=default; t=1558638830;
+        bh=lXNckAZnpcx/r52Bhu7DZWMItin9YE9HIlmcNz015hY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=itieRdrFlN6ySInUNR32hEdiJ1H0iu9wCljAnYdiM3FeBYTA8IL63EfH8y9QZU84u
-         SsRbLbff5uAM4yuD4S2vDr0xF0v4CQ1a/MVoJEIs/mLbOVBIpuot1HnhpSWap/UjO8
-         NaLw+3Euvl8zyMYinM+oKBCA+Z8nBylgzThA0m/0=
+        b=b0D2otx9dqJ1BtqPf1Cy9c5ni6fpoU7PSqH55ULp/yhUHT9nMt7mKaB3Ja7wAGRme
+         VTQKBKcaO4HiADBh3/+nkR6obmO27MTTl3X7X/Hhem4S2WRHxUG4J0gYBlTVtg+jMb
+         xHtWzdFqfLufXVd6wKxgfbED5VTtMzezE5BFGrm4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 61/77] power: supply: cpcap-battery: Fix division by zero
-Date:   Thu, 23 May 2019 21:06:19 +0200
-Message-Id: <20190523181728.409484885@linuxfoundation.org>
+Subject: [PATCH 4.14 62/77] securityfs: fix use-after-free on symlink traversal
+Date:   Thu, 23 May 2019 21:06:20 +0200
+Message-Id: <20190523181728.540271608@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
 References: <20190523181719.982121681@linuxfoundation.org>
@@ -45,42 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit dbe7208c6c4aec083571f2ec742870a0d0edbea3 ]
+[ Upstream commit 46c874419652bbefdfed17420fd6e88d8a31d9ec ]
 
-If called fast enough so samples do not increment, we can get
-division by zero in kernel:
+symlink body shouldn't be freed without an RCU delay.  Switch securityfs
+to ->destroy_inode() and use of call_rcu(); free both the inode and symlink
+body in the callback.
 
-__div0
-cpcap_battery_cc_raw_div
-cpcap_battery_get_property
-power_supply_get_property.part.1
-power_supply_get_property
-power_supply_show_property
-power_supply_uevent
-
-Fixes: 874b2adbed12 ("power: supply: cpcap-battery: Add a battery driver")
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/power/supply/cpcap-battery.c | 3 +++
- 1 file changed, 3 insertions(+)
+ security/inode.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/power/supply/cpcap-battery.c b/drivers/power/supply/cpcap-battery.c
-index ee71a2b37b12c..fe7fcf3a2ad03 100644
---- a/drivers/power/supply/cpcap-battery.c
-+++ b/drivers/power/supply/cpcap-battery.c
-@@ -221,6 +221,9 @@ static int cpcap_battery_cc_raw_div(struct cpcap_battery_ddata *ddata,
- 	int avg_current;
- 	u32 cc_lsb;
+diff --git a/security/inode.c b/security/inode.c
+index 8dd9ca8848e43..829f15672e01f 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -26,17 +26,22 @@
+ static struct vfsmount *mount;
+ static int mount_count;
  
-+	if (!divider)
-+		return 0;
+-static void securityfs_evict_inode(struct inode *inode)
++static void securityfs_i_callback(struct rcu_head *head)
+ {
+-	truncate_inode_pages_final(&inode->i_data);
+-	clear_inode(inode);
++	struct inode *inode = container_of(head, struct inode, i_rcu);
+ 	if (S_ISLNK(inode->i_mode))
+ 		kfree(inode->i_link);
++	free_inode_nonrcu(inode);
++}
 +
- 	sample &= 0xffffff;		/* 24-bits, unsigned */
- 	offset &= 0x7ff;		/* 10-bits, signed */
++static void securityfs_destroy_inode(struct inode *inode)
++{
++	call_rcu(&inode->i_rcu, securityfs_i_callback);
+ }
  
+ static const struct super_operations securityfs_super_operations = {
+ 	.statfs		= simple_statfs,
+-	.evict_inode	= securityfs_evict_inode,
++	.destroy_inode	= securityfs_destroy_inode,
+ };
+ 
+ static int fill_super(struct super_block *sb, void *data, int silent)
 -- 
 2.20.1
 
