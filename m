@@ -2,222 +2,319 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7658327937
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 11:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 622F62793B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 11:31:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730399AbfEWJaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 05:30:24 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41859 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730283AbfEWJaY (ORCPT
+        id S1730444AbfEWJaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 05:30:46 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38343 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726913AbfEWJaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 05:30:24 -0400
-Received: by mail-wr1-f65.google.com with SMTP id u16so1564250wrn.8
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 02:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qQG/Dz+q3JTMTmvRPhKGrhtgC1e/05CWbdwWmbSbs0U=;
-        b=owHVPK/SPHvRkGKDqN3ABV7GCe7eUovnMPq4gnajGKoTxPDnmsFy1LVzD8WAHKYYJb
-         xWtGG9H4ZaC+xpYDyDOTNqhGNyyUt1KaaIwjhTKkM8kiqSW+5IZhYw58TwkvQJqurEO2
-         bjEhU1ozg6hBHexysrUznVzhEA4LUcwxnIIu6KlGhrBlDl6FDis2Axz8147S1/OQo6Jg
-         /mxkkJWPAxiiLsiCHyiInQ3CssPCcV2/lLMHb2zA/zyv1eBCCynAClfMhWP7uH/5LAao
-         W3Kr2F0b0PqBnbD9DQqjRp6jAnRmCdDiw5Ayk14QB6BmgEWARBa891iBqxudeWxMzCGe
-         BiKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qQG/Dz+q3JTMTmvRPhKGrhtgC1e/05CWbdwWmbSbs0U=;
-        b=UqBDI7RQqRf4V4t/veYDwHcwYDVlh1Wmy1gurM/YeO7c6nT/EnfnaNs0i5fcnh93OT
-         LKvfP0Ar3IjQpwO0alUw2MwFVCtZw0+VLFMtXliEzJY9YG0rzYr+4mc3PnZH3GXKIcNq
-         Ibc+YliJ9U56Rn/oyoDnemf6+lRne9J20yBI4hVQyScuC0BJTtP2scPyLqgmKvpQDKBm
-         Gkc0vMsPTjmW1I2wBJd6ZwvHsGudk0MhsYWAv1WFxhYiRF9G0mq43QEpcBbS45oFZqKe
-         7/f9Y+pRnnc5ODxJ87kldbe9JYiHeDbcuizf/ixmkJYXqogWOTpgYoYGst5GYtlY+37L
-         Aa3w==
-X-Gm-Message-State: APjAAAX3EphEp77P6WcuHgGnOtKgd6CamEajTJgPvwS+vcWEIAT0ep1B
-        78UWS6HXcVOKI8kmxW9sSSYEBn2wU37/6A==
-X-Google-Smtp-Source: APXvYqybkROd+8FV7xvzYRHzx5I6P8yHjU/b56D5mpl52Evdz6IbV5IvY5L/X78qMtD8vo3ZK0UNVw==
-X-Received: by 2002:adf:e90b:: with SMTP id f11mr2427438wrm.291.1558603821998;
-        Thu, 23 May 2019 02:30:21 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id o8sm48848496wra.4.2019.05.23.02.30.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 02:30:21 -0700 (PDT)
-Subject: Re: [PATCH] soundwire: stream: fix bad unlock balance
-To:     Sanyog Kale <sanyog.r.kale@intel.com>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        vkoul@kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-References: <20190522162528.5892-1-srinivas.kandagatla@linaro.org>
- <4744834c-36b1-dd8d-45fa-76c75eb3d5cb@linux.intel.com>
- <2dc66f9d-e508-d457-a7d6-c06c4336e7b8@linaro.org>
- <20190523092034.GA23777@buildpc-HP-Z230>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <b85e54e8-5ba8-38ff-3538-f54526c67b31@linaro.org>
-Date:   Thu, 23 May 2019 10:30:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 23 May 2019 05:30:46 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4N9UWIl4042629
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 23 May 2019 02:30:32 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4N9UWIl4042629
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1558603833;
+        bh=TjS9zQNW6L3cWnv1itpSB4m61vAcsJd8D1v0EGoAKRQ=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=hquMs0RNu/RJk6uV28LrEhFMSl8K7pdEdyV6+0rdz3ubV+K/jXSeBL3JeCNwx/gVB
+         Uox2gmBkdXzC6hrpoByReJWdC3yLdQg3NdxilOKDMTkGX2ETpopRySw/8p1Fq0iACV
+         CNQ4k7FPPkbjqZ4JvAgkLVTMs0bMBuUwbE+HVLuDSd4rftiQwknu7B3td1IcLDyzwi
+         dqSbsIt7TltKkA2veUpGEDwRy3iw8CyveVlkgF/j4Z3PETmMu787u6zzWAeitPPIVu
+         WiTa5J+WFrCIgEQlSgIP0ebrclWTME5qC+ih3z3A/sX0sTugjBlsKezWvgywBY2psD
+         J7IZV0Z/vAp+Q==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4N9UVI94042624;
+        Thu, 23 May 2019 02:30:31 -0700
+Date:   Thu, 23 May 2019 02:30:31 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Len Brown <tipbot@zytor.com>
+Message-ID: <tip-2e4c54dac7b360c3820399bdf06cde9134a4495b@git.kernel.org>
+Cc:     len.brown@intel.com, hpa@zytor.com, Brice.Goglin@inria.fr,
+        mingo@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          peterz@infradead.org, Brice.Goglin@inria.fr, mingo@kernel.org,
+          hpa@zytor.com, len.brown@intel.com
+In-Reply-To: <071c23a298cd27ede6ed0b6460cae190d193364f.1557769318.git.len.brown@intel.com>
+References: <071c23a298cd27ede6ed0b6460cae190d193364f.1557769318.git.len.brown@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/topology] topology: Create core_cpus and die_cpus sysfs
+ attributes
+Git-Commit-ID: 2e4c54dac7b360c3820399bdf06cde9134a4495b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20190523092034.GA23777@buildpc-HP-Z230>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-3.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        T_DATE_IN_FUTURE_96_Q autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  2e4c54dac7b360c3820399bdf06cde9134a4495b
+Gitweb:     https://git.kernel.org/tip/2e4c54dac7b360c3820399bdf06cde9134a4495b
+Author:     Len Brown <len.brown@intel.com>
+AuthorDate: Mon, 13 May 2019 13:58:56 -0400
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 23 May 2019 10:08:34 +0200
 
+topology: Create core_cpus and die_cpus sysfs attributes
 
-On 23/05/2019 10:20, Sanyog Kale wrote:
-> On Thu, May 23, 2019 at 09:43:14AM +0100, Srinivas Kandagatla wrote:
->>
->>
->> On 22/05/2019 17:41, Pierre-Louis Bossart wrote:
->>>
->>>
->>> On 5/22/19 11:25 AM, Srinivas Kandagatla wrote:
->>>> This patch fixes below warning due to unlocking without locking.
->>>>
->>>> ?? =====================================
->>>> ?? WARNING: bad unlock balance detected!
->>>> ?? 5.1.0-16506-gc1c383a6f0a2-dirty #1523 Tainted: G?????????????? W
->>>> ?? -------------------------------------
->>>> ?? aplay/2954 is trying to release lock (&bus->msg_lock) at:
->>>> ?? do_bank_switch+0x21c/0x480
->>>> ?? but there are no more locks to release!
->>>>
->>>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>>> ---
->>>> ?? drivers/soundwire/stream.c | 3 ++-
->>>> ?? 1 file changed, 2 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
->>>> index 544925ff0b40..d16268f30e4f 100644
->>>> --- a/drivers/soundwire/stream.c
->>>> +++ b/drivers/soundwire/stream.c
->>>> @@ -814,7 +814,8 @@ static int do_bank_switch(struct
->>>> sdw_stream_runtime *stream)
->>>> ?????????????????????????? goto error;
->>>> ?????????????????? }
->>>> -?????????????? mutex_unlock(&bus->msg_lock);
->>>> +?????????????? if (mutex_is_locked(&bus->msg_lock))
->>>> +?????????????????????? utex_unlock(&bus->msg_lock);
->>>
->>> Does this even compile? should be mutex_unlock, no?
->>>
->>> We also may want to identify the issue in more details without pushing
->>> it under the rug. The locking mechanism is far from simple and it's
->>> likely there are a number of problems with it.
->>>
->> msg_lock is taken conditionally during multi link bank switch cases, however
->> the unlock is done unconditionally leading to this warning.
->>
->> Having a closer look show that there could be a dead lock in this path while
->> executing sdw_transfer(). And infact there is no need to take msg_lock in
->> multi link switch cases as sdw_transfer should take care of this.
->>
->> Vinod/Sanyog any reason why msg_lock is really required in this path?
->>
-> 
-> In case of multi link we use sdw_transfer_defer instead of sdw_transfer
-> where lock is not acquired, hence lock is acquired in do_bank_switch for
-> multi link. we should add same check of multi link to release lock in
-> do_bank_switch.
+Create CPU topology sysfs attributes: "core_cpus" and "core_cpus_list"
 
-probably we should just add the lock around the sdw_transfer_defer call 
-in sdw_bank_switch()?
-This should cleanup the code a bit too.
+These attributes represent all of the logical CPUs that share the
+same core.
 
-something like:
+These attriutes is synonymous with the existing "thread_siblings" and
+"thread_siblings_list" attribute, which will be deprecated.
 
------------------------------------->cut<-----------------------------
-diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-index d01060dbee96..f455af5b8151 100644
---- a/drivers/soundwire/stream.c
-+++ b/drivers/soundwire/stream.c
-@@ -676,10 +676,13 @@ static int sdw_bank_switch(struct sdw_bus *bus, 
-int m_rt_count)
-          */
-         multi_link = bus->multi_link && (m_rt_count > 1);
+Create CPU topology sysfs attributes: "die_cpus" and "die_cpus_list".
+These attributes represent all of the logical CPUs that share the
+same die.
 
--       if (multi_link)
-+       if (multi_link) {
-+               mutex_lock(&bus->msg_lock);
-                 ret = sdw_transfer_defer(bus, wr_msg, &bus->defer_msg);
--       else
-+               mutex_unlock(&bus->msg_lock);
-+       } else {
-                 ret = sdw_transfer(bus, wr_msg);
-+       }
+Suggested-by: Brice Goglin <Brice.Goglin@inria.fr>
+Signed-off-by: Len Brown <len.brown@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/071c23a298cd27ede6ed0b6460cae190d193364f.1557769318.git.len.brown@intel.com
 
-         if (ret < 0) {
-                 dev_err(bus->dev, "Slave frame_ctrl reg write failed\n");
-@@ -742,25 +745,19 @@ static int do_bank_switch(struct 
-sdw_stream_runtime *stream)
-         struct sdw_master_runtime *m_rt = NULL;
-         const struct sdw_master_ops *ops;
-         struct sdw_bus *bus = NULL;
--       bool multi_link = false;
-         int ret = 0;
+---
+ Documentation/cputopology.txt   | 21 +++++++++++++++------
+ arch/x86/include/asm/smp.h      |  1 +
+ arch/x86/include/asm/topology.h |  1 +
+ arch/x86/kernel/smpboot.c       | 22 ++++++++++++++++++++++
+ arch/x86/xen/smp_pv.c           |  1 +
+ drivers/base/topology.c         | 12 ++++++++++++
+ include/linux/topology.h        |  3 +++
+ 7 files changed, 55 insertions(+), 6 deletions(-)
 
-         list_for_each_entry(m_rt, &stream->master_list, stream_node) {
-                 bus = m_rt->bus;
-                 ops = bus->ops;
-
--               if (bus->multi_link) {
--                       multi_link = true;
--                       mutex_lock(&bus->msg_lock);
--               }
--
-                 /* Pre-bank switch */
-                 if (ops->pre_bank_switch) {
-                         ret = ops->pre_bank_switch(bus);
-                         if (ret < 0) {
-                                 dev_err(bus->dev,
-                                         "Pre bank switch op failed: 
-%d\n", ret);
--                               goto msg_unlock;
-+                               return ret;
-                         }
-                 }
-
-@@ -814,7 +811,6 @@ static int do_bank_switch(struct sdw_stream_runtime 
-*stream)
-                         goto error;
-                 }
-
--               mutex_unlock(&bus->msg_lock);
-         }
-
-         return ret;
-@@ -827,16 +823,6 @@ static int do_bank_switch(struct sdw_stream_runtime 
-*stream)
-                 kfree(bus->defer_msg.msg);
-         }
-
--msg_unlock:
--
--       if (multi_link) {
--               list_for_each_entry(m_rt, &stream->master_list, 
-stream_node) {
--                       bus = m_rt->bus;
--                       if (mutex_is_locked(&bus->msg_lock))
--                               mutex_unlock(&bus->msg_lock);
--               }
--       }
--
-         return ret;
-  }
-
------------------------------------->cut<-----------------------------
-> 
->> --srini
->>
->>>> ?????????? }
->>>> ?????????? return ret;
->>>>
-> 
+diff --git a/Documentation/cputopology.txt b/Documentation/cputopology.txt
+index 48af5c290e20..b90dafcc8237 100644
+--- a/Documentation/cputopology.txt
++++ b/Documentation/cputopology.txt
+@@ -36,15 +36,15 @@ drawer_id:
+ 	identifier (rather than the kernel's).	The actual value is
+ 	architecture and platform dependent.
+ 
+-thread_siblings:
++core_cpus:
+ 
+-	internal kernel map of cpuX's hardware threads within the same
+-	core as cpuX.
++	internal kernel map of CPUs within the same core.
++	(deprecated name: "thread_siblings")
+ 
+-thread_siblings_list:
++core_cpus_list:
+ 
+-	human-readable list of cpuX's hardware threads within the same
+-	core as cpuX.
++	human-readable list of CPUs within the same core.
++	(deprecated name: "thread_siblings_list");
+ 
+ package_cpus:
+ 
+@@ -56,6 +56,14 @@ package_cpus_list:
+ 	human-readable list of CPUs sharing the same physical_package_id.
+ 	(deprecated name: "core_siblings_list")
+ 
++die_cpus:
++
++	internal kernel map of CPUs within the same die.
++
++die_cpus_list:
++
++	human-readable list of CPUs within the same die.
++
+ book_siblings:
+ 
+ 	internal kernel map of cpuX's hardware threads within the same
+@@ -93,6 +101,7 @@ these macros in include/asm-XXX/topology.h::
+ 	#define topology_drawer_id(cpu)
+ 	#define topology_sibling_cpumask(cpu)
+ 	#define topology_core_cpumask(cpu)
++	#define topology_die_cpumask(cpu)
+ 	#define topology_book_cpumask(cpu)
+ 	#define topology_drawer_cpumask(cpu)
+ 
+diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+index da545df207b2..b673a226ad6c 100644
+--- a/arch/x86/include/asm/smp.h
++++ b/arch/x86/include/asm/smp.h
+@@ -23,6 +23,7 @@ extern unsigned int num_processors;
+ 
+ DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_sibling_map);
+ DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
++DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_die_map);
+ /* cpus sharing the last level cache: */
+ DECLARE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_llc_shared_map);
+ DECLARE_PER_CPU_READ_MOSTLY(u16, cpu_llc_id);
+diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+index 9de16b4f6023..4b14d2318251 100644
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -111,6 +111,7 @@ extern const struct cpumask *cpu_coregroup_mask(int cpu);
+ #define topology_core_id(cpu)			(cpu_data(cpu).cpu_core_id)
+ 
+ #ifdef CONFIG_SMP
++#define topology_die_cpumask(cpu)		(per_cpu(cpu_die_map, cpu))
+ #define topology_core_cpumask(cpu)		(per_cpu(cpu_core_map, cpu))
+ #define topology_sibling_cpumask(cpu)		(per_cpu(cpu_sibling_map, cpu))
+ 
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index a6e01b6c2709..1a19a5171949 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -91,6 +91,10 @@ EXPORT_PER_CPU_SYMBOL(cpu_sibling_map);
+ DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_core_map);
+ EXPORT_PER_CPU_SYMBOL(cpu_core_map);
+ 
++/* representing HT, core, and die siblings of each logical CPU */
++DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_die_map);
++EXPORT_PER_CPU_SYMBOL(cpu_die_map);
++
+ DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_llc_shared_map);
+ 
+ /* Per CPU bogomips and other parameters */
+@@ -509,6 +513,15 @@ static bool match_pkg(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
+ 	return false;
+ }
+ 
++static bool match_die(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
++{
++	if ((c->phys_proc_id == o->phys_proc_id) &&
++		(c->cpu_die_id == o->cpu_die_id))
++		return true;
++	return false;
++}
++
++
+ #if defined(CONFIG_SCHED_SMT) || defined(CONFIG_SCHED_MC)
+ static inline int x86_sched_itmt_flags(void)
+ {
+@@ -571,6 +584,7 @@ void set_cpu_sibling_map(int cpu)
+ 		cpumask_set_cpu(cpu, topology_sibling_cpumask(cpu));
+ 		cpumask_set_cpu(cpu, cpu_llc_shared_mask(cpu));
+ 		cpumask_set_cpu(cpu, topology_core_cpumask(cpu));
++		cpumask_set_cpu(cpu, topology_die_cpumask(cpu));
+ 		c->booted_cores = 1;
+ 		return;
+ 	}
+@@ -619,6 +633,9 @@ void set_cpu_sibling_map(int cpu)
+ 		}
+ 		if (match_pkg(c, o) && !topology_same_node(c, o))
+ 			x86_has_numa_in_package = true;
++
++		if ((i == cpu) || (has_mp && match_die(c, o)))
++			link_mask(topology_die_cpumask, cpu, i);
+ 	}
+ 
+ 	threads = cpumask_weight(topology_sibling_cpumask(cpu));
+@@ -1223,6 +1240,7 @@ static __init void disable_smp(void)
+ 		physid_set_mask_of_physid(0, &phys_cpu_present_map);
+ 	cpumask_set_cpu(0, topology_sibling_cpumask(0));
+ 	cpumask_set_cpu(0, topology_core_cpumask(0));
++	cpumask_set_cpu(0, topology_die_cpumask(0));
+ }
+ 
+ /*
+@@ -1318,6 +1336,7 @@ void __init native_smp_prepare_cpus(unsigned int max_cpus)
+ 	for_each_possible_cpu(i) {
+ 		zalloc_cpumask_var(&per_cpu(cpu_sibling_map, i), GFP_KERNEL);
+ 		zalloc_cpumask_var(&per_cpu(cpu_core_map, i), GFP_KERNEL);
++		zalloc_cpumask_var(&per_cpu(cpu_die_map, i), GFP_KERNEL);
+ 		zalloc_cpumask_var(&per_cpu(cpu_llc_shared_map, i), GFP_KERNEL);
+ 	}
+ 
+@@ -1538,6 +1557,8 @@ static void remove_siblinginfo(int cpu)
+ 			cpu_data(sibling).booted_cores--;
+ 	}
+ 
++	for_each_cpu(sibling, topology_die_cpumask(cpu))
++		cpumask_clear_cpu(cpu, topology_die_cpumask(sibling));
+ 	for_each_cpu(sibling, topology_sibling_cpumask(cpu))
+ 		cpumask_clear_cpu(cpu, topology_sibling_cpumask(sibling));
+ 	for_each_cpu(sibling, cpu_llc_shared_mask(cpu))
+@@ -1545,6 +1566,7 @@ static void remove_siblinginfo(int cpu)
+ 	cpumask_clear(cpu_llc_shared_mask(cpu));
+ 	cpumask_clear(topology_sibling_cpumask(cpu));
+ 	cpumask_clear(topology_core_cpumask(cpu));
++	cpumask_clear(topology_die_cpumask(cpu));
+ 	c->cpu_core_id = 0;
+ 	c->booted_cores = 0;
+ 	cpumask_clear_cpu(cpu, cpu_sibling_setup_mask);
+diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
+index 590fcf863006..77d81c1a63e9 100644
+--- a/arch/x86/xen/smp_pv.c
++++ b/arch/x86/xen/smp_pv.c
+@@ -251,6 +251,7 @@ static void __init xen_pv_smp_prepare_cpus(unsigned int max_cpus)
+ 	for_each_possible_cpu(i) {
+ 		zalloc_cpumask_var(&per_cpu(cpu_sibling_map, i), GFP_KERNEL);
+ 		zalloc_cpumask_var(&per_cpu(cpu_core_map, i), GFP_KERNEL);
++		zalloc_cpumask_var(&per_cpu(cpu_die_map, i), GFP_KERNEL);
+ 		zalloc_cpumask_var(&per_cpu(cpu_llc_shared_map, i), GFP_KERNEL);
+ 	}
+ 	set_cpu_sibling_map(0);
+diff --git a/drivers/base/topology.c b/drivers/base/topology.c
+index dc3c19b482f3..4e033d4cc0dc 100644
+--- a/drivers/base/topology.c
++++ b/drivers/base/topology.c
+@@ -53,10 +53,18 @@ define_siblings_show_func(thread_siblings, sibling_cpumask);
+ static DEVICE_ATTR_RO(thread_siblings);
+ static DEVICE_ATTR_RO(thread_siblings_list);
+ 
++define_siblings_show_func(core_cpus, sibling_cpumask);
++static DEVICE_ATTR_RO(core_cpus);
++static DEVICE_ATTR_RO(core_cpus_list);
++
+ define_siblings_show_func(core_siblings, core_cpumask);
+ static DEVICE_ATTR_RO(core_siblings);
+ static DEVICE_ATTR_RO(core_siblings_list);
+ 
++define_siblings_show_func(die_cpus, die_cpumask);
++static DEVICE_ATTR_RO(die_cpus);
++static DEVICE_ATTR_RO(die_cpus_list);
++
+ define_siblings_show_func(package_cpus, core_cpumask);
+ static DEVICE_ATTR_RO(package_cpus);
+ static DEVICE_ATTR_RO(package_cpus_list);
+@@ -83,8 +91,12 @@ static struct attribute *default_attrs[] = {
+ 	&dev_attr_core_id.attr,
+ 	&dev_attr_thread_siblings.attr,
+ 	&dev_attr_thread_siblings_list.attr,
++	&dev_attr_core_cpus.attr,
++	&dev_attr_core_cpus_list.attr,
+ 	&dev_attr_core_siblings.attr,
+ 	&dev_attr_core_siblings_list.attr,
++	&dev_attr_die_cpus.attr,
++	&dev_attr_die_cpus_list.attr,
+ 	&dev_attr_package_cpus.attr,
+ 	&dev_attr_package_cpus_list.attr,
+ #ifdef CONFIG_SCHED_BOOK
+diff --git a/include/linux/topology.h b/include/linux/topology.h
+index 5cc8595dd0e4..47a3e3c08036 100644
+--- a/include/linux/topology.h
++++ b/include/linux/topology.h
+@@ -196,6 +196,9 @@ static inline int cpu_to_mem(int cpu)
+ #ifndef topology_core_cpumask
+ #define topology_core_cpumask(cpu)		cpumask_of(cpu)
+ #endif
++#ifndef topology_die_cpumask
++#define topology_die_cpumask(cpu)		cpumask_of(cpu)
++#endif
+ 
+ #ifdef CONFIG_SCHED_SMT
+ static inline const struct cpumask *cpu_smt_mask(int cpu)
