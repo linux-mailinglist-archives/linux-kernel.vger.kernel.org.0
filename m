@@ -2,45 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D2F28679
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8B4628ACE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387608AbfEWTJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:09:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43116 "EHLO mail.kernel.org"
+        id S2388924AbfEWTr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:47:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387557AbfEWTJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:09:52 -0400
+        id S2387603AbfEWTNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:13:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA21E2184B;
-        Thu, 23 May 2019 19:09:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D262120863;
+        Thu, 23 May 2019 19:12:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638592;
-        bh=GoC1OIA003h0+CxziUkA4dOZlYYlol8sXKPimKJOX4g=;
+        s=default; t=1558638780;
+        bh=DSUmzvgjUNMwYATk24t7LKBls8lxxLoyxNRXEDvqXbI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZV3K26vB22rWPJJhbRp9yY1Spqa2dn9RRECM/eLqKsI7BWJNIShSFVyzlLK5xJsUh
-         kfJyNmf5EIGZwOPOTGz8NNaH/BnATnrzOhN0mEM38NC9v3ge+Q+6NiGsSnO8dgflgo
-         hGstUC0MigGp54lQVPDxXCi/7srkQSh0gM6NyVWw=
+        b=mlZTEyTSVldJQS99Ptu9rwpYeg6XcoMOJaJz3EctBqOjB4j0YewR9XrjtaxiKd/5m
+         +FY6sVidGSrRR3anI7zXzXF9CV1Bh53xLZxEkeXyfE0SfcbFPlGFHFg2OTaEBBleaO
+         Pxom5eS2kFVyGGVjxyb71QTqWYb3ntR0jBRrWUf4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 29/53] objtool: Allow AR to be overridden with HOSTAR
+        stable@vger.kernel.org, Orit Wasserman <orit.was@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Elazar Leibovich <elazar@lightbitslabs.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 35/77] tracing: Fix partial reading of trace events id file
 Date:   Thu, 23 May 2019 21:05:53 +0200
-Message-Id: <20190523181715.421061869@linuxfoundation.org>
+Message-Id: <20190523181725.069959999@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
-References: <20190523181710.981455400@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,57 +46,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Elazar Leibovich <elazar@lightbitslabs.com>
 
-commit 8ea58f1e8b11cca3087b294779bf5959bf89cc10 upstream.
+commit cbe08bcbbe787315c425dde284dcb715cfbf3f39 upstream.
 
-Currently, this Makefile hardcodes GNU ar, meaning that if it is not
-available, there is no way to supply a different one and the build will
-fail.
+When reading only part of the id file, the ppos isn't tracked correctly.
+This is taken care by simple_read_from_buffer.
 
-  $ make AR=llvm-ar CC=clang LD=ld.lld HOSTAR=llvm-ar HOSTCC=clang \
-         HOSTLD=ld.lld HOSTLDFLAGS=-fuse-ld=lld defconfig modules_prepare
-  ...
-    AR       /out/tools/objtool/libsubcmd.a
-  /bin/sh: 1: ar: not found
-  ...
+Reading a single byte, and then the next byte would result EOF.
 
-Follow the logic of HOST{CC,LD} and allow the user to specify a
-different ar tool via HOSTAR (which is used elsewhere in other
-tools/ Makefiles).
+While this seems like not a big deal, this breaks abstractions that
+reads information from files unbuffered. See for example
+https://github.com/golang/go/issues/29399
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Cc: <stable@vger.kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/80822a9353926c38fd7a152991c6292491a9d0e8.1558028966.git.jpoimboe@redhat.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/481
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+This code was mentioned as problematic in
+commit cd458ba9d5a5
+("tracing: Do not (ab)use trace_seq in event_id_read()")
+
+An example C code that show this bug is:
+
+  #include <stdio.h>
+  #include <stdint.h>
+
+  #include <sys/types.h>
+  #include <sys/stat.h>
+  #include <fcntl.h>
+  #include <unistd.h>
+
+  int main(int argc, char **argv) {
+    if (argc < 2)
+      return 1;
+    int fd = open(argv[1], O_RDONLY);
+    char c;
+    read(fd, &c, 1);
+    printf("First  %c\n", c);
+    read(fd, &c, 1);
+    printf("Second %c\n", c);
+  }
+
+Then run with, e.g.
+
+  sudo ./a.out /sys/kernel/debug/tracing/events/tcp/tcp_set_state/id
+
+You'll notice you're getting the first character twice, instead of the
+first two characters in the id file.
+
+Link: http://lkml.kernel.org/r/20181231115837.4932-1-elazar@lightbitslabs.com
+
+Cc: Orit Wasserman <orit.was@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: 23725aeeab10b ("ftrace: provide an id file for each event")
+Signed-off-by: Elazar Leibovich <elazar@lightbitslabs.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/objtool/Makefile |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/trace/trace_events.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -7,11 +7,12 @@ ARCH := x86
- endif
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -1319,9 +1319,6 @@ event_id_read(struct file *filp, char __
+ 	char buf[32];
+ 	int len;
  
- # always use the host compiler
-+HOSTAR	?= ar
- HOSTCC	?= gcc
- HOSTLD	?= ld
-+AR	 = $(HOSTAR)
- CC	 = $(HOSTCC)
- LD	 = $(HOSTLD)
--AR	 = ar
+-	if (*ppos)
+-		return 0;
+-
+ 	if (unlikely(!id))
+ 		return -ENODEV;
  
- ifeq ($(srctree),)
- srctree := $(patsubst %/,%,$(dir $(CURDIR)))
 
 
