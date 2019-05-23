@@ -2,122 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96190278DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 11:09:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03823278E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 11:10:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730046AbfEWJJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 05:09:30 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53784 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbfEWJJ3 (ORCPT
+        id S1730298AbfEWJJq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 05:09:46 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33107 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730237AbfEWJJp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 05:09:29 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 74E3E80311; Thu, 23 May 2019 11:09:17 +0200 (CEST)
-Date:   Thu, 23 May 2019 11:09:26 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: 5.2-rc1 on droid4: spi crash
-Message-ID: <20190523090926.GA9106@amd>
+        Thu, 23 May 2019 05:09:45 -0400
+Received: by mail-qt1-f196.google.com with SMTP id m32so5866293qtf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 02:09:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZDRg3ieis6hoh/yJ9a80gOidWlG1G6Pw/YGxgRuSE94=;
+        b=kA31TSrggwsJxxWDnJJPIOo3MgixNqwLlwlFlwOzYC28Qzv9rkp8BWwHIdODxR99Nt
+         d7IFt6+f5xHBItXGp2Eu/3CYh18PpggLnYDWOPGEhC58NLAK8u/eOGkbZkra0hb+DjIW
+         5fb8+ypRJRIiFczeHfu1xVkpxzf1gcGRUnImDzPZUWqkbSgL6KAMHL9W7a8Fu8M5DujO
+         90V5srCCUOkBo351510PYMPxAxjqB4JtbYWAJ2PHaAarEBwCMnecaut6HWHq4qz/oqfM
+         qo2HNtUzDfnS3OXjBi1JU+j+hPnA/OKdCeWoN/pvQm7TpUNlroxutZ/9RIUPko5fruIR
+         BCcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZDRg3ieis6hoh/yJ9a80gOidWlG1G6Pw/YGxgRuSE94=;
+        b=CiG07S2pSxSL1YJekuxx2s2zWJfVge3ud3R4exR1ImvrxrV9/V1aeKfEwt93vkvD7b
+         v5MquIFu030Joy8NvtffDc1Ed13XAJDUnyfVsDVnuaQhfJd247dF7J1KkhHY42b/JFL+
+         RVHtUNiiLVB6Q/jkKZnrm9y9w914A30I2M1yf+GMeTyYPr0FSnRvL3dQh4dR12bqPwPR
+         UC0bIRs+/fRw4v6rFurxL3SgVs6TdJtoUqW+HaBzHyeFHybTyl7MZh1APZPEeeebwIKB
+         eGGhziP8tntcVyUG7aaKfc+bSFu1t3NOzKzbd9YDAwvMHnFY4y35fVvp0fmzsdsum5VP
+         vFnQ==
+X-Gm-Message-State: APjAAAWjLvjJAnJ2hBilLbTtz3dJ83zLf+daW0W6pwM4nCcteuugeEiU
+        Z1GXxmSdMw1YDZYWVSkr+E1uxMdgCc+LdxIoBWcZBg==
+X-Google-Smtp-Source: APXvYqzPHWai2cPVbmyi53PtZyW+rD0M2Kck+rs0vgo/buY2HBfBi20KQ1+3WaNRxJAeDdyBzyejy/NHzp/5Y2dGtco=
+X-Received: by 2002:ac8:352d:: with SMTP id y42mr78662075qtb.209.1558602584218;
+ Thu, 23 May 2019 02:09:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1555580267-29299-1-git-send-email-fabrice.gasnier@st.com> <45e934af-d677-d7d4-09ea-3ed01872dab6@st.com>
+In-Reply-To: <45e934af-d677-d7d4-09ea-3ed01872dab6@st.com>
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date:   Thu, 23 May 2019 11:09:33 +0200
+Message-ID: <CA+M3ks5O9YpZ-4f3x=bFn_LxJu+6i3pu7jsWv_93pe14y8V71w@mail.gmail.com>
+Subject: Re: [RESEND PATCH v5 0/3] Add PM support to STM32 LP Timer drivers
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>, tduszyns@gmail.com,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        u.kleine-koenig@pengutronix.de,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Le ven. 10 mai 2019 =C3=A0 09:51, Fabrice Gasnier <fabrice.gasnier@st.com> =
+a =C3=A9crit :
+>
+> On 4/18/19 11:37 AM, Fabrice Gasnier wrote:
+> > This patch series adds power management support for STM32 LP Timer:
+> > - PWM driver
+> > - Document the pinctrl states for sleep mode
+> >
+> > It also adds device link between the PWM consumer and the PWM provider.
+> > This allows proper sequencing for suspend/resume (e.g. user will likely
+> > do a pwm_disable() before the PWM provider suspend executes), see [1].
+> >
+> > [1] https://lkml.org/lkml/2019/2/5/770
+> >
+>
+> Hi Thierry,
+>
+> Please let me know if you have some more comments on this series. It's
+> been under review since quite some time now.
+>
 
---6c2NcOVqGQ03X4Wi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Thierry,
 
-Hi!
+Does something is blocking on this series ?
+How can we progress on it ?
 
-This was greeting me overnight... I don't yet know how reproducible it
-is, it happened once so far.
+Regards,
+Benjamin
 
-Best regards,
-								Pavel
-
-root@devuan:/sys/class/leds#
-Message from syslogd@devuan at May 23 00:11:31 ...
- kernel:[14889.641143] Internal error: Oops: 5 [#1] SMP ARM
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.638275] Process spi0 (pid: 100, stack limit =3D
- 0x97305d31)
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.650238] Stack: (0xedee7ed0 to 0xedee8000)
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.652069] 7ec0:
- 00000000 00000000 eba35c14 eba35c50
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.662841] 7ee0: edd93000 edd93360 ede3da50 c052683c
- ffffffff edadcc10 edadcc9c 00000004
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.671051] 7f00: 00000000 ede3d800 600f0013 edd93000
- eba35c14 eba35c50 edadcc10 edadcc10
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.679260] 7f20: 00000002 00000001 edd9322c c0526cb4
- edd932a4 edb34600 edd932a0 edd932a4
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.687499] 7f40: 00000000 edd932d0 edd932a0 edd932a4
- 00000000 00000001 c0e82d14 edd932b4
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.695709] 7f60: c0e82d14 c0148f40 00000000 edca5580
- 00000000 ede39400 edca55a8 edd932a0
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.703918] 7f80: ed88dd48 c0148e74 00000000 c01491ec
- ede39400 c01490dc 00000000 00000000
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.708251] 7fa0: 00000000 00000000 00000000 c01010e8
- 00000000 00000000 00000000 00000000
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.720367] 7fc0: 00000000 00000000 00000000 00000000
- 00000000 00000000 00000000 00000000
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.724334] 7fe0: 00000000 00000000 00000000 00000000
- 00000013 00000000 00000000 00000000
-
-Message from syslogd@devuan at May 23 00:11:51 ...
- kernel:[14909.807312] Code: e3a08c02 e5954034 e1a01005 e1a00007
- (e5943008)
- Write failed: Broken pipe
- pavel@duo:/data/l/k$
-=20
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---6c2NcOVqGQ03X4Wi
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlzmY0YACgkQMOfwapXb+vImbACglBJwmJksJUdy7p/yaXHVJm2I
-OzEAoLOmo07dE0Zan5Wn0qs3XGq3xV55
-=vTr7
------END PGP SIGNATURE-----
-
---6c2NcOVqGQ03X4Wi--
+> Thanks in advance,
+> Best Regards,
+> Fabrice
+>
+> > ---
+> > resend v5:
+> > - update collected acks
+> >
+> > Changes in v5:
+> > - improve a warning message, fix a style issue.
+> >
+> > Changes in v4:
+> > - improve error handling when adding the PWM consumer device link.
+> >
+> > Changes in v3:
+> > - Move the device_link_add() call to of_pwm_get() as discussed with Uwe=
+.
+> >
+> > Changes in v2:
+> > - Don't disable PWM channel in PWM provider: rather refuse to suspend
+> >   and report an error as suggested by Uwe and Thierry.
+> > - Add patch 3/3 to propose device link addition.
+> > - No updates for STM32 LP Timer IIO driver. Patches can be send separat=
+ely.
+> >
+> > Fabrice Gasnier (3):
+> >   dt-bindings: pwm-stm32-lp: document pinctrl sleep state
+> >   pwm: stm32-lp: Add power management support
+> >   pwm: core: add consumer device link
+> >
+> >  .../devicetree/bindings/pwm/pwm-stm32-lp.txt       |  9 ++--
+> >  drivers/pwm/core.c                                 | 50 ++++++++++++++=
+++++++--
+> >  drivers/pwm/pwm-stm32-lp.c                         | 25 +++++++++++
+> >  include/linux/pwm.h                                |  6 ++-
+> >  4 files changed, 82 insertions(+), 8 deletions(-)
+> >
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
