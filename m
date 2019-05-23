@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B22A287DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BC8F2874B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390850AbfEWTYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:24:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35010 "EHLO mail.kernel.org"
+        id S2389480AbfEWTRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:17:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389827AbfEWTYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:24:10 -0400
+        id S2389459AbfEWTRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:17:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5AE7217D9;
-        Thu, 23 May 2019 19:24:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C60C22184E;
+        Thu, 23 May 2019 19:17:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639449;
-        bh=tXoZMYc7cpMKx8LYA+rpYZH2ULjsUpEYydwxB8RBcrA=;
+        s=default; t=1558639059;
+        bh=35Apv3+ZopS6PBybBSOU2LTPrTwq+FlzVf2YA0xTMTU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2sfwj4COZ+4X5jt8efCc0ih6oHDwirhePlSv0aC5xhPJdJPTQlfIZ58ENPozoY4Qu
-         aGduGcnZJtgJPTtw3fVkDPX7VlZXsB0pw3JLrjjx9gDxaEl7qm3vG+06A/0NeaLTAa
-         6pCZGA95y5+jeqIAh5CIe05sxVIZIaLxpOcrG2/Q=
+        b=N3VbzCej3ymnfitmI9SlJryHejLCtrNZNnu4h8x99NtuXYKx4rzc4FcGf3ZzAKzGK
+         YTsDKGf1GpmJgTzhDhbxSKaP5z0bQbMj7GjbOw+a2JscAP+vaKMoao0NOOtPHLMeY1
+         C8sNtJTAC2LKw5eDHhKyVqgnRs+xDafp7T1Dnwss=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Stefan=20M=C3=A4tje?= <stefan.maetje@esd.eu>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 5.0 092/139] PCI: Work around Pericom PCIe-to-PCI bridge Retrain Link erratum
+        stable@vger.kernel.org, Yufen Yu <yuyufen@huawei.com>,
+        Martin Wilck <mwilck@suse.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 081/114] dm mpath: always free attached_handler_name in parse_path()
 Date:   Thu, 23 May 2019 21:06:20 +0200
-Message-Id: <20190523181732.546172615@linuxfoundation.org>
+Message-Id: <20190523181739.063658133@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,98 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Mätje <stefan.maetje@esd.eu>
+From: Martin Wilck <mwilck@suse.com>
 
-commit 4ec73791a64bab25cabf16a6067ee478692e506d upstream.
+commit 940bc471780b004a5277c1931f52af363c2fc9da upstream.
 
-Due to an erratum in some Pericom PCIe-to-PCI bridges in reverse mode
-(conventional PCI on primary side, PCIe on downstream side), the Retrain
-Link bit needs to be cleared manually to allow the link training to
-complete successfully.
+Commit b592211c33f7 ("dm mpath: fix attached_handler_name leak and
+dangling hw_handler_name pointer") fixed a memory leak for the case
+where setup_scsi_dh() returns failure. But setup_scsi_dh may return
+success and not "use" attached_handler_name if the
+retain_attached_hwhandler flag is not set on the map. As setup_scsi_sh
+properly "steals" the pointer by nullifying it, freeing it
+unconditionally in parse_path() is safe.
 
-If it is not cleared manually, the link training is continuously restarted
-and no devices below the PCI-to-PCIe bridge can be accessed.  That means
-drivers for devices below the bridge will be loaded but won't work and may
-even crash because the driver is only reading 0xffff.
-
-See the Pericom Errata Sheet PI7C9X111SLB_errata_rev1.2_102711.pdf for
-details.  Devices known as affected so far are: PI7C9X110, PI7C9X111SL,
-PI7C9X130.
-
-Add a new flag, clear_retrain_link, in struct pci_dev.  Quirks for affected
-devices set this bit.
-
-Note that pcie_retrain_link() lives in aspm.c because that's currently the
-only place we use it, but this erratum is not specific to ASPM, and we may
-retrain links for other reasons in the future.
-
-Signed-off-by: Stefan Mätje <stefan.maetje@esd.eu>
-[bhelgaas: apply regardless of CONFIG_PCIEASPM]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: stable@vger.kernel.org
+Fixes: b592211c33f7 ("dm mpath: fix attached_handler_name leak and dangling hw_handler_name pointer")
+Cc: stable@vger.kernel.org
+Reported-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Martin Wilck <mwilck@suse.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/pcie/aspm.c |    9 +++++++++
- drivers/pci/quirks.c    |   17 +++++++++++++++++
- include/linux/pci.h     |    2 ++
- 3 files changed, 28 insertions(+)
+ drivers/md/dm-mpath.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -205,6 +205,15 @@ static bool pcie_retrain_link(struct pci
- 	pcie_capability_read_word(parent, PCI_EXP_LNKCTL, &reg16);
- 	reg16 |= PCI_EXP_LNKCTL_RL;
- 	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
-+	if (parent->clear_retrain_link) {
-+		/*
-+		 * Due to an erratum in some devices the Retrain Link bit
-+		 * needs to be cleared again manually to allow the link
-+		 * training to succeed.
-+		 */
-+		reg16 &= ~PCI_EXP_LNKCTL_RL;
-+		pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
-+	}
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -892,6 +892,7 @@ static struct pgpath *parse_path(struct
+ 	if (attached_handler_name || m->hw_handler_name) {
+ 		INIT_DELAYED_WORK(&p->activate_path, activate_path_work);
+ 		r = setup_scsi_dh(p->path.dev->bdev, m, &attached_handler_name, &ti->error);
++		kfree(attached_handler_name);
+ 		if (r) {
+ 			dm_put_device(ti, p->path.dev);
+ 			goto bad;
+@@ -906,7 +907,6 @@ static struct pgpath *parse_path(struct
  
- 	/* Wait for link training end. Break out after waiting for timeout */
- 	start_jiffies = jiffies;
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -2245,6 +2245,23 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_IN
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x10f4, quirk_disable_aspm_l0s);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x1508, quirk_disable_aspm_l0s);
- 
-+/*
-+ * Some Pericom PCIe-to-PCI bridges in reverse mode need the PCIe Retrain
-+ * Link bit cleared after starting the link retrain process to allow this
-+ * process to finish.
-+ *
-+ * Affected devices: PI7C9X110, PI7C9X111SL, PI7C9X130.  See also the
-+ * Pericom Errata Sheet PI7C9X111SLB_errata_rev1.2_102711.pdf.
-+ */
-+static void quirk_enable_clear_retrain_link(struct pci_dev *dev)
-+{
-+	dev->clear_retrain_link = 1;
-+	pci_info(dev, "Enable PCIe Retrain Link quirk\n");
-+}
-+DECLARE_PCI_FIXUP_HEADER(0x12d8, 0xe110, quirk_enable_clear_retrain_link);
-+DECLARE_PCI_FIXUP_HEADER(0x12d8, 0xe111, quirk_enable_clear_retrain_link);
-+DECLARE_PCI_FIXUP_HEADER(0x12d8, 0xe130, quirk_enable_clear_retrain_link);
-+
- static void fixup_rev1_53c810(struct pci_dev *dev)
- {
- 	u32 class = dev->class;
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -348,6 +348,8 @@ struct pci_dev {
- 	unsigned int	hotplug_user_indicators:1; /* SlotCtl indicators
- 						      controlled exclusively by
- 						      user sysfs */
-+	unsigned int	clear_retrain_link:1;	/* Need to clear Retrain Link
-+						   bit manually */
- 	unsigned int	d3_delay;	/* D3->D0 transition time in ms */
- 	unsigned int	d3cold_delay;	/* D3cold->D0 transition time in ms */
- 
+ 	return p;
+  bad:
+-	kfree(attached_handler_name);
+ 	free_pgpath(p);
+ 	return ERR_PTR(r);
+ }
 
 
