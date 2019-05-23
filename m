@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B384288B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE99D2897D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391710AbfEWT2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:28:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40452 "EHLO mail.kernel.org"
+        id S2391314AbfEWTi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:38:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391002AbfEWT2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:28:01 -0400
+        id S2390670AbfEWTXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:23:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3ECB72054F;
-        Thu, 23 May 2019 19:28:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B5F52133D;
+        Thu, 23 May 2019 19:23:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639680;
-        bh=LBVCXhgVU49YHaR9Ev/F2JhIioCYtg0jVSYC9JHnQbs=;
+        s=default; t=1558639395;
+        bh=lNtY3LwbNjoFMni+6IrjFtt5NfDe/DYLXnGcFMVYK00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m3lRRI6RlHj60DY/8tMJ7r5MWVoMx8a0sVyCDgylv0o0zCe6KMk2WU6GQ0gxrYLkz
-         BbF3avJg7RYJPOdmleNdzTqqX1jIQuwasx1ic8nmKiiC9n9WvAuXUaOM2IOW0XbcXc
-         l18O8cQZN0OQXvlWELIwrOwtMeuO4LLf+pRgWH+g=
+        b=yXQgx1KRTjff6MtIXj+ehMx/LiMp+6OwNcim3Uy5qsPjPlQ4X9lli0cALKmFZZLm1
+         1j4c4ZDZOg9vveaItaGNDySsY/+K6zMU/C/O7C1Jao7NjJbQs0rUgEQ6oc+Sd0ncOR
+         SGjlMrJnrEiHVKuL8QSab6UupSCgWybtWK/JTqLo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
-        Haggai Eran <haggaie@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: [PATCH 5.1 055/122] RDMA/mlx5: Use get_zeroed_page() for clock_info
+        stable@vger.kernel.org,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 5.0 089/139] PCI/AER: Change pci_aer_init() stub to return void
 Date:   Thu, 23 May 2019 21:06:17 +0200
-Message-Id: <20190523181712.012640350@linuxfoundation.org>
+Message-Id: <20190523181732.241762809@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,98 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 
-commit ddcdc368b1033e19fd3a5f750752e10e28a87826 upstream.
+commit 31f996efbd5a7825f4d30150469e9d110aea00e8 upstream.
 
-get_zeroed_page() returns a virtual address for the page which is better
-than allocating a struct page and doing a permanent kmap on it.
+Commit 60ed982a4e78 ("PCI/AER: Move internal declarations to
+drivers/pci/pci.h") changed pci_aer_init() to return "void", but didn't
+change the stub for when CONFIG_PCIEAER isn't enabled.  Change the stub to
+match.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Reviewed-by: Haggai Eran <haggaie@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 60ed982a4e78 ("PCI/AER: Move internal declarations to drivers/pci/pci.h")
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+CC: stable@vger.kernel.org	# v4.19+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx5/main.c                   |    5 ++-
- drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c |   30 +++++++-------------
- include/linux/mlx5/driver.h                         |    1 
- 3 files changed, 14 insertions(+), 22 deletions(-)
+ drivers/pci/pci.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -2070,11 +2070,12 @@ static int mlx5_ib_mmap_clock_info_page(
- 		return -EPERM;
- 	vma->vm_flags &= ~VM_MAYWRITE;
- 
--	if (!dev->mdev->clock_info_page)
-+	if (!dev->mdev->clock_info)
- 		return -EOPNOTSUPP;
- 
- 	return rdma_user_mmap_page(&context->ibucontext, vma,
--				   dev->mdev->clock_info_page, PAGE_SIZE);
-+				   virt_to_page(dev->mdev->clock_info),
-+				   PAGE_SIZE);
- }
- 
- static int uar_mmap(struct mlx5_ib_dev *dev, enum mlx5_ib_mmap_cmd cmd,
---- a/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
-@@ -535,23 +535,16 @@ void mlx5_init_clock(struct mlx5_core_de
- 	do_div(ns, NSEC_PER_SEC / HZ);
- 	clock->overflow_period = ns;
- 
--	mdev->clock_info_page = alloc_page(GFP_KERNEL);
--	if (mdev->clock_info_page) {
--		mdev->clock_info = kmap(mdev->clock_info_page);
--		if (!mdev->clock_info) {
--			__free_page(mdev->clock_info_page);
--			mlx5_core_warn(mdev, "failed to map clock page\n");
--		} else {
--			mdev->clock_info->sign   = 0;
--			mdev->clock_info->nsec   = clock->tc.nsec;
--			mdev->clock_info->cycles = clock->tc.cycle_last;
--			mdev->clock_info->mask   = clock->cycles.mask;
--			mdev->clock_info->mult   = clock->nominal_c_mult;
--			mdev->clock_info->shift  = clock->cycles.shift;
--			mdev->clock_info->frac   = clock->tc.frac;
--			mdev->clock_info->overflow_period =
--						clock->overflow_period;
--		}
-+	mdev->clock_info =
-+		(struct mlx5_ib_clock_info *)get_zeroed_page(GFP_KERNEL);
-+	if (mdev->clock_info) {
-+		mdev->clock_info->nsec = clock->tc.nsec;
-+		mdev->clock_info->cycles = clock->tc.cycle_last;
-+		mdev->clock_info->mask = clock->cycles.mask;
-+		mdev->clock_info->mult = clock->nominal_c_mult;
-+		mdev->clock_info->shift = clock->cycles.shift;
-+		mdev->clock_info->frac = clock->tc.frac;
-+		mdev->clock_info->overflow_period = clock->overflow_period;
- 	}
- 
- 	INIT_WORK(&clock->pps_info.out_work, mlx5_pps_out);
-@@ -599,8 +592,7 @@ void mlx5_cleanup_clock(struct mlx5_core
- 	cancel_delayed_work_sync(&clock->overflow_work);
- 
- 	if (mdev->clock_info) {
--		kunmap(mdev->clock_info_page);
--		__free_page(mdev->clock_info_page);
-+		free_page((unsigned long)mdev->clock_info);
- 		mdev->clock_info = NULL;
- 	}
- 
---- a/include/linux/mlx5/driver.h
-+++ b/include/linux/mlx5/driver.h
-@@ -681,7 +681,6 @@ struct mlx5_core_dev {
- #endif
- 	struct mlx5_clock        clock;
- 	struct mlx5_ib_clock_info  *clock_info;
--	struct page             *clock_info_page;
- 	struct mlx5_fw_tracer   *tracer;
- };
- 
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -596,7 +596,7 @@ void pci_aer_clear_fatal_status(struct p
+ void pci_aer_clear_device_status(struct pci_dev *dev);
+ #else
+ static inline void pci_no_aer(void) { }
+-static inline int pci_aer_init(struct pci_dev *d) { return -ENODEV; }
++static inline void pci_aer_init(struct pci_dev *d) { }
+ static inline void pci_aer_exit(struct pci_dev *d) { }
+ static inline void pci_aer_clear_fatal_status(struct pci_dev *dev) { }
+ static inline void pci_aer_clear_device_status(struct pci_dev *dev) { }
 
 
