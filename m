@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0153028AF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71BEA28881
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388123AbfEWTvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:51:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42070 "EHLO mail.kernel.org"
+        id S2391459AbfEWT0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:26:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732014AbfEWTJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:09:04 -0400
+        id S2391444AbfEWT0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:26:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AA8D217D7;
-        Thu, 23 May 2019 19:09:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83C2A217D7;
+        Thu, 23 May 2019 19:26:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638544;
-        bh=X82DCfnwJygqNt/nKZWX1ft7kNfJxTjDL6mOycoRrSs=;
+        s=default; t=1558639611;
+        bh=tQ4EPmHa88YeE+lsAVf8RF8bcxRpc2MVqWookuBRWD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C5mI2k+2cg4/AW2V+uOo0VLOKIXAkdFk5g5fMnVhaJi4dQ7rVKXzNgW3Moa2VgH5T
-         pHGsI0Z8RtHhQyXPSp1XxnwNbiy6xMWHnAw1kfTYibcluMBKvXF0Mcfbik39nsHslw
-         weFe7vdHREx6u/W3vZ2uzRrifNNnjI6wJc7AErls=
+        b=UdoDIGLUCWe36beGMT9+lr9WQo4crgVo9e87O0cgsabv7KQ1Thd3OOSFRcVXj9pZK
+         RRYRgEQWvjvxaJxyY0i+yjyn3nGkP4nd9+GhrGh/pA+wKoYDuvDO/N0Z984f80+6/S
+         49c7Tvpi3aOmsqVyNumuuoH1DPMl1avyK+vd8ZMA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.9 10/53] parisc: Rename LEVEL to PA_ASM_LEVEL to avoid name clash with DRBD code
+        stable@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 012/122] vsock/virtio: free packets during the socket release
 Date:   Thu, 23 May 2019 21:05:34 +0200
-Message-Id: <20190523181712.553142093@linuxfoundation.org>
+Message-Id: <20190523181706.599575882@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
-References: <20190523181710.981455400@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,75 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Helge Deller <deller@gmx.de>
+From: Stefano Garzarella <sgarzare@redhat.com>
 
-commit 1829dda0e87f4462782ca81be474c7890efe31ce upstream.
+[ Upstream commit ac03046ece2b158ebd204dfc4896fd9f39f0e6c8 ]
 
-LEVEL is a very common word, and now after many years it suddenly
-clashed with another LEVEL define in the DRBD code.
-Rename it to PA_ASM_LEVEL instead.
+When the socket is released, we should free all packets
+queued in the per-socket list in order to avoid a memory
+leak.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Helge Deller <deller@gmx.de>
-Cc: <stable@vger.kernel.org>
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/parisc/include/asm/assembly.h |    6 +++---
- arch/parisc/kernel/head.S          |    4 ++--
- arch/parisc/kernel/syscall.S       |    2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ net/vmw_vsock/virtio_transport_common.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/parisc/include/asm/assembly.h
-+++ b/arch/parisc/include/asm/assembly.h
-@@ -59,14 +59,14 @@
- #define LDCW		ldcw,co
- #define BL		b,l
- # ifdef CONFIG_64BIT
--#  define LEVEL		2.0w
-+#  define PA_ASM_LEVEL	2.0w
- # else
--#  define LEVEL		2.0
-+#  define PA_ASM_LEVEL	2.0
- # endif
- #else
- #define LDCW		ldcw
- #define BL		bl
--#define LEVEL		1.1
-+#define PA_ASM_LEVEL	1.1
- #endif
+--- a/net/vmw_vsock/virtio_transport_common.c
++++ b/net/vmw_vsock/virtio_transport_common.c
+@@ -786,12 +786,19 @@ static bool virtio_transport_close(struc
  
- #ifdef __ASSEMBLY__
---- a/arch/parisc/kernel/head.S
-+++ b/arch/parisc/kernel/head.S
-@@ -22,7 +22,7 @@
- #include <linux/linkage.h>
- #include <linux/init.h>
+ void virtio_transport_release(struct vsock_sock *vsk)
+ {
++	struct virtio_vsock_sock *vvs = vsk->trans;
++	struct virtio_vsock_pkt *pkt, *tmp;
+ 	struct sock *sk = &vsk->sk;
+ 	bool remove_sock = true;
  
--	.level	LEVEL
-+	.level	PA_ASM_LEVEL
+ 	lock_sock(sk);
+ 	if (sk->sk_type == SOCK_STREAM)
+ 		remove_sock = virtio_transport_close(vsk);
++
++	list_for_each_entry_safe(pkt, tmp, &vvs->rx_queue, list) {
++		list_del(&pkt->list);
++		virtio_transport_free_pkt(pkt);
++	}
+ 	release_sock(sk);
  
- 	__INITDATA
- ENTRY(boot_args)
-@@ -254,7 +254,7 @@ stext_pdc_ret:
- 	ldo		R%PA(fault_vector_11)(%r10),%r10
- 
- $is_pa20:
--	.level		LEVEL /* restore 1.1 || 2.0w */
-+	.level		PA_ASM_LEVEL /* restore 1.1 || 2.0w */
- #endif /*!CONFIG_64BIT*/
- 	load32		PA(fault_vector_20),%r10
- 
---- a/arch/parisc/kernel/syscall.S
-+++ b/arch/parisc/kernel/syscall.S
-@@ -48,7 +48,7 @@ registers).
- 	 */
- #define KILL_INSN	break	0,0
- 
--	.level          LEVEL
-+	.level          PA_ASM_LEVEL
- 
- 	.text
- 
+ 	if (remove_sock)
 
 
