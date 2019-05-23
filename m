@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37BAD287B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2541C28AD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390456AbfEWTWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:22:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60314 "EHLO mail.kernel.org"
+        id S2388908AbfEWTrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:47:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390457AbfEWTWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:22:21 -0400
+        id S2387829AbfEWTMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:12:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8121217D9;
-        Thu, 23 May 2019 19:22:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0AC420863;
+        Thu, 23 May 2019 19:12:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639341;
-        bh=/ooMEr3sMXswUrQXLTg5AgIOva1OMjNOZyVecNJhe0U=;
+        s=default; t=1558638764;
+        bh=oe3Ks5A33FJZZy8e0C9HZahremKFJ9LlOQk49bdyEpU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VrK49qHD1IbS2tBQhOTDghI5ZGNMJGm1kJMPdc5rGc0oYAEHiDbDsUM+0aoB6jB09
-         446Z3g/SQIq1AsNQ8rERfD2WG7jPWisAexbs03Jl8G2swEsd42Zfadlr/EYFIwsKOU
-         juQuhr+jLb4x8DjHMWfPDQSt/rn/bwaSkCfL05iw=
+        b=McRj1gHku0Um55+cVkUA/T3sMSHeQPogMXs0QPEKLfnNbE+AFj0I41vArDZw1ZFSl
+         0lAXBK9er29HeNpRs0yZC/ET2C8QuSfo+N/XtjX0WY3LTbBWOF/yAqqeRxFR7BxtuX
+         htixZkWHrhCn1XMZkOvqGe+d3q9W4MUkIkbJppR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH 5.0 069/139] memory: tegra: Fix integer overflow on tick value calculation
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.14 39/77] perf intel-pt: Fix sample timestamp wrt non-taken branches
 Date:   Thu, 23 May 2019 21:05:57 +0200
-Message-Id: <20190523181729.816033188@linuxfoundation.org>
+Message-Id: <20190523181725.594545999@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit b906c056b6023c390f18347169071193fda57dde upstream.
+commit 1b6599a9d8e6c9f7e9b0476012383b1777f7fc93 upstream.
 
-Multiplying the Memory Controller clock rate by the tick count results
-in an integer overflow and in result the truncated tick value is being
-programmed into hardware, such that the GR3D memory client performance is
-reduced by two times.
+The sample timestamp is updated to ensure that the timestamp represents
+the time of the sample and not a branch that the decoder is still
+walking towards. The sample timestamp is updated when the decoder
+returns, but the decoder does not return for non-taken branches. Update
+the sample timestamp then also.
 
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Note that commit 3f04d98e972b5 ("perf intel-pt: Improve sample
+timestamp") was also a stable fix and appears, for example, in v4.4
+stable tree as commit a4ebb58fd124 ("perf intel-pt: Improve sample
+timestamp").
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: stable@vger.kernel.org # v4.4+
+Fixes: 3f04d98e972b ("perf intel-pt: Improve sample timestamp")
+Link: http://lkml.kernel.org/r/20190510124143.27054-4-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/memory/tegra/mc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -280,7 +280,7 @@ static int tegra_mc_setup_latency_allowa
- 	u32 value;
- 
- 	/* compute the number of MC clock cycles per tick */
--	tick = mc->tick * clk_get_rate(mc->clk);
-+	tick = (unsigned long long)mc->tick * clk_get_rate(mc->clk);
- 	do_div(tick, NSEC_PER_SEC);
- 
- 	value = readl(mc->regs + MC_EMEM_ARB_CFG);
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1313,8 +1313,11 @@ static int intel_pt_walk_tnt(struct inte
+ 				return 0;
+ 			}
+ 			decoder->ip += intel_pt_insn.length;
+-			if (!decoder->tnt.count)
++			if (!decoder->tnt.count) {
++				decoder->sample_timestamp = decoder->timestamp;
++				decoder->sample_insn_cnt = decoder->timestamp_insn_cnt;
+ 				return -EAGAIN;
++			}
+ 			decoder->tnt.payload <<= 1;
+ 			continue;
+ 		}
 
 
