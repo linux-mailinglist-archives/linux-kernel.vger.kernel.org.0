@@ -2,41 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A7172896B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C51288FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391376AbfEWTgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:36:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36710 "EHLO mail.kernel.org"
+        id S2392072AbfEWTaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:30:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389800AbfEWTZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:25:17 -0400
+        id S2392055AbfEWTaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:30:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 100712133D;
-        Thu, 23 May 2019 19:25:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71B8D21851;
+        Thu, 23 May 2019 19:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639516;
-        bh=I3em34TPw1tOqm1IGSJ9vZptuF9O8eyUf6JBcohdZxc=;
+        s=default; t=1558639806;
+        bh=GoC1OIA003h0+CxziUkA4dOZlYYlol8sXKPimKJOX4g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UCTBcOhtFzWEGxnlM4VyNbWBP7tWwCKMnn0zFcrA/ANORjudmYWdN2p4jd9el1p+R
-         f97bkDX//oB15tLiH/kP6XXFjg5+MQ0UTr+7oSx7t/+kpf9LcYznrVtDN62dLsnkb7
-         iTnLUbA+VjqNzVJzHOkUdww/onfpdXSGyW/GhIrA=
+        b=psNzxiYDFSBT2+MSOpUk9V5jMHtkNmMOTANTTingvpE5EO/2hT35ifEk5hSmPDTTf
+         R2QMcaPL6+SUJyNMy3UAOxP7isOfuHQCcwqS9r4Suu+MmfK438z+R8YfqhdBSpLsRO
+         AdpkBxCRrm1fdaBHRRXsMMJh/JX3f6J5fJdJX7+o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bhagavathi Perumal S <bperumal@codeaurora.org>,
-        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 117/139] mac80211: Fix kernel panic due to use of txq after free
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 5.1 083/122] objtool: Allow AR to be overridden with HOSTAR
 Date:   Thu, 23 May 2019 21:06:45 +0200
-Message-Id: <20190523181734.966207237@linuxfoundation.org>
+Message-Id: <20190523181715.854897254@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,41 +50,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f1267cf3c01b12e0f843fb6a7450a7f0b2efab8a ]
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-The txq of vif is added to active_txqs list for ATF TXQ scheduling
-in the function ieee80211_queue_skb(), but it was not properly removed
-before freeing the txq object. It was causing use after free of the txq
-objects from the active_txqs list, result was kernel panic
-due to invalid memory access.
+commit 8ea58f1e8b11cca3087b294779bf5959bf89cc10 upstream.
 
-Fix kernel invalid memory access by properly removing txq object
-from active_txqs list before free the object.
+Currently, this Makefile hardcodes GNU ar, meaning that if it is not
+available, there is no way to supply a different one and the build will
+fail.
 
-Signed-off-by: Bhagavathi Perumal S <bperumal@codeaurora.org>
-Acked-by: Toke Høiland-Jørgensen <toke@redhat.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+  $ make AR=llvm-ar CC=clang LD=ld.lld HOSTAR=llvm-ar HOSTCC=clang \
+         HOSTLD=ld.lld HOSTLDFLAGS=-fuse-ld=lld defconfig modules_prepare
+  ...
+    AR       /out/tools/objtool/libsubcmd.a
+  /bin/sh: 1: ar: not found
+  ...
+
+Follow the logic of HOST{CC,LD} and allow the user to specify a
+different ar tool via HOSTAR (which is used elsewhere in other
+tools/ Makefiles).
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Cc: <stable@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/80822a9353926c38fd7a152991c6292491a9d0e8.1558028966.git.jpoimboe@redhat.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/481
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/mac80211/iface.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/objtool/Makefile |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/mac80211/iface.c b/net/mac80211/iface.c
-index 4a6ff1482a9ff..02d2e6f11e936 100644
---- a/net/mac80211/iface.c
-+++ b/net/mac80211/iface.c
-@@ -1908,6 +1908,9 @@ void ieee80211_if_remove(struct ieee80211_sub_if_data *sdata)
- 	list_del_rcu(&sdata->list);
- 	mutex_unlock(&sdata->local->iflist_mtx);
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -7,11 +7,12 @@ ARCH := x86
+ endif
  
-+	if (sdata->vif.txq)
-+		ieee80211_txq_purge(sdata->local, to_txq_info(sdata->vif.txq));
-+
- 	synchronize_rcu();
+ # always use the host compiler
++HOSTAR	?= ar
+ HOSTCC	?= gcc
+ HOSTLD	?= ld
++AR	 = $(HOSTAR)
+ CC	 = $(HOSTCC)
+ LD	 = $(HOSTLD)
+-AR	 = ar
  
- 	if (sdata->dev) {
--- 
-2.20.1
-
+ ifeq ($(srctree),)
+ srctree := $(patsubst %/,%,$(dir $(CURDIR)))
 
 
