@@ -2,133 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE436289D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:43:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0076128774
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389891AbfEWTmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:42:42 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:32928 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389690AbfEWTSv (ORCPT
+        id S2389854AbfEWTTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:19:37 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42063 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388671AbfEWTTd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:18:51 -0400
-Received: by mail-lf1-f66.google.com with SMTP id x132so5247281lfd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:18:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7Xq8hDRQty0iPHxqWBmFMiHP5/NEYwgv6qrN0Vc4nP8=;
-        b=ElJnN4SIqyVX33y7h7nGUs3agYvp1XeedQRemgpNbRIk5YlpyMiZcdC55lWgxLgh11
-         KGA9kvQoiXXYs/58eF04FaDku2dDlD83wtRBSt+M6G1ZAh4arkTz+KAL9TD9eCPYRb/s
-         Ml/yCA3Aye5kHbDL64GQjMNXaH7xxCsjKFKk57fS61mAwZZbM5zYQIgvTjCECVGeIZvS
-         Vu8BchtkGC9SqVmc9zM+HUOnm3qts+3oDP4vc86hWfjkeMINYmjeEB+owqaNfIjKGnt1
-         gaT8dQa9c8myhvRDjgnSpTJpspt1aTRyCZ621kdINUkw1wzbTQr7dwLOXa4U8fvDlT2D
-         Gyvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7Xq8hDRQty0iPHxqWBmFMiHP5/NEYwgv6qrN0Vc4nP8=;
-        b=QXrYLeaTU3fmuYLUhlUSOyrxHsaMSrkZoPxhmbjwOjNN7iqvlLqRjnMkZRud/++f+j
-         Wj/+knWDCibAwlV7l2Ldb57JpBr7AjXTzOG35NxgqtXFpYs9Yf8KGtsvW2KfYzMhLRwu
-         hXN19G5bzV0ohNKrK0ewFDnoe3W875I0200znJJjjBYWQUEghn+MGb6sZo2N/kHEh7jT
-         aMjdhKNHLOY96xIJvUSx7B5eiWQ2MY6rz9/CIW/BfWZWC11IB11fiOEgEWacAhQiwZ/o
-         PIoN4WpfCjt2C+XNfc4SorkUSt34XtoGxJ/npMtLWRyAUScMGwNZbX6YdazvP0N3sOHm
-         Kaqw==
-X-Gm-Message-State: APjAAAWXBd8NJR+r40HkpYVeUgTQ1UrGSiUodXmmJWRsRaGpcoUykZOy
-        XxPavAFDsc2j3jfwaUu1WVq522psobZI0CUTnsAAAw==
-X-Google-Smtp-Source: APXvYqw1XbYiFz5hQUalCxrVjKiO6TIO71hT0hyMX6W3pIGmpBG9+vju9MG+sHieuLq/jz7BZlnOc90KWMXZK2Bxibs=
-X-Received: by 2002:a19:189:: with SMTP id 131mr46796309lfb.74.1558639129364;
- Thu, 23 May 2019 12:18:49 -0700 (PDT)
+        Thu, 23 May 2019 15:19:33 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 6A162803D0; Thu, 23 May 2019 21:19:21 +0200 (CEST)
+Date:   Thu, 23 May 2019 21:19:22 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     angus.ainslie@puri.sm, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 2/4] arm64: dts: fsl: librem5: Add a device tree for
+ the Librem5 devkit
+Message-ID: <20190523191922.GA3803@xo-6d-61-c0.localdomain>
+References: <20190520142330.3556-1-angus@akkea.ca>
+ <20190520142330.3556-3-angus@akkea.ca>
 MIME-Version: 1.0
-References: <1558338735-8444-1-git-send-email-amelie.delaunay@st.com>
- <20190522054833.GB4574@dell> <eb8425ec-989a-9701-7fee-61bd1d2b93c1@st.com>
- <20190522084133.GF4574@dell> <bc1b5f1d-23b0-141d-f58f-b54ac303fe20@st.com>
- <CACRpkdYmdpwEvCBrL6i1V+Zxd0OSpZmD8BJPSZu9jYNeJkoimQ@mail.gmail.com> <08ea97544018430caf53af36677902b7@SFHDAG3NODE2.st.com>
-In-Reply-To: <08ea97544018430caf53af36677902b7@SFHDAG3NODE2.st.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 23 May 2019 21:18:37 +0200
-Message-ID: <CACRpkdZLbMJ5dKiL9J1x=PozBVH777kNNABZi-n0LxD0BOp8mw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: stmfx: Fix compile issue when CONFIG_OF_GPIO is
- not defined
-To:     Amelie DELAUNAY <amelie.delaunay@st.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "kbuild-all@01.org" <kbuild-all@01.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520142330.3556-3-angus@akkea.ca>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 4:11 PM Amelie DELAUNAY <amelie.delaunay@st.com> wr=
-ote:
-> On 5/22/19 11:48 PM, Linus Walleij wrote:
-> > On Wed, May 22, 2019 at 11:21 AM Amelie DELAUNAY <amelie.delaunay@st.co=
-m> wrote:
-> >
-> >> ../drivers/pinctrl/pinctrl-stmfx.c:409:20: error:
-> >> =E2=80=98pinconf_generic_dt_node_to_map_pin=E2=80=99 undeclared here (=
-not in a function)
-> >>     .dt_node_to_map =3D pinconf_generic_dt_node_to_map_pin,
-> >>
-> >> OF_GPIO depends on OF.
-> >>
-> >> So either
-> >>       depends on OF || (OF && COMPILE_TEST)
-> >> or
-> >>       depends on OF || (OF_GPIO && COMPILE_TEST)
-> >>
-> >> and
-> >>
-> >>       select OF_GPIO
-> >
-> > I would use just:
-> >
-> > depends on OF_GPIO
-> >
-> > Because OF_GPIO already depends on OF, and
-> > compile tests will not work without OF_GPIO which
-> > require OF so...
-> >
-> > Besides it is what most other GPIO drivers do.
-> >
-> > So just keep that one line and drop the rest.
-> >
-> > Yours,
-> > Linus Walleij
-> >
->
-> Ok so I can get rid of COMPILE_TEST ?
->         depends on I2C
->         depends on OF_GPIO
->         select GENERIC_PINCONF
->         select GPIOLIB_IRQCHIP
->         select MFD_STMFX
+Hi!
 
-Yep just like that.
+> This is for the development kit board for the Librem 5. The current level
+> of support yields a working console and is able to boot userspace from
+> the network or eMMC.
+> 
+> Additional subsystems that are active :
 
-> Because I've no arch to balance COMPILE_TEST. Or maybe something like
->         depends on OF_GPIO && (OF || COMPILE_TEST)
-> even if OF_GPIO && OF is redundant ?
+> - haptic motor
 
-COMPILE_TEST is just to make something available for testing
-on other architectures, such as testing ARM-specific drivers
-on x86.
+Haptic motor is not a LED. It should be controlled by input subsystem.
 
-With just OF_GPIO as dependency, it will be compile tested anyways
-because x86 allyesconfig will enable OF and OF_GPIO, and also
-all the STMFX drivers.
+> +	pwmleds {
+> +		compatible = "pwm-leds";
+> +
+> +		haptic {
+> +			label = "librem5::haptic";
+> +			pwms = <&pwm2 0 200000>;
+> +			active-low;
+> +			max-brightness = <255>;
+> +			power-supply = <&reg_3v3_p>;
+> +		};
+> +	};
 
-Yours,
-Linus Walleij
+You can take a look at N900, that has reasonable interface.
+
+Thanks,
+										Pavel
