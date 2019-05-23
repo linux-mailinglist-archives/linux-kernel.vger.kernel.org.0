@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7CE288B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93C79288E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391745AbfEWT2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:28:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40648 "EHLO mail.kernel.org"
+        id S2391953AbfEWT3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:29:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391727AbfEWT2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:28:09 -0400
+        id S2391937AbfEWT3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:29:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38499206BA;
-        Thu, 23 May 2019 19:28:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF5D52133D;
+        Thu, 23 May 2019 19:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639688;
-        bh=ZKAWL+TfWyCxI4eR1wQK7z52Plma/GdthdPmEGtd6Z0=;
+        s=default; t=1558639761;
+        bh=HiFtAIKrl+Yj/b7btEiQx9X+/cf8POcNBsL9C668gKc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QWnIUEEP7+z8+fj8jCbybQpQqEysyFm0wsDIuqSvr8xkDXIH43luv98vrvzEtP3f0
-         273knjPXjoVnvwc/JDAYvthhR7LMUE3h29Mek2NwwZp/xpD6Mqt9Y+kkVbnKxUspix
-         UOr8qGHM2BLsAeN3TZOCGFCMvcd3Ax6N9Mj5GBV8=
+        b=ENXBowsK4E9PLX3ry0BGGWHuV853e9IaYzTXwQMGquvX+DEmmXbBUG7Cl4vuGPpJV
+         mf6n6YX0uoV8Hocw5tU5zihFzHSDZOw7LMMRFNoMekFnotCi/dsT8YkmUiV8SAol9L
+         WGUMCbXVlI4w49Mhzm6GtCeO36fj/7FLKA6J936g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olga Kornievskaia <kolga@netapp.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 5.1 058/122] PNFS fallback to MDS if no deviceid found
-Date:   Thu, 23 May 2019 21:06:20 +0200
-Message-Id: <20190523181712.487406914@linuxfoundation.org>
+        stable@vger.kernel.org, Zhong Kaihua <zhongkaihua@huawei.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        Dong Zhang <zhangdong46@hisilicon.com>,
+        Leo Yan <leo.yan@linaro.org>, Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 5.1 059/122] clk: hi3660: Mark clk_gate_ufs_subsys as critical
+Date:   Thu, 23 May 2019 21:06:21 +0200
+Message-Id: <20190523181712.577353528@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
 References: <20190523181705.091418060@linuxfoundation.org>
@@ -43,34 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Olga Kornievskaia <kolga@netapp.com>
+From: Leo Yan <leo.yan@linaro.org>
 
-commit b1029c9bc078a6f1515f55dd993b507dcc7e3440 upstream.
+commit 9f77a60669d13ed4ddfa6cd7374c9d88da378ffa upstream.
 
-If we fail to find a good deviceid while trying to pnfs instead of
-propogating an error back fallback to doing IO to the MDS. Currently,
-code with fals the IO with EINVAL.
+clk_gate_ufs_subsys is a system bus clock, turning off it will
+introduce lockup issue during system suspend flow.  Let's mark
+clk_gate_ufs_subsys as critical clock, thus keeps it on during
+system suspend and resume.
 
-Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
-Fixes: 8d40b0f14846f ("NFS filelayout:call GETDEVICEINFO after pnfs_layout_process completes"
-Cc: stable@vger.kernel.org # v4.11+
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Fixes: d374e6fd5088 ("clk: hisilicon: Add clock driver for hi3660 SoC")
+Cc: stable@vger.kernel.org
+Cc: Zhong Kaihua <zhongkaihua@huawei.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
+Suggested-by: Dong Zhang <zhangdong46@hisilicon.com>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/filelayout/filelayout.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/hisilicon/clk-hi3660.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/fs/nfs/filelayout/filelayout.c
-+++ b/fs/nfs/filelayout/filelayout.c
-@@ -904,7 +904,7 @@ fl_pnfs_update_layout(struct inode *ino,
- 	status = filelayout_check_deviceid(lo, fl, gfp_flags);
- 	if (status) {
- 		pnfs_put_lseg(lseg);
--		lseg = ERR_PTR(status);
-+		lseg = NULL;
- 	}
- out:
- 	return lseg;
+--- a/drivers/clk/hisilicon/clk-hi3660.c
++++ b/drivers/clk/hisilicon/clk-hi3660.c
+@@ -163,8 +163,12 @@ static const struct hisi_gate_clock hi36
+ 	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 17, 0, },
+ 	{ HI3660_CLK_GATE_ISP_SNCLK2, "clk_gate_isp_snclk2",
+ 	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 18, 0, },
++	/*
++	 * clk_gate_ufs_subsys is a system bus clock, mark it as critical
++	 * clock and keep it on for system suspend and resume.
++	 */
+ 	{ HI3660_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_sysbus",
+-	  CLK_SET_RATE_PARENT, 0x50, 21, 0, },
++	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x50, 21, 0, },
+ 	{ HI3660_PCLK_GATE_DSI0, "pclk_gate_dsi0", "clk_div_cfgbus",
+ 	  CLK_SET_RATE_PARENT, 0x50, 28, 0, },
+ 	{ HI3660_PCLK_GATE_DSI1, "pclk_gate_dsi1", "clk_div_cfgbus",
 
 
