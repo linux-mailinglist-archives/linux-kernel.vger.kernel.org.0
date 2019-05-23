@@ -2,55 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BD1C27A0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 12:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15D6827A18
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 12:13:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730284AbfEWKKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 06:10:08 -0400
-Received: from mga17.intel.com ([192.55.52.151]:15994 "EHLO mga17.intel.com"
+        id S1730234AbfEWKNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 06:13:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54372 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730028AbfEWKKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 06:10:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP; 23 May 2019 03:10:07 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 23 May 2019 03:10:05 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Oleksandr Natalenko <oleksandr@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Markus Heiser <markus.heiser@darmarit.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH 0/8] docs: Fixes for recent versions of Sphinx
-In-Reply-To: <20190523093944.mylk5l3ginkpelfi@butterfly.localdomain>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190522205034.25724-1-corbet@lwn.net> <20190523093944.mylk5l3ginkpelfi@butterfly.localdomain>
-Date:   Thu, 23 May 2019 13:13:23 +0300
-Message-ID: <877eah7a2k.fsf@intel.com>
+        id S1726429AbfEWKNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 06:13:40 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A10687FDFF;
+        Thu, 23 May 2019 10:13:38 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-101.ams2.redhat.com [10.36.116.101])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 204021001E6F;
+        Thu, 23 May 2019 10:13:38 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 0008F16E08; Thu, 23 May 2019 12:13:36 +0200 (CEST)
+Date:   Thu, 23 May 2019 12:13:36 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QEMU'S CIRRUS DEVICE" 
+        <virtualization@lists.linux-foundation.org>,
+        Dave Airlie <airlied@redhat.com>
+Subject: Re: [PATCH] drm/cirrus: remove leftover files
+Message-ID: <20190523101336.thknzetzyx3j6sa7@sirius.home.kraxel.org>
+References: <20190522103307.12711-1-kraxel@redhat.com>
+ <20190522150634.GA26677@ravnborg.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190522150634.GA26677@ravnborg.org>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 23 May 2019 10:13:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 23 May 2019, Oleksandr Natalenko <oleksandr@redhat.com> wrote:
-> Thanks for the efforts. I've run this on top of Linus' tree, and the
-> only sphinx-related deprecation warning I've spotted is this one:
->
-> /home/onatalen/work/src/linux/Documentation/sphinx/cdomain.py:51: RemovedInSphinx30Warning: app.override_domain() is deprecated. Use app.add_domain() with override option instead.
->   app.override_domain(CDomain)
->
-> Otherwise, it builds.
+On Wed, May 22, 2019 at 05:06:34PM +0200, Sam Ravnborg wrote:
+> On Wed, May 22, 2019 at 12:33:07PM +0200, Gerd Hoffmann wrote:
+> > cirrus_drv.h and cirrus_ttm.c are unused since commit ab3e023b1b4c
+> > ("drm/cirrus: rewrite and modernize driver"), apparently I ran "rm"
+> > instead of "git rm" on them so they are still in present the tree.
+> > 
+> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> 
+> Always nice with the code removal patches.
+> Will you apply yourself?
 
-Please share your Sphinx version (sphinx-build --version).
+Yes.
 
-BR,
-Jani.
+thanks,
+  Gerd
 
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
