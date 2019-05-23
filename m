@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09140287E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB0B9288DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390922AbfEWTYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:24:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35474 "EHLO mail.kernel.org"
+        id S2391919AbfEWT3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:29:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390434AbfEWTY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:24:29 -0400
+        id S2391902AbfEWT3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:29:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EBEF21872;
-        Thu, 23 May 2019 19:24:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCC1021872;
+        Thu, 23 May 2019 19:29:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639468;
-        bh=YzxVZagn4yBuXs8rIInrK+XHSs1m65ndjNkEB/hNnqw=;
+        s=default; t=1558639753;
+        bh=0GUiNJsKaY4YyNVQ08p1lGKyxp86mUO25WH9yXSFZYA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o/p6J1/R0CsJPKQ8b4b4DIuWJzFBacTvZ3ZYO83a835ifb9CbtgrLbUxxrKbefTgD
-         BDCtVBDpbVCMJRob10MpnJpIUaaM2RuvjJmRBB1FTmnJco+r8BtaxDlBx70nAVxWwK
-         C0tpESgxdgWPikxQY1kwzHBcW0yzCWAFASHSCeOE=
+        b=I9QvOgLjaNvnVAS95GNr7GJtx3np+nBOg97AEelhY9tojj3WJ5wtpzB3uPU/XXda9
+         o+raPvjij3/+VonRqbuMT7u0FYitnAqNjD6OOb16/69zJlmmeLle4Azgg4xVCTe6YD
+         PPdt0CW+gAnoUK8wvrW1b6sB/pUB+mgETBWv707M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kirill Smelkov <kirr@nexedi.com>,
+        stable@vger.kernel.org, Antonio SJ Musumeci <trapexit@spawn.link>,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.0 099/139] fuse: Add FOPEN_STREAM to use stream_open()
-Date:   Thu, 23 May 2019 21:06:27 +0200
-Message-Id: <20190523181733.421233135@linuxfoundation.org>
+Subject: [PATCH 5.1 066/122] fuse: fix writepages on 32bit
+Date:   Thu, 23 May 2019 21:06:28 +0200
+Message-Id: <20190523181713.460919265@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,87 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kirill Smelkov <kirr@nexedi.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit bbd84f33652f852ce5992d65db4d020aba21f882 upstream.
+commit 9de5be06d0a89ca97b5ab902694d42dfd2bb77d2 upstream.
 
-Starting from commit 9c225f2655e3 ("vfs: atomic f_pos accesses as per
-POSIX") files opened even via nonseekable_open gate read and write via lock
-and do not allow them to be run simultaneously. This can create read vs
-write deadlock if a filesystem is trying to implement a socket-like file
-which is intended to be simultaneously used for both read and write from
-filesystem client.  See commit 10dce8af3422 ("fs: stream_open - opener for
-stream-like files so that read and write can run simultaneously without
-deadlock") for details and e.g. commit 581d21a2d02a ("xenbus: fix deadlock
-on writes to /proc/xen/xenbus") for a similar deadlock example on
-/proc/xen/xenbus.
+Writepage requests were cropped to i_size & 0xffffffff, which meant that
+mmaped writes to any file larger than 4G might be silently discarded.
 
-To avoid such deadlock it was tempting to adjust fuse_finish_open to use
-stream_open instead of nonseekable_open on just FOPEN_NONSEEKABLE flags,
-but grepping through Debian codesearch shows users of FOPEN_NONSEEKABLE,
-and in particular GVFS which actually uses offset in its read and write
-handlers
+Fix by storing the file size in a properly sized variable (loff_t instead
+of size_t).
 
-	https://codesearch.debian.net/search?q=-%3Enonseekable+%3D
-	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1080
-	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1247-1346
-	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1399-1481
-
-so if we would do such a change it will break a real user.
-
-Add another flag (FOPEN_STREAM) for filesystem servers to indicate that the
-opened handler is having stream-like semantics; does not use file position
-and thus the kernel is free to issue simultaneous read and write request on
-opened file handle.
-
-This patch together with stream_open() should be added to stable kernels
-starting from v3.14+. This will allow to patch OSSPD and other FUSE
-filesystems that provide stream-like files to return FOPEN_STREAM |
-FOPEN_NONSEEKABLE in open handler and this way avoid the deadlock on all
-kernel versions. This should work because fuse_finish_open ignores unknown
-open flags returned from a filesystem and so passing FOPEN_STREAM to a
-kernel that is not aware of this flag cannot hurt. In turn the kernel that
-is not aware of FOPEN_STREAM will be < v3.14 where just FOPEN_NONSEEKABLE
-is sufficient to implement streams without read vs write deadlock.
-
-Cc: stable@vger.kernel.org # v3.14+
-Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
+Reported-by: Antonio SJ Musumeci <trapexit@spawn.link>
+Fixes: 6eaf4782eb09 ("fuse: writepages: crop secondary requests")
+Cc: <stable@vger.kernel.org> # v3.13
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/file.c            |    4 +++-
- include/uapi/linux/fuse.h |    2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ fs/fuse/file.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -181,7 +181,9 @@ void fuse_finish_open(struct inode *inod
- 		file->f_op = &fuse_direct_io_file_operations;
- 	if (!(ff->open_flags & FOPEN_KEEP_CACHE))
- 		invalidate_inode_pages2(inode->i_mapping);
--	if (ff->open_flags & FOPEN_NONSEEKABLE)
-+	if (ff->open_flags & FOPEN_STREAM)
-+		stream_open(inode, file);
-+	else if (ff->open_flags & FOPEN_NONSEEKABLE)
- 		nonseekable_open(inode, file);
- 	if (fc->atomic_o_trunc && (file->f_flags & O_TRUNC)) {
- 		struct fuse_inode *fi = get_fuse_inode(inode);
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -226,11 +226,13 @@ struct fuse_file_lock {
-  * FOPEN_KEEP_CACHE: don't invalidate the data cache on open
-  * FOPEN_NONSEEKABLE: the file is not seekable
-  * FOPEN_CACHE_DIR: allow caching this directory
-+ * FOPEN_STREAM: the file is stream-like (no file position at all)
-  */
- #define FOPEN_DIRECT_IO		(1 << 0)
- #define FOPEN_KEEP_CACHE	(1 << 1)
- #define FOPEN_NONSEEKABLE	(1 << 2)
- #define FOPEN_CACHE_DIR		(1 << 3)
-+#define FOPEN_STREAM		(1 << 4)
+@@ -1586,7 +1586,7 @@ __acquires(fi->lock)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
+-	size_t crop = i_size_read(inode);
++	loff_t crop = i_size_read(inode);
+ 	struct fuse_req *req;
  
- /**
-  * INIT request/reply flags
+ 	while (fi->writectr >= 0 && !list_empty(&fi->queued_writes)) {
 
 
