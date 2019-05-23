@@ -2,101 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55B1427EC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1B1A27ED8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:54:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730684AbfEWNul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 09:50:41 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:48658 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730495AbfEWNul (ORCPT
+        id S1730854AbfEWNx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:53:59 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44715 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730323AbfEWNx5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 09:50:41 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4NDoZ0m014524;
-        Thu, 23 May 2019 08:50:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1558619435;
-        bh=/iyye2ek1YfSfYPIG48/zDexo+U1o6msUMjecZkKJRM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=LHZwAGCCYUWq9VqkVBw3MhZ8eXZxwmXIfjd17OttBn/Eg1MN3UiaNY00krWK8vJd/
-         8zls0QeBunaBK71mBdnO/wJW3dkAq96ny+v5zUaWognQ8XWEgp933Bmi13kMFGaSvg
-         Ve+BLb5rhBKMblbWABwcgDXRA+u0HyJr1prB9Nhs=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4NDoZhJ041563
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 May 2019 08:50:35 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 23
- May 2019 08:50:34 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 23 May 2019 08:50:35 -0500
-Received: from [10.250.90.63] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4NDoYpv115882;
-        Thu, 23 May 2019 08:50:34 -0500
-Subject: Re: [RESEND PATCH v4 1/6] regulator: lm363x: Make the gpio register
- enable flexible
-To:     Mark Brown <broonie@kernel.org>
-CC:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-        <lgirdwood@gmail.com>, <lee.jones@linaro.org>,
-        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190522192733.13422-1-dmurphy@ti.com>
- <20190522192733.13422-2-dmurphy@ti.com>
- <20190523130311.GA17245@sirena.org.uk>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <d4673abc-442c-83eb-1830-7f7ed9d8419e@ti.com>
-Date:   Thu, 23 May 2019 08:50:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 23 May 2019 09:53:57 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n2so3172062pgp.11;
+        Thu, 23 May 2019 06:53:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=wBOus5XnMT/GSFm7Ta2azVSwxrEw9Cm7MC3BR8HqZMQ=;
+        b=AYqyVghC2krw5toK68f4xOM57O3RMbSdGaDaNMebJfETjLn/GEMAAcQ1+mBmNK7dmY
+         ljlsrUa3QizI/pO79Q0a+D9ZxtBFPJINAA3WfdMDmbO7wuqpe/eDcKr/c0BnlYfOnrXa
+         36hY+yot8t+cf59FWTZ8oaW1/5sLEBxOsHzdzDjIODlgJ/Sx1EeCr8+v/SVOg59hBL9q
+         7MKg//dmuoJlbxnZ+uBtuz/Z9FXj6R0MA+KRgL+/hQxR4g/oFHV6OHZW4LuUvfi2LB97
+         7nQMQZtL2Oyhx1B7qaZPxKD3pBgF2PVEst0tGfbE9MLIUtr41utsqNJaltFKndXPZFyv
+         xpJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=wBOus5XnMT/GSFm7Ta2azVSwxrEw9Cm7MC3BR8HqZMQ=;
+        b=ehRd8E93chCojwH/SruG6YBzvqLPLg6/YdztZ+xVKEcTKOwyzHpK5V/RTV7DAc3sdH
+         5wyjdhJVBjYyZQswTlzBNWc44vJ0uwQC+4F0+qpMCuF5bkPQvUTIYp8Xnp5xjGXzUpJ5
+         lvJi7WgxIbZZQXIK4lV/QBwYkJnSPvnix4m73IGaalqpt0fet+Gjrxhar+QTo5jGIpZH
+         AW4DoblVb2kNeeK8Gfz7Vmm0Y1nJzAL6Q5pfdnYgAOw2/ou5gNh20CX6I8GwkbI0kCe7
+         HmWbfBT9RQDZGbcx3+ambNCx8SrkkEdJ3c8Rxj+6xqKb7In6uo3aqxJDfLGDZdt/XpBZ
+         y+Ow==
+X-Gm-Message-State: APjAAAV1VqHDKlO3Ayes0snIg5jYIE/LOwR0aT0zoB2RYSJslLh+2oEu
+        6EY+ktjuC9Hs5czDO09JepZM7QmwXQg=
+X-Google-Smtp-Source: APXvYqyjfGFyvo1lLdMR/jT+jVGxH8yZMja3v8JHFTQYYTIDpJj5qCC6LIDRsy0lm1J2aJ3us2ZShg==
+X-Received: by 2002:a62:2ec4:: with SMTP id u187mr103116784pfu.84.1558619636990;
+        Thu, 23 May 2019 06:53:56 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id q70sm959922pja.31.2019.05.23.06.53.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 06:53:56 -0700 (PDT)
+Date:   Thu, 23 May 2019 21:53:26 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     kvalo@codeaurora.org, eyalreizer@gmail.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] sdio: Fix a memory leaking bug in wl1271_probe()
+Message-ID: <20190523135326.GA25841@zhanggen-UX430UQ>
 MIME-Version: 1.0
-In-Reply-To: <20190523130311.GA17245@sirena.org.uk>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark
+In wl1271_probe(), 'glue->core' is allocated by platform_device_alloc(),
+when this allocation fails, ENOMEM is returned. However, 'pdev_data'
+and 'glue' are allocated by devm_kzalloc() before 'glue->core'. When
+platform_device_alloc() returns NULL, we should also free 'pdev_data'
+and 'glue' before wl1271_probe() ends to prevent leaking memory.
 
-On 5/23/19 8:03 AM, Mark Brown wrote:
-> On Wed, May 22, 2019 at 02:27:28PM -0500, Dan Murphy wrote:
->> The use of and enablement of the GPIO can be used across devices.
->> Use the enable_reg in the regulator descriptor for the register to
->> write.
-> 
->> @@ -263,8 +263,8 @@ static int lm363x_regulator_probe(struct platform_device *pdev)
->>  
->>  	if (gpiod) {
->>  		cfg.ena_gpiod = gpiod;
->> -
->> -		ret = regmap_update_bits(regmap, LM3632_REG_BIAS_CONFIG,
->> +		ret = regmap_update_bits(regmap,
->> +					 lm363x_regulator_desc[id].enable_reg,
->>  					 LM3632_EXT_EN_MASK,
->>  					 LM3632_EXT_EN_MASK);
->>  		if (ret) {
-> 
-> Is it guaranteed that the bitmask for enabling the use of the GPIO is
-> going to be the same for all regulators?  The bitmasks for the regulator
-> enable look to be different, and it also looks like this setting might
-> affect multiple regulators since it seems there are multiple enable bits
-> in the same register.  If this affects multiple regulators then how's
-> that working at the minute?
-> 
-
-Yes for the 3632 and 36274 bit0 is the EXT_EN for LCM on these chips.
-LM3631 does not have LCM GPIO control so there is no setting and this should not be called.
-If it is then the developer implemented the DT wrong.
-
-LM3631 - No LCM GPIO control
-
-LM36274 reg 0x09 bit 0 7.6.9 of the data sheet
-LM3632 reg 0x0c bit 0 7.6.12 of the data sheet
-
-Dan
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+---
+diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
+index 4d4b0770..e134f30 100644
+--- a/drivers/net/wireless/ti/wlcore/sdio.c
++++ b/drivers/net/wireless/ti/wlcore/sdio.c
+@@ -340,7 +340,7 @@ static int wl1271_probe(struct sdio_func *func,
+ 	if (!glue->core) {
+ 		dev_err(glue->dev, "can't allocate platform_device");
+ 		ret = -ENOMEM;
+-		goto out;
++		goto out_free;
+ 	}
+ 
+ 	glue->core->dev.parent = &func->dev;
+@@ -385,6 +385,10 @@ static int wl1271_probe(struct sdio_func *func,
+ out_dev_put:
+ 	platform_device_put(glue->core);
+ 
++out_free:
++	devm_kfree(&func->dev, pdev_data);
++	devm_kfree(&func->dev, glue);
++
+ out:
+ 	return ret;
+ }
+---
