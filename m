@@ -2,79 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7056D27DEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ACB4282C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 18:19:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730728AbfEWNTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 09:19:21 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39754 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbfEWNTV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 09:19:21 -0400
-Received: from [5.158.153.53] (helo=nanos.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hTnco-00045s-PI; Thu, 23 May 2019 15:19:14 +0200
-Date:   Thu, 23 May 2019 15:19:14 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     TonyWWang-oc <TonyWWang-oc@zhaoxin.com>
-cc:     "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        David Wang <DavidWang@zhaoxin.com>,
-        "Cooper Yan(BJ-RD)" <CooperYan@zhaoxin.com>,
-        "Qiyuan Wang(BJ-RD)" <QiyuanWang@zhaoxin.com>,
-        "Herry Yang(BJ-RD)" <HerryYang@zhaoxin.com>
-Subject: Re: [PATCH v1 1/3] x86/cpu: Create Zhaoxin processors architecture
- support file
-In-Reply-To: <b3b31fab04814140b1feb13887c4aa2a@zhaoxin.com>
-Message-ID: <alpine.DEB.2.21.1905231516350.2291@nanos.tec.linutronix.de>
-References: <b3b31fab04814140b1feb13887c4aa2a@zhaoxin.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1731674AbfEWQTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 12:19:32 -0400
+Received: from toryburch.com ([198.23.132.45]:53479 "EHLO timesharemyths.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731254AbfEWQTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 12:19:32 -0400
+To:     linux-kernel@vger.kernel.org
+Subject: Logo printing on the USB drives
+Message-ID: <3e5be09d88b518c98eb49ca5d3f95044@lucastirepros.com>
+Date:   Thu, 23 May 2019 15:20:26 +0200
+From:   "Stacy" <ryan@tanschmidit.tech>
+Reply-To: lucas@tanschmidit.tech
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; format=flowed; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 23 May 2019, TonyWWang-oc wrote:
-> --- /dev/null
-> +++ b/arch/x86/kernel/cpu/zhaoxin.c
-> @@ -0,0 +1,178 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Zhaoxin Processor Support for Linux
-> + *
-> + * Copyright (c) 2019 Shanghai Zhaoxin Semiconductor Co., Ltd.
-> + *
-> + * Author: David Wang <davidwang@zhaoxin.com>
-> + *
-> + * This file is licensed under the terms of the GNU General
-> + * License v2.0 or later. See file COPYING for details.
+Hi,
 
-Please remove this boilerplate text. The SPDX license identifier is
-sufficient, but looking at that:
+I am following up on my previous attempt to contact you.
+We wanted to check to see if you need any LOGO promotional products for
+your business?
 
-> +// SPDX-License-Identifier: GPL-2.0
+Our company manufactures USB Flash Drives that are custom printed with your
+logo.
+They make the perfect marketing tool for your business or organization.
 
-That clearly disagrees with your boilerplate text which says 'v2.0 or
-later'. Assumed that you want or later, then the SPDX id needs to say so.
+Looking for other items with your logo?   We can supply anything with your
+logo…
 
-// SPDX-License-Identifier: GPL-2.0-or-later
+Most Popular Items right now:
+- T-shirts, Hoodies
+- Table Covers printed with your brand
+- Pens
+- Water Bottles
+- Banners…
+- You name it we can make it and print on it for you!
 
-Thanks,
+Our USB Pricing is at an ALL TIME LOW.
+We offer low minimum quantities and all memory sizes.
 
-	tglx
+Over 150 Stock Models as well as 100 % custom shaped USB drives in the
+shape of your Logo or
+product or just about anything else you can imagine!
+Ask about our End of the Year Promotions!
 
+We can pre-load your media files, images, presentations and files onto the
+drives for you.
+These are ideal handouts for trade shows, branding, corporate gifts and
+employees.
 
+* Please reply back and let me know what quantity and memory size you need
+for a Fast Quote!
 
+Are you a school or nonprofit?  Please let us know for even further
+discounts.
+
+Let us send you a quote!   We will EARN your business!
+
+Regards,
+
+Stacy Williams
+Custom Logo Products
+Whatsapp: +8617199402387
 
