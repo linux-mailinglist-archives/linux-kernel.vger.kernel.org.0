@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0502286B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC32A28AB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388331AbfEWTL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:11:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45520 "EHLO mail.kernel.org"
+        id S2389699AbfEWTpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:45:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388313AbfEWTL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:11:56 -0400
+        id S2389077AbfEWTPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:15:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B11E2133D;
-        Thu, 23 May 2019 19:11:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B58A217D7;
+        Thu, 23 May 2019 19:15:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638715;
-        bh=fcau2Na3AHGRaU+BsHdcB5iV/QDvQxU4OX8p2siQh4k=;
+        s=default; t=1558638949;
+        bh=2yOBiJ/ADzN5mUmjQMi39EZs/vsECzak1Apuewu9mss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u8XXd5MflP/e0E1gA1J9PjgnCLhcShoWFG0xcWlKCEY5CYdkvwsfHiY2ufaCbag45
-         bOHeCOfKBCLTZZEQv+ZZzIluP6szRVQaorowX/0BC20xFIMhGMoS72O/rHeW095CLE
-         jh1YTk4l9V13kvxnohj2TMKXL0Un7uQ+tbJjRnqo=
+        b=aUzT0gL2VIzgEXWClu4uWM8yqwib7QTtLix+0lqNq2ubPMqXWVuBrnqQxFMl8plkk
+         N/AH7YjkE5i/0NvlRfTjRSr47jMiW6IXbx3Jiurju5sGv4H+BYqohRIanOJ5HrSG+J
+         X1N5bzfpfyWwQiZOkkL+fzG1QBF0VDvcPrVy9Wmg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.14 21/77] media: ov6650: Fix sensor possibly not detected on probe
+        stable@vger.kernel.org, Steev Klimaszewski <steev@kali.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.19 040/114] clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides divider
 Date:   Thu, 23 May 2019 21:05:39 +0200
-Message-Id: <20190523181723.252123464@linuxfoundation.org>
+Message-Id: <20190523181735.397285171@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-commit 933c1320847f5ed6b61a7d10f0a948aa98ccd7b0 upstream.
+commit 40db569d6769ffa3864fd1b89616b1a7323568a8 upstream.
 
-After removal of clock_start() from before soc_camera_init_i2c() in
-soc_camera_probe() by commit 9aea470b399d ("[media] soc-camera: switch
-I2C subdevice drivers to use v4l2-clk") introduced in v3.11, the ov6650
-driver could no longer probe the sensor successfully because its clock
-was no longer turned on in advance.  The issue was initially worked
-around by adding that missing clock_start() equivalent to OMAP1 camera
-interface driver - the only user of this sensor - but a propoer fix
-should be rather implemented in the sensor driver code itself.
+There are wrongly set parenthesis in the code that are resulting in a
+wrong configuration being programmed for PLLM. The original fix was made
+by Danny Huang in the downstream kernel. The patch was tested on Nyan Big
+Tegra124 chromebook, PLLM rate changing works correctly now and system
+doesn't lock up after changing the PLLM rate due to EMC scaling.
 
-Fix the issue by inserting a delay between the clock is turned on and
-the sensor I2C registers are read for the first time.
-
-Tested on Amstrad Delta with now out of tree but still locally
-maintained omap1_camera host driver.
-
-Fixes: 9aea470b399d ("[media] soc-camera: switch I2C subdevice drivers to use v4l2-clk")
-
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: <stable@vger.kernel.org>
+Tested-by: Steev Klimaszewski <steev@kali.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/ov6650.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/tegra/clk-pll.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/media/i2c/ov6650.c
-+++ b/drivers/media/i2c/ov6650.c
-@@ -826,6 +826,8 @@ static int ov6650_video_probe(struct i2c
- 	if (ret < 0)
- 		return ret;
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -662,8 +662,8 @@ static void _update_pll_mnp(struct tegra
+ 		pll_override_writel(val, params->pmc_divp_reg, pll);
  
-+	msleep(20);
-+
- 	/*
- 	 * check and show product ID and manufacturer ID
- 	 */
+ 		val = pll_override_readl(params->pmc_divnm_reg, pll);
+-		val &= ~(divm_mask(pll) << div_nmp->override_divm_shift) |
+-			~(divn_mask(pll) << div_nmp->override_divn_shift);
++		val &= ~((divm_mask(pll) << div_nmp->override_divm_shift) |
++			(divn_mask(pll) << div_nmp->override_divn_shift));
+ 		val |= (cfg->m << div_nmp->override_divm_shift) |
+ 			(cfg->n << div_nmp->override_divn_shift);
+ 		pll_override_writel(val, params->pmc_divnm_reg, pll);
 
 
