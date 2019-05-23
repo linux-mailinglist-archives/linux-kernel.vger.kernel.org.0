@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B089E28AD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 173D928737
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388991AbfEWTrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:47:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46694 "EHLO mail.kernel.org"
+        id S2388854AbfEWTQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:16:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731873AbfEWTMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:12:52 -0400
+        id S2389252AbfEWTQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:16:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C359C217D9;
-        Thu, 23 May 2019 19:12:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5890217D9;
+        Thu, 23 May 2019 19:16:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638772;
-        bh=3rxfAX4mLHvVaXl+hX9hwHnq3HJQHQSfrnr68pxQPQk=;
+        s=default; t=1558639008;
+        bh=fvZOAFP5AIRVhhIqDeRi4wXWN+GCiBS8EQcBL1t27ak=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V6JTE46ICWkHXjV1l8wbyDv3hmewX02HiMM6h5cRl8aiECOPcDlowYgmqM1pfgfu6
-         PeQj7OVCer5O6wOfVbcv273mrfektAe+n4SURcVHIjteIQXXs5Io7HI1jXryVGdDgQ
-         PqZbCN/YTsEqitMWWjzQhQ+5kjuixbk9EOQGGulU=
+        b=W+SOyHZtUQD7s5nsJ8tLQMAl8KarLRRHcLM3AGbJk1qBuvbHMe8+aL/JgOfEomzLc
+         WiBWsGbk84VSPxcnWeiQPadD/RtLDl1lghoZhcnIgZmCCSZZ37xWoPZHgstcv23HCk
+         g9ASlqa+kiJo92IQfgqda0t7EOw+I1uYC+i6yEiw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
         Teddy Wang <teddy.wang@siliconmotion.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.14 42/77] fbdev: sm712fb: fix VRAM detection, dont set SR70/71/74/75
-Date:   Thu, 23 May 2019 21:06:00 +0200
-Message-Id: <20190523181725.964126138@linuxfoundation.org>
+Subject: [PATCH 4.19 062/114] fbdev: sm712fb: fix brightness control on reboot, dont set SR30
+Date:   Thu, 23 May 2019 21:06:01 +0200
+Message-Id: <20190523181737.216064352@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,18 +47,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yifeng Li <tomli@tomli.me>
 
-commit dcf9070595e100942c539e229dde4770aaeaa4e9 upstream.
+commit 5481115e25e42b9215f2619452aa99c95f08492f upstream.
 
-On a Thinkpad s30 (Pentium III / i440MX, Lynx3DM), the amount of Video
-RAM is not detected correctly by the xf86-video-siliconmotion driver.
-This is because sm712fb overwrites the GPR71 Scratch Pad Register, which
-is set by BIOS on x86 and used to indicate amount of VRAM.
+On a Thinkpad s30 (Pentium III / i440MX, Lynx3DM), rebooting with
+sm712fb framebuffer driver would cause the role of brightness up/down
+button to swap.
 
-Other Scratch Pad Registers, including GPR70/74/75, don't have the same
-side-effect, but overwriting to them is still questionable, as they are
-not related to modesetting.
+Experiments showed the FPR30 register caused this behavior. Moreover,
+even if this register don't have side-effect on other systems, over-
+writing it is also highly questionable, since it was originally
+configurated by the motherboard manufacturer by hardwiring pull-down
+resistors to indicate the type of LCD panel. We should not mess with
+it.
 
-Stop writing to SR70/71/74/75 (a.k.a GPR70/71/74/75).
+Stop writing to the SR30 (a.k.a FPR30) register.
 
 Signed-off-by: Yifeng Li <tomli@tomli.me>
 Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
@@ -68,19 +70,19 @@ Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/sm712fb.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/sm712fb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/drivers/video/fbdev/sm712fb.c
 +++ b/drivers/video/fbdev/sm712fb.c
-@@ -1146,7 +1146,9 @@ static void sm7xx_set_timing(struct smtc
+@@ -1145,8 +1145,8 @@ static void sm7xx_set_timing(struct smtc
+ 
  		/* init SEQ register SR30 - SR75 */
  		for (i = 0; i < SIZE_SR30_SR75; i++)
- 			if ((i + 0x30) != 0x30 && (i + 0x30) != 0x62 &&
--			    (i + 0x30) != 0x6a && (i + 0x30) != 0x6b)
-+			    (i + 0x30) != 0x6a && (i + 0x30) != 0x6b &&
-+			    (i + 0x30) != 0x70 && (i + 0x30) != 0x71 &&
-+			    (i + 0x30) != 0x74 && (i + 0x30) != 0x75)
+-			if ((i + 0x30) != 0x62 && (i + 0x30) != 0x6a &&
+-			    (i + 0x30) != 0x6b)
++			if ((i + 0x30) != 0x30 && (i + 0x30) != 0x62 &&
++			    (i + 0x30) != 0x6a && (i + 0x30) != 0x6b)
  				smtc_seqw(i + 0x30,
  					  vgamode[j].init_sr30_sr75[i]);
  
