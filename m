@@ -2,39 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72ABF28775
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEB69287E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389869AbfEWTTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:19:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55740 "EHLO mail.kernel.org"
+        id S2391025AbfEWTY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:24:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388715AbfEWTTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:19:36 -0400
+        id S2391016AbfEWTYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:24:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B4992133D;
-        Thu, 23 May 2019 19:19:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4009920868;
+        Thu, 23 May 2019 19:24:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639175;
-        bh=kesfgwBqgVXPkLx/zEwnlJg4dQOQm0nNiBwMUCHiobU=;
+        s=default; t=1558639494;
+        bh=cLLt/rInlk/yS1RnHy6KiOCgBywX0s/xE3MlAWS9mKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WIc318X0NXF4+RmWoXQXCsDnvhK1MqSAwcgODxbros/QeaxFCJ0CZfyTnoddHGb7L
-         dGoAIBrU78sQ4jOfaCQyTBFZx32jX8iZaTjBFkLAIr67pqrHZpQEr5HSkXWC5K1voX
-         XTfHqSsyySSaxUNpaxYVy7FpskUAi00DSqCkNXXA=
+        b=NoE6keBiJuXJbGi9nwr5kuWZ4EtHODzPOAr+sKn+01X8m9Nh/dOg1nlAFplZ3B5oP
+         9+1g+jL3WtXWfc5sK4Jrym0jINW/b94Rz7eSdI2KS6maQqQUe+nqiBM3odWSebYft8
+         v+r/YMRC3ThbRs5H4+Ev+LSJZIAtfvg5yb2FX2QY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.19 114/114] bpf, lru: avoid messing with eviction heuristics upon syscall lookup
-Date:   Thu, 23 May 2019 21:06:53 +0200
-Message-Id: <20190523181740.955032364@linuxfoundation.org>
+        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
+        Gary R Hook <gary.hook@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Coly Li <colyli@suse.de>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 126/139] x86/mm/mem_encrypt: Disable all instrumentation for early SME setup
+Date:   Thu, 23 May 2019 21:06:54 +0200
+Message-Id: <20190523181735.737390919@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,106 +60,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+[ Upstream commit b51ce3744f115850166f3d6c292b9c8cb849ad4f ]
 
-commit 50b045a8c0ccf44f76640ac3eea8d80ca53979a3 upstream.
+Enablement of AMD's Secure Memory Encryption feature is determined very
+early after start_kernel() is entered. Part of this procedure involves
+scanning the command line for the parameter 'mem_encrypt'.
 
-One of the biggest issues we face right now with picking LRU map over
-regular hash table is that a map walk out of user space, for example,
-to just dump the existing entries or to remove certain ones, will
-completely mess up LRU eviction heuristics and wrong entries such
-as just created ones will get evicted instead. The reason for this
-is that we mark an entry as "in use" via bpf_lru_node_set_ref() from
-system call lookup side as well. Thus upon walk, all entries are
-being marked, so information of actual least recently used ones
-are "lost".
+To determine intended state, the function sme_enable() uses library
+functions cmdline_find_option() and strncmp(). Their use occurs early
+enough such that it cannot be assumed that any instrumentation subsystem
+is initialized.
 
-In case of Cilium where it can be used (besides others) as a BPF
-based connection tracker, this current behavior causes disruption
-upon control plane changes that need to walk the map from user space
-to evict certain entries. Discussion result from bpfconf [0] was that
-we should simply just remove marking from system call side as no
-good use case could be found where it's actually needed there.
-Therefore this patch removes marking for regular LRU and per-CPU
-flavor. If there ever should be a need in future, the behavior could
-be selected via map creation flag, but due to mentioned reason we
-avoid this here.
+For example, making calls to a KASAN-instrumented function before KASAN
+is set up will result in the use of uninitialized memory and a boot
+failure.
 
-  [0] http://vger.kernel.org/bpfconf.html
+When AMD's SME support is enabled, conditionally disable instrumentation
+of these dependent functions in lib/string.c and arch/x86/lib/cmdline.c.
 
-Fixes: 29ba732acbee ("bpf: Add BPF_MAP_TYPE_LRU_HASH")
-Fixes: 8f8449384ec3 ("bpf: Add BPF_MAP_TYPE_LRU_PERCPU_HASH")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ [ bp: Get rid of intermediary nostackp var and cleanup whitespace. ]
 
+Fixes: aca20d546214 ("x86/mm: Add support to make use of Secure Memory Encryption")
+Reported-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Gary R Hook <gary.hook@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Boris Brezillon <bbrezillon@kernel.org>
+Cc: Coly Li <colyli@suse.de>
+Cc: "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: "luto@kernel.org" <luto@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: "mingo@redhat.com" <mingo@redhat.com>
+Cc: "peterz@infradead.org" <peterz@infradead.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/155657657552.7116.18363762932464011367.stgit@sosrh3.amd.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/hashtab.c |   23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ arch/x86/lib/Makefile | 12 ++++++++++++
+ lib/Makefile          | 11 +++++++++++
+ 2 files changed, 23 insertions(+)
 
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -518,18 +518,30 @@ static u32 htab_map_gen_lookup(struct bp
- 	return insn - insn_buf;
- }
+diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+index 140e61843a079..3cb3af51ec897 100644
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -6,6 +6,18 @@
+ # Produces uninteresting flaky coverage.
+ KCOV_INSTRUMENT_delay.o	:= n
  
--static void *htab_lru_map_lookup_elem(struct bpf_map *map, void *key)
-+static __always_inline void *__htab_lru_map_lookup_elem(struct bpf_map *map,
-+							void *key, const bool mark)
- {
- 	struct htab_elem *l = __htab_map_lookup_elem(map, key);
- 
- 	if (l) {
--		bpf_lru_node_set_ref(&l->lru_node);
-+		if (mark)
-+			bpf_lru_node_set_ref(&l->lru_node);
- 		return l->key + round_up(map->key_size, 8);
- 	}
- 
- 	return NULL;
- }
- 
-+static void *htab_lru_map_lookup_elem(struct bpf_map *map, void *key)
-+{
-+	return __htab_lru_map_lookup_elem(map, key, true);
-+}
++# Early boot use of cmdline; don't instrument it
++ifdef CONFIG_AMD_MEM_ENCRYPT
++KCOV_INSTRUMENT_cmdline.o := n
++KASAN_SANITIZE_cmdline.o  := n
 +
-+static void *htab_lru_map_lookup_elem_sys(struct bpf_map *map, void *key)
-+{
-+	return __htab_lru_map_lookup_elem(map, key, false);
-+}
++ifdef CONFIG_FUNCTION_TRACER
++CFLAGS_REMOVE_cmdline.o = -pg
++endif
 +
- static u32 htab_lru_map_gen_lookup(struct bpf_map *map,
- 				   struct bpf_insn *insn_buf)
- {
-@@ -1206,6 +1218,7 @@ const struct bpf_map_ops htab_lru_map_op
- 	.map_free = htab_map_free,
- 	.map_get_next_key = htab_map_get_next_key,
- 	.map_lookup_elem = htab_lru_map_lookup_elem,
-+	.map_lookup_elem_sys_only = htab_lru_map_lookup_elem_sys,
- 	.map_update_elem = htab_lru_map_update_elem,
- 	.map_delete_elem = htab_lru_map_delete_elem,
- 	.map_gen_lookup = htab_lru_map_gen_lookup,
-@@ -1237,7 +1250,6 @@ static void *htab_lru_percpu_map_lookup_
++CFLAGS_cmdline.o := $(call cc-option, -fno-stack-protector)
++endif
++
+ inat_tables_script = $(srctree)/arch/x86/tools/gen-insn-attr-x86.awk
+ inat_tables_maps = $(srctree)/arch/x86/lib/x86-opcode-map.txt
+ quiet_cmd_inat_tables = GEN     $@
+diff --git a/lib/Makefile b/lib/Makefile
+index e1b59da714186..d1f312096bec5 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -17,6 +17,17 @@ KCOV_INSTRUMENT_list_debug.o := n
+ KCOV_INSTRUMENT_debugobjects.o := n
+ KCOV_INSTRUMENT_dynamic_debug.o := n
  
- int bpf_percpu_hash_copy(struct bpf_map *map, void *key, void *value)
- {
--	struct bpf_htab *htab = container_of(map, struct bpf_htab, map);
- 	struct htab_elem *l;
- 	void __percpu *pptr;
- 	int ret = -ENOENT;
-@@ -1253,8 +1265,9 @@ int bpf_percpu_hash_copy(struct bpf_map
- 	l = __htab_map_lookup_elem(map, key);
- 	if (!l)
- 		goto out;
--	if (htab_is_lru(htab))
--		bpf_lru_node_set_ref(&l->lru_node);
-+	/* We do not mark LRU map element here in order to not mess up
-+	 * eviction heuristics when user space does a map walk.
-+	 */
- 	pptr = htab_elem_get_ptr(l, map->key_size);
- 	for_each_possible_cpu(cpu) {
- 		bpf_long_memcpy(value + off,
++# Early boot use of cmdline, don't instrument it
++ifdef CONFIG_AMD_MEM_ENCRYPT
++KASAN_SANITIZE_string.o := n
++
++ifdef CONFIG_FUNCTION_TRACER
++CFLAGS_REMOVE_string.o = -pg
++endif
++
++CFLAGS_string.o := $(call cc-option, -fno-stack-protector)
++endif
++
+ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+ 	 rbtree.o radix-tree.o timerqueue.o xarray.o \
+ 	 idr.o int_sqrt.o extable.o \
+-- 
+2.20.1
+
 
 
