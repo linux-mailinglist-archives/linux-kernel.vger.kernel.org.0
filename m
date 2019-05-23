@@ -2,90 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 697E227DC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2FA527DE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:17:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730685AbfEWNMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 09:12:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40108 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729430AbfEWNMb (ORCPT
+        id S1730729AbfEWNRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:17:12 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35047 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbfEWNRM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 09:12:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QvlfoLHm0G7/InzihE6PxMP0/Z/oolwPHati4bZmwQk=; b=wvGRj18ykIjgLomRO2wv+zz2c
-        6FN4MniOthn8MoyoxeRJ587gb7wWgPnLnueeF74OHNrJ/hje8VjT3sxKa6EcouM0RxxZJzqEvmabM
-        AchRocYS+FjBtFfeXPh/wbVWtTD85UB+eYfe1ecuWyHP9DUwL8Ogby4rV6hkzuPnj3kJs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hTnVy-0000AJ-Rd; Thu, 23 May 2019 13:12:10 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 386DD1126D24; Thu, 23 May 2019 14:12:07 +0100 (BST)
-Date:   Thu, 23 May 2019 14:12:07 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Eduardo Valentin <edubezval@gmail.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Cc:     tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
-        mgalka@collabora.com, matthew.hart@linaro.org,
-        khilman@baylibre.com, enric.balletbo@collabora.com,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        Zhang Rui <rui.zhang@intel.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: mainline/master boot bisection: v5.2-rc1-165-g54dee406374c on
- rk3288-veyron-jaq
-Message-ID: <20190523131207.GC17245@sirena.org.uk>
-References: <5ce6040d.1c69fb81.60b3b.29fb@mx.google.com>
+        Thu, 23 May 2019 09:17:12 -0400
+Received: by mail-pl1-f193.google.com with SMTP id p1so2775717plo.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 06:17:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Kopmk5mvy3G2sPVhmNvkGBCegMtkQbUAC1QtXamn6kQ=;
+        b=DEtKgYpPpwGdbF4EcNDd2ZV7eBWZlHpcbgHalwosHws5txIbZNSvv0f0YekrZUq2ww
+         Trs96X2AALKE9VRNe9cveE56HD+zlE+STMyYpqgqldesj6HqzSxiJBPKXU84DP+hP+DZ
+         gPigezIOLn1FQytjs8mgTXUIUk+VOWvGKIP6ST0zGblcuDIpt2YMDvoI7w2+2IPLaCeT
+         IqTR0pCumOBm7YsnP/dEF/L1pwzodGp3czArtm985mxSsP2UE9BhTErDu7mOpiQ+A17N
+         absyxnXzb/nx70hx7QQt53dxnZRCY4vwX11ONClSry7eUIpc0yTF3mkuxQwueqMeNMBS
+         s2jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Kopmk5mvy3G2sPVhmNvkGBCegMtkQbUAC1QtXamn6kQ=;
+        b=QKbTpdVDL14i1R+iiwfJAQLLc1bGloZTh/7VaGVnLVCrKZhHKFwMex4zOqIobMzZOk
+         e8C/NwdMkWVf1woQD7ahVlUteNtvhPmoEIBeA9hfqRyIfHO47mhrDTTe6XMdfQPbOEnr
+         Wj2Z4Jk/ujkChSkc09G6+/OdPKdDq8rVvt1G6GvSrzwKe8fvcNW27cWDJkZHzYljuPjb
+         7kGyY7G+TkdNr2QH8WWEmWHpTYHwSxkIiijPa4q3hgcrGnZgUdH5YanKHHbNRKC21Uxb
+         kExK3iVAZ7Tub35FxPR6/b0367WM0LfymmJLAik6hYNGL+PwiNW88YpzugdKAxNGoSMr
+         4uxw==
+X-Gm-Message-State: APjAAAUkWFYl2eobrL708UqpdI+jAKC6Xc6gJ/Qv4+86VKa+t/J4/Wc9
+        /W7xtNyMNo8EPZetn19U7eQClwW8xv9Y8g==
+X-Google-Smtp-Source: APXvYqxkANieYzEE6DMJG1h286DYQm3u0jAfyirRH8il7DT9Y0MRpbf2blOEcPSth+kWaRJwtHZCvw==
+X-Received: by 2002:a17:902:9689:: with SMTP id n9mr98509857plp.133.1558617431700;
+        Thu, 23 May 2019 06:17:11 -0700 (PDT)
+Received: from dragon (98.142.130.235.16clouds.com. [98.142.130.235])
+        by smtp.gmail.com with ESMTPSA id x66sm20992216pfx.139.2019.05.23.06.17.04
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Thu, 23 May 2019 06:17:10 -0700 (PDT)
+Date:   Thu, 23 May 2019 21:16:08 +0800
+From:   Shawn Guo <shawn.guo@linaro.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "agross@kernel.org" <agross@kernel.org>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "jagan@amarulasolutions.com" <jagan@amarulasolutions.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "dinguyen@kernel.org" <dinguyen@kernel.org>,
+        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable CONFIG_QORIQ_THERMAL
+Message-ID: <20190523131606.GA21933@dragon>
+References: <1558425114-10625-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="JgQwtEuHJzHdouWu"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5ce6040d.1c69fb81.60b3b.29fb@mx.google.com>
-X-Cookie: I brake for chezlogs!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1558425114-10625-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 21, 2019 at 07:57:05AM +0000, Anson Huang wrote:
+> i.MX8MQ needs CONFIG_QORIQ_THERMAL for thermal support.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
---JgQwtEuHJzHdouWu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please send to my kernel.org email address.
 
-On Wed, May 22, 2019 at 07:23:09PM -0700, kernelci.org bot wrote:
+Shawn
 
->   Details:    https://kernelci.org/boot/id/5ce5984c59b514e6a47a364c
->   Plain log:  https://storage.kernelci.org//mainline/master/v5.2-rc1-165-g54dee406374c/arm/multi_v7_defconfig+CONFIG_EFI=y+CONFIG_ARM_LPAE=y/gcc-8/lab-collabora/boot-rk3288-veyron-jaq.txt
->   HTML log:   https://storage.kernelci.org//mainline/master/v5.2-rc1-165-g54dee406374c/arm/multi_v7_defconfig+CONFIG_EFI=y+CONFIG_ARM_LPAE=y/gcc-8/lab-collabora/boot-rk3288-veyron-jaq.html
->   Result:     28694e009e51 thermal: rockchip: fix up the tsadc pinctrl setting error
-
-It looks like this issue has persisted for a while without any kind of
-fix happening - given that the bisection has identified this commit as
-causing the regression and confirmed that reverting it fixes shouldn't
-we just revert?  My guess would be that there's some error with the
-pinctrl settings in the DT for the board.
-
---JgQwtEuHJzHdouWu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzmnCYACgkQJNaLcl1U
-h9DdRQf+JZtHoJEVkzFX602V6UOrnMDu66zIL9WEt8FQA28mY1VFaEe5jdz2Qhow
-EoBDngfyg8tk3oipmTqKRQ6xmCwGyTzYJBJn/OXjCqJHV09ZtJFmlo70EVppBO/c
-rClNwCjcwaQpC1fekhcBbZdx0AmeVNkfSD/CKtEa0ZppBeqxch+u9CEL4QzR9LPC
-TSTRNXixW9s7SdI/RVs9EO0Gskr0w+M1QBPjhyegJHlny7FI9QYPU9RMUrtuIqrH
-zcVRf7D/rzmnS6jHOZCvEQ49PXwcBHv/KnNp6t7ttNz5gr0EIKhaFEICSnTSjMh+
-eFF4fQBLHILKCtKUTkNWZKbi4Qcl6Q==
-=m0Lf
------END PGP SIGNATURE-----
-
---JgQwtEuHJzHdouWu--
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index da85808..61be39b 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -420,6 +420,7 @@ CONFIG_SENSORS_INA2XX=m
+>  CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
+>  CONFIG_CPU_THERMAL=y
+>  CONFIG_THERMAL_EMULATION=y
+> +CONFIG_QORIQ_THERMAL=m
+>  CONFIG_ROCKCHIP_THERMAL=m
+>  CONFIG_RCAR_THERMAL=y
+>  CONFIG_RCAR_GEN3_THERMAL=y
+> -- 
+> 2.7.4
+> 
