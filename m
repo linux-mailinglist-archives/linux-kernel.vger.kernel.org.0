@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28144288F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8E0128869
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391070AbfEWT3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:29:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43024 "EHLO mail.kernel.org"
+        id S2391231AbfEWTZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:25:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387697AbfEWT3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:29:51 -0400
+        id S2390854AbfEWTZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:25:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD1652054F;
-        Thu, 23 May 2019 19:29:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B700206BA;
+        Thu, 23 May 2019 19:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639790;
-        bh=9oY+pI8ykV1BKLM3bhcwgDCHMon/QrsSj3NZSK0i6N4=;
+        s=default; t=1558639554;
+        bh=DkMFBUH8q41ZeGEIbJ9dFUwRW/KljHpVFXL34aCZG2s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YPJE7BSv/J049j+N/K4RCM4wn334hr8dlqtAVtC62RwNCrL/XSuX2+VYvqLnx0AI+
-         doBJKL2WVxvZA2r4nc4GvjQSulx6tVJPb5mWxnXf7f0lmbQCOLuJ3kNoJ0N6v7Gj8l
-         pqs5oR1yXn3BMIm2k5AS8ZN9kcfqPDEdkopHjkUE=
+        b=JkLgVbnWlJe1elnHNqXiHOs6j1EX5VfQGkJyGV1f7rPqo1ktTlp64GNB70UtAulJ3
+         vxT9Gx1CTIs6hULW5EzxapptQ5J1xjhvlmN94Btnx9cXp2MMUJE02+mfupx85CfLl/
+         +egSkUsnNBFC9ToYcZzPOq73GlEw+Bc/FcX5VLSc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yifeng Li <tomli@tomli.me>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 5.1 093/122] fbdev: sm712fb: fix crashes and garbled display during DPMS modesetting
-Date:   Thu, 23 May 2019 21:06:55 +0200
-Message-Id: <20190523181717.424559061@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 128/139] KVM: selftests: make hyperv_cpuid test pass on AMD
+Date:   Thu, 23 May 2019 21:06:56 +0200
+Message-Id: <20190523181735.895664692@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,140 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yifeng Li <tomli@tomli.me>
+[ Upstream commit eba3afde1cea7dbd7881683232f2a85e2ed86bfe ]
 
-commit f627caf55b8e735dcec8fa6538e9668632b55276 upstream.
+Enlightened VMCS is only supported on Intel CPUs but the test shouldn't
+fail completely.
 
-On a Thinkpad s30 (Pentium III / i440MX, Lynx3DM), blanking the display
-or starting the X server will crash and freeze the system, or garble the
-display.
-
-Experiments showed this problem can mostly be solved by adjusting the
-order of register writes. Also, sm712fb failed to consider the difference
-of clock frequency when unblanking the display, and programs the clock for
-SM712 to SM720.
-
-Fix them by adjusting the order of register writes, and adding an
-additional check for SM720 for programming the clock frequency.
-
-Signed-off-by: Yifeng Li <tomli@tomli.me>
-Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Teddy Wang <teddy.wang@siliconmotion.com>
-Cc: <stable@vger.kernel.org>  # v4.4+
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/sm712fb.c |   64 ++++++++++++++++++++++++------------------
- 1 file changed, 38 insertions(+), 26 deletions(-)
+ tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/sm712fb.c
-+++ b/drivers/video/fbdev/sm712fb.c
-@@ -886,67 +886,79 @@ static inline unsigned int chan_to_field
+diff --git a/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c b/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
+index 264425f75806b..9a21e912097c4 100644
+--- a/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
++++ b/tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
+@@ -141,7 +141,13 @@ int main(int argc, char *argv[])
  
- static int smtc_blank(int blank_mode, struct fb_info *info)
- {
-+	struct smtcfb_info *sfb = info->par;
+ 	free(hv_cpuid_entries);
+ 
+-	vcpu_ioctl(vm, VCPU_ID, KVM_ENABLE_CAP, &enable_evmcs_cap);
++	rv = _vcpu_ioctl(vm, VCPU_ID, KVM_ENABLE_CAP, &enable_evmcs_cap);
 +
- 	/* clear DPMS setting */
- 	switch (blank_mode) {
- 	case FB_BLANK_UNBLANK:
- 		/* Screen On: HSync: On, VSync : On */
-+
-+		switch (sfb->chip_id) {
-+		case 0x710:
-+		case 0x712:
-+			smtc_seqw(0x6a, 0x16);
-+			smtc_seqw(0x6b, 0x02);
-+		case 0x720:
-+			smtc_seqw(0x6a, 0x0d);
-+			smtc_seqw(0x6b, 0x02);
-+			break;
-+		}
-+
-+		smtc_seqw(0x23, (smtc_seqr(0x23) & (~0xc0)));
- 		smtc_seqw(0x01, (smtc_seqr(0x01) & (~0x20)));
--		smtc_seqw(0x6a, 0x16);
--		smtc_seqw(0x6b, 0x02);
- 		smtc_seqw(0x21, (smtc_seqr(0x21) & 0x77));
- 		smtc_seqw(0x22, (smtc_seqr(0x22) & (~0x30)));
--		smtc_seqw(0x23, (smtc_seqr(0x23) & (~0xc0)));
--		smtc_seqw(0x24, (smtc_seqr(0x24) | 0x01));
- 		smtc_seqw(0x31, (smtc_seqr(0x31) | 0x03));
-+		smtc_seqw(0x24, (smtc_seqr(0x24) | 0x01));
- 		break;
- 	case FB_BLANK_NORMAL:
- 		/* Screen Off: HSync: On, VSync : On   Soft blank */
-+		smtc_seqw(0x24, (smtc_seqr(0x24) | 0x01));
-+		smtc_seqw(0x31, ((smtc_seqr(0x31) & (~0x07)) | 0x00));
-+		smtc_seqw(0x23, (smtc_seqr(0x23) & (~0xc0)));
- 		smtc_seqw(0x01, (smtc_seqr(0x01) & (~0x20)));
-+		smtc_seqw(0x22, (smtc_seqr(0x22) & (~0x30)));
- 		smtc_seqw(0x6a, 0x16);
- 		smtc_seqw(0x6b, 0x02);
--		smtc_seqw(0x22, (smtc_seqr(0x22) & (~0x30)));
--		smtc_seqw(0x23, (smtc_seqr(0x23) & (~0xc0)));
--		smtc_seqw(0x24, (smtc_seqr(0x24) | 0x01));
--		smtc_seqw(0x31, ((smtc_seqr(0x31) & (~0x07)) | 0x00));
- 		break;
- 	case FB_BLANK_VSYNC_SUSPEND:
- 		/* Screen On: HSync: On, VSync : Off */
-+		smtc_seqw(0x24, (smtc_seqr(0x24) & (~0x01)));
-+		smtc_seqw(0x31, ((smtc_seqr(0x31) & (~0x07)) | 0x00));
-+		smtc_seqw(0x23, ((smtc_seqr(0x23) & (~0xc0)) | 0x20));
- 		smtc_seqw(0x01, (smtc_seqr(0x01) | 0x20));
--		smtc_seqw(0x20, (smtc_seqr(0x20) & (~0xB0)));
--		smtc_seqw(0x6a, 0x0c);
--		smtc_seqw(0x6b, 0x02);
- 		smtc_seqw(0x21, (smtc_seqr(0x21) | 0x88));
-+		smtc_seqw(0x20, (smtc_seqr(0x20) & (~0xB0)));
- 		smtc_seqw(0x22, ((smtc_seqr(0x22) & (~0x30)) | 0x20));
--		smtc_seqw(0x23, ((smtc_seqr(0x23) & (~0xc0)) | 0x20));
--		smtc_seqw(0x24, (smtc_seqr(0x24) & (~0x01)));
--		smtc_seqw(0x31, ((smtc_seqr(0x31) & (~0x07)) | 0x00));
- 		smtc_seqw(0x34, (smtc_seqr(0x34) | 0x80));
-+		smtc_seqw(0x6a, 0x0c);
-+		smtc_seqw(0x6b, 0x02);
- 		break;
- 	case FB_BLANK_HSYNC_SUSPEND:
- 		/* Screen On: HSync: Off, VSync : On */
-+		smtc_seqw(0x24, (smtc_seqr(0x24) & (~0x01)));
-+		smtc_seqw(0x31, ((smtc_seqr(0x31) & (~0x07)) | 0x00));
-+		smtc_seqw(0x23, ((smtc_seqr(0x23) & (~0xc0)) | 0xD8));
- 		smtc_seqw(0x01, (smtc_seqr(0x01) | 0x20));
--		smtc_seqw(0x20, (smtc_seqr(0x20) & (~0xB0)));
--		smtc_seqw(0x6a, 0x0c);
--		smtc_seqw(0x6b, 0x02);
- 		smtc_seqw(0x21, (smtc_seqr(0x21) | 0x88));
-+		smtc_seqw(0x20, (smtc_seqr(0x20) & (~0xB0)));
- 		smtc_seqw(0x22, ((smtc_seqr(0x22) & (~0x30)) | 0x10));
--		smtc_seqw(0x23, ((smtc_seqr(0x23) & (~0xc0)) | 0xD8));
--		smtc_seqw(0x24, (smtc_seqr(0x24) & (~0x01)));
--		smtc_seqw(0x31, ((smtc_seqr(0x31) & (~0x07)) | 0x00));
- 		smtc_seqw(0x34, (smtc_seqr(0x34) | 0x80));
-+		smtc_seqw(0x6a, 0x0c);
-+		smtc_seqw(0x6b, 0x02);
- 		break;
- 	case FB_BLANK_POWERDOWN:
- 		/* Screen On: HSync: Off, VSync : Off */
-+		smtc_seqw(0x24, (smtc_seqr(0x24) & (~0x01)));
-+		smtc_seqw(0x31, ((smtc_seqr(0x31) & (~0x07)) | 0x00));
-+		smtc_seqw(0x23, ((smtc_seqr(0x23) & (~0xc0)) | 0xD8));
- 		smtc_seqw(0x01, (smtc_seqr(0x01) | 0x20));
--		smtc_seqw(0x20, (smtc_seqr(0x20) & (~0xB0)));
--		smtc_seqw(0x6a, 0x0c);
--		smtc_seqw(0x6b, 0x02);
- 		smtc_seqw(0x21, (smtc_seqr(0x21) | 0x88));
-+		smtc_seqw(0x20, (smtc_seqr(0x20) & (~0xB0)));
- 		smtc_seqw(0x22, ((smtc_seqr(0x22) & (~0x30)) | 0x30));
--		smtc_seqw(0x23, ((smtc_seqr(0x23) & (~0xc0)) | 0xD8));
--		smtc_seqw(0x24, (smtc_seqr(0x24) & (~0x01)));
--		smtc_seqw(0x31, ((smtc_seqr(0x31) & (~0x07)) | 0x00));
- 		smtc_seqw(0x34, (smtc_seqr(0x34) | 0x80));
-+		smtc_seqw(0x6a, 0x0c);
-+		smtc_seqw(0x6b, 0x02);
- 		break;
- 	default:
- 		return -EINVAL;
++	if (rv) {
++		fprintf(stderr,
++			"Enlightened VMCS is unsupported, skip related test\n");
++		goto vm_free;
++	}
+ 
+ 	hv_cpuid_entries = kvm_get_supported_hv_cpuid(vm);
+ 	if (!hv_cpuid_entries)
+@@ -151,6 +157,7 @@ int main(int argc, char *argv[])
+ 
+ 	free(hv_cpuid_entries);
+ 
++vm_free:
+ 	kvm_vm_free(vm);
+ 
+ 	return 0;
+-- 
+2.20.1
+
 
 
