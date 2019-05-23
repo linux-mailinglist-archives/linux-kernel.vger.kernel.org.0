@@ -2,74 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ACB4282C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 18:19:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADFE727DF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:22:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731674AbfEWQTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 12:19:32 -0400
-Received: from toryburch.com ([198.23.132.45]:53479 "EHLO timesharemyths.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731254AbfEWQTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 12:19:32 -0400
-To:     linux-kernel@vger.kernel.org
-Subject: Logo printing on the USB drives
-Message-ID: <3e5be09d88b518c98eb49ca5d3f95044@lucastirepros.com>
-Date:   Thu, 23 May 2019 15:20:26 +0200
-From:   "Stacy" <ryan@tanschmidit.tech>
-Reply-To: lucas@tanschmidit.tech
+        id S1730613AbfEWNWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:22:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41816 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726310AbfEWNWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 09:22:30 -0400
+Received: from [192.168.0.101] (unknown [58.212.135.189])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83B5820862;
+        Thu, 23 May 2019 13:22:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558617749;
+        bh=fafG5urEIcaBd2TyvSTWRmea9cT2jasXKlmsCh3VSws=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=SMVTE6A4oqESJX9PxuakmNe2snGrj3s+XpCTQWn5c4j/5ndOSXvTvjclhmnXiMdRg
+         i7P8i4DcErB+Ep49l+Zy0XBcDodiMg48o1HXSRPGQYeWxbLrYgHyHSuAYnDzPbT89d
+         QiQr2ud0LT7Zp5Y/NRon8ijRwPYlySFjK64Rp5VU=
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add missing sysfs entries in
+ documentation
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <20190521180606.10461-1-jaegeuk@kernel.org>
+ <20190522175035.GB81051@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <14672901-54a2-120f-a2ce-52f7d6fb3008@kernel.org>
+Date:   Thu, 23 May 2019 21:22:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190522175035.GB81051@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2019-5-23 1:50, Jaegeuk Kim wrote:
+> This patch cleans up documentation to cover missing sysfs entries.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-I am following up on my previous attempt to contact you.
-We wanted to check to see if you need any LOGO promotional products for
-your business?
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Our company manufactures USB Flash Drives that are custom printed with your
-logo.
-They make the perfect marketing tool for your business or organization.
+> + reserved_blocks	      This parameter indicates the number of blocks that
+> +			      f2fs reserves internally for root.
+> +
 
-Looking for other items with your logo?   We can supply anything with your
-logo…
+I mean we can move below entry here.
 
-Most Popular Items right now:
-- T-shirts, Hoodies
-- Table Covers printed with your brand
-- Pens
-- Water Bottles
-- Banners…
-- You name it we can make it and print on it for you!
+current_reserved_blocks	      This shows # of blocks currently reserved.
 
-Our USB Pricing is at an ALL TIME LOW.
-We offer low minimum quantities and all memory sizes.
+> + reserved_blocks	      This shows # of blocks currently reserved.
 
-Over 150 Stock Models as well as 100 % custom shaped USB drives in the
-shape of your Logo or
-product or just about anything else you can imagine!
-Ask about our End of the Year Promotions!
-
-We can pre-load your media files, images, presentations and files onto the
-drives for you.
-These are ideal handouts for trade shows, branding, corporate gifts and
-employees.
-
-* Please reply back and let me know what quantity and memory size you need
-for a Fast Quote!
-
-Are you a school or nonprofit?  Please let us know for even further
-discounts.
-
-Let us send you a quote!   We will EARN your business!
-
-Regards,
-
-Stacy Williams
-Custom Logo Products
-Whatsapp: +8617199402387
-
+Thanks,
