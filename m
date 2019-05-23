@@ -2,104 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B24A92895C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C1CE28980
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391887AbfEWTfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:35:11 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41009 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387758AbfEWTfJ (ORCPT
+        id S2391381AbfEWTik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:38:40 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52901 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390653AbfEWTii (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:35:09 -0400
-Received: by mail-wr1-f68.google.com with SMTP id u16so3637109wrn.8
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:35:08 -0700 (PDT)
+        Thu, 23 May 2019 15:38:38 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y3so7046269wmm.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LCWIRjkelIsQTcka41nOL2PfrXSiWnEkqhx7SOe+Cs8=;
-        b=Tssa4wzmF60NI8v4tq2Nj7Cvxd/g2lxfLZ8wL/ksNOUR1HbDmTgJHgGW8Ps46oe7pp
-         Abb3+b38WpXcJdKRWry6DBkwceX0sH2h0E3i75WsGTCpR9eNjqUqqPDzYFw0cSpnw6fr
-         /898fTyD6dT53EhE2bVxrcH0VA+/4IhSjKfrGVsEjOfSZbifBGandHI/ZQCkfnA7p7ww
-         l/E7jO7ns5jMClXqhHHceeabWoPCQ8fAdkK7Sf2kQF+bOvkQAoNoHV+FG9gF9RYGQshm
-         mV1f+mIgXg9YOEKbCTP7O1uBRcQNBjRDT+JYCeX27835vtxIXSpz68H7yHY/DXQaaUys
-         aYMw==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=usHFsL/Ku0+Qt69lCmqe22nPRQ+KCZhK+aj6hDp84KA=;
+        b=dEsVb+717tCpXM8S8/JVSdaPBKgC83leuc1FOaorAZjd+ULMl6eVEbEy2UPyYsCWUS
+         mZh7R6nEIeJNMWh3SVxRpUQG4GqALYcrNmdzk5ytH9Li/qOOm8nlLHyKs+qYkU8r3392
+         ma2KBLIJutn+5Gmum7VdZSYnYE52esHH2dxBAJ6hW2VRC353R0zjMxfFV2327qj+KdU2
+         aPHX7J9eB+KtvkI8MM0Yt59wOkgZLOcMrbe/pc+3hbJG90+avzfCAoAGezfgnU4D95OC
+         +a8BEz2AA0Qyc5zDGQL/+pI/U3Zt2lgbkKZrEq7qNvP5Apux5z8CxI/YRrJgv6UnrheQ
+         +0ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LCWIRjkelIsQTcka41nOL2PfrXSiWnEkqhx7SOe+Cs8=;
-        b=ewsyK62+uDToYTYWDM+fwhfpsD21DePbdTXgLGUtTWkZkme5GIydXQOqDTwtpEZo0P
-         1qdksJFfnblHwnRlw/RNbyJ43RVlvH4l6RCeo4fcLMqAQk3pZMbTQEjlwAYK9LkMDeh8
-         Cjzw/02+6a2qoZGGbj2kmbKMn1DPUjquZ6YV8ms6SHcP0rHhAMbsyuMUAHCwAip5h9Av
-         sVEmjaSXJ71wg8LZNNqCILt9dw/yAL2vhFI8HUOOTyDaD/3rOGbXewy8WCMDmjORy/d3
-         Im5z+pVbpwq/wRT4bNwlUnyJGyPB72aj2mFauY/Cmyo5p1h7gj3GPpRtYGNhnymGjAUO
-         rPXA==
-X-Gm-Message-State: APjAAAV2LFsTA2PcMspG+WQRIUSapUL4TE+z8005msPzGROklJn1ULxC
-        f4x33/7uxpSACjBzfK1smVWIdhY=
-X-Google-Smtp-Source: APXvYqySB9x4R1K6ByuXf9O/I9uSMXwuEj2Qdszk5SkUHXZE1V2kM7FQ0W7bFjNvqg3gxtEBR0oyOw==
-X-Received: by 2002:adf:db87:: with SMTP id u7mr11184427wri.245.1558640108191;
-        Thu, 23 May 2019 12:35:08 -0700 (PDT)
-Received: from avx2 ([46.53.252.55])
-        by smtp.gmail.com with ESMTPSA id l6sm290312wmi.24.2019.05.23.12.35.07
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=usHFsL/Ku0+Qt69lCmqe22nPRQ+KCZhK+aj6hDp84KA=;
+        b=OflHMISr5Y13ktDIFQ04MWuWky51GZcnnk7bWU2plAox7X0Xfvv4kxLAaXYTcAPyTv
+         djcvfztwfYOWyyqHP1qVOAqqS/hpo0zKPoNwp1tVb0zs3xW5c+8izO2XESr0cI6uzVPC
+         8/Z1pWn+M6gj1tTCyxpowtRnbbFFAkVmnVT/CZ7EXMY4bIt8HO0ZuU3HDRCAIHoDUK/9
+         w3PfEJThYIo1oVp+0Rc4qZKEvjdTqvKSSx5bFWQODFcm1ttJxq1qE42oa9gvGEr8J1ou
+         obLqknWGRfN/6WSJk5Tt2bAcj/8sHbuNaBCNimeANC4cRMWtRcrzXv/bPDP5Rcm25O5Y
+         mcFw==
+X-Gm-Message-State: APjAAAUYtGg5gq1JLfURQDMC+ZY6YT0TZi+3YoPOSLoYnzIAFWXDqYXP
+        1brio54Ekwu4QPoNZFtrEQj3Wg==
+X-Google-Smtp-Source: APXvYqw6ha7d5sNzeDFQr/ijdtNE/bEpoeVCKgQGVyf/DObuR09g3pB8MvOSpCNmuBgVeq+biOQ4CA==
+X-Received: by 2002:a1c:20d7:: with SMTP id g206mr12847712wmg.136.1558640315678;
+        Thu, 23 May 2019 12:38:35 -0700 (PDT)
+Received: from [192.168.43.165] ([37.170.182.188])
+        by smtp.googlemail.com with ESMTPSA id o6sm365890wrh.55.2019.05.23.12.38.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 12:35:07 -0700 (PDT)
-Date:   Thu, 23 May 2019 22:35:05 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] elf: fix "start_code" evaluation
-Message-ID: <20190523193505.GA8475@avx2>
-References: <20190523175736.GA6222@avx2>
- <20190523114417.f99d781754ed22950115c64a@linux-foundation.org>
+        Thu, 23 May 2019 12:38:35 -0700 (PDT)
+Subject: Re: [PATCH] clocksource/drivers/ixp4xx: Implement delay timer
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20190523181602.3284-1-linus.walleij@linaro.org>
+ <3496e81f-ea63-794d-0d8a-8eba9f2f6853@linaro.org>
+ <CACRpkdZ5LCeqkvJrN-TAcSy7knNOQhGV7M_wfZZ4Rz5ah87KnA@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <08ab3a6e-5167-02e8-9d46-0186b92c8a71@linaro.org>
+Date:   Thu, 23 May 2019 21:38:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <CACRpkdZ5LCeqkvJrN-TAcSy7knNOQhGV7M_wfZZ4Rz5ah87KnA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190523114417.f99d781754ed22950115c64a@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 11:44:17AM -0700, Andrew Morton wrote:
-> On Thu, 23 May 2019 20:57:36 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+On 23/05/2019 21:34, Linus Walleij wrote:
+> On Thu, May 23, 2019 at 9:21 PM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>> On 23/05/2019 20:16, Linus Walleij wrote:
 > 
-> > Only executable ELF program headers should change ->start_code.
-> > 
-> > ...
-> >
-> > --- a/fs/binfmt_elf.c
-> > +++ b/fs/binfmt_elf.c
-> > @@ -1026,7 +1026,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
-> >  			}
-> >  		}
-> >  		k = elf_ppnt->p_vaddr;
-> > -		if (k < start_code)
-> > +		if ((elf_ppnt->p_flags & PF_X) && k < start_code)
-> >  			start_code = k;
-> >  		if (start_data < k)
-> >  			start_data = k;
+>>> This adds delay timer functionality to the IXP4xx
+>>> timer driver.
+>>>
+>>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> The patch does not apply on tip/timers/core
 > 
-> What problem does this solve?
+> This seems to be because tip/timers/core is not yet containing
+> the commits from v5.2-rc1.
+> 
+> Maybe I just send my patches too early after the merge window :)
 
-It is a bug. Look at the ->end_code update:
+Ok, I see thanks!
 
-	if ((elf_ppnt->p_flags & PF_X) && end_code < k)
-		end_code = k;
 
-> How does it alter runtime behaviour?
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-It makes "VmExe" and "VmLib" accounting more accurate for common case.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-> How do we know it won't break anything?
-
-We don't. Some distros are unaffected because they ship binaries with
-first PT_LOAD segment being executable (Debian 8). Some don't.
-
-Regardless, these fields are lies: ELF binary can have multiple disjoint
-PT_LOAD segments, but all those ->start and ->end fields assume everything
-is mapped together.
-
-Hopefully nobody actually uses them for anything serious.
