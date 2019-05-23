@@ -2,112 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CAE1283E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 18:36:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE9D6283F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 18:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731423AbfEWQgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 12:36:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56428 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730752AbfEWQgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 12:36:21 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1484A308624A;
-        Thu, 23 May 2019 16:36:11 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 0D76C60C9E;
-        Thu, 23 May 2019 16:36:07 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 23 May 2019 18:36:08 +0200 (CEST)
-Date:   Thu, 23 May 2019 18:36:04 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] signal: Adjust error codes according to
- restore_user_sigmask()
-Message-ID: <20190523163604.GE23070@redhat.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190522150505.GA4915@redhat.com>
- <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
- <20190522161407.GB4915@redhat.com>
- <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
- <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
- <20190523145944.GB23070@redhat.com>
- <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
+        id S1731420AbfEWQic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 12:38:32 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:46313 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731281AbfEWQib (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 12:38:31 -0400
+Received: by mail-ua1-f66.google.com with SMTP id a95so2398220uaa.13
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 09:38:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r0rDpYcpEU2DlpfJPWclkw5oXzfo0RvY7oAeAA+3T90=;
+        b=f7DFyXKTBWt5U7XgFYEc6tpBvygZbJf11fOqOQXgOXkwOVzXyJkqrEFj1jL04GFqyF
+         KaPeTgWPv1xcwPktqe+PKBE5ipEuuUyahM+6zRAjX7mwCrDn8SQiMqpgRr8v4QSo8uBt
+         mai/Br9ocyY4z1h4P4lZ9JoH9BK9pnb/uS9X8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r0rDpYcpEU2DlpfJPWclkw5oXzfo0RvY7oAeAA+3T90=;
+        b=DW/iAnxn8I8kPt2KCBOZMwuLO5O3p8Kdw9wpYUdKLmk6O9bErhTIjz2Grq+MGEvP4u
+         MlngadFaMv2nGQ6wAJ6HzyGXenU34ycxAhsyuaShvGHBoLuo2bu3MdCnk7mt/S2Bn7Ck
+         I6dmV9xYRgGVw6d9kYlJQh40Da9S3R8eYxOLQD/3bZGBJhUG2UZjQj00q1NvXiSD6BVi
+         dPDyOmEUpjPByo4Yxqg92gSEsdcdijq1SrBGXwck3kml/83SLU5XSGCeG26xL6vdX8fw
+         6bHkMl2+/qhghUucdEtdwrFx115REkh4BuBRoq1m7p2HUHSqpijx5Er7Ru3IjCbb+kdJ
+         shkg==
+X-Gm-Message-State: APjAAAVzqHboTTCwpWirh5qty3/si/LSIIE6nVJk1Kvzoy4jDKciFqXG
+        m0weoOK27JOJieV/PSZ+cR/3N3Yw5Yg=
+X-Google-Smtp-Source: APXvYqwwv2GeXYd2l4kWC+IbjJkN/SM5JR+83UAD/cPNsfmK6f8VN34PEmpZZ94xsMDK4XzlTTBiWA==
+X-Received: by 2002:a9f:22e8:: with SMTP id 95mr41344595uan.6.1558629509570;
+        Thu, 23 May 2019 09:38:29 -0700 (PDT)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id w9sm6046890vkh.53.2019.05.23.09.38.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 09:38:28 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id l20so3990844vsp.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 09:38:25 -0700 (PDT)
+X-Received: by 2002:a67:1cc2:: with SMTP id c185mr23275103vsc.20.1558629505309;
+ Thu, 23 May 2019 09:38:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 23 May 2019 16:36:21 +0000 (UTC)
+References: <20190501043734.26706-1-bjorn.andersson@linaro.org> <20190501043734.26706-3-bjorn.andersson@linaro.org>
+In-Reply-To: <20190501043734.26706-3-bjorn.andersson@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 23 May 2019 09:38:13 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VVxKSp6e=j8YM8JBrhsF+T=0=8xDjd_817hphOMWHVFA@mail.gmail.com>
+Message-ID: <CAD=FV=VVxKSp6e=j8YM8JBrhsF+T=0=8xDjd_817hphOMWHVFA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/4] soc: qcom: Add AOSS QMP driver
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23, David Laight wrote:
+Hi,
+
+On Tue, Apr 30, 2019 at 9:38 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
 >
-> From: Oleg Nesterov
-> > On 05/23, David Laight wrote:
-> > >
-> > > I'm confused...
-> >
-> > Me too. To clarify, the current code is obviously buggy, pselect/whatever
-> > shouldn't return 0 (or anything else) if it was interrupted and we are going
-> > to deliver the signal.
->
-> If it was interrupted the return value has to be EINTR.
+> +static int qmp_qdss_clk_prepare(struct clk_hw *hw)
+> +{
+> +       struct qmp *qmp = container_of(hw, struct qmp, qdss_clk);
+> +       char buf[QMP_MSG_LEN] = "{class: clock, res: qdss, val: 1}";
 
-Yes, and this is what we need to fix.
+nit: "static const" the buf?  No need to copy it to the stack each
+time.  In qmp_qdss_clk_unprepare() too.
 
-> Whether any signal handlers are called is a separate matter.
+...your string is also now fixed at 34 bytes big (including the '\0').
+Do we still need to send exactly 96 bytes, or can we dumb this down to
+36?  We'll get a compile error if we overflow, right?  If this truly
+needs to be exactly 96 bytes maybe qmp_send()'s error checks should
+check for things being exactly 96 bytes instead of checking for > and
+% 4.
 
-Not really... because in this case we know that the signal will be delivered,
 
-> > Not sure I understand... OK, suppose that you do
-> >
-> > 	block-all-signals;
-> > 	ret = pselect(..., sigmask(SIG_URG));
-> >
-> > if it returns success/timeout then the handler for SIG_URG should not be called?
->
-> Ugg...
-> Posix probably allows the signal handler be called at the point the event
-> happens rather than being deferred until the system call completes.
-> Queueing up the signal handler to be run at a later time (syscall exit)
-> certainly makes sense.
-> Definitely safest to call the signal handler even if success/timeout
-> is returned.
+> +static int qmp_qdss_clk_add(struct qmp *qmp)
+> +{
+> +       struct clk_init_data qdss_init = {
+> +               .ops = &qmp_qdss_clk_ops,
+> +               .name = "qdss",
+> +       };
 
-Why?
+Can't qdss_init be "static const"?  That had the advantage of not
+needing to construct it on the stack and also of it having a longer
+lifetime.  It looks like clk_register() stores the "hw" pointer in its
+structure and the "hw" structure will have a pointer here.  While I
+can believe that it never looks at it again, it's nice if that pointer
+doesn't point somewhere on an old stack.
 
-> pselect() exists to stop the entry race, not the exit one.
+I suppose we could go the other way and try to mark more stuff in this
+module as __init and __initdata, but even then at least the pointer
+won't be onto a stack.  ;-)
 
-pselect() has to block SIG_URG again before it returns to user-mode, right?
 
-Suppose pselect() finds a ready fd, and this races with SIG_URG.
+> +       int ret;
+> +
+> +       qmp->qdss_clk.init = &qdss_init;
+> +       ret = clk_hw_register(qmp->dev, &qmp->qdss_clk);
+> +       if (ret < 0) {
+> +               dev_err(qmp->dev, "failed to register qdss clock\n");
+> +               return ret;
+> +       }
+> +
+> +       return of_clk_add_hw_provider(qmp->dev->of_node, of_clk_hw_simple_get,
+> +                                     &qmp->qdss_clk);
 
-Why do you think the handler should run?
+devm_clk_hw_register() and devm_of_clk_add_hw_provider()?  If you're
+worried about ordering you could always throw in
+devm_add_action_or_reset() to handle the qmp_pd_remove(), qmp_close()
+and mbox_free_channel().
 
-What if SIG_URG comes right after pselect() blocks SIG_URG again? I mean,
-how this differs the case when it comes before, but a ready fd was already
-found?
+...with that you could fully get rid of qmp_remove() and also your
+setting of drvdata.
 
-Oleg.
 
+> +static void qmp_pd_remove(struct qmp *qmp)
+> +{
+> +       struct genpd_onecell_data *data = &qmp->pd_data;
+> +       struct device *dev = qmp->dev;
+> +       int i;
+> +
+> +       of_genpd_del_provider(dev->of_node);
+> +
+> +       for (i = 0; i < data->num_domains; i++)
+> +               pm_genpd_remove(data->domains[i]);
+
+Still feels like the above loop would be better as:
+  for (i = data->num_domains - 1; i >= 0; i--)
+
+
+(BTW: any way you could add me to the CC list for future patches so I
+notice them earlier?)
+
+-Doug
