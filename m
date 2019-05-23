@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F0F2286DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E17B828A2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:57:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388630AbfEWTNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:13:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47584 "EHLO mail.kernel.org"
+        id S2387709AbfEWTKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:10:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388135AbfEWTNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:13:35 -0400
+        id S2387650AbfEWTKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:10:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 687C720863;
-        Thu, 23 May 2019 19:13:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E0F5217F9;
+        Thu, 23 May 2019 19:10:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638814;
-        bh=lD4/6hQEBd8Jge6vEJoPNGZPleezE7ZlAsciEFCdsUE=;
+        s=default; t=1558638608;
+        bh=FZI5N1ooc/Jf6QBaLIZLSXt2/oMJG9xwKnO+Glubvng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WIq1p1G8eRndRdkSJ3HXKQ8Di80PmWyPHL0XybY3ZM/JvnAd+yQ6f6iddGzyCc1YO
-         Q6yKDYNtVXgAA/Dab7BgMSjdz6gGFA2t9CUTaDt3PrMqyjOEO5pv5L3cT57aYXYbDV
-         8TB6L0GqFrXCWvWo2az+NJlOeQ82aIfBOOdtTk8s=
+        b=QwhrRzsN6bkvLbUGIfM/wKPau60htNMJhAnKd/f0UEnF60c1piBhC4JGB3O9P1o/R
+         w5J2seONfEYLTCRrAIggd8uQzgD8Fd5hBNH0dbhzGouDIXFhrY4ewV3c/d5cEuGtmg
+         7KSdFxmaeFFcI/+FThv6NYU3b5iQDOjnhPH38nOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Sowden <jeremy@azazel.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 58/77] vti4: ipip tunnel deregistration fixes.
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        Nigel Croxon <ncroxon@redhat.com>,
+        Song Liu <songliubraving@fb.com>
+Subject: [PATCH 4.9 52/53] md/raid: raid5 preserve the writeback action after the parity check
 Date:   Thu, 23 May 2019 21:06:16 +0200
-Message-Id: <20190523181727.976880575@linuxfoundation.org>
+Message-Id: <20190523181719.226466348@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
+References: <20190523181710.981455400@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5483844c3fc18474de29f5d6733003526e0a9f78 ]
+From: Nigel Croxon <ncroxon@redhat.com>
 
-If tunnel registration failed during module initialization, the module
-would fail to deregister the IPPROTO_COMP protocol and would attempt to
-deregister the tunnel.
+commit b2176a1dfb518d870ee073445d27055fea64dfb8 upstream.
 
-The tunnel was not deregistered during module-exit.
+The problem is that any 'uptodate' vs 'disks' check is not precise
+in this path. Put a "WARN_ON(!test_bit(R5_UPTODATE, &dev->flags)" on the
+device that might try to kick off writes and then skip the action.
+Better to prevent the raid driver from taking unexpected action *and* keep
+the system alive vs killing the machine with BUG_ON.
 
-Fixes: dd9ee3444014e ("vti4: Fix a ipip packet processing bug in 'IPCOMP' virtual tunnel")
-Signed-off-by: Jeremy Sowden <jeremy@azazel.net>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Note: fixed warning reported by kbuild test robot <lkp@intel.com>
+
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Nigel Croxon <ncroxon@redhat.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/ipv4/ip_vti.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/md/raid5.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/net/ipv4/ip_vti.c b/net/ipv4/ip_vti.c
-index 306603a7f3514..c07065b7e3b0e 100644
---- a/net/ipv4/ip_vti.c
-+++ b/net/ipv4/ip_vti.c
-@@ -663,9 +663,9 @@ static int __init vti_init(void)
- 	return err;
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -3878,7 +3878,7 @@ static void handle_parity_checks6(struct
+ 		/* now write out any block on a failed drive,
+ 		 * or P or Q if they were recomputed
+ 		 */
+-		BUG_ON(s->uptodate < disks - 1); /* We don't need Q to recover */
++		dev = NULL;
+ 		if (s->failed == 2) {
+ 			dev = &sh->dev[s->failed_num[1]];
+ 			s->locked++;
+@@ -3903,6 +3903,14 @@ static void handle_parity_checks6(struct
+ 			set_bit(R5_LOCKED, &dev->flags);
+ 			set_bit(R5_Wantwrite, &dev->flags);
+ 		}
++		if (WARN_ONCE(dev && !test_bit(R5_UPTODATE, &dev->flags),
++			      "%s: disk%td not up to date\n",
++			      mdname(conf->mddev),
++			      dev - (struct r5dev *) &sh->dev)) {
++			clear_bit(R5_LOCKED, &dev->flags);
++			clear_bit(R5_Wantwrite, &dev->flags);
++			s->locked--;
++		}
+ 		clear_bit(STRIPE_DEGRADED, &sh->state);
  
- rtnl_link_failed:
--	xfrm4_protocol_deregister(&vti_ipcomp4_protocol, IPPROTO_COMP);
--xfrm_tunnel_failed:
- 	xfrm4_tunnel_deregister(&ipip_handler, AF_INET);
-+xfrm_tunnel_failed:
-+	xfrm4_protocol_deregister(&vti_ipcomp4_protocol, IPPROTO_COMP);
- xfrm_proto_comp_failed:
- 	xfrm4_protocol_deregister(&vti_ah4_protocol, IPPROTO_AH);
- xfrm_proto_ah_failed:
-@@ -680,6 +680,7 @@ pernet_dev_failed:
- static void __exit vti_fini(void)
- {
- 	rtnl_link_unregister(&vti_link_ops);
-+	xfrm4_tunnel_deregister(&ipip_handler, AF_INET);
- 	xfrm4_protocol_deregister(&vti_ipcomp4_protocol, IPPROTO_COMP);
- 	xfrm4_protocol_deregister(&vti_ah4_protocol, IPPROTO_AH);
- 	xfrm4_protocol_deregister(&vti_esp4_protocol, IPPROTO_ESP);
--- 
-2.20.1
-
+ 		set_bit(STRIPE_INSYNC, &sh->state);
 
 
