@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D653D2867B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B93828A50
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387632AbfEWTJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:09:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43174 "EHLO mail.kernel.org"
+        id S2387531AbfEWTMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:12:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387604AbfEWTJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:09:55 -0400
+        id S2387571AbfEWTMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:12:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61D882186A;
-        Thu, 23 May 2019 19:09:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5E62217D7;
+        Thu, 23 May 2019 19:12:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638594;
-        bh=8G87I6+bRkUxbApeia6mB4Dt8Rsuu8aFBBZL7mVii/4=;
+        s=default; t=1558638732;
+        bh=Wpgw0TDUGZYsGHzCIymzJWbj9GHxVRPuswZba+0s04s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nUYHrRt0T6EspPAFvOTLG5+cznB75WNR+3fQRIFCaoLrB8w/43x6gY4lvUPEX3PRV
-         0Hph0pNfakKcj0hdm7SFagT4Wu2C8opBFAQO+92R00M7ziYpdRdJapBtnmoohAsKVI
-         kek9xwhwGZ30fGSV2J4HnDYVYKs3j43pOFaevDts=
+        b=cZg4LqKic+UsNQOa83Cx/kDP79PN7UR+xj4ZaWEknjwAlsF3FsawVw5ZZTp8mx4Je
+         9+BZpQTsEdUgxChaX+ErQjFp+kKhA9SZbDEAlCMnP34yHPWTC7D8PlHHCnGvRypjDT
+         yS3TmWTBUAzEJEvaHe2M+ZLPrCQHoI9+l3fLO/FQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yifeng Li <tomli@tomli.me>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.9 30/53] fbdev: sm712fb: fix brightness control on reboot, dont set SR30
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH 4.14 36/77] memory: tegra: Fix integer overflow on tick value calculation
 Date:   Thu, 23 May 2019 21:05:54 +0200
-Message-Id: <20190523181715.578592764@linuxfoundation.org>
+Message-Id: <20190523181725.198933109@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
-References: <20190523181710.981455400@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yifeng Li <tomli@tomli.me>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-commit 5481115e25e42b9215f2619452aa99c95f08492f upstream.
+commit b906c056b6023c390f18347169071193fda57dde upstream.
 
-On a Thinkpad s30 (Pentium III / i440MX, Lynx3DM), rebooting with
-sm712fb framebuffer driver would cause the role of brightness up/down
-button to swap.
+Multiplying the Memory Controller clock rate by the tick count results
+in an integer overflow and in result the truncated tick value is being
+programmed into hardware, such that the GR3D memory client performance is
+reduced by two times.
 
-Experiments showed the FPR30 register caused this behavior. Moreover,
-even if this register don't have side-effect on other systems, over-
-writing it is also highly questionable, since it was originally
-configurated by the motherboard manufacturer by hardwiring pull-down
-resistors to indicate the type of LCD panel. We should not mess with
-it.
-
-Stop writing to the SR30 (a.k.a FPR30) register.
-
-Signed-off-by: Yifeng Li <tomli@tomli.me>
-Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Teddy Wang <teddy.wang@siliconmotion.com>
-Cc: <stable@vger.kernel.org>  # v4.4+
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/sm712fb.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/memory/tegra/mc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/video/fbdev/sm712fb.c
-+++ b/drivers/video/fbdev/sm712fb.c
-@@ -1144,8 +1144,8 @@ static void sm7xx_set_timing(struct smtc
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -72,7 +72,7 @@ static int tegra_mc_setup_latency_allowa
+ 	u32 value;
  
- 		/* init SEQ register SR30 - SR75 */
- 		for (i = 0; i < SIZE_SR30_SR75; i++)
--			if ((i + 0x30) != 0x62 && (i + 0x30) != 0x6a &&
--			    (i + 0x30) != 0x6b)
-+			if ((i + 0x30) != 0x30 && (i + 0x30) != 0x62 &&
-+			    (i + 0x30) != 0x6a && (i + 0x30) != 0x6b)
- 				smtc_seqw(i + 0x30,
- 					  vgamode[j].init_sr30_sr75[i]);
+ 	/* compute the number of MC clock cycles per tick */
+-	tick = mc->tick * clk_get_rate(mc->clk);
++	tick = (unsigned long long)mc->tick * clk_get_rate(mc->clk);
+ 	do_div(tick, NSEC_PER_SEC);
  
+ 	value = readl(mc->regs + MC_EMEM_ARB_CFG);
 
 
