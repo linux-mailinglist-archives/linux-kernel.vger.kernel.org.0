@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71C36286E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ADFD289CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:43:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388686AbfEWTOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:14:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48082 "EHLO mail.kernel.org"
+        id S2390275AbfEWTmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:42:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388678AbfEWTOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:14:07 -0400
+        id S2389747AbfEWTTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:19:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5275A217D9;
-        Thu, 23 May 2019 19:14:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B15A0205ED;
+        Thu, 23 May 2019 19:19:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638846;
-        bh=Re8T2yTHXK5XAfnVq2GhyXnFobK1U4GrBjodwoG3V1I=;
+        s=default; t=1558639148;
+        bh=zo4BNT2y5vGThUf1YBTI4tm47+GcKrXMdYgr+k3oHic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GsAqwifSIJAPc5rAw+7Skji10ACv3hllz6uenmSmtMqHFBp+rPS/f0wEZ2EaipxYS
-         cMBFQt22nxIfHywe0ETUZgPCv4+1er+KNV4ZpfvMkpAUa/z06LjvpVI8bkXHWy/WmF
-         KZP8gFo26uQoSjq9HM/Nkdit1f2khRtcYvVjXcqU=
+        b=KUHS9hsMhTSISoqAsSQ1IhyM1ZB2UeGuvb93Veqcn9cLtHVCmM3FqBLWitkTTc/I3
+         CJBYb8rJ9fptANOclPCCm9lcmOLgyiHmE3ihtG6itMq+HvXDbcFLCEqAPGltXcGj60
+         nYtGuHJb7zCBVymaeiT55WQS/Q4S/aJgS3p3DDZI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.14 75/77] bpf: add map_lookup_elem_sys_only for lookups from syscall side
-Date:   Thu, 23 May 2019 21:06:33 +0200
-Message-Id: <20190523181730.307329542@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 095/114] x86: kvm: hyper-v: deal with buggy TLB flush requests from WS2012
+Date:   Thu, 23 May 2019 21:06:34 +0200
+Message-Id: <20190523181739.956056404@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+[ Upstream commit da66761c2d93a46270d69001abb5692717495a68 ]
 
-commit c6110222c6f49ea68169f353565eb865488a8619 upstream.
+It was reported that with some special Multi Processor Group configuration,
+e.g:
+ bcdedit.exe /set groupsize 1
+ bcdedit.exe /set maxgroup on
+ bcdedit.exe /set groupaware on
+for a 16-vCPU guest WS2012 shows BSOD on boot when PV TLB flush mechanism
+is in use.
 
-Add a callback map_lookup_elem_sys_only() that map implementations
-could use over map_lookup_elem() from system call side in case the
-map implementation needs to handle the latter differently than from
-the BPF data path. If map_lookup_elem_sys_only() is set, this will
-be preferred pick for map lookups out of user space. This hook is
-used in a follow-up fix for LRU map, but once development window
-opens, we can convert other map types from map_lookup_elem() (here,
-the one called upon BPF_MAP_LOOKUP_ELEM cmd is meant) over to use
-the callback to simplify and clean up the latter.
+Tracing kvm_hv_flush_tlb immediately reveals the issue:
 
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ kvm_hv_flush_tlb: processor_mask 0x0 address_space 0x0 flags 0x2
 
+The only flag set in this request is HV_FLUSH_ALL_VIRTUAL_ADDRESS_SPACES,
+however, processor_mask is 0x0 and no HV_FLUSH_ALL_PROCESSORS is specified.
+We don't flush anything and apparently it's not what Windows expects.
 
+TLFS doesn't say anything about such requests and newer Windows versions
+seem to be unaffected. This all feels like a WS2012 bug, which is, however,
+easy to workaround in KVM: let's flush everything when we see an empty
+flush request, over-flushing doesn't hurt.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/bpf.h  |    1 +
- kernel/bpf/syscall.c |    5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ arch/x86/kvm/hyperv.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -28,6 +28,7 @@ struct bpf_map_ops {
- 	void (*map_free)(struct bpf_map *map);
- 	int (*map_get_next_key)(struct bpf_map *map, void *key, void *next_key);
- 	void (*map_release_uref)(struct bpf_map *map);
-+	void *(*map_lookup_elem_sys_only)(struct bpf_map *map, void *key);
+diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+index 01d209ab5481b..229d996051653 100644
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1291,7 +1291,16 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
+ 				       flush.address_space, flush.flags);
  
- 	/* funcs callable from userspace and from eBPF programs */
- 	void *(*map_lookup_elem)(struct bpf_map *map, void *key);
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -493,7 +493,10 @@ static int map_lookup_elem(union bpf_att
- 		err = bpf_fd_htab_map_lookup_elem(map, key, value);
+ 		sparse_banks[0] = flush.processor_mask;
+-		all_cpus = flush.flags & HV_FLUSH_ALL_PROCESSORS;
++
++		/*
++		 * Work around possible WS2012 bug: it sends hypercalls
++		 * with processor_mask = 0x0 and HV_FLUSH_ALL_PROCESSORS clear,
++		 * while also expecting us to flush something and crashing if
++		 * we don't. Let's treat processor_mask == 0 same as
++		 * HV_FLUSH_ALL_PROCESSORS.
++		 */
++		all_cpus = (flush.flags & HV_FLUSH_ALL_PROCESSORS) ||
++			flush.processor_mask == 0;
  	} else {
- 		rcu_read_lock();
--		ptr = map->ops->map_lookup_elem(map, key);
-+		if (map->ops->map_lookup_elem_sys_only)
-+			ptr = map->ops->map_lookup_elem_sys_only(map, key);
-+		else
-+			ptr = map->ops->map_lookup_elem(map, key);
- 		if (ptr)
- 			memcpy(value, ptr, value_size);
- 		rcu_read_unlock();
+ 		if (unlikely(kvm_read_guest(kvm, ingpa, &flush_ex,
+ 					    sizeof(flush_ex))))
+-- 
+2.20.1
+
 
 
