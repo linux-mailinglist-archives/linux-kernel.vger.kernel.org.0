@@ -2,45 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50820287FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80791286A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391246AbfEWTZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:25:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37668 "EHLO mail.kernel.org"
+        id S2388087AbfEWTLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:11:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391228AbfEWTZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:25:57 -0400
+        id S2388069AbfEWTLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:11:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D4F6217D9;
-        Thu, 23 May 2019 19:25:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19BA0217F9;
+        Thu, 23 May 2019 19:11:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639556;
-        bh=2oQPVjb/XH6t5N0VlZPojdoMnrm+tfWh1CGpuHuzy8M=;
+        s=default; t=1558638664;
+        bh=E8Fez+UjFAXlTw7Yz7IfL44Gcey0YmhWjuPBqO4+gB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Se5eqo7YphNDsf/vlKqGOvdtp3p/oyMHFtnr7O2NEU7qZsiiIv2fqcl6GkbJa4FeH
-         V6j/hJe25e5ICGJwCxV4a33UZy2Wz1Mc5FQThW43Nii4p7PDanqhMRVAFcoj+fr7cW
-         ifOmkO+fYTfewcRTY0YJxXPTcU9DBFuCbC8lKrHA=
+        b=jfQkF8hSg7lL4k0VUE3TdylxD93+lPKRRMBuH497kmS2qaqy8LcHJp4b4ciu3uHfL
+         vjpXIzwYUf/1wfeCTcWx9HTgw/qk8gPK0gsVJYhn31v8AGCk03fV7QgGVz/kvvSoQn
+         zbespLKK5JWfZ7hKa21syCawuK/UToFYvwVKtjDo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mikael Magnusson <mikael.kernel@lists.m7n.se>,
-        Wei Wang <weiwan@google.com>, Martin Lau <kafai@fb.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Ahern <dsahern@gmail.com>
-Subject: [PATCH 5.1 001/122] ipv6: fix src addr routing with the exception table
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Guillaume Nault <gnault@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 05/77] ppp: deflate: Fix possible crash in deflate_init
 Date:   Thu, 23 May 2019 21:05:23 +0200
-Message-Id: <20190523181705.324928617@linuxfoundation.org>
+Message-Id: <20190523181720.797965477@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -49,137 +45,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Wang <weiwan@google.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 510e2ceda031eed97a7a0f9aad65d271a58b460d ]
+[ Upstream commit 3ebe1bca58c85325c97a22d4fc3f5b5420752e6f ]
 
-When inserting route cache into the exception table, the key is
-generated with both src_addr and dest_addr with src addr routing.
-However, current logic always assumes the src_addr used to generate the
-key is a /128 host address. This is not true in the following scenarios:
-1. When the route is a gateway route or does not have next hop.
-   (rt6_is_gw_or_nonexthop() == false)
-2. When calling ip6_rt_cache_alloc(), saddr is passed in as NULL.
-This means, when looking for a route cache in the exception table, we
-have to do the lookup twice: first time with the passed in /128 host
-address, second time with the src_addr stored in fib6_info.
+BUG: unable to handle kernel paging request at ffffffffa018f000
+PGD 3270067 P4D 3270067 PUD 3271063 PMD 2307eb067 PTE 0
+Oops: 0000 [#1] PREEMPT SMP
+CPU: 0 PID: 4138 Comm: modprobe Not tainted 5.1.0-rc7+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+RIP: 0010:ppp_register_compressor+0x3e/0xd0 [ppp_generic]
+Code: 98 4a 3f e2 48 8b 15 c1 67 00 00 41 8b 0c 24 48 81 fa 40 f0 19 a0
+75 0e eb 35 48 8b 12 48 81 fa 40 f0 19 a0 74
+RSP: 0018:ffffc90000d93c68 EFLAGS: 00010287
+RAX: ffffffffa018f000 RBX: ffffffffa01a3000 RCX: 000000000000001a
+RDX: ffff888230c750a0 RSI: 0000000000000000 RDI: ffffffffa019f000
+RBP: ffffc90000d93c80 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffa0194080
+R13: ffff88822ee1a700 R14: 0000000000000000 R15: ffffc90000d93e78
+FS:  00007f2339557540(0000) GS:ffff888237a00000(0000)
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffa018f000 CR3: 000000022bde4000 CR4: 00000000000006f0
+Call Trace:
+ ? 0xffffffffa01a3000
+ deflate_init+0x11/0x1000 [ppp_deflate]
+ ? 0xffffffffa01a3000
+ do_one_initcall+0x6c/0x3cc
+ ? kmem_cache_alloc_trace+0x248/0x3b0
+ do_init_module+0x5b/0x1f1
+ load_module+0x1db1/0x2690
+ ? m_show+0x1d0/0x1d0
+ __do_sys_finit_module+0xc5/0xd0
+ __x64_sys_finit_module+0x15/0x20
+ do_syscall_64+0x6b/0x1d0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-This solves the pmtu discovery issue reported by Mikael Magnusson where
-a route cache with a lower mtu info is created for a gateway route with
-src addr. However, the lookup code is not able to find this route cache.
+If ppp_deflate fails to register in deflate_init,
+module initialization failed out, however
+ppp_deflate_draft may has been regiestred and not
+unregistered before return.
+Then the seconed modprobe will trigger crash like this.
 
-Fixes: 2b760fcf5cfb ("ipv6: hook up exception table to store dst cache")
-Reported-by: Mikael Magnusson <mikael.kernel@lists.m7n.se>
-Bisected-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: Wei Wang <weiwan@google.com>
-Cc: Martin Lau <kafai@fb.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Guillaume Nault <gnault@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/route.c |   51 +++++++++++++++++++++++++++------------------------
- 1 file changed, 27 insertions(+), 24 deletions(-)
+ drivers/net/ppp/ppp_deflate.c |   20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -110,8 +110,8 @@ static int rt6_fill_node(struct net *net
- 			 int iif, int type, u32 portid, u32 seq,
- 			 unsigned int flags);
- static struct rt6_info *rt6_find_cached_rt(struct fib6_info *rt,
--					   struct in6_addr *daddr,
--					   struct in6_addr *saddr);
-+					   const struct in6_addr *daddr,
-+					   const struct in6_addr *saddr);
+--- a/drivers/net/ppp/ppp_deflate.c
++++ b/drivers/net/ppp/ppp_deflate.c
+@@ -610,12 +610,20 @@ static struct compressor ppp_deflate_dra
  
- #ifdef CONFIG_IPV6_ROUTE_INFO
- static struct fib6_info *rt6_add_route_info(struct net *net,
-@@ -1529,31 +1529,44 @@ out:
-  * Caller has to hold rcu_read_lock()
-  */
- static struct rt6_info *rt6_find_cached_rt(struct fib6_info *rt,
--					   struct in6_addr *daddr,
--					   struct in6_addr *saddr)
-+					   const struct in6_addr *daddr,
-+					   const struct in6_addr *saddr)
+ static int __init deflate_init(void)
  {
-+	const struct in6_addr *src_key = NULL;
- 	struct rt6_exception_bucket *bucket;
--	struct in6_addr *src_key = NULL;
- 	struct rt6_exception *rt6_ex;
- 	struct rt6_info *res = NULL;
- 
--	bucket = rcu_dereference(rt->rt6i_exception_bucket);
--
- #ifdef CONFIG_IPV6_SUBTREES
- 	/* rt6i_src.plen != 0 indicates rt is in subtree
- 	 * and exception table is indexed by a hash of
- 	 * both rt6i_dst and rt6i_src.
--	 * Otherwise, the exception table is indexed by
--	 * a hash of only rt6i_dst.
-+	 * However, the src addr used to create the hash
-+	 * might not be exactly the passed in saddr which
-+	 * is a /128 addr from the flow.
-+	 * So we need to use f6i->fib6_src to redo lookup
-+	 * if the passed in saddr does not find anything.
-+	 * (See the logic in ip6_rt_cache_alloc() on how
-+	 * rt->rt6i_src is updated.)
- 	 */
- 	if (rt->fib6_src.plen)
- 		src_key = saddr;
-+find_ex:
- #endif
-+	bucket = rcu_dereference(rt->rt6i_exception_bucket);
- 	rt6_ex = __rt6_find_exception_rcu(&bucket, daddr, src_key);
- 
- 	if (rt6_ex && !rt6_check_expired(rt6_ex->rt6i))
- 		res = rt6_ex->rt6i;
- 
-+#ifdef CONFIG_IPV6_SUBTREES
-+	/* Use fib6_src as src_key and redo lookup */
-+	if (!res && src_key && src_key != &rt->fib6_src.addr) {
-+		src_key = &rt->fib6_src.addr;
-+		goto find_ex;
-+	}
-+#endif
+-        int answer = ppp_register_compressor(&ppp_deflate);
+-        if (answer == 0)
+-                printk(KERN_INFO
+-		       "PPP Deflate Compression module registered\n");
+-	ppp_register_compressor(&ppp_deflate_draft);
+-        return answer;
++	int rc;
 +
- 	return res;
++	rc = ppp_register_compressor(&ppp_deflate);
++	if (rc)
++		return rc;
++
++	rc = ppp_register_compressor(&ppp_deflate_draft);
++	if (rc) {
++		ppp_unregister_compressor(&ppp_deflate);
++		return rc;
++	}
++
++	pr_info("PPP Deflate Compression module registered\n");
++	return 0;
  }
  
-@@ -2608,10 +2621,8 @@ out:
- u32 ip6_mtu_from_fib6(struct fib6_info *f6i, struct in6_addr *daddr,
- 		      struct in6_addr *saddr)
- {
--	struct rt6_exception_bucket *bucket;
--	struct rt6_exception *rt6_ex;
--	struct in6_addr *src_key;
- 	struct inet6_dev *idev;
-+	struct rt6_info *rt;
- 	u32 mtu = 0;
- 
- 	if (unlikely(fib6_metric_locked(f6i, RTAX_MTU))) {
-@@ -2620,18 +2631,10 @@ u32 ip6_mtu_from_fib6(struct fib6_info *
- 			goto out;
- 	}
- 
--	src_key = NULL;
--#ifdef CONFIG_IPV6_SUBTREES
--	if (f6i->fib6_src.plen)
--		src_key = saddr;
--#endif
--
--	bucket = rcu_dereference(f6i->rt6i_exception_bucket);
--	rt6_ex = __rt6_find_exception_rcu(&bucket, daddr, src_key);
--	if (rt6_ex && !rt6_check_expired(rt6_ex->rt6i))
--		mtu = dst_metric_raw(&rt6_ex->rt6i->dst, RTAX_MTU);
--
--	if (likely(!mtu)) {
-+	rt = rt6_find_cached_rt(f6i, daddr, saddr);
-+	if (unlikely(rt)) {
-+		mtu = dst_metric_raw(&rt->dst, RTAX_MTU);
-+	} else {
- 		struct net_device *dev = fib6_info_nh_dev(f6i);
- 
- 		mtu = IPV6_MIN_MTU;
+ static void __exit deflate_cleanup(void)
 
 
