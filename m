@@ -2,83 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E11602762F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 08:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E396927631
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 08:50:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbfEWGtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 02:49:39 -0400
-Received: from mail-it1-f182.google.com ([209.85.166.182]:35251 "EHLO
-        mail-it1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbfEWGti (ORCPT
+        id S1727684AbfEWGuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 02:50:02 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36210 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbfEWGuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 02:49:38 -0400
-Received: by mail-it1-f182.google.com with SMTP id u186so6950138ith.0
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 23:49:38 -0700 (PDT)
+        Thu, 23 May 2019 02:50:01 -0400
+Received: by mail-wm1-f66.google.com with SMTP id j187so4508873wmj.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 23:50:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jltpASykzdU6htyNAFi8yet91P2ld9Xm5d16qO9Qr/I=;
-        b=VInmJ/2Xpp4UaA+qhfOrs+cGQh1HHqfQDXnCmrQ7JrsiLtQQPezecPfRB/nPQFGDbF
-         RQVzq4nw8rR+628WmC7/gnimTwaSMDxzkI+fnEo4DUOE8F5dXSbX+2HDEffYAqd9EzN9
-         T2DYbSSXKsq1FYbdiiDjGTmpUZ+kkrA1NLMZrCLufzwli6tocJDNzBmhb0qXQSg3uJIm
-         KCaXsTQCP9XwCDW9XbNuycqybZ08f5jyZP9aOL/5panh0mwJJRYouxtQtcqGL15jwmBJ
-         b+p//qs57aTdASmqXAP0AjkwZSmTAKG7ryYx6Ytwpu1YSdjk0/3/GWsOeQUjBJa5ptGW
-         iP7g==
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HmFIp9t60XLoWbjpmc3RIKG7TQwMK3zhK3suz8duCcY=;
+        b=QEeOX5Zpege49oGEBr/MZw4gdpiibcLBcjULl5TUds3gk8zAdN8f1nfT1u+ph3fgaU
+         /3l68la0eQiaGbHrv6tfi2qhOpJu//Dn5OToqvU2T/urx8hetpHMpLCC9TOMa2v+EuE2
+         IkazlMnmKpYUetYUAYrn29xY3+m6WpLyo4vqtiV8rSDCeyCzk5MeM+lRRx5s3WY1/ity
+         /uvsMq2tNu1qLCNNdgMX6Y9qpvzsDGL5TGYc8lDaVmE8ME8BjlbyS6E0vqN3ftwHzuvi
+         ggFlgT9GEepD47JvSKsanvVRtIditNdwnIzS1RaaOnTomsrmj3dPVklO6NnxdviUPg2/
+         ecZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jltpASykzdU6htyNAFi8yet91P2ld9Xm5d16qO9Qr/I=;
-        b=t9c8qYir6c/qBYGEtipYdANjQtr9A+GkqWkU3y58DziXHdH1iZO1GmMpxlKeLMOGxk
-         S7RUi+VYKpqM31vXJqtzRYpdENLKLohzK4qcMKVNZ0Xw22QQArf/YmpZarCsRkJ68e5x
-         EiTebRDE2rKa+XbIHf4zg4tLEdegXeBNqDwL5PmewHrRDeDnxbkhLfEWbs/xQsfb41Xw
-         9AFrKQCr2I8FXOT3mBjExDlKY9oQvygOx/j/j2ISKkNTmzh74ZSZFI+heU3BRhPUs6fe
-         lC0hUX6wnBvq02A99iKuYdF5bjY0IvVHipv3oF86RRzzdy/ifjX/OZxJ4bAi3PmUxqAb
-         1yig==
-X-Gm-Message-State: APjAAAXqbeOea6n2J6vic6MwLkWhtOrM/JtsAv5DuNYFgYb5UpsnI3so
-        fGXM0BDJEPrT9YGkTZwkR2GDc6dRjowiNgYXkHyI4w==
-X-Google-Smtp-Source: APXvYqxh9Tn+M4JYpzw6xDNDhjGnXu7+KTF2kmiR8oZXPHg1vEwPSozEsr4gJhWk/jaUSj/DTk6oRJT7/84TgQBQOmE=
-X-Received: by 2002:a02:412:: with SMTP id 18mr24066471jab.82.1558594177480;
- Wed, 22 May 2019 23:49:37 -0700 (PDT)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=HmFIp9t60XLoWbjpmc3RIKG7TQwMK3zhK3suz8duCcY=;
+        b=J5iA2OawLjXutiYDCgNjrwzdKEEbAemfEXAjzD1UY5ZGx/466CRTTE7q0uB6GQodLj
+         65KOLu3xgjTQSlVZZjWjyvlVWvl0lwKjU4/sOEnrhYVJ01zWTw30VMy5dY9THJqBVGlr
+         OsCzpzTt+lCQFXgCS9WUowuz4H2JLPxOrg1pERSmWD5OK1qsiY8afBQ0XietSAqRufUJ
+         bn2hD/MqyqHOLDcMMwo1oVB9Hxzchclu7oHzDo34Yil4R7wFbKoCoDhRc3NjMFt/3xQ0
+         Kh7N0oh54WybwZBfUFM48ocwCZxrylv1S1561qKRsBGiSYP5luT3El+ic1wHv953M5Hg
+         biVw==
+X-Gm-Message-State: APjAAAVSQCmU/dPPmxrFrZRgdQ/oPotvTXX4j33+/pa5M85EIBpyIXiF
+        eC2y7j7uhvhVHqc+qCghVz8=
+X-Google-Smtp-Source: APXvYqzRjJAfgOF0LfSB//bPT2XjMKpaZ04zbTcRKVPJSru3IHBGx1d8nHeZGLgkGQJbXV3P77YNBQ==
+X-Received: by 2002:a05:600c:21d7:: with SMTP id x23mr10884971wmj.87.1558594199985;
+        Wed, 22 May 2019 23:49:59 -0700 (PDT)
+Received: from macbookpro.malat.net ([2a01:e34:ee1e:860:6f23:82e6:aa2d:bbd1])
+        by smtp.gmail.com with ESMTPSA id g6sm36004224wro.29.2019.05.22.23.49.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 22 May 2019 23:49:59 -0700 (PDT)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 9137C1146D73; Thu, 23 May 2019 08:49:57 +0200 (CEST)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc/32s: Include <linux/moduleloader.h> header file to fix a warning
+Date:   Thu, 23 May 2019 08:49:56 +0200
+Message-Id: <20190523064956.29008-1-malat@debian.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <CAPhKKr_uVTFAzne0QkZFUGfb8RxQdVFx41G9kXRY7sFN-=pZ6w@mail.gmail.com>
- <199564879.15267174.1556199472004.JavaMail.zimbra@redhat.com>
- <CA+bK7J7tHOkz5KMVHpaV1x_dy6X6A7gtxcBYXJO8jj98qvWETw@mail.gmail.com>
- <CACT4Y+a_wLnB_f1bfNy_HAipF4iHFiyraogMHWdK285oxgJr+g@mail.gmail.com> <ECADFF3FD767C149AD96A924E7EA6EAF97726E9E@USCULXMSG01.am.sony.com>
-In-Reply-To: <ECADFF3FD767C149AD96A924E7EA6EAF97726E9E@USCULXMSG01.am.sony.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 23 May 2019 08:49:26 +0200
-Message-ID: <CACT4Y+asvDxDunUYmABecnnxAVz0zGZ87XY=5pwy6F-ULsmMSw@mail.gmail.com>
-Subject: Re: Linux Testing Microconference at LPC
-To:     Tim Bird <Tim.Bird@sony.com>
-Cc:     Tim Bird <tbird20d@gmail.com>,
-        Veronika Kabatova <vkabatov@redhat.com>,
-        Dhaval Giani <dhaval.giani@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        gustavo padovan <gustavo.padovan@collabora.co.uk>,
-        knut omang <knut.omang@oracle.com>,
-        Eliska Slobodova <eslobodo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 2:08 AM <Tim.Bird@sony.com> wrote:
-> > From: Dmitry Vyukov
-> > On Fri, Apr 26, 2019 at 11:03 PM Tim Bird <tbird20d@gmail.com> wrote:
-> > >
-> > > I'm in the process now of planning Automated Testing Summit 2019,
-> > > which is tentatively planned for Lyon, France on October 31.  This is
-> >
-> > This is _November_ 1, right?
-> No.  Thursday, October 31, 2019.  Is there some conflict on Thursday?
+In commit 2edb16efc899 ("powerpc/32: Add KASAN support") support for
+KASAN has been added. However building it as module leads to (warning
+treated as error with W=1):
 
-Ah, no, sorry. It's just me incapable of reading numbers.
+  arch/powerpc/mm/kasan/kasan_init_32.c:135:7: error: no previous prototype for 'module_alloc' [-Werror=missing-prototypes]
+
+Make sure to include <linux/moduleloader.h> to provide the following
+prototype: module_alloc.
+
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ arch/powerpc/mm/kasan/kasan_init_32.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/powerpc/mm/kasan/kasan_init_32.c b/arch/powerpc/mm/kasan/kasan_init_32.c
+index 0d62be3cba47..0c31e440d094 100644
+--- a/arch/powerpc/mm/kasan/kasan_init_32.c
++++ b/arch/powerpc/mm/kasan/kasan_init_32.c
+@@ -7,6 +7,7 @@
+ #include <linux/memblock.h>
+ #include <linux/sched/task.h>
+ #include <linux/vmalloc.h>
++#include <linux/moduleloader.h>
+ #include <asm/pgalloc.h>
+ #include <asm/code-patching.h>
+ #include <mm/mmu_decl.h>
+-- 
+2.20.1
+
