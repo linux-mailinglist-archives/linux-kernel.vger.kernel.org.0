@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73BD628740
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABA422888A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388957AbfEWTRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:17:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52368 "EHLO mail.kernel.org"
+        id S2391519AbfEWT1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:27:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389384AbfEWTRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:17:18 -0400
+        id S2391496AbfEWT1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:27:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46E4221851;
-        Thu, 23 May 2019 19:17:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14A6B206BA;
+        Thu, 23 May 2019 19:27:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639037;
-        bh=+athbFoOd2Xxcsmu54xtO7qi37LKpNoQwFHL9MONUjo=;
+        s=default; t=1558639621;
+        bh=W0f3EHcVEBs8UfuFtMj60PbcCvQ0hwXJbGh92iFhmzQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h/0cWW4pIQUWMtc00PLiVP/8JTONFZutVx5QAoDE0MswZBNJqHBCMKts0brpk5Kas
-         ew8lcLVEvanPKDjESdJdbW6LzYtHBXGFBUKAE/PJDQS72dJ5ubtJb0jE/UpN5yz5JU
-         wGGJMmv5lpKA9qSTq8oZZXOu9sqqPCpYfpy0Q058=
+        b=BetIprL7AW8TNXHlFSrtoaLUwjOB17uIw3EHpKDZAdAY5Y/5w+fzss82BqyKe28oG
+         jVsuO41AELVZcSTzXxob95an3ycJrcvpQnnqGV0JQAyePZHybhorVKW3upd3OoSnY3
+         JRwA/dRXAnaximJoT8vTRzePh5BmrSC3wwc34/TU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.19 056/114] perf intel-pt: Fix instructions sampling rate
+        stable@vger.kernel.org, Tingwei Zhang <tingwei@codeaurora.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 5.1 033/122] stm class: Fix channel free in stm output free path
 Date:   Thu, 23 May 2019 21:05:55 +0200
-Message-Id: <20190523181736.694301832@linuxfoundation.org>
+Message-Id: <20190523181709.227475548@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,91 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Tingwei Zhang <tingwei@codeaurora.org>
 
-commit 7ba8fa20e26eb3c0c04d747f7fd2223694eac4d5 upstream.
+commit ee496da4c3915de3232b5f5cd20e21ae3e46fe8d upstream.
 
-The timestamp used to determine if an instruction sample is made, is an
-estimate based on the number of instructions since the last known
-timestamp. A consequence is that it might go backwards, which results in
-extra samples. Change it so that a sample is only made when the
-timestamp goes forwards.
+Number of free masters is not set correctly in stm
+free path. Fix this by properly adding the number
+of output channels before setting them to 0 in
+stm_output_disclaim().
 
-Note this does not affect a sampling period of 0 or sampling periods
-specified as a count of instructions.
+Currently it is equivalent to doing nothing since
+master->nr_free is incremented by 0.
 
-Example:
-
- Before:
-
- $ perf script --itrace=i10us
- ls 13812 [003] 2167315.222583:       3270 instructions:u:      7fac71e2e494 __GI___tunables_init+0xf4 (/lib/x86_64-linux-gnu/ld-2.28.so)
- ls 13812 [003] 2167315.222667:      30902 instructions:u:      7fac71e2da0f _dl_cache_libcmp+0x2f (/lib/x86_64-linux-gnu/ld-2.28.so)
- ls 13812 [003] 2167315.222667:         10 instructions:u:      7fac71e2d9ff _dl_cache_libcmp+0x1f (/lib/x86_64-linux-gnu/ld-2.28.so)
- ls 13812 [003] 2167315.222667:          8 instructions:u:      7fac71e2d9ea _dl_cache_libcmp+0xa (/lib/x86_64-linux-gnu/ld-2.28.so)
- ls 13812 [003] 2167315.222667:         14 instructions:u:      7fac71e2d9ea _dl_cache_libcmp+0xa (/lib/x86_64-linux-gnu/ld-2.28.so)
- ls 13812 [003] 2167315.222667:          6 instructions:u:      7fac71e2d9ff _dl_cache_libcmp+0x1f (/lib/x86_64-linux-gnu/ld-2.28.so)
- ls 13812 [003] 2167315.222667:         14 instructions:u:      7fac71e2d9ff _dl_cache_libcmp+0x1f (/lib/x86_64-linux-gnu/ld-2.28.so)
- ls 13812 [003] 2167315.222667:          4 instructions:u:      7fac71e2dab2 _dl_cache_libcmp+0xd2 (/lib/x86_64-linux-gnu/ld-2.28.so)
- ls 13812 [003] 2167315.222728:      16423 instructions:u:      7fac71e2477a _dl_map_object_deps+0x1ba (/lib/x86_64-linux-gnu/ld-2.28.so)
- ls 13812 [003] 2167315.222734:      12731 instructions:u:      7fac71e27938 _dl_name_match_p+0x68 (/lib/x86_64-linux-gnu/ld-2.28.so)
- ...
-
- After:
- $ perf script --itrace=i10us
- ls 13812 [003] 2167315.222583:       3270 instructions:u:      7fac71e2e494 __GI___tunables_init+0xf4 (/lib/x86_64-linux-gnu/ld-2.28.so)
- ls 13812 [003] 2167315.222667:      30902 instructions:u:      7fac71e2da0f _dl_cache_libcmp+0x2f (/lib/x86_64-linux-gnu/ld-2.28.so)
- ls 13812 [003] 2167315.222728:      16479 instructions:u:      7fac71e2477a _dl_map_object_deps+0x1ba (/lib/x86_64-linux-gnu/ld-2.28.so)
- ...
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: f4aa081949e7b ("perf tools: Add Intel PT decoder")
-Link: http://lkml.kernel.org/r/20190510124143.27054-2-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 7bd1d4093c2f ("stm class: Introduce an abstraction for System Trace Module devices")
+Signed-off-by: Tingwei Zhang <tingwei@codeaurora.org>
+Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc: stable@vger.kernel.org # v4.4
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/hwtracing/stm/core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -888,16 +888,20 @@ static uint64_t intel_pt_next_period(str
- 	timestamp = decoder->timestamp + decoder->timestamp_insn_cnt;
- 	masked_timestamp = timestamp & decoder->period_mask;
- 	if (decoder->continuous_period) {
--		if (masked_timestamp != decoder->last_masked_timestamp)
-+		if (masked_timestamp > decoder->last_masked_timestamp)
- 			return 1;
- 	} else {
- 		timestamp += 1;
- 		masked_timestamp = timestamp & decoder->period_mask;
--		if (masked_timestamp != decoder->last_masked_timestamp) {
-+		if (masked_timestamp > decoder->last_masked_timestamp) {
- 			decoder->last_masked_timestamp = masked_timestamp;
- 			decoder->continuous_period = true;
- 		}
- 	}
-+
-+	if (masked_timestamp < decoder->last_masked_timestamp)
-+		return decoder->period_ticks;
-+
- 	return decoder->period_ticks - (timestamp - masked_timestamp);
+--- a/drivers/hwtracing/stm/core.c
++++ b/drivers/hwtracing/stm/core.c
+@@ -218,8 +218,8 @@ stm_output_disclaim(struct stm_device *s
+ 	bitmap_release_region(&master->chan_map[0], output->channel,
+ 			      ilog2(output->nr_chans));
+ 
+-	output->nr_chans = 0;
+ 	master->nr_free += output->nr_chans;
++	output->nr_chans = 0;
  }
  
-@@ -926,7 +930,10 @@ static void intel_pt_sample_insn(struct
- 	case INTEL_PT_PERIOD_TICKS:
- 		timestamp = decoder->timestamp + decoder->timestamp_insn_cnt;
- 		masked_timestamp = timestamp & decoder->period_mask;
--		decoder->last_masked_timestamp = masked_timestamp;
-+		if (masked_timestamp > decoder->last_masked_timestamp)
-+			decoder->last_masked_timestamp = masked_timestamp;
-+		else
-+			decoder->last_masked_timestamp += decoder->period_ticks;
- 		break;
- 	case INTEL_PT_PERIOD_NONE:
- 	case INTEL_PT_PERIOD_MTC:
+ /*
 
 
