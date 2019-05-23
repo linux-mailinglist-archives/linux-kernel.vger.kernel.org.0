@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E832877B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E09132879B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389289AbfEWTTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:19:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56224 "EHLO mail.kernel.org"
+        id S2390209AbfEWTVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:21:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389928AbfEWTTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:19:52 -0400
+        id S2389795AbfEWTVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:21:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D617820863;
-        Thu, 23 May 2019 19:19:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B48F205ED;
+        Thu, 23 May 2019 19:21:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639191;
-        bh=7CsxQZnR9OEYV73h7mR3bBrUUkWb0cqJ/BNieI70RKk=;
+        s=default; t=1558639268;
+        bh=k5a2uGeSV8BCZEQP5DMuv8ykv8Uyr3yo+lrxvYUCLfE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GjY8TMe28vwbY7YaMkN+LvChKkMQxfdU61d4cS9a29O73JL+Ve48Lo0FxcXBW81cB
-         kiLh1tefbIVASP5XbchL2iVuKPykYxccaBtpJdBDuHzQCI2viOURd77SHc7Rmn1TfQ
-         EpjL1JrzhJHsGz1+kwZL7AYTZG9SSjqmdkzHa5AQ=
+        b=jtk63p1Z7mS1/6whjVVFJtKGeqrqxQiaiGH04xbIwoN5m5fSIQWAScNxkNnDsB9Y4
+         xqWFQ5OU4IsymDUnHiXQYTGTtjJmALdEcGeGI3ViWvslwKhsYMAvQXp9rsY//hdWL7
+         NZWgl+Oh9WCK3vEGWocIvu2pE5WEkGYkh+zajOUQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junwei Hu <hujunwei4@huawei.com>,
-        Wang Wang <wangwang2@huawei.com>,
-        Kang Zhou <zhoukang7@huawei.com>,
-        Suanming Mou <mousuanming@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.0 013/139] tipc: fix modprobe tipc failed after switch order of device registration
-Date:   Thu, 23 May 2019 21:05:01 +0200
-Message-Id: <20190523181722.193050896@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kernel-team@android.com, "Jorge E. Moreira" <jemoreira@google.com>
+Subject: [PATCH 5.0 014/139] vsock/virtio: Initialize core virtio vsock before registering the driver
+Date:   Thu, 23 May 2019 21:05:02 +0200
+Message-Id: <20190523181722.326937126@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
 References: <20190523181720.120897565@linuxfoundation.org>
@@ -46,92 +46,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junwei Hu <hujunwei4@huawei.com>
+From: "Jorge E. Moreira" <jemoreira@google.com>
 
-[ Upstream commit 532b0f7ece4cb2ffd24dc723ddf55242d1188e5e ]
+[ Upstream commit ba95e5dfd36647622d8897a2a0470dde60e59ffd ]
 
-Error message printed:
-modprobe: ERROR: could not insert 'tipc': Address family not
-supported by protocol.
-when modprobe tipc after the following patch: switch order of
-device registration, commit 7e27e8d6130c
-("tipc: switch order of device registration to fix a crash")
+Avoid a race in which static variables in net/vmw_vsock/af_vsock.c are
+accessed (while handling interrupts) before they are initialized.
 
-Because sock_create_kern(net, AF_TIPC, ...) is called by
-tipc_topsrv_create_listener() in the initialization process
-of tipc_net_ops, tipc_socket_init() must be execute before that.
+[    4.201410] BUG: unable to handle kernel paging request at ffffffffffffffe8
+[    4.207829] IP: vsock_addr_equals_addr+0x3/0x20
+[    4.211379] PGD 28210067 P4D 28210067 PUD 28212067 PMD 0
+[    4.211379] Oops: 0000 [#1] PREEMPT SMP PTI
+[    4.211379] Modules linked in:
+[    4.211379] CPU: 1 PID: 30 Comm: kworker/1:1 Not tainted 4.14.106-419297-gd7e28cc1f241 #1
+[    4.211379] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+[    4.211379] Workqueue: virtio_vsock virtio_transport_rx_work
+[    4.211379] task: ffffa3273d175280 task.stack: ffffaea1800e8000
+[    4.211379] RIP: 0010:vsock_addr_equals_addr+0x3/0x20
+[    4.211379] RSP: 0000:ffffaea1800ebd28 EFLAGS: 00010286
+[    4.211379] RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffffb94e42f0
+[    4.211379] RDX: 0000000000000400 RSI: ffffffffffffffe0 RDI: ffffaea1800ebdd0
+[    4.211379] RBP: ffffaea1800ebd58 R08: 0000000000000001 R09: 0000000000000001
+[    4.211379] R10: 0000000000000000 R11: ffffffffb89d5d60 R12: ffffaea1800ebdd0
+[    4.211379] R13: 00000000828cbfbf R14: 0000000000000000 R15: ffffaea1800ebdc0
+[    4.211379] FS:  0000000000000000(0000) GS:ffffa3273fd00000(0000) knlGS:0000000000000000
+[    4.211379] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    4.211379] CR2: ffffffffffffffe8 CR3: 000000002820e001 CR4: 00000000001606e0
+[    4.211379] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    4.211379] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    4.211379] Call Trace:
+[    4.211379]  ? vsock_find_connected_socket+0x6c/0xe0
+[    4.211379]  virtio_transport_recv_pkt+0x15f/0x740
+[    4.211379]  ? detach_buf+0x1b5/0x210
+[    4.211379]  virtio_transport_rx_work+0xb7/0x140
+[    4.211379]  process_one_work+0x1ef/0x480
+[    4.211379]  worker_thread+0x312/0x460
+[    4.211379]  kthread+0x132/0x140
+[    4.211379]  ? process_one_work+0x480/0x480
+[    4.211379]  ? kthread_destroy_worker+0xd0/0xd0
+[    4.211379]  ret_from_fork+0x35/0x40
+[    4.211379] Code: c7 47 08 00 00 00 00 66 c7 07 28 00 c7 47 08 ff ff ff ff c7 47 04 ff ff ff ff c3 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 00 8b 47 08 <3b> 46 08 75 0a 8b 47 04 3b 46 04 0f 94 c0 c3 31 c0 c3 90 66 2e
+[    4.211379] RIP: vsock_addr_equals_addr+0x3/0x20 RSP: ffffaea1800ebd28
+[    4.211379] CR2: ffffffffffffffe8
+[    4.211379] ---[ end trace f31cc4a2e6df3689 ]---
+[    4.211379] Kernel panic - not syncing: Fatal exception in interrupt
+[    4.211379] Kernel Offset: 0x37000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[    4.211379] Rebooting in 5 seconds..
 
-I move tipc_socket_init() into function tipc_init_net().
-
-Fixes: 7e27e8d6130c
-("tipc: switch order of device registration to fix a crash")
-Signed-off-by: Junwei Hu <hujunwei4@huawei.com>
-Reported-by: Wang Wang <wangwang2@huawei.com>
-Reviewed-by: Kang Zhou <zhoukang7@huawei.com>
-Reviewed-by: Suanming Mou <mousuanming@huawei.com>
+Fixes: 22b5c0b63f32 ("vsock/virtio: fix kernel panic after device hot-unplug")
+Cc: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: kvm@vger.kernel.org
+Cc: virtualization@lists.linux-foundation.org
+Cc: netdev@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: stable@vger.kernel.org [4.9+]
+Signed-off-by: Jorge E. Moreira <jemoreira@google.com>
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tipc/core.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ net/vmw_vsock/virtio_transport.c |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
---- a/net/tipc/core.c
-+++ b/net/tipc/core.c
-@@ -66,6 +66,10 @@ static int __net_init tipc_init_net(stru
- 	INIT_LIST_HEAD(&tn->node_list);
- 	spin_lock_init(&tn->node_list_lock);
+--- a/net/vmw_vsock/virtio_transport.c
++++ b/net/vmw_vsock/virtio_transport.c
+@@ -702,28 +702,27 @@ static int __init virtio_vsock_init(void
+ 	if (!virtio_vsock_workqueue)
+ 		return -ENOMEM;
  
-+	err = tipc_socket_init();
-+	if (err)
-+		goto out_socket;
-+
- 	err = tipc_sk_rht_init(net);
- 	if (err)
- 		goto out_sk_rht;
-@@ -92,6 +96,8 @@ out_subscr:
- out_nametbl:
- 	tipc_sk_rht_destroy(net);
- out_sk_rht:
-+	tipc_socket_stop();
-+out_socket:
- 	return err;
- }
+-	ret = register_virtio_driver(&virtio_vsock_driver);
++	ret = vsock_core_init(&virtio_transport.transport);
+ 	if (ret)
+ 		goto out_wq;
  
-@@ -102,6 +108,7 @@ static void __net_exit tipc_exit_net(str
- 	tipc_bcast_stop(net);
- 	tipc_nametbl_stop(net);
- 	tipc_sk_rht_destroy(net);
-+	tipc_socket_stop();
- }
+-	ret = vsock_core_init(&virtio_transport.transport);
++	ret = register_virtio_driver(&virtio_vsock_driver);
+ 	if (ret)
+-		goto out_vdr;
++		goto out_vci;
  
- static struct pernet_operations tipc_net_ops = {
-@@ -137,10 +144,6 @@ static int __init tipc_init(void)
- 	if (err)
- 		goto out_pernet;
- 
--	err = tipc_socket_init();
--	if (err)
--		goto out_socket;
--
- 	err = tipc_bearer_setup();
- 	if (err)
- 		goto out_bearer;
-@@ -148,8 +151,6 @@ static int __init tipc_init(void)
- 	pr_info("Started in single node mode\n");
  	return 0;
- out_bearer:
--	tipc_socket_stop();
--out_socket:
- 	unregister_pernet_subsys(&tipc_net_ops);
- out_pernet:
- 	tipc_unregister_sysctl();
-@@ -165,7 +166,6 @@ out_netlink:
- static void __exit tipc_exit(void)
+ 
+-out_vdr:
+-	unregister_virtio_driver(&virtio_vsock_driver);
++out_vci:
++	vsock_core_exit();
+ out_wq:
+ 	destroy_workqueue(virtio_vsock_workqueue);
+ 	return ret;
+-
+ }
+ 
+ static void __exit virtio_vsock_exit(void)
  {
- 	tipc_bearer_cleanup();
--	tipc_socket_stop();
- 	unregister_pernet_subsys(&tipc_net_ops);
- 	tipc_netlink_stop();
- 	tipc_netlink_compat_stop();
+-	vsock_core_exit();
+ 	unregister_virtio_driver(&virtio_vsock_driver);
++	vsock_core_exit();
+ 	destroy_workqueue(virtio_vsock_workqueue);
+ }
+ 
 
 
