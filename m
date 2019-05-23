@@ -2,170 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 135B827713
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 09:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E8E62772D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 09:37:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730064AbfEWHfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 03:35:24 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:39391 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726081AbfEWHfW (ORCPT
+        id S1730380AbfEWHhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 03:37:41 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:43648 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726070AbfEWHhd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 03:35:22 -0400
-X-UUID: 6e2832516f8746e5ba414606f3f850cf-20190523
-X-UUID: 6e2832516f8746e5ba414606f3f850cf-20190523
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <long.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 523751359; Thu, 23 May 2019 15:35:16 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 23 May 2019 15:35:15 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 23 May 2019 15:35:14 +0800
-From:   Long Cheng <long.cheng@mediatek.com>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        YT Shen <yt.shen@mediatek.com>,
-        Zhenbao Liu <zhenbao.liu@mediatek.com>,
-        Long Cheng <long.cheng@mediatek.com>
-Subject: [PATCH 2/2] serial: 8250-mtk: modify uart DMA rx
-Date:   Thu, 23 May 2019 15:35:09 +0800
-Message-ID: <1558596909-14084-3-git-send-email-long.cheng@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1558596909-14084-1-git-send-email-long.cheng@mediatek.com>
-References: <1558596909-14084-1-git-send-email-long.cheng@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 2482CA85B661DC8764D4515A4275E8B6BC1A308EAB7BD6FB1D1E48C73F6E41C32000:8
-X-MTK:  N
+        Thu, 23 May 2019 03:37:33 -0400
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id D17AAC019E;
+        Thu, 23 May 2019 07:37:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1558597059; bh=tx/RgSBNhnHOh1Ade5WF0HH1a1AcMDyppC57wRGfoHY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Y7lLSv4nWF+c9EihmPKmOa7DSJJXsSawAPFiFPO2sbEasiWGf6D/35vF9aDVL+fAg
+         43hiifuM6MYjr/MSV7cBumU9LX8R/pPI3Fmk1CYWAVxM2Vjnss29iYxo7wseaV+MbM
+         5jZ7RAo6W/mCJoIkYHOSThyGx4ndRivkphW38fqFWastzUfCKAyKPORjot75WNTt6/
+         cRw7Y5RsN2cKzAPU/ht2Jl5DL/xMZfRrv/tgcA1s6+ASN9b3WU3spRJ240PeD2JmYg
+         8YrQre0iCBqbjpxSTAjC5ufaxxoQF+E75C1msncNBE40/TE+9y2DHi/iOJ+YMpWysa
+         iP7zTwEJxD4zw==
+Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id D07E1A009B;
+        Thu, 23 May 2019 07:37:28 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id CBCCD3D92B;
+        Thu, 23 May 2019 09:37:27 +0200 (CEST)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH net-next 00/18] net: stmmac: Improvements and Selftests
+Date:   Thu, 23 May 2019 09:36:50 +0200
+Message-Id: <cover.1558596599.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify uart rx and complete for DMA
+[ Thanks to the introducion of selftests this series ended up being a misc
+of improvements and the selftests additions per-se. ]
 
-Signed-off-by: Long Cheng <long.cheng@mediatek.com>
----
- drivers/tty/serial/8250/8250_mtk.c |   49 +++++++++++++++---------------------
- 1 file changed, 20 insertions(+), 29 deletions(-)
+This introduces selftests support in stmmac driver. We add 9 basic sanity
+checks and MAC loopback support for all cores within the driver. This way
+more tests can easily be added in the future and can be run in virtually
+any MAC/GMAC/QoS/XGMAC platform.
 
-diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
-index 417c7c8..f470ded 100644
---- a/drivers/tty/serial/8250/8250_mtk.c
-+++ b/drivers/tty/serial/8250/8250_mtk.c
-@@ -47,7 +47,6 @@
- #define MTK_UART_DMA_EN_RX	0x5
- 
- #define MTK_UART_ESCAPE_CHAR	0x77	/* Escape char added under sw fc */
--#define MTK_UART_TX_SIZE	UART_XMIT_SIZE
- #define MTK_UART_RX_SIZE	0x8000
- #define MTK_UART_TX_TRIGGER	1
- #define MTK_UART_RX_TRIGGER	MTK_UART_RX_SIZE
-@@ -89,28 +88,30 @@ static void mtk8250_dma_rx_complete(void *param)
- 	struct mtk8250_data *data = up->port.private_data;
- 	struct tty_port *tty_port = &up->port.state->port;
- 	struct dma_tx_state state;
-+	int copied, total, cnt;
- 	unsigned char *ptr;
--	int copied;
- 
--	dma_sync_single_for_cpu(dma->rxchan->device->dev, dma->rx_addr,
--				dma->rx_size, DMA_FROM_DEVICE);
-+	if (data->rx_status == DMA_RX_SHUTDOWN)
-+		return;
- 
- 	dmaengine_tx_status(dma->rxchan, dma->rx_cookie, &state);
-+	total = dma->rx_size - state.residue;
-+	cnt = total;
- 
--	if (data->rx_status == DMA_RX_SHUTDOWN)
--		return;
-+	if ((data->rx_pos + cnt) > dma->rx_size)
-+		cnt = dma->rx_size - data->rx_pos;
- 
--	if ((data->rx_pos + state.residue) <= dma->rx_size) {
--		ptr = (unsigned char *)(data->rx_pos + dma->rx_buf);
--		copied = tty_insert_flip_string(tty_port, ptr, state.residue);
--	} else {
--		ptr = (unsigned char *)(data->rx_pos + dma->rx_buf);
--		copied = tty_insert_flip_string(tty_port, ptr,
--						dma->rx_size - data->rx_pos);
-+	ptr = (unsigned char *)(data->rx_pos + dma->rx_buf);
-+	copied = tty_insert_flip_string(tty_port, ptr, cnt);
-+	data->rx_pos += cnt;
-+
-+	if (total > cnt) {
- 		ptr = (unsigned char *)(dma->rx_buf);
--		copied += tty_insert_flip_string(tty_port, ptr,
--				data->rx_pos + state.residue - dma->rx_size);
-+		cnt = total - cnt;
-+		copied += tty_insert_flip_string(tty_port, ptr, cnt);
-+		data->rx_pos = cnt;
- 	}
-+
- 	up->port.icount.rx += copied;
- 
- 	tty_flip_buffer_push(tty_port);
-@@ -121,9 +122,7 @@ static void mtk8250_dma_rx_complete(void *param)
- static void mtk8250_rx_dma(struct uart_8250_port *up)
- {
- 	struct uart_8250_dma *dma = up->dma;
--	struct mtk8250_data *data = up->port.private_data;
- 	struct dma_async_tx_descriptor	*desc;
--	struct dma_tx_state	 state;
- 
- 	desc = dmaengine_prep_slave_single(dma->rxchan, dma->rx_addr,
- 					   dma->rx_size, DMA_DEV_TO_MEM,
-@@ -138,12 +137,6 @@ static void mtk8250_rx_dma(struct uart_8250_port *up)
- 
- 	dma->rx_cookie = dmaengine_submit(desc);
- 
--	dmaengine_tx_status(dma->rxchan, dma->rx_cookie, &state);
--	data->rx_pos = state.residue;
--
--	dma_sync_single_for_device(dma->rxchan->device->dev, dma->rx_addr,
--				   dma->rx_size, DMA_FROM_DEVICE);
--
- 	dma_async_issue_pending(dma->rxchan);
- }
- 
-@@ -156,13 +149,11 @@ static void mtk8250_dma_enable(struct uart_8250_port *up)
- 	if (data->rx_status != DMA_RX_START)
- 		return;
- 
--	dma->rxconf.direction		= DMA_DEV_TO_MEM;
--	dma->rxconf.src_addr_width	= dma->rx_size / 1024;
--	dma->rxconf.src_addr		= dma->rx_addr;
-+	dma->rxconf.src_port_window_size	= dma->rx_size;
-+	dma->rxconf.src_addr				= dma->rx_addr;
- 
--	dma->txconf.direction		= DMA_MEM_TO_DEV;
--	dma->txconf.dst_addr_width	= MTK_UART_TX_SIZE / 1024;
--	dma->txconf.dst_addr		= dma->tx_addr;
-+	dma->txconf.dst_port_window_size	= UART_XMIT_SIZE;
-+	dma->txconf.dst_addr				= dma->tx_addr;
- 
- 	serial_out(up, UART_FCR, UART_FCR_ENABLE_FIFO | UART_FCR_CLEAR_RCVR |
- 		UART_FCR_CLEAR_XMIT);
+Having this we can find regressions and missing features in the driver
+while at the same time we can check if the IP is correctly working.
+
+We have been using this for some time now and I do have more tests to
+submit in the feature. My experience is that although writing the tests
+adds more development time, the gain results are obvious.
+
+I let this feature optional within the driver under a Kconfig option.
+
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+
+Corentin Labbe (1):
+  net: ethernet: stmmac: dwmac-sun8i: Enable control of loopback
+
+Jose Abreu (17):
+  net: stmmac: Add MAC loopback callback to HWIF
+  net: stmmac: dwmac100: Add MAC loopback support
+  net: stmmac: dwmac1000: Add MAC loopback support
+  net: stmmac: dwmac4/5: Add MAC loopback support
+  net: stmmac: dwxgmac2: Add MAC loopback support
+  net: stmmac: Switch MMC functions to HWIF callbacks
+  net: stmmac: dwmac1000: Also pass control frames while in promisc mode
+  net: stmmac: dwmac4/5: Also pass control frames while in promisc mode
+  net: stmmac: dwxgmac2: Also pass control frames while in promisc mode
+  net: stmmac: Introduce selftests support
+  net: stmmac: dwmac1000: Fix Hash Filter
+  net: stmmac: dwmac1000: Clear unused address entries
+  net: stmmac: dwmac4/5: Fix Hash Filter
+  net: stmmac: dwmac4/5: Do not disable whole RX in dma_stop_rx()
+  net: stmmac: dwxgmac2: Do not disable whole RX in dma_stop_rx()
+  net: stmmac: dwmac4/5: Clear unused address entries
+  net: stmmac: Prevent missing interrupts when running NAPI
+
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |   9 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile       |   2 +
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  |  13 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac1000.h    |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac1000_core.c   |  22 +-
+ .../net/ethernet/stmicro/stmmac/dwmac100_core.c    |  13 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h       |   3 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |  29 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c   |   4 -
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |   2 +
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    |  15 +-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |   4 -
+ drivers/net/ethernet/stmicro/stmmac/hwif.c         |   9 +
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  21 +
+ drivers/net/ethernet/stmicro/stmmac/mmc.h          |   4 -
+ drivers/net/ethernet/stmicro/stmmac/mmc_core.c     |  13 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  22 +
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |   8 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   7 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 837 +++++++++++++++++++++
+ 21 files changed, 1016 insertions(+), 23 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
+
 -- 
-1.7.9.5
+2.7.4
 
