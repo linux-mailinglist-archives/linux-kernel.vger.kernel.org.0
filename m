@@ -2,70 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7F3228B8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 22:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92A8328B94
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 22:34:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388048AbfEWUcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 16:32:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387666AbfEWUcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 16:32:11 -0400
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B95DE2175B;
-        Thu, 23 May 2019 20:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558643530;
-        bh=NElWUzJvif1deH6MO8Vjb5akrs/yWZctQSPiNSP6HTQ=;
-        h=Subject:From:To:Date:From;
-        b=cuuuCEyaO0+tVw1eQ0dQR8jPOtypqqL8Cc8zic90c7MmH6RxafnnFzEZe06rXWdC2
-         kqBah+LhE21Q4qImSE9Aqff5WyHEK1R5n1UwJZDqZu9+nXzOcRN/Qwsd97JmP0mDcl
-         gtjvqqDnc3vS/rXMLxhdMB+udIeCjrPY0B0PN428=
-Message-ID: <1558643528.2934.3.camel@kernel.org>
-Subject: [ANNOUNCE] 3.18.140-rt117
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Julia Cartwright <julia@ni.com>
-Date:   Thu, 23 May 2019 15:32:08 -0500
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S2387936AbfEWUeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 16:34:15 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:56755 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387533AbfEWUeO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 16:34:14 -0400
+X-Originating-IP: 90.89.68.76
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 10FE9FF806;
+        Thu, 23 May 2019 20:34:07 +0000 (UTC)
+Date:   Thu, 23 May 2019 22:34:07 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bshah@mykolab.com, Vasily Khoruzhick <anarsoul@gmail.com>,
+        powerpan@qq.com, michael@amarulasolutions.com,
+        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v10 01/11] drm/sun4i: dsi: Fix TCON DRQ set bits
+Message-ID: <20190523203407.o5obg2wtj7wwau6a@flea>
+References: <20190520090318.27570-1-jagan@amarulasolutions.com>
+ <20190520090318.27570-2-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520090318.27570-2-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello RT Folks!
+On Mon, May 20, 2019 at 02:33:08PM +0530, Jagan Teki wrote:
+> According to "DRM kernel-internal display mode structure" in
+> include/drm/drm_modes.h the current driver is trying to include
+> sync timings along with front porch value while checking and
+> computing drq set bits in non-burst mode.
+>
+> mode->hsync_end - mode->hdisplay => horizontal front porch + sync
+>
+> With adding additional sync timings, the dsi controller leads to
+> wrong drq set bits for "bananapi,s070wv20-ct16" panel which indeed
+> trigger panel flip_done timed out as:
+>
+>  WARNING: CPU: 0 PID: 31 at drivers/gpu/drm/drm_atomic_helper.c:1429 drm_atomic_helper_wait_for_vblanks.part.1+0x298/0x2a0
+>  [CRTC:46:crtc-0] vblank wait timed out
+>  Modules linked in:
+>  CPU: 0 PID: 31 Comm: kworker/0:1 Not tainted 5.1.0-next-20190514-00026-g01f0c75b902d-dirty #13
+>  Hardware name: Allwinner sun8i Family
+>  Workqueue: events deferred_probe_work_func
+>  [<c010ed54>] (unwind_backtrace) from [<c010b76c>] (show_stack+0x10/0x14)
+>  [<c010b76c>] (show_stack) from [<c0688c70>] (dump_stack+0x84/0x98)
+>  [<c0688c70>] (dump_stack) from [<c011d9e4>] (__warn+0xfc/0x114)
+>  [<c011d9e4>] (__warn) from [<c011da40>] (warn_slowpath_fmt+0x44/0x68)
+>  [<c011da40>] (warn_slowpath_fmt) from [<c040cd50>] (drm_atomic_helper_wait_for_vblanks.part.1+0x298/0x2a0)
+>  [<c040cd50>] (drm_atomic_helper_wait_for_vblanks.part.1) from [<c040e694>] (drm_atomic_helper_commit_tail_rpm+0x5c/0x6c)
+>  [<c040e694>] (drm_atomic_helper_commit_tail_rpm) from [<c040e4dc>] (commit_tail+0x40/0x6c)
+>  [<c040e4dc>] (commit_tail) from [<c040e5cc>] (drm_atomic_helper_commit+0xbc/0x128)
+>  [<c040e5cc>] (drm_atomic_helper_commit) from [<c0411b64>] (restore_fbdev_mode_atomic+0x1cc/0x1dc)
+>  [<c0411b64>] (restore_fbdev_mode_atomic) from [<c04156f8>] (drm_fb_helper_restore_fbdev_mode_unlocked+0x54/0xa0)
+>  [<c04156f8>] (drm_fb_helper_restore_fbdev_mode_unlocked) from [<c0415774>] (drm_fb_helper_set_par+0x30/0x54)
+>  [<c0415774>] (drm_fb_helper_set_par) from [<c03ad450>] (fbcon_init+0x560/0x5ac)
+>  [<c03ad450>] (fbcon_init) from [<c03eb8a0>] (visual_init+0xbc/0x104)
+>  [<c03eb8a0>] (visual_init) from [<c03ed1b8>] (do_bind_con_driver+0x1b0/0x390)
+>  [<c03ed1b8>] (do_bind_con_driver) from [<c03ed780>] (do_take_over_console+0x13c/0x1c4)
+>  [<c03ed780>] (do_take_over_console) from [<c03ad800>] (do_fbcon_takeover+0x74/0xcc)
+>  [<c03ad800>] (do_fbcon_takeover) from [<c013c9c8>] (notifier_call_chain+0x44/0x84)
+>  [<c013c9c8>] (notifier_call_chain) from [<c013cd20>] (__blocking_notifier_call_chain+0x48/0x60)
+>  [<c013cd20>] (__blocking_notifier_call_chain) from [<c013cd50>] (blocking_notifier_call_chain+0x18/0x20)
+>  [<c013cd50>] (blocking_notifier_call_chain) from [<c03a6e44>] (register_framebuffer+0x1e0/0x2f8)
+>  [<c03a6e44>] (register_framebuffer) from [<c04153c0>] (__drm_fb_helper_initial_config_and_unlock+0x2fc/0x50c)
+>  [<c04153c0>] (__drm_fb_helper_initial_config_and_unlock) from [<c04158c8>] (drm_fbdev_client_hotplug+0xe8/0x1b8)
+>  [<c04158c8>] (drm_fbdev_client_hotplug) from [<c0415a20>] (drm_fbdev_generic_setup+0x88/0x118)
+>  [<c0415a20>] (drm_fbdev_generic_setup) from [<c043f060>] (sun4i_drv_bind+0x128/0x160)
+>  [<c043f060>] (sun4i_drv_bind) from [<c044b598>] (try_to_bring_up_master+0x164/0x1a0)
+>  [<c044b598>] (try_to_bring_up_master) from [<c044b668>] (__component_add+0x94/0x140)
+>  [<c044b668>] (__component_add) from [<c0445e1c>] (sun6i_dsi_probe+0x144/0x234)
+>  [<c0445e1c>] (sun6i_dsi_probe) from [<c0452ef4>] (platform_drv_probe+0x48/0x9c)
+>  [<c0452ef4>] (platform_drv_probe) from [<c04512cc>] (really_probe+0x1dc/0x2c8)
+>  [<c04512cc>] (really_probe) from [<c0451518>] (driver_probe_device+0x60/0x160)
+>  [<c0451518>] (driver_probe_device) from [<c044f7a4>] (bus_for_each_drv+0x74/0xb8)
+>  [<c044f7a4>] (bus_for_each_drv) from [<c045107c>] (__device_attach+0xd0/0x13c)
+>  [<c045107c>] (__device_attach) from [<c0450474>] (bus_probe_device+0x84/0x8c)
+>  [<c0450474>] (bus_probe_device) from [<c0450900>] (deferred_probe_work_func+0x64/0x90)
+>  [<c0450900>] (deferred_probe_work_func) from [<c0135970>] (process_one_work+0x204/0x420)
+>  [<c0135970>] (process_one_work) from [<c013690c>] (worker_thread+0x274/0x5a0)
+>  [<c013690c>] (worker_thread) from [<c013b3d8>] (kthread+0x11c/0x14c)
+>  [<c013b3d8>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+>  Exception stack(0xde539fb0 to 0xde539ff8)
+>  9fa0:                                     00000000 00000000 00000000 00000000
+>  9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>  9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>  ---[ end trace b57eb1e5c64c6b8b ]---
+>  random: fast init done
+>  [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CRTC:46:crtc-0] flip_done timed out
+>  [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CONNECTOR:48:DSI-1] flip_done timed out
+>  [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [PLANE:30:plane-0] flip_done timed out
+>
+> But according to Allwinner A33, A64 BSP code [1] [3] the TCON DRQ for
+> non-burst DSI mode can be computed based on "horizontal front porch"
+> value only (no sync timings included).
+>
+> Detailed evidence for drq set bits based on A33 BSP [1] [2]
+>
+> => panel->lcd_ht - panel->lcd_x - panel->lcd_hbp - 20
+> => (tt->hor_front_porch + lcdp->panel_info.lcd_hbp +
+> lcdp->panel_info.lcd_x) - panel->lcd_x - panel->lcd_hbp - 20
+> => tt->hor_front_porch - 20
 
-I'm pleased to announce the 3.18.140-rt117 stable release.
+The thing is, while your explanation on the DRM side is sound,
+Allwinner has been using the hbp field of their panel description to
+store what DRM calls the backporch and the sync period.
 
-You can get this release via the git tree at:
+And nowhere in that commit log you are describing whether it's still
+an issue or not, and if it's not anymore how you did test that it's
+not the case anymore.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+Maxime
 
-  branch: v3.18-rt-rebase
-  Head SHA1: f7fa9a750011e58fbc407b2cd6e58207a187f4b9
-
-Or to build 3.18.140-rt117 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.18.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v3.x/patch-3.18.140.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/3.18/patch-3.18.140-rt117.patch.xz
-
-
-Enjoy!
-
-   Tom
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
