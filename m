@@ -2,86 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5375627FBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 16:32:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93D9E27FC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 16:33:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730921AbfEWOcm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 10:32:42 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33330 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730708AbfEWOcl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 10:32:41 -0400
-Received: by mail-qt1-f196.google.com with SMTP id z5so614947qtb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 07:32:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=26O4OAT3StjGcdvXWdoax0aRus0DVxp2E0u/qprceKo=;
-        b=zfcN1c1eomMu4+oxnKPYdhDF2+VuS/B2E91XN3OlCwQw7KkklrujUQt8Kn5EKAXrGY
-         ky/1UB308P/7q0WsnVGs5zkXTd0UslTzabH6KAPdXvHo4ywiM4EJ2agZAyCfJm3t7kGh
-         aJfKlvedmBR9f+Odt+gP5zlLz+6cPU0onGlKfVGSiOf1C4L4lRQJ4lTTjH4aGIf0hIU1
-         eDpi16auna3NIpAhQOqkSI/vfO4QvFDbGR/p5yxpVQz0ftc712fBu5i+MhhNqFAY4hMQ
-         KRW9jPEmbatolCDcubTgZulhcUm7MK+6TxOmmNTr/UujaPPAqinAbJOii1JTZMxPzTRu
-         qGXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=26O4OAT3StjGcdvXWdoax0aRus0DVxp2E0u/qprceKo=;
-        b=tdNyYETT7Kvfiv4u5q2SFwp1FTLjbib19c24puwePwLdQKkdWPqnz0q0R4p8OoF43I
-         vBG1GsYkS3jPk8tFuPg3Tk6ZifGrp1hX9d3wrB+kNYDdTuhHWQsUHnU/k6L4Ah43u3Ul
-         rq+q7aN5U2S3KNxOjugSg9WTOgZAnLtG6+vqOegNFyy2f2FZw9nBlQ9ZKCygR96GgRfR
-         WgdO/i5Co9CwN8C9gig+ODXsP5lBziX1W2R08xCR3AjfPevVZPrNDCwNoa/V9amDS6Kn
-         Pb6h6f5mj699IMeBlvd3HTpW0Yht7C71hD43A8358rluyAQ/07Lor1IgZ+gM6HvBFpZG
-         y6TQ==
-X-Gm-Message-State: APjAAAXlHn8mpvxLCv1d+8rKPVca1QXBtSnJXU5G0JR8ey1i6vYMx910
-        EOavu8SAEmDO4Z7sTQJ45Aig0A==
-X-Google-Smtp-Source: APXvYqwhHNKz/pi41E5cnHTYcYzQ3e6W/Vv0HpqStGGaYWCsQz5zn9J2dosBcXxlTD20r8VmIj5f4A==
-X-Received: by 2002:a0c:b50b:: with SMTP id d11mr27491149qve.98.1558621960357;
-        Thu, 23 May 2019 07:32:40 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li483-211.members.linode.com. [50.116.44.211])
-        by smtp.gmail.com with ESMTPSA id w2sm10446227qto.19.2019.05.23.07.32.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 May 2019 07:32:39 -0700 (PDT)
-Date:   Thu, 23 May 2019 22:32:27 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/30] coresight: Support for ACPI bindings
-Message-ID: <20190523143227.GC31751@leoy-ThinkPad-X240s>
-References: <1558521304-27469-1-git-send-email-suzuki.poulose@arm.com>
+        id S1730875AbfEWOdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 10:33:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50684 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730710AbfEWOdt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 10:33:49 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BD6DE307DA31;
+        Thu, 23 May 2019 14:33:48 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 7691E620DF;
+        Thu, 23 May 2019 14:33:44 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 23 May 2019 16:33:46 +0200 (CEST)
+Date:   Thu, 23 May 2019 16:33:41 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, dbueso@suse.de, axboe@kernel.dk,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Message-ID: <20190523143340.GA23070@redhat.com>
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190522150505.GA4915@redhat.com>
+ <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
+ <20190522161407.GB4915@redhat.com>
+ <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1558521304-27469-1-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 23 May 2019 14:33:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+On 05/22, Deepa Dinamani wrote:
+>
+> > > > --- a/include/linux/sched/signal.h
+> > > > +++ b/include/linux/sched/signal.h
+> > > > @@ -416,7 +416,6 @@ void task_join_group_stop(struct task_struct *task);
+> > > > static inline void set_restore_sigmask(void)
+> > > > {
+> > > >    set_thread_flag(TIF_RESTORE_SIGMASK);
+> > > > -    WARN_ON(!test_thread_flag(TIF_SIGPENDING));
+> > >
+> > > So you always want do_signal() to be called?
+> >
+> > Why do you think so? No. This is just to avoid the warning, because with the
+> > patch I sent set_restore_sigmask() is called "in advance".
+> >
+> > > You will have to check each architecture's implementation of
+> > > do_signal() to check if that has any side effects.
+> >
+> > I don't think so.
+>
+> Why not?
 
-On Wed, May 22, 2019 at 11:34:33AM +0100, Suzuki K Poulose wrote:
+Why yes?
 
-[...]
+it seems that we have some communication problems. OK, please look at the code
+I proposed, I only added a couple of TODO comments
 
-> Changes since v2:
->  - Drop the patches exposing device links via sysfs, to be posted as separate
->    series.
+	static inline void set_restore_sigmask(void)
+	{
+		// WARN_ON(!TIF_SIGPENDING) was removed by this patch
+		current->restore_sigmask = true;
+	}
 
-Thanks for sharing the git tree linkage in another email.  Just want
-to confirm, since patch set v3 you have dropped the patch "coresight:
-Expose device connections via sysfs" [1], will you send out this patch
-after ACPI binding support patches has been merged?
+	int set_user_sigmask(const sigset_t __user *umask, size_t sigsetsize)
+	{
+		sigset_t *kmask;
 
-When you send out the new patch for exposing device connection, please
-loop me so that I can base on it for perf testing related works.
+		if (!umask)
+			return 0;
 
-Thanks,
-Leo Yan
+		if (sigsetsize != sizeof(sigset_t))
+			return -EINVAL;
+		if (copy_from_user(kmask, umask, sizeof(sigset_t)))
+			return -EFAULT;
 
-[1] https://lkml.org/lkml/2019/4/15/658
+		set_restore_sigmask();
+		current->saved_sigmask = current->blocked;
+		set_current_blocked(kmask);
+
+		return 0;
+	}
+
+	SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct epoll_event __user *, events,
+			int, maxevents, int, timeout, const sigset_t __user *, sigmask,
+			size_t, sigsetsize)
+	{
+		int error;
+
+		/*
+		 * If the caller wants a certain signal mask to be set during the wait,
+		 * we apply it here.
+		 */
+		error = set_user_sigmask(sigmask, sigsetsize);
+		if (error)
+			return error;
+
+		error = do_epoll_wait(epfd, events, maxevents, timeout);
+
+		// TODO. Add another helper to restore WARN_ON(!TIF_SIGPENDING)
+		// in case restore_saved_sigmask() is NOT called.
+
+		if (error != -EINTR)
+			restore_saved_sigmask();
+
+		return error;
+	}
+
+Note that it looks much simpler. Now, could you please explain
+
+	- why do you think this code is not correct ?
+
+	- why do you think we need to audit do_signal() ???
+
+
+
+> > > Although this is not what the patch is solving.
+> >
+> > Sure. But you know, after I tried to read the changelog, I am not sure
+> > I understand what exactly you are trying to fix. Could you please explain
+> > this part
+> >
+> >         The behavior
+> >         before 854a6ed56839a was that the signals were dropped after the error
+> >         code was decided. This resulted in lost signals but the userspace did not
+> >         notice it
+> >
+> > ? I fail to understand it, sorry. It looks as if the code was already buggy before
+> > that commit and it could miss a signal or something like this, but I do not see how.
+>
+> Did you read the explanation pointed to in the commit text? :
+>
+> https://lore.kernel.org/linux-fsdevel/20190427093319.sgicqik2oqkez3wk@dcvr/
+
+this link points to the lengthy and confusing discussion... after a quick glance
+I didn't find an answer to my question, so let me repeat it again: why do you think
+the kernel was buggy even before 854a6ed56839a40f6b5d02a2962f48841482eec4 ("signal:
+Add restore_user_sigmask()") ?
+
+Just in case...
+https://lore.kernel.org/linux-fsdevel/CABeXuvq7gCV2qPOo+Q8jvNyRaTvhkRLRbnL_oJ-AuK7Sp=P3QQ@mail.gmail.com/
+doesn't look right to me... let me quite some parts of your email:
+
+
+	-       /*
+	-        * If we changed the signal mask, we need to restore the original one.
+	-        * In case we've got a signal while waiting, we do not restore the
+	-        * signal mask yet, and we allow do_signal() to deliver the signal on
+	-        * the way back to userspace, before the signal mask is restored.
+	-        */
+	-       if (sigmask) {
+	-               if (error == -EINTR) {
+	-                       memcpy(&current->saved_sigmask, &sigsaved,
+	-                              sizeof(sigsaved));
+	-                       set_restore_sigmask();
+	-               } else
+
+	**** Execution reaches this else statement and the sigmask is restored
+	directly, ignoring the newly generated signal.
+
+I see nothing wrong. This is what we want.
+
+	The signal is never
+	handled.
+
+Well, "never" is not right. It won't be handled now, because it is blocked, but
+for example think of another pselect/whatever call with the same sigmask.
+
+> It would be better to understand the isssue before we start discussing the fix.
+
+Agreed. And that is why I am asking for your explanations, quite possibly I missed
+something, but so far I fail to understand you.
+
+Oleg.
+
