@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 716AF28762
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09140287E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389701AbfEWTSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:18:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54522 "EHLO mail.kernel.org"
+        id S2390922AbfEWTYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:24:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389313AbfEWTSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:18:50 -0400
+        id S2390434AbfEWTY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:24:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B32172133D;
-        Thu, 23 May 2019 19:18:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EBEF21872;
+        Thu, 23 May 2019 19:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639129;
-        bh=b0VwoUslq5QPp9NlJd1ruUUqXSpc2qq2oRT1XJaKvXw=;
+        s=default; t=1558639468;
+        bh=YzxVZagn4yBuXs8rIInrK+XHSs1m65ndjNkEB/hNnqw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1GcOB60ymrOxPmosR2jV4+xjFgmQkmYi6LSiEO8VPR8Idd8OQuSdG5lmUUnBcSjHe
-         bWxlmWp2bTD5bdC9aHD7rtsYoHerD28pLEVl3qa6+SLEyyVdqAZXAiXvj8DtQmPkqD
-         ZS1c6ZuG9ayha03daXTm55MDpzyvs7ydtF9Wx8dA=
+        b=o/p6J1/R0CsJPKQ8b4b4DIuWJzFBacTvZ3ZYO83a835ifb9CbtgrLbUxxrKbefTgD
+         BDCtVBDpbVCMJRob10MpnJpIUaaM2RuvjJmRBB1FTmnJco+r8BtaxDlBx70nAVxWwK
+         C0tpESgxdgWPikxQY1kwzHBcW0yzCWAFASHSCeOE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 088/114] xfrm: Honor original L3 slave device in xfrmi policy lookup
+        stable@vger.kernel.org, Kirill Smelkov <kirr@nexedi.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 5.0 099/139] fuse: Add FOPEN_STREAM to use stream_open()
 Date:   Thu, 23 May 2019 21:06:27 +0200
-Message-Id: <20190523181739.547636418@linuxfoundation.org>
+Message-Id: <20190523181733.421233135@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +43,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 025c65e119bf58b610549ca359c9ecc5dee6a8d2 ]
+From: Kirill Smelkov <kirr@nexedi.com>
 
-If an xfrmi is associated to a vrf layer 3 master device,
-xfrm_policy_check() fails after traffic decapsulation. The input
-interface is replaced by the layer 3 master device, and hence
-xfrmi_decode_session() can't match the xfrmi anymore to satisfy
-policy checking.
+commit bbd84f33652f852ce5992d65db4d020aba21f882 upstream.
 
-Extend ingress xfrmi lookup to honor the original layer 3 slave
-device, allowing xfrm interfaces to operate within a vrf domain.
+Starting from commit 9c225f2655e3 ("vfs: atomic f_pos accesses as per
+POSIX") files opened even via nonseekable_open gate read and write via lock
+and do not allow them to be run simultaneously. This can create read vs
+write deadlock if a filesystem is trying to implement a socket-like file
+which is intended to be simultaneously used for both read and write from
+filesystem client.  See commit 10dce8af3422 ("fs: stream_open - opener for
+stream-like files so that read and write can run simultaneously without
+deadlock") for details and e.g. commit 581d21a2d02a ("xenbus: fix deadlock
+on writes to /proc/xen/xenbus") for a similar deadlock example on
+/proc/xen/xenbus.
 
-Fixes: f203b76d7809 ("xfrm: Add virtual xfrm interfaces")
-Signed-off-by: Martin Willi <martin@strongswan.org>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+To avoid such deadlock it was tempting to adjust fuse_finish_open to use
+stream_open instead of nonseekable_open on just FOPEN_NONSEEKABLE flags,
+but grepping through Debian codesearch shows users of FOPEN_NONSEEKABLE,
+and in particular GVFS which actually uses offset in its read and write
+handlers
+
+	https://codesearch.debian.net/search?q=-%3Enonseekable+%3D
+	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1080
+	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1247-1346
+	https://gitlab.gnome.org/GNOME/gvfs/blob/1.40.0-6-gcbc54396/client/gvfsfusedaemon.c#L1399-1481
+
+so if we would do such a change it will break a real user.
+
+Add another flag (FOPEN_STREAM) for filesystem servers to indicate that the
+opened handler is having stream-like semantics; does not use file position
+and thus the kernel is free to issue simultaneous read and write request on
+opened file handle.
+
+This patch together with stream_open() should be added to stable kernels
+starting from v3.14+. This will allow to patch OSSPD and other FUSE
+filesystems that provide stream-like files to return FOPEN_STREAM |
+FOPEN_NONSEEKABLE in open handler and this way avoid the deadlock on all
+kernel versions. This should work because fuse_finish_open ignores unknown
+open flags returned from a filesystem and so passing FOPEN_STREAM to a
+kernel that is not aware of this flag cannot hurt. In turn the kernel that
+is not aware of FOPEN_STREAM will be < v3.14 where just FOPEN_NONSEEKABLE
+is sufficient to implement streams without read vs write deadlock.
+
+Cc: stable@vger.kernel.org # v3.14+
+Signed-off-by: Kirill Smelkov <kirr@nexedi.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- include/net/xfrm.h        |  3 ++-
- net/xfrm/xfrm_interface.c | 17 ++++++++++++++---
- net/xfrm/xfrm_policy.c    |  2 +-
- 3 files changed, 17 insertions(+), 5 deletions(-)
+ fs/fuse/file.c            |    4 +++-
+ include/uapi/linux/fuse.h |    2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-index 3e966c632f3b2..4ddd2b13ac8d6 100644
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@ -295,7 +295,8 @@ struct xfrm_replay {
- };
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -181,7 +181,9 @@ void fuse_finish_open(struct inode *inod
+ 		file->f_op = &fuse_direct_io_file_operations;
+ 	if (!(ff->open_flags & FOPEN_KEEP_CACHE))
+ 		invalidate_inode_pages2(inode->i_mapping);
+-	if (ff->open_flags & FOPEN_NONSEEKABLE)
++	if (ff->open_flags & FOPEN_STREAM)
++		stream_open(inode, file);
++	else if (ff->open_flags & FOPEN_NONSEEKABLE)
+ 		nonseekable_open(inode, file);
+ 	if (fc->atomic_o_trunc && (file->f_flags & O_TRUNC)) {
+ 		struct fuse_inode *fi = get_fuse_inode(inode);
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -226,11 +226,13 @@ struct fuse_file_lock {
+  * FOPEN_KEEP_CACHE: don't invalidate the data cache on open
+  * FOPEN_NONSEEKABLE: the file is not seekable
+  * FOPEN_CACHE_DIR: allow caching this directory
++ * FOPEN_STREAM: the file is stream-like (no file position at all)
+  */
+ #define FOPEN_DIRECT_IO		(1 << 0)
+ #define FOPEN_KEEP_CACHE	(1 << 1)
+ #define FOPEN_NONSEEKABLE	(1 << 2)
+ #define FOPEN_CACHE_DIR		(1 << 3)
++#define FOPEN_STREAM		(1 << 4)
  
- struct xfrm_if_cb {
--	struct xfrm_if	*(*decode_session)(struct sk_buff *skb);
-+	struct xfrm_if	*(*decode_session)(struct sk_buff *skb,
-+					   unsigned short family);
- };
- 
- void xfrm_if_register_cb(const struct xfrm_if_cb *ifcb);
-diff --git a/net/xfrm/xfrm_interface.c b/net/xfrm/xfrm_interface.c
-index 82723ef44db3e..555ee2aca6c01 100644
---- a/net/xfrm/xfrm_interface.c
-+++ b/net/xfrm/xfrm_interface.c
-@@ -70,17 +70,28 @@ static struct xfrm_if *xfrmi_lookup(struct net *net, struct xfrm_state *x)
- 	return NULL;
- }
- 
--static struct xfrm_if *xfrmi_decode_session(struct sk_buff *skb)
-+static struct xfrm_if *xfrmi_decode_session(struct sk_buff *skb,
-+					    unsigned short family)
- {
- 	struct xfrmi_net *xfrmn;
--	int ifindex;
- 	struct xfrm_if *xi;
-+	int ifindex = 0;
- 
- 	if (!secpath_exists(skb) || !skb->dev)
- 		return NULL;
- 
-+	switch (family) {
-+	case AF_INET6:
-+		ifindex = inet6_sdif(skb);
-+		break;
-+	case AF_INET:
-+		ifindex = inet_sdif(skb);
-+		break;
-+	}
-+	if (!ifindex)
-+		ifindex = skb->dev->ifindex;
-+
- 	xfrmn = net_generic(xs_net(xfrm_input_state(skb)), xfrmi_net_id);
--	ifindex = skb->dev->ifindex;
- 
- 	for_each_xfrmi_rcu(xfrmn->xfrmi[0], xi) {
- 		if (ifindex == xi->dev->ifindex &&
-diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-index bf5d59270f79d..ce1b262ce9646 100644
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -2339,7 +2339,7 @@ int __xfrm_policy_check(struct sock *sk, int dir, struct sk_buff *skb,
- 	ifcb = xfrm_if_get_cb();
- 
- 	if (ifcb) {
--		xi = ifcb->decode_session(skb);
-+		xi = ifcb->decode_session(skb, family);
- 		if (xi) {
- 			if_id = xi->p.if_id;
- 			net = xi->net;
--- 
-2.20.1
-
+ /**
+  * INIT request/reply flags
 
 
