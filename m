@@ -2,76 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70447275CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 07:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C08A2275D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 07:53:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729866AbfEWFxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 01:53:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725806AbfEWFxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 01:53:01 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A63C2075E;
-        Thu, 23 May 2019 05:53:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558590781;
-        bh=tax24nmBc628VmVjaF783AtVlysAZD6fCJGwTezeGjM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CmiFpU/tt/UQvKhkn2236vqNC/YozN9lFSm4XiW03lKqrccWSyLvTdLlr03/2UA3M
-         ryAHMnWBeh8CwIYNHMYhcynpGmw6h/iG3xxauTq+qFbPFtZr0P5gjIqPInQcDY7SuF
-         uraQf5X7iaoEd5DZmzYTG42sbkRLn2pmdhW1I/3M=
-Date:   Thu, 23 May 2019 07:52:58 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Cliff Whickman <cpw@sgi.com>, Robin Holt <robinmholt@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com
-Subject: Re: -Wuninitialized warning in drivers/misc/sgi-xp/xpc_partition.c
-Message-ID: <20190523055258.GC22946@kroah.com>
-References: <20190503033340.GA7980@archlinux-i9>
- <20190523015639.GB17819@archlinux-epyc>
+        id S1729940AbfEWFxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 01:53:45 -0400
+Received: from mail-pg1-f175.google.com ([209.85.215.175]:42669 "EHLO
+        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbfEWFxp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 01:53:45 -0400
+Received: by mail-pg1-f175.google.com with SMTP id e17so2382103pgo.9
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 22:53:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vsdU5h/JC9pv4aYPKeA7tyb+gDcuPa26p02OCnzHaD8=;
+        b=paGyFWN24bYRxA6znxnHSznLozAL0ut2UZKWJjip4oiEtIBrrBPud+5tV2O+XZytmR
+         WgIQ8HZs7T3ur4UYNxNojeyzZDHjeO3RUqXGGJh9WnZ2BoXPIcCAExPfmPO1zX7jrvXU
+         LMmCiFt6pbQln7tvn9WL3ntLwqbZfVe2IAMrAQ1I9agjpDazRtNKwh2OJ6Wak1JNxS+S
+         PzwphHmmC8pxRC3NmYIMTXQ5IdjARjE/QF7moYX6S9+fdpNVOp7f7ZoX5loIQqGyi6OM
+         YLo2oixcY+shyCNgCOHjhQrtr2qmFkhyfJbVx0gCJGyZTeKx7PHNISiNXwYkgGRUQBPh
+         SyUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vsdU5h/JC9pv4aYPKeA7tyb+gDcuPa26p02OCnzHaD8=;
+        b=LiOiTyOfq854JzJGvq+iBpTwY7XKTEl85OOy7qJ5HOaZchAt/U2HQp0sVOylDNHTmv
+         w7oFheX51r8PcX4AUbNsleo7fdLYpFI5mxGzz0QqHvZZAnzSWbsdwRPPDjz33VmYSz6g
+         b/KnI5xWbH9tZqdYULt39JTqLq0iFq4Pf4lRk6KWJ982jYG0TSu7QPgagvIn8TYtiejM
+         cy0hvBHDacKPrS3SlyfPg1njZaROSYEtz8kdaL4sONfptMbKQzWKZWEV/o9VgqvSwsFW
+         x45bDRvAHzxnzpKAAkAGH0ju+MgF8msU9GLQ93aVS9rxltjzP7iHJwIIUD3qi76JKKqd
+         sEDg==
+X-Gm-Message-State: APjAAAUNuyrDAkzt4aBU5og5NXkpOOETa1YfyYsaNXBhP0lmNlEA8DZm
+        lrbVeuUPEQolWH0rxXTqyFz2DE2z7BZT8Q==
+X-Google-Smtp-Source: APXvYqyeDaZz9YUJQTVSBO9ROnlxKQdVPA1g1kS+N9W6BG20wZ5ZmgKLHN+CNRrwocvLh7N2zw8USg==
+X-Received: by 2002:a63:b00e:: with SMTP id h14mr91601278pgf.321.1558590824444;
+        Wed, 22 May 2019 22:53:44 -0700 (PDT)
+Received: from Gentoo ([103.231.90.171])
+        by smtp.gmail.com with ESMTPSA id i12sm32241040pfd.33.2019.05.22.22.53.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 22 May 2019 22:53:43 -0700 (PDT)
+Date:   Thu, 23 May 2019 11:23:31 +0530
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: PSA: Do not use "Reported-By" without reporter's approval
+Message-ID: <20190523055331.GA16577@Gentoo>
+References: <20190522193011.GB21412@chatter.i7.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
 Content-Disposition: inline
-In-Reply-To: <20190523015639.GB17819@archlinux-epyc>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190522193011.GB21412@chatter.i7.local>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 06:56:39PM -0700, Nathan Chancellor wrote:
-> On Thu, May 02, 2019 at 08:33:40PM -0700, Nathan Chancellor wrote:
-> > Hi all,
-> > 
-> > When building with -Wuninitialized, Clang warns:
-> > 
-> > drivers/misc/sgi-xp/xpc_partition.c:73:14: warning: variable 'buf' is uninitialized when used within its own initialization [-Wuninitialized]
-> >         void *buf = buf;
-> >               ~~~   ^~~
-> > 1 warning generated.
-> > 
-> > I am not really sure how to properly initialize buf in this instance.
-> > I would assume it would involve xpc_kmalloc_cacheline_aligned like
-> > further down in the function but maybe not, this function isn't entirely
-> > clear. Could we get your input, this is one of the last warnings I see
-> > in a few allyesconfig builds.
-> > 
-> > Thanks,
-> > Nathan
-> 
-> Hi all,
-> 
-> Friendly ping for comments/input. This is one of a few remaining
-> warnings I see, it'd be nice to get it fixed up so we can turn it on for
-> the whole kernel.
 
-Patches are gladly welcome :)
+--17pEHd4RhPHOinZp
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
 
-thanks,
+Make sense Kai!
 
-greg k-h
+On 15:30 Wed 22 May , Konstantin Ryabitsev wrote:
+>Hello, all:
+>
+>It is common courtesy to include this tagline when submitting patches:
+>
+>Reported-By: J. Doe <jdoe@example.com>
+>
+>Please ask the reporter's permission before doing so (even if they'd
+>submitted a public bugzilla report or sent a report to the mailing
+>list). They need to understand and agree that:
+>
+>- their name and email address will become a permanent, non-excisable
+>  part of the Linux Kernel git history
+>- their name and email address will be stored on multiple public
+>  archival copies of the linux kernel mailing list, collected and
+>  managed by different legal entities
+>
+>With or without GDPR laws, this is something the reporter needs to be
+>aware of and they need to be okay with it, as a matter of courtesy.
+>
+>-K
+
+--17pEHd4RhPHOinZp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAlzmNVcACgkQsjqdtxFL
+KRWA6Qf+Oxwa6kXBNelJ+GAEnOseXyo6i53MlFHJaBHqImluJFfkxCbOBCtZ1gaF
+Tc6dt9+ZYpatCkx+UuTigC1shcqqULieWFz/Olf/JWfdLvvtLudzDDmyfcOF20QV
+YCGOTjTLhxp8EQ4zJqi/fq8/JGrmcHT4JRDifo1Gjhf9fVWaYS7hX8Vjg7qxyupS
+F+4Az5t0nbJQaiRbTlWTuRo2jOUIE+mAMQR9jGIz9bS1uylmSPwIXN/m6tKMf07J
+K4ayzD9Jc1wOMqfDPxD7EScOzZQYkj2sph20LFuiTBnb/bGUdd9QHLlouT/3B+fJ
+/NRwzaM3NmJ0OdoBpgR4DmVxxlsoFg==
+=otcg
+-----END PGP SIGNATURE-----
+
+--17pEHd4RhPHOinZp--
