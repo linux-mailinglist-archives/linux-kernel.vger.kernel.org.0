@@ -2,123 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 657842845A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 18:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F52F28467
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 18:58:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731383AbfEWQ5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 12:57:24 -0400
-Received: from foss.arm.com ([217.140.101.70]:50904 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730899AbfEWQ5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 12:57:22 -0400
+        id S1731265AbfEWQ6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 12:58:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50982 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730899AbfEWQ6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 12:58:46 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0774C374;
-        Thu, 23 May 2019 09:57:22 -0700 (PDT)
-Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B06C3F5AF;
-        Thu, 23 May 2019 09:57:15 -0700 (PDT)
-Date:   Thu, 23 May 2019 17:57:09 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        Lee Smith <Lee.Smith@arm.com>, linux-kselftest@vger.kernel.org,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Evgeniy Stepanov <eugenis@google.com>,
-        linux-media@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        linux-kernel@vger.kernel.org,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: Re: [PATCH v15 00/17] arm64: untag user pointers passed to the kernel
-Message-ID: <20190523165708.q6ru7xg45aqfjzpr@mbp>
-References: <cover.1557160186.git.andreyknvl@google.com>
- <20190517144931.GA56186@arrakis.emea.arm.com>
- <20190521184856.GC2922@ziepe.ca>
- <20190522134925.GV28398@e103592.cambridge.arm.com>
- <20190523002052.GF15389@ziepe.ca>
- <20190523104256.GX28398@e103592.cambridge.arm.com>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBD31374;
+        Thu, 23 May 2019 09:58:45 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61A693F5AF;
+        Thu, 23 May 2019 09:58:44 -0700 (PDT)
+Date:   Thu, 23 May 2019 17:58:41 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Lei Wang <leiwang_git@outlook.com>
+Cc:     "bp@alien8.de" <bp@alien8.de>,
+        "james.morse@arm.com" <james.morse@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "lewan@microsoft.com" <lewan@microsoft.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: edac: arm-dmc520.txt
+Message-ID: <20190523165841.GD7523@lakrids.cambridge.arm.com>
+References: <CY1PR0401MB1244062C1738B09D6100F202860A0@CY1PR0401MB1244.namprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190523104256.GX28398@e103592.cambridge.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CY1PR0401MB1244062C1738B09D6100F202860A0@CY1PR0401MB1244.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 11:42:57AM +0100, Dave P Martin wrote:
-> On Wed, May 22, 2019 at 09:20:52PM -0300, Jason Gunthorpe wrote:
-> > On Wed, May 22, 2019 at 02:49:28PM +0100, Dave Martin wrote:
-> > > If multiple people will care about this, perhaps we should try to
-> > > annotate types more explicitly in SYSCALL_DEFINEx() and ABI data
-> > > structures.
-> > > 
-> > > For example, we could have a couple of mutually exclusive modifiers
-> > > 
-> > > T __object *
-> > > T __vaddr * (or U __vaddr)
-> > > 
-> > > In the first case the pointer points to an object (in the C sense)
-> > > that the call may dereference but not use for any other purpose.
-> > 
-> > How would you use these two differently?
-> > 
-> > So far the kernel has worked that __user should tag any pointer that
-> > is from userspace and then you can't do anything with it until you
-> > transform it into a kernel something
+On Thu, May 16, 2019 at 02:35:47AM +0000, Lei Wang wrote:
+> From: Lei Wang <leiwang_git@outlook.com>
 > 
-> Ultimately it would be good to disallow casting __object pointers execpt
-> to compatible __object pointer types, and to make get_user etc. demand
-> __object.
+> This is the device tree bindings for new EDAC driver dmc520_edac.c.
 > 
-> __vaddr pointers / addresses would be freely castable, but not to
-> __object and so would not be dereferenceable even indirectly.
+> Signed-off-by: Lei Wang <leiwang_git@outlook.com>
+> ---
+>  .../devicetree/bindings/edac/arm-dmc520.txt        | 26 ++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/edac/arm-dmc520.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/edac/arm-dmc520.txt b/Documentation/devicetree/bindings/edac/arm-dmc520.txt
+> new file mode 100644
+> index 0000000..71e7aa3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/edac/arm-dmc520.txt
+> @@ -0,0 +1,26 @@
+> +* ARM DMC-520 EDAC node
+> +
+> +Required properties:
+> +- compatible		: "brcm,dmc-520", "arm,dmc-520".
+> +- reg			: Address range of the DMC-520 registers.
+> +- interrupts		: DMC-520 interrupt numbers. The example below specifies
+> +			  two interrupt lines for dram_ecc_errc_int and
+> +			  dram_ecc_errd_int.
+> +- interrupt-config	: This is an array of interrupt masks. For each of the
+> +			  above interrupt line, add one interrupt mask element to
+> +			  it. That is, there is a 1:1 mapping from each interrupt
+> +			  line to an interrupt mask. An interrupt mask can represent
+> +			  multiple interrupts being enabled. Refer to interrupt_control
+> +			  register in DMC-520 TRM for interrupt mapping. In the example
+> +			  below, the interrupt configuration enables dram_ecc_errc_int
+> +			  and dram_ecc_errd_int. And each interrupt is connected to
+> +			  a separate interrupt line.
 
-I think it gets too complicated and there are ambiguous cases that we
-may not be able to distinguish. For example copy_from_user() may be used
-to copy a user data structure into the kernel, hence __object would
-work, while the same function may be used to copy opaque data to a file,
-so __vaddr may be a better option (unless I misunderstood your
-proposal).
+Generally we use interrupt-names to distinguish interrupts.
 
-We currently have T __user * and I think it's a good starting point. The
-prior attempt [1] was shut down because it was just hiding the cast
-using __force. We'd need to work through those cases again and rather
-start changing the function prototypes to avoid unnecessary casting in
-the callers (e.g. get_user_pages(void __user *) or come up with a new
-type) while changing the explicit casting to a macro where it needs to
-be obvious that we are converting a user pointer, potentially typed
-(tagged), to an untyped address range. We may need a user_ptr_to_ulong()
-macro or similar (it seems that we have a u64_to_user_ptr, wasn't aware
-of it).
+Do you really have arbitary subsets of lines muxed together?
 
-It may actually not be far from what you suggested but I'd keep the
-current T __user * to denote possible dereference.
+Thanks,
+Mark.
 
-[1] https://lore.kernel.org/lkml/5d54526e5ff2e5ad63d0dfdd9ab17cf359afa4f2.1535629099.git.andreyknvl@google.com/
-
--- 
-Catalin
+> +
+> +Example:
+> +
+> +dmc0: dmc@200000 {
+> +	compatible = "brcm,dmc-520", "arm,dmc-520";
+> +	reg = <0x200000 0x80000>;
+> +	interrupts = <0x0 0x349 0x4>, <0x0 0x34B 0x4>;
+> +	interrupt-config = <0x4>, <0x8>;
+> +};
+> -- 
+> 2.7.4
+> 
