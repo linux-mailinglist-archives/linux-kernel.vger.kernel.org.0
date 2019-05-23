@@ -2,322 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FADB285A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 20:07:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D634B28595
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 20:06:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387531AbfEWSHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 14:07:14 -0400
-Received: from foss.arm.com ([217.140.101.70]:52132 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387509AbfEWSHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 14:07:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50C2B1684;
-        Thu, 23 May 2019 11:07:11 -0700 (PDT)
-Received: from ostrya.cambridge.arm.com (ostrya.cambridge.arm.com [10.1.196.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A6D8B3F5AF;
-        Thu, 23 May 2019 11:07:09 -0700 (PDT)
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-To:     joro@8bytes.org, alex.williamson@redhat.com
-Cc:     jacob.jun.pan@linux.intel.com, eric.auger@redhat.com,
-        ashok.raj@intel.com, yi.l.liu@linux.intel.com, robdclark@gmail.com,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [PATCH 4/4] iommu: Add recoverable fault reporting
-Date:   Thu, 23 May 2019 19:06:13 +0100
-Message-Id: <20190523180613.55049-5-jean-philippe.brucker@arm.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523180613.55049-1-jean-philippe.brucker@arm.com>
-References: <20190523180613.55049-1-jean-philippe.brucker@arm.com>
+        id S1731403AbfEWSGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 14:06:49 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:45548 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731093AbfEWSGt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 14:06:49 -0400
+Received: by mail-io1-f66.google.com with SMTP id b3so228796iob.12;
+        Thu, 23 May 2019 11:06:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XdOS1jq8b2ZAmKzwdek6sp8pOeqK25qgZhjMRx+3kPc=;
+        b=NWtL07zFOCFP4lBu8Iphuhtalv/5o3pmtac06X4fCcWHWCwJ66NC+/eZo76l5v4fzJ
+         /8EOn/fQ7zeG+DPayQVmNufQw84O/o9H1oOCw0fQfaLZ3sxud2tVSPtfN7Q/HEw7lmxX
+         ouLciFoIAhTvk+ZpGNrpd0iDMLKtjqmCnryYJdyjMrDjqEm5VbOzB5Kc4RsmvChBgu7Y
+         lbD6+axWrJgt+FmL44NWrR2x6diOBV1cHanRkGbk8DpyJJOyMv326+sSpAp4fOxHOESR
+         E3j9rND/5Bml3JxdmQHl5AWGJG69qz+8idDIEcMfQCvBxbKt8bYBJlfTonsCRISMqiz3
+         PcIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XdOS1jq8b2ZAmKzwdek6sp8pOeqK25qgZhjMRx+3kPc=;
+        b=ZNNI5zfvoh7rqkoGsYMz4q6pRzdD/FF+vCU4Xhv19AR/lXo0UQzKQFxMOk17J3+TFk
+         xB9JcCtG56MsClZZHYnZpWHeSOaGN1qva0Yk44Vg5M2bQpB17di3yULCHiKF8iY1m/em
+         DkjOZ1Im+vWOscwSrDSAOJkCEYGwTA8HGoIsP0OL3AgwmlzgTMa8F6jJYalpx1Jt/i/Q
+         MiISGoTu4Re/jci818uEXxVYFqwvEXv3FbkfxxxXPFvR7r2NLkYIi8SFIzFCIJw/ZFvX
+         4eSFImCclbjVGaciUcjzlAE3omL6bOZEhFeGuFiUbTosHeUM9xF3W4+EO6KxrHJalS4X
+         gsJA==
+X-Gm-Message-State: APjAAAUmmCbG8ORP/VO2G41IUYNNcqIzOcHttOlPJeF/j58NaMBB9cSQ
+        FKK+k/sA3UPwODraimJpcph4i7CyIeUWVk1dWGQ=
+X-Google-Smtp-Source: APXvYqyXvLulnivo5Zhy2pYfrQZo94/GrgWZbNEIX2qy7Qee+RUyI7AyGkRhqzwfHnEEtS/npGnzsNF16tkWzAUuAgQ=
+X-Received: by 2002:a6b:c411:: with SMTP id y17mr4123111ioa.265.1558634808133;
+ Thu, 23 May 2019 11:06:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190522032144.10995-1-deepa.kernel@gmail.com>
+ <20190522150505.GA4915@redhat.com> <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
+ <20190522161407.GB4915@redhat.com> <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+ <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com> <20190523145944.GB23070@redhat.com>
+ <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com> <20190523163604.GE23070@redhat.com>
+ <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+In-Reply-To: <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Thu, 23 May 2019 11:06:37 -0700
+Message-ID: <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
+Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some IOMMU hardware features, for example PCI PRI and Arm SMMU Stall,
-enable recoverable I/O page faults. Allow IOMMU drivers to report PRI Page
-Requests and Stall events through the new fault reporting API. The
-consumer of the fault can be either an I/O page fault handler in the host,
-or a guest OS.
+Ok, since there has been quite a bit of argument here, I will
+backtrack a little bit and maybe it will help us understand what's
+happening here.
+There are many scenarios being discussed on this thread:
+a. State of code before 854a6ed56839a
+b. State after 854a6ed56839a
+c. Proposed fix as per the patchset in question.
 
-Once handled, the fault must be completed by sending a page response back
-to the IOMMU. Add an iommu_page_response() function to complete a page
-fault.
+Oleg, I will discuss these first and then we can discuss the
+additional changes you suggested.
 
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
----
- drivers/iommu/iommu.c      | 95 +++++++++++++++++++++++++++++++++++++-
- include/linux/iommu.h      | 19 ++++++++
- include/uapi/linux/iommu.h | 34 ++++++++++++++
- 3 files changed, 146 insertions(+), 2 deletions(-)
+Some background on why we have these syscalls that take sigmask as an
+argument. This is just for the sake of completeness of the argument.
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index d546f7baa0d4..b09b3707f0e4 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -872,7 +872,14 @@ EXPORT_SYMBOL_GPL(iommu_group_unregister_notifier);
-  * @data: private data passed as argument to the handler
-  *
-  * When an IOMMU fault event is received, this handler gets called with the
-- * fault event and data as argument. The handler should return 0 on success.
-+ * fault event and data as argument. The handler should return 0 on success. If
-+ * the fault is recoverable (IOMMU_FAULT_PAGE_REQ), the handler should also
-+ * complete the fault by calling iommu_page_response() with one of the following
-+ * response code:
-+ * - IOMMU_PAGE_RESP_SUCCESS: retry the translation
-+ * - IOMMU_PAGE_RESP_INVALID: terminate the fault
-+ * - IOMMU_PAGE_RESP_FAILURE: terminate the fault and stop reporting
-+ *   page faults if possible.
-  *
-  * Return 0 if the fault handler was installed successfully, or an error.
-  */
-@@ -907,6 +914,8 @@ int iommu_register_device_fault_handler(struct device *dev,
- 	}
- 	param->fault_param->handler = handler;
- 	param->fault_param->data = data;
-+	mutex_init(&param->fault_param->lock);
-+	INIT_LIST_HEAD(&param->fault_param->faults);
- 
- done_unlock:
- 	mutex_unlock(&param->lock);
-@@ -937,6 +946,12 @@ int iommu_unregister_device_fault_handler(struct device *dev)
- 	if (!param->fault_param)
- 		goto unlock;
- 
-+	/* we cannot unregister handler if there are pending faults */
-+	if (!list_empty(&param->fault_param->faults)) {
-+		ret = -EBUSY;
-+		goto unlock;
-+	}
-+
- 	kfree(param->fault_param);
- 	param->fault_param = NULL;
- 	put_device(dev);
-@@ -953,13 +968,15 @@ EXPORT_SYMBOL_GPL(iommu_unregister_device_fault_handler);
-  * @evt: fault event data
-  *
-  * Called by IOMMU drivers when a fault is detected, typically in a threaded IRQ
-- * handler.
-+ * handler. When this function fails and the fault is recoverable, it is the
-+ * caller's responsibility to complete the fault.
-  *
-  * Return 0 on success, or an error.
-  */
- int iommu_report_device_fault(struct device *dev, struct iommu_fault_event *evt)
- {
- 	struct iommu_param *param = dev->iommu_param;
-+	struct iommu_fault_event *evt_pending = NULL;
- 	struct iommu_fault_param *fparam;
- 	int ret = 0;
- 
-@@ -974,7 +991,27 @@ int iommu_report_device_fault(struct device *dev, struct iommu_fault_event *evt)
- 		ret = -EINVAL;
- 		goto done_unlock;
- 	}
-+
-+	if (evt->fault.type == IOMMU_FAULT_PAGE_REQ &&
-+	    (evt->fault.prm.flags & IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE)) {
-+		evt_pending = kmemdup(evt, sizeof(struct iommu_fault_event),
-+				      GFP_KERNEL);
-+		if (!evt_pending) {
-+			ret = -ENOMEM;
-+			goto done_unlock;
-+		}
-+		mutex_lock(&fparam->lock);
-+		list_add_tail(&evt_pending->list, &fparam->faults);
-+		mutex_unlock(&fparam->lock);
-+	}
-+
- 	ret = fparam->handler(evt, fparam->data);
-+	if (ret && evt_pending) {
-+		mutex_lock(&fparam->lock);
-+		list_del(&evt_pending->list);
-+		mutex_unlock(&fparam->lock);
-+		kfree(evt_pending);
-+	}
- done_unlock:
- 	mutex_unlock(&param->lock);
- 	return ret;
-@@ -1515,6 +1552,60 @@ int iommu_attach_device(struct iommu_domain *domain, struct device *dev)
- }
- EXPORT_SYMBOL_GPL(iommu_attach_device);
- 
-+int iommu_page_response(struct device *dev,
-+			struct iommu_page_response *msg)
-+{
-+	bool pasid_valid;
-+	int ret = -EINVAL;
-+	struct iommu_fault_event *evt;
-+	struct iommu_fault_page_request *prm;
-+	struct iommu_param *param = dev->iommu_param;
-+	struct iommu_domain *domain = iommu_get_domain_for_dev(dev);
-+
-+	if (!domain || !domain->ops->page_response)
-+		return -ENODEV;
-+
-+	/*
-+	 * Device iommu_param should have been allocated when device is
-+	 * added to its iommu_group.
-+	 */
-+	if (!param || !param->fault_param)
-+		return -EINVAL;
-+
-+	/* Only send response if there is a fault report pending */
-+	mutex_lock(&param->fault_param->lock);
-+	if (list_empty(&param->fault_param->faults)) {
-+		dev_warn_ratelimited(dev, "no pending PRQ, drop response\n");
-+		goto done_unlock;
-+	}
-+	/*
-+	 * Check if we have a matching page request pending to respond,
-+	 * otherwise return -EINVAL
-+	 */
-+	list_for_each_entry(evt, &param->fault_param->faults, list) {
-+		prm = &evt->fault.prm;
-+		pasid_valid = prm->flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID;
-+
-+		if ((pasid_valid && prm->pasid != msg->pasid) ||
-+		    prm->grpid != msg->grpid)
-+			continue;
-+
-+		/* Sanitize the reply */
-+		msg->addr = prm->addr;
-+		msg->flags = pasid_valid ? IOMMU_PAGE_RESP_PASID_VALID : 0;
-+
-+		ret = domain->ops->page_response(dev, msg, evt->iommu_private);
-+		list_del(&evt->list);
-+		kfree(evt);
-+		break;
-+	}
-+
-+done_unlock:
-+	mutex_unlock(&param->fault_param->lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(iommu_page_response);
-+
- static void __iommu_detach_device(struct iommu_domain *domain,
- 				  struct device *dev)
- {
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index f95e376a7ed3..a78c5f571082 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -227,6 +227,7 @@ struct iommu_sva_ops {
-  * @sva_bind: Bind process address space to device
-  * @sva_unbind: Unbind process address space from device
-  * @sva_get_pasid: Get PASID associated to a SVA handle
-+ * @page_response: handle page request response
-  * @pgsize_bitmap: bitmap of all possible supported page sizes
-  */
- struct iommu_ops {
-@@ -287,6 +288,10 @@ struct iommu_ops {
- 	void (*sva_unbind)(struct iommu_sva *handle);
- 	int (*sva_get_pasid)(struct iommu_sva *handle);
- 
-+	int (*page_response)(struct device *dev,
-+			     struct iommu_page_response *msg,
-+			     u64 iommu_private);
-+
- 	unsigned long pgsize_bitmap;
- };
- 
-@@ -311,11 +316,13 @@ struct iommu_device {
-  * unrecoverable faults such as DMA or IRQ remapping faults.
-  *
-  * @fault: fault descriptor
-+ * @list: pending fault event list, used for tracking responses
-  * @iommu_private: used by the IOMMU driver for storing fault-specific
-  *                 data. Users should not modify this field before
-  *                 sending the fault response.
-  */
- struct iommu_fault_event {
-+	struct list_head list;
- 	struct iommu_fault fault;
- 	u64 iommu_private;
- };
-@@ -324,10 +331,14 @@ struct iommu_fault_event {
-  * struct iommu_fault_param - per-device IOMMU fault data
-  * @handler: Callback function to handle IOMMU faults at device level
-  * @data: handler private data
-+ * @faults: holds the pending faults which needs response, e.g. page response.
-+ * @lock: protect pending faults list
-  */
- struct iommu_fault_param {
- 	iommu_dev_fault_handler_t handler;
- 	void *data;
-+	struct list_head faults;
-+	struct mutex lock;
- };
- 
- /**
-@@ -442,6 +453,8 @@ extern int iommu_unregister_device_fault_handler(struct device *dev);
- extern int iommu_report_device_fault(struct device *dev,
- 				     struct iommu_fault_event *evt);
- 
-+extern int iommu_page_response(struct device *dev,
-+			       struct iommu_page_response *msg);
- extern int iommu_group_id(struct iommu_group *group);
- extern struct iommu_group *iommu_group_get_for_dev(struct device *dev);
- extern struct iommu_domain *iommu_group_default_domain(struct iommu_group *);
-@@ -769,6 +782,12 @@ int iommu_report_device_fault(struct device *dev, struct iommu_fault_event *evt)
- 	return -ENODEV;
- }
- 
-+static inline int iommu_page_response(struct device *dev,
-+				      struct iommu_page_response *msg)
-+{
-+	return -ENODEV;
-+}
-+
- static inline int iommu_group_id(struct iommu_group *group)
- {
- 	return -ENODEV;
-diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
-index 796402174d6c..166500036557 100644
---- a/include/uapi/linux/iommu.h
-+++ b/include/uapi/linux/iommu.h
-@@ -115,4 +115,38 @@ struct iommu_fault {
- 		struct iommu_fault_page_request prm;
- 	};
- };
-+
-+/**
-+ * enum iommu_page_response_code - Return status of fault handlers
-+ * @IOMMU_PAGE_RESP_SUCCESS: Fault has been handled and the page tables
-+ *	populated, retry the access. This is "Success" in PCI PRI.
-+ * @IOMMU_PAGE_RESP_FAILURE: General error. Drop all subsequent faults from
-+ *	this device if possible. This is "Response Failure" in PCI PRI.
-+ * @IOMMU_PAGE_RESP_INVALID: Could not handle this fault, don't retry the
-+ *	access. This is "Invalid Request" in PCI PRI.
-+ */
-+enum iommu_page_response_code {
-+	IOMMU_PAGE_RESP_SUCCESS = 0,
-+	IOMMU_PAGE_RESP_INVALID,
-+	IOMMU_PAGE_RESP_FAILURE,
-+};
-+
-+/**
-+ * struct iommu_page_response - Generic page response information
-+ * @flags: encodes whether the corresponding fields are valid
-+ *         (IOMMU_FAULT_PAGE_RESPONSE_* values)
-+ * @pasid: Process Address Space ID
-+ * @grpid: Page Request Group Index
-+ * @code: response code from &enum iommu_page_response_code
-+ * @addr: page address
-+ */
-+struct iommu_page_response {
-+#define IOMMU_PAGE_RESP_PASID_VALID	(1 << 0)
-+	__u32	flags;
-+	__u32	pasid;
-+	__u32	grpid;
-+	__u32	code;
-+	__u64	addr;
-+};
-+
- #endif /* _UAPI_IOMMU_H */
--- 
-2.21.0
+These are particularly meant for a scenario(d) such as below:
 
+1. block the signals you don't care about.
+2. syscall()
+3. unblock the signals blocked in 1.
+
+The problem here is that if there is a signal that is not blocked by 1
+and such a signal is delivered between 1 and 2(since they are not
+atomic), the syscall in 2 might block forever as it never found out
+about the signal.
+
+As per [a] and let's consider the case of epoll_pwait only first for simplicity.
+
+As I said before, ep_poll() is what checks for signal_pending() and is
+responsible for setting errno to -EINTR when there is a signal.
+
+So if a signal is received after ep_poll() and ep_poll() returns
+success, it is never noticed by the syscall during execution.
+So the question is does the userspace have to know about this signal
+or not. From scenario [d] above, I would say it should, even if all
+the fd's completed successfully.
+This does not happen in [a]. So this is what I said was already broken.
+
+What [b] does is to move the signal check closer to the restoration of
+the signal. This way it is good. So, if there is a signal after
+ep_poll() returns success, it is noticed and the signal is delivered
+when the syscall exits. But, the syscall error status itself is 0.
+
+So now [c] is adjusting the return values based on whether extra
+signals were detected after ep_poll(). This part was needed even for
+[a].
+
+Let me know if this clarifies things a bit.
+
+-Deepa
