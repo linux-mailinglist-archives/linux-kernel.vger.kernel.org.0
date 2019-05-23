@@ -2,109 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC4328B15
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE73528B13
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387701AbfEWTxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:53:25 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54076 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387433AbfEWTxY (ORCPT
+        id S2387535AbfEWTxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:53:19 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:43467 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387422AbfEWTxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:53:24 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4NJlR6F187003
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 15:53:23 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2sp1yqg6du-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 15:53:23 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <farosas@linux.ibm.com>;
-        Thu, 23 May 2019 20:53:22 +0100
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 May 2019 20:53:18 +0100
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4NJrHRk31982062
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 May 2019 19:53:17 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6D59B112065;
-        Thu, 23 May 2019 19:53:17 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4E10E112062;
-        Thu, 23 May 2019 19:53:16 +0000 (GMT)
-Received: from farosas.linux.ibm.com.br.ibm.com (unknown [9.86.26.96])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 23 May 2019 19:53:16 +0000 (GMT)
-From:   Fabiano Rosas <farosas@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jan Kiszka <jan.kiszka@siemens.com>,
-        Kieran Bingham <kbingham@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Jackie Liu <liuyun01@kylinos.cn>
-Subject: [PATCH] scripts/gdb: Fix invocation when CONFIG_COMMON_CLK is not set
-Date:   Thu, 23 May 2019 16:53:11 -0300
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19052319-0072-0000-0000-000004326D81
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011150; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01207584; UDB=6.00634204; IPR=6.00988564;
- MB=3.00027022; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-23 19:53:20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052319-0073-0000-0000-00004C562D62
-Message-Id: <20190523195313.24701-1-farosas@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-23_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=15 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=828 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905230128
+        Thu, 23 May 2019 15:53:18 -0400
+Received: by mail-io1-f65.google.com with SMTP id v7so5863796iob.10
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:53:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=DUU/JbmMxaxg7HEI5Jb2l3ME8qgdUZEOoglUf3jK+GY=;
+        b=igINZ4GD+EOp0DvTKqUNFQnlzJ1wiFH4hEOhTjj0cIvpAK3IncMBUgipg+Uy6akPXM
+         oM1m5FQHGxuDD0SnhgkdAEcdanMHc3aDKrCDQIUR0BQJAlZGy47IYOYNn0WeVrBNoGXT
+         G4A9527XT1IEyaaEUwzfJTN3i5o5Fd4hHTdHaAAbf6XWlp2gtioS3KYT9Vj8DniHnSZE
+         5rH89R5ML0i9TBsCS3NQdtzGagFLiUDYnND742EMZEGgg1QaxwmyIKM40sGPimDdIOYT
+         hboFUwj/at1sWwmTWW8b845KOHsU4s2p4+JeLiaGNKGQSWnHEapnMam2xhYd92iphFiC
+         fazw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DUU/JbmMxaxg7HEI5Jb2l3ME8qgdUZEOoglUf3jK+GY=;
+        b=mNWQd/OJFErt+gcEJ8HmcvlmJev6N22xQJxRZYKgUpHXMON8VTh9Z4JhWAfTdp+ltG
+         LOhxhsB5R4+eJUq0OKdX5POwzipXiqlcruqXGvSTk5fUq7q/CkpRpruRPf7udDKgBVjO
+         27KQijZ3nN4H7+SGBJoycy8Rhl90B7P1XnHPwIMRphEhKkt8PvTNQMrQIr+fm8dIZqqL
+         KskXUrMmEAh645lw8eWM1yPtUwXEWhn3q4heEDxitBO0N4MDL1pe66ZpJ/+jwksJvTue
+         Dyn989pmnHnFFgim6nyXKd+i1O7sQsP5eY84+glHLoPspeLS14o9aOXdORUXvAapcJQ2
+         QQQA==
+X-Gm-Message-State: APjAAAWMFzyeg4GfGR4Sy10dyYQPK7M14QWW+PFCbEqfwlKWOeID07Sx
+        vhfEcPm7PyfuJgHvk4YMkczFaeKC
+X-Google-Smtp-Source: APXvYqzZdSej/UV5gAPYiZNghEuZ3itNPIn1ECvcokeYAni5y3sjlxKqulk9wFkuXjR1CQ+YInXCpQ==
+X-Received: by 2002:a5d:9c0e:: with SMTP id 14mr24944306ioe.135.1558641197860;
+        Thu, 23 May 2019 12:53:17 -0700 (PDT)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id w194sm206638itb.33.2019.05.23.12.53.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 12:53:17 -0700 (PDT)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] MAINTAINERS: Add entry for fieldbus subsystem
+Date:   Thu, 23 May 2019 15:53:12 -0400
+Message-Id: <20190523195313.31008-1-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CLK_GET_RATE_NOCACHE depends on CONFIG_COMMON_CLK. Importing
-constants.py when CONFIG_COMMON_CLK is not defined causes:
+Add myself as the maintainer of the fieldbus subsystem.
 
-  (gdb) lx-symbols
-  (...)
-    File "scripts/gdb/linux/proc.py", line 15, in <module>
-      from linux import constants
-    File "scripts/gdb/linux/constants.py", line 2, in <module>
-      LX_CLK_GET_RATE_NOCACHE = gdb.parse_and_eval("CLK_GET_RATE_NOCACHE")
-  gdb.error: No symbol "CLK_GET_RATE_NOCACHE" in current context.
-
-Fixes: e7e6f462c1be ("scripts/gdb: print cached rate in lx-clk-summary")
-Signed-off-by: Fabiano Rosas <farosas@linux.ibm.com>
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
 ---
- scripts/gdb/linux/constants.py.in | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ MAINTAINERS | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/scripts/gdb/linux/constants.py.in b/scripts/gdb/linux/constants.py.in
-index 1d73083da6cb..2efbec6b6b8d 100644
---- a/scripts/gdb/linux/constants.py.in
-+++ b/scripts/gdb/linux/constants.py.in
-@@ -40,7 +40,8 @@
- import gdb
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5cfbea4ce575..1cac53bced08 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14905,6 +14905,11 @@ L:	linux-erofs@lists.ozlabs.org
+ S:	Maintained
+ F:	drivers/staging/erofs/
  
- /* linux/clk-provider.h */
--LX_GDBPARSED(CLK_GET_RATE_NOCACHE)
-+if IS_BUILTIN(CONFIG_COMMON_CLK):
-+    LX_GDBPARSED(CLK_GET_RATE_NOCACHE)
- 
- /* linux/fs.h */
- LX_VALUE(SB_RDONLY)
++STAGING - FIELDBUS SUBSYSTEM
++M:	Sven Van Asbroeck <TheSven73@gmail.com>
++S:	Maintained
++F:	drivers/staging/fieldbus/*
++
+ STAGING - INDUSTRIAL IO
+ M:	Jonathan Cameron <jic23@kernel.org>
+ L:	linux-iio@vger.kernel.org
 -- 
-2.20.1
+2.17.1
 
