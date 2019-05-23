@@ -2,93 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82C7027A82
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 12:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 120AD27A97
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 12:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730405AbfEWK2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 06:28:21 -0400
-Received: from foss.arm.com ([217.140.101.70]:42882 "EHLO foss.arm.com"
+        id S1730284AbfEWKfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 06:35:21 -0400
+Received: from foss.arm.com ([217.140.101.70]:42996 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729972AbfEWK2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 06:28:20 -0400
+        id S1727466AbfEWKfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 06:35:21 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A688341;
-        Thu, 23 May 2019 03:28:20 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1AA03F718;
-        Thu, 23 May 2019 03:28:15 -0700 (PDT)
-Date:   Thu, 23 May 2019 11:28:13 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Borislav Petkov <bp@alien8.de>,
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E3737341;
+        Thu, 23 May 2019 03:35:20 -0700 (PDT)
+Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CECA73F718;
+        Thu, 23 May 2019 03:35:18 -0700 (PDT)
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        David Miller <davem@davemloft.net>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        James Hogan <jhogan@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Matt Turner <mattst88@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Richard Henderson <rth@twiddle.net>,
-        "# 3.4.x" <stable@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: Re: [PATCH 00/18] locking/atomic: atomic64 type cleanup
-Message-ID: <20190523102813.GC3370@lakrids.cambridge.arm.com>
-References: <20190522132250.26499-1-mark.rutland@arm.com>
- <CAK8P3a3X-7Yq9W+wEMRf3QvoEhrPHYmYukLaAr_39iKhJLC-bA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3X-7Yq9W+wEMRf3QvoEhrPHYmYukLaAr_39iKhJLC-bA@mail.gmail.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+        Will Deacon <will.deacon@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH 00/15] arm64: KVM: add SPE profiling support for guest
+Date:   Thu, 23 May 2019 11:34:47 +0100
+Message-Id: <20190523103502.25925-1-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 11:18:59PM +0200, Arnd Bergmann wrote:
-> On Wed, May 22, 2019 at 3:23 PM Mark Rutland <mark.rutland@arm.com> wrote:
-> >
-> > Currently architectures return inconsistent types for atomic64 ops. Some return
-> > long (e..g. powerpc), some return long long (e.g. arc), and some return s64
-> > (e.g. x86).
-> >
-> > This is a bit messy, and causes unnecessary pain (e.g. as values must be cast
-> > before they can be printed [1]).
-> >
-> > This series reworks all the atomic64 implementations to use s64 as the base
-> > type for atomic64_t (as discussed [2]), and to ensure that this type is
-> > consistently used for parameters and return values in the API, avoiding further
-> > problems in this area.
-> >
-> > This series (based on v5.1-rc1) can also be found in my atomics/type-cleanup
-> > branch [3] on kernel.org.
-> 
-> Nice cleanup!
-> 
-> I've provided an explicit Ack for the asm-generic patch if someone wants
-> to pick up the entire series, but I can also put it all into my asm-generic
-> tree if you want, after more people have had a chance to take a look.
+Hi,
 
-Thanks!
+This series implements support for allowing KVM guests to use the Arm
+Statistical Profiling Extension (SPE).
 
-I had assumed that this would go through the tip tree, as previous
-atomic rework had, but I have no preference as to how this gets merged.
+The patches are also available on a branch[1]. The last two extra
+patches are for the kvmtool if someone wants to play with it.
 
-I'm not sure what the policy is, so I'll leave it to Peter and Will to
-say.
+Regards,
+Sudeep
 
-Mark.
+v1->v2:
+	- Rebased on v5.2-rc1
+	- Adjusted sysreg_elx_s macros with merged clang build support
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux.git kvm_spe
+
+Sudeep Holla (15):
+  KVM: arm64: add {read,write}_sysreg_elx_s versions for new registers
+  dt-bindings: ARM SPE: highlight the need for PPI partitions on
+    heterogeneous systems
+  arm64: KVM: reset E2PB correctly in MDCR_EL2 when exiting the
+    guest(VHE)
+  arm64: KVM: define SPE data structure for each vcpu
+  arm64: KVM: add access handler for SPE system registers
+  arm64: KVM/VHE: enable the use PMSCR_EL12 on VHE systems
+  arm64: KVM: split debug save restore across vm/traps activation
+  arm64: KVM/debug: drop pmscr_el1 and use sys_regs[PMSCR_EL1] in
+    kvm_cpu_context
+  arm64: KVM: add support to save/restore SPE profiling buffer controls
+  arm64: KVM: enable conditional save/restore full SPE profiling buffer
+    controls
+  arm64: KVM/debug: trap all accesses to SPE controls at EL1
+  KVM: arm64: add a new vcpu device control group for SPEv1
+  KVM: arm64: enable SPE support
+  KVMTOOL: update_headers: Sync kvm UAPI headers with linux v5.2-rc1
+  KVMTOOL: kvm: add a vcpu feature for SPEv1 support
+
+ .../devicetree/bindings/arm/spe-pmu.txt       |   5 +-
+ Documentation/virtual/kvm/devices/vcpu.txt    |  28 +++
+ arch/arm64/boot/dts/arm/rtsm_ve-aemv8a.dts    | 185 +++++++++++-------
+ arch/arm64/configs/defconfig                  |   6 +
+ arch/arm64/include/asm/kvm_host.h             |  19 +-
+ arch/arm64/include/asm/kvm_hyp.h              |  26 ++-
+ arch/arm64/include/uapi/asm/kvm.h             |   4 +
+ arch/arm64/kvm/Kconfig                        |   7 +
+ arch/arm64/kvm/Makefile                       |   1 +
+ arch/arm64/kvm/guest.c                        |   9 +
+ arch/arm64/kvm/hyp/debug-sr.c                 |  98 +++++++---
+ arch/arm64/kvm/hyp/switch.c                   |  18 +-
+ arch/arm64/kvm/reset.c                        |   3 +
+ arch/arm64/kvm/sys_regs.c                     |  35 ++++
+ include/kvm/arm_spe.h                         |  71 +++++++
+ include/uapi/linux/kvm.h                      |   1 +
+ virt/kvm/arm/arm.c                            |   5 +
+ virt/kvm/arm/spe.c                            | 163 +++++++++++++++
+ 18 files changed, 570 insertions(+), 114 deletions(-)
+ create mode 100644 include/kvm/arm_spe.h
+ create mode 100644 virt/kvm/arm/spe.c
+
+--
+2.17.1
+
