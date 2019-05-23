@@ -2,103 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D75A27D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5712527D4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:53:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730740AbfEWMyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 08:54:20 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36158 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729698AbfEWMyT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 08:54:19 -0400
-Received: by mail-pg1-f194.google.com with SMTP id a3so3111092pgb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 05:54:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PxeLHI+jcJnNa8egh+nhhwEm8X7EMV+hjf297FNmO2k=;
-        b=peBQCQTsOhZRPBlQhXGKjX9BmJCm8odmIaIdt9AnoBnHuLuHgBSIXKze8HoLcLodx8
-         88zvIel1MVoqD70UqU0d105JJNVD6H45YVT8ukmGTeINvYrVwbVAq99W+/3EMHSFu79x
-         a9SuvDw1Perwg9+I1hzp8+WrgIt0MLVSOz021DaYE2pY6y3n5bwN2lSwdQhUA33W+WYu
-         H/tb+45zUX2AC1E+N/eai3SA4M03ghD0k8Ne4ccQHQEtAQMZniNsrAOereY6Hg1xhXpy
-         rvwNkm5FJ2VMWSIR8Hrnw4zJs1UyEvsPXi7pgLKnkbAq2Z/19DJzAjKc4+nh/8fslNbX
-         AMig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=PxeLHI+jcJnNa8egh+nhhwEm8X7EMV+hjf297FNmO2k=;
-        b=fnN1ijtCUKFaBM3Gmoofge5R9j4xPoBw2rarrI78ArkrCQFAGQoT4XR5DmSuMScuId
-         8J38KKKXsohucT6my3Oz7UBIrwHUhiKNHheqL2Dj7F/5YwkV4XPGgogcfyIhlJIpF2em
-         CY6y5Wkux5CVaxSXnieA4kcsUfGkMdYWF7gcXuaFaXR4l8PHkzNFFF2rKTY83O/f9T0g
-         5jYV9PT/gu0UVpzptzx8cbKJKjlLrXHEtTP1WUXNeObq8wACyRGv7UH271Hd6IxCuDBR
-         AiCviuhYibtADtXiFF1vNfTeh6zw9HGB+GquuChxtBTZtZJ1hv+Y9/AEyy1qH5gA1hGz
-         lQsQ==
-X-Gm-Message-State: APjAAAVykARKERAg7oavNChNK0mdXeeMJ+Z/hendUzs4neUbbXoxWjsd
-        lNyohDh5Jf1t2/82+6sT/YQ=
-X-Google-Smtp-Source: APXvYqxV4KBmIXZqYjcYRuW7xGgYl0YjuSZmNGQlm0u6NJ3EFrA8/HTX+//gsnRZZM/zz+A7JhRanA==
-X-Received: by 2002:a63:4a16:: with SMTP id x22mr5750690pga.219.1558616059112;
-        Thu, 23 May 2019 05:54:19 -0700 (PDT)
-Received: from localhost.localdomain ([122.163.94.48])
-        by smtp.gmail.com with ESMTPSA id w12sm27355248pgp.51.2019.05.23.05.54.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 05:54:18 -0700 (PDT)
-From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
-To:     gregkh@linuxfoundation.org, straube.linux@gmail.com,
-        realwakka@gmail.com, hle@owl.eu.com, rico.schrage@gmail.com,
-        sophie.matter@web.de, weiyongjun1@huawei.com, jbi.octave@gmail.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Subject: [PATCH v2] staging: pi433: Remove unnecessary variable
-Date:   Thu, 23 May 2019 18:23:41 +0530
-Message-Id: <20190523125340.29338-1-nishkadg.linux@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        id S1730985AbfEWMw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 08:52:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39478 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730323AbfEWMw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 08:52:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 17DE1AF96;
+        Thu, 23 May 2019 12:52:55 +0000 (UTC)
+From:   Michal Rostecki <mrostecki@opensuse.org>
+Cc:     Michal Rostecki <mrostecki@opensuse.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK),
+        netdev@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
+        bpf@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
+        linux-kernel@vger.kernel.org (open list),
+        xdp-newbies@vger.kernel.org (open list:XDP (eXpress Data Path))
+Subject: [PATCH bpf-next v2 RESEND 0/2] Move bpf_printk to bpf_helpers.h
+Date:   Thu, 23 May 2019 14:53:53 +0200
+Message-Id: <20190523125355.18437-1-mrostecki@opensuse.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The variable retval is assigned constant values twice, and can therefore
-be replaced by its values.
+This series of patches move the commonly used bpf_printk macro to
+bpf_helpers.h which is already included in all BPF programs which
+defined that macro on their own.
 
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
----
-Changes in v2:
-- Add Wei Yongjun to the recipients list
-- Fix From and Signed-off-by fields
+v1->v2:
+- If HBM_DEBUG is not defined in hbm sample, undefine bpf_printk and set
+  an empty macro for it.
 
- drivers/staging/pi433/pi433_if.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Michal Rostecki (2):
+  selftests: bpf: Move bpf_printk to bpf_helpers.h
+  samples: bpf: Do not define bpf_printk macro
 
-diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-index c889f0bdf424..40c6f4e7632f 100644
---- a/drivers/staging/pi433/pi433_if.c
-+++ b/drivers/staging/pi433/pi433_if.c
-@@ -871,7 +871,6 @@ pi433_write(struct file *filp, const char __user *buf,
- static long
- pi433_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
--	int			retval = 0;
- 	struct pi433_instance	*instance;
- 	struct pi433_device	*device;
- 	struct pi433_tx_cfg	tx_cfg;
-@@ -923,10 +922,10 @@ pi433_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		mutex_unlock(&device->rx_lock);
- 		break;
- 	default:
--		retval = -EINVAL;
-+		return -EINVAL;
- 	}
- 
--	return retval;
-+	return 0;
- }
- 
- #ifdef CONFIG_COMPAT
+ samples/bpf/hbm_kern.h                                | 11 ++---------
+ samples/bpf/tcp_basertt_kern.c                        |  7 -------
+ samples/bpf/tcp_bufs_kern.c                           |  7 -------
+ samples/bpf/tcp_clamp_kern.c                          |  7 -------
+ samples/bpf/tcp_cong_kern.c                           |  7 -------
+ samples/bpf/tcp_iw_kern.c                             |  7 -------
+ samples/bpf/tcp_rwnd_kern.c                           |  7 -------
+ samples/bpf/tcp_synrto_kern.c                         |  7 -------
+ samples/bpf/tcp_tos_reflect_kern.c                    |  7 -------
+ samples/bpf/xdp_sample_pkts_kern.c                    |  7 -------
+ tools/testing/selftests/bpf/bpf_helpers.h             |  8 ++++++++
+ .../testing/selftests/bpf/progs/sockmap_parse_prog.c  |  7 -------
+ .../selftests/bpf/progs/sockmap_tcp_msg_prog.c        |  7 -------
+ .../selftests/bpf/progs/sockmap_verdict_prog.c        |  7 -------
+ .../testing/selftests/bpf/progs/test_lwt_seg6local.c  |  7 -------
+ tools/testing/selftests/bpf/progs/test_xdp_noinline.c |  7 -------
+ tools/testing/selftests/bpf/test_sockmap_kern.h       |  7 -------
+ 17 files changed, 10 insertions(+), 114 deletions(-)
+
 -- 
-2.19.1
+2.21.0
 
