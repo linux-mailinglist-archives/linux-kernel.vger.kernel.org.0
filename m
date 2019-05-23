@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF3F82869A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2555D2872F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388004AbfEWTK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:10:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44230 "EHLO mail.kernel.org"
+        id S2389189AbfEWTQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:16:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387956AbfEWTKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:10:54 -0400
+        id S2389160AbfEWTQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:16:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58EFC2133D;
-        Thu, 23 May 2019 19:10:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30B8C2133D;
+        Thu, 23 May 2019 19:16:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638653;
-        bh=4Iku/FjekZcjWFXaDe6eZYD6gS+UBEqFJtU66m3sppg=;
+        s=default; t=1558638978;
+        bh=n+iY9opbL5gGBysj7809sJCcw/XvIAH8N+H6U+pwqK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vljZJj6ZPykeetZpJ56ey/nlElpypx2rmFvBJ3FX627WhVT9iQsPaAfBZ6uwgX+nU
-         bV2kuh8q6n8lvhPtUCGjWNiHGBpgOvnsj9rcyCBwLx+l5MqJGQPk6F7K3XicpSGmeG
-         +Asqats1wVIzsDWniKIkkRp1b2jsO7iMIlDOa/ro=
+        b=GrwjIGIrvxCYv2zjKhtc5sSSwjBNf9g3Gl0OI7t2V6j8YTpFBMbc7oJsZfFbBPZ70
+         KIrJr3GNSjYRmtNHFzYYyLh9sovDNEDUQU+9yr1AfrIvljVJ7P3Y5jO+MsYA/AlQqX
+         wp6tm7PhXritxMUSCN1/iUME1GbN4KNTxz+bMUxg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tingwei Zhang <tingwei@codeaurora.org>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.14 15/77] stm class: Fix channel free in stm output free path
+        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.19 034/114] media: ov6650: Fix sensor possibly not detected on probe
 Date:   Thu, 23 May 2019 21:05:33 +0200
-Message-Id: <20190523181722.338591145@linuxfoundation.org>
+Message-Id: <20190523181734.865863531@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tingwei Zhang <tingwei@codeaurora.org>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-commit ee496da4c3915de3232b5f5cd20e21ae3e46fe8d upstream.
+commit 933c1320847f5ed6b61a7d10f0a948aa98ccd7b0 upstream.
 
-Number of free masters is not set correctly in stm
-free path. Fix this by properly adding the number
-of output channels before setting them to 0 in
-stm_output_disclaim().
+After removal of clock_start() from before soc_camera_init_i2c() in
+soc_camera_probe() by commit 9aea470b399d ("[media] soc-camera: switch
+I2C subdevice drivers to use v4l2-clk") introduced in v3.11, the ov6650
+driver could no longer probe the sensor successfully because its clock
+was no longer turned on in advance.  The issue was initially worked
+around by adding that missing clock_start() equivalent to OMAP1 camera
+interface driver - the only user of this sensor - but a propoer fix
+should be rather implemented in the sensor driver code itself.
 
-Currently it is equivalent to doing nothing since
-master->nr_free is incremented by 0.
+Fix the issue by inserting a delay between the clock is turned on and
+the sensor I2C registers are read for the first time.
 
-Fixes: 7bd1d4093c2f ("stm class: Introduce an abstraction for System Trace Module devices")
-Signed-off-by: Tingwei Zhang <tingwei@codeaurora.org>
-Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc: stable@vger.kernel.org # v4.4
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Tested on Amstrad Delta with now out of tree but still locally
+maintained omap1_camera host driver.
+
+Fixes: 9aea470b399d ("[media] soc-camera: switch I2C subdevice drivers to use v4l2-clk")
+
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/stm/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/ov6650.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -226,8 +226,8 @@ stm_output_disclaim(struct stm_device *s
- 	bitmap_release_region(&master->chan_map[0], output->channel,
- 			      ilog2(output->nr_chans));
+--- a/drivers/media/i2c/ov6650.c
++++ b/drivers/media/i2c/ov6650.c
+@@ -815,6 +815,8 @@ static int ov6650_video_probe(struct i2c
+ 	if (ret < 0)
+ 		return ret;
  
--	output->nr_chans = 0;
- 	master->nr_free += output->nr_chans;
-+	output->nr_chans = 0;
- }
- 
- /*
++	msleep(20);
++
+ 	/*
+ 	 * check and show product ID and manufacturer ID
+ 	 */
 
 
