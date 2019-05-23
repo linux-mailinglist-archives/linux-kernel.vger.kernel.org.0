@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87FEE27D33
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:51:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ACFB27D2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:51:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730804AbfEWMvb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 08:51:31 -0400
+        id S1730742AbfEWMvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 08:51:18 -0400
 Received: from mga11.intel.com ([192.55.52.93]:27649 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729698AbfEWMvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 08:51:15 -0400
+        id S1730708AbfEWMvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 08:51:16 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
   by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 May 2019 05:51:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,503,1549958400"; 
-   d="scan'208";a="174743435"
+   d="scan'208";a="174743445"
 Received: from marshy.an.intel.com ([10.122.105.159])
-  by fmsmga002.fm.intel.com with ESMTP; 23 May 2019 05:51:14 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 23 May 2019 05:51:15 -0700
 From:   richard.gong@linux.intel.com
 To:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
         mark.rutland@arm.com, dinguyen@kernel.org, atull@kernel.org
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         sen.li@intel.com, richard.gong@linux.intel.com,
         Richard Gong <richard.gong@intel.com>
-Subject: [PATCHv3 1/4] firmware: stratix10-svc: extend svc to support RSU notify and WD features
-Date:   Thu, 23 May 2019 08:03:27 -0500
-Message-Id: <1558616610-499-2-git-send-email-richard.gong@linux.intel.com>
+Subject: [PATCHv3 2/4] firmware: add Intel Stratix10 remote system update driver
+Date:   Thu, 23 May 2019 08:03:28 -0500
+Message-Id: <1558616610-499-3-git-send-email-richard.gong@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1558616610-499-1-git-send-email-richard.gong@linux.intel.com>
 References: <1558616610-499-1-git-send-email-richard.gong@linux.intel.com>
@@ -39,318 +39,488 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Richard Gong <richard.gong@intel.com>
 
-Entend Intel Stratix10 service layer driver to support RSU notify and
-watchdog timeout features.
+The Intel Remote System Update (RSU) driver exposes interfaces access
+through the Intel Service Layer to user space via sysfs interface.
+The RSU interfaces report and control some of the optional RSU features
+on Intel Stratix 10 SoC.
 
-RSU is used to provide our customers with protection against loading bad
-bitstream onto their devices when those devices are booting from flash
-
-RSU notifies provides users with an API to notify the firmware of the
-state of hard processor system.
-
-RSU instructs firmware what to do when rebooting due to a watchdog timer
-expiration, the firmware can reboot with the current running image or
-reboot with the normal RSU flow.
+The RSU feature provides a way for customers to update the boot
+configuration of a Intel Stratix 10 SoC device with significantly reduced
+risk of corrupting the bitstream storage and bricking the system.
 
 Signed-off-by: Richard Gong <richard.gong@intel.com>
 Reviewed-by: Alan Tull <atull@kernel.org>
 ---
-v2: changed to add intel stratix10 RSU device
-    changed to support RSU in handling a watchdog timeout
+v2: s/SysFS/sysfs, s/scnprintf/sprintf,
+    s/attr_group/ATTRIBUTE_GROUPS, use devm_device_add_groups() and
+    devm_device_remove_groups()
+    added check the return value from rsu_send_msg()
+    removed a pr_info in stratix10_rsu_probe()
+    removed compatible = "intel,stratix10-rsu"
 v3: no change
 ---
- drivers/firmware/stratix10-svc.c                   | 74 +++++++++++++++++++++-
- include/linux/firmware/intel/stratix10-smc.h       | 48 ++++++++++++--
- .../linux/firmware/intel/stratix10-svc-client.h    | 12 +++-
- 3 files changed, 124 insertions(+), 10 deletions(-)
+ drivers/firmware/Kconfig         |  18 ++
+ drivers/firmware/Makefile        |   1 +
+ drivers/firmware/stratix10-rsu.c | 409 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 428 insertions(+)
+ create mode 100644 drivers/firmware/stratix10-rsu.c
 
-diff --git a/drivers/firmware/stratix10-svc.c b/drivers/firmware/stratix10-svc.c
-index 6e65148..89e2849 100644
---- a/drivers/firmware/stratix10-svc.c
-+++ b/drivers/firmware/stratix10-svc.c
-@@ -38,6 +38,9 @@
- #define FPGA_CONFIG_DATA_CLAIM_TIMEOUT_MS	200
- #define FPGA_CONFIG_STATUS_TIMEOUT_SEC		30
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index 11fda9e..517a8d5 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -214,6 +214,24 @@ config INTEL_STRATIX10_SERVICE
  
-+/* stratix10 service layer clients */
-+#define STRATIX10_RSU				"stratix10-rsu"
+ 	  Say Y here if you want Stratix10 service layer support.
+ 
++config INTEL_STRATIX10_RSU
++        tristate "Intel Stratix10 Remote System Update"
++        depends on INTEL_STRATIX10_SERVICE
++        help
++          The Intel Remote System Update (RSU) driver exposes interfaces
++          access through the Intel Service Layer to user space via sysfs
++          device attribute nodes. The RSU interfaces report/control some of
++          the optional RSU features of the Stratix 10 SoC FPGA.
 +
- typedef void (svc_invoke_fn)(unsigned long, unsigned long, unsigned long,
- 			     unsigned long, unsigned long, unsigned long,
- 			     unsigned long, unsigned long,
-@@ -45,6 +48,14 @@ typedef void (svc_invoke_fn)(unsigned long, unsigned long, unsigned long,
- struct stratix10_svc_chan;
- 
- /**
-+ * struct stratix10_svc - svc private data
-+ * @stratix10_svc_rsu: pointer to stratix10 RSU device
++          The RSU provides a way for customers to update the boot
++          configuration of a Stratix 10 SoC device with significantly reduced
++          risk of corrupting the bitstream storage and bricking the system.
++
++          Enable RSU support if you are using an Intel SoC FPGA with the RSU
++          feature enabled and you want Linux user space control.
++
++          Say Y here if you want Intel RSU support.
++
+ config QCOM_SCM
+ 	bool
+ 	depends on ARM || ARM64
+diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+index 3fa0b34..d04d5fc 100644
+--- a/drivers/firmware/Makefile
++++ b/drivers/firmware/Makefile
+@@ -11,6 +11,7 @@ obj-$(CONFIG_EDD)		+= edd.o
+ obj-$(CONFIG_EFI_PCDP)		+= pcdp.o
+ obj-$(CONFIG_DMIID)		+= dmi-id.o
+ obj-$(CONFIG_INTEL_STRATIX10_SERVICE) += stratix10-svc.o
++obj-$(CONFIG_INTEL_STRATIX10_RSU)     += stratix10-rsu.o
+ obj-$(CONFIG_ISCSI_IBFT_FIND)	+= iscsi_ibft_find.o
+ obj-$(CONFIG_ISCSI_IBFT)	+= iscsi_ibft.o
+ obj-$(CONFIG_FIRMWARE_MEMMAP)	+= memmap.o
+diff --git a/drivers/firmware/stratix10-rsu.c b/drivers/firmware/stratix10-rsu.c
+new file mode 100644
+index 0000000..770605c
+--- /dev/null
++++ b/drivers/firmware/stratix10-rsu.c
+@@ -0,0 +1,409 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018-2019, Intel Corporation
 + */
-+struct stratix10_svc {
-+	struct platform_device *stratix10_svc_rsu;
++
++#include <linux/arm-smccc.h>
++#include <linux/bitfield.h>
++#include <linux/completion.h>
++#include <linux/kobject.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/firmware/intel/stratix10-svc-client.h>
++#include <linux/string.h>
++#include <linux/sysfs.h>
++
++#define RSU_STATE_MASK			GENMASK_ULL(31, 0)
++#define RSU_VERSION_MASK                GENMASK_ULL(63, 32)
++#define RSU_ERROR_LOCATION_MASK         GENMASK_ULL(31, 0)
++#define RSU_ERROR_DETAIL_MASK		GENMASK_ULL(63, 32)
++
++#define RSU_TIMEOUT	(msecs_to_jiffies(SVC_RSU_REQUEST_TIMEOUT_MS))
++
++/**
++ * struct stratix10_rsu_priv - rsu data structure
++ * @chan: pointer to the allocated service channel
++ * @client: active service client
++ * @completion: state for callback completion
++ * @lock: a mutex to protect callback completion state
++ * @status.current_image: address of image currently running in flash
++ * @status.fail_image: address of failed image in flash
++ * @status.version: the version number of RSU firmware
++ * @status.state: the state of RSU system
++ * @status.error_details: error code
++ * @status.error_location: the error offset inside the image that failed
++ */
++struct stratix10_rsu_priv {
++	struct stratix10_svc_chan *chan;
++	struct stratix10_svc_client client;
++	struct completion completion;
++	struct mutex lock;
++	struct {
++		unsigned long current_image;
++		unsigned long fail_image;
++		unsigned int version;
++		unsigned int state;
++		unsigned int error_details;
++		unsigned int error_location;
++	} status;
 +};
 +
 +/**
-  * struct stratix10_svc_sh_memory - service shared memory structure
-  * @sync_complete: state for a completion
-  * @addr: physical address of shared memory block
-@@ -295,7 +306,10 @@ static void svc_thread_recv_status_ok(struct stratix10_svc_data *p_data,
- 	case COMMAND_RECONFIG_STATUS:
- 		cb_data->status = BIT(SVC_STATUS_RECONFIG_COMPLETED);
- 		break;
-+	case COMMAND_RSU_STATUS:
- 	case COMMAND_RSU_UPDATE:
-+	case COMMAND_RSU_NOTIFY:
-+	case COMMAND_RSU_WD:
- 		cb_data->status = BIT(SVC_STATUS_RSU_OK);
- 		break;
- 	default:
-@@ -386,6 +400,16 @@ static int svc_normal_to_secure_thread(void *data)
- 			a1 = pdata->arg[0];
- 			a2 = 0;
- 			break;
-+		case COMMAND_RSU_NOTIFY:
-+			a0 = INTEL_SIP_SMC_RSU_NOTIFY;
-+			a1 = pdata->arg[0];
-+			a2 = 0;
-+			break;
-+		case COMMAND_RSU_WD:
-+			a0 = INTEL_SIP_SMC_RSU_WD;
-+			a1 = pdata->arg[0];
-+			a2 = 0;
-+			break;
- 		default:
- 			pr_warn("it shouldn't happen\n");
- 			break;
-@@ -438,7 +462,28 @@ static int svc_normal_to_secure_thread(void *data)
- 			pr_debug("%s: STATUS_REJECTED\n", __func__);
- 			break;
- 		case INTEL_SIP_SMC_FPGA_CONFIG_STATUS_ERROR:
-+		case INTEL_SIP_SMC_RSU_ERROR:
- 			pr_err("%s: STATUS_ERROR\n", __func__);
-+			switch (pdata->command) {
-+			/* for FPGA mgr */
-+			case COMMAND_RECONFIG_DATA_CLAIM:
-+			case COMMAND_RECONFIG:
-+			case COMMAND_RECONFIG_DATA_SUBMIT:
-+			case COMMAND_RECONFIG_STATUS:
-+				cbdata->status =
-+					BIT(SVC_STATUS_RECONFIG_ERROR);
-+				break;
++ * rsu_status_callback() - Status callback from Intel service layer
++ * @client: pointer to service client
++ * @data: pointer to callback data structure
++ *
++ * Callback from Intel service layer for RSU status request. Status is
++ * only updated after a system reboot, so a get updated status call is
++ * made during driver probe.
++ */
++static void rsu_status_callback(struct stratix10_svc_client *client,
++				struct stratix10_svc_cb_data *data)
++{
++	struct stratix10_rsu_priv *priv = client->priv;
++	struct arm_smccc_res *res = (struct arm_smccc_res *)data->kaddr1;
 +
-+			/* for RSU */
-+			case COMMAND_RSU_STATUS:
-+			case COMMAND_RSU_UPDATE:
-+			case COMMAND_RSU_NOTIFY:
-+			case COMMAND_RSU_WD:
-+				cbdata->status =
-+					BIT(SVC_STATUS_RSU_ERROR);
-+				break;
-+			}
-+
- 			cbdata->status = BIT(SVC_STATUS_RECONFIG_ERROR);
- 			cbdata->kaddr1 = NULL;
- 			cbdata->kaddr2 = NULL;
-@@ -530,7 +575,7 @@ static int svc_get_sh_memory(struct platform_device *pdev,
- 
- 	if (!sh_memory->addr || !sh_memory->size) {
- 		dev_err(dev,
--			"fails to get shared memory info from secure world\n");
-+			"failed to get shared memory info from secure world\n");
- 		return -ENOMEM;
- 	}
- 
-@@ -768,7 +813,7 @@ int stratix10_svc_send(struct stratix10_svc_chan *chan, void *msg)
- 					      "svc_smc_hvc_thread");
- 			if (IS_ERR(chan->ctrl->task)) {
- 				dev_err(chan->ctrl->dev,
--					"fails to create svc_smc_hvc_thread\n");
-+					"failed to create svc_smc_hvc_thread\n");
- 				kfree(p_data);
- 				return -EINVAL;
- 			}
-@@ -913,6 +958,8 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
- 	struct stratix10_svc_chan *chans;
- 	struct gen_pool *genpool;
- 	struct stratix10_svc_sh_memory *sh_memory;
-+	struct stratix10_svc *svc;
-+
- 	svc_invoke_fn *invoke_fn;
- 	size_t fifo_size;
- 	int ret;
-@@ -957,7 +1004,7 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
- 	fifo_size = sizeof(struct stratix10_svc_data) * SVC_NUM_DATA_IN_FIFO;
- 	ret = kfifo_alloc(&controller->svc_fifo, fifo_size, GFP_KERNEL);
- 	if (ret) {
--		dev_err(dev, "fails to allocate FIFO\n");
-+		dev_err(dev, "failed to allocate FIFO\n");
- 		return ret;
- 	}
- 	spin_lock_init(&controller->svc_fifo_lock);
-@@ -975,6 +1022,24 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
- 	list_add_tail(&controller->node, &svc_ctrl);
- 	platform_set_drvdata(pdev, controller);
- 
-+	/* add svc client device(s) */
-+	svc = devm_kzalloc(dev, sizeof(*svc), GFP_KERNEL);
-+	if (!svc)
-+		return -ENOMEM;
-+
-+	svc->stratix10_svc_rsu = platform_device_alloc(STRATIX10_RSU, 0);
-+	if (!svc->stratix10_svc_rsu) {
-+		dev_err(dev, "failed to allocate %s device\n", STRATIX10_RSU);
-+		return -ENOMEM;
++	if (data->status == BIT(SVC_STATUS_RSU_OK)) {
++		priv->status.version = FIELD_GET(RSU_VERSION_MASK,
++						 res->a2);
++		priv->status.state = FIELD_GET(RSU_STATE_MASK, res->a2);
++		priv->status.fail_image = res->a1;
++		priv->status.current_image = res->a0;
++		priv->status.error_location =
++			FIELD_GET(RSU_ERROR_LOCATION_MASK, res->a3);
++		priv->status.error_details =
++			FIELD_GET(RSU_ERROR_DETAIL_MASK, res->a3);
++	} else {
++		dev_err(client->dev, "COMMAND_RSU_STATUS returned 0x%lX\n",
++			res->a0);
++		priv->status.version = 0;
++		priv->status.state = 0;
++		priv->status.fail_image = 0;
++		priv->status.current_image = 0;
++		priv->status.error_location = 0;
++		priv->status.error_details = 0;
 +	}
 +
-+	ret = platform_device_add(svc->stratix10_svc_rsu);
++	complete(&priv->completion);
++}
++
++/**
++ * rsu_command_callback() - Update callback from Intel service layer
++ * @client: pointer to client
++ * @data: pointer to callback data structure
++ *
++ * Callback from Intel service layer for RSU commands.
++ */
++static void rsu_command_callback(struct stratix10_svc_client *client,
++				 struct stratix10_svc_cb_data *data)
++{
++	struct stratix10_rsu_priv *priv = client->priv;
++
++	if (data->status != BIT(SVC_STATUS_RSU_OK))
++		dev_err(client->dev, "RSU returned status is %i\n",
++			data->status);
++	complete(&priv->completion);
++}
++
++/**
++ * rsu_send_msg() - send a message to Intel service layer
++ * @priv: pointer to rsu private data
++ * @command: RSU status or update command
++ * @arg: the request argument, the bitstream address or notify status
++ * @callback: function pointer for the callback (status or update)
++ *
++ * Start an Intel service layer transaction to perform the SMC call that
++ * is necessary to get RSU boot log or set the address of bitstream to
++ * boot after reboot.
++ *
++ * Returns 0 on success or -ETIMEDOUT on error.
++ */
++static int rsu_send_msg(struct stratix10_rsu_priv *priv,
++			enum stratix10_svc_command_code command,
++	unsigned long arg,
++	void (*callback)(struct stratix10_svc_client *client,
++			 struct stratix10_svc_cb_data *data))
++{
++	struct stratix10_svc_client_msg msg;
++	int ret;
++
++	mutex_lock(&priv->lock);
++	reinit_completion(&priv->completion);
++	priv->client.receive_cb = callback;
++
++	msg.command = command;
++	if (arg)
++		msg.arg[0] = arg;
++
++	ret = stratix10_svc_send(priv->chan, &msg);
++	if (ret < 0)
++		goto status_done;
++
++	ret = wait_for_completion_interruptible_timeout(&priv->completion,
++							RSU_TIMEOUT);
++	if (!ret) {
++		dev_err(priv->client.dev,
++			"timeout waiting for COMMAND_RSU_STATUS\n");
++		ret = -ETIMEDOUT;
++		goto status_done;
++	} else if (ret < 0) {
++		dev_err(priv->client.dev,
++			"error %d waiting for COMMAND_RSU_STATUS\n", ret);
++		goto status_done;
++	} else {
++		ret = 0;
++	}
++
++status_done:
++	stratix10_svc_done(priv->chan);
++	mutex_unlock(&priv->lock);
++	return ret;
++}
++
++/*
++ * This driver exposes some optional features of the Intel Stratix 10 SoC FPGA.
++ * The sysfs interfaces exposed here are FPGA Remote System Update (RSU)
++ * related.  They allow user space software to query the configuration system
++ * status and to request optional reboot behavior specific to Intel FPGAs.
++ */
++
++static ssize_t current_image_show(struct device *dev,
++				  struct device_attribute *attr, char *buf)
++{
++	struct stratix10_rsu_priv *priv = dev_get_drvdata(dev);
++
++	if (!priv)
++		return -ENODEV;
++
++	return sprintf(buf, "%ld", priv->status.current_image);
++}
++
++static ssize_t fail_image_show(struct device *dev,
++			       struct device_attribute *attr, char *buf)
++{
++	struct stratix10_rsu_priv *priv = dev_get_drvdata(dev);
++
++	if (!priv)
++		return -ENODEV;
++
++	return sprintf(buf, "%ld", priv->status.fail_image);
++}
++
++static ssize_t version_show(struct device *dev, struct device_attribute *attr,
++			    char *buf)
++{
++	struct stratix10_rsu_priv *priv = dev_get_drvdata(dev);
++
++	if (!priv)
++		return -ENODEV;
++
++	return sprintf(buf, "%d", priv->status.version);
++}
++
++static ssize_t state_show(struct device *dev, struct device_attribute *attr,
++			  char *buf)
++{
++	struct stratix10_rsu_priv *priv = dev_get_drvdata(dev);
++
++	if (!priv)
++		return -ENODEV;
++
++	return sprintf(buf, "%d", priv->status.state);
++}
++
++static ssize_t error_location_show(struct device *dev,
++				   struct device_attribute *attr, char *buf)
++{
++	struct stratix10_rsu_priv *priv = dev_get_drvdata(dev);
++
++	if (!priv)
++		return -ENODEV;
++
++	return sprintf(buf, "%d", priv->status.error_location);
++}
++
++static ssize_t error_details_show(struct device *dev,
++				  struct device_attribute *attr, char *buf)
++{
++	struct stratix10_rsu_priv *priv = dev_get_drvdata(dev);
++
++	if (!priv)
++		return -ENODEV;
++
++	return sprintf(buf, "%d", priv->status.error_details);
++}
++
++static ssize_t reboot_image_store(struct device *dev,
++				  struct device_attribute *attr,
++				  const char *buf, size_t count)
++{
++	struct stratix10_rsu_priv *priv = dev_get_drvdata(dev);
++	unsigned long address;
++	int ret;
++
++	if (priv == 0)
++		return -ENODEV;
++
++	ret = kstrtoul(buf, 0, &address);
++	if (ret)
++		return ret;
++
++	ret = rsu_send_msg(priv, COMMAND_RSU_UPDATE,
++			   address, rsu_command_callback);
 +	if (ret) {
-+		platform_device_put(svc->stratix10_svc_rsu);
++		dev_err(dev, "Error, RSU update returned %i\n", ret);
 +		return ret;
 +	}
-+	dev_set_drvdata(dev, svc);
 +
- 	pr_info("Intel Service Layer Driver Initialized\n");
- 
- 	return ret;
-@@ -982,8 +1047,11 @@ static int stratix10_svc_drv_probe(struct platform_device *pdev)
- 
- static int stratix10_svc_drv_remove(struct platform_device *pdev)
- {
-+	struct stratix10_svc *svc = dev_get_drvdata(&pdev->dev);
- 	struct stratix10_svc_controller *ctrl = platform_get_drvdata(pdev);
- 
-+	platform_device_unregister(svc->stratix10_svc_rsu);
++	return count;
++}
 +
- 	kfifo_free(&ctrl->svc_fifo);
- 	if (ctrl->task) {
- 		kthread_stop(ctrl->task);
-diff --git a/include/linux/firmware/intel/stratix10-smc.h b/include/linux/firmware/intel/stratix10-smc.h
-index 01684d9..6096738 100644
---- a/include/linux/firmware/intel/stratix10-smc.h
-+++ b/include/linux/firmware/intel/stratix10-smc.h
-@@ -210,7 +210,7 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_FPGA_CONFIG_LOOPBACK \
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_LOOPBACK)
- 
--/*
-+/**
-  * Request INTEL_SIP_SMC_REG_READ
-  *
-  * Read a protected register at EL3
-@@ -229,7 +229,7 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_REG_READ \
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_REG_READ)
- 
--/*
-+/**
-  * Request INTEL_SIP_SMC_REG_WRITE
-  *
-  * Write a protected register at EL3
-@@ -248,7 +248,7 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_REG_WRITE \
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_REG_WRITE)
- 
--/*
-+/**
-  * Request INTEL_SIP_SMC_FUNCID_REG_UPDATE
-  *
-  * Update one or more bits in a protected register at EL3 using a
-@@ -269,7 +269,7 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_REG_UPDATE \
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_REG_UPDATE)
- 
--/*
-+/**
-  * Request INTEL_SIP_SMC_RSU_STATUS
-  *
-  * Request remote status update boot log, call is synchronous.
-@@ -292,7 +292,7 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_RSU_STATUS \
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_RSU_STATUS)
- 
--/*
-+/**
-  * Request INTEL_SIP_SMC_RSU_UPDATE
-  *
-  * Request to set the offset of the bitstream to boot after reboot, call
-@@ -310,7 +310,7 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- #define INTEL_SIP_SMC_RSU_UPDATE \
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_RSU_UPDATE)
- 
--/*
-+/**
-  * Request INTEL_SIP_SMC_ECC_DBE
-  *
-  * Sync call used by service driver at EL1 to alert EL3 that a Double
-@@ -329,3 +329,39 @@ INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_FPGA_CONFIG_COMPLETED_WRITE)
- 	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_ECC_DBE)
- 
- #endif
++static ssize_t notify_store(struct device *dev,
++			    struct device_attribute *attr,
++			    const char *buf, size_t count)
++{
++	struct stratix10_rsu_priv *priv = dev_get_drvdata(dev);
++	unsigned long status;
++	int ret;
 +
-+/**
-+ * Request INTEL_SIP_SMC_RSU_NOTIFY
-+ *
-+ * Sync call used by service driver at EL1 to report hard processor
-+ * system state to firmware
-+ *
-+ * Call register usage:
-+ * a0 INTEL_SIP_SMC_RSU_NOTIFY
-+ * a1 32bit value representing hard processor system state
-+ * a2-7 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK
-+ */
-+#define INTEL_SIP_SMC_FUNCID_RSU_NOTIFY 14
-+#define INTEL_SIP_SMC_RSU_NOTIFY \
-+	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_RSU_NOTIFY)
++	if (priv == 0)
++		return -ENODEV;
 +
-+/**
-+ * Request INTEL_SIP_SMC_RSU_WD
-+ *
-+ * Sync call used by service driver at EL1 to instruct firmware what to
-+ * do when rebooting due to a watchdog timer expiration
-+ *
-+ * Call register usage:
-+ * a0 INTEL_SIP_SMC_RSU_WD
-+ * a1 32bit value indicating action for firmware to take
-+ * a2-7 not used
-+ *
-+ * Return status
-+ * a0 INTEL_SIP_SMC_STATUS_OK
-+ */
-+#define INTEL_SIP_SMC_FUNCID_RSU_WD 15
-+#define INTEL_SIP_SMC_RSU_WD \
-+	INTEL_SIP_SMC_FAST_CALL_VAL(INTEL_SIP_SMC_FUNCID_RSU_WD)
-diff --git a/include/linux/firmware/intel/stratix10-svc-client.h b/include/linux/firmware/intel/stratix10-svc-client.h
-index e521f17..ea7604b 100644
---- a/include/linux/firmware/intel/stratix10-svc-client.h
-+++ b/include/linux/firmware/intel/stratix10-svc-client.h
-@@ -95,6 +95,14 @@ struct stratix10_svc_chan;
-  *
-  * @COMMAND_RSU_UPDATE: set the offset of the bitstream to boot after reboot,
-  * return status is SVC_STATUS_RSU_OK or SVC_STATUS_RSU_ERROR
-+ *
-+ * @COMMAND_RSU_NOTIFY: report the status of hard processor system
-+ * software to firmware, return status is SVC_STATUS_RSU_OK or
-+ * SVC_STATUS_RSU_ERROR
-+ *
-+ * @COMMAND_RSU_WD: instruct firmware what to do when rebooting due to a
-+ * watchdog timer expiration, return status is SVC_STATUS_RSU_OK or
-+ * SVC_STATUS_RSU_ERROR
-  */
- enum stratix10_svc_command_code {
- 	COMMAND_NOOP = 0,
-@@ -103,7 +111,9 @@ enum stratix10_svc_command_code {
- 	COMMAND_RECONFIG_DATA_CLAIM,
- 	COMMAND_RECONFIG_STATUS,
- 	COMMAND_RSU_STATUS,
--	COMMAND_RSU_UPDATE
-+	COMMAND_RSU_UPDATE,
-+	COMMAND_RSU_NOTIFY,
-+	COMMAND_RSU_WD,
- };
- 
- /**
++	ret = kstrtoul(buf, 0, &status);
++	if (ret)
++		return ret;
++
++	ret = rsu_send_msg(priv, COMMAND_RSU_NOTIFY,
++			   status, rsu_command_callback);
++	if (ret) {
++		dev_err(dev, "Error, RSU notify returned %i\n", ret);
++		return ret;
++	}
++
++	return count;
++}
++
++static ssize_t watchdog_store(struct device *dev,
++			      struct device_attribute *attr,
++			      const char *buf, size_t count)
++{
++	struct stratix10_rsu_priv *priv = dev_get_drvdata(dev);
++	unsigned long wd_action;
++	int ret;
++
++	if (priv == 0)
++		return -ENODEV;
++
++	ret = kstrtoul(buf, 0, &wd_action);
++	if (ret)
++		return ret;
++
++	ret = rsu_send_msg(priv, COMMAND_RSU_WD,
++			   wd_action, rsu_command_callback);
++	if (ret) {
++		dev_err(dev, "Error, WD timer expiration returned %i\n", ret);
++		return ret;
++	}
++
++	return count;
++}
++
++static DEVICE_ATTR_RO(current_image);
++static DEVICE_ATTR_RO(fail_image);
++static DEVICE_ATTR_RO(state);
++static DEVICE_ATTR_RO(version);
++static DEVICE_ATTR_RO(error_location);
++static DEVICE_ATTR_RO(error_details);
++static DEVICE_ATTR_WO(reboot_image);
++static DEVICE_ATTR_WO(notify);
++static DEVICE_ATTR_WO(watchdog);
++
++static struct attribute *rsu_attrs[] = {
++	&dev_attr_current_image.attr,
++	&dev_attr_fail_image.attr,
++	&dev_attr_state.attr,
++	&dev_attr_version.attr,
++	&dev_attr_error_location.attr,
++	&dev_attr_error_details.attr,
++	&dev_attr_reboot_image.attr,
++	&dev_attr_notify.attr,
++	&dev_attr_watchdog.attr,
++	NULL
++};
++
++ATTRIBUTE_GROUPS(rsu);
++
++static int stratix10_rsu_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct stratix10_rsu_priv *priv;
++	int ret;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->client.dev = dev;
++	priv->client.receive_cb = NULL;
++	priv->client.priv = priv;
++	priv->status.current_image = 0;
++	priv->status.fail_image = 0;
++	priv->status.error_location = 0;
++	priv->status.error_details = 0;
++	priv->status.version = 0;
++	priv->status.state = 0;
++
++	mutex_init(&priv->lock);
++	priv->chan = stratix10_svc_request_channel_byname(&priv->client,
++							  SVC_CLIENT_RSU);
++	if (IS_ERR(priv->chan)) {
++		dev_err(dev, "couldn't get service channel %s\n",
++			SVC_CLIENT_RSU);
++		return PTR_ERR(priv->chan);
++	}
++
++	init_completion(&priv->completion);
++	platform_set_drvdata(pdev, priv);
++
++	/* status is only updated after reboot */
++	ret = rsu_send_msg(priv, COMMAND_RSU_STATUS,
++			   0, rsu_status_callback);
++	if (ret) {
++		dev_err(dev, "Error, getting RSU status %i\n", ret);
++		stratix10_svc_free_channel(priv->chan);
++	}
++
++	ret = devm_device_add_groups(dev, rsu_groups);
++	if (ret) {
++		dev_err(dev, "unable to create sysfs group");
++		stratix10_svc_free_channel(priv->chan);
++	}
++
++	return ret;
++}
++
++static int stratix10_rsu_remove(struct platform_device *pdev)
++{
++	struct stratix10_rsu_priv *priv = platform_get_drvdata(pdev);
++
++	stratix10_svc_free_channel(priv->chan);
++	devm_device_remove_groups(&pdev->dev, rsu_groups);
++	return 0;
++}
++
++static struct platform_driver stratix10_rsu_driver = {
++	.probe = stratix10_rsu_probe,
++	.remove = stratix10_rsu_remove,
++	.driver = {
++		.name = "stratix10-rsu",
++	},
++};
++
++module_platform_driver(stratix10_rsu_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Intel Remote System Update Driver");
++MODULE_AUTHOR("Richard Gong <richard.gong@intel.com>");
 -- 
 2.7.4
 
