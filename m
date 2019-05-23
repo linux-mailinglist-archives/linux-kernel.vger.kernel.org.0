@@ -2,61 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A486127D0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66AEE27CEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730643AbfEWMpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 08:45:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37712 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730028AbfEWMpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 08:45:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 645D9AD78;
-        Thu, 23 May 2019 12:45:09 +0000 (UTC)
-Message-ID: <1558614729.3994.5.camel@suse.com>
-Subject: Re: [RFC PATCH] usb: host: xhci: allow __GFP_FS in dma allocation
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        Jaewon Kim <jaewon31.kim@gmail.com>
-Cc:     linux-mm@kvack.org, gregkh@linuxfoundation.org,
-        Jaewon Kim <jaewon31.kim@samsung.com>,
-        m.szyprowski@samsung.com, ytk.lee@samsung.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Date:   Thu, 23 May 2019 14:32:09 +0200
-In-Reply-To: <20190520055657.GA31866@infradead.org>
-References: <CAJrd-UuMRdWHky4gkmiR0QYozfXW0O35Ohv6mJPFx2TLa8hRKg@mail.gmail.com>
-         <20190520055657.GA31866@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        id S1730549AbfEWMdF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 08:33:05 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45406 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728309AbfEWMdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 08:33:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA87B80D;
+        Thu, 23 May 2019 05:33:03 -0700 (PDT)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 75E153F575;
+        Thu, 23 May 2019 05:33:02 -0700 (PDT)
+Subject: Re: implement generic dma_map_ops for IOMMUs v6
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Tom Murphy <tmurphy@arista.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190523070028.7435-1-hch@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <60f73595-006d-8f88-f5af-d362f9e42ec1@arm.com>
+Date:   Thu, 23 May 2019 13:33:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190523070028.7435-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On So, 2019-05-19 at 22:56 -0700, Christoph Hellwig wrote:
-> Folks, you can't just pass arbitary GFP_ flags to dma allocation
-> routines, beause very often they are not just wrappers around
-> the page allocator.
+On 23/05/2019 08:00, Christoph Hellwig wrote:
 > 
-> So no, you can't just fine grained control the flags, but the
-> existing code is just as buggy.
+> Hi Robin and Joerg,
 > 
-> Please switch to use memalloc_noio_save() instead.
+> I think we are finally ready for the generic dma-iommu series.  I have
+> various DMA API changes pending, and Tom has patches ready to convert
+> the AMD and Intel iommu drivers over to it.  I'd love to have this
+> in a stable branch shared between the dma-mapping and iommu trees
+> the day after rc2 is released.  I volunteer to create the branch,
+> but I'm fine with it living in the iommu tree as well.
 
-Thinking about this again, we have a problem. We introduced
-memalloc_noio_save() in 3.10 . Hence the code should have been
-correct in v4.14. Which means that either
-6518202970c1 "(mm/cma: remove unsupported gfp_mask
-parameter from cma_alloc()"
-is buggy, or the original issue with a delay of 2 seconds
-still exist.
+Yup, I'd also like to see this in -next ASAP in the hope that board 
+farms and maybe even real users can start chewing on it. Thanks for 
+persevering :)
 
-Do we need to do something?
+Robin.
 
-	Regards
-		Oliver
-
+> 
+> 
+> A git tree is also available at:
+> 
+>      git://git.infradead.org/users/hch/misc.git dma-iommu-ops.6
+> 
+> Gitweb:
+> 
+>      http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/dma-iommu-ops.6
+> 
+> Changes since v5:
+>   - rebased to latest linus tree and dropped a patch now merged
+>   - remove the now pointless __dma_iommu_mmap function
+>   - restore a cleanup from Robin that would have caused a conflict in
+>     last merge winow, but is fine now
+> 
+> Changes since v4:
+>   - rebased to 5.2-rc1
+> 
+> Changes since v3:
+>   - fold the separate patch to refactor mmap bounds checking
+>   - don't warn on not finding a vm_area
+>   - improve a commit log
+>   - refactor __dma_iommu_free a little differently
+>   - remove a minor MSI map cleanup to avoid a conflict with the
+>     "Split iommu_dma_map_msi_msg" series
+> 
+> Changes since v2:
+>   - address various review comments and include patches from Robin
+> 
+> Changes since v1:
+>   - only include other headers in dma-iommu.h if CONFIG_DMA_IOMMU is enabled
+>   - keep using a scatterlist in iommu_dma_alloc
+>   - split out mmap/sgtable fixes and move them early in the series
+>   - updated a few commit logs
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> 
