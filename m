@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BADDF2870E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:16:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C63A528655
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388619AbfEWTPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:15:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50270 "EHLO mail.kernel.org"
+        id S1731754AbfEWTI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:08:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389066AbfEWTPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:15:46 -0400
+        id S1731464AbfEWTI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:08:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D590C2133D;
-        Thu, 23 May 2019 19:15:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E5492133D;
+        Thu, 23 May 2019 19:08:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638946;
-        bh=HiFtAIKrl+Yj/b7btEiQx9X+/cf8POcNBsL9C668gKc=;
+        s=default; t=1558638506;
+        bh=FtYbvIv3gOl5LAcrN+tt1XTYQKijAsSZSVhpgmTQNSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cAnmXq3rNl4GYGEnZ89oWrttUELBRqd1Nt00SVPEKLswghcE3lgtUMPEP22RzW8ko
-         dx/qv4xcvn67z+1u1Rk/8cr5ANrizYCxKKsLzE34c1RZ/sIh9e+s1Pl9Mia1zdfLCZ
-         HgyIMX6UXbkpVLWe8XwyK7w5dhrZBNCl+98IyXz8=
+        b=qClh0fTBWIJ+ZFpQxra0BRMB88UWQKmhi76H/gpEgRuzsFc8vAstK57NEKj8OXMn8
+         BZH34ElUP+wUasikPZ6NsGRlHszMI3AQGT2DTJBCgdvDMUusqnJ8RFIfQ4p/taWPlt
+         ERo5O4w35SAPIlfxr2Dc4kjF31EYEO3UxObttLS0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhong Kaihua <zhongkaihua@huawei.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>,
-        Dong Zhang <zhangdong46@hisilicon.com>,
-        Leo Yan <leo.yan@linaro.org>, Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.19 039/114] clk: hi3660: Mark clk_gate_ufs_subsys as critical
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 14/53] p54: drop device reference count if fails to enable device
 Date:   Thu, 23 May 2019 21:05:38 +0200
-Message-Id: <20190523181735.310111138@linuxfoundation.org>
+Message-Id: <20190523181713.118777884@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
+References: <20190523181710.981455400@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,44 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+From: Pan Bian <bianpan2016@163.com>
 
-commit 9f77a60669d13ed4ddfa6cd7374c9d88da378ffa upstream.
+commit 8149069db81853570a665f5e5648c0e526dc0e43 upstream.
 
-clk_gate_ufs_subsys is a system bus clock, turning off it will
-introduce lockup issue during system suspend flow.  Let's mark
-clk_gate_ufs_subsys as critical clock, thus keeps it on during
-system suspend and resume.
+The function p54p_probe takes an extra reference count of the PCI
+device. However, the extra reference count is not dropped when it fails
+to enable the PCI device. This patch fixes the bug.
 
-Fixes: d374e6fd5088 ("clk: hisilicon: Add clock driver for hi3660 SoC")
 Cc: stable@vger.kernel.org
-Cc: Zhong Kaihua <zhongkaihua@huawei.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
-Suggested-by: Dong Zhang <zhangdong46@hisilicon.com>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Acked-by: Christian Lamparter <chunkeey@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/hisilicon/clk-hi3660.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intersil/p54/p54pci.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/hisilicon/clk-hi3660.c
-+++ b/drivers/clk/hisilicon/clk-hi3660.c
-@@ -163,8 +163,12 @@ static const struct hisi_gate_clock hi36
- 	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 17, 0, },
- 	{ HI3660_CLK_GATE_ISP_SNCLK2, "clk_gate_isp_snclk2",
- 	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 18, 0, },
-+	/*
-+	 * clk_gate_ufs_subsys is a system bus clock, mark it as critical
-+	 * clock and keep it on for system suspend and resume.
-+	 */
- 	{ HI3660_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_sysbus",
--	  CLK_SET_RATE_PARENT, 0x50, 21, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x50, 21, 0, },
- 	{ HI3660_PCLK_GATE_DSI0, "pclk_gate_dsi0", "clk_div_cfgbus",
- 	  CLK_SET_RATE_PARENT, 0x50, 28, 0, },
- 	{ HI3660_PCLK_GATE_DSI1, "pclk_gate_dsi1", "clk_div_cfgbus",
+--- a/drivers/net/wireless/intersil/p54/p54pci.c
++++ b/drivers/net/wireless/intersil/p54/p54pci.c
+@@ -554,7 +554,7 @@ static int p54p_probe(struct pci_dev *pd
+ 	err = pci_enable_device(pdev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Cannot enable new PCI device\n");
+-		return err;
++		goto err_put;
+ 	}
+ 
+ 	mem_addr = pci_resource_start(pdev, 0);
+@@ -639,6 +639,7 @@ static int p54p_probe(struct pci_dev *pd
+ 	pci_release_regions(pdev);
+  err_disable_dev:
+ 	pci_disable_device(pdev);
++err_put:
+ 	pci_dev_put(pdev);
+ 	return err;
+ }
 
 
