@@ -2,84 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E76B275EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 08:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26CDA27603
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 08:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfEWGOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 02:14:32 -0400
-Received: from ozlabs.org ([203.11.71.1]:45989 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725873AbfEWGOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 02:14:32 -0400
-Received: by ozlabs.org (Postfix, from userid 1003)
-        id 458fNP5zgyz9s6w; Thu, 23 May 2019 16:14:29 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
-        t=1558592069; bh=Tr73qojhfVjEZCm5/e8GumQVv2PX+3DhCXwgTZaf9eA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iHrJwjk21wsErNroYSoT3Ay7LcZvRgset0OR28n19aUJtizFBULwKHdwdYeELZVs7
-         yQPr7hIxjT5QEbkSpu3LKQ6llJyW68FWRehC62TVIJeG3HFl5Qsg3AMUz0UEajvyyM
-         bVresl/mOT5RkLO74c/3INadBxhN1LVXXyTioH9J6MfswNVeFHbFzupj3NGWBxqnsY
-         O8niIP6YeNyWk6V4PZ/f+uFR/AXmo6H/MZegB6COwqBtZbgUaCZEb3VVJb5tBp/nu7
-         y+e3lIhYIFqwRwNQ4IPe1vTPwM6Ry4yf95i8zN7ALEM7LiEfdYVJwP/kHEnOd+Wgr7
-         4yRKQ9xdStmHQ==
-Date:   Thu, 23 May 2019 16:14:27 +1000
-From:   Paul Mackerras <paulus@ozlabs.org>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3 14/16] powerpc/32: implement fast entry for syscalls
- on BOOKE
-Message-ID: <20190523061427.GA19655@blackberry>
-References: <cover.1556627571.git.christophe.leroy@c-s.fr>
- <3e254178a157e7eaeef48f983880f71f97d1f296.1556627571.git.christophe.leroy@c-s.fr>
+        id S1726913AbfEWGdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 02:33:51 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:16451 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbfEWGdv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 02:33:51 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ce63ecf0000>; Wed, 22 May 2019 23:33:51 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 22 May 2019 23:33:50 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 22 May 2019 23:33:50 -0700
+Received: from [10.2.169.219] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 23 May
+ 2019 06:33:49 +0000
+Subject: Re: [PATCH 5/5] mm/hmm: Fix mm stale reference use in hmm_free()
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Ralph Campbell <rcampbell@nvidia.com>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20190506233514.12795-1-rcampbell@nvidia.com>
+ <20190522233628.GA16137@ziepe.ca>
+ <2938d2da-424d-786e-5486-1e4fa9f58425@nvidia.com>
+ <20190523012504.GG15389@ziepe.ca>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <0994464b-8e59-c227-0b67-00ddd9c83943@nvidia.com>
+Date:   Wed, 22 May 2019 23:32:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3e254178a157e7eaeef48f983880f71f97d1f296.1556627571.git.christophe.leroy@c-s.fr>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190523012504.GG15389@ziepe.ca>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1558593231; bh=DMgMenbiYkWeMSHYgllY0KX56kuCMPb7MQ3jm5E4nqE=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Wpc8uOrTOwt5LsR4mYCEpKSR3W18iqjaOJShap9QBNSQwpiwqktG7gS+nRRAeCNTI
+         z51b+X+xRvcEzjdH497mx/qR//Y5p2pxbCAUnuQiDckr0CMcMgzIm321CP0j4qMwrK
+         vTaVKBHknoV3n93dwec2nIJ24KUbd4FYrsXcHTeYrFFLmdecMoeWl+ysPIYGwwuf6p
+         x7rc+PPigxXuBOWrXD4CtYYYzoj3C1a9gDQpfAgRx/XWDxCfJJnEeSbxeKZIPaiA7N
+         lw9Ipfg+lCZqyxljJso/m4GFf3DalwjB2MR7RjPXqIBG9bqKgjuWm0gwLn7y5T3TYB
+         P1hLkZoEPSR/g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 30, 2019 at 12:39:03PM +0000, Christophe Leroy wrote:
-> This patch implements a fast entry for syscalls.
-> 
-> Syscalls don't have to preserve non volatile registers except LR.
-> 
-> This patch then implement a fast entry for syscalls, where
-> volatile registers get clobbered.
-> 
-> As this entry is dedicated to syscall it always sets MSR_EE
-> and warns in case MSR_EE was previously off
-> 
-> It also assumes that the call is always from user, system calls are
-> unexpected from kernel.
+On 5/22/19 6:25 PM, Jason Gunthorpe wrote:
+> On Wed, May 22, 2019 at 05:54:17PM -0700, Ralph Campbell wrote:
+>>
+>> On 5/22/19 4:36 PM, Jason Gunthorpe wrote:
+>>> On Mon, May 06, 2019 at 04:35:14PM -0700, rcampbell@nvidia.com wrote:
+>>>> From: Ralph Campbell <rcampbell@nvidia.com>
+>>>>
+>>>> The last reference to struct hmm may be released long after the mm_struct
+>>>> is destroyed because the struct hmm_mirror memory may be part of a
+>>>> device driver open file private data pointer. The file descriptor close
+>>>> is usually after the mm_struct is destroyed in do_exit(). This is a good
+>>>> reason for making struct hmm a kref_t object [1] since its lifetime spans
+>>>> the life time of mm_struct and struct hmm_mirror.
+>>>
+>>>> The fix is to not use hmm->mm in hmm_free() and to clear mm->hmm and
+>>>> hmm->mm pointers in hmm_destroy() when the mm_struct is
+>>>> destroyed.
+>>>
+>>> I think the right way to fix this is to have the struct hmm hold a
+>>> mmgrab() on the mm so its memory cannot go away until all of the hmm
+>>> users release the struct hmm, hmm_ranges/etc
+>>>
+>>> Then we can properly use mmget_not_zero() instead of the racy/abnormal
+>>> 'if (hmm->xmm == NULL || hmm->dead)' pattern (see the other
+>>> thread). Actually looking at this, all these tests look very
+>>> questionable. If we hold the mmget() for the duration of the range
+>>> object, as Jerome suggested, then they all get deleted.
+>>>
+>>> That just leaves mmu_notifier_unregister_no_relase() as the remaining
+>>> user of hmm->mm (everyone else is trying to do range->mm) - and it
+>>> looks like it currently tries to call
+>>> mmu_notifier_unregister_no_release on a NULL hmm->mm and crashes :(
+>>>
+>>> Holding the mmgrab fixes this as we can safely call
+>>> mmu_notifier_unregister_no_relase() post exit_mmap on a grab'd mm.
+>>>
+>>> Also we can delete the hmm_mm_destroy() intrustion into fork.c as it
+>>> can't be called when the mmgrab is active.
+>>>
+>>> This is the basic pattern we used in ODP when working with mmu
+>>> notifiers, I don't know why hmm would need to be different.
 
-This is now upstream as commit 1a4b739bbb4f.  On the e500mc test
-config that I use, I'm getting this build failure:
++1 for the mmgrab() approach. I have never been able to see how these
+various checks can protect anything, and refcounting it into place definitely
+sounds like the right answer.
 
-arch/powerpc/kernel/head_fsl_booke.o: In function `SystemCall':
-arch/powerpc/kernel/head_fsl_booke.S:416: undefined reference to `kvmppc_handler_BOOKE_INTERRUPT_SYSCALL_SPRN_SRR1'
-Makefile:1052: recipe for target 'vmlinux' failed
 
-> +.macro SYSCALL_ENTRY trapno intno
-> +	mfspr	r10, SPRN_SPRG_THREAD
-> +#ifdef CONFIG_KVM_BOOKE_HV
-> +BEGIN_FTR_SECTION
-> +	mtspr	SPRN_SPRG_WSCRATCH0, r10
-> +	stw	r11, THREAD_NORMSAVE(0)(r10)
-> +	stw	r13, THREAD_NORMSAVE(2)(r10)
-> +	mfcr	r13			/* save CR in r13 for now	   */
-> +	mfspr	r11, SPRN_SRR1
-> +	mtocrf	0x80, r11	/* check MSR[GS] without clobbering reg */
-> +	bf	3, 1975f
-> +	b	kvmppc_handler_BOOKE_INTERRUPT_\intno\()_SPRN_SRR1
-
-It seems to me that the "_SPRN_SRR1" on the end of this line
-isn't meant to be there...  However, it still fails to link with that
-removed.
-
-Paul.
+thanks,
+-- 
+John Hubbard
+NVIDIA
