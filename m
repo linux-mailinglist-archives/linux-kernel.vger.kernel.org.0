@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BBD128798
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 762EA28702
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:16:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390181AbfEWTVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:21:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58184 "EHLO mail.kernel.org"
+        id S2388948AbfEWTPW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:15:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389459AbfEWTVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:21:04 -0400
+        id S2388939AbfEWTPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:15:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0CAF2133D;
-        Thu, 23 May 2019 19:21:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0964217D7;
+        Thu, 23 May 2019 19:15:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639263;
-        bh=10XOMHYCtBXmq82im8ODiqLdbIgJIm8C3wPIzJ3hL1Y=;
+        s=default; t=1558638919;
+        bh=tQ4EPmHa88YeE+lsAVf8RF8bcxRpc2MVqWookuBRWD0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=evp5f1R+5gPvnCB4Ts9VJj857kVSgrbWG36Mw+B0DapM21f+iGrJHs66lYiK40JOn
-         FnFzrAaCpaJo/AIb0Ip8c+Btd6UJSI/PHi9fCZ8aG+XpgOVJi4KZr8y+v/hRm9Omei
-         lIOola0bSbs8vEipDqdmnE7FlxVSXMeh9PMqqQfQ=
+        b=KpejofUAkIGC8wpr2Cc8Wvb5xABlKXzdSXxdg3InDlPVdtrmx5Xbbfvxth7yn57Jd
+         w27dGhA1M84BQeN4bC7CEa7bOtreLsbPgIXPTNxaWV4sd+jTSMUD5UWzlqZTHrlxYm
+         6Bu9hJpqdRSJ42qObaz1U34QfSvRAflU/EJsitKE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
-Subject: [PATCH 5.0 022/139] parisc: Export running_on_qemu symbol for modules
-Date:   Thu, 23 May 2019 21:05:10 +0200
-Message-Id: <20190523181723.626371654@linuxfoundation.org>
+        stable@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 012/114] vsock/virtio: free packets during the socket release
+Date:   Thu, 23 May 2019 21:05:11 +0200
+Message-Id: <20190523181732.808465017@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,27 +43,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Helge Deller <deller@gmx.de>
+From: Stefano Garzarella <sgarzare@redhat.com>
 
-commit 3e1120f4b57bc12437048494ab56648edaa5b57d upstream.
+[ Upstream commit ac03046ece2b158ebd204dfc4896fd9f39f0e6c8 ]
 
-Signed-off-by: Helge Deller <deller@gmx.de>
-CC: stable@vger.kernel.org # v4.9+
+When the socket is released, we should free all packets
+queued in the per-socket list in order to avoid a memory
+leak.
+
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/parisc/kernel/process.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/vmw_vsock/virtio_transport_common.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/parisc/kernel/process.c
-+++ b/arch/parisc/kernel/process.c
-@@ -193,6 +193,7 @@ int dump_task_fpu (struct task_struct *t
-  */
+--- a/net/vmw_vsock/virtio_transport_common.c
++++ b/net/vmw_vsock/virtio_transport_common.c
+@@ -786,12 +786,19 @@ static bool virtio_transport_close(struc
  
- int running_on_qemu __read_mostly;
-+EXPORT_SYMBOL(running_on_qemu);
- 
- void __cpuidle arch_cpu_idle_dead(void)
+ void virtio_transport_release(struct vsock_sock *vsk)
  {
++	struct virtio_vsock_sock *vvs = vsk->trans;
++	struct virtio_vsock_pkt *pkt, *tmp;
+ 	struct sock *sk = &vsk->sk;
+ 	bool remove_sock = true;
+ 
+ 	lock_sock(sk);
+ 	if (sk->sk_type == SOCK_STREAM)
+ 		remove_sock = virtio_transport_close(vsk);
++
++	list_for_each_entry_safe(pkt, tmp, &vvs->rx_queue, list) {
++		list_del(&pkt->list);
++		virtio_transport_free_pkt(pkt);
++	}
+ 	release_sock(sk);
+ 
+ 	if (remove_sock)
 
 
