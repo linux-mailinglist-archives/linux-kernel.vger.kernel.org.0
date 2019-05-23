@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63EC5287AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CC222872E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389522AbfEWTWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:22:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59514 "EHLO mail.kernel.org"
+        id S2389170AbfEWTQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:16:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390361AbfEWTVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:21:55 -0400
+        id S2388746AbfEWTQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:16:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60398217D9;
-        Thu, 23 May 2019 19:21:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6C0E21872;
+        Thu, 23 May 2019 19:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639314;
-        bh=Q0lGo3h/GiZTNUedHTI6vKMsm4zr8272mGtNb6WOu9Y=;
+        s=default; t=1558638973;
+        bh=Ix5/FeW61euHB0eP6dvSiXYWjlbhF0GfmGarIiU1x9w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K6+CAJbX7oeB7WksLOhcEqb26oBLztl2uJJtsvuIh2+Pfa9QD42EjFVkr2UW8It7h
-         tUeS/OMHIt3pxad/9vg3o0s3M2q7TQTAahAP7pSSEG9ScdqPCkUhM3z6P7fR7GOheR
-         IqT2fxFhHXhfmxsNsSEmjLQ8jGv/3BqPkP/LAE7o=
+        b=xBS/gjYNlpkO9yfYaXw/TPKLy39hG6pwU4u2qn4smuI6EQF/kOidIBVdYm+SAwHBs
+         apGGMyNXLRC9zSb7zIjaKKe/ghANCgPIFibogIGtUAmMLCVCiujh0zueTf8xK7v5MI
+         qIJmXl/EK+Oi8QhIQmvi9V8jMFbwKbfjrVeXre7M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Christoph Probst <kernel@probst.it>,
         Pavel Shilovsky <pshilov@microsoft.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH 5.0 042/139] cifs: fix strcat buffer overflow and reduce raciness in smb21_set_oplock_level()
-Date:   Thu, 23 May 2019 21:05:30 +0200
-Message-Id: <20190523181726.206207031@linuxfoundation.org>
+Subject: [PATCH 4.19 032/114] cifs: fix strcat buffer overflow and reduce raciness in smb21_set_oplock_level()
+Date:   Thu, 23 May 2019 21:05:31 +0200
+Message-Id: <20190523181734.714698055@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -66,7 +66,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/cifs/smb2ops.c
 +++ b/fs/cifs/smb2ops.c
-@@ -2652,26 +2652,28 @@ smb21_set_oplock_level(struct cifsInodeI
+@@ -2348,26 +2348,28 @@ smb21_set_oplock_level(struct cifsInodeI
  		       unsigned int epoch, bool *purge_cache)
  {
  	char message[5] = {0};
