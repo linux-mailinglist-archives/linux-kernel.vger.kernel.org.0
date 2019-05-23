@@ -2,83 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3855D28960
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F88728957
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391926AbfEWTfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:35:38 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37039 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391378AbfEWT0j (ORCPT
+        id S2392066AbfEWTe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:34:26 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34376 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387947AbfEWTeX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:26:39 -0400
-Received: by mail-pl1-f193.google.com with SMTP id p15so3141267pll.4
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:26:39 -0700 (PDT)
+        Thu, 23 May 2019 15:34:23 -0400
+Received: by mail-lj1-f195.google.com with SMTP id j24so6585697ljg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:34:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VDNGhEy9xcY5qhQBwgmeKY7uMhD3iDBpzQrTh3YeEPI=;
-        b=iR7F2nIBUNsTCsMqey8hSHSMrV7DfTTeWHmkCDg8UgtsBXW0zTY327QCqe4ecBJQvf
-         hlm7QkGvzRpAj1M1gF92gb11/ehfmWKZavskXkAUbuC8kg3hVu+6mR5yV7wItz7fwLTs
-         HG+ZCAu9MRfiHx+lT/iGVZweEzLXd184Cg7wo=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zEdXi9YQ9/PVR4ABDgc5oGstALKw+UDObwes1f/BG98=;
+        b=VeUasp/nnilSR6G52vcxOnkUGJ5BU1C3y+jVW5I+Sk31loGDYD+0/OPsfjHw47uxRD
+         XrahVXJxoor8ACcJ27z0OySYERZUEw7TzTBWEDU2mGo2DdFb3uIrbTMYcnz/QTQHfwYG
+         +F3f+cK3YX5vYB1mNMAk16hmd5y44YYJuFU7n/VvSwBttfzg15gvV9UYhLSSI25lgXH9
+         8Dcv1E/j3LZhKUEUXkPCM4sokOXChPvpUfAYb9nIiQ4ODUlM/aekq1QzOTUR+3mYLxCL
+         w3qEh67Z4vDW4/T2Y9ZqmE3+M/TAHoeYBryiLSUXViQg9LWV3ApsJHDm3vuo3ValJI4S
+         vlXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VDNGhEy9xcY5qhQBwgmeKY7uMhD3iDBpzQrTh3YeEPI=;
-        b=nwK08rqU4JBP/kyHcqbqAh0Gk9d/EMUYmZJVehRitzwmBJbziQIUjtdJiALFpmYNXF
-         ecBfoj1IQ/itEAelrJGyMoXA2p0ew+56PjlxZYO85uU0bCzpchQsDoPJU5he0mKD+ao5
-         lH/B1cNtr8gF8bHnRhwhjsIFTOeeX2NWR9OSDX21roflXH79XbbuSiybtlotgjjRu9C9
-         8KWQ7tlyTRPu6G8TiaBWUCixTBDyDKuFDTRUF7Uot8Ln0/lkx0QLD2fv2Uu4ynZqVgPo
-         NhxC00ZynkBKC2knqWz6CULB/jaiaVvlRRLrQB+ADp0qG/8mu6HCA9RowfDi3bZ+XsOe
-         6j4Q==
-X-Gm-Message-State: APjAAAWOH80dOtv2qvb/V8wOmz+AD7xqEZRW5xpN+Vxm51IhAJsNLquU
-        2eP5v6q6CwXZY4bW5JwXOylDWg==
-X-Google-Smtp-Source: APXvYqzctClo+C3NAxQPdNqnyOxQfbbNxFst8N9yeh77qq6xjV64NrqAkKos6MRZQpNcBtuoBglsFw==
-X-Received: by 2002:a17:902:e683:: with SMTP id cn3mr77742018plb.86.1558639598873;
-        Thu, 23 May 2019 12:26:38 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id l65sm262626pfb.7.2019.05.23.12.26.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 12:26:38 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, trivial@kernel.org,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] tracing: Use correct function name in trace_filter_add_remove_task() comment
-Date:   Thu, 23 May 2019 12:26:28 -0700
-Message-Id: <20190523192628.134406-1-mka@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zEdXi9YQ9/PVR4ABDgc5oGstALKw+UDObwes1f/BG98=;
+        b=ZanirnOr96HVNFdrUL54NPdyIQREzD5AHAnRnHBCZacsajxuEq7iW8kaMW6nK1MmVZ
+         oTjdlZsxSqDgHkMCezbf/VrcT0Cq8B/BaD0Uck2v9bMvqLmwPiR+TEngtCw29rJ6FWiW
+         2Obu3psRNdY9jaF8GtpxdEHR0dls0ngL66CTAtRzkbQqLSFMe7+mXFdnA0Z2sdvApgci
+         7sb2+F76cjb2gJFdZXiy49eX17sXLnkjcz4Kcirp5Ih3/nfoF19ozdUg8k8hNLlycWr0
+         q9/kxGEqy6Q4emvFMZBpbiGgIgLPrymBqzM/I5Ofnsm3muoDssoM5BFFlFjz6YIcE44V
+         Ew+w==
+X-Gm-Message-State: APjAAAXKJkUTSOdOJALUw29lvL0Tjh/s1DyyPJ9Nu0oBaWh7gN9D7OqR
+        8d0xljcIuYoodZnsez2OvyABVFM9cTMV8olWeOlqag==
+X-Google-Smtp-Source: APXvYqxS49q1gB/9+MX0Pw4nbYPSIUWDf6r45GnAk81uVyDOoTg2BLY0kTVzeVnskN1RmSdLk4myFHA4dwsnUm3QOI0=
+X-Received: by 2002:a2e:874b:: with SMTP id q11mr21679456ljj.48.1558640061895;
+ Thu, 23 May 2019 12:34:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190523181602.3284-1-linus.walleij@linaro.org> <3496e81f-ea63-794d-0d8a-8eba9f2f6853@linaro.org>
+In-Reply-To: <3496e81f-ea63-794d-0d8a-8eba9f2f6853@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 23 May 2019 21:34:09 +0200
+Message-ID: <CACRpkdZ5LCeqkvJrN-TAcSy7knNOQhGV7M_wfZZ4Rz5ah87KnA@mail.gmail.com>
+Subject: Re: [PATCH] clocksource/drivers/ixp4xx: Implement delay timer
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The comment of trace_filter_add_remove_task() refers to the function as
-'trace_pid_filter_add_remove_task', use the correct name.
+On Thu, May 23, 2019 at 9:21 PM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+> On 23/05/2019 20:16, Linus Walleij wrote:
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- kernel/trace/trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > This adds delay timer functionality to the IXP4xx
+> > timer driver.
+> >
+> > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> The patch does not apply on tip/timers/core
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 2c92b3d9ea30..d1ab31abc46f 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -366,7 +366,7 @@ trace_ignore_this_task(struct trace_pid_list *filtered_pids, struct task_struct
- }
- 
- /**
-- * trace_pid_filter_add_remove_task - Add or remove a task from a pid_list
-+ * trace_filter_add_remove_task - Add or remove a task from a pid_list
-  * @pid_list: The list to modify
-  * @self: The current task for fork or NULL for exit
-  * @task: The task to add or remove
--- 
-2.22.0.rc1.257.g3120a18244-goog
+This seems to be because tip/timers/core is not yet containing
+the commits from v5.2-rc1.
 
+Maybe I just send my patches too early after the merge window :)
+
+Yours,
+Linus Walleij
