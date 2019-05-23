@@ -2,67 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFBEE28648
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:07:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 988C52891C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731584AbfEWTHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:07:15 -0400
-Received: from knopi.disroot.org ([178.21.23.139]:35012 "EHLO
-        knopi.disroot.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731464AbfEWTHP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:07:15 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by disroot.org (Postfix) with ESMTP id 1DBEA31D51;
-        Thu, 23 May 2019 21:07:13 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at disroot.org
-Received: from knopi.disroot.org ([127.0.0.1])
-        by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 73kF_Qb1l6j5; Thu, 23 May 2019 21:07:11 +0200 (CEST)
-From:   Daniel Smith <danct12@disroot.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-        t=1558638431; bh=80tieOKqOyKyqCagUUFd4AVkjajAKOxE5qwgMUdCc58=;
-        h=From:To:Cc:Subject:Date;
-        b=Mey49fOAHRSXSrpxL2YMBQRq8r9++pUFZ5Huo1dDnMmXwlgzfb5n0Pb4WFYjUM+cL
-         K40RF9kLyz2jJW3J9csP5eYf8XEElUxBerX3V8gc0usdGsTk+tH2V4OtHAIscUL+iZ
-         HoNKURRjBBlXkAeFhYGIDsGuO0Py7D3vRs5Q2+3+DlHju8CvQBF9pO/8dUFc8nnScx
-         EhRILEKT1y6dWoNee2m1YQpZC1MJfi3AApT2JDKXCMmDNCRRShGYkg9Ahcgu17LRps
-         0EHUfRgSQVSD1EpVaJGus77rXpmlt6I/rkld0A3D1BVBs4YMa+6yXR/Nc06ikRee2Z
-         0h4YX7mZnjlMA==
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Daniel Smith <danct12@disroot.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] input: silead: Add MSSL0017 to acpi_device_id.
-Date:   Fri, 24 May 2019 02:06:59 +0700
-Message-Id: <20190523190659.3117-1-danct12@disroot.org>
-Mime-Version: 1.0
+        id S2392191AbfEWTaw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:30:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392184AbfEWTas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:30:48 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E462217D7;
+        Thu, 23 May 2019 19:30:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558639847;
+        bh=ld43xxN+ALfqwSMcS5c7IYDBke35KTl7y2i8iFVunyg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ud5wjYWDihcYpOFlIB8lHrmVnKnslCa2qvbC/9FPY+pxuONox2AeCXKDA4Z/lpycZ
+         tDEsCfawcLt1CWcUPFDW4i4Dh+i47ldjq8iN8VBNLVTTj6sDV2bJdyhUBsncmFR/ad
+         zol1LbPhBntxrcesVo7G7VQU9xXzUK8ksowhGX2E=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 5.1 098/122] PCI/AER: Change pci_aer_init() stub to return void
+Date:   Thu, 23 May 2019 21:07:00 +0200
+Message-Id: <20190523181718.195270718@linuxfoundation.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
+User-Agent: quilt/0.66
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Chuwi Hi10 Plus, the Silead device id is MSSL0017.
+From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 
-Signed-off-by: Daniel Smith <danct12@disroot.org>
+commit 31f996efbd5a7825f4d30150469e9d110aea00e8 upstream.
+
+Commit 60ed982a4e78 ("PCI/AER: Move internal declarations to
+drivers/pci/pci.h") changed pci_aer_init() to return "void", but didn't
+change the stub for when CONFIG_PCIEAER isn't enabled.  Change the stub to
+match.
+
+Fixes: 60ed982a4e78 ("PCI/AER: Move internal declarations to drivers/pci/pci.h")
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+CC: stable@vger.kernel.org	# v4.19+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/input/touchscreen/silead.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/pci.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/silead.c b/drivers/input/touchscreen/silead.c
-index 09241d4cdebc..06f0eb04a8fd 100644
---- a/drivers/input/touchscreen/silead.c
-+++ b/drivers/input/touchscreen/silead.c
-@@ -617,6 +617,7 @@ static const struct acpi_device_id silead_ts_acpi_match[] = {
- 	{ "MSSL1680", 0 },
- 	{ "MSSL0001", 0 },
- 	{ "MSSL0002", 0 },
-+	{ "MSSL0017", 0 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, silead_ts_acpi_match);
--- 
-2.21.0
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -597,7 +597,7 @@ void pci_aer_clear_fatal_status(struct p
+ void pci_aer_clear_device_status(struct pci_dev *dev);
+ #else
+ static inline void pci_no_aer(void) { }
+-static inline int pci_aer_init(struct pci_dev *d) { return -ENODEV; }
++static inline void pci_aer_init(struct pci_dev *d) { }
+ static inline void pci_aer_exit(struct pci_dev *d) { }
+ static inline void pci_aer_clear_fatal_status(struct pci_dev *dev) { }
+ static inline void pci_aer_clear_device_status(struct pci_dev *dev) { }
+
 
