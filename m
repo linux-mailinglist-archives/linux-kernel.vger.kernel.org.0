@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14650287C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 488AB28757
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390683AbfEWTXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:23:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33312 "EHLO mail.kernel.org"
+        id S2389573AbfEWTST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:18:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390633AbfEWTXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:23:08 -0400
+        id S2389523AbfEWTSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:18:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B1B82054F;
-        Thu, 23 May 2019 19:23:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB3B6205ED;
+        Thu, 23 May 2019 19:18:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639387;
-        bh=KYikK1JLLVyzvW7pXda+GM9WVHPirwtjFfbWEW8PFiQ=;
+        s=default; t=1558639094;
+        bh=+dH4tLbB5MAGB6/kpQgez879bVH3AbQuXGiy5148d+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pin7bLv9LB1msOpVB3z4m3hSrkHfH/072XeJofxWz7tH/p0PM3fmywZyGtS5jrvsK
-         wnLiMz3ctihlHHu4kvuJIV4mAaiXrMPe4jjo5i5WQ1HlnT8OvVIKK1FXdepVcARNJg
-         Uu25C2K6zOMPr1rswPRloy4Sn1yXhE10Z6MEqfYQ=
+        b=Ar3GqiS7FEGm0mJy0Nym22/dlsHCDJqImOZE6hCOFhZUYSyWQhud4/BCjnrioR4Ml
+         EmauUBiDhEip4SxzASqE5jNmIDwPRMYctQKBF6G8bdOhZ2tWC+WB83Ft4iXKd20W7e
+         QDxi+ffTr6ENs3gHuYu0yCedHZpaANevb4JAQt7s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        James Prestwood <james.prestwood@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 5.0 086/139] PCI: Mark Atheros AR9462 to avoid bus reset
+        =?UTF-8?q?Stefan=20M=C3=A4tje?= <stefan.maetje@esd.eu>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH 4.19 075/114] PCI: Factor out pcie_retrain_link() function
 Date:   Thu, 23 May 2019 21:06:14 +0200
-Message-Id: <20190523181731.943827021@linuxfoundation.org>
+Message-Id: <20190523181738.540233344@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +45,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Prestwood <james.prestwood@linux.intel.com>
+From: Stefan Mätje <stefan.maetje@esd.eu>
 
-commit 6afb7e26978da5e86e57e540fdce65c8b04f398a upstream.
+commit 86fa6a344209d9414ea962b1f1ac6ade9dd7563a upstream.
 
-When using PCI passthrough with this device, the host machine locks up
-completely when starting the VM, requiring a hard reboot.  Add a quirk to
-avoid bus resets on this device.
+Factor out pcie_retrain_link() to use for Pericom Retrain Link quirk.  No
+functional change intended.
 
-Fixes: c3e59ee4e766 ("PCI: Mark Atheros AR93xx to avoid bus reset")
-Link: https://lore.kernel.org/linux-pci/20190107213248.3034-1-james.prestwood@linux.intel.com
-Signed-off-by: James Prestwood <james.prestwood@linux.intel.com>
+Signed-off-by: Stefan Mätje <stefan.maetje@esd.eu>
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-CC: stable@vger.kernel.org	# v3.14+
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/quirks.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/pcie/aspm.c |   40 ++++++++++++++++++++++++----------------
+ 1 file changed, 24 insertions(+), 16 deletions(-)
 
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -3408,6 +3408,7 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_A
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0032, quirk_no_bus_reset);
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x003c, quirk_no_bus_reset);
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0033, quirk_no_bus_reset);
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0034, quirk_no_bus_reset);
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -198,6 +198,29 @@ static void pcie_clkpm_cap_init(struct p
+ 	link->clkpm_capable = (blacklist) ? 0 : capable;
+ }
  
++static bool pcie_retrain_link(struct pcie_link_state *link)
++{
++	struct pci_dev *parent = link->pdev;
++	unsigned long start_jiffies;
++	u16 reg16;
++
++	pcie_capability_read_word(parent, PCI_EXP_LNKCTL, &reg16);
++	reg16 |= PCI_EXP_LNKCTL_RL;
++	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
++
++	/* Wait for link training end. Break out after waiting for timeout */
++	start_jiffies = jiffies;
++	for (;;) {
++		pcie_capability_read_word(parent, PCI_EXP_LNKSTA, &reg16);
++		if (!(reg16 & PCI_EXP_LNKSTA_LT))
++			break;
++		if (time_after(jiffies, start_jiffies + LINK_RETRAIN_TIMEOUT))
++			break;
++		msleep(1);
++	}
++	return !(reg16 & PCI_EXP_LNKSTA_LT);
++}
++
  /*
-  * Root port on some Cavium CN8xxx chips do not successfully complete a bus
+  * pcie_aspm_configure_common_clock: check if the 2 ends of a link
+  *   could use common clock. If they are, configure them to use the
+@@ -207,7 +230,6 @@ static void pcie_aspm_configure_common_c
+ {
+ 	int same_clock = 1;
+ 	u16 reg16, parent_reg, child_reg[8];
+-	unsigned long start_jiffies;
+ 	struct pci_dev *child, *parent = link->pdev;
+ 	struct pci_bus *linkbus = parent->subordinate;
+ 	/*
+@@ -265,21 +287,7 @@ static void pcie_aspm_configure_common_c
+ 		reg16 &= ~PCI_EXP_LNKCTL_CCC;
+ 	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
+ 
+-	/* Retrain link */
+-	reg16 |= PCI_EXP_LNKCTL_RL;
+-	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
+-
+-	/* Wait for link training end. Break out after waiting for timeout */
+-	start_jiffies = jiffies;
+-	for (;;) {
+-		pcie_capability_read_word(parent, PCI_EXP_LNKSTA, &reg16);
+-		if (!(reg16 & PCI_EXP_LNKSTA_LT))
+-			break;
+-		if (time_after(jiffies, start_jiffies + LINK_RETRAIN_TIMEOUT))
+-			break;
+-		msleep(1);
+-	}
+-	if (!(reg16 & PCI_EXP_LNKSTA_LT))
++	if (pcie_retrain_link(link))
+ 		return;
+ 
+ 	/* Training failed. Restore common clock configurations */
 
 
