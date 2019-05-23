@@ -2,79 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 911D028B77
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 22:23:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54910285E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 20:28:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387746AbfEWUXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 16:23:25 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44636 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387450AbfEWUXZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 16:23:25 -0400
-Received: by mail-ot1-f68.google.com with SMTP id g18so6624582otj.11
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 13:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FW8ptGotkgtXFOQxEyNpjt0JP8BqcY4khRdBUzxGD9E=;
-        b=njOq4WeSNJyHnSOnmQL4N4uTQMpHBzAatUAD+oVavwq6rVacXvEtD5vUhxBlBcF6jf
-         +ih8vX49NwzraKpbDoGMeHatPdCEgN6gHPZurpnc4tl2Yznz+2D4D3ttCu8ZoSZfwAjf
-         K13T88nBIUqFUe4JmKgngV2cOh3bEigXTXafE3a+FNNIl9M8pphoavj7i0ipuPg6dziF
-         NyWQNAqz5ZdkRJEuyJiO2OZBBVWSahiduSIUWAyu49JG6rCxWRkh6VdVhXD+i5U/MEb5
-         /IZfP+QFUGnjxajsWA3n2djzSpGmvEZ7TXJSlSdKT/ZsIBSo/KgDZBC8Ypl6qZXS263k
-         mcog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FW8ptGotkgtXFOQxEyNpjt0JP8BqcY4khRdBUzxGD9E=;
-        b=aaa5dIiHvOoNkrusZD8pZTClV72zVHm8UUj8tUXppzyGCUkNh1PesE7TF1ccFlFlCg
-         /GUj0K59N35nKjrJzLI10M1D5p85tMsbEgpnd+GRuG+cbgfj1JKy+zaIJS+HUiKgpcS4
-         9qFLv1atmvj+Xp5UgyTN8S39gD2Y/hMTj/S7RTMMfBSRMsGLLiUGeEcP7oP0VyfdAgSp
-         SIzxSeK8A0nN4jzYEjBhSZb0SLHrgrcNogWmk6EeCH7fSZaelSVVg/pqQcaZYmSjAM8C
-         jTmvxoSHyMDShuMrI9IHkj7BBrZzq+LqIRRxa9x7RMKRC5qKMvtMnZPJiVJQGcNMAyAP
-         fWmA==
-X-Gm-Message-State: APjAAAV4vQwi6G5UGnE/5wciRYuJV6QVjAMISdPA63qN6PM8SdUrzCnP
-        yC5XFwSbh5YchQggl0t7qBk/gqnCjRoQplmtYnvuwXiD
-X-Google-Smtp-Source: APXvYqwY4bYDr21ELI4yNLq57yMgWWRbeW0ntvJPrTjtaZLQ/U4ieoP23hDhanEefvTDKe7MynPZ+3Gh+sCZlqOZ/Sc=
-X-Received: by 2002:a9d:68c5:: with SMTP id i5mr8582241oto.224.1558643004192;
- Thu, 23 May 2019 13:23:24 -0700 (PDT)
+        id S1731397AbfEWS2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 14:28:30 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:50202 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731107AbfEWS2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 14:28:30 -0400
+Received: from cz.tnic (unknown [165.204.77.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8C4C01EC0722;
+        Thu, 23 May 2019 20:28:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1558636108;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=1dFzXcVh5H3mgKQCZ4xmGQdhf/xiGlb61Su3Uj/Yo6c=;
+        b=ILlcH0LXJL/gRjkeOXDR8ELTkSF9fB8PBnYh+hCFeEKx8RnEe6vztTq6GATli7szEoyzSU
+        UEWIWSxA56XlrlkoI6wO6HwRW5jQq+ssIhqVjKWyk+VFdnq6DHBFhemhmoHbTkuqplFFbn
+        sPxFbPUeoS2hjZIA5yehDO7Qqe+Xucw=
+Date:   Thu, 23 May 2019 22:28:17 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH] x86/MCE: Statically allocate mce_banks_array
+Message-ID: <20190523202754.GA3980@cz.tnic>
+References: <20190523150345.42906-1-Yazen.Ghannam@amd.com>
 MIME-Version: 1.0
-References: <20190523195313.31008-1-TheSven73@gmail.com> <1b741b25b973e049948b3e490c13aad48716d5b0.camel@perches.com>
-In-Reply-To: <1b741b25b973e049948b3e490c13aad48716d5b0.camel@perches.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Thu, 23 May 2019 16:23:13 -0400
-Message-ID: <CAGngYiUnRSSPLDhXeAg5E0pM_-ZbNV9qpOarSemDdpwLPRZeqA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] MAINTAINERS: Add entry for fieldbus subsystem
-To:     Joe Perches <joe@perches.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190523150345.42906-1-Yazen.Ghannam@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 4:00 PM Joe Perches <joe@perches.com> wrote:
-> patch 2/2 specifically covers the anybuss directory,
-> but the Documentation directory has no matching pattern.
+On Thu, May 23, 2019 at 03:03:55PM +0000, Ghannam, Yazen wrote:
+> From: Yazen Ghannam <yazen.ghannam@amd.com>
+> 
+> The MCE control data is stored in an array of struct mce_banks. This
+> array has historically been shared by all CPUs and it was allocated
+> dynamically during the first CPU's init sequence.
+> 
+> However, starting with
+> 
+> 	5b0883f5c7be ("x86/MCE: Make mce_banks a per-CPU array")
+> 
+> the array was changed to become a per-CPU array. Each CPU would
+> dynamically allocate the array during its own init sequence.
+> 
+> This seems benign expect when "Lock Debugging" config options are
+> enabled in which case the following message appears.
+> 
+> 	BUG: sleeping function called from invalid context at mm/slab.h:418
+> 
+> The message appears during the secondary CPUs' init sequences. This seems
+> to be because these CPUs are in system_state=SYSTEM_SCHEDULING compared
+> to the primary CPU which is in system_state=SYSTEM_BOOTING.
+> 
+> Allocate the mce_banks_array statically so that this issue can be
+> avoided.
+> 
+> Also, remove the now unnecessary return values from
+> __mcheck_cpu_mce_banks_init() and __mcheck_cpu_cap_init().
+> 
+> Fixes: 5b0883f5c7be ("x86/MCE: Make mce_banks a per-CPU array")
+> Reported-by: kernel test robot <rong.a.chen@intel.com>
+> Suggested-by: Borislav Petkov <bp@suse.de>
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+>  arch/x86/kernel/cpu/mce/core.c | 39 ++++++++++++----------------------
+>  1 file changed, 14 insertions(+), 25 deletions(-)
 
-Thank you for spotting that, I will re-spin the set.
+Can you rediff this patch against tip/master please?
 
->
-> trivia: anybuss looks like a misspelling.
-> It might be better as anybus-s.
->
+It fixes a patch which is already in -rc1 so it needs to go first, into
+urgent, before your patchset.
 
-This came up as well during the review process. When we insert a separator,
-the include files start looking like anybus-s-controller.h, and the structs
-become like struct anybus_s_ops. It then no longer looks like a misspelling,
-but becomes harder to read?
+Thx.
 
-An alternative solution is to get rid of the 's' suffix altogether. Anybus-S
-is the only flavour we support right now. Although that may obviously
-change in the future.
+-- 
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply. Srsly.
