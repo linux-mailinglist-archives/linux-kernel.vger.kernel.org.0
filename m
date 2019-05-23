@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B19AE286FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 511612886C
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388897AbfEWTPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:15:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49402 "EHLO mail.kernel.org"
+        id S2391262AbfEWT0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:26:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388900AbfEWTPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:15:09 -0400
+        id S2391247AbfEWT0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:26:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91732217D7;
-        Thu, 23 May 2019 19:15:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03E772054F;
+        Thu, 23 May 2019 19:25:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638908;
-        bh=Zyi6/V6Q9wxuy+2AalVKF76usHYRC+U6nu1asExXwKM=;
+        s=default; t=1558639559;
+        bh=nZGcgFc2z8V4eaNeBmEJckrEFcB5RsTgV1d1vKVSKko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uu+CkX8J/ISODK0ZEGbpiTqIqCElpeWpkDY31ZzlJyp9+AmQOE4v+lSRoZ8YKxuNx
-         FfHQcpeNcICDmbMom/1CP8fdxFxLwWh8CUuLPTgdQusDe0epNVhN5BAGC4CPxbNO2H
-         NJKroF++6f0SLWzYG4nODf7+q5wNxr9aKBzg3oz4=
+        b=ZUeAI0rViOdNLwf9Pjxs4GZpWac7UwXOxUFWsPSmFPLTrJAQS4owTAnmIuP8VREpj
+         NuxWK7ZgANTk6pB9YahiTs/B2BSg7ioXPlw5QtVRRcMPL9VXcoRkqUq0Ixt6bmr1zs
+         dY8v2sxqc5zjno9T3Xp9EGOkBPVpDiQUARBUUA3c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
-        NeilBrown <neilb@suse.com>, Song Liu <songliubraving@fb.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 025/114] Revert "MD: fix lock contention for flush bios"
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Wei Wang <weiwan@google.com>, David Ahern <dsahern@gmail.com>,
+        Martin Lau <kafai@fb.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 002/122] ipv6: prevent possible fib6 leaks
 Date:   Thu, 23 May 2019 21:05:24 +0200
-Message-Id: <20190523181734.144559010@linuxfoundation.org>
+Message-Id: <20190523181705.393382695@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,316 +46,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: NeilBrown <neilb@suse.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 4bc034d35377196c854236133b07730a777c4aba upstream.
+[ Upstream commit 61fb0d01680771f72cc9d39783fb2c122aaad51e ]
 
-This reverts commit 5a409b4f56d50b212334f338cb8465d65550cd85.
+At ipv6 route dismantle, fib6_drop_pcpu_from() is responsible
+for finding all percpu routes and set their ->from pointer
+to NULL, so that fib6_ref can reach its expected value (1).
 
-This patch has two problems.
+The problem right now is that other cpus can still catch the
+route being deleted, since there is no rcu grace period
+between the route deletion and call to fib6_drop_pcpu_from()
 
-1/ it make multiple calls to submit_bio() from inside a make_request_fn.
- The bios thus submitted will be queued on current->bio_list and not
- submitted immediately.  As the bios are allocated from a mempool,
- this can theoretically result in a deadlock - all the pool of requests
- could be in various ->bio_list queues and a subsequent mempool_alloc
- could block waiting for one of them to be released.
+This can leak the fib6 and associated resources, since no
+notifier will take care of removing the last reference(s).
 
-2/ It aims to handle a case when there are many concurrent flush requests.
-  It handles this by submitting many requests in parallel - all of which
-  are identical and so most of which do nothing useful.
-  It would be more efficient to just send one lower-level request, but
-  allow that to satisfy multiple upper-level requests.
+I decided to add another boolean (fib6_destroying) instead
+of reusing/renaming exception_bucket_flushed to ease stable backports,
+and properly document the memory barriers used to implement this fix.
 
-Fixes: 5a409b4f56d5 ("MD: fix lock contention for flush bios")
-Cc: <stable@vger.kernel.org> # v4.19+
-Tested-by: Xiao Ni <xni@redhat.com>
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This patch has been co-developped with Wei Wang.
+
+Fixes: 93531c674315 ("net/ipv6: separate handling of FIB entries from dst based routes")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Wei Wang <weiwan@google.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Martin Lau <kafai@fb.com>
+Acked-by: Wei Wang <weiwan@google.com>
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/md/md.c |  163 ++++++++++++++++++--------------------------------------
- drivers/md/md.h |   22 ++-----
- 2 files changed, 62 insertions(+), 123 deletions(-)
+ include/net/ip6_fib.h |    3 ++-
+ net/ipv6/ip6_fib.c    |   12 +++++++++---
+ net/ipv6/route.c      |    7 +++++++
+ 3 files changed, 18 insertions(+), 4 deletions(-)
 
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -132,24 +132,6 @@ static inline int speed_max(struct mddev
- 		mddev->sync_speed_max : sysctl_speed_limit_max;
- }
+--- a/include/net/ip6_fib.h
++++ b/include/net/ip6_fib.h
+@@ -171,7 +171,8 @@ struct fib6_info {
+ 					dst_nocount:1,
+ 					dst_nopolicy:1,
+ 					dst_host:1,
+-					unused:3;
++					fib6_destroying:1,
++					unused:2;
  
--static void * flush_info_alloc(gfp_t gfp_flags, void *data)
--{
--        return kzalloc(sizeof(struct flush_info), gfp_flags);
--}
--static void flush_info_free(void *flush_info, void *data)
--{
--        kfree(flush_info);
--}
--
--static void * flush_bio_alloc(gfp_t gfp_flags, void *data)
--{
--	return kzalloc(sizeof(struct flush_bio), gfp_flags);
--}
--static void flush_bio_free(void *flush_bio, void *data)
--{
--	kfree(flush_bio);
--}
--
- static struct ctl_table_header *raid_table_header;
- 
- static struct ctl_table raid_table[] = {
-@@ -429,54 +411,30 @@ static int md_congested(void *data, int
- /*
-  * Generic flush handling for md
-  */
--static void submit_flushes(struct work_struct *ws)
--{
--	struct flush_info *fi = container_of(ws, struct flush_info, flush_work);
--	struct mddev *mddev = fi->mddev;
--	struct bio *bio = fi->bio;
--
--	bio->bi_opf &= ~REQ_PREFLUSH;
--	md_handle_request(mddev, bio);
--
--	mempool_free(fi, mddev->flush_pool);
--}
- 
--static void md_end_flush(struct bio *fbio)
-+static void md_end_flush(struct bio *bio)
+ 	struct fib6_nh			fib6_nh;
+ 	struct rcu_head			rcu;
+--- a/net/ipv6/ip6_fib.c
++++ b/net/ipv6/ip6_fib.c
+@@ -909,6 +909,12 @@ static void fib6_drop_pcpu_from(struct f
  {
--	struct flush_bio *fb = fbio->bi_private;
--	struct md_rdev *rdev = fb->rdev;
--	struct flush_info *fi = fb->fi;
--	struct bio *bio = fi->bio;
--	struct mddev *mddev = fi->mddev;
-+	struct md_rdev *rdev = bio->bi_private;
-+	struct mddev *mddev = rdev->mddev;
+ 	int cpu;
  
- 	rdev_dec_pending(rdev, mddev);
- 
--	if (atomic_dec_and_test(&fi->flush_pending)) {
--		if (bio->bi_iter.bi_size == 0) {
--			/* an empty barrier - all done */
--			bio_endio(bio);
--			mempool_free(fi, mddev->flush_pool);
--		} else {
--			INIT_WORK(&fi->flush_work, submit_flushes);
--			queue_work(md_wq, &fi->flush_work);
--		}
-+	if (atomic_dec_and_test(&mddev->flush_pending)) {
-+		/* The pre-request flush has finished */
-+		queue_work(md_wq, &mddev->flush_work);
- 	}
--
--	mempool_free(fb, mddev->flush_bio_pool);
--	bio_put(fbio);
-+	bio_put(bio);
- }
- 
--void md_flush_request(struct mddev *mddev, struct bio *bio)
-+static void md_submit_flush_data(struct work_struct *ws);
++	/* Make sure rt6_make_pcpu_route() wont add other percpu routes
++	 * while we are cleaning them here.
++	 */
++	f6i->fib6_destroying = 1;
++	mb(); /* paired with the cmpxchg() in rt6_make_pcpu_route() */
 +
-+static void submit_flushes(struct work_struct *ws)
+ 	/* release the reference to this fib entry from
+ 	 * all of its cached pcpu routes
+ 	 */
+@@ -932,6 +938,9 @@ static void fib6_purge_rt(struct fib6_in
  {
-+	struct mddev *mddev = container_of(ws, struct mddev, flush_work);
- 	struct md_rdev *rdev;
--	struct flush_info *fi;
--
--	fi = mempool_alloc(mddev->flush_pool, GFP_NOIO);
--
--	fi->bio = bio;
--	fi->mddev = mddev;
--	atomic_set(&fi->flush_pending, 1);
+ 	struct fib6_table *table = rt->fib6_table;
  
-+	INIT_WORK(&mddev->flush_work, md_submit_flush_data);
-+	atomic_set(&mddev->flush_pending, 1);
- 	rcu_read_lock();
- 	rdev_for_each_rcu(rdev, mddev)
- 		if (rdev->raid_disk >= 0 &&
-@@ -486,40 +444,59 @@ void md_flush_request(struct mddev *mdde
- 			 * we reclaim rcu_read_lock
- 			 */
- 			struct bio *bi;
--			struct flush_bio *fb;
- 			atomic_inc(&rdev->nr_pending);
- 			atomic_inc(&rdev->nr_pending);
- 			rcu_read_unlock();
--
--			fb = mempool_alloc(mddev->flush_bio_pool, GFP_NOIO);
--			fb->fi = fi;
--			fb->rdev = rdev;
--
- 			bi = bio_alloc_mddev(GFP_NOIO, 0, mddev);
--			bio_set_dev(bi, rdev->bdev);
- 			bi->bi_end_io = md_end_flush;
--			bi->bi_private = fb;
-+			bi->bi_private = rdev;
-+			bio_set_dev(bi, rdev->bdev);
- 			bi->bi_opf = REQ_OP_WRITE | REQ_PREFLUSH;
--
--			atomic_inc(&fi->flush_pending);
-+			atomic_inc(&mddev->flush_pending);
- 			submit_bio(bi);
--
- 			rcu_read_lock();
- 			rdev_dec_pending(rdev, mddev);
++	if (rt->rt6i_pcpu)
++		fib6_drop_pcpu_from(rt, table);
++
+ 	if (atomic_read(&rt->fib6_ref) != 1) {
+ 		/* This route is used as dummy address holder in some split
+ 		 * nodes. It is not leaked, but it still holds other resources,
+@@ -953,9 +962,6 @@ static void fib6_purge_rt(struct fib6_in
+ 			fn = rcu_dereference_protected(fn->parent,
+ 				    lockdep_is_held(&table->tb6_lock));
  		}
- 	rcu_read_unlock();
-+	if (atomic_dec_and_test(&mddev->flush_pending))
-+		queue_work(md_wq, &mddev->flush_work);
-+}
- 
--	if (atomic_dec_and_test(&fi->flush_pending)) {
--		if (bio->bi_iter.bi_size == 0) {
--			/* an empty barrier - all done */
--			bio_endio(bio);
--			mempool_free(fi, mddev->flush_pool);
--		} else {
--			INIT_WORK(&fi->flush_work, submit_flushes);
--			queue_work(md_wq, &fi->flush_work);
--		}
-+static void md_submit_flush_data(struct work_struct *ws)
-+{
-+	struct mddev *mddev = container_of(ws, struct mddev, flush_work);
-+	struct bio *bio = mddev->flush_bio;
-+
-+	/*
-+	 * must reset flush_bio before calling into md_handle_request to avoid a
-+	 * deadlock, because other bios passed md_handle_request suspend check
-+	 * could wait for this and below md_handle_request could wait for those
-+	 * bios because of suspend check
-+	 */
-+	mddev->flush_bio = NULL;
-+	wake_up(&mddev->sb_wait);
-+
-+	if (bio->bi_iter.bi_size == 0) {
-+		/* an empty barrier - all done */
-+		bio_endio(bio);
-+	} else {
-+		bio->bi_opf &= ~REQ_PREFLUSH;
-+		md_handle_request(mddev, bio);
+-
+-		if (rt->rt6i_pcpu)
+-			fib6_drop_pcpu_from(rt, table);
  	}
  }
+ 
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -1260,6 +1260,13 @@ static struct rt6_info *rt6_make_pcpu_ro
+ 	prev = cmpxchg(p, NULL, pcpu_rt);
+ 	BUG_ON(prev);
+ 
++	if (rt->fib6_destroying) {
++		struct fib6_info *from;
 +
-+void md_flush_request(struct mddev *mddev, struct bio *bio)
-+{
-+	spin_lock_irq(&mddev->lock);
-+	wait_event_lock_irq(mddev->sb_wait,
-+			    !mddev->flush_bio,
-+			    mddev->lock);
-+	mddev->flush_bio = bio;
-+	spin_unlock_irq(&mddev->lock);
++		from = xchg((__force struct fib6_info **)&pcpu_rt->from, NULL);
++		fib6_info_release(from);
++	}
 +
-+	INIT_WORK(&mddev->flush_work, submit_flushes);
-+	queue_work(md_wq, &mddev->flush_work);
-+}
- EXPORT_SYMBOL(md_flush_request);
- 
- static inline struct mddev *mddev_get(struct mddev *mddev)
-@@ -566,6 +543,7 @@ void mddev_init(struct mddev *mddev)
- 	atomic_set(&mddev->openers, 0);
- 	atomic_set(&mddev->active_io, 0);
- 	spin_lock_init(&mddev->lock);
-+	atomic_set(&mddev->flush_pending, 0);
- 	init_waitqueue_head(&mddev->sb_wait);
- 	init_waitqueue_head(&mddev->recovery_wait);
- 	mddev->reshape_position = MaxSector;
-@@ -5519,22 +5497,6 @@ int md_run(struct mddev *mddev)
- 		if (err)
- 			return err;
- 	}
--	if (mddev->flush_pool == NULL) {
--		mddev->flush_pool = mempool_create(NR_FLUSH_INFOS, flush_info_alloc,
--						flush_info_free, mddev);
--		if (!mddev->flush_pool) {
--			err = -ENOMEM;
--			goto abort;
--		}
--	}
--	if (mddev->flush_bio_pool == NULL) {
--		mddev->flush_bio_pool = mempool_create(NR_FLUSH_BIOS, flush_bio_alloc,
--						flush_bio_free, mddev);
--		if (!mddev->flush_bio_pool) {
--			err = -ENOMEM;
--			goto abort;
--		}
--	}
- 
- 	spin_lock(&pers_lock);
- 	pers = find_pers(mddev->level, mddev->clevel);
-@@ -5694,15 +5656,8 @@ int md_run(struct mddev *mddev)
- 	return 0;
- 
- abort:
--	if (mddev->flush_bio_pool) {
--		mempool_destroy(mddev->flush_bio_pool);
--		mddev->flush_bio_pool = NULL;
--	}
--	if (mddev->flush_pool){
--		mempool_destroy(mddev->flush_pool);
--		mddev->flush_pool = NULL;
--	}
--
-+	bioset_exit(&mddev->bio_set);
-+	bioset_exit(&mddev->sync_set);
- 	return err;
- }
- EXPORT_SYMBOL_GPL(md_run);
-@@ -5906,14 +5861,6 @@ static void __md_stop(struct mddev *mdde
- 		mddev->to_remove = &md_redundancy_group;
- 	module_put(pers->owner);
- 	clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
--	if (mddev->flush_bio_pool) {
--		mempool_destroy(mddev->flush_bio_pool);
--		mddev->flush_bio_pool = NULL;
--	}
--	if (mddev->flush_pool) {
--		mempool_destroy(mddev->flush_pool);
--		mddev->flush_pool = NULL;
--	}
+ 	return pcpu_rt;
  }
  
- void md_stop(struct mddev *mddev)
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -252,19 +252,6 @@ enum mddev_sb_flags {
- 	MD_SB_NEED_REWRITE,	/* metadata write needs to be repeated */
- };
- 
--#define NR_FLUSH_INFOS 8
--#define NR_FLUSH_BIOS 64
--struct flush_info {
--	struct bio			*bio;
--	struct mddev			*mddev;
--	struct work_struct		flush_work;
--	atomic_t			flush_pending;
--};
--struct flush_bio {
--	struct flush_info *fi;
--	struct md_rdev *rdev;
--};
--
- struct mddev {
- 	void				*private;
- 	struct md_personality		*pers;
-@@ -470,8 +457,13 @@ struct mddev {
- 						   * metadata and bitmap writes
- 						   */
- 
--	mempool_t			*flush_pool;
--	mempool_t			*flush_bio_pool;
-+	/* Generic flush handling.
-+	 * The last to finish preflush schedules a worker to submit
-+	 * the rest of the request (without the REQ_PREFLUSH flag).
-+	 */
-+	struct bio *flush_bio;
-+	atomic_t flush_pending;
-+	struct work_struct flush_work;
- 	struct work_struct event_work;	/* used by dm to report failure event */
- 	void (*sync_super)(struct mddev *mddev, struct md_rdev *rdev);
- 	struct md_cluster_info		*cluster_info;
 
 
