@@ -2,110 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE35D2856B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 19:56:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3EEC28570
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 19:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387403AbfEWR4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 13:56:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36352 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731116AbfEWR4p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 13:56:45 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9C9F3307CDF2;
-        Thu, 23 May 2019 17:56:45 +0000 (UTC)
-Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0ED9968386;
-        Thu, 23 May 2019 17:56:40 +0000 (UTC)
-Date:   Thu, 23 May 2019 19:56:38 +0200
-From:   Andrew Jones <drjones@redhat.com>
-To:     Thomas Huth <thuth@redhat.com>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH 9/9] KVM: selftests: Move kvm_create_max_vcpus test to
- generic code
-Message-ID: <20190523175638.5sc5zjbgsqe4bkes@kamzik.brq.redhat.com>
-References: <20190523164309.13345-1-thuth@redhat.com>
- <20190523164309.13345-10-thuth@redhat.com>
+        id S1731503AbfEWR55 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 13:57:57 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14026 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731311AbfEWR55 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 13:57:57 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ce6df1f0001>; Thu, 23 May 2019 10:57:52 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 23 May 2019 10:57:56 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 23 May 2019 10:57:56 -0700
+Received: from [10.2.169.219] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 23 May
+ 2019 17:57:52 +0000
+Subject: Re: [PATCH 1/1] infiniband/mm: convert put_page() to put_user_page*()
+To:     Jerome Glisse <jglisse@redhat.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        "Dennis Dalessandro" <dennis.dalessandro@intel.com>,
+        Christian Benvenuti <benve@cisco.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ira Weiny <ira.weiny@intel.com>
+References: <20190523072537.31940-1-jhubbard@nvidia.com>
+ <20190523072537.31940-2-jhubbard@nvidia.com>
+ <20190523153133.GB5104@redhat.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <708b9fc4-9afd-345e-83f7-2ceae673a4fd@nvidia.com>
+Date:   Thu, 23 May 2019 10:56:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190523164309.13345-10-thuth@redhat.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 23 May 2019 17:56:45 +0000 (UTC)
+In-Reply-To: <20190523153133.GB5104@redhat.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1558634272; bh=L+NsLVitjlajK5Fndh2v4VhhHtFHNGHsvBcTolR7zkE=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=nsqB1IeZFCuxxH6mHCvcXZ7r8Pp4bj2szDVLBKtv72WLrTh+NFjrf0A9KJEyx6nYx
+         xdOeSAheQUOMNx3oiM4T5lPXrconSMMy+s+NQQGNgYdc8sEtCh47sE/Vm2HaLAaAiM
+         ZkDCNxXsOFRKAzoqGDNk4VwTtjSCvSWvNbEHPsRyJWAOhct4eHLdLrjBtMsYIdiBlt
+         5oCBCOxrHcv0zQQw/jFLI9tSx2R80yUokM0UWuJfUGjOnoC4ZlmwXm8CgKnBSRfcj9
+         tGwlXMkJwAUQcdbP4pb8SVB7v69N3DEB/BN9mMBxHFJfBkMi22AShiQE/7gH5lfnTw
+         1abZmIUAVz0tA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 06:43:09PM +0200, Thomas Huth wrote:
-> There is nothing x86-specific in the test apart from the VM_MODE_P52V48_4K
-> which we can now replace with VM_MODE_DEFAULT. Thus let's move the file to
-> the main folder and enable it for aarch64 and s390x, too.
-> 
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
-> ---
->  tools/testing/selftests/kvm/Makefile                          | 4 +++-
->  .../testing/selftests/kvm/{x86_64 => }/kvm_create_max_vcpus.c | 3 ++-
->  2 files changed, 5 insertions(+), 2 deletions(-)
->  rename tools/testing/selftests/kvm/{x86_64 => }/kvm_create_max_vcpus.c (93%)
-> 
-> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-> index d8beb990c8f4..aef5bd1166cf 100644
-> --- a/tools/testing/selftests/kvm/Makefile
-> +++ b/tools/testing/selftests/kvm/Makefile
-> @@ -21,15 +21,17 @@ TEST_GEN_PROGS_x86_64 += x86_64/evmcs_test
->  TEST_GEN_PROGS_x86_64 += x86_64/hyperv_cpuid
->  TEST_GEN_PROGS_x86_64 += x86_64/vmx_close_while_nested_test
->  TEST_GEN_PROGS_x86_64 += x86_64/smm_test
-> -TEST_GEN_PROGS_x86_64 += x86_64/kvm_create_max_vcpus
->  TEST_GEN_PROGS_x86_64 += x86_64/vmx_set_nested_state_test
-> +TEST_GEN_PROGS_x86_64 += kvm_create_max_vcpus
->  TEST_GEN_PROGS_x86_64 += dirty_log_test
->  TEST_GEN_PROGS_x86_64 += clear_dirty_log_test
->  
->  TEST_GEN_PROGS_aarch64 += dirty_log_test
->  TEST_GEN_PROGS_aarch64 += clear_dirty_log_test
-> +TEST_GEN_PROGS_aarch64 += kvm_create_max_vcpus
->  
->  TEST_GEN_PROGS_s390x += s390x/sync_regs_test
-> +TEST_GEN_PROGS_s390x += kvm_create_max_vcpus
->  
->  TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(UNAME_M))
->  LIBKVM += $(LIBKVM_$(UNAME_M))
-> diff --git a/tools/testing/selftests/kvm/x86_64/kvm_create_max_vcpus.c b/tools/testing/selftests/kvm/kvm_create_max_vcpus.c
-> similarity index 93%
-> rename from tools/testing/selftests/kvm/x86_64/kvm_create_max_vcpus.c
-> rename to tools/testing/selftests/kvm/kvm_create_max_vcpus.c
-> index 50e92996f918..db78ce07c416 100644
-> --- a/tools/testing/selftests/kvm/x86_64/kvm_create_max_vcpus.c
-> +++ b/tools/testing/selftests/kvm/kvm_create_max_vcpus.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
->  /*
->   * kvm_create_max_vcpus
->   *
-> @@ -28,7 +29,7 @@ void test_vcpu_creation(int first_vcpu_id, int num_vcpus)
->  	printf("Testing creating %d vCPUs, with IDs %d...%d.\n",
->  	       num_vcpus, first_vcpu_id, first_vcpu_id + num_vcpus - 1);
->  
-> -	vm = vm_create(VM_MODE_P52V48_4K, DEFAULT_GUEST_PHY_PAGES, O_RDWR);
-> +	vm = vm_create(VM_MODE_DEFAULT, DEFAULT_GUEST_PHY_PAGES, O_RDWR);
->  
->  	for (i = 0; i < num_vcpus; i++) {
->  		int vcpu_id = first_vcpu_id + i;
-> -- 
-> 2.21.0
->
+On 5/23/19 8:31 AM, Jerome Glisse wrote:
+[...]
+>=20
+> Reviewed-by: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+>=20
 
-Reviewed-by: Andrew Jones <drjones@redhat.com>
+Thanks for the review!
+
+> Between i have a wishlist see below
+[...]
+>> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/um=
+em.c
+>> index e7ea819fcb11..673f0d240b3e 100644
+>> --- a/drivers/infiniband/core/umem.c
+>> +++ b/drivers/infiniband/core/umem.c
+>> @@ -54,9 +54,10 @@ static void __ib_umem_release(struct ib_device *dev, =
+struct ib_umem *umem, int d
+>>  =20
+>>   	for_each_sg_page(umem->sg_head.sgl, &sg_iter, umem->sg_nents, 0) {
+>>   		page =3D sg_page_iter_page(&sg_iter);
+>> -		if (!PageDirty(page) && umem->writable && dirty)
+>> -			set_page_dirty_lock(page);
+>> -		put_page(page);
+>> +		if (umem->writable && dirty)
+>> +			put_user_pages_dirty_lock(&page, 1);
+>> +		else
+>> +			put_user_page(page);
+>=20
+> Can we get a put_user_page_dirty(struct page 8*pages, bool dirty, npages)=
+ ?
+>=20
+> It is a common pattern that we might have to conditionaly dirty the pages
+> and i feel it would look cleaner if we could move the branch within the
+> put_user_page*() function.
+>=20
+
+This sounds reasonable to me, do others have a preference on this? Last tim=
+e
+we discussed it, I recall there was interest in trying to handle the sg lis=
+ts,
+which was where a lot of focus was. I'm not sure if there was a preference =
+one=20
+way or the other, on adding more of these helpers.
+
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
