@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80819287CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D343C28A2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:57:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390726AbfEWTXg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:23:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33952 "EHLO mail.kernel.org"
+        id S2387775AbfEWTKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:10:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390712AbfEWTXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:23:32 -0400
+        id S2387743AbfEWTKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:10:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18431217D7;
-        Thu, 23 May 2019 19:23:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFD672133D;
+        Thu, 23 May 2019 19:10:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639411;
-        bh=oheSv95oFkn+VVV3lf9Ovz2363O9f+rCEsKN1nvHhuA=;
+        s=default; t=1558638613;
+        bh=xywE+GSgYA5Pfdjb6LBnSzVFaUGC8KB/hDWbOo3Es4M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1GXE7hQyCoNv8RIHeMPzMd+LV1o355tbBKfnZlZfOug4JTfsTyTZkKoXeP+KF5p/0
-         CqkFjZeUVdMcQEN+nYwXm/oO0P9ED/5XNJLc3BFAWL89jLc9V0RBVMweulE8Q1Tqev
-         mgUe0EVUmiQAmWTkkYb0QZuD+U+eaiO+SUwl2g/U=
+        b=A1Yq5ySbuQhqeVOsKDQyfTJUxepdzZLpw1os5hjiQI6JhveTA/CuFuyLdZzsmCLQM
+         zvzkW1Xp/L7XIuvafShhA5VHKxbVwTyOr8WEbVfcd5yfZ4JFM4bGW3LSSwj9zZQvOk
+         yYuiynslrfYVwgGMtcZ7Vl0eal6PIK0AjaulNyJo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yifeng Li <tomli@tomli.me>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 5.0 079/139] fbdev: sm712fb: fix white screen of death on reboot, dont set CR3B-CR3F
-Date:   Thu, 23 May 2019 21:06:07 +0200
-Message-Id: <20190523181731.140741448@linuxfoundation.org>
+        stable@vger.kernel.org, Jeremy Sowden <jeremy@azazel.net>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 44/53] vti4: ipip tunnel deregistration fixes.
+Date:   Thu, 23 May 2019 21:06:08 +0200
+Message-Id: <20190523181717.950582899@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
+References: <20190523181710.981455400@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yifeng Li <tomli@tomli.me>
+[ Upstream commit 5483844c3fc18474de29f5d6733003526e0a9f78 ]
 
-commit 8069053880e0ee3a75fd6d7e0a30293265fe3de4 upstream.
+If tunnel registration failed during module initialization, the module
+would fail to deregister the IPPROTO_COMP protocol and would attempt to
+deregister the tunnel.
 
-On a Thinkpad s30 (Pentium III / i440MX, Lynx3DM), rebooting with
-sm712fb framebuffer driver would cause a white screen of death on
-the next POST, presumably the proper timings for the LCD panel was
-not reprogrammed properly by the BIOS.
+The tunnel was not deregistered during module-exit.
 
-Experiments showed a few CRTC Scratch Registers, including CRT3D,
-CRT3E and CRT3F may be used internally by BIOS as some flags. CRT3B is
-a hardware testing register, we shouldn't mess with it. CRT3C has
-blanking signal and line compare control, which is not needed for this
-driver.
-
-Stop writing to CR3B-CR3F (a.k.a CRT3B-CRT3F) registers. Even if these
-registers don't have side-effect on other systems, writing to them is
-also highly questionable.
-
-Signed-off-by: Yifeng Li <tomli@tomli.me>
-Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Teddy Wang <teddy.wang@siliconmotion.com>
-Cc: <stable@vger.kernel.org>  # v4.4+
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: dd9ee3444014e ("vti4: Fix a ipip packet processing bug in 'IPCOMP' virtual tunnel")
+Signed-off-by: Jeremy Sowden <jeremy@azazel.net>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/sm712fb.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ net/ipv4/ip_vti.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/video/fbdev/sm712fb.c
-+++ b/drivers/video/fbdev/sm712fb.c
-@@ -1173,8 +1173,12 @@ static void sm7xx_set_timing(struct smtc
- 			smtc_crtcw(i, vgamode[j].init_cr00_cr18[i]);
+diff --git a/net/ipv4/ip_vti.c b/net/ipv4/ip_vti.c
+index 270e79f4d40e6..4e39c935e057e 100644
+--- a/net/ipv4/ip_vti.c
++++ b/net/ipv4/ip_vti.c
+@@ -678,9 +678,9 @@ static int __init vti_init(void)
+ 	return err;
  
- 		/* init CRTC register CR30 - CR4D */
--		for (i = 0; i < SIZE_CR30_CR4D; i++)
-+		for (i = 0; i < SIZE_CR30_CR4D; i++) {
-+			if ((i + 0x30) >= 0x3B && (i + 0x30) <= 0x3F)
-+				/* side-effect, don't write to CR3B-CR3F */
-+				continue;
- 			smtc_crtcw(i + 0x30, vgamode[j].init_cr30_cr4d[i]);
-+		}
- 
- 		/* init CRTC register CR90 - CRA7 */
- 		for (i = 0; i < SIZE_CR90_CRA7; i++)
+ rtnl_link_failed:
+-	xfrm4_protocol_deregister(&vti_ipcomp4_protocol, IPPROTO_COMP);
+-xfrm_tunnel_failed:
+ 	xfrm4_tunnel_deregister(&ipip_handler, AF_INET);
++xfrm_tunnel_failed:
++	xfrm4_protocol_deregister(&vti_ipcomp4_protocol, IPPROTO_COMP);
+ xfrm_proto_comp_failed:
+ 	xfrm4_protocol_deregister(&vti_ah4_protocol, IPPROTO_AH);
+ xfrm_proto_ah_failed:
+@@ -696,6 +696,7 @@ pernet_dev_failed:
+ static void __exit vti_fini(void)
+ {
+ 	rtnl_link_unregister(&vti_link_ops);
++	xfrm4_tunnel_deregister(&ipip_handler, AF_INET);
+ 	xfrm4_protocol_deregister(&vti_ipcomp4_protocol, IPPROTO_COMP);
+ 	xfrm4_protocol_deregister(&vti_ah4_protocol, IPPROTO_AH);
+ 	xfrm4_protocol_deregister(&vti_esp4_protocol, IPPROTO_ESP);
+-- 
+2.20.1
+
 
 
