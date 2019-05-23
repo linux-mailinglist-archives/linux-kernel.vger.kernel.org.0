@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B4CD28963
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E04C28A86
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:57:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391942AbfEWTfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:35:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38298 "EHLO mail.kernel.org"
+        id S2388672AbfEWTQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:16:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391334AbfEWT00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:26:26 -0400
+        id S2388263AbfEWTP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:15:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECC712054F;
-        Thu, 23 May 2019 19:26:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BAAC21841;
+        Thu, 23 May 2019 19:15:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639586;
-        bh=ohi96GrQJW1etsYjYNksG5b5OIcpsBj69l3XFpp8G7M=;
+        s=default; t=1558638957;
+        bh=bRt5aQ02+ZCB3U16y6YlI6tuHQ0IH4I6lTxjjEgaPq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S5AkAkV9sjiubOeQVkwB7WECxxoBC5skOBY5R9LJnnjR06D5v0KgtQrAm01wQfPbe
-         abM7St27vtnPCSI6/E04Yb4cdsIEamnDG9N8cQb/fOgfocWIECcTswYD+fGSCT4xG1
-         MdIVHFhwTuipI5CGR881mzZLBCwfvvNU5uZREY1c=
+        b=QzfysmAmyrv+IZfw9xHpUFaBhEexVVp/evcTrXfK97KOOyVt/mplry8hZRODCSIPu
+         9ymSImcH9OhwIBhQ4TJ6F7V6JK5BoDefABF+RBnvr8VmnUhJGEpXAjofQWiXyyiSpi
+         tlqtmycV3GJW6KRKICwEO4LhA5EUrZXpnYkI7Fb4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmytro Linkin <dmitrolin@mellanox.com>,
-        Gavi Teitz <gavi@mellanox.com>, Roi Dayan <roid@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 5.1 020/122] net/mlx5e: Add missing ethtool driver info for representors
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Bernie Thompson <bernie@plugable.com>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.19 043/114] udlfb: delete the unused parameter for dlfb_handle_damage
 Date:   Thu, 23 May 2019 21:05:42 +0200
-Message-Id: <20190523181707.480253543@linuxfoundation.org>
+Message-Id: <20190523181735.643133184@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +45,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmytro Linkin <dmitrolin@mellanox.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-[ Upstream commit cf83c8fdcd4756644595521f48748ec22f7efede ]
+commit bd86b6c5c60711dbd4fa21bdb497a188ecb6cf63 upstream.
 
-For all representors added firmware version info to show in
-ethtool driver info.
-For uplink representor, because only it is tied to the pci device
-sysfs, added pci bus info.
+Remove the unused parameter "data" and unused variable "ret".
 
-Fixes: ff9b85de5d5d ("net/mlx5e: Add some ethtool port control entries to the uplink rep netdev")
-Signed-off-by: Dmytro Linkin <dmitrolin@mellanox.com>
-Reviewed-by: Gavi Teitz <gavi@mellanox.com>
-Reviewed-by: Roi Dayan <roid@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Bernie Thompson <bernie@plugable.com>
+Cc: Ladislav Michl <ladis@linux-mips.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_rep.c |   19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
-@@ -65,9 +65,26 @@ static void mlx5e_rep_indr_unregister_bl
- static void mlx5e_rep_get_drvinfo(struct net_device *dev,
- 				  struct ethtool_drvinfo *drvinfo)
- {
-+	struct mlx5e_priv *priv = netdev_priv(dev);
-+	struct mlx5_core_dev *mdev = priv->mdev;
-+
- 	strlcpy(drvinfo->driver, mlx5e_rep_driver_name,
- 		sizeof(drvinfo->driver));
- 	strlcpy(drvinfo->version, UTS_RELEASE, sizeof(drvinfo->version));
-+	snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
-+		 "%d.%d.%04d (%.16s)",
-+		 fw_rev_maj(mdev), fw_rev_min(mdev),
-+		 fw_rev_sub(mdev), mdev->board_id);
-+}
-+
-+static void mlx5e_uplink_rep_get_drvinfo(struct net_device *dev,
-+					 struct ethtool_drvinfo *drvinfo)
-+{
-+	struct mlx5e_priv *priv = netdev_priv(dev);
-+
-+	mlx5e_rep_get_drvinfo(dev, drvinfo);
-+	strlcpy(drvinfo->bus_info, pci_name(priv->mdev->pdev),
-+		sizeof(drvinfo->bus_info));
+---
+ drivers/video/fbdev/udlfb.c |   21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
+
+--- a/drivers/video/fbdev/udlfb.c
++++ b/drivers/video/fbdev/udlfb.c
+@@ -594,10 +594,9 @@ static int dlfb_render_hline(struct dlfb
+ 	return 0;
  }
  
- static const struct counter_desc sw_rep_stats_desc[] = {
-@@ -363,7 +380,7 @@ static const struct ethtool_ops mlx5e_vf
- };
+-static int dlfb_handle_damage(struct dlfb_data *dlfb, int x, int y,
+-	       int width, int height, char *data)
++static int dlfb_handle_damage(struct dlfb_data *dlfb, int x, int y, int width, int height)
+ {
+-	int i, ret;
++	int i;
+ 	char *cmd;
+ 	cycles_t start_cycles, end_cycles;
+ 	int bytes_sent = 0;
+@@ -641,7 +640,7 @@ static int dlfb_handle_damage(struct dlf
+ 			*cmd++ = 0xAF;
+ 		/* Send partial buffer remaining before exiting */
+ 		len = cmd - (char *) urb->transfer_buffer;
+-		ret = dlfb_submit_urb(dlfb, urb, len);
++		dlfb_submit_urb(dlfb, urb, len);
+ 		bytes_sent += len;
+ 	} else
+ 		dlfb_urb_completion(urb);
+@@ -679,7 +678,7 @@ static ssize_t dlfb_ops_write(struct fb_
+ 				(u32)info->var.yres);
  
- static const struct ethtool_ops mlx5e_uplink_rep_ethtool_ops = {
--	.get_drvinfo	   = mlx5e_rep_get_drvinfo,
-+	.get_drvinfo	   = mlx5e_uplink_rep_get_drvinfo,
- 	.get_link	   = ethtool_op_get_link,
- 	.get_strings       = mlx5e_rep_get_strings,
- 	.get_sset_count    = mlx5e_rep_get_sset_count,
+ 		dlfb_handle_damage(dlfb, 0, start, info->var.xres,
+-			lines, info->screen_base);
++			lines);
+ 	}
+ 
+ 	return result;
+@@ -695,7 +694,7 @@ static void dlfb_ops_copyarea(struct fb_
+ 	sys_copyarea(info, area);
+ 
+ 	dlfb_handle_damage(dlfb, area->dx, area->dy,
+-			area->width, area->height, info->screen_base);
++			area->width, area->height);
+ }
+ 
+ static void dlfb_ops_imageblit(struct fb_info *info,
+@@ -706,7 +705,7 @@ static void dlfb_ops_imageblit(struct fb
+ 	sys_imageblit(info, image);
+ 
+ 	dlfb_handle_damage(dlfb, image->dx, image->dy,
+-			image->width, image->height, info->screen_base);
++			image->width, image->height);
+ }
+ 
+ static void dlfb_ops_fillrect(struct fb_info *info,
+@@ -717,7 +716,7 @@ static void dlfb_ops_fillrect(struct fb_
+ 	sys_fillrect(info, rect);
+ 
+ 	dlfb_handle_damage(dlfb, rect->dx, rect->dy, rect->width,
+-			      rect->height, info->screen_base);
++			      rect->height);
+ }
+ 
+ /*
+@@ -859,8 +858,7 @@ static int dlfb_ops_ioctl(struct fb_info
+ 		if (area.y > info->var.yres)
+ 			area.y = info->var.yres;
+ 
+-		dlfb_handle_damage(dlfb, area.x, area.y, area.w, area.h,
+-			   info->screen_base);
++		dlfb_handle_damage(dlfb, area.x, area.y, area.w, area.h);
+ 	}
+ 
+ 	return 0;
+@@ -1065,8 +1063,7 @@ static int dlfb_ops_set_par(struct fb_in
+ 			pix_framebuffer[i] = 0x37e6;
+ 	}
+ 
+-	dlfb_handle_damage(dlfb, 0, 0, info->var.xres, info->var.yres,
+-			   info->screen_base);
++	dlfb_handle_damage(dlfb, 0, 0, info->var.xres, info->var.yres);
+ 
+ 	return 0;
+ }
 
 
