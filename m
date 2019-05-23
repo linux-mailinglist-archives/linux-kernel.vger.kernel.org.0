@@ -2,63 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADFE727DF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:22:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC5F727DFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:23:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730613AbfEWNWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 09:22:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41816 "EHLO mail.kernel.org"
+        id S1728309AbfEWNXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:23:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726310AbfEWNWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 09:22:30 -0400
-Received: from [192.168.0.101] (unknown [58.212.135.189])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726310AbfEWNXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 09:23:35 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83B5820862;
-        Thu, 23 May 2019 13:22:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95C4020862;
+        Thu, 23 May 2019 13:23:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558617749;
-        bh=fafG5urEIcaBd2TyvSTWRmea9cT2jasXKlmsCh3VSws=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=SMVTE6A4oqESJX9PxuakmNe2snGrj3s+XpCTQWn5c4j/5ndOSXvTvjclhmnXiMdRg
-         i7P8i4DcErB+Ep49l+Zy0XBcDodiMg48o1HXSRPGQYeWxbLrYgHyHSuAYnDzPbT89d
-         QiQr2ud0LT7Zp5Y/NRon8ijRwPYlySFjK64Rp5VU=
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add missing sysfs entries in
- documentation
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20190521180606.10461-1-jaegeuk@kernel.org>
- <20190522175035.GB81051@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <14672901-54a2-120f-a2ce-52f7d6fb3008@kernel.org>
-Date:   Thu, 23 May 2019 21:22:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        s=default; t=1558617814;
+        bh=i6pp3RLEvBeIhKApRemRE1F31C6IrTnEG9M9+DpDJn4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=chW2ZjX0prGsWVbRZdCwgBBN+jw6IfEK4cW9UlglzX5ZZ/dqZNjDFZVsBKGZ312WA
+         3PggHOz/MiNwqdeehm4F3+DgAnXJGS2dMPnOw/Go1EpTLh7erdRW44acDpPEE5dum1
+         pOLLKliv0SHG5DhD1UcgQOc5crWVFnEvNvFeodlI=
+Date:   Thu, 23 May 2019 21:22:36 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] clk: imx: imx8mm: correct audio_pll2_clk to
+ audio_pll2_out
+Message-ID: <20190523132235.GZ9261@dragon>
+References: <20190522014832.29485-1-peng.fan@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <20190522175035.GB81051@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190522014832.29485-1-peng.fan@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-5-23 1:50, Jaegeuk Kim wrote:
-> This patch cleans up documentation to cover missing sysfs entries.
+On Wed, May 22, 2019 at 01:34:46AM +0000, Peng Fan wrote:
+> There is no audio_pll2_clk registered, it should be audio_pll2_out.
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: <stable@vger.kernel.org>
+> Fixes: ba5625c3e27 ("clk: imx: Add clock driver support for imx8mm")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Stephen,
 
-> + reserved_blocks	      This parameter indicates the number of blocks that
-> +			      f2fs reserves internally for root.
-> +
+I leave this to you, since it's a fix.
 
-I mean we can move below entry here.
+Shawn
 
-current_reserved_blocks	      This shows # of blocks currently reserved.
-
-> + reserved_blocks	      This shows # of blocks currently reserved.
-
-Thanks,
+> ---
+>  drivers/clk/imx/clk-imx8mm.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+> index 1ef8438e3d6d..3a889846a05c 100644
+> --- a/drivers/clk/imx/clk-imx8mm.c
+> +++ b/drivers/clk/imx/clk-imx8mm.c
+> @@ -325,7 +325,7 @@ static const char *imx8mm_dsi_dbi_sels[] = {"osc_24m", "sys_pll1_266m", "sys_pll
+>  					    "sys_pll2_1000m", "sys_pll3_out", "audio_pll2_out", "video_pll1_out", };
+>  
+>  static const char *imx8mm_usdhc3_sels[] = {"osc_24m", "sys_pll1_400m", "sys_pll1_800m", "sys_pll2_500m",
+> -					   "sys_pll3_out", "sys_pll1_266m", "audio_pll2_clk", "sys_pll1_100m", };
+> +					   "sys_pll3_out", "sys_pll1_266m", "audio_pll2_out", "sys_pll1_100m", };
+>  
+>  static const char *imx8mm_csi1_core_sels[] = {"osc_24m", "sys_pll1_266m", "sys_pll2_250m", "sys_pll1_800m",
+>  					      "sys_pll2_1000m", "sys_pll3_out", "audio_pll2_out", "video_pll1_out", };
+> @@ -361,11 +361,11 @@ static const char *imx8mm_pdm_sels[] = {"osc_24m", "sys_pll2_100m", "audio_pll1_
+>  					"sys_pll2_1000m", "sys_pll3_out", "clk_ext3", "audio_pll2_out", };
+>  
+>  static const char *imx8mm_vpu_h1_sels[] = {"osc_24m", "vpu_pll_out", "sys_pll1_800m", "sys_pll2_1000m",
+> -					   "audio_pll2_clk", "sys_pll2_125m", "sys_pll3_clk", "audio_pll1_out", };
+> +					   "audio_pll2_out", "sys_pll2_125m", "sys_pll3_clk", "audio_pll1_out", };
+>  
+>  static const char *imx8mm_dram_core_sels[] = {"dram_pll_out", "dram_alt_root", };
+>  
+> -static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "osc_27m", "sys_pll1_200m", "audio_pll2_clk",
+> +static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "osc_27m", "sys_pll1_200m", "audio_pll2_out",
+>  					 "vpu_pll", "sys_pll1_80m", };
+>  
+>  static struct clk *clks[IMX8MM_CLK_END];
+> -- 
+> 2.16.4
+> 
