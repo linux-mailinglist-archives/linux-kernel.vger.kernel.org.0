@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F4D28659
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 551BF28808
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731810AbfEWTIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:08:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41354 "EHLO mail.kernel.org"
+        id S2391357AbfEWT02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:26:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731464AbfEWTIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:08:35 -0400
+        id S2391322AbfEWT0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:26:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68AE2217D7;
-        Thu, 23 May 2019 19:08:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C88A21855;
+        Thu, 23 May 2019 19:26:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638514;
-        bh=OcTC82Idr7QM0Ae7wMMO+hDiIGr3q5BcUhehwOdHS4A=;
+        s=default; t=1558639583;
+        bh=k5a2uGeSV8BCZEQP5DMuv8ykv8Uyr3yo+lrxvYUCLfE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ohiccOY/dCgKNmOzNFqbNc5Rs7ifcod6G9X11jBd3xkiV8vtWdci2xOc1jFBYvxwv
-         rNAU6M8XOpg0aR3j4KT7X2xKuu9IRtWXeBQGIa4vXLCmKzAhHYsMpHS7WtDsWmW8ZD
-         wU2CjRR6WlKcT+9rXip/INv2Sw50rHFEYRvDWRC8=
+        b=yrb4Fu0/fWK+K7SsmBIR39UL9yw7wEpfdQdXrjsu+QHqiktSbtFgn5qUaovgQXybB
+         4x5Jz2DoRasXjzhpYZKtTHEZQQO4ciJzgxZ4E6H5nQxWdXC2LMWDvD14koabjktmHu
+         DdL8J7zlzE1kcUJjqNh3JNjV8Zh0zD39TgwQRk8Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.9 17/53] media: ov6650: Fix sensor possibly not detected on probe
+        stable@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        kernel-team@android.com, "Jorge E. Moreira" <jemoreira@google.com>
+Subject: [PATCH 5.1 019/122] vsock/virtio: Initialize core virtio vsock before registering the driver
 Date:   Thu, 23 May 2019 21:05:41 +0200
-Message-Id: <20190523181713.595067200@linuxfoundation.org>
+Message-Id: <20190523181707.367273069@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
-References: <20190523181710.981455400@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +46,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+From: "Jorge E. Moreira" <jemoreira@google.com>
 
-commit 933c1320847f5ed6b61a7d10f0a948aa98ccd7b0 upstream.
+[ Upstream commit ba95e5dfd36647622d8897a2a0470dde60e59ffd ]
 
-After removal of clock_start() from before soc_camera_init_i2c() in
-soc_camera_probe() by commit 9aea470b399d ("[media] soc-camera: switch
-I2C subdevice drivers to use v4l2-clk") introduced in v3.11, the ov6650
-driver could no longer probe the sensor successfully because its clock
-was no longer turned on in advance.  The issue was initially worked
-around by adding that missing clock_start() equivalent to OMAP1 camera
-interface driver - the only user of this sensor - but a propoer fix
-should be rather implemented in the sensor driver code itself.
+Avoid a race in which static variables in net/vmw_vsock/af_vsock.c are
+accessed (while handling interrupts) before they are initialized.
 
-Fix the issue by inserting a delay between the clock is turned on and
-the sensor I2C registers are read for the first time.
+[    4.201410] BUG: unable to handle kernel paging request at ffffffffffffffe8
+[    4.207829] IP: vsock_addr_equals_addr+0x3/0x20
+[    4.211379] PGD 28210067 P4D 28210067 PUD 28212067 PMD 0
+[    4.211379] Oops: 0000 [#1] PREEMPT SMP PTI
+[    4.211379] Modules linked in:
+[    4.211379] CPU: 1 PID: 30 Comm: kworker/1:1 Not tainted 4.14.106-419297-gd7e28cc1f241 #1
+[    4.211379] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+[    4.211379] Workqueue: virtio_vsock virtio_transport_rx_work
+[    4.211379] task: ffffa3273d175280 task.stack: ffffaea1800e8000
+[    4.211379] RIP: 0010:vsock_addr_equals_addr+0x3/0x20
+[    4.211379] RSP: 0000:ffffaea1800ebd28 EFLAGS: 00010286
+[    4.211379] RAX: 0000000000000002 RBX: 0000000000000000 RCX: ffffffffb94e42f0
+[    4.211379] RDX: 0000000000000400 RSI: ffffffffffffffe0 RDI: ffffaea1800ebdd0
+[    4.211379] RBP: ffffaea1800ebd58 R08: 0000000000000001 R09: 0000000000000001
+[    4.211379] R10: 0000000000000000 R11: ffffffffb89d5d60 R12: ffffaea1800ebdd0
+[    4.211379] R13: 00000000828cbfbf R14: 0000000000000000 R15: ffffaea1800ebdc0
+[    4.211379] FS:  0000000000000000(0000) GS:ffffa3273fd00000(0000) knlGS:0000000000000000
+[    4.211379] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    4.211379] CR2: ffffffffffffffe8 CR3: 000000002820e001 CR4: 00000000001606e0
+[    4.211379] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    4.211379] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[    4.211379] Call Trace:
+[    4.211379]  ? vsock_find_connected_socket+0x6c/0xe0
+[    4.211379]  virtio_transport_recv_pkt+0x15f/0x740
+[    4.211379]  ? detach_buf+0x1b5/0x210
+[    4.211379]  virtio_transport_rx_work+0xb7/0x140
+[    4.211379]  process_one_work+0x1ef/0x480
+[    4.211379]  worker_thread+0x312/0x460
+[    4.211379]  kthread+0x132/0x140
+[    4.211379]  ? process_one_work+0x480/0x480
+[    4.211379]  ? kthread_destroy_worker+0xd0/0xd0
+[    4.211379]  ret_from_fork+0x35/0x40
+[    4.211379] Code: c7 47 08 00 00 00 00 66 c7 07 28 00 c7 47 08 ff ff ff ff c7 47 04 ff ff ff ff c3 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 00 8b 47 08 <3b> 46 08 75 0a 8b 47 04 3b 46 04 0f 94 c0 c3 31 c0 c3 90 66 2e
+[    4.211379] RIP: vsock_addr_equals_addr+0x3/0x20 RSP: ffffaea1800ebd28
+[    4.211379] CR2: ffffffffffffffe8
+[    4.211379] ---[ end trace f31cc4a2e6df3689 ]---
+[    4.211379] Kernel panic - not syncing: Fatal exception in interrupt
+[    4.211379] Kernel Offset: 0x37000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[    4.211379] Rebooting in 5 seconds..
 
-Tested on Amstrad Delta with now out of tree but still locally
-maintained omap1_camera host driver.
-
-Fixes: 9aea470b399d ("[media] soc-camera: switch I2C subdevice drivers to use v4l2-clk")
-
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 22b5c0b63f32 ("vsock/virtio: fix kernel panic after device hot-unplug")
+Cc: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: kvm@vger.kernel.org
+Cc: virtualization@lists.linux-foundation.org
+Cc: netdev@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: stable@vger.kernel.org [4.9+]
+Signed-off-by: Jorge E. Moreira <jemoreira@google.com>
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/i2c/soc_camera/ov6650.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/vmw_vsock/virtio_transport.c |   13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
---- a/drivers/media/i2c/soc_camera/ov6650.c
-+++ b/drivers/media/i2c/soc_camera/ov6650.c
-@@ -844,6 +844,8 @@ static int ov6650_video_probe(struct i2c
- 	if (ret < 0)
- 		return ret;
+--- a/net/vmw_vsock/virtio_transport.c
++++ b/net/vmw_vsock/virtio_transport.c
+@@ -702,28 +702,27 @@ static int __init virtio_vsock_init(void
+ 	if (!virtio_vsock_workqueue)
+ 		return -ENOMEM;
  
-+	msleep(20);
-+
- 	/*
- 	 * check and show product ID and manufacturer ID
- 	 */
+-	ret = register_virtio_driver(&virtio_vsock_driver);
++	ret = vsock_core_init(&virtio_transport.transport);
+ 	if (ret)
+ 		goto out_wq;
+ 
+-	ret = vsock_core_init(&virtio_transport.transport);
++	ret = register_virtio_driver(&virtio_vsock_driver);
+ 	if (ret)
+-		goto out_vdr;
++		goto out_vci;
+ 
+ 	return 0;
+ 
+-out_vdr:
+-	unregister_virtio_driver(&virtio_vsock_driver);
++out_vci:
++	vsock_core_exit();
+ out_wq:
+ 	destroy_workqueue(virtio_vsock_workqueue);
+ 	return ret;
+-
+ }
+ 
+ static void __exit virtio_vsock_exit(void)
+ {
+-	vsock_core_exit();
+ 	unregister_virtio_driver(&virtio_vsock_driver);
++	vsock_core_exit();
+ 	destroy_workqueue(virtio_vsock_workqueue);
+ }
+ 
 
 
