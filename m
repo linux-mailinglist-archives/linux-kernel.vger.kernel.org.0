@@ -2,93 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 299E528474
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 19:01:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D4F328443
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 18:54:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731369AbfEWRBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 13:01:03 -0400
-Received: from phlegethon.blisses.org ([50.56.97.101]:46479 "EHLO
-        phlegethon.blisses.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730860AbfEWRBD (ORCPT
+        id S1731064AbfEWQyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 12:54:21 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44811 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730790AbfEWQyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 13:01:03 -0400
-X-Greylist: delayed 482 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 May 2019 13:01:02 EDT
-Received: from cocytus.blisses.org (cocytus.blisses.org [64.223.129.151])
-        by phlegethon.blisses.org (Postfix) with ESMTP id 39A00194DF0;
-        Thu, 23 May 2019 12:52:59 -0400 (EDT)
-Received: from blisses.org (acheron.int.blisses.org [10.0.1.10])
-        by cocytus.blisses.org (Postfix) with ESMTPSA id 037EB80323;
-        Thu, 23 May 2019 12:52:58 -0400 (EDT)
-Date:   Thu, 23 May 2019 12:52:56 -0400
-From:   Mason Loring Bliss <mason@blisses.org>
-To:     Devel <zfs-devel@list.zfsonlinux.org>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Nicolai Stange <nstange@suse.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [zfs-devel] Re: [PATCH] x86/fpu: allow kernel_fpu_{begin,end} to
- be used by non-GPL modules
-Message-ID: <20190523165256.GD8766@blisses.org>
-References: <20190522044204.24207-1-cyphar@cyphar.com>
- <20190522100959.GA15390@kroah.com>
+        Thu, 23 May 2019 12:54:21 -0400
+Received: by mail-pl1-f196.google.com with SMTP id c5so2987602pll.11
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 09:54:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jM8bPKPXf1vLmOMB9nivq9wEiQ5oNGIfwZnpi/tQ11U=;
+        b=hxKU6VApctxuI6bY6dYjsrprnDeMIP5e7X4grbMLeGrGi3OgFXCRTAvDudT5aCEu7R
+         WMXgnhfgBFoB9zpZTXOT9ElzzM/QqVXsv2qnmehpgJG/rWXdqWGAGGJOOLHkRLslDqo8
+         syWoZcRKYdiPgfOwl6Q61f5V18hSqp9CEnRNM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jM8bPKPXf1vLmOMB9nivq9wEiQ5oNGIfwZnpi/tQ11U=;
+        b=eR8c7ao7hamse3tPQgpYLRu8sxI97TVrbQMi/NdsrIRQk1muhaklZEZTZcoQRhQF4p
+         hiG0yw/qxYS3YPwtJJJD9AEeWrTxOEBW3C8Xsr1W2xLKawOvsSs+fDSrH306EQ0IOLi9
+         UHacaLixo9oeK5SlKjxE7C6yxX1qzjFx6hcxY+MkmOPjYnG9cJLO0bisCZBGbwvtThS0
+         Dsrfq3fj+OPe8IrGa9o19K2IFKKOSGN2I5aFAdO8tgb5uF91ljFsRla04B8uvXITwY/9
+         ntPWL9Pt1o39UmItEZIl09jnsRzPOlPoLcxtdqtwJrNA0hBojM4yB6btd2kimJf/75Ok
+         zi0g==
+X-Gm-Message-State: APjAAAVpXK9SNhFH73gRWm414Miw4YY9vhBlwK6J317Pf6Q3pcIdk/NO
+        gD+gjsaYi8+MZkxRmrvLTfjxnA==
+X-Google-Smtp-Source: APXvYqzRvW08pcgEQmLH5J2fGe0N3Fb0DAbC67BZi8nxb1q++tB++Q1v4RohqfoylaFhM0Om1QzhYg==
+X-Received: by 2002:a17:902:c01:: with SMTP id 1mr59795146pls.142.1558630460533;
+        Thu, 23 May 2019 09:54:20 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y7sm1368984pge.89.2019.05.23.09.54.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 May 2019 09:54:19 -0700 (PDT)
+Date:   Thu, 23 May 2019 09:54:18 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Gen Zhang <blackgod016574@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     jslaby@suse.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] consolemap: Fix a memory leaking bug in
+ drivers/tty/vt/consolemap.c
+Message-ID: <201905230952.B47ADA17A@keescook>
+References: <20190521092935.GA2297@zhanggen-UX430UQ>
+ <201905211342.DE554F0D@keescook>
+ <20190522015055.GC4093@zhanggen-UX430UQ>
+ <201905221353.AD8E585E6D@keescook>
+ <20190523003452.GB14060@zhanggen-UX430UQ>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qtZFehHsKgwS5rPz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190522100959.GA15390@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190523003452.GB14060@zhanggen-UX430UQ>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 23, 2019 at 08:34:52AM +0800, Gen Zhang wrote:
+> In function con_insert_unipair(), when allocation for p2 and p1[n]
+> fails, ENOMEM is returned, but previously allocated p1 is not freed, 
+> remains as leaking memory. Thus we should free p1 as well when this
+> allocation fails.
+> 
+> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
 
---qtZFehHsKgwS5rPz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As far as I can see this is correct, as it's just restoring the prior
+state before the p1 allocation.
 
-On Wed, May 22, 2019 at 12:09:59PM +0200, Greg KH wrote:
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-> No, please, we have gone over this before, we do not care at all about
-> external kernel modules, ESPECIALLY ones that are not GPL compatible.
+> ---
+> diff --git a/drivers/tty/vt/consolemap.c b/drivers/tty/vt/consolemap.c
+> index b28aa0d..79fcc96 100644
+> --- a/drivers/tty/vt/consolemap.c
+> +++ b/drivers/tty/vt/consolemap.c
+> @@ -489,7 +489,11 @@ con_insert_unipair(struct uni_pagedir *p, u_short unicode, u_short fontpos)
+>  	p2 = p1[n = (unicode >> 6) & 0x1f];
+>  	if (!p2) {
+>  		p2 = p1[n] = kmalloc_array(64, sizeof(u16), GFP_KERNEL);
+> -		if (!p2) return -ENOMEM;
+> +		if (!p2) {
+> +			kfree(p1);
+> +			p->uni_pgdir[n] = NULL;
+> +			return -ENOMEM;
+> +		}
+>  		memset(p2, 0xff, 64*sizeof(u16)); /* No glyphs for the characters (yet) */
+>  	}
+>  
+> ---
 
-The best option here is for you to start caring. Makes the world a better
-place.
-
-Free software people doing what they can to attack other free software based
-on relatively trivial idealogical differences isn't a good look, and it's b=
-ad
-for the users.
-
---=20
-Mason Loring Bliss  ((   If I have not seen as far as others, it is because
- mason@blisses.org   ))   giants were standing on my shoulders. - Hal Abels=
-on
-
---qtZFehHsKgwS5rPz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEEXtBZz1axB5rEDCEnrJXcHbvJVUFAlzmz+cACgkQnrJXcHbv
-JVVupw/7Bq36ybgI/6t7HDNeyUvKEHP5Jevf/nkUFQSSSwOU65qHzGLUcxjoMY31
-jtLufmbCL4ggvA9yVxnQY3T1C4aT+j61IAPvKJ1AUgbfXxoahRgz0Lbf2HxKiSf/
-jTBNAjGXaP06UmlWG2+Io15P90k2lThO67VPGtkH6/IqvynqIo0xE5zYnzDXu+XW
-RDH0IlwvRt62jJjdNDQQw9Hz4JHebIrymgbUeSfLTPKYeb4eqnrrV1TpRQOIevTF
-XjGaD5L21kr/00f1K7UvY9X0tYYVWBG1PC3RhKk1diTpRRypuYbkf05JowjqpE8O
-sJYPY94ZUILz75mC8l2OCx2WbAEMeQ1zKQ16I9i1TLXysGl0cRpmfRjJPvyEjVAl
-LJ+gaYyeOZVU9Leu4q2yYYyTXnJnKhbYaWcedNcPGpoSgLR9zQiHKhjG7wPXFW7v
-iRztgB1EYuWXWscq7NfQmVTKUfVDq+LltKCtZePvMl+jW+zynoo5vZPhYgn84aBF
-zLLHsoVehHAlHsp02SeEJWY9oNvxXUgwN7qxzU9VCMM6ns9fDnkHngXvLefuMQF6
-EiQYmJoxjU8RBlyt++MlCjNydl2xSx5HFl5W87H1VFgxwDm/Ai2dL+PFVMv3+uZ+
-RbC4VId+Z5UJUHqtw9ynsCR3lQVPbpfV5llf+vT7xdMQIveGp9Q=
-=QjP0
------END PGP SIGNATURE-----
-
---qtZFehHsKgwS5rPz--
+-- 
+Kees Cook
