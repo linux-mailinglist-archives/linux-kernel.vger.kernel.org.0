@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E17B828A2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:57:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FA3628681
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387709AbfEWTKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:10:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43440 "EHLO mail.kernel.org"
+        id S2387750AbfEWTKO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:10:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387650AbfEWTKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:10:08 -0400
+        id S2387722AbfEWTKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:10:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E0F5217F9;
-        Thu, 23 May 2019 19:10:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5655C2133D;
+        Thu, 23 May 2019 19:10:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638608;
-        bh=FZI5N1ooc/Jf6QBaLIZLSXt2/oMJG9xwKnO+Glubvng=;
+        s=default; t=1558638610;
+        bh=d2lz/LRhtp1gvkecaybs2OEfgoE9qS63fMgr3EWksjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QwhrRzsN6bkvLbUGIfM/wKPau60htNMJhAnKd/f0UEnF60c1piBhC4JGB3O9P1o/R
-         w5J2seONfEYLTCRrAIggd8uQzgD8Fd5hBNH0dbhzGouDIXFhrY4ewV3c/d5cEuGtmg
-         7KSdFxmaeFFcI/+FThv6NYU3b5iQDOjnhPH38nOM=
+        b=gWtjzCP/sa6mikPpmfGGGT00I/TJjPjgoFCxlNmHExS3iX+sC88lZg+9C6BuB1iZn
+         pAKdRk4UnH/nzAKDJ+aMnQznclUPyvbDqRse+awE/rwB0OP+1CRxx4wbNwwPpq+qiL
+         E7QbTkLkBsIBIjUUUK0rfHxHBXTaX3eukH2AIw6A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        Nigel Croxon <ncroxon@redhat.com>,
-        Song Liu <songliubraving@fb.com>
-Subject: [PATCH 4.9 52/53] md/raid: raid5 preserve the writeback action after the parity check
-Date:   Thu, 23 May 2019 21:06:16 +0200
-Message-Id: <20190523181719.226466348@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 53/53] btrfs: Honour FITRIM range constraints during free space trim
+Date:   Thu, 23 May 2019 21:06:17 +0200
+Message-Id: <20190523181719.388423466@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
 References: <20190523181710.981455400@linuxfoundation.org>
@@ -44,52 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nigel Croxon <ncroxon@redhat.com>
+From: Nikolay Borisov <nborisov@suse.com>
 
-commit b2176a1dfb518d870ee073445d27055fea64dfb8 upstream.
+commit c2d1b3aae33605a61cbab445d8ae1c708ccd2698 upstream.
 
-The problem is that any 'uptodate' vs 'disks' check is not precise
-in this path. Put a "WARN_ON(!test_bit(R5_UPTODATE, &dev->flags)" on the
-device that might try to kick off writes and then skip the action.
-Better to prevent the raid driver from taking unexpected action *and* keep
-the system alive vs killing the machine with BUG_ON.
+Up until now trimming the freespace was done irrespective of what the
+arguments of the FITRIM ioctl were. For example fstrim's -o/-l arguments
+will be entirely ignored. Fix it by correctly handling those paramter.
+This requires breaking if the found freespace extent is after the end of
+the passed range as well as completing trim after trimming
+fstrim_range::len bytes.
 
-Note: fixed warning reported by kbuild test robot <lkp@intel.com>
-
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Nigel Croxon <ncroxon@redhat.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Fixes: 499f377f49f0 ("btrfs: iterate over unused chunk space in FITRIM")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/md/raid5.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -3878,7 +3878,7 @@ static void handle_parity_checks6(struct
- 		/* now write out any block on a failed drive,
- 		 * or P or Q if they were recomputed
- 		 */
--		BUG_ON(s->uptodate < disks - 1); /* We don't need Q to recover */
-+		dev = NULL;
- 		if (s->failed == 2) {
- 			dev = &sh->dev[s->failed_num[1]];
- 			s->locked++;
-@@ -3903,6 +3903,14 @@ static void handle_parity_checks6(struct
- 			set_bit(R5_LOCKED, &dev->flags);
- 			set_bit(R5_Wantwrite, &dev->flags);
- 		}
-+		if (WARN_ONCE(dev && !test_bit(R5_UPTODATE, &dev->flags),
-+			      "%s: disk%td not up to date\n",
-+			      mdname(conf->mddev),
-+			      dev - (struct r5dev *) &sh->dev)) {
-+			clear_bit(R5_LOCKED, &dev->flags);
-+			clear_bit(R5_Wantwrite, &dev->flags);
-+			s->locked--;
-+		}
- 		clear_bit(STRIPE_DEGRADED, &sh->state);
+---
+ fs/btrfs/extent-tree.c |   25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
+
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -11150,9 +11150,9 @@ int btrfs_error_unpin_extent_range(struc
+  * transaction.
+  */
+ static int btrfs_trim_free_extents(struct btrfs_device *device,
+-				   u64 minlen, u64 *trimmed)
++				   struct fstrim_range *range, u64 *trimmed)
+ {
+-	u64 start = 0, len = 0;
++	u64 start = range->start, len = 0;
+ 	int ret;
  
- 		set_bit(STRIPE_INSYNC, &sh->state);
+ 	*trimmed = 0;
+@@ -11188,8 +11188,8 @@ static int btrfs_trim_free_extents(struc
+ 			atomic_inc(&trans->use_count);
+ 		spin_unlock(&fs_info->trans_lock);
+ 
+-		ret = find_free_dev_extent_start(trans, device, minlen, start,
+-						 &start, &len);
++		ret = find_free_dev_extent_start(trans, device, range->minlen,
++						 start, &start, &len);
+ 		if (trans)
+ 			btrfs_put_transaction(trans);
+ 
+@@ -11201,6 +11201,16 @@ static int btrfs_trim_free_extents(struc
+ 			break;
+ 		}
+ 
++		/* If we are out of the passed range break */
++		if (start > range->start + range->len - 1) {
++			mutex_unlock(&fs_info->chunk_mutex);
++			ret = 0;
++			break;
++		}
++
++		start = max(range->start, start);
++		len = min(range->len, len);
++
+ 		ret = btrfs_issue_discard(device->bdev, start, len, &bytes);
+ 		up_read(&fs_info->commit_root_sem);
+ 		mutex_unlock(&fs_info->chunk_mutex);
+@@ -11211,6 +11221,10 @@ static int btrfs_trim_free_extents(struc
+ 		start += len;
+ 		*trimmed += bytes;
+ 
++		/* We've trimmed enough */
++		if (*trimmed >= range->len)
++			break;
++
+ 		if (fatal_signal_pending(current)) {
+ 			ret = -ERESTARTSYS;
+ 			break;
+@@ -11295,8 +11309,7 @@ int btrfs_trim_fs(struct btrfs_root *roo
+ 	mutex_lock(&fs_info->fs_devices->device_list_mutex);
+ 	devices = &fs_info->fs_devices->devices;
+ 	list_for_each_entry(device, devices, dev_list) {
+-		ret = btrfs_trim_free_extents(device, range->minlen,
+-					      &group_trimmed);
++		ret = btrfs_trim_free_extents(device, range, &group_trimmed);
+ 		if (ret) {
+ 			dev_failed++;
+ 			dev_ret = ret;
 
 
