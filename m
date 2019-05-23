@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E2427D48
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:52:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27E0A27D42
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:52:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730870AbfEWMvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 08:51:52 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40495 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730829AbfEWMvv (ORCPT
+        id S1730890AbfEWMvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 08:51:53 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41827 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730840AbfEWMvv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 23 May 2019 08:51:51 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q62so5348301ljq.7
+Received: by mail-lj1-f195.google.com with SMTP id q16so5340969ljj.8
         for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 05:51:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=nikanor-nu.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Sr3q+U1eMl/yAW7j8+VmGxN32duQd8dX2jbMshZTZ4s=;
-        b=s9ui9vJnc8eOVXnf7ED0z4qUqkyiwh94tqkJK1PSzsZZcnrjJY9KfwJKMMW9V1zgYF
-         lsaZnmEodpfsTw02J1dgawNxrHvNu9vSlLbEFcx5B87fepseyC3TaYtWJEVFwe26AiyQ
-         9hdYiMKL68UYW7ox8To0Y50q3cvVEr/BDxT9ZfFSCVx+CBfAcSBcRfWi9xHcZj0TMYjU
-         SRT6n7LsY0AX+QGw+6vHqktX9fN8M86CZvwi5eblEw+zEVosvwSnVP0tJf7EJOd3Ode1
-         WVywZcYiedyQwVjbDhvOUmU61RI/bXZxzBKQUtMkL74YaiwMr7FzK/TgQnac9uAgN44X
-         cfoQ==
+        bh=ddLsiPPlKYPqW2Yby2eWqxRHzPEpKsPV3+wkowCsdyY=;
+        b=b6bRhEXzVgbOx5K9R9pU2BNCVNbwrPs53JANGU/s7do77nBoNf2Eogll37DyiI3d7x
+         8IcjnRciLa8+8VRE3UkC16LAaLVT62NrJyGwPqYDQhf9jbVTwSaGGuvaLtyu0WIv4qxi
+         R8Mw1Rn9zgmMLoKuQvra+PVTmOhDEm8gZ/zseT1xwCurwLRNz5NjSlhNYzTs086mOa1f
+         UGkITa9BG+dfBCwLZko3T7nEBWJJVK6QDEwk/F+f4lA7iABXv+dJyeMLI//+OwQXePhY
+         63ZpiNvqUz+wZtFuMFXlRDTqGzMD41QjAa2HVBvO0rVPR9Yggpcc+ugl3COcXBY41hty
+         X1OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Sr3q+U1eMl/yAW7j8+VmGxN32duQd8dX2jbMshZTZ4s=;
-        b=Zjue1HPVGJiztoSyGYnMA5yGEOL+Lvb8WLQFZUxXNxe+R9GBnVJt4ypDgCGagKHUXa
-         TtpLo5/qE+4kzQwNEWM7IS+bgwk1XzS8v/4D3pqzXHfTzvLLdG0RZx03McRkh+q9/h4+
-         igbEzoHPg8suQdmUexLcQvG37isxNrDTaY07mixG/XPEUA2QQpYbb/lJLf+kBdj8fi4Q
-         cfa012b43d9yZDz7gVTU2meL75YghrjtbqfaG2W/iMqLBX+m85ITWGFTHxmzLxDqrASk
-         eNBkXIHTdAwLGBDg6WvDolNFzi+iEFh1NYCYiiJrIFhUoxwhNHHB9oApxkRQaotLFcrA
-         DScg==
-X-Gm-Message-State: APjAAAXIUoF3P88d/4ToWIHqi2NRo8X4PS8QE84Ivc2p9qS2NyR7teG1
-        9JgtHNl85pydwlPKl9TG7q4bHw==
-X-Google-Smtp-Source: APXvYqxvKprStAqdVyypXJpegvM61kwochDKE/AbVUmkUROg08eJUHMB8Y605duz88Pc36qg+GbAYw==
-X-Received: by 2002:a2e:880d:: with SMTP id x13mr8142330ljh.72.1558615909344;
-        Thu, 23 May 2019 05:51:49 -0700 (PDT)
+        bh=ddLsiPPlKYPqW2Yby2eWqxRHzPEpKsPV3+wkowCsdyY=;
+        b=pzqmpFdoKWk9/EqJYnN+DDkLi6T5tE73ioI2txTLoCEB8RfyU7hYowFfrEo/J2SVH0
+         d/A2tJ77mN66IJbEdrqLGmzAUCt0jICpZ6Ye3KZDaOZLStBcXgVtRswvMOcPPzts5N4S
+         nUyEov6d1JATWyxe7qIznAWtV95p2Ph60r5YTPuz49fD1n0w1C/ygCFwRtsRCBdeUfRK
+         Td72ZAXWIu0DKlBm8M8DkNCB6iUcYzG0w9RrOTZjMD5oAzU8N2oDemBLbA5kY2hkDIxW
+         1Q7r3lWw1NWxi3aXutm93GX59ebIOvfvQZPOuE0DNBMJh3EQS5crSoEPyW5hyacnUC1N
+         ylUQ==
+X-Gm-Message-State: APjAAAXdncXeBa5fYc4e7uuY4Ec3toH5CAdJSnOoxI+XcFQ1NyEWfnXN
+        BlvISdY5bDaMeIfxRBK6iTAdAyKhaCXMtQ==
+X-Google-Smtp-Source: APXvYqwdvnBv/jd5U+HTO/R5bwSc0+253jnFz/eDpjqAYngSUxeGY+h58mhevhId1G4p4Tt426LDyg==
+X-Received: by 2002:a2e:89cc:: with SMTP id c12mr41892922ljk.90.1558615910243;
+        Thu, 23 May 2019 05:51:50 -0700 (PDT)
 Received: from dev.nikanor.nu (78-72-133-4-no161.tbcn.telia.com. [78.72.133.4])
-        by smtp.gmail.com with ESMTPSA id c19sm5947154lfi.69.2019.05.23.05.51.48
+        by smtp.gmail.com with ESMTPSA id c19sm5947154lfi.69.2019.05.23.05.51.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 05:51:48 -0700 (PDT)
+        Thu, 23 May 2019 05:51:49 -0700 (PDT)
 From:   =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
 To:     gregkh@linuxfoundation.org
 Cc:     simon@nikanor.nu, jeremy@azazel.net, dan.carpenter@oracle.com,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/9] staging: kpc2000: add missing asterisk in comment
-Date:   Thu, 23 May 2019 14:51:37 +0200
-Message-Id: <20190523125143.32511-4-simon@nikanor.nu>
+Subject: [PATCH v2 4/9] staging: kpc2000: fix alignment issues in cell_probe.c
+Date:   Thu, 23 May 2019 14:51:38 +0200
+Message-Id: <20190523125143.32511-5-simon@nikanor.nu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190523125143.32511-1-simon@nikanor.nu>
 References: <20190523125143.32511-1-simon@nikanor.nu>
@@ -63,26 +63,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes checkpatch.pl error "code indent should use tabs where possible".
+Fixes checkpatch.pl warnings "Alignment should match open parenthesis"
+and "Lines should not end with a '('".
 
 Signed-off-by: Simon Sandström <simon@nikanor.nu>
 ---
- drivers/staging/kpc2000/kpc2000/cell_probe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/kpc2000/kpc2000/cell_probe.c | 34 +++++++++-----------
+ 1 file changed, 15 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/staging/kpc2000/kpc2000/cell_probe.c b/drivers/staging/kpc2000/kpc2000/cell_probe.c
-index b559ade04aca..945d8e4e7ba5 100644
+index 945d8e4e7ba5..5b88504b00ec 100644
 --- a/drivers/staging/kpc2000/kpc2000/cell_probe.c
 +++ b/drivers/staging/kpc2000/kpc2000/cell_probe.c
-@@ -25,7 +25,7 @@
-  *                                                              D                   C2S DMA Present
-  *                                                               DDD                C2S DMA Channel Number    [up to 8 channels]
-  *                                                                  II              IRQ Count [0 to 3 IRQs per core]
--                                                                      1111111000
-+ *                                                                    1111111000
-  *                                                                    IIIIIII       IRQ Base Number [up to 128 IRQs per card]
-  *                                                                           ___    Spare
-  *
+@@ -128,15 +128,13 @@ static int probe_core_basic(unsigned int core_num, struct kp2000_device *pcard,
+ 
+ 	cell.resources = resources;
+ 
+-	return mfd_add_devices(
+-		PCARD_TO_DEV(pcard),    // parent
+-		pcard->card_num * 100,  // id
+-		&cell,                  // struct mfd_cell *
+-		1,                      // ndevs
+-		&pcard->regs_base_resource,
+-		0,                      // irq_base
+-		NULL                    // struct irq_domain *
+-	);
++	return mfd_add_devices(PCARD_TO_DEV(pcard),    // parent
++			       pcard->card_num * 100,  // id
++			       &cell,                  // struct mfd_cell *
++			       1,                      // ndevs
++			       &pcard->regs_base_resource,
++			       0,                      // irq_base
++			       NULL);                  // struct irq_domain *
+ }
+ 
+ 
+@@ -373,15 +371,13 @@ static int  create_dma_engine_core(struct kp2000_device *pcard, size_t engine_re
+ 
+ 	cell.resources = resources;
+ 
+-	return mfd_add_devices(
+-		PCARD_TO_DEV(pcard),    // parent
+-		pcard->card_num * 100,  // id
+-		&cell,                  // struct mfd_cell *
+-		1,                      // ndevs
+-		&pcard->dma_base_resource,
+-		0,                      // irq_base
+-		NULL                    // struct irq_domain *
+-	);
++	return mfd_add_devices(PCARD_TO_DEV(pcard),    // parent
++			       pcard->card_num * 100,  // id
++			       &cell,                  // struct mfd_cell *
++			       1,                      // ndevs
++			       &pcard->dma_base_resource,
++			       0,                      // irq_base
++			       NULL);                  // struct irq_domain *
+ }
+ 
+ static int  kp2000_setup_dma_controller(struct kp2000_device *pcard)
+@@ -462,7 +458,7 @@ int  kp2000_probe_cores(struct kp2000_device *pcard)
+ 			switch (cte.type) {
+ 			case KP_CORE_ID_I2C:
+ 				err = probe_core_basic(core_num, pcard,
+-				KP_DRIVER_NAME_I2C, cte);
++						       KP_DRIVER_NAME_I2C, cte);
+ 				break;
+ 
+ 			case KP_CORE_ID_SPI:
 -- 
 2.20.1
 
