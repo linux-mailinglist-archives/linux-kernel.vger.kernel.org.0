@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9447D28AAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F7A82879E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389724AbfEWTou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:44:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51014 "EHLO mail.kernel.org"
+        id S2388518AbfEWTVX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:21:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388495AbfEWTQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:16:21 -0400
+        id S2390238AbfEWTVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:21:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2D822133D;
-        Thu, 23 May 2019 19:16:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45F2E2184E;
+        Thu, 23 May 2019 19:21:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638981;
-        bh=JgV2P0eKYsAjG/g+1Hm4nwBYz0UruGhYBV1VLhBpyKY=;
+        s=default; t=1558639279;
+        bh=/shmoAfMHeChlfamuwFjcmMLBihdaV9C+Zf0m3u1u6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xfuznK+E7pEKekvb34js9GFEhLJRHhoB4zUAven+er6H2J8wrQx6m8vugrEDsqt9Q
-         FPO0nX6m6MEz0tweJsFV8Qh8sKyarBR+zeTZZ+nVTjMQU0qYV70PSgsuZz+/ol7+QZ
-         iT8ChLxIM9+B85choOouq86QBf1sGLWfjROVGLt4=
+        b=FB4Pr5h/YuzyAkgyXHufCO6j/LL5q34IQro7fplOMdL9VdV4YAvlaYFFb8YLCjzPS
+         jw4xC0aT/Cs4obSBhZcHWnxKa5yFVFZ2Sc1u0/Ixndy090UCVUUBq7UwVg9WHqlKdX
+         YnxU+9NdW4a9/3r93lbuseZ9QZlU4+TbSNyaUfJo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 035/114] media: imx: csi: Allow unknown nearest upstream entities
+Subject: [PATCH 5.0 046/139] media: imx: Clear fwnode link struct for each endpoint iteration
 Date:   Thu, 23 May 2019 21:05:34 +0200
-Message-Id: <20190523181734.960677562@linuxfoundation.org>
+Message-Id: <20190523181726.655909670@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,17 +46,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Steve Longerbeam <slongerbeam@gmail.com>
 
-commit 904371f90b2c0c749a5ab75478c129a4682ac3d8 upstream.
+commit 107927fa597c99eaeee4f51865ca0956ec71b6a2 upstream.
 
-On i.MX6, the nearest upstream entity to the CSI can only be the
-CSI video muxes or the Synopsys DW MIPI CSI-2 receiver.
+In imx_media_create_csi_of_links(), the 'struct v4l2_fwnode_link' must
+be cleared for each endpoint iteration, otherwise if the remote port
+has no "reg" property, link.remote_port will not be reset to zero.
+This was discovered on the i.MX53 SMD board, since the OV5642 connects
+directly to ipu1_csi0 and has a single source port with no "reg"
+property.
 
-However the i.MX53 has no CSI video muxes or a MIPI CSI-2 receiver.
-So allow for the nearest upstream entity to the CSI to be something
-other than those.
-
-Fixes: bf3cfaa712e5c ("media: staging/imx: get CSI bus type from nearest
-upstream entity")
+Fixes: 621b08eabcddb ("media: staging/imx: remove static media link arrays")
 
 Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 Cc: stable@vger.kernel.org
@@ -65,49 +64,35 @@ Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/media/imx/imx-media-csi.c |   18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/staging/media/imx/imx-media-of.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -153,9 +153,10 @@ static inline bool requires_passthrough(
- /*
-  * Parses the fwnode endpoint from the source pad of the entity
-  * connected to this CSI. This will either be the entity directly
-- * upstream from the CSI-2 receiver, or directly upstream from the
-- * video mux. The endpoint is needed to determine the bus type and
-- * bus config coming into the CSI.
-+ * upstream from the CSI-2 receiver, directly upstream from the
-+ * video mux, or directly upstream from the CSI itself. The endpoint
-+ * is needed to determine the bus type and bus config coming into
-+ * the CSI.
-  */
- static int csi_get_upstream_endpoint(struct csi_priv *priv,
- 				     struct v4l2_fwnode_endpoint *ep)
-@@ -168,7 +169,8 @@ static int csi_get_upstream_endpoint(str
- 	if (!priv->src_sd)
- 		return -EPIPE;
+--- a/drivers/staging/media/imx/imx-media-of.c
++++ b/drivers/staging/media/imx/imx-media-of.c
+@@ -143,15 +143,18 @@ int imx_media_create_csi_of_links(struct
+ 				  struct v4l2_subdev *csi)
+ {
+ 	struct device_node *csi_np = csi->dev->of_node;
+-	struct fwnode_handle *fwnode, *csi_ep;
+-	struct v4l2_fwnode_link link;
+ 	struct device_node *ep;
+-	int ret;
+-
+-	link.local_node = of_fwnode_handle(csi_np);
+-	link.local_port = CSI_SINK_PAD;
  
--	src = &priv->src_sd->entity;
-+	sd = priv->src_sd;
-+	src = &sd->entity;
- 
- 	if (src->function == MEDIA_ENT_F_VID_MUX) {
- 		/*
-@@ -182,6 +184,14 @@ static int csi_get_upstream_endpoint(str
- 			src = &sd->entity;
- 	}
- 
-+	/*
-+	 * If the source is neither the video mux nor the CSI-2 receiver,
-+	 * get the source pad directly upstream from CSI itself.
-+	 */
-+	if (src->function != MEDIA_ENT_F_VID_MUX &&
-+	    sd->grp_id != IMX_MEDIA_GRP_ID_CSI2)
-+		src = &priv->sd.entity;
+ 	for_each_child_of_node(csi_np, ep) {
++		struct fwnode_handle *fwnode, *csi_ep;
++		struct v4l2_fwnode_link link;
++		int ret;
 +
- 	/* get source pad of entity directly upstream from src */
- 	pad = imx_media_find_upstream_pad(priv->md, src, 0);
- 	if (IS_ERR(pad))
++		memset(&link, 0, sizeof(link));
++
++		link.local_node = of_fwnode_handle(csi_np);
++		link.local_port = CSI_SINK_PAD;
++
+ 		csi_ep = of_fwnode_handle(ep);
+ 
+ 		fwnode = fwnode_graph_get_remote_endpoint(csi_ep);
 
 
