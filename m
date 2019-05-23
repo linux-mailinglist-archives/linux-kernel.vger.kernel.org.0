@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC222872E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A41EE28987
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389170AbfEWTQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:16:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50836 "EHLO mail.kernel.org"
+        id S2390916AbfEWTji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:39:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388746AbfEWTQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:16:13 -0400
+        id S2387582AbfEWTV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:21:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6C0E21872;
-        Thu, 23 May 2019 19:16:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DD792184E;
+        Thu, 23 May 2019 19:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638973;
-        bh=Ix5/FeW61euHB0eP6dvSiXYWjlbhF0GfmGarIiU1x9w=;
+        s=default; t=1558639317;
+        bh=5UCojV3+1l9pwyt7QHyOjN9adHUxg59F+wBeuWKbW/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xBS/gjYNlpkO9yfYaXw/TPKLy39hG6pwU4u2qn4smuI6EQF/kOidIBVdYm+SAwHBs
-         apGGMyNXLRC9zSb7zIjaKKe/ghANCgPIFibogIGtUAmMLCVCiujh0zueTf8xK7v5MI
-         qIJmXl/EK+Oi8QhIQmvi9V8jMFbwKbfjrVeXre7M=
+        b=MzBxNCUhAbq80RvVBy23BEFwkOX1FqInnYCvhQWNRQPvC4qfA8oB+m81Z2UgFoJtv
+         IwxUgbpmpgXzo+JkZh2STawjm5dM40xq3VfnsBRC2vjJMDPj6SC2HI6+9ep5wd3qCS
+         vy7ys7qcnsEAT98FpHxDIHzO/X4T0xh7zca2q9TY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Probst <kernel@probst.it>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.19 032/114] cifs: fix strcat buffer overflow and reduce raciness in smb21_set_oplock_level()
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 5.0 043/139] phy: ti-pipe3: fix missing bit-wise or operator when assigning val
 Date:   Thu, 23 May 2019 21:05:31 +0200
-Message-Id: <20190523181734.714698055@linuxfoundation.org>
+Message-Id: <20190523181726.314759313@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Probst <kernel@probst.it>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 6a54b2e002c9d00b398d35724c79f9fe0d9b38fb upstream.
+commit e6577cb5103b7ca7c0204c0c86ef4af8aa6288f6 upstream.
 
-Change strcat to strncpy in the "None" case to fix a buffer overflow
-when cinode->oplock is reset to 0 by another thread accessing the same
-cinode. It is never valid to append "None" to any other message.
+There seems to be a missing bit-wise or operator when setting val,
+fix this by adding it in.
 
-Consolidate multiple writes to cinode->oplock to reduce raciness.
-
-Signed-off-by: Christoph Probst <kernel@probst.it>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
+Fixes: 2796ceb0c18a ("phy: ti-pipe3: Update pcie phy settings")
+Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2ops.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/phy/ti/phy-ti-pipe3.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -2348,26 +2348,28 @@ smb21_set_oplock_level(struct cifsInodeI
- 		       unsigned int epoch, bool *purge_cache)
- {
- 	char message[5] = {0};
-+	unsigned int new_oplock = 0;
+--- a/drivers/phy/ti/phy-ti-pipe3.c
++++ b/drivers/phy/ti/phy-ti-pipe3.c
+@@ -303,7 +303,7 @@ static void ti_pipe3_calibrate(struct ti
  
- 	oplock &= 0xFF;
- 	if (oplock == SMB2_OPLOCK_LEVEL_NOCHANGE)
- 		return;
+ 	val = ti_pipe3_readl(phy->phy_rx, PCIEPHYRX_ANA_PROGRAMMABILITY);
+ 	val &= ~(INTERFACE_MASK | LOSD_MASK | MEM_PLLDIV);
+-	val = (0x1 << INTERFACE_SHIFT | 0xA << LOSD_SHIFT);
++	val |= (0x1 << INTERFACE_SHIFT | 0xA << LOSD_SHIFT);
+ 	ti_pipe3_writel(phy->phy_rx, PCIEPHYRX_ANA_PROGRAMMABILITY, val);
  
--	cinode->oplock = 0;
- 	if (oplock & SMB2_LEASE_READ_CACHING_HE) {
--		cinode->oplock |= CIFS_CACHE_READ_FLG;
-+		new_oplock |= CIFS_CACHE_READ_FLG;
- 		strcat(message, "R");
- 	}
- 	if (oplock & SMB2_LEASE_HANDLE_CACHING_HE) {
--		cinode->oplock |= CIFS_CACHE_HANDLE_FLG;
-+		new_oplock |= CIFS_CACHE_HANDLE_FLG;
- 		strcat(message, "H");
- 	}
- 	if (oplock & SMB2_LEASE_WRITE_CACHING_HE) {
--		cinode->oplock |= CIFS_CACHE_WRITE_FLG;
-+		new_oplock |= CIFS_CACHE_WRITE_FLG;
- 		strcat(message, "W");
- 	}
--	if (!cinode->oplock)
--		strcat(message, "None");
-+	if (!new_oplock)
-+		strncpy(message, "None", sizeof(message));
-+
-+	cinode->oplock = new_oplock;
- 	cifs_dbg(FYI, "%s Lease granted on inode %p\n", message,
- 		 &cinode->vfs_inode);
- }
+ 	val = ti_pipe3_readl(phy->phy_rx, PCIEPHYRX_DIGITAL_MODES);
 
 
