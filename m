@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A520287B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB70728888
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389903AbfEWTWi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:22:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60672 "EHLO mail.kernel.org"
+        id S2391503AbfEWT1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:27:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390503AbfEWTWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:22:36 -0400
+        id S2391486AbfEWT1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:27:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F86421841;
-        Thu, 23 May 2019 19:22:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6670320868;
+        Thu, 23 May 2019 19:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639355;
-        bh=a9UcbVbIAa9yFWsS81lStfkrnBa1VMhlC8V7xi8PUFQ=;
+        s=default; t=1558639618;
+        bh=PXnCjs8j+JetXEPaNFWEecv9BivgufsuIGkzGDl9ea8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dEi+6ED1DAVZcsk/Z8YpbRbU0dNNEev6iWz0S5mV49bHZOscadyt+em2pfjbhhDfN
-         zVr6Hpd8CRrwtcp0NpJD4adgTMN3/oWlegbfR7pvsg+ctTQyPv0q5tvBbGk1O2ca/W
-         iAy0NcJEdLv/MLi6BPz4QCP8iBMvr7dMzVAGiOas=
+        b=RX6hb7wSylbUUEeOJclaRlqZ9RBWIK3ruFSD/erM0JsnWs/CoJUQciaX5nGk8gpuQ
+         HZMMCe674JyjBig4+UsTzOSiQh0ItvCQMCOUtst1/AatEEmGsBd0YfS2HLmeCcGUDN
+         UBytcB8WcVZ8Lt19SJo40GZzzNUG6fcX0usZFtlE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Bernie Thompson <bernie@plugable.com>,
-        Ladislav Michl <ladis@linux-mips.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 5.0 057/139] udlfb: introduce a rendering mutex
-Date:   Thu, 23 May 2019 21:05:45 +0200
-Message-Id: <20190523181728.109604911@linuxfoundation.org>
+        stable@vger.kernel.org, Dongli Zhang <dongli.zhang@oracle.com>,
+        James Smart <james.smart@broadcom.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-scsi@vger.kernel.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>
+Subject: [PATCH 5.1 024/122] blk-mq: free hw queues resource in hctxs release handler
+Date:   Thu, 23 May 2019 21:05:46 +0200
+Message-Id: <20190523181707.943993176@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,149 +49,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-commit babc250e278eac7b0e671bdaedf833759b43bb78 upstream.
+commit c7e2d94b3d1634988a95ac4d77a72dc7487ece06 upstream.
 
-Rendering calls may be done simultaneously from the workqueue,
-dlfb_ops_write, dlfb_ops_ioctl, dlfb_ops_set_par and dlfb_dpy_deferred_io.
-The code is robust enough so that it won't crash on concurrent rendering.
+Once blk_cleanup_queue() returns, tags shouldn't be used any more,
+because blk_mq_free_tag_set() may be called. Commit 45a9c9d909b2
+("blk-mq: Fix a use-after-free") fixes this issue exactly.
 
-However, concurrent rendering may cause display corruption if the same
-pixel is simultaneously being rendered. In order to avoid this corruption,
-this patch adds a mutex around the rendering calls.
+However, that commit introduces another issue. Before 45a9c9d909b2,
+we are allowed to run queue during cleaning up queue if the queue's
+kobj refcount is held. After that commit, queue can't be run during
+queue cleaning up, otherwise oops can be triggered easily because
+some fields of hctx are freed by blk_mq_free_queue() in blk_cleanup_queue().
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Bernie Thompson <bernie@plugable.com>
-Cc: Ladislav Michl <ladis@linux-mips.org>
-Cc: <stable@vger.kernel.org>
-[b.zolnierkie: replace "dlfb:" with "uldfb:" in the patch summary]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+We have invented ways for addressing this kind of issue before, such as:
+
+	8dc765d438f1 ("SCSI: fix queue cleanup race before queue initialization is done")
+	c2856ae2f315 ("blk-mq: quiesce queue before freeing queue")
+
+But still can't cover all cases, recently James reports another such
+kind of issue:
+
+	https://marc.info/?l=linux-scsi&m=155389088124782&w=2
+
+This issue can be quite hard to address by previous way, given
+scsi_run_queue() may run requeues for other LUNs.
+
+Fixes the above issue by freeing hctx's resources in its release handler, and this
+way is safe becasue tags isn't needed for freeing such hctx resource.
+
+This approach follows typical design pattern wrt. kobject's release handler.
+
+Cc: Dongli Zhang <dongli.zhang@oracle.com>
+Cc: James Smart <james.smart@broadcom.com>
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: linux-scsi@vger.kernel.org,
+Cc: Martin K . Petersen <martin.petersen@oracle.com>,
+Cc: Christoph Hellwig <hch@lst.de>,
+Cc: James E . J . Bottomley <jejb@linux.vnet.ibm.com>,
+Reported-by: James Smart <james.smart@broadcom.com>
+Fixes: 45a9c9d909b2 ("blk-mq: Fix a use-after-free")
+Cc: stable@vger.kernel.org
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Tested-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/udlfb.c |   41 ++++++++++++++++++++++++++++++-----------
- include/video/udlfb.h       |    1 +
- 2 files changed, 31 insertions(+), 11 deletions(-)
+ block/blk-core.c     |    2 +-
+ block/blk-mq-sysfs.c |    6 ++++++
+ block/blk-mq.c       |    8 ++------
+ block/blk-mq.h       |    2 +-
+ 4 files changed, 10 insertions(+), 8 deletions(-)
 
---- a/drivers/video/fbdev/udlfb.c
-+++ b/drivers/video/fbdev/udlfb.c
-@@ -596,7 +596,7 @@ static int dlfb_render_hline(struct dlfb
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -375,7 +375,7 @@ void blk_cleanup_queue(struct request_qu
+ 	blk_exit_queue(q);
  
- static int dlfb_handle_damage(struct dlfb_data *dlfb, int x, int y, int width, int height)
+ 	if (queue_is_mq(q))
+-		blk_mq_free_queue(q);
++		blk_mq_exit_queue(q);
+ 
+ 	percpu_ref_exit(&q->q_usage_counter);
+ 
+--- a/block/blk-mq-sysfs.c
++++ b/block/blk-mq-sysfs.c
+@@ -10,6 +10,7 @@
+ #include <linux/smp.h>
+ 
+ #include <linux/blk-mq.h>
++#include "blk.h"
+ #include "blk-mq.h"
+ #include "blk-mq-tag.h"
+ 
+@@ -33,6 +34,11 @@ static void blk_mq_hw_sysfs_release(stru
  {
--	int i;
-+	int i, ret;
- 	char *cmd;
- 	cycles_t start_cycles, end_cycles;
- 	int bytes_sent = 0;
-@@ -606,21 +606,29 @@ static int dlfb_handle_damage(struct dlf
- 
- 	start_cycles = get_cycles();
- 
-+	mutex_lock(&dlfb->render_mutex);
+ 	struct blk_mq_hw_ctx *hctx = container_of(kobj, struct blk_mq_hw_ctx,
+ 						  kobj);
 +
- 	aligned_x = DL_ALIGN_DOWN(x, sizeof(unsigned long));
- 	width = DL_ALIGN_UP(width + (x-aligned_x), sizeof(unsigned long));
- 	x = aligned_x;
++	if (hctx->flags & BLK_MQ_F_BLOCKING)
++		cleanup_srcu_struct(hctx->srcu);
++	blk_free_flush_queue(hctx->fq);
++	sbitmap_free(&hctx->ctx_map);
+ 	free_cpumask_var(hctx->cpumask);
+ 	kfree(hctx->ctxs);
+ 	kfree(hctx);
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2267,12 +2267,7 @@ static void blk_mq_exit_hctx(struct requ
+ 	if (set->ops->exit_hctx)
+ 		set->ops->exit_hctx(hctx, hctx_idx);
  
- 	if ((width <= 0) ||
- 	    (x + width > dlfb->info->var.xres) ||
--	    (y + height > dlfb->info->var.yres))
--		return -EINVAL;
-+	    (y + height > dlfb->info->var.yres)) {
-+		ret = -EINVAL;
-+		goto unlock_ret;
-+	}
- 
--	if (!atomic_read(&dlfb->usb_active))
--		return 0;
-+	if (!atomic_read(&dlfb->usb_active)) {
-+		ret = 0;
-+		goto unlock_ret;
-+	}
- 
- 	urb = dlfb_get_urb(dlfb);
--	if (!urb)
--		return 0;
-+	if (!urb) {
-+		ret = 0;
-+		goto unlock_ret;
-+	}
- 	cmd = urb->transfer_buffer;
- 
- 	for (i = y; i < y + height ; i++) {
-@@ -654,7 +662,11 @@ error:
- 		    >> 10)), /* Kcycles */
- 		   &dlfb->cpu_kcycles_used);
- 
--	return 0;
-+	ret = 0;
-+
-+unlock_ret:
-+	mutex_unlock(&dlfb->render_mutex);
-+	return ret;
+-	if (hctx->flags & BLK_MQ_F_BLOCKING)
+-		cleanup_srcu_struct(hctx->srcu);
+-
+ 	blk_mq_remove_cpuhp(hctx);
+-	blk_free_flush_queue(hctx->fq);
+-	sbitmap_free(&hctx->ctx_map);
  }
  
- static void dlfb_init_damage(struct dlfb_data *dlfb)
-@@ -782,17 +794,19 @@ static void dlfb_dpy_deferred_io(struct
- 	int bytes_identical = 0;
- 	int bytes_rendered = 0;
- 
-+	mutex_lock(&dlfb->render_mutex);
-+
- 	if (!fb_defio)
--		return;
-+		goto unlock_ret;
- 
- 	if (!atomic_read(&dlfb->usb_active))
--		return;
-+		goto unlock_ret;
- 
- 	start_cycles = get_cycles();
- 
- 	urb = dlfb_get_urb(dlfb);
- 	if (!urb)
--		return;
-+		goto unlock_ret;
- 
- 	cmd = urb->transfer_buffer;
- 
-@@ -825,6 +839,8 @@ error:
- 	atomic_add(((unsigned int) ((end_cycles - start_cycles)
- 		    >> 10)), /* Kcycles */
- 		   &dlfb->cpu_kcycles_used);
-+unlock_ret:
-+	mutex_unlock(&dlfb->render_mutex);
+ static void blk_mq_exit_hw_queues(struct request_queue *q,
+@@ -2905,7 +2900,8 @@ err_exit:
  }
+ EXPORT_SYMBOL(blk_mq_init_allocated_queue);
  
- static int dlfb_get_edid(struct dlfb_data *dlfb, char *edid, int len)
-@@ -986,6 +1002,8 @@ static void dlfb_ops_destroy(struct fb_i
+-void blk_mq_free_queue(struct request_queue *q)
++/* tags can _not_ be used after returning from blk_mq_exit_queue */
++void blk_mq_exit_queue(struct request_queue *q)
+ {
+ 	struct blk_mq_tag_set	*set = q->tag_set;
  
- 	cancel_work_sync(&dlfb->damage_work);
+--- a/block/blk-mq.h
++++ b/block/blk-mq.h
+@@ -37,7 +37,7 @@ struct blk_mq_ctx {
+ 	struct kobject		kobj;
+ } ____cacheline_aligned_in_smp;
  
-+	mutex_destroy(&dlfb->render_mutex);
-+
- 	if (info->cmap.len != 0)
- 		fb_dealloc_cmap(&info->cmap);
- 	if (info->monspecs.modedb)
-@@ -1682,6 +1700,7 @@ static int dlfb_usb_probe(struct usb_int
- 	dlfb->ops = dlfb_ops;
- 	info->fbops = &dlfb->ops;
- 
-+	mutex_init(&dlfb->render_mutex);
- 	dlfb_init_damage(dlfb);
- 	spin_lock_init(&dlfb->damage_lock);
- 	INIT_WORK(&dlfb->damage_work, dlfb_damage_work);
---- a/include/video/udlfb.h
-+++ b/include/video/udlfb.h
-@@ -48,6 +48,7 @@ struct dlfb_data {
- 	int base8;
- 	u32 pseudo_palette[256];
- 	int blank_mode; /*one of FB_BLANK_ */
-+	struct mutex render_mutex;
- 	int damage_x;
- 	int damage_y;
- 	int damage_x2;
+-void blk_mq_free_queue(struct request_queue *q);
++void blk_mq_exit_queue(struct request_queue *q);
+ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr);
+ void blk_mq_wake_waiters(struct request_queue *q);
+ bool blk_mq_dispatch_rq_list(struct request_queue *, struct list_head *, bool);
 
 
