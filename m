@@ -2,75 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCA022813A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 17:32:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC370276F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 09:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731073AbfEWPb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 11:31:57 -0400
-Received: from foss.arm.com ([217.140.101.70]:49102 "EHLO foss.arm.com"
+        id S1729896AbfEWHcP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 03:32:15 -0400
+Received: from mga03.intel.com ([134.134.136.65]:36471 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730859AbfEWPb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 11:31:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E057A78;
-        Thu, 23 May 2019 08:31:56 -0700 (PDT)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C3B813F690;
-        Thu, 23 May 2019 08:31:55 -0700 (PDT)
-Subject: Re: [PATCH v4 00/30] coresight: Support for ACPI bindings
-To:     leo.yan@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
-        linux-kernel@vger.kernel.org
-References: <1558521304-27469-1-git-send-email-suzuki.poulose@arm.com>
- <20190523143227.GC31751@leoy-ThinkPad-X240s>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <23a50436-4bcf-3439-c189-093e1a58438d@arm.com>
-Date:   Thu, 23 May 2019 16:31:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190523143227.GC31751@leoy-ThinkPad-X240s>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726081AbfEWHcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 03:32:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 May 2019 00:32:14 -0700
+X-ExtLoop1: 1
+Received: from wvoon-ilbpg2.png.intel.com ([10.88.227.88])
+  by fmsmga005.fm.intel.com with ESMTP; 23 May 2019 00:32:08 -0700
+From:   Voon Weifeng <weifeng.voon@intel.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jose Abreu <joabreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        biao huang <biao.huang@mediatek.com>,
+        Ong Boon Leong <boon.leong.ong@intel.com>,
+        Kweh Hock Leong <hock.leong.kweh@intel.com>,
+        Voon Weifeng <weifeng.voon@intel.com>
+Subject: [PATCH net-next v2 0/5] net: stmmac: enable EHL SGMII
+Date:   Thu, 23 May 2019 23:32:42 +0800
+Message-Id: <1558625567-21653-1-git-send-email-weifeng.voon@intel.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leo,
+012345678901234567890123456789012345678901234567890123456789012345678901234
+This patch-set is to enable Ethernet controller
+(DW Ethernet QoS and DW Ethernet PCS) with SGMII interface in Elkhart Lake.
+The DW Ethernet PCS is the Physical Coding Sublayer that is between Ethernet
+MAC and PHY and uses MDIO Clause-45 as Communication.
 
-On 23/05/2019 15:32, Leo Yan wrote:
-> Hi Suzuki,
-> 
-> On Wed, May 22, 2019 at 11:34:33AM +0100, Suzuki K Poulose wrote:
-> 
-> [...]
-> 
->> Changes since v2:
->>   - Drop the patches exposing device links via sysfs, to be posted as separate
->>     series.
-> 
-> Thanks for sharing the git tree linkage in another email.  Just want
-> to confirm, since patch set v3 you have dropped the patch "coresight:
-> Expose device connections via sysfs" [1], will you send out this patch
-> after ACPI binding support patches has been merged?
+Kweh Hock Leong (1):
+  net: stmmac: enable clause 45 mdio support
 
-We are awaiting Mike's comment on the approach, as his CTI support also
-needs something similar.
+Ong Boon Leong (3):
+  net: stmmac: introducing support for DWC xPCS logics
+  net: stmmac: add xpcs function hooks into main driver and ethtool
+  net: stmmac: add xPCS functions for device with DWMACv5.1
 
-> 
-> When you send out the new patch for exposing device connection, please
-> loop me so that I can base on it for perf testing related works.
+Voon Weifeng (1):
+  net: stmmac: add EHL SGMII 1Gbps PCI info and PCI ID
 
-Sure, will do. As such, the perf testing should not be affected by that
-series. It is just a helper to demonstrate the connections. But yes, it
-will definitely help you to choose an ETF for a cluster, if you had multiple
-ETFs on the system. Otherwise, you should be OK.
+ drivers/net/ethernet/stmicro/stmmac/Makefile       |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |  33 ++++
+ drivers/net/ethernet/stmicro/stmmac/dwxpcs.c       | 198 +++++++++++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/dwxpcs.h       |  51 ++++++
+ drivers/net/ethernet/stmicro/stmmac/hwif.c         |  41 ++++-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  21 +++
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |   2 +
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |  50 ++++--
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 152 ++++++++++++----
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c  |  40 ++++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c   | 111 ++++++++++++
+ include/linux/phy.h                                |   2 +
+ include/linux/stmmac.h                             |   3 +
+ 14 files changed, 649 insertions(+), 58 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxpcs.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxpcs.h
 
-Please be aware that the power management support is missing on ACPI platform.
-So you must make sure, by other means, that the debug domain is powered up.
+-- 
+Changelog v2:
+*Added support for the C37 AN for 1000BASE-X and SGMII (MAC side SGMII only)
+*removed and submitted the fix patch to net
+ "net: stmmac: dma channel control register need to be init first"
+*Squash the following 2 patches and move it to the end of the patch set:
+ "net: stmmac: add EHL SGMII 1Gbps platform data and PCI ID"
+ "net: stmmac: add xPCS platform data for EHL"
+1.9.1
 
-
-Cheers
-Suzuki
