@@ -2,124 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D634B28595
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 20:06:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD7A9285AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 20:10:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731403AbfEWSGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 14:06:49 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:45548 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731093AbfEWSGt (ORCPT
+        id S1731415AbfEWSKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 14:10:19 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40724 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731117AbfEWSKS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 14:06:49 -0400
-Received: by mail-io1-f66.google.com with SMTP id b3so228796iob.12;
-        Thu, 23 May 2019 11:06:48 -0700 (PDT)
+        Thu, 23 May 2019 14:10:18 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g69so3060781plb.7
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 11:10:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XdOS1jq8b2ZAmKzwdek6sp8pOeqK25qgZhjMRx+3kPc=;
-        b=NWtL07zFOCFP4lBu8Iphuhtalv/5o3pmtac06X4fCcWHWCwJ66NC+/eZo76l5v4fzJ
-         /8EOn/fQ7zeG+DPayQVmNufQw84O/o9H1oOCw0fQfaLZ3sxud2tVSPtfN7Q/HEw7lmxX
-         ouLciFoIAhTvk+ZpGNrpd0iDMLKtjqmCnryYJdyjMrDjqEm5VbOzB5Kc4RsmvChBgu7Y
-         lbD6+axWrJgt+FmL44NWrR2x6diOBV1cHanRkGbk8DpyJJOyMv326+sSpAp4fOxHOESR
-         E3j9rND/5Bml3JxdmQHl5AWGJG69qz+8idDIEcMfQCvBxbKt8bYBJlfTonsCRISMqiz3
-         PcIA==
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=qogrVJOizjXohj66Ojog3iB0x5HKIyjxf0Fb3bKvncg=;
+        b=O2tL3kRXSUqWeMsaIAIz1NTqJRh3l/cyn7YerV7qbm6+THbzlsbi95yOKYxOMopA3L
+         nEfSIYE7/v9qv+4Nwa1psBbruMtvul0mHzmtkMJQFFzwyyflYgGFKNPVVzM68VbdYmO6
+         Yj8+Eq7ORqqp8FddWUBEbAGULiTi9ORD+m+dkKavoXhZRjzA/9jivMtUq/3W0o/6iECv
+         WTLASvVl8FrK2u48Exmbf3CKNh7v3x6GkA1EN5VOuCnRrRHW/FdWGigw+w3sicvCVwlu
+         t7rwa+C3+XqU3pvyzlSoYuSKsScHUR3oPiagApC2ig7yq34yfOZAYeeP2fwrZkkrTNYl
+         FppQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XdOS1jq8b2ZAmKzwdek6sp8pOeqK25qgZhjMRx+3kPc=;
-        b=ZNNI5zfvoh7rqkoGsYMz4q6pRzdD/FF+vCU4Xhv19AR/lXo0UQzKQFxMOk17J3+TFk
-         xB9JcCtG56MsClZZHYnZpWHeSOaGN1qva0Yk44Vg5M2bQpB17di3yULCHiKF8iY1m/em
-         DkjOZ1Im+vWOscwSrDSAOJkCEYGwTA8HGoIsP0OL3AgwmlzgTMa8F6jJYalpx1Jt/i/Q
-         MiISGoTu4Re/jci818uEXxVYFqwvEXv3FbkfxxxXPFvR7r2NLkYIi8SFIzFCIJw/ZFvX
-         4eSFImCclbjVGaciUcjzlAE3omL6bOZEhFeGuFiUbTosHeUM9xF3W4+EO6KxrHJalS4X
-         gsJA==
-X-Gm-Message-State: APjAAAUmmCbG8ORP/VO2G41IUYNNcqIzOcHttOlPJeF/j58NaMBB9cSQ
-        FKK+k/sA3UPwODraimJpcph4i7CyIeUWVk1dWGQ=
-X-Google-Smtp-Source: APXvYqyXvLulnivo5Zhy2pYfrQZo94/GrgWZbNEIX2qy7Qee+RUyI7AyGkRhqzwfHnEEtS/npGnzsNF16tkWzAUuAgQ=
-X-Received: by 2002:a6b:c411:: with SMTP id y17mr4123111ioa.265.1558634808133;
- Thu, 23 May 2019 11:06:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190522150505.GA4915@redhat.com> <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
- <20190522161407.GB4915@redhat.com> <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
- <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com> <20190523145944.GB23070@redhat.com>
- <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com> <20190523163604.GE23070@redhat.com>
- <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
-In-Reply-To: <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Thu, 23 May 2019 11:06:37 -0700
-Message-ID: <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
-Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=qogrVJOizjXohj66Ojog3iB0x5HKIyjxf0Fb3bKvncg=;
+        b=J+KiRDSwm8Ibgpi+Oc+fkmM2KLxTdUd4G5TI/ANolcjFn4ZoeXQ9JM8JiUzLHtUsCI
+         r1WUCvmonmH+hsDefEuC1gcTPomsTK7ntx2w27u7QphOcl8uUPqsuCu0dLrnOArZd40Z
+         aZ7C742fOIJwbFGOVn8l0yta/rNVjlIocX56JWktYP7GBaz62VuY/bs4RrlvSEvEyFqc
+         vLhlxb7Mhoah6pnH8NzxFqf4yhDV4ABZmuo7lX/GPusVA4wmDVYiR2Fsy3V4VU6dpBAM
+         QguV4VwlMbkca626Fs3+NSZethb2pu3oMYe5pxR0b/Ir2E0fK3EfhhNJlQLnOBD7QMQV
+         daWQ==
+X-Gm-Message-State: APjAAAVPgmv/LIaO5w77UtsK81psubHgZHOaAuAFnyORP+V8/DYBCxIb
+        I4K/QVd3PdRgtDJwVsA/NBI=
+X-Google-Smtp-Source: APXvYqwEv3Z6GLKOi7kYkYMl5cifVoL8lQyTtBriohTMME3NoBA5wUHICmi8xxIok439uCzH5N+ijA==
+X-Received: by 2002:a17:902:bd94:: with SMTP id q20mr77764391pls.146.1558635017817;
+        Thu, 23 May 2019 11:10:17 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.73])
+        by smtp.gmail.com with ESMTPSA id l20sm95360pff.102.2019.05.23.11.10.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 11:10:17 -0700 (PDT)
+Date:   Thu, 23 May 2019 23:40:09 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Kimberly Brown <kimbrownkd@gmail.com>,
+        Jeeeun Evans <jeeeunevans@gmail.com>,
+        Anirudh Rayabharam <anirudh.rayabharam@gmail.com>,
+        Nishka Dasgupta <nishka.dasgupta@yahoo.com>,
+        Murray McAllister <murray.mcallister@insomniasec.com>,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Puranjay Mohan <puranjay12@gmail.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Omer Efrat <omer.efrat@tandemg.com>,
+        Michael Straube <straube.linux@gmail.com>,
+        Emanuel Bennici <benniciemanuel78@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [Patch v4] staging: rtl8723bs: core: rtw_ap: fix Unneeded variable:
+ "ret". Return "0
+Message-ID: <20190523181009.GA9411@hari-Inspiron-1545>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ok, since there has been quite a bit of argument here, I will
-backtrack a little bit and maybe it will help us understand what's
-happening here.
-There are many scenarios being discussed on this thread:
-a. State of code before 854a6ed56839a
-b. State after 854a6ed56839a
-c. Proposed fix as per the patchset in question.
+Function "rtw_sta_flush" always returns 0 value. So change
+ return type of rtw_sta_flush from int to void.
 
-Oleg, I will discuss these first and then we can discuss the
-additional changes you suggested.
+Same thing applies for rtw_hostapd_sta_flush
 
-Some background on why we have these syscalls that take sigmask as an
-argument. This is just for the sake of completeness of the argument.
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+------
+ Changes v2 -
+       change return type of rtw_sta_flush
+ Changes v3 -
+       fix indentaion issue
+ Changes v4 -
+       prepare patch on linux-next
+---
+---
+ drivers/staging/rtl8723bs/core/rtw_ap.c           | 7 ++-----
+ drivers/staging/rtl8723bs/include/rtw_ap.h        | 2 +-
+ drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c | 4 ++--
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c    | 7 +++----
+ 4 files changed, 8 insertions(+), 12 deletions(-)
 
-These are particularly meant for a scenario(d) such as below:
+diff --git a/drivers/staging/rtl8723bs/core/rtw_ap.c b/drivers/staging/rtl8723bs/core/rtw_ap.c
+index 912ac2f..7bebb41 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_ap.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ap.c
+@@ -2189,10 +2189,9 @@ u8 ap_free_sta(
+ 	return beacon_updated;
+ }
+ 
+-int rtw_sta_flush(struct adapter *padapter)
++void rtw_sta_flush(struct adapter *padapter)
+ {
+ 	struct list_head	*phead, *plist;
+-	int ret = 0;
+ 	struct sta_info *psta = NULL;
+ 	struct sta_priv *pstapriv = &padapter->stapriv;
+ 	struct mlme_ext_priv *pmlmeext = &padapter->mlmeextpriv;
+@@ -2202,7 +2201,7 @@ int rtw_sta_flush(struct adapter *padapter)
+ 	DBG_871X(FUNC_NDEV_FMT"\n", FUNC_NDEV_ARG(padapter->pnetdev));
+ 
+ 	if ((pmlmeinfo->state&0x03) != WIFI_FW_AP_STATE)
+-		return ret;
++		return;
+ 
+ 	spin_lock_bh(&pstapriv->asoc_list_lock);
+ 	phead = &pstapriv->asoc_list;
+@@ -2226,8 +2225,6 @@ int rtw_sta_flush(struct adapter *padapter)
+ 	issue_deauth(padapter, bc_addr, WLAN_REASON_DEAUTH_LEAVING);
+ 
+ 	associated_clients_update(padapter, true);
+-
+-	return ret;
+ }
+ 
+ /* called > TSR LEVEL for USB or SDIO Interface*/
+diff --git a/drivers/staging/rtl8723bs/include/rtw_ap.h b/drivers/staging/rtl8723bs/include/rtw_ap.h
+index fd56c9db..d6f3a3a 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_ap.h
++++ b/drivers/staging/rtl8723bs/include/rtw_ap.h
+@@ -31,7 +31,7 @@ u8 bss_cap_update_on_sta_leave(struct adapter *padapter, struct sta_info *psta);
+ void sta_info_update(struct adapter *padapter, struct sta_info *psta);
+ void ap_sta_info_defer_update(struct adapter *padapter, struct sta_info *psta);
+ u8 ap_free_sta(struct adapter *padapter, struct sta_info *psta, bool active, u16 reason);
+-int rtw_sta_flush(struct adapter *padapter);
++void rtw_sta_flush(struct adapter *padapter);
+ void start_ap_mode(struct adapter *padapter);
+ void stop_ap_mode(struct adapter *padapter);
+ 
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+index 996bd1a..9bc6856 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+@@ -2870,9 +2870,9 @@ static int cfg80211_rtw_del_station(struct wiphy *wiphy, struct net_device *ndev
+ 
+ 		flush_all_cam_entry(padapter);	/* clear CAM */
+ 
+-		ret = rtw_sta_flush(padapter);
++		rtw_sta_flush(padapter);
+ 
+-		return ret;
++		return 0;
+ 	}
+ 
+ 
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+index bfbbcf0..236a462 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+@@ -3753,7 +3753,7 @@ static int rtw_set_beacon(struct net_device *dev, struct ieee_param *param, int
+ 
+ }
+ 
+-static int rtw_hostapd_sta_flush(struct net_device *dev)
++static void rtw_hostapd_sta_flush(struct net_device *dev)
+ {
+ 	/* _irqL irqL; */
+ 	/* struct list_head	*phead, *plist; */
+@@ -3765,8 +3765,7 @@ static int rtw_hostapd_sta_flush(struct net_device *dev)
+ 
+ 	flush_all_cam_entry(padapter);	/* clear CAM */
+ 
+-	return rtw_sta_flush(padapter);
+-
++	rtw_sta_flush(padapter);
+ }
+ 
+ static int rtw_add_sta(struct net_device *dev, struct ieee_param *param)
+@@ -4253,7 +4252,7 @@ static int rtw_hostapd_ioctl(struct net_device *dev, struct iw_point *p)
+ 	switch (param->cmd) {
+ 	case RTL871X_HOSTAPD_FLUSH:
+ 
+-		ret = rtw_hostapd_sta_flush(dev);
++		rtw_hostapd_sta_flush(dev);
+ 
+ 		break;
+ 
+-- 
+2.7.4
 
-1. block the signals you don't care about.
-2. syscall()
-3. unblock the signals blocked in 1.
-
-The problem here is that if there is a signal that is not blocked by 1
-and such a signal is delivered between 1 and 2(since they are not
-atomic), the syscall in 2 might block forever as it never found out
-about the signal.
-
-As per [a] and let's consider the case of epoll_pwait only first for simplicity.
-
-As I said before, ep_poll() is what checks for signal_pending() and is
-responsible for setting errno to -EINTR when there is a signal.
-
-So if a signal is received after ep_poll() and ep_poll() returns
-success, it is never noticed by the syscall during execution.
-So the question is does the userspace have to know about this signal
-or not. From scenario [d] above, I would say it should, even if all
-the fd's completed successfully.
-This does not happen in [a]. So this is what I said was already broken.
-
-What [b] does is to move the signal check closer to the restoration of
-the signal. This way it is good. So, if there is a signal after
-ep_poll() returns success, it is noticed and the signal is delivered
-when the syscall exits. But, the syscall error status itself is 0.
-
-So now [c] is adjusting the return values based on whether extra
-signals were detected after ep_poll(). This part was needed even for
-[a].
-
-Let me know if this clarifies things a bit.
-
--Deepa
