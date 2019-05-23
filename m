@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71BEA28881
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A033286BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391459AbfEWT0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:26:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38826 "EHLO mail.kernel.org"
+        id S2388413AbfEWTMP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:12:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391444AbfEWT0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:26:51 -0400
+        id S2388380AbfEWTMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:12:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83C2A217D7;
-        Thu, 23 May 2019 19:26:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B22FE2186A;
+        Thu, 23 May 2019 19:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639611;
-        bh=tQ4EPmHa88YeE+lsAVf8RF8bcxRpc2MVqWookuBRWD0=;
+        s=default; t=1558638729;
+        bh=JtWd6O3/eRycUXinHH2loJFoCaEZwSr600RHCObQA7A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UdoDIGLUCWe36beGMT9+lr9WQo4crgVo9e87O0cgsabv7KQ1Thd3OOSFRcVXj9pZK
-         RRYRgEQWvjvxaJxyY0i+yjyn3nGkP4nd9+GhrGh/pA+wKoYDuvDO/N0Z984f80+6/S
-         49c7Tvpi3aOmsqVyNumuuoH1DPMl1avyK+vd8ZMA=
+        b=FeJJqX87bPKp2DpOXadz4ATqQZay8JBHMYEV9JJ7YAbxXv+fEwZujI2/2mllwVst8
+         zAkvB35+C9H35PbNTSc8AL+L/w/UYxDTYx9BL9YGp5A1llazChhCwocLZvDNMatuTC
+         GWm7XAIngyqRSP15wB5GR7y9Ki2v06h42WPjVG2U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 012/122] vsock/virtio: free packets during the socket release
+        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
+        NeilBrown <neilb@suse.com>, Yufen Yu <yuyufen@huawei.com>,
+        Song Liu <songliubraving@fb.com>
+Subject: [PATCH 4.14 16/77] md: add mddev->pers to avoid potential NULL pointer dereference
 Date:   Thu, 23 May 2019 21:05:34 +0200
-Message-Id: <20190523181706.599575882@linuxfoundation.org>
+Message-Id: <20190523181722.480834303@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefano Garzarella <sgarzare@redhat.com>
+From: Yufen Yu <yuyufen@huawei.com>
 
-[ Upstream commit ac03046ece2b158ebd204dfc4896fd9f39f0e6c8 ]
+commit ee37e62191a59d253fc916b9fc763deb777211e2 upstream.
 
-When the socket is released, we should free all packets
-queued in the per-socket list in order to avoid a memory
-leak.
+When doing re-add, we need to ensure rdev->mddev->pers is not NULL,
+which can avoid potential NULL pointer derefence in fallowing
+add_bound_rdev().
 
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: a6da4ef85cef ("md: re-add a failed disk")
+Cc: Xiao Ni <xni@redhat.com>
+Cc: NeilBrown <neilb@suse.com>
+Cc: <stable@vger.kernel.org> # 4.4+
+Reviewed-by: NeilBrown <neilb@suse.com>
+Signed-off-by: Yufen Yu <yuyufen@huawei.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/vmw_vsock/virtio_transport_common.c |    7 +++++++
- 1 file changed, 7 insertions(+)
 
---- a/net/vmw_vsock/virtio_transport_common.c
-+++ b/net/vmw_vsock/virtio_transport_common.c
-@@ -786,12 +786,19 @@ static bool virtio_transport_close(struc
- 
- void virtio_transport_release(struct vsock_sock *vsk)
- {
-+	struct virtio_vsock_sock *vvs = vsk->trans;
-+	struct virtio_vsock_pkt *pkt, *tmp;
- 	struct sock *sk = &vsk->sk;
- 	bool remove_sock = true;
- 
- 	lock_sock(sk);
- 	if (sk->sk_type == SOCK_STREAM)
- 		remove_sock = virtio_transport_close(vsk);
-+
-+	list_for_each_entry_safe(pkt, tmp, &vvs->rx_queue, list) {
-+		list_del(&pkt->list);
-+		virtio_transport_free_pkt(pkt);
-+	}
- 	release_sock(sk);
- 
- 	if (remove_sock)
+---
+ drivers/md/md.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -2845,8 +2845,10 @@ state_store(struct md_rdev *rdev, const
+ 			err = 0;
+ 		}
+ 	} else if (cmd_match(buf, "re-add")) {
+-		if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk == -1) &&
+-			rdev->saved_raid_disk >= 0) {
++		if (!rdev->mddev->pers)
++			err = -EINVAL;
++		else if (test_bit(Faulty, &rdev->flags) && (rdev->raid_disk == -1) &&
++				rdev->saved_raid_disk >= 0) {
+ 			/* clear_bit is performed _after_ all the devices
+ 			 * have their local Faulty bit cleared. If any writes
+ 			 * happen in the meantime in the local node, they
 
 
