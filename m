@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92BB628700
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:16:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3212287FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388919AbfEWTPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:15:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49468 "EHLO mail.kernel.org"
+        id S2391272AbfEWT0F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:26:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388288AbfEWTPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:15:12 -0400
+        id S2391251AbfEWT0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:26:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9EF1217D9;
-        Thu, 23 May 2019 19:15:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B69742133D;
+        Thu, 23 May 2019 19:26:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638911;
-        bh=JC0trqDF3LcECBpAStaC3Xy5m+S9bjkAG+FXWPSbCR8=;
+        s=default; t=1558639562;
+        bh=erWqDX8SpUwJR1ygf9C0eCHvcngG2wRO1gFt5XSuHpg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IZmmmc11HGId/Gp2ysDbwb7fTKxVQawe3Xkin7l02DMERfZOOaFDI6/OL5Bz3+2Sp
-         MpEc4br+oWJbOerp+Bbi0MgkbbTzs3gssULctqrrgD+5w2ona9vFPONZjq1Yn+NUNt
-         fjRItnwspffvvfwOGbn5UNnoZAyvhOaCOulndSvQ=
+        b=sb/hsSJ+LEJfQvh05d8QhtZzB98VE5eHHViIGrIKDgVc7FM5FvmfhiLOF3HjLRfos
+         lD03zt1CI3KRxUkubfGwM3Cf6gqEHmemXmSoPrgn4GVz8wx8RQ0TH3DRo2XpVtBtIk
+         9XzgEbOcvPvSiPJOMP2AuUGvSkc2ZeUTmPE127jQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiao Ni <xni@redhat.com>,
-        NeilBrown <neilb@suse.com>, Song Liu <songliubraving@fb.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 026/114] md: batch flush requests.
+        stable@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 003/122] net: Always descend into dsa/
 Date:   Thu, 23 May 2019 21:05:25 +0200
-Message-Id: <20190523181734.237942488@linuxfoundation.org>
+Message-Id: <20190523181705.491688046@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,170 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: NeilBrown <neilb@suse.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-commit 2bc13b83e6298486371761de503faeffd15b7534 upstream.
+[ Upstream commit 0fe9f173d6cda95874edeb413b1fa9907b5ae830 ]
 
-Currently if many flush requests are submitted to an md device is quick
-succession, they are serialized and can take a long to process them all.
-We don't really need to call flush all those times - a single flush call
-can satisfy all requests submitted before it started.
-So keep track of when the current flush started and when it finished,
-allow any pending flush that was requested before the flush started
-to complete without waiting any more.
+Jiri reported that with a kernel built with CONFIG_FIXED_PHY=y,
+CONFIG_NET_DSA=m and CONFIG_NET_DSA_LOOP=m, we would not get to a
+functional state where the mock-up driver is registered. Turns out that
+we are not descending into drivers/net/dsa/ unconditionally, and we
+won't be able to link-in dsa_loop_bdinfo.o which does the actual mock-up
+mdio device registration.
 
-Test results from Xiao:
-
-Test is done on a raid10 device which is created by 4 SSDs. The tool is
-dbench.
-
-1. The latest linux stable kernel
-  Operation                Count    AvgLat    MaxLat
-  --------------------------------------------------
-  Deltree                    768    10.509    78.305
-  Flush                  2078376     0.013    10.094
-  Close                  21787697     0.019    18.821
-  LockX                    96580     0.007     3.184
-  Mkdir                      384     0.008     0.062
-  Rename                 1255883     0.191    23.534
-  ReadX                  46495589     0.020    14.230
-  WriteX                 14790591     7.123    60.706
-  Unlink                 5989118     0.440    54.551
-  UnlockX                  96580     0.005     2.736
-  FIND_FIRST             10393845     0.042    12.079
-  SET_FILE_INFORMATION   2415558     0.129    10.088
-  QUERY_FILE_INFORMATION 4711725     0.005     8.462
-  QUERY_PATH_INFORMATION 26883327     0.032    21.715
-  QUERY_FS_INFORMATION   4929409     0.010     8.238
-  NTCreateX              29660080     0.100    53.268
-
-Throughput 1034.88 MB/sec (sync open)  128 clients  128 procs
-max_latency=60.712 ms
-
-2. With patch1 "Revert "MD: fix lock contention for flush bios""
-  Operation                Count    AvgLat    MaxLat
-  --------------------------------------------------
-  Deltree                    256     8.326    36.761
-  Flush                   693291     3.974   180.269
-  Close                  7266404     0.009    36.929
-  LockX                    32160     0.006     0.840
-  Mkdir                      128     0.008     0.021
-  Rename                  418755     0.063    29.945
-  ReadX                  15498708     0.007     7.216
-  WriteX                 4932310    22.482   267.928
-  Unlink                 1997557     0.109    47.553
-  UnlockX                  32160     0.004     1.110
-  FIND_FIRST             3465791     0.036     7.320
-  SET_FILE_INFORMATION    805825     0.015     1.561
-  QUERY_FILE_INFORMATION 1570950     0.005     2.403
-  QUERY_PATH_INFORMATION 8965483     0.013    14.277
-  QUERY_FS_INFORMATION   1643626     0.009     3.314
-  NTCreateX              9892174     0.061    41.278
-
-Throughput 345.009 MB/sec (sync open)  128 clients  128 procs
-max_latency=267.939 m
-
-3. With patch1 and patch2
-  Operation                Count    AvgLat    MaxLat
-  --------------------------------------------------
-  Deltree                    768     9.570    54.588
-  Flush                  2061354     0.666    15.102
-  Close                  21604811     0.012    25.697
-  LockX                    95770     0.007     1.424
-  Mkdir                      384     0.008     0.053
-  Rename                 1245411     0.096    12.263
-  ReadX                  46103198     0.011    12.116
-  WriteX                 14667988     7.375    60.069
-  Unlink                 5938936     0.173    30.905
-  UnlockX                  95770     0.005     4.147
-  FIND_FIRST             10306407     0.041    11.715
-  SET_FILE_INFORMATION   2395987     0.048     7.640
-  QUERY_FILE_INFORMATION 4672371     0.005     9.291
-  QUERY_PATH_INFORMATION 26656735     0.018    19.719
-  QUERY_FS_INFORMATION   4887940     0.010     7.654
-  NTCreateX              29410811     0.059    28.551
-
-Throughput 1026.21 MB/sec (sync open)  128 clients  128 procs
-max_latency=60.075 ms
-
-Cc: <stable@vger.kernel.org> # v4.19+
-Tested-by: Xiao Ni <xni@redhat.com>
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reported-by: Jiri Pirko <jiri@resnulli.us>
+Fixes: 40013ff20b1b ("net: dsa: Fix functional dsa-loop dependency on FIXED_PHY")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
+Tested-by: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/md/md.c |   27 +++++++++++++++++++++++----
- drivers/md/md.h |    3 +++
- 2 files changed, 26 insertions(+), 4 deletions(-)
+ drivers/net/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -433,6 +433,7 @@ static void submit_flushes(struct work_s
- 	struct mddev *mddev = container_of(ws, struct mddev, flush_work);
- 	struct md_rdev *rdev;
- 
-+	mddev->start_flush = ktime_get_boottime();
- 	INIT_WORK(&mddev->flush_work, md_submit_flush_data);
- 	atomic_set(&mddev->flush_pending, 1);
- 	rcu_read_lock();
-@@ -473,6 +474,7 @@ static void md_submit_flush_data(struct
- 	 * could wait for this and below md_handle_request could wait for those
- 	 * bios because of suspend check
- 	 */
-+	mddev->last_flush = mddev->start_flush;
- 	mddev->flush_bio = NULL;
- 	wake_up(&mddev->sb_wait);
- 
-@@ -487,15 +489,32 @@ static void md_submit_flush_data(struct
- 
- void md_flush_request(struct mddev *mddev, struct bio *bio)
- {
-+	ktime_t start = ktime_get_boottime();
- 	spin_lock_irq(&mddev->lock);
- 	wait_event_lock_irq(mddev->sb_wait,
--			    !mddev->flush_bio,
-+			    !mddev->flush_bio ||
-+			    ktime_after(mddev->last_flush, start),
- 			    mddev->lock);
--	mddev->flush_bio = bio;
-+	if (!ktime_after(mddev->last_flush, start)) {
-+		WARN_ON(mddev->flush_bio);
-+		mddev->flush_bio = bio;
-+		bio = NULL;
-+	}
- 	spin_unlock_irq(&mddev->lock);
- 
--	INIT_WORK(&mddev->flush_work, submit_flushes);
--	queue_work(md_wq, &mddev->flush_work);
-+	if (!bio) {
-+		INIT_WORK(&mddev->flush_work, submit_flushes);
-+		queue_work(md_wq, &mddev->flush_work);
-+	} else {
-+		/* flush was performed for some other bio while we waited. */
-+		if (bio->bi_iter.bi_size == 0)
-+			/* an empty barrier - all done */
-+			bio_endio(bio);
-+		else {
-+			bio->bi_opf &= ~REQ_PREFLUSH;
-+			mddev->pers->make_request(mddev, bio);
-+		}
-+	}
- }
- EXPORT_SYMBOL(md_flush_request);
- 
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -463,6 +463,9 @@ struct mddev {
- 	 */
- 	struct bio *flush_bio;
- 	atomic_t flush_pending;
-+	ktime_t start_flush, last_flush; /* last_flush is when the last completed
-+					  * flush was started.
-+					  */
- 	struct work_struct flush_work;
- 	struct work_struct event_work;	/* used by dm to report failure event */
- 	void (*sync_super)(struct mddev *mddev, struct md_rdev *rdev);
+--- a/drivers/net/Makefile
++++ b/drivers/net/Makefile
+@@ -40,7 +40,7 @@ obj-$(CONFIG_ARCNET) += arcnet/
+ obj-$(CONFIG_DEV_APPLETALK) += appletalk/
+ obj-$(CONFIG_CAIF) += caif/
+ obj-$(CONFIG_CAN) += can/
+-obj-$(CONFIG_NET_DSA) += dsa/
++obj-y += dsa/
+ obj-$(CONFIG_ETHERNET) += ethernet/
+ obj-$(CONFIG_FDDI) += fddi/
+ obj-$(CONFIG_HIPPI) += hippi/
 
 
