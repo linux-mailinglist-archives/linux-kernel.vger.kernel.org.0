@@ -2,55 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5580027A90
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 12:32:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4E827A3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 12:21:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730170AbfEWKcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 06:32:50 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:57282 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727466AbfEWKcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 06:32:50 -0400
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x4NAUiWV008275
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Thu, 23 May 2019 03:30:55 -0700
-Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 23 May
- 2019 03:30:34 -0700
-Subject: Re: [PATCH v2] tipc: Avoid copying bytes beyond the supplied data
-To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
-        "jon.maloy@ericsson.com" <jon.maloy@ericsson.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "niveditas98@gmail.com" <niveditas98@gmail.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "tipc-discussion@lists.sourceforge.net" 
-        <tipc-discussion@lists.sourceforge.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190520034536.22782-1-chris.packham@alliedtelesis.co.nz>
- <2830aab3-3fa9-36d2-5646-d5e4672ae263@windriver.com>
- <00ce1b1e52ac4b729d982c86127334aa@svr-chch-ex1.atlnz.lc>
-From:   Ying Xue <ying.xue@windriver.com>
-Message-ID: <11c81207-54dd-16d5-3f33-1ccf45a06dac@windriver.com>
-Date:   Thu, 23 May 2019 18:20:45 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1730296AbfEWKVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 06:21:08 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42470 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726429AbfEWKVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 06:21:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CEC50341;
+        Thu, 23 May 2019 03:21:07 -0700 (PDT)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 780123F718;
+        Thu, 23 May 2019 03:21:06 -0700 (PDT)
+Date:   Thu, 23 May 2019 11:21:04 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        James Morse <James.Morse@arm.com>,
+        Will Deacon <Will.Deacon@arm.com>
+Subject: Re: [REVIEW][PATCH 03/26] signal/arm64: Use force_sig not
+ force_sig_fault for SIGKILL
+Message-ID: <20190523102101.GW28398@e103592.cambridge.arm.com>
+References: <20190523003916.20726-1-ebiederm@xmission.com>
+ <20190523003916.20726-4-ebiederm@xmission.com>
 MIME-Version: 1.0
-In-Reply-To: <00ce1b1e52ac4b729d982c86127334aa@svr-chch-ex1.atlnz.lc>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.224.155.90]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190523003916.20726-4-ebiederm@xmission.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/23/19 4:46 AM, Chris Packham wrote:
-> On most distros that is generated from include/uapi in the kernel source 
-> and packaged as part of libc or a kernel-headers package. So once this 
-> patch is accepted and makes it into the distros 
-> /usr/include/linux/tipc_config.h will have this fix.
+On Thu, May 23, 2019 at 01:38:53AM +0100, Eric W. Biederman wrote:
+> It really only matters to debuggers but the SIGKILL does not have any
+> si_codes that use the fault member of the siginfo union.  Correct this
+> the simple way and call force_sig instead of force_sig_fault when the
+> signal is SIGKILL.
 
-Thanks for the clarification. You are right, so it's unnecessary to make
-any change.
+I haven't fully understood the context for this, but why does it matter
+what's in siginfo for SIGKILL?  My understanding is that userspace
+(including ptrace) never gets to see it anyway for the SIGKILL case.
+
+Here it feels like SIGKILL is logically a synchronous, thread-targeted
+fault: we must ensure that no subsequent insn in current executes (just
+like other fault signal).  In this case, I thought we fall back to
+SIGKILL not because there is no fault, but because we failed to
+properly diagnose or report the type of fault that occurred.
+
+So maybe handling it consistently with other faults signals makes
+sense.  The fact that delivery of this signal destroys the process
+before anyone can look at the resulting siginfo feels like a
+side-effect rather than something obviously wrong.
+
+The siginfo is potentially useful diagnostic information, that we could
+subsequently provide a means to access post-mortem.
+
+I just dived in on this single patch, so I may be missing something more
+fundamental, or just being pedantic...
+
+Cheers
+---Dave
+
+> Cc: stable@vger.kernel.org
+> Cc: Dave Martin <Dave.Martin@arm.com>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Fixes: af40ff687bc9 ("arm64: signal: Ensure si_code is valid for all fault signals")
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>  arch/arm64/kernel/traps.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> index ade32046f3fe..0feb17bdcaa0 100644
+> --- a/arch/arm64/kernel/traps.c
+> +++ b/arch/arm64/kernel/traps.c
+> @@ -282,6 +282,11 @@ void arm64_notify_die(const char *str, struct pt_regs *regs,
+>  		current->thread.fault_address = 0;
+>  		current->thread.fault_code = err;
+>  
+> +		if (signo == SIGKILL) {
+> +			arm64_show_signal(signo, str);
+> +			force_sig(signo, current);
+> +			return;
+> +		}
+>  		arm64_force_sig_fault(signo, sicode, addr, str);
+>  	} else {
+>  		die(str, regs, err);
+> -- 
+> 2.21.0
+> 
