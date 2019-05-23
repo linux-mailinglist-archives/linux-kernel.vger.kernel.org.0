@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3992E287D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B09F2894E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390049AbfEWTYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:24:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34788 "EHLO mail.kernel.org"
+        id S2391888AbfEWTdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:33:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390455AbfEWTYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:24:02 -0400
+        id S2391222AbfEWT2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:28:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D80CE20868;
-        Thu, 23 May 2019 19:24:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9CA62054F;
+        Thu, 23 May 2019 19:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639441;
-        bh=3LCnykdvczOHiMlWD1ftBlEW8L15TV0zrYb9NTJ2fds=;
+        s=default; t=1558639726;
+        bh=SYtLHW5PN2kaTLi0hvmfSGvW2uL/0c+YVmjsMHL4+To=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DUD80yJxNKC/K3Zy03aU80WrAddJi/ezLVsf40NvM3skYWL1F5kHoIJdacdqcA6DR
-         Fr2I84lYH+A0V3VRnAVmO7/5EefzROaUuHHZb7zcETakGuUW+10U1l67kMsqncLd8a
-         sw/v5dCPTN29S3IUpFAWQYGGq5PEJfK3JZBVWJV4=
+        b=B6nVKPvVTA74rF8sTb8i+Exx2JvvA18yMCEi8gG37dfEgqeb1i6KmIA8vVyWA563F
+         xkPD9yQ8+MF2cKHk+XHXSyYAG6dWQq7zCMBCpTp7fDoIAiR0lJ9uoXUi9iQZ6sjEFp
+         XQQnFP9FDhsUo/Cros93aim1cPKp3SaTafhPoybw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 106/139] xfrm: Honor original L3 slave device in xfrmi policy lookup
+        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 5.1 072/122] ceph: flush dirty inodes before proceeding with remount
 Date:   Thu, 23 May 2019 21:06:34 +0200
-Message-Id: <20190523181734.066870227@linuxfoundation.org>
+Message-Id: <20190523181714.274118885@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 025c65e119bf58b610549ca359c9ecc5dee6a8d2 ]
+From: Jeff Layton <jlayton@kernel.org>
 
-If an xfrmi is associated to a vrf layer 3 master device,
-xfrm_policy_check() fails after traffic decapsulation. The input
-interface is replaced by the layer 3 master device, and hence
-xfrmi_decode_session() can't match the xfrmi anymore to satisfy
-policy checking.
+commit 00abf69dd24f4444d185982379c5cc3bb7b6d1fc upstream.
 
-Extend ingress xfrmi lookup to honor the original layer 3 slave
-device, allowing xfrm interfaces to operate within a vrf domain.
+xfstest generic/452 was triggering a "Busy inodes after umount" warning.
+ceph was allowing the mount to go read-only without first flushing out
+dirty inodes in the cache. Ensure we sync out the filesystem before
+allowing a remount to proceed.
 
-Fixes: f203b76d7809 ("xfrm: Add virtual xfrm interfaces")
-Signed-off-by: Martin Willi <martin@strongswan.org>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Link: http://tracker.ceph.com/issues/39571
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- include/net/xfrm.h        |  3 ++-
- net/xfrm/xfrm_interface.c | 17 ++++++++++++++---
- net/xfrm/xfrm_policy.c    |  2 +-
- 3 files changed, 17 insertions(+), 5 deletions(-)
+ fs/ceph/super.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-index 902437dfbce77..c9b0b2b5d672f 100644
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@ -295,7 +295,8 @@ struct xfrm_replay {
- };
- 
- struct xfrm_if_cb {
--	struct xfrm_if	*(*decode_session)(struct sk_buff *skb);
-+	struct xfrm_if	*(*decode_session)(struct sk_buff *skb,
-+					   unsigned short family);
- };
- 
- void xfrm_if_register_cb(const struct xfrm_if_cb *ifcb);
-diff --git a/net/xfrm/xfrm_interface.c b/net/xfrm/xfrm_interface.c
-index dbb3c1945b5c9..85fec98676d34 100644
---- a/net/xfrm/xfrm_interface.c
-+++ b/net/xfrm/xfrm_interface.c
-@@ -70,17 +70,28 @@ static struct xfrm_if *xfrmi_lookup(struct net *net, struct xfrm_state *x)
- 	return NULL;
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -845,6 +845,12 @@ static void ceph_umount_begin(struct sup
+ 	return;
  }
  
--static struct xfrm_if *xfrmi_decode_session(struct sk_buff *skb)
-+static struct xfrm_if *xfrmi_decode_session(struct sk_buff *skb,
-+					    unsigned short family)
- {
- 	struct xfrmi_net *xfrmn;
--	int ifindex;
- 	struct xfrm_if *xi;
-+	int ifindex = 0;
- 
- 	if (!secpath_exists(skb) || !skb->dev)
- 		return NULL;
- 
-+	switch (family) {
-+	case AF_INET6:
-+		ifindex = inet6_sdif(skb);
-+		break;
-+	case AF_INET:
-+		ifindex = inet_sdif(skb);
-+		break;
-+	}
-+	if (!ifindex)
-+		ifindex = skb->dev->ifindex;
++static int ceph_remount(struct super_block *sb, int *flags, char *data)
++{
++	sync_filesystem(sb);
++	return 0;
++}
 +
- 	xfrmn = net_generic(xs_net(xfrm_input_state(skb)), xfrmi_net_id);
--	ifindex = skb->dev->ifindex;
- 
- 	for_each_xfrmi_rcu(xfrmn->xfrmi[0], xi) {
- 		if (ifindex == xi->dev->ifindex &&
-diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-index 8d1a898d0ba56..a6b58df7a70f6 100644
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -3313,7 +3313,7 @@ int __xfrm_policy_check(struct sock *sk, int dir, struct sk_buff *skb,
- 	ifcb = xfrm_if_get_cb();
- 
- 	if (ifcb) {
--		xi = ifcb->decode_session(skb);
-+		xi = ifcb->decode_session(skb, family);
- 		if (xi) {
- 			if_id = xi->p.if_id;
- 			net = xi->net;
--- 
-2.20.1
-
+ static const struct super_operations ceph_super_ops = {
+ 	.alloc_inode	= ceph_alloc_inode,
+ 	.destroy_inode	= ceph_destroy_inode,
+@@ -852,6 +858,7 @@ static const struct super_operations cep
+ 	.drop_inode	= ceph_drop_inode,
+ 	.sync_fs        = ceph_sync_fs,
+ 	.put_super	= ceph_put_super,
++	.remount_fs	= ceph_remount,
+ 	.show_options   = ceph_show_options,
+ 	.statfs		= ceph_statfs,
+ 	.umount_begin   = ceph_umount_begin,
 
 
