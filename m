@@ -2,150 +2,484 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE9D6283F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 18:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49FD6283E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 18:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731420AbfEWQic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 12:38:32 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:46313 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731281AbfEWQib (ORCPT
+        id S1731202AbfEWQiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 12:38:22 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33236 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730752AbfEWQiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 12:38:31 -0400
-Received: by mail-ua1-f66.google.com with SMTP id a95so2398220uaa.13
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 09:38:30 -0700 (PDT)
+        Thu, 23 May 2019 12:38:21 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c66so7522113wme.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 09:38:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=r0rDpYcpEU2DlpfJPWclkw5oXzfo0RvY7oAeAA+3T90=;
-        b=f7DFyXKTBWt5U7XgFYEc6tpBvygZbJf11fOqOQXgOXkwOVzXyJkqrEFj1jL04GFqyF
-         KaPeTgWPv1xcwPktqe+PKBE5ipEuuUyahM+6zRAjX7mwCrDn8SQiMqpgRr8v4QSo8uBt
-         mai/Br9ocyY4z1h4P4lZ9JoH9BK9pnb/uS9X8=
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Uc/EZeoFWudzAAaizpZc7eAmy5xMsx8Uz2iUj7QK1iU=;
+        b=xxuQx4PmAnDPT9Y12KQdAqxrHnAWLOJmILCkkXaiIfiO4lBiRonCFB+nWZ2INdQP6U
+         EqSCbgJjK1tCZidcMH2CajpmE5eJ6LVCU1BRnCRlERChDPvN0ji+fxC6Pui30XJvTMXR
+         EEuB+oz8oRraQX30DKyFPUlEIjJwECFJNtNX22ul5kBLN+K0KP8dJVyeQDg/sP5a9QMT
+         iCT6caHMrsyteKdnltcEcgzzegmQj8HYcNWoHAqQt/goswJ/YBaZY9WloB+vwgM08NJA
+         dJFNqi+VVX2ilFMJlc1S/H4WZv2lrYfGa7JAv6CqxbPPqTWhev8sACbGAqGkdRsFtqiE
+         cSjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r0rDpYcpEU2DlpfJPWclkw5oXzfo0RvY7oAeAA+3T90=;
-        b=DW/iAnxn8I8kPt2KCBOZMwuLO5O3p8Kdw9wpYUdKLmk6O9bErhTIjz2Grq+MGEvP4u
-         MlngadFaMv2nGQ6wAJ6HzyGXenU34ycxAhsyuaShvGHBoLuo2bu3MdCnk7mt/S2Bn7Ck
-         I6dmV9xYRgGVw6d9kYlJQh40Da9S3R8eYxOLQD/3bZGBJhUG2UZjQj00q1NvXiSD6BVi
-         dPDyOmEUpjPByo4Yxqg92gSEsdcdijq1SrBGXwck3kml/83SLU5XSGCeG26xL6vdX8fw
-         6bHkMl2+/qhghUucdEtdwrFx115REkh4BuBRoq1m7p2HUHSqpijx5Er7Ru3IjCbb+kdJ
-         shkg==
-X-Gm-Message-State: APjAAAVzqHboTTCwpWirh5qty3/si/LSIIE6nVJk1Kvzoy4jDKciFqXG
-        m0weoOK27JOJieV/PSZ+cR/3N3Yw5Yg=
-X-Google-Smtp-Source: APXvYqwwv2GeXYd2l4kWC+IbjJkN/SM5JR+83UAD/cPNsfmK6f8VN34PEmpZZ94xsMDK4XzlTTBiWA==
-X-Received: by 2002:a9f:22e8:: with SMTP id 95mr41344595uan.6.1558629509570;
-        Thu, 23 May 2019 09:38:29 -0700 (PDT)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id w9sm6046890vkh.53.2019.05.23.09.38.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 09:38:28 -0700 (PDT)
-Received: by mail-vs1-f43.google.com with SMTP id l20so3990844vsp.3
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 09:38:25 -0700 (PDT)
-X-Received: by 2002:a67:1cc2:: with SMTP id c185mr23275103vsc.20.1558629505309;
- Thu, 23 May 2019 09:38:25 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Uc/EZeoFWudzAAaizpZc7eAmy5xMsx8Uz2iUj7QK1iU=;
+        b=UZVh8AgJJGpGQhk4rMwbJeg5bgZ/azmT9OWzXVI2ao6fFQOAora3aduqrNPu/UDld4
+         k4PwJLwcC0lGhtonubxeBlz+i1wHMbFjcUIGQARI/XDSI9ZxPL9CoDSxMlcSXg7fMF9H
+         vp2pzEAJiMEcoaQ2T95bB/r4iMPQjOv+JCusjKIk3dlKFQpXEhdSGX60lf5oBsRNuT3m
+         dcDyfeiuoF1QVv6VEQmVEjLYG9IhZBGqVNynb6MXd/fKwDCcUKxq63zEyOEUvTEwRXyL
+         i3agc4M1Hgp3wGTU0YP0uj98RVnMyTelX6QWLYrJTgobQbAXORUpoRU3qHOzn7MZhHiO
+         FN9A==
+X-Gm-Message-State: APjAAAWRu1XCoJeLeZExoikeOxXCDXw2Nxc98w6SaSamdbOmoBbU7QQ/
+        MbLOqk8shml19KCOjkiES90uNQ==
+X-Google-Smtp-Source: APXvYqwsh61PmjWJEGFJ6UHfJ+KqwQGNKlIWWaG+cRw1WBTYSoKmRqXzStwyuTej5U4VDuoqd2DD3g==
+X-Received: by 2002:a1c:9a83:: with SMTP id c125mr11609852wme.39.1558629497283;
+        Thu, 23 May 2019 09:38:17 -0700 (PDT)
+Received: from [192.168.43.165] ([37.170.117.75])
+        by smtp.googlemail.com with ESMTPSA id s62sm21765wmf.24.2019.05.23.09.38.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 09:38:16 -0700 (PDT)
+Subject: Re: [RFC v2 1/2] clocksource: davinci-timer: add support for
+ clockevents
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190523125813.29506-1-brgl@bgdev.pl>
+ <20190523125813.29506-2-brgl@bgdev.pl>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <dbe04cda-4f42-46b5-0808-e756a65180d2@linaro.org>
+Date:   Thu, 23 May 2019 18:38:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190501043734.26706-1-bjorn.andersson@linaro.org> <20190501043734.26706-3-bjorn.andersson@linaro.org>
-In-Reply-To: <20190501043734.26706-3-bjorn.andersson@linaro.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 23 May 2019 09:38:13 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VVxKSp6e=j8YM8JBrhsF+T=0=8xDjd_817hphOMWHVFA@mail.gmail.com>
-Message-ID: <CAD=FV=VVxKSp6e=j8YM8JBrhsF+T=0=8xDjd_817hphOMWHVFA@mail.gmail.com>
-Subject: Re: [PATCH v7 2/4] soc: qcom: Add AOSS QMP driver
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190523125813.29506-2-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, Apr 30, 2019 at 9:38 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> +static int qmp_qdss_clk_prepare(struct clk_hw *hw)
+On 23/05/2019 14:58, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Currently the clocksource and clockevent support for davinci platforms
+> lives in mach-davinci. It hard-codes many things, uses global variables,
+> implements functionalities unused by any platform and has code fragments
+> scattered across many (often unrelated) files.
+> 
+> Implement a new, modern and simplified timer driver and put it into
+> drivers/clocksource. We still need to support legacy board files so
+> export a config structure and a function that allows machine code to
+> register the timer.
+> 
+> The timer we're using is 64-bit but can be programmed in dual 32-bit
+> mode (both chained and unchained). We're using dual 32-bit mode to
+> have separate counters for clockevents and clocksource.
+> 
+> This patch contains the core code and support for clockevent. The
+> clocksource code will be included in a subsequent patch.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  drivers/clocksource/Kconfig         |   5 +
+>  drivers/clocksource/Makefile        |   1 +
+>  drivers/clocksource/timer-davinci.c | 285 ++++++++++++++++++++++++++++
+>  include/clocksource/timer-davinci.h |  44 +++++
+>  4 files changed, 335 insertions(+)
+>  create mode 100644 drivers/clocksource/timer-davinci.c
+>  create mode 100644 include/clocksource/timer-davinci.h
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index 6bcaa4e2e72c..32dee6abd54a 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -42,6 +42,11 @@ config BCM_KONA_TIMER
+>  	help
+>  	  Enables the support for the BCM Kona mobile timer driver.
+>  
+> +config DAVINCI_TIMER
+> +	bool "Texas Instruments DaVinci timer driver" if COMPILE_TEST
+> +	help
+> +	  Enables the support for the TI DaVinci timer driver.
+> +
+>  config DIGICOLOR_TIMER
+>  	bool "Digicolor timer driver" if COMPILE_TEST
+>  	select CLKSRC_MMIO
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index 236858fa7fbf..021831bcc567 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -15,6 +15,7 @@ obj-$(CONFIG_SH_TIMER_TMU)	+= sh_tmu.o
+>  obj-$(CONFIG_EM_TIMER_STI)	+= em_sti.o
+>  obj-$(CONFIG_CLKBLD_I8253)	+= i8253.o
+>  obj-$(CONFIG_CLKSRC_MMIO)	+= mmio.o
+> +obj-$(CONFIG_DAVINCI_TIMER)	+= timer-davinci.o
+>  obj-$(CONFIG_DIGICOLOR_TIMER)	+= timer-digicolor.o
+>  obj-$(CONFIG_OMAP_DM_TIMER)	+= timer-ti-dm.o
+>  obj-$(CONFIG_DW_APB_TIMER)	+= dw_apb_timer.o
+> diff --git a/drivers/clocksource/timer-davinci.c b/drivers/clocksource/timer-davinci.c
+> new file mode 100644
+> index 000000000000..a8fc7b3805c9
+> --- /dev/null
+> +++ b/drivers/clocksource/timer-davinci.c
+> @@ -0,0 +1,285 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * TI DaVinci clocksource driver
+> + *
+> + * Copyright (C) 2019 Texas Instruments
+> + * Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> + * (with tiny parts adopted from code by Kevin Hilman <khilman@baylibre.com>)
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clockchips.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/sched_clock.h>
+> +
+> +#include <clocksource/timer-davinci.h>
+> +
+> +#undef pr_fmt
+> +#define pr_fmt(fmt) "%s: " fmt "\n", __func__
+> +
+> +#define DAVINCI_TIMER_REG_TIM12			0x10
+> +#define DAVINCI_TIMER_REG_TIM34			0x14
+> +#define DAVINCI_TIMER_REG_PRD12			0x18
+> +#define DAVINCI_TIMER_REG_PRD34			0x1c
+> +#define DAVINCI_TIMER_REG_TCR			0x20
+> +#define DAVINCI_TIMER_REG_TGCR			0x24
+> +
+> +#define DAVINCI_TIMER_TIMMODE_MASK		GENMASK(3, 2)
+> +#define DAVINCI_TIMER_RESET_MASK		GENMASK(1, 0)
+> +#define DAVINCI_TIMER_TIMMODE_32BIT_UNCHAINED	BIT(2)
+> +#define DAVINCI_TIMER_UNRESET			GENMASK(1, 0)
+> +
+> +#define DAVINCI_TIMER_ENAMODE_MASK		GENMASK(1, 0)
+> +#define DAVINCI_TIMER_ENAMODE_DISABLED		0x00
+> +#define DAVINCI_TIMER_ENAMODE_ONESHOT		BIT(0)
+> +
+> +#define DAVINCI_TIMER_ENAMODE_SHIFT_TIM12	6
+> +#define DAVINCI_TIMER_ENAMODE_SHIFT_TIM34	22
+> +
+> +#define DAVINCI_TIMER_MIN_DELTA			0x01
+> +#define DAVINCI_TIMER_MAX_DELTA			0xfffffffe
+> +
+> +#define DAVINCI_TIMER_TGCR_DEFAULT \
+> +		(DAVINCI_TIMER_TIMMODE_32BIT_UNCHAINED | DAVINCI_TIMER_UNRESET)
+> +
+> +/* Cache the TCR register value. */
+> +static unsigned int davinci_tcr;
+> +
+> +struct davinci_clockevent {
+> +	struct clock_event_device dev;
+> +	void __iomem *base;
+> +
+> +	unsigned int tim_off;
+> +	unsigned int prd_off;
+> +	unsigned int cmp_off;
+> +
+> +	unsigned int enamode_disabled;
+> +	unsigned int enamode_oneshot;
+> +	unsigned int enamode_mask;
+> +};
+> +
+> +static struct davinci_clockevent *
+> +to_davinci_clockevent(struct clock_event_device *clockevent)
 > +{
-> +       struct qmp *qmp = container_of(hw, struct qmp, qdss_clk);
-> +       char buf[QMP_MSG_LEN] = "{class: clock, res: qdss, val: 1}";
-
-nit: "static const" the buf?  No need to copy it to the stack each
-time.  In qmp_qdss_clk_unprepare() too.
-
-...your string is also now fixed at 34 bytes big (including the '\0').
-Do we still need to send exactly 96 bytes, or can we dumb this down to
-36?  We'll get a compile error if we overflow, right?  If this truly
-needs to be exactly 96 bytes maybe qmp_send()'s error checks should
-check for things being exactly 96 bytes instead of checking for > and
-% 4.
-
-
-> +static int qmp_qdss_clk_add(struct qmp *qmp)
+> +	return container_of(clockevent, struct davinci_clockevent, dev);
+> +}
+> +
+> +static unsigned int
+> +davinci_clockevent_read(struct davinci_clockevent *clockevent,
+> +			unsigned int reg)
 > +{
-> +       struct clk_init_data qdss_init = {
-> +               .ops = &qmp_qdss_clk_ops,
-> +               .name = "qdss",
-> +       };
-
-Can't qdss_init be "static const"?  That had the advantage of not
-needing to construct it on the stack and also of it having a longer
-lifetime.  It looks like clk_register() stores the "hw" pointer in its
-structure and the "hw" structure will have a pointer here.  While I
-can believe that it never looks at it again, it's nice if that pointer
-doesn't point somewhere on an old stack.
-
-I suppose we could go the other way and try to mark more stuff in this
-module as __init and __initdata, but even then at least the pointer
-won't be onto a stack.  ;-)
-
-
-> +       int ret;
+> +	return readl_relaxed(clockevent->base + reg);
+> +}
 > +
-> +       qmp->qdss_clk.init = &qdss_init;
-> +       ret = clk_hw_register(qmp->dev, &qmp->qdss_clk);
-> +       if (ret < 0) {
-> +               dev_err(qmp->dev, "failed to register qdss clock\n");
-> +               return ret;
-> +       }
-> +
-> +       return of_clk_add_hw_provider(qmp->dev->of_node, of_clk_hw_simple_get,
-> +                                     &qmp->qdss_clk);
-
-devm_clk_hw_register() and devm_of_clk_add_hw_provider()?  If you're
-worried about ordering you could always throw in
-devm_add_action_or_reset() to handle the qmp_pd_remove(), qmp_close()
-and mbox_free_channel().
-
-...with that you could fully get rid of qmp_remove() and also your
-setting of drvdata.
-
-
-> +static void qmp_pd_remove(struct qmp *qmp)
+> +static void davinci_clockevent_write(struct davinci_clockevent *clockevent,
+> +				     unsigned int reg, unsigned int val)
 > +{
-> +       struct genpd_onecell_data *data = &qmp->pd_data;
-> +       struct device *dev = qmp->dev;
-> +       int i;
+> +	writel_relaxed(val, clockevent->base + reg);
+> +}
 > +
-> +       of_genpd_del_provider(dev->of_node);
+> +static void davinci_tcr_update(void __iomem *base,
+> +			       unsigned int mask, unsigned int val)
+> +{
+> +	davinci_tcr &= ~mask;
+> +	davinci_tcr |= val & mask;
+
+
+I don't see when the davinci_tcr is initialized.
+
+> +	writel_relaxed(davinci_tcr, base + DAVINCI_TIMER_REG_TCR);
+> +}
 > +
-> +       for (i = 0; i < data->num_domains; i++)
-> +               pm_genpd_remove(data->domains[i]);
+> +static int davinci_clockevent_shutdown(struct clock_event_device *dev)
+> +{
+> +	struct davinci_clockevent *clockevent;
+> +
+> +	clockevent = to_davinci_clockevent(dev);
+> +
+> +	davinci_tcr_update(clockevent->base,
+> +			   clockevent->enamode_mask,
+> +			   clockevent->enamode_disabled);
+> +
+> +	return 0;
+> +}
+> +
+> +static int davinci_clockevent_set_oneshot(struct clock_event_device *dev)
+> +{
+> +	struct davinci_clockevent *clockevent = to_davinci_clockevent(dev);
+> +
+> +	davinci_clockevent_write(clockevent, clockevent->tim_off, 0x0);
+> +
+> +	davinci_tcr_update(clockevent->base,
+> +			   clockevent->enamode_mask,
+> +			   clockevent->enamode_oneshot);
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +davinci_clockevent_set_next_event_std(unsigned long cycles,
+> +				      struct clock_event_device *dev)
+> +{
+> +	struct davinci_clockevent *clockevent = to_davinci_clockevent(dev);
+> +
+> +	davinci_clockevent_shutdown(dev);
+> +
+> +	davinci_clockevent_write(clockevent, clockevent->tim_off, 0x0);
+> +	davinci_clockevent_write(clockevent, clockevent->prd_off, cycles);
+> +
+> +	davinci_clockevent_set_oneshot(dev);
+> +
+> +	return 0;
+> +}
+> +
+> +static int
+> +davinci_clockevent_set_next_event_cmp(unsigned long cycles,
+> +				      struct clock_event_device *dev)
+> +{
+> +	struct davinci_clockevent *clockevent = to_davinci_clockevent(dev);
+> +	unsigned int curr_time;
+> +
+> +	curr_time = davinci_clockevent_read(clockevent, clockevent->tim_off);
+> +	davinci_clockevent_write(clockevent,
+> +				 clockevent->cmp_off, curr_time + cycles);
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t davinci_timer_irq_timer(int irq, void *data)
+> +{
+> +	struct davinci_clockevent *clockevent = data;
+> +
+> +	if (!clockevent_state_oneshot(&clockevent->dev))
+> +		davinci_tcr_update(clockevent,
+> +				   clockevent->enamode_mask,
+> +				   clockevent->enamode_disabled);
+> +
+> +	clockevent->dev.event_handler(&clockevent->dev);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static void davinci_timer_init(void __iomem *base)
+> +{
+> +	/* Set clock to internal mode and disable it. */
+> +	writel_relaxed(0x0, base + DAVINCI_TIMER_REG_TCR);
+> +	/*
+> +	 * Reset both 32-bit timers, set no prescaler for timer 34, set the
+> +	 * timer to dual 32-bit unchained mode, unreset both 32-bit timers.
+> +	 */
+> +	writel_relaxed(DAVINCI_TIMER_TGCR_DEFAULT,
+> +		       base + DAVINCI_TIMER_REG_TGCR);
+> +	/* Init both counters to zero. */
+> +	writel_relaxed(0x0, base + DAVINCI_TIMER_REG_TIM12);
+> +	writel_relaxed(0x0, base + DAVINCI_TIMER_REG_TIM34);
+> +}
+> +
+> +int __init davinci_timer_register(struct clk *clk,
+> +				  const struct davinci_timer_cfg *timer_cfg)
+> +{
+> +	struct davinci_clockevent *clockevent;
+> +	unsigned int tick_rate, shift;
+> +	void __iomem *base;
+> +	int rv;
+> +
+> +	rv = clk_prepare_enable(clk);
+> +	if (rv) {
+> +		pr_err("Unable to prepare and enable the timer clock");
+> +		return rv;
+> +	}
+> +
+> +	base = request_mem_region(timer_cfg->reg.start,
+> +				  resource_size(&timer_cfg->reg),
+> +				  "davinci-timer");
+> +	if (!base) {
+> +		pr_err("Unable to request memory region");
+> +		return -EBUSY;
+> +	}
+> +
+> +	base = ioremap(timer_cfg->reg.start, resource_size(&timer_cfg->reg));
+> +	if (!base) {
+> +		pr_err("Unable to map the register range");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	davinci_timer_init(base);
+> +	tick_rate = clk_get_rate(clk);
+> +
+> +	clockevent = kzalloc(sizeof(*clockevent), GFP_KERNEL);
+> +	if (!clockevent) {
+> +		pr_err("Error allocating memory for clockevent data");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	clockevent->dev.name = "tim12";
+> +	clockevent->dev.features = CLOCK_EVT_FEAT_ONESHOT;
+> +	clockevent->dev.cpumask = cpumask_of(0);
+> +
+> +	clockevent->base = base;
+> +	clockevent->tim_off = DAVINCI_TIMER_REG_TIM12;
+> +	clockevent->prd_off = DAVINCI_TIMER_REG_PRD12;
+> +
+> +	shift = DAVINCI_TIMER_ENAMODE_SHIFT_TIM12;
+> +	clockevent->enamode_disabled = DAVINCI_TIMER_ENAMODE_DISABLED << shift;
+> +	clockevent->enamode_oneshot = DAVINCI_TIMER_ENAMODE_ONESHOT << shift;
+> +	clockevent->enamode_mask = DAVINCI_TIMER_ENAMODE_MASK << shift;
+> +
+> +	clockevent->dev.set_state_shutdown = davinci_clockevent_shutdown;
+> +	clockevent->dev.set_state_oneshot = davinci_clockevent_set_oneshot;
+> +
+> +	if (timer_cfg->cmp_off) {
+> +		clockevent->cmp_off = timer_cfg->cmp_off;
+> +		clockevent->dev.set_next_event =
+> +				davinci_clockevent_set_next_event_cmp;
+> +	} else {
+> +		clockevent->dev.set_next_event =
+> +				davinci_clockevent_set_next_event_std;
+> +	}
+> +
+> +	rv = request_irq(timer_cfg->irq[DAVINCI_TIMER_CLOCKEVENT_IRQ].start,
+> +			 davinci_timer_irq_timer, IRQF_TIMER,
+> +			 "clockevent", clockevent);
+> +	if (rv) {
+> +		pr_err("Unable to request the clockevent interrupt");
+> +		return rv;
+> +	}
+> +
+> +	clockevents_config_and_register(&clockevent->dev, tick_rate,
+> +					DAVINCI_TIMER_MIN_DELTA,
+> +					DAVINCI_TIMER_MAX_DELTA);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __init of_davinci_timer_register(struct device_node *np)
+> +{
+> +	struct davinci_timer_cfg timer_cfg = { };
+> +	struct clk *clk;
+> +	int rv;
+> +
+> +	rv = of_address_to_resource(np, 0, &timer_cfg.reg);
+> +	if (rv) {
+> +		pr_err("Unable to get the register range for timer");
+> +		return rv;
+> +	}
+> +
+> +	rv = of_irq_to_resource_table(np, timer_cfg.irq,
+> +				      DAVINCI_TIMER_NUM_IRQS);
+> +	if (rv != DAVINCI_TIMER_NUM_IRQS) {
+> +		pr_err("Unable to get the interrupts for timer");
+> +		return rv;
+> +	}
+> +
+> +	clk = of_clk_get(np, 0);
+> +	if (IS_ERR(clk)) {
+> +		pr_err("Unable to get the timer clock");
+> +		return PTR_ERR(clk);
+> +	}
+> +
+> +	rv = davinci_timer_register(clk, &timer_cfg);
+> +	if (rv)
+> +		clk_put(clk);
+> +
+> +	return rv;
+> +}
+> +TIMER_OF_DECLARE(davinci_timer, "ti,da830-timer", of_davinci_timer_register);
+> diff --git a/include/clocksource/timer-davinci.h b/include/clocksource/timer-davinci.h
+> new file mode 100644
+> index 000000000000..1dcc1333fbc8
+> --- /dev/null
+> +++ b/include/clocksource/timer-davinci.h
+> @@ -0,0 +1,44 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * TI DaVinci clocksource driver
+> + *
+> + * Copyright (C) 2019 Texas Instruments
+> + * Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> + */
+> +
+> +#ifndef __TIMER_DAVINCI_H__
+> +#define __TIMER_DAVINCI_H__
+> +
+> +#include <linux/clk.h>
+> +#include <linux/ioport.h>
+> +
+> +enum {
+> +	DAVINCI_TIMER_CLOCKEVENT_IRQ,
+> +	DAVINCI_TIMER_CLOCKSOURCE_IRQ,
+> +	DAVINCI_TIMER_NUM_IRQS,
+> +};
+> +
+> +/**
+> + * struct davinci_timer_cfg - davinci clocksource driver configuration struct
+> + * @reg:        register range resource
+> + * @irq:        clockevent and clocksource interrupt resources
+> + * @cmp_off:    if set - it specifies the compare register used for clockevent
+> + *
+> + * Note: if the compare register is specified, the driver will use the bottom
+> + * clock half for both clocksource and clockevent and the compare register
+> + * to generate event irqs. The user must supply the correct compare register
+> + * interrupt number.
+> + *
+> + * This is only used by da830 the DSP of which uses the top half. The timer
+> + * driver still configures the top half to run in free-run mode.
+> + */
+> +struct davinci_timer_cfg {
+> +	struct resource reg;
+> +	struct resource irq[DAVINCI_TIMER_NUM_IRQS];
+> +	unsigned int cmp_off;
+> +};
+> +
+> +int __init davinci_timer_register(struct clk *clk,
+> +				  const struct davinci_timer_cfg *data);
+> +
+> +#endif /* __TIMER_DAVINCI_H__ */
+> 
 
-Still feels like the above loop would be better as:
-  for (i = data->num_domains - 1; i >= 0; i--)
 
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-(BTW: any way you could add me to the CC list for future patches so I
-notice them earlier?)
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
--Doug
