@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3B27287C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B5BF286CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390594AbfEWTW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:22:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32952 "EHLO mail.kernel.org"
+        id S2388474AbfEWTNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:13:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390578AbfEWTWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:22:54 -0400
+        id S2387591AbfEWTM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:12:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59AC3206BA;
-        Thu, 23 May 2019 19:22:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33A4F217D7;
+        Thu, 23 May 2019 19:12:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639373;
-        bh=PBtTUBAOYf3seKE7fedPr1UQ96MftwcjzEdHhxafmvk=;
+        s=default; t=1558638777;
+        bh=wKOlZSx4CfiKezSLe4RjSocThAM1H9tuHQ8Ho95X1wE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ad7z8kjl89sYSD86X8f1Gk6siyWOaGttZb2SvMjM5hZ2S4sh7Fq3xkgl/KIPRQTRV
-         Gjbie5lqddRVWhMenb0Vy3/Tcm3O4fC0ZgiC2t6KAeB2rz52urKnEMuvdCMVAXXywG
-         I+ZlA00XchyPkYye4e5qiJdbYJZEH4uyH7Yul+pI=
+        b=cLv4lDmc4SVbyO8MiqYn8GUoo6/pHcWXrUNPddqCWzHrVjY8cdnLZzN8yF7cy7MgW
+         DxIvc4GUkDQ7kp5nnmnEo5fEJWFsjngKZsSkL1NXFO6lqpi3O1dB/IuzYlC/CQaPn3
+         gNTeyaeHZg+z7N+UuliNIwp79S/EZUrA10Xh8Ae0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@linux-mips.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org
-Subject: [PATCH 5.0 073/139] MIPS: perf: Fix build with CONFIG_CPU_BMIPS5000 enabled
-Date:   Thu, 23 May 2019 21:06:01 +0200
-Message-Id: <20190523181730.299366832@linuxfoundation.org>
+        stable@vger.kernel.org, Yifeng Li <tomli@tomli.me>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Teddy Wang <teddy.wang@siliconmotion.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.14 44/77] fbdev: sm712fb: fix boot screen glitch when sm712fb replaces VGA
+Date:   Thu, 23 May 2019 21:06:02 +0200
+Message-Id: <20190523181726.193702265@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,101 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Yifeng Li <tomli@tomli.me>
 
-commit 1b1f01b653b408ebe58fec78c566d1075d285c64 upstream.
+commit ec1587d5073f29820e358f3a383850d61601d981 upstream.
 
-arch/mips/kernel/perf_event_mipsxx.c: In function 'mipsxx_pmu_enable_event':
-arch/mips/kernel/perf_event_mipsxx.c:326:21: error: unused variable 'event' [-Werror=unused-variable]
-  struct perf_event *event = container_of(evt, struct perf_event, hw);
-                     ^~~~~
+When the machine is booted in VGA mode, loading sm712fb would cause
+a glitch of random pixels shown on the screen. To prevent it from
+happening, we first clear the entire framebuffer, and we also need
+to stop calling smtcfb_setmode() during initialization, the fbdev
+layer will call it for us later when it's ready.
 
-Fix this by making use of IS_ENABLED() to simplify the code and avoid
-unnecessary ifdefery.
-
-Fixes: 84002c88599d ("MIPS: perf: Fix perf with MT counting other threads")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@linux-mips.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mips@vger.kernel.org
-Cc: stable@vger.kernel.org # v4.18+
+Signed-off-by: Yifeng Li <tomli@tomli.me>
+Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Teddy Wang <teddy.wang@siliconmotion.com>
+Cc: <stable@vger.kernel.org>  # v4.4+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/perf_event_mipsxx.c |   21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
+ drivers/video/fbdev/sm712fb.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/arch/mips/kernel/perf_event_mipsxx.c
-+++ b/arch/mips/kernel/perf_event_mipsxx.c
-@@ -64,17 +64,11 @@ struct mips_perf_event {
- 	#define CNTR_EVEN	0x55555555
- 	#define CNTR_ODD	0xaaaaaaaa
- 	#define CNTR_ALL	0xffffffff
--#ifdef CONFIG_MIPS_MT_SMP
- 	enum {
- 		T  = 0,
- 		V  = 1,
- 		P  = 2,
- 	} range;
--#else
--	#define T
--	#define V
--	#define P
--#endif
- };
+--- a/drivers/video/fbdev/sm712fb.c
++++ b/drivers/video/fbdev/sm712fb.c
+@@ -1493,7 +1493,11 @@ static int smtcfb_pci_probe(struct pci_d
+ 	if (err)
+ 		goto failed;
  
- static struct mips_perf_event raw_event;
-@@ -325,9 +319,7 @@ static void mipsxx_pmu_enable_event(stru
- {
- 	struct perf_event *event = container_of(evt, struct perf_event, hw);
- 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
--#ifdef CONFIG_MIPS_MT_SMP
- 	unsigned int range = evt->event_base >> 24;
--#endif /* CONFIG_MIPS_MT_SMP */
+-	smtcfb_setmode(sfb);
++	/*
++	 * The screen would be temporarily garbled when sm712fb takes over
++	 * vesafb or VGA text mode. Zero the framebuffer.
++	 */
++	memset_io(sfb->lfb, 0, sfb->fb->fix.smem_len);
  
- 	WARN_ON(idx < 0 || idx >= mipspmu.num_counters);
- 
-@@ -336,21 +328,15 @@ static void mipsxx_pmu_enable_event(stru
- 		/* Make sure interrupt enabled. */
- 		MIPS_PERFCTRL_IE;
- 
--#ifdef CONFIG_CPU_BMIPS5000
--	{
-+	if (IS_ENABLED(CONFIG_CPU_BMIPS5000)) {
- 		/* enable the counter for the calling thread */
- 		cpuc->saved_ctrl[idx] |=
- 			(1 << (12 + vpe_id())) | BRCM_PERFCTRL_TC;
--	}
--#else
--#ifdef CONFIG_MIPS_MT_SMP
--	if (range > V) {
-+	} else if (IS_ENABLED(CONFIG_MIPS_MT_SMP) && range > V) {
- 		/* The counter is processor wide. Set it up to count all TCs. */
- 		pr_debug("Enabling perf counter for all TCs\n");
- 		cpuc->saved_ctrl[idx] |= M_TC_EN_ALL;
--	} else
--#endif /* CONFIG_MIPS_MT_SMP */
--	{
-+	} else {
- 		unsigned int cpu, ctrl;
- 
- 		/*
-@@ -365,7 +351,6 @@ static void mipsxx_pmu_enable_event(stru
- 		cpuc->saved_ctrl[idx] |= ctrl;
- 		pr_debug("Enabling perf counter for CPU%d\n", cpu);
- 	}
--#endif /* CONFIG_CPU_BMIPS5000 */
- 	/*
- 	 * We do not actually let the counter run. Leave it until start().
- 	 */
+ 	err = register_framebuffer(info);
+ 	if (err < 0)
 
 
