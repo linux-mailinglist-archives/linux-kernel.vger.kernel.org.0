@@ -2,132 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE6822800C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 16:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F1A128012
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 16:45:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730905AbfEWOom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 10:44:42 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33281 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730709AbfEWOol (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 10:44:41 -0400
-Received: by mail-pf1-f196.google.com with SMTP id z28so3381622pfk.0;
-        Thu, 23 May 2019 07:44:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=trLF/Pu76tcs2yNpJEmVVGLKJPxzPf+7/LopwlS1ci8=;
-        b=sf4PXYXeAQSFyn0UVZTTW2ciZr/ivjcuG5sp5GStckkZgxCyuav/So+HN6AeqF2+Uc
-         nA2qq6zG1nYL+fCcfs9sDtvvZniacIHuvyBkk5kKq5XAzEpRRikrZeczPUXmSo5RusWg
-         Vt9krzTu2EUS8SbY3x+ZUlhF5Fo4sT6eVvBIre3nN3PzAwL+hmmTWhnWqvazYVGiaOxS
-         v257kAIWtsYx4eIcnZ+pzmI7Vp8+J1/JS2AuG2NX5f/SHs5U3szZ9QMvIqyuDMT2saD4
-         zHYxtj95orWKnwBRtPaMsdifgQLK3YegNcMf/NU/hvlzQ/EQElhwesRZIuMi8IUUMQzm
-         4bJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=trLF/Pu76tcs2yNpJEmVVGLKJPxzPf+7/LopwlS1ci8=;
-        b=Rjul+5lbuwnu715oVdcNt7U02jpBae4yk+QkGvMkwEikiUS0X6x1hjhhb4cJnRrj4C
-         hikx+b+gxf9SzUSeP4228YDHV+tkBqo3c7UTiaeqo/t11mpmHrEOiI7AT93RNsQ2FQBo
-         rWbcU4PW299HmxqaNNgTzQY6KONBI9ZON93tOvFQsKXiufEmdRvENRHEUF0j6sAAiWQ4
-         xq4mHzScBsFJaH4R6LFQ2UrAAbHnffKUb358wYpZ6K4ab8Sg1Ljd44hPDBWeemNizO/l
-         LU4AjWMqUtTmrocCkT3FJCi9yd0G5PwHgouCfSDOT944EhH89zbG7MtytL+Y4QoNX6Xm
-         4vtg==
-X-Gm-Message-State: APjAAAWcEHBGnmOutXRzNDgEIecXuwxIW3JZWuDJFAsISiOQkyO03IyQ
-        XLoEcSPRmlMTGx8K2+w7rAM=
-X-Google-Smtp-Source: APXvYqzb4lEsv8vtep4ivojq/y0QGSAnx/qVDcHNABBr29g5D97ty1yHiucaSX80WUZQQvYPoGVKzQ==
-X-Received: by 2002:a17:90a:b890:: with SMTP id o16mr1669701pjr.60.1558622680943;
-        Thu, 23 May 2019 07:44:40 -0700 (PDT)
-Received: from zhanggen-UX430UQ ([66.42.35.75])
-        by smtp.gmail.com with ESMTPSA id h6sm42913471pfk.188.2019.05.23.07.44.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 07:44:40 -0700 (PDT)
-Date:   Thu, 23 May 2019 22:44:25 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     kvalo@codeaurora.org, eyalreizer@gmail.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] sdio: Fix a memory leaking bug in wl1271_probe()
-Message-ID: <20190523144425.GA26766@zhanggen-UX430UQ>
+        id S1730967AbfEWOpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 10:45:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47978 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730709AbfEWOo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 10:44:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B972A80D;
+        Thu, 23 May 2019 07:44:58 -0700 (PDT)
+Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9DF2A3F690;
+        Thu, 23 May 2019 07:44:52 -0700 (PDT)
+Date:   Thu, 23 May 2019 15:44:49 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     enh <enh@google.com>, Evgenii Stepanov <eugenis@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        kvm@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Subject: Re: [PATCH v15 00/17] arm64: untag user pointers passed to the kernel
+Message-ID: <20190523144449.waam2mkyzhjpqpur@mbp>
+References: <cover.1557160186.git.andreyknvl@google.com>
+ <20190517144931.GA56186@arrakis.emea.arm.com>
+ <CAFKCwrj6JEtp4BzhqO178LFJepmepoMx=G+YdC8sqZ3bcBp3EQ@mail.gmail.com>
+ <20190521182932.sm4vxweuwo5ermyd@mbp>
+ <201905211633.6C0BF0C2@keescook>
+ <20190522101110.m2stmpaj7seezveq@mbp>
+ <CAJgzZoosKBwqXRyA6fb8QQSZXFqfHqe9qO9je5TogHhzuoGXJQ@mail.gmail.com>
+ <20190522163527.rnnc6t4tll7tk5zw@mbp>
+ <201905221316.865581CF@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <201905221316.865581CF@keescook>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In wl1271_probe(), 'glue->core' is allocated by platform_device_alloc(),
-when this allocation fails, ENOMEM is returned. However, 'pdev_data'
-and 'glue' are allocated by devm_kzalloc() before 'glue->core'. When
-platform_device_alloc() returns NULL, we should also free 'pdev_data'
-and 'glue' before wl1271_probe() ends to prevent leaking memory.
+On Wed, May 22, 2019 at 01:47:36PM -0700, Kees Cook wrote:
+> On Wed, May 22, 2019 at 05:35:27PM +0100, Catalin Marinas wrote:
+> > The two hard requirements I have for supporting any new hardware feature
+> > in Linux are (1) a single kernel image binary continues to run on old
+> > hardware while making use of the new feature if available and (2) old
+> > user space continues to run on new hardware while new user space can
+> > take advantage of the new feature.
+> 
+> Agreed! And I think the series meets these requirements, yes?
 
-Similarly, we should free 'pdev_data' when 'glue' is NULL. And we
-should free 'pdev_data' and 'glue' when 'ret' is error.
+Yes. I mentioned this just to make sure people don't expect different
+kernel builds for different hardware features.
 
-Further, we shoulf free 'glue->dev', 'pdev_data' and 'glue' when this
-function normally ends to prevent memory leaking.
+There is also the obvious requirement which I didn't mention: new user
+space continues to run on new/subsequent kernel versions. That's one of
+the points of contention for this series (ignoring MTE) with the
+maintainers having to guarantee this without much effort. IOW, do the
+500K+ new lines in a subsequent kernel version break any user space out
+there? I'm only talking about the relaxed TBI ABI. Are the usual LTP,
+syskaller sufficient? Better static analysis would definitely help.
 
-Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
----
-diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
-index 4d4b0770..232ce5f 100644
---- a/drivers/net/wireless/ti/wlcore/sdio.c
-+++ b/drivers/net/wireless/ti/wlcore/sdio.c
-@@ -298,8 +298,10 @@ static int wl1271_probe(struct sdio_func *func,
- 	pdev_data->if_ops = &sdio_ops;
- 
- 	glue = devm_kzalloc(&func->dev, sizeof(*glue), GFP_KERNEL);
--	if (!glue)
--		return -ENOMEM;
-+	if (!glue) {
-+		ret = -ENOMEM;
-+		goto out_free1;
-+	}
- 
- 	glue->dev = &func->dev;
- 
-@@ -311,7 +313,7 @@ static int wl1271_probe(struct sdio_func *func,
- 
- 	ret = wlcore_probe_of(&func->dev, &irq, &wakeirq, pdev_data);
- 	if (ret)
--		goto out;
-+		goto out_free2;
- 
- 	/* if sdio can keep power while host is suspended, enable wow */
- 	mmcflags = sdio_get_host_pm_caps(func);
-@@ -340,7 +342,7 @@ static int wl1271_probe(struct sdio_func *func,
- 	if (!glue->core) {
- 		dev_err(glue->dev, "can't allocate platform_device");
- 		ret = -ENOMEM;
--		goto out;
-+		goto out_free2;
- 	}
- 
- 	glue->core->dev.parent = &func->dev;
-@@ -380,11 +382,20 @@ static int wl1271_probe(struct sdio_func *func,
- 		dev_err(glue->dev, "can't add platform device\n");
- 		goto out_dev_put;
- 	}
-+	platform_device_put(glue->core);
-+	devm_kfree(&func->dev, glue);
-+	devm_kfree(&func->dev, pdev_data);
- 	return 0;
- 
- out_dev_put:
- 	platform_device_put(glue->core);
- 
-+out_free2:
-+	devm_kfree(&func->dev, glue);
-+
-+out_free1:
-+	devm_kfree(&func->dev, pdev_data);
-+
- out:
- 	return ret;
- }
----
+> > For MTE, we just can't enable it by default since there are applications
+> > who use the top byte of a pointer and expect it to be ignored rather
+> > than failing with a mismatched tag. Just think of a hwasan compiled
+> > binary where TBI is expected to work and you try to run it with MTE
+> > turned on.
+> 
+> Ah! Okay, here's the use-case I wasn't thinking of: the concern is TBI
+> conflicting with MTE. And anything that starts using TBI suddenly can't
+> run in the future because it's being interpreted as MTE bits? (Is that
+> the ABI concern?
+
+That's another aspect to figure out when we add the MTE support. I don't
+think we'd be able to do this without an explicit opt-in by the user.
+
+Or, if we ever want MTE to be turned on by default (i.e. tag checking),
+even if everything is tagged with 0, we have to disallow TBI for user
+and this includes hwasan. There were a small number of programs using
+the TBI (I think some JavaScript compilers tried this). But now we are
+bringing in the hwasan support and this can be a large user base. Shall
+we add an ELF note for such binaries that use TBI/hwasan?
+
+This series is still required for MTE but we may decide not to relax the
+ABI blindly, therefore the opt-in (prctl) or personality idea.
+
+> I feel like we got into the weeds about ioctl()s and one-off bugs...)
+
+This needs solving as well. Most driver developers won't know why
+untagged_addr() is needed unless we have more rigorous types or type
+annotations and a tool to check them (we should probably revive the old
+sparse thread).
+
+> So there needs to be some way to let the kernel know which of three
+> things it should be doing:
+> 1- leaving userspace addresses as-is (present)
+> 2- wiping the top bits before using (this series)
+
+(I'd say tolerating rather than wiping since get_user still uses the tag
+in the current series)
+
+The current series does not allow any choice between 1 and 2, the
+default ABI basically becomes option 2.
+
+> 3- wiping the top bits for most things, but retaining them for MTE as
+>    needed (the future)
+
+2 and 3 are not entirely compatible as a tagged pointer may be checked
+against the memory colour by the hardware. So you can't have hwasan
+binary with MTE enabled.
+
+> I expect MTE to be the "default" in the future. Once a system's libc has
+> grown support for it, everything will be trying to use MTE. TBI will be
+> the special case (but TBI is effectively a prerequisite).
+
+The kernel handling of tagged pointers is indeed a prerequisite. The ABI
+distinction between the above 2 and 3 needs to be solved.
+
+> AFAICT, the only difference I see between 2 and 3 will be the tag handling
+> in usercopy (all other places will continue to ignore the top bits). Is
+> that accurate?
+
+Yes, mostly (for the kernel). If MTE is enabled by default for a hwasan
+binary, it will SEGFAULT (either in user space or in kernel uaccess).
+How does the kernel choose between 2 and 3?
+
+> Is "1" a per-process state we want to keep? (I assume not, but rather it
+> is available via no TBI/MTE CONFIG or a boot-time option, if at all?)
+
+Possibly, though not necessarily per process. For testing or if
+something goes wrong during boot, a command line option with a static
+label would do. The AT_FLAGS bit needs to be checked by user space. My
+preference would be per-process.
+
+> To choose between "2" and "3", it seems we need a per-process flag to
+> opt into TBI (and out of MTE).
+
+Or leave option 2 the default and get it to opt in to MTE.
+
+> For userspace, how would a future binary choose TBI over MTE? If it's
+> a library issue, we can't use an ELF bit, since the choice may be
+> "late" after ELF load (this implies the need for a prctl().) If it's
+> binary-only ("built with HWKASan") then an ELF bit seems sufficient.
+> And without the marking, I'd expect the kernel to enforce MTE when
+> there are high bits.
+
+The current plan is that a future binary issues a prctl(), after
+checking the HWCAP_MTE bit (as I replied to Elliot, the MTE instructions
+are not in the current NOP space). I'd expect this to be done by the
+libc or dynamic loader under the assumption that the binaries it loads
+do _not_ use the top pointer byte for anything else. With hwasan
+compiled objects this gets more confusing (any ELF note to identify
+them?).
+
+(there is also the risk of existing applications using TBI already but
+I'm not aware of any still using this feature other than hwasan)
+
+-- 
+Catalin
