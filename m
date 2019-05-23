@@ -2,313 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E1FD28C25
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 23:09:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CE9528C29
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 23:13:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388285AbfEWVJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 17:09:22 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:51979 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388175AbfEWVJU (ORCPT
+        id S2387894AbfEWVNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 17:13:36 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42621 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbfEWVNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 17:09:20 -0400
-Received: by mail-it1-f193.google.com with SMTP id m3so12319689itl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 14:09:19 -0700 (PDT)
+        Thu, 23 May 2019 17:13:35 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 33so804707pgv.9;
+        Thu, 23 May 2019 14:13:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DCdWUqMVpGTE6FqZCHfMHY8K5wiZoy6gpaWqmgZjo4s=;
-        b=A32rhnYX6zCMNDKeqhQiABgAOnCOQWdaexJX6FwyOkdYchKnAuxlqk7fFydjLWIfwd
-         5AL4B1MBOM8xJUzsYXX0MDDHYGCj+BX8IhSizIVp0oE/HV4ki28OTw22gTR5CHppV8gW
-         j8C6DfTJj1qs7EwaDfVk+X7H5X2mNL9HEDgmXCcg5R74Nxa4IBevjKLQrlXrc5EfEXIH
-         fcr840UeQuRHSIo3WLAUDl8qxtZLa8nqGeSkXCUg7+TmHlklab6S5JaTQ8WCCXvm0CU2
-         +MpJsvgPOGHvG5VK1A1c5iGS512iirBrxfSlpidenHDCtoogusqgsacKCQCzxDle9mfQ
-         IilQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=K2Z73ozoP4xYlRdxuI3HEY6SJZRGV7xEroO9zwT3AeM=;
+        b=JYVPyhPzum1KLZ27PNzqDRdL2C+6/4HNIeaTIpx19GqiC8GbUdgcfrz4eGT5aoU/Oh
+         KxK88BMjZouqYQUXtR9PSifl5tFXz4TKvdewyH0WP+gHzrxtKk6iTPoJQE08ZDg15zFk
+         m57LCydYZuYuBYIWz663WhFXz+ESBL0yhgiEIdrl10q0BUDb/ntQI6AWaLIm5hbhLn6V
+         SEsKM2YkAn+nPQfUCSARSrMhNqX/k+xL/YlVdduD0wVYcsQESfwdoDIcch6TJeIdJ8UT
+         e+cwCVEBvpJIeVdrUgKL6ullZ5iMKzMqqHytEv2SV5jOFDUC/FKs/Kq7lgf8U/DrCjLV
+         D+rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DCdWUqMVpGTE6FqZCHfMHY8K5wiZoy6gpaWqmgZjo4s=;
-        b=k7yuUj2CKA7JoHooKkE6J6nINgu10MXFpu3mxay0ApCj+jQ5nJwJfN5PC7E++nt1aX
-         i+2fxECzZT0G4qVcNdQcfnCssRyPZNlOWYfzxwjqV1a6JEYfSXS7jY7gvuf2Bf9iA/15
-         g8sBhEjL48zWhGiKD6cRXthr4jHgWyC294ErlmVvFATIhRO5ftD3T7fydXrDKHT2Bwv4
-         wblghJzzAO1AGJmmNBB1l73pElmuf4LZkWiPSOk2T2n0m7p3uRF5n0n6EhPramJ4pwqP
-         Rnf601EAg8K/AgLUL8b8k39gqfDbtP/86ELDnXtCUuYnrUGQnXEwcDmhC6gbnB4Y52GH
-         RXMA==
-X-Gm-Message-State: APjAAAVgzhfJpd1EcFJLtRByJ3MWh+UAc3oeeGr+LgkULWV1cH/YNvHD
-        KfDrKTUGiqTEsfPyzSwuVcN0qqO5e7k2G3b5PgQY4A==
-X-Google-Smtp-Source: APXvYqwJ+zx4+qJM/ykMGiFXVMSxdwVig7XuiPEKAOIX54Fi4grVYi4iqYEc2jlFZ/7AXf5nPrtmp2W9RJuL1g/PESI=
-X-Received: by 2002:a24:ca84:: with SMTP id k126mr14174410itg.104.1558645759476;
- Thu, 23 May 2019 14:09:19 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=K2Z73ozoP4xYlRdxuI3HEY6SJZRGV7xEroO9zwT3AeM=;
+        b=Jq5584RXXoStvN4UXOitVoXgLs1qc0iiNn+eIM22UgaVBTmpB/YnMi9kG0G3oCD13D
+         8KeHCwpDg+dDMSlv/A5OU1OaHajeocLSaBBU+YRYsso3qM2W2oPQeKJZOESVgbmN1zVX
+         /LFaRHXw88xc8iv1BLcGBTpx5FDq8gFb2ksdyTeAfPi0Wyz4CTI8/R9rO9/TzR73mVGY
+         L3pySeNFh7LGx7PK6IlV7ZgVsAzW3k7BEJd6FPx/JS0OnoNX91/tyTMxaQ5CpfMu6xiQ
+         /j67QisT9Jw++h6tqC8N4MlmWMTMiXxGFsWkwinT3rLzVm6i1HeRTOrZnZrBrwHq/ciz
+         xRaw==
+X-Gm-Message-State: APjAAAUYvzu44igwnLoo7uZkfek8M/wmyhIEryEkEAfkF6P9KmsKMYZh
+        K28nuZluOZLn10BeR/eE1n4=
+X-Google-Smtp-Source: APXvYqwq0Hf30NTU6STZxcvyVRdNPiG0zQBEJaQMoLHFsbcI1qRpiYL+p0hc0Vq/opKBMGXumybJMg==
+X-Received: by 2002:a63:1d1d:: with SMTP id d29mr101307855pgd.63.1558646014571;
+        Thu, 23 May 2019 14:13:34 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::1:d5a9])
+        by smtp.gmail.com with ESMTPSA id n35sm262768pjc.3.2019.05.23.14.13.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 14:13:33 -0700 (PDT)
+Date:   Thu, 23 May 2019 14:13:31 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Kris Van Hees <kris.van.hees@oracle.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, dtrace-devel@oss.oracle.com,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org, acme@kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, peterz@infradead.org
+Subject: Re: [RFC PATCH 00/11] bpf, trace, dtrace: DTrace BPF program type
+ implementation and sample use
+Message-ID: <20190523211330.hng74yi75ixmcznc@ast-mbp.dhcp.thefacebook.com>
+References: <201905202347.x4KNl0cs030532@aserv0121.oracle.com>
+ <20190521175617.ipry6ue7o24a2e6n@ast-mbp.dhcp.thefacebook.com>
+ <20190521184137.GH2422@oracle.com>
+ <20190521205533.evfszcjvdouby7vp@ast-mbp.dhcp.thefacebook.com>
+ <20190521173618.2ebe8c1f@gandalf.local.home>
+ <20190521214325.rr7emn5z3b7wqiiy@ast-mbp.dhcp.thefacebook.com>
+ <20190521174757.74ec8937@gandalf.local.home>
+ <20190522052327.GN2422@oracle.com>
+ <20190522205329.uu26oq2saj56og5m@ast-mbp.dhcp.thefacebook.com>
+ <20190523054610.GR2422@oracle.com>
 MIME-Version: 1.0
-References: <20190523183516.583-1-atish.patra@wdc.com>
-In-Reply-To: <20190523183516.583-1-atish.patra@wdc.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 23 May 2019 22:09:06 +0100
-Message-ID: <CAKv+Gu9VnjtgdkqfJJ1qQQ0W=z+uYN9Y-1n3Md3tV+d6a63wZA@mail.gmail.com>
-Subject: Re: [v3 PATCH] RISC-V: Add a PE/COFF compliant Image header.
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Zong Li <zong@andestech.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Tom Rini <trini@konsulko.com>, paul.walmsley@sifive.com,
-        Nick Kossifidis <mick@ics.forth.gr>,
-        linux-riscv@lists.infradead.org, marek.vasut@gmail.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190523054610.GR2422@oracle.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 23 May 2019 at 19:35, Atish Patra <atish.patra@wdc.com> wrote:
->
-> Currently, last stage boot loaders such as U-Boot can accept only
-> uImage which is an unnecessary additional step in automating boot flows.
->
-> Add a PE/COFF compliant image header that boot loaders can parse and
-> directly load kernel flat Image. The existing booting methods will continue
-> to work as it is.
->
+On Thu, May 23, 2019 at 01:46:10AM -0400, Kris Van Hees wrote:
+> 
+> I think there is a difference between a solution and a good solution.  Adding
+> a lot of knowledge in the userspace component about how things are imeplemented
+> at the kernel level makes for a more fragile infrastructure and involves
+> breaking down well established boundaries in DTrace that are part of the design
+> specifically to ensure that userspace doesn't need to depend on such intimate
+> knowledge.
 
-This statement does not make sense. This patch does not implement a
-single one of the various elements that make up a valid PE/COFF
-header.
+argh. see more below. This is fundamental disagreement.
 
-The arm64 Image header has been designed in a way so that it can
-co-exist with a PE/COFF header in the same image, and this is what
-this patch duplicates. The arm64 Image header has nothing to do with
-PE/COFF.
+> > > Another advantage of being able to operate on a more abstract probe concept
+> > > that is not tied to a specific probe type is that the userspace component does
+> > > not need to know about the implementation details of the specific probes.
+> > 
+> > If that is indeed the case that dtrace is broken _by design_
+> > and nothing on the kernel side can fix it.
+> > 
+> > bpf prog attached to NMI is running in NMI.
+> > That is very different execution context vs kprobe.
+> > kprobe execution context is also different from syscall.
+> > 
+> > The user writing the script has to be aware in what context
+> > that script will be executing.
+> 
+> The design behind DTrace definitely recognizes that different types of probes
+> operate in different ways and have different data associated with them.  That
+> is why probes (in legacy DTrace) are managed by providers, one for each type
+> of probe.  The providers handle the specifics of a probe type, and provide a
+> generic probe API to the processing component of DTrace:
+> 
+>     SDT probes -----> SDT provider -------+
+>                                           |
+>     FBT probes -----> FBT provider -------+--> DTrace engine
+>                                           |
+>     syscall probes -> systrace provider --+
+> 
+> This means that the DTrace processing component can be implemented based on a
+> generic probe concept, and the providers will take care of the specifics.  In
+> that sense, it is similar to so many other parts of the kernel where a generic
+> API is exposed so that higher level components don't need to know implementation
+> details.
+> 
+> In DTrace, people write scripts based on UAPI-style interfaces and they don't
+> have to concern themselves with e.g. knowing how to get the value of the 3rd
+> argument that was passed by the firing probe.  All they need to know is that
+> the probe will have a 3rd argument, and that the 3rd argument to *any* probe
+> can be accessed as 'arg2' (or args[2] for typed arguments, if the provider is
+> capable of providing that).  Different probes have different ways of passing
+> arguments, and only the provider code for each probe type needs to know how
+> to retrieve the argument values.
+> 
+> Does this help bring clarity to the reasons why an abstract (generic) probe
+> concept is part of DTrace's design?
 
-A PE/COFF executable header consists of
-- the letters MZ at offset 0x0 (the MS-DOS header)
-- the offset to the PE header at offset 0x3c
-- the characters PE\0\0 at the offset mentioned above, followed by the
-standard COFF header fields
-- a PE32 or PE32+ (depending on the bitness) optional* header,
-followed by a set of section headers.
+It actually sounds worse than I thought.
+If dtrace script reads some kernel field it's considered to be uapi?! ouch.
+It means dtrace development philosophy is incompatible with the linux kernel.
+There is no way kernel is going to bend itself to make dtrace scripts
+runnable if that means that all dtrace accessible fields become uapi.
 
+In stark contrast to dtrace all of bpf tracing scripts (bcc scripts
+and bpftrace scripts) are written for specific kernel with intimate
+knowledge of kernel details. They do break all the time when kernel changes.
+kprobe and tracepoints are NOT uapi. All of them can change.
+tracepoints are a bit more stable than kprobes, but they are not uapi.
 
-
-
-> Another goal of this header is to support EFI stub for RISC-V in future.
-> EFI specification needs PE/COFF image header in the beginning of the kernel
-> image in order to load it as an EFI application. In order to support
-> EFI stub, code0 should be replaced with "MZ" magic string and res5(at
-> offset 0x3c) should point to the rest of the PE/COFF header (which will
-> be added during EFI support).
->
-> This patch is based on ARM64 boot image header and provides an opprtunity
-> to combine both ARM64 & RISC-V image headers.
->
-> Tested on both QEMU and HiFive Unleashed using OpenSBI + U-Boot + Linux.
->
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
->
-> ---
-> I have not sent out corresponding U-Boot patch as all the changes are
-> compatible with current u-boot support. Once, the kernel header format
-> is agreed upon, I will update the U-Boot patch.
->
-> Changes from v2->v3
-> 1. Modified reserved fields to define a header version.
-> 2. Added header documentation.
->
-> Changes from v1-v2:
-> 1. Added additional reserved elements to make it fully PE compatible.
-> ---
->  Documentation/riscv/boot-image-header.txt | 50 ++++++++++++++++++
->  arch/riscv/include/asm/image.h            | 64 +++++++++++++++++++++++
->  arch/riscv/kernel/head.S                  | 32 ++++++++++++
->  3 files changed, 146 insertions(+)
->  create mode 100644 Documentation/riscv/boot-image-header.txt
->  create mode 100644 arch/riscv/include/asm/image.h
->
-> diff --git a/Documentation/riscv/boot-image-header.txt b/Documentation/riscv/boot-image-header.txt
-> new file mode 100644
-> index 000000000000..68abc2353cec
-> --- /dev/null
-> +++ b/Documentation/riscv/boot-image-header.txt
-> @@ -0,0 +1,50 @@
-> +                               Boot image header in RISC-V Linux
-> +                       =============================================
-> +
-> +Author: Atish Patra <atish.patra@wdc.com>
-> +Date  : 20 May 2019
-> +
-> +This document only describes the boot image header details for RISC-V Linux.
-> +The complete booting guide will be available at Documentation/riscv/booting.txt.
-> +
-> +The following 64-byte header is present in decompressed Linux kernel image.
-> +
-> +       u32 code0;                /* Executable code */
-> +       u32 code1;                /* Executable code */
-> +       u64 text_offset;          /* Image load offset, little endian */
-> +       u64 image_size;           /* Effective Image size, little endian */
-> +       u64 flags;                /* kernel flags, little endian */
-> +       u32 version;              /* Version of this header */
-> +       u32 res1  = 0;            /* Reserved */
-> +       u64 res2  = 0;            /* Reserved */
-> +       u64 magic = 0x5643534952; /* Magic number, little endian, "RISCV" */
-> +       u32 res3;                 /* Reserved for additional RISC-V specific header */
-> +       u32 res4;                 /* Reserved for PE COFF offset */
-> +
-> +This header format is compliant with PE/COFF header and largely inspired from
-> +ARM64 header. Thus, both ARM64 & RISC-V header can be combined into one common
-> +header in future.
-> +
-> +Notes:
-> +- This header can also be reused to support EFI stub for RISC-V in future. EFI
-> +  specification needs PE/COFF image header in the beginning of the kernel image
-> +  in order to load it as an EFI application. In order to support EFI stub,
-> +  code0 should be replaced with "MZ" magic string and res5(at offset 0x3c) should
-> +  point to the rest of the PE/COFF header.
-> +
-> +- version field indicate header version number.
-> +       Bits 0:15  - Minor version
-> +       Bits 16:31 - Major version
-> +
-> +  This preserves compatibility across newer and older version of the header.
-> +  The current version is defined as 0.1.
-> +
-> +- res3 is reserved for offset to any other additional fields. This makes the
-> +  header extendible in future. One example would be to accommodate ISA
-> +  extension for RISC-V in future. For current version, it is set to be zero.
-> +
-> +- In current header, the flag field has only one field.
-> +       Bit 0: Kernel endianness. 1 if BE, 0 if LE.
-> +
-> +- Image size is mandatory for boot loader to load kernel image. Booting will
-> +  fail otherwise.
-> diff --git a/arch/riscv/include/asm/image.h b/arch/riscv/include/asm/image.h
-> new file mode 100644
-> index 000000000000..61c9f20d2f19
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/image.h
-> @@ -0,0 +1,64 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifndef __ASM_IMAGE_H
-> +#define __ASM_IMAGE_H
-> +
-> +#define RISCV_IMAGE_MAGIC      "RISCV"
-> +
-> +
-> +#define RISCV_IMAGE_FLAG_BE_SHIFT      0
-> +#define RISCV_IMAGE_FLAG_BE_MASK       0x1
-> +
-> +#define RISCV_IMAGE_FLAG_LE            0
-> +#define RISCV_IMAGE_FLAG_BE            1
-> +
-> +
-> +#ifdef CONFIG_CPU_BIG_ENDIAN
-> +#define __HEAD_FLAG_BE         RISCV_IMAGE_FLAG_BE
-> +#else
-> +#define __HEAD_FLAG_BE         RISCV_IMAGE_FLAG_LE
-> +#endif
-> +
-> +#define __HEAD_FLAG(field)     (__HEAD_FLAG_##field << \
-> +                               RISCV_IMAGE_FLAG_##field##_SHIFT)
-> +
-> +#define __HEAD_FLAGS           (__HEAD_FLAG(BE))
-> +
-> +#define RISCV_HEADER_VERSION_MAJOR 0
-> +#define RISCV_HEADER_VERSION_MINOR 1
-> +
-> +#define RISCV_HEADER_VERSION (RISCV_HEADER_VERSION_MAJOR << 16 | \
-> +                             RISCV_HEADER_VERSION_MINOR)
-> +
-> +#ifndef __ASSEMBLY__
-> +/*
-> + * struct riscv_image_header - riscv kernel image header
-> + *
-> + * @code0:             Executable code
-> + * @code1:             Executable code
-> + * @text_offset:       Image load offset
-> + * @image_size:                Effective Image size
-> + * @flags:             kernel flags
-> + * @version:           version
-> + * @reserved:          reserved
-> + * @reserved:          reserved
-> + * @magic:             Magic number
-> + * @reserved:          reserved (will be used for additional RISC-V specific header)
-> + * @reserved:          reserved (will be used for PE COFF offset)
-> + */
-> +
-> +struct riscv_image_header {
-> +       u32 code0;
-> +       u32 code1;
-> +       u64 text_offset;
-> +       u64 image_size;
-> +       u64 flags;
-> +       u32 version;
-> +       u32 res1;
-> +       u64 res2;
-> +       u64 magic;
-> +       u32 res3;
-> +       u32 res4;
-> +};
-> +#endif /* __ASSEMBLY__ */
-> +#endif /* __ASM_IMAGE_H */
-> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-> index 370c66ce187a..577893bb150d 100644
-> --- a/arch/riscv/kernel/head.S
-> +++ b/arch/riscv/kernel/head.S
-> @@ -19,9 +19,41 @@
->  #include <asm/thread_info.h>
->  #include <asm/page.h>
->  #include <asm/csr.h>
-> +#include <asm/image.h>
->
->  __INIT
->  ENTRY(_start)
-> +       /*
-> +        * Image header expected by Linux boot-loaders. The image header data
-> +        * structure is described in asm/image.h.
-> +        * Do not modify it without modifying the structure and all bootloaders
-> +        * that expects this header format!!
-> +        */
-> +       /* jump to start kernel */
-> +       j _start_kernel
-> +       /* reserved */
-> +       .word 0
-> +       .balign 8
-> +#if __riscv_xlen == 64
-> +       /* Image load offset(2MB) from start of RAM */
-> +       .dword 0x200000
-> +#else
-> +       /* Image load offset(4MB) from start of RAM */
-> +       .dword 0x400000
-> +#endif
-> +       /* Effective size of kernel image */
-> +       .dword _end - _start
-> +       .dword __HEAD_FLAGS
-> +       .word RISCV_HEADER_VERSION
-> +       .word 0
-> +       .dword 0
-> +       .asciz RISCV_IMAGE_MAGIC
-> +       .word 0
-> +       .balign 4
-> +       .word 0
-> +
-> +.global _start_kernel
-> +_start_kernel:
->         /* Mask all interrupts */
->         csrw CSR_SIE, zero
->         csrw CSR_SIP, zero
-> --
-> 2.21.0
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
