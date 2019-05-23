@@ -2,111 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E90682787A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 10:52:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B16327873
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 10:51:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730115AbfEWIwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 04:52:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34272 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726081AbfEWIwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 04:52:04 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9633220675;
-        Thu, 23 May 2019 08:52:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558601523;
-        bh=GvIxnz2QDkzaDXhCwkyYIbh58BouSz387m9539g/2A8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cGQ/xj15H4e7wzpcSW5LwgkL0k2fAuxUfKby8GOqJq7U+CObYxAh8WO4TLHsuSU42
-         5OmnsByuClenpeucDd2R6GXBQ9Q2yBeqlfsJP9xf/abAQ4i3T1VngiNyi/Mf833qTw
-         +QEBNS3NTcj3UbMAhjKZ/c3iC5Hv1hkYAHSrkH3c=
-Date:   Thu, 23 May 2019 16:51:04 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Ran Wang <ran.wang_1@nxp.com>,
-        Bhaskar Upadhaya <bhaskar.upadhaya@nxp.com>
-Cc:     Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: ls1028a: Fix CPU idle fail.
-Message-ID: <20190523085104.GP9261@dragon>
-References: <20190517045753.3709-1-ran.wang_1@nxp.com>
+        id S1729820AbfEWIvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 04:51:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55230 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726230AbfEWIvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 04:51:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B42A7ADD8;
+        Thu, 23 May 2019 08:51:09 +0000 (UTC)
+Message-ID: <c756c54d5e924d61b8ec6eccecf9bfdce7c2b543.camel@suse.de>
+Subject: Re: [RFC v2 3/5] clk: bcm2835: use firmware interface to update pllb
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>
+Cc:     linux-arm-kernel@lists.infradead.org, ptesarik@suse.com,
+        sboyd@kernel.org, viresh.kumar@linaro.org, mturquette@baylibre.com,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, mbrugger@suse.de, ssuloev@orpaltech.com
+Date:   Thu, 23 May 2019 10:51:07 +0200
+In-Reply-To: <1599901940.259900.1558475026379@email.ionos.de>
+References: <20190520104708.11980-1-nsaenzjulienne@suse.de>
+         <20190520104708.11980-4-nsaenzjulienne@suse.de>
+         <ebc78880-418f-f507-021c-41295113e041@i2se.com>
+         <6383b357-3f7e-f031-f59f-61c598e44763@i2se.com>
+         <a142b72b828a798610d885d81189dd21b1870d78.camel@suse.de>
+         <1599901940.259900.1558475026379@email.ionos.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-rttIxA1wzU/XwAkxrIx0"
+User-Agent: Evolution 3.32.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190517045753.3709-1-ran.wang_1@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 17, 2019 at 12:57:53PM +0800, Ran Wang wrote:
-> PSCI spec define 1st parameter's bit 16 of function CPU_SUSPEND to
-> indicate CPU State Type: 0 for standby, 1 for power down. In this
-> case, we want to select standby for CPU idle feature. But current
-> setting wrongly select power down and cause CPU SUSPEND fail every
-> time. Need this fix.
-> 
-> Fixes: 8897f3255c9c ("arm64: dts: Add support for NXP LS1028A SoC")
-> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
 
-Leo, Bhaskar,
+--=-rttIxA1wzU/XwAkxrIx0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Do you guys agree with it?
+On Tue, 2019-05-21 at 23:43 +0200, Stefan Wahren wrote:
+> > Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 21. Mai 2019 um =
+17:47
+> > geschrieben:
+> >=20
+> >=20
+> > Hi Stefan, thanks for your comments!
+> >=20
+> > On Tue, 2019-05-21 at 14:40 +0200, Stefan Wahren wrote:
+> > > Hi Nicolas,
+> > >=20
+> > > On 20.05.19 14:11, Stefan Wahren wrote:
+> > > > Hi Nicolas,
+> > > >=20
+> > > > the following comments applies only in case Eric is fine with the w=
+hole
+> > > > approach.
+> > > >=20
+> > > > On 20.05.19 12:47, Nicolas Saenz Julienne wrote:
+> > > > > Raspberry Pi's firmware, which runs in a dedicated processor, kee=
+ps
+> > > > maybe we should clarify that the firmware is running in the VPU
+> > > > > track of the board's temperature and voltage. It's resposible for
+> > > > > scaling the CPU frequency whenever it deems the device reached an
+> > > > > unsafe
+> > > > > state. On top of that the firmware provides an interface which al=
+lows
+> > > > > Linux to to query the clock's state or change it's frequency.
+> > > > I think this requires a separate update of the devicetree binding.
+> > > > > Being the sole user of the bcm2835 clock driver, this integrates =
+the
+> > > > > firmware interface into the clock driver and adds a first user: t=
+he
+> > > > > CPU
+> > > > > pll, also known as 'pllb'.
+> > > > Please verify that the kernel still works (and this clock driver pr=
+obe)
+> > > > under the following conditions:
+> > > >=20
+> > > > - CONFIG_RASPBERRYPI_FIRMWARE=3Dn
+> > > > - CONFIG_RASPBERRYPI_FIRMWARE=3Dm
+> > > > - older DTBs without patch #1
+> > > i thought about this and the case this driver would return
+> > > -EPROBE_DEFER. The clock driver is too essential for doing such a thi=
+ng.
+> > > So i think the best solution would be to move these changes into a
+> > > separate driver which should be register by the clock driver (similia=
+r
+> > > to vchiq). This also avoid the need of a new device tree binding.
+> >=20
+> > I understand your concerns.
+> >=20
+> > Wouldn't you prefer registering the device trough the device tree? I'd =
+go
+> > with
+> > the same approach as the firmware touchscreen driver, which is register=
+ed
+> > after
+> > the firmware's probe trough dt's 'simple-bus'. That said, it's not a
+> > strongly
+> > held opinion, I'm happy with whatever solution as long as it works.
+>=20
+> A devicetree binding always introduce some kind of inflexibility. In case
+> someone finds a better solution later things can get really messy. A rece=
+nt
+> example is the clock handling for i2c-bcm2835.
 
-Shawn
+Fair enough.
 
-> ---
->  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi |   18 +++++++++---------
->  1 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> index b045812..bf7f845 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-> @@ -28,7 +28,7 @@
->  			enable-method = "psci";
->  			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&l2>;
-> -			cpu-idle-states = <&CPU_PH20>;
-> +			cpu-idle-states = <&CPU_PW20>;
->  		};
->  
->  		cpu1: cpu@1 {
-> @@ -38,7 +38,7 @@
->  			enable-method = "psci";
->  			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&l2>;
-> -			cpu-idle-states = <&CPU_PH20>;
-> +			cpu-idle-states = <&CPU_PW20>;
->  		};
->  
->  		l2: l2-cache {
-> @@ -53,13 +53,13 @@
->  		 */
->  		entry-method = "arm,psci";
->  
-> -		CPU_PH20: cpu-ph20 {
-> -			compatible = "arm,idle-state";
-> -			idle-state-name = "PH20";
-> -			arm,psci-suspend-param = <0x00010000>;
-> -			entry-latency-us = <1000>;
-> -			exit-latency-us = <1000>;
-> -			min-residency-us = <3000>;
-> +		CPU_PW20: cpu-pw20 {
-> +			  compatible = "arm,idle-state";
-> +			  idle-state-name = "PW20";
-> +			  arm,psci-suspend-param = <0x0>;
-> +			  entry-latency-us = <2000>;
-> +			  exit-latency-us = <2000>;
-> +			  min-residency-us = <6000>;
->  		};
->  	};
->  
-> -- 
-> 1.7.1
-> 
+> > I get from your comments that you'd like the register based version of
+> > 'pllb'
+> > and 'pllb_arm' to be loaded if for some reason the firmware isn't avail=
+able.
+> > Is
+> > that right?=20
+>=20
+> This wasn't my intention. I would prefer a simple approch here (no handov=
+er).=20
+>=20
+> > The main problem I see with this is the duplication of 'pllb' and
+> > 'pllb_arm'. Both drivers will create the same clock device through diff=
+erent
+> > interfaces. Any suggestions on how to deal with that? If not I can simp=
+ly
+> > remove 'pllb' and 'pllb_arm' from clk-bcm2835.c.
+>=20
+> Yes. So even if this driver is disabled, there shouldn't be a regression.=
+ Or
+> did i miss something?
+
+No, there shoudn't be any regressions as these clocks are not being used at=
+ the
+moment.
+
+I'll send a follow-up series soon :)
+
+Regrads,
+Nicolas
+
+
+--=-rttIxA1wzU/XwAkxrIx0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlzmXvsACgkQlfZmHno8
+x/5grgf8DaKHj4n6xgx7Eziw8ZvWeoGXlEqp0jORn3i0LMRCmP3NfeQjeI6JKcqk
+cr+LKsKAOdKqi+LSK5E97AD+dhifsZBkQWdXiiWmlqTALBoRx9jug+Bz5hcXQWSP
+GEc7b3ptWKWhdHCkNYDPUMs/2QECyhvdzS64cqzxyWVitzkue3oucEuHBB0zKEVS
+d4O3HJXxgFhUE0hyBEmlaPm94mBq9wIywm01Ifj2Lmzb/gXrM8mYfyZoxW9jM7tl
+2bXiN04WcM6kSq+J4t+3v+baNCP6YlHDnDU7scJ2grPkydirg+E5O87YrKJ0RGys
+okD9UnL1HYEPsLM94xjqSw+H5f2sgQ==
+=kYhp
+-----END PGP SIGNATURE-----
+
+--=-rttIxA1wzU/XwAkxrIx0--
+
