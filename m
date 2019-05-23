@@ -2,95 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A885028BE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 22:51:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C20528B7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 22:29:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388166AbfEWUvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 16:51:09 -0400
-Received: from gateway23.websitewelcome.com ([192.185.48.104]:18369 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387894AbfEWUvI (ORCPT
+        id S2387951AbfEWU3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 16:29:40 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:39290 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387834AbfEWU3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 16:51:08 -0400
-X-Greylist: delayed 1309 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 May 2019 16:51:08 EDT
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 324496CE03
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 15:29:19 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id TuL1hXirYdnCeTuL1hDcUO; Thu, 23 May 2019 15:29:19 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.47.159] (port=34524 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hTuL0-000Lzk-50; Thu, 23 May 2019 15:29:18 -0500
-Date:   Thu, 23 May 2019 15:29:17 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ALSA: Use struct_size() helper
-Message-ID: <20190523202917.GA12595@embeddedor>
+        Thu, 23 May 2019 16:29:39 -0400
+Received: by mail-it1-f195.google.com with SMTP id 9so10482431itf.4
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 13:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=b890wSvSu6wn7E/uDIjk2vqaDgCqNzWOhAkC3m9/u2s=;
+        b=Oh21H9o532d2n/TnnynzsE2ljIHzgvh1GxeZTfW2qHwe3qovfNr5GvwkMjmzzVASMz
+         Ia9juX5Ktr3S8qTF/YJHNxCt6CaUVoykR+EYa013yQLepgHgtg0j0znllhIvqIAShZDw
+         4WUocTAH0WMfZVqIMAevGQTiRV3Q7Wo1FYCD7Idb8bWJrytQ9B+mCrvaW/Y9kb3ddC8w
+         qi0s1otayOcCHqXNqVEvIuOiPH3oe2ibsYGcrmU1UywHhpLR8LdjYq0apUM74Ra8RS3F
+         T+zDEyFLJBLLEUvOaReB2N4eiDd3iTFZgg/vvjmfyoNCZXwF2JsBICr3Dggkrv/bqkih
+         e3TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=b890wSvSu6wn7E/uDIjk2vqaDgCqNzWOhAkC3m9/u2s=;
+        b=T+rWsxoqC/hyXyx/zQ6Mu1bHx1Y9yJosMqRCh1yvHDx7XQ8JjGzRTZAvvs9+vtqwdi
+         ww+s6FsBe9ginLk0Pahtj+TDDHU6V4sdxim9OZRpS9/REoPFgpJgxN6tidhWwnUU6Cro
+         fmTHta0eIIDhye34geTHV33sjMDx8y7ByJwjIP5ksyOAOJGUWji4hWB/YF4KfKOpGmyf
+         bkITDx/K6QRCfd6AjRhwsjVQq8RmhLj5OzuwXeg824+MctHmkljgcxXHAOYjTLcRzD9P
+         PSHqP806meigg0IuYh6NMLBV5DuPlERDwJFZQ6gl98HFQhtGt29+plKXgAVjsKblvH8n
+         jLIg==
+X-Gm-Message-State: APjAAAVqAQWHJ9enNNcODV+lxgZOGWF52MBq3cNzFwHxv5+9NiTv5580
+        hDynmZA6igGVoSbz3JjqGaDvpw==
+X-Google-Smtp-Source: APXvYqwoBcWiq9kt8e9AFxHiOgATa2Rx2JHeWpNLhTfaKeetKbRVbLGHjaraqPj3ixUZof8y8n2B5A==
+X-Received: by 2002:a24:d43:: with SMTP id 64mr7541897itx.114.1558643378930;
+        Thu, 23 May 2019 13:29:38 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id i25sm194019ioi.42.2019.05.23.13.29.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 May 2019 13:29:38 -0700 (PDT)
+Date:   Thu, 23 May 2019 13:29:37 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Alan Mikhak <alan.mikhak@sifive.com>
+cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kishon@ti.com, lorenzo.pieralisi@arm.com,
+        linux-riscv@lists.infradead.org, palmer@sifive.com
+Subject: Re: [PATCH 1/2] tools: PCI: Fix broken pcitest compilation
+In-Reply-To: <1558642464-9946-2-git-send-email-alan.mikhak@sifive.com>
+Message-ID: <alpine.DEB.2.21.9999.1905231329130.31734@viisi.sifive.com>
+References: <1558642464-9946-1-git-send-email-alan.mikhak@sifive.com> <1558642464-9946-2-git-send-email-alan.mikhak@sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.47.159
-X-Source-L: No
-X-Exim-ID: 1hTuL0-000Lzk-50
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.47.159]:34524
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of the struct_size() helper instead of an open-coded version
-in order to avoid any potential type mistakes, in particular in the
-context in which this code is being used.
+On Thu, 23 May 2019, Alan Mikhak wrote:
 
-So, replace the following form:
+> From: Alan Mikhak <alan.mikhak@sifive.com>
 
-sizeof(struct rate_priv) + src_format->channels * sizeof(struct rate_channel)
+Please drop this line.
 
-with:
+> Fixes: fef31ecaaf2c ("tools: PCI: Fix compilation warnings")
 
-struct_size(data, channels, src_format->channels)
+This goes down below with the Signed-off-by: lines.
 
-This code was detected with the help of Coccinelle.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- sound/core/oss/rate.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/core/oss/rate.c b/sound/core/oss/rate.c
-index 2fa9299a440d..7cd09cef6961 100644
---- a/sound/core/oss/rate.c
-+++ b/sound/core/oss/rate.c
-@@ -323,8 +323,8 @@ int snd_pcm_plugin_build_rate(struct snd_pcm_substream *plug,
- 
- 	err = snd_pcm_plugin_build(plug, "rate conversion",
- 				   src_format, dst_format,
--				   sizeof(struct rate_priv) +
--				   src_format->channels * sizeof(struct rate_channel),
-+				   struct_size(data, channels,
-+					       src_format->channels),
- 				   &plugin);
- 	if (err < 0)
- 		return err;
--- 
-2.21.0
-
+- Paul
