@@ -2,103 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D0F28D17
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 00:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49C9528D2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 00:34:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388637AbfEWWb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 18:31:28 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:60076 "EHLO ale.deltatee.com"
+        id S2388521AbfEWWd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 18:33:28 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:51085 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388554AbfEWWbP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 18:31:15 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hTwEv-00062W-R4; Thu, 23 May 2019 16:31:13 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hTwEq-0001ST-L6; Thu, 23 May 2019 16:31:04 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kselftest@vger.kernel.org, Jon Mason <jdmason@kudzu.us>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Eric Pilmore <epilmore@gigaio.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu, 23 May 2019 16:31:00 -0600
-Message-Id: <20190523223100.5526-11-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190523223100.5526-1-logang@deltatee.com>
-References: <20190523223100.5526-1-logang@deltatee.com>
+        id S2387621AbfEWWd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 18:33:27 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45945w370pz9sBr;
+        Fri, 24 May 2019 08:33:24 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1558650804;
+        bh=QWurjPbadvLi/z4O5dSr2aM3lqa3PhG88Zxdi9mp4fU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gVRWsJWIDPYNKirFujwrxZ7RMk66i1doKjzuAFeU/6iDA7LjggRGlzRrF7b+OQzY1
+         KZU85tETll4C0hRASyIIKno490dRU0V7OH2CwfdMrvm/uil2kP+mVD+7yTTic3vzCv
+         B6vuVXuAJWCLF8qbyxGia/g1mYq8smC9DxF5apV9rMa0uMK98xlQrqcMM6In9SndEA
+         LJedpbKXumBdnR6CF6IiEGddJ0Py3HG0FZAEiQnEVrebdj/VPIivd6QLIcXuoQ91Ot
+         RiCOG/BwTDgH7ihkaPjKO0LoI6n824F++hfGdmC2WgJhADWfOJbdWvCoyjKm3YcoY6
+         0WFp4JIirWHzg==
+Date:   Fri, 24 May 2019 08:33:21 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Keith Busch <keith.busch@intel.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the block tree
+Message-ID: <20190524083321.7ada6382@canb.auug.org.au>
+In-Reply-To: <20190523215206.GA15192@localhost.localdomain>
+References: <20190524074500.1fde68d6@canb.auug.org.au>
+        <20190523215206.GA15192@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-ntb@googlegroups.com, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org, jdmason@kudzu.us, joro@8bytes.org, bhelgaas@google.com, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, epilmore@gigaio.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: [PATCH v5 10/10] NTB: Describe the ntb_msi_test client in the documentation.
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bH4wz8EXsUVjijbXawieSEI"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a blurb in Documentation/ntb.txt to describe the ntb_msi_test tool's
-debugfs interface. Similar to the (out of date) ntb_tool description.
+--Sig_/bH4wz8EXsUVjijbXawieSEI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- Documentation/ntb.txt | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Hi Keith,
 
-diff --git a/Documentation/ntb.txt b/Documentation/ntb.txt
-index a043854d28df..802a539f1592 100644
---- a/Documentation/ntb.txt
-+++ b/Documentation/ntb.txt
-@@ -194,6 +194,33 @@ Debugfs Files:
- 	This file is used to read and write peer scratchpads.  See
- 	*spad* for details.
- 
-+NTB MSI Test Client (ntb\_msi\_test)
-+------------------------------------
-+
-+The MSI test client serves to test and debug the MSI library which
-+allows for passing MSI interrupts across NTB memory windows. The
-+test client is interacted with through the debugfs filesystem:
-+
-+* *debugfs*/ntb\_tool/*hw*/
-+	A directory in debugfs will be created for each
-+	NTB device probed by the tool.  This directory is shortened to *hw*
-+	below.
-+* *hw*/port
-+	This file describes the local port number
-+* *hw*/irq*_occurrences
-+	One occurrences file exists for each interrupt and, when read,
-+	returns the number of times the interrupt has been triggered.
-+* *hw*/peer*/port
-+	This file describes the port number for each peer
-+* *hw*/peer*/count
-+	This file describes the number of interrupts that can be
-+	triggered on each peer
-+* *hw*/peer*/trigger
-+	Writing an interrupt number (any number less than the value
-+	specified in count) will trigger the interrupt on the
-+	specified peer. That peer's interrupt's occurrence file
-+	should be incremented.
-+
- NTB Hardware Drivers
- ====================
- 
--- 
-2.20.1
+On Thu, 23 May 2019 15:52:07 -0600 Keith Busch <kbusch@kernel.org> wrote:
+>
+> On Fri, May 24, 2019 at 07:45:00AM +1000, Stephen Rothwell wrote:
+> > Commits
+> >=20
+> >   5fb4aac756ac ("nvme: release namespace SRCU protection before perform=
+ing controller ioctls")
+> >   90ec611adcf2 ("nvme: merge nvme_ns_ioctl into nvme_ioctl")
+> >   3f98bcc58cd5 ("nvme: remove the ifdef around nvme_nvm_ioctl")
+> >   100c815cbd56 ("nvme: fix srcu locking on error return in nvme_get_ns_=
+from_disk")
+> >=20
+> > are missing a Signed-off-by from their committer. =20
+>=20
+> Oops, I'd only added my Reviewed-by. Do I need to update the commit
+> messages and resend, or is this just putting me on notice for next time?
 
+That depends on Jens ...
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/bH4wz8EXsUVjijbXawieSEI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlznH7EACgkQAVBC80lX
+0GzBnQf/dI0C/I6VfskUrct9z8/c/UiS7V4TOegHThOyh+n+WRFgZH/Pm7mezScA
+uwqHlNd9CI9qIoQatQHg93I6tjtcB/hYSMDQEqTEvaBz39NqFZJuJWY4z+9Uk4YR
+4QJRKSi99ABMrc4RtNQUFrk8fBW49M/uBpZ2McY0TheR4m/6Lom90a7WQyCyeqbz
+w3CTOAP3UAd/KkMgEHYGKH1GI4XmdB15fstbGtd1XCTw0VjTWOu8r7d5IWYrSJWQ
+Pkh8t1q2osTZFbe3Yti9iobdsbcF2oXt+EqyrZEGxaqMBbcw5uglQuS0t8gPhkAh
+ls19SIdwHf4skdZraAqcipgaFH+K2A==
+=D15q
+-----END PGP SIGNATURE-----
+
+--Sig_/bH4wz8EXsUVjijbXawieSEI--
