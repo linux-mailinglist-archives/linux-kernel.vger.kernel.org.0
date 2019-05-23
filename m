@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48A9D2868E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2425289EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:43:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387820AbfEWTK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:10:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43676 "EHLO mail.kernel.org"
+        id S2389393AbfEWTnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:43:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387789AbfEWTKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:10:22 -0400
+        id S2389104AbfEWTSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:18:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3061C217D7;
-        Thu, 23 May 2019 19:10:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4203205ED;
+        Thu, 23 May 2019 19:18:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638621;
-        bh=zMokBmG2SiKr56AHDr4LskiULYRSW7ptbdGvkBWruxw=;
+        s=default; t=1558639086;
+        bh=uoGfpUeuIvKrRjJ8W9UmvXGRoaQW3kSZZ1iO8OjKlIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AvVOGvixZJkd7ZD/RCWRrjixe/1phTotUiVk2Xp3jttW/vJI6iCnoherNfXOdhdhB
-         H/r5jAKRcRjgFUAfb48cARgdvKZROkBxXeT5E0JZwdPXM7U4Y81RcMZsbNyedo8fk6
-         bx9uOKs5Nw3hiUaH5Fle9MvKo8W3T1Vfo1yKs/GM=
+        b=oGMfBR3UkQhlc1fyPCiawNBaGYxTb/9XrCgRbZbLfUKUn12ytGnVSE5UIJ/G/2BCV
+         NfTlwag4SPUp70Dtu8speJjcEKmcOdmUw8VjOXj+iLTmKXYSga2OuN9aQ045RfAGpA
+         nDHwp/q6FBzH3R2P0tYgs1YjGd8jR/ra4qZ9Hc3c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 47/53] KVM: arm/arm64: Ensure vcpu target is unset on reset failure
+        stable@vger.kernel.org,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.19 072/114] PCI: Init PCIe feature bits for managed host bridge alloc
 Date:   Thu, 23 May 2019 21:06:11 +0200
-Message-Id: <20190523181718.436163153@linuxfoundation.org>
+Message-Id: <20190523181738.279463354@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
-References: <20190523181710.981455400@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 811328fc3222f7b55846de0cd0404339e2e1e6d7 ]
+From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 
-A failed KVM_ARM_VCPU_INIT should not set the vcpu target,
-as the vcpu target is used by kvm_vcpu_initialized() to
-determine if other vcpu ioctls may proceed. We need to set
-the target before calling kvm_reset_vcpu(), but if that call
-fails, we should then unset it and clear the feature bitmap
-while we're at it.
+commit 6302bf3ef78dd210b5ff4a922afcb7d8eff8a211 upstream.
 
-Signed-off-by: Andrew Jones <drjones@redhat.com>
-[maz: Simplified patch, completed commit message]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Two functions allocate a host bridge: devm_pci_alloc_host_bridge() and
+pci_alloc_host_bridge().  At the moment, only the unmanaged one initializes
+the PCIe feature bits, which prevents from using features such as hotplug
+or AER on some systems, when booting with device tree.  Make the
+initialization code common.
+
+Fixes: 02bfeb484230 ("PCI/portdrv: Simplify PCIe feature permission checking")
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+CC: stable@vger.kernel.org	# v4.17+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/kvm/arm.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/pci/probe.c |   23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/kvm/arm.c b/arch/arm/kvm/arm.c
-index a670c70f4def9..dfc00a5bdc10d 100644
---- a/arch/arm/kvm/arm.c
-+++ b/arch/arm/kvm/arm.c
-@@ -801,7 +801,7 @@ int kvm_vm_ioctl_irq_line(struct kvm *kvm, struct kvm_irq_level *irq_level,
- static int kvm_vcpu_set_target(struct kvm_vcpu *vcpu,
- 			       const struct kvm_vcpu_init *init)
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -535,16 +535,9 @@ static void pci_release_host_bridge_dev(
+ 	kfree(to_pci_host_bridge(dev));
+ }
+ 
+-struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
++static void pci_init_host_bridge(struct pci_host_bridge *bridge)
  {
--	unsigned int i;
-+	unsigned int i, ret;
- 	int phys_target = kvm_target_cpu();
+-	struct pci_host_bridge *bridge;
+-
+-	bridge = kzalloc(sizeof(*bridge) + priv, GFP_KERNEL);
+-	if (!bridge)
+-		return NULL;
+-
+ 	INIT_LIST_HEAD(&bridge->windows);
+-	bridge->dev.release = pci_release_host_bridge_dev;
  
- 	if (init->target != phys_target)
-@@ -836,9 +836,14 @@ static int kvm_vcpu_set_target(struct kvm_vcpu *vcpu,
- 	vcpu->arch.target = phys_target;
- 
- 	/* Now we know what it is, we can reset it. */
--	return kvm_reset_vcpu(vcpu);
--}
-+	ret = kvm_reset_vcpu(vcpu);
-+	if (ret) {
-+		vcpu->arch.target = -1;
-+		bitmap_zero(vcpu->arch.features, KVM_VCPU_MAX_FEATURES);
-+	}
- 
-+	return ret;
+ 	/*
+ 	 * We assume we can manage these PCIe features.  Some systems may
+@@ -557,6 +550,18 @@ struct pci_host_bridge *pci_alloc_host_b
+ 	bridge->native_shpc_hotplug = 1;
+ 	bridge->native_pme = 1;
+ 	bridge->native_ltr = 1;
 +}
++
++struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
++{
++	struct pci_host_bridge *bridge;
++
++	bridge = kzalloc(sizeof(*bridge) + priv, GFP_KERNEL);
++	if (!bridge)
++		return NULL;
++
++	pci_init_host_bridge(bridge);
++	bridge->dev.release = pci_release_host_bridge_dev;
  
- static int kvm_arch_vcpu_ioctl_vcpu_init(struct kvm_vcpu *vcpu,
- 					 struct kvm_vcpu_init *init)
--- 
-2.20.1
-
+ 	return bridge;
+ }
+@@ -571,7 +576,7 @@ struct pci_host_bridge *devm_pci_alloc_h
+ 	if (!bridge)
+ 		return NULL;
+ 
+-	INIT_LIST_HEAD(&bridge->windows);
++	pci_init_host_bridge(bridge);
+ 	bridge->dev.release = devm_pci_release_host_bridge_dev;
+ 
+ 	return bridge;
 
 
