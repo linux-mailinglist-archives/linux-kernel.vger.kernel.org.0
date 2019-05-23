@@ -2,113 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EC6C2747C
+	by mail.lfdr.de (Postfix) with ESMTP id C84572747D
 	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 04:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729698AbfEWCgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 22:36:44 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34824 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbfEWCgo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 22:36:44 -0400
-Received: by mail-pg1-f193.google.com with SMTP id t1so2291797pgc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 19:36:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TYy9mnGw838Z6ch8hH4W+J8qg+DBgD5PvvxcXV/fJrw=;
-        b=Ez83ZcJnZxAbc3c67jAKqZGUKDpO8IL+z/Umj+K7A00qOC2f+8dz2OhjS5rADuxLOM
-         L18C9kkeAB4ke26FQq4TK8sak/eym9qz/AoeoQSIVFjvRfIqk1MhW8i/yVY9J2pH1qsd
-         85MKzoVbR/cYzxu8wjzBHvob5IvUZtLld+2hgiJrKHdj2szRhWyCO/OsBOxUl97mEfIu
-         BauqGWmOgUqxrbLbCtn406wSSr5kh5rRr2Z/7emMgs9LjMcwAq4PRCzFKH3uvtV7CaG2
-         wzf4A/cdyk75MJYZzuiZNvXK9qJRI/wPeQHqtxt/laYhkl5pH2jzhhat7E/i0OtDWLS3
-         yjnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TYy9mnGw838Z6ch8hH4W+J8qg+DBgD5PvvxcXV/fJrw=;
-        b=FzdwRvXe76Lxtg7U1Z6K1aegjLR9qDcyUjKIalEuftF0xGXEELH6ux2xoaP2zP6mfB
-         Dsua0QYbqLfOZ4KNdB/jns3aMPjeUAU8URxWzVIkD4GlZo7l+xNaFz0LKlmlatpf1/mm
-         bf+oq41Jjb0qXyt0NYFbdGZWQSP70YT2fHSw86tuNZ1I9Q4E8yWryTLjtYyyn3hKwsxR
-         dkLsc2dAGODrhKPguDewxjykRvl1Y/6dTCg7O3iUbB6VBIgutYyxeX3wMw8sstzrsWsN
-         KX82Q3//aq7UJX1aNdNFlGGjMOGK+9tq9oKgD802HvWhhau7fRsujV3z7pgFZrd1A1B6
-         t+GA==
-X-Gm-Message-State: APjAAAXsD8YZf3So/N7LnfTwyBh0kBsvzsWLkz8Leep/p50GavWXFxhy
-        trfh3lJYQLUn4U9dUUmuYfw=
-X-Google-Smtp-Source: APXvYqwgSCQjm6qqsQ2FVUFP7eAp8i4/6rVj3AInpbf5h+8sjCBrGQM4LzpGB8wfeOaGq3eIYOgohg==
-X-Received: by 2002:a63:ff0f:: with SMTP id k15mr92609291pgi.407.1558579003658;
-        Wed, 22 May 2019 19:36:43 -0700 (PDT)
-Received: from google.com ([2401:fa00:d:10:75ad:a5d:715f:f6d8])
-        by smtp.gmail.com with ESMTPSA id o1sm18555290pfa.66.2019.05.22.19.36.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 22 May 2019 19:36:43 -0700 (PDT)
-Date:   Thu, 23 May 2019 11:36:38 +0900
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
-        Krister Johansen <kjlx@templeofstupid.com>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>
-Subject: Re: [PATCH 1/3] perf tools: Protect reading thread's namespace
-Message-ID: <20190523023636.GA196218@google.com>
-References: <20190522053250.207156-1-namhyung@kernel.org>
- <20190522053250.207156-2-namhyung@kernel.org>
- <20190522131832.GB30271@kernel.org>
+        id S1729793AbfEWChs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 22:37:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35600 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727305AbfEWChr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 22:37:47 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AA1143082163;
+        Thu, 23 May 2019 02:37:47 +0000 (UTC)
+Received: from [10.72.12.128] (ovpn-12-128.pek2.redhat.com [10.72.12.128])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4A6D910AFEC9;
+        Thu, 23 May 2019 02:37:40 +0000 (UTC)
+Subject: Re: [PATCH V2 0/4] Prevent vhost kthread from hogging CPU
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, stefanha@redhat.com
+References: <1558067392-11740-1-git-send-email-jasowang@redhat.com>
+ <20190520085207-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <aa132e69-4646-da70-7def-b6ad72d4ebda@redhat.com>
+Date:   Thu, 23 May 2019 10:37:39 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190522131832.GB30271@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190520085207-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 23 May 2019 02:37:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
 
-On Wed, May 22, 2019 at 10:18:32AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Wed, May 22, 2019 at 02:32:48PM +0900, Namhyung Kim escreveu:
-> > It seems that the current code lacks holding the namespace lock in
-> > thread__namespaces().  Otherwise it can see inconsistent results.
-> > 
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/util/thread.c | 15 +++++++++++++--
-> >  1 file changed, 13 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-> > index 403045a2bbea..b413ba5b9835 100644
-> > --- a/tools/perf/util/thread.c
-> > +++ b/tools/perf/util/thread.c
-> > @@ -133,7 +133,7 @@ void thread__put(struct thread *thread)
-> >  	}
-> >  }
-> >  
-> > -struct namespaces *thread__namespaces(const struct thread *thread)
-> > +static struct namespaces *__thread__namespaces(const struct thread *thread)
-> >  {
-> >  	if (list_empty(&thread->namespaces_list))
-> >  		return NULL;
-> > @@ -141,10 +141,21 @@ struct namespaces *thread__namespaces(const struct thread *thread)
-> >  	return list_first_entry(&thread->namespaces_list, struct namespaces, list);
-> >  }
-> >  
-> > +struct namespaces *thread__namespaces(const struct thread *thread)
-> > +{
-> > +	struct namespaces *ns;
-> > +
-> > +	down_read((struct rw_semaphore *)&thread->namespaces_lock);
-> > +	ns = __thread__namespaces(thread);
-> > +	up_read((struct rw_semaphore *)&thread->namespaces_lock);
-> > +
-> 
-> Humm, so we need to change thread__namespaces() to remove that const
-> instead of throwing it away with that cast, right?
+On 2019/5/20 下午8:52, Michael S. Tsirkin wrote:
+> On Fri, May 17, 2019 at 12:29:48AM -0400, Jason Wang wrote:
+>> Hi:
+>>
+>> This series try to prevent a guest triggerable CPU hogging through
+>> vhost kthread. This is done by introducing and checking the weight
+>> after each requrest. The patch has been tested with reproducer of
+>> vsock and virtio-net. Only compile test is done for vhost-scsi.
+>>
+>> Please review.
+>> This addresses CVE-2019-3900.
+> OK I think we should clean this code some more but given
+> it's a CVE fix maybe it's best to do as a patch on top.
+>
+> Acked-by: Michael S. Tsirkin<mst@redhat.com>
+>
+> Dave do you want to merge this or should I?
+>
 
-Yes, that's possible too.  Note that thread__comm_str() has the same issue
-as well.
+According to David's last reply, it's better for you to merge I think.
 
-Thanks,
-Namhyung
+Thanks
+
