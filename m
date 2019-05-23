@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C64582878D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23F4F28708
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390088AbfEWTUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:20:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57414 "EHLO mail.kernel.org"
+        id S2389030AbfEWTPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:15:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390072AbfEWTUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:20:34 -0400
+        id S2388581AbfEWTPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:15:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC231217D9;
-        Thu, 23 May 2019 19:20:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02BF3217D7;
+        Thu, 23 May 2019 19:15:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639234;
-        bh=W0f3EHcVEBs8UfuFtMj60PbcCvQ0hwXJbGh92iFhmzQ=;
+        s=default; t=1558638935;
+        bh=DR2Hg/fRrmYxcQi0/v7BdYlawFDvUxGS549mG4XxQ/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NF/jovqzPltQPTZtrGXBty1yiigfoXca0GBVBwxcoEG8h7shA7hb/A/tLLtdwZcjL
-         2+niZE3JHZnm/vB2pqE1iDzIur/aPmdJeBrtuepveWxMnXfDIVE7jwinEU1sSN1PAh
-         nlrWe7AFiZ7e4+BxJjbWxoEHWrFv1tQgF+QMvJOE=
+        b=MQreXXinqDTBm0DNz4WKNqXrIpivBLUmu7IfD1jM9Hqe33l1t4niACvga01bIQDnv
+         9Bvi3m4xETfNlbhu+7DXlkwS7HbdCg0kMflCaGtLjxqCW54TC4b+NjshYnL5nJCrXD
+         ODZ2xlZFX6wuCh4g5Bs1bhDjCFIPfZDUQ1TJscy8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tingwei Zhang <tingwei@codeaurora.org>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 5.0 029/139] stm class: Fix channel free in stm output free path
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.19 018/114] parisc: Skip registering LED when running in QEMU
 Date:   Thu, 23 May 2019 21:05:17 +0200
-Message-Id: <20190523181724.485873063@linuxfoundation.org>
+Message-Id: <20190523181733.503938496@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +42,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tingwei Zhang <tingwei@codeaurora.org>
+From: Helge Deller <deller@gmx.de>
 
-commit ee496da4c3915de3232b5f5cd20e21ae3e46fe8d upstream.
+commit b438749044356dd1329c45e9b5a9377b6ea13eb2 upstream.
 
-Number of free masters is not set correctly in stm
-free path. Fix this by properly adding the number
-of output channels before setting them to 0 in
-stm_output_disclaim().
+No need to spend CPU cycles when we run on QEMU.
 
-Currently it is equivalent to doing nothing since
-master->nr_free is incremented by 0.
-
-Fixes: 7bd1d4093c2f ("stm class: Introduce an abstraction for System Trace Module devices")
-Signed-off-by: Tingwei Zhang <tingwei@codeaurora.org>
-Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc: stable@vger.kernel.org # v4.4
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Helge Deller <deller@gmx.de>
+CC: stable@vger.kernel.org # v4.9+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/stm/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/parisc/led.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/hwtracing/stm/core.c
-+++ b/drivers/hwtracing/stm/core.c
-@@ -218,8 +218,8 @@ stm_output_disclaim(struct stm_device *s
- 	bitmap_release_region(&master->chan_map[0], output->channel,
- 			      ilog2(output->nr_chans));
+--- a/drivers/parisc/led.c
++++ b/drivers/parisc/led.c
+@@ -568,6 +568,9 @@ int __init register_led_driver(int model
+ 		break;
  
--	output->nr_chans = 0;
- 	master->nr_free += output->nr_chans;
-+	output->nr_chans = 0;
- }
- 
- /*
+ 	case DISPLAY_MODEL_LASI:
++		/* Skip to register LED in QEMU */
++		if (running_on_qemu)
++			return 1;
+ 		LED_DATA_REG = data_reg;
+ 		led_func_ptr = led_LASI_driver;
+ 		printk(KERN_INFO "LED display at %lx registered\n", LED_DATA_REG);
 
 
