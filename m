@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2656B287F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A7172896B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391060AbfEWTZS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:25:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36664 "EHLO mail.kernel.org"
+        id S2391376AbfEWTgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:36:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389390AbfEWTZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:25:14 -0400
+        id S2389800AbfEWTZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:25:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6643C2054F;
-        Thu, 23 May 2019 19:25:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 100712133D;
+        Thu, 23 May 2019 19:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639513;
-        bh=opDWCBP5qXH4pJO+XUAFzz8F7pnR+9TexN+XwhMkewU=;
+        s=default; t=1558639516;
+        bh=I3em34TPw1tOqm1IGSJ9vZptuF9O8eyUf6JBcohdZxc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j63Y02u4acmpmTvdG6pNzflfWPzCswFU8H3A+q+bief5icI+74llPQb2zUCmgXjBP
-         Yp1TTGvb6IKBkUT7sp37kgMUQ5lYi73/qStdMjq2r2dmcKmFvbmgziUyA//2ABCjhN
-         zFqNCnn5NuH6i5vVNRnLkbMuIoAX/uB1Ik2pBFAs=
+        b=UCTBcOhtFzWEGxnlM4VyNbWBP7tWwCKMnn0zFcrA/ANORjudmYWdN2p4jd9el1p+R
+         f97bkDX//oB15tLiH/kP6XXFjg5+MQ0UTr+7oSx7t/+kpf9LcYznrVtDN62dLsnkb7
+         iTnLUbA+VjqNzVJzHOkUdww/onfpdXSGyW/GhIrA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org,
+        Bhagavathi Perumal S <bperumal@codeaurora.org>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 116/139] x86: kvm: hyper-v: deal with buggy TLB flush requests from WS2012
-Date:   Thu, 23 May 2019 21:06:44 +0200
-Message-Id: <20190523181734.875673419@linuxfoundation.org>
+Subject: [PATCH 5.0 117/139] mac80211: Fix kernel panic due to use of txq after free
+Date:   Thu, 23 May 2019 21:06:45 +0200
+Message-Id: <20190523181734.966207237@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
 References: <20190523181720.120897565@linuxfoundation.org>
@@ -44,58 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit da66761c2d93a46270d69001abb5692717495a68 ]
+[ Upstream commit f1267cf3c01b12e0f843fb6a7450a7f0b2efab8a ]
 
-It was reported that with some special Multi Processor Group configuration,
-e.g:
- bcdedit.exe /set groupsize 1
- bcdedit.exe /set maxgroup on
- bcdedit.exe /set groupaware on
-for a 16-vCPU guest WS2012 shows BSOD on boot when PV TLB flush mechanism
-is in use.
+The txq of vif is added to active_txqs list for ATF TXQ scheduling
+in the function ieee80211_queue_skb(), but it was not properly removed
+before freeing the txq object. It was causing use after free of the txq
+objects from the active_txqs list, result was kernel panic
+due to invalid memory access.
 
-Tracing kvm_hv_flush_tlb immediately reveals the issue:
+Fix kernel invalid memory access by properly removing txq object
+from active_txqs list before free the object.
 
- kvm_hv_flush_tlb: processor_mask 0x0 address_space 0x0 flags 0x2
-
-The only flag set in this request is HV_FLUSH_ALL_VIRTUAL_ADDRESS_SPACES,
-however, processor_mask is 0x0 and no HV_FLUSH_ALL_PROCESSORS is specified.
-We don't flush anything and apparently it's not what Windows expects.
-
-TLFS doesn't say anything about such requests and newer Windows versions
-seem to be unaffected. This all feels like a WS2012 bug, which is, however,
-easy to workaround in KVM: let's flush everything when we see an empty
-flush request, over-flushing doesn't hurt.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Bhagavathi Perumal S <bperumal@codeaurora.org>
+Acked-by: Toke Høiland-Jørgensen <toke@redhat.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/hyperv.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ net/mac80211/iface.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index 371c669696d70..610c0f1fbdd71 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1371,7 +1371,16 @@ static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
+diff --git a/net/mac80211/iface.c b/net/mac80211/iface.c
+index 4a6ff1482a9ff..02d2e6f11e936 100644
+--- a/net/mac80211/iface.c
++++ b/net/mac80211/iface.c
+@@ -1908,6 +1908,9 @@ void ieee80211_if_remove(struct ieee80211_sub_if_data *sdata)
+ 	list_del_rcu(&sdata->list);
+ 	mutex_unlock(&sdata->local->iflist_mtx);
  
- 		valid_bank_mask = BIT_ULL(0);
- 		sparse_banks[0] = flush.processor_mask;
--		all_cpus = flush.flags & HV_FLUSH_ALL_PROCESSORS;
++	if (sdata->vif.txq)
++		ieee80211_txq_purge(sdata->local, to_txq_info(sdata->vif.txq));
 +
-+		/*
-+		 * Work around possible WS2012 bug: it sends hypercalls
-+		 * with processor_mask = 0x0 and HV_FLUSH_ALL_PROCESSORS clear,
-+		 * while also expecting us to flush something and crashing if
-+		 * we don't. Let's treat processor_mask == 0 same as
-+		 * HV_FLUSH_ALL_PROCESSORS.
-+		 */
-+		all_cpus = (flush.flags & HV_FLUSH_ALL_PROCESSORS) ||
-+			flush.processor_mask == 0;
- 	} else {
- 		if (unlikely(kvm_read_guest(kvm, ingpa, &flush_ex,
- 					    sizeof(flush_ex))))
+ 	synchronize_rcu();
+ 
+ 	if (sdata->dev) {
 -- 
 2.20.1
 
