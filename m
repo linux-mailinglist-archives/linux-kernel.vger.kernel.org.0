@@ -2,110 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20EB727D5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05D6227D4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:52:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730698AbfEWMxr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 08:53:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56348 "EHLO mail.kernel.org"
+        id S1730704AbfEWMwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 08:52:51 -0400
+Received: from mga03.intel.com ([134.134.136.65]:53817 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729698AbfEWMxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 08:53:47 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5323B20879;
-        Thu, 23 May 2019 12:53:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558616026;
-        bh=SERTH+SFKq066tXekGq7+Iv3lNmb4A+1H2XMyUB7QOE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RogaUuUKOP+axkjXcbYomNJxH4WFwd0Sek1udq9ymI5uj6yE9DoRvkP5VhAObPZ+w
-         CJRFnlyTjaVy+vRj+oYupgt2hE5bFh21xGlbwfEu5QYtC4AvyOzp1FasrCLBvY6AGm
-         iIL2hgvrzMhytD4LpYXEe7r16V/vcLvp1QbIuxMI=
-Date:   Thu, 23 May 2019 20:52:36 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Olof Johansson <olof@lixom.net>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: Re: [PATCH V3 RESEND 3/4] defconfig: arm64: enable i.MX8 SCU octop
- driver
-Message-ID: <20190523125235.GV9261@dragon>
-References: <20190522020040.30283-1-peng.fan@nxp.com>
- <20190522020040.30283-3-peng.fan@nxp.com>
+        id S1730323AbfEWMwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 08:52:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 May 2019 05:52:50 -0700
+X-ExtLoop1: 1
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.29])
+  by fmsmga008.fm.intel.com with ESMTP; 23 May 2019 05:52:48 -0700
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     <hannes@cmpxchg.org>, <mhocko@suse.com>,
+        <mgorman@techsingularity.net>, <kirill.shutemov@linux.intel.com>,
+        <josef@toxicpanda.com>, <hughd@google.com>, <shakeelb@google.com>,
+        <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [v4 PATCH 2/2] mm: vmscan: correct some vmscan counters for THP swapout
+References: <1558578458-83807-1-git-send-email-yang.shi@linux.alibaba.com>
+        <1558578458-83807-2-git-send-email-yang.shi@linux.alibaba.com>
+Date:   Thu, 23 May 2019 20:52:48 +0800
+In-Reply-To: <1558578458-83807-2-git-send-email-yang.shi@linux.alibaba.com>
+        (Yang Shi's message of "Thu, 23 May 2019 10:27:38 +0800")
+Message-ID: <87lfyx9vtr.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190522020040.30283-3-peng.fan@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 01:47:05AM +0000, Peng Fan wrote:
-> Build in CONFIG_NVMEM_IMX_OCOTP_SCU.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Shawn Guo <shawn.guo@linaro.org>
-> Cc: Andy Gross <andy.gross@linaro.org>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Olof Johansson <olof@lixom.net>
-> Cc: Jagan Teki <jagan@amarulasolutions.com>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Yang Shi <yang.shi@linux.alibaba.com> writes:
 
-Please do not use base64 encoding for patch posting.
-
-Shawn
-
+> Since commit bd4c82c22c36 ("mm, THP, swap: delay splitting THP after
+> swapped out"), THP can be swapped out in a whole.  But, nr_reclaimed
+> and some other vm counters still get inc'ed by one even though a whole
+> THP (512 pages) gets swapped out.
+>
+> This doesn't make too much sense to memory reclaim.  For example, direct
+> reclaim may just need reclaim SWAP_CLUSTER_MAX pages, reclaiming one THP
+> could fulfill it.  But, if nr_reclaimed is not increased correctly,
+> direct reclaim may just waste time to reclaim more pages,
+> SWAP_CLUSTER_MAX * 512 pages in worst case.
+>
+> And, it may cause pgsteal_{kswapd|direct} is greater than
+> pgscan_{kswapd|direct}, like the below:
+>
+> pgsteal_kswapd 122933
+> pgsteal_direct 26600225
+> pgscan_kswapd 174153
+> pgscan_direct 14678312
+>
+> nr_reclaimed and nr_scanned must be fixed in parallel otherwise it would
+> break some page reclaim logic, e.g.
+>
+> vmpressure: this looks at the scanned/reclaimed ratio so it won't
+> change semantics as long as scanned & reclaimed are fixed in parallel.
+>
+> compaction/reclaim: compaction wants a certain number of physical pages
+> freed up before going back to compacting.
+>
+> kswapd priority raising: kswapd raises priority if we scan fewer pages
+> than the reclaim target (which itself is obviously expressed in order-0
+> pages). As a result, kswapd can falsely raise its aggressiveness even
+> when it's making great progress.
+>
+> Other than nr_scanned and nr_reclaimed, some other counters, e.g.
+> pgactivate, nr_skipped, nr_ref_keep and nr_unmap_fail need to be fixed
+> too since they are user visible via cgroup, /proc/vmstat or trace
+> points, otherwise they would be underreported.
+>
+> When isolating pages from LRUs, nr_taken has been accounted in base
+> page, but nr_scanned and nr_skipped are still accounted in THP.  It
+> doesn't make too much sense too since this may cause trace point
+> underreport the numbers as well.
+>
+> So accounting those counters in base page instead of accounting THP as
+> one page.
+>
+> nr_dirty, nr_unqueued_dirty, nr_congested and nr_writeback are used by
+> file cache, so they are not impacted by THP swap.
+>
+> This change may result in lower steal/scan ratio in some cases since
+> THP may get split during page reclaim, then a part of tail pages get
+> reclaimed instead of the whole 512 pages, but nr_scanned is accounted
+> by 512, particularly for direct reclaim.  But, this should be not a
+> significant issue.
+>
+> Cc: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Mel Gorman <mgorman@techsingularity.net>
+> Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Hugh Dickins <hughd@google.com>
+> Cc: Shakeel Butt <shakeelb@google.com>
+> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 > ---
-> 
-> V3:
->  No change
-> V2:
->  rename patch title, add review tag
-> 
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 979a95c915b6..32b85102b857 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -748,6 +748,7 @@ CONFIG_HISI_PMU=y
->  CONFIG_QCOM_L2_PMU=y
->  CONFIG_QCOM_L3_PMU=y
->  CONFIG_NVMEM_IMX_OCOTP=y
-> +CONFIG_NVMEM_IMX_OCOTP_SCU=y
->  CONFIG_QCOM_QFPROM=y
->  CONFIG_ROCKCHIP_EFUSE=y
->  CONFIG_UNIPHIER_EFUSE=y
-> -- 
-> 2.16.4
-> 
+> v4: Fixed the comments from Johannes and Huang Ying
+> v3: Removed Shakeel's Reviewed-by since the patch has been changed significantly
+>     Switched back to use compound_order per Matthew
+>     Fixed more counters per Johannes
+> v2: Added Shakeel's Reviewed-by
+>     Use hpage_nr_pages instead of compound_order per Huang Ying and William Kucharski
+>
+>  mm/vmscan.c | 34 ++++++++++++++++++++++------------
+>  1 file changed, 22 insertions(+), 12 deletions(-)
+>
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index b65bc50..1b35a7a 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -1118,6 +1118,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  		int may_enter_fs;
+>  		enum page_references references = PAGEREF_RECLAIM_CLEAN;
+>  		bool dirty, writeback;
+> +		unsigned int nr_pages;
+>  
+>  		cond_resched();
+>  
+> @@ -1129,7 +1130,9 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  
+>  		VM_BUG_ON_PAGE(PageActive(page), page);
+>  
+> -		sc->nr_scanned++;
+> +		/* Account the number of base pages evne though THP */
+
+s/evne/even/
+
+> +		nr_pages = 1 << compound_order(page);
+> +		sc->nr_scanned += nr_pages;
+>  
+>  		if (unlikely(!page_evictable(page)))
+>  			goto activate_locked;
+> @@ -1250,7 +1253,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  		case PAGEREF_ACTIVATE:
+>  			goto activate_locked;
+>  		case PAGEREF_KEEP:
+> -			stat->nr_ref_keep++;
+> +			stat->nr_ref_keep += nr_pages;
+>  			goto keep_locked;
+>  		case PAGEREF_RECLAIM:
+>  		case PAGEREF_RECLAIM_CLEAN:
+
+If the THP is split, you need
+
+        sc->nr_scanned -= nr_pages - 1;
+
+Otherwise the tail pages will be counted twice.
+
+> @@ -1315,7 +1318,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  			if (unlikely(PageTransHuge(page)))
+>  				flags |= TTU_SPLIT_HUGE_PMD;
+>  			if (!try_to_unmap(page, flags)) {
+> -				stat->nr_unmap_fail++;
+> +				stat->nr_unmap_fail += nr_pages;
+>  				goto activate_locked;
+>  			}
+>  		}
+> @@ -1442,7 +1445,11 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  
+>  		unlock_page(page);
+>  free_it:
+> -		nr_reclaimed++;
+> +		/*
+> +		 * THP may get swapped out in a whole, need account
+> +		 * all base pages.
+> +		 */
+> +		nr_reclaimed += (1 << compound_order(page));
+
+Best Regards,
+Huang, Ying
