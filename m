@@ -2,224 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 562F82815D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 17:36:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AAD928167
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 17:38:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731112AbfEWPgV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 11:36:21 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46552 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730904AbfEWPgU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 11:36:20 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4NFYAet136190
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 11:36:19 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2snuwx872j-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 11:36:19 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Thu, 23 May 2019 16:36:18 +0100
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 23 May 2019 16:36:15 +0100
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4NFaD3440239452
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 23 May 2019 15:36:13 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5CF8A2805A;
-        Thu, 23 May 2019 15:36:13 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C3D2D28059;
-        Thu, 23 May 2019 15:36:12 +0000 (GMT)
-Received: from [9.85.195.246] (unknown [9.85.195.246])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 23 May 2019 15:36:12 +0000 (GMT)
-Subject: Re: [PATCH v9 0/4] vfio: ap: AP Queue Interrupt Control
-To:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
-        david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1558452877-27822-1-git-send-email-pmorel@linux.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Thu, 23 May 2019 11:36:12 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1731083AbfEWPic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 11:38:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41258 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730760AbfEWPic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 11:38:32 -0400
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5F792184B
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 15:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558625911;
+        bh=In3rvS7qPiwg1FJyBh5dflvbEpFMS5hBT03hiE9/rvA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xk6zSVVym0P5KzT42cddxpF5yiXdUhUa7xXOH8MpCn/cfJ3S5vsZrZR1o+iH6sGKX
+         hkrXhHaIakfO9PQJ7lGcW4W7NPRcZPL0drDouwMn9s5QqGCuu2jZjFp4+Z07wrOi7k
+         YHcRad0Pul+hudp7zzagXr+enMDf8Rtwvcy617Ek=
+Received: by mail-wm1-f51.google.com with SMTP id f204so6351652wme.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 08:38:30 -0700 (PDT)
+X-Gm-Message-State: APjAAAW+AKsgrPOGSjPBukQSBwawgQJJLWTXR52xrrCbjiHcb8ajfR8M
+        1BCrBwSU0FzDqH6FSWkkp3ZTPVNzGNtP2tZ9AhlKTg==
+X-Google-Smtp-Source: APXvYqy++PtcXnqHwArqj5UBHapLbM3bluHIFIybhJhiF3cxodhKIK1g6g8QRkLstCYhKG/XwAU/aSxLQ8voK78SKUw=
+X-Received: by 2002:a1c:9c42:: with SMTP id f63mr13030971wme.23.1558625909476;
+ Thu, 23 May 2019 08:38:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1558452877-27822-1-git-send-email-pmorel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19052315-0052-0000-0000-000003C6077C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011149; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01207499; UDB=6.00634153; IPR=6.00988479;
- MB=3.00027020; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-23 15:36:17
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052315-0053-0000-0000-00006104218B
-Message-Id: <5b46f988-fa79-4d84-c81f-144daa0c4426@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-23_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905230106
+References: <20190520114105.GD27805@linux.intel.com> <20190521151836.GA4843@linux.intel.com>
+ <20190521155140.GE22089@linux.intel.com> <20190522132022.GC31176@linux.intel.com>
+ <20190522132227.GD31176@linux.intel.com> <0e183cce-c4b4-0e10-dbb6-bd81bea58b66@tycho.nsa.gov>
+ <20190522153836.GA24833@linux.intel.com> <CALCETrUS8xyF1JJmQs18BGTDhPRXf+s81BkMZCZwmY73r7M+zg@mail.gmail.com>
+ <20190523023517.GA31950@linux.intel.com> <20190523102628.GC10955@linux.intel.com>
+ <20190523141752.GA12078@linux.intel.com>
+In-Reply-To: <20190523141752.GA12078@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 23 May 2019 08:38:17 -0700
+X-Gmail-Original-Message-ID: <CALCETrUzx3LPAKCLFf75P-XshAkRcr+JLET3LA_kHDs9MA11FA@mail.gmail.com>
+Message-ID: <CALCETrUzx3LPAKCLFf75P-XshAkRcr+JLET3LA_kHDs9MA11FA@mail.gmail.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/21/19 11:34 AM, Pierre Morel wrote:
-> This patch series implements PQAP/AQIC interception in KVM.
-> 
-> 1) Data to handle GISA interrupt for AQIC
-> 
-> To implement this we need to add a new structure, vfio_ap_queue,
-> to be able to retrieve the mediated device associated with a queue
-> and specific values needed to register/unregister the interrupt
-> structures:
->    - APQN: to be able to issue the commands and search for queue
->      structures
->    - saved NIB : to keep track of the pin page for unpining it
->    - saved ISC : to unregister with the GIB interface
->    - matrix_mdev: to retrieve the associate matrix, the mediated device
->      and KVM
-> 
-> Specific handling bei keeping old values when re-registering is
-> needed because the guest could unregister interrupt in a invisble
-> manner bei issuing an un-interceptible RESET command.
-> 
-> Reset commands issued directly by the guest and indirectly when
-> removing the guest unpin the memory and deregister the ISC.
-> 
-> The vfio_ap_queue is associated to the ap_device during the probe
-> of the device and dissociated during the remove of the ap_device.
-> 
-> The vfio_ap_queue is associated to the matrix mediated device during
-> each interception of the AQIC command, so it does not need to be
-> dissociated until the guest is terminated.
-> 
-> The life of the vfio_ap_queue will be protected by the matrix_dev lock
-> to guaranty that no change can occur to the CRYCB or that devices can
-> not be removed when a vfio_ap_queue is in use.
-> 
-> 2) KVM destroy race conditions
-> 
-> To make sure that KVM do not vanish and GISA is still available
-> when the VFIO_AP driver is in used we take a reference to KVM
-> during the opening of the mediated device and release it on
-> releasing the mediated device.
-> 
-> 3) Interception of PQAP
-> 
-> The driver registers a hook structure to KVM providing:
-> - a pointer to a function implementing PQAP(AQIC) handling
-> - the reference to the module owner of the hook
-> 
-> On interception by KVM we do not change the behavior, returning
->   -EOPNOTSUPP to the user in the case AP instructions are not
-> supported by the host or by the guest.
-> Otherwise we verify the exceptions cases before trying to call
-> the vfio_ap hook.
-> 
-> In the case we do not find a hook we assume that the CRYCB has not
-> been setup for the guest and is empty.
-> 
-> 4) Enabling and disabling the IRQ
-> 
-> When enabling the IRQ care is taken to unping the saved NIB.
-> When disabling IRQ care is taken to wait until the IRQ bit
-> of the queue status is cleared before unpining the NIB.
-> 
-> On RESET and before unpinning the NIB and unregistering the ISC
-> the IRQ is disabled using PQAP/AQIC even when a PQAP/APZQ have
-> been done.
-> 
-> 5) Removing the AP device
-> 
-> Removing the AP device without having unassign it is clearly
-> discourage by the documentation.
-> The patch series does not check if the queue is used by a
-> guest. It only de-register the IRQ, unregister ISC and unpin
-> the NIB, then free the vfio_ap_queue.
-> 
-> 6) Associated QEMU patch
-> 
-> There is a QEMU patch which is needed to enable the PQAP/AQIC
-> facility in the guest.
-> 
-> Posted in qemu-devel@nongnu.org as:
-> Message-Id: <1550146494-21085-1-git-send-email-pmorel@linux.ibm.com>
-> 
-> 7) Compatibility with Dynamic configuration patches
-> 
-> Tony, I did not rebase this series above the dynamic configuration
-> patches because:
-> - This series do the work it needs to do without having to take
->    care on the dynamic configuration.
-> - It is guarantied that interrupt will be shut off after removing
->    the APQueue device
-> - The dynamic configuration series is not converging.
+On Thu, May 23, 2019 at 7:17 AM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Thu, May 23, 2019 at 01:26:28PM +0300, Jarkko Sakkinen wrote:
+> > On Wed, May 22, 2019 at 07:35:17PM -0700, Sean Christopherson wrote:
+> > > But actually, there's no need to disallow mmap() after ECREATE since the
+> > > LSM checks also apply to mmap(), e.g. FILE__EXECUTE would be needed to
+> > > mmap() any enclave pages PROT_EXEC.  I guess my past self thought mmap()
+> > > bypassed LSM checks?  The real problem is that mmap()'ng an existing
+> > > enclave would require FILE__WRITE and FILE__EXECUTE, which puts us back
+> > > at square one.
+> >
+> > I'm lost with the constraints we want to set.
+>
+> As is today, SELinux policies would require enclave loaders to have
+> FILE__WRITE and FILE__EXECUTE permissions on /dev/sgx/enclave.  Presumably
+> other LSMs have similar requirements.  Requiring all processes to have
+> FILE__{WRITE,EXECUTE} permissions means the permissions don't add much
+> value, e.g. they can't be used to distinguish between an enclave that is
+> being loaded from an unmodified file and an enclave that is being
+> generated on the fly, e.g. Graphene.
+>
+> Looking back at Andy's mail, he was talking about requiring FILE__EXECUTE
+> to run an enclave, so perhaps it's only FILE__WRITE that we're trying to
+> special case.
+>
 
-Would you consider the following?
+I thought about this some more, and I have a new proposal that helps
+address the ELRANGE alignment issue and the permission issue at the
+cost of some extra verbosity.  Maybe you all can poke holes in it :)
+The basic idea is to make everything more explicit from a user's
+perspective.  Here's how it works:
 
-* Take dynconfig patch "s390: vfio-ap: wait for queue empty on queue
-   reset" and include it in your series. This patch modifies the
-   reset function to wait for queue empty.
+Opening /dev/sgx/enclave gives an enclave_fd that, by design, doesn't
+give EXECUTE or WRITE.  mmap() on the enclave_fd only works if you
+pass PROT_NONE and gives the correct alignment.  The resulting VMA
+cannot be mprotected or mremapped.  It can't be mmapped at all until
+after ECREATE because the alignment isn't known before that.
 
-* In dynconfig patch "s390: vfio-ap: handle bind and unbind of AP queue
-   device" the following functions are introduced:
+Associated with the enclave are a bunch (up to 7) "enclave segment
+inodes".  These are anon_inodes that are created automagically.  An
+enclave segment is a group of pages, not necessary contiguous, with an
+upper bound on the memory permissions.  Each enclave page belongs to a
+segment.  When you do EADD, you tell the driver what segment you're
+adding to. [0]  This means that EADD gets an extra argument that is a
+permission mask for the page -- in addition to the initial SECINFO,
+you also pass to EADD something to the effect of "I promise never to
+map this with permissions greater than RX".
 
-      void vfio_ap_mdev_probe_queue(struct ap_queue *queue)
-      void vfio_ap_mdev_remove_queue(struct ap_queue *queue)
+Then we just need some way to mmap a region from an enclave segment.
+This could be done by having a way to get an fd for an enclave segment
+or it could be done by having a new ioctl SGX_IOC_MAP_SEGMENT.  User
+code would use this operation to replace, MAP_FIXED-style, ranges from
+the big PROT_NONE mapping with the relevant pages from the enclave
+segment.  The resulting vma would only have VM_MAYWRITE if the segment
+is W, only have VM_MAYEXEC if the segment is X, and only have
+VM_MAYREAD if the segment is R.  Depending on implementation details,
+the VMAs might need to restrict mremap() to avoid mapping pages that
+aren't part of the segment in question.
 
-   The vfio_ap_mdev_probe_queue function is called from the vfio_ap
-   driver probe callback. You could embed the code you've introduced in
-   the probe callback there. Of course, you would need to return int
-   from the function for the -ENOMEM error.
+It's plausible that this whole thing works without the magic segment
+inodes under the hood, but figuring that out would need a careful look
+at how all the core mm bits and LSM bits work together.
 
-   The vfio_ap_mdev_remove_queue function is called from the vfio_ap
-   driver remove callback. You could embed the code you've introduced in
-   the remove callback there.
+To get all the LSM stuff to work, SELinux will need some way to
+automatically assign an appropriate label to the segment inodes.  I
+assume that such a mechanism already exists and gets used for things
+like sockets, but I haven't actually confirmed this.
 
-* Move your vfio_ap_irq_disable function to vfio_ap_ops.c and make it a
-   static function.
-
-* Leave the vfio_ap_mdev_reset_queue function as a static function in
-   vfio_ap_ops.c
-
-If you do the things above, then I can base the dynconfig series on
-the IRQ series without much of a merge issue. What say you?
-
-Note: I've included review comments for patch 3/4 to match the
-       suggestions above.
-
-> 
-> However Tony, the choice is your's, I won't be able to help
-> in a near future.
-> 
-> 
-> Pierre Morel (4):
->    s390: ap: kvm: add PQAP interception for AQIC
->    vfio: ap: register IOMMU VFIO notifier
->    s390: ap: implement PAPQ AQIC interception in kernel
->    s390: ap: kvm: Enable PQAP/AQIC facility for the guest
-> 
->   arch/s390/include/asm/kvm_host.h      |   7 +
->   arch/s390/kvm/priv.c                  |  86 ++++++++
->   arch/s390/tools/gen_facilities.c      |   1 +
->   drivers/s390/crypto/vfio_ap_drv.c     |  34 ++-
->   drivers/s390/crypto/vfio_ap_ops.c     | 379 +++++++++++++++++++++++++++++++++-
->   drivers/s390/crypto/vfio_ap_private.h |  15 ++
->   6 files changed, 514 insertions(+), 8 deletions(-)
-> 
-
+[0] There needs to be some vaguely intelligent semantics if you EADD
+the *same* address more than once.  A simple solution would be to
+disallow it if the segments don't match.
