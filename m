@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93C79288E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DDC428974
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391953AbfEWT3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:29:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42456 "EHLO mail.kernel.org"
+        id S2391414AbfEWThn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:37:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391937AbfEWT3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:29:22 -0400
+        id S2390244AbfEWTYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:24:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF5D52133D;
-        Thu, 23 May 2019 19:29:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78EC52054F;
+        Thu, 23 May 2019 19:24:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639761;
-        bh=HiFtAIKrl+Yj/b7btEiQx9X+/cf8POcNBsL9C668gKc=;
+        s=default; t=1558639452;
+        bh=/lZTweBW81hb+YjBSmF1dONvupQjZjJDzP6SgXt1RdQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ENXBowsK4E9PLX3ry0BGGWHuV853e9IaYzTXwQMGquvX+DEmmXbBUG7Cl4vuGPpJV
-         mf6n6YX0uoV8Hocw5tU5zihFzHSDZOw7LMMRFNoMekFnotCi/dsT8YkmUiV8SAol9L
-         WGUMCbXVlI4w49Mhzm6GtCeO36fj/7FLKA6J936g=
+        b=wprpcTJjEsFyenlnodYBNLieEt7w4Cw/QsRwOJlwg0N2+hCwy9q4wqnsgY7K2ZOCv
+         q8AJqjHti4WmV6ph67cXJfLDmhcnzjcFuxidPJ/d8pJUlqKra9zVmvqETs4+/25pso
+         OB47AjkZiQ/3Fpp7wtXnKV+Chg8O9M38WdsmCQgo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhong Kaihua <zhongkaihua@huawei.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>,
-        Dong Zhang <zhangdong46@hisilicon.com>,
-        Leo Yan <leo.yan@linaro.org>, Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 5.1 059/122] clk: hi3660: Mark clk_gate_ufs_subsys as critical
+        stable@vger.kernel.org, Nikos Tsironis <ntsironis@arrikto.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 5.0 093/139] dm cache metadata: Fix loading discard bitset
 Date:   Thu, 23 May 2019 21:06:21 +0200
-Message-Id: <20190523181712.577353528@linuxfoundation.org>
+Message-Id: <20190523181732.701803003@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,44 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+From: Nikos Tsironis <ntsironis@arrikto.com>
 
-commit 9f77a60669d13ed4ddfa6cd7374c9d88da378ffa upstream.
+commit e28adc3bf34e434b30e8d063df4823ba0f3e0529 upstream.
 
-clk_gate_ufs_subsys is a system bus clock, turning off it will
-introduce lockup issue during system suspend flow.  Let's mark
-clk_gate_ufs_subsys as critical clock, thus keeps it on during
-system suspend and resume.
+Add missing dm_bitset_cursor_next() to properly advance the bitset
+cursor.
 
-Fixes: d374e6fd5088 ("clk: hisilicon: Add clock driver for hi3660 SoC")
+Otherwise, the discarded state of all blocks is set according to the
+discarded state of the first block.
+
+Fixes: ae4a46a1f6 ("dm cache metadata: use bitset cursor api to load discard bitset")
 Cc: stable@vger.kernel.org
-Cc: Zhong Kaihua <zhongkaihua@huawei.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Zhangfei Gao <zhangfei.gao@linaro.org>
-Suggested-by: Dong Zhang <zhangdong46@hisilicon.com>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/hisilicon/clk-hi3660.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/md/dm-cache-metadata.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/hisilicon/clk-hi3660.c
-+++ b/drivers/clk/hisilicon/clk-hi3660.c
-@@ -163,8 +163,12 @@ static const struct hisi_gate_clock hi36
- 	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 17, 0, },
- 	{ HI3660_CLK_GATE_ISP_SNCLK2, "clk_gate_isp_snclk2",
- 	  "clk_isp_snclk_mux", CLK_SET_RATE_PARENT, 0x50, 18, 0, },
-+	/*
-+	 * clk_gate_ufs_subsys is a system bus clock, mark it as critical
-+	 * clock and keep it on for system suspend and resume.
-+	 */
- 	{ HI3660_CLK_GATE_UFS_SUBSYS, "clk_gate_ufs_subsys", "clk_div_sysbus",
--	  CLK_SET_RATE_PARENT, 0x50, 21, 0, },
-+	  CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0x50, 21, 0, },
- 	{ HI3660_PCLK_GATE_DSI0, "pclk_gate_dsi0", "clk_div_cfgbus",
- 	  CLK_SET_RATE_PARENT, 0x50, 28, 0, },
- 	{ HI3660_PCLK_GATE_DSI1, "pclk_gate_dsi1", "clk_div_cfgbus",
+--- a/drivers/md/dm-cache-metadata.c
++++ b/drivers/md/dm-cache-metadata.c
+@@ -1167,11 +1167,18 @@ static int __load_discards(struct dm_cac
+ 		if (r)
+ 			return r;
+ 
+-		for (b = 0; b < from_dblock(cmd->discard_nr_blocks); b++) {
++		for (b = 0; ; b++) {
+ 			r = fn(context, cmd->discard_block_size, to_dblock(b),
+ 			       dm_bitset_cursor_get_value(&c));
+ 			if (r)
+ 				break;
++
++			if (b >= (from_dblock(cmd->discard_nr_blocks) - 1))
++				break;
++
++			r = dm_bitset_cursor_next(&c);
++			if (r)
++				break;
+ 		}
+ 
+ 		dm_bitset_cursor_end(&c);
 
 
