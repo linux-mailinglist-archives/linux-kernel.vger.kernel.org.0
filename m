@@ -2,68 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B6DD27D7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 912E927D86
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730495AbfEWNCY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 09:02:24 -0400
-Received: from mail-oi1-f182.google.com ([209.85.167.182]:37682 "EHLO
-        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbfEWNCY (ORCPT
+        id S1730633AbfEWNDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:03:22 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52968 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729698AbfEWNDW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 09:02:24 -0400
-Received: by mail-oi1-f182.google.com with SMTP id f4so4274715oib.4
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 06:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tNTxg7bVPZmS33ui0X46cGpgoHbHka7Jatfgd+05r0A=;
-        b=ksC3eCaUf4c9SziYbr35L/hYzF9ZaG5TbfHH6tVpupboGJa9b77/If5Mmhwr5dllY/
-         sOZ7+ZCJhg62PVMtRTx1P1tjtgr4EXdHsqKZ0q/pwZmT3GFjF3mwcIQidi0Zp/HJ201Z
-         cAZO4tfzZjgrby4BLXLqTlhP3OcMa2V4WSy7r4PCyDfTe7CT43LHN6EZta8KIHVDGZxk
-         UqUzDpFAfp+gZoSkktkZGyTl+XYtXHThstAHieI2ZZLmjEX3b5bsP2APbW+nxiA3hRxq
-         9PSmBV8TZSHFQjtYDNgt5jDN4l6Am0nGcsdRkimRKBG9dz412CoFhTT3PLA6zXU4+SFD
-         IMPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tNTxg7bVPZmS33ui0X46cGpgoHbHka7Jatfgd+05r0A=;
-        b=ArNbQSDriKEWmSM0RuFXWuyipk0M+dgRVrN+R3UGH9mPMGdPSCYdO7ZsAQIQpr+yrq
-         jURiTLR9m4gqcVc95ypd9dT6SLqQX97YNeCNVUIYZgvrAZBo9aSNnp0xs+aEQcuaUVDH
-         00oMled2ss7rzLOy067+Ndk9Ae9xcO/2f3ypWezKkhskAensu/WntKYLHccSRkPrwuxj
-         gjBTDcJ2HfmTTVjsN5Ny0CxFcHGs3ZLyboRaD4FEWUPtzkvJ05DZUxndbIWy56VQ5kdv
-         oPbGedVgKBnk2vgy1YK9k6xwPE8OmrPGO8qJtBjgx1RZAMKCg9d83Yzsx1g3hGkRD2ys
-         1yhw==
-X-Gm-Message-State: APjAAAVfUWQ1qZ3t5TqguLpu/s9lzvtvmqwhC0GwhbZP03TP5TpRwM2b
-        SvvkbqevRRzuMdTU5OKnSGDSA3zhCUsAf2TSMz+LZg==
-X-Google-Smtp-Source: APXvYqzPq6u1bW7frG+lxPr4cHztCZGidS1iWMvvxUPCE6evmBgLNIR25ve8juJpQmUQyy35gSn4H8ph1pgY1Qy/8oI=
-X-Received: by 2002:aca:7250:: with SMTP id p77mr2703246oic.103.1558616543038;
- Thu, 23 May 2019 06:02:23 -0700 (PDT)
+        Thu, 23 May 2019 09:03:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5cZRKgxQvNkz3iJLe3vn3TDHYQVxlYUX8jd+t+YZvVg=; b=avPj+r3sHYQzdd+uP3fSpLXk4
+        fr78e9eo3SrMXInj6xGmZxcHYoNy3c0g4mJCsV1vA9jjeaeXW/kVftqm+j86ceP2REDch3bQhhJ84
+        3KFb4fKbAol/VlJ501pTHiAVOxxzc5g2Brq2AUKFZjjVwa9VwZLEGwZtAVcO7HRD8aLzA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hTnNL-00009h-Jx; Thu, 23 May 2019 13:03:15 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 962B21126D24; Thu, 23 May 2019 14:03:11 +0100 (BST)
+Date:   Thu, 23 May 2019 14:03:11 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz, lgirdwood@gmail.com,
+        lee.jones@linaro.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v4 1/6] regulator: lm363x: Make the gpio register
+ enable flexible
+Message-ID: <20190523130311.GA17245@sirena.org.uk>
+References: <20190522192733.13422-1-dmurphy@ti.com>
+ <20190522192733.13422-2-dmurphy@ti.com>
 MIME-Version: 1.0
-References: <20190523063504.10530-1-nishka.dasgupta@yahoo.com>
- <20190523072220.GC24998@kroah.com> <b8cc12d9-2fe3-754b-be08-f23055a31ffe@yahoo.com>
- <20190523082702.GB28231@azazel.net> <20190523090918.GU31203@kadam>
-In-Reply-To: <20190523090918.GU31203@kadam>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Thu, 23 May 2019 09:02:11 -0400
-Message-ID: <CAGngYiWT3a5EYZsgxdRQsrEnu4Cw6FNmNWhzx721SY8DXYL4Rw@mail.gmail.com>
-Subject: Re: [PATCH] staging: fieldbus: anybuss: Remove unnecessary variables
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Jeremy Sowden <jeremy@azazel.net>,
-        Nishka Dasgupta <nishka.dasgupta@yahoo.com>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Content-Disposition: inline
+In-Reply-To: <20190522192733.13422-2-dmurphy@ti.com>
+X-Cookie: I brake for chezlogs!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 5:09 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> Sven, you should add yourself to the MAINTAINERS file.
 
-Greg, what do you think?
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, May 22, 2019 at 02:27:28PM -0500, Dan Murphy wrote:
+> The use of and enablement of the GPIO can be used across devices.
+> Use the enable_reg in the regulator descriptor for the register to
+> write.
+
+> @@ -263,8 +263,8 @@ static int lm363x_regulator_probe(struct platform_dev=
+ice *pdev)
+> =20
+>  	if (gpiod) {
+>  		cfg.ena_gpiod =3D gpiod;
+> -
+> -		ret =3D regmap_update_bits(regmap, LM3632_REG_BIAS_CONFIG,
+> +		ret =3D regmap_update_bits(regmap,
+> +					 lm363x_regulator_desc[id].enable_reg,
+>  					 LM3632_EXT_EN_MASK,
+>  					 LM3632_EXT_EN_MASK);
+>  		if (ret) {
+
+Is it guaranteed that the bitmask for enabling the use of the GPIO is
+going to be the same for all regulators?  The bitmasks for the regulator
+enable look to be different, and it also looks like this setting might
+affect multiple regulators since it seems there are multiple enable bits
+in the same register.  If this affects multiple regulators then how's
+that working at the minute?
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzmmgwACgkQJNaLcl1U
+h9AW+wf/W9R9Ah4Ahge5WpgUG5KcZlhb1Pg8RHBA9nrw5Wo/xEXiczOYi+we0nb2
+AyLzhBfpufQOzZM3Ua+zUoMjjTs2yFvaTb25zSN5EHHJ2QzpWjveSKVRfnl7rpxQ
+VyvXzwc9q1dPC7zDHS/jjixCw/pM1we2U7/xMhNspPNY7+RIf4Q9K4HBjyXl8bY0
+Hzt1mUMXUAcFThQu8Jd1J7CF/rdXBqhtHKjDMnlvG6w2q6WqQufQHJ3TZR43yFAc
+0raknJuO5029WwxMxA1jJbuE1e/k2Vm1K3pKWq/XK1PeyA2sekcenFnZdieJgbvd
+RJTQ7GG0xr6edBiR0q8GdwduhSUN9A==
+=vcQI
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
