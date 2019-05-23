@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E9D828AEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5168228959
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388320AbfEWTu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:50:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43048 "EHLO mail.kernel.org"
+        id S2391662AbfEWTep (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:34:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387574AbfEWTJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:09:50 -0400
+        id S2391614AbfEWT1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:27:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB13821841;
-        Thu, 23 May 2019 19:09:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E412D2054F;
+        Thu, 23 May 2019 19:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638589;
-        bh=Rbsbd6QlhoNCTrhmdRBaMqtVoTwYH+FKiBtFuhyqzi8=;
+        s=default; t=1558639656;
+        bh=wo0rAbH0ZJ53UEuPAxfUCnXzx11Ia4RZgA1x+PQCU40=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VOglRKbuhXuvYghUE5Zr+j9xXILjXwYleFxCG9cLOPVvGOuG/OpOKMO2oIB0yDPgt
-         YGuUVFFz12rxIF3N0ejFYSgo9pGNF3DrrOtXgtHpSKoX9YvdozI8cVrSwjf8sa91ZC
-         v4nRKIboXvofPYEyjkulnLglV3/GwOO2dpkqlHWI=
+        b=KJJoOyW5XXHLHThoHtl8YOfbhwpzJenei1aFI027b8jtjRmWx+LkXkxWbYjXXFY9o
+         YoXnFoLOBRS7Mvrx+98nWhzE0V4ecA1C3v6CEYbP0vyxskQipkxKFVqTyvmecT6TLn
+         wrCn9gUX1bp5M2JyNRaWwdDwKELFEGsEl906I27o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 28/53] perf intel-pt: Fix sample timestamp wrt non-taken branches
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
+Subject: [PATCH 5.1 030/122] parisc: Allow live-patching of __meminit functions
 Date:   Thu, 23 May 2019 21:05:52 +0200
-Message-Id: <20190523181715.242057269@linuxfoundation.org>
+Message-Id: <20190523181708.832938862@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
-References: <20190523181710.981455400@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +42,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Helge Deller <deller@gmx.de>
 
-commit 1b6599a9d8e6c9f7e9b0476012383b1777f7fc93 upstream.
+commit d19a12906e5e558c0f6b6cfece7b7caf1012ef95 upstream.
 
-The sample timestamp is updated to ensure that the timestamp represents
-the time of the sample and not a branch that the decoder is still
-walking towards. The sample timestamp is updated when the decoder
-returns, but the decoder does not return for non-taken branches. Update
-the sample timestamp then also.
+When making the text sections writeable with set_kernel_text_rw(1),
+include all text sections including those in the __init section.
+Otherwise functions marked with __meminit will stay read-only.
 
-Note that commit 3f04d98e972b5 ("perf intel-pt: Improve sample
-timestamp") was also a stable fix and appears, for example, in v4.4
-stable tree as commit a4ebb58fd124 ("perf intel-pt: Improve sample
-timestamp").
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org # v4.4+
-Fixes: 3f04d98e972b ("perf intel-pt: Improve sample timestamp")
-Link: http://lkml.kernel.org/r/20190510124143.27054-4-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Helge Deller <deller@gmx.de>
+Cc: <stable@vger.kernel.org>	# 4.20+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/parisc/mm/init.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -1235,8 +1235,11 @@ static int intel_pt_walk_tnt(struct inte
- 				return 0;
- 			}
- 			decoder->ip += intel_pt_insn.length;
--			if (!decoder->tnt.count)
-+			if (!decoder->tnt.count) {
-+				decoder->sample_timestamp = decoder->timestamp;
-+				decoder->sample_insn_cnt = decoder->timestamp_insn_cnt;
- 				return -EAGAIN;
-+			}
- 			decoder->tnt.payload <<= 1;
- 			continue;
- 		}
+--- a/arch/parisc/mm/init.c
++++ b/arch/parisc/mm/init.c
+@@ -495,7 +495,7 @@ static void __init map_pages(unsigned lo
+ 
+ void __init set_kernel_text_rw(int enable_read_write)
+ {
+-	unsigned long start = (unsigned long) _text;
++	unsigned long start = (unsigned long) __init_begin;
+ 	unsigned long end   = (unsigned long) &data_start;
+ 
+ 	map_pages(start, __pa(start), end-start,
 
 
