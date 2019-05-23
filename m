@@ -2,105 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9435274DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 05:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCF47274E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 05:59:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbfEWD6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 23:58:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43798 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726070AbfEWD6m (ORCPT
+        id S1729724AbfEWD66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 23:58:58 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51567 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbfEWD66 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 23:58:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=texO5kjCiEyRmA9j8g6TTKwQQkF5isv3f023B/uvzhs=; b=KejvbuT5ypOOy1kGXQohTsyf7
-        FNfeMpU0pDrgoKMZww1WiKg/xa5W1ZRCiJZgImZ1b4SYOqY2sW4hAXtTHfZIFJC9FJG7vVsUz3pUc
-        kY4Xq6DKYVHO/oaaMv0B2c15hoNaVgzYC5BUkQwVoP6UPSYsjO3CPiTKVsIoAz5MoPESZ91Kg1Vni
-        a/uou4gXI6+Jx8uSLJyLYobPvknnVxdUPaHCD06JyiD7/EgpZvvS8BjXuibJzy6tnKYidtxGzSKs6
-        v71HEPit5etVQrMYejPK1woKwOV7M9WXvskhQa15vVfNMEtSglArMQYGGVA2gmsL1t0dFR/varD/s
-        KorAFxyHg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hTesJ-00057R-Ai; Thu, 23 May 2019 03:58:39 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>
-Cc:     kbuild test robot <lkp@intel.com>, Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] ASoc: fix sound/soc/intel/skylake/slk-ssp-clk.c build error
- on IA64
-Message-ID: <9019c87f-cf1a-b59f-d87e-8169b247cf88@infradead.org>
-Date:   Wed, 22 May 2019 20:58:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 22 May 2019 23:58:58 -0400
+Received: by mail-it1-f195.google.com with SMTP id m3so7410658itl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 20:58:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gK23drSPTc6Sp50YYd591WJVpCNLG3i0gkiUHxG/8iE=;
+        b=O6Yn6uNY1U0GDT9H8Zs+XxTtDEAWg0hV7yCdnRVLsukaCu/z8SGFTzg+Sd6Rntf/IF
+         Pl9r5CJ1BGtoYQk9S+8OPyfAgV/fuB5O6Bj/M5YPzxhbxmDUNisJRZH+uysYGsN9A4ue
+         m7as3a4YtFLJLAIgSFxfP4wLXczYnAe9kb/IuUlLiPXF/i/d4TnvBOD4sSnyMe17Vj8H
+         j1sArQys6TlhAKDSzeyDumwPL7vh7xro00H5E2eO0BX8A0RxPlp0mygYC/xoDA4Q9hlj
+         ZkIuD0te/WwKkoGxfb3OhGoZ2eccpWs9oh0jq5vVol2ipRT8ohevIL4JyOMaOSVpfJv+
+         jxxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gK23drSPTc6Sp50YYd591WJVpCNLG3i0gkiUHxG/8iE=;
+        b=VwHI2X6ciZnXR61SxYzvmN9x3r4Vkw92ohYaRifDaWP3Ik7zxs/PB5ujl32e7oOSw0
+         xF2juTjiwS221AFCsq16sRiBbc7BtJbfSFQlxdHs3GjrgST04Mn7suikpBqueXh/VqSa
+         YxZGYVeW/9BtjwumON4Afhgk0kU6k2SQ5vIQWz7C5TV0Y2Oix4J3Ry/x/E3klAcC/7sx
+         6Acykd/Tp3X9PDydoPKcHVj57L1lnRGUnq6SNbnlbwicUR/owbaBdwOCf1AUbVhvSU5Q
+         qq4Soyl9WwMalsb9rGkR0Q/esSe8WFpmmBsNDamlRJk7/6hrmkj4M0wFsMKU0uWCLNIk
+         FetA==
+X-Gm-Message-State: APjAAAWj0xLu9tbe0FVic08qHJ8LG0shq+tw4YIeVwhYciKNBTEHFwTu
+        17QM0fYWPTEHy24ViZZoZK0qJR1Wu0jZwGocxbFZ0OI=
+X-Google-Smtp-Source: APXvYqxjgdM9Bp5/7T5lxKvZL5BxoimH1/ppzovCcySA6voShJ3Vkzvq6mBdjzh+IYVopDk/DIZdvtMiSaT9Ji8lBcg=
+X-Received: by 2002:a24:2e17:: with SMTP id i23mr10763400ita.100.1558583937195;
+ Wed, 22 May 2019 20:58:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190512054829.11899-1-cai@lca.pw> <20190513124112.GH24036@dhcp22.suse.cz>
+ <1557755039.6132.23.camel@lca.pw> <20190513140448.GJ24036@dhcp22.suse.cz>
+ <1557760846.6132.25.camel@lca.pw> <20190513153143.GK24036@dhcp22.suse.cz>
+ <CAFgQCTt9XA9_Y6q8wVHkE9_i+b0ZXCAj__zYU0DU9XUkM3F4Ew@mail.gmail.com> <20190522111655.GA4374@dhcp22.suse.cz>
+In-Reply-To: <20190522111655.GA4374@dhcp22.suse.cz>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Thu, 23 May 2019 11:58:45 +0800
+Message-ID: <CAFgQCTuKVif9gPTsbNdAqLGQyQpQ+gC2D1BQT99d0yDYHj4_mA@mail.gmail.com>
+Subject: Re: [PATCH -next v2] mm/hotplug: fix a null-ptr-deref during NUMA boot
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Qian Cai <cai@lca.pw>, Andrew Morton <akpm@linux-foundation.org>,
+        Barret Rhoden <brho@google.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ingo Molnar <mingo@elte.hu>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Wed, May 22, 2019 at 7:16 PM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Wed 22-05-19 15:12:16, Pingfan Liu wrote:
+> > On Mon, May 13, 2019 at 11:31 PM Michal Hocko <mhocko@kernel.org> wrote:
+> > >
+> > > On Mon 13-05-19 11:20:46, Qian Cai wrote:
+> > > > On Mon, 2019-05-13 at 16:04 +0200, Michal Hocko wrote:
+> > > > > On Mon 13-05-19 09:43:59, Qian Cai wrote:
+> > > > > > On Mon, 2019-05-13 at 14:41 +0200, Michal Hocko wrote:
+> > > > > > > On Sun 12-05-19 01:48:29, Qian Cai wrote:
+> > > > > > > > The linux-next commit ("x86, numa: always initialize all possible
+> > > > > > > > nodes") introduced a crash below during boot for systems with a
+> > > > > > > > memory-less node. This is due to CPUs that get onlined during SMP boot,
+> > > > > > > > but that onlining triggers a page fault in bus_add_device() during
+> > > > > > > > device registration:
+> > > > > > > >
+> > > > > > > >       error = sysfs_create_link(&bus->p->devices_kset->kobj,
+> > > > > > > >
+> > > > > > > > bus->p is NULL. That "p" is the subsys_private struct, and it should
+> > > > > > > > have been set in,
+> > > > > > > >
+> > > > > > > >       postcore_initcall(register_node_type);
+> > > > > > > >
+> > > > > > > > but that happens in do_basic_setup() after smp_init().
+> > > > > > > >
+> > > > > > > > The old code had set this node online via alloc_node_data(), so when it
+> > > > > > > > came time to do_cpu_up() -> try_online_node(), the node was already up
+> > > > > > > > and nothing happened.
+> > > > > > > >
+> > > > > > > > Now, it attempts to online the node, which registers the node with
+> > > > > > > > sysfs, but that can't happen before the 'node' subsystem is registered.
+> > > > > > > >
+> > > > > > > > Since kernel_init() is running by a kernel thread that is in
+> > > > > > > > SYSTEM_SCHEDULING state, fixed this by skipping registering with sysfs
+> > > > > > > > during the early boot in __try_online_node().
+> > > > > > >
+> > > > > > > Relying on SYSTEM_SCHEDULING looks really hackish. Why cannot we simply
+> > > > > > > drop try_online_node from do_cpu_up? Your v2 remark below suggests that
+> > > > > > > we need to call node_set_online because something later on depends on
+> > > > > > > that. Btw. why do we even allocate a pgdat from this path? This looks
+> > > > > > > really messy.
+> > > > > >
+> > > > > > See the commit cf23422b9d76 ("cpu/mem hotplug: enable CPUs online before
+> > > > > > local
+> > > > > > memory online")
+> > > > > >
+> > > > > > It looks like try_online_node() in do_cpu_up() is needed for memory hotplug
+> > > > > > which is to put its node online if offlined and then hotadd_new_pgdat()
+> > > > > > calls
+> > > > > > build_all_zonelists() to initialize the zone list.
+> > > > >
+> > > > > Well, do we still have to followthe logic that the above (unreviewed)
+> > > > > commit has established? The hotplug code in general made a lot of ad-hoc
+> > > > > design decisions which had to be revisited over time. If we are not
+> > > > > allocating pgdats for newly added memory then we should really make sure
+> > > > > to do so at a proper time and hook. I am not sure about CPU vs. memory
+> > > > > init ordering but even then I would really prefer if we could make the
+> > > > > init less obscure and _documented_.
+> > > >
+> > > > I don't know, but I think it is a good idea to keep the existing logic rather
+> > > > than do a big surgery
+> > >
+> > > Adding more hacks just doesn't make the situation any better.
+> > >
+> > > > unless someone is able to confirm it is not breaking NUMA
+> > > > node physical hotplug.
+> > >
+> > > I have a machine to test whole node offline. I am just busy to prepare a
+> > > patch myself. I can have it tested though.
+> > >
+> > I think the definition of "node online" is worth of rethinking. Before
+> > patch "x86, numa: always initialize all possible nodes", online means
+> > either cpu or memory present. After this patch, only node owing memory
+> > as present.
+> >
+> > In the commit log, I think the change's motivation should be "Not to
+> > mention that it doesn't really make much sense to consider an empty
+> > node as online because we just consider this node whenever we want to
+> > iterate nodes to use and empty node is obviously not the best
+> > candidate."
+> >
+> > But in fact, we already have for_each_node_state(nid, N_MEMORY) to
+> > cover this purpose.
+>
+> I do not really think we want to spread N_MEMORY outside of the core MM.
+> It is quite confusing IMHO.
+> .
+But it has already like this. Just git grep N_MEMORY.
 
-skl-ssp-clk.c does not build on IA64 because the driver
-uses the common clock interface, so make the driver depend
-on COMMON_CLK.
+> > Furthermore, changing the definition of online may
+> > break something in the scheduler, e.g. in task_numa_migrate(), where
+> > it calls for_each_online_node.
+>
+> Could you be more specific please? Why should numa balancing consider
+> nodes without any memory?
+>
+As my understanding, the destination cpu can be on a memory less node.
+BTW, there are several functions in the scheduler facing the same
+scenario, task_numa_migrate() is an example.
 
-Fixes this build error:
-../sound/soc/intel/skylake/skl-ssp-clk.c:26:16: error: field 'hw' has incomplete type
-  struct clk_hw hw;
-                ^~
+> > By keeping the node owning cpu as online, Michal's patch can avoid
+> > such corner case and keep things easy. Furthermore, if needed, the
+> > other patch can use for_each_node_state(nid, N_MEMORY) to replace
+> > for_each_online_node is some space.
+>
+> Ideally no code outside of the core MM should care about what kind of
+> memory does the node really own. The external code should only care
+> whether the node is online and thus usable or offline and of no
+> interest.
+Yes, but maybe it will pay great effort on it.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Cc: Jie Yang <yang.jie@linux.intel.com>
-Cc: alsa-devel@alsa-project.org
----
- sound/soc/intel/Kconfig        |    3 ++-
- sound/soc/intel/boards/Kconfig |    2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
---- lnx-52-rc1.orig/sound/soc/intel/Kconfig
-+++ lnx-52-rc1/sound/soc/intel/Kconfig
-@@ -104,7 +104,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
- config SND_SOC_INTEL_SKYLAKE
- 	tristate "All Skylake/SST Platforms"
- 	depends on PCI && ACPI
--	select SND_SOC_INTEL_SKL
-+	select SND_SOC_INTEL_SKL if COMMON_CLK
- 	select SND_SOC_INTEL_APL
- 	select SND_SOC_INTEL_KBL
- 	select SND_SOC_INTEL_GLK
-@@ -120,6 +120,7 @@ config SND_SOC_INTEL_SKYLAKE
- config SND_SOC_INTEL_SKL
- 	tristate "Skylake Platforms"
- 	depends on PCI && ACPI
-+	depends on COMMON_CLK
- 	select SND_SOC_INTEL_SKYLAKE_FAMILY
- 	help
- 	  If you have a Intel Skylake platform with the DSP enabled
---- lnx-52-rc1.orig/sound/soc/intel/boards/Kconfig
-+++ lnx-52-rc1/sound/soc/intel/boards/Kconfig
-@@ -286,7 +286,7 @@ config SND_SOC_INTEL_KBL_RT5663_MAX98927
- 	select SND_SOC_MAX98927
- 	select SND_SOC_DMIC
- 	select SND_SOC_HDAC_HDMI
--	select SND_SOC_INTEL_SKYLAKE_SSP_CLK
-+	select SND_SOC_INTEL_SKYLAKE_SSP_CLK if COMMON_CLK
- 	help
- 	  This adds support for ASoC Onboard Codec I2S machine driver. This will
- 	  create an alsa sound card for RT5663 + MAX98927.
-
-
+Regards,
+Pingfan
+> --
+> Michal Hocko
+> SUSE Labs
