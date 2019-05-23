@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE99D2897D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB089286DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391314AbfEWTi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:38:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33490 "EHLO mail.kernel.org"
+        id S2388658AbfEWTNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:13:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390670AbfEWTXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:23:16 -0400
+        id S2388614AbfEWTNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:13:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B5F52133D;
-        Thu, 23 May 2019 19:23:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EE67217D9;
+        Thu, 23 May 2019 19:13:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639395;
-        bh=lNtY3LwbNjoFMni+6IrjFtt5NfDe/DYLXnGcFMVYK00=;
+        s=default; t=1558638817;
+        bh=vYDKPCRRhpmV+CiLuoHZgrEgCpLRZssg1PODElcZR8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yXQgx1KRTjff6MtIXj+ehMx/LiMp+6OwNcim3Uy5qsPjPlQ4X9lli0cALKmFZZLm1
-         1j4c4ZDZOg9vveaItaGNDySsY/+K6zMU/C/O7C1Jao7NjJbQs0rUgEQ6oc+Sd0ncOR
-         SGjlMrJnrEiHVKuL8QSab6UupSCgWybtWK/JTqLo=
+        b=m6klldvaqiYzpu+0QkeO0J6weI0c7qG5WzIpvLGtj4vuG4IvUo/Bpebs09m6dU8Ln
+         nfdFnTUR4Nht2AUwUlXz1HVb6I0JC+dKy4sLVfcdiMbTP1X4kO+Ux23Ob5ARR2CuO+
+         P1jqo6J9tAuhtS9nRFBBDlQ2w1iaHd/po2KP9Ot8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 5.0 089/139] PCI/AER: Change pci_aer_init() stub to return void
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 59/77] esp4: add length check for UDP encapsulation
 Date:   Thu, 23 May 2019 21:06:17 +0200
-Message-Id: <20190523181732.241762809@linuxfoundation.org>
+Message-Id: <20190523181728.120817290@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +44,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+[ Upstream commit 8dfb4eba4100e7cdd161a8baef2d8d61b7a7e62e ]
 
-commit 31f996efbd5a7825f4d30150469e9d110aea00e8 upstream.
+esp_output_udp_encap can produce a length that doesn't fit in the 16
+bits of a UDP header's length field. In that case, we'll send a
+fragmented packet whose length is larger than IP_MAX_MTU (resulting in
+"Oversized IP packet" warnings on receive) and with a bogus UDP
+length.
 
-Commit 60ed982a4e78 ("PCI/AER: Move internal declarations to
-drivers/pci/pci.h") changed pci_aer_init() to return "void", but didn't
-change the stub for when CONFIG_PCIEAER isn't enabled.  Change the stub to
-match.
+To prevent this, add a length check to esp_output_udp_encap and return
+ -EMSGSIZE on failure.
 
-Fixes: 60ed982a4e78 ("PCI/AER: Move internal declarations to drivers/pci/pci.h")
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-CC: stable@vger.kernel.org	# v4.19+
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This seems to be older than git history.
 
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pci.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/esp4.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -596,7 +596,7 @@ void pci_aer_clear_fatal_status(struct p
- void pci_aer_clear_device_status(struct pci_dev *dev);
- #else
- static inline void pci_no_aer(void) { }
--static inline int pci_aer_init(struct pci_dev *d) { return -ENODEV; }
-+static inline void pci_aer_init(struct pci_dev *d) { }
- static inline void pci_aer_exit(struct pci_dev *d) { }
- static inline void pci_aer_clear_fatal_status(struct pci_dev *dev) { }
- static inline void pci_aer_clear_device_status(struct pci_dev *dev) { }
+diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
+index d30285c5d52dd..c8e32f167ebbf 100644
+--- a/net/ipv4/esp4.c
++++ b/net/ipv4/esp4.c
+@@ -205,7 +205,7 @@ static void esp_output_fill_trailer(u8 *tail, int tfclen, int plen, __u8 proto)
+ 	tail[plen - 1] = proto;
+ }
+ 
+-static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *esp)
++static int esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *esp)
+ {
+ 	int encap_type;
+ 	struct udphdr *uh;
+@@ -213,6 +213,7 @@ static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, stru
+ 	__be16 sport, dport;
+ 	struct xfrm_encap_tmpl *encap = x->encap;
+ 	struct ip_esp_hdr *esph = esp->esph;
++	unsigned int len;
+ 
+ 	spin_lock_bh(&x->lock);
+ 	sport = encap->encap_sport;
+@@ -220,11 +221,14 @@ static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, stru
+ 	encap_type = encap->encap_type;
+ 	spin_unlock_bh(&x->lock);
+ 
++	len = skb->len + esp->tailen - skb_transport_offset(skb);
++	if (len + sizeof(struct iphdr) >= IP_MAX_MTU)
++		return -EMSGSIZE;
++
+ 	uh = (struct udphdr *)esph;
+ 	uh->source = sport;
+ 	uh->dest = dport;
+-	uh->len = htons(skb->len + esp->tailen
+-		  - skb_transport_offset(skb));
++	uh->len = htons(len);
+ 	uh->check = 0;
+ 
+ 	switch (encap_type) {
+@@ -241,6 +245,8 @@ static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, stru
+ 
+ 	*skb_mac_header(skb) = IPPROTO_UDP;
+ 	esp->esph = esph;
++
++	return 0;
+ }
+ 
+ int esp_output_head(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *esp)
+@@ -254,8 +260,12 @@ int esp_output_head(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *
+ 	int tailen = esp->tailen;
+ 
+ 	/* this is non-NULL only with UDP Encapsulation */
+-	if (x->encap)
+-		esp_output_udp_encap(x, skb, esp);
++	if (x->encap) {
++		int err = esp_output_udp_encap(x, skb, esp);
++
++		if (err < 0)
++			return err;
++	}
+ 
+ 	if (!skb_cloned(skb)) {
+ 		if (tailen <= skb_tailroom(skb)) {
+-- 
+2.20.1
+
 
 
