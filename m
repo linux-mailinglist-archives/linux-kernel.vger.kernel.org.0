@@ -2,117 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E140276EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 09:29:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87C8A276EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 09:30:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729698AbfEWH3T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 03:29:19 -0400
-Received: from mx01-fr.bfs.de ([193.174.231.67]:52310 "EHLO mx01-fr.bfs.de"
+        id S1729841AbfEWHaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 03:30:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726310AbfEWH3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 03:29:19 -0400
-Received: from mail-fr.bfs.de (mail-fr.bfs.de [10.177.18.200])
-        by mx01-fr.bfs.de (Postfix) with ESMTPS id 269D9200CC;
-        Thu, 23 May 2019 09:29:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-        t=1558596552; h=from:from:sender:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ju/S+wL2OcAXGoSvJDWSAsd3Xk7WBxZ9ICqLs8QO3/4=;
-        b=dougbRlq29X/T7685vGkmNF8H0e99JxKvupXzkBeLsppGSBTAI+ejPeRg8zpFi7mzMbgi+
-        mmmftdAF/w1tmxT0omG8iGDBVnDQc8N0s+haP2lqxSOiQXTVkGuCOx9lIgkQbHpNvpY35h
-        qhTBuj5iH8d+rX+ZoLe6/YHMOdz7iEenc0f/qNgl4kBGSDCcFTANPMICddzqjR5UkzHNR8
-        wx35MdUQhpK0LaLQ8XkipQG+DajX3vjFKzk576TctPhIx1G7Xy1G+d0XXJzglZmK2nrAC6
-        piYg6e1Zqgz1BBB+5vwKyGAXOWEAEG37yCik8soR8V8t4cY+XO8eENwOMgyIcg==
-Received: from [134.92.181.33] (unknown [134.92.181.33])
-        by mail-fr.bfs.de (Postfix) with ESMTPS id 05015BEEBD;
-        Thu, 23 May 2019 09:29:11 +0200 (CEST)
-Message-ID: <5CE64BC7.4010803@bfs.de>
-Date:   Thu, 23 May 2019 09:29:11 +0200
-From:   walter harms <wharms@bfs.de>
-Reply-To: wharms@bfs.de
-User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; de; rv:1.9.1.16) Gecko/20101125 SUSE/3.0.11 Thunderbird/3.0.11
+        id S1726237AbfEWHaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 03:30:19 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37FD0217D7;
+        Thu, 23 May 2019 07:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558596618;
+        bh=ujhlpZ5mKhOsSZaVmr89iXdVz9pfrd/drTOvs0yhvHU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EsvtVZ34uzPG9EKYWQ/ck6dXWDhMiNMaXUy8RgTWicMVfjzv0Gq3d9hWEpnS2c7f7
+         A4ZmOoJqYgDymznW3xADriW5o0blaYk9VcKquaWaELMQqX0h9LKp9NFONr13IUwTA1
+         kdCREoeiugAkVh3XXRIT1f25qbrKID00URKXlSAk=
+Date:   Thu, 23 May 2019 09:30:16 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Shobhit Kukreti <shobhitkukreti@yahoo.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: pi433: cleanup to adhere with linux coding style
+Message-ID: <20190523073016.GA14393@kroah.com>
+References: <20190523010619.GA23217@t-1000>
 MIME-Version: 1.0
-To:     Aung <aung.aungkyawsoe@gmail.com>
-CC:     lkml <linux-kernel@vger.kernel.org>
-Subject: Re: need company for kernel upgrade
-References: <5CE53BA9.4070906@bfs.de> <CABC7EG8NiiPycthdfb7Ng3MsxTvmmxk_LjcosM8ZD1F0CnuDFw@mail.gmail.com>
-In-Reply-To: <CABC7EG8NiiPycthdfb7Ng3MsxTvmmxk_LjcosM8ZD1F0CnuDFw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.06
-Authentication-Results: mx01-fr.bfs.de
-X-Spamd-Result: default: False [-3.06 / 7.00];
-         ARC_NA(0.00)[];
-         HAS_REPLYTO(0.00)[wharms@bfs.de];
-         BAYES_HAM(-2.96)[99.82%];
-         FROM_HAS_DN(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[gmail.com];
-         TAGGED_RCPT(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         REPLYTO_ADDR_EQ_FROM(0.00)[];
-         TO_DN_ALL(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_TWO(0.00)[2];
-         FREEMAIL_TO(0.00)[gmail.com];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCVD_TLS_ALL(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190523010619.GA23217@t-1000>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Am 23.05.2019 00:31, schrieb Aung:
-> Hello
+On Wed, May 22, 2019 at 06:06:22PM -0700, Shobhit Kukreti wrote:
+> The linux coding style emphasizes on a limit of 80 characters
+> per line. Cleaned up several over 80 character warnings in following files:
 > 
-> I thought you build a kernel, then using SCP or dd to overwite uImage
-> file to replace
-> the previous kernel image into the file system, then reboot it. Or are
-> you trying to
-> upgrade without rebooting? Cheers!
+> pi433_if.c
+> pi433_if.h
+> rf69.c
 > 
-
-No,
-the company i am working for has a custom build arm-board.
-We bought the kernel from the assembler but found it has
-some problems that need fixing.
-Basically we want to improve the linux-kernel so it can run
-native on our boards.
-
-re,
- wh
-
-
-> Sincerely
+> Signed-off-by: Shobhit Kukreti <shobhitkukreti@yahoo.com>
+> ---
+>  drivers/staging/pi433/pi433_if.c | 15 ++++---
+>  drivers/staging/pi433/pi433_if.h | 25 +++++++----
+>  drivers/staging/pi433/rf69.c     | 89 ++++++++++++++++++++++++----------------
+>  3 files changed, 78 insertions(+), 51 deletions(-)
 > 
-> Aung
-> 
-> On 5/22/19, walter harms <wharms@bfs.de> wrote:
->> the list was silent but NTL.
->>
->> Hi developers,
->> i am in search of a company that can help upgrading
->> a running linux-kernel on custom hardware.
->> Est. time 10 days.
->>
->>
->> The problems are already identified, we are aiming
->> the get the current vanilla linux kernel on the system.
->>
->>
->> re,
->>  wh
->>
->> _______________________________________________
->> linux-arm mailing list
->> linux-arm@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm
->>
+> diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
+> index c889f0b..07715c9 100644
+> --- a/drivers/staging/pi433/pi433_if.c
+> +++ b/drivers/staging/pi433/pi433_if.c
+> @@ -439,8 +439,7 @@ pi433_receive(void *data)
+>  		/* wait for RSSI level to become high */
+>  		dev_dbg(dev->dev, "rx: going to wait for high RSSI level");
+>  		retval = wait_event_interruptible(dev->rx_wait_queue,
+> -						  rf69_get_flag(dev->spi,
+> -								rssi_exceeded_threshold));
+> +			rf69_get_flag(dev->spi,	rssi_exceeded_threshold));
+
+Ick, no.  The original code is fine here, this makes it much harder to
+understand what is going on here, right?
+
+>  		if (retval) /* wait was interrupted */
+>  			goto abort;
+>  		dev->interrupt_rx_allowed = false;
+> @@ -475,7 +474,7 @@ pi433_receive(void *data)
+>  	/* length byte enabled? */
+>  	if (dev->rx_cfg.enable_length_byte == OPTION_ON) {
+>  		retval = wait_event_interruptible(dev->fifo_wait_queue,
+> -						  dev->free_in_fifo < FIFO_SIZE);
+> +					dev->free_in_fifo < FIFO_SIZE);
+
+Same for this, and all the other changes you made.  The 80 column "rule"
+is just a strong hint.  There are other ways to remove it instead of
+just moving code to the left like you did here, if you really want to
+fix these warnings up.
+
+thanks,
+
+greg k-h
