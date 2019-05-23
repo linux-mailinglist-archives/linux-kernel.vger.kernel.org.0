@@ -2,86 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2450D2772C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 09:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6465427748
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 09:39:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730347AbfEWHhh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 03:37:37 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33419 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730320AbfEWHhf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 03:37:35 -0400
-Received: by mail-lf1-f68.google.com with SMTP id x132so3659403lfd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 00:37:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cx8kg7WymCjtyRcPfqK4zjuEJ4lhy55B2Gkin5DJtFU=;
-        b=fR8RE84n1odppI3p20OTG7XaGgUYqo6kXCldCRW8or5Z3hIBeoEMGNKMB5ZPtdNJk/
-         mgByEQfAV30URjnhve0FLDZCf3VjYeJTLxrXOtpebu/WgWJa95xV6q/bzJIWfQu5kAM/
-         lb+2YJRaFCyI9zlUIgxWbqOGBQ8GH9WL7wLHOn/TeVF16dYN8cUyFpGCJTNx4/m3BA6y
-         WhJFolJShRdIpJ8lYYTZrjQzkt4A0fSuH6IOy7MSadTiKYexx/vuh+O5dw6MVcnvh0iX
-         6FmVEvoLxExnr+FvKCG/9HFdK3pBLFR3kjTdxjnhyNRcvh8Flzh1gs9FGLySsBOjgh/R
-         +vAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cx8kg7WymCjtyRcPfqK4zjuEJ4lhy55B2Gkin5DJtFU=;
-        b=iHbH+RfH9sZ19jN7bEaejXJytnqm84GJUqmNVCdvogYsK7Y1ri5T9a1ofumLv1i0wA
-         ggVonfKt/mtIAKNQqJ5YUDgr5ONbm6NcNX34AvtzZoeHv01SelIZsIr3S8puxHk+aGkO
-         lm1Mwq4khTch0Ng5B28gEJlZOhvT+CcCMzbKMI03ZIaLj2nMdu9KL51+bVpBPr7HST/Y
-         iGdRHA18KaKGA2oc8/Kq76FB+9P+vZSLD6S0I7Gt0PyrXo74p4hPUDIyPougsOJ/sAoi
-         Kbo9TlZJgMmWg7k76QO1ARKCEhhMAjVFIdA/oHIBahoobD+ZE/f5vtXbrViJVc4aTnOB
-         2QHQ==
-X-Gm-Message-State: APjAAAWXA+HgFl/o1who6u2q9MXWNN/ApP1WKasK4eDmTQwmyJu/J57I
-        7nrTPNtteM/VHTDY4HH5KPqSY0ryP9wpqYvf86g88g==
-X-Google-Smtp-Source: APXvYqyBRsqXPk9Dhzbeg2Oz3JZyzA3NjwECl9TBODwCZZrOK9/RFjOdjOlwiSIFYgEUEDYHs19a86bibzY+Aklnf3E=
-X-Received: by 2002:ac2:5935:: with SMTP id v21mr4885287lfi.117.1558597053613;
- Thu, 23 May 2019 00:37:33 -0700 (PDT)
+        id S1730650AbfEWHiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 03:38:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39228 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726310AbfEWHit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 03:38:49 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8E482075E;
+        Thu, 23 May 2019 07:38:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558597128;
+        bh=PDeQ/R6EFXXI6bmG+2plkabUTkZx6Xpn/gVapHNA3DQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A7DoqJN2tSJu1utHXlZ/Uk9R23K9mhPPKEIMvUAwL23Qfy5vM6Xr98X0r923XXkRE
+         wy7k9kJcj2h3C5v20tYNfAQ34HDISe6d248XLL5gQ+D32V1phD/sXMaBTIvhRxu0hf
+         8SRKuiWIwfdzus11Ls+EacvJN1RcPhaRs1MbU2Ko=
+Date:   Thu, 23 May 2019 15:37:45 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Yinbo Zhu <yinbo.zhu@nxp.com>
+Cc:     Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        xiaobo.xie@nxp.com, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        yangbo.lu@nxp.com, jiafei.pan@nxp.com,
+        Ashish Kumar <Ashish.Kumar@nxp.com>
+Subject: Re: [PATCH v2] arm64: dts: ls1028a: Add esdhc node in dts
+Message-ID: <20190523073744.GG9261@dragon>
+References: <20190515040046.9230-1-yinbo.zhu@nxp.com>
 MIME-Version: 1.0
-References: <20190522152925.12419-1-benjamin.gaignard@st.com>
-In-Reply-To: <20190522152925.12419-1-benjamin.gaignard@st.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 23 May 2019 09:37:22 +0200
-Message-ID: <CACRpkdYOS0UrXPtJb0--4RW6QM_Xq8wb=9Gj5X9fk7JWCgpWfQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Allow pinctrl framework to create links
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     Alexandre TORGUE <alexandre.torgue@st.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190515040046.9230-1-yinbo.zhu@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benjamin!
+On Wed, May 15, 2019 at 12:00:46PM +0800, Yinbo Zhu wrote:
+> From: Ashish Kumar <Ashish.Kumar@nxp.com>
+> 
+> This patch is to add esdhc node and enable SD UHS-I,
+> eMMC HS200 for ls1028ardb/ls1028aqds board.
+> 
+> Signed-off-by: Ashish Kumar <Ashish.Kumar@nxp.com>
+> Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+> ---
+> Change in v2:
+> 		Update the patch title
+> 		Add a commont in dts code
+> 
+>  arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts |    8 ++++++
+>  arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts |   13 ++++++++++
+>  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi    |   27 +++++++++++++++++++++
+>  3 files changed, 48 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+> index 14c79f4..180e5d2 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
+> @@ -42,6 +42,14 @@
+>  	status = "okay";
+>  };
+>  
+> +&esdhc {
+> +	status = "okay";
+> +};
+> +
+> +&esdhc1 {
+> +	status = "okay";
+> +};
+> +
+>  &i2c0 {
+>  	status = "okay";
+>  
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+> index f86b054..1bfaf42 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+> @@ -30,6 +30,19 @@
+>  	};
+>  };
+>  
+> +&esdhc {
+> +	status = "okay";
 
-On Wed, May 22, 2019 at 5:29 PM Benjamin Gaignard
-<benjamin.gaignard@st.com> wrote:
+We usually put 'status' at the end of property list.
 
-> Some pin controllers may need to ensure suspend/resume calls ordering between
-> themselves and their clients.
-> That is the case for STMFX (an I2C GPIO expender) which need to be suspended
-> after all it clients to let them call pinctrl_pm_select_sleep_state() before
-> perform it own suspend function. It is the same problem for resume but in
-> reverse order.
->
-> This series allow to let pinctrl core knows if a controller would like to
-> create link between itself and it client by setting create_link to true.
+> +	sd-uhs-sdr104;
+> +	sd-uhs-sdr50;
+> +	sd-uhs-sdr25;
+> +	sd-uhs-sdr12;
+> +	};
 
-I changed the name of the boolt to "link_consumers" and applied!
+Bad indentation.
 
-I will send patches for all other pin controllers that are I2C or other
-slow bus based, as they will definately need this. Let's see what
-happens!
+> +
+> +&esdhc1 {
+> +	status = "okay";
+> +	mmc-hs200-1_8v;
+> +	};
+> +
+>  &i2c0 {
+>  	status = "okay";
+>  
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> index 2896bbc..5c7546f 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> @@ -274,6 +274,33 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		esdhc: esdhc@2140000 {
 
-Yours,
-Linus Walleij
+'mmc' for node name, and the node should be sorted in unit-address.
+
+> +			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
+> +			reg = <0x0 0x2140000 0x0 0x10000>;
+> +			interrupts = <0 28 0x4>; /* Level high type */
+
+interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
+
+> +			clock-frequency = <0>; /* fixed up by bootloader */
+> +			clocks = <&clockgen 2 1>;
+> +			voltage-ranges = <1800 1800 3300 3300>;
+> +			sdhci,auto-cmd12;
+> +			little-endian;
+> +			bus-width = <4>;
+> +			status = "disabled";
+> +		};
+> +
+> +		esdhc1: esdhc@2150000 {
+> +			compatible = "fsl,ls1028a-esdhc", "fsl,esdhc";
+> +			reg = <0x0 0x2150000 0x0 0x10000>;
+> +			interrupts = <0 63 0x4>; /* Level high type */
+> +			clock-frequency = <0>; /* fixed up by bootloader */
+> +			clocks = <&clockgen 2 1>;
+> +			voltage-ranges = <1800 1800 3300 3300>;
+> +			sdhci,auto-cmd12;
+> +			broken-cd;
+
+Shouldn't this one be a board level property?
+
+Shawn
+
+> +			little-endian;
+> +			bus-width = <4>;
+> +			status = "disabled";
+> +		};
+> +
+>  		sata: sata@3200000 {
+>  			compatible = "fsl,ls1028a-ahci";
+>  			reg = <0x0 0x3200000 0x0 0x10000>,
+> -- 
+> 1.7.1
+> 
