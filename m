@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D36C28940
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC7B287E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392244AbfEWTcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:32:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45842 "EHLO mail.kernel.org"
+        id S2391032AbfEWTZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:25:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391945AbfEWTcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:32:03 -0400
+        id S2391019AbfEWTY6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:24:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2345B21881;
-        Thu, 23 May 2019 19:32:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2586D217D7;
+        Thu, 23 May 2019 19:24:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639921;
-        bh=9tqMZWqEHULiuOWDI2seNvJ1xyybwcMj/Ewo4lbLsvc=;
+        s=default; t=1558639497;
+        bh=FxkdIhG38ihpYGCunrzIqZkGUeuxlN4iMAdCgEIL3v8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TkPtJD7J6OzuNymBw+KpEimKMm42fmkrHghKQX04XFdmZhB41EfAgiAaYrXsi90RB
-         bLDF5i+TiOKS0GISv+LZc3YhHxgk6XHGsrkREXmhNRLmvhrs2DoZ8ywEvQaV+owOr/
-         Q0Q3X0yetCCgnNB/3NsUtY2SadDHMbZ47pXwsH68=
+        b=MOnaQInDBmYTd+MKS+uKYG2kbyn5Kop+ryqR1NYcl0LHmSZ0E5Bm16TRNdpFDcPtf
+         WCvGeH8F/cex/dgd007vveP9hScNW1GHIKgW1vUg7Embz65FDSzp5xqmsAhPNGBgQg
+         7IXXpk/a1rgT5G8FNCRw4JQpJs2NrckSEm2Tae4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yifeng Li <tomli@tomli.me>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 5.1 092/122] fbdev: sm712fb: use 1024x768 by default on non-MIPS, fix garbled display
-Date:   Thu, 23 May 2019 21:06:54 +0200
-Message-Id: <20190523181717.258003900@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Xu <peterx@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 127/139] KVM: fix KVM_CLEAR_DIRTY_LOG for memory slots of unaligned size
+Date:   Thu, 23 May 2019 21:06:55 +0200
+Message-Id: <20190523181735.824545490@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,124 +44,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yifeng Li <tomli@tomli.me>
+[ Upstream commit 76d58e0f07ec203bbdfcaabd9a9fc10a5a3ed5ea ]
 
-commit 4ed7d2ccb7684510ec5f7a8f7ef534bc6a3d55b2 upstream.
+If a memory slot's size is not a multiple of 64 pages (256K), then
+the KVM_CLEAR_DIRTY_LOG API is unusable: clearing the final 64 pages
+either requires the requested page range to go beyond memslot->npages,
+or requires log->num_pages to be unaligned, and kvm_clear_dirty_log_protect
+requires log->num_pages to be both in range and aligned.
 
-Loongson MIPS netbooks use 1024x600 LCD panels, which is the original
-target platform of this driver, but nearly all old x86 laptops have
-1024x768. Lighting 768 panels using 600's timings would partially
-garble the display. Since it's not possible to distinguish them reliably,
-we change the default to 768, but keep 600 as-is on MIPS.
+To allow this case, allow log->num_pages not to be a multiple of 64 if
+it ends exactly on the last page of the slot.
 
-Further, earlier laptops, such as IBM Thinkpad 240X, has a 800x600 LCD
-panel, this driver would probably garbled those display. As we don't
-have one for testing, the original behavior of the driver is kept as-is,
-but the problem has been documented is the comments.
-
-Signed-off-by: Yifeng Li <tomli@tomli.me>
-Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Teddy Wang <teddy.wang@siliconmotion.com>
-Cc: <stable@vger.kernel.org>  # v4.4+
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: Peter Xu <peterx@redhat.com>
+Fixes: 98938aa8edd6 ("KVM: validate userspace input in kvm_clear_dirty_log_protect()", 2019-01-02)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/sm712.h   |    7 +++--
- drivers/video/fbdev/sm712fb.c |   53 +++++++++++++++++++++++++++++++-----------
- 2 files changed, 44 insertions(+), 16 deletions(-)
+ Documentation/virtual/kvm/api.txt            | 5 +++--
+ tools/testing/selftests/kvm/dirty_log_test.c | 9 ++++++---
+ virt/kvm/kvm_main.c                          | 7 ++++---
+ 3 files changed, 13 insertions(+), 8 deletions(-)
 
---- a/drivers/video/fbdev/sm712.h
-+++ b/drivers/video/fbdev/sm712.h
-@@ -15,9 +15,10 @@
- 
- #define FB_ACCEL_SMI_LYNX 88
- 
--#define SCREEN_X_RES      1024
--#define SCREEN_Y_RES      600
--#define SCREEN_BPP        16
-+#define SCREEN_X_RES          1024
-+#define SCREEN_Y_RES_PC       768
-+#define SCREEN_Y_RES_NETBOOK  600
-+#define SCREEN_BPP            16
- 
- #define dac_reg	(0x3c8)
- #define dac_val	(0x3c9)
---- a/drivers/video/fbdev/sm712fb.c
-+++ b/drivers/video/fbdev/sm712fb.c
-@@ -1463,6 +1463,43 @@ static u_long sm7xx_vram_probe(struct sm
- 	return 0;  /* unknown hardware */
- }
- 
-+static void sm7xx_resolution_probe(struct smtcfb_info *sfb)
-+{
-+	/* get mode parameter from smtc_scr_info */
-+	if (smtc_scr_info.lfb_width != 0) {
-+		sfb->fb->var.xres = smtc_scr_info.lfb_width;
-+		sfb->fb->var.yres = smtc_scr_info.lfb_height;
-+		sfb->fb->var.bits_per_pixel = smtc_scr_info.lfb_depth;
-+		goto final;
-+	}
-+
+diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+index ba8927c0d45c4..a1b8e6d92298c 100644
+--- a/Documentation/virtual/kvm/api.txt
++++ b/Documentation/virtual/kvm/api.txt
+@@ -3790,8 +3790,9 @@ The ioctl clears the dirty status of pages in a memory slot, according to
+ the bitmap that is passed in struct kvm_clear_dirty_log's dirty_bitmap
+ field.  Bit 0 of the bitmap corresponds to page "first_page" in the
+ memory slot, and num_pages is the size in bits of the input bitmap.
+-Both first_page and num_pages must be a multiple of 64.  For each bit
+-that is set in the input bitmap, the corresponding page is marked "clean"
++first_page must be a multiple of 64; num_pages must also be a multiple of
++64 unless first_page + num_pages is the size of the memory slot.  For each
++bit that is set in the input bitmap, the corresponding page is marked "clean"
+ in KVM's dirty bitmap, and dirty tracking is re-enabled for that page
+ (for example via write-protection, or by clearing the dirty bit in
+ a page table entry).
+diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
+index 4715cfba20dce..93f99c6b7d79e 100644
+--- a/tools/testing/selftests/kvm/dirty_log_test.c
++++ b/tools/testing/selftests/kvm/dirty_log_test.c
+@@ -288,8 +288,11 @@ static void run_test(enum vm_guest_mode mode, unsigned long iterations,
+ #endif
+ 	max_gfn = (1ul << (guest_pa_bits - guest_page_shift)) - 1;
+ 	guest_page_size = (1ul << guest_page_shift);
+-	/* 1G of guest page sized pages */
+-	guest_num_pages = (1ul << (30 - guest_page_shift));
 +	/*
-+	 * No parameter, default resolution is 1024x768-16.
-+	 *
-+	 * FIXME: earlier laptops, such as IBM Thinkpad 240X, has a 800x600
-+	 * panel, also see the comments about Thinkpad 240X above.
++	 * A little more than 1G of guest page sized pages.  Cover the
++	 * case where the size is not aligned to 64 pages.
 +	 */
-+	sfb->fb->var.xres = SCREEN_X_RES;
-+	sfb->fb->var.yres = SCREEN_Y_RES_PC;
-+	sfb->fb->var.bits_per_pixel = SCREEN_BPP;
-+
-+#ifdef CONFIG_MIPS
-+	/*
-+	 * Loongson MIPS netbooks use 1024x600 LCD panels, which is the original
-+	 * target platform of this driver, but nearly all old x86 laptops have
-+	 * 1024x768. Lighting 768 panels using 600's timings would partially
-+	 * garble the display, so we don't want that. But it's not possible to
-+	 * distinguish them reliably.
-+	 *
-+	 * So we change the default to 768, but keep 600 as-is on MIPS.
-+	 */
-+	sfb->fb->var.yres = SCREEN_Y_RES_NETBOOK;
-+#endif
-+
-+final:
-+	big_pixel_depth(sfb->fb->var.bits_per_pixel, smtc_scr_info.lfb_depth);
-+}
-+
- static int smtcfb_pci_probe(struct pci_dev *pdev,
- 			    const struct pci_device_id *ent)
- {
-@@ -1508,19 +1545,6 @@ static int smtcfb_pci_probe(struct pci_d
++	guest_num_pages = (1ul << (30 - guest_page_shift)) + 3;
+ 	host_page_size = getpagesize();
+ 	host_num_pages = (guest_num_pages * guest_page_size) / host_page_size +
+ 			 !!((guest_num_pages * guest_page_size) % host_page_size);
+@@ -359,7 +362,7 @@ static void run_test(enum vm_guest_mode mode, unsigned long iterations,
+ 		kvm_vm_get_dirty_log(vm, TEST_MEM_SLOT_INDEX, bmap);
+ #ifdef USE_CLEAR_DIRTY_LOG
+ 		kvm_vm_clear_dirty_log(vm, TEST_MEM_SLOT_INDEX, bmap, 0,
+-				       DIV_ROUND_UP(host_num_pages, 64) * 64);
++				       host_num_pages);
+ #endif
+ 		vm_dirty_log_verify(bmap);
+ 		iteration++;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index b5238bcba72cb..4cc0d8a46891f 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1241,7 +1241,7 @@ int kvm_clear_dirty_log_protect(struct kvm *kvm,
+ 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
+ 		return -EINVAL;
  
- 	sm7xx_init_hw();
+-	if ((log->first_page & 63) || (log->num_pages & 63))
++	if (log->first_page & 63)
+ 		return -EINVAL;
  
--	/* get mode parameter from smtc_scr_info */
--	if (smtc_scr_info.lfb_width != 0) {
--		sfb->fb->var.xres = smtc_scr_info.lfb_width;
--		sfb->fb->var.yres = smtc_scr_info.lfb_height;
--		sfb->fb->var.bits_per_pixel = smtc_scr_info.lfb_depth;
--	} else {
--		/* default resolution 1024x600 16bit mode */
--		sfb->fb->var.xres = SCREEN_X_RES;
--		sfb->fb->var.yres = SCREEN_Y_RES;
--		sfb->fb->var.bits_per_pixel = SCREEN_BPP;
--	}
--
--	big_pixel_depth(sfb->fb->var.bits_per_pixel, smtc_scr_info.lfb_depth);
- 	/* Map address and memory detection */
- 	mmio_base = pci_resource_start(pdev, 0);
- 	pci_read_config_byte(pdev, PCI_REVISION_ID, &sfb->chip_rev_id);
-@@ -1582,6 +1606,9 @@ static int smtcfb_pci_probe(struct pci_d
- 		goto failed_fb;
- 	}
+ 	slots = __kvm_memslots(kvm, as_id);
+@@ -1254,8 +1254,9 @@ int kvm_clear_dirty_log_protect(struct kvm *kvm,
+ 	n = ALIGN(log->num_pages, BITS_PER_LONG) / 8;
  
-+	/* probe and decide resolution */
-+	sm7xx_resolution_probe(sfb);
-+
- 	/* can support 32 bpp */
- 	if (sfb->fb->var.bits_per_pixel == 15)
- 		sfb->fb->var.bits_per_pixel = 16;
+ 	if (log->first_page > memslot->npages ||
+-	    log->num_pages > memslot->npages - log->first_page)
+-			return -EINVAL;
++	    log->num_pages > memslot->npages - log->first_page ||
++	    (log->num_pages < memslot->npages - log->first_page && (log->num_pages & 63)))
++	    return -EINVAL;
+ 
+ 	*flush = false;
+ 	dirty_bitmap_buffer = kvm_second_dirty_bitmap(memslot);
+-- 
+2.20.1
+
 
 
