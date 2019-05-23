@@ -2,98 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED1927D0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5929F27D11
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:45:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730606AbfEWMn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 08:43:57 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59424 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729361AbfEWMn4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 08:43:56 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 816968037F; Thu, 23 May 2019 14:43:44 +0200 (CEST)
-Date:   Thu, 23 May 2019 14:43:54 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     jacek.anaszewski@gmail.com, broonie@kernel.org,
-        lgirdwood@gmail.com, lee.jones@linaro.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [RESEND PATCH v4 5/6] dt-bindings: leds: Add LED bindings for
- the LM36274
-Message-ID: <20190523124354.GA20354@amd>
-References: <20190522192733.13422-1-dmurphy@ti.com>
- <20190522192733.13422-6-dmurphy@ti.com>
+        id S1730661AbfEWMpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 08:45:34 -0400
+Received: from verein.lst.de ([213.95.11.211]:46617 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729698AbfEWMpd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 08:45:33 -0400
+Received: by newverein.lst.de (Postfix, from userid 2005)
+        id 139CB68AFE; Thu, 23 May 2019 14:45:09 +0200 (CEST)
+Date:   Thu, 23 May 2019 14:45:08 +0200
+From:   Torsten Duwe <duwe@lst.de>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Harald Geyer <harald@ccbib.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/6] drm/bridge: Add Analogix anx6345 support
+Message-ID: <20190523124508.GC15685@lst.de>
+References: <20190523065013.2719D68B05@newverein.lst.de> <20190523065356.0734568BFE@newverein.lst.de> <20190523075041.GC4745@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190522192733.13422-6-dmurphy@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190523075041.GC4745@pendragon.ideasonboard.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 23, 2019 at 10:50:41AM +0300, Laurent Pinchart wrote:
+> Hi Torsten,
+> 
+> Thank you for the patch.
 
---envbJBWh7q8WU6mo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the thorough review!
 
-On Wed 2019-05-22 14:27:32, Dan Murphy wrote:
-> Add the LM36274 LED specific bindings.
->=20
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  .../devicetree/bindings/leds/leds-lm36274.txt | 82 +++++++++++++++++++
->  1 file changed, 82 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm36274.t=
-xt
->=20
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm36274.txt b/Do=
-cumentation/devicetree/bindings/leds/leds-lm36274.txt
-> new file mode 100644
-> index 000000000000..329393700191
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm36274.txt
-> @@ -0,0 +1,82 @@
-> +* Texas Instruments LM36274 4-Channel LCD Backlight Driver w/Integrated =
-Bias
-> +
-> +The LM36274 is an integrated four-channel WLED driver and LCD bias suppl=
-y.
-> +The backlight boost provides the power to bias four parallel LED strings=
- with
-> +up to 29V total output voltage. The 11-bit LED current is programmable v=
-ia
-> +the I2C bus and/or controlled via a logic level PWM input from 60 ??A to=
- 30 mA.
+> On Thu, May 23, 2019 at 08:53:56AM +0200, Torsten Duwe wrote:
+> > +{
+> > +	struct anx6345 *anx6345 = connector_to_anx6345(connector);
+> > +	int err, num_modes = 0;
+> > +	bool power_off = false;
+> > +
+> > +	mutex_lock(&anx6345->lock);
+> > +
+> > +	if (!anx6345->edid) {
+> 
+> Could the chip be used with a hot-pluggable display, or is it guaranteed
+> that EDID will never change ?
 
-??A -> uA.
+The chip itself is capable of (e)DP hot-plugging, so the signals suggest.
+See the previous discussions about what to expect on the output side.
+Currently, the driver does not handle hot-plugging.
 
-Otherwise:
+> > +
+> > +	err = drm_of_find_panel_or_bridge(client->dev.of_node, 1, 0,
+> > +					  &anx6345->panel, NULL);
+> > +	if (err == -EPROBE_DEFER)
+> > +		return err;
+> > +
+> > +	if (err)
+> > +		DRM_DEBUG("No panel found\n");
+> 
+> Shouldn't this be fatal ?
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+No, basically same as above. On the output side, there can be a panel,
+another bridge, or some eDP plug. If the DT didn't explicitly specify
+a panel or a bridge, we can still generate video output as soon as
+there is valid EDID data.
 
---envbJBWh7q8WU6mo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Your other points went straight onto my TODO list.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+	Torsten
 
-iEYEARECAAYFAlzmlYoACgkQMOfwapXb+vKqwQCguE1tYsJKSdrCZlp4APCde3/D
-J+AAnRSO8dODevspq37ZGOhKif55TPKL
-=vVX+
------END PGP SIGNATURE-----
-
---envbJBWh7q8WU6mo--
