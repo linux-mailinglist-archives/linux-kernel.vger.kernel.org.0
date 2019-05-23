@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31BE62865A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4005928A0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:56:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731829AbfEWTIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:08:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41424 "EHLO mail.kernel.org"
+        id S1731868AbfEWTIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:08:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731464AbfEWTIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:08:38 -0400
+        id S1731831AbfEWTIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:08:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16F8A21841;
-        Thu, 23 May 2019 19:08:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4DDF2133D;
+        Thu, 23 May 2019 19:08:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638517;
-        bh=SNM0Fl27uXWqQ5amLSxTAalRgg9QV1Z6TRqIcxX9UNU=;
+        s=default; t=1558638520;
+        bh=orGAPiNHKnN2kobSYub5yOo5XaEgSIVO5wYOYA/I1P8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Yd9rw4zbxq0RX6e+GUTFDFWy/BZInqsl6bOvk1Pq2S91MQw0g0EZ15phvU8f4n7bT
-         MQpj1Kpi3hvqc615EeD76BMmQyL4xuvD9NFrz/XptJkhLqMveAKBJQi+Jgew8eDwSC
-         sY2+0oeqyt+M0sWBBcfBD8qQ5J+uAXxf5G9nGzFI=
+        b=fXHXGpd+yFD/75nMf6YdmlVcBtAmggC0XY4wdwapAZlCQDAdoGouCSgcmJrZ9gaUn
+         YkGozE+nnaRLn/6Yt9MABOB8XP0EaYA6BuTZRAseXm4mXBqIkmo29WwIHsmkrlRHLj
+         TUXpSKbDSErRjU/yPjGA9v2OOlis/sfnZNitL2Ng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.9 18/53] NFS4: Fix v4.0 client state corruption when mount
-Date:   Thu, 23 May 2019 21:05:42 +0200
-Message-Id: <20190523181713.746726375@linuxfoundation.org>
+        stable@vger.kernel.org, Steev Klimaszewski <steev@kali.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.9 19/53] clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides divider
+Date:   Thu, 23 May 2019 21:05:43 +0200
+Message-Id: <20190523181713.904860512@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
 References: <20190523181710.981455400@linuxfoundation.org>
@@ -43,47 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-commit f02f3755dbd14fb935d24b14650fff9ba92243b8 upstream.
+commit 40db569d6769ffa3864fd1b89616b1a7323568a8 upstream.
 
-stat command with soft mount never return after server is stopped.
+There are wrongly set parenthesis in the code that are resulting in a
+wrong configuration being programmed for PLLM. The original fix was made
+by Danny Huang in the downstream kernel. The patch was tested on Nyan Big
+Tegra124 chromebook, PLLM rate changing works correctly now and system
+doesn't lock up after changing the PLLM rate due to EMC scaling.
 
-When alloc a new client, the state of the client will be set to
-NFS4CLNT_LEASE_EXPIRED.
-
-When the server is stopped, the state manager will work, and accord
-the state to recover. But the state is NFS4CLNT_LEASE_EXPIRED, it
-will drain the slot table and lead other task to wait queue, until
-the client recovered. Then the stat command is hung.
-
-When discover server trunking, the client will renew the lease,
-but check the client state, it lead the client state corruption.
-
-So, we need to call state manager to recover it when detect server
-ip trunking.
-
-Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Cc: <stable@vger.kernel.org>
+Tested-by: Steev Klimaszewski <steev@kali.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/nfs4state.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/tegra/clk-pll.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -143,6 +143,10 @@ int nfs40_discover_server_trunking(struc
- 		/* Sustain the lease, even if it's empty.  If the clientid4
- 		 * goes stale it's of no use for trunking discovery. */
- 		nfs4_schedule_state_renewal(*result);
-+
-+		/* If the client state need to recover, do it. */
-+		if (clp->cl_state)
-+			nfs4_schedule_state_manager(clp);
- 	}
- out:
- 	return status;
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -638,8 +638,8 @@ static void _update_pll_mnp(struct tegra
+ 		pll_override_writel(val, params->pmc_divp_reg, pll);
+ 
+ 		val = pll_override_readl(params->pmc_divnm_reg, pll);
+-		val &= ~(divm_mask(pll) << div_nmp->override_divm_shift) |
+-			~(divn_mask(pll) << div_nmp->override_divn_shift);
++		val &= ~((divm_mask(pll) << div_nmp->override_divm_shift) |
++			(divn_mask(pll) << div_nmp->override_divn_shift));
+ 		val |= (cfg->m << div_nmp->override_divm_shift) |
+ 			(cfg->n << div_nmp->override_divn_shift);
+ 		pll_override_writel(val, params->pmc_divnm_reg, pll);
 
 
