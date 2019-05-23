@@ -2,101 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE1DB2837D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 18:27:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8EF928215
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 18:04:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731184AbfEWQ1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 12:27:33 -0400
-Received: from www62.your-server.de ([213.133.104.62]:49426 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730752AbfEWQ1d (ORCPT
+        id S1730961AbfEWQEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 12:04:06 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:27264 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730790AbfEWQEF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 12:27:33 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hTqBA-0006CQ-CS; Thu, 23 May 2019 18:02:52 +0200
-Received: from [178.197.249.12] (helo=linux.home)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hTqBA-000Mgq-4p; Thu, 23 May 2019 18:02:52 +0200
-Subject: Re: [PATCH bpf v1 1/3] selftests/bpf: Test correctness of narrow
- 32bit read on 64bit field
-To:     Krzesimir Nowak <krzesimir@kinvolk.io>, bpf@vger.kernel.org
-Cc:     iago@kinvolk.io, alban@kinvolk.io, Shuah Khan <shuah@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrey Ignatov <rdna@fb.com>,
-        Jiong Wang <jiong.wang@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190515134731.12611-1-krzesimir@kinvolk.io>
- <20190515134731.12611-2-krzesimir@kinvolk.io>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <c28c3cea-a8e0-fbd8-6113-bbb4cece0178@iogearbox.net>
-Date:   Thu, 23 May 2019 18:02:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Thu, 23 May 2019 12:04:05 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4NG0sFA026679;
+        Thu, 23 May 2019 18:03:56 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=CshXfxU4/xd79yLbQPMejneBfTfn/les3xcKItJgDCk=;
+ b=U1MGQ6b0L0k9tiX8Bw01OqR6XxNf1xAn77QuCY7Zg2Ijp42sHMPAuPkgUT7XhNbcYT5+
+ W5fpCfQ+/aEzKmU2Ypm7/UuNzvkzPF956NxWkO8E5EPHkceCb83jKGpRrMkR67vDVNne
+ tJt5hg4fJUbhF4AFC41fSQRDTO874gqQLTdwp6qGRHxrTEM1RA7LSrD60yDBd7gI8XpM
+ o3hBuz3oFWRjKBmfCSpcINdNZCKAVopZR/f99iN3b+10yNdPn1uUxeEJ49TtvoFXR8Z1
+ XJIWk0BjKvxee+oHhmRsbETFimsagGvZ7OL64mybYprwV5F0Yl/GYWbSLL0CduVT9og8 0Q== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2snrve2898-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 23 May 2019 18:03:56 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1A62938;
+        Thu, 23 May 2019 16:03:55 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DF1DE4E9A;
+        Thu, 23 May 2019 16:03:54 +0000 (GMT)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.44) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 23 May
+ 2019 18:03:54 +0200
+Received: from localhost (10.48.0.131) by Webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 23 May 2019 18:03:54 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        xiang xiao <xiaoxiang781216@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+CC:     <arnaud.pouliquen@st.com>,
+        Fabien DESSENNE <fabien.dessenne@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Subject: [PATCH v4 0/2] TTY: add rpmsg tty driver
+Date:   Thu, 23 May 2019 18:03:19 +0200
+Message-ID: <1558627401-1090-1-git-send-email-arnaud.pouliquen@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190515134731.12611-2-krzesimir@kinvolk.io>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25458/Thu May 23 09:58:32 2019)
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.131]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-23_13:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/15/2019 03:47 PM, Krzesimir Nowak wrote:
-> Test the correctness of the 32bit narrow reads by reading both halves
-> of the 64 bit field and doing a binary or on them to see if we get the
-> original value.
-> 
-> This isn't really tested - the program is not being run, because
-> BPF_PROG_TYPE_PERF_EVENT is not supported by bpf_test_run_prog.
+This patch set introduces a TTY console on top of the RPMsg framework which
+enables the following use cases:
+- Provide a console to communicate easily with the remote processor
+  application.
+- Provide an interface to get the remote processor log traces without
+  ring buffer limitation.
+- Ease the migration from MPU + MCU processors to multi core processors
+  (MPU and MCU integrated in one processor)
 
-One option could be to add actual support for BPF_PROG_TYPE_PERF_EVENT to
-test_verifier where the program gets actually triggered, and the result
-stored in a map value that the test case reads out for checking the result
-against the expected one. Recently added something similar for LRU maps in
-the test suite, that shouldn't be too complex.
+An alternative of this proposed solution would consist in using the virtio
+console:
+The drawback with that solution is that it requires a specific virtio buffer
+(in addition to the one already used for RPMsg) which does not fit with remote
+processors with little memory. The proposed solution allows to multiplex the
+console with the other rpmsg services, optimizing the memory.
 
-Thanks,
-Daniel
+The first patch adds an API to the rpmsg framework ('get buffer size') and the
+second one is the rpmsg tty driver itself.
 
-> Signed-off-by: Krzesimir Nowak <krzesimir@kinvolk.io>
-> ---
->  tools/testing/selftests/bpf/verifier/var_off.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/bpf/verifier/var_off.c b/tools/testing/selftests/bpf/verifier/var_off.c
-> index 8504ac937809..2668819dcc85 100644
-> --- a/tools/testing/selftests/bpf/verifier/var_off.c
-> +++ b/tools/testing/selftests/bpf/verifier/var_off.c
-> @@ -246,3 +246,18 @@
->  	.result = ACCEPT,
->  	.prog_type = BPF_PROG_TYPE_LWT_IN,
->  },
-> +{
-> +	"32bit loads of a 64bit field (both least and most significant words)",
-> +	.insns = {
-> +	BPF_LDX_MEM(BPF_W, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_perf_event_data, sample_period)),
-> +	BPF_LDX_MEM(BPF_W, BPF_REG_5, BPF_REG_1, offsetof(struct bpf_perf_event_data, sample_period) + 4),
-> +	BPF_LDX_MEM(BPF_DW, BPF_REG_6, BPF_REG_1, offsetof(struct bpf_perf_event_data, sample_period)),
-> +	BPF_ALU64_IMM(BPF_LSH, BPF_REG_4, 32),
-> +	BPF_ALU64_REG(BPF_OR, BPF_REG_4, BPF_REG_5),
-> +	BPF_ALU64_REG(BPF_XOR, BPF_REG_4, BPF_REG_6),
-> +	BPF_MOV64_REG(BPF_REG_0, BPF_REG_4),
-> +	BPF_EXIT_INSN(),
-> +	},
-> +	.result = ACCEPT,
-> +	.prog_type = BPF_PROG_TYPE_PERF_EVENT,
-> +},
-> 
+History:
+-V3 to V4: 
+	- update documentation in rst format
+	- use tty_insert_flip_string_fixed_flag helper
+	- suppress some poinrter check (overprotection)
+	- move low_latency set from probe to activate ops. 
+	- various corrections and improvements relative to Jiri's comments 
+
+-V2 to V3:
+	- suppress error return on rpmsg callback as not tested in rpmsg framework
+	- change some flow messages level to debug
+	- add missing out of memory checks
+
+-V1 to V2:
+	- modify message structure to allow to data transmission but also
+	flow control
+	- add documentation file to describe message structure for remote
+	  implementation
+	- add dtr/rts management
+	- disable termios modes that generates non optimized behavior on RPMsg
+	  transfers
+	- replace rpmsg_send by rpmsg_trysend to not block the write
+	- suppress useless spinlock on read
+	- miscellaneous fixes to improve robustness
+
+Arnaud Pouliquen (2):
+  rpmsg: core: add possibility to get message payload length
+  tty: add rpmsg driver
+
+ Documentation/serial/tty_rpmsg.rst |  43 ++++
+ drivers/rpmsg/rpmsg_core.c         |  20 ++
+ drivers/rpmsg/rpmsg_internal.h     |   2 +
+ drivers/rpmsg/virtio_rpmsg_bus.c   |  11 +
+ drivers/tty/Kconfig                |   9 +
+ drivers/tty/Makefile               |   1 +
+ drivers/tty/rpmsg_tty.c            | 455 +++++++++++++++++++++++++++++++++++++
+ include/linux/rpmsg.h              |  10 +
+ 8 files changed, 551 insertions(+)
+ create mode 100644 Documentation/serial/tty_rpmsg.rst
+ create mode 100644 drivers/tty/rpmsg_tty.c
+
+-- 
+2.7.4
 
