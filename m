@@ -2,207 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E32527E1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:28:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7456127E2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:33:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730668AbfEWN2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 09:28:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:49167 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729934AbfEWN2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 09:28:07 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 458r0W1tQ5z9s1c;
-        Thu, 23 May 2019 23:27:54 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, will.deacon@arm.com
-Cc:     aou@eecs.berkeley.edu, arnd@arndb.de, bp@alien8.de,
-        catalin.marinas@arm.com, davem@davemloft.net, fenghua.yu@intel.com,
-        heiko.carstens@de.ibm.com, herbert@gondor.apana.org.au,
-        ink@jurassic.park.msu.ru, jhogan@kernel.org, linux@armlinux.org.uk,
-        mark.rutland@arm.com, mattst88@gmail.com, mingo@kernel.org,
-        palmer@sifive.com, paul.burton@mips.com, paulus@samba.org,
-        ralf@linux-mips.org, rth@twiddle.net, stable@vger.kernel.org,
-        tglx@linutronix.de, tony.luck@intel.com, vgupta@synopsys.com
-Subject: Re: [PATCH 10/18] locking/atomic: powerpc: use s64 for atomic64
-In-Reply-To: <20190522132250.26499-11-mark.rutland@arm.com>
-References: <20190522132250.26499-1-mark.rutland@arm.com> <20190522132250.26499-11-mark.rutland@arm.com>
-Date:   Thu, 23 May 2019 23:27:54 +1000
-Message-ID: <87ef4pqp0l.fsf@concordia.ellerman.id.au>
+        id S1730697AbfEWNcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:32:54 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40005 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730613AbfEWNcw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 09:32:52 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 15so5798233wmg.5
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 06:32:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZL2mTowtd+iMS19QPGPsV0ihDUcR6R3pM4Mf8egGGYk=;
+        b=RW8IHPk8xrGrRfFLfeE7DQsgUQlpaZ98zcUFZ9VMv9++4lY8ZqqqCwrgPtGDNaLnQT
+         AIydtDp0R/68FYPA4lMfw8o1ekSgcBnzXcKcW8qg67lhOtQwEA+yAlAe42grac7wXFqL
+         JJaoX8Qvrgn3Tjdmz8TvMP2hifGpOat5AH48E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZL2mTowtd+iMS19QPGPsV0ihDUcR6R3pM4Mf8egGGYk=;
+        b=sUuldVD4RGIzTloyd52EEL6205k65+9fDBiMoCQRIT/jVnYtl3BEn7+ZCl+mhwgksS
+         4MzuO8yvy1gKwRVoLN2UfLWxCIrP12gCpuioX1PxgpGiokrAKiCPrk6wW9prZcDTxnRD
+         zP3J/Aaxerih52Ic80JaEW+4QtN/lYDg1ecnnMq7n5BZ6c1tfIUPNO5izkQxeMxhSaPc
+         3tKF+Ta4pfnP3MiS7xdUQtnVd36qYuu3T6sHJ2Peji14tBbuDPQVRPCSRN4tB/wvakR2
+         RPI/NLmIo0inEnnQL53qhWqfXdz+PMWmP2Lky4gMHn23UCGDtTR2/C4dV5z43414CijM
+         LP9g==
+X-Gm-Message-State: APjAAAUfv8HwNcBwvWY+KHvbDDU/xHIoGD2eOU3iaNUqI8n1R3PAWIM7
+        l7g9PM2/2Mbz7eFIXcaR/TtPk6PRKs+Pxg==
+X-Google-Smtp-Source: APXvYqxKrJOPJRcvYLMrdPZnlVlCNLb48gdjcwCy4V1eDa2hEzDxmAnHtDnBkHcBtZSUt+9RfSJwmQ==
+X-Received: by 2002:a1c:7c0b:: with SMTP id x11mr11221336wmc.86.1558618370123;
+        Thu, 23 May 2019 06:32:50 -0700 (PDT)
+Received: from localhost.localdomain (86.100.broadband17.iol.cz. [109.80.100.86])
+        by smtp.gmail.com with ESMTPSA id g16sm1633868wrm.96.2019.05.23.06.32.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 23 May 2019 06:32:49 -0700 (PDT)
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [RFC PATCH] rcu: Make 'rcu_assign_pointer(p, v)' of type 'typeof(p)'
+Date:   Thu, 23 May 2019 15:32:20 +0200
+Message-Id: <1558618340-17254-1-git-send-email-andrea.parri@amarulasolutions.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark Rutland <mark.rutland@arm.com> writes:
-> As a step towards making the atomic64 API use consistent types treewide,
-> let's have the powerpc atomic64 implementation use s64 as the underlying
-> type for atomic64_t, rather than long, matching the generated headers.
->
-> As atomic64_read() depends on the generic defintion of atomic64_t, this
-> still returns long on 64-bit. This will be converted in a subsequent
-> patch.
->
-> Otherwise, there should be no functional change as a result of this
-> patch.
->
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/powerpc/include/asm/atomic.h | 44 +++++++++++++++++++--------------------
->  1 file changed, 22 insertions(+), 22 deletions(-)
+The expression
 
-Conversion looks good to me.
+  rcu_assign_pointer(p, typeof(p) v)
 
-Reviewed-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+is reported to be of type 'typeof(p)' in the documentation (c.f., e.g.,
+Documentation/RCU/whatisRCU.txt) but this is not the case: for example,
+the following snippet
 
-cheers
+  int **y;
+  int *x;
+  int *r0;
 
-> diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
-> index 52eafaf74054..31c231ea56b7 100644
-> --- a/arch/powerpc/include/asm/atomic.h
-> +++ b/arch/powerpc/include/asm/atomic.h
-> @@ -297,24 +297,24 @@ static __inline__ int atomic_dec_if_positive(atomic_t *v)
->  
->  #define ATOMIC64_INIT(i)	{ (i) }
->  
-> -static __inline__ long atomic64_read(const atomic64_t *v)
-> +static __inline__ s64 atomic64_read(const atomic64_t *v)
->  {
-> -	long t;
-> +	s64 t;
->  
->  	__asm__ __volatile__("ld%U1%X1 %0,%1" : "=r"(t) : "m"(v->counter));
->  
->  	return t;
->  }
->  
-> -static __inline__ void atomic64_set(atomic64_t *v, long i)
-> +static __inline__ void atomic64_set(atomic64_t *v, s64 i)
->  {
->  	__asm__ __volatile__("std%U0%X0 %1,%0" : "=m"(v->counter) : "r"(i));
->  }
->  
->  #define ATOMIC64_OP(op, asm_op)						\
-> -static __inline__ void atomic64_##op(long a, atomic64_t *v)		\
-> +static __inline__ void atomic64_##op(s64 a, atomic64_t *v)		\
->  {									\
-> -	long t;								\
-> +	s64 t;								\
->  									\
->  	__asm__ __volatile__(						\
->  "1:	ldarx	%0,0,%3		# atomic64_" #op "\n"			\
-> @@ -327,10 +327,10 @@ static __inline__ void atomic64_##op(long a, atomic64_t *v)		\
->  }
->  
->  #define ATOMIC64_OP_RETURN_RELAXED(op, asm_op)				\
-> -static inline long							\
-> -atomic64_##op##_return_relaxed(long a, atomic64_t *v)			\
-> +static inline s64							\
-> +atomic64_##op##_return_relaxed(s64 a, atomic64_t *v)			\
->  {									\
-> -	long t;								\
-> +	s64 t;								\
->  									\
->  	__asm__ __volatile__(						\
->  "1:	ldarx	%0,0,%3		# atomic64_" #op "_return_relaxed\n"	\
-> @@ -345,10 +345,10 @@ atomic64_##op##_return_relaxed(long a, atomic64_t *v)			\
->  }
->  
->  #define ATOMIC64_FETCH_OP_RELAXED(op, asm_op)				\
-> -static inline long							\
-> -atomic64_fetch_##op##_relaxed(long a, atomic64_t *v)			\
-> +static inline s64							\
-> +atomic64_fetch_##op##_relaxed(s64 a, atomic64_t *v)			\
->  {									\
-> -	long res, t;							\
-> +	s64 res, t;							\
->  									\
->  	__asm__ __volatile__(						\
->  "1:	ldarx	%0,0,%4		# atomic64_fetch_" #op "_relaxed\n"	\
-> @@ -396,7 +396,7 @@ ATOMIC64_OPS(xor, xor)
->  
->  static __inline__ void atomic64_inc(atomic64_t *v)
->  {
-> -	long t;
-> +	s64 t;
->  
->  	__asm__ __volatile__(
->  "1:	ldarx	%0,0,%2		# atomic64_inc\n\
-> @@ -409,9 +409,9 @@ static __inline__ void atomic64_inc(atomic64_t *v)
->  }
->  #define atomic64_inc atomic64_inc
->  
-> -static __inline__ long atomic64_inc_return_relaxed(atomic64_t *v)
-> +static __inline__ s64 atomic64_inc_return_relaxed(atomic64_t *v)
->  {
-> -	long t;
-> +	s64 t;
->  
->  	__asm__ __volatile__(
->  "1:	ldarx	%0,0,%2		# atomic64_inc_return_relaxed\n"
-> @@ -427,7 +427,7 @@ static __inline__ long atomic64_inc_return_relaxed(atomic64_t *v)
->  
->  static __inline__ void atomic64_dec(atomic64_t *v)
->  {
-> -	long t;
-> +	s64 t;
->  
->  	__asm__ __volatile__(
->  "1:	ldarx	%0,0,%2		# atomic64_dec\n\
-> @@ -440,9 +440,9 @@ static __inline__ void atomic64_dec(atomic64_t *v)
->  }
->  #define atomic64_dec atomic64_dec
->  
-> -static __inline__ long atomic64_dec_return_relaxed(atomic64_t *v)
-> +static __inline__ s64 atomic64_dec_return_relaxed(atomic64_t *v)
->  {
-> -	long t;
-> +	s64 t;
->  
->  	__asm__ __volatile__(
->  "1:	ldarx	%0,0,%2		# atomic64_dec_return_relaxed\n"
-> @@ -463,9 +463,9 @@ static __inline__ long atomic64_dec_return_relaxed(atomic64_t *v)
->   * Atomically test *v and decrement if it is greater than 0.
->   * The function returns the old value of *v minus 1.
->   */
-> -static __inline__ long atomic64_dec_if_positive(atomic64_t *v)
-> +static __inline__ s64 atomic64_dec_if_positive(atomic64_t *v)
->  {
-> -	long t;
-> +	s64 t;
->  
->  	__asm__ __volatile__(
->  	PPC_ATOMIC_ENTRY_BARRIER
-> @@ -502,9 +502,9 @@ static __inline__ long atomic64_dec_if_positive(atomic64_t *v)
->   * Atomically adds @a to @v, so long as it was not @u.
->   * Returns the old value of @v.
->   */
-> -static __inline__ long atomic64_fetch_add_unless(atomic64_t *v, long a, long u)
-> +static __inline__ s64 atomic64_fetch_add_unless(atomic64_t *v, s64 a, s64 u)
->  {
-> -	long t;
-> +	s64 t;
->  
->  	__asm__ __volatile__ (
->  	PPC_ATOMIC_ENTRY_BARRIER
-> @@ -534,7 +534,7 @@ static __inline__ long atomic64_fetch_add_unless(atomic64_t *v, long a, long u)
->   */
->  static __inline__ int atomic64_inc_not_zero(atomic64_t *v)
->  {
-> -	long t1, t2;
-> +	s64 t1, t2;
->  
->  	__asm__ __volatile__ (
->  	PPC_ATOMIC_ENTRY_BARRIER
-> -- 
-> 2.11.0
+  ...
+
+  r0 = rcu_assign_pointer(*y, x);
+
+can currently result in the compiler warning
+
+  warning: assignment to ‘int *’ from ‘uintptr_t’ {aka ‘long unsigned int’} makes pointer from integer without a cast [-Wint-conversion]
+
+Cast the uintptr_t value to a typeof(p) value.
+
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: rcu@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+---
+NOTE:
+
+TBH, I'm not sure this is 'the right patch' (hence the RFC...): in
+fact, I'm currently missing the motivations for allowing assignments
+such as the "r0 = ..." assignment above in generic code.  (BTW, it's
+not currently possible to use such assignments in litmus tests...)
+
+The usual concern is, of course, that if something is allowed (read
+'compile!' ;/) then people will soon or later use it and they'll do
+it in all sorts of 'creative' ways, such as 'to extend dependencies
+across rcu_assign_pointer() calls' as in
+
+  x = READ_ONCE(*z);
+  r0 = rcu_assign_pointer(*y, x);
+  WRITE_ONCE(*w, r0);
+
+Notice that using a 'do { ... } while (0)', say, would prevent such
+tricks/rvalues. (The same approach is used by smp_store_release().)
+
+For a related discussion, please see:
+
+  https://lkml.kernel.org/r/20190523083013.GA4616@andrea
+
+Thoughts?
+
+  Andrea
+---
+ include/linux/rcupdate.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 915460ec08722..b94ba5de78fba 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -375,7 +375,7 @@ static inline void rcu_preempt_sleep_check(void) { }
+ 		WRITE_ONCE((p), (typeof(p))(_r_a_p__v));		      \
+ 	else								      \
+ 		smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+-	_r_a_p__v;							      \
++	((typeof(p))_r_a_p__v);						      \
+ })
+ 
+ /**
+-- 
+2.7.4
+
