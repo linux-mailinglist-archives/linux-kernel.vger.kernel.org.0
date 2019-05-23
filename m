@@ -2,208 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 439B328A21
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:57:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11F2F28680
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732200AbfEWTJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:09:30 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40762 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732185AbfEWTJ3 (ORCPT
+        id S2387727AbfEWTKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:10:11 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:40172 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387704AbfEWTKK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:09:29 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d30so3613929pgm.7
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:09:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Nu4ATjrqQqsM0pX/rCcIWFjpR3mlic29/RWxUeaEtwY=;
-        b=K79gKRW/JknosTVB0FWYG94V0xmWP66HddU2XJjlge1xRraBz7b2P3GVnw1g99kj+p
-         AH0pEr84Z9WIHP9dV4jtvVVbxNazILT46Uv1QMrsOWrZejFssLMYYuNRfz9DxuHvjCMy
-         YtCuwR8/CVmTRBK4S4KpgTB/vJqtk6pvOu9LwMJhizbQ5O/2E0Kn2vk6aP7F6GMBCpkW
-         Q2LMW7JaH1kJFzEG/3G6IXICIlQYDgqXyTfvtdXETjSKKdHqOGRGCYIWVxtO10r4aPRO
-         TpA453wrrs3FnXfY0GpiM8STOIe4DAfN7DCCo+UlIakJNiAx++bPU24jzY/bY9T+HbYr
-         KOzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Nu4ATjrqQqsM0pX/rCcIWFjpR3mlic29/RWxUeaEtwY=;
-        b=CQNy90Jlitsv41tgo4AJqxhxQhdR4+etyWChdg/iYaZJbQQwtZz2CRQ2tJ8PM44iLN
-         ZQFw4/P2OLnh40DtTDR3mPKWScAo0SQZ6QGePNS13GqyEAKUVD6eP2LPLkaWhdX1P05j
-         iloVVdJihPHpc9xeQM2pK6EgwAuDxOIk0p6H1f6xUo8fDjoH/lKwltqaan4QVqghs5PL
-         tGxGoEOI+v8WWrHjzbY0guyZIc+mD87xScdkJG9zC9Pz4gn5UV+pxuvnCN+YWJPT0bRg
-         q2i/VSXIPexJY7gEsRBsdOPDTX5xUJV3oS/lkpSwVGVTvB+n1J2P2lhYy4JdBZptE+Fu
-         jYmg==
-X-Gm-Message-State: APjAAAWzVDuDkQG/rPKRomTGus31inap8UboQiXHGeIpqAk3WY8vSWrm
-        zb7zhe6M6HWgoHa3bJgZ5irMeQ==
-X-Google-Smtp-Source: APXvYqzJVzBs96A0vZXeyNDI2SldyKqbOk+LVZ141h/UfoMVaEjbJAN4az6WNwpCYRb8DJaE+FJgNA==
-X-Received: by 2002:a63:225b:: with SMTP id t27mr13484490pgm.25.1558638568172;
-        Thu, 23 May 2019 12:09:28 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id i7sm201071pfo.19.2019.05.23.12.09.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 May 2019 12:09:27 -0700 (PDT)
-Date:   Thu, 23 May 2019 12:09:25 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Andy Gross <agross@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 2/4] soc: qcom: Add AOSS QMP driver
-Message-ID: <20190523190925.GU31438@minitux>
-References: <20190501043734.26706-1-bjorn.andersson@linaro.org>
- <20190501043734.26706-3-bjorn.andersson@linaro.org>
- <CAD=FV=VVxKSp6e=j8YM8JBrhsF+T=0=8xDjd_817hphOMWHVFA@mail.gmail.com>
- <5ce6e0cd.1c69fb81.9a03e.0260@mx.google.com>
+        Thu, 23 May 2019 15:10:10 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4NJA6Nk028160;
+        Thu, 23 May 2019 14:10:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1558638606;
+        bh=bJbg1A/txouFJSm6HDuK7A27QEfGpODsy5IJMrZQuaU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=jTerZ5K9nLu0AxG9WFvwpQY4AaaG0eDboGnkSqJJf2u+ZiNrG+rCg5u8xMvyFw7o7
+         it6zQ3fBe50bN1Ew667cTEde6JHbsreD69XqWg8ZZrrCqhpOE3gA6HNfJtIbAPNU68
+         Wfw++lFhaqYj8gO6GE9N5CYJMpWjVfYgE5J3Aibs=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4NJA60F005401
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 23 May 2019 14:10:06 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 23
+ May 2019 14:10:05 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 23 May 2019 14:10:05 -0500
+Received: from [10.250.90.63] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4NJA55D024840;
+        Thu, 23 May 2019 14:10:05 -0500
+Subject: Re: [RESEND PATCH v4 6/6] leds: lm36274: Introduce the TI LM36274 LED
+ driver
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     <jacek.anaszewski@gmail.com>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <lee.jones@linaro.org>,
+        <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190522192733.13422-1-dmurphy@ti.com>
+ <20190522192733.13422-7-dmurphy@ti.com> <20190523125012.GB20354@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <0c2bd6af-92c5-2458-dc41-1ea413545347@ti.com>
+Date:   Thu, 23 May 2019 14:09:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ce6e0cd.1c69fb81.9a03e.0260@mx.google.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190523125012.GB20354@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 23 May 11:05 PDT 2019, Stephen Boyd wrote:
+Pavel
 
-> Quoting Doug Anderson (2019-05-23 09:38:13)
-> > Hi,
-> > 
-> > On Tue, Apr 30, 2019 at 9:38 PM Bjorn Andersson
-> > <bjorn.andersson@linaro.org> wrote:
-> > 
-> > > +static int qmp_qdss_clk_add(struct qmp *qmp)
-> > > +{
-> > > +       struct clk_init_data qdss_init = {
-> > > +               .ops = &qmp_qdss_clk_ops,
-> > > +               .name = "qdss",
-> > > +       };
-> > 
-> > Can't qdss_init be "static const"?  That had the advantage of not
-> > needing to construct it on the stack and also of it having a longer
-> > lifetime.  It looks like clk_register() stores the "hw" pointer in its
-> > structure and the "hw" structure will have a pointer here.  While I
-> > can believe that it never looks at it again, it's nice if that pointer
-> > doesn't point somewhere on an old stack.
-> > 
-> > I suppose we could go the other way and try to mark more stuff in this
-> > module as __init and __initdata, but even then at least the pointer
-> > won't be onto a stack.  ;-)
-> > 
+Thanks for the review
+
+On 5/23/19 7:50 AM, Pavel Machek wrote:
+> Hi!
 > 
-> Const would be nice, but otherwise making it static isn't a good idea.
-> The clk_init_data structure is all copied over, although we do leave a
-> dangling pointer to it stored inside the clk_hw structure we don't use
-> it after clk registration. Maybe we should overwrite the pointer with
-> NULL once we're done in clk_register() so that clk providers can't use
-> it. It might break somebody but would at least clarify this point.
+>> +++ b/drivers/leds/leds-lm36274.c
+> 
+>> +static int lm36274_parse_dt(struct lm36274 *lm36274_data)
+>> +{
+>> +	struct fwnode_handle *child = NULL;
+>> +	char label[LED_MAX_NAME_SIZE];
+>> +	struct device *dev = &lm36274_data->pdev->dev;
+>> +	const char *name;
+>> +	int child_cnt;
+>> +	int ret = -EINVAL;
+>> +
+>> +	/* There should only be 1 node */
+>> +	child_cnt = device_get_child_node_count(dev);
+>> +	if (child_cnt != 1)
+>> +		return ret;
+> 
+> I'd do explicit "return -EINVAL" here.
 > 
 
-I had to read through the clock code to conclude that this was indeed
-the design, so I'm happy with your patch of ensuring that this is
-followed. Perhaps add a statement in the kerneldoc for struct clk_hw as
-well to state that init won't be accessed past the return of
-clk_register.
+ACK
 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index aa51756fd4d6..56997a974408 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3438,9 +3438,9 @@ static int clk_cpy_name(const char **dst_p, const char *src, bool must_exist)
->  	return 0;
->  }
->  
-> -static int clk_core_populate_parent_map(struct clk_core *core)
-> +static int clk_core_populate_parent_map(struct clk_core *core,
-> +					const struct clk_init_data *init)
->  {
-> -	const struct clk_init_data *init = core->hw->init;
->  	u8 num_parents = init->num_parents;
->  	const char * const *parent_names = init->parent_names;
->  	const struct clk_hw **parent_hws = init->parent_hws;
-> @@ -3520,6 +3520,14 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
->  {
->  	int ret;
->  	struct clk_core *core;
-> +	const struct clk_init_data *init = hw->init;
-> +
-> +	/*
-> +	 * The init data is not supposed to be used outside of registration path.
-> +	 * Set it to NULL so that provider drivers can't use it either and so that
-> +	 * we catch use of hw->init early on in the core.
-> +	 */
-> +	hw->init = NULL;
->  
->  	core = kzalloc(sizeof(*core), GFP_KERNEL);
->  	if (!core) {
-> @@ -3527,17 +3535,17 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
->  		goto fail_out;
->  	}
->  
-> -	core->name = kstrdup_const(hw->init->name, GFP_KERNEL);
-> +	core->name = kstrdup_const(init->name, GFP_KERNEL);
->  	if (!core->name) {
->  		ret = -ENOMEM;
->  		goto fail_name;
->  	}
->  
-> -	if (WARN_ON(!hw->init->ops)) {
-> +	if (WARN_ON(!init->ops)) {
->  		ret = -EINVAL;
->  		goto fail_ops;
->  	}
-> -	core->ops = hw->init->ops;
-> +	core->ops = init->ops;
->  
->  	if (dev && pm_runtime_enabled(dev))
->  		core->rpm_enabled = true;
-> @@ -3546,13 +3554,13 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
->  	if (dev && dev->driver)
->  		core->owner = dev->driver->owner;
->  	core->hw = hw;
-> -	core->flags = hw->init->flags;
-> -	core->num_parents = hw->init->num_parents;
-> +	core->flags = init->flags;
-> +	core->num_parents = init->num_parents;
->  	core->min_rate = 0;
->  	core->max_rate = ULONG_MAX;
->  	hw->core = core;
->  
-> -	ret = clk_core_populate_parent_map(core);
-> +	ret = clk_core_populate_parent_map(core, init);
->  	if (ret)
->  		goto fail_parents;
->  
-
-I've reviewed this and it looks good!
-
-Regards,
-Bjorn
-
+>> +static int lm36274_probe(struct platform_device *pdev)
+>> +{
+>> +	struct ti_lmu *lmu = dev_get_drvdata(pdev->dev.parent);
+>> +	struct lm36274 *lm36274_data;
+>> +	int ret;
+>> +
+>> +	lm36274_data = devm_kzalloc(&pdev->dev, sizeof(*lm36274_data),
+>> +				    GFP_KERNEL);
+>> +	if (!lm36274_data) {
+>> +		ret = -ENOMEM;
+>> +		return ret;
+>> +	}
 > 
-> > 
-> > 
-> > > +static void qmp_pd_remove(struct qmp *qmp)
-> > > +{
-> > > +       struct genpd_onecell_data *data = &qmp->pd_data;
-> > > +       struct device *dev = qmp->dev;
-> > > +       int i;
-> > > +
-> > > +       of_genpd_del_provider(dev->of_node);
-> > > +
-> > > +       for (i = 0; i < data->num_domains; i++)
-> > > +               pm_genpd_remove(data->domains[i]);
-> > 
-> > Still feels like the above loop would be better as:
-> >   for (i = data->num_domains - 1; i >= 0; i--)
-> > 
+> And certainly do "return -ENOMEM" explicitly here.
 > 
-> Reason being to remove in reverse order? Otherwise this looks like an
-> opinion.
+
+ACK
+
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> 									Pavel
+> 
