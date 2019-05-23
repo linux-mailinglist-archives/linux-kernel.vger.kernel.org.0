@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4672F28AE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 292DA2864F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:08:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731848AbfEWTtT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:49:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44568 "EHLO mail.kernel.org"
+        id S1731652AbfEWTIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:08:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388069AbfEWTLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:11:10 -0400
+        id S1731464AbfEWTIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:08:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C712217D9;
-        Thu, 23 May 2019 19:11:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 020732133D;
+        Thu, 23 May 2019 19:08:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638669;
-        bh=tQ4EPmHa88YeE+lsAVf8RF8bcxRpc2MVqWookuBRWD0=;
+        s=default; t=1558638493;
+        bh=33G58YR+16EHvNo+jVGF2xS+GJFDlcqpbp4ZAZXzQYo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QrENA8UcnVJIM6yfJF3PMxexITSAcuIwkdpnFKOwaeREa2pIPbH7rBIkDElTCs3G9
-         XGz0qzoxmQi/kgxn+50lbldLdJu4ej8Jef1vq1KDQxv17nMg3QBzpOift3FEE9qrF1
-         ANHT6kOEpV1eKXxZmmgY5ZzvjCSp4bvbf4BpPyeI=
+        b=wcF4OdILkHkeANFSdoL3C9fhC+zTHAl/tLOFmK91R+AXzB4cJONafVsXPrycaFX0c
+         ymQ5PZaXRD3IxFBuH6JwZ9lLKoYDPj3CSkKSpgsSFsV0da92Gp2nxPRaDq8D+SyzdR
+         /JhZwyxv45Qr/bWUnKe25ThEEiSajeamtNCjIkxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Garzarella <sgarzare@redhat.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 07/77] vsock/virtio: free packets during the socket release
+Subject: [PATCH 4.9 01/53] net: avoid weird emergency message
 Date:   Thu, 23 May 2019 21:05:25 +0200
-Message-Id: <20190523181721.098201875@linuxfoundation.org>
+Message-Id: <20190523181711.173625689@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
+References: <20190523181710.981455400@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -43,42 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefano Garzarella <sgarzare@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit ac03046ece2b158ebd204dfc4896fd9f39f0e6c8 ]
+[ Upstream commit d7c04b05c9ca14c55309eb139430283a45c4c25f ]
 
-When the socket is released, we should free all packets
-queued in the per-socket list in order to avoid a memory
-leak.
+When host is under high stress, it is very possible thread
+running netdev_wait_allrefs() returns from msleep(250)
+10 seconds late.
 
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+This leads to these messages in the syslog :
+
+[...] unregister_netdevice: waiting for syz_tun to become free. Usage count = 0
+
+If the device refcount is zero, the wait is over.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/vmw_vsock/virtio_transport_common.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ net/core/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/vmw_vsock/virtio_transport_common.c
-+++ b/net/vmw_vsock/virtio_transport_common.c
-@@ -786,12 +786,19 @@ static bool virtio_transport_close(struc
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -7499,7 +7499,7 @@ static void netdev_wait_allrefs(struct n
  
- void virtio_transport_release(struct vsock_sock *vsk)
- {
-+	struct virtio_vsock_sock *vvs = vsk->trans;
-+	struct virtio_vsock_pkt *pkt, *tmp;
- 	struct sock *sk = &vsk->sk;
- 	bool remove_sock = true;
+ 		refcnt = netdev_refcnt_read(dev);
  
- 	lock_sock(sk);
- 	if (sk->sk_type == SOCK_STREAM)
- 		remove_sock = virtio_transport_close(vsk);
-+
-+	list_for_each_entry_safe(pkt, tmp, &vvs->rx_queue, list) {
-+		list_del(&pkt->list);
-+		virtio_transport_free_pkt(pkt);
-+	}
- 	release_sock(sk);
- 
- 	if (remove_sock)
+-		if (time_after(jiffies, warning_time + 10 * HZ)) {
++		if (refcnt && time_after(jiffies, warning_time + 10 * HZ)) {
+ 			pr_emerg("unregister_netdevice: waiting for %s to become free. Usage count = %d\n",
+ 				 dev->name, refcnt);
+ 			warning_time = jiffies;
 
 
