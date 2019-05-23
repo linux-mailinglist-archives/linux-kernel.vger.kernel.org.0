@@ -2,108 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 037BD277A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 10:07:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E5B7277AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 10:08:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730219AbfEWIHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 04:07:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36664 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbfEWIHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 04:07:09 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D9DE68830E
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 08:07:09 +0000 (UTC)
-Received: from zhyan-laptop.redhat.com (ovpn-12-163.pek2.redhat.com [10.72.12.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 350B05D9C6;
-        Thu, 23 May 2019 08:07:07 +0000 (UTC)
-From:   "Yan, Zheng" <zyan@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     idryomov@redhat.com, jlayton@redhat.com
-Subject: [PATCH 8/8] ceph: hold i_ceph_lock when removing caps for freeing inode
-Date:   Thu, 23 May 2019 16:06:46 +0800
-Message-Id: <20190523080646.19632-8-zyan@redhat.com>
-In-Reply-To: <20190523080646.19632-1-zyan@redhat.com>
-References: <20190523080646.19632-1-zyan@redhat.com>
+        id S1729430AbfEWIIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 04:08:54 -0400
+Received: from mail-eopbgr40054.outbound.protection.outlook.com ([40.107.4.54]:27552
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726070AbfEWIIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 04:08:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s7TW7SrGZyFu1JjCdwNDBFdcM4EAzwrJk58onsTZD0g=;
+ b=mGGvxHnyjYxFd3dxTFWM7DJADIkjyO8kXDeyA/TQ5oFH2VQcJFfZ0NKdUQQv7oQIhhQbb/tILqB/wrn22Mm6OHk98zqISllbBaHgqWk6Q1iNGygBEKj3dWE/lmpctuGI9cl5T51/6tOFy1k+1C/eVVVLB3NoM8hyADIrGA+Ovc0=
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) by
+ VI1PR04MB5150.eurprd04.prod.outlook.com (20.177.50.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1922.15; Thu, 23 May 2019 08:08:50 +0000
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::39fd:f3c3:46fc:f872]) by VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::39fd:f3c3:46fc:f872%7]) with mapi id 15.20.1922.018; Thu, 23 May 2019
+ 08:08:50 +0000
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+CC:     Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v2 1/2] crypto: caam - fix pkcs1pad(rsa-caam, sha256)
+ failure because of invalid input
+Thread-Topic: [PATCH v2 1/2] crypto: caam - fix pkcs1pad(rsa-caam, sha256)
+ failure because of invalid input
+Thread-Index: AQHVCxD1/1xcZwH7eE+osRH9ZRl26A==
+Date:   Thu, 23 May 2019 08:08:50 +0000
+Message-ID: <VI1PR04MB44452D9C82BB8835DDF759298C010@VI1PR04MB4445.eurprd04.prod.outlook.com>
+References: <1557919546-360-1-git-send-email-iuliana.prodan@nxp.com>
+ <20190523061202.ic2vgimgzvvm6dzc@gondor.apana.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=iuliana.prodan@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: cf0ff7c2-6cf7-49e6-1d45-08d6df55e3b4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5150;
+x-ms-traffictypediagnostic: VI1PR04MB5150:
+x-microsoft-antispam-prvs: <VI1PR04MB515086496B62B865F41A2D5E8C010@VI1PR04MB5150.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3173;
+x-forefront-prvs: 00462943DE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(366004)(346002)(396003)(199004)(189003)(66066001)(52536014)(99286004)(8676002)(25786009)(55016002)(316002)(4744005)(478600001)(76116006)(229853002)(73956011)(7696005)(64756008)(66446008)(66476007)(66946007)(66556008)(33656002)(26005)(74316002)(76176011)(186003)(5660300002)(68736007)(6116002)(6916009)(3846002)(6506007)(102836004)(53546011)(7736002)(4326008)(6436002)(486006)(44832011)(2906002)(305945005)(71190400001)(6246003)(14454004)(71200400001)(53936002)(9686003)(81166006)(81156014)(476003)(86362001)(8936002)(54906003)(446003)(256004)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5150;H:VI1PR04MB4445.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: AZFoy4EQkloD8QRcbg92lvtDMtkHRhRg/iOCa9DeOqOmfVchKcIf4rnDuF4Vrew2lYGSNdrQKZoT7eDiOMojHFp/OGLPYzCz5PV0F7K9BFwdvtwtI4YTK4vPofAn6yBY1BWEapHZ2qLLbl+JG6pmf1/ucV8J3GDeZ7pwzIhitiO7tVgmAvSC2AHLYd5bbM9CB4upxo3dTKIBEP0Ct4x906YWxKBIdNSzWhTO52ZexeQfu97EFKqb5cRthHrsSfCzVpRc4zDIHAg7ZFyS3Aixlzmpoaxd9/z/AxLjFpcawmao4kkM2xf0Ae2TUfCGBk+/94/UjGUPAVEcI3lg1KXvgxBH+9axN6LvoydUmxpDyJ37TYBKFqc9HBpYMznCGjrHPIcPZWZbb1pWWjlvluCGjBj5kj1VGgmxnH8Bk3A0Csg=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 23 May 2019 08:07:09 +0000 (UTC)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf0ff7c2-6cf7-49e6-1d45-08d6df55e3b4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 May 2019 08:08:50.3430
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: iuliana.prodan@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ceph_d_revalidate(, LOOKUP_RCU) may call __ceph_caps_issued_mask()
-on a freeing inode.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
----
- fs/ceph/caps.c  | 10 ++++++----
- fs/ceph/inode.c |  2 +-
- fs/ceph/super.h |  2 +-
- 3 files changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 0176241eaea7..7754d7679122 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1263,20 +1263,22 @@ static int send_cap_msg(struct cap_msg_args *arg)
- }
- 
- /*
-- * Queue cap releases when an inode is dropped from our cache.  Since
-- * inode is about to be destroyed, there is no need for i_ceph_lock.
-+ * Queue cap releases when an inode is dropped from our cache.
-  */
--void __ceph_remove_caps(struct inode *inode)
-+void __ceph_remove_caps(struct ceph_inode_info *ci)
- {
--	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct rb_node *p;
- 
-+	/* lock i_ceph_lock, because ceph_d_revalidate(..., LOOKUP_RCU)
-+	 * may call __ceph_caps_issued_mask() on a freeing inode. */
-+	spin_lock(&ci->i_ceph_lock);
- 	p = rb_first(&ci->i_caps);
- 	while (p) {
- 		struct ceph_cap *cap = rb_entry(p, struct ceph_cap, ci_node);
- 		p = rb_next(p);
- 		__ceph_remove_cap(cap, true);
- 	}
-+	spin_unlock(&ci->i_ceph_lock);
- }
- 
- /*
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index e47a25495be5..30d0cdc21035 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -534,7 +534,7 @@ void ceph_destroy_inode(struct inode *inode)
- 
- 	ceph_fscache_unregister_inode_cookie(ci);
- 
--	__ceph_remove_caps(inode);
-+	__ceph_remove_caps(ci);
- 
- 	if (__ceph_has_any_quota(ci))
- 		ceph_adjust_quota_realms_count(inode, false);
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 11aeb540b0cf..e74867743e07 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1003,7 +1003,7 @@ extern void ceph_add_cap(struct inode *inode,
- 			 unsigned cap, unsigned seq, u64 realmino, int flags,
- 			 struct ceph_cap **new_cap);
- extern void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release);
--extern void __ceph_remove_caps(struct inode* inode);
-+extern void __ceph_remove_caps(struct ceph_inode_info *ci);
- extern void ceph_put_cap(struct ceph_mds_client *mdsc,
- 			 struct ceph_cap *cap);
- extern int ceph_is_any_caps(struct inode *inode);
--- 
-2.17.2
-
+On 5/23/2019 9:12 AM, Herbert Xu wrote:=0A=
+> On Wed, May 15, 2019 at 02:25:45PM +0300, Iuliana Prodan wrote:=0A=
+>>=0A=
+>> @@ -1058,6 +1105,14 @@ static int __init caam_pkc_init(void)=0A=
+>>   		goto out_put_dev;=0A=
+>>   	}=0A=
+>>   =0A=
+>> +	/* allocate zero buffer, used for padding input */=0A=
+>> +	zero_buffer =3D kzalloc(CAAM_RSA_MAX_INPUT_SIZE - 1, GFP_DMA |=0A=
+>> +			      GFP_KERNEL);=0A=
+>> +	if (!zero_buffer) {=0A=
+>> +		err =3D -ENOMEM;=0A=
+>> +		goto out_put_dev;=0A=
+>> +	}=0A=
+>> +=0A=
+>>   	err =3D crypto_register_akcipher(&caam_rsa);=0A=
+>>   	if (err)=0A=
+>>   		dev_warn(ctrldev, "%s alg registration failed\n",=0A=
+> =0A=
+> This patch does not apply on top of the caam patch-series from Horia.=0A=
+> You're also going to leak zero_buffer if crypto_register_akcipher=0A=
+> fails.=0A=
+> =0A=
+> Cheers,=0A=
+> =0A=
+=0A=
+I'll fix the conflicts and also the leak of zero_buffer if =0A=
+crypto_register_akcipher fails and send a new version.=0A=
+=0A=
+Regards,=0A=
+Iulia=0A=
