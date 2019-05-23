@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02A912881B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4737A287B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389830AbfEWTWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:22:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59806 "EHLO mail.kernel.org"
+        id S2390428AbfEWTWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:22:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388660AbfEWTWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:22:06 -0400
+        id S2390406AbfEWTWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:22:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0735C205ED;
-        Thu, 23 May 2019 19:22:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1C5F21841;
+        Thu, 23 May 2019 19:22:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639325;
-        bh=Izkbe190T4j/Rt5mfXWuYGBWKYq4g4dZ4r2nz9ulMrU=;
+        s=default; t=1558639328;
+        bh=Q/5OzBM4VQEOBvCfeonOdIK9aQC1KWHPkJclcmFLRO4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MXUWfeQfZFNHdG2I5L4gxqvSAJbVfcnQIQPF9HavR24j0n6wos+cRyop0ZqH4jPRY
-         Gcs00zkIapPkrT6OBqn4IGGF7bqI8WX6TCeFEHu36IQNCOh+57o65swWHgAZQuOv1J
-         ZVBvW78N+j1Mz/qjHlhR1D2nGFWwp8NoueIGDfrw=
+        b=EiOnNxdDSTk2yzJM5tmG7toeozy7R/XyG9Aa0VKKemuRleXijDXaT5LS9tmcRygRo
+         0750/1hgXzwpkhMuJFY3er5eMXj+0UjFfHMazbq/EZV40KuN+r1WRt6xF5Voll9JIJ
+         N2sQm0X+GunuJgthCcIJY+ZYJ6SCujKuOh/O0ZA0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 5.0 063/139] ceph: flush dirty inodes before proceeding with remount
-Date:   Thu, 23 May 2019 21:05:51 +0200
-Message-Id: <20190523181728.957143804@linuxfoundation.org>
+        stable@vger.kernel.org, Nicolai Stange <nstange@suse.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 5.0 064/139] x86_64: Add gap to int3 to allow for call emulation
+Date:   Thu, 23 May 2019 21:05:52 +0200
+Message-Id: <20190523181729.091826690@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
 References: <20190523181720.120897565@linuxfoundation.org>
@@ -43,48 +45,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-commit 00abf69dd24f4444d185982379c5cc3bb7b6d1fc upstream.
+commit 2700fefdb2d9751c416ad56897e27d41e409324a upstream.
 
-xfstest generic/452 was triggering a "Busy inodes after umount" warning.
-ceph was allowing the mount to go read-only without first flushing out
-dirty inodes in the cache. Ensure we sync out the filesystem before
-allowing a remount to proceed.
+To allow an int3 handler to emulate a call instruction, it must be able to
+push a return address onto the stack. Add a gap to the stack to allow the
+int3 handler to push the return address and change the return from int3 to
+jump straight to the emulated called function target.
+
+Link: http://lkml.kernel.org/r/20181130183917.hxmti5josgq4clti@treble
+Link: http://lkml.kernel.org/r/20190502162133.GX2623@hirez.programming.kicks-ass.net
+
+[
+  Note, this is needed to allow Live Kernel Patching to not miss calling a
+  patched function when tracing is enabled. -- Steven Rostedt
+]
 
 Cc: stable@vger.kernel.org
-Link: http://tracker.ceph.com/issues/39571
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Fixes: b700e7f03df5 ("livepatch: kernel: add support for live patching")
+Tested-by: Nicolai Stange <nstange@suse.de>
+Reviewed-by: Nicolai Stange <nstange@suse.de>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/super.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/entry/entry_64.S |   18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -832,6 +832,12 @@ static void ceph_umount_begin(struct sup
- 	return;
- }
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -881,7 +881,7 @@ apicinterrupt IRQ_WORK_VECTOR			irq_work
+  * @paranoid == 2 is special: the stub will never switch stacks.  This is for
+  * #DF: if the thread stack is somehow unusable, we'll still get a useful OOPS.
+  */
+-.macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1
++.macro idtentry sym do_sym has_error_code:req paranoid=0 shift_ist=-1 create_gap=0
+ ENTRY(\sym)
+ 	UNWIND_HINT_IRET_REGS offset=\has_error_code*8
  
-+static int ceph_remount(struct super_block *sb, int *flags, char *data)
-+{
-+	sync_filesystem(sb);
-+	return 0;
-+}
+@@ -901,6 +901,20 @@ ENTRY(\sym)
+ 	jnz	.Lfrom_usermode_switch_stack_\@
+ 	.endif
+ 
++	.if \create_gap == 1
++	/*
++	 * If coming from kernel space, create a 6-word gap to allow the
++	 * int3 handler to emulate a call instruction.
++	 */
++	testb	$3, CS-ORIG_RAX(%rsp)
++	jnz	.Lfrom_usermode_no_gap_\@
++	.rept	6
++	pushq	5*8(%rsp)
++	.endr
++	UNWIND_HINT_IRET_REGS offset=8
++.Lfrom_usermode_no_gap_\@:
++	.endif
 +
- static const struct super_operations ceph_super_ops = {
- 	.alloc_inode	= ceph_alloc_inode,
- 	.destroy_inode	= ceph_destroy_inode,
-@@ -839,6 +845,7 @@ static const struct super_operations cep
- 	.drop_inode	= ceph_drop_inode,
- 	.sync_fs        = ceph_sync_fs,
- 	.put_super	= ceph_put_super,
-+	.remount_fs	= ceph_remount,
- 	.show_options   = ceph_show_options,
- 	.statfs		= ceph_statfs,
- 	.umount_begin   = ceph_umount_begin,
+ 	.if \paranoid
+ 	call	paranoid_entry
+ 	.else
+@@ -1132,7 +1146,7 @@ apicinterrupt3 HYPERV_STIMER0_VECTOR \
+ #endif /* CONFIG_HYPERV */
+ 
+ idtentry debug			do_debug		has_error_code=0	paranoid=1 shift_ist=DEBUG_STACK
+-idtentry int3			do_int3			has_error_code=0
++idtentry int3			do_int3			has_error_code=0	create_gap=1
+ idtentry stack_segment		do_stack_segment	has_error_code=1
+ 
+ #ifdef CONFIG_XEN_PV
 
 
