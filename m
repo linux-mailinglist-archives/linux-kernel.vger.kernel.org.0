@@ -2,62 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F03928984
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D653D2867B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390728AbfEWTjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:39:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60054 "EHLO mail.kernel.org"
+        id S2387632AbfEWTJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:09:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390008AbfEWTWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:22:13 -0400
+        id S2387604AbfEWTJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:09:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96B7E20868;
-        Thu, 23 May 2019 19:22:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61D882186A;
+        Thu, 23 May 2019 19:09:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639333;
-        bh=zhqxLNwqGhcmRxAFfvqCUSgl9hkjVkSm1FFOk4cXzZY=;
+        s=default; t=1558638594;
+        bh=8G87I6+bRkUxbApeia6mB4Dt8Rsuu8aFBBZL7mVii/4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AM5t0mytLyhUWl57uxW3iPTPfifUZyUjH9YFXbILo+nKMxseIg56BTAA9q7ns5KMx
-         hjD88QFc3xfl0JUE7dHb70fLv0/V74bfayRMP2uXvq/rcZEvxUnEWEpxK2I97T+zkV
-         ZIPPjjj54NzHlAi8Oz5XAY1mt4QCKDvzPb8sDRDI=
+        b=nUYHrRt0T6EspPAFvOTLG5+cznB75WNR+3fQRIFCaoLrB8w/43x6gY4lvUPEX3PRV
+         0Hph0pNfakKcj0hdm7SFagT4Wu2C8opBFAQO+92R00M7ziYpdRdJapBtnmoohAsKVI
+         kek9xwhwGZ30fGSV2J4HnDYVYKs3j43pOFaevDts=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Juergen Gross <jgross@suse.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 5.0 066/139] ftrace/x86_64: Emulate call function while updating in breakpoint handler
+        stable@vger.kernel.org, Yifeng Li <tomli@tomli.me>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Teddy Wang <teddy.wang@siliconmotion.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.9 30/53] fbdev: sm712fb: fix brightness control on reboot, dont set SR30
 Date:   Thu, 23 May 2019 21:05:54 +0200
-Message-Id: <20190523181729.392695463@linuxfoundation.org>
+Message-Id: <20190523181715.578592764@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
+References: <20190523181710.981455400@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -67,152 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Yifeng Li <tomli@tomli.me>
 
-commit 9e298e8604088a600d8100a111a532a9d342af09 upstream.
+commit 5481115e25e42b9215f2619452aa99c95f08492f upstream.
 
-Nicolai Stange discovered[1] that if live kernel patching is enabled, and the
-function tracer started tracing the same function that was patched, the
-conversion of the fentry call site during the translation of going from
-calling the live kernel patch trampoline to the iterator trampoline, would
-have as slight window where it didn't call anything.
+On a Thinkpad s30 (Pentium III / i440MX, Lynx3DM), rebooting with
+sm712fb framebuffer driver would cause the role of brightness up/down
+button to swap.
 
-As live kernel patching depends on ftrace to always call its code (to
-prevent the function being traced from being called, as it will redirect
-it). This small window would allow the old buggy function to be called, and
-this can cause undesirable results.
+Experiments showed the FPR30 register caused this behavior. Moreover,
+even if this register don't have side-effect on other systems, over-
+writing it is also highly questionable, since it was originally
+configurated by the motherboard manufacturer by hardwiring pull-down
+resistors to indicate the type of LCD panel. We should not mess with
+it.
 
-Nicolai submitted new patches[2] but these were controversial. As this is
-similar to the static call emulation issues that came up a while ago[3].
-But after some debate[4][5] adding a gap in the stack when entering the
-breakpoint handler allows for pushing the return address onto the stack to
-easily emulate a call.
+Stop writing to the SR30 (a.k.a FPR30) register.
 
-[1] http://lkml.kernel.org/r/20180726104029.7736-1-nstange@suse.de
-[2] http://lkml.kernel.org/r/20190427100639.15074-1-nstange@suse.de
-[3] http://lkml.kernel.org/r/3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com
-[4] http://lkml.kernel.org/r/CAHk-=wh5OpheSU8Em_Q3Hg8qw_JtoijxOdPtHru6d+5K8TWM=A@mail.gmail.com
-[5] http://lkml.kernel.org/r/CAHk-=wjvQxY4DvPrJ6haPgAa6b906h=MwZXO6G8OtiTGe=N7_w@mail.gmail.com
-
-[
-  Live kernel patching is not implemented on x86_32, thus the emulate
-  calls are only for x86_64.
-]
-
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Nicolai Stange <nstange@suse.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: the arch/x86 maintainers <x86@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>
-Cc: Miroslav Benes <mbenes@suse.cz>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Nayna Jain <nayna@linux.ibm.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Joerg Roedel <jroedel@suse.de>
-Cc: "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Cc: stable@vger.kernel.org
-Fixes: b700e7f03df5 ("livepatch: kernel: add support for live patching")
-Tested-by: Nicolai Stange <nstange@suse.de>
-Reviewed-by: Nicolai Stange <nstange@suse.de>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-[ Changed to only implement emulated calls for x86_64 ]
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Yifeng Li <tomli@tomli.me>
+Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Teddy Wang <teddy.wang@siliconmotion.com>
+Cc: <stable@vger.kernel.org>  # v4.4+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/ftrace.c |   32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
+ drivers/video/fbdev/sm712fb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -29,6 +29,7 @@
- #include <asm/kprobes.h>
- #include <asm/ftrace.h>
- #include <asm/nops.h>
-+#include <asm/text-patching.h>
+--- a/drivers/video/fbdev/sm712fb.c
++++ b/drivers/video/fbdev/sm712fb.c
+@@ -1144,8 +1144,8 @@ static void sm7xx_set_timing(struct smtc
  
- #ifdef CONFIG_DYNAMIC_FTRACE
+ 		/* init SEQ register SR30 - SR75 */
+ 		for (i = 0; i < SIZE_SR30_SR75; i++)
+-			if ((i + 0x30) != 0x62 && (i + 0x30) != 0x6a &&
+-			    (i + 0x30) != 0x6b)
++			if ((i + 0x30) != 0x30 && (i + 0x30) != 0x62 &&
++			    (i + 0x30) != 0x6a && (i + 0x30) != 0x6b)
+ 				smtc_seqw(i + 0x30,
+ 					  vgamode[j].init_sr30_sr75[i]);
  
-@@ -231,6 +232,7 @@ int ftrace_modify_call(struct dyn_ftrace
- }
- 
- static unsigned long ftrace_update_func;
-+static unsigned long ftrace_update_func_call;
- 
- static int update_ftrace_func(unsigned long ip, void *new)
- {
-@@ -259,6 +261,8 @@ int ftrace_update_ftrace_func(ftrace_fun
- 	unsigned char *new;
- 	int ret;
- 
-+	ftrace_update_func_call = (unsigned long)func;
-+
- 	new = ftrace_call_replace(ip, (unsigned long)func);
- 	ret = update_ftrace_func(ip, new);
- 
-@@ -294,13 +298,28 @@ int ftrace_int3_handler(struct pt_regs *
- 	if (WARN_ON_ONCE(!regs))
- 		return 0;
- 
--	ip = regs->ip - 1;
--	if (!ftrace_location(ip) && !is_ftrace_caller(ip))
--		return 0;
-+	ip = regs->ip - INT3_INSN_SIZE;
- 
--	regs->ip += MCOUNT_INSN_SIZE - 1;
-+#ifdef CONFIG_X86_64
-+	if (ftrace_location(ip)) {
-+		int3_emulate_call(regs, (unsigned long)ftrace_regs_caller);
-+		return 1;
-+	} else if (is_ftrace_caller(ip)) {
-+		if (!ftrace_update_func_call) {
-+			int3_emulate_jmp(regs, ip + CALL_INSN_SIZE);
-+			return 1;
-+		}
-+		int3_emulate_call(regs, ftrace_update_func_call);
-+		return 1;
-+	}
-+#else
-+	if (ftrace_location(ip) || is_ftrace_caller(ip)) {
-+		int3_emulate_jmp(regs, ip + CALL_INSN_SIZE);
-+		return 1;
-+	}
-+#endif
- 
--	return 1;
-+	return 0;
- }
- 
- static int ftrace_write(unsigned long ip, const char *val, int size)
-@@ -858,6 +877,8 @@ void arch_ftrace_update_trampoline(struc
- 
- 	func = ftrace_ops_get_func(ops);
- 
-+	ftrace_update_func_call = (unsigned long)func;
-+
- 	/* Do a safe modify in case the trampoline is executing */
- 	new = ftrace_call_replace(ip, (unsigned long)func);
- 	ret = update_ftrace_func(ip, new);
-@@ -959,6 +980,7 @@ static int ftrace_mod_jmp(unsigned long
- {
- 	unsigned char *new;
- 
-+	ftrace_update_func_call = 0UL;
- 	new = ftrace_jmp_replace(ip, (unsigned long)func);
- 
- 	return update_ftrace_func(ip, new);
 
 
