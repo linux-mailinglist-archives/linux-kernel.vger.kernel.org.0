@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02B0B2881F
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B930286C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390448AbfEWTWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:22:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60162 "EHLO mail.kernel.org"
+        id S2387804AbfEWTMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:12:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389740AbfEWTWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:22:16 -0400
+        id S1731662AbfEWTMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:12:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F50821850;
-        Thu, 23 May 2019 19:22:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6862217D9;
+        Thu, 23 May 2019 19:12:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639335;
-        bh=kiG2Z147l4GuJ/myFhrqydpFyu3ZbV9OGO+gjWFZCQk=;
+        s=default; t=1558638759;
+        bh=+athbFoOd2Xxcsmu54xtO7qi37LKpNoQwFHL9MONUjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K9YiUv0CfhXY9EjcQS7HUdzacSvIdD0+bCbCTfAJZzveEL97BKX4TfDdE1ij995St
-         uncHZH0bf55yEeOmaaSp4vXt8N4WyFad+sMixUAdK2M1zaBsEMBSjJ4Sji5fK4T8To
-         ar9TdtkxPB31oz0t2GBgQg8kVhVRezJRylae4niA=
+        b=MIy0bs2Tw9z12IQd2knKBtaiF5SFcthbXllkNc5jI7EsskfV2+WCclsfBTYwbUrwB
+         aXkkqFnVtRb1qtW3e+DUzpmFvh9zMgnykKAVyE1AiPUoP58aySj2od0TLnqYJwJeNJ
+         IUB4bmwC5x3rMvy6rI67IaDYh4gjwCXDdoLDIbYY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Orit Wasserman <orit.was@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Elazar Leibovich <elazar@lightbitslabs.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 5.0 067/139] tracing: Fix partial reading of trace events id file
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.14 37/77] perf intel-pt: Fix instructions sampling rate
 Date:   Thu, 23 May 2019 21:05:55 +0200
-Message-Id: <20190523181729.548435244@linuxfoundation.org>
+Message-Id: <20190523181725.313797495@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,77 +44,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Elazar Leibovich <elazar@lightbitslabs.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit cbe08bcbbe787315c425dde284dcb715cfbf3f39 upstream.
+commit 7ba8fa20e26eb3c0c04d747f7fd2223694eac4d5 upstream.
 
-When reading only part of the id file, the ppos isn't tracked correctly.
-This is taken care by simple_read_from_buffer.
+The timestamp used to determine if an instruction sample is made, is an
+estimate based on the number of instructions since the last known
+timestamp. A consequence is that it might go backwards, which results in
+extra samples. Change it so that a sample is only made when the
+timestamp goes forwards.
 
-Reading a single byte, and then the next byte would result EOF.
+Note this does not affect a sampling period of 0 or sampling periods
+specified as a count of instructions.
 
-While this seems like not a big deal, this breaks abstractions that
-reads information from files unbuffered. See for example
-https://github.com/golang/go/issues/29399
+Example:
 
-This code was mentioned as problematic in
-commit cd458ba9d5a5
-("tracing: Do not (ab)use trace_seq in event_id_read()")
+ Before:
 
-An example C code that show this bug is:
+ $ perf script --itrace=i10us
+ ls 13812 [003] 2167315.222583:       3270 instructions:u:      7fac71e2e494 __GI___tunables_init+0xf4 (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ls 13812 [003] 2167315.222667:      30902 instructions:u:      7fac71e2da0f _dl_cache_libcmp+0x2f (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ls 13812 [003] 2167315.222667:         10 instructions:u:      7fac71e2d9ff _dl_cache_libcmp+0x1f (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ls 13812 [003] 2167315.222667:          8 instructions:u:      7fac71e2d9ea _dl_cache_libcmp+0xa (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ls 13812 [003] 2167315.222667:         14 instructions:u:      7fac71e2d9ea _dl_cache_libcmp+0xa (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ls 13812 [003] 2167315.222667:          6 instructions:u:      7fac71e2d9ff _dl_cache_libcmp+0x1f (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ls 13812 [003] 2167315.222667:         14 instructions:u:      7fac71e2d9ff _dl_cache_libcmp+0x1f (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ls 13812 [003] 2167315.222667:          4 instructions:u:      7fac71e2dab2 _dl_cache_libcmp+0xd2 (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ls 13812 [003] 2167315.222728:      16423 instructions:u:      7fac71e2477a _dl_map_object_deps+0x1ba (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ls 13812 [003] 2167315.222734:      12731 instructions:u:      7fac71e27938 _dl_name_match_p+0x68 (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ...
 
-  #include <stdio.h>
-  #include <stdint.h>
+ After:
+ $ perf script --itrace=i10us
+ ls 13812 [003] 2167315.222583:       3270 instructions:u:      7fac71e2e494 __GI___tunables_init+0xf4 (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ls 13812 [003] 2167315.222667:      30902 instructions:u:      7fac71e2da0f _dl_cache_libcmp+0x2f (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ls 13812 [003] 2167315.222728:      16479 instructions:u:      7fac71e2477a _dl_map_object_deps+0x1ba (/lib/x86_64-linux-gnu/ld-2.28.so)
+ ...
 
-  #include <sys/types.h>
-  #include <sys/stat.h>
-  #include <fcntl.h>
-  #include <unistd.h>
-
-  int main(int argc, char **argv) {
-    if (argc < 2)
-      return 1;
-    int fd = open(argv[1], O_RDONLY);
-    char c;
-    read(fd, &c, 1);
-    printf("First  %c\n", c);
-    read(fd, &c, 1);
-    printf("Second %c\n", c);
-  }
-
-Then run with, e.g.
-
-  sudo ./a.out /sys/kernel/debug/tracing/events/tcp/tcp_set_state/id
-
-You'll notice you're getting the first character twice, instead of the
-first two characters in the id file.
-
-Link: http://lkml.kernel.org/r/20181231115837.4932-1-elazar@lightbitslabs.com
-
-Cc: Orit Wasserman <orit.was@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: stable@vger.kernel.org
-Fixes: 23725aeeab10b ("ftrace: provide an id file for each event")
-Signed-off-by: Elazar Leibovich <elazar@lightbitslabs.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: f4aa081949e7b ("perf tools: Add Intel PT decoder")
+Link: http://lkml.kernel.org/r/20190510124143.27054-2-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events.c |    3 ---
- 1 file changed, 3 deletions(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1318,9 +1318,6 @@ event_id_read(struct file *filp, char __
- 	char buf[32];
- 	int len;
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -888,16 +888,20 @@ static uint64_t intel_pt_next_period(str
+ 	timestamp = decoder->timestamp + decoder->timestamp_insn_cnt;
+ 	masked_timestamp = timestamp & decoder->period_mask;
+ 	if (decoder->continuous_period) {
+-		if (masked_timestamp != decoder->last_masked_timestamp)
++		if (masked_timestamp > decoder->last_masked_timestamp)
+ 			return 1;
+ 	} else {
+ 		timestamp += 1;
+ 		masked_timestamp = timestamp & decoder->period_mask;
+-		if (masked_timestamp != decoder->last_masked_timestamp) {
++		if (masked_timestamp > decoder->last_masked_timestamp) {
+ 			decoder->last_masked_timestamp = masked_timestamp;
+ 			decoder->continuous_period = true;
+ 		}
+ 	}
++
++	if (masked_timestamp < decoder->last_masked_timestamp)
++		return decoder->period_ticks;
++
+ 	return decoder->period_ticks - (timestamp - masked_timestamp);
+ }
  
--	if (*ppos)
--		return 0;
--
- 	if (unlikely(!id))
- 		return -ENODEV;
- 
+@@ -926,7 +930,10 @@ static void intel_pt_sample_insn(struct
+ 	case INTEL_PT_PERIOD_TICKS:
+ 		timestamp = decoder->timestamp + decoder->timestamp_insn_cnt;
+ 		masked_timestamp = timestamp & decoder->period_mask;
+-		decoder->last_masked_timestamp = masked_timestamp;
++		if (masked_timestamp > decoder->last_masked_timestamp)
++			decoder->last_masked_timestamp = masked_timestamp;
++		else
++			decoder->last_masked_timestamp += decoder->period_ticks;
+ 		break;
+ 	case INTEL_PT_PERIOD_NONE:
+ 	case INTEL_PT_PERIOD_MTC:
 
 
