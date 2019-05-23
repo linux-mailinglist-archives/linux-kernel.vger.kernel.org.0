@@ -2,95 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28B2A280A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 17:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D408A280BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 17:13:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731042AbfEWPLE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 11:11:04 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:32932 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730951AbfEWPLB (ORCPT
+        id S1730950AbfEWPNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 11:13:41 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:46972 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730709AbfEWPNl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 11:11:01 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d9so6722323wrx.0;
-        Thu, 23 May 2019 08:11:01 -0700 (PDT)
+        Thu, 23 May 2019 11:13:41 -0400
+Received: by mail-ua1-f65.google.com with SMTP id a95so2283437uaa.13
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 08:13:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9wwz+xfCsHkHpcqUvXeTMqGEu53cQ0RDs4iESG7T3CQ=;
-        b=oLDDUfny5GtdyO+VUAmKEqF0H9jggBBicRo3ExIGe7XhbAMOFPWQmKFj8k8jbGzVK3
-         +vu/jtK1kcZxpAKsSlNtOXKE25fxw5yoSPHmVUkx3CHQDdllbYQwj4Mq0CMq5C/0/mDr
-         86jjGYEWvwLnW4k2LzY4dAbGh2AN26BqQsXRAhPn5qTWog50oKgs4aItEc6cLFiyLRol
-         uFuC0uMs1VsVLUFiciLx8JAxuFVE/kFeqAegOGsK9hUV82gwIlhk8+lOy0qiL5F/Msvz
-         ohCfn2iEqXyYH1cZA/MjMMCBTjhE4gH3wZHG6FZBQZnh8TBWIpXPxxYBMEymrwOZ2dAN
-         j8dA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jJwXkGHAjsBuNVlpPqPHB/gqYdCj2Tmp+gapq3iY+ic=;
+        b=N+mfa0zy+pExM2ZUNCDOd7EfDziYW2R2p9cEyDaLDTL8Z9/JY1U+JerG+cgLatDl1p
+         o6kLElYFF/CJBn8MgO+e6Rk8EX9jnp0H83jEIX4QCp+O2YsWMMPtI8eIMQSHI7fVhK26
+         YOUG49rWHjTZtvdyAwR9l6oZVOpxGvUQtXxvM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9wwz+xfCsHkHpcqUvXeTMqGEu53cQ0RDs4iESG7T3CQ=;
-        b=Vq4w/Mc62D15ZJfAoZmbmw9P87P5bifDY+ZbEIC+qo16lkm44FaieDeutiqDl4+iJX
-         FhFMMUlx1aWHHiXkFEVtLofqSJ8Cpd1wR8Ls8cm9XadTUWj9K59GOxGf1H4UgktKwFAZ
-         JJW7LRiEthBWIO6sGC0EwuKzRIVtioyHe8ZUT1M0NkKC6kUBXeed/1bmlCvlxD+LI5AW
-         E3TS26PBPM2+LT8oyCvlAf7Lv0yMg5drL2O/PHneplf3PMYdXZQu+2N4v4Gcx/hWj2LT
-         Y4dFpn0EVkYXWmGis8LQsvSF9gjhfehKgCwqIaxE7albBnExQo8tPPYyg6sQ1RADQEhD
-         xWgw==
-X-Gm-Message-State: APjAAAXwcaV5L4A8+f70fJwAJuXyqqSroJPj5qrsLTN31ACYj1EUPHyX
-        ZGx81N7/YX6Q0mx4Lpb9FPE=
-X-Google-Smtp-Source: APXvYqwpqFOtLIWfs3xJWCqQCSaru3enfRBsUpAknbkIYOU0UUgbvZX0ZeO7EK5SZbkov/7ukjHJYQ==
-X-Received: by 2002:adf:ce8e:: with SMTP id r14mr46914850wrn.289.1558624260438;
-        Thu, 23 May 2019 08:11:00 -0700 (PDT)
-Received: from localhost.localdomain (18.189-60-37.rdns.acropolistelecom.net. [37.60.189.18])
-        by smtp.gmail.com with ESMTPSA id q15sm11436324wrr.19.2019.05.23.08.10.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 08:10:59 -0700 (PDT)
-From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jJwXkGHAjsBuNVlpPqPHB/gqYdCj2Tmp+gapq3iY+ic=;
+        b=Hy17gDhAO+6bEhO9+11l4E8CDlOy1qKrUisGr4rQ6svKZd/hXKek2uEFdKf2ycQcE3
+         r/hM8rWHYJuGnvpVWaE1aszDhme9GTOku2pKRj3a+uMcsL1NcNEsnagi2WOBNVvY4+LW
+         xdIMNDfDLDPmN5dyYuGbZYB/Bj8fJA9w9/wh/bIlynDY1Xbr2ip+lG2sqrei86pwJMPy
+         PMBNj9y7k+bCXjgFEaKFHE+NWQCnw8hDEjGm1ZQTjqu5rY3uyaeFcseyakfM57xT5sXQ
+         5EdkBF39ZPvbHpgA8HtcRtpJWNLrlDKQ5OwZKoapiUSV/McRIL0y1Wy1ZCq+g20naoyo
+         Y8PQ==
+X-Gm-Message-State: APjAAAXilpdR4RV1MMDHNMhZY6IPRbd6DMW4xa9K/ZaKrabYto0whGOE
+        K8GJWXDRgjiLE2bEiqGQpAKfALR1sQw=
+X-Google-Smtp-Source: APXvYqw/QEmwPjEKH1pM2uVeQ///EMDB1aZCq4FH4uAD9WpZsyyd9pMsR08ykd1K/246Jd7ELtG7UA==
+X-Received: by 2002:ab0:806:: with SMTP id a6mr13737891uaf.10.1558624420395;
+        Thu, 23 May 2019 08:13:40 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id p7sm4642485vsp.34.2019.05.23.08.13.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 08:13:26 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id z11so3798308vsq.9
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 08:13:11 -0700 (PDT)
+X-Received: by 2002:a67:ebd6:: with SMTP id y22mr31596912vso.87.1558624390840;
+ Thu, 23 May 2019 08:13:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190501043734.26706-1-bjorn.andersson@linaro.org> <20190501043734.26706-4-bjorn.andersson@linaro.org>
+In-Reply-To: <20190501043734.26706-4-bjorn.andersson@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 23 May 2019 08:12:56 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XTF5y9dhfq_QsFdbWLszj6EFzTH4NozDPu_7YVzQur3g@mail.gmail.com>
+Message-ID: <CAD=FV=XTF5y9dhfq_QsFdbWLszj6EFzTH4NozDPu_7YVzQur3g@mail.gmail.com>
+Subject: Re: [PATCH v7 3/4] arm64: dts: qcom: Add AOSS QMP node
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v5 4/4] arm64: defconfig: enable sunxi watchdog
-Date:   Thu, 23 May 2019 17:10:50 +0200
-Message-Id: <20190523151050.27302-5-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190523151050.27302-1-peron.clem@gmail.com>
-References: <20190523151050.27302-1-peron.clem@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SUNXI_WATCHDOG option is required to make the
-watchdog available on Allwinner H6.
+Hi,
 
-Enable this option as a module.
+On Tue, Apr 30, 2019 at 9:37 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> The AOSS QMP provides a number of power domains, used for QDSS and
+> PIL, add the node for this.
+>
+> Tested-by: Sibi Sankar <sibis@codeaurora.org>
+> Reviewed-by: Sibi Sankar <sibis@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>
+> Changes since v6:
+> - Added #clock-cells
+>
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index fcb93300ca62..666bc88d3e81 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -14,6 +14,7 @@
+>  #include <dt-bindings/interconnect/qcom,sdm845.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/phy/phy-qcom-qusb2.h>
+> +#include <dt-bindings/power/qcom-aoss-qmp.h>
+>  #include <dt-bindings/power/qcom-rpmpd.h>
+>  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+>  #include <dt-bindings/reset/qcom,sdm845-pdc.h>
+> @@ -2142,6 +2143,15 @@
 
-Signed-off-by: Clément Péron <peron.clem@gmail.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Please avoid editing patches by hand.  I needed to manually change the
+"15" above to "16" to apply.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4d583514258c..fc51dd4decb1 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -420,6 +420,7 @@ CONFIG_UNIPHIER_THERMAL=y
- CONFIG_WATCHDOG=y
- CONFIG_ARM_SP805_WATCHDOG=y
- CONFIG_S3C2410_WATCHDOG=y
-+CONFIG_SUNXI_WATCHDOG=m
- CONFIG_IMX2_WDT=y
- CONFIG_MESON_GXBB_WATCHDOG=m
- CONFIG_MESON_WATCHDOG=m
--- 
-2.20.1
-
+-Doug
