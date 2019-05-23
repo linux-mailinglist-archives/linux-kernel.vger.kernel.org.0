@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6463628868
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D855428925
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391216AbfEWTZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:25:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37582 "EHLO mail.kernel.org"
+        id S2392227AbfEWTbH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:31:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391198AbfEWTZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:25:52 -0400
+        id S2403757AbfEWTbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:31:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED55220868;
-        Thu, 23 May 2019 19:25:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D12F2054F;
+        Thu, 23 May 2019 19:31:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639551;
-        bh=EhYtP/rpvE8jWFvUYVqzJ7BQ2mvQOotty2PPRp7l7Lw=;
+        s=default; t=1558639863;
+        bh=nzeW2X+X5V2hvChwOFElfChmral2wiPC7L2Eajqvbp8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0jBV/gwhQSLDUhetVhJWEmQwXJH5mUSqc6GXUlFVVtOrVVWEM+qN1y6hdiuHiOLlr
-         O77B3PaDPTxEGRpx5rmEbaI0MiXE/eeQNUN0FH8EQBB1sTv2rzZjUuT1FM24u6tS+G
-         6IoUtPYG14Zn1sS2oxpOXavgE4Lw366vaoLhvq7E=
+        b=pA7EMfbsHctIzouoF7F5JUaxskX/iQ/xDknL8yZxH05T3Sr0DWgrUkARGSmXZql+X
+         WAYEe8ChvaJCPD5hmwG5JiprJ87JkddtLBls3q+FpYJkGf53b0gB2OVdHycbN8fxOw
+         tF2BfTiLJ68sy8RQ1oW8Xuj08FD1nHJYbJvXfBd0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chenbo Feng <fengc@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH 5.0 137/139] bpf: relax inode permission check for retrieving bpf program
-Date:   Thu, 23 May 2019 21:07:05 +0200
-Message-Id: <20190523181736.640635204@linuxfoundation.org>
+        stable@vger.kernel.org, Helen Koike <helen.koike@collabora.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 5.1 104/122] dm init: fix max devices/targets checks
+Date:   Thu, 23 May 2019 21:07:06 +0200
+Message-Id: <20190523181719.105819177@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chenbo Feng <fengc@google.com>
+From: Helen Koike <helen.koike@collabora.com>
 
-commit e547ff3f803e779a3898f1f48447b29f43c54085 upstream.
+commit 8e890c1ab1b1e0f765cd8da82c4dee011698a5e8 upstream.
 
-For iptable module to load a bpf program from a pinned location, it
-only retrieve a loaded program and cannot change the program content so
-requiring a write permission for it might not be necessary.
-Also when adding or removing an unrelated iptable rule, it might need to
-flush and reload the xt_bpf related rules as well and triggers the inode
-permission check. It might be better to remove the write premission
-check for the inode so we won't need to grant write access to all the
-processes that flush and restore iptables rules.
+dm-init should allow up to DM_MAX_{DEVICES,TARGETS} for devices/targets,
+and not DM_MAX_{DEVICES,TARGETS} - 1.
 
-Signed-off-by: Chenbo Feng <fengc@google.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fix the checks and also fix the error message when the number of devices
+is surpassed.
+
+Fixes: 6bbc923dfcf57d ("dm: add support to directly boot to a mapped device")
+Cc: stable@vger.kernel.org
+Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/inode.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-init.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -518,7 +518,7 @@ out:
- static struct bpf_prog *__get_prog_inode(struct inode *inode, enum bpf_prog_type type)
- {
- 	struct bpf_prog *prog;
--	int ret = inode_permission(inode, MAY_READ | MAY_WRITE);
-+	int ret = inode_permission(inode, MAY_READ);
- 	if (ret)
- 		return ERR_PTR(ret);
+--- a/drivers/md/dm-init.c
++++ b/drivers/md/dm-init.c
+@@ -160,7 +160,7 @@ static int __init dm_parse_table(struct
+ 
+ 	while (table_entry) {
+ 		DMDEBUG("parsing table \"%s\"", str);
+-		if (++dev->dmi.target_count >= DM_MAX_TARGETS) {
++		if (++dev->dmi.target_count > DM_MAX_TARGETS) {
+ 			DMERR("too many targets %u > %d",
+ 			      dev->dmi.target_count, DM_MAX_TARGETS);
+ 			return -EINVAL;
+@@ -242,9 +242,9 @@ static int __init dm_parse_devices(struc
+ 			return -ENOMEM;
+ 		list_add_tail(&dev->list, devices);
+ 
+-		if (++ndev >= DM_MAX_DEVICES) {
+-			DMERR("too many targets %u > %d",
+-			      dev->dmi.target_count, DM_MAX_TARGETS);
++		if (++ndev > DM_MAX_DEVICES) {
++			DMERR("too many devices %lu > %d",
++			      ndev, DM_MAX_DEVICES);
+ 			return -EINVAL;
+ 		}
  
 
 
