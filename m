@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F24B28A45
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:57:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8F5B2867D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388220AbfEWTLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:11:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44954 "EHLO mail.kernel.org"
+        id S2387671AbfEWTKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:10:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388190AbfEWTLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:11:31 -0400
+        id S2387650AbfEWTKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:10:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C957C2133D;
-        Thu, 23 May 2019 19:11:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AA3F217D7;
+        Thu, 23 May 2019 19:10:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638691;
-        bh=+1IZQUrfGfQnqIsSCy0XTRlbk6xEN7G2HIDr6wTwctg=;
+        s=default; t=1558638602;
+        bh=5J9r7WqGNFJ/CSado9t/MekUwvyPZF1ABsZJ4qFD3k0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=itp9kKQAaBfz48GR7snsScRsHu9YvzJ0Qvy+6+DOEhe+Np6wntVOk/kixTc9vj2Wl
-         LXZ3AKAxqXti41AcxXADMok6KOHc/76A/FWNagaX4DhcHMJ9fa6p+QNlwRveGtL0bL
-         6BJH8Sk/hDFGymvyWre2hDIZOasmGAhaOh8xSius=
+        b=m9Q+hA4+8WomfXkNyotfwFJiVYwExZhQPlQiBSr9SZm6RhlXxHRkrPi8x9VgWoZAC
+         72JdkohjTjyEA7PQFRJ9CyG8oUejuIBppoO44hZ7qv8nmtR6FN8vp5QgW4F/nNzZu6
+         EjkWk31u6BDywuzJzHWoy/8F2vwytR22P9FA89Zg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.14 29/77] fuse: honor RLIMIT_FSIZE in fuse_file_fallocate
+        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.9 23/53] ceph: flush dirty inodes before proceeding with remount
 Date:   Thu, 23 May 2019 21:05:47 +0200
-Message-Id: <20190523181724.243047686@linuxfoundation.org>
+Message-Id: <20190523181714.509534943@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
+References: <20190523181710.981455400@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liu Bo <bo.liu@linux.alibaba.com>
+From: Jeff Layton <jlayton@kernel.org>
 
-commit 0cbade024ba501313da3b7e5dd2a188a6bc491b5 upstream.
+commit 00abf69dd24f4444d185982379c5cc3bb7b6d1fc upstream.
 
-fstests generic/228 reported this failure that fuse fallocate does not
-honor what 'ulimit -f' has set.
+xfstest generic/452 was triggering a "Busy inodes after umount" warning.
+ceph was allowing the mount to go read-only without first flushing out
+dirty inodes in the cache. Ensure we sync out the filesystem before
+allowing a remount to proceed.
 
-This adds the necessary inode_newsize_ok() check.
-
-Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-Fixes: 05ba1f082300 ("fuse: add FALLOCATE operation")
-Cc: <stable@vger.kernel.org> # v3.5
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Cc: stable@vger.kernel.org
+Link: http://tracker.ceph.com/issues/39571
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/file.c |    7 +++++++
+ fs/ceph/super.c |    7 +++++++
  1 file changed, 7 insertions(+)
 
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2974,6 +2974,13 @@ static long fuse_file_fallocate(struct f
- 		}
- 	}
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -742,6 +742,12 @@ static void ceph_umount_begin(struct sup
+ 	return;
+ }
  
-+	if (!(mode & FALLOC_FL_KEEP_SIZE) &&
-+	    offset + length > i_size_read(inode)) {
-+		err = inode_newsize_ok(inode, offset + length);
-+		if (err)
-+			return err;
-+	}
++static int ceph_remount(struct super_block *sb, int *flags, char *data)
++{
++	sync_filesystem(sb);
++	return 0;
++}
 +
- 	if (!(mode & FALLOC_FL_KEEP_SIZE))
- 		set_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
- 
+ static const struct super_operations ceph_super_ops = {
+ 	.alloc_inode	= ceph_alloc_inode,
+ 	.destroy_inode	= ceph_destroy_inode,
+@@ -750,6 +756,7 @@ static const struct super_operations cep
+ 	.evict_inode	= ceph_evict_inode,
+ 	.sync_fs        = ceph_sync_fs,
+ 	.put_super	= ceph_put_super,
++	.remount_fs	= ceph_remount,
+ 	.show_options   = ceph_show_options,
+ 	.statfs		= ceph_statfs,
+ 	.umount_begin   = ceph_umount_begin,
 
 
