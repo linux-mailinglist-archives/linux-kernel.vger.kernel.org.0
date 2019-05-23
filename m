@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC32A28AB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6421428806
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389699AbfEWTpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:45:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50304 "EHLO mail.kernel.org"
+        id S2391319AbfEWT0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:26:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389077AbfEWTPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:15:49 -0400
+        id S2390636AbfEWT0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:26:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B58A217D7;
-        Thu, 23 May 2019 19:15:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F14C920868;
+        Thu, 23 May 2019 19:26:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638949;
-        bh=2yOBiJ/ADzN5mUmjQMi39EZs/vsECzak1Apuewu9mss=;
+        s=default; t=1558639578;
+        bh=J41EuJLG+sXz2i4AKh/xVoeOsnYj33XSb3EDyOR4SOo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aUzT0gL2VIzgEXWClu4uWM8yqwib7QTtLix+0lqNq2ubPMqXWVuBrnqQxFMl8plkk
-         N/AH7YjkE5i/0NvlRfTjRSr47jMiW6IXbx3Jiurju5sGv4H+BYqohRIanOJ5HrSG+J
-         X1N5bzfpfyWwQiZOkkL+fzG1QBF0VDvcPrVy9Wmg=
+        b=pjS7/piVzC6JoSPF4MeteIaG4LZWgT2nci9aXRLzPfieAgWwe5qsrFzl4CLoM40ac
+         JvZElRO5Vvmg2VGQN3EtnIYLpIhK8Z8TmGq+VTLILBR6Up9ftkELcH8A2RaxBqFHkM
+         edoTNwW7CVEH5LFFxWi0qUyoA/2Pr+W1bfNnZqo0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steev Klimaszewski <steev@kali.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.19 040/114] clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides divider
+        stable@vger.kernel.org, Jianbo Liu <jianbol@mellanox.com>,
+        Edward Cree <ecree@solarflare.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.1 017/122] net/mlx5e: Fix calling wrong function to get inner vlan key and mask
 Date:   Thu, 23 May 2019 21:05:39 +0200
-Message-Id: <20190523181735.397285171@linuxfoundation.org>
+Message-Id: <20190523181707.134169459@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Jianbo Liu <jianbol@mellanox.com>
 
-commit 40db569d6769ffa3864fd1b89616b1a7323568a8 upstream.
+[ Upstream commit 12d5cbf89a6599f6bbd7b373dba0e74b5bd9c505 ]
 
-There are wrongly set parenthesis in the code that are resulting in a
-wrong configuration being programmed for PLLM. The original fix was made
-by Danny Huang in the downstream kernel. The patch was tested on Nyan Big
-Tegra124 chromebook, PLLM rate changing works correctly now and system
-doesn't lock up after changing the PLLM rate due to EMC scaling.
+When flow_rule_match_XYZ() functions were first introduced,
+flow_rule_match_cvlan() for inner vlan is missing.
 
-Cc: <stable@vger.kernel.org>
-Tested-by: Steev Klimaszewski <steev@kali.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+In mlx5_core driver, to get inner vlan key and mask, flow_rule_match_vlan()
+is just called, which is wrong because it obtains outer vlan information by
+FLOW_DISSECTOR_KEY_VLAN.
+
+This commit fixes this by changing to call flow_rule_match_cvlan() after
+it's added.
+
+Fixes: 8f2566225ae2 ("flow_offload: add flow_rule and flow_match structures and use them")
+Signed-off-by: Jianbo Liu <jianbol@mellanox.com>
+Signed-off-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/clk/tegra/clk-pll.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -662,8 +662,8 @@ static void _update_pll_mnp(struct tegra
- 		pll_override_writel(val, params->pmc_divp_reg, pll);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -1561,7 +1561,7 @@ static int __parse_cls_flower(struct mlx
+ 	if (flow_rule_match_key(rule, FLOW_DISSECTOR_KEY_CVLAN)) {
+ 		struct flow_match_vlan match;
  
- 		val = pll_override_readl(params->pmc_divnm_reg, pll);
--		val &= ~(divm_mask(pll) << div_nmp->override_divm_shift) |
--			~(divn_mask(pll) << div_nmp->override_divn_shift);
-+		val &= ~((divm_mask(pll) << div_nmp->override_divm_shift) |
-+			(divn_mask(pll) << div_nmp->override_divn_shift));
- 		val |= (cfg->m << div_nmp->override_divm_shift) |
- 			(cfg->n << div_nmp->override_divn_shift);
- 		pll_override_writel(val, params->pmc_divnm_reg, pll);
+-		flow_rule_match_vlan(rule, &match);
++		flow_rule_match_cvlan(rule, &match);
+ 		if (match.mask->vlan_id ||
+ 		    match.mask->vlan_priority ||
+ 		    match.mask->vlan_tpid) {
 
 
