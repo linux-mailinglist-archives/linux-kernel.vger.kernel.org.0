@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA6C9287D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3FB1288CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390808AbfEWTYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:24:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34698 "EHLO mail.kernel.org"
+        id S2391827AbfEWT2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:28:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390797AbfEWTX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:23:59 -0400
+        id S2391810AbfEWT2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:28:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15AB52054F;
-        Thu, 23 May 2019 19:23:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AC63206BA;
+        Thu, 23 May 2019 19:28:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639438;
-        bh=OFIsjXtbHYZbOt8iZhE+4vMAQY/LFmC8UGgt9t/KYqo=;
+        s=default; t=1558639723;
+        bh=HouLTLqIqjRCwjXfcBrJZTlxNRJEi9ykC66tBSDO8QI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1fnrE7W2adqlwh2Wzx33dgH1CXBm7mZDkXc8e29yHdMaUFjSk1AQVnHeRYoqMLVS3
-         XDKxUr6LtRX6Hq+Ut1RIQmILDOGAliOiwzAHSyEWAQsbwLLyu5X+Z3KnumdbKpscJI
-         s4bSL33DN45+/KFFGF1YVPFPbwu4R1m8dMIm2Wk8=
+        b=UUKkSCsgq/v5chWw/k1acTKEP+v4lPx64jgsbi2Zpqvr+DLwL5TcmkNpWyIKztz21
+         24maJhlA4sQ+rzNPTgj7/hH3o+tySpAX2vfC6etvZE6w4OAgjbMVxQXT4ZVYBPatCV
+         5bfvhVI5WCreARiMbrmGtumaP6TCpXzc+9nCJyMY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 105/139] esp4: add length check for UDP encapsulation
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 5.1 071/122] iommu/tegra-smmu: Fix invalid ASID bits on Tegra30/114
 Date:   Thu, 23 May 2019 21:06:33 +0200
-Message-Id: <20190523181733.974550825@linuxfoundation.org>
+Message-Id: <20190523181714.112401613@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,90 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8dfb4eba4100e7cdd161a8baef2d8d61b7a7e62e ]
+From: Dmitry Osipenko <digetx@gmail.com>
 
-esp_output_udp_encap can produce a length that doesn't fit in the 16
-bits of a UDP header's length field. In that case, we'll send a
-fragmented packet whose length is larger than IP_MAX_MTU (resulting in
-"Oversized IP packet" warnings on receive) and with a bogus UDP
-length.
+commit 43a0541e312f7136e081e6bf58f6c8a2e9672688 upstream.
 
-To prevent this, add a length check to esp_output_udp_encap and return
- -EMSGSIZE on failure.
+Both Tegra30 and Tegra114 have 4 ASID's and the corresponding bitfield of
+the TLB_FLUSH register differs from later Tegra generations that have 128
+ASID's.
 
-This seems to be older than git history.
+In a result the PTE's are now flushed correctly from TLB and this fixes
+problems with graphics (randomly failing tests) on Tegra30.
 
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/ipv4/esp4.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ drivers/iommu/tegra-smmu.c |   25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
-index 10e809b296ec8..fb065a8937ea2 100644
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -226,7 +226,7 @@ static void esp_output_fill_trailer(u8 *tail, int tfclen, int plen, __u8 proto)
- 	tail[plen - 1] = proto;
- }
- 
--static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *esp)
-+static int esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *esp)
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -102,7 +102,6 @@ static inline u32 smmu_readl(struct tegr
+ #define  SMMU_TLB_FLUSH_VA_MATCH_ALL     (0 << 0)
+ #define  SMMU_TLB_FLUSH_VA_MATCH_SECTION (2 << 0)
+ #define  SMMU_TLB_FLUSH_VA_MATCH_GROUP   (3 << 0)
+-#define  SMMU_TLB_FLUSH_ASID(x)          (((x) & 0x7f) << 24)
+ #define  SMMU_TLB_FLUSH_VA_SECTION(addr) ((((addr) & 0xffc00000) >> 12) | \
+ 					  SMMU_TLB_FLUSH_VA_MATCH_SECTION)
+ #define  SMMU_TLB_FLUSH_VA_GROUP(addr)   ((((addr) & 0xffffc000) >> 12) | \
+@@ -205,8 +204,12 @@ static inline void smmu_flush_tlb_asid(s
  {
- 	int encap_type;
- 	struct udphdr *uh;
-@@ -234,6 +234,7 @@ static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, stru
- 	__be16 sport, dport;
- 	struct xfrm_encap_tmpl *encap = x->encap;
- 	struct ip_esp_hdr *esph = esp->esph;
-+	unsigned int len;
+ 	u32 value;
  
- 	spin_lock_bh(&x->lock);
- 	sport = encap->encap_sport;
-@@ -241,11 +242,14 @@ static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, stru
- 	encap_type = encap->encap_type;
- 	spin_unlock_bh(&x->lock);
- 
-+	len = skb->len + esp->tailen - skb_transport_offset(skb);
-+	if (len + sizeof(struct iphdr) >= IP_MAX_MTU)
-+		return -EMSGSIZE;
+-	value = SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_ASID(asid) |
+-		SMMU_TLB_FLUSH_VA_MATCH_ALL;
++	if (smmu->soc->num_asids == 4)
++		value = (asid & 0x3) << 29;
++	else
++		value = (asid & 0x7f) << 24;
 +
- 	uh = (struct udphdr *)esph;
- 	uh->source = sport;
- 	uh->dest = dport;
--	uh->len = htons(skb->len + esp->tailen
--		  - skb_transport_offset(skb));
-+	uh->len = htons(len);
- 	uh->check = 0;
- 
- 	switch (encap_type) {
-@@ -262,6 +266,8 @@ static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, stru
- 
- 	*skb_mac_header(skb) = IPPROTO_UDP;
- 	esp->esph = esph;
-+
-+	return 0;
++	value |= SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_VA_MATCH_ALL;
+ 	smmu_writel(smmu, value, SMMU_TLB_FLUSH);
  }
  
- int esp_output_head(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *esp)
-@@ -275,8 +281,12 @@ int esp_output_head(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *
- 	int tailen = esp->tailen;
+@@ -216,8 +219,12 @@ static inline void smmu_flush_tlb_sectio
+ {
+ 	u32 value;
  
- 	/* this is non-NULL only with UDP Encapsulation */
--	if (x->encap)
--		esp_output_udp_encap(x, skb, esp);
-+	if (x->encap) {
-+		int err = esp_output_udp_encap(x, skb, esp);
+-	value = SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_ASID(asid) |
+-		SMMU_TLB_FLUSH_VA_SECTION(iova);
++	if (smmu->soc->num_asids == 4)
++		value = (asid & 0x3) << 29;
++	else
++		value = (asid & 0x7f) << 24;
 +
-+		if (err < 0)
-+			return err;
-+	}
++	value |= SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_VA_SECTION(iova);
+ 	smmu_writel(smmu, value, SMMU_TLB_FLUSH);
+ }
  
- 	if (!skb_cloned(skb)) {
- 		if (tailen <= skb_tailroom(skb)) {
--- 
-2.20.1
-
+@@ -227,8 +234,12 @@ static inline void smmu_flush_tlb_group(
+ {
+ 	u32 value;
+ 
+-	value = SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_ASID(asid) |
+-		SMMU_TLB_FLUSH_VA_GROUP(iova);
++	if (smmu->soc->num_asids == 4)
++		value = (asid & 0x3) << 29;
++	else
++		value = (asid & 0x7f) << 24;
++
++	value |= SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_VA_GROUP(iova);
+ 	smmu_writel(smmu, value, SMMU_TLB_FLUSH);
+ }
+ 
 
 
