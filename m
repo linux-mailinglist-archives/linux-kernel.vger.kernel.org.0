@@ -2,181 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05D6227D4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D75A27D5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:54:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730704AbfEWMwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 08:52:51 -0400
-Received: from mga03.intel.com ([134.134.136.65]:53817 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730323AbfEWMwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 08:52:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 May 2019 05:52:50 -0700
-X-ExtLoop1: 1
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.29])
-  by fmsmga008.fm.intel.com with ESMTP; 23 May 2019 05:52:48 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     <hannes@cmpxchg.org>, <mhocko@suse.com>,
-        <mgorman@techsingularity.net>, <kirill.shutemov@linux.intel.com>,
-        <josef@toxicpanda.com>, <hughd@google.com>, <shakeelb@google.com>,
-        <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [v4 PATCH 2/2] mm: vmscan: correct some vmscan counters for THP swapout
-References: <1558578458-83807-1-git-send-email-yang.shi@linux.alibaba.com>
-        <1558578458-83807-2-git-send-email-yang.shi@linux.alibaba.com>
-Date:   Thu, 23 May 2019 20:52:48 +0800
-In-Reply-To: <1558578458-83807-2-git-send-email-yang.shi@linux.alibaba.com>
-        (Yang Shi's message of "Thu, 23 May 2019 10:27:38 +0800")
-Message-ID: <87lfyx9vtr.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1730740AbfEWMyU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 08:54:20 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36158 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729698AbfEWMyT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 08:54:19 -0400
+Received: by mail-pg1-f194.google.com with SMTP id a3so3111092pgb.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 05:54:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PxeLHI+jcJnNa8egh+nhhwEm8X7EMV+hjf297FNmO2k=;
+        b=peBQCQTsOhZRPBlQhXGKjX9BmJCm8odmIaIdt9AnoBnHuLuHgBSIXKze8HoLcLodx8
+         88zvIel1MVoqD70UqU0d105JJNVD6H45YVT8ukmGTeINvYrVwbVAq99W+/3EMHSFu79x
+         a9SuvDw1Perwg9+I1hzp8+WrgIt0MLVSOz021DaYE2pY6y3n5bwN2lSwdQhUA33W+WYu
+         H/tb+45zUX2AC1E+N/eai3SA4M03ghD0k8Ne4ccQHQEtAQMZniNsrAOereY6Hg1xhXpy
+         rvwNkm5FJ2VMWSIR8Hrnw4zJs1UyEvsPXi7pgLKnkbAq2Z/19DJzAjKc4+nh/8fslNbX
+         AMig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PxeLHI+jcJnNa8egh+nhhwEm8X7EMV+hjf297FNmO2k=;
+        b=fnN1ijtCUKFaBM3Gmoofge5R9j4xPoBw2rarrI78ArkrCQFAGQoT4XR5DmSuMScuId
+         8J38KKKXsohucT6my3Oz7UBIrwHUhiKNHheqL2Dj7F/5YwkV4XPGgogcfyIhlJIpF2em
+         CY6y5Wkux5CVaxSXnieA4kcsUfGkMdYWF7gcXuaFaXR4l8PHkzNFFF2rKTY83O/f9T0g
+         5jYV9PT/gu0UVpzptzx8cbKJKjlLrXHEtTP1WUXNeObq8wACyRGv7UH271Hd6IxCuDBR
+         AiCviuhYibtADtXiFF1vNfTeh6zw9HGB+GquuChxtBTZtZJ1hv+Y9/AEyy1qH5gA1hGz
+         lQsQ==
+X-Gm-Message-State: APjAAAVykARKERAg7oavNChNK0mdXeeMJ+Z/hendUzs4neUbbXoxWjsd
+        lNyohDh5Jf1t2/82+6sT/YQ=
+X-Google-Smtp-Source: APXvYqxV4KBmIXZqYjcYRuW7xGgYl0YjuSZmNGQlm0u6NJ3EFrA8/HTX+//gsnRZZM/zz+A7JhRanA==
+X-Received: by 2002:a63:4a16:: with SMTP id x22mr5750690pga.219.1558616059112;
+        Thu, 23 May 2019 05:54:19 -0700 (PDT)
+Received: from localhost.localdomain ([122.163.94.48])
+        by smtp.gmail.com with ESMTPSA id w12sm27355248pgp.51.2019.05.23.05.54.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 05:54:18 -0700 (PDT)
+From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
+To:     gregkh@linuxfoundation.org, straube.linux@gmail.com,
+        realwakka@gmail.com, hle@owl.eu.com, rico.schrage@gmail.com,
+        sophie.matter@web.de, weiyongjun1@huawei.com, jbi.octave@gmail.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Subject: [PATCH v2] staging: pi433: Remove unnecessary variable
+Date:   Thu, 23 May 2019 18:23:41 +0530
+Message-Id: <20190523125340.29338-1-nishkadg.linux@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yang Shi <yang.shi@linux.alibaba.com> writes:
+The variable retval is assigned constant values twice, and can therefore
+be replaced by its values.
 
-> Since commit bd4c82c22c36 ("mm, THP, swap: delay splitting THP after
-> swapped out"), THP can be swapped out in a whole.  But, nr_reclaimed
-> and some other vm counters still get inc'ed by one even though a whole
-> THP (512 pages) gets swapped out.
->
-> This doesn't make too much sense to memory reclaim.  For example, direct
-> reclaim may just need reclaim SWAP_CLUSTER_MAX pages, reclaiming one THP
-> could fulfill it.  But, if nr_reclaimed is not increased correctly,
-> direct reclaim may just waste time to reclaim more pages,
-> SWAP_CLUSTER_MAX * 512 pages in worst case.
->
-> And, it may cause pgsteal_{kswapd|direct} is greater than
-> pgscan_{kswapd|direct}, like the below:
->
-> pgsteal_kswapd 122933
-> pgsteal_direct 26600225
-> pgscan_kswapd 174153
-> pgscan_direct 14678312
->
-> nr_reclaimed and nr_scanned must be fixed in parallel otherwise it would
-> break some page reclaim logic, e.g.
->
-> vmpressure: this looks at the scanned/reclaimed ratio so it won't
-> change semantics as long as scanned & reclaimed are fixed in parallel.
->
-> compaction/reclaim: compaction wants a certain number of physical pages
-> freed up before going back to compacting.
->
-> kswapd priority raising: kswapd raises priority if we scan fewer pages
-> than the reclaim target (which itself is obviously expressed in order-0
-> pages). As a result, kswapd can falsely raise its aggressiveness even
-> when it's making great progress.
->
-> Other than nr_scanned and nr_reclaimed, some other counters, e.g.
-> pgactivate, nr_skipped, nr_ref_keep and nr_unmap_fail need to be fixed
-> too since they are user visible via cgroup, /proc/vmstat or trace
-> points, otherwise they would be underreported.
->
-> When isolating pages from LRUs, nr_taken has been accounted in base
-> page, but nr_scanned and nr_skipped are still accounted in THP.  It
-> doesn't make too much sense too since this may cause trace point
-> underreport the numbers as well.
->
-> So accounting those counters in base page instead of accounting THP as
-> one page.
->
-> nr_dirty, nr_unqueued_dirty, nr_congested and nr_writeback are used by
-> file cache, so they are not impacted by THP swap.
->
-> This change may result in lower steal/scan ratio in some cases since
-> THP may get split during page reclaim, then a part of tail pages get
-> reclaimed instead of the whole 512 pages, but nr_scanned is accounted
-> by 512, particularly for direct reclaim.  But, this should be not a
-> significant issue.
->
-> Cc: "Huang, Ying" <ying.huang@intel.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
-> v4: Fixed the comments from Johannes and Huang Ying
-> v3: Removed Shakeel's Reviewed-by since the patch has been changed significantly
->     Switched back to use compound_order per Matthew
->     Fixed more counters per Johannes
-> v2: Added Shakeel's Reviewed-by
->     Use hpage_nr_pages instead of compound_order per Huang Ying and William Kucharski
->
->  mm/vmscan.c | 34 ++++++++++++++++++++++------------
->  1 file changed, 22 insertions(+), 12 deletions(-)
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index b65bc50..1b35a7a 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1118,6 +1118,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->  		int may_enter_fs;
->  		enum page_references references = PAGEREF_RECLAIM_CLEAN;
->  		bool dirty, writeback;
-> +		unsigned int nr_pages;
->  
->  		cond_resched();
->  
-> @@ -1129,7 +1130,9 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->  
->  		VM_BUG_ON_PAGE(PageActive(page), page);
->  
-> -		sc->nr_scanned++;
-> +		/* Account the number of base pages evne though THP */
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+---
+Changes in v2:
+- Add Wei Yongjun to the recipients list
+- Fix From and Signed-off-by fields
 
-s/evne/even/
+ drivers/staging/pi433/pi433_if.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> +		nr_pages = 1 << compound_order(page);
-> +		sc->nr_scanned += nr_pages;
->  
->  		if (unlikely(!page_evictable(page)))
->  			goto activate_locked;
-> @@ -1250,7 +1253,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->  		case PAGEREF_ACTIVATE:
->  			goto activate_locked;
->  		case PAGEREF_KEEP:
-> -			stat->nr_ref_keep++;
-> +			stat->nr_ref_keep += nr_pages;
->  			goto keep_locked;
->  		case PAGEREF_RECLAIM:
->  		case PAGEREF_RECLAIM_CLEAN:
+diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
+index c889f0bdf424..40c6f4e7632f 100644
+--- a/drivers/staging/pi433/pi433_if.c
++++ b/drivers/staging/pi433/pi433_if.c
+@@ -871,7 +871,6 @@ pi433_write(struct file *filp, const char __user *buf,
+ static long
+ pi433_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+-	int			retval = 0;
+ 	struct pi433_instance	*instance;
+ 	struct pi433_device	*device;
+ 	struct pi433_tx_cfg	tx_cfg;
+@@ -923,10 +922,10 @@ pi433_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		mutex_unlock(&device->rx_lock);
+ 		break;
+ 	default:
+-		retval = -EINVAL;
++		return -EINVAL;
+ 	}
+ 
+-	return retval;
++	return 0;
+ }
+ 
+ #ifdef CONFIG_COMPAT
+-- 
+2.19.1
 
-If the THP is split, you need
-
-        sc->nr_scanned -= nr_pages - 1;
-
-Otherwise the tail pages will be counted twice.
-
-> @@ -1315,7 +1318,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->  			if (unlikely(PageTransHuge(page)))
->  				flags |= TTU_SPLIT_HUGE_PMD;
->  			if (!try_to_unmap(page, flags)) {
-> -				stat->nr_unmap_fail++;
-> +				stat->nr_unmap_fail += nr_pages;
->  				goto activate_locked;
->  			}
->  		}
-> @@ -1442,7 +1445,11 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->  
->  		unlock_page(page);
->  free_it:
-> -		nr_reclaimed++;
-> +		/*
-> +		 * THP may get swapped out in a whole, need account
-> +		 * all base pages.
-> +		 */
-> +		nr_reclaimed += (1 << compound_order(page));
-
-Best Regards,
-Huang, Ying
