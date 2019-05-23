@@ -2,64 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C74F2739C
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 02:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59546273A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 02:59:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729687AbfEWA6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 20:58:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38802 "EHLO mail.kernel.org"
+        id S1729760AbfEWA7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 20:59:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727854AbfEWA6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 20:58:50 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727691AbfEWA7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 20:59:53 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BABB82089E;
-        Thu, 23 May 2019 00:58:48 +0000 (UTC)
-Date:   Wed, 22 May 2019 20:58:47 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Sasha Levin <sashal@kernel.org>, shuah <shuah@kernel.org>,
-        Dhaval Giani <dhaval.giani@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Tim Bird <tbird20d@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Carpenter,Dan" <dan.carpenter@oracle.com>, willy@infradead.org,
-        gustavo.padovan@collabora.co.uk,
-        Dmitry Vyukov <dvyukov@google.com>, knut.omang@oracle.com
-Subject: Re: Linux Testing Microconference at LPC
-Message-ID: <20190522205847.68e36a7f@gandalf.local.home>
-In-Reply-To: <20190522210231.GA212436@google.com>
-References: <CAPhKKr_uVTFAzne0QkZFUGfb8RxQdVFx41G9kXRY7sFN-=pZ6w@mail.gmail.com>
-        <3c6c9405-7e90-fb03-aa1c-0ada13203980@kernel.org>
-        <20190516003649.GS11972@sasha-vm>
-        <20190522210231.GA212436@google.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id A666D2089E;
+        Thu, 23 May 2019 00:59:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558573193;
+        bh=1qlr1saWEx9OtCDPOZZL3KDO+7inSJQ4Uod5b4ZfYxY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q0Tk8FJlY3aXlAmtiS70EZ6IwtmjdlmkKqoOoiyGdap2W1xZfpJQuHecqbOiN29F1
+         pZVQYC5jQq2BWSzfUixnMoaq1IPNTt7/B6lWj/Em6ZrVufMRsSW21cJHKe0x5G/iJZ
+         6uAO/YDqnGJnyzHSAb/C17AeuHxYxkv8wqE0jPnA=
+Date:   Thu, 23 May 2019 08:58:56 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "ccaione@baylibre.com" <ccaione@baylibre.com>,
+        "angus@akkea.ca" <angus@akkea.ca>,
+        "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: imx8mq: Add SNVS clock
+Message-ID: <20190523005854.GB16359@dragon>
+References: <1557882259-3353-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1557882259-3353-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 22 May 2019 14:02:31 -0700
-Brendan Higgins <brendanhiggins@google.com> wrote:
-
-> Cool, so do we just want to go with that? Have a single slot for KUnit
-> and KTF combined?
+On Wed, May 15, 2019 at 01:09:24AM +0000, Anson Huang wrote:
+> Add macro for the SNVS clock of the i.MX8MQ.
 > 
-> We can each present our work up to this point; maybe offer some
-> background and rationale on why we made the decision we have and then we
-> can have some moderated discussion on, pros, cons, next steps, etc?
-> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-You have till the end of today to submit a Refereed talk if you want to
-present. Otherwise, Microconferences should only have 5 to 10 minutes
-to present what they want to discuss before a discussion should
-proceed. If you need more than 10 minutes to give your point, then you
-need to try to get a Refereed talk in, and that will give you a full 40
-minutes.
-
--- Steve
+Applied, thanks.
