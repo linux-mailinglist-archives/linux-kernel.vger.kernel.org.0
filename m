@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D2CF288B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 291882874A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391733AbfEWT2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:28:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40582 "EHLO mail.kernel.org"
+        id S2389468AbfEWTRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:17:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391212AbfEWT2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:28:06 -0400
+        id S2389460AbfEWTRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:17:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89DA621880;
-        Thu, 23 May 2019 19:28:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 306A02133D;
+        Thu, 23 May 2019 19:17:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639686;
-        bh=MW32hsEj+bBsxFl2lvUcnJoAOxMKjk7PbtOnPJNOI0M=;
+        s=default; t=1558639056;
+        bh=EjlE2ovGcgePIpb0P9J+WLinGF9krRSoTGEpCVh9Smc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VDfm542c1d31jJ6CVj8bEltPkHnS4l4977cW1uMVGUM2ixxdCNQMWQ1fUFYxKWMPf
-         w1GLMmGIvSW1vh0yF3jJ5hUpNryB+bhza/8+A6IE7yODxm3rJ2a1vFg8G5mqedDEFp
-         j6fB3AAvI4VxGx3j7+mDvOKpc7oZsX8afsjL8SNo=
+        b=Vzhu/n4wmViVeSKgzDVZG3lf/j/3AHvmWFX2jbhAlNlb9n/3NBo78DiRosAIGijja
+         nXJljYzTa6X+p46WZ7aNvj+tA3pUhZjobMxh3kUKKpUXBgkpREU+2oBV/DMREOaIsb
+         dSnVKI8WzkucWM9pqPyC6lpd5HfFivsxaNnleGbA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 5.1 057/122] NFS4: Fix v4.0 client state corruption when mount
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 080/114] dm integrity: correctly calculate the size of metadata area
 Date:   Thu, 23 May 2019 21:06:19 +0200
-Message-Id: <20190523181712.316173633@linuxfoundation.org>
+Message-Id: <20190523181738.973182902@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit f02f3755dbd14fb935d24b14650fff9ba92243b8 upstream.
+commit 30bba430ddf737978e40561198693ba91386dac1 upstream.
 
-stat command with soft mount never return after server is stopped.
+When we use separate devices for data and metadata, dm-integrity would
+incorrectly calculate the size of the metadata device as if it had
+512-byte block size - and it would refuse activation with larger block
+size and smaller metadata device.
 
-When alloc a new client, the state of the client will be set to
-NFS4CLNT_LEASE_EXPIRED.
+Fix this so that it takes actual block size into account, which fixes
+the following reported issue:
+https://gitlab.com/cryptsetup/cryptsetup/issues/450
 
-When the server is stopped, the state manager will work, and accord
-the state to recover. But the state is NFS4CLNT_LEASE_EXPIRED, it
-will drain the slot table and lead other task to wait queue, until
-the client recovered. Then the stat command is hung.
-
-When discover server trunking, the client will renew the lease,
-but check the client state, it lead the client state corruption.
-
-So, we need to call state manager to recover it when detect server
-ip trunking.
-
-Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Fixes: 356d9d52e122 ("dm integrity: allow separate metadata device")
+Cc: stable@vger.kernel.org # v4.19+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/nfs4state.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/md/dm-integrity.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -159,6 +159,10 @@ int nfs40_discover_server_trunking(struc
- 		/* Sustain the lease, even if it's empty.  If the clientid4
- 		 * goes stale it's of no use for trunking discovery. */
- 		nfs4_schedule_state_renewal(*result);
-+
-+		/* If the client state need to recover, do it. */
-+		if (clp->cl_state)
-+			nfs4_schedule_state_manager(clp);
- 	}
- out:
- 	return status;
+--- a/drivers/md/dm-integrity.c
++++ b/drivers/md/dm-integrity.c
+@@ -2557,7 +2557,7 @@ static int calculate_device_limits(struc
+ 		if (last_sector < ic->start || last_sector >= ic->meta_device_sectors)
+ 			return -EINVAL;
+ 	} else {
+-		__u64 meta_size = ic->provided_data_sectors * ic->tag_size;
++		__u64 meta_size = (ic->provided_data_sectors >> ic->sb->log2_sectors_per_block) * ic->tag_size;
+ 		meta_size = (meta_size + ((1U << (ic->log2_buffer_sectors + SECTOR_SHIFT)) - 1))
+ 				>> (ic->log2_buffer_sectors + SECTOR_SHIFT);
+ 		meta_size <<= ic->log2_buffer_sectors;
+@@ -3428,7 +3428,7 @@ try_smaller_buffer:
+ 	DEBUG_print("	journal_sections %u\n", (unsigned)le32_to_cpu(ic->sb->journal_sections));
+ 	DEBUG_print("	journal_entries %u\n", ic->journal_entries);
+ 	DEBUG_print("	log2_interleave_sectors %d\n", ic->sb->log2_interleave_sectors);
+-	DEBUG_print("	device_sectors 0x%llx\n", (unsigned long long)ic->device_sectors);
++	DEBUG_print("	data_device_sectors 0x%llx\n", (unsigned long long)ic->data_device_sectors);
+ 	DEBUG_print("	initial_sectors 0x%x\n", ic->initial_sectors);
+ 	DEBUG_print("	metadata_run 0x%x\n", ic->metadata_run);
+ 	DEBUG_print("	log2_metadata_run %d\n", ic->log2_metadata_run);
 
 
