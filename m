@@ -2,97 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C1CE28980
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB532898D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391381AbfEWTik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:38:40 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52901 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390653AbfEWTii (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:38:38 -0400
-Received: by mail-wm1-f67.google.com with SMTP id y3so7046269wmm.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=usHFsL/Ku0+Qt69lCmqe22nPRQ+KCZhK+aj6hDp84KA=;
-        b=dEsVb+717tCpXM8S8/JVSdaPBKgC83leuc1FOaorAZjd+ULMl6eVEbEy2UPyYsCWUS
-         mZh7R6nEIeJNMWh3SVxRpUQG4GqALYcrNmdzk5ytH9Li/qOOm8nlLHyKs+qYkU8r3392
-         ma2KBLIJutn+5Gmum7VdZSYnYE52esHH2dxBAJ6hW2VRC353R0zjMxfFV2327qj+KdU2
-         aPHX7J9eB+KtvkI8MM0Yt59wOkgZLOcMrbe/pc+3hbJG90+avzfCAoAGezfgnU4D95OC
-         +a8BEz2AA0Qyc5zDGQL/+pI/U3Zt2lgbkKZrEq7qNvP5Apux5z8CxI/YRrJgv6UnrheQ
-         +0ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=usHFsL/Ku0+Qt69lCmqe22nPRQ+KCZhK+aj6hDp84KA=;
-        b=OflHMISr5Y13ktDIFQ04MWuWky51GZcnnk7bWU2plAox7X0Xfvv4kxLAaXYTcAPyTv
-         djcvfztwfYOWyyqHP1qVOAqqS/hpo0zKPoNwp1tVb0zs3xW5c+8izO2XESr0cI6uzVPC
-         8/Z1pWn+M6gj1tTCyxpowtRnbbFFAkVmnVT/CZ7EXMY4bIt8HO0ZuU3HDRCAIHoDUK/9
-         w3PfEJThYIo1oVp+0Rc4qZKEvjdTqvKSSx5bFWQODFcm1ttJxq1qE42oa9gvGEr8J1ou
-         obLqknWGRfN/6WSJk5Tt2bAcj/8sHbuNaBCNimeANC4cRMWtRcrzXv/bPDP5Rcm25O5Y
-         mcFw==
-X-Gm-Message-State: APjAAAUYtGg5gq1JLfURQDMC+ZY6YT0TZi+3YoPOSLoYnzIAFWXDqYXP
-        1brio54Ekwu4QPoNZFtrEQj3Wg==
-X-Google-Smtp-Source: APXvYqw6ha7d5sNzeDFQr/ijdtNE/bEpoeVCKgQGVyf/DObuR09g3pB8MvOSpCNmuBgVeq+biOQ4CA==
-X-Received: by 2002:a1c:20d7:: with SMTP id g206mr12847712wmg.136.1558640315678;
-        Thu, 23 May 2019 12:38:35 -0700 (PDT)
-Received: from [192.168.43.165] ([37.170.182.188])
-        by smtp.googlemail.com with ESMTPSA id o6sm365890wrh.55.2019.05.23.12.38.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 12:38:35 -0700 (PDT)
-Subject: Re: [PATCH] clocksource/drivers/ixp4xx: Implement delay timer
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20190523181602.3284-1-linus.walleij@linaro.org>
- <3496e81f-ea63-794d-0d8a-8eba9f2f6853@linaro.org>
- <CACRpkdZ5LCeqkvJrN-TAcSy7knNOQhGV7M_wfZZ4Rz5ah87KnA@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <08ab3a6e-5167-02e8-9d46-0186b92c8a71@linaro.org>
-Date:   Thu, 23 May 2019 21:38:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2390963AbfEWTkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:40:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53712 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390281AbfEWTkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:40:03 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 356F988E63;
+        Thu, 23 May 2019 19:40:02 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4820A60BF3;
+        Thu, 23 May 2019 19:40:01 +0000 (UTC)
+Date:   Thu, 23 May 2019 15:39:59 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Artemy Kovalyov <artemyko@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>
+Subject: Re: [PATCH v4 0/1] Use HMM for ODP v4
+Message-ID: <20190523193959.GA5658@redhat.com>
+References: <20190522174852.GA23038@redhat.com>
+ <20190522235737.GD15389@ziepe.ca>
+ <20190523150432.GA5104@redhat.com>
+ <20190523154149.GB12159@ziepe.ca>
+ <20190523155207.GC5104@redhat.com>
+ <20190523163429.GC12159@ziepe.ca>
+ <20190523173302.GD5104@redhat.com>
+ <20190523175546.GE12159@ziepe.ca>
+ <20190523182458.GA3571@redhat.com>
+ <20190523191038.GG12159@ziepe.ca>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdZ5LCeqkvJrN-TAcSy7knNOQhGV7M_wfZZ4Rz5ah87KnA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190523191038.GG12159@ziepe.ca>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 23 May 2019 19:40:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/05/2019 21:34, Linus Walleij wrote:
-> On Thu, May 23, 2019 at 9:21 PM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->> On 23/05/2019 20:16, Linus Walleij wrote:
+On Thu, May 23, 2019 at 04:10:38PM -0300, Jason Gunthorpe wrote:
 > 
->>> This adds delay timer functionality to the IXP4xx
->>> timer driver.
->>>
->>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
->>
->> The patch does not apply on tip/timers/core
+> On Thu, May 23, 2019 at 02:24:58PM -0400, Jerome Glisse wrote:
+> > I can not take mmap_sem in range_register, the READ_ONCE is fine and
+> > they are no race as we do take a reference on the hmm struct thus
 > 
-> This seems to be because tip/timers/core is not yet containing
-> the commits from v5.2-rc1.
-> 
-> Maybe I just send my patches too early after the merge window :)
+> Of course there are use after free races with a READ_ONCE scheme, I
+> shouldn't have to explain this.
 
-Ok, I see thanks!
+Well i can not think of anything again here the mm->hmm can not
+change while driver is calling hmm_range_register() so if you
+want i can remove the READ_ONCE() this does not change anything.
 
 
--- 
- <http://www.linaro.org/> Linaro.org â”‚ Open source software for ARM SoCs
+> If you cannot take the read mmap sem (why not?), then please use my
+> version and push the update to the driver through -mm..
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Please see previous threads on why it was a failure.
 
+Cheers,
+Jérôme
