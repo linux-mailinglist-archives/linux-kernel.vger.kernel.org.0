@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18AE2286B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 421A9287A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388304AbfEWTLx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:11:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45352 "EHLO mail.kernel.org"
+        id S2390283AbfEWTVb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:21:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388268AbfEWTLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:11:50 -0400
+        id S2389460AbfEWTV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:21:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA4622133D;
-        Thu, 23 May 2019 19:11:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C40820863;
+        Thu, 23 May 2019 19:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638710;
-        bh=msRxoN6CqdadNIZaUmmQ0x8HaJiap/CRJsG94dvaHKA=;
+        s=default; t=1558639287;
+        bh=MW32hsEj+bBsxFl2lvUcnJoAOxMKjk7PbtOnPJNOI0M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XMsywfiPAcZOrBTsuIK06PvwCpqswhwHwEPyotU/LCrlJcSsIvm1HZ6yM6aKOHR7v
-         rNRb4AsKnU9M5QkDcHJ6y31f7dMsvjsxi2O5Uilx83z1Lv2nFlhU7BTTnPkz1ag5wc
-         FCBGPW3nmGj1qCh6zE1NCRGg/53YOPMJN4quQQq0=
+        b=BBFmiYP0VfjFgQJwFKBZkpDwqvCTHB6ihvUN0np1aFh/KrxdMf0BTMpXL5z5Tl5wR
+         bdhS0Zf36zVnVjTxeWuCBWhkm5zt3AlsI42r2sz17n8a8HM2Qi+lhTAvePBK5CL+PR
+         noLVp5fdDDIbP/i1R/BIOGpEmfYkYTggILJ/TqCE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phong Tran <tranmanphong@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.14 19/77] of: fix clang -Wunsequenced for be32_to_cpu()
+        stable@vger.kernel.org, ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 5.0 049/139] NFS4: Fix v4.0 client state corruption when mount
 Date:   Thu, 23 May 2019 21:05:37 +0200
-Message-Id: <20190523181722.930751648@linuxfoundation.org>
+Message-Id: <20190523181727.061426173@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phong Tran <tranmanphong@gmail.com>
+From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
 
-commit 440868661f36071886ed360d91de83bd67c73b4f upstream.
+commit f02f3755dbd14fb935d24b14650fff9ba92243b8 upstream.
 
-Now, make the loop explicit to avoid clang warning.
+stat command with soft mount never return after server is stopped.
 
-./include/linux/of.h:238:37: warning: multiple unsequenced modifications
-to 'cell' [-Wunsequenced]
-                r = (r << 32) | be32_to_cpu(*(cell++));
-                                                  ^~
-./include/linux/byteorder/generic.h:95:21: note: expanded from macro
-'be32_to_cpu'
-                    ^
-./include/uapi/linux/byteorder/little_endian.h:40:59: note: expanded
-from macro '__be32_to_cpu'
-                                                          ^
-./include/uapi/linux/swab.h:118:21: note: expanded from macro '__swab32'
-        ___constant_swab32(x) :                 \
-                           ^
-./include/uapi/linux/swab.h:18:12: note: expanded from macro
-'___constant_swab32'
-        (((__u32)(x) & (__u32)0x000000ffUL) << 24) |            \
-                  ^
+When alloc a new client, the state of the client will be set to
+NFS4CLNT_LEASE_EXPIRED.
 
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Link: https://github.com/ClangBuiltLinux/linux/issues/460
-Suggested-by: David Laight <David.Laight@ACULAB.COM>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+When the server is stopped, the state manager will work, and accord
+the state to recover. But the state is NFS4CLNT_LEASE_EXPIRED, it
+will drain the slot table and lead other task to wait queue, until
+the client recovered. Then the stat command is hung.
+
+When discover server trunking, the client will renew the lease,
+but check the client state, it lead the client state corruption.
+
+So, we need to call state manager to recover it when detect server
+ip trunking.
+
+Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
 Cc: stable@vger.kernel.org
-[robh: fix up whitespace]
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/of.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/nfs/nfs4state.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -229,8 +229,8 @@ extern struct device_node *of_find_all_n
- static inline u64 of_read_number(const __be32 *cell, int size)
- {
- 	u64 r = 0;
--	while (size--)
--		r = (r << 32) | be32_to_cpu(*(cell++));
-+	for (; size--; cell++)
-+		r = (r << 32) | be32_to_cpu(*cell);
- 	return r;
- }
- 
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -159,6 +159,10 @@ int nfs40_discover_server_trunking(struc
+ 		/* Sustain the lease, even if it's empty.  If the clientid4
+ 		 * goes stale it's of no use for trunking discovery. */
+ 		nfs4_schedule_state_renewal(*result);
++
++		/* If the client state need to recover, do it. */
++		if (clp->cl_state)
++			nfs4_schedule_state_manager(clp);
+ 	}
+ out:
+ 	return status;
 
 
