@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D4DB286CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14650287C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388498AbfEWTNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:13:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46912 "EHLO mail.kernel.org"
+        id S2390683AbfEWTXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:23:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387921AbfEWTND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:13:03 -0400
+        id S2390633AbfEWTXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:23:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78F6B2133D;
-        Thu, 23 May 2019 19:13:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B1B82054F;
+        Thu, 23 May 2019 19:23:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638783;
-        bh=I6u1nRkixkWgd4+KBmT8cNxNPupYXx8ksFuELRXsnq4=;
+        s=default; t=1558639387;
+        bh=KYikK1JLLVyzvW7pXda+GM9WVHPirwtjFfbWEW8PFiQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1i5FjDXtv/EzKgDD7H+mss6epe0SW2i+JxEFOlD1wglXi8Zly2u5UqF0iRWHJcGbV
-         unNv6wPmOUbOMCOI/yzmKOc9VExJR8BQnE7ztVk6yXlk7zHSO8NdMNu0nPe2yytZ+3
-         TeJy8twIHWvCiuqe0GiCz0OhHghvO1Mj4QOjWO4c=
+        b=pin7bLv9LB1msOpVB3z4m3hSrkHfH/072XeJofxWz7tH/p0PM3fmywZyGtS5jrvsK
+         wnLiMz3ctihlHHu4kvuJIV4mAaiXrMPe4jjo5i5WQ1HlnT8OvVIKK1FXdepVcARNJg
+         Uu25C2K6zOMPr1rswPRloy4Sn1yXhE10Z6MEqfYQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.14 55/77] dm delay: fix a crash when invalid device is specified
-Date:   Thu, 23 May 2019 21:06:13 +0200
-Message-Id: <20190523181727.590080797@linuxfoundation.org>
+        stable@vger.kernel.org,
+        James Prestwood <james.prestwood@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 5.0 086/139] PCI: Mark Atheros AR9462 to avoid bus reset
+Date:   Thu, 23 May 2019 21:06:14 +0200
+Message-Id: <20190523181731.943827021@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: James Prestwood <james.prestwood@linux.intel.com>
 
-commit 81bc6d150ace6250503b825d9d0c10f7bbd24095 upstream.
+commit 6afb7e26978da5e86e57e540fdce65c8b04f398a upstream.
 
-When the target line contains an invalid device, delay_ctr() will call
-delay_dtr() with NULL workqueue.  Attempting to destroy the NULL
-workqueue causes a crash.
+When using PCI passthrough with this device, the host machine locks up
+completely when starting the VM, requiring a hard reboot.  Add a quirk to
+avoid bus resets on this device.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: c3e59ee4e766 ("PCI: Mark Atheros AR93xx to avoid bus reset")
+Link: https://lore.kernel.org/linux-pci/20190107213248.3034-1-james.prestwood@linux.intel.com
+Signed-off-by: James Prestwood <james.prestwood@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+CC: stable@vger.kernel.org	# v3.14+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-delay.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pci/quirks.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/md/dm-delay.c
-+++ b/drivers/md/dm-delay.c
-@@ -222,7 +222,8 @@ static void delay_dtr(struct dm_target *
- {
- 	struct delay_c *dc = ti->private;
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3408,6 +3408,7 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_A
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0032, quirk_no_bus_reset);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x003c, quirk_no_bus_reset);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0033, quirk_no_bus_reset);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0034, quirk_no_bus_reset);
  
--	destroy_workqueue(dc->kdelayd_wq);
-+	if (dc->kdelayd_wq)
-+		destroy_workqueue(dc->kdelayd_wq);
- 
- 	dm_put_device(ti, dc->dev_read);
- 
+ /*
+  * Root port on some Cavium CN8xxx chips do not successfully complete a bus
 
 
