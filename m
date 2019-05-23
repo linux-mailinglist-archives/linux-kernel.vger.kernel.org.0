@@ -2,95 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77D2A2749B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 04:52:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74DB3274A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 04:58:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730025AbfEWCvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 22:51:33 -0400
-Received: from mail-pg1-f175.google.com ([209.85.215.175]:42580 "EHLO
-        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729976AbfEWCvc (ORCPT
+        id S1729724AbfEWC6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 22:58:20 -0400
+Received: from smtprelay0248.hostedemail.com ([216.40.44.248]:49209 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727305AbfEWC6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 22:51:32 -0400
-Received: by mail-pg1-f175.google.com with SMTP id e17so2156794pgo.9
-        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 19:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Fg/iHmx0B1Mv4Llb80mXau43v90pWA5HUyUPc2gShgg=;
-        b=N7gavrhWEUw0x/OIpr76d/A/QEMOAExQ8CGX8SNEHzd2JYpT3BBsEN530r3g2yElpk
-         wugcmhEbfKVTlhkWKEjCBVr3lU+rUfVMzJZSFvlX2W+k+T70pFHPUHfiK9lhtq5qYdh6
-         SvnzqrkmEVoHcpfXIlsCgqzZds2/iFokvqmN8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Fg/iHmx0B1Mv4Llb80mXau43v90pWA5HUyUPc2gShgg=;
-        b=SwZJpGv0YJeY4bQMJwXvwTwudyna/q0Mw+0eO5yXoSPci3bEzx0uxpoBW+fhE6+rVG
-         SjQGIN4NeyFc2VrIghVxXIXkfZC4Zwns55g8xvjKfKTAFT8xe+jij9ZUXLwwzufrgX9L
-         yIrGBAEDlfaCHBOz3MDFXGZTHNTy0x7v60lzo7DT77EWaL2BtpWdZYEzesNAMgsZqsHa
-         V3TpBBbzdWFyrCe+oae5YxK6TZPuKQ+Cyhe8TI4Wuzl0vzLSYYfWFBBCI7aeUJV4ZS1C
-         bhUCD4039OrhqydBeIdNyF3bYfg8TjgdeIl2mqhOPfGxnHvT0/LhzBKiE1WbUskcYHL0
-         SvIg==
-X-Gm-Message-State: APjAAAXKtpK7MdQ3O9xI9ky/iwuXGdOop2ZFiMkh6mFpcRZ4Q37scYrG
-        GxwI9V3qlEmrnNZrwvwNc5CITQ==
-X-Google-Smtp-Source: APXvYqyXG074m3md96HTSMqZH6wIifHHqDJmGnwXeGgSJ4ZhoMxIhAnPrKUyQBs+M9DIGdtK5+64qQ==
-X-Received: by 2002:a62:14d6:: with SMTP id 205mr100298494pfu.4.1558579891739;
-        Wed, 22 May 2019 19:51:31 -0700 (PDT)
-Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id q19sm42812174pff.96.2019.05.22.19.51.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 22 May 2019 19:51:31 -0700 (PDT)
-From:   Scott Branden <scott.branden@broadcom.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH 3/3] soc: qcom: mdt_loader: add offset to request_firmware_into_buf
-Date:   Wed, 22 May 2019 19:51:13 -0700
-Message-Id: <20190523025113.4605-4-scott.branden@broadcom.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190523025113.4605-1-scott.branden@broadcom.com>
-References: <20190523025113.4605-1-scott.branden@broadcom.com>
+        Wed, 22 May 2019 22:58:19 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 04C33100E86C0;
+        Thu, 23 May 2019 02:58:18 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:1981:2194:2199:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3870:3871:4250:4321:5007:7901:10004:10400:10848:11232:11658:11914:12663:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21627:21795:30054:30060:30070:30090:30091,0,RBL:172.56.44.57:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:38,LUA_SUMMARY:none
+X-HE-Tag: care15_2aae51fa10659
+X-Filterd-Recvd-Size: 1955
+Received: from XPS-9350 (unknown [172.56.44.57])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 23 May 2019 02:58:12 +0000 (UTC)
+Message-ID: <4857dce766f161a643eb3340dfee6a2dec7eb2e5.camel@perches.com>
+Subject: Re: [GIT PULL] SPDX update for 5.2-rc1 - round 1
+From:   Joe Perches <joe@perches.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spdx@vger.kernel.org
+Date:   Wed, 22 May 2019 19:57:41 -0700
+In-Reply-To: <CAK7LNAQ=M0ejV3C8bgjuMxdRR9v=2-GRdXeUjFR6URrrtYPCnA@mail.gmail.com>
+References: <20190521133257.GA21471@kroah.com>
+         <CAK7LNASZWLwYC2E3vBkXhp7wt9zBWkFrR+NTnxTyLn1zO66a0w@mail.gmail.com>
+         <eae2d0e80824cc84965c571a0ea097e14d3f498c.camel@perches.com>
+         <CAK7LNAQ=M0ejV3C8bgjuMxdRR9v=2-GRdXeUjFR6URrrtYPCnA@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adjust request_firmware_into_buf API to allow for portions
-of firmware file to be read into a buffer.  mdt_loader still
-retricts request fo whole file read into buffer.
+On Thu, 2019-05-23 at 11:49 +0900, Masahiro Yamada wrote:
+> On Wed, May 22, 2019 at 3:37 PM Joe Perches <joe@perches.com> wrote:
+[]
+> > I could also wire up a patch to checkpatch and docs to
+> > remove the /* */ requirement for .h files and prefer
+> > the generic // form for both .c and .h files as the
+> > current minimum tooling versions now all allow //
+> > comments
+> > .
+> 
+> We have control for minimal tool versions for building the kernel,
+> so I think // will be OK for in-kernel headers.
+> 
+> 
+> On the other hand, I am not quite sure about UAPI headers.
+> We cannot define minimum tool versions
+> for building user-space.
+> Perhaps, using // in UAPI headers causes a problem
+> if an ancient compiler is used?
 
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
----
- drivers/soc/qcom/mdt_loader.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Good point. Thanks.
 
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index 1c488024c698..ad20d159699c 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -172,8 +172,11 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 
- 		if (phdr->p_filesz) {
- 			sprintf(fw_name + fw_name_len - 3, "b%02d", i);
--			ret = request_firmware_into_buf(&seg_fw, fw_name, dev,
--							ptr, phdr->p_filesz);
-+			ret = request_firmware_into_buf
-+						(&seg_fw, fw_name, dev,
-+						 ptr, phdr->p_filesz,
-+						 0,
-+						 KERNEL_PREAD_FLAG_WHOLE);
- 			if (ret) {
- 				dev_err(dev, "failed to load %s\n", fw_name);
- 				break;
--- 
-2.17.1
 
