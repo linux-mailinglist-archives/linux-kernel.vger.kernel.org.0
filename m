@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B702E2876A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 266BC286D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389767AbfEWTTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:19:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55024 "EHLO mail.kernel.org"
+        id S2388554AbfEWTNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:13:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389753AbfEWTTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:19:12 -0400
+        id S2388535AbfEWTNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:13:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CDB22133D;
-        Thu, 23 May 2019 19:19:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26AEF2133D;
+        Thu, 23 May 2019 19:13:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639150;
-        bh=HNGLaFlvxUey+wgNM8bSXPpa0u4wbFLvqAw5Xwmpc7w=;
+        s=default; t=1558638793;
+        bh=f9nW3eW/JZUhDP1mC9CGGowAK0xI9bgaliSg1tvtH0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EyPNH0+JMEDAE6BMmw76nmg9meqJYxYIl8uq1WxwRS71RnOzcpsQmgsXZODRUCfZx
-         Xt80vi2VToSo1SLdWxjOzztfN9wI/kE97Tr/N9Uge/5A9Gzwx1Lj/Z7RF/gPmAcHDA
-         KxPG3ATOaw5O29odX+Nnf3EmydA9gN/yyDH5eVPc=
+        b=DCt9xHLSJ0drjz9h+mY4bY88whBoEvLSi6ZaeL8VKuOqxl/Hj3lJIuQ+qaaTyNzhW
+         pIs2n6HPR+AwH0nZ/HbqFgeMyUiyaRscyQX2VOZRqU95MCz8tviJU4zdI5oYZJjjuL
+         SviLVU7IyfLVFgvHpBMFDoZA8IJk9AXTZrmi2LHE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+0bf0519d6e0de15914fe@syzkaller.appspotmail.com,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 086/114] xfrm: clean up xfrm protocol checks
+Subject: [PATCH 4.14 67/77] iwlwifi: mvm: check for length correctness in iwl_mvm_create_skb()
 Date:   Thu, 23 May 2019 21:06:25 +0200
-Message-Id: <20190523181739.411590584@linuxfoundation.org>
+Message-Id: <20190523181729.245577514@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,135 +43,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit dbb2483b2a46fbaf833cfb5deb5ed9cace9c7399 ]
+[ Upstream commit de1887c064b9996ac03120d90d0a909a3f678f98 ]
 
-In commit 6a53b7593233 ("xfrm: check id proto in validate_tmpl()")
-I introduced a check for xfrm protocol, but according to Herbert
-IPSEC_PROTO_ANY should only be used as a wildcard for lookup, so
-it should be removed from validate_tmpl().
+We don't check for the validity of the lengths in the packet received
+from the firmware.  If the MPDU length received in the rx descriptor
+is too short to contain the header length and the crypt length
+together, we may end up trying to copy a negative number of bytes
+(headlen - hdrlen < 0) which will underflow and cause us to try to
+copy a huge amount of data.  This causes oopses such as this one:
 
-And, IPSEC_PROTO_ANY is expected to only match 3 IPSec-specific
-protocols, this is why xfrm_state_flush() could still miss
-IPPROTO_ROUTING, which leads that those entries are left in
-net->xfrm.state_all before exit net. Fix this by replacing
-IPSEC_PROTO_ANY with zero.
+BUG: unable to handle kernel paging request at ffff896be2970000
+PGD 5e201067 P4D 5e201067 PUD 5e205067 PMD 16110d063 PTE 8000000162970161
+Oops: 0003 [#1] PREEMPT SMP NOPTI
+CPU: 2 PID: 1824 Comm: irq/134-iwlwifi Not tainted 4.19.33-04308-geea41cf4930f #1
+Hardware name: [...]
+RIP: 0010:memcpy_erms+0x6/0x10
+Code: 90 90 90 90 eb 1e 0f 1f 00 48 89 f8 48 89 d1 48 c1 e9 03 83 e2 07 f3 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1 <f3> a4 c3
+ 0f 1f 80 00 00 00 00 48 89 f8 48 83 fa 20 72 7e 40 38 fe
+RSP: 0018:ffffa4630196fc60 EFLAGS: 00010287
+RAX: ffff896be2924618 RBX: ffff896bc8ecc600 RCX: 00000000fffb4610
+RDX: 00000000fffffff8 RSI: ffff896a835e2a38 RDI: ffff896be2970000
+RBP: ffffa4630196fd30 R08: ffff896bc8ecc600 R09: ffff896a83597000
+R10: ffff896bd6998400 R11: 000000000200407f R12: ffff896a83597050
+R13: 00000000fffffff8 R14: 0000000000000010 R15: ffff896a83597038
+FS:  0000000000000000(0000) GS:ffff896be8280000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff896be2970000 CR3: 000000005dc12002 CR4: 00000000003606e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ iwl_mvm_rx_mpdu_mq+0xb51/0x121b [iwlmvm]
+ iwl_pcie_rx_handle+0x58c/0xa89 [iwlwifi]
+ iwl_pcie_irq_rx_msix_handler+0xd9/0x12a [iwlwifi]
+ irq_thread_fn+0x24/0x49
+ irq_thread+0xb0/0x122
+ kthread+0x138/0x140
+ ret_from_fork+0x1f/0x40
 
-This patch also extracts the check from validate_tmpl() to
-xfrm_id_proto_valid() and uses it in parse_ipsecrequest().
-With this, no other protocols should be added into xfrm.
+Fix that by checking the lengths for correctness and trigger a warning
+to show that we have received wrong data.
 
-Fixes: 6a53b7593233 ("xfrm: check id proto in validate_tmpl()")
-Reported-by: syzbot+0bf0519d6e0de15914fe@syzkaller.appspotmail.com
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/xfrm.h      | 17 +++++++++++++++++
- net/ipv6/xfrm6_tunnel.c |  2 +-
- net/key/af_key.c        |  4 +++-
- net/xfrm/xfrm_state.c   |  2 +-
- net/xfrm/xfrm_user.c    | 14 +-------------
- 5 files changed, 23 insertions(+), 16 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c | 28 ++++++++++++++++---
+ 1 file changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-index 5e3daf53b3d1e..3e966c632f3b2 100644
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@ -1430,6 +1430,23 @@ static inline int xfrm_state_kern(const struct xfrm_state *x)
- 	return atomic_read(&x->tunnel_users);
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c b/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
+index 8ba8c70571fb7..7fb8bbaf21420 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
+@@ -141,9 +141,9 @@ static inline int iwl_mvm_check_pn(struct iwl_mvm *mvm, struct sk_buff *skb,
  }
  
-+static inline bool xfrm_id_proto_valid(u8 proto)
-+{
-+	switch (proto) {
-+	case IPPROTO_AH:
-+	case IPPROTO_ESP:
-+	case IPPROTO_COMP:
-+#if IS_ENABLED(CONFIG_IPV6)
-+	case IPPROTO_ROUTING:
-+	case IPPROTO_DSTOPTS:
-+#endif
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+/* IPSEC_PROTO_ANY only matches 3 IPsec protocols, 0 could match all. */
- static inline int xfrm_id_proto_match(u8 proto, u8 userproto)
+ /* iwl_mvm_create_skb Adds the rxb to a new skb */
+-static void iwl_mvm_create_skb(struct sk_buff *skb, struct ieee80211_hdr *hdr,
+-			       u16 len, u8 crypt_len,
+-			       struct iwl_rx_cmd_buffer *rxb)
++static int iwl_mvm_create_skb(struct iwl_mvm *mvm, struct sk_buff *skb,
++			      struct ieee80211_hdr *hdr, u16 len, u8 crypt_len,
++			      struct iwl_rx_cmd_buffer *rxb)
  {
- 	return (!userproto || proto == userproto ||
-diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
-index 12cb3aa990af4..d9e5f6808811a 100644
---- a/net/ipv6/xfrm6_tunnel.c
-+++ b/net/ipv6/xfrm6_tunnel.c
-@@ -345,7 +345,7 @@ static void __net_exit xfrm6_tunnel_net_exit(struct net *net)
- 	unsigned int i;
- 
- 	xfrm_flush_gc();
--	xfrm_state_flush(net, IPSEC_PROTO_ANY, false, true);
-+	xfrm_state_flush(net, 0, false, true);
- 
- 	for (i = 0; i < XFRM6_TUNNEL_SPI_BYADDR_HSIZE; i++)
- 		WARN_ON_ONCE(!hlist_empty(&xfrm6_tn->spi_byaddr[i]));
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index 7d4bed9550605..0b79c9aa8eb1f 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -1951,8 +1951,10 @@ parse_ipsecrequest(struct xfrm_policy *xp, struct sadb_x_ipsecrequest *rq)
- 
- 	if (rq->sadb_x_ipsecrequest_mode == 0)
- 		return -EINVAL;
-+	if (!xfrm_id_proto_valid(rq->sadb_x_ipsecrequest_proto))
+ 	struct iwl_rx_packet *pkt = rxb_addr(rxb);
+ 	struct iwl_rx_mpdu_desc *desc = (void *)pkt->data;
+@@ -184,6 +184,20 @@ static void iwl_mvm_create_skb(struct sk_buff *skb, struct ieee80211_hdr *hdr,
+ 	 * present before copying packet data.
+ 	 */
+ 	hdrlen += crypt_len;
++
++	if (WARN_ONCE(headlen < hdrlen,
++		      "invalid packet lengths (hdrlen=%d, len=%d, crypt_len=%d)\n",
++		      hdrlen, len, crypt_len)) {
++		/*
++		 * We warn and trace because we want to be able to see
++		 * it in trace-cmd as well.
++		 */
++		IWL_DEBUG_RX(mvm,
++			     "invalid packet lengths (hdrlen=%d, len=%d, crypt_len=%d)\n",
++			     hdrlen, len, crypt_len);
 +		return -EINVAL;
++	}
++
+ 	skb_put_data(skb, hdr, hdrlen);
+ 	skb_put_data(skb, (u8 *)hdr + hdrlen + pad_len, headlen - hdrlen);
  
--	t->id.proto = rq->sadb_x_ipsecrequest_proto; /* XXX check proto */
-+	t->id.proto = rq->sadb_x_ipsecrequest_proto;
- 	if ((mode = pfkey_mode_to_xfrm(rq->sadb_x_ipsecrequest_mode)) < 0)
- 		return -EINVAL;
- 	t->mode = mode;
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 3f729cd512aff..11e09eb138d60 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -2386,7 +2386,7 @@ void xfrm_state_fini(struct net *net)
+@@ -196,6 +210,8 @@ static void iwl_mvm_create_skb(struct sk_buff *skb, struct ieee80211_hdr *hdr,
+ 		skb_add_rx_frag(skb, 0, rxb_steal_page(rxb), offset,
+ 				fraglen, rxb->truesize);
+ 	}
++
++	return 0;
+ }
  
- 	flush_work(&net->xfrm.state_hash_work);
- 	flush_work(&xfrm_state_gc_work);
--	xfrm_state_flush(net, IPSEC_PROTO_ANY, false, true);
-+	xfrm_state_flush(net, 0, false, true);
- 
- 	WARN_ON(!list_empty(&net->xfrm.state_all));
- 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 060afc4ffd958..2122f89f61555 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1513,20 +1513,8 @@ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
- 			return -EINVAL;
- 		}
- 
--		switch (ut[i].id.proto) {
--		case IPPROTO_AH:
--		case IPPROTO_ESP:
--		case IPPROTO_COMP:
--#if IS_ENABLED(CONFIG_IPV6)
--		case IPPROTO_ROUTING:
--		case IPPROTO_DSTOPTS:
--#endif
--		case IPSEC_PROTO_ANY:
--			break;
--		default:
-+		if (!xfrm_id_proto_valid(ut[i].id.proto))
- 			return -EINVAL;
--		}
--
+ /* iwl_mvm_pass_packet_to_mac80211 - passes the packet for mac80211 */
+@@ -1033,7 +1049,11 @@ void iwl_mvm_rx_mpdu_mq(struct iwl_mvm *mvm, struct napi_struct *napi,
+ 			rx_status->boottime_ns = ktime_get_boot_ns();
  	}
  
- 	return 0;
+-	iwl_mvm_create_skb(skb, hdr, len, crypt_len, rxb);
++	if (iwl_mvm_create_skb(mvm, skb, hdr, len, crypt_len, rxb)) {
++		kfree_skb(skb);
++		goto out;
++	}
++
+ 	if (!iwl_mvm_reorder(mvm, napi, queue, sta, skb, desc))
+ 		iwl_mvm_pass_packet_to_mac80211(mvm, napi, skb, queue, sta);
+ out:
 -- 
 2.20.1
 
