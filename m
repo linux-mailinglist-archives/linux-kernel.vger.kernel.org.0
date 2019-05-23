@@ -2,77 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BB532898D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42D1E289BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:43:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390963AbfEWTkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:40:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53712 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390281AbfEWTkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:40:03 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 356F988E63;
-        Thu, 23 May 2019 19:40:02 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4820A60BF3;
-        Thu, 23 May 2019 19:40:01 +0000 (UTC)
-Date:   Thu, 23 May 2019 15:39:59 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>,
-        Moni Shoua <monis@mellanox.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Kaike Wan <kaike.wan@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>
-Subject: Re: [PATCH v4 0/1] Use HMM for ODP v4
-Message-ID: <20190523193959.GA5658@redhat.com>
-References: <20190522174852.GA23038@redhat.com>
- <20190522235737.GD15389@ziepe.ca>
- <20190523150432.GA5104@redhat.com>
- <20190523154149.GB12159@ziepe.ca>
- <20190523155207.GC5104@redhat.com>
- <20190523163429.GC12159@ziepe.ca>
- <20190523173302.GD5104@redhat.com>
- <20190523175546.GE12159@ziepe.ca>
- <20190523182458.GA3571@redhat.com>
- <20190523191038.GG12159@ziepe.ca>
+        id S2390532AbfEWTlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:41:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47918 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389233AbfEWTlf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:41:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Y4CF8VQ482x9+gF5CsOg/mXlQPERa3qs/eCs0oVRAJ8=; b=FtnxFgFCfEdc3mEAZAw8IsXF4
+        jQpoZBQ3b80gdnApy4UED7IQOONKMYS3liEa9vqS1CyVy5xj44NkYARQJZJzFhXCmbAN9cLJAJ608
+        4GU5MnZJHC16lhg91q/FopB9whBsFo1JoMQ5lrKNF57bReSLM1haCrprcPTP9OeZtlZ37LsiQNprS
+        bwFpdZ2W/fn+2lbz0zu+AO4SigjcCkqknzEFb0W/ZgQhQLl05fTV6EKHV4e154+YQOMRD5Cq56KQj
+        Yj4UsROp60Rm9vYLIgIjw6l/ItZUFWDZyYwz4+ryzdVyOrM1ewvkWJoDv7Aiqlj+C4h5XpDfleN1E
+        JsFu9hqfA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hTtak-000431-T7; Thu, 23 May 2019 19:41:30 +0000
+Date:   Thu, 23 May 2019 12:41:30 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Shakeel Butt <shakeelb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>
+Subject: Re: xarray breaks thrashing detection and cgroup isolation
+Message-ID: <20190523194130.GA4598@bombadil.infradead.org>
+References: <20190523174349.GA10939@cmpxchg.org>
+ <20190523183713.GA14517@bombadil.infradead.org>
+ <CALvZod4o0sA8CM961ZCCp-Vv+i6awFY0U07oJfXFDiVfFiaZfg@mail.gmail.com>
+ <20190523190032.GA7873@bombadil.infradead.org>
+ <20190523192117.GA5723@cmpxchg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190523191038.GG12159@ziepe.ca>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 23 May 2019 19:40:02 +0000 (UTC)
+In-Reply-To: <20190523192117.GA5723@cmpxchg.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 04:10:38PM -0300, Jason Gunthorpe wrote:
+On Thu, May 23, 2019 at 03:21:17PM -0400, Johannes Weiner wrote:
+> On Thu, May 23, 2019 at 12:00:32PM -0700, Matthew Wilcox wrote:
+> > On Thu, May 23, 2019 at 11:49:41AM -0700, Shakeel Butt wrote:
+> > > On Thu, May 23, 2019 at 11:37 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > > > On Thu, May 23, 2019 at 01:43:49PM -0400, Johannes Weiner wrote:
+> > > > > I noticed that recent upstream kernels don't account the xarray nodes
+> > > > > of the page cache to the allocating cgroup, like we used to do for the
+> > > > > radix tree nodes.
+> > > > >
+> > > > > This results in broken isolation for cgrouped apps, allowing them to
+> > > > > escape their containment and harm other cgroups and the system with an
+> > > > > excessive build-up of nonresident information.
+> > > > >
+> > > > > It also breaks thrashing/refault detection because the page cache
+> > > > > lives in a different domain than the xarray nodes, and so the shadow
+> > > > > shrinker can reclaim nonresident information way too early when there
+> > > > > isn't much cache in the root cgroup.
+> > > > >
+> > > > > I'm not quite sure how to fix this, since the xarray code doesn't seem
+> > > > > to have per-tree gfp flags anymore like the radix tree did. We cannot
+> > > > > add SLAB_ACCOUNT to the radix_tree_node_cachep slab cache. And the
+> > > > > xarray api doesn't seem to really support gfp flags, either (xas_nomem
+> > > > > does, but the optimistic internal allocations have fixed gfp flags).
+> > > >
+> > > > Would it be a problem to always add __GFP_ACCOUNT to the fixed flags?
+> > > > I don't really understand cgroups.
+> > 
+> > > Also some users of xarray may not want __GFP_ACCOUNT. That's the
+> > > reason we had __GFP_ACCOUNT for page cache instead of hard coding it
+> > > in radix tree.
+> > 
+> > This is what I don't understand -- why would someone not want
+> > __GFP_ACCOUNT?  For a shared resource?  But the page cache is a shared
+> > resource.  So what is a good example of a time when an allocation should
+> > _not_ be accounted to the cgroup?
 > 
-> On Thu, May 23, 2019 at 02:24:58PM -0400, Jerome Glisse wrote:
-> > I can not take mmap_sem in range_register, the READ_ONCE is fine and
-> > they are no race as we do take a reference on the hmm struct thus
+> We used to cgroup-account every slab charge to cgroups per default,
+> until we changed it to a whitelist behavior:
 > 
-> Of course there are use after free races with a READ_ONCE scheme, I
-> shouldn't have to explain this.
+> commit b2a209ffa605994cbe3c259c8584ba1576d3310c
+> Author: Vladimir Davydov <vdavydov@virtuozzo.com>
+> Date:   Thu Jan 14 15:18:05 2016 -0800
+> 
+>     Revert "kernfs: do not account ino_ida allocations to memcg"
+>     
+>     Currently, all kmem allocations (namely every kmem_cache_alloc, kmalloc,
+>     alloc_kmem_pages call) are accounted to memory cgroup automatically.
+>     Callers have to explicitly opt out if they don't want/need accounting
+>     for some reason.  Such a design decision leads to several problems:
+>     
+>      - kmalloc users are highly sensitive to failures, many of them
+>        implicitly rely on the fact that kmalloc never fails, while memcg
+>        makes failures quite plausible.
 
-Well i can not think of anything again here the mm->hmm can not
-change while driver is calling hmm_range_register() so if you
-want i can remove the READ_ONCE() this does not change anything.
+Doesn't apply here.  The allocation under spinlock is expected to fail,
+and then we'll use xas_nomem() with the caller's specified GFP flags
+which may or may not include __GFP_ACCOUNT.
 
+>      - A lot of objects are shared among different containers by design.
+>        Accounting such objects to one of containers is just unfair.
+>        Moreover, it might lead to pinning a dead memcg along with its kmem
+>        caches, which aren't tiny, which might result in noticeable increase
+>        in memory consumption for no apparent reason in the long run.
 
-> If you cannot take the read mmap sem (why not?), then please use my
-> version and push the update to the driver through -mm..
+These objects are in the slab of radix_tree_nodes, and we'll already be
+accounting page cache nodes to the cgroup, so accounting random XArray
+nodes to the cgroups isn't going to make the problem worse.
 
-Please see previous threads on why it was a failure.
+>      - There are tons of short-lived objects. Accounting them to memcg will
+>        only result in slight noise and won't change the overall picture, but
+>        we still have to pay accounting overhead.
 
-Cheers,
-Jérôme
+XArray nodes are generally not short-lived objects.
+
