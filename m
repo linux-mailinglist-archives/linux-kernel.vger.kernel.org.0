@@ -2,147 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94D94279C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 11:55:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55310279DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 11:58:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbfEWJzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 05:55:11 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40397 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbfEWJzK (ORCPT
+        id S1730460AbfEWJ5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 05:57:48 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52079 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730402AbfEWJ5r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 05:55:10 -0400
-Received: by mail-ed1-f65.google.com with SMTP id j12so8354488eds.7
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 02:55:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XcnGRhVVyNL37UuM2RMXdYZmMPDHmNAhLUCRA5xcUDo=;
-        b=O0wuggV6ZTRRY9IuFVi+Hy5ZffEWKgbDaxa4tUMjnr9ukzoVJ+6ESsFv482ScAF+lN
-         mZJQMUGVUc4J6DhDCUH25aotoYsf10ISXjQ03OgcydZlHj6YMDwmwdTgHrQqfRbY0b2e
-         +MkrirnkhnUODJSGZeiiTghbv1k678cPmDD5fU0dyiykv7ixjjepA8wUU/TvIq5ADMeM
-         kIanjFRf+sWTGKkUkejAd32KCh2rj29VqwW4ask3xJXreRH1UwkrmEqpFdxwP5lfiJyz
-         B7vkZAjE7n6GGVkd8y1t6z+9fq6lyZO7i9b0KYvFE/HJTlsRZElQrWIEP1p047EJSUyE
-         oRWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XcnGRhVVyNL37UuM2RMXdYZmMPDHmNAhLUCRA5xcUDo=;
-        b=KQDHN0YLV40ktTRj6RKBdv7f+hm1YME0KcIzOU0Mrmb88V8HnkP/4tNGh2r1UArBnq
-         gVk/P+EPbqBjTYeoojS3d5WkZGFw+m2riXXrIpvMpW69V/oqaxyX/wiPj4gvU+FI6vg9
-         /Td20v/r3lYVYKP8+tgh98zWB3IBTZuASneRL1GfFtMgxWWuRyDmR2r8Cp14Xr7HFp7L
-         zl8mrrigEXba5gw3Rlo0uvr8dm5ekul7b1Y45mVeH4coKTHXi6VyT7L82bW/IcfFOuPr
-         bL/OHqB99ySzVZjEEhtA+tkYvgfl1f9DjvNwc6ehtoYFXA7q3lz+m8AcBpftxLwozSrq
-         cWew==
-X-Gm-Message-State: APjAAAUsNlebc0isRn9UHVTVm957DTnRTK3Gyd01Eap/NTQrkcLzuzhR
-        HAuNeW+rN6j+1aPyMwqKZCMkSA==
-X-Google-Smtp-Source: APXvYqybccPv5N0s4ahkfYQemfrz5kSo1mA+KsJL9r2ibL+W2QszQceCSAyrL2eQwh8lWs+J+tYolQ==
-X-Received: by 2002:a50:ad77:: with SMTP id z52mr95891367edc.174.1558605309242;
-        Thu, 23 May 2019 02:55:09 -0700 (PDT)
-Received: from brauner.io (178-197-142-46.pool.kielnet.net. [46.142.197.178])
-        by smtp.gmail.com with ESMTPSA id o47sm7838488edc.37.2019.05.23.02.55.08
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 23 May 2019 02:55:08 -0700 (PDT)
-Date:   Thu, 23 May 2019 11:55:07 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fanotify: remove redundant capable(CAP_SYS_ADMIN)s
-Message-ID: <20190523095506.nyei5nogvv63lm4a@brauner.io>
-References: <20190522163150.16849-1-christian@brauner.io>
- <CAOQ4uxjV=7=FXuyccBK9Pu1B7o-w-pbc1FQXJxY4q6z8E93KOg@mail.gmail.com>
- <EB97EF04-D44F-4320-ACDC-C536EED03BA4@brauner.io>
- <CAOQ4uxhodqVw0DVfcvXYH5vBf4LKcv7t388ZwXeZPBTcEMzGSw@mail.gmail.com>
+        Thu, 23 May 2019 05:57:47 -0400
+Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4N9v5RO041482;
+        Thu, 23 May 2019 18:57:05 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
+ Thu, 23 May 2019 18:57:05 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4N9uo60041398
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 23 May 2019 18:57:05 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: Monitor change of console loglevel.
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <1557501546-10263-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20190514091917.GA26804@jagdpanzerIV>
+ <3e2cf31d-25af-e7c3-b308-62f64d650974@i-love.sakura.ne.jp>
+Message-ID: <4d1a4b51-999b-63c6-5ce3-a704013cecb6@i-love.sakura.ne.jp>
+Date:   Thu, 23 May 2019 18:56:50 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
+In-Reply-To: <3e2cf31d-25af-e7c3-b308-62f64d650974@i-love.sakura.ne.jp>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhodqVw0DVfcvXYH5vBf4LKcv7t388ZwXeZPBTcEMzGSw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 11:00:22PM +0300, Amir Goldstein wrote:
-> On Wed, May 22, 2019 at 9:57 PM Christian Brauner <christian@brauner.io> wrote:
-> >
-> > On May 22, 2019 8:29:37 PM GMT+02:00, Amir Goldstein <amir73il@gmail.com> wrote:
-> > >On Wed, May 22, 2019 at 7:32 PM Christian Brauner
-> > ><christian@brauner.io> wrote:
-> > >>
-> > >> This removes two redundant capable(CAP_SYS_ADMIN) checks from
-> > >> fanotify_init().
-> > >> fanotify_init() guards the whole syscall with capable(CAP_SYS_ADMIN)
-> > >at the
-> > >> beginning. So the other two capable(CAP_SYS_ADMIN) checks are not
-> > >needed.
-> > >
-> > >It's intentional:
-> > >
-> > >commit e7099d8a5a34d2876908a9fab4952dabdcfc5909
-> > >Author: Eric Paris <eparis@redhat.com>
-> > >Date:   Thu Oct 28 17:21:57 2010 -0400
-> > >
-> > >    fanotify: limit the number of marks in a single fanotify group
-> > >
-> > >There is currently no limit on the number of marks a given fanotify
-> > >group
-> > >can have.  Since fanotify is gated on CAP_SYS_ADMIN this was not seen
-> > >as
-> > >a serious DoS threat.  This patch implements a default of 8192, the
-> > >same as
-> > >inotify to work towards removing the CAP_SYS_ADMIN gating and
-> > >eliminating
-> > >    the default DoS'able status.
-> > >
-> > >    Signed-off-by: Eric Paris <eparis@redhat.com>
-> > >
-> > >There idea is to eventually remove the gated CAP_SYS_ADMIN.
-> > >There is no reason that fanotify could not be used by unprivileged
-> > >users
-> > >to setup inotify style watch on an inode or directories children, see:
-> > >https://patchwork.kernel.org/patch/10668299/
-> > >
-> > >>
-> > >> Fixes: 5dd03f55fd2 ("fanotify: allow userspace to override max queue
-> > >depth")
-> > >> Fixes: ac7e22dcfaf ("fanotify: allow userspace to override max
-> > >marks")
-> > >
-> > >Fixes is used to tag bug fixes for stable.
-> > >There is no bug.
-> > >
-> > >Thanks,
-> > >Amir.
-> >
-> > Interesting. When do you think the gate can be removed?
-> 
-> Nobody is working on this AFAIK.
-> What I posted was a simple POC, but I have no use case for this.
-> In the patchwork link above, Jan has listed the prerequisites for
-> removing the gate.
-> 
-> One of the prerequisites is FAN_REPORT_FID, which is now merged.
-> When events gets reported with fid instead of fd, unprivileged user
-> (hopefully) cannot use fid for privilege escalation.
-> 
-> > I was looking into switching from inotify to fanotify but since it's not usable from
-> > non-initial userns it's a no-no
-> > since we support nested workloads.
-> 
-> One of Jan's questions was what is the benefit of using inotify-compatible
-> fanotify vs. using inotify.
-> So what was the reason you were looking into switching from inotify to fanotify?
-> Is it because of mount/filesystem watch? Because making those available for
+Well, the culprit of this problem might be syz_execute_func().
 
-Yeah. Well, I would need to look but you could probably do it safely for
-filesystems mountable in user namespaces (which are few).
-Can you do a bind-mount and then place a watch on the bind-mount or is
-this superblock based?
+  https://twitter.com/ed_maste/status/1131165065485398016
 
-Thanks!
-Christian
+Then, blacklisting specific syscalls/arguments might not work.
+We will need to guard specific paths on the kernel side using
+some kernel config option...
+
+Anyway, Andrew, will you send this patch to linux-next.git ?
+syzbot would identify which syz_execute_func() call is triggering
+this problem.
+
+From 96e0741839f56c461f85d83e20bf5ae6baac9a3a Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Thu, 23 May 2019 05:57:52 +0900
+Subject: [PATCH] printk: Monitor change of console loglevel.
+
+We are seeing syzbot reports [1] where printk() messages prior to panic()
+are missing for unknown reason. To test whether it is due to some testcase
+changing console loglevel, let's panic() as soon as console loglevel has
+changed. This patch is intended for testing on linux-next.git only, and
+will be removed after we found what is wrong.
+
+[1] https://lkml.kernel.org/r/127c9c3b-f878-174f-7065-66dc50fcabcf@i-love.sakura.ne.jp
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+---
+ kernel/printk/printk.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 1888f6a..5326015 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -3343,3 +3343,23 @@ void kmsg_dump_rewind(struct kmsg_dumper *dumper)
+ EXPORT_SYMBOL_GPL(kmsg_dump_rewind);
+ 
+ #endif
++
++#ifdef CONFIG_DEBUG_AID_FOR_SYZBOT
++static int initial_loglevel;
++static void check_loglevel(struct timer_list *timer)
++{
++	if (console_loglevel < initial_loglevel)
++		panic("Console loglevel changed (%d->%d)!", initial_loglevel,
++		      console_loglevel);
++	mod_timer(timer, jiffies + HZ);
++}
++static int __init loglevelcheck_init(void)
++{
++	static DEFINE_TIMER(timer, check_loglevel);
++
++	initial_loglevel = console_loglevel;
++	mod_timer(&timer, jiffies + HZ);
++	return 0;
++}
++late_initcall(loglevelcheck_init);
++#endif
+-- 
+1.8.3.1
