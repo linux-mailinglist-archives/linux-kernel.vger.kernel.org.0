@@ -2,63 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C82276EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 09:29:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E140276EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 09:29:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729762AbfEWH3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 03:29:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36320 "EHLO mail.kernel.org"
+        id S1729698AbfEWH3T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 03:29:19 -0400
+Received: from mx01-fr.bfs.de ([193.174.231.67]:52310 "EHLO mx01-fr.bfs.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726310AbfEWH3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 03:29:54 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C7C9217D7;
-        Thu, 23 May 2019 07:29:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558596593;
-        bh=c19NWt/LnVDFdWa5G3PG11NsA8ijCR/rV/h5vpWD/KM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FUnxHXFaDCaj/+Bu7q+MBexqxbykrKFJGpTwTuxoc22wIq9w7U6xRHM2hyAjbMBmK
-         LIR+oih5+cDxXqyJpdNT4jUIcDHfarSSpGfsysvmet33eNIPlLKQc1FTTSfgblf3fn
-         kXKCTYqYQrDq/R2K6dnEqAbw5moK87v1dWDx444s=
-Date:   Thu, 23 May 2019 15:28:52 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 2/3] clk: imx8mm: add SNVS clock to clock tree
-Message-ID: <20190523072851.GE9261@dragon>
-References: <1557883490-22360-1-git-send-email-Anson.Huang@nxp.com>
- <1557883490-22360-2-git-send-email-Anson.Huang@nxp.com>
+        id S1726310AbfEWH3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 03:29:19 -0400
+Received: from mail-fr.bfs.de (mail-fr.bfs.de [10.177.18.200])
+        by mx01-fr.bfs.de (Postfix) with ESMTPS id 269D9200CC;
+        Thu, 23 May 2019 09:29:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
+        t=1558596552; h=from:from:sender:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ju/S+wL2OcAXGoSvJDWSAsd3Xk7WBxZ9ICqLs8QO3/4=;
+        b=dougbRlq29X/T7685vGkmNF8H0e99JxKvupXzkBeLsppGSBTAI+ejPeRg8zpFi7mzMbgi+
+        mmmftdAF/w1tmxT0omG8iGDBVnDQc8N0s+haP2lqxSOiQXTVkGuCOx9lIgkQbHpNvpY35h
+        qhTBuj5iH8d+rX+ZoLe6/YHMOdz7iEenc0f/qNgl4kBGSDCcFTANPMICddzqjR5UkzHNR8
+        wx35MdUQhpK0LaLQ8XkipQG+DajX3vjFKzk576TctPhIx1G7Xy1G+d0XXJzglZmK2nrAC6
+        piYg6e1Zqgz1BBB+5vwKyGAXOWEAEG37yCik8soR8V8t4cY+XO8eENwOMgyIcg==
+Received: from [134.92.181.33] (unknown [134.92.181.33])
+        by mail-fr.bfs.de (Postfix) with ESMTPS id 05015BEEBD;
+        Thu, 23 May 2019 09:29:11 +0200 (CEST)
+Message-ID: <5CE64BC7.4010803@bfs.de>
+Date:   Thu, 23 May 2019 09:29:11 +0200
+From:   walter harms <wharms@bfs.de>
+Reply-To: wharms@bfs.de
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; de; rv:1.9.1.16) Gecko/20101125 SUSE/3.0.11 Thunderbird/3.0.11
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1557883490-22360-2-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+To:     Aung <aung.aungkyawsoe@gmail.com>
+CC:     lkml <linux-kernel@vger.kernel.org>
+Subject: Re: need company for kernel upgrade
+References: <5CE53BA9.4070906@bfs.de> <CABC7EG8NiiPycthdfb7Ng3MsxTvmmxk_LjcosM8ZD1F0CnuDFw@mail.gmail.com>
+In-Reply-To: <CABC7EG8NiiPycthdfb7Ng3MsxTvmmxk_LjcosM8ZD1F0CnuDFw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.06
+Authentication-Results: mx01-fr.bfs.de
+X-Spamd-Result: default: False [-3.06 / 7.00];
+         ARC_NA(0.00)[];
+         HAS_REPLYTO(0.00)[wharms@bfs.de];
+         BAYES_HAM(-2.96)[99.82%];
+         FROM_HAS_DN(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         TAGGED_RCPT(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         REPLYTO_ADDR_EQ_FROM(0.00)[];
+         TO_DN_ALL(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_TWO(0.00)[2];
+         FREEMAIL_TO(0.00)[gmail.com];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         RCVD_COUNT_TWO(0.00)[2];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCVD_TLS_ALL(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 15, 2019 at 01:29:57AM +0000, Anson Huang wrote:
-> i.MX8MM has clock gate for SNVS module, add it into clock tree
-> for SNVS RTC driver to manage.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Applied, thanks.
+
+Am 23.05.2019 00:31, schrieb Aung:
+> Hello
+> 
+> I thought you build a kernel, then using SCP or dd to overwite uImage
+> file to replace
+> the previous kernel image into the file system, then reboot it. Or are
+> you trying to
+> upgrade without rebooting? Cheers!
+> 
+
+No,
+the company i am working for has a custom build arm-board.
+We bought the kernel from the assembler but found it has
+some problems that need fixing.
+Basically we want to improve the linux-kernel so it can run
+native on our boards.
+
+re,
+ wh
+
+
+> Sincerely
+> 
+> Aung
+> 
+> On 5/22/19, walter harms <wharms@bfs.de> wrote:
+>> the list was silent but NTL.
+>>
+>> Hi developers,
+>> i am in search of a company that can help upgrading
+>> a running linux-kernel on custom hardware.
+>> Est. time 10 days.
+>>
+>>
+>> The problems are already identified, we are aiming
+>> the get the current vanilla linux kernel on the system.
+>>
+>>
+>> re,
+>>  wh
+>>
+>> _______________________________________________
+>> linux-arm mailing list
+>> linux-arm@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm
+>>
