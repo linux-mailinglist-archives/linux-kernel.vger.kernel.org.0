@@ -2,54 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1736C27E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:42:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00A5027E63
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:43:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730760AbfEWNmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 09:42:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729698AbfEWNmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 09:42:38 -0400
-Received: from [192.168.0.101] (unknown [58.212.135.189])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B88520881;
-        Thu, 23 May 2019 13:42:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558618957;
-        bh=RUb9icmu0Ty8LfzEJ902RXv2qHZxk/BhEuHdhN79j/A=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nPGcmaQy7OSDI6cW5QhnextVgb6tb6qXHw6AE/nE1ZBisUrN83Cl4bD7MHvXqK6mX
-         q+ucE6i2ZHaq2EV8t4sv8zFN/oZGl7CquyP2D6bTZv0es+KXndN8hWdpVxi9+WdTIM
-         btYBcH+BSc+82zNOU98UJTa6+Bm/moo+6M23JKAQ=
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add error prints for debugging mount
- failure
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     linux-kernel@vger.kernel.org
-References: <1558585157-9349-1-git-send-email-stummala@codeaurora.org>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <079b434f-ee28-2c52-a789-6116e20ccce6@kernel.org>
-Date:   Thu, 23 May 2019 21:42:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1730792AbfEWNm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:42:56 -0400
+Received: from mail-yw1-f54.google.com ([209.85.161.54]:46933 "EHLO
+        mail-yw1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729698AbfEWNmz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 09:42:55 -0400
+Received: by mail-yw1-f54.google.com with SMTP id a130so2263160ywe.13
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 06:42:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=d2xwc7F6zHpKnKXnQOqNB0N8tTOjZfh0iNokUhkE8N4=;
+        b=Q/mEzYHv/LzzLjjXZezenAJGG4CglTKkb0JzShP61tkCXInb6SeS1vSpboO7U/PQAv
+         DyIn6UjgC5F9ryv3a2XRAnyZJLcgk/0jGOMFT25HqebPxF0kql/smA9UgzXWYp2RQY3O
+         W4Yvw8T5OH5a8qokiIi78U7MsKxKGdhv36GFHqwux6j7y4vaaoGyKXxwPHZmFstblSXP
+         dBrE1IEGfi6tUwFUgcqwObC6g52HwBwuJwTctw945IHKFB4UZTR3sWhNrCc+pzEbmt+C
+         2vR/vfjJ+LNNAqkd+xl5oij4Wos6fJ2slPJtwO/4kQRJvzfF8UAFlsc472mY1BL3UzwW
+         SUJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=d2xwc7F6zHpKnKXnQOqNB0N8tTOjZfh0iNokUhkE8N4=;
+        b=OzrNNtKBypMF6ObTn0lHxEgZOd213v5XzJuUkre+fNBreD3wa7WUAZtTZazB3lxgd8
+         yCQVsOer540fhSXrPCzbBaahkWX4YTnD6PaeWdBTycTedVKfLJUCRe+on8735VtVJkag
+         igga1n4hqssBk3rVzzEtT+omYFhM5EdXM8qfnUOEgw5r4l9gKM08twpVNj6UT2iuZn1T
+         RBWVrMWNZuuk6FUNtkCfwTsvPQYNlI0/QBc/okPepz1zxLK3X0mKO7UzNv9zYgogQkiY
+         ZBBdOULMBiVtAO8J9Gj7+HMknTjckDyUp7jeftMPwip4QXWu4JBdH05C/QYvCR+v+Loc
+         c/Ow==
+X-Gm-Message-State: APjAAAXWA/OUtGPFQIKTQaO5S5fKewVUiazqh25jWOKo9kcqzB9hMcXE
+        VeEuuZ7ssQMwZeKETcId7g5lbxiJDhCHpfHSxQw5Lps=
+X-Google-Smtp-Source: APXvYqw4V0graIIIMCuvHnVAS8i7B8loZ7t9QmYPYmeEk4jL9/auSxOx0XQ8psSyQdcgMxoTXVmhVLgIk2oDmGs/lTA=
+X-Received: by 2002:a81:456:: with SMTP id 83mr37474969ywe.118.1558618974748;
+ Thu, 23 May 2019 06:42:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1558585157-9349-1-git-send-email-stummala@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Turritopsis Dohrnii Teo En Ming <tdteoenming@gmail.com>
+Date:   Thu, 23 May 2019 21:42:40 +0800
+Message-ID: <CANnei0GomXJiFRFdkq4uUB8aReUN91v1T36hVTyNnR0NEPO-GA@mail.gmail.com>
+Subject: Workplace Mobbing: Bullying at the Workplace
+To:     linux-kernel@vger.kernel.org
+Cc:     Turritopsis Dohrnii Teo En Ming <tdteoenming@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-5-23 12:19, Sahitya Tummala wrote:
-> Add error prints to get more details on the mount failure.
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Subject/Topic: Workplace Mobbing: Bullying at the Workplace
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+23rd May 2019 9:30 PM Singapore Time GMT+8
 
-Thanks,
+There are (perhaps) millions of Targeted Individuals (TIs) in
+(perhaps) every country all over the world.
+
+According to accounts and experiences shared by many Targeted
+Individuals, every Targeted Individual will definitely be subjected to
+workplace mobbing (being bullied at the workplace). This is all part
+and parcel of the targeting program.
+
+Mr. Turritopsis Dohrnii Teo En Ming is a Targeted Individual in Singapore.
+
+Mr. Turritopsis Dohrnii Teo En Ming is 41 years old as at 23rd May 2019.
+
+-----BEGIN EMAIL SIGNATURE-----
+
+The Gospel for all Targeted Individuals (TIs):
+
+[The New York Times] Microwave Weapons Are Prime Suspect in Ills of
+U.S. Embassy Workers
+
+Link: https://www.nytimes.com/2018/09/01/science/sonic-attack-cuba-microwave.html
+
+********************************************************************************************
+
+Singaporean Mr. Turritopsis Dohrnii Teo En Ming's Academic
+Qualifications as at 14 Feb 2019
+
+[1] https://tdtemcerts.wordpress.com/
+
+[2] https://tdtemcerts.blogspot.sg/
+
+[3] https://www.scribd.com/user/270125049/Teo-En-Ming
+
+-----END EMAIL SIGNATURE-----
