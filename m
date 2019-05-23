@@ -2,115 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 269622891B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:42:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFBEE28648
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:07:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391970AbfEWTat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:30:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391695AbfEWTap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:30:45 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A54020879;
-        Thu, 23 May 2019 19:30:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639844;
-        bh=ffYAePsAYSLY2PZJ5lNAa7ZiztMb4ESID2IlEHjN8yc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d8pL2XpUpwlgUGKurncKehxHjQYf22Rw/PvdZ9Zw17clB7KnPnCmNVpJg4Oodyj/t
-         vnbORAJupnygvuA7ku+T6WJFOABYiZ77Ti4QgIlD/7Ih4OTeA65ck8vFamoPYKCXX4
-         u0YIAlN3zRepASt/O8Abqd4xyn+iarWA4EXFpBKw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 5.1 097/122] PCI: Init PCIe feature bits for managed host bridge alloc
-Date:   Thu, 23 May 2019 21:06:59 +0200
-Message-Id: <20190523181718.056998161@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1731584AbfEWTHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:07:15 -0400
+Received: from knopi.disroot.org ([178.21.23.139]:35012 "EHLO
+        knopi.disroot.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731464AbfEWTHP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:07:15 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by disroot.org (Postfix) with ESMTP id 1DBEA31D51;
+        Thu, 23 May 2019 21:07:13 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at disroot.org
+Received: from knopi.disroot.org ([127.0.0.1])
+        by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 73kF_Qb1l6j5; Thu, 23 May 2019 21:07:11 +0200 (CEST)
+From:   Daniel Smith <danct12@disroot.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+        t=1558638431; bh=80tieOKqOyKyqCagUUFd4AVkjajAKOxE5qwgMUdCc58=;
+        h=From:To:Cc:Subject:Date;
+        b=Mey49fOAHRSXSrpxL2YMBQRq8r9++pUFZ5Huo1dDnMmXwlgzfb5n0Pb4WFYjUM+cL
+         K40RF9kLyz2jJW3J9csP5eYf8XEElUxBerX3V8gc0usdGsTk+tH2V4OtHAIscUL+iZ
+         HoNKURRjBBlXkAeFhYGIDsGuO0Py7D3vRs5Q2+3+DlHju8CvQBF9pO/8dUFc8nnScx
+         EhRILEKT1y6dWoNee2m1YQpZC1MJfi3AApT2JDKXCMmDNCRRShGYkg9Ahcgu17LRps
+         0EHUfRgSQVSD1EpVaJGus77rXpmlt6I/rkld0A3D1BVBs4YMa+6yXR/Nc06ikRee2Z
+         0h4YX7mZnjlMA==
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Daniel Smith <danct12@disroot.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] input: silead: Add MSSL0017 to acpi_device_id.
+Date:   Fri, 24 May 2019 02:06:59 +0700
+Message-Id: <20190523190659.3117-1-danct12@disroot.org>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+On Chuwi Hi10 Plus, the Silead device id is MSSL0017.
 
-commit 6302bf3ef78dd210b5ff4a922afcb7d8eff8a211 upstream.
-
-Two functions allocate a host bridge: devm_pci_alloc_host_bridge() and
-pci_alloc_host_bridge().  At the moment, only the unmanaged one initializes
-the PCIe feature bits, which prevents from using features such as hotplug
-or AER on some systems, when booting with device tree.  Make the
-initialization code common.
-
-Fixes: 02bfeb484230 ("PCI/portdrv: Simplify PCIe feature permission checking")
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-CC: stable@vger.kernel.org	# v4.17+
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Daniel Smith <danct12@disroot.org>
 ---
- drivers/pci/probe.c |   23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ drivers/input/touchscreen/silead.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -586,16 +586,9 @@ static void pci_release_host_bridge_dev(
- 	kfree(to_pci_host_bridge(dev));
- }
- 
--struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
-+static void pci_init_host_bridge(struct pci_host_bridge *bridge)
- {
--	struct pci_host_bridge *bridge;
--
--	bridge = kzalloc(sizeof(*bridge) + priv, GFP_KERNEL);
--	if (!bridge)
--		return NULL;
--
- 	INIT_LIST_HEAD(&bridge->windows);
--	bridge->dev.release = pci_release_host_bridge_dev;
- 
- 	/*
- 	 * We assume we can manage these PCIe features.  Some systems may
-@@ -608,6 +601,18 @@ struct pci_host_bridge *pci_alloc_host_b
- 	bridge->native_shpc_hotplug = 1;
- 	bridge->native_pme = 1;
- 	bridge->native_ltr = 1;
-+}
-+
-+struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
-+{
-+	struct pci_host_bridge *bridge;
-+
-+	bridge = kzalloc(sizeof(*bridge) + priv, GFP_KERNEL);
-+	if (!bridge)
-+		return NULL;
-+
-+	pci_init_host_bridge(bridge);
-+	bridge->dev.release = pci_release_host_bridge_dev;
- 
- 	return bridge;
- }
-@@ -622,7 +627,7 @@ struct pci_host_bridge *devm_pci_alloc_h
- 	if (!bridge)
- 		return NULL;
- 
--	INIT_LIST_HEAD(&bridge->windows);
-+	pci_init_host_bridge(bridge);
- 	bridge->dev.release = devm_pci_release_host_bridge_dev;
- 
- 	return bridge;
-
+diff --git a/drivers/input/touchscreen/silead.c b/drivers/input/touchscreen/silead.c
+index 09241d4cdebc..06f0eb04a8fd 100644
+--- a/drivers/input/touchscreen/silead.c
++++ b/drivers/input/touchscreen/silead.c
+@@ -617,6 +617,7 @@ static const struct acpi_device_id silead_ts_acpi_match[] = {
+ 	{ "MSSL1680", 0 },
+ 	{ "MSSL0001", 0 },
+ 	{ "MSSL0002", 0 },
++	{ "MSSL0017", 0 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, silead_ts_acpi_match);
+-- 
+2.21.0
 
