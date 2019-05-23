@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DBC628A2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 337D4289FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:43:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387652AbfEWTKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:10:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43278 "EHLO mail.kernel.org"
+        id S2389397AbfEWTR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:17:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387604AbfEWTKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:10:00 -0400
+        id S2389375AbfEWTRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:17:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EC722133D;
-        Thu, 23 May 2019 19:09:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A08921872;
+        Thu, 23 May 2019 19:17:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638600;
-        bh=DGEHl8TIH0hqQEozBpsSU+CoLWsm/BgOYFTk5j/3BAo=;
+        s=default; t=1558639040;
+        bh=uAgXl6jx6TsS2nw/MjIAyn/1+iFWziT62wRj3t4zXOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=weSwdl1UPoN92VhKNoZNm7rgXNPPhtaGdUCIGFX529VSpRJ7doUVJQcKXtBzqBdE8
-         gR9y0K6irM0pnYhYXYilxwI7F9fivpmIiMd0PcMxZuqRF1JfWbkCtQv47HFF7s9I9a
-         pNFmKz9AGp8SW6z73CPvgHp8KcOEUmJR4VEB65tc=
+        b=JRBcNxA0aAd3v5668eDw2IfarRwrN5ucdTkneGWKn9yHUdUEJPh+K3QgmcQQJMX7K
+         ncYy0p0tJZ4moQvJHye9ixPyjVYmHfrSCJJ4wQ0cItRowoADNmHSIGpHsvwoCBZcXC
+         TliGz0DT6VNTJ/FUxYrqf+2j6pfO6wIWXJ1kEQ0c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yifeng Li <tomli@tomli.me>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.9 32/53] fbdev: sm712fb: fix white screen of death on reboot, dont set CR3B-CR3F
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.19 057/114] perf intel-pt: Fix improved sample timestamp
 Date:   Thu, 23 May 2019 21:05:56 +0200
-Message-Id: <20190523181715.937375474@linuxfoundation.org>
+Message-Id: <20190523181736.774052612@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
-References: <20190523181710.981455400@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +44,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yifeng Li <tomli@tomli.me>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-commit 8069053880e0ee3a75fd6d7e0a30293265fe3de4 upstream.
+commit 61b6e08dc8e3ea80b7485c9b3f875ddd45c8466b upstream.
 
-On a Thinkpad s30 (Pentium III / i440MX, Lynx3DM), rebooting with
-sm712fb framebuffer driver would cause a white screen of death on
-the next POST, presumably the proper timings for the LCD panel was
-not reprogrammed properly by the BIOS.
+The decoder uses its current timestamp in samples. Usually that is a
+timestamp that has already passed, but in some cases it is a timestamp
+for a branch that the decoder is walking towards, and consequently
+hasn't reached.
 
-Experiments showed a few CRTC Scratch Registers, including CRT3D,
-CRT3E and CRT3F may be used internally by BIOS as some flags. CRT3B is
-a hardware testing register, we shouldn't mess with it. CRT3C has
-blanking signal and line compare control, which is not needed for this
-driver.
+The intel_pt_sample_time() function decides which is which, but was not
+handling TNT packets exactly correctly.
 
-Stop writing to CR3B-CR3F (a.k.a CRT3B-CRT3F) registers. Even if these
-registers don't have side-effect on other systems, writing to them is
-also highly questionable.
+In the case of TNT, the timestamp applies to the first branch, so the
+decoder must first walk to that branch.
 
-Signed-off-by: Yifeng Li <tomli@tomli.me>
-Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Teddy Wang <teddy.wang@siliconmotion.com>
-Cc: <stable@vger.kernel.org>  # v4.4+
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+That means intel_pt_sample_time() should return true for TNT, and this
+patch makes that change. However, if the first branch is a non-taken
+branch (i.e. a 'N'), then intel_pt_sample_time() needs to return false
+for subsequent taken branches in the same TNT packet.
+
+To handle that, introduce a new state INTEL_PT_STATE_TNT_CONT to
+distinguish the cases.
+
+Note that commit 3f04d98e972b5 ("perf intel-pt: Improve sample
+timestamp") was also a stable fix and appears, for example, in v4.4
+stable tree as commit a4ebb58fd124 ("perf intel-pt: Improve sample
+timestamp").
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: stable@vger.kernel.org # v4.4+
+Fixes: 3f04d98e972b5 ("perf intel-pt: Improve sample timestamp")
+Link: http://lkml.kernel.org/r/20190510124143.27054-3-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/sm712fb.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/drivers/video/fbdev/sm712fb.c
-+++ b/drivers/video/fbdev/sm712fb.c
-@@ -1172,8 +1172,12 @@ static void sm7xx_set_timing(struct smtc
- 			smtc_crtcw(i, vgamode[j].init_cr00_cr18[i]);
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -58,6 +58,7 @@ enum intel_pt_pkt_state {
+ 	INTEL_PT_STATE_NO_IP,
+ 	INTEL_PT_STATE_ERR_RESYNC,
+ 	INTEL_PT_STATE_IN_SYNC,
++	INTEL_PT_STATE_TNT_CONT,
+ 	INTEL_PT_STATE_TNT,
+ 	INTEL_PT_STATE_TIP,
+ 	INTEL_PT_STATE_TIP_PGD,
+@@ -72,8 +73,9 @@ static inline bool intel_pt_sample_time(
+ 	case INTEL_PT_STATE_NO_IP:
+ 	case INTEL_PT_STATE_ERR_RESYNC:
+ 	case INTEL_PT_STATE_IN_SYNC:
+-	case INTEL_PT_STATE_TNT:
++	case INTEL_PT_STATE_TNT_CONT:
+ 		return true;
++	case INTEL_PT_STATE_TNT:
+ 	case INTEL_PT_STATE_TIP:
+ 	case INTEL_PT_STATE_TIP_PGD:
+ 	case INTEL_PT_STATE_FUP:
+@@ -1256,7 +1258,9 @@ static int intel_pt_walk_tnt(struct inte
+ 				return -ENOENT;
+ 			}
+ 			decoder->tnt.count -= 1;
+-			if (!decoder->tnt.count)
++			if (decoder->tnt.count)
++				decoder->pkt_state = INTEL_PT_STATE_TNT_CONT;
++			else
+ 				decoder->pkt_state = INTEL_PT_STATE_IN_SYNC;
+ 			decoder->tnt.payload <<= 1;
+ 			decoder->state.from_ip = decoder->ip;
+@@ -1287,7 +1291,9 @@ static int intel_pt_walk_tnt(struct inte
  
- 		/* init CRTC register CR30 - CR4D */
--		for (i = 0; i < SIZE_CR30_CR4D; i++)
-+		for (i = 0; i < SIZE_CR30_CR4D; i++) {
-+			if ((i + 0x30) >= 0x3B && (i + 0x30) <= 0x3F)
-+				/* side-effect, don't write to CR3B-CR3F */
-+				continue;
- 			smtc_crtcw(i + 0x30, vgamode[j].init_cr30_cr4d[i]);
-+		}
- 
- 		/* init CRTC register CR90 - CRA7 */
- 		for (i = 0; i < SIZE_CR90_CRA7; i++)
+ 		if (intel_pt_insn.branch == INTEL_PT_BR_CONDITIONAL) {
+ 			decoder->tnt.count -= 1;
+-			if (!decoder->tnt.count)
++			if (decoder->tnt.count)
++				decoder->pkt_state = INTEL_PT_STATE_TNT_CONT;
++			else
+ 				decoder->pkt_state = INTEL_PT_STATE_IN_SYNC;
+ 			if (decoder->tnt.payload & BIT63) {
+ 				decoder->tnt.payload <<= 1;
+@@ -2356,6 +2362,7 @@ const struct intel_pt_state *intel_pt_de
+ 			err = intel_pt_walk_trace(decoder);
+ 			break;
+ 		case INTEL_PT_STATE_TNT:
++		case INTEL_PT_STATE_TNT_CONT:
+ 			err = intel_pt_walk_tnt(decoder);
+ 			if (err == -EAGAIN)
+ 				err = intel_pt_walk_trace(decoder);
 
 
