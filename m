@@ -2,88 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2CDE28065
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 17:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCD9A2806E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 17:01:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731012AbfEWPAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 11:00:25 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:35057 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730741AbfEWPAZ (ORCPT
+        id S1730875AbfEWPB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 11:01:58 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40069 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730751AbfEWPB5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 11:00:25 -0400
-Received: by mail-oi1-f196.google.com with SMTP id a132so4618320oib.2;
-        Thu, 23 May 2019 08:00:24 -0700 (PDT)
+        Thu, 23 May 2019 11:01:57 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g69so2871015plb.7
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 08:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=9HPbB+/1XsdXIOfekp8uwS00PlsQpqBLPqA5cNuO+gA=;
+        b=ylu32XyvB6DWk0CsJb509nElZsZmOoFdPwMEL7u9OSkrpMlho3jb6QCQxy/15T3wMp
+         BkhEPVUE6VEjBnuopij1rHk8QYCaghvYH8nfxns4iMxmCIThEKBsFr7NIzJeo60nFE+u
+         j6xCj8u/NAAWkIaUwYdcd9Kt6fLrmLFbXPzLInYfEWgAd9vYUSbaXz6Y21iIppxWCiEw
+         fhyvwnbHOdYDua1hNZPpaKxj+en82dkzN3OBIe3f3ehQmxjE/wF1eI+jGQcTWy4jWIaI
+         A/hn1rjsz8tLHDQY/Lwgn4XetVvulMZwBrTFYJ920MSzUw7+NoxvcOic0caAQyyoHKGo
+         JetQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qeElCV+Nxu7+CjCipGaoQ8bPDQ/OvLxQiVOvXHGO8wU=;
-        b=akLkGPnb5jcklOwOikBbzeKdN4MhmgNNvcC31lc16knee4JUvBRHr12oVT8QBa++Tw
-         LWT7OocUINANzTc/5lbDncqm5NVs5+moYTfGmrPfkyh88SWdc5IlCpGnsvRgaIVYGroU
-         ZZPiKz/V6N8sPhS+7P8zCcAt8z2JU76Av4sRvhn+lFacw84/i35XNTKpTNgIN19PIHcz
-         Fto8cf7v2hC40aPoXgj9kEQgNDhCi3FBanxjH0UkLLydreBCjMLDH5ngo6ScB77Xpk1V
-         hUU5/HmXTnqQlg6MDN8vPUK2sUABAkb4WlIkjlMf9I4WzaPRhV8R4iWEyka7VvaLJCJy
-         IYVg==
-X-Gm-Message-State: APjAAAX8Eguj6YfFh07OI4aiF+CfTK2d/7KPZ3FIdAdGIy2C/kYPq0sb
-        v+61XbT64FBr3RnmMx4Ne4rVE1E=
-X-Google-Smtp-Source: APXvYqw+Zx4Tu7B3lsgAaVXYIU6YlWQRJGzzP06SV1533OP9OPc7wxuh08Z0YveCkf05D3ocehL3hw==
-X-Received: by 2002:aca:7552:: with SMTP id q79mr3041138oic.85.1558623623408;
-        Thu, 23 May 2019 08:00:23 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id f5sm9256735oto.67.2019.05.23.08.00.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 23 May 2019 08:00:22 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, Joe Perches <joe@perches.com>
-Subject: [PATCH v2] checkpatch.pl: Update DT vendor prefix check
-Date:   Thu, 23 May 2019 10:00:22 -0500
-Message-Id: <20190523150022.2747-1-robh@kernel.org>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9HPbB+/1XsdXIOfekp8uwS00PlsQpqBLPqA5cNuO+gA=;
+        b=g8nBqubIeukcYIqO5WmsMeqqDeKHsFOWpEKe0paZoC3C6txIws/GnmKsTvQrQbKh1Y
+         /C1v/B3Qtu9Lk+E0M+gIToTFYDuNHQsDFcmBRr+pd48/5+1IsftCqon1tO6JPPErOnPP
+         bEyW4/koJyGOaExbrPLgo7kLO5ivSzPRY4N7me5qvu2Hbj5pp40peq5qEeNspmz5EokH
+         xfPubFos+nrvA3rHB0ZBiRievfQhOGL+jsmL6SHjYACkLQugzuXvBGvosFn9UmzKYNBZ
+         6uxk3BUc19mNG4ThJW98OOEzxSpji+Wgb0euGCWvP96oWPGfheqncXD4aArZ9N57ppIX
+         bJcw==
+X-Gm-Message-State: APjAAAVQ6bqmWZu4PJcfqO4W5JpUUV5M4NRBJAFyFN9Qp773hZZl5+Ow
+        A7mA8mXrvua2GR2/nxYXsU8olQ==
+X-Google-Smtp-Source: APXvYqzIj2BwrvMPQRJHJSSCOwmfUvkSruAz2K1zWiJscGPLw6+nznE6Ym2LMHGMG9AawDFEugtI+g==
+X-Received: by 2002:a17:902:2de4:: with SMTP id p91mr82211589plb.300.1558623717040;
+        Thu, 23 May 2019 08:01:57 -0700 (PDT)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id t2sm25418248pfh.166.2019.05.23.08.01.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 08:01:56 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] soc: qcom: apr: Don't use reg for domain id
+Date:   Thu, 23 May 2019 08:01:53 -0700
+Message-Id: <20190523150153.13136-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit 8122de54602e ("dt-bindings: Convert vendor prefixes to
-json-schema"), vendor-prefixes.txt has been converted to a DT schema.
-Update the checkpatch.pl DT check to extract vendor prefixes from the new
-vendor-prefixes.yaml file.
+The reg property represents the address and size on the bus that a
+device lives, but for APR the parent is a rpmsg bus, which does not have
+numerical addresses. Simply defining #address/#size-cells to 1 and 0,
+respectively, to silence the compiler is not an appropriate solution.
 
-Fixes: 8122de54602e ("dt-bindings: Convert vendor prefixes to json-schema")
-Cc: Joe Perches <joe@perches.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Replace the use of "reg" with an APR specific property.
+
+Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
-v2: Handle vendor prefixes with '-' using Joe's reworked grep
 
- scripts/checkpatch.pl | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes since v1:
+- Fixed example to match change
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index bb28b178d929..342c7c781ba5 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3027,7 +3027,7 @@ sub process {
- 			my @compats = $rawline =~ /\"([a-zA-Z0-9\-\,\.\+_]+)\"/g;
+ Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt | 6 +++---
+ drivers/soc/qcom/apr.c                                  | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+index bcc612cc7423..db501269f47b 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+@@ -9,7 +9,7 @@ used for audio/voice services on the QDSP.
+ 	Value type: <stringlist>
+ 	Definition: must be "qcom,apr-v<VERSION-NUMBER>", example "qcom,apr-v2"
  
- 			my $dt_path = $root . "/Documentation/devicetree/bindings/";
--			my $vp_file = $dt_path . "vendor-prefixes.txt";
-+			my $vp_file = $dt_path . "vendor-prefixes.yaml";
+-- reg
++- qcom,apr-domain
+ 	Usage: required
+ 	Value type: <u32>
+ 	Definition: Destination processor ID.
+@@ -49,9 +49,9 @@ by the individual bindings for the specific service
+ The following example represents a QDSP based sound card on a MSM8996 device
+ which uses apr as communication between Apps and QDSP.
  
- 			foreach my $compat (@compats) {
- 				my $compat2 = $compat;
-@@ -3042,7 +3042,7 @@ sub process {
+-	apr@4 {
++	apr {
+ 		compatible = "qcom,apr-v2";
+-		reg = <APR_DOMAIN_ADSP>;
++		qcom,apr-domain = <APR_DOMAIN_ADSP>;
  
- 				next if $compat !~ /^([a-zA-Z0-9\-]+)\,/;
- 				my $vendor = $1;
--				`grep -Eq "^$vendor\\b" $vp_file`;
-+				`grep -Eq "\\"\\^\Q$vendor\E,\\.\\*\\":" $vp_file`;
- 				if ( $? >> 8 ) {
- 					WARN("UNDOCUMENTED_DT_STRING",
- 					     "DT compatible string vendor \"$vendor\" appears un-documented -- check $vp_file\n" . $herecurr);
+ 		q6core@3 {
+ 			compatible = "qcom,q6core";
+diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
+index 74f8b9607daa..b83d71b2e0a4 100644
+--- a/drivers/soc/qcom/apr.c
++++ b/drivers/soc/qcom/apr.c
+@@ -276,7 +276,7 @@ static int apr_probe(struct rpmsg_device *rpdev)
+ 	if (!apr)
+ 		return -ENOMEM;
+ 
+-	ret = of_property_read_u32(dev->of_node, "reg", &apr->dest_domain_id);
++	ret = of_property_read_u32(dev->of_node, "qcom,apr-domain", &apr->dest_domain_id);
+ 	if (ret) {
+ 		dev_err(dev, "APR Domain ID not specified in DT\n");
+ 		return ret;
 -- 
-2.20.1
+2.18.0
 
