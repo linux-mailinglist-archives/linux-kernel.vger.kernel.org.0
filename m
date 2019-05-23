@@ -2,89 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 761D527C5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A11B527C7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730743AbfEWMCo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 08:02:44 -0400
-Received: from first.geanix.com ([116.203.34.67]:60988 "EHLO first.geanix.com"
+        id S1730553AbfEWMLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 08:11:37 -0400
+Received: from out.migadu.com ([91.121.223.63]:55296 "EHLO out.migadu.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730718AbfEWMCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 08:02:43 -0400
-Received: from localhost (unknown [193.163.1.7])
-        by first.geanix.com (Postfix) with ESMTPSA id 9CC971173;
-        Thu, 23 May 2019 12:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
-        t=1558612910; bh=4qHd8Py9Up+qZTBH6TcBDfKSmHpp4v/tKKzuTrnyayg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=SaXnObYzu6eGVxxRWGAjvw1VwK9pIMe87nh05+w8EmbgK4z8skYuqic6khjFx7h2K
-         S2I+nK61H8PBRBu3wtK77mwo0HQtFYPIb+OhEdxiAx5MUwgJb5E5vBiAVhqw8xpOiS
-         5ch5kIVOWPYK7rcVGM+Oi4X65oF4/yeIflIHqO7odryCv6EbyzgFqvfvQCV2kGpr3G
-         /4FSMI1xy/4hcU/g4Jk7wYa90wMTET7u43QigNbT+x0YAzTWpcZopZByjkvqJyKden
-         F4Ljg6HFOv1SneD7IpypXmtX0hTdcYXgmOpoKufFew/csKDormdgkpGXNF/3d8fty5
-         8JXjBxqHi9KWQ==
-From:   Esben Haabendal <esben@geanix.com>
-To:     netdev@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        YueHaibing <yuehaibing@huawei.com>,
-        =?UTF-8?q?Petr=20=C5=A0tetiar?= <ynezz@true.cz>,
-        Yang Wei <yang.wei9@zte.com.cn>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] net: ll_temac: Enable multicast support
-Date:   Thu, 23 May 2019 14:02:22 +0200
-Message-Id: <20190523120222.3807-5-esben@geanix.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523120222.3807-1-esben@geanix.com>
-References: <20190523120222.3807-1-esben@geanix.com>
+        id S1729762AbfEWMLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 08:11:36 -0400
+X-Greylist: delayed 452 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 May 2019 08:11:35 EDT
+Received: (Migadu outbound); Thu, 23 May 2019 12:04:02 +0000
+Authentication-Results: out.migadu.com; auth=pass (plain)
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+        by out.migadu.com (Haraka/2.8.16) with ESMTPSA id 62D1782A-3A83-4104-AD52-8CDAF3E8EFDE.1
+        envelope-from <luis@aurorafoss.org> (authenticated bits=0)
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 verify=FAIL);
+        Thu, 23 May 2019 12:04:02 +0000
+Received: by mail-oi1-f171.google.com with SMTP id 203so4120846oid.13;
+        Thu, 23 May 2019 05:04:01 -0700 (PDT)
+X-Gm-Message-State: APjAAAXivUop7Xpf4Dy/YUDqxqUNxdPcZPLV2rYZJ8woSHEXkJi/lMsc
+        ZkJVOWxkWmusvQlOiT3ATNYA639lwfxuquEqQj4=
+X-Google-Smtp-Source: APXvYqx9TJdgzx+SRsv86x3Pg6PgQ6XTQ2PTSIBmK/tCq/Q7sGUckZpCFugE7A+nvTBUZyUbWV5sH9EmdN5jhxjrmrM=
+X-Received: by 2002:aca:240d:: with SMTP id n13mr2388042oic.145.1558613040588;
+ Thu, 23 May 2019 05:04:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,UNPARSEABLE_RELAY,URIBL_BLOCKED
-        autolearn=disabled version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on 796779db2bec
+References: <c2f3c22c-d491-17e7-ede7-54f9df11e064@redhat.com>
+ <20190402160433.15810-1-luis@aurorafoss.org> <55a52a4e-01d1-2f4c-25e3-0047537bef86@redhat.com>
+ <CAPyOxm8DyFjRxeL9QFHGW084cg5vhsKrwqGFy5rp8MEEZ3AHEQ@mail.gmail.com>
+ <c34e15ec4be9d783c7134491639eb176@_> <9d8458a1-fc47-0727-4dc8-1d1eb185886d@redhat.com>
+In-Reply-To: <9d8458a1-fc47-0727-4dc8-1d1eb185886d@redhat.com>
+From:   =?UTF-8?Q?Lu=C3=ADs_Ferreira?= <luis@aurorafoss.org>
+Date:   Thu, 23 May 2019 13:03:49 +0100
+X-Gmail-Original-Message-ID: <CAPyOxm9Q0Chq+TVjyK1eFWXCSJb0d-pttnEFVRB0Sw4QZnMM+Q@mail.gmail.com>
+Message-ID: <CAPyOxm9Q0Chq+TVjyK1eFWXCSJb0d-pttnEFVRB0Sw4QZnMM+Q@mail.gmail.com>
+Subject: Re: [PATCH] iio: accel: add missing sensor for some 2-in-1 based ultrabooks
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     jic23@kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1;a=rsa-sha256;bh=QG2XsEKhdyNggSpbcBvp05DnITNX9W6WV+MXt8mStR8=;c=relaxed/simple;d=aurorafoss.org;h=from:subject:date:to;s=default;b=qKz9x26S6oYtXxLvi1XFna2EuynaZGJmO3Gj31bruSlY7XSJQMQ4IT0qYo3bUOKezVIqKX38nPRyDqqd3NoOJHsAGiIoTNx55lrcRb24M0IOdiL/8sAZ+tne54lUZ8TQhriKq78paaoDOmWdt91/rF9IF4PJrZTyePHwBzEI6k8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Multicast support have been tested and is working now.
+Hi Hams,
 
-Signed-off-by: Esben Haabendal <esben@geanix.com>
----
- drivers/net/ethernet/xilinx/ll_temac_main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+https://github.com/systemd/systemd/pull/12322
+https://github.com/hadess/iio-sensor-proxy/pull/262
 
-diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
-index 75da604..5d8894d 100644
---- a/drivers/net/ethernet/xilinx/ll_temac_main.c
-+++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
-@@ -21,7 +21,6 @@
-  *
-  * TODO:
-  * - Factor out locallink DMA code into separate driver
-- * - Fix multicast assignment.
-  * - Fix support for hardware checksumming.
-  * - Testing.  Lots and lots of testing.
-  *
-@@ -1096,6 +1095,7 @@ static const struct net_device_ops temac_netdev_ops = {
- 	.ndo_open = temac_open,
- 	.ndo_stop = temac_stop,
- 	.ndo_start_xmit = temac_start_xmit,
-+	.ndo_set_rx_mode = temac_set_multicast_list,
- 	.ndo_set_mac_address = temac_set_mac_address,
- 	.ndo_validate_addr = eth_validate_addr,
- 	.ndo_do_ioctl = temac_ioctl,
-@@ -1161,7 +1161,6 @@ static int temac_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, ndev);
- 	SET_NETDEV_DEV(ndev, &pdev->dev);
--	ndev->flags &= ~IFF_MULTICAST;  /* clear multicast */
- 	ndev->features = NETIF_F_SG;
- 	ndev->netdev_ops = &temac_netdev_ops;
- 	ndev->ethtool_ops = &temac_ethtool_ops;
--- 
-2.4.11
+As all the pull requests to systemd and iio-sensor-proxy has already
+been merged, I just need your review on this:
+https://github.com/systemd/systemd/pull/12449
 
+Then, I guess this patch is ready to go. Please let me know if theres any i=
+ssue.
+
+Regards,
+Luis
+
+
+On Wed, 17 Apr 2019 at 16:08, Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi,
+>
+> On 15-04-19 17:40, luis@aurorafoss.org wrote:
+> > April 6, 2019 10:36 AM, "Hans de Goede" <hdegoede@redhat.com> wrote:
+> >
+> > Hi,
+> >
+> >> Yes that seems the best way forward with this.
+> >>
+> >> Note I think "base" is better then "keyboard" for the sensor which
+> >> is in the base/keyboard. But neither is perfect, so go which whatever
+> >> you prefer.
+> >
+> > Reference to:
+> > - https://github.com/hadess/iio-sensor-proxy/pull/262 > - https://githu=
+b.com/systemd/systemd/pull/12322
+>
+> Thank you for your work on this, I see that Bastien has
+> already reviewed the iio-sensor-proxy changes.
+>
+> I've just added one small remark to the systemd changes,
+> except for that small remark the systemd changes look good to me.
+>
+> Regards,
+>
+> Hams
+>
+>
+>
+>
+> >> On 06-04-19 01:01, Lu=C3=ADs Ferreira wrote:
+> >>
+> >>> Hi,
+> >>> Basically we need to come up with a convention to (optionally) indica=
+te
+> >>
+> >> the sensors location with a udev attribute set by:
+> >> /lib/udev/hwdb.d/60-sensor.hwdb
+> >>> So should we start adding `ACCEL_LOCATION=3Ddisplay` and
+> >>> `ACCEL_LOCATION=3Dkeyboard` attributes to that file and patch
+> >>> iio-sensor-proxy to ignore the keyboard ones as a first step ?
+> >>
+> >> Yes that seems the best way forward with this.
+> >>
+> >> Note I think "base" is better then "keyboard" for the sensor which
+> >> is in the base/keyboard. But neither is perfect, so go which whatever
+> >> you prefer.
+> >>
+> >> Thanks & Regards,
+> >>
+> >> Hans
+> >>
+> >>> On Wed, 3 Apr 2019 at 10:10, Hans de Goede <hdegoede@redhat.com> wrot=
+e:
+> >>
+> >> Hi,
+> >>
+> >> On 02-04-19 18:04, Lu=C3=ADs Ferreira wrote:
+> >>> Some ultrabooks, like Teclast F6 Pro, use KIOX010A sensor on display
+> >>> and KIOX020A sensor on keyboard base, to detect tablet mode or screen
+> >>> orientation.
+> >>
+> >> I deliberately left out the KIOX020A id for now, because currently
+> >> userspace cannot really deal with having 2 sensors.
+> >>
+> >> See:
+> >> https://github.com/systemd/systemd/issues/6557
+> >> https://github.com/hadess/iio-sensor-proxy/issues/166
+> >>
+> >> Basically we need to come up with a convention to (optionally) indicat=
+e
+> >> the sensors location with a udev attribute set by:
+> >> /lib/udev/hwdb.d/60-sensor.hwdb
+> >>
+> >> And then patch iio-sensor-proxy to consume that attribute and ignore
+> >> the one which has e.g. ACCEL_LOCATION=3Dkeyboard in its udev propertie=
+s
+> >>
+> >> Ignoring would be a first step, maybe later it can do something useful
+> >> with it, see e.g. : https://github.com/alesguzik/linux_detect_tablet_m=
+ode
+> >>
+> >> IMHO we really should minimally get code in place for iio-sensor-proxy
+> >> to ignore the keyboard accelerometer before merging this patch.
+> >>
+> >> I realize that having the code in place will not magically get it on
+> >> all users machines, but I believe this is the minimum which needs to
+> >> happen before we push this out and potentially breaks people screen
+> >> rotation.
+> >>
+> >> I've had working on this on my TODO list for a long long time now,
+> >> but -ENOTIME. If you have some time to work on this then that would
+> >> be great.
+> >>
+> >> Regards,
+> >>
+> >> Hans
+> >>> Signed-off-by: Lu=C3=ADs Ferreira <luis@aurorafoss.org>
+> >>> ---
+> >>> drivers/iio/accel/kxcjk-1013.c | 1 +
+> >>> 1 file changed, 1 insertion(+)
+> >>>
+> >>> diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk=
+-1013.c
+> >>> index 7096e577b23f..9a5e445facc1 100644
+> >>> --- a/drivers/iio/accel/kxcjk-1013.c
+> >>> +++ b/drivers/iio/accel/kxcjk-1013.c
+> >>> @@ -1492,6 +1492,7 @@ static const struct acpi_device_id kx_acpi_matc=
+h[] =3D {
+> >>> {"KIOX0009", KXTJ21009},
+> >>> {"KIOX000A", KXCJ91008},
+> >>> {"KIOX010A", KXCJ91008}, /* KXCJ91008 inside the display of a 2-in-1 =
+*/
+> >>> + {"KIOX020A", KXCJ91008},
+> >>> {"KXTJ1009", KXTJ21009},
+> >>> {"KXJ2109", KXTJ21009},
+> >>> {"SMO8500", KXCJ91008},
