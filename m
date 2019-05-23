@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A413288F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98E52287F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392037AbfEWTaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:30:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43216 "EHLO mail.kernel.org"
+        id S2391075AbfEWTZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:25:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392018AbfEWTaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:30:00 -0400
+        id S2391055AbfEWTZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:25:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91539217D7;
-        Thu, 23 May 2019 19:29:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 944902184E;
+        Thu, 23 May 2019 19:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639799;
-        bh=bKs5VgwY2UPSlE56fRRjQSE74HLtE6QYQqPNJaat+zg=;
+        s=default; t=1558639511;
+        bh=LtAw2JPeh35qAaYGeZsx8jGPw5if8EhsDrE/tt2wK5k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gt5FhsLvCxtQByiFGyNSdf1ifmkJZqPqSaz0+/tZYlvLzxGUttJ9p4SkczVF6sujo
-         uVmC64+CPXMprHvFjKMPhZfla0dpzLQQ+eAbu5C/J2d0tLyuCmLLxYxbEZVdYUV/3U
-         kVs+ul5aiI66OanCca6rL0h0dw8NNoOLRL/k4iAI=
+        b=2OHFkfg46zr+lRvvKVqoFeBj1X1VpynvEc0NVd9DiiP1P8DtiBkYyM8G5fhworlUU
+         PUNh08FCajfnprafcj8FQmxQlhVRl3ZZgCzxu0vhAMwLxJhSLvJMdbwb0bvTfdWyaX
+         Z7J1L3onzOJ+WZmGXW9mU+wofCSTmfQALaZuXc34=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 5.1 080/122] perf intel-pt: Fix improved sample timestamp
-Date:   Thu, 23 May 2019 21:06:42 +0200
-Message-Id: <20190523181715.374011582@linuxfoundation.org>
+        stable@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 115/139] PCI: Fix issue with "pci=disable_acs_redir" parameter being ignored
+Date:   Thu, 23 May 2019 21:06:43 +0200
+Message-Id: <20190523181734.807123874@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
-References: <20190523181705.091418060@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,96 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+[ Upstream commit d5bc73f34cc97c4b4b9202cc93182c2515076edf ]
 
-commit 61b6e08dc8e3ea80b7485c9b3f875ddd45c8466b upstream.
+In most cases, kmalloc() will not be available early in boot when
+pci_setup() is called.  Thus, the kstrdup() call that was added to fix the
+__initdata bug with the disable_acs_redir parameter usually returns NULL,
+so the parameter is discarded and has no effect.
 
-The decoder uses its current timestamp in samples. Usually that is a
-timestamp that has already passed, but in some cases it is a timestamp
-for a branch that the decoder is walking towards, and consequently
-hasn't reached.
+To fix this, store the string that's in initdata until an initcall function
+can allocate the memory appropriately.  This way we don't need any
+additional static memory.
 
-The intel_pt_sample_time() function decides which is which, but was not
-handling TNT packets exactly correctly.
-
-In the case of TNT, the timestamp applies to the first branch, so the
-decoder must first walk to that branch.
-
-That means intel_pt_sample_time() should return true for TNT, and this
-patch makes that change. However, if the first branch is a non-taken
-branch (i.e. a 'N'), then intel_pt_sample_time() needs to return false
-for subsequent taken branches in the same TNT packet.
-
-To handle that, introduce a new state INTEL_PT_STATE_TNT_CONT to
-distinguish the cases.
-
-Note that commit 3f04d98e972b5 ("perf intel-pt: Improve sample
-timestamp") was also a stable fix and appears, for example, in v4.4
-stable tree as commit a4ebb58fd124 ("perf intel-pt: Improve sample
-timestamp").
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org # v4.4+
-Fixes: 3f04d98e972b5 ("perf intel-pt: Improve sample timestamp")
-Link: http://lkml.kernel.org/r/20190510124143.27054-3-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: d2fd6e81912a ("PCI: Fix __initdata issue with "pci=disable_acs_redir" parameter")
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/pci/pci.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -58,6 +58,7 @@ enum intel_pt_pkt_state {
- 	INTEL_PT_STATE_NO_IP,
- 	INTEL_PT_STATE_ERR_RESYNC,
- 	INTEL_PT_STATE_IN_SYNC,
-+	INTEL_PT_STATE_TNT_CONT,
- 	INTEL_PT_STATE_TNT,
- 	INTEL_PT_STATE_TIP,
- 	INTEL_PT_STATE_TIP_PGD,
-@@ -72,8 +73,9 @@ static inline bool intel_pt_sample_time(
- 	case INTEL_PT_STATE_NO_IP:
- 	case INTEL_PT_STATE_ERR_RESYNC:
- 	case INTEL_PT_STATE_IN_SYNC:
--	case INTEL_PT_STATE_TNT:
-+	case INTEL_PT_STATE_TNT_CONT:
- 		return true;
-+	case INTEL_PT_STATE_TNT:
- 	case INTEL_PT_STATE_TIP:
- 	case INTEL_PT_STATE_TIP_PGD:
- 	case INTEL_PT_STATE_FUP:
-@@ -1261,7 +1263,9 @@ static int intel_pt_walk_tnt(struct inte
- 				return -ENOENT;
- 			}
- 			decoder->tnt.count -= 1;
--			if (!decoder->tnt.count)
-+			if (decoder->tnt.count)
-+				decoder->pkt_state = INTEL_PT_STATE_TNT_CONT;
-+			else
- 				decoder->pkt_state = INTEL_PT_STATE_IN_SYNC;
- 			decoder->tnt.payload <<= 1;
- 			decoder->state.from_ip = decoder->ip;
-@@ -1292,7 +1296,9 @@ static int intel_pt_walk_tnt(struct inte
- 
- 		if (intel_pt_insn.branch == INTEL_PT_BR_CONDITIONAL) {
- 			decoder->tnt.count -= 1;
--			if (!decoder->tnt.count)
-+			if (decoder->tnt.count)
-+				decoder->pkt_state = INTEL_PT_STATE_TNT_CONT;
-+			else
- 				decoder->pkt_state = INTEL_PT_STATE_IN_SYNC;
- 			if (decoder->tnt.payload & BIT63) {
- 				decoder->tnt.payload <<= 1;
-@@ -2372,6 +2378,7 @@ const struct intel_pt_state *intel_pt_de
- 			err = intel_pt_walk_trace(decoder);
- 			break;
- 		case INTEL_PT_STATE_TNT:
-+		case INTEL_PT_STATE_TNT_CONT:
- 			err = intel_pt_walk_tnt(decoder);
- 			if (err == -EAGAIN)
- 				err = intel_pt_walk_trace(decoder);
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index e91005d0f20c7..3f77bab698ced 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -6266,8 +6266,7 @@ static int __init pci_setup(char *str)
+ 			} else if (!strncmp(str, "pcie_scan_all", 13)) {
+ 				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
+ 			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
+-				disable_acs_redir_param =
+-					kstrdup(str + 18, GFP_KERNEL);
++				disable_acs_redir_param = str + 18;
+ 			} else {
+ 				printk(KERN_ERR "PCI: Unknown option `%s'\n",
+ 						str);
+@@ -6278,3 +6277,19 @@ static int __init pci_setup(char *str)
+ 	return 0;
+ }
+ early_param("pci", pci_setup);
++
++/*
++ * 'disable_acs_redir_param' is initialized in pci_setup(), above, to point
++ * to data in the __initdata section which will be freed after the init
++ * sequence is complete. We can't allocate memory in pci_setup() because some
++ * architectures do not have any memory allocation service available during
++ * an early_param() call. So we allocate memory and copy the variable here
++ * before the init section is freed.
++ */
++static int __init pci_realloc_setup_params(void)
++{
++	disable_acs_redir_param = kstrdup(disable_acs_redir_param, GFP_KERNEL);
++
++	return 0;
++}
++pure_initcall(pci_realloc_setup_params);
+-- 
+2.20.1
+
 
 
