@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7864287D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5E3828ACC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387521AbfEWTXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:23:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34460 "EHLO mail.kernel.org"
+        id S2388872AbfEWTrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:47:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390770AbfEWTXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:23:50 -0400
+        id S2388082AbfEWTN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:13:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2EB62054F;
-        Thu, 23 May 2019 19:23:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DAF32186A;
+        Thu, 23 May 2019 19:13:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639430;
-        bh=uxPr8ykJ/Zl6QN+mxD8fJr+dtsoS0g8hBhrj1U7skoM=;
+        s=default; t=1558638806;
+        bh=iinsLTxbI9GgEq3kXfceGAF5pzt0Yc7F8j71KqN8rV0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E8pky9rYwxq+f7FRdp/bAGQ1gmeUvj9wxhytchAsXC/JLJDSq/YgbLN1rGEZ6phE6
-         v1xigbgdGLDODfoXMmDLN4VUCt3eTezg9b95ylaZ9Rp4ydLg6mcnVnzMRCEJYH+0gm
-         Gi0EdzZ8QR5kCZiu3/ZVVzopyZZaNT13Qa8DSmoI=
+        b=JPHLvEHjKJVFH/x3TVO4WhhLjOtAn0hjqbW8f6SrlFMWA/8a9RzET5rHIA0a8cLsn
+         bIVPzW5Io7+t7/O4ODPYwTfozu1Y/HxoZ/qvaxzGekzU7FtmIUKyLA0uoqKTsmr8VM
+         7N1MFuzGcRn/vM9xMvMe37AFCfE5p6YRi7FKEuas=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Su Yanjun <suyj.fnst@cn.fujitsu.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 102/139] xfrm6_tunnel: Fix potential panic when unloading xfrm6_tunnel module
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        Nigel Croxon <ncroxon@redhat.com>, Xiao Ni <xni@redhat.com>,
+        Song Liu <songliubraving@fb.com>
+Subject: [PATCH 4.14 72/77] Revert "Dont jump to compute_result state from check_result state"
 Date:   Thu, 23 May 2019 21:06:30 +0200
-Message-Id: <20190523181733.708413856@linuxfoundation.org>
+Message-Id: <20190523181729.932487393@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,38 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6ee02a54ef990a71bf542b6f0a4e3321de9d9c66 ]
+From: Song Liu <songliubraving@fb.com>
 
-When unloading xfrm6_tunnel module, xfrm6_tunnel_fini directly
-frees the xfrm6_tunnel_spi_kmem. Maybe someone has gotten the
-xfrm6_tunnel_spi, so need to wait it.
+commit a25d8c327bb41742dbd59f8c545f59f3b9c39983 upstream.
 
-Fixes: 91cc3bb0b04ff("xfrm6_tunnel: RCU conversion")
-Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This reverts commit 4f4fd7c5798bbdd5a03a60f6269cf1177fbd11ef.
+
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Nigel Croxon <ncroxon@redhat.com>
+Cc: Xiao Ni <xni@redhat.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/ipv6/xfrm6_tunnel.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/md/raid5.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
-index bc65db782bfb1..12cb3aa990af4 100644
---- a/net/ipv6/xfrm6_tunnel.c
-+++ b/net/ipv6/xfrm6_tunnel.c
-@@ -402,6 +402,10 @@ static void __exit xfrm6_tunnel_fini(void)
- 	xfrm6_tunnel_deregister(&xfrm6_tunnel_handler, AF_INET6);
- 	xfrm_unregister_type(&xfrm6_tunnel_type, AF_INET6);
- 	unregister_pernet_subsys(&xfrm6_tunnel_net_ops);
-+	/* Someone maybe has gotten the xfrm6_tunnel_spi.
-+	 * So need to wait it.
-+	 */
-+	rcu_barrier();
- 	kmem_cache_destroy(xfrm6_tunnel_spi_kmem);
- }
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -4218,15 +4218,26 @@ static void handle_parity_checks6(struct
+ 	case check_state_check_result:
+ 		sh->check_state = check_state_idle;
  
--- 
-2.20.1
-
+-		if (s->failed > 1)
+-			break;
+ 		/* handle a successful check operation, if parity is correct
+ 		 * we are done.  Otherwise update the mismatch count and repair
+ 		 * parity if !MD_RECOVERY_CHECK
+ 		 */
+ 		if (sh->ops.zero_sum_result == 0) {
+-			/* Any parity checked was correct */
+-			set_bit(STRIPE_INSYNC, &sh->state);
++			/* both parities are correct */
++			if (!s->failed)
++				set_bit(STRIPE_INSYNC, &sh->state);
++			else {
++				/* in contrast to the raid5 case we can validate
++				 * parity, but still have a failure to write
++				 * back
++				 */
++				sh->check_state = check_state_compute_result;
++				/* Returning at this point means that we may go
++				 * off and bring p and/or q uptodate again so
++				 * we make sure to check zero_sum_result again
++				 * to verify if p or q need writeback
++				 */
++			}
+ 		} else {
+ 			atomic64_add(STRIPE_SECTORS, &conf->mddev->resync_mismatches);
+ 			if (test_bit(MD_RECOVERY_CHECK, &conf->mddev->recovery)) {
 
 
