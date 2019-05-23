@@ -2,39 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC4FF2875A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71D89286D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389612AbfEWTS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:18:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53840 "EHLO mail.kernel.org"
+        id S2387703AbfEWTNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:13:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389588AbfEWTSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:18:23 -0400
+        id S2388560AbfEWTNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:13:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8E93217D9;
-        Thu, 23 May 2019 19:18:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D19E217D7;
+        Thu, 23 May 2019 19:13:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639102;
-        bh=tT3A7MgSY8GySfsmmxxmN0nbp6Jz1o10Gaxx8+h9/P8=;
+        s=default; t=1558638798;
+        bh=DwPRsVPAigTrOiWpGpo/JfMhmIDhEdbd23DOd4P3y1E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jRagaAofvKJOwYReE0dTB02G+CyPx3qwADDirPta6zElNOC+eX6v9DnM4jXObFBMV
-         fEZDI+EgMPtg7IfNEjK8LMNHZ7SvjbZhkggD3RxR0xVjTlCCmtulYsr6lzWzduRjhy
-         s8ni1luJ1U0EC+zy7NmpeeVsYIf2lKuFkKQE+6+w=
+        b=xkcEaXSuKH5jLZs1r3e6WzrXxa40vOrS4R9DgWHHc1M+0F6VEgeOjSQpPNV7yWXeM
+         w9PuyoHH0j/njQn89/I4SnzdaXoUtfJBoY4wtT4sUdeeWH0baSwcI8fwMlkpSXHhnY
+         rcdIi7dpICzB18YMevpQpuDl+dp/Hfw2Cy0m951Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org, Li RongQing <lirongqing@baidu.com>,
+        Gary R Hook <gary.hook@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Coly Li <colyli@suse.de>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 087/114] esp4: add length check for UDP encapsulation
-Date:   Thu, 23 May 2019 21:06:26 +0200
-Message-Id: <20190523181739.478982228@linuxfoundation.org>
+Subject: [PATCH 4.14 69/77] x86/mm/mem_encrypt: Disable all instrumentation for early SME setup
+Date:   Thu, 23 May 2019 21:06:27 +0200
+Message-Id: <20190523181729.524273661@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,88 +60,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8dfb4eba4100e7cdd161a8baef2d8d61b7a7e62e ]
+[ Upstream commit b51ce3744f115850166f3d6c292b9c8cb849ad4f ]
 
-esp_output_udp_encap can produce a length that doesn't fit in the 16
-bits of a UDP header's length field. In that case, we'll send a
-fragmented packet whose length is larger than IP_MAX_MTU (resulting in
-"Oversized IP packet" warnings on receive) and with a bogus UDP
-length.
+Enablement of AMD's Secure Memory Encryption feature is determined very
+early after start_kernel() is entered. Part of this procedure involves
+scanning the command line for the parameter 'mem_encrypt'.
 
-To prevent this, add a length check to esp_output_udp_encap and return
- -EMSGSIZE on failure.
+To determine intended state, the function sme_enable() uses library
+functions cmdline_find_option() and strncmp(). Their use occurs early
+enough such that it cannot be assumed that any instrumentation subsystem
+is initialized.
 
-This seems to be older than git history.
+For example, making calls to a KASAN-instrumented function before KASAN
+is set up will result in the use of uninitialized memory and a boot
+failure.
 
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+When AMD's SME support is enabled, conditionally disable instrumentation
+of these dependent functions in lib/string.c and arch/x86/lib/cmdline.c.
+
+ [ bp: Get rid of intermediary nostackp var and cleanup whitespace. ]
+
+Fixes: aca20d546214 ("x86/mm: Add support to make use of Secure Memory Encryption")
+Reported-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Gary R Hook <gary.hook@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Boris Brezillon <bbrezillon@kernel.org>
+Cc: Coly Li <colyli@suse.de>
+Cc: "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: "luto@kernel.org" <luto@kernel.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: "mingo@redhat.com" <mingo@redhat.com>
+Cc: "peterz@infradead.org" <peterz@infradead.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/155657657552.7116.18363762932464011367.stgit@sosrh3.amd.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/esp4.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ arch/x86/lib/Makefile | 12 ++++++++++++
+ lib/Makefile          | 11 +++++++++++
+ 2 files changed, 23 insertions(+)
 
-diff --git a/net/ipv4/esp4.c b/net/ipv4/esp4.c
-index 12a43a5369a54..114f9def1ec54 100644
---- a/net/ipv4/esp4.c
-+++ b/net/ipv4/esp4.c
-@@ -223,7 +223,7 @@ static void esp_output_fill_trailer(u8 *tail, int tfclen, int plen, __u8 proto)
- 	tail[plen - 1] = proto;
- }
+diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
+index d435c89875c14..60b410ff31e8a 100644
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@ -6,6 +6,18 @@
+ # Produces uninteresting flaky coverage.
+ KCOV_INSTRUMENT_delay.o	:= n
  
--static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *esp)
-+static int esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *esp)
- {
- 	int encap_type;
- 	struct udphdr *uh;
-@@ -231,6 +231,7 @@ static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, stru
- 	__be16 sport, dport;
- 	struct xfrm_encap_tmpl *encap = x->encap;
- 	struct ip_esp_hdr *esph = esp->esph;
-+	unsigned int len;
- 
- 	spin_lock_bh(&x->lock);
- 	sport = encap->encap_sport;
-@@ -238,11 +239,14 @@ static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, stru
- 	encap_type = encap->encap_type;
- 	spin_unlock_bh(&x->lock);
- 
-+	len = skb->len + esp->tailen - skb_transport_offset(skb);
-+	if (len + sizeof(struct iphdr) >= IP_MAX_MTU)
-+		return -EMSGSIZE;
++# Early boot use of cmdline; don't instrument it
++ifdef CONFIG_AMD_MEM_ENCRYPT
++KCOV_INSTRUMENT_cmdline.o := n
++KASAN_SANITIZE_cmdline.o  := n
 +
- 	uh = (struct udphdr *)esph;
- 	uh->source = sport;
- 	uh->dest = dport;
--	uh->len = htons(skb->len + esp->tailen
--		  - skb_transport_offset(skb));
-+	uh->len = htons(len);
- 	uh->check = 0;
- 
- 	switch (encap_type) {
-@@ -259,6 +263,8 @@ static void esp_output_udp_encap(struct xfrm_state *x, struct sk_buff *skb, stru
- 
- 	*skb_mac_header(skb) = IPPROTO_UDP;
- 	esp->esph = esph;
++ifdef CONFIG_FUNCTION_TRACER
++CFLAGS_REMOVE_cmdline.o = -pg
++endif
 +
-+	return 0;
- }
- 
- int esp_output_head(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *esp)
-@@ -272,8 +278,12 @@ int esp_output_head(struct xfrm_state *x, struct sk_buff *skb, struct esp_info *
- 	int tailen = esp->tailen;
- 
- 	/* this is non-NULL only with UDP Encapsulation */
--	if (x->encap)
--		esp_output_udp_encap(x, skb, esp);
-+	if (x->encap) {
-+		int err = esp_output_udp_encap(x, skb, esp);
++CFLAGS_cmdline.o := $(call cc-option, -fno-stack-protector)
++endif
 +
-+		if (err < 0)
-+			return err;
-+	}
+ inat_tables_script = $(srctree)/arch/x86/tools/gen-insn-attr-x86.awk
+ inat_tables_maps = $(srctree)/arch/x86/lib/x86-opcode-map.txt
+ quiet_cmd_inat_tables = GEN     $@
+diff --git a/lib/Makefile b/lib/Makefile
+index b1ac450329033..4ea31c2d982df 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -17,6 +17,17 @@ KCOV_INSTRUMENT_list_debug.o := n
+ KCOV_INSTRUMENT_debugobjects.o := n
+ KCOV_INSTRUMENT_dynamic_debug.o := n
  
- 	if (!skb_cloned(skb)) {
- 		if (tailen <= skb_tailroom(skb)) {
++# Early boot use of cmdline, don't instrument it
++ifdef CONFIG_AMD_MEM_ENCRYPT
++KASAN_SANITIZE_string.o := n
++
++ifdef CONFIG_FUNCTION_TRACER
++CFLAGS_REMOVE_string.o = -pg
++endif
++
++CFLAGS_string.o := $(call cc-option, -fno-stack-protector)
++endif
++
+ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+ 	 rbtree.o radix-tree.o dump_stack.o timerqueue.o\
+ 	 idr.o int_sqrt.o extable.o \
 -- 
 2.20.1
 
