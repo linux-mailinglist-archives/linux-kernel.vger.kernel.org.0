@@ -2,87 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B6E27E66
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:43:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AE4A27E92
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730826AbfEWNnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 09:43:13 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:43303 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729698AbfEWNnN (ORCPT
+        id S1730797AbfEWNqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:46:33 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40576 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730564AbfEWNqb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 09:43:13 -0400
-Received: by mail-ua1-f68.google.com with SMTP id u4so2173030uau.10
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 06:43:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kDtnRElNuUyMt12FB8Rk0MvDHzUU1QwxTxxj3HBh2vw=;
-        b=F5HMpVG3EWCJPzMlJKs927sGGct8xw/xB0Y89Vgc09MmTe9qCI0EWFwkd3F7L+ZqFU
-         kWHqmexwtAqAJgSeoLTmFnZylC+rm5Br2x4lzGtcs02ZZCavNG2Gf5f+gE/JWhQ/Ivs/
-         8x2rRNG3Gb6qPEUUT/ibkLnE5XHfMOxE1oKgDBsbVXYeq/geXD2fm0t7ZMlNcI6Ag/XQ
-         tbJ0nagR/yajVw57nuQCPVX18YlRvtDzNv8eAC23gjHJgwzVXV5xko9O2KehbFq5yR5X
-         JXt7dQUscteyeiumbcstLMRjk9pfvtsuAbcAyqhHrkbkUqxZO4aGLoi3vYUAgFsAwP9e
-         VWDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kDtnRElNuUyMt12FB8Rk0MvDHzUU1QwxTxxj3HBh2vw=;
-        b=IK90TvaGgGozeV433ZekRf1/yXX8NJjNfk2TNjrC5UzH5LcHAjtZPWWhoApmI8QS0R
-         mdchY8WRnX4lP5ziw5lI04/zQmB9gv9/CZ760L4yEmLCk4ccjTF+Sps7xDugEeePJ3xF
-         CppYzwrwDNFtUXbtXpDDkqe6DiH7AmVOG6NdHiEOuHDTFfeEeAHQxuN4BstHoyEDg4Gx
-         zpGWBePGf56WfqHCKJBYia0nJCX50+vdR4SqH8nU4DWivAGnCzVuKvG8ju7fPqZdgyzA
-         lCZ5b3jT5Po2hSI4eww7ijjvNWmUtwsHQwufYBACfsLovBM38U9Twzdjj75mEmoYK6Pf
-         qs+A==
-X-Gm-Message-State: APjAAAXQXC90wnVZouQ58QzFXMxGk9wPSaTEYTseIlyUcHY1LKrJs6zf
-        Fr/DDq0RxBaJjWs7S1BfewTJxq2160HW+lgbioPnBw==
-X-Google-Smtp-Source: APXvYqwGxws4eO22FIKVa1UIaqOVwcqNo2ovHYADpIBiJJe9TRlN+UMwHQoxWg/gax3t035v1obA5yqmm0zqE+T3KI8=
-X-Received: by 2002:a9f:366b:: with SMTP id s40mr22365743uad.121.1558618992582;
- Thu, 23 May 2019 06:43:12 -0700 (PDT)
+        Thu, 23 May 2019 09:46:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mfme33xseZptaUR1J0V/caYBOllJ3rsr79Z37c1uExY=; b=p03EHWT2EucM1oy2mwwkLoCa4
+        cEClGv19UdrvGGd0zT2qpW5VR+hR7uqzOdMkk8Pq97xH1hF2IuNiIw8WCKa8qpFzoFcgidqqUxoFM
+        qkFRSOWgyqaN+BmVvehSRKNxsehKedaX1zgRl/igV7NNJdWO7vlbzoLgwPplFrbbMbU6w=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hTo39-0000Dd-D8; Thu, 23 May 2019 13:46:27 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 0250D1126D24; Thu, 23 May 2019 14:46:25 +0100 (BST)
+Date:   Thu, 23 May 2019 14:46:25 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-rockchip@lists.infradead.org, drinkcat@chromium.org,
+        Guenter Roeck <groeck@chromium.org>, briannorris@chromium.org,
+        mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] spi: Allow SPI devices to request the pumping
+ thread be realtime
+Message-ID: <20190523134625.GG17245@sirena.org.uk>
+References: <20190515164814.258898-1-dianders@chromium.org>
+ <20190515164814.258898-3-dianders@chromium.org>
 MIME-Version: 1.0
-References: <1558515574-11155-1-git-send-email-sagar.kadam@sifive.com>
- <1558515574-11155-4-git-send-email-sagar.kadam@sifive.com>
- <20190522194529.GJ7281@lunn.ch> <CAARK3HmMVibudG2CFLBoMSAqnraXyirTL6CXYo1T_XJEuGJy7Q@mail.gmail.com>
- <20190523123435.GA15531@lunn.ch>
-In-Reply-To: <20190523123435.GA15531@lunn.ch>
-From:   Sagar Kadam <sagar.kadam@sifive.com>
-Date:   Thu, 23 May 2019 19:13:01 +0530
-Message-ID: <CAARK3H=BPT3aGUGiQvov5aqFRNVTSeyqJ-bNGw6uEoU7c8iiJg@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] i2c-ocores: sifive: add polling mode workaround
- for FU540-C000 SoC.
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, peter@korsgaard.com,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bO4vSxwwZtUjUWHo"
+Content-Disposition: inline
+In-Reply-To: <20190515164814.258898-3-dianders@chromium.org>
+X-Cookie: I brake for chezlogs!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
 
+--bO4vSxwwZtUjUWHo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, May 23, 2019 at 6:04 PM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> > Thank you Andrew for reviewing the patch set.
-> > Can you please let me know weather you or Peter will be pick up the patch
-> > for v5.3 or they  should go in via some other tree?
->
-> Hi Sagar
->
-> Wolfram Sang should pick the patchset up.
->
+On Wed, May 15, 2019 at 09:48:12AM -0700, Douglas Anderson wrote:
+> Right now the only way to get the SPI pumping thread bumped up to
+> realtime priority is for the controller to request it.  However it may
+> be that the controller works fine with the normal priority but
+> communication to a particular SPI device on the bus needs realtime
+> priority.
 
-Ok, Great. Do we need to write to him about this patchset?
+The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
 
->         Andrew
+  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
 
-Regards,
-Sagar Kadam
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-rt-pump
+
+for you to fetch changes up to 924b5867e7bd6a6a98014f0517b747465b108011:
+
+  spi: Allow SPI devices to request the pumping thread be realtime (2019-05-23 14:44:02 +0100)
+
+----------------------------------------------------------------
+spi: Allow setting pump to RT priority
+
+----------------------------------------------------------------
+Douglas Anderson (1):
+      spi: Allow SPI devices to request the pumping thread be realtime
+
+ drivers/spi/spi.c       | 36 ++++++++++++++++++++++++++++++------
+ include/linux/spi/spi.h |  2 ++
+ 2 files changed, 32 insertions(+), 6 deletions(-)
+
+--bO4vSxwwZtUjUWHo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzmpDEACgkQJNaLcl1U
+h9AT8wf9HCQwiI9ChQBim3VkHh1VA8vwPgC20zoPo4PUGPcvvaWX5I3lrUoeCp1Q
+vpMaUDp9J8OQ57wbmNFjqYYwLAK66XMUPQmqyH6q+1m1JSp5FP41aVGkJD32UOnk
+wqsDdznTOvdDrgnVtJWtqjSWiK18M4OQJhIJGwe0wBRIfk+bpQDa+s+R34wgHCt8
+xGJZcdJagggMsco0HvSgLuIRcIVuLbsCiu9Vxh1GR3ko3x7xLUVhkoKzxJ81qVu1
+99KmShuE/rXn2IKU0lfC6WjItvey3r1RWyKFsSd7xKI6Izz45lNFrUlgrSOyLW4R
+NqMXjQUeC/nEluG0IIC4X0mbopIIsw==
+=Xgy/
+-----END PGP SIGNATURE-----
+
+--bO4vSxwwZtUjUWHo--
