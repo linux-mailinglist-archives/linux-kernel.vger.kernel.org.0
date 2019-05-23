@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FEB52869B
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC57828664
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388012AbfEWTK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:10:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44192 "EHLO mail.kernel.org"
+        id S1732009AbfEWTJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:09:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387984AbfEWTKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:10:51 -0400
+        id S1731992AbfEWTI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:08:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A29402133D;
-        Thu, 23 May 2019 19:10:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C66E217D7;
+        Thu, 23 May 2019 19:08:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638651;
-        bh=X82DCfnwJygqNt/nKZWX1ft7kNfJxTjDL6mOycoRrSs=;
+        s=default; t=1558638538;
+        bh=zZyUwNkjLz79/Q09dfLu0J71rjWtORh+YiQLwpXk0go=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PkpBqKqlr8uUWho5j4ZsPTY7sA3G2ue37geOP9Rxwc+BQtjx6Buza0k5+8a7ydXZF
-         577K7zpLCmjztpbv6j5i5+31/5nqHTI98y7rn/H9+2QwqunEYG8N6al+DlkXgYdcSd
-         t664Q63AphIbAIeRK8xC5XhHfHg608enlPGkSse0=
+        b=qt8qPeTIiXo9uZaVryrkd+VCofNuH0y/zFWlubFOYXAczCwwvbFMc8/y1GwwZ1q5/
+         iHKT726YspH9vSzq7BPGoe5I4Mo6DEcnLaGtvosIQ5lSFj2oF/yYl/Cp2641g6OXRv
+         o2j+EHTfOPRCvHR44c0CH6+xK2rG59U7xEvifu3c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.14 14/77] parisc: Rename LEVEL to PA_ASM_LEVEL to avoid name clash with DRBD code
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.9 08/53] parisc: Export running_on_qemu symbol for modules
 Date:   Thu, 23 May 2019 21:05:32 +0200
-Message-Id: <20190523181722.193119109@linuxfoundation.org>
+Message-Id: <20190523181712.274451857@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
+References: <20190523181710.981455400@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,73 +44,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Helge Deller <deller@gmx.de>
 
-commit 1829dda0e87f4462782ca81be474c7890efe31ce upstream.
+commit 3e1120f4b57bc12437048494ab56648edaa5b57d upstream.
 
-LEVEL is a very common word, and now after many years it suddenly
-clashed with another LEVEL define in the DRBD code.
-Rename it to PA_ASM_LEVEL instead.
-
-Reported-by: kbuild test robot <lkp@intel.com>
 Signed-off-by: Helge Deller <deller@gmx.de>
-Cc: <stable@vger.kernel.org>
+CC: stable@vger.kernel.org # v4.9+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/include/asm/assembly.h |    6 +++---
- arch/parisc/kernel/head.S          |    4 ++--
- arch/parisc/kernel/syscall.S       |    2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ arch/parisc/kernel/process.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/parisc/include/asm/assembly.h
-+++ b/arch/parisc/include/asm/assembly.h
-@@ -59,14 +59,14 @@
- #define LDCW		ldcw,co
- #define BL		b,l
- # ifdef CONFIG_64BIT
--#  define LEVEL		2.0w
-+#  define PA_ASM_LEVEL	2.0w
- # else
--#  define LEVEL		2.0
-+#  define PA_ASM_LEVEL	2.0
- # endif
- #else
- #define LDCW		ldcw
- #define BL		bl
--#define LEVEL		1.1
-+#define PA_ASM_LEVEL	1.1
- #endif
+--- a/arch/parisc/kernel/process.c
++++ b/arch/parisc/kernel/process.c
+@@ -189,6 +189,7 @@ int dump_task_fpu (struct task_struct *t
+  */
  
- #ifdef __ASSEMBLY__
---- a/arch/parisc/kernel/head.S
-+++ b/arch/parisc/kernel/head.S
-@@ -22,7 +22,7 @@
- #include <linux/linkage.h>
- #include <linux/init.h>
+ int running_on_qemu __read_mostly;
++EXPORT_SYMBOL(running_on_qemu);
  
--	.level	LEVEL
-+	.level	PA_ASM_LEVEL
- 
- 	__INITDATA
- ENTRY(boot_args)
-@@ -254,7 +254,7 @@ stext_pdc_ret:
- 	ldo		R%PA(fault_vector_11)(%r10),%r10
- 
- $is_pa20:
--	.level		LEVEL /* restore 1.1 || 2.0w */
-+	.level		PA_ASM_LEVEL /* restore 1.1 || 2.0w */
- #endif /*!CONFIG_64BIT*/
- 	load32		PA(fault_vector_20),%r10
- 
---- a/arch/parisc/kernel/syscall.S
-+++ b/arch/parisc/kernel/syscall.S
-@@ -48,7 +48,7 @@ registers).
- 	 */
- #define KILL_INSN	break	0,0
- 
--	.level          LEVEL
-+	.level          PA_ASM_LEVEL
- 
- 	.text
- 
+ void __cpuidle arch_cpu_idle_dead(void)
+ {
 
 
