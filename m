@@ -2,130 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C7832874E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE436289D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:43:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389488AbfEWTRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:17:55 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37836 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389454AbfEWTRg (ORCPT
+        id S2389891AbfEWTmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:42:42 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:32928 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389690AbfEWTSv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:17:36 -0400
-Received: by mail-qt1-f193.google.com with SMTP id o7so8117338qtp.4
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:17:36 -0700 (PDT)
+        Thu, 23 May 2019 15:18:51 -0400
+Received: by mail-lf1-f66.google.com with SMTP id x132so5247281lfd.0
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 12:18:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Pm+Vx0dhObnzybiaJozRDpH0LoNYUiVOhc6EGMjBZwU=;
-        b=O0RCPEGvWXVRXRZ7y88skUaFHv3isN4h6Tr6VLsss0em/c8A1IncniPr014w2Ci4io
-         9rBOKNHmm68kYI6ygpwlm+QtR16oXFPy2bhxS9CwKHFqrIfMtEWctvqEZ4eVLH4Cn7TJ
-         HOeZtmCGjBcvBSU18syidFL3Um1gGyCpWXeJsZC2Nvpz7PwdjRmaH9U2HY3sw2gtM83U
-         WGdsqtqNuVbxSdeTfdP4MztNl8z1hsbkujcQdJiIBLEMbySogRMR8przLBmtfBbirVh8
-         fc9baIPJgppq8UkcxW/nJPwGb+5dwFFa4fUBYQGfezP1UVVzSkaq/4vRP8kXOph9tKhv
-         tF2w==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7Xq8hDRQty0iPHxqWBmFMiHP5/NEYwgv6qrN0Vc4nP8=;
+        b=ElJnN4SIqyVX33y7h7nGUs3agYvp1XeedQRemgpNbRIk5YlpyMiZcdC55lWgxLgh11
+         KGA9kvQoiXXYs/58eF04FaDku2dDlD83wtRBSt+M6G1ZAh4arkTz+KAL9TD9eCPYRb/s
+         Ml/yCA3Aye5kHbDL64GQjMNXaH7xxCsjKFKk57fS61mAwZZbM5zYQIgvTjCECVGeIZvS
+         Vu8BchtkGC9SqVmc9zM+HUOnm3qts+3oDP4vc86hWfjkeMINYmjeEB+owqaNfIjKGnt1
+         gaT8dQa9c8myhvRDjgnSpTJpspt1aTRyCZ621kdINUkw1wzbTQr7dwLOXa4U8fvDlT2D
+         Gyvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pm+Vx0dhObnzybiaJozRDpH0LoNYUiVOhc6EGMjBZwU=;
-        b=f0xMvVWbbw3D0Numv2fp5vVEQhJBphO8cf8/2qwwGU82un4BgaRgwnmK3N1qzf45vn
-         cgYg0VKq+f8mPBvsNzRHaaum91hRMCUnG8bnzhMMIDhzaRwMNAmoC8iOKk1zEveZrvKh
-         7rtrtpxXak1hW1vymLZRdkB8Fb4xa1IzO5f4b072Im0+3mh1CCHENgF6pABcT23kX61I
-         8Rl3bPLUFWPwy6WWxWjAldN9TgEGU9KyfWH9KKGdbL/iiAnWl+4At2gQ9vkzw2uIAgmJ
-         tZVU958Il3UAYXBdeXZil8wdS9KQqBAWu4G4FYrFlNgV/Nmi/TXYoo7xmuC+a84rJCHd
-         4HgQ==
-X-Gm-Message-State: APjAAAWltBe9r7QvoUn9SWPq/MNd1p88DMQDj/7fzPYMfybaNszV3trN
-        PjLSZzHh3BK4PAIUcqCmjGFrag==
-X-Google-Smtp-Source: APXvYqyby6SPIf9lPMNL5yZPBW7JhGUYjZjNDXWEHEzHk702uXmsFYcPFIXfDXhIH78qusR4hcmSJg==
-X-Received: by 2002:a0c:9acb:: with SMTP id k11mr59015856qvf.85.1558639055850;
-        Thu, 23 May 2019 12:17:35 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-49-251.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.49.251])
-        by smtp.gmail.com with ESMTPSA id q24sm139016qtq.58.2019.05.23.12.17.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 23 May 2019 12:17:35 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hTtDa-0000kS-RM; Thu, 23 May 2019 16:17:34 -0300
-Date:   Thu, 23 May 2019 16:17:34 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        "john.hubbard@gmail.com" <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Christian Benvenuti <benve@cisco.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 1/1] infiniband/mm: convert put_page() to put_user_page*()
-Message-ID: <20190523191734.GH12159@ziepe.ca>
-References: <20190523072537.31940-1-jhubbard@nvidia.com>
- <20190523072537.31940-2-jhubbard@nvidia.com>
- <20190523172852.GA27175@iweiny-DESK2.sc.intel.com>
- <20190523173222.GH12145@mellanox.com>
- <fa6d7d7c-13a3-0586-6384-768ebb7f0561@nvidia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7Xq8hDRQty0iPHxqWBmFMiHP5/NEYwgv6qrN0Vc4nP8=;
+        b=QXrYLeaTU3fmuYLUhlUSOyrxHsaMSrkZoPxhmbjwOjNN7iqvlLqRjnMkZRud/++f+j
+         Wj/+knWDCibAwlV7l2Ldb57JpBr7AjXTzOG35NxgqtXFpYs9Yf8KGtsvW2KfYzMhLRwu
+         hXN19G5bzV0ohNKrK0ewFDnoe3W875I0200znJJjjBYWQUEghn+MGb6sZo2N/kHEh7jT
+         aMjdhKNHLOY96xIJvUSx7B5eiWQ2MY6rz9/CIW/BfWZWC11IB11fiOEgEWacAhQiwZ/o
+         PIoN4WpfCjt2C+XNfc4SorkUSt34XtoGxJ/npMtLWRyAUScMGwNZbX6YdazvP0N3sOHm
+         Kaqw==
+X-Gm-Message-State: APjAAAWXBd8NJR+r40HkpYVeUgTQ1UrGSiUodXmmJWRsRaGpcoUykZOy
+        XxPavAFDsc2j3jfwaUu1WVq522psobZI0CUTnsAAAw==
+X-Google-Smtp-Source: APXvYqw1XbYiFz5hQUalCxrVjKiO6TIO71hT0hyMX6W3pIGmpBG9+vju9MG+sHieuLq/jz7BZlnOc90KWMXZK2Bxibs=
+X-Received: by 2002:a19:189:: with SMTP id 131mr46796309lfb.74.1558639129364;
+ Thu, 23 May 2019 12:18:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa6d7d7c-13a3-0586-6384-768ebb7f0561@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1558338735-8444-1-git-send-email-amelie.delaunay@st.com>
+ <20190522054833.GB4574@dell> <eb8425ec-989a-9701-7fee-61bd1d2b93c1@st.com>
+ <20190522084133.GF4574@dell> <bc1b5f1d-23b0-141d-f58f-b54ac303fe20@st.com>
+ <CACRpkdYmdpwEvCBrL6i1V+Zxd0OSpZmD8BJPSZu9jYNeJkoimQ@mail.gmail.com> <08ea97544018430caf53af36677902b7@SFHDAG3NODE2.st.com>
+In-Reply-To: <08ea97544018430caf53af36677902b7@SFHDAG3NODE2.st.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 23 May 2019 21:18:37 +0200
+Message-ID: <CACRpkdZLbMJ5dKiL9J1x=PozBVH777kNNABZi-n0LxD0BOp8mw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: stmfx: Fix compile issue when CONFIG_OF_GPIO is
+ not defined
+To:     Amelie DELAUNAY <amelie.delaunay@st.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "kbuild-all@01.org" <kbuild-all@01.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 10:46:38AM -0700, John Hubbard wrote:
-> On 5/23/19 10:32 AM, Jason Gunthorpe wrote:
-> > On Thu, May 23, 2019 at 10:28:52AM -0700, Ira Weiny wrote:
-> > > > @@ -686,8 +686,8 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
-> > > >   			 * ib_umem_odp_map_dma_single_page().
-> > > >   			 */
-> > > >   			if (npages - (j + 1) > 0)
-> > > > -				release_pages(&local_page_list[j+1],
-> > > > -					      npages - (j + 1));
-> > > > +				put_user_pages(&local_page_list[j+1],
-> > > > +					       npages - (j + 1));
-> > > 
-> > > I don't know if we discussed this before but it looks like the use of
-> > > release_pages() was not entirely correct (or at least not necessary) here.  So
-> > > I think this is ok.
-> > 
-> > Oh? John switched it from a put_pages loop to release_pages() here:
-> > 
-> > commit 75a3e6a3c129cddcc683538d8702c6ef998ec589
-> > Author: John Hubbard <jhubbard@nvidia.com>
-> > Date:   Mon Mar 4 11:46:45 2019 -0800
-> > 
-> >      RDMA/umem: minor bug fix in error handling path
-> >      1. Bug fix: fix an off by one error in the code that cleans up if it fails
-> >         to dma-map a page, after having done a get_user_pages_remote() on a
-> >         range of pages.
-> >      2. Refinement: for that same cleanup code, release_pages() is better than
-> >         put_page() in a loop.
-> > 
-> > And now we are going to back something called put_pages() that
-> > implements the same for loop the above removed?
-> > 
-> > Seems like we are going in circles?? John?
-> > 
-> 
-> put_user_pages() is meant to be a drop-in replacement for release_pages(),
-> so I made the above change as an interim step in moving the callsite from
-> a loop, to a single call.
-> 
-> And at some point, it may be possible to find a way to optimize put_user_pages()
-> in a similar way to the batching that release_pages() does, that was part
-> of the plan for this.
-> 
-> But I do see what you mean: in the interim, maybe put_user_pages() should
-> just be calling release_pages(), how does that change sound?
+On Thu, May 23, 2019 at 4:11 PM Amelie DELAUNAY <amelie.delaunay@st.com> wr=
+ote:
+> On 5/22/19 11:48 PM, Linus Walleij wrote:
+> > On Wed, May 22, 2019 at 11:21 AM Amelie DELAUNAY <amelie.delaunay@st.co=
+m> wrote:
+> >
+> >> ../drivers/pinctrl/pinctrl-stmfx.c:409:20: error:
+> >> =E2=80=98pinconf_generic_dt_node_to_map_pin=E2=80=99 undeclared here (=
+not in a function)
+> >>     .dt_node_to_map =3D pinconf_generic_dt_node_to_map_pin,
+> >>
+> >> OF_GPIO depends on OF.
+> >>
+> >> So either
+> >>       depends on OF || (OF && COMPILE_TEST)
+> >> or
+> >>       depends on OF || (OF_GPIO && COMPILE_TEST)
+> >>
+> >> and
+> >>
+> >>       select OF_GPIO
+> >
+> > I would use just:
+> >
+> > depends on OF_GPIO
+> >
+> > Because OF_GPIO already depends on OF, and
+> > compile tests will not work without OF_GPIO which
+> > require OF so...
+> >
+> > Besides it is what most other GPIO drivers do.
+> >
+> > So just keep that one line and drop the rest.
+> >
+> > Yours,
+> > Linus Walleij
+> >
+>
+> Ok so I can get rid of COMPILE_TEST ?
+>         depends on I2C
+>         depends on OF_GPIO
+>         select GENERIC_PINCONF
+>         select GPIOLIB_IRQCHIP
+>         select MFD_STMFX
 
-It would have made it more consistent.. But it seems this isn't a
-functional problem in this patch
+Yep just like that.
 
-Jason
+> Because I've no arch to balance COMPILE_TEST. Or maybe something like
+>         depends on OF_GPIO && (OF || COMPILE_TEST)
+> even if OF_GPIO && OF is redundant ?
+
+COMPILE_TEST is just to make something available for testing
+on other architectures, such as testing ARM-specific drivers
+on x86.
+
+With just OF_GPIO as dependency, it will be compile tested anyways
+because x86 allyesconfig will enable OF and OF_GPIO, and also
+all the STMFX drivers.
+
+Yours,
+Linus Walleij
