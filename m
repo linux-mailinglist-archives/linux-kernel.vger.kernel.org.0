@@ -2,67 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 300DD28C0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 23:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88EDB28C12
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 23:07:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731708AbfEWVCZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 17:02:25 -0400
-Received: from smtprelay0230.hostedemail.com ([216.40.44.230]:56005 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729797AbfEWVCY (ORCPT
+        id S1731703AbfEWVHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 17:07:21 -0400
+Received: from mail-pf1-f177.google.com ([209.85.210.177]:36376 "EHLO
+        mail-pf1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731666AbfEWVHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 17:02:24 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id A6868182CED28;
-        Thu, 23 May 2019 21:02:23 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:421:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2110:2198:2199:2393:2553:2559:2562:2828:2911:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:4425:4470:5007:10004:10400:10848:11232:11658:11914:12740:12760:12895:13069:13149:13230:13311:13357:13439:14096:14097:14181:14659:14721:21080:21324:21451:21627:30054:30060:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: brick10_31daacd83bf3d
-X-Filterd-Recvd-Size: 1862
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 23 May 2019 21:02:22 +0000 (UTC)
-Message-ID: <a3c036b12979ab7269917247a683eeb63df71d58.camel@perches.com>
-Subject: Re: [PATCH 1/2] MAINTAINERS: Add entry for fieldbus subsystem
-From:   Joe Perches <joe@perches.com>
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Thu, 23 May 2019 14:02:16 -0700
-In-Reply-To: <CAGngYiUnRSSPLDhXeAg5E0pM_-ZbNV9qpOarSemDdpwLPRZeqA@mail.gmail.com>
-References: <20190523195313.31008-1-TheSven73@gmail.com>
-         <1b741b25b973e049948b3e490c13aad48716d5b0.camel@perches.com>
-         <CAGngYiUnRSSPLDhXeAg5E0pM_-ZbNV9qpOarSemDdpwLPRZeqA@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 23 May 2019 17:07:20 -0400
+Received: by mail-pf1-f177.google.com with SMTP id v80so3934316pfa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 14:07:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZTioGuKOgNO6SwugnrEDEktz7xGxS3YWSFmCmowDiZ8=;
+        b=IxyjS7QI/iWlVolD7qMxHAsrVnEz6vYW71ld0uA+5lDEvFXgNW5y/+Hovb10dtf0fk
+         Pg6Q1W5Z978oA4Q50rBxaWG9aZoy1bha2AtsABYeJSCXvM8bvkBZe/H7yebqDH4tZPmb
+         e3KCf7zt3QR2PwmHVAlWsefxzk/UkrygDd1Uaw5e8miN15gBHL6N1BLt2cSjBeE8pV9v
+         0yEEQxhqQpHE+4rX9vVQHwlzDvEily5DxK5axwiUyupU/tLG3xoW/cechfBnsByTQiuO
+         mLRIdBQbbuT12JKswtN7ln/DniAJ2Wb+AFrXu6zhCVMik0qJAZtehXqlyAZ0Ssage/4R
+         /RDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZTioGuKOgNO6SwugnrEDEktz7xGxS3YWSFmCmowDiZ8=;
+        b=B/otwtLq8ko0+MPBl1rRP1eRBojvHYq17391Lt4tqymvwn8SahxokJjKUae1WAPOAS
+         IMwXi/M2ZKZkLtbfrvG1YiLM7ENuQ1NCBMryIzBYg70rwCc/Gs5MuphhbgII9zcdeeiR
+         4IMYCcWJALtpZmz1ZyzksZjWjbm8yMJSWQB4EFxiaBzBWpQnAUoZVXswmgzOKjzfunpQ
+         YqnXPq3qHuhsz0GHJgMWNJpTgoKHD97YJQq0DuR/ZoBq6vFMY2qmMeMLVdR48NMee2hc
+         ReaZ5eAQeBNFWa5oJiO9fvmIMOcl3qtsQm8bTGejEYLZW9A69d4UW1cJPVwWHV5qTYyt
+         ZHYw==
+X-Gm-Message-State: APjAAAXbLU5MvwFKRB+GNXmfkbHS5tCNo6T7qL9fOfyAtTCBj+Q3rILR
+        Y37xi+DTrkPDotk4vylwvSBDlzAuH5cdYZT8e7kmDg==
+X-Google-Smtp-Source: APXvYqzuzYiOYVO1qbzCh4Aabm6AuxyJ016kEM0zJSXu1CU6EAU3utELN2tXg74h76qjcEGbSDT5iAY80582D/hn8Oc=
+X-Received: by 2002:a63:550c:: with SMTP id j12mr5619579pgb.450.1558645640095;
+ Thu, 23 May 2019 14:07:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAG=yYwk+g28_dnOcN--w-PLbGtA2oM5tq14W4X5bBjdurnF2iA@mail.gmail.com>
+ <20190523174739.GY3274@piout.net>
+In-Reply-To: <20190523174739.GY3274@piout.net>
+From:   Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date:   Fri, 24 May 2019 02:36:42 +0530
+Message-ID: <CAG=yYwmrE30nROqn63oAkXN9BCqfmo4T7+QPN-H3mSGG9dLU4A@mail.gmail.com>
+Subject: Re: about selftests/rtc test related stuff
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     a.zummo@towertech.it, Shuah Khan <shuah@kernel.org>,
+        linux-rtc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-05-23 at 16:23 -0400, Sven Van Asbroeck wrote:
-> On Thu, May 23, 2019 at 4:00 PM Joe Perches <joe@perches.com> wrote:
-> > trivia: anybuss looks like a misspelling.
-> > It might be better as anybus-s.
-> This came up as well during the review process. When we insert a separator,
-> the include files start looking like anybus-s-controller.h, and the structs
-> become like struct anybus_s_ops. It then no longer looks like a misspelling,
-> but becomes harder to read?
-> 
-> An alternative solution is to get rid of the 's' suffix altogether. Anybus-S
-> is the only flavour we support right now. Although that may obviously
-> change in the future.
+On Thu, May 23, 2019 at 11:17 PM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+> Your user probably doesn't have access to the rtc device file.
+anyway thanks related
+Following is the result with sudo....
+------------------------x--------------------------------------x----------------------------
+$sudo ./rtctest
+[sudo] password for jeffrin:
+[==========] Running 7 tests from 2 test cases.
+[ RUN      ] rtc.date_read
+rtctest.c:49:rtc.date_read:Current RTC date/time is 23/05/2019 20:49:49.
+[       OK ] rtc.date_read
+[ RUN      ] rtc.uie_read
+[       OK ] rtc.uie_read
+[ RUN      ] rtc.uie_select
+[       OK ] rtc.uie_select
+[ RUN      ] rtc.alarm_alm_set
+rtctest.c:137:rtc.alarm_alm_set:Alarm time now set to 20:49:58.
+rtctest.c:156:rtc.alarm_alm_set:data: 1a0
+[       OK ] rtc.alarm_alm_set
+[ RUN      ] rtc.alarm_wkalm_set
+rtctest.c:195:rtc.alarm_wkalm_set:Alarm time now set to 23/05/2019 20:50:01.
+[       OK ] rtc.alarm_wkalm_set
+[ RUN      ] rtc.alarm_alm_set_minute
+rtctest.c:239:rtc.alarm_alm_set_minute:Alarm time now set to 20:51:00.
+Alarm clock
+$rtctest.c:258:rtc.alarm_alm_set_minute:data: 1a0
 
-anybuss just looked odd to me.
+$
 
-Whatever you choose is up to you and
-no doubt you'll choose well.
-
-cheers, Joe
+------------------------x--------------------------------------x----------------------------
 
 
+-- 
+software engineer
+rajagiri school of engineering and technology
