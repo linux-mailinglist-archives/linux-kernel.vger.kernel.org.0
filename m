@@ -2,221 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E0727EB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:49:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0D8927ECC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:52:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730936AbfEWNtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 09:49:12 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45154 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730706AbfEWNtL (ORCPT
+        id S1730818AbfEWNwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:52:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47892 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730323AbfEWNwR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 09:49:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=XNfOmz3mv1HI9Hoz2nuwSlZ+6AVMa+i0bbmtNTX06rY=; b=vYclXzO/lJeo
-        5I3MA1p+mhNuW9aJRR1b0h4FIWti7rFeFjRJZVNr0v8sVisTaD2+tKTmUPrLGpvOv7Mmd9hzLneV+
-        /ls7ALHv2GolE9ROmBJQcZR5dPmhsqRPbS87GCgKmL3oOAfmPmLjG76vVoCjv3+eZqcwgAIzi2V1W
-        Egfiw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hTo5k-0000FQ-CM; Thu, 23 May 2019 13:49:08 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id C162C1126D28; Thu, 23 May 2019 14:49:07 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: dt-bindings: Convert spi-gpio binding to json-schema" to the spi tree
-In-Reply-To: <20190521212325.16639-2-robh@kernel.org>
-X-Patchwork-Hint: ignore
-Message-Id: <20190523134907.C162C1126D28@debutante.sirena.org.uk>
-Date:   Thu, 23 May 2019 14:49:07 +0100 (BST)
+        Thu, 23 May 2019 09:52:17 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4NDn21n121341;
+        Thu, 23 May 2019 09:51:30 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2snunr3s69-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 23 May 2019 09:51:30 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x4NDn55p121840;
+        Thu, 23 May 2019 09:51:29 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2snunr3s5d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 23 May 2019 09:51:29 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x4N7mSO7021521;
+        Thu, 23 May 2019 07:56:08 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma01dal.us.ibm.com with ESMTP id 2sn84n1kgf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 23 May 2019 07:56:08 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4NDoCSq23003300
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 23 May 2019 13:50:12 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8E0B0B208A;
+        Thu, 23 May 2019 13:50:12 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6A045B208B;
+        Thu, 23 May 2019 13:50:12 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.216])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 23 May 2019 13:50:12 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 985A416C0FB0; Thu, 23 May 2019 06:50:13 -0700 (PDT)
+Date:   Thu, 23 May 2019 06:50:13 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFC PATCH] rcu: Make 'rcu_assign_pointer(p, v)' of type
+ 'typeof(p)'
+Message-ID: <20190523135013.GL28207@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <1558618340-17254-1-git-send-email-andrea.parri@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1558618340-17254-1-git-send-email-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-23_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905230096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Thu, May 23, 2019 at 03:32:20PM +0200, Andrea Parri wrote:
+> The expression
+> 
+>   rcu_assign_pointer(p, typeof(p) v)
+> 
+> is reported to be of type 'typeof(p)' in the documentation (c.f., e.g.,
+> Documentation/RCU/whatisRCU.txt) but this is not the case: for example,
+> the following snippet
+> 
+>   int **y;
+>   int *x;
+>   int *r0;
+> 
+>   ...
+> 
+>   r0 = rcu_assign_pointer(*y, x);
+> 
+> can currently result in the compiler warning
+> 
+>   warning: assignment to ‘int *’ from ‘uintptr_t’ {aka ‘long unsigned int’} makes pointer from integer without a cast [-Wint-conversion]
+> 
+> Cast the uintptr_t value to a typeof(p) value.
+> 
+> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
+> Cc: Josh Triplett <josh@joshtriplett.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+> Cc: Joel Fernandes <joel@joelfernandes.org>
+> Cc: rcu@vger.kernel.org
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> ---
+> NOTE:
+> 
+> TBH, I'm not sure this is 'the right patch' (hence the RFC...): in
+> fact, I'm currently missing the motivations for allowing assignments
+> such as the "r0 = ..." assignment above in generic code.  (BTW, it's
+> not currently possible to use such assignments in litmus tests...)
 
-   spi: dt-bindings: Convert spi-gpio binding to json-schema
+Given that a quick (and perhaps error-prone) search of the uses of
+rcu_assign_pointer() in v5.1 didn't find a single use of the return
+value, let's please instead change the documentation and implementation
+to eliminate the return value.
 
-has been applied to the spi tree at
+> The usual concern is, of course, that if something is allowed (read
+> 'compile!' ;/) then people will soon or later use it and they'll do
+> it in all sorts of 'creative' ways, such as 'to extend dependencies
+> across rcu_assign_pointer() calls' as in
+> 
+>   x = READ_ONCE(*z);
+>   r0 = rcu_assign_pointer(*y, x);
+>   WRITE_ONCE(*w, r0);
+> 
+> Notice that using a 'do { ... } while (0)', say, would prevent such
+> tricks/rvalues. (The same approach is used by smp_store_release().)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
+As you in fact suggest here.  ;-)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+							Thanx, Paul
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 97266c4d05345f9b500d10c3caa1070249e895e7 Mon Sep 17 00:00:00 2001
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 21 May 2019 16:23:25 -0500
-Subject: [PATCH] spi: dt-bindings: Convert spi-gpio binding to json-schema
-
-Convert the spi-gpio binding to DT schema format.
-
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-spi@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../devicetree/bindings/spi/spi-gpio.txt      | 43 -----------
- .../devicetree/bindings/spi/spi-gpio.yaml     | 72 +++++++++++++++++++
- 2 files changed, 72 insertions(+), 43 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/spi/spi-gpio.txt
- create mode 100644 Documentation/devicetree/bindings/spi/spi-gpio.yaml
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-gpio.txt b/Documentation/devicetree/bindings/spi/spi-gpio.txt
-deleted file mode 100644
-index 52db562f17a4..000000000000
---- a/Documentation/devicetree/bindings/spi/spi-gpio.txt
-+++ /dev/null
-@@ -1,43 +0,0 @@
--SPI-GPIO devicetree bindings
--
--This represents a group of 3-n GPIO lines used for bit-banged SPI on dedicated
--GPIO lines.
--
--Required properties:
--
-- - compatible: should be set to "spi-gpio"
-- - #address-cells: should be set to <0x1>
-- - ranges
-- - sck-gpios: GPIO spec for the SCK line to use
-- - miso-gpios: GPIO spec for the MISO line to use
-- - mosi-gpios: GPIO spec for the MOSI line to use
-- - cs-gpios: GPIOs to use for chipselect lines.
--             Not needed if num-chipselects = <0>.
-- - num-chipselects: Number of chipselect lines. Should be <0> if a single device
--                    with no chip select is connected.
--
--Deprecated bindings:
--
--These legacy GPIO line bindings can alternatively be used to define the
--GPIO lines used, they should not be used in new device trees.
--
-- - gpio-sck: GPIO spec for the SCK line to use
-- - gpio-miso: GPIO spec for the MISO line to use
-- - gpio-mosi: GPIO spec for the MOSI line to use
--
--Example:
--
--	spi {
--		compatible = "spi-gpio";
--		#address-cells = <0x1>;
--		ranges;
--
--		sck-gpios = <&gpio 95 0>;
--		miso-gpios = <&gpio 98 0>;
--		mosi-gpios = <&gpio 97 0>;
--		cs-gpios = <&gpio 125 0>;
--		num-chipselects = <1>;
--
--		/* clients */
--	};
--
-diff --git a/Documentation/devicetree/bindings/spi/spi-gpio.yaml b/Documentation/devicetree/bindings/spi/spi-gpio.yaml
-new file mode 100644
-index 000000000000..55c4f1705f07
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-gpio.yaml
-@@ -0,0 +1,72 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: SPI-GPIO devicetree bindings
-+
-+maintainers:
-+  - Rob Herring <robh@kernel.org>
-+
-+description:
-+  This represents a group of 3-n GPIO lines used for bit-banged SPI on
-+  dedicated GPIO lines.
-+
-+allOf:
-+  - $ref: "/schemas/spi/spi-controller.yaml#"
-+
-+properties:
-+  compatible:
-+    const: spi-gpio
-+
-+  sck-gpios:
-+    description: GPIO spec for the SCK line to use
-+    maxItems: 1
-+
-+  miso-gpios:
-+    description: GPIO spec for the MISO line to use
-+    maxItems: 1
-+
-+  mosi-gpios:
-+    description: GPIO spec for the MOSI line to use
-+    maxItems: 1
-+
-+  cs-gpios:
-+    description: GPIOs to use for chipselect lines.
-+      Not needed if num-chipselects = <0>.
-+    minItems: 1
-+    maxItems: 1024
-+
-+  num-chipselects:
-+    description: Number of chipselect lines. Should be <0> if a single device
-+      with no chip select is connected.
-+    $ref: "/schemas/types.yaml#/definitions/uint32"
-+
-+  # Deprecated properties
-+  gpio-sck: false
-+  gpio-miso: false
-+  gpio-mosi: false
-+
-+required:
-+  - compatible
-+  - num-chipselects
-+  - sck-gpios
-+
-+examples:
-+  - |
-+    spi {
-+      compatible = "spi-gpio";
-+      #address-cells = <0x1>;
-+      #size-cells = <0x0>;
-+
-+      sck-gpios = <&gpio 95 0>;
-+      miso-gpios = <&gpio 98 0>;
-+      mosi-gpios = <&gpio 97 0>;
-+      cs-gpios = <&gpio 125 0>;
-+      num-chipselects = <1>;
-+
-+      /* clients */
-+    };
-+
-+...
--- 
-2.20.1
-
+> For a related discussion, please see:
+> 
+>   https://lkml.kernel.org/r/20190523083013.GA4616@andrea
+> 
+> Thoughts?
+> 
+>   Andrea
+> ---
+>  include/linux/rcupdate.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> index 915460ec08722..b94ba5de78fba 100644
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -375,7 +375,7 @@ static inline void rcu_preempt_sleep_check(void) { }
+>  		WRITE_ONCE((p), (typeof(p))(_r_a_p__v));		      \
+>  	else								      \
+>  		smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+> -	_r_a_p__v;							      \
+> +	((typeof(p))_r_a_p__v);						      \
+>  })
+>  
+>  /**
+> -- 
+> 2.7.4
+> 
