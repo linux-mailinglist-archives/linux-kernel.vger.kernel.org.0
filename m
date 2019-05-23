@@ -2,115 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE2B927E2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8CFC27E30
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:33:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730631AbfEWNcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 09:32:51 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34614 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728309AbfEWNcu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 09:32:50 -0400
-Received: by mail-lf1-f67.google.com with SMTP id v18so4434376lfi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 06:32:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1lShfxTWAZnn0xxmbff/egndjUhtx1mRABTy7i2apwY=;
-        b=u5oj3c9EuRX/8mgsmB8f+22uOI2oYi8x5Itm62R6HZSQJv9DkeAbU44hmF/Vb6mGjK
-         lnQGSVS5KcsYWTCRZapXhr3w7jx+6WoiQY3ww1nPedgx/AinwoobS42RShaxf2KwxcxO
-         kbP8cF4yNnZLVcSz3JfVIEOLPuo5TvBihQtgzoKFcgRLnU7ckJw7Ar8mdA1zwFmh72fW
-         ybwyAYGd6YDlw18clEXK/nTGKTmxOasfvqxNvrBsFkWJH5+VuzFRgrHeY847VcBtudlh
-         ys5c3UNOA6hGYvGNIfyQE8xTkFG+ccmp6eI51gF8GgowatIsnOQP25NJNYZpODu7ikqr
-         LO8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1lShfxTWAZnn0xxmbff/egndjUhtx1mRABTy7i2apwY=;
-        b=CE1LfsjEOhKMMC2Ixh0vmDuqUZuV1/ctgOPNqWqsnHYvJb4RmVKhYNVv7TNc5vIPoV
-         xPAfAZ0a6Lxx57uN2SfwnxPr23bwQZwFmFTv75jgvaQ/OVWdBt4E5Q1/sbFsyRrSMYE1
-         z9SseeJEfjOhH+amq2DY8HrI6HqzwHA3XhgDn9UDHMZgfIVnBFQP5QdRY7nO06S5TaSX
-         krs8wzVU95AcjniPzNwqXk98cbqXUNvZhPVVlIJcfAn7dh1FE8D45ytoJ0UKfOB1i/Va
-         S+uo09D3f9JtsMbqh6AmUTHghqZmjfbeP44mBRVYbUK1phIrr/uqMyfl6N/2xSmVAx0Z
-         WzhA==
-X-Gm-Message-State: APjAAAWs75jjV28ER91JWxOdTFKiAfxraUVrWANsGf2vQrfD95HKs1yY
-        RAP/OOBSb/f2Q94skpmSYUA=
-X-Google-Smtp-Source: APXvYqw1rWwaalNTduK2+/sn9gsSAiOSi7BxDpd/1Ex1JIe/qGpx2Ax85hDl0z0zYMwZQTzjtBKQDA==
-X-Received: by 2002:ac2:54af:: with SMTP id w15mr3011164lfk.8.1558618368247;
-        Thu, 23 May 2019 06:32:48 -0700 (PDT)
-Received: from seldlx21914.corpusers.net ([37.139.156.40])
-        by smtp.gmail.com with ESMTPSA id q28sm1035667lfp.3.2019.05.23.06.32.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 06:32:47 -0700 (PDT)
-Date:   Thu, 23 May 2019 15:32:45 +0200
-From:   Vitaly Wool <vitalywool@gmail.com>
-To:     Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
-Cc:     Dan Streetman <ddstreet@ieee.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleksiy.Avramchenko@sony.com,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] z3fold: fix sheduling while atomic
-Message-Id: <20190523153245.119dfeed55927e8755250ddd@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.30; x86_64-unknown-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1730741AbfEWNc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:32:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45156 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730549AbfEWNc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 09:32:57 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 00A18792AE;
+        Thu, 23 May 2019 13:32:57 +0000 (UTC)
+Received: from treble (ovpn-121-106.rdu2.redhat.com [10.10.121.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CBE446836A;
+        Thu, 23 May 2019 13:32:55 +0000 (UTC)
+Date:   Thu, 23 May 2019 08:32:53 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Kairui Song <kasong@redhat.com>
+Cc:     Alexei Starovoitov <ast@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
+Subject: Re: Getting empty callchain from perf_callchain_kernel()
+Message-ID: <20190523133253.tad6ywzzexks6hrp@treble>
+References: <20190517074600.GJ2623@hirez.programming.kicks-ass.net>
+ <20190517081057.GQ2650@hirez.programming.kicks-ass.net>
+ <CACPcB9cB5n1HOmZcVpusJq8rAV5+KfmZ-Lxv3tgsSoy7vNrk7w@mail.gmail.com>
+ <20190517091044.GM2606@hirez.programming.kicks-ass.net>
+ <CACPcB9cpNp5CBqoRs+XMCwufzAFa8Pj-gbmj9fb+g5wVdue=ig@mail.gmail.com>
+ <20190522140233.GC16275@worktop.programming.kicks-ass.net>
+ <ab047883-69f6-1175-153f-5ad9462c6389@fb.com>
+ <20190522174517.pbdopvookggen3d7@treble>
+ <20190522234635.a47bettklcf5gt7c@treble>
+ <CACPcB9dRJ89YAMDQdKoDMU=vFfpb5AaY0mWC_Xzw1ZMTFBf6ng@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CACPcB9dRJ89YAMDQdKoDMU=vFfpb5AaY0mWC_Xzw1ZMTFBf6ng@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 23 May 2019 13:32:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kmem_cache_alloc() may be called from z3fold_alloc() in atomic
-context, so we need to pass correct gfp flags to avoid "scheduling
-while atomic" bug.
+On Thu, May 23, 2019 at 02:48:11PM +0800, Kairui Song wrote:
+> On Thu, May 23, 2019 at 7:46 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >
+> > On Wed, May 22, 2019 at 12:45:17PM -0500, Josh Poimboeuf wrote:
+> > > On Wed, May 22, 2019 at 02:49:07PM +0000, Alexei Starovoitov wrote:
+> > > > The one that is broken is prog_tests/stacktrace_map.c
+> > > > There we attach bpf to standard tracepoint where
+> > > > kernel suppose to collect pt_regs before calling into bpf.
+> > > > And that's what bpf_get_stackid_tp() is doing.
+> > > > It passes pt_regs (that was collected before any bpf)
+> > > > into bpf_get_stackid() which calls get_perf_callchain().
+> > > > Same thing with kprobes, uprobes.
+> > >
+> > > Is it trying to unwind through ___bpf_prog_run()?
+> > >
+> > > If so, that would at least explain why ORC isn't working.  Objtool
+> > > currently ignores that function because it can't follow the jump table.
+> >
+> > Here's a tentative fix (for ORC, at least).  I'll need to make sure this
+> > doesn't break anything else.
+> >
+> > diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+> > index 242a643af82f..1d9a7cc4b836 100644
+> > --- a/kernel/bpf/core.c
+> > +++ b/kernel/bpf/core.c
+> > @@ -1562,7 +1562,6 @@ static u64 ___bpf_prog_run(u64 *regs, const struct bpf_insn *insn, u64 *stack)
+> >                 BUG_ON(1);
+> >                 return 0;
+> >  }
+> > -STACK_FRAME_NON_STANDARD(___bpf_prog_run); /* jump table */
+> >
+> >  #define PROG_NAME(stack_size) __bpf_prog_run##stack_size
+> >  #define DEFINE_BPF_PROG_RUN(stack_size) \
+> > diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> > index 172f99195726..2567027fce95 100644
+> > --- a/tools/objtool/check.c
+> > +++ b/tools/objtool/check.c
+> > @@ -1033,13 +1033,6 @@ static struct rela *find_switch_table(struct objtool_file *file,
+> >                 if (text_rela->type == R_X86_64_PC32)
+> >                         table_offset += 4;
+> >
+> > -               /*
+> > -                * Make sure the .rodata address isn't associated with a
+> > -                * symbol.  gcc jump tables are anonymous data.
+> > -                */
+> > -               if (find_symbol_containing(rodata_sec, table_offset))
+> > -                       continue;
+> > -
+> >                 rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
+> >                 if (rodata_rela) {
+> >                         /*
+> 
+> Hi Josh, this still won't fix the problem.
+> 
+> Problem is not (or not only) with ___bpf_prog_run, what actually went
+> wrong is with the JITed bpf code.
 
-Signed-off-by: Vitaly Wool <vitaly.vul@sony.com>
----
- mm/z3fold.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+There seem to be a bunch of issues.  My patch at least fixes the failing
+selftest reported by Alexei for ORC.
 
-diff --git a/mm/z3fold.c b/mm/z3fold.c
-index 99be52c5ca45..985732c8b025 100644
---- a/mm/z3fold.c
-+++ b/mm/z3fold.c
-@@ -190,10 +190,11 @@ static int size_to_chunks(size_t size)
- 
- static void compact_page_work(struct work_struct *w);
- 
--static inline struct z3fold_buddy_slots *alloc_slots(struct z3fold_pool *pool)
-+static inline struct z3fold_buddy_slots *alloc_slots(struct z3fold_pool *pool,
-+							gfp_t gfp)
- {
- 	struct z3fold_buddy_slots *slots = kmem_cache_alloc(pool->c_handle,
--							GFP_KERNEL);
-+							    gfp);
- 
- 	if (slots) {
- 		memset(slots->slot, 0, sizeof(slots->slot));
-@@ -295,10 +296,10 @@ static void z3fold_unregister_migration(struct z3fold_pool *pool)
- 
- /* Initializes the z3fold header of a newly allocated z3fold page */
- static struct z3fold_header *init_z3fold_page(struct page *page,
--					struct z3fold_pool *pool)
-+					struct z3fold_pool *pool, gfp_t gfp)
- {
- 	struct z3fold_header *zhdr = page_address(page);
--	struct z3fold_buddy_slots *slots = alloc_slots(pool);
-+	struct z3fold_buddy_slots *slots = alloc_slots(pool, gfp);
- 
- 	if (!slots)
- 		return NULL;
-@@ -912,7 +913,7 @@ static int z3fold_alloc(struct z3fold_pool *pool, size_t size, gfp_t gfp,
- 	if (!page)
- 		return -ENOMEM;
- 
--	zhdr = init_z3fold_page(page, pool);
-+	zhdr = init_z3fold_page(page, pool, gfp);
- 	if (!zhdr) {
- 		__free_page(page);
- 		return -ENOMEM;
+How can I recreate your issue?
+
+> For frame pointer unwinder, it seems the JITed bpf code will have a
+> shifted "BP" register? (arch/x86/net/bpf_jit_comp.c:217), so if we can
+> unshift it properly then it will work.
+
+Yeah, that looks like a frame pointer bug in emit_prologue().
+
+> I tried below code, and problem is fixed (only for frame pointer
+> unwinder though). Need to find a better way to detect and do any
+> similar trick for bpf part, if this is a feasible way to fix it:
+> 
+> diff --git a/arch/x86/kernel/unwind_frame.c b/arch/x86/kernel/unwind_frame.c
+> index 9b9fd4826e7a..2c0fa2aaa7e4 100644
+> --- a/arch/x86/kernel/unwind_frame.c
+> +++ b/arch/x86/kernel/unwind_frame.c
+> @@ -330,8 +330,17 @@ bool unwind_next_frame(struct unwind_state *state)
+>         }
+> 
+>         /* Move to the next frame if it's safe: */
+> -       if (!update_stack_state(state, next_bp))
+> -               goto bad_address;
+> +       if (!update_stack_state(state, next_bp)) {
+> +               // Try again with shifted BP
+> +               state->bp += 5; // see AUX_STACK_SPACE
+> +               next_bp = (unsigned long
+> *)READ_ONCE_TASK_STACK(state->task, *state->bp);
+> +               // Clean and refetch stack info, it's marked as error outed
+> +               state->stack_mask = 0;
+> +               get_stack_info(next_bp, state->task,
+> &state->stack_info, &state->stack_mask);
+> +               if (!update_stack_state(state, next_bp)) {
+> +                       goto bad_address;
+> +               }
+> +       }
+> 
+>         return true;
+
+Nack.
+
+> For ORC unwinder, I think the unwinder can't find any info about the
+> JITed part. Maybe if can let it just skip the JITed part and go to
+> kernel context, then should be good enough.
+
+If it's starting from a fake pt_regs then that's going to be a
+challenge.
+
+Will the JIT code always have the same stack layout?  If so then we
+could hard code that knowledge in ORC.  Or even better, create a generic
+interface for ORC to query the creator of the generated code about the
+stack layout.
+
 -- 
-2.17.1
+Josh
