@@ -2,103 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 901AF27D63
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06F5527D6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 14:58:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730594AbfEWM5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 08:57:21 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:45715 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbfEWM5U (ORCPT
+        id S1730734AbfEWM6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 08:58:19 -0400
+Received: from mail-wm1-f50.google.com ([209.85.128.50]:40716 "EHLO
+        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730284AbfEWM6S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 08:57:20 -0400
-X-Originating-IP: 90.88.22.185
-Received: from localhost (aaubervilliers-681-1-80-185.w90-88.abo.wanadoo.fr [90.88.22.185])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id CD843C0010;
-        Thu, 23 May 2019 12:57:16 +0000 (UTC)
-Date:   Thu, 23 May 2019 14:57:16 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-watchdog@vger.kernel.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/5] dt-bindings: watchdog: add Allwinner H6 r_watchdog
-Message-ID: <20190523125716.g4euwplfsvw4vqzl@flea>
-References: <20190521160330.28402-1-peron.clem@gmail.com>
- <20190521160330.28402-4-peron.clem@gmail.com>
- <20190522103243.mmrfato5p2mhtf4j@flea>
- <CAJiuCcdaZVLQyupEf8HPaUySakufXXAhzundo6VeyQaAyZ8Trw@mail.gmail.com>
+        Thu, 23 May 2019 08:58:18 -0400
+Received: by mail-wm1-f50.google.com with SMTP id 15so5674042wmg.5
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 05:58:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=o/wtiYR2xsTC11waSO0yQUkZ4S3S31FqfgaPX+rcr4s=;
+        b=r9PZXAbFtJJPPvfQKRF6s1VHnG3klpb3OOQ9YbAaVc30OrfbyFjPcDaG8WTk7KnD/L
+         wk6pIuXqTf4vOm2od99w7Gexv/tKuwTYb/vvCeEwIvK80SqkgbvRsJ9FHuQDWtuoG53H
+         OZS6AEaWh89rv6PE3k7On3pIorUmC1ToiWFgTxcPTKuwsTx145B0OMOU5GVR61icBFtY
+         dTNkQTBVq+F2qSfvgl6CUyFZqUFozzzOLBmPlmw/h2zLtgvG4ulfOqeRzAFhGIymUDff
+         1H4lDDPPZt+UeupJvdXu8X7wV/wRH75j9sWdmyEAu2GXXQZ39U0OI6mZ4Mq4Ryu8vwLF
+         jWZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=o/wtiYR2xsTC11waSO0yQUkZ4S3S31FqfgaPX+rcr4s=;
+        b=UHqaQNzQil85Rwj1wKY5+0GlikCpNuroFAH/eoRzvfnCZz/NHYkx86Wp2PKc1XCqhd
+         /erMjhYAzvoe959m9thN+XrEzqjiIVE03S5246aThlIOiH8BrSu9vdX8IaTHPtFY2Xcs
+         djqPHkHxQX05WvJryHe8ApUzGIeoSV3YM85t78Z6VW2tEwTSUpcvzK4LfR+IQ2vseK3/
+         CNcCN+9P51RAeuSNsLhAwPJK5bH3ZHT+8+0EDiO/qrwxT7RykdjcNX4c8rJm9Wqm4xRB
+         G9Mts3nYNM2WZFxcZ8lzcgEHIHBDvNwr9H25ccyQDlxPOWLb5F7qHeIfFDmha6d5nfGx
+         cvJA==
+X-Gm-Message-State: APjAAAXeOgd0xkUqqvjIYlPZw4zev4jsRDDHDdUHtk+d0RAw11+7kpsx
+        nsiHEj/uYGbQIhi40tPxI1hKQQ==
+X-Google-Smtp-Source: APXvYqwK7EF3A/sETDYJqJjEvH+9WhzGaBLe8eflWij1cL5o/3OTIchEO4ol0wDyLjpwfdW/vL7BGQ==
+X-Received: by 2002:a1c:a958:: with SMTP id s85mr11479598wme.144.1558616296604;
+        Thu, 23 May 2019 05:58:16 -0700 (PDT)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id s13sm9876118wmh.31.2019.05.23.05.58.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 05:58:15 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [RFC v2 0/2] clocksource: davinci-timer: new driver
+Date:   Thu, 23 May 2019 14:58:11 +0200
+Message-Id: <20190523125813.29506-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wdtcxmlg6dhvhpqj"
-Content-Disposition: inline
-In-Reply-To: <CAJiuCcdaZVLQyupEf8HPaUySakufXXAhzundo6VeyQaAyZ8Trw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
---wdtcxmlg6dhvhpqj
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Daniel,
 
-On Wed, May 22, 2019 at 06:15:26PM +0200, Cl=E9ment P=E9ron wrote:
-> Hi Maxime,
->
-> On Wed, 22 May 2019 at 12:32, Maxime Ripard <maxime.ripard@bootlin.com> w=
-rote:
-> >
-> > On Tue, May 21, 2019 at 06:03:28PM +0200, Cl=E9ment P=E9ron wrote:
-> > > Allwinner H6 has a second watchdog on the r-blocks which is
-> > > compatible with the A31.
-> > >
-> > > This commit add the H6 compatible for the r_watchdog.
-> > >
-> > > Signed-off-by: Cl=E9ment P=E9ron <peron.clem@gmail.com>
-> >
-> > Unless you have some evidence that the two blocks are different, then
-> > you should just reuse the same one.
->
-> I have no evidence it's different nor identical, it's not documented
-> in the user manual.
-> I thought it would better to have separate bindings in case there is a
-> difference.
-> Than don't have and find later that we have to introduce one.
+this is another try at the davinci clocksource driver. Changes in
+regard to v1 listed below. As before, the driver is split into two
+parts (one for clockevent and one for clocksource).
 
-It's a tradeoff. Pushing your logic to the limit, we would have a
-compatible for each controller embedded in an SoC.
+v1 -> v2:
+- changed the format of the copyright notice
+- removed all mentiones of the periodic timer setting
+- added caching of the TCR register value so that its updating doesn't
+  require a read
+- split the timer configuration for clock events into the
+  set_state_oneshot() and set_state_shutdown() callbacks
 
-This would be unmaintainable, and slightly useless since that case is
-very unlikely.
+Bartosz Golaszewski (2):
+  clocksource: davinci-timer: add support for clockevents
+  clocksource: timer-davinci: add support for clocksource
 
-However, having differences between SoCs is quite common, hence why we
-have different compatibles for each SoC.
+ drivers/clocksource/Kconfig         |   5 +
+ drivers/clocksource/Makefile        |   1 +
+ drivers/clocksource/timer-davinci.c | 355 ++++++++++++++++++++++++++++
+ include/clocksource/timer-davinci.h |  44 ++++
+ 4 files changed, 405 insertions(+)
+ create mode 100644 drivers/clocksource/timer-davinci.c
+ create mode 100644 include/clocksource/timer-davinci.h
 
-Maxime
+-- 
+2.21.0
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---wdtcxmlg6dhvhpqj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOaYrAAKCRDj7w1vZxhR
-xUPnAPsGJnjqxtkcj8BFHo1UbY6rBrhE114RafzPUtXuJD8o4QEAmWfFGwayxZZ0
-63T2ZEyt/CbXZE9fTnSFpRsi3BkzQA4=
-=Frvc
------END PGP SIGNATURE-----
-
---wdtcxmlg6dhvhpqj--
