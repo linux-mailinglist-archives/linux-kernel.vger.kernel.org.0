@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F0E52866A
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 683E928A91
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:57:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732110AbfEWTJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:09:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42280 "EHLO mail.kernel.org"
+        id S2389231AbfEWTQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:16:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732039AbfEWTJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:09:15 -0400
+        id S2388819AbfEWTQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:16:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 254CD217D9;
-        Thu, 23 May 2019 19:09:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E63E217D7;
+        Thu, 23 May 2019 19:16:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638554;
-        bh=7SF0+dsHk+mgt4zb+zuAEaQtQeE459Z9Q27HuScuU+o=;
+        s=default; t=1558638994;
+        bh=HouLTLqIqjRCwjXfcBrJZTlxNRJEi9ykC66tBSDO8QI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D7FIhNt8AXKNCyYa+iDSlKiABmMrMBc2yhaeiU7SmoY153kFNGhSlgEHE9zsWRkjK
-         RkIOVrwOnhzGRNWrSZE/I9aNQuHCeCiJKze+zOsEz0s3wJdXHm05lOzy422NzGMxfK
-         o64R7iVOb6EhDQ/MBYLpM2ePKBd5l0bar09hw4es=
+        b=drF109dy9gMnI0oKmipeY+T12O2063Dg8g3HyLNNugib1GTOIJW6F06szZKs6RPmL
+         844nPesqK2ZD0oRaVeHJoZDMpKvf6YxQi6a/KW5JtGwO9tfZrv5KkmxOQtkc8sNAla
+         1XvJLZoOn9/FFx1MXKSfdBs8fsNchaEsoJoQORcs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Orit Wasserman <orit.was@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Elazar Leibovich <elazar@lightbitslabs.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.9 24/53] tracing: Fix partial reading of trace events id file
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.19 049/114] iommu/tegra-smmu: Fix invalid ASID bits on Tegra30/114
 Date:   Thu, 23 May 2019 21:05:48 +0200
-Message-Id: <20190523181714.682253388@linuxfoundation.org>
+Message-Id: <20190523181736.156742338@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
-References: <20190523181710.981455400@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,77 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Elazar Leibovich <elazar@lightbitslabs.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-commit cbe08bcbbe787315c425dde284dcb715cfbf3f39 upstream.
+commit 43a0541e312f7136e081e6bf58f6c8a2e9672688 upstream.
 
-When reading only part of the id file, the ppos isn't tracked correctly.
-This is taken care by simple_read_from_buffer.
+Both Tegra30 and Tegra114 have 4 ASID's and the corresponding bitfield of
+the TLB_FLUSH register differs from later Tegra generations that have 128
+ASID's.
 
-Reading a single byte, and then the next byte would result EOF.
+In a result the PTE's are now flushed correctly from TLB and this fixes
+problems with graphics (randomly failing tests) on Tegra30.
 
-While this seems like not a big deal, this breaks abstractions that
-reads information from files unbuffered. See for example
-https://github.com/golang/go/issues/29399
-
-This code was mentioned as problematic in
-commit cd458ba9d5a5
-("tracing: Do not (ab)use trace_seq in event_id_read()")
-
-An example C code that show this bug is:
-
-  #include <stdio.h>
-  #include <stdint.h>
-
-  #include <sys/types.h>
-  #include <sys/stat.h>
-  #include <fcntl.h>
-  #include <unistd.h>
-
-  int main(int argc, char **argv) {
-    if (argc < 2)
-      return 1;
-    int fd = open(argv[1], O_RDONLY);
-    char c;
-    read(fd, &c, 1);
-    printf("First  %c\n", c);
-    read(fd, &c, 1);
-    printf("Second %c\n", c);
-  }
-
-Then run with, e.g.
-
-  sudo ./a.out /sys/kernel/debug/tracing/events/tcp/tcp_set_state/id
-
-You'll notice you're getting the first character twice, instead of the
-first two characters in the id file.
-
-Link: http://lkml.kernel.org/r/20181231115837.4932-1-elazar@lightbitslabs.com
-
-Cc: Orit Wasserman <orit.was@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: stable@vger.kernel.org
-Fixes: 23725aeeab10b ("ftrace: provide an id file for each event")
-Signed-off-by: Elazar Leibovich <elazar@lightbitslabs.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/iommu/tegra-smmu.c |   25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1310,9 +1310,6 @@ event_id_read(struct file *filp, char __
- 	char buf[32];
- 	int len;
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -102,7 +102,6 @@ static inline u32 smmu_readl(struct tegr
+ #define  SMMU_TLB_FLUSH_VA_MATCH_ALL     (0 << 0)
+ #define  SMMU_TLB_FLUSH_VA_MATCH_SECTION (2 << 0)
+ #define  SMMU_TLB_FLUSH_VA_MATCH_GROUP   (3 << 0)
+-#define  SMMU_TLB_FLUSH_ASID(x)          (((x) & 0x7f) << 24)
+ #define  SMMU_TLB_FLUSH_VA_SECTION(addr) ((((addr) & 0xffc00000) >> 12) | \
+ 					  SMMU_TLB_FLUSH_VA_MATCH_SECTION)
+ #define  SMMU_TLB_FLUSH_VA_GROUP(addr)   ((((addr) & 0xffffc000) >> 12) | \
+@@ -205,8 +204,12 @@ static inline void smmu_flush_tlb_asid(s
+ {
+ 	u32 value;
  
--	if (*ppos)
--		return 0;
--
- 	if (unlikely(!id))
- 		return -ENODEV;
+-	value = SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_ASID(asid) |
+-		SMMU_TLB_FLUSH_VA_MATCH_ALL;
++	if (smmu->soc->num_asids == 4)
++		value = (asid & 0x3) << 29;
++	else
++		value = (asid & 0x7f) << 24;
++
++	value |= SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_VA_MATCH_ALL;
+ 	smmu_writel(smmu, value, SMMU_TLB_FLUSH);
+ }
+ 
+@@ -216,8 +219,12 @@ static inline void smmu_flush_tlb_sectio
+ {
+ 	u32 value;
+ 
+-	value = SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_ASID(asid) |
+-		SMMU_TLB_FLUSH_VA_SECTION(iova);
++	if (smmu->soc->num_asids == 4)
++		value = (asid & 0x3) << 29;
++	else
++		value = (asid & 0x7f) << 24;
++
++	value |= SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_VA_SECTION(iova);
+ 	smmu_writel(smmu, value, SMMU_TLB_FLUSH);
+ }
+ 
+@@ -227,8 +234,12 @@ static inline void smmu_flush_tlb_group(
+ {
+ 	u32 value;
+ 
+-	value = SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_ASID(asid) |
+-		SMMU_TLB_FLUSH_VA_GROUP(iova);
++	if (smmu->soc->num_asids == 4)
++		value = (asid & 0x3) << 29;
++	else
++		value = (asid & 0x7f) << 24;
++
++	value |= SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_VA_GROUP(iova);
+ 	smmu_writel(smmu, value, SMMU_TLB_FLUSH);
+ }
  
 
 
