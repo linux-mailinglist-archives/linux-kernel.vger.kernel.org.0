@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AABBB2885E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26ED52876E
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391099AbfEWTZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:25:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36788 "EHLO mail.kernel.org"
+        id S2389798AbfEWTTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:19:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391066AbfEWTZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:25:19 -0400
+        id S2389786AbfEWTTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:19:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B56BF206BA;
-        Thu, 23 May 2019 19:25:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 584B8217D9;
+        Thu, 23 May 2019 19:19:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639519;
-        bh=8DzaXU7SRJekdLbqReNh6QlLY7B/bqwH9I8btBJlcRM=;
+        s=default; t=1558639158;
+        bh=eA3BQgY37CSkoOQSyuV3cKELYcWKvjSPQgRaJdkj1b8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ETWrjLupOs5jNtkNJdyHgWXIjUtLdIhAjZOtK4bkDRlKqH3hj55rut7xE57lmjDiK
-         CU1I3A44vaNhVj5jqxCsvLFtdagUWyll72J3QYsEpeG6YCUFA96mXitwK3V9IfLQpM
-         pntkeG9jIATpw14b7JnjCzcSbKw+pNZdzOOZ+ee4=
+        b=D33i0313vThoOuiPgpmRH27GmrfMtv3Iqz+mxNxV/5v4pLmNLN5DTuxAga96a8XSQ
+         5wjXBkqYKVV7HJ4dfrsxQZG8XBRDzq8TdI4Jp2SXMjXRYeq7Sm9SBtAxm8V4cUYefD
+         dUc4cPZqiSVEZ3ERQf6Zy5afcVPr6pIQOnCzjjuQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 118/139] net: ieee802154: fix missing checks for regmap_update_bits
-Date:   Thu, 23 May 2019 21:06:46 +0200
-Message-Id: <20190523181735.056351348@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        Nigel Croxon <ncroxon@redhat.com>, Xiao Ni <xni@redhat.com>,
+        Song Liu <songliubraving@fb.com>
+Subject: [PATCH 4.19 108/114] Revert "Dont jump to compute_result state from check_result state"
+Date:   Thu, 23 May 2019 21:06:47 +0200
+Message-Id: <20190523181740.646499661@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,52 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 22e8860cf8f777fbf6a83f2fb7127f682a8e9de4 ]
+From: Song Liu <songliubraving@fb.com>
 
-regmap_update_bits could fail and deserves a check.
+commit a25d8c327bb41742dbd59f8c545f59f3b9c39983 upstream.
 
-The patch adds the checks and if it fails, returns its error
-code upstream.
+This reverts commit 4f4fd7c5798bbdd5a03a60f6269cf1177fbd11ef.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Nigel Croxon <ncroxon@redhat.com>
+Cc: Xiao Ni <xni@redhat.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ieee802154/mcr20a.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/md/raid5.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
-index c589f5ae75bb5..8bb53ec8d9cf2 100644
---- a/drivers/net/ieee802154/mcr20a.c
-+++ b/drivers/net/ieee802154/mcr20a.c
-@@ -533,6 +533,8 @@ mcr20a_start(struct ieee802154_hw *hw)
- 	dev_dbg(printdev(lp), "no slotted operation\n");
- 	ret = regmap_update_bits(lp->regmap_dar, DAR_PHY_CTRL1,
- 				 DAR_PHY_CTRL1_SLOTTED, 0x0);
-+	if (ret < 0)
-+		return ret;
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -4221,15 +4221,26 @@ static void handle_parity_checks6(struct
+ 	case check_state_check_result:
+ 		sh->check_state = check_state_idle;
  
- 	/* enable irq */
- 	enable_irq(lp->spi->irq);
-@@ -540,11 +542,15 @@ mcr20a_start(struct ieee802154_hw *hw)
- 	/* Unmask SEQ interrupt */
- 	ret = regmap_update_bits(lp->regmap_dar, DAR_PHY_CTRL2,
- 				 DAR_PHY_CTRL2_SEQMSK, 0x0);
-+	if (ret < 0)
-+		return ret;
- 
- 	/* Start the RX sequence */
- 	dev_dbg(printdev(lp), "start the RX sequence\n");
- 	ret = regmap_update_bits(lp->regmap_dar, DAR_PHY_CTRL1,
- 				 DAR_PHY_CTRL1_XCVSEQ_MASK, MCR20A_XCVSEQ_RX);
-+	if (ret < 0)
-+		return ret;
- 
- 	return 0;
- }
--- 
-2.20.1
-
+-		if (s->failed > 1)
+-			break;
+ 		/* handle a successful check operation, if parity is correct
+ 		 * we are done.  Otherwise update the mismatch count and repair
+ 		 * parity if !MD_RECOVERY_CHECK
+ 		 */
+ 		if (sh->ops.zero_sum_result == 0) {
+-			/* Any parity checked was correct */
+-			set_bit(STRIPE_INSYNC, &sh->state);
++			/* both parities are correct */
++			if (!s->failed)
++				set_bit(STRIPE_INSYNC, &sh->state);
++			else {
++				/* in contrast to the raid5 case we can validate
++				 * parity, but still have a failure to write
++				 * back
++				 */
++				sh->check_state = check_state_compute_result;
++				/* Returning at this point means that we may go
++				 * off and bring p and/or q uptodate again so
++				 * we make sure to check zero_sum_result again
++				 * to verify if p or q need writeback
++				 */
++			}
+ 		} else {
+ 			atomic64_add(STRIPE_SECTORS, &conf->mddev->resync_mismatches);
+ 			if (test_bit(MD_RECOVERY_CHECK, &conf->mddev->recovery)) {
 
 
