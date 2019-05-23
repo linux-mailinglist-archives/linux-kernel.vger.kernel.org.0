@@ -2,111 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CA37280A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 17:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9BAB2809A
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 17:11:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731064AbfEWPLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 11:11:06 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34292 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731009AbfEWPLE (ORCPT
+        id S1730904AbfEWPK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 11:10:58 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46002 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730756AbfEWPK6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 11:11:04 -0400
-Received: by mail-lj1-f195.google.com with SMTP id j24so5839122ljg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 08:11:02 -0700 (PDT)
+        Thu, 23 May 2019 11:10:58 -0400
+Received: by mail-wr1-f65.google.com with SMTP id b18so6665197wrq.12;
+        Thu, 23 May 2019 08:10:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+XRLAU6oU5E0/8gW3lY2rtdeODZlzcPWAFZA13HWTCU=;
-        b=A87Rf4qG4wn9ePdBXWK4S6A+i4fN/l2BHBriTyA/NV7md909J0ajFqoql7nafgIWFX
-         zNeMu8SMtxpeDziW/96Gcai5LoSeFlFor/iwm8XXRysAwkMkqUmZRyYrQAC88L1pZlXU
-         ZQKZDUd8/qaGGjTkJPmRfmYpeswXlH3T1V2Y0=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lG50LjNdtMd0GMcXEgVx+Uoijbx7K9hNxSLBW/EgKhU=;
+        b=ldNHsFevoUJI+m4FbTi2UMH8wljD73iVyxptd+ijSL15+l+rvV27f4AhOfD6Zithsz
+         WHb2N7G1npz9JSFRbdGPfYOgGBC0e9w0H9CXu1nBFbBWtdq43KJ+vRiBbMmpxNw9KI4S
+         Aep6RVyaD/KsRv+ZWnTUzNufFG+S8xl+kI8jsyzurpZGX262YD6X/LM6Hwe1FT0zDZXU
+         SKQeh+duhFV4XN7daCUxIws7h8BRcEK3oGdbGeAJblBk/DV5iFfMf+TJAnpzMNzmokQP
+         rbhFXAqrhe3S1YPlLEklIZ7ksp7mHOESuCYvGE5DJiGKehx2Ifyo5fOyiYFAXuRrF106
+         aAQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+XRLAU6oU5E0/8gW3lY2rtdeODZlzcPWAFZA13HWTCU=;
-        b=g1ME4vproLsJAGQu+m18+6QerInQxw6i62wRMGAxjdfpHYnPNIjZ1eSCGjP+BrCQaD
-         mYTE56amW10zuQ4j/pFUnLD8vw19IqhuNWH9IwJhS0bg2ByWswADovApBIkra0GUdRX2
-         Al3UFGMviB/C4dZ2N0O8gZ8zuEM5t+LonCgLO832F087EUVmNVGblrEhZO7pFXVChPl4
-         ngnzjmCS9EY1RNvtFw38g7hz1gj/aqipIFNf8AsREfK+PYBKDXatc24953RDANnLDfLA
-         dBvjExjOTNrDhGmFXFqDdG2ek7kNdQbfgjuE+kPRw2zEcxC4Ic4/3S14sAPOukZe/t4z
-         t8Tg==
-X-Gm-Message-State: APjAAAUvE1JW5UgQFbF6moMVApNwMj2bb7PK0HlpsA8nu9ALomS09e1V
-        sRhAlGfY6biQ/nXpdB26xHC4NRbNK5c=
-X-Google-Smtp-Source: APXvYqxaqCjyOEHCxc9MQXgkXopn6HZcwV603IGTSMeYKncmqSVra4/Id1PFDeZPU5c2+5QyAU6wCw==
-X-Received: by 2002:a2e:9d09:: with SMTP id t9mr16250773lji.151.1558624261471;
-        Thu, 23 May 2019 08:11:01 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id n10sm251492lfk.39.2019.05.23.08.11.00
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lG50LjNdtMd0GMcXEgVx+Uoijbx7K9hNxSLBW/EgKhU=;
+        b=Bqzhz6fMEoOC+nSzSGddgW9jAwV9MJOP3N+JxS/FC/+6LLktL2BVZ2HF49qjfyRSrB
+         a/DG/+K6cPnQgpApU1YOaLs4a290Fhncw41Up1ETy30GozXE/A6T2QAqqi1N0aQ2C8wT
+         /QtLazp4C0wSk5oHg1N+sLj10T/MTIO7nkv/Ncr/c4qJfxIIzIYn8/bytBiTjtH0WYtJ
+         2Kp3QaQwz7AhUuNGJuYsQ7sf53Al2nDRv+y44tbv8195LJhw5UCj/tBcr/Jvdi3eSQl+
+         nBiU/pJfoHlQ/VxRm0byEWjywx6Et3gZd4aDPlt0rsJDEsdXNSfmp42OUrtxYNLCroNY
+         Zsjg==
+X-Gm-Message-State: APjAAAU25wD6sX2esBLb7x0dKCgHuLqb0MFswPBLAAf/Os3ggjqrYH9T
+        RFj7aC5OfBtSQAPEFOeNE2Sx2xTTlUZngQ==
+X-Google-Smtp-Source: APXvYqwCg24QiXYaWltw5JOWO6jVdtF8z8XW5AMyTqUcKape8p/MJ1d+TsrXsWEg5OIeBmZrAPWruA==
+X-Received: by 2002:adf:cf0e:: with SMTP id o14mr3337336wrj.230.1558624256003;
+        Thu, 23 May 2019 08:10:56 -0700 (PDT)
+Received: from localhost.localdomain (18.189-60-37.rdns.acropolistelecom.net. [37.60.189.18])
+        by smtp.gmail.com with ESMTPSA id q15sm11436324wrr.19.2019.05.23.08.10.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 08:11:00 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id e13so5792457ljl.11
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 08:11:00 -0700 (PDT)
-X-Received: by 2002:a2e:9b0c:: with SMTP id u12mr18999482lji.189.1558624260065;
- Thu, 23 May 2019 08:11:00 -0700 (PDT)
+        Thu, 23 May 2019 08:10:55 -0700 (PDT)
+From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Subject: [PATCH v5 0/4] Allwinner H6 watchdog support
+Date:   Thu, 23 May 2019 17:10:46 +0200
+Message-Id: <20190523151050.27302-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190523100013.52a8d2a6@gandalf.local.home>
-In-Reply-To: <20190523100013.52a8d2a6@gandalf.local.home>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 23 May 2019 08:10:44 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg5HqJ2Kfgpub+tCWQ2_FiFwEW9H1Rm+an-BLGaGvDDXw@mail.gmail.com>
-Message-ID: <CAHk-=wg5HqJ2Kfgpub+tCWQ2_FiFwEW9H1Rm+an-BLGaGvDDXw@mail.gmail.com>
-Subject: Re: [RFC][PATCH] kernel.h: Add generic roundup_64() macro
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau@lists.freedesktop.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 7:00 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> +# define roundup_64(x, y) (                            \
-> +{                                                      \
-> +       typeof(y) __y = y;                              \
-> +       typeof(x) __x = (x) + (__y - 1);                \
-> +       do_div(__x, __y);                               \
-> +       __x * __y;                                      \
-> +}                                                      \
+Hi,
 
-The thing about this is that it absolutely sucks for power-of-two arguments.
+Allwinner H6 SoC has two watchdogs.
 
-The regular roundup() that uses division has the compiler at least
-optimize them to shifts - at least for constant cases. But do_div() is
-meant for "we already know it's not a power of two", and the compiler
-doesn't have any understanding of the internals.
+As we are not sure that both A64 and H6 are stricly identical, I have
+introduced the H6 bindings.
 
-And it looks to me like the use case you want this for is very much
-probably a power of two. In which case division is all kinds of just
-stupid.
+After investigation it seems that on some boards the first watchdog doesn't
+make it properly reboot. Please see details in the commit log.
 
-And we already have a power-of-two round up function that works on
-u64. It's called "round_up()".
+I think it's proper to add it with a comment anyway.
 
-I wish we had a better visual warning about the differences between
-"round_up()" (limited to powers-of-two, but efficient, and works with
-any size) and "roundup()" (generic, potentially horribly slow, and
-doesn't work for 64-bit on 32-bit).
+The r_watchdog is still available and usable on all the H6 boards.
 
-Side note: "round_up()" has the problem that it uses "x" twice.
+Thanks,
+Clément
 
-End result: somebody should look at this, but I really don't like the
-"force division" case that is likely horribly slow and nasty.
+Changes since v4:
+ - Delete specific bindings for r-wdt
 
-                  Linus
+Changes since v3:
+ - Remove A64 compatible
+ - Introduce specific bindings for r-wdt
+
+Changes since v2:
+ - Reintroduce H6 bindings
+ - Add watchdog Maintainters / ML
+ - Add Martin Ayotte test results
+
+Changes since v1:
+ - Use A64 compatible instead of H6
+ - Remove dt-bindings patch
+ - Change watchdog status to disabled
+ - Add r_watchdog node patch
+ - Add enable sunxi watchdog patch
+
+Clément Péron (4):
+  dt-bindings: watchdog: add Allwinner H6 watchdog
+  arm64: dts: allwinner: h6: add watchdog node
+  arm64: dts: allwinner: h6: add r_watchog node
+  arm64: defconfig: enable sunxi watchdog
+
+ .../devicetree/bindings/watchdog/sunxi-wdt.txt   |  1 +
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi     | 16 ++++++++++++++++
+ arch/arm64/configs/defconfig                     |  1 +
+ 3 files changed, 18 insertions(+)
+
+-- 
+2.20.1
+
