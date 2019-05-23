@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1497528677
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02A912881B
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387585AbfEWTJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:09:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42988 "EHLO mail.kernel.org"
+        id S2389830AbfEWTWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:22:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387557AbfEWTJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:09:47 -0400
+        id S2388660AbfEWTWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:22:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5089A217D9;
-        Thu, 23 May 2019 19:09:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0735C205ED;
+        Thu, 23 May 2019 19:22:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638586;
-        bh=pYDNUhEx/RuXpEWIYf/7Xp4hAssq22RbuTVmBp2vFcA=;
+        s=default; t=1558639325;
+        bh=Izkbe190T4j/Rt5mfXWuYGBWKYq4g4dZ4r2nz9ulMrU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vqhOD7YVQqbfODs1u8uyZLMu5iDe6cAhm2dBoFnhodcOAEuhUBVIUUSlL9iSOvplt
-         +hui5OvC5eucYDDZkJxUA/xbgWzLBA7xUUTd0fjew1OulY8GBV4SGo3m6dkCWg4l0A
-         5k0NGLwFCC4NTVxBnmMtKmS9Y5GVYRtgG3ii79uw=
+        b=MXUWfeQfZFNHdG2I5L4gxqvSAJbVfcnQIQPF9HavR24j0n6wos+cRyop0ZqH4jPRY
+         Gcs00zkIapPkrT6OBqn4IGGF7bqI8WX6TCeFEHu36IQNCOh+57o65swWHgAZQuOv1J
+         ZVBvW78N+j1Mz/qjHlhR1D2nGFWwp8NoueIGDfrw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 27/53] perf intel-pt: Fix improved sample timestamp
+        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 5.0 063/139] ceph: flush dirty inodes before proceeding with remount
 Date:   Thu, 23 May 2019 21:05:51 +0200
-Message-Id: <20190523181715.121766373@linuxfoundation.org>
+Message-Id: <20190523181728.957143804@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
-References: <20190523181710.981455400@linuxfoundation.org>
+In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
+References: <20190523181720.120897565@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,96 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Jeff Layton <jlayton@kernel.org>
 
-commit 61b6e08dc8e3ea80b7485c9b3f875ddd45c8466b upstream.
+commit 00abf69dd24f4444d185982379c5cc3bb7b6d1fc upstream.
 
-The decoder uses its current timestamp in samples. Usually that is a
-timestamp that has already passed, but in some cases it is a timestamp
-for a branch that the decoder is walking towards, and consequently
-hasn't reached.
+xfstest generic/452 was triggering a "Busy inodes after umount" warning.
+ceph was allowing the mount to go read-only without first flushing out
+dirty inodes in the cache. Ensure we sync out the filesystem before
+allowing a remount to proceed.
 
-The intel_pt_sample_time() function decides which is which, but was not
-handling TNT packets exactly correctly.
-
-In the case of TNT, the timestamp applies to the first branch, so the
-decoder must first walk to that branch.
-
-That means intel_pt_sample_time() should return true for TNT, and this
-patch makes that change. However, if the first branch is a non-taken
-branch (i.e. a 'N'), then intel_pt_sample_time() needs to return false
-for subsequent taken branches in the same TNT packet.
-
-To handle that, introduce a new state INTEL_PT_STATE_TNT_CONT to
-distinguish the cases.
-
-Note that commit 3f04d98e972b5 ("perf intel-pt: Improve sample
-timestamp") was also a stable fix and appears, for example, in v4.4
-stable tree as commit a4ebb58fd124 ("perf intel-pt: Improve sample
-timestamp").
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: stable@vger.kernel.org # v4.4+
-Fixes: 3f04d98e972b5 ("perf intel-pt: Improve sample timestamp")
-Link: http://lkml.kernel.org/r/20190510124143.27054-3-adrian.hunter@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: stable@vger.kernel.org
+Link: http://tracker.ceph.com/issues/39571
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/intel-pt-decoder/intel-pt-decoder.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ fs/ceph/super.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
-@@ -58,6 +58,7 @@ enum intel_pt_pkt_state {
- 	INTEL_PT_STATE_NO_IP,
- 	INTEL_PT_STATE_ERR_RESYNC,
- 	INTEL_PT_STATE_IN_SYNC,
-+	INTEL_PT_STATE_TNT_CONT,
- 	INTEL_PT_STATE_TNT,
- 	INTEL_PT_STATE_TIP,
- 	INTEL_PT_STATE_TIP_PGD,
-@@ -72,8 +73,9 @@ static inline bool intel_pt_sample_time(
- 	case INTEL_PT_STATE_NO_IP:
- 	case INTEL_PT_STATE_ERR_RESYNC:
- 	case INTEL_PT_STATE_IN_SYNC:
--	case INTEL_PT_STATE_TNT:
-+	case INTEL_PT_STATE_TNT_CONT:
- 		return true;
-+	case INTEL_PT_STATE_TNT:
- 	case INTEL_PT_STATE_TIP:
- 	case INTEL_PT_STATE_TIP_PGD:
- 	case INTEL_PT_STATE_FUP:
-@@ -1178,7 +1180,9 @@ static int intel_pt_walk_tnt(struct inte
- 				return -ENOENT;
- 			}
- 			decoder->tnt.count -= 1;
--			if (!decoder->tnt.count)
-+			if (decoder->tnt.count)
-+				decoder->pkt_state = INTEL_PT_STATE_TNT_CONT;
-+			else
- 				decoder->pkt_state = INTEL_PT_STATE_IN_SYNC;
- 			decoder->tnt.payload <<= 1;
- 			decoder->state.from_ip = decoder->ip;
-@@ -1209,7 +1213,9 @@ static int intel_pt_walk_tnt(struct inte
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -832,6 +832,12 @@ static void ceph_umount_begin(struct sup
+ 	return;
+ }
  
- 		if (intel_pt_insn.branch == INTEL_PT_BR_CONDITIONAL) {
- 			decoder->tnt.count -= 1;
--			if (!decoder->tnt.count)
-+			if (decoder->tnt.count)
-+				decoder->pkt_state = INTEL_PT_STATE_TNT_CONT;
-+			else
- 				decoder->pkt_state = INTEL_PT_STATE_IN_SYNC;
- 			if (decoder->tnt.payload & BIT63) {
- 				decoder->tnt.payload <<= 1;
-@@ -2153,6 +2159,7 @@ const struct intel_pt_state *intel_pt_de
- 			err = intel_pt_walk_trace(decoder);
- 			break;
- 		case INTEL_PT_STATE_TNT:
-+		case INTEL_PT_STATE_TNT_CONT:
- 			err = intel_pt_walk_tnt(decoder);
- 			if (err == -EAGAIN)
- 				err = intel_pt_walk_trace(decoder);
++static int ceph_remount(struct super_block *sb, int *flags, char *data)
++{
++	sync_filesystem(sb);
++	return 0;
++}
++
+ static const struct super_operations ceph_super_ops = {
+ 	.alloc_inode	= ceph_alloc_inode,
+ 	.destroy_inode	= ceph_destroy_inode,
+@@ -839,6 +845,7 @@ static const struct super_operations cep
+ 	.drop_inode	= ceph_drop_inode,
+ 	.sync_fs        = ceph_sync_fs,
+ 	.put_super	= ceph_put_super,
++	.remount_fs	= ceph_remount,
+ 	.show_options   = ceph_show_options,
+ 	.statfs		= ceph_statfs,
+ 	.umount_begin   = ceph_umount_begin,
 
 
