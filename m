@@ -2,80 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26C19277B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 10:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61D06277BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 10:12:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730046AbfEWILB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 04:11:01 -0400
-Received: from mga07.intel.com ([134.134.136.100]:11568 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726070AbfEWILA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 04:11:00 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 May 2019 01:10:59 -0700
-X-ExtLoop1: 1
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
-  by orsmga007.jf.intel.com with ESMTP; 23 May 2019 01:10:48 -0700
-Date:   Thu, 23 May 2019 11:10:48 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190523081048.GA10955@linux.intel.com>
-References: <20190517000331.GD11204@linux.intel.com>
- <CALCETrWxw7xALE0kmiYBzomaSMAeXEVq-7rX7xeqPtDPeDQiCA@mail.gmail.com>
- <20190520114105.GD27805@linux.intel.com>
- <20190521151836.GA4843@linux.intel.com>
- <20190521155140.GE22089@linux.intel.com>
- <20190522132022.GC31176@linux.intel.com>
- <20190522132227.GD31176@linux.intel.com>
- <0e183cce-c4b4-0e10-dbb6-bd81bea58b66@tycho.nsa.gov>
- <20190522153836.GA24833@linux.intel.com>
- <CALCETrUS8xyF1JJmQs18BGTDhPRXf+s81BkMZCZwmY73r7M+zg@mail.gmail.com>
+        id S1729081AbfEWIMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 04:12:33 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52137 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbfEWIMd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 04:12:33 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id D75F180312; Thu, 23 May 2019 10:12:21 +0200 (CEST)
+Date:   Thu, 23 May 2019 10:12:31 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, broonie@kernel.org,
+        lgirdwood@gmail.com, lee.jones@linaro.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH v4 4/6] regulator: lm363x: Add support for LM36274
+Message-ID: <20190523081231.GB20460@amd>
+References: <20190522192733.13422-1-dmurphy@ti.com>
+ <20190522192733.13422-5-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="tsOsTdHNUZQcU9Ye"
 Content-Disposition: inline
-In-Reply-To: <CALCETrUS8xyF1JJmQs18BGTDhPRXf+s81BkMZCZwmY73r7M+zg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190522192733.13422-5-dmurphy@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 03:42:45PM -0700, Andy Lutomirski wrote:
-> As far as I know from this whole discussion, we still haven't come up
-> with any credible way to avoid tracking, per enclave page, whether
-> that page came from unmodified PROT_EXEC memory.
 
-So is this in the context that the enclave is read from another VMA
-and not through a file descriptor? Is that locked in?
+--tsOsTdHNUZQcU9Ye
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-/Jarkko
+On Wed 2019-05-22 14:27:31, Dan Murphy wrote:
+> Adding regulator support for the LM36274 backlight driver.
+> This device can leverage this existing code as the functionality
+> and registers are common enough between the LM36274 and the LM363x
+> series of devices.
+>=20
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--tsOsTdHNUZQcU9Ye
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlzmVe8ACgkQMOfwapXb+vIZvwCdGjWPuXPS5trKLZTmMSOjaYQM
+HjEAnROTQv3lgMrBAw1z8Xc1q+1zrC5w
+=E+Tw
+-----END PGP SIGNATURE-----
+
+--tsOsTdHNUZQcU9Ye--
