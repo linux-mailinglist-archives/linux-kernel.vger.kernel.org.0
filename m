@@ -2,106 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75D70274A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 04:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6318E274AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 05:10:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbfEWC5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 22 May 2019 22:57:55 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60514 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727305AbfEWC5y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 22 May 2019 22:57:54 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5F6E559463;
-        Thu, 23 May 2019 02:57:54 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (ovpn-12-100.pek2.redhat.com [10.72.12.100])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C1FB7DF688;
-        Thu, 23 May 2019 02:57:50 +0000 (UTC)
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, tglx@linutronix.de, mingo@kernel.org, bp@alien8.de,
-        hpa@zytor.com, kirill.shutemov@linux.intel.com,
-        keescook@chromium.org, Baoquan He <bhe@redhat.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v5] x86/mm/KASLR: Fix the size of vmemmap section
-Date:   Thu, 23 May 2019 10:57:44 +0800
-Message-Id: <20190523025744.3756-1-bhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 23 May 2019 02:57:54 +0000 (UTC)
+        id S1729538AbfEWDKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 22 May 2019 23:10:10 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40293 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727305AbfEWDKK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 22 May 2019 23:10:10 -0400
+Received: by mail-pg1-f195.google.com with SMTP id d30so2321919pgm.7
+        for <linux-kernel@vger.kernel.org>; Wed, 22 May 2019 20:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5wjdetJzCblRZKgz8G97TYJJmRpcSdI9wVdjybuMxn0=;
+        b=RT3zqwV7CSCZljjogtPUDZEiepXHH0xA/FgePa+xFTGM1qOxeJf4/EbyagkjVQPiC4
+         qN9ErLEY74axdbOcmv9SHGdQTejVrg0Yz6NYHM/mwhPXkPFDykc+ZqYrnUjP5qDn+sbS
+         0f0JlMxQC1fPsiu77qriPMWC08liY91nUJKjkP9cECQ4fVJ5OiHZ0gS4gQVDhZnh7JZk
+         6PLYxbS+na6CpIhLf2opgdveJqPnnl5ttESOarHuQyYr6fJLpvlEJnN1efAy0mfHU/Qo
+         t6L+heofgyo76V7PYPawBzAj2LKqV0Wp6FPQ3pFUzwMhEmkf2hTtjivgpFFp84MaVwoh
+         ACzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5wjdetJzCblRZKgz8G97TYJJmRpcSdI9wVdjybuMxn0=;
+        b=gr94IJRc1VR2WHRAY0EQY2ZwoRjOy7ow52q1BMrQgdLWOAYcxvowlruGFMiVgmafM+
+         UFNcyPVu+VOztxLtFXvkj+g2p0tqeMj3euiCPbs5/zufGHSEtdrAMNRVnz1m6NdkUMnz
+         uO8lMQVvQdRsB3Mnqu8ukl35WruV4hffdU8QFe6gJfcKzKyT6G9LNwS/7rmUCZo+DoNV
+         G4HWoA+goqKnEWsDQmnRv8bVJW1PqitvWM0FXAD0NRjREodz/1RZ4juWPy4kth9cCa90
+         HDXP+vyyqDBRsUWmRv4ewoMco+ZVn/W8p4f5mHbgWYeZ/f66NRYf3UmIolfLtZYiqQUG
+         kzJw==
+X-Gm-Message-State: APjAAAUL59PeWT0iAJiy3yXSvbA9B4cTufPaFvAdvLrWsMJ5nimPIvjH
+        dn82MRIL8ZajlBPUNoAdlyg=
+X-Google-Smtp-Source: APXvYqwnd0KdCeiQBHxGpQ7WzlE0yTgWHO2HLYTJNQ29DA1LaWxa5NL0mj4AYN6AJIukQ13fDPF2dA==
+X-Received: by 2002:aa7:9212:: with SMTP id 18mr28349362pfo.120.1558581009311;
+        Wed, 22 May 2019 20:10:09 -0700 (PDT)
+Received: from google.com ([2401:fa00:d:10:75ad:a5d:715f:f6d8])
+        by smtp.gmail.com with ESMTPSA id c16sm29231876pfd.99.2019.05.22.20.10.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 22 May 2019 20:10:08 -0700 (PDT)
+Date:   Thu, 23 May 2019 12:10:02 +0900
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Stanislav Fomichev <sdf@fomichev.me>,
+        Song Liu <songliubraving@fb.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH 01/12] perf tools: Separate generic code in
+ dso__data_file_size
+Message-ID: <20190523031001.GD196218@google.com>
+References: <20190508132010.14512-1-jolsa@kernel.org>
+ <20190508132010.14512-2-jolsa@kernel.org>
+ <20190513194754.GB3198@kernel.org>
+ <20190513200015.GA2064@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190513200015.GA2064@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kernel_randomize_memory() hardcodes the size of vmemmap section as 1 TB,
-to support the maximum amount of system RAM in 4-level paging mode, 64 TB.
+Hi Jirka,
 
-However, 1 TB is not enough for vmemmap in 5-level paging mode. Assuming
-the size of struct page is 64 Bytes, to support 4 PB system RAM in 5-level,
-64 TB of vmemmap area is needed. The wrong hardcoding may cause vmemmap
-stamping into the following cpu_entry_area section, if KASLR puts vmemmap
-very close to cpu_entry_area , and the actual area of vmemmap is much
-bigger than 1 TB.
+On Mon, May 13, 2019 at 10:00:15PM +0200, Jiri Olsa wrote:
+> On Mon, May 13, 2019 at 04:47:54PM -0300, Arnaldo Carvalho de Melo wrote:
+> > Em Wed, May 08, 2019 at 03:19:59PM +0200, Jiri Olsa escreveu:
+> > > Moving file specific code in dso__data_file_size function
+> > > into separate file_size function. I'll add bpf specific
+> > > code in following patches.
+> > 
+> > I'm applying this patch, as it just moves things around, no logic
+> > change, but can you please clarify a question I have after looking at
+> > this patch?
+> >  
+> > > Link: http://lkml.kernel.org/n/tip-rkcsft4a0f8sw33p67llxf0d@git.kernel.org
+> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > > ---
+> > >  tools/perf/util/dso.c | 19 ++++++++++++-------
+> > >  1 file changed, 12 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+> > > index e059976d9d93..cb6199c1390a 100644
+> > > --- a/tools/perf/util/dso.c
+> > > +++ b/tools/perf/util/dso.c
+> > > @@ -898,18 +898,12 @@ static ssize_t cached_read(struct dso *dso, struct machine *machine,
+> > >  	return r;
+> > >  }
+> > >  
+> > > -int dso__data_file_size(struct dso *dso, struct machine *machine)
+> > > +static int file_size(struct dso *dso, struct machine *machine)
+> > >  {
+> > >  	int ret = 0;
+> > >  	struct stat st;
+> > >  	char sbuf[STRERR_BUFSIZE];
+> > >  
+> > > -	if (dso->data.file_size)
+> > > -		return 0;
+> > > -
+> > > -	if (dso->data.status == DSO_DATA_STATUS_ERROR)
+> > > -		return -1;
+> > > -
+> > >  	pthread_mutex_lock(&dso__data_open_lock);
+> > >  
+> > >  	/*
+> > > @@ -938,6 +932,17 @@ int dso__data_file_size(struct dso *dso, struct machine *machine)
+> > >  	return ret;
+> > >  }
+> > >  
+> > > +int dso__data_file_size(struct dso *dso, struct machine *machine)
+> > > +{
+> > > +	if (dso->data.file_size)
+> > > +		return 0;
+> > > +
+> > > +	if (dso->data.status == DSO_DATA_STATUS_ERROR)
+> > > +		return -1;
+> > > +
+> > > +	return file_size(dso, machine);
+> > > +}
+> > 
+> > 
+> > So the name of the function suggests we want to know the
+> > "data_file_size" of a dso, then the logic in it returns _zero_ if a
+> > member named "dso->data.file_size" is _not_ zero, can you please
+> > clarify?
+> > 
+> > I was expecting something like:
+> > 
+> > 	if (dso->data.file_size)
+> > 		return dso->data.file_size;
+> > 
+> > I.e. if we had already read it, return the cached value, otherwise go
+> > and call some other function to get that info somehow.
+> 
+> we keep the data size in dso->data.file_size,
+> the function just updates it
+> 
+> the return code is the error code.. not sure,
+> why its like that, but it is ;-)
+> 
+> maybe we wanted separate size and error code,
+> because the size needs to be u64 and we use
+> int everywhere.. less casting
 
-So here calculate the actual size of vmemmap region, then align up to 1 TB
-boundary. In 4-level it's always 1 TB. In 5-level it's adjusted on demand.
-The current code reserves 0.5 PB for vmemmap in 5-level. In this new way,
-the left space can be saved to join randomization to increase the entropy.
+Maybe we can rename it to dso__update_file_size().
 
-Fiexes: eedb92abb9bb ("x86/mm: Make virtual memory layout dynamic for CONFIG_X86_5LEVEL=y")
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Acked-by: Kirill A. Shutemov <kirill@linux.intel.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: stable@vger.kernel.org
----
-v4->v5:
-  Add Fixes tag and Cc to stable.
-v3->v4:
-  Fix the incorrect style of code comment;
-  Add ack tags from Kirill and Kees.
-v3 discussion is here:
-  http://lkml.kernel.org/r/20190422091045.GB3584@localhost.localdomain
- arch/x86/mm/kaslr.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index dc3f058bdf9b..c0eedb85a92f 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -52,7 +52,7 @@ static __initdata struct kaslr_memory_region {
- } kaslr_regions[] = {
- 	{ &page_offset_base, 0 },
- 	{ &vmalloc_base, 0 },
--	{ &vmemmap_base, 1 },
-+	{ &vmemmap_base, 0 },
- };
- 
- /* Get size in bytes used by the memory region */
-@@ -78,6 +78,7 @@ void __init kernel_randomize_memory(void)
- 	unsigned long rand, memory_tb;
- 	struct rnd_state rand_state;
- 	unsigned long remain_entropy;
-+	unsigned long vmemmap_size;
- 
- 	vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
- 	vaddr = vaddr_start;
-@@ -109,6 +110,14 @@ void __init kernel_randomize_memory(void)
- 	if (memory_tb < kaslr_regions[0].size_tb)
- 		kaslr_regions[0].size_tb = memory_tb;
- 
-+	/*
-+	 * Calculate how many TB vmemmap region needs, and aligned to
-+	 * 1TB boundary.
-+	 */
-+	vmemmap_size = (kaslr_regions[0].size_tb << (TB_SHIFT - PAGE_SHIFT)) *
-+		sizeof(struct page);
-+	kaslr_regions[2].size_tb = DIV_ROUND_UP(vmemmap_size, 1UL << TB_SHIFT);
-+
- 	/* Calculate entropy available between regions */
- 	remain_entropy = vaddr_end - vaddr_start;
- 	for (i = 0; i < ARRAY_SIZE(kaslr_regions); i++)
--- 
-2.17.2
-
+Thanks,
+Namhyung
