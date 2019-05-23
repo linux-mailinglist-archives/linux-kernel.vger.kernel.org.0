@@ -2,174 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E37E28485
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 19:09:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A717284B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 19:18:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387399AbfEWRJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 13:09:02 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36739 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730867AbfEWRJC (ORCPT
+        id S1731231AbfEWRSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 13:18:04 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55314 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731095AbfEWRSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 13:09:02 -0400
-Received: by mail-ed1-f68.google.com with SMTP id a8so10236539edx.3;
-        Thu, 23 May 2019 10:09:00 -0700 (PDT)
+        Thu, 23 May 2019 13:18:04 -0400
+Received: by mail-wm1-f67.google.com with SMTP id x64so6649105wmb.5;
+        Thu, 23 May 2019 10:18:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:openpgp:autocrypt:message-id:date
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=JqpKKF8u4atruLZeJRlzKvhmwKnhiDpsfffFU0OwfeY=;
-        b=Z7+8XpluiUSJ+/YUPE0uV14ZCVH8GfOJhzpz8+LsfeVFNh878jI9pBHJVzsNmwjX94
-         ReSkwP0/sIj4vB9YFnU2wJXWgPDbsNtpXgPLWszOb32gK8mSmVfcYNnly60BgvL3zdlG
-         splNHmjr/LeSRqDmbsijHH5LzezX791OHsEtxJvbfNATpbdW8NEfXcmm2sT/6Bf211F2
-         t9MQ0NtjEqseHMFcRWXNGYlvk9UmhnzkBGlWZQeVvCGgrs8IDVKph6tZ0G9e1eUDwQCC
-         TvXGeNtht0sqJz9DRFawaav4yLyYKXEPcfHpDa/Dn+I/RPVzJBQ/ooKz8WD4UycmrG9f
-         gEZA==
+        bh=jaESNs4hCLS2B67pZhYME8U2AZgN5qJKIo+PAIFx/Pc=;
+        b=WnvWX/goQFDV1XYt88cdHikALq7QfOWdheLk5BssxNMOtj5sRAUdJEkD8dJCBxwM0k
+         w4AoPUoa78Sil6NcZUe5K7b8Th4y3S9jl8oVbiaRVHYzrg3KrWzajXVJtrY6zj/MI+Rg
+         erdigxScQKDPw4WXZhSy7rBLsMBJF1V/6W2uKfCXarER+JxnfHwaSnZXsWu2FqMy7c49
+         wKNvc6g/ZK4UWe0gf5v4aZbNg9cZRvqj+TsowHbulIlivXuQp9zip9E/ensLgf+laYTW
+         3+vShQ9FFZ9mrFxdi0jzvIUBrTXQDPV4c9NMryGVABGO1xR/KWZ2A+ubkm+0QvZxRaMc
+         pLsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:openpgp:autocrypt
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=JqpKKF8u4atruLZeJRlzKvhmwKnhiDpsfffFU0OwfeY=;
-        b=mqjuHeNeWvSmOYBBeqvCRU5lJj+9OoH23u8fTa9NzEJPRUXCqMazDzQjW3rsVgsRuo
-         cHK90vwm6JojoR2mph1T/92hVDPj+yjm0sZQpWUUTnpk8WhOiH5ij+TTWejm0H2tmHzK
-         DMraIb8sCW3EzcAbiYHXMWa1jfNIEw2sh/ljAHwniiTl8AytmiPwIUarHLl0sSE0glUj
-         scmwlF3wDXn5ed1qzzI87iBLdbhT/26134TAU6StbWByzA3OnyUTTXRLmXDNUA+GJmvQ
-         14PPMN5Qn9pr0GR9mpUyYR85/ar78gPHiPQZyjv6BdIt190KwPTJR4xSGlTAcwKKIJJH
-         RLrg==
-X-Gm-Message-State: APjAAAW+C/GJGf2BUJQWOin78uNS+D2GyWuIX/hDGkShq7c4IKwRI5Bs
-        AxWzTMotR/3qloC/i6HwtwY=
-X-Google-Smtp-Source: APXvYqxYkwRM0SzTeyMSlhinkKDLc5vcOeez94usU0quFrHEUKgUcbL04sMp03vL57Ghbzl0L1p87w==
-X-Received: by 2002:a50:987c:: with SMTP id h57mr51649310edb.229.1558631339545;
-        Thu, 23 May 2019 10:08:59 -0700 (PDT)
-Received: from ziggy.stardust (charybdis-ext.suse.de. [195.135.221.2])
-        by smtp.gmail.com with ESMTPSA id f44sm20208eda.73.2019.05.23.10.08.58
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 10:08:58 -0700 (PDT)
-Subject: Re: [PATCH v13 1/2] arm: dts: mt2712: add uart APDMA to device tree
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-To:     Long Cheng <long.cheng@mediatek.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sean Wang <sean.wang@mediatek.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, srv_heupstream@mediatek.com,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        YT Shen <yt.shen@mediatek.com>,
-        Zhenbao Liu <zhenbao.liu@mediatek.com>
-References: <1558596909-14084-1-git-send-email-long.cheng@mediatek.com>
- <1558596909-14084-2-git-send-email-long.cheng@mediatek.com>
- <434cbd9b-face-de45-0d17-4096ad81a7b9@gmail.com>
+        bh=jaESNs4hCLS2B67pZhYME8U2AZgN5qJKIo+PAIFx/Pc=;
+        b=L8r8thuXWJOosTtqdTBqUOhrhi7HmldVp6YkJ+X0KTWTct0pFArzD2hOEgMLScSReR
+         ZYk+IMC9pMM63f35dHREvY7Gl7vzKQO91EgxjElEVWTYtWbLbZJ72ZIgGV6pxOpzlx6u
+         hPoyNDUVR/vEls9laxuLx5TdsveIPBDCYNRpGnli/e3YUaBE1Ab0ZnPFGw18huZR6EaO
+         wsnxkd15OosYSik0cJUjAcPXBQb+kTdCkoOSx1m5XwMTcPsD2/nMSZu++iiKni0loK5O
+         tSp6+7IlLfl3oo3d8ilMzlL0OjTvHLVmvr3EUnck6nwlK1l1Zu+T8gHY59eXFrX3BYt6
+         t6ig==
+X-Gm-Message-State: APjAAAXFxs8A9ib7IX3Sk0rcEixGZFrqLHMbDEboJHJTIyAdP7ZyR686
+        YfaQwapMJGZcVlKZMzKW4QDwkZp8
+X-Google-Smtp-Source: APXvYqzX43VINOR3UJSYmqV3brcHiNb00GOFlWEEcQ9fMKivftcsO2vdVJ7tDvwfLy1cKEXib2MJvQ==
+X-Received: by 2002:a1c:ef05:: with SMTP id n5mr13178914wmh.149.1558631880331;
+        Thu, 23 May 2019 10:18:00 -0700 (PDT)
+Received: from [10.67.49.213] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id 16sm49321wmx.45.2019.05.23.10.17.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 10:17:59 -0700 (PDT)
+Subject: Re: [PATCH RFC] firmware: arm_scmi: Allow for better protocol
+ extensibility
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     james.quinlan@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:CPU FREQUENCY SCALING FRAMEWORK" 
+        <linux-pm@vger.kernel.org>,
+        "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>
+References: <20190521200110.8309-1-f.fainelli@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <9c7fdd43-dffe-9339-272d-62311a39dbb9@gmail.com>
-Date:   Thu, 23 May 2019 19:08:57 +0200
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <f9403e7e-1b87-dc46-dfc5-62227c659e7c@gmail.com>
+Date:   Thu, 23 May 2019 10:17:50 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <434cbd9b-face-de45-0d17-4096ad81a7b9@gmail.com>
+In-Reply-To: <20190521200110.8309-1-f.fainelli@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -178,137 +134,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 5/21/19 1:01 PM, Florian Fainelli wrote:
+> The SCMI specific allows implementors to define their custom protocols
+> in the 0x80-0xFF space. The current scmi_handle structure requires us to
+> extend the structure with a set of operations and associated private
+> data in a way that is not quite scaling well.
+> 
+> Create a 255 bytes structure that contains an opaque pointer to a set of
+> operations and private data and create two helper functions to retrieve
+> those based on the protocol identifier. Several options were considered,
+> like using a linked list but since we could be performance sensitive in
+> some paths, using an array was faster and simpler.
+> 
+> Convert all call sites to use either scmi_protocol_get_ops() or
+> scmi_protocol_get_info().
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-
-On 23/05/2019 19:04, Matthias Brugger wrote:
-> 
-> 
-> On 23/05/2019 09:35, Long Cheng wrote:
->> 1. add uart APDMA controller device node
->> 2. add uart 0/1/2/3/4/5 DMA function
->>
->> Signed-off-by: Long Cheng <long.cheng@mediatek.com>
->> ---
->>  arch/arm64/boot/dts/mediatek/mt2712e.dtsi |   51 +++++++++++++++++++++++++++++
->>  1 file changed, 51 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
->> index 43307ba..a7a7362 100644
->> --- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
->> +++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
->> @@ -300,6 +300,9 @@
->>  		interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_LOW>;
->>  		clocks = <&baud_clk>, <&sys_clk>;
->>  		clock-names = "baud", "bus";
->> +		dmas = <&apdma 10
->> +			&apdma 11>;
->> +		dma-names = "tx", "rx";
->>  		status = "disabled";
->>  	};
->>  
->> @@ -369,6 +372,39 @@
->>  			 (GIC_CPU_MASK_RAW(0x13) | IRQ_TYPE_LEVEL_HIGH)>;
->>  	};
->>  
->> +	apdma: dma-controller@11000400 {
->> +		compatible = "mediatek,mt2712-uart-dma",
->> +			     "mediatek,mt6577-uart-dma";
-> 
-> I was able to find a binding descpription but no actual driver.
-> drivers/dma/mediatek only has hsdma and cqdma but no apdma driver.
-> 
-> Seems there is something missing here.
-> 
-
-Sorry I just realized that tje driver got merged from v12.
-
-Regards,
-Matthias
-
-> Regards,
-> Matthias
-> 
->> +		reg = <0 0x11000400 0 0x80>,
->> +		      <0 0x11000480 0 0x80>,
->> +		      <0 0x11000500 0 0x80>,
->> +		      <0 0x11000580 0 0x80>,
->> +		      <0 0x11000600 0 0x80>,
->> +		      <0 0x11000680 0 0x80>,
->> +		      <0 0x11000700 0 0x80>,
->> +		      <0 0x11000780 0 0x80>,
->> +		      <0 0x11000800 0 0x80>,
->> +		      <0 0x11000880 0 0x80>,
->> +		      <0 0x11000900 0 0x80>,
->> +		      <0 0x11000980 0 0x80>;
->> +		interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_SPI 104 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_SPI 105 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_SPI 106 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_SPI 107 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_SPI 108 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_SPI 109 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_SPI 110 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_SPI 111 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_SPI 112 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_SPI 113 IRQ_TYPE_LEVEL_LOW>,
->> +			     <GIC_SPI 114 IRQ_TYPE_LEVEL_LOW>;
->> +		dma-requests = <12>;
->> +		clocks = <&pericfg CLK_PERI_AP_DMA>;
->> +		clock-names = "apdma";
->> +		#dma-cells = <1>;
->> +	};
->> +
->>  	auxadc: adc@11001000 {
->>  		compatible = "mediatek,mt2712-auxadc";
->>  		reg = <0 0x11001000 0 0x1000>;
->> @@ -385,6 +421,9 @@
->>  		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
->>  		clocks = <&baud_clk>, <&sys_clk>;
->>  		clock-names = "baud", "bus";
->> +		dmas = <&apdma 0
->> +			&apdma 1>;
->> +		dma-names = "tx", "rx";
->>  		status = "disabled";
->>  	};
->>  
->> @@ -395,6 +434,9 @@
->>  		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
->>  		clocks = <&baud_clk>, <&sys_clk>;
->>  		clock-names = "baud", "bus";
->> +		dmas = <&apdma 2
->> +			&apdma 3>;
->> +		dma-names = "tx", "rx";
->>  		status = "disabled";
->>  	};
->>  
->> @@ -405,6 +447,9 @@
->>  		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_LOW>;
->>  		clocks = <&baud_clk>, <&sys_clk>;
->>  		clock-names = "baud", "bus";
->> +		dmas = <&apdma 4
->> +			&apdma 5>;
->> +		dma-names = "tx", "rx";
->>  		status = "disabled";
->>  	};
->>  
->> @@ -415,6 +460,9 @@
->>  		interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_LOW>;
->>  		clocks = <&baud_clk>, <&sys_clk>;
->>  		clock-names = "baud", "bus";
->> +		dmas = <&apdma 6
->> +			&apdma 7>;
->> +		dma-names = "tx", "rx";
->>  		status = "disabled";
->>  	};
->>  
->> @@ -629,6 +677,9 @@
->>  		interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_LOW>;
->>  		clocks = <&baud_clk>, <&sys_clk>;
->>  		clock-names = "baud", "bus";
->> +		dmas = <&apdma 8
->> +			&apdma 9>;
->> +		dma-names = "tx", "rx";
->>  		status = "disabled";
->>  	};
->>  
->>
+On second thought, what I really need is private storage to the scmi_dev
+(the consumer side), and not so much the protocol (provider) side.
+Therefore using dev_{set,get}_drvadata() against scmi_device::dev should
+be working just fine, and if we are concerned about another part of the
+SCMI stack making use of that storage, we can always extend struct
+scmi_device with a private cookie.
+-- 
+Florian
