@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F93D28851
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D8F928906
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390961AbfEWTYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:24:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35636 "EHLO mail.kernel.org"
+        id S2392106AbfEWTaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:30:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390933AbfEWTYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:24:36 -0400
+        id S2391634AbfEWTaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:30:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A10820868;
-        Thu, 23 May 2019 19:24:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 920F9217D7;
+        Thu, 23 May 2019 19:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639476;
-        bh=ynpK6vOq3ylr4Y2UYS7s2xllcFjZWtS8zw4ic0tmoJQ=;
+        s=default; t=1558639815;
+        bh=fvZOAFP5AIRVhhIqDeRi4wXWN+GCiBS8EQcBL1t27ak=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nXX5IxoivxFHM0i6oxqruGYHuu/xKLqS7acujf8ZtWPcKiQqraEANEJOOBJpWx8Ri
-         EHQIx7w4C8eoDLP9cV2xLj0rlMOcgydkcmmHt5QkyvcCfu0jkBC8DG3cDSW+MQ3W/Q
-         TzGkNj0TkXhazjgAQg4NoziXoNzHn/fH+uDcuwT4=
+        b=DD3sy0eIUiQxS/o1PwEsxfSAHX/thKHVf8PZPRCpbvdeFc0B2ti4A4QFW8ZUpSIOk
+         sD1+M5eC2klGlTuZ3vtFbyAXxyCSAo4PR5gFUQswC4fi8WyNpamCUzKdItDmgg6HTb
+         RjDu/O3gE7vgJ7I/G705Jis+2gr4zr6iCdcQrz24=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 119/139] KVM: arm/arm64: Ensure vcpu target is unset on reset failure
-Date:   Thu, 23 May 2019 21:06:47 +0200
-Message-Id: <20190523181735.150659444@linuxfoundation.org>
+        stable@vger.kernel.org, Yifeng Li <tomli@tomli.me>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Teddy Wang <teddy.wang@siliconmotion.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 5.1 086/122] fbdev: sm712fb: fix brightness control on reboot, dont set SR30
+Date:   Thu, 23 May 2019 21:06:48 +0200
+Message-Id: <20190523181716.297877327@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 811328fc3222f7b55846de0cd0404339e2e1e6d7 ]
+From: Yifeng Li <tomli@tomli.me>
 
-A failed KVM_ARM_VCPU_INIT should not set the vcpu target,
-as the vcpu target is used by kvm_vcpu_initialized() to
-determine if other vcpu ioctls may proceed. We need to set
-the target before calling kvm_reset_vcpu(), but if that call
-fails, we should then unset it and clear the feature bitmap
-while we're at it.
+commit 5481115e25e42b9215f2619452aa99c95f08492f upstream.
 
-Signed-off-by: Andrew Jones <drjones@redhat.com>
-[maz: Simplified patch, completed commit message]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+On a Thinkpad s30 (Pentium III / i440MX, Lynx3DM), rebooting with
+sm712fb framebuffer driver would cause the role of brightness up/down
+button to swap.
+
+Experiments showed the FPR30 register caused this behavior. Moreover,
+even if this register don't have side-effect on other systems, over-
+writing it is also highly questionable, since it was originally
+configurated by the motherboard manufacturer by hardwiring pull-down
+resistors to indicate the type of LCD panel. We should not mess with
+it.
+
+Stop writing to the SR30 (a.k.a FPR30) register.
+
+Signed-off-by: Yifeng Li <tomli@tomli.me>
+Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Teddy Wang <teddy.wang@siliconmotion.com>
+Cc: <stable@vger.kernel.org>  # v4.4+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- virt/kvm/arm/arm.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/video/fbdev/sm712fb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index 9c486fad3f9f8..6202b4f718cea 100644
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -949,7 +949,7 @@ int kvm_vm_ioctl_irq_line(struct kvm *kvm, struct kvm_irq_level *irq_level,
- static int kvm_vcpu_set_target(struct kvm_vcpu *vcpu,
- 			       const struct kvm_vcpu_init *init)
- {
--	unsigned int i;
-+	unsigned int i, ret;
- 	int phys_target = kvm_target_cpu();
+--- a/drivers/video/fbdev/sm712fb.c
++++ b/drivers/video/fbdev/sm712fb.c
+@@ -1145,8 +1145,8 @@ static void sm7xx_set_timing(struct smtc
  
- 	if (init->target != phys_target)
-@@ -984,9 +984,14 @@ static int kvm_vcpu_set_target(struct kvm_vcpu *vcpu,
- 	vcpu->arch.target = phys_target;
+ 		/* init SEQ register SR30 - SR75 */
+ 		for (i = 0; i < SIZE_SR30_SR75; i++)
+-			if ((i + 0x30) != 0x62 && (i + 0x30) != 0x6a &&
+-			    (i + 0x30) != 0x6b)
++			if ((i + 0x30) != 0x30 && (i + 0x30) != 0x62 &&
++			    (i + 0x30) != 0x6a && (i + 0x30) != 0x6b)
+ 				smtc_seqw(i + 0x30,
+ 					  vgamode[j].init_sr30_sr75[i]);
  
- 	/* Now we know what it is, we can reset it. */
--	return kvm_reset_vcpu(vcpu);
--}
-+	ret = kvm_reset_vcpu(vcpu);
-+	if (ret) {
-+		vcpu->arch.target = -1;
-+		bitmap_zero(vcpu->arch.features, KVM_VCPU_MAX_FEATURES);
-+	}
- 
-+	return ret;
-+}
- 
- static int kvm_arch_vcpu_ioctl_vcpu_init(struct kvm_vcpu *vcpu,
- 					 struct kvm_vcpu_init *init)
--- 
-2.20.1
-
 
 
