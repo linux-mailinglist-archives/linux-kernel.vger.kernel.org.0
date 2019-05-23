@@ -2,53 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5458F27F35
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 16:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E7527E42
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 15:38:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730860AbfEWOMu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 10:12:50 -0400
-Received: from smtp3.ono.com ([62.42.230.163]:23197 "EHLO smtp3.ono.com"
+        id S1730713AbfEWNh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 09:37:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:46550 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730323AbfEWOMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 10:12:49 -0400
-X-Junkmail-Premium-Raw: score=17/50,refid=2.7.2:2019.5.23.134216:17:17.509,ip=62.42.230.132,rules=__HAS_MSGID,
- __SANE_MSGID, MSGID_JMAIL_DEFAULT, INVALID_MSGID_NO_FQDN, __HAS_FROM,
- __HAS_REPLYTO, __FRAUD_WEBMAIL_REPLYTO, SUBJ_STARTS_IN_SPACE,
- __SUBJ_ALPHA_END, __MIME_VERSION, __CT, __CT_TEXT_PLAIN, __CTE,
- MISSING_HEADERS, __FRAUD_INYOURCOUNTRY, __STOCK_PHRASE_7, __STOCK_PHRASE_8,
- __FRAUD_MONEY_GENERIC, __FRAUD_MONEY_BIG_COIN_DIG, __OEM_PRICE,
- __FRAUD_MONEY_CURRENCY_DOLLAR, __NO_HTML_TAG_RAW, BODYTEXTP_SIZE_3000_LESS,
- BODY_SIZE_400_499, __MIME_TEXT_P1, __MIME_TEXT_ONLY, HTML_00_01, HTML_00_10,
- __FRAUD_MONEY_CURRENCY, __FRAUD_MONEY_BIG_COIN, __FRAUD_MONEY_VALUE,
- __FRAUD_MONEY, FRAUD_X3, BODY_SIZE_5000_LESS, __FRAUD_WEBMAIL,
- WEBMAIL_REPLYTO_NOT_FROM, FRAUD_WEBMAIL_R_NOT_F, __FRAUD_COMMON,
- __MIME_TEXT_P, NO_URI_FOUND, NO_CTA_URI_FOUND, __PHISH_SPEAR_STRUCTURE_1,
- BODY_SIZE_1000_LESS, BODY_SIZE_2000_LESS, __PHISH_SPEAR_STRUCTURE_2,
- REPLYTO_FROM_DIFF_ADDY, NO_URI_HTTPS, BODY_SIZE_7000_LESS, TO_MALFORMED
-Received: from resprs02 (62.42.230.132) by smtp3.ono.com (9.0.019.09-1)
-        id 5CC0A28F013BA632; Thu, 23 May 2019 16:12:45 +0200
-Received: from (149.126.75.2) by webmailcpr02n.ono.com;  Thu, 23 May 2019 15:36:16 +0200
-Message-ID: <17842236.2439011558618576370.JavaMail.defaultUser@defaultHost>
-Date:   Thu, 23 May 2019 15:36:16 +0200 (CEST)
-From:   Aisha Gaddafi <anicetovalle@ono.com>
-Reply-To: gaisha983@gmail.com
-Subject:  Hello My Beloved One, i need your assistance
+        id S1729902AbfEWNh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 09:37:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1649D80D;
+        Thu, 23 May 2019 06:37:58 -0700 (PDT)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C54A3F575;
+        Thu, 23 May 2019 06:37:57 -0700 (PDT)
+Subject: Re: [PATCH v4 00/30] coresight: Support for ACPI bindings
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
+        coresight@lists.linaro.org
+References: <1558521304-27469-1-git-send-email-suzuki.poulose@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <b45be0f7-5573-23fb-90c1-9a8e4fc6a5e1@arm.com>
+Date:   Thu, 23 May 2019 14:37:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain;charset="UTF-8"
+In-Reply-To: <1558521304-27469-1-git-send-email-suzuki.poulose@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Assalamu Alaikum,
-I came across your contact during my private search
-Mrs Aisha Al-Qaddafi is my name, the only daughter of late Libyan
-president, I have funds the sum
-of $27.5 million USD for investment, I am interested in you for
-investment project assistance in your country,
-i shall compensate you 30% of the total sum after the funds are
-transfer into your account,
-Mrs Aisha Al-Qaddafi
 
+
+On 22/05/2019 11:34, Suzuki K Poulose wrote:
+> This series adds the support for CoreSight devices on ACPI based
+> platforms. The device connections are encoded as _DSD graph property[0],
+> with CoreSight specific extensions to indicate the direction of data
+> flow as described in [1]. Components attached to CPUs are listed
+> as child devices of the corresponding CPU, removing explicit links
+> to the CPU like we do in the DT.
+> 
+> The majority of the series cleans up the driver and prepares the subsystem
+> for platform agnostic firwmare probing, naming scheme, searching etc.
+> 
+> We introduce platform independent helpers to parse the platform supplied
+> information. Thus we rename the platform handling code from:
+> 	of_coresight.c  => coresight-platform.c
+> 
+> The CoreSight driver creates shadow devices that appear on the Coresight
+> bus, in addition to the real devices (e.g, AMBA bus devices). The name
+> of these devices match the real device. This makes the device name
+> a bit cryptic for ACPI platform. So this series also introduces a generic
+> platform agnostic device naming scheme for the shadow Coresight devices.
+> Towards this we also make changes to the way we lookup devices to resolve
+> the connections, as we can't use the names to identify the devices. So,
+> we use the "fwnode_handle" of the real device for the device lookups.
+> Towards that we clean up the drivers to keep track of the "CoreSight"
+> device rather than the "real" device. However, all real operations,
+> like DMA allocation, Power management etc. must be performed on
+> the real device which is the parent of the shadow device.
+> 
+> Finally we add the support for parsing the ACPI platform data. The power
+> management support is missing in the ACPI (and this is not specific to
+> CoreSight). The firmware must ensure that the respective power domains
+> are turned on.
+> 
+> Applies on v5.2-rc1
+> 
+> Tested on a Juno-r0 board with ACPI bindings patch (Patch 31/30) added on
+> top of [2]. You would need to make sure that the debug power domain is
+> turned on before the Linux kernel boots. (e.g, connect the DS-5 to the
+> Juno board while at UEFI). arm32 code is only compile tested.
+> 
+> [0] ACPI Device Graphs using _DSD (Not available online yet, approved but
+>      awaiting publish and eventually should be linked at).
+>      https://uefi.org/sites/default/files/resources/_DSD-implementation-guide-toplevel-1_1.htm
+> [1] https://developer.arm.com/docs/den0067/latest/acpi-for-coresighttm-10-platform-design-document
+> [2] https://github.com/tianocore/edk2-platforms.git
+
+The kernel patches are also available at :
+
+git://linux-arm.org/linux-skp.git coresight-acpi/v4
+
+Suzuki
