@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42187286D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93108289F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:43:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388525AbfEWTNL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:13:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47000 "EHLO mail.kernel.org"
+        id S2389502AbfEWTSA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:18:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388510AbfEWTNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:13:09 -0400
+        id S2388242AbfEWTRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:17:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA32E217D9;
-        Thu, 23 May 2019 19:13:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F604217D7;
+        Thu, 23 May 2019 19:17:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638788;
-        bh=UY8SQeHd7FCBBneJtTyKQp5Ic9+zcQhEBd8HXBbyPCc=;
+        s=default; t=1558639072;
+        bh=uxPr8ykJ/Zl6QN+mxD8fJr+dtsoS0g8hBhrj1U7skoM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=atfqW5YD0D2Hn7lgl1kEIi7Ne9S5O5pW8uDSTyf21ah68r3nzSQqB8G6sB7TYB4I4
-         lqtTp6FvjYmDyhPwAoJLVfSVyvtF3rJkXjiuHfrpH4cv3yXKx2/gTW83fGqILolPsM
-         ksQyGVNojG28h1Hp5rk6yV29weU1meAg0Afj6Zck=
+        b=jUzDeuzmH2eyk20+Fkv4y3Z943SeIz5IfySF7YoQPk76Cx8OhFr6qpB0hclaJxPZt
+         0i42pDXVgrys2K+3aq8nV2Kmk9Kn255pnwJkefo7OXO2arMd3FXF5Ogzr1i3thUCim
+         4pniMw2DXZKrm+odN1GgYtY3gNCl5FelggAUR5Vw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org, Su Yanjun <suyj.fnst@cn.fujitsu.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 65/77] KVM: arm/arm64: Ensure vcpu target is unset on reset failure
+Subject: [PATCH 4.19 084/114] xfrm6_tunnel: Fix potential panic when unloading xfrm6_tunnel module
 Date:   Thu, 23 May 2019 21:06:23 +0200
-Message-Id: <20190523181728.972641334@linuxfoundation.org>
+Message-Id: <20190523181739.279581814@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 811328fc3222f7b55846de0cd0404339e2e1e6d7 ]
+[ Upstream commit 6ee02a54ef990a71bf542b6f0a4e3321de9d9c66 ]
 
-A failed KVM_ARM_VCPU_INIT should not set the vcpu target,
-as the vcpu target is used by kvm_vcpu_initialized() to
-determine if other vcpu ioctls may proceed. We need to set
-the target before calling kvm_reset_vcpu(), but if that call
-fails, we should then unset it and clear the feature bitmap
-while we're at it.
+When unloading xfrm6_tunnel module, xfrm6_tunnel_fini directly
+frees the xfrm6_tunnel_spi_kmem. Maybe someone has gotten the
+xfrm6_tunnel_spi, so need to wait it.
 
-Signed-off-by: Andrew Jones <drjones@redhat.com>
-[maz: Simplified patch, completed commit message]
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Fixes: 91cc3bb0b04ff("xfrm6_tunnel: RCU conversion")
+Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- virt/kvm/arm/arm.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ net/ipv6/xfrm6_tunnel.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index 32aa88c19b8d5..4154f98b337c5 100644
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -856,7 +856,7 @@ int kvm_vm_ioctl_irq_line(struct kvm *kvm, struct kvm_irq_level *irq_level,
- static int kvm_vcpu_set_target(struct kvm_vcpu *vcpu,
- 			       const struct kvm_vcpu_init *init)
- {
--	unsigned int i;
-+	unsigned int i, ret;
- 	int phys_target = kvm_target_cpu();
+diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
+index bc65db782bfb1..12cb3aa990af4 100644
+--- a/net/ipv6/xfrm6_tunnel.c
++++ b/net/ipv6/xfrm6_tunnel.c
+@@ -402,6 +402,10 @@ static void __exit xfrm6_tunnel_fini(void)
+ 	xfrm6_tunnel_deregister(&xfrm6_tunnel_handler, AF_INET6);
+ 	xfrm_unregister_type(&xfrm6_tunnel_type, AF_INET6);
+ 	unregister_pernet_subsys(&xfrm6_tunnel_net_ops);
++	/* Someone maybe has gotten the xfrm6_tunnel_spi.
++	 * So need to wait it.
++	 */
++	rcu_barrier();
+ 	kmem_cache_destroy(xfrm6_tunnel_spi_kmem);
+ }
  
- 	if (init->target != phys_target)
-@@ -891,9 +891,14 @@ static int kvm_vcpu_set_target(struct kvm_vcpu *vcpu,
- 	vcpu->arch.target = phys_target;
- 
- 	/* Now we know what it is, we can reset it. */
--	return kvm_reset_vcpu(vcpu);
--}
-+	ret = kvm_reset_vcpu(vcpu);
-+	if (ret) {
-+		vcpu->arch.target = -1;
-+		bitmap_zero(vcpu->arch.features, KVM_VCPU_MAX_FEATURES);
-+	}
- 
-+	return ret;
-+}
- 
- static int kvm_arch_vcpu_ioctl_vcpu_init(struct kvm_vcpu *vcpu,
- 					 struct kvm_vcpu_init *init)
 -- 
 2.20.1
 
