@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52322286D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3DD928764
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388586AbfEWTN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:13:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47342 "EHLO mail.kernel.org"
+        id S2389711AbfEWTS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:18:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388571AbfEWTNW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:13:22 -0400
+        id S2389700AbfEWTSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:18:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0463920863;
-        Thu, 23 May 2019 19:13:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70FEA2133D;
+        Thu, 23 May 2019 19:18:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638801;
-        bh=5RmkLvk7knbL+rmP+iB/6/q9Ll0m41LXNGKFi+pBfdE=;
+        s=default; t=1558639131;
+        bh=Fn75vAqq208ZamoG1r5eXuJPt0CbASeV6eFZIIJezJ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uhAtpRAz9BqYd3/5LBrry1OYp/wFAUwW+ej1ElVq1NXIXDkV5vtqgq9s4z8fUMo0d
-         ypxW4F2puR45FKtgVhy2l4PRCTUZyEYLgaWXMaZaViloW6bTXnPn0UY6QO6OzEA7KF
-         OdofzLnpfrMf7MwIvViYRrHJ77/Rv43FCIhB3oZw=
+        b=TcRoAxEVbRJqSyXpejEb5R/N0iCi8u9ZgTVP2SptTb2B4NLJHAFDZN8cd2d/8Tksy
+         g4aDwwluKLfJEESHmXslQJt8dLZ8HAfuNgA03Ez00r80PT8rW8Bz1DdsYsM8yCa+R6
+         mF7K6BGEv/NiIIIgUafSxXaeFBJgUSwGgdfXKC4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 70/77] ufs: fix braino in ufs_get_inode_gid() for solaris UFS flavour
+Subject: [PATCH 4.19 089/114] xfrm4: Fix uninitialized memory read in _decode_session4
 Date:   Thu, 23 May 2019 21:06:28 +0200
-Message-Id: <20190523181729.649101311@linuxfoundation.org>
+Message-Id: <20190523181739.613288277@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
-References: <20190523181719.982121681@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +44,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4e9036042fedaffcd868d7f7aa948756c48c637d ]
+[ Upstream commit 8742dc86d0c7a9628117a989c11f04a9b6b898f3 ]
 
-To choose whether to pick the GID from the old (16bit) or new (32bit)
-field, we should check if the old gid field is set to 0xffff.  Mainline
-checks the old *UID* field instead - cut'n'paste from the corresponding
-code in ufs_get_inode_uid().
+We currently don't reload pointers pointing into skb header
+after doing pskb_may_pull() in _decode_session4(). So in case
+pskb_may_pull() changed the pointers, we read from random
+memory. Fix this by putting all the needed infos on the
+stack, so that we don't need to access the header pointers
+after doing pskb_may_pull().
 
-Fixes: 252e211e90ce
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ufs/util.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/xfrm4_policy.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/fs/ufs/util.h b/fs/ufs/util.h
-index 1907be6d58085..f3092d513551a 100644
---- a/fs/ufs/util.h
-+++ b/fs/ufs/util.h
-@@ -229,7 +229,7 @@ ufs_get_inode_gid(struct super_block *sb, struct ufs_inode *inode)
- 	case UFS_UID_44BSD:
- 		return fs32_to_cpu(sb, inode->ui_u3.ui_44.ui_gid);
- 	case UFS_UID_EFT:
--		if (inode->ui_u1.oldids.ui_suid == 0xFFFF)
-+		if (inode->ui_u1.oldids.ui_sgid == 0xFFFF)
- 			return fs32_to_cpu(sb, inode->ui_u3.ui_sun.ui_gid);
- 		/* Fall through */
- 	default:
+diff --git a/net/ipv4/xfrm4_policy.c b/net/ipv4/xfrm4_policy.c
+index d73a6d6652f60..2b144b92ae46a 100644
+--- a/net/ipv4/xfrm4_policy.c
++++ b/net/ipv4/xfrm4_policy.c
+@@ -111,7 +111,8 @@ static void
+ _decode_session4(struct sk_buff *skb, struct flowi *fl, int reverse)
+ {
+ 	const struct iphdr *iph = ip_hdr(skb);
+-	u8 *xprth = skb_network_header(skb) + iph->ihl * 4;
++	int ihl = iph->ihl;
++	u8 *xprth = skb_network_header(skb) + ihl * 4;
+ 	struct flowi4 *fl4 = &fl->u.ip4;
+ 	int oif = 0;
+ 
+@@ -122,6 +123,11 @@ _decode_session4(struct sk_buff *skb, struct flowi *fl, int reverse)
+ 	fl4->flowi4_mark = skb->mark;
+ 	fl4->flowi4_oif = reverse ? skb->skb_iif : oif;
+ 
++	fl4->flowi4_proto = iph->protocol;
++	fl4->daddr = reverse ? iph->saddr : iph->daddr;
++	fl4->saddr = reverse ? iph->daddr : iph->saddr;
++	fl4->flowi4_tos = iph->tos;
++
+ 	if (!ip_is_fragment(iph)) {
+ 		switch (iph->protocol) {
+ 		case IPPROTO_UDP:
+@@ -133,7 +139,7 @@ _decode_session4(struct sk_buff *skb, struct flowi *fl, int reverse)
+ 			    pskb_may_pull(skb, xprth + 4 - skb->data)) {
+ 				__be16 *ports;
+ 
+-				xprth = skb_network_header(skb) + iph->ihl * 4;
++				xprth = skb_network_header(skb) + ihl * 4;
+ 				ports = (__be16 *)xprth;
+ 
+ 				fl4->fl4_sport = ports[!!reverse];
+@@ -146,7 +152,7 @@ _decode_session4(struct sk_buff *skb, struct flowi *fl, int reverse)
+ 			    pskb_may_pull(skb, xprth + 2 - skb->data)) {
+ 				u8 *icmp;
+ 
+-				xprth = skb_network_header(skb) + iph->ihl * 4;
++				xprth = skb_network_header(skb) + ihl * 4;
+ 				icmp = xprth;
+ 
+ 				fl4->fl4_icmp_type = icmp[0];
+@@ -159,7 +165,7 @@ _decode_session4(struct sk_buff *skb, struct flowi *fl, int reverse)
+ 			    pskb_may_pull(skb, xprth + 4 - skb->data)) {
+ 				__be32 *ehdr;
+ 
+-				xprth = skb_network_header(skb) + iph->ihl * 4;
++				xprth = skb_network_header(skb) + ihl * 4;
+ 				ehdr = (__be32 *)xprth;
+ 
+ 				fl4->fl4_ipsec_spi = ehdr[0];
+@@ -171,7 +177,7 @@ _decode_session4(struct sk_buff *skb, struct flowi *fl, int reverse)
+ 			    pskb_may_pull(skb, xprth + 8 - skb->data)) {
+ 				__be32 *ah_hdr;
+ 
+-				xprth = skb_network_header(skb) + iph->ihl * 4;
++				xprth = skb_network_header(skb) + ihl * 4;
+ 				ah_hdr = (__be32 *)xprth;
+ 
+ 				fl4->fl4_ipsec_spi = ah_hdr[1];
+@@ -183,7 +189,7 @@ _decode_session4(struct sk_buff *skb, struct flowi *fl, int reverse)
+ 			    pskb_may_pull(skb, xprth + 4 - skb->data)) {
+ 				__be16 *ipcomp_hdr;
+ 
+-				xprth = skb_network_header(skb) + iph->ihl * 4;
++				xprth = skb_network_header(skb) + ihl * 4;
+ 				ipcomp_hdr = (__be16 *)xprth;
+ 
+ 				fl4->fl4_ipsec_spi = htonl(ntohs(ipcomp_hdr[1]));
+@@ -196,7 +202,7 @@ _decode_session4(struct sk_buff *skb, struct flowi *fl, int reverse)
+ 				__be16 *greflags;
+ 				__be32 *gre_hdr;
+ 
+-				xprth = skb_network_header(skb) + iph->ihl * 4;
++				xprth = skb_network_header(skb) + ihl * 4;
+ 				greflags = (__be16 *)xprth;
+ 				gre_hdr = (__be32 *)xprth;
+ 
+@@ -213,10 +219,6 @@ _decode_session4(struct sk_buff *skb, struct flowi *fl, int reverse)
+ 			break;
+ 		}
+ 	}
+-	fl4->flowi4_proto = iph->protocol;
+-	fl4->daddr = reverse ? iph->saddr : iph->daddr;
+-	fl4->saddr = reverse ? iph->daddr : iph->saddr;
+-	fl4->flowi4_tos = iph->tos;
+ }
+ 
+ static void xfrm4_update_pmtu(struct dst_entry *dst, struct sock *sk,
 -- 
 2.20.1
 
