@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 541CD28848
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:40:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5836F288DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390887AbfEWTYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:24:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35334 "EHLO mail.kernel.org"
+        id S2391894AbfEWT3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:29:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389589AbfEWTYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:24:23 -0400
+        id S2391416AbfEWT3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:29:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43C192054F;
-        Thu, 23 May 2019 19:24:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F4B3217D7;
+        Thu, 23 May 2019 19:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639462;
-        bh=FnalDg18hBi6kHR+z/J9Vm5QcBsPty/hXYq3rg0fMHQ=;
+        s=default; t=1558639748;
+        bh=eGjSZCeMlhs3mCdvp+rkNdXCGOMD6kWJsci1m1TlAcw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l2LjDRpYfnt8mX9i9YMX1ScIYXAVSrh0zcufmH4IiJXIyXI7/IVK8U7vJh8U2emLd
-         E4ZsLX7rfzwADBXEDqOcOuXZApkB1dtPYpeyvtogjTk5Ildo0ykKMzhPAWHtgNwaPb
-         PK70m07FezTnYz+ptGBTvjpn7+86jWzHiAlb3Q60=
+        b=z9/ojJAzgr+icF4P/kgbUQrtYGistxrAkr5InlcJPWHgrX6bis4GnvxfH7M3QSRjX
+         V9JlsQLJ/FSJEhD4ZJSX1gIw9C0u3zMigGstnm7GLY8Iy8AB84rXBRIf/YCGHTX/8n
+         SJ8z3cQbgcRC+5y9aEwC4N4Jfb5HXIo/Fe9uLFbk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.0 097/139] dm integrity: correctly calculate the size of metadata area
-Date:   Thu, 23 May 2019 21:06:25 +0200
-Message-Id: <20190523181733.202230618@linuxfoundation.org>
+        Bernie Thompson <bernie@plugable.com>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 5.1 064/122] udlfb: fix sleeping inside spinlock
+Date:   Thu, 23 May 2019 21:06:26 +0200
+Message-Id: <20190523181713.201724775@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +47,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 30bba430ddf737978e40561198693ba91386dac1 upstream.
+commit 6b11f9d8433b471fdd3ebed232b43a4b723be6ff upstream.
 
-When we use separate devices for data and metadata, dm-integrity would
-incorrectly calculate the size of the metadata device as if it had
-512-byte block size - and it would refuse activation with larger block
-size and smaller metadata device.
+If a framebuffer device is used as a console, the rendering calls
+(copyarea, fillrect, imageblit) may be done with the console spinlock
+held. On udlfb, these function call dlfb_handle_damage that takes a
+blocking semaphore before acquiring an URB.
 
-Fix this so that it takes actual block size into account, which fixes
-the following reported issue:
-https://gitlab.com/cryptsetup/cryptsetup/issues/450
+In order to fix the bug, this patch changes the calls copyarea, fillrect
+and imageblit to offload USB work to a workqueue.
 
-Fixes: 356d9d52e122 ("dm integrity: allow separate metadata device")
-Cc: stable@vger.kernel.org # v4.19+
+A side effect of this patch is 3x improvement in console scrolling speed
+because the device doesn't have to be updated after each copyarea call.
+
 Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Cc: Bernie Thompson <bernie@plugable.com>
+Cc: Ladislav Michl <ladis@linux-mips.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-integrity.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/video/fbdev/udlfb.c |   56 +++++++++++++++++++++++++++++++++++++++++---
+ include/video/udlfb.h       |    6 ++++
+ 2 files changed, 59 insertions(+), 3 deletions(-)
 
---- a/drivers/md/dm-integrity.c
-+++ b/drivers/md/dm-integrity.c
-@@ -2568,7 +2568,7 @@ static int calculate_device_limits(struc
- 		if (last_sector < ic->start || last_sector >= ic->meta_device_sectors)
- 			return -EINVAL;
- 	} else {
--		__u64 meta_size = ic->provided_data_sectors * ic->tag_size;
-+		__u64 meta_size = (ic->provided_data_sectors >> ic->sb->log2_sectors_per_block) * ic->tag_size;
- 		meta_size = (meta_size + ((1U << (ic->log2_buffer_sectors + SECTOR_SHIFT)) - 1))
- 				>> (ic->log2_buffer_sectors + SECTOR_SHIFT);
- 		meta_size <<= ic->log2_buffer_sectors;
-@@ -3439,7 +3439,7 @@ try_smaller_buffer:
- 	DEBUG_print("	journal_sections %u\n", (unsigned)le32_to_cpu(ic->sb->journal_sections));
- 	DEBUG_print("	journal_entries %u\n", ic->journal_entries);
- 	DEBUG_print("	log2_interleave_sectors %d\n", ic->sb->log2_interleave_sectors);
--	DEBUG_print("	device_sectors 0x%llx\n", (unsigned long long)ic->device_sectors);
-+	DEBUG_print("	data_device_sectors 0x%llx\n", (unsigned long long)ic->data_device_sectors);
- 	DEBUG_print("	initial_sectors 0x%x\n", ic->initial_sectors);
- 	DEBUG_print("	metadata_run 0x%x\n", ic->metadata_run);
- 	DEBUG_print("	log2_metadata_run %d\n", ic->log2_metadata_run);
+--- a/drivers/video/fbdev/udlfb.c
++++ b/drivers/video/fbdev/udlfb.c
+@@ -657,6 +657,50 @@ error:
+ 	return 0;
+ }
+ 
++static void dlfb_init_damage(struct dlfb_data *dlfb)
++{
++	dlfb->damage_x = INT_MAX;
++	dlfb->damage_x2 = 0;
++	dlfb->damage_y = INT_MAX;
++	dlfb->damage_y2 = 0;
++}
++
++static void dlfb_damage_work(struct work_struct *w)
++{
++	struct dlfb_data *dlfb = container_of(w, struct dlfb_data, damage_work);
++	int x, x2, y, y2;
++
++	spin_lock_irq(&dlfb->damage_lock);
++	x = dlfb->damage_x;
++	x2 = dlfb->damage_x2;
++	y = dlfb->damage_y;
++	y2 = dlfb->damage_y2;
++	dlfb_init_damage(dlfb);
++	spin_unlock_irq(&dlfb->damage_lock);
++
++	if (x < x2 && y < y2)
++		dlfb_handle_damage(dlfb, x, y, x2 - x, y2 - y);
++}
++
++static void dlfb_offload_damage(struct dlfb_data *dlfb, int x, int y, int width, int height)
++{
++	unsigned long flags;
++	int x2 = x + width;
++	int y2 = y + height;
++
++	if (x >= x2 || y >= y2)
++		return;
++
++	spin_lock_irqsave(&dlfb->damage_lock, flags);
++	dlfb->damage_x = min(x, dlfb->damage_x);
++	dlfb->damage_x2 = max(x2, dlfb->damage_x2);
++	dlfb->damage_y = min(y, dlfb->damage_y);
++	dlfb->damage_y2 = max(y2, dlfb->damage_y2);
++	spin_unlock_irqrestore(&dlfb->damage_lock, flags);
++
++	schedule_work(&dlfb->damage_work);
++}
++
+ /*
+  * Path triggered by usermode clients who write to filesystem
+  * e.g. cat filename > /dev/fb1
+@@ -693,7 +737,7 @@ static void dlfb_ops_copyarea(struct fb_
+ 
+ 	sys_copyarea(info, area);
+ 
+-	dlfb_handle_damage(dlfb, area->dx, area->dy,
++	dlfb_offload_damage(dlfb, area->dx, area->dy,
+ 			area->width, area->height);
+ }
+ 
+@@ -704,7 +748,7 @@ static void dlfb_ops_imageblit(struct fb
+ 
+ 	sys_imageblit(info, image);
+ 
+-	dlfb_handle_damage(dlfb, image->dx, image->dy,
++	dlfb_offload_damage(dlfb, image->dx, image->dy,
+ 			image->width, image->height);
+ }
+ 
+@@ -715,7 +759,7 @@ static void dlfb_ops_fillrect(struct fb_
+ 
+ 	sys_fillrect(info, rect);
+ 
+-	dlfb_handle_damage(dlfb, rect->dx, rect->dy, rect->width,
++	dlfb_offload_damage(dlfb, rect->dx, rect->dy, rect->width,
+ 			      rect->height);
+ }
+ 
+@@ -940,6 +984,8 @@ static void dlfb_ops_destroy(struct fb_i
+ {
+ 	struct dlfb_data *dlfb = info->par;
+ 
++	cancel_work_sync(&dlfb->damage_work);
++
+ 	if (info->cmap.len != 0)
+ 		fb_dealloc_cmap(&info->cmap);
+ 	if (info->monspecs.modedb)
+@@ -1636,6 +1682,10 @@ static int dlfb_usb_probe(struct usb_int
+ 	dlfb->ops = dlfb_ops;
+ 	info->fbops = &dlfb->ops;
+ 
++	dlfb_init_damage(dlfb);
++	spin_lock_init(&dlfb->damage_lock);
++	INIT_WORK(&dlfb->damage_work, dlfb_damage_work);
++
+ 	INIT_LIST_HEAD(&info->modelist);
+ 
+ 	if (!dlfb_alloc_urb_list(dlfb, WRITES_IN_FLIGHT, MAX_TRANSFER)) {
+--- a/include/video/udlfb.h
++++ b/include/video/udlfb.h
+@@ -48,6 +48,12 @@ struct dlfb_data {
+ 	int base8;
+ 	u32 pseudo_palette[256];
+ 	int blank_mode; /*one of FB_BLANK_ */
++	int damage_x;
++	int damage_y;
++	int damage_x2;
++	int damage_y2;
++	spinlock_t damage_lock;
++	struct work_struct damage_work;
+ 	struct fb_ops ops;
+ 	/* blit-only rendering path metrics, exposed through sysfs */
+ 	atomic_t bytes_rendered; /* raw pixel-bytes driver asked to render */
 
 
