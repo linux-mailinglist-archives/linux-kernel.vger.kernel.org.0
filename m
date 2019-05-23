@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 650CA28753
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06947288C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389547AbfEWTSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:18:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53520 "EHLO mail.kernel.org"
+        id S2391793AbfEWT2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:28:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389523AbfEWTSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:18:09 -0400
+        id S2403755AbfEWT2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:28:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81C3B20863;
-        Thu, 23 May 2019 19:18:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD10121841;
+        Thu, 23 May 2019 19:28:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639089;
-        bh=m00MS62AnepkM7lQYAoP56lp6ODo9R8Wy3Zth4c/3Zg=;
+        s=default; t=1558639710;
+        bh=UMvC08lni5aLyINag6W8qHVq+hf79X6rzLlABvFa1xc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hc0OTAYTxE70FSNnNv2HAiEQTBQRTWgbMNyXyZCiDKDT0AFE8d62TSI0rl+0NKIJ7
-         iaSZMkAr/E2aIEW+/RckJYf2/z5o3mo4NEZ2w42y96g2inJ5XfRParjl8hoqRhq5PS
-         IViV12o7bbQAw6xYaIqcbhmWQYShttKVxFgcIXtQ=
+        b=JSEJ65Lx6sjLmlEhZTKmYxzciKcC/2es1fQK5YrMX85KGn2IMxJjYDIGzK8j9gm6D
+         kYukHYlJF/O2VldNmJHWaIbCGw+mY9deWEARZB3s6W/9cHMoS9UnLv5Tz8p6OFY1w0
+         fMRxiZ9LShg1/LoWSx6WGd8RTitubGxTNsFG2ARY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.19 073/114] PCI/AER: Change pci_aer_init() stub to return void
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 5.1 050/122] media: seco-cec: fix building with RC_CORE=m
 Date:   Thu, 23 May 2019 21:06:12 +0200
-Message-Id: <20190523181738.356645222@linuxfoundation.org>
+Message-Id: <20190523181711.322318490@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 31f996efbd5a7825f4d30150469e9d110aea00e8 upstream.
+commit 63604a143fe168094fbbccba56f6e3241683e399 upstream.
 
-Commit 60ed982a4e78 ("PCI/AER: Move internal declarations to
-drivers/pci/pci.h") changed pci_aer_init() to return "void", but didn't
-change the stub for when CONFIG_PCIEAER isn't enabled.  Change the stub to
-match.
+I previously added an RC_CORE dependency here, but missed the corner
+case of CONFIG_VIDEO_SECO_CEC=y with CONFIG_RC_CORE=m, which still
+causes a link error:
 
-Fixes: 60ed982a4e78 ("PCI/AER: Move internal declarations to drivers/pci/pci.h")
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-CC: stable@vger.kernel.org	# v4.19+
+drivers/media/platform/seco-cec/seco-cec.o: In function `secocec_probe':
+seco-cec.c:(.text+0x1b8): undefined reference to `devm_rc_allocate_device'
+seco-cec.c:(.text+0x2e8): undefined reference to `devm_rc_register_device'
+drivers/media/platform/seco-cec/seco-cec.o: In function `secocec_irq_handler':
+seco-cec.c:(.text+0xa2c): undefined reference to `rc_keydown'
+
+Refine the dependency to disallow building the RC subdriver in this case.
+This is the same logic we apply in other drivers like it.
+
+Fixes: f27dd0ad6885 ("media: seco-cec: fix RC_CORE dependency")
+
+Cc: <stable@vger.kernel.org> # 5.1
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/pci.h |    2 +-
+ drivers/media/platform/Kconfig |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -530,7 +530,7 @@ void pci_aer_clear_fatal_status(struct p
- void pci_aer_clear_device_status(struct pci_dev *dev);
- #else
- static inline void pci_no_aer(void) { }
--static inline int pci_aer_init(struct pci_dev *d) { return -ENODEV; }
-+static inline void pci_aer_init(struct pci_dev *d) { }
- static inline void pci_aer_exit(struct pci_dev *d) { }
- static inline void pci_aer_clear_fatal_status(struct pci_dev *dev) { }
- static inline void pci_aer_clear_device_status(struct pci_dev *dev) { }
+--- a/drivers/media/platform/Kconfig
++++ b/drivers/media/platform/Kconfig
+@@ -649,7 +649,7 @@ config VIDEO_SECO_CEC
+ config VIDEO_SECO_RC
+ 	bool "SECO Boards IR RC5 support"
+ 	depends on VIDEO_SECO_CEC
+-	depends on RC_CORE
++	depends on RC_CORE=y || RC_CORE = VIDEO_SECO_CEC
+ 	help
+ 	  If you say yes here you will get support for the
+ 	  SECO Boards Consumer-IR in seco-cec driver.
 
 
