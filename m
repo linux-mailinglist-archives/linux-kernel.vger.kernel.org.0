@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E66C4289C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46E29288ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:41:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390558AbfEWTmF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:42:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55644 "EHLO mail.kernel.org"
+        id S2391996AbfEWT3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:29:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388839AbfEWTTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:19:33 -0400
+        id S2390954AbfEWT3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:29:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E335120863;
-        Thu, 23 May 2019 19:19:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65E53217D9;
+        Thu, 23 May 2019 19:29:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639172;
-        bh=NxlkgndduMBlQUHyFdbZ5HLM7/ESUJYyK8ZlwqGaSh8=;
+        s=default; t=1558639774;
+        bh=AxJsAR8dpjeA9qCIvZZYVwgDd+oYyxFSMJaIX6clBMk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hKS3OM/hQWMGcC2MwF0JNW4YaAx8Zvpr30vjEzOI2RzkuzNL/inoOVbJH1MZr0ypg
-         Zr/9bQn9NCvQCfdfvqp/7UmjdiFcejavT33Qiiy0zVsLw0gRZX/28Ey0Ww0HPy3Vhl
-         qdRCjVUoTq+MHf5EhobkQpT0UiauoKl6UL5NIk0k=
+        b=GnrK1fBxpQG5LNN3vXZF7i/aFGv9pyjITMGjZGqNx9iX+w9coP19woVpyb8fzmSGr
+         GL6sTi1WBH7Gc6gxl51qhnwv2FVg/fB8v3k50/hw5vBLsjxR790DHYg+gry5E1HtBl
+         opxxeKDHRJBq13Ka/0A3LbAoO6+VqYp1x7NUEp44=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH 4.19 113/114] bpf: add map_lookup_elem_sys_only for lookups from syscall side
+        stable@vger.kernel.org, Yifeng Li <tomli@tomli.me>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Teddy Wang <teddy.wang@siliconmotion.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 5.1 090/122] fbdev: sm712fb: fix crashes during framebuffer writes by correctly mapping VRAM
 Date:   Thu, 23 May 2019 21:06:52 +0200
-Message-Id: <20190523181740.896392740@linuxfoundation.org>
+Message-Id: <20190523181716.914344420@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-References: <20190523181731.372074275@linuxfoundation.org>
+In-Reply-To: <20190523181705.091418060@linuxfoundation.org>
+References: <20190523181705.091418060@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +45,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Yifeng Li <tomli@tomli.me>
 
-commit c6110222c6f49ea68169f353565eb865488a8619 upstream.
+commit 9e0e59993df0601cddb95c4f6c61aa3d5e753c00 upstream.
 
-Add a callback map_lookup_elem_sys_only() that map implementations
-could use over map_lookup_elem() from system call side in case the
-map implementation needs to handle the latter differently than from
-the BPF data path. If map_lookup_elem_sys_only() is set, this will
-be preferred pick for map lookups out of user space. This hook is
-used in a follow-up fix for LRU map, but once development window
-opens, we can convert other map types from map_lookup_elem() (here,
-the one called upon BPF_MAP_LOOKUP_ELEM cmd is meant) over to use
-the callback to simplify and clean up the latter.
+On a Thinkpad s30 (Pentium III / i440MX, Lynx3DM), running fbtest or X
+will crash the machine instantly, because the VRAM/framebuffer is not
+mapped correctly.
 
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+On SM712, the framebuffer starts at the beginning of address space, but
+SM720's framebuffer starts at the 1 MiB offset from the beginning. However,
+sm712fb fails to take this into account, as a result, writing to the
+framebuffer will destroy all the registers and kill the system immediately.
+Another problem is the driver assumes 8 MiB of VRAM for SM720, but some
+SM720 system, such as this IBM Thinkpad, only has 4 MiB of VRAM.
+
+Fix this problem by removing the hardcoded VRAM size, adding a function to
+query the amount of VRAM from register MCR76 on SM720, and adding proper
+framebuffer offset.
+
+Please note that the memory map may have additional problems on Big-Endian
+system, which is not available for testing by myself. But I highly suspect
+that the original code is also broken on Big-Endian machines for SM720, so
+at least we are not making the problem worse. More, the driver also assumed
+SM710/SM712 has 4 MiB of VRAM, but it has a 2 MiB version as well, and used
+in earlier laptops, such as IBM Thinkpad 240X, the driver would probably
+crash on them. I've never seen one of those machines and cannot fix it, but
+I have documented these problems in the comments.
+
+Signed-off-by: Yifeng Li <tomli@tomli.me>
+Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Teddy Wang <teddy.wang@siliconmotion.com>
+Cc: <stable@vger.kernel.org>  # v4.4+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- include/linux/bpf.h  |    1 +
- kernel/bpf/syscall.c |    5 ++++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/sm712.h   |    5 ----
+ drivers/video/fbdev/sm712fb.c |   48 ++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 44 insertions(+), 9 deletions(-)
 
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -34,6 +34,7 @@ struct bpf_map_ops {
- 	void (*map_free)(struct bpf_map *map);
- 	int (*map_get_next_key)(struct bpf_map *map, void *key, void *next_key);
- 	void (*map_release_uref)(struct bpf_map *map);
-+	void *(*map_lookup_elem_sys_only)(struct bpf_map *map, void *key);
+--- a/drivers/video/fbdev/sm712.h
++++ b/drivers/video/fbdev/sm712.h
+@@ -19,11 +19,6 @@
+ #define SCREEN_Y_RES      600
+ #define SCREEN_BPP        16
  
- 	/* funcs callable from userspace and from eBPF programs */
- 	void *(*map_lookup_elem)(struct bpf_map *map, void *key);
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -721,7 +721,10 @@ static int map_lookup_elem(union bpf_att
- 		err = bpf_fd_reuseport_array_lookup_elem(map, key, value);
- 	} else {
- 		rcu_read_lock();
--		ptr = map->ops->map_lookup_elem(map, key);
-+		if (map->ops->map_lookup_elem_sys_only)
-+			ptr = map->ops->map_lookup_elem_sys_only(map, key);
-+		else
-+			ptr = map->ops->map_lookup_elem(map, key);
- 		if (ptr)
- 			memcpy(value, ptr, value_size);
- 		rcu_read_unlock();
+-/*Assume SM712 graphics chip has 4MB VRAM */
+-#define SM712_VIDEOMEMORYSIZE	  0x00400000
+-/*Assume SM722 graphics chip has 8MB VRAM */
+-#define SM722_VIDEOMEMORYSIZE	  0x00800000
+-
+ #define dac_reg	(0x3c8)
+ #define dac_val	(0x3c9)
+ 
+--- a/drivers/video/fbdev/sm712fb.c
++++ b/drivers/video/fbdev/sm712fb.c
+@@ -1329,6 +1329,11 @@ static int smtc_map_smem(struct smtcfb_i
+ {
+ 	sfb->fb->fix.smem_start = pci_resource_start(pdev, 0);
+ 
++	if (sfb->chip_id == 0x720)
++		/* on SM720, the framebuffer starts at the 1 MB offset */
++		sfb->fb->fix.smem_start += 0x00200000;
++
++	/* XXX: is it safe for SM720 on Big-Endian? */
+ 	if (sfb->fb->var.bits_per_pixel == 32)
+ 		sfb->fb->fix.smem_start += big_addr;
+ 
+@@ -1366,12 +1371,45 @@ static inline void sm7xx_init_hw(void)
+ 	outb_p(0x11, 0x3c5);
+ }
+ 
++static u_long sm7xx_vram_probe(struct smtcfb_info *sfb)
++{
++	u8 vram;
++
++	switch (sfb->chip_id) {
++	case 0x710:
++	case 0x712:
++		/*
++		 * Assume SM712 graphics chip has 4MB VRAM.
++		 *
++		 * FIXME: SM712 can have 2MB VRAM, which is used on earlier
++		 * laptops, such as IBM Thinkpad 240X. This driver would
++		 * probably crash on those machines. If anyone gets one of
++		 * those and is willing to help, run "git blame" and send me
++		 * an E-mail.
++		 */
++		return 0x00400000;
++	case 0x720:
++		outb_p(0x76, 0x3c4);
++		vram = inb_p(0x3c5) >> 6;
++
++		if (vram == 0x00)
++			return 0x00800000;  /* 8 MB */
++		else if (vram == 0x01)
++			return 0x01000000;  /* 16 MB */
++		else if (vram == 0x02)
++			return 0x00400000;  /* illegal, fallback to 4 MB */
++		else if (vram == 0x03)
++			return 0x00400000;  /* 4 MB */
++	}
++	return 0;  /* unknown hardware */
++}
++
+ static int smtcfb_pci_probe(struct pci_dev *pdev,
+ 			    const struct pci_device_id *ent)
+ {
+ 	struct smtcfb_info *sfb;
+ 	struct fb_info *info;
+-	u_long smem_size = 0x00800000;	/* default 8MB */
++	u_long smem_size;
+ 	int err;
+ 	unsigned long mmio_base;
+ 
+@@ -1428,12 +1466,15 @@ static int smtcfb_pci_probe(struct pci_d
+ 	mmio_base = pci_resource_start(pdev, 0);
+ 	pci_read_config_byte(pdev, PCI_REVISION_ID, &sfb->chip_rev_id);
+ 
++	smem_size = sm7xx_vram_probe(sfb);
++	dev_info(&pdev->dev, "%lu MiB of VRAM detected.\n",
++					smem_size / 1048576);
++
+ 	switch (sfb->chip_id) {
+ 	case 0x710:
+ 	case 0x712:
+ 		sfb->fb->fix.mmio_start = mmio_base + 0x00400000;
+ 		sfb->fb->fix.mmio_len = 0x00400000;
+-		smem_size = SM712_VIDEOMEMORYSIZE;
+ 		sfb->lfb = ioremap(mmio_base, mmio_addr);
+ 		if (!sfb->lfb) {
+ 			dev_err(&pdev->dev,
+@@ -1465,8 +1506,7 @@ static int smtcfb_pci_probe(struct pci_d
+ 	case 0x720:
+ 		sfb->fb->fix.mmio_start = mmio_base;
+ 		sfb->fb->fix.mmio_len = 0x00200000;
+-		smem_size = SM722_VIDEOMEMORYSIZE;
+-		sfb->dp_regs = ioremap(mmio_base, 0x00a00000);
++		sfb->dp_regs = ioremap(mmio_base, 0x00200000 + smem_size);
+ 		sfb->lfb = sfb->dp_regs + 0x00200000;
+ 		sfb->mmio = (smtc_regbaseaddress =
+ 		    sfb->dp_regs + 0x000c0000);
 
 
