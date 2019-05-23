@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AE3F2865D
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E7E928716
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:16:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731898AbfEWTIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:08:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41672 "EHLO mail.kernel.org"
+        id S2389145AbfEWTQO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:16:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731881AbfEWTIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:08:45 -0400
+        id S2387892AbfEWTQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:16:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB97B2133D;
-        Thu, 23 May 2019 19:08:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AC6B21855;
+        Thu, 23 May 2019 19:16:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558638525;
-        bh=LBaIhUwmWULRCU0HZBDSpu5bpRck7bODU6pdkuMq7rU=;
+        s=default; t=1558638965;
+        bh=BaE502KF3RSrEJsx6zWCLf7Tgg4O9nSg/aNdqrraxeQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oByEzlfJ/dCHi/cl7zf7Vy0rCZR+GkT/lkuLRG2Iq4kGG7IOzVLFllzcwPafvlgkR
-         UMUT6klEzZLC7rWzMk6MHitEP0Az+wKYk3HTNFM6SQgkIfosWnss00UoQYimTcE5VG
-         0ed2EVxLH0vBrL3PKqzy+blTBtffgiqV5dFLXymI=
+        b=plTA96unlXovdKtSeVBUp5tk4In8pbeFd7ju7imt2l/rArN7DaKu14txmVVijrKMH
+         ZTvicjSuH6QUCoPYQ3vli2f8dVeix+H1GPLnhFvb9LPPaADLI9gRtigwq9c8WxBVTX
+         4eNTrdmoFeMmysU+qf0fD4bGNI2R3bNIJOXYVrfo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
+        stable@vger.kernel.org, Antonio SJ Musumeci <trapexit@spawn.link>,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.9 21/53] fuse: honor RLIMIT_FSIZE in fuse_file_fallocate
+Subject: [PATCH 4.19 046/114] fuse: fix writepages on 32bit
 Date:   Thu, 23 May 2019 21:05:45 +0200
-Message-Id: <20190523181714.216443850@linuxfoundation.org>
+Message-Id: <20190523181735.884574925@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
-References: <20190523181710.981455400@linuxfoundation.org>
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,40 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liu Bo <bo.liu@linux.alibaba.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 0cbade024ba501313da3b7e5dd2a188a6bc491b5 upstream.
+commit 9de5be06d0a89ca97b5ab902694d42dfd2bb77d2 upstream.
 
-fstests generic/228 reported this failure that fuse fallocate does not
-honor what 'ulimit -f' has set.
+Writepage requests were cropped to i_size & 0xffffffff, which meant that
+mmaped writes to any file larger than 4G might be silently discarded.
 
-This adds the necessary inode_newsize_ok() check.
+Fix by storing the file size in a properly sized variable (loff_t instead
+of size_t).
 
-Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-Fixes: 05ba1f082300 ("fuse: add FALLOCATE operation")
-Cc: <stable@vger.kernel.org> # v3.5
+Reported-by: Antonio SJ Musumeci <trapexit@spawn.link>
+Fixes: 6eaf4782eb09 ("fuse: writepages: crop secondary requests")
+Cc: <stable@vger.kernel.org> # v3.13
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/file.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/fuse/file.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -2961,6 +2961,13 @@ static long fuse_file_fallocate(struct f
- 		}
- 	}
+@@ -1526,7 +1526,7 @@ __acquires(fc->lock)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
+-	size_t crop = i_size_read(inode);
++	loff_t crop = i_size_read(inode);
+ 	struct fuse_req *req;
  
-+	if (!(mode & FALLOC_FL_KEEP_SIZE) &&
-+	    offset + length > i_size_read(inode)) {
-+		err = inode_newsize_ok(inode, offset + length);
-+		if (err)
-+			return err;
-+	}
-+
- 	if (!(mode & FALLOC_FL_KEEP_SIZE))
- 		set_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
- 
+ 	while (fi->writectr >= 0 && !list_empty(&fi->queued_writes)) {
 
 
