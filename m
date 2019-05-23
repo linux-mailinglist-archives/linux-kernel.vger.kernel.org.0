@@ -2,303 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7756E277A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 10:07:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8812277AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 10:07:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730070AbfEWIHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 04:07:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:65485 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729986AbfEWIG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 04:06:59 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CCB73C057F2F
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 08:06:58 +0000 (UTC)
-Received: from zhyan-laptop.redhat.com (ovpn-12-163.pek2.redhat.com [10.72.12.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 26B3A5D9C6;
-        Thu, 23 May 2019 08:06:56 +0000 (UTC)
-From:   "Yan, Zheng" <zyan@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     idryomov@redhat.com, jlayton@redhat.com
-Subject: [PATCH 4/8] ceph: close race between d_name_cmp() and update_dentry_lease()
-Date:   Thu, 23 May 2019 16:06:42 +0800
-Message-Id: <20190523080646.19632-4-zyan@redhat.com>
-In-Reply-To: <20190523080646.19632-1-zyan@redhat.com>
-References: <20190523080646.19632-1-zyan@redhat.com>
+        id S1729866AbfEWIGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 04:06:55 -0400
+Received: from mail-eopbgr40074.outbound.protection.outlook.com ([40.107.4.74]:61106
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729700AbfEWIGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 04:06:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nWaTk8MbZpmIop2guW09qvoF8guSPYmjA49+FhJk8C0=;
+ b=j7ULGu3vY4YvufQl7EUVFjTzC1y14pIo6DVEcH0qwc5eIZPrqLMKq7WFzeZTeYyES7+q4w/GIKjuzPdKxMxuyWA/r9R9zDAcyy3L2QSJt9lTcPRJALTDfzDog6iQr99Lx8G9EGHnQrwf1feKh4/V7E9smyt+voRVAOvw+ZwSV1Y=
+Received: from AM5PR04MB3299.eurprd04.prod.outlook.com (10.173.255.158) by
+ AM5PR04MB3185.eurprd04.prod.outlook.com (10.173.255.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1900.17; Thu, 23 May 2019 08:06:43 +0000
+Received: from AM5PR04MB3299.eurprd04.prod.outlook.com
+ ([fe80::15e3:bb28:7e33:1adb]) by AM5PR04MB3299.eurprd04.prod.outlook.com
+ ([fe80::15e3:bb28:7e33:1adb%7]) with mapi id 15.20.1922.017; Thu, 23 May 2019
+ 08:06:42 +0000
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+CC:     Leo Li <leoyang.li@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [EXT] Re: [PATCHv2] arm64: dts: ls1028a: add flexspi nodes
+Thread-Topic: [EXT] Re: [PATCHv2] arm64: dts: ls1028a: add flexspi nodes
+Thread-Index: AQHVCw6ogMFRF8ssNEKztKIHvtwUn6Z4ZSmAgAAAqwA=
+Date:   Thu, 23 May 2019 08:06:42 +0000
+Message-ID: <AM5PR04MB32997EA37551AFC88FCBE2C6F5010@AM5PR04MB3299.eurprd04.prod.outlook.com>
+References: <20190515110924.13726-1-xiaowei.bao@nxp.com>
+ <20190523080049.GI9261@dragon>
+In-Reply-To: <20190523080049.GI9261@dragon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=xiaowei.bao@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 43aa6459-d660-4dbd-d523-08d6df5597b1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:AM5PR04MB3185;
+x-ms-traffictypediagnostic: AM5PR04MB3185:
+x-microsoft-antispam-prvs: <AM5PR04MB318553DD68302E88F4EEB310F5010@AM5PR04MB3185.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:167;
+x-forefront-prvs: 00462943DE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(346002)(366004)(396003)(13464003)(189003)(199004)(44832011)(4326008)(86362001)(7696005)(316002)(99286004)(54906003)(76176011)(2906002)(186003)(478600001)(53546011)(6506007)(55016002)(476003)(26005)(3846002)(6116002)(102836004)(8936002)(6436002)(66066001)(81166006)(81156014)(8676002)(486006)(11346002)(446003)(73956011)(76116006)(229853002)(52536014)(5660300002)(53936002)(68736007)(66556008)(64756008)(6246003)(66946007)(66476007)(66446008)(256004)(74316002)(7736002)(305945005)(9686003)(33656002)(6916009)(71200400001)(71190400001)(25786009)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR04MB3185;H:AM5PR04MB3299.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: wVM7EXpMrt8yPD59xt0F4FUO6zo1lXmGRO9nu3FVBehM+OkLyDGiPhLlmEK8F6yMK36OzOmlTWi0rIIQW3kHQHsvWDP83KlW8yHKvIJdI7vQvvnGdACPt1lf0AvSgS3TlPQrxGt1biF/yRQpKIey5aJp7dXM52j9NToZDXowjc+iSxqLUM4o9c2VxhqZZkHfQaIS5x8JvaIwQ/H6qUpppgpOlUL49oqp30IQZcr1lbax1eYlSMcfsdYoNrsKCXUDC1cplUYcEE5FsvqB6zRazAWKpoiy4LKdiBvjq6X5Z9MayKruuJEU14iclYxpNzXH2AByoll4t0lrADMv/i/kzm7Hq5wAaWUBSf0st8oxjPcEFg216jvzY7NTYn9Ixdr+e9bNc/ZQuD8dCSOiFBJxF0ZX3WVSHtwFCke5eoXH0Co=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 23 May 2019 08:06:58 +0000 (UTC)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43aa6459-d660-4dbd-d523-08d6df5597b1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 May 2019 08:06:42.8512
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR04MB3185
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-d_name_cmp() and update_dentry_lease() lock and unlock dentry->d_lock
-respectively. Dentry may get renamed between them. The fix is moving
-the dentry name compare into update_dentry_lease().
-
-This patch introduce two version of update_dentry_lease(). One version
-is for the case that parent inode is locked. It does not need to check
-parent/target inode and dentry name. Another version is for the case
-that parent inode is not locked. It checks arent/target inode and dentry
-name after locking dentry->d_lock.
-
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
----
- fs/ceph/inode.c | 164 ++++++++++++++++++++++++++----------------------
- 1 file changed, 88 insertions(+), 76 deletions(-)
-
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 8cfece240ffe..e47a25495be5 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1031,59 +1031,38 @@ static int fill_inode(struct inode *inode, struct page *locked_page,
- }
- 
- /*
-- * caller should hold session s_mutex.
-+ * caller should hold session s_mutex and dentry->d_lock.
-  */
--static void update_dentry_lease(struct dentry *dentry,
--				struct ceph_mds_reply_lease *lease,
--				struct ceph_mds_session *session,
--				unsigned long from_time,
--				struct ceph_vino *tgt_vino,
--				struct ceph_vino *dir_vino)
-+static void __update_dentry_lease(struct inode *dir, struct dentry *dentry,
-+				  struct ceph_mds_reply_lease *lease,
-+				  struct ceph_mds_session *session,
-+				  unsigned long from_time,
-+				  struct ceph_mds_session **old_lease_session)
- {
- 	struct ceph_dentry_info *di = ceph_dentry(dentry);
- 	long unsigned duration = le32_to_cpu(lease->duration_ms);
- 	long unsigned ttl = from_time + (duration * HZ) / 1000;
- 	long unsigned half_ttl = from_time + (duration * HZ / 2) / 1000;
--	struct inode *dir;
--	struct ceph_mds_session *old_lease_session = NULL;
--
--	/*
--	 * Make sure dentry's inode matches tgt_vino. NULL tgt_vino means that
--	 * we expect a negative dentry.
--	 */
--	if (!tgt_vino && d_really_is_positive(dentry))
--		return;
--
--	if (tgt_vino && (d_really_is_negative(dentry) ||
--			!ceph_ino_compare(d_inode(dentry), tgt_vino)))
--		return;
- 
--	spin_lock(&dentry->d_lock);
- 	dout("update_dentry_lease %p duration %lu ms ttl %lu\n",
- 	     dentry, duration, ttl);
- 
--	dir = d_inode(dentry->d_parent);
--
--	/* make sure parent matches dir_vino */
--	if (!ceph_ino_compare(dir, dir_vino))
--		goto out_unlock;
--
- 	/* only track leases on regular dentries */
- 	if (ceph_snap(dir) != CEPH_NOSNAP)
--		goto out_unlock;
-+		return;
- 
- 	di->lease_shared_gen = atomic_read(&ceph_inode(dir)->i_shared_gen);
- 	if (duration == 0) {
- 		__ceph_dentry_dir_lease_touch(di);
--		goto out_unlock;
-+		return;
- 	}
- 
- 	if (di->lease_gen == session->s_cap_gen &&
- 	    time_before(ttl, di->time))
--		goto out_unlock;  /* we already have a newer lease. */
-+		return;  /* we already have a newer lease. */
- 
- 	if (di->lease_session && di->lease_session != session) {
--		old_lease_session = di->lease_session;
-+		*old_lease_session = di->lease_session;
- 		di->lease_session = NULL;
- 	}
- 
-@@ -1096,6 +1075,62 @@ static void update_dentry_lease(struct dentry *dentry,
- 	di->time = ttl;
- 
- 	__ceph_dentry_lease_touch(di);
-+}
-+
-+static inline void update_dentry_lease(struct inode *dir, struct dentry *dentry,
-+					struct ceph_mds_reply_lease *lease,
-+					struct ceph_mds_session *session,
-+					unsigned long from_time)
-+{
-+	struct ceph_mds_session *old_lease_session = NULL;
-+	spin_lock(&dentry->d_lock);
-+	__update_dentry_lease(dir, dentry, lease, session, from_time,
-+			      &old_lease_session);
-+	spin_unlock(&dentry->d_lock);
-+	if (old_lease_session)
-+		ceph_put_mds_session(old_lease_session);
-+}
-+
-+/*
-+ * update dentry lease without having parent inode locked
-+ */
-+static void update_dentry_lease_careful(struct dentry *dentry,
-+					struct ceph_mds_reply_lease *lease,
-+					struct ceph_mds_session *session,
-+					unsigned long from_time,
-+					char *dname, u32 dname_len,
-+					struct ceph_vino *pdvino,
-+					struct ceph_vino *ptvino)
-+
-+{
-+	struct inode *dir;
-+	struct ceph_mds_session *old_lease_session = NULL;
-+
-+	spin_lock(&dentry->d_lock);
-+	/* make sure dentry's name matches target */
-+	if (dentry->d_name.len != dname_len ||
-+	    memcmp(dentry->d_name.name, dname, dname_len))
-+		goto out_unlock;
-+
-+	dir = d_inode(dentry->d_parent);
-+	/* make sure parent matches dvino */
-+	if (!ceph_ino_compare(dir, pdvino))
-+		goto out_unlock;
-+
-+	/* make sure dentry's inode matches target. NULL ptvino means that
-+	 * we expect a negative dentry */
-+	if (ptvino) {
-+		if (d_really_is_negative(dentry))
-+			goto out_unlock;
-+		if (!ceph_ino_compare(d_inode(dentry), ptvino))
-+			goto out_unlock;
-+	} else {
-+		if (d_really_is_positive(dentry))
-+			goto out_unlock;
-+	}
-+
-+	__update_dentry_lease(dir, dentry, lease, session,
-+			      from_time, &old_lease_session);
- out_unlock:
- 	spin_unlock(&dentry->d_lock);
- 	if (old_lease_session)
-@@ -1160,19 +1195,6 @@ static int splice_dentry(struct dentry **pdn, struct inode *in)
- 	return 0;
- }
- 
--static int d_name_cmp(struct dentry *dentry, const char *name, size_t len)
--{
--	int ret;
--
--	/* take d_lock to ensure dentry->d_name stability */
--	spin_lock(&dentry->d_lock);
--	ret = dentry->d_name.len - len;
--	if (!ret)
--		ret = memcmp(dentry->d_name.name, name, len);
--	spin_unlock(&dentry->d_lock);
--	return ret;
--}
--
- /*
-  * Incorporate results into the local cache.  This is either just
-  * one inode, or a directory, dentry, and possibly linked-to inode (e.g.,
-@@ -1375,10 +1397,9 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 			} else if (have_lease) {
- 				if (d_unhashed(dn))
- 					d_add(dn, NULL);
--				update_dentry_lease(dn, rinfo->dlease,
--						    session,
--						    req->r_request_started,
--						    NULL, &dvino);
-+				update_dentry_lease(dir, dn,
-+						    rinfo->dlease, session,
-+						    req->r_request_started);
- 			}
- 			goto done;
- 		}
-@@ -1400,11 +1421,9 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 		}
- 
- 		if (have_lease) {
--			tvino.ino = le64_to_cpu(rinfo->targeti.in->ino);
--			tvino.snap = le64_to_cpu(rinfo->targeti.in->snapid);
--			update_dentry_lease(dn, rinfo->dlease, session,
--					    req->r_request_started,
--					    &tvino, &dvino);
-+			update_dentry_lease(dir, dn,
-+					    rinfo->dlease, session,
-+					    req->r_request_started);
- 		}
- 		dout(" final dn %p\n", dn);
- 	} else if ((req->r_op == CEPH_MDS_OP_LOOKUPSNAP ||
-@@ -1422,27 +1441,20 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 		err = splice_dentry(&req->r_dentry, in);
- 		if (err < 0)
- 			goto done;
--	} else if (rinfo->head->is_dentry &&
--		   !d_name_cmp(req->r_dentry, rinfo->dname, rinfo->dname_len)) {
-+	} else if (rinfo->head->is_dentry && req->r_dentry) {
-+		/* parent inode is not locked, be carefull */
- 		struct ceph_vino *ptvino = NULL;
--
--		if ((le32_to_cpu(rinfo->diri.in->cap.caps) & CEPH_CAP_FILE_SHARED) ||
--		    le32_to_cpu(rinfo->dlease->duration_ms)) {
--			dvino.ino = le64_to_cpu(rinfo->diri.in->ino);
--			dvino.snap = le64_to_cpu(rinfo->diri.in->snapid);
--
--			if (rinfo->head->is_target) {
--				tvino.ino = le64_to_cpu(rinfo->targeti.in->ino);
--				tvino.snap = le64_to_cpu(rinfo->targeti.in->snapid);
--				ptvino = &tvino;
--			}
--
--			update_dentry_lease(req->r_dentry, rinfo->dlease,
--				session, req->r_request_started, ptvino,
--				&dvino);
--		} else {
--			dout("%s: no dentry lease or dir cap\n", __func__);
-+		dvino.ino = le64_to_cpu(rinfo->diri.in->ino);
-+		dvino.snap = le64_to_cpu(rinfo->diri.in->snapid);
-+		if (rinfo->head->is_target) {
-+			tvino.ino = le64_to_cpu(rinfo->targeti.in->ino);
-+			tvino.snap = le64_to_cpu(rinfo->targeti.in->snapid);
-+			ptvino = &tvino;
- 		}
-+		update_dentry_lease_careful(req->r_dentry, rinfo->dlease,
-+					    session, req->r_request_started,
-+					    rinfo->dname, rinfo->dname_len,
-+					    &dvino, ptvino);
- 	}
- done:
- 	dout("fill_trace done err=%d\n", err);
-@@ -1604,7 +1616,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 	/* FIXME: release caps/leases if error occurs */
- 	for (i = 0; i < rinfo->dir_nr; i++) {
- 		struct ceph_mds_reply_dir_entry *rde = rinfo->dir_entries + i;
--		struct ceph_vino tvino, dvino;
-+		struct ceph_vino tvino;
- 
- 		dname.name = rde->name;
- 		dname.len = rde->name_len;
-@@ -1705,9 +1717,9 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 
- 		ceph_dentry(dn)->offset = rde->offset;
- 
--		dvino = ceph_vino(d_inode(parent));
--		update_dentry_lease(dn, rde->lease, req->r_session,
--				    req->r_request_started, &tvino, &dvino);
-+		update_dentry_lease(d_inode(parent), dn,
-+				    rde->lease, req->r_session,
-+				    req->r_request_started);
- 
- 		if (err == 0 && skipped == 0 && cache_ctl.index >= 0) {
- 			ret = fill_readdir_cache(d_inode(parent), dn,
--- 
-2.17.2
-
+SGkgU2hhd24sDQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBTaGF3biBHdW8g
+PHNoYXduZ3VvQGtlcm5lbC5vcmc+IA0KU2VudDogMjAxOcTqNdTCMjPI1SAxNjowMQ0KVG86IFhp
+YW93ZWkgQmFvIDx4aWFvd2VpLmJhb0BueHAuY29tPg0KQ2M6IExlbyBMaSA8bGVveWFuZy5saUBu
+eHAuY29tPjsgcm9iaCtkdEBrZXJuZWwub3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgbGludXgt
+YXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9y
+ZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KU3ViamVjdDogW0VYVF0gUmU6IFtQQVRD
+SHYyXSBhcm02NDogZHRzOiBsczEwMjhhOiBhZGQgZmxleHNwaSBub2Rlcw0KDQpDYXV0aW9uOiBF
+WFQgRW1haWwNCg0KT24gV2VkLCBNYXkgMTUsIDIwMTkgYXQgMTE6MDk6MjVBTSArMDAwMCwgWGlh
+b3dlaSBCYW8gd3JvdGU6DQo+IEZyb206IFhpYW93ZWkgQmFvIDx4aWFvd2VpLmJhb0BueHAuY29t
+Pg0KPg0KPiBBZGQgZnNwaSBub2RlIHByb3BlcnR5IGZvciBMUzEwMjhBIFNvQyBmb3IgRmxleFNQ
+SSBkcml2ZXIuDQo+IFByb3BlcnR5IGFkZGVkIGZvciB0aGUgRmxleFNQSSBjb250cm9sbGVyIGFu
+ZCBmb3IgdGhlIGNvbm5lY3RlZCBzbGF2ZSANCj4gZGV2aWNlIGZvciB0aGUgTFMxMDI4QVJEQiBh
+bmQgTFMxMDI4QVFEUyB0YXJnZXQuDQo+IFRoaXMgaXMgaGF2aW5nIG9uZSBTUEktTk9SIGZsYXNo
+IGRldmljZSwgbXQzNXh1MDJnIGNvbm5lY3RlZCBhdCBDUzAuDQo+DQo+IFNpZ25lZC1vZmYtYnk6
+IFhpYW93ZWkgQmFvIDx4aWFvd2VpLmJhb0BueHAuY29tPg0KPiAtLS0NCj4gdjI6DQo+ICAtIG1v
+ZGlmeSB0aGUgY29tbWl0IG1lc3NhZ2UgYW5kIHRoZSBkdHMgZm9ybWF0Lg0KPg0KPiAgYXJjaC9h
+cm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTAyOGEtcWRzLmR0cyB8ICAgMTUgKysrKysr
+KysrKysrKysrDQo+ICBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9mc2wtbHMxMDI4YS1y
+ZGIuZHRzIHwgICAxNSArKysrKysrKysrKysrKysNCj4gIGFyY2gvYXJtNjQvYm9vdC9kdHMvZnJl
+ZXNjYWxlL2ZzbC1sczEwMjhhLmR0c2kgICAgfCAgIDEyICsrKysrKysrKysrKw0KPiAgMyBmaWxl
+cyBjaGFuZ2VkLCA0MiBpbnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKQ0KPg0KPiBkaWZmIC0t
+Z2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTAyOGEtcWRzLmR0cyAN
+Cj4gYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9mc2wtbHMxMDI4YS1xZHMuZHRzDQo+
+IGluZGV4IDViY2Q0OTEuLjZlMTI4MDYgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtNjQvYm9vdC9k
+dHMvZnJlZXNjYWxlL2ZzbC1sczEwMjhhLXFkcy5kdHMNCj4gKysrIGIvYXJjaC9hcm02NC9ib290
+L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTAyOGEtcWRzLmR0cw0KPiBAQCAtMTU4LDYgKzE1OCwyMSBA
+QA0KPiAgICAgICB9Ow0KPiAgfTsNCj4NCj4gKyZmc3BpIHsNCg0KS2VlcCB0aGUgbGFiZWxpbmcg
+bm9kZSBzb3J0IGFscGhhYmV0aWNhbGx5LiAgVGhhdCBzYWlkLCAmZnNwaSBzaG91bGQgYmUgYWRk
+ZWQgYmVmb3JlICZpMmMwLg0KDQo+ICsgICAgIHN0YXR1cyA9ICJva2F5IjsNCg0KUGxlYXNlIGhh
+dmUgbmV3bGluZSBiZXR3ZWVuIHByb3BlcnR5IGFuZCBjaGlsZCBub2RlLg0KDQo+ICsgICAgIG10
+MzV4dTAyZzogZmxhc2hAMCB7DQo+ICsgICAgICAgICAgICAgI2FkZHJlc3MtY2VsbHMgPSA8MT47
+DQo+ICsgICAgICAgICAgICAgI3NpemUtY2VsbHMgPSA8MT47DQo+ICsgICAgICAgICAgICAgY29t
+cGF0aWJsZSA9ICJzcGFuc2lvbixtMjVwODAiOw0KDQpQbGVhc2Ugc3RhcnQgcHJvcGVydGllcyB3
+aXRoIGNvbXBhdGlibGUuDQpbWGlhb3dlaSBCYW9dIEkgaGF2ZSBzdWJtaXQgdGhlIHYzIHBhdGNo
+IHRvIGZpeCB0aGlzIGlzc3VlLg0KDQo+ICsgICAgICAgICAgICAgbTI1cCxmYXN0LXJlYWQ7DQo+
+ICsgICAgICAgICAgICAgc3BpLW1heC1mcmVxdWVuY3kgPSA8MjAwMDAwMDA+Ow0KPiArICAgICAg
+ICAgICAgIHJlZyA9IDwwPjsNCj4gKyAgICAgICAgICAgICAvKiBUaGUgZm9sbG93aW5nIHNldHRp
+bmcgZW5hYmxlcyAxLTEtOCAoQ01ELUFERFItREFUQSkgbW9kZSAqLw0KPiArICAgICAgICAgICAg
+IHNwaS1yeC1idXMtd2lkdGggPSA8OD47IC8qIDggU1BJIFJ4IGxpbmVzICovDQo+ICsgICAgICAg
+ICAgICAgc3BpLXR4LWJ1cy13aWR0aCA9IDwxPjsgLyogMSBTUEkgVHggbGluZSAqLw0KPiArICAg
+ICB9Ow0KPiArfTsNCj4gKw0KPiAgJnNhaTEgew0KPiAgICAgICBzdGF0dXMgPSAib2theSI7DQo+
+ICB9Ow0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxz
+MTAyOGEtcmRiLmR0cyANCj4gYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9mc2wtbHMx
+MDI4YS1yZGIuZHRzDQo+IGluZGV4IDI1ZDIzNzAuLjVkMzk2MTYgMTAwNjQ0DQo+IC0tLSBhL2Fy
+Y2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2ZzbC1sczEwMjhhLXJkYi5kdHMNCj4gKysrIGIv
+YXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTAyOGEtcmRiLmR0cw0KPiBAQCAt
+MTM2LDYgKzEzNiwyMSBAQA0KPiAgICAgICB9Ow0KPiAgfTsNCj4NCj4gKyZmc3BpIHsNCj4gKyAg
+ICAgc3RhdHVzID0gIm9rYXkiOw0KPiArICAgICBtdDM1eHUwMmc6IGZsYXNoQDAgew0KPiArICAg
+ICAgICAgICAgICNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPiArICAgICAgICAgICAgICNzaXplLWNl
+bGxzID0gPDE+Ow0KPiArICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAic3BhbnNpb24sbTI1cDgw
+IjsNCj4gKyAgICAgICAgICAgICBtMjVwLGZhc3QtcmVhZDsNCj4gKyAgICAgICAgICAgICBzcGkt
+bWF4LWZyZXF1ZW5jeSA9IDwyMDAwMDAwMD47DQo+ICsgICAgICAgICAgICAgcmVnID0gPDA+Ow0K
+PiArICAgICAgICAgICAgIC8qIFRoZSBmb2xsb3dpbmcgc2V0dGluZyBlbmFibGVzIDEtMS04IChD
+TUQtQUREUi1EQVRBKSBtb2RlICovDQo+ICsgICAgICAgICAgICAgc3BpLXJ4LWJ1cy13aWR0aCA9
+IDw4PjsgLyogOCBTUEkgUnggbGluZXMgKi8NCj4gKyAgICAgICAgICAgICBzcGktdHgtYnVzLXdp
+ZHRoID0gPDE+OyAvKiAxIFNQSSBUeCBsaW5lICovDQo+ICsgICAgIH07DQo+ICt9Ow0KPiArDQo+
+ICAmZHVhcnQwIHsNCj4gICAgICAgc3RhdHVzID0gIm9rYXkiOw0KPiAgfTsNCj4gZGlmZiAtLWdp
+dCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2ZzbC1sczEwMjhhLmR0c2kgDQo+IGIv
+YXJjaC9hcm02NC9ib290L2R0cy9mcmVlc2NhbGUvZnNsLWxzMTAyOGEuZHRzaQ0KPiBpbmRleCBi
+YTcxYTMzLi5hMjdjZDYwIDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVz
+Y2FsZS9mc2wtbHMxMDI4YS5kdHNpDQo+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNj
+YWxlL2ZzbC1sczEwMjhhLmR0c2kNCj4gQEAgLTEwOSw2ICsxMDksMTggQEANCj4gICAgICAgICAg
+ICAgICB9Ow0KPiAgICAgICB9Ow0KPg0KPiArICAgICBmc3BpOiBzcGlAMjBjMDAwMCB7DQoNCkFy
+ZSB5b3Ugc3VyZSB5b3Ugd2FudCB0byBhZGQgdGhpcyBkZXZpY2Ugbm9kZSBvdXRzaWRlIG9mICdz
+b2MnIG5vZGU/DQoNCj4gKyAgICAgICAgICAgICBjb21wYXRpYmxlID0gIm54cCxseDIxNjBhLWZz
+cGkiLCAic2ltcGxlLWJ1cyI7DQo+ICsgICAgICAgICAgICAgI2FkZHJlc3MtY2VsbHMgPSA8MT47
+DQo+ICsgICAgICAgICAgICAgI3NpemUtY2VsbHMgPSA8MD47DQo+ICsgICAgICAgICAgICAgcmVn
+ID0gPDB4MCAweDIwYzAwMDAgMHgwIDB4MTAwMDA+LA0KPiArICAgICAgICAgICAgICAgICA8MHgw
+IDB4MjAwMDAwMDAgMHgwIDB4MTAwMDAwMDA+Ow0KDQpGaXggdGhlIGluZGVudGF0aW9uIHRvIGdp
+dCBpdCBhbGlnbmVkIHdpdGggYWJvdmUgJzwnLg0KW1hpYW93ZWkgQmFvXSB0aGlzIGlzIGFsaWdu
+ZWQsIEkgZG9uJ3Qga25vdyB3aHkgaXQgaXMgbm90IGFsaWduZWQgaW4gZW1haWwuIFRoYW5rcy4N
+Cg0KPiArICAgICAgICAgICAgIHJlZy1uYW1lcyA9ICJGU1BJIiwgIkZTUEktbWVtb3J5IjsNCj4g
+KyAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPDAgMjUgMHg0PjsgLyogTGV2ZWwgaGlnaCB0eXBl
+ICovDQoNCmludGVycnVwdHMgPSA8R0lDX1NQSSAyNSBJUlFfVFlQRV9MRVZFTF9ISUdIPjsNCg0K
+U2hhd24NCg0KPiArICAgICAgICAgICAgIGNsb2NrcyA9IDwmY2xvY2tnZW4gNCAzPiwgPCZjbG9j
+a2dlbiA0IDM+Ow0KPiArICAgICAgICAgICAgIGNsb2NrLW5hbWVzID0gImZzcGlfZW4iLCAiZnNw
+aSI7DQo+ICsgICAgIH07DQo+ICsNCj4gICAgICAgc29jOiBzb2Mgew0KPiAgICAgICAgICAgICAg
+IGNvbXBhdGlibGUgPSAic2ltcGxlLWJ1cyI7DQo+ICAgICAgICAgICAgICAgI2FkZHJlc3MtY2Vs
+bHMgPSA8Mj47DQo+IC0tDQo+IDEuNy4xDQo+DQo=
