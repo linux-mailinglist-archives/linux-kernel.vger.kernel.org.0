@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 446D62878E
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9844028693
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:15:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390102AbfEWTUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:20:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57540 "EHLO mail.kernel.org"
+        id S2387922AbfEWTKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:10:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390072AbfEWTUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:20:40 -0400
+        id S2387890AbfEWTKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 15:10:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33608217D7;
-        Thu, 23 May 2019 19:20:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25C5521871;
+        Thu, 23 May 2019 19:10:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558639239;
-        bh=qqtzSOErxlsiyQ+y/Ki7LFxgaKu2TqUXZ3UHTW02tIA=;
+        s=default; t=1558638637;
+        bh=f1WChCHh2g9gQRPvWkwNKXNLAL9hPKJYXZ1abqo6dzI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JNo7LCM5Pr6sjqlV/9xGO3hJy3mQx2OPiCn/RIdiK6mTMwvadugn1rR4/oG034W3q
-         PwZsnFVXMqFGoglQENlNHjX/wvTEyn3pDXqTqsU1gRCk36U51eZpRSesTkcbdH9LfG
-         732Jw8o7137toF3ChN6g9WeiamJ7+Xn4qqVjM7F4=
+        b=OvMwpeoMdLiRQtBmGR0Blg0P/9NaG5yFkzW7plV1udMtJoFLTu3rgxm2kCn+EdLJB
+         74Xq2j05ft2O8mIKvNqfMaNIfB+eJVIRnIhOn4iwAq7yIaQg784K9/nQmFWqyHFgt+
+         dtK+LlNMOYD8rmSMkuuxfJ55eJxJWetkKxr7I9Ic=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hou Tao <houtao1@huawei.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.0 031/139] brd: re-enable __GFP_HIGHMEM in brd_insert_page()
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 01/77] net: avoid weird emergency message
 Date:   Thu, 23 May 2019 21:05:19 +0200
-Message-Id: <20190523181724.775119691@linuxfoundation.org>
+Message-Id: <20190523181720.184010954@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523181720.120897565@linuxfoundation.org>
-References: <20190523181720.120897565@linuxfoundation.org>
+In-Reply-To: <20190523181719.982121681@linuxfoundation.org>
+References: <20190523181719.982121681@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -43,43 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Tao <houtao1@huawei.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit f6b50160a06d4a0d6a3999ab0c5aec4f52dba248 upstream.
+[ Upstream commit d7c04b05c9ca14c55309eb139430283a45c4c25f ]
 
-__GFP_HIGHMEM is disabled if dax is enabled on brd, however
-dax support for brd has been removed since commit (7a862fbbdec6
-"brd: remove dax support"), so restore __GFP_HIGHMEM in
-brd_insert_page().
+When host is under high stress, it is very possible thread
+running netdev_wait_allrefs() returns from msleep(250)
+10 seconds late.
 
-Also remove the no longer applicable comments about DAX and highmem.
+This leads to these messages in the syslog :
 
-Cc: stable@vger.kernel.org
-Fixes: 7a862fbbdec6 ("brd: remove dax support")
-Signed-off-by: Hou Tao <houtao1@huawei.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[...] unregister_netdevice: waiting for syz_tun to become free. Usage count = 0
+
+If the device refcount is zero, the wait is over.
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/block/brd.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ net/core/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -96,13 +96,8 @@ static struct page *brd_insert_page(stru
- 	/*
- 	 * Must use NOIO because we don't want to recurse back into the
- 	 * block or filesystem layers from page reclaim.
--	 *
--	 * Cannot support DAX and highmem, because our ->direct_access
--	 * routine for DAX must return memory that is always addressable.
--	 * If DAX was reworked to use pfns and kmap throughout, this
--	 * restriction might be able to be lifted.
- 	 */
--	gfp_flags = GFP_NOIO | __GFP_ZERO;
-+	gfp_flags = GFP_NOIO | __GFP_ZERO | __GFP_HIGHMEM;
- 	page = alloc_page(gfp_flags);
- 	if (!page)
- 		return NULL;
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -7852,7 +7852,7 @@ static void netdev_wait_allrefs(struct n
+ 
+ 		refcnt = netdev_refcnt_read(dev);
+ 
+-		if (time_after(jiffies, warning_time + 10 * HZ)) {
++		if (refcnt && time_after(jiffies, warning_time + 10 * HZ)) {
+ 			pr_emerg("unregister_netdevice: waiting for %s to become free. Usage count = %d\n",
+ 				 dev->name, refcnt);
+ 			warning_time = jiffies;
 
 
