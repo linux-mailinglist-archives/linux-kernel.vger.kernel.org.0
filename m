@@ -2,161 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCE3227FB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 16:31:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDF2327FBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 16:32:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730865AbfEWObT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 10:31:19 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:47009 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730708AbfEWObT (ORCPT
+        id S1730944AbfEWOcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 10:32:43 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46833 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730899AbfEWOcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 10:31:19 -0400
-Received: by mail-pl1-f196.google.com with SMTP id r18so2825971pls.13;
-        Thu, 23 May 2019 07:31:18 -0700 (PDT)
+        Thu, 23 May 2019 10:32:41 -0400
+Received: by mail-ot1-f67.google.com with SMTP id j49so5571188otc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 07:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=OzO5RxAs85LgaOleUXBoRLjXCQwekMSHZAP0cUDWHtg=;
-        b=jVOwhhEJb5le1IMdGM9kPsH/V44mOmocvvXjZUIcPBj8+ylGNBd8RN7RuTlVrd7HqV
-         8zuhWExktEV+QaezF41L5rt9x7FFCyTtdBf6DB7OWiGEXBQQ3hZMKd4fZwGLyVDfsj8h
-         /qpN62uubjW7lQ/GJs2rXKJZYAXjlqJCU9ADo+ZeAKaodrbdpdoqHAAjHkhRrIL2UZVm
-         MohVf0uPAqvR+flYQBiETtqq//jtOB3vSecQexEe967n7OIatP91SFq3OYWnw/OSMQ5T
-         Y6QTnTaTDZpp18F/1AUYP5EJzU5aqkwMWDoHlMe8NnPI2xSjHPXH635j4FSygTN3asHH
-         s94Q==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UmCv77ojMXG+c1Fp7DLXkEEMvKlYSuA0abYrccWopi8=;
+        b=BCy6Okmk8ktr4nwvd4MspoIxsNlhMgBNgut3lK3gji1Mo8ZK86sDQuXYRAM0aEzKt1
+         l5h9Z162b8ZZvcy3+o2m7mOM8MFYONAclzGI9eGRFt+MvF5Vk7qd2XbUpuRtY3kwxigT
+         TItqAHhT39/xzIdVfEVUYP6dbydvV9umwbP2vl+FxdLXFLSb9ACpWUQrIu3LG0CJGus3
+         efSiM9X4tBhY2RglIlFRNgfOwB840H3gEzgClahgzgTog6Yv+6has8aNNHrrbEHD2p91
+         f4b1gS1SqBJkPyuKpLmeXF29Yw4PJv/H5cHfQKgbABzZI5vn49C4VG2ZQkov7h619lB0
+         cONg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=OzO5RxAs85LgaOleUXBoRLjXCQwekMSHZAP0cUDWHtg=;
-        b=XGyMQP/8F0M4RQNhHmOxmZVTOGOTyiy+EyEH+y4kzlon9PZdWyiwzQ6uDEKgz+UWwb
-         2QQeO2blf1BhESHaQKCSKPJcZ2WzMJLfGcAmFEvSEuEZvCPiZj/sWEsjnvT85QVwSzdw
-         FoCDt95JaKOQJTojpnXt/wW8KGBPEqNW4uD2iABj5Q2iByHqIvb6//GXTqUouz5yvtO9
-         OPLBoVZlAk61CXibrpxuXUUsxLfgX7TZsaK9IhHVigZJeWlTrQeTE3ZW4wnsKP5ikd8U
-         52wA+XgjmCjuYkqSqgD9ytysr4eGknWLssEizTheUHxkiXsWAvhQtPZTT/wl3BkhZBGQ
-         g5+A==
-X-Gm-Message-State: APjAAAWqkRJ/e/YJMNe7Xv7WV3cXCSLURdyEpUlI3ADLjNOmIgi4BnaT
-        /moGhyeq7jSnu3aGpT6tdAUwkWrGZ8c=
-X-Google-Smtp-Source: APXvYqxpzb5BE4r9ASutH0halvaxX8CdPejd0RKIzvdRu7HWvgwdf6uNbOj44MJftLqExn5j5LV8ww==
-X-Received: by 2002:a17:902:e18d:: with SMTP id cd13mr31139018plb.301.1558621878491;
-        Thu, 23 May 2019 07:31:18 -0700 (PDT)
-Received: from zhanggen-UX430UQ ([66.42.35.75])
-        by smtp.gmail.com with ESMTPSA id 140sm45674391pfw.123.2019.05.23.07.30.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 07:31:17 -0700 (PDT)
-Date:   Thu, 23 May 2019 22:30:22 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     kvalo@codeaurora.org, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: Fix a memory leaking bug in wl1271_probe()
-Message-ID: <20190523143022.GA26485@zhanggen-UX430UQ>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UmCv77ojMXG+c1Fp7DLXkEEMvKlYSuA0abYrccWopi8=;
+        b=DzeznXuIGv9qlSQIISF09ZHyZNnGcjInUGxxUOpcMExBPxcL/RvdbZsjo2x1j0/bwn
+         /91lTDnGpDZHeGEsStsN6IliK8maluMXlnsoGIx0qvNNqQ9Xvhm9WSPyZFxdr4hydIiM
+         P6/5lfZugOG8dN4aHBfIppACgj+cSaWQ5XavIb3phvX/4c7nEr4aWXmap8DHQDBys4An
+         hCHqsxmoT4F5bJoyKHdfDsiS4QrK3p9MOp13avgiB9J6HCdF8RjYhtkuZoTyt4zHpcjM
+         6Dcn3CBXw5aIu6IBFyzFI9HNzBjVl8MFxj+PfI6aZIrVoKmk5FWbUh+mVo0Deq98T8GT
+         xmDg==
+X-Gm-Message-State: APjAAAWpw89qf18YqyFFV5k2SA8PTvlg9yV13ZSWLJdH04Bbmevbvdqv
+        YGlOZwEbTLxfD2EVLeuYSihyHD+EHB3FJK5wRINeLQ==
+X-Google-Smtp-Source: APXvYqzFh/C6cDrkSdzIHZQLhSVRwEaU4gGSzclCCpHMgWTGugVQoxN/zVlngGYGKq3CVngNXUCDkIhtZyPn6qxtEko=
+X-Received: by 2002:a9d:7f8b:: with SMTP id t11mr72319otp.110.1558621960440;
+ Thu, 23 May 2019 07:32:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190522155259.11174-1-christian@brauner.io> <20190522165737.GC4915@redhat.com>
+ <20190523115118.pmscbd6kaqy37dym@brauner.io>
+In-Reply-To: <20190523115118.pmscbd6kaqy37dym@brauner.io>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 23 May 2019 16:32:14 +0200
+Message-ID: <CAG48ez0Uq2GQnQsuPkNrDdJVku_6GPeZ_5F_-5J3iy2CULr0_Q@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] open: add close_range()
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Oleg Nesterov <oleg@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>, Shuah Khan <shuah@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Todd Kjos <tkjos@android.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In wl1271_probe(), 'glue->core' is allocated by platform_device_alloc(),
-when this allocation fails, ENOMEM is returned. However, 'pdev_data'
-and 'glue' are allocated by devm_kzalloc() before 'glue->core'. When
-platform_device_alloc() returns NULL, we should also free 'pdev_data'
-and 'glue' before wl1271_probe() ends to prevent leaking memory.
+On Thu, May 23, 2019 at 1:51 PM Christian Brauner <christian@brauner.io> wrote:
+[...]
+> I kept it dumb and was about to reply that your solution introduces more
+> code when it seemed we wanted to keep this very simple for now.
+> But then I saw that find_next_opened_fd() already exists as
+> find_next_fd(). So it's actually not bad compared to what I sent in v1.
+> So - with some small tweaks (need to test it and all now) - how do we
+> feel about?:
+[...]
+> static int __close_next_open_fd(struct files_struct *files, unsigned *curfd, unsigned maxfd)
+> {
+>         struct file *file = NULL;
+>         unsigned fd;
+>         struct fdtable *fdt;
+>
+>         spin_lock(&files->file_lock);
+>         fdt = files_fdtable(files);
+>         fd = find_next_fd(fdt, *curfd);
 
-Similarly, we shoulf free 'pdev_data' when 'glue' is NULL. And we should
-free 'pdev_data' and 'glue' when 'glue->reg' is error and when 'ret' is
-error.
+find_next_fd() finds free fds, not used ones.
 
-Further, we should free 'glue->core', 'pdev_data' and 'glue' when this 
-function normally ends to prevent leaking memory.
+>         if (fd >= fdt->max_fds || fd > maxfd)
+>                 goto out_unlock;
+>
+>         file = fdt->fd[fd];
+>         rcu_assign_pointer(fdt->fd[fd], NULL);
+>         __put_unused_fd(files, fd);
 
-Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
----
-diff --git a/drivers/net/wireless/ti/wlcore/spi.c b/drivers/net/wireless/ti/wlcore/spi.c
-index 62ce54a..3a020bd 100644
---- a/drivers/net/wireless/ti/wlcore/spi.c
-+++ b/drivers/net/wireless/ti/wlcore/spi.c
-@@ -480,7 +480,7 @@ static int wl1271_probe(struct spi_device *spi)
- 	struct wl12xx_spi_glue *glue;
- 	struct wlcore_platdev_data *pdev_data;
- 	struct resource res[1];
--	int ret;
-+	int ret = -ENOMEM;
- 
- 	pdev_data = devm_kzalloc(&spi->dev, sizeof(*pdev_data), GFP_KERNEL);
- 	if (!pdev_data)
-@@ -491,7 +491,8 @@ static int wl1271_probe(struct spi_device *spi)
- 	glue = devm_kzalloc(&spi->dev, sizeof(*glue), GFP_KERNEL);
- 	if (!glue) {
- 		dev_err(&spi->dev, "can't allocate glue\n");
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto out_free1;
- 	}
- 
- 	glue->dev = &spi->dev;
-@@ -503,31 +504,35 @@ static int wl1271_probe(struct spi_device *spi)
- 	spi->bits_per_word = 32;
- 
- 	glue->reg = devm_regulator_get(&spi->dev, "vwlan");
--	if (PTR_ERR(glue->reg) == -EPROBE_DEFER)
--		return -EPROBE_DEFER;
-+	if (PTR_ERR(glue->reg) == -EPROBE_DEFER) {
-+		ret = -EPROBE_DEFER;
-+		goto out_free2;
-+	}
- 	if (IS_ERR(glue->reg)) {
- 		dev_err(glue->dev, "can't get regulator\n");
--		return PTR_ERR(glue->reg);
-+		ret = PTR_ERR(glue->reg);
-+		goto out_free2;
- 	}
- 
- 	ret = wlcore_probe_of(spi, glue, pdev_data);
- 	if (ret) {
- 		dev_err(glue->dev,
- 			"can't get device tree parameters (%d)\n", ret);
--		return ret;
-+		goto out_free2;
- 	}
- 
- 	ret = spi_setup(spi);
- 	if (ret < 0) {
- 		dev_err(glue->dev, "spi_setup failed\n");
--		return ret;
-+		goto out_free2;
- 	}
- 
- 	glue->core = platform_device_alloc(pdev_data->family->name,
- 					   PLATFORM_DEVID_AUTO);
- 	if (!glue->core) {
- 		dev_err(glue->dev, "can't allocate platform_device\n");
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto out_free2;
- 	}
- 
- 	glue->core->dev.parent = &spi->dev;
-@@ -557,10 +562,18 @@ static int wl1271_probe(struct spi_device *spi)
- 		goto out_dev_put;
- 	}
- 
-+	platform_device_put(glue->core);
-+	devm_kfree(&func->dev, glue);
-+	devm_kfree(&func->dev, pdev_data);
- 	return 0;
- 
- out_dev_put:
- 	platform_device_put(glue->core);
-+out_free2:
-+	devm_kfree(&func->dev, glue);
-+out_free1:
-+	devm_kfree(&func->dev, pdev_data);
-+out:
- 	return ret;
- }
- 
----
+You can't do __put_unused_fd() if the old pointer in fdt->fd[fd] was
+NULL - because that means that the fd has been reserved by another
+thread that is about to put a file pointer in there, and if you
+release the fd here, that messes up the refcounting (or hits the
+BUG_ON() in __fd_install()).
+
+> out_unlock:
+>         spin_unlock(&files->file_lock);
+>
+>         if (!file)
+>                 return -EBADF;
+>
+>         *curfd = fd;
+>         filp_close(file, files);
+>         return 0;
+> }
+>
+> int __close_range(struct files_struct *files, unsigned fd, unsigned max_fd)
+> {
+>         if (fd > max_fd)
+>                 return -EINVAL;
+>
+>         while (fd <= max_fd) {
+
+Note that with a pattern like this, you have to be careful about what
+happens if someone gives you max_fd==0xffffffff - then this condition
+is always true and the loop can not terminate this way.
+
+>                 if (__close_next_fd(files, &fd, maxfd))
+>                         break;
+
+(obviously it can still terminate this way)
+
+>                 cond_resched();
+>                 fd++;
+>         }
+>
+>         return 0;
+> }
