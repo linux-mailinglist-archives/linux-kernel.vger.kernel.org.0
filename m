@@ -2,368 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AC4828AFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:58:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D19C2866F
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 21:10:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388309AbfEWTve (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 15:51:34 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:42804 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731850AbfEWTIn (ORCPT
+        id S2387415AbfEWTJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 15:09:27 -0400
+Received: from knopi.disroot.org ([178.21.23.139]:34132 "EHLO
+        knopi.disroot.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732155AbfEWTJZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 15:08:43 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4NJ8dML034797;
-        Thu, 23 May 2019 14:08:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1558638519;
-        bh=GLtiVWFcme/Cn8dQa/wp+bSDn/qnr2+YqURpJOJAkAU=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=SdxS59dXBokFmf1dyLBouAGfNjB9lGBSKC2Kr5XS8AwDXbkFiSE4KHIr6kixhAUkr
-         eqzAd7uo1fs2gg0Loi2pDJGu2YyoZytg7yeVR513edQWQfQLvxzSmf47OnPI6XPQva
-         wDQUZ/MsJTUJsRh/uPx/5eT32X42dRY1lL7XLL9M=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4NJ8ciP079051
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 23 May 2019 14:08:39 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 23
- May 2019 14:08:38 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 23 May 2019 14:08:38 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4NJ8cUh027535;
-        Thu, 23 May 2019 14:08:38 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v3 9/9] leds: Update the lp55xx to use the multi color framework
-Date:   Thu, 23 May 2019 14:08:20 -0500
-Message-ID: <20190523190820.29375-10-dmurphy@ti.com>
-X-Mailer: git-send-email 2.21.0.5.gaeb582a983
-In-Reply-To: <20190523190820.29375-1-dmurphy@ti.com>
-References: <20190523190820.29375-1-dmurphy@ti.com>
-MIME-Version: 1.0
+        Thu, 23 May 2019 15:09:25 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by disroot.org (Postfix) with ESMTP id C442E31D55;
+        Thu, 23 May 2019 21:09:23 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at disroot.org
+Received: from knopi.disroot.org ([127.0.0.1])
+        by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id vmu_h8mAoYUm; Thu, 23 May 2019 21:09:22 +0200 (CEST)
+From:   Daniel Smith <danct12@disroot.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+        t=1558638562; bh=4X7RiEUOO10b4AmFFhEJd+iNhQIpQPnLIH8kZbBd5OQ=;
+        h=From:To:Cc:Subject:Date;
+        b=U2btwKbcAOtKJ1vrs8k9LTweuOG1B9lm1loE60rPNHcHTAvnuM7TLnIwXDSToZi7k
+         Qq9iG6Zd0mNcArqRS6coOZNaI5r24bsq6P8oUm/TzccOYwauypxogPmA+g/1ReqdzP
+         AZAlnLuCE9aHgWzgtbAuMru5H5tCeowJ9/BD4UczCIh7SVBZzEXXIcnhunstZo8hAi
+         RrcHax7aFvoUzQ+DTs4ot2MNM+DMZm3wUsuf1S1fPa/SozPc8+tN4fVYUXT3s4tK53
+         htU88HRPDpu9oYc56mb1812+y3cNwUsBv26F0gRV1WGauZZztkON2fcSM/0d1ysN39
+         Q97hg3GOo3JbQ==
+Cc:     Daniel Smith <danct12@disroot.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: touchscreen_dmi: Add info for the CHUWI Hi10 Plus tablet.
+Date:   Fri, 24 May 2019 02:09:13 +0700
+Message-Id: <20190523190913.5801-1-danct12@disroot.org>
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the lp5523 to use the multi color framework.
+Added touch screen info for CHUWI Hi10 Plus tablet.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
+Signed-off-by: Daniel Smith <danct12@disroot.org>
 ---
- drivers/leds/leds-lp5523.c                |  13 +++
- drivers/leds/leds-lp55xx-common.c         | 133 ++++++++++++++++++----
- drivers/leds/leds-lp55xx-common.h         |  10 ++
- include/linux/platform_data/leds-lp55xx.h |   5 +
- 4 files changed, 142 insertions(+), 19 deletions(-)
+ drivers/platform/x86/touchscreen_dmi.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index fd64df5a57a5..dbcc4d100054 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -804,6 +804,18 @@ static ssize_t store_master_fader_leds(struct device *dev,
- 	return ret;
- }
+diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+index bd0856d2e825..1dbb53c3f1e7 100644
+--- a/drivers/platform/x86/touchscreen_dmi.c
++++ b/drivers/platform/x86/touchscreen_dmi.c
+@@ -91,6 +91,22 @@ static const struct ts_dmi_data chuwi_hi10_air_data = {
+ 	.properties	= chuwi_hi10_air_props,
+ };
  
-+static int lp5523_led_intensity(struct lp55xx_led *led, int chan_num)
-+{
-+	struct lp55xx_chip *chip = led->chip;
-+	int ret;
-+
-+	mutex_lock(&chip->lock);
-+	ret = lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + chan_num,
-+		     led->brightness);
-+	mutex_unlock(&chip->lock);
-+	return ret;
-+}
-+
- static int lp5523_led_brightness(struct lp55xx_led *led)
- {
- 	struct lp55xx_chip *chip = led->chip;
-@@ -870,6 +882,7 @@ static struct lp55xx_device_config lp5523_cfg = {
- 	.max_channel  = LP5523_MAX_LEDS,
- 	.post_init_device   = lp5523_post_init_device,
- 	.brightness_fn      = lp5523_led_brightness,
-+	.intensity_fn       = lp5523_led_intensity,
- 	.set_led_current    = lp5523_set_led_current,
- 	.firmware_cb        = lp5523_firmware_loaded,
- 	.run_engine         = lp5523_run_engine,
-diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index 723f2f17497a..b54fbb8f78c6 100644
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -38,6 +38,11 @@ static struct lp55xx_led *dev_to_lp55xx_led(struct device *dev)
- 	return cdev_to_lp55xx_led(dev_get_drvdata(dev));
- }
- 
-+static struct lp55xx_led *mcdev_to_lp55xx_led(struct led_classdev_mc *mc_dev)
-+{
-+	return container_of(mc_dev, struct lp55xx_led, mc_cdev);
-+}
-+
- static void lp55xx_reset_device(struct lp55xx_chip *chip)
- {
- 	struct lp55xx_device_config *cfg = chip->cfg;
-@@ -141,15 +146,36 @@ static int lp55xx_set_brightness(struct led_classdev *cdev,
- 	struct lp55xx_device_config *cfg = led->chip->cfg;
- 
- 	led->brightness = (u8)brightness;
-+
- 	return cfg->brightness_fn(led);
- }
- 
-+static int lp55xx_set_color(struct led_classdev_mc *mcled_cdev,
-+			    int color, int value)
-+{
-+	struct lp55xx_led *led = mcdev_to_lp55xx_led(mcled_cdev);
-+	struct lp55xx_device_config *cfg = led->chip->cfg;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(led->channel_color); i++)
-+		if (led->channel_color[i] == color)
-+			break;
-+
-+	led->brightness = (u8)value;
-+	return cfg->intensity_fn(led, led->grouped_channels[i]);
-+}
-+
-+static struct led_multicolor_ops lp55xx_mc_ops = {
-+	.set_color_brightness = lp55xx_set_color,
++static const struct property_entry chuwi_hi10_plus_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-min-x", 0),
++	PROPERTY_ENTRY_U32("touchscreen-min-y", 5),
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1914),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1283),
++	PROPERTY_ENTRY_STRING("firmware-name", "gsl1680-chuwi-hi10plus.fw"),
++	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
++	PROPERTY_ENTRY_BOOL("silead,home-button"),
++	{ }
 +};
 +
- static int lp55xx_init_led(struct lp55xx_led *led,
- 			struct lp55xx_chip *chip, int chan)
- {
- 	struct lp55xx_platform_data *pdata = chip->pdata;
- 	struct lp55xx_device_config *cfg = chip->cfg;
- 	struct device *dev = &chip->cl->dev;
-+	struct led_classdev *led_cdev;
- 	char name[32];
- 	int ret;
- 	int max_channel = cfg->max_channel;
-@@ -162,10 +188,39 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 	if (pdata->led_config[chan].led_current == 0)
- 		return 0;
- 
-+	if (pdata->led_config[chan].name) {
-+		led->cdev.name = pdata->led_config[chan].name;
-+	} else {
-+		snprintf(name, sizeof(name), "%s:channel%d",
-+			pdata->label ? : chip->cl->name, chan);
-+		led->cdev.name = name;
-+	}
++static const struct ts_dmi_data chuwi_hi10_plus_data = {
++	.acpi_name      = "MSSL0017:00",
++	.properties     = chuwi_hi10_plus_props,
++};
 +
-+	if (pdata->led_config[chan].num_colors > 1) {
-+		led_cdev = &led->mc_cdev.led_cdev;
-+		led_cdev->brightness_set_blocking = lp55xx_set_brightness;
-+		led_cdev->name = led->cdev.name;
-+		led_cdev->groups = lp55xx_led_groups;
-+		led->mc_cdev.ops = &lp55xx_mc_ops;
-+		led->mc_cdev.num_leds = pdata->led_config[chan].num_colors;
-+		memcpy(led->mc_cdev.available_colors,
-+		       pdata->led_config[chan].channel_color,
-+		       sizeof(led->mc_cdev.available_colors));
-+		memcpy(led->channel_color,
-+		       pdata->led_config[chan].channel_color,
-+		       sizeof(led->channel_color));
-+		memcpy(led->grouped_channels,
-+		       pdata->led_config[chan].grouped_channels,
-+		       sizeof(led->grouped_channels));
-+	} else {
-+
-+		led->cdev.default_trigger = pdata->led_config[chan].default_trigger;
-+		led->cdev.brightness_set_blocking = lp55xx_set_brightness;
-+	}	led->cdev.groups = lp55xx_led_groups;
-+
- 	led->led_current = pdata->led_config[chan].led_current;
- 	led->max_current = pdata->led_config[chan].max_current;
- 	led->chan_nr = pdata->led_config[chan].chan_nr;
--	led->cdev.default_trigger = pdata->led_config[chan].default_trigger;
- 
- 	if (led->chan_nr >= max_channel) {
- 		dev_err(dev, "Use channel numbers between 0 and %d\n",
-@@ -173,18 +228,11 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 		return -EINVAL;
- 	}
- 
--	led->cdev.brightness_set_blocking = lp55xx_set_brightness;
--	led->cdev.groups = lp55xx_led_groups;
--
--	if (pdata->led_config[chan].name) {
--		led->cdev.name = pdata->led_config[chan].name;
--	} else {
--		snprintf(name, sizeof(name), "%s:channel%d",
--			pdata->label ? : chip->cl->name, chan);
--		led->cdev.name = name;
--	}
-+	if (pdata->led_config[chan].num_colors > 1)
-+		ret = led_classdev_multicolor_register(dev, &led->mc_cdev);
-+	else
-+		ret = led_classdev_register(dev, &led->cdev);
- 
--	ret = led_classdev_register(dev, &led->cdev);
- 	if (ret) {
- 		dev_err(dev, "led register err: %d\n", ret);
- 		return ret;
-@@ -541,6 +589,38 @@ void lp55xx_unregister_sysfs(struct lp55xx_chip *chip)
- }
- EXPORT_SYMBOL_GPL(lp55xx_unregister_sysfs);
- 
-+static int lp5xx_parse_channel_child(struct device_node *np,
-+				     struct lp55xx_led_config *cfg,
-+				     int chan_num)
-+{
-+	struct device_node *child;
-+	int num_colors = 0;
-+	u32 color_id;
-+	u32 led_number;
-+	int ret;
-+
-+	cfg[chan_num].default_trigger =
-+			of_get_property(np, "linux,default-trigger", NULL);
-+
-+	for_each_child_of_node(np, child) {
-+		of_property_read_string(child, "chan-name",
-+					&cfg[chan_num].name);
-+		of_property_read_u8(child, "led-cur",
-+				    &cfg[chan_num].led_current);
-+		of_property_read_u8(child, "max-cur",
-+				    &cfg[chan_num].max_current);
-+		of_property_read_u32(child, "color", &color_id);
-+		cfg[chan_num].channel_color[num_colors] = color_id;
-+		ret = of_property_read_u32(child, "reg", &led_number);
-+		cfg[chan_num].grouped_channels[num_colors] = led_number;
-+		num_colors++;
-+	}
-+
-+	cfg->num_colors = num_colors;
-+
-+	return 0;
-+}
-+
- struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 						      struct device_node *np)
- {
-@@ -548,6 +628,8 @@ struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 	struct lp55xx_platform_data *pdata;
- 	struct lp55xx_led_config *cfg;
- 	int num_channels;
-+	int num_chan_children;
-+	u32 led_number;
- 	int i = 0;
- 
- 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-@@ -568,13 +650,26 @@ struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 	pdata->num_channels = num_channels;
- 
- 	for_each_child_of_node(np, child) {
--		cfg[i].chan_nr = i;
--
--		of_property_read_string(child, "chan-name", &cfg[i].name);
--		of_property_read_u8(child, "led-cur", &cfg[i].led_current);
--		of_property_read_u8(child, "max-cur", &cfg[i].max_current);
--		cfg[i].default_trigger =
--			of_get_property(child, "linux,default-trigger", NULL);
-+		num_chan_children = of_get_child_count(child);
-+		if (num_chan_children != 0)
-+			lp5xx_parse_channel_child(child, cfg, i);
-+		else {
-+			of_property_read_string(child, "chan-name",
-+						&cfg[i].name);
-+			of_property_read_u8(child, "led-cur",
-+					    &cfg[i].led_current);
-+			of_property_read_u8(child, "max-cur",
-+					    &cfg[i].max_current);
-+			cfg[i].default_trigger =
-+				of_get_property(child, "linux,default-trigger",
-+						NULL);
-+			of_property_read_u32(child, "reg", &led_number);
-+
-+			if (led_number < 0 || led_number > 6)
-+				return ERR_PTR(EINVAL);
-+
-+			cfg[i].chan_nr = led_number;
-+		}
- 
- 		i++;
- 	}
-diff --git a/drivers/leds/leds-lp55xx-common.h b/drivers/leds/leds-lp55xx-common.h
-index abf1fb5da37d..cd28ec2c78a5 100644
---- a/drivers/leds/leds-lp55xx-common.h
-+++ b/drivers/leds/leds-lp55xx-common.h
-@@ -15,6 +15,8 @@
- #ifndef _LEDS_LP55XX_COMMON_H
- #define _LEDS_LP55XX_COMMON_H
- 
-+#include <linux/led-class-multicolor.h>
-+
- enum lp55xx_engine_index {
- 	LP55XX_ENGINE_INVALID,
- 	LP55XX_ENGINE_1,
-@@ -112,6 +114,9 @@ struct lp55xx_device_config {
- 	/* access brightness register */
- 	int (*brightness_fn)(struct lp55xx_led *led);
- 
-+	/* access brightness register */
-+	int (*intensity_fn)(struct lp55xx_led *led, int chan_num);
-+
- 	/* current setting function */
- 	void (*set_led_current) (struct lp55xx_led *led, u8 led_current);
- 
-@@ -162,6 +167,7 @@ struct lp55xx_chip {
-  * struct lp55xx_led
-  * @chan_nr         : Channel number
-  * @cdev            : LED class device
-+ * @mc_cdev	    : Multi color class device
-  * @led_current     : Current setting at each led channel
-  * @max_current     : Maximun current at each led channel
-  * @brightness      : Brightness value
-@@ -170,9 +176,13 @@ struct lp55xx_chip {
- struct lp55xx_led {
- 	int chan_nr;
- 	struct led_classdev cdev;
-+	struct led_classdev_mc mc_cdev;
- 	u8 led_current;
- 	u8 max_current;
- 	u8 brightness;
-+	int num_colors;
-+	int channel_color[10];
-+	int grouped_channels[10];
- 	struct lp55xx_chip *chip;
- };
- 
-diff --git a/include/linux/platform_data/leds-lp55xx.h b/include/linux/platform_data/leds-lp55xx.h
-index 624ff9edad6f..bde6827f1aea 100644
---- a/include/linux/platform_data/leds-lp55xx.h
-+++ b/include/linux/platform_data/leds-lp55xx.h
-@@ -15,6 +15,8 @@
- #ifndef _LEDS_LP55XX_H
- #define _LEDS_LP55XX_H
- 
-+#include <linux/led-class-multicolor.h>
-+
- /* Clock configuration */
- #define LP55XX_CLOCK_AUTO	0
- #define LP55XX_CLOCK_INT	1
-@@ -26,6 +28,9 @@ struct lp55xx_led_config {
- 	u8 chan_nr;
- 	u8 led_current; /* mA x10, 0 if led is not connected */
- 	u8 max_current;
-+	int num_colors;
-+	int channel_color[10];
-+	int grouped_channels[10];
- };
- 
- struct lp55xx_predef_pattern {
+ static const struct property_entry chuwi_vi8_props[] = {
+ 	PROPERTY_ENTRY_U32("touchscreen-min-x", 4),
+ 	PROPERTY_ENTRY_U32("touchscreen-min-y", 6),
+@@ -605,6 +621,15 @@ static const struct dmi_system_id touchscreen_dmi_table[] = {
+ 			DMI_MATCH(DMI_PRODUCT_SKU, "P1W6_C109D_B"),
+ 		},
+ 	},
++	{
++		/* Chuwi Hi10 Plus (CWI527) */
++		.driver_data = (void *)&chuwi_hi10_plus_data,
++		.matches = {
++			DMI_MATCH(DMI_BOARD_VENDOR, "Hampoo"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Hi10 plus tablet"),
++			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
++		},
++	},
+ 	{
+ 		/* Chuwi Vi8 (CWI506) */
+ 		.driver_data = (void *)&chuwi_vi8_data,
 -- 
-2.21.0.5.gaeb582a983
+2.21.0
 
