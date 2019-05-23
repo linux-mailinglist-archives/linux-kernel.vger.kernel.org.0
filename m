@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B888927BE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 13:36:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D56327BE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 23 May 2019 13:36:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730652AbfEWLgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 07:36:54 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39201 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730493AbfEWLgg (ORCPT
+        id S1730595AbfEWLgl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 07:36:41 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34820 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729949AbfEWLgi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 07:36:36 -0400
-Received: by mail-lf1-f66.google.com with SMTP id f1so4133631lfl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 04:36:36 -0700 (PDT)
+        Thu, 23 May 2019 07:36:38 -0400
+Received: by mail-lj1-f196.google.com with SMTP id h11so5152119ljb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 04:36:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=nikanor-nu.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=N81VduL34DQfMDrcwklUsVpIH+zv/8mLQSEnWzPurkE=;
-        b=YUC8gLjRT3RpGd1P5TgxaNiCYI994Q059+IpAjSQEiYFBnlHyMen2ZSJO8DLwhRJd1
-         xPdPMZ+fGemuH0rxQCjwq1EuW3H5cdUj95U3jAlAKQ8hV3XGH9IJp51zhDGfoM4pQsrY
-         8uyqWEFeYXiznUDqN9D/6Xrl96FI+PjejmIHWZLbcq0Kp+NpBteyg+d+Y3A//NFLnodM
-         5rpKLEgSuom6vTsBFE/K5PsLDTKgHJPj7Cl5HxVo4IBgc6n/byyqoAT8TSm6rYlDCE/6
-         UFW8hQaI42QgPWM9L9iLWdns0AznlhUFrq2mTSDQbfGPN5LfWYytjBTOS7YA5zz5YEQG
-         dIEQ==
+        bh=11qH4y9SfuGcGcjlxGwKTBKKhuVs5qvrsowrYqhLe+k=;
+        b=Y7bYLdd5Ld95lBElF+p+gMQOuiWb+w+At7YDGkJortepcdHgqXw+vHsr1Xovdn4ayt
+         uKHewJa0wAPLm+49BFZcWJJfwwa5okbo15J4pvBUL97sPQ1tPBVt1/WHPREEnTc/V2Ww
+         LBx3h2a4Y4jwQ8Krho6kRDZ8661Nh2AFQGLaJSAbc7xW0mJYvyN5BRDl0XWzKaw1Kgu9
+         IPBg6Moi5NMkx2Bc5pTlUiBVndC3ywvVa3KvyTXNuu0CYsalbzvf/OPhFH3mEZ65rkra
+         aK1o/gBc1xZ2zhUGbgOfhJb98Xu9CrU10tUaWu0vyDKABymiAthp/J3HN/aENf8FsO3S
+         O8hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=N81VduL34DQfMDrcwklUsVpIH+zv/8mLQSEnWzPurkE=;
-        b=F4lbnF8AOImME1YWKKuoui322Y17YyPso31UjWYYNmtRE1PNY6CGb7Eac19C7euszW
-         P8NBYtWVYHO40UMgsgBZ4KFW0h5rxyo+EeC0GCTMxXxqjtFoAjGDiVZM/HB4+x2/esPk
-         e8trE+S9ynBQd+wdD8wfi0mK/o7nE0xhRzB317rBdDI1rTLRTEMPafyhAr6xzJYapamy
-         cDkUzY6NaPnb1JaxVrNqne/AIgVD3aXDe/pabd7K2O3H1jBQyEldsr014cwKQFYT9hXC
-         ZGdgm1TMCzbyHp7WopHQmMnbbfxYtodxGGPYPf6woPeIzvgTF966KJ76L9eMqlhfZrU0
-         0BFw==
-X-Gm-Message-State: APjAAAV+xs2GyA/9FODHqJmXWIp+kGRzZup7B/t2tGULbqhIniGmujFe
-        +1N9Fm09P0+DqeAfqw1c6PUr8Q==
-X-Google-Smtp-Source: APXvYqwXNT8B12ktl98j3v3Ee/yAwsO/8sfKR2XyP5+WPd5PTUnOgcdgXNyeIHpX8wKnDEPlmr/gpw==
-X-Received: by 2002:a19:700b:: with SMTP id h11mr1359602lfc.25.1558611395583;
-        Thu, 23 May 2019 04:36:35 -0700 (PDT)
+        bh=11qH4y9SfuGcGcjlxGwKTBKKhuVs5qvrsowrYqhLe+k=;
+        b=n16iAXi/pRl27te8qNEZ+MQOvRQRQse2ItNWhlq5hyXRJ/30uI+hEVO4eGL07L2G+q
+         gLxSqrPCf6GXNUJfTBn5LlOCQCnEClur5Dw6yC/dACVxmYx6v/Y8t6sgjVB9UmDIzwLR
+         bpyM8Yc8UmISehm6PfudKlr38/OwDN1H1xACLCYHLik0V2+37r4HXsY9qZRtHEC38JyU
+         S3y95QtoPTNld9dQDbPQ2VwCqLDWD6voiWPKAlzAXpQtUfU/+JeRyGwCW7cfhG5HZP8I
+         oS4lLkOciLW6HUFz4pFWHtbQQnNKKNALOfAwJdwcEJkLuaEuKL89d8kN8UEBbl1ViyuJ
+         xMQw==
+X-Gm-Message-State: APjAAAUb+DxaSwxSgpoSZoCbBDijWNW4uFzgzDOd0SYSwwsb5PKpkl7o
+        U5aV1r7oifDicdjMsNb14Ze1xw==
+X-Google-Smtp-Source: APXvYqx7pRnYxk6XRIEXgy9Ad7KNNYeIcOE4OGgp6hRV2gwnbrOOVxc7iNVI2ZGrwynKkeYyjbKcEg==
+X-Received: by 2002:a2e:9259:: with SMTP id v25mr5166102ljg.46.1558611396410;
+        Thu, 23 May 2019 04:36:36 -0700 (PDT)
 Received: from dev.nikanor.nu (78-72-133-4-no161.tbcn.telia.com. [78.72.133.4])
-        by smtp.gmail.com with ESMTPSA id d68sm5269287lfg.23.2019.05.23.04.36.34
+        by smtp.gmail.com with ESMTPSA id d68sm5269287lfg.23.2019.05.23.04.36.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Thu, 23 May 2019 04:36:35 -0700 (PDT)
 From:   =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
 To:     gregkh@linuxfoundation.org
 Cc:     simon@nikanor.nu, jeremy@azazel.net, dan.carpenter@oracle.com,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/8] staging: kpc2000: remove extra blank lines in cell_probe.c
-Date:   Thu, 23 May 2019 13:36:10 +0200
-Message-Id: <20190523113613.28342-6-simon@nikanor.nu>
+Subject: [PATCH 6/8] staging: kpc2000: use kzalloc(sizeof(var)...) in cell_probe.c
+Date:   Thu, 23 May 2019 13:36:11 +0200
+Message-Id: <20190523113613.28342-7-simon@nikanor.nu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190523113613.28342-1-simon@nikanor.nu>
 References: <20190523113613.28342-1-simon@nikanor.nu>
@@ -63,49 +63,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes checkpatch.pl warnings "Please don't use multiple blank lines".
+Fixes checkpatch.pl warning "Prefer kzalloc(sizeof(*kudev)...) over
+kzalloc(sizeof(struct kpc_uio_device)...)"
 
 Signed-off-by: Simon Sandström <simon@nikanor.nu>
 ---
- drivers/staging/kpc2000/kpc2000/cell_probe.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/staging/kpc2000/kpc2000/cell_probe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/kpc2000/kpc2000/cell_probe.c b/drivers/staging/kpc2000/kpc2000/cell_probe.c
-index b621adb712ff..0da41ca17eb7 100644
+index 0da41ca17eb7..8d9254db9498 100644
 --- a/drivers/staging/kpc2000/kpc2000/cell_probe.c
 +++ b/drivers/staging/kpc2000/kpc2000/cell_probe.c
-@@ -94,7 +94,6 @@ void parse_core_table_entry(struct core_table_entry *cte, const u64 read_val, co
- 	}
- }
+@@ -292,7 +292,7 @@ static int probe_core_uio(unsigned int core_num, struct kp2000_device *pcard,
  
--
- static int probe_core_basic(unsigned int core_num, struct kp2000_device *pcard,
- 			    char *name, const struct core_table_entry cte)
- {
-@@ -111,7 +110,6 @@ static int probe_core_basic(unsigned int core_num, struct kp2000_device *pcard,
+ 	dev_dbg(&pcard->pdev->dev, "Found UIO core:   type = %02d  dma = %02x / %02x  offset = 0x%x  length = 0x%x (%d regs)\n", cte.type, KPC_OLD_S2C_DMA_CH_NUM(cte), KPC_OLD_C2S_DMA_CH_NUM(cte), cte.offset, cte.length, cte.length / 8);
  
- 	dev_dbg(&pcard->pdev->dev, "Found Basic core: type = %02d  dma = %02x / %02x  offset = 0x%x  length = 0x%x (%d regs)\n", cte.type, KPC_OLD_S2C_DMA_CH_NUM(cte), KPC_OLD_C2S_DMA_CH_NUM(cte), cte.offset, cte.length, cte.length / 8);
- 
--
- 	cell.platform_data = &core_pdata;
- 	cell.pdata_size = sizeof(struct kpc_core_device_platdata);
- 	cell.num_resources = 2;
-@@ -137,7 +135,6 @@ static int probe_core_basic(unsigned int core_num, struct kp2000_device *pcard,
- 			       NULL);                  // struct irq_domain *
- }
- 
--
- struct kpc_uio_device {
- 	struct list_head list;
- 	struct kp2000_device *pcard;
-@@ -347,7 +344,6 @@ static int probe_core_uio(unsigned int core_num, struct kp2000_device *pcard,
- 	return 0;
- }
- 
--
- static int  create_dma_engine_core(struct kp2000_device *pcard, size_t engine_regs_offset, int engine_num, int irq_num)
- {
- 	struct mfd_cell  cell = { .id = engine_num };
+-	kudev = kzalloc(sizeof(struct kpc_uio_device), GFP_KERNEL);
++	kudev = kzalloc(sizeof(*kudev), GFP_KERNEL);
+ 	if (!kudev) {
+ 		dev_err(&pcard->pdev->dev, "%s: failed to kzalloc kpc_uio_device\n",
+ 			__func__);
 -- 
 2.20.1
 
