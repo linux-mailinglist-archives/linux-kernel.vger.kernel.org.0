@@ -2,181 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15C8A28F2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 04:37:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7BDA28F31
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 04:40:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731828AbfEXChm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 22:37:42 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:46513 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbfEXChl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 22:37:41 -0400
-Received: by mail-ua1-f68.google.com with SMTP id a95so2956749uaa.13
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 19:37:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=W3RENNt8ptqBe5aR4wFWWSl1w/4lboaHznHsC3/mWNA=;
-        b=FxmwRazMYp6zFP+s/5xXuoyTsMgZ5hsK+7CnZabNco8fxkDe5S1kotafNuhgS/m31r
-         Wk8AJMvL4xmyYPlEFfIxc/ZTS9/uZhL/JR5d4VTZzaK4PRGIuzEXoepMSx66z2uNDXwO
-         taaau4QU5Aht+vCJxhjs4XC/nUpfTif10/vsdkJ/ieGDoz37Bbghu70sspeNmKQFsy3O
-         M0h2FR1nk8aGONnPq6v+y7vKBnOTAHbHkVPL3d/0ie/H4mZf1UcVbobIXtOqQgzVoYSb
-         VblSvR56Z3fO0r5oXB/6yPzQmJ4BT+tJcWat7jCfN4Mf6DuShrC1QON7gJdD2Mw25ggV
-         mZ4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=W3RENNt8ptqBe5aR4wFWWSl1w/4lboaHznHsC3/mWNA=;
-        b=tPQmwoYas3S0mZ3YhfhTeWTla8DJW0oGteLgNaF5aUkIW2Jm/mUEtHyoE4jvPNOEls
-         YRRs9HYVV9Kko1VU58dlizs+qs3MAIfpET4ePXYq9rUx0NS+iWgZTx/O8fdvfC0hBnSE
-         KrXdw5Ezbt0yydP9mdK4VNRcw1MrkXWjxG89yVrA8F6yBQ1WYXJ0vIHWpBNTru+EmOS/
-         qxbpLD37hL42z9JzE7UeFpTkmWnZMZhf9O8gKwddamtVoKfdS8EOqwRdreuVNbxI2vvB
-         GaxLKP8lZc4gIRuRcdYudIoNOMOh8CLqdmMm8eMgLYx2S/dWcFsMd9+esSGvhJicOdF6
-         +TAQ==
-X-Gm-Message-State: APjAAAXUkwri04F442Rc+SEa6I1/9TjS5OZ183B1+pptI+bcA3L065H/
-        U6Qmz2p2vM8xX4tE09PROyuPuw==
-X-Google-Smtp-Source: APXvYqyLZhcMiUNQP58oRldrpIe1o1emae5Fhiz9Fd52qOrj6TZxcFhAKp+myirlu8bobh2O0IGTcQ==
-X-Received: by 2002:ab0:e08:: with SMTP id g8mr20255829uak.32.1558665460085;
-        Thu, 23 May 2019 19:37:40 -0700 (PDT)
-Received: from Qians-MBP.fios-router.home (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id d5sm392837vka.34.2019.05.23.19.37.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 23 May 2019 19:37:39 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     airlied@linux.ie, daniel@ffwll.ch
-Cc:     thellstrom@vmware.com, hch@lst.de, m.szyprowski@samsung.com,
-        robin.murphy@arm.com, linux-graphics-maintainer@vmware.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH] drm/vmwgfx: fix a warning due to missing dma_parms
-Date:   Thu, 23 May 2019 22:37:19 -0400
-Message-Id: <20190524023719.1495-1-cai@lca.pw>
-X-Mailer: git-send-email 2.20.1 (Apple Git-117)
+        id S2387867AbfEXCkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 22:40:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60978 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727037AbfEXCkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 22:40:12 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1263F2177E;
+        Fri, 24 May 2019 02:40:09 +0000 (UTC)
+Date:   Thu, 23 May 2019 22:40:08 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Kris Van Hees <kris.van.hees@oracle.com>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, dtrace-devel@oss.oracle.com,
+        linux-kernel@vger.kernel.org, mhiramat@kernel.org, acme@kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, peterz@infradead.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: [RFC PATCH 00/11] bpf, trace, dtrace: DTrace BPF program type
+ implementation and sample use
+Message-ID: <20190523224008.55f6d3ab@oasis.local.home>
+In-Reply-To: <20190524020849.vxg3hqjtnhnicyzp@ast-mbp.dhcp.thefacebook.com>
+References: <20190521173618.2ebe8c1f@gandalf.local.home>
+        <20190521214325.rr7emn5z3b7wqiiy@ast-mbp.dhcp.thefacebook.com>
+        <20190521174757.74ec8937@gandalf.local.home>
+        <20190522052327.GN2422@oracle.com>
+        <20190522205329.uu26oq2saj56og5m@ast-mbp.dhcp.thefacebook.com>
+        <20190523054610.GR2422@oracle.com>
+        <20190523211330.hng74yi75ixmcznc@ast-mbp.dhcp.thefacebook.com>
+        <20190523190243.54221053@gandalf.local.home>
+        <20190524003148.pk7qbxn7ysievhym@ast-mbp.dhcp.thefacebook.com>
+        <20190523215737.6601ab7c@oasis.local.home>
+        <20190524020849.vxg3hqjtnhnicyzp@ast-mbp.dhcp.thefacebook.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Booting up with DMA_API_DEBUG_SG=y generates a warning below due to the
-driver forgot to set dma_parms appropriately. Set it after
-vmw_dma_masks(), so it can choose a size either DMA_BIT_MASK(64) or
-DMA_BIT_MASK(44).
 
-DMA-API: vmwgfx 0000:00:0f.0: mapping sg segment longer than device
-claims to support [len=2097152] [max=65536]
-WARNING: CPU: 2 PID: 261 at kernel/dma/debug.c:1232
-debug_dma_map_sg+0x360/0x480
-Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop
-Reference Platform, BIOS 6.00 04/13/2018
-RIP: 0010:debug_dma_map_sg+0x360/0x480
-Call Trace:
- vmw_ttm_map_dma+0x3b1/0x5b0 [vmwgfx]
- vmw_bo_map_dma+0x25/0x30 [vmwgfx]
- vmw_otables_setup+0x2a8/0x750 [vmwgfx]
- vmw_request_device_late+0x78/0xc0 [vmwgfx]
- vmw_request_device+0xee/0x4e0 [vmwgfx]
- vmw_driver_load.cold+0x757/0xd84 [vmwgfx]
- drm_dev_register+0x1ff/0x340 [drm]
- drm_get_pci_dev+0x110/0x290 [drm]
- vmw_probe+0x15/0x20 [vmwgfx]
- local_pci_probe+0x7a/0xc0
- pci_device_probe+0x1b9/0x290
- really_probe+0x1b5/0x630
- driver_probe_device+0xa3/0x1a0
- device_driver_attach+0x94/0xa0
- __driver_attach+0xdd/0x1c0
- bus_for_each_dev+0xfe/0x150
- driver_attach+0x2d/0x40
- bus_add_driver+0x290/0x350
- driver_register+0xdc/0x1d0
- __pci_register_driver+0xda/0xf0
- vmwgfx_init+0x34/0x1000 [vmwgfx]
- do_one_initcall+0xe5/0x40a
- do_init_module+0x10f/0x3a0
- load_module+0x16a5/0x1a40
- __se_sys_finit_module+0x183/0x1c0
- __x64_sys_finit_module+0x43/0x50
- do_syscall_64+0xc8/0x606
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ Added Linus and Al ]
 
-Fixes: fb1d9738ca05 ("drm/vmwgfx: Add DRM driver for VMware Virtual GPU")
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+On Thu, 23 May 2019 19:08:51 -0700
+Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index bf6c3500d363..5c567b81174f 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -747,6 +747,13 @@ static int vmw_driver_load(struct drm_device *dev, unsigned long chipset)
- 	if (unlikely(ret != 0))
- 		goto out_err0;
- 
-+	dev->dev->dma_parms =  kzalloc(sizeof(*dev->dev->dma_parms),
-+				       GFP_KERNEL);
-+	if (!dev->dev->dma_parms)
-+		goto out_err0;
-+
-+	dma_set_max_seg_size(dev->dev, *dev->dev->dma_mask);
-+
- 	if (dev_priv->capabilities & SVGA_CAP_GMR2) {
- 		DRM_INFO("Max GMR ids is %u\n",
- 			 (unsigned)dev_priv->max_gmr_ids);
-@@ -772,7 +779,7 @@ static int vmw_driver_load(struct drm_device *dev, unsigned long chipset)
- 	if (unlikely(dev_priv->mmio_virt == NULL)) {
- 		ret = -ENOMEM;
- 		DRM_ERROR("Failed mapping MMIO.\n");
--		goto out_err0;
-+		goto out_err1;
- 	}
- 
- 	/* Need mmio memory to check for fifo pitchlock cap. */
-@@ -781,7 +788,7 @@ static int vmw_driver_load(struct drm_device *dev, unsigned long chipset)
- 	    !vmw_fifo_have_pitchlock(dev_priv)) {
- 		ret = -ENOSYS;
- 		DRM_ERROR("Hardware has no pitchlock\n");
--		goto out_err4;
-+		goto out_err2;
- 	}
- 
- 	dev_priv->tdev = ttm_object_device_init(&ttm_mem_glob, 12,
-@@ -790,7 +797,7 @@ static int vmw_driver_load(struct drm_device *dev, unsigned long chipset)
- 	if (unlikely(dev_priv->tdev == NULL)) {
- 		DRM_ERROR("Unable to initialize TTM object management.\n");
- 		ret = -ENOMEM;
--		goto out_err4;
-+		goto out_err2;
- 	}
- 
- 	dev->dev_private = dev_priv;
-@@ -944,8 +951,11 @@ static int vmw_driver_load(struct drm_device *dev, unsigned long chipset)
- 		pci_release_regions(dev->pdev);
- out_no_device:
- 	ttm_object_device_release(&dev_priv->tdev);
--out_err4:
-+out_err2:
- 	memunmap(dev_priv->mmio_virt);
-+out_err1:
-+	kfree(dev->dev->dma_parms);
-+	dev->dev->dma_parms = NULL;
- out_err0:
- 	for (i = vmw_res_context; i < vmw_res_max; ++i)
- 		idr_destroy(&dev_priv->res_idr[i]);
-@@ -995,6 +1005,8 @@ static void vmw_driver_unload(struct drm_device *dev)
- 
- 	ttm_object_device_release(&dev_priv->tdev);
- 	memunmap(dev_priv->mmio_virt);
-+	kfree(dev->dev->dma_parms);
-+	dev->dev->dma_parms = NULL;
- 	if (dev_priv->ctx.staged_bindings)
- 		vmw_binding_state_free(dev_priv->ctx.staged_bindings);
- 
--- 
-2.20.1 (Apple Git-117)
+> > > > 
+> > > > I wish that was totally true, but tracepoints *can* be an abi. I had
+> > > > code reverted because powertop required one to be a specific
+> > > > format. To this day, the wakeup event has a "success" field that
+> > > > writes in a hardcoded "1", because there's tools that depend on it,
+> > > > and they only work if there's a success field and the value is 1.    
+> > > 
+> > > I really think that you should put powertop nightmares to rest.
+> > > That was long ago. The kernel is different now.  
+> > 
+> > Is it?
+> >   
+> > > Linus made it clear several times that it is ok to change _all_
+> > > tracepoints. Period. Some maintainers somehow still don't believe
+> > > that they can do it.  
+> > 
+> > From what I remember him saying several times, is that you can change
+> > all tracepoints, but if it breaks a tool that is useful, then that
+> > change will get reverted. He will allow you to go and fix that tool and
+> > bring back the change (which was the solution to powertop).  
+> 
+> my interpretation is different.
+> We changed tracepoints. It broke scripts. People changed scripts.
+
+Scripts are different than binary tools.
+
+> 
+> >   
+> > > 
+> > > Some tracepoints are used more than others and more people will
+> > > complain: "ohh I need to change my script" when that tracepoint
+> > > changes. But the kernel development is not going to be hampered by a
+> > > tracepoint. No matter how widespread its usage in scripts.  
+> > 
+> > That's because we'll treat bpf (and Dtrace) scripts like modules (no
+> > abi), at least we better. But if there's a tool that doesn't use the
+> > script and reads the tracepoint directly via perf, then that's a
+> > different story.  
+> 
+> absolutely not.
+> tracepoint is a tracepoint. It can change regardless of what
+> and how is using it.
+
+Instead of putting words into Linus's mouth, I'll just let him speak
+for himself. If a useful tool that reads a tracepoint breaks because we
+changed the tracepoint, and Linus is fine with that. Then great, we can
+start adding them to VFS and not worry about them being an ABI.
+
+-- Steve
+
 
