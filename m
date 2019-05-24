@@ -2,62 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13F8829E01
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 20:27:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 970E429E07
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 20:30:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731987AbfEXS1i convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 24 May 2019 14:27:38 -0400
-Received: from mbkd0211.ocn.ad.jp ([153.149.233.12]:57337 "EHLO
-        mbkd0211.ocn.ad.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbfEXS1h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 14:27:37 -0400
-Received: from mf-smf-ucb025c1 (mf-smf-ucb025c1.ocn.ad.jp [153.153.66.163])
-        by mbkd0211.ocn.ad.jp (Postfix) with ESMTP id 705A7A0265D;
-        Sat, 25 May 2019 03:27:34 +0900 (JST)
-Received: from ocn-vc-mts-105c1.ocn.ad.jp ([153.138.237.142])
-        by mf-smf-ucb025c1 with ESMTP
-        id UEuchyAilDMxuUEukh8awc; Sat, 25 May 2019 03:27:34 +0900
-Received: from smtp.ocn.ne.jp ([153.149.227.135])
-        by ocn-vc-mts-105c1.ocn.ad.jp with ESMTP
-        id UEuVhLl7EIcwdUEuVh2tMb; Sat, 25 May 2019 03:27:34 +0900
-Received: from smtp.ocn.ne.jp (unknown [106.223.32.105])
-        by smtp.ocn.ne.jp (Postfix) with ESMTPA;
-        Sat, 25 May 2019 03:27:19 +0900 (JST)
-From:   Venkat Subbiah <sky@royal.ocn.ne.jp>
-Content-Type: text/plain;
-        charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Mime-Version: 1.0 (1.0)
-Subject: re
-Message-Id: <83959D89-81BB-4729-B3BD-08F1FC909FE0@royal.ocn.ne.jp>
-Date:   Fri, 24 May 2019 14:30:14 -0400
-To:     "Murli" <krish@lancesoft.com>, "Udaya" <udayakumar@megasoft.com>,
-        "Vivek" <vivek.kumar@broadcom.com>, "Vivek" <vivek@employees.org>,
-        "Nanda" <nandhubama@megasoft.com>,
-        "Prasanna" <prasannak@aditi.com>, "Roshan" <roshankumar@inf.com>,
-        "Deepa" <deepakkumar@inf.com>, "Jimmy" <jkwok@3eti.com>,
-        "Lakshman" <lakshman@vxl.co.in>, "lauren" <lauren@dateswitch.com>,
-        "laurenb" <laurenb@dateswitch.com>,
-        "Ida Maupin" <idamleak@challalaw.com>,
-        "Morgan" <morgan.lim@timesys.com>,
-        "linux kernel" <linux-kernel@vger.kernel.org>,
-        "Macha" <macha@yahoogroups.com>, "Jay" <jay@anisi.com>,
-        "Usha" <spemm@g1440.com>
-X-Mailer: iPhone Mail (14C92)
+        id S1729277AbfEXSau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 14:30:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726581AbfEXSau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 14:30:50 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6721E2175B;
+        Fri, 24 May 2019 18:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558722649;
+        bh=90gbbJoSH5e/DbujPH4jsD6Dp2o4oN2DKsos/CYbGqI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eYhBz0j63dwk0VEiRZPvJJY424FLGoUH2PO3tNa/iHXjw1FDr4j4HIRh9UPr1L08I
+         VfJGOjrZ8Iq/KUcxedzGX4ChL/c2tj2NMInzsL/GrmTfJCt/ldBRnjPRNe1mEyWW4H
+         BKwk9sm2NpJZkj1P1Hjn3+LhpFKmT3lM5fRJzmvc=
+Date:   Fri, 24 May 2019 20:30:45 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] lkdtm fixes for next
+Message-ID: <20190524183045.GA16661@kroah.com>
+References: <201905091017.DA22A3E0C@keescook>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201905091017.DA22A3E0C@keescook>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 09, 2019 at 10:19:39AM -0700, Kees Cook wrote:
+> Hi Greg,
+> 
+> Please pull these lkdtm fixes for next. If possible, it'd be nice to get
+> these into v5.2 (they're small fixes), but I'm fine if they have to wait.
+> I meant to send these earlier, but got distracted by other things.
+> 
+> Thanks!
+> 
+> -Kees
+> 
+> The following changes since commit 8c2ffd9174779014c3fe1f96d9dc3641d9175f00:
+> 
+>   Linux 5.1-rc2 (2019-03-24 14:02:26 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/lkdtm-next
 
-Hi 
+Now pulled, thanks.
 
-
-http://www.rstechnology.club/lay.php?nnyar=ZJA8001
-
-
-
-
-
-Venkat
+greg k-h
