@@ -2,161 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDC11298F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 15:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D5222990D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 15:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403826AbfEXN3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 09:29:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39764 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403799AbfEXN3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 09:29:32 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7482930ADC75;
-        Fri, 24 May 2019 13:29:21 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2A8382E024;
-        Fri, 24 May 2019 13:29:12 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 24 May 2019 15:29:21 +0200 (CEST)
-Date:   Fri, 24 May 2019 15:29:12 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] signal: Adjust error codes according to
- restore_user_sigmask()
-Message-ID: <20190524132911.GA2655@redhat.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190522150505.GA4915@redhat.com>
- <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
- <20190522161407.GB4915@redhat.com>
- <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
- <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
- <20190523145944.GB23070@redhat.com>
- <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
- <20190523163604.GE23070@redhat.com>
- <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+        id S2403852AbfEXNfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 09:35:51 -0400
+Received: from casper.infradead.org ([85.118.1.10]:56308 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403804AbfEXNfu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 09:35:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=a84L9ZynbQTHP9MHDmUi2uab2LrEajX0zeKKzUoHR2Q=; b=QbNFbzbaVGx6nDE4Lt/gz/ontH
+        mryLBk30+Ei/1aJ+mmhUQ1nwSoK+Py0cZktjf95fKVLP0ih2qCetBqumwAPZ3v9hvga8J/u12VOsz
+        wFi+JwWMK3ZMvFf/WHD8qCexM6jX0O6LKU8b+ka+TM8Xd9igf8AIzEuu91xScDMK9qQ7WQYz07wlG
+        TdPelpbWfdjxSj1WSXwumK1MacDG7AWnyZvKhmxIl/YWXUj5unKVWShDq38fDFgU5zM9KPc3Cn74W
+        NLqjEzHu1Q2rAsc2qy6QCf6WI11FyYoYaoQNTJviuZrQP0QGneB+DzhTgL3jLGdU2wL5dzxCj1D4J
+        9HSKYaAQ==;
+Received: from 177.97.63.247.dynamic.adsl.gvt.net.br ([177.97.63.247] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hUAML-00007l-4G; Fri, 24 May 2019 13:35:45 +0000
+Date:   Fri, 24 May 2019 10:35:40 -0300
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     andreyknvl@google.com,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>, <wen.yang99@zte.com.cn>
+Subject: Re: [PATCH] media: usb: siano: Fix general protection fault in
+ smsusb
+Message-ID: <20190524103540.250a69e7@coco.lan>
+In-Reply-To: <Pine.LNX.4.44L0.1905071237310.1632-100000@iolanthe.rowland.org>
+References: <0000000000004a08f805883ead54@google.com>
+        <Pine.LNX.4.44L0.1905071237310.1632-100000@iolanthe.rowland.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 24 May 2019 13:29:31 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems that we all are just trying to confuse each other. I got lost.
+Em Tue, 7 May 2019 12:39:47 -0400 (EDT)
+Alan Stern <stern@rowland.harvard.edu> escreveu:
 
-On 05/23, David Laight wrote:
->
-> From: Oleg Nesterov
-> > Sent: 23 May 2019 17:36
-> > On 05/23, David Laight wrote:
-> > >
-> > > From: Oleg Nesterov
-> > > > On 05/23, David Laight wrote:
-> ...
-> > > > Not sure I understand... OK, suppose that you do
-> > > >
-> > > > 	block-all-signals;
-> > > > 	ret = pselect(..., sigmask(SIG_URG));
-> > > >
-> > > > if it returns success/timeout then the handler for SIG_URG should not be called?
-> > >
-> > > Ugg...
-> > > Posix probably allows the signal handler be called at the point the event
-> > > happens rather than being deferred until the system call completes.
-> > > Queueing up the signal handler to be run at a later time (syscall exit)
-> > > certainly makes sense.
-> > > Definitely safest to call the signal handler even if success/timeout
-> > > is returned.
-> >
-> > Why?
-> >
-> > > pselect() exists to stop the entry race, not the exit one.
-> >
-> > pselect() has to block SIG_URG again before it returns to user-mode, right?
->
-> Yep.
-> So the signal handler can't be called for a signal that happens after
-> pselect() returns.
+> The syzkaller USB fuzzer found a general-protection-fault bug in the
+> smsusb part of the Siano DVB driver.  The fault occurs during probe
+> because the driver assumes without checking that the device has both
+> IN and OUT endpoints and the IN endpoint is ep1.
+> 
+> By slightly rearranging the driver's initialization code, we can make
+> the appropriate checks early on and thus avoid the problem.  If the
+> expected endpoints aren't present, the new code safely returns -ENODEV
+> from the probe routine.
+> 
+> Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> Reported-and-tested-by: syzbot+53f029db71c19a47325a@syzkaller.appspotmail.com
+> CC: <stable@vger.kernel.org>
+> 
+> ---
+> 
+> 
+> [as1897]
+> 
+> 
+>  drivers/media/usb/siano/smsusb.c |   33 ++++++++++++++++++++-------------
+>  1 file changed, 20 insertions(+), 13 deletions(-)
+> 
+> Index: usb-devel/drivers/media/usb/siano/smsusb.c
+> ===================================================================
+> --- usb-devel.orig/drivers/media/usb/siano/smsusb.c
+> +++ usb-devel/drivers/media/usb/siano/smsusb.c
+> @@ -400,6 +400,7 @@ static int smsusb_init_device(struct usb
+>  	struct smsusb_device_t *dev;
+>  	void *mdev;
+>  	int i, rc;
+> +	int in_maxp;
+>  
+>  	/* create device object */
+>  	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
+> @@ -411,6 +412,24 @@ static int smsusb_init_device(struct usb
+>  	dev->udev = interface_to_usbdev(intf);
+>  	dev->state = SMSUSB_DISCONNECTED;
+>  
+> +	for (i = 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) {
+> +		struct usb_endpoint_descriptor *desc =
+> +				&intf->cur_altsetting->endpoint[i].desc;
+> +
+> +		if (desc->bEndpointAddress & USB_DIR_IN) {
+> +			dev->in_ep = desc->bEndpointAddress;
+> +			in_maxp = usb_endpoint_maxp(desc);
+> +		} else {
+> +			dev->out_ep = desc->bEndpointAddress;
+> +		}
+> +	}
+> +
+> +	pr_debug("in_ep = %02x, out_ep = %02x\n", dev->in_ep, dev->out_ep);
+> +	if (!dev->in_ep || !dev->out_ep) {	/* Missing endpoints? */
+> +		smsusb_term_device(intf);
+> +		return -ENODEV;
+> +	}
+> +
+>  	params.device_type = sms_get_board(board_id)->type;
+>  
+>  	switch (params.device_type) {
+> @@ -425,24 +444,12 @@ static int smsusb_init_device(struct usb
+>  		/* fall-thru */
+>  	default:
+>  		dev->buffer_size = USB2_BUFFER_SIZE;
+> -		dev->response_alignment =
+> -		    le16_to_cpu(dev->udev->ep_in[1]->desc.wMaxPacketSize) -
+> -		    sizeof(struct sms_msg_hdr);
+> +		dev->response_alignment = in_maxp - sizeof(struct sms_msg_hdr);
+>  
+>  		params.flags |= SMS_DEVICE_FAMILY2;
+>  		break;
+>  	}
+>  
+> -	for (i = 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) {
+> -		if (intf->cur_altsetting->endpoint[i].desc. bEndpointAddress & USB_DIR_IN)
+> -			dev->in_ep = intf->cur_altsetting->endpoint[i].desc.bEndpointAddress;
+> -		else
+> -			dev->out_ep = intf->cur_altsetting->endpoint[i].desc.bEndpointAddress;
+> -	}
+> -
+> -	pr_debug("in_ep = %02x, out_ep = %02x\n",
+> -		dev->in_ep, dev->out_ep);
+> -
+>  	params.device = &dev->udev->dev;
+>  	params.usb_device = dev->udev;
+>  	params.buffer_size = dev->buffer_size;
+> 
 
-Yes. And "after pselect() returns" actually means "after pselect() restores
-the old sigmask while it returns to user mode".
+Patch looks correct, and I'm applying it. It exposes another potential
+problem though: what happens if sizeof(desc.wMaxPacketSize) < sizeof(struct sms_msg_hdr)?
 
-> > Suppose pselect() finds a ready fd, and this races with SIG_URG.
->
-> You mean if SIG_URG is raised after a ready fd is found (or even timeout)?
-> So the return value isn't EINTR.
+I'm enclosing a followup patch that should solve this situation
+(and clean up a sparse warning).
 
-Yes.
+Thanks,
+Mauro
 
-> (If an fd is readable on entry, the SIG_URG could have happened much earlier.)
+[PATCH] media: smsusb: better handle optional alignment
 
-Why not? See the pseudo code above. It was blocked before pselect() was called.
-So SIG_URG can be already pending when pselect() is called but since an fd is
-already ready on entry pselect() restores the old sigmask (and thus blocks SIG_URG
-again) and returns success. The handler is not called.
+Most Siano devices require an alignment for the response.
 
-However, if there is no a ready fd, pselect won't block. It will notice SIG_URG,
-deliver this signal, and return -EINTR.
+Changeset f3be52b0056a ("media: usb: siano: Fix general protection fault in smsusb")
+changed the logic with gets such aligment, but it now produces a
+sparce warning:
+
+drivers/media/usb/siano/smsusb.c: In function 'smsusb_init_device':
+drivers/media/usb/siano/smsusb.c:447:37: warning: 'in_maxp' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  447 |   dev->response_alignment = in_maxp - sizeof(struct sms_msg_hdr);
+      |                             ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The sparse message itself is bogus, but a broken (or fake) USB
+eeprom could produce a negative value for response_alignment.
+
+So, change the code in order to check if the result is not
+negative.
+
+Fixes: f3be52b0056a ("media: usb: siano: Fix general protection fault in smsusb")
+CC: <stable@vger.kernel.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+
+diff --git a/drivers/media/usb/siano/smsusb.c b/drivers/media/usb/siano/smsusb.c
+index 27ad14a3f831..e39f3f40dfdd 100644
+--- a/drivers/media/usb/siano/smsusb.c
++++ b/drivers/media/usb/siano/smsusb.c
+@@ -400,7 +400,7 @@ static int smsusb_init_device(struct usb_interface *intf, int board_id)
+ 	struct smsusb_device_t *dev;
+ 	void *mdev;
+ 	int i, rc;
+-	int in_maxp;
++	int align = 0;
+ 
+ 	/* create device object */
+ 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
+@@ -418,14 +418,14 @@ static int smsusb_init_device(struct usb_interface *intf, int board_id)
+ 
+ 		if (desc->bEndpointAddress & USB_DIR_IN) {
+ 			dev->in_ep = desc->bEndpointAddress;
+-			in_maxp = usb_endpoint_maxp(desc);
++			align = usb_endpoint_maxp(desc) - sizeof(struct sms_msg_hdr);
+ 		} else {
+ 			dev->out_ep = desc->bEndpointAddress;
+ 		}
+ 	}
+ 
+ 	pr_debug("in_ep = %02x, out_ep = %02x\n", dev->in_ep, dev->out_ep);
+-	if (!dev->in_ep || !dev->out_ep) {	/* Missing endpoints? */
++	if (!dev->in_ep || !dev->out_ep || align < 0) {  /* Missing endpoints? */
+ 		smsusb_term_device(intf);
+ 		return -ENODEV;
+ 	}
+@@ -444,7 +444,7 @@ static int smsusb_init_device(struct usb_interface *intf, int board_id)
+ 		/* fall-thru */
+ 	default:
+ 		dev->buffer_size = USB2_BUFFER_SIZE;
+-		dev->response_alignment = in_maxp - sizeof(struct sms_msg_hdr);
++		dev->response_alignment = align;
+ 
+ 		params.flags |= SMS_DEVICE_FAMILY2;
+ 		break;
 
 
-> > Why do you think the handler should run?
->
-> Think of the application code loop.
-> Consider what happens if the signal is SIG_INT - to request the program
-> stop.
 
-SIG_INT or SIG_URG ? Again, please look at the pseudo code above. SIG_INT is
-blocked and never unblocked.
-
-> After every pselect() call the application looks to see if the handler
-> has been called.
-> If one of the fds is always readable pselect() will never return EINTR
-> but you want the SIG_INT handler run so that the loop gets terminated.
-> If you only call the signal handler when EINTR is returned the process
-> will never stop.
-> So you need to call the handler even when pselect() succeeds/time out.
-
-Then do not block SIG_INT ?
-
-	block-all-signals-except-SIG_INT;
-	ret = pselect(..., sigmask{SIG_URG, SIG_INT});
-
-
-> > What if SIG_URG comes right after pselect() blocks SIG_URG again? I mean,
-> > how this differs the case when it comes before, but a ready fd was already
-> > found?
->
-> I suspect you need to defer the re-instatement of the original mask
-> to the code that calls the signal handlers (which probably should
-> be called with the programs signal mask).
-
-This is what the kernel does when the signal is delivered, the original mask
-is restored after the signal handler runs.
-
-> So that particular window doesn't exist.
-
-Which window???
-
-Oleg.
 
