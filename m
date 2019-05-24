@@ -2,128 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F6F297AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:56:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 695E02979E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:52:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391398AbfEXLyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:54:05 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49178 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391378AbfEXLyF (ORCPT
+        id S2391343AbfEXLws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:52:48 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37053 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391235AbfEXLws (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:54:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vVkD+yS+6mY3ND8nY872UeMHSULOVyjDtscm+0lgvtc=; b=Dy0aSOZbCrVtrIo8dC0PzlUHX
-        uFjvE/MFtcTUu5HIH7+jBtdgszhIPRaXs1lCTo3Bk8K784xoTIXK0SpZuzRHKaTidrLbfA9kASK2h
-        YOYRaERfDnMZVsM1gw582GINE4uLOMLbwVub24179V+GnxUelKob/P3Pq4B2pr6szy7k0O56XVa5r
-        2QecVZ8IzRq4rzgnJd/ywlC51c3JBP53P3kp/2EgJVQmOjCqOjA/p8FL1Mr4g4nLPNMnYz/J6Cm2p
-        gJ323St9pi8uoLuX6aipNMh8SKXqD4ptdPWllpqyo2L18brt0NaDiH/HU2IakAidNo36uECiVaKEC
-        xPtBx64og==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hU8kU-0008N3-D0; Fri, 24 May 2019 11:52:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id AC0A620670583; Fri, 24 May 2019 13:52:31 +0200 (CEST)
-Date:   Fri, 24 May 2019 13:52:31 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu, arnd@arndb.de,
-        bp@alien8.de, catalin.marinas@arm.com, davem@davemloft.net,
-        fenghua.yu@intel.com, heiko.carstens@de.ibm.com,
-        herbert@gondor.apana.org.au, ink@jurassic.park.msu.ru,
-        jhogan@kernel.org, linux@armlinux.org.uk, mattst88@gmail.com,
-        mingo@kernel.org, mpe@ellerman.id.au, palmer@sifive.com,
-        paul.burton@mips.com, paulus@samba.org, ralf@linux-mips.org,
-        rth@twiddle.net, stable@vger.kernel.org, tglx@linutronix.de,
-        tony.luck@intel.com, vgupta@synopsys.com,
-        gregkh@linuxfoundation.org, jhansen@vmware.com, vdasa@vmware.com,
-        aditr@vmware.com, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 00/18] locking/atomic: atomic64 type cleanup
-Message-ID: <20190524115231.GN2623@hirez.programming.kicks-ass.net>
-References: <20190522132250.26499-1-mark.rutland@arm.com>
- <20190523083013.GA4616@andrea>
- <20190523101926.GA3370@lakrids.cambridge.arm.com>
- <20190524103731.GN2606@hirez.programming.kicks-ass.net>
- <20190524111807.GS2650@hirez.programming.kicks-ass.net>
- <20190524114220.GA4260@fuggles.cambridge.arm.com>
+        Fri, 24 May 2019 07:52:48 -0400
+Received: by mail-lj1-f194.google.com with SMTP id h19so4801ljj.4
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:52:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q0Kts/0fjXS1PAYHGJKdlU6se3KA5XKc0egkbyyI/dg=;
+        b=zadfwpf6mMh8AzqN6OHd8hRdjnqFMxEX6zMtMQo3Rf7CsHiESKkYa2RFtfnG16tsx4
+         TIDu1DesFaUFM3gimkOQDcb2K8ZC0R9Q9xABtgGWuMRdpfaq2mRNbzI/NCNF8qkCzt8/
+         s6iHDRKSk+WAko+qOj/8Ms4xEaYSg22u6soAnT4W4QvYijEAOiOGOPNieNEtG8QPb7w/
+         HkN2X34NymvS9+kKXXVhxh/Mbz3bBWwRBWmKQhGSPnTBpfdqEWCP3+wO+sOgsKXBKfGq
+         EfjqfZv1uzj2dZIHXlYSO5z2qyrHeAdO/EEdSKIv+O86wHv0U57qP7uDU/L+nfX/u91J
+         oayg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q0Kts/0fjXS1PAYHGJKdlU6se3KA5XKc0egkbyyI/dg=;
+        b=U6Tb24SuO4JTHJXnIxKIR6E6Tr5JpciJjc4UvcYymOxpFqmwyHhlAhNERh/i66INdw
+         F8o5d1nnKEJY8PcEDBOAMqYqU/FNUmDC4N24deHICqbBqNmkSe+QiyubPZ+BAMjTuhFk
+         MnxYj8AW7GVE942TTJGS53A2fGyUtZ/THlFl7Rp8i1KUT/Xd4h0fp0bo2ai0OXWHI+mY
+         LfPJFFSOzJSQ3LhAFwxr1zlQaefLclJ9sSVh6I2LpET7BhcKR1Q258nBM7L0OuGCji9I
+         Ei4NCgXkCEW/w5UDg3+aE9SqHjvzIza3sKdI3dg1+qFSPzGSiaFUNIpVp1Qu3Ljkv2Tu
+         FZhA==
+X-Gm-Message-State: APjAAAXqRKekdjslrAwLGjm2rPKt0f4F2uXLBf8hzBpj1sZjsK+ejCMa
+        FnUia7rXax/QWbCvaqDEIi3gmsuN0Ai4K0/tTyPzcjvT
+X-Google-Smtp-Source: APXvYqzLxiN+avbq24R1b9TWzEF95PSP6H4ILV+zwdhuAGkfwsLyWdUlcnWC3l/I4iShVVyAItRPYEgwEsqo8Dp4H34=
+X-Received: by 2002:a2e:9456:: with SMTP id o22mr2636564ljh.56.1558698766270;
+ Fri, 24 May 2019 04:52:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524114220.GA4260@fuggles.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190520083101.10229-1-manivannan.sadhasivam@linaro.org> <20190520083101.10229-4-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20190520083101.10229-4-manivannan.sadhasivam@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 24 May 2019 13:52:34 +0200
+Message-ID: <CACRpkdZUR-8Q+tD3szv+=QBJ3h-Mdue9ooj_OY-NkL4MGt7YGQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5] pinctrl: Rework the pinmux handling for BM1880 SoC
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        alec.lin@bitmain.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 12:42:20PM +0100, Will Deacon wrote:
+On Mon, May 20, 2019 at 10:31 AM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 
-> > diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
-> > index dca3fb0554db..125c95ddbbc0 100644
-> > --- a/Documentation/atomic_t.txt
-> > +++ b/Documentation/atomic_t.txt
-> > @@ -83,6 +83,9 @@ The non-RMW ops are (typically) regular LOADs and STOREs and are canonically
-> >  implemented using READ_ONCE(), WRITE_ONCE(), smp_load_acquire() and
-> >  smp_store_release() respectively.
-> >  
-> 
-> Not sure you need a new paragraph here.
-> 
-> > +Therefore, if you find yourself only using the Non-RMW operations of atomic_t,
-> > +you do not in fact need atomic_t at all and are doing it wrong.
-> > +
-> 
-> That makes sense to me, although I now find that the sentence below is a bit
-> confusing because it sounds like it's a caveat relating to only using
-> Non-RMW ops.
-> 
-> >  The one detail to this is that atomic_set{}() should be observable to the RMW
-> >  ops. That is:
-> 
-> How about changing this to be:
-> 
->   "A subtle detail of atomic_set{}() is that it should be observable..."
+> Rework the BM1880 SoC pinmux handling by removing the
+> BM1880_PINMUX_FUNCTION_MUX define and merging it with the
+> BM1880_PINMUX_FUNCTION definition. Since the PWM muxing is handled by
+> generic pin controller in the SoC itself, there is no need to have a
+> dedicated code to do the muxing in PWM registers. So, lets club all
+> pinmux handling in the same per pin mux handling code.
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Done, find below.
+Patch applied.
 
----
-Subject: Documentation/atomic_t.txt: Clarify pure non-rmw usage
-
-Clarify that pure non-RMW usage of atomic_t is pointless, there is
-nothing 'magical' about atomic_set() / atomic_read().
-
-This is something that seems to confuse people, because I happen upon it
-semi-regularly.
-
-Acked-by: Will Deacon <will.deacon@arm.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- Documentation/atomic_t.txt | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
-index dca3fb0554db..89eae7f6b360 100644
---- a/Documentation/atomic_t.txt
-+++ b/Documentation/atomic_t.txt
-@@ -81,9 +81,11 @@ SEMANTICS
- 
- The non-RMW ops are (typically) regular LOADs and STOREs and are canonically
- implemented using READ_ONCE(), WRITE_ONCE(), smp_load_acquire() and
--smp_store_release() respectively.
-+smp_store_release() respectively. Therefore, if you find yourself only using
-+the Non-RMW operations of atomic_t, you do not in fact need atomic_t at all
-+and are doing it wrong.
- 
--The one detail to this is that atomic_set{}() should be observable to the RMW
-+A subtle detail of atomic_set{}() is that it should be observable to the RMW
- ops. That is:
- 
-   C atomic-set
+Yours,
+Linus Walleij
