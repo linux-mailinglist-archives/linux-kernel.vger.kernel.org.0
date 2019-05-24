@@ -2,163 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 408D329527
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 11:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B1D329536
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 11:56:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390210AbfEXJxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 05:53:36 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38428 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389582AbfEXJxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 05:53:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9282FA78;
-        Fri, 24 May 2019 02:53:35 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 626C93F703;
-        Fri, 24 May 2019 02:53:33 -0700 (PDT)
-Subject: Re: [PATCH] clocksource/arm_arch_timer: Don't trace count reader
- functions
-To:     Julien Thierry <julien.thierry@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>
-References: <1558689025-50679-1-git-send-email-julien.thierry@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <9adf92c2-b7a5-00a3-ff09-58484d9bb9db@arm.com>
-Date:   Fri, 24 May 2019 10:53:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <1558689025-50679-1-git-send-email-julien.thierry@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S2390352AbfEXJ4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 05:56:09 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:57882 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389913AbfEXJ4I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 05:56:08 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4O9relr154092;
+        Fri, 24 May 2019 09:56:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=Xt2LRD1HTmFluvPLqEnx354Bp5/ZDUC/bcc9fFvWKiY=;
+ b=ESe6Zar0QQPKmyyTR2grrFzsxEGzofp0c6vFZFOeHzNXAjqq7PTDqNH3hu6bk0RNuKWx
+ kttZNP+Z+HukaWSlZjwoK24CIphPS0MOAU2ocefJ75quVnCyj6cK0IGIGfVCcaVYV/Tf
+ nqi+XFpNUFcLDwQCS/F358FeytcfAhnpmhFyzBIIru7Nsn01P6aFWYH64LumUcbnRkLF
+ xsI+dgbT5LdUbuOgIL1cs71IHD92j1UjLZVsdSWpZmoATqmK6L1DYCs5FIpax2hhrYpR
+ 8+8InIusDUSzybzEpxBdi/XFVcRIyejQQlekXkgcclWoxj6Y7ZBrlOBhEBuuP+u/tMOK iw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2smsk5g2qm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 May 2019 09:56:05 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4O9tcZG134996;
+        Fri, 24 May 2019 09:56:05 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2smsgtsmvk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 May 2019 09:56:04 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4O9u0pb005353;
+        Fri, 24 May 2019 09:56:01 GMT
+Received: from tomti.i.net-space.pl (/10.175.163.203)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 24 May 2019 09:56:00 +0000
+From:   Daniel Kiper <daniel.kiper@oracle.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org
+Cc:     dpsmith@apertussolutions.com, eric.snowberg@oracle.com,
+        hpa@zytor.com, kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
+        ross.philipson@oracle.com
+Subject: [PATCH RFC 0/2] x86/boot: Introduce the setup_header2
+Date:   Fri, 24 May 2019 11:55:02 +0200
+Message-Id: <20190524095504.12894-1-daniel.kiper@oracle.com>
+X-Mailer: git-send-email 2.11.0
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9266 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=576
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905240068
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9266 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=617 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905240068
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/05/2019 10:10, Julien Thierry wrote:
-> With v5.2-rc1, The ftrace functions_graph tracer locks up whenever it is
-> enabled on arm64.
-> 
-> Since commit 0ea415390cd3 ("clocksource/arm_arch_timer: Use
-> arch_timer_read_counter to access stable counters") a function pointer
-> is consistently used to read the counter instead of potentially
-> referencing an inlinable function.
-> 
-> The graph tacers relies on accessing the timer counters to compute the
+Hi,
 
-nit: tracers
+This change is needed to properly start the Linux kernel in Intel TXT mode and
+is a part of the TrenchBoot project (https://github.com/TrenchBoot).
 
-> time spent in functions which causes the lockup when attempting to trace
-> these code paths.
-> 
-> Annontate the arm arch timer counter accessors as notrace.
+Daniel
 
-nit: Annotate
+ Documentation/x86/boot.txt               | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ arch/x86/Kconfig                         |  7 +++++++
+ arch/x86/boot/Makefile                   |  2 +-
+ arch/x86/boot/compressed/Makefile        |  5 +++--
+ arch/x86/boot/compressed/setup_header2.S | 18 ++++++++++++++++++
+ arch/x86/boot/compressed/sl_stub.S       | 28 ++++++++++++++++++++++++++++
+ arch/x86/boot/header.S                   |  3 ++-
+ arch/x86/boot/tools/build.c              |  8 ++++++++
+ arch/x86/include/uapi/asm/bootparam.h    |  1 +
+ 9 files changed, 123 insertions(+), 4 deletions(-)
 
-> 
-> Fixes: 0ea415390cd3 ("clocksource/arm_arch_timer: Use
->        arch_timer_read_counter to access stable counters")
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> ---
->  drivers/clocksource/arm_arch_timer.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-> index b2a951a..5c69c9a 100644
-> --- a/drivers/clocksource/arm_arch_timer.c
-> +++ b/drivers/clocksource/arm_arch_timer.c
-> @@ -149,22 +149,22 @@ u32 arch_timer_reg_read(int access, enum arch_timer_reg reg,
->  	return val;
->  }
->  
-> -static u64 arch_counter_get_cntpct_stable(void)
-> +static notrace u64 arch_counter_get_cntpct_stable(void)
->  {
->  	return __arch_counter_get_cntpct_stable();
->  }
->  
-> -static u64 arch_counter_get_cntpct(void)
-> +static notrace u64 arch_counter_get_cntpct(void)
->  {
->  	return __arch_counter_get_cntpct();
->  }
->  
-> -static u64 arch_counter_get_cntvct_stable(void)
-> +static notrace u64 arch_counter_get_cntvct_stable(void)
->  {
->  	return __arch_counter_get_cntvct_stable();
->  }
->  
-> -static u64 arch_counter_get_cntvct(void)
-> +static notrace u64 arch_counter_get_cntvct(void)
->  {
->  	return __arch_counter_get_cntvct();
->  }
-> 
+Daniel Kiper (2):
+      x86/boot: Introduce the setup_header2
+      x86/boot: Introduce dummy MLE header
 
-Well spotted, thanks Julien.
-
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-
-Daniel, can you please pick this up for the next batch of clocksource fixes?
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
