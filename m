@@ -2,162 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6A27296EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:17:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4CA296E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:16:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391102AbfEXLRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:17:01 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35452 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390960AbfEXLQy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:16:54 -0400
-Received: by mail-wm1-f68.google.com with SMTP id w9so2700021wmi.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:16:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iYRnpnNRQ7/Yn4sCtvCK5+WUBHE5avZWWYPxLbImYZU=;
-        b=rnm0jHfAzJ1AP8s88sisdQZ5nQbg3x8BdKbT5ATKq3y8Rvvg9GMLdi6LmAr+t24XxH
-         03Vl+bouHsiOY+/gkQ+nvo6h3zSCgChzAps95hweWo4EBPX2zO3Vt4gJisiMLRZx7dY6
-         XJEUp0L8pwD7v3nEeGEGFK44YIHBQWOZJHbgy+qNI+JUXwsnxa312EB1BG1g1Zscl0Ys
-         Jk7JXT4zBXaOEDe/2DlkX4b3mEtotUM+OB6ji+4Rp60zc++vNUhBVERvBjnkDB4XVPcY
-         jF7HD9bUDWqXH1YggzwV8bSzP3HKTaK7zsrwSTFyJgfHJ2BohOyTD6UqFtInrB8PfosK
-         LHtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iYRnpnNRQ7/Yn4sCtvCK5+WUBHE5avZWWYPxLbImYZU=;
-        b=Vs7YNgsJzQXce83BA+8XX5rv/MmCN6xfydM2iMLPR0tc3SaZJokV1JWgcM0AmHnJ4V
-         9T1NPsYoe7Sd65vnts5HVXmiAyIqV2QR1+1ciPW+TLcHABa1rUEeK1QKtWT7OHc9yR7G
-         7pJzx44xO72bakfGNji1Yzb0fnmyOp5hRk4AdpgsE5iqKa5gHrJKIKZv6jf5nh3Nc6Wq
-         N8TwL/Mrc4szZSvsG9l85DYhApFqK17YvzyXqJc7gDmeueyPh0B1QvGTjkN9ihFENN3o
-         Qeor6WD7R47mUl6VEa8sZUR83rUWWyhWQFQ1DAV1G6PgHjtNieuDkIZUKYctLkvTs9NM
-         7/Dg==
-X-Gm-Message-State: APjAAAWTppLanfu3II6NwljsqSIqfWvBGep0kKqeSexzfPqGJrUYe5Z9
-        mkLQpsRDdA2jdjKwj/RhNebYHA==
-X-Google-Smtp-Source: APXvYqxCiyh6rAWYbIziPRw6M8e/SQdLjYhO6jS9ibrCF9xxkSfFqksoNfCn5r67E3TEIpRNcX1yDQ==
-X-Received: by 2002:a7b:c765:: with SMTP id x5mr9377556wmk.26.1558696612702;
-        Fri, 24 May 2019 04:16:52 -0700 (PDT)
-Received: from clegane.local (73.82.95.92.rev.sfr.net. [92.95.82.73])
-        by smtp.gmail.com with ESMTPSA id h12sm2575392wre.14.2019.05.24.04.16.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 04:16:52 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
-Subject: [PATCH V2 9/9] genirq/timings: Add selftest for next event computation
-Date:   Fri, 24 May 2019 13:16:15 +0200
-Message-Id: <20190524111615.4891-10-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190524111615.4891-1-daniel.lezcano@linaro.org>
-References: <20190524111615.4891-1-daniel.lezcano@linaro.org>
+        id S2390783AbfEXLQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:16:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60340 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390410AbfEXLQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 07:16:33 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7488D309266A;
+        Fri, 24 May 2019 11:16:33 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-20.pek2.redhat.com [10.72.12.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B711517243;
+        Fri, 24 May 2019 11:16:23 +0000 (UTC)
+Subject: Re: [PATCH] scsi: smartpqi: properly set both the DMA mask and the
+ coherent DMA mask in pqi_pci_init()
+To:     Don.Brace@microchip.com, Thomas.Lendacky@amd.com,
+        linux-kernel@vger.kernel.org
+Cc:     don.brace@microsemi.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        esc.storagedev@microsemi.com, dyoung@redhat.com
+References: <20190523055212.23568-1-lijiang@redhat.com>
+ <c5d45523-43f5-d2fd-01ac-85f285146ecd@amd.com>
+ <SN6PR11MB2767D4410415F0B03BFE900DE1010@SN6PR11MB2767.namprd11.prod.outlook.com>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <cea857c8-12db-d10c-124a-fd68cdcdc202@redhat.com>
+Date:   Fri, 24 May 2019 19:16:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <SN6PR11MB2767D4410415F0B03BFE900DE1010@SN6PR11MB2767.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 24 May 2019 11:16:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The circular buffers are now validated at this point with the two
-previous patches. The next interrupt index algorithm which is the
-hardest part to validate can be validated with the tests provided with
-this patch.
+在 2019年05月24日 06:55, Don.Brace@microchip.com 写道:
+> -----Original Message-----
+> From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-owner@vger.kernel.org] On Behalf Of Lendacky, Thomas
+> Sent: Thursday, May 23, 2019 9:45 AM
+> To: Lianbo Jiang <lijiang@redhat.com>; linux-kernel@vger.kernel.org
+> Cc: don.brace@microsemi.com; jejb@linux.ibm.com; martin.petersen@oracle.com; linux-scsi@vger.kernel.org; esc.storagedev@microsemi.com; dyoung@redhat.com
+> Subject: Re: [PATCH] scsi: smartpqi: properly set both the DMA mask and the coherent DMA mask in pqi_pci_init()
+> 
+> On 5/23/19 12:52 AM, Lianbo Jiang wrote:
+>> When SME is enabled, the smartpqi driver won't work on the HP DL385
+>> G10 machine, which causes the failure of kernel boot because it fails 
+>> to allocate pqi error buffer. Please refer to the kernel log:
+>> ....
+>> [    9.431749] usbcore: registered new interface driver uas
+>> [    9.441524] Microsemi PQI Driver (v1.1.4-130)
+>> [    9.442956] i40e 0000:04:00.0: fw 6.70.48768 api 1.7 nvm 10.2.5
+>> [    9.447237] smartpqi 0000:23:00.0: Microsemi Smart Family Controller found
+>>          Starting dracut initqueue hook...
+>> [  OK  ] Started Show Plymouth Boot Scre[    9.471654] Broadcom NetXtreme-C/E driver bnxt_en v1.9.1
+>> en.
+>> [  OK  ] Started Forward Password Requests to Plymouth Directory Watch.
+>> [[0;[    9.487108] smartpqi 0000:23:00.0: failed to allocate PQI error buffer
+>> ....
+>> [  139.050544] dracut-initqueue[949]: Warning: dracut-initqueue 
+>> timeout - starting timeout scripts [  139.589779] 
+>> dracut-initqueue[949]: Warning: dracut-initqueue timeout - starting 
+>> timeout scripts
+>>
+>> For correct operation, lets call the dma_set_mask_and_coherent() to 
+>> properly set the mask for both streaming and coherent, in order to 
+>> inform the kernel about the devices DMA addressing capabilities.
+> 
+> You should probably expand on this a bit...  Basically, the fact that the coherent DMA mask value wasn't set caused the driver to fall back to SWIOTLB when SME is active.
 
-It uses the intervals stored in the arrays and insert all the values
-except the last one. The next event computation must return the same
-value as the last element we did not inserted.
+Thank you, Tom.
 
-Add tests for the next event index computation.
+> I'm not sure if the failure was from running out of SWIOTLB or exceeding the maximum allocation size for SWIOTLB
+If so, it should print some messages like "swiotlb buffer is full", but i did not get such a log.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- kernel/irq/timings.c | 66 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+> I believe the fix is proper, but I'll let the driver owner comment on that.
+> 
+> Thanks,
+> Tom
+> 
+> Acked-by: Don Brace <don.brace@microsemi.com>
+> Tested-by: Don Brace <don.brace@microsemi.com>
+> 
+> Please add the extra description suggested by Thomas.
+> 
+OK, i will add Tom's description to patch log and post again.
 
-diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
-index 5e4efac967fd..eb2bb1d1551f 100644
---- a/kernel/irq/timings.c
-+++ b/kernel/irq/timings.c
-@@ -705,6 +705,68 @@ static struct timings_intervals tis[] __initdata = {
- 	{ intervals4, ARRAY_SIZE(intervals4) },
- };
- 
-+static int __init irq_timings_test_next_index(struct timings_intervals *ti)
-+{
-+	int _buffer[IRQ_TIMINGS_SIZE];
-+	int buffer[IRQ_TIMINGS_SIZE];
-+	int index, start, i, count, period_max;
-+
-+	count = ti->count - 1;
-+
-+	period_max = count > (3 * PREDICTION_PERIOD_MAX) ?
-+		PREDICTION_PERIOD_MAX : count / 3;
-+
-+	/*
-+	 * Inject all values except the last one which will be used
-+	 * to compare with the next index result.
-+	 */
-+	pr_debug("index suite: ");
-+
-+	for (i = 0; i < count; i++) {
-+		index = irq_timings_interval_index(ti->intervals[i]);
-+		_buffer[i & IRQ_TIMINGS_MASK] = index;
-+		pr_cont("%d ", index);
-+	}
-+
-+	start = count < IRQ_TIMINGS_SIZE ? 0 :
-+		count & IRQ_TIMINGS_MASK;
-+
-+	count = min_t(int, count, IRQ_TIMINGS_SIZE);
-+
-+	for (i = 0; i < count; i++) {
-+		int index = (start + i) & IRQ_TIMINGS_MASK;
-+		buffer[i] = _buffer[index];
-+	}
-+
-+	index = irq_timings_next_event_index(buffer, count, period_max);
-+	i = irq_timings_interval_index(ti->intervals[ti->count - 1]);
-+
-+	if (index != i) {
-+		pr_err("Expected (%d) and computed (%d) next indexes differ\n",
-+		       i, index);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __init irq_timings_next_index_selftest(void)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(tis); i++) {
-+
-+		pr_info("---> Injecting intervals number #%d (count=%zd)\n",
-+			i, tis[i].count);
-+
-+		ret = irq_timings_test_next_index(&tis[i]);
-+		if (ret)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
- static int __init irq_timings_test_irqs(struct timings_intervals *ti)
- {
- 	struct irqt_stat __percpu *s;
-@@ -876,6 +938,10 @@ static int __init irq_timings_selftest(void)
- 		goto out;
- 
- 	ret = irq_timings_irqs_selftest();
-+	if (ret)
-+		goto out;
-+
-+	ret = irq_timings_next_index_selftest();
- out:
- 	pr_info("---------- selftest end with %s -----------\n",
- 		ret ? "failure" : "success");
--- 
-2.17.1
+Thank you, Don.
 
+Lianbo
+> 
+>>
+>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>> ---
+>>  drivers/scsi/smartpqi/smartpqi_init.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/scsi/smartpqi/smartpqi_init.c 
+>> b/drivers/scsi/smartpqi/smartpqi_init.c
+>> index c26cac819f9e..8b1fde6c7dab 100644
+>> --- a/drivers/scsi/smartpqi/smartpqi_init.c
+>> +++ b/drivers/scsi/smartpqi/smartpqi_init.c
+>> @@ -7282,7 +7282,7 @@ static int pqi_pci_init(struct pqi_ctrl_info *ctrl_info)
+>>         else
+>>                 mask = DMA_BIT_MASK(32);
+>>
+>> -       rc = dma_set_mask(&ctrl_info->pci_dev->dev, mask);
+>> +       rc = dma_set_mask_and_coherent(&ctrl_info->pci_dev->dev, 
+>> + mask);
+>>         if (rc) {
+>>                 dev_err(&ctrl_info->pci_dev->dev, "failed to set DMA mask\n");
+>>                 goto disable_device;
+>> --
+>> 2.17.1
+>>
