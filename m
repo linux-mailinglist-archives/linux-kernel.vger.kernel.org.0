@@ -2,152 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 583CE29921
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 15:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A58929937
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 15:47:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403848AbfEXNjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 09:39:01 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:9078 "EHLO pegase1.c-s.fr"
+        id S2403884AbfEXNrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 09:47:01 -0400
+Received: from mga18.intel.com ([134.134.136.126]:38809 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391124AbfEXNjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 09:39:00 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 459SBn3dnQz9vDbw;
-        Fri, 24 May 2019 15:38:57 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=TSUZUAqp; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id mOq06eIpRzHs; Fri, 24 May 2019 15:38:57 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 459SBn2ZRfz9vDbt;
-        Fri, 24 May 2019 15:38:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1558705137; bh=dNQmp4NjVmmDcT7XPeKzhurMj7uO+tx6pR8p+ltkIPQ=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=TSUZUAqpWLUEP6N+IDvZjESvyQK7AfQ3ng8tklkbNkI/RfSssr6t8WlOKuWTXORY1
-         DXGZ1+RhBkPvWDCQFDSbUwMIe7SdWopg19/zrV6yWk8E7bjLbVRfuHl4e7Aanok4mT
-         TxTWlpn2sSU4ewAEOuGVcwQ/Z6LNOABNSGC7+Zi8=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C63828B877;
-        Fri, 24 May 2019 15:38:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id JKziJ3JuUJGp; Fri, 24 May 2019 15:38:58 +0200 (CEST)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A41ED8B7BF;
-        Fri, 24 May 2019 15:38:58 +0200 (CEST)
-Subject: Re: [RFC PATCH v2] powerpc: fix kexec failure on book3s/32
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <8164abbe117d8353bb88132d7cfa8bc26a60ca66.1558677767.git.christophe.leroy@c-s.fr>
-Message-ID: <8c3088b3-5fea-3cff-23f1-f6bc433d9a38@c-s.fr>
-Date:   Fri, 24 May 2019 15:38:58 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S2391124AbfEXNrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 09:47:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 06:47:00 -0700
+X-ExtLoop1: 1
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by fmsmga007.fm.intel.com with ESMTP; 24 May 2019 06:46:58 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1hUAXB-0003ZZ-T3; Fri, 24 May 2019 16:46:57 +0300
+Date:   Fri, 24 May 2019 16:46:57 +0300
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Stefan Roese <sr@denx.de>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yegor Yefremov <yegorslists@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: Re: [PATCH 1/2 v2] serial: mctrl_gpio: Check if GPIO property
+ exisits before requesting it
+Message-ID: <20190524134657.GV9224@smile.fi.intel.com>
+References: <20190524094825.16151-1-sr@denx.de>
+ <20190524102002.GT2781@lahna.fi.intel.com>
+ <CAHp75VcMVrYv1MXmmqE9fDXShS=Y8pPdWZ4f1neo=ne88TLZDg@mail.gmail.com>
+ <287cdcc8-9a8f-4583-8be9-bd1f95936733@denx.de>
 MIME-Version: 1.0
-In-Reply-To: <8164abbe117d8353bb88132d7cfa8bc26a60ca66.1558677767.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <287cdcc8-9a8f-4583-8be9-bd1f95936733@denx.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 24/05/2019 à 08:05, Christophe Leroy a écrit :
-> Fixes: 63b2bc619565 ("powerpc/mm/32s: Use BATs for STRICT_KERNEL_RWX")
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-
-Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-
-> ---
->   arch/powerpc/kernel/machine_kexec_32.c | 8 ++++++++
->   arch/powerpc/mm/book3s32/mmu.c         | 7 +++++--
->   arch/powerpc/mm/mmu_decl.h             | 2 ++
->   3 files changed, 15 insertions(+), 2 deletions(-)
+On Fri, May 24, 2019 at 01:29:34PM +0200, Stefan Roese wrote:
+> On 24.05.19 13:11, Andy Shevchenko wrote:
+> > On Fri, May 24, 2019 at 1:21 PM Mika Westerberg
+> > <mika.westerberg@linux.intel.com> wrote:
+> > > 
+> > > On Fri, May 24, 2019 at 11:48:24AM +0200, Stefan Roese wrote:
+> > > > This patch adds a check for the GPIOs property existence, before the
+> > > > GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
+> > > > support is added (2nd patch in this patch series) on x86 platforms using
+> > > > ACPI.
+> > > > 
+> > > > Here Mika's comments from 2016-08-09:
+> > > > 
+> > > > "
+> > > > I noticed that with v4.8-rc1 serial console of some of our Broxton
+> > > > systems does not work properly anymore. I'm able to see output but input
+> > > > does not work.
+> > > > 
+> > > > I bisected it down to commit 4ef03d328769eddbfeca1f1c958fdb181a69c341
+> > > > ("tty/serial/8250: use mctrl_gpio helpers").
+> > > > 
+> > > > The reason why it fails is that in ACPI we do not have names for GPIOs
+> > > > (except when _DSD is used) so we use the "idx" to index into _CRS GPIO
+> > > > resources. Now mctrl_gpio_init_noauto() goes through a list of GPIOs
+> > > > calling devm_gpiod_get_index_optional() passing "idx" of 0 for each. The
+> > > > UART device in Broxton has following (simplified) ACPI description:
+> > > > 
+> > > >      Device (URT4)
+> > > >      {
+> > > >          ...
+> > > >          Name (_CRS, ResourceTemplate () {
+> > > >              GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+> > > >                      "\\_SB.GPO0", 0x00, ResourceConsumer)
+> > > >              {
+> > > >                  0x003A
+> > > >              }
+> > > >              GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+> > > >                      "\\_SB.GPO0", 0x00, ResourceConsumer)
+> > > >              {
+> > > >                  0x003D
+> > > >              }
+> > > >          })
+> > > > 
+> > > > In this case it finds the first GPIO (0x003A which happens to be RX pin
+> > > > for that UART), turns it into GPIO which then breaks input for the UART
+> > > > device. This also breaks systems with bluetooth connected to UART (those
+> > > > typically have some GPIOs in their _CRS).
+> > > > 
+> > > > Any ideas how to fix this?
+> > > > 
+> > > > We cannot just drop the _CRS index lookup fallback because that would
+> > > > break many existing machines out there so maybe we can limit this to
+> > > > only DT enabled machines. Or alternatively probe if the property first
+> > > > exists before trying to acquire the GPIOs (using
+> > > > device_property_present()).
+> > > > "
+> > > > 
+> > > > This patch implements the fix suggested by Mika in his statement above.
+> > > > 
+> > 
+> > We have a board where ASL provides _DSD for CTS and RxD pins.
+> > I'm afraid this won't work on it.
 > 
-> diff --git a/arch/powerpc/kernel/machine_kexec_32.c b/arch/powerpc/kernel/machine_kexec_32.c
-> index affe5dcce7f4..83e61a8f8468 100644
-> --- a/arch/powerpc/kernel/machine_kexec_32.c
-> +++ b/arch/powerpc/kernel/machine_kexec_32.c
-> @@ -15,6 +15,7 @@
->   #include <asm/cacheflush.h>
->   #include <asm/hw_irq.h>
->   #include <asm/io.h>
-> +#include <mm/mmu_decl.h>
->   
->   typedef void (*relocate_new_kernel_t)(
->   				unsigned long indirection_page,
-> @@ -35,6 +36,8 @@ void default_machine_kexec(struct kimage *image)
->   	unsigned long page_list;
->   	unsigned long reboot_code_buffer, reboot_code_buffer_phys;
->   	relocate_new_kernel_t rnk;
-> +	unsigned long bat_size = 128 << 10;
-> +	unsigned long bat_mask = ~(bat_size - 1);
->   
->   	/* Interrupts aren't acceptable while we reboot */
->   	local_irq_disable();
-> @@ -54,6 +57,11 @@ void default_machine_kexec(struct kimage *image)
->   	memcpy((void *)reboot_code_buffer, relocate_new_kernel,
->   						relocate_new_kernel_size);
->   
-> +	printk(KERN_INFO "Reboot code buffer at %lx\n", reboot_code_buffer);
-> +	mtsrin(mfsrin(reboot_code_buffer) & ~SR_NX, reboot_code_buffer);
-> +	setibat(7, reboot_code_buffer & bat_mask, reboot_code_buffer_phys & bat_mask,
-> +		bat_size, PAGE_KERNEL_TEXT);
+> With "won't work" you mean, that the GPIO can't be used for modem
+> control in this case in the current implementation (with this
+> patchset)? Or do you mean, that the breakage (input does not work
+> on Broxton systems) will not be solved by this patch?
 
-A call to update_bats() have to be added here after setibat()
+It will solve RxD case, due to mctrl doesn't count RxD as a "control" line.
 
-Christophe
+Though we have CTS pin defined for the same purpose, which means the hardware
+flow control won't work on a subset of Broxton boards.
 
-> +
->   	flush_icache_range(reboot_code_buffer,
->   				reboot_code_buffer + KEXEC_CONTROL_PAGE_SIZE);
->   	printk(KERN_INFO "Bye!\n");
-> diff --git a/arch/powerpc/mm/book3s32/mmu.c b/arch/powerpc/mm/book3s32/mmu.c
-> index fc073cb2c517..7124700edb0f 100644
-> --- a/arch/powerpc/mm/book3s32/mmu.c
-> +++ b/arch/powerpc/mm/book3s32/mmu.c
-> @@ -124,8 +124,8 @@ static unsigned int block_size(unsigned long base, unsigned long top)
->    * of 2 between 128k and 256M.
->    * Only for 603+ ...
->    */
-> -static void setibat(int index, unsigned long virt, phys_addr_t phys,
-> -		    unsigned int size, pgprot_t prot)
-> +void setibat(int index, unsigned long virt, phys_addr_t phys,
-> +	     unsigned int size, pgprot_t prot)
->   {
->   	unsigned int bl = (size >> 17) - 1;
->   	int wimgxpp;
-> @@ -197,6 +197,9 @@ void mmu_mark_initmem_nx(void)
->   	if (cpu_has_feature(CPU_FTR_601))
->   		return;
->   
-> +	if (IS_ENABLED(CONFIG_KEXEC))
-> +		nb--;
-> +
->   	for (i = 0; i < nb - 1 && base < top && top - base > (128 << 10);) {
->   		size = block_size(base, top);
->   		setibat(i++, PAGE_OFFSET + base, base, size, PAGE_KERNEL_TEXT);
-> diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
-> index 7bac0aa2026a..478584d50cf2 100644
-> --- a/arch/powerpc/mm/mmu_decl.h
-> +++ b/arch/powerpc/mm/mmu_decl.h
-> @@ -103,6 +103,8 @@ void print_system_hash_info(void);
->   extern void mapin_ram(void);
->   extern void setbat(int index, unsigned long virt, phys_addr_t phys,
->   		   unsigned int size, pgprot_t prot);
-> +void setibat(int index, unsigned long virt, phys_addr_t phys,
-> +	     unsigned int size, pgprot_t prot);
->   
->   extern int __map_without_bats;
->   extern unsigned int rtas_data, rtas_size;
-> 
+> If its the former, then I think that solving this issue is something
+> for a new patch, to support modem-control on such platforms as well
+> (if needed).
+
+> Please note that this patch is not trying to get modem-control working
+> on such ACPI based systems.
+
+I understand that. At the same time it should not break existing systems.
+
+> Its targeted for device-tree enabled
+> platforms, using the 8250 serial driver, here specifically a MIPS
+> MT7688 based board. And just wants to fix the latter issue mentioned
+> above so that the 8250 modem-control support can be accepted in
+> mainline.
+
+As I said already we have to distinguish *the purpose* of these GPIOs.
+(like CTS).
+
+Can we apply this if and only if the device has no ACPI companion device?
+
+In this case DT will work as you expect and ACPI won't be broken.
+
+> > Basically we need to understand the use of the GPIOs in UART. In our
+> > case it's an out-of-band wake up source for UART.
+> > Simply requiring GPIOs to be present is not enough.
+> > 
+> > Perhaps property like 'modem-control-gpio-in-use' (this seems a bad
+> > name, given for sake of example).
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
