@@ -2,47 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2509529064
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 07:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C98290CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 08:14:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731884AbfEXFaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 01:30:13 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:58674 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbfEXFaN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 01:30:13 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1740014E0BCCC;
-        Thu, 23 May 2019 22:30:11 -0700 (PDT)
-Date:   Thu, 23 May 2019 22:30:08 -0700 (PDT)
-Message-Id: <20190523.223008.2251094307207174464.davem@davemloft.net>
-To:     esben@geanix.com
-Cc:     sfr@canb.auug.org.au, michal.simek@xilinx.com, andrew@lunn.ch,
-        yuehaibing@huawei.com, ynezz@true.cz, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ll_temac: Fix compile error
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190524052444.2983-1-esben@geanix.com>
-References: <20190524094709.3f9830f2@canb.auug.org.au>
-        <20190524052444.2983-1-esben@geanix.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 23 May 2019 22:30:11 -0700 (PDT)
+        id S2388824AbfEXGN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 02:13:59 -0400
+Received: from app1.whu.edu.cn ([202.114.64.88]:50962 "EHLO whu.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387936AbfEXGN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 02:13:59 -0400
+X-Greylist: delayed 2221 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 May 2019 02:13:57 EDT
+Received: from localhost (unknown [111.202.192.3])
+        by email1 (Coremail) with SMTP id AQBjCgDnR6XugudcZXHNAA--.25152S2;
+        Fri, 24 May 2019 13:36:51 +0800 (CST)
+From:   Peng Wang <rocking@whu.edu.cn>
+To:     axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Wang <rocking@whu.edu.cn>
+Subject: [UNTESTED PATCH] block: fix a potential null pointer dereference
+Date:   Fri, 24 May 2019 13:35:20 +0800
+Message-Id: <20190524053520.30963-1-rocking@whu.edu.cn>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQBjCgDnR6XugudcZXHNAA--.25152S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruFWrtrW8XFWkAr18AFW7CFg_yoW3AFX_Ww
+        4vyan7uFn5Xr43ur1DZFWYyF1vkr48JF4xGFWftr9rX3WFq3Z0ywsxGr45JFZ3GFWfuryD
+        Xw4kXr15Xr1xZjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbckFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+        6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_GrWl
+        42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+        WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAK
+        I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
+        4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+        42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUhdbbUUUUU=
+X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Esben Haabendal <esben@geanix.com>
-Date: Fri, 24 May 2019 07:24:42 +0200
+blk_queue_dying() still needs request_queue "q" when
+enter_succeeded is false, so let's set "q" zero later.
 
-> Fixes: 1b3fa5cf859b ("net: ll_temac: Cleanup multicast filter on change")
-> Signed-off-by: Esben Haabendal <esben@geanix.com>
+Signed-off-by: Peng Wang <rocking@whu.edu.cn>
+---
+ block/blk-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied.
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 419d600e6637..3d43909db3b8 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -1056,7 +1056,6 @@ blk_qc_t generic_make_request(struct bio *bio)
+ 				flags = BLK_MQ_REQ_NOWAIT;
+ 			if (blk_queue_enter(q, flags) < 0) {
+ 				enter_succeeded = false;
+-				q = NULL;
+ 			}
+ 		}
+ 
+@@ -1088,6 +1087,7 @@ blk_qc_t generic_make_request(struct bio *bio)
+ 				bio_wouldblock_error(bio);
+ 			else
+ 				bio_io_error(bio);
++			q = NULL;
+ 		}
+ 		bio = bio_list_pop(&bio_list_on_stack[0]);
+ 	} while (bio);
+-- 
+2.19.1
+
