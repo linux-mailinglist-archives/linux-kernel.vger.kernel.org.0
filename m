@@ -2,116 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FC34292C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37E03292D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:21:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389315AbfEXISm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:18:42 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40210 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389046AbfEXISm (ORCPT
+        id S2389634AbfEXIUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:20:46 -0400
+Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:38330 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389566AbfEXIUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:18:42 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u17so4867879pfn.7
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:18:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5MVjgGhmeDVVcsd1Bp0XT3uzjq2j5RVjcC5adv2QpbQ=;
-        b=iRuKM28tYfKNZrvip2A5NOWelVL/4eBtb964IsQlQSIxC/7erSXVG83O6CVtGoqz/+
-         vBJHdI3/i+9VXVzomdVKI8qa+vg2YULe2U+7m/oukpljX8eu34y4MpEz3MYLuxxU7uhb
-         lJtB+dR823Ada50ALi0DAOQdfMAYLi2gdjrq3FYq9X3yf7GIfTdyJn5g2LlTa8Xjcjxa
-         u9Q1BULQoqV0wrU2AGe9oLIW0AlCwoRjN6eI+Wg0WD5oqVJVLzDW43GCY9MZ+/Kn5XuY
-         XUIYlHu83mJWrQ05/Iga1DctvwXC0OP/5qiUkbUUZqapVnvB7V1Qn8TbFvrzXCRSp0Uu
-         vgVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5MVjgGhmeDVVcsd1Bp0XT3uzjq2j5RVjcC5adv2QpbQ=;
-        b=UOf/k4eUueS+1qz55+mY3ugjb+ZzBXTkLC1mmz1hCgN/aNF71Su/eUai04sL5f4syh
-         VpW5VCCuk9x5izc3VdZwT3JLCZ1VCSo/ceb5lmYdK6Z05RDJ0/5o15c3Tss5QXd4ZF3V
-         TqCr26hNpQzms13+9r3I21wJ2AZN+ZroNJ32+81Fc586y7uvKcwL0Ojx79iV4/pnoI4R
-         eodYD5JI0x9x/hrT/zhEgZx1RWTL2dwj+bmdMyTnI6t5IcbbtkBtgjlirIuDVJxFXICy
-         domBbGoK4tTXFBcxYoHVzAdaFjBsN6arq1B/jdnFhEdQ6+sMF6HVv9yAX58T7NOql9eI
-         jA9g==
-X-Gm-Message-State: APjAAAWOKrfwsaBN7gDensFqtQ9c0WCQ+7YjGgFln6JZbXs/MA4TYB7J
-        gdnX9FWortQVt85rvzh1iMI=
-X-Google-Smtp-Source: APXvYqyIQSkcOIdJYgcmWe/9jjru5iacQQMg57EgrzxY52IaOz0WwUYWgCUYZURSvIOGbqe1zdETYA==
-X-Received: by 2002:a62:ab0a:: with SMTP id p10mr11335022pff.143.1558685921271;
-        Fri, 24 May 2019 01:18:41 -0700 (PDT)
-Received: from localhost.localdomain ([110.225.17.212])
-        by smtp.gmail.com with ESMTPSA id e10sm3356478pfm.137.2019.05.24.01.18.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 01:18:40 -0700 (PDT)
-From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
-To:     gregkh@linuxfoundation.org, colin.king@canonical.com,
-        herbert@gondor.apana.org.au, qader.aymen@gmail.com,
-        sergio.paracuellos@gmail.com, bhanusreemahesh@gmail.com,
-        mattmccoy110@gmail.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Subject: [PATCH] staging: ks7010: Merge multiple return variables in ks_hostif.c
-Date:   Fri, 24 May 2019 13:48:21 +0530
-Message-Id: <20190524081821.5671-1-nishkadg.linux@gmail.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 24 May 2019 04:20:42 -0400
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 64DF2C012D;
+        Fri, 24 May 2019 08:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1558686027; bh=pTugxC0xi6tYCnoQGaHnrYQc67+/MuULJSrDVJlby38=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Mzx7ypakxqoo6XQJtzXNgeTfh9n4JMJk1vFytFhri/GuK8SVtfuxaG1exRQkNF41o
+         BjcIMqm+8Xt5d7PrxO3I5bzWiVYC55vuqUKfQvZGqfk4uhwiQi45Ezu6xiiS1NXe/X
+         XHIX0TPBF1HTyrNco8jghEYfoc5rUxrF7xARQUQKPxSQWoAOT0E7JWI165rjNULOGw
+         Yi8zvTCllYxW3J2R5llFRraOjIXCim+HJsw5Pg/rge2b2ntkXcL1WKLTcxzreG5/Gg
+         kOY+SMwQQtDYAbVeAjid319HKIGaxDfYH2Ju8EoQ3SUhPIN7gTJFk7hr+TDVpsYIQZ
+         vOCQafWJqhW2w==
+Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 686A2A00AA;
+        Fri, 24 May 2019 08:20:36 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id 4A8853FAE9;
+        Fri, 24 May 2019 10:20:35 +0200 (CEST)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH net-next v2 00/18] net: stmmac: Improvements and Selftests
+Date:   Fri, 24 May 2019 10:20:08 +0200
+Message-Id: <cover.1558685827.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function hostif_data_request had two return variables, ret and
-result. When ret is assigned a value, in all cases (except one) this
-assignment is followed immediately by a goto to the end of the
-function. In the last case, the goto takes effect only if ret < 0;
-however, if ret >= 0 then this value of ret is not needed in the
-remainder of that branch. On the other hand result is used (assigned a
-value and returned) only in those branches where ret >= 0 or ret has
-not been used at all.
-As the values of ret and result are not both required at the same point
-in any branch, result can be removed and its occurrences replaced with
-ret.
+[ Thanks to the introducion of selftests this series ended up being a misc
+of improvements and the selftests additions per-se. ]
 
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
----
- drivers/staging/ks7010/ks_hostif.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+This introduces selftests support in stmmac driver. We add 9 basic sanity
+checks and MAC loopback support for all cores within the driver. This way
+more tests can easily be added in the future and can be run in virtually
+any MAC/GMAC/QoS/XGMAC platform.
 
-diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-index 3775fd4b89ae..2666f9e30c15 100644
---- a/drivers/staging/ks7010/ks_hostif.c
-+++ b/drivers/staging/ks7010/ks_hostif.c
-@@ -1067,7 +1067,6 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
- 	unsigned int length = 0;
- 	struct hostif_data_request *pp;
- 	unsigned char *p;
--	int result;
- 	unsigned short eth_proto;
- 	struct ether_hdr *eth_hdr;
- 	unsigned short keyinfo = 0;
-@@ -1209,8 +1208,8 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
- 	pp->header.event = cpu_to_le16(HIF_DATA_REQ);
- 
- 	/* tx request */
--	result = ks_wlan_hw_tx(priv, pp, hif_align_size(sizeof(*pp) + skb_len),
--			       send_packet_complete, skb);
-+	ret = ks_wlan_hw_tx(priv, pp, hif_align_size(sizeof(*pp) + skb_len),
-+			    send_packet_complete, skb);
- 
- 	/* MIC FAILURE REPORT check */
- 	if (eth_proto == ETH_P_PAE &&
-@@ -1225,7 +1224,7 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
- 			priv->wpa.mic_failure.stop = 1;
- 	}
- 
--	return result;
-+	return ret;
- 
- err_kfree:
- 	kfree(pp);
+Having this we can find regressions and missing features in the driver
+while at the same time we can check if the IP is correctly working.
+
+We have been using this for some time now and I do have more tests to
+submit in the feature. My experience is that although writing the tests
+adds more development time, the gain results are obvious.
+
+I let this feature optional within the driver under a Kconfig option.
+
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+
+Corentin Labbe (1):
+  net: ethernet: stmmac: dwmac-sun8i: Enable control of loopback
+
+Jose Abreu (17):
+  net: stmmac: Add MAC loopback callback to HWIF
+  net: stmmac: dwmac100: Add MAC loopback support
+  net: stmmac: dwmac1000: Add MAC loopback support
+  net: stmmac: dwmac4/5: Add MAC loopback support
+  net: stmmac: dwxgmac2: Add MAC loopback support
+  net: stmmac: Switch MMC functions to HWIF callbacks
+  net: stmmac: dwmac1000: Also pass control frames while in promisc mode
+  net: stmmac: dwmac4/5: Also pass control frames while in promisc mode
+  net: stmmac: dwxgmac2: Also pass control frames while in promisc mode
+  net: stmmac: Introduce selftests support
+  net: stmmac: dwmac1000: Fix Hash Filter
+  net: stmmac: dwmac1000: Clear unused address entries
+  net: stmmac: dwmac4/5: Fix Hash Filter
+  net: stmmac: dwmac4/5: Do not disable whole RX in dma_stop_rx()
+  net: stmmac: dwxgmac2: Do not disable whole RX in dma_stop_rx()
+  net: stmmac: dwmac4/5: Clear unused address entries
+  net: stmmac: Prevent missing interrupts when running NAPI
+
+ drivers/net/ethernet/stmicro/stmmac/Kconfig        |   9 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile       |   2 +
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  |  13 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac1000.h    |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac1000_core.c   |  22 +-
+ .../net/ethernet/stmicro/stmmac/dwmac100_core.c    |  13 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h       |   3 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |  29 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c   |   4 -
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |   2 +
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    |  15 +-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |   4 -
+ drivers/net/ethernet/stmicro/stmmac/hwif.c         |   9 +
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  21 +
+ drivers/net/ethernet/stmicro/stmmac/mmc.h          |   4 -
+ drivers/net/ethernet/stmicro/stmmac/mmc_core.c     |  13 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  22 +
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |   8 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   7 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 850 +++++++++++++++++++++
+ 21 files changed, 1029 insertions(+), 23 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c
+
 -- 
-2.19.1
+2.7.4
 
