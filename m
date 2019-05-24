@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7816296E5
+	by mail.lfdr.de (Postfix) with ESMTP id 73C19296E4
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:17:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390934AbfEXLQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2390965AbfEXLQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 24 May 2019 07:16:44 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34823 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390856AbfEXLQk (ORCPT
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40051 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390410AbfEXLQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:16:40 -0400
-Received: by mail-wr1-f67.google.com with SMTP id m3so9608696wrv.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:16:39 -0700 (PDT)
+        Fri, 24 May 2019 07:16:41 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t4so1326384wrx.7
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:16:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OVCnRskmJCeqZXRUtBHTU3a0dRFZnt0B8APXmqZl1PE=;
-        b=iSt+KozEePLOt00yptQg4U7xEgXqAzfPyZlBkSB8rsZ6OtjxaUBKIKfXhMXsFcAIeO
-         7pqnkJ1PnIUul3tBicMbE4tvxLzoY8nwY3BJMY5WRPcpba6j6U+Dy3VT7aWbblAnr2RJ
-         bbZYAKKTaNyKHWEsMfMPp8fwTi61DSxczu3LyxUb0kQ9bI2wMoVLDKlluuRJf8N+e+7u
-         bUHhO/KAuOc9Z025MWY10RgUNyLmgblRzh8SCdg3cdLZw5bhKee1+D36cMdUfpweXETK
-         o6hAXcY0BvphSPze1AadEQV24/Xah6W9/xGxs6oiHXeHiCZNzp6NL9wj2vkVi0k2qO1m
-         R2tQ==
+        bh=L7Wy/UoR346yun6rGdrn0w0Sk7Zt+3JLoV24BHUfklw=;
+        b=twWc4/+Qzxo/D1UOnToCY0eDa73j5l1K8Qp94mmxWXgleAnqOFh7FoKKZXgEX4YCZ0
+         k2+yDABe/dRSA4VkRLWycdfvXMNAh72chSlPqCET2BGRhVfJyuoVFeS8WwFTy7HwZ5LZ
+         RHnk8bGliEfW33uzlNY+eHQRjzpwMaHQtca8eb9UsIl+QVPTpYk0CQDqCU8rAZQL+VCQ
+         jIEpo5lLqbJeJcRRObCrX2EcluaWMkAhvFRcRKq0/9bjxxpX1u2WV6zE+8uh2LN2M9Lr
+         57VthcvkM2QDAh+/7dH2ni5xz4/7svNg+4NpIlS7Md0oowPzqWjkGBq9JjBEZSOqfKy7
+         JRNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=OVCnRskmJCeqZXRUtBHTU3a0dRFZnt0B8APXmqZl1PE=;
-        b=LjbiqOpt4TKWIpN5OnxJEdBV0KTzhtoTqrAFPUkEoAMj8gWdMWPh6mNCGlSn1AFRmQ
-         YZ9uVUtRf11wRZ2yLBnMpAqfs7aPRy+28mhnwWQCd4mpWd1lw2omHPeXG5O8iWnP3LAF
-         76sp482b/FElip8e65Yg9Gh6+YYalMLyou4wvsjbociuoSAwcuyGowDCgdwt1teJvRID
-         8iAZ3sNOqKE6k/x4Y2+UGKgvJamtUbG/jcRQUhGg6QzlMzvmpF8GfJ0pnrYNEOCNjR9D
-         X1HkZ1fLrKGK2xw//RgfeXRvlLrIz3UR2BD67Zt/vDhXJ4UBIfmXRE6ui64RglNRGZmP
-         X79g==
-X-Gm-Message-State: APjAAAVrqeBImLYXQ7PSqLk+lIrGLfX5JE5BeDb0/R2VZ02780Qcx/58
-        EAirU/1LiW8y/JyS2oFC0gMXoa9Ilik=
-X-Google-Smtp-Source: APXvYqwSVWXushrLaqcjDUL7QPeX8seJFMMrfVpKutgtlib86Ky9xHAd+am5U60x5t2rGWFNo7TwCw==
-X-Received: by 2002:a05:6000:43:: with SMTP id k3mr62372855wrx.234.1558696599149;
-        Fri, 24 May 2019 04:16:39 -0700 (PDT)
+        bh=L7Wy/UoR346yun6rGdrn0w0Sk7Zt+3JLoV24BHUfklw=;
+        b=BSZtwcg4XluQ7viQ4XtYkCMRR+pZBDGs6broLnFyYVZOxRfKGJU05aNpYeQhZrBbDJ
+         IOdne5850jWKU/EMSHt3FT7t55FTGrfQM6sseI2S0Ns0tFfRwvOD7iNuMNbofWU7JzEG
+         m77FeVdJZdA/WAHZCLyTjKgvvtDFQVCAQiAF992GEfQWj6XXpyalcqS5cpb7tSnFHCXH
+         ocM3hKZiHKjIY5MEQAgYCcjUC+DwFZvhCPNOtIiYQv2qXRogTxhroQYsQdzEw4rMh3ZC
+         CSaW7SYHG7MRz8qFDJZTDQKc3FxJ782tQYfDPQLzUg2O/ZTlARBtwK36AzjkL9E2uSm2
+         Sm2g==
+X-Gm-Message-State: APjAAAVQtPmAUCddQQPr33+EQuFaTbS9jAcWkyNEGdLagc3N0UhPmKnl
+        nz0vrIoGANNnr3prAZP2NUuwmw==
+X-Google-Smtp-Source: APXvYqw/r6MOQUm7yL1/YotNmLwatMoacJjTUqbMZk2z6ica/A8ndWWmfGDLMbPOl6S4ZfvHpN/7yQ==
+X-Received: by 2002:adf:e94b:: with SMTP id m11mr5174901wrn.133.1558696600480;
+        Fri, 24 May 2019 04:16:40 -0700 (PDT)
 Received: from clegane.local (73.82.95.92.rev.sfr.net. [92.95.82.73])
-        by smtp.gmail.com with ESMTPSA id h12sm2575392wre.14.2019.05.24.04.16.38
+        by smtp.gmail.com with ESMTPSA id h12sm2575392wre.14.2019.05.24.04.16.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 04:16:38 -0700 (PDT)
+        Fri, 24 May 2019 04:16:39 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
-Subject: [PATCH V2 2/9] genirq/timings: Fix timings buffer inspection
-Date:   Fri, 24 May 2019 13:16:08 +0200
-Message-Id: <20190524111615.4891-3-daniel.lezcano@linaro.org>
+Subject: [PATCH V2 3/9] genirq/timings: Optimize the period detection speed
+Date:   Fri, 24 May 2019 13:16:09 +0200
+Message-Id: <20190524111615.4891-4-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190524111615.4891-1-daniel.lezcano@linaro.org>
 References: <20190524111615.4891-1-daniel.lezcano@linaro.org>
@@ -58,68 +58,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It appears the index beginning computation is not correct, the current
-code does:
+If we have a minimal period and if there is a period which is a
+multiple of it but lesser than the max period then it will be detected
+before and the minimal period will be never reached.
 
-     i = (irqts->count & IRQ_TIMINGS_MASK) - 1
+ 1 2 1 2 1 2 1 2 1 2 1 2
+ <-----> <-----> <----->
+ <-> <-> <-> <-> <-> <->
 
-If irqts->count is equal to zero, we end up with an index equal to -1,
-but that does not happen because the function checks against zero
-before and returns in such case.
+In our case, the minimum period is 2 and the maximum period is 5. That
+means all repeating pattern of 2 will be detected as repeating pattern
+of 4, it is pointless to go up to 2 when searching for the period as it
+will always fail.
 
-However, if irqts->count is a multiple of IRQ_TIMINGS_SIZE, the
-resulting & bit op will be zero and leads also to a -1 index.
+Remove one loop iteration by increasing the minimal period to 3.
 
-Re-introduce the iteration loop belonging to the previous variance
-code which was correct.
-
-Fixes: bbba0e7c5cda "genirq/timings: Add array suffix computation code"
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- kernel/irq/timings.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ kernel/irq/timings.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
-index 60362aca4ca4..250bb00ccd85 100644
+index 250bb00ccd85..06bde5253a7d 100644
 --- a/kernel/irq/timings.c
 +++ b/kernel/irq/timings.c
-@@ -267,6 +267,23 @@ void irq_timings_disable(void)
- #define PREDICTION_MAX		10 /* 2 ^ PREDICTION_MAX useconds */
- #define PREDICTION_BUFFER_SIZE	16 /* slots for EMAs, hardly more than 16 */
+@@ -261,7 +261,7 @@ void irq_timings_disable(void)
+ #define EMA_ALPHA_VAL		64
+ #define EMA_ALPHA_SHIFT		7
  
-+/*
-+ * Number of elements in the circular buffer: If it happens it was
-+ * flushed before, then the number of elements could be smaller than
-+ * IRQ_TIMINGS_SIZE, so the count is used, otherwise the array size is
-+ * used as we wrapped. The index begins from zero when we did not
-+ * wrap. That could be done in a nicer way with the proper circular
-+ * array structure type but with the cost of extra computation in the
-+ * interrupt handler hot path. We choose efficiency.
-+ */
-+#define for_each_irqts(i, irqts)					\
-+	for (i = irqts->count < IRQ_TIMINGS_SIZE ?			\
-+		     0 : irqts->count & IRQ_TIMINGS_MASK,		\
-+		     irqts->count = min(IRQ_TIMINGS_SIZE,		\
-+					irqts->count);			\
-+	     irqts->count > 0; irqts->count--,				\
-+		     i = (i + 1) & IRQ_TIMINGS_MASK)
-+
- struct irqt_stat {
- 	u64	last_ts;
- 	u64	ema_time[PREDICTION_BUFFER_SIZE];
-@@ -528,11 +545,7 @@ u64 irq_timings_next_event(u64 now)
- 	 * model while decrementing the counter because we consume the
- 	 * data from our circular buffer.
- 	 */
--
--	i = (irqts->count & IRQ_TIMINGS_MASK) - 1;
--	irqts->count = min(IRQ_TIMINGS_SIZE, irqts->count);
--
--	for (; irqts->count > 0; irqts->count--, i = (i + 1) & IRQ_TIMINGS_MASK) {
-+	for_each_irqts(i, irqts) {
- 		irq = irq_timing_decode(irqts->values[i], &ts);
- 		s = idr_find(&irqt_stats, irq);
- 		if (s)
+-#define PREDICTION_PERIOD_MIN	2
++#define PREDICTION_PERIOD_MIN	3
+ #define PREDICTION_PERIOD_MAX	5
+ #define PREDICTION_FACTOR	4
+ #define PREDICTION_MAX		10 /* 2 ^ PREDICTION_MAX useconds */
 -- 
 2.17.1
 
