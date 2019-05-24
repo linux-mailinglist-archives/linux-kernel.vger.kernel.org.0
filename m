@@ -2,63 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 970E429E07
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 20:30:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 164D229E0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 20:33:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729277AbfEXSau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 14:30:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50276 "EHLO mail.kernel.org"
+        id S1732047AbfEXSdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 14:33:07 -0400
+Received: from node.akkea.ca ([192.155.83.177]:52586 "EHLO node.akkea.ca"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726581AbfEXSau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 14:30:50 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6721E2175B;
-        Fri, 24 May 2019 18:30:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558722649;
-        bh=90gbbJoSH5e/DbujPH4jsD6Dp2o4oN2DKsos/CYbGqI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eYhBz0j63dwk0VEiRZPvJJY424FLGoUH2PO3tNa/iHXjw1FDr4j4HIRh9UPr1L08I
-         VfJGOjrZ8Iq/KUcxedzGX4ChL/c2tj2NMInzsL/GrmTfJCt/ldBRnjPRNe1mEyWW4H
-         BKwk9sm2NpJZkj1P1Hjn3+LhpFKmT3lM5fRJzmvc=
-Date:   Fri, 24 May 2019 20:30:45 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] lkdtm fixes for next
-Message-ID: <20190524183045.GA16661@kroah.com>
-References: <201905091017.DA22A3E0C@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201905091017.DA22A3E0C@keescook>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S1726581AbfEXSdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 14:33:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id 8BC524E2056;
+        Fri, 24 May 2019 18:33:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1558722785; bh=GjTxWLl04/VBrp89zY7pbkJt4uF3uLA357204mKJBEw=;
+        h=From:To:Cc:Subject:Date;
+        b=iqQ148KskLDabUqs7ziDLJqI1JbmGYdXQTsH70U6NGTr19O8PeHiEFJh3Rf+0hzQL
+         4aBWLhwTCqKPsY4fWOIAJNg/LA4Gs55svP2HBtiDcjZTGe/F/4G/15TjzAN3Dsz8q2
+         /4/VSbZkMfI+Nv+LXmrrIZ6T58kA5AW/Lx+WvMEQ=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id CNbJyUawJgxq; Fri, 24 May 2019 18:33:04 +0000 (UTC)
+Received: from localhost.localdomain (unknown [24.244.23.228])
+        by node.akkea.ca (Postfix) with ESMTPSA id 29B944E204B;
+        Fri, 24 May 2019 18:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1558722784; bh=GjTxWLl04/VBrp89zY7pbkJt4uF3uLA357204mKJBEw=;
+        h=From:To:Cc:Subject:Date;
+        b=AK1DVFXHN3gSR8L2WvNAJAmFPwV9JmFN2/9E0ZJydzJGBJOiiynU5QhXsMFEd2WWy
+         ANZf6ey7e3nWYE5E/y4d3lP8tGwAPUP0rLHSWONJ7ZXK4yOF+f5P+Xtr4c6ZArOR8d
+         3byebZw9C814EVdtmeKOyQSE77Gl1P0m1v2lyKjg=
+From:   Angus Ainslie <angus@akkea.ca>
+To:     angus.ainslie@puri.sm
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Angus Ainslie <angus@akkea.ca>
+Subject: [PATCH v14 0/3] Add support for the Purism Librem5 devkit
+Date:   Fri, 24 May 2019 12:32:54 -0600
+Message-Id: <20190524183257.16066-1-angus@akkea.ca>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 09, 2019 at 10:19:39AM -0700, Kees Cook wrote:
-> Hi Greg,
-> 
-> Please pull these lkdtm fixes for next. If possible, it'd be nice to get
-> these into v5.2 (they're small fixes), but I'm fine if they have to wait.
-> I meant to send these earlier, but got distracted by other things.
-> 
-> Thanks!
-> 
-> -Kees
-> 
-> The following changes since commit 8c2ffd9174779014c3fe1f96d9dc3641d9175f00:
-> 
->   Linux 5.1-rc2 (2019-03-24 14:02:26 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/lkdtm-next
+The Librem5 devkit is based on the imx8mq from NXP. This is a default
+devicetree to boot the board to a command prompt.
 
-Now pulled, thanks.
+Changes since v13:
 
-greg k-h
+Moved haptic motor from pwm-led to gpio-vibrator.
+Cleaned up regulator node naming.
+Whitescpace cleanup.
+Re-indent pinmux stanzas.
+Drop pwm2 node.
+Drop MAINTAINERS patch.
+
+Changes since v12:
+
+Updated patch to vendor-prefixes.yaml.
+Dropped always on from regulators.
+
+Changes since v11:
+
+Added reviewed-by tags.
+Fixed subject typo.
+
+Changes since v10:
+
+Moved MAINTAINERS entry to "ARM/FREESCALE IMX" section
+
+Changes since v9:
+
+Added a MAINTAINERS entry for arm64 imx devicetree files.
+
+Changes since v8:
+
+Fixed license comment.
+Changed regulators to all lower case.
+Changed clock frequency for NXP errata e7805.
+Dropped blank line.
+
+Changes since v7:
+
+More regulators always on for USB.
+Add vbus regulator.
+Drop vbat regulator.
+Replace legacy "gpio-key,wakeup" with "wakeup-source".
+Add vbus-supply to get rid of warning
+imx8mq-usb-phy 382f0040.usb-phy: 382f0040.usb-phy supply vbus not found,
+using dummy regulator
+
+Changes since v6:
+
+Dropped unused regulators.
+Fix regulator phandles case.
+Dropped extra whitespace.
+
+Changes since v5:
+
+Added reviewed-by tags.
+Moved USB port links to USB controller node.
+
+Changes since v4:
+
+Compiled against linux-next next-20190415.
+Added imx8mq to the arm yaml file.
+Re-arrange regulator nodes to drop undefined supplies.
+Additional ordering for aesthetics.
+Split some long lines.
+Added lots of blank lines.
+Moved pinctl muxes to where they are used.
+Cleaned out reg defintions from regulator nodes.
+
+Changes since v3:
+
+Freshly sorted and pressed nodes.
+Change the backlight to an interpolated scale.
+Dropped i2c2.
+Dropped devkit version number to match debian MR.
+
+Changes since v2:
+
+Fixed incorrect phy-supply for the fsl-fec.
+Dropped unused regulator property.
+Fixup Makefile for linux-next.
+
+Changes since v1:
+
+Dropped config file.
+Updated the board compatible label.
+Changed node names to follow naming conventions.
+Added a more complete regulator hierachy.
+Removed unused nodes.
+Removed unknown devices.
+Fixed comment style.
+Dropped undocumented properties.
+
+Angus Ainslie (Purism) (3):
+  arm64: dts: fsl: librem5: Add a device tree for the Librem5 devkit
+  dt-bindings: Add an entry for Purism SPC
+  dt-bindings: arm: fsl: Add the imx8mq boards
+
+ .../devicetree/bindings/arm/fsl.yaml          |   7 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ arch/arm64/boot/dts/freescale/Makefile        |   1 +
+ .../dts/freescale/imx8mq-librem5-devkit.dts   | 794 ++++++++++++++++++
+ 4 files changed, 804 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+
+-- 
+2.17.1
+
