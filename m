@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7252B2960D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A459A29613
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390504AbfEXKlf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 06:41:35 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42368 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390242AbfEXKlf (ORCPT
+        id S2390626AbfEXKlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 06:41:50 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46584 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390410AbfEXKlt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 06:41:35 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 33so1889852pgv.9
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 03:41:34 -0700 (PDT)
+        Fri, 24 May 2019 06:41:49 -0400
+Received: by mail-pg1-f196.google.com with SMTP id o11so234646pgm.13
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 03:41:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c0MxRnTCE9BXc+WmYpS8NriHcx2Lj8b3YSmcOc81bkk=;
-        b=KhdkuwhLGFTGUIzjnoSXCcjRF1xudF+4rTPCNkNPO+riBV5qj6+YN/XmRVEm/HCRG5
-         3Jn3cbkMmq2gMiGJaV6ndJJmu2lKue5pniic1qpViALZjk/6h4ANhWXPElMRyGyMwj0I
-         jC9ZZh4aHfKNKmJ4whJ1tmXgtD1aztJzyF9N4=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Y5swjDHGKG+ezs/+w53g29T0/qBVH9yKlg23nn55c5E=;
+        b=U3C+2Pkv2aIG9zWer39/ZGLeS4wd7ty00L8nRwq2xSL9FzpzYmJ8/WtIyJFRadmuQc
+         DTP0KxyKCLyYHEAPVI55+6VrkoniAOF48Vl9Wj50Veq/wZPJat9/g22LGvoecBk8SR7s
+         r9+EN1shbjhX2kn0bCjSZ2tUp8JHkSf1kS7r8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c0MxRnTCE9BXc+WmYpS8NriHcx2Lj8b3YSmcOc81bkk=;
-        b=Q/CfjyexCjJz2PvvcWpRGyCzy+6y6ODhk5+6h5QBbZbgQGmlpee0zmYaFxosTQmYHO
-         /pcVXGRXmtIK3CvBK0g0mFAVtjReRdv+OeVJh4z+wVAnUHcse2unwzGu55LsyzZSvVLx
-         wM3u7pSYUNpSL9iaUboYa8ZtfsGvgDqFOVDOycDd340Uvsac0XPvwYJhqZfyxruZGLMq
-         UEhgYCitAVyrCLSxtx+mYTjNOh6F+XR0etFVp5QvkngEd1kKeecQBMqtIvsBKk8lLdbS
-         8ePtD8ouJN7W/vgTyUD6dmyt9MQMpQWwNrHPaHnEytei28fFYu2xW4Ny55BS6ur5vxn3
-         lSmQ==
-X-Gm-Message-State: APjAAAWipVFmAF9f56JeZe6zT/gQb2J+bIGav52PW15TSdowGGYspsS/
-        9a+QdVZua/Fe6nb3LucIYJLubg==
-X-Google-Smtp-Source: APXvYqz44Tfpkk+GdZoxymyVgoEhAr6weX4O6ILp2GFIiVeKdz6RAp1tuYQbqrGK2N425gP+pUQjVw==
-X-Received: by 2002:a63:4a4f:: with SMTP id j15mr8692927pgl.338.1558694493926;
-        Fri, 24 May 2019 03:41:33 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Y5swjDHGKG+ezs/+w53g29T0/qBVH9yKlg23nn55c5E=;
+        b=HHhBLt8MSjSTsBje1XbxX8871o5M4FBYz+21UJgHWEAht+xmzzKgVSOturr3i5hvBt
+         PIMR2Dyy7iOs6YHaQWx6yyG/Lr1qxL6ZgZbYn05vtwFqFJdkNoTwxKcLPE5bV83LL/MC
+         VmonmzZPpa0wO94SId9W9ktEJ6regtUnVgf7sUbyDV39gawYeLbFqd1pd3YBIgTsGlTx
+         Suog3mT6+O6I1qN5u0Tiyvjgj6oiYMnT/huGuarxRaTyjuxCWVYDLpB9Wp/z3dH5ZdgR
+         n7bXMjFiMFr6WEmz52r9YzfzS5Ora6ft7aWOu28c+ORM6w9sTvLRRuRY041UjWgkU06i
+         oW9w==
+X-Gm-Message-State: APjAAAV9yhQcOUEI9o6ESQrJW8CMAdGvzhm1H+8sKfXVNBRZwKMbQd9/
+        8AaGBTADWyahRoU/dUHhBoQYBw==
+X-Google-Smtp-Source: APXvYqyvPrCWj4wLzn1Yd+9CbYrQKIVeghMZMryVtTFYZMAHt18ZSgOULimYpUVkB3YXKeqkBNPeBw==
+X-Received: by 2002:a63:9d8d:: with SMTP id i135mr104296236pgd.245.1558694509078;
+        Fri, 24 May 2019 03:41:49 -0700 (PDT)
 Received: from localhost.localdomain ([183.82.227.60])
-        by smtp.gmail.com with ESMTPSA id m72sm6550113pjb.7.2019.05.24.03.41.27
+        by smtp.gmail.com with ESMTPSA id m72sm6550113pjb.7.2019.05.24.03.41.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 03:41:33 -0700 (PDT)
+        Fri, 24 May 2019 03:41:48 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Andrzej Hajda <a.hajda@samsung.com>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
@@ -55,11 +55,14 @@ Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 0/6] drm/bridge: Add ICN6211 MIPI-DSI/RGB bridge
-Date:   Fri, 24 May 2019 16:11:09 +0530
-Message-Id: <20190524104115.20161-1-jagan@amarulasolutions.com>
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2 1/6] drm/sun4i: dsi: Use drm panel_or_bridge call
+Date:   Fri, 24 May 2019 16:11:10 +0530
+Message-Id: <20190524104115.20161-2-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20190524104115.20161-1-jagan@amarulasolutions.com>
+References: <20190524104115.20161-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,50 +70,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drm/bridge: Add ICN6211 MIPI-DSI/RGB bridge
+Right now the driver is finding the panel using of_drm_find_panel,
+replace the same with drm_of_find_panel_or_bridge which would help
+to find the panel or bridge on the same call if bridge support added
+in future.
 
-This is v2 series for supporting Chipone ICN6211 DSI/RGB bridge,
-here is the previous version set[1]
+Added NULL in bridge argument, same will replace with bridge parameter
+once bridge supported.
 
-The overlay patch, has Bananapi panel which would depends on,
-previous MIPI DSI fixes series[2] to make the panel works.
+Cc: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Changes for v2:
-- use panel_or_bridge for finding panel and bridge
-- add panel overlay dts patch for port based panel enablement
-- update the bridge sequence dynamically, by getting mode
-  timings from panel-simple
-- correct the brinding compatible
-- add more information in binding example
-- replace the bridge detach with proper ops
-- add bridge overlay dts patch for port based panel enablement
-
-[2] https://patchwork.freedesktop.org/series/60847/
-[1] https://patchwork.freedesktop.org/series/58060/
-
-Any inputs?
-Jagan.
-
-Jagan Teki (6):
-  drm/sun4i: dsi: Use drm panel_or_bridge call
-  [DO NOT MERGE] ARM: dts: sun8i: bananapi-m2m: Enable Bananapi S070WV20-CT16 DSI panel
-  drm/sun4i: dsi: Add bridge support
-  dt-bindings: display: bridge: Add ICN6211 MIPI-DSI to RGB converter bridge
-  drm/bridge: Add Chipone ICN6211 MIPI-DSI/RGB converter bridge
-  [DO NOT MERGE] ARM: dts: sun8i: bananapi-m2m: Enable Bananapi S070WV20-CT16 DSI panel
-
- .../display/bridge/chipone,icn6211.txt        |  78 ++++
- MAINTAINERS                                   |   6 +
- arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts  |  86 +++++
- drivers/gpu/drm/bridge/Kconfig                |  10 +
- drivers/gpu/drm/bridge/Makefile               |   1 +
- drivers/gpu/drm/bridge/chipone-icn6211.c      | 344 ++++++++++++++++++
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        |  67 +++-
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h        |   1 +
- 8 files changed, 575 insertions(+), 18 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/chipone,icn6211.txt
- create mode 100644 drivers/gpu/drm/bridge/chipone-icn6211.c
-
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 65771e9a343a..ae2fe31b05b1 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -21,6 +21,7 @@
+ #include <drm/drmP.h>
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_mipi_dsi.h>
++#include <drm/drm_of.h>
+ #include <drm/drm_panel.h>
+ #include <drm/drm_probe_helper.h>
+ 
+@@ -964,11 +965,13 @@ static int sun6i_dsi_attach(struct mipi_dsi_host *host,
+ 			    struct mipi_dsi_device *device)
+ {
+ 	struct sun6i_dsi *dsi = host_to_sun6i_dsi(host);
++	int ret;
+ 
+ 	dsi->device = device;
+-	dsi->panel = of_drm_find_panel(device->dev.of_node);
+-	if (IS_ERR(dsi->panel))
+-		return PTR_ERR(dsi->panel);
++	ret = drm_of_find_panel_or_bridge(host->dev->of_node, 0, 0,
++					  &dsi->panel, NULL);
++	if (ret)
++		return ret;
+ 
+ 	dev_info(host->dev, "Attached device %s\n", device->name);
+ 
 -- 
 2.18.0.321.gffc6fa0e3
 
