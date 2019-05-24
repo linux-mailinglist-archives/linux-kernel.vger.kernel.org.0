@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 049CA29D3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 19:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8070B29D13
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 19:35:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391774AbfEXRhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 13:37:00 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41216 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391362AbfEXRfO (ORCPT
+        id S2391620AbfEXRfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 13:35:18 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36368 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391421AbfEXRfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 13:35:14 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z3so800041pgp.8
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 10:35:14 -0700 (PDT)
+        Fri, 24 May 2019 13:35:15 -0400
+Received: by mail-pl1-f196.google.com with SMTP id d21so4439635plr.3
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 10:35:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=WjG/oYBVCTJ2cGSnVCWqwlxIc3B5k8jAV6xmXnGg2uk=;
-        b=DWnMfzRx8uWzIrexmTH6icT77P0bzj4A6Bl6Me/8fyKJ8+Eh3WN52ltUnTzvTw5zRC
-         HqrcyTxeWw74Fbnf4SkuWYKwDcySDL0v94ERXknwIAdQeEPQRTsFFy3CDrDfEMrsobFu
-         +u6eSxb32WMlbSljrRidcbVprKanMJhy03X3qbq8Oad4e4OzTBhD7CyEW9JdLKtYDhhn
-         vdKgLO8Ndg/mEc0nizAxhj4aLYpounInK92BylqJ4S8KAb4IaOEx2GtsMfkVQA54T0sK
-         9bb6sTPJaVA4Z6ZIDVcJhHa4666uS8PNjQM4icyA/sRqP7SZb86pbQUM1wNKkcdjxGpW
-         XFbQ==
+        bh=bHfFo/ORpsa03SvyTpjVHtc4WYRwtr5BeZCOvFgzYZo=;
+        b=hSBPmd0yHRq5YPvvnYa5Gx0AuXkJSH3B/lf9UvmmoD/BV8lpht4l4I20wq2uLPOEPs
+         u7ufCc6pRQ3OIj5ikzw7wj6tCJb8XA05l+3Ag8o3CxvMzdRYsLnd4zvezjzSjKixKYF9
+         tCi1s+z/0fQW6n6IyymDffRnqsMm0576GcSIFZko3qMfIcB7H2Yn1EIFnLBxojtntpDI
+         up25DcEbYTZjo+CzyW8v3n6/ZyYz/e/SGmtK8MXqs7PkzM0602OyS2k2oNGTq/ntRLDa
+         9thUJP0L0kIiwr1tfYWkIzSUvthKBLIhli1z9zahMaCO5znW4HJDhWd/ywN2Z6EnDT0n
+         do3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=WjG/oYBVCTJ2cGSnVCWqwlxIc3B5k8jAV6xmXnGg2uk=;
-        b=KycMgtk8SdDUy0c4iV9Qkfx5V/fh1cOSOgbGJUB3mQ6Syn5AYn4nHTgUmeGw7y/WRO
-         bwkm+nWPcHW5L59umoiC+WJowttFXAUejMM2QTVvBkE6kgpDGOhVuCfVuAx48rBqV2Ei
-         EiJuMesnSrahn+FG2lUYpcAHOsJaP6NdK4ncv/aHLteVHEgZNsJxCEeSZBGRBId3H9tb
-         3xpz9vxyJs9QJSdM9nExuugtVD3ZF4Hl2DXFdDrq0F1GzyArFyMekUtvNDTQSCSSM17B
-         oUqm58J6CZqJMD4Zfpqyy8R63xsDriCEp6PIpOjmXXmzBbHcc2L6UqZNi+9xD7wqHjiV
-         Sl6g==
-X-Gm-Message-State: APjAAAVtJmcWQMiLSGvqhnxWaL8QwV1kv38AxMBMGwENFiq2BYRUAZ4j
-        a++bO77X4uzO0xlM4uu0tFMz3w==
-X-Google-Smtp-Source: APXvYqxF7Gh9lYjg7zMff3L3s+55twJiUlAXjsPmW0fDU2skcjVUANizUZ6SrVSwPuiqOGu0q2pGPg==
-X-Received: by 2002:a17:90a:d992:: with SMTP id d18mr10956709pjv.74.1558719313700;
-        Fri, 24 May 2019 10:35:13 -0700 (PDT)
+        bh=bHfFo/ORpsa03SvyTpjVHtc4WYRwtr5BeZCOvFgzYZo=;
+        b=Cm+GQC/PbgYaMjnm5rd8cALxFZx/M3Noc1nl3NWjtuEcKaWG856wE1LYSKyh2iM0gw
+         ayT2N1DP9Jb/SbaQZ+D/m+Wp4Pg2qB0IdH04qlMDOHTpFOJqDo+MRFgScEafdIc02Uh2
+         LhqS5o7YAUsVVJSw0Tvx0+ZcZfKbe9HUJqYiH2+KOGAb5mLRzq4/VHfPDps28gvBS0C4
+         gMTZeLoiJ0LQ5O6xYfUmTr3b7kIx4nu8rkEqAXNUoLKVIgAyHS7fCRkYiiLt2mIfhB9Z
+         nbS7RXBca9lhnejZCqK4WppfJzIz2RwVGtU+FET8ObsQIm6aD73vMwHjdNZFkaJxGhbx
+         Z2Xw==
+X-Gm-Message-State: APjAAAUprWX43ySPIqGLV6JGgEl0gOdBFctnP8egogjCtFwGp5C6Up9P
+        iqh8Drw7JHkY98SfASFag/JUcw==
+X-Google-Smtp-Source: APXvYqw3jFqGsxy+JmYpU6cE0TmMJET0MNIbWGdNxRz1i1yMAvwnbNIlpfoAHYWR6fWUT4Gq5Oe/rw==
+X-Received: by 2002:a17:902:2e81:: with SMTP id r1mr91812796plb.0.1558719314882;
+        Fri, 24 May 2019 10:35:14 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id k13sm2809575pgr.90.2019.05.24.10.35.12
+        by smtp.gmail.com with ESMTPSA id k13sm2809575pgr.90.2019.05.24.10.35.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 10:35:13 -0700 (PDT)
+        Fri, 24 May 2019 10:35:14 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     acme@kernel.org
 Cc:     peterz@infradead.org, mingo@redhat.com,
@@ -51,9 +51,9 @@ Cc:     peterz@infradead.org, mingo@redhat.com,
         namhyung@kernel.org, suzuki.poulose@arm.com, leo.yan@linaro.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         coresight@lists.linaro.org
-Subject: [PATCH v2 03/17] perf tools: Configure SWITCH_EVENTS in CPU-wide mode
-Date:   Fri, 24 May 2019 11:34:54 -0600
-Message-Id: <20190524173508.29044-4-mathieu.poirier@linaro.org>
+Subject: [PATCH v2 04/17] perf tools: Add handling of itrace start events
+Date:   Fri, 24 May 2019 11:34:55 -0600
+Message-Id: <20190524173508.29044-5-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190524173508.29044-1-mathieu.poirier@linaro.org>
 References: <20190524173508.29044-1-mathieu.poirier@linaro.org>
@@ -62,29 +62,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ask the perf core to generate an event when processes are swapped in/out of
-context.  That way proper action can be taken by the decoding code when
-faced with such event.
+Add handling of ITRACE events in order to add the tid/pid of the executing
+process to the perf tools machine infrastructure.  This information is
+later retrieved when a contextID packet is found in the trace stream.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- tools/perf/arch/arm/util/cs-etm.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/cs-etm.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index be1e4f20affa..cc7f1cd23b14 100644
---- a/tools/perf/arch/arm/util/cs-etm.c
-+++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -257,6 +257,9 @@ static int cs_etm_recording_options(struct auxtrace_record *itr,
- 	ptr->evlist = evlist;
- 	ptr->snapshot_mode = opts->auxtrace_snapshot_mode;
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index de488b43f440..0742c50fce46 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -1657,6 +1657,29 @@ static int cs_etm__process_timeless_queues(struct cs_etm_auxtrace *etm,
+ 	return 0;
+ }
  
-+	if (perf_can_record_switch_events())
-+		opts->record_switch_events = true;
++static int cs_etm__process_itrace_start(struct cs_etm_auxtrace *etm,
++					union perf_event *event)
++{
++	struct thread *th;
 +
- 	evlist__for_each_entry(evlist, evsel) {
- 		if (evsel->attr.type == cs_etm_pmu->type) {
- 			if (cs_etm_evsel) {
++	if (etm->timeless_decoding)
++		return 0;
++
++	/*
++	 * Add the tid/pid to the log so that we can get a match when
++	 * we get a contextID from the decoder.
++	 */
++	th = machine__findnew_thread(etm->machine,
++				     event->itrace_start.pid,
++				     event->itrace_start.tid);
++	if (!th)
++		return -ENOMEM;
++
++	thread__put(th);
++
++	return 0;
++}
++
+ static int cs_etm__process_event(struct perf_session *session,
+ 				 union perf_event *event,
+ 				 struct perf_sample *sample,
+@@ -1694,6 +1717,9 @@ static int cs_etm__process_event(struct perf_session *session,
+ 		return cs_etm__process_timeless_queues(etm,
+ 						       event->fork.tid);
+ 
++	if (event->header.type == PERF_RECORD_ITRACE_START)
++		return cs_etm__process_itrace_start(etm, event);
++
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
