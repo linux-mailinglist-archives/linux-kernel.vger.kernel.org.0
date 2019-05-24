@@ -2,82 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26B4529AA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B45C29AAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:12:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389555AbfEXPJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:09:54 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:22829 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389467AbfEXPJy (ORCPT
+        id S2389591AbfEXPMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 11:12:14 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36528 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389129AbfEXPMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 11:09:54 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-43-9H9NAz60OGu4ogR4nhuCpQ-1; Fri, 24 May 2019 16:09:51 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 24 May 2019 16:09:50 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 24 May 2019 16:09:50 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        'Oleg Nesterov' <oleg@redhat.com>
-CC:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v2] signal: Adjust error codes according to
- restore_user_sigmask()
-Thread-Topic: [PATCH v2] signal: Adjust error codes according to
- restore_user_sigmask()
-Thread-Index: AQHVELwtsgR+BAQFXk2JV68Wk/7LjKZ4aINAgABVkoCAAB2x0P///TgAgAARdkCAAUypAIAAGykAgAARILA=
-Date:   Fri, 24 May 2019 15:09:50 +0000
-Message-ID: <91b68aa69ab642c3a3cb327776ebda11@AcuMS.aculab.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190522150505.GA4915@redhat.com>
- <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
- <20190522161407.GB4915@redhat.com>
- <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
- <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
- <20190523145944.GB23070@redhat.com>
- <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
- <20190523163604.GE23070@redhat.com>
- <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
- <20190524132911.GA2655@redhat.com>
- <766510cbbec640b18fd99f3946b37475@AcuMS.aculab.com>
-In-Reply-To: <766510cbbec640b18fd99f3946b37475@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 24 May 2019 11:12:14 -0400
+Received: by mail-lf1-f67.google.com with SMTP id y10so7437117lfl.3;
+        Fri, 24 May 2019 08:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3OFuz1ctW8EXs3j2sT/f6sr8fJB1b9c1HDH5fn4La0E=;
+        b=EBqHw7ZZyrMIw0bwCg2e1yg65WCIXKALtx8Hsc5jm4dMOKXhXPyFRI4SBRnqNlKVV6
+         4YKC8SqoVudMHhYj4vZ6fI5jw8C3tKqZrm+SAd5W31m5nucQEs8vobApXCmw5oI0mmQr
+         o7J3fS4YvV2H8k6nwLnvsC/xzpYCN9ygTQ59dslzFkyuHguz2KE+UHOosbzdYpCIwAJX
+         UssSzlD3bMNKe13sc66q8A8s5wwE7wudi1zTkfWBeZn5VGRjC7GUN1CzQnLuTqWOVmsN
+         e6XNG++DJRWNiBycJLKn+U8OOpBE2T1GePW2BDv7oGk2IOOfcUlu+s1OOMnCKIRC6gOl
+         x9wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3OFuz1ctW8EXs3j2sT/f6sr8fJB1b9c1HDH5fn4La0E=;
+        b=AnSdUcLB6Y99zuFKw/cPMDhi2rcIoqP6WhcTOU/YvZNOPGr1tctd8meAr2LzNWpe0Y
+         4m2goG8w/ApPslaxJnjXbmpMUCCm+s5MMG8prO+WrB6Mpiqwlyu+tdtdCY40mkTRwJJR
+         PiW/0ITnl5LQRs9IdL845g0PE+N2qAiylJBXBncxDYgEu0vk7puGvvawjRS+BcBsio7f
+         Rx1yE5Q91elEloYD6SR6pQwBYmH8jscbb8Jl/4KDWVu3mMth/4pAXniV3dVMXTurkUvI
+         DM3TwhqQklHsROSKFN5ubRtY1pgTSTq2FKtfy7QZ+LYIE0yE7plBghlYY8VIUC4kRE2k
+         0DKA==
+X-Gm-Message-State: APjAAAUDgrB8iyf6BsK+a2cWpVIgofM/uKdFWR+X6FaDUl79iFvrZ8Rw
+        f9vQWfzsElpv2E6QrB6XxY8=
+X-Google-Smtp-Source: APXvYqwoFDqcSsqo6ShH12EuQNSjowSOZvAbxkkXO/uL+eDvaYb9H6TBq+WVaIAaetlbdQcaZmIlfw==
+X-Received: by 2002:ac2:4286:: with SMTP id m6mr10082691lfh.150.1558710731991;
+        Fri, 24 May 2019 08:12:11 -0700 (PDT)
+Received: from localhost.localdomain ([94.29.35.141])
+        by smtp.gmail.com with ESMTPSA id w25sm860400lfl.0.2019.05.24.08.12.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 08:12:09 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Mallikarjun Kasoju <mkasoju@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 RE-SEND] regulator: max77620: Support Maxim 77663
+Date:   Fri, 24 May 2019 18:10:34 +0300
+Message-Id: <20190524151034.26048-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-MC-Unique: 9H9NAz60OGu4ogR4nhuCpQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogRGF2aWQgTGFpZ2h0DQo+IFNlbnQ6IDI0IE1heSAyMDE5IDE2OjAwDQouLi4NCj4gSSd2
-ZSBoYWQgaG9ycmlkIHRob3VnaHRzIGFib3V0IFNJR19TVVNQRU5EIDotKQ0KDQpOb3QgdG8gbWVu
-dGlvbiBleGl0aW5nIHNpZ25hbCBoYW5kbGVycyB3aXRoIGxvbmdqbXAoKS4NCg0KCURhdmlkDQoN
-Ci0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJt
-LCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChX
-YWxlcykNCg==
+Add support for Maxim 77663.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+
+This patch was a part of MFD/Regulator patch-series and the MFD patches are
+already in v5.2, the regulator patch was left out because the MFD subsys
+maintainer decided to not take it via the MFD tree. There are no changes in
+v5 of this patch, this is merely a re-send of the patch.
+
+ drivers/regulator/max77620-regulator.c | 26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/max77620-regulator.c b/drivers/regulator/max77620-regulator.c
+index 0ad91a7f9cb9..0ec9f81fe74a 100644
+--- a/drivers/regulator/max77620-regulator.c
++++ b/drivers/regulator/max77620-regulator.c
+@@ -761,6 +761,24 @@ static struct max77620_regulator_info max20024_regs_info[MAX77620_NUM_REGS] = {
+ 	RAIL_LDO(LDO8, ldo8, "in-ldo7-8", N, 800000, 3950000, 50000),
+ };
+ 
++static struct max77620_regulator_info max77663_regs_info[MAX77620_NUM_REGS] = {
++	RAIL_SD(SD0, sd0, "in-sd0", SD0, 600000, 3387500, 12500, 0xFF, NONE),
++	RAIL_SD(SD1, sd1, "in-sd1", SD1, 800000, 1587500, 12500, 0xFF, NONE),
++	RAIL_SD(SD2, sd2, "in-sd2", SDX, 600000, 3787500, 12500, 0xFF, NONE),
++	RAIL_SD(SD3, sd3, "in-sd3", SDX, 600000, 3787500, 12500, 0xFF, NONE),
++	RAIL_SD(SD4, sd4, "in-sd4", SDX, 600000, 3787500, 12500, 0xFF, NONE),
++
++	RAIL_LDO(LDO0, ldo0, "in-ldo0-1", N, 800000, 2375000, 25000),
++	RAIL_LDO(LDO1, ldo1, "in-ldo0-1", N, 800000, 2375000, 25000),
++	RAIL_LDO(LDO2, ldo2, "in-ldo2",   P, 800000, 3950000, 50000),
++	RAIL_LDO(LDO3, ldo3, "in-ldo3-5", P, 800000, 3950000, 50000),
++	RAIL_LDO(LDO4, ldo4, "in-ldo4-6", P, 800000, 1587500, 12500),
++	RAIL_LDO(LDO5, ldo5, "in-ldo3-5", P, 800000, 3950000, 50000),
++	RAIL_LDO(LDO6, ldo6, "in-ldo4-6", P, 800000, 3950000, 50000),
++	RAIL_LDO(LDO7, ldo7, "in-ldo7-8", N, 800000, 3950000, 50000),
++	RAIL_LDO(LDO8, ldo8, "in-ldo7-8", N, 800000, 3950000, 50000),
++};
++
+ static int max77620_regulator_probe(struct platform_device *pdev)
+ {
+ 	struct max77620_chip *max77620_chip = dev_get_drvdata(pdev->dev.parent);
+@@ -785,9 +803,14 @@ static int max77620_regulator_probe(struct platform_device *pdev)
+ 	case MAX77620:
+ 		rinfo = max77620_regs_info;
+ 		break;
+-	default:
++	case MAX20024:
+ 		rinfo = max20024_regs_info;
+ 		break;
++	case MAX77663:
++		rinfo = max77663_regs_info;
++		break;
++	default:
++		return -EINVAL;
+ 	}
+ 
+ 	config.regmap = pmic->rmap;
+@@ -881,6 +904,7 @@ static const struct dev_pm_ops max77620_regulator_pm_ops = {
+ static const struct platform_device_id max77620_regulator_devtype[] = {
+ 	{ .name = "max77620-pmic", },
+ 	{ .name = "max20024-pmic", },
++	{ .name = "max77663-pmic", },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(platform, max77620_regulator_devtype);
+-- 
+2.21.0
 
