@@ -2,126 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4CA296E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16580296EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:18:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390783AbfEXLQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:16:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60340 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390410AbfEXLQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:16:33 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7488D309266A;
-        Fri, 24 May 2019 11:16:33 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-20.pek2.redhat.com [10.72.12.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B711517243;
-        Fri, 24 May 2019 11:16:23 +0000 (UTC)
-Subject: Re: [PATCH] scsi: smartpqi: properly set both the DMA mask and the
- coherent DMA mask in pqi_pci_init()
-To:     Don.Brace@microchip.com, Thomas.Lendacky@amd.com,
-        linux-kernel@vger.kernel.org
-Cc:     don.brace@microsemi.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        esc.storagedev@microsemi.com, dyoung@redhat.com
-References: <20190523055212.23568-1-lijiang@redhat.com>
- <c5d45523-43f5-d2fd-01ac-85f285146ecd@amd.com>
- <SN6PR11MB2767D4410415F0B03BFE900DE1010@SN6PR11MB2767.namprd11.prod.outlook.com>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <cea857c8-12db-d10c-124a-fd68cdcdc202@redhat.com>
-Date:   Fri, 24 May 2019 19:16:17 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2390871AbfEXLSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:18:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37842 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390759AbfEXLSk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 07:18:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MwsXLs7WTZaHxJpnrqoGN4CLjyg7waRkeF8Z+h9pCfA=; b=dWcgLrZoVDg62DirK77o+eC7x
+        wxkOHptuRv34IPZg2fqfuDEf6hyMn/LD2xO3ZHyILpKXC4tM1ngwnCthGFgR2rIjAWHT/GVmnF51O
+        1yda5LCb1txf0XlYovXt7RubaokJKOGKRXr5RJYNoU6VLvd89D8nCREMM4DgNYog35uIJ9vf3o3fh
+        7QE0auEW8jgKa/i90HKXp8nCDU7WZS/tRqSRwAikitk5LLL048PsizIudFbJSH22Gj9cnwNvaivMz
+        tlaUJ6NGTbuwHEderejD+yg0bd41IniWaRXaxxYQ/2IPEiBCBLImAfvTpBuinnxJV/lOdKBvzVuWu
+        tvdK2oLSg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hU8DB-0007nx-Ar; Fri, 24 May 2019 11:18:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A486A2029B0A3; Fri, 24 May 2019 13:18:07 +0200 (CEST)
+Date:   Fri, 24 May 2019 13:18:07 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        aou@eecs.berkeley.edu, arnd@arndb.de, bp@alien8.de,
+        catalin.marinas@arm.com, davem@davemloft.net, fenghua.yu@intel.com,
+        heiko.carstens@de.ibm.com, herbert@gondor.apana.org.au,
+        ink@jurassic.park.msu.ru, jhogan@kernel.org, linux@armlinux.org.uk,
+        mattst88@gmail.com, mingo@kernel.org, mpe@ellerman.id.au,
+        palmer@sifive.com, paul.burton@mips.com, paulus@samba.org,
+        ralf@linux-mips.org, rth@twiddle.net, stable@vger.kernel.org,
+        tglx@linutronix.de, tony.luck@intel.com, vgupta@synopsys.com,
+        gregkh@linuxfoundation.org, jhansen@vmware.com, vdasa@vmware.com,
+        aditr@vmware.com, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 00/18] locking/atomic: atomic64 type cleanup
+Message-ID: <20190524111807.GS2650@hirez.programming.kicks-ass.net>
+References: <20190522132250.26499-1-mark.rutland@arm.com>
+ <20190523083013.GA4616@andrea>
+ <20190523101926.GA3370@lakrids.cambridge.arm.com>
+ <20190524103731.GN2606@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <SN6PR11MB2767D4410415F0B03BFE900DE1010@SN6PR11MB2767.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 24 May 2019 11:16:33 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190524103731.GN2606@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2019年05月24日 06:55, Don.Brace@microchip.com 写道:
-> -----Original Message-----
-> From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-owner@vger.kernel.org] On Behalf Of Lendacky, Thomas
-> Sent: Thursday, May 23, 2019 9:45 AM
-> To: Lianbo Jiang <lijiang@redhat.com>; linux-kernel@vger.kernel.org
-> Cc: don.brace@microsemi.com; jejb@linux.ibm.com; martin.petersen@oracle.com; linux-scsi@vger.kernel.org; esc.storagedev@microsemi.com; dyoung@redhat.com
-> Subject: Re: [PATCH] scsi: smartpqi: properly set both the DMA mask and the coherent DMA mask in pqi_pci_init()
+On Fri, May 24, 2019 at 12:37:31PM +0200, Peter Zijlstra wrote:
+> On Thu, May 23, 2019 at 11:19:26AM +0100, Mark Rutland wrote:
 > 
-> On 5/23/19 12:52 AM, Lianbo Jiang wrote:
->> When SME is enabled, the smartpqi driver won't work on the HP DL385
->> G10 machine, which causes the failure of kernel boot because it fails 
->> to allocate pqi error buffer. Please refer to the kernel log:
->> ....
->> [    9.431749] usbcore: registered new interface driver uas
->> [    9.441524] Microsemi PQI Driver (v1.1.4-130)
->> [    9.442956] i40e 0000:04:00.0: fw 6.70.48768 api 1.7 nvm 10.2.5
->> [    9.447237] smartpqi 0000:23:00.0: Microsemi Smart Family Controller found
->>          Starting dracut initqueue hook...
->> [  OK  ] Started Show Plymouth Boot Scre[    9.471654] Broadcom NetXtreme-C/E driver bnxt_en v1.9.1
->> en.
->> [  OK  ] Started Forward Password Requests to Plymouth Directory Watch.
->> [[0;[    9.487108] smartpqi 0000:23:00.0: failed to allocate PQI error buffer
->> ....
->> [  139.050544] dracut-initqueue[949]: Warning: dracut-initqueue 
->> timeout - starting timeout scripts [  139.589779] 
->> dracut-initqueue[949]: Warning: dracut-initqueue timeout - starting 
->> timeout scripts
->>
->> For correct operation, lets call the dma_set_mask_and_coherent() to 
->> properly set the mask for both streaming and coherent, in order to 
->> inform the kernel about the devices DMA addressing capabilities.
+> > [mark@lakrids:~/src/linux]% git grep '\(return\|=\)\s\+atomic\(64\)\?_set'
+> > include/linux/vmw_vmci_defs.h:  return atomic_set((atomic_t *)var, (u32)new_val);
+> > include/linux/vmw_vmci_defs.h:  return atomic64_set(var, new_val);
+> > 
 > 
-> You should probably expand on this a bit...  Basically, the fact that the coherent DMA mask value wasn't set caused the driver to fall back to SWIOTLB when SME is active.
+> Oh boy, what a load of crap you just did find.
+> 
+> How about something like the below? I've not read how that buffer is
+> used, but the below preserves all broken without using atomic*_t.
 
-Thank you, Tom.
+Clarified by something along these lines?
 
-> I'm not sure if the failure was from running out of SWIOTLB or exceeding the maximum allocation size for SWIOTLB
-If so, it should print some messages like "swiotlb buffer is full", but i did not get such a log.
+---
+ Documentation/atomic_t.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> I believe the fix is proper, but I'll let the driver owner comment on that.
-> 
-> Thanks,
-> Tom
-> 
-> Acked-by: Don Brace <don.brace@microsemi.com>
-> Tested-by: Don Brace <don.brace@microsemi.com>
-> 
-> Please add the extra description suggested by Thomas.
-> 
-OK, i will add Tom's description to patch log and post again.
-
-Thank you, Don.
-
-Lianbo
-> 
->>
->> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
->> ---
->>  drivers/scsi/smartpqi/smartpqi_init.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/scsi/smartpqi/smartpqi_init.c 
->> b/drivers/scsi/smartpqi/smartpqi_init.c
->> index c26cac819f9e..8b1fde6c7dab 100644
->> --- a/drivers/scsi/smartpqi/smartpqi_init.c
->> +++ b/drivers/scsi/smartpqi/smartpqi_init.c
->> @@ -7282,7 +7282,7 @@ static int pqi_pci_init(struct pqi_ctrl_info *ctrl_info)
->>         else
->>                 mask = DMA_BIT_MASK(32);
->>
->> -       rc = dma_set_mask(&ctrl_info->pci_dev->dev, mask);
->> +       rc = dma_set_mask_and_coherent(&ctrl_info->pci_dev->dev, 
->> + mask);
->>         if (rc) {
->>                 dev_err(&ctrl_info->pci_dev->dev, "failed to set DMA mask\n");
->>                 goto disable_device;
->> --
->> 2.17.1
->>
+diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
+index dca3fb0554db..125c95ddbbc0 100644
+--- a/Documentation/atomic_t.txt
++++ b/Documentation/atomic_t.txt
+@@ -83,6 +83,9 @@ The non-RMW ops are (typically) regular LOADs and STOREs and are canonically
+ implemented using READ_ONCE(), WRITE_ONCE(), smp_load_acquire() and
+ smp_store_release() respectively.
+ 
++Therefore, if you find yourself only using the Non-RMW operations of atomic_t,
++you do not in fact need atomic_t at all and are doing it wrong.
++
+ The one detail to this is that atomic_set{}() should be observable to the RMW
+ ops. That is:
+ 
