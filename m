@@ -2,163 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9513629362
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:48:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A12202936B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:50:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389667AbfEXIss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:48:48 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42220 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389488AbfEXIss (ORCPT
+        id S2389711AbfEXIu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:50:27 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33828 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389448AbfEXIu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:48:48 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 188so7925209ljf.9
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=GhIlaR2R/WDcCpztQRUoJRfl8xHyTqpHnxSrqDeAz1A=;
-        b=esWJX+crexokT24aSBq5Qlk0UnAO4fbSyr2+zVaV61DjyX54uyW31dzHTs9zhRemz0
-         MPZM5vt3law+QdnOKFtJDUDEtivlLS9uENDJNeWW7riuob+6NJGhammsgZI4BWppGwoa
-         mchEo0oPeLbxsIUMue1nwTmKpSwLD9lkeT3kvyDq9uTQKBma6+ahMdLu6kpkZ+ghH+FS
-         BDqnGyfxmKXu+BR98QbRRsgU9PaYSXv1w/yV1Ql1BoKlp2ytfaH5/tqB4jc/42MMEAGv
-         eCcVZK7cmqrHqd+535XWH7ms5RYWUE6COeOGxVZTHbHeLkBPV7IWPNbOUfDURqI2uWhx
-         HTpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GhIlaR2R/WDcCpztQRUoJRfl8xHyTqpHnxSrqDeAz1A=;
-        b=aSSlhOR/L22/6trYs4E6S0mCO++qvfeJBwIimpF4utP0YD3Ug8O7BM5isXZoONw8Wi
-         DLVo+Mlj3YL+7nbU4IWa78PcOS3sx9COw7c+3HLWJ5AFR/l77j8mnWxWWRCvVf5O8jro
-         Zi7GlOg8ssKZLGqDMg77Vzld1tCKHiX/I3XNG+MQgg4NRHDd4390Bcc7uAzeETspPqFf
-         1JDoDKWJYqP3TZy0AcnlUekzhRcFUawhtt9FFDpw31NgK2BuOnZXyjYVjtO2TSFpOc/3
-         L6PdpCIoWTwk9f0KXSjw7g3tNft+QDaNQUVSaGDujl7Is4P9tq40sozhEYsbWVYsNNP2
-         48cQ==
-X-Gm-Message-State: APjAAAVptGlU+z5nlNBWX9Xgp+eoa/7LDc+Lv/aF1OW1i9L8BWTLSGPX
-        xN/+BzcL/FCaNugIVcAnZj/pS6/bODrLQAh2t0B3fw==
-X-Google-Smtp-Source: APXvYqwEYr9zI6BkhnUM++IfeCcC+xbSOsMTtYqvpe6zA/njTkpkrPLs5HySfbG+rBCaT0DAWzeOiXT/AKbWPtdZdlc=
-X-Received: by 2002:a2e:864e:: with SMTP id i14mr20074286ljj.141.1558687726068;
- Fri, 24 May 2019 01:48:46 -0700 (PDT)
+        Fri, 24 May 2019 04:50:26 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4O8oKVl026215;
+        Fri, 24 May 2019 03:50:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1558687820;
+        bh=/qvsKjjrzMOuqfE4AI6CHRCXStcPXbN8fsAEk/gLESs=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=nVJO//LY62/0eRWDhHco9r9Bn/VCALRTJ4cKK7P3GOCXtmUaVUYabTcb0j6z27Bti
+         DrlyB/6s8pbI4KERybu7FufAsgGmRlkezij6fJX1mh51ntKdt655a26rdsL725llrU
+         7xYKGNaA7uOQFYabwoN4RWdUiuwf9jgiLeFh2mMM=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4O8oKWS061465
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 24 May 2019 03:50:20 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 24
+ May 2019 03:50:20 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 24 May 2019 03:50:20 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4O8oHsQ020943;
+        Fri, 24 May 2019 03:50:18 -0500
+Subject: Re: [PATCH v2] PCI: endpoint: Skip odd BAR when skipping 64bit BAR
+To:     Alan Mikhak <alan.mikhak@sifive.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lorenzo.pieralisi@arm.com>,
+        <linux-riscv@lists.infradead.org>, <palmer@sifive.com>,
+        <paul.walmsley@sifive.com>
+References: <1558648540-14239-1-git-send-email-alan.mikhak@sifive.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <5ea275c0-b502-1f3e-c94d-487f3e0292fc@ti.com>
+Date:   Fri, 24 May 2019 14:19:03 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190523181731.372074275@linuxfoundation.org>
-In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 24 May 2019 14:18:34 +0530
-Message-ID: <CA+G9fYsXDbU-ZLD1mji8c8rNErVu+YOUvbw2rpXvMPXdRC5NPg@mail.gmail.com>
-Subject: Re: [PATCH 4.19 000/114] 4.19.46-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1558648540-14239-1-git-send-email-alan.mikhak@sifive.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 May 2019 at 00:44, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.46 release.
-> There are 114 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat 25 May 2019 06:15:02 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.46-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi,
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+On 24/05/19 3:25 AM, Alan Mikhak wrote:
+> Always skip odd bar when skipping 64bit BARs in pci_epf_test_set_bar()
+> and pci_epf_test_alloc_space().
+> 
+> Otherwise, pci_epf_test_set_bar() will call pci_epc_set_bar() on odd loop
+> index when skipping reserved 64bit BAR. Moreover, pci_epf_test_alloc_space()
+> will call pci_epf_alloc_space() on bind for odd loop index when BAR is 64bit
+> but leaks on subsequent unbind by not calling pci_epf_free_space().
+> 
+> Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
+> Reviewed-by: Paul Walmsley <paul.walmsley@sifive.com>
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 25 ++++++++++++-------------
+>  1 file changed, 12 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index 27806987e93b..96156a537922 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -389,7 +389,7 @@ static void pci_epf_test_unbind(struct pci_epf *epf)
+>  
+>  static int pci_epf_test_set_bar(struct pci_epf *epf)
+>  {
+> -	int bar;
+> +	int bar, add;
+>  	int ret;
+>  	struct pci_epf_bar *epf_bar;
+>  	struct pci_epc *epc = epf->epc;
+> @@ -400,8 +400,14 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+>  
+>  	epc_features = epf_test->epc_features;
+>  
+> -	for (bar = BAR_0; bar <= BAR_5; bar++) {
+> +	for (bar = BAR_0; bar <= BAR_5; bar += add) {
+>  		epf_bar = &epf->bar[bar];
+> +		/*
+> +		 * pci_epc_set_bar() sets PCI_BASE_ADDRESS_MEM_TYPE_64
+> +		 * if the specific implementation required a 64-bit BAR,
+> +		 * even if we only requested a 32-bit BAR.
+> +		 */
 
-Summary
-------------------------------------------------------------------------
+set_bar shouldn't set PCI_BASE_ADDRESS_MEM_TYPE_64. If a platform supports only
+64-bit BAR, that should be specified in epc_features bar_fixed_64bit member.
 
-kernel: 4.19.46-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: 071ff9cc98498f489abc097471549b19933ba3e2
-git describe: v4.19.45-115-g071ff9cc9849
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.45-115-g071ff9cc9849
-
-
-No regressions (compared to build v4.19.45)
-
-No fixes (compared to build v4.19.45)
-
-Ran 23173 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Thanks
+Kishon
