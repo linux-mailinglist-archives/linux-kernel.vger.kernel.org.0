@@ -2,71 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D89E29E8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 20:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA84729E91
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 20:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391753AbfEXS4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 14:56:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59610 "EHLO mail.kernel.org"
+        id S1731979AbfEXS4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 14:56:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391181AbfEXS4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 14:56:23 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729017AbfEXS4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 14:56:38 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0B0B21848;
-        Fri, 24 May 2019 18:56:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01E262184E;
+        Fri, 24 May 2019 18:56:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558724182;
-        bh=6Epa1m9LNZsgEwNRSEGbamh91rJfdsZ6dvkBcZsooN0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=19BseHudoDiVcs2Sh836Bi/rmib5/BqtgYUscahe7w34x91wNnCjTbXxPjNWAqSm6
-         fsx7FDuyJzNNNGiXJa/DBaKUTUUAeNq6i60EAqOrnu0RtS5oyJMnKbykeW5YnESWtU
-         uP8QPBd+9CGdSbVdz1wR/ldeIgE3IMhjUtwGZ8W0=
-Subject: Re: [PATCH 4.9 00/53] 4.9.179-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190523181710.981455400@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <d86f648a-4dd5-4eee-dcd9-13abbd019855@kernel.org>
-Date:   Fri, 24 May 2019 12:56:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        s=default; t=1558724197;
+        bh=mDq/DWwgp3UM71BT18cgNx7A9Iyxv2hOHPkkrxaLreY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UkL5oanR0C4pERFmmeGAEx005S21NpvisgZIXizHIlgfhFI5z9XQqxOmiAcorXohw
+         ktqNZQYGo62yjCX2ADIFb2diz51G0Pz2LHOkL4e7je7dY7rsIF0ahZ8hrCIt0XRbAe
+         OzdADpJAFitmnOYrmYa29LnFFGZIm8oDXZ1k4YmM=
+Date:   Fri, 24 May 2019 20:56:35 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     richard.gong@linux.intel.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, dinguyen@kernel.org,
+        atull@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sen.li@intel.com,
+        Richard Gong <richard.gong@intel.com>
+Subject: Re: [PATCHv3 3/4] firmware: rsu: document sysfs interface
+Message-ID: <20190524185635.GA13200@kroah.com>
+References: <1558616610-499-1-git-send-email-richard.gong@linux.intel.com>
+ <1558616610-499-4-git-send-email-richard.gong@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1558616610-499-4-git-send-email-richard.gong@linux.intel.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/23/19 1:05 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.179 release.
-> There are 53 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, May 23, 2019 at 08:03:29AM -0500, richard.gong@linux.intel.com wrote:
+> From: Richard Gong <richard.gong@intel.com>
 > 
-> Responses should be made by Sat 25 May 2019 06:15:18 PM UTC.
-> Anything received after that time might be too late.
+> Describe Intel Stratix10 Remote System Update (RSU) device attributes
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.179-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
+> Signed-off-by: Richard Gong <richard.gong@intel.com>
+> Reviewed-by: Alan Tull <atull@kernel.org>
+> ---
+> v2: changed to use tab everywhere and wrap lines at 72 colums
+>     s/soc:firmware:svc:rsu/stratix10-rsu.0
+>     added for watchdog
+> v3: s/KernelVersion:5.2/KernelVersion:5.3
+> ---
+>  .../testing/sysfs-devices-platform-stratix10-rsu   | 100 +++++++++++++++++++++
+>  1 file changed, 100 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-devices-platform-stratix10-rsu
 > 
-> thanks,
-> 
-> greg k-h
-> 
+> diff --git a/Documentation/ABI/testing/sysfs-devices-platform-stratix10-rsu b/Documentation/ABI/testing/sysfs-devices-platform-stratix10-rsu
+> new file mode 100644
+> index 0000000..73ebaf2
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-devices-platform-stratix10-rsu
+> @@ -0,0 +1,100 @@
+> +		Intel Stratix10 Remote System Update (RSU) device attributes
+> +
+> +What:		/sys/devices/platform/stratix10-rsu.0/current_image
+> +Date:		May 2019
+> +KernelVersion:	5.3
+> +Contact:	Richard Gong <richard.gong@intel.com>
+> +Description:
+> +		(RO) the address of image currently running in flash.
+> +
+> +What:		/sys/devices/platform/stratix10-rsu.0/fail_image
+> +Date:		May 2019
+> +KernelVersion:	5.3
+> +Contact:	Richard Gong <richard.gong@intel.com>
+> +Description:
+> +		(RO) the address of failed image in flash.
+> +
+> +What:		/sys/devices/platform/stratix10-rsu.0/state
+> +Date:		May 2019
+> +KernelVersion:	5.3
+> +Contact:	Richard Gong <richard.gong@intel.com>
+> +Description:
+> +		(RO) the state of RSU system.
+> +		The state field has two parts: major error code in upper 16 bits and
+> +		minor error code in lower 16 bits.
+> +
+> +		Major error code:
+> +			0xF001	bitstream error
+> +			0xF002	hardware access failure
+> +			0xF003	bitstream corruption
+> +			0xF004	internal error
+> +			0xF005	device error
+> +			0xF006	CPU watchdog timeout
+> +			0xF007	internal unknown error
+> +		Minor error code:
+> +			Currently used only when major error is 0xF006
+> +			(CPU watchdog timeout), in which case the minor
+> +			error code is the value reported by CPU to
+> +			firmware through the RSU notify command before
+> +			the watchdog timeout occurs.
+> +
+> +What:		/sys/devices/platform/stratix10-rsu.0/fail_image
+> +Date:           May 2019
+> +KernelVersion:  5.3
+> +Contact:        Richard Gong <richard.gong@intel.com>
+> +Description:
+> +		(RO) the version number of RSU firmware.
+> +
+> +What:		/sys/devices/platform/stratix10-rsu.0/error_location
+> +Date:           May 2019
+> +KernelVersion:  5.3
+> +Contact:        Richard Gong <richard.gong@intel.com>
+> +Description:
+> +		(RO) the error offset inside the image that failed.
+> +
 
-Compiled and booted on my test system. No dmesg regressions.
+You are mixing tabs and spaces in this file.  Please always just use
+tabs.
 
 thanks,
--- Shuah
+
+greg k-h
