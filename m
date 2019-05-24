@@ -2,76 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1655D297A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B336297AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:56:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391376AbfEXLx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:53:56 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36530 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390961AbfEXLxz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:53:55 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y10so6936512lfl.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ArzXIkFbICKV9szOeGfzmIhB8Bq88PwXMETYybb74ok=;
-        b=jzEE+tTJPbcrtJ4L4eQdnvHMcevMqqx5FcY5sYaJi/hIwBRhZf/eda7UvoUBQsKPrF
-         3m4yW6UvhCwqrLuTnJoHBQGDRuV5vuBC3s0BZDXXgyU8F63o9UUhp4aTVAhdsNPaC4f7
-         U/Z2i3KAEq9rF7xHmkGh9bWREmGY2xB+DYAEEucYsFhkF18+R2fckx2ZSQgFVQJL8rLd
-         2lPdfoYC0Z2KMEYKi9xauWIqUDH5QN/xPrx/qgz8w4juGGoqw22wrxY2EnESQ3qhRkUz
-         dvCTi8jOREMhc3LMNJU0DkAGs87Al91/0vpDJ65HmSkGn7dBP1FWLTlYTEIE5hK+7K4T
-         jrjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ArzXIkFbICKV9szOeGfzmIhB8Bq88PwXMETYybb74ok=;
-        b=PaO5kcOixJoJTCROgbLKLZCOPCfogcQERGOPVjPUqapqdrl8r1grLA74dIgK5AwTC7
-         ha2UyZCj+iXxuhgb55/WcwantWay8Nnd9TyAMtwNz6PloO/O3ID5t+nBWor5caqRLu/w
-         lUjW6EZ4bkItro229elMBumk1k67nCpxATsP01WpkSH7vbzQhnAKqdXzKjgpcOuupI6s
-         z7gyjeRXAV9DYbTWAqF44GD5SWg8gPLKxbp2niWMYtO1AFl8U3pf0q+kNaYtHg2CYvpn
-         k3cMa77D9fpsbPUMdnA549TkDDHMULTEP3PawbP3hFpAf+yBu7ffStozDgDuBxw+gxRo
-         pt+g==
-X-Gm-Message-State: APjAAAWo/B93N+bNapShIU23W4q2etGnklMEDzOmLZDnlNAgcu1j36aY
-        JoIHX9MCLiMyd7WxAzhmVIITqPTNsjBv5Q6QjOwefA==
-X-Google-Smtp-Source: APXvYqzE7BYn50MEZEoe+sHHjHC8sPLW6Y7wfn3iSsAAhDLZMksxZFIgx0M3J1CenXT2tXKspxlHD8pFNqWzLwTn398=
-X-Received: by 2002:ac2:4919:: with SMTP id n25mr5435050lfi.114.1558698834149;
- Fri, 24 May 2019 04:53:54 -0700 (PDT)
+        id S2391427AbfEXLyc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:54:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34796 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391271AbfEXLyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 07:54:31 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 88D033087950;
+        Fri, 24 May 2019 11:54:29 +0000 (UTC)
+Received: from carbon (ovpn-200-45.brq.redhat.com [10.40.200.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D13E91001E6C;
+        Fri, 24 May 2019 11:54:20 +0000 (UTC)
+Date:   Fri, 24 May 2019 13:54:18 +0200
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Cc:     grygorii.strashko@ti.com, davem@davemloft.net, ast@kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        xdp-newbies@vger.kernel.org, ilias.apalodimas@linaro.org,
+        netdev@vger.kernel.org, daniel@iogearbox.net,
+        jakub.kicinski@netronome.com, john.fastabend@gmail.com,
+        brouer@redhat.com, Tariq Toukan <tariqt@mellanox.com>
+Subject: Re: [PATCH net-next 3/3] net: ethernet: ti: cpsw: add XDP support
+Message-ID: <20190524135418.5408591e@carbon>
+In-Reply-To: <20190523182035.9283-4-ivan.khoronzhuk@linaro.org>
+References: <20190523182035.9283-1-ivan.khoronzhuk@linaro.org>
+        <20190523182035.9283-4-ivan.khoronzhuk@linaro.org>
 MIME-Version: 1.0
-References: <20190520083101.10229-1-manivannan.sadhasivam@linaro.org> <20190520083101.10229-5-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20190520083101.10229-5-manivannan.sadhasivam@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 24 May 2019 13:53:42 +0200
-Message-ID: <CACRpkda3zvFfEzfVkUT3_zvoL-fTNxF+59T0f8dZtBGV9kQVAg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] dt-bindings: pinctrl: Document pinconf bindings for
- BM1880 SoC
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        alec.lin@bitmain.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 24 May 2019 11:54:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 10:31 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
+On Thu, 23 May 2019 21:20:35 +0300
+Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
 
-> Document pinconf bindings for Bitmain BM1880 SoC.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Add XDP support based on rx page_pool allocator, one frame per page.
+> Page pool allocator is used with assumption that only one rx_handler
+> is running simultaneously. DMA map/unmap is reused from page pool
+> despite there is no need to map whole page.
 
-Uses standard bindings so completely uncontroversial.
-Patch applied.
+When using page_pool for DMA-mapping, your XDP-memory model must use
+1-page per packet, which you state you do.  This is because
+__page_pool_put_page() fallback mode does a __page_pool_clean_page()
+unmapping the DMA.  Ilias and I are looking at options for removing this
+restriction as Mlx5 would need it (when we extend the SKB to return
+pages to page_pool).
 
-Yours,
-Linus Walleij
+Unfortunately, I've found another blocker for drivers using the DMA
+mapping feature of page_pool.  We don't properly handle the case, where
+a remote TX-driver have xdp_frame's in-flight, and simultaneously the
+sending driver is unloaded and take down the page_pool.  Nothing crash,
+but we end-up calling put_page() on a page that is still DMA-mapped.
+
+I'm working on different solutions for fixing this, see here:
+ https://github.com/xdp-project/xdp-project/blob/master/areas/mem/page_pool03_shutdown_inflight.org
+-- 
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
