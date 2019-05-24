@@ -2,123 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E61FF2A156
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 00:37:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 302312A15C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 00:39:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404405AbfEXWhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 18:37:02 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:33143 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404233AbfEXWhC (ORCPT
+        id S2404410AbfEXWjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 18:39:01 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51642 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbfEXWjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 18:37:02 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hUIo8-0003f8-Nz; Fri, 24 May 2019 16:37:00 -0600
-Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hUInz-00078V-TG; Fri, 24 May 2019 16:37:00 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>, linux-arch@vger.kernel.org,
-        Dave Martin <Dave.Martin@arm.com>,
-        James Morse <james.morse@arm.com>
-References: <20190523003916.20726-1-ebiederm@xmission.com>
-        <20190523003916.20726-4-ebiederm@xmission.com>
-        <20190523101702.GG26646@fuggles.cambridge.arm.com>
-        <875zq1gnh4.fsf_-_@xmission.com>
-        <20190523161509.GE31896@fuggles.cambridge.arm.com>
-        <8736l4evkn.fsf@xmission.com>
-        <20190524100008.GE3432@fuggles.cambridge.arm.com>
-Date:   Fri, 24 May 2019 17:36:41 -0500
-In-Reply-To: <20190524100008.GE3432@fuggles.cambridge.arm.com> (Will Deacon's
-        message of "Fri, 24 May 2019 11:00:08 +0100")
-Message-ID: <87o93rcwee.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Fri, 24 May 2019 18:39:00 -0400
+Received: by mail-wm1-f68.google.com with SMTP id f10so3369664wmb.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 15:38:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fyZi6v0mcgKSC16RURy0qopnByCgnXY1K2U9goxfA1Q=;
+        b=JNQS/PTGqlUgYcpzMAYHuZqlDvD2sNfGPlDoRvlyNpPQfxbTZutYHgHCSjsSJCCw05
+         5YmVB59KP6XFcHrAKqxOqRTk6Hr9wRl/t3WLBPgNtb3FGdbcbWTLcHAG8wVVbZqX5ja4
+         9e08U9URC16u5tUAjjOWPTrjp9emoLdkHQ0gikVaBB/CDY/xofJWr5/JmNvBDV7cHUTw
+         XcxwQUgNMMwd8fo0Eas9iV1pSTWD3TghtD0rDuSCLTb3c3Fn4yeh1DBbBaVGUgyKG3tK
+         opPLbHpuRD8/V0Rlas0cihCTst7HIoJ/xDApIijjD/5PGhOoh/stcZc5gpOkc5HLQSYP
+         wI9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fyZi6v0mcgKSC16RURy0qopnByCgnXY1K2U9goxfA1Q=;
+        b=D86zpJQIpFFu6PFqho9J27k3/7Qnv16lCH1xPt+5tQCzz9m0gybPGAgGJ0sz34iA7h
+         ikTvxqs8YxQ3WrHZd0uyuZSkNe4/lXswRtc52/XAb32I4IlR9V03trARB7Bs7akDds8L
+         yyt1mREyRZyBT3B0qHaKCE11Y0UVp4HOHoe7OurkHyBoNRmGh4gJJTMjUKCLujywz+fR
+         V1J4ISc8m/QqT8Ll8+3gZJohrO4n1YHVGnKtkxjZaqkNdY0IiaIAS8VF2SrvoFJs53CP
+         NTZzds4wT0sj26rKDKI+yrj8wuzoz11aiEzeXmy8wJCkg/cz6cHWT155vJLHIZo+LnjZ
+         KYPQ==
+X-Gm-Message-State: APjAAAVlFXu4FDQ5+0dWfURl+1/rdIuE5WT1Q58pST0eiJHxKRRuNwpx
+        1qBeP8Ui04R6xrgJNeFx2wGU86PPnbX16HbtHZRIag==
+X-Google-Smtp-Source: APXvYqxW2n5H9vt7mX4JNr8xeJxdoAikSxRfwl4bvPXYtUPI7AS/sOyLcEt10h951ycbvpy5lE6/mmoD6w3q9rCJBPA=
+X-Received: by 2002:a1c:2e0a:: with SMTP id u10mr63993wmu.92.1558737537847;
+ Fri, 24 May 2019 15:38:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1hUInz-00078V-TG;;;mid=<87o93rcwee.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18KsTklFquJZ3XN9nLI6a6O9i3kp8xGjAc=
-X-SA-Exim-Connect-IP: 72.206.97.68
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,
-        T_TooManySym_01,XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4352]
-        *  0.7 XMSubLong Long Subject
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Will Deacon <will.deacon@arm.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 8418 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.1 (0.0%), b_tie_ro: 2.2 (0.0%), parse: 0.99
-        (0.0%), extract_message_metadata: 11 (0.1%), get_uri_detail_list: 1.49
-        (0.0%), tests_pri_-1000: 7 (0.1%), tests_pri_-950: 1.04 (0.0%),
-        tests_pri_-900: 0.84 (0.0%), tests_pri_-90: 17 (0.2%), check_bayes: 16
-        (0.2%), b_tokenize: 4.6 (0.1%), b_tok_get_all: 5 (0.1%), b_comp_prob:
-        1.42 (0.0%), b_tok_touch_all: 2.8 (0.0%), b_finish: 0.62 (0.0%),
-        tests_pri_0: 159 (1.9%), check_dkim_signature: 0.38 (0.0%),
-        check_dkim_adsp: 2.2 (0.0%), poll_dns_idle: 8204 (97.5%),
-        tests_pri_10: 1.83 (0.0%), tests_pri_500: 8214 (97.6%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [REVIEW][PATCHv2 03/26] signal/arm64: Use force_sig not force_sig_fault for SIGKILL
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <20190524134928.16834-1-jarod@redhat.com> <30882.1558732616@famine>
+In-Reply-To: <30882.1558732616@famine>
+From:   =?UTF-8?B?TWFoZXNoIEJhbmRld2FyICjgpK7gpLngpYfgpLYg4KSs4KSC4KSh4KWH4KS14KS+4KSwKQ==?= 
+        <maheshb@google.com>
+Date:   Fri, 24 May 2019 15:38:46 -0700
+Message-ID: <CAF2d9jhGmsaOZsDWNFihsD4EuEVq9s0xwY22d+FuhBz=A2JpKA@mail.gmail.com>
+Subject: Re: [PATCH net] bonding/802.3ad: fix slave link initialization
+ transition states
+To:     Jay Vosburgh <jay.vosburgh@canonical.com>
+Cc:     Jarod Wilson <jarod@redhat.com>, linux-kernel@vger.kernel.org,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-netdev <netdev@vger.kernel.org>,
+        Heesoon Kim <Heesoon.Kim@stratus.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Will Deacon <will.deacon@arm.com> writes:
-
-> On Thu, May 23, 2019 at 03:59:20PM -0500, Eric W. Biederman wrote:
->> Will Deacon <will.deacon@arm.com> writes:
->> 
->> > On Thu, May 23, 2019 at 11:11:19AM -0500, Eric W. Biederman wrote:
->> >> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
->> >> index ade32046f3fe..e45d5b440fb1 100644
->> >> --- a/arch/arm64/kernel/traps.c
->> >> +++ b/arch/arm64/kernel/traps.c
->> >> @@ -256,7 +256,10 @@ void arm64_force_sig_fault(int signo, int code, void __user *addr,
->> >>  			   const char *str)
->> >>  {
->> >>  	arm64_show_signal(signo, str);
->> >> -	force_sig_fault(signo, code, addr, current);
->> >> +	if (signo == SIGKILL)
->> >> +		force_sig(SIGKILL, current);
->> >> +	else
->> >> +		force_sig_fault(signo, code, addr, current);
->> >>  }
->> >
->> > Acked-by: Will Deacon <will.deacon@arm.com>
->> >
->> > Are you planning to send this series on, or would you like me to pick this
->> > into the arm64 tree?
->> 
->> I am planning on taking this through siginfo tree, unless it causes
->> problems.
+On Fri, May 24, 2019 at 2:17 PM Jay Vosburgh <jay.vosburgh@canonical.com> wrote:
 >
-> Okey doke, it would just be nice to see this patch land in 5.2, that's
-> all.
+> Jarod Wilson <jarod@redhat.com> wrote:
+>
+> >Once in a while, with just the right timing, 802.3ad slaves will fail to
+> >properly initialize, winding up in a weird state, with a partner system
+> >mac address of 00:00:00:00:00:00. This started happening after a fix to
+> >properly track link_failure_count tracking, where an 802.3ad slave that
+> >reported itself as link up in the miimon code, but wasn't able to get a
+> >valid speed/duplex, started getting set to BOND_LINK_FAIL instead of
+> >BOND_LINK_DOWN. That was the proper thing to do for the general "my link
+> >went down" case, but has created a link initialization race that can put
+> >the interface in this odd state.
+>
+Are there any notification consequences because of this change?
 
-As this does not appear to have any real world consequences I am aiming
-at 5.3.  If someone else would like to take it and feed it to Linus
-sooner I won't object.
-
-Eric
-
+>        Reading back in the git history, the ultimate cause of this
+> "weird state" appears to be devices that assert NETDEV_UP prior to
+> actually being able to supply sane speed/duplex values, correct?
+>
+>         Presuming that this is the case, I don't see that there's much
+> else to be done here, and so:
+>
+> Acked-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+>
+> >The simple fix is to instead set the slave link to BOND_LINK_DOWN again,
+> >if the link has never been up (last_link_up == 0), so the link state
+> >doesn't bounce from BOND_LINK_DOWN to BOND_LINK_FAIL -- it hasn't failed
+> >in this case, it simply hasn't been up yet, and this prevents the
+> >unnecessary state change from DOWN to FAIL and getting stuck in an init
+> >failure w/o a partner mac.
+> >
+> >Fixes: ea53abfab960 ("bonding/802.3ad: fix link_failure_count tracking")
+> >CC: Jay Vosburgh <j.vosburgh@gmail.com>
+> >CC: Veaceslav Falico <vfalico@gmail.com>
+> >CC: Andy Gospodarek <andy@greyhouse.net>
+> >CC: "David S. Miller" <davem@davemloft.net>
+> >CC: netdev@vger.kernel.org
+> >Tested-by: Heesoon Kim <Heesoon.Kim@stratus.com>
+> >Signed-off-by: Jarod Wilson <jarod@redhat.com>
+>
+>
+>
+> >---
+> > drivers/net/bonding/bond_main.c | 15 ++++++++++-----
+> > 1 file changed, 10 insertions(+), 5 deletions(-)
+> >
+> >diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+> >index 062fa7e3af4c..407f4095a37a 100644
+> >--- a/drivers/net/bonding/bond_main.c
+> >+++ b/drivers/net/bonding/bond_main.c
+> >@@ -3122,13 +3122,18 @@ static int bond_slave_netdev_event(unsigned long event,
+> >       case NETDEV_CHANGE:
+> >               /* For 802.3ad mode only:
+> >                * Getting invalid Speed/Duplex values here will put slave
+> >-               * in weird state. So mark it as link-fail for the time
+> >-               * being and let link-monitoring (miimon) set it right when
+> >-               * correct speeds/duplex are available.
+> >+               * in weird state. Mark it as link-fail if the link was
+> >+               * previously up or link-down if it hasn't yet come up, and
+> >+               * let link-monitoring (miimon) set it right when correct
+> >+               * speeds/duplex are available.
+> >                */
+> >               if (bond_update_speed_duplex(slave) &&
+> >-                  BOND_MODE(bond) == BOND_MODE_8023AD)
+> >-                      slave->link = BOND_LINK_FAIL;
+> >+                  BOND_MODE(bond) == BOND_MODE_8023AD) {
+> >+                      if (slave->last_link_up)
+> >+                              slave->link = BOND_LINK_FAIL;
+> >+                      else
+> >+                              slave->link = BOND_LINK_DOWN;
+> >+              }
+> >
+> >               if (BOND_MODE(bond) == BOND_MODE_8023AD)
+> >                       bond_3ad_adapter_speed_duplex_changed(slave);
+> >--
+> >2.20.1
+> >
