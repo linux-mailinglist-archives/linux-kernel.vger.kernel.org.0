@@ -2,55 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB5B229248
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:00:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 499C029245
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:00:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389357AbfEXIAU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:00:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37367 "EHLO
+        id S2389242AbfEXIAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:00:09 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34235 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389001AbfEXIAT (ORCPT
+        with ESMTP id S2388996AbfEXIAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:00:19 -0400
+        Fri, 24 May 2019 04:00:08 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4O7wjmW114869
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4O7xOm5115005
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 24 May 2019 00:58:45 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4O7wjmW114869
+        Fri, 24 May 2019 00:59:24 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4O7xOm5115005
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1558684726;
-        bh=d498370uNJzjkSB2ppzDKeE46E+k/K8w1znYVdM5fv0=;
+        s=2019051801; t=1558684764;
+        bh=gR+sVOfv9g9vi8Nv64InJyGxDz7fDw8ERv85hAVYXQM=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=XvrD3J9VuJz6VfVGXV61ImGoXS0Y5jh8JEvS9oaVuC7m/eBDhmPw7N/LXJEsiGexN
-         GDRzOV5E0QQjR83PWr7xgYgfq/+UD3Al+MbmW6HhDqoyGaTTP1ZZIjJwg5F++jZxzU
-         4fIDgQaW8H2TYN/hE9B7aKljBJkqio5cvw2UH5oudZz3k2aybO7l61aYn+4RarCqrH
-         IoMaMKFnTphsSpSAQlKOf9c9h+fukTzV3mreUO/PwE4yTeDEoP8c2DTaFmQ0edsB7F
-         tWKH9jQvXf8+VTtiMoqEWABFAUAzhvUzN/IClIhU3HNb47FjEeZONFpjy9mBMSxJGR
-         tSv26q+vLmaQg==
+        b=vl27+EdKwkCt1uJzIw81rFHxSzKLBrXtPvlzcQqMpU7k4gV+1BYK6s3ATZBRrKu00
+         7SbMQ2Yzz6ZqG5QNfSGXuABEuRsd+LpY6BsMJjkkPKunoTqx7v10YG7SfDuQbsR/d3
+         dFzdfmK/Mm+eqxQZI0mQFRdrfw9CUd6VB5O/nZeiBFD80wAwWtcZUIoNjZywd8em8/
+         ooW/q2X5Hbh123QICvlbr7FwGHoNj6Bebr6SqtvJqkeQXgPYnYCd4hVbStQb8YgH30
+         xQL2ATxHti+1kuzdhwTwmM+Xfs3peWwcrcULISqpa3/H+Ju6fjT5Zyz1j8KWYNCuEh
+         vpuRKiBULN8XQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4O7widk114866;
-        Fri, 24 May 2019 00:58:44 -0700
-Date:   Fri, 24 May 2019 00:58:44 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4O7xN0J115002;
+        Fri, 24 May 2019 00:59:23 -0700
+Date:   Fri, 24 May 2019 00:59:23 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Ingo Molnar <tipbot@zytor.com>
-Message-ID: <tip-2777cae2b19d4a08ad233b3504c19c6f7a6a2ef3@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-        a.p.zijlstra@chello.nl, mingo@kernel.org, riel@surriel.com,
-        hpa@zytor.com, brgerst@gmail.com, torvalds@linux-foundation.org,
-        jgross@suse.com, luto@kernel.org, tglx@linutronix.de, bp@alien8.de,
-        dvlasenk@redhat.com, peterz@infradead.org
-Reply-To: linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
-          a.p.zijlstra@chello.nl, riel@surriel.com,
-          torvalds@linux-foundation.org, tglx@linutronix.de, bp@alien8.de,
-          mingo@kernel.org, hpa@zytor.com, brgerst@gmail.com,
-          luto@kernel.org, jgross@suse.com, dvlasenk@redhat.com,
-          peterz@infradead.org
-In-Reply-To: <20190425091717.GA72229@gmail.com>
-References: <20190425091717.GA72229@gmail.com>
+Message-ID: <tip-11e86dc7f2746210f9c7dc10deaa7658f8dc8350@git.kernel.org>
+Cc:     mingo@kernel.org, brgerst@gmail.com, jgross@suse.com,
+        hpa@zytor.com, peterz@infradead.org, bp@alien8.de,
+        tglx@linutronix.de, dvlasenk@redhat.com,
+        linux-kernel@vger.kernel.org, luto@kernel.org,
+        torvalds@linux-foundation.org
+Reply-To: mingo@kernel.org, brgerst@gmail.com, jgross@suse.com,
+          hpa@zytor.com, peterz@infradead.org, bp@alien8.de,
+          tglx@linutronix.de, dvlasenk@redhat.com,
+          linux-kernel@vger.kernel.org, luto@kernel.org,
+          torvalds@linux-foundation.org
+In-Reply-To: <20190425095039.GC115378@gmail.com>
+References: <20190425095039.GC115378@gmail.com>
 To:     linux-tip-commits@vger.kernel.org
 Subject: [tip:x86/paravirt] x86/paravirt: Detect over-sized patching bugs in
- paravirt_patch_insns()
-Git-Commit-ID: 2777cae2b19d4a08ad233b3504c19c6f7a6a2ef3
+ paravirt_patch_call()
+Git-Commit-ID: 11e86dc7f2746210f9c7dc10deaa7658f8dc8350
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -70,81 +69,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2777cae2b19d4a08ad233b3504c19c6f7a6a2ef3
-Gitweb:     https://git.kernel.org/tip/2777cae2b19d4a08ad233b3504c19c6f7a6a2ef3
+Commit-ID:  11e86dc7f2746210f9c7dc10deaa7658f8dc8350
+Gitweb:     https://git.kernel.org/tip/11e86dc7f2746210f9c7dc10deaa7658f8dc8350
 Author:     Ingo Molnar <mingo@kernel.org>
-AuthorDate: Thu, 25 Apr 2019 11:17:17 +0200
+AuthorDate: Thu, 25 Apr 2019 11:50:39 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 25 Apr 2019 12:00:31 +0200
+CommitDate: Thu, 25 Apr 2019 12:00:44 +0200
 
-x86/paravirt: Detect over-sized patching bugs in paravirt_patch_insns()
+x86/paravirt: Detect over-sized patching bugs in paravirt_patch_call()
 
-So paravirt_patch_insns() contains this gem of logic:
+paravirt_patch_call() currently handles patching failures inconsistently:
+we generate a warning in the retpoline case, but don't in other cases where
+we might end up with a non-working kernel as well.
 
-unsigned paravirt_patch_insns(void *insnbuf, unsigned len,
-                              const char *start, const char *end)
-{
-        unsigned insn_len = end - start;
+So just convert it all to a BUG_ON(), these patching calls are *not* supposed
+to fail, and if they do we want to know it immediately.
 
-        if (insn_len > len || start == NULL)
-                insn_len = len;
-        else
-                memcpy(insnbuf, start, insn_len);
+This also makes the kernel smaller and removes an #ifdef ugly.
 
-        return insn_len;
-}
-
-Note how 'len' (size of the original instruction) is checked against the new
-instruction, and silently discarded with no warning printed whatsoever.
-
-This crashes the kernel in funny ways if the patching template is buggy,
-and usually in much later places.
-
-Instead do a direct BUG_ON(), there's no way to continue successfully at that point.
-
-I've tested this patch, with the vanilla kernel check never triggers, and
-if I intentionally increase the size of one of the patch templates to a
-too high value the assert triggers:
-
-[    0.164385] kernel BUG at arch/x86/kernel/paravirt.c:167!
-
-Without this patch a broken kernel randomly crashes in later places,
-after the silent patching failure.
+I tried it with a richly paravirt-enabled kernel and no patching bugs
+were detected.
 
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Juergen Gross <jgross@suse.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20190425091717.GA72229@gmail.com
+Link: http://lkml.kernel.org/r/20190425095039.GC115378@gmail.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/paravirt.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kernel/paravirt.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index c0e0101133f3..7f9121f2fdac 100644
+index 7f9121f2fdac..544d386ded45 100644
 --- a/arch/x86/kernel/paravirt.c
 +++ b/arch/x86/kernel/paravirt.c
-@@ -163,10 +163,10 @@ unsigned paravirt_patch_insns(void *insnbuf, unsigned len,
+@@ -73,21 +73,21 @@ struct branch {
+ static unsigned paravirt_patch_call(void *insnbuf, const void *target,
+ 				    unsigned long addr, unsigned len)
  {
- 	unsigned insn_len = end - start;
++	const int call_len = 5;
+ 	struct branch *b = insnbuf;
+-	unsigned long delta = (unsigned long)target - (addr+5);
++	unsigned long delta = (unsigned long)target - (addr+call_len);
  
--	if (insn_len > len || start == NULL)
--		insn_len = len;
--	else
--		memcpy(insnbuf, start, insn_len);
-+	/* Alternative instruction is too large for the patch site and we cannot continue: */
-+	BUG_ON(insn_len > len || start == NULL);
-+
-+	memcpy(insnbuf, start, insn_len);
+-	if (len < 5) {
+-#ifdef CONFIG_RETPOLINE
+-		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
+-#endif
+-		return len;	/* call too long for patch site */
++	if (len < call_len) {
++		pr_warn("paravirt: Failed to patch indirect CALL at %ps\n", (void *)addr);
++		/* Kernel might not be viable if patching fails, bail out: */
++		BUG_ON(1);
+ 	}
  
- 	return insn_len;
+ 	b->opcode = 0xe8; /* call */
+ 	b->delta = delta;
+-	BUILD_BUG_ON(sizeof(*b) != 5);
++	BUILD_BUG_ON(sizeof(*b) != call_len);
+ 
+-	return 5;
++	return call_len;
  }
+ 
+ #ifdef CONFIG_PARAVIRT_XXL
