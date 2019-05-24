@@ -2,56 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F05C529273
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E23A29285
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:11:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389292AbfEXIIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:08:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37169 "EHLO
+        id S2389467AbfEXILW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:11:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58945 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388959AbfEXIIj (ORCPT
+        with ESMTP id S2389397AbfEXILV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:08:39 -0400
+        Fri, 24 May 2019 04:11:21 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4O88EkV118439
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4O88urr118516
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 24 May 2019 01:08:14 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4O88EkV118439
+        Fri, 24 May 2019 01:08:56 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4O88urr118516
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1558685295;
-        bh=SwMpO8MEB+Y8QLnlfgnGBVMC/j9d1mGCQWrUxsdytHc=;
+        s=2019051801; t=1558685336;
+        bh=/g2qr/niuIcpb3juF6H+paxatAK0nWwxC7eMCGVMUWY=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=CVxFnRIerqb4f0HyywT+8N3VI9hViK0+CSmdIrrIrOvmnHVzuqQiKUwHTh7PrjwQ1
-         eXnVL70RkLDsghZSMUqAx8yTTBUmWr5rrv/tF4PTLLEsNMVnlPGE14uB9IZrFKFADy
-         JkmwahZgIMgjbFdcOHNrfGGZ4+RyuI7OjInUplwnPqMUW7pjcU9/q3iyduf3YKwkyP
-         s8Oq0TlS3sNzJrHRcHtvUtAy6yC0trUpwmCg2jSUv5Qh9PzI+OXVgZge3V3DHMtegU
-         PswI5PrjizHwP4fxF1QKDocc1vZcaNGRvJ9WLb0TpVivKRWn6i0iaFYUXk5YlhbH7a
-         BjPE3iWZt4wlg==
+        b=bOeWLx4EGKIfw7OmyYR7jw0m68++5ZHEeCOxptrGm4fsynTfxKpOPA+GXaLt5iGxF
+         t5FF21U2gwy2iR9pY0gi+/HBp0zaMWeqYz3OTtyFiJrpdhzIoZ4+rlxkSkkAQ+IXau
+         8ALC+iwgXelRPirBY7xYBH1sL6hKxWV+klclt4rKDprKcIaSlBt3cittWKGpkKh/M0
+         mdZstIPdenbxtGyhZn7mIGNNRGwiq6hlDtPzePnfzZFDBfvyogZ1DIWmrQj8yqj+sd
+         ZtOsYJ6110TgtsZdEuiQZbBbJ5GgCelyjpWq8bPB9lBw2C9Vt5B4FIXZ8+pxIQDrxz
+         OYlUe5iZq3O7Q==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4O88DMm118436;
-        Fri, 24 May 2019 01:08:13 -0700
-Date:   Fri, 24 May 2019 01:08:13 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4O88tuU118513;
+        Fri, 24 May 2019 01:08:55 -0700
+Date:   Fri, 24 May 2019 01:08:55 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Yabin Cui <tipbot@zytor.com>
-Message-ID: <tip-1b038c6e05ff70a1e66e3e571c2e6106bdb75f53@git.kernel.org>
-Cc:     jolsa@redhat.com, hpa@zytor.com, torvalds@linux-foundation.org,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, tglx@linutronix.de, acme@kernel.org,
-        eranian@google.com, mingo@kernel.org, yabinc@google.com,
-        alexander.shishkin@linux.intel.com, acme@redhat.com,
-        vincent.weaver@maine.edu
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          namhyung@kernel.org, torvalds@linux-foundation.org,
-          peterz@infradead.org, hpa@zytor.com, jolsa@redhat.com,
-          vincent.weaver@maine.edu, acme@redhat.com,
-          alexander.shishkin@linux.intel.com, yabinc@google.com,
-          mingo@kernel.org, acme@kernel.org, eranian@google.com
-In-Reply-To: <20190517115418.224478157@infradead.org>
-References: <20190517115418.224478157@infradead.org>
+From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Message-ID: <tip-3f9fbe9bd86c534eba2faf5d840fd44c6049f50e@git.kernel.org>
+Cc:     yabinc@google.com, eranian@google.com, mingo@kernel.org,
+        jolsa@redhat.com, linux-kernel@vger.kernel.org, acme@redhat.com,
+        tglx@linutronix.de, vincent.weaver@maine.edu, peterz@infradead.org,
+        torvalds@linux-foundation.org, hpa@zytor.com,
+        alexander.shishkin@linux.intel.com
+Reply-To: peterz@infradead.org, linux-kernel@vger.kernel.org,
+          jolsa@redhat.com, vincent.weaver@maine.edu, eranian@google.com,
+          mingo@kernel.org, alexander.shishkin@linux.intel.com,
+          hpa@zytor.com, torvalds@linux-foundation.org, acme@redhat.com,
+          tglx@linutronix.de, yabinc@google.com
+In-Reply-To: <20190517115418.309516009@infradead.org>
+References: <20190517115418.309516009@infradead.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/ring_buffer: Fix exposing a temporarily
- decreased data_head
-Git-Commit-ID: 1b038c6e05ff70a1e66e3e571c2e6106bdb75f53
+Subject: [tip:perf/urgent] perf/ring_buffer: Add ordering to rb->nest
+ increment
+Git-Commit-ID: 3f9fbe9bd86c534eba2faf5d840fd44c6049f50e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -69,98 +67,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1b038c6e05ff70a1e66e3e571c2e6106bdb75f53
-Gitweb:     https://git.kernel.org/tip/1b038c6e05ff70a1e66e3e571c2e6106bdb75f53
-Author:     Yabin Cui <yabinc@google.com>
-AuthorDate: Fri, 17 May 2019 13:52:31 +0200
+Commit-ID:  3f9fbe9bd86c534eba2faf5d840fd44c6049f50e
+Gitweb:     https://git.kernel.org/tip/3f9fbe9bd86c534eba2faf5d840fd44c6049f50e
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Fri, 17 May 2019 13:52:32 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Fri, 24 May 2019 09:00:10 +0200
 
-perf/ring_buffer: Fix exposing a temporarily decreased data_head
+perf/ring_buffer: Add ordering to rb->nest increment
 
-In perf_output_put_handle(), an IRQ/NMI can happen in below location and
-write records to the same ring buffer:
+Similar to how decrementing rb->next too early can cause data_head to
+(temporarily) be observed to go backward, so too can this happen when
+we increment too late.
 
-	...
-	local_dec_and_test(&rb->nest)
-	...                          <-- an IRQ/NMI can happen here
-	rb->user_page->data_head = head;
-	...
+This barrier() ensures the rb->head load happens after the increment,
+both the one in the 'goto again' path, as the one from
+perf_output_get_handle() -- albeit very unlikely to matter for the
+latter.
 
-In this case, a value A is written to data_head in the IRQ, then a value
-B is written to data_head after the IRQ. And A > B. As a result,
-data_head is temporarily decreased from A to B. And a reader may see
-data_head < data_tail if it read the buffer frequently enough, which
-creates unexpected behaviors.
-
-This can be fixed by moving dec(&rb->nest) to after updating data_head,
-which prevents the IRQ/NMI above from updating data_head.
-
-[ Split up by peterz. ]
-
-Signed-off-by: Yabin Cui <yabinc@google.com>
+Suggested-by: Yabin Cui <yabinc@google.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: acme@kernel.org
 Cc: mark.rutland@arm.com
+Cc: namhyung@kernel.org
 Fixes: ef60777c9abd ("perf: Optimize the perf_output() path by removing IRQ-disables")
-Link: http://lkml.kernel.org/r/20190517115418.224478157@infradead.org
+Link: http://lkml.kernel.org/r/20190517115418.309516009@infradead.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/events/ring_buffer.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ kernel/events/ring_buffer.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index 674b35383491..009467a60578 100644
+index 009467a60578..4b5f8d932400 100644
 --- a/kernel/events/ring_buffer.c
 +++ b/kernel/events/ring_buffer.c
-@@ -51,11 +51,18 @@ again:
+@@ -48,6 +48,15 @@ static void perf_output_put_handle(struct perf_output_handle *handle)
+ 	unsigned long head;
+ 
+ again:
++	/*
++	 * In order to avoid publishing a head value that goes backwards,
++	 * we must ensure the load of @rb->head happens after we've
++	 * incremented @rb->nest.
++	 *
++	 * Otherwise we can observe a @rb->head value before one published
++	 * by an IRQ/NMI happening between the load and the increment.
++	 */
++	barrier();
  	head = local_read(&rb->head);
  
  	/*
--	 * IRQ/NMI can happen here, which means we can miss a head update.
-+	 * IRQ/NMI can happen here and advance @rb->head, causing our
-+	 * load above to be stale.
- 	 */
- 
--	if (!local_dec_and_test(&rb->nest))
-+	/*
-+	 * If this isn't the outermost nesting, we don't have to update
-+	 * @rb->user_page->data_head.
-+	 */
-+	if (local_read(&rb->nest) > 1) {
-+		local_dec(&rb->nest);
- 		goto out;
-+	}
- 
- 	/*
- 	 * Since the mmap() consumer (userspace) can run on a different CPU:
-@@ -87,9 +94,18 @@ again:
- 	rb->user_page->data_head = head;
- 
- 	/*
--	 * Now check if we missed an update -- rely on previous implied
--	 * compiler barriers to force a re-read.
-+	 * We must publish the head before decrementing the nest count,
-+	 * otherwise an IRQ/NMI can publish a more recent head value and our
-+	 * write will (temporarily) publish a stale value.
-+	 */
-+	barrier();
-+	local_set(&rb->nest, 0);
-+
-+	/*
-+	 * Ensure we decrement @rb->nest before we validate the @rb->head.
-+	 * Otherwise we cannot be sure we caught the 'last' nested update.
- 	 */
-+	barrier();
- 	if (unlikely(head != local_read(&rb->head))) {
- 		local_inc(&rb->nest);
- 		goto again;
