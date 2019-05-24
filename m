@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA357293E4
+	by mail.lfdr.de (Postfix) with ESMTP id 378CC293E3
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:57:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390293AbfEXIzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:55:00 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34402 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390240AbfEXIyp (ORCPT
+        id S2390288AbfEXIyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:54:52 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44500 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390248AbfEXIyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:54:45 -0400
-Received: by mail-ed1-f66.google.com with SMTP id p27so13377941eda.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:54:44 -0700 (PDT)
+        Fri, 24 May 2019 04:54:46 -0400
+Received: by mail-ed1-f65.google.com with SMTP id b8so13304637edm.11
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:54:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mUAcB3sU0dD3E/MUylEVVwC2GTKxo8rk41HcMoWy7Z0=;
-        b=G8gQaHLZUx+WzPRhTW9uW/COq5N31wy0ORbu7OIDAR64WlKCvpFjKEJSkBXQceNUqU
-         Pf2ZP8mFN3py9TSDiJCyhwRzpd2XkYyNoHJZxCR/dIW1IXyui6OCcrPWPzlGghN5ZXxa
-         ENIvnIJhRgK6TnD1XZkchnjTIKtsaX7Tf2OIM=
+        bh=NmvrGIUWQkTElry91PwheZTmzBnjKP7PR8ohbwjeRGw=;
+        b=Nh3n8kL/lOQMsn5ZR8TvohBEqbIzE7Lgj3nCIy9tF9DcXQiDN/rMDZEKzdjjQlKv2v
+         DBcU1thQcKCne7ZjTeekcxfx+fSPE39PVenj5kjlxDaGWTjihc9VVQH/EXPWiuIuPEI+
+         oThhEVt/uxjw2gJKXFL2oGTpb8aHJS//3bOh4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mUAcB3sU0dD3E/MUylEVVwC2GTKxo8rk41HcMoWy7Z0=;
-        b=L3N+reFxL5odm52YCXZyZBxMUrgwMTtLjZPcLSbd5iHTvsGrBhQP6DIR/iWbYD2y4e
-         hPYLmoiIC0yMzM53RW+96n9zbpNTvkkseDTEEL5CbxX3NIsgHYU8yl0b0S77WBmIFOA7
-         W5mFDbBO6Mb4ZGCAxY1FVf7WpBlnwX7CrEFCAqKjrwD3KBAot3z6lsXMKAsHyu27cbQF
-         Od1JuUMe8HwbkchbT6JoOozf0S+PWKHi9VtXLhSm+s6CRNYWh0kN6Eg8G6E4XCbltdlO
-         Lwu/YdTIERGP4tE/FzzTeArxh8etGU0XWS899/xAZDUVRinBFGL48jg6UuNMI0QJV10b
-         WX2Q==
-X-Gm-Message-State: APjAAAWsHTLNR2cWQVeKJuC8pXtIbuqhOFMYDYp+HYKEayhiul/8nuyL
-        yW1riSLDulvjrU4ysumVQR5GpRx0sYo=
-X-Google-Smtp-Source: APXvYqz2qHhN5A2pWKpVJsBUdeEY8H62cdHPVnuNt4a6bkkHftmLnMSppn0lpuPcH/owQLYONbNwfA==
-X-Received: by 2002:a17:906:d557:: with SMTP id gk23mr78999185ejb.285.1558688083594;
-        Fri, 24 May 2019 01:54:43 -0700 (PDT)
+        bh=NmvrGIUWQkTElry91PwheZTmzBnjKP7PR8ohbwjeRGw=;
+        b=BoXeUwAmzPxQ0sm5rd8Gjc0o5hNzULdPHlU1FKhNk7bG03Zo/2mgb4gRrmUO+fnQqe
+         Hhq8JTCh6QIrGezYwCkD93vWPMfN0Fa13VurBBZPTZteC2Gpx8mlxz8IVvGSr0Ymy9Qh
+         A9I/F/b0zQ9fZmbVPu+DQVq10PrN1T276HO52U5UWIhwyTZmPqxK7HQ0FIPxqCmmrO66
+         WIv/Qmygd9Fvyo+OEucXE7XnWIOvpox5Vjl/wd8FmFxIJC12wzveEDNXisfAua5IY/Le
+         m3f9dSLvV6qj/VdRLCBDHbz+8wns/IOUchpxfiyG9olJdnaTlO700khZkaNx9PSfdwQO
+         wr6w==
+X-Gm-Message-State: APjAAAXqmXVDIZf6Mkiv14h/PMvTfroE0JOTAC9gA/nUR4H2OmXHujiu
+        ratcIg+oP8TdfMTPqBwCLKB3boG/jcw=
+X-Google-Smtp-Source: APXvYqwajf0oCHKmp7dOkjnUHWvBU13ALDXZf5gmM/1TI3Cp7xnjVwoelMbSOCmGIhHgMN29lqIMcQ==
+X-Received: by 2002:a17:907:20cd:: with SMTP id qq13mr55869127ejb.170.1558688084971;
+        Fri, 24 May 2019 01:54:44 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id 96sm567082edq.68.2019.05.24.01.54.42
+        by smtp.gmail.com with ESMTPSA id 96sm567082edq.68.2019.05.24.01.54.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 01:54:42 -0700 (PDT)
+        Fri, 24 May 2019 01:54:44 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         DRI Development <dri-devel@lists.freedesktop.org>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
         Daniel Vetter <daniel.vetter@intel.com>,
-        Jens Frederich <jfrederich@gmail.com>,
-        Daniel Drake <dsd@laptop.org>,
-        Jon Nettleton <jon.nettleton@gmail.com>
-Subject: [PATCH 32/33] staging/olpc_dcon: Add drm conversion to TODO
-Date:   Fri, 24 May 2019 10:53:53 +0200
-Message-Id: <20190524085354.27411-33-daniel.vetter@ffwll.ch>
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+Subject: [PATCH 33/33] backlight: simplify lcd notifier
+Date:   Fri, 24 May 2019 10:53:54 +0200
+Message-Id: <20190524085354.27411-34-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
 References: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
@@ -64,42 +64,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-this driver is pretty horrible from a design pov, and needs a complete
-overhaul. Concrete thing that annoys me is that it looks at
-registered_fb, which is an internal thing to fbmem.c and fbcon.c. And
-ofc it gets the lifetime rules all wrong (it should at least use
-get/put_fb_info).
+With all the work I've done on replacing fb notifier calls with direct
+calls into fbcon the backlight/lcd notifier is the only user left.
 
-Looking at the history, there's been an attempt at dropping this from
-staging in 2016, but that had to be reverted. Since then not real
-effort except the usual stream of trivial patches, and fbdev has been
-formally closed for any new hw support. Time to try again and drop
-this?
+It will only receive events now that it cares about, hence we can
+remove this check.
 
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Jens Frederich <jfrederich@gmail.com>
-Cc: Daniel Drake <dsd@laptop.org>
-Cc: Jon Nettleton <jon.nettleton@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>
 ---
- drivers/staging/olpc_dcon/TODO | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/video/backlight/lcd.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/drivers/staging/olpc_dcon/TODO b/drivers/staging/olpc_dcon/TODO
-index 665a0b061719..fe09efbc7f77 100644
---- a/drivers/staging/olpc_dcon/TODO
-+++ b/drivers/staging/olpc_dcon/TODO
-@@ -1,4 +1,11 @@
- TODO:
-+	- complete rewrite:
-+	  1. The underlying fbdev drivers need to be converted into drm kernel
-+	     modesetting drivers.
-+	  2. The dcon low-power display mode can then be integrated using the
-+	     drm damage tracking and self-refresh helpers.
-+	  This bolted-on self-refresh support that digs around in fbdev
-+	  internals, but isn't properly integrated, is not the correct solution.
- 	- see if vx855 gpio API can be made similar enough to cs5535 so we can
- 	  share more code
- 	- convert all uses of the old GPIO API from <linux/gpio.h> to the
+diff --git a/drivers/video/backlight/lcd.c b/drivers/video/backlight/lcd.c
+index a758039475d0..8ea5e5937ae2 100644
+--- a/drivers/video/backlight/lcd.c
++++ b/drivers/video/backlight/lcd.c
+@@ -29,17 +29,6 @@ static int fb_notifier_callback(struct notifier_block *self,
+ 	struct lcd_device *ld;
+ 	struct fb_event *evdata = data;
+ 
+-	/* If we aren't interested in this event, skip it immediately ... */
+-	switch (event) {
+-	case FB_EVENT_BLANK:
+-	case FB_EVENT_MODE_CHANGE:
+-	case FB_EARLY_EVENT_BLANK:
+-	case FB_R_EARLY_EVENT_BLANK:
+-		break;
+-	default:
+-		return 0;
+-	}
+-
+ 	ld = container_of(self, struct lcd_device, fb_notif);
+ 	if (!ld->ops)
+ 		return 0;
 -- 
 2.20.1
 
