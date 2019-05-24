@@ -2,152 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC45229636
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:44:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C5D22963C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:44:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390822AbfEXKoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 06:44:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49232 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390578AbfEXKoG (ORCPT
+        id S2390852AbfEXKo3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 06:44:29 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53319 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390535AbfEXKo3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 06:44:06 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EF415611FC; Fri, 24 May 2019 10:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1558694645;
-        bh=HF7FUic2Qgap5t9eKuxI7oyYoQWtLjSkiQ9P+5lmjgA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=NCJDg9xpM3m7Tr78OqD7WJBPCTV8Eaq/qGbuC7+HQaM/CIZOJP4tORbuXzvsqFjKW
-         E++8fOAhFf+BJxjR9J3Iu3ijtsVhQHgaJOj44V+MvrJwXTxarGdtaeoPURC3/ww+GF
-         MuBmCRdMXuF0XKAhzZLNaZ39DH9rxeufjzoh6RcQ=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3EAFB60C5F;
-        Fri, 24 May 2019 10:44:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1558694644;
-        bh=HF7FUic2Qgap5t9eKuxI7oyYoQWtLjSkiQ9P+5lmjgA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KbvxFmnvnO6HucGm9IgtDjyI71UXjCLu9Fa0t4OsNNZV3YlobN6ZhhNvIOGA6ZQxB
-         n2VgvVUOv0xlRf6L28u+vkxgHON1z1O5JR9HY/vs96NLaE+cT0e+HUP3bapWuQL02e
-         g3QZW3sy3nJ2pkA0dIwv2EVIyl1oZNz2z0KpdZgc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3EAFB60C5F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Sahitya Tummala <stummala@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] f2fs: add errors=panic mount option
-Date:   Fri, 24 May 2019 16:13:51 +0530
-Message-Id: <1558694631-12481-1-git-send-email-stummala@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Fri, 24 May 2019 06:44:29 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 198so8862703wme.3;
+        Fri, 24 May 2019 03:44:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0jy20rK00X/Jpvye1eiZdw+BT0nVJunFQCUMU0sD3iQ=;
+        b=X1PxbDFgBqLM2NhmlrzxN/Z4MQHhxPSqs6aIHaPvF6iBAMLHzmH4nUvsmk//1HfYtC
+         M7+RiqIUBnxnUqtQ25FtAlI9TYUuDf8FA0WWWY/sJW0s+MvmNdXDzLauptvrWs2cUaqj
+         xB+/SW80bPKdsBGtHWxc3y8FmFHI5GngHXc59KD+O5Lr2DZmG38IJpvxIEkC6uuIeR/7
+         wWJu9Qn8qPhvMRywg+V6bnzPeOFiQ/IORcoYGzLsMY7vtwENi1rb4BA++E0rVIYk3rnv
+         Y0vPlbwObLKxWrwWEwMTrgKOWFImoQkdIM62Bc2RaeWmlzzqiOrhfp4C5RF5aK4p4H/c
+         49DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=0jy20rK00X/Jpvye1eiZdw+BT0nVJunFQCUMU0sD3iQ=;
+        b=dxKknvKYCf+qdGu5T4HpBMZ1JuqQ4tf9CezMFm2bmpuxekMSz8gPS2sPR2q9L5+qP3
+         OzbC77RH80chMLppMfi5jeucEsRVgVJy0rtDFM3+ecdmdsT5B/uaxdFQN2453zwwDT0g
+         +PMLK4hENioCAxCZaV+fgkbkUtBWintsQm0G8DqYntHfBLid4nCx1gVQQVi8U/DU/bwx
+         pXK2DEuNbWG3GwI6gPkGk3jfD71/O+Bw/7dGeqLRokXarfpvBvU8PdGedmZMFGj2pX/X
+         f+7GFNUvRR0ZkmEkydnr7VmBbuqywDD1UKi1p+5aC6lIpruVzoE9Wxpt4Kc9SgUDpG27
+         u4dw==
+X-Gm-Message-State: APjAAAUysrWhKLDeQyJi2f+YbeDLqUxBzXOhzSgN5KO/Vl561VLV7zKs
+        ksYYVOTwpDGNfhk2XX3eBoc=
+X-Google-Smtp-Source: APXvYqyeytuN8l7DauI//G/eM6aGcU8yhn6PWpRVKMHeZ4rs7BNDg9Pkie2MVw5YsStjKFsnchTflQ==
+X-Received: by 2002:a1c:6c0a:: with SMTP id h10mr16235945wmc.135.1558694666632;
+        Fri, 24 May 2019 03:44:26 -0700 (PDT)
+Received: from macbookpro.malat.net ([2a01:e34:ee1e:860:6f23:82e6:aa2d:bbd1])
+        by smtp.gmail.com with ESMTPSA id o6sm4589463wrh.55.2019.05.24.03.44.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 24 May 2019 03:44:25 -0700 (PDT)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 9E40B11415E7; Fri, 24 May 2019 12:44:24 +0200 (CEST)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH v2] powerpc/power: Expose pfn_is_nosave prototype
+Date:   Fri, 24 May 2019 12:44:18 +0200
+Message-Id: <20190524104418.17194-1-malat@debian.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190523114736.30268-1-malat@debian.org>
+References: <20190523114736.30268-1-malat@debian.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add errors=panic mount option for debugging purpose. It can be
-set dynamically when the config option CONFIG_F2FS_CHECK_FS
-is not enabled.
+The declaration for pfn_is_nosave is only available in
+kernel/power/power.h. Since this function can be override in arch,
+expose it globally. Having a prototype will make sure to avoid warning
+(sometime treated as error with W=1) such as:
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+  arch/powerpc/kernel/suspend.c:18:5: error: no previous prototype for 'pfn_is_nosave' [-Werror=missing-prototypes]
+
+This moves the declaration into a globally visible header file and add
+missing include to avoid a warning on powerpc. Also remove the
+duplicated prototypes since not required anymore.
+
+Cc: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- fs/f2fs/f2fs.h  |  9 +++++++--
- fs/f2fs/super.c | 21 +++++++++++++++++++++
- 2 files changed, 28 insertions(+), 2 deletions(-)
+v2: As suggestion by christophe remove duplicates prototypes
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9b3d997..95adedb 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -32,8 +32,12 @@
- #define f2fs_bug_on(sbi, condition)					\
- 	do {								\
- 		if (unlikely(condition)) {				\
--			WARN_ON(1);					\
--			set_sbi_flag(sbi, SBI_NEED_FSCK);		\
-+			if (test_opt(sbi, ERRORS_PANIC)) {		\
-+				BUG_ON(condition);			\
-+			} else {					\
-+				WARN_ON(1);				\
-+				set_sbi_flag(sbi, SBI_NEED_FSCK);	\
-+			}						\
- 		}							\
- 	} while (0)
- #endif
-@@ -99,6 +103,7 @@ struct f2fs_fault_info {
- #define F2FS_MOUNT_INLINE_XATTR_SIZE	0x00800000
- #define F2FS_MOUNT_RESERVE_ROOT		0x01000000
- #define F2FS_MOUNT_DISABLE_CHECKPOINT	0x02000000
-+#define F2FS_MOUNT_ERRORS_PANIC		0x04000000
+ arch/powerpc/kernel/suspend.c | 1 +
+ arch/s390/kernel/entry.h      | 1 -
+ include/linux/suspend.h       | 1 +
+ kernel/power/power.h          | 2 --
+ 4 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/kernel/suspend.c b/arch/powerpc/kernel/suspend.c
+index a531154cc0f3..9e1b6b894245 100644
+--- a/arch/powerpc/kernel/suspend.c
++++ b/arch/powerpc/kernel/suspend.c
+@@ -8,6 +8,7 @@
+  */
  
- #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
- #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 912e261..7d6d96a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -137,6 +137,7 @@ enum {
- 	Opt_fsync,
- 	Opt_test_dummy_encryption,
- 	Opt_checkpoint,
-+	Opt_errors,
- 	Opt_err,
- };
+ #include <linux/mm.h>
++#include <linux/suspend.h>
+ #include <asm/page.h>
+ #include <asm/sections.h>
  
-@@ -196,6 +197,7 @@ enum {
- 	{Opt_fsync, "fsync_mode=%s"},
- 	{Opt_test_dummy_encryption, "test_dummy_encryption"},
- 	{Opt_checkpoint, "checkpoint=%s"},
-+	{Opt_errors, "errors=%s"},
- 	{Opt_err, NULL},
- };
+diff --git a/arch/s390/kernel/entry.h b/arch/s390/kernel/entry.h
+index 20420c2b8a14..b2956d49b6ad 100644
+--- a/arch/s390/kernel/entry.h
++++ b/arch/s390/kernel/entry.h
+@@ -63,7 +63,6 @@ void __init startup_init(void);
+ void die(struct pt_regs *regs, const char *str);
+ int setup_profiling_timer(unsigned int multiplier);
+ void __init time_init(void);
+-int pfn_is_nosave(unsigned long);
+ void s390_early_resume(void);
+ unsigned long prepare_ftrace_return(unsigned long parent, unsigned long sp, unsigned long ip);
  
-@@ -788,6 +790,23 @@ static int parse_options(struct super_block *sb, char *options)
- 			}
- 			kvfree(name);
- 			break;
-+		case Opt_errors:
-+#ifndef CONFIG_F2FS_CHECK_FS
-+			name = match_strdup(&args[0]);
-+			if (!name)
-+				return -ENOMEM;
-+
-+			if (strlen(name) == 5 && !strncmp(name, "panic", 5)) {
-+				set_opt(sbi, ERRORS_PANIC);
-+			} else {
-+				kvfree(name);
-+				return -EINVAL;
-+			}
-+			kvfree(name);
-+			f2fs_msg(sb, KERN_INFO,
-+				"debug mode errors=panic enabled\n");
-+#endif
-+			break;
- 		default:
- 			f2fs_msg(sb, KERN_ERR,
- 				"Unrecognized mount option \"%s\" or missing value",
-@@ -1417,6 +1436,8 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_printf(seq, ",fsync_mode=%s", "strict");
- 	else if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_NOBARRIER)
- 		seq_printf(seq, ",fsync_mode=%s", "nobarrier");
-+	if (test_opt(sbi, ERRORS_PANIC))
-+		seq_printf(seq, ",errors=%s", "panic");
- 	return 0;
- }
+diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+index 6b3ea9ea6a9e..e8b8a7bede90 100644
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -395,6 +395,7 @@ extern bool system_entering_hibernation(void);
+ extern bool hibernation_available(void);
+ asmlinkage int swsusp_save(void);
+ extern struct pbe *restore_pblist;
++int pfn_is_nosave(unsigned long pfn);
+ #else /* CONFIG_HIBERNATION */
+ static inline void register_nosave_region(unsigned long b, unsigned long e) {}
+ static inline void register_nosave_region_late(unsigned long b, unsigned long e) {}
+diff --git a/kernel/power/power.h b/kernel/power/power.h
+index 9e58bdc8a562..44bee462ff57 100644
+--- a/kernel/power/power.h
++++ b/kernel/power/power.h
+@@ -75,8 +75,6 @@ static inline void hibernate_reserved_size_init(void) {}
+ static inline void hibernate_image_size_init(void) {}
+ #endif /* !CONFIG_HIBERNATION */
  
+-extern int pfn_is_nosave(unsigned long);
+-
+ #define power_attr(_name) \
+ static struct kobj_attribute _name##_attr = {	\
+ 	.attr	= {				\
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.20.1
 
