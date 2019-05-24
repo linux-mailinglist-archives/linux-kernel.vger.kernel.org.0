@@ -2,193 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8DFE28EC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 03:27:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBCF128EDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 03:38:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388762AbfEXB1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 21:27:46 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43081 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388654AbfEXB1q (ORCPT
+        id S2388807AbfEXBiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 21:38:52 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:38325 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388762AbfEXBiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 21:27:46 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f25so4060181pgv.10
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 18:27:45 -0700 (PDT)
+        Thu, 23 May 2019 21:38:50 -0400
+Received: by mail-qk1-f194.google.com with SMTP id p26so2522780qkj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 18:38:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=appneta.com; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=EVMg6Qtj7ikChCelvTU+2YJkv4PCfrgHPBFORJX3mFA=;
-        b=GaZBo4/N13xcQn4sMkr2O5w7wNgDefNiWAKdsS7AGvCIFyaNC0NzPzgxQN43sRjTao
-         mu3oRTyvQFjyVjkGf1I75HDbuiUS3N2KZGuRo/07GUpV/KVTxTLDd/Eys5H8BNiLOMUU
-         YsBrJYnINu4jiox+VecZg3XLXSm/9PU8Xh1TI=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BD8gsIvGveusm922tD1e2XMMn8H4dDeMiU5yfjezjZI=;
+        b=xVg4PJseLvecfb9jz98prCdPoo9JQYisyN8ivZrwv0hVZSOVec7u8vyLPiJq1+AWkU
+         xORi9/5fKgn1vYui99U0fVJvpP7Dcq6vdalwSuLo8zeRtE2qiHYW7xyaclgO3BgWgcUs
+         hYoiRoYWFJcgtf34suZ4wcYNRghBczu4DMsNX4G89r2iXKVQoXBp67z0GaQTk51FzN4L
+         rrdhxO61WsmSUNowOgD2qwQcBg03svO7TEO3Y4wE7v6ct7MaMYxuyIGg2daJ76EocMK9
+         gdAdbpFVldM/rdtSs9O/n1vAh/FNLGi2O39ytO+3jdyJkOeeMsV44+RyLHGNIabnoYP1
+         SxTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=EVMg6Qtj7ikChCelvTU+2YJkv4PCfrgHPBFORJX3mFA=;
-        b=j8OOUcxR5yJl/5zJeBrtTAVJdcM8tWiq3c9xm8NRkGvhh8dK9iXk6AMvqkMZQrJhr+
-         GsMB1r9p0lzhgIbhJZG+VGPujSmSEHeBmB1XkAMEqQOPl77z6lYQ3mMlWaObOHWJWEcr
-         zokqR22O3rszafphdGdtJE2Z6xk7XE+6e4pbOJ5XOcEFVAV+v7QCHOHwbFlh0xkGbnu/
-         OCl3uG5SqnGOj22zif8cHbCvvPUlgorrtce5KzmESxjmNp8wJvbOBiQlWs/ys9DS2kZj
-         tAII9kxTidpKQbRrosqgCV/qHW30dzZvucD8kOUuuLF3IgywoNKaYa3GFqBRAF2XKp3N
-         JDIg==
-X-Gm-Message-State: APjAAAXGSJI9qihEGiJ4/DO5BM1G/zpS91KXUEeKP11UR+ppp1FMLOuG
-        ONkJSj58s3WvxL3lSNDSBuyYqQ==
-X-Google-Smtp-Source: APXvYqyKssmrS9+A0qv02q3F8yGSQprA43jRQmjfROvEFJaqxDoRlQelfPhryzHN6zl2OxVRx0Wh3A==
-X-Received: by 2002:a17:90a:e390:: with SMTP id b16mr5606709pjz.137.1558661264376;
-        Thu, 23 May 2019 18:27:44 -0700 (PDT)
-Received: from [10.0.1.19] (S010620c9d00fc332.vf.shawcable.net. [70.71.167.160])
-        by smtp.gmail.com with ESMTPSA id c14sm516923pgl.43.2019.05.23.18.27.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 May 2019 18:27:43 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
-Subject: Re: [PATCH net 4/4] net/udpgso_bench_tx: audit error queue
-From:   Fred Klassen <fklassen@appneta.com>
-In-Reply-To: <CAF=yD-KBNLr5KY-YQ1KMmZGCpYNefSJKaJkZNOwd8nRiedpQtA@mail.gmail.com>
-Date:   Thu, 23 May 2019 18:27:41 -0700
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        Willem de Bruijn <willemb@google.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D68C643B-C6A4-4EC5-8E4F-368BDE03760B@appneta.com>
-References: <20190523210651.80902-1-fklassen@appneta.com>
- <20190523210651.80902-5-fklassen@appneta.com>
- <CAF=yD-KBNLr5KY-YQ1KMmZGCpYNefSJKaJkZNOwd8nRiedpQtA@mail.gmail.com>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-X-Mailer: Apple Mail (2.3445.104.8)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BD8gsIvGveusm922tD1e2XMMn8H4dDeMiU5yfjezjZI=;
+        b=P2RMqVv+2D60iaeZnaTsNnI1xSy4pw0gkVoE5oNirfdISpVvD/CgEwGG9NCYwe4ABS
+         sOSdLdjrvz7KTaSWnNN1QmOyF6H7pUUm3VZzF1J52IDu6Sx1cjkun1lineBrwsfn5ZkA
+         /vVb3pkFhcROFI3tVw1HBPm0hu9RgpPLNkfR8llJp5bIivqMkD99xDnrth9N6PbETxxL
+         ZO/pEAfb1uK4ahifJd0fWqynEmZeHEDNoMCU3q2OWn18dTLOnPZqBxk5tdt+pbJ2IvOv
+         h5DiKSgG2jjtgfwVWXJO+IkejMRfC9TDKTJquFQqjxkcOCHbjH2pE0HWz1Vgc2y2xx5f
+         r8ww==
+X-Gm-Message-State: APjAAAUHWluS7FoY4PjZ/6Dk6f0zWS4BjKtEaicSavAa0RtS8jG+qlVS
+        ySduaBT8/pjWjobUB09Cp87O/rcCRE5+Sg==
+X-Google-Smtp-Source: APXvYqwYIIZ/sR4oA2tEC93zoJvGsRR2w2lnu7OyHYSXPUgaNp8l91gDLyUIatxi+0C1sLDmYy+s8g==
+X-Received: by 2002:a37:8703:: with SMTP id j3mr18291782qkd.188.1558661929282;
+        Thu, 23 May 2019 18:38:49 -0700 (PDT)
+Received: from leoy-ThinkPad-X240s (li483-211.members.linode.com. [50.116.44.211])
+        by smtp.gmail.com with ESMTPSA id d58sm775782qtb.11.2019.05.23.18.38.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 23 May 2019 18:38:48 -0700 (PDT)
+Date:   Fri, 24 May 2019 09:38:42 +0800
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/30] coresight: Support for ACPI bindings
+Message-ID: <20190524013842.GA5971@leoy-ThinkPad-X240s>
+References: <1558521304-27469-1-git-send-email-suzuki.poulose@arm.com>
+ <20190523143227.GC31751@leoy-ThinkPad-X240s>
+ <23a50436-4bcf-3439-c189-093e1a58438d@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <23a50436-4bcf-3439-c189-093e1a58438d@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Willem, this is only my 2nd patch, and my last one was a one liner.
-I=E2=80=99ll try to work through this, but let me know if I am doing a =
-rookie
-mistake (learning curve and all).
+Hi Suzuki,
 
+On Thu, May 23, 2019 at 04:31:54PM +0100, Suzuki K Poulose wrote:
 
-> On May 23, 2019, at 2:56 PM, Willem de Bruijn =
-<willemdebruijn.kernel@gmail.com> wrote:
->=20
-> On Thu, May 23, 2019 at 5:11 PM Fred Klassen <fklassen@appneta.com> =
-wrote:
->>=20
->> This enhancement adds the '-a' option, which will count all CMSG
->> messages on the error queue and print a summary report.
->>=20
->> Fixes: 3a687bef148d ("selftests: udp gso benchmark")
->=20
-> Also not a fix, but an extension.
+[...]
 
-I=E2=80=99ll make a v2 patch and remove =E2=80=9CFixes:".
+> > When you send out the new patch for exposing device connection, please
+> > loop me so that I can base on it for perf testing related works.
+> 
+> Sure, will do.
 
->=20
->>=20
->> Example:
->>=20
->>    # ./udpgso_bench_tx -4uT -a -l5 -S 1472 -D 172.16.120.189
->>    udp tx:    492 MB/s     8354 calls/s   8354 msg/s
->>    udp tx:    477 MB/s     8106 calls/s   8106 msg/s
->>    udp tx:    488 MB/s     8288 calls/s   8288 msg/s
->>    udp tx:    882 MB/s    14975 calls/s  14975 msg/s
->>    Summary over 5.000 seconds ...
->>    sum udp tx:    696 MB/s      57696 calls (11539/s)  57696 msgs =
-(11539/s)
->>    Tx Timestamps: received:     57696   errors: 0
->>=20
->> This can be useful in tracking loss of messages when under load. For =
-example,
->> adding the '-z' option results in loss of TX timestamp messages:
->>=20
->>    # ./udpgso_bench_tx -4ucT -a -l5 -S 1472 -D 172.16.120.189 -p 3239 =
--z
->>    udp tx:    490 MB/s     8325 calls/s   8325 msg/s
->>    udp tx:    500 MB/s     8492 calls/s   8492 msg/s
->>    udp tx:    883 MB/s    14985 calls/s  14985 msg/s
->>    udp tx:    756 MB/s    12823 calls/s  12823 msg/s
->>    Summary over 5.000 seconds ...
->>    sum udp tx:    657 MB/s      54429 calls (10885/s)  54429 msgs =
-(10885/s)
->>    Tx Timestamps: received:     34046   errors: 0
->>    Zerocopy acks: received:     54422   errors: 0
->=20
-> This would probably also be more useful as regression test if it is in
-> the form of a pass/fail test: if timestamps are requested and total
-> count is zero, then the feature is broken and the process should exit
-> with an error.
->=20
+Thanks a lot!
 
-I=E2=80=99ll add a hard failure for zero response for TX Timestamps or =
-Zerocopy,
-or if any errors occur.
+> As such, the perf testing should not be affected by that
+> series. It is just a helper to demonstrate the connections. But yes, it
+> will definitely help you to choose an ETF for a cluster, if you had multiple
+> ETFs on the system. Otherwise, you should be OK.
 
+Yeah, the perf testing approach is heavily based on sysfs out/in nodes
+to find the trace pathes.
 
->>=20
->> Fixes: 3a687bef148d ("selftests: udp gso benchmark")
->=20
-> Repeated
+> Please be aware that the power management support is missing on ACPI platform.
+> So you must make sure, by other means, that the debug domain is powered up.
 
-Will fix.
->=20
->> Signed-off-by: Fred Klassen <fklassen@appneta.com>
->> ---
->> tools/testing/selftests/net/udpgso_bench_tx.c | 152 =
-+++++++++++++++++++-------
->> 1 file changed, 113 insertions(+), 39 deletions(-)
->>=20
->> diff --git a/tools/testing/selftests/net/udpgso_bench_tx.c =
-b/tools/testing/selftests/net/udpgso_bench_tx.c
->> index 56e0d890b066..9924342a0b03 100644
->> --- a/tools/testing/selftests/net/udpgso_bench_tx.c
->> +++ b/tools/testing/selftests/net/udpgso_bench_tx.c
->> @@ -62,10 +62,19 @@ static bool cfg_tcp;
->> static uint32_t        cfg_tx_ts =3D SOF_TIMESTAMPING_TX_SOFTWARE;
->> static bool    cfg_tx_tstamp;
->> static uint32_t        cfg_tos;
->> +static bool    cfg_audit;
->> static bool    cfg_verbose;
->> static bool    cfg_zerocopy;
->> static int     cfg_msg_nr;
->> static uint16_t        cfg_gso_size;
->> +static unsigned long total_num_msgs;
->> +static unsigned long total_num_sends;
->> +static unsigned long stat_tx_ts;
->> +static unsigned long stat_tx_ts_errors;
->> +static unsigned long tstart;
->> +static unsigned long tend;
->> +static unsigned long stat_zcopies;
->> +static unsigned long stat_zcopy_errors;
->>=20
->> static socklen_t cfg_alen;
->> static struct sockaddr_storage cfg_dst_addr;
->> @@ -137,8 +146,11 @@ static void flush_cmsg(struct cmsghdr *cmsg)
->>                        struct my_scm_timestamping *tss;
->>=20
->>                        tss =3D (struct my_scm_timestamping =
-*)CMSG_DATA(cmsg);
->> -                       fprintf(stderr, "tx timestamp =3D =
-%lu.%09lu\n",
->> -                               tss->ts[i].tv_sec, =
-tss->ts[i].tv_nsec);
->> +                       if (tss->ts[i].tv_sec =3D=3D 0)
->> +                               stat_tx_ts_errors++;
->> +                       if (cfg_verbose)
->> +                               fprintf(stderr, "tx timestamp =3D =
-%lu.%09lu\n",
->> +                                       tss->ts[i].tv_sec, =
-tss->ts[i].tv_nsec);
->=20
-> changes unrelated to this feature?
+Thanks for reminding; for the first step, I will not add any power
+management enabling steps in the testing script, we can add the
+related operations if later we have clear idea for this.
 
-I=E2=80=99ll remove. Do you think that I should pull out any messages =
-related
-to =E2=80=9Ccfg_verbose=E2=80=9D?=20
-
+Thanks,
+Leo Yan
