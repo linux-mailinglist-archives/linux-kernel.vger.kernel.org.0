@@ -2,80 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 108AD29072
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 07:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F6C29077
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 07:43:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731893AbfEXFlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 01:41:21 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:61724 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfEXFlV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 01:41:21 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x4O5eDEB025409;
-        Fri, 24 May 2019 14:40:13 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x4O5eDEB025409
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1558676415;
-        bh=iN9az4yLq8H8s7g0mKC1/aWat7k8YMfbSGrf+YN/OP8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=2jZOEwPt/oMl8dLaQxV1S+FMPlz/CpP9UQrNnUt8ovtrQgf0dAAhr3X5W5D6lVNeW
-         Yu+JH/F/59av5IGQ0yP3Kk0BupUuthgNiwjhlyyXKJ73U2G4uF9FbtDt+rlorZ11BJ
-         fbdRw0L5nht8Yk2uSDtIjDXZ+Tuq0Vy3J/i5+emzxRsavL4th0VEp3eakmKBsODkoQ
-         R7273/Kda8aOtU4xZfO0zHnaN/WCZsPf1qwp8+SypnyLdarmQqhrfW/O0gcN4mjZ2u
-         smH7NhM9o7DQLdWPl2NahHOrnOfjU5gEdmx/rWpPntDPgQv30z3eZJalTBpPocjXZ3
-         L0aNnVoX0q8zQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Cc:     Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] clocksource: arc_timer: use BIT() instead of _BITUL()
-Date:   Fri, 24 May 2019 14:40:10 +0900
-Message-Id: <20190524054010.19323-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        id S1731932AbfEXFnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 01:43:17 -0400
+Received: from foss.arm.com ([217.140.101.70]:34038 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725890AbfEXFnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 01:43:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AFEAC374;
+        Thu, 23 May 2019 22:43:15 -0700 (PDT)
+Received: from [10.162.42.134] (p8cg001049571a15.blr.arm.com [10.162.42.134])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C7A293F5AF;
+        Thu, 23 May 2019 22:43:10 -0700 (PDT)
+Subject: Re: [PATCH V3 2/4] arm64/mm: Hold memory hotplug lock while walking
+ for kernel page table dump
+To:     David Hildenbrand <david@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        mgorman@techsingularity.net, james.morse@arm.com,
+        robin.murphy@arm.com, cpandya@codeaurora.org,
+        arunks@codeaurora.org, dan.j.williams@intel.com, osalvador@suse.de,
+        cai@lca.pw, logang@deltatee.com, ira.weiny@intel.com
+References: <1557824407-19092-1-git-send-email-anshuman.khandual@arm.com>
+ <1557824407-19092-3-git-send-email-anshuman.khandual@arm.com>
+ <20190515165847.GH16651@dhcp22.suse.cz>
+ <20190516102354.GB40960@lakrids.cambridge.arm.com>
+ <a141ffa1-aa81-39df-11ba-9e18046356ff@arm.com>
+ <20190516111607.GR16651@dhcp22.suse.cz>
+ <ec7e5085-c61e-9d8b-73e9-8dca28288d47@redhat.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <1250ef6a-ba33-92bb-2cc4-590b9b0f022d@arm.com>
+Date:   Fri, 24 May 2019 11:13:21 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <ec7e5085-c61e-9d8b-73e9-8dca28288d47@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is in-kernel C code, so there is no reason to use _BITUL().
-Replace it with equivalent BIT().
+On 05/23/2019 02:10 PM, David Hildenbrand wrote:
+> On 16.05.19 13:16, Michal Hocko wrote:
+>> On Thu 16-05-19 16:36:12, Anshuman Khandual wrote:
+>>> On 05/16/2019 03:53 PM, Mark Rutland wrote:
+>>>> Hi Michal,
+>>>>
+>>>> On Wed, May 15, 2019 at 06:58:47PM +0200, Michal Hocko wrote:
+>>>>> On Tue 14-05-19 14:30:05, Anshuman Khandual wrote:
+>>>>>> The arm64 pagetable dump code can race with concurrent modification of the
+>>>>>> kernel page tables. When a leaf entries are modified concurrently, the dump
+>>>>>> code may log stale or inconsistent information for a VA range, but this is
+>>>>>> otherwise not harmful.
+>>>>>>
+>>>>>> When intermediate levels of table are freed, the dump code will continue to
+>>>>>> use memory which has been freed and potentially reallocated for another
+>>>>>> purpose. In such cases, the dump code may dereference bogus addressses,
+>>>>>> leading to a number of potential problems.
+>>>>>>
+>>>>>> Intermediate levels of table may by freed during memory hot-remove, or when
+>>>>>> installing a huge mapping in the vmalloc region. To avoid racing with these
+>>>>>> cases, take the memory hotplug lock when walking the kernel page table.
+>>>>>
+>>>>> Why is this a problem only on arm64 
+>>>>
+>>>> It looks like it's not -- I think we're just the first to realise this.
+>>>>
+>>>> AFAICT x86's debugfs ptdump has the same issue if run conccurently with
+>>>> memory hot remove. If 32-bit arm supported hot-remove, its ptdump code
+>>>> would have the same issue.
+>>>>
+>>>>> and why do we even care for debugfs? Does anybody rely on this thing
+>>>>> to be reliable? Do we even need it? Who is using the file?
+>>>>
+>>>> The debugfs part is used intermittently by a few people working on the
+>>>> arm64 kernel page tables. We use that both to sanity-check that kernel
+>>>> page tables are created/updated correctly after changes to the arm64 mmu
+>>>> code, and also to debug issues if/when we encounter issues that appear
+>>>> to be the result of kernel page table corruption.
+>>>>
+>>>> So while it's rare to need it, it's really useful to have when we do
+>>>> need it, and I'd rather not remove it. I'd also rather that it didn't
+>>>> have latent issues where we can accidentally crash the kernel when using
+>>>> it, which is what this patch is addressing.
+>>>>
+>>>>> I am asking because I would really love to make mem hotplug locking less
+>>>>> scattered outside of the core MM than more. Most users simply shouldn't
+>>>>> care. Pfn walkers should rely on pfn_to_online_page.
+>>>>
+>>>> I'm not sure if that would help us here; IIUC pfn_to_online_page() alone
+>>>> doesn't ensure that the page remains online. Is there a way to achieve
+>>>> that other than get_online_mems()?
+>>>
+>>> Still wondering how pfn_to_online_page() is applicable here. It validates
+>>> a given PFN and whether its online from sparse section mapping perspective
+>>> before giving it's struct page. IIUC it is used during a linear scanning
+>>> of a physical address range not for a page table walk. So how it can solve
+>>> the problem when a struct page which was used as an intermediate level page
+>>> table page gets released back to the buddy from another concurrent thread ?
+>>
+>> Well, my comment about pfn_to_online_page was more generic and it might
+>> not apply to this specific case. I meant to say that the code outside of
+>> the core MM shouldn't really care about the hotplug locking.
+>>
+> 
+> What am I missing, how is it guaranteed that a page doesn't get
+> offlined/removed without holding a lock here?
 
-I added #include <linux/bits.h> explicitly although it has been included
-by other headers eventually.
+It is not guaranteed.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> 
+> We would at least need some RCU mechnism or similar to sync against
+> pages vanishing.
 
- drivers/clocksource/arc_timer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Yes, if we dont take memory_hotplug_lock preventing memory hot remove.
 
-diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
-index b28970ca4a7a..b1f21bf3b83c 100644
---- a/drivers/clocksource/arc_timer.c
-+++ b/drivers/clocksource/arc_timer.c
-@@ -16,6 +16,7 @@
-  */
- 
- #include <linux/interrupt.h>
-+#include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/clocksource.h>
-@@ -142,7 +143,7 @@ static u64 arc_read_rtc(struct clocksource *cs)
- 		l = read_aux_reg(AUX_RTC_LOW);
- 		h = read_aux_reg(AUX_RTC_HIGH);
- 		status = read_aux_reg(AUX_RTC_CTRL);
--	} while (!(status & _BITUL(31)));
-+	} while (!(status & BIT(31)));
- 
- 	return (((u64)h) << 32) | l;
- }
--- 
-2.17.1
+> 
+> pfn_to_online_page() assumes that somebody touches a page he doesn't
+> own. There has to be some way for core-mm to realize this and defer
+> offlining/removinf.
 
+First of all I am not sure yet if Michal really meant that reference
+should be taken on all struct pages (while dumping kernel page table)
+for each range (minimum hot remove granularity) to prevent them from
+being hot removed.
