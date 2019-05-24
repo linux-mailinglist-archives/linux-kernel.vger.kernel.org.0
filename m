@@ -2,58 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1151299D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4464B299DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:14:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404106AbfEXOOD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 10:14:03 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46491 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403864AbfEXOOD (ORCPT
+        id S2404122AbfEXOOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 10:14:21 -0400
+Received: from mail-pg1-f176.google.com ([209.85.215.176]:37204 "EHLO
+        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403981AbfEXOOU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 10:14:03 -0400
-Received: by mail-lf1-f66.google.com with SMTP id l26so7251570lfh.13
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 07:14:02 -0700 (PDT)
+        Fri, 24 May 2019 10:14:20 -0400
+Received: by mail-pg1-f176.google.com with SMTP id n27so5144478pgm.4;
+        Fri, 24 May 2019 07:14:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=w5R2Tst2s7tEETC5HjzVcuxNpQo69R9uTgohCbePuhc=;
-        b=MyaCVXA0xIX4HTfx+a2anfAJdBFENedlo9/pAve9f/vbzqUUVN9IXzQPuyJtalBNHn
-         7AGRA5w+9pksqTOmSXrgrtMmfrhZJVKoea/mppeav0O6WadAZ7h9bvZ1xBCaW4oFK03v
-         3WpJgDfWfuauHQi8RjPd0tksNhhY9n1H+56vSSHfN6MQfzrQkYrthKMPTpsmrxjt2tGz
-         zH8nsg3Au6Izi7snMUvQIHIFR19cVoS7shxU1dw6DETyjAJbmZn63zk36WhK40RKudmu
-         MpZaeMbXEAXXUDLi1v5osHfshmi/EAuU7YrSdx/bCMrUPeRpb5ZyDUOLvyKMdbrqUcG8
-         XWaA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6h70DII01vc5AT/Achjo29MFy4kzT0/DLQcmd2XnwKU=;
+        b=uhKgduvEe5oxL2fXoG++sjialxQ50ChAUc3WciT4t+SZTulJ3J3/bZIpdDbjk08wlg
+         o3eWmb5PZJwSFboUwNHxoqeiKL4748uKaczaIUgs6H/fbw0mH8Gr75uv9bTHaJ9x8LaV
+         0tM/In3eYG9sKCGigcR04zYl/sSmP/Z1Vx3BStQqXHwgNpCaTOo5TfzYha/N8mZoQhIR
+         YD8tjpG3fmxTIBoSxTZKaLq58X843NLFbvNNE939bHcIAl4S94/9C17yDxb5qvJI7uac
+         J+T14mjnX04J6FNaEpIioHtV/e0K/vwhFC2+1PIsXZn+ZwZ7R7xnM3uitf87cFxPkZsP
+         AlJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=w5R2Tst2s7tEETC5HjzVcuxNpQo69R9uTgohCbePuhc=;
-        b=cqhKUnqPU+G5+i1MXqypaIgNalVXg9CCwXJ9B6v3JAL1jCrbAvJomFePJ/lMRFJeXe
-         T2tk4okJ94N62sBx4sD5ACUewL//1kXrF2MM+Z2FDMYl7AKM+D+S1wbx1ADe0QPh7F3a
-         BvQuI1Vhp/u9qzhqMRU8RNu5c9XX2GhA/l5OKa1HdJs12fSYDyacWTqlAwmuQLeEzpol
-         5W/1q4MMxom8w8/ZgixJ2mk1PN/IDWarAGtq3sjAquUaRB8WqGIAA0rkTVVwsqklQ6hf
-         nSH4qg25ol+gt9/NVMk4DkrykcDerJ+ZRpAE3NnK7Dy8DADGYONaGfqqlZaSCMUx4k13
-         1NJQ==
-X-Gm-Message-State: APjAAAXIt2g7RI5fuWJTgEETPxYrKq5m7c83GWkXR5yvZX6SWOEaAW2i
-        6nI/90Lmk0bpIF2s/3gzQ1Sfu2LGiMg8uU0V+r8=
-X-Google-Smtp-Source: APXvYqyIogSHX1ww9d5dSiiFj9YLEUTNF/YPXzkLvJY2g8Kidk/a1TP/cpC1SYwPPNKvIkAnFjJx0YHtj234gKLI9cY=
-X-Received: by 2002:a19:f00a:: with SMTP id p10mr8099795lfc.43.1558707241341;
- Fri, 24 May 2019 07:14:01 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6h70DII01vc5AT/Achjo29MFy4kzT0/DLQcmd2XnwKU=;
+        b=cd7qeMxtjCeSAuQdi0Pb2d0ZrM+YwORXebG6iw0imR5Pv29DWFZ8uPnVCh6htbDN8u
+         Mj4+11Hmk+F/QJOEFxQ1pyM7e+TkdZXutRVeD2Mcr8yML4nr1z1lj4q/QJ1I7DyWzX0m
+         1LRpCrhIyfzMAW/O2YEwLTtm1H5pb9S/rYBo6MJFRt9c8xdrZBGbn7lzhoStUWeQy+Ct
+         JoV1nhhaxtoZQfYRNuWOp0o7lAyHbpPcqL2cDP77yPJBE8ZbQtiuKIxwC5heg1jtdZxe
+         LLdMJYRXq/UR6PESuV945R+zF5OuwvtoUsh0S/SDSn4pYwRq0qxr6RpxT5vVkNPEQNE3
+         Y2Mg==
+X-Gm-Message-State: APjAAAX5bnhlA8JiOl9eVykv+fShFZNp73CsDvZ0V3k2f290Z2Yw72Tm
+        m4PRXTrayHbg5E/HyRWW0VG0Sxf4XU0iOrKUjDo=
+X-Google-Smtp-Source: APXvYqyjUPYjp6u5VBIgbQIbByV2A/1X2b6aOT6ENs5VfoMXsbamQalLOcb+p9ougBdtkYbEn0Hr7Kf/+DaQUR3+bkY=
+X-Received: by 2002:aa7:8495:: with SMTP id u21mr102639494pfn.125.1558707259841;
+ Fri, 24 May 2019 07:14:19 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a2e:2b56:0:0:0:0:0 with HTTP; Fri, 24 May 2019 07:14:00
- -0700 (PDT)
-Reply-To: mrdavidkekeli01@gmail.com
-From:   "Mr.David Keller" <davidkjn1@gmail.com>
-Date:   Fri, 24 May 2019 14:14:00 +0000
-Message-ID: <CAAfY6swrzHUDvoMJTOZW28w-ZKv82tP0U0=J3C_4T-87UOPHjg@mail.gmail.com>
-Subject: My Greeting
-To:     undisclosed-recipients:;
+References: <20190524142713.360c0c10@canb.auug.org.au>
+In-Reply-To: <20190524142713.360c0c10@canb.auug.org.au>
+From:   Steve French <smfrench@gmail.com>
+Date:   Fri, 24 May 2019 09:14:07 -0500
+Message-ID: <CAH2r5msm9TfC8f5WNOyD-9g01u9m-UNPuk_XPp3Ykhc4u7+Rtg@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the cifs tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     CIFS <linux-cifs@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Murphy Zhou <jencce.kernel@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Greeting, Did you receive the letter i sent to you.Please answer
-me.Best Regard,Mr.David Keller.
+fixed and repushed to cifs-2.6.git for-next
+
+On Thu, May 23, 2019 at 11:27 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> In commit
+>
+>   f875253b5fe6 ("fs/cifs/smb2pdu.c: fix buffer free in SMB2_ioctl_free")
+>
+> Fixes tag
+>
+>   Fixes: 2c87d6a ("cifs: Allocate memory for all iovs in smb2_ioctl")
+>
+> has these problem(s):
+>
+>   - SHA1 should be at least 12 digits long
+>     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+>     or later) just making sure it is not set (or set to "auto").
+>
+> --
+> Cheers,
+> Stephen Rothwell
+
+
+
+-- 
+Thanks,
+
+Steve
