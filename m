@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 003F1296E3
+	by mail.lfdr.de (Postfix) with ESMTP id E7816296E5
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:17:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390893AbfEXLQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:16:41 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46503 "EHLO
+        id S2390934AbfEXLQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:16:44 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34823 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390410AbfEXLQj (ORCPT
+        with ESMTP id S2390856AbfEXLQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:16:39 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r7so9578114wrr.13
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:16:38 -0700 (PDT)
+        Fri, 24 May 2019 07:16:40 -0400
+Received: by mail-wr1-f67.google.com with SMTP id m3so9608696wrv.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:16:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=A0HzfJ8leQV9/Ia+5j4PgeiH8O0rzgjlyMwyBqLrNY4=;
-        b=pvNpKcLsEz+1W37HcVISnMK4xkdCyLtbas0+BI0hYTjlzR/fSpFpW7oqy0Nk7KvHwx
-         BxHl44BzkSqRlNJhucVvuVCrgCGGQO6decnRTfn12JuxgpSvDQ+ouiu5kba2JFwy+OJR
-         BTJbBFDg17pyytm0KbCGpghu4BjNRDIVEmfXZCKwARZSevQBe/bE0pjHs6sFqG0qDgyc
-         HxZ/NMWbPrzbIVMbeHXTU2Na9e01X8aT7e7OIzCXs7cgJKeK8otHCzSESBjs8q+8/0kV
-         U/rQUYpkoIqbdy865VwfoCkjhL5vFxFEqLtJw+hixLdQNJ+JEjKHWzFXC+ULshxJrIc9
-         nYew==
+        bh=OVCnRskmJCeqZXRUtBHTU3a0dRFZnt0B8APXmqZl1PE=;
+        b=iSt+KozEePLOt00yptQg4U7xEgXqAzfPyZlBkSB8rsZ6OtjxaUBKIKfXhMXsFcAIeO
+         7pqnkJ1PnIUul3tBicMbE4tvxLzoY8nwY3BJMY5WRPcpba6j6U+Dy3VT7aWbblAnr2RJ
+         bbZYAKKTaNyKHWEsMfMPp8fwTi61DSxczu3LyxUb0kQ9bI2wMoVLDKlluuRJf8N+e+7u
+         bUHhO/KAuOc9Z025MWY10RgUNyLmgblRzh8SCdg3cdLZw5bhKee1+D36cMdUfpweXETK
+         o6hAXcY0BvphSPze1AadEQV24/Xah6W9/xGxs6oiHXeHiCZNzp6NL9wj2vkVi0k2qO1m
+         R2tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=A0HzfJ8leQV9/Ia+5j4PgeiH8O0rzgjlyMwyBqLrNY4=;
-        b=Qg0BIgN9dDs0n4NAvSflcHsswb8dCK2IuRg/yyUpWNTkur6Ubm9BuKGOIltVeaGQ2b
-         gCJDaYa0zXTkYpd588sn0haFz7719KuYMpDFVn51//jNs+rtx/onoae1JvAoCLkfzjWu
-         6l7P/HrJcK1BZwrC/0XOSDSeAuU0G6rNHvvTpkML8cM6sCiKmEbE3ma0VLijPZ8LYTWr
-         FjiD4v3pA1D8LoOijavxHGXkS6wEb53CCTy1gfQ8HGivJptvZjqBp3oi3W1tEfAXUMbt
-         FONgREhStDCQwgWKWZ5ETP5y4qmiqBZYZjUGzVcGmUER1B86M6RvKvy9FhbptCXnwrJX
-         cRIA==
-X-Gm-Message-State: APjAAAU7q9Y5OriknPJZqgJiwu8qOTD8yF4pBihCm2pSq3ytIzPipAlS
-        0GuKfsMwFshilN7xbf8nl+dCziu5+pA=
-X-Google-Smtp-Source: APXvYqxuE0d5xdGWQJE+c9M90XY85xYZMHaMvDk0/gvF3HXxprlp1muq6u5JWC6kZD3MTvgrkCnjDw==
-X-Received: by 2002:a5d:4945:: with SMTP id r5mr9522454wrs.328.1558696597623;
-        Fri, 24 May 2019 04:16:37 -0700 (PDT)
+        bh=OVCnRskmJCeqZXRUtBHTU3a0dRFZnt0B8APXmqZl1PE=;
+        b=LjbiqOpt4TKWIpN5OnxJEdBV0KTzhtoTqrAFPUkEoAMj8gWdMWPh6mNCGlSn1AFRmQ
+         YZ9uVUtRf11wRZ2yLBnMpAqfs7aPRy+28mhnwWQCd4mpWd1lw2omHPeXG5O8iWnP3LAF
+         76sp482b/FElip8e65Yg9Gh6+YYalMLyou4wvsjbociuoSAwcuyGowDCgdwt1teJvRID
+         8iAZ3sNOqKE6k/x4Y2+UGKgvJamtUbG/jcRQUhGg6QzlMzvmpF8GfJ0pnrYNEOCNjR9D
+         X1HkZ1fLrKGK2xw//RgfeXRvlLrIz3UR2BD67Zt/vDhXJ4UBIfmXRE6ui64RglNRGZmP
+         X79g==
+X-Gm-Message-State: APjAAAVrqeBImLYXQ7PSqLk+lIrGLfX5JE5BeDb0/R2VZ02780Qcx/58
+        EAirU/1LiW8y/JyS2oFC0gMXoa9Ilik=
+X-Google-Smtp-Source: APXvYqwSVWXushrLaqcjDUL7QPeX8seJFMMrfVpKutgtlib86Ky9xHAd+am5U60x5t2rGWFNo7TwCw==
+X-Received: by 2002:a05:6000:43:: with SMTP id k3mr62372855wrx.234.1558696599149;
+        Fri, 24 May 2019 04:16:39 -0700 (PDT)
 Received: from clegane.local (73.82.95.92.rev.sfr.net. [92.95.82.73])
-        by smtp.gmail.com with ESMTPSA id h12sm2575392wre.14.2019.05.24.04.16.36
+        by smtp.gmail.com with ESMTPSA id h12sm2575392wre.14.2019.05.24.04.16.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 04:16:37 -0700 (PDT)
+        Fri, 24 May 2019 04:16:38 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
-Subject: [PATCH V2 1/9] genirq/timings: Fix next event index function
-Date:   Fri, 24 May 2019 13:16:07 +0200
-Message-Id: <20190524111615.4891-2-daniel.lezcano@linaro.org>
+Subject: [PATCH V2 2/9] genirq/timings: Fix timings buffer inspection
+Date:   Fri, 24 May 2019 13:16:08 +0200
+Message-Id: <20190524111615.4891-3-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190524111615.4891-1-daniel.lezcano@linaro.org>
 References: <20190524111615.4891-1-daniel.lezcano@linaro.org>
@@ -58,97 +58,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current code was luckily working with most of the interval samples
-testing but actually it fails to correctly detect pattern repeatition
-breaking at the end of the buffer.
+It appears the index beginning computation is not correct, the current
+code does:
 
-Narrowing down the bug has been a real pain because of the pointers,
-so the routine is rewrite by using indexes instead.
+     i = (irqts->count & IRQ_TIMINGS_MASK) - 1
+
+If irqts->count is equal to zero, we end up with an index equal to -1,
+but that does not happen because the function checks against zero
+before and returns in such case.
+
+However, if irqts->count is a multiple of IRQ_TIMINGS_SIZE, the
+resulting & bit op will be zero and leads also to a -1 index.
+
+Re-introduce the iteration loop belonging to the previous variance
+code which was correct.
 
 Fixes: bbba0e7c5cda "genirq/timings: Add array suffix computation code"
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- kernel/irq/timings.c | 53 ++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 44 insertions(+), 9 deletions(-)
+ kernel/irq/timings.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
 diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
-index 90c735da15d0..60362aca4ca4 100644
+index 60362aca4ca4..250bb00ccd85 100644
 --- a/kernel/irq/timings.c
 +++ b/kernel/irq/timings.c
-@@ -297,7 +297,18 @@ static u64 irq_timings_ema_new(u64 value, u64 ema_old)
+@@ -267,6 +267,23 @@ void irq_timings_disable(void)
+ #define PREDICTION_MAX		10 /* 2 ^ PREDICTION_MAX useconds */
+ #define PREDICTION_BUFFER_SIZE	16 /* slots for EMAs, hardly more than 16 */
  
- static int irq_timings_next_event_index(int *buffer, size_t len, int period_max)
- {
--	int i;
-+	int period;
++/*
++ * Number of elements in the circular buffer: If it happens it was
++ * flushed before, then the number of elements could be smaller than
++ * IRQ_TIMINGS_SIZE, so the count is used, otherwise the array size is
++ * used as we wrapped. The index begins from zero when we did not
++ * wrap. That could be done in a nicer way with the proper circular
++ * array structure type but with the cost of extra computation in the
++ * interrupt handler hot path. We choose efficiency.
++ */
++#define for_each_irqts(i, irqts)					\
++	for (i = irqts->count < IRQ_TIMINGS_SIZE ?			\
++		     0 : irqts->count & IRQ_TIMINGS_MASK,		\
++		     irqts->count = min(IRQ_TIMINGS_SIZE,		\
++					irqts->count);			\
++	     irqts->count > 0; irqts->count--,				\
++		     i = (i + 1) & IRQ_TIMINGS_MASK)
 +
-+	/*
-+	 * Move the beginnning pointer to the end minus the max period
-+	 * x 3. We are at the point we can begin searching the pattern
-+	 */
-+	buffer = &buffer[len - (period_max * 3)];
-+
-+	/*
-+	 * Adjust the length to the maximum allowed period x 3
-+	 */
-+	len = period_max * 3;
- 
- 	/*
- 	 * The buffer contains the suite of intervals, in a ilog2
-@@ -306,21 +317,45 @@ static int irq_timings_next_event_index(int *buffer, size_t len, int period_max)
- 	 * period beginning at the end of the buffer. We do that for
- 	 * each suffix.
+ struct irqt_stat {
+ 	u64	last_ts;
+ 	u64	ema_time[PREDICTION_BUFFER_SIZE];
+@@ -528,11 +545,7 @@ u64 irq_timings_next_event(u64 now)
+ 	 * model while decrementing the counter because we consume the
+ 	 * data from our circular buffer.
  	 */
--	for (i = period_max; i >= PREDICTION_PERIOD_MIN ; i--) {
-+	for (period = period_max; period >= PREDICTION_PERIOD_MIN ; period--) {
- 
--		int *begin = &buffer[len - (i * 3)];
--		int *ptr = begin;
-+		/*
-+		 * The first comparison always succeed because the
-+		 * suffix is deduced from the first n-period bytes of
-+		 * the buffer and we compare the initial suffix with
-+		 * itself, so we can skip the first iteration.
-+		 */
-+		int idx = period;
-+		size_t size = period;
- 
- 		/*
- 		 * We look if the suite with period 'i' repeat
- 		 * itself. If it is truncated at the end, as it
- 		 * repeats we can use the period to find out the next
--		 * element.
-+		 * element with the modulo.
- 		 */
--		while (!memcmp(ptr, begin, i * sizeof(*ptr))) {
--			ptr += i;
--			if (ptr >= &buffer[len])
--				return begin[((i * 3) % i)];
-+		while (!memcmp(buffer, &buffer[idx], size * sizeof(int))) {
-+
-+			/*
-+			 * Move the index in a period basis
-+			 */
-+			idx += size;
-+
-+			/*
-+			 * If this condition is reached, all previous
-+			 * memcmp were successful, so the period is
-+			 * found.
-+			 */
-+			if (idx == len)
-+				return buffer[len % period];
-+
-+			/*
-+			 * If the remaining elements to compare are
-+			 * smaller than the period, readjust the size
-+			 * of the comparison for the last iteration.
-+			 */
-+			if (len - idx < period)
-+				size = len - idx;
- 		}
- 	}
- 
+-
+-	i = (irqts->count & IRQ_TIMINGS_MASK) - 1;
+-	irqts->count = min(IRQ_TIMINGS_SIZE, irqts->count);
+-
+-	for (; irqts->count > 0; irqts->count--, i = (i + 1) & IRQ_TIMINGS_MASK) {
++	for_each_irqts(i, irqts) {
+ 		irq = irq_timing_decode(irqts->values[i], &ts);
+ 		s = idr_find(&irqt_stats, irq);
+ 		if (s)
 -- 
 2.17.1
 
