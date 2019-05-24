@@ -2,104 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 378CC293E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:57:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F9AD2938D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:54:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390288AbfEXIyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:54:52 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44500 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390248AbfEXIyq (ORCPT
+        id S2390037AbfEXIyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:54:24 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2118 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389964AbfEXIyT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:54:46 -0400
-Received: by mail-ed1-f65.google.com with SMTP id b8so13304637edm.11
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NmvrGIUWQkTElry91PwheZTmzBnjKP7PR8ohbwjeRGw=;
-        b=Nh3n8kL/lOQMsn5ZR8TvohBEqbIzE7Lgj3nCIy9tF9DcXQiDN/rMDZEKzdjjQlKv2v
-         DBcU1thQcKCne7ZjTeekcxfx+fSPE39PVenj5kjlxDaGWTjihc9VVQH/EXPWiuIuPEI+
-         oThhEVt/uxjw2gJKXFL2oGTpb8aHJS//3bOh4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NmvrGIUWQkTElry91PwheZTmzBnjKP7PR8ohbwjeRGw=;
-        b=BoXeUwAmzPxQ0sm5rd8Gjc0o5hNzULdPHlU1FKhNk7bG03Zo/2mgb4gRrmUO+fnQqe
-         Hhq8JTCh6QIrGezYwCkD93vWPMfN0Fa13VurBBZPTZteC2Gpx8mlxz8IVvGSr0Ymy9Qh
-         A9I/F/b0zQ9fZmbVPu+DQVq10PrN1T276HO52U5UWIhwyTZmPqxK7HQ0FIPxqCmmrO66
-         WIv/Qmygd9Fvyo+OEucXE7XnWIOvpox5Vjl/wd8FmFxIJC12wzveEDNXisfAua5IY/Le
-         m3f9dSLvV6qj/VdRLCBDHbz+8wns/IOUchpxfiyG9olJdnaTlO700khZkaNx9PSfdwQO
-         wr6w==
-X-Gm-Message-State: APjAAAXqmXVDIZf6Mkiv14h/PMvTfroE0JOTAC9gA/nUR4H2OmXHujiu
-        ratcIg+oP8TdfMTPqBwCLKB3boG/jcw=
-X-Google-Smtp-Source: APXvYqwajf0oCHKmp7dOkjnUHWvBU13ALDXZf5gmM/1TI3Cp7xnjVwoelMbSOCmGIhHgMN29lqIMcQ==
-X-Received: by 2002:a17:907:20cd:: with SMTP id qq13mr55869127ejb.170.1558688084971;
-        Fri, 24 May 2019 01:54:44 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id 96sm567082edq.68.2019.05.24.01.54.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 01:54:44 -0700 (PDT)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>
-Subject: [PATCH 33/33] backlight: simplify lcd notifier
-Date:   Fri, 24 May 2019 10:53:54 +0200
-Message-Id: <20190524085354.27411-34-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
-References: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
+        Fri, 24 May 2019 04:54:19 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ce7b1350000>; Fri, 24 May 2019 01:54:13 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 24 May 2019 01:54:18 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 24 May 2019 01:54:18 -0700
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 24 May
+ 2019 08:54:17 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 24 May 2019 08:54:18 +0000
+Received: from moonraker.nvidia.com (Not Verified[10.21.132.148]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5ce7b1380001>; Fri, 24 May 2019 01:54:17 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] Revert "ASoC: simple-card: Fix configuration of DAI format"
+Date:   Fri, 24 May 2019 09:54:04 +0100
+Message-ID: <1558688044-22025-1-git-send-email-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1558688053; bh=nLIuj+dWoHUdiLPx4+WIEBrzL5eS8acbrvzehEuKewA=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=U7qLd1q8OQQZhGp7qzKaeHeA6i3Xdhy1PU+tomyMsdXeT4AGyOeWMWaCXa08lSbM6
+         Ph7h2yRh/+ZedkiWZQnPeGmW0K5ElEw0egotjTyGYhWPBzT205VlCYFU2ppM+kiBFz
+         m6eeyCwAzBO5/yYdYJBIWWnlr27Xx09z0RcImMFsqbe39IRJV06XrGA44rpdD6hpqQ
+         h/N7mlX7YjWvHukBqJEUgsWu1oC14osKxZbMIztu1lG9IE63xMMpwIwDJLsr79cVTg
+         wkmj8u9jXSR5Ma0APD7hh6Y3raoh7J6UeY9SXog8GRaf8PvgiOEWs4vL0SQsWm8P2N
+         wpIIL0Of/k6UA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With all the work I've done on replacing fb notifier calls with direct
-calls into fbcon the backlight/lcd notifier is the only user left.
+Revert commit 069d037aea98 ("ASoC: simple-card: Fix configuration of
+DAI format"). During further review, it turns out that the actual issue
+was caused by an incorrectly formatted device-tree node describing the
+soundcard.
 
-It will only receive events now that it cares about, hence we can
-remove this check.
+The following is incorrect because the simple-audio-card
+'bitclock-master' and 'frame-master' properties should not reference the
+actual codec phandle ...
 
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>
+	sound {
+		compatible = "simple-audio-card";
+		...
+	=>	simple-audio-card,bitclock-master = <&codec>;
+	=>	simple-audio-card,frame-master = <&codec>;
+		...
+
+		simple-audio-card,cpu {
+			sound-dai = <&xxx>;
+		};
+
+		simple-audio-card,codec {
+	=>		sound-dai = <&codec>;
+		};
+	};
+
+Rather, these properties should reference the phandle to the
+'simple-audio-card,codec' property as shown below ...
+
+	sound {
+		compatible = "simple-audio-card";
+		...
+	=>	simple-audio-card,bitclock-master = <&codec>;
+	=>	simple-audio-card,frame-master = <&codec>;
+		...
+
+		simple-audio-card,cpu {
+			sound-dai = <&xxx>;
+		};
+
+	=>	codec: simple-audio-card,codec { /* simple-card wants here */
+			sound-dai = <&xxx>;	 /* not here */
+		};
+	};
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/video/backlight/lcd.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ sound/soc/generic/simple-card.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/video/backlight/lcd.c b/drivers/video/backlight/lcd.c
-index a758039475d0..8ea5e5937ae2 100644
---- a/drivers/video/backlight/lcd.c
-+++ b/drivers/video/backlight/lcd.c
-@@ -29,17 +29,6 @@ static int fb_notifier_callback(struct notifier_block *self,
- 	struct lcd_device *ld;
- 	struct fb_event *evdata = data;
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index c2a2c5fd0801..d16e894fce2b 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -283,6 +283,11 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
+ 	codec_dai		=
+ 	dai_props->codec_dai	= &priv->dais[li->dais++];
  
--	/* If we aren't interested in this event, skip it immediately ... */
--	switch (event) {
--	case FB_EVENT_BLANK:
--	case FB_EVENT_MODE_CHANGE:
--	case FB_EARLY_EVENT_BLANK:
--	case FB_R_EARLY_EVENT_BLANK:
--		break;
--	default:
--		return 0;
--	}
++	ret = asoc_simple_parse_daifmt(dev, node, codec,
++				       prefix, &dai_link->dai_fmt);
++	if (ret < 0)
++		goto dai_link_of_err;
++
+ 	simple_parse_mclk_fs(top, cpu, codec, dai_props, prefix);
+ 
+ 	ret = asoc_simple_parse_cpu(cpu, dai_link, &single_cpu);
+@@ -293,11 +298,6 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
+ 
+-	ret = asoc_simple_parse_daifmt(dev, node, dai_link->codecs->of_node,
+-				       prefix, &dai_link->dai_fmt);
+-	if (ret < 0)
+-		goto dai_link_of_err;
 -
- 	ld = container_of(self, struct lcd_device, fb_notif);
- 	if (!ld->ops)
- 		return 0;
+ 	ret = asoc_simple_parse_platform(plat, dai_link);
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
 -- 
-2.20.1
+2.7.4
 
