@@ -2,148 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3066E2934D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:42:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E789829353
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:43:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389617AbfEXImd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:42:33 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38238 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389281AbfEXImd (ORCPT
+        id S2389669AbfEXIna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:43:30 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35151 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389281AbfEXIn3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:42:33 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d18so9081557wrs.5
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:42:31 -0700 (PDT)
+        Fri, 24 May 2019 04:43:29 -0400
+Received: by mail-lj1-f196.google.com with SMTP id h11so7957534ljb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:43:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=/eh8kpJepWcHd05fTLgUlObMd6U9mhCiDLTnG3UeKcI=;
-        b=hcCGrA1n1uB8S14VInJAwo4TfTI9LyNWA8O28fqhM2rVpmLndfjfHyAF9eOJLg4LYa
-         p2aocEcOyNpx3DahIxVfDTD1FKvkhKIKXeJs4ytV1va0a8SSiBiebByNvQTRM/fp49P5
-         o7EPPHnTSs3+IZU/CawlaKvgk4PvxamnuGrLRyEjyi1iq9MyvecvLivGrEWhPpTAEmyk
-         qX4gbw2nZB8SoNuSmspdWEyRBhnAPaIRfpSwxvkCnxJu7bsBeuzvwJQp3+Jb7X78uOF2
-         8s6rOWmmA9F43XQYVHQgROZYHtvhke9mtHUXqROXtHQ+eA4Zok5h66KCbMR0E7V5Prr/
-         oXYQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=2UGCpA22jrVv8p9U3LtnJYy4mTfB0OkTT5zNxTX9Y9E=;
+        b=WhHqJhf1qkUGoFrvbntgMG9Vtkw0hDHAVDQd3JUXLi0k8UB+6RkvzcmMi8Mf+tlyt9
+         Fzx3Rm70otucFLSGs8EdzagNeJQaaXvSRCbNXtP5FUOUuUiTo/RmPmkKgsQdzMGn/uez
+         85sC67xAnXMroSY8YutK3NNUBorZS+9HShW7CgjxKJEirp63fNKdf/3eqs9d0OqpG0HR
+         sHuCeMpEv8E5xLJ6hd3esDb0GemTWlSkV0CA6Sf9hbttrDeZQJVOhQns68JvbiXyBDG3
+         J7LK9V5wPmGbRiozveCHAMDqjvNNosKRlXMEzblKSAHl3IqcV9eAJLlV5BZxqVaRuvuG
+         miCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=/eh8kpJepWcHd05fTLgUlObMd6U9mhCiDLTnG3UeKcI=;
-        b=tPVvRHHWWsjlVmszhEOFsSMFG1vgosfF3LtatyvFpgZ/s/0c6KUHgo0zJqknR4K2Gp
-         9fMt4ze7vFLWPx/izgFNfF4yKYGKFkbZzUZjlIFR3SzVEwAZdNLAQj2XYvPISJeWV4Z+
-         SphwMCpU7MJEQXVDE6Fhy2JhiAY3hEgykwqVJwAwfuxAvlMr+WA8AaJW60EMjmG7Kual
-         nLxsf0djXMSLbEEfWvk/tDRd0YIv9U/4S1EEPsFKgUntOlQkKCPwjF4JeGe/tSpU9a/Q
-         EbsN5WKMBiacZpvmWCabArP58QvOjkiuhAMSSmDnJv7TRUIhnqbjQbZzndlJzjxmVkx1
-         6N1A==
-X-Gm-Message-State: APjAAAVDPft7a3yw9Erxc38mT6MssgddljuVqvmYW6Jt2/YhVTef+Kpk
-        L7lX7At9SP6AyFEeq8WWVLt+3hg4W/k=
-X-Google-Smtp-Source: APXvYqyLnco13OdPHMGW6AArjIFEq6MpKQ7TUhVrVAXk43WMVF9owzwnsYDk2JrxFLeHX1Tl2OpFYw==
-X-Received: by 2002:adf:b447:: with SMTP id v7mr62237424wrd.267.1558687350584;
-        Fri, 24 May 2019 01:42:30 -0700 (PDT)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id r4sm1376397wrv.34.2019.05.24.01.42.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 01:42:29 -0700 (PDT)
-Subject: Re: [PATCH] drm/meson: imply dw-hdmi i2s audio for meson hdmi
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20190429102325.29022-1-jbrunet@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <5bd1ab1d-9352-8ac0-de99-e80bd23f7264@baylibre.com>
-Date:   Fri, 24 May 2019 10:42:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2UGCpA22jrVv8p9U3LtnJYy4mTfB0OkTT5zNxTX9Y9E=;
+        b=Vf8ksG8p1f+quepm6PMPa57X+Wvcb+7ltpF3pUHlXKMr3Gfbk/BaG0CnpobFlGJPQo
+         x4uYpboj5ovldcKfuTfw3q2CjIaFsx8ZU66/mamw7X26wHD+gicxKiJptSo8v4Q1UMmT
+         V2gB6sWWPm/SYTrFfa46oVHORQpDhNPhxTalUDkcfAbCpb1GP2m1R7IU3P7L/hXAgkSV
+         RaL4G3e6q1DPVzXfPheKn6xnNljZcgEKdizzZfeiydqxQzosRZYsMf6VHrbk4cg32Qut
+         gooHMcWJxWv2g5Moqxn7Zn7dq6mKsRrFWGfCuaL4/zBX6LakPJg86bclsrygR6c8Qxzn
+         PxOQ==
+X-Gm-Message-State: APjAAAVICYvpQzGFke8oJHyPec6rtHEmKl0c/Vj4iEHMz/8imDF9Bp//
+        zRYKuRxWQ8WoHyWr6B8Epw4FRvMIBmRCCdRkQnoX4w==
+X-Google-Smtp-Source: APXvYqwjnmSEo46KGBhe5MUpoaw6uYQBmbXj0jbIUPWSD6KRHce5EuNKpxV2WFvs1OI0U9nJGdmCELgxnrJAycaNp2A=
+X-Received: by 2002:a2e:b0fc:: with SMTP id h28mr33659890ljl.55.1558687407909;
+ Fri, 24 May 2019 01:43:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190429102325.29022-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190523181710.981455400@linuxfoundation.org>
+In-Reply-To: <20190523181710.981455400@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 24 May 2019 14:13:15 +0530
+Message-ID: <CA+G9fYuYgDB=ta07ZeQrRgEDwddQCmWpTr9N47CPEnWC5GuS_Q@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/53] 4.9.179-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/04/2019 12:23, Jerome Brunet wrote:
-> Imply the i2s part of the Synopsys HDMI driver for Amlogic SoCs.
-> This will enable the i2s part by default when meson hdmi driver
-> is enable but let platforms not supported by the audio subsystem
-> disable it if necessary.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/gpu/drm/meson/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/meson/Kconfig b/drivers/gpu/drm/meson/Kconfig
-> index c28b69f48555..a480e4a80bea 100644
-> --- a/drivers/gpu/drm/meson/Kconfig
-> +++ b/drivers/gpu/drm/meson/Kconfig
-> @@ -14,3 +14,4 @@ config DRM_MESON_DW_HDMI
->  	depends on DRM_MESON
->  	default y if DRM_MESON
->  	select DRM_DW_HDMI
-> +	imply DRM_DW_HDMI_I2S_AUDIO
-> 
+On Fri, 24 May 2019 at 00:38, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.9.179 release.
+> There are 53 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat 25 May 2019 06:15:18 PM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.179-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.9.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-And applying to drm-misc-next
+Summary
+------------------------------------------------------------------------
 
-Thanks,
-Neil
+kernel: 4.9.179-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: f6bc31d8c3be3e5ab957341b3f99f8b45fcc646e
+git describe: v4.9.178-54-gf6bc31d8c3be
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.178-54-gf6bc31d8c3be
+
+No regressions (compared to build v4.9.178)
+
+No fixes (compared to build v4.9.178)
+
+Ran 21733 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
