@@ -2,68 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78ED029A18
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26DF129A5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391645AbfEXOaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 10:30:10 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54972 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390885AbfEXOaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 10:30:10 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 668BEE8D9F6C3ED72522;
-        Fri, 24 May 2019 22:30:05 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 24 May 2019 22:29:54 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>
-Subject: [PATCH] kernel: sysctl: change ipfrag_high/low_thresh to CTL_ULONG
-Date:   Fri, 24 May 2019 22:38:27 +0800
-Message-ID: <20190524143827.43301-1-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S2404138AbfEXOuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 10:50:02 -0400
+Received: from esa6.hc3370-68.iphmx.com ([216.71.155.175]:28358 "EHLO
+        esa6.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403888AbfEXOuC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 10:50:02 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 May 2019 10:50:02 EDT
+Authentication-Results: esa6.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=sergey.dyasli@citrix.com; spf=Pass smtp.mailfrom=sergey.dyasli@citrix.com; spf=None smtp.helo=postmaster@MIAPEX02MSOL01.citrite.net
+Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  sergey.dyasli@citrix.com) identity=pra;
+  client-ip=23.29.105.83; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="sergey.dyasli@citrix.com";
+  x-sender="sergey.dyasli@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa6.hc3370-68.iphmx.com: domain of
+  sergey.dyasli@citrix.com designates 23.29.105.83 as permitted
+  sender) identity=mailfrom; client-ip=23.29.105.83;
+  receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="sergey.dyasli@citrix.com";
+  x-sender="sergey.dyasli@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:23.29.105.83 ip4:162.221.156.83 ~all"
+Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@MIAPEX02MSOL01.citrite.net) identity=helo;
+  client-ip=23.29.105.83; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="sergey.dyasli@citrix.com";
+  x-sender="postmaster@MIAPEX02MSOL01.citrite.net";
+  x-conformance=sidf_compatible
+IronPort-SDR: L92NSaSjxlBdCrBZmCT7+KZG4Ypxl9hxObzcbTlTGj1ik8mZ/QurcPRcudyPz0wT7NEsSH7sP3
+ MJXkDS/mgE6r+D8y+MZKfLXq0xyFTms518AlB8qdQXaw6+EL7Pe0M6+KaigzDGzS12uuU9pYHq
+ Q+lrpr3VMvhzt24mGoUa15wMAbtzddgMkHVzVVor0dUXNW9kxpO4KKE0DN8R2SvfRDQELlhvBt
+ 48OfDLveutAj2VxKV7f4KrqfSNilCmX8emHh+m/YsH9zlv2Zw5LxMiRFE01CtKoNNfcn+c+UIS
+ WFc=
+X-SBRS: 2.7
+X-MesageID: 860160
+X-Ironport-Server: esa6.hc3370-68.iphmx.com
+X-Remote-IP: 23.29.105.83
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.60,507,1549947600"; 
+   d="scan'208";a="860160"
+From:   Sergey Dyasli <sergey.dyasli@citrix.com>
+To:     <iommu@lists.linux-foundation.org>,
+        <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>
+CC:     Sergey Dyasli <sergey.dyasli@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Paul Durrant <paul.durrant@citrix.com>
+Subject: [PATCH v1] xen/swiotlb: rework early repeat code
+Date:   Fri, 24 May 2019 15:42:50 +0100
+Message-ID: <20190524144250.5102-1-sergey.dyasli@citrix.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3e67f106f619 ("inet: frags: break the 2GB limit for frags storage"),
-changes ipfrag_high/low_thread 'type' from int to long, using CTL_ULONG
-instead of CTL_INT to keep consistent.
+Current repeat code is plain broken for the early=true case. Xen exchanges
+all DMA (<4GB) pages that it can on the first xen_swiotlb_fixup() attempt.
+All further attempts with a halved region will fail immediately because
+all DMA pages already belong to Dom0.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Introduce contig_pages param for xen_swiotlb_fixup() to track the number
+of pages that were made contiguous in MFN space and use the same bootmem
+region while halving the memory requirements.
+
+Signed-off-by: Sergey Dyasli <sergey.dyasli@citrix.com>
 ---
- kernel/sysctl_binary.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+CC: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: Juergen Gross <jgross@suse.com>
+CC: Stefano Stabellini <sstabellini@kernel.org>
+CC: Paul Durrant <paul.durrant@citrix.com>
+---
+ drivers/xen/swiotlb-xen.c | 36 ++++++++++++++++++++++++++++++------
+ 1 file changed, 30 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/sysctl_binary.c b/kernel/sysctl_binary.c
-index 73c132095a7b..ef0687f40f87 100644
---- a/kernel/sysctl_binary.c
-+++ b/kernel/sysctl_binary.c
-@@ -410,8 +410,8 @@ static const struct bin_table bin_net_ipv4_table[] = {
- 	{ CTL_INT,	NET_IPV4_ICMP_RATELIMIT,		"icmp_ratelimit" },
- 	{ CTL_INT,	NET_IPV4_ICMP_RATEMASK,			"icmp_ratemask" },
+diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+index 5dcb06fe9667..d2aba804d06c 100644
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -142,7 +142,8 @@ static int is_xen_swiotlb_buffer(dma_addr_t dma_addr)
+ static int max_dma_bits = 32;
  
--	{ CTL_INT,	NET_IPV4_IPFRAG_HIGH_THRESH,		"ipfrag_high_thresh" },
--	{ CTL_INT,	NET_IPV4_IPFRAG_LOW_THRESH,		"ipfrag_low_thresh" },
-+	{ CTL_ULONG,	NET_IPV4_IPFRAG_HIGH_THRESH,		"ipfrag_high_thresh" },
-+	{ CTL_ULONG,	NET_IPV4_IPFRAG_LOW_THRESH,		"ipfrag_low_thresh" },
- 	{ CTL_INT,	NET_IPV4_IPFRAG_TIME,			"ipfrag_time" },
+ static int
+-xen_swiotlb_fixup(void *buf, size_t size, unsigned long nslabs)
++xen_swiotlb_fixup(void *buf, size_t size, unsigned long nslabs,
++		  unsigned long *contig_pages)
+ {
+ 	int i, rc;
+ 	int dma_bits;
+@@ -156,10 +157,13 @@ xen_swiotlb_fixup(void *buf, size_t size, unsigned long nslabs)
+ 		int slabs = min(nslabs - i, (unsigned long)IO_TLB_SEGSIZE);
  
- 	{ CTL_INT,	NET_IPV4_IPFRAG_SECRET_INTERVAL,	"ipfrag_secret_interval" },
+ 		do {
++			unsigned int order = get_order(slabs << IO_TLB_SHIFT);
+ 			rc = xen_create_contiguous_region(
+ 				p + (i << IO_TLB_SHIFT),
+-				get_order(slabs << IO_TLB_SHIFT),
++				order,
+ 				dma_bits, &dma_handle);
++			if (rc == 0)
++				*contig_pages += 1 << order;
+ 		} while (rc && dma_bits++ < max_dma_bits);
+ 		if (rc)
+ 			return rc;
+@@ -202,7 +206,7 @@ static const char *xen_swiotlb_error(enum xen_swiotlb_err err)
+ }
+ int __ref xen_swiotlb_init(int verbose, bool early)
+ {
+-	unsigned long bytes, order;
++	unsigned long bytes, order, contig_pages;
+ 	int rc = -ENOMEM;
+ 	enum xen_swiotlb_err m_ret = XEN_SWIOTLB_UNKNOWN;
+ 	unsigned int repeat = 3;
+@@ -244,13 +248,32 @@ int __ref xen_swiotlb_init(int verbose, bool early)
+ 	/*
+ 	 * And replace that memory with pages under 4GB.
+ 	 */
++	contig_pages = 0;
+ 	rc = xen_swiotlb_fixup(xen_io_tlb_start,
+ 			       bytes,
+-			       xen_io_tlb_nslabs);
++			       xen_io_tlb_nslabs,
++			       &contig_pages);
+ 	if (rc) {
+-		if (early)
++		if (early) {
++			unsigned long orig_bytes = bytes;
++			while (repeat-- > 0) {
++				xen_io_tlb_nslabs = max(1024UL, /* Min is 2MB */
++						      (xen_io_tlb_nslabs >> 1));
++				pr_info("Lowering to %luMB\n",
++				     (xen_io_tlb_nslabs << IO_TLB_SHIFT) >> 20);
++				bytes = xen_set_nslabs(xen_io_tlb_nslabs);
++				order = get_order(xen_io_tlb_nslabs << IO_TLB_SHIFT);
++				xen_io_tlb_end = xen_io_tlb_start + bytes;
++				if (contig_pages >= (1ul << order)) {
++					/* Enough pages were made contiguous */
++					memblock_free(__pa(xen_io_tlb_start + bytes),
++						     PAGE_ALIGN(orig_bytes - bytes));
++					goto fixup_done;
++				}
++			}
+ 			memblock_free(__pa(xen_io_tlb_start),
+ 				      PAGE_ALIGN(bytes));
++		}
+ 		else {
+ 			free_pages((unsigned long)xen_io_tlb_start, order);
+ 			xen_io_tlb_start = NULL;
+@@ -258,6 +281,7 @@ int __ref xen_swiotlb_init(int verbose, bool early)
+ 		m_ret = XEN_SWIOTLB_EFIXUP;
+ 		goto error;
+ 	}
++fixup_done:
+ 	start_dma_addr = xen_virt_to_bus(xen_io_tlb_start);
+ 	if (early) {
+ 		if (swiotlb_init_with_tbl(xen_io_tlb_start, xen_io_tlb_nslabs,
+@@ -272,7 +296,7 @@ int __ref xen_swiotlb_init(int verbose, bool early)
+ 
+ 	return rc;
+ error:
+-	if (repeat--) {
++	if (repeat-- > 0) {
+ 		xen_io_tlb_nslabs = max(1024UL, /* Min is 2MB */
+ 					(xen_io_tlb_nslabs >> 1));
+ 		pr_info("Lowering to %luMB\n",
 -- 
-2.20.1
+2.17.1
 
