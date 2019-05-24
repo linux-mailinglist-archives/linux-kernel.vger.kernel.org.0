@@ -2,113 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A5BA29BF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 18:15:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5F329BFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 18:19:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390656AbfEXQPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 12:15:32 -0400
-Received: from mga11.intel.com ([192.55.52.93]:45431 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390532AbfEXQPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 12:15:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 09:15:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,507,1549958400"; 
-   d="scan'208";a="177765957"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by fmsmga002.fm.intel.com with ESMTP; 24 May 2019 09:15:23 -0700
-Date:   Fri, 24 May 2019 09:16:19 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     hch@lst.de, robin.murphy@arm.com, m.szyprowski@samsung.com,
-        vdumpa@nvidia.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        joro@8bytes.org, dwmw2@infradead.org, tony@atomide.com,
-        akpm@linux-foundation.org, sfr@canb.auug.org.au,
-        treding@nvidia.com, keescook@chromium.org, iamjoonsoo.kim@lge.com,
-        wsa+renesas@sang-engineering.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org,
-        dann.frazier@canonical.com
-Subject: Re: [PATCH v3 2/2] dma-contiguous: Use fallback alloc_pages for
- single pages
-Message-ID: <20190524161618.GB23100@iweiny-DESK2.sc.intel.com>
-References: <20190524040633.16854-1-nicoleotsuka@gmail.com>
- <20190524040633.16854-3-nicoleotsuka@gmail.com>
+        id S2390392AbfEXQT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 12:19:27 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35453 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389588AbfEXQT1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 12:19:27 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p26so15157092edr.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 09:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CPXRqRXi1dkgpDWgkFmv18S2UXCoASA126/ZLDqpep8=;
+        b=UylskouGfFzdz9k+rD+nBUfnMYwu3B0Nrzz9IwSBv0raqC8VeO7Lkj9KRYotH32kPR
+         nHWepxV6u3vgwH2ef+aZf2ztNNBaHS3ozEOEmxUDfkARJoFeLSU91+wVtTaehbyEkGlW
+         WkJRGJNPShq1SMDUDasYCQlV9bDsrgqX/R4nk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=CPXRqRXi1dkgpDWgkFmv18S2UXCoASA126/ZLDqpep8=;
+        b=ByVV4EFMYTsTIP87ih91eXzuaKWfeJ4COfu6B4Y9D/wKrNSO7Illu3Eq8kZ+zIq5Kh
+         EKkWtZSbeschFZqcafUM1Jxc+mQ0BSYMag2fuRGSdpfTAjoolr09dxYytcyQ3z2/SPvs
+         A6Ayp4NDX9W7dJReYt7kGbzsfe2Ptx/X7PNaQsv62onc2ouxNA7SVqw/E35QBDSTo9Jt
+         lyJsFNMRWJwvvXpkN2z+PIixQeI4Xp/Ie9Zkhq6D0Ut/FGF/9Gg0j1nujIgHNRSUlWUf
+         u4HlnU3Fz8BpjlAu8EIt1jA89fFQpQfFMkq1uSXE0imOMQoy45fO3FaQTzrYAyoi8JXU
+         h/kw==
+X-Gm-Message-State: APjAAAXrLYmRj+64ffh6y46BhyCgBrCA/iAfk+8cj/e3ZdDurTmv76wM
+        JcUowPcTwMPZHOJly76yPWAuuG93Qks=
+X-Google-Smtp-Source: APXvYqxgOqPPzrf9EfWwfmeL3Crqrk0YFhsfqKE5TlV0QEK2AcOGsS18h9BWypj8BrokO9/WGm1gEQ==
+X-Received: by 2002:a17:906:ecee:: with SMTP id qt14mr79168553ejb.96.1558714765767;
+        Fri, 24 May 2019 09:19:25 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id g18sm848038edh.13.2019.05.24.09.19.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 24 May 2019 09:19:24 -0700 (PDT)
+Date:   Fri, 24 May 2019 18:19:22 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Subject: Re: linux-next: build failure after merge of the drm-fixes tree
+Message-ID: <20190524161922.GB21222@phenom.ffwll.local>
+Mail-Followup-To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+References: <20190524082926.6e1a7d8f@canb.auug.org.au>
+ <CAKMK7uGSfOev71DKF+ygRjU0rMWcrW3rL7-=Xhbwdm9STUWntQ@mail.gmail.com>
+ <20190524201548.2e8594a2@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190524040633.16854-3-nicoleotsuka@gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20190524201548.2e8594a2@canb.auug.org.au>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 09:06:33PM -0700, Nicolin Chen wrote:
-> The addresses within a single page are always contiguous, so it's
-> not so necessary to always allocate one single page from CMA area.
-> Since the CMA area has a limited predefined size of space, it may
-> run out of space in heavy use cases, where there might be quite a
-> lot CMA pages being allocated for single pages.
+On Fri, May 24, 2019 at 08:15:48PM +1000, Stephen Rothwell wrote:
+> Hi Daniel,
 > 
-> However, there is also a concern that a device might care where a
-> page comes from -- it might expect the page from CMA area and act
-> differently if the page doesn't.
-
-How does a device know, after this call, if a CMA area was used?  From the
-patches I figured a device should not care.
-
+> On Fri, 24 May 2019 10:09:28 +0200 Daniel Vetter <daniel@ffwll.ch> wrote:
+> >
+> > On Fri, May 24, 2019 at 12:29 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > After merging the drm-fixes tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > >
+> > > drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'load_dmcu_fw':
+> > > drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:667:7: error: implicit declaration of function 'ASICREV_IS_PICASSO'; did you mean 'ASICREV_IS_VEGA12_P'? [-Werror=implicit-function-declaration]
+> > >    if (ASICREV_IS_PICASSO(adev->external_rev_id))
+> > >        ^~~~~~~~~~~~~~~~~~
+> > >        ASICREV_IS_VEGA12_P
+> > >
+> > > Caused by commit
+> > >
+> > >   55143dc23ca4 ("drm/amd/display: Don't load DMCU for Raven 1")
+> > >
+> > > I have reverted that commit for today.  
+> > 
+> > Seems to compile fine here, and Dave just sent out the pull so I guess
+> > works for him too. What's your .config?
 > 
-> This patch tries to use the fallback alloc_pages path, instead of
-> one-page size allocations from the global CMA area in case that a
-> device does not have its own CMA area. This'd save resources from
-> the CMA global area for more CMA allocations, and also reduce CMA
-> fragmentations resulted from trivial allocations.
+> See above "x86_64 allmodconfig"
 > 
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
->  kernel/dma/contiguous.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+> Looking at it closely now, I can't see how that error comes about.
 > 
-> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-> index 21f39a6cb04f..6914b92d5c88 100644
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -223,14 +223,23 @@ bool dma_release_from_contiguous(struct device *dev, struct page *pages,
->   * This function allocates contiguous memory buffer for specified device. It
->   * first tries to use device specific contiguous memory area if available or
->   * the default global one, then tries a fallback allocation of normal pages.
-> + *
-> + * Note that it byapss one-page size of allocations from the global area as
-> + * the addresses within one page are always contiguous, so there is no need
-> + * to waste CMA pages for that kind; it also helps reduce fragmentations.
->   */
->  struct page *dma_alloc_contiguous(struct device *dev, size_t size, gfp_t gfp)
->  {
->  	int node = dev ? dev_to_node(dev) : NUMA_NO_NODE;
->  	size_t count = PAGE_ALIGN(size) >> PAGE_SHIFT;
->  	size_t align = get_order(PAGE_ALIGN(size));
-> -	struct cma *cma = dev_get_cma_area(dev);
->  	struct page *page = NULL;
-> +	struct cma *cma = NULL;
-> +
-> +	if (dev && dev->cma_area)
-> +		cma = dev->cma_area;
-> +	else if (count > 1)
-> +		cma = dma_contiguous_default_area;
-
-Doesn't dev_get_dma_area() already do this?
-
-Ira
-
->  
->  	/* CMA can be used only in the context which permits sleeping */
->  	if (cma && gfpflags_allow_blocking(gfp)) {
-> -- 
-> 2.17.1
+> Ah, in the drm-fixes tree, the definition of  is protected by
 > 
+>   #if defined(CONFIG_DRM_AMD_DC_DCN1_01)
+> 
+> which gets removed in the amdgpu tree (merged later).  So I can only
+> presume that CONFIG_DRM_AMD_DC_DCN1_01 was not set for the build I did.
+> 
+> config DRM_AMD_DC
+>         bool "AMD DC - Enable new display engine"
+>         default y
+>         select DRM_AMD_DC_DCN1_0 if X86 && !(KCOV_INSTRUMENT_ALL && KCOV_ENABLE_
+> COMPARISONS)KCOV_INSTRUMENT_ALL && KCOV_ENABLE_COMPARISONS
+>         select DRM_AMD_DC_DCN1_01 if X86 && !(KCOV_INSTRUMENT_ALL && KCOV_ENABLE_COMPARISONS)
+> 
+> So maybe KCOV_INSTRUMENT_ALL && KCOV_ENABLE_COMPARISONS are set for
+> allmodconfig.  I no longer have the actual .config file any more, sorry.
+
+Ah yes. Dave figured it out too and added a revert on top and redid the
+pull to Linus. Thanks for spotting&reporting this.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
