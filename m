@@ -2,126 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E23A29285
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96DEC29276
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:09:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389467AbfEXILW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:11:22 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58945 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389397AbfEXILV (ORCPT
+        id S2389290AbfEXIJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:09:42 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39998 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389147AbfEXIJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:11:21 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4O88urr118516
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 24 May 2019 01:08:56 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4O88urr118516
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1558685336;
-        bh=/g2qr/niuIcpb3juF6H+paxatAK0nWwxC7eMCGVMUWY=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=bOeWLx4EGKIfw7OmyYR7jw0m68++5ZHEeCOxptrGm4fsynTfxKpOPA+GXaLt5iGxF
-         t5FF21U2gwy2iR9pY0gi+/HBp0zaMWeqYz3OTtyFiJrpdhzIoZ4+rlxkSkkAQ+IXau
-         8ALC+iwgXelRPirBY7xYBH1sL6hKxWV+klclt4rKDprKcIaSlBt3cittWKGpkKh/M0
-         mdZstIPdenbxtGyhZn7mIGNNRGwiq6hlDtPzePnfzZFDBfvyogZ1DIWmrQj8yqj+sd
-         ZtOsYJ6110TgtsZdEuiQZbBbJ5GgCelyjpWq8bPB9lBw2C9Vt5B4FIXZ8+pxIQDrxz
-         OYlUe5iZq3O7Q==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4O88tuU118513;
-        Fri, 24 May 2019 01:08:55 -0700
-Date:   Fri, 24 May 2019 01:08:55 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-3f9fbe9bd86c534eba2faf5d840fd44c6049f50e@git.kernel.org>
-Cc:     yabinc@google.com, eranian@google.com, mingo@kernel.org,
-        jolsa@redhat.com, linux-kernel@vger.kernel.org, acme@redhat.com,
-        tglx@linutronix.de, vincent.weaver@maine.edu, peterz@infradead.org,
-        torvalds@linux-foundation.org, hpa@zytor.com,
-        alexander.shishkin@linux.intel.com
-Reply-To: peterz@infradead.org, linux-kernel@vger.kernel.org,
-          jolsa@redhat.com, vincent.weaver@maine.edu, eranian@google.com,
-          mingo@kernel.org, alexander.shishkin@linux.intel.com,
-          hpa@zytor.com, torvalds@linux-foundation.org, acme@redhat.com,
-          tglx@linutronix.de, yabinc@google.com
-In-Reply-To: <20190517115418.309516009@infradead.org>
-References: <20190517115418.309516009@infradead.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/ring_buffer: Add ordering to rb->nest
- increment
-Git-Commit-ID: 3f9fbe9bd86c534eba2faf5d840fd44c6049f50e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 24 May 2019 04:09:41 -0400
+Received: by mail-ot1-f66.google.com with SMTP id u11so7908934otq.7
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:09:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YuE0856TsTDzOr+71DW3ES+79KQ8yfmx0fgvjM9w/1k=;
+        b=NhG5otDuKj+xoYuqWMZ8PG2WA2QVSXgCAotFXiApL9qn+lNO9iLE9Iqscjht011rS7
+         /JdGphDVJAgCROpPSVvDsWfZy5wi6hUW4hvYY9rBdAKg5cyUYwOTcd88yDwY2qkpBNE9
+         wPxsQh/OoT6+xGc/qZ2ghPwLXHIymQxMHJods=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YuE0856TsTDzOr+71DW3ES+79KQ8yfmx0fgvjM9w/1k=;
+        b=t4QwaediUNTzvzRHM6W4t71En2suINhd+bB9Dvy8RMy8AqfxomDoW+vhUAHjVG+qHc
+         DaHeIF0v/7eZzK73BjAFQuU//OJQxlWvNYN3Ze7yH5jAwXsgXTDRuXmfU66OJCYrvimS
+         4nM6fAiw4QIdOgz8QoUzj4ilkCcWgKYa7QqG7r80zkNAardDyuOz8hLNI2n93bX65uKk
+         4bvvcFyZZlyNYI9g92Mk0A4kJUhG6YcIBJdKMRuX/pU6dhs9eNIWf45alTS0uy7aQHEc
+         deu2+ZNMKs/hKERrFX0XGn/yfAAskb5RvIyJzixsmmnJE3fFYysqktX/itGlx/SysqPv
+         OQOA==
+X-Gm-Message-State: APjAAAXvN6MxFgBcVQDoVi3w0qsH0CuRR9qcixq8eVy1575dZQoEZXiF
+        c+B9zncVl29kGMZ+11X8JtFUQtDoWUQ0cOCLXmVAow==
+X-Google-Smtp-Source: APXvYqwTQvXvByfrzF4XOqJaZR3DWhg2Aui8um312pfGys3LkCBzcYSph7Loao897bvhjCqFHYARbNInZuy8DwKhvxg=
+X-Received: by 2002:a9d:6e1a:: with SMTP id e26mr61890768otr.188.1558685381035;
+ Fri, 24 May 2019 01:09:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_03_06,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+References: <20190524082926.6e1a7d8f@canb.auug.org.au>
+In-Reply-To: <20190524082926.6e1a7d8f@canb.auug.org.au>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Fri, 24 May 2019 10:09:28 +0200
+Message-ID: <CAKMK7uGSfOev71DKF+ygRjU0rMWcrW3rL7-=Xhbwdm9STUWntQ@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the drm-fixes tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3f9fbe9bd86c534eba2faf5d840fd44c6049f50e
-Gitweb:     https://git.kernel.org/tip/3f9fbe9bd86c534eba2faf5d840fd44c6049f50e
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Fri, 17 May 2019 13:52:32 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 24 May 2019 09:00:10 +0200
+On Fri, May 24, 2019 at 12:29 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> After merging the drm-fixes tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'load_dmcu_fw':
+> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:667:7: error: implicit declaration of function 'ASICREV_IS_PICASSO'; did you mean 'ASICREV_IS_VEGA12_P'? [-Werror=implicit-function-declaration]
+>    if (ASICREV_IS_PICASSO(adev->external_rev_id))
+>        ^~~~~~~~~~~~~~~~~~
+>        ASICREV_IS_VEGA12_P
+>
+> Caused by commit
+>
+>   55143dc23ca4 ("drm/amd/display: Don't load DMCU for Raven 1")
+>
+> I have reverted that commit for today.
 
-perf/ring_buffer: Add ordering to rb->nest increment
+Seems to compile fine here, and Dave just sent out the pull so I guess
+works for him too. What's your .config?
+-Daniel
 
-Similar to how decrementing rb->next too early can cause data_head to
-(temporarily) be observed to go backward, so too can this happen when
-we increment too late.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-This barrier() ensures the rb->head load happens after the increment,
-both the one in the 'goto again' path, as the one from
-perf_output_get_handle() -- albeit very unlikely to matter for the
-latter.
 
-Suggested-by: Yabin Cui <yabinc@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Cc: acme@kernel.org
-Cc: mark.rutland@arm.com
-Cc: namhyung@kernel.org
-Fixes: ef60777c9abd ("perf: Optimize the perf_output() path by removing IRQ-disables")
-Link: http://lkml.kernel.org/r/20190517115418.309516009@infradead.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/events/ring_buffer.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
 
-diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
-index 009467a60578..4b5f8d932400 100644
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -48,6 +48,15 @@ static void perf_output_put_handle(struct perf_output_handle *handle)
- 	unsigned long head;
- 
- again:
-+	/*
-+	 * In order to avoid publishing a head value that goes backwards,
-+	 * we must ensure the load of @rb->head happens after we've
-+	 * incremented @rb->nest.
-+	 *
-+	 * Otherwise we can observe a @rb->head value before one published
-+	 * by an IRQ/NMI happening between the load and the increment.
-+	 */
-+	barrier();
- 	head = local_read(&rb->head);
- 
- 	/*
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
