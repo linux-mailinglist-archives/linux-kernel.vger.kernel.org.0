@@ -2,183 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10A7529B54
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:41:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09E4C29B5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:42:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390176AbfEXPlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:41:50 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45532 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389079AbfEXPlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 11:41:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72E5C15A2;
-        Fri, 24 May 2019 08:41:46 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC68A3F575;
-        Fri, 24 May 2019 08:41:45 -0700 (PDT)
-Date:   Fri, 24 May 2019 16:41:44 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: Re: [PATCH v15 05/17] arms64: untag user pointers passed to memory
- syscalls
-Message-ID: <20190524154143.GG8268@e119886-lin.cambridge.arm.com>
-References: <cover.1557160186.git.andreyknvl@google.com>
- <00eb4c63fefc054e2c8d626e8fedfca11d7c2600.1557160186.git.andreyknvl@google.com>
+        id S2390314AbfEXPmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 11:42:49 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51138 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389206AbfEXPms (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 11:42:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=6LF1uAQ2oica475Ehbh+NoOEhdE3ZAb3FjLSENrt/0M=; b=1n9ifoFQv+/PqlphLj4Vv6dDg+
+        xNMyEWYx+A3Ha1qhWKM+L70RJ+VUo3PyXic61tvYA7CDuTtHwHSYq0QATSQm8nzSxYJSF5dG88hfu
+        NyhAQrSDcEjH9g2Kdbrqo28eic5i8xh5iBRjdfeGsxWRZmR41wa17P3ot1TZNTj7WciXGJlJaks0m
+        2TzQD+aEPzjZ1OjsQzhWViqZn+3v5I1UkJE3AA+P/4GUXaw446wKIhcn1a/K3rhsAzw20QU7VjRN3
+        5x81GgJ2pFBRr2+f62aWiLHngaItcqct0GnBgLf1nIgaRjhoPJU8rsSqJqligy3TOG5jVECTZsEjb
+        HYGQBvxw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hUCLF-00017C-Vi; Fri, 24 May 2019 15:42:46 +0000
+Subject: Re: linux-next: Tree for May 24 (leds-lm3697)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+References: <20190524140727.19d1e349@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <f8300d14-972d-1c03-3266-836b94c1ec9a@infradead.org>
+Date:   Fri, 24 May 2019 08:42:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00eb4c63fefc054e2c8d626e8fedfca11d7c2600.1557160186.git.andreyknvl@google.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <20190524140727.19d1e349@canb.auug.org.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 06, 2019 at 06:30:51PM +0200, Andrey Konovalov wrote:
-> This patch is a part of a series that extends arm64 kernel ABI to allow to
-> pass tagged user pointers (with the top byte set to something else other
-> than 0x00) as syscall arguments.
+On 5/23/19 9:07 PM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> This patch allows tagged pointers to be passed to the following memory
-> syscalls: brk, get_mempolicy, madvise, mbind, mincore, mlock, mlock2,
-> mmap, mmap_pgoff, mprotect, mremap, msync, munlock, munmap,
-> remap_file_pages, shmat and shmdt.
+> News: there will be no linux-next release on Monday.
 > 
-> This is done by untagging pointers passed to these syscalls in the
-> prologues of their handlers.
+> Changes since 20190523:
 > 
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> ---
-
-
-> +SYSCALL_DEFINE2(arm64_mlock, unsigned long, start, size_t, len)
-> +{
-> +	start = untagged_addr(start);
-> +	return ksys_mlock(start, len, VM_LOCKED);
-> +}
-> +
-> +SYSCALL_DEFINE2(arm64_mlock2, unsigned long, start, size_t, len)
-> +{
-> +	start = untagged_addr(start);
-> +	return ksys_mlock(start, len, VM_LOCKED);
-> +}
-
-I think this may be a copy/paste error...
-
-Shouldn't mlock2 have a third 'flags' argument to distinguish is from mlock?
-
-Thanks,
-
-Andrew Murray
-
-> +
-> +SYSCALL_DEFINE2(arm64_munlock, unsigned long, start, size_t, len)
-> +{
-> +	start = untagged_addr(start);
-> +	return ksys_munlock(start, len);
-> +}
-> +
-> +SYSCALL_DEFINE3(arm64_mprotect, unsigned long, start, size_t, len,
-> +		unsigned long, prot)
-> +{
-> +	start = untagged_addr(start);
-> +	return ksys_mprotect_pkey(start, len, prot, -1);
-> +}
-> +
-> +SYSCALL_DEFINE3(arm64_msync, unsigned long, start, size_t, len, int, flags)
-> +{
-> +	start = untagged_addr(start);
-> +	return ksys_msync(start, len, flags);
-> +}
-> +
-> +SYSCALL_DEFINE3(arm64_mincore, unsigned long, start, size_t, len,
-> +		unsigned char __user *, vec)
-> +{
-> +	start = untagged_addr(start);
-> +	return ksys_mincore(start, len, vec);
-> +}
-> +
-> +SYSCALL_DEFINE5(arm64_remap_file_pages, unsigned long, start,
-> +		unsigned long, size, unsigned long, prot,
-> +		unsigned long, pgoff, unsigned long, flags)
-> +{
-> +	start = untagged_addr(start);
-> +	return ksys_remap_file_pages(start, size, prot, pgoff, flags);
-> +}
-> +
-> +SYSCALL_DEFINE3(arm64_shmat, int, shmid, char __user *, shmaddr, int, shmflg)
-> +{
-> +	shmaddr = untagged_addr(shmaddr);
-> +	return ksys_shmat(shmid, shmaddr, shmflg);
-> +}
-> +
-> +SYSCALL_DEFINE1(arm64_shmdt, char __user *, shmaddr)
-> +{
-> +	shmaddr = untagged_addr(shmaddr);
-> +	return ksys_shmdt(shmaddr);
-> +}
-> +
->  /*
->   * Wrappers to pass the pt_regs argument.
->   */
->  #define sys_personality		sys_arm64_personality
-> +#define sys_mmap_pgoff		sys_arm64_mmap_pgoff
-> +#define sys_mremap		sys_arm64_mremap
-> +#define sys_munmap		sys_arm64_munmap
-> +#define sys_brk			sys_arm64_brk
-> +#define sys_get_mempolicy	sys_arm64_get_mempolicy
-> +#define sys_madvise		sys_arm64_madvise
-> +#define sys_mbind		sys_arm64_mbind
-> +#define sys_mlock		sys_arm64_mlock
-> +#define sys_mlock2		sys_arm64_mlock2
-> +#define sys_munlock		sys_arm64_munlock
-> +#define sys_mprotect		sys_arm64_mprotect
-> +#define sys_msync		sys_arm64_msync
-> +#define sys_mincore		sys_arm64_mincore
-> +#define sys_remap_file_pages	sys_arm64_remap_file_pages
-> +#define sys_shmat		sys_arm64_shmat
-> +#define sys_shmdt		sys_arm64_shmdt
->  
->  asmlinkage long sys_ni_syscall(const struct pt_regs *);
->  #define __arm64_sys_ni_syscall	sys_ni_syscall
-> -- 
-> 2.21.0.1020.gf2820cf01a-goog
+> The input-current tree gained a build failure so I reverted a commit.
 > 
+> The drm-fixes tree gained a build failure so I reverted a commit.
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> The v4l-dvb tree gained a conflict against Linus' tree.
+> 
+> Non-merge commits (relative to Linus' tree): 1814
+>  1870 files changed, 61172 insertions(+), 32723 deletions(-)
+> 
+> ----------------------------------------------------------------------------
+> 
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+> are tracking the linux-next tree using git, you should not use "git pull"
+> to do so as that will try to merge the new linux-next release with the
+> old one.  You should use "git fetch" and checkout or reset to the new
+> master.
+> 
+> You can see which trees have been included by looking in the Next/Trees
+> file in the source.  There are also quilt-import.log and merge.log
+> files in the Next directory.  Between each merge, the tree was built
+> with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
+> multi_v7_defconfig for arm and a native build of tools/perf. After
+> the final fixups (if any), I do an x86_64 modules_install followed by
+> builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
+> ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
+> and sparc64 defconfig. And finally, a simple boot test of the powerpc
+> pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+> 
+> Below is a summary of the state of the merge.
+> 
+> I am currently merging 290 trees (counting Linus' and 70 trees of bug
+> fix patches pending for the current merge release).
+> 
+> Stats about the size of the tree over time can be seen at
+> http://neuling.org/linux-next-size.html .
+> 
+> Status of my local build tests will be at
+> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+> advice about cross compilers/configs that work, we are always open to add
+> more builds.
+> 
+> Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+> Gortmaker for triage and bug fixes.
+> 
+
+seen on i386:
+
+ld: drivers/leds/leds-lm3697.o: in function `lm3697_probe':
+leds-lm3697.c:(.text+0x451): undefined reference to `devm_of_led_classdev_register'
+
+CONFIG_LEDS_CLASS=m
+CONFIG_LEDS_TI_LMU_COMMON=y
+CONFIG_LEDS_LM3697=y
+
+
+It looks to me like this is needed:
+
+	depends on LEDS_CLASS && I2C && OF
+?
+
+-- 
+~Randy
