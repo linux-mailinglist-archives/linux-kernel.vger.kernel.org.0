@@ -2,141 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 517F628F71
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 05:11:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D646228F7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 05:13:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388580AbfEXDL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 23:11:27 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39143 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387559AbfEXDL1 (ORCPT
+        id S2388762AbfEXDNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 23:13:17 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37238 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387726AbfEXDNR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 23:11:27 -0400
-Received: by mail-it1-f194.google.com with SMTP id 9so11694522itf.4;
-        Thu, 23 May 2019 20:11:26 -0700 (PDT)
+        Thu, 23 May 2019 23:13:17 -0400
+Received: by mail-pl1-f196.google.com with SMTP id p15so3563720pll.4
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 20:13:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E7hznSwoqjG8X1odMBGc2satoFe87v1Y0P/9fKHS9SY=;
-        b=a7Sc0ZmlEG6jC7OpcrRVUkNXq0SBb3Dc/hNdk5Vi6ayUDLd0Dm8M0wWvJFgwttZZ4M
-         aninTKfSUZDRjfNGqPsMzWLja++EezX/hO4fX5nJBzfyFI6kNO7dvjypaoVQz4ys7+R5
-         9IVPBxW1C4i6BRZ4f3bqLocvJh1c9QUTPILj4gipCVXMgVTUpT9LBYkMiRDL2TaalXNe
-         rQ6wJugIty6JwVWYs5nF97JpvrTENcxT3PWNqVTqRhEna4JwxQokvn2SUzkeP09LHMDC
-         DgccA6RcG2CmDNt2DoIHjZymnDK30hw9WxWvnBoApiNxfRbL6LLAu65RJr1Ih71O/P5e
-         SodQ==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=SADUbUTzsKuL6+0zlFN554wz3Ug1cJN9qaVymCYLya8=;
+        b=RkRTYY+3hCLgYqP2p+u+vpPJcIgR7UCLzQVOZl9uOyK1n3lrfRyg3ucE3OwGPk9P+P
+         tLqwZbaVRXdBtc+0DB1TZU+dOnf2fVy3XzzMaozUAPfUS7T4BerAEIx3U0BwTrIpAbgu
+         qLtLDLrTExsuU55T39GAzXMZXAKwO71fUxxMl2m1lMOO5++FwxOK3wbIu6GyfxRh5N0l
+         dfPD8qf2iIcp9eetBCLwPJvPBr60mdgGEuu5OLeNGSZP8Dqd39y6BJssucc2z9/MN2T4
+         LoO2I9Qff2ZTZj2Eh7XtljAR7+yoO5T15x39zK54CNISqcbKOuHqo4Hd+/u/uYDWfrhO
+         n/NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E7hznSwoqjG8X1odMBGc2satoFe87v1Y0P/9fKHS9SY=;
-        b=Ezz2Tgeoxjdv/gvVJ/MA5BphhJp0ROY7eGuEAPB34pjOfZ9Qhjq2ttOZI492SrJqID
-         oYb+trVWohcEsTTnuvrXvqhM9++ob+KDmqye9lu5WGczS9UEq2zlUGooX0bFUTQ7eDNO
-         73TpY8KHHy+M7pkUnZ7s50p4JClZ/FVH+/BnIUFnJHG2PFE26yzI5AaPHTyZc6iITSaB
-         nqFqf1RuwcGj8pV4vQ7v0OO0m5cntojFaB/EJT2diuKOwc2KO87DKUsVqyDu/xj3efNO
-         jRbywuuPXIY3ktLzuRoSCd49qjhz+CSclAPfHslijAnC/ldpKQ38cq/SakMisXgIe5f4
-         /CnQ==
-X-Gm-Message-State: APjAAAU/nXJChSYn3/OkCY5jM66bpCt/c1PazWN/OjkBlJQ/qjpoKeug
-        A1Ap6yIXeByCvDlPB2sRDwiDyk7343xDzT5OICXlSzV8sA==
-X-Google-Smtp-Source: APXvYqz4ssg3ircx9GKZ/bOQFSdzkDIVdQtquf3WB1GzGhZLWMOO7FDaVjBjQGy32wO2lRBtVYsHwdCKMGdQi1fBKFw=
-X-Received: by 2002:a24:1dce:: with SMTP id 197mr16766439itj.16.1558667486023;
- Thu, 23 May 2019 20:11:26 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=SADUbUTzsKuL6+0zlFN554wz3Ug1cJN9qaVymCYLya8=;
+        b=N/v92FoJXJhlsNj7eyHfyZApeb61RvPFxlDxZ4CYVrvH7K37V4mnZ+HEI2OO3U48n5
+         fpeS7c0ySu2s5MkzIXtL37Uc7Gk9yoSovjXvbqfli/rb9jdD3ZYAiTTvux55jdWjHI0y
+         AYMatMjwB/oBIUdfpv25zQTRT+sHqiEu94yCRAj3DiPW2q0jWA6ULgtChhcrNjTK1ezM
+         8xe0wFmpH0/7UY9HpFqtlAGRtpY/GneC20uK7vREckhwaHWM5dPXpDQVXodL6vcWDUB2
+         tjJHYdQ9SACjwi1s+rXZIQWE2hC1jaCtTtv3UV8pq/RY4L9dLrCQ1M4jw9JDW+9NmYv0
+         XHkA==
+X-Gm-Message-State: APjAAAU66AGdZbMRmtWbxO8OqywqD/U1mhv6szD9fsgQvL9jatNmhspt
+        djuC7p3M6BHB9BPyifhGCDi5Jwo73a4=
+X-Google-Smtp-Source: APXvYqwx+3Ni5mzChJHEGu89s31328M3giHbmL30qpfZhaPz2GvtZ7v0kNlaEDRChzrpyQdQ6bnsNw==
+X-Received: by 2002:a17:902:b615:: with SMTP id b21mr40159692pls.12.1558667596052;
+        Thu, 23 May 2019 20:13:16 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id e10sm909308pfm.137.2019.05.23.20.13.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 20:13:15 -0700 (PDT)
+Date:   Fri, 24 May 2019 11:12:48 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] dm-region-hash: Fix a missing-check bug in __rh_alloc()
+Message-ID: <20190524031248.GA6295@zhanggen-UX430UQ>
 MIME-Version: 1.0
-References: <1556087581-14513-1-git-send-email-kernelfans@gmail.com>
- <10dc5468-6cd9-85c7-ba66-1dfa5aa922b7@suse.com> <CAFgQCTstd667wP6g+maxYekz4u3iBR2R=FHUiS1V=XxTs6MKUw@mail.gmail.com>
- <CAFgQCTtQm7SuBRfXik6B065Aa+uQ=Mx6i+Y1q+NJU1GEiUgH4g@mail.gmail.com>
-In-Reply-To: <CAFgQCTtQm7SuBRfXik6B065Aa+uQ=Mx6i+Y1q+NJU1GEiUgH4g@mail.gmail.com>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Fri, 24 May 2019 11:11:13 +0800
-Message-ID: <CAFgQCTuAEbST8ZdSJmPDTPbqkL3uZ8j6U-vTWT879wARDhUwTw@mail.gmail.com>
-Subject: Re: [PATCHv2] kernel/crash: make parse_crashkernel()'s return value
- more indicant
-To:     Matthias Brugger <mbrugger@suse.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Rich Felker <dalias@libc.org>,
-        linux-ia64@vger.kernel.org,
-        Julien Thierry <julien.thierry@arm.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>, x86@kernel.org,
-        linux-mips@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-s390@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        linux-sh@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        David Hildenbrand <david@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Hogan <jhogan@kernel.org>,
-        Dave Young <dyoung@redhat.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Borislav Petkov <bp@alien8.de>, Stefan Agner <stefan@agner.ch>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Jens Axboe <axboe@kernel.dk>, Tony Luck <tony.luck@intel.com>,
-        Baoquan He <bhe@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Paul Burton <paul.burton@mips.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Greg Hackmann <ghackmann@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Matthias, ping? Any suggestions?
+In function __rh_alloc(), the pointer nreg is allocated a memory space
+via kmalloc(). And it is used in the following codes. However, when 
+there is a memory allocation error, kmalloc() fails. Thus null pointer
+dereference may happen. And it will cause the kernel to crash. Therefore,
+we should check the return value and handle the error.
+Further, in __rh_find(), we should also check the return value and
+handle the error.
 
-Thanks,
-Pingfan
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
 
-
-On Thu, May 2, 2019 at 2:22 PM Pingfan Liu <kernelfans@gmail.com> wrote:
->
-> On Thu, Apr 25, 2019 at 4:20 PM Pingfan Liu <kernelfans@gmail.com> wrote:
-> >
-> > On Wed, Apr 24, 2019 at 4:31 PM Matthias Brugger <mbrugger@suse.com> wrote:
-> > >
-> > >
-> > [...]
-> > > > @@ -139,6 +141,8 @@ static int __init parse_crashkernel_simple(char *cmdline,
-> > > >               pr_warn("crashkernel: unrecognized char: %c\n", *cur);
-> > > >               return -EINVAL;
-> > > >       }
-> > > > +     if (*crash_size == 0)
-> > > > +             return -EINVAL;
-> > >
-> > > This covers the case where I pass an argument like "crashkernel=0M" ?
-> > > Can't we fix that by using kstrtoull() in memparse and check if the return value
-> > > is < 0? In that case we could return without updating the retptr and we will be
-> > > fine.
-> After a series of work, I suddenly realized that it can not be done
-> like this way. "0M" causes kstrtoull() to return -EINVAL, but this is
-> caused by "M", not "0". If passing "0" to kstrtoull(), it will return
-> 0 on success.
->
-> > >
-> > It seems that kstrtoull() treats 0M as invalid parameter, while
-> > simple_strtoull() does not.
-> >
-> My careless going through the code. And I tested with a valid value
-> "256M" using kstrtoull(), it also returned -EINVAL.
->
-> So I think there is no way to distinguish 0 from a positive value
-> inside this basic math function.
-> Do I miss anything?
->
-> Thanks and regards,
-> Pingfan
+---
+diff --git a/drivers/md/dm-region-hash.c b/drivers/md/dm-region-hash.c
+index 1f76045..2fa1641 100644
+--- a/drivers/md/dm-region-hash.c
++++ b/drivers/md/dm-region-hash.c
+@@ -290,8 +290,11 @@ static struct dm_region *__rh_alloc(struct dm_region_hash *rh, region_t region)
+ 	struct dm_region *reg, *nreg;
+ 
+ 	nreg = mempool_alloc(&rh->region_pool, GFP_ATOMIC);
+-	if (unlikely(!nreg))
++	if (unlikely(!nreg)) {
+ 		nreg = kmalloc(sizeof(*nreg), GFP_NOIO | __GFP_NOFAIL);
++		if (!nreg)
++			return NULL;
++	}
+ 
+ 	nreg->state = rh->log->type->in_sync(rh->log, region, 1) ?
+ 		      DM_RH_CLEAN : DM_RH_NOSYNC;
+@@ -329,6 +332,8 @@ static struct dm_region *__rh_find(struct dm_region_hash *rh, region_t region)
+ 	if (!reg) {
+ 		read_unlock(&rh->hash_lock);
+ 		reg = __rh_alloc(rh, region);
++		if (!reg)
++			return NULL;
+ 		read_lock(&rh->hash_lock);
+ 	}
+ 
+---
