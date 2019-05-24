@@ -2,15 +2,15 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FBF928E96
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 03:17:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 733DF28EA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 03:17:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388807AbfEXBQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 21:16:42 -0400
+        id S2389053AbfEXBR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 21:17:27 -0400
 Received: from mga05.intel.com ([192.55.52.43]:14788 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388730AbfEXBQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 21:16:39 -0400
+        id S2388753AbfEXBQk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 21:16:40 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
@@ -42,9 +42,9 @@ Cc:     Ashok Raj <ashok.raj@intel.com>, Joerg Roedel <joro@8bytes.org>,
         Baoquan He <bhe@redhat.com>,
         Jan Kiszka <jan.kiszka@siemens.com>,
         Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [RFC PATCH v4 18/21] x86/apic: Add a parameter for the APIC delivery mode
-Date:   Thu, 23 May 2019 18:16:20 -0700
-Message-Id: <1558660583-28561-19-git-send-email-ricardo.neri-calderon@linux.intel.com>
+Subject: [RFC PATCH v4 19/21] iommu/vt-d: Rework prepare_irte() to support per-irq delivery mode
+Date:   Thu, 23 May 2019 18:16:21 -0700
+Message-Id: <1558660583-28561-20-git-send-email-ricardo.neri-calderon@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
@@ -53,24 +53,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Until now, the delivery mode of APIC interrupts is set to the default
-mode set in the APIC driver. However, there are no restrictions in hardware
-to configure each interrupt with a different delivery mode. Specifying the
-delivery mode per interrupt is useful when one is interested in changing
-the delivery mode of a particular interrupt. For instance, this can be used
-to deliver an interrupt as non-maskable.
+A recent change introduced a new member to struct irq_cfg to specify the
+delivery mode of an interrupt. Supporting the configuration of the
+delivery mode would require adding a third argument to prepare_irte().
+Instead, simply take a pointer to a irq_cfg data structure as a the only
+argument.
 
-Add a new member, delivery_mode, to struct irq_cfg. This new member, can
-be used to update the configuration of the delivery mode in each interrupt
-domain. Likewise, add equivalent macros to populate MSI messages.
+Internally, configure the delivery mode of the Interrupt Remapping Table
+Entry as specified in the irq_cfg data structure and not as the APIC
+setting.
 
-Currently, all interrupt domains set the delivery mode of interrupts using
-the APIC setting. Interrupt domains use an irq_cfg data structure to
-configure their own data structures and hardware resources. Thus, in order
-to keep the current behavior, set the delivery mode of the irq
-configuration that as the APIC setting. In this manner, irq domains can
-obtain the delivery mode from the irq configuration data instead of the
-APIC setting, if needed.
+This change does not change the existing behavior, as the delivery mode
+of the APIC is used to configure irq_cfg data structure.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Andi Kleen <andi.kleen@intel.com>
@@ -94,62 +88,44 @@ Cc: x86@kernel.org
 Cc: iommu@lists.linux-foundation.org
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 ---
- arch/x86/include/asm/hw_irq.h |  5 +++--
- arch/x86/include/asm/msidef.h |  3 +++
- arch/x86/kernel/apic/vector.c | 10 ++++++++++
- 3 files changed, 16 insertions(+), 2 deletions(-)
+ drivers/iommu/intel_irq_remapping.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/hw_irq.h b/arch/x86/include/asm/hw_irq.h
-index 32e666e1231e..c024e5976b78 100644
---- a/arch/x86/include/asm/hw_irq.h
-+++ b/arch/x86/include/asm/hw_irq.h
-@@ -117,8 +117,9 @@ struct irq_alloc_info {
- };
+diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
+index 4160aa9f3f80..2e61eaca7d7e 100644
+--- a/drivers/iommu/intel_irq_remapping.c
++++ b/drivers/iommu/intel_irq_remapping.c
+@@ -1072,7 +1072,7 @@ static int reenable_irq_remapping(int eim)
+ 	return -1;
+ }
  
- struct irq_cfg {
--	unsigned int		dest_apicid;
--	unsigned int		vector;
-+	unsigned int				dest_apicid;
-+	unsigned int				vector;
-+	enum ioapic_irq_destination_types	delivery_mode;
- };
+-static void prepare_irte(struct irte *irte, int vector, unsigned int dest)
++static void prepare_irte(struct irte *irte, struct irq_cfg *irq_cfg)
+ {
+ 	memset(irte, 0, sizeof(*irte));
  
- extern struct irq_cfg *irq_cfg(unsigned int irq);
-diff --git a/arch/x86/include/asm/msidef.h b/arch/x86/include/asm/msidef.h
-index 38ccfdc2d96e..6d666c90f057 100644
---- a/arch/x86/include/asm/msidef.h
-+++ b/arch/x86/include/asm/msidef.h
-@@ -16,6 +16,9 @@
- 					 MSI_DATA_VECTOR_MASK)
+@@ -1086,9 +1086,9 @@ static void prepare_irte(struct irte *irte, int vector, unsigned int dest)
+ 	 * irq migration in the presence of interrupt-remapping.
+ 	*/
+ 	irte->trigger_mode = 0;
+-	irte->dlvry_mode = apic->irq_delivery_mode;
+-	irte->vector = vector;
+-	irte->dest_id = IRTE_DEST(dest);
++	irte->dlvry_mode = irq_cfg->delivery_mode;
++	irte->vector = irq_cfg->vector;
++	irte->dest_id = IRTE_DEST(irq_cfg->dest_apicid);
+ 	irte->redir_hint = 1;
+ }
  
- #define MSI_DATA_DELIVERY_MODE_SHIFT	8
-+#define MSI_DATA_DELIVERY_MODE_MASK	0x00000700
-+#define MSI_DATA_DELIVERY_MODE(dm)	(((dm) << MSI_DATA_DELIVERY_MODE_SHIFT) & \
-+					 MSI_DATA_DELIVERY_MODE_MASK)
- #define  MSI_DATA_DELIVERY_FIXED	(0 << MSI_DATA_DELIVERY_MODE_SHIFT)
- #define  MSI_DATA_DELIVERY_LOWPRI	(1 << MSI_DATA_DELIVERY_MODE_SHIFT)
- #define  MSI_DATA_DELIVERY_NMI		(4 << MSI_DATA_DELIVERY_MODE_SHIFT)
-diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-index 3173e07d3791..99436fe7e932 100644
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -548,6 +548,16 @@ static int x86_vector_alloc_irqs(struct irq_domain *domain, unsigned int virq,
- 		irqd->chip_data = apicd;
- 		irqd->hwirq = virq + i;
- 		irqd_set_single_target(irqd);
-+
-+		/*
-+		 * Initialize the delivery mode of this irq to match the
-+		 * default delivery mode of the APIC. This is useful for
-+		 * children irq domains which want to take the delivery
-+		 * mode from the individual irq configuration rather
-+		 * than from the APIC.
-+		 */
-+		 apicd->hw_irq_cfg.delivery_mode = apic->irq_delivery_mode;
-+
- 		/*
- 		 * Legacy vectors are already assigned when the IOAPIC
- 		 * takes them over. They stay on the same vector. This is
+@@ -1265,7 +1265,7 @@ static void intel_irq_remapping_prepare_irte(struct intel_ir_data *data,
+ 	struct irte *irte = &data->irte_entry;
+ 	struct msi_msg *msg = &data->msi_entry;
+ 
+-	prepare_irte(irte, irq_cfg->vector, irq_cfg->dest_apicid);
++	prepare_irte(irte, irq_cfg);
+ 	switch (info->type) {
+ 	case X86_IRQ_ALLOC_TYPE_IOAPIC:
+ 		/* Set source-id of interrupt request */
 -- 
 2.17.1
 
