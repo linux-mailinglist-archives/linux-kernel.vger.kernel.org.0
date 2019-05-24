@@ -2,107 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE9D0298A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 15:13:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60F6A298AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 15:15:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391556AbfEXNNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 09:13:54 -0400
-Received: from foss.arm.com ([217.140.101.70]:42714 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391124AbfEXNNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 09:13:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1388CA78;
-        Fri, 24 May 2019 06:13:53 -0700 (PDT)
-Received: from [10.162.42.134] (p8cg001049571a15.blr.arm.com [10.162.42.134])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 99E793F5AF;
-        Fri, 24 May 2019 06:13:49 -0700 (PDT)
-Subject: Re: mm/compaction: BUG: NULL pointer dereference
-To:     Mel Gorman <mgorman@techsingularity.net>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>, linux-mm@kvack.org,
-        akpm@linux-foundation.org, mhocko@suse.com, cai@lca.pw,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-        kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org
-References: <1558689619-16891-1-git-send-email-suzuki.poulose@arm.com>
- <cfddd75a-b302-5557-05b8-2b328bba27c8@arm.com>
- <20190524123047.GO18914@techsingularity.net>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <9ae23db2-e696-047b-af18-1e75ebbda085@arm.com>
-Date:   Fri, 24 May 2019 18:43:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2391625AbfEXNO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 09:14:59 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33255 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391519AbfEXNO6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 09:14:58 -0400
+Received: by mail-wm1-f68.google.com with SMTP id v19so1191254wmh.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 06:14:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Jxhy/ZRQVu0N4aJfmO4/71R3nY5TFqXIBTeivwXcm7c=;
+        b=oODzF+T/DBIACYMaX7aHy66ZJ0K51vFiAnrjhIknXiU2IQxFg913Gu6Cg+FlRRfiuh
+         S5GUjihxQFm4xR1q+lidtwGrtLoYHDoRB9hOBOrlcGKDVlDGAmF1tjgPI4gIsGWyCfpU
+         kj9Fx6b6VMOCHWPFMrUPO4naNdGs2tipdpQbor14GkrMjZ9fVkRgrjJcHI70rfk8C6Xs
+         sgKAF0Ya9dy5GL+WK2/X7yT2JGMT53WKaWWlnMxgWYNNOFCs4n2WABHH265It5ZteviM
+         p51rXRXpCbHSTYRfHtMmHnMNccAMNwDcckfWvui/KRYnthGnbUDkPRRMp0QrMty72Sip
+         +vWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Jxhy/ZRQVu0N4aJfmO4/71R3nY5TFqXIBTeivwXcm7c=;
+        b=CkxrkkBPsEexqQ1HG9G+6+/krICw/sHLIyTTDuxomYTe8T4duSZ3JcGMlhBITfnCKQ
+         IhT/FNRGNi+ySym6t5E8hWbWZb5+2f2eVJ5Nv6u6znhRDXQvyh/P+Ku2X2RO7oKdgowF
+         +oHWU6ysE0DXv+hKqM22TuyC4Asvqgk3odrpg8YdPsHU2btPMgcyH/qlMutwgzKaWFvo
+         ioePz7RsQQQs0jzvHf9NwcAHx/9g0IFbNdCVdtNxILE1bKUvS4jWykpiOBEpxlfaGXT3
+         RLp0qpvcf60ql4mlR/GrqAU8MKYY/7dNJ6Ah2r2GoAs6BOn/IBYAya8GymGMP3FN7P9h
+         2Qxg==
+X-Gm-Message-State: APjAAAUg+uurUHOh519WOpUfOmQ3HEuT1pPzTSKTW93EA5GOj+RnqD2X
+        kbYCNMaPNBaBWyC+U1t8201zkEXcZeJ9ZQ==
+X-Google-Smtp-Source: APXvYqwi0SONwzrBG+bKNWxlmxVsSZIFFN9uvG5c+wwCuUu9sceMvEKZ4iR2jWYn7FUUKI4fD4enyw==
+X-Received: by 2002:a7b:cb84:: with SMTP id m4mr3870520wmi.50.1558703695698;
+        Fri, 24 May 2019 06:14:55 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id v184sm3859002wma.6.2019.05.24.06.14.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 24 May 2019 06:14:54 -0700 (PDT)
+Date:   Fri, 24 May 2019 14:14:53 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Yisheng Xie <ysxie@foxmail.com>, linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH 24/33] Revert "backlight/fbcon: Add FB_EVENT_CONBLANK"
+Message-ID: <20190524131453.e6mefygqyg46jeuf@holly.lan>
+References: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
+ <20190524085354.27411-25-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-In-Reply-To: <20190524123047.GO18914@techsingularity.net>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190524085354.27411-25-daniel.vetter@ffwll.ch>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/24/2019 06:00 PM, Mel Gorman wrote:
-> On Fri, May 24, 2019 at 04:26:16PM +0530, Anshuman Khandual wrote:
->>
->>
->> On 05/24/2019 02:50 PM, Suzuki K Poulose wrote:
->>> Hi,
->>>
->>> We are hitting NULL pointer dereferences while running stress tests with KVM.
->>> See splat [0]. The test is to spawn 100 VMs all doing standard debian
->>> installation (Thanks to Marc's automated scripts, available here [1] ).
->>> The problem has been reproduced with a better rate of success from 5.1-rc6
->>> onwards.
->>>
->>> The issue is only reproducible with swapping enabled and the entire
->>> memory is used up, when swapping heavily. Also this issue is only reproducible
->>> on only one server with 128GB, which has the following memory layout:
->>>
->>> [32GB@4GB, hole , 96GB@544GB]
->>>
->>> Here is my non-expert analysis of the issue so far.
->>>
->>> Under extreme memory pressure, the kswapd could trigger reset_isolation_suitable()
->>> to figure out the cached values for migrate/free pfn for a zone, by scanning through
->>> the entire zone. On our server it does so in the range of [ 0x10_0000, 0xa00_0000 ],
->>> with the following area of holes : [ 0x20_0000, 0x880_0000 ].
->>> In the failing case, we end up setting the cached migrate pfn as : 0x508_0000, which
->>> is right in the center of the zone pfn range. i.e ( 0x10_0000 + 0xa00_0000 ) / 2,
->>> with reset_migrate = 0x88_4e00, reset_free = 0x10_0000.
->>>
->>> Now these cached values are used by the fast_isolate_freepages() to find a pfn. However,
->>> since we cant find anything during the search we fall back to using the page belonging
->>> to the min_pfn (which is the migrate_pfn), without proper checks to see if that is valid
->>> PFN or not. This is then passed on to fast_isolate_around() which tries to do :
->>> set_pageblock_skip(page) on the page which blows up due to an NULL mem_section pointer.
->>>
->>> The following patch seems to fix the issue for me, but I am not quite convinced that
->>> it is the right fix. Thoughts ?
->>>
->>>
->>> diff --git a/mm/compaction.c b/mm/compaction.c
->>> index 9febc8c..9e1b9ac 100644
->>> --- a/mm/compaction.c
->>> +++ b/mm/compaction.c
->>> @@ -1399,7 +1399,7 @@ fast_isolate_freepages(struct compact_control *cc)
->>>  				page = pfn_to_page(highest);
->>>  				cc->free_pfn = highest;
->>>  			} else {
->>> -				if (cc->direct_compaction) {
->>> +				if (cc->direct_compaction && pfn_valid(min_pfn)) {
->>>  					page = pfn_to_page(min_pfn);
->>
->> pfn_to_online_page() here would be better as it does not add pfn_valid() cost on
->> architectures which does not subscribe to CONFIG_HOLES_IN_ZONE. But regardless if
->> the compaction is trying to scan pfns in zone holes, then it should be avoided.
+On Fri, May 24, 2019 at 10:53:45AM +0200, Daniel Vetter wrote:
+> This reverts commit 994efacdf9a087b52f71e620b58dfa526b0cf928.
 > 
-> CONFIG_HOLES_IN_ZONE typically applies in special cases where an arch
-> punches holes within a section. As both do a section lookup, the cost is
-> similar but pfn_valid in general is less subtle in this case. Normally
-> pfn_valid_within is only ok when a pfn_valid check has been made on the
-> max_order aligned range as well as a zone boundary check. In this case,
-> it's much more straight-forward to leave it as pfn_valid.
+> The justification is that if hw blanking fails (i.e. fbops->fb_blank)
+> fails, then we still want to shut down the backlight. Which is exactly
+> _not_ what fb_blank() does and so rather inconsistent if we end up
+> with different behaviour between fbcon and direct fbdev usage. Given
+> that the entire notifier maze is getting in the way anyway I figured
+> it's simplest to revert this not well justified commit.
+> 
+> v2: Add static inline to the dummy version.
+> 
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Yisheng Xie <ysxie@foxmail.com>
+> Cc: linux-fbdev@vger.kernel.org
 
-Sure, makes sense.
+Hi Daniel
+
+When this goes round again could you add me to the covering letter?
+
+I looked at all three of the patches and no objections on my side but
+I'm reluctant to send out acks because I'm not sure I understood the
+wider picture well enough.
+
+
+Daniel.
+
+
+> ---
+>  drivers/video/backlight/backlight.c |  2 +-
+>  drivers/video/fbdev/core/fbcon.c    | 14 +-------------
+>  drivers/video/fbdev/core/fbmem.c    |  1 +
+>  include/linux/fb.h                  |  4 +---
+>  include/linux/fbcon.h               |  2 ++
+>  5 files changed, 6 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/video/backlight/backlight.c b/drivers/video/backlight/backlight.c
+> index deb824bef6e2..c55590ec0057 100644
+> --- a/drivers/video/backlight/backlight.c
+> +++ b/drivers/video/backlight/backlight.c
+> @@ -46,7 +46,7 @@ static int fb_notifier_callback(struct notifier_block *self,
+>  	int fb_blank = 0;
+>  
+>  	/* If we aren't interested in this event, skip it immediately ... */
+> -	if (event != FB_EVENT_BLANK && event != FB_EVENT_CONBLANK)
+> +	if (event != FB_EVENT_BLANK)
+>  		return 0;
+>  
+>  	bd = container_of(self, struct backlight_device, fb_notif);
+> diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+> index 259cdd118475..d9f545f1a81b 100644
+> --- a/drivers/video/fbdev/core/fbcon.c
+> +++ b/drivers/video/fbdev/core/fbcon.c
+> @@ -2350,8 +2350,6 @@ static int fbcon_switch(struct vc_data *vc)
+>  static void fbcon_generic_blank(struct vc_data *vc, struct fb_info *info,
+>  				int blank)
+>  {
+> -	struct fb_event event;
+> -
+>  	if (blank) {
+>  		unsigned short charmask = vc->vc_hi_font_mask ?
+>  			0x1ff : 0xff;
+> @@ -2362,13 +2360,6 @@ static void fbcon_generic_blank(struct vc_data *vc, struct fb_info *info,
+>  		fbcon_clear(vc, 0, 0, vc->vc_rows, vc->vc_cols);
+>  		vc->vc_video_erase_char = oldc;
+>  	}
+> -
+> -
+> -	lock_fb_info(info);
+> -	event.info = info;
+> -	event.data = &blank;
+> -	fb_notifier_call_chain(FB_EVENT_CONBLANK, &event);
+> -	unlock_fb_info(info);
+>  }
+>  
+>  static int fbcon_blank(struct vc_data *vc, int blank, int mode_switch)
+> @@ -3240,7 +3231,7 @@ int fbcon_fb_registered(struct fb_info *info)
+>  	return ret;
+>  }
+>  
+> -static void fbcon_fb_blanked(struct fb_info *info, int blank)
+> +void fbcon_fb_blanked(struct fb_info *info, int blank)
+>  {
+>  	struct fbcon_ops *ops = info->fbcon_par;
+>  	struct vc_data *vc;
+> @@ -3344,9 +3335,6 @@ static int fbcon_event_notify(struct notifier_block *self,
+>  		con2fb = event->data;
+>  		con2fb->framebuffer = con2fb_map[con2fb->console - 1];
+>  		break;
+> -	case FB_EVENT_BLANK:
+> -		fbcon_fb_blanked(info, *(int *)event->data);
+> -		break;
+>  	case FB_EVENT_REMAP_ALL_CONSOLE:
+>  		idx = info->node;
+>  		fbcon_remap_all(idx);
+> diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+> index ddc0c16b8bbf..9366fbe99a58 100644
+> --- a/drivers/video/fbdev/core/fbmem.c
+> +++ b/drivers/video/fbdev/core/fbmem.c
+> @@ -1068,6 +1068,7 @@ fb_blank(struct fb_info *info, int blank)
+>  	event.data = &blank;
+>  
+>  	early_ret = fb_notifier_call_chain(FB_EARLY_EVENT_BLANK, &event);
+> +	fbcon_fb_blanked(info, blank);
+>  
+>  	if (info->fbops->fb_blank)
+>   		ret = info->fbops->fb_blank(blank, info);
+> diff --git a/include/linux/fb.h b/include/linux/fb.h
+> index 0d86aa31bf8d..1e66fac3124f 100644
+> --- a/include/linux/fb.h
+> +++ b/include/linux/fb.h
+> @@ -137,12 +137,10 @@ struct fb_cursor_user {
+>  #define FB_EVENT_GET_CONSOLE_MAP        0x07
+>  /*      CONSOLE-SPECIFIC: set console to framebuffer mapping */
+>  #define FB_EVENT_SET_CONSOLE_MAP        0x08
+> -/*      A hardware display blank change occurred */
+> +/*      A display blank is requested       */
+>  #define FB_EVENT_BLANK                  0x09
+>  /*      Private modelist is to be replaced */
+>  #define FB_EVENT_MODE_CHANGE_ALL	0x0B
+> -/*	A software display blank change occurred */
+> -#define FB_EVENT_CONBLANK               0x0C
+>  /*      CONSOLE-SPECIFIC: remap all consoles to new fb - for vga_switcheroo */
+>  #define FB_EVENT_REMAP_ALL_CONSOLE      0x0F
+>  /*      A hardware display blank early change occurred */
+> diff --git a/include/linux/fbcon.h b/include/linux/fbcon.h
+> index 305e4f2eddac..d67d7ec51ef9 100644
+> --- a/include/linux/fbcon.h
+> +++ b/include/linux/fbcon.h
+> @@ -14,6 +14,7 @@ int fbcon_mode_deleted(struct fb_info *info,
+>  void fbcon_new_modelist(struct fb_info *info);
+>  void fbcon_get_requirement(struct fb_info *info,
+>  			   struct fb_blit_caps *caps);
+> +void fbcon_fb_blanked(struct fb_info *info, int blank);
+>  #else
+>  static inline void fb_console_init(void) {}
+>  static inline void fb_console_exit(void) {}
+> @@ -27,6 +28,7 @@ static inline int fbcon_mode_deleted(struct fb_info *info,
+>  static inline void fbcon_new_modelist(struct fb_info *info) {}
+>  static inline void fbcon_get_requirement(struct fb_info *info,
+>  					 struct fb_blit_caps *caps) {}
+> +static inline void fbcon_fb_blanked(struct fb_info *info, int blank) {}
+>  #endif
+>  
+>  #endif /* _LINUX_FBCON_H */
+> -- 
+> 2.20.1
+> 
