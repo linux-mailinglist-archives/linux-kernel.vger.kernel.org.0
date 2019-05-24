@@ -2,86 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A81E29ADE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60A3F29AAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:12:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389790AbfEXPUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:20:12 -0400
-Received: from c.mx.filmlight.ltd.uk ([54.76.112.217]:35009 "EHLO
-        c.mx.filmlight.ltd.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389428AbfEXPUL (ORCPT
+        id S2389711AbfEXPMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 11:12:23 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60910 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389654AbfEXPMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 11:20:11 -0400
-X-Greylist: delayed 535 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 May 2019 11:20:10 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by omni.filmlight.ltd.uk (Postfix) with ESMTP id E84FD40000D9;
-        Fri, 24 May 2019 16:11:14 +0100 (BST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 omni.filmlight.ltd.uk E84FD40000D9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=filmlight.ltd.uk;
-        s=default; t=1558710674;
-        bh=0Ug3SmMBjFHqgISSjAkOrPxbVWMmS3DdLx7SQNNyROg=;
-        h=Cc:Subject:To:References:From:Date:In-Reply-To:From;
-        b=wpXaBT074VJO3lUY2B3AqfKB/W8kA/0eApqSZ41aOSGqNLFXeF+yci3TFm4WhVp4H
-         kV37VGx9Na/NLT5TmdU7mOXvKRov8tvnBDw7t4Am86QVyAKBCTZ3DDWsVdZoEArlfE
-         1m3WIQhTP2Qa/l+lxluF+WXJkuQNf4b1SOeoeu50=
-Received: from montana.filmlight.ltd.uk (envoy [62.7.83.226])
-        (Authenticated sender: roger)
-        by omni.filmlight.ltd.uk (Postfix) with ESMTPSA id AB169887FAA;
-        Fri, 24 May 2019 16:11:14 +0100 (BST)
-Cc:     roger@filmlight.ltd.uk, LKML <linux-kernel@vger.kernel.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau@lists.freedesktop.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC][PATCH] kernel.h: Add generic roundup_64() macro
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20190523100013.52a8d2a6@gandalf.local.home>
- <CAHk-=wg5HqJ2Kfgpub+tCWQ2_FiFwEW9H1Rm+an-BLGaGvDDXw@mail.gmail.com>
- <20190523112740.7167aba4@gandalf.local.home>
-From:   Roger Willcocks <roger@filmlight.ltd.uk>
-Message-ID: <e4e875f0-2aa5-89f4-f462-78bedb9c5cde@filmlight.ltd.uk>
-Date:   Fri, 24 May 2019 16:11:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190523112740.7167aba4@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+        Fri, 24 May 2019 11:12:21 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4OEvxvA061050
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 11:12:20 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2spjjmhny2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 11:12:20 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 24 May 2019 16:12:18 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 24 May 2019 16:12:15 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4OFCEZB40501408
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 May 2019 15:12:14 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 14B2342049;
+        Fri, 24 May 2019 15:12:14 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A2464204B;
+        Fri, 24 May 2019 15:12:13 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.111.39])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 24 May 2019 15:12:12 +0000 (GMT)
+Subject: Re: [PATCH v6 2/3] add a new ima template field buf
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     mjg59@google.com, roberto.sassu@huawei.com, vgoyal@redhat.com
+Date:   Fri, 24 May 2019 11:12:02 -0400
+In-Reply-To: <20190521000645.16227-3-prsriva02@gmail.com>
+References: <20190521000645.16227-1-prsriva02@gmail.com>
+         <20190521000645.16227-3-prsriva02@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19052415-0016-0000-0000-0000027F1352
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19052415-0017-0000-0000-000032DC108A
+Message-Id: <1558710722.3977.68.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-24_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=967 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905240100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2019-05-20 at 17:06 -0700, Prakhar Srivastava wrote:
+> A buffer(cmdline args) measured into ima cannot be appraised
+> without already being aware of the buffer contents.Since we
+> don't know what cmdline args will be passed (or need to validate
+> what was passed) it is not possible to appraise it. 
+> 
+> Since hashs are non reversible the raw buffer is needed to 
+> recompute the hash.
+> To regenrate the hash of the buffer and appraise the same
+> the contents of the buffer need to be available.
+> 
+> A new template field buf is added to the existing ima template
+> fields, which can be used to store/read the buffer itself.
+> Two new fields are added to the ima_event_data to carry the
+> buf and buf_len whenever necessary.
+> 
+> Updated the process_buffer_measurement call to add the buf
+> to the ima_event_data.
+> process_buffer_measurement added in "Add a new ima hook 
+> ima_kexec_cmdline to measure cmdline args"
+> 
+> - Add a new template field 'buf' to be used to store/read
+> the buffer data.
+> - Added two new fields to ima_event_data to hold the buf and
+> buf_len [Suggested by Roberto]
+> -Updated process_buffer_meaurement to add the buffer to
+> ima_event_data
 
-On 23/05/2019 16:27, Steven Rostedt wrote:
->
-> I haven't yet tested this, but what about something like the following:
->
-> ...perhaps forget about the constant check, and just force
-> the power of two check:
->
-> 							\
-> 	if (!(__y & (__y >> 1))) {			\
-> 		__x =3D round_up(x, y);			\
-> 	} else {					\
+This patch description can be written more concisely.
 
-You probably want
+Patch 1/3 in this series introduces measuring the kexec boot command
+line.  This patch defines a new template field for storing the kexec
+boot command line in the measurement list in order for a remote
+attestation server to verify.
 
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!(__y &=
- (__y - 1))
+As mentioned, the first patch description should include a shell
+command for verifying the digest in the kexec boot command line
+measurement list record against /proc/cmdline.  This patch description
+should include a shell command showing how to verify the digest based
+on the new field.  Should the new field in the ascii measurement list
+be displayed as a string, not hex?
 
---
-
-Roger
-
+Mimi
 
