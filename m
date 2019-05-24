@@ -2,99 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9695B291E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 09:39:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4133F291E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 09:41:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389174AbfEXHjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 03:39:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51854 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388911AbfEXHjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 03:39:03 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AE2663092663;
-        Fri, 24 May 2019 07:38:54 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (ovpn-12-43.pek2.redhat.com [10.72.12.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 164815B689;
-        Fri, 24 May 2019 07:38:50 +0000 (UTC)
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@kernel.org, bp@alien8.de, hpa@zytor.com,
-        kirill.shutemov@linux.intel.com, x86@kernel.org, dyoung@redhat.com,
-        Baoquan He <bhe@redhat.com>
-Subject: [PATCH v5 3/3] x86/kdump/64: Change the upper limit of crashkernel reservation
-Date:   Fri, 24 May 2019 15:38:10 +0800
-Message-Id: <20190524073810.24298-4-bhe@redhat.com>
-In-Reply-To: <20190524073810.24298-1-bhe@redhat.com>
-References: <20190524073810.24298-1-bhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 24 May 2019 07:39:03 +0000 (UTC)
+        id S2389118AbfEXHlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 03:41:11 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:40121 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388960AbfEXHlK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 03:41:10 -0400
+Received: by mail-qk1-f193.google.com with SMTP id q197so6033838qke.7
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 00:41:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FRYxcsA8gB9FibohJrWOdhqpBp517njxkreby+OWZAA=;
+        b=a5i0hc5HW8w1Q7zIUP9Y7DPRDw4v8USDI6kD/nh9++tvffpz1+pgiRf+aAWJCuQAvc
+         OIBY6KFziDqoUfqsDk4O8SSfsHBCc31jzc/FwSqDjEjnEaV6VHe3X5K5lB/RstOu6hL9
+         6CBlzXrLrpyAJoqlrkVjZ+tF9DJfKL63h6Lo156jmtIPoH1W+ZAGO0a2+cW4cXIytmOc
+         h5wPK2oeuI+jYnGTp4IRuEob+oJ8PTmig6ExqmPWRNIwhP43sScFJPdsstJuTgX3J/Ts
+         MWPDI6l//x6qkrE65S1luOK+DeMthJi+YNLJML9Es5IOQ8yzvWdi+9LneyLUVHQP9RJe
+         kndg==
+X-Gm-Message-State: APjAAAW72Ci0vCiVaABYqUXR6hnFXMLStBV1GipmXcGSA1nvfm5IQhKT
+        koA87j/MdXUDHVrfdJe81IhW9nhznkluqXATU5E=
+X-Google-Smtp-Source: APXvYqwKjoorl+i2iSi0wJjXdbgxY2NnU3CoD/Rr8CXva8Z9KCBM7/GgIHAXtDLbf7tJIkQBQvIgx6lRi0X7Yz2ZISg=
+X-Received: by 2002:a37:3ce:: with SMTP id 197mr78391397qkd.14.1558683664367;
+ Fri, 24 May 2019 00:41:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAAzmS69VFrTPzZ8DY_NPPTZYtBssocRnQOFAyo3VbSTO4CesbA@mail.gmail.com>
+ <20190523161532.122421-1-natechancellor@gmail.com> <CAKwvOdmjQvCh__ZH+gLLgcKy4u1n5cgJQPU1WRuitEp+UZra5w@mail.gmail.com>
+In-Reply-To: <CAKwvOdmjQvCh__ZH+gLLgcKy4u1n5cgJQPU1WRuitEp+UZra5w@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 24 May 2019 09:40:47 +0200
+Message-ID: <CAK8P3a3RE3Jwft6WTNavV7St3P+mVFwRyCQFVaO3==LB7j29rw@mail.gmail.com>
+Subject: Re: [PATCH] misc: sgi-xp: Properly initialize buf in xpc_get_rsvd_page_pa
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Cliff Whickman <cpw@sgi.com>,
+        Robin Holt <robinmholt@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Stephen Hines <srhines@google.com>,
+        Tony Luck <tony.luck@intel.com>, rja@sgi.com,
+        Fenghua Yu <fenghua.yu@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Restrict kdump to only reserve crashkernel below 64TB.
+On Thu, May 23, 2019 at 8:05 PM 'Nick Desaulniers' via Clang Built
+Linux <clang-built-linux@googlegroups.com> wrote:
+>
+> On Thu, May 23, 2019 at 9:20 AM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > Clang warns:
+> >
+> > drivers/misc/sgi-xp/xpc_partition.c:73:14: warning: variable 'buf' is
+> > uninitialized when used within its own initialization [-Wuninitialized]
+> >         void *buf = buf;
+> >               ~~~   ^~~
+> > 1 warning generated.
+> >
+> > Initialize it to NULL, which is more deterministic.
+> >
+> > Fixes: 279290294662 ("[IA64-SGI] cleanup the way XPC locates the reserved page")
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/466
+> > Suggested-by: Stephen Hines <srhines@google.com>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+>
+> From https://github.com/ClangBuiltLinux/linux/issues/466#issuecomment-488781917
+> I tried to follow the rabbit hole, but eventually these void* get
+> converted to u64's and passed along to function that I have no idea
+> whether they handle the value `(u64)(void*)0` or not.  Either way,
+> they definitely don't handle uninitialized values/UB.
+>
+> I was going to cc Robin who's already cc'ed, but looks like this code
+> was last touched 7-10 years ago. + Tony and Fenghua for ia64 since
+> sn_partition_reserved_page_pa is defined in
+> arch/ia64/include/asm/sn/sn_sal.h.
+>
+> In absence of consensus, I'll prefer NULL to uninitialized.
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> Thanks Nathan for following up on this.
 
-The reaons is that the kdump may jump from 5-level to 4-level, and if
-the kdump kernel is put above 64TB, then the jumping will fail. While the
-1st kernel reserves crashkernel region during bootup, we don't know yet
-which kind of kernel will be loaded after system bootup, 5-level kernel
-or 4-level kernel.
+I also had to take a look, and I think I understand what's going on,
+and interestingly, the code is correct, both before and after your patch.
+It's described in this comment:
 
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Acked-by: Dave Young <dyoung@redhat.com>
----
- arch/x86/kernel/setup.c | 15 ++++++++++++---
- include/linux/sizes.h   |  1 +
- 2 files changed, 13 insertions(+), 3 deletions(-)
+/*
+ * Returns the physical address of the partition's reserved page through
+ * an iterative number of calls.
+ *
+ * On first call, 'cookie' and 'len' should be set to 0, and 'addr'
+ * set to the nasid of the partition whose reserved page's address is
+ * being sought.
+ * On subsequent calls, pass the values, that were passed back on the
+ * previous call.
+ *
+ * While the return status equals SALRET_MORE_PASSES, keep calling
+ * this function after first copying 'len' bytes starting at 'addr'
+ * into 'buf'. Once the return status equals SALRET_OK, 'addr' will
+ * be the physical address of the partition's reserved page. If the
+ * return status equals neither of these, an error as occurred.
+ */
+static inline s64
+sn_partition_reserved_page_pa(u64 buf, u64 *cookie, u64 *addr, u64 *len)
 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 08a5f4a131f5..dcbdf54fb5c1 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -453,15 +453,24 @@ static void __init memblock_x86_reserve_range_setup_data(void)
- #define CRASH_ALIGN		SZ_16M
- 
- /*
-- * Keep the crash kernel below this limit.  On 32 bits earlier kernels
-- * would limit the kernel to the low 512 MiB due to mapping restrictions.
-+ * Keep the crash kernel below this limit.
-+ *
-+ * On 32 bits earlier kernels would limit the kernel to the low 512 MiB
-+ * due to mapping restrictions.
-+ *
-+ * On 64bit, kdump kernel need be restricted to be under 64TB, which is
-+ * the upper limit of system RAM in 4-level paing mode. Since the kdump
-+ * jumping could be from 5-level to 4-level, the jumping will fail if
-+ * kernel is put above 64TB, and there's no way to detect the paging mode
-+ * of the kernel which will be loaded for dumping during the 1st kernel
-+ * bootup.
-  */
- #ifdef CONFIG_X86_32
- # define CRASH_ADDR_LOW_MAX	SZ_512M
- # define CRASH_ADDR_HIGH_MAX	SZ_512M
- #else
- # define CRASH_ADDR_LOW_MAX	SZ_4G
--# define CRASH_ADDR_HIGH_MAX	MAXMEM
-+# define CRASH_ADDR_HIGH_MAX	SZ_64T
- #endif
- 
- static int __init reserve_crashkernel_low(void)
-diff --git a/include/linux/sizes.h b/include/linux/sizes.h
-index fbde0bc7e882..8651269cb46c 100644
---- a/include/linux/sizes.h
-+++ b/include/linux/sizes.h
-@@ -47,5 +47,6 @@
- #define SZ_2G				0x80000000
- 
- #define SZ_4G				_AC(0x100000000, ULL)
-+#define SZ_64T				_AC(0x400000000000, ULL)
- 
- #endif /* __LINUX_SIZES_H__ */
--- 
-2.17.2
+so *len is set to zero on the first call and tells the bios how many bytes
+are accessible at 'buf', and it does get updated by the BIOS to tell
+us how many bytes it needs, and then we allocate that and try again.
 
+With that explanation added,
+
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
