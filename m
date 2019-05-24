@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 852EB29B2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:35:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0520229B2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390320AbfEXPfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:35:41 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35154 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390083AbfEXPff (ORCPT
+        id S2390411AbfEXPfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 11:35:52 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:32851 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390163AbfEXPff (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 24 May 2019 11:35:35 -0400
-Received: by mail-lf1-f67.google.com with SMTP id c17so7502189lfi.2;
+Received: by mail-lj1-f193.google.com with SMTP id w1so9078956ljw.0;
         Fri, 24 May 2019 08:35:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=FVedIOrmGpOcaFRJmHXTB7UeLVU4DsMUhFHAazuTakE=;
-        b=IBz2xZzcryLkEF3QwZxXBNQMWVKKacms5g+HthecLOEVvmicKQfcbyEZOj2hjvWoRM
-         5jkTawDL6utDEqFajkvCljhNAEe8ueRqpO8UEx0bIHfhJeSSNYfU+vCvlz8us0OvNT4L
-         Fr8/XUgd+lARCIwxpbT8kgLbtOdHJywbDhf/+Kim4VRbzpMwU3Q54qiJpew8jxVguXhp
-         H7C1/x0lr3AAemtgF85aaIHGIaPJbb/9xIHnpyMrkXuWsdmelm0WSB2qjM9FsZysfjDJ
-         iasRy7gsd5uAdLlWacqm+Tn3McW15gfIPYcpJ54raFP61202d6Vmj1VwgJBhnfSBBdUR
-         8fZg==
+        bh=PdWdZJtFLzv4jBGeRTNjR+jpddUaN+iIYYeuiIm2P7U=;
+        b=tkpt6hq/2DH8WDXDwdpqUUJBG8pgyCin+cZBq7daZESOfqZShEIaUO0zh2Wt55r1Yj
+         3LkwPshSBk9e66iQfLz8YOcq8pMi2Ex0tD79aHiGaySnWKh7xvtLBYI0rxH831ZWX7xG
+         sMe0dMakoAPU8snm3jgs2HOtvY8H7I5xh8sfbNlSWigJE8zlAClywzx6+fY0QyCmIXvY
+         VgXDV4uqIg8hNf1Yifi8VaFGlE1uQ9DRX/c5yKyAvoEbZHP1n/V3eiZVr+ZTPPNpVnVC
+         +hbwSx6Q6JNZ+0ornpozFrVAuKymZTG0XWJ+lG8G/NCw1uLc6Ou+C3ToX/kxtbifDBUX
+         bcsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=FVedIOrmGpOcaFRJmHXTB7UeLVU4DsMUhFHAazuTakE=;
-        b=T+9MfYnI9DJ42HiYA5NjFAl9hrE0wAy+tWKjzJ/PBUr7VjmkzaG4JnBblBMnD4BAkh
-         5UcAdGn7MpsFD+ndXsbob5GLE0Mpo5heAvgtmEsp4KZhlYmLOUm4TdLcq9x66pWP4Q8V
-         v8DaXRNjES/ZBolx3zjFDx+WD/x761i/FT+rLJ74NCY73GdAPNJy7SjuNOOTSHCGix/x
-         ziiEwh05N2M5NcHEAlsUymgJyK/RspOPC/z/clwQi6BdvnpufXYBt5FtVWcNSLeqSVhl
-         omfhAcPp6U7Ghd3xamu+XgLT6ciky4K7E0u1QuGI3uWuP+v9KAZBVV+uNQuGWBQm/iHy
-         EDnQ==
-X-Gm-Message-State: APjAAAWTqDezc3+XqPaoObB5Pm3HyrOSmNVt/XXb1b9fRbGohX9JhyDa
-        BPb05c24mOQ0eVt7mTf9SoI=
-X-Google-Smtp-Source: APXvYqyVAhHUikmlJTylVRAFKxrIMmuUKPLiWQJbGKEaygC7zqcEXr4ksyljREFFfO/6m1xEDfRrmg==
-X-Received: by 2002:a19:cdce:: with SMTP id d197mr4648620lfg.161.1558712132268;
-        Fri, 24 May 2019 08:35:32 -0700 (PDT)
+        bh=PdWdZJtFLzv4jBGeRTNjR+jpddUaN+iIYYeuiIm2P7U=;
+        b=uFCmyUO4fAyNHrXRlA2stsq8lVqAUl34pNYYo8g7KZH+amvPI6FKXD10dLIt2txizl
+         6WNY5ZFwqO7k3NSZYKmgREWfJcW5BNLtBasaU78Ql5aBhJ/hxbbeRzqPoh1vIkUxmSe2
+         4pQmYXSYzKRbvFC8xonmjsNI0cSQKcQ+nNVd/RayU/8APsuR+RYNcppoI/7BApZitT1A
+         QTICyfg+AYZ3sxjp2ivm1sSIUKsb0S/ClktRairrzzK+8Te3zOzO7ctuLL661eU67REv
+         IuhkumjZYserLOPSOVUgiPnMxmI2hQe2SprsInYhguiAQjtabhVE3B79ftaA6oFPa8ME
+         vaBw==
+X-Gm-Message-State: APjAAAW9X5HRO8PlXGxWqcR08oV0HYjStchclvqCGArEW+2QVaTWCVAN
+        9NTK2awkI5nKBEjiKj0AZOA=
+X-Google-Smtp-Source: APXvYqwd49qp6YKW0neMcGz6SFiiEsLpisFnpfouM3YjeYiB3AEAviwn8Wa/I6GqMw59WTlcFNZDAQ==
+X-Received: by 2002:a2e:9acb:: with SMTP id p11mr23733949ljj.129.1558712133364;
+        Fri, 24 May 2019 08:35:33 -0700 (PDT)
 Received: from localhost.localdomain ([94.29.35.141])
-        by smtp.gmail.com with ESMTPSA id y14sm572316ljh.60.2019.05.24.08.35.31
+        by smtp.gmail.com with ESMTPSA id y14sm572316ljh.60.2019.05.24.08.35.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 08:35:31 -0700 (PDT)
+        Fri, 24 May 2019 08:35:32 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -54,9 +54,9 @@ To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         Nicolas Chauvet <kwizart@gmail.com>
-Subject: [PATCH v3 6/8] clocksource/drivers/tegra: Minor code clean up
-Date:   Fri, 24 May 2019 18:32:51 +0300
-Message-Id: <20190524153253.28564-7-digetx@gmail.com>
+Subject: [PATCH v3 7/8] clocksource/drivers/tegra: Use SPDX identifier
+Date:   Fri, 24 May 2019 18:32:52 +0300
+Message-Id: <20190524153253.28564-8-digetx@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190524153253.28564-1-digetx@gmail.com>
 References: <20190524153253.28564-1-digetx@gmail.com>
@@ -67,143 +67,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Correct typo and use proper upper casing for acronyms in the comments,
-use common style for error messages, prepend error messages with
-"tegra-timer:", add error message for cpuhp_setup_state() failure and
-clean up whitespaces in the code to fix checkpatch warnings.
+Use SPDX tag for the license identification instead of a free form text
+to aid license-checking automation and for brevity.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clocksource/timer-tegra20.c | 43 ++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 19 deletions(-)
+ drivers/clocksource/timer-tegra20.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
-index 18b81d814b3b..12784a82fd57 100644
+index 12784a82fd57..1a3ee928e9a5 100644
 --- a/drivers/clocksource/timer-tegra20.c
 +++ b/drivers/clocksource/timer-tegra20.c
-@@ -15,6 +15,8 @@
-  *
-  */
- 
-+#define pr_fmt(fmt)	"tegra-timer: " fmt
-+
- #include <linux/clk.h>
- #include <linux/clockchips.h>
- #include <linux/cpu.h>
-@@ -30,13 +32,13 @@
- 
- #include "timer-of.h"
- 
--#define RTC_SECONDS            0x08
--#define RTC_SHADOW_SECONDS     0x0c
--#define RTC_MILLISECONDS       0x10
-+#define RTC_SECONDS		0x08
-+#define RTC_SHADOW_SECONDS	0x0c
-+#define RTC_MILLISECONDS	0x10
- 
--#define TIMERUS_CNTR_1US 0x10
--#define TIMERUS_USEC_CFG 0x14
--#define TIMERUS_CNTR_FREEZE 0x4c
-+#define TIMERUS_CNTR_1US	0x10
-+#define TIMERUS_USEC_CFG	0x14
-+#define TIMERUS_CNTR_FREEZE	0x4c
- 
- #define TIMER_PTV		0x0
- #define TIMER_PTV_EN		BIT(31)
-@@ -57,7 +59,7 @@ static u32 usec_config;
- static void __iomem *timer_reg_base;
- 
- static int tegra_timer_set_next_event(unsigned long cycles,
--					 struct clock_event_device *evt)
-+				      struct clock_event_device *evt)
- {
- 	void __iomem *reg_base = timer_of_base(to_timer_of(evt));
- 
-@@ -178,15 +180,17 @@ static struct timer_of suspend_rtc_to = {
- 
+@@ -1,18 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0
  /*
-  * tegra_rtc_read - Reads the Tegra RTC registers
-- * Care must be taken that this funciton is not called while the
-+ * Care must be taken that this function is not called while the
-  * tegra_rtc driver could be executing to avoid race conditions
-  * on the RTC shadow register
+  * Copyright (C) 2010 Google, Inc.
+- *
+- * Author:
+- *	Colin Cross <ccross@google.com>
+- *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
++ * Author: Colin Cross <ccross@google.com>
   */
- static u64 tegra_rtc_read_ms(struct clocksource *cs)
- {
- 	void __iomem *reg_base = timer_of_base(&suspend_rtc_to);
-+
- 	u32 ms = readl_relaxed(reg_base + RTC_MILLISECONDS);
- 	u32 s = readl_relaxed(reg_base + RTC_SHADOW_SECONDS);
-+
- 	return (u64)s * MSEC_PER_SEC + ms;
- }
  
-@@ -231,7 +235,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
- 
- 	to = this_cpu_ptr(&tegra_to);
- 	ret = timer_of_init(np, to);
--	if (ret < 0)
-+	if (ret)
- 		goto out;
- 
- 	timer_reg_base = timer_of_base(to);
-@@ -290,8 +294,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
- 		cpu_to->clkevt.cpumask = cpumask_of(cpu);
- 		cpu_to->clkevt.irq = irq_of_parse_and_map(np, idx);
- 		if (!cpu_to->clkevt.irq) {
--			pr_err("%s: can't map IRQ for CPU%d\n",
--			       __func__, cpu);
-+			pr_err("failed to map irq for cpu%d\n", cpu);
- 			ret = -EINVAL;
- 			goto out_irq;
- 		}
-@@ -301,8 +304,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
- 				  IRQF_TIMER | IRQF_NOBALANCING,
- 				  cpu_to->clkevt.name, &cpu_to->clkevt);
- 		if (ret) {
--			pr_err("%s: cannot setup irq %d for CPU%d\n",
--				__func__, cpu_to->clkevt.irq, cpu);
-+			pr_err("failed to set up irq for cpu%d: %d\n",
-+			       cpu, ret);
- 			irq_dispose_mapping(cpu_to->clkevt.irq);
- 			cpu_to->clkevt.irq = 0;
- 			goto out_irq;
-@@ -321,11 +324,14 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
- 	register_current_timer_delay(&tegra_delay_timer);
- #endif
- 
--	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
--			  "AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
--			  tegra_timer_stop);
-+	ret = cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
-+				"AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
-+				tegra_timer_stop);
-+	if (ret)
-+		pr_err("failed to set up cpu hp state: %d\n", ret);
- 
- 	return ret;
-+
- out_irq:
- 	for_each_possible_cpu(cpu) {
- 		struct timer_of *cpu_to;
-@@ -338,6 +344,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20)
- 	}
- out:
- 	timer_of_cleanup(to);
-+
- 	return ret;
- }
- 
-@@ -361,8 +368,6 @@ static int __init tegra20_init_rtc(struct device_node *np)
- 	if (ret)
- 		return ret;
- 
--	clocksource_register_hz(&suspend_rtc_clocksource, 1000);
--
--	return 0;
-+	return clocksource_register_hz(&suspend_rtc_clocksource, 1000);
- }
- TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
+ #define pr_fmt(fmt)	"tegra-timer: " fmt
 -- 
 2.21.0
 
