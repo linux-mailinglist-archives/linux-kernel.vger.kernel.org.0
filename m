@@ -2,186 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD5D929537
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 11:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE49329546
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 11:57:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390380AbfEXJ4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 05:56:10 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:57888 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390247AbfEXJ4J (ORCPT
+        id S2390451AbfEXJ5T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 05:57:19 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35097 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390429AbfEXJ5Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 05:56:09 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4O9rYtP154062;
-        Fri, 24 May 2019 09:56:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=gph/cZtiNouDdoN+j1zsu+fZav7CrzoQ3asuHLB7WAM=;
- b=xHc7JZPtrR3yGBCBdSUIC6QItzPJ6112PvNTPnsdtI+15j82K4ObCHLmlo0+zq81ESBf
- b3vchUJWuh4hlHZ3VKP+fz3K6eZS9qrgd7YTWd0f4Ke9B6TtT/zLeLJUyd6HcVVJrlVD
- 87Y7pOeLXHWQPSXufLC6+9NK7qXjwGEAvYtK+lZJ843OBl4TMTAuQNaPydBIRsyh7n51
- cnjIwHDRi9Yoa9ENnxL1GA/9nbSlOMkYrRVXv7rzmc/1SQoNUXqNzIIcL82TTfsOA9JG
- 6r2InjI10ZlRVbE0Ix+gqSXAT9Os7ULyLoyEwS+DiyeAfKjRRUi+qBtNPFtNZH/7IRLq Zw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2smsk5g2qp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 24 May 2019 09:56:06 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4O9tlVn151536;
-        Fri, 24 May 2019 09:56:05 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2smsgw1gk4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 24 May 2019 09:56:05 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4O9u4tl023849;
-        Fri, 24 May 2019 09:56:04 GMT
-Received: from tomti.i.net-space.pl (/10.175.163.203)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 24 May 2019 09:56:04 +0000
-From:   Daniel Kiper <daniel.kiper@oracle.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org
-Cc:     dpsmith@apertussolutions.com, eric.snowberg@oracle.com,
-        hpa@zytor.com, kanth.ghatraju@oracle.com, konrad.wilk@oracle.com,
-        ross.philipson@oracle.com
-Subject: [PATCH RFC 2/2] x86/boot: Introduce dummy MLE header
-Date:   Fri, 24 May 2019 11:55:04 +0200
-Message-Id: <20190524095504.12894-3-daniel.kiper@oracle.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190524095504.12894-1-daniel.kiper@oracle.com>
-References: <20190524095504.12894-1-daniel.kiper@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9266 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905240068
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9266 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905240068
+        Fri, 24 May 2019 05:57:16 -0400
+Received: by mail-io1-f67.google.com with SMTP id p2so7317587iol.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 02:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=M/EcKSjlMMdWfcfrmWG3Y6oYYZWgbCmZ8EBb04SSgDI=;
+        b=EeksouSAZsbhL5PUeN9hhOGBqYxIdgSKG5pQ+CgypqeDVq7bvpYcPXpk4nvjOuW49N
+         Cd4uShxLwvxYqjNcKJ1dy0vgFQCi2T8kxvU7ymug9tdoWc48ogQukvWRqj+rDoH/lZdi
+         mk5z5JSaGumuXh7MuLtf/caHxjlNoDkGebMRL5Kle1S+UkUeFxrzzUYh15VlBefAAZZh
+         CGz2xqNtbDLY3X4iOkDE4cj/9EBRAAN5LtdJXmQiizdA26ixBiIxuDmHOO8snmNVAUCf
+         D9hWTi20mwBr6A6qLADbL5T84zefMNStJO0L4UzAz8DoygTZHCKwLfWm5uYPmb4D8osW
+         kQzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=M/EcKSjlMMdWfcfrmWG3Y6oYYZWgbCmZ8EBb04SSgDI=;
+        b=cLa5SkTMefQYzIZLZHmxs2C0ueDHHvVmJUzr4MKsTP156F11fGMrIwebONvOxwOYND
+         ZIjiVT3Xjo2+6VThTlZY7Ox8vNillBrLnyASu14BQawbpZcsqzA3NYtdq74MHbvm41DU
+         /yAYPzRBaqmDz8g3rz+xBUFNcpWcxV/aHvPiOW/MsQFGhq7JoCMLQON2q9ik6FvdYvOv
+         whXQ98/mQeWCM/jooO9I1XB+FZpdmEW4yEqrRQOBAHaVApUDFdX0gbePvfMwsk1RWuR/
+         RpaZAJXHnVC3JwtiECrlnukh/mJlpdxSVwuqhi6Dkn8fo8GTH5cjfpvAK114lvqgf0gc
+         om2w==
+X-Gm-Message-State: APjAAAXqYqJgqZ75Fz0CWqdYy2qkbz0JgfRXZMizEPulTVyI8BESkH8n
+        cHYrOADtKrfX5eiU00ddEOWuUw==
+X-Google-Smtp-Source: APXvYqz+et+m459Xc/MMXDSFkPYbu9py1MoPd8KKsOjtuxRk1ZkOpU0M8gCI3dUvadZvqxc3xELSrQ==
+X-Received: by 2002:a5e:8207:: with SMTP id l7mr5693770iom.232.1558691835391;
+        Fri, 24 May 2019 02:57:15 -0700 (PDT)
+Received: from brauner.io ([172.56.12.37])
+        by smtp.gmail.com with ESMTPSA id 194sm973879itm.40.2019.05.24.02.57.06
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 24 May 2019 02:57:14 -0700 (PDT)
+Date:   Fri, 24 May 2019 11:57:04 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Shuah Khan <shuah@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Todd Kjos <tkjos@android.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [PATCH v1 1/2] open: add close_range()
+Message-ID: <20190524095701.b7ioi5gg573vmajh@brauner.io>
+References: <20190522155259.11174-1-christian@brauner.io>
+ <67e4458a-9cc4-d1aa-608c-73ebe9e2f7a3@yandex-team.ru>
+ <20190523163345.q5ynd2ytk7nxcvqf@brauner.io>
+ <CAK8P3a26uvqmExJZsezhB+cp2ADM0Ai9jVUKWOFM6kg848bCKg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a26uvqmExJZsezhB+cp2ADM0Ai9jVUKWOFM6kg848bCKg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DO NOT APPLY!!!
+On Fri, May 24, 2019 at 09:43:53AM +0200, Arnd Bergmann wrote:
+> On Thu, May 23, 2019 at 6:33 PM Christian Brauner <christian@brauner.io> wrote:
+> > On Thu, May 23, 2019 at 07:22:17PM +0300, Konstantin Khlebnikov wrote:
+> > > On 22.05.2019 18:52, Christian Brauner wrote:> This adds the close_range() syscall. It allows to efficiently close a range
+> > > >   22 files changed, 100 insertions(+), 9 deletions(-)
+> > > >
+> > >
+> > > It would be better to split arch/ wiring into separate patch for better readability.
+> >
+> > Ok. You mean only do x86 - seems to be the standard - and then move the
+> > others into a separate patch? Doesn't seem worth to have a patch
+> > per-arch, I'd think.
+> 
+> I think I would prefer the first patch to just add the call without wiring it up
+> anywhere, and a second patch do add it on all architectures including x86.
 
-THIS PATCH INTRODUCES DUMMY MLE HEADER AND SIMPLY ILLUSTRATES HOW TO
-EXTEND THE setup_header2 PROPERLY.
+I've split this into two patches and also bumped arm64
+__NR_compat_syscalls that I've missed before as you mentioned!
 
-DO NOT APPLY!!!
-
-Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
-Reviewed-by: Ross Philipson <ross.philipson@oracle.com>
----
- Documentation/x86/boot.txt               |  6 ++++++
- arch/x86/Kconfig                         |  7 +++++++
- arch/x86/boot/compressed/Makefile        |  1 +
- arch/x86/boot/compressed/setup_header2.S |  6 ++++++
- arch/x86/boot/compressed/sl_stub.S       | 28 ++++++++++++++++++++++++++++
- 5 files changed, 48 insertions(+)
- create mode 100644 arch/x86/boot/compressed/sl_stub.S
-
-diff --git a/Documentation/x86/boot.txt b/Documentation/x86/boot.txt
-index ff10c6116662..09cf50d7dca2 100644
---- a/Documentation/x86/boot.txt
-+++ b/Documentation/x86/boot.txt
-@@ -793,6 +793,12 @@ Offset/size:	0x0004/4
-   This field contains the size of the setup_header2 including setup_header2.header.
-   It should be used by the boot loader to detect supported fields in the setup_header2.
- 
-+Field name:	mle_header_offset
-+Offset/size:	0x0008/4
-+
-+  This field contains the MLE header offset from the beginning of the kernel image.
-+  If it is set to zero then it means that MLE header is not build into the kernel.
-+
- 
- **** THE IMAGE CHECKSUM
- 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 5ad92419be19..021e274ede54 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1961,6 +1961,13 @@ config EFI_MIXED
- 
- 	   If unsure, say N.
- 
-+config SECURE_LAUNCH_STUB
-+       bool "Secure Launch stub support"
-+       depends on X86_64
-+       ---help---
-+         This kernel feature allows a bzImage to be loaded directly
-+         through Intel TXT or AMD SKINIT measured launch.
-+
- config SECCOMP
- 	def_bool y
- 	prompt "Enable seccomp to safely compute untrusted bytecode"
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index c12ccc2bd923..9722d119e19a 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -78,6 +78,7 @@ vmlinux-objs-y := $(obj)/vmlinux.lds $(obj)/setup_header2.o $(obj)/head_$(BITS).
- 
- vmlinux-objs-$(CONFIG_EARLY_PRINTK) += $(obj)/early_serial_console.o
- vmlinux-objs-$(CONFIG_RANDOMIZE_BASE) += $(obj)/kaslr.o
-+vmlinux-objs-$(CONFIG_SECURE_LAUNCH_STUB) += $(obj)/sl_stub.o
- ifdef CONFIG_X86_64
- 	vmlinux-objs-$(CONFIG_RANDOMIZE_BASE) += $(obj)/kaslr_64.o
- 	vmlinux-objs-y += $(obj)/mem_encrypt.o
-diff --git a/arch/x86/boot/compressed/setup_header2.S b/arch/x86/boot/compressed/setup_header2.S
-index 0b3963296825..eb732626fd22 100644
---- a/arch/x86/boot/compressed/setup_header2.S
-+++ b/arch/x86/boot/compressed/setup_header2.S
-@@ -9,4 +9,10 @@ setup_header2:
- 	.ascii	"hDR2"
-         /* Size. */
- 	.long	setup_header2_end - setup_header2
-+        /* MLE header offset. */
-+#ifdef CONFIG_SECURE_LAUNCH_STUB
-+	.long	mle_header
-+#else
-+	.long	0
-+#endif
- setup_header2_end:
-diff --git a/arch/x86/boot/compressed/sl_stub.S b/arch/x86/boot/compressed/sl_stub.S
-new file mode 100644
-index 000000000000..34f5000528e4
---- /dev/null
-+++ b/arch/x86/boot/compressed/sl_stub.S
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/*
-+ * Copyright (c) 2019 Oracle and/or its affiliates. All rights reserved.
-+ *
-+ * Author(s):
-+ *     Ross Philipson <ross.philipson@oracle.com>
-+ */
-+	.code32
-+	.text
-+
-+	/* The MLE Header per the TXT Specification, section 4.1 */
-+	.global	mle_header
-+
-+mle_header:
-+	.long	0x9082ac5a    /* UUID0 */
-+	.long	0x74a7476f    /* UUID1 */
-+	.long	0xa2555c0f    /* UUID2 */
-+	.long	0x42b651cb    /* UUID3 */
-+	.long	0x00000034    /* MLE header size */
-+	.long	0x00020002    /* MLE version 2.2 */
-+	.long	0x01234567    /* Linear entry point of MLE (virt. address) */
-+	.long	0x00000000    /* First valid page of MLE */
-+	.long	0x00000000    /* Offset within binary of first byte of MLE */
-+	.long	0x00000000    /* Offset within binary of last byte + 1 of MLE */
-+	.long	0x00000223    /* Bit vector of MLE-supported capabilities */
-+	.long	0x00000000    /* Starting linear address of command line */
-+	.long	0x00000000    /* Ending linear address of command line */
--- 
-2.11.0
-
+Thanks!
+Christian
