@@ -2,155 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88D0129A33
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:45:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A13A729A5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:50:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404099AbfEXOpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 10:45:34 -0400
-Received: from mail-pl1-f176.google.com ([209.85.214.176]:44818 "EHLO
-        mail-pl1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390885AbfEXOpd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 10:45:33 -0400
-Received: by mail-pl1-f176.google.com with SMTP id c5so4265924pll.11
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 07:45:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=MHvHrkxq2UZnF7o26TUMkBSgD+CCAEdyDhJ6RlRxDq4=;
-        b=JktF32OUwIUFyGZjeQ3YmXTO0LTptYRLgl4mxzlfIS18qqzPT0JbakeLqSiXgj8iU5
-         /AjUqhVb5fxrnJGRBg0Op/qEO+r66Ie27ZQzeRU/7XQTgU7Ydmi9vosEOm9X+AXJSUK1
-         98HoGyR1LBgyej4GrYbxShLddFcGIgxOqpNluCNGEqLs0cRNByuEGAPMizULWNinHVY4
-         YT/nRCimaS8UPNixhkDLPdo8qrcQ7ZcfqwGAGlG56q5dvM6QsjyWP0mbAmhckshJy+uT
-         9BMqeVg4loc+rLskjjw6h3+nThebKPOBbMZMnHbWMH2gI+VK4CgofIQIEDrmGRchk0uq
-         7Xvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=MHvHrkxq2UZnF7o26TUMkBSgD+CCAEdyDhJ6RlRxDq4=;
-        b=UHQKj3kFP89M8zzAPYZFlmSoBWMpELsm1uZTc6rLf8KDI4WEgmNOVNtQsW+szulafN
-         HniGLHdWtFK+tilrtN0KlvG+QXcnGXd8V5bX04Vwa+2LJdAIcDjFQ7b3Q1m5bwshkbWy
-         eNL4ZE80ThGn9ZowkyfN4kbTJfL1FfkgHj/KtsebKg8ymTvdwAEGHxJlbWQGn0hDteOq
-         4WV3/Xgld3Nu9wFVclBbOJ3LxEeI2UBuiSZ3AH68QQQwntDJ4hlGeVWxRTVlfzi+lsNz
-         a4/YdOt1WciDWi/+PssM7xP6Vh8AENZORt4ExDwGVejhGW0umdjju4UZs55V6RR5d2VS
-         pGFQ==
-X-Gm-Message-State: APjAAAXsEcCj2gbjOxdP6ApYFWR6ex/+iD0tVDviCxj50W1zyLBuHYaI
-        xBDSPbZE336fCLDuPC0HyXA=
-X-Google-Smtp-Source: APXvYqydly2nntodiLgnYLq/vhdMvgJqXc5van8JufMPzJRkBw6YKEUFoYnDLEe8GTc3tJzJVxfcrg==
-X-Received: by 2002:a17:902:2d03:: with SMTP id o3mr71181543plb.309.1558709133220;
-        Fri, 24 May 2019 07:45:33 -0700 (PDT)
-Received: from [192.168.1.80] (c-71-202-18-166.hsd1.ca.comcast.net. [71.202.18.166])
-        by smtp.gmail.com with ESMTPSA id k6sm3100014pfi.86.2019.05.24.07.45.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 07:45:32 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: Is 2nd Generation Intel(R) Xeon(R) Processors (Formerly Cascade Lake) affected by MDS
-From:   Tony Luck <tony.luck@gmail.com>
-X-Mailer: iPhone Mail (16F156)
-In-Reply-To: <20190524141732.GA4412@kroah.com>
-Date:   Fri, 24 May 2019 07:45:31 -0700
-Cc:     Jinpu Wang <jinpu.wang@cloud.ionos.com>,
-        Thomas Gleixner <tglx@linutronix.de>, tony.luck@intel.com,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Elmar Gerdes <elmar.gerdes@cloud.ionos.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7B9F565D-EE66-432B-9D29-E494BFD24683@gmail.com>
-References: <CAMGffEkQmdrrH3+UChZx_Af6WcFFQFw6fz3Ti4CRUau-wq7jow@mail.gmail.com> <20190524141732.GA4412@kroah.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        id S2404151AbfEXOux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 10:50:53 -0400
+Received: from smtp.asem.it ([151.1.184.197]:60586 "EHLO smtp.asem.it"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403860AbfEXOux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 10:50:53 -0400
+X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 May 2019 10:50:52 EDT
+Received: from webmail.asem.it
+        by asem.it (smtp.asem.it)
+        (SecurityGateway 5.5.0)
+        with ESMTP id SG003896145.MSG 
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 16:45:48 +0200S
+Received: from ASAS044.asem.intra (172.16.16.44) by ASAS044.asem.intra
+ (172.16.16.44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1261.35; Fri, 24
+ May 2019 16:45:47 +0200
+Received: from flavio-x.asem.intra (172.16.17.208) by ASAS044.asem.intra
+ (172.16.16.44) with Microsoft SMTP Server id 15.1.1261.35 via Frontend
+ Transport; Fri, 24 May 2019 16:45:47 +0200
+From:   Flavio Suligoi <f.suligoi@asem.it>
+To:     Marek Vasut <marek.vasut@gmail.com>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Richard Weinberger <richard@nod.at>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Flavio Suligoi <f.suligoi@asem.it>
+Subject: [PATCH] mtd: spi-nor: change "error reading JEDEC id" from dbg to err
+Date:   Fri, 24 May 2019 16:45:45 +0200
+Message-ID: <1558709145-12088-1-git-send-email-f.suligoi@asem.it>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-SGHeloLookup-Result: pass smtp.helo=webmail.asem.it (ip=172.16.16.44)
+X-SGSPF-Result: none (smtp.asem.it)
+X-SGOP-RefID: str=0001.0A090209.5CE8039C.0029,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0 (_st=1 _vt=0 _iwf=0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stepping 5 is preproduction of cascade lake. MDS mitigation is in production=
- parts (stepping >=3D 6)
+In case of SPI error during the reading of the nor Id,
+the probe fails without any error message related to
+the JEDEC Id reading procedure.
 
-Sent from my iPhone
+Signed-off-by: Flavio Suligoi <f.suligoi@asem.it>
+---
+ drivers/mtd/spi-nor/spi-nor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> On May 24, 2019, at 07:17, Greg Kroah-Hartman <gregkh@linuxfoundation.org>=
- wrote:
->=20
->> On Fri, May 24, 2019 at 03:19:34PM +0200, Jinpu Wang wrote:
->> Resend with plain text, and remove confidential unnecessary signature.
->> sorry for spam.
->>=20
->> Hi Thomas, hi Greg, hi Tony, hi Arjan, hi other expert on the list
->>=20
->> I noticed on our Cascade lake with 4.14.120,  the kernel is reporting
->> vulnerable:
->> jwang@ps401a-912:~$ head /sys/devices/system/cpu/vulnerabilities/mds
->> Vulnerable: Clear CPU buffers attempted, no microcode; SMT vulnerable
->>=20
->> But according to INTEL,  they have built the mitigation in hardware
->> for Cascade Lake:
->> https://www.intel.com/content/www/us/en/architecture-and-technology/engin=
-eering-new-protections-into-hardware.html
->>=20
->> We are using latest microcode from debian:
->> https://metadata.ftp-master.debian.org/changelogs//non-free/i/intel-micro=
-code/intel-microcode_3.20190514.1~deb9u1_changelog
->> lscpu:
->> jwang@ps401a-912:~$ lscpu
->> Architecture:          x86_64
->> CPU op-mode(s):        32-bit, 64-bit
->> Byte Order:            Little Endian
->> CPU(s):                96
->> On-line CPU(s) list:   0-95
->> Thread(s) per core:    2
->> Core(s) per socket:    24
->> Socket(s):             2
->> NUMA node(s):          2
->> Vendor ID:             GenuineIntel
->> CPU family:            6
->> Model:                 85
->> Model name:            Intel(R) Xeon(R) Platinum 8268 CPU @ 2.90GHz
->> Stepping:              5
->> CPU MHz:               3228.226
->> CPU max MHz:           3900.0000
->> CPU min MHz:           1000.0000
->> BogoMIPS:              5800.00
->> Virtualization:        VT-x
->> L1d cache:             32K
->> L1i cache:             32K
->> L2 cache:              1024K
->> L3 cache:              33792K
->> NUMA node0 CPU(s):     0-23,48-71
->> NUMA node1 CPU(s):     24-47,72-95
->> Flags:                 fpu vme de pse tsc msr pae mce cx8 apic sep
->> mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht
->> tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs
->> bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq
->> dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm
->> pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes
->> xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3
->> cdp_l3 invpcid_single intel_ppin ssbd mba ibrs ibpb stibp tpr_shadow
->> vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2
->> erms invpcid rtm cqm mpx rdt_a avx512f avx512dq rdseed adx smap
->> clflushopt clwb intel_pt avx512cd avx512bw avx512vl xsaveopt xsavec
->> xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local
->> dtherm ida arat pln pts pku ospke flush_l1d arch_capabilities
->>=20
->> Clearly we want to buy Cascade Lake if the hardware mitigations are in
->> place, but the information on the internet is quite limited and
->> misleading.
->>=20
->> Could anyone of you could clarify it for us?
->> Does it mean 4.14.120 is missing patches for detecting Cascade Lake
->> mitigation, Or maybe only small set of cascade lake has mitigation?
->> Or the community/intel are not sure about it yet?
->=20
-> Did you try 4.19 or 5.1?  Try those and see if anything changes.
->=20
-> If not, odds are you need a microcode update from Intel, please contact
-> them, nothing we can do about that.
->=20
-> If 4.14 works different from 4.19 or 5.1, please let us know.
->=20
-> thanks,
->=20
-> greg k-h
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 73172d7..8719d45 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -2062,7 +2062,7 @@ static const struct flash_info *spi_nor_read_id(struct spi_nor *nor)
+ 
+ 	tmp = nor->read_reg(nor, SPINOR_OP_RDID, id, SPI_NOR_MAX_ID_LEN);
+ 	if (tmp < 0) {
+-		dev_dbg(nor->dev, "error %d reading JEDEC ID\n", tmp);
++		dev_err(nor->dev, "error %d reading JEDEC ID\n", tmp);
+ 		return ERR_PTR(tmp);
+ 	}
+ 
+-- 
+2.7.4
+
