@@ -2,356 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C63DE29B1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:32:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C780629B0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:31:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390134AbfEXPc0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:32:26 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:19278 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390083AbfEXPcZ (ORCPT
+        id S2389711AbfEXPbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 11:31:52 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45523 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389405AbfEXPbw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 11:32:25 -0400
-X-IronPort-AV: E=Sophos;i="5.60,507,1549897200"; 
-   d="scan'208";a="16875518"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 25 May 2019 00:32:19 +0900
-Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 492B1400A927;
-        Sat, 25 May 2019 00:32:17 +0900 (JST)
-From:   Gareth Williams <gareth.williams.jx@renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] clk: renesas: r9a06g032: Add clock domain support
-Date:   Fri, 24 May 2019 16:31:44 +0100
-Message-Id: <1558711904-27278-3-git-send-email-gareth.williams.jx@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1558711904-27278-1-git-send-email-gareth.williams.jx@renesas.com>
-References: <1558711904-27278-1-git-send-email-gareth.williams.jx@renesas.com>
+        Fri, 24 May 2019 11:31:52 -0400
+Received: by mail-pl1-f195.google.com with SMTP id a5so4307030pls.12
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 08:31:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xax+Itit2redxrlh2xu6KH2UMjJ3BZeeSxkOY3WyROU=;
+        b=z485kAr9blKJo6NBcbFr+fn20i1azeIo3+m7fUvokaeqRUDgcc0Eo9zWEeVNtRD1lh
+         y8wnAE4K60RClRAnK0p7rP6oJCWY56aQWFQyaaetR3chFQKdoud5UkTqffwxDnZrBC1c
+         AKlGkIuVvJuetDxg4BKn90i8pRVi3aL3y5jwHOYTBIpTXcGfK/RFsXGI6ixujey85UfO
+         RtIEsCCVTd7dqNaA4HkMOE5TGlTeIruWEdryqC1zR9XDeidfqPF5zSyeCCEzzgzUgrO7
+         /xBYTJd7bBwfT2YNxIrnTJ7MrR6t2ftIbdJShesXRo+8/jmZqk7VE/n94cYHv6ZpW0HQ
+         6uOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xax+Itit2redxrlh2xu6KH2UMjJ3BZeeSxkOY3WyROU=;
+        b=pGVb7n9Gt+d3BaLhBVHtEjm53emlxWA3M2JggRECX+6Vga4yAYoxSTTjA4dWZCD7Lw
+         sHnYtcq2okLmlTWmy+aJI076OikqzuFp0V0H1oVd7oA7o9tMzxlPO8DeEEZ0YaxVMLaE
+         w94uS4f7ZtIm3pVjaxLsRET+jtIeR4VfrCNpNsCGmNRNfr1tzRTYjixm1Afmh1nmK1o2
+         6uMZ/6v+dO7kMjmvVXCKhLrFRtIpAGVDiZBcWpDlYwmxM2+QQ5cRjuYKtzRc8atPyBKo
+         UB3xyaT/L1UL2trXNdtPPvgUqIfFVnwjKiFr1wbNRVC8Wstbe90V9YBJnJjf2g+DrxzV
+         WCmQ==
+X-Gm-Message-State: APjAAAWjklR1WI2Efi/pbzUfoOdbXeiAJk0n8EGdeypQgl4f63IMZLBk
+        7kSiPsAc43wjK4Derylk1VKgKA==
+X-Google-Smtp-Source: APXvYqzJDR+ptpnVNFiBcyHOv6NHmG2mK8rNF3q+c/HygM64gpdEeAHy3TO3MHZ4nC0zBp3xVj++ag==
+X-Received: by 2002:a17:902:8c8f:: with SMTP id t15mr51364381plo.87.1558711911326;
+        Fri, 24 May 2019 08:31:51 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:180::805])
+        by smtp.gmail.com with ESMTPSA id j2sm4862174pfb.157.2019.05.24.08.31.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 24 May 2019 08:31:50 -0700 (PDT)
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com
+Subject: [PATCH] mm: fix page cache convergence regression
+Date:   Fri, 24 May 2019 11:31:48 -0400
+Message-Id: <20190524153148.18481-1-hannes@cmpxchg.org>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several clocks on the r9ag032 which are currently not enabled
-in their drivers that can be delegated to clock domain system for power
-management. Therefore add support for clock domain functionality to the
-r9a06g032 clock driver.
+Since a28334862993 ("page cache: Finish XArray conversion"), on most
+major Linux distributions, the page cache doesn't correctly transition
+when the hot data set is changing, and leaves the new pages thrashing
+indefinitely instead of kicking out the cold ones.
 
-Signed-off-by: Gareth Williams <gareth.williams.jx@renesas.com>
+On a freshly booted, freshly ssh'd into virtual machine with 1G RAM
+running stock Arch Linux:
+
+[root@ham ~]# ./reclaimtest.sh
++ dd of=workingset-a bs=1M count=0 seek=600
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ ./mincore workingset-a
+153600/153600 workingset-a
++ dd of=workingset-b bs=1M count=0 seek=600
++ cat workingset-b
++ cat workingset-b
++ cat workingset-b
++ cat workingset-b
++ ./mincore workingset-a workingset-b
+104029/153600 workingset-a
+120086/153600 workingset-b
++ cat workingset-b
++ cat workingset-b
++ cat workingset-b
++ cat workingset-b
++ ./mincore workingset-a workingset-b
+104029/153600 workingset-a
+120268/153600 workingset-b
+
+workingset-b is a 600M file on a 1G host that is otherwise entirely
+idle. No matter how often it's being accessed, it won't get cached.
+
+While investigating, I noticed that the non-resident information gets
+aggressively reclaimed - /proc/vmstat::workingset_nodereclaim. This is
+a problem because a workingset transition like this relies on the
+non-resident information tracked in the page cache tree of evicted
+file ranges: when the cache faults are refaults of recently evicted
+cache, we challenge the existing active set, and that allows a new
+workingset to establish itself.
+
+Tracing the shrinker that maintains this memory revealed that all page
+cache tree nodes were allocated to the root cgroup. This is a problem,
+because 1) the shrinker sizes the amount of non-resident information
+it keeps to the size of the cgroup's other memory and 2) on most major
+Linux distributions, only kernel threads live in the root cgroup and
+everything else gets put into services or session groups:
+
+[root@ham ~]# cat /proc/self/cgroup
+0::/user.slice/user-0.slice/session-c1.scope
+
+As a result, we basically maintain no non-resident information for the
+workloads running on the system, thus breaking the caching algorithm.
+
+Looking through the code, I found the culprit in the above-mentioned
+patch: when switching from the radix tree to xarray, it dropped the
+__GFP_ACCOUNT flag from the tree node allocations - the flag that
+makes sure the allocated memory gets charged to and tracked by the
+cgroup of the calling process - in this case, the one doing the fault.
+
+To fix this, allow xarray users to specify per-tree gfp flags that
+supplement the hardcoded gfp flags inside the xarray expansion code.
+This is analogous to the radix tree API. Then restore the page cache
+tree annotation that passes the __GFP_ACCOUNT flag during expansions.
+
+With this patch applied, the page cache correctly converges on new
+workingsets again after just a few iterations:
+
+[root@ham ~]# ./reclaimtest.sh
++ dd of=workingset-a bs=1M count=0 seek=600
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ cat workingset-a
++ ./mincore workingset-a
+153600/153600 workingset-a
++ dd of=workingset-b bs=1M count=0 seek=600
++ cat workingset-b
++ ./mincore workingset-a workingset-b
+124607/153600 workingset-a
+87876/153600 workingset-b
++ cat workingset-b
++ ./mincore workingset-a workingset-b
+81313/153600 workingset-a
+133321/153600 workingset-b
++ cat workingset-b
++ ./mincore workingset-a workingset-b
+63036/153600 workingset-a
+153600/153600 workingset-b
+
+Cc: stable@vger.kernel.org # 4.20+
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- drivers/clk/renesas/r9a06g032-clocks.c | 229 +++++++++++++++++++++++----------
- 1 file changed, 160 insertions(+), 69 deletions(-)
+ fs/inode.c             | 1 +
+ include/linux/xarray.h | 2 ++
+ lib/xarray.c           | 8 ++++++--
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index 97c7247..06799cd 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -16,6 +16,8 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_domain.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <dt-bindings/clock/r9a06g032-sysctrl.h>
-@@ -28,6 +30,7 @@ struct r9a06g032_gate {
- /* This is used to describe a clock for instantiation */
- struct r9a06g032_clkdesc {
- 	const char *name;
-+	uint32_t managed: 1;
- 	uint32_t type: 3;
- 	uint32_t index: 8;
- 	uint32_t source : 8; /* source index + 1 (0 == none) */
-@@ -60,7 +63,11 @@ struct r9a06g032_clkdesc {
- #define D_GATE(_idx, _n, _src, ...) \
- 	{ .type = K_GATE, .index = R9A06G032_##_idx, \
- 		.source = 1 + R9A06G032_##_src, .name = _n, \
--		.gate = I_GATE(__VA_ARGS__), }
-+		.gate = I_GATE(__VA_ARGS__) }
-+#define D_MODULE(_idx, _n, _src, ...) \
-+	{ .type = K_GATE, .index = R9A06G032_##_idx, \
-+		.source = 1 + R9A06G032_##_src, .name = _n, \
-+		.managed = 1, .gate = I_GATE(__VA_ARGS__) }
- #define D_ROOT(_idx, _n, _mul, _div) \
- 	{ .type = K_FFC, .index = R9A06G032_##_idx, .name = _n, \
- 		.div = _div, .mul = _mul }
-@@ -121,7 +128,7 @@ enum { K_GATE = 0, K_FFC, K_DIV, K_BITSEL, K_DUALGATE };
+diff --git a/fs/inode.c b/fs/inode.c
+index e9d18b2c3f91..3b454d2119c4 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -362,6 +362,7 @@ EXPORT_SYMBOL(inc_nlink);
+ static void __address_space_init_once(struct address_space *mapping)
+ {
+ 	xa_init_flags(&mapping->i_pages, XA_FLAGS_LOCK_IRQ);
++	mapping->i_pages.xa_gfp = __GFP_ACCOUNT;
+ 	init_rwsem(&mapping->i_mmap_rwsem);
+ 	INIT_LIST_HEAD(&mapping->private_list);
+ 	spin_lock_init(&mapping->private_lock);
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 0e01e6129145..cbbf76e4c973 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -292,6 +292,7 @@ struct xarray {
+ 	spinlock_t	xa_lock;
+ /* private: The rest of the data structure is not to be used directly. */
+ 	gfp_t		xa_flags;
++	gfp_t		xa_gfp;
+ 	void __rcu *	xa_head;
+ };
  
- #define R9A06G032_CLOCK_COUNT		(R9A06G032_UART_GROUP_34567 + 1)
- 
--static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
-+static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
- 	D_ROOT(CLKOUT, "clkout", 25, 1),
- 	D_ROOT(CLK_PLL_USB, "clk_pll_usb", 12, 10),
- 	D_FFC(CLKOUT_D10, "clkout_d10", CLKOUT, 10),
-@@ -170,7 +177,7 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
- 	D_GATE(CLK_P6_PG2, "clk_p6_pg2", DIV_P6_PG, 0x8a3, 0x8a4, 0x8a5, 0, 0xb61, 0, 0),
- 	D_GATE(CLK_P6_PG3, "clk_p6_pg3", DIV_P6_PG, 0x8a6, 0x8a7, 0x8a8, 0, 0xb62, 0, 0),
- 	D_GATE(CLK_P6_PG4, "clk_p6_pg4", DIV_P6_PG, 0x8a9, 0x8aa, 0x8ab, 0, 0xb63, 0, 0),
--	D_GATE(CLK_PCI_USB, "clk_pci_usb", CLKOUT_D40, 0xe6, 0, 0, 0, 0, 0, 0),
-+	D_MODULE(CLK_PCI_USB, "clk_pci_usb", CLKOUT_D40, 0xe6, 0, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_QSPI0, "clk_qspi0", DIV_QSPI0, 0x2a4, 0x2a5, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_QSPI1, "clk_qspi1", DIV_QSPI1, 0x484, 0x485, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_RGMII_REF, "clk_rgmii_ref", CLKOUT_D8, 0x340, 0, 0, 0, 0, 0, 0),
-@@ -187,17 +194,17 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
- 	D_GATE(CLK_SPI5, "clk_spi5", DIV_P4_PG, 0x822, 0x823, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_SWITCH, "clk_switch", DIV_SWITCH, 0x982, 0x983, 0, 0, 0, 0, 0),
- 	D_DIV(DIV_MOTOR, "div_motor", CLKOUT_D5, 84, 2, 8),
--	D_GATE(HCLK_ECAT125, "hclk_ecat125", CLKOUT_D8, 0x400, 0x401, 0, 0x402, 0, 0x440, 0x441),
--	D_GATE(HCLK_PINCONFIG, "hclk_pinconfig", CLKOUT_D40, 0x740, 0x741, 0x742, 0, 0xae0, 0, 0),
--	D_GATE(HCLK_SERCOS, "hclk_sercos", CLKOUT_D10, 0x420, 0x422, 0, 0x421, 0, 0x460, 0x461),
--	D_GATE(HCLK_SGPIO2, "hclk_sgpio2", DIV_P5_PG, 0x8c3, 0x8c4, 0x8c5, 0, 0xb41, 0, 0),
--	D_GATE(HCLK_SGPIO3, "hclk_sgpio3", DIV_P5_PG, 0x8c6, 0x8c7, 0x8c8, 0, 0xb42, 0, 0),
--	D_GATE(HCLK_SGPIO4, "hclk_sgpio4", DIV_P5_PG, 0x8c9, 0x8ca, 0x8cb, 0, 0xb43, 0, 0),
--	D_GATE(HCLK_TIMER0, "hclk_timer0", CLKOUT_D40, 0x743, 0x744, 0x745, 0, 0xae1, 0, 0),
--	D_GATE(HCLK_TIMER1, "hclk_timer1", CLKOUT_D40, 0x746, 0x747, 0x748, 0, 0xae2, 0, 0),
--	D_GATE(HCLK_USBF, "hclk_usbf", CLKOUT_D8, 0xe3, 0, 0, 0xe4, 0, 0x102, 0x103),
--	D_GATE(HCLK_USBH, "hclk_usbh", CLKOUT_D8, 0xe0, 0xe1, 0, 0xe2, 0, 0x100, 0x101),
--	D_GATE(HCLK_USBPM, "hclk_usbpm", CLKOUT_D8, 0xe5, 0, 0, 0, 0, 0, 0),
-+	D_MODULE(HCLK_ECAT125, "hclk_ecat125", CLKOUT_D8, 0x400, 0x401, 0, 0x402, 0, 0x440, 0x441),
-+	D_MODULE(HCLK_PINCONFIG, "hclk_pinconfig", CLKOUT_D40, 0x740, 0x741, 0x742, 0, 0xae0, 0, 0),
-+	D_MODULE(HCLK_SERCOS, "hclk_sercos", CLKOUT_D10, 0x420, 0x422, 0, 0x421, 0, 0x460, 0x461),
-+	D_MODULE(HCLK_SGPIO2, "hclk_sgpio2", DIV_P5_PG, 0x8c3, 0x8c4, 0x8c5, 0, 0xb41, 0, 0),
-+	D_MODULE(HCLK_SGPIO3, "hclk_sgpio3", DIV_P5_PG, 0x8c6, 0x8c7, 0x8c8, 0, 0xb42, 0, 0),
-+	D_MODULE(HCLK_SGPIO4, "hclk_sgpio4", DIV_P5_PG, 0x8c9, 0x8ca, 0x8cb, 0, 0xb43, 0, 0),
-+	D_MODULE(HCLK_TIMER0, "hclk_timer0", CLKOUT_D40, 0x743, 0x744, 0x745, 0, 0xae1, 0, 0),
-+	D_MODULE(HCLK_TIMER1, "hclk_timer1", CLKOUT_D40, 0x746, 0x747, 0x748, 0, 0xae2, 0, 0),
-+	D_MODULE(HCLK_USBF, "hclk_usbf", CLKOUT_D8, 0xe3, 0, 0, 0xe4, 0, 0x102, 0x103),
-+	D_MODULE(HCLK_USBH, "hclk_usbh", CLKOUT_D8, 0xe0, 0xe1, 0, 0xe2, 0, 0x100, 0x101),
-+	D_MODULE(HCLK_USBPM, "hclk_usbpm", CLKOUT_D8, 0xe5, 0, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_48_PG_F, "clk_48_pg_f", CLK_48, 0x78c, 0x78d, 0, 0x78e, 0, 0xb04, 0xb05),
- 	D_GATE(CLK_48_PG4, "clk_48_pg4", CLK_48, 0x789, 0x78a, 0x78b, 0, 0xb03, 0, 0),
- 	D_FFC(CLK_DDRPHY_PLLCLK_D4, "clk_ddrphy_pllclk_d4", CLK_DDRPHY_PLLCLK, 4),
-@@ -207,13 +214,13 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
- 	D_FFC(CLK_REF_SYNC_D8, "clk_ref_sync_d8", CLK_REF_SYNC, 8),
- 	D_FFC(CLK_SERCOS100_D2, "clk_sercos100_d2", CLK_SERCOS100, 2),
- 	D_DIV(DIV_CA7, "div_ca7", CLK_REF_SYNC, 57, 1, 4, 1, 2, 4),
--	D_GATE(HCLK_CAN0, "hclk_can0", CLK_48, 0x783, 0x784, 0x785, 0, 0xb01, 0, 0),
--	D_GATE(HCLK_CAN1, "hclk_can1", CLK_48, 0x786, 0x787, 0x788, 0, 0xb02, 0, 0),
--	D_GATE(HCLK_DELTASIGMA, "hclk_deltasigma", DIV_MOTOR, 0x1ef, 0x1f0, 0x1f1, 0, 0, 0, 0),
--	D_GATE(HCLK_PWMPTO, "hclk_pwmpto", DIV_MOTOR, 0x1ec, 0x1ed, 0x1ee, 0, 0, 0, 0),
--	D_GATE(HCLK_RSV, "hclk_rsv", CLK_48, 0x780, 0x781, 0x782, 0, 0xb00, 0, 0),
--	D_GATE(HCLK_SGPIO0, "hclk_sgpio0", DIV_MOTOR, 0x1e0, 0x1e1, 0x1e2, 0, 0, 0, 0),
--	D_GATE(HCLK_SGPIO1, "hclk_sgpio1", DIV_MOTOR, 0x1e3, 0x1e4, 0x1e5, 0, 0, 0, 0),
-+	D_MODULE(HCLK_CAN0, "hclk_can0", CLK_48, 0x783, 0x784, 0x785, 0, 0xb01, 0, 0),
-+	D_MODULE(HCLK_CAN1, "hclk_can1", CLK_48, 0x786, 0x787, 0x788, 0, 0xb02, 0, 0),
-+	D_MODULE(HCLK_DELTASIGMA, "hclk_deltasigma", DIV_MOTOR, 0x1ef, 0x1f0, 0x1f1, 0, 0, 0, 0),
-+	D_MODULE(HCLK_PWMPTO, "hclk_pwmpto", DIV_MOTOR, 0x1ec, 0x1ed, 0x1ee, 0, 0, 0, 0),
-+	D_MODULE(HCLK_RSV, "hclk_rsv", CLK_48, 0x780, 0x781, 0x782, 0, 0xb00, 0, 0),
-+	D_MODULE(HCLK_SGPIO0, "hclk_sgpio0", DIV_MOTOR, 0x1e0, 0x1e1, 0x1e2, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SGPIO1, "hclk_sgpio1", DIV_MOTOR, 0x1e3, 0x1e4, 0x1e5, 0, 0, 0, 0),
- 	D_DIV(RTOS_MDC, "rtos_mdc", CLK_REF_SYNC, 100, 80, 640, 80, 160, 320, 640),
- 	D_GATE(CLK_CM3, "clk_cm3", CLK_REF_SYNC_D4, 0xba0, 0xba1, 0, 0xba2, 0, 0xbc0, 0xbc1),
- 	D_GATE(CLK_DDRC, "clk_ddrc", CLK_DDRPHY_PLLCLK_D4, 0x323, 0x324, 0, 0, 0, 0, 0),
-@@ -221,53 +228,53 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] __initconst = {
- 	D_GATE(CLK_HSR50, "clk_hsr50", CLK_HSR100_D2, 0x484, 0x485, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_HW_RTOS, "clk_hw_rtos", CLK_REF_SYNC_D4, 0xc60, 0xc61, 0, 0, 0, 0, 0),
- 	D_GATE(CLK_SERCOS50, "clk_sercos50", CLK_SERCOS100_D2, 0x424, 0x423, 0, 0, 0, 0, 0),
--	D_GATE(HCLK_ADC, "hclk_adc", CLK_REF_SYNC_D8, 0x1af, 0x1b0, 0x1b1, 0, 0, 0, 0),
--	D_GATE(HCLK_CM3, "hclk_cm3", CLK_REF_SYNC_D4, 0xc20, 0xc21, 0xc22, 0, 0, 0, 0),
--	D_GATE(HCLK_CRYPTO_EIP150, "hclk_crypto_eip150", CLK_REF_SYNC_D4, 0x123, 0x124, 0x125, 0, 0x142, 0, 0),
--	D_GATE(HCLK_CRYPTO_EIP93, "hclk_crypto_eip93", CLK_REF_SYNC_D4, 0x120, 0x121, 0, 0x122, 0, 0x140, 0x141),
--	D_GATE(HCLK_DDRC, "hclk_ddrc", CLK_REF_SYNC_D4, 0x320, 0x322, 0, 0x321, 0, 0x3a0, 0x3a1),
--	D_GATE(HCLK_DMA0, "hclk_dma0", CLK_REF_SYNC_D4, 0x260, 0x261, 0x262, 0x263, 0x2c0, 0x2c1, 0x2c2),
--	D_GATE(HCLK_DMA1, "hclk_dma1", CLK_REF_SYNC_D4, 0x264, 0x265, 0x266, 0x267, 0x2c3, 0x2c4, 0x2c5),
--	D_GATE(HCLK_GMAC0, "hclk_gmac0", CLK_REF_SYNC_D4, 0x360, 0x361, 0x362, 0x363, 0x3c0, 0x3c1, 0x3c2),
--	D_GATE(HCLK_GMAC1, "hclk_gmac1", CLK_REF_SYNC_D4, 0x380, 0x381, 0x382, 0x383, 0x3e0, 0x3e1, 0x3e2),
--	D_GATE(HCLK_GPIO0, "hclk_gpio0", CLK_REF_SYNC_D4, 0x212, 0x213, 0x214, 0, 0, 0, 0),
--	D_GATE(HCLK_GPIO1, "hclk_gpio1", CLK_REF_SYNC_D4, 0x215, 0x216, 0x217, 0, 0, 0, 0),
--	D_GATE(HCLK_GPIO2, "hclk_gpio2", CLK_REF_SYNC_D4, 0x229, 0x22a, 0x22b, 0, 0, 0, 0),
--	D_GATE(HCLK_HSR, "hclk_hsr", CLK_HSR100_D2, 0x480, 0x482, 0, 0x481, 0, 0x4c0, 0x4c1),
--	D_GATE(HCLK_I2C0, "hclk_i2c0", CLK_REF_SYNC_D8, 0x1a9, 0x1aa, 0x1ab, 0, 0, 0, 0),
--	D_GATE(HCLK_I2C1, "hclk_i2c1", CLK_REF_SYNC_D8, 0x1ac, 0x1ad, 0x1ae, 0, 0, 0, 0),
--	D_GATE(HCLK_LCD, "hclk_lcd", CLK_REF_SYNC_D4, 0x7a0, 0x7a1, 0x7a2, 0, 0xb20, 0, 0),
--	D_GATE(HCLK_MSEBI_M, "hclk_msebi_m", CLK_REF_SYNC_D4, 0x164, 0x165, 0x166, 0, 0x183, 0, 0),
--	D_GATE(HCLK_MSEBI_S, "hclk_msebi_s", CLK_REF_SYNC_D4, 0x160, 0x161, 0x162, 0x163, 0x180, 0x181, 0x182),
--	D_GATE(HCLK_NAND, "hclk_nand", CLK_REF_SYNC_D4, 0x280, 0x281, 0x282, 0x283, 0x2e0, 0x2e1, 0x2e2),
--	D_GATE(HCLK_PG_I, "hclk_pg_i", CLK_REF_SYNC_D4, 0x7ac, 0x7ad, 0, 0x7ae, 0, 0xb24, 0xb25),
--	D_GATE(HCLK_PG19, "hclk_pg19", CLK_REF_SYNC_D4, 0x22c, 0x22d, 0x22e, 0, 0, 0, 0),
--	D_GATE(HCLK_PG20, "hclk_pg20", CLK_REF_SYNC_D4, 0x22f, 0x230, 0x231, 0, 0, 0, 0),
--	D_GATE(HCLK_PG3, "hclk_pg3", CLK_REF_SYNC_D4, 0x7a6, 0x7a7, 0x7a8, 0, 0xb22, 0, 0),
--	D_GATE(HCLK_PG4, "hclk_pg4", CLK_REF_SYNC_D4, 0x7a9, 0x7aa, 0x7ab, 0, 0xb23, 0, 0),
--	D_GATE(HCLK_QSPI0, "hclk_qspi0", CLK_REF_SYNC_D4, 0x2a0, 0x2a1, 0x2a2, 0x2a3, 0x300, 0x301, 0x302),
--	D_GATE(HCLK_QSPI1, "hclk_qspi1", CLK_REF_SYNC_D4, 0x480, 0x481, 0x482, 0x483, 0x4c0, 0x4c1, 0x4c2),
--	D_GATE(HCLK_ROM, "hclk_rom", CLK_REF_SYNC_D4, 0xaa0, 0xaa1, 0xaa2, 0, 0xb80, 0, 0),
--	D_GATE(HCLK_RTC, "hclk_rtc", CLK_REF_SYNC_D8, 0xa00, 0, 0, 0, 0, 0, 0),
--	D_GATE(HCLK_SDIO0, "hclk_sdio0", CLK_REF_SYNC_D4, 0x60, 0x61, 0x62, 0x63, 0x80, 0x81, 0x82),
--	D_GATE(HCLK_SDIO1, "hclk_sdio1", CLK_REF_SYNC_D4, 0x640, 0x641, 0x642, 0x643, 0x660, 0x661, 0x662),
--	D_GATE(HCLK_SEMAP, "hclk_semap", CLK_REF_SYNC_D4, 0x7a3, 0x7a4, 0x7a5, 0, 0xb21, 0, 0),
--	D_GATE(HCLK_SPI0, "hclk_spi0", CLK_REF_SYNC_D4, 0x200, 0x201, 0x202, 0, 0, 0, 0),
--	D_GATE(HCLK_SPI1, "hclk_spi1", CLK_REF_SYNC_D4, 0x203, 0x204, 0x205, 0, 0, 0, 0),
--	D_GATE(HCLK_SPI2, "hclk_spi2", CLK_REF_SYNC_D4, 0x206, 0x207, 0x208, 0, 0, 0, 0),
--	D_GATE(HCLK_SPI3, "hclk_spi3", CLK_REF_SYNC_D4, 0x209, 0x20a, 0x20b, 0, 0, 0, 0),
--	D_GATE(HCLK_SPI4, "hclk_spi4", CLK_REF_SYNC_D4, 0x20c, 0x20d, 0x20e, 0, 0, 0, 0),
--	D_GATE(HCLK_SPI5, "hclk_spi5", CLK_REF_SYNC_D4, 0x20f, 0x210, 0x211, 0, 0, 0, 0),
--	D_GATE(HCLK_SWITCH, "hclk_switch", CLK_REF_SYNC_D4, 0x980, 0, 0x981, 0, 0, 0, 0),
--	D_GATE(HCLK_SWITCH_RG, "hclk_switch_rg", CLK_REF_SYNC_D4, 0xc40, 0xc41, 0xc42, 0, 0, 0, 0),
--	D_GATE(HCLK_UART0, "hclk_uart0", CLK_REF_SYNC_D8, 0x1a0, 0x1a1, 0x1a2, 0, 0, 0, 0),
--	D_GATE(HCLK_UART1, "hclk_uart1", CLK_REF_SYNC_D8, 0x1a3, 0x1a4, 0x1a5, 0, 0, 0, 0),
--	D_GATE(HCLK_UART2, "hclk_uart2", CLK_REF_SYNC_D8, 0x1a6, 0x1a7, 0x1a8, 0, 0, 0, 0),
--	D_GATE(HCLK_UART3, "hclk_uart3", CLK_REF_SYNC_D4, 0x218, 0x219, 0x21a, 0, 0, 0, 0),
--	D_GATE(HCLK_UART4, "hclk_uart4", CLK_REF_SYNC_D4, 0x21b, 0x21c, 0x21d, 0, 0, 0, 0),
--	D_GATE(HCLK_UART5, "hclk_uart5", CLK_REF_SYNC_D4, 0x220, 0x221, 0x222, 0, 0, 0, 0),
--	D_GATE(HCLK_UART6, "hclk_uart6", CLK_REF_SYNC_D4, 0x223, 0x224, 0x225, 0, 0, 0, 0),
--	D_GATE(HCLK_UART7, "hclk_uart7", CLK_REF_SYNC_D4, 0x226, 0x227, 0x228, 0, 0, 0, 0),
-+	D_MODULE(HCLK_ADC, "hclk_adc", CLK_REF_SYNC_D8, 0x1af, 0x1b0, 0x1b1, 0, 0, 0, 0),
-+	D_MODULE(HCLK_CM3, "hclk_cm3", CLK_REF_SYNC_D4, 0xc20, 0xc21, 0xc22, 0, 0, 0, 0),
-+	D_MODULE(HCLK_CRYPTO_EIP150, "hclk_crypto_eip150", CLK_REF_SYNC_D4, 0x123, 0x124, 0x125, 0, 0x142, 0, 0),
-+	D_MODULE(HCLK_CRYPTO_EIP93, "hclk_crypto_eip93", CLK_REF_SYNC_D4, 0x120, 0x121, 0, 0x122, 0, 0x140, 0x141),
-+	D_MODULE(HCLK_DDRC, "hclk_ddrc", CLK_REF_SYNC_D4, 0x320, 0x322, 0, 0x321, 0, 0x3a0, 0x3a1),
-+	D_MODULE(HCLK_DMA0, "hclk_dma0", CLK_REF_SYNC_D4, 0x260, 0x261, 0x262, 0x263, 0x2c0, 0x2c1, 0x2c2),
-+	D_MODULE(HCLK_DMA1, "hclk_dma1", CLK_REF_SYNC_D4, 0x264, 0x265, 0x266, 0x267, 0x2c3, 0x2c4, 0x2c5),
-+	D_MODULE(HCLK_GMAC0, "hclk_gmac0", CLK_REF_SYNC_D4, 0x360, 0x361, 0x362, 0x363, 0x3c0, 0x3c1, 0x3c2),
-+	D_MODULE(HCLK_GMAC1, "hclk_gmac1", CLK_REF_SYNC_D4, 0x380, 0x381, 0x382, 0x383, 0x3e0, 0x3e1, 0x3e2),
-+	D_MODULE(HCLK_GPIO0, "hclk_gpio0", CLK_REF_SYNC_D4, 0x212, 0x213, 0x214, 0, 0, 0, 0),
-+	D_MODULE(HCLK_GPIO1, "hclk_gpio1", CLK_REF_SYNC_D4, 0x215, 0x216, 0x217, 0, 0, 0, 0),
-+	D_MODULE(HCLK_GPIO2, "hclk_gpio2", CLK_REF_SYNC_D4, 0x229, 0x22a, 0x22b, 0, 0, 0, 0),
-+	D_MODULE(HCLK_HSR, "hclk_hsr", CLK_HSR100_D2, 0x480, 0x482, 0, 0x481, 0, 0x4c0, 0x4c1),
-+	D_MODULE(HCLK_I2C0, "hclk_i2c0", CLK_REF_SYNC_D8, 0x1a9, 0x1aa, 0x1ab, 0, 0, 0, 0),
-+	D_MODULE(HCLK_I2C1, "hclk_i2c1", CLK_REF_SYNC_D8, 0x1ac, 0x1ad, 0x1ae, 0, 0, 0, 0),
-+	D_MODULE(HCLK_LCD, "hclk_lcd", CLK_REF_SYNC_D4, 0x7a0, 0x7a1, 0x7a2, 0, 0xb20, 0, 0),
-+	D_MODULE(HCLK_MSEBI_M, "hclk_msebi_m", CLK_REF_SYNC_D4, 0x164, 0x165, 0x166, 0, 0x183, 0, 0),
-+	D_MODULE(HCLK_MSEBI_S, "hclk_msebi_s", CLK_REF_SYNC_D4, 0x160, 0x161, 0x162, 0x163, 0x180, 0x181, 0x182),
-+	D_MODULE(HCLK_NAND, "hclk_nand", CLK_REF_SYNC_D4, 0x280, 0x281, 0x282, 0x283, 0x2e0, 0x2e1, 0x2e2),
-+	D_MODULE(HCLK_PG_I, "hclk_pg_i", CLK_REF_SYNC_D4, 0x7ac, 0x7ad, 0, 0x7ae, 0, 0xb24, 0xb25),
-+	D_MODULE(HCLK_PG19, "hclk_pg19", CLK_REF_SYNC_D4, 0x22c, 0x22d, 0x22e, 0, 0, 0, 0),
-+	D_MODULE(HCLK_PG20, "hclk_pg20", CLK_REF_SYNC_D4, 0x22f, 0x230, 0x231, 0, 0, 0, 0),
-+	D_MODULE(HCLK_PG3, "hclk_pg3", CLK_REF_SYNC_D4, 0x7a6, 0x7a7, 0x7a8, 0, 0xb22, 0, 0),
-+	D_MODULE(HCLK_PG4, "hclk_pg4", CLK_REF_SYNC_D4, 0x7a9, 0x7aa, 0x7ab, 0, 0xb23, 0, 0),
-+	D_MODULE(HCLK_QSPI0, "hclk_qspi0", CLK_REF_SYNC_D4, 0x2a0, 0x2a1, 0x2a2, 0x2a3, 0x300, 0x301, 0x302),
-+	D_MODULE(HCLK_QSPI1, "hclk_qspi1", CLK_REF_SYNC_D4, 0x480, 0x481, 0x482, 0x483, 0x4c0, 0x4c1, 0x4c2),
-+	D_MODULE(HCLK_ROM, "hclk_rom", CLK_REF_SYNC_D4, 0xaa0, 0xaa1, 0xaa2, 0, 0xb80, 0, 0),
-+	D_MODULE(HCLK_RTC, "hclk_rtc", CLK_REF_SYNC_D8, 0xa00, 0, 0, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SDIO0, "hclk_sdio0", CLK_REF_SYNC_D4, 0x60, 0x61, 0x62, 0x63, 0x80, 0x81, 0x82),
-+	D_MODULE(HCLK_SDIO1, "hclk_sdio1", CLK_REF_SYNC_D4, 0x640, 0x641, 0x642, 0x643, 0x660, 0x661, 0x662),
-+	D_MODULE(HCLK_SEMAP, "hclk_semap", CLK_REF_SYNC_D4, 0x7a3, 0x7a4, 0x7a5, 0, 0xb21, 0, 0),
-+	D_MODULE(HCLK_SPI0, "hclk_spi0", CLK_REF_SYNC_D4, 0x200, 0x201, 0x202, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SPI1, "hclk_spi1", CLK_REF_SYNC_D4, 0x203, 0x204, 0x205, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SPI2, "hclk_spi2", CLK_REF_SYNC_D4, 0x206, 0x207, 0x208, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SPI3, "hclk_spi3", CLK_REF_SYNC_D4, 0x209, 0x20a, 0x20b, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SPI4, "hclk_spi4", CLK_REF_SYNC_D4, 0x20c, 0x20d, 0x20e, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SPI5, "hclk_spi5", CLK_REF_SYNC_D4, 0x20f, 0x210, 0x211, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SWITCH, "hclk_switch", CLK_REF_SYNC_D4, 0x980, 0, 0x981, 0, 0, 0, 0),
-+	D_MODULE(HCLK_SWITCH_RG, "hclk_switch_rg", CLK_REF_SYNC_D4, 0xc40, 0xc41, 0xc42, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART0, "hclk_uart0", CLK_REF_SYNC_D8, 0x1a0, 0x1a1, 0x1a2, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART1, "hclk_uart1", CLK_REF_SYNC_D8, 0x1a3, 0x1a4, 0x1a5, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART2, "hclk_uart2", CLK_REF_SYNC_D8, 0x1a6, 0x1a7, 0x1a8, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART3, "hclk_uart3", CLK_REF_SYNC_D4, 0x218, 0x219, 0x21a, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART4, "hclk_uart4", CLK_REF_SYNC_D4, 0x21b, 0x21c, 0x21d, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART5, "hclk_uart5", CLK_REF_SYNC_D4, 0x220, 0x221, 0x222, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART6, "hclk_uart6", CLK_REF_SYNC_D4, 0x223, 0x224, 0x225, 0, 0, 0, 0),
-+	D_MODULE(HCLK_UART7, "hclk_uart7", CLK_REF_SYNC_D4, 0x226, 0x227, 0x228, 0, 0, 0, 0),
- 	/*
- 	 * These are not hardware clocks, but are needed to handle the special
- 	 * case where we have a 'selector bit' that doesn't just change the
-@@ -344,6 +351,86 @@ struct r9a06g032_clk_gate {
- 
- #define to_r9a06g032_gate(_hw) container_of(_hw, struct r9a06g032_clk_gate, hw)
- 
-+static int create_add_module_clock(struct of_phandle_args *clkspec,
-+				   struct device *dev)
-+{
-+	struct clk *clk;
-+	int error = 0;
-+
-+	clk = of_clk_get_from_provider(clkspec);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	error = pm_clk_create(dev);
-+	if (error) {
-+		clk_put(clk);
-+		return error;
-+	}
-+
-+	error = pm_clk_add_clk(dev, clk);
-+	if (error) {
-+		pm_clk_destroy(dev);
-+		clk_put(clk);
-+	}
-+
-+	return error;
-+}
-+
-+static int r9a06g032_attach_dev(struct generic_pm_domain *pd,
-+				struct device *dev)
-+{
-+	struct device_node *np = dev->of_node;
-+	struct of_phandle_args clkspec;
-+	int i = 0;
-+	int error;
-+
-+	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
-+					   &clkspec)) {
-+		int index;
-+		if (clkspec.np != pd->dev.of_node)
-+			continue;
-+
-+		index = clkspec.args[0];
-+
-+		if (index < R9A06G032_CLOCK_COUNT &&
-+		    r9a06g032_clocks[index].managed) {
-+			of_node_put(clkspec.np);
-+
-+			error = create_add_module_clock(&clkspec, dev);
-+			if (error)
-+				return error;
-+		}
-+		i++;
-+	}
-+
-+	return 0;
-+}
-+
-+static void r9a06g032_detach_dev(struct generic_pm_domain *unused, struct device *dev)
-+{
-+	if (!pm_clk_no_clocks(dev))
-+		pm_clk_destroy(dev);
-+}
-+
-+static int r9a06g032_add_clk_domain(struct device *dev)
-+{
-+	struct device_node *np = dev->of_node;
-+	struct generic_pm_domain *pd;
-+
-+	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-+	if (!pd)
-+		return -ENOMEM;
-+
-+	pd->name = np->name;
-+	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
-+	pd->attach_dev = r9a06g032_attach_dev;
-+	pd->detach_dev = r9a06g032_detach_dev;
-+	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
-+
-+	of_genpd_add_provider_simple(np, pd);
-+	return 0;
-+}
-+
- static void
- r9a06g032_clk_gate_set(struct r9a06g032_priv *clocks,
- 		       struct r9a06g032_gate *g, int on)
-@@ -870,8 +957,12 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
- 	if (error)
- 		return error;
- 
--	return devm_add_action_or_reset(dev,
-+	error = devm_add_action_or_reset(dev,
- 					r9a06g032_clocks_del_clk_provider, np);
-+	if (error)
-+		return error;
-+
-+	return r9a06g032_add_clk_domain(dev);
+@@ -374,6 +375,7 @@ static inline void xa_init_flags(struct xarray *xa, gfp_t flags)
+ {
+ 	spin_lock_init(&xa->xa_lock);
+ 	xa->xa_flags = flags;
++	xa->xa_gfp = 0;
+ 	xa->xa_head = NULL;
  }
  
- static const struct of_device_id r9a06g032_match[] = {
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 6be3acbb861f..324be9534861 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -298,6 +298,7 @@ bool xas_nomem(struct xa_state *xas, gfp_t gfp)
+ 		xas_destroy(xas);
+ 		return false;
+ 	}
++	gfp |= xas->xa->xa_gfp;
+ 	xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
+ 	if (!xas->xa_alloc)
+ 		return false;
+@@ -325,6 +326,7 @@ static bool __xas_nomem(struct xa_state *xas, gfp_t gfp)
+ 		xas_destroy(xas);
+ 		return false;
+ 	}
++	gfp |= xas->xa->xa_gfp;
+ 	if (gfpflags_allow_blocking(gfp)) {
+ 		xas_unlock_type(xas, lock_type);
+ 		xas->xa_alloc = kmem_cache_alloc(radix_tree_node_cachep, gfp);
+@@ -358,8 +360,10 @@ static void *xas_alloc(struct xa_state *xas, unsigned int shift)
+ 	if (node) {
+ 		xas->xa_alloc = NULL;
+ 	} else {
+-		node = kmem_cache_alloc(radix_tree_node_cachep,
+-					GFP_NOWAIT | __GFP_NOWARN);
++		gfp_t gfp;
++
++		gfp = GFP_NOWAIT | __GFP_NOWARN | xas->xa->xa_gfp;
++		node = kmem_cache_alloc(radix_tree_node_cachep, gfp);
+ 		if (!node) {
+ 			xas_set_err(xas, -ENOMEM);
+ 			return NULL;
 -- 
-2.7.4
+2.21.0
 
