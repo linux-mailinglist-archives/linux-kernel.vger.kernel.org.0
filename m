@@ -2,105 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32AC129D9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 19:56:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCC0729D9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 19:57:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbfEXR4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 13:56:49 -0400
-Received: from mga14.intel.com ([192.55.52.115]:33046 "EHLO mga14.intel.com"
+        id S1732014AbfEXR5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 13:57:11 -0400
+Received: from foss.arm.com ([217.140.101.70]:48016 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728222AbfEXR4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 13:56:48 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 10:56:48 -0700
-X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by orsmga001.jf.intel.com with ESMTP; 24 May 2019 10:56:45 -0700
-Date:   Fri, 24 May 2019 10:56:47 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        "Xing, Cedric" <cedric.xing@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190524175647.GC365@linux.intel.com>
-References: <20190523023517.GA31950@linux.intel.com>
- <20190523102628.GC10955@linux.intel.com>
- <20190523141752.GA12078@linux.intel.com>
- <CALCETrUzx3LPAKCLFf75P-XshAkRcr+JLET3LA_kHDs9MA11FA@mail.gmail.com>
- <20190523234044.GC12078@linux.intel.com>
- <CALCETrV4DVEfW6EJ6DnQGGYDJAiA5M1QcuYJTiroumOM+D6Jjg@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E8956@ORSMSX116.amr.corp.intel.com>
- <dda0912b-cb15-3c07-d368-345159e995f7@tycho.nsa.gov>
- <20190524174243.GA365@linux.intel.com>
- <56EA6C7C-F69E-42EB-9CFB-CD0300549298@amacapital.net>
+        id S1726071AbfEXR5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 13:57:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C1C4A78;
+        Fri, 24 May 2019 10:57:09 -0700 (PDT)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E1993F703;
+        Fri, 24 May 2019 10:57:06 -0700 (PDT)
+Date:   Fri, 24 May 2019 18:56:58 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Peng Fan <peng.fan@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "andre.przywara@arm.com" <andre.przywara@arm.com>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 0/2] mailbox: arm: introduce smc triggered mailbox
+Message-ID: <20190524175658.GA5045@e107155-lin>
+References: <20190523060437.11059-1-peng.fan@nxp.com>
+ <4ba2b243-5622-bb27-6fc3-cd9457430e54@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <56EA6C7C-F69E-42EB-9CFB-CD0300549298@amacapital.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <4ba2b243-5622-bb27-6fc3-cd9457430e54@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 10:54:34AM -0700, Andy Lutomirski wrote:
-> 
-> > On May 24, 2019, at 10:42 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> > 
-> > Hmm, I've been thinking more about pulling permissions from the source
-> > page.  Conceptually I'm not sure we need to meet the same requirements as
-> > non-enclave DSOs while the enclave is being built, i.e. do we really need
-> > to force userspace to fully map the enclave in normal memory?
-> > 
-> > Consider the Graphene scenario where it's building an enclave on the fly.
-> > Pulling permissions from the source VMAs means Graphene has to map the
-> > code pages of the enclave with X.  This means Graphene will need EXEDMOD
-> > (or EXECMEM if Graphene isn't careful).  In a non-SGX scenario this makes
-> > perfect sense since there is no way to verify the end result of RW->RX.
-> > 
-> > But for SGX, assuming enclaves are whitelisted by their sigstruct (checked
-> > at EINIT) and because page permissions affect sigstruct.MRENCLAVE, it *is*
-> > possible to verify the resulting RX contents.  E.g. for the purposes of
-> > LSMs, can't we use the .sigstruct file as a proxy for the enclave and
-> > require FILE__EXECUTE on the .sigstruct inode to map/run the enclave?
-> 
-> I think it’s sound for some but not all use cases. I would imagine that a lot
-> of users won’t restrict sigstruct at all — the “use this as a sigstruct”
-> permission will be granted to everything and maybe even to memfd. But even
-> users like that might want to force their enclaves to be hardened such that
-> writable pages are never executable, in which case Graphene may need an
-> exception to run.
+On Thu, May 23, 2019 at 10:30:50AM -0700, Florian Fainelli wrote:
+> Hi,
+>
+> On 5/22/19 10:50 PM, Peng Fan wrote:
+> > This is a modified version from Andre Przywara's patch series
+> > https://lore.kernel.org/patchwork/cover/812997/.
+> > [1] is a draft implementation of i.MX8MM SCMI ATF implementation that
+> > use smc as mailbox, power/clk is included, but only part of clk has been
+> > implemented to work with hardware, power domain only supports get name
+> > for now.
+> >
+> > The traditional Linux mailbox mechanism uses some kind of dedicated hardware
+> > IP to signal a condition to some other processing unit, typically a dedicated
+> > management processor.
+> > This mailbox feature is used for instance by the SCMI protocol to signal a
+> > request for some action to be taken by the management processor.
+> > However some SoCs does not have a dedicated management core to provide
+> > those services. In order to service TEE and to avoid linux shutdown
+> > power and clock that used by TEE, need let firmware to handle power
+> > and clock, the firmware here is ARM Trusted Firmware that could also
+> > run SCMI service.
+> >
+> > The existing SCMI implementation uses a rather flexible shared memory
+> > region to communicate commands and their parameters, it still requires a
+> > mailbox to actually trigger the action.
+>
+> We have had something similar done internally with a couple of minor
+> differences:
+>
+> - a SGI is used to send SCMI notifications/delayed replies to support
+> asynchronism (patches are in the works to actually add that to the Linux
+> SCMI framework). There is no good support for SGI in the kernel right
+> now so we hacked up something from the existing SMP code and adding the
+> ability to register our own IPI handlers (SHAME!). Using a PPI should
+> work and should allow for using request_irq() AFAICT.
+>
 
-Heh, I belatedly had the same thought.  See my follow-up about EXECMEM.
+We have been thinking this since we were asked if SMC can be transport.
+Generally out of 16 SGIs, 8 are reserved for secure side and non-secure
+has 8. Of these 8, IIUC 7 is already being used by kernel. So unless we
+manage to get the last one reserved exclusive to SCMI, it makes it
+difficult to add SGI support in SCMI.
 
-> But maybe I’m nuts.
+We have been telling partners/vendors about this limitation if they
+use SMC as transport and need to have dedicated h/w interrupt for the
+notifications.
+
+Another issue could be with virtualisation(using HVC) and EL handling
+so called SCMI SGI. We need to think about those too. I will try to get
+more info on this and come back on this.
+
+--
+Regards,
+Sudeep
