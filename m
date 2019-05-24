@@ -2,105 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC668297FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 14:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2739329805
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 14:28:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391510AbfEXM0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 08:26:32 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6870 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2391299AbfEXM0c (ORCPT
+        id S2391562AbfEXM1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 08:27:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41868 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391244AbfEXM1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 08:26:32 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4OCJ6Hq021165;
-        Fri, 24 May 2019 14:26:21 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=MRkkLHdMQA+fa243SgLqmgSMuMqZksxq6zRTMMLwqTI=;
- b=UBkDOjp+86RcHTz7CrpA0k7LNC39DmwaTk3HVvoWoQGecrJtUjcvL29dWEKfb/b/sJgW
- qXPr18nlCniLI3rhEv4fCjUGz/9rNmlf6HeEwh3gEwxrNcSSJVcSSueBDcH1JVgmmFCT
- VWhdz34tvJpQLziQRDBJXlzWz3Q7g0D5ZMbAhL9v3MVnqAdC/IBzGyHRO/hoJmYsmO9b
- pgsVSILuEZvytnIPiBXjxUhdLNqkUxIxxkyLJLNcvbaPB7+U9nHiZKgwLf43Ialw9uJP
- QeOUiNJBLqyWdvOfSzReKN7Hsgd/oo9z9p4262dpW1KPVXLUSsAiRoaOHxGAJtJuCOlK BA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2sj774nmu5-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 24 May 2019 14:26:21 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 23DA034;
-        Fri, 24 May 2019 12:26:21 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id EEDDD2BCC;
-        Fri, 24 May 2019 12:26:20 +0000 (GMT)
-Received: from [10.48.0.204] (10.75.127.50) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 24 May
- 2019 14:26:20 +0200
-Subject: Re: [PATCH 0/2] pinctrl: stm32: add suspend/resume management
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1557474150-19618-1-git-send-email-alexandre.torgue@st.com>
- <CACRpkdYgTbTa6RmM3y-myk31ZxLGZ+8KvLof1XHkockrX4tofA@mail.gmail.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <4a35e070-b18a-e0f5-76b6-72054eb98b43@st.com>
-Date:   Fri, 24 May 2019 14:26:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Fri, 24 May 2019 08:27:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eVHp0ESgYP2SVv9gpU+9DqsaIL0Z0MyAUxyGFotINZY=; b=dde4IC0EDUPS5Dae7l2uy4MU/
+        OMQgKWX3Koau5qTkaGVhQ1Xse792h1gAth33/3bAsMo2wS2qH0SRUZsZULKoLHZM44c5KuOb60mbX
+        TxZvC4cOeAMYXQXBHHBdqZyHnq9gfWzM/7OrlIn3j4RaUShcLuf3cwtp5MVCZ/aSMzicjVXN+uEre
+        mV6rXmKqxQI3vaBkjXDMsh8w9vi1tPPfiRjtg7QPqElTBZ5OEWdP5SobpJ19xdHS/p+uaddOQNqQb
+        XLHjS8/dYvQHzRcam6z1tzj6KQFxovixjnYHkHgo5H61WT2qrJAuEx8FQY6GWeVp37GM2FqeFzhkm
+        IFrXYVWOQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hU9IE-0000iZ-DB; Fri, 24 May 2019 12:27:26 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 967A22027B77E; Fri, 24 May 2019 14:27:24 +0200 (CEST)
+Date:   Fri, 24 May 2019 14:27:24 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Frank Ch. Eigler" <fche@redhat.com>
+Subject: Re: [RFC][PATCH 03/14 v2] function_graph: Allow multiple users to
+ attach to function graph
+Message-ID: <20190524122724.GO2623@hirez.programming.kicks-ass.net>
+References: <20190520142001.270067280@goodmis.org>
+ <20190520142156.992391836@goodmis.org>
+ <20190524112608.GJ2589@hirez.programming.kicks-ass.net>
+ <20190524081219.25de03f6@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYgTbTa6RmM3y-myk31ZxLGZ+8KvLof1XHkockrX4tofA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG5NODE2.st.com (10.75.127.14) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-24_05:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190524081219.25de03f6@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, May 24, 2019 at 08:12:19AM -0400, Steven Rostedt wrote:
+> On Fri, 24 May 2019 13:26:08 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > But but but but.. why not add all the required bits to the shadow stack
+> > in the first place and do away with the array entirely?
+> 
+> What required bits would that be? The pointer to the fgraph_ops,
+> because we need that to pass to the calling function.
 
+I was thinking a smaller structure comprising of {func,callback}, which
+you pop, if func matches, run callback.
 
-On 5/24/19 1:24 PM, Linus Walleij wrote:
-> On Fri, May 10, 2019 at 9:42 AM Alexandre Torgue
-> <alexandre.torgue@st.com> wrote:
+> > So on ret, just keep POP'ing until either the stack is empty or the
+> > entry is for another function.
 > 
->> During power sequence, GPIO hardware registers could be lost if the power
->> supply is switched off. Each device using pinctrl API is in charge of
->> managing pins during suspend/resume sequences. But for pins used as gpio or
->> irq stm32 pinctrl driver has to save the hardware configuration.
->> Each register will be saved at runtime and restored during resume sequence.
+> When we hit a fgraph_ops, how do we know if it was freed or not? We
+> can't just blindly reference it.
 > 
-> Both patches applied.
+> The idea of the array, is that we can maintain state in a single
+> location of when the fgraph_ops is freed. If we return from a function,
+> we have an index and a counter, and if the counter doesn't match with
+> what's in the array, then we know that the fgraph_ops is no longer
+> around and we just drop it.
 > 
-> On the same pinctrl devel branch is also Benjamin's patches to support
-> the "link_consumers" property on the pin controller descriptor to
-> enable links from pin control consumers back to their pin controller
-> suppliers, especially important for STMFX.
+> The reason for the array, is to keep track of if the fgraph_ops has
+> been freed or not. Otherwise, when we unregister the fgraph_ops, we
+> would need to search all shadow stacks, looking for it to unreference
+> it.
 > 
-> Would you please check if it work fine if you turn on this feature
-> for the SoC STM32 pin controller?
-> 
+> Believe me, I rather not have that array, but I couldn't come up with a
+> better solution to handle freeing of fgraph_ops.
 
-Sure. Either today or next Monday.
+The trivial answer would be to refcount the thing, but can't we make
+rcu_tasks do this?
 
-I let you know.
-
-regards
-Alex
-
-> I am working a bit on refining the patches, so I want to enable testing
-> with some SoC pin controllers as well and possibly make the
-> behavior default.
-> 
-> Yours,
-> Linus Walleij
-> 
+And delay the unreg until all active users are gone -- who gives a crap
+that can take a while.
