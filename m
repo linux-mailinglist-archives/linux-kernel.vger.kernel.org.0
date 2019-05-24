@@ -2,45 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 254A229111
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 08:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F022F2910D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 08:37:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388912AbfEXGhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 02:37:48 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:37564 "EHLO inva020.nxp.com"
+        id S2388849AbfEXGho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 02:37:44 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:42892 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387936AbfEXGhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 02:37:47 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CAA361A0259;
-        Fri, 24 May 2019 08:37:44 +0200 (CEST)
+        id S2387936AbfEXGho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 02:37:44 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2F8122001F9;
+        Fri, 24 May 2019 08:37:42 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9AF931A013D;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AE23C20021F;
         Fri, 24 May 2019 08:37:35 +0200 (CEST)
 Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2D587402D6;
-        Fri, 24 May 2019 14:37:24 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7975B402E0;
+        Fri, 24 May 2019 14:37:27 +0800 (SGT)
 From:   peng.fan@nxp.com
 To:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
         shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com
 Cc:     linux-imx@nxp.com, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         van.freenix@gmail.com, Peng Fan <peng.fan@nxp.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Olof Johansson <olof@lixom.net>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: [PATCH V3 RESEND AGAIN 1/2] defconfig: arm64: enable i.MX8 SCU octop driver
-Date:   Fri, 24 May 2019 14:39:12 +0800
-Message-Id: <20190524063913.44171-1-peng.fan@nxp.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Anson Huang <anson.huang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: [PATCH V3 RESEND AGAIN 2/2] arm64: dts: imx: add i.MX8QXP ocotp support
+Date:   Fri, 24 May 2019 14:39:13 +0800
+Message-Id: <20190524063913.44171-2-peng.fan@nxp.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190524063913.44171-1-peng.fan@nxp.com>
+References: <20190524063913.44171-1-peng.fan@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,44 +44,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peng Fan <peng.fan@nxp.com>
 
-Build in CONFIG_NVMEM_IMX_OCOTP_SCU.
+Add i.MX8QXP ocotp node
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Shawn Guo <shawn.guo@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Olof Johansson <olof@lixom.net>
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Anson Huang <anson.huang@nxp.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Cc: devicetree@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
 
 V3:
- No change
+ Add R-b tag
 V2:
- rename patch title, add review tag
+ move address/size-cells below compatible, add "scu"
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 979a95c915b6..32b85102b857 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -748,6 +748,7 @@ CONFIG_HISI_PMU=y
- CONFIG_QCOM_L2_PMU=y
- CONFIG_QCOM_L3_PMU=y
- CONFIG_NVMEM_IMX_OCOTP=y
-+CONFIG_NVMEM_IMX_OCOTP_SCU=y
- CONFIG_QCOM_QFPROM=y
- CONFIG_ROCKCHIP_EFUSE=y
- CONFIG_UNIPHIER_EFUSE=y
+diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+index 0683ee2a48ae..725d341ee160 100644
+--- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
+@@ -141,6 +141,12 @@
+ 			compatible = "fsl,imx8qxp-iomuxc";
+ 		};
+ 
++		ocotp: imx8qx-ocotp {
++			compatible = "fsl,imx8qxp-scu-ocotp";
++			#address-cells = <1>;
++			#size-cells = <1>;
++		};
++
+ 		pd: imx8qx-pd {
+ 			compatible = "fsl,imx8qxp-scu-pd";
+ 			#power-domain-cells = <1>;
 -- 
 2.16.4
 
