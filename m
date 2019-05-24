@@ -2,111 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E4129B37
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:36:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA19629B3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:37:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390451AbfEXPgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:36:01 -0400
-Received: from mga05.intel.com ([192.55.52.43]:31359 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389927AbfEXPfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 11:35:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 08:35:31 -0700
-X-ExtLoop1: 1
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga003.jf.intel.com with ESMTP; 24 May 2019 08:35:30 -0700
-Date:   Fri, 24 May 2019 08:36:25 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>
-Subject: Re: [PATCH] mm/swap: Fix release_pages() when releasing devmap pages
-Message-ID: <20190524153625.GA23100@iweiny-DESK2.sc.intel.com>
-References: <20190523223746.4982-1-ira.weiny@intel.com>
- <CAPcyv4gYxyoX5U+Fg0LhwqDkMRb-NRvPShOh+nXp-r_HTwhbyA@mail.gmail.com>
+        id S2390088AbfEXPg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 11:36:59 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4921 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389419AbfEXPg6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 11:36:58 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ce80f9a0000>; Fri, 24 May 2019 08:36:58 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 24 May 2019 08:36:58 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 24 May 2019 08:36:58 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 24 May
+ 2019 15:36:56 +0000
+Subject: Re: [PATCH] tegra_wm9712: Fix a memory leaking bug in
+ tegra_wm9712_driver_probe()
+To:     Gen Zhang <blackgod016574@gmail.com>
+CC:     <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190524005014.GA2289@zhanggen-UX430UQ>
+ <b2d43dfe-17e5-a975-435b-49f2aa2ad550@nvidia.com>
+ <20190524143309.GA8631@zhanggen-UX430UQ>
+ <e52f4140-a119-a584-40a2-6359d6e1784a@nvidia.com>
+ <20190524150053.GA9235@zhanggen-UX430UQ>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <1740686f-a466-430c-9d01-ab83ea6998ac@nvidia.com>
+Date:   Fri, 24 May 2019 16:36:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPcyv4gYxyoX5U+Fg0LhwqDkMRb-NRvPShOh+nXp-r_HTwhbyA@mail.gmail.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20190524150053.GA9235@zhanggen-UX430UQ>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1558712218; bh=rDbHj92qicJ93c3g6qztLoh7zaFndpxTw1RYqjrPd9Q=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=W+2G8WaQZfLr2917mkUcJkjSRe6m9eWd6+SU1muUO0R1zbqSow4az4woRWlAcdpz0
+         fsfq12f8q/MWRiLOGWNTcMx+g0bVlol5gS32f9/xGKd9WlZSoM3cec6x3okEVHDC7s
+         h8x/Pn7dUGal0TW0+4RyaT4MULKI0FidG/EnuyVhw3j1vDe4fk5dg1WIvBg80MEHKh
+         oBTcTgUSnSEBH+5CLGby4Vv30My1eOhEEOgYK/HP784zcm9LPIUxi8ztVFGY7h5IB7
+         d/NvHRHJh46Z5Mb7sAOGKiNRXXpPe/0i1Byc7sZzpcIhQiXs2RZjOScqbMC2BFWcl/
+         QlpZ6KKsmlufQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 08:58:12PM -0700, Dan Williams wrote:
-> On Thu, May 23, 2019 at 3:37 PM <ira.weiny@intel.com> wrote:
-> >
-> > From: Ira Weiny <ira.weiny@intel.com>
-> >
-> > Device pages can be more than type MEMORY_DEVICE_PUBLIC.
-> >
-> > Handle all device pages within release_pages()
-> >
-> > This was found via code inspection while determining if release_pages()
-> > and the new put_user_pages() could be interchangeable.
-> >
-> > Cc: Jérôme Glisse <jglisse@redhat.com>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Michal Hocko <mhocko@suse.com>
-> > Cc: John Hubbard <jhubbard@nvidia.com>
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > ---
-> >  mm/swap.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/mm/swap.c b/mm/swap.c
-> > index 3a75722e68a9..d1e8122568d0 100644
-> > --- a/mm/swap.c
-> > +++ b/mm/swap.c
-> > @@ -739,15 +739,14 @@ void release_pages(struct page **pages, int nr)
-> >                 if (is_huge_zero_page(page))
-> >                         continue;
-> >
-> > -               /* Device public page can not be huge page */
-> > -               if (is_device_public_page(page)) {
-> > +               if (is_zone_device_page(page)) {
-> >                         if (locked_pgdat) {
-> >                                 spin_unlock_irqrestore(&locked_pgdat->lru_lock,
-> >                                                        flags);
-> >                                 locked_pgdat = NULL;
-> >                         }
-> > -                       put_devmap_managed_page(page);
-> > -                       continue;
-> > +                       if (put_devmap_managed_page(page))
-> 
-> This "shouldn't" fail, and if it does the code that follows might get
 
-I agree it shouldn't based on the check.  However...
+On 24/05/2019 16:00, Gen Zhang wrote:
+> On Fri, May 24, 2019 at 03:47:34PM +0100, Jon Hunter wrote:
+>>
+>> On 24/05/2019 15:33, Gen Zhang wrote:
+>>> On Fri, May 24, 2019 at 09:33:13AM +0100, Jon Hunter wrote:
+>>>>
+>>>> On 24/05/2019 01:50, Gen Zhang wrote:
+>>>>> In tegra_wm9712_driver_probe(), 'machine->codec' is allocated by
+>>>>> platform_device_alloc(). When it is NULL, function returns ENOMEM.
+>>>>> However, 'machine' is allocated by devm_kzalloc() before this site.
+>>>>> Thus we should free 'machine' before function ends to prevent memory
+>>>>> leaking.
+>>>>
+>>>> Memory allocated by devm_xxx() is automatically freed on failure so this
+>>>> is not correct.
+>>> Thanks for your comments, Jon. But after I examined the code, I am still
+>>> confused about the usage of devm_kmalloc(). You can kindly refer to 
+>>> hisi_sas_debugfs_init() in drivers/scsi/hisi_sas/hisi_sas_main.c. And
+>>> devm_kfree() is used to free a memory allocated by devm_kmalloc(). And
+>>> I found other situations similar to this in other files.
+>>>
+>>> So, I hope you can give me some guidance on this. Thanks!
+>>
+>> Please refer to the devres documentation [0].
+>>
+>> Cheers,
+>> Jon
+>>
+>> [0] https://www.kernel.org/doc/Documentation/driver-model/devres.txt
+>>
+>> -- 
+>> nvpublic
+> Thanks for your reply. I figured out that devm_kmalloc will free the 
+> memory no matter fail or not. But I still want to ask why other codes
+> as I above mentioned use devm_kfree() to free memory allocated by 
+> devm_kmalloc(). If the memory is automatically freed, is this 
+> devm_kfee() redundant codes that should be removed? Am I 
+> misunderstanding this again or it is something else?
 
-> confused by a ZONE_DEVICE page. If anything I would make this a
-> WARN_ON_ONCE(!put_devmap_managed_page(page)), but always continue
-> unconditionally.
+There could well be cases where you need to explicitly call
+devm_kfree(), but having a quick glance at the example above, I don't
+see why you would call devm_kfree() here and yes looks like that code
+could be simplified significantly. Notice that hisi_sas_debugfs_exit()
+does not free any memory as it is not necessary to explicitly do so.
 
-I was trying to follow the pattern from put_page()  Where if fails it indicated
-it was not a devmap page and so "regular" processing should continue.
+Cheers
+Jon
 
-Since I'm unsure I'll just ask what does this check do?
-
-        if (!static_branch_unlikely(&devmap_managed_key))
-                return false;
-
-... In put_devmap_managed_page()?
-
-> 
-> Other than that you can add:
-> 
->     Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-
-Thanks v2 to follow.
-
-Ira
-
+-- 
+nvpublic
