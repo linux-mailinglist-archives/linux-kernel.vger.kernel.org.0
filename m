@@ -2,49 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9930129D32
+	by mail.lfdr.de (Postfix) with ESMTP id 266C329D31
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 19:36:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391635AbfEXRga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 13:36:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56846 "EHLO mail.kernel.org"
+        id S2404194AbfEXRg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 13:36:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391625AbfEXRfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2391635AbfEXRfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 24 May 2019 13:35:19 -0400
-Subject: Re: [GIT PULL] MMC fixes for v5.2-rc2
+Subject: Re: [GIT PULL] Thermal-SoC management fixes for v5.2-rc2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1558719318;
-        bh=3//W+R2g2vtbQtrQlh2PcION/YmJvJ4R3j5ioeXprnY=;
+        bh=STPbDAqo5Qaz2aAF57J5Ru0rQPuXT+z6enSD+2RIGzQ=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=iurwumsIfrQST3FAYazTkarb1OTMEL6xWkw8iNTGSG5uGRZ6whhBns1YfmO0+8zLS
-         ZKy7Xa0AkifFmaAiolWREMIB+QXkYZDo8HhLduuNqUPNQKAJu6XI93J2Sd8Eee3taP
-         EWVgx+cnIE/v5cN/DcqfHr39ExrR+T08lsoklsDo=
+        b=vvYYJ1A3uAxK9UILBig1aMgX3i/KePWRRFC+SGxd3RFU9liy06URL874AmuHQGPTk
+         9QlTGgFqEZa4ljtfPuN82isuaq+QJdjYigJue3XArWIwDDrYabrpKq6CmwBqofMkh8
+         nq76OL+FIyQgc9yh+4VRIGbz8t4YOu7De/MaHCF4=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190524101028.8158-1-ulf.hansson@linaro.org>
-References: <20190524101028.8158-1-ulf.hansson@linaro.org>
+In-Reply-To: <20190524135457.GB2750@localhost.localdomain>
+References: <20190524135457.GB2750@localhost.localdomain>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190524101028.8158-1-ulf.hansson@linaro.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.2-2
-X-PR-Tracked-Commit-Id: ec0970e0a1b2c807c908d459641a9f9a1be3e130
+X-PR-Tracked-Message-Id: <20190524135457.GB2750@localhost.localdomain>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
+ fixes
+X-PR-Tracked-Commit-Id: 6a310f8f97bb8bc2e2bb9db6f49a1b8678c8d144
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e50e6798f1e29e57bc83ba546a9bbbdabe1104a4
-Message-Id: <155871931801.20356.14786012085460229236.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 49bbd8bb34a48267afb116c3dcfe0cb30b6638cb
+Message-Id: <155871931816.20356.9691581192914440240.pr-tracker-bot@kernel.org>
 Date:   Fri, 24 May 2019 17:35:18 +0000
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+To:     Eduardo Valentin <edubezval@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 24 May 2019 12:10:28 +0200:
+The pull request you sent on Fri, 24 May 2019 06:54:58 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.2-2
+> git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e50e6798f1e29e57bc83ba546a9bbbdabe1104a4
+https://git.kernel.org/torvalds/c/49bbd8bb34a48267afb116c3dcfe0cb30b6638cb
 
 Thank you!
 
