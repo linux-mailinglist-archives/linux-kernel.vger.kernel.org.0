@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8E57293E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA357293E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:57:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390276AbfEXIyr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:54:47 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34401 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390179AbfEXIyo (ORCPT
+        id S2390293AbfEXIzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:55:00 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34402 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390240AbfEXIyp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:54:44 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p27so13377867eda.1
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:54:43 -0700 (PDT)
+        Fri, 24 May 2019 04:54:45 -0400
+Received: by mail-ed1-f66.google.com with SMTP id p27so13377941eda.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:54:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3VFKuM3MW7HhJw8g+F0ZAMGgocYe76vTXpU+uF+1TQo=;
-        b=cvyCEwSj1QIHhiUcfE6glzcCA2U8gdeQg0UJH+eLHNVqhr9yA74lr76XhDC68i/K4s
-         ySqXKthJaclCts4kf7qGy4NZyjN9KsaoOAoblQUPftMCEF/SeQQBYvkHtmqPvnJ5Mrm+
-         4wMOGUPvzJhyy1ifC2pEL2npDGzuVq8hf/6JQ=
+        bh=mUAcB3sU0dD3E/MUylEVVwC2GTKxo8rk41HcMoWy7Z0=;
+        b=G8gQaHLZUx+WzPRhTW9uW/COq5N31wy0ORbu7OIDAR64WlKCvpFjKEJSkBXQceNUqU
+         Pf2ZP8mFN3py9TSDiJCyhwRzpd2XkYyNoHJZxCR/dIW1IXyui6OCcrPWPzlGghN5ZXxa
+         ENIvnIJhRgK6TnD1XZkchnjTIKtsaX7Tf2OIM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3VFKuM3MW7HhJw8g+F0ZAMGgocYe76vTXpU+uF+1TQo=;
-        b=nhFCWMM3Ev89fmil6EFcmhCv9QF84ewowXfBgvDjk2gubUp35YRAPSSElEXJiQ/0nH
-         jfOLfoyQ7JC9BqgQ8KSTPDhCO+S9eCnXy0OwgGnHM/LpGsOCgAyvbBwgb0z2KK/HdJAv
-         uVTBIXumLbzFdVF+6MPRu48xios0r84Xxl+iFg2hNVrtACKAFSemtvpdn+Hq/irSdymz
-         Y/ihycBRH9r/uC7WIKWAmHtu84+KCIaqDVMSU/sAeHKiiEUodydQFz7Zm/+gm40ZOTD6
-         Eq3O+/BVf0MEvecXEq4iT+XxUEbGxdg6equoDW6phgzZ9zaoAx2HhNtcIc7yhYQAtUSl
-         A72w==
-X-Gm-Message-State: APjAAAXx1ML3DTLcX4rKt1ya5lSQIl0+9SZGq4qP9zBpni15cmTq8iF5
-        /6sxMecTYf8N7YRmsa+RreWCOYIr4Jc=
-X-Google-Smtp-Source: APXvYqxEVgu2quVopIofi1fANkMhstACI2EGNdT+MIZH3gHRE5pFQbfKt9ctKt7SsMjsTvmXSEszUQ==
-X-Received: by 2002:a17:906:2ac5:: with SMTP id m5mr81917352eje.71.1558688082399;
-        Fri, 24 May 2019 01:54:42 -0700 (PDT)
+        bh=mUAcB3sU0dD3E/MUylEVVwC2GTKxo8rk41HcMoWy7Z0=;
+        b=L3N+reFxL5odm52YCXZyZBxMUrgwMTtLjZPcLSbd5iHTvsGrBhQP6DIR/iWbYD2y4e
+         hPYLmoiIC0yMzM53RW+96n9zbpNTvkkseDTEEL5CbxX3NIsgHYU8yl0b0S77WBmIFOA7
+         W5mFDbBO6Mb4ZGCAxY1FVf7WpBlnwX7CrEFCAqKjrwD3KBAot3z6lsXMKAsHyu27cbQF
+         Od1JuUMe8HwbkchbT6JoOozf0S+PWKHi9VtXLhSm+s6CRNYWh0kN6Eg8G6E4XCbltdlO
+         Lwu/YdTIERGP4tE/FzzTeArxh8etGU0XWS899/xAZDUVRinBFGL48jg6UuNMI0QJV10b
+         WX2Q==
+X-Gm-Message-State: APjAAAWsHTLNR2cWQVeKJuC8pXtIbuqhOFMYDYp+HYKEayhiul/8nuyL
+        yW1riSLDulvjrU4ysumVQR5GpRx0sYo=
+X-Google-Smtp-Source: APXvYqz2qHhN5A2pWKpVJsBUdeEY8H62cdHPVnuNt4a6bkkHftmLnMSppn0lpuPcH/owQLYONbNwfA==
+X-Received: by 2002:a17:906:d557:: with SMTP id gk23mr78999185ejb.285.1558688083594;
+        Fri, 24 May 2019 01:54:43 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id 96sm567082edq.68.2019.05.24.01.54.41
+        by smtp.gmail.com with ESMTPSA id 96sm567082edq.68.2019.05.24.01.54.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 01:54:41 -0700 (PDT)
+        Fri, 24 May 2019 01:54:42 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         DRI Development <dri-devel@lists.freedesktop.org>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
         Daniel Vetter <daniel.vetter@intel.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Yisheng Xie <ysxie@foxmail.com>
-Subject: [PATCH 31/33] fbcon: Document what I learned about fbcon locking
-Date:   Fri, 24 May 2019 10:53:52 +0200
-Message-Id: <20190524085354.27411-32-daniel.vetter@ffwll.ch>
+        Jens Frederich <jfrederich@gmail.com>,
+        Daniel Drake <dsd@laptop.org>,
+        Jon Nettleton <jon.nettleton@gmail.com>
+Subject: [PATCH 32/33] staging/olpc_dcon: Add drm conversion to TODO
+Date:   Fri, 24 May 2019 10:53:53 +0200
+Message-Id: <20190524085354.27411-33-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
 References: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
@@ -64,47 +64,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's not pretty.
+this driver is pretty horrible from a design pov, and needs a complete
+overhaul. Concrete thing that annoys me is that it looks at
+registered_fb, which is an internal thing to fbmem.c and fbcon.c. And
+ofc it gets the lifetime rules all wrong (it should at least use
+get/put_fb_info).
+
+Looking at the history, there's been an attempt at dropping this from
+staging in 2016, but that had to be reverted. Since then not real
+effort except the usual stream of trivial patches, and fbdev has been
+formally closed for any new hw support. Time to try again and drop
+this?
 
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Yisheng Xie <ysxie@foxmail.com>
+Cc: Jens Frederich <jfrederich@gmail.com>
+Cc: Daniel Drake <dsd@laptop.org>
+Cc: Jon Nettleton <jon.nettleton@gmail.com>
 ---
- drivers/video/fbdev/core/fbcon.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/staging/olpc_dcon/TODO | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index 6a4bbb8407c0..8444d5151c2d 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -88,6 +88,25 @@
- #  define DPRINTK(fmt, args...)
- #endif
- 
-+/*
-+ * FIXME: Locking
-+ *
-+ * - fbcon state itself is protected by the console_lock, and the code does a
-+ *   pretty good job at making sure that lock is held everywhere it's needed.
-+ *
-+ * - access to the registered_fb array is entirely unprotected. This should use
-+ *   proper object lifetime handling, i.e. get/put_fb_info. This also means
-+ *   switching from indices to proper pointers for fb_info everywhere.
-+ *
-+ * - fbcon doesn't bother with fb_lock/unlock at all. This is buggy, since it
-+ *   means concurrent access to the same fbdev from both fbcon and userspace
-+ *   will blow up. To fix this all fbcon calls from fbmem.c need to be moved out
-+ *   of fb_lock/unlock protected sections, since otherwise we'll recurse and
-+ *   deadlock eventually. Aside: Due to these deadlock issues the fbdev code in
-+ *   fbmem.c cannot use locking asserts, and there's lots of callers which get
-+ *   the rules wrong, e.g. fbsysfs.c entirely missed fb_lock/unlock calls too.
-+ */
-+
- enum {
- 	FBCON_LOGO_CANSHOW	= -1,	/* the logo can be shown */
- 	FBCON_LOGO_DRAW		= -2,	/* draw the logo to a console */
+diff --git a/drivers/staging/olpc_dcon/TODO b/drivers/staging/olpc_dcon/TODO
+index 665a0b061719..fe09efbc7f77 100644
+--- a/drivers/staging/olpc_dcon/TODO
++++ b/drivers/staging/olpc_dcon/TODO
+@@ -1,4 +1,11 @@
+ TODO:
++	- complete rewrite:
++	  1. The underlying fbdev drivers need to be converted into drm kernel
++	     modesetting drivers.
++	  2. The dcon low-power display mode can then be integrated using the
++	     drm damage tracking and self-refresh helpers.
++	  This bolted-on self-refresh support that digs around in fbdev
++	  internals, but isn't properly integrated, is not the correct solution.
+ 	- see if vx855 gpio API can be made similar enough to cs5535 so we can
+ 	  share more code
+ 	- convert all uses of the old GPIO API from <linux/gpio.h> to the
 -- 
 2.20.1
 
