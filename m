@@ -2,57 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 166F92969C
+	by mail.lfdr.de (Postfix) with ESMTP id 8D1602969D
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:08:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390813AbfEXLIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:08:11 -0400
-Received: from mail-lf1-f41.google.com ([209.85.167.41]:34322 "EHLO
-        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390604AbfEXLIL (ORCPT
+        id S2390910AbfEXLIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:08:14 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42861 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390714AbfEXLIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:08:11 -0400
-Received: by mail-lf1-f41.google.com with SMTP id v18so6840843lfi.1
+        Fri, 24 May 2019 07:08:12 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y13so6805167lfh.9
         for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:08:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=nikanor-nu.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7oGIGUHfrIIEjfNNRqGi/2xzPgG8aUQ9pTUobrsjH28=;
-        b=HJgoaP5+gqMm1YH+q7FJqO7CYyWFZvR6fT5VeknZR5WabOd9YCcw6uy7CCMgNjU12I
-         sqIRsVdfNxCRa551lfgs2tdyX+ykcpsiCQ3AOkBN6qdvoMYvo5vcqqrcUKeBY6LLMbtD
-         I9BMtzSylb/k/REGevZWD1kSFsqVrPl1R9oLr/mxW4sU1elKWHwKTGnjZ+/uc34Fl+AH
-         vvlHsk9BCM8Co+oACI9pgPe0Rzt/0wCsmxUjYXsIrgYT7pVYEgzuR4FXp3Y4+KOGENEz
-         Inb7XROGuVX18DVNSvPrqt2109QBwPfs6UqJf75h/xwOqlli3OozYtFZ3w7iMuBAu14j
-         GARw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=atMxjy9C7OQe8GpIdLJBQm8m+GFrGLxyYvK8iCvKAkM=;
+        b=L/bL+9Z8mZNNx+wl9m98wo7ZK+zr37ugLt5TV7nnKt6uGIBbJFF0/TeWU8Pp7SEjuQ
+         B68D6NNM65F9KwR6tbKSIg4S1YTISVzWxrq08LMtuhu/pgSPeT0OeEoGSz0HoIXVxyaN
+         /3G2RaHyeLjSSJcEnO4aly7WO7qEGHRlSi54cAWtxRcteau5BfyZnY3i7GPzNOFdTJfr
+         tRncjpwajX6jtDBaQ2L63Tgf+f/4hOIX3NnkNIyho/H5KD9zwYegHW7cK2hO/fqRVSDR
+         WcQYiVyhlHhHRyDEvz9Mcn8xN/F9Fm3JBRD4MFuPT2KMjEuoZpw4AY059zawd3WksfLV
+         uryQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7oGIGUHfrIIEjfNNRqGi/2xzPgG8aUQ9pTUobrsjH28=;
-        b=hhGup8EzTeRyHQEZwlfH9s1gjjadWfIWzFK9q6U7MgVm2+J1jcgcf0Eianm+rV43l9
-         aCejz9TtyMq2Rc/bCkYsC86vHguu0xGuA9wmig1I/uD9CURUD6Z5ptagyuzQ6bD5GN4L
-         cx3xh8hGJVrvGpcR7F4V8vfu7feY/dnNSzSsJPOmJRHTXblcdc3DVeMa0DH4h3Z4WDUU
-         h4PdtigFWtMdOTnq8XSUPSDX1RCXWX/EU2JT/FCvM5duapj6rcFPMvwKoyas736HJB0J
-         K8/ffb3ejLxdmpAqJD+z060IDJFclLVe/xMAeg5I4aBjYyDhr5PCanwdIBQgkzZPmG37
-         bBNA==
-X-Gm-Message-State: APjAAAVvSWw/IjAuV+wUkTAc63HM88PUMee3RTnzWqhc3mtqo+vUaUMB
-        gvtmpVyAMAOR8/dqJfQUi4XLSg==
-X-Google-Smtp-Source: APXvYqyHVuXmrj3IngkH3jiB9BLpMGMuMwu5ydZM+10r4gXyniq6KO6/Sy3nmq1jgPtonYTFLhqP8Q==
-X-Received: by 2002:ac2:419a:: with SMTP id z26mr14250127lfh.122.1558696089232;
-        Fri, 24 May 2019 04:08:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=atMxjy9C7OQe8GpIdLJBQm8m+GFrGLxyYvK8iCvKAkM=;
+        b=FOs7EPP6gMbRC6gxz324AxT8NxUus49yL6oHobAZTL5We5ocpjeTvJs5+L2P7oKFgW
+         EPdb0rSvdJoCrz77EVBfYx8QFmavaWOVh5Ulwk4CIjEfKBxcDFv2EVDwUZ4pcBJm5bY8
+         o8how2UMY/wXrKmy7v2ovviKNZVw5xUbT4d7SQcoYgh9712bA/v+CN0XtHCaJidVv+oh
+         aNL9Uq12EZyHust+wxuFzBtpK8MRrB0pDL+Kq0dVUDTqKRIU1EBUf5hYujgBvNacf7Zb
+         MzVSaOuY3Fu4PCYy5xdoGm3/tyZlMQFgHNyMfnu8m3awUqh9VX4BuGdjfqEkLoV+9pSa
+         VDDw==
+X-Gm-Message-State: APjAAAXh3FCIeSedRPVal6kb+xy2KDOWoLGLZ+l3cYiwsO2SvJjKZs97
+        8yjeLJgtRIxoMjDuuxVPE526Pg==
+X-Google-Smtp-Source: APXvYqyr0iuyuv6cZDN1lY/dPIGjPQ9/in/uZeJ9teIO4j6Z9AEA6St3vAvqSRW1cfTePD0qHmXROA==
+X-Received: by 2002:ac2:482a:: with SMTP id 10mr1204546lft.51.1558696090033;
+        Fri, 24 May 2019 04:08:10 -0700 (PDT)
 Received: from dev.nikanor.nu (78-72-133-4-no161.tbcn.telia.com. [78.72.133.4])
-        by smtp.gmail.com with ESMTPSA id x21sm446234ljj.43.2019.05.24.04.08.08
+        by smtp.gmail.com with ESMTPSA id x21sm446234ljj.43.2019.05.24.04.08.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 04:08:08 -0700 (PDT)
+        Fri, 24 May 2019 04:08:09 -0700 (PDT)
 From:   =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
 To:     gregkh@linuxfoundation.org
 Cc:     jeremy@azazel.net, simon@nikanor.nu, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] Fix whitespace issues in staging/kpc2000
-Date:   Fri, 24 May 2019 13:07:58 +0200
-Message-Id: <20190524110802.2953-1-simon@nikanor.nu>
+Subject: [PATCH 1/4] staging: kpc2000: add spaces around operators in core.c
+Date:   Fri, 24 May 2019 13:07:59 +0200
+Message-Id: <20190524110802.2953-2-simon@nikanor.nu>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190524110802.2953-1-simon@nikanor.nu>
+References: <20190524110802.2953-1-simon@nikanor.nu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -61,22 +63,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Fixes checkpatch.pl check "spaces preferred around that <op>".
 
-These patches fixes minor whitespace issues in staging/kpc2000/core.c as
-reported by checkpatch.pl.
+Signed-off-by: Simon Sandström <simon@nikanor.nu>
+---
+ drivers/staging/kpc2000/kpc2000/core.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-- Simon
-
-Simon Sandström (4):
-  staging: kpc2000: add spaces around operators in core.c
-  staging: kpc2000: remove extra blank line in core.c
-  staging: kpc2000: add missing spaces in core.c
-  staging: kpc2000: remove extra spaces in core.c
-
- drivers/staging/kpc2000/kpc2000/core.c | 33 +++++++++++++-------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
-
+diff --git a/drivers/staging/kpc2000/kpc2000/core.c b/drivers/staging/kpc2000/kpc2000/core.c
+index 4110032d0cbb..b464973d12ad 100644
+--- a/drivers/staging/kpc2000/kpc2000/core.c
++++ b/drivers/staging/kpc2000/kpc2000/core.c
+@@ -276,18 +276,18 @@ static ssize_t kp2000_cdev_read(struct file *filp, char __user *buf,
+ 	if (WARN(NULL == buf, "kp2000_cdev_read: buf is a NULL pointer!\n"))
+ 		return -EINVAL;
+ 
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "Card ID                 : 0x%08x\n", pcard->card_id);
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "Build Version           : 0x%08x\n", pcard->build_version);
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "Build Date              : 0x%08x\n", pcard->build_datestamp);
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "Build Time              : 0x%08x\n", pcard->build_timestamp);
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "Core Table Offset       : 0x%08x\n", pcard->core_table_offset);
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "Core Table Length       : 0x%08x\n", pcard->core_table_length);
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "Hardware Revision       : 0x%08x\n", pcard->hardware_revision);
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "SSID                    : 0x%016llx\n", pcard->ssid);
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "DDNA                    : 0x%016llx\n", pcard->ddna);
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "IRQ Mask                : 0x%016llx\n", readq(pcard->sysinfo_regs_base + REG_INTERRUPT_MASK));
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "IRQ Active              : 0x%016llx\n", readq(pcard->sysinfo_regs_base + REG_INTERRUPT_ACTIVE));
+-	cnt += scnprintf(buff+cnt, BUFF_CNT-cnt, "CPLD                    : 0x%016llx\n", readq(pcard->sysinfo_regs_base + REG_CPLD_CONFIG));
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "Card ID                 : 0x%08x\n", pcard->card_id);
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "Build Version           : 0x%08x\n", pcard->build_version);
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "Build Date              : 0x%08x\n", pcard->build_datestamp);
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "Build Time              : 0x%08x\n", pcard->build_timestamp);
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "Core Table Offset       : 0x%08x\n", pcard->core_table_offset);
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "Core Table Length       : 0x%08x\n", pcard->core_table_length);
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "Hardware Revision       : 0x%08x\n", pcard->hardware_revision);
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "SSID                    : 0x%016llx\n", pcard->ssid);
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "DDNA                    : 0x%016llx\n", pcard->ddna);
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "IRQ Mask                : 0x%016llx\n", readq(pcard->sysinfo_regs_base + REG_INTERRUPT_MASK));
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "IRQ Active              : 0x%016llx\n", readq(pcard->sysinfo_regs_base + REG_INTERRUPT_ACTIVE));
++	cnt += scnprintf(buff + cnt, BUFF_CNT - cnt, "CPLD                    : 0x%016llx\n", readq(pcard->sysinfo_regs_base + REG_CPLD_CONFIG));
+ 
+ 	if (*f_pos >= cnt)
+ 		return 0;
 -- 
 2.20.1
 
