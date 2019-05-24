@@ -2,15 +2,15 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F212928E88
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 03:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B6928E89
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 03:16:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388696AbfEXBQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 21:16:38 -0400
+        id S2388740AbfEXBQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 21:16:39 -0400
 Received: from mga02.intel.com ([134.134.136.20]:42224 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387578AbfEXBQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 21:16:37 -0400
+        id S1731608AbfEXBQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 21:16:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
@@ -32,17 +32,12 @@ Cc:     Ashok Raj <ashok.raj@intel.com>, Joerg Roedel <joro@8bytes.org>,
         Ricardo Neri <ricardo.neri@intel.com>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Wincy Van <fanwenyi0529@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
         Philippe Ombredanne <pombredanne@nexb.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Baoquan He <bhe@redhat.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [RFC PATCH v4 01/21] x86/msi: Add definition for NMI delivery mode
-Date:   Thu, 23 May 2019 18:16:03 -0700
-Message-Id: <1558660583-28561-2-git-send-email-ricardo.neri-calderon@linux.intel.com>
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [RFC PATCH v4 02/21] x86/hpet: Expose hpet_writel() in header
+Date:   Thu, 23 May 2019 18:16:04 -0700
+Message-Id: <1558660583-28561-3-git-send-email-ricardo.neri-calderon@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
@@ -51,47 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Until now, the delivery mode of MSI interrupts is set to the default
-mode set in the APIC driver. However, there are no restrictions in hardware
-to configure each interrupt with a different delivery mode. Specifying the
-delivery mode per interrupt is useful when one is interested in changing
-the delivery mode of a particular interrupt. For instance, this can be used
-to deliver an interrupt as non-maskable.
+In order to allow hpet_writel() to be used by other components (e.g.,
+the HPET-based hardlockup detector) expose it in the HPET header file.
+
+No empty definition is needed if CONFIG_HPET is not selected as all
+existing callers select such config symbol.
 
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Andi Kleen <andi.kleen@intel.com>
 Cc: Tony Luck <tony.luck@intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Wincy Van <fanwenyi0529@gmail.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
 Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
 Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
 Cc: x86@kernel.org
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 ---
- arch/x86/include/asm/msidef.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/hpet.h | 1 +
+ arch/x86/kernel/hpet.c      | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/msidef.h b/arch/x86/include/asm/msidef.h
-index ee2f8ccc32d0..38ccfdc2d96e 100644
---- a/arch/x86/include/asm/msidef.h
-+++ b/arch/x86/include/asm/msidef.h
-@@ -18,6 +18,7 @@
- #define MSI_DATA_DELIVERY_MODE_SHIFT	8
- #define  MSI_DATA_DELIVERY_FIXED	(0 << MSI_DATA_DELIVERY_MODE_SHIFT)
- #define  MSI_DATA_DELIVERY_LOWPRI	(1 << MSI_DATA_DELIVERY_MODE_SHIFT)
-+#define  MSI_DATA_DELIVERY_NMI		(4 << MSI_DATA_DELIVERY_MODE_SHIFT)
+diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
+index 67385d56d4f4..f132fbf984d4 100644
+--- a/arch/x86/include/asm/hpet.h
++++ b/arch/x86/include/asm/hpet.h
+@@ -72,6 +72,7 @@ extern int is_hpet_enabled(void);
+ extern int hpet_enable(void);
+ extern void hpet_disable(void);
+ extern unsigned int hpet_readl(unsigned int a);
++extern void hpet_writel(unsigned int d, unsigned int a);
+ extern void force_hpet_resume(void);
  
- #define MSI_DATA_LEVEL_SHIFT		14
- #define	 MSI_DATA_LEVEL_DEASSERT	(0 << MSI_DATA_LEVEL_SHIFT)
+ struct irq_data;
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index a0573f2e7763..5e86e024c489 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -62,7 +62,7 @@ inline unsigned int hpet_readl(unsigned int a)
+ 	return readl(hpet_virt_address + a);
+ }
+ 
+-static inline void hpet_writel(unsigned int d, unsigned int a)
++inline void hpet_writel(unsigned int d, unsigned int a)
+ {
+ 	writel(d, hpet_virt_address + a);
+ }
 -- 
 2.17.1
 
