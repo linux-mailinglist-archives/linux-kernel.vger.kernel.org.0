@@ -2,116 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 724D429A51
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86E7C29A5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:51:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404216AbfEXOsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 10:48:08 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42878 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404198AbfEXOsI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 10:48:08 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w9so7204663oic.9
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 07:48:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XyDR7SEzBDh6/L7wWbAnb4fBQMmEaID+h9zq8zkdXwM=;
-        b=TTyzJoAQaJr1Z5JL720iOhyCk6sQ8Luuk+gkQ98csDg2KOlIYhARswIci9jfRTK5Mt
-         vpM9kr70L/vQUWiyHKMgsAEjAqK0xP1n3/6jFoLt0zy7qnX7OdQQsuyC1l1ymSBXbEPI
-         PLA7E9fOCDoG5b+JIjtNJuBhvyEX4979+Bk3w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XyDR7SEzBDh6/L7wWbAnb4fBQMmEaID+h9zq8zkdXwM=;
-        b=Fz8eo18YFaBLwITKpRtM3Tv0UccT0uvo/9L4XFnPa+0yxtlhLcT03/G1dlUdwzfS8I
-         FhO8bk3VA5P1SZHHRYVzS7XS7MQj2qLs5d1tZR1H1079NGaNtxGrVGZrISTpdG3/QNvn
-         Lwl6rlBfmZIawPiO2gaaeBIV8xxy6ZLU6fJD7fT5PpA73HXKeEgJAvVzPW5Vh2IUYdxk
-         cjmd0Zf3hBvuKtFJxkKf3xrAEo5+d7sgpPiHvcTkauIYQ04l3tmQGDF7p+BmdwP5rcRL
-         yHKFnrJY0s86WHS3ZlbYXZYG3uC8X7K3fVMOzhjzUrE22p6O4obsDvRfpcNTSBYrnFRp
-         ++uQ==
-X-Gm-Message-State: APjAAAXly/GXgabZaWWr2gWDrG4qwpDXZCA+IYKEizscwH8telyQpXCh
-        6kDLZV0SIcvcl/MLN9BIsmBYTci+ir8=
-X-Google-Smtp-Source: APXvYqzhI1wh/lPGD2AINpdwp9ZBhrb1YQDUgCcqkg3VpxyCz6Y4TfuXI3evKLnxOV+WFGZ6aKzsDA==
-X-Received: by 2002:aca:b587:: with SMTP id e129mr116340oif.143.1558709286349;
-        Fri, 24 May 2019 07:48:06 -0700 (PDT)
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com. [209.85.167.171])
-        by smtp.gmail.com with ESMTPSA id 59sm1010777otq.8.2019.05.24.07.48.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 07:48:05 -0700 (PDT)
-Received: by mail-oi1-f171.google.com with SMTP id a132so7234511oib.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 07:48:04 -0700 (PDT)
-X-Received: by 2002:aca:48c2:: with SMTP id v185mr6247311oia.171.1558709283923;
- Fri, 24 May 2019 07:48:03 -0700 (PDT)
+        id S2404178AbfEXOvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 10:51:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35976 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404154AbfEXOvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 10:51:17 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 604EB30B1B84;
+        Fri, 24 May 2019 14:51:11 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 41FB02CFD6;
+        Fri, 24 May 2019 14:51:07 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 24 May 2019 16:51:11 +0200 (CEST)
+Date:   Fri, 24 May 2019 16:51:06 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Message-ID: <20190524145105.GD2655@redhat.com>
+References: <20190522161407.GB4915@redhat.com>
+ <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+ <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
+ <20190523145944.GB23070@redhat.com>
+ <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
+ <20190523163604.GE23070@redhat.com>
+ <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+ <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
+ <20190524141947.GC2655@redhat.com>
+ <CABeXuvqx9fZGiGSAQEE=7wechoGE0E8YW7icBWoTtXPkWPROUw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190521192045.261801-1-ncrews@chromium.org> <2b8eccfa-0117-37c3-44cb-b1220b9678f9@collabora.com>
-In-Reply-To: <2b8eccfa-0117-37c3-44cb-b1220b9678f9@collabora.com>
-From:   Nick Crews <ncrews@chromium.org>
-Date:   Fri, 24 May 2019 08:47:51 -0600
-X-Gmail-Original-Message-ID: <CAHX4x86QbUybRoMScsJ+vwzic6TfECzBnccEe89M8HojMDgH8Q@mail.gmail.com>
-Message-ID: <CAHX4x86QbUybRoMScsJ+vwzic6TfECzBnccEe89M8HojMDgH8Q@mail.gmail.com>
-Subject: Re: [PATCH v5] platform/chrome: wilco_ec: Add telemetry char device interface
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Dmitry Torokhov <dtor@google.com>
-Cc:     Benson Leung <bleung@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Simon Glass <sjg@chromium.org>, bartfab@chromium.org,
-        Oleh Lamzin <lamzin@google.com>,
-        Jason Wong <jchwong@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABeXuvqx9fZGiGSAQEE=7wechoGE0E8YW7icBWoTtXPkWPROUw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 24 May 2019 14:51:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Enric, thanks for the review!
+On 05/24, Deepa Dinamani wrote:
+>
+> I think you are misunderstanding what I said.
 
-On Fri, May 24, 2019 at 3:51 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> Hi Nick,
->
-> I'm mostly fine with it but ...
->
-> On 21/5/19 21:20, Nick Crews wrote:
-> > The Wilco Embedded Controller is able to send telemetry data
-> > which is useful for enterprise applications. A daemon running on
-> > the OS sends a command to the EC via a write() to a char device,
-> > and can read the response with a read(). The write() request is
-> > verified by the driver to ensure that it is performing only one
-> > of the whitelisted commands, and that no extraneous data is
-> > being transmitted to the EC. The response is passed directly
-> > back to the reader with no modification.
+probably. Everything was very confusing to me from the very beginning.
+And yes, I can hardly understand your emails, sorry. This one too :/
+
+> You are taking things
+> out of context. I was saying here what I did was inspired by why the
+> syscall was designed to begin with.
+
+which syscall?
+
+> The syscall below refers to
+> epoll_wait and not epoll_pwait.
+
+So you tried to explain why epoll_pwait() was designed? Or what?
+
+Either way, everything I said below still looks right to me. This probably
+means that I still can't understand you.
+
+But this is irrelevant. My main point is that the kernel was correct before
+854a6ed568 ("signal: Add restore_user_sigmask()"), the (incomplete) patch I sent
+tries to a) restore the correct behaviour and b) simplify/cleanup the code.
+
+> On Fri, May 24, 2019 at 7:19 AM Oleg Nesterov <oleg@redhat.com> wrote:
 > >
-> > The character device will appear as /dev/wilco_telemN, where N
-> > is some small non-negative integer, starting with 0. Only one
->
-> Still remains my question in the previous version.
->
-> We will really have more than one /dev/wilco_telemN devices handled by this
-> driver? Why not use a Miscellaneous Character Device Driver that will simplify
-> the code?
+> > On 05/23, Deepa Dinamani wrote:
+> > >
+> > > 1. block the signals you don't care about.
+> > > 2. syscall()
+> > > 3. unblock the signals blocked in 1.
+> >
+> > and even this part of your email is very confusing. because in this case
+> > we can never miss a signal. I'd say
+> >
+> >         1. block the signals you don't care about
+> >         2. unblock the signals which should interrupt the syscall below
+> >         3. syscall()
+> >         4. block the signals unblocked in 2.
+> >
+> > Oleg.
+> >
 
-We probably will not have more than one device handled by the driver,
-but I did this
-at the request of Dmitry. He wanted to just do it right the first time so no one
-would have to fix it if in the future a second device was needed. FYI,
-I did the same
-thing for the events driver at https://lore.kernel.org/patchwork/patch/1078461/.
-
-I just tried to find the email thread and/or the review on the
-Chromium Gerrit that
-documents this, but I couldn't find it. It must have been a private
-message, so sorry I
-can't link you to it.
-
-Dmitry, am I interpreting your reasoning correctly?
-
-Thanks,
-Nick
