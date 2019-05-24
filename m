@@ -2,88 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EF7729515
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 11:48:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40C0F2951A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 11:49:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390220AbfEXJrx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 05:47:53 -0400
-Received: from retiisi.org.uk ([95.216.213.190]:49866 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389841AbfEXJrx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 05:47:53 -0400
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2390265AbfEXJsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 05:48:46 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:46260 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389911AbfEXJsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 05:48:46 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 82CB3634C7B;
-        Fri, 24 May 2019 12:47:22 +0300 (EEST)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1hU6nK-00018F-C3; Fri, 24 May 2019 12:47:22 +0300
-Date:   Fri, 24 May 2019 12:47:22 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [media] videobuf-dma-contig: Use size of buffer in mmap
- not vma size
-Message-ID: <20190524094722.sjzk6hwfgjigxix6@valkosipuli.retiisi.org.uk>
-References: <20190329173427.18238-1-afd@ti.com>
+        by mx2.mailbox.org (Postfix) with ESMTPS id 92B1DA1064;
+        Fri, 24 May 2019 11:48:43 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id aWeop9YRr6Wt; Fri, 24 May 2019 11:48:26 +0200 (CEST)
+From:   Stefan Roese <sr@denx.de>
+To:     linux-serial@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Yegor Yefremov <yegorslists@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: [PATCH 1/2 v2] serial: mctrl_gpio: Check if GPIO property exisits before requesting it
+Date:   Fri, 24 May 2019 11:48:24 +0200
+Message-Id: <20190524094825.16151-1-sr@denx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190329173427.18238-1-afd@ti.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 29, 2019 at 12:34:27PM -0500, Andrew F. Davis wrote:
-> The size of the vma can be larger than the size of the backing buffer.
-> Use the buffer size over vma size to prevent exposing extra memory
-> to userspace.
-> 
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
+This patch adds a check for the GPIOs property existence, before the
+GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
+support is added (2nd patch in this patch series) on x86 platforms using
+ACPI.
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Here Mika's comments from 2016-08-09:
 
-> ---
->  drivers/media/v4l2-core/videobuf-dma-contig.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/videobuf-dma-contig.c b/drivers/media/v4l2-core/videobuf-dma-contig.c
-> index e1bf50df4c70..65e2655d22b7 100644
-> --- a/drivers/media/v4l2-core/videobuf-dma-contig.c
-> +++ b/drivers/media/v4l2-core/videobuf-dma-contig.c
-> @@ -280,7 +280,6 @@ static int __videobuf_mmap_mapper(struct videobuf_queue *q,
->  	struct videobuf_dma_contig_memory *mem;
->  	struct videobuf_mapping *map;
->  	int retval;
-> -	unsigned long size;
->  
->  	dev_dbg(q->dev, "%s\n", __func__);
->  
-> @@ -303,7 +302,6 @@ static int __videobuf_mmap_mapper(struct videobuf_queue *q,
->  		goto error;
->  
->  	/* Try to remap memory */
-> -	size = vma->vm_end - vma->vm_start;
->  	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
->  
->  	/* the "vm_pgoff" is just used in v4l2 to find the
-> @@ -314,7 +312,7 @@ static int __videobuf_mmap_mapper(struct videobuf_queue *q,
->  	 */
->  	vma->vm_pgoff = 0;
->  
-> -	retval = vm_iomap_memory(vma, mem->dma_handle, size);
-> +	retval = vm_iomap_memory(vma, mem->dma_handle, mem->size);
->  	if (retval) {
->  		dev_err(q->dev, "mmap: remap failed with error %d. ",
->  			retval);
-> -- 
-> 2.21.0
-> 
+"
+I noticed that with v4.8-rc1 serial console of some of our Broxton
+systems does not work properly anymore. I'm able to see output but input
+does not work.
 
+I bisected it down to commit 4ef03d328769eddbfeca1f1c958fdb181a69c341
+("tty/serial/8250: use mctrl_gpio helpers").
+
+The reason why it fails is that in ACPI we do not have names for GPIOs
+(except when _DSD is used) so we use the "idx" to index into _CRS GPIO
+resources. Now mctrl_gpio_init_noauto() goes through a list of GPIOs
+calling devm_gpiod_get_index_optional() passing "idx" of 0 for each. The
+UART device in Broxton has following (simplified) ACPI description:
+
+    Device (URT4)
+    {
+        ...
+        Name (_CRS, ResourceTemplate () {
+            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+                    "\\_SB.GPO0", 0x00, ResourceConsumer)
+            {
+                0x003A
+            }
+            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
+                    "\\_SB.GPO0", 0x00, ResourceConsumer)
+            {
+                0x003D
+            }
+        })
+
+In this case it finds the first GPIO (0x003A which happens to be RX pin
+for that UART), turns it into GPIO which then breaks input for the UART
+device. This also breaks systems with bluetooth connected to UART (those
+typically have some GPIOs in their _CRS).
+
+Any ideas how to fix this?
+
+We cannot just drop the _CRS index lookup fallback because that would
+break many existing machines out there so maybe we can limit this to
+only DT enabled machines. Or alternatively probe if the property first
+exists before trying to acquire the GPIOs (using
+device_property_present()).
+"
+
+This patch implements the fix suggested by Mika in his statement above.
+
+Signed-off-by: Stefan Roese <sr@denx.de>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Yegor Yefremov <yegorslists@googlemail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>
+---
+v2:
+- Include the problem description and analysis from Mika into the commit
+  text, as suggested by Greg.
+
+ drivers/tty/serial/serial_mctrl_gpio.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
+index 39ed56214cd3..cac50b20a119 100644
+--- a/drivers/tty/serial/serial_mctrl_gpio.c
++++ b/drivers/tty/serial/serial_mctrl_gpio.c
+@@ -116,6 +116,13 @@ struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev, unsigned int idx)
+ 
+ 	for (i = 0; i < UART_GPIO_MAX; i++) {
+ 		enum gpiod_flags flags;
++		char *gpio_str;
++
++		/* Check if GPIO property exists and continue if not */
++		gpio_str = kasprintf(GFP_KERNEL, "%s-gpios",
++				     mctrl_gpios_desc[i].name);
++		if (!device_property_present(dev, gpio_str))
++			continue;
+ 
+ 		if (mctrl_gpios_desc[i].dir_out)
+ 			flags = GPIOD_OUT_LOW;
 -- 
-Sakari Ailus
+2.21.0
+
