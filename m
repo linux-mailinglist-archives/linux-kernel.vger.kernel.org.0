@@ -2,73 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3CF628FCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 06:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC83628FD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 06:08:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725852AbfEXEFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 00:05:49 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33426 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfEXEFt (ORCPT
+        id S1727482AbfEXEIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 00:08:04 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38741 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725813AbfEXEID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 00:05:49 -0400
-Received: by mail-lj1-f193.google.com with SMTP id w1so7435353ljw.0
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 21:05:48 -0700 (PDT)
+        Fri, 24 May 2019 00:08:03 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v11so4278683pgl.5
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 21:08:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bMvKtFN1e33kpboGuviLZvfkEjRfz5jbm8LdT4mUCDU=;
-        b=WgyI+my0JXdOEJsdGY3Vs1l2Q/d27f1OZS0CNv5G8gYHThrU3eKCmbG0Ks9W0F6obh
-         2b1UUXdsa23Epz6r+vhmbgVPgbExpEmKy1okLJE5KBf9j7roDhQ1NU8X4tn5tbqNdHgw
-         SYck62IL79urnywL2GC9eTu6+dov4ELvohsy4Banqu/68bCA1dUKlBg+YYZHQjYhBvQ0
-         15c3wnoUfq+Qb+bUkL9w82hNs4nbkbIKKWiOu0Ampnv6qB4W2GdWvQjnCZmA7DcU3NS2
-         hRtdmt1Os28GQcaTTlvO1p0lBEfjmfJK8IQ/ILHhkgPP5kG+UTY5Q8D16KpYlUEMI7fr
-         BxuQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=s74YDk11h63m3BV7XOfnkCuG6v9uaJVVe9rNVON22hw=;
+        b=d4pWEaoDp8VDALdkCMCsdpaApDEtbf5qlmNVmtFaBu1dLqdJeDQAeAOVmLHxFoOH2T
+         0KPvaAWTEKyeMBhm+4UC/dQvOjY/nwyM/qO/nbiRmBo9pAvmEWRw/GbN6v2yEXKE6Uif
+         1IVZz6BJJxpjuO+gvH0PYvuK5AFQh4McrEeM76gok5/33Q0ciesPflsroAVXZ5CsyzON
+         H9/F8sXGiqPEYQIxTFKTAnibA8qNWGGUiMepgWhsAhmj72HmkGQ6ip5T7JMixrDb59Q5
+         1AG8HJWjKIuoZaWZHwFRH4weX2//KEgT50ICzsbyxb+ZFJk+oWktK+KDA2/H+LGKg1UJ
+         zN0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bMvKtFN1e33kpboGuviLZvfkEjRfz5jbm8LdT4mUCDU=;
-        b=jszY5GNRY9kIVX2ngEL5KySyXeMJ0kjc2WtDYdmgsM48PZMLCbup4yDyGVRgZyuvov
-         g+0FBlrDZZYJ7urQntxx1QqH7x2JqyzEcyw010qQxVcGQjxQZwKLG8NZt0uvhp6eVdVY
-         kgbVwOSHqfe21ecNrcoIexFAWidYpYgsHj+OcfyrISJ8hGcDvgp9MIuas3cKkSBAQ8As
-         9pvCjP7XKv3jPdn0G2Od3p8Ia0QME18H1O+Wt/ga8L9OUKyA6R63yejylxweWwq4DWQ9
-         zfjXBWw1M1hiUU4NDKtNJHWY7NnPUplOgATS0o7H6GFFtsfuaITjnuAZsYNbPTAD85ZL
-         ynQA==
-X-Gm-Message-State: APjAAAU5l3dbX1GQJd8cWi3VTmEKwv3F1xPbxUCFAWx+mSyFwku+iEQB
-        YHUSA+YN3bHht67gTlr4Bor5SUftBWLcUlJdRwk=
-X-Google-Smtp-Source: APXvYqx2COq+bydPlaV1tCE964ZlkfqtZ8TL30G7mGs9JJdsmHxxZkT2dz3Jc6A1xFhshtcbOczpwiaeyXLbndRY2lA=
-X-Received: by 2002:a2e:2b58:: with SMTP id q85mr52647970lje.179.1558670747341;
- Thu, 23 May 2019 21:05:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190523124535.GA12931@gmail.com> <20190523221210.4a2bb326@oasis.local.home>
-In-Reply-To: <20190523221210.4a2bb326@oasis.local.home>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 24 May 2019 06:05:36 +0200
-Message-ID: <CANiq72=J_RkEByD1ToX1Y2MwkwrCdg0SFZKK02jwu_PpyADPoQ@mail.gmail.com>
-Subject: Re: [PATCH] tracing: silence GCC 9 array bounds warning
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=s74YDk11h63m3BV7XOfnkCuG6v9uaJVVe9rNVON22hw=;
+        b=b6OJbwa+VfYQ32XpSjJ+X3+rGT9bAF1wpff1IK0hN+65A3Wr6hqpF9LlAXJ3q96U54
+         1uFcubNdcNcW6g/QqVwBPzbEEdGu9B/uYGkYvNTzuB2Vk8XNGPRuuI+ytxAsaZcLTVvX
+         XAJ86Qu0eXuHOqEgMbClYbJ5xg5pM53Ie+gbYyFNJ429PokWBltjHDuWChC6kKNpW25v
+         zcyaTPO8V+d3xrbzGB00FpbW8DMDBm/VWaQ5N1EZ9PoBxE/oxYpG6ZFaOoaNU97G50a5
+         qDuPUWOSzJ/NTR6A01AEI6fOSeUbATrbl19KRGXucR/AvTa7kSHk0mZ75SwELjDSl1+1
+         /1ug==
+X-Gm-Message-State: APjAAAXGCDCN7mQ+Lq/vjMoM7YzrWFFZk56MVkXtUEf5SjVibxB6Eakv
+        frUZiky+1kUhabX/+mA/nWI=
+X-Google-Smtp-Source: APXvYqz7SgXlmeiaXSvQX7Xs4PBLb1OsSy441YSgpyHE/mSRMUQEJbvKztTfbmY/Z7v8FcGOYR8dGA==
+X-Received: by 2002:aa7:9aa5:: with SMTP id x5mr18456270pfi.135.1558670882701;
+        Thu, 23 May 2019 21:08:02 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id e123sm786412pgc.29.2019.05.23.21.08.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 21:08:02 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     hch@lst.de, robin.murphy@arm.com, m.szyprowski@samsung.com
+Cc:     vdumpa@nvidia.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        joro@8bytes.org, dwmw2@infradead.org, tony@atomide.com,
+        akpm@linux-foundation.org, sfr@canb.auug.org.au,
+        treding@nvidia.com, keescook@chromium.org, iamjoonsoo.kim@lge.com,
+        wsa+renesas@sang-engineering.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org,
+        dann.frazier@canonical.com
+Subject: [PATCH v3 0/2] Optimize dma_*_from_contiguous calls
+Date:   Thu, 23 May 2019 21:06:31 -0700
+Message-Id: <20190524040633.16854-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 4:12 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> On Thu, 23 May 2019 14:45:35 +0200
-> Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
->
-> I still prefer the typecast of void *, as that's used a bit more in the
-> kernel, but since char * is also used (not as much), I'll leave it. But
-> the parenthesis around iter are unnecessary. I'll remove them.
+[ Per discussion at v1, we decide to add two new functions and start
+  replacing callers one by one. For this series, it only touches the
+  dma-direct part. And instead of merging two PATCHes, I still keep
+  them separate so that we may easily revert PATCH-2 if anything bad
+  happens as last time -- PATCH-1 is supposed to be a safe cleanup. ]
 
-If the preferred style in the kernel is void *, change it on your
-side, please! :-) Maybe we should mention it in the coding guidelines.
+This series of patches try to optimize dma_*_from_contiguous calls:
+PATCH-1 abstracts two new functions and applies to dma-direct.c file.
+PATCH-2 saves single pages and reduce fragmentations from CMA area.
 
-Cheers,
-Miguel
+Please check their commit messages for detail changelog.
+
+Nicolin Chen (2):
+  dma-contiguous: Abstract dma_{alloc,free}_contiguous()
+  dma-contiguous: Use fallback alloc_pages for single pages
+
+ include/linux/dma-contiguous.h | 11 +++++++
+ kernel/dma/contiguous.c        | 57 ++++++++++++++++++++++++++++++++++
+ kernel/dma/direct.c            | 24 +++-----------
+ 3 files changed, 72 insertions(+), 20 deletions(-)
+
+-- 
+2.17.1
+
