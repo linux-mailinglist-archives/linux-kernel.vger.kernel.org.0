@@ -2,152 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B167329C56
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 18:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B2F229C5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 18:33:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390929AbfEXQbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 12:31:22 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36879 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390392AbfEXQbV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 12:31:21 -0400
-Received: by mail-pl1-f194.google.com with SMTP id p15so4381827pll.4;
-        Fri, 24 May 2019 09:31:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+SbEPxSc3I9t4ZXFty6TOIoP4vL3V/mhx3yZoaGSreo=;
-        b=GlQveNqrq65wwhA4ieUT9aYptmfo7DDk7kZsOPsenXJoyymP8EW2oqHg4Ml8/3MChv
-         Rk26pdLUgacRyUSwRU5Vli1itjAwjxUP8dpy/hF0LYe91eSyh93RklAZOtrePW07t4Wj
-         AO4EQ4Wi0bF+Z5609+Ivos/VCDTS8RF6fs0wSDNQZfexOWJ7Gds++zNzKA9xQxVub2/G
-         AgTV+WWZPwYVLlOVKev8Z0NuqgxC2ke/Z9LOlT2sMcWjHMmZJthTibU6z3JrVp5qaYJv
-         2uxmKXCSnWi3iJei8Qsp3Vx6Do6adEetf1+MvMbEPDmzmubBQDiC3Rkjb2Y4U/QvR6F2
-         4URA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+SbEPxSc3I9t4ZXFty6TOIoP4vL3V/mhx3yZoaGSreo=;
-        b=EToL5/H2jXOnzxF49v2o3V6qO8f19401xobMgyj834JKtIq0h3G1G08CfazGcPqAJs
-         9eCKzSP/dfE1r20pyj35kDmlqhFtiDhhRIojlyhRO9ixT0c6jmqphCxJYv+Wkf8GS/8M
-         Bb7mq31SdOkFM3ZI+aDW85vHuAT3y9lYgHUb3fHJ8mRmOIblQztmATIqIUQ8bkSgiL5i
-         58Gk/tQK/+Sjk7gpgsSX7/IO5EGs37WHjHrs/h4K7lYtf17M8Ztu3UDBX5EDk6K0agLE
-         M0QK8mdHDaacxbLtNrEA1v9Ko1SCxOcSr5amBzU0uj6aEIx6PZ8qdzBwG7sseCEV5i/p
-         RZmQ==
-X-Gm-Message-State: APjAAAUxSCIUsjoOdbdhV59ajbf7dA906IMZQo6yJnRZOgqPC1jPHW/m
-        ycCz9vgawVl9CpJM7adGXBpgE7AgPHwecVaXIKzCdkkipcA=
-X-Google-Smtp-Source: APXvYqyfIsWqcIjwlEhAaUOL1D7Git4IbxuJL/FO7WdnNTDUNfF9A6xrslrJUF9+OPD2qFwXrrjhqkm7DEAzbJU3nnM=
-X-Received: by 2002:a17:902:e00a:: with SMTP id ca10mr109769533plb.18.1558715481196;
- Fri, 24 May 2019 09:31:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190520224124.153005-1-mathewk@chromium.org> <CAK+PMK47_OE-BgOYD_TD0kwxD4RG+nS9Wstg4ydUy7yV9nVmHQ@mail.gmail.com>
- <a7a23cbea93d46b48f7c9bd4e4cd4314@AUSX13MPC105.AMER.DELL.COM>
-In-Reply-To: <a7a23cbea93d46b48f7c9bd4e4cd4314@AUSX13MPC105.AMER.DELL.COM>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 24 May 2019 19:31:10 +0300
-Message-ID: <CAHp75VdQs-e0F-MHk3bX3Csp6cGCf5mYJLdVVTBc3i3S8ExgmA@mail.gmail.com>
-Subject: Re: [PATCH v2] platform/x86: intel-vbtn: Report switch events when
- event wakes device
-To:     Mario Limonciello <Mario.Limonciello@dell.com>
-Cc:     jettrink@chromium.org, mathewk@chromium.org,
+        id S2390967AbfEXQdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 12:33:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52266 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390021AbfEXQdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 12:33:32 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B100D309704F;
+        Fri, 24 May 2019 16:33:16 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
+        by smtp.corp.redhat.com (Postfix) with SMTP id A78C8608CD;
+        Fri, 24 May 2019 16:33:11 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 24 May 2019 18:33:16 +0200 (CEST)
+Date:   Fri, 24 May 2019 18:33:10 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     David Laight <David.Laight@aculab.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        AceLan Kao <acelan.kao@canonical.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Message-ID: <20190524163310.GG2655@redhat.com>
+References: <20190522161407.GB4915@redhat.com>
+ <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+ <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
+ <20190523145944.GB23070@redhat.com>
+ <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
+ <20190523163604.GE23070@redhat.com>
+ <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+ <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
+ <20190524141054.GB2655@redhat.com>
+ <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 24 May 2019 16:33:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 4:43 PM <Mario.Limonciello@dell.com> wrote:
+On 05/24, Deepa Dinamani wrote:
 >
-> > -----Original Message-----
-> > From: Jett Rink <jettrink@chromium.org>
-> > Sent: Tuesday, May 21, 2019 8:37 AM
-> > To: Mathew King
-> > Cc: linux-kernel; AceLan Kao; Andy Shevchenko; Darren Hart; platform-driver-
-> > x86@vger.kernel.org; Limonciello, Mario
-> > Subject: Re: [PATCH v2] platform/x86: intel-vbtn: Report switch events when event
-> > wakes device
+> On Fri, May 24, 2019 at 7:11 AM Oleg Nesterov <oleg@redhat.com> wrote:
 > >
+> > On 05/23, Deepa Dinamani wrote:
+> > >
+> > > Ok, since there has been quite a bit of argument here, I will
+> > > backtrack a little bit and maybe it will help us understand what's
+> > > happening here.
+> > > There are many scenarios being discussed on this thread:
+> > > a. State of code before 854a6ed56839a
 > >
-
-Pushed to my review and testing queue, thanks!
-
-> > [EXTERNAL EMAIL]
-> >
-> > On Mon, May 20, 2019 at 4:41 PM Mathew King <mathewk@chromium.org>
-> > wrote:
-> > >
-> > > When a switch event, such as tablet mode/laptop mode or docked/undocked,
-> > > wakes a device make sure that the value of the swich is reported.
-> > > Without when a device is put in tablet mode from laptop mode when it is
-> > > suspended or vice versa the device will wake up but mode will be
-> > > incorrect.
-> > >
-> > > Tested by suspending a device in laptop mode and putting it in tablet
-> > > mode, the device resumes and is in tablet mode. When suspending the
-> > > device in tablet mode and putting it in laptop mode the device resumes
-> > > and is in laptop mode.
-> > >
-> > > Signed-off-by: Mathew King <mathewk@chromium.org>
-> > >
-> > > ---
-> > > Changes in v2:
-> > >   - Added comment explaining why switch events are reported
-> > >   - Format so that checkpatch is happy
-> > > ---
-> > >  drivers/platform/x86/intel-vbtn.c | 16 ++++++++++++++--
-> > >  1 file changed, 14 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/platform/x86/intel-vbtn.c b/drivers/platform/x86/intel-vbtn.c
-> > > index 06cd7e818ed5..a0d0cecff55f 100644
-> > > --- a/drivers/platform/x86/intel-vbtn.c
-> > > +++ b/drivers/platform/x86/intel-vbtn.c
-> > > @@ -76,12 +76,24 @@ static void notify_handler(acpi_handle handle, u32
-> > event, void *context)
-> > >         struct platform_device *device = context;
-> > >         struct intel_vbtn_priv *priv = dev_get_drvdata(&device->dev);
-> > >         unsigned int val = !(event & 1); /* Even=press, Odd=release */
-> > > -       const struct key_entry *ke_rel;
-> > > +       const struct key_entry *ke, *ke_rel;
-> > >         bool autorelease;
-> > >
-> > >         if (priv->wakeup_mode) {
-> > > -               if (sparse_keymap_entry_from_scancode(priv->input_dev, event)) {
-> > > +               ke = sparse_keymap_entry_from_scancode(priv->input_dev, event);
-> > > +               if (ke) {
-> > >                         pm_wakeup_hard_event(&device->dev);
-> > > +
-> > > +                       /*
-> > > +                        * Switch events like tablet mode will wake the device
-> > > +                        * and report the new switch position to the input
-> > > +                        * subsystem.
-> > > +                        */
-> > Thanks for adding the comment; This looks good to me.
-> >
-> > > +                       if (ke->type == KE_SW)
-> > > +                               sparse_keymap_report_event(priv->input_dev,
-> > > +                                                          event,
-> > > +                                                          val,
-> > > +                                                          0);
-> > >                         return;
-> > >                 }
-> > >                 goto out_unknown;
-> > > --
-> > > 2.21.0.1020.gf2820cf01a-goog
-> > >
-> >
-> > Reviewed-by: Jett Rink <jettrink@chromium.org>
+> > I think everything was correct,
 >
-> Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
+> There were 2 things that were wrong:
+>
+> 1. If an unblocked signal was received, after the ep_poll(), then the
+> return status did not indicate that.
 
+Yes,
 
+> This is expected behavior
+> according to man page. If this is indeed what is expected then the man
+> page should note that signal will be delivered in this case and return
+> code will still be 0.
+>
+> "EINTR
+> The call was interrupted by a signal handler before either any of the
+> requested events occurred or the timeout expired; see signal(7)."
 
--- 
-With Best Regards,
-Andy Shevchenko
+and what do you think the man page could say?
+
+This is obviously possible for any syscall, and we can't avoid this. A signal
+can come right after syscall insn completes. The signal handler will be called
+but this won't change $rax, user-space can see return code == 0 or anything else.
+
+And this doesn't differ from the case when the signal comes before syscall returns.
+
+> 2. The restoring of the sigmask is done right in the syscall part and
+> not while exiting the syscall and if you get a blocked signal here,
+> you will deliver this to userspace.
+
+So I assume that this time you are talking about epoll_pwait() and not epoll_wait()...
+
+And I simply can't understand you. But yes, if the original mask doesn't include
+the pending signal it will be delivered while the syscall can return success/timout
+or -EFAULT or anything.
+
+This is correct, see above.
+
+> > > b. State after 854a6ed56839a
+> >
+> > obviously buggy,
+>
+> Ok, then can you point out what specifically was wrong with
+> 854a6ed56839a?
+
+Cough. If nothing else the lost -EINTR?
+
+> And, not how it could be more simple?
+
+Well, I already sent the patch and after that I even showed you the code with the
+patch applied. See https://lore.kernel.org/lkml/20190523143340.GA23070@redhat.com/
+
+> > What you are saying looks very confusing to me, I will assume that you
+> > meant something like
+> >
+> >         - a signal SIG_XXX was blocked before sys_epoll_pwait() was called
+> >
+> >         - sys_epoll_pwait(sigmask) unblocks SIG_XXX according to sigmask
+> >
+> >         - sys_epoll_pwait() calls do_epoll_wait() which returns success
+> >
+> >         - SIG_XXX comes after that and it is "never noticed"
+> >
+> > Yes. Everything is correct. And see my reply to David, SIG_XXX can even
+> > come _before_ sys_epoll_pwait() was called.
+>
+> No, I'm talking about a signal that was not blocked.
+
+OK, see above.
+
+> > > So the question is does the userspace have to know about this signal
+> > > or not.
+> >
+> > If userspace needs to know about SIG_XXX it should not block it, that is all.
+>
+> What should be the return value if a signal is detected after a fd completed?
+
+Did you mean "if a signal is detected after a ready fd was already found" ?
+
+In this case the return value should report success. But I have already lost,
+this all looks irrelevant wrt to fix we need.
+
+> > > What [b] does is to move the signal check closer to the restoration of
+> > > the signal.
+> >
+> > FOR NO REASON, afaics (to simplify, lets forget the problem with the wrong
+> > return value you are trying to fix).
+>
+> As I already pointed out, the restoring of the sigmask is done during
+> the syscall and not while exiting the syscall and if you get a blocked
+> signal here, you will deliver this to userspace.
+>
+> > And even if there were ANY reason to do this, note that (with or without this
+> > fix) the signal_pending() check inside restore_user_sigmask() can NOT help,
+> > simply because SIG_XXX can come right after this check.
+>
+> This I pointed out already that we should probably make this sequence atomic.
+
+See above.
+
+Oleg.
+
