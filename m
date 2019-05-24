@@ -2,80 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 406C329029
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 06:53:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 819682902F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 06:54:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731679AbfEXEwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 00:52:15 -0400
-Received: from foss.arm.com ([217.140.101.70]:33468 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726034AbfEXEwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 00:52:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D285374;
-        Thu, 23 May 2019 21:52:14 -0700 (PDT)
-Received: from [10.162.42.134] (p8cg001049571a15.blr.arm.com [10.162.42.134])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D2773F703;
-        Thu, 23 May 2019 21:52:07 -0700 (PDT)
-Subject: Re: [PATCH V4 3/4] arm64/mm: Hold memory hotplug lock while walking
- for kernel page table dump
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        akpm@linux-foundation.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, mark.rutland@arm.com, ira.weiny@intel.com,
-        david@redhat.com, cai@lca.pw, logang@deltatee.com,
-        james.morse@arm.com, cpandya@codeaurora.org, arunks@codeaurora.org,
-        dan.j.williams@intel.com, mgorman@techsingularity.net,
-        osalvador@suse.de, ard.biesheuvel@arm.com
-References: <1558329516-10445-1-git-send-email-anshuman.khandual@arm.com>
- <1558329516-10445-4-git-send-email-anshuman.khandual@arm.com>
- <20190521101457.GK32329@dhcp22.suse.cz>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <4a9e0e2a-2acd-11b5-5181-41801cd11d98@arm.com>
-Date:   Fri, 24 May 2019 10:22:18 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1731893AbfEXEyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 00:54:16 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46591 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfEXEyP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 00:54:15 -0400
+Received: by mail-ed1-f66.google.com with SMTP id f37so12391067edb.13;
+        Thu, 23 May 2019 21:54:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uG3LPpXz6HczhaN7aWRgjWXEjlUyPFH9Q9Ci4mtls4c=;
+        b=RhchpjZOyc6YOPzzhLiPo8uzy5QDshjjbVUAl/1r0pHwDCT81ap/4dXT5pjxUt8lNA
+         obCEhe35IXr1YlvBHPxqrVNPu8XGZ0xNB+ml51goaUAgnvBwIp09n4jwJ6VyvTjlu0pZ
+         6XUkcty1O/OhNMrJaQayoBeScyevQA0ZGRTFaiAZpJRoaY39VU2uBDN8NGG+i3cvK87N
+         /tsNbnvGjGlhrXjKG7ck5PkM8v/+1CCC8LPr4FPAYSPh0r43IjdPY66x9wpp5xmfRvht
+         mhyS1QBWOgnrv7aM2HAmhfi4RZbpLhEKn8y8lb/rLPM4S4DTFffZpt1FezySNME4RHCs
+         9biw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uG3LPpXz6HczhaN7aWRgjWXEjlUyPFH9Q9Ci4mtls4c=;
+        b=d/EG75l/gNmdfB3QvjeSSx38STsuf1tHFF1QXPjyi9/+gSrliCLgwe330rcXe99Crt
+         OY7I9s5iSRCGgbqdA5L4XY9lZFz8GToU4M6dIiXJ2Sw7ORVEbfkGw6fl5r/IewHp0h2l
+         VmBu7sAknuh08NXab05/HkcnmGHrQmgRxUmEWnlWDQGtBZSh07Iw8NrVQJef5QIiTO5G
+         u/TdiujHYQeJ8aVngM6mcGspNu9oh3U4cAY5UxEzTlUqEMcCfsIRhOVEuOSrzbuhsMFx
+         8UCswlySdoeD6bTjJLwJLolHxBdJ3Y8lnimcS55VXJ+vBa1DpI5QvTTOBfjFMZ2cPILb
+         8mWw==
+X-Gm-Message-State: APjAAAWsIDDKjwnNg6U8/CF09ngsH9Dpn1Bz0KepX1egMWBH30tU8TsY
+        Xq49vSmRoNtt1tjlNsQKXCwURTukAaDsNDohxPKrlw==
+X-Google-Smtp-Source: APXvYqyVFquGjXhN70UMr779J+DpaHvuoyJcT5E5q7SCuYrvqDrm5fabMf10dubNfnA1j7pgstupffbjFBuG45z+GV8=
+X-Received: by 2002:a50:f5d0:: with SMTP id x16mr100271128edm.287.1558673653525;
+ Thu, 23 May 2019 21:54:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190521101457.GK32329@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190523210651.80902-1-fklassen@appneta.com> <20190523210651.80902-2-fklassen@appneta.com>
+ <CAF=yD-Jf95De=z_nx9WFkGDa6+nRUqM_1PqGkjwaFPzOe+PfXg@mail.gmail.com> <AE8E0772-7256-4B9C-A990-96930E834AEE@appneta.com>
+In-Reply-To: <AE8E0772-7256-4B9C-A990-96930E834AEE@appneta.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Fri, 24 May 2019 00:53:37 -0400
+Message-ID: <CAF=yD-LtAKpND601LQrC1+=iF6spSUXVdUapcsbJdv5FYa=5Jg@mail.gmail.com>
+Subject: Re: [PATCH net 1/4] net/udp_gso: Allow TX timestamp with UDP GSO
+To:     Fred Klassen <fklassen@appneta.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 23, 2019 at 9:38 PM Fred Klassen <fklassen@appneta.com> wrote:
+>
+> > Thanks for the report.
+> >
+> > Zerocopy notification reference count is managed in skb_segment. That
+> > should work.
+> >
+> > Support for timestamping with the new GSO feature is indeed an
+> > oversight. The solution is similar to how TCP associates the timestamp
+> > with the right segment in tcp_gso_tstamp.
+> >
+> > Only, I think we want to transfer the timestamp request to the last
+> > datagram, not the first. For send timestamp, the final byte leaving
+> > the host is usually more interesting.
+>
+> TX Timestamping the last packet of a datagram is something that would
+> work poorly for our application. We need to measure the time it takes
+> for the first bit that is sent until the first bit of the last packet is received.
+> Timestaming the last packet of a burst seems somewhat random to me
+> and would not be useful. Essentially we would be timestamping a
+> random byte in a UDP GSO buffer.
+>
+> I believe there is a precedence for timestamping the first packet. With
+> IPv4 packets, the first packet is timestamped and the remaining fragments
+> are not.
 
+Interesting. TCP timestamping takes the opposite choice and does
+timestamp the last byte in the sendmsg request.
 
-On 05/21/2019 03:44 PM, Michal Hocko wrote:
-> On Mon 20-05-19 10:48:35, Anshuman Khandual wrote:
->> The arm64 page table dump code can race with concurrent modification of the
->> kernel page tables. When a leaf entries are modified concurrently, the dump
->> code may log stale or inconsistent information for a VA range, but this is
->> otherwise not harmful.
->>
->> When intermediate levels of table are freed, the dump code will continue to
->> use memory which has been freed and potentially reallocated for another
->> purpose. In such cases, the dump code may dereference bogus addresses,
->> leading to a number of potential problems.
->>
->> Intermediate levels of table may by freed during memory hot-remove,
->> which will be enabled by a subsequent patch. To avoid racing with
->> this, take the memory hotplug lock when walking the kernel page table.
-> 
-> I've had a comment on this patch in the previous version which didn't
-> get answered completely AFAICS. If you really insist then please make
-> sure to describe why does this really matter because this will make
-> any further changes to the hotplug locking harder and I would to see
-> that it is worth the additional trouble.
+It sounds like it depends on the workload. Perhaps this then needs to
+be configurable with an SOF_.. flag.
 
-Hello Michal,
-
-I was under the impression (seems wrongful now) that the previous discussion
-was complete. Nonetheless we can still discuss it further. Mark has responded
-on the previous V3 thread [1] and because this particular patch does not have
-any changes from last time, we can continue discussing this in that thread.
-
-[1] https://lkml.org/lkml/2019/5/22/613   
-
-- Anshuman
+Another option would be to return a timestamp for every segment. But
+they would all return the same tskey. And it causes different behavior
+with and without hardware offload.
