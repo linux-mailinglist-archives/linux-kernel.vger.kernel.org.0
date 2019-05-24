@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02E1A2A1F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 02:05:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06E6B2A1F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 02:05:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbfEYAFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 20:05:18 -0400
+        id S1726468AbfEYAF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 20:05:27 -0400
 Received: from mga01.intel.com ([192.55.52.88]:36240 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbfEYAFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1725996AbfEYAFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 24 May 2019 20:05:17 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -29,9 +29,9 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ravi V Shankar" <ravi.v.shankar@intel.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v3 2/5] x86/umwait: Initialize umwait control values
-Date:   Fri, 24 May 2019 16:55:59 -0700
-Message-Id: <1558742162-73402-3-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v3 3/5] x86/umwait: Add sysfs interface to control umwait C0.2 state
+Date:   Fri, 24 May 2019 16:56:00 -0700
+Message-Id: <1558742162-73402-4-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1558742162-73402-1-git-send-email-fenghua.yu@intel.com>
 References: <1558742162-73402-1-git-send-email-fenghua.yu@intel.com>
@@ -40,136 +40,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-umwait or tpause allows processor to enter a light-weight
-power/performance optimized state (C0.1 state) or an improved
-power/performance optimized state (C0.2 state) for a period
-specified by the instruction or until the system time limit or until
-a store to the monitored address range in umwait.
+C0.2 state in umwait and tpause instructions can be enabled or disabled
+on a processor through IA32_UMWAIT_CONTROL MSR register.
 
-IA32_UMWAIT_CONTROL MSR register allows kernel to enable/disable C0.2
-on the processor and set maximum time the processor can reside in
-C0.1 or C0.2.
+By default, C0.2 is enabled and the user wait instructions result in
+lower power consumption with slower wakeup time.
 
-By default C0.2 is enabled so the user wait instructions can enter the
-C0.2 state to save more power with slower wakeup time.
+But in real time systems which requrie faster wakeup time although power
+savings could be smaller, the administrator needs to disable C0.2 and all
+C0.2 requests from user applications revert to C0.1.
 
-Default maximum umwait time is 100000 cycles. A later patch provides
-a sysfs interface to adjust this value.
+A sysfs interface "/sys/devices/system/cpu/umwait_control/enable_c0_2" is
+created to allow the administrator to control C0.2 state during run time.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 Reviewed-by: Ashok Raj <ashok.raj@intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
 ---
- arch/x86/include/asm/msr-index.h |  4 ++
- arch/x86/power/Makefile          |  1 +
- arch/x86/power/umwait.c          | 75 ++++++++++++++++++++++++++++++++
- 3 files changed, 80 insertions(+)
- create mode 100644 arch/x86/power/umwait.c
+ arch/x86/power/umwait.c | 75 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 71 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 979ef971cc78..af502e947298 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -61,6 +61,10 @@
- #define MSR_PLATFORM_INFO_CPUID_FAULT_BIT	31
- #define MSR_PLATFORM_INFO_CPUID_FAULT		BIT_ULL(MSR_PLATFORM_INFO_CPUID_FAULT_BIT)
- 
-+#define MSR_IA32_UMWAIT_CONTROL			0xe1
-+#define MSR_IA32_UMWAIT_CONTROL_C02		BIT(0)
-+#define MSR_IA32_UMWAIT_CONTROL_MAX_TIME	0xfffffffc
-+
- #define MSR_PKG_CST_CONFIG_CONTROL	0x000000e2
- #define NHM_C3_AUTO_DEMOTE		(1UL << 25)
- #define NHM_C1_AUTO_DEMOTE		(1UL << 26)
-diff --git a/arch/x86/power/Makefile b/arch/x86/power/Makefile
-index 37923d715741..62e2c609d1fe 100644
---- a/arch/x86/power/Makefile
-+++ b/arch/x86/power/Makefile
-@@ -8,3 +8,4 @@ CFLAGS_cpu.o	:= $(nostackp)
- 
- obj-$(CONFIG_PM_SLEEP)		+= cpu.o
- obj-$(CONFIG_HIBERNATION)	+= hibernate_$(BITS).o hibernate_asm_$(BITS).o hibernate.o
-+obj-y				+= umwait.o
 diff --git a/arch/x86/power/umwait.c b/arch/x86/power/umwait.c
-new file mode 100644
-index 000000000000..80cc53a9c2d0
---- /dev/null
+index 80cc53a9c2d0..cf5de7e1cc24 100644
+--- a/arch/x86/power/umwait.c
 +++ b/arch/x86/power/umwait.c
-@@ -0,0 +1,75 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/syscore_ops.h>
-+#include <linux/suspend.h>
-+#include <linux/cpu.h>
-+#include <asm/msr.h>
-+
-+static bool umwait_c0_2_enabled = true;
-+/* Umwait max time is in TSC-quanta. Bits[1:0] are zero. */
-+static u32 umwait_max_time = 100000;
-+
-+/* Return value that will be used to set IA32_UMWAIT_CONTROL MSR */
-+static u32 umwait_compute_msr_value(void)
+@@ -7,6 +7,7 @@
+ static bool umwait_c0_2_enabled = true;
+ /* Umwait max time is in TSC-quanta. Bits[1:0] are zero. */
+ static u32 umwait_max_time = 100000;
++static DEFINE_MUTEX(umwait_lock);
+ 
+ /* Return value that will be used to set IA32_UMWAIT_CONTROL MSR */
+ static u32 umwait_compute_msr_value(void)
+@@ -22,7 +23,7 @@ static u32 umwait_compute_msr_value(void)
+ 	       (umwait_max_time & MSR_IA32_UMWAIT_CONTROL_MAX_TIME);
+ }
+ 
+-static void umwait_control_msr_update(void)
++static void umwait_control_msr_update(void *unused)
+ {
+ 	u32 msr_val;
+ 
+@@ -33,7 +34,9 @@ static void umwait_control_msr_update(void)
+ /* Set up IA32_UMWAIT_CONTROL MSR on CPU using the current global setting. */
+ static int umwait_cpu_online(unsigned int cpu)
+ {
+-	umwait_control_msr_update();
++	mutex_lock(&umwait_lock);
++	umwait_control_msr_update(NULL);
++	mutex_unlock(&umwait_lock);
+ 
+ 	return 0;
+ }
+@@ -49,24 +52,88 @@ static int umwait_cpu_online(unsigned int cpu)
+  */
+ static void umwait_syscore_resume(void)
+ {
+-	umwait_control_msr_update();
++	/* No need to lock because only BP is running now. */
++	umwait_control_msr_update(NULL);
+ }
+ 
+ static struct syscore_ops umwait_syscore_ops = {
+ 	.resume	= umwait_syscore_resume,
+ };
+ 
++static ssize_t
++enable_c0_2_show(struct device *dev, struct device_attribute *attr,
++		 char *buf)
 +{
-+	/*
-+	 * When bit 0 in IA32_UMWAIT_CONTROL MSR is 1, C0.2 is disabled.
-+	 * Otherwise, C0.2 is enabled.
-+	 * So the value in bit 0 is opposite of umwait_c0_2_enabled.
-+	 */
-+	u32 umwait_c0_2_disabled = umwait_c0_2_enabled ? 0 : 1;
-+
-+	return (umwait_c0_2_disabled & MSR_IA32_UMWAIT_CONTROL_C02) |
-+	       (umwait_max_time & MSR_IA32_UMWAIT_CONTROL_MAX_TIME);
++	return sprintf(buf, "%d\n", umwait_c0_2_enabled);
 +}
 +
-+static void umwait_control_msr_update(void)
++static void umwait_control_msr_update_all_cpus(void)
 +{
 +	u32 msr_val;
 +
 +	msr_val = umwait_compute_msr_value();
-+	wrmsr(MSR_IA32_UMWAIT_CONTROL, msr_val, 0);
++	/* All CPUs have same umwait control setting */
++	on_each_cpu(umwait_control_msr_update, NULL, 1);
 +}
 +
-+/* Set up IA32_UMWAIT_CONTROL MSR on CPU using the current global setting. */
-+static int umwait_cpu_online(unsigned int cpu)
++static ssize_t enable_c0_2_store(struct device *dev,
++				 struct device_attribute *attr,
++				 const char *buf, size_t count)
 +{
-+	umwait_control_msr_update();
-+
-+	return 0;
-+}
-+
-+/*
-+ * On resume, set up IA32_UMWAIT_CONTROL MSR on BP which is the only active
-+ * CPU at this time. Setting up the MSR on APs when they are re-added later
-+ * using CPU hotplug.
-+ * The MSR on BP is supposed not to be changed during suspend and thus it's
-+ * unnecessary to set it again during resume from suspend. But at this point
-+ * we don't know resume is from suspend or hiberation. To simplify the
-+ * situation, just set up the MSR on resume from suspend.
-+ */
-+static void umwait_syscore_resume(void)
-+{
-+	umwait_control_msr_update();
-+}
-+
-+static struct syscore_ops umwait_syscore_ops = {
-+	.resume	= umwait_syscore_resume,
-+};
-+
-+static int __init umwait_init(void)
-+{
++	bool c0_2_enabled;
 +	int ret;
 +
-+	if (!boot_cpu_has(X86_FEATURE_WAITPKG))
-+		return -ENODEV;
-+
-+	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "umwait/intel:online",
-+				umwait_cpu_online, NULL);
-+	if (ret < 0)
++	ret = kstrtobool(buf, &c0_2_enabled);
++	if (ret)
 +		return ret;
 +
-+	register_syscore_ops(&umwait_syscore_ops);
++	mutex_lock(&umwait_lock);
 +
-+	return 0;
++	if (umwait_c0_2_enabled == c0_2_enabled)
++		goto out_unlock;
++
++	umwait_c0_2_enabled = c0_2_enabled;
++	/* Enable/disable C0.2 state on all CPUs */
++	umwait_control_msr_update_all_cpus();
++
++out_unlock:
++	mutex_unlock(&umwait_lock);
++
++	return count;
 +}
-+device_initcall(umwait_init);
++static DEVICE_ATTR_RW(enable_c0_2);
++
++static struct attribute *umwait_attrs[] = {
++	&dev_attr_enable_c0_2.attr,
++	NULL
++};
++
++static struct attribute_group umwait_attr_group = {
++	.attrs = umwait_attrs,
++	.name = "umwait_control",
++};
++
+ static int __init umwait_init(void)
+ {
++	struct device *dev;
+ 	int ret;
+ 
+ 	if (!boot_cpu_has(X86_FEATURE_WAITPKG))
+ 		return -ENODEV;
+ 
++	/* Add umwait control interface. */
++	dev = cpu_subsys.dev_root;
++	ret = sysfs_create_group(&dev->kobj, &umwait_attr_group);
++	if (ret)
++		return ret;
++
+ 	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "umwait/intel:online",
+ 				umwait_cpu_online, NULL);
+-	if (ret < 0)
++	if (ret < 0) {
++		sysfs_remove_group(&dev->kobj, &umwait_attr_group);
++
+ 		return ret;
++	}
+ 
+ 	register_syscore_ops(&umwait_syscore_ops);
+ 
 -- 
 2.19.1
 
