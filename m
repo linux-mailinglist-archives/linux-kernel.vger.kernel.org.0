@@ -2,98 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47328295E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7109295EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:36:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390525AbfEXKdq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 06:33:46 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34591 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389942AbfEXKdq (ORCPT
+        id S2390623AbfEXKgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 06:36:46 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:60716 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389448AbfEXKgq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 06:33:46 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f8so9492016wrt.1;
-        Fri, 24 May 2019 03:33:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xy3TJvnccS7kGUcSZLX9sdDSzruBA3cqxWDF1khBA+4=;
-        b=a5ovVBZw+lCIGJjdJVOqP7nQ8+/GJah+4KRJNDsic1i593Xr2molZadc/TTL321dhs
-         6h+tDBCJh+WhiklO4rE7x07qlQCGLadG/4db6XsJZ7moFJvtkuRQfYWyfjS2T9GngewH
-         bMnu2E9D2iCPv0O9425dOC58fFLEK1jnINmW17ztiyXog0siLAICmazaUr/J4MiDKQOd
-         z+7yzpWYUgIY+NfxG8GjpXRohOqAQUayvuosE7qiIzeziUuxFWlUaBSTUWZCsFXFqMkb
-         eLqN7GY91W5+taYvQfV+j+e34K43aY0vn8KSGGULj/ouBjNlp/RcGHHtbYFnrV6g4gmA
-         +uaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=xy3TJvnccS7kGUcSZLX9sdDSzruBA3cqxWDF1khBA+4=;
-        b=XNKs8gEz1CNReDq4fOZUu0fPS44gKtmO5eYkHQWSmQx2uhU6jqUhLCWLYOxI21oUfZ
-         IDMb6lJquRbDnX/q+9nqPSU9i44mALiCgfvLc1UmKJ7fYE54kYq2mhPlWxS/efMkz8zL
-         +HzspWOxlhyTMt8KAXQ5wbDzmyPisLEN1tAC87FBkZNWwmTxLz6EfUisPWiKbguSKK/C
-         LaZ9gpQ4cJ4Qsa5bK/9uGL2d/qbv83YyPLKNBHHbnw19f9O6q2s/dCswRrW1yKtJuzcp
-         rABfyc56ogGFI3DtmPasyoDvG3qiTUghGhLcz7pBCx0Ea5nednw9qt0QlDEzVkzKGWxa
-         /DBQ==
-X-Gm-Message-State: APjAAAUkKg54p3EMTue7hTZvEvSnJR/1+dDUC6QLUAwz/XPwTUeMkTWP
-        IZ9hWAFZZMVdv+qFNk17ysdoI22M
-X-Google-Smtp-Source: APXvYqxaatb4farmltlaj0cwWSTh0PzBX2v0mslJ3vCUXBT5o/rX4TmsParooCTTZ8kwa95GD1gYcw==
-X-Received: by 2002:adf:ec0f:: with SMTP id x15mr63377772wrn.120.1558694023967;
-        Fri, 24 May 2019 03:33:43 -0700 (PDT)
-Received: from macbookpro.malat.net ([2a01:e34:ee1e:860:6f23:82e6:aa2d:bbd1])
-        by smtp.gmail.com with ESMTPSA id f16sm1976736wrx.58.2019.05.24.03.33.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 May 2019 03:33:43 -0700 (PDT)
-Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 8D3EB11415E7; Fri, 24 May 2019 12:33:41 +0200 (CEST)
-From:   Mathieu Malaterre <malat@debian.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     trivial@kernel.org, kernel-janitors@vger.kernel.org,
-        Mathieu Malaterre <malat@debian.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] clocksource: Move inline keyword to the beginning of function declarations
-Date:   Fri, 24 May 2019 12:33:39 +0200
-Message-Id: <20190524103339.28787-1-malat@debian.org>
-X-Mailer: git-send-email 2.20.1
+        Fri, 24 May 2019 06:36:46 -0400
+Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4OAZW6N082260;
+        Fri, 24 May 2019 19:35:32 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
+ Fri, 24 May 2019 19:35:32 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4OAZQQO082192
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 24 May 2019 19:35:32 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] printk: Monitor change of console loglevel.
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <1557501546-10263-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20190514091917.GA26804@jagdpanzerIV>
+ <3e2cf31d-25af-e7c3-b308-62f64d650974@i-love.sakura.ne.jp>
+ <4d1a4b51-999b-63c6-5ce3-a704013cecb6@i-love.sakura.ne.jp>
+ <CACT4Y+YNNzsMHpjDUpfHNYJMqYA+foHtSBdrg_NSeKJKadoGwQ@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <68486fcf-325f-fbd3-adb4-14666d477917@i-love.sakura.ne.jp>
+Date:   Fri, 24 May 2019 19:35:28 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACT4Y+YNNzsMHpjDUpfHNYJMqYA+foHtSBdrg_NSeKJKadoGwQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The inline keyword was not at the beginning of the function declarations.
-Fix the following warnings triggered when using W=1:
+On 2019/05/24 16:55, Dmitry Vyukov wrote:
+> On Thu, May 23, 2019 at 11:57 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>
+>> Well, the culprit of this problem might be syz_execute_func().
+>>
+>>   https://twitter.com/ed_maste/status/1131165065485398016
+>>
+>> Then, blacklisting specific syscalls/arguments might not work.
+>> We will need to guard specific paths on the kernel side using
+>> some kernel config option...
+> 
+> Yes, that's a nasty issue. We could stop running random code, or
+> setuid into nobody, but then we will lose lots of test coverage...
+> 
 
-  kernel/time/clocksource.c:108:1: warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
-  kernel/time/clocksource.c:113:1: warning: 'inline' is not at beginning of declaration [-Wold-style-declaration]
-
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- kernel/time/clocksource.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 3bcc19ceb073..fff5f64981c6 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -105,12 +105,12 @@ static DEFINE_SPINLOCK(watchdog_lock);
- static int watchdog_running;
- static atomic_t watchdog_reset_pending;
- 
--static void inline clocksource_watchdog_lock(unsigned long *flags)
-+static inline void clocksource_watchdog_lock(unsigned long *flags)
- {
- 	spin_lock_irqsave(&watchdog_lock, *flags);
- }
- 
--static void inline clocksource_watchdog_unlock(unsigned long *flags)
-+static inline void clocksource_watchdog_unlock(unsigned long *flags)
- {
- 	spin_unlock_irqrestore(&watchdog_lock, *flags);
- }
--- 
-2.20.1
+I think that guarding specific paths on the kernel side is better.
+TOMOYO already added CONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING for
+avoid emitting WARNING: string and getting more test coverage. There are
+other codes emitting WARNING: string that confuses syzbot. If we guard
+critical paths like reboot/poweroff request that will destroy the target
+VM instance, we can get more test coverage while reducing pointless reports.
 
