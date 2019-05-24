@@ -2,192 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CCED295EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:36:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A7BB29601
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:38:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390646AbfEXKgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 06:36:50 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39903 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390106AbfEXKgt (ORCPT
+        id S2390717AbfEXKiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 06:38:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42420 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390583AbfEXKiW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 06:36:49 -0400
-Received: by mail-wm1-f65.google.com with SMTP id z23so4626379wma.4
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 03:36:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=P+Ps4soXhNKRq8iNC0OfOmvq/D++en0Ppi7wC4gKVx0=;
-        b=gEfcHnefDLO+ppOkR7MP9RLPlcs/38SUkWXB74AxVdIaislri8gPRcwyYUCN/5B2C7
-         089eb7fzZZ9gQ+AfzfePKfPQ7aSlqocafZdx57oycCGHQrZgNDU0l8r5X/A0EzKNhCzQ
-         6814qW4O90X0XEI6s9r2fMX4/zVhkDiSAJqMk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=P+Ps4soXhNKRq8iNC0OfOmvq/D++en0Ppi7wC4gKVx0=;
-        b=I8KFG+plin5WX2A2bLXLH5y8qS1htsFIMbFlanFv9YSCq7h1yTd4TT3lQlCGStfckk
-         5LhaLmvMYenblpC7sUdNp/8tCE0/z5qP4Ehru1pLzPcYq7q1K+jZDPK5VulRqbkoMbzR
-         rN+NFnVgIW0in/GjaRXkYTPEvegbXRVLK1QerNW895UMIRhte1WgrEwL59OvnHI0YUbF
-         rBOSRy+CV+wt17j3CKNL7cIQiDzw4AEabjY+TyTHUyIaxYQmhxU4OGwge9XVeKBvGHBM
-         FBSsvDh5Jwo+6mVhRT4ar1sAvFDVZwUwf42XnWcFXjdsU/Yb8cuADPDwr1CSbo598FOC
-         sHaQ==
-X-Gm-Message-State: APjAAAUCp0WfeiArWCn/PQagq6TNVNnwV5fRHGRBt7NhaUqlg2UAA5/S
-        1r9R10ZkwYoiuQemmi5FSd3b791yyKfDwA==
-X-Google-Smtp-Source: APXvYqwA0hRTekhpxAelht4GnryGiG0SywCCf5pEww/YaqRII7ojVdJRdLYUw200qQ0ItSvG2/tIbQ==
-X-Received: by 2002:a05:600c:2198:: with SMTP id e24mr2748337wme.92.1558694207340;
-        Fri, 24 May 2019 03:36:47 -0700 (PDT)
-Received: from localhost.localdomain (86.100.broadband17.iol.cz. [109.80.100.86])
-        by smtp.gmail.com with ESMTPSA id h12sm2438862wre.14.2019.05.24.03.36.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 24 May 2019 03:36:46 -0700 (PDT)
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     linux-kernel@vger.kernel.org
+        Fri, 24 May 2019 06:38:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1SIR/nalPssf/0C1EVzh7EOnaBoQ17v7Xe1OGlM5rzQ=; b=ee0aSNpWwygM7bJYH/G/7m8DJ
+        furwOdTstRcsrNpmN6Fq7aPPCYd1qriYL+0cGkWIpIHLqhGZ37wZt9y5WBYxirfSgiawpKxOngZRa
+        OlXZxOVYDAMUBWCCN7+NOR4XYxA4iEWLObX/+hB2Osox4bvPTH+Mf3vFeTrTSGxRwCY2f3IOy4NLl
+        AByn3HSQKiBeHrmeS3w1Fc1nTXquwTd9QJHWETl+2H0XVaAI8Pl0m4bRdoOYU7qBilW2NO7xAIn4I
+        fk6P9Sa0/wnKYE1Hv3bn4kHNE9bYrYeBJD9k66Qq5HlyETDzDRcXbG3u5CnH9oS8zaqyo9BP8JbCN
+        YGudmZBJQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hU7Zu-0006du-ET; Fri, 24 May 2019 10:37:34 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0835320281C32; Fri, 24 May 2019 12:37:32 +0200 (CEST)
+Date:   Fri, 24 May 2019 12:37:31 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mark Rutland <mark.rutland@arm.com>
 Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH] rcu: Prevent evaluation of rcu_assign_pointer()
-Date:   Fri, 24 May 2019 12:36:37 +0200
-Message-Id: <1558694197-19295-1-git-send-email-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.7.4
+        linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        aou@eecs.berkeley.edu, arnd@arndb.de, bp@alien8.de,
+        catalin.marinas@arm.com, davem@davemloft.net, fenghua.yu@intel.com,
+        heiko.carstens@de.ibm.com, herbert@gondor.apana.org.au,
+        ink@jurassic.park.msu.ru, jhogan@kernel.org, linux@armlinux.org.uk,
+        mattst88@gmail.com, mingo@kernel.org, mpe@ellerman.id.au,
+        palmer@sifive.com, paul.burton@mips.com, paulus@samba.org,
+        ralf@linux-mips.org, rth@twiddle.net, stable@vger.kernel.org,
+        tglx@linutronix.de, tony.luck@intel.com, vgupta@synopsys.com,
+        gregkh@linuxfoundation.org, jhansen@vmware.com, vdasa@vmware.com,
+        aditr@vmware.com, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 00/18] locking/atomic: atomic64 type cleanup
+Message-ID: <20190524103731.GN2606@hirez.programming.kicks-ass.net>
+References: <20190522132250.26499-1-mark.rutland@arm.com>
+ <20190523083013.GA4616@andrea>
+ <20190523101926.GA3370@lakrids.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190523101926.GA3370@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Paul [1]:
+On Thu, May 23, 2019 at 11:19:26AM +0100, Mark Rutland wrote:
 
- "Given that a quick (and perhaps error-prone) search of the uses
-  of rcu_assign_pointer() in v5.1 didn't find a single use of the
-  return value, let's please instead change the documentation and
-  implementation to eliminate the return value."
+> [mark@lakrids:~/src/linux]% git grep '\(return\|=\)\s\+atomic\(64\)\?_set'
+> include/linux/vmw_vmci_defs.h:  return atomic_set((atomic_t *)var, (u32)new_val);
+> include/linux/vmw_vmci_defs.h:  return atomic64_set(var, new_val);
+> 
 
-[1] https://lkml.kernel.org/r/20190523135013.GL28207@linux.ibm.com
+Oh boy, what a load of crap you just did find.
 
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: rcu@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Sasha Levin <sashal@kernel.org>
+How about something like the below? I've not read how that buffer is
+used, but the below preserves all broken without using atomic*_t.
+
 ---
-Matthew, Sasha:
-
-The patch is based on -rcu/dev; I took the liberty of applying the
-same change to your #defines in:
-
- tools/testing/radix-tree/linux/rcupdate.h
- tools/include/linux/rcu.h
-
-but I admit that I'm not familiar with their uses: please shout if
-you have any objections with it.
----
- Documentation/RCU/whatisRCU.txt           |  8 ++++----
- include/linux/rcupdate.h                  |  5 ++---
- tools/include/linux/rcu.h                 | 11 +++++++++--
- tools/testing/radix-tree/linux/rcupdate.h |  5 ++++-
- 4 files changed, 19 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
-index 981651a8b65d2..f99a87b9a88fa 100644
---- a/Documentation/RCU/whatisRCU.txt
-+++ b/Documentation/RCU/whatisRCU.txt
-@@ -212,7 +212,7 @@ synchronize_rcu()
+diff --git a/include/linux/vmw_vmci_defs.h b/include/linux/vmw_vmci_defs.h
+index 0c06178e4985..8ee472118f54 100644
+--- a/include/linux/vmw_vmci_defs.h
++++ b/include/linux/vmw_vmci_defs.h
+@@ -438,8 +438,8 @@ enum {
+ struct vmci_queue_header {
+ 	/* All fields are 64bit and aligned. */
+ 	struct vmci_handle handle;	/* Identifier. */
+-	atomic64_t producer_tail;	/* Offset in this queue. */
+-	atomic64_t consumer_head;	/* Offset in peer queue. */
++	u64 producer_tail;	/* Offset in this queue. */
++	u64 consumer_head;	/* Offset in peer queue. */
+ };
  
- rcu_assign_pointer()
- 
--	typeof(p) rcu_assign_pointer(p, typeof(p) v);
-+	rcu_assign_pointer(p, typeof(p) v);
- 
- 	Yes, rcu_assign_pointer() -is- implemented as a macro, though it
- 	would be cool to be able to declare a function in this manner.
-@@ -220,9 +220,9 @@ rcu_assign_pointer()
- 
- 	The updater uses this function to assign a new value to an
- 	RCU-protected pointer, in order to safely communicate the change
--	in value from the updater to the reader.  This function returns
--	the new value, and also executes any memory-barrier instructions
--	required for a given CPU architecture.
-+	in value from the updater to the reader.  This macro does not
-+	evaluate to an rvalue, but it does execute any memory-barrier
-+	instructions required for a given CPU architecture.
- 
- 	Perhaps just as important, it serves to document (1) which
- 	pointers are protected by RCU and (2) the point at which a
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 915460ec08722..a5f61a08e65fc 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -367,7 +367,7 @@ static inline void rcu_preempt_sleep_check(void) { }
-  * other macros that it invokes.
+ /*
+@@ -740,13 +740,9 @@ static inline void *vmci_event_data_payload(struct vmci_event_data *ev_data)
+  * prefix will be used, so correctness isn't an issue, but using a
+  * 64bit operation still adds unnecessary overhead.
   */
- #define rcu_assign_pointer(p, v)					      \
--({									      \
-+do {									      \
- 	uintptr_t _r_a_p__v = (uintptr_t)(v);				      \
- 	rcu_check_sparse(p, __rcu);				      \
- 									      \
-@@ -375,8 +375,7 @@ static inline void rcu_preempt_sleep_check(void) { }
- 		WRITE_ONCE((p), (typeof(p))(_r_a_p__v));		      \
- 	else								      \
- 		smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
--	_r_a_p__v;							      \
--})
-+} while (0)
- 
- /**
-  * rcu_swap_protected() - swap an RCU and a regular pointer
-diff --git a/tools/include/linux/rcu.h b/tools/include/linux/rcu.h
-index 7d02527e5bcea..01a435ee48cd6 100644
---- a/tools/include/linux/rcu.h
-+++ b/tools/include/linux/rcu.h
-@@ -19,7 +19,14 @@ static inline bool rcu_is_watching(void)
- 	return false;
+-static inline u64 vmci_q_read_pointer(atomic64_t *var)
++static inline u64 vmci_q_read_pointer(u64 *var)
+ {
+-#if defined(CONFIG_X86_32)
+-	return atomic_read((atomic_t *)var);
+-#else
+-	return atomic64_read(var);
+-#endif
++	return READ_ONCE(*(unsigned long *)var);
  }
  
--#define rcu_assign_pointer(p, v) ((p) = (v))
--#define RCU_INIT_POINTER(p, v) p=(v)
-+#define rcu_assign_pointer(p, v)				\
-+do {								\
-+	(p) = (v);						\
-+} while (0)
-+
-+#define RCU_INIT_POINTER(p, v)					\
-+do {								\
-+	(p) = (v);						\
-+} while (0)
+ /*
+@@ -755,23 +751,17 @@ static inline u64 vmci_q_read_pointer(atomic64_t *var)
+  * never exceeds a 32bit value in this case. On 32bit SMP, using a
+  * locked cmpxchg8b adds unnecessary overhead.
+  */
+-static inline void vmci_q_set_pointer(atomic64_t *var,
+-				      u64 new_val)
++static inline void vmci_q_set_pointer(u64 *var, u64 new_val)
+ {
+-#if defined(CONFIG_X86_32)
+-	return atomic_set((atomic_t *)var, (u32)new_val);
+-#else
+-	return atomic64_set(var, new_val);
+-#endif
++	/* XXX buggered on big-endian */
++	WRITE_ONCE(*(unsigned long *)var, (unsigned long)new_val);
+ }
  
- #endif
-diff --git a/tools/testing/radix-tree/linux/rcupdate.h b/tools/testing/radix-tree/linux/rcupdate.h
-index fd280b070fdb1..48212f3a758e6 100644
---- a/tools/testing/radix-tree/linux/rcupdate.h
-+++ b/tools/testing/radix-tree/linux/rcupdate.h
-@@ -7,6 +7,9 @@
- #define rcu_dereference_raw(p) rcu_dereference(p)
- #define rcu_dereference_protected(p, cond) rcu_dereference(p)
- #define rcu_dereference_check(p, cond) rcu_dereference(p)
--#define RCU_INIT_POINTER(p, v)	(p) = (v)
-+#define RCU_INIT_POINTER(p, v)					\
-+do {								\
-+	(p) = (v);						\
-+} while (0)
+ /*
+  * Helper to add a given offset to a head or tail pointer. Wraps the
+  * value of the pointer around the max size of the queue.
+  */
+-static inline void vmci_qp_add_pointer(atomic64_t *var,
+-				       size_t add,
+-				       u64 size)
++static inline void vmci_qp_add_pointer(u64 *var, size_t add, u64 size)
+ {
+ 	u64 new_val = vmci_q_read_pointer(var);
  
- #endif
--- 
-2.7.4
-
+@@ -848,8 +838,8 @@ static inline void vmci_q_header_init(struct vmci_queue_header *q_header,
+ 				      const struct vmci_handle handle)
+ {
+ 	q_header->handle = handle;
+-	atomic64_set(&q_header->producer_tail, 0);
+-	atomic64_set(&q_header->consumer_head, 0);
++	q_header->producer_tail = 0;
++	q_header->consumer_head = 0;
+ }
+ 
+ /*
