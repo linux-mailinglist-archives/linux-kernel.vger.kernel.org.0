@@ -2,105 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B773F291F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 09:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B5AF29203
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 09:44:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389178AbfEXHmv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 03:42:51 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:27286 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388960AbfEXHmv (ORCPT
+        id S2389206AbfEXHoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 03:44:18 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:16299 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388911AbfEXHoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 03:42:51 -0400
-X-UUID: d50e7404e6a24342ab317cff1f4924c2-20190524
-X-UUID: d50e7404e6a24342ab317cff1f4924c2-20190524
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <neal.liu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1760047958; Fri, 24 May 2019 15:42:37 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 24 May 2019 15:42:34 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 24 May 2019 15:42:34 +0800
-Message-ID: <1558683754.5671.4.camel@mtkswgap22>
-Subject: Re: [PATCH 3/3] hwrng: add mt67xx-rng driver
-From:   Neal Liu <neal.liu@mediatek.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        wsd_upstream <wsd_upstream@mediatek.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "mpm@selenic.com" <mpm@selenic.com>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        Crystal Guo =?UTF-8?Q?=28=E9=83=AD=E6=99=B6=29?= 
-        <Crystal.Guo@mediatek.com>, Neal Liu <neal.liu@mediatek.com>
-Date:   Fri, 24 May 2019 15:42:34 +0800
-In-Reply-To: <20190510063915.kwqy3e5urs6j7ity@gondor.apana.org.au>
-References: <1557287937-2410-1-git-send-email-neal.liu@mediatek.com>
-         <1557287937-2410-4-git-send-email-neal.liu@mediatek.com>
-         <12193108.aNnqf5ydOJ@tauon.chronox.de>
-         <1557311737.11818.11.camel@mtkswgap22>
-         <20190509052649.xfkgb3qd7rhcgktj@gondor.apana.org.au>
-         <1557413686.23445.6.camel@mtkswgap22>
-         <20190510063915.kwqy3e5urs6j7ity@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Fri, 24 May 2019 03:44:16 -0400
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Christian.Gromm@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Christian.Gromm@microchip.com";
+  x-sender="Christian.Gromm@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Christian.Gromm@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; spf=Pass smtp.mailfrom=Christian.Gromm@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+X-IronPort-AV: E=Sophos;i="5.60,506,1549954800"; 
+   d="scan'208";a="34292066"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 24 May 2019 00:44:15 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 24 May 2019 00:43:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gAm2YwAZ/EmePgHMsx/on3S5wg7TWPQxUKqD3gJrDwE=;
+ b=Q3BVUNODh0DnzX7/DUsZruTT/duaEpFXg+ysxob2XfL9Jil94ScxuLr8J8wBTEgiy9147lhcwZ5LqGKoZGpcIgk2BXbaY2cpu0h1KRUzxJWOjKfOMgKAIk29QGk9S3YGp16Lh5eHXcfrDK9uq464qAX/hvYF+KHRyRjal7R2oEU=
+Received: from DM6PR11MB3705.namprd11.prod.outlook.com (20.178.231.155) by
+ DM6PR11MB3499.namprd11.prod.outlook.com (20.177.220.92) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1922.18; Fri, 24 May 2019 07:43:34 +0000
+Received: from DM6PR11MB3705.namprd11.prod.outlook.com
+ ([fe80::489a:6dfb:8f5a:4e32]) by DM6PR11MB3705.namprd11.prod.outlook.com
+ ([fe80::489a:6dfb:8f5a:4e32%2]) with mapi id 15.20.1922.018; Fri, 24 May 2019
+ 07:43:34 +0000
+From:   <Christian.Gromm@microchip.com>
+To:     <linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <nishkadg.linux@gmail.com>, <devel@driverdev.osuosl.org>
+Subject: Re: [PATCH] staging: most: usb: Remove variable frame_size
+Thread-Topic: [PATCH] staging: most: usb: Remove variable frame_size
+Thread-Index: AQHVEWru4bAmJ43IiUKRHTPXdpRoOqZ55vcA
+Date:   Fri, 24 May 2019 07:43:34 +0000
+Message-ID: <1558684034.16425.5.camel@microchip.com>
+References: <20190523132334.29611-1-nishkadg.linux@gmail.com>
+In-Reply-To: <20190523132334.29611-1-nishkadg.linux@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [62.154.213.229]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c9644965-a449-4c6c-a6f8-08d6e01b8698
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:DM6PR11MB3499;
+x-ms-traffictypediagnostic: DM6PR11MB3499:
+x-microsoft-antispam-prvs: <DM6PR11MB34992CCEBD96F73D9C6995C4F8020@DM6PR11MB3499.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:229;
+x-forefront-prvs: 0047BC5ADE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(376002)(136003)(346002)(189003)(199004)(2501003)(66556008)(76176011)(6246003)(110136005)(26005)(8936002)(2201001)(86362001)(71200400001)(71190400001)(186003)(99286004)(316002)(53936002)(486006)(103116003)(68736007)(25786009)(11346002)(5660300002)(476003)(66476007)(2616005)(446003)(229853002)(8676002)(6436002)(3846002)(66066001)(14454004)(6116002)(6512007)(64756008)(73956011)(66446008)(66946007)(91956017)(76116006)(81166006)(478600001)(102836004)(6486002)(14444005)(6506007)(36756003)(256004)(305945005)(81156014)(2906002)(72206003)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR11MB3499;H:DM6PR11MB3705.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: hvs1JZ4V4E2EvKzsjAq6a9DrncC+raw6BZJx3yPyztiCP+hckx3HACx1aTTnGU0paRBYAPrJxQNIRDKDvnF+/DoZs5zhdqamVQ10sBlMpbQJ5hdgrZeVd3qs+Gs0Jszu/PZ16YjgbLvyySMpU8f2tSWSbPcDdjvbdrbkIz+aDKsg+E8tT3JLL8gYhLmNBHICpkDKz+YfnD43X0dSda+GJHHF5udZiUjupunmPHE08wNjt+lc7wj9C3OVgcOnXCxRUW7yHr0OnGYyjQ9tH25Dhtfpw+r2VYYpSlKs8vIJxX/gMBp458A5fM50tb+V3LAVXsCuK5C8Ez09Op4GfF4uVvlXajUS6ZGucjXCJB4+2Rt5gz+bMx4SVnGkyiz1nn7owJGxRV2Q1Z7tMjzeMowDf7DXLN9sjKo97J1Yo+1Fq60=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <16B117BE1C833640A6995931C6077582@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 89ED3B40815DB6F837B8DBB2E0E3948F37DDFAA36A07D69CF4F4116AD8AC13F82000:8
-X-MTK:  N
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9644965-a449-4c6c-a6f8-08d6e01b8698
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2019 07:43:34.6014
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: christian.gromm@microchip.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB3499
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Herbert,
-	Could you kindly help to review our patches?
-	Thanks
-
-From	Neal Liu <>
-Subject	[PATCH 0/3] MT67XX random number generator support
-Date	Wed, 8 May 2019 11:58:54 +0800
-share
-These patch series introduce a generic rng driver for Trustzone
-based kernel driver which would like to communicate with ATF
-SIP services.
-
-Patch #1 initials SMC fid table for Mediatek SIP interfaces and
-adds HWRNG related SMC call.
-
-Patch #2..3 adds mt67xx-rng kernel driver for Trustzone based SoCs.
-For Mediatek SoCs on ARMv8 with TrustZone enabled, peripherals like
-entropy sources is not accessible from normal world (linux) and
-rather accessible from secure world (ATF/TEE) only. This driver aims
-to provide a generic interface to ATF rng service.
-
-Neal Liu (3):
-  soc: mediatek: add SMC fid table for SIP interface
-  dt-bindings: rng: update bindings for MT67xx SoCs
-  hwrng: add mt67xx-rng driver
-
- Documentation/devicetree/bindings/rng/mtk-rng.txt |   13 ++-
- drivers/char/hw_random/Kconfig                    |   16 ++++
- drivers/char/hw_random/Makefile                   |    1 +
- drivers/char/hw_random/mt67xx-rng.c               |  104
-+++++++++++++++++++++
- include/linux/soc/mediatek/mtk_sip_svc.h          |   55 +++++++++++
- 5 files changed, 186 insertions(+), 3 deletions(-)
- create mode 100644 drivers/char/hw_random/mt67xx-rng.c
- create mode 100644 include/linux/soc/mediatek/mtk_sip_svc.h
-
--- 
-1.7.9.5
-
-Best Regards,
--Neal Liu
-
-
+T24gRG8sIDIwMTktMDUtMjMgYXQgMTg6NTMgKzA1MzAsIE5pc2hrYSBEYXNndXB0YSB3cm90ZToN
+Cj4gRXh0ZXJuYWwgRS1NYWlsDQo+IA0KPiANCj4gUmVtb3ZlIHZhcmlhYmxlIGZyYW1lX3NpemUg
+YXMgaXRzIG11bHRpcGxlIHVzYWdlcyBhcmUgYWxsIGluZGVwZW5kZW50DQo+IG9mDQo+IGVhY2gg
+b3RoZXIgYW5kIHNvIGNhbiBiZSByZXR1cm5lZCBzZXBhcmF0ZWx5Lg0KPiBJc3N1ZSBmb3VuZCB3
+aXRoIENvY2NpbmVsbGUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBOaXNoa2EgRGFzZ3VwdGEgPG5p
+c2hrYWRnLmxpbnV4QGdtYWlsLmNvbT4NCg0KQWNrZWQtYnk6IENocmlzdGlhbiBHcm9tbSA8Y2hy
+aXN0aWFuLmdyb21tQG1pY3JvY2hpcC5jb20+DQoNCj4gLS0tDQo+IMKgZHJpdmVycy9zdGFnaW5n
+L21vc3QvdXNiL3VzYi5jIHwgMTYgKysrKysrLS0tLS0tLS0tLQ0KPiDCoDEgZmlsZSBjaGFuZ2Vk
+LCA2IGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvc3RhZ2luZy9tb3N0L3VzYi91c2IuYw0KPiBiL2RyaXZlcnMvc3RhZ2luZy9tb3N0L3Vz
+Yi91c2IuYw0KPiBpbmRleCAzNjBjYjViN2ExMGIuLjc1MWU4MmNmNjZjNSAxMDA2NDQNCj4gLS0t
+IGEvZHJpdmVycy9zdGFnaW5nL21vc3QvdXNiL3VzYi5jDQo+ICsrKyBiL2RyaXZlcnMvc3RhZ2lu
+Zy9tb3N0L3VzYi91c2IuYw0KPiBAQCAtMTg2LDMyICsxODYsMjggQEAgc3RhdGljIGlubGluZSBp
+bnQgc3RhcnRfc3luY19lcChzdHJ1Y3QNCj4gdXNiX2RldmljZSAqdXNiX2RldiwgdTE2IGVwKQ0K
+PiDCoCAqLw0KPiDCoHN0YXRpYyB1bnNpZ25lZCBpbnQgZ2V0X3N0cmVhbV9mcmFtZV9zaXplKHN0
+cnVjdCBtb3N0X2NoYW5uZWxfY29uZmlnDQo+ICpjZmcpDQo+IMKgew0KPiAtCXVuc2lnbmVkIGlu
+dCBmcmFtZV9zaXplID0gMDsNCj4gwqAJdW5zaWduZWQgaW50IHN1Yl9zaXplID0gY2ZnLT5zdWJi
+dWZmZXJfc2l6ZTsNCj4gwqANCj4gwqAJaWYgKCFzdWJfc2l6ZSkgew0KPiDCoAkJcHJfd2Fybigi
+TWlzY29uZmlnOiBTdWJidWZmZXIgc2l6ZSB6ZXJvLlxuIik7DQo+IC0JCXJldHVybiBmcmFtZV9z
+aXplOw0KPiArCQlyZXR1cm4gMDsNCj4gwqAJfQ0KPiDCoAlzd2l0Y2ggKGNmZy0+ZGF0YV90eXBl
+KSB7DQo+IMKgCWNhc2UgTU9TVF9DSF9JU09DOg0KPiAtCQlmcmFtZV9zaXplID0gQVZfUEFDS0VU
+U19QRVJfWEFDVCAqIHN1Yl9zaXplOw0KPiAtCQlicmVhazsNCj4gKwkJcmV0dXJuIEFWX1BBQ0tF
+VFNfUEVSX1hBQ1QgKiBzdWJfc2l6ZTsNCj4gwqAJY2FzZSBNT1NUX0NIX1NZTkM6DQo+IMKgCQlp
+ZiAoY2ZnLT5wYWNrZXRzX3Blcl94YWN0ID09IDApIHsNCj4gwqAJCQlwcl93YXJuKCJNaXNjb25m
+aWc6IFBhY2tldHMgcGVyIFhBQ1QNCj4gemVyb1xuIik7DQo+IC0JCQlmcmFtZV9zaXplID0gMDsN
+Cj4gKwkJCXJldHVybiAwOw0KPiDCoAkJfSBlbHNlIGlmIChjZmctPnBhY2tldHNfcGVyX3hhY3Qg
+PT0gMHhGRikgew0KPiAtCQkJZnJhbWVfc2l6ZSA9IChVU0JfTVRVIC8gc3ViX3NpemUpICoNCj4g
+c3ViX3NpemU7DQo+ICsJCQlyZXR1cm4gKFVTQl9NVFUgLyBzdWJfc2l6ZSkgKiBzdWJfc2l6ZTsN
+Cj4gwqAJCX0gZWxzZSB7DQo+IC0JCQlmcmFtZV9zaXplID0gY2ZnLT5wYWNrZXRzX3Blcl94YWN0
+ICoNCj4gc3ViX3NpemU7DQo+ICsJCQlyZXR1cm4gY2ZnLT5wYWNrZXRzX3Blcl94YWN0ICogc3Vi
+X3NpemU7DQo+IMKgCQl9DQo+IC0JCWJyZWFrOw0KPiDCoAlkZWZhdWx0Og0KPiDCoAkJcHJfd2Fy
+bigiUXVlcnkgZnJhbWUgc2l6ZSBvZiBub24tc3RyZWFtaW5nDQo+IGNoYW5uZWxcbiIpOw0KPiAt
+CQlicmVhazsNCj4gKwkJcmV0dXJuIDA7DQo+IMKgCX0NCj4gLQlyZXR1cm4gZnJhbWVfc2l6ZTsN
+Cj4gwqB9DQo+IMKgDQo+IMKgLyoq
