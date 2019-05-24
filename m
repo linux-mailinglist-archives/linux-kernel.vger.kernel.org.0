@@ -2,54 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 499C029245
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:00:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B8CF2924B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:01:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389242AbfEXIAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:00:09 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34235 "EHLO
+        id S2389203AbfEXIAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:00:53 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39425 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388996AbfEXIAI (ORCPT
+        with ESMTP id S2388960AbfEXIAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:00:08 -0400
+        Fri, 24 May 2019 04:00:53 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4O7xOm5115005
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4O808XC115339
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 24 May 2019 00:59:24 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4O7xOm5115005
+        Fri, 24 May 2019 01:00:09 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4O808XC115339
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1558684764;
-        bh=gR+sVOfv9g9vi8Nv64InJyGxDz7fDw8ERv85hAVYXQM=;
+        s=2019051801; t=1558684809;
+        bh=n8IXZY6e0HNOwvWBm8X4b2MBeiZXpki2pqRP4rNyyqI=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=vl27+EdKwkCt1uJzIw81rFHxSzKLBrXtPvlzcQqMpU7k4gV+1BYK6s3ATZBRrKu00
-         7SbMQ2Yzz6ZqG5QNfSGXuABEuRsd+LpY6BsMJjkkPKunoTqx7v10YG7SfDuQbsR/d3
-         dFzdfmK/Mm+eqxQZI0mQFRdrfw9CUd6VB5O/nZeiBFD80wAwWtcZUIoNjZywd8em8/
-         ooW/q2X5Hbh123QICvlbr7FwGHoNj6Bebr6SqtvJqkeQXgPYnYCd4hVbStQb8YgH30
-         xQL2ATxHti+1kuzdhwTwmM+Xfs3peWwcrcULISqpa3/H+Ju6fjT5Zyz1j8KWYNCuEh
-         vpuRKiBULN8XQ==
+        b=XZUvf8Y1lkWcukNv3vUGpHXraFolh9hvm7QYtlw3pqQtalVTUYh9D9Y0K3PBm4wG4
+         zpiyMD3ovDEboIM092IO/8zQ8abKL2+YqaDV02In79Rj2Dej9JBoNf3k09pR4fDsAk
+         dpK2wvV/O/kVEqGF+Lxc/6g1CT0B/aLAwmrThIlF7K0+gDsXC4FcYNVQ41Y16T67ce
+         C5ZB3bt7BI6HF2vuWLnrAof8agVAAwoDP8hL4JXYx5aHGWTJ0qy0/JZIDqQhO4rdLm
+         nhmWPyRDz3KsnOuA8CqYyHs2vIHz37moH9k2rxQNpe61wiY8rj+wkwAquj/EZuEb/P
+         Y7Q8JdI4wKGFw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4O7xN0J115002;
-        Fri, 24 May 2019 00:59:23 -0700
-Date:   Fri, 24 May 2019 00:59:23 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4O808XH115336;
+        Fri, 24 May 2019 01:00:08 -0700
+Date:   Fri, 24 May 2019 01:00:08 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Ingo Molnar <tipbot@zytor.com>
-Message-ID: <tip-11e86dc7f2746210f9c7dc10deaa7658f8dc8350@git.kernel.org>
-Cc:     mingo@kernel.org, brgerst@gmail.com, jgross@suse.com,
-        hpa@zytor.com, peterz@infradead.org, bp@alien8.de,
-        tglx@linutronix.de, dvlasenk@redhat.com,
-        linux-kernel@vger.kernel.org, luto@kernel.org,
-        torvalds@linux-foundation.org
-Reply-To: mingo@kernel.org, brgerst@gmail.com, jgross@suse.com,
-          hpa@zytor.com, peterz@infradead.org, bp@alien8.de,
-          tglx@linutronix.de, dvlasenk@redhat.com,
-          linux-kernel@vger.kernel.org, luto@kernel.org,
-          torvalds@linux-foundation.org
-In-Reply-To: <20190425095039.GC115378@gmail.com>
-References: <20190425095039.GC115378@gmail.com>
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-fb2af0712fe8831dc152b0b5dd8bc516970da336@git.kernel.org>
+Cc:     dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+        bp@alien8.de, dvlasenk@redhat.com, luto@kernel.org,
+        brgerst@gmail.com, riel@surriel.com, jgross@suse.com,
+        peterz@infradead.org, hpa@zytor.com, tglx@linutronix.de,
+        mingo@kernel.org, torvalds@linux-foundation.org
+Reply-To: torvalds@linux-foundation.org, mingo@kernel.org,
+          brgerst@gmail.com, luto@kernel.org, riel@surriel.com,
+          bp@alien8.de, dave.hansen@linux.intel.com,
+          linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
+          tglx@linutronix.de, hpa@zytor.com, jgross@suse.com,
+          peterz@infradead.org
+In-Reply-To: <20190424134223.603491680@linutronix.de>
+References: <20190424134223.603491680@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/paravirt] x86/paravirt: Detect over-sized patching bugs in
- paravirt_patch_call()
-Git-Commit-ID: 11e86dc7f2746210f9c7dc10deaa7658f8dc8350
+Subject: [tip:x86/paravirt] x86/paravirt: Unify the 32/64 bit paravirt
+ patching code
+Git-Commit-ID: fb2af0712fe8831dc152b0b5dd8bc516970da336
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -69,73 +70,230 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  11e86dc7f2746210f9c7dc10deaa7658f8dc8350
-Gitweb:     https://git.kernel.org/tip/11e86dc7f2746210f9c7dc10deaa7658f8dc8350
-Author:     Ingo Molnar <mingo@kernel.org>
-AuthorDate: Thu, 25 Apr 2019 11:50:39 +0200
+Commit-ID:  fb2af0712fe8831dc152b0b5dd8bc516970da336
+Gitweb:     https://git.kernel.org/tip/fb2af0712fe8831dc152b0b5dd8bc516970da336
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Wed, 24 Apr 2019 15:41:17 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Thu, 25 Apr 2019 12:00:44 +0200
 
-x86/paravirt: Detect over-sized patching bugs in paravirt_patch_call()
+x86/paravirt: Unify the 32/64 bit paravirt patching code
 
-paravirt_patch_call() currently handles patching failures inconsistently:
-we generate a warning in the retpoline case, but don't in other cases where
-we might end up with a non-working kernel as well.
+Large parts of these two files are identical. Merge them together.
 
-So just convert it all to a BUG_ON(), these patching calls are *not* supposed
-to fail, and if they do we want to know it immediately.
-
-This also makes the kernel smaller and removes an #ifdef ugly.
-
-I tried it with a richly paravirt-enabled kernel and no patching bugs
-were detected.
-
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Juergen Gross <jgross@suse.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20190425095039.GC115378@gmail.com
+Cc: Rik van Riel <riel@surriel.com>
+Link: http://lkml.kernel.org/r/20190424134223.603491680@linutronix.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/kernel/paravirt.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/x86/kernel/Makefile                           |  4 +-
+ .../{paravirt_patch_64.c => paravirt_patch.c}      | 62 ++++++++++++++++-----
+ arch/x86/kernel/paravirt_patch_32.c                | 64 ----------------------
+ 3 files changed, 50 insertions(+), 80 deletions(-)
 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 7f9121f2fdac..544d386ded45 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -73,21 +73,21 @@ struct branch {
- static unsigned paravirt_patch_call(void *insnbuf, const void *target,
- 				    unsigned long addr, unsigned len)
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 00b7e27bc2b7..62e78a3fd31e 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -30,7 +30,7 @@ KASAN_SANITIZE_paravirt.o				:= n
+ 
+ OBJECT_FILES_NON_STANDARD_relocate_kernel_$(BITS).o	:= y
+ OBJECT_FILES_NON_STANDARD_test_nx.o			:= y
+-OBJECT_FILES_NON_STANDARD_paravirt_patch_$(BITS).o	:= y
++OBJECT_FILES_NON_STANDARD_paravirt_patch.o		:= y
+ 
+ ifdef CONFIG_FRAME_POINTER
+ OBJECT_FILES_NON_STANDARD_ftrace_$(BITS).o		:= y
+@@ -112,7 +112,7 @@ obj-$(CONFIG_AMD_NB)		+= amd_nb.o
+ obj-$(CONFIG_DEBUG_NMI_SELFTEST) += nmi_selftest.o
+ 
+ obj-$(CONFIG_KVM_GUEST)		+= kvm.o kvmclock.o
+-obj-$(CONFIG_PARAVIRT)		+= paravirt.o paravirt_patch_$(BITS).o
++obj-$(CONFIG_PARAVIRT)		+= paravirt.o paravirt_patch.o
+ obj-$(CONFIG_PARAVIRT_SPINLOCKS)+= paravirt-spinlocks.o
+ obj-$(CONFIG_PARAVIRT_CLOCK)	+= pvclock.o
+ obj-$(CONFIG_X86_PMEM_LEGACY_DEVICE) += pmem.o
+diff --git a/arch/x86/kernel/paravirt_patch_64.c b/arch/x86/kernel/paravirt_patch.c
+similarity index 59%
+rename from arch/x86/kernel/paravirt_patch_64.c
+rename to arch/x86/kernel/paravirt_patch.c
+index bd1558f90cfb..a47899db9932 100644
+--- a/arch/x86/kernel/paravirt_patch_64.c
++++ b/arch/x86/kernel/paravirt_patch.c
+@@ -1,9 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/stringify.h>
++
+ #include <asm/paravirt.h>
+ #include <asm/asm-offsets.h>
+-#include <linux/stringify.h>
+ 
+-#ifdef CONFIG_PARAVIRT_XXL
++#ifdef CONFIG_X86_64
++# ifdef CONFIG_PARAVIRT_XXL
+ DEF_NATIVE(irq, irq_disable, "cli");
+ DEF_NATIVE(irq, irq_enable, "sti");
+ DEF_NATIVE(irq, restore_fl, "pushq %rdi; popfq");
+@@ -12,24 +14,49 @@ DEF_NATIVE(mmu, read_cr2, "movq %cr2, %rax");
+ DEF_NATIVE(mmu, read_cr3, "movq %cr3, %rax");
+ DEF_NATIVE(mmu, write_cr3, "movq %rdi, %cr3");
+ DEF_NATIVE(cpu, wbinvd, "wbinvd");
+-
+ DEF_NATIVE(cpu, usergs_sysret64, "swapgs; sysretq");
+ DEF_NATIVE(cpu, swapgs, "swapgs");
+ DEF_NATIVE(, mov64, "mov %rdi, %rax");
+ 
+-unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len)
++unsigned int paravirt_patch_ident_64(void *insnbuf, unsigned int len)
  {
-+	const int call_len = 5;
- 	struct branch *b = insnbuf;
--	unsigned long delta = (unsigned long)target - (addr+5);
-+	unsigned long delta = (unsigned long)target - (addr+call_len);
- 
--	if (len < 5) {
--#ifdef CONFIG_RETPOLINE
--		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
--#endif
--		return len;	/* call too long for patch site */
-+	if (len < call_len) {
-+		pr_warn("paravirt: Failed to patch indirect CALL at %ps\n", (void *)addr);
-+		/* Kernel might not be viable if patching fails, bail out: */
-+		BUG_ON(1);
- 	}
- 
- 	b->opcode = 0xe8; /* call */
- 	b->delta = delta;
--	BUILD_BUG_ON(sizeof(*b) != 5);
-+	BUILD_BUG_ON(sizeof(*b) != call_len);
- 
--	return 5;
-+	return call_len;
+-	return paravirt_patch_insns(insnbuf, len,
+-				    start__mov64, end__mov64);
++	return paravirt_patch_insns(insnbuf, len, start__mov64, end__mov64);
  }
+-#endif
++# endif /* CONFIG_PARAVIRT_XXL */
  
- #ifdef CONFIG_PARAVIRT_XXL
+-#if defined(CONFIG_PARAVIRT_SPINLOCKS)
++# ifdef CONFIG_PARAVIRT_SPINLOCKS
+ DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%rdi)");
+ DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
+-#endif
++# endif
++
++#else /* CONFIG_X86_64 */
++
++# ifdef CONFIG_PARAVIRT_XXL
++DEF_NATIVE(irq, irq_disable, "cli");
++DEF_NATIVE(irq, irq_enable, "sti");
++DEF_NATIVE(irq, restore_fl, "push %eax; popf");
++DEF_NATIVE(irq, save_fl, "pushf; pop %eax");
++DEF_NATIVE(cpu, iret, "iret");
++DEF_NATIVE(mmu, read_cr2, "mov %cr2, %eax");
++DEF_NATIVE(mmu, write_cr3, "mov %eax, %cr3");
++DEF_NATIVE(mmu, read_cr3, "mov %cr3, %eax");
++
++unsigned int paravirt_patch_ident_64(void *insnbuf, unsigned int len)
++{
++	/* arg in %edx:%eax, return in %edx:%eax */
++	return 0;
++}
++# endif /* CONFIG_PARAVIRT_XXL */
++
++# ifdef CONFIG_PARAVIRT_SPINLOCKS
++DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%eax)");
++DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
++# endif
++
++#endif /* !CONFIG_X86_64 */
+ 
+-unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
++unsigned int native_patch(u8 type, void *ibuf, unsigned long addr,
++			  unsigned int len)
+ {
+ #define PATCH_SITE(ops, x)					\
+ 	case PARAVIRT_PATCH(ops.x):				\
+@@ -41,14 +68,21 @@ unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
+ 		PATCH_SITE(irq, save_fl);
+ 		PATCH_SITE(irq, irq_enable);
+ 		PATCH_SITE(irq, irq_disable);
+-		PATCH_SITE(cpu, usergs_sysret64);
+-		PATCH_SITE(cpu, swapgs);
+-		PATCH_SITE(cpu, wbinvd);
++
+ 		PATCH_SITE(mmu, read_cr2);
+ 		PATCH_SITE(mmu, read_cr3);
+ 		PATCH_SITE(mmu, write_cr3);
++
++# ifdef CONFIG_X86_64
++		PATCH_SITE(cpu, usergs_sysret64);
++		PATCH_SITE(cpu, swapgs);
++		PATCH_SITE(cpu, wbinvd);
++# else
++		PATCH_SITE(cpu, iret);
++# endif
+ #endif
+-#if defined(CONFIG_PARAVIRT_SPINLOCKS)
++
++#ifdef CONFIG_PARAVIRT_SPINLOCKS
+ 	case PARAVIRT_PATCH(lock.queued_spin_unlock):
+ 		if (pv_is_native_spin_unlock())
+ 			return paravirt_patch_insns(ibuf, len,
+diff --git a/arch/x86/kernel/paravirt_patch_32.c b/arch/x86/kernel/paravirt_patch_32.c
+deleted file mode 100644
+index 05d771f81e74..000000000000
+--- a/arch/x86/kernel/paravirt_patch_32.c
++++ /dev/null
+@@ -1,64 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-#include <asm/paravirt.h>
+-
+-#ifdef CONFIG_PARAVIRT_XXL
+-DEF_NATIVE(irq, irq_disable, "cli");
+-DEF_NATIVE(irq, irq_enable, "sti");
+-DEF_NATIVE(irq, restore_fl, "push %eax; popf");
+-DEF_NATIVE(irq, save_fl, "pushf; pop %eax");
+-DEF_NATIVE(cpu, iret, "iret");
+-DEF_NATIVE(mmu, read_cr2, "mov %cr2, %eax");
+-DEF_NATIVE(mmu, write_cr3, "mov %eax, %cr3");
+-DEF_NATIVE(mmu, read_cr3, "mov %cr3, %eax");
+-
+-unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len)
+-{
+-	/* arg in %edx:%eax, return in %edx:%eax */
+-	return 0;
+-}
+-#endif
+-
+-#if defined(CONFIG_PARAVIRT_SPINLOCKS)
+-DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%eax)");
+-DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
+-#endif
+-
+-unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
+-{
+-#define PATCH_SITE(ops, x)					\
+-	case PARAVIRT_PATCH(ops.x):				\
+-		return paravirt_patch_insns(ibuf, len, start_##ops##_##x, end_##ops##_##x)
+-
+-	switch (type) {
+-#ifdef CONFIG_PARAVIRT_XXL
+-		PATCH_SITE(irq, irq_disable);
+-		PATCH_SITE(irq, irq_enable);
+-		PATCH_SITE(irq, restore_fl);
+-		PATCH_SITE(irq, save_fl);
+-		PATCH_SITE(cpu, iret);
+-		PATCH_SITE(mmu, read_cr2);
+-		PATCH_SITE(mmu, read_cr3);
+-		PATCH_SITE(mmu, write_cr3);
+-#endif
+-#if defined(CONFIG_PARAVIRT_SPINLOCKS)
+-	case PARAVIRT_PATCH(lock.queued_spin_unlock):
+-		if (pv_is_native_spin_unlock())
+-			return paravirt_patch_insns(ibuf, len,
+-						    start_lock_queued_spin_unlock,
+-						    end_lock_queued_spin_unlock);
+-		break;
+-
+-	case PARAVIRT_PATCH(lock.vcpu_is_preempted):
+-		if (pv_is_native_vcpu_is_preempted())
+-			return paravirt_patch_insns(ibuf, len,
+-						    start_lock_vcpu_is_preempted,
+-						    end_lock_vcpu_is_preempted);
+-		break;
+-#endif
+-
+-	default:
+-		break;
+-	}
+-#undef PATCH_SITE
+-	return paravirt_patch_default(type, ibuf, addr, len);
+-}
