@@ -2,81 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 312D028E44
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 02:12:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B29328E47
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 02:15:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731608AbfEXAMo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 20:12:44 -0400
-Received: from mx.allycomm.com ([138.68.30.55]:47689 "EHLO mx.allycomm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727042AbfEXAMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 20:12:43 -0400
-Received: from jkletsky-mbp15.guidewire.com (inet.guidewire.com [199.91.42.30])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.allycomm.com (Postfix) with ESMTPSA id E376D3D38F;
-        Thu, 23 May 2019 17:12:41 -0700 (PDT)
-Subject: Re: [PATCH v4 3/3] mtd: spinand: Add support for GigaDevice
- GD5F1GQ4UFxxG
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190522220555.11626-1-lede@allycomm.com>
- <20190522220555.11626-4-lede@allycomm.com>
- <e438022f-3444-9aae-adac-2dd3dd0071b7@kontron.de>
-From:   Jeff Kletsky <lede@allycomm.com>
-Message-ID: <e0682730-b69d-d774-d98f-53858e390d8b@allycomm.com>
-Date:   Thu, 23 May 2019 17:12:41 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.6.1
+        id S1731663AbfEXAPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 20:15:32 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40202 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730546AbfEXAPc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 20:15:32 -0400
+Received: by mail-oi1-f194.google.com with SMTP id r136so5763790oie.7
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 17:15:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A/Q+M3D/f31BjghiNjOc57yo6l8Vxd0pYHlve49qAjA=;
+        b=nou534kHwoDKIDJsqawXYheb+9fDqSaHbkgw8vFRhFL/uGfktKnn/XHtIveDUjl/ye
+         oz9ror2NPIQlkiTsRhJK+AjyflTmUtlRdlCj+zCQmAV6GjIFb8tL6SXPYLAr1OwATxRn
+         7FaJ8l2v6FB0jAulv6lr+kxiRofnSDrnU7yKQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=A/Q+M3D/f31BjghiNjOc57yo6l8Vxd0pYHlve49qAjA=;
+        b=OnFR774b/3+Fh/nf3++6rLfyKO0ktlhJyR+ySj68NghoDp9GOVLa1A7XwE8eygqMl3
+         O/rQ6RYku6biwdBvxtxmHjFhRVMWiDjnZeEJY73ypaYIJhI6XUc+wwadmROZ6wDlD0N6
+         ImA8ie2RSOnqyNXHI582OaGnsD2rKS3DG7F9KUKK9fqqhVzKQbAsxzyK2Y2nmquas51a
+         mBKphdVdEHu3FK5XsrFiLPG378GFgPrIfw8kYfVCkFKuJGrP0gorpQF0rNacCQpoadMI
+         bRwrExLTkVnWA/uFrNDwiVUyIk9t7QZUHrj2Iuc/DXKyGgsmophjm2b2CFU70lg65+K4
+         y5yg==
+X-Gm-Message-State: APjAAAVxVQHbHflo13hQ8RHtcJAVrX1/YPp4ppV5ovjEBKRUxlYiQ8qv
+        7GcIHcR4Uj6xjCFGY5IbK52emkH7LI4=
+X-Google-Smtp-Source: APXvYqwcVb9/4lP7vRt8hiDy+mScAH6NA9afJz4qMx5ODUY/34p6D8mpcRqbRdjveIn0cSOC59SvtQ==
+X-Received: by 2002:aca:d44a:: with SMTP id l71mr4293763oig.41.1558656931255;
+        Thu, 23 May 2019 17:15:31 -0700 (PDT)
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com. [209.85.210.47])
+        by smtp.gmail.com with ESMTPSA id o128sm391651oih.48.2019.05.23.17.15.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 17:15:30 -0700 (PDT)
+Received: by mail-ot1-f47.google.com with SMTP id i8so7109429oth.10
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 17:15:29 -0700 (PDT)
+X-Received: by 2002:a9d:4b92:: with SMTP id k18mr25836368otf.351.1558656929524;
+ Thu, 23 May 2019 17:15:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <e438022f-3444-9aae-adac-2dd3dd0071b7@kontron.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20190521151519.158273-1-rrangel@chromium.org>
+In-Reply-To: <20190521151519.158273-1-rrangel@chromium.org>
+From:   Nick Crews <ncrews@chromium.org>
+Date:   Thu, 23 May 2019 18:15:18 -0600
+X-Gmail-Original-Message-ID: <CAHX4x86bnXh_xPqU4ZwuT9RpVtyDwEP1NDWbKDWmNbXfKKEVxA@mail.gmail.com>
+Message-ID: <CAHX4x86bnXh_xPqU4ZwuT9RpVtyDwEP1NDWbKDWmNbXfKKEVxA@mail.gmail.com>
+Subject: Re: [PATCH] platform/chrome: wilco_ec: Add version sysfs entries
+To:     Raul E Rangel <rrangel@chromium.org>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Simon Glass <sjg@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Olof Johansson <olof@lixom.net>,
+        Sean Paul <seanpaul@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(reduced direct addressees, though still on lists)
-
-On 5/22/19 11:42 PM, Schrempf Frieder wrote:
-
-> On 23.05.19 00:05, Jeff Kletsky wrote:
->> From: Jeff Kletsky <git-commits@allycomm.com>
->>
->> The GigaDevice GD5F1GQ4UFxxG SPI NAND is in current production devices
->> and, while it has the same logical layout as the E-series devices,
->> it differs in the SPI interfacing in significant ways.
->>
->> This support is contingent on previous commits to:
->>
->>     * Add support for two-byte device IDs
->>     * Define macros for page-read ops with three-byte addresses
->>
->> http://www.gigadevice.com/datasheet/gd5f1gq4xfxxg/
->>
->> Signed-off-by: Jeff Kletsky <git-commits@allycomm.com>
-> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+On Tue, May 21, 2019 at 9:15 AM Raul E Rangel <rrangel@chromium.org> wrote:
 >
->> Reported-by: kbuild test robot <lkp@intel.com>
-> I dont't think that this Reported-by tag should be used here. The bot
-> reported build errors caused by your patch and you fixed it in a new
-> version. As far as I understand this tag, it references someone who
-> reported a flaw/bug that led to this change in the first place.
-> The version history of the changes won't be visible in the git history
-> later, but the tag will be and would be rather confusing.
+> Add the ability to extract version information from the EC.
+>
+> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
 
-Thank you for your patience and explanations. I've been being conservative
-as I'm not a "seasoned, Linux professional" and am still getting my
-git send-email config / command line for Linux properly straightened out.
+Looks good to me, thanks Raul!
+I applied to the chromium branch, and it works.
 
-Should I send another patch set with the `kbuild...` tag removed,
-or would it be removed in the process of an appropriate member
-of the Linux MTD team adding their tag for approval, if and when
-that happens?
+Reviewed-by: Nick Crews <ncrews@chromium.org>
+Tested-by: Nick Crews <ncrews@chromium.org>
 
-Jeff
+> ---
+>
+> This patch is rebased on platform/chrome: wilco_ec: Add Boot on AC support.
+> https://lkml.org/lkml/2019/4/16/1374
+>
+> That patch wasn't in the for-next branch, so I'm not 100% sure if it
+> applies cleanly to for-next.
 
+It doesn't apply cleanly :(
+You can add https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git
+as the platform/chrome remote to ensure that it will apply cleanly.
+It would probably be good for you to re-send this after rebasing it on for-next.
