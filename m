@@ -2,125 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDF8829F84
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 22:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4968B29F8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 22:03:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391826AbfEXUBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 16:01:38 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41687 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391669AbfEXUBi (ORCPT
+        id S2391832AbfEXUDm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 16:03:42 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57465 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391612AbfEXUDl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 16:01:38 -0400
-Received: by mail-ot1-f67.google.com with SMTP id l25so9764229otp.8;
-        Fri, 24 May 2019 13:01:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UHojS6CxTbfNN1lxBjQLh832vFhB7+3k4jCcVBGUCwo=;
-        b=ejkNcbw1bQFBLEnFnDkIxXEI0u0HP7oz5bcc1EnQ+n94Z72O6xJzE8EuzHq+JdeSMk
-         p19cyfGthHzSF4yHlB8Ele/gjquVnEk/9YTyp8PVGMegFHF90VbRGOLjSxHxF1vOCrDp
-         jjWgh8B+aE26+SyApL7pIGvJYt42K89NqUr5gsBDiq9XjNY2zwBdWJRfaT1FCMAMMW8h
-         obgMmSr7UbIVkQurVpvrvdfX1JTTBc0whdnKpgfnKAjC5XDCVy5Unke95FJ/SnlpCJ6D
-         Hg+WoYVvllJbpiGZ4UWGAHKr6tC7t/Bdt/pRpGrrAp1eZgYcXZaDSY3W/PTTwzpzItbm
-         LZYg==
+        Fri, 24 May 2019 16:03:41 -0400
+Received: from mail-ot1-f71.google.com ([209.85.210.71])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <dann.frazier@canonical.com>)
+        id 1hUGPi-0007wv-F1
+        for linux-kernel@vger.kernel.org; Fri, 24 May 2019 20:03:38 +0000
+Received: by mail-ot1-f71.google.com with SMTP id 73so4999384oty.2
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 13:03:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UHojS6CxTbfNN1lxBjQLh832vFhB7+3k4jCcVBGUCwo=;
-        b=DnUMhbTt5VOV6kuHIBMKWSmiQ9kFLskQUOY5jayl85X5E11L19doUkjmW+sEyi61GJ
-         RRe/TBD6s+BbK5B8iAeX1GE6XadpPqUW4g6yHC8Ey9gSS3+Z4etqR8hNfh3OUoAbtFyb
-         GO9VDeCg+UQXRCog3Va0wlTFWS2YVuDaF+wT4NSHx7x1k62+nnn1jAVkNB5BIQD6vo3j
-         292SS+jH8zinv11tFdZH2a8p0zl1r2tdfigWdAdXocTGhfxiEJUw82bKQzPxn5w5DNkJ
-         aLIPofCqYGxBdN3oDUXNs4N5gVKe4Ie/U2Gu6VUvil5juQKklN+RnWMK3qcNHSpufdbb
-         vWmQ==
-X-Gm-Message-State: APjAAAXnGrO/9rJ+B5/DtYDiWVMTgSRnPGG5hEcNfi15c0CeJ8V627c9
-        aRlvPQnwk+NI14CWKjAkEQ9frvfN0uQFdONKYyzOIOoz
-X-Google-Smtp-Source: APXvYqzSMTnEHaKwB73h2CFY4FSicOsI1MybuGKVOLrzVAipkF3fG84GytPKtPzLmZN/FtCKvVZXpyhhocFTfUBiZlE=
-X-Received: by 2002:a9d:7f8b:: with SMTP id t11mr107728otp.110.1558728097573;
- Fri, 24 May 2019 13:01:37 -0700 (PDT)
+        bh=MdZgSrzvQrNvArhhMwV6uq98L6kGwXydzTCUTc3ed/4=;
+        b=nyzkxWlpmuQTSM7FL8BbV7PvXVB4xXH0cSeWffJLbTSbrj03V2WDPh/ZdXcfNG3yoU
+         L5L3u0ZVoTo5fNICoeiL4xhZ37bRhduTSFxjcIguZHKDIsrpOwBWAkH7Y+Qv8HL/WQIJ
+         CHdznPhvV09D9nadnKXRj32wT69+Jdat8PR3XnLTq72BBEIwifNChCvYE8pw0ZTp9CL1
+         VeMCAgB+ZtMfOkDKIzcdMSjEooTtGLCQ2FEXopxVBicVlCC/I20dyWOkzSX8ENynQ87o
+         Q/hIfZdtEsxJRFume/r5VOAIAhbe2CQB4Iy8aNbNF8F0TN0/Z01pg9Qvl9Tr1paVa+tf
+         IhiA==
+X-Gm-Message-State: APjAAAVXvzfQlU1yYLQnFZS1RxCxaUn3Ii9vsEsPn3CgdClOwEj88jSJ
+        4oPkAEfpvq14fovKp9dRbq6OhhU9MJZ/SyCuOnwnUMlhziM0zBE9di7fLNtcAqFDcpbgaQ4hvE7
+        Qk+y4KggDeVYroRKISGYaIzQbp085xwifvJe3rdsDQfsg0tDsGyA4VYTvhg==
+X-Received: by 2002:a05:6830:164d:: with SMTP id h13mr31758686otr.99.1558728217210;
+        Fri, 24 May 2019 13:03:37 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxoya9uYRsSIEv51UV91v8Z+LxDz8k4gGrzqqMySgCjbel8axNiXlhuqaT0Un+V+0ZUNeHLZgzLuTVB5rKzbzc=
+X-Received: by 2002:a05:6830:164d:: with SMTP id h13mr31758663otr.99.1558728216929;
+ Fri, 24 May 2019 13:03:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190524030514.14082-1-qiang.zhao@nxp.com>
-In-Reply-To: <20190524030514.14082-1-qiang.zhao@nxp.com>
-From:   Yang Li <pku.leo@gmail.com>
-Date:   Fri, 24 May 2019 15:01:26 -0500
-Message-ID: <CADRPPNQjgDRPDzA31c6qQ=ZynYQjHTHNOJQ+_bFGr37SPuYApw@mail.gmail.com>
-Subject: Re: [PATCH] i2c: layerscape: use PIO when fail to request dma channel
-To:     Qiang Zhao <qiang.zhao@nxp.com>
-Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190524040633.16854-1-nicoleotsuka@gmail.com>
+In-Reply-To: <20190524040633.16854-1-nicoleotsuka@gmail.com>
+From:   dann frazier <dann.frazier@canonical.com>
+Date:   Fri, 24 May 2019 14:03:25 -0600
+Message-ID: <CALdTtnu=WdYbqyq57EkB-=rsyz72SW-J8oyD7f6Xm-da2OgRgQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] Optimize dma_*_from_contiguous calls
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>, vdumpa@nvidia.com,
+        linux@armlinux.org.uk, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, chris@zankel.net,
+        jcmvbkbc@gmail.com, joro@8bytes.org, dwmw2@infradead.org,
+        tony@atomide.com, akpm@linux-foundation.org, sfr@canb.auug.org.au,
+        treding@nvidia.com, keescook@chromium.org, iamjoonsoo.kim@lge.com,
+        wsa+renesas@sang-engineering.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        iommu@lists.linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 10:08 PM Qiang Zhao <qiang.zhao@nxp.com> wrote:
+On Thu, May 23, 2019 at 10:08 PM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
 >
-> When fail to request DMA TX/RX channel, use PIO instead for layerscape.
+> [ Per discussion at v1, we decide to add two new functions and start
+>   replacing callers one by one. For this series, it only touches the
+>   dma-direct part. And instead of merging two PATCHes, I still keep
+>   them separate so that we may easily revert PATCH-2 if anything bad
+>   happens as last time -- PATCH-1 is supposed to be a safe cleanup. ]
+>
+> This series of patches try to optimize dma_*_from_contiguous calls:
+> PATCH-1 abstracts two new functions and applies to dma-direct.c file.
+> PATCH-2 saves single pages and reduce fragmentations from CMA area.
+>
+> Please check their commit messages for detail changelog.
+>
+> Nicolin Chen (2):
+>   dma-contiguous: Abstract dma_{alloc,free}_contiguous()
+>   dma-contiguous: Use fallback alloc_pages for single pages
+>
+>  include/linux/dma-contiguous.h | 11 +++++++
+>  kernel/dma/contiguous.c        | 57 ++++++++++++++++++++++++++++++++++
+>  kernel/dma/direct.c            | 24 +++-----------
+>  3 files changed, 72 insertions(+), 20 deletions(-)
 
-I know that there is a problem that the i2c will fail to probe when
-edma driver is not configured.  But this shouldn't be a Layerscape
-specific issue.  We don't have proper fix yet, but we have a
-workaround which is enable the EDMA driver in the defconfig.
-Disabling deferred probe just for Layerscape is not a proper fix
-either as this is not specific to Layerscape.
+Thanks Nicolin. Tested on a HiSilicon D06 system.
 
->
-> Signed-off-by: Zhao Qiang <qiang.zhao@nxp.com>
-> ---
->  drivers/i2c/busses/i2c-imx.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> index 98b278613cf2..39a5ab4cf332 100644
-> --- a/drivers/i2c/busses/i2c-imx.c
-> +++ b/drivers/i2c/busses/i2c-imx.c
-> @@ -347,9 +347,13 @@ static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
->
->         dma->chan_tx = dma_request_chan(dev, "tx");
->         if (IS_ERR(dma->chan_tx)) {
-> +#ifdef CONFIG_ARCH_LAYERSCAPE
-> +               dev_dbg(dev, "can't request DMA tx channel\n");
-> +#else
->                 ret = PTR_ERR(dma->chan_tx);
->                 if (ret != -ENODEV && ret != -EPROBE_DEFER)
->                         dev_err(dev, "can't request DMA tx channel (%d)\n", ret);
-> +#endif
->                 goto fail_al;
->         }
->
-> @@ -366,9 +370,13 @@ static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
->
->         dma->chan_rx = dma_request_chan(dev, "rx");
->         if (IS_ERR(dma->chan_rx)) {
-> +#ifdef CONFIG_ARCH_LAYERSCAPE
-> +               dev_dbg(dev, "can't request DMA rx channel\n");
-> +#else
->                 ret = PTR_ERR(dma->chan_rx);
->                 if (ret != -ENODEV && ret != -EPROBE_DEFER)
->                         dev_err(dev, "can't request DMA rx channel (%d)\n", ret);
-> +#endif
->                 goto fail_tx;
->         }
->
-> @@ -396,6 +404,9 @@ static int i2c_imx_dma_request(struct imx_i2c_struct *i2c_imx,
->         dma_release_channel(dma->chan_tx);
->  fail_al:
->         devm_kfree(dev, dma);
-> +#ifdef CONFIG_ARCH_LAYERSCAPE
-> +       dev_info(dev, "can't use DMA, using PIO instead.\n");
-> +#endif
->         /* return successfully if there is no dma support */
->         return ret == -ENODEV ? 0 : ret;
->  }
-> --
-> 2.17.1
->
-
-
--- 
-- Leo
+Tested-by: dann frazier <dann.frazier@canonical.com>
