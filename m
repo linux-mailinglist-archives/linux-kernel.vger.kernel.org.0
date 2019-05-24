@@ -2,103 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BC3F29625
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:43:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36C172962B
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:43:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390511AbfEXKm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 06:42:59 -0400
-Received: from foss.arm.com ([217.140.101.70]:39864 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390374AbfEXKm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 06:42:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D473B374;
-        Fri, 24 May 2019 03:42:57 -0700 (PDT)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5690D3F703;
-        Fri, 24 May 2019 03:42:56 -0700 (PDT)
-Subject: Re: mm/compaction: BUG: NULL pointer dereference
-To:     mgorman@techsingularity.net
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@suse.com,
-        cai@lca.pw, linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-        kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org
-References: <1558689619-16891-1-git-send-email-suzuki.poulose@arm.com>
- <20190524103924.GN18914@techsingularity.net>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <98b93f38-64a7-dcd1-c027-6d1195f3380f@arm.com>
-Date:   Fri, 24 May 2019 11:42:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2390774AbfEXKne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 06:43:34 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46002 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390465AbfEXKnd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 06:43:33 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w34so188254pga.12
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 03:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8vuYuFD/5hunekM87lEsGh/8eCfgNQ+vP68Nh+1lg0I=;
+        b=EXBKWqHzxchoyXavJy+DUUjq9erk94e758eJBKaG25cITWW0Xl8CUyFxgzvFO0DMkv
+         BxSmZYGJtPSa+kZvcfnj0NdXKDSOk3W19dZTkZwN2O0FAUq8LuiCl0Gh4JQ7F3zrq0BG
+         iI/9LpGH7fs1cG8BSzxFwQPyCLkVyWmhSpfhQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8vuYuFD/5hunekM87lEsGh/8eCfgNQ+vP68Nh+1lg0I=;
+        b=Nt4IiA7T+CN438tm0OmZrQzdWiPrYb3XfOoxMxGpsdAWNuCV2+EYECYHEyTDD1glsL
+         tLCEF58TNdRgl/DG5T+/hQbBUHnnFMVl+MRfGpCEfUwBiv4BfmVBaWBPF7N3JwFdh2RQ
+         wGqT5q1wvDCLm+Lg5pYpeCQywn8qdu9hii46PiplpcwbZdQLnE9y3m/ybq7BMa4dvTyF
+         p8zGmfIPZra3OdyEL3E3GuhSgtGrmBRDS8+e83vk66UoOl8ShtRMzFbUvLZKO3u9N2G4
+         5jgOICX5qBatCoMOLbIACJI9t2dlTrL2v9uvv6cvBT2iVPGyzR4LFVR7Yfxk6JeO1Jk7
+         fd4A==
+X-Gm-Message-State: APjAAAX2ZG+46HVCirzZQOxgGzjlJcDT6L4LitSX5JLwWwHH8cWFlx+4
+        66mKhOcplZplKagFzhszVir3gg==
+X-Google-Smtp-Source: APXvYqwycicrVwk5ndUffCLYURVgKz0vy41pPuW9ahWqj3rjBAvuDI9sZaRa1UaC/4hduJFpzK7ccg==
+X-Received: by 2002:aa7:842f:: with SMTP id q15mr112526398pfn.161.1558694612646;
+        Fri, 24 May 2019 03:43:32 -0700 (PDT)
+Received: from localhost.localdomain ([183.82.227.60])
+        by smtp.gmail.com with ESMTPSA id h11sm2303416pfn.170.2019.05.24.03.43.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 03:43:32 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v2 3/6] drm/sun4i: dsi: Add bridge support
+Date:   Fri, 24 May 2019 16:13:14 +0530
+Message-Id: <20190524104317.20287-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-In-Reply-To: <20190524103924.GN18914@techsingularity.net>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mel,
+Some display panels would come up with a non-DSI output which
+can have an option to connect DSI interface by means of bridge
+converter.
 
-Thanks for your quick response.
+This DSI to non-DSI bridge converter would require a bridge
+driver that would communicate the DSI controller for bridge
+functionalities.
 
-On 24/05/2019 11:39, Mel Gorman wrote:
-> On Fri, May 24, 2019 at 10:20:19AM +0100, Suzuki K Poulose wrote:
->> Hi,
->>
->> We are hitting NULL pointer dereferences while running stress tests with KVM.
->> See splat [0]. The test is to spawn 100 VMs all doing standard debian
->> installation (Thanks to Marc's automated scripts, available here [1] ).
->> The problem has been reproduced with a better rate of success from 5.1-rc6
->> onwards.
->>
->> The issue is only reproducible with swapping enabled and the entire
->> memory is used up, when swapping heavily. Also this issue is only reproducible
->> on only one server with 128GB, which has the following memory layout:
->>
->> [32GB@4GB, hole , 96GB@544GB]
->>
->> Here is my non-expert analysis of the issue so far.
->>
->> Under extreme memory pressure, the kswapd could trigger reset_isolation_suitable()
->> to figure out the cached values for migrate/free pfn for a zone, by scanning through
->> the entire zone. On our server it does so in the range of [ 0x10_0000, 0xa00_0000 ],
->> with the following area of holes : [ 0x20_0000, 0x880_0000 ].
->> In the failing case, we end up setting the cached migrate pfn as : 0x508_0000, which
->> is right in the center of the zone pfn range. i.e ( 0x10_0000 + 0xa00_0000 ) / 2,
->> with reset_migrate = 0x88_4e00, reset_free = 0x10_0000.
->>
->> Now these cached values are used by the fast_isolate_freepages() to find a pfn. However,
->> since we cant find anything during the search we fall back to using the page belonging
->> to the min_pfn (which is the migrate_pfn), without proper checks to see if that is valid
->> PFN or not. This is then passed on to fast_isolate_around() which tries to do :
->> set_pageblock_skip(page) on the page which blows up due to an NULL mem_section pointer.
->>
->> The following patch seems to fix the issue for me, but I am not quite convinced that
->> it is the right fix. Thoughts ?
->>
-> 
-> I think the patch is valid and the alternatives would be unnecessarily
-> complicated. During a normal scan for free pages to isolate, there
-> is a check for pageblock_pfn_to_page() which uses a pfn_valid check
-> for non-contiguous zones in __pageblock_pfn_to_page. Now, while the
+So, add support for bridge functionalities in Allwinner DSI
+controller.
 
-I had the initial version with the pageblock_pfn_to_page(), but as you said,
-it is a complicated way of perform the same check as pfn_valid().
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 60 +++++++++++++++++++-------
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  1 +
+ 2 files changed, 45 insertions(+), 16 deletions(-)
 
-> non-contiguous check could be made in the area you highlight, it would be a
-> relatively small optimisation that would be unmeasurable overall. However,
-> it is definitely the case that if the PFN you highlight is invalid that
-> badness happens. If you want to express this as a signed-off patch with
-> an adjusted changelog then I'd be happy to add
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index ae2fe31b05b1..2b4b1355a88f 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -775,6 +775,9 @@ static void sun6i_dsi_encoder_enable(struct drm_encoder *encoder)
+ 	if (!IS_ERR(dsi->panel))
+ 		drm_panel_prepare(dsi->panel);
+ 
++	if (!IS_ERR(dsi->bridge))
++		drm_bridge_pre_enable(dsi->bridge);
++
+ 	/*
+ 	 * FIXME: This should be moved after the switch to HS mode.
+ 	 *
+@@ -790,6 +793,9 @@ static void sun6i_dsi_encoder_enable(struct drm_encoder *encoder)
+ 	if (!IS_ERR(dsi->panel))
+ 		drm_panel_enable(dsi->panel);
+ 
++	if (!IS_ERR(dsi->bridge))
++		drm_bridge_enable(dsi->bridge);
++
+ 	sun6i_dsi_start(dsi, DSI_START_HSC);
+ 
+ 	udelay(1000);
+@@ -806,6 +812,9 @@ static void sun6i_dsi_encoder_disable(struct drm_encoder *encoder)
+ 	if (!IS_ERR(dsi->panel)) {
+ 		drm_panel_disable(dsi->panel);
+ 		drm_panel_unprepare(dsi->panel);
++	} else if (!IS_ERR(dsi->bridge)) {
++		drm_bridge_disable(dsi->bridge);
++		drm_bridge_post_disable(dsi->bridge);
+ 	}
+ 
+ 	phy_power_off(dsi->dphy);
+@@ -969,11 +978,12 @@ static int sun6i_dsi_attach(struct mipi_dsi_host *host,
+ 
+ 	dsi->device = device;
+ 	ret = drm_of_find_panel_or_bridge(host->dev->of_node, 0, 0,
+-					  &dsi->panel, NULL);
++					  &dsi->panel, &dsi->bridge);
+ 	if (ret)
+ 		return ret;
+ 
+-	dev_info(host->dev, "Attached device %s\n", device->name);
++	dev_info(host->dev, "Attached %s %s\n",
++		 dsi->bridge ? "bridge" : "panel", device->name);
+ 
+ 	return 0;
+ }
+@@ -983,7 +993,10 @@ static int sun6i_dsi_detach(struct mipi_dsi_host *host,
+ {
+ 	struct sun6i_dsi *dsi = host_to_sun6i_dsi(host);
+ 
+-	dsi->panel = NULL;
++	if (dsi->panel)
++		dsi->panel = NULL;
++	else if (dsi->bridge)
++		dsi->bridge = NULL;
+ 	dsi->device = NULL;
+ 
+ 	return 0;
+@@ -1055,8 +1068,10 @@ static int sun6i_dsi_bind(struct device *dev, struct device *master,
+ 	struct sun4i_tcon *tcon0 = sun4i_get_tcon0(drm);
+ 	int ret;
+ 
+-	if (!dsi->panel)
++	if (!(dsi->panel || dsi->bridge)) {
++		dev_info(drm->dev, "No panel or bridge found... DSI output disabled\n");
+ 		return -EPROBE_DEFER;
++	}
+ 
+ 	dsi->drv = drv;
+ 
+@@ -1078,19 +1093,29 @@ static int sun6i_dsi_bind(struct device *dev, struct device *master,
+ 	}
+ 	dsi->encoder.possible_crtcs = BIT(0);
+ 
+-	drm_connector_helper_add(&dsi->connector,
+-				 &sun6i_dsi_connector_helper_funcs);
+-	ret = drm_connector_init(drm, &dsi->connector,
+-				 &sun6i_dsi_connector_funcs,
+-				 DRM_MODE_CONNECTOR_DSI);
+-	if (ret) {
+-		dev_err(dsi->dev,
+-			"Couldn't initialise the DSI connector\n");
+-		goto err_cleanup_connector;
++	if (dsi->panel) {
++		drm_connector_helper_add(&dsi->connector,
++					 &sun6i_dsi_connector_helper_funcs);
++		ret = drm_connector_init(drm, &dsi->connector,
++					 &sun6i_dsi_connector_funcs,
++					 DRM_MODE_CONNECTOR_DSI);
++		if (ret) {
++			dev_err(dsi->dev,
++				"Couldn't initialise the DSI connector\n");
++			goto err_cleanup_connector;
++		}
++
++		drm_connector_attach_encoder(&dsi->connector, &dsi->encoder);
++		drm_panel_attach(dsi->panel, &dsi->connector);
+ 	}
+ 
+-	drm_connector_attach_encoder(&dsi->connector, &dsi->encoder);
+-	drm_panel_attach(dsi->panel, &dsi->connector);
++	if (dsi->bridge) {
++		ret = drm_bridge_attach(&dsi->encoder, dsi->bridge, NULL);
++		if (ret) {
++			dev_err(dsi->dev, "Couldn't attach the DSI bridge\n");
++			goto err_cleanup_connector;
++		}
++	}
+ 
+ 	return 0;
+ 
+@@ -1104,7 +1129,10 @@ static void sun6i_dsi_unbind(struct device *dev, struct device *master,
+ {
+ 	struct sun6i_dsi *dsi = dev_get_drvdata(dev);
+ 
+-	drm_panel_detach(dsi->panel);
++	if (dsi->panel)
++		drm_panel_detach(dsi->panel);
++	else if (dsi->bridge->funcs->detach)
++		dsi->bridge->funcs->detach(dsi->bridge);
+ }
+ 
+ static const struct component_ops sun6i_dsi_ops = {
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+index c570f2b3868f..c76b71259d2e 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+@@ -32,6 +32,7 @@ struct sun6i_dsi {
+ 	struct sun4i_tcon	*tcon;
+ 	struct mipi_dsi_device	*device;
+ 	struct drm_panel	*panel;
++	struct drm_bridge	*bridge;
+ };
+ 
+ static inline struct sun6i_dsi *host_to_sun6i_dsi(struct mipi_dsi_host *host)
+-- 
+2.18.0.321.gffc6fa0e3
 
-Sure, will send it right away.
-
-> 
-> Reviewed-by: Mel Gorman <mgorman@techsingularity.net>
-> 
-
-Thanks.
-
-Suzuki
