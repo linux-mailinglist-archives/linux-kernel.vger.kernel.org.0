@@ -2,56 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A77F29B97
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:59:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE40429B9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:59:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390337AbfEXP70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:59:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51574 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390200AbfEXP70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 11:59:26 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47EF7217D7;
-        Fri, 24 May 2019 15:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558713565;
-        bh=XwMa7CMpcjz1efQfql4HvlYteg+X/F8oDV04BG5m2lU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EfwTNWoZxrjTEpikuOMzZzSdLcBW0Q45u6aLFm63O9BL4fdlM3YznYNCjrSvvxjuM
-         g53Pp/wOU1odo/9ZnClUVpXHomhiofos7M2Q6i453KiMRhg5l3KCFwsWPs7maFOG3/
-         KbQPrvSM/tT0G7XRuCsON9nTEkFy9ikhpi8rbSk4=
-Date:   Fri, 24 May 2019 17:59:23 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Vijay Khemka <vijaykhemka@fb.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        sdasari@fb.com
-Subject: Re: [PATCH] misc: aspeed-lpc-ctrl: make parameter optional
-Message-ID: <20190524155923.GA7516@kroah.com>
-References: <20190501223411.1655854-1-vijaykhemka@fb.com>
+        id S2390541AbfEXP7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 11:59:45 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44240 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390411AbfEXP7p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 11:59:45 -0400
+Received: by mail-wr1-f67.google.com with SMTP id w13so2181052wru.11
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 08:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kinvolk.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HTU8ZvQGukDYiT1iBEhaciWthxQj5tSMJzxivJb2X1g=;
+        b=Co9GxXET5rTh0Gix9SpGtQXpoW7PfAsPOzE4RvtRidzZoKoaH/7aXuFpxXZqijZTW5
+         VQpH43xlsRCoJpE3daQdOwG8owbA8EqUhSn/7bi+lnRdr5qbWDzXUo3qFT20Us01qhCy
+         +OpZp4cOR2+U9YWVmhvXfDVQhLk8sgHXZ/OW8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=HTU8ZvQGukDYiT1iBEhaciWthxQj5tSMJzxivJb2X1g=;
+        b=q6rEGiNgl5wU0rw5Pl+IQS7oURi81OWxIuotCOq1wnJ5j2eaM/52eA55cQRp2PrA2S
+         L6e0F9zordp011h5ehA+s9dVTYUCa2izpJ9K55qp1uaNAXizNQ26Y94ZTlonzkoHrvCV
+         5A8Y2YzjouXJFkjdbezbFadAAAzD0tgAj+T5IUYP5qPtnPSz21Ye1l9dgvhFD3Ruihoo
+         o96a2M707fTFfe4wRsN6HpTkkcFpBvso4kU4E51U6aoZbjCwAkt1MW5mOGOY9g1KnlZ9
+         +WSpLEvNurGni0TlkqfV6Gi9B36kqeSGLckvz4SlbKwBCo7nQQYfbEqHrhFf87ty+Oa8
+         zTBg==
+X-Gm-Message-State: APjAAAVFGyIGRahI1VGVONuu5eSxGVqe4bfKk25sfhG1U81+UpDM39Yi
+        z+REHNrbWyL2GBGJYF/whWw+DQ==
+X-Google-Smtp-Source: APXvYqyA0nKVvtW4KzkZUeSSbuyLcKqJJfWlj5TiUYJ11BV86ItffK7JLzlBB5qMe/JE64Q0wWetkA==
+X-Received: by 2002:adf:e408:: with SMTP id g8mr31393993wrm.143.1558713583663;
+        Fri, 24 May 2019 08:59:43 -0700 (PDT)
+Received: from locke-xps13.localdomain (69.pool85-58-237.dynamic.orange.es. [85.58.237.69])
+        by smtp.gmail.com with ESMTPSA id i185sm4535054wmg.32.2019.05.24.08.59.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 08:59:42 -0700 (PDT)
+From:   =?UTF-8?q?Iago=20L=C3=B3pez=20Galeiras?= <iago@kinvolk.io>
+To:     john.fastabend@gmail.com, ast@kernel.org, daniel@iogearbox.net
+Cc:     alban@kinvolk.io, krzesimir@kinvolk.io, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Iago=20L=C3=B3pez=20Galeiras?= <iago@kinvolk.io>
+Subject: [PATCH bpf-next v4 0/4] sock ops: add netns ino and dev in bpf context
+Date:   Fri, 24 May 2019 17:59:27 +0200
+Message-Id: <20190524155931.7946-1-iago@kinvolk.io>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190501223411.1655854-1-vijaykhemka@fb.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 01, 2019 at 03:34:11PM -0700, Vijay Khemka wrote:
-> Makiing memory-region and flash as optional parameter in device
-> tree if user needs to use these parameter through ioctl then
-> need to define in devicetree.
-> 
-> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
-> ---
->  drivers/misc/aspeed-lpc-ctrl.c | 58 +++++++++++++++++++++-------------
->  1 file changed, 36 insertions(+), 22 deletions(-)
+I'm taking over Alban's work on this.
 
-File is no longer at this location :(
+This series allows sockops programs to access the network namespace
+inode and device via (struct bpf_sock_ops)->netns_ino and ->netns_dev.
+This can be useful to apply different policies on different network
+namespaces.
+
+In the unlikely case where network namespaces are not compiled in
+(CONFIG_NET_NS=n), the verifier will generate code to return netns_dev
+as usual and will return 0 for netns_ino.
+
+The generated BPF bytecode for netns_ino is loading the correct
+inode number at the time of execution.
+
+However, the generated BPF bytecode for netns_dev is loading an
+immediate value determined at BPF-load-time by looking at the
+initial network namespace. In practice, this works because all netns
+currently use the same virtual device. If this was to change, this
+code would need to be updated too.
+
+It also adds sockmap and verifier selftests to cover the new fields.
+
+Partial reads work thanks to commit e2f7fc0ac69 ("bpf: fix undefined
+behavior in narrow load handling").
+
+v1 patchset can be found at:
+https://lkml.org/lkml/2019/4/12/238
+
+Changes since v1:
+- add netns_dev (review from Alexei)
+- tools/include/uapi/linux/bpf.h: update with netns_dev
+- tools/testing/selftests/bpf/test_sockmap_kern.h: print debugs with
+- This is a new selftest (review from Song)
+
+v2 patchest can be found at:
+https://lkml.org/lkml/2019/4/18/685
+
+Changes since v2:
+- replace __u64 by u64 in kernel code (review from Y Song)
+- remove unneeded #else branch: program would be rejected in
+  is_valid_access (review from Y Song)
+- allow partial reads (<u64) (review from Y Song)
+- standalone patch for the sync (requested by Y Song)
+- update commitmsg to refer to netns_ino
+- test partial reads on netns_dev (review from Y Song)
+- split in two tests
+
+v3 patchset can be found at:
+https://lkml.org/lkml/2019/4/26/740
+
+Changes since v3:
+- return netns_dev unconditionally and set netns_ino to 0 if
+  CONFIG_NET_NS is not enabled (review from Jakub Kicinski)
+- use bpf_ctx_record_field_size and bpf_ctx_narrow_access_ok instead of
+  manually deal with partial reads (review from Y Song)
+- update commit message to reflect new code and remove note about
+  partial reads since it was discussed in the review
+- use bpf_ctx_range() and offsetofend()
+
+Alban Crequy (4):
+  bpf: sock ops: add netns ino and dev in bpf context
+  bpf: sync bpf.h to tools/ for bpf_sock_ops->netns*
+  selftests: bpf: read netns_ino from struct bpf_sock_ops
+  selftests: bpf: verifier: read netns_dev and netns_ino from struct
+    bpf_sock_ops
+
+ include/uapi/linux/bpf.h                      |  2 +
+ net/core/filter.c                             | 70 +++++++++++++++++++
+ tools/include/uapi/linux/bpf.h                |  2 +
+ tools/testing/selftests/bpf/test_sockmap.c    | 38 +++++++++-
+ .../testing/selftests/bpf/test_sockmap_kern.h | 22 ++++++
+ .../testing/selftests/bpf/verifier/var_off.c  | 53 ++++++++++++++
+ 6 files changed, 184 insertions(+), 3 deletions(-)
+
+-- 
+2.21.0
+
