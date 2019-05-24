@@ -2,120 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16E0629B65
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D93A029B7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:49:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390081AbfEXPoj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:44:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36768 "EHLO mx1.redhat.com"
+        id S2390318AbfEXPta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 11:49:30 -0400
+Received: from mga03.intel.com ([134.134.136.65]:61328 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389206AbfEXPoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 11:44:39 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 95F5DC09AD13;
-        Fri, 24 May 2019 15:44:33 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.159])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 4A11C63F62;
-        Fri, 24 May 2019 15:44:26 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 24 May 2019 17:44:33 +0200 (CEST)
-Date:   Fri, 24 May 2019 17:44:25 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] signal: Adjust error codes according to
- restore_user_sigmask()
-Message-ID: <20190524154425.GE2655@redhat.com>
-References: <CABeXuvrPM5xvzqUydbREapvwgy6deYreHp0aaMoSHyLB6+HGRg@mail.gmail.com>
- <20190522161407.GB4915@redhat.com>
- <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
- <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
- <20190523145944.GB23070@redhat.com>
- <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
- <20190523163604.GE23070@redhat.com>
- <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
- <20190524132911.GA2655@redhat.com>
- <766510cbbec640b18fd99f3946b37475@AcuMS.aculab.com>
+        id S2390152AbfEXPta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 11:49:30 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 08:49:28 -0700
+X-ExtLoop1: 1
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga003.jf.intel.com with ESMTP; 24 May 2019 08:49:28 -0700
+Date:   Fri, 24 May 2019 09:44:29 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Hannes Reinecke <hare@suse.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org
+Subject: Re: [5.2-rc1 regression]: nvme vs. hibernation
+Message-ID: <20190524154429.GE15192@localhost.localdomain>
+References: <nycvar.YFH.7.76.1905241706280.1962@cbobk.fhfr.pm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <766510cbbec640b18fd99f3946b37475@AcuMS.aculab.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 24 May 2019 15:44:38 +0000 (UTC)
+In-Reply-To: <nycvar.YFH.7.76.1905241706280.1962@cbobk.fhfr.pm>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/24, David Laight wrote:
->
-> From: Oleg Nesterov
-> > Sent: 24 May 2019 14:29
-> > It seems that we all are just trying to confuse each other. I got lost.
->
-> I'm always lost :-)
+On Fri, May 24, 2019 at 05:22:30PM +0200, Jiri Kosina wrote:
+> Hi,
+> 
+> Something is broken in Linus' tree (4dde821e429) with respec to 
+> hibernation on my thinkpad x270, and it seems to be nvme related.
+> 
+> I reliably see the warning below during hibernation, and then sometimes 
+> resume sort of works but the machine misbehaves here and there (seems like 
+> lost IRQs), sometimes it never comes back from the hibernated state.
+> 
+> I will not have too much have time to look into this over weekend, so I am 
+> sending this out as-is in case anyone has immediate idea. Otherwise I'll 
+> bisect it on monday (I don't even know at the moment what exactly was the 
+> last version that worked reliably, I'll have to figure that out as well 
+> later).
 
-same here ;)
+I believe the warning call trace was introduced when we converted nvme to
+lock-less completions. On device shutdown, we'll check queues for any
+pending completions, and we temporarily disable the interrupts to make
+sure that queues interrupt handler can't run concurrently.
 
-> To my mind changing the signal mask should be enough to get a masked
-> signal handler called - even if the mask is reset before the syscall exits.
+On hibernation, most CPUs are offline, and the interrupt re-enabling
+is hitting this warning that says the IRQ is not associated with any
+online CPUs.
 
-well, the kernel doesn't do this, and on purpose.
-
-> There shouldn't be any need for an interruptible wait to be interrupted.
-
-can't parse ;)
-
-> I suspect that if you send a signal to a process that is looping
-> in userspace (on a different) the signal handler is called on the next
-> exit to userspace regardless as to whether the kernel blocks.
->
-> epoll and pselect shouldn't be any different.
-
-They differ exactly because they manipulate the blocked mask,
-
-> Having the signal unmasked at any time should be enough to get it called.
-
-No. The sigmask passed to pselect() tells the kernel which signals should
-interrupt the syscall if it blocks. The fact that pselect() actually unblocks
-a signal is just the internal implementation detail.
-
-> > > I suspect you need to defer the re-instatement of the original mask
-> > > to the code that calls the signal handlers (which probably should
-> > > be called with the programs signal mask).
-> >
-> > This is what the kernel does when the signal is delivered, the original mask
-> > is restored after the signal handler runs.
->
-> I'd have thought that the original signal mask (all blocked in the examples)
-> should be restored before the signal handler is called.
-
-No. And this means that if you have 2 pending signals, they both will be delivered.
-Unless of course sigaction->sa_mask includes the 2nd one.
-
-> After all the signal handler is allowed to modify the processes signal mask.
-
-only untill the handler returns.
-
-> I've had horrid thoughts about SIG_SUSPEND :-)
-
-google knows nothing about SIG_SUSPEND, neither me ;)
-
-Oleg.
-
+I'm sure we can find a way to fix this warning, but I'm not sure that
+explains the rest of the symptoms you're describing though.
+ 
+ 
+>  WARNING: CPU: 0 PID: 363 at kernel/irq/chip.c:210 irq_startup+0xff/0x110
+>  Modules linked in: bnep ccm af_packet fuse 8021q garp stp mrp llc tun ip6table_mangle ip6table_filter ip6_tables iptable_mangle xt_DSCP xt_tcpudp xt_conntrac
+>   snd_hda_core aes_x86_64 glue_helper crypto_simd snd_pcm cryptd e1000e ptp pcspkr joydev pps_core snd_timer i2c_i801 cfg80211 mei_me mei intel_pch_thermal th
+>  CPU: 0 PID: 363 Comm: kworker/u8:4 Not tainted 5.1.0-08122-ga2d635decbfa #9
+>  Hardware name: LENOVO 20K5S22R00/20K5S22R00, BIOS R0IET38W (1.16 ) 05/31/2017
+>  Workqueue: events_unbound async_run_entry_fn
+>  RIP: 0010:irq_startup+0xff/0x110
+>  Code: f6 4c 89 e7 e8 92 34 00 00 85 c0 75 21 4c 89 e7 31 d2 4c 89 ee e8 e1 cc ff ff 48 89 df e8 89 fe ff ff 41 89 c4 e9 37 ff ff ff <0f> 0b eb b0 0f 0b eb ac 66 0f 1f 84 00 00 
+>  44 00 00
+>  RSP: 0018:ffffa05100f13bd0 EFLAGS: 00010002
+>  RAX: 0000000000000200 RBX: ffff9168e360ec00 RCX: 0000000000000200
+>  RDX: 0000000000000200 RSI: ffffffff9f383600 RDI: ffff9168e360ec18
+>  RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000007
+>  R10: 000000007a6a7b55 R11: 0000000000000000 R12: 0000000000000001
+>  R13: ffff9168e360ec18 R14: ffff9168e6c97000 R15: ffff9168df76c000
+>  FS:  0000000000000000(0000) GS:ffff9168e7280000(0000) knlGS:0000000000000000
+>  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>  CR2: 00007fc942c4bf60 CR3: 00000001f1210002 CR4: 00000000003606e0
+>  Call Trace:
+>   ? __irq_get_desc_lock+0x4e/0x90
+>   enable_irq+0x39/0x70
+>   nvme_poll_irqdisable+0x3a3/0x470 [nvme]
+>   __nvme_disable_io_queues.isra.42+0x16a/0x1d0 [nvme]
+>   nvme_dev_disable+0x17e/0x1e0 [nvme]
+>   ? pci_pm_poweroff+0xf0/0xf0
+>   nvme_suspend+0x13/0x20 [nvme]
+>   pci_pm_freeze+0x52/0xd0
+>   dpm_run_callback+0x6b/0x2e0
+>   __device_suspend+0x147/0x630
+>   ? dpm_show_time+0xe0/0xe0
+>   async_suspend+0x1a/0x90
+>   async_run_entry_fn+0x39/0x160
+>   process_one_work+0x1f0/0x5b0
+>   ? process_one_work+0x16a/0x5b0
+>   worker_thread+0x4c/0x3f0
+>   kthread+0x103/0x140
+>   ? process_one_work+0x5b0/0x5b0
+>   ? kthread_bind+0x10/0x10
+>   ret_from_fork+0x3a/0x50
+>  irq event stamp: 381230
+>  hardirqs last  enabled at (381229): [<ffffffff9e90910d>] _raw_spin_unlock_irqrestore+0x4d/0x70
+>  hardirqs last disabled at (381230): [<ffffffff9e908fa4>] _raw_spin_lock_irqsave+0x24/0x60
+>  softirqs last  enabled at (381104): [<ffffffffc0eeb734>] __iwl_mvm_mac_stop+0xa4/0x1a0 [iwlmvm]
+>  softirqs last disabled at (381102): [<ffffffffc0eeeda6>] iwl_mvm_async_handlers_purge+0x26/0xa0 [iwlmvm]
