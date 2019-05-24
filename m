@@ -2,106 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34716297B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 600F6297BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:58:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391360AbfEXL5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:57:13 -0400
-Received: from mail-eopbgr820057.outbound.protection.outlook.com ([40.107.82.57]:43520
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391094AbfEXL5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:57:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VsZiYFRfaMkkI5PFdVM/jscHJZBWevN+jPfXcBQoz8g=;
- b=KerU2GyIJ2JRZObG04XF2LLTbTIHXzsiDn+J+TLePlx6LuWv3uKxKaRYLdbDIA/ZIh+HwhvMnjzZ4B5xPRlwC9Zfm4WgWamwSZZ8nPV4gyGwWh1ardmqX6Fe8g1rGF679opzXxXtJEtKQZLzlDWZVhACH8rkIz/7KjUtJzmMziI=
-Received: from MN2PR05MB6141.namprd05.prod.outlook.com (20.178.241.217) by
- MN2PR05MB6511.namprd05.prod.outlook.com (20.178.246.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.10; Fri, 24 May 2019 11:57:05 +0000
-Received: from MN2PR05MB6141.namprd05.prod.outlook.com
- ([fe80::c19e:e8f8:b151:9ad]) by MN2PR05MB6141.namprd05.prod.outlook.com
- ([fe80::c19e:e8f8:b151:9ad%6]) with mapi id 15.20.1922.013; Fri, 24 May 2019
- 11:57:05 +0000
-From:   Thomas Hellstrom <thellstrom@vmware.com>
-To:     "hch@lst.de" <hch@lst.de>, "cai@lca.pw" <cai@lca.pw>
-CC:     "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/vmwgfx: fix a warning due to missing dma_parms
-Thread-Topic: [PATCH] drm/vmwgfx: fix a warning due to missing dma_parms
-Thread-Index: AQHVEdmqliGQeseHrE6b20UPYA1BNqZ5zZ4AgABeSIA=
-Date:   Fri, 24 May 2019 11:57:04 +0000
-Message-ID: <c0290fd3af63cbbf677871370df29f6983ad1938.camel@vmware.com>
-References: <20190524023719.1495-1-cai@lca.pw>   <20190524061936.GA2337@lst.de>
-In-Reply-To: <20190524061936.GA2337@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=thellstrom@vmware.com; 
-x-originating-ip: [155.4.205.35]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 97597714-3dfe-4b88-0cdf-08d6e03ef0b2
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:MN2PR05MB6511;
-x-ms-traffictypediagnostic: MN2PR05MB6511:
-x-ld-processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
-x-microsoft-antispam-prvs: <MN2PR05MB6511B2E8DCD36C011E95FC6CA1020@MN2PR05MB6511.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0047BC5ADE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(346002)(39860400002)(366004)(199004)(189003)(8936002)(86362001)(110136005)(54906003)(14454004)(6246003)(2501003)(256004)(71200400001)(7736002)(5660300002)(71190400001)(26005)(36756003)(81156014)(11346002)(305945005)(8676002)(186003)(81166006)(6116002)(446003)(2616005)(3846002)(476003)(4326008)(99286004)(6506007)(102836004)(76176011)(66066001)(478600001)(25786009)(486006)(316002)(229853002)(6436002)(2906002)(118296001)(66446008)(66476007)(91956017)(66556008)(64756008)(66946007)(76116006)(73956011)(53936002)(6486002)(68736007)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR05MB6511;H:MN2PR05MB6141.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 607ijx43DXXootZkipUmM89tJC7PEuGLzz9Ks+NPiQ2Jt1S4d/72ElAH3niXJkYAu7bxsD2p8kAkblSaFoOBkCOHO9qch2ggFDR8alO6zZOgd6+PDPr70+CUvI6/On1ZlFhSJZK/qEIstU6ReOcz8ngpYU4o0apu2nmo4+VXPWZ83Mqt/PTUSpLwUyqpwNu2Wd1KLsclzS38Q7jh38v2S4ExwEdhTp/wfFT4Gy4kcZH2nfnoNaeh8XBmHriEaXw/zD+nwq3PPtLMpFLjZvzYzhTC0nwu75zZUbZPuATUai/UyDwLqmo06evrps4VQMm0GT91+XTwO3FNIaR/f2PgNE4dxFO8ofeM4IfFjKJDZfjfKGG+kADyEQNlkHpErM2hujHEsk/hFiWm3NEshY6BzDbqYgfVkKKS6Sjqn9n7pp8=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F51E448A0378E4478EE05BA1901A9243@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2391390AbfEXL6e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:58:34 -0400
+Received: from mga02.intel.com ([134.134.136.20]:14156 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390961AbfEXL6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 07:58:33 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 04:58:33 -0700
+X-ExtLoop1: 1
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga006.jf.intel.com with SMTP; 24 May 2019 04:58:30 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Fri, 24 May 2019 14:58:29 +0300
+Date:   Fri, 24 May 2019 14:58:29 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     tony camuso <tcamuso@redhat.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        airlied@linux.ie, dkwon@redhat.com
+Subject: Re: [PATCH] drm: assure aux_dev is nonzero before using it
+Message-ID: <20190524115829.GC5942@intel.com>
+References: <20190523110905.22445-1-tcamuso@redhat.com>
+ <87v9y0mept.fsf@intel.com>
+ <04ae1fb0-02ab-88e9-94b3-e36f48cc65d5@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97597714-3dfe-4b88-0cdf-08d6e03ef0b2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2019 11:57:04.8379
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: thellstrom@vmware.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR05MB6511
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <04ae1fb0-02ab-88e9-94b3-e36f48cc65d5@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE5LTA1LTI0IGF0IDA4OjE5ICswMjAwLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90
-ZToNCj4gT24gVGh1LCBNYXkgMjMsIDIwMTkgYXQgMTA6Mzc6MTlQTSAtMDQwMCwgUWlhbiBDYWkg
-d3JvdGU6DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2Ry
-di5jDQo+ID4gYi9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9kcnYuYw0KPiA+IGluZGV4
-IGJmNmMzNTAwZDM2My4uNWM1NjdiODExNzRmIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS92bXdnZngvdm13Z2Z4X2Rydi5jDQo+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3Ztd2dm
-eC92bXdnZnhfZHJ2LmMNCj4gPiBAQCAtNzQ3LDYgKzc0NywxMyBAQCBzdGF0aWMgaW50IHZtd19k
-cml2ZXJfbG9hZChzdHJ1Y3QgZHJtX2RldmljZQ0KPiA+ICpkZXYsIHVuc2lnbmVkIGxvbmcgY2hp
-cHNldCkNCj4gPiAgCWlmICh1bmxpa2VseShyZXQgIT0gMCkpDQo+ID4gIAkJZ290byBvdXRfZXJy
-MDsNCj4gPiAgDQo+ID4gKwlkZXYtPmRldi0+ZG1hX3Bhcm1zID0gIGt6YWxsb2Moc2l6ZW9mKCpk
-ZXYtPmRldi0+ZG1hX3Bhcm1zKSwNCj4gPiArCQkJCSAgICAgICBHRlBfS0VSTkVMKTsNCj4gPiAr
-CWlmICghZGV2LT5kZXYtPmRtYV9wYXJtcykNCj4gPiArCQlnb3RvIG91dF9lcnIwOw0KPiANCj4g
-V2hhdCBidXMgZG9lcyB0aGlzIGRldmljZSBjb21lIGZyb20/ICBJIHRob3VnaCB2bWdmeCB3YXMg
-YQ0KPiAodmlydHVhbGl6ZWQpDQo+IFBDSSBkZXZpY2UsIGluIHdoaWNoIGNhc2UgdGhpcyBzaG91
-bGQgYmUgcHJvdmlkZWQgYnkgdGhlIFBDSSBjb3JlLg0KPiBPciBhcmUgd2UgY2FsbGluZyBETUEg
-bWFwcGluZyByb3V0aW5lcyBvbiBhcmJpdHJhcnkgb3RoZXIgc3RydWN0DQo+IGRldmljZSwNCj4g
-aW4gd2hpY2ggY2FzZSB0aGF0IGlzIHRoZSByZWFsIGJ1ZyBhbmQgd2Ugc2hvdWxkIHN3aXRjaCB0
-aGUgUENJDQo+IGRldmljZQ0KPiBpbnN0ZWFkLg0KDQpJdCdzIGEgUENJIGRldmljZS4gVGhlIHN0
-cnVjdCBkZXZpY2UgKiB1c2VkIGluIGRtYV9tYXBfc2coKSBpcyB0aGUgc2FtZQ0KYXMgdGhlICZw
-Y2lfZGV2LT5kZXYgaGFuZGVkIHRvIHRoZSBwcm9iZSgpIGNhbGxiYWNrLiBCdXQgYXQgcHJvYmUg
-dGltZSwNCnRoZSBzdHJ1Y3QgZGV2aWNlOjpkbWFfcGFybXMgaXMgbm9uLU5VTEwsIGF0IGxlYXN0
-IG9uIG15IHN5c3RlbSBzbw0KdGhlcmUgc2hvdWxkbid0IHJlYWxseSBiZSBhIG5lZWQgdG8ga3ph
-bGxvYygpIGl0Lg0KDQo+IA0KPiA+ICsJZG1hX3NldF9tYXhfc2VnX3NpemUoZGV2LT5kZXYsICpk
-ZXYtPmRldi0+ZG1hX21hc2spOw0KDQpUaGUgbWF4IGlzIFUzMl9NQVguDQoNCi9UaG9tYXMNCg0K
-DQo+IA0KPiBUaGF0IGxvb2tzIG9kZC4gIElmIHlvdSB3YW50IHRvIHN1cHBvcnQgYW4gdW5saW1p
-dGVkIHNlZ21lbnQgc2l6ZQ0KPiBqdXN0IHBhc3MgVUlOVF9NQVggaGVyZS4NCg==
+On Fri, May 24, 2019 at 06:48:32AM -0400, tony camuso wrote:
+> On 5/24/19 4:36 AM, Jani Nikula wrote:
+> > On Thu, 23 May 2019, tcamuso <tcamuso@redhat.com> wrote:
+> >>  From Daniel Kwon <dkwon@redhat.com>
+> >>
+> >> The system was crashed due to invalid memory access while trying to access
+> >> auxiliary device.
+> >>
+> >> crash> bt
+> >> PID: 9863   TASK: ffff89d1bdf11040  CPU: 1   COMMAND: "ipmitool"
+> >>   #0 [ffff89cedd7f3868] machine_kexec at ffffffffb0663674
+> >>   #1 [ffff89cedd7f38c8] __crash_kexec at ffffffffb071cf62
+> >>   #2 [ffff89cedd7f3998] crash_kexec at ffffffffb071d050
+> >>   #3 [ffff89cedd7f39b0] oops_end at ffffffffb0d6d758
+> >>   #4 [ffff89cedd7f39d8] no_context at ffffffffb0d5bcde
+> >>   #5 [ffff89cedd7f3a28] __bad_area_nosemaphore at ffffffffb0d5bd75
+> >>   #6 [ffff89cedd7f3a78] bad_area at ffffffffb0d5c085
+> >>   #7 [ffff89cedd7f3aa0] __do_page_fault at ffffffffb0d7080c
+> >>   #8 [ffff89cedd7f3b10] do_page_fault at ffffffffb0d70905
+> >>   #9 [ffff89cedd7f3b40] page_fault at ffffffffb0d6c758
+> >>      [exception RIP: drm_dp_aux_dev_get_by_minor+0x3d]
+> >>      RIP: ffffffffc0a589bd  RSP: ffff89cedd7f3bf0  RFLAGS: 00010246
+> >>      RAX: 0000000000000000  RBX: 0000000000000000  RCX: ffff89cedd7f3fd8
+> >>      RDX: 0000000000000000  RSI: 0000000000000000  RDI: ffffffffc0a613e0
+> >>      RBP: ffff89cedd7f3bf8   R8: ffff89f1bcbabbd0   R9: 0000000000000000
+> >>      R10: ffff89f1be7a1cc0  R11: 0000000000000000  R12: 0000000000000000
+> >>      R13: ffff89f1b32a2830  R14: ffff89d18fadfa00  R15: 0000000000000000
+> >>      ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+> >>      RIP: 00002b45f0d80d30  RSP: 00007ffc416066a0  RFLAGS: 00010246
+> >>      RAX: 0000000000000002  RBX: 000056062e212d80  RCX: 00007ffc41606810
+> >>      RDX: 0000000000000000  RSI: 0000000000000002  RDI: 00007ffc41606ec0
+> >>      RBP: 0000000000000000   R8: 000056062dfed229   R9: 00002b45f0cdf14d
+> >>      R10: 0000000000000002  R11: 0000000000000246  R12: 00007ffc41606ec0
+> >>      R13: 00007ffc41606ed0  R14: 00007ffc41606ee0  R15: 0000000000000000
+> >>      ORIG_RAX: 0000000000000002  CS: 0033  SS: 002b
+> >>
+> >> ----------------------------------------------------------------------------
+> >>
+> >> It was trying to open '/dev/ipmi0', but as no entry in aux_dir, it returned
+> >> NULL from 'idr_find()'. This drm_dp_aux_dev_get_by_minor() should have done a
+> >> check on this, but had failed to do it.
+> > 
+> > I think the better question is, *why* does the idr_find() return NULL? I
+> > don't think it should, under any circumstances. I fear adding the check
+> > here papers over some other problem, taking us further away from the
+> > root cause.
+> 
+> That's a very good question.
+> 
+> > Also, can you reproduce this on a recent upstream kernel? The aux device
+> > nodes were introduced in kernel v4.6. Whatever you reproduced on v3.10
+> > is pretty much irrelevant for upstream.
+> 
+> I will look into this deeper, using the upstream kernel.
+
+Should be trivial to reproduce with mknod. I wonder if we should stick a
+test like that into igt actually. Not sure how happy people would be if
+igt creates new device nodes...
+
+-- 
+Ville Syrjälä
+Intel
