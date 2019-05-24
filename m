@@ -2,64 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21B44296C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:12:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EEC4296AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:11:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391050AbfEXLLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:11:30 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:37884 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390980AbfEXLLZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:11:25 -0400
-Received: by mail-it1-f193.google.com with SMTP id m140so13231135itg.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:11:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nuilRgGUYviZJo16cdF7vgoam1Y3XVG2+yfRV0kCp44=;
-        b=R+t/15ExfNAlDmS3T8/nYVgxjZsPbXAkCbY/B3M2JMRsaFaURV0Zvwo0dvOoA8j1Hm
-         pYCK1zBbhCgnKR+XhqVnk7+ApqJfnA2u7suNZ83jbrV4R6vPW6qeJf7gbtLWsp8NPh5C
-         7QGuX9muWb4qK2c7arcSFCR/ETv8/zM12NWPgcweja2NzxE0Nb6gWV3ACS2uOuwyElHV
-         mivWTrs4gdGOskQm1ccR4N4oruKpjx/ClJz9t2u6Li4RA51pbfSX1I+7TFfDNr/PD8QU
-         BbPiZbClYmIgJVXnBXzJUBI/f+bo1JTfUguXL47Z1WJ3MaS6fvhxARml1t5MsSBiA5gB
-         mG/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nuilRgGUYviZJo16cdF7vgoam1Y3XVG2+yfRV0kCp44=;
-        b=HXb4o1FGnTDkg9aaZMww6kQDGzLx71RKFC0rI+TQHTwqSwjGIVP/pRJjTm5id4PtW2
-         jRt9+yggrH38F21XApYhBCOcYRNqQsH3HKBXWxfp80/kbvD8npAgndstQF6o4uak64vE
-         zoBhVRdDHfA4VAZ6xhSN/aneqF3WTOMatTKxhdsGj4qrwoSMoUsTGIIrHN/FcHZVJ99B
-         YEh1a+rmzZCWtt70BDB4ywH51w/OTbS9hcdi1E7Sj5jHR+aTK9xs6g/Nd8yyZqK9I0Y/
-         bOGd0w2N/qthNSqdIksU82ooc67k6b5tOgv/wCTjmIq9WLeOLsT9UEkuhEI3Y7aQtxva
-         pt5A==
-X-Gm-Message-State: APjAAAUSqrjp+b7+2Kgi/JRAh0cxb8GIzyPV9XuBe59nqWAThbT2oh+s
-        oWMYcJXZKsf0dRWYEZ+azqPcyg==
-X-Google-Smtp-Source: APXvYqxBWUfU8Pv7v2XH7gr4LqA1seYEni45lAXHr6lzqG9t83zM0qgC2zZvMzAwxI3Sa3ujZjPIVg==
-X-Received: by 2002:a24:7c97:: with SMTP id a145mr12709178itd.117.1558696284466;
-        Fri, 24 May 2019 04:11:24 -0700 (PDT)
-Received: from localhost.localdomain ([172.56.12.37])
-        by smtp.gmail.com with ESMTPSA id y194sm1024771itb.34.2019.05.24.04.11.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 04:11:23 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        fweimer@redhat.com
-Cc:     jannh@google.com, oleg@redhat.com, tglx@linutronix.de,
-        arnd@arndb.de, shuah@kernel.org, dhowells@redhat.com,
-        tkjos@android.com, ldv@altlinux.org, miklos@szeredi.hu,
-        Christian Brauner <christian@brauner.io>,
-        linux-api@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH v3 3/3] tests: add close_range() tests
-Date:   Fri, 24 May 2019 13:10:47 +0200
-Message-Id: <20190524111047.6892-4-christian@brauner.io>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190524111047.6892-1-christian@brauner.io>
-References: <20190524111047.6892-1-christian@brauner.io>
+        id S2390915AbfEXLLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:11:10 -0400
+Received: from onstation.org ([52.200.56.107]:53838 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390760AbfEXLLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 07:11:09 -0400
+Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id CF2B53E88C;
+        Fri, 24 May 2019 11:11:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1558696268;
+        bh=b3xoIo6bZa98+lW1QIsMbZizb+JmTWWn33+Kc5ksiJo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QVGyy0kSeWGNcheHJjAJEw93eVpXHSDN7EfhbQ3t6WSHe8wz1PFkW/W8BBgxUDFPR
+         ACR17+MnBRZFyTpSI5imbsA9FwwkC3aL6TGS57ONUVRWsDsLswMENFW7lR27s1F2Yu
+         puO0OE48XEzT648f92DGoBpb7JQg7DgS5saFy0AM=
+From:   Brian Masney <masneyb@onstation.org>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc:     faiz_abbas@ti.com, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH] mmc: sdhci: queue work after sdhci_defer_done()
+Date:   Fri, 24 May 2019 07:10:53 -0400
+Message-Id: <20190524111053.12228-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,222 +39,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds basic tests for the new close_range() syscall.
-- test that no invalid flags can be passed
-- test that a range of file descriptors is correctly closed
-- test that a range of file descriptors is correctly closed if there there
-  are already closed file descriptors in the range
-- test that max_fd is correctly capped to the current fdtable maximum
+WiFi stopped working on the LG Nexus 5 phone and the issue was bisected
+to the commit c07a48c26519 ("mmc: sdhci: Remove finish_tasklet") that
+moved from using a tasklet to a work queue. That patch also changed
+sdhci_irq() to return IRQ_WAKE_THREAD instead of finishing the work when
+sdhci_defer_done() is true. Change it to queue work to the complete work
+queue if sdhci_defer_done() is true so that the functionality is
+equilivent to what was there when the finish_tasklet was present. This
+corrects the WiFi breakage on the Nexus 5 phone.
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Jann Horn <jannh@google.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Dmitry V. Levin <ldv@altlinux.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Florian Weimer <fweimer@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-api@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+Fixes: c07a48c26519 ("mmc: sdhci: Remove finish_tasklet")
 ---
-v1: unchanged
-v2:
-- Christian Brauner <christian@brauner.io>:
-  - verify that close_range() correctly closes a single file descriptor
-v3:
-- Christian Brauner <christian@brauner.io>:
-  - add missing Cc for Shuah
-  - add missing Cc for linux-kselftest
----
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/core/.gitignore       |   1 +
- tools/testing/selftests/core/Makefile         |   6 +
- .../testing/selftests/core/close_range_test.c | 142 ++++++++++++++++++
- 4 files changed, 150 insertions(+)
- create mode 100644 tools/testing/selftests/core/.gitignore
- create mode 100644 tools/testing/selftests/core/Makefile
- create mode 100644 tools/testing/selftests/core/close_range_test.c
+See 'sdhci@f98a4900' in qcom-msm8974-lge-nexus5-hammerhead.dts for
+details about how the WiFi is wired into sdhci on this platform.
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 9781ca79794a..06e57fabbff9 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -4,6 +4,7 @@ TARGETS += bpf
- TARGETS += breakpoints
- TARGETS += capabilities
- TARGETS += cgroup
-+TARGETS += core
- TARGETS += cpufreq
- TARGETS += cpu-hotplug
- TARGETS += drivers/dma-buf
-diff --git a/tools/testing/selftests/core/.gitignore b/tools/testing/selftests/core/.gitignore
-new file mode 100644
-index 000000000000..6e6712ce5817
---- /dev/null
-+++ b/tools/testing/selftests/core/.gitignore
-@@ -0,0 +1 @@
-+close_range_test
-diff --git a/tools/testing/selftests/core/Makefile b/tools/testing/selftests/core/Makefile
-new file mode 100644
-index 000000000000..de3ae68aa345
---- /dev/null
-+++ b/tools/testing/selftests/core/Makefile
-@@ -0,0 +1,6 @@
-+CFLAGS += -g -I../../../../usr/include/ -I../../../../include
-+
-+TEST_GEN_PROGS := close_range_test
-+
-+include ../lib.mk
-+
-diff --git a/tools/testing/selftests/core/close_range_test.c b/tools/testing/selftests/core/close_range_test.c
-new file mode 100644
-index 000000000000..d6e6079d3d53
---- /dev/null
-+++ b/tools/testing/selftests/core/close_range_test.c
-@@ -0,0 +1,142 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <linux/kernel.h>
-+#include <limits.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <unistd.h>
-+
-+#include "../kselftest.h"
-+
-+static inline int sys_close_range(unsigned int fd, unsigned int max_fd,
-+				  unsigned int flags)
-+{
-+	return syscall(__NR_close_range, fd, max_fd, flags);
-+}
-+
-+#ifndef ARRAY_SIZE
-+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-+#endif
-+
-+int main(int argc, char **argv)
-+{
-+	const char *test_name = "close_range";
-+	int i, ret;
-+	int open_fds[101];
-+	int fd_max, fd_mid, fd_min;
-+
-+	ksft_set_plan(9);
-+
-+	for (i = 0; i < ARRAY_SIZE(open_fds); i++) {
-+		int fd;
-+
-+		fd = open("/dev/null", O_RDONLY | O_CLOEXEC);
-+		if (fd < 0) {
-+			if (errno == ENOENT)
-+				ksft_exit_skip(
-+					"%s test: skipping test since /dev/null does not exist\n",
-+					test_name);
-+
-+			ksft_exit_fail_msg(
-+				"%s test: %s - failed to open /dev/null\n",
-+				strerror(errno), test_name);
-+		}
-+
-+		open_fds[i] = fd;
-+	}
-+
-+	fd_min = open_fds[0];
-+	fd_max = open_fds[99];
-+
-+	ret = sys_close_range(fd_min, fd_max, 1);
-+	if (!ret)
-+		ksft_exit_fail_msg(
-+			"%s test: managed to pass invalid flag value\n",
-+			test_name);
-+	ksft_test_result_pass("do not allow invalid flag values for close_range()\n");
-+
-+	fd_mid = open_fds[50];
-+	ret = sys_close_range(fd_min, fd_mid, 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close range of file descriptors from %d to %d\n",
-+			test_name, fd_min, fd_mid);
-+	ksft_test_result_pass("close_range() from %d to %d\n", fd_min, fd_mid);
-+
-+	for (i = 0; i <= 50; i++) {
-+		ret = fcntl(open_fds[i], F_GETFL);
-+		if (ret >= 0)
-+			ksft_exit_fail_msg(
-+				"%s test: Failed to close range of file descriptors from %d to %d\n",
-+				test_name, fd_min, fd_mid);
-+	}
-+	ksft_test_result_pass("fcntl() verify closed range from %d to %d\n", fd_min, fd_mid);
-+
-+	/* create a couple of gaps */
-+	close(57);
-+	close(78);
-+	close(81);
-+	close(82);
-+	close(84);
-+	close(90);
-+
-+	fd_mid = open_fds[51];
-+	/* Choose slightly lower limit and leave some fds for a later test */
-+	fd_max = open_fds[92];
-+	ret = sys_close_range(fd_mid, fd_max, 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+			test_name);
-+	ksft_test_result_pass("close_range() from %d to %d\n", fd_mid, fd_max);
-+
-+	for (i = 51; i <= 92; i++) {
-+		ret = fcntl(open_fds[i], F_GETFL);
-+		if (ret >= 0)
-+			ksft_exit_fail_msg(
-+				"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+				test_name);
-+	}
-+	ksft_test_result_pass("fcntl() verify closed range from %d to %d\n", fd_mid, fd_max);
-+
-+	fd_mid = open_fds[93];
-+	fd_max = open_fds[99];
-+	/* test that the kernel caps and still closes all fds */
-+	ret = sys_close_range(fd_mid, UINT_MAX, 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+			test_name);
-+	ksft_test_result_pass("close_range() from %d to %d\n", fd_mid, fd_max);
-+
-+	for (i = 93; i < 100; i++) {
-+		ret = fcntl(open_fds[i], F_GETFL);
-+		if (ret >= 0)
-+			ksft_exit_fail_msg(
-+				"%s test: Failed to close range of file descriptors from 51 to 100\n",
-+				test_name);
-+	}
-+	ksft_test_result_pass("fcntl() verify closed range from %d to %d\n", fd_mid, fd_max);
-+
-+	ret = sys_close_range(open_fds[100], open_fds[100], 0);
-+	if (ret < 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close single file descriptor\n",
-+			test_name);
-+	ksft_test_result_pass("close_range() closed single file descriptor\n");
-+
-+	ret = fcntl(open_fds[100], F_GETFL);
-+	if (ret >= 0)
-+		ksft_exit_fail_msg(
-+			"%s test: Failed to close single file descriptor\n",
-+			test_name);
-+	ksft_test_result_pass("fcntl() verify closed single file descriptor\n");
-+
-+	return ksft_exit_pass();
-+}
+bisect log:
+
+ git bisect start
+ # bad: [4dde821e4296e156d133b98ddc4c45861935a4fb] Merge tag 'xfs-5.2-fixes-1' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux
+ git bisect bad 4dde821e4296e156d133b98ddc4c45861935a4fb
+ # good: [e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd] Linux 5.1
+ git bisect good e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd
+ # bad: [8c79f4cd441b27df6cadd11b70a50e06b3b3a2bf] Merge tag 'docs-5.2' of git://git.lwn.net/linux
+ git bisect bad 8c79f4cd441b27df6cadd11b70a50e06b3b3a2bf
+ # bad: [67a242223958d628f0ba33283668e3ddd192d057] Merge tag 'for-5.2/block-20190507' of git://git.kernel.dk/linux-block
+ git bisect bad 67a242223958d628f0ba33283668e3ddd192d057
+ # good: [8ff468c29e9a9c3afe9152c10c7b141343270bf3] Merge branch 'x86-fpu-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+ git bisect good 8ff468c29e9a9c3afe9152c10c7b141343270bf3
+ # good: [e2a5be107f52cefb9010ccae6f569c3ddaa954cc] staging: kpc2000: kpc_spi: Fix build error for {read,write}q
+ git bisect good e2a5be107f52cefb9010ccae6f569c3ddaa954cc
+ # bad: [cf482a49af564a3044de3178ea28f10ad5921b38] Merge tag 'driver-core-5.2-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core
+ git bisect bad cf482a49af564a3044de3178ea28f10ad5921b38
+ # good: [9f2e3a53f7ec9ef55e9d01bc29a6285d291c151e] Merge tag 'for-5.2-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
+ git bisect good 9f2e3a53f7ec9ef55e9d01bc29a6285d291c151e
+ # good: [b4b52b881cf08e13d110eac811d4becc0775abbf] Merge tag 'Wimplicit-fallthrough-5.2-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux
+ git bisect good b4b52b881cf08e13d110eac811d4becc0775abbf
+ # bad: [d5f758f2df8015b8dcf47b6403cc192e4cef734d] mmc: meson-gx: disable HS400
+ git bisect bad d5f758f2df8015b8dcf47b6403cc192e4cef734d
+ # good: [b3fb9d64b497b890f7b779a9f0b40b5cc269ea18] mmc: mmci: define get_dctrl_cfg for legacy variant
+ git bisect good b3fb9d64b497b890f7b779a9f0b40b5cc269ea18
+ # good: [ade024f130f742725da9219624b01666f04bc4a6] memstick: jmb38x_ms: remove set but not used variable 'data'
+ git bisect good ade024f130f742725da9219624b01666f04bc4a6
+ # bad: [42c38d4a1bc41e78dedbf73b0fb35e44007789bb] mmc: core: Fix warning and undefined behavior in mmc voltage handling
+ git bisect bad 42c38d4a1bc41e78dedbf73b0fb35e44007789bb
+ # good: [19d2f695f4e82794df7465b029c02b104d1b9903] mmc: sdhci: Call mmc_request_done() from IRQ handler if possible
+ git bisect good 19d2f695f4e82794df7465b029c02b104d1b9903
+ # bad: [71c733c4e1aeb83e8221e89caeec893d51f88b7b] mmc: tegra: add sdhci tegra suspend and resume
+ git bisect bad 71c733c4e1aeb83e8221e89caeec893d51f88b7b
+ # bad: [c07a48c2651965e84d35cf193dfc0e5f7892d612] mmc: sdhci: Remove finish_tasklet
+ git bisect bad c07a48c2651965e84d35cf193dfc0e5f7892d612
+ # first bad commit: [c07a48c2651965e84d35cf193dfc0e5f7892d612] mmc: sdhci: Remove finish_tasklet
+
+ drivers/mmc/host/sdhci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 97158344b862..3563c3bc57c9 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -3115,7 +3115,7 @@ static irqreturn_t sdhci_irq(int irq, void *dev_id)
+ 			continue;
+ 
+ 		if (sdhci_defer_done(host, mrq)) {
+-			result = IRQ_WAKE_THREAD;
++			queue_work(host->complete_wq, &host->complete_work);
+ 		} else {
+ 			mrqs_done[i] = mrq;
+ 			host->mrqs_done[i] = NULL;
 -- 
-2.21.0
+2.20.1
 
