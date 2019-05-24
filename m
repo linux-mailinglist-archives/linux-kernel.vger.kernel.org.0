@@ -2,223 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35BAF290FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 08:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 254A229111
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 08:38:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388872AbfEXGds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 02:33:48 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:37040 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388350AbfEXGds (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 02:33:48 -0400
-X-UUID: 1ca43289ce1842bc97bfe905dd60c1aa-20190524
-X-UUID: 1ca43289ce1842bc97bfe905dd60c1aa-20190524
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <biao.huang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 676178434; Fri, 24 May 2019 14:33:40 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs01n1.mediatek.inc
- (172.21.101.68) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 24 May
- 2019 14:33:39 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 24 May 2019 14:33:37 +0800
-Message-ID: <1558679617.24897.43.camel@mhfsdcap03>
-Subject: Re: [v2, PATCH] net: stmmac: add support for hash table size
- 128/256 in dwmac4
-From:   biao huang <biao.huang@mediatek.com>
-To:     Jose Abreu <joabreu@synopsys.com>
-CC:     <davem@davemloft.net>, Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>,
-        <jianguo.zhang@mediatek.comi>, <boon.leong.ong@intel.com>
-Date:   Fri, 24 May 2019 14:33:37 +0800
-In-Reply-To: <1557802843-31718-2-git-send-email-biao.huang@mediatek.com>
-References: <1557802843-31718-1-git-send-email-biao.huang@mediatek.com>
-         <1557802843-31718-2-git-send-email-biao.huang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK:  N
+        id S2388912AbfEXGhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 02:37:48 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:37564 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387936AbfEXGhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 02:37:47 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CAA361A0259;
+        Fri, 24 May 2019 08:37:44 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9AF931A013D;
+        Fri, 24 May 2019 08:37:35 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2D587402D6;
+        Fri, 24 May 2019 14:37:24 +0800 (SGT)
+From:   peng.fan@nxp.com
+To:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com
+Cc:     linux-imx@nxp.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        van.freenix@gmail.com, Peng Fan <peng.fan@nxp.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Shawn Guo <shawn.guo@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Olof Johansson <olof@lixom.net>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: [PATCH V3 RESEND AGAIN 1/2] defconfig: arm64: enable i.MX8 SCU octop driver
+Date:   Fri, 24 May 2019 14:39:12 +0800
+Message-Id: <20190524063913.44171-1-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear All,
-any comments about this patch?
-Thanks.
-On Tue, 2019-05-14 at 11:00 +0800, Biao Huang wrote:
-> 1. get hash table size in hw feature reigster, and add support
-> for taller hash table(128/256) in dwmac4.
-> 2. only clear PR/HMC/PM bits of GMAC_PACKET_FILTER, to avoid
-> side effect to functions of other bits.
-> 
-> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/common.h      |    7 +--
->  drivers/net/ethernet/stmicro/stmmac/dwmac4.h      |    4 +-
->  drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c |   50 ++++++++++++---------
->  drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c  |    1 +
->  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    4 ++
->  5 files changed, 40 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-> index 272b9ca6..709dcec 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/common.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-> @@ -335,6 +335,7 @@ struct dma_features {
->  	/* 802.3az - Energy-Efficient Ethernet (EEE) */
->  	unsigned int eee;
->  	unsigned int av;
-> +	unsigned int hash_tb_sz;
->  	unsigned int tsoen;
->  	/* TX and RX csum */
->  	unsigned int tx_coe;
-> @@ -427,9 +428,9 @@ struct mac_device_info {
->  	struct mii_regs mii;	/* MII register Addresses */
->  	struct mac_link link;
->  	void __iomem *pcsr;     /* vpointer to device CSRs */
-> -	int multicast_filter_bins;
-> -	int unicast_filter_entries;
-> -	int mcast_bits_log2;
-> +	unsigned int multicast_filter_bins;
-> +	unsigned int unicast_filter_entries;
-> +	unsigned int mcast_bits_log2;
->  	unsigned int rx_csum;
->  	unsigned int pcs;
->  	unsigned int pmt;
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4.h b/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-> index eb013d5..a5eb7df 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-> @@ -18,8 +18,7 @@
->  /*  MAC registers */
->  #define GMAC_CONFIG			0x00000000
->  #define GMAC_PACKET_FILTER		0x00000008
-> -#define GMAC_HASH_TAB_0_31		0x00000010
-> -#define GMAC_HASH_TAB_32_63		0x00000014
-> +#define GMAC_HASH_TAB(x)		(0x10 + x * 4)
->  #define GMAC_RX_FLOW_CTRL		0x00000090
->  #define GMAC_QX_TX_FLOW_CTRL(x)		(0x70 + x * 4)
->  #define GMAC_TXQ_PRTY_MAP0		0x98
-> @@ -181,6 +180,7 @@ enum power_event {
->  #define GMAC_HW_FEAT_MIISEL		BIT(0)
->  
->  /* MAC HW features1 bitmap */
-> +#define GMAC_HW_HASH_TB_SZ		GENMASK(25, 24)
->  #define GMAC_HW_FEAT_AVSEL		BIT(20)
->  #define GMAC_HW_TSOEN			BIT(18)
->  #define GMAC_HW_TXFIFOSIZE		GENMASK(10, 6)
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-> index 7e5d5db..1f682ec 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-> @@ -401,41 +401,49 @@ static void dwmac4_set_filter(struct mac_device_info *hw,
->  			      struct net_device *dev)
->  {
->  	void __iomem *ioaddr = (void __iomem *)dev->base_addr;
-> -	unsigned int value = 0;
-> +	unsigned int value;
-> +	int numhashregs = (hw->multicast_filter_bins >> 5);
-> +	int mcbitslog2 = hw->mcast_bits_log2;
-> +	int i;
-> +
-> +	value = readl(ioaddr + GMAC_PACKET_FILTER);
-> +	value &= ~GMAC_PACKET_FILTER_PR;
-> +	value &= ~GMAC_PACKET_FILTER_HMC;
-> +	value &= ~GMAC_PACKET_FILTER_PM;
->  
->  	if (dev->flags & IFF_PROMISC) {
-> -		value = GMAC_PACKET_FILTER_PR;
-> +		value |= GMAC_PACKET_FILTER_PR;
->  	} else if ((dev->flags & IFF_ALLMULTI) ||
-> -			(netdev_mc_count(dev) > HASH_TABLE_SIZE)) {
-> +		   (netdev_mc_count(dev) > hw->multicast_filter_bins)) {
->  		/* Pass all multi */
-> -		value = GMAC_PACKET_FILTER_PM;
-> -		/* Set the 64 bits of the HASH tab. To be updated if taller
-> -		 * hash table is used
-> -		 */
-> -		writel(0xffffffff, ioaddr + GMAC_HASH_TAB_0_31);
-> -		writel(0xffffffff, ioaddr + GMAC_HASH_TAB_32_63);
-> +		value |= GMAC_PACKET_FILTER_PM;
-> +		/* Set all the bits of the HASH tab */
-> +		for (i = 0; i < numhashregs; i++)
-> +			writel(0xffffffff, ioaddr + GMAC_HASH_TAB(i));
->  	} else if (!netdev_mc_empty(dev)) {
-> -		u32 mc_filter[2];
-> +		u32 mc_filter[8];
->  		struct netdev_hw_addr *ha;
->  
->  		/* Hash filter for multicast */
-> -		value = GMAC_PACKET_FILTER_HMC;
-> +		value |= GMAC_PACKET_FILTER_HMC;
->  
->  		memset(mc_filter, 0, sizeof(mc_filter));
->  		netdev_for_each_mc_addr(ha, dev) {
-> -			/* The upper 6 bits of the calculated CRC are used to
-> -			 * index the content of the Hash Table Reg 0 and 1.
-> +			/* The upper n bits of the calculated CRC are used to
-> +			 * index the contents of the hash table. The number of
-> +			 * bits used depends on the hardware configuration
-> +			 * selected at core configuration time.
->  			 */
-> -			int bit_nr =
-> -				(bitrev32(~crc32_le(~0, ha->addr, 6)) >> 26);
-> -			/* The most significant bit determines the register
-> -			 * to use while the other 5 bits determines the bit
-> -			 * within the selected register
-> +			int bit_nr = bitrev32(~crc32_le(~0, ha->addr,
-> +					ETH_ALEN)) >> (32 - mcbitslog2);
-> +			/* The most significant bit determines the register to
-> +			 * use (H/L) while the other 5 bits determine the bit
-> +			 * within the register.
->  			 */
-> -			mc_filter[bit_nr >> 5] |= (1 << (bit_nr & 0x1F));
-> +			mc_filter[bit_nr >> 5] |= (1 << (bit_nr & 0x1f));
->  		}
-> -		writel(mc_filter[0], ioaddr + GMAC_HASH_TAB_0_31);
-> -		writel(mc_filter[1], ioaddr + GMAC_HASH_TAB_32_63);
-> +		for (i = 0; i < numhashregs; i++)
-> +			writel(mc_filter[i], ioaddr + GMAC_HASH_TAB(i));
->  	}
->  
->  	/* Handle multiple unicast addresses */
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-> index edb6053..59afb53 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-> @@ -354,6 +354,7 @@ static void dwmac4_get_hw_feature(void __iomem *ioaddr,
->  
->  	/* MAC HW feature1 */
->  	hw_cap = readl(ioaddr + GMAC_HW_FEATURE1);
-> +	dma_cap->hash_tb_sz = (hw_cap & GMAC_HW_HASH_TB_SZ) >> 24;
->  	dma_cap->av = (hw_cap & GMAC_HW_FEAT_AVSEL) >> 20;
->  	dma_cap->tsoen = (hw_cap & GMAC_HW_TSOEN) >> 18;
->  	/* RX and TX FIFO sizes are encoded as log2(n / 128). Undo that by
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index 97c5e1a..1971f9f 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -4159,6 +4159,10 @@ static int stmmac_hw_init(struct stmmac_priv *priv)
->  		priv->plat->enh_desc = priv->dma_cap.enh_desc;
->  		priv->plat->pmt = priv->dma_cap.pmt_remote_wake_up;
->  		priv->hw->pmt = priv->plat->pmt;
-> +		if (priv->dma_cap.hash_tb_sz) {
-> +			priv->hw->multicast_filter_bins = BIT(priv->dma_cap.hash_tb_sz) * 32;
-> +			priv->hw->mcast_bits_log2 = ilog2(priv->hw->multicast_filter_bins);
-> +		}
->  
->  		/* TXCOE doesn't work in thresh DMA mode */
->  		if (priv->plat->force_thresh_dma_mode)
+From: Peng Fan <peng.fan@nxp.com>
 
+Build in CONFIG_NVMEM_IMX_OCOTP_SCU.
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Shawn Guo <shawn.guo@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Olof Johansson <olof@lixom.net>
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+
+V3:
+ No change
+V2:
+ rename patch title, add review tag
+
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 979a95c915b6..32b85102b857 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -748,6 +748,7 @@ CONFIG_HISI_PMU=y
+ CONFIG_QCOM_L2_PMU=y
+ CONFIG_QCOM_L3_PMU=y
+ CONFIG_NVMEM_IMX_OCOTP=y
++CONFIG_NVMEM_IMX_OCOTP_SCU=y
+ CONFIG_QCOM_QFPROM=y
+ CONFIG_ROCKCHIP_EFUSE=y
+ CONFIG_UNIPHIER_EFUSE=y
+-- 
+2.16.4
 
