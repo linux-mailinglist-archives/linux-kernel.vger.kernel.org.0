@@ -2,96 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40DB729B5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:42:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47C8F29B60
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:43:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390235AbfEXPmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:42:42 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32968 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389206AbfEXPml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 11:42:41 -0400
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 90E31FB144421F93551E;
-        Fri, 24 May 2019 16:42:40 +0100 (IST)
-Received: from [10.204.65.201] (10.204.65.201) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 24 May
- 2019 16:42:39 +0100
-Subject: Re:
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <mjg59@google.com>, <vgoyal@redhat.com>
-References: <20190521000645.16227-1-prsriva02@gmail.com>
- <20190521000645.16227-3-prsriva02@gmail.com>
- <1558710722.3977.68.camel@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <a7acac28-156e-80d1-b759-cb0c59f73169@huawei.com>
-Date:   Fri, 24 May 2019 17:42:46 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S2389831AbfEXPnS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 11:43:18 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33704 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389206AbfEXPnR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 11:43:17 -0400
+Received: by mail-pg1-f195.google.com with SMTP id h17so5284567pgv.0;
+        Fri, 24 May 2019 08:43:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=b667PaiUgQ8Q7PpALzJt/7gtzGVjETB3D6yMZYIALTM=;
+        b=k//C0g7exdcOJUzXWpFbNqGCMszp+12V7HlLpivolIypgaoPAXyanHxWMU4qG1gZcw
+         j1aKpX5rg9hmij2IMvONUlM7bHhfdSlddZ9/R01ZA/zH/TJ5ijO7uDi0K2YYu7Rp+sAO
+         vydLknKzVLK8+FqaHvqN7AmvInf2J6sfzVZNkLzeIAkAksKw1kc1y4VO6zlrDoBE2pVs
+         da+DIMZQSrtnYqqjXcd+MybTXwHcrqDWHYikIlBJFmraFEGxoqcBklt7RwffmlQUXlkC
+         Zd15JQuglsWt0Bmx0kQy2RRFlZH8ZwL+eEJQr1PoD989P1TC75l4ymQk7jyq81nc/YAS
+         jGhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=b667PaiUgQ8Q7PpALzJt/7gtzGVjETB3D6yMZYIALTM=;
+        b=mtqTagC6fE2MvlfdVBfUnwjPFbJNqW9coFtwoHa9ZQeKTG20WvfUSLEPsU0HHK+2gk
+         MpONsvGlLgFt0Osx8BP+PhXQHL9RG9huHlCW0q8I/IzHXqoAHSnjDBaqFweiBC+vf/pi
+         EbAVieQ8Z4qNOaQ2f/X1y20x/3wu6m4uMQBXcTXKF9jA9BA3lyzjYAfksz0XhnbbunSm
+         c7lxIeOadkjOdpCKI9mtqoP0zXHPJcb+2XCgPoWn7yCSH5VclUnZfj71rQemTXUhY9Xv
+         lQoKu3D9Fv6iAFsf58yXUijZdt7Gh0meTsFkz5gVzDVjUD0RoOuAwhhgopP8JNIXd2uM
+         dAVg==
+X-Gm-Message-State: APjAAAWoVeSDiVStdz091e+KRFF8ffkIVW4XynVft4cJUpErWCUj8aIC
+        ITdxYvdU880NRCj0axxeIPY=
+X-Google-Smtp-Source: APXvYqwhRl211cWfEVTBxkcGOE9w1J3jhmtE5k3PSWuOj9tEW3/mOIt0iLAt0La053XLjoZSI4kECg==
+X-Received: by 2002:a62:e0cb:: with SMTP id d72mr20598365pfm.242.1558712597167;
+        Fri, 24 May 2019 08:43:17 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id e73sm4397753pfh.59.2019.05.24.08.43.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 08:43:16 -0700 (PDT)
+Date:   Fri, 24 May 2019 23:42:52 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     lgirdwood@gmail.com, perex@perex.cz, alsa-devel@alsa-project.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tegra_wm9712: Fix a memory leaking bug in
+ tegra_wm9712_driver_probe()
+Message-ID: <20190524154252.GA10186@zhanggen-UX430UQ>
+References: <20190524005014.GA2289@zhanggen-UX430UQ>
+ <b2d43dfe-17e5-a975-435b-49f2aa2ad550@nvidia.com>
+ <20190524143309.GA8631@zhanggen-UX430UQ>
+ <e52f4140-a119-a584-40a2-6359d6e1784a@nvidia.com>
+ <20190524150053.GA9235@zhanggen-UX430UQ>
+ <1740686f-a466-430c-9d01-ab83ea6998ac@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1558710722.3977.68.camel@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.204.65.201]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1740686f-a466-430c-9d01-ab83ea6998ac@nvidia.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/24/2019 5:12 PM, Mimi Zohar wrote:
-> On Mon, 2019-05-20 at 17:06 -0700, Prakhar Srivastava wrote:
->> A buffer(cmdline args) measured into ima cannot be appraised
->> without already being aware of the buffer contents.Since we
->> don't know what cmdline args will be passed (or need to validate
->> what was passed) it is not possible to appraise it.
->>
->> Since hashs are non reversible the raw buffer is needed to
->> recompute the hash.
->> To regenrate the hash of the buffer and appraise the same
->> the contents of the buffer need to be available.
->>
->> A new template field buf is added to the existing ima template
->> fields, which can be used to store/read the buffer itself.
->> Two new fields are added to the ima_event_data to carry the
->> buf and buf_len whenever necessary.
->>
->> Updated the process_buffer_measurement call to add the buf
->> to the ima_event_data.
->> process_buffer_measurement added in "Add a new ima hook
->> ima_kexec_cmdline to measure cmdline args"
->>
->> - Add a new template field 'buf' to be used to store/read
->> the buffer data.
->> - Added two new fields to ima_event_data to hold the buf and
->> buf_len [Suggested by Roberto]
->> -Updated process_buffer_meaurement to add the buffer to
->> ima_event_data
+On Fri, May 24, 2019 at 04:36:54PM +0100, Jon Hunter wrote:
+> There could well be cases where you need to explicitly call
+> devm_kfree(), but having a quick glance at the example above, I don't
+> see why you would call devm_kfree() here and yes looks like that code
+> could be simplified significantly. Notice that hisi_sas_debugfs_exit()
+> does not free any memory as it is not necessary to explicitly do so.
 > 
-> This patch description can be written more concisely.
+> Cheers
+> Jon
 > 
-> Patch 1/3 in this series introduces measuring the kexec boot command
-> line.  This patch defines a new template field for storing the kexec
-> boot command line in the measurement list in order for a remote
-> attestation server to verify.
-> 
-> As mentioned, the first patch description should include a shell
-> command for verifying the digest in the kexec boot command line
-> measurement list record against /proc/cmdline.  This patch description
-> should include a shell command showing how to verify the digest based
-> on the new field.  Should the new field in the ascii measurement list
-> be displayed as a string, not hex?
+> -- 
+> nvpublic
+Thanks for your suggestions, Jon! I think I need to e-mail to those
+maintainers about this issue.
 
-We should define a new type. If the type is DATA_FMT_STRING, spaces are
-replaced with '_'.
-
-Roberto
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Thanks
+Gen
