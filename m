@@ -2,110 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EF8429D65
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 19:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2794929D5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 19:41:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731968AbfEXRoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 13:44:02 -0400
-Received: from foss.arm.com ([217.140.101.70]:47798 "EHLO foss.arm.com"
+        id S2391592AbfEXRlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 13:41:13 -0400
+Received: from mga04.intel.com ([192.55.52.120]:24458 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbfEXRoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 13:44:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49D1EA78;
-        Fri, 24 May 2019 10:44:01 -0700 (PDT)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 389A73F703;
-        Fri, 24 May 2019 10:44:00 -0700 (PDT)
-Date:   Fri, 24 May 2019 18:43:57 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com, lorenzo.pieralisi@arm.com
-Subject: [GIT PULL] arm64: Second round of fixes for -rc2
-Message-ID: <20190524174357.GC9120@fuggles.cambridge.arm.com>
+        id S1726381AbfEXRlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 13:41:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 10:41:13 -0700
+X-ExtLoop1: 1
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga004.jf.intel.com with ESMTP; 24 May 2019 10:41:13 -0700
+Date:   Fri, 24 May 2019 10:44:11 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>, yi.l.liu@linux.intel.com,
+        ashok.raj@intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, alex.williamson@redhat.com,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 2/4] iommu: Introduce device fault data
+Message-ID: <20190524104411.15ed5c4b@jacob-builder>
+In-Reply-To: <3f512c57-de7c-dc3b-049c-2c4745757636@arm.com>
+References: <20190523180613.55049-1-jean-philippe.brucker@arm.com>
+        <20190523180613.55049-3-jean-philippe.brucker@arm.com>
+        <791fe9b1-5d85-fd2d-7cfb-c2fb3428deb6@arm.com>
+        <20190524064924.0cc92ae3@jacob-builder>
+        <3f512c57-de7c-dc3b-049c-2c4745757636@arm.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, 24 May 2019 17:14:30 +0100
+Jean-Philippe Brucker <jean-philippe.brucker@arm.com> wrote:
 
-As promised, here's the second round of arm64 fixes for -rc2, based on
--rc1. Details in the tag. The ACPI/IORT build fix is pretty big in the
-diffstat, but it's really just the result of code movement to ensure
-that the functions are guarded correctly when !CONFIG_IOMMU_SUPPORT.
+> On 24/05/2019 14:49, Jacob Pan wrote:
+> > On Thu, 23 May 2019 19:43:46 +0100
+> > Robin Murphy <robin.murphy@arm.com> wrote:  
+> >>> +/**
+> >>> + * struct iommu_fault_event - Generic fault event
+> >>> + *
+> >>> + * Can represent recoverable faults such as a page requests or
+> >>> + * unrecoverable faults such as DMA or IRQ remapping faults.
+> >>> + *
+> >>> + * @fault: fault descriptor
+> >>> + * @iommu_private: used by the IOMMU driver for storing
+> >>> fault-specific
+> >>> + *                 data. Users should not modify this field
+> >>> before
+> >>> + *                 sending the fault response.    
+> >>
+> >> Sorry if I'm a bit late to the party, but given that description,
+> >> if users aren't allowed to touch this then why expose it to them
+> >> at all? I.e. why not have iommu_report_device_fault() pass just
+> >> the fault itself to the fault handler:
+> >>
+> >> 	ret = fparam->handler(&evt->fault, fparam->data);
+> >>
+> >> and let the IOMMU core/drivers decapsulate it again later if need
+> >> be. AFAICS drivers could also just embed the entire generic event
+> >> in their own private structure anyway, just as we do for domains.
+> >>  
+> > I can't remember all the discussion history but I think
+> > iommu_private is used similarly to the page request private data
+> > (device private).  
+> 
+> Hm yes, we already have iommu_fault_page_request::private_data for
+> that. I think I used to stash flags in iommu_private (is_stall and
+> needs_pasid), so that the SMMUv3 driver doesn't need to go fetch them
+> from the device structure, but I removed them. If VT-d doesn't need
+> iommu_private either, maybe we can remove it entirely?
+> 
+yes, vt-d does not use or plan to use it.
+> In any case I agree that device drivers should only need to know about
+> evt->fault.
+> 
+> > We
+> > need to inject the data to the guest and the guest will send the
+> > unmodified data back along with response.  
+> 
+> By the way, does private_data need to go back through the
+> iommu_page_response() path? The current series doesn't do that.
+> 
+yes, private needs to go back in the page_response path. perhaps just
+send the response with the match prm?
+-ret = domain->ops->page_response(dev, msg, evt->iommu_private);
++ret = domain->ops->page_response(dev, msg, prm);
 
-Please pull.
 
-Cheers,
+> > The private data can be used
+> > to tag internal device/iommu context.  
+> 
+> > I think we can do the way you said by keeping them within iommu core
+> > and recover it based on the response but that would require tracking
+> > each fault report, right?  
+> 
+> That's already the case: we decided in thread [1] to track recoverable
+> faults in the IOMMU core, in order to check that the response is sane
+> and to set a quota and/or timeout. (I didn't include your timeout
+> patches here because I think they need a little more work. They are on
+> my sva/api branch.)
+> 
+> I already dropped iommu_private from the iommu_page_response
+> structure. In patch 4 iommu_page_response() retrieves the fault event
+> and pass the corresponding iommu_private back to the IOMMU driver.
+> 
+> [1]
+> https://lore.kernel.org/lkml/20171206112521.1edf8e9b@jacob-builder/
+>
+great, as planned :) I lost track where the discussion ended and
+haven't read the latest code. Thanks
 
-Will
+> Thanks,
+> Jean
+> 
+> > 
+> > If we pass on the private data, we only need to check if the
+> > response belong to the device but not exact match of a specific
+> > fault since the damage is contained in the assigned device. In case
+> > of injection fault into the guest, the response will come
+> > asynchronously after the handler completes.  
 
---->8
-
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
-
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to edbcf50eb8aea5f81ae6d83bb969cb0bc02805a1:
-
-  arm64: insn: Add BUILD_BUG_ON() for invalid masks (2019-05-24 14:58:30 +0100)
-
-----------------------------------------------------------------
-Second round of arm64 fixes for -rc2
-
-- Fix incorrect LDADD instruction encoding in our disassembly macros
-
-- Disable the broken ARM64_PSEUDO_NMI support for now
-
-- Add workaround for Cortex-A76 CPU erratum #1463225
-
-- Handle Cortex-A76/Neoverse-N1 erratum #1418040 w/ existing workaround
-
-- Fix IORT build failure if IOMMU_SUPPORT=n
-
-- Fix place-relative module relocation range checking and its
-  interaction with KASLR
-
-----------------------------------------------------------------
-Ard Biesheuvel (2):
-      arm64/kernel: kaslr: reduce module randomization range to 2 GB
-      arm64/module: deal with ambiguity in PRELxx relocation ranges
-
-Jean-Philippe Brucker (2):
-      arm64: insn: Fix ldadd instruction encoding
-      arm64: insn: Add BUILD_BUG_ON() for invalid masks
-
-Lorenzo Pieralisi (1):
-      ACPI/IORT: Fix build error when IOMMU_SUPPORT is disabled
-
-Marc Zyngier (1):
-      arm64: Handle erratum 1418040 as a superset of erratum 1188873
-
-Will Deacon (3):
-      arm64: Remove useless message during oops
-      arm64: errata: Add workaround for Cortex-A76 erratum #1463225
-      arm64: Kconfig: Make ARM64_PSEUDO_NMI depend on BROKEN for now
-
- Documentation/arm64/silicon-errata.txt |   9 +-
- arch/arm64/Kconfig                     |  26 +++-
- arch/arm64/include/asm/cpucaps.h       |   5 +-
- arch/arm64/include/asm/insn.h          |  18 ++-
- arch/arm64/kernel/cpu_errata.c         |  48 +++++--
- arch/arm64/kernel/entry.S              |   4 +-
- arch/arm64/kernel/kaslr.c              |   6 +-
- arch/arm64/kernel/module.c             |  18 ++-
- arch/arm64/kernel/syscall.c            |  31 +++++
- arch/arm64/kernel/traps.c              |   4 -
- arch/arm64/mm/fault.c                  |  33 +++++
- drivers/acpi/arm64/iort.c              | 238 +++++++++++++++++----------------
- 12 files changed, 284 insertions(+), 156 deletions(-)
+[Jacob Pan]
