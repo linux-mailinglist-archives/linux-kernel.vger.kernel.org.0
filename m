@@ -2,95 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF2F528F2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 04:38:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D06628F2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 04:37:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731847AbfEXCid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 22:38:33 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:35096 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbfEXCic (ORCPT
+        id S1731806AbfEXChM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 22:37:12 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43524 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727037AbfEXChL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 22:38:32 -0400
-Received: by mail-vs1-f68.google.com with SMTP id q13so4832200vso.2
-        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 19:38:32 -0700 (PDT)
+        Thu, 23 May 2019 22:37:11 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c6so4348516pfa.10;
+        Thu, 23 May 2019 19:37:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XvanOsup0AcZacIZGJvgzlGN6xUx2g80dRy7eje+QD0=;
-        b=cmYexK4FBqetbwPK18QiniGVmZ92uhC8h0NzKA+MW8M9lhBSV+45GSAFcxRtZIZg1Q
-         UvDSoqlMCROQMjHkPUZV9tzgmkqIFfSZJA/i0/U56ALxXVjbqfec2EkfufUOKkt7l8ks
-         MRG0Sv9ahQvXpynLdRFo/JexHzDOdc6i4Vtqf89M2lJy0nKVT0V+9IQtgtCwvm3gJ4VF
-         sdefjl8uGXBy81PeyKZwEQj7zK9eTOp2pT37lGGcFJcnkRatmiegLZNuwo4gC9P1htko
-         oMWtQD9ffURCYeYK5xyiGMmmQjbYohgTbHKMwhz0lZkL6RR/TD4vxlm0XfYtwJgxTh9k
-         28bA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VkIHxooMNHFA9OLZaAiTW2cThVgCM7r7P1MhM8qIu0w=;
+        b=qA07P64oWp4ssWXss0N7gOa09mR05BfmjwpoL8tSeaKLrgwqzDn8K1cTuj3YQvBGfz
+         515UA7eNgGYE6o/iJXi5PiK4vdARUDGa4FAXqVTlnt2G5u7aCNEitd1w+qx2rlpY5hw4
+         NMMf96D22RY20ivghoPIdD0YZnvSlobm00RS4TIiht9AjxSYHklzxTECb3u6i+7OGHAI
+         bIFqR3aPsXOOj45Djnq34UbIC0uzaUh9E5CVv7P7okI0FSt2ZHO4Epp/rOynjKK8Lrzo
+         NZdflIFh4NvuASfCgR7uzX22mtYJF/1uuDkMCOV/nzGESnm7ouhTdXcaK5XzGiXShO20
+         YkVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XvanOsup0AcZacIZGJvgzlGN6xUx2g80dRy7eje+QD0=;
-        b=CjXayguOBpqpbPlf5ms4g5WIstIci5Ug2+Y2nzWfZTD4AhkXfgHpjphhuLh2sL7379
-         rgQiFA+uajjZfqmMRpeeyEzCk0sJMdYB+QSxhOXT6JY5DGGJZwb/MJIVKh1B0Bqv7qxw
-         P9oHjIWbpabArbX5HaYmLBrCzqoyFpHKRN1WwtrmwxxcMZ6YETn4YxYG8lri8avThBrA
-         wAtByXrA5aITzSsEy2geA8R/il4+XCPOjC1sEgDYseVQyhhwsz4GXtzHw7Vj3yPyLOGU
-         LQy+99THUFJr+M9W0tQVLqxhnHNsJJcN8FSAtrM9KARiTpy1e7/f5069Jd18YIgAS9jk
-         zVNg==
-X-Gm-Message-State: APjAAAWz2EUP+qPbvXF/S4Rj0yS3iEj1tD3vhmLv4nLq8f9az0HUWkUL
-        b7IcNBl14nNRvMt7kw/JK+k=
-X-Google-Smtp-Source: APXvYqw9cnoq7GyYprdKx3oHAf9Ae/BEpK8fSmDkRJyujfvyQ9MlKaM7QCjNSmucf080ymj9rutKhA==
-X-Received: by 2002:a67:dd8e:: with SMTP id i14mr6545291vsk.149.1558665511952;
-        Thu, 23 May 2019 19:38:31 -0700 (PDT)
-Received: from arch-01.home (c-73-132-202-198.hsd1.md.comcast.net. [73.132.202.198])
-        by smtp.gmail.com with ESMTPSA id p70sm361931vsd.25.2019.05.23.19.38.30
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 23 May 2019 19:38:30 -0700 (PDT)
-From:   Geordan Neukum <gneukum1@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Geordan Neukum <gneukum1@gmail.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Matt Sickler <Matt.Sickler@daktronics.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: kpc2000: Add dependency on MFD_CORE to kconfig symbol 'KPC2000'
-Date:   Fri, 24 May 2019 02:36:36 +0000
-Message-Id: <20190524023639.6773-1-gneukum1@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190523053643.GA14465@kroah.com>
-References: <20190523053643.GA14465@kroah.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VkIHxooMNHFA9OLZaAiTW2cThVgCM7r7P1MhM8qIu0w=;
+        b=fmD3R8KMVO0gYr1VMeqansWoJDmRvG1B+7bvrq/82ZC0HVz7Poqk4vO0Sni3w1xop2
+         OPYwmZH8UGBSQfezW7couwvfxaY/z8BORa2vqyU0aMz33j6pwMojReYlkTYOmgF6AnfK
+         7uwAQgHxc2jCyomo8Q8EoVbquhiFYvMkroGcqiS5eXGTKl8YPhsliFM3iuM7PrmSigqj
+         8fhVBzErMqNzxl1D3m8yewaiYE7a3cbDYSHjIPa5dQ4/gwshar7jpSvcwAFYQe9g+BdM
+         WcTHCNJPnVpGjtld4S8gf0OB/aZwMEs4DKmVG397C7U1sns/hBf/dCC6zsKgDRp64mpv
+         LTQA==
+X-Gm-Message-State: APjAAAVseU9uHGZbf9SF8xIDvuuOQpOz5xmnc06HE8fu7wnKAhdRjRXE
+        LTaYoZdbfFuN5+OI/5y5JdQ=
+X-Google-Smtp-Source: APXvYqz9SR9O0jgdDAlgbo1DH5ZmZpm0ICvWYwm3oRlMhsuWOshPN2VhUB7EWTmvaVVN7PUZKw5njA==
+X-Received: by 2002:a62:1885:: with SMTP id 127mr50701361pfy.48.1558665429895;
+        Thu, 23 May 2019 19:37:09 -0700 (PDT)
+Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
+        by smtp.gmail.com with ESMTPSA id g8sm805937pfk.83.2019.05.23.19.37.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 19:37:09 -0700 (PDT)
+Date:   Thu, 23 May 2019 19:37:07 -0700
+From:   Eduardo Valentin <edubezval@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Rui Zhang <rui.zhang@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Thermal-SoC management changes for v5.2-rc1
+Message-ID: <20190524023705.GD1936@localhost.localdomain>
+References: <20190516044313.GA17751@localhost.localdomain>
+ <CAHk-=wiaO_8SiEB9QM3vOTniiT67K6CBH0uHJ82-Dp_+6kxH3g@mail.gmail.com>
+ <cd06dc28-1076-259a-ba94-bad116771da8@roeck-us.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd06dc28-1076-259a-ba94-bad116771da8@roeck-us.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kpc2000 core makes calls against functions conditionally exported
-upon selection of the kconfig symbol MFD_CORE. Therefore, the kpc2000
-core depends upon the mfd_core, and that dependency must be tracked in
-Kconfig to avoid potential build issues.
+On Thu, May 16, 2019 at 09:55:33AM -0700, Guenter Roeck wrote:
+> On 5/16/19 8:07 AM, Linus Torvalds wrote:
+> >On Wed, May 15, 2019 at 9:43 PM Eduardo Valentin <edubezval@gmail.com> wrote:
+> >>
+> >>- thermal core has a new devm_* API for registering cooling devices, thanks to Guenter R.
+> >>   I took the entire series, that is why you see changes on drivers/hwmon in this pull.
+> >
+> >This clashed badly with commit 6b1ec4789fb1 ("hwmon: (pwm-fan) Add RPM
+> >support via external interrupt"), which added a timer to the pwm-fan
+> >handling.
+> >
+> >In particular, that timer now needed the same kind of cleanup changes,
+> >and I'd like you guys (particularly Guenther, who was involved on both
+> >sides) to double-check my merge.
+> >
+> >The way I solved it was to just make the pwm_fan_pwm_disable()
+> >callback do both the pwm_diable() _and_ the del_timer_sync() on the
+> >new timer. That seemed to be the simplest solution that meshed with
+> >the new devm cleanup model, but while I build-tested the result, I
+> >obviously did no actual use testing. And maybe there's some reason why
+> >that approach is flawed.
+> >
+> >Guenther?
+> 
+> Sorry for the trouble. Looks like I did too much cleanup this time around.
+> 
+> Looks ok. I'll have to send a follow-up patch - we should check the
+> return value of devm_add_action_or_reset(). No idea why I didn't do that
+> in this series. I'll do that after the commit window closes (and after
+> I am back from vacation).
 
-Signed-off-by: Geordan Neukum <gneukum1@gmail.com>
----
-v2 changes
-  - base patch on staging-linus
-  - only add MFD_CORE dependency as the UIO dependency has already been
-    handled by YueHaibing
+OK... From what I could tell, looked fine from a thermal perspective.
 
- drivers/staging/kpc2000/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/kpc2000/Kconfig b/drivers/staging/kpc2000/Kconfig
-index febe4f8b30e5..ef0f4abe894a 100644
---- a/drivers/staging/kpc2000/Kconfig
-+++ b/drivers/staging/kpc2000/Kconfig
-@@ -2,6 +2,7 @@
-
- config KPC2000
- 	bool "Daktronics KPC Device support"
-+	depends on MFD_CORE
- 	depends on PCI
- 	depends on UIO
- 	help
---
-2.21.0
-
+> 
+> Thanks a lot for sorting this out.
+> 
+> Guenter
