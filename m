@@ -2,53 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F286328E2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 02:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E227A28E30
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 02:07:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388680AbfEXAH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 20:07:27 -0400
+        id S2388718AbfEXAHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 20:07:31 -0400
 Received: from esa4.hgst.iphmx.com ([216.71.154.42]:37265 "EHLO
         esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388423AbfEXAH1 (ORCPT
+        with ESMTP id S2388425AbfEXAH2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 20:07:27 -0400
+        Thu, 23 May 2019 20:07:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1558656447; x=1590192447;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=LSOwfC4cbYJ0j98wN25Yv8d8VqJ1wUG9SMGFdxybDGA=;
-  b=ZVsxYz345gtwZ9UcZhlfaTwl82h+FHKPLW7N2bO6qEqW06Tz37gxiyCZ
-   XtBV/dG9r0oaob7eSOBhckBs2Qa7UlXETSC7J6Ni/VG1/7VyGjwe07kbt
-   0OgWYVKa90Uz7Zl/hA9x8kbOaxa4cSfpOAoKLm26yw13UItkFxKDOpNq7
-   3mr+UxPG0mUsUzOZbegnZbLMC9q1Hv06t3WQ3lRna+NYTwzg/jch07QSU
-   Xo094Gna2SCCzpxSdUsKxBhVMiaBMERuAx9HDnRwNzOcKW0a1g/XUZR14
-   5gNv14JFtWrUbruq6C5S2OgjrAvxA4wo+Au7CAwRZIE6/yT+gE0S7Hs48
-   g==;
+  t=1558656448; x=1590192448;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=GED2GA9QcE13vUl5xR4mTzXTMt8Lm/cPPiiomsp+YVU=;
+  b=obUAuUIt/UT9YONdGj5aAe7nyJ+5ubfBwJmKpk2zgzvAs766jbSfuTdd
+   U7cnqDSFb+lIIeYNtIG4ps690LYLhxbcxct3xIPPbqZxWwvzAptwUfyRf
+   xuPbGLXRMtIeigZxv5w0aioB0zWpZfngmSKVRZwHrUhNmsp4uYWpzxmOM
+   AAkxCm9n3eioKsw3hWjBoBhyGa6cMuGfJ33aa3zAgTOwwzSVu52mhP9OO
+   GJqcTUUAMutt9qKBipVkU3a7eKJOhsVw45L3X3h4g0GlTi3Dk/JJs5ehL
+   Vdpeb4b8cgYwAJvvtv6LK2an2sPMS5vc0T/DMFoo7NHiG4CqfBV5iRSeV
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.60,505,1549900800"; 
-   d="scan'208";a="108976451"
+   d="scan'208";a="108976452"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
   by ob1.hgst.iphmx.com with ESMTP; 24 May 2019 08:07:26 +0800
-IronPort-SDR: gCtmWnq/bH1zWmjeMuhFmiSh/hx5nLIKt6Jj4kvRstC31OWj2pX4iULTFJNwnlnL26nmBfAL6h
- 2ASwA4G6xPNJjKpsbUtvnZuD7g2fbUItuYrZ2Ger/6MnxuzZ8J/BWARdc3ok/3xndC8C58QLdH
- vuu8M7TOIDj960Qp2jB0ls88sTTeR1e1HPK2ejQYa+hcaaukoA0bjG7Kxzo1uaANYqaEVjt4qZ
- I2y1axepZHZV5FthQcZeGI+D85lQopVPoVbVToGSlwrt2WhUfv+P69uJEv7IeOhEaC90kN69pn
- yPUIg5F0mFvyM/eg0R5vktYR
+IronPort-SDR: 7dYyZsuQPTbahR8Po1JuSt2YcSX3mvzPDX7V5YenpeSuXcDH3IcCa6zM/knzcYeFUnj9NwbVvu
+ RVIdJ7iDGh8FVJuzkZ8FFraqHLQ378vChaYfbzcWApQHt0OJ83SA1U15hhKrV+akEX7ekCjjPA
+ Tll/Bk7jXRPkYPRLKfeqdV0UX8hd1OP4lkTXmYYp/vVtFGVLwAzGAgo87zKPENGXAlEhbHluai
+ Lt2U3R7UaAZyNsFdXMCRtelyDI2sP0n7zdhMqkALBTJ56VG3qGBpWJetlbFrhfLgTkQtTHSGMs
+ Sw2irdHsNWs8+g3eEmlqKd1K
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 23 May 2019 16:45:07 -0700
-IronPort-SDR: VcAjlWyhrUmApDzJanM4Dp4zOOK9Obpa0fPsjcqxS3qx30cgihTszdbsUaHJ9IY4X0rKJQZx5M
- S5aAe3LLtPrPz15pm0R1nU5yAGAB3qsKrkWvAhl8ygttkgvVknRnY/nv4SmZBT5/JUcZXKV++M
- 0inDP/9cQ8W39io95mF56MiQlquQPdUAE0H5I+Z7agEDuvuVaZxgVJSQff+4JYz2QjZmA9YeVI
- YWUbKRHei8uberUca5/AzjPhItHix9OWdpx6LFOsxbBbtXxcX5aH+jrelUvNHtW4UscaZksn4O
- tjM=
+  by uls-op-cesaep02.wdc.com with ESMTP; 23 May 2019 16:45:08 -0700
+IronPort-SDR: 341jEcSs6pSCjQ27H/KQc3ZHyavI69B6lqsdo28+lkRjZYQlZhRKYL6fFHFnMqSkPyjC2YpFjN
+ zgf5XrjEEjr8QBjGGvG/0WiRgUIkA5iz8PX4gzAfQfnrfLobcPvqyxh88Fr+aWw08EN4duinZA
+ dJFRPpcTHeyc31oDWsGsAXy71D7XdUkLHJjHUOyGTxH2Xh+EsBD7biDVoZpWsOaOoMwVsWGTY/
+ F3mUzmQiap9ZbpO05xrow58G5i4810s27v9u9q9+PMc7WJdNlSpQNtGGQrPnl/RT9bVMZu4Qdj
+ xyg=
 Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 23 May 2019 17:07:25 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 23 May 2019 17:07:26 -0700
 From:   Atish Patra <atish.patra@wdc.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
         Albert Ou <aou@eecs.berkeley.edu>,
         Andreas Schwab <schwab@suse.de>,
         Anup Patel <anup@brainfault.org>,
+        Atish Patra <atish.patra@wdc.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         devicetree@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -63,14 +64,15 @@ Cc:     Atish Patra <atish.patra@wdc.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Will Deacon <will.deacon@arm.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: [RFT PATCH v5 0/5] Unify CPU topology across ARM & RISC-V 
-Date:   Thu, 23 May 2019 17:06:47 -0700
-Message-Id: <20190524000653.13005-1-atish.patra@wdc.com>
+Subject: [RFT PATCH v5 1/5] Documentation: DT: arm: add support for sockets defining package boundaries
+Date:   Thu, 23 May 2019 17:06:48 -0700
+Message-Id: <20190524000653.13005-2-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190524000653.13005-1-atish.patra@wdc.com>
+References: <20190524000653.13005-1-atish.patra@wdc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,89 +80,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpu-map DT entry in ARM can describe the CPU topology in much better
-way compared to other existing approaches. RISC-V can easily adopt this
-binding to represent its own CPU topology. Thus, both cpu-map DT
-binding and topology parsing code can be moved to a common location so
-that RISC-V or any other architecture can leverage that.
+From: Sudeep Holla <sudeep.holla@arm.com>
 
-The relevant discussion regarding unifying cpu topology can be found in
-[1].
+The current ARM DT topology description provides the operating system
+with a topological view of the system that is based on leaf nodes
+representing either cores or threads (in an SMT system) and a
+hierarchical set of cluster nodes that creates a hierarchical topology
+view of how those cores and threads are grouped.
 
-arch_topology seems to be a perfect place to move the common code. I
-have not introduced any significant functional changes in the moved code.
-The only downside in this approach is that the capacity code will be
-executed for RISC-V as well. But, it will exit immediately after not
-able to find the appropriate DT node. If the overhead is considered too
-much, we can always compile out capacity related functions under a
-different config for the architectures that do not support them.
+However this hierarchical representation of clusters does not allow to
+describe what topology level actually represents the physical package or
+the socket boundary, which is a key piece of information to be used by
+an operating system to optimize resource allocation and scheduling.
 
-There was an opportunity to unify topology data structure for ARM32 done
-by patch 3/4. But, I refrained from making any other changes as I am not
-very well versed with original intention for some functions that
-are present in arch_topology.c. I hope this patch series can be served
-as a baseline for such changes in the future.
+Lets add a new "socket" node type in the cpu-map node to describe the
+same.
 
-The patches have been tested for RISC-V and compile tested for ARM64,
-ARM32 & x86.
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/arm/topology.txt      | 52 ++++++++++++++-----
+ 1 file changed, 39 insertions(+), 13 deletions(-)
 
-The socket change[2] is also now part of this series.
-
-[1] https://lkml.org/lkml/2018/11/6/19
-[2] https://lkml.org/lkml/2018/11/7/918
-
-QEMU changes for RISC-V topology are available at
-
-https://github.com/atishp04/qemu/tree/riscv_topology_dt
-
-HiFive Unleashed DT with topology node is available here.
-https://github.com/atishp04/opensbi/tree/HiFive_unleashed_topology
-
-It can be verified with OpenSBI with following additional compile time
-option.
-
-FW_PAYLOAD_FDT="unleashed_topology.dtb"
-
-Changes from v4-v5
-1. Removed the arch_topology.h header inclusion from topology.c and arch_topology.c
-file. Added it in linux/topology.h.
-2. core_id is set to -1 upon reset. Otherwise, ARM topology store function does not
-work.
-
-Changes from v3->v4
-1. Get rid of ARM32 specific information in topology structure.
-2. Remove redundant functions from ARM32 and use common code instead. 
-
-Changes from v2->v3
-1. Cover letter update with experiment DT for topology changes.
-2. Added the patch for [2].
-
-Changes from v1->v2
-1. ARM32 can now use the common code as well.
-
-Atish Patra (4):
-dt-binding: cpu-topology: Move cpu-map to a common binding.
-cpu-topology: Move cpu topology code to common code.
-arm: Use common cpu_topology structure and functions.
-RISC-V: Parse cpu topology during boot.
-
-Sudeep Holla (1):
-Documentation: DT: arm: add support for sockets defining package
-boundaries
-
-.../topology.txt => cpu/cpu-topology.txt}     | 134 ++++++--
-arch/arm/include/asm/topology.h               |  20 --
-arch/arm/kernel/topology.c                    |  60 +---
-arch/arm64/include/asm/topology.h             |  23 --
-arch/arm64/kernel/topology.c                  | 303 +-----------------
-arch/riscv/Kconfig                            |   1 +
-arch/riscv/kernel/smpboot.c                   |   3 +
-drivers/base/arch_topology.c                  | 298 +++++++++++++++++
-include/linux/arch_topology.h                 |  26 ++
-include/linux/topology.h                      |   1 +
-10 files changed, 444 insertions(+), 425 deletions(-)
-rename Documentation/devicetree/bindings/{arm/topology.txt => cpu/cpu-topology.txt} (66%)
-
---
+diff --git a/Documentation/devicetree/bindings/arm/topology.txt b/Documentation/devicetree/bindings/arm/topology.txt
+index b0d80c0fb265..3b8febb46dad 100644
+--- a/Documentation/devicetree/bindings/arm/topology.txt
++++ b/Documentation/devicetree/bindings/arm/topology.txt
+@@ -9,6 +9,7 @@ ARM topology binding description
+ In an ARM system, the hierarchy of CPUs is defined through three entities that
+ are used to describe the layout of physical CPUs in the system:
+ 
++- socket
+ - cluster
+ - core
+ - thread
+@@ -63,21 +64,23 @@ nodes are listed.
+ 
+ 	The cpu-map node's child nodes can be:
+ 
+-	- one or more cluster nodes
++	- one or more cluster nodes or
++	- one or more socket nodes in a multi-socket system
+ 
+ 	Any other configuration is considered invalid.
+ 
+-The cpu-map node can only contain three types of child nodes:
++The cpu-map node can only contain 4 types of child nodes:
+ 
++- socket node
+ - cluster node
+ - core node
+ - thread node
+ 
+ whose bindings are described in paragraph 3.
+ 
+-The nodes describing the CPU topology (cluster/core/thread) can only
+-be defined within the cpu-map node and every core/thread in the system
+-must be defined within the topology.  Any other configuration is
++The nodes describing the CPU topology (socket/cluster/core/thread) can
++only be defined within the cpu-map node and every core/thread in the
++system must be defined within the topology.  Any other configuration is
+ invalid and therefore must be ignored.
+ 
+ ===========================================
+@@ -85,26 +88,44 @@ invalid and therefore must be ignored.
+ ===========================================
+ 
+ cpu-map child nodes must follow a naming convention where the node name
+-must be "clusterN", "coreN", "threadN" depending on the node type (ie
+-cluster/core/thread) (where N = {0, 1, ...} is the node number; nodes which
+-are siblings within a single common parent node must be given a unique and
++must be "socketN", "clusterN", "coreN", "threadN" depending on the node type
++(ie socket/cluster/core/thread) (where N = {0, 1, ...} is the node number; nodes
++which are siblings within a single common parent node must be given a unique and
+ sequential N value, starting from 0).
+ cpu-map child nodes which do not share a common parent node can have the same
+ name (ie same number N as other cpu-map child nodes at different device tree
+ levels) since name uniqueness will be guaranteed by the device tree hierarchy.
+ 
+ ===========================================
+-3 - cluster/core/thread node bindings
++3 - socket/cluster/core/thread node bindings
+ ===========================================
+ 
+-Bindings for cluster/cpu/thread nodes are defined as follows:
++Bindings for socket/cluster/cpu/thread nodes are defined as follows:
++
++- socket node
++
++	 Description: must be declared within a cpu-map node, one node
++		      per physical socket in the system. A system can
++		      contain single or multiple physical socket.
++		      The association of sockets and NUMA nodes is beyond
++		      the scope of this bindings, please refer [2] for
++		      NUMA bindings.
++
++	This node is optional for a single socket system.
++
++	The socket node name must be "socketN" as described in 2.1 above.
++	A socket node can not be a leaf node.
++
++	A socket node's child nodes must be one or more cluster nodes.
++
++	Any other configuration is considered invalid.
+ 
+ - cluster node
+ 
+ 	 Description: must be declared within a cpu-map node, one node
+ 		      per cluster. A system can contain several layers of
+-		      clustering and cluster nodes can be contained in parent
+-		      cluster nodes.
++		      clustering within a single physical socket and cluster
++		      nodes can be contained in parent cluster nodes.
+ 
+ 	The cluster node name must be "clusterN" as described in 2.1 above.
+ 	A cluster node can not be a leaf node.
+@@ -164,13 +185,15 @@ Bindings for cluster/cpu/thread nodes are defined as follows:
+ 4 - Example dts
+ ===========================================
+ 
+-Example 1 (ARM 64-bit, 16-cpu system, two clusters of clusters):
++Example 1 (ARM 64-bit, 16-cpu system, two clusters of clusters in a single
++physical socket):
+ 
+ cpus {
+ 	#size-cells = <0>;
+ 	#address-cells = <2>;
+ 
+ 	cpu-map {
++		socket0 {
+ 			cluster0 {
+ 				cluster0 {
+ 					core0 {
+@@ -253,6 +276,7 @@ cpus {
+ 				};
+ 			};
+ 		};
++	};
+ 
+ 	CPU0: cpu@0 {
+ 		device_type = "cpu";
+@@ -473,3 +497,5 @@ cpus {
+ ===============================================================================
+ [1] ARM Linux kernel documentation
+     Documentation/devicetree/bindings/arm/cpus.yaml
++[2] Devicetree NUMA binding description
++    Documentation/devicetree/bindings/numa.txt
+-- 
 2.21.0
 
