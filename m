@@ -2,110 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB235297B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:56:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D75297B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:57:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391338AbfEXL4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:56:20 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46981 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391289AbfEXL4U (ORCPT
+        id S2391421AbfEXL5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:57:15 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45226 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391195AbfEXL5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:56:20 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r7so9702477wrr.13
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:56:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fIH1V2TkOLOizahELZLm8HyLwy2aaFtFRBz9J0PeBqw=;
-        b=BxxRly/ajvZLSzLtmSK61bITxGipmBwL2OJdeWQO3mNyXxtVS8CEil/Hq9l4iMDC/B
-         VEFZDVNkjxzqX0zbqaeHVXVNhpOn9cAJzdlqNPCzBx+7o6QywsG/hAWe603Bqw6bhPEs
-         LDmeY9vGcEAOtfqf3dCRVdOkTV+JzURsWeF6c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fIH1V2TkOLOizahELZLm8HyLwy2aaFtFRBz9J0PeBqw=;
-        b=Apo+cTe17mtEokulMXob54Jr52rXAwkAS2ICmQ6S+YJqEunNXI+3Noisb+rt2bhVZ/
-         bsduH2d5KDFKeZpCvTuGzxm1oB/ZWgHA9qHuFijsbCztpslvfdS37q0BqLA0JtRJ3Gry
-         XGoEd4YqveK1/QzbUrAbwtUufHnZD8LQXWCxY8m0wlFGVSE5oKK9vYilKIllLtFDNPZX
-         oQ8+y/rqtLeqTbs+gDr3HhPcAN6fmcnc0HQcUKiskhEOk5WH5DZt38Wlmr0oByNmU575
-         oKBB3FIoGZGFL+KLGmAaHPUeiieHLg7o3lUma4yDGJGga6LoU8Hd7bRVHDrr9TWtYTKK
-         +Prw==
-X-Gm-Message-State: APjAAAUsqcKvhF2lx0gYcOkgWbuz/6xekw3Oh+t5bLYvYuOCABy8v41B
-        XpnOK+Ch12O/TfuAz/pRo5CBMA==
-X-Google-Smtp-Source: APXvYqxaUJk406M1CG/mbR9qjOGcTakZkRCyBja4St7JWs72rRudUYM+FwM44E6UaY6tFnqje5PA6A==
-X-Received: by 2002:adf:e90b:: with SMTP id f11mr7526503wrm.291.1558698978195;
-        Fri, 24 May 2019 04:56:18 -0700 (PDT)
-Received: from andrea (86.100.broadband17.iol.cz. [109.80.100.86])
-        by smtp.gmail.com with ESMTPSA id 91sm2540053wrs.43.2019.05.24.04.56.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 04:56:17 -0700 (PDT)
-Date:   Fri, 24 May 2019 13:56:12 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jorgen Hansen <jhansen@vmware.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: Re: [PATCH 1/2] vmw_vmci: Clean up uses of atomic*_set()
-Message-ID: <20190524115612.GA21365@andrea>
-References: <1558694136-19226-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1558694136-19226-2-git-send-email-andrea.parri@amarulasolutions.com>
- <20190524103934.GO2606@hirez.programming.kicks-ass.net>
+        Fri, 24 May 2019 07:57:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UUh+8+/lF5nObSY6PMVsFDBwtwtanNqftEqtZfrQEdA=; b=fdEgooYjTAmXswwglf48pIJR6
+        ZQ7B7c4QM1ozuwpsECe0pIi71lEJ/8A0C2Yb47VHfeuEn8OVA0/c6IBZ07CHXx+lMEUENPzV87h39
+        I470Cf8gXp3CxeKnbTNJ2GMcv3bPm5y3JLu8I0s1enm9saaivtXRhCcFYf5cHxq5XC/tc=;
+Received: from [176.12.107.140] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hU8om-0003BY-U5; Fri, 24 May 2019 11:57:01 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id E912B440046; Fri, 24 May 2019 12:56:59 +0100 (BST)
+Date:   Fri, 24 May 2019 12:56:59 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lgirdwood@gmail.com
+Subject: Re: [GIT PULL] Immutable branch between LEDs, MFD and REGULATOR
+Message-ID: <20190524115659.GC2456@sirena.org.uk>
+References: <20190521203038.31946-1-jacek.anaszewski@gmail.com>
+ <20190522054256.GA4574@dell>
+ <3492171a-bcdc-bee2-684c-e1029653a811@gmail.com>
+ <20190523083129.GH4574@dell>
+ <e7f332a3-ce4b-a058-74b3-3dfd8bccfbc8@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Izn7cH1Com+I3R9J"
 Content-Disposition: inline
-In-Reply-To: <20190524103934.GO2606@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <e7f332a3-ce4b-a058-74b3-3dfd8bccfbc8@gmail.com>
+X-Cookie: The other line moves faster.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 12:39:34PM +0200, Peter Zijlstra wrote:
-> On Fri, May 24, 2019 at 12:35:35PM +0200, Andrea Parri wrote:
-> > The primitive vmci_q_set_pointer() relies on atomic*_set() being of
-> > type 'void', but this is a non-portable implementation detail.
-> > 
-> > Reported-by: Mark Rutland <mark.rutland@arm.com>
-> > Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Jorgen Hansen <jhansen@vmware.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-> > ---
-> >  include/linux/vmw_vmci_defs.h | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/include/linux/vmw_vmci_defs.h b/include/linux/vmw_vmci_defs.h
-> > index 0c06178e4985b..eb593868e2e9e 100644
-> > --- a/include/linux/vmw_vmci_defs.h
-> > +++ b/include/linux/vmw_vmci_defs.h
-> > @@ -759,9 +759,9 @@ static inline void vmci_q_set_pointer(atomic64_t *var,
-> >  				      u64 new_val)
-> >  {
-> >  #if defined(CONFIG_X86_32)
-> > -	return atomic_set((atomic_t *)var, (u32)new_val);
-> > +	atomic_set((atomic_t *)var, (u32)new_val);
-> >  #else
-> > -	return atomic64_set(var, new_val);
-> > +	atomic64_set(var, new_val);
-> >  #endif
-> >  }
-> 
-> All that should just die a horrible death. That code is crap.
-> 
-> See:
-> 
->   lkml.kernel.org/r/20190524103731.GN2606@hirez.programming.kicks-ass.net
 
-I see, that was indeed 'racy' with my patch!  ;-)  Thank you!
+--Izn7cH1Com+I3R9J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Andrea
+On Thu, May 23, 2019 at 10:07:35PM +0200, Jacek Anaszewski wrote:
+> On 5/23/19 10:31 AM, Lee Jones wrote:
+
+> > Once an immutable branch is created, it should never, ever change.  I
+> > think this is the second pull-request I've had from you [0] and the
+> > second one you've wanted to retract.  That should not happen!
+
+> This is life - it is always possible that some problems will be
+> detected in linux-next later in the cycle, either by bots or by other
+> people.
+
+If you've created an immutable branch that other people might have
+merged you should be doing incremental fixes on top of it and not
+changing it unless you've confirmed that nobody else merged it, that's
+the whole immutable thing.  If you rebase the commits are still going to
+be in other people's trees and will still end up getting merged which
+makes a mess.
+
+> Some time ago I referred to Linus' message from 2017 discouraging
+> maintainers from cross-merging their trees, which you didn't find
+> applicable to existing MFD workflow.
+
+> Recently Linus put stress on that again [0].
+
+There's a difference between just grabbing someone's whole tree and
+pulling in a targetted topic branch with only specific overlapping
+stuff.  There's also no requirement on people to immediately merge=20
+such a topic branch, they can always just keep it on file until it=20
+does become important for dependencies.  A lot of the MFD cross tree
+merges are happening because constants introduced in the MFD tree
+become build dependencies for other trees.
+
+Historically there were maintainers who just randomly merged people's
+entire trees which does cause lots of problems, this isn't that.
+
+> So please, if you find it reasonable to proceed with these immutable
+> branches workflow, I would first prefer to see Linus' approval for that.
+
+This is nothing new.
+
+--Izn7cH1Com+I3R9J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzn3AsACgkQJNaLcl1U
+h9CzPQf/XQWXb/SlOinfwRA5a0iVYS+aE687fICb19kdMNAglAUAXsOe9FQTLaqU
+Jd48YIZ2UyPm4Noa1d3p+dnReu/WBqtq+7m5tjIXIblan+0r39xmpuwIm+t/zh71
+fSjUCaYXW/4T/0mXxWr0G4pXOR57O30TgmR9Lr0NVg5jOVxpyzz9Ein/wfeOpPq/
+HUAujAljW4pIYcJzQS3LO7svmUwtVakxzfWLIgqI27UfaMto6ANJpW/Ib0fpJYnR
+ruErQB2EtDvZz4KqH/MxuzAOIYPhy/InAx3UkOg9nO1hMGGgfntaWB3Eu4H5GC9Z
++ep3ZXv7fhqamBL/Y0tk0RynfarR5g==
+=EqwU
+-----END PGP SIGNATURE-----
+
+--Izn7cH1Com+I3R9J--
