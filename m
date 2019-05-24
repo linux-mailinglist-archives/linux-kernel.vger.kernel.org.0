@@ -2,85 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E56BD2960E
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A29529614
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:41:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390583AbfEXKlh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 06:41:37 -0400
-Received: from ozlabs.org ([203.11.71.1]:57047 "EHLO ozlabs.org"
+        id S2390681AbfEXKlx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 06:41:53 -0400
+Received: from foss.arm.com ([217.140.101.70]:39800 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390312AbfEXKlf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 06:41:35 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 459NG51r9dz9s6w;
-        Fri, 24 May 2019 20:41:33 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1558694494;
-        bh=ZgWKFfxHvwpM8Wtk7Zc4j9EyrdKEfULQCXmeKuMZL2M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FICrb9z1efYrymNjagrBKaXUcgEciJG4KmwVwjWqcw5giDjWLEn1E6pIaIJGZxtxI
-         nHaLOXkwWWGUDgMhE4MRg5JamsL2CuIE1cCNw4YGqJIhu/MmARgEJKKPakiUV0WqB8
-         uYPaQb08uACB+x/E/2W0EUBS9P4+APcrop+km4tr69LGExxpbBYxv9OoGSZaG54Eyo
-         30ArngiFovzt0QFTagPSOQdFRz6BX/kuA/QgdcRb36QnEgAkADF2UcqadpLqVUNV7R
-         ABQlUX9QEJ+lPrVo3i+MBfUAAAbVVbG02h2Q8VEfjLgrcwf0igZiQ+wK2V//3jw5ID
-         zqSuCiJinV/yg==
-Date:   Fri, 24 May 2019 20:41:30 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Subject: Re: linux-next: build failure after merge of the drm-fixes tree
-Message-ID: <20190524204130.35fd2b63@canb.auug.org.au>
-In-Reply-To: <20190524201548.2e8594a2@canb.auug.org.au>
-References: <20190524082926.6e1a7d8f@canb.auug.org.au>
-        <CAKMK7uGSfOev71DKF+ygRjU0rMWcrW3rL7-=Xhbwdm9STUWntQ@mail.gmail.com>
-        <20190524201548.2e8594a2@canb.auug.org.au>
+        id S2390639AbfEXKlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 06:41:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2CCC374;
+        Fri, 24 May 2019 03:41:52 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23A643F703;
+        Fri, 24 May 2019 03:41:51 -0700 (PDT)
+Date:   Fri, 24 May 2019 11:41:48 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Tengfei Fan <tengfeif@codeaurora.org>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
+        anshuman.khandual@arm.com, andreyknvl@google.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tengfei@codeaurora.org
+Subject: Re: [PATCH] arm64: break while loop if task had been rescheduled
+Message-ID: <20190524104148.GB12796@lakrids.cambridge.arm.com>
+References: <1558430404-4840-1-git-send-email-tengfeif@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=wMrdjYPpv2SAVt7Y0+ABtL"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1558430404-4840-1-git-send-email-tengfeif@codeaurora.org>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/=wMrdjYPpv2SAVt7Y0+ABtL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, May 21, 2019 at 05:20:04PM +0800, Tengfei Fan wrote:
+> While printing a task's backtrace and this task isn't
+> current task, it is possible that task's fp and fp+8
+> have the same value, so cannot break the while loop.
+> This can break while loop if this task had been
+> rescheduled during print this task's backtrace.
 
-Hi all,
+There are a few cases where backtracing can get stuck in an infinite
+loop. I'd attempted to address that more generally in my
+arm64/robust-stacktrace branch [1].
 
-On Fri, 24 May 2019 20:15:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Ah, in the drm-fixes tree, the definition of  is protected by
-                                               ^
-ASICREV_IS_PICASSO
+Looking at tsk->state here is inherently racy, and doesn't solve the
+general case, so I'd prefer to avoid that.
 
---=20
-Cheers,
-Stephen Rothwell
+Do my patches help you here? If so, I'm happy to rebase those to
+v5.2-rc1 and repost.
 
---Sig_/=wMrdjYPpv2SAVt7Y0+ABtL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks,
+Mark.
 
------BEGIN PGP SIGNATURE-----
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/log/?h=arm64/robust-stacktrace
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlznyloACgkQAVBC80lX
-0GxJbQgAj0dhFiXefIMEVotDJekVsFhb6aKrghhuZ5tUdUEO2J3VmCpA/kRwUPQj
-NgfgVp3d6uOl8WKJvzKxmeH8XUQ+fr13I2rO6ltRKIODWW5Hs+iAHd5lp3EkWF9M
-OFNuM2HuUFV+HIymiD6Nq1Jx8uElzK0lwlCi1LarO3Zeo4orB1B6/TdxQvXuOVTD
-xXLaAM5hvuFF0e8SicPturJ16laxlfH1snCI8gtjmxol7KG1QGWQyUi+Bf3MfQQk
-9tOWZ9Y5Yz3Kz8SOInDpvrEXm14nQ7OWP/n6FLVxCo0UGsL3vkJdaOyCqcr1ojMb
-ZIndbfGIyM2VomQ8oZhTaC3kAjc0ow==
-=rVue
------END PGP SIGNATURE-----
-
---Sig_/=wMrdjYPpv2SAVt7Y0+ABtL--
+> 
+> Signed-off-by: Tengfei Fan <tengfeif@codeaurora.org>
+> ---
+>  arch/arm64/kernel/traps.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+> index 2975598..9df6e02 100644
+> --- a/arch/arm64/kernel/traps.c
+> +++ b/arch/arm64/kernel/traps.c
+> @@ -103,6 +103,9 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+>  {
+>  	struct stackframe frame;
+>  	int skip = 0;
+> +	long cur_state = 0;
+> +	unsigned long cur_sp = 0;
+> +	unsigned long cur_fp = 0;
+>  
+>  	pr_debug("%s(regs = %p tsk = %p)\n", __func__, regs, tsk);
+>  
+> @@ -127,6 +130,9 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+>  		 */
+>  		frame.fp = thread_saved_fp(tsk);
+>  		frame.pc = thread_saved_pc(tsk);
+> +		cur_state = tsk->state;
+> +		cur_sp = thread_saved_sp(tsk);
+> +		cur_fp = frame.fp;
+>  	}
+>  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+>  	frame.graph = 0;
+> @@ -134,6 +140,23 @@ void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
+>  
+>  	printk("Call trace:\n");
+>  	do {
+> +		if (tsk != current && (cur_state != tsk->state
+> +			/*
+> +			 * We would not be printing backtrace for the task
+> +			 * that has changed state from uninterruptible to
+> +			 * running before hitting the do-while loop but after
+> +			 * saving the current state. If task is in running
+> +			 * state before saving the state, then we may print
+> +			 * wrong call trace or end up in infinite while loop
+> +			 * if *(fp) and *(fp+8) are same. While the situation
+> +			 * will stop print when that task schedule out.
+> +			 */
+> +			|| cur_sp != thread_saved_sp(tsk)
+> +			|| cur_fp != thread_saved_fp(tsk))) {
+> +			printk("The task:%s had been rescheduled!\n",
+> +				tsk->comm);
+> +			break;
+> +		}
+>  		/* skip until specified stack frame */
+>  		if (!skip) {
+>  			dump_backtrace_entry(frame.pc);
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
