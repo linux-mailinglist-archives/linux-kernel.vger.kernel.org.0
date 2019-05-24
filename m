@@ -2,118 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7855297D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 14:12:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11848297DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 14:12:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391446AbfEXMMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 08:12:33 -0400
-Received: from mga06.intel.com ([134.134.136.31]:48482 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391253AbfEXMMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 08:12:33 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 05:12:32 -0700
-X-ExtLoop1: 1
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga006.jf.intel.com with SMTP; 24 May 2019 05:12:27 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 24 May 2019 15:12:26 +0300
-Date:   Fri, 24 May 2019 15:12:26 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Brian Starkey <Brian.Starkey@arm.com>
-Cc:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        nd <nd@arm.com>,
-        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
-        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
-        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
-        "thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
-        Ayan Halder <Ayan.Halder@arm.com>,
-        "sean@poorly.run" <sean@poorly.run>
-Subject: Re: [PATCH] drm/komeda: Added AFBC support for komeda driver
-Message-ID: <20190524121226.GD5942@intel.com>
-References: <20190404110552.15778-1-james.qian.wang@arm.com>
- <20190516135748.GC1372@arm.com>
- <20190521084552.GA20625@james-ThinkStation-P300>
- <20190524111009.beddu67vvx66wvmk@DESKTOP-E1NTVVP.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190524111009.beddu67vvx66wvmk@DESKTOP-E1NTVVP.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2391503AbfEXMMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 08:12:52 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43346 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391462AbfEXMMv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 08:12:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=AvMpC7Jz5X1XI3BJzxwbegp9Vy5WFXCNZ3EH9Hh+SNM=; b=aFHsGJCgf2iV
+        df4A+dqMywe9Q+gYMIVBeLEduaAznTZhJSwUc6mYB3lZGLz+5b5oXbR1T7EZYzX42GvsQAJmTP4EQ
+        w1L/ddmB3gwBesAuwjcDNDmcKGyNebPnZICYAID61AkUS/p22U/P1Kph8MIUACMiKfkSmeEJryuM7
+        bKegg=;
+Received: from [176.12.107.140] (helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hU93v-0003Ct-3q; Fri, 24 May 2019 12:12:39 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 0163B440049; Fri, 24 May 2019 13:12:37 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: simple-card: Restore original configuration of DAI format" to the asoc tree
+In-Reply-To: <1558688044-22025-1-git-send-email-jonathanh@nvidia.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190524121238.0163B440049@finisterre.sirena.org.uk>
+Date:   Fri, 24 May 2019 13:12:37 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 11:10:09AM +0000, Brian Starkey wrote:
-> Hi,
-> 
-> On Tue, May 21, 2019 at 09:45:58AM +0100, james qian wang (Arm Technology China) wrote:
-> > On Thu, May 16, 2019 at 09:57:49PM +0800, Ayan Halder wrote:
-> > > On Thu, Apr 04, 2019 at 12:06:14PM +0100, james qian wang (Arm Technology China) wrote:
-> > > >  
-> > > > +static int
-> > > > +komeda_fb_afbc_size_check(struct komeda_fb *kfb, struct drm_file *file,
-> > > > +			  const struct drm_mode_fb_cmd2 *mode_cmd)
-> > > > +{
-> > > > +	struct drm_framebuffer *fb = &kfb->base;
-> > > > +	const struct drm_format_info *info = fb->format;
-> > > > +	struct drm_gem_object *obj;
-> > > > +	u32 alignment_w = 0, alignment_h = 0, alignment_header;
-> > > > +	u32 n_blocks = 0, min_size = 0;
-> > > > +
-> > > > +	obj = drm_gem_object_lookup(file, mode_cmd->handles[0]);
-> > > > +	if (!obj) {
-> > > > +		DRM_DEBUG_KMS("Failed to lookup GEM object\n");
-> > > > +		return -ENOENT;
-> > > > +	}
-> > > > +
-> > > > +	switch (fb->modifier & AFBC_FORMAT_MOD_BLOCK_SIZE_MASK) {
-> > > > +	case AFBC_FORMAT_MOD_BLOCK_SIZE_32x8:
-> > > > +		alignment_w = 32;
-> > > > +		alignment_h = 8;
-> > > > +		break;
-> > > > +	case AFBC_FORMAT_MOD_BLOCK_SIZE_16x16:
-> > > > +		alignment_w = 16;
-> > > > +		alignment_h = 16;
-> > > > +		break;
-> > > > +	default:
-> > > Can we have something like a warn here ?
-> > 
-> > will add a WARN here.
-> > 
-> 
-> I think it's better not to. fb->modifier comes from
-> userspace, so a malicious app could spam us with WARNs, effectively
-> dos-ing the system. -EINVAL should be sufficient.
+The patch
 
-Should probably check that the entire modifier+format is
-actually valid. Otherwise you risk passing on a bogus
-modifier deeper into the driver which may trigger
-interesting bugs.
+   ASoC: simple-card: Restore original configuration of DAI format
 
-Also theoretically (however unlikely) some broken userspace
-might start to depend on the ability to create framebuffers
-with crap modifiers, which could later break if you change
-the way you handle the modifiers. Then you're stuck between
-the rock and hard place because you can't break existing
-userspace but you still want to change the way modifiers
-are handled in the kernel.
+has been applied to the asoc tree at
 
-Best not give userspace too much rope IMO. Two ways to go about
-that:
-1) drm_any_plane_has_format() (assumes your .format_mod_supported()
-   does its job properly)
-2) roll your own 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.2
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 4819d06292c9b57eabdd6d1603e49a27baf183be Mon Sep 17 00:00:00 2001
+From: Jon Hunter <jonathanh@nvidia.com>
+Date: Fri, 24 May 2019 09:54:04 +0100
+Subject: [PATCH] ASoC: simple-card: Restore original configuration of DAI
+ format
+
+Revert commit 069d037aea98 ("ASoC: simple-card: Fix configuration of
+DAI format"). During further review, it turns out that the actual issue
+was caused by an incorrectly formatted device-tree node describing the
+soundcard.
+
+The following is incorrect because the simple-audio-card
+'bitclock-master' and 'frame-master' properties should not reference the
+actual codec phandle ...
+
+	sound {
+		compatible = "simple-audio-card";
+		...
+	=>	simple-audio-card,bitclock-master = <&codec>;
+	=>	simple-audio-card,frame-master = <&codec>;
+		...
+
+		simple-audio-card,cpu {
+			sound-dai = <&xxx>;
+		};
+
+		simple-audio-card,codec {
+	=>		sound-dai = <&codec>;
+		};
+	};
+
+Rather, these properties should reference the phandle to the
+'simple-audio-card,codec' property as shown below ...
+
+	sound {
+		compatible = "simple-audio-card";
+		...
+	=>	simple-audio-card,bitclock-master = <&codec>;
+	=>	simple-audio-card,frame-master = <&codec>;
+		...
+
+		simple-audio-card,cpu {
+			sound-dai = <&xxx>;
+		};
+
+	=>	codec: simple-audio-card,codec { /* simple-card wants here */
+			sound-dai = <&xxx>;	 /* not here */
+		};
+	};
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/generic/simple-card.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index c2c8dcbcf795..9b568f578bcd 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -283,6 +283,11 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
+ 	codec_dai		=
+ 	dai_props->codec_dai	= &priv->dais[li->dais++];
+ 
++	ret = asoc_simple_parse_daifmt(dev, node, codec,
++				       prefix, &dai_link->dai_fmt);
++	if (ret < 0)
++		goto dai_link_of_err;
++
+ 	simple_parse_mclk_fs(top, cpu, codec, dai_props, prefix);
+ 
+ 	ret = asoc_simple_parse_cpu(cpu, dai_link, &single_cpu);
+@@ -293,11 +298,6 @@ static int simple_dai_link_of(struct asoc_simple_priv *priv,
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
+ 
+-	ret = asoc_simple_parse_daifmt(dev, node, dai_link->codecs->of_node,
+-				       prefix, &dai_link->dai_fmt);
+-	if (ret < 0)
+-		goto dai_link_of_err;
+-
+ 	ret = asoc_simple_parse_platform(plat, dai_link);
+ 	if (ret < 0)
+ 		goto dai_link_of_err;
 -- 
-Ville Syrjälä
-Intel
+2.20.1
+
