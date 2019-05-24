@@ -2,120 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DA632A1C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 01:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65E282A1C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 01:50:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbfEXXuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 19:50:09 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33498 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfEXXuG (ORCPT
+        id S1726511AbfEXXup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 19:50:45 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:44180 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726300AbfEXXup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 19:50:06 -0400
-Received: by mail-pf1-f194.google.com with SMTP id z28so6205402pfk.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 16:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4IUQP+uKyCN66rRAguQBd+uSI/nPEDtpoZNPuNABz7k=;
-        b=ExaDqp0kDit6EEuSOcT+FAdLJsr3wasxUTshDnisEPTxiqbsM/iwHBlK5jmEac4uTx
-         1WrmYkFMfBW8Hthn8w/kr+CT1si+DUZOuwzHNsk8UBPZv3PhzihaZaVz4saSEqQb9A8/
-         P62/INsuK+8WFv0NR63C1VMqjfsXLMIYivmZQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4IUQP+uKyCN66rRAguQBd+uSI/nPEDtpoZNPuNABz7k=;
-        b=OlDt5bkCHeO+kkFfbGc81BEqpvWAjLESdSVARxnxEpOjey6hSNOvUhxGNOHMmCNsDD
-         EAEamN4D5ApWGGSOSZ5EfkDH5P5DuFyK98+ycixPySNt5YNZakIVnReGD4vJvuLue0gH
-         pYtyEphvs8KOX/BtbdkJZ6y0P9xeRwkbNukNjgPaVRhC11GF6kvLs9ZNeAiSI4Dy7fek
-         rPmR1aSqQkGZ4Bxi0/uu2YqDOuyiyJDLbcWZJgEUe0uQMjX5V/e6OGJ9Qy8r6stM4ozv
-         zojxZxR6PETzaKu64+h39cm5KVTDE6G849M54Da3Zjyy3MdjPI5JfPPEsNmcKrdmPfA6
-         Do5w==
-X-Gm-Message-State: APjAAAURyOWIOd0r+caUpgvPC8JetjensvX5LBQLntFbHa0yLbAu1zZI
-        8ZTDrAA8sSaHJNPjm+Qa5WscWWZHaAxUHg==
-X-Google-Smtp-Source: APXvYqxNGBpXom3Ado94lkiXFHwXNMChLcccb7ZkYxRn6dsfk/n65WIEwwfbkGKCqFKqFYilSX8ODw==
-X-Received: by 2002:a17:90a:372a:: with SMTP id u39mr12987526pjb.19.1558741804955;
-        Fri, 24 May 2019 16:50:04 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id q4sm3297595pgb.39.2019.05.24.16.50.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 24 May 2019 16:50:04 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>, kvm-ppc@vger.kernel.org,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>, rcu@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH RFC 5/5] rcu: Remove rcu_dereference_raw_notrace since no users
-Date:   Fri, 24 May 2019 19:49:33 -0400
-Message-Id: <20190524234933.5133-6-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
-In-Reply-To: <20190524234933.5133-1-joel@joelfernandes.org>
-References: <20190524234933.5133-1-joel@joelfernandes.org>
+        Fri, 24 May 2019 19:50:45 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1hUJxS-0005Qi-8g; Sat, 25 May 2019 01:50:42 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Jan Luebbe <jlu@pengutronix.de>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, kernel@pengutronix.de,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] proc: report eip and esp for all threads when coredumping
+References: <20190522161614.628-1-jlu@pengutronix.de>
+Date:   Sat, 25 May 2019 01:50:40 +0200
+In-Reply-To: <20190522161614.628-1-jlu@pengutronix.de> (Jan Luebbe's message
+        of "Wed, 22 May 2019 18:16:14 +0200")
+Message-ID: <875zpzif8v.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The series removes all users of the API and with this patch, the API
-itself. Also fix documentation.
+On 2019-05-22, Jan Luebbe <jlu@pengutronix.de> wrote:
+> Commit 0a1eb2d474ed ("fs/proc: Stop reporting eip and esp in
+> /proc/PID/stat") stopped reporting eip/esp and commit fd7d56270b52
+> ("fs/proc: Report eip/esp in /prod/PID/stat for coredumping")
+> reintroduced the feature to fix a regression with userspace core dump
+> handlers (such as minicoredumper).
+>
+> Because PF_DUMPCORE is only set for the primary thread, this didn't fix
+> the original problem for secondary threads. This commit checks
+> mm->core_state instead, as already done for /proc/<pid>/status in
+> task_core_dumping(). As we have a mm_struct available here anyway, this
+> seems to be a clean solution.
+>
+> Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
+> ---
+>  fs/proc/array.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/proc/array.c b/fs/proc/array.c
+> index 2edbb657f859..b76b1e29fc36 100644
+> --- a/fs/proc/array.c
+> +++ b/fs/proc/array.c
+> @@ -462,7 +462,7 @@ static int do_task_stat(struct seq_file *m, struct pid_namespace *ns,
+>  		 * a program is not able to use ptrace(2) in that case. It is
+>  		 * safe because the task has stopped executing permanently.
+>  		 */
+> -		if (permitted && (task->flags & PF_DUMPCORE)) {
+> +		if (permitted && (!!mm->core_state)) {
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- Documentation/RCU/Design/Requirements/Requirements.html | 6 +++---
- include/linux/rcupdate.h                                | 9 ---------
- 2 files changed, 3 insertions(+), 12 deletions(-)
+This is not entirely safe. mm->core_state is set _before_ zap_process()
+is called. Therefore tasks can be executing on a CPU with mm->core_state
+set.
 
-diff --git a/Documentation/RCU/Design/Requirements/Requirements.html b/Documentation/RCU/Design/Requirements/Requirements.html
-index 5a9238a2883c..9727278893e6 100644
---- a/Documentation/RCU/Design/Requirements/Requirements.html
-+++ b/Documentation/RCU/Design/Requirements/Requirements.html
-@@ -2512,9 +2512,9 @@ disabled across the entire RCU read-side critical section.
- <p>
- It is possible to use tracing on RCU code, but tracing itself
- uses RCU.
--For this reason, <tt>rcu_dereference_raw_notrace()</tt>
--is provided for use by tracing, which avoids the destructive
--recursion that could otherwise ensue.
-+This is the other reason for using, <tt>rcu_dereference_raw()</tt>,
-+for use by tracing, which avoids the destructive recursion that could
-+otherwise ensue.
- This API is also used by virtualization in some architectures,
- where RCU readers execute in environments in which tracing
- cannot be used.
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 922bb6848813..f917a27fc115 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -472,15 +472,6 @@ static inline void rcu_preempt_sleep_check(void) { }
- 	__rcu_dereference_check((p), (c) || rcu_read_lock_sched_held(), \
- 				__rcu)
+With the following additional change, I was able to close the window.
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index e42e17e55bfd..93f55563e2c1 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -340,10 +340,10 @@ static int zap_threads(struct task_struct *tsk, struct mm_struct *mm,
  
--/*
-- * The tracing infrastructure traces RCU (we want that), but unfortunately
-- * some of the RCU checks causes tracing to lock up the system.
-- *
-- * The no-tracing version of rcu_dereference_raw() must not call
-- * rcu_read_lock_held().
-- */
--#define rcu_dereference_raw_notrace(p) __rcu_dereference_check((p), 1, __rcu)
--
- /**
-  * rcu_dereference_protected() - fetch RCU pointer when updates prevented
-  * @p: The pointer to read, prior to dereferencing
--- 
-2.22.0.rc1.257.g3120a18244-goog
+ 	spin_lock_irq(&tsk->sighand->siglock);
+ 	if (!signal_group_exit(tsk->signal)) {
+-		mm->core_state = core_state;
+ 		tsk->signal->group_exit_task = tsk;
+ 		nr = zap_process(tsk, exit_code, 0);
+ 		clear_tsk_thread_flag(tsk, TIF_SIGPENDING);
++		mm->core_state = core_state;
+ 	}
+ 	spin_unlock_irq(&tsk->sighand->siglock);
+ 	if (unlikely(nr < 0))
 
+AFAICT core_state does not need to be set before the other lines. But
+there may be some side effects that I overlooked!
+
+John Ogness
