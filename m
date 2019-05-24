@@ -2,62 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C6AF29223
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 09:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6821929236
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 09:59:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389221AbfEXH4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 03:56:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38084 "EHLO mail.kernel.org"
+        id S2389261AbfEXH7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 03:59:09 -0400
+Received: from mga17.intel.com ([192.55.52.151]:8668 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389197AbfEXH4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 03:56:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10FB820879;
-        Fri, 24 May 2019 07:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558684581;
-        bh=bXD6QdoJrj8nxRE6cBPxuj0h6h954JnbAXNYAFv5zSc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BTsYSM/SGgpLTTjkF6vD8AxB0UHlJeCDNcHJ5G+5lAeOCW8Qq1rUfN2Klr23mO/U6
-         KVFBv6BW3E0CMDFZ4n+hURGKqz6STou24e9sTPtf5jOvUGGDWx6WiPt1jQE5su1Ye3
-         MlRV7XGBrOQK0CQB6LQmzL22JCCiCv5ZTSQwA/Mw=
-Date:   Fri, 24 May 2019 09:56:19 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Stefan Roese <sr@denx.de>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: Re: [PATCH 1/2] serial: mctrl_gpio: Check if GPIO property exisits
- before requesting it
-Message-ID: <20190524075619.GB31438@kroah.com>
-References: <20190522121117.14347-1-sr@denx.de>
+        id S2388959AbfEXH7I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 03:59:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 00:59:08 -0700
+X-ExtLoop1: 1
+Received: from tao-optiplex-7060.sh.intel.com ([10.239.13.104])
+  by orsmga008.jf.intel.com with ESMTP; 24 May 2019 00:59:03 -0700
+From:   Tao Xu <tao3.xu@intel.com>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        sean.j.christopherson@intel.com
+Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tao3.xu@intel.com,
+        jingqi.liu@intel.com
+Subject: [PATCH v2 0/3] KVM: x86: Enable user wait instructions
+Date:   Fri, 24 May 2019 15:56:34 +0800
+Message-Id: <20190524075637.29496-1-tao3.xu@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190522121117.14347-1-sr@denx.de>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 02:11:16PM +0200, Stefan Roese wrote:
-> This patch adds a check for the GPIOs property existence, before the
-> GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
-> support is added (2nd patch in this patch series) on x86 platforms using
-> ACPI. Please find a details problem description here:
-> 
-> https://lkml.org/lkml/2016/8/9/357
+UMONITOR, UMWAIT and TPAUSE are a set of user wait instructions.
 
-Can you change this to a lore.kernel.org link instead?
+UMONITOR arms address monitoring hardware using an address. A store
+to an address within the specified address range triggers the
+monitoring hardware to wake up the processor waiting in umwait.
 
-Actually, just put the information in here, no one should ever have to
-search somewhere else to determine what happened in a changelog entry.
+UMWAIT instructs the processor to enter an implementation-dependent
+optimized state while monitoring a range of addresses. The optimized
+state may be either a light-weight power/performance optimized state
+(c0.1 state) or an improved power/performance optimized state
+(c0.2 state).
 
-thanks,
+TPAUSE instructs the processor to enter an implementation-dependent
+optimized state c0.1 or c0.2 state and wake up when time-stamp counter
+reaches specified timeout.
 
-greg k-h
+Availability of the user wait instructions is indicated by the presence
+of the CPUID feature flag WAITPKG CPUID.0x07.0x0:ECX[5].
+
+The patches enable the umonitor, umwait and tpause features in KVM.
+Because umwait and tpause can put a (psysical) CPU into a power saving
+state, by default we dont't expose it to kvm and provide a capability to
+enable it. With this capability enabled, a VM can use UMONITOR, UMWAIT
+and TPAUSE instructions. If the instruction causes a delay, the amount
+of time delayed is called here the physical delay. The physical delay is
+first computed by determining the virtual delay (the time to delay
+relative to the VM’s timestamp counter). Otherwise, UMONITOR, UMWAIT
+and TPAUSE cause an invalid-opcode exception(#UD).
+
+The release document ref below link:
+https://software.intel.com/sites/default/files/\
+managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
+This patch has a dependency on https://lkml.org/lkml/2019/1/16/909
+
+Changelog:
+v2:
+	Separated from the series https://lkml.org/lkml/2018/7/10/160
+	Add provide a capability to enable UMONITOR, UMWAIT and TPAUSE 
+v1:
+	Sent out with MOVDIRI/MOVDIR64B instructions patches
+
+Tao Xu (3):
+  KVM: x86: add support for user wait instructions
+  KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
+  KVM: vmx: handle vm-exit for UMWAIT and TPAUSE
+
+ Documentation/virtual/kvm/api.txt | 12 ++++++
+ arch/x86/include/asm/kvm_host.h   |  1 +
+ arch/x86/include/asm/vmx.h        |  1 +
+ arch/x86/include/uapi/asm/vmx.h   |  6 ++-
+ arch/x86/kvm/cpuid.c              |  2 +-
+ arch/x86/kvm/vmx/vmx.c            | 62 +++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/vmx.h            |  1 +
+ arch/x86/kvm/x86.c                |  8 ++++
+ arch/x86/kvm/x86.h                |  5 +++
+ include/uapi/linux/kvm.h          |  1 +
+ 10 files changed, 97 insertions(+), 2 deletions(-)
+
+-- 
+2.20.1
+
