@@ -2,173 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C30AF2986F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 15:02:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CB6529874
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 15:03:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391475AbfEXNCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 09:02:30 -0400
-Received: from mail-eopbgr00107.outbound.protection.outlook.com ([40.107.0.107]:45792
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391045AbfEXNCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 09:02:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vKlcIklVWRnfj7lNbh0yVu4idBEZKxzMhwhf/rkK5OY=;
- b=L2Kw5XJ/QNnRIf/Jim4qzS30zOqp32QMaHjT7n7vLtdN70NfxNLDrmlby0ZVpXw+wK9DbTOtWaRteDbp38Hw7NRK6POC8wmhwpxGn6rB94HyEEBtACVFP9OfP1xwhilslbJ4oQAMhe55edXQVoYEWA01n7iGlxseAS9HucwKdMo=
-Received: from VI1PR07MB3165.eurprd07.prod.outlook.com (10.175.243.15) by
- VI1PR07MB6159.eurprd07.prod.outlook.com (20.178.124.160) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.10; Fri, 24 May 2019 13:02:24 +0000
-Received: from VI1PR07MB3165.eurprd07.prod.outlook.com
- ([fe80::1403:5377:c11d:a41a]) by VI1PR07MB3165.eurprd07.prod.outlook.com
- ([fe80::1403:5377:c11d:a41a%7]) with mapi id 15.20.1943.007; Fri, 24 May 2019
- 13:02:24 +0000
-From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-To:     "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
-        <krzysztof.adamski@nokia.com>, Guenter Roeck <linux@roeck-us.net>,
-        Jean Delvare <jdelvare@suse.com>
-CC:     "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] adm1275: support PMBUS_VIRT_*_SAMPLES
-Thread-Topic: [PATCH] adm1275: support PMBUS_VIRT_*_SAMPLES
-Thread-Index: AQHVEi8WZbhhz1TyCEmlx6WeByshdKZ6PXiA
-Date:   Fri, 24 May 2019 13:02:24 +0000
-Message-ID: <771ca386-8fdd-f2d3-a9e6-5519b067e5e2@nokia.com>
-References: <20190524124841.GA25728@localhost.localdomain>
-In-Reply-To: <20190524124841.GA25728@localhost.localdomain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [131.228.32.167]
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        id S2403785AbfEXNDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 09:03:11 -0400
+Received: from mga02.intel.com ([134.134.136.20]:17708 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391555AbfEXNDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 09:03:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 06:03:10 -0700
+X-ExtLoop1: 1
+Received: from mgastonx-mobl.amr.corp.intel.com (HELO [10.251.128.35]) ([10.251.128.35])
+  by orsmga003.jf.intel.com with ESMTP; 24 May 2019 06:03:09 -0700
+Subject: Re: [alsa-devel] [PATCH] ASoc: fix
+ sound/soc/intel/skylake/slk-ssp-clk.c build error on IA64
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>
+Cc:     Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        kbuild test robot <lkp@intel.com>
+References: <9019c87f-cf1a-b59f-d87e-8169b247cf88@infradead.org>
+ <6b89e370-90e3-6962-c71a-80919b7c6154@linux.intel.com>
+ <4cedd724-7c2e-10c2-a328-61f7af3ab9ed@infradead.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <7d685525-b0fe-429b-f0ea-f363069cf667@linux.intel.com>
+Date:   Fri, 24 May 2019 08:03:09 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
-x-clientproxiedby: HE1PR0902CA0031.eurprd09.prod.outlook.com
- (2603:10a6:7:15::20) To VI1PR07MB3165.eurprd07.prod.outlook.com
- (2603:10a6:802:21::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=alexander.sverdlin@nokia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 71cde337-1362-4c25-816d-08d6e048109c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(4618075)(2017052603328)(7193020);SRVR:VI1PR07MB6159;
-x-ms-traffictypediagnostic: VI1PR07MB6159:
-x-microsoft-antispam-prvs: <VI1PR07MB615957908649F6762D8EE10188020@VI1PR07MB6159.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5236;
-x-forefront-prvs: 0047BC5ADE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(396003)(39860400002)(366004)(376002)(189003)(199004)(6116002)(25786009)(4326008)(7736002)(186003)(6486002)(102836004)(31686004)(64126003)(26005)(54906003)(110136005)(305945005)(5660300002)(3846002)(14454004)(2906002)(508600001)(53936002)(6512007)(99286004)(71190400001)(256004)(52116002)(36756003)(31696002)(71200400001)(14444005)(86362001)(76176011)(229853002)(11346002)(66946007)(66446008)(2616005)(65956001)(66066001)(66476007)(66556008)(65806001)(486006)(64756008)(476003)(81166006)(53546011)(6506007)(386003)(68736007)(6436002)(81156014)(73956011)(8676002)(316002)(58126008)(6246003)(8936002)(65826007)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB6159;H:VI1PR07MB3165.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: GddHGEi94sg/2cIn9xsPw/5ShR5JHKrg0WTKK+hqXw2L1+7i9qyhnBlT56aCOEN/MZFTYqwCb4Ntvh0ChusQRu0zEKEPQYsd/TP7x6KoxncfHv+JozpOP+2Bn7T9ui0npAGj3N5N5UYjozKmsIDeo7YnegJRqu8pguXvjR4imSmOqCGPd0LwhtQl0CszE7XxXNib+fY2TLle0EdRjKZxPQgvP2szFS9pYuPVmNneC7pSPBuLunZTNL2ZR3J3FN6fAYaK7JhpaQTGNNurgUoMKDH+uVIF5Hpo/F4af/Aa2Z4lL8DvPpptFbsKsedfKT4veqpSxbxHS3vlfAaJVYjYlZqr4m5DBA9Ats0B7LNMLebPpKIqXjJgXxKZrt78vCxo03Kjzw+5bbMXGi0hJwZVu9Yofz/1snnTCUWxG2l003s=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3971BC478225CC4CA562C1AEB6A9D01F@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71cde337-1362-4c25-816d-08d6e048109c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2019 13:02:24.2592
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: alexander.sverdlin@nokia.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB6159
+In-Reply-To: <4cedd724-7c2e-10c2-a328-61f7af3ab9ed@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkhDQoNCk9uIDI0LzA1LzIwMTkgMTQ6NDksIEFkYW1za2ksIEtyenlzenRvZiAoTm9raWEgLSBQ
-TC9Xcm9jbGF3KSB3cm90ZToNCj4gVGhlIGRldmljZSBzdXBwb3J0cyBzZXR0aW5nIHRoZSBudW1i
-ZXIgb2Ygc2FtcGxlcyBmb3IgYXZlcmFnaW5nIHRoZQ0KPiBtZWFzdXJlbWVudHMuIFRoZXJlIGFy
-ZSB0d28gc2VwYXJhdGUgc2V0dGluZ3MgLSBQV1JfQVZHIGZvciBhdmVyYWdpbmcNCj4gUElOIGFu
-ZCBWSV9BVkcgZm9yIGF2ZXJhZ2luZyBWSU4vVkFVWC9JT1VULCBib3RoIGJlaW5nIHBhcnQgb2YN
-Cj4gUE1PTl9DT05GSUcgcmVnaXN0ZXIuIFRoZSB2YWx1ZXMgYXJlIHN0b3JlZCBhcyBleHBvbmVu
-dCBvZiBiYXNlIDIgb2YgdGhlDQo+IGFjdHVhbCBudW1iZXIgb2Ygc2FtcGxlcyB0aGF0IHdpbGwg
-YmUgdGFrZW4uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBLcnp5c3p0b2YgQWRhbXNraSA8a3J6eXN6
-dG9mLmFkYW1za2lAbm9raWEuY29tPg0KDQpSZXZpZXdlZC1ieTogQWxleGFuZGVyIFN2ZXJkbGlu
-IDxhbGV4YW5kZXIuc3ZlcmRsaW5Abm9raWEuY29tPg0KDQo+IC0tLQ0KPiAgZHJpdmVycy9od21v
-bi9wbWJ1cy9hZG0xMjc1LmMgfCA2OCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-LQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDY3IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4g
-DQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2h3bW9uL3BtYnVzL2FkbTEyNzUuYyBiL2RyaXZlcnMv
-aHdtb24vcG1idXMvYWRtMTI3NS5jDQo+IGluZGV4IGY1NjkzNzJjOTIwNC4uNGVmZTFhOWRmNTYz
-IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2h3bW9uL3BtYnVzL2FkbTEyNzUuYw0KPiArKysgYi9k
-cml2ZXJzL2h3bW9uL3BtYnVzL2FkbTEyNzUuYw0KPiBAQCAtMjMsNiArMjMsOCBAQA0KPiAgI2lu
-Y2x1ZGUgPGxpbnV4L3NsYWIuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9pMmMuaD4NCj4gICNpbmNs
-dWRlIDxsaW51eC9iaXRvcHMuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9iaXRmaWVsZC5oPg0KPiAr
-I2luY2x1ZGUgPGxpbnV4L2xvZzIuaD4NCj4gICNpbmNsdWRlICJwbWJ1cy5oIg0KPiAgDQo+ICBl
-bnVtIGNoaXBzIHsgYWRtMTA3NSwgYWRtMTI3MiwgYWRtMTI3NSwgYWRtMTI3NiwgYWRtMTI3OCwg
-YWRtMTI5MywgYWRtMTI5NCB9Ow0KPiBAQCAtNzgsNiArODAsMTAgQEAgZW51bSBjaGlwcyB7IGFk
-bTEwNzUsIGFkbTEyNzIsIGFkbTEyNzUsIGFkbTEyNzYsIGFkbTEyNzgsIGFkbTEyOTMsIGFkbTEy
-OTQgfTsNCj4gICNkZWZpbmUgQURNMTA3NV9WQVVYX09WX1dBUk4JCUJJVCg3KQ0KPiAgI2RlZmlu
-ZSBBRE0xMDc1X1ZBVVhfVVZfV0FSTgkJQklUKDYpDQo+ICANCj4gKyNkZWZpbmUgQURNMTI3NV9Q
-V1JfQVZHX01BU0sJCUdFTk1BU0soMTMsIDExKQ0KPiArI2RlZmluZSBBRE0xMjc1X1ZJX0FWR19N
-QVNLCQlHRU5NQVNLKDEwLCA4KQ0KPiArI2RlZmluZSBBRE0xMjc1X1NBTVBMRVNfQVZHX01BWAkx
-MjgNCj4gKw0KPiAgc3RydWN0IGFkbTEyNzVfZGF0YSB7DQo+ICAJaW50IGlkOw0KPiAgCWJvb2wg
-aGF2ZV9vY19mYXVsdDsNCj4gQEAgLTkwLDYgKzk2LDcgQEAgc3RydWN0IGFkbTEyNzVfZGF0YSB7
-DQo+ICAJYm9vbCBoYXZlX3Bpbl9tYXg7DQo+ICAJYm9vbCBoYXZlX3RlbXBfbWF4Ow0KPiAgCXN0
-cnVjdCBwbWJ1c19kcml2ZXJfaW5mbyBpbmZvOw0KPiArCXN0cnVjdCBtdXRleCBsb2NrOw0KPiAg
-fTsNCj4gIA0KPiAgI2RlZmluZSB0b19hZG0xMjc1X2RhdGEoeCkgIGNvbnRhaW5lcl9vZih4LCBz
-dHJ1Y3QgYWRtMTI3NV9kYXRhLCBpbmZvKQ0KPiBAQCAtMTY0LDYgKzE3MSwzOCBAQCBzdGF0aWMg
-Y29uc3Qgc3RydWN0IGNvZWZmaWNpZW50cyBhZG0xMjkzX2NvZWZmaWNpZW50c1tdID0gew0KPiAg
-CVsxOF0gPSB7IDc2NTgsIDAsIC0zIH0sCQkvKiBwb3dlciwgMjFWLCBpcmFuZ2UyMDAgKi8NCj4g
-IH07DQo+ICANCj4gK3N0YXRpYyBpbmxpbmUgaW50IGFkbTEyNzVfcmVhZF9wbW9uX2NvbmZpZyhz
-dHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LCB1NjQgbWFzaykNCj4gK3sNCj4gKwlpbnQgcmV0Ow0K
-PiArDQo+ICsJcmV0ID0gaTJjX3NtYnVzX3JlYWRfd29yZF9kYXRhKGNsaWVudCwgQURNMTI3NV9Q
-TU9OX0NPTkZJRyk7DQo+ICsJaWYgKHJldCA8IDApDQo+ICsJCXJldHVybiByZXQ7DQo+ICsNCj4g
-KwlyZXR1cm4gRklFTERfR0VUKG1hc2ssIHJldCk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbmxp
-bmUgaW50IGFkbTEyNzVfd3JpdGVfcG1vbl9jb25maWcoc3RydWN0IGkyY19jbGllbnQgKmNsaWVu
-dCwgdTY0IG1hc2ssDQo+ICsJCQkJCSAgICB1MTYgd29yZCkNCj4gK3sNCj4gKwljb25zdCBzdHJ1
-Y3QgcG1idXNfZHJpdmVyX2luZm8gKmluZm8gPSBwbWJ1c19nZXRfZHJpdmVyX2luZm8oY2xpZW50
-KTsNCj4gKwlzdHJ1Y3QgYWRtMTI3NV9kYXRhICpkYXRhID0gdG9fYWRtMTI3NV9kYXRhKGluZm8p
-Ow0KPiArCWludCByZXQ7DQo+ICsNCj4gKwltdXRleF9sb2NrKCZkYXRhLT5sb2NrKTsNCj4gKwly
-ZXQgPSBpMmNfc21idXNfcmVhZF93b3JkX2RhdGEoY2xpZW50LCBBRE0xMjc1X1BNT05fQ09ORklH
-KTsNCj4gKwlpZiAocmV0IDwgMCkgew0KPiArCQltdXRleF91bmxvY2soJmRhdGEtPmxvY2spOw0K
-PiArCQlyZXR1cm4gcmV0Ow0KPiArCX0NCj4gKw0KPiArCXdvcmQgPSBGSUVMRF9QUkVQKG1hc2ss
-IHdvcmQpIHwgKHJldCAmIH5tYXNrKTsNCj4gKwlyZXQgPSBpMmNfc21idXNfd3JpdGVfd29yZF9k
-YXRhKGNsaWVudCwgQURNMTI3NV9QTU9OX0NPTkZJRywgd29yZCk7DQo+ICsJbXV0ZXhfdW5sb2Nr
-KCZkYXRhLT5sb2NrKTsNCj4gKw0KPiArCXJldHVybiByZXQ7DQo+ICt9DQo+ICsNCj4gIHN0YXRp
-YyBpbnQgYWRtMTI3NV9yZWFkX3dvcmRfZGF0YShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LCBp
-bnQgcGFnZSwgaW50IHJlZykNCj4gIHsNCj4gIAljb25zdCBzdHJ1Y3QgcG1idXNfZHJpdmVyX2lu
-Zm8gKmluZm8gPSBwbWJ1c19nZXRfZHJpdmVyX2luZm8oY2xpZW50KTsNCj4gQEAgLTI0Miw2ICsy
-ODEsMTkgQEAgc3RhdGljIGludCBhZG0xMjc1X3JlYWRfd29yZF9kYXRhKHN0cnVjdCBpMmNfY2xp
-ZW50ICpjbGllbnQsIGludCBwYWdlLCBpbnQgcmVnKQ0KPiAgCQlpZiAoIWRhdGEtPmhhdmVfdGVt
-cF9tYXgpDQo+ICAJCQlyZXR1cm4gLUVOWElPOw0KPiAgCQlicmVhazsNCj4gKwljYXNlIFBNQlVT
-X1ZJUlRfUE9XRVJfU0FNUExFUzoNCj4gKwkJcmV0ID0gYWRtMTI3NV9yZWFkX3Btb25fY29uZmln
-KGNsaWVudCwgQURNMTI3NV9QV1JfQVZHX01BU0spOw0KPiArCQlpZiAocmV0IDwgMCkNCj4gKwkJ
-CWJyZWFrOw0KPiArCQlyZXQgPSAxIDw8IHJldDsNCj4gKwkJYnJlYWs7DQo+ICsJY2FzZSBQTUJV
-U19WSVJUX0lOX1NBTVBMRVM6DQo+ICsJY2FzZSBQTUJVU19WSVJUX0NVUlJfU0FNUExFUzoNCj4g
-KwkJcmV0ID0gYWRtMTI3NV9yZWFkX3Btb25fY29uZmlnKGNsaWVudCwgQURNMTI3NV9WSV9BVkdf
-TUFTSyk7DQo+ICsJCWlmIChyZXQgPCAwKQ0KPiArCQkJYnJlYWs7DQo+ICsJCXJldCA9IDEgPDwg
-cmV0Ow0KPiArCQlicmVhazsNCj4gIAlkZWZhdWx0Og0KPiAgCQlyZXQgPSAtRU5PREFUQTsNCj4g
-IAkJYnJlYWs7DQo+IEBAIC0yODYsNiArMzM4LDE3IEBAIHN0YXRpYyBpbnQgYWRtMTI3NV93cml0
-ZV93b3JkX2RhdGEoc3RydWN0IGkyY19jbGllbnQgKmNsaWVudCwgaW50IHBhZ2UsIGludCByZWcs
-DQo+ICAJY2FzZSBQTUJVU19WSVJUX1JFU0VUX1RFTVBfSElTVE9SWToNCj4gIAkJcmV0ID0gcG1i
-dXNfd3JpdGVfd29yZF9kYXRhKGNsaWVudCwgMCwgQURNMTI3OF9QRUFLX1RFTVAsIDApOw0KPiAg
-CQlicmVhazsNCj4gKwljYXNlIFBNQlVTX1ZJUlRfUE9XRVJfU0FNUExFUzoNCj4gKwkJd29yZCA9
-IGNsYW1wX3ZhbCh3b3JkLCAxLCBBRE0xMjc1X1NBTVBMRVNfQVZHX01BWCk7DQo+ICsJCXJldCA9
-IGFkbTEyNzVfd3JpdGVfcG1vbl9jb25maWcoY2xpZW50LCBBRE0xMjc1X1BXUl9BVkdfTUFTSywN
-Cj4gKwkJCQkJCWlsb2cyKHdvcmQpKTsNCj4gKwkJYnJlYWs7DQo+ICsJY2FzZSBQTUJVU19WSVJU
-X0lOX1NBTVBMRVM6DQo+ICsJY2FzZSBQTUJVU19WSVJUX0NVUlJfU0FNUExFUzoNCj4gKwkJd29y
-ZCA9IGNsYW1wX3ZhbCh3b3JkLCAxLCBBRE0xMjc1X1NBTVBMRVNfQVZHX01BWCk7DQo+ICsJCXJl
-dCA9IGFkbTEyNzVfd3JpdGVfcG1vbl9jb25maWcoY2xpZW50LCBBRE0xMjc1X1ZJX0FWR19NQVNL
-LA0KPiArCQkJCQkJaWxvZzIod29yZCkpOw0KPiArCQlicmVhazsNCj4gIAlkZWZhdWx0Og0KPiAg
-CQlyZXQgPSAtRU5PREFUQTsNCj4gIAkJYnJlYWs7DQo+IEBAIC00MjIsNiArNDg1LDggQEAgc3Rh
-dGljIGludCBhZG0xMjc1X3Byb2JlKHN0cnVjdCBpMmNfY2xpZW50ICpjbGllbnQsDQo+ICAJaWYg
-KCFkYXRhKQ0KPiAgCQlyZXR1cm4gLUVOT01FTTsNCj4gIA0KPiArCW11dGV4X2luaXQoJmRhdGEt
-PmxvY2spOw0KPiArDQo+ICAJaWYgKG9mX3Byb3BlcnR5X3JlYWRfdTMyKGNsaWVudC0+ZGV2Lm9m
-X25vZGUsDQo+ICAJCQkJICJzaHVudC1yZXNpc3Rvci1taWNyby1vaG1zIiwgJnNodW50KSkNCj4g
-IAkJc2h1bnQgPSAxMDAwOyAvKiAxIG1PaG0gaWYgbm90IHNldCB2aWEgRFQgKi8NCj4gQEAgLTQz
-OSw3ICs1MDQsOCBAQCBzdGF0aWMgaW50IGFkbTEyNzVfcHJvYmUoc3RydWN0IGkyY19jbGllbnQg
-KmNsaWVudCwNCj4gIAlpbmZvLT5mb3JtYXRbUFNDX0NVUlJFTlRfT1VUXSA9IGRpcmVjdDsNCj4g
-IAlpbmZvLT5mb3JtYXRbUFNDX1BPV0VSXSA9IGRpcmVjdDsNCj4gIAlpbmZvLT5mb3JtYXRbUFND
-X1RFTVBFUkFUVVJFXSA9IGRpcmVjdDsNCj4gLQlpbmZvLT5mdW5jWzBdID0gUE1CVVNfSEFWRV9J
-T1VUIHwgUE1CVVNfSEFWRV9TVEFUVVNfSU9VVDsNCj4gKwlpbmZvLT5mdW5jWzBdID0gUE1CVVNf
-SEFWRV9JT1VUIHwgUE1CVVNfSEFWRV9TVEFUVVNfSU9VVCB8DQo+ICsJCQlQTUJVU19IQVZFX1NB
-TVBMRVM7DQo+ICANCj4gIAlpbmZvLT5yZWFkX3dvcmRfZGF0YSA9IGFkbTEyNzVfcmVhZF93b3Jk
-X2RhdGE7DQo+ICAJaW5mby0+cmVhZF9ieXRlX2RhdGEgPSBhZG0xMjc1X3JlYWRfYnl0ZV9kYXRh
-Ow0KDQotLSANCkJlc3QgcmVnYXJkcywNCkFsZXhhbmRlciBTdmVyZGxpbi4NCg==
+
+
+On 5/23/19 9:59 PM, Randy Dunlap wrote:
+> On 5/23/19 4:28 AM, Pierre-Louis Bossart wrote:
+>>
+>>
+>> On 5/22/19 10:58 PM, Randy Dunlap wrote:
+>>> From: Randy Dunlap <rdunlap@infradead.org>
+>>>
+>>> skl-ssp-clk.c does not build on IA64 because the driver
+>>> uses the common clock interface, so make the driver depend
+>>> on COMMON_CLK.
+>>>
+>>> Fixes this build error:
+>>> ../sound/soc/intel/skylake/skl-ssp-clk.c:26:16: error: field 'hw' has incomplete type
+>>>     struct clk_hw hw;
+>>>                   ^~
+>>>
+>>> Reported-by: kbuild test robot <lkp@intel.com>
+>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>> Cc: Mark Brown <broonie@kernel.org>
+>>> Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>>> Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+>>> Cc: Jie Yang <yang.jie@linux.intel.com>
+>>> Cc: alsa-devel@alsa-project.org
+>>> ---
+>>>    sound/soc/intel/Kconfig        |    3 ++-
+>>>    sound/soc/intel/boards/Kconfig |    2 +-
+>>>    2 files changed, 3 insertions(+), 2 deletions(-)
+>>>
+>>> --- lnx-52-rc1.orig/sound/soc/intel/Kconfig
+>>> +++ lnx-52-rc1/sound/soc/intel/Kconfig
+>>> @@ -104,7 +104,7 @@ config SND_SST_ATOM_HIFI2_PLATFORM_ACPI
+>>>    config SND_SOC_INTEL_SKYLAKE
+>>>        tristate "All Skylake/SST Platforms"
+>>>        depends on PCI && ACPI
+>>> -    select SND_SOC_INTEL_SKL
+>>> +    select SND_SOC_INTEL_SKL if COMMON_CLK
+>>
+>> Is this really necessary? The COMMON_CLK is only needed for the SND_SOC_INTEL_SKYLAKE_SSP_CLK option, isn't it?
+> 
+> It prevents this Kconfig warning:
+> 
+> WARNING: unmet direct dependencies detected for SND_SOC_INTEL_SKL
+>    Depends on [n]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_SOC_INTEL_SST_TOPLEVEL [=y] && PCI [=y] && ACPI [=y] && COMMON_CLK [=n]
+>    Selected by [y]:
+>    - SND_SOC_INTEL_SKYLAKE [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_SOC_INTEL_SST_TOPLEVEL [=y] && PCI [=y] && ACPI [=y]
+
+Humm, ok. Can you share the config? I'd like to look into this. There 
+may be a need for this COMMON_CLK, but applying it here would not be 
+fully correct: you can unselect SND_SOC_INTEL_SKYLAKE and only select 
+SND_SOC_INTEL_SKL and still have the same problem.
+
+> 
+>>>        select SND_SOC_INTEL_APL
+>>>        select SND_SOC_INTEL_KBL
+>>>        select SND_SOC_INTEL_GLK
+>>> @@ -120,6 +120,7 @@ config SND_SOC_INTEL_SKYLAKE
+>>>    config SND_SOC_INTEL_SKL
+>>>        tristate "Skylake Platforms"
+>>>        depends on PCI && ACPI
+>>> +    depends on COMMON_CLK
+>>>        select SND_SOC_INTEL_SKYLAKE_FAMILY
+>>>        help
+>>>          If you have a Intel Skylake platform with the DSP enabled
+>>> --- lnx-52-rc1.orig/sound/soc/intel/boards/Kconfig
+>>> +++ lnx-52-rc1/sound/soc/intel/boards/Kconfig
+>>> @@ -286,7 +286,7 @@ config SND_SOC_INTEL_KBL_RT5663_MAX98927
+>>>        select SND_SOC_MAX98927
+>>>        select SND_SOC_DMIC
+>>>        select SND_SOC_HDAC_HDMI
+>>> -    select SND_SOC_INTEL_SKYLAKE_SSP_CLK
+>>> +    select SND_SOC_INTEL_SKYLAKE_SSP_CLK if COMMON_CLK
+>>
+>> and here I would make it a depend. I guess your solution solves the compilation but doesn't fully represent the fact that this machine driver is not functional without COMMON_CLK+SKYLAKE_SSP_CLK.
+> 
+> Not functional on ia64 anyway.  :)
+
+Yeah, I am fine with this.
