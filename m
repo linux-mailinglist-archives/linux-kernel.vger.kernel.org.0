@@ -2,66 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE99829265
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:06:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83B8029268
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:06:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389316AbfEXIGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:06:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389046AbfEXIGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:06:05 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B0702133D;
-        Fri, 24 May 2019 08:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558685164;
-        bh=vgZcDHT3SM5hC1ueqbfS3ee1j3qnp9qGc2/YoL1k5FE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gAJmLl2IDvA9SaE+pSxROqx56O5HVK4fHHBwrqvuU1e2oKD1TSeooAr9d7RnKN062
-         y39ij4q1bxJel/nQjAQ/6vlsndYcBFQZKaIe39q4YWbJnrLukxXvKBAiBA2p78VckA
-         C2CiYPMn8RCkhf5IOEVHTGbzulH/mdiDB/SAW/t8=
-Date:   Fri, 24 May 2019 10:06:02 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Grzegorz Halat <ghalat@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Oleksandr Natalenko <oleksandr@redhat.com>
-Subject: Re: [PATCH] vt/fbcon: deinitialize resources in visual_init() after
- failed memory allocation
-Message-ID: <20190524080602.GA19514@kroah.com>
-References: <20190426145946.26537-1-ghalat@redhat.com>
- <CAKbGCscqbvOaXPTdmxatNLBygdu=WC0hVUKx0_WnqUR4+dj_zQ@mail.gmail.com>
+        id S2389385AbfEXIG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:06:28 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51713 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389046AbfEXIG1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 04:06:27 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4O86BUI118110
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 24 May 2019 01:06:11 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4O86BUI118110
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1558685172;
+        bh=S4BweBugsgSce9p9FfndUFzYbpXA6BhoTFnm2ojhg/A=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=ZFyXX+2pVPdqXh7B9v9il1P34Msn3ZSKvMOOPmy7yqSIrrywt247MYNzLa5bfFqwB
+         uich72ooBA/MidR87j8LUThcG1HK5coTCuQmJ62VbMfuERZLvy2cmIwWIZltMoS9as
+         M9OsIgO9mZdlWgzMUBfR8+roF7y6mOojgW7eaYc9gSKgI4WWfRef8sZ81EVgKLesQs
+         WrDGeLMdZKxSUcXJjQzZ5FSPBhnHFnyE71i2sIu15yP2jcP7S/BCRY1G5WEyrfriao
+         x3lY7BNSXAVw8bgOb/JkEgprloq/r0eMUmxu+21D6Z8lFmYXmvKN6VOc78Qpg9LLEe
+         Dwp0uolcX/YKg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4O86BR7118107;
+        Fri, 24 May 2019 01:06:11 -0700
+Date:   Fri, 24 May 2019 01:06:11 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Frank van der Linden <tipbot@zytor.com>
+Message-ID: <tip-2ac44ab608705948564791ce1d15d43ba81a1e38@git.kernel.org>
+Cc:     luto@kernel.org, mingo@kernel.org, fllinden@amazon.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, bp@suse.de, peterz@infradead.org
+Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org,
+          peterz@infradead.org, bp@suse.de, fllinden@amazon.com,
+          luto@kernel.org, mingo@kernel.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190522221745.GA15789@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+References: <20190522221745.GA15789@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/CPU/AMD: Don't force the CPB cap when running
+ under a hypervisor
+Git-Commit-ID: 2ac44ab608705948564791ce1d15d43ba81a1e38
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAKbGCscqbvOaXPTdmxatNLBygdu=WC0hVUKx0_WnqUR4+dj_zQ@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+X-Spam-Status: No, score=-0.1 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_03_06,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 04:33:40PM +0200, Grzegorz Halat wrote:
-> On Fri, 26 Apr 2019 at 16:59, Grzegorz Halat <ghalat@redhat.com> wrote:
-> >
-> > After memory allocation failure vc_allocate() doesn't clean up data
-> > which has been initialized in visual_init(). In case of fbcon this
-> > leads to divide-by-0 in fbcon_init() on next open of the same tty.
-> 
-> Hi,
-> A gentle reminder. Could you please review my patch? I've seen two
-> crashes caused by this bug.
+Commit-ID:  2ac44ab608705948564791ce1d15d43ba81a1e38
+Gitweb:     https://git.kernel.org/tip/2ac44ab608705948564791ce1d15d43ba81a1e38
+Author:     Frank van der Linden <fllinden@amazon.com>
+AuthorDate: Wed, 22 May 2019 22:17:45 +0000
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 24 May 2019 08:50:32 +0200
 
-How?  How are you triggering a memory allocation failure in a "normal"
-system?
+x86/CPU/AMD: Don't force the CPB cap when running under a hypervisor
 
-Anyway, I'll queue this up, but it really does not seem like anything
-anyone would see "in the wild".
+For F17h AMD CPUs, the CPB capability ('Core Performance Boost') is forcibly set,
+because some versions of that chip incorrectly report that they do not have it.
 
-thanks,
+However, a hypervisor may filter out the CPB capability, for good
+reasons. For example, KVM currently does not emulate setting the CPB
+bit in MSR_K7_HWCR, and unchecked MSR access errors will be thrown
+when trying to set it as a guest:
 
-greg k-h
+	unchecked MSR access error: WRMSR to 0xc0010015 (tried to write 0x0000000001000011) at rIP: 0xffffffff890638f4 (native_write_msr+0x4/0x20)
+
+	Call Trace:
+	boost_set_msr+0x50/0x80 [acpi_cpufreq]
+	cpuhp_invoke_callback+0x86/0x560
+	sort_range+0x20/0x20
+	cpuhp_thread_fun+0xb0/0x110
+	smpboot_thread_fn+0xef/0x160
+	kthread+0x113/0x130
+	kthread_create_worker_on_cpu+0x70/0x70
+	ret_from_fork+0x35/0x40
+
+To avoid this issue, don't forcibly set the CPB capability for a CPU
+when running under a hypervisor.
+
+Signed-off-by: Frank van der Linden <fllinden@amazon.com>
+Acked-by: Borislav Petkov <bp@suse.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@alien8.de
+Cc: jiaxun.yang@flygoat.com
+Fixes: 0237199186e7 ("x86/CPU/AMD: Set the CPB bit unconditionally on F17h")
+Link: http://lkml.kernel.org/r/20190522221745.GA15789@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com
+[ Minor edits to the changelog. ]
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/kernel/cpu/amd.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 80a405c2048a..8d4e50428b68 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -824,8 +824,11 @@ static void init_amd_zn(struct cpuinfo_x86 *c)
+ {
+ 	set_cpu_cap(c, X86_FEATURE_ZEN);
+ 
+-	/* Fix erratum 1076: CPB feature bit not being set in CPUID. */
+-	if (!cpu_has(c, X86_FEATURE_CPB))
++	/*
++	 * Fix erratum 1076: CPB feature bit not being set in CPUID.
++	 * Always set it, except when running under a hypervisor.
++	 */
++	if (!cpu_has(c, X86_FEATURE_HYPERVISOR) && !cpu_has(c, X86_FEATURE_CPB))
+ 		set_cpu_cap(c, X86_FEATURE_CPB);
+ }
+ 
