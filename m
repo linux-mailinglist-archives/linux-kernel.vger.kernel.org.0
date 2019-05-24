@@ -2,101 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D2FB295ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CCED295EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 12:36:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390596AbfEXKgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 06:36:24 -0400
-Received: from relay.sw.ru ([185.231.240.75]:56218 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389448AbfEXKgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 06:36:24 -0400
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1hU7YU-0005xE-Bo; Fri, 24 May 2019 13:36:06 +0300
-Subject: Re: [PATCH v2 0/7] mm: process_vm_mmap() -- syscall for duplication a
- process mapping
-To:     Andy Lutomirski <luto@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Keith Busch <keith.busch@intel.com>,
-        alexander.h.duyck@linux.intel.com, Weiny Ira <ira.weiny@intel.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        arunks@codeaurora.org, Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Lameter <cl@linux.com>,
-        Rik van Riel <riel@surriel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
+        id S2390646AbfEXKgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 06:36:50 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39903 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390106AbfEXKgt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 06:36:49 -0400
+Received: by mail-wm1-f65.google.com with SMTP id z23so4626379wma.4
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 03:36:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=P+Ps4soXhNKRq8iNC0OfOmvq/D++en0Ppi7wC4gKVx0=;
+        b=gEfcHnefDLO+ppOkR7MP9RLPlcs/38SUkWXB74AxVdIaislri8gPRcwyYUCN/5B2C7
+         089eb7fzZZ9gQ+AfzfePKfPQ7aSlqocafZdx57oycCGHQrZgNDU0l8r5X/A0EzKNhCzQ
+         6814qW4O90X0XEI6s9r2fMX4/zVhkDiSAJqMk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=P+Ps4soXhNKRq8iNC0OfOmvq/D++en0Ppi7wC4gKVx0=;
+        b=I8KFG+plin5WX2A2bLXLH5y8qS1htsFIMbFlanFv9YSCq7h1yTd4TT3lQlCGStfckk
+         5LhaLmvMYenblpC7sUdNp/8tCE0/z5qP4Ehru1pLzPcYq7q1K+jZDPK5VulRqbkoMbzR
+         rN+NFnVgIW0in/GjaRXkYTPEvegbXRVLK1QerNW895UMIRhte1WgrEwL59OvnHI0YUbF
+         rBOSRy+CV+wt17j3CKNL7cIQiDzw4AEabjY+TyTHUyIaxYQmhxU4OGwge9XVeKBvGHBM
+         FBSsvDh5Jwo+6mVhRT4ar1sAvFDVZwUwf42XnWcFXjdsU/Yb8cuADPDwr1CSbo598FOC
+         sHaQ==
+X-Gm-Message-State: APjAAAUCp0WfeiArWCn/PQagq6TNVNnwV5fRHGRBt7NhaUqlg2UAA5/S
+        1r9R10ZkwYoiuQemmi5FSd3b791yyKfDwA==
+X-Google-Smtp-Source: APXvYqwA0hRTekhpxAelht4GnryGiG0SywCCf5pEww/YaqRII7ojVdJRdLYUw200qQ0ItSvG2/tIbQ==
+X-Received: by 2002:a05:600c:2198:: with SMTP id e24mr2748337wme.92.1558694207340;
+        Fri, 24 May 2019 03:36:47 -0700 (PDT)
+Received: from localhost.localdomain (86.100.broadband17.iol.cz. [109.80.100.86])
+        by smtp.gmail.com with ESMTPSA id h12sm2438862wre.14.2019.05.24.03.36.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 24 May 2019 03:36:46 -0700 (PDT)
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Roman Gushchin <guro@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        daniel.m.jordan@oracle.com, Jann Horn <jannh@google.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-References: <155836064844.2441.10911127801797083064.stgit@localhost.localdomain>
- <CALCETrU221N6uPmdaj4bRDDsf+Oc5tEfPERuyV24wsYKHn+spA@mail.gmail.com>
- <9638a51c-4295-924f-1852-1783c7f3e82d@virtuozzo.com>
- <CALCETrUMDTGRtLFocw6vnN___7rkb6r82ULehs0=yQO5PZL8MA@mail.gmail.com>
- <67d1321e-ffd6-24a3-407f-cd26c82e46b8@virtuozzo.com>
- <CALCETrWzuH3=Uh91UeGwpCj28kjQ82Lj2OTuXm7_3d871PyZSA@mail.gmail.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <58ad677d-677f-5e16-ecf9-565fcc3b7145@virtuozzo.com>
-Date:   Fri, 24 May 2019 13:36:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CALCETrWzuH3=Uh91UeGwpCj28kjQ82Lj2OTuXm7_3d871PyZSA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH] rcu: Prevent evaluation of rcu_assign_pointer()
+Date:   Fri, 24 May 2019 12:36:37 +0200
+Message-Id: <1558694197-19295-1-git-send-email-andrea.parri@amarulasolutions.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.05.2019 19:19, Andy Lutomirski wrote:
-> On Tue, May 21, 2019 at 10:44 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>
->> On 21.05.2019 19:43, Andy Lutomirski wrote:
->>> On Tue, May 21, 2019 at 8:52 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>>>
->>>> On 21.05.2019 17:43, Andy Lutomirski wrote:
-> 
->>> Do you mean that the code you sent rejects this case?  If so, please
->>> document it.  In any case, I looked at the code, and it seems to be
->>> trying to handle MAP_SHARED and MAP_ANONYMOUS.  I don't see where it
->>> would reject copying a vDSO.
->>
->> I prohibit all the VMAs, which contain on of flags: VM_HUGETLB|VM_DONTEXPAND|VM_PFNMAP|VM_IO.
->> I'll check carefully, whether it's enough for vDSO.
-> 
-> I think you could make the new syscall a lot more comprehensible bg
-> restricting it to just MAP_ANONYMOUS, by making it unmap the source,
-> or possibly both.  If the new syscall unmaps the source (in order so
-> that the source is gone before the newly mapped pages become
-> accessible), then you avoid issues in which you need to define
-> sensible semantics for what happens if both copies are accessed
-> simultaneously.
+Quoting Paul [1]:
 
-In case of we unmap source, this does not introduce a new principal
-behavior with the same page mapped twice in a single process like
-Kirill pointed. This sounds as a good idea and this covers my
-application area.
+ "Given that a quick (and perhaps error-prone) search of the uses
+  of rcu_assign_pointer() in v5.1 didn't find a single use of the
+  return value, let's please instead change the documentation and
+  implementation to eliminate the return value."
 
-The only new principal thing is a child process will be able to inherit
-a parent's VMA, which is not possible now. But it looks like we never
-depend on processes relationship in the mapping code, and process
-reparenting already gives many combinations, so the new change should
-not affect much on this.
+[1] https://lkml.kernel.org/r/20190523135013.GL28207@linux.ibm.com
 
-Kirill
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: rcu@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Sasha Levin <sashal@kernel.org>
+---
+Matthew, Sasha:
+
+The patch is based on -rcu/dev; I took the liberty of applying the
+same change to your #defines in:
+
+ tools/testing/radix-tree/linux/rcupdate.h
+ tools/include/linux/rcu.h
+
+but I admit that I'm not familiar with their uses: please shout if
+you have any objections with it.
+---
+ Documentation/RCU/whatisRCU.txt           |  8 ++++----
+ include/linux/rcupdate.h                  |  5 ++---
+ tools/include/linux/rcu.h                 | 11 +++++++++--
+ tools/testing/radix-tree/linux/rcupdate.h |  5 ++++-
+ 4 files changed, 19 insertions(+), 10 deletions(-)
+
+diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
+index 981651a8b65d2..f99a87b9a88fa 100644
+--- a/Documentation/RCU/whatisRCU.txt
++++ b/Documentation/RCU/whatisRCU.txt
+@@ -212,7 +212,7 @@ synchronize_rcu()
+ 
+ rcu_assign_pointer()
+ 
+-	typeof(p) rcu_assign_pointer(p, typeof(p) v);
++	rcu_assign_pointer(p, typeof(p) v);
+ 
+ 	Yes, rcu_assign_pointer() -is- implemented as a macro, though it
+ 	would be cool to be able to declare a function in this manner.
+@@ -220,9 +220,9 @@ rcu_assign_pointer()
+ 
+ 	The updater uses this function to assign a new value to an
+ 	RCU-protected pointer, in order to safely communicate the change
+-	in value from the updater to the reader.  This function returns
+-	the new value, and also executes any memory-barrier instructions
+-	required for a given CPU architecture.
++	in value from the updater to the reader.  This macro does not
++	evaluate to an rvalue, but it does execute any memory-barrier
++	instructions required for a given CPU architecture.
+ 
+ 	Perhaps just as important, it serves to document (1) which
+ 	pointers are protected by RCU and (2) the point at which a
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 915460ec08722..a5f61a08e65fc 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -367,7 +367,7 @@ static inline void rcu_preempt_sleep_check(void) { }
+  * other macros that it invokes.
+  */
+ #define rcu_assign_pointer(p, v)					      \
+-({									      \
++do {									      \
+ 	uintptr_t _r_a_p__v = (uintptr_t)(v);				      \
+ 	rcu_check_sparse(p, __rcu);				      \
+ 									      \
+@@ -375,8 +375,7 @@ static inline void rcu_preempt_sleep_check(void) { }
+ 		WRITE_ONCE((p), (typeof(p))(_r_a_p__v));		      \
+ 	else								      \
+ 		smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+-	_r_a_p__v;							      \
+-})
++} while (0)
+ 
+ /**
+  * rcu_swap_protected() - swap an RCU and a regular pointer
+diff --git a/tools/include/linux/rcu.h b/tools/include/linux/rcu.h
+index 7d02527e5bcea..01a435ee48cd6 100644
+--- a/tools/include/linux/rcu.h
++++ b/tools/include/linux/rcu.h
+@@ -19,7 +19,14 @@ static inline bool rcu_is_watching(void)
+ 	return false;
+ }
+ 
+-#define rcu_assign_pointer(p, v) ((p) = (v))
+-#define RCU_INIT_POINTER(p, v) p=(v)
++#define rcu_assign_pointer(p, v)				\
++do {								\
++	(p) = (v);						\
++} while (0)
++
++#define RCU_INIT_POINTER(p, v)					\
++do {								\
++	(p) = (v);						\
++} while (0)
+ 
+ #endif
+diff --git a/tools/testing/radix-tree/linux/rcupdate.h b/tools/testing/radix-tree/linux/rcupdate.h
+index fd280b070fdb1..48212f3a758e6 100644
+--- a/tools/testing/radix-tree/linux/rcupdate.h
++++ b/tools/testing/radix-tree/linux/rcupdate.h
+@@ -7,6 +7,9 @@
+ #define rcu_dereference_raw(p) rcu_dereference(p)
+ #define rcu_dereference_protected(p, cond) rcu_dereference(p)
+ #define rcu_dereference_check(p, cond) rcu_dereference(p)
+-#define RCU_INIT_POINTER(p, v)	(p) = (v)
++#define RCU_INIT_POINTER(p, v)					\
++do {								\
++	(p) = (v);						\
++} while (0)
+ 
+ #endif
+-- 
+2.7.4
+
