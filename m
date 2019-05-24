@@ -2,97 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9B8829B36
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7668229B20
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:34:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390355AbfEXPfu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:35:50 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36123 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390164AbfEXPff (ORCPT
+        id S2389600AbfEXPeN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 24 May 2019 11:34:13 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33749 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389352AbfEXPeM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 11:35:35 -0400
-Received: by mail-lj1-f195.google.com with SMTP id z1so3567386ljb.3;
-        Fri, 24 May 2019 08:35:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=618TV7pnajoPuI0PqJ6tVBxH02eKydMCb/CmuPQTTi8=;
-        b=R8r+dL8r1uz0xwtFfXDEYu04D2f3z1VB8OQWnFdXa8QD3rVCiljKLx7ayuq1ICOSPg
-         TSuVQ6ItehIHbkqzYTCcKmgm30kcE6qJMiKqo53D1v7AFbFfGMlW3wW4DshIPSW6Y4el
-         ItLeGlgiH8oRrnNm9LISBDx6/VlbeZSPl8iWOy6H3bO5a6/d6D2fE9OMLkNn6XtufwSw
-         3v/LmS4iFhBI8kUUs23py7apaLQu+eQASBGq06gkFyyXnCERSdSuAm+vHY9gwfNVt0b/
-         x7y89HUc1UlfXcGorGrV281aX5k30W/oRKaXcgy2md2kJ9XN6zFdog+lQaCW8X2wXhNf
-         fEiA==
+        Fri, 24 May 2019 11:34:12 -0400
+Received: by mail-ot1-f65.google.com with SMTP id 66so9096850otq.0
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 08:34:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=618TV7pnajoPuI0PqJ6tVBxH02eKydMCb/CmuPQTTi8=;
-        b=DqiISh0xYK/T2SaguL51RBuH9Mhxstpdammf6T6tGrhTIRhjtB59vPfnJrsHWzlOgn
-         S4Xssqyg3iR6H7ZLybiz5lk9mrKmgsT5XobWVhn98RcdJ+0YxfEqZ55fS53/lylOzozS
-         Hv/Cquf2gB/iE9YeC3DtlqaHvyy6cnqDdI3U0Au7BENwLvtIRyqaVdypnS/icSYehXsD
-         YgUbIWMVDaKrHHG+NLDo9dUsho7pbSwYa67/ERzzyJPargH2oiWHeGRxx0iG1BxfXJSb
-         OGBbs6iiPQjVd3X71v8pVXQIQT82dqmLP6DXCWzgDrWlPAeQRbtp5g0zSp/kJju91bq8
-         Oozg==
-X-Gm-Message-State: APjAAAWXlfQIO411xwS3IqtbjvoII2qvrm6ydLqfaul7boxNrQHmmMzm
-        j773/K5ars5PDOgou8GYHoI=
-X-Google-Smtp-Source: APXvYqydJE4Azb7Jl0po0NVqBkXSHCKV0s5gl49jeSg/2C4U0fQLq270oliOBKMRuCTSYxnPORMj2w==
-X-Received: by 2002:a2e:818b:: with SMTP id e11mr52951042ljg.82.1558712134287;
-        Fri, 24 May 2019 08:35:34 -0700 (PDT)
-Received: from localhost.localdomain ([94.29.35.141])
-        by smtp.gmail.com with ESMTPSA id y14sm572316ljh.60.2019.05.24.08.35.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 08:35:33 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicolas Chauvet <kwizart@gmail.com>
-Subject: [PATCH v3 8/8] clocksource/drivers/tegra: Support COMPILE_TEST universally
-Date:   Fri, 24 May 2019 18:32:53 +0300
-Message-Id: <20190524153253.28564-9-digetx@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190524153253.28564-1-digetx@gmail.com>
-References: <20190524153253.28564-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XmUFDj9D/eofBnJzPdCvp5T1ZMAct2TpjK59uIWjaGI=;
+        b=HgzQliJr5FyK0loJ/uGKOgIQ9j12KWC3S3reEufRyjtqLFmRlrJMRrlBhJWS9xR6+p
+         A7FgS8CqSz9iiPN7IR1z8thBZ5Xsa9soQ6wWINa9Zav3JXcsy2jw5eMRGTGlhuoKvjfZ
+         fdgPS0zSSFdV4kyElBHr0HmH05ouwHK4AF1KDJtPgFA5/zF0lRAZLIVF+O736NHjPxZ5
+         WQIbwDiX9M3fhTW1AM2C2L+q/QTUV31reh+eMSedPDWpG1PhoW1waX0HNGqTyRVR3P7N
+         RMhTa24attaS7xemNAz4jx2/nACLd6LROshJtdlrEDbrt2dvyN3s9DCs/9W+T1qq9bz6
+         EQUQ==
+X-Gm-Message-State: APjAAAVDUL0QymuLJEbUMizydaY9DG4NO8eksldVC7jVQA1chhxn4ooC
+        uG2sjUofMSCWQKRAMkX4Jplvb19TcjUGpUjLw6I/3g==
+X-Google-Smtp-Source: APXvYqxsrFVzXtT9Acfrz6QjWXchCDlZpb53Ha0Iwr8PLUs05rv6qoQCFOXdqtNTzA0Ek/izdns14Zvmvnm+oyKNNNs=
+X-Received: by 2002:a9d:30d6:: with SMTP id r22mr62722773otg.33.1558712052313;
+ Fri, 24 May 2019 08:34:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190409204003.6428-1-jsavitz@redhat.com> <20190521143414.GJ5307@blackbody.suse.cz>
+In-Reply-To: <20190521143414.GJ5307@blackbody.suse.cz>
+From:   Joel Savitz <jsavitz@redhat.com>
+Date:   Fri, 24 May 2019 11:33:55 -0400
+Message-ID: <CAL1p7m6nfPkWoEEAjO+Gxq-ZiRY7+1jU_7dVcw2-hjC22xz-4A@mail.gmail.com>
+Subject: Re: [PATCH v2] cpuset: restore sanity to cpuset_cpus_allowed_fallback()
+To:     =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc:     linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
+        Tejun Heo <tj@kernel.org>, Waiman Long <longman@redhat.com>,
+        Phil Auld <pauld@redhat.com>, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove build dependency on ARM for compile-testing to allow non-arch
-specific build-bots (like Intel's test robot) to compile the driver and
-report about problems.
+On Tue, May 21, 2019 at 10:35 AM Michal Koutný <mkoutny@suse.com> wrote:
+> >       $ grep Cpus /proc/$$/status
+> >       Cpus_allowed:   ff
+> >       Cpus_allowed_list:      0-7
+>
+> (a)
+>
+> >       $ taskset -p 4 $$
+> >       pid 19202's current affinity mask: f
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clocksource/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> I'm confused where this value comes from, I must be missing something.
+>
+> Joel, is the task in question put into a cpuset with 0xf CPUs only (at
+> point (a))? Or are the CPUs 4-7 offlined as well?
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 3300739edce4..8c21e557181b 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -137,10 +137,10 @@ config SUN5I_HSTIMER
- 	  Enables support the Sun5i timer.
- 
- config TEGRA_TIMER
--	bool "Tegra timer driver" if COMPILE_TEST
-+	bool "Tegra timer driver"
- 	select CLKSRC_MMIO
- 	select TIMER_OF
--	depends on ARM || ARM64
-+	depends on ARCH_TEGRA || COMPILE_TEST
- 	help
- 	  Enables support for the Tegra driver.
- 
--- 
-2.21.0
+Good point.
 
+It is a bit ambiguous, but I performed no action on the task's cpuset
+nor did I offline any cpus at point (a).
+
+After a bit of research, I am fairly certain that the observed
+discrepancy is due to differing mechanisms used to acquire the cpuset
+mask value.
+
+The first mechanism, via `grep Cpus /proc/$$/status`, has it's value
+populated by the expression (task->cpus_allowed) in
+fs/proc/array.c:sched_getaffinity(), whereas the taskset utility
+(https://github.com/karelzak/util-linux/blob/master/schedutils/taskset.c)
+uses sched_getaffinity(2) to determine the "current affinity mask"
+value from the expression (task->cpus_allowed & cpu_active_mask) in
+kernel/sched/core.c:sched_getaffinty(),
+
+I do not know if there is an explicit reason for this discrepancy or
+whether the two mechanisms were simply built independently, perhaps
+for different purposes.
+
+I think the /proc/$$/status value is intended to simply reflect the
+user-specified policy stating which cpus the task is allowed to run on
+without consideration for hardware state, whereas the taskset value is
+representative of the cpus that the task can actually be run on given
+the restriction policy specified by the user via the cpuset mechanism.
+
+By the way, I posted a v2 of this patch that correctly handles cgroup
+v2 behavior.
