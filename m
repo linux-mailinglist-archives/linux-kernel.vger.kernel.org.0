@@ -2,71 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 747752A05A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 23:26:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03AAF2A061
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 23:28:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404259AbfEXV0j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 17:26:39 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58802 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404163AbfEXV0i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 17:26:38 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hUHhr-0007g4-Jm; Fri, 24 May 2019 21:26:27 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Chris Wilson <chris@chris-wilson.co.uk>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915/gtt: set err to -ENOMEM on memory allocation failure
-Date:   Fri, 24 May 2019 22:26:27 +0100
-Message-Id: <20190524212627.24256-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S2404288AbfEXV1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 17:27:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60590 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404279AbfEXV1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 17:27:50 -0400
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92180218A5
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 21:27:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558733268;
+        bh=lYZ/zudY+xu5Tnp4RjFaSiBIAvLoW/eSULQY+XTsmB0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0JGJB4h+D9j0ddlAUz9g50NndJ0gLLwGmUqN1hvMw6D4tflMRdf5hZOowZbD/sSk4
+         KCsScGmqrRQq0ou0NJ72nJq/c7tzqtrm5Bzvy2ECWR6w/Hnp4SZzlyxpREO3ol6HKy
+         VCzEaV6pXU1pu1iXoBn2chS039FLon9BSBUVinwU=
+Received: by mail-wr1-f42.google.com with SMTP id w13so2928377wru.11
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 14:27:48 -0700 (PDT)
+X-Gm-Message-State: APjAAAX70R0dc7rbtTuW1Z5PcBWSg5utBsh6QTC/T6d0MatDV0xT2jti
+        vKNSASxcBesoIOuL6Qj4CYi5J/iRnhox3hY94mdzNQ==
+X-Google-Smtp-Source: APXvYqz/lEYmDwBnuqtbsvCzNOvsvr/2JBTnsk8u6fRJLIYpjhQwWS2cdjPRGlgRYD7PpvsZVsI0HCybdWBGTpi625c=
+X-Received: by 2002:a5d:5506:: with SMTP id b6mr63690967wrv.221.1558733266996;
+ Fri, 24 May 2019 14:27:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20190523141752.GA12078@linux.intel.com> <CALCETrUzx3LPAKCLFf75P-XshAkRcr+JLET3LA_kHDs9MA11FA@mail.gmail.com>
+ <20190523234044.GC12078@linux.intel.com> <CALCETrV4DVEfW6EJ6DnQGGYDJAiA5M1QcuYJTiroumOM+D6Jjg@mail.gmail.com>
+ <960B34DE67B9E140824F1DCDEC400C0F654E8956@ORSMSX116.amr.corp.intel.com>
+ <dda0912b-cb15-3c07-d368-345159e995f7@tycho.nsa.gov> <20190524174243.GA365@linux.intel.com>
+ <20190524175458.GB365@linux.intel.com> <960B34DE67B9E140824F1DCDEC400C0F654E8E1D@ORSMSX116.amr.corp.intel.com>
+ <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com> <20190524200333.GF365@linux.intel.com>
+In-Reply-To: <20190524200333.GF365@linux.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 24 May 2019 14:27:34 -0700
+X-Gmail-Original-Message-ID: <CALCETrUyAAhnQ+RUeN1L41TKj-vcD2CNt-FJ9siO=Zo6gvH1Aw@mail.gmail.com>
+Message-ID: <CALCETrUyAAhnQ+RUeN1L41TKj-vcD2CNt-FJ9siO=Zo6gvH1Aw@mail.gmail.com>
+Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "Xing, Cedric" <cedric.xing@intel.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Dr. Greg" <greg@enjellic.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, May 24, 2019 at 1:03 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> On Fri, May 24, 2019 at 12:37:44PM -0700, Andy Lutomirski wrote:
+> > On Fri, May 24, 2019 at 11:34 AM Xing, Cedric <cedric.xing@intel.com> wrote:
+> > >
+> > > If "initial permissions" for enclaves are less restrictive than shared
+> > > objects, then it'd become a backdoor for circumventing LSM when enclave
+> > > whitelisting is *not* in place. For example, an adversary may load a page,
+> > > which would otherwise never be executable, as an executable page in EPC.
+> > >
+> > > In the case a RWX page is needed, the calling process has to have a RWX
+> > > page serving as the source for EADD so PROCESS__EXECMEM will have been
+> > > checked. For SGX2, changing an EPC page to RWX is subject to FILE__EXECMEM
+> > > on /dev/sgx/enclave, which I see as a security benefit because it only
+> > > affects the enclave but not the whole process hosting it.
+> >
+> > So the permission would be like FILE__EXECMOD on the source enclave
+> > page, because it would be mapped MAP_ANONYMOUS, PROT_WRITE?
+> > MAP_SHARED, PROT_WRITE isn't going to work because that means you can
+> > modify the file.
+>
+> Was this in response to Cedric's comment, or to my comment?
 
-Currently when the allocation of ppgtt->work fails the error return
-path via err_free returns an uninitialized value in err. Fix this
-by setting err to the appropriate error return of -ENOMEM.
+Yours.  I think that requiring source pages to be actually mapped W is
+not such a great idea.
 
-Addresses-Coverity: ("Uninitialized scalar variable")
-Fixes: d3622099c76f ("drm/i915/gtt: Always acquire struct_mutex for gen6_ppgtt_cleanup")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/i915/i915_gem_gtt.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> > I'm starting to think that looking at the source VMA permission bits
+> > or source PTE permission bits is putting a bit too much policy into
+> > the driver as opposed to the LSM.  How about delegating the whole
+> > thing to an LSM hook?  The EADD operation would invoke a new hook,
+> > something like:
+> >
+> > int security_enclave_load_bytes(void *source_addr, struct
+> > vm_area_struct *source_vma, loff_t source_offset, unsigned int
+> > maxperm);
+> >
+> > Then you don't have to muck with mapping anything PROT_EXEC.  Instead
+> > you load from a mapping of a file and the LSM applies whatever policy
+> > it feels appropriate.  If the first pass gets something wrong, the
+> > application or library authors can take it up with the SELinux folks
+> > without breaking the whole ABI :)
+> >
+> > (I'm proposing passing in the source_vma because this hook would be
+> > called with mmap_sem held for read to avoid a TOCTOU race.)
+> >
+> > If we go this route, the only substantial change to the existing
+> > driver that's needed for an initial upstream merge is the maxperm
+> > mechanism and whatever hopefully minimal API changes are needed to
+> > allow users to conveniently set up the mappings.  And we don't need to
+> > worry about how to hack around mprotect() calling into the LSM,
+> > because the LSM will actually be aware of SGX and can just do the
+> > right thing.
+>
+> This doesn't address restricting which processes can run which enclaves,
+> it only allows restricting the build flow.  Or are you suggesting this
+> be done in addition to whitelisting sigstructs?
 
-diff --git a/drivers/gpu/drm/i915/i915_gem_gtt.c b/drivers/gpu/drm/i915/i915_gem_gtt.c
-index 8d8a4b0ad4d9..8a9b506387d4 100644
---- a/drivers/gpu/drm/i915/i915_gem_gtt.c
-+++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
-@@ -2035,8 +2035,10 @@ static struct i915_hw_ppgtt *gen6_ppgtt_create(struct drm_i915_private *i915)
- 	ppgtt->base.vm.pte_encode = ggtt->vm.pte_encode;
- 
- 	ppgtt->work = kmalloc(sizeof(*ppgtt->work), GFP_KERNEL);
--	if (!ppgtt->work)
-+	if (!ppgtt->work) {
-+		err = -ENOMEM;
- 		goto err_free;
-+	}
- 
- 	err = gen6_ppgtt_init_scratch(ppgtt);
- 	if (err)
--- 
-2.20.1
+In addition.
 
+But I named the function badly and gave it a bad signature, which
+confused you.  Let's try again:
+
+int security_enclave_load_from_memory(const struct vm_area_struct
+*source, unsigned int maxperm);
+
+Maybe some really fancy future LSM would also want loff_t
+source_offset, but it's probably not terribly useful.  This same
+callback would be used for EAUG.
+
+Following up on your discussion with Cedric about sigstruct, the other
+callback would be something like:
+
+int security_enclave_init(struct file *sigstruct_file);
+
+The main issue I see is that we also want to control the enclave's
+ability to have RWX pages or to change a W page to X.  We might also
+want:
+
+int security_enclave_load_zeros(unsigned int maxperm);
+
+An enclave that's going to modify its own code will need memory with
+maxperm = RWX or WX.
+
+But this is a bit awkward if the LSM's decision depends on the
+sigstruct.  We could get fancy and require that the sigstruct be
+supplied before any EADD operations so that the maxperm decisions can
+depend on the sigstruct.
+
+Am I making more sense now?
