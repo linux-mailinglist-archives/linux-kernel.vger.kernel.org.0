@@ -2,116 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B378629BEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 18:15:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8F9829BF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 18:15:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390511AbfEXQO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 12:14:57 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46150 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389588AbfEXQO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 12:14:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D24F180D;
-        Fri, 24 May 2019 09:14:56 -0700 (PDT)
-Received: from [10.1.196.129] (ostrya.cambridge.arm.com [10.1.196.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A3733F575;
-        Fri, 24 May 2019 09:14:55 -0700 (PDT)
-Subject: Re: [PATCH 2/4] iommu: Introduce device fault data
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     yi.l.liu@linux.intel.com, ashok.raj@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        alex.williamson@redhat.com
-References: <20190523180613.55049-1-jean-philippe.brucker@arm.com>
- <20190523180613.55049-3-jean-philippe.brucker@arm.com>
- <791fe9b1-5d85-fd2d-7cfb-c2fb3428deb6@arm.com>
- <20190524064924.0cc92ae3@jacob-builder>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <3f512c57-de7c-dc3b-049c-2c4745757636@arm.com>
-Date:   Fri, 24 May 2019 17:14:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2390765AbfEXQPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 12:15:46 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44490 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389588AbfEXQPp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 12:15:45 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b8so15081100edm.11
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 09:15:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=xiom/qbhc8hzsnkXpNYZUpJBz12Ihudb7omPLvvxhj8=;
+        b=kY+E5QiuzaCj1lGRZrWvzWlIc8/dOw5vf72u3ftpBv18Imso/xFk6x0/AyJdz0DyTA
+         AWPbrxLmcaWnMK4Jzd0D4eI9reaHq7Y3lIptb3kt/PPctGb9lAR5khYhRboR9IoFz48b
+         +FSeY0oBxlWeZryLjXQHxFgG2pMzS3v4439x/ADxoOTnZcgQ5W0spbP3oZUYPxWSWeI/
+         lRX6t9zHJGZo1+l05wPc3hQm4T1Qs8O5jj9p4YAliOFsTFRIL7bwCK1myIoxAsMBZ0M9
+         HIm/MSiTktQRB/aXE3J79srWkSOjrAlgK++yvYbAY8w2brUrvku3c7JKpd0ZGMAVgK4M
+         9tcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=xiom/qbhc8hzsnkXpNYZUpJBz12Ihudb7omPLvvxhj8=;
+        b=pSO/72EIOQ5YNBV2KDmMshrjZWj2AkTNlmPXyPVt+oedao7PjW5uUFZ5gb43EB6MuL
+         Vh9kBoIIiavXxngCuBhyjljc2Iqx/4yO8tJroysEKcZw23W6Z71tjHtsywxWFlNhF5vn
+         PhjBYpse2NxpqC8Fsfs6wOBSy8wASarkbt+AK8vmW2qnkzztO96yE8typLyliChAfuRq
+         xmQfQ75rf1DGx6uWY02MW/xZKtekAh9lIOFAVQ6HO+MbfiacVLP0gncRc2fYAXFQ9Utz
+         YgIpEE5t9vstJz7tqARJTKUCPp4ooTiOWgxHimSi3leAO9RtaOjHjodivOFgaXPX8eGv
+         Qa/A==
+X-Gm-Message-State: APjAAAXhpWXF39gtLtK+jQfmmne86b5GVNFlAi2walL6st++vbNzKX2B
+        lyl+R4LwfD6j85uZhhIUsJI=
+X-Google-Smtp-Source: APXvYqwPMvsrTK7DMaHJWzPyB8e3YbMWUoWhnCCT9QLPYu2yG4stqlm1HrSUqH6pfYaXbPKCrw5iJw==
+X-Received: by 2002:a17:906:cd08:: with SMTP id oz8mr37589909ejb.67.1558714543948;
+        Fri, 24 May 2019 09:15:43 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f9:2b:2b15::2])
+        by smtp.gmail.com with ESMTPSA id u5sm428197ejm.85.2019.05.24.09.15.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 09:15:42 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Cliff Whickman <cpw@sgi.com>, Robin Holt <robinmholt@gmail.com>,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Stephen Hines <srhines@google.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: [PATCH] misc: sgi-xp: Properly initialize buf in xpc_get_rsvd_page_pa
+Date:   Fri, 24 May 2019 09:15:17 -0700
+Message-Id: <20190524161517.125941-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.22.0.rc1
+In-Reply-To: <20190524160015.GA7590@kroah.com>
+References: <20190524160015.GA7590@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20190524064924.0cc92ae3@jacob-builder>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/05/2019 14:49, Jacob Pan wrote:
-> On Thu, 23 May 2019 19:43:46 +0100
-> Robin Murphy <robin.murphy@arm.com> wrote:
->>> +/**
->>> + * struct iommu_fault_event - Generic fault event
->>> + *
->>> + * Can represent recoverable faults such as a page requests or
->>> + * unrecoverable faults such as DMA or IRQ remapping faults.
->>> + *
->>> + * @fault: fault descriptor
->>> + * @iommu_private: used by the IOMMU driver for storing
->>> fault-specific
->>> + *                 data. Users should not modify this field before
->>> + *                 sending the fault response.  
->>
->> Sorry if I'm a bit late to the party, but given that description, if 
->> users aren't allowed to touch this then why expose it to them at all? 
->> I.e. why not have iommu_report_device_fault() pass just the fault
->> itself to the fault handler:
->>
->> 	ret = fparam->handler(&evt->fault, fparam->data);
->>
->> and let the IOMMU core/drivers decapsulate it again later if need be. 
->> AFAICS drivers could also just embed the entire generic event in
->> their own private structure anyway, just as we do for domains.
->>
-> I can't remember all the discussion history but I think iommu_private
-> is used similarly to the page request private data (device private).
+Clang warns:
 
-Hm yes, we already have iommu_fault_page_request::private_data for that.
-I think I used to stash flags in iommu_private (is_stall and
-needs_pasid), so that the SMMUv3 driver doesn't need to go fetch them
-from the device structure, but I removed them. If VT-d doesn't need
-iommu_private either, maybe we can remove it entirely?
+drivers/misc/sgi-xp/xpc_partition.c:73:14: warning: variable 'buf' is
+uninitialized when used within its own initialization [-Wuninitialized]
+        void *buf = buf;
+              ~~~   ^~~
+1 warning generated.
 
-In any case I agree that device drivers should only need to know about
-evt->fault.
+Arnd's explanation during review:
 
-> We
-> need to inject the data to the guest and the guest will send the
-> unmodified data back along with response.
+  /*
+   * Returns the physical address of the partition's reserved page through
+   * an iterative number of calls.
+   *
+   * On first call, 'cookie' and 'len' should be set to 0, and 'addr'
+   * set to the nasid of the partition whose reserved page's address is
+   * being sought.
+   * On subsequent calls, pass the values, that were passed back on the
+   * previous call.
+   *
+   * While the return status equals SALRET_MORE_PASSES, keep calling
+   * this function after first copying 'len' bytes starting at 'addr'
+   * into 'buf'. Once the return status equals SALRET_OK, 'addr' will
+   * be the physical address of the partition's reserved page. If the
+   * return status equals neither of these, an error as occurred.
+   */
+  static inline s64
+  sn_partition_reserved_page_pa(u64 buf, u64 *cookie, u64 *addr, u64 *len)
 
-By the way, does private_data need to go back through the
-iommu_page_response() path? The current series doesn't do that.
+  so *len is set to zero on the first call and tells the bios how many
+  bytes are accessible at 'buf', and it does get updated by the BIOS to
+  tell us how many bytes it needs, and then we allocate that and try again.
 
-> The private data can be used
-> to tag internal device/iommu context.
+Fixes: 279290294662 ("[IA64-SGI] cleanup the way XPC locates the reserved page")
+Link: https://github.com/ClangBuiltLinux/linux/issues/466
+Suggested-by: Stephen Hines <srhines@google.com>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/misc/sgi-xp/xpc_partition.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I think we can do the way you said by keeping them within iommu core
-> and recover it based on the response but that would require tracking
-> each fault report, right?
+diff --git a/drivers/misc/sgi-xp/xpc_partition.c b/drivers/misc/sgi-xp/xpc_partition.c
+index 3eba1c420cc0..782ce95d3f17 100644
+--- a/drivers/misc/sgi-xp/xpc_partition.c
++++ b/drivers/misc/sgi-xp/xpc_partition.c
+@@ -70,7 +70,7 @@ xpc_get_rsvd_page_pa(int nasid)
+ 	unsigned long rp_pa = nasid;	/* seed with nasid */
+ 	size_t len = 0;
+ 	size_t buf_len = 0;
+-	void *buf = buf;
++	void *buf = NULL;
+ 	void *buf_base = NULL;
+ 	enum xp_retval (*get_partition_rsvd_page_pa)
+ 		(void *, u64 *, unsigned long *, size_t *) =
+-- 
+2.22.0.rc1
 
-That's already the case: we decided in thread [1] to track recoverable
-faults in the IOMMU core, in order to check that the response is sane
-and to set a quota and/or timeout. (I didn't include your timeout
-patches here because I think they need a little more work. They are on
-my sva/api branch.)
-
-I already dropped iommu_private from the iommu_page_response structure.
-In patch 4 iommu_page_response() retrieves the fault event and pass the
-corresponding iommu_private back to the IOMMU driver.
-
-[1] https://lore.kernel.org/lkml/20171206112521.1edf8e9b@jacob-builder/
-
-Thanks,
-Jean
-
-> 
-> If we pass on the private data, we only need to check if the response
-> belong to the device but not exact match of a specific fault since the
-> damage is contained in the assigned device. In case of injection
-> fault into the guest, the response will come asynchronously after the
-> handler completes.
