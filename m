@@ -2,86 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4A0C29FA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 22:16:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 086E429FA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 22:16:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403993AbfEXUQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 16:16:20 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:33764 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403762AbfEXUQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 16:16:18 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hUGbu-00032T-HJ; Fri, 24 May 2019 14:16:17 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hUGbu-00026Y-Ct; Fri, 24 May 2019 14:16:14 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Fri, 24 May 2019 14:16:10 -0600
-Message-Id: <20190524201610.8039-4-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190524201610.8039-1-logang@deltatee.com>
-References: <20190524201610.8039-1-logang@deltatee.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, bhelgaas@google.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: [PATCH 3/3] PCI: Force trailing new line to resource_alignment_param in sysfs
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S2404060AbfEXUQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 16:16:52 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:42590 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391739AbfEXUQw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 16:16:52 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6363514DE103B;
+        Fri, 24 May 2019 13:16:51 -0700 (PDT)
+Date:   Fri, 24 May 2019 13:16:50 -0700 (PDT)
+Message-Id: <20190524.131650.1001639096871571503.davem@davemloft.net>
+To:     yangbo.lu@nxp.com
+Cc:     netdev@vger.kernel.org, richardcochran@gmail.com,
+        claudiu.manoil@nxp.com, shawnguo@kernel.org, robh+dt@kernel.org,
+        alexandru.marginean@nxp.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2, 0/4] ENETC: support hardware timestamping
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190523023451.2933-1-yangbo.lu@nxp.com>
+References: <20190523023451.2933-1-yangbo.lu@nxp.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 24 May 2019 13:16:51 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When 'pci=resource_alignment=' is specified on the command line, there
-is no trailing new line.  Then, when it's read through the corresponding
-sysfs attribute, there will be no newline and a cat command will not
-show correctly in a shell. If the parameter is set through sysfs
-a new line will be stored and it will 'cat' correctly.
+From: "Y.b. Lu" <yangbo.lu@nxp.com>
+Date: Thu, 23 May 2019 02:33:24 +0000
 
-To solve this, append a new line character in the show function if
-one does not already exist.
+> This patch-set is to support hardware timestamping for ENETC
+> and also to add ENETC 1588 timer device tree node for ls1028a.
+> 
+> Because the ENETC RX BD ring dynamic allocation has not been
+> supported and it is too expensive to use extended RX BDs
+> if timestamping is not used, a Kconfig option is used to
+> enable extended RX BDs in order to support hardware
+> timestamping. This option will be removed once RX BD
+> ring dynamic allocation is implemented.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pci.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 3e71e161f18b..99d130ac6b96 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -6090,6 +6090,16 @@ static ssize_t resource_alignment_show(struct bus_type *bus, char *buf)
- 		count = snprintf(buf, PAGE_SIZE, "%s", resource_alignment_param);
- 	spin_unlock(&resource_alignment_lock);
- 
-+	/*
-+	 * When set by the command line, resource_alignment_param will not
-+	 * have a trailing line feed, which is ugly. So conditionally add
-+	 * it here.
-+	 */
-+	if (count >= 2 && buf[count - 2] != '\n' && count < PAGE_SIZE - 1) {
-+		buf[count - 1] = '\n';
-+		buf[count++] = 0;
-+	}
-+
- 	return count;
- }
- 
--- 
-2.20.1
-
+Series applied.
