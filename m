@@ -2,15 +2,15 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9B3528E98
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 03:17:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 319F728EB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 03:18:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388836AbfEXBQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 21:16:44 -0400
-Received: from mga02.intel.com ([134.134.136.20]:42224 "EHLO mga02.intel.com"
+        id S2389125AbfEXBRp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 21:17:45 -0400
+Received: from mga02.intel.com ([134.134.136.20]:42236 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731683AbfEXBQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 21:16:39 -0400
+        id S1731632AbfEXBQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 23 May 2019 21:16:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
@@ -32,14 +32,12 @@ Cc:     Ashok Raj <ashok.raj@intel.com>, Joerg Roedel <joro@8bytes.org>,
         Ricardo Neri <ricardo.neri@intel.com>,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Arnd Bergmann <arnd@arndb.de>,
         Philippe Ombredanne <pombredanne@nexb.com>,
         Kate Stewart <kstewart@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [RFC PATCH v4 03/21] x86/hpet: Calculate ticks-per-second in a separate function
-Date:   Thu, 23 May 2019 18:16:05 -0700
-Message-Id: <1558660583-28561-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
+Subject: [RFC PATCH v4 04/21] x86/hpet: Add hpet_set_comparator() for periodic and one-shot modes
+Date:   Thu, 23 May 2019 18:16:06 -0700
+Message-Id: <1558660583-28561-5-git-send-email-ricardo.neri-calderon@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
@@ -48,20 +46,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is easier to compute the expiration times of an HPET timer by using
-its frequency (i.e., the number of times it ticks in a second) than its
-period, as given in the capabilities register.
+Instead of setting the timer period directly in hpet_set_periodic(), add a
+new helper function hpet_set_comparator() that only sets the accumulator
+and comparator. hpet_set_periodic() will only prepare the timer for
+periodic mode and leave the expiration programming to
+hpet_set_comparator().
 
-In addition to the HPET char driver, the HPET-based hardlockup detector
-will also need to know the timer's frequency. Thus, create a common
-function that both can use.
+This new function can also be used by other components (e.g., the HPET-
+based hardlockup detector) which also need to configure HPET timers. Thus,
+add its declaration into the hpet header file.
 
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Andi Kleen <andi.kleen@intel.com>
 Cc: Tony Luck <tony.luck@intel.com>
-Cc: Clemens Ladisch <clemens@ladisch.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Kate Stewart <kstewart@linuxfoundation.org>
 Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
@@ -69,79 +67,101 @@ Cc: Stephane Eranian <eranian@google.com>
 Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
 Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
 Cc: x86@kernel.org
+Originally-by: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 ---
- drivers/char/hpet.c  | 31 ++++++++++++++++++++++++-------
- include/linux/hpet.h |  1 +
- 2 files changed, 25 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/hpet.h |  1 +
+ arch/x86/kernel/hpet.c      | 57 +++++++++++++++++++++++++++++--------
+ 2 files changed, 46 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
-index 3a1e6b3ccd10..747255f552a9 100644
---- a/drivers/char/hpet.c
-+++ b/drivers/char/hpet.c
-@@ -836,6 +836,29 @@ static unsigned long hpet_calibrate(struct hpets *hpetp)
- 	return ret;
+diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
+index f132fbf984d4..e7098740f5ee 100644
+--- a/arch/x86/include/asm/hpet.h
++++ b/arch/x86/include/asm/hpet.h
+@@ -102,6 +102,7 @@ extern int hpet_rtc_timer_init(void);
+ extern irqreturn_t hpet_rtc_interrupt(int irq, void *dev_id);
+ extern int hpet_register_irq_handler(rtc_irq_handler handler);
+ extern void hpet_unregister_irq_handler(rtc_irq_handler handler);
++extern void hpet_set_comparator(int num, unsigned int cmp, unsigned int period);
+ 
+ #endif /* CONFIG_HPET_EMULATE_RTC */
+ 
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index 5e86e024c489..1723d55219e8 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -290,6 +290,47 @@ static void hpet_legacy_clockevent_register(void)
+ 	printk(KERN_DEBUG "hpet clockevent registered\n");
  }
  
-+u64 hpet_get_ticks_per_sec(u64 hpet_caps)
++/**
++ * hpet_set_comparator() - Helper function for setting comparator register
++ * @num:	The timer ID
++ * @cmp:	The value to be written to the comparator/accumulator
++ * @period:	The value to be written to the period (0 = oneshot mode)
++ *
++ * Helper function for updating comparator, accumulator and period values.
++ *
++ * In periodic mode, HPET needs HPET_TN_SETVAL to be set before writing
++ * to the Tn_CMP to update the accumulator. Then, HPET needs a second
++ * write (with HPET_TN_SETVAL cleared) to Tn_CMP to set the period.
++ * The HPET_TN_SETVAL bit is automatically cleared after the first write.
++ *
++ * For one-shot mode, HPET_TN_SETVAL does not need to be set.
++ *
++ * See the following documents:
++ *   - Intel IA-PC HPET (High Precision Event Timers) Specification
++ *   - AMD-8111 HyperTransport I/O Hub Data Sheet, Publication # 24674
++ */
++void hpet_set_comparator(int num, unsigned int cmp, unsigned int period)
 +{
-+	u64 ticks_per_sec, period;
++	if (period) {
++		unsigned int v = hpet_readl(HPET_Tn_CFG(num));
 +
-+	period = (hpet_caps & HPET_COUNTER_CLK_PERIOD_MASK) >>
-+		 HPET_COUNTER_CLK_PERIOD_SHIFT; /* fs, 10^-15 */
++		hpet_writel(v | HPET_TN_SETVAL, HPET_Tn_CFG(num));
++	}
++
++	hpet_writel(cmp, HPET_Tn_CMP(num));
++
++	if (!period)
++		return;
 +
 +	/*
-+	 * The frequency is the reciprocal of the period. The period is given
-+	 * in femtoseconds per second. Thus, prepare a dividend to obtain the
-+	 * frequency in ticks per second.
++	 * This delay is seldom used: never in one-shot mode and in periodic
++	 * only when reprogramming the timer.
 +	 */
-+
-+	/* 10^15 femtoseconds per second */
-+	ticks_per_sec = 1000000000000000ULL;
-+	ticks_per_sec += period >> 1; /* round */
-+
-+	/* The quotient is put in the dividend. We drop the remainder. */
-+	do_div(ticks_per_sec, period);
-+
-+	return ticks_per_sec;
++	udelay(1);
++	hpet_writel(period, HPET_Tn_CMP(num));
 +}
++EXPORT_SYMBOL_GPL(hpet_set_comparator);
 +
- int hpet_alloc(struct hpet_data *hdp)
+ static int hpet_set_periodic(struct clock_event_device *evt, int timer)
  {
- 	u64 cap, mcfg;
-@@ -844,7 +867,6 @@ int hpet_alloc(struct hpet_data *hdp)
- 	struct hpets *hpetp;
- 	struct hpet __iomem *hpet;
- 	static struct hpets *last;
--	unsigned long period;
- 	unsigned long long temp;
- 	u32 remainder;
+ 	unsigned int cfg, cmp, now;
+@@ -301,19 +342,11 @@ static int hpet_set_periodic(struct clock_event_device *evt, int timer)
+ 	now = hpet_readl(HPET_COUNTER);
+ 	cmp = now + (unsigned int)delta;
+ 	cfg = hpet_readl(HPET_Tn_CFG(timer));
+-	cfg |= HPET_TN_ENABLE | HPET_TN_PERIODIC | HPET_TN_SETVAL |
+-	       HPET_TN_32BIT;
++	cfg |= HPET_TN_ENABLE | HPET_TN_PERIODIC | HPET_TN_32BIT;
+ 	hpet_writel(cfg, HPET_Tn_CFG(timer));
+-	hpet_writel(cmp, HPET_Tn_CMP(timer));
+-	udelay(1);
+-	/*
+-	 * HPET on AMD 81xx needs a second write (with HPET_TN_SETVAL
+-	 * cleared) to T0_CMP to set the period. The HPET_TN_SETVAL
+-	 * bit is automatically cleared after the first write.
+-	 * (See AMD-8111 HyperTransport I/O Hub Data Sheet,
+-	 * Publication # 24674)
+-	 */
+-	hpet_writel((unsigned int)delta, HPET_Tn_CMP(timer));
++
++	hpet_set_comparator(timer, cmp, (unsigned int)delta);
++
+ 	hpet_start_counter();
+ 	hpet_print_config();
  
-@@ -894,12 +916,7 @@ int hpet_alloc(struct hpet_data *hdp)
- 
- 	last = hpetp;
- 
--	period = (cap & HPET_COUNTER_CLK_PERIOD_MASK) >>
--		HPET_COUNTER_CLK_PERIOD_SHIFT; /* fs, 10^-15 */
--	temp = 1000000000000000uLL; /* 10^15 femtoseconds per second */
--	temp += period >> 1; /* round */
--	do_div(temp, period);
--	hpetp->hp_tick_freq = temp; /* ticks per second */
-+	hpetp->hp_tick_freq = hpet_get_ticks_per_sec(cap);
- 
- 	printk(KERN_INFO "hpet%d: at MMIO 0x%lx, IRQ%s",
- 		hpetp->hp_which, hdp->hd_phys_address,
-diff --git a/include/linux/hpet.h b/include/linux/hpet.h
-index 8604564b985d..e7b36bcf4699 100644
---- a/include/linux/hpet.h
-+++ b/include/linux/hpet.h
-@@ -107,5 +107,6 @@ static inline void hpet_reserve_timer(struct hpet_data *hd, int timer)
- }
- 
- int hpet_alloc(struct hpet_data *);
-+u64 hpet_get_ticks_per_sec(u64 hpet_caps);
- 
- #endif				/* !__HPET__ */
 -- 
 2.17.1
 
