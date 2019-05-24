@@ -2,185 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26DF129A5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C1CE29A21
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:35:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404138AbfEXOuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 10:50:02 -0400
-Received: from esa6.hc3370-68.iphmx.com ([216.71.155.175]:28358 "EHLO
-        esa6.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403888AbfEXOuC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 10:50:02 -0400
-X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 May 2019 10:50:02 EDT
-Authentication-Results: esa6.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=sergey.dyasli@citrix.com; spf=Pass smtp.mailfrom=sergey.dyasli@citrix.com; spf=None smtp.helo=postmaster@MIAPEX02MSOL01.citrite.net
-Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  sergey.dyasli@citrix.com) identity=pra;
-  client-ip=23.29.105.83; receiver=esa6.hc3370-68.iphmx.com;
-  envelope-from="sergey.dyasli@citrix.com";
-  x-sender="sergey.dyasli@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa6.hc3370-68.iphmx.com: domain of
-  sergey.dyasli@citrix.com designates 23.29.105.83 as permitted
-  sender) identity=mailfrom; client-ip=23.29.105.83;
-  receiver=esa6.hc3370-68.iphmx.com;
-  envelope-from="sergey.dyasli@citrix.com";
-  x-sender="sergey.dyasli@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:23.29.105.83 ip4:162.221.156.83 ~all"
-Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@MIAPEX02MSOL01.citrite.net) identity=helo;
-  client-ip=23.29.105.83; receiver=esa6.hc3370-68.iphmx.com;
-  envelope-from="sergey.dyasli@citrix.com";
-  x-sender="postmaster@MIAPEX02MSOL01.citrite.net";
-  x-conformance=sidf_compatible
-IronPort-SDR: L92NSaSjxlBdCrBZmCT7+KZG4Ypxl9hxObzcbTlTGj1ik8mZ/QurcPRcudyPz0wT7NEsSH7sP3
- MJXkDS/mgE6r+D8y+MZKfLXq0xyFTms518AlB8qdQXaw6+EL7Pe0M6+KaigzDGzS12uuU9pYHq
- Q+lrpr3VMvhzt24mGoUa15wMAbtzddgMkHVzVVor0dUXNW9kxpO4KKE0DN8R2SvfRDQELlhvBt
- 48OfDLveutAj2VxKV7f4KrqfSNilCmX8emHh+m/YsH9zlv2Zw5LxMiRFE01CtKoNNfcn+c+UIS
- WFc=
-X-SBRS: 2.7
-X-MesageID: 860160
-X-Ironport-Server: esa6.hc3370-68.iphmx.com
-X-Remote-IP: 23.29.105.83
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.60,507,1549947600"; 
-   d="scan'208";a="860160"
-From:   Sergey Dyasli <sergey.dyasli@citrix.com>
-To:     <iommu@lists.linux-foundation.org>,
-        <xen-devel@lists.xenproject.org>, <linux-kernel@vger.kernel.org>
-CC:     Sergey Dyasli <sergey.dyasli@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Paul Durrant <paul.durrant@citrix.com>
-Subject: [PATCH v1] xen/swiotlb: rework early repeat code
-Date:   Fri, 24 May 2019 15:42:50 +0100
-Message-ID: <20190524144250.5102-1-sergey.dyasli@citrix.com>
-X-Mailer: git-send-email 2.17.1
+        id S2404102AbfEXOff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 10:35:35 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17154 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2391470AbfEXOff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 10:35:35 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E62A93A6EDFF9F60A4F2;
+        Fri, 24 May 2019 22:35:32 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 24 May 2019 22:35:26 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC:     David Woodhouse <dwmw2@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH] jffs2: fix null-ptr-deref during jffs2_unregister_compressor()
+Date:   Fri, 24 May 2019 22:43:57 +0800
+Message-ID: <20190524144357.43560-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current repeat code is plain broken for the early=true case. Xen exchanges
-all DMA (<4GB) pages that it can on the first xen_swiotlb_fixup() attempt.
-All further attempts with a halved region will fail immediately because
-all DMA pages already belong to Dom0.
+It is possible that jffs2_register_compressor() could not be called
+(eg, alloc_workspace() return fails) in jffs2_compressors_init(), so
+unconditionally delete list if unregister compressors will trigger
+this issue when rmmod jffs2.
 
-Introduce contig_pages param for xen_swiotlb_fixup() to track the number
-of pages that were made contiguous in MFN space and use the same bootmem
-region while halving the memory requirements.
+  BUG: KASAN: null-ptr-deref in __list_del_entry_valid+0x45/0xd0 lib/list_debug.c:51
+  Read of size 8 at addr 0000000000000000 by task syz-executor.0/8049
 
-Signed-off-by: Sergey Dyasli <sergey.dyasli@citrix.com>
+  CPU: 1 PID: 8049 Comm: syz-executor.0 Tainted: G         C 5.1.0+ #28
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+  Call Trace:
+   __dump_stack lib/dump_stack.c:77 [inline]
+   dump_stack+0xa9/0x10e lib/dump_stack.c:113
+   __kasan_report+0x171/0x18d mm/kasan/report.c:321
+   kasan_report+0xe/0x20 mm/kasan/common.c:614
+   __list_del_entry_valid+0x45/0xd0 lib/list_debug.c:51
+   jffs2_unregister_compressor+0x41/0xf0 [jffs2]
+   jffs2_lzo_exit+0x11/0x20 [jffs2]
+   jffs2_compressors_exit+0xa/0x30 [jffs2]
+   exit_jffs2_fs+0x1b/0xf4b [jffs2]
+   __do_sys_delete_module kernel/module.c:1027 [inline]
+   __se_sys_delete_module kernel/module.c:970 [inline]
+   __x64_sys_delete_module+0x244/0x330 kernel/module.c:970
+   do_syscall_64+0x72/0x2a0 arch/x86/entry/common.c:298
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Add 'bool initialized' into struct jffs2_compressor, return error
+if initialized is not set in jffs2_unregister_compressor().
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
-CC: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-CC: Juergen Gross <jgross@suse.com>
-CC: Stefano Stabellini <sstabellini@kernel.org>
-CC: Paul Durrant <paul.durrant@citrix.com>
----
- drivers/xen/swiotlb-xen.c | 36 ++++++++++++++++++++++++++++++------
- 1 file changed, 30 insertions(+), 6 deletions(-)
+ fs/jffs2/compr.c | 7 +++++++
+ fs/jffs2/compr.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-index 5dcb06fe9667..d2aba804d06c 100644
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -142,7 +142,8 @@ static int is_xen_swiotlb_buffer(dma_addr_t dma_addr)
- static int max_dma_bits = 32;
- 
- static int
--xen_swiotlb_fixup(void *buf, size_t size, unsigned long nslabs)
-+xen_swiotlb_fixup(void *buf, size_t size, unsigned long nslabs,
-+		  unsigned long *contig_pages)
+diff --git a/fs/jffs2/compr.c b/fs/jffs2/compr.c
+index 4849a4c9a0e2..efbc166f8dca 100644
+--- a/fs/jffs2/compr.c
++++ b/fs/jffs2/compr.c
+@@ -302,6 +302,8 @@ int jffs2_register_compressor(struct jffs2_compressor *comp)
  {
- 	int i, rc;
- 	int dma_bits;
-@@ -156,10 +157,13 @@ xen_swiotlb_fixup(void *buf, size_t size, unsigned long nslabs)
- 		int slabs = min(nslabs - i, (unsigned long)IO_TLB_SEGSIZE);
+ 	struct jffs2_compressor *this;
  
- 		do {
-+			unsigned int order = get_order(slabs << IO_TLB_SHIFT);
- 			rc = xen_create_contiguous_region(
- 				p + (i << IO_TLB_SHIFT),
--				get_order(slabs << IO_TLB_SHIFT),
-+				order,
- 				dma_bits, &dma_handle);
-+			if (rc == 0)
-+				*contig_pages += 1 << order;
- 		} while (rc && dma_bits++ < max_dma_bits);
- 		if (rc)
- 			return rc;
-@@ -202,7 +206,7 @@ static const char *xen_swiotlb_error(enum xen_swiotlb_err err)
++	comp->initialized = false;
++
+ 	if (!comp->name) {
+ 		pr_warn("NULL compressor name at registering JFFS2 compressor. Failed.\n");
+ 		return -1;
+@@ -331,6 +333,8 @@ int jffs2_register_compressor(struct jffs2_compressor *comp)
+ 
+ 	spin_unlock(&jffs2_compressor_list_lock);
+ 
++	comp->initialized = true
++
+ 	return 0;
  }
- int __ref xen_swiotlb_init(int verbose, bool early)
- {
--	unsigned long bytes, order;
-+	unsigned long bytes, order, contig_pages;
- 	int rc = -ENOMEM;
- 	enum xen_swiotlb_err m_ret = XEN_SWIOTLB_UNKNOWN;
- 	unsigned int repeat = 3;
-@@ -244,13 +248,32 @@ int __ref xen_swiotlb_init(int verbose, bool early)
- 	/*
- 	 * And replace that memory with pages under 4GB.
- 	 */
-+	contig_pages = 0;
- 	rc = xen_swiotlb_fixup(xen_io_tlb_start,
- 			       bytes,
--			       xen_io_tlb_nslabs);
-+			       xen_io_tlb_nslabs,
-+			       &contig_pages);
- 	if (rc) {
--		if (early)
-+		if (early) {
-+			unsigned long orig_bytes = bytes;
-+			while (repeat-- > 0) {
-+				xen_io_tlb_nslabs = max(1024UL, /* Min is 2MB */
-+						      (xen_io_tlb_nslabs >> 1));
-+				pr_info("Lowering to %luMB\n",
-+				     (xen_io_tlb_nslabs << IO_TLB_SHIFT) >> 20);
-+				bytes = xen_set_nslabs(xen_io_tlb_nslabs);
-+				order = get_order(xen_io_tlb_nslabs << IO_TLB_SHIFT);
-+				xen_io_tlb_end = xen_io_tlb_start + bytes;
-+				if (contig_pages >= (1ul << order)) {
-+					/* Enough pages were made contiguous */
-+					memblock_free(__pa(xen_io_tlb_start + bytes),
-+						     PAGE_ALIGN(orig_bytes - bytes));
-+					goto fixup_done;
-+				}
-+			}
- 			memblock_free(__pa(xen_io_tlb_start),
- 				      PAGE_ALIGN(bytes));
-+		}
- 		else {
- 			free_pages((unsigned long)xen_io_tlb_start, order);
- 			xen_io_tlb_start = NULL;
-@@ -258,6 +281,7 @@ int __ref xen_swiotlb_init(int verbose, bool early)
- 		m_ret = XEN_SWIOTLB_EFIXUP;
- 		goto error;
- 	}
-+fixup_done:
- 	start_dma_addr = xen_virt_to_bus(xen_io_tlb_start);
- 	if (early) {
- 		if (swiotlb_init_with_tbl(xen_io_tlb_start, xen_io_tlb_nslabs,
-@@ -272,7 +296,7 @@ int __ref xen_swiotlb_init(int verbose, bool early)
  
- 	return rc;
- error:
--	if (repeat--) {
-+	if (repeat-- > 0) {
- 		xen_io_tlb_nslabs = max(1024UL, /* Min is 2MB */
- 					(xen_io_tlb_nslabs >> 1));
- 		pr_info("Lowering to %luMB\n",
+@@ -338,6 +342,9 @@ int jffs2_unregister_compressor(struct jffs2_compressor *comp)
+ {
+ 	D2(struct jffs2_compressor *this);
+ 
++	if (!comp->initialized)
++		return -1;
++
+ 	jffs2_dbg(1, "Unregistering JFFS2 compressor \"%s\"\n", comp->name);
+ 
+ 	spin_lock(&jffs2_compressor_list_lock);
+diff --git a/fs/jffs2/compr.h b/fs/jffs2/compr.h
+index 5e91d578f4ed..c90b86fbddfe 100644
+--- a/fs/jffs2/compr.h
++++ b/fs/jffs2/compr.h
+@@ -56,6 +56,7 @@ struct jffs2_compressor {
+ 			  uint32_t cdatalen, uint32_t datalen);
+ 	int usecount;
+ 	int disabled;		/* if set the compressor won't compress */
++	int initialized;
+ 	unsigned char *compr_buf;	/* used by size compr. mode */
+ 	uint32_t compr_buf_size;	/* used by size compr. mode */
+ 	uint32_t stat_compr_orig_size;
 -- 
-2.17.1
+2.20.1
 
