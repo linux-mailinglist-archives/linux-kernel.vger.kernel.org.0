@@ -2,81 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 123B529F3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 21:42:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F7BA29F40
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 21:42:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391669AbfEXTmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 15:42:16 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42632 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729017AbfEXTmP (ORCPT
+        id S2391734AbfEXTmr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 15:42:47 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:39207 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391698AbfEXTmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 15:42:15 -0400
-Received: by mail-pl1-f196.google.com with SMTP id go2so4541408plb.9
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 12:42:15 -0700 (PDT)
+        Fri, 24 May 2019 15:42:46 -0400
+Received: by mail-vs1-f67.google.com with SMTP id m1so6627647vsr.6
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 12:42:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=2dfVnj0z8UOLBg4J0DLOYq1772RUeCwK2zOSGh4/SWE=;
-        b=vZaagkluwNiMRjWKl9RSzMjTzb/+1YkoKYezoNgxeEzDWoAOHNJVRD9hB1opBDxErw
-         9xr5lV+VyFR9BaG556Xbp/vjkxeWkT+Hp4S7UOU7UZYUdMd77t6LqmAH/7oIpxRYyGTw
-         rq1osS6x3GG1knr0FPHct2FPZQRdXEBjgnwzbFgO/Fm6od5VxJolEgong3iGe/q33LPY
-         PECMT6loq99WvXs7EO+G3X2PFC9BhkDxc1L/lWQXJcJ7vUN8vOxDDwzC2YRTmBDjKJpP
-         U9YYNomVlkkz70eP704r5h0sK8Zkwn0b6KBYbXBLGrkine52vJuXr20svFAgfonrwn3I
-         Zkpw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vhfSnlcb3x0OEuOnYAwcBMXnyJQgUsGnRJ+13Y0a02s=;
+        b=kzEow1LScPr0enEDbSBaWZVHM+oGAipxBS3m7HV5oQz7OQNb3t2AmVYQZBUQYUhexI
+         TsS9HO6+u4FcWXx7elZE7xdqB6g40xn4EvHS6xv2hem9W0knfP5zMmNdYApaESDksFIC
+         d7rlSo+5FRrv6voyWPr8P32El2IIflL0sukfXL39lSFLXvoV1C4i9i3vQlY9h3apOE2x
+         dM2chmb/A9ysLdANeNazZhjzvq/2p0QOnYevhi4AqOvbVH7C4EubFmiLWP/mTjdcVaw5
+         699KF0NYSqKzCqGiVbt+l3Vu1dAfOY+pfVYGeDAKXuggBVAlqp2uhJwBuHVq9Z4O0lEI
+         7onw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=2dfVnj0z8UOLBg4J0DLOYq1772RUeCwK2zOSGh4/SWE=;
-        b=gM5zQc/lI1Wqgev7PTF9296etvFkmlZL/SDsi05Lf3v2chUzcDnyw/FX+Sx2RRpFUQ
-         ed9eF2gRAnuYq8cqUUmVkyORkA9mQIiwOUt658LVsBsjjLgV5ctr9tjOGwZFiSGlQcYx
-         H6ECP/UXynf/jCTtMJvwhizYRe8zcrjLpwSxOoMz6X49h9SzjwBUdFiJE6EA+Byp4B29
-         i9DAKJ+YWpvju+wy0oHIG8XqA07R/MkuMPm3dYyCSO2DPmhKFuoVMgRVu7K2ymOS8YXf
-         uvCd0DzHb4MG+wId/TDe/ZCGvENsy8Xc55aCJYf1VbdmBShhQtC0qqAOAQafvOM/60XJ
-         qGkw==
-X-Gm-Message-State: APjAAAULcQGtgVa9MsQVAodCfd3nhr7zN+8Gs1VF7928texKRekuEc2G
-        EEgXK15ydGGE4AX5yQeCQPleOw==
-X-Google-Smtp-Source: APXvYqyVtWnRm6ZPuzBDAHjyTx+TyF/ONuADCQywreRoi5SrfW3rQzlo+xq+gy2RDJoIMj5p7saM+A==
-X-Received: by 2002:a17:902:1347:: with SMTP id r7mr64611826ple.45.1558726935160;
-        Fri, 24 May 2019 12:42:15 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:ed4f:2717:3604:bb3f])
-        by smtp.googlemail.com with ESMTPSA id r71sm8643926pjb.2.2019.05.24.12.42.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 May 2019 12:42:14 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hexdump0815@googlemail.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH 0/1] ARM: meson8b-mxq: better support for the TRONFY MXQ
-In-Reply-To: <20190524181936.29470-1-martin.blumenstingl@googlemail.com>
-References: <20190524181936.29470-1-martin.blumenstingl@googlemail.com>
-Date:   Fri, 24 May 2019 12:42:13 -0700
-Message-ID: <7hblzr1vxm.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vhfSnlcb3x0OEuOnYAwcBMXnyJQgUsGnRJ+13Y0a02s=;
+        b=pXP9V7skNCmf1RhqDf6xOa+I+Q6y3hJ4+U/IWz5L7J0YHbTt7T8Y56AUY7HgwHeRzA
+         Sh28tHlkAHSuyFPwmsKSFklK4VATC8tsW7kJwUsIDiIruM36cG6sIDx2CmiblIV6aH+n
+         esonNnwcM9vWnLZIAhTbxUNw18q+M0qRJVtwr3Rt+Y+71uIX5sXlsZYO0+Y4YsXiUIzW
+         nXhH1NdpAjMzk5i/MWCnx8+iyN9ltom0CfC+vLfu32AUou6e81bi0M2s6kYcCeugnD70
+         eIVlm85iBaI92nYS5tWI5hpeSTneOFtQ9/UxJGSCzBzsTeHCifFS860UFy5NknRu2a2h
+         PZnw==
+X-Gm-Message-State: APjAAAWfXyxZr0rKdthXQIW6A+UALi8zThZNf+x+bE9X9sCYBQPWBgAX
+        F4LcA8yKP6Ogw3WqAVhVfqzcxYX4SJ7vhkMZsbalG0iz
+X-Google-Smtp-Source: APXvYqydhFkJ5j/OYLRQSG1qS83AsM1W3XSP0BUpGur6e6gs1XAx8XpWdRBGVAmAC0ZEBLOdixV/zcoMo3xKq2J539Q=
+X-Received: by 2002:a67:b408:: with SMTP id x8mr17258650vsl.236.1558726965545;
+ Fri, 24 May 2019 12:42:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190524175324.GA3024@ogabbay-VM> <20190524180122.GA27745@kroah.com>
+In-Reply-To: <20190524180122.GA27745@kroah.com>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Fri, 24 May 2019 22:42:21 +0300
+Message-ID: <CAFCwf12CKwuD-ciA0N+uE+k2iPJPgnbcZ9LbHYiLeBM_oG4wUw@mail.gmail.com>
+Subject: Re: [git pull] habanalabs fixes for 5.2-rc2/3
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
-
-> A while ago a user asked on #linux-amlogic about the state of the
-> TRONFY MXQ in mainline. I did some research (mainly downloading an
-> Android firmware image for that device and looking at the .dtb) and
-> updated the mainline .dts accordingly.
+On Fri, May 24, 2019 at 9:01 PM Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> I kept this patch in my tree but didn't hear back from anyone with one
-> of these boards (who could actually test my patch). That was until
-> today where I got the following message on IRC:
->   any plans to submit your latest own version of the meson8b mxq dtb
->   to mainline? it works really well for me and the one in mainline is
->   too simple to be usedful ...
+> On Fri, May 24, 2019 at 08:53:24PM +0300, Oded Gabbay wrote:
+> > Hi Greg,
+> >
+> > This is the pull request containing fixes for 5.2-rc2/3.
+> >
+> > It supersedes the pull request from 12/5, so you can discard that pull
+> > request, as I see you didn't merge it anyway.
+> >
+> > It contains 3 fixes and 1 change to a new IOCTL that was introduced to
+> > kernel 5.2 in the previous pull requests.
+> >
+> > See the tag comment for more details.
+> >
+> > Thanks,
+> > Oded
+> >
+> > The following changes since commit b0576f9ecb5c51e9932531d23c447b2739261841:
+> >
+> >   misc: sgi-xp: Properly initialize buf in xpc_get_rsvd_page_pa (2019-05-24 19:00:54 +0200)
+>
+> Wait, that is my char-misc-testing branch, which moves to char-misc-next, not char-misc-linus.
+>
+> Please rebase this series on char-misc-linus, as the patches in
+> char-misc-testing are NOT for 5.2-final.
+>
+> thanks,
+>
+> greg k-h
 
-Any chance of getting a Tested-by: from that IRC user on the patch?
+sure, np.
+I'll remember this from now on.
 
-Kevin
+Oded
