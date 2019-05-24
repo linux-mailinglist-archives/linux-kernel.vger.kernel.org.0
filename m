@@ -2,180 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A441329C74
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 18:43:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1F0329C78
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 18:45:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390806AbfEXQnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 12:43:42 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46432 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390314AbfEXQnl (ORCPT
+        id S2390929AbfEXQpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 12:45:13 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41382 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390346AbfEXQpM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 12:43:41 -0400
-Received: by mail-pf1-f193.google.com with SMTP id y11so795736pfm.13;
-        Fri, 24 May 2019 09:43:41 -0700 (PDT)
+        Fri, 24 May 2019 12:45:12 -0400
+Received: by mail-pl1-f194.google.com with SMTP id f12so4373489plt.8
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 09:45:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Hs6h6Dgd1YCJieChdKMoYG/F0MKYbjsY/eSGua0Qxeg=;
-        b=C9fFwYVN6U5H/GTP4DwlmFxR9piykObPH4+srce8G0o5RRfx3Vm1ask5lZK/DnNoXY
-         f6m41rrMmP0p1W9D2fIAUSMy954o8chKiMp4sQh4j9/Ip2JlbW0ruTucLPWUC8gk5172
-         ykxfoa/Sr2U/Cgl6+L1i0HUErRjEWNuLsrvVlRaYG0X3kTykuKUKSrrkWJ5nIJgUMBnW
-         ZpfChUvXEncy3me+h3PJgztLJvPwA7t2EUkyM/cUbCHFbBiimJ+VpQP/m0l8Oosvd78b
-         tiBlg9/0pvZGpi700v8ib8owf3SPZ1qe5xpDgGcRWIxFAQcJR2Ig52OP7wHUPV5rXyu8
-         pmVA==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=y2z2dUkL6OhM76g8NRgsrjEEVDS8Qi9hxxcwTP5yXro=;
+        b=ngVpiceK0/3tVomB8NgMcKoVlDAL4VKoCylBb3sHtgzh3IdevD7uh9d93p7S+3mBtg
+         VWzXRMkGxSaNcTe8rWjbyeOLsuUn29vXbeB34U66Ctqp7nE8+br9lXCxFVs0YsczFnlx
+         g2DtyLmw9/jP1htQchRZMkJDcqWiC6ZnQDe8A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Hs6h6Dgd1YCJieChdKMoYG/F0MKYbjsY/eSGua0Qxeg=;
-        b=PVDcCqSceIyItNQpETNKeOJ5XiJW16gV4wY5Bc/h0JZjsomSJPxJEfeg5jCpzfgKPY
-         MAiOF+xL1/LbAohCMvhcbQNvSlyS6gFowuTwfaZvVD++lq1ZiQ7f0LIXhgAg7ecJekRx
-         rK0Tk2Ia49Kp9mHP2E/2TBCmRRTSyBe/gy8UiKz6946mGQw+D4B8LEiPxOknXciRZmXt
-         1ZB5tlpN+ilKxDkH9igWPqtcYGhILyGkKyqOZAeUe0BEX5KrLxinNSv1QtL0HFiH06G8
-         eCGBX0J7KXytmaSF+AnH0DHjFFx+EBaLtS0lbFSF9M/6mt3MIOiSqdxHaPdILWdrFaO6
-         UscQ==
-X-Gm-Message-State: APjAAAUDZlLLeAKzRfb6OWpiVASYNZ8KZwb8TZ98BFNLTD/Id1Hv1w6j
-        V4hdhb756v6vAD0u2SmF31Sn8oNTs2W/gY8RP7o=
-X-Google-Smtp-Source: APXvYqzXSRVvNXdMjkTZ+soAuasix3Sv25okqcaS75wOeO+F4gLU2nJjITJsHMTnEQ1/fzx+rOiK3DTLi+kBuLwlvi0=
-X-Received: by 2002:a17:90a:778b:: with SMTP id v11mr10825449pjk.132.1558716220822;
- Fri, 24 May 2019 09:43:40 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=y2z2dUkL6OhM76g8NRgsrjEEVDS8Qi9hxxcwTP5yXro=;
+        b=m8TTiPKQwpCrduU5/aqmH7oVrUA2dpCG66UHhNB27A/KVWQHwKRCz7i7tWg+7qug8M
+         UDqzEG6fIizwbWPVAX4bBVGoFvMGzN7IJ7PoNhPmTP8hf+WOwFbFFMGO7DPqOCFHVnOU
+         f2iITfmTV+lxAEpAyv+A3Q/UFVP3Mg2c6p5Ry42Z9MOF7c4GUfIcbuqY8/bsFGIgNElE
+         Lfab91j7P6PETzIs9fJCBM2evYOzBZONeBpYqi5njWtj9pE/fjZ2IbUrvUXNGjgMUj/k
+         eQu7YeFp2J/j33nDiejGktyxxLK4EqgmcrzyHaTN23c/JzXcxt38VmVqyl43MgWI4VHY
+         q3AQ==
+X-Gm-Message-State: APjAAAXLzELjZNwsrxjsy8z1m28KosoL8FvA35REth4LzcY9iABJeHOg
+        dj1+2GhxPmkyfhU/L8ROAHpXMg==
+X-Google-Smtp-Source: APXvYqy5csoUelKHq3QiRCp9VtPY9ZkTFbQOg5Wt/yEN3POdZnheqeeWKxFczwhSSIBvKLJRw89cNw==
+X-Received: by 2002:a17:902:f81:: with SMTP id 1mr58195262plz.242.1558716311638;
+        Fri, 24 May 2019 09:45:11 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id w1sm1326713pfg.51.2019.05.24.09.45.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 24 May 2019 09:45:10 -0700 (PDT)
+Date:   Fri, 24 May 2019 12:45:09 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, rcu@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH] rcu: Prevent evaluation of rcu_assign_pointer()
+Message-ID: <20190524164509.GA197789@google.com>
+References: <1558694197-19295-1-git-send-email-andrea.parri@amarulasolutions.com>
 MIME-Version: 1.0
-References: <20190521062837.3887-1-hdegoede@redhat.com>
-In-Reply-To: <20190521062837.3887-1-hdegoede@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 24 May 2019 19:43:30 +0300
-Message-ID: <CAHp75Vf6qzq3O1qz481FRuT1MN2EZOV43FpoSCC-vqATzyRF8w@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: asus-wmi: Only Tell EC the OS will handle
- display hotkeys from asus_nb_wmi
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Corentin Chary <corentin.chary@gmail.com>,
-        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1558694197-19295-1-git-send-email-andrea.parri@amarulasolutions.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 9:28 AM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Commit 78f3ac76d9e5 ("platform/x86: asus-wmi: Tell the EC the OS will
-> handle the display off hotkey") causes the backlight to be permanently of=
-f
-> on various EeePC laptop models using the eeepc-wmi driver (Asus EeePC
-> 1015BX, Asus EeePC 1025C).
->
-> The asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL) call added
-> by that commit is made conditional in this commit and only enabled in
-> the quirk_entry structs in the asus-nb-wmi driver fixing the broken
-> display / backlight on various EeePC laptop models.
->
-
-Hmm... doesn't apply.
-
-> Cc: Jo=C3=A3o Paulo Rechi Vita <jprvita@endlessm.com>
-> Fixes: 78f3ac76d9e5 ("platform/x86: asus-wmi: Tell the EC the OS will han=
-dle the display off hotkey")
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+On Fri, May 24, 2019 at 12:36:37PM +0200, Andrea Parri wrote:
+> Quoting Paul [1]:
+> 
+>  "Given that a quick (and perhaps error-prone) search of the uses
+>   of rcu_assign_pointer() in v5.1 didn't find a single use of the
+>   return value, let's please instead change the documentation and
+>   implementation to eliminate the return value."
+> 
+> [1] https://lkml.kernel.org/r/20190523135013.GL28207@linux.ibm.com
+> 
+> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
+> Cc: Josh Triplett <josh@joshtriplett.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+> Cc: Joel Fernandes <joel@joelfernandes.org>
+> Cc: rcu@vger.kernel.org
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Sasha Levin <sashal@kernel.org>
 > ---
->  drivers/platform/x86/asus-nb-wmi.c | 8 ++++++++
->  drivers/platform/x86/asus-wmi.c    | 2 +-
->  drivers/platform/x86/asus-wmi.h    | 1 +
->  3 files changed, 10 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/as=
-us-nb-wmi.c
-> index b6f2ff95c3ed..59f3a37a44d7 100644
-> --- a/drivers/platform/x86/asus-nb-wmi.c
-> +++ b/drivers/platform/x86/asus-nb-wmi.c
-> @@ -78,10 +78,12 @@ static bool asus_q500a_i8042_filter(unsigned char dat=
-a, unsigned char str,
->
->  static struct quirk_entry quirk_asus_unknown =3D {
->         .wapf =3D 0,
-> +       .wmi_backlight_set_devstate =3D true,
->  };
->
->  static struct quirk_entry quirk_asus_q500a =3D {
->         .i8042_filter =3D asus_q500a_i8042_filter,
-> +       .wmi_backlight_set_devstate =3D true,
->  };
->
->  /*
-> @@ -92,26 +94,32 @@ static struct quirk_entry quirk_asus_q500a =3D {
->  static struct quirk_entry quirk_asus_x55u =3D {
->         .wapf =3D 4,
->         .wmi_backlight_power =3D true,
-> +       .wmi_backlight_set_devstate =3D true,
->         .no_display_toggle =3D true,
->  };
->
->  static struct quirk_entry quirk_asus_wapf4 =3D {
->         .wapf =3D 4,
-> +       .wmi_backlight_set_devstate =3D true,
->  };
->
->  static struct quirk_entry quirk_asus_x200ca =3D {
->         .wapf =3D 2,
-> +       .wmi_backlight_set_devstate =3D true,
->  };
->
->  static struct quirk_entry quirk_asus_ux303ub =3D {
->         .wmi_backlight_native =3D true,
-> +       .wmi_backlight_set_devstate =3D true,
->  };
->
->  static struct quirk_entry quirk_asus_x550lb =3D {
-> +       .wmi_backlight_set_devstate =3D true,
->         .xusb2pr =3D 0x01D9,
->  };
->
->  static struct quirk_entry quirk_asus_forceals =3D {
-> +       .wmi_backlight_set_devstate =3D true,
->         .wmi_force_als_set =3D true,
->  };
->
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-=
-wmi.c
-> index ee1fa93708ec..a66e99500c12 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -2131,7 +2131,7 @@ static int asus_wmi_add(struct platform_device *pde=
-v)
->                 err =3D asus_wmi_backlight_init(asus);
->                 if (err && err !=3D -ENODEV)
->                         goto fail_backlight;
-> -       } else
-> +       } else if (asus->driver->quirks->wmi_backlight_set_devstate)
->                 err =3D asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2=
-, NULL);
->
->         status =3D wmi_install_notify_handler(asus->driver->event_guid,
-> diff --git a/drivers/platform/x86/asus-wmi.h b/drivers/platform/x86/asus-=
-wmi.h
-> index 6c1311f4b04d..57a79bddb286 100644
-> --- a/drivers/platform/x86/asus-wmi.h
-> +++ b/drivers/platform/x86/asus-wmi.h
-> @@ -44,6 +44,7 @@ struct quirk_entry {
->         bool store_backlight_power;
->         bool wmi_backlight_power;
->         bool wmi_backlight_native;
-> +       bool wmi_backlight_set_devstate;
->         bool wmi_force_als_set;
->         int wapf;
->         /*
-> --
-> 2.21.0
->
+> Matthew, Sasha:
+> 
+> The patch is based on -rcu/dev; I took the liberty of applying the
+> same change to your #defines in:
+> 
+>  tools/testing/radix-tree/linux/rcupdate.h
+>  tools/include/linux/rcu.h
+> 
+> but I admit that I'm not familiar with their uses: please shout if
+> you have any objections with it.
+> ---
+>  Documentation/RCU/whatisRCU.txt           |  8 ++++----
+>  include/linux/rcupdate.h                  |  5 ++---
+>  tools/include/linux/rcu.h                 | 11 +++++++++--
+>  tools/testing/radix-tree/linux/rcupdate.h |  5 ++++-
+>  4 files changed, 19 insertions(+), 10 deletions(-)
+> 
+> diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
+> index 981651a8b65d2..f99a87b9a88fa 100644
+> --- a/Documentation/RCU/whatisRCU.txt
+> +++ b/Documentation/RCU/whatisRCU.txt
+> @@ -212,7 +212,7 @@ synchronize_rcu()
+>  
+>  rcu_assign_pointer()
+>  
+> -	typeof(p) rcu_assign_pointer(p, typeof(p) v);
+> +	rcu_assign_pointer(p, typeof(p) v);
+>  
+>  	Yes, rcu_assign_pointer() -is- implemented as a macro, though it
+>  	would be cool to be able to declare a function in this manner.
+> @@ -220,9 +220,9 @@ rcu_assign_pointer()
+>  
+>  	The updater uses this function to assign a new value to an
+>  	RCU-protected pointer, in order to safely communicate the change
+> -	in value from the updater to the reader.  This function returns
+> -	the new value, and also executes any memory-barrier instructions
+> -	required for a given CPU architecture.
+> +	in value from the updater to the reader.  This macro does not
+> +	evaluate to an rvalue, but it does execute any memory-barrier
+> +	instructions required for a given CPU architecture.
+>  
+>  	Perhaps just as important, it serves to document (1) which
+>  	pointers are protected by RCU and (2) the point at which a
+> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> index 915460ec08722..a5f61a08e65fc 100644
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -367,7 +367,7 @@ static inline void rcu_preempt_sleep_check(void) { }
+>   * other macros that it invokes.
+>   */
+>  #define rcu_assign_pointer(p, v)					      \
+> -({									      \
+> +do {									      \
+>  	uintptr_t _r_a_p__v = (uintptr_t)(v);				      \
+>  	rcu_check_sparse(p, __rcu);				      \
+>  									      \
+> @@ -375,8 +375,7 @@ static inline void rcu_preempt_sleep_check(void) { }
+>  		WRITE_ONCE((p), (typeof(p))(_r_a_p__v));		      \
+>  	else								      \
+>  		smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+> -	_r_a_p__v;							      \
+> -})
+> +} while (0)
+>  
+>  /**
+>   * rcu_swap_protected() - swap an RCU and a regular pointer
+> diff --git a/tools/include/linux/rcu.h b/tools/include/linux/rcu.h
+> index 7d02527e5bcea..01a435ee48cd6 100644
+> --- a/tools/include/linux/rcu.h
+> +++ b/tools/include/linux/rcu.h
+> @@ -19,7 +19,14 @@ static inline bool rcu_is_watching(void)
+>  	return false;
+>  }
+>  
+> -#define rcu_assign_pointer(p, v) ((p) = (v))
+> -#define RCU_INIT_POINTER(p, v) p=(v)
+> +#define rcu_assign_pointer(p, v)				\
+> +do {								\
+> +	(p) = (v);						\
+> +} while (0)
+> +
+> +#define RCU_INIT_POINTER(p, v)					\
+> +do {								\
+> +	(p) = (v);						\
+> +} while (0)
+>  
+>  #endif
+> diff --git a/tools/testing/radix-tree/linux/rcupdate.h b/tools/testing/radix-tree/linux/rcupdate.h
+> index fd280b070fdb1..48212f3a758e6 100644
+> --- a/tools/testing/radix-tree/linux/rcupdate.h
+> +++ b/tools/testing/radix-tree/linux/rcupdate.h
+> @@ -7,6 +7,9 @@
+>  #define rcu_dereference_raw(p) rcu_dereference(p)
+>  #define rcu_dereference_protected(p, cond) rcu_dereference(p)
+>  #define rcu_dereference_check(p, cond) rcu_dereference(p)
+> -#define RCU_INIT_POINTER(p, v)	(p) = (v)
+> +#define RCU_INIT_POINTER(p, v)					\
+> +do {								\
+> +	(p) = (v);						\
+> +} while (0)
+>  
+>  #endif
+> -- 
+> 2.7.4
+> 
 
+Other than Paul's nits, LGTM. Thanks.
 
---=20
-With Best Regards,
-Andy Shevchenko
