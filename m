@@ -2,90 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F022F2910D
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 08:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E8F52911C
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 08:40:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388849AbfEXGho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 02:37:44 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:42892 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387936AbfEXGho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 02:37:44 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2F8122001F9;
-        Fri, 24 May 2019 08:37:42 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AE23C20021F;
-        Fri, 24 May 2019 08:37:35 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7975B402E0;
-        Fri, 24 May 2019 14:37:27 +0800 (SGT)
-From:   peng.fan@nxp.com
-To:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com
-Cc:     linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        van.freenix@gmail.com, Peng Fan <peng.fan@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Anson Huang <anson.huang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH V3 RESEND AGAIN 2/2] arm64: dts: imx: add i.MX8QXP ocotp support
-Date:   Fri, 24 May 2019 14:39:13 +0800
-Message-Id: <20190524063913.44171-2-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190524063913.44171-1-peng.fan@nxp.com>
-References: <20190524063913.44171-1-peng.fan@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2388891AbfEXGk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 02:40:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49750 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388335AbfEXGk4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 02:40:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MboJlUX6ud6Y8h1xvMwj2zi3GdAiWghHA9DcE9E0NzM=; b=gCA2ZddjLB5JYDteejHRuh95u
+        wJtaMuKOt5ACv/IoDR4+kaisQNbxEfqFZy7k1OXAn1DibvkRaXx+6ppZxoi/sgG+aZCL/GCx+GaXT
+        xYn1+r+DqaVdoo9xeLPjTM1sWHV6skEExwJRIQwTSreXcRSJ0noVHx3MlPRSUPg81/AxHUivOym9w
+        3uSlGykT8z6X9n9lodjYzb4NpCAUUqgt5J70gjw2mlp42t5mvX0r7bpW08CB9ZOYsPp42p76e2ZHC
+        cObH1wCHfyOxmPP/jgAmUasX014LH9QR7Dq1g24+bAB9ecrOGc5a5i7RdtUcfpguWkQRROfWnpeMw
+        BqaRnYRLQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hU3sp-0000NM-Do; Fri, 24 May 2019 06:40:51 +0000
+Date:   Thu, 23 May 2019 23:40:51 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Jerome Glisse <jglisse@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Artemy Kovalyov <artemyko@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        linux-mm@kvack.org, akpm@linux-foundation.org
+Subject: Re: [PATCH v4 0/1] Use HMM for ODP v4
+Message-ID: <20190524064051.GA28855@infradead.org>
+References: <20190522174852.GA23038@redhat.com>
+ <20190522235737.GD15389@ziepe.ca>
+ <20190523150432.GA5104@redhat.com>
+ <20190523154149.GB12159@ziepe.ca>
+ <20190523155207.GC5104@redhat.com>
+ <20190523163429.GC12159@ziepe.ca>
+ <20190523173302.GD5104@redhat.com>
+ <20190523175546.GE12159@ziepe.ca>
+ <20190523182458.GA3571@redhat.com>
+ <20190523191038.GG12159@ziepe.ca>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190523191038.GG12159@ziepe.ca>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On Thu, May 23, 2019 at 04:10:38PM -0300, Jason Gunthorpe wrote:
+> 
+> On Thu, May 23, 2019 at 02:24:58PM -0400, Jerome Glisse wrote:
+> > I can not take mmap_sem in range_register, the READ_ONCE is fine and
+> > they are no race as we do take a reference on the hmm struct thus
+> 
+> Of course there are use after free races with a READ_ONCE scheme, I
+> shouldn't have to explain this.
+> 
+> If you cannot take the read mmap sem (why not?), then please use my
+> version and push the update to the driver through -mm..
 
-Add i.MX8QXP ocotp node
-
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: Anson Huang <anson.huang@nxp.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
-
-V3:
- Add R-b tag
-V2:
- move address/size-cells below compatible, add "scu"
-
- arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-index 0683ee2a48ae..725d341ee160 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-@@ -141,6 +141,12 @@
- 			compatible = "fsl,imx8qxp-iomuxc";
- 		};
- 
-+		ocotp: imx8qx-ocotp {
-+			compatible = "fsl,imx8qxp-scu-ocotp";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+		};
-+
- 		pd: imx8qx-pd {
- 			compatible = "fsl,imx8qxp-scu-pd";
- 			#power-domain-cells = <1>;
--- 
-2.16.4
-
+I think it would really help if we queue up these changes in a git tree
+that can be pulled into the driver trees.  Given that you've been
+doing so much work to actually make it usable I'd nominate rdma for the
+"lead" tree.
