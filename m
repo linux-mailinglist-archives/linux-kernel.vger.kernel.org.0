@@ -2,86 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B4F6296FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DF6E29704
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:22:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390955AbfEXLTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:19:41 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:60747 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390743AbfEXLTl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:19:41 -0400
-X-Originating-IP: 90.88.147.134
-Received: from localhost (aaubervilliers-681-1-27-134.w90-88.abo.wanadoo.fr [90.88.147.134])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 71F01C0006;
-        Fri, 24 May 2019 11:19:29 +0000 (UTC)
-Date:   Fri, 24 May 2019 13:19:28 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v2 3/6] drm/sun4i: dsi: Add bridge support
-Message-ID: <20190524111928.ourdmraxw7vrhaar@flea>
-References: <20190524104317.20287-1-jagan@amarulasolutions.com>
+        id S2391041AbfEXLVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:21:18 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17561 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390535AbfEXLVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 07:21:17 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AB8CB4C07225AD491552;
+        Fri, 24 May 2019 19:21:15 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 24 May 2019 19:21:09 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH net-next 0/4] net: hns3: add aRFS feature and fix FEC bugs for HNS3 driver
+Date:   Fri, 24 May 2019 19:19:44 +0800
+Message-ID: <1558696788-12944-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524104317.20287-1-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patchset adds some new features support and fixes some bugs:
+[Patch 1/4 - 3/4] adds support for aRFS
+[Patch 4/4] fix FEC configuration issue
 
-On Fri, May 24, 2019 at 04:13:14PM +0530, Jagan Teki wrote:
-> Some display panels would come up with a non-DSI output which
-> can have an option to connect DSI interface by means of bridge
-> converter.
->
-> This DSI to non-DSI bridge converter would require a bridge
-> driver that would communicate the DSI controller for bridge
-> functionalities.
->
-> So, add support for bridge functionalities in Allwinner DSI
-> controller.
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 60 +++++++++++++++++++-------
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  1 +
->  2 files changed, 45 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> index ae2fe31b05b1..2b4b1355a88f 100644
-> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> @@ -775,6 +775,9 @@ static void sun6i_dsi_encoder_enable(struct drm_encoder *encoder)
->  	if (!IS_ERR(dsi->panel))
->  		drm_panel_prepare(dsi->panel);
->
-> +	if (!IS_ERR(dsi->bridge))
-> +		drm_bridge_pre_enable(dsi->bridge);
-> +
+Jian Shen (4):
+  net: hns3: initialize CPU reverse mapping
+  net: hns3: refine the flow director handle
+  net: hns3: add aRFS support for PF
+  net: hns3: fix for FEC configuration
 
-drm_panel_bridge provides what's needed to deal with both a panel and
-a bridge, I guess it would make sense to use this instead of
-duplicating everything.
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   4 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 108 +++++--
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 336 +++++++++++++++++++--
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  16 +
+ 4 files changed, 404 insertions(+), 60 deletions(-)
 
-Maxime
+-- 
+2.7.4
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
