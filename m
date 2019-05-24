@@ -2,60 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E3DB29ADB
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E39AE29AE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:21:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389620AbfEXPTR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:19:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40006 "EHLO mail.kernel.org"
+        id S2389590AbfEXPU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 11:20:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:15399 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389079AbfEXPTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 11:19:15 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2389079AbfEXPU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 11:20:57 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAF4A2075E;
-        Fri, 24 May 2019 15:19:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558711155;
-        bh=kmYgj5gKowihH9Hz+CQdYeZjDyUaNPJOm5n23hQQWrc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eEYe5FdW353C/LCqKEFnf4py+eROkFAaU3tXUILEyVSuYvIwXIP9467DGRXdjoPFn
-         pitiSmt0cQ/PDMxfXR8viCx+3N83oXI1UjFLfOgxRPtNMDApzrlcKbE2mZ30b8jtt3
-         qxpe443AFhusMA/dy/1IR4IAkicU23McJ6qCd0w8=
-Date:   Fri, 24 May 2019 17:19:12 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jinpu Wang <jinpu.wang@cloud.ionos.com>
-Cc:     Tony Luck <tony.luck@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Elmar Gerdes <elmar.gerdes@cloud.ionos.com>
-Subject: Re: Is 2nd Generation Intel(R) Xeon(R) Processors (Formerly Cascade
- Lake) affected by MDS
-Message-ID: <20190524151912.GA29389@kroah.com>
-References: <CAMGffEkQmdrrH3+UChZx_Af6WcFFQFw6fz3Ti4CRUau-wq7jow@mail.gmail.com>
- <20190524141732.GA4412@kroah.com>
- <7B9F565D-EE66-432B-9D29-E494BFD24683@gmail.com>
- <CAMGffEmmtJhQE04xt84QHrDxUFa0OqbKfZZT_mhXN6P6D99-WA@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id BD41F9FFC6;
+        Fri, 24 May 2019 15:20:51 +0000 (UTC)
+Received: from treble (ovpn-121-106.rdu2.redhat.com [10.10.121.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E7AB85F7C5;
+        Fri, 24 May 2019 15:20:46 +0000 (UTC)
+Date:   Fri, 24 May 2019 10:20:45 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Ard Biesheuvel <ard.biesheuvel@arm.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        james.morse@arm.com, guillaume.gardet@arm.com,
+        mark.rutland@arm.com, mingo@kernel.org, jeyu@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        arnd@arndb.de, x86@kernel.org
+Subject: Re: [PATCH] module/ksymtab: use 64-bit relative reference for target
+ symbol
+Message-ID: <20190524152045.w3syntzp4bb5jb7u@treble>
+References: <20190522150239.19314-1-ard.biesheuvel@arm.com>
+ <293c9d0f-dc14-1413-e4b4-4299f0acfb9e@arm.com>
+ <f2141ee5-d07a-6dd9-47c6-97e8fbdccf34@arm.com>
+ <20190523091811.GA26646@fuggles.cambridge.arm.com>
+ <907a9681-cd1d-3326-e3dd-5f6965497720@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMGffEmmtJhQE04xt84QHrDxUFa0OqbKfZZT_mhXN6P6D99-WA@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <907a9681-cd1d-3326-e3dd-5f6965497720@arm.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 24 May 2019 15:20:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 05:14:38PM +0200, Jinpu Wang wrote:
-> I would expect the production Cascade Lake supports md-clear feature,
-> so VM migration works from old generation.
-> Could some one give me an answer?
+On Thu, May 23, 2019 at 10:29:39AM +0100, Ard Biesheuvel wrote:
+> 
+> 
+> On 5/23/19 10:18 AM, Will Deacon wrote:
+> > On Thu, May 23, 2019 at 09:41:40AM +0100, Ard Biesheuvel wrote:
+> > > 
+> > > 
+> > > On 5/22/19 5:28 PM, Ard Biesheuvel wrote:
+> > > > 
+> > > > 
+> > > > On 5/22/19 4:02 PM, Ard Biesheuvel wrote:
+> > > > > The following commit
+> > > > > 
+> > > > >     7290d5809571 ("module: use relative references for __ksymtab entries")
+> > > > > 
+> > > > > updated the ksymtab handling of some KASLR capable architectures
+> > > > > so that ksymtab entries are emitted as pairs of 32-bit relative
+> > > > > references. This reduces the size of the entries, but more
+> > > > > importantly, it gets rid of statically assigned absolute
+> > > > > addresses, which require fixing up at boot time if the kernel
+> > > > > is self relocating (which takes a 24 byte RELA entry for each
+> > > > > member of the ksymtab struct).
+> > > > > 
+> > > > > Since ksymtab entries are always part of the same module as the
+> > > > > symbol they export (or of the core kernel), it was assumed at the
+> > > > > time that a 32-bit relative reference is always sufficient to
+> > > > > capture the offset between a ksymtab entry and its target symbol.
+> > > > > 
+> > > > > Unfortunately, this is not always true: in the case of per-CPU
+> > > > > variables, a per-CPU variable's base address (which usually differs
+> > > > > from the actual address of any of its per-CPU copies) could be at
+> > > > > an arbitrary offset from the ksymtab entry, and so it may be out
+> > > > > of range for a 32-bit relative reference.
+> > > > > 
+> > > 
+> > > (Apologies for the 3-act monologue)
+> > 
+> > Exposition, development and recapitulation ;)
+> > 
+> > > This turns out to be incorrect. The symbol address of per-CPU variables
+> > > exported by modules is always in the vicinity of __per_cpu_start, and so it
+> > > is simply a matter of making sure that the core kernel is in range for
+> > > module ksymtab entries containing 32-bit relative references.
+> > > 
+> > > When running the arm64 with kaslr enabled, we currently randomize the module
+> > > space based on the range of ADRP/ADD instruction pairs, which have a -/+ 4
+> > > GB range rather than the -/+ 2 GB range of 32-bit place relative data
+> > > relocations. So we can fix this by simply reducing the randomization window
+> > > to 2 GB.
+> > 
+> > Makes sense. Do you see the need for an option to disable PREL relocs
+> > altogether in case somebody wants the additional randomization range?
+> > 
+> 
+> No, not really. To be honest, I don't think
+> CONFIG_RANDOMIZE_MODULE_REGION_FULL is that useful to begin with, and the
+> only reason we enabled it by default at the time was to ensure that the PLT
+> code got some coverage after we introduced it.
 
-No idea, try it and see!
+In code, percpu variables are accessed with absolute relocations, right?
+Before I read your 3rd act, I was wondering if it would make sense to do
+the same with the ksymtab relocations.
 
-good luck!
+Like if we somehow [ insert much hand waving ] ensured that everybody
+uses EXPORT_PER_CPU_SYMBOL() for percpu symbols instead of just
+EXPORT_SYMBOL() then we could use a different macro to create the
+ksymtab relocations for percpu variables, such that they use absolute
+relocations.
 
-greg k-h
+Just an idea.  Maybe the point is moot now.
+
+-- 
+Josh
