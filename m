@@ -2,114 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F342629A1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:34:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7C9F29A22
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 16:36:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404103AbfEXOd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 10:33:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404039AbfEXOdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 10:33:55 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5586D2133D;
-        Fri, 24 May 2019 14:33:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558708435;
-        bh=gZetN5B3ywzeQ7Qs5a+pWguj+B6DKPIfnehnVziFYMc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=aw1FIC57J9GZmg1xCAVTytzdxhIu5ydjXn8d/GgzsVQKCB2WOrjZEHBDQMFdqZq2a
-         Uo3CLauNxVU7oS1m+fp7jgh0kkdLLFyjlmLHlvzs9UtUY4B2qv4x3NDGelhxMANfUS
-         9lGjM78D5IjY63bna6w4N5yiXFW6PNOgaFJdO4I8=
-Content-Type: text/plain; charset="utf-8"
+        id S2404132AbfEXOgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 10:36:05 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:39972 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390885AbfEXOgE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 10:36:04 -0400
+Received: by mail-ua1-f67.google.com with SMTP id d4so3611667uaj.7
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 07:36:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NnZGIthDEueJLTUBQETcG96Vc5ZQvAyOxLJeHJged4c=;
+        b=llWHcf/MoXl1N0hYHw3FyAGdJnvwUAjwpx+gqR3CiT28ez2O5NrbABifCGb68vO35n
+         aglsDuuQoBQsBW+tnetGwOFE3uqGBb1wTqZVGEoeJKlPLt0zOnmSjN4hm4y6uHcYhr9k
+         g3MD9/Z8bzRPyCkHu4/7X0fdkKgaLk/kOdsctTXlQBDcfbMQkc3i4DPtvfIjcwXQyIxw
+         +Ei3acksfhldi+ISYZYDsmTwCpFX7BJhKURVHu5wECESV/c90nl2kHJkVX/kp8lACQ0O
+         Yi0HvAFvbzuUQCp/p9MvQlqPnDH2HTbropYfGjSljC+5AgBFP4SG/iwNlwuTzwXJocwY
+         hj/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NnZGIthDEueJLTUBQETcG96Vc5ZQvAyOxLJeHJged4c=;
+        b=om8RzUXDYhrddj/dETzR6vWgJ9tpmynpEM2ZpSv+npalPSC+9rb6NXM+Xjp12yP8vs
+         73h33nvNxs/EJQ5ll3we0S+TZUeqjYPodFm894+nJLPZn92Zg+pEdP4+Kujlo/HgVyM5
+         2qLlGR6bKaKYHXGnBss+3l58WIYXXdgHWrDsKJHoWL56jL0e0MCba93E9b0UNCbN5O9b
+         1CFPvcYMGdIwYSaJLh46Rws0fTedMd9++ojLBSPA66k/iobxWPPc20e4sdfY7VX7j3AK
+         VIGKNlEHp5VY+sNKHI8F64tD8gBE3B9dsFO2SBZhV5M0HDK7Re66JTwqio2isuneXEni
+         89BA==
+X-Gm-Message-State: APjAAAUIchSWQHDKvH62rTO9iKSXOY6jY67Rm0V3U0i+6poomX82Dg6k
+        bs1GsJA2aWn27jrRM2sNarLgKQ==
+X-Google-Smtp-Source: APXvYqyAlLH4F8dtn2YfTreGfsR5/SjM+/EUgmIRqYkdz80s26eXOnuEtqlJJe7qr9W+Wusxrw/lKg==
+X-Received: by 2002:a9f:22e8:: with SMTP id 95mr45354033uan.6.1558708563381;
+        Fri, 24 May 2019 07:36:03 -0700 (PDT)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id x71sm1253913vkd.24.2019.05.24.07.36.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 07:36:02 -0700 (PDT)
+Date:   Fri, 24 May 2019 10:36:00 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        David Sterba <dsterba@suse.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "lkp@01.org" <lkp@01.org>, LKML <linux-kernel@vger.kernel.org>,
+        Qu Wenruo <wqu@suse.com>
+Subject: Re: [LKP] [btrfs]  302167c50b:  fio.write_bw_MBps -12.4% regression
+Message-ID: <20190524143558.mem7gircjjmut54f@MacBook-Pro-91.local>
+References: <20190203081802.GD10498@shao2-debian>
+ <87h8alqong.fsf@yhuang-dev.intel.com>
+ <87o94dl6pg.fsf@yhuang-dev.intel.com>
+ <874l5k9tx2.fsf@yhuang-dev.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190524072745.27398-1-amergnat@baylibre.com>
-References: <20190524072745.27398-1-amergnat@baylibre.com>
-Subject: Re: [PATCH] clk: fix clock global name usage.
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        baylibre-upstreaming@groups.io,
-        Alexandre Mergnat <amergnat@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-To:     Alexandre Mergnat <amergnat@baylibre.com>, mturquette@baylibre.com
-User-Agent: alot/0.8.1
-Date:   Fri, 24 May 2019 07:33:54 -0700
-Message-Id: <20190524143355.5586D2133D@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <874l5k9tx2.fsf@yhuang-dev.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Alexandre Mergnat (2019-05-24 00:27:45)
-> A recent patch allows the clock framework to specify the parent
-> relationship with either the clk_hw pointer, the global name or through
-> Device Tree name.
+On Fri, May 24, 2019 at 03:46:17PM +0800, Huang, Ying wrote:
+> "Huang, Ying" <ying.huang@intel.com> writes:
+> 
+> > "Huang, Ying" <ying.huang@intel.com> writes:
+> >
+> >> Hi, Josef,
+> >>
+> >> kernel test robot <rong.a.chen@intel.com> writes:
+> >>
+> >>> Greeting,
+> >>>
+> >>> FYI, we noticed a -12.4% regression of fio.write_bw_MBps due to commit:
+> >>>
+> >>>
+> >>> commit: 302167c50b32e7fccc98994a91d40ddbbab04e52 ("btrfs: don't end
+> >>> the transaction for delayed refs in throttle")
+> >>> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git pending-fixes
+> >>>
+> >>> in testcase: fio-basic
+> >>> on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 64G memory
+> >>> with following parameters:
+> >>>
+> >>> 	runtime: 300s
+> >>> 	nr_task: 8t
+> >>> 	disk: 1SSD
+> >>> 	fs: btrfs
+> >>> 	rw: randwrite
+> >>> 	bs: 4k
+> >>> 	ioengine: sync
+> >>> 	test_size: 400g
+> >>> 	cpufreq_governor: performance
+> >>> 	ucode: 0xb00002e
+> >>>
+> >>> test-description: Fio is a tool that will spawn a number of threads
+> >>> or processes doing a particular type of I/O action as specified by
+> >>> the user.
+> >>> test-url: https://github.com/axboe/fio
+> >>>
+> >>>
+> >>
+> >> Do you have time to take a look at this regression?
+> >
+> > Ping
+> 
+> Ping again.
+> 
 
-You could point to the commit instead of saying "a recent patch". Would
-provide more clarity.
+This happens because now we rely more on on-demand flushing than the catchup
+flushing that happened before.  This is just one case where it's slightly worse,
+overall this change provides better latencies, and even in this result it
+provided better completion latencies because we're not randomly flushing at the
+end of a transaction.  It does appear to be costing writes in that they will
+spend more time flushing than before, so you get slightly lower throughput on
+pure small write workloads.  I can't actually see the slowdown locally.
 
->=20
-> But the global name isn't handled by the clk framework because the DT name
-> is considered valid even if it's NULL, so of_clk_get_hw() returns an
-> unexpected clock (the first clock specified in DT).
+This patch is here to stay, it just shows we need to continue to refine the
+flushing code to be less spikey/painful.  Thanks,
 
-Yes, the DT name can be NULL and then we would use the index.
-
->=20
-> This can be fixed by calling of_clk_get_hw() only when DT name is not NUL=
-L.
->=20
-> Fixes: fc0c209c147f ("clk: Allow parents to be specified without string n=
-ames")
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-> ---
->  drivers/clk/clk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index bdb077ba59b9..9624a75e5a8d 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -368,7 +368,7 @@ static struct clk_core *clk_core_get(struct clk_core =
-*core, u8 p_index)
->         const char *dev_id =3D dev ? dev_name(dev) : NULL;
->         struct device_node *np =3D core->of_node;
-> =20
-> -       if (np && index >=3D 0)
-> +       if (name && np && index >=3D 0)
-
-Do you set the index to 0 in this clk's parent_data? We purposefully set
-the index to -1 in clk_core_populate_parent_map() so that the fw_name
-can be NULL but the index can be something >=3D 0 and then we'll use that
-to lookup the clk from DT. We need to support that combination.
-
-	fw_name   |   index |  DT lookup?
-	----------+---------+------------
-	NULL      |    >=3D 0 |     Y
-	NULL      |    -1   |     N
-	non-NULL  |    -1   |     ?
-	non-NULL  |    >=3D 0 |     Y
-
-Maybe we should support the ? case, because right now it will fail to do
-the DT lookup when the index is -1.
-
-So this patch instead?
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b34e84bb8167..a554cb9316a5 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -368,7 +368,7 @@ static struct clk_core *clk_core_get(struct clk_core *c=
-ore, u8 p_index)
- 	const char *dev_id =3D dev ? dev_name(dev) : NULL;
- 	struct device_node *np =3D core->of_node;
-=20
--	if (np && index >=3D 0)
-+	if (np && (index >=3D 0 || name))
- 		hw =3D of_clk_get_hw(np, index, name);
-=20
- 	/*
+Josef
