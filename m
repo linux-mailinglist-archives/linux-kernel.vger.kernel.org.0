@@ -2,131 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3643629F89
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 22:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5458129F93
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 22:08:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391786AbfEXUDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 16:03:36 -0400
-Received: from mga11.intel.com ([192.55.52.93]:59357 "EHLO mga11.intel.com"
+        id S2391780AbfEXUIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 16:08:45 -0400
+Received: from mga17.intel.com ([192.55.52.151]:6671 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391612AbfEXUDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 16:03:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S2391612AbfEXUIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 16:08:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 13:03:34 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 13:08:45 -0700
 X-ExtLoop1: 1
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.36])
-  by fmsmga001.fm.intel.com with ESMTP; 24 May 2019 13:03:33 -0700
-Date:   Fri, 24 May 2019 13:03:33 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "Xing, Cedric" <cedric.xing@intel.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Dr. Greg" <greg@enjellic.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: SGX vs LSM (Re: [PATCH v20 00/28] Intel SGX1 support)
-Message-ID: <20190524200333.GF365@linux.intel.com>
-References: <20190523141752.GA12078@linux.intel.com>
- <CALCETrUzx3LPAKCLFf75P-XshAkRcr+JLET3LA_kHDs9MA11FA@mail.gmail.com>
- <20190523234044.GC12078@linux.intel.com>
- <CALCETrV4DVEfW6EJ6DnQGGYDJAiA5M1QcuYJTiroumOM+D6Jjg@mail.gmail.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E8956@ORSMSX116.amr.corp.intel.com>
- <dda0912b-cb15-3c07-d368-345159e995f7@tycho.nsa.gov>
- <20190524174243.GA365@linux.intel.com>
- <20190524175458.GB365@linux.intel.com>
- <960B34DE67B9E140824F1DCDEC400C0F654E8E1D@ORSMSX116.amr.corp.intel.com>
- <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com>
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga006.fm.intel.com with ESMTP; 24 May 2019 13:08:44 -0700
+Received: from fmsmsx112.amr.corp.intel.com (10.18.116.6) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 24 May 2019 13:08:44 -0700
+Received: from crsmsx104.amr.corp.intel.com (172.18.63.32) by
+ FMSMSX112.amr.corp.intel.com (10.18.116.6) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 24 May 2019 13:08:44 -0700
+Received: from crsmsx101.amr.corp.intel.com ([169.254.1.116]) by
+ CRSMSX104.amr.corp.intel.com ([169.254.6.192]) with mapi id 14.03.0415.000;
+ Fri, 24 May 2019 14:08:42 -0600
+From:   "Weiny, Ira" <ira.weiny@intel.com>
+To:     Shakeel Butt <shakeelb@google.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH RFC] mm/swap: make release_pages() and put_pages() match
+Thread-Topic: [PATCH RFC] mm/swap: make release_pages() and put_pages() match
+Thread-Index: AQHVEmeV6lwaEiR3+E6UJvvneFDW0qZ7EgQA//+iDIA=
+Date:   Fri, 24 May 2019 20:08:42 +0000
+Message-ID: <2807E5FD2F6FDA4886F6618EAC48510E79D3ACC3@CRSMSX101.amr.corp.intel.com>
+References: <20190524193415.9733-1-ira.weiny@intel.com>
+ <CALvZod6skK6NxeRXjKS64+1jpF9NwbLp7DhpWueB0F6Tj4MNUw@mail.gmail.com>
+In-Reply-To: <CALvZod6skK6NxeRXjKS64+1jpF9NwbLp7DhpWueB0F6Tj4MNUw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDJlYzY3Y2ItYjdlMC00NDc0LThlN2EtNDZmODQxOTFlNTUyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWGhaUUYxZ29XQW9TaXRNU2VBVHFcL0tkRWJrdDN3OFlUcFJyNFNKRmJmYWVubmZvVkdDTzFDRWU3VmtFcDc3b3kifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [172.18.205.10]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrUw5sEr-MHPMU4CzEzkrejDs-JOThHB9Buhoxo5-rdpRw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 12:37:44PM -0700, Andy Lutomirski wrote:
-> On Fri, May 24, 2019 at 11:34 AM Xing, Cedric <cedric.xing@intel.com> wrote:
-> >
-> > If "initial permissions" for enclaves are less restrictive than shared
-> > objects, then it'd become a backdoor for circumventing LSM when enclave
-> > whitelisting is *not* in place. For example, an adversary may load a page,
-> > which would otherwise never be executable, as an executable page in EPC.
-> >
-> > In the case a RWX page is needed, the calling process has to have a RWX
-> > page serving as the source for EADD so PROCESS__EXECMEM will have been
-> > checked. For SGX2, changing an EPC page to RWX is subject to FILE__EXECMEM
-> > on /dev/sgx/enclave, which I see as a security benefit because it only
-> > affects the enclave but not the whole process hosting it.
-> 
-> So the permission would be like FILE__EXECMOD on the source enclave
-> page, because it would be mapped MAP_ANONYMOUS, PROT_WRITE?
-> MAP_SHARED, PROT_WRITE isn't going to work because that means you can
-> modify the file.
-
-Was this in response to Cedric's comment, or to my comment?
-
-> I'm starting to think that looking at the source VMA permission bits
-> or source PTE permission bits is putting a bit too much policy into
-> the driver as opposed to the LSM.  How about delegating the whole
-> thing to an LSM hook?  The EADD operation would invoke a new hook,
-> something like:
-> 
-> int security_enclave_load_bytes(void *source_addr, struct
-> vm_area_struct *source_vma, loff_t source_offset, unsigned int
-> maxperm);
-> 
-> Then you don't have to muck with mapping anything PROT_EXEC.  Instead
-> you load from a mapping of a file and the LSM applies whatever policy
-> it feels appropriate.  If the first pass gets something wrong, the
-> application or library authors can take it up with the SELinux folks
-> without breaking the whole ABI :)
-> 
-> (I'm proposing passing in the source_vma because this hook would be
-> called with mmap_sem held for read to avoid a TOCTOU race.)
-> 
-> If we go this route, the only substantial change to the existing
-> driver that's needed for an initial upstream merge is the maxperm
-> mechanism and whatever hopefully minimal API changes are needed to
-> allow users to conveniently set up the mappings.  And we don't need to
-> worry about how to hack around mprotect() calling into the LSM,
-> because the LSM will actually be aware of SGX and can just do the
-> right thing.
-
-This doesn't address restricting which processes can run which enclaves,
-it only allows restricting the build flow.  Or are you suggesting this
-be done in addition to whitelisting sigstructs?
-
-What's the value prop beyond whitelisting sigstructs?  Realistically, I
-doubt LSMs/users will want to take the performance hit of scanning the
-source bytes every time an enclave is loaded.
-
-We could add seomthing like security_enclave_mprotect() in lieu of abusing
-security_file_mprotect(), but passing the full source bytes seems a bit
-much.
+PiANCj4gT24gRnJpLCBNYXkgMjQsIDIwMTkgYXQgMTI6MzMgUE0gPGlyYS53ZWlueUBpbnRlbC5j
+b20+IHdyb3RlOg0KPiA+DQo+ID4gRnJvbTogSXJhIFdlaW55IDxpcmEud2VpbnlAaW50ZWwuY29t
+Pg0KPiA+DQo+ID4gUkZDIEkgaGF2ZSBubyBpZGVhIGlmIHRoaXMgaXMgY29ycmVjdCBvciBub3Qu
+ICBCdXQgbG9va2luZyBhdA0KPiA+IHJlbGVhc2VfcGFnZXMoKSBJIHNlZSBhIGNhbGwgdG8gYm90
+aCBfX0NsZWFyUGFnZUFjdGl2ZSgpIGFuZA0KPiA+IF9fQ2xlYXJQYWdlV2FpdGVycygpIHdoaWxl
+IGluIF9fcGFnZV9jYWNoZV9yZWxlYXNlKCkgSSBkbyBub3QuDQo+ID4NCj4gPiBJcyB0aGlzIGEg
+YnVnIHdoaWNoIG5lZWRzIHRvIGJlIGZpeGVkPyAgRGlkIEkgbWlzcyBjbGVhcmluZyBhY3RpdmUN
+Cj4gPiBzb21ld2hlcmUgZWxzZSBpbiB0aGUgY2FsbCBjaGFpbiBvZiBwdXRfcGFnZT8NCj4gPg0K
+PiA+IFRoaXMgd2FzIGZvdW5kIHZpYSBjb2RlIGluc3BlY3Rpb24gd2hpbGUgZGV0ZXJtaW5pbmcg
+aWYNCj4gPiByZWxlYXNlX3BhZ2VzKCkgYW5kIHRoZSBuZXcgcHV0X3VzZXJfcGFnZXMoKSBjb3Vs
+ZCBiZSBpbnRlcmNoYW5nZWFibGUuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBJcmEgV2Vpbnkg
+PGlyYS53ZWlueUBpbnRlbC5jb20+DQo+ID4gLS0tDQo+ID4gIG1tL3N3YXAuYyB8IDEgKw0KPiA+
+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9t
+bS9zd2FwLmMgYi9tbS9zd2FwLmMNCj4gPiBpbmRleCAzYTc1NzIyZTY4YTkuLjlkMDQzMmJhZGRi
+MCAxMDA2NDQNCj4gPiAtLS0gYS9tbS9zd2FwLmMNCj4gPiArKysgYi9tbS9zd2FwLmMNCj4gPiBA
+QCAtNjksNiArNjksNyBAQCBzdGF0aWMgdm9pZCBfX3BhZ2VfY2FjaGVfcmVsZWFzZShzdHJ1Y3Qg
+cGFnZSAqcGFnZSkNCj4gPiAgICAgICAgICAgICAgICAgZGVsX3BhZ2VfZnJvbV9scnVfbGlzdChw
+YWdlLCBscnV2ZWMsDQo+ID4gcGFnZV9vZmZfbHJ1KHBhZ2UpKTsNCj4gDQo+IHNlZSBwYWdlX29m
+Zl9scnUocGFnZSkgYWJvdmUgd2hpY2ggY2xlYXIgYWN0aXZlIGJpdC4NCg0KVGhhbmtzLCAgU29y
+cnkgZm9yIHRoZSBub2lzZSwNCklyYQ0KDQoNCj4gDQo+ID4gICAgICAgICAgICAgICAgIHNwaW5f
+dW5sb2NrX2lycXJlc3RvcmUoJnBnZGF0LT5scnVfbG9jaywgZmxhZ3MpOw0KPiA+ICAgICAgICAg
+fQ0KPiA+ICsgICAgICAgX19DbGVhclBhZ2VBY3RpdmUocGFnZSk7DQo+ID4gICAgICAgICBfX0Ns
+ZWFyUGFnZVdhaXRlcnMocGFnZSk7DQo+ID4gICAgICAgICBtZW1fY2dyb3VwX3VuY2hhcmdlKHBh
+Z2UpOw0KPiA+ICB9DQo+ID4gLS0NCj4gPiAyLjIwLjENCj4gPg0K
