@@ -2,57 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DBF029FEA
+	by mail.lfdr.de (Postfix) with ESMTP id C0C9829FEB
 	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 22:31:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404200AbfEXUbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 16:31:06 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36632 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403760AbfEXUbF (ORCPT
+        id S2404228AbfEXUbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 16:31:08 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42264 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404009AbfEXUbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 16:31:05 -0400
-Received: by mail-lj1-f195.google.com with SMTP id z1so4293422ljb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 13:31:04 -0700 (PDT)
+        Fri, 24 May 2019 16:31:06 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y13so8023282lfh.9
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 13:31:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=nikanor-nu.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2VsBCh+s9KIchLXCnbVZm8l0SmiHYaF8UPE8Xvrj5NA=;
-        b=Gdc+4qH/wJAUx2hnZjnMydWPk0n9vEpA2RsMguRl1uTzDCEZlNcaI1siyD0ZRPTvlI
-         utVAC01y/J/n/lQF3/oimf4QPC8ujrgEMfiz8IZ0uTjwLjTq0SWj/YhldFZ6IEf4mpQy
-         uXHR3WEdHzyYi3reTjt9tW495B1E/sOhVlM/kRtYaHB8KvUVnOERGpCqKkT1X3rVxsB6
-         HH09xCgjRG+annGgktI5P11aDkEvzaLi+6TqldK7RMJvAniy9Ju3KHCuYd+mKZ1Dqve9
-         F3UwXtMUus/lFoNFRyqT0wmzRhFHgw4V8szKmdXee2X7ZVCm6bD8cyCSeOvE631TvAgz
-         X90Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=dXxgezPTBmcXK6U7eT+ZniYRkjIkHyj/4qWZKolWGME=;
+        b=RKKoulMjCNtwd7QRzpp70GPC02OUG/Ev38XCNd/GOE9VruKM+ZkoKkfuD/KifFk5s/
+         ucZmvOzaROhccsgdk1wbE2HFpvRGvI9RWvowIkXLPuBDBR/UnyZNWb0/0U0C/SZ+b04V
+         JTNd/pWyddg74CN9vAqLZGyUbySTWiGt19XcXzFnmtH0EDGNpenkxDx08OfdmDgHoUq5
+         BBolsDbVu+4YClxX2rC//HO0zO7gUzyeoiJADPggF9Na0qMQp8ZTLqqf2YRzIyTQUs7P
+         zTo7qnhmYPsSfjWQBnQ/CsCYchDX4eWm+9yA7x0tfG8Cc3rattXYV5Km3deWA8u5HTib
+         HeKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2VsBCh+s9KIchLXCnbVZm8l0SmiHYaF8UPE8Xvrj5NA=;
-        b=TVb+lzuqL2P6HSishQx93aYxRAWscExViXnSQyEUEgsJTMFRIVb1UwPs3GW6g57IE1
-         Y20leAV0Cuds2TBl1jozcwdScMODdXtBJRO9vTU/7Yf7Un+VKJGrPHeoB84DDX1Kc2oF
-         87k3+mCZzysZhG9ekqir7IUgWFclvVkrxjFTDyJ3FNRGX1m97FjxehfX4ZoUS+hTQzDw
-         18zlRRqYVVgWQmOpfLrmev4g3EaycF0uE1cdoX2gfIvw6JYkfyxSlpVhHcEcyVMWntUn
-         E7xpBZnRqg/JLKBNQ4gkBgSKRB87eByING/cCkPbgotrquZNyNO6HFYnQMkkYxdjk5ei
-         awAA==
-X-Gm-Message-State: APjAAAVn5KIC+X4fM5Ioipq2AnGaateteCaa/9azDt2jiQN9RqRTbLOr
-        n0jRg+slhHxayHWb8Dykk8eYtQ==
-X-Google-Smtp-Source: APXvYqwsq61RAlojvloERPnYyishobLKCAybzkWKMeuy+RobXY7kCc3R8cmKvZ2ZQgSJI5Dz8RZfDQ==
-X-Received: by 2002:a2e:9e4d:: with SMTP id g13mr10478905ljk.80.1558729863750;
-        Fri, 24 May 2019 13:31:03 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dXxgezPTBmcXK6U7eT+ZniYRkjIkHyj/4qWZKolWGME=;
+        b=pJya1UnshYgFUlIB/n3fFDMWy19LlI8gGSnNG07PJJK0XX6qbYjnQlBHtG+VOCPtmN
+         +wpuyq5t+yMpD6vwYNBs0LUq23jr1AYcmHkEMXTcgZbXl9NvokEDZNZAgIAfWn05VWy1
+         V4FJR512zjk5w6XXakSiW62GWWd40GrFgcS9GFm5/UzH+oP1VODKVKirqsAcqhl3WDKl
+         awWQBQqud/+KlEbD+ENag85GIbjfZb1ZlxRrHCo9I+4CNT0Z/v/uzrvQ8uwt57FqpeoV
+         jJYCIW0sPS3ObVa3YoaopizEyoXbnh4t8F3Wg8UioJTOfN+2U388k8jvsRkzetIBACjr
+         rXJw==
+X-Gm-Message-State: APjAAAW99R1qZRK1qwZcZeUWUVIeVucSh3x9DzFGXpLLSc8ak2lQBw8q
+        pAZZME5czdVeJSDfyu0MXIc6Nw==
+X-Google-Smtp-Source: APXvYqwzxomZi+ea9FMxZMee20ow0MR7W+LSI+IFkN2Zy3auBLCudMHe+NlRlo4M8MrcRwOwijdCBg==
+X-Received: by 2002:a19:ca0e:: with SMTP id a14mr14823589lfg.3.1558729864890;
+        Fri, 24 May 2019 13:31:04 -0700 (PDT)
 Received: from dev.nikanor.nu (78-72-133-4-no161.tbcn.telia.com. [78.72.133.4])
-        by smtp.gmail.com with ESMTPSA id j69sm921036ljb.72.2019.05.24.13.31.02
+        by smtp.gmail.com with ESMTPSA id j69sm921036ljb.72.2019.05.24.13.31.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 13:31:03 -0700 (PDT)
+        Fri, 24 May 2019 13:31:04 -0700 (PDT)
 From:   =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>
 To:     gregkh@linuxfoundation.org
 Cc:     simon@nikanor.nu, Matt.Sickler@daktronics.com,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] Fixes for staging/kpc2000's Kconfig
-Date:   Fri, 24 May 2019 22:30:56 +0200
-Message-Id: <20190524203058.30022-1-simon@nikanor.nu>
+Subject: [PATCH 1/2] staging: kpc2000: fix typo in Kconfig
+Date:   Fri, 24 May 2019 22:30:57 +0200
+Message-Id: <20190524203058.30022-2-simon@nikanor.nu>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190524203058.30022-1-simon@nikanor.nu>
+References: <20190524203058.30022-1-simon@nikanor.nu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -61,27 +63,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Fixes two minor typos in kpc2000's Kconfig: s/Kaktronics/Daktronics
 
-Here are two patches that fixes issues in kpc2000's Kconfig.
+Signed-off-by: Simon Sandström <simon@nikanor.nu>
+---
+ drivers/staging/kpc2000/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-The first one is a typo fix (I'm guessing Kaktronics is a typo...).
-
-The second one is a fix for a dependency issues I met when trying to
-build kpc2000 on a default x86_64 config. I'm not familiar with neither
-MFD nor UIO, so I'm not sure that I solved it correctly. Maybe there are
-some other things to consider as this is in staging?
-
-
-- Simon
-
-Simon Sandström (2):
-  staging: kpc2000: fix typo in Kconfig
-  staging: kpc2000: add missing dependencies for kpc2000
-
- drivers/staging/kpc2000/Kconfig | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/staging/kpc2000/Kconfig b/drivers/staging/kpc2000/Kconfig
+index fb5922928f47..c463d232f2b4 100644
+--- a/drivers/staging/kpc2000/Kconfig
++++ b/drivers/staging/kpc2000/Kconfig
+@@ -21,7 +21,7 @@ config KPC2000_CORE
+ 	  If unsure, say N.
+ 
+ config KPC2000_SPI
+-	tristate "Kaktronics KPC SPI device"
++	tristate "Daktronics KPC SPI device"
+ 	depends on KPC2000 && SPI
+ 	help
+ 	  Say Y here if you wish to support the Daktronics KPC PCI
+@@ -33,7 +33,7 @@ config KPC2000_SPI
+ 	  If unsure, say N.
+ 
+ config KPC2000_I2C
+-	tristate "Kaktronics KPC I2C device"
++	tristate "Daktronics KPC I2C device"
+ 	depends on KPC2000 && I2C
+ 	help
+ 	  Say Y here if you wish to support the Daktronics KPC PCI
 -- 
 2.20.1
 
