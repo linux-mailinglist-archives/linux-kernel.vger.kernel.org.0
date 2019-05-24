@@ -2,148 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60BD529BA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 18:00:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 061D529B99
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 17:59:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390852AbfEXP74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 11:59:56 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38736 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390657AbfEXP7u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 11:59:50 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d18so10548660wrs.5
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 08:59:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kinvolk.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=a4BYbY0H/gJ/SBV0pW9HBq0oWfzuEg4LxLjaui3637c=;
-        b=E9gKK7YmH0pR7gk3fLXm/ealfjAQNJ0sgX7bsR0M8h9rsjPzo2jBg/Dit9A2OTUzGU
-         XZmGXfZ3u/SFQ8a7AdJZUk8tqhFc5M9wKvDy1/TBykNAv77+kYmhe8JPB0Cmh19SrITx
-         GGKi/V+syqcDUQVs9V3ZxOt0Dom732G+0ESyE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=a4BYbY0H/gJ/SBV0pW9HBq0oWfzuEg4LxLjaui3637c=;
-        b=hxxgooH+3PgnNRCJpJ6QrUHHirCa1W/3tzhrELztl2MFN4b7OCdkZrzgTF0Y8Kfrt2
-         qKg5lafWrULgM65kG3aUYyGiTlXUtWLVIsChLc5UQDx6Wl4wDomJYla70tXGk7fWkNra
-         ZymMrf3xISEnDjUopTpzUv3ZQpKby1MKBWvQClHx7WoRwRMaYbV6H0bfsnebfuygru+T
-         4HGKLai+FY8M53SK9IlucEGAd6h/vybXhoLHeIG641wBSXNbokhoANhA7dICjSDKggAn
-         HkwKtIGMiEVM14qsMedDVjAS6KP2zyyK5hZTurO3C8PDf+HsGtqhCjZXkRS8yUO2jKak
-         VPXQ==
-X-Gm-Message-State: APjAAAWLhXfp9DvMkz3oT6ua2zfVlh+6nLIxBhAGSeedKYSBTl5xXV9m
-        dClPk82jNe9m8PYmWrn863Vg/Q==
-X-Google-Smtp-Source: APXvYqywt/PoLflYA+NpdNVy44D4ERB1Ci5BUNDxQ1MXj4L11orInMGwVat9DDAcLlir0teyGDpJ1A==
-X-Received: by 2002:adf:f988:: with SMTP id f8mr3227533wrr.254.1558713588616;
-        Fri, 24 May 2019 08:59:48 -0700 (PDT)
-Received: from locke-xps13.localdomain (69.pool85-58-237.dynamic.orange.es. [85.58.237.69])
-        by smtp.gmail.com with ESMTPSA id i185sm4535054wmg.32.2019.05.24.08.59.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 08:59:47 -0700 (PDT)
-From:   =?UTF-8?q?Iago=20L=C3=B3pez=20Galeiras?= <iago@kinvolk.io>
-To:     john.fastabend@gmail.com, ast@kernel.org, daniel@iogearbox.net
-Cc:     alban@kinvolk.io, krzesimir@kinvolk.io, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v4 4/4] selftests: bpf: verifier: read netns_dev and netns_ino from struct bpf_sock_ops
-Date:   Fri, 24 May 2019 17:59:31 +0200
-Message-Id: <20190524155931.7946-5-iago@kinvolk.io>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190524155931.7946-1-iago@kinvolk.io>
-References: <20190524155931.7946-1-iago@kinvolk.io>
+        id S2390392AbfEXP7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 11:59:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51676 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389079AbfEXP7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 11:59:34 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B80D8217D7;
+        Fri, 24 May 2019 15:59:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558713574;
+        bh=4+rchS067k+etnZl+afwYNLkDhPgxJ39VqZ3BVzy4O0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mSfPGbwLqyhe/N9Idd75C4ptW6jS6o+WpY64OZ6Y6bHR3u5+LT5n+jBUcTn6GeG8X
+         6iEJBw7BahotV0mjYyYdrSq3Z4hg7eGRM2uh8LfrvpM/N1JRgipYhFCc8Z12/jHYlC
+         0l4KrrrjgM8cwFT1dxdxsfuxMGatCvCekuPsaBDE=
+Date:   Fri, 24 May 2019 17:59:32 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Vijay Khemka <vijaykhemka@fb.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        sdasari@fb.com
+Subject: Re: [PATCH v2] misc: aspeed-lpc-ctrl: Correct return values
+Message-ID: <20190524155932.GB7516@kroah.com>
+References: <20190503181336.579877-1-vijaykhemka@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190503181336.579877-1-vijaykhemka@fb.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alban Crequy <alban@kinvolk.io>
+On Fri, May 03, 2019 at 11:13:36AM -0700, Vijay Khemka wrote:
+> Corrected some of return values with appropriate meanings and reported
+> relevant messages as debug information.
+> 
+> Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+> ---
+>  drivers/misc/aspeed-lpc-ctrl.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 
-Tested with:
-> $ sudo ./test_verifier
-> ...
-> #905/p sockops accessing bpf_sock_ops->netns_dev, ok OK
-> #906/p sockops accessing bpf_sock_ops->netns_ino, ok OK
-> ...
-> Summary: 1421 PASSED, 0 SKIPPED, 0 FAILED
-
-Signed-off-by: Alban Crequy <alban@kinvolk.io>
-
----
-
-Changes since v1:
-- This is a new selftest (review from Song)
-
-Changes since v2:
-- test partial reads on netns_dev (review from Y Song)
-- split in two tests
----
- .../testing/selftests/bpf/verifier/var_off.c  | 53 +++++++++++++++++++
- 1 file changed, 53 insertions(+)
-
-diff --git a/tools/testing/selftests/bpf/verifier/var_off.c b/tools/testing/selftests/bpf/verifier/var_off.c
-index 8504ac937809..9e4c6c78eb9d 100644
---- a/tools/testing/selftests/bpf/verifier/var_off.c
-+++ b/tools/testing/selftests/bpf/verifier/var_off.c
-@@ -246,3 +246,56 @@
- 	.result = ACCEPT,
- 	.prog_type = BPF_PROG_TYPE_LWT_IN,
- },
-+{
-+	"sockops accessing bpf_sock_ops->netns_dev, ok",
-+	.insns = {
-+	BPF_LDX_MEM(BPF_DW, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev)),
-+
-+	BPF_LDX_MEM(BPF_W, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev)),
-+	BPF_LDX_MEM(BPF_W, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev) + 4),
-+
-+	BPF_LDX_MEM(BPF_H, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev)),
-+	BPF_LDX_MEM(BPF_H, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev) + 2),
-+	BPF_LDX_MEM(BPF_H, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev) + 4),
-+	BPF_LDX_MEM(BPF_H, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev) + 6),
-+
-+	BPF_LDX_MEM(BPF_B, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev)),
-+	BPF_LDX_MEM(BPF_B, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev) + 1),
-+	BPF_LDX_MEM(BPF_B, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev) + 2),
-+	BPF_LDX_MEM(BPF_B, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev) + 3),
-+	BPF_LDX_MEM(BPF_B, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev) + 4),
-+	BPF_LDX_MEM(BPF_B, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev) + 5),
-+	BPF_LDX_MEM(BPF_B, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev) + 6),
-+	BPF_LDX_MEM(BPF_B, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_dev) + 7),
-+	BPF_MOV64_IMM(BPF_REG_0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.result = ACCEPT,
-+	.prog_type = BPF_PROG_TYPE_SOCK_OPS,
-+},
-+{
-+	"sockops accessing bpf_sock_ops->netns_ino, ok",
-+	.insns = {
-+	BPF_LDX_MEM(BPF_DW, BPF_REG_4, BPF_REG_1, offsetof(struct bpf_sock_ops,
-+							   netns_ino)),
-+	BPF_MOV64_IMM(BPF_REG_0, 0),
-+	BPF_EXIT_INSN(),
-+	},
-+	.result = ACCEPT,
-+	.prog_type = BPF_PROG_TYPE_SOCK_OPS,
-+},
--- 
-2.21.0
-
+File is no longer here :(
