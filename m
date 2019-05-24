@@ -2,220 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A9AA28FAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 05:45:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1ED728FB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 05:48:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388206AbfEXDpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 23:45:31 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44182 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387454AbfEXDpa (ORCPT
+        id S2388689AbfEXDsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 23:48:35 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51408 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387454AbfEXDsf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 23 May 2019 23:45:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=KivctEZd29bcxFDatHTQkCC5nkJlOomPusCVubeDICg=; b=ilqI/cDRAtlshwgWVY6/n6GaCe
-        ybw/acFU1TXkzfK4bJuLzPso6M7U2CzKRlZW5KpOtfwuPTcMI7zoeVFpYbrTOcRBmug03AmhQhVy5
-        wvnlDTTsXb4AvyQgRUh3N1Df7lsWGaPR3dR316khQfU5ut+B2fnae1D390qZxXAD7c3GG65XhXoyH
-        s5pxyqxlxsx2O2eksApW4KrCNu3x9mD+PaeCj66mPNxnBMBland/AUboykDk+4PIauZjlDiWzsapl
-        U/cHe/+wm9dEn9JaY8k8UKUPratU6ybIB+wmR3YFPuRUccEsFK6K7d7iuz6o7NPEQcWtMQT9HKY/2
-        2M7VO+nA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hU193-0003IK-8j; Fri, 24 May 2019 03:45:25 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v2] ASoC: drop COMPILE_TEST for sound/soc/intel/boards/ that
- use X86_INTEL_LPSS
-Message-ID: <03640e4f-1f8e-9090-c03b-364918e633d3@infradead.org>
-Date:   Thu, 23 May 2019 20:45:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 23 May 2019 23:48:35 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f10so372897wmb.1
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 20:48:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=v34blGR1BOyMj6mXuwgkwlptJtpxjWKG4dytKI5nL7Y=;
+        b=qSkxOpDnzNaN5Txt6l2nZBuG9L0SIjfowxHHxRLtPgAxq5mJTJAiqoLy4wv6ELdz2D
+         vdmDx8fRQoP68c08RNMlWIucGQpkXJNm5oShk1ykp0I/37HIb6EStrc70G1i/N928GZe
+         ei7F2/AUKX7lQyPuwf+/21fLnCByVKQl8aF7G8THupEIrnVEnPUkmSO5Wdr9Ffjs/YGs
+         L1V9eNIwSwdkcutpR/p1ZuH2MTfXFIP5fQn3OlnSOfJrCKKMi8ZgaQBGuKh/9Q0YcPLQ
+         jGqNbA2/ZpS9vb/ulkX6uQ5bpZIjHCUefmaf28u4xlR/Z/LQu7YACK3bmyQVAGQOujWI
+         jJ8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=v34blGR1BOyMj6mXuwgkwlptJtpxjWKG4dytKI5nL7Y=;
+        b=kTExAvB21OhvoZuZ83zHv5HRO+59hRtsT6QOFlAWX4f3NTjbBe1wevGjKRhmM7XmWf
+         bzLloINdNGaQ3bHU6YYr3CUXB3d19Cuj/hrzf3Z/fGu/qv1QQHDBhqVZsGzDDdyPFcMl
+         WUG+TNRlZlUiZ1eg5inH7pTt9z4BF9fLKgiOJ22LaNZFU2RfJfULC1JwkvM2h0H6QZDw
+         /YeOP6A4thYhR9vfx+dfKRVxjgF2sPsueuvR1cVkaU37q5oE1Ts7IpkfU1JzSoL6KXBQ
+         erIlU9nNzSAl09I4A4ZleU3XWIMEhoxhUqhgnYBVeBegNQCtOHX1Q+DHLVslasEqg/Ke
+         YN2w==
+X-Gm-Message-State: APjAAAU/WkxF8gKz1QhiuXAwXKg+oYhw06TWyLdXmZykKb4CdsteqSyp
+        unRBFd3B0qIZ75b8jS4gW+qBrA==
+X-Google-Smtp-Source: APXvYqxG4ZsNU/Eh3hsaRQusLj6+eGT7GlYIFrpKh/1q3mMdeeLE5/ucFTpIpIbkzu6SAql8zIjshA==
+X-Received: by 2002:a05:600c:2116:: with SMTP id u22mr13830470wml.58.1558669712978;
+        Thu, 23 May 2019 20:48:32 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id y12sm696389wrh.40.2019.05.23.20.48.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 20:48:32 -0700 (PDT)
+Message-ID: <5ce76990.1c69fb81.2d6ca.3775@mx.google.com>
+Date:   Thu, 23 May 2019 20:48:32 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Branch: linux-4.19.y
+X-Kernelci-Kernel: v4.19.45-115-g071ff9cc9849
+In-Reply-To: <20190523181731.372074275@linuxfoundation.org>
+References: <20190523181731.372074275@linuxfoundation.org>
+Subject: Re: [PATCH 4.19 000/114] 4.19.46-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+stable-rc/linux-4.19.y boot: 125 boots: 0 failed, 112 passed with 13 offlin=
+e (v4.19.45-115-g071ff9cc9849)
 
-This is a partial revert of 164a263bf8d0, which causes build errors
-on non-X86 platforms (specifically seen on IA64) when COMPILE_TEST
-is set/enabled.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.19.y/kernel/v4.19.45-115-g071ff9cc9849/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
+y/kernel/v4.19.45-115-g071ff9cc9849/
 
-Fixes these build errors (on ia64):
-i../sound/soc/intel/boards/bxt_da7219_max98357a.c:19:10: fatal error: asm/cpu_device_id.h: No such file or directory
- #include <asm/cpu_device_id.h>
-../sound/soc/intel/boards/bytcr_rt5640.c:31:10: fatal error: asm/cpu_device_id.h: No such file or directory
- #include <asm/cpu_device_id.h>
-../sound/soc/intel/boards/bytcr_rt5651.c:33:10: fatal error: asm/cpu_device_id.h: No such file or directory
- #include <asm/cpu_device_id.h>
-../sound/soc/intel/boards/cht_bsw_rt5645.c:29:10: fatal error: asm/cpu_device_id.h: No such file or directory
- #include <asm/cpu_device_id.h>
-../sound/soc/intel/boards/bytcht_es8316.c:33:10: fatal error: asm/cpu_device_id.h: No such file or directory
- #include <asm/cpu_device_id.h>
-../sound/soc/intel/boards/bytcht_da7213.c:26:10: fatal error: asm/platform_sst_audio.h: No such file or directory
- #include <asm/platform_sst_audio.h>
+Tree: stable-rc
+Branch: linux-4.19.y
+Git Describe: v4.19.45-115-g071ff9cc9849
+Git Commit: 071ff9cc98498f489abc097471549b19933ba3e2
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 68 unique boards, 24 SoC families, 14 builds out of 206
 
-Fixes: 164a263bf8d0 ("ASoC: Intel: Make boards more available for compile test")
+Offline Platforms:
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Cc: Jie Yang <yang.jie@linux.intel.com>
-Cc: alsa-devel@alsa-project.org
+arm:
+
+    sama5_defconfig:
+        gcc-8
+            at91-sama5d4_xplained: 1 offline lab
+
+    multi_v7_defconfig:
+        gcc-8
+            alpine-db: 1 offline lab
+            at91-sama5d4_xplained: 1 offline lab
+            socfpga_cyclone5_de0_sockit: 1 offline lab
+            stih410-b2120: 1 offline lab
+            sun5i-r8-chip: 1 offline lab
+            tegra124-jetson-tk1: 1 offline lab
+
+    tegra_defconfig:
+        gcc-8
+            tegra124-jetson-tk1: 1 offline lab
+
+    sunxi_defconfig:
+        gcc-8
+            sun5i-r8-chip: 1 offline lab
+
+    bcm2835_defconfig:
+        gcc-8
+            bcm2835-rpi-b: 1 offline lab
+
+arm64:
+
+    defconfig:
+        gcc-8
+            apq8016-sbc: 1 offline lab
+            juno-r2: 1 offline lab
+            mt7622-rfb1: 1 offline lab
+
 ---
- sound/soc/intel/boards/Kconfig |   30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
-
---- lnx-52-rc1.orig/sound/soc/intel/boards/Kconfig
-+++ lnx-52-rc1/sound/soc/intel/boards/Kconfig
-@@ -18,7 +18,7 @@ config SND_SOC_INTEL_HASWELL_MACH
- 	tristate "Haswell Lynxpoint"
- 	depends on I2C
- 	depends on I2C_DESIGNWARE_PLATFORM || COMPILE_TEST
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_RT5640
- 	help
- 	  This adds support for the Lynxpoint Audio DSP on Intel(R) Haswell
-@@ -35,7 +35,7 @@ config SND_SOC_INTEL_BDW_RT5677_MACH
- 	depends on I2C
- 	depends on I2C_DESIGNWARE_PLATFORM || COMPILE_TEST
- 	depends on GPIOLIB || COMPILE_TEST
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_RT5677
- 	help
- 	  This adds support for Intel Broadwell platform based boards with
-@@ -47,7 +47,7 @@ config SND_SOC_INTEL_BROADWELL_MACH
- 	tristate "Broadwell Wildcatpoint"
- 	depends on I2C
- 	depends on I2C_DESIGNWARE_PLATFORM || COMPILE_TEST
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_RT286
- 	help
- 	  This adds support for the Wilcatpoint Audio DSP on Intel(R) Broadwell
-@@ -61,7 +61,7 @@ if SND_SOC_INTEL_BAYTRAIL
- config SND_SOC_INTEL_BYT_MAX98090_MACH
- 	tristate "Baytrail with MAX98090 codec"
- 	depends on I2C
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_MAX98090
- 	help
- 	  This adds audio driver for Intel Baytrail platform based boards
-@@ -72,7 +72,7 @@ config SND_SOC_INTEL_BYT_MAX98090_MACH
- config SND_SOC_INTEL_BYT_RT5640_MACH
- 	tristate "Baytrail with RT5640 codec"
- 	depends on I2C
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_RT5640
- 	help
- 	  This adds audio driver for Intel Baytrail platform based boards
-@@ -86,7 +86,7 @@ if SND_SST_ATOM_HIFI2_PLATFORM || SND_SO
- config SND_SOC_INTEL_BYTCR_RT5640_MACH
- 	tristate "Baytrail and Baytrail-CR with RT5640 codec"
- 	depends on I2C && ACPI
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_ACPI
- 	select SND_SOC_RT5640
- 	help
-@@ -98,7 +98,7 @@ config SND_SOC_INTEL_BYTCR_RT5640_MACH
- config SND_SOC_INTEL_BYTCR_RT5651_MACH
- 	tristate "Baytrail and Baytrail-CR with RT5651 codec"
- 	depends on I2C && ACPI
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_ACPI
- 	select SND_SOC_RT5651
- 	help
-@@ -110,7 +110,7 @@ config SND_SOC_INTEL_BYTCR_RT5651_MACH
- config SND_SOC_INTEL_CHT_BSW_RT5672_MACH
- 	tristate "Cherrytrail & Braswell with RT5672 codec"
- 	depends on I2C && ACPI
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_ACPI
- 	select SND_SOC_RT5670
-         help
-@@ -122,7 +122,7 @@ config SND_SOC_INTEL_CHT_BSW_RT5672_MACH
- config SND_SOC_INTEL_CHT_BSW_RT5645_MACH
- 	tristate "Cherrytrail & Braswell with RT5645/5650 codec"
- 	depends on I2C && ACPI
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_ACPI
- 	select SND_SOC_RT5645
- 	help
-@@ -134,7 +134,7 @@ config SND_SOC_INTEL_CHT_BSW_RT5645_MACH
- config SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH
- 	tristate "Cherrytrail & Braswell with MAX98090 & TI codec"
- 	depends on I2C && ACPI
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_MAX98090
- 	select SND_SOC_TS3A227E
- 	help
-@@ -146,7 +146,7 @@ config SND_SOC_INTEL_CHT_BSW_MAX98090_TI
- config SND_SOC_INTEL_CHT_BSW_NAU8824_MACH
- 	tristate "Cherrytrail & Braswell with NAU88L24 codec"
- 	depends on I2C && ACPI
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_ACPI
- 	select SND_SOC_NAU8824
- 	help
-@@ -158,7 +158,7 @@ config SND_SOC_INTEL_CHT_BSW_NAU8824_MAC
- config SND_SOC_INTEL_BYT_CHT_DA7213_MACH
- 	tristate "Baytrail & Cherrytrail with DA7212/7213 codec"
- 	depends on I2C && ACPI
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_ACPI
- 	select SND_SOC_DA7213
- 	help
-@@ -170,7 +170,7 @@ config SND_SOC_INTEL_BYT_CHT_DA7213_MACH
- config SND_SOC_INTEL_BYT_CHT_ES8316_MACH
- 	tristate "Baytrail & Cherrytrail with ES8316 codec"
- 	depends on I2C && ACPI
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	select SND_SOC_ACPI
- 	select SND_SOC_ES8316
- 	help
-@@ -186,7 +186,7 @@ if SND_SST_ATOM_HIFI2_PLATFORM
- config SND_SOC_INTEL_BYT_CHT_NOCODEC_MACH
- 	tristate "Baytrail & Cherrytrail platform with no codec (MinnowBoard MAX, Up)"
- 	depends on I2C && ACPI
--	depends on X86_INTEL_LPSS || COMPILE_TEST
-+	depends on X86_INTEL_LPSS
- 	help
- 	  This adds support for ASoC machine driver for the MinnowBoard Max or
- 	  Up boards and provides access to I2S signals on the Low-Speed
-@@ -248,7 +248,7 @@ if SND_SOC_INTEL_APL
- config SND_SOC_INTEL_BXT_DA7219_MAX98357A_MACH
- 	tristate "Broxton with DA7219 and MAX98357A in I2S Mode"
- 	depends on I2C && ACPI
--	depends on MFD_INTEL_LPSS || COMPILE_TEST
-+	depends on MFD_INTEL_LPSS
- 	select SND_SOC_DA7219
- 	select SND_SOC_MAX98357A
- 	select SND_SOC_DMIC
-
+For more info write to <info@kernelci.org>
