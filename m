@@ -2,95 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D8D629766
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCFD82976A
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:39:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391133AbfEXLi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:38:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36260 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390714AbfEXLi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:38:26 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F8442168B;
-        Fri, 24 May 2019 11:38:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558697906;
-        bh=Zhhg//BfGeL3tcsPNX0Bm+RkAxei7MrcqCr6feaoOzI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KVaJZM07X99hL8TrcI1XzkxkEmHIbQl5KGD7llIQ55p0Mt+yT1jkDRIa/kfoZTOSu
-         M7F2rqoetBBc8qMlYqr8PnT5wbki/ZMB6gFsyDDzh5cNA/3zbj0oPtWu7w/OxOn/OR
-         yqC5FkK1qPyd0kqrkCh+0Qcx50ifKLpZbST3IJYk=
-Date:   Fri, 24 May 2019 13:38:22 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        aou@eecs.berkeley.edu, arnd@arndb.de, bp@alien8.de,
-        catalin.marinas@arm.com, davem@davemloft.net, fenghua.yu@intel.com,
-        heiko.carstens@de.ibm.com, herbert@gondor.apana.org.au,
-        ink@jurassic.park.msu.ru, jhogan@kernel.org, linux@armlinux.org.uk,
-        mattst88@gmail.com, mingo@kernel.org, mpe@ellerman.id.au,
-        palmer@sifive.com, paul.burton@mips.com, paulus@samba.org,
-        ralf@linux-mips.org, rth@twiddle.net, stable@vger.kernel.org,
-        tglx@linutronix.de, tony.luck@intel.com, vgupta@synopsys.com,
-        jhansen@vmware.com, vdasa@vmware.com, aditr@vmware.com,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 00/18] locking/atomic: atomic64 type cleanup
-Message-ID: <20190524113822.GA32272@kroah.com>
-References: <20190522132250.26499-1-mark.rutland@arm.com>
- <20190523083013.GA4616@andrea>
- <20190523101926.GA3370@lakrids.cambridge.arm.com>
- <20190524103731.GN2606@hirez.programming.kicks-ass.net>
- <20190524111807.GS2650@hirez.programming.kicks-ass.net>
+        id S2391199AbfEXLjL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:39:11 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38282 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391010AbfEXLjK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 07:39:10 -0400
+Received: by mail-ed1-f67.google.com with SMTP id w11so13973060edl.5
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=KppfXZZpJPEi/CjZSEtvqmbI5qt1QsjN8iLsZFEVchY=;
+        b=M9X9ZwPznH9RzIrzt1CwYx5BK1FgrAC/LoZmueDzsSYWKMVhChnb8PowKzS2p8Z+ZB
+         WRW5CpZJDKpMbjXqWJq6PyS2EwrfR9mWc7PizQA3O7DK0GTCvzgjqPbVdX+8TQAKr7V2
+         AVisBXfWFft8palFxkN+LMinjFWuKFJi5p1ya4QcIc65PcAlnCC4Vop0DIp9vPBLANJU
+         geFBHLsybxXz+gBPdfoaHOiYW9OZH3N+gHgEqkRxYmAwmdRRs8t7NQcCeZaD+bEaSXi2
+         tNOj4eP4tmVLjdzL8N8KthH5OAWEfLJPn687S+AXd8GMNgnXWbXXu3nvZBBPu1DZHLAl
+         dXuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=KppfXZZpJPEi/CjZSEtvqmbI5qt1QsjN8iLsZFEVchY=;
+        b=pAIavEOpuFZFnNcu68tHdxnkB7z+jNcHyzPh5HLBfoitjx+Za7l4cucBlq+e80Snr2
+         YUff8dFJtnfqsjPb4z7dhQCI3puI8/nPBBXmQevyYfgjz81mKUVFmxN+27Mg+nCt/DkB
+         uMNUnoY77yqeJ9xm6qywqdepEAV+5GH2UPS8q7+Z30jRJr5rja1T06N5GtMSidhE4dCz
+         KR41m2rMtVVvPNlACMEjMkIpTzILl6OkhmaOddg99Gt3NjXZJoeVa5yowVY3AeGyNIiJ
+         kIIW6NZP9mzSmdfQD8cgdCd2DtjfUH014GPngPfYtNmwECITgShmr2lOHudpN9ntzuPn
+         gTpw==
+X-Gm-Message-State: APjAAAU+GECja7rKDHf4/kjGVsneWBu2F2P8RLFo7Yk6NL/tZ6jrGhUx
+        28Pl0nk/60JARehaRbspLp5BTkgUE9ekaw89yI0=
+X-Google-Smtp-Source: APXvYqzwCrxfSmWQrHVldRF5nGls/1NXgs4ClNU5Iwd+OVOLZlIkoa924eeVf9Bwghx2vfcXHTfH1bwBrhMV0rLNRUs=
+X-Received: by 2002:a50:e40f:: with SMTP id d15mr104508668edm.0.1558697949546;
+ Fri, 24 May 2019 04:39:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524111807.GS2650@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Received: by 2002:a50:9424:0:0:0:0:0 with HTTP; Fri, 24 May 2019 04:39:08
+ -0700 (PDT)
+From:   Mrs Carlsen Monika <carlsen.monika@gmail.com>
+Date:   Fri, 24 May 2019 11:39:08 +0000
+X-Google-Sender-Auth: vKCswPEx6RQOV0jJnxc9IdkehSo
+Message-ID: <CACeAqG-nKs8wwKWBzCVz-5wpdw4iKMM8i90WRHSKArA4=75zxQ@mail.gmail.com>
+Subject: Greetings My Dear, Please I Need Your Help.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 01:18:07PM +0200, Peter Zijlstra wrote:
-> On Fri, May 24, 2019 at 12:37:31PM +0200, Peter Zijlstra wrote:
-> > On Thu, May 23, 2019 at 11:19:26AM +0100, Mark Rutland wrote:
-> > 
-> > > [mark@lakrids:~/src/linux]% git grep '\(return\|=\)\s\+atomic\(64\)\?_set'
-> > > include/linux/vmw_vmci_defs.h:  return atomic_set((atomic_t *)var, (u32)new_val);
-> > > include/linux/vmw_vmci_defs.h:  return atomic64_set(var, new_val);
-> > > 
-> > 
-> > Oh boy, what a load of crap you just did find.
-> > 
-> > How about something like the below? I've not read how that buffer is
-> > used, but the below preserves all broken without using atomic*_t.
-> 
-> Clarified by something along these lines?
-> 
-> ---
->  Documentation/atomic_t.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
-> index dca3fb0554db..125c95ddbbc0 100644
-> --- a/Documentation/atomic_t.txt
-> +++ b/Documentation/atomic_t.txt
-> @@ -83,6 +83,9 @@ The non-RMW ops are (typically) regular LOADs and STOREs and are canonically
->  implemented using READ_ONCE(), WRITE_ONCE(), smp_load_acquire() and
->  smp_store_release() respectively.
->  
-> +Therefore, if you find yourself only using the Non-RMW operations of atomic_t,
-> +you do not in fact need atomic_t at all and are doing it wrong.
-> +
->  The one detail to this is that atomic_set{}() should be observable to the RMW
->  ops. That is:
->  
+Greetings My Dear,
 
-I like it!
+    I sent this mail praying it will found you in a good condition of
+health, since I myself are in a very critical health condition in
+which I  sleep every night without knowing if I may be alive to see
+the next day. I am Mrs. Monika John  Carlsen from Denmark wife of late
+Mr John Carlsen, a widow suffering from long time illness. I have some
+funds I inherited from my late husband, the sum of (eleven million
+dollars) my Doctor told me recently that I have serious sickness which
+is cancer problem. What disturbs me most is my stroke sickness. Having
+known my condition, I decided to donate this fund to a good person
+that will utilize it the way i am going to instruct herein. I need a
+very honest and God fearing person who can claim this money and use it
+for Charity works, for orphanages, widows and also  build schools for
+less privileges that will be named after my late husband if possible
+and to promote the word of God and the effort that the house of God is
+maintained.
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I do not want a situation where this money will be used in an ungodly
+manner. That's why I'm taking this decision. I'm not afraid of death
+so I know where I'm going. I accept this decision because I do not
+have any child who will inherit this money after I die. Please I want
+your sincerely and urgent answer to know if you will be able to
+execute this project, and I will give you more information on how the
+fund will be transferred to your bank account. I am waiting for your
+reply.
+
+May God Bless you,
+Mrs. Monika John  Carlsen
