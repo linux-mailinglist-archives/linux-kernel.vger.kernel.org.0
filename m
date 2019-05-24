@@ -2,79 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3C98290CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 08:14:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9C822906F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 07:37:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388824AbfEXGN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 02:13:59 -0400
-Received: from app1.whu.edu.cn ([202.114.64.88]:50962 "EHLO whu.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387936AbfEXGN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 02:13:59 -0400
-X-Greylist: delayed 2221 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 May 2019 02:13:57 EDT
-Received: from localhost (unknown [111.202.192.3])
-        by email1 (Coremail) with SMTP id AQBjCgDnR6XugudcZXHNAA--.25152S2;
-        Fri, 24 May 2019 13:36:51 +0800 (CST)
-From:   Peng Wang <rocking@whu.edu.cn>
-To:     axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Wang <rocking@whu.edu.cn>
-Subject: [UNTESTED PATCH] block: fix a potential null pointer dereference
-Date:   Fri, 24 May 2019 13:35:20 +0800
-Message-Id: <20190524053520.30963-1-rocking@whu.edu.cn>
-X-Mailer: git-send-email 2.19.1
+        id S1731888AbfEXFhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 01:37:00 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:54887 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726601AbfEXFg7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 01:36:59 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 6417E21EA0;
+        Fri, 24 May 2019 01:36:56 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Fri, 24 May 2019 01:36:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:content-transfer-encoding:in-reply-to; s=fm3; bh=l
+        Kg4XQeq5jOC7ztvZYWg3fg6/ebfKedqKp+BMmCvMz4=; b=baXxfCBU5iplvdNS+
+        6T/zo3PdxcVAcp2ZVjR/RM03J2d0Hhx5U/foQmfV4tbI2tNQEKN4fpExpZk9DkNS
+        VNoM8u6TBCFEEoN8ene9HgcHj5eM6Y4EG1y0nEAtIy4H5hS3FTUaBQpuES9PX49X
+        Kv1qG3OA05tEiWLz8v5A6fLbpxnrZQMQj/0/RiStGyB9Yo/I3GfqjtExBnZ2L6OZ
+        cjt4zcptQ6A/aV5W+CqhIp5KYY0YoXANMic+Tq2YEsG40wm7Zk1zakos+T7Z2vuR
+        EgNNM/MguQl23WKyla46am3aKfioxEdWVZBgeKhTIts7XDStWKmzbU2cUNxIQSGl
+        da3cg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=lKg4XQeq5jOC7ztvZYWg3fg6/ebfKedqKp+BMmCvM
+        z4=; b=rIcjGurc51yGDA0o6P+2ZgymkWxnwCHXtZ2hJugPAl5Yml0KhEQs7QdRe
+        qCrj4dW8ijKHPhjH/+gvGqWMZ5AdHTgxqMqXErGOaC17evTYeOtep74eEGuA0B1l
+        T2ZvGW/yIXu9FICDVoy3B0Xh68PKrqsr+YwrB2EkDZhFUTG7uxpcwE8qjmKuGL7D
+        tAgbmZLo4TQxTJ9n6NlQ+JAfg6EakiLrzEFC7+NcnqZtU5j/PbsLDwmfNaOwJI73
+        IN+ByfD41D28RHvjfdT51RTvIc8X+Ec4XhLWFrKDstnQBqjBeLx4yaYYE9sevQ8H
+        DY0tUJlXdsDZxqyN/tX0eLZ4bgCqw==
+X-ME-Sender: <xms:94LnXKpNTtE4DClk3cE7nkVN0I6OEY8haE37KKWu4risAbqZIzfbTg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddrudduhedgleelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtugfgjggfsehtkeertddtreejnecuhfhrohhmpefrvght
+    vghrucfjuhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrhgvrhesfihhohdqthdrnh
+    gvtheqnecuffhomhgrihhnpehfrhgvvgguvghskhhtohhprdhorhhgnecukfhppeduudej
+    rddvtddrieelrddugedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpehpvghtvghrrdhhuh
+    htthgvrhgvrhesfihhohdqthdrnhgvthenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:94LnXLDzR2BTPIBbGl7IsypQq-fedVl47QPAEJgAc_xgMlH31RJFDg>
+    <xmx:94LnXIfjZeNUf0RQYuLQyeh2SN8dcOoA0bIQBSe9fUOMfD1WRKdSow>
+    <xmx:94LnXNDVAbuhLCoaWJ-1pvkuP2t5dLuI5K7wJpy_GUVkCD32L-ajVg>
+    <xmx:-ILnXHLVBKbZKiRFOaNK-tO5LRDcqWykS-q8Ic1YqJV4w7nYl1aphw>
+Received: from jelly (117-20-69-142.751445.bne.nbn.aussiebb.net [117.20.69.142])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4438680060;
+        Fri, 24 May 2019 01:36:52 -0400 (EDT)
+Date:   Fri, 24 May 2019 15:36:48 +1000
+From:   Peter Hutterer <peter.hutterer@who-t.net>
+To:     Hui Wang <hui.wang@canonical.com>
+Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Xiaoxiao Liu <xiaoxiao.liu-1@cn.alps.com>,
+        dmitry.torokhov@gmail.com, XiaoXiao Liu <sliuuxiaonxiao@gmail.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Xiaojian Cao <xiaojian.cao@cn.alps.com>,
+        "zhangfp1@lenovo.com" <zhangfp1@lenovo.com>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlA==?=
+ =?utf-8?B?5aSNOiBbUEFUQ0hdIGlucHV0?= =?utf-8?Q?=3A?= alps-fix the issue the
+ special alps trackpoint do not work.
+Message-ID: <20190524053648.GA16379@jelly>
+References: <20190520110149.27107-1-sliuuxiaonxiao@gmail.com>
+ <OSBPR01MB485510A2A32CD9D2CE5EF7A1DA070@OSBPR01MB4855.jpnprd01.prod.outlook.com>
+ <345b62e1-407e-7a03-9b03-486bbf5a0a8e@canonical.com>
+ <20190521094622.syeub6tcqhbyc7sg@pali>
+ <OSBPR01MB4855D744473149D037612506DA000@OSBPR01MB4855.jpnprd01.prod.outlook.com>
+ <20190522063546.kb74mxeprkauicul@pali>
+ <OSBPR01MB48550B43F78BBFBDC20D414DDA000@OSBPR01MB4855.jpnprd01.prod.outlook.com>
+ <20190522074030.64sy7xt3wnomtxjb@pali>
+ <20190523060154.GA10526@jelly>
+ <38ec4a40-d51a-aeb1-a5e8-dbaed1142298@canonical.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQBjCgDnR6XugudcZXHNAA--.25152S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruFWrtrW8XFWkAr18AFW7CFg_yoW3AFX_Ww
-        4vyan7uFn5Xr43ur1DZFWYyF1vkr48JF4xGFWftr9rX3WFq3Z0ywsxGr45JFZ3GFWfuryD
-        Xw4kXr15Xr1xZjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbckFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-        A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-        6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_GrWl
-        42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
-        WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAK
-        I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
-        4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-        42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUhdbbUUUUU=
-X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
+In-Reply-To: <38ec4a40-d51a-aeb1-a5e8-dbaed1142298@canonical.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-blk_queue_dying() still needs request_queue "q" when
-enter_succeeded is false, so let's set "q" zero later.
+On Fri, May 24, 2019 at 01:25:52PM +0800, Hui Wang wrote:
+> 
+> On 2019/5/23 下午2:01, Peter Hutterer wrote:
+> > On Wed, May 22, 2019 at 09:40:30AM +0200, Pali Rohár wrote:
+> > > On Wednesday 22 May 2019 07:30:43 Xiaoxiao Liu wrote:
+> > > > Hi Pali,
+> > > > 
+> > > > Ok, and cannot you set ALPS_DUALPOINT flag based on that
+> > > > alps_check_is_trackpoint() result and then update
+> > > > alps_process_packet_ss4_v3() code to supports also
+> > > > V8 trackpoint packets?
+> > > > --> Yes, we can do like so, when we use the v8 method to process the trackpoint , the mouse speed is not ideal.
+> > > >        Then we choose the standard mouse driver.
+> > > Mouse speed is something which is configurable. Have you configured it
+> > > somehow? Also there is libinput project should handle these settings
+> > > more properly.
+> > > 
+> > > Adding Peter Hutterer, maintainer of libinput to loop. I think he could
+> > > help with this problem.
+> > libinput has a quirk for a magic multiplier on trackpoints. it was the only
+> > solution I found that came close to "working" given that every device seems
+> > to provide some other random magic data. Doc for it is here:
+> > https://wayland.freedesktop.org/libinput/doc/latest/trackpoint-configuration.html
+> 
+> Hello Peter Hutterer,
+> 
+> To adjust the trackpoint speed from userspace:
+> 
+> If the libinput version is lower than 1.9.0, we could set
+> POINTINGSTICK_CONST_ACCEL=0.25
+> 
+> If the libinput version is higher than 1.12.0, we could set
+> AttrTrackpointMultiplier=0.25
+> 
+> But if we use libinput-1.10.0,  how could we adjust the speed?
 
-Signed-off-by: Peng Wang <rocking@whu.edu.cn>
----
- block/blk-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The LIBINPUT_ATTR_TRACKPOINT_RANGE property, which didn't end up working
+well (hence why it got replaced again). See the docs here though:
+https://wayland.freedesktop.org/libinput/doc/1.10.0/trackpoints.html
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 419d600e6637..3d43909db3b8 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1056,7 +1056,6 @@ blk_qc_t generic_make_request(struct bio *bio)
- 				flags = BLK_MQ_REQ_NOWAIT;
- 			if (blk_queue_enter(q, flags) < 0) {
- 				enter_succeeded = false;
--				q = NULL;
- 			}
- 		}
- 
-@@ -1088,6 +1087,7 @@ blk_qc_t generic_make_request(struct bio *bio)
- 				bio_wouldblock_error(bio);
- 			else
- 				bio_io_error(bio);
-+			q = NULL;
- 		}
- 		bio = bio_list_pop(&bio_list_on_stack[0]);
- 	} while (bio);
--- 
-2.19.1
+Cheers,
+   Peter
 
+> > 
+> > There are also different speeds depending on which xorg driver you'd use (or
+> > libinput/Wayland), so a "mouse speed is not ideal" is almost a guarantee,
+> > given a large enough variety of setups :) That's why we have the speed
+> > toggle, but I'm happy to hear any suggestions on how to make the trackpoint
+> > more useful (in libinput anyway).
+> > 
+> > > I do not think it is a good idea to force back to generic PS/2 mouse
+> > > driver for touchpads and trackpoints. Native drivers for touchpads and
+> > > trackpoints supports multitouch, absolute reporting and lot of other
+> > > things... Also calculation of mouse speed from absolute positions on
+> > > touchpads can be more easily fixed as from emulated relative movements.
+> > Yeah, agree. Using PS/2 mouse drivers means you lose *all* the extra
+> > features touchpads have like palm detection, tapping, scrolling, gestures,
+> > etc.
+> > 
+> > Cheers,
+> >     Peter
+> > 
+> > > Dmitry, what is your opinion about this problem? What should psmouse.ko
+> > > do in this situation? Disallow usage of absolute mode and force bare
+> > > PS/2 relative mode?
+> > 
