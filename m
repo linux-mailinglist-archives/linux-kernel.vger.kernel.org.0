@@ -2,81 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B0D729502
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 11:42:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66A4D29533
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 11:55:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390257AbfEXJm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 05:42:29 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:18430 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389677AbfEXJm3 (ORCPT
+        id S2390320AbfEXJzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 05:55:47 -0400
+Received: from m9784.mail.qiye.163.com ([220.181.97.84]:30670 "EHLO
+        m9784.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389913AbfEXJzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 05:42:29 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ce7bc850000>; Fri, 24 May 2019 02:42:29 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 24 May 2019 02:42:28 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 24 May 2019 02:42:28 -0700
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 24 May
- 2019 09:42:26 +0000
-Subject: Re: [PATCH] spi: Fix a memory leaking bug in wl1271_probe()
-To:     Gen Zhang <blackgod016574@gmail.com>, <kvalo@codeaurora.org>,
-        <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190523143022.GA26485@zhanggen-UX430UQ>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <279050e0-39e4-173d-ffe8-c1837951f4d1@nvidia.com>
-Date:   Fri, 24 May 2019 10:42:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190523143022.GA26485@zhanggen-UX430UQ>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1558690949; bh=f+gDnXlt84op+cO+SWUow2VW/jdTpsnQIMrQpyyMGgg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=IrJmjsCmpX60wzUFmVgEp/9UJN9UZ8CYieGXNOttBYSl0DHZVc5tniuH7PieaTg0L
-         cJXXy8DPE0qVjF1PnDEITchM8yIkJEFsYMapIUL9UsWWd+dMOtabN/lijwIuBZ3Jij
-         Mu4J588ig4jERKcaDk7drT7tzEVEzG/U7TNC/zdCjRzUG8L90N+JypogQwWKx55x5Z
-         YCxh4Y/K04ckhNUH8R26DDGms6OsVpA1sGDPrUn8bOnFCW9ryGsS0pSgO0b2FBQrKw
-         aFumIbRFnHWe6UetgEZ9eC/5jqDNktD2ofYnSpMQWYZXu6qDRfXm4d4LRCN63HLRLc
-         oOuMI+pveu4oQ==
+        Fri, 24 May 2019 05:55:45 -0400
+Received: from kernel_test2.localdomain (unknown [120.132.1.243])
+        by m9784.mail.qiye.163.com (Hmail) with ESMTPA id B6CFB415E9;
+        Fri, 24 May 2019 17:48:02 +0800 (CST)
+From:   Yao Liu <yotta.liu@ucloud.cn>
+To:     Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, nbd@other.debian.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] nbd: fix connection timed out error after reconnecting to server
+Date:   Fri, 24 May 2019 17:43:54 +0800
+Message-Id: <1558691036-16281-1-git-send-email-yotta.liu@ucloud.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-HM-Spam-Status: e1kIGBQJHllBWUlVT0tMQkJCQkJJSExLTUpZV1koWUFJQjdXWS1ZQUlXWQ
+        kOFx4IWUFZNTQpNjo3JCkuNz5ZBg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PS46Dio*Ezg1TSxWMTA*CEwe
+        TSMwFA9VSlVKTk5DTUJKSUNIS0xLVTMWGhIXVQIUDw8aVRcSDjsOGBcUDh9VGBVFWVdZEgtZQVlK
+        SUtVSkhJVUpVSU9IWVdZCAFZQU9ISEg3Bg++
+X-HM-Tid: 0a6ae93d7ff12086kuqyb6cfb415e9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some I/O requests that have been sent succussfully but have not yet been
+replied won't be resubmitted after reconnecting because of server restart,
+so we add a list to track them.
 
-On 23/05/2019 15:30, Gen Zhang wrote:
-> In wl1271_probe(), 'glue->core' is allocated by platform_device_alloc(),
-> when this allocation fails, ENOMEM is returned. However, 'pdev_data'
-> and 'glue' are allocated by devm_kzalloc() before 'glue->core'. When
-> platform_device_alloc() returns NULL, we should also free 'pdev_data'
-> and 'glue' before wl1271_probe() ends to prevent leaking memory.
-> 
-> Similarly, we shoulf free 'pdev_data' when 'glue' is NULL. And we should
-> free 'pdev_data' and 'glue' when 'glue->reg' is error and when 'ret' is
-> error.
-> 
-> Further, we should free 'glue->core', 'pdev_data' and 'glue' when this 
-> function normally ends to prevent leaking memory.
-> 
-> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-I have seen several of these patches now, and this is not correct. I
-think you need to understand how devm_kzalloc() works.
+Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
+---
+ drivers/block/nbd.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-Jon
-
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index 053958a..ca69d6e 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -113,6 +113,8 @@ struct nbd_device {
+ 	struct list_head list;
+ 	struct task_struct *task_recv;
+ 	struct task_struct *task_setup;
++	struct mutex outstanding_lock;
++	struct list_head outstanding_queue;
+ };
+ 
+ #define NBD_CMD_REQUEUED	1
+@@ -125,6 +127,7 @@ struct nbd_cmd {
+ 	blk_status_t status;
+ 	unsigned long flags;
+ 	u32 cmd_cookie;
++	struct list_head outstanding_entry;
+ };
+ 
+ #if IS_ENABLED(CONFIG_DEBUG_FS)
+@@ -619,6 +622,24 @@ static int nbd_send_cmd(struct nbd_device *nbd, struct nbd_cmd *cmd, int index)
+ 	return 0;
+ }
+ 
++static struct nbd_cmd *nbd_get_cmd(struct nbd_device *nbd,
++					struct nbd_cmd *xcmd)
++{
++	struct nbd_cmd *cmd, *tmp;
++
++	mutex_lock(&nbd->outstanding_lock);
++	list_for_each_entry_safe(cmd, tmp, &nbd->outstanding_queue, outstanding_entry) {
++		if (cmd != xcmd)
++			continue;
++		list_del_init(&cmd->outstanding_entry);
++		mutex_unlock(&nbd->outstanding_lock);
++		return cmd;
++	}
++	mutex_unlock(&nbd->outstanding_lock);
++
++	return ERR_PTR(-ENOENT);
++}
++
+ /* NULL returned = something went wrong, inform userspace */
+ static struct nbd_cmd *nbd_read_stat(struct nbd_device *nbd, int index)
+ {
+@@ -714,12 +735,30 @@ static struct nbd_cmd *nbd_read_stat(struct nbd_device *nbd, int index)
+ 				req, bvec.bv_len);
+ 		}
+ 	}
++	cmd = nbd_get_cmd(nbd, cmd);
++	if (IS_ERR(cmd)) {
++		dev_err(disk_to_dev(nbd->disk), "Unexpected reply (%d) %p which not in outstanding queue\n",
++			tag, req);
++		ret = -ENOENT;
++	}
+ out:
+ 	trace_nbd_payload_received(req, handle);
+ 	mutex_unlock(&cmd->lock);
+ 	return ret ? ERR_PTR(ret) : cmd;
+ }
+ 
++static void nbd_requeue_outstanding(struct nbd_device *nbd)
++{
++	struct nbd_cmd *cmd, *tmp;
++
++	mutex_lock(&nbd->outstanding_lock);
++	list_for_each_entry_safe(cmd, tmp, &nbd->outstanding_queue, outstanding_entry) {
++		nbd_requeue_cmd(cmd);
++		list_del_init(&cmd->outstanding_entry);
++	}
++	mutex_unlock(&nbd->outstanding_lock);
++}
++
+ static void recv_work(struct work_struct *work)
+ {
+ 	struct recv_thread_args *args = container_of(work,
+@@ -742,6 +781,7 @@ static void recv_work(struct work_struct *work)
+ 
+ 		blk_mq_complete_request(blk_mq_rq_from_pdu(cmd));
+ 	}
++	nbd_requeue_outstanding(nbd);
+ 	atomic_dec(&config->recv_threads);
+ 	wake_up(&config->recv_wq);
+ 	nbd_config_put(nbd);
+@@ -892,6 +932,10 @@ static int nbd_handle_cmd(struct nbd_cmd *cmd, int index)
+ 		nbd_mark_nsock_dead(nbd, nsock, 1);
+ 		nbd_requeue_cmd(cmd);
+ 		ret = 0;
++	} else if (ret == 0) {
++		mutex_lock(&nbd->outstanding_lock);
++		list_add_tail(&cmd->outstanding_entry, &nbd->outstanding_queue);
++		mutex_unlock(&nbd->outstanding_lock);
+ 	}
+ out:
+ 	mutex_unlock(&nsock->tx_lock);
+@@ -1615,6 +1659,8 @@ static int nbd_dev_add(int index)
+ 	refcount_set(&nbd->config_refs, 0);
+ 	refcount_set(&nbd->refs, 1);
+ 	INIT_LIST_HEAD(&nbd->list);
++	mutex_init(&nbd->outstanding_lock);
++	INIT_LIST_HEAD(&nbd->outstanding_queue);
+ 	disk->major = NBD_MAJOR;
+ 	disk->first_minor = index << part_shift;
+ 	disk->fops = &nbd_fops;
 -- 
-nvpublic
+1.8.3.1
+
