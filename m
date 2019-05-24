@@ -2,73 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1334291B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 09:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C45D291BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 09:28:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389186AbfEXH1x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 03:27:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34234 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388910AbfEXH1x (ORCPT
+        id S2389198AbfEXH23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 03:28:29 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41663 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388871AbfEXH22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 03:27:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jfU/pBiYlCGOOaoH7p13zhcAF3lexkfxk9MxpHVVZyE=; b=qJiyBB98Yfd32wx1vnufAXNWM
-        KFwEGbxwXbqvJ4/GIFLYcI+svmXTa2/DmNWQGDQ7xEQRUCUSyBOz+NBYhsWg7XT9ctzwrzWdHexM5
-        OkQ+R9cdXaYjgpmaowyUJSnVlK+r7QrFZuOrHsaX0nlddAfIvQVArdUu2J5mzJT0swjbtH+1MAtm7
-        7b8nhuEFMFEpB+BKY+NWVjdLLnFpkO3rqDyTQrOki3KraXl5y/lzQESCIVANUNReOwTEENeoEhkNP
-        XcLdXJ/Rq+LVYi3NWoqP7mWIer2psH9MYtA22900cGlAiBA5KunxB3/sBRZXnABlEr8Biid3vWNTn
-        gNu36J8+g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hU4bx-0006pu-0P; Fri, 24 May 2019 07:27:29 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B02FF201D3687; Fri, 24 May 2019 09:27:26 +0200 (CEST)
-Date:   Fri, 24 May 2019 09:27:26 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Kris Van Hees <kris.van.hees@oracle.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        dtrace-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org, mhiramat@kernel.org, acme@kernel.org,
-        ast@kernel.org, daniel@iogearbox.net
-Subject: Re: [RFC PATCH 00/11] bpf, trace, dtrace: DTrace BPF program type
- implementation and sample use
-Message-ID: <20190524072726.GD2589@hirez.programming.kicks-ass.net>
-References: <201905202347.x4KNl0cs030532@aserv0121.oracle.com>
- <20190521175617.ipry6ue7o24a2e6n@ast-mbp.dhcp.thefacebook.com>
- <20190522142531.GE16275@worktop.programming.kicks-ass.net>
- <20190522182215.GO2422@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190522182215.GO2422@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 24 May 2019 03:28:28 -0400
+Received: by mail-wr1-f66.google.com with SMTP id u16so4952913wrn.8
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 00:28:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=g7My6ofizNceL0e00TKw8x/q9/vF1etxKqWIBGqQLYI=;
+        b=c82BYFQQkPE+bGt+UWZTTY1Thr/oBoM9ZFdoFk/8q3JUBVA64ibMZarit0jRi8MuMe
+         kPgx4E/niQNHqyOSnrJkiTFmAFfZl01hiLoaRXUum4G//6nNPA7ECbs45p3EfghCUx+Q
+         jZw2r6qjF0SrJ2FCrRHjOBZnc2c/1dMiK8rgUBT/bHnCLfJCRRol6u7ok0fVNhS8A4NR
+         VdlxQ/GhNaq/k83UXxw2E4ghLFjQX9SQfj7iflvxE0MYTmiw7nIGbaT19kXXKu1HunUS
+         Yjdp9dugqhf8IHpnI4yTdZgMEL3cpeBgxfEhcp7lgFvp4NIAsLodmTbRYXdAxE7SqqdP
+         EmeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=g7My6ofizNceL0e00TKw8x/q9/vF1etxKqWIBGqQLYI=;
+        b=S5qOaGtpMCh7bZRgkFZ49xO8NevDofOQuNLd/pb+rsAPABqeiyN7DBR4nIVXmgZRdX
+         l0Lp35l6A3Ejgaiv+3PYtQNcpamiqahygBYQGtUbvKM/k1mnivAK9lLBN8hlcNCMV9DP
+         1ef3W2gFD/M8pKVfs6oLQKbgo+mVYixfNI+CwROAlgB00ri2X/zH34NLxPWiZAAbAJCH
+         x2Ed8CR43HFuoU18V36/lwNTXKNzaRk/VAKoyEUkrdY8PP3EWmKrjBsdvEfRcTHAinGe
+         /1gvMz5VVNN48CAaj7PVkxRp8eRZEMzFpXcti1viq6N/gQSooY/NogacrI9o41CrvFk7
+         95MQ==
+X-Gm-Message-State: APjAAAXIbI4i7tOpPFI5pchgl8CRfwFT8SjM4D5Bg0yObhhJsqbpxLc9
+        19jDmvIpD0+Pj+7ni7+AUa0WPw==
+X-Google-Smtp-Source: APXvYqwhN0wfTDoWd2iPpzUi6HAWZlBGAu3YYnYfSG2+8PZwemaCJvdBGx51HB+WetqRnNT3ouREkw==
+X-Received: by 2002:adf:f743:: with SMTP id z3mr16328930wrp.129.1558682907444;
+        Fri, 24 May 2019 00:28:27 -0700 (PDT)
+Received: from pop-os.baylibre.local (mx306-1-88-173-34-203.fbx.proxad.net. [88.173.34.203])
+        by smtp.googlemail.com with ESMTPSA id s11sm3034349wrb.71.2019.05.24.00.28.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 00:28:26 -0700 (PDT)
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        baylibre-upstreaming@groups.io,
+        Alexandre Mergnat <amergnat@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH] clk: fix clock global name usage.
+Date:   Fri, 24 May 2019 09:27:45 +0200
+Message-Id: <20190524072745.27398-1-amergnat@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 02:22:15PM -0400, Kris Van Hees wrote:
+A recent patch allows the clock framework to specify the parent
+relationship with either the clk_hw pointer, the global name or through
+Device Tree name.
 
-> > Let me further NAK it for adding all sorts of garbage to the code --
-> > we're not going to do gaps and stay_in_page nonsense.
-> 
-> Could you give some guidance in terms of an alternative?  The ring buffer code
-> provides both non-contiguous page allocation support and a vmalloc-based
-> allocation, and the vmalloc version certainly would avoid the entire gap and
-> page boundary stuff.  But since the allocator is chosen at build time based on
-> the arch capabilities, there is no way to select a specific memory allocator.
-> I'd be happy to use an alternative approach that allows direct writing into
-> the ring buffer.
+But the global name isn't handled by the clk framework because the DT name
+is considered valid even if it's NULL, so of_clk_get_hw() returns an
+unexpected clock (the first clock specified in DT).
 
-So why can't you do what the regular perf does? Use an output iterator
-that knows about the page breaks? See perf_output_put() for example.
+This can be fixed by calling of_clk_get_hw() only when DT name is not NULL.
 
-Anyway, I agree with Alexei and DaveM, get it working without/minimal
-kernel changes first, and then we can talk about possible optimizations.
+Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+---
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index bdb077ba59b9..9624a75e5a8d 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -368,7 +368,7 @@ static struct clk_core *clk_core_get(struct clk_core *core, u8 p_index)
+ 	const char *dev_id = dev ? dev_name(dev) : NULL;
+ 	struct device_node *np = core->of_node;
+ 
+-	if (np && index >= 0)
++	if (name && np && index >= 0)
+ 		hw = of_clk_get_hw(np, index, name);
+ 
+ 	/*
+-- 
+2.17.1
+
