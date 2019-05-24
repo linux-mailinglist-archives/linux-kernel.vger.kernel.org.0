@@ -2,104 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE5E6292C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FC34292C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:18:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389449AbfEXIPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:15:32 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36861 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389160AbfEXIPb (ORCPT
+        id S2389315AbfEXISm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:18:42 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40210 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389046AbfEXISm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:15:31 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y10so6443749lfl.3
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:15:30 -0700 (PDT)
+        Fri, 24 May 2019 04:18:42 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u17so4867879pfn.7
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:18:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pY20TLIKVkI1/Bl2d5BcPoMjZP1eL0jlGVq4XWFCLqw=;
-        b=yLbcUFVUKHOR54BpTzOG46y3ETP7QeyZEj3PxIvxlmWXhu+p3XLcJfFXKnkco7NJEd
-         OKeoWywqIAob+YJUoOUQtJkbOuABUegFkduX0AfOuvdmxruzZjtEjeby+ZBqbQIoKov8
-         RZZ7uIDhZJ1ql/XGJljY32KPbbpSJG+j1Yxpc=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5MVjgGhmeDVVcsd1Bp0XT3uzjq2j5RVjcC5adv2QpbQ=;
+        b=iRuKM28tYfKNZrvip2A5NOWelVL/4eBtb964IsQlQSIxC/7erSXVG83O6CVtGoqz/+
+         vBJHdI3/i+9VXVzomdVKI8qa+vg2YULe2U+7m/oukpljX8eu34y4MpEz3MYLuxxU7uhb
+         lJtB+dR823Ada50ALi0DAOQdfMAYLi2gdjrq3FYq9X3yf7GIfTdyJn5g2LlTa8Xjcjxa
+         u9Q1BULQoqV0wrU2AGe9oLIW0AlCwoRjN6eI+Wg0WD5oqVJVLzDW43GCY9MZ+/Kn5XuY
+         XUIYlHu83mJWrQ05/Iga1DctvwXC0OP/5qiUkbUUZqapVnvB7V1Qn8TbFvrzXCRSp0Uu
+         vgVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pY20TLIKVkI1/Bl2d5BcPoMjZP1eL0jlGVq4XWFCLqw=;
-        b=Ate2Eo3vVtf7OIxFjOjR3qr6xBcO6NU4Fn/kdg0AKMIb9lZMskNDbOTUyD+D0vMFTQ
-         ZYEV7k40BptUgac5LL0B/xLHjo+3d+gmut2bnaWldSJ7SD7QNxf+CGIqbz3P7Ufny5SI
-         vXc/Ws9xurr2ZaUv80QSVWVWpQ5A/FvzqhphgHmRPR41WBxgOk01fzqL0jC4ZBlUD9MS
-         LpYhrr/jqv4jv7uCI0DJAIXILVblvXuFVe8HaFOkayFPXuK2Jibn7NOOCsKSQsUAvJbU
-         59m43Z01SS4r9kOxilhdB2DcDk1nFmUZ8jeQyUIAXjPC2b9GJdjOcy91dA4tmkeKgZRl
-         lxqw==
-X-Gm-Message-State: APjAAAXJzkKZ/Abzl/MzHEjvfgDkMg0YlGDpAXgd/nLBqrRflKZsyXTT
-        ximfgVSNe1wwY3wPYNlaorKZeKjrprIx8zWjYHRujw==
-X-Google-Smtp-Source: APXvYqzVMi4pg2qRCfQfJd5BsbX8em3+Hdl2SMJgN+BItmMDwe24Jng0frtTTmpTZt9GG9xJXeqVFKyK1swQ88DNA7Q=
-X-Received: by 2002:a05:6512:507:: with SMTP id o7mr29687719lfb.137.1558685729981;
- Fri, 24 May 2019 01:15:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5MVjgGhmeDVVcsd1Bp0XT3uzjq2j5RVjcC5adv2QpbQ=;
+        b=UOf/k4eUueS+1qz55+mY3ugjb+ZzBXTkLC1mmz1hCgN/aNF71Su/eUai04sL5f4syh
+         VpW5VCCuk9x5izc3VdZwT3JLCZ1VCSo/ceb5lmYdK6Z05RDJ0/5o15c3Tss5QXd4ZF3V
+         TqCr26hNpQzms13+9r3I21wJ2AZN+ZroNJ32+81Fc586y7uvKcwL0Ojx79iV4/pnoI4R
+         eodYD5JI0x9x/hrT/zhEgZx1RWTL2dwj+bmdMyTnI6t5IcbbtkBtgjlirIuDVJxFXICy
+         domBbGoK4tTXFBcxYoHVzAdaFjBsN6arq1B/jdnFhEdQ6+sMF6HVv9yAX58T7NOql9eI
+         jA9g==
+X-Gm-Message-State: APjAAAWOKrfwsaBN7gDensFqtQ9c0WCQ+7YjGgFln6JZbXs/MA4TYB7J
+        gdnX9FWortQVt85rvzh1iMI=
+X-Google-Smtp-Source: APXvYqyIQSkcOIdJYgcmWe/9jjru5iacQQMg57EgrzxY52IaOz0WwUYWgCUYZURSvIOGbqe1zdETYA==
+X-Received: by 2002:a62:ab0a:: with SMTP id p10mr11335022pff.143.1558685921271;
+        Fri, 24 May 2019 01:18:41 -0700 (PDT)
+Received: from localhost.localdomain ([110.225.17.212])
+        by smtp.gmail.com with ESMTPSA id e10sm3356478pfm.137.2019.05.24.01.18.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 May 2019 01:18:40 -0700 (PDT)
+From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
+To:     gregkh@linuxfoundation.org, colin.king@canonical.com,
+        herbert@gondor.apana.org.au, qader.aymen@gmail.com,
+        sergio.paracuellos@gmail.com, bhanusreemahesh@gmail.com,
+        mattmccoy110@gmail.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Subject: [PATCH] staging: ks7010: Merge multiple return variables in ks_hostif.c
+Date:   Fri, 24 May 2019 13:48:21 +0530
+Message-Id: <20190524081821.5671-1-nishkadg.linux@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20190522114314.515b410d@canb.auug.org.au>
-In-Reply-To: <20190522114314.515b410d@canb.auug.org.au>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Fri, 24 May 2019 11:15:17 +0300
-Message-ID: <CAEXW_YR99jkobkTUJLKjX-swR_AVYrjFzQcaD8j1JuZZ=dK9Qw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the pidfd tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 4:43 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the akpm-current tree got a conflict in:
->
->   kernel/pid.c
->
-> between commit:
->
->   99e9da7f2796 ("pid: add pidfd_open()")
+The function hostif_data_request had two return variables, ret and
+result. When ret is assigned a value, in all cases (except one) this
+assignment is followed immediately by a goto to the end of the
+function. In the last case, the goto takes effect only if ret < 0;
+however, if ret >= 0 then this value of ret is not needed in the
+remainder of that branch. On the other hand result is used (assigned a
+value and returned) only in those branches where ret >= 0 or ret has
+not been used at all.
+As the values of ret and result are not both required at the same point
+in any branch, result can be removed and its occurrences replaced with
+ret.
 
-Fix LGTM. Thank you.
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+---
+ drivers/staging/ks7010/ks_hostif.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
+index 3775fd4b89ae..2666f9e30c15 100644
+--- a/drivers/staging/ks7010/ks_hostif.c
++++ b/drivers/staging/ks7010/ks_hostif.c
+@@ -1067,7 +1067,6 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
+ 	unsigned int length = 0;
+ 	struct hostif_data_request *pp;
+ 	unsigned char *p;
+-	int result;
+ 	unsigned short eth_proto;
+ 	struct ether_hdr *eth_hdr;
+ 	unsigned short keyinfo = 0;
+@@ -1209,8 +1208,8 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
+ 	pp->header.event = cpu_to_le16(HIF_DATA_REQ);
+ 
+ 	/* tx request */
+-	result = ks_wlan_hw_tx(priv, pp, hif_align_size(sizeof(*pp) + skb_len),
+-			       send_packet_complete, skb);
++	ret = ks_wlan_hw_tx(priv, pp, hif_align_size(sizeof(*pp) + skb_len),
++			    send_packet_complete, skb);
+ 
+ 	/* MIC FAILURE REPORT check */
+ 	if (eth_proto == ETH_P_PAE &&
+@@ -1225,7 +1224,7 @@ int hostif_data_request(struct ks_wlan_private *priv, struct sk_buff *skb)
+ 			priv->wpa.mic_failure.stop = 1;
+ 	}
+ 
+-	return result;
++	return ret;
+ 
+ err_kfree:
+ 	kfree(pp);
+-- 
+2.19.1
 
->
-> from the pidfd tree and commit:
->
->   51c59c914840 ("kernel/pid.c: convert struct pid:count to refcount_t")
->
-> from the akpm-current tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc kernel/pid.c
-> index 39181ccca846,b59681973dd6..000000000000
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@@ -37,8 -36,7 +37,8 @@@
->   #include <linux/init_task.h>
->   #include <linux/syscalls.h>
->   #include <linux/proc_ns.h>
-> - #include <linux/proc_fs.h>
-> + #include <linux/refcount.h>
->  +#include <linux/sched/signal.h>
->   #include <linux/sched/task.h>
->   #include <linux/idr.h>
->
