@@ -2,142 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B5EC296B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:12:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17441296CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390978AbfEXLLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:11:18 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46536 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390865AbfEXLLP (ORCPT
+        id S2390884AbfEXLMQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:12:16 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:48532 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390535AbfEXLMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:11:15 -0400
-Received: by mail-pg1-f194.google.com with SMTP id o11so274309pgm.13;
-        Fri, 24 May 2019 04:11:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+7J3y/fRv6XMK7gAKFuZ39eh40Af0wWeNJ4E0Zu6iH0=;
-        b=HYoUYWIh3uxH3NcvCusp33T+XJZGa3fl3oPvO7fB2blpt4QwpbEZ766Q6PdGDR/jo0
-         6aSBiNvJpU5mDgahFRvLB9LBIE2cUeHXTyFTHszceQw8jfChjmoT29ycbO6G4mLcjkFM
-         pHmIEiwTY7vIw5+kqnuhBDwVnP5a0U+mlm3P/Z74RJ6ALUTXP6fXK8OpIH9JE+0F4oEp
-         UMbXXoMwNDDjUD4OvuQVRdpp07ivomZNl79TGq401M3SdkdgZKlsxtTzM6YfVwppXTC0
-         aPua41Z1j5GWqWXGUY7VMsobwPUDzDvp/uzkRzVojgE11zv26SIUT8a71z36yQBTprjB
-         U8hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+7J3y/fRv6XMK7gAKFuZ39eh40Af0wWeNJ4E0Zu6iH0=;
-        b=mHLV9fA11ZNU+paXL2N30QMK3/hfDBpooKjUHTBPhu02JGkkB7CjVD1nRWHwnYxnE7
-         8h7AgAe4NKECFlMHYG6krBPXSXLEYcieL5cPCU3h/FzCh3a65Ivpp/wIiCsaRpkJgFTk
-         6cE60Me17zMlVjCnmiO1WNL9LFa5LaPq6b52IlQpStD22AW0njU5OzCEVPpGDvwOSpdw
-         33HE01UcwSIgN3AUggo5yKKj5woRvitZKQmnqiZMkzmqVMxwhsV9aExkAnSqo925mkd/
-         JSglaXmVNILGextcuQtX0PhubGIw2cttWB3ERjQaqNB9YCfp06Ho5OlPKTk3VY3RVV6r
-         5NtQ==
-X-Gm-Message-State: APjAAAVVa+HM5hyMJmTqWoXnyKG4G2Fy9Py6JQsIcUxXaNo+dWy7PZKu
-        rz5kUJYSapQGvMaYCNrjpt3SfKcuiiVzMROISW1yfVttl5s=
-X-Google-Smtp-Source: APXvYqzYyUtbyEanugU1hCluTgnfxJNvdrqZABRyTDBTH6kPu9nHnVaBSweAUERuV3/ZxPF8YN2yIXwMP9HRBBhe+Vg=
-X-Received: by 2002:a63:4d0b:: with SMTP id a11mr16877570pgb.74.1558696275115;
- Fri, 24 May 2019 04:11:15 -0700 (PDT)
+        Fri, 24 May 2019 07:12:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nZrEddtZN/QHm9VyiIK9Xeruw6OpbBwJb1qEWWfnmO4=; b=N86Ag8yFfzsqZ0IGfLtN6IkfL
+        54F3ZotahoxB4fxDv0QfhwAOxp5DUfxTvNImbMNy8mTBKs7qr24E0AJSfXcLeYiQA8Pvl/rGkFVXB
+        icvBo+mm6QfoCUWMM7O8unEQ2Kv7Ad+H7h7UgrsxYq3DS16Cse1PHuQ8Js9ACRwq+ePdWbd+KuRG1
+        +lF8ICbdENcWyJT5Kj7OdT/kSOWFHnEuMttU+XShoTwinT5QQRc5HSN9Dqn/XPGhtnxz4AIyrMeaI
+        OYp4f4cafmX3icLEPSAOotYQH3ea8DI7yXz039spII0wwfnpsLfsc7pSKl41SJdWo7iALY7WjRDpC
+        pIApS6Yzw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hU86z-000851-TZ; Fri, 24 May 2019 11:11:46 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 48B8520281C32; Fri, 24 May 2019 13:11:44 +0200 (CEST)
+Date:   Fri, 24 May 2019 13:11:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Frank Ch. Eigler" <fche@redhat.com>
+Subject: Re: [RFC][PATCH 01/14 v2] function_graph: Convert ret_stack to a
+ series of longs
+Message-ID: <20190524111144.GI2589@hirez.programming.kicks-ass.net>
+References: <20190520142001.270067280@goodmis.org>
+ <20190520142156.704372433@goodmis.org>
 MIME-Version: 1.0
-References: <20190524094825.16151-1-sr@denx.de> <20190524102002.GT2781@lahna.fi.intel.com>
-In-Reply-To: <20190524102002.GT2781@lahna.fi.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 24 May 2019 14:11:04 +0300
-Message-ID: <CAHp75VcMVrYv1MXmmqE9fDXShS=Y8pPdWZ4f1neo=ne88TLZDg@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] serial: mctrl_gpio: Check if GPIO property exisits
- before requesting it
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Stefan Roese <sr@denx.de>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190520142156.704372433@goodmis.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 1:21 PM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
->
-> On Fri, May 24, 2019 at 11:48:24AM +0200, Stefan Roese wrote:
-> > This patch adds a check for the GPIOs property existence, before the
-> > GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
-> > support is added (2nd patch in this patch series) on x86 platforms using
-> > ACPI.
-> >
-> > Here Mika's comments from 2016-08-09:
-> >
-> > "
-> > I noticed that with v4.8-rc1 serial console of some of our Broxton
-> > systems does not work properly anymore. I'm able to see output but input
-> > does not work.
-> >
-> > I bisected it down to commit 4ef03d328769eddbfeca1f1c958fdb181a69c341
-> > ("tty/serial/8250: use mctrl_gpio helpers").
-> >
-> > The reason why it fails is that in ACPI we do not have names for GPIOs
-> > (except when _DSD is used) so we use the "idx" to index into _CRS GPIO
-> > resources. Now mctrl_gpio_init_noauto() goes through a list of GPIOs
-> > calling devm_gpiod_get_index_optional() passing "idx" of 0 for each. The
-> > UART device in Broxton has following (simplified) ACPI description:
-> >
-> >     Device (URT4)
-> >     {
-> >         ...
-> >         Name (_CRS, ResourceTemplate () {
-> >             GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
-> >                     "\\_SB.GPO0", 0x00, ResourceConsumer)
-> >             {
-> >                 0x003A
-> >             }
-> >             GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
-> >                     "\\_SB.GPO0", 0x00, ResourceConsumer)
-> >             {
-> >                 0x003D
-> >             }
-> >         })
-> >
-> > In this case it finds the first GPIO (0x003A which happens to be RX pin
-> > for that UART), turns it into GPIO which then breaks input for the UART
-> > device. This also breaks systems with bluetooth connected to UART (those
-> > typically have some GPIOs in their _CRS).
-> >
-> > Any ideas how to fix this?
-> >
-> > We cannot just drop the _CRS index lookup fallback because that would
-> > break many existing machines out there so maybe we can limit this to
-> > only DT enabled machines. Or alternatively probe if the property first
-> > exists before trying to acquire the GPIOs (using
-> > device_property_present()).
-> > "
-> >
-> > This patch implements the fix suggested by Mika in his statement above.
-> >
+On Mon, May 20, 2019 at 10:20:02AM -0400, Steven Rostedt wrote:
 
-We have a board where ASL provides _DSD for CTS and RxD pins.
-I'm afraid this won't work on it.
+> +#define FGRAPH_RET_SIZE (sizeof(struct ftrace_ret_stack))
+> +#define FGRAPH_RET_INDEX (ALIGN(FGRAPH_RET_SIZE, sizeof(long)) / sizeof(long))
 
-Basically we need to understand the use of the GPIOs in UART. In our
-case it's an out-of-band wake up source for UART.
-Simply requiring GPIOs to be present is not enough.
+I think you want to write that like:
 
-Perhaps property like 'modem-control-gpio-in-use' (this seems a bad
-name, given for sake of example).
+	BUILD_BUG_ON(sizeof(ftrace_ret_stack) % sizeof(long));
 
-> > Signed-off-by: Stefan Roese <sr@denx.de>
-> > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
->
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+It'd be very weird for that sizeof not to be right.
 
+> +#define SHADOW_STACK_SIZE (PAGE_SIZE)
 
+Do we really need that big a shadow stack?
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +#define SHADOW_STACK_INDEX			\
+> +	(ALIGN(SHADOW_STACK_SIZE, sizeof(long)) / sizeof(long))
+> +/* Leave on a buffer at the end */
+> +#define SHADOW_STACK_MAX_INDEX (SHADOW_STACK_INDEX - FGRAPH_RET_INDEX)
+> +
+> +#define RET_STACK(t, index) ((struct ftrace_ret_stack *)(&(t)->ret_stack[index]))
+> +#define RET_STACK_INC(c) ({ c += FGRAPH_RET_INDEX; })
+> +#define RET_STACK_DEC(c) ({ c -= FGRAPH_RET_INDEX; })
+
+I'm thinking something like:
+
+#define RET_PUSH(s, val)				\
+do {							\
+	(s) -= sizeof(val);				\
+	(typeof(val) *)(s) = val;			\
+} while (0)
+
+#define RET_POP(s, type)				\
+({							\
+	type *__ptr = (void *)(s);			\
+	(s) += sizeof(type);				\
+	*__ptr;						\
+})
+
+Would me clearer?
