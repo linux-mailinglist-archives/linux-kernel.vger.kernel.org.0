@@ -2,82 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 391B829720
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 418F429728
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 13:28:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391038AbfEXL01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 07:26:27 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33157 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390816AbfEXL00 (ORCPT
+        id S2391043AbfEXL1o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 07:27:44 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34511 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390699AbfEXL1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 07:26:26 -0400
-Received: by mail-qk1-f196.google.com with SMTP id p18so6953495qkk.0
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:26:26 -0700 (PDT)
+        Fri, 24 May 2019 07:27:44 -0400
+Received: by mail-qk1-f194.google.com with SMTP id t64so6738743qkh.1
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 04:27:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=AQbzxXz1q7eupENIwZaibprKRQQ1QGdGQzKNp6w4Rig=;
-        b=qno0DZOafF73RT0ZDcC5fDnleaIYN1r7Spg2AtrRPoNELpOm+eVBquKf6qMKWbrZll
-         vML+ySumfkUfEYJsRHL24yaWH5pJ2yNZvk+QsCm9PHbbqB9FvVUNPlDWi7czSYwW62gh
-         LZl2c3bZ6CtXghWBQfFf+LQJRDn3nM+w6HyXoPhLlkwZ26YXO2dC2zAUmr3wKfwVhcjz
-         zJb7JHfyzcbGDJkHpUPYxU8vDenHtUxsi88gK56wAcnT1O7pEsALLubqM2Jv9hNu4Krf
-         /OvG8Q/kHdAMj8+NFilB1sUaRV8xwnSu+MqeNgwFaIq7JTUC/dBUgN7YcA3F3ADeOT4k
-         vaeQ==
+        bh=BjYcnQFmVjebl5i0cXPxIGxnyaXnU2JY+brSml/1DDA=;
+        b=wGoUtIoO0xz1EQhdjt87mJBjfAHd7Ze0qgWrdLO3iyLU463hhfssDEWbk1Ei9Z18zD
+         MzH1H0jYXc1FdtERUsP1TKuCRpAT1DJC+kGD7/6qUtElGHuy418CvUscrLkU/4gqu1TZ
+         j05FNLrxUQCBUTfGoaPwzMuxLUedlu2x/ExF1zPVYt+Ce26ouQwv6MO3sZA8TRdeCURJ
+         /AaGaj1MziyxFXmubqdVhkewE0SkemPgilorVvo10rANGoC294M0WlmnuMEI9OXQGmqu
+         +ShnV6T6oumzk3r3twukFvr8i3d/6MGzzQ0MHXz5ssSfVnMySSixwiCRxCJQsh/5Ij09
+         QExQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AQbzxXz1q7eupENIwZaibprKRQQ1QGdGQzKNp6w4Rig=;
-        b=CU9RwDTnLYJdn4piT8EG2/om0WAv1dVGCBv8LsoI4rUqdjTbfn1F9sT5V9kYC5zwlA
-         /dzwcQJg5SPbInDA+cALp9OyZ4exGYyxWNLvTJ1NIq5jHv+GlH0JYE2Lk6owezCFV31b
-         qPrOvtTCqjQqjg43NTFWg1pMMpMk6fCY5B8hyL4tVSZ9eF/UgEtXVqvVjexkfjL3jDTE
-         gZA/VSSPlKw3wpnpBC1rV7h6BEnxwazQBk7bKT5c28y+g+rYJz3IlF1babc2AyULO6oc
-         PFgtd6wJjXytAVMMdZzkscf/QiDQT1+evKGAmqCTymJ5IofnOfr3eEEscNgTw/OGbXta
-         ur3g==
-X-Gm-Message-State: APjAAAWWs1W8seGwOlcKcJyQbAN3Z94Sie721OPJg8VWM0U93hKFpklq
-        4W920P4l1gP9u0/23R927ugYmGwZea6cvfiQ8ppH2g==
-X-Google-Smtp-Source: APXvYqwjkUQ0RLpOGJmq7DNe4leRPE5WFR5Q2/qSAXC1a4jjesdy4O9Mkrsk1p39MJVgfwXgFcwsHDCr+h35uS+jHwU=
-X-Received: by 2002:a05:620a:1648:: with SMTP id c8mr73380286qko.186.1558697186148;
- Fri, 24 May 2019 04:26:26 -0700 (PDT)
+        bh=BjYcnQFmVjebl5i0cXPxIGxnyaXnU2JY+brSml/1DDA=;
+        b=nwVjH5Ok2RCTnn9UfZ2+i/dohPTAV35wyFKgr7BhLCt1N204zg24GCEU30M1ZMghLd
+         wCzDpBGdty0j9ltLG9umsKYYgdRxRaFa2CUM6NEn0QuPSHLyRwQvesVb86W+EV+EiL47
+         UF94LApfFVEFVnioUjV+BbYqM6JW9zCP0cnH+gw03ZLQb4AEGHBmB922Mo6Z4NyZzcje
+         DmS3bFzwE2pHLaCdEo/XxIca+ifYf7ovXXD5vHQKxzAslpir8W8ubwhuFryJTrtOx3vy
+         VwsF9cIySG9IwymcbiZXJPfyxcFdGb5tXI0YE8z1tfkMzRA4YfVpaYVdyrS6CrZmRTEM
+         l7PQ==
+X-Gm-Message-State: APjAAAX8vXaEgTHqAqalL1gU2rsSVwyYCcZzE8fxIQPhfh90M7JFd8VE
+        U0pLsbElrqq4bJXwk6h3UEr3BX1Bk96xxte8va8hMg==
+X-Google-Smtp-Source: APXvYqxf7/9bFgNldoDEakk0wvrkUDY2w+3N/zeuVyi+hiSEB2HQNspS+Lvdr8CIJFtRT4V11GagahDvrbloBFIO5qU=
+X-Received: by 2002:ad4:45ab:: with SMTP id y11mr82554975qvu.137.1558697263652;
+ Fri, 24 May 2019 04:27:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <1557474183-19719-1-git-send-email-alexandre.torgue@st.com>
-In-Reply-To: <1557474183-19719-1-git-send-email-alexandre.torgue@st.com>
+References: <20190510090339.17211-1-luca@lucaceresoli.net>
+In-Reply-To: <20190510090339.17211-1-luca@lucaceresoli.net>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 24 May 2019 13:26:14 +0200
-Message-ID: <CACRpkdZ4P=PSCu86p48nBPeVk-h5T0Ytc1CYV3XZGd4fLuJLGw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: stm32: add lock mechanism for irqmux selection
-To:     Alexandre Torgue <alexandre.torgue@st.com>
-Cc:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+Date:   Fri, 24 May 2019 13:27:31 +0200
+Message-ID: <CACRpkda5afsF+2WwMg4_L7uDexFR0UExgmHQ-+JajXmPCpzU3g@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: gpio: remove duplicated lines
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-stm32@st-md-mailman.stormreply.com
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 10, 2019 at 9:43 AM Alexandre Torgue
-<alexandre.torgue@st.com> wrote:
+On Fri, May 10, 2019 at 11:03 AM Luca Ceresoli <luca@lucaceresoli.net> wrote:
 
-> GPIOs are split between several banks (A, B, ...) and each bank can have
-> up to 16 lines. Those GPIOs could be used as interrupt lines thanks to
-> exti lines. As there are only 16 exti lines, a mux is used to select which
-> gpio line is connected to which exti line. Mapping is done as follow:
+> The 'default (active high)' lines are repeated twice. Avoid people stare at
+> their screens looking for differences.
 >
-> -A0, B0, C0.. -->exti_line_0 (X0 selected by mux_0)
-> -A1, B1, C1.. -->exti_line_1 (X1 selected by mux_1)
-> ...
->
-> This patch adds a protection to avoid overriding on mux_n for exti_line_n.
->
-> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 
-Patch applied, can't say I fully understand it but you know what
-you're doing!
+Patch applied with Bartosz's ACK.
 
 Yours,
 Linus Walleij
