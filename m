@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ED6F28EA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 03:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9782E28E9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 03:17:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388988AbfEXBRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 23 May 2019 21:17:17 -0400
-Received: from mga07.intel.com ([134.134.136.100]:15055 "EHLO mga07.intel.com"
+        id S2388915AbfEXBRE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 23 May 2019 21:17:04 -0400
+Received: from mga07.intel.com ([134.134.136.100]:15050 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388765AbfEXBQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388766AbfEXBQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 23 May 2019 21:16:41 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -30,21 +30,10 @@ Cc:     Ashok Raj <ashok.raj@intel.com>, Joerg Roedel <joro@8bytes.org>,
         Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
         linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
         Ricardo Neri <ricardo.neri@intel.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Tony Luck <tony.luck@intel.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [RFC PATCH v4 16/21] x86/watchdog: Add a shim hardlockup detector
-Date:   Thu, 23 May 2019 18:16:18 -0700
-Message-Id: <1558660583-28561-17-git-send-email-ricardo.neri-calderon@linux.intel.com>
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Subject: [RFC PATCH v4 17/21] x86/tsc: Switch to perf-based hardlockup detector if TSC become unstable
+Date:   Thu, 23 May 2019 18:16:19 -0700
+Message-Id: <1558660583-28561-18-git-send-email-ricardo.neri-calderon@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 References: <1558660583-28561-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
@@ -53,156 +42,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The generic hardlockup detector is based on perf. It also provides a set
-of weak stubs that CPU architectures can override. Add a shim hardlockup
-detector for x86 that selects between perf and hpet implementations.
+The HPET-based hardlockup detector relies on the TSC to determine if an
+observed NMI interrupt was originated by HPET timer. Hence, this detector
+can no longer be used with an unstable TSC.
 
-Specifically, this shim implementation is needed for the HPET-based
-hardlockup detector; it can also be used for future implementations.
+In such case, permanently stop the HPET-based hardlockup detector and
+start the perf-based detector.
 
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Clemens Ladisch <clemens@ladisch.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Nayna Jain <nayna@linux.ibm.com>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Suravee Suthikulpanit <Suravee.Suthikulpanit@amd.com>
-Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
-Cc: x86@kernel.org
-Suggested-by: Nicholas Piggin <npiggin@gmail.com>
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 ---
- arch/x86/Kconfig.debug         |  4 ++
- arch/x86/kernel/Makefile       |  1 +
- arch/x86/kernel/watchdog_hld.c | 78 ++++++++++++++++++++++++++++++++++
- 3 files changed, 83 insertions(+)
- create mode 100644 arch/x86/kernel/watchdog_hld.c
+ arch/x86/include/asm/hpet.h    | 2 ++
+ arch/x86/kernel/tsc.c          | 2 ++
+ arch/x86/kernel/watchdog_hld.c | 7 +++++++
+ 3 files changed, 11 insertions(+)
 
-diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
-index 445bbb188f10..52c77e2145c9 100644
---- a/arch/x86/Kconfig.debug
-+++ b/arch/x86/Kconfig.debug
-@@ -169,11 +169,15 @@ config IOMMU_LEAK
- config HAVE_MMIOTRACE_SUPPORT
- 	def_bool y
+diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
+index fd99f2390714..a82cbe17479d 100644
+--- a/arch/x86/include/asm/hpet.h
++++ b/arch/x86/include/asm/hpet.h
+@@ -128,6 +128,7 @@ extern int hardlockup_detector_hpet_init(void);
+ extern void hardlockup_detector_hpet_stop(void);
+ extern void hardlockup_detector_hpet_enable(unsigned int cpu);
+ extern void hardlockup_detector_hpet_disable(unsigned int cpu);
++extern void hardlockup_detector_switch_to_perf(void);
+ #else
+ static inline struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void)
+ { return NULL; }
+@@ -136,6 +137,7 @@ static inline int hardlockup_detector_hpet_init(void)
+ static inline void hardlockup_detector_hpet_stop(void) {}
+ static inline void hardlockup_detector_hpet_enable(unsigned int cpu) {}
+ static inline void hardlockup_detector_hpet_disable(unsigned int cpu) {}
++static void harrdlockup_detector_switch_to_perf(void) {}
+ #endif /* CONFIG_X86_HARDLOCKUP_DETECTOR_HPET */
  
-+config X86_HARDLOCKUP_DETECTOR
-+	bool
+ #else /* CONFIG_HPET_TIMER */
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 59b57605e66c..b2210728ce3d 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -1158,6 +1158,8 @@ void mark_tsc_unstable(char *reason)
+ 
+ 	clocksource_mark_unstable(&clocksource_tsc_early);
+ 	clocksource_mark_unstable(&clocksource_tsc);
 +
- config X86_HARDLOCKUP_DETECTOR_HPET
- 	bool "Use HPET Timer for Hard Lockup Detection"
- 	select SOFTLOCKUP_DETECTOR
- 	select HARDLOCKUP_DETECTOR
- 	select HARDLOCKUP_DETECTOR_CORE
-+	select X86_HARDLOCKUP_DETECTOR
- 	depends on HPET_TIMER && HPET && X86_64
- 	help
- 	  Say y to enable a hardlockup detector that is driven by a High-
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 3ad55de67e8b..e60244b8a8ec 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -106,6 +106,7 @@ obj-$(CONFIG_VM86)		+= vm86_32.o
- obj-$(CONFIG_EARLY_PRINTK)	+= early_printk.o
++	hardlockup_detector_switch_to_perf();
+ }
  
- obj-$(CONFIG_HPET_TIMER) 	+= hpet.o
-+obj-$(CONFIG_X86_HARDLOCKUP_DETECTOR) += watchdog_hld.o
- obj-$(CONFIG_X86_HARDLOCKUP_DETECTOR_HPET) += watchdog_hld_hpet.o
- obj-$(CONFIG_APB_TIMER)		+= apb_timer.o
- 
+ EXPORT_SYMBOL_GPL(mark_tsc_unstable);
 diff --git a/arch/x86/kernel/watchdog_hld.c b/arch/x86/kernel/watchdog_hld.c
-new file mode 100644
-index 000000000000..c2512d4c79c5
---- /dev/null
+index c2512d4c79c5..c8547c227a41 100644
+--- a/arch/x86/kernel/watchdog_hld.c
 +++ b/arch/x86/kernel/watchdog_hld.c
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * A shim hardlockup detector. It overrides the weak stubs of the generic
-+ * implementation to select between the perf- or the hpet-based implementation.
-+ *
-+ * Copyright (C) Intel Corporation 2019
-+ */
+@@ -76,3 +76,10 @@ void watchdog_nmi_stop(void)
+ 	if (detector_type == X86_HARDLOCKUP_DETECTOR_HPET)
+ 		hardlockup_detector_hpet_stop();
+ }
 +
-+#include <linux/nmi.h>
-+#include <asm/hpet.h>
-+
-+enum x86_hardlockup_detector {
-+	X86_HARDLOCKUP_DETECTOR_PERF,
-+	X86_HARDLOCKUP_DETECTOR_HPET,
-+};
-+
-+static enum __read_mostly x86_hardlockup_detector detector_type;
-+
-+int watchdog_nmi_enable(unsigned int cpu)
++void hardlockup_detector_switch_to_perf(void)
 +{
-+	if (detector_type == X86_HARDLOCKUP_DETECTOR_PERF) {
-+		hardlockup_detector_perf_enable();
-+		return 0;
-+	}
-+
-+	if (detector_type == X86_HARDLOCKUP_DETECTOR_HPET) {
-+		hardlockup_detector_hpet_enable(cpu);
-+		return 0;
-+	}
-+
-+	return -ENODEV;
-+}
-+
-+void watchdog_nmi_disable(unsigned int cpu)
-+{
-+	if (detector_type == X86_HARDLOCKUP_DETECTOR_PERF) {
-+		hardlockup_detector_perf_disable();
-+		return;
-+	}
-+
-+	if (detector_type == X86_HARDLOCKUP_DETECTOR_HPET) {
-+		hardlockup_detector_hpet_disable(cpu);
-+		return;
-+	}
-+}
-+
-+int __init watchdog_nmi_probe(void)
-+{
-+	int ret;
-+
-+	/*
-+	 * Try first with the HPET hardlockup detector. It will only
-+	 * succeed if selected at build time and the nmi_watchdog
-+	 * command-line parameter is configured. This ensure that the
-+	 * perf-based detector is used by default, if selected at
-+	 * build time.
-+	 */
-+	ret = hardlockup_detector_hpet_init();
-+	if (!ret) {
-+		detector_type = X86_HARDLOCKUP_DETECTOR_HPET;
-+		return ret;
-+	}
-+
-+	ret = hardlockup_detector_perf_init();
-+	if (!ret) {
-+		detector_type = X86_HARDLOCKUP_DETECTOR_PERF;
-+		return ret;
-+	}
-+
-+	return ret;
-+}
-+
-+void watchdog_nmi_stop(void)
-+{
-+	/* Only the HPET lockup detector defines a stop function. */
-+	if (detector_type == X86_HARDLOCKUP_DETECTOR_HPET)
-+		hardlockup_detector_hpet_stop();
++	detector_type = X86_HARDLOCKUP_DETECTOR_PERF;
++	hardlockup_detector_hpet_stop();
++	hardlockup_start_all();
 +}
 -- 
 2.17.1
