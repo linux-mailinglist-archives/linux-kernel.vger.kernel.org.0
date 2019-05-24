@@ -2,207 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACF3A29CA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 19:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5519429CA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 19:04:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391322AbfEXRDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 13:03:40 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41934 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390960AbfEXRDj (ORCPT
+        id S2391376AbfEXRDt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 13:03:49 -0400
+Received: from sonic304-9.consmr.mail.bf2.yahoo.com ([74.6.128.32]:41317 "EHLO
+        sonic304-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390960AbfEXRDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 13:03:39 -0400
-Received: by mail-wr1-f68.google.com with SMTP id u16so6832009wrn.8
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 10:03:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vlDKP+ImHY8gEo+CL/pDlFa1l6Ab1OQoJ+zrGXUdEuQ=;
-        b=UtzECo6Jq5+8H/lMh3ZOFl3Dib0EkSEEtBomTPpK0P2vtMkt99iYEGeHzpCRlDxkR3
-         E+aDnO+P7ia9y2hoCdvqqKzf09CgsZ+JPHqOU6AIuFWUQrEa0GtN9ubFAjN1wAeKQtKm
-         64EGLy8CuPDsShjCVYyy+vsNPH3QNGJHklAAA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vlDKP+ImHY8gEo+CL/pDlFa1l6Ab1OQoJ+zrGXUdEuQ=;
-        b=KS1GlAnYYNQg3O54GDmOBcC/uNg9Fz1Ewkim+I/T+Tu5f1ZVjH3aN4qMVN3irnv3r3
-         AlIH3foXerkArwep6vQoasr7Ns/MXH+AUVwishEIUQ48cYLr+bDz2in5Fv38Zs6lw7yT
-         3rnP/SlxIUmCOpixEudgM8UkaNLNcudRdUAncF8uFe0yMD8JCommz0Xl9I1ozxWgFX11
-         3ckvp/A1VZvy0Jic3Hh92gp0AzCZtUddtKgL3HrDjVdgdeDQq05rtVxYCBloEP8unlmI
-         4WXJ6rcp7w6P7OJfWweQmkof5rhqJzqM1t+s8RNQhdRlGtDVmae2N41hKCWqK9m75H30
-         whAg==
-X-Gm-Message-State: APjAAAW2yHGucIxvtba2/4h96ppDuKq27CTRkRUw3kXxyrpE2+Aak2z4
-        q2yL49s/0wIHUcgIy55s3ZO/Hg==
-X-Google-Smtp-Source: APXvYqyuTG315nDS22Lscxx6ZIBoD+gT5JkjezYbuU5OMnDLFpUBOCyFyecPTIzX9NbLTgx81em1YA==
-X-Received: by 2002:adf:f909:: with SMTP id b9mr21671891wrr.119.1558717417618;
-        Fri, 24 May 2019 10:03:37 -0700 (PDT)
-Received: from andrea ([89.22.71.151])
-        by smtp.gmail.com with ESMTPSA id r4sm1928306wrv.34.2019.05.24.10.03.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 10:03:37 -0700 (PDT)
-Date:   Fri, 24 May 2019 19:03:28 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, rcu@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH] rcu: Prevent evaluation of rcu_assign_pointer()
-Message-ID: <20190524170328.GA7540@andrea>
-References: <1558694197-19295-1-git-send-email-andrea.parri@amarulasolutions.com>
- <20190524164509.GA197789@google.com>
+        Fri, 24 May 2019 13:03:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1558717427; bh=M+2BQM2x3GSy/dmtDG0o07y3ZYWK28QOQCLRz1DcS2Q=; h=Date:From:Reply-To:Subject:References:From:Subject; b=SXfQm9IvXxSorwqaA9cwTa2ROgULsAfhUM2k1NFMS/JcNj05u+RCLl4R/fZhfHW86oFCqZzTqUb8/fs95XHUzrGHKM2JEIB8/NGnm/04Vsq6+27yn/yIB3jhDNGB7dEmmhdiAAzhMp0/GEJkgQasOWCoyYZay+g+ILHnSuE/H90z0SiC9m4LmNxmoMpkoxOmhCilUN9WMAxNlbnlt4nfk0aE/LjgBu7ltsY7+CrMsBw0lQsbPfWU9i2O6RmjXiLHdh9HNFNMV1IzHB/B0rrOOJ2OearqcZW368LGD7U+HYgkBciM1uLtGvaDq3e898xCB4fBUVZkgGhiwJ6Gl96+1g==
+X-YMail-OSG: V1NgYVIVM1nId53f.sSoypJqEFFtab1NBkiWt53Er_U407BZ_Z7F4hkjzMc8kdp
+ NNPdG7i.v6.uAEpAJh7CbwdFe3hUUBrpndNHrqhoKDW8oX9mjMzuk8DgsJjXXBQCzIJ2qEjemgBM
+ V6e4QnJGW0hbS8qEbz9Fy0KX2aWS2S5.abJSj9mWMNZ4sDtPuBbCPuabc0wg7cgZz_S39tO7YDA1
+ gPnpyeIiCc2C3K.BgLFuX3NlPNO4W2fc_u.FKRqpuvYiC7doWrpF4QDI9yFk5W6H4aHUZpyJrDBi
+ 3ndoRIWrrHGjzwrEch2.8DjFxMHlErnOG_3eWI9iX_gfbbhla8Ex7qQcr.UQ9I2tmG5WE9Jr7d.1
+ V9wJ1YHEOFkS4aSILxKGX..NNQPL13HFD4NbGJtucXX4aIdgP5WI0c3zD0Awene2.EFxHI9WSD5A
+ u7D5uztWn3yPGl4O1JjX9XplutWdqHKcureii9896a4sVRJIlSTAxI7R1M_fUTIQgP6z74RRf23i
+ mco4VvQO07yrf3Le3sAsPQhlE5j_Clj9ZDRjkt1OsLm2IoLc6MpxYU9hudGLbxvdhI31.0uCQPs3
+ aQ7SX63Ob_6BVYUFQ8Q2ksCyLOuap7CAT4enrZ_zGSqQ4pwK0cTHCuMsP8RHZk4x5dI1P1Xk0nfQ
+ rnr7kh5NYr8EHmKAfk3K9IwVYvABrpFoxn9Vig4HAvgZeLecTYozMFcS03Ae0LGl2Kk5lzCx7NhS
+ iuXhXXmNC.ptxtbhWuZ1H1qIpeYJEu0qzMGM3i6nnYOgxdAi7FhBgwXDGxVKGgo5T_1XOxPfWU9.
+ 2sDPXVBJkeX5SmQhFpcipFZQuJkkuA2QDf3VYKabdZc0jE0czsGxm.2s5ERXJ7hrRGqBt7Dntgnb
+ X9Qg7TlUajJ7It_4gqPcEmulOpo34Lw5kCf223Uzj7zIU6IOSyGR.T6kQhanWFuV6W.DcbkneGsA
+ SggnHkwqM7XD1mcdHmwvzyMXaQxh8FuCANN_lTiavygs3cO4BXhZCjYCg1nb0yeB3BTEA7mQ0ro1
+ vk8Zie8D8.e_SdpanlJFCbBatIdfJfiV.5eaOLLFZdQfqKDutnfbsOyUJNb1ysacoIyIdGzgyahg
+ bumKZpsXUSdjgz9WVVTd8dnlYcRsIUdxGXZPB3eZH.30Wice5IWGjW9iqXYzuSCbQm4oz4mpNESp
+ x044mxfUyfhKJNpqCPBMQRnVHeK4BJ56Z.FpnrC265QpxRj14BLQ-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Fri, 24 May 2019 17:03:47 +0000
+Date:   Fri, 24 May 2019 17:03:46 +0000 (UTC)
+From:   Aisha Gaddafi <gaddafiaisha25552@aol.com>
+Reply-To: Aisha Gaddafi <gaisha983@gmail.com>
+Message-ID: <1172799189.4484436.1558717426913@mail.yahoo.com>
+Subject: Hello My Beloved One, i need your assistance
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524164509.GA197789@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <1172799189.4484436.1558717426913.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.13634 YahooMailBasic Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.31 (KHTML, like Gecko) Chrome/26.0.1410.64 Safari/537.31
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 12:45:09PM -0400, Joel Fernandes wrote:
-> On Fri, May 24, 2019 at 12:36:37PM +0200, Andrea Parri wrote:
-> > Quoting Paul [1]:
-> > 
-> >  "Given that a quick (and perhaps error-prone) search of the uses
-> >   of rcu_assign_pointer() in v5.1 didn't find a single use of the
-> >   return value, let's please instead change the documentation and
-> >   implementation to eliminate the return value."
-> > 
-> > [1] https://lkml.kernel.org/r/20190523135013.GL28207@linux.ibm.com
-> > 
-> > Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> > Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-> > Cc: Josh Triplett <josh@joshtriplett.org>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> > Cc: Joel Fernandes <joel@joelfernandes.org>
-> > Cc: rcu@vger.kernel.org
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Will Deacon <will.deacon@arm.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Matthew Wilcox <willy@infradead.org>
-> > Cc: Sasha Levin <sashal@kernel.org>
-> > ---
-> > Matthew, Sasha:
-> > 
-> > The patch is based on -rcu/dev; I took the liberty of applying the
-> > same change to your #defines in:
-> > 
-> >  tools/testing/radix-tree/linux/rcupdate.h
-> >  tools/include/linux/rcu.h
-> > 
-> > but I admit that I'm not familiar with their uses: please shout if
-> > you have any objections with it.
-> > ---
-> >  Documentation/RCU/whatisRCU.txt           |  8 ++++----
-> >  include/linux/rcupdate.h                  |  5 ++---
-> >  tools/include/linux/rcu.h                 | 11 +++++++++--
-> >  tools/testing/radix-tree/linux/rcupdate.h |  5 ++++-
-> >  4 files changed, 19 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.txt
-> > index 981651a8b65d2..f99a87b9a88fa 100644
-> > --- a/Documentation/RCU/whatisRCU.txt
-> > +++ b/Documentation/RCU/whatisRCU.txt
-> > @@ -212,7 +212,7 @@ synchronize_rcu()
-> >  
-> >  rcu_assign_pointer()
-> >  
-> > -	typeof(p) rcu_assign_pointer(p, typeof(p) v);
-> > +	rcu_assign_pointer(p, typeof(p) v);
-> >  
-> >  	Yes, rcu_assign_pointer() -is- implemented as a macro, though it
-> >  	would be cool to be able to declare a function in this manner.
-> > @@ -220,9 +220,9 @@ rcu_assign_pointer()
-> >  
-> >  	The updater uses this function to assign a new value to an
-> >  	RCU-protected pointer, in order to safely communicate the change
-> > -	in value from the updater to the reader.  This function returns
-> > -	the new value, and also executes any memory-barrier instructions
-> > -	required for a given CPU architecture.
-> > +	in value from the updater to the reader.  This macro does not
-> > +	evaluate to an rvalue, but it does execute any memory-barrier
-> > +	instructions required for a given CPU architecture.
-> >  
-> >  	Perhaps just as important, it serves to document (1) which
-> >  	pointers are protected by RCU and (2) the point at which a
-> > diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> > index 915460ec08722..a5f61a08e65fc 100644
-> > --- a/include/linux/rcupdate.h
-> > +++ b/include/linux/rcupdate.h
-> > @@ -367,7 +367,7 @@ static inline void rcu_preempt_sleep_check(void) { }
-> >   * other macros that it invokes.
-> >   */
-> >  #define rcu_assign_pointer(p, v)					      \
-> > -({									      \
-> > +do {									      \
-> >  	uintptr_t _r_a_p__v = (uintptr_t)(v);				      \
-> >  	rcu_check_sparse(p, __rcu);				      \
-> >  									      \
-> > @@ -375,8 +375,7 @@ static inline void rcu_preempt_sleep_check(void) { }
-> >  		WRITE_ONCE((p), (typeof(p))(_r_a_p__v));		      \
-> >  	else								      \
-> >  		smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
-> > -	_r_a_p__v;							      \
-> > -})
-> > +} while (0)
-> >  
-> >  /**
-> >   * rcu_swap_protected() - swap an RCU and a regular pointer
-> > diff --git a/tools/include/linux/rcu.h b/tools/include/linux/rcu.h
-> > index 7d02527e5bcea..01a435ee48cd6 100644
-> > --- a/tools/include/linux/rcu.h
-> > +++ b/tools/include/linux/rcu.h
-> > @@ -19,7 +19,14 @@ static inline bool rcu_is_watching(void)
-> >  	return false;
-> >  }
-> >  
-> > -#define rcu_assign_pointer(p, v) ((p) = (v))
-> > -#define RCU_INIT_POINTER(p, v) p=(v)
-> > +#define rcu_assign_pointer(p, v)				\
-> > +do {								\
-> > +	(p) = (v);						\
-> > +} while (0)
-> > +
-> > +#define RCU_INIT_POINTER(p, v)					\
-> > +do {								\
-> > +	(p) = (v);						\
-> > +} while (0)
-> >  
-> >  #endif
-> > diff --git a/tools/testing/radix-tree/linux/rcupdate.h b/tools/testing/radix-tree/linux/rcupdate.h
-> > index fd280b070fdb1..48212f3a758e6 100644
-> > --- a/tools/testing/radix-tree/linux/rcupdate.h
-> > +++ b/tools/testing/radix-tree/linux/rcupdate.h
-> > @@ -7,6 +7,9 @@
-> >  #define rcu_dereference_raw(p) rcu_dereference(p)
-> >  #define rcu_dereference_protected(p, cond) rcu_dereference(p)
-> >  #define rcu_dereference_check(p, cond) rcu_dereference(p)
-> > -#define RCU_INIT_POINTER(p, v)	(p) = (v)
-> > +#define RCU_INIT_POINTER(p, v)					\
-> > +do {								\
-> > +	(p) = (v);						\
-> > +} while (0)
-> >  
-> >  #endif
-> > -- 
-> > 2.7.4
-> > 
-> 
-> Other than Paul's nits, LGTM. Thanks.
+Dear Friend,
 
-Thank you, Joel!  Will fix those and resend, most likely next week.
+I came across your e-mail contact prior a private search while in need of 
+your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
+three Children. I am the only biological Daughter of late Libyan President 
+(Late Colonel Muammar Gaddafi).
 
-  Andrea
+I have investment funds worth Twenty Seven Million Five Hundred Thousand 
+United State Dollar ($27.500.000.00 ) and i need a trusted investment 
+Manager/Partner because of my current refugee status, however, I am 
+interested in you for investment project assistance in your country, may be 
+from there, we can build business relationship in the nearest future.
+
+I am willing to negotiate investment/business profit sharing ratio with you 
+base on the future investment earning profits.
+
+If you are willing to handle this project on my behalf kindly reply urgent 
+to enable me provide you more information about the investment funds.
+
+Your Urgent Reply Will Be Appreciated.
+
+Best Regards
+Mrs Aisha Gaddafi
