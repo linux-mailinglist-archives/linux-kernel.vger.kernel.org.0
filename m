@@ -2,116 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A01A29240
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 09:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EA0A29247
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:00:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389331AbfEXH71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 03:59:27 -0400
-Received: from mga17.intel.com ([192.55.52.151]:8680 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389153AbfEXH7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 03:59:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 00:59:24 -0700
-X-ExtLoop1: 1
-Received: from tao-optiplex-7060.sh.intel.com ([10.239.13.104])
-  by orsmga008.jf.intel.com with ESMTP; 24 May 2019 00:59:19 -0700
-From:   Tao Xu <tao3.xu@intel.com>
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        sean.j.christopherson@intel.com
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tao3.xu@intel.com,
-        jingqi.liu@intel.com
-Subject: [PATCH v2 3/3] KVM: vmx: handle vm-exit for UMWAIT and TPAUSE
-Date:   Fri, 24 May 2019 15:56:37 +0800
-Message-Id: <20190524075637.29496-4-tao3.xu@intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190524075637.29496-1-tao3.xu@intel.com>
-References: <20190524075637.29496-1-tao3.xu@intel.com>
+        id S2389344AbfEXIAO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:00:14 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59967 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389001AbfEXIAN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 04:00:13 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4O7w4Tb114801
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 24 May 2019 00:58:04 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4O7w4Tb114801
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1558684685;
+        bh=vN9cOtYt2QHny5PGLta3R0axse/CYhigz4jDBZWA6Xc=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=hOYmy/JXzEz7jz09FUgQ/2SoTGW9/dM4S3atoRi5C+9WiSzgFXsJoDShScrwZP+e4
+         3hpFeRJPPc39QHzqo7JcuqNTWyzIi6fWiPWsVxki4nTozVS6WRNOo/+VBaP3eBHHz7
+         8ruWrw6J+N+dvhTh6qnR5mIhaCbAOVMunS5GILRfVaCBxhj1hSGfKlTpv0ExxHDsyP
+         iTXsLWKAh/jzbe/lRsB7nkN1qE6R/BcB+fU8kcpsh5L5B7xJZ+eqOZshIyK9DSDiI1
+         +h6YVrL0Yd2epr3CG24jDA+djPG6Zr17buPCGOnxSBGRWH+xxGHMvSW9o8ISyRVWLy
+         LI+MntP58/a1A==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4O7w3uH114795;
+        Fri, 24 May 2019 00:58:03 -0700
+Date:   Fri, 24 May 2019 00:58:03 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-e05196401657cff3178dc392b739e520b26d4aef@git.kernel.org>
+Cc:     bp@alien8.de, jgross@suse.com, brgerst@gmail.com,
+        peterz@infradead.org, riel@surriel.com, tglx@linutronix.de,
+        luto@kernel.org, hpa@zytor.com, mingo@kernel.org,
+        torvalds@linux-foundation.org, dvlasenk@redhat.com,
+        linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com
+Reply-To: dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org,
+          hpa@zytor.com, tglx@linutronix.de, luto@kernel.org,
+          dvlasenk@redhat.com, riel@surriel.com, peterz@infradead.org,
+          brgerst@gmail.com, torvalds@linux-foundation.org,
+          mingo@kernel.org, bp@alien8.de, jgross@suse.com
+In-Reply-To: <20190424134223.501598258@linutronix.de>
+References: <20190424134223.501598258@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/paravirt] x86/paravirt: Remove bogus extern declarations
+Git-Commit-ID: e05196401657cff3178dc392b739e520b26d4aef
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=2.0 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_03_06,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no
+        version=3.4.2
+X-Spam-Level: **
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the latest Intel 64 and IA-32 Architectures Software Developer's
-Manual, UMWAIT and TPAUSE instructions cause a VM exit if the
-“RDTSC exiting” and “enable user wait and pause” VM-execution controls
-are both 1.
+Commit-ID:  e05196401657cff3178dc392b739e520b26d4aef
+Gitweb:     https://git.kernel.org/tip/e05196401657cff3178dc392b739e520b26d4aef
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Wed, 24 Apr 2019 15:41:16 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 25 Apr 2019 11:35:55 +0200
 
-This patch is to handle the vm-exit for UMWAIT and TPAUSE as invalid_op.
+x86/paravirt: Remove bogus extern declarations
 
-Co-developed-by: Jingqi Liu <jingqi.liu@intel.com>
-Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
-Signed-off-by: Tao Xu <tao3.xu@intel.com>
+These functions are already declared in asm/paravirt.h
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Link: http://lkml.kernel.org/r/20190424134223.501598258@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/uapi/asm/vmx.h |  6 +++++-
- arch/x86/kvm/vmx/vmx.c          | 16 ++++++++++++++++
- 2 files changed, 21 insertions(+), 1 deletion(-)
+ arch/x86/kernel/paravirt_patch_32.c | 3 ---
+ arch/x86/kernel/paravirt_patch_64.c | 3 ---
+ 2 files changed, 6 deletions(-)
 
-diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vmx.h
-index d213ec5c3766..d88d7a68849b 100644
---- a/arch/x86/include/uapi/asm/vmx.h
-+++ b/arch/x86/include/uapi/asm/vmx.h
-@@ -85,6 +85,8 @@
- #define EXIT_REASON_PML_FULL            62
- #define EXIT_REASON_XSAVES              63
- #define EXIT_REASON_XRSTORS             64
-+#define EXIT_REASON_UMWAIT              67
-+#define EXIT_REASON_TPAUSE              68
+diff --git a/arch/x86/kernel/paravirt_patch_32.c b/arch/x86/kernel/paravirt_patch_32.c
+index de138d3912e4..05d771f81e74 100644
+--- a/arch/x86/kernel/paravirt_patch_32.c
++++ b/arch/x86/kernel/paravirt_patch_32.c
+@@ -23,9 +23,6 @@ DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%eax)");
+ DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
+ #endif
  
- #define VMX_EXIT_REASONS \
- 	{ EXIT_REASON_EXCEPTION_NMI,         "EXCEPTION_NMI" }, \
-@@ -142,7 +144,9 @@
- 	{ EXIT_REASON_RDSEED,                "RDSEED" }, \
- 	{ EXIT_REASON_PML_FULL,              "PML_FULL" }, \
- 	{ EXIT_REASON_XSAVES,                "XSAVES" }, \
--	{ EXIT_REASON_XRSTORS,               "XRSTORS" }
-+	{ EXIT_REASON_XRSTORS,               "XRSTORS" }, \
-+	{ EXIT_REASON_UMWAIT,                "UMWAIT" }, \
-+	{ EXIT_REASON_TPAUSE,                "TPAUSE" }
- 
- #define VMX_ABORT_SAVE_GUEST_MSR_FAIL        1
- #define VMX_ABORT_LOAD_HOST_PDPTE_FAIL       2
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 49e107692aee..0743a4ac2b61 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5337,6 +5337,20 @@ static int handle_monitor(struct kvm_vcpu *vcpu)
- 	return handle_nop(vcpu);
- }
- 
-+static int handle_umwait(struct kvm_vcpu *vcpu)
-+{
-+	printk_once(KERN_WARNING "kvm: Can't use UMWAIT instruction "
-+		"when RDTSC exiting VM-execution control is enabled!\n");
-+	return handle_invalid_op(vcpu);
-+}
-+
-+static int handle_tpause(struct kvm_vcpu *vcpu)
-+{
-+	printk_once(KERN_WARNING "kvm: Can't use TPAUSE instruction "
-+		"when RDTSC exiting VM-execution control is enabled!\n");
-+	return handle_invalid_op(vcpu);
-+}
-+
- static int handle_invpcid(struct kvm_vcpu *vcpu)
+-extern bool pv_is_native_spin_unlock(void);
+-extern bool pv_is_native_vcpu_is_preempted(void);
+-
+ unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
  {
- 	u32 vmx_instruction_info;
-@@ -5547,6 +5561,8 @@ static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
- 	[EXIT_REASON_VMFUNC]		      = handle_vmx_instruction,
- 	[EXIT_REASON_PREEMPTION_TIMER]	      = handle_preemption_timer,
- 	[EXIT_REASON_ENCLS]		      = handle_encls,
-+	[EXIT_REASON_UMWAIT]                  = handle_umwait,
-+	[EXIT_REASON_TPAUSE]                  = handle_tpause,
- };
+ #define PATCH_SITE(ops, x)					\
+diff --git a/arch/x86/kernel/paravirt_patch_64.c b/arch/x86/kernel/paravirt_patch_64.c
+index 9d9e04b31077..bd1558f90cfb 100644
+--- a/arch/x86/kernel/paravirt_patch_64.c
++++ b/arch/x86/kernel/paravirt_patch_64.c
+@@ -29,9 +29,6 @@ DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%rdi)");
+ DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
+ #endif
  
- static const int kvm_vmx_max_exit_handlers =
--- 
-2.20.1
-
+-extern bool pv_is_native_spin_unlock(void);
+-extern bool pv_is_native_vcpu_is_preempted(void);
+-
+ unsigned native_patch(u8 type, void *ibuf, unsigned long addr, unsigned len)
+ {
+ #define PATCH_SITE(ops, x)					\
