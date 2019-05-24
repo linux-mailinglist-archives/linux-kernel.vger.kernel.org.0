@@ -2,141 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0048829F99
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 22:15:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A8A29F9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 22:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391813AbfEXUPt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 16:15:49 -0400
-Received: from mga04.intel.com ([192.55.52.120]:33088 "EHLO mga04.intel.com"
+        id S2391838AbfEXUQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 16:16:16 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:33752 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391738AbfEXUPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 16:15:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 13:15:46 -0700
-X-ExtLoop1: 1
-Received: from ideak-desk.fi.intel.com ([10.237.72.204])
-  by orsmga003.jf.intel.com with ESMTP; 24 May 2019 13:15:44 -0700
-From:   Imre Deak <imre.deak@intel.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 2/2] lockdep: Fix merging of hlocks with non-zero references
-Date:   Fri, 24 May 2019 23:15:09 +0300
-Message-Id: <20190524201509.9199-2-imre.deak@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190524201509.9199-1-imre.deak@intel.com>
-References: <20190524201509.9199-1-imre.deak@intel.com>
+        id S2391816AbfEXUQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 16:16:16 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1hUGbu-00032N-CE; Fri, 24 May 2019 14:16:15 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1hUGbu-00026Q-4D; Fri, 24 May 2019 14:16:14 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Fri, 24 May 2019 14:16:07 -0600
+Message-Id: <20190524201610.8039-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, bhelgaas@google.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
+        version=3.4.2
+Subject: [PATCH 0/3] Cleanup resource_alignment parameter
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sequence
+This is a follow up to the cleanup I started last cycle on the
+resource_alignment parameter after finding an improved way to do handle
+the static buffer for the disable_acs_redir parameter. So this patchset
+allows us to drop a significant chunk of static data.
 
-	static DEFINE_WW_CLASS(test_ww_class);
+Per the discussion last cycle, this version keeps the spin locks
+(instead of the RCU implementation) and splits the change into a
+couple different patches.
 
-	struct ww_acquire_ctx ww_ctx;
-	struct ww_mutex ww_lock_a;
-	struct ww_mutex ww_lock_b;
-	struct ww_mutex ww_lock_c;
-	struct mutex lock_c;
+Thanks,
 
-	ww_acquire_init(&ww_ctx, &test_ww_class);
+Logan
 
-	ww_mutex_init(&ww_lock_a, &test_ww_class);
-	ww_mutex_init(&ww_lock_b, &test_ww_class);
-	ww_mutex_init(&ww_lock_c, &test_ww_class);
+--
 
-	mutex_init(&lock_c);
+Logan Gunthorpe (3):
+  PCI: Clean up resource_alignment parameter to not require static
+    buffer
+  PCI: Move pci_[get|set]_resource_alignment_param() into their callers
+  PCI: Force trailing new line to resource_alignment_param in sysfs
 
-	ww_mutex_lock(&ww_lock_a, &ww_ctx);
+ drivers/pci/pci.c | 65 +++++++++++++++++++++++++----------------------
+ 1 file changed, 35 insertions(+), 30 deletions(-)
 
-	mutex_lock(&lock_c);
-
-	ww_mutex_lock(&ww_lock_b, &ww_ctx);
-	ww_mutex_lock(&ww_lock_c, &ww_ctx);
-
-	mutex_unlock(&lock_c);	(*)
-
-	ww_mutex_unlock(&ww_lock_c);
-	ww_mutex_unlock(&ww_lock_b);
-	ww_mutex_unlock(&ww_lock_a);
-
-	ww_acquire_fini(&ww_ctx); (**)
-
-will trigger the following error in __lock_release() when calling
-mutex_release() at **:
-
-	DEBUG_LOCKS_WARN_ON(depth <= 0)
-
-The problem is that the hlock merging happening at * updates the
-references for test_ww_class incorrectly to 3 whereas it should've
-updated it to 4 (representing all the instances for ww_ctx and
-ww_lock_[abc]).
-
-Fix this by updating the references during merging correctly taking into
-account that we can have non-zero references (both for the hlock that we
-merge into another hlock or for the hlock we are merging into).
-
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Imre Deak <imre.deak@intel.com>
----
- kernel/locking/lockdep.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 967352d32af1..9e2a4ab6c731 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3637,6 +3637,11 @@ print_lock_nested_lock_not_held(struct task_struct *curr,
- 
- static int __lock_is_held(const struct lockdep_map *lock, int read);
- 
-+static int hlock_reference(int reference)
-+{
-+	return reference ? : 1;
-+}
-+
- /*
-  * This gets called for every mutex_lock*()/spin_lock*() operation.
-  * We maintain the dependency maps and validate the locking attempt:
-@@ -3702,17 +3707,15 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 	if (depth) {
- 		hlock = curr->held_locks + depth - 1;
- 		if (hlock->class_idx == class_idx && nest_lock) {
--			if (hlock->references) {
--				/*
--				 * Check: unsigned int references overflow.
--				 */
--				if (DEBUG_LOCKS_WARN_ON(hlock->references == UINT_MAX))
--					return 0;
-+			/*
-+			 * Check: unsigned int references overflow.
-+			 */
-+			if (DEBUG_LOCKS_WARN_ON(hlock_reference(hlock->references) >
-+						UINT_MAX - hlock_reference(references)))
-+				return 0;
- 
--				hlock->references++;
--			} else {
--				hlock->references = 2;
--			}
-+			hlock->references = hlock_reference(hlock->references) +
-+					    hlock_reference(references);
- 
- 			return 2;
- 		}
--- 
-2.17.1
-
+--
+2.20.1
