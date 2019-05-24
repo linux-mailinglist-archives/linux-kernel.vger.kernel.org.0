@@ -2,99 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A0E629DBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 20:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0F1429DC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 20:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729477AbfEXSIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 14:08:12 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48186 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727661AbfEXSIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 14:08:12 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49589A78;
-        Fri, 24 May 2019 11:08:11 -0700 (PDT)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E5C8A3F703;
-        Fri, 24 May 2019 11:08:09 -0700 (PDT)
-Date:   Fri, 24 May 2019 19:08:05 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     linux-mm@kvack.org, akpm@linux-foundation.org,
-        catalin.marinas@arm.com, anshuman.khandual@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] arm64: mm: Implement pte_devmap support
-Message-ID: <20190524180805.GA9697@fuggles.cambridge.arm.com>
-References: <cover.1558547956.git.robin.murphy@arm.com>
- <817d92886fc3b33bcbf6e105ee83a74babb3a5aa.1558547956.git.robin.murphy@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <817d92886fc3b33bcbf6e105ee83a74babb3a5aa.1558547956.git.robin.murphy@arm.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+        id S1728995AbfEXSJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 14:09:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50794 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726909AbfEXSJy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 14:09:54 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4OI4KbI003731
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 14:09:53 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2spn59s175-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 14:09:52 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 24 May 2019 19:09:50 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 24 May 2019 19:09:47 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4OI9kK952297748
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 May 2019 18:09:46 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D556F4C052;
+        Fri, 24 May 2019 18:09:46 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 053724C046;
+        Fri, 24 May 2019 18:09:46 +0000 (GMT)
+Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 24 May 2019 18:09:45 +0000 (GMT)
+Subject: Re: Re:
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     mjg59@google.com, vgoyal@redhat.com
+Date:   Fri, 24 May 2019 14:09:45 -0400
+In-Reply-To: <cb0eb785-9050-738e-c1bf-8e769fe096fa@huawei.com>
+References: <20190521000645.16227-1-prsriva02@gmail.com>
+         <20190521000645.16227-3-prsriva02@gmail.com>
+         <1558710722.3977.68.camel@linux.ibm.com>
+         <a7acac28-156e-80d1-b759-cb0c59f73169@huawei.com>
+         <cb0eb785-9050-738e-c1bf-8e769fe096fa@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19052418-0028-0000-0000-000003711A8B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19052418-0029-0000-0000-00002430D182
+Message-Id: <1558721385.3977.84.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-24_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905240117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 04:03:16PM +0100, Robin Murphy wrote:
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 2c41b04708fe..a6378625d47c 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -90,6 +90,7 @@ extern unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)];
->  #define pte_write(pte)		(!!(pte_val(pte) & PTE_WRITE))
->  #define pte_user_exec(pte)	(!(pte_val(pte) & PTE_UXN))
->  #define pte_cont(pte)		(!!(pte_val(pte) & PTE_CONT))
-> +#define pte_devmap(pte)		(!!(pte_val(pte) & PTE_DEVMAP))
->  
->  #define pte_cont_addr_end(addr, end)						\
->  ({	unsigned long __boundary = ((addr) + CONT_PTE_SIZE) & CONT_PTE_MASK;	\
-> @@ -217,6 +218,11 @@ static inline pmd_t pmd_mkcont(pmd_t pmd)
->  	return __pmd(pmd_val(pmd) | PMD_SECT_CONT);
->  }
->  
-> +static inline pte_t pte_mkdevmap(pte_t pte)
-> +{
-> +	return set_pte_bit(pte, __pgprot(PTE_DEVMAP));
-> +}
-> +
->  static inline void set_pte(pte_t *ptep, pte_t pte)
->  {
->  	WRITE_ONCE(*ptep, pte);
-> @@ -381,6 +387,9 @@ static inline int pmd_protnone(pmd_t pmd)
->  
->  #define pmd_mkhuge(pmd)		(__pmd(pmd_val(pmd) & ~PMD_TABLE_BIT))
->  
-> +#define pmd_devmap(pmd)		pte_devmap(pmd_pte(pmd))
-> +#define pmd_mkdevmap(pmd)	pte_pmd(pte_mkdevmap(pmd_pte(pmd)))
-> +
->  #define __pmd_to_phys(pmd)	__pte_to_phys(pmd_pte(pmd))
->  #define __phys_to_pmd_val(phys)	__phys_to_pte_val(phys)
->  #define pmd_pfn(pmd)		((__pmd_to_phys(pmd) & PMD_MASK) >> PAGE_SHIFT)
-> @@ -537,6 +546,11 @@ static inline phys_addr_t pud_page_paddr(pud_t pud)
->  	return __pud_to_phys(pud);
->  }
->  
-> +static inline int pud_devmap(pud_t pud)
-> +{
-> +	return 0;
-> +}
-> +
->  /* Find an entry in the second-level page table. */
->  #define pmd_index(addr)		(((addr) >> PMD_SHIFT) & (PTRS_PER_PMD - 1))
->  
-> @@ -624,6 +638,11 @@ static inline phys_addr_t pgd_page_paddr(pgd_t pgd)
->  
->  #define pgd_ERROR(pgd)		__pgd_error(__FILE__, __LINE__, pgd_val(pgd))
->  
-> +static inline int pgd_devmap(pgd_t pgd)
-> +{
-> +	return 0;
-> +}
+> >> As mentioned, the first patch description should include a shell
+> >> command for verifying the digest in the kexec boot command line
+> >> measurement list record against /proc/cmdline.  This patch description
+> >> should include a shell command showing how to verify the digest based
+> >> on the new field.  Should the new field in the ascii measurement list
+> >> be displayed as a string, not hex?
+> > 
+> > We should define a new type. If the type is DATA_FMT_STRING, spaces are
+> > replaced with '_'.
+> 
+> Or better. Leave it as hex, otherwise there would be a parsing problem
+> if there are spaces in the data for a field.
 
-I think you need to guard this and pXd_devmap() with
-CONFIG_TRANSPARENT_HUGEPAGE, otherwise you'll conflict with the dummy
-definitions in mm.h and the build will fail.
+After making a few changes, the measurement list contains the
+following kexec-cmdline data:
 
-Will
+10 edc32d1e3a5ba7272280a395b6fb56a5ef7c78c3 ima-buf
+sha256:4f43b7db850e
+88c49dfeffd4b1eb4f021d78033dfb05b07e45eec8d0b45275 
+kexec-cmdline
+726f6f
+743d2f6465762f7364613420726f2072642e6c756b732e757569643d6c756b73
+2d6637
+3633643737632d653236622d343431642d613734652d62363633636334643832
+656120
+696d615f706f6c6963793d7463627c61707072616973655f746362
+
+There's probably a better shell command, but the following works to
+verify the digest locally against the /proc/cmdline:
+
+$ echo -n -e `cat /proc/cmdline | sed 's/^.*root=/root=/'` | sha256sum
+4f43b7db850e88c49dfeffd4b1eb4f021d78033dfb05b07e45eec8d0b4527f65  -
+
+If we leave the "buf" field as ascii-hex, what would the shell command
+look like when verifying the digest based on the "buf" field?
+
+Mimi
+
