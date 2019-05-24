@@ -2,114 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE1D12A0B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 23:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A98B2A0B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 23:54:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404429AbfEXVyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 17:54:10 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41200 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404163AbfEXVyJ (ORCPT
+        id S2404458AbfEXVyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 17:54:50 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:46096 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404265AbfEXVyu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 17:54:09 -0400
-Received: by mail-ot1-f67.google.com with SMTP id l25so9995971otp.8;
-        Fri, 24 May 2019 14:54:09 -0700 (PDT)
+        Fri, 24 May 2019 17:54:50 -0400
+Received: by mail-ot1-f65.google.com with SMTP id j49so9973461otc.13;
+        Fri, 24 May 2019 14:54:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ocTPW25nWKpvKq/JRulYN0S/pGd+SXijFY/6jO39icc=;
-        b=LR+y4dfzQ1En/48ndRBMDMCzCcy5jZO/Cj5wqKrwm/5gJP9+hNp2c/1NBejMfsfD8u
-         xSqQg4R1LeTqKdsFW8y6JXE/nbnlmlgMrzu8dVsUNbcN/4HuCNKHQtha9CvwfybGD7vi
-         GYUVfPEMDHx58SnSUbnTsl/8WbfC/CIrft4Ru6qm32edtI7gedzHqr7wMajWREaWThKa
-         qhm9q4M7nLyQTwY2tInkomF1CgXOfTb73XTI5I/PEAdQPGp82Gv3G70MxaZm2Xq/V9RA
-         aiuueAaOOeAwV+39zEXp2JNkfLAQb0HZzIXuVdiJMwN41DVZcb3YUl4IRvIkdQMqRFGh
-         lS1g==
-X-Gm-Message-State: APjAAAX34cqbRUqUYwjFVUxSaWWwCNHAqDXYI9QWY5qDSji4Ky3sEnhz
-        vD1o20gKDnyA8mkntPk/pw==
-X-Google-Smtp-Source: APXvYqxz7j6TAqcCOb7TkXaiVR8I/EoSc62MSkmCQ9hdBLYDFZ+4Dlt6IECHsh8xO5wmRSqntod77A==
-X-Received: by 2002:a9d:6248:: with SMTP id i8mr198636otk.276.1558734848769;
-        Fri, 24 May 2019 14:54:08 -0700 (PDT)
+        bh=WwRWeH6o4e0zEUidM8+Mp3KiI/hAFcVnEjbVX8vBMvc=;
+        b=NR+6h/mZ388JZn47DxAtfXlAwspc4zwQhx8h0j2rrCLC+3cfTKdygvLx9wgSRALoc2
+         fm84ThsYvuBya9Nc9zJIJooMBFpuuFSbxY6zyRM4NJM7okbCAWks2kJOzhOMaw3rXesd
+         NzUpBir/uXMiilWCzGHG8BHRm6AQUK79j0WTMbIchSjnaE49FMu+qG/zrh9ivoSyP0L3
+         bMjNhQTV16qenavvZKBCQq+WgoAVCmCp/0hc+KEQwF49LRa8F2SNyL+VwLZDBsmgD87T
+         p+mx3jtElupMkK2bnf2HsGWGiB7jvy867YKDTiORXyR5FQ1FyjJ+h1rAuJ2f3DADFLiE
+         rAIQ==
+X-Gm-Message-State: APjAAAVPWps14D6EHhiNcTXY3JL/ZebRSk+FSbwlIV2Q5QEhFf21hRRe
+        OeDWMxLBZexx3nYVjcXJMQ==
+X-Google-Smtp-Source: APXvYqxfYQC+exjUSNJQHKb3wOaN746sP+WD7kMTf/uk/I7m4GfAAdcQaxmAayNlguFMhN8AXAnZMQ==
+X-Received: by 2002:a9d:7cd2:: with SMTP id r18mr223772otn.345.1558734889169;
+        Fri, 24 May 2019 14:54:49 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p64sm1425346oif.8.2019.05.24.14.54.07
+        by smtp.gmail.com with ESMTPSA id 80sm1585634otj.2.2019.05.24.14.54.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 24 May 2019 14:54:08 -0700 (PDT)
-Date:   Fri, 24 May 2019 16:54:07 -0500
+        Fri, 24 May 2019 14:54:48 -0700 (PDT)
+Date:   Fri, 24 May 2019 16:54:47 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        CK HU <ck.hu@mediatek.com>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        YT Shen <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh 
-        <dennis-yc.hsimediatek/mtkcam/drv/fdvt/4.0/cam_fdvt_v4l2.cppeh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>, ginny.chen@mediatek.com
-Subject: Re: [PATCH v6 04/12] dt-binding: gce: add binding for gce event
- property
-Message-ID: <20190524215407.GA7214@bogus>
-References: <20190516090224.59070-1-bibby.hsieh@mediatek.com>
- <20190516090224.59070-5-bibby.hsieh@mediatek.com>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Chris Snook <chris.snook@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, John Crispin <john@phrozen.org>,
+        Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Chuanhong Guo <gch981213@gmail.com>,
+        info@freifunk-bad-gandersheim.net
+Subject: Re: [PATCH v6 1/3] dt-bindings: net: add qca,ar71xx.txt documentation
+Message-ID: <20190524215447.GA12009@bogus>
+References: <20190524111224.24819-1-o.rempel@pengutronix.de>
+ <20190524111224.24819-2-o.rempel@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190516090224.59070-5-bibby.hsieh@mediatek.com>
+In-Reply-To: <20190524111224.24819-2-o.rempel@pengutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 16, 2019 at 05:02:16PM +0800, Bibby Hsieh wrote:
-> Client hardware would send event to GCE hardware,
-> mediatek,gce-event-names and mediatek,gce-events
-
-We removed mediatek,gce-event-names?
-
-> can be used to present the event.
+On Fri, 24 May 2019 13:12:22 +0200, Oleksij Rempel wrote:
+> Add binding documentation for Atheros/QCA networking IP core used
+> in many routers.
 > 
-> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
->  Documentation/devicetree/bindings/mailbox/mtk-gce.txt | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  .../devicetree/bindings/net/qca,ar71xx.txt    | 45 +++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/qca,ar71xx.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-> index dceab63ccd06..265bb58da7bd 100644
-> --- a/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-> +++ b/Documentation/devicetree/bindings/mailbox/mtk-gce.txt
-> @@ -35,6 +35,8 @@ Required properties for a client device:
->  Optional properties for a client device:
->  - mediatek,gce-client-reg: u32, specify the sub-system id which is corresponding
->    to the register address.
-> +- mediatek,gce-events: u32, the event number defined in
-> +  'dt-bindings/gce/mt8173-gce.h' or 'dt-binding/gce/mt8183-gce.h'.
 
-This and the example don't match. Is it an u32 or an array of u32? If 
-the latter, how many elements?
-
->  
->  Some vaules of properties are defined in 'dt-bindings/gce/mt8173-gce.h'
->  or 'dt-binding/gce/mt8183-gce.h'. Such as sub-system ids, thread priority, event ids.
-> @@ -57,8 +59,8 @@ Example for a client device:
->  		compatible = "mediatek,mt8173-mmsys";
->  		mboxes = <&gce 0 CMDQ_THR_PRIO_LOWEST 1>,
->  			 <&gce 1 CMDQ_THR_PRIO_LOWEST 1>;
-> -		mutex-event-eof = <CMDQ_EVENT_MUTEX0_STREAM_EOF
-> -				CMDQ_EVENT_MUTEX1_STREAM_EOF>;
-> +		mediatek,gce-events = <CMDQ_EVENT_MDP_RDMA0_SOF>,
-> +				      <CMDQ_EVENT_MDP_RSZ0_SOF>;
->  		mediatek,gce-client-reg = <&gce SUBSYS_1400XXXX 0x3000 0x1000>,
->  					  <&gce SUBSYS_1401XXXX 0x2000 0x100>;
->  		...
-> -- 
-> 2.18.0
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
