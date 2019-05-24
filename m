@@ -2,133 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8899C2986C
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 15:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B26029871
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 15:02:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391372AbfEXNCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 09:02:10 -0400
-Received: from onstation.org ([52.200.56.107]:54248 "EHLO onstation.org"
+        id S2403760AbfEXNCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 09:02:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:42494 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391045AbfEXNCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 09:02:10 -0400
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id B68C73E88C;
-        Fri, 24 May 2019 13:02:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1558702928;
-        bh=z0jLt5GmPMP9SlehCoH5XOtq6l1p49diMIagJEvp4Qk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=smAVCUCykCHg++Dm5V8KlqfT5bsIWumj7ZrBGCUTy1m2iBlT5OcjhX8UojJtSkArp
-         oO1iKMD08rTaMxV65tpG71BGKZI74eEZXsPUcu8XJmKDy+Un1OI9m7V5vCceJ9SDAz
-         +SeCUTfxNxkazFQxBs6dIPwU4/AU/YhAZhx6naOQ=
-Date:   Fri, 24 May 2019 09:02:08 -0400
-From:   Brian Masney <masneyb@onstation.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     ulf.hansson@linaro.org, faiz_abbas@ti.com,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] mmc: sdhci: queue work after sdhci_defer_done()
-Message-ID: <20190524130208.GA16322@basecamp>
-References: <20190524111053.12228-1-masneyb@onstation.org>
- <70782901-a9ac-5647-1abe-89c86a44a01b@intel.com>
+        id S2391045AbfEXNCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 09:02:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A794A78;
+        Fri, 24 May 2019 06:02:44 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D5D53F703;
+        Fri, 24 May 2019 06:02:41 -0700 (PDT)
+Date:   Fri, 24 May 2019 14:02:17 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Andrew Jones <drjones@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Kristina =?utf-8?Q?Mart=C5=A1enko?= <kristina.martsenko@arm.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        Sudakshina Das <sudi.das@arm.com>,
+        Paul Elliott <paul.elliott@arm.com>
+Subject: Re: [PATCH 4/8] arm64: Basic Branch Target Identification support
+Message-ID: <20190524130217.GA15566@lakrids.cambridge.arm.com>
+References: <1558693533-13465-1-git-send-email-Dave.Martin@arm.com>
+ <1558693533-13465-5-git-send-email-Dave.Martin@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <70782901-a9ac-5647-1abe-89c86a44a01b@intel.com>
+In-Reply-To: <1558693533-13465-5-git-send-email-Dave.Martin@arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 03:17:13PM +0300, Adrian Hunter wrote:
-> On 24/05/19 2:10 PM, Brian Masney wrote:
-> > WiFi stopped working on the LG Nexus 5 phone and the issue was bisected
-> > to the commit c07a48c26519 ("mmc: sdhci: Remove finish_tasklet") that
-> > moved from using a tasklet to a work queue. That patch also changed
-> > sdhci_irq() to return IRQ_WAKE_THREAD instead of finishing the work when
-> > sdhci_defer_done() is true. Change it to queue work to the complete work
-> > queue if sdhci_defer_done() is true so that the functionality is
-> > equilivent to what was there when the finish_tasklet was present. This
-> > corrects the WiFi breakage on the Nexus 5 phone.
-> > 
-> > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > Fixes: c07a48c26519 ("mmc: sdhci: Remove finish_tasklet")
-> > ---
-> > See 'sdhci@f98a4900' in qcom-msm8974-lge-nexus5-hammerhead.dts for
-> > details about how the WiFi is wired into sdhci on this platform.
-> > 
-> > bisect log:
-> > 
-> >  git bisect start
-> >  # bad: [4dde821e4296e156d133b98ddc4c45861935a4fb] Merge tag 'xfs-5.2-fixes-1' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux
-> >  git bisect bad 4dde821e4296e156d133b98ddc4c45861935a4fb
-> >  # good: [e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd] Linux 5.1
-> >  git bisect good e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd
-> >  # bad: [8c79f4cd441b27df6cadd11b70a50e06b3b3a2bf] Merge tag 'docs-5.2' of git://git.lwn.net/linux
-> >  git bisect bad 8c79f4cd441b27df6cadd11b70a50e06b3b3a2bf
-> >  # bad: [67a242223958d628f0ba33283668e3ddd192d057] Merge tag 'for-5.2/block-20190507' of git://git.kernel.dk/linux-block
-> >  git bisect bad 67a242223958d628f0ba33283668e3ddd192d057
-> >  # good: [8ff468c29e9a9c3afe9152c10c7b141343270bf3] Merge branch 'x86-fpu-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> >  git bisect good 8ff468c29e9a9c3afe9152c10c7b141343270bf3
-> >  # good: [e2a5be107f52cefb9010ccae6f569c3ddaa954cc] staging: kpc2000: kpc_spi: Fix build error for {read,write}q
-> >  git bisect good e2a5be107f52cefb9010ccae6f569c3ddaa954cc
-> >  # bad: [cf482a49af564a3044de3178ea28f10ad5921b38] Merge tag 'driver-core-5.2-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core
-> >  git bisect bad cf482a49af564a3044de3178ea28f10ad5921b38
-> >  # good: [9f2e3a53f7ec9ef55e9d01bc29a6285d291c151e] Merge tag 'for-5.2-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
-> >  git bisect good 9f2e3a53f7ec9ef55e9d01bc29a6285d291c151e
-> >  # good: [b4b52b881cf08e13d110eac811d4becc0775abbf] Merge tag 'Wimplicit-fallthrough-5.2-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux
-> >  git bisect good b4b52b881cf08e13d110eac811d4becc0775abbf
-> >  # bad: [d5f758f2df8015b8dcf47b6403cc192e4cef734d] mmc: meson-gx: disable HS400
-> >  git bisect bad d5f758f2df8015b8dcf47b6403cc192e4cef734d
-> >  # good: [b3fb9d64b497b890f7b779a9f0b40b5cc269ea18] mmc: mmci: define get_dctrl_cfg for legacy variant
-> >  git bisect good b3fb9d64b497b890f7b779a9f0b40b5cc269ea18
-> >  # good: [ade024f130f742725da9219624b01666f04bc4a6] memstick: jmb38x_ms: remove set but not used variable 'data'
-> >  git bisect good ade024f130f742725da9219624b01666f04bc4a6
-> >  # bad: [42c38d4a1bc41e78dedbf73b0fb35e44007789bb] mmc: core: Fix warning and undefined behavior in mmc voltage handling
-> >  git bisect bad 42c38d4a1bc41e78dedbf73b0fb35e44007789bb
-> >  # good: [19d2f695f4e82794df7465b029c02b104d1b9903] mmc: sdhci: Call mmc_request_done() from IRQ handler if possible
-> >  git bisect good 19d2f695f4e82794df7465b029c02b104d1b9903
-> >  # bad: [71c733c4e1aeb83e8221e89caeec893d51f88b7b] mmc: tegra: add sdhci tegra suspend and resume
-> >  git bisect bad 71c733c4e1aeb83e8221e89caeec893d51f88b7b
-> >  # bad: [c07a48c2651965e84d35cf193dfc0e5f7892d612] mmc: sdhci: Remove finish_tasklet
-> >  git bisect bad c07a48c2651965e84d35cf193dfc0e5f7892d612
-> >  # first bad commit: [c07a48c2651965e84d35cf193dfc0e5f7892d612] mmc: sdhci: Remove finish_tasklet
-> > 
-> >  drivers/mmc/host/sdhci.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> > index 97158344b862..3563c3bc57c9 100644
-> > --- a/drivers/mmc/host/sdhci.c
-> > +++ b/drivers/mmc/host/sdhci.c
-> > @@ -3115,7 +3115,7 @@ static irqreturn_t sdhci_irq(int irq, void *dev_id)
-> >  			continue;
-> >  
-> >  		if (sdhci_defer_done(host, mrq)) {
-> > -			result = IRQ_WAKE_THREAD;
-> > +			queue_work(host->complete_wq, &host->complete_work);
-> 
-> The IRQ thread has a lot less latency than the work queue, which is why it
-> is done that way.
-> 
-> I am not sure why you say this change is equivalent to what was there
-> before, nor why it fixes your problem.
-> 
-> Can you explain some more?
+Hi Dave,
 
-What I meant by the equivalent change was that tasklet_schedule() used
-to be called in this situation rather than returning IRQ_WAKE_THREAD.
+This generally looks good, but I have a few comments below.
 
-I'm honestly not sure exactly what's going on yet. Without the patch I
-sent out, wlan0 is not detected on the phone. Perhaps there is a subtle
-race condition somewhere that is exposed with the reduction in latency
-since I assume tasklet_schedule() is more expensive than doing the
-processing in the bottom half?
+On Fri, May 24, 2019 at 11:25:29AM +0100, Dave Martin wrote:
+> +#define arch_calc_vm_prot_bits(prot, pkey) arm64_calc_vm_prot_bits(prot)
+> +static inline unsigned long arm64_calc_vm_prot_bits(unsigned long prot)
+> +{
+> +	if (system_supports_bti() && (prot & PROT_BTI_GUARDED))
+> +		return VM_ARM64_GP;
+> +
+> +	return 0;
+> +}
+> +
+> +#define arch_vm_get_page_prot(vm_flags) arm64_vm_get_page_prot(vm_flags)
+> +static inline pgprot_t arm64_vm_get_page_prot(unsigned long vm_flags)
+> +{
+> +	return (vm_flags & VM_ARM64_GP) ? __pgprot(PTE_GP) : __pgprot(0);
+> +}
 
-I'll do some more digging and see if I can find more information. I sent
-this out to get a discussion started.
+While the architectural name for the PTE bit is GP, it might make more
+sense to call the vm flag VM_ARM64_BTI, since people are more likely to
+recognise BTI than GP as a mnemonic.
 
-Brian
+Not a big deal either way, though.
+
+[...]
+
+> diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+> index b2de329..b868ef11 100644
+> --- a/arch/arm64/include/asm/ptrace.h
+> +++ b/arch/arm64/include/asm/ptrace.h
+> @@ -41,6 +41,7 @@
+>  
+>  /* Additional SPSR bits not exposed in the UABI */
+>  #define PSR_IL_BIT		(1 << 20)
+> +#define PSR_BTYPE_CALL		(2 << 10)
+
+I thought BTYPE was a 2-bit field, so isn't there at leat one other
+value to have a mnemonic for?
+
+Is it an enumeration or a bitmask?
+
+>  #endif /* _UAPI__ASM_HWCAP_H */
+> diff --git a/arch/arm64/include/uapi/asm/mman.h b/arch/arm64/include/uapi/asm/mman.h
+> new file mode 100644
+> index 0000000..4776b43
+> --- /dev/null
+> +++ b/arch/arm64/include/uapi/asm/mman.h
+> @@ -0,0 +1,9 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef _UAPI__ASM_MMAN_H
+> +#define _UAPI__ASM_MMAN_H
+> +
+> +#include <asm-generic/mman.h>
+> +
+> +#define PROT_BTI_GUARDED	0x10		/* BTI guarded page */
+
+From prior discussions, I thought this would be PROT_BTI, without the
+_GUARDED suffix. Do we really need that?
+
+AFAICT, all other PROT_* definitions only have a single underscore, and
+the existing arch-specific flags are PROT_ADI on sparc, and PROT_SAO on
+powerpc.
+
+[...]
+
+> diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
+> index b82e0a9..3717b06 100644
+> --- a/arch/arm64/kernel/ptrace.c
+> +++ b/arch/arm64/kernel/ptrace.c
+> @@ -1860,7 +1860,7 @@ void syscall_trace_exit(struct pt_regs *regs)
+>   */
+>  #define SPSR_EL1_AARCH64_RES0_BITS \
+>  	(GENMASK_ULL(63, 32) | GENMASK_ULL(27, 25) | GENMASK_ULL(23, 22) | \
+> -	 GENMASK_ULL(20, 13) | GENMASK_ULL(11, 10) | GENMASK_ULL(5, 5))
+> +	 GENMASK_ULL(20, 13) | GENMASK_ULL(5, 5))
+>  #define SPSR_EL1_AARCH32_RES0_BITS \
+>  	(GENMASK_ULL(63, 32) | GENMASK_ULL(22, 22) | GENMASK_ULL(20, 20))
+
+Phew; I was worried this would be missed!
+
+[...]
+
+> @@ -741,6 +741,11 @@ static void setup_return(struct pt_regs *regs, struct k_sigaction *ka,
+>  	regs->regs[29] = (unsigned long)&user->next_frame->fp;
+>  	regs->pc = (unsigned long)ka->sa.sa_handler;
+>  
+> +	if (system_supports_bti()) {
+> +		regs->pstate &= ~(regs->pstate & PSR_BTYPE_MASK);
+
+Nit: that can be:
+
+		regs->pstate &= ~PSR_BTYPE_MASK;
+
+> diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
+> index 5610ac0..85b456b 100644
+> --- a/arch/arm64/kernel/syscall.c
+> +++ b/arch/arm64/kernel/syscall.c
+> @@ -66,6 +66,7 @@ static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
+>  	unsigned long flags = current_thread_info()->flags;
+>  
+>  	regs->orig_x0 = regs->regs[0];
+> +	regs->pstate &= ~(regs->pstate & PSR_BTYPE_MASK);
+
+Likewise:
+
+	regs->pstate &= ~PSR_BTYPE_MASK;
+
+... though I don't understand why that would matter to syscalls, nor how
+those bits could ever be set given we had to execute an SVC to get here.
+
+What am I missing?
+
+Thanks,
+Mark.
