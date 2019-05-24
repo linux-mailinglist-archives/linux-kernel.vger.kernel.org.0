@@ -2,54 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21326293D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5050B293F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 10:57:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389964AbfEXIy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 04:54:27 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35079 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389970AbfEXIyT (ORCPT
+        id S2390413AbfEXI4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 04:56:08 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46804 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389980AbfEXIyU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 04:54:19 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p26so13357294edr.2
-        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:54:19 -0700 (PDT)
+        Fri, 24 May 2019 04:54:20 -0400
+Received: by mail-ed1-f66.google.com with SMTP id f37so13271611edb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 01:54:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MAPnhxqw8kme2eR+AuVFsaR4pvfjpQV+5x2Qx7ASEQ8=;
-        b=g5enIYA9/Sf7GfGnysfGpukptLtI9FO3uexJgB1nyWmwUQeQZpajlKLvC48gfEooCj
-         UmYLR/n/r61sxtQ8j7c8JKeME1z94nt44Jw0zuML5JVBkPDW1qY+b4mIGIA2HnO2e4Yk
-         g+hdRUhd1/FkxR+SROSkLv9GsKIT+fyVqJdQo=
+        bh=9Yo/Zer+8+iZGO3QV40bLkqCAAdgnz/HLbmfJGGYr+Q=;
+        b=cFppgu9fnJ/2ig/l4HBHyobS0yHLQykJ8yLGQM9AAcNv7HUmalYinvJ0ZiHtjlY2DS
+         0fWKpQ+q8hGL1X4DypWe1pT5oGssfAUU/K4r9Mh84vSzJDX1dgqpC4l7ktU0WNniBa9D
+         GEyHmeVCWvTv+fG3oFfLaOaXdMDoJV9eJNWXA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MAPnhxqw8kme2eR+AuVFsaR4pvfjpQV+5x2Qx7ASEQ8=;
-        b=TrZ0poW4tLGU2DMoqlld9D/+jxKrS76Tdz14SQNQQXD8k7eAKM/f7VRCAVEeJ9UkfF
-         8n+o3RJtPxDtEfR1uWgudiLRb/rJxVhVFAE3ZaleSk5dBPqbA6M8NJvbiFQIxA4dD3Cj
-         5gp/LjLlvZ3il+di/nd+wqqPXeTCSBHAjOzr9zI4b1z962tLJ5FGn7PqxFi+aIIqs0r+
-         HyxPRm5YCPFywwm+ukQm3DvW4UAS/M2s9gcZzq7MOgLoRuIFagSjhC512mOSEFprKuoo
-         8/Q2YhyhLYOEypDIYMtfy7SkMGc82CiRbnDGn/DaWgc1cVEoyuu6EAOrDpzwe06+a4Wv
-         DhWQ==
-X-Gm-Message-State: APjAAAUu4XAhTKJ84O5y7apOlI+woHJi4W1di1zThjJQrXR4NBoSb+J4
-        O2rdQmGJTRHsPi54RDYNQnASv1Xfmws=
-X-Google-Smtp-Source: APXvYqzYz34fK8/8X7Y/uPtf4olS4exJNIxPEIlqqQbxRTgl2/MAionDBwX0f6ASez9o9LStg7IXFQ==
-X-Received: by 2002:a17:906:63c1:: with SMTP id u1mr19497792ejk.173.1558688058160;
-        Fri, 24 May 2019 01:54:18 -0700 (PDT)
+        bh=9Yo/Zer+8+iZGO3QV40bLkqCAAdgnz/HLbmfJGGYr+Q=;
+        b=boSLm3dqftm/28XmFhd94QxqzSl482yV/gaD86ayom906IhBuFjtMK3VEseuTO7sHV
+         F+O3Y9vrPL3p7kCLO5Q0AWKBe+kxcG8QjAAaX93yGeBp6AMShrW/vhclig5FMjfrCTfH
+         vVYbNpLnLpmSWGBSXZyGjSL4Q2GzSXgQLCrkdyFESm0gid5neSoweP1cl46p2oM1KVsO
+         OIog52A+JRYnEkKB2HdiT9kNVWOL7ygFMeJFMr5fTCy3b64d3e642n1Jd4ssKrrZT0ak
+         DlCpCkO99baqd0glIaTw8JPlLqxLD/cmgWSoPsdcWZCyUSnnXOnViafpk4TMj2/d5zc0
+         byig==
+X-Gm-Message-State: APjAAAU0pzat7gbG16dCdqNBr0dM6+oPrRAkSHWWLQ3etxiW6MWpbEPm
+        g+XC3GyKb5unze3BZt3lxp+VO10J9kA=
+X-Google-Smtp-Source: APXvYqyP+e+E2qU4Lv+BMo7M2voezqLCAoqOH/3CPIQ+j9xKGyjgD9b1iL7vXjKHs6owTje8UsWqqA==
+X-Received: by 2002:a50:90dd:: with SMTP id d29mr102590308eda.127.1558688059374;
+        Fri, 24 May 2019 01:54:19 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id 96sm567082edq.68.2019.05.24.01.54.16
+        by smtp.gmail.com with ESMTPSA id 96sm567082edq.68.2019.05.24.01.54.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 24 May 2019 01:54:17 -0700 (PDT)
+        Fri, 24 May 2019 01:54:18 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         DRI Development <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 12/33] fbdev/omap: sysfs files can't disappear before the device is gone
-Date:   Fri, 24 May 2019 10:53:33 +0200
-Message-Id: <20190524085354.27411-13-daniel.vetter@ffwll.ch>
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Rob Clark <robdclark@gmail.com>
+Subject: [PATCH 13/33] fbdev: sysfs files can't disappear before the device is gone
+Date:   Fri, 24 May 2019 10:53:34 +0200
+Message-Id: <20190524085354.27411-14-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
 References: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
@@ -64,84 +66,40 @@ Which means lock_fb_info can never fail. Remove the error handling.
 
 Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Rob Clark <robdclark@gmail.com>
 ---
- .../video/fbdev/omap2/omapfb/omapfb-sysfs.c   | 21 +++++++------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ drivers/video/fbdev/core/fbsysfs.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c b/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c
-index 8087a009c54f..bd0d20283372 100644
---- a/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c
-+++ b/drivers/video/fbdev/omap2/omapfb/omapfb-sysfs.c
-@@ -60,8 +60,7 @@ static ssize_t store_rotate_type(struct device *dev,
- 	if (rot_type != OMAP_DSS_ROT_DMA && rot_type != OMAP_DSS_ROT_VRFB)
+diff --git a/drivers/video/fbdev/core/fbsysfs.c b/drivers/video/fbdev/core/fbsysfs.c
+index 44cca39f2b51..5f329278e55f 100644
+--- a/drivers/video/fbdev/core/fbsysfs.c
++++ b/drivers/video/fbdev/core/fbsysfs.c
+@@ -179,10 +179,7 @@ static ssize_t store_modes(struct device *device,
  		return -EINVAL;
  
--	if (!lock_fb_info(fbi))
+ 	console_lock();
+-	if (!lock_fb_info(fb_info)) {
+-		console_unlock();
 -		return -ENODEV;
-+	lock_fb_info(fbi);
+-	}
++	lock_fb_info(fb_info);
  
- 	r = 0;
- 	if (rot_type == ofbi->rotation_type)
-@@ -112,8 +111,7 @@ static ssize_t store_mirror(struct device *dev,
- 	if (r)
- 		return r;
+ 	list_splice(&fb_info->modelist, &old_list);
+ 	fb_videomode_to_modelist((const struct fb_videomode *)buf, i,
+@@ -409,10 +406,7 @@ static ssize_t store_fbstate(struct device *device,
+ 	state = simple_strtoul(buf, &last, 0);
  
--	if (!lock_fb_info(fbi))
+ 	console_lock();
+-	if (!lock_fb_info(fb_info)) {
+-		console_unlock();
 -		return -ENODEV;
-+	lock_fb_info(fbi);
+-	}
++	lock_fb_info(fb_info);
  
- 	ofbi->mirror = mirror;
+ 	fb_set_suspend(fb_info, (int)state);
  
-@@ -149,8 +147,7 @@ static ssize_t show_overlays(struct device *dev,
- 	ssize_t l = 0;
- 	int t;
- 
--	if (!lock_fb_info(fbi))
--		return -ENODEV;
-+	lock_fb_info(fbi);
- 	omapfb_lock(fbdev);
- 
- 	for (t = 0; t < ofbi->num_overlays; t++) {
-@@ -208,8 +205,7 @@ static ssize_t store_overlays(struct device *dev, struct device_attribute *attr,
- 	if (buf[len - 1] == '\n')
- 		len = len - 1;
- 
--	if (!lock_fb_info(fbi))
--		return -ENODEV;
-+	lock_fb_info(fbi);
- 	omapfb_lock(fbdev);
- 
- 	if (len > 0) {
-@@ -340,8 +336,7 @@ static ssize_t show_overlays_rotate(struct device *dev,
- 	ssize_t l = 0;
- 	int t;
- 
--	if (!lock_fb_info(fbi))
--		return -ENODEV;
-+	lock_fb_info(fbi);
- 
- 	for (t = 0; t < ofbi->num_overlays; t++) {
- 		l += snprintf(buf + l, PAGE_SIZE - l, "%s%d",
-@@ -369,8 +364,7 @@ static ssize_t store_overlays_rotate(struct device *dev,
- 	if (buf[len - 1] == '\n')
- 		len = len - 1;
- 
--	if (!lock_fb_info(fbi))
--		return -ENODEV;
-+	lock_fb_info(fbi);
- 
- 	if (len > 0) {
- 		char *p = (char *)buf;
-@@ -453,8 +447,7 @@ static ssize_t store_size(struct device *dev, struct device_attribute *attr,
- 
- 	size = PAGE_ALIGN(size);
- 
--	if (!lock_fb_info(fbi))
--		return -ENODEV;
-+	lock_fb_info(fbi);
- 
- 	if (display && display->driver->sync)
- 		display->driver->sync(display);
 -- 
 2.20.1
 
