@@ -2,109 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2252829081
-	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 07:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4562E29087
+	for <lists+linux-kernel@lfdr.de>; Fri, 24 May 2019 07:52:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388496AbfEXFtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 01:49:21 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:54904 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388232AbfEXFtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 01:49:19 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 052572000AC;
-        Fri, 24 May 2019 07:49:17 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 19B9D200088;
-        Fri, 24 May 2019 07:49:12 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C1288402D6;
-        Fri, 24 May 2019 13:49:05 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, leonard.crestez@nxp.com, abel.vesa@nxp.com,
-        viresh.kumar@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, hyc.nju@gmail.com
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH RESEND 2/2] soc: imx: soc-imx8: Correct return value of error handle
-Date:   Fri, 24 May 2019 13:51:01 +0800
-Message-Id: <20190524055101.3424-2-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190524055101.3424-1-Anson.Huang@nxp.com>
-References: <20190524055101.3424-1-Anson.Huang@nxp.com>
+        id S2388359AbfEXFwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 01:52:12 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35477 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfEXFwM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 01:52:12 -0400
+Received: by mail-wr1-f66.google.com with SMTP id m3so8596874wrv.2
+        for <linux-kernel@vger.kernel.org>; Thu, 23 May 2019 22:52:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=BF/ShRtzX5UB+FCq7u4p4rYV8u0ylb2ctMlpDYGE3K0=;
+        b=SNcVzCeQlqjWrAnN2SdzihmWCDxHivI7YV+WJA75jW2833n9tfdOCUe5blIPVKdJ05
+         qrXYlLHcHvLGiW2iJ9MAplKfjAGBFnzVG7yRjtZOeUgQAqkwHebbE0WfBt8bpX86ytZ7
+         taUi2DrRKdesPpN929KE5d5a0fe0h9ih7YYvMKEakpKZMcYo3TLKcARhEQ0H7JsxvytD
+         ZXODiKY+O6HhRt2BrzmklGOiH378vLVg09xtyJKtZJAz1k3DtfLuDF3+hVlfhpmGpR8j
+         dJ7yEGXoc9Tt1ydKJmVN30jOWtMXWID4eRc4Lfo61oDvDj1Kvq/P7mGgZ6cVNwmDl3hD
+         P9Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=BF/ShRtzX5UB+FCq7u4p4rYV8u0ylb2ctMlpDYGE3K0=;
+        b=JBZq1yV+c4yBVtMF9kk0l3fo3nyUjipKhnxALY8ldBF7jRKFVkWZwDumiwYcZlswb5
+         qfPK+n4yzy1dlzCJztD7GT7TnxyTAgsY+/2mE5uCKyJbj1akUgIaKEmH/WAp4yVAqOxn
+         7w/CjsQOqwSYgVu6Nak0zUrwJZrsr03AU6sHeWX/QiORljKVBNAoB1eXpcBhx15MT06I
+         QvGJP8G+yP3cpn7RogQA7Z6Rh9QzCq2WAAF9jE1v/EbbCEOsWI19ttE8VxxCGMhHQVVT
+         BFd6vdF7pdETawzHJaVmeVkNoA8Qy5JbNlm+qZRBNBfYVSUAserYTed9JBfev/5lpS6o
+         4q1Q==
+X-Gm-Message-State: APjAAAUH0yp6cXZy21kBmNfIFda7aTyjFS6L8v46xnSQ60i/4mLVptj8
+        LeJdVx2DulHKZBFTcW5Ij5rRjA==
+X-Google-Smtp-Source: APXvYqxrx47e5izUS2A8wp96XT1e79WUxb39UwpLR0714CrVKvl7+J3OJ1BC3ys2Xfaon3R6WUDxmw==
+X-Received: by 2002:adf:df08:: with SMTP id y8mr2677941wrl.258.1558677129882;
+        Thu, 23 May 2019 22:52:09 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id z202sm2750645wmc.18.2019.05.23.22.52.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 May 2019 22:52:09 -0700 (PDT)
+Message-ID: <5ce78689.1c69fb81.58097.eacf@mx.google.com>
+Date:   Thu, 23 May 2019 22:52:09 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Tree: mainline
+X-Kernelci-Lab-Name: lab-baylibre
+X-Kernelci-Branch: master
+X-Kernelci-Kernel: v5.2-rc1-172-g4dde821e4296
+Subject: mainline/master boot bisection: v5.2-rc1-172-g4dde821e4296 on
+ meson-g12a-x96-max
+To:     tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
+        mgalka@collabora.com, Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>, broonie@kernel.org,
+        matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com, Jerome Brunet <jbrunet@baylibre.com>
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-amlogic@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-Current implementation of i.MX8 SoC driver returns -ENODEV
-for all cases of error during initialization, this is incorrect.
-This patch fixes them using correct return value according
-to different errors.
+mainline/master boot bisection: v5.2-rc1-172-g4dde821e4296 on meson-g12a-x9=
+6-max
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
----
- drivers/soc/imx/soc-imx8.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+Summary:
+  Start:      4dde821e4296 Merge tag 'xfs-5.2-fixes-1' of git://git.kernel.=
+org/pub/scm/fs/xfs/xfs-linux
+  Details:    https://kernelci.org/boot/id/5ce72c6259b514ed817a3640
+  Plain log:  https://storage.kernelci.org//mainline/master/v5.2-rc1-172-g4=
+dde821e4296/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-baylibre/bo=
+ot-meson-g12a-x96-max.txt
+  HTML log:   https://storage.kernelci.org//mainline/master/v5.2-rc1-172-g4=
+dde821e4296/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-baylibre/bo=
+ot-meson-g12a-x96-max.html
+  Result:     11a7bea17c9e arm64: dts: meson: g12a: add pinctrl support con=
+trollers
 
-diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
-index d5badde..2183edf 100644
---- a/drivers/soc/imx/soc-imx8.c
-+++ b/drivers/soc/imx/soc-imx8.c
-@@ -102,7 +102,7 @@ static int __init imx8_soc_init(void)
- 
- 	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
- 	if (!soc_dev_attr)
--		return -ENODEV;
-+		return -ENOMEM;
- 
- 	soc_dev_attr->family = "Freescale i.MX";
- 
-@@ -112,8 +112,10 @@ static int __init imx8_soc_init(void)
- 		goto free_soc;
- 
- 	id = of_match_node(imx8_soc_match, root);
--	if (!id)
-+	if (!id) {
-+		ret = -ENODEV;
- 		goto free_soc;
-+	}
- 
- 	data = id->data;
- 	if (data) {
-@@ -123,12 +125,16 @@ static int __init imx8_soc_init(void)
- 	}
- 
- 	soc_dev_attr->revision = imx8_revision(soc_rev);
--	if (!soc_dev_attr->revision)
-+	if (!soc_dev_attr->revision) {
-+		ret = -ENOMEM;
- 		goto free_soc;
-+	}
- 
- 	soc_dev = soc_device_register(soc_dev_attr);
--	if (IS_ERR(soc_dev))
-+	if (IS_ERR(soc_dev)) {
-+		ret = PTR_ERR(soc_dev);
- 		goto free_rev;
-+	}
- 
- 	if (IS_ENABLED(CONFIG_ARM_IMX_CPUFREQ_DT))
- 		platform_device_register_simple("imx-cpufreq-dt", -1, NULL, 0);
-@@ -142,6 +148,6 @@ static int __init imx8_soc_init(void)
- free_soc:
- 	kfree(soc_dev_attr);
- 	of_node_put(root);
--	return -ENODEV;
-+	return ret;
- }
- device_initcall(imx8_soc_init);
--- 
-2.7.4
+Checks:
+  revert:     PASS
+  verify:     PASS
 
+Parameters:
+  Tree:       mainline
+  URL:        git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
+git
+  Branch:     master
+  Target:     meson-g12a-x96-max
+  CPU arch:   arm64
+  Lab:        lab-baylibre
+  Compiler:   gcc-8
+  Config:     defconfig+CONFIG_RANDOMIZE_BASE=3Dy
+  Test suite: boot
+
+Breaking commit found:
+
+---------------------------------------------------------------------------=
+----
+commit 11a7bea17c9e0a36daab934d83e15a760f402147
+Author: Jerome Brunet <jbrunet@baylibre.com>
+Date:   Mon Mar 18 10:58:45 2019 +0100
+
+    arm64: dts: meson: g12a: add pinctrl support controllers
+    =
+
+    Add the peripheral and always-on pinctrl controllers to the g12a soc.
+    =
+
+    Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+    Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+    Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/=
+dts/amlogic/meson-g12a.dtsi
+index abfa167751af..5e07e4ca3f4b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+@@ -104,6 +104,29 @@
+ 				#address-cells =3D <2>;
+ 				#size-cells =3D <2>;
+ 				ranges =3D <0x0 0x0 0x0 0x34400 0x0 0x400>;
++
++				periphs_pinctrl: pinctrl@40 {
++					compatible =3D "amlogic,meson-g12a-periphs-pinctrl";
++					#address-cells =3D <2>;
++					#size-cells =3D <2>;
++					ranges;
++
++					gpio: bank@40 {
++						reg =3D <0x0 0x40  0x0 0x4c>,
++						      <0x0 0xe8  0x0 0x18>,
++						      <0x0 0x120 0x0 0x18>,
++						      <0x0 0x2c0 0x0 0x40>,
++						      <0x0 0x340 0x0 0x1c>;
++						reg-names =3D "gpio",
++							    "pull",
++							    "pull-enable",
++							    "mux",
++							    "ds";
++						gpio-controller;
++						#gpio-cells =3D <2>;
++						gpio-ranges =3D <&periphs_pinctrl 0 0 86>;
++					};
++				};
+ 			};
+ =
+
+ 			hiu: bus@3c000 {
+@@ -150,6 +173,25 @@
+ 					clocks =3D <&xtal>, <&clkc CLKID_CLK81>;
+ 					clock-names =3D "xtal", "mpeg-clk";
+ 				};
++
++				ao_pinctrl: pinctrl@14 {
++					compatible =3D "amlogic,meson-g12a-aobus-pinctrl";
++					#address-cells =3D <2>;
++					#size-cells =3D <2>;
++					ranges;
++
++					gpio_ao: bank@14 {
++						reg =3D <0x0 0x14 0x0 0x8>,
++						      <0x0 0x1c 0x0 0x8>,
++						      <0x0 0x24 0x0 0x14>;
++						reg-names =3D "mux",
++							    "ds",
++							    "gpio";
++						gpio-controller;
++						#gpio-cells =3D <2>;
++						gpio-ranges =3D <&ao_pinctrl 0 0 15>;
++					};
++				};
+ 			};
+ =
+
+ 			sec_AO: ao-secure@140 {
+---------------------------------------------------------------------------=
+----
+
+
+Git bisection log:
+
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [a455eda33faafcaac1effb31d682765b14ef868c] Merge branch 'linus' of =
+git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
+git bisect good a455eda33faafcaac1effb31d682765b14ef868c
+# bad: [4dde821e4296e156d133b98ddc4c45861935a4fb] Merge tag 'xfs-5.2-fixes-=
+1' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux
+git bisect bad 4dde821e4296e156d133b98ddc4c45861935a4fb
+# bad: [8c05f3b965da14e7790711026b32cc10a4c06213] Merge tag 'for-linus' of =
+git://git.armlinux.org.uk/~rmk/linux-arm
+git bisect bad 8c05f3b965da14e7790711026b32cc10a4c06213
+# bad: [b45da609a02460c6a34c395f03f891f1fb2a021a] Merge tag 'imx-bindings-5=
+.2' of git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux into ar=
+m/dt
+git bisect bad b45da609a02460c6a34c395f03f891f1fb2a021a
+# bad: [a41332dd5e2ac56b0b6eb0959d8828bfe0d6a4ad] Merge tag 'socfpga_dts_up=
+dates_for_v5.2' of git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/l=
+inux into arm/dt
+git bisect bad a41332dd5e2ac56b0b6eb0959d8828bfe0d6a4ad
+# bad: [bbf7499dc033831ae91125a88a062910cdc62cf2] Merge tag 'aspeed-5.2-dev=
+icetree' of git://git.kernel.org/pub/scm/linux/kernel/git/joel/aspeed into =
+arm/dt
+git bisect bad bbf7499dc033831ae91125a88a062910cdc62cf2
+# bad: [f6f9683c5aedff214433fa130e67a79f08a47fdb] Merge tag 'v5.2-rockchip-=
+dts32-1' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockc=
+hip into arm/dt
+git bisect bad f6f9683c5aedff214433fa130e67a79f08a47fdb
+# bad: [e2cffeb398f4830b004774444809ee256b9bc653] arm64: dts: meson-g12a: A=
+dd CMA reserved memory
+git bisect bad e2cffeb398f4830b004774444809ee256b9bc653
+# bad: [11a7bea17c9e0a36daab934d83e15a760f402147] arm64: dts: meson: g12a: =
+add pinctrl support controllers
+git bisect bad 11a7bea17c9e0a36daab934d83e15a760f402147
+# good: [7e09092aee006b21d830b99f8498b5640b8711f6] arm64: dts: meson-gxl-s9=
+05d-phicomm-n1: add status LED
+git bisect good 7e09092aee006b21d830b99f8498b5640b8711f6
+# good: [965c827ac37e71f76d3ac55c75ac08909f2a4eed] arm64: dts: meson: g12a:=
+ add efuse
+git bisect good 965c827ac37e71f76d3ac55c75ac08909f2a4eed
+# good: [b019f4a4199f865b054262ff78f606ca70f7b981] arm64: dts: meson: g12a:=
+ Add AO Clock + Reset Controller support
+git bisect good b019f4a4199f865b054262ff78f606ca70f7b981
+# first bad commit: [11a7bea17c9e0a36daab934d83e15a760f402147] arm64: dts: =
+meson: g12a: add pinctrl support controllers
+---------------------------------------------------------------------------=
+----
