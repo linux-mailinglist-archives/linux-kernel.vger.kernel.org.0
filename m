@@ -2,75 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED0A2A74A
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 00:52:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 838382A74D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 01:09:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbfEYWwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 18:52:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbfEYWwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 18:52:12 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8FC42081C;
-        Sat, 25 May 2019 22:52:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558824731;
-        bh=MJPUSD67w1vDzE1s8ukB7WvKrTYgamW84goFYYVDSPI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=uYhUPzjxc/GeB+FzHFhyxZ7vo3ablcJVW7xTFZBQ663X5B5pDMj9l2/WBJbSP5sIr
-         PmGFV5rSX7sooE3xDLZ0ZP95v/yHZ+2wABSbIW1lqY2R4xZBk6KSwpM+VoS3oiefLg
-         XSQ9v+swjbOvZCStCoNjXDVcLBs5kNEKQR+06saQ=
-Date:   Sat, 25 May 2019 15:52:10 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dave Airlie <airlied@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jerome Glisse <jglisse@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>,
-        Moni Shoua <monis@mellanox.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Kaike Wan <kaike.wan@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        linux-mm@kvack.org, dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: RFC: Run a dedicated hmm.git for 5.3
-Message-Id: <20190525155210.8a9a66385ac8169d0e144225@linux-foundation.org>
-In-Reply-To: <20190524124455.GB16845@ziepe.ca>
-References: <20190522235737.GD15389@ziepe.ca>
-        <20190523150432.GA5104@redhat.com>
-        <20190523154149.GB12159@ziepe.ca>
-        <20190523155207.GC5104@redhat.com>
-        <20190523163429.GC12159@ziepe.ca>
-        <20190523173302.GD5104@redhat.com>
-        <20190523175546.GE12159@ziepe.ca>
-        <20190523182458.GA3571@redhat.com>
-        <20190523191038.GG12159@ziepe.ca>
-        <20190524064051.GA28855@infradead.org>
-        <20190524124455.GB16845@ziepe.ca>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727505AbfEYXIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 19:08:54 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:58920 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfEYXIy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 May 2019 19:08:54 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hUfmQ-0007tt-IP; Sat, 25 May 2019 23:08:46 +0000
+Date:   Sun, 26 May 2019 00:08:46 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 23/23] NFS: Add fs_context support.
+Message-ID: <20190525230846.GP17978@ZenIV.linux.org.uk>
+References: <155862813755.26654.563679411147031501.stgit@warthog.procyon.org.uk>
+ <155862834550.26654.17230477291010963688.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155862834550.26654.17230477291010963688.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 24 May 2019 09:44:55 -0300 Jason Gunthorpe <jgg@ziepe.ca> wrote:
+On Thu, May 23, 2019 at 05:19:05PM +0100, David Howells wrote:
 
-> Now that -mm merged the basic hmm API skeleton I think running like
-> this would get us quickly to the place we all want: comprehensive in tree
-> users of hmm.
-> 
-> Andrew, would this be acceptable to you?
+>  out_no_data:
+> -	dfprintk(MOUNT, "NFS: mount program didn't pass any mount data\n");
+> -	return -EINVAL;
+> +	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
+> +		ctx->skip_reconfig_option_check = true;
+> +		return 0;
+> +	}
 
-Sure.  Please take care not to permit this to reduce the amount of
-exposure and review which the core HMM pieces get.
+That really ought to be
+	if (fc->root) { /* remount */
+		ctx->skip_reconfig_option_check = true;
+		return 0;
+	}
+and similar in the v4 counterpart.  fc->purpose is a bad idea; it is
+possible to get rid of it.
 
+Frankly, I'm tempted to add
+
+static inline bool is_remount_fc(struct fs_context *fc)
+{
+	return fc->root != NULL;
+}
+
+and just use that in such places...
