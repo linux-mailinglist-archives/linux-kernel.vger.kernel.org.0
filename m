@@ -2,124 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 305682A442
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 13:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5481A2A43D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 13:50:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfEYLxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 07:53:21 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38857 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726484AbfEYLxV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 07:53:21 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4PBr6ZV669446
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 25 May 2019 04:53:07 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4PBr6ZV669446
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1558785187;
-        bh=KiMKmTiAuhosDMsfX0eRtwIsbNvqHBTWySDbVzObIsw=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=XxUXDopvTJ2/NYyhD1BhhOgJXiDoi07O8P7JDF8UW4egCO5ng3l2EB9bY83U3X4kx
-         P1jmwOuM0rWcqLaK8vkYvM2Viy+9/b3gDqaO9fODpAGDLmBegZ6DHX63ZizhIwysMN
-         GRNbBTwjMY7eZQ6hrywQ186iVJZmcxOwIFQmOnP89VJGkoCgvpEGDiPmaQVVJJHyo/
-         L15/1jTEEv7zeSM5vj97iBP/8r2z1yRkKcbnRS5Z2L85xB3ps9FznliJD4nmZ47TUg
-         J3BaLLGkO+kUZUZPUNvrAziLpQueHzdYAnDImTq6jm5tArUVC25LVtLT4vlEeydShj
-         f84+vlfs0y0jg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4PBr504669443;
-        Sat, 25 May 2019 04:53:05 -0700
-Date:   Sat, 25 May 2019 04:53:05 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Rob Bradford <tipbot@zytor.com>
-Message-ID: <tip-88447c5b93d98be847f428c39ba589779a59eb83@git.kernel.org>
-Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org,
-        blackgod016574@gmail.com, peterz@infradead.org, mingo@kernel.org,
-        ard.biesheuvel@linaro.org, torvalds@linux-foundation.org,
-        robert.bradford@intel.com, tglx@linutronix.de
-Reply-To: tglx@linutronix.de, robert.bradford@intel.com,
-          torvalds@linux-foundation.org, peterz@infradead.org,
-          ard.biesheuvel@linaro.org, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, blackgod016574@gmail.com,
-          hpa@zytor.com
-In-Reply-To: <20190525112559.7917-3-ard.biesheuvel@linaro.org>
-References: <20190525112559.7917-3-ard.biesheuvel@linaro.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/urgent] efi: Allow the number of EFI configuration tables
- entries to be zero
-Git-Commit-ID: 88447c5b93d98be847f428c39ba589779a59eb83
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1726908AbfEYLtw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 07:49:52 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:51548 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726697AbfEYLtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 May 2019 07:49:52 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B4D5E6F2072E705EE811;
+        Sat, 25 May 2019 19:49:44 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 25 May 2019 19:49:36 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Andy Gross <agross@kernel.org>,
+        David Brown <david.brown@linaro.org>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: [PATCH] usb: dwc3: qcom: Use of_clk_get_parent_count()
+Date:   Sat, 25 May 2019 19:58:08 +0800
+Message-ID: <20190525115808.108142-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=1.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_24_48,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: *
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  88447c5b93d98be847f428c39ba589779a59eb83
-Gitweb:     https://git.kernel.org/tip/88447c5b93d98be847f428c39ba589779a59eb83
-Author:     Rob Bradford <robert.bradford@intel.com>
-AuthorDate: Sat, 25 May 2019 13:25:59 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 25 May 2019 13:48:17 +0200
+Use of_clk_get_parent_count() instead of open coding.
 
-efi: Allow the number of EFI configuration tables entries to be zero
-
-Only try and access the EFI configuration tables if there there are any
-reported. This allows EFI to be continued to used on systems where there
-are no configuration table entries.
-
-Signed-off-by: Rob Bradford <robert.bradford@intel.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Gen Zhang <blackgod016574@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20190525112559.7917-3-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- arch/x86/platform/efi/quirks.c | 3 +++
- drivers/firmware/efi/efi.c     | 3 +++
- 2 files changed, 6 insertions(+)
+ drivers/usb/dwc3/dwc3-qcom.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index feb77777c8b8..632b83885867 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -513,6 +513,9 @@ int __init efi_reuse_config(u64 tables, int nr_tables)
- 	void *p, *tablep;
- 	struct efi_setup_data *data;
+diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+index 184df4daa590..821f5179d7b6 100644
+--- a/drivers/usb/dwc3/dwc3-qcom.c
++++ b/drivers/usb/dwc3/dwc3-qcom.c
+@@ -446,8 +446,7 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
+ 		goto reset_assert;
+ 	}
  
-+	if (nr_tables == 0)
-+		return 0;
-+
- 	if (!efi_setup)
- 		return 0;
- 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 55b77c576c42..521a541d02ad 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -636,6 +636,9 @@ int __init efi_config_init(efi_config_table_type_t *arch_tables)
- 	void *config_tables;
- 	int sz, ret;
- 
-+	if (efi.systab->nr_tables == 0)
-+		return 0;
-+
- 	if (efi_enabled(EFI_64BIT))
- 		sz = sizeof(efi_config_table_64_t);
- 	else
+-	ret = dwc3_qcom_clk_init(qcom, of_count_phandle_with_args(np,
+-						"clocks", "#clock-cells"));
++	ret = dwc3_qcom_clk_init(qcom, of_clk_get_parent_count(np));
+ 	if (ret) {
+ 		dev_err(dev, "failed to get clocks\n");
+ 		goto reset_assert;
+-- 
+2.20.1
+
