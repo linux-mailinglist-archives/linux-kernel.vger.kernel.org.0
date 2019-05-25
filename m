@@ -2,114 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEA142A379
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 10:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C3E12A37D
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 10:46:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726651AbfEYIjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 04:39:23 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44365 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfEYIjW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 04:39:22 -0400
-Received: by mail-lj1-f193.google.com with SMTP id e13so10585399ljl.11
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2019 01:39:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nikanor-nu.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=WpJePGfJIkx4FN1WBzkrq9jAiVMdDuI8VDoj6jlDCJw=;
-        b=upKWGQ+8nYg4SmyNCTZ+wtvSB9hiUgEmIQ2z7RttYczwgS0kUu2WPdGRHRuxqQiQug
-         YJAzcW1nV/5MuyFv1ws+AzkXSeGh5w2fvs+rUQd+o6k3Qu4v0aPwuZdw4e/qX1O8mpJw
-         uPIMLvjVMCxs3Q2qXyipQq37siSJg40ZFxpFA0jJ72pOM1ylmXAnY2TEnuAZGjLYX0aQ
-         OdNtqYGIs0+rj1X+Y1D41nEqe9VmShi8EjBnePRXdOyk33jmICFemz+mVl/xXLe4Wui8
-         4ybXb/ELQKKBc0MwUD3KfuRmSlyD7NPLqJiRrzOPwCRLnhhhAt9r5gTYOE1l90BhmbWP
-         qIGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=WpJePGfJIkx4FN1WBzkrq9jAiVMdDuI8VDoj6jlDCJw=;
-        b=FAWneno86Gj/7N/xFC3THb4+CIowpOftBjKh89XXe8shnyQ+VHmSFPU9xJ6KPu0bf6
-         PIsESSilY1dTkkVr2SS3dsoCmYlLqt4plxxFBviYyJKDyUpm/Jka5gg5GlNsbE0IQavx
-         UMN04swia7ikOQl7N2cng6OwdwV7ZEZDOdAH7wXQFr9BBfKrxA0h2t1FQnYpmkvjChau
-         QuHd9Eoyk8oxpXnxGTmPFFOMV0xJAUuRq22h54DicxDk8fexVlZufqabPOqu+Oby/UMy
-         UTWiPUHw4qJ5MXwZK+QgyR54iGKw2zz5VNeZSvnMifLG9sOxjT199cukecYVp2BsPppq
-         HBSA==
-X-Gm-Message-State: APjAAAW1GM/g8EpxZ1b6cWJUXx1Y0TQ4DnJjy0gbddHYsg7/f/zcTmfs
-        Q+zChTKDGWExyXs88PgJt5Uw/20HH2ONsA==
-X-Google-Smtp-Source: APXvYqzjUHk8+eGgs6xW9sGM4or2e8CwO+kAgBfVsPn2uuho8wMG4elnmrcXZBtsSzpvhH2RZogaqA==
-X-Received: by 2002:a05:651c:1055:: with SMTP id x21mr36711486ljm.83.1558773560815;
-        Sat, 25 May 2019 01:39:20 -0700 (PDT)
-Received: from dev.nikanor.nu (78-72-133-4-no161.tbcn.telia.com. [78.72.133.4])
-        by smtp.gmail.com with ESMTPSA id v9sm855551ljd.45.2019.05.25.01.39.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 25 May 2019 01:39:20 -0700 (PDT)
-Date:   Sat, 25 May 2019 10:39:18 +0200
-From:   Simon =?utf-8?Q?Sandstr=C3=B6m?= <simon@nikanor.nu>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] staging: kpc2000: add missing dependencies for
- kpc2000
-Message-ID: <20190525083918.dxa5qtomlu5yyqw5@dev.nikanor.nu>
-References: <20190524203058.30022-1-simon@nikanor.nu>
- <20190524203058.30022-3-simon@nikanor.nu>
- <20190525050017.GA18684@kroah.com>
+        id S1726667AbfEYIqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 04:46:00 -0400
+Received: from skyboo.net ([94.40.87.198]:41804 "EHLO skyboo.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726376AbfEYIp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 May 2019 04:45:59 -0400
+Received: from manio by skyboo.net with local (Exim 4.91)
+        (envelope-from <manio@skyboo.net>)
+        id 1hUSJR-0007xV-DF; Sat, 25 May 2019 10:45:57 +0200
+From:   Mariusz Bialonczyk <manio@skyboo.net>
+To:     linux-kernel@vger.kernel.org, Greg Kroah-Hartman <greg@kroah.com>
+Cc:     Mariusz Bialonczyk <manio@skyboo.net>
+Date:   Sat, 25 May 2019 10:45:38 +0200
+Message-Id: <20190525084538.29389-1-manio@skyboo.net>
+X-Mailer: git-send-email 2.19.0.rc1
+In-Reply-To: <20190524182109.GA26827@kroah.com>
+References: <20190524182109.GA26827@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190525050017.GA18684@kroah.com>
-User-Agent: NeoMutt/20180716
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, greg@kroah.com, manio@skyboo.net
+X-SA-Exim-Mail-From: manio@skyboo.net
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on nemesis.skyboo.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NO_RELAYS,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.1
+Subject: [PATCH 4/4 v2] w1: ds2805: rename w1_family struct, fixing c-p typo
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on skyboo.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 25, 2019 at 07:00:17AM +0200, Greg KH wrote:
-> On Fri, May 24, 2019 at 10:30:58PM +0200, Simon Sandström wrote:
-> > Fixes build errors:
-> > 
-> > ERROR: "mfd_remove_devices" [kpc2000.ko] undefined!
-> > ERROR: "uio_unregister_device" [kpc2000.ko] undefined!
-> > ERROR: "mfd_add_devices" [kpc2000.ko] undefined!
-> > ERROR: "__uio_register_device" [kpc2000.ko] undefined!
-> > 
-> > Signed-off-by: Simon Sandström <simon@nikanor.nu>
-> > ---
-> >  drivers/staging/kpc2000/Kconfig | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/staging/kpc2000/Kconfig b/drivers/staging/kpc2000/Kconfig
-> > index c463d232f2b4..5188b56123ab 100644
-> > --- a/drivers/staging/kpc2000/Kconfig
-> > +++ b/drivers/staging/kpc2000/Kconfig
-> > @@ -3,6 +3,8 @@
-> >  config KPC2000
-> >  	bool "Daktronics KPC Device support"
-> >  	depends on PCI
-> > +	select MFD_CORE
-> > +	select UIO
-> >  	help
-> >  	  Select this if you wish to use the Daktronics KPC PCI devices
-> >  
-> 
-> This is already in linux-next (in a different form), are you sure you
-> are working against the latest kernel tree?
-> 
-> thanks,
-> 
-> greg k-h
+The ds2805 has a structure named: w1_family_2d, which surely
+comes from a w1_ds2431 module. This commit fixes this name to
+prevent confusion and mark a correct family name.
 
-It's based on your staging tree. I think that I have to go back and read
-about next trees again, because I thought it took longer time for things
-to get from staging-next to linux-next.
+Signed-off-by: Mariusz Bialonczyk <manio@skyboo.net>
+---
+Changes in v2:
+    Added a missing commit msg.
 
-Anyway, neither the MFD_CORE nor the typo fix is in linux-next so I
-guess that I could just rebase this on linux-next and re-send as v2.
-I'm not sure if MFD_CORE should be "depends on" or "select" though...
+ drivers/w1/slaves/w1_ds2805.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/w1/slaves/w1_ds2805.c b/drivers/w1/slaves/w1_ds2805.c
+index 29348d283a65..ab349604531a 100644
+--- a/drivers/w1/slaves/w1_ds2805.c
++++ b/drivers/w1/slaves/w1_ds2805.c
+@@ -288,7 +288,7 @@ static struct w1_family_ops w1_f0d_fops = {
+ 	.remove_slave   = w1_f0d_remove_slave,
+ };
+ 
+-static struct w1_family w1_family_2d = {
++static struct w1_family w1_family_0d = {
+ 	.fid = W1_EEPROM_DS2805,
+ 	.fops = &w1_f0d_fops,
+ };
+@@ -296,13 +296,13 @@ static struct w1_family w1_family_2d = {
+ static int __init w1_f0d_init(void)
+ {
+ 	pr_info("%s()\n", __func__);
+-	return w1_register_family(&w1_family_2d);
++	return w1_register_family(&w1_family_0d);
+ }
+ 
+ static void __exit w1_f0d_fini(void)
+ {
+ 	pr_info("%s()\n", __func__);
+-	w1_unregister_family(&w1_family_2d);
++	w1_unregister_family(&w1_family_0d);
+ }
+ 
+ module_init(w1_f0d_init);
+-- 
+2.19.0.rc1
 
-- Simon
