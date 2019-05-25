@@ -2,80 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E24F62A43B
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 13:49:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7E632A43E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 13:50:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfEYLtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 07:49:40 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:19685 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbfEYLtk (ORCPT
+        id S1726943AbfEYLtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 07:49:55 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39924 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726859AbfEYLtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 07:49:40 -0400
-Received: from grover.flets-west.jp (softbank126125154139.bbtec.net [126.125.154.139]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id x4PBnLmr006832;
-        Sat, 25 May 2019 20:49:22 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x4PBnLmr006832
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1558784962;
-        bh=GcQ0/FUcETTNQeH6qzQKxM8A8Qu2qmHKXiYNQ7p/tn0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=CdYjXNohyx7syAc6Z486jL4ktqGmdHFwPBG20R/Sk6klfweBdmLxmZOwLjGGiW56y
-         /3Q7Hiz3cdDUnBlyGx+kOeW1e3jtr8fTfsD9YamQNastvfc0efpTvmxWsfIs/Z/fzT
-         uwF8NRs0sCOUnceAYciwtwLAG3kPu/ciwqHRS6AfuDxg8j9/cifs9EkO7EJm2b/vx8
-         DwyUf8XNjhMp8CQj9rkmio7asncHBE3f4wg+ZflbXiFgDUm8AtpubgqAC0RaCyAh8j
-         0jMB8m4iqLHfKTnCj0rXdBh0D3PyJTrjs6W5iw0UFb6lrzvM31lOk0Ru5SciX0AIzR
-         6u6F1ILeUp/vw==
-X-Nifty-SrcIP: [126.125.154.139]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] kconfig: tests: fix recursive inclusion unit test
-Date:   Sat, 25 May 2019 20:49:19 +0900
-Message-Id: <20190525114919.26188-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 25 May 2019 07:49:53 -0400
+Received: by mail-wm1-f68.google.com with SMTP id z23so7483127wma.4
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2019 04:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UaeK3mpcxtQ8DilQSPxFFqvKnnJ4UJsxo8ix82U8d1I=;
+        b=mqdlnr6/PXhU5Z4V/2Fmjtc7WED9oLTl7naxIRlu6c7y9Hitu3eWF8QMs0xJV8WmOu
+         8bfzvbg1aSF/aIsEH+ROvpMsjc8ssNgD8I/RAvppxiu+WlDxXbRPizup4uA7nw5VF6ym
+         7w00zTxzGmY7PQpPebBYIw0DZ9vmIewF6FCeOfCKExVMLKteGImGS3uIiGJkQPowsDOV
+         jiP+hm9ud1llJTkjlizX5Hj+c4UIu3Nip5ZUIZTqOay5vpQwiw/KSnfO3ZfKJI8ppHAk
+         tmLkxWXa45hGWfk2zs5XAKqORcCpivnWJ9O8QDDq1m4OTlnrB5nENkRnbehQecQNjjFP
+         dHZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UaeK3mpcxtQ8DilQSPxFFqvKnnJ4UJsxo8ix82U8d1I=;
+        b=Io+pz6egXXhDXcvBSd6DqKPfxSwUP55Rs7N+gnQb/B6Fh59L74qtHsJuEK71cF/NkG
+         FT2HUbnHhvOdzRaAK3nSW+ondCB02cZwYoqFKEhHBwmnIM5a/5/4FBPEN/4dqJG7FZn4
+         9GKlan0k1Lq5BS9Yj8HZTx5djxekz4C1Hn0OsGfBR3kynrjxMRVf49vgmm0oD45Y94GH
+         A28H2Vjm4VD9i+r/IR/MGWeRQUlQl4V/Bh5UMwAjv3XWLJVs5BC0zQ0gW4jsqVcRDMbF
+         kWcRpQIInNcfqsBxx6LTDMJXWk2yDvAr+zzdwwatmLYpWdP0WijmbmZKK/COXZyt3OzP
+         KZjQ==
+X-Gm-Message-State: APjAAAVPN5fetOoxNS+ju2JLDUJhajZP7jIdNE1SGN7j1mHd1uTlA2uM
+        RcUjzWuR9Li8Rxs4+1K0iQ//oO3l
+X-Google-Smtp-Source: APXvYqwL6esy1siZjGnXYNaE9NpPgc5irvL6nCTfjq/qIUhxiacUxffsdn6DUJLlwrVjliryXAzfag==
+X-Received: by 2002:a7b:cb57:: with SMTP id v23mr3517023wmj.60.1558784991209;
+        Sat, 25 May 2019 04:49:51 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id k17sm3658762wrm.73.2019.05.25.04.49.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 25 May 2019 04:49:50 -0700 (PDT)
+Date:   Sat, 25 May 2019 13:49:48 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     kernel test robot <lkp@intel.com>
+Cc:     Qian Cai <cai@lca.pw>, LKP <lkp@01.org>,
+        linux-kernel@vger.kernel.org, philip.li@intel.com
+Subject: Re: 8d2bd61bd8 ("sched/core: Clean up sched_init() a bit"):  BUG:
+ unable to handle page fault for address: 00ba0396
+Message-ID: <20190525114948.GA24312@gmail.com>
+References: <5ce91b39.Txl3DDmbeNsPYyrE%lkp@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ce91b39.Txl3DDmbeNsPYyrE%lkp@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding SPDX license identifier is pretty safe; however, here is one
-exception.
 
-Since commit ec8f24b7faaf ("treewide: Add SPDX license identifier -
-Makefile/Kconfig"), "make testconfig" would not pass.
+* kernel test robot <lkp@intel.com> wrote:
 
-When Kconfig detects a circular file inclusion, it displays error
-messages with a file name and a line number prefixed to each line.
+> Greetings,
+> 
+> 0day kernel testing robot got the below dmesg and the first bad commit is
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
+> 
+> commit 8d2bd61bd89260d5da5eaef7cf264587f19a7e0d
+> Author:     Qian Cai <cai@lca.pw>
+> AuthorDate: Wed May 22 14:20:06 2019 -0400
+> Commit:     Ingo Molnar <mingo@kernel.org>
+> CommitDate: Fri May 24 08:57:29 2019 +0200
+> 
+>     sched/core: Clean up sched_init() a bit
+>     
+>     Compiling a kernel with both FAIR_GROUP_SCHED=n and RT_GROUP_SCHED=n
+>     will generate a warning using W=1:
+>     
+>       kernel/sched/core.c: In function 'sched_init':
+>       kernel/sched/core.c:5906:32: warning: variable 'ptr' set but not used
+>     
+>     Use this opportunity to tidy up a code a bit by removing unnecssary
+>     indentations and lines.
+>     
+>     Signed-off-by: Qian Cai <cai@lca.pw>
+>     Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>     Cc: Peter Zijlstra <peterz@infradead.org>
+>     Cc: Thomas Gleixner <tglx@linutronix.de>
+>     Link: http://lkml.kernel.org/r/1558549206-13031-1-git-send-email-cai@lca.pw
+>     [ Also remove some of the unnecessary #endif comments. ]
+>     Signed-off-by: Ingo Molnar <mingo@kernel.org>
 
-The unit test checks if Kconfig emits the error messages correctly
-(this also checks the line number correctness).
+I've removed this commit for the time being.
 
-Now that the test input has the SPDX license identifier at the very top,
-the line numbers in the expected stderr should be incremented by 1.
+Thanks,
 
-Fixes: ec8f24b7faaf ("treewide: Add SPDX license identifier - Makefile/Kconfig")
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- scripts/kconfig/tests/err_recursive_inc/expected_stderr | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/scripts/kconfig/tests/err_recursive_inc/expected_stderr b/scripts/kconfig/tests/err_recursive_inc/expected_stderr
-index 6b582eee2176..b070a31fdfeb 100644
---- a/scripts/kconfig/tests/err_recursive_inc/expected_stderr
-+++ b/scripts/kconfig/tests/err_recursive_inc/expected_stderr
-@@ -1,6 +1,6 @@
- Recursive inclusion detected.
- Inclusion path:
-   current file : Kconfig.inc1
--  included from: Kconfig.inc3:1
--  included from: Kconfig.inc2:3
--  included from: Kconfig.inc1:4
-+  included from: Kconfig.inc3:2
-+  included from: Kconfig.inc2:4
-+  included from: Kconfig.inc1:5
--- 
-2.17.1
-
+	Ingo
