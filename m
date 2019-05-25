@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 291932A299
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 05:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BCFB2A29C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 05:34:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfEYDdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 23:33:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42850 "EHLO mail.kernel.org"
+        id S1726908AbfEYDdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 23:33:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726622AbfEYDdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726633AbfEYDdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 24 May 2019 23:33:17 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CE4A2177E;
+        by mail.kernel.org (Postfix) with ESMTPSA id 75692217D7;
         Sat, 25 May 2019 03:33:16 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hUNQp-0002FL-EG; Fri, 24 May 2019 23:33:15 -0400
-Message-Id: <20190525033315.333596820@goodmis.org>
+        id 1hUNQp-0002Fq-Ip; Fri, 24 May 2019 23:33:15 -0400
+Message-Id: <20190525033315.468968522@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 24 May 2019 23:32:33 -0400
+Date:   Fri, 24 May 2019 23:32:34 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -32,8 +32,8 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Julia Cartwright <julia@ni.com>,
         Daniel Wagner <daniel.wagner@siemens.com>,
-        tom.zanussi@linux.intel.com, stable-rt@vger.kernel.org
-Subject: [PATCH RT 1/6] powerpc/pseries/iommu: Use a locallock instead local_irq_save()
+        tom.zanussi@linux.intel.com
+Subject: [PATCH RT 2/6] powerpc: reshuffle TIF bits
 References: <20190525033232.795741612@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -49,93 +49,149 @@ If anyone has any objections, please let me know.
 
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-The locallock protects the per-CPU variable tce_page. The function
-attempts to allocate memory while tce_page is protected (by disabling
-interrupts).
+Powerpc32/64 does not compile because TIF_SYSCALL_TRACE's bit is higher
+than 15 and the assembly instructions don't expect that.
 
-Use local_irq_save() instead of local_irq_disable().
+Move TIF_RESTOREALL, TIF_NOERROR to the higher bits and keep
+TIF_NEED_RESCHED_LAZY in the lower range. As a result one split load is
+needed and otherwise we can use immediates.
 
-Cc: stable-rt@vger.kernel.org
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/powerpc/platforms/pseries/iommu.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ arch/powerpc/include/asm/thread_info.h | 11 +++++++----
+ arch/powerpc/kernel/entry_32.S         | 12 +++++++-----
+ arch/powerpc/kernel/entry_64.S         | 12 +++++++-----
+ 3 files changed, 21 insertions(+), 14 deletions(-)
 
-diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
-index 06f02960b439..d80d919c78d3 100644
---- a/arch/powerpc/platforms/pseries/iommu.c
-+++ b/arch/powerpc/platforms/pseries/iommu.c
-@@ -38,6 +38,7 @@
- #include <linux/of.h>
- #include <linux/iommu.h>
- #include <linux/rculist.h>
-+#include <linux/locallock.h>
- #include <asm/io.h>
- #include <asm/prom.h>
- #include <asm/rtas.h>
-@@ -212,6 +213,7 @@ static int tce_build_pSeriesLP(struct iommu_table *tbl, long tcenum,
- }
+diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
+index ce316076bc52..64c3d1a720e2 100644
+--- a/arch/powerpc/include/asm/thread_info.h
++++ b/arch/powerpc/include/asm/thread_info.h
+@@ -83,18 +83,18 @@ extern int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src
+ #define TIF_SIGPENDING		1	/* signal pending */
+ #define TIF_NEED_RESCHED	2	/* rescheduling necessary */
+ #define TIF_FSCHECK		3	/* Check FS is USER_DS on return */
+-#define TIF_NEED_RESCHED_LAZY	4       /* lazy rescheduling necessary */
+ #define TIF_RESTORE_TM		5	/* need to restore TM FP/VEC/VSX */
+ #define TIF_PATCH_PENDING	6	/* pending live patching update */
+ #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+ #define TIF_SINGLESTEP		8	/* singlestepping active */
+ #define TIF_NOHZ		9	/* in adaptive nohz mode */
+ #define TIF_SECCOMP		10	/* secure computing */
+-#define TIF_RESTOREALL		11	/* Restore all regs (implies NOERROR) */
+-#define TIF_NOERROR		12	/* Force successful syscall return */
++
++#define TIF_NEED_RESCHED_LAZY	11	/* lazy rescheduling necessary */
++#define TIF_SYSCALL_TRACEPOINT	12	/* syscall tracepoint instrumentation */
++
+ #define TIF_NOTIFY_RESUME	13	/* callback before returning to user */
+ #define TIF_UPROBE		14	/* breakpointed or single-stepping */
+-#define TIF_SYSCALL_TRACEPOINT	15	/* syscall tracepoint instrumentation */
+ #define TIF_EMULATE_STACK_STORE	16	/* Is an instruction emulation
+ 						for stack store? */
+ #define TIF_MEMDIE		17	/* is terminating due to OOM killer */
+@@ -103,6 +103,9 @@ extern int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src
+ #endif
+ #define TIF_POLLING_NRFLAG	19	/* true if poll_idle() is polling TIF_NEED_RESCHED */
+ #define TIF_32BIT		20	/* 32 bit binary */
++#define TIF_RESTOREALL		21	/* Restore all regs (implies NOERROR) */
++#define TIF_NOERROR		22	/* Force successful syscall return */
++
  
- static DEFINE_PER_CPU(__be64 *, tce_page);
-+static DEFINE_LOCAL_IRQ_LOCK(tcp_page_lock);
+ /* as above, but as bit values */
+ #define _TIF_SYSCALL_TRACE	(1<<TIF_SYSCALL_TRACE)
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index 3783f3ef17a4..44bcf1585bd1 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -393,7 +393,9 @@ ret_from_syscall:
+ 	MTMSRD(r10)
+ 	lwz	r9,TI_FLAGS(r12)
+ 	li	r8,-MAX_ERRNO
+-	andi.	r0,r9,(_TIF_SYSCALL_DOTRACE|_TIF_SINGLESTEP|_TIF_USER_WORK_MASK|_TIF_PERSYSCALL_MASK)
++	lis	r0,(_TIF_SYSCALL_DOTRACE|_TIF_SINGLESTEP|_TIF_USER_WORK_MASK|_TIF_PERSYSCALL_MASK)@h
++	ori	r0,r0, (_TIF_SYSCALL_DOTRACE|_TIF_SINGLESTEP|_TIF_USER_WORK_MASK|_TIF_PERSYSCALL_MASK)@l
++	and.	r0,r9,r0
+ 	bne-	syscall_exit_work
+ 	cmplw	0,r3,r8
+ 	blt+	syscall_exit_cont
+@@ -511,13 +513,13 @@ syscall_dotrace:
+ 	b	syscall_dotrace_cont
  
- static int tce_buildmulti_pSeriesLP(struct iommu_table *tbl, long tcenum,
- 				     long npages, unsigned long uaddr,
-@@ -232,7 +234,8 @@ static int tce_buildmulti_pSeriesLP(struct iommu_table *tbl, long tcenum,
- 		                           direction, attrs);
- 	}
+ syscall_exit_work:
+-	andi.	r0,r9,_TIF_RESTOREALL
++	andis.	r0,r9,_TIF_RESTOREALL@h
+ 	beq+	0f
+ 	REST_NVGPRS(r1)
+ 	b	2f
+ 0:	cmplw	0,r3,r8
+ 	blt+	1f
+-	andi.	r0,r9,_TIF_NOERROR
++	andis.	r0,r9,_TIF_NOERROR@h
+ 	bne-	1f
+ 	lwz	r11,_CCR(r1)			/* Load CR */
+ 	neg	r3,r3
+@@ -526,12 +528,12 @@ syscall_exit_work:
  
--	local_irq_save(flags);	/* to protect tcep and the page behind it */
-+	/* to protect tcep and the page behind it */
-+	local_lock_irqsave(tcp_page_lock, flags);
+ 1:	stw	r6,RESULT(r1)	/* Save result */
+ 	stw	r3,GPR3(r1)	/* Update return value */
+-2:	andi.	r0,r9,(_TIF_PERSYSCALL_MASK)
++2:	andis.	r0,r9,(_TIF_PERSYSCALL_MASK)@h
+ 	beq	4f
  
- 	tcep = __this_cpu_read(tce_page);
+ 	/* Clear per-syscall TIF flags if any are set.  */
  
-@@ -243,7 +246,7 @@ static int tce_buildmulti_pSeriesLP(struct iommu_table *tbl, long tcenum,
- 		tcep = (__be64 *)__get_free_page(GFP_ATOMIC);
- 		/* If allocation fails, fall back to the loop implementation */
- 		if (!tcep) {
--			local_irq_restore(flags);
-+			local_unlock_irqrestore(tcp_page_lock, flags);
- 			return tce_build_pSeriesLP(tbl, tcenum, npages, uaddr,
- 					    direction, attrs);
- 		}
-@@ -277,7 +280,7 @@ static int tce_buildmulti_pSeriesLP(struct iommu_table *tbl, long tcenum,
- 		tcenum += limit;
- 	} while (npages > 0 && !rc);
+-	li	r11,_TIF_PERSYSCALL_MASK
++	lis	r11,_TIF_PERSYSCALL_MASK@h
+ 	addi	r12,r12,TI_FLAGS
+ 3:	lwarx	r8,0,r12
+ 	andc	r8,r8,r11
+diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
+index 7671fa5da9fa..fe713d014220 100644
+--- a/arch/powerpc/kernel/entry_64.S
++++ b/arch/powerpc/kernel/entry_64.S
+@@ -250,7 +250,9 @@ system_call_exit:
  
--	local_irq_restore(flags);
-+	local_unlock_irqrestore(tcp_page_lock, flags);
+ 	ld	r9,TI_FLAGS(r12)
+ 	li	r11,-MAX_ERRNO
+-	andi.	r0,r9,(_TIF_SYSCALL_DOTRACE|_TIF_SINGLESTEP|_TIF_USER_WORK_MASK|_TIF_PERSYSCALL_MASK)
++	lis	r0,(_TIF_SYSCALL_DOTRACE|_TIF_SINGLESTEP|_TIF_USER_WORK_MASK|_TIF_PERSYSCALL_MASK)@h
++	ori	r0,r0,(_TIF_SYSCALL_DOTRACE|_TIF_SINGLESTEP|_TIF_USER_WORK_MASK|_TIF_PERSYSCALL_MASK)@l
++	and.	r0,r9,r0
+ 	bne-	.Lsyscall_exit_work
  
- 	if (unlikely(rc == H_NOT_ENOUGH_RESOURCES)) {
- 		ret = (int)rc;
-@@ -435,13 +438,14 @@ static int tce_setrange_multi_pSeriesLP(unsigned long start_pfn,
- 	u64 rc = 0;
- 	long l, limit;
+ 	andi.	r0,r8,MSR_FP
+@@ -363,25 +365,25 @@ END_FTR_SECTION_IFSET(CPU_FTR_HAS_PPR)
+ 	/* If TIF_RESTOREALL is set, don't scribble on either r3 or ccr.
+ 	 If TIF_NOERROR is set, just save r3 as it is. */
  
--	local_irq_disable();	/* to protect tcep and the page behind it */
-+	/* to protect tcep and the page behind it */
-+	local_lock_irq(tcp_page_lock);
- 	tcep = __this_cpu_read(tce_page);
+-	andi.	r0,r9,_TIF_RESTOREALL
++	andis.	r0,r9,_TIF_RESTOREALL@h
+ 	beq+	0f
+ 	REST_NVGPRS(r1)
+ 	b	2f
+ 0:	cmpld	r3,r11		/* r11 is -MAX_ERRNO */
+ 	blt+	1f
+-	andi.	r0,r9,_TIF_NOERROR
++	andis.	r0,r9,_TIF_NOERROR@h
+ 	bne-	1f
+ 	ld	r5,_CCR(r1)
+ 	neg	r3,r3
+ 	oris	r5,r5,0x1000	/* Set SO bit in CR */
+ 	std	r5,_CCR(r1)
+ 1:	std	r3,GPR3(r1)
+-2:	andi.	r0,r9,(_TIF_PERSYSCALL_MASK)
++2:	andis.	r0,r9,(_TIF_PERSYSCALL_MASK)@h
+ 	beq	4f
  
- 	if (!tcep) {
- 		tcep = (__be64 *)__get_free_page(GFP_ATOMIC);
- 		if (!tcep) {
--			local_irq_enable();
-+			local_unlock_irq(tcp_page_lock);
- 			return -ENOMEM;
- 		}
- 		__this_cpu_write(tce_page, tcep);
-@@ -487,7 +491,7 @@ static int tce_setrange_multi_pSeriesLP(unsigned long start_pfn,
+ 	/* Clear per-syscall TIF flags if any are set.  */
  
- 	/* error cleanup: caller will clear whole range */
- 
--	local_irq_enable();
-+	local_unlock_irq(tcp_page_lock);
- 	return rc;
- }
- 
+-	li	r11,_TIF_PERSYSCALL_MASK
++	lis	r11,(_TIF_PERSYSCALL_MASK)@h
+ 	addi	r12,r12,TI_FLAGS
+ 3:	ldarx	r10,0,r12
+ 	andc	r10,r10,r11
 -- 
 2.20.1
 
