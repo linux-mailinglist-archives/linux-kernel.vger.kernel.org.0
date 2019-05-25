@@ -2,58 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02DCB2A22A
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 02:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C3432A22C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 02:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfEYAyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 20:54:53 -0400
-Received: from ozlabs.org ([203.11.71.1]:38857 "EHLO ozlabs.org"
+        id S1726540AbfEYAzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 20:55:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726273AbfEYAyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 20:54:51 -0400
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 459lBd53mCz9sBr; Sat, 25 May 2019 10:54:49 +1000 (AEST)
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 8b909e3548706cbebc0a676067b81aadda57f47e
-X-Patchwork-Hint: ignore
-In-Reply-To: <20190522220158.18479-1-bauerman@linux.ibm.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: Re: [PATCH] powerpc: Fix loading of kernel + initramfs with kexec_file_load()
-Message-Id: <459lBd53mCz9sBr@ozlabs.org>
-Date:   Sat, 25 May 2019 10:54:49 +1000 (AEST)
+        id S1726129AbfEYAzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 20:55:18 -0400
+Subject: Re: [GIT PULL] SCSI fixes for 5.2-rc1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558745717;
+        bh=6vz8ToqiAo8y+Q9DRK5b5As4iQxOqglcI8455fzgkaQ=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=ldMJaqDwIdIGC9+XiMwxLdMgjUnEl8XJ8HlvX0lKMoKUbhE/QUYLPY+5by2hkrfzA
+         7CllnQ63Qea4JVRNYGY41kHG6X4kB1OXh/N+8GY+GChlNwsqlG+EKoiNE1e+meZ/Vs
+         N8EnRccmmt9jC3pFYx0j8u21Qc21nl7IZlGhWvQM=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <1558739503.3235.58.camel@HansenPartnership.com>
+References: <1558739503.3235.58.camel@HansenPartnership.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <1558739503.3235.58.camel@HansenPartnership.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+X-PR-Tracked-Commit-Id: 8acf608e602f6ec38b7cc37b04c80f1ce9a1a6cc
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2409207a73cc8e4aff75ceccf6fe5c3ce4d391bc
+Message-Id: <155874571757.25799.10363647256514675305.pr-tracker-bot@kernel.org>
+Date:   Sat, 25 May 2019 00:55:17 +0000
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-05-22 at 22:01:58 UTC, Thiago Jung Bauermann wrote:
-> Commit b6664ba42f14 ("s390, kexec_file: drop arch_kexec_mem_walk()")
-> changed kexec_add_buffer() to skip searching for a memory location if
-> kexec_buf.mem is already set, and use the address that is there.
-> 
-> In powerpc code we reuse a kexec_buf variable for loading both the kernel
-> and the initramfs by resetting some of the fields between those uses, but
-> not mem. This causes kexec_add_buffer() to try to load the kernel at the
-> same address where initramfs will be loaded, which is naturally rejected:
-> 
->   # kexec -s -l --initrd initramfs vmlinuz
->   kexec_file_load failed: Invalid argument
-> 
-> Setting the mem field before every call to kexec_add_buffer() fixes this
-> regression.
-> 
-> Fixes: b6664ba42f14 ("s390, kexec_file: drop arch_kexec_mem_walk()")
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-> Reviewed-by: Dave Young <dyoung@redhat.com>
+The pull request you sent on Fri, 24 May 2019 16:11:43 -0700:
 
-Applied to powerpc fixes, thanks.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-https://git.kernel.org/powerpc/c/8b909e3548706cbebc0a676067b81aad
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2409207a73cc8e4aff75ceccf6fe5c3ce4d391bc
 
-cheers
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
