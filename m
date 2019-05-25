@@ -2,104 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E632A43E
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 13:50:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D11C2A441
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 13:53:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfEYLtz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 07:49:55 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39924 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726859AbfEYLtx (ORCPT
+        id S1726924AbfEYLw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 07:52:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41963 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726484AbfEYLwz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 07:49:53 -0400
-Received: by mail-wm1-f68.google.com with SMTP id z23so7483127wma.4
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2019 04:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UaeK3mpcxtQ8DilQSPxFFqvKnnJ4UJsxo8ix82U8d1I=;
-        b=mqdlnr6/PXhU5Z4V/2Fmjtc7WED9oLTl7naxIRlu6c7y9Hitu3eWF8QMs0xJV8WmOu
-         8bfzvbg1aSF/aIsEH+ROvpMsjc8ssNgD8I/RAvppxiu+WlDxXbRPizup4uA7nw5VF6ym
-         7w00zTxzGmY7PQpPebBYIw0DZ9vmIewF6FCeOfCKExVMLKteGImGS3uIiGJkQPowsDOV
-         jiP+hm9ud1llJTkjlizX5Hj+c4UIu3Nip5ZUIZTqOay5vpQwiw/KSnfO3ZfKJI8ppHAk
-         tmLkxWXa45hGWfk2zs5XAKqORcCpivnWJ9O8QDDq1m4OTlnrB5nENkRnbehQecQNjjFP
-         dHZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UaeK3mpcxtQ8DilQSPxFFqvKnnJ4UJsxo8ix82U8d1I=;
-        b=Io+pz6egXXhDXcvBSd6DqKPfxSwUP55Rs7N+gnQb/B6Fh59L74qtHsJuEK71cF/NkG
-         FT2HUbnHhvOdzRaAK3nSW+ondCB02cZwYoqFKEhHBwmnIM5a/5/4FBPEN/4dqJG7FZn4
-         9GKlan0k1Lq5BS9Yj8HZTx5djxekz4C1Hn0OsGfBR3kynrjxMRVf49vgmm0oD45Y94GH
-         A28H2Vjm4VD9i+r/IR/MGWeRQUlQl4V/Bh5UMwAjv3XWLJVs5BC0zQ0gW4jsqVcRDMbF
-         kWcRpQIInNcfqsBxx6LTDMJXWk2yDvAr+zzdwwatmLYpWdP0WijmbmZKK/COXZyt3OzP
-         KZjQ==
-X-Gm-Message-State: APjAAAVPN5fetOoxNS+ju2JLDUJhajZP7jIdNE1SGN7j1mHd1uTlA2uM
-        RcUjzWuR9Li8Rxs4+1K0iQ//oO3l
-X-Google-Smtp-Source: APXvYqwL6esy1siZjGnXYNaE9NpPgc5irvL6nCTfjq/qIUhxiacUxffsdn6DUJLlwrVjliryXAzfag==
-X-Received: by 2002:a7b:cb57:: with SMTP id v23mr3517023wmj.60.1558784991209;
-        Sat, 25 May 2019 04:49:51 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id k17sm3658762wrm.73.2019.05.25.04.49.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 25 May 2019 04:49:50 -0700 (PDT)
-Date:   Sat, 25 May 2019 13:49:48 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     kernel test robot <lkp@intel.com>
-Cc:     Qian Cai <cai@lca.pw>, LKP <lkp@01.org>,
-        linux-kernel@vger.kernel.org, philip.li@intel.com
-Subject: Re: 8d2bd61bd8 ("sched/core: Clean up sched_init() a bit"):  BUG:
- unable to handle page fault for address: 00ba0396
-Message-ID: <20190525114948.GA24312@gmail.com>
-References: <5ce91b39.Txl3DDmbeNsPYyrE%lkp@intel.com>
+        Sat, 25 May 2019 07:52:55 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4PBqO1M669391
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 25 May 2019 04:52:24 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4PBqO1M669391
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1558785145;
+        bh=+2tVzL716qZMfK/2Lsae5ftcXAdW3xS7aEYeoXeVHqA=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=WL5vE7XZAh/sVtSarLjzGcOuvvVB/wzFxIsJGA1Y3R97g+5yXC6erVYlPnFtV9jFi
+         vQzA9cWah2jJ8fpJ1Q9XEX2xs1rRRGtcv8Qq1dECMY4qz0vivl0RRBMnkRborwJxHF
+         o1IDoR+l5XfGI+1z90dEqG6m7BcjvNX82H13oTMYQs7YAqDgQnAO1SrOr+ri5H7/PD
+         SvGB61BYlo8tULMvlWPEf6S5K5L9101N1UAMq3iPS5VSE3SMiDByCS1F4h6WIDy3BN
+         CmIqOHRC4vqUY9Y+PGrjyHmv/YA2yf70tfRCtJi5FlYecEkg3acTV6Fgv4BCWaiqnb
+         6IjtRv1OxZNZw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4PBqNxW669388;
+        Sat, 25 May 2019 04:52:23 -0700
+Date:   Sat, 25 May 2019 04:52:23 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Gen Zhang <tipbot@zytor.com>
+Message-ID: <tip-4e78921ba4dd0aca1cc89168f45039add4183f8e@git.kernel.org>
+Cc:     peterz@infradead.org, mingo@kernel.org,
+        torvalds@linux-foundation.org, hpa@zytor.com,
+        ard.biesheuvel@linaro.org, robert.bradford@intel.com,
+        blackgod016574@gmail.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org
+Reply-To: robert.bradford@intel.com, ard.biesheuvel@linaro.org,
+          hpa@zytor.com, mingo@kernel.org, peterz@infradead.org,
+          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+          blackgod016574@gmail.com, tglx@linutronix.de
+In-Reply-To: <20190525112559.7917-2-ard.biesheuvel@linaro.org>
+References: <20190525112559.7917-2-ard.biesheuvel@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:efi/urgent] efi/x86/Add missing error handling to old_memmap
+ 1:1 mapping code
+Git-Commit-ID: 4e78921ba4dd0aca1cc89168f45039add4183f8e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <5ce91b39.Txl3DDmbeNsPYyrE%lkp@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=1.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_24_48,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
+        DKIM_VALID_EF,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Level: *
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  4e78921ba4dd0aca1cc89168f45039add4183f8e
+Gitweb:     https://git.kernel.org/tip/4e78921ba4dd0aca1cc89168f45039add4183f8e
+Author:     Gen Zhang <blackgod016574@gmail.com>
+AuthorDate: Sat, 25 May 2019 13:25:58 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Sat, 25 May 2019 13:48:17 +0200
 
-* kernel test robot <lkp@intel.com> wrote:
+efi/x86/Add missing error handling to old_memmap 1:1 mapping code
 
-> Greetings,
-> 
-> 0day kernel testing robot got the below dmesg and the first bad commit is
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched/core
-> 
-> commit 8d2bd61bd89260d5da5eaef7cf264587f19a7e0d
-> Author:     Qian Cai <cai@lca.pw>
-> AuthorDate: Wed May 22 14:20:06 2019 -0400
-> Commit:     Ingo Molnar <mingo@kernel.org>
-> CommitDate: Fri May 24 08:57:29 2019 +0200
-> 
->     sched/core: Clean up sched_init() a bit
->     
->     Compiling a kernel with both FAIR_GROUP_SCHED=n and RT_GROUP_SCHED=n
->     will generate a warning using W=1:
->     
->       kernel/sched/core.c: In function 'sched_init':
->       kernel/sched/core.c:5906:32: warning: variable 'ptr' set but not used
->     
->     Use this opportunity to tidy up a code a bit by removing unnecssary
->     indentations and lines.
->     
->     Signed-off-by: Qian Cai <cai@lca.pw>
->     Cc: Linus Torvalds <torvalds@linux-foundation.org>
->     Cc: Peter Zijlstra <peterz@infradead.org>
->     Cc: Thomas Gleixner <tglx@linutronix.de>
->     Link: http://lkml.kernel.org/r/1558549206-13031-1-git-send-email-cai@lca.pw
->     [ Also remove some of the unnecessary #endif comments. ]
->     Signed-off-by: Ingo Molnar <mingo@kernel.org>
+The old_memmap flow in efi_call_phys_prolog() performs numerous memory
+allocations, and either does not check for failure at all, or it does
+but fails to propagate it back to the caller, which may end up calling
+into the firmware with an incomplete 1:1 mapping.
 
-I've removed this commit for the time being.
+So let's fix this by returning NULL from efi_call_phys_prolog() on
+memory allocation failures only, and by handling this condition in the
+caller. Also, clean up any half baked sets of page tables that we may
+have created before returning with a NULL return value.
 
-Thanks,
+Note that any failure at this level will trigger a panic() two levels
+up, so none of this makes a huge difference, but it is a nice cleanup
+nonetheless.
 
-	Ingo
+[ardb: update commit log, add efi_call_phys_epilog() call on error path]
+
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rob Bradford <robert.bradford@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20190525112559.7917-2-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/platform/efi/efi.c    | 2 ++
+ arch/x86/platform/efi/efi_64.c | 9 ++++++---
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+index e1cb01a22fa8..a7189a3b4d70 100644
+--- a/arch/x86/platform/efi/efi.c
++++ b/arch/x86/platform/efi/efi.c
+@@ -85,6 +85,8 @@ static efi_status_t __init phys_efi_set_virtual_address_map(
+ 	pgd_t *save_pgd;
+ 
+ 	save_pgd = efi_call_phys_prolog();
++	if (!save_pgd)
++		return EFI_ABORTED;
+ 
+ 	/* Disable interrupts around EFI calls: */
+ 	local_irq_save(flags);
+diff --git a/arch/x86/platform/efi/efi_64.c b/arch/x86/platform/efi/efi_64.c
+index cf0347f61b21..08ce8177c3af 100644
+--- a/arch/x86/platform/efi/efi_64.c
++++ b/arch/x86/platform/efi/efi_64.c
+@@ -84,13 +84,15 @@ pgd_t * __init efi_call_phys_prolog(void)
+ 
+ 	if (!efi_enabled(EFI_OLD_MEMMAP)) {
+ 		efi_switch_mm(&efi_mm);
+-		return NULL;
++		return efi_mm.pgd;
+ 	}
+ 
+ 	early_code_mapping_set_exec(1);
+ 
+ 	n_pgds = DIV_ROUND_UP((max_pfn << PAGE_SHIFT), PGDIR_SIZE);
+ 	save_pgd = kmalloc_array(n_pgds, sizeof(*save_pgd), GFP_KERNEL);
++	if (!save_pgd)
++		return NULL;
+ 
+ 	/*
+ 	 * Build 1:1 identity mapping for efi=old_map usage. Note that
+@@ -138,10 +140,11 @@ pgd_t * __init efi_call_phys_prolog(void)
+ 		pgd_offset_k(pgd * PGDIR_SIZE)->pgd &= ~_PAGE_NX;
+ 	}
+ 
+-out:
+ 	__flush_tlb_all();
+-
+ 	return save_pgd;
++out:
++	efi_call_phys_epilog(save_pgd);
++	return NULL;
+ }
+ 
+ void __init efi_call_phys_epilog(pgd_t *save_pgd)
