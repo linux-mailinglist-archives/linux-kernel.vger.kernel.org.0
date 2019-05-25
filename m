@@ -2,96 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9207A2A54B
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 18:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9702A55A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 18:38:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbfEYQXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 12:23:54 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44805 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727223AbfEYQXm (ORCPT
+        id S1727175AbfEYQh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 12:37:57 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54714 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727125AbfEYQh4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 12:23:42 -0400
-Received: by mail-wr1-f68.google.com with SMTP id w13so4443738wru.11;
-        Sat, 25 May 2019 09:23:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mz71BHS9e6D0Hy+3p0/CgKuWt1VgJzq7zAM5T7mHY2o=;
-        b=jUrGqIVcaMBSQcLPCUQrRz5m5HvJXlyQ468xiszvGOrzlbZiJta79v1MI4OHS9BrJw
-         slJRfaQIZKHfawdD+VE64WDHAPRL8caZPMvUxY+fajXRhXJTwKAflma5EW4AsMaWbWy/
-         cpt652xyVNGp12XtgtneQfp0kk6rTic5HQrz5e4nzEcg6RBBUSY+ml1QHvBDYRVmC0wT
-         3GdZg17rdLHujZf4MJlVc2IGS1SceA3Aibdddsw19d5+Dd70wtQAOCVOteyeTCOaxbpg
-         J+mjNfS1QZ5ksoqvUxq++X25DwHkdiBEra11GEMmjPQWPi8wHwQOPRuz9TWYguyOY4sE
-         DNdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mz71BHS9e6D0Hy+3p0/CgKuWt1VgJzq7zAM5T7mHY2o=;
-        b=qWUlQ/CKvqXJyLAiJg69s1nfmQNRxTwcFqkRJ3MmJhPZr7rqrfsQ+Gih8QNK1URSJe
-         AGnPJsOVB6a132EgqVZVUGcYrIbu5YhtyHkx23zilhv38pJyZqA2AyyGeDoUjnI2EUOy
-         +vqNl3eEmAjtHiLsJfxXQh0g/eHnQsLl/C2NEudoK5WD467Smgz3wnRfWWveWazxvo7t
-         QTDzXBx9N4pIGZEVIxl2USUUKzjZVZ9UcAf7l8d2+s3k79W9r194HNXAsZbJzhKI6ddq
-         5gCz+7YPM4oN7z+mRauXP+z75d9BZQgH1X5OrEtPZAroJ7Ar9GAiEpulEQ4IwgttKp+6
-         55BA==
-X-Gm-Message-State: APjAAAWeiN4Yd11IPo2VKTmD0aNaIOVZvk9+1LIzCEHyKW4XEtp1tiWB
-        RxxII6JErywl1PSjPyCeU2w=
-X-Google-Smtp-Source: APXvYqwOH/zwDPb6sFjgA3noRqLyg0IS8DDT4t4lmVfw9uSbTr3HjpeHNuNaUkAdH15jvnlEPnlHJA==
-X-Received: by 2002:adf:f9c5:: with SMTP id w5mr37265578wrr.26.1558801419314;
-        Sat, 25 May 2019 09:23:39 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e0a:1f1:d0f0::4e2b:d7ca])
-        by smtp.gmail.com with ESMTPSA id k184sm13194409wmk.0.2019.05.25.09.23.38
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 25 May 2019 09:23:38 -0700 (PDT)
-From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v3 7/7] arm64: defconfig: Enable Sun4i SPDIF module
-Date:   Sat, 25 May 2019 18:23:23 +0200
-Message-Id: <20190525162323.20216-8-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190525162323.20216-1-peron.clem@gmail.com>
-References: <20190525162323.20216-1-peron.clem@gmail.com>
+        Sat, 25 May 2019 12:37:56 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x4PGYaOR022380
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2019 09:37:55 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=5RTPfI6UzZo8h/nwiW8QfQd6DBgTvw5sKSvqdQKtb2o=;
+ b=TPpiil9iO3VW4SB2PmqCp9qNWGOvc8+rJRLqlnPEeKiuoRpjr1zbk59/iNkN0Td3xokU
+ lcEQKnPuwKfjThy0/xEBlee717DwDqV0E5f+cVPd+4LOcwjNI/kCltJLw6FqkghIPQu8
+ qY/6g7VDt9ODi0BoBb5ESAfmkFJWRC/OFZw= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by m0089730.ppops.net with ESMTP id 2sq16r8wey-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2019 09:37:55 -0700
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
+ Sat, 25 May 2019 09:37:54 -0700
+Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
+        id 2E29D126D83B1; Sat, 25 May 2019 09:37:43 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Roman Gushchin <guro@fb.com>
+Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
+To:     Alexei Starovoitov <ast@kernel.org>, <bpf@vger.kernel.org>
+CC:     Daniel Borkmann <daniel@iogearbox.net>, <netdev@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>, <kernel-team@fb.com>,
+        <cgroups@vger.kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Yonghong Song <yhs@fb.com>, <linux-kernel@vger.kernel.org>,
+        Roman Gushchin <guro@fb.com>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH v5 bpf-next 0/4] cgroup bpf auto-detachment
+Date:   Sat, 25 May 2019 09:37:38 -0700
+Message-ID: <20190525163742.2616471-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-25_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=743 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905250117
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner A64 and H6 use the Sun4i SPDIF driver.
+This patchset implements a cgroup bpf auto-detachment functionality:
+bpf programs are detached as soon as possible after removal of the
+cgroup, without waiting for the release of all associated resources.
 
-Enable this to allow a proper support.
+Patches 2 and 3 are required to implement a corresponding kselftest
+in patch 4.
 
-Signed-off-by: Clément Péron <peron.clem@gmail.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+v5:
+  1) rebase
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index b535f0f412cc..de5b65d45311 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -526,6 +526,7 @@ CONFIG_SND_SOC_ROCKCHIP_RT5645=m
- CONFIG_SND_SOC_RK3399_GRU_SOUND=m
- CONFIG_SND_SOC_SAMSUNG=y
- CONFIG_SND_SOC_RCAR=m
-+CONFIG_SND_SUN4I_SPDIF=m
- CONFIG_SND_SOC_AK4613=m
- CONFIG_SND_SOC_ES7134=m
- CONFIG_SND_SOC_ES7241=m
+v4:
+  1) release cgroup bpf data using a workqueue
+  2) add test_cgroup_attach to .gitignore
+
+v3:
+  1) some minor changes and typo fixes
+
+v2:
+  1) removed a bogus check in patch 4
+  2) moved buf[len] = 0 in patch 2
+
+
+Roman Gushchin (4):
+  bpf: decouple the lifetime of cgroup_bpf from cgroup itself
+  selftests/bpf: convert test_cgrp2_attach2 example into kselftest
+  selftests/bpf: enable all available cgroup v2 controllers
+  selftests/bpf: add auto-detach test
+
+ include/linux/bpf-cgroup.h                    |  11 +-
+ include/linux/cgroup.h                        |  18 +++
+ kernel/bpf/cgroup.c                           |  41 ++++-
+ kernel/cgroup/cgroup.c                        |  11 +-
+ samples/bpf/Makefile                          |   2 -
+ tools/testing/selftests/bpf/.gitignore        |   1 +
+ tools/testing/selftests/bpf/Makefile          |   3 +-
+ tools/testing/selftests/bpf/cgroup_helpers.c  |  57 +++++++
+ .../selftests/bpf/test_cgroup_attach.c        | 146 ++++++++++++++++--
+ 9 files changed, 261 insertions(+), 29 deletions(-)
+ rename samples/bpf/test_cgrp2_attach2.c => tools/testing/selftests/bpf/test_cgroup_attach.c (79%)
+
 -- 
-2.20.1
+2.21.0
 
