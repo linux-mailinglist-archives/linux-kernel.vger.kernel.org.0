@@ -2,35 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 314D32A278
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 05:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BCC12A281
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 05:20:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726598AbfEYDLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 24 May 2019 23:11:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54730 "EHLO mail.kernel.org"
+        id S1726697AbfEYDRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 24 May 2019 23:17:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbfEYDLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 24 May 2019 23:11:10 -0400
+        id S1726483AbfEYDRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 24 May 2019 23:17:47 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABA5A2133D;
-        Sat, 25 May 2019 03:11:08 +0000 (UTC)
-Date:   Fri, 24 May 2019 23:11:06 -0400
+        by mail.kernel.org (Postfix) with ESMTPSA id 133332175B;
+        Sat, 25 May 2019 03:17:46 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1hUNBp-0001hD-5R; Fri, 24 May 2019 23:17:45 -0400
+Message-Id: <20190525031633.811342628@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Fri, 24 May 2019 23:16:33 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Jagadeesh Pagadala <jagdsh.linux@gmail.com>
-Subject: [GIT PULL] tracing: Small fixes to histogram code and header
- cleanup
-Message-ID: <20190524231106.5812936b@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Frank Ch. Eigler" <fche@redhat.com>
+Subject: [PATCH 00/16 v3] function_graph: Rewrite to allow multiple users
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -38,101 +44,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-Linus,
+The background for this is explained in the V1 version found here:
 
-Tom Zanussi sent me some small fixes and cleanups to the histogram
-code and I forgot to incorporate them.
+ http://lkml.kernel.org/r/20181122012708.491151844@goodmis.org
 
-I also added a small clean up patch that was sent to me a while ago
-and I just noticed it.
+The TL;DR; is this:
 
+ The function graph tracer required a rewrite, mainly because it
+ can only allow one callback registered at a time. The main motivation
+ for this change is to allow kretprobes to use the code of function
+ graph tracer, which should allow all archs that have function graph
+ tracing to also have kretprobes with no extra work.
 
-Please pull the latest trace-v5.2-rc1 tree, which can be found at:
+Masami told me that one requirement was to allow the function entry
+callback to store data on the shadow stack that can be retrieved by
+the the function return callback. I added this, as well as a per-task
+variable (used by one of the function graph users).
 
+The two functions to allow the storing of data on the stack and
+retrieval of it are:
+
+ void *fgraph_reserve_data(int size_in_bytes)
+
+    Allows the entry function to reserve up to 4 words of data on
+    the shadow stack. On success, a pointer to the contents is returned.
+    This may be only called once per entry function.
+
+ void *fgraph_retrieve_data(void)
+
+    Allows the return function to retrieve the reserved data that was
+    allocated by the entry function.
+
+Changes since v2:
+
+  http://lkml.kernel.org/r/20190520142001.270067280@goodmis.org
+
+ As a request from Peter Zijlstra, I changed the direction of
+ the stack from growing up, to growing down. It passes some smoke
+ tests, but I will need to run a lot more tests on it. But I decide
+ to post this series anyway.
+
+ Also changed, was using BULID_BUG_ON() instead of the align tricks,
+ And also used round_up() to remove another align trick.
+
+ I found a bug it patch 4 that was fixed in patch 5, but I fixed
+ it in patch 4 to keep it bisectable.
+
+ Added a few more comments, and also added more boot up self tests to
+ test more of the passing of data around.
+
+The git repo can be found here:
 
   git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v5.2-rc1
+ftrace/fgraph-multi-stackdown
 
-Tag SHA1: bceb0fd66744c3aa0cd8f3bba3e4b45ca38b3aaa
-Head SHA1: 4eebe38a37f9397ffecd4bd3afbdf36838a97969
+Head SHA1: 7e25deae405b75aaaa7d5d98fcafdd79c34f87cb
 
 
-Jagadeesh Pagadala (1):
-      kernel/trace/trace.h: Remove duplicate header of trace_seq.h
-
-Tom Zanussi (3):
-      tracing: Prevent hist_field_var_ref() from accessing NULL tracing_map_elts
-      tracing: Check keys for variable references in expressions too
-      tracing: Add a check_val() check before updating cond_snapshot() track_val
+Steven Rostedt (VMware) (16):
+      function_graph: Convert ret_stack to a series of longs
+      fgraph: Use BUILD_BUG_ON() to make sure we have structures divisible by long
+      fgraph: Have the current->ret_stack go down not up
+      function_graph: Add an array structure that will allow multiple callbacks
+      function_graph: Allow multiple users to attach to function graph
+      function_graph: Remove logic around ftrace_graph_entry and return
+      ftrace/function_graph: Pass fgraph_ops to function graph callbacks
+      ftrace: Allow function_graph tracer to be enabled in instances
+      ftrace: Allow ftrace startup flags exist without dynamic ftrace
+      function_graph: Have the instances use their own ftrace_ops for filtering
+      function_graph: Add "task variables" per task for fgraph_ops
+      function_graph: Move set_graph_function tests to shadow stack global var
+      function_graph: Move graph depth stored data to shadow stack global var
+      function_graph: Move graph notrace bit to shadow stack global var
+      function_graph: Implement fgraph_reserve_data() and fgraph_retrieve_data()
+      function_graph: Add selftest for passing local variables
 
 ----
- kernel/trace/trace.h             |  1 -
- kernel/trace/trace_events_hist.c | 13 +++++++++++--
- 2 files changed, 11 insertions(+), 3 deletions(-)
----------------------------
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 1974ce818ddb..82c70b63d375 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -15,7 +15,6 @@
- #include <linux/trace_seq.h>
- #include <linux/trace_events.h>
- #include <linux/compiler.h>
--#include <linux/trace_seq.h>
- #include <linux/glob.h>
- 
- #ifdef CONFIG_FTRACE_SYSCALLS
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 7fca3457c705..ca6b0dff60c5 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -59,7 +59,7 @@
- 	C(NO_CLOSING_PAREN,	"No closing paren found"),		\
- 	C(SUBSYS_NOT_FOUND,	"Missing subsystem"),			\
- 	C(INVALID_SUBSYS_EVENT,	"Invalid subsystem or event name"),	\
--	C(INVALID_REF_KEY,	"Using variable references as keys not supported"), \
-+	C(INVALID_REF_KEY,	"Using variable references in keys not supported"), \
- 	C(VAR_NOT_FOUND,	"Couldn't find variable"),		\
- 	C(FIELD_NOT_FOUND,	"Couldn't find field"),
- 
-@@ -1854,6 +1854,9 @@ static u64 hist_field_var_ref(struct hist_field *hist_field,
- 	struct hist_elt_data *elt_data;
- 	u64 var_val = 0;
- 
-+	if (WARN_ON_ONCE(!elt))
-+		return var_val;
-+
- 	elt_data = elt->private_data;
- 	var_val = elt_data->var_ref_vals[hist_field->var_ref_idx];
- 
-@@ -3582,14 +3585,20 @@ static bool cond_snapshot_update(struct trace_array *tr, void *cond_data)
- 	struct track_data *track_data = tr->cond_snapshot->cond_data;
- 	struct hist_elt_data *elt_data, *track_elt_data;
- 	struct snapshot_context *context = cond_data;
-+	struct action_data *action;
- 	u64 track_val;
- 
- 	if (!track_data)
- 		return false;
- 
-+	action = track_data->action_data;
-+
- 	track_val = get_track_val(track_data->hist_data, context->elt,
- 				  track_data->action_data);
- 
-+	if (!action->track_data.check_val(track_data->track_val, track_val))
-+		return false;
-+
- 	track_data->track_val = track_val;
- 	memcpy(track_data->key, context->key, track_data->key_len);
- 
-@@ -4503,7 +4512,7 @@ static int create_key_field(struct hist_trigger_data *hist_data,
- 			goto out;
- 		}
- 
--		if (hist_field->flags & HIST_FIELD_FL_VAR_REF) {
-+		if (field_has_hist_vars(hist_field, 0))	{
- 			hist_err(tr, HIST_ERR_INVALID_REF_KEY, errpos(field_str));
- 			destroy_hist_field(hist_field, 0);
- 			ret = -EINVAL;
-
+ include/linux/ftrace.h               |  37 +-
+ include/linux/sched.h                |   2 +-
+ kernel/trace/fgraph.c                | 870 ++++++++++++++++++++++++++++-------
+ kernel/trace/ftrace.c                |  13 +-
+ kernel/trace/ftrace_internal.h       |   2 -
+ kernel/trace/trace.h                 | 132 +++---
+ kernel/trace/trace_functions.c       |   7 +
+ kernel/trace/trace_functions_graph.c |  96 ++--
+ kernel/trace/trace_irqsoff.c         |  10 +-
+ kernel/trace/trace_sched_wakeup.c    |  10 +-
+ kernel/trace/trace_selftest.c        | 317 ++++++++++++-
+ 11 files changed, 1205 insertions(+), 291 deletions(-)
