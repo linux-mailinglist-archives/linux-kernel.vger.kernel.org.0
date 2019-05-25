@@ -2,177 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82BB52A4CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 16:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB86F2A4DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 16:20:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbfEYOQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 10:16:16 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55244 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726126AbfEYOQP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 10:16:15 -0400
-Received: by mail-wm1-f68.google.com with SMTP id i3so12007529wml.4
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2019 07:16:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jARxfBsrYNvn7p8/Iwq3xmRStS+33h/bwiy/IOpncSw=;
-        b=J2+3oUfC3vN7+6n1601HaKaX2N0bISJtdFuFv7AxD82JHNdlPlSsKja61ewa8f63Fj
-         hKAbHrX0BwDFlnvvoFNaO/TVkkmDjAlw1pacC6Y9gi9hBjnCy7BJnvqizLRZAj+uR0Nm
-         E03ujVVYpD/P2v45a2BedfgJplBratCM4QliZKsCFTO4yz4zPZzSiHjgoKRdk+oZS84P
-         vijPl9LaOh9GTD1AM19CgjjbJ+VswPStIVPrcUimIKplWeQTuum4Ll9CUT3EIhjx6fBp
-         AJaG9OUofavZqi/ZEq88Mw2lP1pR12IlEAh/n1qaZovRKgxDqfTtlElc644kZI+SDh3K
-         faVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jARxfBsrYNvn7p8/Iwq3xmRStS+33h/bwiy/IOpncSw=;
-        b=AI8dnTZlm+tcxtsEJsa62BczCPcNk6fl9uAJzDr5vU9w7KNS5wYfb5Sb724YiEb7lm
-         6IyZTZGdWNxE7qvPERtezKAcCHQQyYu4D3Pni3CZnXJe+9qfYokXfnGieneeXXio+DGL
-         FzZEUee5KNJ6Zw1ilZ5UBGvbwP4ICPlF3a2Jiocoeqk+wI21ZALq3sXej1bRetU2k9o8
-         2UQ3od/A5cCHIbRnGPSUPHPyARn4EjJttC5M/EN1GXsXo1ADcm+ElSUUdH/Ksm02i+OJ
-         iQWt4ZCRpftdnUsiesOse1QoG/ZtDC1GXymYQjZs2D8MYYk/yxWkV6NOmitqVGPaguXA
-         +cbA==
-X-Gm-Message-State: APjAAAX1QHfdYHeiSABvgDSbNuHAsBHxrpJaMhU8TsL+bzL9QYvCsbOQ
-        60HplkDLgh/Gfq7vegI5tPnMWA==
-X-Google-Smtp-Source: APXvYqwrPmYJuj/du/Dc8iJgUR2Ouxp1rFf0arkcYlJk38pzVkHpeaXVsyMTuTwWL9kjZEwVOZ3S3A==
-X-Received: by 2002:a1c:7503:: with SMTP id o3mr20950643wmc.28.1558793772558;
-        Sat, 25 May 2019 07:16:12 -0700 (PDT)
-Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id z23sm1996078wml.42.2019.05.25.07.16.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 25 May 2019 07:16:12 -0700 (PDT)
-Subject: Re: [RFC v2 1/2] clocksource: davinci-timer: add support for
- clockevents
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Lechner <david@lechnology.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190523125813.29506-1-brgl@bgdev.pl>
- <20190523125813.29506-2-brgl@bgdev.pl>
- <dbe04cda-4f42-46b5-0808-e756a65180d2@linaro.org>
- <CAMRc=MfUFE_yBSqS-s4fVcU9W11Amgeer-eXWNBrkG0Z7KD4tA@mail.gmail.com>
- <5f513fdc-7768-43b8-9d0c-56f07a60768f@linaro.org>
- <CAMRc=MeFMQ9rz-=8GktGtaQm1j-X66RsCBTqR3-mofc4Bju8-w@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <a4585f30-5fa7-7fde-bbbd-c32464c0f060@linaro.org>
-Date:   Sat, 25 May 2019 16:16:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727054AbfEYOUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 10:20:22 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37152 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726126AbfEYOUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 May 2019 10:20:21 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C18379AFA202D24360F6;
+        Sat, 25 May 2019 22:20:15 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Sat, 25 May 2019
+ 22:20:10 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <bgolaszewski@baylibre.com>, <jacek.anaszewski@gmail.com>,
+        <pavel@ucw.cz>, <dmurphy@ti.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] leds: max77650: Remove set but not used variable 'parent'
+Date:   Sat, 25 May 2019 22:19:41 +0800
+Message-ID: <20190525141941.16088-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=MeFMQ9rz-=8GktGtaQm1j-X66RsCBTqR3-mofc4Bju8-w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/05/2019 13:53, Bartosz Golaszewski wrote:
-> pt., 24 maj 2019 o 10:59 Daniel Lezcano <daniel.lezcano@linaro.org> napisał(a):
->>
->> On 24/05/2019 09:28, Bartosz Golaszewski wrote:
->>> czw., 23 maj 2019 o 18:38 Daniel Lezcano <daniel.lezcano@linaro.org> napisał(a):
->>>>
->>>> On 23/05/2019 14:58, Bartosz Golaszewski wrote:
->>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>>
->>>>> Currently the clocksource and clockevent support for davinci platforms
->>>>> lives in mach-davinci. It hard-codes many things, uses global variables,
->>>>> implements functionalities unused by any platform and has code fragments
->>>>> scattered across many (often unrelated) files.
->>>>>
->>>>> Implement a new, modern and simplified timer driver and put it into
->>>>> drivers/clocksource. We still need to support legacy board files so
->>>>> export a config structure and a function that allows machine code to
->>>>> register the timer.
->>>>>
->>>>> The timer we're using is 64-bit but can be programmed in dual 32-bit
->>>>> mode (both chained and unchained). We're using dual 32-bit mode to
->>>>> have separate counters for clockevents and clocksource.
->>>>>
->>>>> This patch contains the core code and support for clockevent. The
->>>>> clocksource code will be included in a subsequent patch.
->>>>>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-[ ... ]
+drivers/leds/leds-max77650.c: In function max77650_led_probe:
+drivers/leds/leds-max77650.c:67:17: warning: variable parent set but not used [-Wunused-but-set-variable]
 
->>>>> +static unsigned int
->>>>> +davinci_clockevent_read(struct davinci_clockevent *clockevent,
->>>>> +                     unsigned int reg)
->>>>> +{
->>>>> +     return readl_relaxed(clockevent->base + reg);
->>>>> +}
->>>>> +
->>>>> +static void davinci_clockevent_write(struct davinci_clockevent *clockevent,
->>>>> +                                  unsigned int reg, unsigned int val)
->>>>> +{
->>>>> +     writel_relaxed(val, clockevent->base + reg);
->>>>> +}
->>>>> +
->>>>> +static void davinci_tcr_update(void __iomem *base,
->>>>> +                            unsigned int mask, unsigned int val)
->>>>> +{
->>>>> +     davinci_tcr &= ~mask;
->>>>> +     davinci_tcr |= val & mask;
->>>>
->>>>
->>>> I don't see when the davinci_tcr is initialized.
->>>>
->>>
->>> It's set to 0x0 by the compiler and we're setting the register to 0x0
->>> in davinci_timer_init().
->>
->> Why did you need to readl before in the previous version? The idea of
->> caching the value was to save an extra readl.
->>
->> If it is always zero, then we don't need this variable neither the read,
->> just doing:
->>
->> writel_relaxed(val & mask, base + DAVINCI_TIMER_REG_TCR);
->>
->> should work no ?
-> 
-> It's not always zero. Its reset value is zero and we write 0 to it at
-> init time just to make sure, but then we modify it according to the
-> configuration. The single TCR register controls both halves of the
-> timer, so we do need an actual update, not a simple write.
+It is never used and can be removed.
 
-Ok but the driver can be oneshot or disabled in the code (mutually
-exclusive), no ?
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/leds/leds-max77650.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-So doing
+diff --git a/drivers/leds/leds-max77650.c b/drivers/leds/leds-max77650.c
+index 6b74ce9cac12..8a8e5c65b157 100644
+--- a/drivers/leds/leds-max77650.c
++++ b/drivers/leds/leds-max77650.c
+@@ -64,7 +64,6 @@ static int max77650_led_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *of_node, *child;
+ 	struct max77650_led *leds, *led;
+-	struct device *parent;
+ 	struct device *dev;
+ 	struct regmap *map;
+ 	const char *label;
+@@ -72,7 +71,6 @@ static int max77650_led_probe(struct platform_device *pdev)
+ 	u32 reg;
+ 
+ 	dev = &pdev->dev;
+-	parent = dev->parent;
+ 	of_node = dev->of_node;
+ 
+ 	if (!of_node)
+-- 
+2.17.1
 
- - writel(oneshot, base);
- - writel(disabled, base);
-
-works without any mask computation, no?
-
-Well the above assumes other part of the register aren't changed by
-other subsystems (or by the timer itself).
-
-
-
-
-
-
-
-
-
-
-
--- :
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
