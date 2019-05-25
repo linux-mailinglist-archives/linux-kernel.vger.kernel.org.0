@@ -2,204 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3370B2A55D
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 18:38:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDEB92A56A
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 18:38:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbfEYQiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 12:38:00 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:50226 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727125AbfEYQh6 (ORCPT
+        id S1727290AbfEYQi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 12:38:28 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33577 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727125AbfEYQi1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 12:37:58 -0400
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4PGYmpV028910
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2019 09:37:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=lnPKXVooJUbpNWC+TYw9Uba3sAqshRTgWZf+RLcJsCI=;
- b=Rle19znJg/aLiVMugEYDnp8OAPnyKDVLqwHVQITc51uNuaEglgY9pnM1xYkmSGUVlCgO
- 6D5qhnIa3mXxkGbL21OkjEA1ulxpSEzL8cFNmTGzKGmHArZpDxnzQ8suN9QeSZxwJeq4
- rq6Q8cGkYT8J+Y8gXCh1CBW7vy8yq/w69Go= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2sq3d3gptn-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2019 09:37:57 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Sat, 25 May 2019 09:37:55 -0700
-Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 3D5C3126D83BE; Sat, 25 May 2019 09:37:43 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Roman Gushchin <guro@fb.com>
-Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
-To:     Alexei Starovoitov <ast@kernel.org>, <bpf@vger.kernel.org>
-CC:     Daniel Borkmann <daniel@iogearbox.net>, <netdev@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>, <kernel-team@fb.com>,
-        <cgroups@vger.kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-        Yonghong Song <yhs@fb.com>, <linux-kernel@vger.kernel.org>,
-        Roman Gushchin <guro@fb.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v5 bpf-next 4/4] selftests/bpf: add auto-detach test
-Date:   Sat, 25 May 2019 09:37:42 -0700
-Message-ID: <20190525163742.2616471-5-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190525163742.2616471-1-guro@fb.com>
-References: <20190525163742.2616471-1-guro@fb.com>
-X-FB-Internal: Safe
+        Sat, 25 May 2019 12:38:27 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d9so12841990wrx.0;
+        Sat, 25 May 2019 09:38:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=P1PyjslIuFkdLZ1LECH2oSAMmTt5Um4BAQa4nOZIt94=;
+        b=ZCG5JA+bIRDyleKl2mXDSKEp9k5JUA0n0iBeFRwDKw1Fs5sbHew+pHrqpO+AVaYcDk
+         GbQOzYLEetuN7tzq4YO2itG3MCd0VrWiWvlBNLP94BenthcKgYrio9BbozLM3VDqavWR
+         Lo3Fwl8QSY+FZ9HXd2H4JNg7yUGxpNKQ491HSncL5MczBDs8dD7y9dFezntMKpIq+L51
+         w1KoNwprxk7lGvNIy+iEbrJSSNU3qpKTgUCgSLso/uqyZVSNyiOJc9LXQcUx3+4ZSUAX
+         H0m3RQkTcQ2B2h/17Gf96fzMNShsQRNGONnkY7JcSB0If1UlSrdDXOecxZnumgXMJcEq
+         RWQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=P1PyjslIuFkdLZ1LECH2oSAMmTt5Um4BAQa4nOZIt94=;
+        b=Bo+QOThZNsb0D2Be3NXIbRR1vNwoj+9KZblWOQQNpb6MTaAThycfuVEr3cynyPLWdu
+         +sqh695f0eDMTkP7b5gaUrC2SEG7Jd0Z2iCDdOqmJXENlmPJeh4kokq0BiB6aa6LTtQa
+         jW9RA3l9UtCKImuXhqxD5lMHd70qK4iRDd4FDIVcixGMMBNE2zYSRfASGlgwIvEMNLfU
+         J9hDsgsBHAJdBgv981uk+tNo1dfomAU8oRcry6LnrvHrpt3oeCPiK33a1th8cKkraMsd
+         5eagUAoh6y/YtyljHEdXMRVlL4oIIpq6ufFYkB7nQZ0qybf81hsKshpw0MLgsrAkEgeD
+         3ozg==
+X-Gm-Message-State: APjAAAXEp+f2tF7QaC214WZivr7R2qhaNgyRgktehoamY0PCt0FVQdrS
+        gxkSx2J6a6NJ5OkK2u44zew=
+X-Google-Smtp-Source: APXvYqz78k3LlnXP7jY3H0OnrSSVjujSRE2IRywudpy2P67AUT4Fy3Xl69vJWmYaBl5Bg9zioHfo+Q==
+X-Received: by 2002:a5d:6b03:: with SMTP id v3mr7769108wrw.309.1558802305724;
+        Sat, 25 May 2019 09:38:25 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e0a:1f1:d0f0::4e2b:d7ca])
+        by smtp.gmail.com with ESMTPSA id f65sm9306498wmg.45.2019.05.25.09.38.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 25 May 2019 09:38:25 -0700 (PDT)
+From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Subject: [PATCH v2 0/7] Allwinner H6 DMA support
+Date:   Sat, 25 May 2019 18:38:12 +0200
+Message-Id: <20190525163819.21055-1-peron.clem@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-25_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=528 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905250117
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a kselftest to cover bpf auto-detachment functionality.
-The test creates a cgroup, associates some resources with it,
-attaches a couple of bpf programs and deletes the cgroup.
+Hi,
 
-Then it checks that bpf programs are going away in 5 seconds.
+This series has been first proposed by Jernej Skrabec[1].
+As this series is mandatory for SPDIF/I2S support and because he is
+busy on Cedrus stuff. I asked him to make the minor change requested
+and repost it.
+Authorship remains to him.
 
-Expected output:
-  $ ./test_cgroup_attach
-  #override:PASS
-  #multi:PASS
-  #autodetach:PASS
-  test_cgroup_attach:PASS
+I have tested this series with SPDIF driver and added a patch to enable
+DMA_SUN6I_CONFIG for arm64.
 
-On a kernel without auto-detaching:
-  $ ./test_cgroup_attach
-  #override:PASS
-  #multi:PASS
-  #autodetach:FAIL
-  test_cgroup_attach:FAIL
+Original Post:
+"
+DMA engine engine on H6 almost the same as on older SoCs. The biggest
+difference is that it has slightly rearranged bits in registers and
+it needs additional clock, probably due to iommu.
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Acked-by: Yonghong Song <yhs@fb.com>
----
- .../selftests/bpf/test_cgroup_attach.c        | 98 ++++++++++++++++++-
- 1 file changed, 97 insertions(+), 1 deletion(-)
+These patches were tested with I2S connected to HDMI. I2S needs
+additional patches which will be sent later.
 
-diff --git a/tools/testing/selftests/bpf/test_cgroup_attach.c b/tools/testing/selftests/bpf/test_cgroup_attach.c
-index 2d6d57f50e10..7671909ee1cb 100644
---- a/tools/testing/selftests/bpf/test_cgroup_attach.c
-+++ b/tools/testing/selftests/bpf/test_cgroup_attach.c
-@@ -456,9 +456,105 @@ static int test_multiprog(void)
- 	return rc;
- }
- 
-+static int test_autodetach(void)
-+{
-+	__u32 prog_cnt = 4, attach_flags;
-+	int allow_prog[2] = {0};
-+	__u32 prog_ids[2] = {0};
-+	int cg = 0, i, rc = -1;
-+	void *ptr = NULL;
-+	int attempts;
-+
-+	for (i = 0; i < ARRAY_SIZE(allow_prog); i++) {
-+		allow_prog[i] = prog_load_cnt(1, 1 << i);
-+		if (!allow_prog[i])
-+			goto err;
-+	}
-+
-+	if (setup_cgroup_environment())
-+		goto err;
-+
-+	/* create a cgroup, attach two programs and remember their ids */
-+	cg = create_and_get_cgroup("/cg_autodetach");
-+	if (cg < 0)
-+		goto err;
-+
-+	if (join_cgroup("/cg_autodetach"))
-+		goto err;
-+
-+	for (i = 0; i < ARRAY_SIZE(allow_prog); i++) {
-+		if (bpf_prog_attach(allow_prog[i], cg, BPF_CGROUP_INET_EGRESS,
-+				    BPF_F_ALLOW_MULTI)) {
-+			log_err("Attaching prog[%d] to cg:egress", i);
-+			goto err;
-+		}
-+	}
-+
-+	/* make sure that programs are attached and run some traffic */
-+	assert(bpf_prog_query(cg, BPF_CGROUP_INET_EGRESS, 0, &attach_flags,
-+			      prog_ids, &prog_cnt) == 0);
-+	assert(system(PING_CMD) == 0);
-+
-+	/* allocate some memory (4Mb) to pin the original cgroup */
-+	ptr = malloc(4 * (1 << 20));
-+	if (!ptr)
-+		goto err;
-+
-+	/* close programs and cgroup fd */
-+	for (i = 0; i < ARRAY_SIZE(allow_prog); i++) {
-+		close(allow_prog[i]);
-+		allow_prog[i] = 0;
-+	}
-+
-+	close(cg);
-+	cg = 0;
-+
-+	/* leave the cgroup and remove it. don't detach programs */
-+	cleanup_cgroup_environment();
-+
-+	/* wait for the asynchronous auto-detachment.
-+	 * wait for no more than 5 sec and give up.
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(prog_ids); i++) {
-+		for (attempts = 5; attempts >= 0; attempts--) {
-+			int fd = bpf_prog_get_fd_by_id(prog_ids[i]);
-+
-+			if (fd < 0)
-+				break;
-+
-+			/* don't leave the fd open */
-+			close(fd);
-+
-+			if (!attempts)
-+				goto err;
-+
-+			sleep(1);
-+		}
-+	}
-+
-+	rc = 0;
-+err:
-+	for (i = 0; i < ARRAY_SIZE(allow_prog); i++)
-+		if (allow_prog[i] > 0)
-+			close(allow_prog[i]);
-+	if (cg)
-+		close(cg);
-+	free(ptr);
-+	cleanup_cgroup_environment();
-+	if (!rc)
-+		printf("#autodetach:PASS\n");
-+	else
-+		printf("#autodetach:FAIL\n");
-+	return rc;
-+}
-+
- int main(void)
- {
--	int (*tests[])(void) = {test_foo_bar, test_multiprog};
-+	int (*tests[])(void) = {
-+		test_foo_bar,
-+		test_multiprog,
-+		test_autodetach,
-+	};
- 	int errors = 0;
- 	int i;
- 
+Please take a look.
+
+Best regards,
+Jernej
+"
+
+Thanks,
+Clément
+
+Changes since v1:
+ - Enable DMA_SUN6I in arm64 defconfig
+ - Change mbus_clk to has_mbus_clk
+ - Collect Rob H. reviewed-by
+
+Clément Péron (1):
+  arm64: defconfig: enable Allwinner DMA drivers
+
+Jernej Skrabec (6):
+  dt-bindings: arm64: allwinner: h6: Add binding for DMA controller
+  dmaengine: sun6i: Add a quirk for additional mbus clock
+  dmaengine: sun6i: Add a quirk for setting DRQ fields
+  dmaengine: sun6i: Add a quirk for setting mode fields
+  dmaengine: sun6i: Add support for H6 DMA
+  arm64: dts: allwinner: h6: Add DMA node
+
+ .../devicetree/bindings/dma/sun6i-dma.txt     |   9 +-
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  12 ++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/dma/sun6i-dma.c                       | 147 +++++++++++++-----
+ 4 files changed, 132 insertions(+), 37 deletions(-)
+
 -- 
-2.21.0
+2.20.1
 
