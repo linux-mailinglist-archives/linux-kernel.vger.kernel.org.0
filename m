@@ -2,97 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0784C2A37C
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 10:46:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C9532A37E
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 10:49:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfEYIpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 04:45:55 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:44474 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbfEYIpz (ORCPT
+        id S1726679AbfEYIsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 04:48:14 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35666 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfEYIsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 04:45:55 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hUSJH-0001zt-6b; Sat, 25 May 2019 10:45:47 +0200
-Date:   Sat, 25 May 2019 10:45:46 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] mm/gup: continue VM_FAULT_RETRY processing event for
- pre-faults
-Message-ID: <20190525084546.fap2wkefepeia22f@linutronix.de>
-References: <1557844195-18882-1-git-send-email-rppt@linux.ibm.com>
- <20190522122113.a2edc8aba32f0fad189bae21@linux-foundation.org>
- <20190522194322.5k52docwgp5zkdcj@linutronix.de>
- <alpine.LSU.2.11.1905241429460.1141@eggly.anvils>
+        Sat, 25 May 2019 04:48:13 -0400
+Received: by mail-wm1-f67.google.com with SMTP id w9so5174910wmi.0
+        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2019 01:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YtHNbXkR8JRWk1Tkm7eGOHp/N9pmWt1Y/yd2UcLLjio=;
+        b=JQdoHjYszNkd2PYIj4hELUly0wTg/imi9kZkVwciB7yyM50WriIaY5/4oezNW3MSHs
+         Mf/eydrhaHAsUxyvkgtVQyd8SgoL+iB5q/fLhy0pNcBImYFmAbV/I5zA4jNz7C8h0iAD
+         MIMxP6k3gBxzrtxkLwsCsngBBUTZU5tneeHSrQvCcgAykD25hNORB0NtseWYThSf5/Z/
+         yJMRPsF/JdlCPH8c0loZ4QjpRimj2nZKm2ej/EId8pm8VCK1/vvzpAexr9J+VjtlzBNz
+         LDe/0YOxBP8rfZ3Zab9fk5F6ONaWy20qmM59PTa9LWs7EZ3Zvx+hoJ7S4VL6tqrrbNRU
+         C+Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YtHNbXkR8JRWk1Tkm7eGOHp/N9pmWt1Y/yd2UcLLjio=;
+        b=KwuGAAB6DDYWdwdmVugusJ/05INg2VG5QS/RgiGt777kxHtrou+cIAlPZAl0pd318v
+         1M0AOkwSLf8bH1yPisvBqcwWDyYXr8Voe0XA+EKsTwWeJJO3a1vy4v1yM9j9bTgNkHWQ
+         rYcqnZIk3Ol4L9B8sVJ5g1Lm2HnmktstcGldZajG7UOIdNk0kZGioZdHA4DXdyFh2Wp6
+         afZDTkIKkD7cOj2w/OaOELAeqfvoC5c8/6gjse5sc8gMMC8imv1Uexoe8KSIH7FglJZy
+         JlQG+q3zBHAF2hXE7V6jMuLQ3kzlR61mIxnprqzumZ7PhBNvD9cSyz6VctZe/+e7hiIs
+         2C7Q==
+X-Gm-Message-State: APjAAAWOtfuTcJ1e35P3jC6vcvhL7p6zEu1k71rSv8bkKseCEOfaOSXD
+        Yo3oxLEayl6HLIimhOBltJAsOoVx
+X-Google-Smtp-Source: APXvYqyW+yuAmCbGQSbsTnHH75/FetS6cUuCnerfjTeM0vLdpFvHda+nrh041AWg6UelQssMUxFLVg==
+X-Received: by 2002:a1c:cb05:: with SMTP id b5mr2933369wmg.146.1558774091594;
+        Sat, 25 May 2019 01:48:11 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id s11sm8649552wrb.71.2019.05.25.01.48.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 25 May 2019 01:48:10 -0700 (PDT)
+Date:   Sat, 25 May 2019 10:48:08 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     kan.liang@linux.intel.com
+Cc:     vincent.weaver@maine.edu, ak@linux.intel.com, peterz@infradead.org,
+        alexander.shishkin@linux.intel.com, acme@redhat.com,
+        jolsa@redhat.com, eranian@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] perf/x86: Disable non generic regs for
+ software/probe events
+Message-ID: <20190525084808.GA15802@gmail.com>
+References: <1558636616-4891-1-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.1905241429460.1141@eggly.anvils>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1558636616-4891-1-git-send-email-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-24 15:22:51 [-0700], Hugh Dickins wrote:
-> I've now run a couple of hours of load successfully with Mike's patch
-> to GUP, no problem; but whatever the merits of that patch in general,
-> I agree with Andrew that fault_in_pages_writeable() seems altogether
-> more appropriate for copy_fpstate_to_sigframe(), and have now run a
-> couple of hours of load successfully with this instead (rewrite to taste):
 
-so this patch instead of Mike's GUP patch fixes the issue you observed?
-Is this just a taste question or limitation of the function in general?
+* kan.liang@linux.intel.com <kan.liang@linux.intel.com> wrote:
 
-I'm asking because it has been suggested and is used in MPX code (in the
-signal path but .mmap) and I'm not aware of any limitation. But as I
-wrote earlier to akpm, if the MM folks suggest to use this instead I am
-happy to switch.
-
-> --- 5.2-rc1/arch/x86/kernel/fpu/signal.c
-> +++ linux/arch/x86/kernel/fpu/signal.c
-> @@ -3,6 +3,7 @@
->   * FPU signal frame handling routines.
->   */
+> @@ -57,6 +57,11 @@ static unsigned int pt_regs_offset[PERF_REG_X86_MAX] = {
+>  #endif
+>  };
 >  
-> +#include <linux/pagemap.h>
->  #include <linux/compat.h>
->  #include <linux/cpu.h>
+> +u64 non_generic_regs_mask(void)
+> +{
+> +	return (~((1ULL << PERF_REG_X86_XMM0) - 1));
+> +}
+> +
+>  u64 perf_reg_value(struct pt_regs *regs, int idx)
+>  {
+>  	struct x86_perf_regs *perf_regs;
+> diff --git a/include/linux/perf_regs.h b/include/linux/perf_regs.h
+> index 4767474..c1c3454 100644
+> --- a/include/linux/perf_regs.h
+> +++ b/include/linux/perf_regs.h
+> @@ -9,6 +9,8 @@ struct perf_regs {
+>  	struct pt_regs	*regs;
+>  };
 >  
-> @@ -189,15 +190,7 @@ retry:
->  	fpregs_unlock();
->  
->  	if (ret) {
-> -		int aligned_size;
-> -		int nr_pages;
-> -
-> -		aligned_size = offset_in_page(buf_fx) + fpu_user_xstate_size;
-> -		nr_pages = DIV_ROUND_UP(aligned_size, PAGE_SIZE);
-> -
-> -		ret = get_user_pages_unlocked((unsigned long)buf_fx, nr_pages,
-> -					      NULL, FOLL_WRITE);
-> -		if (ret == nr_pages)
-> +		if (!fault_in_pages_writeable(buf_fx, fpu_user_xstate_size))
->  			goto retry;
->  		return -EFAULT;
->  	}
-> 
-> (I did wonder whether there needs to be an access_ok() check on buf_fx;
-> but if so, then I think it would already have been needed before the
-> earlier copy_fpregs_to_sigframe(); but I didn't get deep enough into
-> that to be sure, nor into whether access_ok() check on buf covers buf_fx.)
+> +u64 non_generic_regs_mask(void);
 
-There is an access_ok() at the begin of copy_fpregs_to_sigframe(). The
-memory is allocated from user's stack and there is (later) an
-access_ok() for the whole region (which can be more than the memory used
-by the FPU code).
+This is a *constant* value, why is it in a separate function, not an 
+inline?
 
-> Hugh
+Or rather, since it's obviously a constant, name it in such a way. 
+(PERF_REG_X86_NON_GENERIC_MASK or so.)
 
-Sebastian
+To the generic code define it as 0 if arch headers haven't overriden it.
+
+> +u64 __weak non_generic_regs_mask(void)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline bool has_non_generic_regs(struct perf_event *event)
+> +{
+> +	u64 mask = non_generic_regs_mask();
+> +
+> +	return ((event->attr.sample_regs_user & mask) ||
+> +		(event->attr.sample_regs_intr & mask));
+
+'return' is not a function ...
+
+> +	/* only support generic regs */
+> +	if (has_non_generic_regs(event))
+> +		return -EOPNOTSUPP;
+
+In human readable comments please use complete sentences with no 
+unnecessary abbreviations, i.e. "Only support generic registers".
+
+Thanks,
+
+	Ingo
