@@ -2,82 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D54C2A2B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 06:18:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 963432A2EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 07:00:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726175AbfEYES3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 00:18:29 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57098 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725839AbfEYES2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 00:18:28 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A3AC57A6F2A73DE5BF64;
-        Sat, 25 May 2019 12:18:22 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Sat, 25 May 2019 12:18:13 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <jeremy@azazel.net>
-CC:     <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH net] =?UTF-8?q?staging:=20Remove=20set=20but=20not=20used?= =?UTF-8?q?=20variable=20=E2=80=98status=E2=80=99?=
-Date:   Sat, 25 May 2019 12:26:42 +0800
-Message-ID: <20190525042642.78482-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726225AbfEYFAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 01:00:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725878AbfEYFAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 May 2019 01:00:21 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1488B2177E;
+        Sat, 25 May 2019 05:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558760420;
+        bh=mIXbDXcQPMJSc4UESXKNywctOSB6Moa7tm6Jt46hGR4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=00FgJh01/Thls1CggdEZBj8yQBkONkK7KKarlpioeuDiFOyer6WSHGtYbOSnyrJ60
+         tHdAcyGob9MFtufyHhv2JzLmHzs4vgpLTUtssIJEZ39/jF1EUOI8wN9wbtFPPR0FaK
+         DQE+bvaZ6bUXPRsbh2hnM2kBUCyZPQi+EfUR64ok=
+Date:   Sat, 25 May 2019 07:00:17 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Simon =?iso-8859-1?Q?Sandstr=F6m?= <simon@nikanor.nu>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] staging: kpc2000: add missing dependencies for
+ kpc2000
+Message-ID: <20190525050017.GA18684@kroah.com>
+References: <20190524203058.30022-1-simon@nikanor.nu>
+ <20190524203058.30022-3-simon@nikanor.nu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190524203058.30022-3-simon@nikanor.nu>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Fri, May 24, 2019 at 10:30:58PM +0200, Simon Sandstr�m wrote:
+> Fixes build errors:
+> 
+> ERROR: "mfd_remove_devices" [kpc2000.ko] undefined!
+> ERROR: "uio_unregister_device" [kpc2000.ko] undefined!
+> ERROR: "mfd_add_devices" [kpc2000.ko] undefined!
+> ERROR: "__uio_register_device" [kpc2000.ko] undefined!
+> 
+> Signed-off-by: Simon Sandstr�m <simon@nikanor.nu>
+> ---
+>  drivers/staging/kpc2000/Kconfig | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/staging/kpc2000/Kconfig b/drivers/staging/kpc2000/Kconfig
+> index c463d232f2b4..5188b56123ab 100644
+> --- a/drivers/staging/kpc2000/Kconfig
+> +++ b/drivers/staging/kpc2000/Kconfig
+> @@ -3,6 +3,8 @@
+>  config KPC2000
+>  	bool "Daktronics KPC Device support"
+>  	depends on PCI
+> +	select MFD_CORE
+> +	select UIO
+>  	help
+>  	  Select this if you wish to use the Daktronics KPC PCI devices
+>  
 
-drivers/staging/kpc2000/kpc_spi/spi_driver.c: In function
-‘kp_spi_transfer_one_message’:
-drivers/staging/kpc2000/kpc_spi/spi_driver.c:282:9: warning: variable
-‘status’ set but not used [-Wunused-but-set-variable]
-     int status = 0;
-         ^~~~~~
-The variable 'status' is not used any more, remve it.
+This is already in linux-next (in a different form), are you sure you
+are working against the latest kernel tree?
 
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- drivers/staging/kpc2000/kpc_spi/spi_driver.c | 3 ---
- 1 file changed, 3 deletions(-)
+thanks,
 
-diff --git a/drivers/staging/kpc2000/kpc_spi/spi_driver.c b/drivers/staging/kpc2000/kpc_spi/spi_driver.c
-index 86df16547a92..16f9518f8d63 100644
---- a/drivers/staging/kpc2000/kpc_spi/spi_driver.c
-+++ b/drivers/staging/kpc2000/kpc_spi/spi_driver.c
-@@ -279,7 +279,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
-     struct kp_spi       *kpspi;
-     struct spi_transfer *transfer;
-     union kp_spi_config sc;
--    int status = 0;
-     
-     spidev = m->spi;
-     kpspi = spi_master_get_devdata(master);
-@@ -332,7 +331,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
-     /* do the transfers for this message */
-     list_for_each_entry(transfer, &m->transfers, transfer_list) {
-         if (transfer->tx_buf == NULL && transfer->rx_buf == NULL && transfer->len) {
--            status = -EINVAL;
-             break;
-         }
-         
-@@ -370,7 +368,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
-             m->actual_length += count;
-             
-             if (count != transfer->len) {
--                status = -EIO;
-                 break;
-             }
-         }
--- 
-2.20.1
-
+greg k-h
