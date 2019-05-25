@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 716632A54D
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 18:24:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71CB82A53F
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 18:23:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbfEYQYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 12:24:03 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38201 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727187AbfEYQXh (ORCPT
+        id S1727230AbfEYQXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 12:23:42 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34328 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbfEYQXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 25 May 2019 12:23:37 -0400
-Received: by mail-wm1-f67.google.com with SMTP id t5so11926476wmh.3;
-        Sat, 25 May 2019 09:23:35 -0700 (PDT)
+Received: by mail-wr1-f66.google.com with SMTP id f8so12827877wrt.1;
+        Sat, 25 May 2019 09:23:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qbqoVQVB81rH9/Oh9EOj+HyMcRISA85POp2mDoREhbs=;
-        b=IC/CSiPkuVdpssu8k6hyO+0c5RveetIZXR6bHj0clPiaSo481s8Kz0b35tw6ux0MM6
-         XakvCZ0VqtyJsK2wvvw6/51opcLYyUBE0t03LlA4AyOZTtUaR/4H4kGNn7QMeVbWbfga
-         4zwyJLg8jkYRqpHPaeAkbus2T76g3FRtO00o1vfPA0vsIxVmdeqMox++FmjjInLiaHF3
-         7o3mqdOm+XSUdy32aAILd5079DyDQjnnFzQ09fOs2DzU/XHE5ADe+YbNIaDJjpMEnf0u
-         QSdsmDXiS4kF0elymiH1UTbahwRbOka8I5kfz81Pb04JXXN74gcPlisFmeWeN9qWhhar
-         dbyw==
+        bh=5uUaYKFKqVciIG3lVseFyzbyz6GKlPhTPtvbtba51oA=;
+        b=bHLkAWb9RfaNiXMj3sBfSi6dpURjsbFlzSAaDE8K334xT29EiBpmbLYA0Gk6IdaNIb
+         2mZY4BDMqGmHswFGwX20J00imoNKgA8vT1DSgaJR437fnNk6ylUGk6Zm7+Yp2ih11lDm
+         vbHzXF7kJFN6bEXymy0y1E3n/OU+uW9HJTHTFeahfVhQeYY5QVo4o9+M6yY0n71WdKfV
+         b9BtKnuVccwPam5ipRCVE7iP0vV8f/cOEGMjjNVIOH5/FckfXzpBxNcPKNV/MBHWOs6K
+         ZBxdukjjSbTsNYLW5IDaUvM1BDTjNL8l9/QPT3cg8xtaUpQxOPG7zjKdk7GIeW6Mf7hj
+         /FPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qbqoVQVB81rH9/Oh9EOj+HyMcRISA85POp2mDoREhbs=;
-        b=X+938dqLC81N3TQ/3v/F8u88F2Hn/Nb6envhu2M9EGXD/0f3ItXXMmJ4Ne2yQ2xjKz
-         w52MdIVzIujpWqIpqFMM4yAf1Y59OZ5yXCv2xY9mN9d/fhhex3Odeoz3v17Vy4j83B2b
-         +jy6O2A29l7oU3vwGMDVxXNtN78IdFz0zPHM0ZwkPcL4RLkegp6rZ/2Y0JXj2gRyJP8h
-         WrCkksvaa4A8PojfASK4KJykUZk5xAUnvgbJBbgvs44D0N43P4A7jLwXxm8UJVh4BX1X
-         dQope741Nqu0nXCjXMOrl171iSRXw8/M0z/518atoGLYmQna+Hc0BvKgMdNIVs4gzKRY
-         vdmQ==
-X-Gm-Message-State: APjAAAVQCeRcA1/Nb4HMpv9LR//1f6uNfprk5KSjC4AnfXCLENYKDcLA
-        d0N7l6qj3kQPETFrpNpBC0k=
-X-Google-Smtp-Source: APXvYqxTUPHfbkGRqrcv73CLbSTer8ARaAejduD0uldwBW1Mn/rySStC4X1Si4JaSs/8XWn7bL01tA==
-X-Received: by 2002:a05:600c:204a:: with SMTP id p10mr4187874wmg.161.1558801414715;
-        Sat, 25 May 2019 09:23:34 -0700 (PDT)
+        bh=5uUaYKFKqVciIG3lVseFyzbyz6GKlPhTPtvbtba51oA=;
+        b=k82GuDoBqnEJleXaZJZG9u4BUmQbGFG4f/+HMhdiuAO5gOZJOo///0QXEGrzGo51cF
+         n+UnBRmpLt9g1J0Uroy6xh4gEVP5zseqxwqK8wOPFk/G6i4K3E6eLt3x8wGun7AVOctI
+         K3D9YBfpbal3Yf1aaUP48V+R8AOZpsWxpPSI8C9kq1QrlaIWhMiSp3I6HPoU4zbTVHkD
+         ASGVuS1uxhFLy5QKvUjmWUNE/4GxN6ctMZQiCTj+appsgO9Hpu3Qff4XvS9ecxn8mF9E
+         sXL9OsfXFTcPHmSPRyjXsis4xwnU7HflXbH0kaB9uE4qzoMhj+/vNgUzUKkNZ4aySsTU
+         jLYQ==
+X-Gm-Message-State: APjAAAVR8esFGD1BSB5dydQEWAoWPUlr3nhcH/f3+znmCEsBvD4eLhBP
+        J5vXaTxuEstjnved9PwQJ9g=
+X-Google-Smtp-Source: APXvYqwkPqO3mn4ga/iil/wlxyKMkJ5pDpNfzOJHHLu+QPgmwmExfzMvPXSHTN8LXOo1cqiuCvs5UA==
+X-Received: by 2002:a05:6000:1c6:: with SMTP id t6mr18063975wrx.236.1558801415765;
+        Sat, 25 May 2019 09:23:35 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:1f1:d0f0::4e2b:d7ca])
-        by smtp.gmail.com with ESMTPSA id k184sm13194409wmk.0.2019.05.25.09.23.33
+        by smtp.gmail.com with ESMTPSA id k184sm13194409wmk.0.2019.05.25.09.23.34
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 25 May 2019 09:23:33 -0700 (PDT)
+        Sat, 25 May 2019 09:23:35 -0700 (PDT)
 From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -57,9 +57,9 @@ To:     Liam Girdwood <lgirdwood@gmail.com>,
 Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v3 3/7] ASoC: sun4i-spdif: Add TX fifo bit flush quirks
-Date:   Sat, 25 May 2019 18:23:19 +0200
-Message-Id: <20190525162323.20216-4-peron.clem@gmail.com>
+Subject: [PATCH v3 4/7] ASoC: sun4i-spdif: Add support for H6 SoC
+Date:   Sat, 25 May 2019 18:23:20 +0200
+Message-Id: <20190525162323.20216-5-peron.clem@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190525162323.20216-1-peron.clem@gmail.com>
 References: <20190525162323.20216-1-peron.clem@gmail.com>
@@ -71,80 +71,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner H6 has a different bit to flush the TX FIFO.
+Allwinner H6 has a different mapping for the fifo register controller.
 
-Add a quirks to prepare introduction of H6 SoC.
+Actually only the fifo TX bit is used in the drivers.
+
+Use the freshly introduced quirks to make this drivers compatible with
+the Allwinner H6.
 
 Signed-off-by: Clément Péron <peron.clem@gmail.com>
 ---
- sound/soc/sunxi/sun4i-spdif.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ sound/soc/sunxi/sun4i-spdif.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
 diff --git a/sound/soc/sunxi/sun4i-spdif.c b/sound/soc/sunxi/sun4i-spdif.c
-index b6c66a62e915..8317bbee0712 100644
+index 8317bbee0712..86bf6a99703f 100644
 --- a/sound/soc/sunxi/sun4i-spdif.c
 +++ b/sound/soc/sunxi/sun4i-spdif.c
-@@ -166,10 +166,12 @@
-  *
-  * @reg_dac_tx_data: TX FIFO offset for DMA config.
-  * @has_reset: SoC needs reset deasserted.
-+ * @reg_fctl_ftx: TX FIFO flush bitmask.
-  */
- struct sun4i_spdif_quirks {
- 	unsigned int reg_dac_txdata;
- 	bool has_reset;
-+	unsigned int reg_fctl_ftx;
- };
+@@ -75,6 +75,18 @@
+ 	#define SUN4I_SPDIF_FCTL_RXOM(v)		((v) << 0)
+ 	#define SUN4I_SPDIF_FCTL_RXOM_MASK		GENMASK(1, 0)
  
- struct sun4i_spdif_dev {
-@@ -180,16 +182,19 @@ struct sun4i_spdif_dev {
- 	struct snd_soc_dai_driver cpu_dai_drv;
- 	struct regmap *regmap;
- 	struct snd_dmaengine_dai_dma_data dma_params_tx;
-+	const struct sun4i_spdif_quirks *quirks;
- };
- 
- static void sun4i_spdif_configure(struct sun4i_spdif_dev *host)
- {
-+	const struct sun4i_spdif_quirks *quirks = host->quirks;
++#define SUN50I_H6_SPDIF_FCTL (0x14)
++	#define SUN50I_H6_SPDIF_FCTL_HUB_EN		BIT(31)
++	#define SUN50I_H6_SPDIF_FCTL_FTX		BIT(30)
++	#define SUN50I_H6_SPDIF_FCTL_FRX		BIT(29)
++	#define SUN50I_H6_SPDIF_FCTL_TXTL(v)		((v) << 12)
++	#define SUN50I_H6_SPDIF_FCTL_TXTL_MASK		GENMASK(19, 12)
++	#define SUN50I_H6_SPDIF_FCTL_RXTL(v)		((v) << 4)
++	#define SUN50I_H6_SPDIF_FCTL_RXTL_MASK		GENMASK(10, 4)
++	#define SUN50I_H6_SPDIF_FCTL_TXIM		BIT(2)
++	#define SUN50I_H6_SPDIF_FCTL_RXOM(v)		((v) << 0)
++	#define SUN50I_H6_SPDIF_FCTL_RXOM_MASK		GENMASK(1, 0)
 +
- 	/* soft reset SPDIF */
- 	regmap_write(host->regmap, SUN4I_SPDIF_CTL, SUN4I_SPDIF_CTL_RESET);
- 
- 	/* flush TX FIFO */
- 	regmap_update_bits(host->regmap, SUN4I_SPDIF_FCTL,
--			   SUN4I_SPDIF_FCTL_FTX, SUN4I_SPDIF_FCTL_FTX);
-+			   quirks->reg_fctl_ftx, quirks->reg_fctl_ftx);
- 
- 	/* clear TX counter */
- 	regmap_write(host->regmap, SUN4I_SPDIF_TXCNT, 0);
-@@ -418,15 +423,18 @@ static struct snd_soc_dai_driver sun4i_spdif_dai = {
- 
- static const struct sun4i_spdif_quirks sun4i_a10_spdif_quirks = {
- 	.reg_dac_txdata	= SUN4I_SPDIF_TXFIFO,
-+	.reg_fctl_ftx   = SUN4I_SPDIF_FCTL_FTX,
- };
- 
- static const struct sun4i_spdif_quirks sun6i_a31_spdif_quirks = {
- 	.reg_dac_txdata	= SUN4I_SPDIF_TXFIFO,
-+	.reg_fctl_ftx   = SUN4I_SPDIF_FCTL_FTX,
+ #define SUN4I_SPDIF_FSTA	(0x18)
+ 	#define SUN4I_SPDIF_FSTA_TXE			BIT(14)
+ 	#define SUN4I_SPDIF_FSTA_TXECNTSHT		(8)
+@@ -438,6 +450,12 @@ static const struct sun4i_spdif_quirks sun8i_h3_spdif_quirks = {
  	.has_reset	= true,
  };
  
- static const struct sun4i_spdif_quirks sun8i_h3_spdif_quirks = {
- 	.reg_dac_txdata	= SUN8I_SPDIF_TXFIFO,
-+	.reg_fctl_ftx   = SUN4I_SPDIF_FCTL_FTX,
- 	.has_reset	= true,
++static const struct sun4i_spdif_quirks sun50i_h6_spdif_quirks = {
++	.reg_dac_txdata = SUN8I_SPDIF_TXFIFO,
++	.reg_fctl_ftx   = SUN50I_H6_SPDIF_FCTL_FTX,
++	.has_reset      = true,
++};
++
+ static const struct of_device_id sun4i_spdif_of_match[] = {
+ 	{
+ 		.compatible = "allwinner,sun4i-a10-spdif",
+@@ -451,6 +469,10 @@ static const struct of_device_id sun4i_spdif_of_match[] = {
+ 		.compatible = "allwinner,sun8i-h3-spdif",
+ 		.data = &sun8i_h3_spdif_quirks,
+ 	},
++	{
++		.compatible = "allwinner,sun50i-h6-spdif",
++		.data = &sun50i_h6_spdif_quirks,
++	},
+ 	{ /* sentinel */ }
  };
- 
-@@ -507,6 +515,7 @@ static int sun4i_spdif_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "Failed to determine the quirks to use\n");
- 		return -ENODEV;
- 	}
-+	host->quirks = quirks;
- 
- 	host->regmap = devm_regmap_init_mmio(&pdev->dev, base,
- 						&sun4i_spdif_regmap_config);
+ MODULE_DEVICE_TABLE(of, sun4i_spdif_of_match);
 -- 
 2.20.1
 
