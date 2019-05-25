@@ -2,114 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED9162A303
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 07:46:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEC9C2A326
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 08:04:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbfEYFqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 01:46:02 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35437 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726145AbfEYFqB (ORCPT
+        id S1726386AbfEYGE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 02:04:28 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40733 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbfEYGE2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 01:46:01 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 8ADA021C47;
-        Sat, 25 May 2019 01:45:58 -0400 (EDT)
-Received: from imap5 ([10.202.2.55])
-  by compute1.internal (MEProxy); Sat, 25 May 2019 01:45:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-         h=mime-version:message-id:in-reply-to:references:date:from:to
-        :cc:subject:content-type; s=fm1; bh=ecZFFYkyGooDDU4UAYrqow9TRzdY
-        x/qSE7cRT3BSbyg=; b=FYaYk+QUzqpbiWPmPQlTsOzdVe+BkJJmnRzB6YBtvA5W
-        VGcAughE1Wrqj6G+22Mh51eroOvtuGyLSIQqfqgt+KGTErAdT3Hr7SzTwol+aV60
-        E4EELKY5l7U3r3oPdbKFxc41q+W29VG7qhXT+6TLXPnTKe+8MlGLOCQBO0/n6A1W
-        XZxKBvn0anXOaYzIVdXw2301YItG0So2Yoj8cWrpctdbfOWAYXogMl9LbOk2EdeV
-        FYHOgpnwv8ItqbVmUB0L5hiIvd6xXYUudoUdy39g/kWI6zrTAHlx6s7C1F+k7wr8
-        4VEL/54uGFMICd0dHgFIxfiMGsegTW1c6dHDv3Mj/w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=ecZFFY
-        kyGooDDU4UAYrqow9TRzdYx/qSE7cRT3BSbyg=; b=UluMDSWFlRDvhnaqomfrK/
-        BqLOn6spA8HYzQahijYaE8eJFaJqixhMCku9N+w7kaVpGOPeESpo6V3/+Mis+DCL
-        ZxsWETXXR0FglxYiIc8iINsLHeFSmgSTgjtNDbx4D445OoI5gDCiiRUNTjpCrLQ8
-        dsByVE9HxZppdjjsuE3bhuHNNX9zcF2Ww/8PxKSn59U0uQPBIjJptfbzZ1S2k8LS
-        HnInghtcMlUICegs8PGxHjaEHUofIinB5zmItZkkljxIq0ex4+Pv1ZpVImSVwCuz
-        Pn1S8i4WrALFbIdPb35JKrau74z68Ynpatl4H/+f0zKVRpSFv9K2xC/OXCsasfAQ
-        ==
-X-ME-Sender: <xms:ldboXEUydlS3Lw-uhm2A1fAgLV3d64gPlgkDGO2hNotzdH-jE7Fd1g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddujedgleelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomhepfdfvrghk
-    rghshhhiucfurghkrghmohhtohdfuceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthh
-    hirdhjpheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfrrghrrghmpehmrghi
-    lhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjphenucevlhhush
-    htvghrufhiiigvpedt
-X-ME-Proxy: <xmx:ldboXOkErS0AMw_t33rZoC--JEZSRAdiNT5MfY7q9lLlCNV0IBZZAg>
-    <xmx:ldboXGBjKa4mr4UNbv2LiEXyxyOwWQolDkWshQAuxppHGDr4AqP6gg>
-    <xmx:ldboXOfYQVvASZZS_nCHLqWv1diztlKxsAaFSGJJIRepsxBHN6LhQQ>
-    <xmx:ltboXDavRseUQwZbvgjgEYS3HBkhK6trOfHK9Zc1iEQPBPrqDQbDiQ>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 8EE445C0095; Sat, 25 May 2019 01:45:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.6-553-gc304556-fmstable-20190524v1
-Mime-Version: 1.0
-Message-Id: <9fe864d1-db6c-4b72-bfa3-3a1c638f1fae@www.fastmail.com>
-In-Reply-To: <20190524213351.24594-1-colin.king@canonical.com>
-References: <20190524213351.24594-1-colin.king@canonical.com>
-Date:   Sat, 25 May 2019 14:45:57 +0900
-From:   "Takashi Sakamoto" <o-takashi@sakamocchi.jp>
-To:     "Colin King" <colin.king@canonical.com>,
-        "Clemens Ladisch" <clemens@ladisch.de>,
-        "Jaroslav Kysela" <perex@perex.cz>,
-        "Takashi Iwai" <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: =?UTF-8?Q?Re:_[alsa-devel]_[PATCH][next]_ALSA:_firewire-lib:_remove_redu?=
- =?UTF-8?Q?ndant=09assignment_to_cip=5Fheader?=
-Content-Type: text/plain
+        Sat, 25 May 2019 02:04:28 -0400
+Received: by mail-pl1-f195.google.com with SMTP id g69so4996193plb.7
+        for <linux-kernel@vger.kernel.org>; Fri, 24 May 2019 23:04:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=MM6OOzM4T+V4zslooatuonhXlfRCNs+JVKlRCY2343A=;
+        b=WsnbJVNyUx6si4w8yZ0Coji5M1mNT8dklbTY1i/pqVceKyQ0JePsbV/qSYPbBPVIxC
+         bLSmCxtYp+tJmRKdL1lKgG1ltIrK+cT59yyGaR1u/F2UfFv32+ce7+PxsQFsxb37WrjQ
+         RAeh9YCIJeyVVI9ssqly5jzmOd0n4s8EcdFlo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=MM6OOzM4T+V4zslooatuonhXlfRCNs+JVKlRCY2343A=;
+        b=A/OaNYlbfe9SZd2Ra125Z88jWrLHJxUp9uaSUuESpzsME3fSEMwMEamL1REeatlu1j
+         F+Kzdlhhzobttg0eUwSLdY3INpGvZv0AeegGWwtx1U+U5AzfFCWa/+u2Z+XgWvl9YY5d
+         FA/a+rkmWcgWviAAXtyWv6Cl7Iuu+XJEA2UeQT2PKEFFIFrFUf/GbSN7SVQpGPbYH+pZ
+         iNEsKjIi/uRPre6dIic3qD2T0oiDEWoLM7wgOeImo91XOZsUZkKWwje0TiR4LVskpAXK
+         aNzrl0UHQepzkfYuPtxQMK5kMSjmL4a0w+ynieKztwNmH2yyo6vsYl93mF+H9SslPu9N
+         MUjw==
+X-Gm-Message-State: APjAAAV6Ajiiye4JJeoKr3+8FWrVaIix4smInGQno0QJsABJrGdsTZZn
+        0czpZOXAfXJ2cezC4s+HlgW/U9LAqU4=
+X-Google-Smtp-Source: APXvYqwICLfXnKeJ8xfZCs/kzlcTsSn3305CxzDQkAlhNZk+8mMauIsrtG1lTUmYKNco22sHdW5dqQ==
+X-Received: by 2002:a17:902:2be8:: with SMTP id l95mr6541998plb.231.1558764267844;
+        Fri, 24 May 2019 23:04:27 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id e184sm6631260pfa.169.2019.05.24.23.04.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 24 May 2019 23:04:26 -0700 (PDT)
+Date:   Fri, 24 May 2019 23:04:25 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     Gen Zhang <blackgod016574@gmail.com>, jslaby@suse.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] consolemap: Fix a memory leaking bug in
+ drivers/tty/vt/consolemap.c
+Message-ID: <201905242302.139A912@keescook>
+References: <20190521092935.GA2297@zhanggen-UX430UQ>
+ <201905211342.DE554F0D@keescook>
+ <20190522015055.GC4093@zhanggen-UX430UQ>
+ <201905221353.AD8E585E6D@keescook>
+ <20190523003452.GB14060@zhanggen-UX430UQ>
+ <201905230952.B47ADA17A@keescook>
+ <b99d0da6-a1d6-1c04-66ff-b2937d21d346@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b99d0da6-a1d6-1c04-66ff-b2937d21d346@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Colin,
-
-On Sat, May 25, 2019, at 06:35, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Fri, May 24, 2019 at 10:37:59AM +0100, Jon Hunter wrote:
+> Kees,
 > 
-> The assignement to cip_header is redundant as the value never
-> read and it is being re-assigned in the if and else paths of
-> the following if statement. Clean up the code by removing it.
+> On 23/05/2019 17:54, Kees Cook wrote:
+> > On Thu, May 23, 2019 at 08:34:52AM +0800, Gen Zhang wrote:
+> >> In function con_insert_unipair(), when allocation for p2 and p1[n]
+> >> fails, ENOMEM is returned, but previously allocated p1 is not freed, 
+> >> remains as leaking memory. Thus we should free p1 as well when this
+> >> allocation fails.
+> >>
+> >> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+> > 
+> > As far as I can see this is correct, as it's just restoring the prior
+> > state before the p1 allocation.
 > 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  sound/firewire/amdtp-stream.c | 1 -
->  1 file changed, 1 deletion(-)
+> Are you sure this is correct? It looks like p1 is only allocated if
+> p->uni_pgdir[n = unicode >> 11] == NULL.
+
+Thanks, yes, I looked more closely, and this is wrong. It's probably
+fine to leave it as it was (since it appears to just be allocating
+on demand). If we really want to restore the state on failure, we
+also can't re-use "n", which is no longer valid. Here, I think,
+would be a complete patch to check for allocation and use a separate
+index for the other array:
+
+
+diff --git a/drivers/tty/vt/consolemap.c b/drivers/tty/vt/consolemap.c
+index b28aa0d289f8..5f77cffc53b8 100644
+--- a/drivers/tty/vt/consolemap.c
++++ b/drivers/tty/vt/consolemap.c
+@@ -474,7 +474,8 @@ static int con_unify_unimap(struct vc_data *conp, struct uni_pagedir *p)
+ static int
+ con_insert_unipair(struct uni_pagedir *p, u_short unicode, u_short fontpos)
+ {
+-	int i, n;
++	int i, n, high;
++	bool p1_alloced = false;
+ 	u16 **p1, *p2;
+ 
+ 	p1 = p->uni_pgdir[n = unicode >> 11];
+@@ -482,14 +483,22 @@ con_insert_unipair(struct uni_pagedir *p, u_short unicode, u_short fontpos)
+ 		p1 = p->uni_pgdir[n] = kmalloc_array(32, sizeof(u16 *),
+ 						     GFP_KERNEL);
+ 		if (!p1) return -ENOMEM;
++		p1_alloced = true;
+ 		for (i = 0; i < 32; i++)
+ 			p1[i] = NULL;
+ 	}
+ 
+-	p2 = p1[n = (unicode >> 6) & 0x1f];
++	p2 = p1[high = (unicode >> 6) & 0x1f];
+ 	if (!p2) {
+-		p2 = p1[n] = kmalloc_array(64, sizeof(u16), GFP_KERNEL);
+-		if (!p2) return -ENOMEM;
++		p2 = p1[high] = kmalloc_array(64, sizeof(u16), GFP_KERNEL);
++		if (!p2) {
++			if (p1_alloced) {
++				kfree(p1);
++				p->uni_pgdir[n] = NULL;
++			}
++			return -ENOMEM;
++		}
++
+ 		memset(p2, 0xff, 64*sizeof(u16)); /* No glyphs for the characters (yet) */
+ 	}
+ 
+
+But, frankly, probably the patch should just be removed...
+
+-Kees
+
 > 
-> diff --git a/sound/firewire/amdtp-stream.c 
-> b/sound/firewire/amdtp-stream.c
-> index 2d9c764061d1..4236955bbf57 100644
-> --- a/sound/firewire/amdtp-stream.c
-> +++ b/sound/firewire/amdtp-stream.c
-> @@ -675,7 +675,6 @@ static int handle_in_packet(struct amdtp_stream *s, 
-> unsigned int cycle,
->  		return -EIO;
->  	}
->  
-> -	cip_header = ctx_header + 2;
->  	if (!(s->flags & CIP_NO_HEADER)) {
->  		cip_header = &ctx_header[2];
->  		err = check_cip_header(s, cip_header, payload_length,
+> I only mention this because I have seen a few patches from Gen today
+> regarding memory leaks and devm_kzalloc() that are not correct.
+> 
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > 
+> >> ---
+> >> diff --git a/drivers/tty/vt/consolemap.c b/drivers/tty/vt/consolemap.c
+> >> index b28aa0d..79fcc96 100644
+> >> --- a/drivers/tty/vt/consolemap.c
+> >> +++ b/drivers/tty/vt/consolemap.c
+> >> @@ -489,7 +489,11 @@ con_insert_unipair(struct uni_pagedir *p, u_short unicode, u_short fontpos)
+> >>  	p2 = p1[n = (unicode >> 6) & 0x1f];
+> >>  	if (!p2) {
+> >>  		p2 = p1[n] = kmalloc_array(64, sizeof(u16), GFP_KERNEL);
+> >> -		if (!p2) return -ENOMEM;
+> >> +		if (!p2) {
+> >> +			kfree(p1);
+> >> +			p->uni_pgdir[n] = NULL;
+> >> +			return -ENOMEM;
+> >> +		}
+> >>  		memset(p2, 0xff, 64*sizeof(u16)); /* No glyphs for the characters (yet) */
+> >>  	}
+> >>  
+> >> ---
+> 
+> Cheers
+> Jon
+> 
+> -- 
+> nvpublic
 
-Thanks for the fix. I've already posted further patch for refactoring
-and this was also fixed by a commit 98e3e43b599d ("
-ALSA: firewire-lib: refactoring to obsolete IR packet handler").
-
-https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/commit/?id=98e3e43b599d742c104864c6772a251025ffb52b
-
-Thanks
-
-
-Takashi Sakamoto
+-- 
+Kees Cook
