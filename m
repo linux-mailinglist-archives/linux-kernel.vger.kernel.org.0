@@ -2,234 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 429922A322
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 07:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED9162A303
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 07:46:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfEYFtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 01:49:20 -0400
-Received: from mga05.intel.com ([192.55.52.43]:46780 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726990AbfEYFtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 01:49:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 May 2019 22:49:16 -0700
-X-ExtLoop1: 1
-Received: from allen-box.sh.intel.com ([10.239.159.136])
-  by fmsmga006.fm.intel.com with ESMTP; 24 May 2019 22:49:14 -0700
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     ashok.raj@intel.com, jacob.jun.pan@intel.com, kevin.tian@intel.com,
-        jamessewart@arista.com, tmurphy@arista.com, dima@arista.com,
-        sai.praneeth.prakhya@intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v4 15/15] iommu/vt-d: Remove static identity map code
-Date:   Sat, 25 May 2019 13:41:36 +0800
-Message-Id: <20190525054136.27810-16-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190525054136.27810-1-baolu.lu@linux.intel.com>
-References: <20190525054136.27810-1-baolu.lu@linux.intel.com>
+        id S1726437AbfEYFqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 01:46:02 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35437 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726145AbfEYFqB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 25 May 2019 01:46:01 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 8ADA021C47;
+        Sat, 25 May 2019 01:45:58 -0400 (EDT)
+Received: from imap5 ([10.202.2.55])
+  by compute1.internal (MEProxy); Sat, 25 May 2019 01:45:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+         h=mime-version:message-id:in-reply-to:references:date:from:to
+        :cc:subject:content-type; s=fm1; bh=ecZFFYkyGooDDU4UAYrqow9TRzdY
+        x/qSE7cRT3BSbyg=; b=FYaYk+QUzqpbiWPmPQlTsOzdVe+BkJJmnRzB6YBtvA5W
+        VGcAughE1Wrqj6G+22Mh51eroOvtuGyLSIQqfqgt+KGTErAdT3Hr7SzTwol+aV60
+        E4EELKY5l7U3r3oPdbKFxc41q+W29VG7qhXT+6TLXPnTKe+8MlGLOCQBO0/n6A1W
+        XZxKBvn0anXOaYzIVdXw2301YItG0So2Yoj8cWrpctdbfOWAYXogMl9LbOk2EdeV
+        FYHOgpnwv8ItqbVmUB0L5hiIvd6xXYUudoUdy39g/kWI6zrTAHlx6s7C1F+k7wr8
+        4VEL/54uGFMICd0dHgFIxfiMGsegTW1c6dHDv3Mj/w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=ecZFFY
+        kyGooDDU4UAYrqow9TRzdYx/qSE7cRT3BSbyg=; b=UluMDSWFlRDvhnaqomfrK/
+        BqLOn6spA8HYzQahijYaE8eJFaJqixhMCku9N+w7kaVpGOPeESpo6V3/+Mis+DCL
+        ZxsWETXXR0FglxYiIc8iINsLHeFSmgSTgjtNDbx4D445OoI5gDCiiRUNTjpCrLQ8
+        dsByVE9HxZppdjjsuE3bhuHNNX9zcF2Ww/8PxKSn59U0uQPBIjJptfbzZ1S2k8LS
+        HnInghtcMlUICegs8PGxHjaEHUofIinB5zmItZkkljxIq0ex4+Pv1ZpVImSVwCuz
+        Pn1S8i4WrALFbIdPb35JKrau74z68Ynpatl4H/+f0zKVRpSFv9K2xC/OXCsasfAQ
+        ==
+X-ME-Sender: <xms:ldboXEUydlS3Lw-uhm2A1fAgLV3d64gPlgkDGO2hNotzdH-jE7Fd1g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddujedgleelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomhepfdfvrghk
+    rghshhhiucfurghkrghmohhtohdfuceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthh
+    hirdhjpheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfrrghrrghmpehmrghi
+    lhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjphenucevlhhush
+    htvghrufhiiigvpedt
+X-ME-Proxy: <xmx:ldboXOkErS0AMw_t33rZoC--JEZSRAdiNT5MfY7q9lLlCNV0IBZZAg>
+    <xmx:ldboXGBjKa4mr4UNbv2LiEXyxyOwWQolDkWshQAuxppHGDr4AqP6gg>
+    <xmx:ldboXOfYQVvASZZS_nCHLqWv1diztlKxsAaFSGJJIRepsxBHN6LhQQ>
+    <xmx:ltboXDavRseUQwZbvgjgEYS3HBkhK6trOfHK9Zc1iEQPBPrqDQbDiQ>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 8EE445C0095; Sat, 25 May 2019 01:45:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.6-553-gc304556-fmstable-20190524v1
+Mime-Version: 1.0
+Message-Id: <9fe864d1-db6c-4b72-bfa3-3a1c638f1fae@www.fastmail.com>
+In-Reply-To: <20190524213351.24594-1-colin.king@canonical.com>
+References: <20190524213351.24594-1-colin.king@canonical.com>
+Date:   Sat, 25 May 2019 14:45:57 +0900
+From:   "Takashi Sakamoto" <o-takashi@sakamocchi.jp>
+To:     "Colin King" <colin.king@canonical.com>,
+        "Clemens Ladisch" <clemens@ladisch.de>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        "Takashi Iwai" <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: =?UTF-8?Q?Re:_[alsa-devel]_[PATCH][next]_ALSA:_firewire-lib:_remove_redu?=
+ =?UTF-8?Q?ndant=09assignment_to_cip=5Fheader?=
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code to prepare the static identity map for various reserved
-memory ranges in intel_iommu_init() is duplicated with the default
-domain mechanism now. Remove it to avoid duplication.
+Hi Colin,
 
-Signed-off-by: James Sewart <jamessewart@arista.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel-iommu.c | 144 +-----------------------------------
- 1 file changed, 1 insertion(+), 143 deletions(-)
+On Sat, May 25, 2019, at 06:35, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The assignement to cip_header is redundant as the value never
+> read and it is being re-assigned in the if and else paths of
+> the following if statement. Clean up the code by removing it.
+> 
+> Addresses-Coverity: ("Unused value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  sound/firewire/amdtp-stream.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/sound/firewire/amdtp-stream.c 
+> b/sound/firewire/amdtp-stream.c
+> index 2d9c764061d1..4236955bbf57 100644
+> --- a/sound/firewire/amdtp-stream.c
+> +++ b/sound/firewire/amdtp-stream.c
+> @@ -675,7 +675,6 @@ static int handle_in_packet(struct amdtp_stream *s, 
+> unsigned int cycle,
+>  		return -EIO;
+>  	}
+>  
+> -	cip_header = ctx_header + 2;
+>  	if (!(s->flags & CIP_NO_HEADER)) {
+>  		cip_header = &ctx_header[2];
+>  		err = check_cip_header(s, cip_header, payload_length,
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 7c7230ae6967..ce38c6b3763a 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -2789,31 +2789,6 @@ static inline int iommu_prepare_rmrr_dev(struct dmar_rmrr_unit *rmrr,
- 					  rmrr->end_address);
- }
- 
--#ifdef CONFIG_INTEL_IOMMU_FLOPPY_WA
--static inline void iommu_prepare_isa(void)
--{
--	struct pci_dev *pdev;
--	int ret;
--
--	pdev = pci_get_class(PCI_CLASS_BRIDGE_ISA << 8, NULL);
--	if (!pdev)
--		return;
--
--	pr_info("Prepare 0-16MiB unity mapping for LPC\n");
--	ret = iommu_prepare_identity_map(&pdev->dev, 0, 16*1024*1024 - 1);
--
--	if (ret)
--		pr_err("Failed to create 0-16MiB identity map - floppy might not work\n");
--
--	pci_dev_put(pdev);
--}
--#else
--static inline void iommu_prepare_isa(void)
--{
--	return;
--}
--#endif /* !CONFIG_INTEL_IOMMU_FLPY_WA */
--
- static int md_domain_init(struct dmar_domain *domain, int guest_width);
- 
- static int __init si_domain_init(int hw)
-@@ -3028,68 +3003,6 @@ static int device_def_domain_type(struct device *dev)
- 			IOMMU_DOMAIN_IDENTITY : 0;
- }
- 
--static inline int iommu_should_identity_map(struct device *dev)
--{
--	return device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY;
--}
--
--static int __init dev_prepare_static_identity_mapping(struct device *dev, int hw)
--{
--	int ret;
--
--	if (!iommu_should_identity_map(dev))
--		return 0;
--
--	ret = domain_add_dev_info(si_domain, dev);
--	if (!ret)
--		dev_info(dev, "%s identity mapping\n",
--			 hw ? "Hardware" : "Software");
--	else if (ret == -ENODEV)
--		/* device not associated with an iommu */
--		ret = 0;
--
--	return ret;
--}
--
--
--static int __init iommu_prepare_static_identity_mapping(int hw)
--{
--	struct pci_dev *pdev = NULL;
--	struct dmar_drhd_unit *drhd;
--	struct intel_iommu *iommu;
--	struct device *dev;
--	int i;
--	int ret = 0;
--
--	for_each_pci_dev(pdev) {
--		ret = dev_prepare_static_identity_mapping(&pdev->dev, hw);
--		if (ret)
--			return ret;
--	}
--
--	for_each_active_iommu(iommu, drhd)
--		for_each_active_dev_scope(drhd->devices, drhd->devices_cnt, i, dev) {
--			struct acpi_device_physical_node *pn;
--			struct acpi_device *adev;
--
--			if (dev->bus != &acpi_bus_type)
--				continue;
--
--			adev= to_acpi_device(dev);
--			mutex_lock(&adev->physical_node_lock);
--			list_for_each_entry(pn, &adev->physical_node_list, node) {
--				ret = dev_prepare_static_identity_mapping(pn->dev, hw);
--				if (ret)
--					break;
--			}
--			mutex_unlock(&adev->physical_node_lock);
--			if (ret)
--				return ret;
--		}
--
--	return 0;
--}
--
- static void intel_iommu_init_qi(struct intel_iommu *iommu)
- {
- 	/*
-@@ -3312,11 +3225,8 @@ static int copy_translation_tables(struct intel_iommu *iommu)
- static int __init init_dmars(void)
- {
- 	struct dmar_drhd_unit *drhd;
--	struct dmar_rmrr_unit *rmrr;
--	bool copied_tables = false;
--	struct device *dev;
- 	struct intel_iommu *iommu;
--	int i, ret;
-+	int ret;
- 
- 	/*
- 	 * for each drhd
-@@ -3409,7 +3319,6 @@ static int __init init_dmars(void)
- 			} else {
- 				pr_info("Copied translation tables from previous kernel for %s\n",
- 					iommu->name);
--				copied_tables = true;
- 			}
- 		}
- 
-@@ -3449,57 +3358,6 @@ static int __init init_dmars(void)
- 	if (ret)
- 		goto free_iommu;
- 
--
--	/*
--	 * If we copied translations from a previous kernel in the kdump
--	 * case, we can not assign the devices to domains now, as that
--	 * would eliminate the old mappings. So skip this part and defer
--	 * the assignment to device driver initialization time.
--	 */
--	if (copied_tables)
--		goto domains_done;
--
--	/*
--	 * If pass through is not set or not enabled, setup context entries for
--	 * identity mappings for rmrr, gfx, and isa and may fall back to static
--	 * identity mapping if iommu_identity_mapping is set.
--	 */
--	if (iommu_identity_mapping) {
--		ret = iommu_prepare_static_identity_mapping(hw_pass_through);
--		if (ret) {
--			pr_crit("Failed to setup IOMMU pass-through\n");
--			goto free_iommu;
--		}
--	}
--	/*
--	 * For each rmrr
--	 *   for each dev attached to rmrr
--	 *   do
--	 *     locate drhd for dev, alloc domain for dev
--	 *     allocate free domain
--	 *     allocate page table entries for rmrr
--	 *     if context not allocated for bus
--	 *           allocate and init context
--	 *           set present in root table for this bus
--	 *     init context with domain, translation etc
--	 *    endfor
--	 * endfor
--	 */
--	pr_info("Setting RMRR:\n");
--	for_each_rmrr_units(rmrr) {
--		/* some BIOS lists non-exist devices in DMAR table. */
--		for_each_active_dev_scope(rmrr->devices, rmrr->devices_cnt,
--					  i, dev) {
--			ret = iommu_prepare_rmrr_dev(rmrr, dev);
--			if (ret)
--				pr_err("Mapping reserved region failed\n");
--		}
--	}
--
--	iommu_prepare_isa();
--
--domains_done:
--
- 	/*
- 	 * for each drhd
- 	 *   enable fault log
--- 
-2.17.1
+Thanks for the fix. I've already posted further patch for refactoring
+and this was also fixed by a commit 98e3e43b599d ("
+ALSA: firewire-lib: refactoring to obsolete IR packet handler").
 
+https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/commit/?id=98e3e43b599d742c104864c6772a251025ffb52b
+
+Thanks
+
+
+Takashi Sakamoto
