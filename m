@@ -2,196 +2,309 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5718C2A696
-	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 20:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71D5D2A69C
+	for <lists+linux-kernel@lfdr.de>; Sat, 25 May 2019 20:48:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbfEYSrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 25 May 2019 14:47:45 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45216 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbfEYSro (ORCPT
+        id S1727579AbfEYSs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 25 May 2019 14:48:29 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:50648 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbfEYSs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 25 May 2019 14:47:44 -0400
-Received: by mail-pg1-f195.google.com with SMTP id w34so2163731pga.12
-        for <linux-kernel@vger.kernel.org>; Sat, 25 May 2019 11:47:44 -0700 (PDT)
+        Sat, 25 May 2019 14:48:26 -0400
+Received: by mail-it1-f196.google.com with SMTP id a186so11131043itg.0;
+        Sat, 25 May 2019 11:48:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=appneta.com; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=YDOaRpq6cneaxNOt199jCWjQbuCNeTQ0/HDa1/buiiI=;
-        b=IV1fxz+fdPOULLAy8vhVdakqb5/2dFHvC6XZr4vvrb/fa/UcOhSW0ZE6ZgES3r3DIK
-         Y9GboccTSoyHrV/YF6d1am9zq1vo/eycJWEuXygGW8EA9jWEwHe2l4n7HUvyqXwtGMa8
-         mc7z+XXI6xYBQ7bPJiYm6mRfJOcPcq9qiurmA=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=sZoCbpozx2WzELJxdxaEDmEhop+Xro7Vi+HBCV+TS1o=;
+        b=g0VlUeJTLjDj5kTn6r0gK/cmgEqbLqLXv/SixD12M7rAecVh4wyIoDyB1RIZZX1bNq
+         XLZzlKhjoNlZTRqsXwAiyjiSA8j+2YKfYWaGWwMHigj9naufogTW+W09t2VTXJ1IgVop
+         ezhiQ5R7WL0pj3/99Xxt9Xgl7KrlCfyKwKRsarGozt2fCLtwNeCf/6awYLoIDQBDZzar
+         dnYzUd+rKaezLtLUlWf8Pr/7+zWAYQAuCCHGB3rScQ7vrjmbvBgAM3bwpApjMyjOEkxL
+         kw7joZYoRDgo2uXv6tTjCNhrVmCo4XowRbYPNsw/IBGiiH8rtAktmYkE0c05OP3LFx0b
+         U8XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=YDOaRpq6cneaxNOt199jCWjQbuCNeTQ0/HDa1/buiiI=;
-        b=hsc6mo7fCnhKmnx90ogVgDHnIE881fmR6d2tasJo+/MG/2q8gzXZfWSLaKPHCUCu4Q
-         dhsMyrVjRAY4Qbj5Ua3dgl74xeA/I22kViZc/EsYVmJlrdGT0oM2jC2eGjQZsYEjXGbf
-         YuyKVD44G7PAERRL/vh/NELwMdYyuUlT3v85DUEh7YfyZMI9j2j/e3dh0z4KH8v9J23G
-         TiIG8EKl+1v+q5dk7ax6ucdksOTwNVDbKKWUli8i6T+xSCl5PM+9b1UFYbiHrr5dF/cr
-         TjwdYldRKF5iZP8kAGZT2ozxwJ1qvf+Z8jVGRn6CSYXnHjGyzxPg79ePlHS3vvlVwzlo
-         QK/Q==
-X-Gm-Message-State: APjAAAWZSCLrPYo6nRKn8I/TbgOxGB3HtQ1LMTKQl0injQjay+GkDlDc
-        22Sm4SQeAhk4kqozkyn+l72cWg==
-X-Google-Smtp-Source: APXvYqyMLYOtBbRXBLKKejVKV0kG1+iyNGtisu5tqZGtwaDIV20GdsXNVUhoGhWi8kxRq/9P4UTeog==
-X-Received: by 2002:aa7:9a99:: with SMTP id w25mr28840800pfi.249.1558810063530;
-        Sat, 25 May 2019 11:47:43 -0700 (PDT)
-Received: from [10.0.1.19] (S010620c9d00fc332.vf.shawcable.net. [70.71.167.160])
-        by smtp.gmail.com with ESMTPSA id u123sm7337414pfu.67.2019.05.25.11.47.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 25 May 2019 11:47:42 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH net 1/4] net/udp_gso: Allow TX timestamp with UDP GSO
-From:   Fred Klassen <fklassen@appneta.com>
-In-Reply-To: <CA+FuTScNr9Srsn9QFBSj=oT4TnMh1QuOZ2h40g=joNjSwccqMg@mail.gmail.com>
-Date:   Sat, 25 May 2019 11:47:41 -0700
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=sZoCbpozx2WzELJxdxaEDmEhop+Xro7Vi+HBCV+TS1o=;
+        b=feoLV4YXWsjf/PuyU5PkcbQNSNAvvNhgNLQMB8upPMtErRiqISMgIKa6Tdxxv8VFSF
+         wDwBOoX90Iclhf0OF12cH4+cqf88BbpEwvz/1Xppzo44Nriy5PbLp2O+FSRcPTzQlkx3
+         D9J6WNEPWxUWebrKspIx73UW/haC52GZc1Zk6kr3sSmkmgV6p9/pYbM8y+0MxaWc134i
+         gLTTw7fKys3UFKJQZs4f2PFKeaRBnU8LjKvGHGU1YzxIIdJ1vPrjSpP10oYDxuzE3ToH
+         hQkxorIRbmiz3KxTD4azKLZdEOAdA0HdcHR2JocVG147h4W3UhdzSyoFVpQVYl9xTD2Y
+         CUAQ==
+X-Gm-Message-State: APjAAAUbSMhfaye96EPiK+j6F4pPTVqRFl13fVmzEafUhjDDbtWzvfYZ
+        ez0G1HN8ZuH83RLO/H2pkaybfIrC9rX1JWN8S6A=
+X-Google-Smtp-Source: APXvYqztVIy2Z3QZqJKHiF6I+2B4HprXc4s8f7rIl/bjVuS8V9KQ9z4GtrTMWDdHlIylrt/2fcxNBjuSxvgr6pbHjE4=
+X-Received: by 2002:a02:cabb:: with SMTP id e27mr19684986jap.12.1558810105828;
+ Sat, 25 May 2019 11:48:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190512082614.9045-1-tiny.windzz@gmail.com> <20190512082614.9045-3-tiny.windzz@gmail.com>
+ <20190512221612.ubmknvim4utnqpl4@core.my.home> <CAEExFWv5A5mhpV7afQT=AaYx2ko5QnfbM6HvfuTgT1Na=ssOcw@mail.gmail.com>
+ <20190516182936.h6xdzp3gtg4ikave@core.my.home> <CAEExFWvDO3wJd6wp1hFudf3EGF0NixgKAwAd5-b1=VLF+7-jCw@mail.gmail.com>
+ <20190519142239.eolisexp5mrdyafz@core.my.home>
+In-Reply-To: <20190519142239.eolisexp5mrdyafz@core.my.home>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Sun, 26 May 2019 02:48:13 +0800
+Message-ID: <CAEExFWsc_YB8NORW4ULfuoicL=xr_oAdtHSaxz4ELv53qvCAsQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] thermal: sun50i: add thermal driver for h6
+To:     Frank Lee <tiny.windzz@gmail.com>, rui.zhang@intel.com,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>, robh+dt@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, catalin.marinas@arm.com,
+        will.deacon@arm.com, David Miller <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan.Cameron@huawei.com,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        paulmck@linux.ibm.com, Andy Gross <andy.gross@linaro.org>,
+        olof@lixom.net, bjorn.andersson@linaro.org,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        marc.w.gonzalez@free.fr, stefan.wahren@i2se.com,
+        enric.balletbo@collabora.com, devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <4032C02B-EA43-4540-8283-8466CDD0B8D2@appneta.com>
-References: <20190523210651.80902-1-fklassen@appneta.com>
- <20190523210651.80902-2-fklassen@appneta.com>
- <CAF=yD-Jf95De=z_nx9WFkGDa6+nRUqM_1PqGkjwaFPzOe+PfXg@mail.gmail.com>
- <AE8E0772-7256-4B9C-A990-96930E834AEE@appneta.com>
- <CAF=yD-LtAKpND601LQrC1+=iF6spSUXVdUapcsbJdv5FYa=5Jg@mail.gmail.com>
- <AFC1ECC8-BFAC-4718-B0C9-97CC4BD1F397@appneta.com>
- <CAF=yD-Le-eTadOi7PL8WFEQCG=yLqb5gvKiks+s5Akeq8TenBQ@mail.gmail.com>
- <90E3853F-107D-45BA-93DC-D0BE8AC6FCBB@appneta.com>
- <CA+FuTScNr9Srsn9QFBSj=oT4TnMh1QuOZ2h40g=joNjSwccqMg@mail.gmail.com>
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+HI Ond=C5=99ej,
 
-
-> On May 25, 2019, at 8:20 AM, Willem de Bruijn =
-<willemdebruijn.kernel@gmail.com> wrote:
->=20
-> On Fri, May 24, 2019 at 6:01 PM Fred Klassen <fklassen@appneta.com> =
+On Sun, May 19, 2019 at 10:22 PM Ond=C5=99ej Jirman <megous@megous.com> wro=
+te:
+>
+> Hello Yangtao,
+>
+> On Sat, May 18, 2019 at 12:34:57AM +0800, Frank Lee wrote:
+> > HI,
+> >
+> > On Fri, May 17, 2019 at 2:29 AM Ond=C5=99ej Jirman <megous@megous.com> =
 wrote:
->>=20
->>=20
->>=20
->>> On May 24, 2019, at 12:29 PM, Willem de Bruijn =
-<willemdebruijn.kernel@gmail.com> wrote:
->>>=20
->>> It is the last moment that a timestamp can be generated for the last
->>> byte, I don't see how that is "neither the start nor the end of a =
-GSO
->>> packet=E2=80=9D.
->>=20
->> My misunderstanding. I thought TCP did last segment timestamping, not
->> last byte. In that case, your statements make sense.
->>=20
->>>> It would be interesting if a practical case can be made for =
-timestamping
->>>> the last segment. In my mind, I don=E2=80=99t see how that would be =
-valuable.
->>>=20
->>> It depends whether you are interested in measuring network latency =
-or
->>> host transmit path latency.
->>>=20
->>> For the latter, knowing the time from the start of the sendmsg call =
-to
->>> the moment the last byte hits the wire is most relevant. Or in =
-absence
->>> of (well defined) hardware support, the last byte being queued to =
-the
->>> device is the next best thing.
->=20
-> Sounds to me like both cases have a legitimate use case, and we want
-> to support both.
->=20
-> Implementation constraints are that storage for this timestamp
-> information is scarce and we cannot add new cold cacheline accesses in
-> the datapath.
->=20
-> The simplest approach would be to unconditionally timestamp both the
-> first and last segment. With the same ID. Not terribly elegant. But it
-> works.
->=20
-> If conditional, tx_flags has only one bit left. I think we can harvest
-> some, as not all defined bits are in use at the same stages in the
-> datapath, but that is not a trivial change. Some might also better be
-> set in the skb, instead of skb_shinfo. Which would also avoids
-> touching that cacheline. We could possibly repurpose bits from u32
-> tskey.
->=20
-> All that can come later. Initially, unless we can come up with
-> something more elegant, I would suggest that UDP follows the rule
-> established by TCP and timestamps the last byte. And we add an
-> explicit SOF_TIMESTAMPING_OPT_FIRSTBYTE that is initially only
-> supported for UDP, sets a new SKBTX_TX_FB_TSTAMP bit in
-> __sock_tx_timestamp and is interpreted in __udp_gso_segment.
->=20
+> > >
+> > > Hi Yangtao,
+> > >
+> > > thank you for work on this driver.
+> > >
+> > > On Fri, May 17, 2019 at 02:06:53AM +0800, Frank Lee wrote:
+> > > > HI Ond=C5=99ej,
+> > > >
+> > > > On Mon, May 13, 2019 at 6:16 AM Ond=C5=99ej Jirman <megous@megous.c=
+om> wrote:
+> > > > > > +
+> > > > > > +/* Temp Unit: millidegree Celsius */
+> > > > > > +static int tsens_reg2temp(struct tsens_device *tmdev,
+> > > > > > +                           int reg)
+> > > > >
+> > > > > Please name all functions so that they are more clearly identifia=
+ble
+> > > > > in stack traces as belonging to this driver. For example:
+> > > > >
+> > > > >   sun8i_ths_reg2temp
+> > > > >
+> > > > > The same applies for all tsens_* functions below. tsens_* is too
+> > > > > generic.
+> > > >
+> > > > Done but no sun8i_ths_reg2temp.
+> > > >
+> > > > ths_reg2tem() should be a generic func.
+> > > > I think it should be suitable for all platforms=EF=BC=8C so no plat=
+form prefix.
+> > >
+> > > You've missed my point. The driver name is sun8i_thermal and if you g=
+et
+> > > and oops from the kernel you'll get a stack trace where there are jus=
+t function
+> > > names. If you use too generic function names, it will not be clear wh=
+ich
+> > > driver is oopsing.
+> > >
+> > >   - sun8i_ths_reg2temp will tell you much more clearly where to searc=
+h than
+> > >   - ths_reg2temp
+> > >
+> > > Of course you can always grep, but most thermal drivers are thermal s=
+ensor (ths)
+> > > drivers, and if multiple of them used this too-generic naming scheme =
+you'd
+> > > have hard time debugging.
+> > >
+> > > Look at other thermal drivers. They usually encode driver name in the=
+ function
+> > > names to help with identification (even if these are static driver-lo=
+cal
+> > > functions).
+> > >
+> >
+> > Can we change to sunxi_ths_ prefix?
+>
+> It should probably match the driver name, but yes, that's better.
+>
+> > > > > > +static int tsens_probe(struct platform_device *pdev)
+> > > > > > +{
+> > > > > > +     struct tsens_device *tmdev;
+> > > > > > +     struct device *dev =3D &pdev->dev;
+> > > > > > +     int ret;
+> > > > > > +
+> > > > > > +     tmdev =3D devm_kzalloc(dev, sizeof(*tmdev), GFP_KERNEL);
+> > > > > > +     if (!tmdev)
+> > > > > > +             return -ENOMEM;
+> > > > > > +
+> > > > > > +     tmdev->dev =3D dev;
+> > > > > > +     tmdev->chip =3D of_device_get_match_data(&pdev->dev);
+> > > > > > +     if (!tmdev->chip)
+> > > > > > +             return -EINVAL;
+> > > > > > +
+> > > > > > +     ret =3D tsens_init(tmdev);
+> > > > > > +     if (ret)
+> > > > > > +             return ret;
+> > > > > > +
+> > > > > > +     ret =3D tsens_register(tmdev);
+> > > > > > +     if (ret)
+> > > > > > +             return ret;
+> > > > >
+> > > > > Why split this out of probe into separate functions?
+> > > > >
+> > > > > > +     ret =3D tmdev->chip->enable(tmdev);
+> > > > > > +     if (ret)
+> > > > > > +             return ret;
+> > > > > > +
+> > > > > > +     platform_set_drvdata(pdev, tmdev);
+> > > > > > +
+> > > > > > +     return ret;
+> > > > > > +}
+> > > > > > +
+> > > > > > +static int tsens_remove(struct platform_device *pdev)
+> > > > > > +{
+> > > > > > +     struct tsens_device *tmdev =3D platform_get_drvdata(pdev)=
+;
+> > > > > > +
+> > > > > > +     tmdev->chip->disable(tmdev);
+> > > > > > +
+> > > > > > +     return 0;
+> > > > > > +}
+> > > > > > +
+> > > > > > +static int sun50i_thermal_enable(struct tsens_device *tmdev)
+> > > > > > +{
+> > > > > > +     int ret, val;
+> > > > > > +
+> > > > > > +     ret =3D reset_control_deassert(tmdev->reset);
+> > > > > > +     if (ret)
+> > > > > > +             return ret;
+> > > > > > +
+> > > > > > +     ret =3D clk_prepare_enable(tmdev->bus_clk);
+> > > > > > +     if (ret)
+> > > > > > +             goto assert_reset;
+> > > > > > +
+> > > > > > +     ret =3D tsens_calibrate(tmdev);
+> > > > > > +     if (ret)
+> > > > > > +             return ret;
+> > > > >
+> > > > > If this fails (it may likely fail with EPROBE_DEFER) you are leav=
+ing reset
+> > > > > deasserted, and clock enabled.
+> > > > >
+> > > > > Overall, I think, reset/clock management and nvmem reading will b=
+e common
+> > > > > to all the HW variants, so it doesn't make much sense splitting i=
+t out
+> > > > > of probe into separate functions, and makes it more error prone.
+> > > >
+> > > > Our long-term goal is to support all platforms.
+> > > > Bacicallt there is a differencr between each generation.
+> > > > So I feel it necessary to isolate these differences.
+> > > >
+> > > > Maybe:
+> > > > At some point, we can draw a part of the public part and platform
+> > > > difference into different
+> > > > files. something like qcom thermal driver.
+> > >
+> > > I understand, but I wrote ths drivers for H3/H5/A83T and it so far it=
+ looks like
+> > > all of them would share these 3 calls.
+> > >
+> > > You'll be enabling clock/reset and callibrating everywhere. So puttin=
+g this to
+> > > per-SoC function seems premature.
+> >
+> > In fact, enalbe and disable are the suspend and resume functions.(PM
+> > callback will be added in the future)
+> > When exiting from s2ram, the register will become the initial value.
+> > We need to do all the work, enabling reset/clk ,calibrating and
+> > initializing other reg.
+> >
+> > So I think it is no need to put enabling reset/clk and calibrating to
+> > probe func, and I'd like
+> > to keep enable and disable func.
+>
+> I know, I don't think it needs to be per-soc. These actions are all share=
+d by
+> all SoCs. Maybe with an exception that some SoCs may need one more clock,=
+ but
+> that can be made optionally-required by some flag in struct sunxi_thermal=
+_chip.
+>
+> Only highly SoC specific thing is configuring the THS registers for sampl=
+ing
+> frequency/averaging/enabling interrupts. The reset/clock enable is generi=
+c, and
+> already abstracted by the clock/reset framework.
+>
+> So what I suggest is having:
+>
+> sunxi_ths_enable()
+>         reset deassert
+>         bus clock prepare enable
+>         optionally module clock prepare enable (in the future)
+>         call per-soc calibration
+>         call per-soc setup callback
+>
+> sunxi_ths_disable()
+>         reset assert
+>         bus clock unprepare disable
+>         optionally module clock unprepare disable
+>
+> And if you could move devm_nvmem_cell_get to probe that should make per-S=
+oC
+> calibration callback also less repetitive and could avoid undoing the ena=
+ble
+> in case it returns EPROBE_DEFER (which is possible).
+>
+> All this should make it easier to support PM in the future and add less
+> cumbersome to add support for A83T and H3/H5.
+>
+> BTW, what are your plans for more SoC support? I'd like to add support fo=
+r
+> A83T and H3/H5, maybe even during the 5.3 cycle if this driver happens to=
+ land
+> early enough. If you don't have any plans I'll take it on.
+>
 
-I don=E2=80=99t see how to practically TX timestamp the last byte of any =
-packet
-(UDP GSO or otherwise). The best we could do is timestamp the last
-segment,  or rather the time that the last segment is queued. Let me
-attempt to explain.
+I plan to support h3 and a33 later.
+Can you support other platforms?
 
-First let=E2=80=99s look at software TX timestamps which are for are =
-generated
-by skb_tx_timestamp() in nearly every network driver=E2=80=99s xmit =
-routine. It
-states:
+Cheers,
+Yangtao
 
-=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
-=80=94=E2=80=94 cut =E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
-=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94
- * Ethernet MAC Drivers should call this function in their hard_xmit()
- * function immediately before giving the sk_buff to the MAC hardware.
-=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
-=80=94=E2=80=94 cut =E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
-=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94
-
-That means that the sk_buff will get timestamped just before rather
-than just after it is sent. To truly capture the timestamp of the last
-byte, this routine routine would have to be called a second time, right
-after sending to MAC hardware. Then the user program would have
-sort out the 2 timestamps. My guess is that this isn=E2=80=99t something =
-that
-NIC vendors would be willing to implement in their drivers.
-
-So, the best we can do is timestamp is just before the last segment.
-Suppose UDP GSO sends 3000 bytes to a 1500 byte MTU adapter.
-If we set SKBTX_HW_TSTAMP flag on the last segment, the timestamp
-occurs half way through the burst. But it may not be exactly half way
-because the segments may get queued much faster than wire rate.
-Therefore the time between segment 1 and segment 2 may be much
-much smaller than their spacing on the wire. I would not find this
-useful.
-
-I propose that we stick with the method used for IP fragments, which
-is timestamping just before the first byte is sent. Put another way, I=20=
-
-propose that we start the clock in an automobile race just before the
-front of the first car crosses the start line rather than when the front
-of the last car crosses the start line.
-
-TX timestamping in hardware has even more limitations. For the most
-part, we can only do one timestamp per packet or burst.  If we requested
-a timestamp of only the last segment of a packet, we would have work
-backwards to calculate the start time of the packet, but that would
-only be be a best guess. For extremely time sensitive applications
-(such as the one we develop), this would not be practical.
-
-We could still consider setting a flag that would allow the timestamping
-the last segment rather than the first. However since we cannot=20
-truly measure the timestamp of the last byte, I would question the value
-in doing so.
-
+> thank you and regards,
+>         o.
+>
+> > >
+> > > thank you and regards,
+> > >         o.
+> > >
+> > > > Regards,
+> > > > Yangtao
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
