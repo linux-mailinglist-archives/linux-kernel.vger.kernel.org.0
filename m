@@ -2,22 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D992AB94
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 20:23:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A60D2AB98
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 20:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbfEZSW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 14:22:58 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:48133 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727988AbfEZSW5 (ORCPT
+        id S1728086AbfEZSYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 14:24:21 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:51667 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbfEZSYV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 14:22:57 -0400
-X-Originating-IP: 90.89.68.76
+        Sun, 26 May 2019 14:24:21 -0400
 Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
         (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 7CA4DC0003;
-        Sun, 26 May 2019 18:22:49 +0000 (UTC)
-Date:   Sun, 26 May 2019 20:22:49 +0200
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 5B9BA200009;
+        Sun, 26 May 2019 18:24:11 +0000 (UTC)
+Date:   Sun, 26 May 2019 20:24:10 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
 Cc:     Liam Girdwood <lgirdwood@gmail.com>,
@@ -29,15 +28,15 @@ Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Jagan Teki <jagan@amarulasolutions.com>,
         alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/7] ASoC: sun4i-spdif: Move quirks to the top
-Message-ID: <20190526182249.nx7ql7bghzuah7rd@flea>
+Subject: Re: [PATCH v3 3/7] ASoC: sun4i-spdif: Add TX fifo bit flush quirks
+Message-ID: <20190526182410.soqb6bne6w66d5j6@flea>
 References: <20190525162323.20216-1-peron.clem@gmail.com>
- <20190525162323.20216-3-peron.clem@gmail.com>
+ <20190525162323.20216-4-peron.clem@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6o7q3ljfvpuo6cyn"
+        protocol="application/pgp-signature"; boundary="ncwtv45aqoqucxoa"
 Content-Disposition: inline
-In-Reply-To: <20190525162323.20216-3-peron.clem@gmail.com>
+In-Reply-To: <20190525162323.20216-4-peron.clem@gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -45,21 +44,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---6o7q3ljfvpuo6cyn
+--ncwtv45aqoqucxoa
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 25, 2019 at 06:23:18PM +0200, Cl=E9ment P=E9ron wrote:
-> The quirks are actually defines in the middle of the file with
-> short explanation.
+On Sat, May 25, 2019 at 06:23:19PM +0200, Cl=E9ment P=E9ron wrote:
+> Allwinner H6 has a different bit to flush the TX FIFO.
 >
-> Move this at the top and add a section to have coherency with
-> sun4i-i2s.
+> Add a quirks to prepare introduction of H6 SoC.
 >
 > Signed-off-by: Cl=E9ment P=E9ron <peron.clem@gmail.com>
+> ---
+>  sound/soc/sunxi/sun4i-spdif.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/sunxi/sun4i-spdif.c b/sound/soc/sunxi/sun4i-spdif.c
+> index b6c66a62e915..8317bbee0712 100644
+> --- a/sound/soc/sunxi/sun4i-spdif.c
+> +++ b/sound/soc/sunxi/sun4i-spdif.c
+> @@ -166,10 +166,12 @@
+>   *
+>   * @reg_dac_tx_data: TX FIFO offset for DMA config.
+>   * @has_reset: SoC needs reset deasserted.
+> + * @reg_fctl_ftx: TX FIFO flush bitmask.
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+It's a bit weird to use the same prefix for a register offset
+(reg_dac_tx_data) and a value (reg_fctl_ftx).
 
 Maxime
 
@@ -68,15 +79,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---6o7q3ljfvpuo6cyn
+--ncwtv45aqoqucxoa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOrZeQAKCRDj7w1vZxhR
-xYznAQCG1ejGnz0/Amek60TIzTGn7GCQXJ14lwLZt7fBCIsxdgD9FkDn/kl+sLzC
-xhVYYDDY3qXuamvmvEtLHOuGs4SYgQM=
-=+pbe
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOrZygAKCRDj7w1vZxhR
+xX2iAP4vmqh1nSGLNbrJR8v0vBh2+l0fQX6kqx83+rzmZQkZAwEA9wYOzTE6aQsj
+ncPb9kzAxB6nwlo5NuAAcwZBIUQ9rA4=
+=uFpz
 -----END PGP SIGNATURE-----
 
---6o7q3ljfvpuo6cyn--
+--ncwtv45aqoqucxoa--
