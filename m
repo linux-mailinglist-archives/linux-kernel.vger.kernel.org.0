@@ -2,114 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32F212AC08
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 22:17:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06FA12AC14
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 22:27:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725855AbfEZURZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 16:17:25 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41030 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbfEZURY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 16:17:24 -0400
-Received: by mail-oi1-f194.google.com with SMTP id y10so10528937oia.8
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 13:17:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=3uf9cufEGhDoTEnfE1h9K1llyrP8ckDtJqezj61tU2A=;
-        b=nLMGJ2BF8srHOOyJh/mHZ+qgHENvX00rMwG1YC5XDW+oB79h7ArHJXQb8We3lHho4h
-         d12+FULqFsV9zjbIaxsTd4lGID9t8s6c9vKIlCg/NH99awYHv7oqKPTIX3jCfYSpr71J
-         x/Qj+tJfy2B52URYJMaGyvZhsgVKaUruiccUSA7a8509NFBUryqERZo25UjLYReosVhQ
-         xPIKQ5xv6d0+5Lv7/eFpMvXoM57SubmnNNg2SnMbvAHtz1M335o9QczoN26rxjal9+Vb
-         q6YXLyNgAaKWB+c2TEAZwBRNFhk3xupR1pH6HgI0or9vFTa414LPRQjE7FfTJEHZm4pl
-         Tx+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=3uf9cufEGhDoTEnfE1h9K1llyrP8ckDtJqezj61tU2A=;
-        b=JuZdNPeMASocKVXiPLhMq6xtsVCnAMGrYH8ViIxTXM4FmsOcihdfG0OBmPMfWUrupp
-         hjEAnBlYaLqsHvWS9O0iDzAi8GJoDnl8c89umPvp5T5vPn+cGPHHEXwOJ2oKSDExpH6y
-         UALnscTy7nW8yqGDgaaNz2GesoMXpU7dp7zAj8aSsFlo1P0iWr+tX7755ox5BZibaMiD
-         bDYJAFDkQtCyA8cgM7BrKm0dTKSXr/45ifJtR+4PKB8yZ6pmXJzTlYRHqyDncxwI6SgY
-         J2VAlQC3mtJAWW6/it28g6M5kN1xF3NGnGGqTDvXQBtVPbKMhRvy7us9tJWW8zCxpN2+
-         h5Rg==
-X-Gm-Message-State: APjAAAVI8I5Q0mn6Flcpymzxw8ogf1HJYqO3PJmykqz/XH6LMsTm22sy
-        cHQtwzt7SNw9m9T/aPSHtA8VDg==
-X-Google-Smtp-Source: APXvYqy4mE9GkvIYIH0dQKiRyKKl0V5oqT23k8QaDoMApbh2MokN1Ee0p6duj/olz9iuQdHSNYBk4w==
-X-Received: by 2002:a05:6808:603:: with SMTP id y3mr394497oih.74.1558901843688;
-        Sun, 26 May 2019 13:17:23 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id e4sm3189630oti.64.2019.05.26.13.17.21
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 26 May 2019 13:17:22 -0700 (PDT)
-Date:   Sun, 26 May 2019 13:17:03 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Pavel Machek <pavel@ucw.cz>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH] mm/gup: continue VM_FAULT_RETRY processing event for
- pre-faults
-In-Reply-To: <20190526193651.spvm2vtrwxlhsjrv@linutronix.de>
-Message-ID: <alpine.LSU.2.11.1905261250590.2394@eggly.anvils>
-References: <1557844195-18882-1-git-send-email-rppt@linux.ibm.com> <20190522122113.a2edc8aba32f0fad189bae21@linux-foundation.org> <20190522194322.5k52docwgp5zkdcj@linutronix.de> <alpine.LSU.2.11.1905241429460.1141@eggly.anvils> <20190525084546.fap2wkefepeia22f@linutronix.de>
- <alpine.LSU.2.11.1905251033230.1112@eggly.anvils> <20190526193651.spvm2vtrwxlhsjrv@linutronix.de>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        id S1726106AbfEZU1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 16:27:48 -0400
+Received: from port70.net ([81.7.13.123]:59088 "EHLO port70.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725616AbfEZU1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 May 2019 16:27:46 -0400
+X-Greylist: delayed 420 seconds by postgrey-1.27 at vger.kernel.org; Sun, 26 May 2019 16:27:44 EDT
+Received: by port70.net (Postfix, from userid 1002)
+        id 64F7EABEC0BA; Sun, 26 May 2019 22:20:42 +0200 (CEST)
+Date:   Sun, 26 May 2019 22:20:42 +0200
+From:   Szabolcs Nagy <nsz@port70.net>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        torvalds@linux-foundation.org, fweimer@redhat.com,
+        jannh@google.com, oleg@redhat.com, tglx@linutronix.de,
+        arnd@arndb.de, shuah@kernel.org, dhowells@redhat.com,
+        tkjos@android.com, ldv@altlinux.org, miklos@szeredi.hu,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v2 1/2] open: add close_range()
+Message-ID: <20190526202041.GO16415@port70.net>
+References: <20190523154747.15162-1-christian@brauner.io>
+ <20190523154747.15162-2-christian@brauner.io>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190523154747.15162-2-christian@brauner.io>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 26 May 2019, Sebastian Andrzej Siewior wrote:
+* Christian Brauner <christian@brauner.io> [2019-05-23 17:47:46 +0200]:
+> This adds the close_range() syscall. It allows to efficiently close a range
+> of file descriptors up to all file descriptors of a calling task.
 > 
-> Okay. The GUP functions are not properly documented for my taste. There
-> is no indication whether or not the mm_sem has to be acquired prior
-> invoking it. Following the call chain of get_user_pages() I ended up in
-> __get_user_pages_locked() `locked = NULL' indicated that mm_sem is no
-> acquired and then I saw this:
-> |                 if (!locked)
-> |                         /* VM_FAULT_RETRY couldn't trigger, bypass */
-> |                         return ret;
+> The syscall came up in a recent discussion around the new mount API and
+> making new file descriptor types cloexec by default. During this
+> discussion, Al suggested the close_range() syscall (cf. [1]). Note, a
+> syscall in this manner has been requested by various people over time.
 > 
-> kind of suggesting that it is okay to invoke it without holding the
-> mm_sem prefault. It passed a few tests and then
-> 	https://lkml.kernel.org/r/1556657902.6132.13.camel@lca.pw
+> First, it helps to close all file descriptors of an exec()ing task. This
+> can be done safely via (quoting Al's example from [1] verbatim):
 > 
-> happened. After that, I switched to the locked variant and the problem
-> disappeared (also I noticed that MPX code is invoked within ->mmap()).
+>         /* that exec is sensitive */
+>         unshare(CLONE_FILES);
+>         /* we don't want anything past stderr here */
+>         close_range(3, ~0U);
+>         execve(....);
 
-Ah, I wasn't following what happened here while it was in linux-next.
+this does not work in a hosted c implementation unless the libc
+guarantees not to use libc internal fds (e.g. in execve).
+(the libc cannot easily abstract fds, so the syscall abi layer
+fd semantics is necessarily visible to user code.)
 
-I certainly agree that all the variants are very confusing, and the
-matter of mmap_sem particularly so. Because it used to be a simple
-rule that you needed to hold mmap_sem to call get_user_pages(); but
-that can be so contended that get_user_pages_fast(), and VM_FAULT_RETRY,
-optimizations came in, then interfaces like get_user_pages_locked() and
-get_user_pages_unlocked().
+i think this is a new constraint for userspace runtimes.
+(not entirely unreasonable though)
 
-I think when you say that you "switched to the locked variant", you're
-writing of when you switched to using get_user_pages_unlocked(), which
-takes and releases the mmap_sem itself: yes, using get_user_pages()
-without holding mmap_sem would have been open to serious errors.
+> The code snippet above is one way of working around the problem that file
+> descriptors are not cloexec by default. This is aggravated by the fact that
+> we can't just switch them over without massively regressing userspace. For
+> a whole class of programs having an in-kernel method of closing all file
+> descriptors is very helpful (e.g. demons, service managers, programming
+> language standard libraries, container managers etc.).
 
-The documentation in comments above get_user_pages_locked() and
-get_user_pages_unlocked() looks rather good to me, actually.
+was cloexec_range(a,b) considered?
 
-But this is all good reason to use the less challenging
-fault_in_pages_writable() instead. (And also saves all those GUP
-developers, who from time to time have to search through all users
-of GUP in one form or another, to make this or that improvement,
-from having to visit arch/x86/kernel/fpu/signal.c: they will
-quietly thank you.)
+> (Please note, unshare(CLONE_FILES) should only be needed if the calling
+>  task is multi-threaded and shares the file descriptor table with another
+>  thread in which case two threads could race with one thread allocating
+>  file descriptors and the other one closing them via close_range(). For the
+>  general case close_range() before the execve() is sufficient.)
 
-Hugh
+assuming there is no unblocked signal handler that may open fds.
+
+a syscall that tramples on fds not owned by the caller is ugly
+(not generally safe to use and may break things if it gets used),
+i don't have a better solution for fd leaks or missing cloexec,
+but i think it needs more analysis how it can be used.
