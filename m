@@ -2,79 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDA962AA3A
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 16:20:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 289912A9D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 15:12:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbfEZOUI convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 26 May 2019 10:20:08 -0400
-Received: from smtp-proxy.vodafone.com.gh ([80.87.74.13]:40836 "HELO
-        smtp-proxy.vodafone.com.gh" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1727658AbfEZOUI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 10:20:08 -0400
-X-Greylist: delayed 3161 seconds by postgrey-1.27 at vger.kernel.org; Sun, 26 May 2019 10:19:56 EDT
-Received: from mailhost.vodafone.com.gh (mailhost.vodafone.com.gh [80.87.74.11])
-        by smtp-proxy.vodafone.com.gh (Postfix) with ESMTP id E00794891814;
-        Sun, 26 May 2019 12:57:47 +0000 (GMT)
-Received: from localhost (localhost [127.0.0.1])
-        by mailhost.vodafone.com.gh (Postfix) with ESMTP id 234992975631;
-        Sun, 26 May 2019 12:59:35 +0000 (GMT)
-Received: from mailhost.vodafone.com.gh ([127.0.0.1])
-        by localhost (mailhost.vodafone.com.gh [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id v8UGoZOxx48E; Sun, 26 May 2019 12:59:33 +0000 (GMT)
-Received: from localhost (localhost [127.0.0.1])
-        by mailhost.vodafone.com.gh (Postfix) with ESMTP id EDE5A2976E05;
-        Sun, 26 May 2019 12:59:29 +0000 (GMT)
-X-Virus-Scanned: amavisd-new at vodafone.com.gh
-Received: from mailhost.vodafone.com.gh ([127.0.0.1])
-        by localhost (mailhost.vodafone.com.gh [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id S6pgSD2uACCr; Sun, 26 May 2019 12:59:29 +0000 (GMT)
-Received: from mailhost.vodafone.com.gh (mailhost.vodafone.com.gh [80.87.74.11])
-        by mailhost.vodafone.com.gh (Postfix) with ESMTP id CFB852975004;
-        Sun, 26 May 2019 12:59:23 +0000 (GMT)
-Date:   Sun, 26 May 2019 12:59:23 +0000 (GMT)
-From:   "Deputy Managing Director (IMF)" <afrilog@vodafone.com.gh>
-Reply-To: "Deputy Managing Director (IMF)" <info@imfukunit.co.uk>
-Message-ID: <75733888.5706630.1558875563815.JavaMail.zimbra@vodafone.com.gh>
-Subject: =?utf-8?Q?OG=C5=81OSZENIE_O_P=C5=81ATNO=C5=9ACI_WYNAGRODZE=C5=83.?=
+        id S1727813AbfEZNJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 09:09:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56648 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727708AbfEZNJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 May 2019 09:09:58 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1AE852DD43;
+        Sun, 26 May 2019 13:09:58 +0000 (UTC)
+Received: from krava (ovpn-204-45.brq.redhat.com [10.40.204.45])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 68F435C221;
+        Sun, 26 May 2019 13:09:55 +0000 (UTC)
+Date:   Sun, 26 May 2019 15:09:54 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Stanislav Fomichev <sdf@fomichev.me>,
+        Song Liu <songliubraving@fb.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH 05/12] perf tools: Read also the end of the kernel
+Message-ID: <20190526130954.GA16567@krava>
+References: <20190508132010.14512-1-jolsa@kernel.org>
+ <20190508132010.14512-6-jolsa@kernel.org>
+ <20190524181506.GE17479@kernel.org>
+ <20190524181717.GF17479@kernel.org>
+ <20190524184607.GG17479@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [80.87.74.11]
-X-Mailer: Zimbra 8.7.6_GA_1776 (ZimbraWebClient - FF66 (Win)/8.7.6_GA_1776)
-Thread-Index: QEhmWf/h/fcIQtCbO8Jp6enl/mJ6gw==
-Thread-Topic: =?utf-8?Q?OG=C5=81OSZENIE_O_P=C5=81ATNO=C5=9ACI_WYNAGRODZE=C5=83=2E?=
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190524184607.GG17479@kernel.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Sun, 26 May 2019 13:09:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Uwaga: Beneficjent,
+On Fri, May 24, 2019 at 03:46:07PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Fri, May 24, 2019 at 03:17:17PM -0300, Arnaldo Carvalho de Melo escreveu:
+> > Em Fri, May 24, 2019 at 03:15:06PM -0300, Arnaldo Carvalho de Melo escreveu:
+> > > Em Wed, May 08, 2019 at 03:20:03PM +0200, Jiri Olsa escreveu:
+> > > > We mark the end of kernel based on the first module,
+> > > > but that could cover some bpf program maps. Reading
+> > > > _etext symbol if it's present to get precise kernel
+> > > > map end.
+> > > 
+> > > Investigating... Have you run 'perf test' before hitting the send
+> > > button? :-)
+> > 
+> > <SNIP>
+> > 
+> > > [root@quaco c]# perf test -v 1
+> > >  1: vmlinux symtab matches kallsyms                       :
+> > <SNIP>
+> > > --- start ---
+> > > ERR : 0xffffffff8cc00e41: __indirect_thunk_end not on kallsyms
+> > <SNIP>
+> > > test child finished with -1
+> > > ---- end ----
+> > > vmlinux symtab matches kallsyms: FAILED!
+> > > [root@quaco c]#
+> > 
+> > So...
+> > 
+> > [root@quaco c]# grep __indirect_thunk_end /proc/kallsyms
+> > ffffffff8cc00e41 T __indirect_thunk_end
+> > [root@quaco c]# grep -w _etext /proc/kallsyms
+> > ffffffff8cc00e41 T _etext
+> > [root@quaco c]#
+> > 
+> > [root@quaco c]# grep -w ffffffff8cc00e41 /proc/kallsyms
+> > ffffffff8cc00e41 T _etext
+> > ffffffff8cc00e41 T __indirect_thunk_end
+> > [root@quaco c]#
+> > 
+> > Lemme try to fix this.
+> 
+> So, I got this right before your patch:
+> 
+> commit 1d1c54c5bbf55256e691bedb47b0d14745043e80
+> Author: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Date:   Fri May 24 15:39:00 2019 -0300
+> 
+>     perf test vmlinux-kallsyms: Ignore aliases to _etext when searching on kallsyms
+>     
+>     No need to search for aliases for the symbol that marks the end of the
+>     kernel text segment, the following patch will make such symbols not to
+>     be found when searching in the kallsyms maps causing this test to fail.
+>     
+>     So as a prep patch to avoid breaking bisection, ignore such symbols.
+>     
+>     Cc: Adrian Hunter <adrian.hunter@intel.com>
+>     Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>     Cc: Andi Kleen <ak@linux.intel.com>
+>     Cc: Jiri Olsa <jolsa@kernel.org>
+>     Cc: Namhyung Kim <namhyung@kernel.org>
+>     Cc: Peter Zijlstra <peterz@infradead.org>
+>     Cc: Song Liu <songliubraving@fb.com>
+>     Cc: Stanislav Fomichev <sdf@google.com>
+>     Cc: Thomas Richter <tmricht@linux.ibm.com>
+>     Link: https://lkml.kernel.org/n/tip-qfwuih8cvmk9doh7k5k244eq@git.kernel.org
+>     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Możesz nie rozumieć, dlaczego ta poczta dotarła do ciebie. Wspólne spotkanie zostało zorganizowane przez czołowych urzędników Międzynarodowego Funduszu Walutowego (MFW) z Senacką Komisją ds. Pojednania Długów Zagranicznych i Zespołem ds. Wdrażania Funduszu na rzecz Beneficjentów / Dziedziczenia w kategorii D, dotyczącą wszystkich ofiar oszustw na całym świecie, które zostały skierowane i na czele z tymi dwoma ciała. Konieczne stało się skontaktowanie z Tobą w tej sprawie.
+works for me
 
-Ten e-mail jest przeznaczony dla wszystkich osób, które zostały oszukane lub wymuszone z powodu oszustwa z tytułu zaliczki, a niektórzy emeryci, którzy nie otrzymali zasiłku z tytułu zasiłku, korzystają z rządu swojego kraju.
+Tested-by: Jiri Olsa <jolsa@kernel.org>
 
-Międzynarodowy Fundusz Walutowy (MFW), Grupa Banku Światowego i Federalne Biuro Śledcze (FBI) zgodziły się zrekompensować każdemu z was sumę pięciu milionów dolarów amerykańskich (5.000.000,00 dolarów). Dotyczy to emerytowanych emerytów, wszystkich zagranicznych kontrahentów / najbliższych krewnych i osób, które miały niedokończoną transakcję lub międzynarodowych firm, które zawiodły z powodu problemów rządu lub nieprawidłowości.
-
-Podczas spotkania stwierdzono, że wszystkie potencjalne fundusze beneficjenta rekompensaty powinny być ZAPŁACONE przez KARTĘ ATM BANKU LUB PROJEKT BANKOWY i przesłane odpowiednio do ich kraju.
-
-Wszyscy beneficjenci zostali wybrani za pośrednictwem globalnego losowego zintegrowanego systemu sporządzonego w 27 milionach adresów e-mail za pośrednictwem Internetu, a szczęśliwi beneficjenci nie muszą kupować żadnych biletów, aby skorzystać z tego programu kompensacyjnego. Twój e-mail znajduje się na naszej liście i dlatego kontaktujemy się z Tobą, został on uzgodniony i podpisany przez Radę Dyrektorów Międzynarodowego Funduszu Walutowego (IMF) i Powierników Grupy Banku Światowego.
-
-Prześlij swoje pełne dane, takie jak imię i nazwisko: numer telefonu: wiek: płeć i adres oraz numer referencyjny pliku poniżej (IMF-90990_WB) za wypłatę odszkodowania.
-
-Osoba kontaktowa: Pan Joaquim Levy.
-======= Dyrektor finansowy
-        (Grupa Banku Światowego) =======
-E-mail: info@joaquimlevy.com
-Tel: + 44-7452286707
-
-Mamy nadzieję usłyszeć od ciebie, gdy tylko otrzymasz wypłatę odszkodowania. Jeśli masz jakieś pytania, możesz wysłać mi wiadomość e-mail. (info@imfukunit.co.uk)
-
-Pozdrowienia,
-Pan Mitsuhiro Furusawa (Zastępca Dyrektora Zarządzającego MFW)
-CC: Pani Kristalina Georgieva (Dyrektor Naczelny Banku Światowego)
-CC: Pan Christopher A. Wray (FBI, Dyrektor)
-************************************************** ************************************************** ************************************************** ***********************
-UWAGA: Jeśli otrzymałeś tę wiadomość w swoim folderze SPAM / BULK, to znaczy z powodu ograniczeń wprowadzonych przez Twojego dostawcę usług internetowych, my (Międzynarodowy Fundusz Walutowy (IMF)) zachęcamy Cię do rzeczywistego potraktowania go.
+thanks,
+jirka
