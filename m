@@ -2,88 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA62A2AB81
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 19:54:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFCCF2AB91
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 20:22:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbfEZRxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 13:53:55 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43231 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727972AbfEZRxy (ORCPT
+        id S1728031AbfEZSWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 14:22:33 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:50465 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbfEZSWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 13:53:54 -0400
-Received: by mail-wr1-f66.google.com with SMTP id l17so6224730wrm.10
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 10:53:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3E6kp+r7OBI+9gX6jKnLvemsSLfWQYZx5SlrWEsr91k=;
-        b=uQoCkVfOa3mKlGmbIro1dqhChMhzFDxfe5KBa53zd4QcbYMUct0vZEKTYIa1yUYqKD
-         OWn4AXA4mAHqXyjhJ/YSe0fL7HWsqXAzFf5bQUG7cV45OZ7pybXL4kreplFU14ba3G1r
-         p84pZxng0KLULOLSIxWfcixUgDYTlhjJRoXuL/y+HkZYqWEwBGZ0nUg+cX0ydQMUgM09
-         2ojSuem5oLncLKodckltIJ/Ro2CJfgqFVYzA2KqD6bpN6A23+/EYhwlSA2nlt+vOsRL2
-         o1BSFNr6R+rbdkVcWtW9WNKiiTjZK6+H6ql+CDbvSzGSuQpAVRuoZ5EsMKKjxQZQmkp2
-         lgwQ==
-X-Gm-Message-State: APjAAAUxxkut+0aBE0j45hWlbUMn1Q8nWjfBzMoexZBVGCBxZa6Rd2p5
-        D07kzjPDE7JeeipjhUxNx3wbwZ5o4dI=
-X-Google-Smtp-Source: APXvYqzQOxQEM8sgEkxzsO2Ks3B+FO1y/Lc06FIhA94o3VdiVhvDVjoDuFE1oO8eaQRV+PbB7yXgnA==
-X-Received: by 2002:adf:8062:: with SMTP id 89mr678539wrk.97.1558893232941;
-        Sun, 26 May 2019 10:53:52 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:7428:5a9c:3100:a747? ([2001:b07:6468:f312:7428:5a9c:3100:a747])
-        by smtp.gmail.com with ESMTPSA id n10sm418987wrr.11.2019.05.26.10.53.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 May 2019 10:53:52 -0700 (PDT)
-Subject: Re: [GIT PULL] KVM changes for Linux 5.2-rc2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM list <kvm@vger.kernel.org>
-References: <1558864555-53503-1-git-send-email-pbonzini@redhat.com>
- <CAHk-=wi3YcO4JTpkeENETz3fqf3DeKc7-tvXwqPmVcq-pgKg5g@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <2d55fd2a-afbf-1b7c-ca82-8bffaa18e0d0@redhat.com>
-Date:   Sun, 26 May 2019 19:53:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Sun, 26 May 2019 14:22:33 -0400
+X-Originating-IP: 90.89.68.76
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id E0DAAFF803;
+        Sun, 26 May 2019 18:22:20 +0000 (UTC)
+Date:   Sun, 26 May 2019 20:22:20 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 1/7] dt-bindings: sound: sun4i-spdif: Add Allwinner H6
+ compatible
+Message-ID: <20190526182220.hgajlcyssujjkmiu@flea>
+References: <20190525162323.20216-1-peron.clem@gmail.com>
+ <20190525162323.20216-2-peron.clem@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wi3YcO4JTpkeENETz3fqf3DeKc7-tvXwqPmVcq-pgKg5g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="psc5odxto6fmnb22"
+Content-Disposition: inline
+In-Reply-To: <20190525162323.20216-2-peron.clem@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/05/19 17:51, Linus Torvalds wrote:
-> On Sun, May 26, 2019 at 2:56 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->>
->>   https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-> 
-> This says it's a tag, but it's not. It's just a commit pointer (also
-> called a "lightweight tag", because while it technically is exactly
-> the same thing as a branch, it's obviously in the tag namespace and
-> git will _treat_ it like a tag).
-> 
-> Normally your tags are proper signed tags. So I'm not pulling this,
-> waiting for confirmation.
 
-Shell history shows that I typed
+--psc5odxto6fmnb22
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	git push kvm +HEAD:tags/for-linus
+On Sat, May 25, 2019 at 06:23:17PM +0200, Cl=E9ment P=E9ron wrote:
+> Allwinner H6 has a SPDIF controller with an increase of the fifo
+> size and a sligher difference in memory mapping compare to H3/A64.
+>
+> This make it not compatible with the previous generation.
+>
+> Introduce a specific bindings for H6 SoC.
+>
+> Signed-off-by: Cl=E9ment P=E9ron <peron.clem@gmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> ---
+>  Documentation/devicetree/bindings/sound/sunxi,sun4i-spdif.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/sound/sunxi,sun4i-spdif.tx=
+t b/Documentation/devicetree/bindings/sound/sunxi,sun4i-spdif.txt
+> index 0c64a209c2e9..c0fbb50a4df9 100644
+> --- a/Documentation/devicetree/bindings/sound/sunxi,sun4i-spdif.txt
+> +++ b/Documentation/devicetree/bindings/sound/sunxi,sun4i-spdif.txt
+> @@ -7,10 +7,11 @@ For now only playback is supported.
+>
+>  Required properties:
+>
+> -  - compatible		: should be one of the following:
+> +  - compatible		: Should be one of the following:
+>      - "allwinner,sun4i-a10-spdif": for the Allwinner A10 SoC
+>      - "allwinner,sun6i-a31-spdif": for the Allwinner A31 SoC
+>      - "allwinner,sun8i-h3-spdif": for the Allwinner H3 SoC
+> +    - "allwinner,sun50i-h6-spdif": for the allwinner H6 SoC
 
-(which matches the "git push kvm +HEAD:queue" that I often do, and
-therefore can be explained by muscle memory).
+This won't apply anymore on top of next, we've moved to a YAML
+schemas.
 
-The interesting thing is that not only git will treat lightweight tags
-like, well, tags: in addition, because I _locally_ had a tag object that
-pointed to the same commit and had the same name, git-request-pull
-included my local tag's message in its output!  I wonder if this could
-be considered a bug.
+Maxime
 
-I have now pushed the actual tag object to the same place.
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Paolo
+--psc5odxto6fmnb22
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOrZXAAKCRDj7w1vZxhR
+xehgAQDOcuI0MFI4WlSZ6gB352Ad8vsUL9N1MElpyvk09ZwjRQEAt9hBwX5dJWpV
+oqCVDFu0/sZMMNzIZydtd7mLfyUf8AU=
+=Vygo
+-----END PGP SIGNATURE-----
+
+--psc5odxto6fmnb22--
