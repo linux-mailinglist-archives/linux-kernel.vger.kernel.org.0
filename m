@@ -2,160 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B3D92ABEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 21:39:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8A602ABF1
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 21:41:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfEZThA convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 26 May 2019 15:37:00 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:46462 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbfEZThA (ORCPT
+        id S1727270AbfEZTle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 15:41:34 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:40241 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727097AbfEZTld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 15:37:00 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hUywt-00040n-BE; Sun, 26 May 2019 21:36:51 +0200
-Date:   Sun, 26 May 2019 21:36:51 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Pavel Machek <pavel@ucw.cz>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH] mm/gup: continue VM_FAULT_RETRY processing event for
- pre-faults
-Message-ID: <20190526193651.spvm2vtrwxlhsjrv@linutronix.de>
-References: <1557844195-18882-1-git-send-email-rppt@linux.ibm.com>
- <20190522122113.a2edc8aba32f0fad189bae21@linux-foundation.org>
- <20190522194322.5k52docwgp5zkdcj@linutronix.de>
- <alpine.LSU.2.11.1905241429460.1141@eggly.anvils>
- <20190525084546.fap2wkefepeia22f@linutronix.de>
- <alpine.LSU.2.11.1905251033230.1112@eggly.anvils>
+        Sun, 26 May 2019 15:41:33 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hUz1F-0004BC-5J; Sun, 26 May 2019 21:41:21 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hUz1E-00018L-9V; Sun, 26 May 2019 21:41:20 +0200
+Date:   Sun, 26 May 2019 21:41:20 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-pwm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH 10/14] pwm: meson: simplify the calculation of the
+ pre-divider and count
+Message-ID: <20190526194120.uzuq6ncz5l2z4hfm@pengutronix.de>
+References: <20190525181133.4875-1-martin.blumenstingl@googlemail.com>
+ <20190525181133.4875-11-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <alpine.LSU.2.11.1905251033230.1112@eggly.anvils>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190525181133.4875-11-martin.blumenstingl@googlemail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-25 11:09:15 [-0700], Hugh Dickins wrote:
-> On Sat, 25 May 2019, Sebastian Andrzej Siewior wrote:
-> > On 2019-05-24 15:22:51 [-0700], Hugh Dickins wrote:
-> > > I've now run a couple of hours of load successfully with Mike's patch
-> > > to GUP, no problem; but whatever the merits of that patch in general,
-> > > I agree with Andrew that fault_in_pages_writeable() seems altogether
-> > > more appropriate for copy_fpstate_to_sigframe(), and have now run a
-> > > couple of hours of load successfully with this instead (rewrite to taste):
-> > 
-> > so this patch instead of Mike's GUP patch fixes the issue you observed?
+On Sat, May 25, 2019 at 08:11:29PM +0200, Martin Blumenstingl wrote:
+> Replace the loop to calculate the pre-divider and count with two
+> separate div64_u64() calculations. This makes the code easier to read
+> and improves the precision.
 > 
-> Yes.
+> Two example cases:
+> 1) 32.768kHz LPO clock for the SDIO wifi chip on Khadas VIM
+>    clock input: 500MHz (FCLK_DIV4)
+>    period: 30518ns
+>    duty cycle: 15259ns
+> old algorithm: pre_div=0, cnt=15259
+> new algorithm: pre_div=0, cnt=15259
+> (no difference in calculated values)
 > 
-> > Is this just a taste question or limitation of the function in general?
+> 2) PWM LED on Khadas VIM
+>    clock input: 24MHz (XTAL)
+>    period: 7812500ns
+>    duty cycle: 7812500ns
+> old algorithm: pre_div=2, cnt=62004
+> new algorithm: pre_div=2, cnt=62500
+> Using a scope (24MHz sampling rate) shows the actual difference:
+> - old: 7753000ns, off by -59500ns (0.7616%)
+> - new: 7815000ns, off by +2500ns (0.032%)
 > 
-> I'd say it's just a taste question. Though the the fact that your
-> usage showed up a bug in the get_user_pages_unlocked() implementation,
-> demanding a fix, does indicate that it's a more fragile and complex
-> route, better avoided if there's a good simple alternative. If it were
-> not already on your slowpath, I'd also argue fault_in_pages_writeable()
-> is a more efficient way to do it.
-
-Okay. The GUP functions are not properly documented for my taste. There
-is no indication whether or not the mm_sem has to be acquired prior
-invoking it. Following the call chain of get_user_pages() I ended up in
-__get_user_pages_locked() `locked = NULL' indicated that mm_sem is no
-acquired and then I saw this:
-|                 if (!locked)
-|                         /* VM_FAULT_RETRY couldn't trigger, bypass */
-|                         return ret;
-
-kind of suggesting that it is okay to invoke it without holding the
-mm_sem prefault. It passed a few tests and then
-	https://lkml.kernel.org/r/1556657902.6132.13.camel@lca.pw
-
-happened. After that, I switched to the locked variant and the problem
-disappeared (also I noticed that MPX code is invoked within ->mmap()).
-
-> > I'm asking because it has been suggested and is used in MPX code (in the
-> > signal path but .mmap) and I'm not aware of any limitation. But as I
-> > wrote earlier to akpm, if the MM folks suggest to use this instead I am
-> > happy to switch.
+> Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/pwm/pwm-meson.c | 25 ++++++++++---------------
+>  1 file changed, 10 insertions(+), 15 deletions(-)
 > 
-> I know nothing of MPX, beyond that Dave Hansen has posted patches to
-> remove that support entirely, so I'm surprised arch/x86/mm/mpx.c is
-> still in the tree.
-I need to poke at that. I has been removed but then KVM folks complained
-that they kind of depend on that if it has been exposed to the guest. We
-need to fade it out slowlyâ€¦
+> diff --git a/drivers/pwm/pwm-meson.c b/drivers/pwm/pwm-meson.c
+> index 27915d6475e3..9afa1e5aaebf 100644
+> --- a/drivers/pwm/pwm-meson.c
+> +++ b/drivers/pwm/pwm-meson.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+>  #include <linux/kernel.h>
+> +#include <linux/math64.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> @@ -145,7 +146,6 @@ static int meson_pwm_calc(struct meson_pwm *meson, struct pwm_device *pwm,
+>  	struct meson_pwm_channel *channel = pwm_get_chip_data(pwm);
+>  	unsigned int duty, period, pre_div, cnt, duty_cnt;
+>  	unsigned long fin_freq = -1;
+> -	u64 fin_ps;
+>  
+>  	duty = state->duty_cycle;
+>  	period = state->period;
+> @@ -164,24 +164,19 @@ static int meson_pwm_calc(struct meson_pwm *meson, struct pwm_device *pwm,
+>  	}
+>  
+>  	dev_dbg(meson->chip.dev, "fin_freq: %lu Hz\n", fin_freq);
+> -	fin_ps = (u64)NSEC_PER_SEC * 1000;
+> -	do_div(fin_ps, fin_freq);
+> -
+> -	/* Calc pre_div with the period */
+> -	for (pre_div = 0; pre_div <= MISC_CLK_DIV_MASK; pre_div++) {
+> -		cnt = DIV_ROUND_CLOSEST_ULL((u64)period * 1000,
+> -					    fin_ps * (pre_div + 1));
+> -		dev_dbg(meson->chip.dev, "fin_ps=%llu pre_div=%u cnt=%u\n",
+> -			fin_ps, pre_div, cnt);
+> -		if (cnt <= 0xffff)
+> -			break;
+> -	}
+>  
+> +	pre_div = div64_u64(fin_freq * (u64)period, NSEC_PER_SEC * 0xffffLL);
+>  	if (pre_div > MISC_CLK_DIV_MASK) {
+>  		dev_err(meson->chip.dev, "unable to get period pre_div\n");
+>  		return -EINVAL;
+>  	}
+>  
+> +	cnt = div64_u64(fin_freq * (u64)period, NSEC_PER_SEC * (pre_div + 1));
+> +	if (cnt > 0xffff) {
+> +		dev_err(meson->chip.dev, "unable to get period cnt\n");
+> +		return -EINVAL;
+> +	}
+> +
 
->                    But peering at it now, it looks as if it's using
-> get_user_pages() while holding mmap_sem, whereas you (sensibly enough)
-> used get_user_pages_unlocked() to handle the mmap_sem for you -
-> the trouble with that is that since it knows it's in control of
-> mmap_sem, it feels free to drop it internally, and that takes it
-> down the path of the premature return when pages NULL that Mike is
-> fixing. MPX's get_user_pages() is not free to go that way.
-oki.
+There is a slight modification in the calculation of pre_div that isn't
+catched by the examples above.
 
-> > > --- 5.2-rc1/arch/x86/kernel/fpu/signal.c
-> > > +++ linux/arch/x86/kernel/fpu/signal.c
-> > > @@ -3,6 +3,7 @@
-> > >   * FPU signal frame handling routines.
-> > >   */
-> > >  
-> > > +#include <linux/pagemap.h>
-> > >  #include <linux/compat.h>
-> > >  #include <linux/cpu.h>
-> > >  
-> > > @@ -189,15 +190,7 @@ retry:
-> > >  	fpregs_unlock();
-> > >  
-> > >  	if (ret) {
-> > > -		int aligned_size;
-> > > -		int nr_pages;
-> > > -
-> > > -		aligned_size = offset_in_page(buf_fx) + fpu_user_xstate_size;
-> > > -		nr_pages = DIV_ROUND_UP(aligned_size, PAGE_SIZE);
-> > > -
-> > > -		ret = get_user_pages_unlocked((unsigned long)buf_fx, nr_pages,
-> > > -					      NULL, FOLL_WRITE);
-> > > -		if (ret == nr_pages)
-> > > +		if (!fault_in_pages_writeable(buf_fx, fpu_user_xstate_size))
-> > >  			goto retry;
-> > >  		return -EFAULT;
-> > >  	}
-> > > 
-> > > (I did wonder whether there needs to be an access_ok() check on buf_fx;
-> > > but if so, then I think it would already have been needed before the
-> > > earlier copy_fpregs_to_sigframe(); but I didn't get deep enough into
-> > > that to be sure, nor into whether access_ok() check on buf covers buf_fx.)
-> > 
-> > There is an access_ok() at the begin of copy_fpregs_to_sigframe(). The
-> > memory is allocated from user's stack and there is (later) an
-> > access_ok() for the whole region (which can be more than the memory used
-> > by the FPU code).
-> 
-> Yes, but remember I know nothing of this FPU signal code, so I cannot
-> tell whether an access_ok(buf, size) is good enough to cover the range
-> of an access_ok(buf_fx, fpu_user_xstate_size).
+Before this patch we had:
 
-yes, because size >= fpu_user_xstate_size
+	pick smallest pre_div such that
+		round_closest(period * 1000 / (round_down(1e12 / fin_freq) * (pre_div + 1)) <= 0xffff
 
-> Your "(later)" worries me a little - I hope you're not writing first
-> and checking the limits later; but what you're doing may be perfectly
-> correct, I'm just too far from understanding the details to say; but
-> raised the matter because (I think) get_user_pages_unlocked() would
-> entail an access_ok() check where fault_in_pages_writable() would not.
+New approach is:
 
-no, we first check the range and then write. It is later checked again
-after the size has been extended.
+	pre_div = round_down(fin_freq * period / (1e9 * 0xffff))
 
-> Hugh
+An advantage of the new approach is better as it rounds only once and is
+easier.
 
-Sebastian
+Consider fin_freq = 99990001 and period = 655355, then the old algorithm
+picks pre_div = 1 while the new picks pre_div = 0.
+
+I didn't continue here to check which are the resulting waveforms, I
+assume they are different though.
+
+As there is currently no definition what is a "better" approximation for
+a given requested pair (duty_cycle, period) I cannot say if these
+changes are good or not.
+
+And that's a pity, so I still think there should be a documented
+definition that lays down how a lowlevel driver should round. Without
+that a consumer that cares about fine differences can not rely an the
+abstraction provided by the PWM framework because each low-level driver
+might behave differently.
+
+@Thierry: So can you please continue the discussion about this topic.
+The longer this is delayed the more patches are created and submitted
+that eventually might be wrong which is a waste of developer and
+reviewer time.
+
+Assuming the people who care about meson don't object after reading this
+I wouldn't want to stop this patch going in though. So:
+
+	Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
