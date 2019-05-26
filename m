@@ -2,191 +2,539 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E63C82A938
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 11:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 045B42A943
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 12:28:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbfEZJ4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 05:56:01 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33467 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbfEZJ4A (ORCPT
+        id S1727735AbfEZK11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 06:27:27 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37208 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727695AbfEZK10 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 05:56:00 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v19so4230450wmh.0;
-        Sun, 26 May 2019 02:55:58 -0700 (PDT)
+        Sun, 26 May 2019 06:27:26 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w37so21822395edw.4
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 03:27:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=V4y1eNNVoOK6/0U7eERLp4HxeWi2eXZbpKBuvUVBXCQ=;
-        b=FHhdibBGhypGnt0u7hX3MR+6+Q5Da11bxD074Gv9vIVSuWSoaaxPW4M3dy70pWGUIT
-         aLUYVSSnwu/K1rdPIaPBTd7s5nDkYn8LR2t6yWw2MfLOwNWZfI1VQvf6qkmpznyW6VDK
-         GeSQIcbWjpr1gGRISEG5PNVUlb7k0dh1puHVVVXHTX6I/+Dqf9M19m3CiQxnXDhfqBIw
-         8rm9MFzmuwyj2Vejk0ErEBVXkEETtklPOulWMhazpXjdxgIrovR/nDP+CDvi7UNLZja9
-         5keBq8/wiLJAkpn2v5a7rvhGLkF6GUffQZn3JQIESyLgqFDWlUzLfPmCVV68OoZns0A7
-         Y0WA==
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZM/EOjgR192bIuDTGtYeSgtPYnS6DSR9g0MP8i2wMUw=;
+        b=PUtwGpZdKpzKYPvn+5SjcC8/OZjR8O+INZ3iI4Khk1df0X3CXPWWSaOcdR/Ef3w1eq
+         JrKYXQfbneTScu3bMUzunDwwnDBjRZIJqbIhjwTupBQlQtQhhdoVvZipVLjEX0JF7Umn
+         JHBd40p7FDueC5mA83tzUIjnsSuHJmFlHbNRRFQnvqTLAx7Yy6UsMIN02M7rNikyDsSa
+         mQN1wbw8oE11X/ebrKAg0ZPyJ0osGXltFSPkK9mSyFwiCryoivYD9iw9eMtP27eGnHbT
+         oxaGn4sqVuvydrd1lwVHVM4OqfOpSltwU/90URCg+oSNeIJ3f+7W2wV2xH7CjeNFBooH
+         tw3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=V4y1eNNVoOK6/0U7eERLp4HxeWi2eXZbpKBuvUVBXCQ=;
-        b=gcoAdu0hMVd58TXYLheD/vlfVCUnqPQpf5zIFaJMzWLZbwOu1jhUJG2vyAYFu8atZq
-         hVRRuDh7J3Gaa5+NJOAf6bLJObFZE7BCzLobBjrbGEkwNJRNUnaf7qF63J1yLKCVXXAd
-         X2rLy4wCstorv4aRrZ3LlgIrvleLyJCoRzZLNVLEurG9k+DBiqxhdCWuwwHYBT0q1C7t
-         shu76LU6J1KouQCZuI4Js+OxJXGPeFZd7Xg2AE8+Rk3fXP/oXoTV9JHsiI+c+N5vepxj
-         MlCnR61HMX5FzBnkFqr3Cj8Pd5PXnaeuKOFE38jwBS027BurS/QM6GJnViUGZw2C/uw5
-         eLBw==
-X-Gm-Message-State: APjAAAUNDEiLxp3K7Vf5jUc+M5W5LzmtEe2f034ITFioeCrW2aMLzCUO
-        zMUEKRYi3lnyuH5Zcwk3bQE=
-X-Google-Smtp-Source: APXvYqznLZicOimpmrQNby3csyxP01hRvf/AQcz9zFmpsgKYT+JsrYcxO0Z2bcJ2/HwUUzOzfesBuQ==
-X-Received: by 2002:a1c:9e8e:: with SMTP id h136mr21653348wme.29.1558864557618;
-        Sun, 26 May 2019 02:55:57 -0700 (PDT)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id v124sm13557120wme.42.2019.05.26.02.55.56
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZM/EOjgR192bIuDTGtYeSgtPYnS6DSR9g0MP8i2wMUw=;
+        b=SkivBZGdt7v6tCmJpiWSp7/Oirn0xgLr/GMRJDve6zhSKUTZbfFA9qTO0B43gGfhXa
+         7ri8pA8LpMYajZh6erXm6QtgAGIGCLXKAFYP5ZCdMJzvSkG08cOhV/Gw4UiL4vg0dAiq
+         XyycIP6XcMNt+SYcdyNQ8Xng+boT8gYumQuckT+LtoWk9R+VW7p6phf3RCGxpNRfiWcw
+         mlrhESXSbEhi0c0llpYT8JuurTabjM3eIuLbawKFw5IRLcCncHZ4OrfiRIfDX4CbGCM8
+         Eb2gv6TFznNi/5Q6tbgMfZyL4RVyL63eeWKkHum/gmJj2WrAksDDZKH8bIwWOFULeBHK
+         1BLQ==
+X-Gm-Message-State: APjAAAUqrnzXdeSzS6DnDwOaB7uIFTFLDPJtuov9IEi2/aHmXgw7zTMq
+        6rgC44u1UHCXncvgkOpdShZ30A==
+X-Google-Smtp-Source: APXvYqwppAO6scGE6V/Xf4reitpagHLYytCfeJOJ9Bs0jO883kqS+9ZfqEcncES+kEO2kZX7pltkwQ==
+X-Received: by 2002:a17:906:958:: with SMTP id j24mr81491890ejd.160.1558866443826;
+        Sun, 26 May 2019 03:27:23 -0700 (PDT)
+Received: from localhost.localdomain (ip5f5bf7d3.dynamic.kabel-deutschland.de. [95.91.247.211])
+        by smtp.gmail.com with ESMTPSA id l43sm2314100eda.70.2019.05.26.03.27.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 May 2019 02:55:56 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM changes for Linux 5.2-rc2
-Date:   Sun, 26 May 2019 11:55:55 +0200
-Message-Id: <1558864555-53503-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        Sun, 26 May 2019 03:27:23 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, jannh@google.com
+Cc:     fweimer@redhat.com, oleg@redhat.com, arnd@arndb.de,
+        dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@gmail.com>, linux-api@vger.kernel.org
+Subject: [PATCH 1/2] fork: add clone6
+Date:   Sun, 26 May 2019 12:26:11 +0200
+Message-Id: <20190526102612.6970-1-christian@brauner.io>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+This adds the clone6 system call.
 
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+As mentioned several times already (cf. [7], [8]) here's the promised
+patchset for clone6().
 
-  Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+We recently merged the CLONE_PIDFD patchset (cf. [1]). It took the last
+free flag from clone().
 
-are available in the git repository at:
+Independent of the CLONE_PIDFD patchset a time namespace has been discussed
+at Linux Plumber Conference last year and has been sent out and reviewed
+(cf. [5]). It is expected that it will go upstream in the not too distant
+future. However, it relies on the addition of the CLONE_NEWTIME flag to
+clone(). The only other good candidate - CLONE_DETACHED - is currently not
+recycable as we have identified at least two large or widely used codebases
+that currently pass this flag (cf. [2], [3], and [4]). Given that we
+grabbed the last clone() flag we effectively blocked the time namespace
+patchset. It just seems right that we unblock it again.
 
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+The idea is to keep clone6() very simple and close to the original clone(),
+specifically, to keep on supporting old clone()-based workloads.
+We know there have been various creative proposals how a new process
+creation syscall or even api is supposed to look like. Some people even
+going so far as to argue that the traditional fork()+exec() split should be
+abandoned in favor of an in-kernel version of spawn(). Independent of
+whether or not we personally think spawn() is a good idea this patchset has
+and does not want to have anything to do with this.
+One stance we take is that there's no real good alternative to
+clone()+exec() and we need and want to support this model going forward
+independent of spawn().
+The following requirements guided us for clone6():
+- bump the number of available flags as much as possible while ensuring
+  that all flag arguments are passed in registers so they remain easily
+  accessible for seccomp.
+- move non-flag arguments that are currently passed as separate arguments
+  in clone() into a dedicated struct
+  - choose a struct layout that is easy to handle on 32 and on 64 bit
+  - choose a struct layout that is extensible
+  - give new flags that currently need to abuse another flag's dedicated
+    return argument in clone() their own dedicated return argument
+    (e.g. CLONE_PIDFD)
+- ease of transition for userspace from clone() to clone6()
+- do not try to be clever or complex: keep clone6() as dumb as possible
 
-for you to fetch changes up to 66f61c92889ff3ca365161fb29dd36d6354682ba:
+What we came up with is clone6() which has the following signature:
 
-  KVM: x86: fix return value for reserved EFER (2019-05-24 21:55:02 +0200)
+struct clone6_args {
+        __s32 pidfd;
+        __aligned_u64 parent_tidptr;
+        __aligned_u64 child_tidptr;
+        __aligned_u64 stack;
+        __aligned_u64 stack_size;
+        __aligned_u64 tls;
+};
 
-----------------------------------------------------------------
-The usual smattering of fixes and tunings that came in too late for the
-merge window, but should not wait four months before they appear in
-a release.  I also travelled a bit more than usual in the first part
-of May, which didn't help with picking up patches and reports promptly.
+long sys_clone6(struct clone6_args __user *uargs,
+                unsigned int flags1,
+                unsigned int flags2,
+                unsigned int flags3,
+                unsigned int flags4,
+                unsigned int flags5);
 
-----------------------------------------------------------------
-Andrew Jones (3):
-      kvm: selftests: aarch64: dirty_log_test: fix unaligned memslot size
-      kvm: selftests: aarch64: fix default vm mode
-      kvm: selftests: aarch64: compile with warnings on
+clone6() cleanly supports all of the supported flags from clone() in
+flags1, i.e. flags1 is full and all legacy workloads are supported with
+clone6().
+With clone6() we have 160 flag values in total which - even for a feature
+heavy syscall like clone - should hold quite a while. If they are really
+all taken at some point we can simply bite the bullet and start adding
+additional flag arguments into struct clone6 itself.
 
-Borislav Petkov (1):
-      x86/kvm/pmu: Set AMD's virt PMU version to 1
+Another advantage of sticking close to the old clone() is the low cost for
+userspace to switch to this new api. Quite a lot of userspace apis (e.g.
+pthreads) are based on the clone() syscall. With the new clone6() syscall
+supporting all of the old workloads and opening up the ability to add new
+features should make switching to it for userspace more appealing. In
+essence, glibc can just write a simple wrapper to switch from clone() to
+clone6().
 
-Christian Borntraeger (2):
-      KVM: s390: change default halt poll time to 50us
-      KVM: s390: fix memory slot handling for KVM_SET_USER_MEMORY_REGION
+There has been some interest in this patchset already. We have received a
+patch from the CRIU corner for clone6() that would set the PID/TID of a
+restored process without /proc/sys/kernel/ns_last_pid to eliminate a race.
 
-Christoffer Dall (1):
-      MAINTAINERS: KVM: arm/arm64: Remove myself as maintainer
+/* References */
+[1]: b3e5838252665ee4cfa76b82bdf1198dca81e5be
+[2]: https://dxr.mozilla.org/mozilla-central/source/security/sandbox/linux/SandboxFilter.cpp#343
+[3]: https://git.musl-libc.org/cgit/musl/tree/src/thread/pthread_create.c#n233
+[4]: https://sources.debian.org/src/blcr/0.8.5-2.3/cr_module/cr_dump_self.c/?hl=740#L740
+[5]: https://lore.kernel.org/lkml/20190425161416.26600-1-dima@arista.com/
+[6]: https://lore.kernel.org/lkml/20190425161416.26600-2-dima@arista.com/
+[7]: https://lore.kernel.org/lkml/CAHrFyr5HxpGXA2YrKza-oB-GGwJCqwPfyhD-Y5wbktWZdt0sGQ@mail.gmail.com/
+[8]: https://lore.kernel.org/lkml/20190524102756.qjsjxukuq2f4t6bo@brauner.io/
 
-Dan Carpenter (1):
-      KVM: selftests: Fix a condition in test_hv_cpuid()
+Co-developed-by: Jann Horn <jannh@google.com>
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Christian Brauner <christian@brauner.io>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Pavel Emelyanov <xemul@virtuozzo.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Adrian Reber <adrian@lisas.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrei Vagin <avagin@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Florian Weimer <fweimer@redhat.com>
+Cc: linux-api@vger.kernel.org
+---
+ arch/x86/ia32/sys_ia32.c   |   9 ++-
+ include/linux/sched/task.h |   2 +-
+ include/linux/syscalls.h   |   9 +++
+ include/uapi/linux/sched.h |  14 ++++
+ kernel/fork.c              | 161 ++++++++++++++++++++++++++++---------
+ 5 files changed, 152 insertions(+), 43 deletions(-)
 
-James Morse (2):
-      KVM: arm64: Move pmu hyp code under hyp's Makefile to avoid instrumentation
-      KVM: arm/arm64: Move cc/it checks under hyp's Makefile to avoid instrumentation
+diff --git a/arch/x86/ia32/sys_ia32.c b/arch/x86/ia32/sys_ia32.c
+index a43212036257..55a8c550ba74 100644
+--- a/arch/x86/ia32/sys_ia32.c
++++ b/arch/x86/ia32/sys_ia32.c
+@@ -237,6 +237,11 @@ COMPAT_SYSCALL_DEFINE5(x86_clone, unsigned long, clone_flags,
+ 		       unsigned long, newsp, int __user *, parent_tidptr,
+ 		       unsigned long, tls_val, int __user *, child_tidptr)
+ {
+-	return _do_fork(clone_flags, newsp, 0, parent_tidptr, child_tidptr,
+-			tls_val);
++	struct clone6_args args = {
++		.stack = newsp,
++		.parent_tidptr = (uintptr_t)parent_tidptr,
++		.tls = tls_val,
++		.child_tidptr = (uintptr_t)child_tidptr
++	};
++	return _do_fork(clone_flags, &args);
+ }
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index f1227f2c38a4..06e7c0df6ab0 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -73,7 +73,7 @@ extern void do_group_exit(int);
+ extern void exit_files(struct task_struct *);
+ extern void exit_itimers(struct signal_struct *);
+ 
+-extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
++extern long _do_fork(u64 clone_flags, struct clone6_args *uargs);
+ extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
+ struct task_struct *fork_idle(int);
+ struct mm_struct *copy_init_mm(void);
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index e2870fe1be5b..235df5c5e711 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -70,6 +70,7 @@ struct sigaltstack;
+ struct rseq;
+ union bpf_attr;
+ struct io_uring_params;
++struct clone6_args;
+ 
+ #include <linux/types.h>
+ #include <linux/aio_abi.h>
+@@ -852,6 +853,14 @@ asmlinkage long sys_clone(unsigned long, unsigned long, int __user *,
+ 	       int __user *, unsigned long);
+ #endif
+ #endif
++
++#ifdef __ARCH_WANT_SYS_CLONE
++asmlinkage long sys_clone6(struct clone6_args __user *uargs,
++			   unsigned int flags1, unsigned int flags2,
++			   unsigned int flags3, unsigned int flags4,
++			   unsigned int flags5);
++#endif
++
+ asmlinkage long sys_execve(const char __user *filename,
+ 		const char __user *const __user *argv,
+ 		const char __user *const __user *envp);
+diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+index ed4ee170bee2..b8d2809c5bc6 100644
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@ -2,6 +2,8 @@
+ #ifndef _UAPI_LINUX_SCHED_H
+ #define _UAPI_LINUX_SCHED_H
+ 
++#include <linux/types.h>
++
+ /*
+  * cloning flags:
+  */
+@@ -31,6 +33,18 @@
+ #define CLONE_NEWNET		0x40000000	/* New network namespace */
+ #define CLONE_IO		0x80000000	/* Clone io context */
+ 
++/*
++ * Arguments for the clone6 syscall
++ */
++struct clone6_args {
++	__s32 pidfd;
++	__aligned_u64 parent_tidptr;
++	__aligned_u64 child_tidptr;
++	__aligned_u64 stack;
++	__aligned_u64 stack_size;
++	__aligned_u64 tls;
++};
++
+ /*
+  * Scheduling policies
+  */
+diff --git a/kernel/fork.c b/kernel/fork.c
+index b4cba953040a..ffd5471c64af 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1760,19 +1760,21 @@ static __always_inline void delayed_free_task(struct task_struct *tsk)
+  * flags). The actual kick-off is left to the caller.
+  */
+ static __latent_entropy struct task_struct *copy_process(
+-					unsigned long clone_flags,
+-					unsigned long stack_start,
+-					unsigned long stack_size,
+-					int __user *parent_tidptr,
+-					int __user *child_tidptr,
++					u64 clone_flags,
+ 					struct pid *pid,
+ 					int trace,
+-					unsigned long tls,
+-					int node)
++					int node,
++					struct clone6_args *args,
++					bool is_clone6)
+ {
+ 	int pidfd = -1, retval;
+ 	struct task_struct *p;
+ 	struct multiprocess_signals delayed;
++	int __user *child_tidptr = u64_to_user_ptr(args->child_tidptr);
++	int __user *parent_tidptr = NULL;
++	unsigned long tls = args->tls;
++	unsigned long stack_start = args->stack;
++	unsigned long stack_size = args->stack_size;
+ 
+ 	/*
+ 	 * Don't allow sharing the root directory with processes in a different
+@@ -1824,25 +1826,32 @@ static __latent_entropy struct task_struct *copy_process(
+ 		int reserved;
+ 
+ 		/*
+-		 * - CLONE_PARENT_SETTID is useless for pidfds and also
+-		 *   parent_tidptr is used to return pidfds.
+ 		 * - CLONE_DETACHED is blocked so that we can potentially
+ 		 *   reuse it later for CLONE_PIDFD.
+ 		 * - CLONE_THREAD is blocked until someone really needs it.
+ 		 */
+-		if (clone_flags &
+-		    (CLONE_DETACHED | CLONE_PARENT_SETTID | CLONE_THREAD))
++		if (clone_flags & (CLONE_DETACHED | CLONE_THREAD))
+ 			return ERR_PTR(-EINVAL);
+ 
+-		/*
+-		 * Verify that parent_tidptr is sane so we can potentially
+-		 * reuse it later.
+-		 */
+-		if (get_user(reserved, parent_tidptr))
+-			return ERR_PTR(-EFAULT);
++		if (!is_clone6) {
++			/*
++			 * For non-clone6() versions parent_tidptr is used to
++			 * return pidfds.
++			 */
++			if (clone_flags & CLONE_PARENT_SETTID)
++				return ERR_PTR(-EINVAL);
+ 
+-		if (reserved != 0)
+-			return ERR_PTR(-EINVAL);
++			/*
++			 * Verify that parent_tidptr is sane so we can
++			 * potentially reuse it later.
++			 */
++			parent_tidptr = u64_to_user_ptr(args->parent_tidptr);
++			if (get_user(reserved, parent_tidptr))
++				return ERR_PTR(-EFAULT);
++
++			if (reserved != 0)
++				return ERR_PTR(-EINVAL);
++		}
+ 	}
+ 
+ 	/*
+@@ -2062,9 +2071,14 @@ static __latent_entropy struct task_struct *copy_process(
+ 			goto bad_fork_free_pid;
+ 
+ 		pidfd = retval;
+-		retval = put_user(pidfd, parent_tidptr);
+-		if (retval)
+-			goto bad_fork_put_pidfd;
++		if (!is_clone6) {
++			/* store pidfd in parent_tidptr for legacy clone */
++			retval = put_user(pidfd, parent_tidptr);
++			if (retval)
++				goto bad_fork_put_pidfd;
++		} else {
++			args->pidfd = pidfd;
++		}
+ 	}
+ 
+ #ifdef CONFIG_BLOCK
+@@ -2313,8 +2327,10 @@ static inline void init_idle_pids(struct task_struct *idle)
+ struct task_struct *fork_idle(int cpu)
+ {
+ 	struct task_struct *task;
+-	task = copy_process(CLONE_VM, 0, 0, NULL, NULL, &init_struct_pid, 0, 0,
+-			    cpu_to_node(cpu));
++	struct clone6_args args = { 0 };
++
++	task = copy_process(CLONE_VM, &init_struct_pid, 0,
++			    cpu_to_node(cpu), &args, false);
+ 	if (!IS_ERR(task)) {
+ 		init_idle_pids(task);
+ 		init_idle(task, cpu);
+@@ -2334,18 +2350,15 @@ struct mm_struct *copy_init_mm(void)
+  * It copies the process, and if successful kick-starts
+  * it and waits for it to finish using the VM if required.
+  */
+-long _do_fork(unsigned long clone_flags,
+-	      unsigned long stack_start,
+-	      unsigned long stack_size,
+-	      int __user *parent_tidptr,
+-	      int __user *child_tidptr,
+-	      unsigned long tls)
++static long _do_clone_common(u64 clone_flags, struct clone6_args *args,
++			     bool is_clone6)
+ {
+ 	struct completion vfork;
+ 	struct pid *pid;
+ 	struct task_struct *p;
+ 	int trace = 0;
+ 	long nr;
++	int __user *parent_tidptr = u64_to_user_ptr(args->parent_tidptr);
+ 
+ 	/*
+ 	 * Determine whether and which event to report to ptracer.  When
+@@ -2365,8 +2378,8 @@ long _do_fork(unsigned long clone_flags,
+ 			trace = 0;
+ 	}
+ 
+-	p = copy_process(clone_flags, stack_start, stack_size, parent_tidptr,
+-			 child_tidptr, NULL, trace, tls, NUMA_NO_NODE);
++	p = copy_process(clone_flags, NULL, trace, NUMA_NO_NODE, args,
++			 is_clone6);
+ 	add_latent_entropy();
+ 
+ 	if (IS_ERR(p))
+@@ -2405,6 +2418,11 @@ long _do_fork(unsigned long clone_flags,
+ 	return nr;
+ }
+ 
++long _do_fork(u64 clone_flags, struct clone6_args *args)
++{
++	return _do_clone_common(clone_flags, args, false);
++}
++
+ #ifndef CONFIG_HAVE_COPY_THREAD_TLS
+ /* For compatibility with architectures that call do_fork directly rather than
+  * using the syscall entry points below. */
+@@ -2414,8 +2432,14 @@ long do_fork(unsigned long clone_flags,
+ 	      int __user *parent_tidptr,
+ 	      int __user *child_tidptr)
+ {
+-	return _do_fork(clone_flags, stack_start, stack_size,
+-			parent_tidptr, child_tidptr, 0);
++	struct clone6_args args = {
++		.stack = stack_start,
++		.stack_size = stack_size,
++		.parent_tidptr = (uintptr_t)parent_tidptr,
++		.child_tidptr = (uintptr_t)child_tidptr
++	};
++
++	return _do_fork(clone_flags, &args);
+ }
+ #endif
+ 
+@@ -2424,15 +2448,20 @@ long do_fork(unsigned long clone_flags,
+  */
+ pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags)
+ {
+-	return _do_fork(flags|CLONE_VM|CLONE_UNTRACED, (unsigned long)fn,
+-		(unsigned long)arg, NULL, NULL, 0);
++	struct clone6_args args = {
++		.stack = (unsigned long)fn,
++		.stack_size = (unsigned long)arg,
++	};
++	return _do_fork(flags|CLONE_VM|CLONE_UNTRACED, &args);
+ }
+ 
+ #ifdef __ARCH_WANT_SYS_FORK
+ SYSCALL_DEFINE0(fork)
+ {
+ #ifdef CONFIG_MMU
+-	return _do_fork(SIGCHLD, 0, 0, NULL, NULL, 0);
++	struct clone6_args args = { 0 };
++
++	return _do_fork(SIGCHLD, &args);
+ #else
+ 	/* can not support in nommu mode */
+ 	return -EINVAL;
+@@ -2443,8 +2472,9 @@ SYSCALL_DEFINE0(fork)
+ #ifdef __ARCH_WANT_SYS_VFORK
+ SYSCALL_DEFINE0(vfork)
+ {
+-	return _do_fork(CLONE_VFORK | CLONE_VM | SIGCHLD, 0,
+-			0, NULL, NULL, 0);
++	struct clone6_args args = { 0 };
++
++	return _do_fork(CLONE_VFORK | CLONE_VM | SIGCHLD, &args);
+ }
+ #endif
+ 
+@@ -2472,7 +2502,58 @@ SYSCALL_DEFINE5(clone, unsigned long, clone_flags, unsigned long, newsp,
+ 		 unsigned long, tls)
+ #endif
+ {
+-	return _do_fork(clone_flags, newsp, 0, parent_tidptr, child_tidptr, tls);
++	struct clone6_args args = {
++		.stack = newsp,
++		.parent_tidptr = (uintptr_t)parent_tidptr,
++		.tls = tls,
++		.child_tidptr = (uintptr_t)child_tidptr
++	};
++	return _do_fork(clone_flags, &args);
++}
++
++SYSCALL_DEFINE6(clone6, struct clone6_args __user*, uargs,
++			unsigned int, flags1,
++			unsigned int, flags2,
++			unsigned int, flags3,
++			unsigned int, flags4,
++			unsigned int, flags5)
++{
++	struct clone6_args args = { 0 };
++	u64 flags = flags1;
++	int result;
++
++	if (flags2 || flags3 || flags4 || flags5)
++		return -EINVAL;
++
++	/*
++	 * flags1 is full so we only need to verify that CLONE_DETACHED
++	 * is not passed since we can't use it.
++	 */
++	if (flags & CLONE_DETACHED)
++		return -EINVAL;
++
++	result = get_user(args.stack, &uargs->stack);
++#if defined(CONFIG_CLONE_BACKWARDS3)
++	if (!result)
++		result = get_user(args.stack_size, &uargs->stack_size);
++#endif
++	if (!result && (flags & (CLONE_CHILD_CLEARTID | CLONE_CHILD_SETTID)))
++		result = get_user(args.child_tidptr, &uargs->child_tidptr);
++	if (!result && (flags & CLONE_PARENT_SETTID))
++		result = get_user(args.parent_tidptr, &uargs->parent_tidptr);
++	if (!result && (flags & CLONE_SETTLS))
++		result = get_user(args.tls, &uargs->tls);
++	if (result)
++		return -EFAULT;
++
++	result = _do_clone_common(flags, &args, true);
++
++	if (flags & CLONE_PIDFD) {
++		if (put_user(args.pidfd, &uargs->pidfd))
++			return -EFAULT;
++	}
++
++	return result;
+ }
+ #endif
+ 
+-- 
+2.21.0
 
-Jim Mattson (2):
-      kvm: x86: Include multiple indices with CPUID leaf 0x8000001d
-      kvm: x86: Include CPUID leaf 0x8000001e in kvm's supported CPUID
-
-Paolo Bonzini (10):
-      Merge tag 'kvm-s390-master-5.2-1' of git://git.kernel.org/.../kvms390/linux into HEAD
-      Merge tag 'kvmarm-fixes-for-5.2' of git://git.kernel.org/.../kvmarm/kvmarm into HEAD
-      KVM: nVMX: really fix the size checks on KVM_SET_NESTED_STATE
-      kvm: selftests: avoid type punning
-      kvm: fix compilation on s390
-      KVM: selftests: do not blindly clobber registers in guest asm
-      KVM: x86: do not spam dmesg with VMCS/VMCB dumps
-      KVM: x86/pmu: mask the result of rdpmc according to the width of the counters
-      KVM: x86/pmu: do not mask the value that is written to fixed PMUs
-      KVM: x86: fix return value for reserved EFER
-
-Peter Xu (1):
-      kvm: Check irqchip mode before assign irqfd
-
-Sean Christopherson (1):
-      KVM: nVMX: Clear nested_run_pending if setting nested state fails
-
-Stefan Raspl (1):
-      tools/kvm_stat: fix fields filter for child events
-
-Suthikulpanit, Suravee (1):
-      kvm: svm/avic: fix off-by-one in checking host APIC ID
-
-Thomas Huth (3):
-      KVM: selftests: Compile code with warnings enabled
-      KVM: selftests: Remove duplicated TEST_ASSERT in hyperv_cpuid.c
-      KVM: selftests: Wrap vcpu_nested_state_get/set functions with x86 guard
-
-Wanpeng Li (4):
-      KVM: Fix spinlock taken warning during host resume
-      KVM: nVMX: Fix using __this_cpu_read() in preemptible context
-      KVM: LAPIC: Fix lapic_timer_advance_ns parameter overflow
-      KVM: LAPIC: Expose per-vCPU timer_advance_ns to userspace
-
-Wei Yongjun (1):
-      KVM: s390: fix typo in parameter description
-
-Yi Wang (1):
-      kvm: vmx: Fix -Wmissing-prototypes warnings
-
- MAINTAINERS                                        |   2 -
- arch/arm/kvm/hyp/Makefile                          |   1 +
- arch/arm64/include/asm/kvm_host.h                  |   3 -
- arch/arm64/kvm/hyp/Makefile                        |   1 +
- arch/arm64/kvm/hyp/switch.c                        |  39 ++++++
- arch/arm64/kvm/pmu.c                               |  38 ------
- arch/s390/include/asm/kvm_host.h                   |   2 +-
- arch/s390/kvm/kvm-s390.c                           |  37 +++---
- arch/x86/kvm/cpuid.c                               |   8 +-
- arch/x86/kvm/debugfs.c                             |  18 +++
- arch/x86/kvm/irq.c                                 |   7 ++
- arch/x86/kvm/irq.h                                 |   1 +
- arch/x86/kvm/pmu.c                                 |  10 +-
- arch/x86/kvm/pmu.h                                 |   3 +-
- arch/x86/kvm/pmu_amd.c                             |   4 +-
- arch/x86/kvm/svm.c                                 |  15 ++-
- arch/x86/kvm/vmx/nested.c                          |  35 +++---
- arch/x86/kvm/vmx/pmu_intel.c                       |  26 ++--
- arch/x86/kvm/vmx/vmx.c                             |  26 ++--
- arch/x86/kvm/vmx/vmx.h                             |   1 +
- arch/x86/kvm/x86.c                                 |   4 +-
- tools/kvm/kvm_stat/kvm_stat                        |  16 ++-
- tools/kvm/kvm_stat/kvm_stat.txt                    |   2 +
- tools/testing/selftests/kvm/Makefile               |   4 +-
- tools/testing/selftests/kvm/dirty_log_test.c       |   8 +-
- tools/testing/selftests/kvm/include/kvm_util.h     |   2 +
- .../testing/selftests/kvm/lib/aarch64/processor.c  |  11 +-
- tools/testing/selftests/kvm/lib/kvm_util.c         |   5 +-
- tools/testing/selftests/kvm/lib/ucall.c            |   2 +-
- tools/testing/selftests/kvm/lib/x86_64/processor.c |   4 +-
- .../selftests/kvm/x86_64/cr4_cpuid_sync_test.c     |   1 +
- tools/testing/selftests/kvm/x86_64/evmcs_test.c    |   7 +-
- tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c  |   9 +-
- .../selftests/kvm/x86_64/platform_info_test.c      |   1 -
- tools/testing/selftests/kvm/x86_64/smm_test.c      |   3 +-
- tools/testing/selftests/kvm/x86_64/state_test.c    |   7 +-
- .../testing/selftests/kvm/x86_64/sync_regs_test.c  |  54 ++++----
- .../kvm/x86_64/vmx_close_while_nested_test.c       |   5 +-
- .../kvm/x86_64/vmx_set_nested_state_test.c         |   2 +-
- .../selftests/kvm/x86_64/vmx_tsc_adjust_test.c     |   5 +-
- virt/kvm/arm/aarch32.c                             | 121 ------------------
- virt/kvm/arm/hyp/aarch32.c                         | 136 +++++++++++++++++++++
- virt/kvm/eventfd.c                                 |   9 ++
- virt/kvm/kvm_main.c                                |   7 +-
- 44 files changed, 399 insertions(+), 303 deletions(-)
- create mode 100644 virt/kvm/arm/hyp/aarch32.c
