@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 659482ABD6
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 21:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E15922ABE7
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 21:20:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbfEZTSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 15:18:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58724 "EHLO mail.kernel.org"
+        id S1727729AbfEZTTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 15:19:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbfEZTSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727023AbfEZTSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 26 May 2019 15:18:48 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D05F2171F;
+        by mail.kernel.org (Postfix) with ESMTPSA id C122821721;
         Sun, 26 May 2019 19:18:47 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1hUyfO-0004Y8-Oo; Sun, 26 May 2019 15:18:46 -0400
-Message-Id: <20190526191846.657047582@goodmis.org>
+        id 1hUyfO-0004Yc-Te; Sun, 26 May 2019 15:18:46 -0400
+Message-Id: <20190526191846.811372856@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 26 May 2019 15:18:30 -0400
+Date:   Sun, 26 May 2019 15:18:31 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: [for-next][PATCH 02/16] x86/ftrace: Make enable parameter bool where applicable
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [for-next][PATCH 03/16] x86/uaccess: Allow access_ok() in irq context if pagefault_disabled
 References: <20190526191828.466305460@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -36,51 +36,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-The code modification functions have an "enable" parameter that is an "int"
-but used as a boolean. Switch its type to "bool" to remove the ambiguity
-that "int" causes.
+WARN_ON_IN_IRQ() assumes that the access_ok() and following
+user memory access can sleep. But this assumption is not
+always correct; when the pagefault is disabled, following
+memory access will just returns -EFAULT and never sleep.
 
-Link: http://lkml.kernel.org/r/e1429923d9eda92a3cf5ee9e33c7eacce539781d.1558115654.git.naveen.n.rao@linux.vnet.ibm.com
+Add pagefault_disabled() check in WARN_ON_ONCE() so that
+it can ignore the case we call it with disabling pagefault.
+For this purpose, this modified pagefault_disabled() as
+an inline function.
 
-Reported-by: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/155789868664.26965.7932665824135793317.stgit@devnote2
+
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/x86/kernel/ftrace.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/uaccess.h | 4 +++-
+ include/linux/uaccess.h        | 5 ++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-index 0927bb158ffc..ba37bcb7f92b 100644
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -370,7 +370,7 @@ static int add_brk_on_nop(struct dyn_ftrace *rec)
- 	return add_break(rec->ip, old);
- }
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index c82abd6e4ca3..9c4435307ff8 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -66,7 +66,9 @@ static inline bool __chk_range_not_ok(unsigned long addr, unsigned long size, un
+ })
  
--static int add_breakpoints(struct dyn_ftrace *rec, int enable)
-+static int add_breakpoints(struct dyn_ftrace *rec, bool enable)
- {
- 	unsigned long ftrace_addr;
- 	int ret;
-@@ -478,7 +478,7 @@ static int add_update_nop(struct dyn_ftrace *rec)
- 	return add_update_code(ip, new);
- }
+ #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+-# define WARN_ON_IN_IRQ()	WARN_ON_ONCE(!in_task())
++static inline bool pagefault_disabled(void);
++# define WARN_ON_IN_IRQ()	\
++	WARN_ON_ONCE(!in_task() && !pagefault_disabled())
+ #else
+ # define WARN_ON_IN_IRQ()
+ #endif
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index 2b70130af585..5a43ef7db492 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -203,7 +203,10 @@ static inline void pagefault_enable(void)
+ /*
+  * Is the pagefault handler disabled? If so, user access methods will not sleep.
+  */
+-#define pagefault_disabled() (current->pagefault_disabled != 0)
++static inline bool pagefault_disabled(void)
++{
++	return current->pagefault_disabled != 0;
++}
  
--static int add_update(struct dyn_ftrace *rec, int enable)
-+static int add_update(struct dyn_ftrace *rec, bool enable)
- {
- 	unsigned long ftrace_addr;
- 	int ret;
-@@ -524,7 +524,7 @@ static int finish_update_nop(struct dyn_ftrace *rec)
- 	return ftrace_write(ip, new, 1);
- }
- 
--static int finish_update(struct dyn_ftrace *rec, int enable)
-+static int finish_update(struct dyn_ftrace *rec, bool enable)
- {
- 	unsigned long ftrace_addr;
- 	int ret;
+ /*
+  * The pagefault handler is in general disabled by pagefault_disable() or
 -- 
 2.20.1
 
