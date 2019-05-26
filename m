@@ -2,190 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 965A12A921
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 11:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8F2E2A92D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 11:28:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbfEZJLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 05:11:37 -0400
-Received: from mail05-md.ns.itscom.net ([175.177.155.115]:38799 "EHLO
-        mail05-md.ns.itscom.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727546AbfEZJLg (ORCPT
+        id S1727697AbfEZJ2a convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 26 May 2019 05:28:30 -0400
+Received: from linux-libre.fsfla.org ([209.51.188.54]:49130 "EHLO
+        linux-libre.fsfla.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727639AbfEZJ23 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 05:11:36 -0400
-Received: from cmsa03-mds.s.noc.itscom.net (cmsa03-md.ns.itscom.net [175.177.0.93])
-        by mail05-md-outgoing.ns.itscom.net (Postfix) with ESMTP id 504A26585EF;
-        Sun, 26 May 2019 18:11:34 +0900 (JST)
-Received: from jromail.nowhere ([219.110.50.76])
-        by cmsa-md with ESMTP
-        id UpBmhgn4cFyw2UpBmhybPt; Sun, 26 May 2019 18:11:34 +0900
-Received: from jro by jrobl id 1hUpBm-0004et-1c ; Sun, 26 May 2019 18:11:34 +0900
-From:   "J. R. Okajima" <hooanon05g@gmail.com>
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Sun, 26 May 2019 05:28:29 -0400
+X-Greylist: delayed 466 seconds by postgrey-1.27 at vger.kernel.org; Sun, 26 May 2019 05:28:28 EDT
+Received: from free.home (home.lxoliva.fsfla.org [172.31.160.164])
+        by linux-libre.fsfla.org (8.15.2/8.15.2/Debian-3) with ESMTP id x4Q9JdKg031188;
+        Sun, 26 May 2019 09:19:41 GMT
+Received: from livre (livre.home [172.31.160.2])
+        by free.home (8.15.2/8.15.2) with ESMTP id x4Q9J058102102;
+        Sun, 26 May 2019 06:19:01 -0300
+From:   Alexandre Oliva <lxoliva@fsfla.org>
+To:     "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>, Tom Li <tomli@tomli.me>,
+        James Hogan <jhogan@kernel.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     kolyshkin@gmail.com
-Subject: [PATCH] concrete /proc/mounts
+Subject: Re: [RFC] On the Current Troubles of Mainlining Loongson Platform Drivers
+Organization: Free thinker, not speaking for FSF Latin America
+References: <20190208083038.GA1433@localhost.localdomain>
+        <orbm3i5xrn.fsf@lxoliva.fsfla.org>
+        <20190211125506.GA21280@localhost.localdomain>
+        <orimxq3q9j.fsf@lxoliva.fsfla.org>
+        <20190211230614.GB22242@darkstar.musicnaut.iki.fi>
+        <orva1jj9ht.fsf@lxoliva.fsfla.org>
+        <20190217235951.GA20700@darkstar.musicnaut.iki.fi>
+        <orpnrpj2rk.fsf@lxoliva.fsfla.org>
+        <alpine.LFD.2.21.1902180227090.15915@eddie.linux-mips.org>
+        <orlg1ryyo2.fsf@lxoliva.fsfla.org>
+        <alpine.LFD.2.21.1903071744560.7728@eddie.linux-mips.org>
+        <orwolaw5u1.fsf@lxoliva.fsfla.org>
+        <alpine.LFD.2.21.1903082347330.31648@eddie.linux-mips.org>
+Date:   Sun, 26 May 2019 06:19:00 -0300
+In-Reply-To: <alpine.LFD.2.21.1903082347330.31648@eddie.linux-mips.org>
+        (Maciej W. Rozycki's message of "Fri, 8 Mar 2019 23:56:03 +0000
+        (GMT)")
+Message-ID: <or7ead4lq3.fsf@lxoliva.fsfla.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17909.1558861894.1@jrobl>
-Date:   Sun, 26 May 2019 18:11:34 +0900
-Message-ID: <17910.1558861894@jrobl>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.84
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 1e83f8634c6efe7dd4e6036ee202ca10bdbca0b3
-Author: J. R. Okajima <hooanon05g@gmail.com>
-Date:   Sat May 25 18:35:13 2019 +0900
+On Mar  8, 2019, "Maciej W. Rozycki" <macro@linux-mips.org> wrote:
 
-    concrete /proc/mounts
-    
-    When the size of /proc/mounts exceeds PAGE_SIZE, seq_read() has to
-    release namespace_sem via mounts_op.m_stop().  It means if someone else
-    issues mount(2) or umount(2) and the mounts list got changed, then the
-    continuous getmntent(3) calls show the incomplete mounts list and some
-    entries may not appear in it.
-    
-    This patch generates the full mounts list when mounts_op.m_start() is
-    called, and keep it in the seq_file buffer until the file is closed.
-    The size of the buffer increases if necessary.  Other operations m_next,
-    m_stop, m_show become meaningless, but still necessary for the seq_file
-    manner.
-    
-    I don't think the size of the buffer matters because many /proc entries
-    already keep the similar PAGE_SIZE buffer.  Increasing /proc/mounts
-    buffer is to keep the correctness of the mount list.
-    
-    Reported-by: Kirill Kolyshkin <kolyshkin@gmail.com>
-    See-also: https://github.com/kolyshkin/procfs-test
-    Signed-off-by: J. R. Okajima <hooanon05g@gmail.com>
+>  Anyway I meant: does `war_io_reorder_wmb' expand to `wmb' on your system?
 
-diff --git a/fs/mount.h b/fs/mount.h
-index f39bc9da4d73..1ffd97696ca9 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -131,9 +131,7 @@ struct proc_mounts {
- 	struct mnt_namespace *ns;
- 	struct path root;
- 	int (*show)(struct seq_file *, struct vfsmount *);
--	void *cached_mount;
--	u64 cached_event;
--	loff_t cached_index;
-+	bool filled;
- };
+No, it expands to `barrier' on the yeeloong:
+
+CONFIG_CPU_LOONGSON2F=y
+CONFIG_CPU_LOONGSON2F_WORKAROUNDS=y
+CONFIG_CPU_LOONGSON2=y
+CONFIG_SYS_HAS_CPU_LOONGSON2F=y
+
+
+I've finally managed to do the bisection on object files I mentioned I'd
+do to try to pinpoint where __BUILT_IOPORT_PFX with barrier rather than
+!barrier regressed.
+
+I found that forcing barrier off for drivers/irqchip/irq-i8259 was
+enough to avoid the problem.
+
+(I further narrowed it down to byte I/O, which is no surprise
+considering irq-i8259 doesn't seem to use any non-byte I/O.)
+
+Then I narrowed it down to output only.
+
+A Loongson2F kernel built with the patch below works at normal speed.
+I've also keyed the -1 barrier selector to compiling the irq-i8259
+driver only, and that got me a functional kernel, but I'm not confident
+that the same issues that affect the interrupt controller, preventing it
+from initializing correctly, is not also affecting other drivers, just
+in less visible ways, so the patch conservatively reverts to the older
+barriers for all I/O (i.e., non-mem) out primitives.
+
+I've tested this on a yeeloong on top of v5.1.5.
+
+I'm tempted to start using this patch in my Freeloong builds of GNU
+Linux-libre for gnewsense/yeeloong of 5.0 and 5.1 stable releases, to
+try to make them usable.  Can anyone suggest any reason why it might be
+risky to do so, moving on as much as I could to the new barriers,
+sticking to the 4.19-one only for non-mem out?  As in, could mixing the
+barriers be riskier than reverting to the 4.19 barriers everywhere?
+
+Thanks in advance for any insights and recommendations,
+
+
+diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
+index 845fbbc7a2e3..04be4758d4ff 100644
+--- a/arch/mips/include/asm/io.h
++++ b/arch/mips/include/asm/io.h
+@@ -416,7 +416,7 @@ static inline void pfx##out##bwlq##p(type val, unsigned long port)	\
+ 	volatile type *__addr;						\
+ 	type __val;							\
+ 									\
+-	if (barrier)							\
++	if (barrier > 0)						\
+ 		iobarrier_rw();						\
+ 	else								\
+ 		war_io_reorder_wmb();					\
+@@ -467,13 +467,22 @@ BUILDIO_MEM(w, u16)
+ BUILDIO_MEM(l, u32)
+ BUILDIO_MEM(q, u64)
  
- extern const struct seq_operations mounts_op;
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d18deb4c410b..2984a48cd40f 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1298,46 +1298,77 @@ struct vfsmount *mnt_clone_internal(const struct path *path)
- 
- #ifdef CONFIG_PROC_FS
- /* iterator; we want it to have access to namespace_sem, thus here... */
--static void *m_start(struct seq_file *m, loff_t *pos)
-+static int m_start_fill(struct seq_file *m)
- {
-+	int err;
-+	size_t last_count;
-+	char *buf;
-+	struct mount *r;
- 	struct proc_mounts *p = m->private;
- 
- 	down_read(&namespace_sem);
--	if (p->cached_event == p->ns->event) {
--		void *v = p->cached_mount;
--		if (*pos == p->cached_index)
--			return v;
--		if (*pos == p->cached_index + 1) {
--			v = seq_list_next(v, &p->ns->list, &p->cached_index);
--			return p->cached_mount = v;
-+	list_for_each_entry(r, &p->ns->list, mnt_list) {
-+		last_count = m->count;
-+		err = p->show(m, &r->mnt);
-+		if (unlikely(err < 0))
-+			break;
-+		if (!seq_has_overflowed(m))
-+			continue;
+-#define __BUILD_IOPORT_PFX(bus, bwlq, type)				\
+-	__BUILD_IOPORT_SINGLE(bus, bwlq, type, 1, 0,)			\
+-	__BUILD_IOPORT_SINGLE(bus, bwlq, type, 1, 0, _p)
++#define __BUILD_IOPORT_PFX(bus, bwlq, type, barrier)			\
++	__BUILD_IOPORT_SINGLE(bus, bwlq, type, barrier, 0,)		\
++	__BUILD_IOPORT_SINGLE(bus, bwlq, type, barrier, 0, _p)
 +
-+		/* expand the buffer */
-+		buf = kvmalloc(m->size + PAGE_SIZE, GFP_KERNEL);
-+		if (unlikely(!buf)) {
-+			err = -ENOMEM;
-+			break;
-+		}
-+		memcpy(buf, m->buf, last_count);
-+		kvfree(m->buf);
-+		m->buf = buf;
-+		m->size += PAGE_SIZE;
-+		m->count = last_count;
-+
-+		err = p->show(m, &r->mnt);
-+		if (unlikely(err < 0))
-+			break;
-+		else if (unlikely(seq_has_overflowed(m))) {
-+			err = -EFBIG;
-+			break;
- 		}
- 	}
-+	up_read(&namespace_sem);
++/* Choose the kind of barrier used for out in __BUILD_IOPORT_SINGLE in
++   non-__mem_ variants.  On Loongson2F, irq-i8259 fails to initialize
++   when this is defined to 1.  */
++#if defined(CONFIG_CPU_LOONGSON2)
++#define USE_IO_BARRIER_FOR_NON_MEM_OUT -1
++#else
++#define USE_IO_BARRIER_FOR_NON_MEM_OUT 1
++#endif
  
--	p->cached_event = p->ns->event;
--	p->cached_mount = seq_list_start(&p->ns->list, *pos);
--	p->cached_index = *pos;
--	return p->cached_mount;
-+	if (!err)
-+		p->filled = true;
-+	return err;
- }
+ #define BUILDIO_IOPORT(bwlq, type)					\
+-	__BUILD_IOPORT_PFX(, bwlq, type)				\
+-	__BUILD_IOPORT_PFX(__mem_, bwlq, type)
++	__BUILD_IOPORT_PFX(, bwlq, type, USE_IO_BARRIER_FOR_NON_MEM_OUT) \
++	__BUILD_IOPORT_PFX(__mem_, bwlq, type, 2)
  
--static void *m_next(struct seq_file *m, void *v, loff_t *pos)
-+static void *m_start(struct seq_file *m, loff_t *pos)
- {
-+	int err;
- 	struct proc_mounts *p = m->private;
- 
--	p->cached_mount = seq_list_next(v, &p->ns->list, pos);
--	p->cached_index = *pos;
--	return p->cached_mount;
-+	if (!p->filled) {
-+		err = m_start_fill(m);
-+		if (unlikely(err))
-+			return ERR_PTR(err);
-+	}
-+
-+	return m_start; /* any valid pointer */
-+}
-+
-+static void *m_next(struct seq_file *m, void *v, loff_t *pos)
-+{
-+	return NULL;
- }
- 
- static void m_stop(struct seq_file *m, void *v)
- {
--	up_read(&namespace_sem);
-+	/* empty */
- }
- 
- static int m_show(struct seq_file *m, void *v)
- {
--	struct proc_mounts *p = m->private;
--	struct mount *r = list_entry(v, struct mount, mnt_list);
--	return p->show(m, &r->mnt);
-+	return 0;
- }
- 
- const struct seq_operations mounts_op = {
-diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-index 7626ee11b06c..f8aee5cca1b1 100644
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -279,7 +279,6 @@ static int mounts_open_common(struct inode *inode, struct file *file,
- 	p->ns = ns;
- 	p->root = root;
- 	p->show = show;
--	p->cached_event = ~0ULL;
- 
- 	return 0;
- 
+ BUILDIO_IOPORT(b, u8)
+ BUILDIO_IOPORT(w, u16)
+
+
+-- 
+Alexandre Oliva, freedom fighter  he/him   https://FSFLA.org/blogs/lxo
+Be the change, be Free!                 FSF Latin America board member
+GNU Toolchain Engineer                        Free Software Evangelist
+Hay que enGNUrecerse, pero sin perder la terGNUra jamás - Che GNUevara
