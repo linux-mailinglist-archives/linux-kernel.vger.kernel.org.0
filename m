@@ -2,84 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6BDE2AB1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 18:20:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E767B2AB23
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 18:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbfEZQUw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 12:20:52 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39463 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfEZQUw (ORCPT
+        id S1727948AbfEZQ0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 12:26:37 -0400
+Received: from sonic309-54.consmr.mail.ne1.yahoo.com ([66.163.184.180]:36641
+        "EHLO sonic309-54.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727910AbfEZQ0h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 12:20:52 -0400
-Received: by mail-lf1-f68.google.com with SMTP id f1so10349915lfl.6;
-        Sun, 26 May 2019 09:20:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=01nMFHopGBCZI/oY5AFsKMqNsMt7+AjmjgP0ZjkgZD0=;
-        b=H9kOov7CMbdB+pTxe0jciE/0X9oGCvFwZWDK1QndljD3nCAkXWhPqQrhRAkQi59WA+
-         d1eMVPPgA648vZfajLaltDW4PpoUB4pt83MyTL8K46y+UiuRDyXY5HNuTOJif87Lqecv
-         kL+pn979wtoM5zsiZjVxsKyorZ5fDMvXc5EYdLwfb29E7UMtLbbi6SY6+B9EjVK9V9N9
-         jppYbzw6fnq8W4DKmTORjKAQGOTgjdVW0TITDNwUDfmzZIQ2GHdOG9eZLBAnZ2U1JIpK
-         oZea98ME0YjW6/g1Ch8EirFC6vsAF2YeXFVxSa5XzAQMHPBzbwOOEGdLWTiIgXY9fDAt
-         gF9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=01nMFHopGBCZI/oY5AFsKMqNsMt7+AjmjgP0ZjkgZD0=;
-        b=d+AT28OZkvToROcSkbKH5jDUExZ2jL1zqXBWcbMzoaO5CnNKnVwB4Bdnv/W9KjTRCj
-         LtlVH9zLz1zZpsECumMdLbQtQPydUVjZ1DJSGiiGjbqKCz316yY1s1DHHpGls2UBrZKr
-         70XoB052Ee96vNxu3VhyGszjCIu9cHaG1T+l0kV831yzStmRS1azl4oaS7xwX9fesJNN
-         kC4oWA5SZ98+J6gUY78k+Dz51z5EN01n2QMNAv2DinP0MhSyYnigXOH/kESj5qemSyVP
-         OMNu3YFRAOLJx1txpji9nm1pU2hnV0lfrfprdNodnK0C/qEtUGW1r8vKtb2w83gi6h9R
-         VL8Q==
-X-Gm-Message-State: APjAAAWE8sW+PDz2rv9j219t4UDEqbUKp3r4ucW1/rFp753PEqoinbW2
-        +HLac4dosE5i5QcANESRCNwOqGu5BeI41VXG1Pw=
-X-Google-Smtp-Source: APXvYqwxMEk0IUeAy9UBTsg3h8S+c0X1iydUjhxKYRUIOzNVGYIXzMI1MwgnfY73XGd4ekjkgDqWVxxMzKH40Taah+c=
-X-Received: by 2002:ac2:4213:: with SMTP id y19mr4505084lfh.66.1558887650127;
- Sun, 26 May 2019 09:20:50 -0700 (PDT)
+        Sun, 26 May 2019 12:26:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1558887996; bh=QFQXNGn0FJohU3l97Cng3z90qjIEAqAKmbCVyMu/adQ=; h=Date:From:Reply-To:Subject:References:From:Subject; b=dPxX9K6wyusdiZ8b2EHYQcw9LTS5EbOoGKrleTUVn6wIYIssoDK1CPoo5SMRY95KjPTftpMPZFQtjktOcUpX1Dq87UpyE8L9HuXFYa7imHNDp9Pqbahus7jFFqiI4DiKNb8se8u6nx70t7KfUHUiB8qkdb0ecscuOOndLuLamfizBlsWTbcEzyWHmbrBlCULogrfx8F3AbvCZ7L6Jryw/3sJA7rI7ur6RNIxUXjzYiNLnxFGs+CuTI6wMRVnBZpZ0DWOrUX5pyMYl7HTagQpNGW2G9D97DB3eKKLhwVqHnvEiFEwK3pF45u/dd6UdNbZBFe60L0KyRCS32dOC6lUyA==
+X-YMail-OSG: _tFzpswVM1kH2pRlNm2GGCXuZ6Zt_16HE8WgSYbuF7er4CQdmxFy6VQHfSbKaWR
+ ZGVyTxWcPHk.pKuzfz39mFeVXfkj6WzojFmF0Pmo9vmH9c_oqtXbzt8B5L8w5LqlgSQRIr0FhP1f
+ uCDUB252pzehnSHNYQd3_HFt3vaRWO8Iz5P0Bl6Lkkqts4tyH13ldHqEelaMsMK6gsOwq9t7vpVH
+ QZlwJ_SHqsbDlGq6rC8jJxdRjC1sK6_e_xu715Fcyk0dQv_scyKRpyliMvbZdd_Oyw5roM9QJbHd
+ rBmYwF54IUCr2jRYVxMeA5ERj71edEbIhkiIhQDh1OxKFHm6Pp478L9qHaE45PqASKptdp0k7s3p
+ z.xnLlXRWNTTWRRs73r2PXygoQ4vZtrEOZQ7pAY.yUjeFOidfZaHAeTAJFs8Z8EdmTk3qMRhm_Be
+ EPWgtf3of4VDXQh3yQm3Aqc8uR33WSWRGPmz8_DFWoievhoQi_m6NFQkA9lHmh5wLSu26lpyVYEz
+ BL_pnjBvF__CGXBP3ZBAtD.dGE5zy22px54ZrbYP5q.DO0cNfwVGvMsfcPZoxm1_nN7d9rA95kDB
+ NNV2LkfwKl3EuhTBrLdz40zNpBX_pbNELQu2YT0wQOErvsp8yoehD5U3tGkzoFgkC2UWDzAUeRmR
+ QkAU4taDfV8YJSFZpnC3aJGUCJ6nDuG9.seMS7.ww22fuO_n0JXY4uuqcnJOnryyL3kK_F0n2vV1
+ kOb6AFMm5s5tCkJNKxl3Bo3xsdYgOhmr62OsjcbiCvgqct5XMWFU7NheHx1I1XS9R4UyLk5qPO5v
+ UN2fRFgsMdb.BUlb3eo2qyEIFmfmNzy9eg86je2rqmiZijgPLDjvHE4KRac4cgRR1sfcOKYUkYyx
+ YedDv_qMmk1Wok2avqJWUFvCKpEyg08QW1LJ8pz5iuWWSm_cXX2PpgslJF1licBgbD9aPsrbWoVU
+ xjib53SAXGVVhxdMc6kq19Ni24g9kU.VjWTcHbLJh1DkM80dr.mbk4KrP81o6c._NyF8cUBiR6qe
+ kv_oiOpbggT98SI_UegzUPf6LGtdaNBrkcgbjkape4h_O8vMx4Ry6VzaxegPfTHHIq9PXQv12w1X
+ 9MUxnDvJPe2X3u65RZWMUJ4HtHESTX2mXhQNpBKrNF6PinOP.twh9JT1sEe5C412pW7gjA.VWGxk
+ 7SXQJ9tsPRVyvxafwZKEposar6jn7bbbO9LkSN5cC_H90yewCB1b1gXDBXlcRWM8a3S1AV28-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Sun, 26 May 2019 16:26:36 +0000
+Date:   Sun, 26 May 2019 16:24:34 +0000 (UTC)
+From:   Major Dennis Hornbeck <cd68@labourza.online>
+Reply-To: Major Dennis Hornbeck <hornbeckmajordennis637@gmail.com>
+Message-ID: <1055307886.7818108.1558887874541@mail.yahoo.com>
+Subject: 
 MIME-Version: 1.0
-References: <20190524234933.5133-1-joel@joelfernandes.org> <20190524234933.5133-5-joel@joelfernandes.org>
-In-Reply-To: <20190524234933.5133-5-joel@joelfernandes.org>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Sun, 26 May 2019 18:20:39 +0200
-Message-ID: <CANiq72noLXGXo7iarC1vCYX3X5L4fXq1DASK9gMtD_25-VEuHA@mail.gmail.com>
-Subject: Re: [PATCH RFC 4/5] rculist: Remove hlist_for_each_entry_rcu_notrace
- since no users
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>, kvm-ppc@vger.kernel.org,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>, rcu@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <1055307886.7818108.1558887874541.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.13634 YahooMailBasic Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 25, 2019 at 1:50 AM Joel Fernandes (Google)
-<joel@joelfernandes.org> wrote:
->
-> The series removes all users of the API and with this patch, the API
-> itself.
->
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  .clang-format           |  1 -
+I am in the military unit here in Afghanistan, we have some amount of funds that we want to move out of the country. My partners and I need a good partner someone we can trust. It is risk free and legal. Reply to this email: hornbeckmajordennis637@gmail.com
 
-Ack for clang-format, and thanks for removing it there too! :-)
-
-Cheers,
-Miguel
+Regards,
+Major Dennis Hornbeck.
