@@ -2,93 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A33E42AA98
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 18:06:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 077972AB19
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 18:19:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbfEZQGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 12:06:13 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33448 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfEZQGN (ORCPT
+        id S1727944AbfEZQTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 12:19:43 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41004 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbfEZQTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 12:06:13 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g21so6079765plq.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 09:06:13 -0700 (PDT)
+        Sun, 26 May 2019 12:19:43 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q17so3277482pfq.8;
+        Sun, 26 May 2019 09:19:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=jwR1lvrNF2AItUaoIXP2wSOWe9t1QX2CvMMmPBX6eWA=;
-        b=csv+uwl8wQAeGK7nnISSbnHejM9zbg+YO0ZVBLhi1VoBadodQEAORGD+ptdZJdh3mR
-         6DOL1MSUI+4J+Sw5xEkUw3UWdH5AkgU6eQIiquaBRbiIo7nY2PcXodsYFW6JfHee+YGc
-         UE/JC+p+sXh9hw4vSgM7FYiY7/0adDs967I2PoZh9GUZS148REiypraHWydI1qgP4IIi
-         mpxzBxsJpqWs8yILaEXIbmCh8scx3ZxT3Dquidue3/s6XTg7rx/6Pv35p0nQ4StGE6cY
-         X/lowZobfMr0STL42yuyPo/Eq/3eQCQxPxrROkN50kAaJlXpdAnxKwf4smT6CKDuwb31
-         4O9A==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lJ3OpNMCdALqETy0qV5AcNhUPuYZT+J/DUPQVFJRLrg=;
+        b=Yzj1MZMxRBURL4/0AbkPkUdnFTzelszWr8GQM+ybm1VxPKjvHkTwlQ3sj3osgf9jzp
+         qr1J7/0u1N/fo+clTbcqoWLfTusD4q7Zn6uRZEfiLyyGpMpDFQIwAkLxHjbrBz2fnzdu
+         HiHXRHubIGaQuonnipHj42EMFBtWYXAMDIYl3PTgT2BwqJDBJFGySd45V76liEBBcOai
+         /7NFZb5Z55a+UR9PGHQ16pyp5df/QeB+W0QwtmvbPYnFDFJJ2Mb3rGIu70coSyu0Wk6H
+         3r/5Swfuswrd2XU6O6dGaT7hdjkb/qcqz422h7mPxHeTX37i0mlnz8dbM22jB5xImJzE
+         UYzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jwR1lvrNF2AItUaoIXP2wSOWe9t1QX2CvMMmPBX6eWA=;
-        b=qz6b4qXFC/HaRA21iuGNGyjj7WjchhbcICzIsYXvg4hXneQRcI3kEvo11Tz+OCCP6n
-         6wqyWYKpBe24LF1eiYtlP2gXnRURhMPF0j7yHvHHFs/hcw2GzdxNBSHjhqs8b+lxhMf0
-         o2D3FLXHnMTqZ8IEOsGrXg9e4ZTCIauMKb8hDsa2Prh/TRP9zFKFO9zduhSmSpT/BloF
-         KBupgxmLZDPAHzl082PELolZKcweaHCi6wcFU6nDUGwo2wQlEf0xxoUejxNrEYfsW8Ag
-         /mAoWNlwLC/XkhEIwaNaDTFByRsBzzHsjEyFwH99+spfwb1N4M4UlJKKlceUDX/HjOgS
-         noYA==
-X-Gm-Message-State: APjAAAU72XpUMfK7ozZWqkK1VYT+M3Z1yaqD84E+tzPrc0+gqwk0Vvyt
-        jDdulsUIgYVxSJsDRJ8yuB0=
-X-Google-Smtp-Source: APXvYqy6dpm9qmGQs6V4REc11e8QQz7Hqjq3wNCXmHeuo1x/HgyeFG7yngUroeYo1Dw356070z7GNA==
-X-Received: by 2002:a17:902:bc8a:: with SMTP id bb10mr22710797plb.310.1558886772874;
-        Sun, 26 May 2019 09:06:12 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC.domain.name ([106.51.23.119])
-        by smtp.gmail.com with ESMTPSA id o2sm12859036pgq.50.2019.05.26.09.06.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 26 May 2019 09:06:12 -0700 (PDT)
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     miguel.ojeda.sandonis@gmail.com
-Cc:     linux-kernel@vger.kernel.org, willy@infradead.org,
-        robin@protonic.nl, Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH 2/2] auxdisplay/ht16k33.c: Convert to use vm_map_pages_zero()
-Date:   Sun, 26 May 2019 21:41:10 +0530
-Message-Id: <1558887070-4076-1-git-send-email-jrdr.linux@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lJ3OpNMCdALqETy0qV5AcNhUPuYZT+J/DUPQVFJRLrg=;
+        b=KCZ4s3o7muq+Ql/jwpFuAwqR4g4gcyAQXvbGPJqYGRUySDpqQihzsHViJF4ZfecsNg
+         etDF7UWUyaWiVgDivMgo143hUqsYSGzIkMEYC+eBjVb+Q9jjgPuhZluHhPvW7vAu2syL
+         xhmuojWrkMsyO1us8hvZyBI9j1051Wn5rYqcChPSOvQXiELamBvfokcD5+Chx2/0d0Xg
+         idvVIASVtNqxFzcCcb0TQcOrNU+Rmr1REqKXVWvu3GBh2Bq9Ou9ZLaaCCnXOfX1Ov7NH
+         hXu6v/BjeaBziyG4afmlN213vSRoyH76UnXxwEMF0JTfTbeJDvKvl05T7uMlhYXsFs+t
+         4OlA==
+X-Gm-Message-State: APjAAAUOhXajK+CSpDhK4SfkbOG0Jy8p4Oc17qXyMU51rAf0U5BF/GUW
+        N8uTh0rgSru2kOnwGCj2HAXrE60I
+X-Google-Smtp-Source: APXvYqyYEON9Xr5P99XYoWbOI3hC46I2FaQxJzEmoSFufFpmE1Bkb1AymXxw3Q6LDrfc1BAZKUOZOw==
+X-Received: by 2002:a63:d901:: with SMTP id r1mr36281064pgg.271.1558887581720;
+        Sun, 26 May 2019 09:19:41 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id q142sm11649009pfc.27.2019.05.26.09.19.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 26 May 2019 09:19:40 -0700 (PDT)
+Date:   Sun, 26 May 2019 09:19:39 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     cheiny@synaptics.com, nick@shmanahar.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH -next] Input: synaptics-rmi4 - Remove set but not used
+ variable 'sensor_flags'
+Message-ID: <20190526161939.GA256861@dtor-ws>
+References: <20190525141119.11852-1-yuehaibing@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190525141119.11852-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While using mmap, the incorrect values of length and vm_pgoff are
-ignored and this driver goes ahead with mapping fbdev.buffer
-to user vma.
+On Sat, May 25, 2019 at 10:11:19PM +0800, YueHaibing wrote:
+> Fixes gcc '-Wunused-but-set-variable' warning:
+> 
+> drivers/input/rmi4/rmi_f12.c: In function rmi_f12_read_sensor_tuning:
+> drivers/input/rmi4/rmi_f12.c:76:6: warning: variable sensor_flags set but not used [-Wunused-but-set-variable]
+> 
+> It's not used since introduction in
+> commit b43d2c1e9353 ("Input: synaptics-rmi4 - add support for F12")
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Convert vm_insert_pages() to use vm_map_pages_zero(). We could later
-"fix" these drivers to behave according to the normal vm_pgoff
-offsetting simply by removing the _zero suffix on the function name
-and if that causes regressions, it gives us an easy way to revert.
+Applied, thank you.
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Acked-by: Robin van der Gracht <robin@protonic.nl>
----
-v2: Fixed minor typo. Acked-by tag added.
+> ---
+>  drivers/input/rmi4/rmi_f12.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/input/rmi4/rmi_f12.c b/drivers/input/rmi4/rmi_f12.c
+> index 5c7f48915779..72b5498e1a9f 100644
+> --- a/drivers/input/rmi4/rmi_f12.c
+> +++ b/drivers/input/rmi4/rmi_f12.c
+> @@ -73,7 +73,6 @@ static int rmi_f12_read_sensor_tuning(struct f12_data *f12)
+>  	int pitch_y = 0;
+>  	int rx_receivers = 0;
+>  	int tx_receivers = 0;
+> -	int sensor_flags = 0;
+>  
+>  	item = rmi_get_register_desc_item(&f12->control_reg_desc, 8);
+>  	if (!item) {
+> @@ -129,10 +128,8 @@ static int rmi_f12_read_sensor_tuning(struct f12_data *f12)
+>  		offset += 2;
+>  	}
+>  
+> -	if (rmi_register_desc_has_subpacket(item, 4)) {
+> -		sensor_flags = buf[offset];
+> +	if (rmi_register_desc_has_subpacket(item, 4))
+>  		offset += 1;
+> -	}
+>  
+>  	sensor->x_mm = (pitch_x * rx_receivers) >> 12;
+>  	sensor->y_mm = (pitch_y * tx_receivers) >> 12;
+> -- 
+> 2.17.1
+> 
+> 
 
- drivers/auxdisplay/ht16k33.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
-index 21393ec..9c0bb77 100644
---- a/drivers/auxdisplay/ht16k33.c
-+++ b/drivers/auxdisplay/ht16k33.c
-@@ -223,9 +223,9 @@ static int ht16k33_bl_check_fb(struct backlight_device *bl, struct fb_info *fi)
- static int ht16k33_mmap(struct fb_info *info, struct vm_area_struct *vma)
- {
- 	struct ht16k33_priv *priv = info->par;
-+	struct page *pages = virt_to_page(priv->fbdev.buffer);
- 
--	return vm_insert_page(vma, vma->vm_start,
--			      virt_to_page(priv->fbdev.buffer));
-+	return vm_map_pages_zero(vma, &pages, 1);
- }
- 
- static struct fb_ops ht16k33_fb_ops = {
 -- 
-1.9.1
-
+Dmitry
