@@ -2,49 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F07222ABC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 21:06:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32CED2ABC6
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 21:09:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfEZTGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 15:06:41 -0400
-Received: from mail02-md.ns.itscom.net ([175.177.155.112]:43454 "EHLO
-        mail02-md.ns.itscom.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbfEZTGk (ORCPT
+        id S1727107AbfEZTJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 15:09:12 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:39312 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbfEZTJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 15:06:40 -0400
-Received: from cmsa02-mds.s.noc.itscom.net (cmsa02-md.ns.itscom.net [175.177.0.92])
-        by mail02-md-outgoing.ns.itscom.net (Postfix) with ESMTP id 4F32DB0068B;
-        Mon, 27 May 2019 04:06:39 +0900 (JST)
-Received: from jromail.nowhere ([219.110.50.76])
-        by cmsa-md with ESMTP
-        id UyTfhOMNFRqYFUyTfhth0V; Mon, 27 May 2019 04:06:39 +0900
-Received: from jro by jrobl id 1hUyTe-0003tD-JL ; Mon, 27 May 2019 04:06:38 +0900
-From:   "J. R. Okajima" <hooanon05g@gmail.com>
-Subject: Re: [PATCH] concrete /proc/mounts
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kolyshkin@gmail.com
-In-Reply-To: <20190526120719.GQ17978@ZenIV.linux.org.uk>
-References: <17910.1558861894@jrobl> <20190526120719.GQ17978@ZenIV.linux.org.uk>
+        Sun, 26 May 2019 15:09:11 -0400
+Received: by mail-yw1-f65.google.com with SMTP id w21so5811521ywd.6;
+        Sun, 26 May 2019 12:09:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=afnFp8Qj6zuCgzLE0dd47oL4y3p86FHahzySe9xFq38=;
+        b=P225AtmgLXa4AQY4cLPTI/vGK0XNkInPnL3TFJ67fgeH0aM7EbwXlurnLETHJqJwIh
+         fZ9Gsxb9n8ok3a7vfE7NH6onYvFkrBRxB1DwC2NKEkqBC+k25HTZIy4M2EXfc9gk5akm
+         tz84YkSiT4qKaiZhDM1DHw448nfsm6oak5ZuC7DmpLyDNabMOXdhhn+gj4HvAMH9HB1U
+         Z6qcoTwwIwjws0tJAp0I7zCPBTkXcBBSoTklqbJzbhc9oNfllaGHm4MMPQsgY/M0jND/
+         ECBOOGlgt9/FKvSsRPiADIXyFnhQD3IQ6YuPzbgM5MtDOOxqNOWP61PGGAPKNH6YxORJ
+         oYEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=afnFp8Qj6zuCgzLE0dd47oL4y3p86FHahzySe9xFq38=;
+        b=twwA7htDESyg4cJyJ33blNe4y/E1S0A/yodRtnoB/8RrscCbkL5fI2TGEt++cqBg9+
+         BWsGS3vaZB4CxiFImxsMaLZMVW78eLUF7+T6gm8oxXqDe71HmcvBq91oV934JkBHaKNs
+         1jT29nW0iEDVlmAPThOKdg1I+WiwqYBf9cA/Aebj3+taZReNO5RqDJNO7vHQGYmxJtgG
+         foAA84hac1WuGDiXtWoRAw3A6gRY6afScrwVt0GhRhMBC1zYm69QosOMbmIci2ERuCaG
+         4UCgQZEjuc4zUOW2SCMj0fclZ1DIIMXT5H0QkbYIB5lFExccrvxV6UoCJHLOijwHsVA2
+         RzQg==
+X-Gm-Message-State: APjAAAUaOuQ6zZs9IPeQh6kP2nTdYRbuR5e1/Pzs3umQlErSG/AUWZmq
+        g7IxmZDDu2+WfECF7KKZWmJLfvGg59oQ25bU8fo=
+X-Google-Smtp-Source: APXvYqzuO7uis+Ag6d0Dm4SMdjW5wXGBTZf9kN4/BqjULwWAZx1N7dZqSDycF4Wb4W9vS79yjtRH9ARh5G62qavqBn4=
+X-Received: by 2002:a81:cf03:: with SMTP id u3mr23678220ywi.306.1558897750823;
+ Sun, 26 May 2019 12:09:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <14953.1558897598.1@jrobl>
-Date:   Mon, 27 May 2019 04:06:38 +0900
-Message-ID: <14954.1558897598@jrobl>
+References: <20190525180923.6105-1-peron.clem@gmail.com> <20190525180923.6105-2-peron.clem@gmail.com>
+ <20190526190217.257pxcc5s7ykhfor@flea>
+In-Reply-To: <20190526190217.257pxcc5s7ykhfor@flea>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Sun, 26 May 2019 21:08:59 +0200
+Message-ID: <CAJiuCcdpaw8jLMFUAAqvHr82+UZ4Lf1rrVvB1ksYQ1xcQqTDAg@mail.gmail.com>
+Subject: Re: [PATCH 01/10] dt-bindings: media: A31 compatible
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Al Viro:
-> Translation: let's generate the entire contents on the first read() and keep
-> it until the sucker's closed; that way userland wont' see anything changing
-> under it.  Oh, wait...
+Hi Maxime,
+
+On Sun, 26 May 2019 at 21:02, Maxime Ripard <maxime.ripard@bootlin.com> wro=
+te:
 >
-> NAK.
+> On Sat, May 25, 2019 at 08:09:14PM +0200, Cl=C3=A9ment P=C3=A9ron wrote:
+> > Since Allwiner A31 all the SoC have a differente memory mapping.
+> >
+> > Introduce this bindings to make a difference since this generation.
+> >
+> > Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+>
+> Mentionning what those differences are would be great
 
-Do you mean that the change can hide other mountpoints which are
-kept unchanged before/after read()?
+Will do,
+Thanks for the review,
+Cl=C3=A9ment
 
-
-J. R. Okajima
+>
+> Maxime
+>
+> --
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com, "Missing dma-requests, using %u.\n",
+> > -                      DMA_CHAN_MAX_DRQ_A31);
+> > -             sdc->max_request =3D DMA_CHAN_MAX_DRQ_A31;
+> > +                      DMA_CHAN_MA
