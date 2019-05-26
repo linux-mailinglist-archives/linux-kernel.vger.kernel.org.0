@@ -2,132 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 576CB2A945
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 12:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9DCD2A94A
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 12:35:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfEZK11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 06:27:27 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43722 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727708AbfEZK11 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 06:27:27 -0400
-Received: by mail-ed1-f66.google.com with SMTP id w33so18459960edb.10
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 03:27:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=S+oB2jDYFfiPbDeKt5OpxAstfWpdkA4qca9bIIMmsGE=;
-        b=JgYNuUv018IPyJcRHgDtebanYdWMdoX7TqTb7KeEsIsMOxpJixhxGi6+cpO3GL29gJ
-         we5uzd16MxfMbYjX3M4Wou3EISRCbu9zIFwFdtLO/dIbtOYyq1OxoqHh3Ckp1Z6U0np7
-         E0axT2YppNMrxQONXAl62AQcpz4+MMSI4GeeTIfW0Mb6YhtGKSu+i5LY5zNu1qE3ytZU
-         qG6FqdvDGg02Gmo5a6XamzkCXXesNYL490NeuCrg2YaxXdr1W7HynekZ/8ntlckHz9W5
-         1hs8csuAesg6hDeMA6m33DATPVEs2yKhuxgqdO+gzw4xUIb8hE/5HKk7XpnVB6r6qFn4
-         LwFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=S+oB2jDYFfiPbDeKt5OpxAstfWpdkA4qca9bIIMmsGE=;
-        b=YMud8Is24/JK8+tKhrabFy4Lcg5PdzuT/KdXQm+IWeYpjQPMjiCTY3WDXEvLEX8D2M
-         YMRP/zdIVy1Nm7V576TXRP7Q9jO/aTCF4GDBcKNwITk/cKrIY4XY8/txF8MKpy1T8NNE
-         SYxvkpZ3CAwbUzt/ogwQ5II0OaGYbeXiej68QypAW6CGWXnBQiASDFQvDHQvgRQ1ij2i
-         +VLqrjwW9xAMHtfabWyS9qMNN5Y6m7hFiOHudMGhGa6O+jGo1Cf73Rm/O9ISKJDbXrhB
-         bTMZZn6mPLc5avK3v5oDTyBtP9pBiOyYn78SC/y5nfVju3YPwlH343MZIcbZP4k7KZLj
-         yExQ==
-X-Gm-Message-State: APjAAAWWNo2h2j3rQ0mKBrtzNezF93mct504LBga42biksRmUjRlaPs8
-        RntVvbU2oHErF/p8qGQqvFFD+g==
-X-Google-Smtp-Source: APXvYqzLXD8k61g6xw/zjaPYfAsykZOtCqoXw4qSKk1VEtXwNkDzo/wxCo9Fz/U+2I9xaaEINIv1bw==
-X-Received: by 2002:a17:906:1fcb:: with SMTP id e11mr83640788ejt.221.1558866445409;
-        Sun, 26 May 2019 03:27:25 -0700 (PDT)
-Received: from localhost.localdomain (ip5f5bf7d3.dynamic.kabel-deutschland.de. [95.91.247.211])
-        by smtp.gmail.com with ESMTPSA id l43sm2314100eda.70.2019.05.26.03.27.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 May 2019 03:27:24 -0700 (PDT)
-From:   Christian Brauner <christian@brauner.io>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, jannh@google.com
-Cc:     fweimer@redhat.com, oleg@redhat.com, arnd@arndb.de,
-        dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Adrian Reber <adrian@lisas.de>, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, x86@kernel.org
-Subject: [PATCH 2/2] arch: wire-up clone6() syscall on x86
-Date:   Sun, 26 May 2019 12:26:12 +0200
-Message-Id: <20190526102612.6970-2-christian@brauner.io>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190526102612.6970-1-christian@brauner.io>
-References: <20190526102612.6970-1-christian@brauner.io>
+        id S1727755AbfEZKfP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 06:35:15 -0400
+Received: from ozlabs.org ([203.11.71.1]:59679 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727688AbfEZKfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 May 2019 06:35:15 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45Bc1r0WqTz9s9N;
+        Sun, 26 May 2019 20:35:10 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1558866912;
+        bh=DnNXuT/E0GJRQs92JlY2gE9GN3zCl/CPDbVIrQAH6+8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=BHLHADn/w8oCn5f9ow/N3YARo80WhrWsmCglxnTNwTnID4Igqf7XXU++IC/kNAz3g
+         ZMl4K4W/qdANhu0i/xRO8WCUohVNfHM/c0t347U62vyzGeQiT7/kTnGF4uJzXsvp/5
+         cbriVwU0emcnPvS8JIcPVr0h3Zj7egk/QFPIaGwGo98CuhsMT6zjpSRPc04UqjEGun
+         M/I0e2XhOBbuzC1i6/GK8KBga64Gi9tno684it8sDUATwAjq9pTTydsNnQwGyMVico
+         Ot/5x/VC+15Tm7OVi4lhWD4BfLXDmLfdwmXgjaEMB0p04yGHAvqbcJ6XFeQmT/2vge
+         ZIi/bRq8ZjNpg==
+Date:   Sun, 26 May 2019 20:35:03 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: linux-next: Fixes tag needs some work in the clk tree
+Message-ID: <20190526203503.174d0d80@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3oRiTfHo_l//pMeWmoC70a3"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wire up the clone6() call on x86.
+--Sig_/3oRiTfHo_l//pMeWmoC70a3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This patch only wires up clone6() on x86. Some of the arches look like they
-need special assembly massaging and it is probably smarter if the
-appropriate arch maintainers would do the actual wiring.
+Hi all,
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Adrian Reber <adrian@lisas.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Florian Weimer <fweimer@redhat.com>
-Cc: linux-api@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-Cc: x86@kernel.org
----
- arch/x86/entry/syscalls/syscall_32.tbl | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl | 1 +
- include/uapi/asm-generic/unistd.h      | 4 +++-
- 3 files changed, 5 insertions(+), 1 deletion(-)
+In commit
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index ad968b7bac72..dffcd57990b3 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -438,3 +438,4 @@
- 431	i386	fsconfig		sys_fsconfig			__ia32_sys_fsconfig
- 432	i386	fsmount			sys_fsmount			__ia32_sys_fsmount
- 433	i386	fspick			sys_fspick			__ia32_sys_fspick
-+436	i386	clone6			sys_clone6			__ia32_sys_clone6
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index b4e6f9e6204a..73bf4cc099a2 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -355,6 +355,7 @@
- 431	common	fsconfig		__x64_sys_fsconfig
- 432	common	fsmount			__x64_sys_fsmount
- 433	common	fspick			__x64_sys_fspick
-+436	common	clone6			__x64_sys_clone6/ptregs
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index a87904daf103..500bdb4c5e36 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -844,9 +844,11 @@ __SYSCALL(__NR_fsconfig, sys_fsconfig)
- __SYSCALL(__NR_fsmount, sys_fsmount)
- #define __NR_fspick 433
- __SYSCALL(__NR_fspick, sys_fspick)
-+#define __NR_clone6 436
-+__SYSCALL(__NR_clone6, sys_clone6)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 434
-+#define __NR_syscalls 437
- 
- /*
-  * 32 bit systems traditionally used different
--- 
-2.21.0
+  b3fddd5b100e ("clk: imx: imx8mm: fix int pll clk gate")
 
+Fixes tag
+
+  Fixes: ba5625c3e27 ("clk: imx: Add clock driver support for imx8mm")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/3oRiTfHo_l//pMeWmoC70a3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzqa9cACgkQAVBC80lX
+0Gy7Pgf/SpxBmyJz4pO5N5hIl98MKbG2oP+938MrCAv1b/I8vQNK7lmDUAA1A8Ue
+XzPndx5l0USn1jpXs3AWJIsu2HgXIKuELexzrGwH2JstMmueoT6sMhBXuTiwPMd/
+RDe1SEieyiV/5c0yLfbJeJqe8dSdSk2so+3pE6SvvXwXi62hcRyCdaqleanlcldS
+1M8/rDIS2BEaXXGRSbN2n+6IsK/IhVaGjGXs6Xp3/XeehEt5jrcK9cfYip2XqlP/
+ykvY3OC5T1/ZhatUt6h2pdxWEbuVX3jO6n0vavIlGCR2bf/W399yMqPZ2VkvA9uF
+ZAJ7O+yqhNLsbgtXaP5IRlkJN9TYaA==
+=1maZ
+-----END PGP SIGNATURE-----
+
+--Sig_/3oRiTfHo_l//pMeWmoC70a3--
