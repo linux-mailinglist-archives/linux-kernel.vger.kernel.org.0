@@ -2,69 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD43D2A966
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 13:30:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4241B2A96A
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 13:38:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727746AbfEZLar (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 07:30:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49650 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727621AbfEZLaq (ORCPT
+        id S1727779AbfEZLiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 07:38:23 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45005 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727658AbfEZLiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 07:30:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Jw4RVjb44Rl/ijGMDvXlIocM4n+wpJ+gzkrVGf7lYHI=; b=B9RbYvX+BRYnxapubpxxADejO
-        x66DQneKUCIAI1k9L+lDLC9ViSYCqJ/BatwnGD7a0pu9TzLVeiEfNw3idbXlvzBswV7SqthuEEAIx
-        Gug0nME/T60pDeZvnIb91NaU4p+NdlQz/hKNrAbTYbomQJcntR3p8L4MN4ayKwjOUxNQaxF7BFlQ9
-        3yFDRJB6uQ3Ezu7wghWk0H5Wy2JN8Bzl5/fQ0ht//A36yqfOwh+QxVBk3RI4xvRrwI1GRFmHg6Wb+
-        Fpau3zojmKqj2m8LJPCcW77VqLs0A6eS3vSfp/oSN0Zs/asSp3mvW7Su4ojTsUCIYBh10TTMv8Ych
-        fp2CzUbbw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hUrMR-0002Dx-L2; Sun, 26 May 2019 11:30:43 +0000
-Date:   Sun, 26 May 2019 04:30:43 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Christian Benvenuti <benve@cisco.com>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2] infiniband/mm: convert put_page() to put_user_page*()
-Message-ID: <20190526113043.GA3518@infradead.org>
-References: <20190525014522.8042-1-jhubbard@nvidia.com>
- <20190525014522.8042-2-jhubbard@nvidia.com>
- <20190526110631.GD1075@bombadil.infradead.org>
+        Sun, 26 May 2019 07:38:23 -0400
+Received: by mail-pl1-f195.google.com with SMTP id c5so5925294pll.11;
+        Sun, 26 May 2019 04:38:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=vHyiWIrxCKbF82jHEx3dPDyuEINmnCFpVzzmHglDTDU=;
+        b=Vq9hIrZQXQAcBJNa2Jvwml7Vo4eoyG6F+c+016aZD/7Q6IPGiD1Ngf+Y5PtTFbGEri
+         5YwrEmOPv64T4Ff9w9Z7zb4klhEYemZBxiJtHzHQYgZ9n0BeUQhwwfLNOBQEBoSN5Kc7
+         9wsTbcVxK9saGxCmm2169a81jE5Qhr4jWOHrwCSwm3S3a9A2LFb8MPRTVJ5tNMez2TV5
+         li4n1IZc9KffzwIH+ZRv8y9Px14XacpXwxYyoZpYGNHj+DWrYaecp/7xhgaUaTQB4AD+
+         qASL/oNHndLicoUWpBQDTSLxXfZ/WEI2jWiaEGRQoUiLr2YD9F52MjgGkjbqqQcF7+Dd
+         iJDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=vHyiWIrxCKbF82jHEx3dPDyuEINmnCFpVzzmHglDTDU=;
+        b=D/sk0y0yb1R1D+uh2gZ8cDCIe/23pmAnnJzMsrp6AD3/vb6JgxclpFENPkMOtyAKru
+         KDBnA+2Yeq9xy/+ZP/PXiBU9waCl2hHE5EgDNPzFxg6G5iKDzpjTr/WPcTFX2N7O07Hj
+         SKUahHkOU/QhWiZrQz0AolJVY/8ObV1rAo9RY2eQDJbXRaPiReph8QGkuxHn6Urq5rFe
+         Wh7rjPI2gzZuN3wUgMFqLpVo+TWH8k/IjlCdyJJ7ydOOwUtmqCp3c7W/t6/bxURJX3Eh
+         92ETf3qJtD8BguopvQdShtAaTwPekbLiIVIodSMCmwS1wPAPaOuZAFLHIJimDHEdvbNW
+         AQ/w==
+X-Gm-Message-State: APjAAAXn45zzFA5Gz8f6a+mHqulBCaAYx15SU6PXP6tUhDrUezbsT4w1
+        iyqhM+brxZudIVARltIc8+NVtJON
+X-Google-Smtp-Source: APXvYqyVScmWg74EtVIen6Cs4u7grE7ear46zwMSqGZTsVgp8Ph3T8Wb2RqlrR0VhJZPGnGfBfPZZQ==
+X-Received: by 2002:a17:902:2bc9:: with SMTP id l67mr85855288plb.171.1558870702896;
+        Sun, 26 May 2019 04:38:22 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.92.73])
+        by smtp.gmail.com with ESMTPSA id f1sm1836101pfg.154.2019.05.26.04.38.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 26 May 2019 04:38:22 -0700 (PDT)
+Date:   Sun, 26 May 2019 17:08:16 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] iwlwifi: fix warning iwl-trans.h is included more than once
+Message-ID: <20190526113815.GA6328@hari-Inspiron-1545>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190526110631.GD1075@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 26, 2019 at 04:06:31AM -0700, Matthew Wilcox wrote:
-> I thought we agreed at LSFMM that the future is a new get_user_bvec()
-> / put_user_bvec().  This is largely going to touch the same places as
-> step 2 in your list above.  Is it worth doing step 2?
-> 
-> One of the advantages of put_user_bvec() is that it would be quite easy
-> to miss a conversion from put_page() to put_user_page(), but it'll be
-> a type error to miss a conversion from put_page() to put_user_bvec().
+remove duplication include of iwl-trans.h
 
-FYI, I've got a prototype for get_user_pages_bvec.  I'll post a RFC
-series in a few days.
+issue identified by includecheck
+
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+---
+ drivers/net/wireless/intel/iwlwifi/iwl-devtrace.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-devtrace.h b/drivers/net/wireless/intel/iwlwifi/iwl-devtrace.h
+index fc649b2..f5a56c5 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-devtrace.h
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-devtrace.h
+@@ -86,7 +86,6 @@ static inline size_t iwl_rx_trace_len(const struct iwl_trans *trans,
+ 
+ #include <linux/tracepoint.h>
+ #include <linux/device.h>
+-#include "iwl-trans.h"
+ 
+ 
+ #if !defined(CONFIG_IWLWIFI_DEVICE_TRACING) || defined(__CHECKER__)
+-- 
+2.7.4
+
