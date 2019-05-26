@@ -2,65 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35F7D2A981
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 13:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0D82A98D
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 14:07:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727776AbfEZLwD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 07:52:03 -0400
-Received: from www17.your-server.de ([213.133.104.17]:48374 "EHLO
-        www17.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727751AbfEZLwC (ORCPT
+        id S1727775AbfEZMHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 08:07:21 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:42272 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbfEZMHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 07:52:02 -0400
-Received: from [88.198.220.132] (helo=sslproxy03.your-server.de)
-        by www17.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <thomas@m3y3r.de>)
-        id 1hUrh3-00032r-9b; Sun, 26 May 2019 13:52:01 +0200
-Received: from [2a02:908:4c22:ec00:915f:2518:d2f6:b586] (helo=maria.localdomain)
-        by sslproxy03.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <thomas@m3y3r.de>)
-        id 1hUrh1-0008TO-VQ; Sun, 26 May 2019 13:52:01 +0200
-Received: by maria.localdomain (sSMTP sendmail emulation); Sun, 26 May 2019 13:51:59 +0200
-From:   "Thomas Meyer" <thomas@m3y3r.de>
-Date:   Sun, 26 May 2019 13:51:59 +0200
-Message-Id: <E1hUrh1-0008TO-VQ@sslproxy03.your-server.de>
-X-Authenticated-Sender: thomas@m3y3r.de
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25461/Sun May 26 09:57:08 2019)
-To:     unlisted-recipients:; (no To-header on input)
+        Sun, 26 May 2019 08:07:21 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hUrvr-0008Af-Cx; Sun, 26 May 2019 12:07:19 +0000
+Date:   Sun, 26 May 2019 13:07:19 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     "J. R. Okajima" <hooanon05g@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kolyshkin@gmail.com
+Subject: Re: [PATCH] concrete /proc/mounts
+Message-ID: <20190526120719.GQ17978@ZenIV.linux.org.uk>
+References: <17910.1558861894@jrobl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17910.1558861894@jrobl>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From thomas@m3y3r.de Sun May 26 13:49:04 2019
-Subject: [PATCH] drm/omap: Make sure device_id tables are NULL terminated
-To: tomi.valkeinen@ti.com, airlied@linux.ie, daniel@ffwll.ch,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Patch: Cocci
-X-Mailer: DiffSplit
-Message-ID: <1558871364611-249425076-1-diffsplit-thomas@m3y3r.de>
-References: <1558871364605-1026448693-0-diffsplit-thomas@m3y3r.de>
-In-Reply-To: <1558871364605-1026448693-0-diffsplit-thomas@m3y3r.de>
-X-Serial-No: 1
+On Sun, May 26, 2019 at 06:11:34PM +0900, J. R. Okajima wrote:
+> commit 1e83f8634c6efe7dd4e6036ee202ca10bdbca0b3
+> Author: J. R. Okajima <hooanon05g@gmail.com>
+> Date:   Sat May 25 18:35:13 2019 +0900
+> 
+>     concrete /proc/mounts
+>     
+>     When the size of /proc/mounts exceeds PAGE_SIZE, seq_read() has to
+>     release namespace_sem via mounts_op.m_stop().  It means if someone else
+>     issues mount(2) or umount(2) and the mounts list got changed, then the
+>     continuous getmntent(3) calls show the incomplete mounts list and some
+>     entries may not appear in it.
+>     
+>     This patch generates the full mounts list when mounts_op.m_start() is
+>     called, and keep it in the seq_file buffer until the file is closed.
+>     The size of the buffer increases if necessary.  Other operations m_next,
+>     m_stop, m_show become meaningless, but still necessary for the seq_file
+>     manner.
+>     
+>     I don't think the size of the buffer matters because many /proc entries
+>     already keep the similar PAGE_SIZE buffer.  Increasing /proc/mounts
+>     buffer is to keep the correctness of the mount list.
+>     
+>     Reported-by: Kirill Kolyshkin <kolyshkin@gmail.com>
+>     See-also: https://github.com/kolyshkin/procfs-test
+>     Signed-off-by: J. R. Okajima <hooanon05g@gmail.com>
 
-Make sure (of/i2c/platform)_device_id tables are NULL terminated.
+Translation: let's generate the entire contents on the first read() and keep
+it until the sucker's closed; that way userland wont' see anything changing
+under it.  Oh, wait...
 
-Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
----
-
-diff -u -p a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
---- a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
-+++ b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
-@@ -198,6 +198,7 @@ static const struct of_device_id omapdss
- 	{ .compatible = "toppoly,td028ttec1" },
- 	{ .compatible = "tpo,td028ttec1" },
- 	{ .compatible = "tpo,td043mtea1" },
-+	{},
- };
- 
- static int __init omapdss_boot_init(void)
+NAK.
