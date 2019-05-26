@@ -2,125 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50AB22AC2E
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 22:48:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07FC62AC36
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 22:49:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbfEZUsX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 16:48:23 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38187 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbfEZUsT (ORCPT
+        id S1726275AbfEZUth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 16:49:37 -0400
+Received: from mail-lf1-f46.google.com ([209.85.167.46]:39682 "EHLO
+        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725827AbfEZUth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 16:48:19 -0400
-Received: by mail-lf1-f68.google.com with SMTP id b11so4172950lfa.5;
-        Sun, 26 May 2019 13:48:18 -0700 (PDT)
+        Sun, 26 May 2019 16:49:37 -0400
+Received: by mail-lf1-f46.google.com with SMTP id f1so10579297lfl.6
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 13:49:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+x6WG6WqbSoE6WUEpqF/4MvaYXvmZDdI8YQeSR6pdD8=;
-        b=FJZ3qf3EdxoSTq8Zw6mow2R8CM8rKNPwCia7dpfuJr79mWc3Y+l7Yd3oBMtj9rZYJY
-         EGSE8r5UI81ttNQpJaIUxQtFAh+mI1onGNQKJv93No1Tdv8I9NwJQOOVnpbCVcq84fcw
-         tbkEDyYx0xRfMs7EUkVSYcoR8Co+J6CxYIGlyUOw4pQLT6/BlWA8gMd73HYkxzwNCDiF
-         ryy4Tp77LPg1LrdUdteoodZ9kmogF/Ttp2Iodgp9ifY635nu0dxg4kdQKCEjZeTQxNVp
-         8ZnB/J1DBuIuR0zGAlHs9yZJ1gAVwwLpY9+PmXtwHGTSRx5UiDhd6OgfZUPFQbYSyIsR
-         PjpA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IJg/yCjfVM3Ozhpb5ZCNN4WebegqjDbfI7FMAeP5e48=;
+        b=GD3ZVbCtAZQtaJFSDPqrCMmGJBcOkN8aadPzlAK4DlrCkWV1mtFgYPxuS4XgVoIFNB
+         07DttpIS7YSA6RHknmleBz7ZadImeyD5hn2YsmsOhxL1gJeJcYNAfteCCxReSzZW5Sy7
+         HXffCAFYiq7pFrgWGoGWbWSP6Y+fjHTJprbE0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+x6WG6WqbSoE6WUEpqF/4MvaYXvmZDdI8YQeSR6pdD8=;
-        b=o7m3nWoF1iDR6unuRMj71Rdxf4brEOp7QqjYwvJs4jJsjrnDdOBttacTBnJQotr2tl
-         6Q1D93B1ocWVWtQ7yhaXW01s7YPItr+Wdvp+NeINv5Vvua8nqIx+p59rcTFJGbrFv3+U
-         W28eFSg7FhJCw8QFl7z6BvICtNEZBRKOGnoT2zQA7sPYSfhrbvaMcdkkiIW1saCPu4hn
-         IllwGAsMIxGxUX+ylhIOVfYmgD3Z2gzydrw0i6FUwByPI3PQrF+QTgD7hBPesQtRWbHV
-         JkDOBz4YwpKBPtlK0230RXMyIF9+J3XzjNwbE9ylml62uO+JEQK1zSotjF59mgcsy6mq
-         a+rQ==
-X-Gm-Message-State: APjAAAV1lFN1POVvVaFplSH7Uq6u8H0dJoa7dsnFw5cJO+bMErW9qbwi
-        DQWgEw9zPDu8wPTveZ+0cxE=
-X-Google-Smtp-Source: APXvYqxEZxbj0cvy32Qo1Uc8bigNO+ua0rKsDLgeke2jkdcJeBuoF1/4drlztU40NHIxnsyUaLRU3g==
-X-Received: by 2002:a19:2247:: with SMTP id i68mr719938lfi.174.1558903697319;
-        Sun, 26 May 2019 13:48:17 -0700 (PDT)
-Received: from z50.gdansk-morena.vectranet.pl (109241207190.gdansk.vectranet.pl. [109.241.207.190])
-        by smtp.gmail.com with ESMTPSA id i187sm1859475lfe.64.2019.05.26.13.48.16
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IJg/yCjfVM3Ozhpb5ZCNN4WebegqjDbfI7FMAeP5e48=;
+        b=bJ24pBRsEfIsWHezbD62Z/pSGUslDRKC5I7QI4ecEov2KG2L1+ll6Pr/tALRtQLUSV
+         wqNNT1FO7fx78DSLxlBiLK5d46VnDe4FHrMXNDOyp2PxuLYowJzQCX3Nx0JN0Tko5/jK
+         FdA3luaDgZX8MICRFEgtEl8A0uL8R59kHc+RE9D56OmtHTL/7JX20pFFQBsGLyPJlawx
+         Pq9yPBCz6Pwr9hY8xNOUQaB7yO6nye5y2a4DOgFvswrUdsaZG0ZwdzoSkilI1UR60Os4
+         ip08m6DraN32wa0XY/wTL8lVRRYEH7YGI1l7uQrIiGYqvBLZS/uJqu9lFJGRf7Hw5Wek
+         Sw6A==
+X-Gm-Message-State: APjAAAXpiY7Co44hINiSjjpvMc9PcAm91rZxg+UGSnQgwSfYqNkd+qug
+        chFDRoB8bWEO+8K+VqgumCPSx4bNuao=
+X-Google-Smtp-Source: APXvYqxBo0MqNerB/5bSupuiUIDzJUu975cHC1s38sSeRKYM27Kf9lq1iGxl+URXHxnh/vVBlUW7nw==
+X-Received: by 2002:a19:8116:: with SMTP id c22mr1363358lfd.111.1558903774248;
+        Sun, 26 May 2019 13:49:34 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id j19sm1033420lfb.84.2019.05.26.13.49.33
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 May 2019 13:48:16 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [RFC PATCH 5/5] media: ov6650: Add .init_cfg() pad operation callback
-Date:   Sun, 26 May 2019 22:47:58 +0200
-Message-Id: <20190526204758.1904-6-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190526204758.1904-1-jmkrzyszt@gmail.com>
-References: <20190526204758.1904-1-jmkrzyszt@gmail.com>
+        Sun, 26 May 2019 13:49:33 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id m15so9976102lfh.4
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 13:49:33 -0700 (PDT)
+X-Received: by 2002:a19:521a:: with SMTP id m26mr10136807lfb.134.1558903772902;
+ Sun, 26 May 2019 13:49:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1558864555-53503-1-git-send-email-pbonzini@redhat.com>
+ <CAHk-=wi3YcO4JTpkeENETz3fqf3DeKc7-tvXwqPmVcq-pgKg5g@mail.gmail.com> <2d55fd2a-afbf-1b7c-ca82-8bffaa18e0d0@redhat.com>
+In-Reply-To: <2d55fd2a-afbf-1b7c-ca82-8bffaa18e0d0@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 26 May 2019 13:49:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgzKzAwS=_ySikL1f=Gr62YXL_WXGh82wZKMOvzJ9+2VA@mail.gmail.com>
+Message-ID: <CAHk-=wgzKzAwS=_ySikL1f=Gr62YXL_WXGh82wZKMOvzJ9+2VA@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM changes for Linux 5.2-rc2
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Junio Hamano C <gitster@pobox.com>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Git List Mailing <git@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver now supports V4L2_SUBDEV_FORMAT_TRY operation mode only in
-.get/set_fmt() pad operation callbacks.  That means only .try_format
-member of pad config is maintained.  As a consequence, active crop
-rectangle is used as a referece while V4L2_SUBDEV_FORMAT_TRY requests
-are processed.  In order to fix that, a method for initialization of
-.try_crop pad config member is needed.
+On Sun, May 26, 2019 at 10:53 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> The interesting thing is that not only git will treat lightweight tags
+> like, well, tags:
 
-Implement .init_cfg() pad operation callback which initializes the pad
-config from current active format and selection settings.  From now on,
-and before the driver V4L2_SUBDEV_FORMAT_TRY support is further
-modified, host interface drivers should call .init_cfg() on a pad
-config before passing it to V4L2_SUBDEV_FORMAT_TRY operations.
+Yeah, that's very much by design - lightweight tags are very
+comvenient for local temporary stuff where you don't want signing etc
+(think automated test infrastructure, or just local reminders).
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
- drivers/media/i2c/ov6650.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> In addition, because I _locally_ had a tag object that
+> pointed to the same commit and had the same name, git-request-pull
+> included my local tag's message in its output!  I wonder if this could
+> be considered a bug.
 
-diff --git a/drivers/media/i2c/ov6650.c b/drivers/media/i2c/ov6650.c
-index cc70d8952999..c3d4c1f598b2 100644
---- a/drivers/media/i2c/ov6650.c
-+++ b/drivers/media/i2c/ov6650.c
-@@ -447,6 +447,26 @@ static int ov6650_s_power(struct v4l2_subdev *sd, int on)
- 	return ret;
- }
- 
-+static int ov6650_init_cfg(struct v4l2_subdev *sd,
-+			   struct v4l2_subdev_pad_config *cfg)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(sd);
-+	struct ov6650 *priv = to_ov6650(client);
-+	struct v4l2_mbus_framefmt *mf;
-+	struct v4l2_rect *rect;
-+
-+	mf = &cfg->try_fmt;
-+	*mf = ov6650_def_fmt;
-+	mf->width = priv->rect.width >> priv->half_scale;
-+	mf->height = priv->rect.height >> priv->half_scale;
-+	mf->code = priv->code;
-+
-+	rect = &cfg->try_crop;
-+	*rect = priv->rect;
-+
-+	return 0;
-+}
-+
- static int ov6650_get_selection(struct v4l2_subdev *sd,
- 		struct v4l2_subdev_pad_config *cfg,
- 		struct v4l2_subdev_selection *sel)
-@@ -959,6 +979,7 @@ static const struct v4l2_subdev_video_ops ov6650_video_ops = {
- };
- 
- static const struct v4l2_subdev_pad_ops ov6650_pad_ops = {
-+	.init_cfg	= ov6650_init_cfg,
- 	.enum_mbus_code = ov6650_enum_mbus_code,
- 	.get_selection	= ov6650_get_selection,
- 	.set_selection	= ov6650_set_selection,
--- 
-2.21.0
+Yeah, I think git request-pull should at least *warn* about the tag
+not being the same object locally as in the remote you're asking me to
+pull.
 
+Are you sure you didn't get a warning, and just missed it? But adding
+Junio and the Git list just as a possible heads-up for this in case
+git request-pull really only compares the object the tag points to,
+rather than the SHA1 of the tag itself.
+
+             Linus
