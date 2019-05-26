@@ -2,79 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7738A2AA8B
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 17:52:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 954182AA9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 18:09:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbfEZPwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 11:52:10 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45122 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727833AbfEZPwK (ORCPT
+        id S1727931AbfEZQJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 12:09:00 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:59573 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfEZQJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 11:52:10 -0400
-Received: by mail-lf1-f66.google.com with SMTP id n22so2604205lfe.12
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 08:52:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QHoFdmqYPstpJxz64t3x628SCZa/yDvhSqOoPOA4w6g=;
-        b=HiVrlb3j4Y5yNwh6/jTPn8HCpEbqXkEXDwOcla5O5f8dWYrdyYwvVOYh79ZPa5sLuR
-         posfmVSL3U7+kfupnep0eUcaME8BznR+rnxBQnRGiLRiCqJigRr8Gn1qraU3yTBtQxsN
-         V4wSIbMLLzvD35ihMOTj7pcvMESgxu3h5Wr1Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QHoFdmqYPstpJxz64t3x628SCZa/yDvhSqOoPOA4w6g=;
-        b=q1Tv1+n0Y6ZJ9Vj/DBgQ/vZS4zyDevUycNNjvZcLho9N6VWYvztnVJ8me0DnJxP6ft
-         fkKzOZzoanm7M9dwETgLeSpR2e5lX/KpOAFp+YlnaL9HNZkPnSsh0PssFPExGxiCfSIf
-         Tqhzm+R2NAauC2RB5tMUe+iXNXVQ02+ZotGZrkQhwnbcGuoBzwOCNKRyaeS34iaLB3+E
-         r9XsQLP7URSoYl6XKCw1OZY1tGEl9kyyaPSreKOVf35YK/E/Z1VuZz9qDamCIojx0xbS
-         6b4rLFU3QbDZx/3mOAaOtQBRH9CpDZ7Aq7FWLfUxM0r/5Q+BBUIbzSyyid+Tk6yfYRkP
-         iKhg==
-X-Gm-Message-State: APjAAAUIdIdIOLZ9x4UxofeKWLr20y2jfiA1WSnMGgzi9gGS3uvV4oBP
-        +p9XytFBJLhBlIOlpjH+UWAYpoQf0P8=
-X-Google-Smtp-Source: APXvYqyq0YgUzEZEliMLL/q3dTI9lZ1oLa6i7gonwDbByXuuaxOs+I2nHzJe/S1IXeqsqjj//+ESOw==
-X-Received: by 2002:ac2:429a:: with SMTP id m26mr17748777lfh.152.1558885928128;
-        Sun, 26 May 2019 08:52:08 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id f11sm1745739lfa.48.2019.05.26.08.52.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 26 May 2019 08:52:07 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id h13so10334080lfc.7
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 08:52:07 -0700 (PDT)
-X-Received: by 2002:a19:7418:: with SMTP id v24mr12467788lfe.79.1558885926829;
- Sun, 26 May 2019 08:52:06 -0700 (PDT)
+        Sun, 26 May 2019 12:09:00 -0400
+X-Originating-IP: 79.86.19.127
+Received: from [192.168.0.12] (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id E836A240005;
+        Sun, 26 May 2019 16:08:48 +0000 (UTC)
+From:   Alex Ghiti <alex@ghiti.fr>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH REBASE v2 1/2] x86, arm64: Move ARCH_WANT_HUGE_PMD_SHARE
+ config in arch/Kconfig
+References: <20190526125038.8419-1-alex@ghiti.fr>
+ <20190526125038.8419-2-alex@ghiti.fr> <20190526144230.GA13220@gmail.com>
+Message-ID: <2c1c9ad4-257a-faba-7ae0-0eb2dd0d09b3@ghiti.fr>
+Date:   Sun, 26 May 2019 12:08:48 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <1558864555-53503-1-git-send-email-pbonzini@redhat.com>
-In-Reply-To: <1558864555-53503-1-git-send-email-pbonzini@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 26 May 2019 08:51:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi3YcO4JTpkeENETz3fqf3DeKc7-tvXwqPmVcq-pgKg5g@mail.gmail.com>
-Message-ID: <CAHk-=wi3YcO4JTpkeENETz3fqf3DeKc7-tvXwqPmVcq-pgKg5g@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM changes for Linux 5.2-rc2
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM list <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190526144230.GA13220@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 26, 2019 at 2:56 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+On 5/26/19 10:42 AM, Ingo Molnar wrote:
+> * Alexandre Ghiti <alex@ghiti.fr> wrote:
 >
->   https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+>> ARCH_WANT_HUGE_PMD_SHARE config was declared in both architectures:
+>> move this declaration in arch/Kconfig and make those architectures
+>> select it.
+>>
+>> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+>> Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+>> ---
+>>   arch/Kconfig       | 3 +++
+>>   arch/arm64/Kconfig | 2 +-
+>>   arch/x86/Kconfig   | 4 +---
+>>   3 files changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/Kconfig b/arch/Kconfig
+>> index c47b328eada0..d2f212dc8e72 100644
+>> --- a/arch/Kconfig
+>> +++ b/arch/Kconfig
+>> @@ -577,6 +577,9 @@ config HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+>>   config HAVE_ARCH_HUGE_VMAP
+>>   	bool
+>>   
+>> +config ARCH_WANT_HUGE_PMD_SHARE
+>> +	bool
+>> +
+>>   config HAVE_ARCH_SOFT_DIRTY
+>>   	bool
+>>   
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index 4780eb7af842..dee7f750c42f 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -70,6 +70,7 @@ config ARM64
+>>   	select ARCH_SUPPORTS_NUMA_BALANCING
+>>   	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
+>>   	select ARCH_WANT_FRAME_POINTERS
+>> +	select ARCH_WANT_HUGE_PMD_SHARE if ARM64_4K_PAGES || (ARM64_16K_PAGES && !ARM64_VA_BITS_36)
+>>   	select ARCH_HAS_UBSAN_SANITIZE_ALL
+>>   	select ARM_AMBA
+>>   	select ARM_ARCH_TIMER
+>> @@ -884,7 +885,6 @@ config SYS_SUPPORTS_HUGETLBFS
+>>   	def_bool y
+>>   
+>>   config ARCH_WANT_HUGE_PMD_SHARE
+>> -	def_bool y if ARM64_4K_PAGES || (ARM64_16K_PAGES && !ARM64_VA_BITS_36)
+>>   
+>>   config ARCH_HAS_CACHE_LINE_SIZE
+>>   	def_bool y
+>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>> index 2bbbd4d1ba31..fa021ec38803 100644
+>> --- a/arch/x86/Kconfig
+>> +++ b/arch/x86/Kconfig
+>> @@ -93,6 +93,7 @@ config X86
+>>   	select ARCH_USE_QUEUED_SPINLOCKS
+>>   	select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
+>>   	select ARCH_WANTS_DYNAMIC_TASK_STRUCT
+>> +	select ARCH_WANT_HUGE_PMD_SHARE
+>>   	select ARCH_WANTS_THP_SWAP		if X86_64
+>>   	select BUILDTIME_EXTABLE_SORT
+>>   	select CLKEVT_I8253
+>> @@ -301,9 +302,6 @@ config ARCH_HIBERNATION_POSSIBLE
+>>   config ARCH_SUSPEND_POSSIBLE
+>>   	def_bool y
+>>   
+>> -config ARCH_WANT_HUGE_PMD_SHARE
+>> -	def_bool y
+>> -
+>>   config ARCH_WANT_GENERAL_HUGETLB
+>>   	def_bool y
+> Acked-by: Ingo Molnar <mingo@kernel.org>
 
-This says it's a tag, but it's not. It's just a commit pointer (also
-called a "lightweight tag", because while it technically is exactly
-the same thing as a branch, it's obviously in the tag namespace and
-git will _treat_ it like a tag).
+Thanks !
 
-Normally your tags are proper signed tags. So I'm not pulling this,
-waiting for confirmation.
+Alex
 
-               Linus
+>
+> Thanks,
+>
+> 	Ingo
