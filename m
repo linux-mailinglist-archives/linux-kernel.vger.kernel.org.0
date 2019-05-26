@@ -2,81 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAE202A934
-	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 11:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E1832A936
+	for <lists+linux-kernel@lfdr.de>; Sun, 26 May 2019 11:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbfEZJge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 05:36:34 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50936 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727639AbfEZJgd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 05:36:33 -0400
-Received: by mail-it1-f194.google.com with SMTP id a186so12645956itg.0
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 02:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=fNBM2SE4R0yBBh8+KaSvXTAQYQaoeqvRm1I1WMLAlf8=;
-        b=B5le05cxACzdl13OrprKzjCHwyw0uxz6YhgP9MYk3xCLXd7ta4+Ak2x/PhOp2j9JU0
-         T2WxNfF+8FmMIKuaaOAJ+0oEIOk8XnPE8CR60/UEH3StXKxl0vr2yqifrzS5KgeyytO6
-         77b+Ve+QYw29AD1ifK1ici50vo7lqQhkN+RKct2Ob9EbmGkR+/7/OpC8CYUU414V0NAa
-         2OdQHn+vCA6hKAHyyMUcoWwBS7WFpf4vt6n5ywCuzWUpeWSJXU9X3zFooXxp2DZCRUjW
-         K6EUpa2gPf/Olr4TpaQCKLirW4L16MmEceLEvP+1ESQiWS4kOtbRkOdtpy7hgqGeYYbg
-         Q6Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=fNBM2SE4R0yBBh8+KaSvXTAQYQaoeqvRm1I1WMLAlf8=;
-        b=GIgHkstV9qBYaBKd9Dgen/MeTAP2UdmfMtvqElEmRdR+kdGYrG9axHk5GW5l1VN9HQ
-         CWR7A37roXCuNfNu9RFR8x8cHWxXh4ALGA3NK0ta1rbAr6wuCv6DTT4s8uxhZGqdoj1j
-         AG84rhjzzLA3Yib4FDJoDcypnY7akta1WG4lNlsj2WnVeaS9i0voizxEjy8d1FIXutS6
-         C5hw8olydVmKY7imrt4CCRUtL8KQ5QmZRxr3cWH2E2pS6W2wFlVYevyt6RDs213k3Ypn
-         DULojX9SrZ4uSBqzu53+EsqSZE0d08c1Mhfp16nvymPifY9q2KG7xeSqQC52x1su/Wv+
-         0u3w==
-X-Gm-Message-State: APjAAAVvGHtQz3rAXFZA4vHw8MR17nL1eLhhcq/q+OaG27wA9xFHQGqi
-        evl0h8qavFWc5tSNV1CqpRtAaxbafVd5yI7sfv8=
-X-Google-Smtp-Source: APXvYqzu0C/ULFYwAGT3e6aNAccy6E2S26RWYEWyUrUZYuJvRAZ855I7apRepVOqMQ5ORmR5bha0ur6AeCQUT/yBE6k=
-X-Received: by 2002:a24:fcc7:: with SMTP id b190mr26031904ith.122.1558863392980;
- Sun, 26 May 2019 02:36:32 -0700 (PDT)
+        id S1727711AbfEZJsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 05:48:16 -0400
+Received: from mx1.riseup.net ([198.252.153.129]:41888 "EHLO mx1.riseup.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727639AbfEZJsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 May 2019 05:48:16 -0400
+Received: from capuchin.riseup.net (capuchin-pn.riseup.net [10.0.1.176])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "*.riseup.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (verified OK))
+        by mx1.riseup.net (Postfix) with ESMTPS id EB5721A0CAF;
+        Sun, 26 May 2019 02:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+        t=1558864095; bh=8OaqU8bvZuIXA7nF3gCJ4vUP6PXw6ku0VUrbHfqjHAQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AbJFSzTpy+q0/Tly14xp4E0gE66+KV+sX4Pv4MNcTkczonBjKea1eclojC481a33W
+         QOsKILLMLBykNx9COt9boiw+h1qp6Gtwjv8cCxpRQn8dWlrHhQNkMUsxetjKuWqGq+
+         GNNatU64LAdFB/pti6KAlFD1dEXZXTG/Ytl2Magc=
+X-Riseup-User-ID: F570A3085F3311A36801C4EC41F2616F67BF4FC43DF8360ACC0A436D2EF42768
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+         by capuchin.riseup.net (Postfix) with ESMTPSA id 4C351120896;
+        Sun, 26 May 2019 02:48:11 -0700 (PDT)
+From:   Yegor Timoshenko <yegortimoshenko@riseup.net>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Yegor Timoshenko <yegortimoshenko@riseup.net>
+Subject: [PATCH] arm64: dts: allwinner: a64: bananapi-m64: enable UART2
+Date:   Sun, 26 May 2019 12:47:15 +0300
+Message-Id: <20190526094715.12289-1-yegortimoshenko@riseup.net>
 MIME-Version: 1.0
-Reply-To: mr.patrickmark84@gmail.com
-Received: by 2002:a92:4781:0:0:0:0:0 with HTTP; Sun, 26 May 2019 02:36:32
- -0700 (PDT)
-From:   Parrick Mark <parrickmark99@gmail.com>
-Date:   Sun, 26 May 2019 10:36:32 +0100
-X-Google-Sender-Auth: yXq8l5AMEnYe-j5YALIuFlHedlQ
-Message-ID: <CALfi9K00oBevsjxNX0W04F4q_Mj=EDVsj8fsNois8JZLMk_b1w@mail.gmail.com>
-Subject: GREETINGS TO YOU
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings,
+BananaPi M64 exposes UART2 interface that is supposed to be enabled
+by default (see "Default Function" in the pin definition table from
+the manufacturer [1]).
 
-I know that this mail will come to you as a surprise as we have never
-met before, but need not to worry as I am contacting you independently
-of my investigation and no one is informed of this communication. I
-need your urgent assistance in transferring the sum of $11,300,000.00
-USD immediately to your private account.The money has been here in our
-Bank lying dormant for years now without anybody coming for the claim
-of it.
+[1]: https://bananapi.gitbooks.io/bpi-m64/en/bpi-m64gpiopindefine.html
 
-I want to release the money to you as the relative to our deceased
-customer (the account owner) who died a long with his supposed NEXT OF
-KIN since 16th October 2005. The Banking laws here does not allow such
-money to stay more than 14 years, because the money will be recalled
-to the Bank treasury account as unclaimed fund.
+Signed-off-by: Yegor Timoshenko <yegortimoshenko@riseup.net>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index 094cfed13df9..100d1a8fd292 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -54,6 +54,7 @@
+ 		ethernet0 = &emac;
+ 		serial0 = &uart0;
+ 		serial1 = &uart1;
++		serial2 = &uart2;
+ 	};
+ 
+ 	chosen {
+@@ -312,6 +313,12 @@
+ 	status = "okay";
+ };
+ 
++&uart2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart2_pins>;
++	status = "okay";
++};
++
+ &usb_otg {
+ 	dr_mode = "otg";
+ 	status = "okay";
+-- 
+2.20.1
 
-By indicating your interest I will send you the full details on how
-the business will be executed.
-
-Please respond urgently and delete if you are not interested.
-
-Best Regards,
-Mr.Patrick Mark
