@@ -2,87 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50D8A2AFA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 10:00:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7603D2AF8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 09:48:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbfE0IAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 04:00:08 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:59520 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfE0IAH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 04:00:07 -0400
-Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 9A6AC3A293C;
-        Mon, 27 May 2019 07:47:56 +0000 (UTC)
-X-Originating-IP: 90.88.147.134
-Received: from localhost (aaubervilliers-681-1-27-134.w90-88.abo.wanadoo.fr [90.88.147.134])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 4DDFCC000B;
-        Mon, 27 May 2019 07:47:46 +0000 (UTC)
-Date:   Mon, 27 May 2019 09:47:45 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 03/10] ARM: dts: sunxi: prefer A31 instead of A13 for
- ir
-Message-ID: <20190527074745.5oyt5tyuoc75ntiq@flea>
-References: <20190526222536.10917-1-peron.clem@gmail.com>
- <20190526222536.10917-4-peron.clem@gmail.com>
+        id S1726264AbfE0Hso (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 03:48:44 -0400
+Received: from mga11.intel.com ([192.55.52.93]:53221 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725869AbfE0Hsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 03:48:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 May 2019 00:48:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,518,1549958400"; 
+   d="scan'208";a="178782694"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.198]) ([10.237.72.198])
+  by fmsmga002.fm.intel.com with ESMTP; 27 May 2019 00:48:39 -0700
+Subject: Re: Issue with Broadcom wireless in 5.2rc1 (was Re: [PATCH] mmc:
+ sdhci: queue work after sdhci_defer_done())
+To:     Brian Masney <masneyb@onstation.org>,
+        Arend Van Spriel <arend.vanspriel@broadcom.com>
+Cc:     Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>, ulf.hansson@linaro.org,
+        faiz_abbas@ti.com, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org
+References: <20190524111053.12228-1-masneyb@onstation.org>
+ <70782901-a9ac-5647-1abe-89c86a44a01b@intel.com>
+ <20190524154958.GB16322@basecamp> <20190526122136.GA26456@basecamp>
+ <e8c049ce-07e1-8b34-678d-41b3d6d41983@broadcom.com>
+ <20190526195819.GA29665@basecamp>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <e7818bf9-a1d1-24b8-360d-62d7493afa91@intel.com>
+Date:   Mon, 27 May 2019 10:48:24 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pp6ncxjpttni4i4p"
-Content-Disposition: inline
-In-Reply-To: <20190526222536.10917-4-peron.clem@gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190526195819.GA29665@basecamp>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 26/05/19 10:58 PM, Brian Masney wrote:
+> On Sun, May 26, 2019 at 08:42:21PM +0200, Arend Van Spriel wrote:
+>> On 5/26/2019 2:21 PM, Brian Masney wrote:
+>>> + Broadcom wireless maintainers
+>>>
+>>> On Fri, May 24, 2019 at 11:49:58AM -0400, Brian Masney wrote:
+>>>> On Fri, May 24, 2019 at 03:17:13PM +0300, Adrian Hunter wrote:
+>>>>> On 24/05/19 2:10 PM, Brian Masney wrote:
+>>>>>> WiFi stopped working on the LG Nexus 5 phone and the issue was bisected
+>>>>>> to the commit c07a48c26519 ("mmc: sdhci: Remove finish_tasklet") that
+>>>>>> moved from using a tasklet to a work queue. That patch also changed
+>>>>>> sdhci_irq() to return IRQ_WAKE_THREAD instead of finishing the work when
+>>>>>> sdhci_defer_done() is true. Change it to queue work to the complete work
+>>>>>> queue if sdhci_defer_done() is true so that the functionality is
+>>>>>> equilivent to what was there when the finish_tasklet was present. This
+>>>>>> corrects the WiFi breakage on the Nexus 5 phone.
+>>>>>>
+>>>>>> Signed-off-by: Brian Masney <masneyb@onstation.org>
+>>>>>> Fixes: c07a48c26519 ("mmc: sdhci: Remove finish_tasklet")
+>>>>>> ---
+>>>>>> [ ... ]
+>>>>>>
+>>>>>>   drivers/mmc/host/sdhci.c | 2 +-
+>>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>>>>> index 97158344b862..3563c3bc57c9 100644
+>>>>>> --- a/drivers/mmc/host/sdhci.c
+>>>>>> +++ b/drivers/mmc/host/sdhci.c
+>>>>>> @@ -3115,7 +3115,7 @@ static irqreturn_t sdhci_irq(int irq, void *dev_id)
+>>>>>>   			continue;
+>>>>>>   		if (sdhci_defer_done(host, mrq)) {
+>>>>>> -			result = IRQ_WAKE_THREAD;
+>>>>>> +			queue_work(host->complete_wq, &host->complete_work);
+>>>>>
+>>>>> The IRQ thread has a lot less latency than the work queue, which is why it
+>>>>> is done that way.
+>>>>>
+>>>>> I am not sure why you say this change is equivalent to what was there
+>>>>> before, nor why it fixes your problem.
+>>>>>
+>>>>> Can you explain some more?
+>>>>
+>>>> [ ... ]
+>>>>
+>>>> drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c calls
+>>>> sdio_claim_host() and it appears to never return.
 
---pp6ncxjpttni4i4p
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is because SDHCI is using the IRQ thread to process the SDIO card
+interrupt (sdio_run_irqs()).  When the card driver tries to use the card, it
+causes interrupts which deadlocks since c07a48c26519 ("mmc: sdhci: Remove
+finish_tasklet") has moved the tasklet processing to the IRQ thread.
 
-On Mon, May 27, 2019 at 12:25:29AM +0200, Cl=E9ment P=E9ron wrote:
-> Since A31, memory mapping of the IR driver has changed.
->
-> Prefer the A31 bindings instead of A13.
->
-> Signed-off-by: Cl=E9ment P=E9ron <peron.clem@gmail.com>
-> ---
->  arch/arm/boot/dts/sun6i-a31.dtsi   | 2 +-
->  arch/arm/boot/dts/sun8i-a83t.dtsi  | 2 +-
->  arch/arm/boot/dts/sun9i-a80.dtsi   | 2 +-
->  arch/arm/boot/dts/sunxi-h3-h5.dtsi | 2 +-
+I would expect to be able to use the IRQ thread to complete requests, and it
+is desirable to do so because it is lower latency.
 
-Can you split the H3 in a separate patch? this will go through a
-separate branch.
+Probably, SDHCI should use sdio_signal_irq() which queues a work item, and
+is what other drivers are doing.
 
-Thanks!
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---pp6ncxjpttni4i4p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOuWIQAKCRDj7w1vZxhR
-xUx7AQDWMM7bqbWyusgAqBceK1Mm3YxF86z+jSIPo7ooKR2vMgEApTPK5Q9rYvHu
-XiaJRAAZYlSm12fyKBMhDUzo2be/fwE=
-=ZMdg
------END PGP SIGNATURE-----
-
---pp6ncxjpttni4i4p--
+I will investigate some more and send a patch.
