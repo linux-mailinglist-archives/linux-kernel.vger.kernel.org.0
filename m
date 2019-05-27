@@ -2,99 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 397E22B620
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 861F72B628
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfE0NRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:17:43 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39883 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfE0NRm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:17:42 -0400
-Received: by mail-wr1-f68.google.com with SMTP id e2so8147987wrv.6
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 06:17:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3CdhkKFfggu7RKyEGJPDR3uKtKfRfN9PzQkEoRGpys0=;
-        b=RbFHF85ICbSpB/QDeuBoxpPshiJs01zY4pu/8n9Lf3BNzE4SFyL/GyytRGewLvfrPo
-         2SDaDIMtzrrdACNFufY1J9BG5RMntHYFdQZ9KdGNiSpf5Ii+VdlPrRo2G7fsVxBRTNLN
-         J1iKR6bK3sZ4mw3u79gezUI2/eCWN45qwQ5RubnV6Zw6OQFLOJjrYcLr1erCTdw+iRac
-         CNbXnm+xzAIGSw5+CSghe/JflH4LpDc3NJzcQuBXR1X4Uv4W0o3pIxwV0zL0746Q6N7r
-         VifVZCTVWUSX+uChCR7uBMMOnUW+VjxnHyXA3VW+Dq5T8FXYBqg+DNAl0h7762vib/5/
-         oKvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3CdhkKFfggu7RKyEGJPDR3uKtKfRfN9PzQkEoRGpys0=;
-        b=VQqlg4QG1oRqlteYmkvi6Ofkbdiyaqpuq4IIVnn+4caY6BdkegAxSLx5wOYVKyuabu
-         SI1bT9fETzRh/gHzfcrhDi9JPn4tTKNtD+Z5VQPaaanKKf8AhwANP/gKg0P0phFlWprA
-         /lWTH4p3Ex/Hme6B/qJN04LYEQv5K0/FYYD6kqjTa02zAxGcBdh4YoW2AL/Alj7aCW3X
-         Epgg3XGr6LhkYyUBVxL3uqqSU/JzONqkWy0hz3RD9p2pfgNholGZoYburK1+bWQIIG2H
-         PvEif+V4DYhtlITp1Wr3CZyyQjy0eF7i+axOoEXhdvHHkH9frujLDExCI7dtwBD9ZEvQ
-         U7Wg==
-X-Gm-Message-State: APjAAAUQWSCNLruHjUeC62mRuzB1ho033JFmx/T1zpAkYSyfrWUg/a8W
-        bPD1IN0+toY03TDVu3DdEBMn49O07pmRO76XD/E=
-X-Google-Smtp-Source: APXvYqxwsgyqKq3v6r0+iHi/zVPWhJzn/oWLFri6jGvIXh+zaY6enrZ38Uj3PrCQ1+XWh5tnUc1T76NEJbrPh7coDvQ=
-X-Received: by 2002:a5d:5406:: with SMTP id g6mr9664403wrv.286.1558963061338;
- Mon, 27 May 2019 06:17:41 -0700 (PDT)
+        id S1726453AbfE0NTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:19:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59256 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726063AbfE0NTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 09:19:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1952DAE78;
+        Mon, 27 May 2019 13:19:45 +0000 (UTC)
+Subject: Re: [PATCH v2] mm: mlockall error for flag MCL_ONFAULT
+To:     "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Jordan, Tobias" <Tobias.Jordan@elektrobit.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+References: <20190527070415.GA1658@dhcp22.suse.cz>
+ <20190527075333.GA6339@er01809n.ebgroup.elektrobit.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <7d5b948d-0253-e73e-980f-f6db5f92b461@suse.cz>
+Date:   Mon, 27 May 2019 15:19:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190524181936.29470-1-martin.blumenstingl@googlemail.com> <20190524181936.29470-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20190524181936.29470-2-martin.blumenstingl@googlemail.com>
-From:   hex dump <hexdump0815@gmail.com>
-Date:   Mon, 27 May 2019 15:17:47 +0200
-Message-ID: <CAKTihDV-zee+rodgg=h1xgBnyiq2oSg4UcaURtCcGCN-Qa4rsw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ARM: dts: meson8b: mxq: improve support for the
- TRONFY MXQ S805
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190527075333.GA6339@er01809n.ebgroup.elektrobit.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 8:19 PM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
-> The TRONFY MXQ comes with either 1GB or 2GB RAM.
->
-> Both variants share (like most boards based on Amlogic reference
-> designs):
-> - 10/100 PHY (IC Plus IP101GR) with GPIOH_4 being the reset line and
->   GPIOH_3 the interrupt line
-> - SD card slot with the card detection GPIO at CARD_6
-> - VCCK is generated by PWM_C with a period of 1148ns and XTAL as input
->   clock
-> - USB OTG exposed on one of the USB-A connectors
-> - 4-port USB hub with 3 ports exposed to the outside
->
-> There seem the multiple board revision out there according to various
-> forum posts:
-> - storage: eMMC or NAND flash
-> - wifi: Ampak AP6210 or Realtek 8189
->
-> Add support for the following functionality:
-> - SoC temperature (hwmon)
-> - changing the CPU voltage
-> - Ethernet connectivity
-> - SD card
-> - USB
->
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Tested-by: hexdump <hexdump0815@googlemail.com>
+On 5/27/19 9:53 AM, Potyra, Stefan wrote:
+> If mlockall() is called with only MCL_ONFAULT as flag,
+> it removes any previously applied lockings and does
+> nothing else.
+> 
+> This behavior is counter-intuitive and doesn't match the
+> Linux man page.
+> 
+>   For mlockall():
+> 
+>   EINVAL Unknown  flags were specified or MCL_ONFAULT was specified with‐
+>          out either MCL_FUTURE or MCL_CURRENT.
+> 
+> Consequently, return the error EINVAL, if only MCL_ONFAULT
+> is passed. That way, applications will at least detect that
+> they are calling mlockall() incorrectly.
+> 
+> Fixes: b0f205c2a308 ("mm: mlock: add mlock flags to enable VM_LOCKONFAULT usage")
+> Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+> Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-BEFORE (no patches from this series applied):
-the mxq device was not really useable with the old mainline dtb as
-most peripeherals were not supported
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-AFTER (the patch applied):
-the rresulting dtb works perfectly fine with my mxq device and all
-mentioned supported functions work as expected
+Thanks, shame we didn't catch it during review. Hope nobody will report
+a regression.
 
-best wishes - hexdump
+> ---
+>  mm/mlock.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/mlock.c b/mm/mlock.c
+> index e492a155c51a..03f39cbdd4c4 100644
+> --- a/mm/mlock.c
+> +++ b/mm/mlock.c
+> @@ -797,7 +797,8 @@ SYSCALL_DEFINE1(mlockall, int, flags)
+>  	unsigned long lock_limit;
+>  	int ret;
+>  
+> -	if (!flags || (flags & ~(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT)))
+> +	if (!flags || (flags & ~(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT)) ||
+> +	    flags == MCL_ONFAULT)
+>  		return -EINVAL;
+>  
+>  	if (!can_do_mlock())
+> 
+
