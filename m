@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4774B2B63D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:22:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67E492B63B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:22:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbfE0NWb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:22:31 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36159 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbfE0NWJ (ORCPT
+        id S1726631AbfE0NWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:22:12 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43410 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbfE0NWJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 27 May 2019 09:22:09 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s17so16951714wru.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 06:22:07 -0700 (PDT)
+Received: by mail-wr1-f66.google.com with SMTP id l17so8527473wrm.10
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 06:22:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=B15kJiNx0gB5GZgy154+cF2VY43Rpy+WChAQDJEB4z4=;
-        b=rxyG/XbxOY9xO0y8sz7iyV/GR+qomMOMyrjb46om9LbLfzHg+biOdo3QrM6hV19Wye
-         2RDnWMDDZXA2XaWC+ixE+k79juVBbkN9/GqFFk/x/Nyyr3G3l8ALH3meaEZAotFvrElm
-         BPz7tcSanuoSSu60aB755pCVvWBjgcaxfQWa6kWkVk5Nffcn87IzYwzFZYZG9Pm1bU5j
-         zdDsKtxX9Db3wfQTAPOE0KjSNjwhQzXlnDmBL4WOpgVJA3LUOWcscEeM3ooZUKWnfr4J
-         b+aa7hPn5TEA9MxVjJk6ZTUeKFZx6AJn8AhKbnC9ij52i6wQdgCZ3yKUiVzyda02xbom
-         dIdg==
+        bh=0UO6p2NGpn6/x+RK1bJoMUDg+U4e7UPzCJT+tP40PaA=;
+        b=r2OcgSMZb0v4j6KbwLI3lZude7y52PSXwphSwGgAIB9u+xVVV7O/ahSo2ZS/LMcwH4
+         wqshUKB2VvyaIvZhSS1V6K9UjnbU/mlFMiBkGhIM8CIkv4bJvseyfm2UDDmt9hu2xBT6
+         7mNhfmxgyl+059rx5X70BqJVEko6sOMPVDMUIj17uk3Mz9YHuInOrtmJOrdDUh5agYy3
+         HWxtSiW4Dv1vzm/RcshsbWCqdV4AwrqZqlNL4O7MUcXGlbc8UecfNomF9mp+IvnpLTmx
+         eKGYRgm+jZrmQ0ClplDsnJEqjxcxJ3Kyvw+9oxCoU9lggtjHlOnmPBVzAL0C5Y2ya6Ck
+         C2Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=B15kJiNx0gB5GZgy154+cF2VY43Rpy+WChAQDJEB4z4=;
-        b=Zj29FxnM9KIIHi2IEkrnPxxp/RM7wkPsb7YZZmHTOlWgJnXc7Pzqlmq+bAGfBTvGcX
-         85COfhoE8TNtcykHhcDJHTaRVTbzia66D2C2GSNcTUvVwN7WYV6RgfU1Mz487ErT9kEN
-         Ti1+7ine+Er+he3uMjWpjzLoq36G2Ie/no/7yldP+HvaBOrVmeU1nfduAeiwyxj1gZlI
-         l0VaVA/289scA+XdGobckJhrfp/wCjh0ZiFIkSe9OnTBaypg8Zi5+/DRl2MWD26BZpUq
-         sex0GAL4ho9p8kf9vNpNdHVFKeViw2HZlMzvdV4QFiCuVUiep/tg/4O638EfjWeRerJ7
-         gBqg==
-X-Gm-Message-State: APjAAAXpuGDFrOZ9KcGw7SN3jdiAIX7C3oKIIM4s6l7g4bI9aMd3LzTr
-        U3YelIOXzj4w4sNDN+xQW2SSwQ==
-X-Google-Smtp-Source: APXvYqwNQZvfpu+TITjMJMn64RyU9BPmMPPPawWMAjqT5Dub5Vb5xePuM97dcekNw6lWKErVTVOkFA==
-X-Received: by 2002:adf:e30d:: with SMTP id b13mr58410891wrj.246.1558963326793;
-        Mon, 27 May 2019 06:22:06 -0700 (PDT)
+        bh=0UO6p2NGpn6/x+RK1bJoMUDg+U4e7UPzCJT+tP40PaA=;
+        b=EwnGaKaPXJMvGCetHLoEy6qaR5+yqCt1IPFjoola3pmwPuxpKcAbmqh6y1Ubc8Y4YT
+         kxRE6R2ITw0XkTyGyRx7UK48FgVgZyh3ae6Xj+cwb492Tbyh+HUGW8UGKaap5NXuwfI0
+         knu9n7QlG3AVm9naTgWPQ9L3zAoEPNPISQDtpY7oDaODc44dXD37I5SQ8FwhzzFlTax4
+         7boW8V7DJN8r00zthQaLLnWrDXTjKKJ6W+3tb8ULuDuKavARSQ7DkgCpvz5YCU4cgb/M
+         bxnpgYjHxmfvTwB4cSwelSmxwm97tK+/DosGbpth2QhSUq+jSmwcH+zhU0ie1e4dZGSq
+         tmEg==
+X-Gm-Message-State: APjAAAWsRVvkiqRqYa6bobwrD7p03MI5fMQh71AlD3cwc8ukpaJC5wiN
+        djpCVW+IJl5E6qgCQUmzjGjLXW6Jvh1W5g==
+X-Google-Smtp-Source: APXvYqzCwOlwTFCDqqaeLiT8HaxVqritfgZVZbXUj48aOqAe46yNkgcCzFHUbw7WVsspKUXNijl9Ug==
+X-Received: by 2002:adf:fe07:: with SMTP id n7mr134383wrr.7.1558963327475;
+        Mon, 27 May 2019 06:22:07 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
         by smtp.gmail.com with ESMTPSA id l12sm7019836wmj.22.2019.05.27.06.22.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 27 May 2019 06:22:06 -0700 (PDT)
+        Mon, 27 May 2019 06:22:07 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         christianshewitt@gmail.com
-Subject: [PATCH 05/10] arm64: dts: meson-gxbb-vega-s95: fix regulators
-Date:   Mon, 27 May 2019 15:21:55 +0200
-Message-Id: <20190527132200.17377-6-narmstrong@baylibre.com>
+Subject: [PATCH 06/10] arm64: dts: meson-gxbb-vega-s95: add HDMI nodes
+Date:   Mon, 27 May 2019 15:21:56 +0200
+Message-Id: <20190527132200.17377-7-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190527132200.17377-1-narmstrong@baylibre.com>
 References: <20190527132200.17377-1-narmstrong@baylibre.com>
@@ -64,104 +64,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Align the regulator names with other GXBB SoCS for upcoming
-SARADC support and SDIO/SDCard fixes.
-Also fix how regulators are passed to MMC controllers & USB.
+Add HDMI nodes to support graphics on Vega S95
 
 Suggested-by: Christian Hewitt <christianshewitt@gmail.com>
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- .../boot/dts/amlogic/meson-gxbb-vega-s95.dtsi | 34 ++++++++++++-------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+ .../boot/dts/amlogic/meson-gxbb-vega-s95.dtsi | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-index 623bcb6594b1..760730d4e87b 100644
+index 760730d4e87b..6738b2aac9a0 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-@@ -28,10 +28,10 @@
- 		};
+@@ -73,6 +73,17 @@
+ 		pwms = <&pwm_ef 0 30518 0>; /* PWM_E at 32.768KHz */
  	};
  
--	usb_vbus: regulator-usb0-vbus {
-+	usb_pwr: regulator-usb-pwrs {
- 		compatible = "regulator-fixed";
- 
--		regulator-name = "USB0_VBUS";
-+		regulator-name = "USB_PWR";
- 
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
-@@ -40,18 +40,25 @@
- 		enable-active-high;
- 	};
- 
--	vcc_3v3: regulator-vcc_3v3 {
-+	vddio_boot: regulator-vddio_boot {
- 		compatible = "regulator-fixed";
--		regulator-name = "VCC_3V3";
-+		regulator-name = "VDDIO_BOOT";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
++	hdmi-connector {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_connector_in: endpoint {
++				remote-endpoint = <&hdmi_tx_tmds_out>;
++			};
++		};
 +	};
 +
-+	vddao_3v3: regulator-vddao_3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDAO_3V3";
- 		regulator-min-microvolt = <3300000>;
- 		regulator-max-microvolt = <3300000>;
+ 	sdio_pwrseq: sdio-pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		reset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_LOW>,
+@@ -108,6 +119,18 @@
  	};
- 
--	vcc_1v8: regulator-vcc_1v8 {
-+	vcc_3v3: regulator-vcc_3v3 {
- 		compatible = "regulator-fixed";
--		regulator-name = "VCC_1V8";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
-+		regulator-name = "VCC_3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
- 	};
- 
- 	emmc_pwrseq: emmc-pwrseq {
-@@ -133,8 +140,8 @@
- 
- 	mmc-pwrseq = <&sdio_pwrseq>;
- 
--	vmmc-supply = <&vcc_3v3>;
--	vqmmc-supply = <&vcc_1v8>;
-+	vmmc-supply = <&vddao_3v3>;
-+	vqmmc-supply = <&vddio_boot>;
- 
- 	brcmf: wifi@1 {
- 		reg = <1>;
-@@ -156,7 +163,8 @@
- 
- 	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
- 
--	vmmc-supply = <&vcc_3v3>;
-+	vmmc-supply = <&vddao_3v3>;
-+	vqmmc-supply = <&vcc_3v3>;
  };
  
- /* eMMC */
-@@ -176,7 +184,7 @@
- 
- 	mmc-pwrseq = <&emmc_pwrseq>;
- 	vmmc-supply = <&vcc_3v3>;
--	vmmcq-sumpply = <&vcc_1v8>;
-+	vqmmc-supply = <&vddio_boot>;
- };
- 
- &uart_AO {
-@@ -187,7 +195,7 @@
- 
- &usb0_phy {
++&hdmi_tx {
++	status = "okay";
++	pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
++	pinctrl-names = "default";
++};
++
++&hdmi_tx_tmds_port {
++	hdmi_tx_tmds_out: endpoint {
++		remote-endpoint = <&hdmi_connector_in>;
++	};
++};
++
+ &ir {
  	status = "okay";
--	phy-supply = <&usb_vbus>;
-+	phy-supply = <&usb_pwr>;
- };
- 
- &usb1_phy {
+ 	pinctrl-0 = <&remote_input_ao_pins>;
 -- 
 2.21.0
 
