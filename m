@@ -2,144 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F9B32B9F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 20:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CD3F2B9FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 20:17:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfE0SPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 14:15:36 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:34622 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbfE0SPg (ORCPT
+        id S1727182AbfE0SRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 14:17:43 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:34626 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726817AbfE0SRn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 14:15:36 -0400
-Received: by mail-ua1-f66.google.com with SMTP id 7so6804913uah.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 11:15:35 -0700 (PDT)
+        Mon, 27 May 2019 14:17:43 -0400
+Received: by mail-vs1-f65.google.com with SMTP id q64so11120345vsd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 11:17:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8hNxMGBAGDDkJj992yk9VOgjaUK9vfpRQoQGfXOovpE=;
-        b=R35p3owaTNtpz8MKhE3eb7p90Rmi3WA5z/IJLfYWxVZBpq3sSmZbyPaLZ+g95OFPLj
-         9nln1OdB5Rvf8gwb4rQbRYIsNLusvEJXx7zGVj5EYwA83fEJtc5HaF1UNeCxOy5omeDa
-         GAyE56QpwHgC0CT68m18jw6FEeT/1n2spYPfWdSBhQgdW6IKW3e90iju4iJHMzcjoEr8
-         zyTxg1uWCQHDh7WZaUCrOJIKk18+S8uCyT77OMo4QJ0+v9wCEPzhPZEmgYXkMXXMm8VG
-         MtX0tokKVf2ITpLZZPa0p/ErpJtrljHSYPhMSlFxTmruq7ArzrEqc5QUvzfeuyQkWFG2
-         epXA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Wk2hdUXANFYl1/k0tGnBJuWme842kQgEugYRrAdMJgU=;
+        b=dS4IbOdhgZVSQqWE7W9HLkrZGQvhZ5abk5sQyiNlaHVjv85/1nWeAywC/QDyez/NL5
+         z5AsU7MavE++ZEHOw8BPtuFl6Sl4UofmOw2JMe8ShMocnqtby87XNUKx/Ynr/IiV5k4S
+         orzYRSZzC7PdIRMNlk5aBCIXPnUpTfvSyJn5JPRMiFhwEko33ECMK7cuh70/+y6un1gJ
+         rrPyBdC2KSR4FFZ/fXnMog2IOWRqmbwXXzgLgWBhbyphDpZn+xro+tYx+/W4yNXgHXah
+         3/mzTz1Ffet/YgR4K1+Noi+2C8Qr5Gf16oP/oHeUde/Cw3BPJYfSTbmqpKYSPiHHrZ9H
+         ELeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8hNxMGBAGDDkJj992yk9VOgjaUK9vfpRQoQGfXOovpE=;
-        b=Ii20353rWwc/Cy5FwPR6hbXUo772gxePoVQFOLH0ZE+qVFB01pEXuQbkH0waDcWeqa
-         6JgLTVg1qcMTyciaEr+Uc0zcDe6TSNVJlgHBfOPsIsVxEGmt5ofoz5fxeCllkZkeW6zb
-         AShfy8klRLl8mLVsSc8e/ge/Jl2yMwWfQ/hQvPA2knBbBk4A2x/T61EDJ90GWNdjyTfF
-         EPxG4NRLa6ktLFKIxykiRPisvMYWjJoDb0NzMr1G97HDHqY6+iQBv2kGApFixeiuITEX
-         GY46XuIKV8u4+Liz8csdGWsI4Mj3X+6lcz3vD6YXdIVEBNe8PlOCtP1SXUbEjDtHQ4UV
-         LT3Q==
-X-Gm-Message-State: APjAAAX86rOdjxL7U62aw6LYLlTtrkNjgqWTiw4NZ4q8hyU8sFpuIsXO
-        POTT097CV7hYryqotaZw0/Aydg==
-X-Google-Smtp-Source: APXvYqwv7ANsIWSla6GVRQobbng/bEadzUM3um96jeSPyG6hwcnv7WioNf8L1mG+BSjhPwpAO5GK0w==
-X-Received: by 2002:ab0:4a97:: with SMTP id s23mr22342607uae.19.1558980935337;
-        Mon, 27 May 2019 11:15:35 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id b78sm4160999vkb.10.2019.05.27.11.15.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 May 2019 11:15:34 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hVK9m-0002cU-92; Mon, 27 May 2019 15:15:34 -0300
-Date:   Mon, 27 May 2019 15:15:34 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Ariel Levkovich <lariel@mellanox.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mlx5: avoid 64-bit division
-Message-ID: <20190527181534.GA10029@ziepe.ca>
-References: <20190520111902.7104DE0184@unicorn.suse.cz>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wk2hdUXANFYl1/k0tGnBJuWme842kQgEugYRrAdMJgU=;
+        b=pDrjWzgTPc/5hK8MubZ1CwTCymsKsMRZ0qoQWuykVRwEXJPBjVFn/3HtODwXI0lrx3
+         dhuRQxFQGGcY21k1UZ6GLmIRwQJjwJSutsnY4Uf73C7hqIfL3BaPUSFWyKZUo2Wo4mBT
+         rkf9New5+FOODCNblrNMg6K8DB415XOt7fB5z0iz9fcSOUgkd3yC8ceUOL0NH1UGHmnu
+         T3tvWaSTZG34Tm5n4HcNhkHd9yZZT66meGYBkF0Tv2/gmc1WaHTJkP7vadYGEMkeaAsU
+         3oc8IJlC77IV9JrJ/ipkYJEaNT9btcLrNNe/95Wx5vZMDUrlMUmHoXWpoqCOOriVwPQH
+         ewYg==
+X-Gm-Message-State: APjAAAViuXrdMx/oYnwj6tuGvweriI3d474MuVMRyiQfnQg6p51fdjmD
+        sgcvw/muf2tZFEGdk8h3jaeMehq1tLUTspHM0bAFmg==
+X-Google-Smtp-Source: APXvYqzuKcW/79QkdRTF5rt129CfhCTBkDjwdQNIeah8lsnBs26cDYoRW6a2C+MEJfPi6wzVzRHznUMCZcNZHRlI5d8=
+X-Received: by 2002:a67:3046:: with SMTP id w67mr51182171vsw.165.1558981062356;
+ Mon, 27 May 2019 11:17:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190520111902.7104DE0184@unicorn.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1556264798-18540-1-git-send-email-ludovic.Barre@st.com> <1556264798-18540-4-git-send-email-ludovic.Barre@st.com>
+In-Reply-To: <1556264798-18540-4-git-send-email-ludovic.Barre@st.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 27 May 2019 20:17:05 +0200
+Message-ID: <CAPDyKFrxp3Y3AudNvkkSRaph2Fe-A-F6Cs0jfy9RUja76GYeiA@mail.gmail.com>
+Subject: Re: [PATCH V2 3/5] mmc: mmci: fix clear of busy detect status
+To:     Ludovic Barre <ludovic.Barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 20, 2019 at 01:19:02PM +0200, Michal Kubecek wrote:
-> Commit 25c13324d03d ("IB/mlx5: Add steering SW ICM device memory type")
-> breaks i386 build by introducing three 64-bit divisions. As the divisor
-> is MLX5_SW_ICM_BLOCK_SIZE() which is always a power of 2, we can replace
-> the division with bit operations.
-> 
-> Fixes: 25c13324d03d ("IB/mlx5: Add steering SW ICM device memory type")
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
->  drivers/infiniband/hw/mlx5/cmd.c  | 9 +++++++--
->  drivers/infiniband/hw/mlx5/main.c | 2 +-
->  2 files changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/infiniband/hw/mlx5/cmd.c b/drivers/infiniband/hw/mlx5/cmd.c
-> index e3ec79b8f7f5..6c8645033102 100644
-> +++ b/drivers/infiniband/hw/mlx5/cmd.c
-> @@ -190,12 +190,12 @@ int mlx5_cmd_alloc_sw_icm(struct mlx5_dm *dm, int type, u64 length,
->  			  u16 uid, phys_addr_t *addr, u32 *obj_id)
->  {
->  	struct mlx5_core_dev *dev = dm->dev;
-> -	u32 num_blocks = DIV_ROUND_UP(length, MLX5_SW_ICM_BLOCK_SIZE(dev));
->  	u32 out[MLX5_ST_SZ_DW(general_obj_out_cmd_hdr)] = {};
->  	u32 in[MLX5_ST_SZ_DW(create_sw_icm_in)] = {};
->  	unsigned long *block_map;
->  	u64 icm_start_addr;
->  	u32 log_icm_size;
-> +	u32 num_blocks;
->  	u32 max_blocks;
->  	u64 block_idx;
->  	void *sw_icm;
-> @@ -224,6 +224,8 @@ int mlx5_cmd_alloc_sw_icm(struct mlx5_dm *dm, int type, u64 length,
->  		return -EINVAL;
->  	}
->  
-> +	num_blocks = (length + MLX5_SW_ICM_BLOCK_SIZE(dev) - 1) >>
-> +		     MLX5_LOG_SW_ICM_BLOCK_SIZE(dev);
->  	max_blocks = BIT(log_icm_size - MLX5_LOG_SW_ICM_BLOCK_SIZE(dev));
->  	spin_lock(&dm->lock);
->  	block_idx = bitmap_find_next_zero_area(block_map,
-> @@ -266,13 +268,16 @@ int mlx5_cmd_dealloc_sw_icm(struct mlx5_dm *dm, int type, u64 length,
->  			    u16 uid, phys_addr_t addr, u32 obj_id)
->  {
->  	struct mlx5_core_dev *dev = dm->dev;
-> -	u32 num_blocks = DIV_ROUND_UP(length, MLX5_SW_ICM_BLOCK_SIZE(dev));
->  	u32 out[MLX5_ST_SZ_DW(general_obj_out_cmd_hdr)] = {};
->  	u32 in[MLX5_ST_SZ_DW(general_obj_in_cmd_hdr)] = {};
->  	unsigned long *block_map;
-> +	u32 num_blocks;
->  	u64 start_idx;
->  	int err;
->  
-> +	num_blocks = (length + MLX5_SW_ICM_BLOCK_SIZE(dev) - 1) >>
-> +		     MLX5_LOG_SW_ICM_BLOCK_SIZE(dev);
-> +
->  	switch (type) {
->  	case MLX5_IB_UAPI_DM_TYPE_STEERING_SW_ICM:
->  		start_idx =
-> diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-> index abac70ad5c7c..340290b883fe 100644
-> +++ b/drivers/infiniband/hw/mlx5/main.c
-> @@ -2344,7 +2344,7 @@ static int handle_alloc_dm_sw_icm(struct ib_ucontext *ctx,
->  	/* Allocation size must a multiple of the basic block size
->  	 * and a power of 2.
->  	 */
-> -	act_size = roundup(attr->length, MLX5_SW_ICM_BLOCK_SIZE(dm_db->dev));
-> +	act_size = round_up(attr->length, MLX5_SW_ICM_BLOCK_SIZE(dm_db->dev));
->  	act_size = roundup_pow_of_two(act_size);
+On Fri, 26 Apr 2019 at 09:46, Ludovic Barre <ludovic.Barre@st.com> wrote:
+>
+> From: Ludovic Barre <ludovic.barre@st.com>
+>
+> The "busy_detect_flag" is used to read/clear busy value of
+> mmci status. The "busy_detect_mask" is used to manage busy irq of
+> mmci mask.
+> For sdmmc variant, the 2 properties have not the same offset.
+> To clear the busyd0 status bit, we must add busy detect flag,
+> the mmci mask is not enough.
+>
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 
-It is kind of weird that we have round_up and the bitshift
-version.. None of this is performance critical so why not just use
-round_up everywhere?
+Ludovic, again, apologies for the delay.
 
-Ariel, it is true MLX5_SW_ICM_BLOCK_SIZE will always be a power of
-two?
+> ---
+>  drivers/mmc/host/mmci.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/mmci.c b/drivers/mmc/host/mmci.c
+> index a040f54..3cd52e8 100644
+> --- a/drivers/mmc/host/mmci.c
+> +++ b/drivers/mmc/host/mmci.c
+> @@ -1517,7 +1517,8 @@ static irqreturn_t mmci_irq(int irq, void *dev_id)
+>                  * to make sure that both start and end interrupts are always
+>                  * cleared one after the other.
+>                  */
+> -               status &= readl(host->base + MMCIMASK0);
+> +               status &= readl(host->base + MMCIMASK0) |
+> +                       host->variant->busy_detect_flag;
 
-Jason
+I think this is not entirely correct, because it would mean we check
+for busy even if we haven't unmasked the busy IRQ via the
+variant->busy_detect_mask.
+
+I suggest to store a new bool in the host (call it
+"busy_detect_unmasked" or whatever makes sense to you), to track
+whether we have unmasked the busy IRQ or not. Then take this flag into
+account, before ORing the value of host->variant->busy_detect_flag,
+according to above.
+
+>                 if (host->variant->busy_detect)
+>                         writel(status & ~host->variant->busy_detect_mask,
+>                                host->base + MMCICLEAR);
+> --
+> 2.7.4
+>
+
+Kind regards
+Uffe
