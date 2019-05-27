@@ -2,53 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC3442B8A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:56:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA2272B8AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 18:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbfE0P44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 11:56:56 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38563 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbfE0P44 (ORCPT
+        id S1726481AbfE0QDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 12:03:25 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35150 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbfE0QDZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 11:56:56 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b76so9790288pfb.5;
-        Mon, 27 May 2019 08:56:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=d6VSBFNBtAbJpYlBgVyHpiunnCtg5nq2DJVgA1pCtMA=;
-        b=jtkyvqMqsBJBDfI+8Vyo9jx8Zu56SQR9OU96Wf8gn9qcqPL0dhirCkWpHS9Q4LJoTf
-         FnH8J7xFslp71OCeVd9OTKi8nuockChFDcyvMwY+XFnuRkpQxiIqaHPUQmH8Ntgxre28
-         x4Oec5b+wAAR8zX6mcArnvX7vfKrhwnrSaPsJ3bCJKlEq18rF5RLNbXP6gPlyeiDXYrB
-         VXYyXqsv57vT/jHgAOa1epzDJ68BPcIOjp2CM5usrOM5vvJTAnOVKdBPIDxGYWmmC3tW
-         YZ7KnYA5eI2kVA2HU2NDd+Pv9KQKc/YaSYmKqYaBcHrPovVeZ+NBUd8MBdkq5ABBuPSH
-         0u8Q==
+        Mon, 27 May 2019 12:03:25 -0400
+Received: by mail-wr1-f66.google.com with SMTP id m3so17341460wrv.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 09:03:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=d6VSBFNBtAbJpYlBgVyHpiunnCtg5nq2DJVgA1pCtMA=;
-        b=W+aNhwTKE+AssN2x/6Yzs5a1/AEMSBzqgznGr1vqgB5q3oKHq39h0weOIzpyC0XflW
-         Aj6v/dVSbJ9v55skCTixoEcc3WSJIdmCYvzVDED4Iu3nqpNPa8A5ruPP635YREc+bqjv
-         KPSQlpVp/liAE2nc7yuhhFcFIHytGIWTxvZrLec22v8mCQlOzBy4MXjEzOQrKrg4bSpX
-         vjagmhQV9SGzzuYAl1M2ERr0IYfJUA1Qe0m93rDDCr7m3DAHc44yf1DQTNjgz3JAcLYR
-         te8v8u7iYm8ZemktTaxNui00sDoZ5cXuiLtLe4PSJi6cS9YoYk7gTRkfXxMH6rijZr2g
-         9h4w==
-X-Gm-Message-State: APjAAAUKZqyWnNmlQ02K0/LkAXsaOtaUX0HamGrnC+nhF/XM4xX//W3S
-        0GgnDWXThPhEsqKMezsc3F08EkKI
-X-Google-Smtp-Source: APXvYqwcAY5U9y/EHrI4RzsmJwHSIzREkHux5n+Pnh+rJpV8l5dRNU8u/Pmwj5d1E4tkhpXhbdMBcw==
-X-Received: by 2002:a17:90a:b393:: with SMTP id e19mr32693682pjr.91.1558972615422;
-        Mon, 27 May 2019 08:56:55 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id q70sm19541411pja.31.2019.05.27.08.56.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 08:56:54 -0700 (PDT)
+        bh=2TYRQV/8vy5n7AkTEmZf5fs246F6UHHh7ITNZBQ2EdM=;
+        b=XiBNyImdVIa7+7zmkGX8dSwKu3eesg7W7TIlPO69crsPn1dEFbN9pJngIOtWt928vK
+         YAid0x4J73gYjFd/QhDlFDb/K9YOuTscw3tEVFRyf8SWldnHK+TH7MEvs6q8IAuMU0FY
+         SUzD+JYuZhv9MV3xrfo7Dq4zs6/3RC1gjqf5C7/8Mzr/4p3H5wfe+Bs7XcYMu2vvqLxj
+         Xh0UWiOrno74cvjYD23YzPefy3GJtnfVKhlj2uiBaD4YWrFUm6uha7XZ68InJc5fXtHi
+         ldy3cSHN+mjSk9diHBifiEA9djV5MuYB5nvThfwvXXXX6mxi4Vh+gHl4us0PKhKVWXn+
+         LgyA==
+X-Gm-Message-State: APjAAAUJRPnM3CShdxZ6nJs0GasRxu8iEl05O2JzyGltSeHLPcKzVTym
+        yJIcDqRMlWoxEtwferGEPMH2EwdgQ78=
+X-Google-Smtp-Source: APXvYqwT2b/6FC4cJVZGNdWcdbbsNERf/3B12TaNX+gUgYXRWPEXC9eJwz0FLxEkCRuK1jUYHdIfoQ==
+X-Received: by 2002:a5d:6108:: with SMTP id v8mr19005476wrt.150.1558973003585;
+        Mon, 27 May 2019 09:03:23 -0700 (PDT)
+Received: from [192.168.1.43] (228.red-83-52-173.dynamicip.rima-tde.net. [83.52.173.228])
+        by smtp.gmail.com with ESMTPSA id a128sm12214045wma.23.2019.05.27.09.03.21
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 09:03:22 -0700 (PDT)
 Subject: Re: [Qemu-devel] Running linux on qemu omap
-To:     Tony Lindgren <tony@atomide.com>,
-        =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <philmd@redhat.com>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Tony Lindgren <tony@atomide.com>
 Cc:     Thomas Huth <thuth@redhat.com>,
         Aaro Koskinen <aaro.koskinen@iki.fi>,
         Corentin Labbe <clabbe.montjoie@gmail.com>,
@@ -62,14 +51,17 @@ References: <20190520190533.GA28160@Red>
  <8977e2bb-8d9e-f4fd-4c44-b4f67e0e7314@redhat.com>
  <c2972889-fe60-7614-fb6e-e57ddf780a54@redhat.com>
  <20190527063250.GI5447@atomide.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <5dbec436-4356-415e-eb1c-0f506af89744@roeck-us.net>
-Date:   Mon, 27 May 2019 08:56:53 -0700
+ <5dbec436-4356-415e-eb1c-0f506af89744@roeck-us.net>
+From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <philmd@redhat.com>
+Openpgp: id=89C1E78F601EE86C867495CBA2A3FD6EDEADC0DE;
+ url=http://pgp.mit.edu/pks/lookup?op=get&search=0xA2A3FD6EDEADC0DE
+Message-ID: <55b06c4c-5963-d4ef-4dcf-b222786bfd52@redhat.com>
+Date:   Mon, 27 May 2019 18:03:21 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190527063250.GI5447@atomide.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <5dbec436-4356-415e-eb1c-0f506af89744@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,21 +69,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/26/19 11:32 PM, Tony Lindgren wrote:
-> Hi,
-> 
-> * Philippe Mathieu-Daudé <philmd@redhat.com> [190523 12:01]:
->> What I use as reference for testing ARM boards [*] is the work of
->> Guenter Roeck:
->> https://github.com/groeck/linux-build-test/blob/master/rootfs/arm/run-qemu-arm.sh
-> 
-> I think Guenter also has v2.3.50-local-linaro branch in his
-> github repo that has support for few extra boards like Beagleboard.
-> Not sure what's the current branch to use though.
-> 
-I'd be happy to use a different (supported) branch, but the Linaro branch
-was the only one I could find that supports those boards. Unfortunately,
-qemu changed so much since 2.3 that it is all but impossible to merge
-the code into mainline qemu without spending a lot of effort on it.
+On 5/27/19 5:56 PM, Guenter Roeck wrote:
+> On 5/26/19 11:32 PM, Tony Lindgren wrote:
+>> Hi,
+>>
+>> * Philippe Mathieu-Daudé <philmd@redhat.com> [190523 12:01]:
+>>> What I use as reference for testing ARM boards [*] is the work of
+>>> Guenter Roeck:
+>>> https://github.com/groeck/linux-build-test/blob/master/rootfs/arm/run-qemu-arm.sh
+>>>
+>>
+>> I think Guenter also has v2.3.50-local-linaro branch in his
+>> github repo that has support for few extra boards like Beagleboard.
+>> Not sure what's the current branch to use though.
+>>
+> I'd be happy to use a different (supported) branch, but the Linaro branch
+> was the only one I could find that supports those boards. Unfortunately,
+> qemu changed so much since 2.3 that it is all but impossible to merge
+> the code into mainline qemu without spending a lot of effort on it.
 
-Guenter
+Peter commented on that here:
+https://lists.gnu.org/archive/html/qemu-devel/2015-05/msg00137.html
+
+"This is not a trivial job (my estimate was that it would be a couple
+of months work to get the complete set sorted out and upstreamed ..."
