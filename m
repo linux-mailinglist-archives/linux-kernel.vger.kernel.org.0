@@ -2,88 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16F252B4B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 14:15:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBBFB2B460
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 14:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725943AbfE0MPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 08:15:04 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45893 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727301AbfE0MPD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 08:15:03 -0400
-Received: by mail-pf1-f193.google.com with SMTP id s11so9486585pfm.12
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 05:15:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=UgMa49/CXAIFVmKElCefxmiPU7Ly3jsRaFKqmaNzYxk=;
-        b=dgGhYPxCcW3WWOSfXAK4cawTdNYAntuom/Q44qKYhoXSkArjRPj54mQFQf5VNb8ImT
-         oLYMf+hlO3FaR3xqWS2NhU3UXe7+BpSpQzWWTWl5ku3nx/WI1vja5WxER0KxbFp+Bq0V
-         VFE2Be9sIyNjEI2Z2TYE7rzNAyJyFGkcVgdqtLrpHdzXo/B//y4O4j0/oeE2XiOOkXjA
-         5ItQSW504Fd3X0F9Oh/l9yj6E7ZhkFY4WAbX2HcbPVEeoJeVxF8eNhhMosChst3egUrY
-         LlA39Sl7xP4d9CT96KFqxSanSqnOFiTXZVS1SZgwX4nWJHSWxJW1I8PoOS8TSWXvsl5L
-         DKAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=UgMa49/CXAIFVmKElCefxmiPU7Ly3jsRaFKqmaNzYxk=;
-        b=LwFU1HVHF4+7ajdMkEV7W+erCgTerz1rX+pgP476oM46DETslFXI2J7DITr2B9FG1c
-         FmcDCpk0sQELF7Q5tky3jCs2cOkkB0hhDM/lLJfdhQJbcFb1IYs2bE3iZbKw6ZLx8xYA
-         Etay3RY5izjkX5WDY+PtFurAFg9gnVtA8j9f2hParuWqHvNjT1Pviy5gnBSeflMsMuhJ
-         FfcoW6QcGvZjTmOepk4ZrDzasAcK7K13DB/LGAyfkC7btbwXijvuxXD2ru/HEqrnoYxF
-         1F73egmBiUs9rr15GCUChG2eN/m1WIL1wQmE2H4BJdereV6ndP4OUfJZgqaHi9PYZN7D
-         FQUA==
-X-Gm-Message-State: APjAAAVT64oNk2zgrYvvHC3c7c/nSOAmr3gAbxS2JV9is/ywS0mi7SXI
-        +uOkYqnmqHI3Gp6h8aWp4HapKLCo
-X-Google-Smtp-Source: APXvYqxS2piUYDwcMVqQI47Y6BNpTk2A4nMwnH6IesVP9VwLN7wBTaTydMwaf4+U23IaB32BcCeb6g==
-X-Received: by 2002:a17:90a:37ef:: with SMTP id v102mr31239181pjb.12.1558959302575;
-        Mon, 27 May 2019 05:15:02 -0700 (PDT)
-Received: from localhost ([43.224.245.181])
-        by smtp.gmail.com with ESMTPSA id r185sm13609106pfc.167.2019.05.27.05.15.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 05:15:01 -0700 (PDT)
-From:   Weitao Hou <houweitaoo@gmail.com>
-To:     dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, miquel.raynal@bootlin.com, richard@nod.at,
-        vigneshr@ti.com
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Weitao Hou <houweitaoo@gmail.com>
-Subject: [PATCH] mtd: remove unused value for mtdoops
-Date:   Mon, 27 May 2019 20:14:40 +0800
-Message-Id: <20190527121440.19271-1-houweitaoo@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        id S1726941AbfE0MGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 08:06:55 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17580 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726071AbfE0MGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 08:06:54 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 84DCA3273ECA518A4663;
+        Mon, 27 May 2019 20:06:52 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 27 May 2019 20:06:43 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>
+Subject: [PATCH v2] media: saa7164: fix remove_proc_entry warning
+Date:   Mon, 27 May 2019 20:14:55 +0800
+Message-ID: <20190527121455.177296-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <a921e7c8-53a2-bc48-286e-76efa6c4ba07@xs4all.nl>
+References: <a921e7c8-53a2-bc48-286e-76efa6c4ba07@xs4all.nl>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-since hdr was never used, we need not reserve and init it
+if saa7164_proc_create() fails, saa7164_fini() will trigger a warning,
 
-Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
+name 'saa7164'
+WARNING: CPU: 1 PID: 6311 at fs/proc/generic.c:672 remove_proc_entry+0x1e8/0x3a0
+  ? remove_proc_entry+0x1e8/0x3a0
+  ? try_stop_module+0x7b/0x240
+  ? proc_readdir+0x70/0x70
+  ? rcu_read_lock_sched_held+0xd7/0x100
+  saa7164_fini+0x13/0x1f [saa7164]
+  __x64_sys_delete_module+0x30c/0x480
+  ? __ia32_sys_delete_module+0x480/0x480
+  ? __x64_sys_clock_gettime+0x11e/0x1c0
+  ? __x64_sys_timer_create+0x1a0/0x1a0
+  ? trace_hardirqs_off_caller+0x40/0x180
+  ? do_syscall_64+0x18/0x450
+  do_syscall_64+0x9f/0x450
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Fix it by checking the return of proc_create_single() before
+calling remove_proc_entry().
+
+Cc: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- drivers/mtd/mtdoops.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/media/pci/saa7164/saa7164-core.c | 33 ++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/mtd/mtdoops.c b/drivers/mtd/mtdoops.c
-index e078fc41aa61..6ae4b70ebdbb 100644
---- a/drivers/mtd/mtdoops.c
-+++ b/drivers/mtd/mtdoops.c
-@@ -191,14 +191,8 @@ static void mtdoops_write(struct mtdoops_context *cxt, int panic)
- {
- 	struct mtd_info *mtd = cxt->mtd;
- 	size_t retlen;
--	u32 *hdr;
- 	int ret;
+diff --git a/drivers/media/pci/saa7164/saa7164-core.c b/drivers/media/pci/saa7164/saa7164-core.c
+index 05f25c9bb308..04d566b1b41e 100644
+--- a/drivers/media/pci/saa7164/saa7164-core.c
++++ b/drivers/media/pci/saa7164/saa7164-core.c
+@@ -1122,16 +1122,25 @@ static int saa7164_proc_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
  
--	/* Add mtdoops header to the buffer */
--	hdr = cxt->oops_buf;
--	hdr[0] = cxt->nextcount;
--	hdr[1] = MTDOOPS_KERNMSG_MAGIC;
++static struct proc_dir_entry *saa7164_pe;
++
+ static int saa7164_proc_create(void)
+ {
+-	struct proc_dir_entry *pe;
 -
- 	if (panic) {
- 		ret = mtd_panic_write(mtd, cxt->nextpage * record_size,
- 				      record_size, &retlen, cxt->oops_buf);
+-	pe = proc_create_single("saa7164", S_IRUGO, NULL, saa7164_proc_show);
+-	if (!pe)
++	saa7164_pe = proc_create_single("saa7164", S_IRUGO, NULL, saa7164_proc_show);
++	if (!saa7164_pe)
+ 		return -ENOMEM;
+ 
+ 	return 0;
+ }
++
++static void saa7164_proc_destroy(void)
++{
++	if (saa7164_pe)
++		remove_proc_entry("saa7164", NULL);
++}
++#else
++static int saa7164_proc_create(void) { return 0; }
++static void saa7164_proc_destroy(void) {}
+ #endif
+ 
+ static int saa7164_thread_function(void *data)
+@@ -1503,19 +1512,21 @@ static struct pci_driver saa7164_pci_driver = {
+ 
+ static int __init saa7164_init(void)
+ {
+-	printk(KERN_INFO "saa7164 driver loaded\n");
++	int ret = pci_register_driver(&saa7164_pci_driver);
++
++	if (ret)
++		return ret;
+ 
+-#ifdef CONFIG_PROC_FS
+ 	saa7164_proc_create();
+-#endif
+-	return pci_register_driver(&saa7164_pci_driver);
++
++	printk(KERN_INFO "saa7164 driver loaded\n");
++
++	return 0;
+ }
+ 
+ static void __exit saa7164_fini(void)
+ {
+-#ifdef CONFIG_PROC_FS
+-	remove_proc_entry("saa7164", NULL);
+-#endif
++	saa7164_proc_destroy();
+ 	pci_unregister_driver(&saa7164_pci_driver);
+ }
+ 
 -- 
-2.18.0
+2.20.1
 
