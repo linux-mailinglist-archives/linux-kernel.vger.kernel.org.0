@@ -2,101 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BC7D2B9A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 19:58:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 653B32B9AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 19:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfE0R56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 13:57:58 -0400
-Received: from smtprelay0021.hostedemail.com ([216.40.44.21]:49093 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726545AbfE0R56 (ORCPT
+        id S1727051AbfE0R72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 13:59:28 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43212 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726484AbfE0R72 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 13:57:58 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id C7F7C100E86C3;
-        Mon, 27 May 2019 17:57:56 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2194:2199:2393:2525:2553:2559:2563:2682:2685:2828:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6742:7808:7903:8957:9025:9040:9108:10004:10400:10848:11026:11232:11658:11914:12043:12114:12555:12740:12760:12895:12986:13019:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21324:21451:21627:30054:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
-X-HE-Tag: can07_7f3a0e0e0e616
-X-Filterd-Recvd-Size: 3205
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf15.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 27 May 2019 17:57:54 +0000 (UTC)
-Message-ID: <475b18e78ba7e04363fe002315f75d2ce35496f9.camel@perches.com>
-Subject: Re: [PATCH v2] rcu: Don't return a value from rcu_assign_pointer()
-From:   Joe Perches <joe@perches.com>
-To:     paulmck@linux.ibm.com
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sasha Levin <sashal@kernel.org>, apw@canonical.com
-Date:   Mon, 27 May 2019 10:57:52 -0700
-In-Reply-To: <20190527174901.GL28207@linux.ibm.com>
-References: <1558946997-25559-1-git-send-email-andrea.parri@amarulasolutions.com>
-         <20190527161050.GK28207@linux.ibm.com>
-         <810a0dae47c90c39015903c413303fcee89ab5eb.camel@perches.com>
-         <20190527174901.GL28207@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 27 May 2019 13:59:28 -0400
+Received: by mail-oi1-f193.google.com with SMTP id t187so12408801oie.10
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 10:59:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EJGfKoNTtpHONAVVUy19xvP3ls9YinFzlhtPvuaaZVE=;
+        b=TlKlSZ398+uKs8zrRJn+n5ZCxMASWZOWoRpwb/v1xRubZfj4EfH4TbS1Im4gJ3BxlW
+         RS/MfkHzp0Y0zDIu44W/ZwMUbHjuC8TeawiGy6x1dpyNpKF2ltyoxFXHfYZnpTZU9H2z
+         EI2jcg7Iifru4vK1s0ED8+JY1Jf5l4rGEy4C82b6A9p/x6iNPchqKyEAKBBKzPxzJaD0
+         dxmaZai1MYO5bpF2MznXexA1FneahbyAbk3l07g+TvKj02TnsMkf4kGzJh7R2h0LdS/x
+         gK0adkSqtjqbTC08gpj96V+YKrIs7pTOvpKH2ukDKFKcbII7X1bPmNzLp6aQWMFgQk9/
+         0GWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EJGfKoNTtpHONAVVUy19xvP3ls9YinFzlhtPvuaaZVE=;
+        b=IoFE0PPZsMzhNI/zKWkk2NPotDXJLW2oOzo2Q7/yljL9nvkXJRNsfzyAJl2Diy/zCd
+         GHuI4lFHUCguOU2kxTZsx+mQ6x0uKALN3a20SjpoV80PQkKKorwFWB5gYLPC9SaJnmhI
+         c0tDFZ3UsmoTcqXW1dOfYUFtNfdH31mB8dQWOEYkdpKbvSfkbuIhpudhMtvJTxu5XZ7n
+         pAh2R+sdH4BXlhYbU7XKuS2H+suimwwktfVT8HuJaxArsvym4yqeh5194jWt5N6v8K+B
+         8f5psmq46wK4bt12/+qbyjqgLYBpegvmzr54O10Ir19k35Glh+2WproIzZBkMjuoKMFG
+         h/Pw==
+X-Gm-Message-State: APjAAAWqXkAbmp7etPrC+ZWVmHP2ka1/9C3mBnJ91EztK3u58xnImPuJ
+        ILwP735l2/X5iJbcyeqA1lfHewrPk4xb5HF7p64=
+X-Google-Smtp-Source: APXvYqyztf2KYxq0XQAdm49QKiZVOTLlyp/9w5kkaygaCobcIDARngGgN8JL9uLHbk6VK7SzwYqlTkjQZchECqhZCkY=
+X-Received: by 2002:aca:3545:: with SMTP id c66mr110836oia.129.1558979967712;
+ Mon, 27 May 2019 10:59:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190527125059.32010-1-narmstrong@baylibre.com>
+In-Reply-To: <20190527125059.32010-1-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 27 May 2019 19:59:16 +0200
+Message-ID: <CAFBinCBJO3J1wG1wa6X26VT6yGT_c_1XHOPiPpMRZGW8KKxopg@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: meson: g12a: Add hwrng node
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-05-27 at 10:49 -0700, Paul E. McKenney wrote:
-> On Mon, May 27, 2019 at 10:21:22AM -0700, Joe Perches wrote:
-> > On Mon, 2019-05-27 at 09:10 -0700, Paul E. McKenney wrote:
-> > > On Mon, May 27, 2019 at 10:49:57AM +0200, Andrea Parri wrote:
-> > > > Quoting Paul [1]:
-> > > > 
-> > > >   "Given that a quick (and perhaps error-prone) search of the uses
-> > > >    of rcu_assign_pointer() in v5.1 didn't find a single use of the
-> > > >    return value, let's please instead change the documentation and
-> > > >    implementation to eliminate the return value."
-> > > > 
-> > > > [1] https://lkml.kernel.org/r/20190523135013.GL28207@linux.ibm.com
-> > > 
-> > > Queued, thank you!
-> > > 
-> > > Adding the checkpatch maintainers on CC as well.  The "do { } while
-> > > (0)" prevents the return value from being used, by design.  Given the
-> > > checkpatch complaint, is there some better way to achieve this?
-> > 
-> > Not sure what the checkpatch complaint is here.
-> 
-> Checkpatch seems to want at least two statements in each
-> "do { } while (0)" macro definition:
-> 
-> WARNING: Single statement macros should not use a do {} while (0) loop
-> 
-> > Reading the link above, there seems to be a compiler warning.
-> 
-> The compiler warning is a theoretical issue that is being fixed by this
-> patch, and the patch is giving the checkpatch warning.
-> 
-> > Perhaps a statement expression macro with no return value?
-> > 
-> > #define rcu_assign_pointer(p, v)	({ (p) = (v); ; })
-> 
-> This is at best an acquired taste for me...
-
-Another ugly possibility could be:
-
-#define rcu_assign_pointer(p, v) do {if (1) (p) = (v); } while (0)
-
-Possibly the best option would be to ignore checkpatch here
-and just add a comment above the use.
-
-
-
+On Mon, May 27, 2019 at 2:51 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> The Amlogic G12A has the hwrng module at the end of an unknown
+> "EFUSE" bus.
+>
+> The hwrng is not enabled on the vendor G12A DTs, but is enabled on
+> next generation SM1 SoC family sharing the exact same memory mapping.
+>
+> Let's add the "EFUSE" bus and the hwrng node.
+>
+> This hwrng has been checked with the rng-tools rngtest FIPS tool :
+> rngtest: starting FIPS tests...
+> rngtest: bits received from input: 1630240032
+> rngtest: FIPS 140-2 successes: 81436
+> rngtest: FIPS 140-2 failures: 76
+> rngtest: FIPS 140-2(2001-10-10) Monobit: 10
+> rngtest: FIPS 140-2(2001-10-10) Poker: 6
+> rngtest: FIPS 140-2(2001-10-10) Runs: 26
+> rngtest: FIPS 140-2(2001-10-10) Long run: 34
+> rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+> rngtest: input channel speed: (min=3.784; avg=5687.521; max=19073.486)Mibits/s
+> rngtest: FIPS tests speed: (min=47.684; avg=52.348; max=52.835)Mibits/s
+> rngtest: Program run time: 30000987 microseconds
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
