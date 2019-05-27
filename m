@@ -2,76 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85D582ACD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 03:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 844232ACDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 03:56:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbfE0BtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 21:49:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37788 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfE0BtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 21:49:17 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 349AD3092664;
-        Mon, 27 May 2019 01:49:17 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DC4D15C3FD;
-        Mon, 27 May 2019 01:49:14 +0000 (UTC)
-Date:   Sun, 26 May 2019 21:49:14 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Gen Zhang <blackgod016574@gmail.com>
-Cc:     agk@redhat.com, dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: dm-region-hash: fix a missing-check bug in __rh_alloc()
-Message-ID: <20190527014913.GA10098@redhat.com>
-References: <20190527005034.GA16907@zhanggen-UX430UQ>
+        id S1726115AbfE0B4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 21:56:08 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:40111 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725864AbfE0B4H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 May 2019 21:56:07 -0400
+Received: by mail-it1-f195.google.com with SMTP id h11so21980742itf.5;
+        Sun, 26 May 2019 18:56:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4riq5WOrC6jxJv+1e3ONXH5F0cl4unP+M0sgitUBG8A=;
+        b=F7B66fV4prSwIRfZawcHCapEbxTOWBuNBaZCIQ6EKpn3pkjpnaU2czUylmkzXzlmxZ
+         HmxRo+aD2j2gvXclYMexnD6hwOLonFPwXDUH+/IixOYGch84mgAAXREsk4msNRwi/h9I
+         HCo090HtDhVHdNDV5Qn6jyyoBpUpTpA49nns51My6WExajf8nG2B+OXvnDSHQTIeyYHS
+         kMpRa18MeLr/EZzs67xhiPD7irU1MA6t6Ulk+YtnhVTm273ovhoACo8b/JD4VfFbxmRH
+         qML6YVc+FTxO2IyD1fWKmkOYXNA3ce5AlwQwyvAnX6ebUtz9iwyHKBLp8bkaC0/wVE0r
+         jygg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4riq5WOrC6jxJv+1e3ONXH5F0cl4unP+M0sgitUBG8A=;
+        b=d/pCWuSETcpk3Y23+IwUemF+niJ7AXy9wKN5xH/Y+lrb6NQQbPQKHmz8ZcT7N0PdIg
+         LG6EYuaBB/rm3whwpyELuzW/mW0PTtHUDk8AzTGmGFpr6HKMTC3Nb7q4Ij7B9CJnTnnC
+         CRBLXS1HCQvuuUaTUzAAhcslgnOIWXvFQ+hdawAoUpbQWN9w3Al1zZ5OiWcSgkKiUcNe
+         +UlZH7+JP2SL01O1jdFd5AFEuZwfpawYp52TlODoYZNbsc97x4bHVhY1fhJZfc8te79o
+         IaDYrmS2ASX7V+9P1vLbV/AdrUnMzycFnDJsuiH6uybKyx33KPs6v06e0IyA/oVdMHHO
+         Tj7w==
+X-Gm-Message-State: APjAAAUYUNdrnAsAfjIO//iVVM5mqaH/6EUUNcjWcefDaEsIUCrYZcmV
+        DahLfy0pCJWgxPPqdapZl8jOPd2c0SUGRo+JMlA=
+X-Google-Smtp-Source: APXvYqywHGWRgscHD3wttrQTCBgSjiAHfAChFkGelESVt8gY5T7nllpYfOpg60tGtOEJ4v9Y/l/47i8eo83/eIeSbt8=
+X-Received: by 2002:a02:7420:: with SMTP id o32mr7347087jac.117.1558922166931;
+ Sun, 26 May 2019 18:56:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190527005034.GA16907@zhanggen-UX430UQ>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 27 May 2019 01:49:17 +0000 (UTC)
+References: <20190523060437.11059-1-peng.fan@nxp.com>
+In-Reply-To: <20190523060437.11059-1-peng.fan@nxp.com>
+From:   Jassi Brar <jassisinghbrar@gmail.com>
+Date:   Sun, 26 May 2019 20:55:55 -0500
+Message-ID: <CABb+yY0r-njq2OGVP9xAh=-wgib5zk8XbS-vdY1jtz2R=rT4Nw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mailbox: arm: introduce smc triggered mailbox
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "andre.przywara@arm.com" <andre.przywara@arm.com>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 26 2019 at  8:50pm -0400,
-Gen Zhang <blackgod016574@gmail.com> wrote:
+On Thu, May 23, 2019 at 12:50 AM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> This is a modified version from Andre Przywara's patch series
+> https://lore.kernel.org/patchwork/cover/812997/.
+>
+Can you please specify exact modifications on top of Andre's last
+submission? As in "Changes since v1: ...."
 
-> In function __rh_alloc(), the pointer nreg is allocated a memory space
-> via kmalloc(). And it is used in the following codes. However, when 
-> there is a memory allocation error, kmalloc() fails. Thus null pointer
-> dereference may happen. And it will cause the kernel to crash. Therefore,
-> we should check the return value and handle the error.
-> Further, in __rh_find(), we should also check the return value and
-> handle the error.
-> 
-> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-> ---
-> diff --git a/drivers/md/dm-region-hash.c b/drivers/md/dm-region-hash.c
-> index 1f76045..2fa1641 100644
-> --- a/drivers/md/dm-region-hash.c
-> +++ b/drivers/md/dm-region-hash.c
-> @@ -290,8 +290,11 @@ static struct dm_region *__rh_alloc(struct dm_region_hash *rh, region_t region)
->  	struct dm_region *reg, *nreg;
->  
->  	nreg = mempool_alloc(&rh->region_pool, GFP_ATOMIC);
-> -	if (unlikely(!nreg))
-> +	if (unlikely(!nreg)) {
->  		nreg = kmalloc(sizeof(*nreg), GFP_NOIO | __GFP_NOFAIL);
-> +		if (!nreg)
-> +			return NULL;
-> +	}
->  
->  	nreg->state = rh->log->type->in_sync(rh->log, region, 1) ?
->  		      DM_RH_CLEAN : DM_RH_NOSYNC;
-
-This patch isn't needed.  __GFP_NOFAIL means the allocation won't fail.
-
-And there are many other users of __GFP_NOFAIL that don't check for
-failure.  
-
-Mike
+Thanks.
