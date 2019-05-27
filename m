@@ -2,96 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D3EA2B973
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 19:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB2382B981
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 19:47:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfE0Rji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 13:39:38 -0400
-Received: from mail-eopbgr820085.outbound.protection.outlook.com ([40.107.82.85]:36408
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726346AbfE0Rji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 13:39:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9nukTWVhaXbENkuw/cFKiMLmJ38LiHA5CZU4tJI/3pc=;
- b=0zSKHf5uKdLZOAnxLIct0qxDHMh9V6C2fsyrdLZ1zLKaIHBqhnLi6/X/k6EB3+fzjB2fOeNLFBUcNTGsJ/GsFBl8tdOzAQd3XLaeln3g9jEZppTMHda3bQRUMLlhg3gGqVWZSvMemp6f9L7hF6TdMkqRyU3L+WsahciS+reIq+I=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB6006.namprd05.prod.outlook.com (20.178.53.91) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1943.10; Mon, 27 May 2019 17:39:35 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::2cb6:a3d1:f675:ced8]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::2cb6:a3d1:f675:ced8%3]) with mapi id 15.20.1943.007; Mon, 27 May 2019
- 17:39:35 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [RFC PATCH 3/6] smp: Run functions concurrently in
- smp_call_function_many()
-Thread-Topic: [RFC PATCH 3/6] smp: Run functions concurrently in
- smp_call_function_many()
-Thread-Index: AQHVEtL3456yzrQkuUCZGG9Vlj1rtaZ+s9QAgACM0QA=
-Date:   Mon, 27 May 2019 17:39:35 +0000
-Message-ID: <57E94109-CBE8-43BA-98FF-646E8C9EE8A2@vmware.com>
-References: <20190525082203.6531-1-namit@vmware.com>
- <20190525082203.6531-4-namit@vmware.com>
- <20190527091534.GS2623@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190527091534.GS2623@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ff516cac-b04d-46e7-0bdb-08d6e2ca48e8
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BYAPR05MB6006;
-x-ms-traffictypediagnostic: BYAPR05MB6006:
-x-microsoft-antispam-prvs: <BYAPR05MB6006271574D1B2EE48F51637D01D0@BYAPR05MB6006.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;
-x-forefront-prvs: 0050CEFE70
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(366004)(39860400002)(346002)(199004)(189003)(2906002)(4326008)(25786009)(36756003)(99286004)(6916009)(229853002)(66066001)(86362001)(66946007)(14454004)(73956011)(66446008)(64756008)(76116006)(5660300002)(478600001)(4744005)(71190400001)(71200400001)(83716004)(66476007)(26005)(66556008)(82746002)(446003)(186003)(316002)(6246003)(8936002)(8676002)(81156014)(81166006)(33656002)(256004)(305945005)(6512007)(14444005)(486006)(6436002)(6486002)(11346002)(476003)(7736002)(2616005)(68736007)(76176011)(3846002)(54906003)(6116002)(53546011)(6506007)(53936002)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB6006;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 9kdxRpMQqNYdBD+/qNHpQ1Hg+oIt8Dwzitr2fqw+7Vg0+hvrZQsDxU1G6nHWfekPfd0PnWPBf5c4YPo9IvCWo+iaOjrZeshb6RiJOZ3q599QriHfhXqqRYHFQLW2rgPBsUrv080+LkHexoM6iMF/JowzVAMOY2RWl7AwortD9HB/PJEzoqjQH1Ghp6Dab039VZ88gf5Jk7hlHVuZA4L8G/16sld18rOreASiwBhXrV5TCvAtRsgBhby7j37fCZiH26cV1d8eHOLW/ntwuvtsyEnf1I9ZnHl8BrwfheznU5AVl+5Q+R98JM8hxfSfu1she0fivrkbz9/HmzmSHENQnD1qlvC7ZKDitN+w2ti2E3Xmooxf+coB7QwAt2lpXQUchsWDNQceDsUKoEuts0S/S51YacRVQL39OgBLLgNdPHU=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <40D6DF2CC2A029459073F1745B2DB2E2@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff516cac-b04d-46e7-0bdb-08d6e2ca48e8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2019 17:39:35.1943
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: namit@vmware.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB6006
+        id S1726969AbfE0RrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 13:47:11 -0400
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:49124 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbfE0RrL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 13:47:11 -0400
+Received: by mail-vk1-f202.google.com with SMTP id 129so5337435vkh.15
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 10:47:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=WabwXVWKHDF9Gj73vwc0I/pwrF46pP20FoOfyIilig8=;
+        b=JwAG/FOCufiHwOPhwR/U8FpRywH60cnD+4+jDfx6S4A///ABXalQdR96p/DGNSiINt
+         taQAVzi4ZWYDlppGDunCnKCNi5U8BJB8Ytw4L2DJRBZO1g1Re6PWcNpn6UDYZSUkQWkB
+         IepdDzZx5Kgi7HIlAX8OeDAag68w+Znn93OZRx0meQF2zD2u7gKnDQxpsQZT9fK2gIWa
+         mIY6D3mPHsyHG7SVQhl75Ss/FIBUzprB9kA/K4Wr7eWTYv+q+JrprJphWF2gcAp5fyg+
+         mE+PUeHZzG74iVppBlJ7SW1XU4rhwK1VvZYszfeEqkhWJwngLRqmQhx8OrIDksadQBnd
+         aZRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=WabwXVWKHDF9Gj73vwc0I/pwrF46pP20FoOfyIilig8=;
+        b=iAm1GTqnd99zied4r7fTbMkAAFscJEmPSXCmihKWxJsk3UGuONagUyd5OCdk5B5YvJ
+         S4iluD9VugkrNIMSVa33bkXZ0cCpdg0LPHF0KIduCO3dWlXN5u1xAbu6JYgFsPYSfV/M
+         JO5SioUGCP1H9DeZhvWOG4P5zZgvy9GONXUtJH6LX5s9RKfmVFzfmajXPT5EbMmC48ul
+         XyBWcHSo0y+k6n75yadq+LzXl49iPHnkYLO2e5tWmpFgdKn8Ee+3ExxC1H5riQlIvfaj
+         GXnvKIOBmVL+t831K7LIvBgODkCJ8IfGkQOQELChAEsYy6ifN6KqWDwNVHecbBjOoTxd
+         Vlvw==
+X-Gm-Message-State: APjAAAVBe1+guXcMgwIIrqrK0QF8YmxJHV+KZaB3lGXKsuK7U/CDxlmO
+        lnRdC2qOrAw8Ux0kKAiZmz7FMmR4IjkBTQ==
+X-Google-Smtp-Source: APXvYqxRk9l2Xm/VuGGKrKk6z1pZngrkZJw9tB+kHYOSMI90hyZqW/59RtYGljuqxAiUAnNldNNH4TeiKvMH4g==
+X-Received: by 2002:ab0:28c9:: with SMTP id g9mr46031261uaq.73.1558979229956;
+ Mon, 27 May 2019 10:47:09 -0700 (PDT)
+Date:   Mon, 27 May 2019 10:46:43 -0700
+Message-Id: <20190527174643.209172-1-shakeelb@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
+Subject: [PATCH v3] mm, memcg: introduce memory.events.local
+From:   Shakeel Butt <shakeelb@google.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Chris Down <chris@chrisdown.name>
+Cc:     linux-mm@kvack.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Shakeel Butt <shakeelb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBNYXkgMjcsIDIwMTksIGF0IDI6MTUgQU0sIFBldGVyIFppamxzdHJhIDxwZXRlcnpAaW5m
-cmFkZWFkLm9yZz4gd3JvdGU6DQo+IA0KPj4gKwkJLyoNCj4+ICsJCSAqIENob29zZSB0aGUgbW9z
-dCBlZmZpY2llbnQgd2F5IHRvIHNlbmQgYW4gSVBJLiBOb3RlIHRoYXQgdGhlDQo+PiArCQkgKiBu
-dW1iZXIgb2YgQ1BVcyBtaWdodCBiZSB6ZXJvIGR1ZSB0byBjb25jdXJyZW50IGNoYW5nZXMgdG8g
-dGhlDQo+PiArCQkgKiBwcm92aWRlZCBtYXNrIG9yIGNwdV9vbmxpbmVfbWFzay4NCj4+ICsJCSAq
-Lw0KPiANCj4gU2luY2Ugd2UgaGF2ZSBwcmVlbXB0aW9uIGRpc2FibGVkIGhlcmUsIEkgZG9uJ3Qg
-dGhpbmsgb25saW5lIG1hc2sgY2FuDQo+IHNocmluaywgY3B1LW9mZmxpbmUgdXNlcyBzdG9wX21h
-Y2hpbmUoKS4NCg0KUmlnaHQuIFNvIEnigJlsbCB1cGRhdGUgdGhlIGNvbW1lbnQsIGJ1dCBJSVVD
-IHRoZSBwcm92aWRlZCBtYXNrIG1pZ2h0IHN0aWxsDQpjaGFuZ2UsIHNvIEnigJlsbCBsZWF2ZSB0
-aGUgcmVzdCBvZiB0aGUgY29tbWVudCBhbmQgdGhlIGNvZGUgYXMgaXMuDQoNCj4+ICsJCWlmIChu
-cl9jcHVzID09IDEpDQo+PiArCQkJYXJjaF9zZW5kX2NhbGxfZnVuY3Rpb25fc2luZ2xlX2lwaShs
-YXN0X2NwdSk7DQo+PiArCQllbHNlIGlmIChsaWtlbHkobnJfY3B1cyA+IDEpKQ0KPj4gKwkJCWFy
-Y2hfc2VuZF9jYWxsX2Z1bmN0aW9uX2lwaV9tYXNrKGNmZC0+Y3B1bWFza19pcGkpOw0KPj4gKwl9
-DQoNCg0K
+The memory controller in cgroup v2 exposes memory.events file for each
+memcg which shows the number of times events like low, high, max, oom
+and oom_kill have happened for the whole tree rooted at that memcg.
+Users can also poll or register notification to monitor the changes in
+that file. Any event at any level of the tree rooted at memcg will
+notify all the listeners along the path till root_mem_cgroup. There are
+existing users which depend on this behavior.
+
+However there are users which are only interested in the events
+happening at a specific level of the memcg tree and not in the events in
+the underlying tree rooted at that memcg. One such use-case is a
+centralized resource monitor which can dynamically adjust the limits of
+the jobs running on a system. The jobs can create their sub-hierarchy
+for their own sub-tasks. The centralized monitor is only interested in
+the events at the top level memcgs of the jobs as it can then act and
+adjust the limits of the jobs. Using the current memory.events for such
+centralized monitor is very inconvenient. The monitor will keep
+receiving events which it is not interested and to find if the received
+event is interesting, it has to read memory.event files of the next
+level and compare it with the top level one. So, let's introduce
+memory.events.local to the memcg which shows and notify for the events
+at the memcg level.
+
+Now, does memory.stat and memory.pressure need their local versions.
+IMHO no due to the no internal process contraint of the cgroup v2. The
+memory.stat file of the top level memcg of a job shows the stats and
+vmevents of the whole tree. The local stats or vmevents of the top level
+memcg will only change if there is a process running in that memcg but
+v2 does not allow that. Similarly for memory.pressure there will not be
+any process in the internal nodes and thus no chance of local pressure.
+
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Reviewed-by: Roman Gushchin <guro@fb.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+Changelog since v2:
+- Added documentation.
+
+Changelog since v1:
+- refactor memory_events_show to share between events and events.local
+
+ Documentation/admin-guide/cgroup-v2.rst | 10 ++++++++
+ include/linux/memcontrol.h              |  7 ++++-
+ mm/memcontrol.c                         | 34 +++++++++++++++++--------
+ 3 files changed, 40 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 19c4e78666ff..0e961fc90cd9 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1119,6 +1119,11 @@ PAGE_SIZE multiple when read back.
+ 	otherwise, a value change in this file generates a file
+ 	modified event.
+ 
++	Note that all fields in this file are hierarchical and the
++	file modified event can be generated due to an event down the
++	hierarchy. For for the local events at the cgroup level see
++	memory.events.local.
++
+ 	  low
+ 		The number of times the cgroup is reclaimed due to
+ 		high memory pressure even though its usage is under
+@@ -1158,6 +1163,11 @@ PAGE_SIZE multiple when read back.
+ 		The number of processes belonging to this cgroup
+ 		killed by any kind of OOM killer.
+ 
++  memory.events.local
++	Similar to memory.events but the fields in the file are local
++	to the cgroup i.e. not hierarchical. The file modified event
++	generated on this file reflects only the local events.
++
+   memory.stat
+ 	A read-only flat-keyed file which exists on non-root cgroups.
+ 
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 36bdfe8e5965..de77405eec46 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -239,8 +239,9 @@ struct mem_cgroup {
+ 	/* OOM-Killer disable */
+ 	int		oom_kill_disable;
+ 
+-	/* memory.events */
++	/* memory.events and memory.events.local */
+ 	struct cgroup_file events_file;
++	struct cgroup_file events_local_file;
+ 
+ 	/* handle for "memory.swap.events" */
+ 	struct cgroup_file swap_events_file;
+@@ -286,6 +287,7 @@ struct mem_cgroup {
+ 	atomic_long_t		vmevents_local[NR_VM_EVENT_ITEMS];
+ 
+ 	atomic_long_t		memory_events[MEMCG_NR_MEMORY_EVENTS];
++	atomic_long_t		memory_events_local[MEMCG_NR_MEMORY_EVENTS];
+ 
+ 	unsigned long		socket_pressure;
+ 
+@@ -761,6 +763,9 @@ static inline void count_memcg_event_mm(struct mm_struct *mm,
+ static inline void memcg_memory_event(struct mem_cgroup *memcg,
+ 				      enum memcg_memory_event event)
+ {
++	atomic_long_inc(&memcg->memory_events_local[event]);
++	cgroup_file_notify(&memcg->events_local_file);
++
+ 	do {
+ 		atomic_long_inc(&memcg->memory_events[event]);
+ 		cgroup_file_notify(&memcg->events_file);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 2713b45ec3f0..a57dfcc4c4a4 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5630,21 +5630,29 @@ static ssize_t memory_max_write(struct kernfs_open_file *of,
+ 	return nbytes;
+ }
+ 
++static void __memory_events_show(struct seq_file *m, atomic_long_t *events)
++{
++	seq_printf(m, "low %lu\n", atomic_long_read(&events[MEMCG_LOW]));
++	seq_printf(m, "high %lu\n", atomic_long_read(&events[MEMCG_HIGH]));
++	seq_printf(m, "max %lu\n", atomic_long_read(&events[MEMCG_MAX]));
++	seq_printf(m, "oom %lu\n", atomic_long_read(&events[MEMCG_OOM]));
++	seq_printf(m, "oom_kill %lu\n",
++		   atomic_long_read(&events[MEMCG_OOM_KILL]));
++}
++
+ static int memory_events_show(struct seq_file *m, void *v)
+ {
+ 	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+ 
+-	seq_printf(m, "low %lu\n",
+-		   atomic_long_read(&memcg->memory_events[MEMCG_LOW]));
+-	seq_printf(m, "high %lu\n",
+-		   atomic_long_read(&memcg->memory_events[MEMCG_HIGH]));
+-	seq_printf(m, "max %lu\n",
+-		   atomic_long_read(&memcg->memory_events[MEMCG_MAX]));
+-	seq_printf(m, "oom %lu\n",
+-		   atomic_long_read(&memcg->memory_events[MEMCG_OOM]));
+-	seq_printf(m, "oom_kill %lu\n",
+-		   atomic_long_read(&memcg->memory_events[MEMCG_OOM_KILL]));
++	__memory_events_show(m, memcg->memory_events);
++	return 0;
++}
++
++static int memory_events_local_show(struct seq_file *m, void *v)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+ 
++	__memory_events_show(m, memcg->memory_events_local);
+ 	return 0;
+ }
+ 
+@@ -5806,6 +5814,12 @@ static struct cftype memory_files[] = {
+ 		.file_offset = offsetof(struct mem_cgroup, events_file),
+ 		.seq_show = memory_events_show,
+ 	},
++	{
++		.name = "events.local",
++		.flags = CFTYPE_NOT_ON_ROOT,
++		.file_offset = offsetof(struct mem_cgroup, events_local_file),
++		.seq_show = memory_events_local_show,
++	},
+ 	{
+ 		.name = "stat",
+ 		.flags = CFTYPE_NOT_ON_ROOT,
+-- 
+2.22.0.rc1.257.g3120a18244-goog
+
