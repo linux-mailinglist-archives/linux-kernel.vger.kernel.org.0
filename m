@@ -2,80 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6C552BB28
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 22:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C292D2BB2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 22:13:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbfE0ULs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 16:11:48 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:53164 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfE0ULs (ORCPT
+        id S1727218AbfE0UNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 16:13:34 -0400
+Received: from gateway31.websitewelcome.com ([192.185.144.96]:40697 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726839AbfE0UNe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 16:11:48 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 4F86B80376;
-        Mon, 27 May 2019 22:11:41 +0200 (CEST)
-Date:   Mon, 27 May 2019 22:11:39 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] drm/bridge: extract some Analogix I2C DP common code
-Message-ID: <20190527201139.GA27782@ravnborg.org>
-References: <20190523065013.2719D68B05@newverein.lst.de>
- <20190523065352.8FD7668B05@newverein.lst.de>
+        Mon, 27 May 2019 16:13:34 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 3F5E71B756
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 15:13:33 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id VLzxhAQFG2PzOVLzxhXBig; Mon, 27 May 2019 15:13:33 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.47.159] (port=41708 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hVLzw-003uCI-CB; Mon, 27 May 2019 15:13:32 -0500
+Date:   Mon, 27 May 2019 15:13:31 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH net-next] net: mvpp2: cls: Remove unnecessary comparison of
+ unsigned integer with < 0
+Message-ID: <20190527201331.GA14908@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190523065352.8FD7668B05@newverein.lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10
-        a=1z2v1k-a1PjaIlATdV0A:9 a=CjuIK1q_8ugA:10
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.47.159
+X-Source-L: No
+X-Exim-ID: 1hVLzw-003uCI-CB
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.47.159]:41708
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Torsten.
+There is no need to compare info->fs.location with < 0 because such
+comparison of an unsigned value is always false.
 
-> index 000000000000..9cb30962032e
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/analogix/analogix-i2c-dptx.c
-> @@ -0,0 +1,169 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright(c) 2017 Icenowy Zheng <icenowy@aosc.io>
-> + *
-> + * Based on analogix-anx78xx.c, which is:
-> + *   Copyright(c) 2016, Analogix Semiconductor. All rights reserved.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <drm/drm.h>
-> +#include <drm/drmP.h>
+Fix this by removing such comparison.
 
-Can we please avoid drmP.h in new files.
-The header file is deprecated and we try to get rid of it.
+Addresses-Coverity-ID: 1445598 ("Unsigned compared against 0")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-	Sam
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+index d046f7a1dcf5..40beeb72ae10 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+@@ -1232,8 +1232,7 @@ int mvpp2_ethtool_cls_rule_ins(struct mvpp2_port *port,
+ 	struct mvpp2_ethtool_fs *efs, *old_efs;
+ 	int ret = 0;
+ 
+-	if (info->fs.location >= 4 ||
+-	    info->fs.location < 0)
++	if (info->fs.location >= 4)
+ 		return -EINVAL;
+ 
+ 	efs = kzalloc(sizeof(*efs), GFP_KERNEL);
+-- 
+2.21.0
+
