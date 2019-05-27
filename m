@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DD922AF0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 08:58:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E2CF2AF0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 08:58:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbfE0G6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 02:58:44 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:47257 "EHLO
+        id S1726462AbfE0G6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 02:58:39 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:32872 "EHLO
         smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726322AbfE0G6b (ORCPT
+        by vger.kernel.org with ESMTP id S1726334AbfE0G6c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 02:58:31 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0850651|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.503012-0.0276285-0.469359;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03292;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=5;RT=5;SR=0;TI=SMTPD_---.Edg3JTK_1558940308;
-Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.Edg3JTK_1558940308)
-          by smtp.aliyun-inc.com(10.147.42.197);
-          Mon, 27 May 2019 14:58:28 +0800
+        Mon, 27 May 2019 02:58:32 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07612007|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.136347-0.00582676-0.857826;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16378;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=5;RT=5;SR=0;TI=SMTPD_---.Edg12hD_1558940309;
+Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.Edg12hD_1558940309)
+          by smtp.aliyun-inc.com(10.147.41.120);
+          Mon, 27 May 2019 14:58:29 +0800
 From:   Mao Han <han_mao@c-sky.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Mao Han <han_mao@c-sky.com>, Rob Herring <robh+dt@kernel.org>,
+Cc:     Guo Ren <ren_guo@c-sky.com>, Mao Han <han_mao@c-sky.com>,
         Guo Ren <guoren@kernel.org>, linux-csky@vger.kernel.org
-Subject: [PATCH V2 4/5] dt-bindings: csky: Add csky PMU bindings
-Date:   Mon, 27 May 2019 14:57:20 +0800
-Message-Id: <bb2ba724313959f62fd7968164ca12e8fcf7f242.1558939831.git.han_mao@c-sky.com>
+Subject: [PATCH V2 5/5] csky: Fixup some error count in 810 & 860.
+Date:   Mon, 27 May 2019 14:57:21 +0800
+Message-Id: <2dfbabdcc60d4b5fa6a1595a1ca64102cfe06f05.1558939831.git.han_mao@c-sky.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1558939831.git.han_mao@c-sky.com>
 References: <cover.1558939831.git.han_mao@c-sky.com>
@@ -33,62 +33,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the documentation to describe that how to add pmu node in
-dts.
+From: Guo Ren <ren_guo@c-sky.com>
 
+ck810 pmu only support event with index 0-8 and 0xd; ck860 only
+support event 1~4, 0xa~0x1b. So do not register unsupport event
+to hardware cache event, which may leader to unknown behavior.
+
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 Signed-off-by: Mao Han <han_mao@c-sky.com>
-CC: Rob Herring <robh+dt@kernel.org>
 CC: Guo Ren <guoren@kernel.org>
 CC: linux-csky@vger.kernel.org
 ---
- Documentation/devicetree/bindings/csky/pmu.txt | 38 ++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/csky/pmu.txt
+ arch/csky/kernel/perf_event.c | 60 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 54 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/csky/pmu.txt b/Documentation/devicetree/bindings/csky/pmu.txt
-new file mode 100644
-index 0000000..6d3cba3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/csky/pmu.txt
-@@ -0,0 +1,38 @@
-+============================
-+C-SKY Performance Monitor Units
-+============================
-+
-+C-SKY 8xx series cores often have a PMU for counting cpu and cache events.
-+The C-SKY PMU representation in the device tree should be done as under:
-+
-+==============================
-+PMU node bindings definition
-+==============================
-+
-+	Description: Describes PMU
-+
-+	PROPERTIES
-+
-+	- compatible
-+		Usage: required
-+		Value type: <string>
-+		Definition: must be "csky,csky-pmu"
-+	- interrupts
-+		Usage: required
-+		Value type: <u32>
-+		Definition: must be pmu irq num defined by soc
-+	- reg-io-width
-+		Usage: optional
-+		Value type: <u32>
-+		Definition: the width of pmu counter
-+
-+Examples:
-+---------
-+
-+        pmu {
-+                compatible = "csky,csky-pmu";
-+                interrupts = <0x17>;
-+                interrupt-parent = <&intc>;
-+		reg-io-width = <0x30>;
-+        };
-+
+diff --git a/arch/csky/kernel/perf_event.c b/arch/csky/kernel/perf_event.c
+index a6a1582..bb5033f 100644
+--- a/arch/csky/kernel/perf_event.c
++++ b/arch/csky/kernel/perf_event.c
+@@ -735,6 +735,20 @@ static const int csky_pmu_hw_map[PERF_COUNT_HW_MAX] = {
+ #define CACHE_OP_UNSUPPORTED	0xffff
+ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
+ 	[C(L1D)] = {
++#ifdef CONFIG_CPU_CK810
++		[C(OP_READ)] = {
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
++		},
++		[C(OP_WRITE)] = {
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
++		},
++		[C(OP_PREFETCH)] = {
++			[C(RESULT_ACCESS)]	= 0x5,
++			[C(RESULT_MISS)]	= 0x6,
++		},
++#else
+ 		[C(OP_READ)] = {
+ 			[C(RESULT_ACCESS)]	= 0x14,
+ 			[C(RESULT_MISS)]	= 0x15,
+@@ -744,9 +758,10 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
+ 			[C(RESULT_MISS)]	= 0x17,
+ 		},
+ 		[C(OP_PREFETCH)] = {
+-			[C(RESULT_ACCESS)]	= 0x5,
+-			[C(RESULT_MISS)]	= 0x6,
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
+ 		},
++#endif
+ 	},
+ 	[C(L1I)] = {
+ 		[C(OP_READ)] = {
+@@ -763,6 +778,20 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
+ 		},
+ 	},
+ 	[C(LL)] = {
++#ifdef CONFIG_CPU_CK810
++		[C(OP_READ)] = {
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
++		},
++		[C(OP_WRITE)] = {
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
++		},
++		[C(OP_PREFETCH)] = {
++			[C(RESULT_ACCESS)]	= 0x7,
++			[C(RESULT_MISS)]	= 0x8,
++		},
++#else
+ 		[C(OP_READ)] = {
+ 			[C(RESULT_ACCESS)]	= 0x18,
+ 			[C(RESULT_MISS)]	= 0x19,
+@@ -772,29 +801,48 @@ static const int csky_pmu_cache_map[C(MAX)][C(OP_MAX)][C(RESULT_MAX)] = {
+ 			[C(RESULT_MISS)]	= 0x1b,
+ 		},
+ 		[C(OP_PREFETCH)] = {
+-			[C(RESULT_ACCESS)]	= 0x7,
+-			[C(RESULT_MISS)]	= 0x8,
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
+ 		},
++#endif
+ 	},
+ 	[C(DTLB)] = {
++#ifdef CONFIG_CPU_CK810
+ 		[C(OP_READ)] = {
+-			[C(RESULT_ACCESS)]	= 0x5,
+-			[C(RESULT_MISS)]	= 0xb,
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
+ 		},
+ 		[C(OP_WRITE)] = {
+ 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
+ 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
+ 		},
++#else
++		[C(OP_READ)] = {
++			[C(RESULT_ACCESS)]	= 0x14,
++			[C(RESULT_MISS)]	= 0xb,
++		},
++		[C(OP_WRITE)] = {
++			[C(RESULT_ACCESS)]	= 0x16,
++			[C(RESULT_MISS)]	= 0xb,
++		},
++#endif
+ 		[C(OP_PREFETCH)] = {
+ 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
+ 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
+ 		},
+ 	},
+ 	[C(ITLB)] = {
++#ifdef CONFIG_CPU_CK810
++		[C(OP_READ)] = {
++			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
++			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
++		},
++#else
+ 		[C(OP_READ)] = {
+ 			[C(RESULT_ACCESS)]	= 0x3,
+ 			[C(RESULT_MISS)]	= 0xa,
+ 		},
++#endif
+ 		[C(OP_WRITE)] = {
+ 			[C(RESULT_ACCESS)]	= CACHE_OP_UNSUPPORTED,
+ 			[C(RESULT_MISS)]	= CACHE_OP_UNSUPPORTED,
 -- 
 2.7.4
 
