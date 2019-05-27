@@ -2,27 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55ABD2B925
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 18:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2352B922
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 18:37:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbfE0QhL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 12:37:11 -0400
+        id S1726543AbfE0QhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 12:37:04 -0400
 Received: from proxy04.fsdata.se ([89.221.252.227]:50417 "EHLO
         mail-gw01.fsdata.se" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726704AbfE0QhI (ORCPT
+        with ESMTP id S1725991AbfE0QhE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 12:37:08 -0400
+        Mon, 27 May 2019 12:37:04 -0400
 X-Greylist: delayed 911 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 May 2019 12:37:03 EDT
 Received: from localhost (94.234.40.49) by DAG01.HMC.local (192.168.46.11)
- with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 27 May 2019 18:21:48
+ with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 27 May 2019 18:21:49
  +0200
 From:   Mattias Jacobsson <2pi@mok.nu>
-To:     <dvhart@infradead.org>, <andy@infradead.org>
+To:     <dvhart@infradead.org>, <andy@infradead.org>,
+        <mario.limonciello@dell.com>, <mjg59@srcf.ucam.org>,
+        <pali.rohar@gmail.com>
 CC:     <2pi@mok.nu>, <platform-driver-x86@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/3] platform/x86: wmi: add context pointer field to struct wmi_device_id
-Date:   Mon, 27 May 2019 18:21:29 +0200
-Message-ID: <c69e613dc6087487962166dbf2e780db77ee8a82.1558968964.git.2pi@mok.nu>
+Subject: [PATCH 2/3] platform/x86: wmi: add context argument to the probe function
+Date:   Mon, 27 May 2019 18:21:30 +0200
+Message-ID: <4db1cd4649f5d169acfc08dde6e6a41cf308dd53.1558968964.git.2pi@mok.nu>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1558968964.git.2pi@mok.nu>
 References: <cover.1558968964.git.2pi@mok.nu>
@@ -37,65 +39,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using wmi_install_notify_handler() to initialize a WMI handler a
-data pointer can be supplied which will be passed on to the notification
-handler. No similar feature exist when handling WMI events via struct
-wmi_driver.
+The struct wmi_device_id has a context pointer field, forward this
+pointer as an argument to the probe function in struct wmi_driver.
 
-Add a context field pointer to struct wmi_device_id and add a function
-find_guid_context() to retrieve that context pointer.
+Update existing users of the same probe function to accept this new
+context argument.
 
 Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
 ---
- drivers/platform/x86/wmi.c      | 22 ++++++++++++++++++++++
- include/linux/mod_devicetable.h |  1 +
- 2 files changed, 23 insertions(+)
+ drivers/platform/x86/dell-smbios-wmi.c       | 2 +-
+ drivers/platform/x86/dell-wmi-descriptor.c   | 3 ++-
+ drivers/platform/x86/dell-wmi.c              | 2 +-
+ drivers/platform/x86/huawei-wmi.c            | 2 +-
+ drivers/platform/x86/intel-wmi-thunderbolt.c | 3 ++-
+ drivers/platform/x86/wmi-bmof.c              | 2 +-
+ drivers/platform/x86/wmi.c                   | 3 ++-
+ include/linux/wmi.h                          | 2 +-
+ 8 files changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-index 7b26b6ccf1a0..f41f1410da9d 100644
---- a/drivers/platform/x86/wmi.c
-+++ b/drivers/platform/x86/wmi.c
-@@ -146,6 +146,28 @@ static bool find_guid(const char *guid_string, struct wmi_block **out)
- 	return false;
+diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
+index c3ed3c8c17b9..add2687079f7 100644
+--- a/drivers/platform/x86/dell-smbios-wmi.c
++++ b/drivers/platform/x86/dell-smbios-wmi.c
+@@ -146,7 +146,7 @@ static long dell_smbios_wmi_filter(struct wmi_device *wdev, unsigned int cmd,
+ 	return ret;
  }
  
-+static const void *find_guid_context(struct wmi_block *wblock,
-+				      struct wmi_driver *wdriver)
-+{
-+	const struct wmi_device_id *id;
-+	uuid_le guid_input;
-+
-+	if (wblock == NULL || wdriver == NULL)
-+		return NULL;
-+	if (wdriver->id_table == NULL)
-+		return NULL;
-+
-+	id = wdriver->id_table;
-+	while (*id->guid_string) {
-+		if (uuid_le_to_bin(id->guid_string, &guid_input))
-+			continue;
-+		if (!memcmp(wblock->gblock.guid, &guid_input, 16))
-+			return id->context;
-+		id++;
-+	}
-+	return NULL;
-+}
-+
- static int get_subobj_info(acpi_handle handle, const char *pathname,
- 			   struct acpi_device_info **info)
+-static int dell_smbios_wmi_probe(struct wmi_device *wdev)
++static int dell_smbios_wmi_probe(struct wmi_device *wdev, const void *context)
  {
-diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
-index 448621c32e4d..09366859aac2 100644
---- a/include/linux/mod_devicetable.h
-+++ b/include/linux/mod_devicetable.h
-@@ -798,6 +798,7 @@ struct tee_client_device_id {
+ 	struct wmi_driver *wdriver =
+ 		container_of(wdev->dev.driver, struct wmi_driver, driver);
+diff --git a/drivers/platform/x86/dell-wmi-descriptor.c b/drivers/platform/x86/dell-wmi-descriptor.c
+index 14ab250b7d5a..9994fd1a5acf 100644
+--- a/drivers/platform/x86/dell-wmi-descriptor.c
++++ b/drivers/platform/x86/dell-wmi-descriptor.c
+@@ -106,7 +106,8 @@ EXPORT_SYMBOL_GPL(dell_wmi_get_hotfix);
+  * WMI buffer length        12       4    <length>
+  * WMI hotfix number        16       4    <hotfix>
   */
- struct wmi_device_id {
- 	const char guid_string[UUID_STRING_LEN+1];
-+	const void *context;
+-static int dell_wmi_descriptor_probe(struct wmi_device *wdev)
++static int dell_wmi_descriptor_probe(struct wmi_device *wdev,
++				     const void *context)
+ {
+ 	union acpi_object *obj = NULL;
+ 	struct descriptor_priv *priv;
+diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
+index d118bb73fcae..72b0a69a6ed0 100644
+--- a/drivers/platform/x86/dell-wmi.c
++++ b/drivers/platform/x86/dell-wmi.c
+@@ -672,7 +672,7 @@ static int dell_wmi_events_set_enabled(bool enable)
+ 	return dell_smbios_error(ret);
+ }
+ 
+-static int dell_wmi_probe(struct wmi_device *wdev)
++static int dell_wmi_probe(struct wmi_device *wdev, const void *context)
+ {
+ 	struct dell_wmi_priv *priv;
+ 	int ret;
+diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
+index 52fcac5b393a..195a7f3638cb 100644
+--- a/drivers/platform/x86/huawei-wmi.c
++++ b/drivers/platform/x86/huawei-wmi.c
+@@ -166,7 +166,7 @@ static int huawei_wmi_input_setup(struct wmi_device *wdev)
+ 	return input_register_device(priv->idev);
+ }
+ 
+-static int huawei_wmi_probe(struct wmi_device *wdev)
++static int huawei_wmi_probe(struct wmi_device *wdev, const void *context)
+ {
+ 	struct huawei_wmi_priv *priv;
+ 	int err;
+diff --git a/drivers/platform/x86/intel-wmi-thunderbolt.c b/drivers/platform/x86/intel-wmi-thunderbolt.c
+index 4dfa61434a76..974c22a7ff61 100644
+--- a/drivers/platform/x86/intel-wmi-thunderbolt.c
++++ b/drivers/platform/x86/intel-wmi-thunderbolt.c
+@@ -56,7 +56,8 @@ static const struct attribute_group tbt_attribute_group = {
+ 	.attrs = tbt_attrs,
  };
  
- #endif /* LINUX_MOD_DEVICETABLE_H */
+-static int intel_wmi_thunderbolt_probe(struct wmi_device *wdev)
++static int intel_wmi_thunderbolt_probe(struct wmi_device *wdev,
++				       const void *context)
+ {
+ 	int ret;
+ 
+diff --git a/drivers/platform/x86/wmi-bmof.c b/drivers/platform/x86/wmi-bmof.c
+index 8751a13134be..105a82b6b076 100644
+--- a/drivers/platform/x86/wmi-bmof.c
++++ b/drivers/platform/x86/wmi-bmof.c
+@@ -54,7 +54,7 @@ read_bmof(struct file *filp, struct kobject *kobj,
+ 	return count;
+ }
+ 
+-static int wmi_bmof_probe(struct wmi_device *wdev)
++static int wmi_bmof_probe(struct wmi_device *wdev, const void *context)
+ {
+ 	struct bmof_priv *priv;
+ 	int ret;
+diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+index f41f1410da9d..09bc6270ec16 100644
+--- a/drivers/platform/x86/wmi.c
++++ b/drivers/platform/x86/wmi.c
+@@ -926,7 +926,8 @@ static int wmi_dev_probe(struct device *dev)
+ 		dev_warn(dev, "failed to enable device -- probing anyway\n");
+ 
+ 	if (wdriver->probe) {
+-		ret = wdriver->probe(dev_to_wdev(dev));
++		ret = wdriver->probe(dev_to_wdev(dev),
++				find_guid_context(wblock, wdriver));
+ 		if (ret != 0)
+ 			goto probe_failure;
+ 	}
+diff --git a/include/linux/wmi.h b/include/linux/wmi.h
+index 592f81afecbb..1e84c474a993 100644
+--- a/include/linux/wmi.h
++++ b/include/linux/wmi.h
+@@ -44,7 +44,7 @@ struct wmi_driver {
+ 	struct device_driver driver;
+ 	const struct wmi_device_id *id_table;
+ 
+-	int (*probe)(struct wmi_device *wdev);
++	int (*probe)(struct wmi_device *wdev, const void *context);
+ 	int (*remove)(struct wmi_device *wdev);
+ 	void (*notify)(struct wmi_device *device, union acpi_object *data);
+ 	long (*filter_callback)(struct wmi_device *wdev, unsigned int cmd,
 -- 
 2.21.0
 
