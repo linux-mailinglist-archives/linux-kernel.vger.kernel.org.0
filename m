@@ -2,118 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 598CF2B295
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C95D22B290
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfE0K4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 06:56:44 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33024 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbfE0K4o (ORCPT
+        id S1726762AbfE0K4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 06:56:10 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:55312 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbfE0K4K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 06:56:44 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g21so6948507plq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 03:56:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xQG94E91rcdUfSlkW1uYF9ApGj+jgzKgN0E+vtaKz6A=;
-        b=Gy9EASSRYlr9i12Logn21TdN5ujim45QVkv2y2MggLHvc1zjqiO1HnQBLFMvdefKhV
-         8EUvnRVO5xeo+ymGVEjsG02qBU4VBKJE1w07kzfdcqPRGvvU6qwS7CcKyUwBb43n6ctR
-         GXh4BXEKOgL0SWJtNXegveEi3DU5WYLZJg+61DjGG2FPDXWGfylwfRNQeZlbtfrm0Ca+
-         3h/DBbQC5pmXA6gRd0uHwD+EOUkhThBuDvV1Iai08L58GcavSub2+7rJ+l4x9dHUQrr6
-         XJqz9SfLROkIZQU/3aNmTia9K5JyI8CzL9X7+4mJCGAJPvtRPfLc2cg1CoPnV0/ANVEJ
-         kf8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xQG94E91rcdUfSlkW1uYF9ApGj+jgzKgN0E+vtaKz6A=;
-        b=kYqSFiTXr0v9ldFYajXwAIqEbrqM3nSBmlaeBSW2pbVzmobHs2GVRP2isVcK+Qgy4U
-         hnXFISDjTFN8D/rcMVxV6Z3U3e0vD1NVmI1hj9X1a02UHgmV8zYXOHv75bRS7qTDvn9g
-         GckJ9sJeN2PBUIn8XAnnQQPQ/DplPJllx852AVOokw8jlltJ2FoafnB6Y5DC+8NfLLLf
-         VtSpVvrWLr+pcXr6fU3qAPz5s0M5fIlLbI1DzYrgNR9ovdW+SSF89J4i+aoPygRZpFs+
-         vSabuj/auNEStbGkgKMvgabBi/XJz/QEzAdHTxZjY9EBdoqN/KQBot7729zPNpHyoE0u
-         i5KA==
-X-Gm-Message-State: APjAAAWehiFJg6tn3uII9kECDAZ5oSbjc0he3v/FzvNR71MQJDvCAf9W
-        wKwnDtbo8Ay5JxXImPxDO1E=
-X-Google-Smtp-Source: APXvYqwYifFGznpVmbp990JQuxYufhL5+M7CwwnvfxITZA/hhhnqSphHZcc/3LL1+bFx/1MWhz5Akw==
-X-Received: by 2002:a17:902:28c9:: with SMTP id f67mr20202766plb.19.1558954603720;
-        Mon, 27 May 2019 03:56:43 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id x10sm14034629pfj.136.2019.05.27.03.56.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 May 2019 03:56:43 -0700 (PDT)
-Date:   Mon, 27 May 2019 03:55:29 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     hch@lst.de, robin.murphy@arm.com, m.szyprowski@samsung.com,
-        vdumpa@nvidia.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, chris@zankel.net, jcmvbkbc@gmail.com,
-        joro@8bytes.org, dwmw2@infradead.org, tony@atomide.com,
-        akpm@linux-foundation.org, sfr@canb.auug.org.au,
-        treding@nvidia.com, keescook@chromium.org, iamjoonsoo.kim@lge.com,
-        wsa+renesas@sang-engineering.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org,
-        dann.frazier@canonical.com
-Subject: Re: [PATCH v3 2/2] dma-contiguous: Use fallback alloc_pages for
- single pages
-Message-ID: <20190527105528.GA26916@Asurada-Nvidia.nvidia.com>
-References: <20190524040633.16854-1-nicoleotsuka@gmail.com>
- <20190524040633.16854-3-nicoleotsuka@gmail.com>
- <20190524161618.GB23100@iweiny-DESK2.sc.intel.com>
+        Mon, 27 May 2019 06:56:10 -0400
+Received: from 79.184.255.36.ipv4.supernova.orange.pl (79.184.255.36) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.213)
+ id c71e16143d68c4a3; Mon, 27 May 2019 12:56:08 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     x86 <x86@kernel.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Ido Schimmel <idosch@idosch.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Laura Abbott <labbott@fedoraproject.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Simon Schricker <sschricker@suse.de>,
+        Borislav Petkov <bp@suse.de>, Hannes Reinecke <hare@suse.de>
+Subject: [PATCH] x86: intel_epb: Do not build when CONFIG_PM is unset
+Date:   Mon, 27 May 2019 12:56:07 +0200
+Message-ID: <3844875.YPkTDDlcrF@kreacher>
+In-Reply-To: <20190509174338.GA24432@splinter>
+References: <1637073.gl2OfxWTjI@aspire.rjw.lan> <1627338.1fd8ofggM8@kreacher> <20190509174338.GA24432@splinter>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524161618.GB23100@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ira,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On Fri, May 24, 2019 at 09:16:19AM -0700, Ira Weiny wrote:
-> On Thu, May 23, 2019 at 09:06:33PM -0700, Nicolin Chen wrote:
-> > The addresses within a single page are always contiguous, so it's
-> > not so necessary to always allocate one single page from CMA area.
-> > Since the CMA area has a limited predefined size of space, it may
-> > run out of space in heavy use cases, where there might be quite a
-> > lot CMA pages being allocated for single pages.
-> > 
-> > However, there is also a concern that a device might care where a
-> > page comes from -- it might expect the page from CMA area and act
-> > differently if the page doesn't.
-> 
-> How does a device know, after this call, if a CMA area was used?  From the
-> patches I figured a device should not care.
+Commit 9ed0985332a6 ("x86: intel_epb: Take CONFIG_PM into account")
+prevented the majority of the Performance and Energy Bias Hint (EPB)
+handling code from being built when CONFIG_PM is unset to fix a
+regression introduced by commit b9c273babce7 ("PM / arch: x86:
+MSR_IA32_ENERGY_PERF_BIAS sysfs interface").
 
-A device doesn't know. But that doesn't mean a device won't care
-at all. There was a concern from Robin and Christoph, as a corner
-case that device might act differently if the memory isn't in its
-own CMA region. That's why we let it still use its device specific
-CMA area.
+In hindsight, however, it would be better to skip all of the EPB
+handling code for CONFIG_PM unset as there really is no reason for
+it to be there in that case.  Namely, if the EPB is not touched
+by the kernel at all with CONFIG_PM unset, there is no need to
+worry about modifying the EPB inadvertently on CPU online and since
+the system will not suspend or hibernate then, there is no need to
+worry about possible modifications of the EPB by the platform
+firmware during system-wide PM transitions.
 
-> > +	if (dev && dev->cma_area)
-> > +		cma = dev->cma_area;
-> > +	else if (count > 1)
-> > +		cma = dma_contiguous_default_area;
-> 
-> Doesn't dev_get_dma_area() already do this?
+For this reason, revert the changes made by commit 9ed0985332a6
+and only allow intel_epb.o to be built when CONFIG_PM is set.
 
-Partially yes. But unwrapping it makes the program flow clear in
-my opinion. Actually I should have mentioned that this patch was
-suggested by Christoph also.
+Note that this changes the behavior of the kernels built with
+CONFIG_PM unset as they will not modify the EPB on boot if it is
+zero initially any more, so it is not a fix strictly speaking, but
+users building their kernels with CONFIG_PM unset really should not
+expect them to take energy efficiency into account.  Moreover, if
+CONFIG_PM is unset for performance reasons, leaving EPB as set
+initially by the platform firmware will actually be consistent
+with the user's expectations.
 
-Otherwise, it would need an override like:
-	cma = dev_get_dma_area();
-	if (count > 1 && cma == dma_contiguous_default_area)
-		cma = NULL;
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-Which doesn't look that bad though..
+This is complementary to the EPB handling changes made in the current
+development cycle, so IMO it would be good to do it in this cycle too
+if there are no technical concerns or objections regarding it.
 
-Thanks
-Nicolin
+---
+ arch/x86/kernel/cpu/Makefile    |    5 ++++-
+ arch/x86/kernel/cpu/intel_epb.c |   22 +---------------------
+ 2 files changed, 5 insertions(+), 22 deletions(-)
+
+Index: linux-pm/arch/x86/kernel/cpu/Makefile
+===================================================================
+--- linux-pm.orig/arch/x86/kernel/cpu/Makefile
++++ linux-pm/arch/x86/kernel/cpu/Makefile
+@@ -28,7 +28,10 @@ obj-y			+= cpuid-deps.o
+ obj-$(CONFIG_PROC_FS)	+= proc.o
+ obj-$(CONFIG_X86_FEATURE_NAMES) += capflags.o powerflags.o
+ 
+-obj-$(CONFIG_CPU_SUP_INTEL)		+= intel.o intel_pconfig.o intel_epb.o
++ifdef CONFIG_CPU_SUP_INTEL
++obj-y			+= intel.o intel_pconfig.o
++obj-$(CONFIG_PM)	+= intel_epb.o
++endif
+ obj-$(CONFIG_CPU_SUP_AMD)		+= amd.o
+ obj-$(CONFIG_CPU_SUP_HYGON)		+= hygon.o
+ obj-$(CONFIG_CPU_SUP_CYRIX_32)		+= cyrix.o
+Index: linux-pm/arch/x86/kernel/cpu/intel_epb.c
+===================================================================
+--- linux-pm.orig/arch/x86/kernel/cpu/intel_epb.c
++++ linux-pm/arch/x86/kernel/cpu/intel_epb.c
+@@ -97,7 +97,6 @@ static void intel_epb_restore(void)
+ 	wrmsrl(MSR_IA32_ENERGY_PERF_BIAS, (epb & ~EPB_MASK) | val);
+ }
+ 
+-#ifdef CONFIG_PM
+ static struct syscore_ops intel_epb_syscore_ops = {
+ 	.suspend = intel_epb_save,
+ 	.resume = intel_epb_restore,
+@@ -194,25 +193,6 @@ static int intel_epb_offline(unsigned in
+ 	return 0;
+ }
+ 
+-static inline void register_intel_ebp_syscore_ops(void)
+-{
+-	register_syscore_ops(&intel_epb_syscore_ops);
+-}
+-#else /* !CONFIG_PM */
+-static int intel_epb_online(unsigned int cpu)
+-{
+-	intel_epb_restore();
+-	return 0;
+-}
+-
+-static int intel_epb_offline(unsigned int cpu)
+-{
+-	return intel_epb_save();
+-}
+-
+-static inline void register_intel_ebp_syscore_ops(void) {}
+-#endif
+-
+ static __init int intel_epb_init(void)
+ {
+ 	int ret;
+@@ -226,7 +206,7 @@ static __init int intel_epb_init(void)
+ 	if (ret < 0)
+ 		goto err_out_online;
+ 
+-	register_intel_ebp_syscore_ops();
++	register_syscore_ops(&intel_epb_syscore_ops);
+ 	return 0;
+ 
+ err_out_online:
+
+
+
