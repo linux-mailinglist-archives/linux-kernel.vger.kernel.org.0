@@ -2,109 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB47D2B753
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 16:12:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC9462B75C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 16:14:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbfE0OMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 10:12:06 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39474 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbfE0OMG (ORCPT
+        id S1726568AbfE0OOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 10:14:23 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57165 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbfE0OOW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 10:12:06 -0400
-Received: by mail-wm1-f68.google.com with SMTP id z23so11925789wma.4
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 07:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IH+CgbtwcPpUTo0IcL6te1tyJLliTl08cVkJbHiaKHs=;
-        b=KXRgIFFHOPGgWF0ReWctzCnop7Jh68+tRFUVYOR11ha0wZfzuCMuVZtedeD8LgLQx2
-         yfVAVEkavWN1rF18o9XhRetkVEOc5rCG7TOiMHj6wRsRF/sybfvqSzpFkSSlNNNzYrij
-         dGFELUI19vP4sjxwgt5D9F0m4stdGhsdAVO5O5flg73UijLjrFlPPgvVjH97fCWZPniA
-         pn1/sLXNUdCNJsWC4qpS4eaLJ3aOxpz34mguLt68babqKOliBAPODF51Va+Mk1qApdcj
-         0hA0G/F4c4FWqL3P38IRP6U1WQOcfYO7JlFT6Cak3pMojBL2pynEHawVLM/lQb+wG1ZR
-         rkSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IH+CgbtwcPpUTo0IcL6te1tyJLliTl08cVkJbHiaKHs=;
-        b=YkaTvW0QfEmeTvCxtprb9cjcofWDS3CdGAV75rRKnl8u0IRSPrVEfsyuIRxLAa/QRG
-         6J/HUYaJlbgBpj37P2JE/g7u+qN+99Si5rIn73MKnvBU33LFbnotnwiYI3ZtAZGG5/nZ
-         Y9+ApiG/vEeQkQ1JoUghUzM18r3/8n3B5MRmZBzwrYBKPfDomGEmE6gNnfWYzkiYsfPk
-         OWo+RsPz/vSlN9HbrlaUXnKVCUgBC6WSv+BecbSBWuWGaMj8rNx6+VNs6Jj29ILZuYQY
-         w7hrpbijfkWrzQv/HeNUA6W9Aqg/qTvAZtYa5QK383EDBucit1o7WKrn8fYjI+B0itRO
-         MawA==
-X-Gm-Message-State: APjAAAXWikwKyRClUwmcWAkl2rS82S+GtSmbpFHjn9ZBspSQXSI1kjmv
-        CE4tyH2pCCtc8R7CVWxUd7o=
-X-Google-Smtp-Source: APXvYqyBTqvmxE0Lqy2I5YtyWJmUJ3je0sIR/f1aXkVjew21CfhtFU+Mh+PhIXDcoriOK4z/jWZDZA==
-X-Received: by 2002:a1c:ed0b:: with SMTP id l11mr4844538wmh.103.1558966324113;
-        Mon, 27 May 2019 07:12:04 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id p16sm22968262wrg.49.2019.05.27.07.12.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 May 2019 07:12:03 -0700 (PDT)
-Date:   Mon, 27 May 2019 16:12:01 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jiri Kosina <trivial@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [trivial] perf: Spelling s/EACCESS/EACCES/
-Message-ID: <20190527141201.GA1537@gmail.com>
-References: <20190527122309.5840-1-geert+renesas@glider.be>
+        Mon, 27 May 2019 10:14:22 -0400
+Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4RECPOj004246;
+        Mon, 27 May 2019 23:12:25 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
+ Mon, 27 May 2019 23:12:25 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4RECNAa004233
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Mon, 27 May 2019 23:12:24 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] kernel/hung_task.c: Monitor killed tasks.
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Liu Chuansheng <chuansheng.liu@intel.com>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <1557745331-10367-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20190515105540.vyzh6n62rqi5imqv@pathway.suse.cz>
+ <ee7501c6-d996-1684-1652-f0f838ba69c3@i-love.sakura.ne.jp>
+ <20190516115758.6v7oitg3vbkfhh5j@pathway.suse.cz>
+ <a3d9de97-46e8-aa43-1743-ebf66b434830@i-love.sakura.ne.jp>
+Message-ID: <60d1d7f6-b201-3dcb-a51b-76a31bcfa919@i-love.sakura.ne.jp>
+Date:   Mon, 27 May 2019 23:12:20 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190527122309.5840-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a3d9de97-46e8-aa43-1743-ebf66b434830@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Andrew, I updated description part. Please carry this patch.
+----------
+[PATCH] kernel/hung_task.c: Monitor killed tasks.
 
-* Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+syzbot's current top report is "no output from test machine" where the
+userspace process failed to spawn a new test process for 300 seconds
+for some reason. One of reasons which can result in this report is that
+an already spawned test process was unable to terminate (e.g. trapped at
+an unkillable retry loop due to some bug) after SIGKILL was sent to that
+process. Therefore, reporting when a thread is failing to terminate
+despite a fatal signal is pending would give us more useful information.
 
-> The correct spelling is EACCES:
-> 
-> include/uapi/asm-generic/errno-base.h:#define EACCES 13 /* Permission denied */
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  include/linux/perf_event.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 0ab99c7b652d41b1..10569e25b5a9b656 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -289,7 +289,7 @@ struct pmu {
->  	 *  -EBUSY	-- @event is for this PMU but PMU temporarily unavailable
->  	 *  -EINVAL	-- @event is for this PMU but @event is not valid
->  	 *  -EOPNOTSUPP -- @event is for this PMU, @event is valid, but not supported
-> -	 *  -EACCESS	-- @event is for this PMU, @event is valid, but no privilidges
-> +	 *  -EACCES	-- @event is for this PMU, @event is valid, but no privilidges
->  	 *
->  	 *  0		-- @event is for this PMU and valid
->  	 *
+In the context of syzbot's testing where there are only 2 CPUs in the
+target VM (which means that only small number of threads and not so much
+memory) and threads get SIGKILL after 5 seconds from fork(), being unable
+to reach do_exit() within 10 seconds is likely a sign of something went
+wrong. Therefore, I would like to try this patch in linux-next.git for
+feasibility testing whether this patch helps finding more bugs and
+reproducers for such bugs, by bringing "unable to terminate threads"
+reports out of "no output from test machine" reports.
 
+Potential bad effect of this patch will be that kernel code becomes
+killable without addressing the root cause of being unable to terminate,
+for use of killable wait will bypass both TASK_UNINTERRUPTIBLE stall test
+and SIGKILL after 5 seconds behavior, which will result in failing to
+detect in real systems where SIGKILL won't be sent after 5 seconds when
+something went wrong.
 
-Actually, -EACCES got typoed itself and survived due to historic reasons. 
-I think we can tolerate the 'typo' fixed in documentation, can we?
+This version shares existing sysctl settings (e.g. check interval,
+timeout, whether to panic) used for detecting TASK_UNINTERRUPTIBLE
+threads. We will likely want to use different sysctl settings for
+monitoring killed threads. But let's start as linux-next.git patch
+without introducing new sysctl settings. We can add sysctl settings
+before sending to linux.git.
 
-Also, the *far* bigger typo is, in the same line:
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+---
 
-s/privilidges
- /privileges
+ include/linux/sched.h |  1 +
+ kernel/hung_task.c    | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
 
-:-)
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index a2cd1585..d42bdd7 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -850,6 +850,7 @@ struct task_struct {
+ #ifdef CONFIG_DETECT_HUNG_TASK
+ 	unsigned long			last_switch_count;
+ 	unsigned long			last_switch_time;
++	unsigned long			killed_time;
+ #endif
+ 	/* Filesystem information: */
+ 	struct fs_struct		*fs;
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index f108a95..34e7b84 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -141,6 +141,47 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 	touch_nmi_watchdog();
+ }
+ 
++static void check_killed_task(struct task_struct *t, unsigned long timeout)
++{
++	unsigned long stamp = t->killed_time;
++
++	/*
++	 * Ensure the task is not frozen.
++	 * Also, skip vfork and any other user process that freezer should skip.
++	 */
++	if (unlikely(t->flags & (PF_FROZEN | PF_FREEZER_SKIP)))
++		return;
++	/*
++	 * Skip threads which are already inside do_exit(), for exit_mm() etc.
++	 * might take many seconds.
++	 */
++	if (t->flags & PF_EXITING)
++		return;
++	if (!stamp) {
++		stamp = jiffies;
++		if (!stamp)
++			stamp++;
++		t->killed_time = stamp;
++		return;
++	}
++	if (time_is_after_jiffies(stamp + timeout * HZ))
++		return;
++	trace_sched_process_hang(t);
++	if (sysctl_hung_task_panic) {
++		console_verbose();
++		hung_task_call_panic = true;
++	}
++	/*
++	 * This thread failed to terminate for more than
++	 * sysctl_hung_task_timeout_secs seconds, complain:
++	 */
++	pr_err("INFO: task %s:%d can't die for more than %ld seconds.\n",
++	       t->comm, t->pid, (jiffies - stamp) / HZ);
++	sched_show_task(t);
++	hung_task_show_lock = true;
++	touch_nmi_watchdog();
++}
++
+ /*
+  * To avoid extending the RCU grace period for an unbounded amount of time,
+  * periodically exit the critical section and enter a new one.
+@@ -192,6 +233,9 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 				goto unlock;
+ 			last_break = jiffies;
+ 		}
++		/* Check threads which are about to terminate. */
++		if (unlikely(fatal_signal_pending(t)))
++			check_killed_task(t, timeout);
+ 		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
+ 		if (t->state == TASK_UNINTERRUPTIBLE)
+ 			check_hung_task(t, timeout);
+-- 
+1.8.3.1
 
-Thanks,
-
-	Ingo
