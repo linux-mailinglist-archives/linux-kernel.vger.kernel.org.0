@@ -2,124 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60FCD2AFA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 09:58:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA7802AFA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 10:01:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbfE0H6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 03:58:18 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40933 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbfE0H6S (ORCPT
+        id S1726353AbfE0IBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 04:01:12 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:35341 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725940AbfE0IBL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 03:58:18 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u17so9114847pfn.7;
-        Mon, 27 May 2019 00:58:18 -0700 (PDT)
+        Mon, 27 May 2019 04:01:11 -0400
+Received: by mail-ua1-f68.google.com with SMTP id r7so3916223ual.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 01:01:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AtLyxtk9Dzb+m0497auHuXX2nLc0N/zfXlXDKG81NXE=;
-        b=YddJ3EXGsxY4Mae6Yosu3sXkx8hcN2mk9wf03Iho6huUQyCPm36tLZN9XRHcwwl3Li
-         VZaWwsKHHQZcGjze8MpJwBYvZOr4/JFoZqb2BPJXB4vYBfUDiYxmmmeOW3i5Nkxxl1sA
-         P1fefUbWAjWl4KGzjTUuRKEIyJuI1s/2DqcJ3DorxbS8UENXyLrPmziVxPdpJ+rBCOF9
-         YomHgrYFvLVxqilDv0CmZeyCuZyUeOhpTLmA4D3xEhFkTGRV8ptiiK2Ma+ENptkVk/mR
-         m95QZTxEYEUNCpACv/zCSylIB2q9gUhh6hNzdZIxykp8t69jthBbipxfdll4UlP3zuWj
-         kGOA==
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pBSUB4SN9OQHrj4cS3m08A0jB5J8vJS1S0v+4XLlE6Q=;
+        b=ZhhQ0nQYNF4NIRNcn8EBoMCENvbjo/FT16CK5aZsaQlVJzsTPPRM1WjKPMMVjZMqa0
+         NMLtpPdg0Z3+IdtejtnhYB8qZEupLY4/qS90T+Uf2jaMcSJFK9CEAQ2T3MFDXkPDDddD
+         bZJbsRElCU//XHK/eBO0PhkTi93SQzsshlT5s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AtLyxtk9Dzb+m0497auHuXX2nLc0N/zfXlXDKG81NXE=;
-        b=E9865puWIr3ZOA6rm/8yVUmQyyjx/Wz5HIRNHiJMZhKjW0WOfwF6JsYVXHDxJVHM4r
-         6BaPJ8n82wUoIM5wNEuyQ6eXkNVFQK3asEd3vszmRICpHK7Id2BZ2O1HAaZb1X2Kp2U2
-         QMt49vH1nOwKGCFM23hfmUsNR2CuJuvdzHGnp+0doMU2hYWxMi98GmGeTtkIet3NXKFH
-         IPrBH3t70biO42QPoSJZHGCtqMLlU/UWppE6b7gaNdNw4nbqpns+zMI4yQMDjXneolpK
-         1tPoEYVePYA4VRAW5/c5FhKZ/FJCSzVUNgPEIqna4VPqIiE4ol/9mDAEzPx4AxD0uVUP
-         EVRQ==
-X-Gm-Message-State: APjAAAXV9iqEoAudT2nMAB42a8la7Z9ah6EX9Np4NIBfVtokBxXqUm3a
-        vkdXQSkUuNaBsjwX68zyv7I=
-X-Google-Smtp-Source: APXvYqy7Ciw4BWJbHLqJmf1T3VmgXQeVxglXh68Qvk5eTkT4dj+InYqIzbs2GO1rQP7sg3r1fXpkAw==
-X-Received: by 2002:a17:90a:b885:: with SMTP id o5mr28965553pjr.52.1558943897757;
-        Mon, 27 May 2019 00:58:17 -0700 (PDT)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id d9sm8833891pgl.20.2019.05.27.00.58.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 27 May 2019 00:58:16 -0700 (PDT)
-Date:   Mon, 27 May 2019 16:58:11 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>, linux-api@vger.kernel.org
-Subject: Re: [RFC 7/7] mm: madvise support MADV_ANONYMOUS_FILTER and
- MADV_FILE_FILTER
-Message-ID: <20190527075811.GC6879@google.com>
-References: <20190520035254.57579-1-minchan@kernel.org>
- <20190520035254.57579-8-minchan@kernel.org>
- <20190520092801.GA6836@dhcp22.suse.cz>
- <20190521025533.GH10039@google.com>
- <20190521062628.GE32329@dhcp22.suse.cz>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pBSUB4SN9OQHrj4cS3m08A0jB5J8vJS1S0v+4XLlE6Q=;
+        b=NcZ+4iqJS4pEtmlzgjr9+5SfFUJQuCQLTDkWoTBT+rWM/TxVyx+7VeA5ukfyNUlLST
+         fnzb0W3PI6YqaQd1K3bjUiuWvREV+LgczgCgPUSMeJi+ClzD96Pmcx7WmOsYpkOhZyKX
+         uMOBDEoWv5q9pB+KYO1nlPtG8uUE23nEz84UDMJeHznyrp9MceK09HH/ZhKp9iQlMKNo
+         A/NqeFQlsn3C2dsLXv8icuoel467SjmDKnNLR/cWV4Kif93J5KtlETlcwQKtyslTVmyr
+         TqwoStG0c2+Gf4g8Pkct6JfWfxQ0y2QVswV3caMc1PyS3/lSUdg3jNbmDgw4xgs6K3Ae
+         pwhg==
+X-Gm-Message-State: APjAAAVlXAwCcYgZvHxug1a2QcbXC9NPSyZvU441blHKwku9rAt5Mnwr
+        XDHPIA0zBIX9n+JRAbtSr/hvfZvBq1gZdv+KXTyD7WQGQsY=
+X-Google-Smtp-Source: APXvYqzkfGtl1QOJitY9/IYlk2BjiUCahgGT/Fg6vPpgSQhBy5rvKcyR1VEpJW2OnRnxzyHMeqdv4eqfq1dQsogSskQ=
+X-Received: by 2002:ab0:70d1:: with SMTP id r17mr20075942ual.136.1558944070794;
+ Mon, 27 May 2019 01:01:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521062628.GE32329@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190525124202.8120-1-yuehaibing@huawei.com>
+In-Reply-To: <20190525124202.8120-1-yuehaibing@huawei.com>
+From:   Sumit Saxena <sumit.saxena@broadcom.com>
+Date:   Mon, 27 May 2019 13:30:59 +0530
+Message-ID: <CAL2rwxrmVuTsR=JY4h5agyTPMdsZA1xgvdC09O9XV3gDMTm2BQ@mail.gmail.com>
+Subject: Re: [PATCH -next] scsi: megaraid_sas: remove set but not used
+ variables 'host' and 'wait_time'
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>, jejb@linux.ibm.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        "PDL,MEGARAIDLINUX" <megaraidlinux.pdl@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 08:26:28AM +0200, Michal Hocko wrote:
-> On Tue 21-05-19 11:55:33, Minchan Kim wrote:
-> > On Mon, May 20, 2019 at 11:28:01AM +0200, Michal Hocko wrote:
-> > > [cc linux-api]
-> > > 
-> > > On Mon 20-05-19 12:52:54, Minchan Kim wrote:
-> > > > System could have much faster swap device like zRAM. In that case, swapping
-> > > > is extremely cheaper than file-IO on the low-end storage.
-> > > > In this configuration, userspace could handle different strategy for each
-> > > > kinds of vma. IOW, they want to reclaim anonymous pages by MADV_COLD
-> > > > while it keeps file-backed pages in inactive LRU by MADV_COOL because
-> > > > file IO is more expensive in this case so want to keep them in memory
-> > > > until memory pressure happens.
-> > > > 
-> > > > To support such strategy easier, this patch introduces
-> > > > MADV_ANONYMOUS_FILTER and MADV_FILE_FILTER options in madvise(2) like
-> > > > that /proc/<pid>/clear_refs already has supported same filters.
-> > > > They are filters could be Ored with other existing hints using top two bits
-> > > > of (int behavior).
-> > > 
-> > > madvise operates on top of ranges and it is quite trivial to do the
-> > > filtering from the userspace so why do we need any additional filtering?
-> > > 
-> > > > Once either of them is set, the hint could affect only the interested vma
-> > > > either anonymous or file-backed.
-> > > > 
-> > > > With that, user could call a process_madvise syscall simply with a entire
-> > > > range(0x0 - 0xFFFFFFFFFFFFFFFF) but either of MADV_ANONYMOUS_FILTER and
-> > > > MADV_FILE_FILTER so there is no need to call the syscall range by range.
-> > > 
-> > > OK, so here is the reason you want that. The immediate question is why
-> > > cannot the monitor do the filtering from the userspace. Slightly more
-> > > work, all right, but less of an API to expose and that itself is a
-> > > strong argument against.
-> > 
-> > What I should do if we don't have such filter option is to enumerate all of
-> > vma via /proc/<pid>/maps and then parse every ranges and inode from string,
-> > which would be painful for 2000+ vmas.
-> 
-> Painful is not an argument to add a new user API. If the existing API
-> suits the purpose then it should be used. If it is not usable, we can
-> think of a different way.
+On Sat, May 25, 2019 at 6:14 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fixes gcc '-Wunused-but-set-variable' warnings:
+>
+> drivers/scsi/megaraid/megaraid_sas_base.c: In function megasas_suspend:
+> drivers/scsi/megaraid/megaraid_sas_base.c:7269:20: warning: variable host set but not used [-Wunused-but-set-variable]
+> drivers/scsi/megaraid/megaraid_sas_base.c: In function megasas_aen_polling:
+> drivers/scsi/megaraid/megaraid_sas_base.c:8397:15: warning: variable wait_time set but not used [-Wunused-but-set-variable]
+>
+> 'host' is never used since introduction in
+> commit 31ea7088974c ("[SCSI] megaraid_sas: add hibernation support")
+>
+> 'wait_time' is not used since commit
+> 11c71cb4ab7c ("megaraid_sas: Do not allow PCI access during OCR")
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
 
-I measured 1568 vma parsing overhead of /proc/<pid>/maps in ARM64 modern
-mobile CPU. It takes 60ms and 185ms on big cores depending on cpu governor.
-It's never trivial.
+> ---
+>  drivers/scsi/megaraid/megaraid_sas_base.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+>
+> diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+> index 92e576228d5f..ed0f6ca578e5 100644
+> --- a/drivers/scsi/megaraid/megaraid_sas_base.c
+> +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+> @@ -7239,11 +7239,9 @@ static void megasas_shutdown_controller(struct megasas_instance *instance,
+>  static int
+>  megasas_suspend(struct pci_dev *pdev, pm_message_t state)
+>  {
+> -       struct Scsi_Host *host;
+>         struct megasas_instance *instance;
+>
+>         instance = pci_get_drvdata(pdev);
+> -       host = instance->host;
+>         instance->unload = 1;
+>
+>         dev_info(&pdev->dev, "%s is called\n", __func__);
+> @@ -8367,7 +8365,7 @@ megasas_aen_polling(struct work_struct *work)
+>         struct megasas_instance *instance = ev->instance;
+>         union megasas_evt_class_locale class_locale;
+>         int event_type = 0;
+> -       u32 seq_num, wait_time = MEGASAS_RESET_WAIT_TIME;
+> +       u32 seq_num;
+>         int error;
+>         u8  dcmd_ret = DCMD_SUCCESS;
+>
+> @@ -8377,10 +8375,6 @@ megasas_aen_polling(struct work_struct *work)
+>                 return;
+>         }
+>
+> -       /* Adjust event workqueue thread wait time for VF mode */
+> -       if (instance->requestorId)
+> -               wait_time = MEGASAS_ROUTINE_WAIT_TIME_VF;
+> -
+>         /* Don't run the event workqueue thread if OCR is running */
+>         mutex_lock(&instance->reset_mutex);
+>
+> --
+> 2.17.1
+>
+>
