@@ -2,108 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FCEF2B840
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:19:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EA9D2B842
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:19:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfE0PTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 11:19:06 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44197 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbfE0PTC (ORCPT
+        id S1726895AbfE0PTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 11:19:15 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39178 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726645AbfE0PTD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 11:19:02 -0400
-Received: by mail-lj1-f196.google.com with SMTP id e13so14961640ljl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 08:19:01 -0700 (PDT)
+        Mon, 27 May 2019 11:19:03 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w22so9270921pgi.6;
+        Mon, 27 May 2019 08:19:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=v/69OPvwjOinzl+9ALg7GpdBlRB0Izx4CLNV/SO6CVY=;
-        b=sp5TtVt0QWossyePsI0pwfUwbXk0kwuyZ3Q6WK9mDv5RwWtoQH2e93S6VPSdJf2Pd7
-         ueQNA2nVax3EAVEuU8+zB9l+e6ZKexa0Sala5JZsZhaJkmkJcpYsiX2BtKsY6VLpRuaT
-         vz5fnHdqqbVuD1f6oHE4OTdmhb8AF9lGaT6wYx1HAS2P8EG6G7W2XULg76DyX3veqI56
-         aND2VwK69f/iqhtVR9U2YgL0Oui6eD75hK3Ld9JxCrOVIw5jKVlZDCRI5hdghprkXpe/
-         QazwvMFfeiMeEiR6SiWw/C3Rz70yvm0JA1FsRynowlMMKSyJTiry5opRgWMYWqNAP/H6
-         LYQg==
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=wKRYLSYKzE2k4jFHpZmRlCn5LnNbsStdg5D8PnYwlpE=;
+        b=q7Xd8Lebsp1l3HocpLrwjIl0tM4rnRkL6po/MBApZ5k16ZVpXwa4aXsP2VNvOuIuXC
+         Je4JosdBHlyx8uMt4k0yidbWD72peNmSMiPm4ioIz7N3PqL2WyXC6FdfhfzpNsoELPOi
+         rdwNK8SSP0FYy2TMNgByTWF2eOkEeRYpCuTuvQi1llZE/XWNVqi2piTU6d3ySUaozZQI
+         2phU5bXOWeGHfHexudFhebBo5tMjRtaVpjsH7kQSNI/U5n2IVU6+/kriyR2M2qnFRYdw
+         y0qXo387I9QuTRjr0s4eQkSkYkCBCffEdn7iXisSGENViN37J+bJB2FuHkMrP1gT4U96
+         v/PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=v/69OPvwjOinzl+9ALg7GpdBlRB0Izx4CLNV/SO6CVY=;
-        b=savOqdfgc2K9zNyAHWxKmNxslHyYhI1xZUAlD1nQeL98Lql+Lk06SxZ21beB3pOUvT
-         2fgSe8Pl87BQ8TKyKGcc9XHdCappq5NCfGR1+So6HcbEdxGwhxqaG6ko74yO/eHYDgBi
-         jAXgma+mxIbv40GvPxAktEgstQLUBaudJPbMe2/ZeP8YH6CfYY5TYV8nWzvF5xW1A1Uj
-         sRPeHEl2Mufo/bX0Dm5Ym/n1fn/+66IAPzDYaMj3g5MqdpWscObpdB22kT0Yo6IOFaQL
-         a++nucrZ3H2QXPVF/eeyjgK/AerCRVjAC1rLpg7UOPHfe1K3qH/gSYZ6xuIth2W68Bv2
-         AhbA==
-X-Gm-Message-State: APjAAAWAqejK5avoGMFtCDcorAGxZ1Apj9BUCB6uI6/1TtvT/MnzxET5
-        ryy0kgpR44T78qOrYE6dWCc=
-X-Google-Smtp-Source: APXvYqwCoutspyS+zZrN5ZysSrHKllwv2mgh3TpyyOJ5FW6lX7OaWsa0f9YLi2ui4UlgnpRQBjECXg==
-X-Received: by 2002:a2e:8796:: with SMTP id n22mr3489968lji.75.1558970340582;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=wKRYLSYKzE2k4jFHpZmRlCn5LnNbsStdg5D8PnYwlpE=;
+        b=RJk9070P9764wT5R6f23J9cyT/k4sAtkCyGJFMlACfogUoQVr5tSQ43v2y01duSW+Z
+         HMwaif20dIhT7lYEeG89LDCCWd2n6T4ZscehOE3/BzbQ8IQSvDxjaseKIicaWOlvXxuI
+         sNdOm+gt7h0ibbTUNP0eHd/6gvjHCjdnEKH1WdHE6dTVWwgFF6eOfHksR2EFE42x2exx
+         j1fou4k4dhEnBVl/21nmKV3Aa9Mf4n0+5OLgrfPbF58qeYdLk9g+nF5gUDohOB95wee/
+         /9ZaU2wOsJ92HZnXBPmUWeVcg7Xzk9M1A9pq6fO0wgzEfSZc/Vyil/406AIpk90HLze6
+         GVYA==
+X-Gm-Message-State: APjAAAUdRZSP/GloaIKjJtiUBxZKdiCJ0Fnb18u5D+8HGZG3ut1e8JJ+
+        FS459EaY4hrWqbqqEXP/GSeEOrLP
+X-Google-Smtp-Source: APXvYqxMehS8QCzhcyqJ0WLGpmftug/4/G3fWnhju+fhqevVuE4AIJsX7qwJq+1QrO00UWRwmm2wMw==
+X-Received: by 2002:a17:90b:14e:: with SMTP id em14mr32106670pjb.19.1558970341885;
+        Mon, 27 May 2019 08:19:01 -0700 (PDT)
+Received: from ip-172-31-44-144.us-west-2.compute.internal (ec2-54-186-128-88.us-west-2.compute.amazonaws.com. [54.186.128.88])
+        by smtp.gmail.com with ESMTPSA id f20sm93168pgf.59.2019.05.27.08.19.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Mon, 27 May 2019 08:19:00 -0700 (PDT)
-Received: from pc636.semobile.internal ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id h25sm2308701ljb.80.2019.05.27.08.18.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 08:18:59 -0700 (PDT)
-From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     Roman Gushchin <guro@fb.com>, Uladzislau Rezki <urezki@gmail.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
-Subject: [PATCH v4 4/4] mm/vmap: switch to WARN_ON() and move it under unlink_va()
-Date:   Mon, 27 May 2019 17:18:43 +0200
-Message-Id: <20190527151843.27416-5-urezki@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190527151843.27416-1-urezki@gmail.com>
-References: <20190527151843.27416-1-urezki@gmail.com>
+Date:   Mon, 27 May 2019 15:18:59 +0000
+From:   Alakesh Haloi <alakesh.haloi@gmail.com>
+To:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Xu <peterx@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shuah Khan <shuah@kernel.org>
+Subject: [PATCH] userfaultfd: selftest: fix compiler warning
+Message-ID: <20190527151859.GA3217@ip-172-31-44-144.us-west-2.compute.internal>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Trigger a warning if an object that is about to be freed is
-detached. We used to have a BUG_ON(), but even though it is
-considered as faulty behaviour that is not a good reason to
-break a system.
+Fixes following compiler warning
 
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+userfaultfd.c: In function ‘usage’:
+userfaultfd.c:126:2: warning: format not a string literal and no format
+	arguments [-Wformat-security]
+  fprintf(stderr, examples);
+
+Signed-off-by: Alakesh Haloi <alakesh.haloi@gmail.com>
 ---
- mm/vmalloc.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ tools/testing/selftests/vm/userfaultfd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 371aba9a4bf1..1dd459d0220a 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -533,11 +533,7 @@ link_va(struct vmap_area *va, struct rb_root *root,
- static __always_inline void
- unlink_va(struct vmap_area *va, struct rb_root *root)
- {
--	/*
--	 * During merging a VA node can be empty, therefore
--	 * not linked with the tree nor list. Just check it.
--	 */
--	if (!RB_EMPTY_NODE(&va->rb_node)) {
-+	if (!WARN_ON(RB_EMPTY_NODE(&va->rb_node))) {
- 		if (root == &free_vmap_area_root)
- 			rb_erase_augmented(&va->rb_node,
- 				root, &free_vmap_area_rb_augment_cb);
-@@ -1187,8 +1183,6 @@ EXPORT_SYMBOL_GPL(unregister_vmap_purge_notifier);
+diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
+index 5d1db824f73a..b3e6497b080c 100644
+--- a/tools/testing/selftests/vm/userfaultfd.c
++++ b/tools/testing/selftests/vm/userfaultfd.c
+@@ -123,7 +123,7 @@ static void usage(void)
+ 	fprintf(stderr, "Supported <test type>: anon, hugetlb, "
+ 		"hugetlb_shared, shmem\n\n");
+ 	fprintf(stderr, "Examples:\n\n");
+-	fprintf(stderr, examples);
++	fprintf(stderr, "%s", examples);
+ 	exit(1);
+ }
  
- static void __free_vmap_area(struct vmap_area *va)
- {
--	BUG_ON(RB_EMPTY_NODE(&va->rb_node));
--
- 	/*
- 	 * Remove from the busy tree/list.
- 	 */
 -- 
-2.11.0
+2.17.1
 
