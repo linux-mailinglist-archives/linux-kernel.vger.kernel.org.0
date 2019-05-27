@@ -2,130 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCA262B20F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A26192B205
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:22:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfE0KW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 06:22:26 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:8766 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726313AbfE0KWZ (ORCPT
+        id S1726839AbfE0KWD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 06:22:03 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39825 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfE0KWC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 06:22:25 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4RAGcSf031336;
-        Mon, 27 May 2019 12:21:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : in-reply-to : references : mime-version : content-type
- : content-transfer-encoding; s=STMicroelectronics;
- bh=wps+SDKyn14/sTW3Eret7RKWvrgnINJUAp0gJ+ptxDk=;
- b=gvnKygsUyE2/7zsLmyK3byjlXUl15AlFFGnZXXay4/tht9zRv0eFUjQgboXgGkVkG6Ju
- h6ku6Z4gIaLCcqeKKfwVIPusDk/0Oy3k+890b3+4a4eN6K/7Wa9E6UX937/Jk0ASBT28
- GIsazNr4pqEgE5PqEB56/cMIKYtdOV2AP+YzakDwVLsDTBBc0d1tmcSwc43jyCFgGZ45
- UuyhgsE9EvSEnT6EvTr4+zJYzQl6Z1n2kVnBN4V/LMmptiT7oARZ9K6focryReCaPmPt
- GNzKaHf/PobBU0uG+2eq0wsvL/C9U6wYA74KR82gQQe4LI8RRhCOwuLAjD1kKNDzKcD1 uQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2sptu9jjhj-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 27 May 2019 12:21:49 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C31B531;
-        Mon, 27 May 2019 10:21:48 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 89C692805;
-        Mon, 27 May 2019 10:21:48 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 27 May
- 2019 12:21:48 +0200
-Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 27 May 2019 12:21:48
- +0200
-From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        "Daniel Vetter" <daniel@ffwll.ch>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Nickey Yang <nickey.yang@rock-chips.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 2/2] drm/stm: dsi: add power on/off phy ops
-Date:   Mon, 27 May 2019 12:21:39 +0200
-Message-ID: <1558952499-15418-3-git-send-email-yannick.fertre@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1558952499-15418-1-git-send-email-yannick.fertre@st.com>
-References: <1558952499-15418-1-git-send-email-yannick.fertre@st.com>
+        Mon, 27 May 2019 06:22:02 -0400
+Received: by mail-wr1-f66.google.com with SMTP id e2so7610963wrv.6
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 03:22:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=b21qaBk7xgBLkh/tR0jiPGLO6jWcDKAw7epKgIMYkgI=;
+        b=gmNM+F46bBFRK67zBu1mFuHNdpxCSJHIQMxoudNsqtcoP3/m4EfosM2dTkFdM7+5Ut
+         apIiv5sM9yZWFPHnOiDfQYpSN+xva4MC6QToPeOiy5KANx95zna9gxUMnDukmeeXhaMi
+         MR2Zw4o79SqVsWB7KMea0aeZym4zCsIuBXM/84OF7hDf9eRYL8zhIQml0FERrhIvpk9K
+         RkkRa3HlBuFeunISCfLB0gQfMr/kf8T6cB2TKjHmGx6nz44DaEeTI0ZgPYg1nRPh1yMO
+         53MKZzoiW/KHryqph1HP6aNxI5KTZifVzGeT9H2pbJecwCfUkmZsp4hPTfX8H2nQtjNO
+         Batw==
+X-Gm-Message-State: APjAAAVxeYPaMj2d0wdS2Toa3oyT7pwaHlxqKGjbX62yw6Dx+lhYuZEy
+        NQNLHWN3r/m5srUiJrxZ34sr4Q==
+X-Google-Smtp-Source: APXvYqyHBiTtlTwjGNSoRY9mSrO2K+MXLJKpJDqJEZ9a29tUYpcW0gYHSxIWv7TusW+bveIx9CmIaw==
+X-Received: by 2002:adf:db87:: with SMTP id u7mr25167674wri.245.1558952521069;
+        Mon, 27 May 2019 03:22:01 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:c43e:46a8:e962:cee8? ([2001:b07:6468:f312:c43e:46a8:e962:cee8])
+        by smtp.gmail.com with ESMTPSA id a17sm8328827wrr.80.2019.05.27.03.21.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 03:22:00 -0700 (PDT)
+Subject: Re: [RFC PATCH 5/6] x86/mm/tlb: Flush remote and local TLBs
+ concurrently
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Juergen Gross <jgross@suse.com>
+Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-hyperv@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+References: <20190525082203.6531-1-namit@vmware.com>
+ <20190525082203.6531-6-namit@vmware.com>
+ <08b21fb5-2226-7924-30e3-31e4adcfc0a3@suse.com>
+ <20190527094710.GU2623@hirez.programming.kicks-ass.net>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <e9c0dc1f-799a-b6e3-8d41-58f0a6b693cd@redhat.com>
+Date:   Mon, 27 May 2019 12:21:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.201.23.97]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-27_07:,,
- signatures=0
+In-Reply-To: <20190527094710.GU2623@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These new physical operations are helpful to power_on/off the dsi
-wrapper. If the dsi wrapper is powered in video mode, the display
-controller (ltdc) register access will hang when DSI fifos are full.
+On 27/05/19 11:47, Peter Zijlstra wrote:
+> On Sat, May 25, 2019 at 10:54:50AM +0200, Juergen Gross wrote:
+>> On 25/05/2019 10:22, Nadav Amit wrote:
+> 
+>>> diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+>>> index 946f8f1f1efc..3a156e63c57d 100644
+>>> --- a/arch/x86/include/asm/paravirt_types.h
+>>> +++ b/arch/x86/include/asm/paravirt_types.h
+>>> @@ -211,6 +211,12 @@ struct pv_mmu_ops {
+>>>  	void (*flush_tlb_user)(void);
+>>>  	void (*flush_tlb_kernel)(void);
+>>>  	void (*flush_tlb_one_user)(unsigned long addr);
+>>> +	/*
+>>> +	 * flush_tlb_multi() is the preferred interface. When it is used,
+>>> +	 * flush_tlb_others() should return false.
+>>
+>> This comment does not make sense. flush_tlb_others() return type is
+>> void.
+> 
+> I suspect that is an artifact from before the static_key; an attempt to
+> make the pv interface less awkward.
+> 
+> Something like the below would work for KVM I suspect, the others
+> (Hyper-V and Xen are more 'interesting').
+> 
+> ---
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -580,7 +580,7 @@ static void __init kvm_apf_trap_init(voi
+>  
+>  static DEFINE_PER_CPU(cpumask_var_t, __pv_tlb_mask);
+>  
+> -static void kvm_flush_tlb_others(const struct cpumask *cpumask,
+> +static void kvm_flush_tlb_multi(const struct cpumask *cpumask,
+>  			const struct flush_tlb_info *info)
+>  {
+>  	u8 state;
+> @@ -594,6 +594,9 @@ static void kvm_flush_tlb_others(const s
+>  	 * queue flush_on_enter for pre-empted vCPUs
+>  	 */
+>  	for_each_cpu(cpu, flushmask) {
+> +		if (cpu == smp_processor_id())
+> +			continue;
+> +
 
-Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
----
- drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+Even this would be just an optimization; the vCPU you're running on
+cannot be preempted.  You can just change others to multi.
 
-diff --git a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-index 01db020..0ab32fe 100644
---- a/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-+++ b/drivers/gpu/drm/stm/dw_mipi_dsi-stm.c
-@@ -210,10 +210,27 @@ static int dw_mipi_dsi_phy_init(void *priv_data)
- 	if (ret)
- 		DRM_DEBUG_DRIVER("!TIMEOUT! waiting PLL, let's continue\n");
- 
-+	return 0;
-+}
-+
-+static void dw_mipi_dsi_phy_power_on(void *priv_data)
-+{
-+	struct dw_mipi_dsi_stm *dsi = priv_data;
-+
-+	DRM_DEBUG_DRIVER("\n");
-+
- 	/* Enable the DSI wrapper */
- 	dsi_set(dsi, DSI_WCR, WCR_DSIEN);
-+}
- 
--	return 0;
-+static void dw_mipi_dsi_phy_power_off(void *priv_data)
-+{
-+	struct dw_mipi_dsi_stm *dsi = priv_data;
-+
-+	DRM_DEBUG_DRIVER("\n");
-+
-+	/* Disable the DSI wrapper */
-+	dsi_clear(dsi, DSI_WCR, WCR_DSIEN);
- }
- 
- static int
-@@ -287,6 +304,8 @@ dw_mipi_dsi_get_lane_mbps(void *priv_data, const struct drm_display_mode *mode,
- 
- static const struct dw_mipi_dsi_phy_ops dw_mipi_dsi_stm_phy_ops = {
- 	.init = dw_mipi_dsi_phy_init,
-+	.power_on = dw_mipi_dsi_phy_power_on,
-+	.power_off = dw_mipi_dsi_phy_power_off,
- 	.get_lane_mbps = dw_mipi_dsi_get_lane_mbps,
- };
- 
--- 
-2.7.4
+Paolo
+
+>  		src = &per_cpu(steal_time, cpu);
+>  		state = READ_ONCE(src->preempted);
+>  		if ((state & KVM_VCPU_PREEMPTED)) {
+> @@ -603,7 +606,7 @@ static void kvm_flush_tlb_others(const s
+>  		}
+>  	}
+>  
+> -	native_flush_tlb_others(flushmask, info);
+> +	native_flush_tlb_multi(flushmask, info);
+>  }
+>  
+>  static void __init kvm_guest_init(void)
+> @@ -628,9 +631,8 @@ static void __init kvm_guest_init(void)
+>  	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
+>  	    !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
+>  	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
+> -		pv_ops.mmu.flush_tlb_others = kvm_flush_tlb_others;
+> +		pv_ops.mmu.flush_tlb_multi = kvm_flush_tlb_multi;
+>  		pv_ops.mmu.tlb_remove_table = tlb_remove_table;
+> -		static_key_disable(&flush_tlb_multi_enabled.key);
+>  	}
+>  
+>  	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
+> 
 
