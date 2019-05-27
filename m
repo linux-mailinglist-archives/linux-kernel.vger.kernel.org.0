@@ -2,145 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B64C2B288
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:54:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 598CF2B295
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726576AbfE0Kyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 06:54:38 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42432 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbfE0Kyh (ORCPT
+        id S1726876AbfE0K4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 06:56:44 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33024 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbfE0K4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 06:54:37 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y13so11706354lfh.9
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 03:54:36 -0700 (PDT)
+        Mon, 27 May 2019 06:56:44 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g21so6948507plq.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 03:56:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T2n4gBNEt3oKhgRBGoBZWnyBBkiJxP3xEBbVU5SxBlY=;
-        b=dR84Z3nuv3s5YOrQqiLB6Ix9wMQyT82iqcq3wrUTRa/kZxr+uBwRmuVxh7hx4Lj3FM
-         KEhFHkxTmGv6Kam6nBU+3HqKorCFNvjw9OKzYn2VNr6iYG7Vd9fuyzf40YRt32xz2mSg
-         bOlKoojrSHXP5UsyZ7jQAqUTsUqLpKSgzi5DR4/VRyJe0G/djkI1+RjUawiyvAvHZEv3
-         3XP1nkgpkAxPkHG7+BRQVTg9/MdbHsZdjvMS8pi4eVrG7fJTgAEcOXKiSiV6YDPNq6jw
-         6xUNJqhwJr+anTyRiB+gdR3lBXp1Y/etJgAXzlqqmzfgEdAxjIYaFfuQhg6wQqVmQwf3
-         vXaQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xQG94E91rcdUfSlkW1uYF9ApGj+jgzKgN0E+vtaKz6A=;
+        b=Gy9EASSRYlr9i12Logn21TdN5ujim45QVkv2y2MggLHvc1zjqiO1HnQBLFMvdefKhV
+         8EUvnRVO5xeo+ymGVEjsG02qBU4VBKJE1w07kzfdcqPRGvvU6qwS7CcKyUwBb43n6ctR
+         GXh4BXEKOgL0SWJtNXegveEi3DU5WYLZJg+61DjGG2FPDXWGfylwfRNQeZlbtfrm0Ca+
+         3h/DBbQC5pmXA6gRd0uHwD+EOUkhThBuDvV1Iai08L58GcavSub2+7rJ+l4x9dHUQrr6
+         XJqz9SfLROkIZQU/3aNmTia9K5JyI8CzL9X7+4mJCGAJPvtRPfLc2cg1CoPnV0/ANVEJ
+         kf8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T2n4gBNEt3oKhgRBGoBZWnyBBkiJxP3xEBbVU5SxBlY=;
-        b=gnAkhaXxUbFbmYFSXjLqTXc01TffCzh331d2HSTtVn6d21W7tZFUb9TEOZwHxQEuU3
-         RzQWaI4bCoIWWgkTK4xVfoqi0WlDjvGcrI667h/9pWaqNjzFJ0BaxUAN0Tmp/OPSyFMF
-         8ksEuDobjD+gTx2hof1K8gq9+GfKkvtyZjHk5QzOlbNIrfqInEAe5/HjnNIavAxW6Kdy
-         iL62QDy7TRzp1o0KZwweO2qSVG7ywCy2mIzMt3P7/1+ZTgD/gGRk29icZFjr+/JN20bI
-         IT/uqPZDWiMJO1bNzW5A6BG6Bgwp2D5lEPMvRGMn0QLqetb318rIaOh0L/dbIMf/WaTT
-         4RLQ==
-X-Gm-Message-State: APjAAAV/oNEeutnI7acJBWNIgziL8+1G97ngpDalg9bYpSh9SwZqCDRk
-        WpslEPMdFcB+5i6PX3soEYcZzbsyBDb7kdZ0HEY=
-X-Google-Smtp-Source: APXvYqxlu5SnIBVa0aUlRiEJtdFyNmXZap0vDJRssM/5GGdUmvTYcWWazIPXEdPkaGYaXb7kqt5b4zLGBxOPmONRBqE=
-X-Received: by 2002:a19:9e46:: with SMTP id h67mr8374590lfe.120.1558954475111;
- Mon, 27 May 2019 03:54:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xQG94E91rcdUfSlkW1uYF9ApGj+jgzKgN0E+vtaKz6A=;
+        b=kYqSFiTXr0v9ldFYajXwAIqEbrqM3nSBmlaeBSW2pbVzmobHs2GVRP2isVcK+Qgy4U
+         hnXFISDjTFN8D/rcMVxV6Z3U3e0vD1NVmI1hj9X1a02UHgmV8zYXOHv75bRS7qTDvn9g
+         GckJ9sJeN2PBUIn8XAnnQQPQ/DplPJllx852AVOokw8jlltJ2FoafnB6Y5DC+8NfLLLf
+         VtSpVvrWLr+pcXr6fU3qAPz5s0M5fIlLbI1DzYrgNR9ovdW+SSF89J4i+aoPygRZpFs+
+         vSabuj/auNEStbGkgKMvgabBi/XJz/QEzAdHTxZjY9EBdoqN/KQBot7729zPNpHyoE0u
+         i5KA==
+X-Gm-Message-State: APjAAAWehiFJg6tn3uII9kECDAZ5oSbjc0he3v/FzvNR71MQJDvCAf9W
+        wKwnDtbo8Ay5JxXImPxDO1E=
+X-Google-Smtp-Source: APXvYqwYifFGznpVmbp990JQuxYufhL5+M7CwwnvfxITZA/hhhnqSphHZcc/3LL1+bFx/1MWhz5Akw==
+X-Received: by 2002:a17:902:28c9:: with SMTP id f67mr20202766plb.19.1558954603720;
+        Mon, 27 May 2019 03:56:43 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id x10sm14034629pfj.136.2019.05.27.03.56.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 27 May 2019 03:56:43 -0700 (PDT)
+Date:   Mon, 27 May 2019 03:55:29 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     hch@lst.de, robin.murphy@arm.com, m.szyprowski@samsung.com,
+        vdumpa@nvidia.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        joro@8bytes.org, dwmw2@infradead.org, tony@atomide.com,
+        akpm@linux-foundation.org, sfr@canb.auug.org.au,
+        treding@nvidia.com, keescook@chromium.org, iamjoonsoo.kim@lge.com,
+        wsa+renesas@sang-engineering.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org,
+        dann.frazier@canonical.com
+Subject: Re: [PATCH v3 2/2] dma-contiguous: Use fallback alloc_pages for
+ single pages
+Message-ID: <20190527105528.GA26916@Asurada-Nvidia.nvidia.com>
+References: <20190524040633.16854-1-nicoleotsuka@gmail.com>
+ <20190524040633.16854-3-nicoleotsuka@gmail.com>
+ <20190524161618.GB23100@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-References: <20190524174918.71074b358001bdbf1c23cd77@gmail.com> <20190525150948.e1ff1a2a894ca8110abc8183@linux-foundation.org>
-In-Reply-To: <20190525150948.e1ff1a2a894ca8110abc8183@linux-foundation.org>
-From:   Vitaly Wool <vitalywool@gmail.com>
-Date:   Mon, 27 May 2019 12:54:23 +0200
-Message-ID: <CAMJBoFNXVc3BBdEOsKTSHO51reHL93GPQNO4Tjkx+OaDcpb22g@mail.gmail.com>
-Subject: Re: [PATCH] z3fold: add inter-page compaction
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Dan Streetman <ddstreet@ieee.org>,
-        Oleksiy.Avramchenko@sony.com,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Uladzislau Rezki <urezki@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190524161618.GB23100@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 26, 2019 at 12:09 AM Andrew Morton
-<akpm@linux-foundation.org> wrote:
+Hi Ira,
 
-<snip>
-> Forward-declaring inline functions is peculiar, but it does appear to work.
->
-> z3fold is quite inline-happy.  Fortunately the compiler will ignore the
-> inline hint if it seems a bad idea.  Even then, the below shrinks
-> z3fold.o text from 30k to 27k.  Which might even make it faster....
+On Fri, May 24, 2019 at 09:16:19AM -0700, Ira Weiny wrote:
+> On Thu, May 23, 2019 at 09:06:33PM -0700, Nicolin Chen wrote:
+> > The addresses within a single page are always contiguous, so it's
+> > not so necessary to always allocate one single page from CMA area.
+> > Since the CMA area has a limited predefined size of space, it may
+> > run out of space in heavy use cases, where there might be quite a
+> > lot CMA pages being allocated for single pages.
+> > 
+> > However, there is also a concern that a device might care where a
+> > page comes from -- it might expect the page from CMA area and act
+> > differently if the page doesn't.
+> 
+> How does a device know, after this call, if a CMA area was used?  From the
+> patches I figured a device should not care.
 
-It is faster with inlines, I'll try to find a better balance between
-size and performance in the next version of the patch though.
+A device doesn't know. But that doesn't mean a device won't care
+at all. There was a concern from Robin and Christoph, as a corner
+case that device might act differently if the memory isn't in its
+own CMA region. That's why we let it still use its device specific
+CMA area.
 
-<snip>
-> >
-> > ...
-> >
-> > +static inline struct z3fold_header *__get_z3fold_header(unsigned long handle,
-> > +                                                     bool lock)
-> > +{
-> > +     struct z3fold_buddy_slots *slots;
-> > +     struct z3fold_header *zhdr;
-> > +     unsigned int seq;
-> > +     bool is_valid;
-> > +
-> > +     if (!(handle & (1 << PAGE_HEADLESS))) {
-> > +             slots = handle_to_slots(handle);
-> > +             do {
-> > +                     unsigned long addr;
-> > +
-> > +                     seq = read_seqbegin(&slots->seqlock);
-> > +                     addr = *(unsigned long *)handle;
-> > +                     zhdr = (struct z3fold_header *)(addr & PAGE_MASK);
-> > +                     preempt_disable();
->
-> Why is this done?
->
-> > +                     is_valid = !read_seqretry(&slots->seqlock, seq);
-> > +                     if (!is_valid) {
-> > +                             preempt_enable();
-> > +                             continue;
-> > +                     }
-> > +                     /*
-> > +                      * if we are here, zhdr is a pointer to a valid z3fold
-> > +                      * header. Lock it! And then re-check if someone has
-> > +                      * changed which z3fold page this handle points to
-> > +                      */
-> > +                     if (lock)
-> > +                             z3fold_page_lock(zhdr);
-> > +                     preempt_enable();
-> > +                     /*
-> > +                      * we use is_valid as a "cached" value: if it's false,
-> > +                      * no other checks needed, have to go one more round
-> > +                      */
-> > +             } while (!is_valid || (read_seqretry(&slots->seqlock, seq) &&
-> > +                     (lock ? ({ z3fold_page_unlock(zhdr); 1; }) : 1)));
-> > +     } else {
-> > +             zhdr = (struct z3fold_header *)(handle & PAGE_MASK);
-> > +     }
-> > +
-> > +     return zhdr;
-> > +}
-> >
-> > ...
-> >
-> >  static unsigned short handle_to_chunks(unsigned long handle)
-> >  {
-> > -     unsigned long addr = *(unsigned long *)handle;
-> > +     unsigned long addr;
-> > +     struct z3fold_buddy_slots *slots = handle_to_slots(handle);
-> > +     unsigned int seq;
-> > +
-> > +     do {
-> > +             seq = read_seqbegin(&slots->seqlock);
-> > +             addr = *(unsigned long *)handle;
-> > +     } while (read_seqretry(&slots->seqlock, seq));
->
-> It isn't done here (I think).
+> > +	if (dev && dev->cma_area)
+> > +		cma = dev->cma_area;
+> > +	else if (count > 1)
+> > +		cma = dma_contiguous_default_area;
+> 
+> Doesn't dev_get_dma_area() already do this?
 
-handle_to_chunks() is always called with z3fold header locked which
-makes it a lot easier in this case. I'll add some comments in V2.
+Partially yes. But unwrapping it makes the program flow clear in
+my opinion. Actually I should have mentioned that this patch was
+suggested by Christoph also.
 
-Thanks,
-   Vitaly
+Otherwise, it would need an override like:
+	cma = dev_get_dma_area();
+	if (count > 1 && cma == dma_contiguous_default_area)
+		cma = NULL;
+
+Which doesn't look that bad though..
+
+Thanks
+Nicolin
