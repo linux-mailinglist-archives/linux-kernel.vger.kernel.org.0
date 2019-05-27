@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1732B2B634
+	by mail.lfdr.de (Postfix) with ESMTP id 7FFF92B635
 	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbfE0NWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:22:08 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35691 "EHLO
+        id S1726604AbfE0NWJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:22:09 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44270 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbfE0NWF (ORCPT
+        with ESMTP id S1726274AbfE0NWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:22:05 -0400
-Received: by mail-wr1-f68.google.com with SMTP id m3so16943027wrv.2
+        Mon, 27 May 2019 09:22:06 -0400
+Received: by mail-wr1-f68.google.com with SMTP id w13so8561070wru.11
         for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 06:22:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=T95ZQlA6lX+40Lhm6IUwdSzze46k73cFevOVZXOTee0=;
-        b=g1CGoCwNSEGKRD0Ut/4cJGCrE3QZykkRFvqivPRJa4jpyFrpTxQSksGSIRpFKDo5yl
-         QP+Olgb2asgUvOl5y20PXku1Us0ELGXqMh0Nph7H2pDsEFrPqUntPPdU9NxKbRahNjRJ
-         3LYBdOFznQQvzHJ7zRfAIKcfDkrO+2eMKt9AA//choxXBIIZfh51oSKuwjH6SNzoaX0g
-         2NdLZMFdjFNiX88qpPMYF4nwudX5uw3giLwzgXOB+t1AWvldAv4wHbznahlIXegaenLK
-         uri2HZForiU+R91YsE71oMEmjYgiQiGjslPXZjKyFy8B1dwE/SnhQ9OB2cM5RVT3H5VA
-         uxOg==
+        bh=Z5tls13Db7MluddscEzD/cF6XBKT+xo8zEqe2ab5FrI=;
+        b=bSGwfDwAQNmN5af6mPI9aaBpl7ow9qoZBVLH4+zqLWruiKxLnW5XbtURKbDdTcnRQO
+         6vnjdz8rtc5Z/BRk5ivxx7l/c0jj3RbtJPJTGGmKIi5tT1npBVYDSYze3aReFnj0SWDp
+         so9B0iTixNrayDnNwS2qbh1fjLesU1G7I7cH+kVWL6zAnqkp7ouE6T+9RbCCrbAooG7d
+         Q5+jYo+x4dGc1HMfqMQMyxGyz0fEZ6cxyzW44yUiqd/bUjucvtApDQstXj5Hd7ScmY03
+         rdg2aTMEbG3A9OCaQ2K6SA+7/fo2JNpjnysCa8otZntQIsSV0ZYM7EfdXi70+NZnbQKU
+         Fyig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=T95ZQlA6lX+40Lhm6IUwdSzze46k73cFevOVZXOTee0=;
-        b=RnzPPUqS38C8Lgvll7iQJqNvZl/L8PMO2MevbVFKsMv84DL70GsjNkLC+yNJdOLA5T
-         SPvWG5Xkpn/khi9+Hg29KwO3QCG5I+jXjQPJmiVcgqnZ/IERkwddmcnEeqshrj8qOeJX
-         OzCVutSpbdG0RACVJs1nvMGfGHlvxkfgO12oofVD6yqTcnIAozcppGkSptN2GaP+4DEU
-         qr50BLRPMXNtyOFbXqZYaL8tbMQtl/ZBgrk1cM7EsfZap1NG3ZaFtAvCI/Km7SLuXXbs
-         TawHm9elHCLi+L34LdfWqhYqvL9Pr4A2+omJS9A63bbZ/dTO9fjHGEmekYJ13yOiAEtq
-         08Xg==
-X-Gm-Message-State: APjAAAU4+uEXeOg3p68hETt0Z0zlB2Y56JQILuWXGYWqrSFIOORIpDTC
-        yqYQnUKyK0tkUlOCAvAWpjAzNw==
-X-Google-Smtp-Source: APXvYqymA+dN50e6OgVbRt3gPhz5kZvcuJc9tJqA4+IAQr5buFHgQO7vfJ1KrGPvnu4NRcR62G9fyw==
-X-Received: by 2002:a5d:6588:: with SMTP id q8mr28940610wru.259.1558963323258;
+        bh=Z5tls13Db7MluddscEzD/cF6XBKT+xo8zEqe2ab5FrI=;
+        b=SbrkGVtnVo0hSymUxUZ2G2svdjWGuDjiFXYJNnt+lNsLhcYI9QzN8EDobyavrYsNum
+         Vri9fCIGnyVLNHC1rsM3W0WGklVA1rxNLJIfqzZp0cOQ97iY4o+CqFsle54gq8kWrjmj
+         hDxWyEEiHQzpiQKBAc3S4t9/XCqq/mj5h5Izs8Zsa+6q78uenjjXsejJw66LRpDwHKwD
+         cz8vDHVXso9lXbhXPnKnd8mSVBYH4Q9Mwgsw9RAJSS0CTevCGepYid/6D5aTAjr3Y3il
+         j3xCW8NGZBIU4ty57CPfzci5gnU5acbUbxjwkirZvqS4vRQkWKC0xr6PUWSZ/IEgoQeU
+         fgxA==
+X-Gm-Message-State: APjAAAWr7zX6Ew3nqgP9X8y0U39G7Wrnlgl0bXf9k64bZnJNoqo4xaib
+        f48OfqGDWzlj+HROZA007YDyLQ==
+X-Google-Smtp-Source: APXvYqx4ak3U23GjVQ37/QuSEhrHTCPPogN0xcqSigoV1Oz/v7kkcfkYXBee31EHzam3stgt8gbEaA==
+X-Received: by 2002:adf:eec9:: with SMTP id a9mr21802706wrp.281.1558963323951;
         Mon, 27 May 2019 06:22:03 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l12sm7019836wmj.22.2019.05.27.06.22.02
+        by smtp.gmail.com with ESMTPSA id l12sm7019836wmj.22.2019.05.27.06.22.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 27 May 2019 06:22:02 -0700 (PDT)
+        Mon, 27 May 2019 06:22:03 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com
 Cc:     Christian Hewitt <christianshewitt@gmail.com>,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 01/10] arm64: dts: meson-gxm-khadas-vim2: fix gpio-keys-polled node
-Date:   Mon, 27 May 2019 15:21:51 +0200
-Message-Id: <20190527132200.17377-2-narmstrong@baylibre.com>
+Subject: [PATCH 02/10] arm64: dts: meson-gxm-khadas-vim2: fix Bluetooth support
+Date:   Mon, 27 May 2019 15:21:52 +0200
+Message-Id: <20190527132200.17377-3-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190527132200.17377-1-narmstrong@baylibre.com>
 References: <20190527132200.17377-1-narmstrong@baylibre.com>
@@ -66,36 +66,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Christian Hewitt <christianshewitt@gmail.com>
 
-Fix DTC warnings:
-
-meson-gxm-khadas-vim2.dtb: Warning (avoid_unnecessary_addr_size):
-   /gpio-keys-polled: unnecessary #address-cells/#size-cells
-	without "ranges" or child "reg" property
+- Remove serial1 alias
+- Add support for uart_A rts/cts
+- Add bluetooth uart_A subnode qith shutdown gpio
 
 Fixes: b8b74dda3908 ("ARM64: dts: meson-gxm: Add support for Khadas VIM2")
-Suggested-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index c5f3f90a42ae..25079501f2bb 100644
+index 25079501f2bb..ff4f0780824d 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-@@ -63,11 +63,9 @@
+@@ -18,7 +18,6 @@
  
- 	gpio-keys-polled {
- 		compatible = "gpio-keys-polled";
--		#address-cells = <1>;
--		#size-cells = <0>;
- 		poll-interval = <100>;
+ 	aliases {
+ 		serial0 = &uart_AO;
+-		serial1 = &uart_A;
+ 		serial2 = &uart_AO_B;
+ 	};
  
--		button@0 {
-+		power-button {
- 			label = "power";
- 			linux,code = <KEY_POWER>;
- 			gpios = <&gpio_ao GPIOAO_2 GPIO_ACTIVE_LOW>;
+@@ -403,8 +402,14 @@
+ /* This one is connected to the Bluetooth module */
+ &uart_A {
+ 	status = "okay";
+-	pinctrl-0 = <&uart_a_pins>;
++	pinctrl-0 = <&uart_a_pins>, <&uart_a_cts_rts_pins>;
+ 	pinctrl-names = "default";
++	uart-has-rtscts;
++
++	bluetooth {
++		compatible = "brcm,bcm43438-bt";
++		shutdown-gpios = <&gpio GPIOX_17 GPIO_ACTIVE_HIGH>;
++	};
+ };
+ 
+ /* This is brought out on the Linux_RX (18) and Linux_TX (19) pins: */
 -- 
 2.21.0
 
