@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1564A2B20D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A32C82B209
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbfE0KWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 06:22:22 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:6160 "EHLO
+        id S1726881AbfE0KWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 06:22:16 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:8820 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726313AbfE0KWV (ORCPT
+        by vger.kernel.org with ESMTP id S1725858AbfE0KWQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 06:22:21 -0400
+        Mon, 27 May 2019 06:22:16 -0400
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4RAGdv9031349;
-        Mon, 27 May 2019 12:21:47 +0200
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4RAGcSe031336;
+        Mon, 27 May 2019 12:21:48 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : mime-version : content-type :
- content-transfer-encoding; s=STMicroelectronics;
- bh=ixDf88IcNb3TU6tNgq8bjWEyDdaEJ144CZTxviT3UTE=;
- b=ff8ILc4ioPMsKqkyweSlcBLsWP3MVx7APoWrr8IMFcUnhQbUOuM2cSK01jfzckrRQ1P3
- zPxU1nT7zO+zDGVsWWXKJFTD44GvrXet2j92zvpt0KVP6IL0QAnCbl5Amb26cx42FGLn
- PnlqIWbZ84Axixb93FC6KYocoPJ2V8J0yTda2eYpj2dsn1y0LZVIYqYknBlaWeJ0vI0c
- t/pm1I8WOT1U82e2h4eiizrCIWdso8nk3tmOCxkrl471FgxRc9gKBFos8alVZkxI10f8
- 7FVl3dipDCqPhYVREzJd6YTFhU8UyVGdDuwpuhxNGoBAjXytNIT4M4SHcpZSNNJVDlNS kA== 
+ date : message-id : in-reply-to : references : mime-version : content-type
+ : content-transfer-encoding; s=STMicroelectronics;
+ bh=K9MPddInRylWsZUKTiMMozhp1doQ8Ls5xxWg0TmbCm0=;
+ b=ulVHYNCWpNB/fmvKmxz1BPx6VyZtV6zgHD6llj10aA0P4+8hLCp+5s5tR86b2ITOfLdX
+ +d8IbtKqMp2+0HDyn8JKXrtes1np928OvwMtOG4GgWsfC7Y+KvTrj5y+ktExn62V8bNf
+ wmH6NK2YiaKzVFREdamSbTbiCJMIJzOvsIeqRCjolGpwcQJ4CiotjC0a/ugjwyLpsaRj
+ OdxEobI8380pMauJ6Sec2UhcD2T3H0wgYLppei5lW2K1wRjO5wgASVXO2n6YJRk5BnKf
+ kf3NPWCNB8HdCTIFmGFg8s+lqyv9IMC+m7Hyp8IQTUMs6a1CHonpSEyw9HLapDyVGtY3 ig== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2sptu9jjhg-1
+        by mx08-00178001.pphosted.com with ESMTP id 2sptu9jjhh-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 27 May 2019 12:21:47 +0200
+        Mon, 27 May 2019 12:21:48 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 636BB31;
-        Mon, 27 May 2019 10:21:46 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 347112804;
-        Mon, 27 May 2019 10:21:46 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 27 May
- 2019 12:21:46 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A3C7E34;
+        Mon, 27 May 2019 10:21:47 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 78BE32804;
+        Mon, 27 May 2019 10:21:47 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 27 May
+ 2019 12:21:47 +0200
 Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 27 May 2019 12:21:45
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 27 May 2019 12:21:46
  +0200
 From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
 To:     Andrzej Hajda <a.hajda@samsung.com>,
@@ -58,10 +58,12 @@ To:     Andrzej Hajda <a.hajda@samsung.com>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 0/2] dw-mipi-dsi: add power on & off optional phy ops and update stm
-Date:   Mon, 27 May 2019 12:21:37 +0200
-Message-ID: <1558952499-15418-1-git-send-email-yannick.fertre@st.com>
+Subject: [PATCH v1 1/2] drm/bridge/synopsys: dsi: add power on/off optional phy ops
+Date:   Mon, 27 May 2019 12:21:38 +0200
+Message-ID: <1558952499-15418-2-git-send-email-yannick.fertre@st.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1558952499-15418-1-git-send-email-yannick.fertre@st.com>
+References: <1558952499-15418-1-git-send-email-yannick.fertre@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
@@ -73,22 +75,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These patches fix a bug concerning an access issue to display controler (ltdc)
-registers.
-If the physical layer of the DSI is started too early then the fifo DSI are full
-very quickly which implies ltdc register's access hang up. To avoid this
-problem, it is necessary to start the DSI physical layer only when the bridge
-is enable.
+Add power on & off optional physical operation functions, helpful to
+program specific registers of the DSI physical part.
 
-Yannick Fertré (2):
-  drm/bridge/synopsys: dsi: add power on/off optional phy ops
-  drm/stm: dsi: add power on/off phy ops
+Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 8 ++++++++
+ include/drm/bridge/dw_mipi_dsi.h              | 2 ++
+ 2 files changed, 10 insertions(+)
 
- drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c |  8 ++++++++
- drivers/gpu/drm/stm/dw_mipi_dsi-stm.c         | 21 ++++++++++++++++++++-
- include/drm/bridge/dw_mipi_dsi.h              |  2 ++
- 3 files changed, 30 insertions(+), 1 deletion(-)
-
---
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+index e915ae8..5bb676f 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+@@ -775,6 +775,10 @@ static void dw_mipi_dsi_clear_err(struct dw_mipi_dsi *dsi)
+ static void dw_mipi_dsi_bridge_post_disable(struct drm_bridge *bridge)
+ {
+ 	struct dw_mipi_dsi *dsi = bridge_to_dsi(bridge);
++	const struct dw_mipi_dsi_phy_ops *phy_ops = dsi->plat_data->phy_ops;
++
++	if (phy_ops->power_off)
++		phy_ops->power_off(dsi->plat_data->priv_data);
+ 
+ 	/*
+ 	 * Switch to command mode before panel-bridge post_disable &
+@@ -874,11 +878,15 @@ static void dw_mipi_dsi_bridge_mode_set(struct drm_bridge *bridge,
+ static void dw_mipi_dsi_bridge_enable(struct drm_bridge *bridge)
+ {
+ 	struct dw_mipi_dsi *dsi = bridge_to_dsi(bridge);
++	const struct dw_mipi_dsi_phy_ops *phy_ops = dsi->plat_data->phy_ops;
+ 
+ 	/* Switch to video mode for panel-bridge enable & panel enable */
+ 	dw_mipi_dsi_set_mode(dsi, MIPI_DSI_MODE_VIDEO);
+ 	if (dsi->slave)
+ 		dw_mipi_dsi_set_mode(dsi->slave, MIPI_DSI_MODE_VIDEO);
++
++	if (phy_ops->power_on)
++		phy_ops->power_on(dsi->plat_data->priv_data);
+ }
+ 
+ static enum drm_mode_status
+diff --git a/include/drm/bridge/dw_mipi_dsi.h b/include/drm/bridge/dw_mipi_dsi.h
+index 7d3dd69..df6eda6 100644
+--- a/include/drm/bridge/dw_mipi_dsi.h
++++ b/include/drm/bridge/dw_mipi_dsi.h
+@@ -14,6 +14,8 @@ struct dw_mipi_dsi;
+ 
+ struct dw_mipi_dsi_phy_ops {
+ 	int (*init)(void *priv_data);
++	void (*power_on)(void *priv_data);
++	void (*power_off)(void *priv_data);
+ 	int (*get_lane_mbps)(void *priv_data,
+ 			     const struct drm_display_mode *mode,
+ 			     unsigned long mode_flags, u32 lanes, u32 format,
+-- 
 2.7.4
 
