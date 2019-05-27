@@ -2,114 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76DB02AD13
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 04:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9EC02AD1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 05:01:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726127AbfE0C4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 22:56:31 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:43771 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725923AbfE0C4a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 22:56:30 -0400
-X-UUID: fdc718982f0f42ceb23f9eb55922256f-20190527
-X-UUID: fdc718982f0f42ceb23f9eb55922256f-20190527
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1648446813; Mon, 27 May 2019 10:56:24 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33DR.mediatek.inc
- (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 27 May
- 2019 10:56:22 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 27 May 2019 10:56:22 +0800
-Message-ID: <1558925782.10179.429.camel@mhfsdcap03>
-Subject: Re: [RESEND PATCH] usb: mtu3: fix up undefined reference to
- usb_debug_root
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Date:   Mon, 27 May 2019 10:56:22 +0800
-In-Reply-To: <20190524113322.GA32094@kroah.com>
-References: <ee71197a681165aa72cb73c7f6cb402953351805.1558678075.git.chunfeng.yun@mediatek.com>
-         <20190524074552.GA1080@kroah.com> <1558689951.10179.422.camel@mhfsdcap03>
-         <20190524113322.GA32094@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        id S1726264AbfE0DAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 23:00:54 -0400
+Received: from mga18.intel.com ([134.134.136.126]:61440 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbfE0DAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 May 2019 23:00:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 May 2019 20:00:53 -0700
+X-ExtLoop1: 1
+Received: from genxtest-ykzhao.sh.intel.com (HELO [10.239.143.71]) ([10.239.143.71])
+  by fmsmga001.fm.intel.com with ESMTP; 26 May 2019 20:00:51 -0700
+Subject: Re: [PATCH v6 4/4] x86/acrn: Add hypercall for ACRN guest
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        Jason Chen CJ <jason.cj.chen@intel.com>
+References: <1556595926-17910-1-git-send-email-yakui.zhao@intel.com>
+ <1556595926-17910-5-git-send-email-yakui.zhao@intel.com>
+ <20190515073715.GC24212@zn.tnic>
+From:   "Zhao, Yakui" <yakui.zhao@intel.com>
+Message-ID: <b8210e0e-bdf2-3e17-ce9a-d7a3ca0e6672@intel.com>
+Date:   Mon, 27 May 2019 10:57:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <20190515073715.GC24212@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-05-24 at 13:33 +0200, Greg Kroah-Hartman wrote:
-> On Fri, May 24, 2019 at 05:25:51PM +0800, Chunfeng Yun wrote:
-> > On Fri, 2019-05-24 at 09:45 +0200, Greg Kroah-Hartman wrote:
-> > > On Fri, May 24, 2019 at 02:11:33PM +0800, Chunfeng Yun wrote:
-> > > > When CONFIG_USB is not set, and CONFIG_USB_GADGET is set,
-> > > > there is an issue:
-> > > > 
-> > > > ld:
-> > > > drivers/usb/mtu3/mtu3_debugfs.o: in function 'ssusb_debugfs_create_root':
-> > > > mtu3_debugfs.c:(.text+0xba3): undefined reference to 'usb_debug_root'
-> > > > 
-> > > > usb_debug_root is only built when CONFIG_USB is enabled, so here drop it
-> > > > and use NULL instead.
-> > > > 
-> > > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > > > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> > > > Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> > > > ---
-> > > >  drivers/usb/mtu3/mtu3_debugfs.c | 3 +--
-> > > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > > 
-> > > Why resend?
-> > Sorry, I should send it out as v2 due to acked-by is added.
+
+
+On 2019年05月15日 15:37, Borislav Petkov wrote:
+> On Tue, Apr 30, 2019 at 11:45:26AM +0800, Zhao Yakui wrote:
+>> When the ACRN hypervisor is detected, the hypercall is needed so that the
+>> ACRN guest can query/config some settings. For example: it can be used
+>> to query the resources in hypervisor and manage the CPU/memory/device/
+>> interrupt for guest operating system.
+>>
+>> Add the hypercall so that the ACRN guest can communicate with the
+>> low-level ACRN hypervisor. On x86 it is implemented with the VMCALL
+>> instruction.
+>>
+>> Co-developed-by: Jason Chen CJ <jason.cj.chen@intel.com>
+>> Signed-off-by: Jason Chen CJ <jason.cj.chen@intel.com>
+>> Signed-off-by: Zhao Yakui <yakui.zhao@intel.com>
+>> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+>> ---
+>> V1->V2: Refine the comments for the function of acrn_hypercall0/1/2
+>> v2->v3: Use the "vmcall" mnemonic to replace hard-code byte definition
+>> v4->v5: Use _ASM_X86_ACRN_HYPERCALL_H instead of _ASM_X86_ACRNHYPERCALL_H.
+>>          Use the "VMCALL" mnemonic in comment/commit log.
+>>          Uppercase r8/rdi/rsi/rax for hypercall parameter register in comment.
+>> v5->v6: Remove explicit local register variable for inline assembly
+>> ---
+>>   arch/x86/include/asm/acrn_hypercall.h | 84 +++++++++++++++++++++++++++++++++++
+>>   1 file changed, 84 insertions(+)
+>>   create mode 100644 arch/x86/include/asm/acrn_hypercall.h
+>>
+>> diff --git a/arch/x86/include/asm/acrn_hypercall.h b/arch/x86/include/asm/acrn_hypercall.h
+>> new file mode 100644
+>> index 0000000..5cb438e
+>> --- /dev/null
+>> +++ b/arch/x86/include/asm/acrn_hypercall.h
 > 
-> Then please document that below the --- line, otherwise I have no idea :(
-Ok
+> Questions:
 > 
-> > > > diff --git a/drivers/usb/mtu3/mtu3_debugfs.c b/drivers/usb/mtu3/mtu3_debugfs.c
-> > > > index 62c57ddc554e..b7c86ccd50b4 100644
-> > > > --- a/drivers/usb/mtu3/mtu3_debugfs.c
-> > > > +++ b/drivers/usb/mtu3/mtu3_debugfs.c
-> > > > @@ -528,8 +528,7 @@ void ssusb_dr_debugfs_init(struct ssusb_mtk *ssusb)
-> > > >  
-> > > >  void ssusb_debugfs_create_root(struct ssusb_mtk *ssusb)
-> > > >  {
-> > > > -	ssusb->dbgfs_root =
-> > > > -		debugfs_create_dir(dev_name(ssusb->dev), usb_debug_root);
-> > > > +	ssusb->dbgfs_root = debugfs_create_dir(dev_name(ssusb->dev), NULL);
-> > > 
-> > > This moves the directory to a new location no matter what the
-> > > configuration is. What's wrong with where it is today?  
-> > it seems usb_debug_root is only for host, but not for gadget only, it's
-> > defined and created in usb/core/usb.c
-> 
-> True, but you just moved the root if usb core is present too.
-It's an easy way, and other dual-role driver also uses NULL
+> * why isn't this in acrn.h and needs to be a separate header?
+
+I refer to the Xen/KVM hypercall to add the ACRN hypercall in one 
+separate header.
+
+The ACRN hypercall is defined in one separate acrn_hypercall.h and can 
+be included explicitly by the *.c that needs the hypercall.
+
 
 > 
-> > > And shoudn't we
-> > > create the usb root directory if only gadget is enabled?
-> > Yes, need modify udc/core.c, it's better if support it, do you want me
-> > to send a patch for it?
-> 
-> Yes please, let's see what that looks like.
-I'll do it.
+> * why aren't those functions used anywhere?
+
+The hypercall will be used in driver part. Before the driver part is 
+added, it seems that the defined ACRN hypercall functions are not used.
+Do I need to add these functions together with driver part?
 
 Thanks
+    Yakui
 > 
-> thanks,
-> 
-> greg k-h
-
-
