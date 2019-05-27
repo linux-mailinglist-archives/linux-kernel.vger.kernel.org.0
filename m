@@ -2,87 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 215C92B767
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 16:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 023942B751
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 16:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfE0OSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 10:18:16 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.46]:11092 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726115AbfE0OSQ (ORCPT
+        id S1726736AbfE0OLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 10:11:00 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37289 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbfE0OLA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 10:18:16 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 79C7F37D689
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 09:10:36 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id VGKihlqmcdnCeVGKihR0yS; Mon, 27 May 2019 09:10:36 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.47.159] (port=56988 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hVGKh-000n52-ID; Mon, 27 May 2019 09:10:35 -0500
-Date:   Mon, 27 May 2019 09:10:33 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Marco Felsch <m.felsch@pengutronix.de>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] Input: qt1050 - remove unnecessary comparison of unsigned
- integer with < 0
-Message-ID: <20190527141033.GA19251@embeddedor>
+        Mon, 27 May 2019 10:11:00 -0400
+Received: by mail-pf1-f193.google.com with SMTP id a23so9668876pff.4;
+        Mon, 27 May 2019 07:10:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HxaKb923UGKkDjt3DLQ0Jhkyn8a6WOxpMEKsse04C8E=;
+        b=OBnrlXd5G29eMqV4+0yXDWnEeT++ZbAqT1wdTjAeVuTS63grxnGXjhr5MSjqhVXvyY
+         jz6tSjnDH+L5UjfNSv6+a/zHBNdYnfyVpN1pUO/Vv9U3YSV3gRfn4QUEosN/s8BwCf57
+         1A959Lr6qXZm+bpnKQo6/nW5iR620Rhz5EXlbX5lR/ieC1uTaEYhtop0pltJMXRO6bUu
+         N7CRpTGrFH7/Q+N6uzpHjEaR94AHKC4qTrh1KqJsO8yQKCewceEgR57cJzixCY9OMmry
+         ix+6mM8cpkRQuQB/2ZH3iD1I27bfTVpZuwyefxkU87T+3TdJGvsiXuAijvZX/S1khvL0
+         A/0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HxaKb923UGKkDjt3DLQ0Jhkyn8a6WOxpMEKsse04C8E=;
+        b=S1ksZk3jBvt53MnB/zAR82u9AaowFrgtlIttAvNrNga9fzRJxUl0U0HD1VqIejHunL
+         OQgN6sxwj3Kmre6SGPrL7D5ZC+8mLzaOCpYtV1P/5X2A7v+sR95kLtP0JZUTg/9UlBQE
+         vKYtiAxl6Uk10tHZSxOfDHSqDGD3VkP9gYjhnmF8KIZ0H5M9ekNs/KPqVqUTd/UGZFcU
+         ozI0X6oR5vtGP3j0jNNJTnaK6y9VvbWPktDzgp1sc8Ro/5zothAKyoR9Dhu16Oek6Pud
+         z1igC1ynq6siyY7PrGfkRKGpUv8uH3hdwDG4FvZ3aCpP6CJN9pOGQf+DqUMt428WEy3n
+         Nw5g==
+X-Gm-Message-State: APjAAAVRwN64pIBd+SgQJNNACAkkhtFalrdPHKsh6VMCDc9CWFxq6LuI
+        rEN8cJd+0MK81MBBfkw7Qbc=
+X-Google-Smtp-Source: APXvYqzH7T1rjCD57DmmwmMS6qj+W9QUOwMpdAZek65o4EgfX7VbEYG6Em0XK5nA8CQUW55sHYA5KA==
+X-Received: by 2002:aa7:9a99:: with SMTP id w25mr43033747pfi.249.1558966259731;
+        Mon, 27 May 2019 07:10:59 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id m6sm13744807pgr.18.2019.05.27.07.10.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 07:10:59 -0700 (PDT)
+Date:   Mon, 27 May 2019 22:10:38 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] tegra-hsp: fix a missing-check bug in
+ tegra_hsp_doorbell_create()
+Message-ID: <20190527141038.GA6453@zhanggen-UX430UQ>
+References: <20190527130430.GA5367@zhanggen-UX430UQ>
+ <20190527140549.GA7202@ulmo>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.47.159
-X-Source-L: No
-X-Exim-ID: 1hVGKh-000n52-ID
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.47.159]:56988
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190527140549.GA7202@ulmo>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need to compare button.num with < 0 because such comparison
-of an unsigned value is always false.
+On Mon, May 27, 2019 at 04:05:49PM +0200, Thierry Reding wrote:
+> On Mon, May 27, 2019 at 09:04:30PM +0800, Gen Zhang wrote:
+> > In tegra_hsp_doorbell_create(), 'db->name' is allocated by 
+> > devm_kstrdup_const(). It returns NULL when fails. So 'db->name' should
+> > be checked.
+> > 
+> > Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+> > ---
+> > diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+> > index 11fc9fd..b613c46 100644
+> > --- a/drivers/mailbox/tegra-hsp.c
+> > +++ b/drivers/mailbox/tegra-hsp.c
+> > @@ -292,6 +292,8 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
+> >  	db->channel.hsp = hsp;
+> >  
+> >  	db->name = devm_kstrdup_const(hsp->dev, name, GFP_KERNEL);
+> > +	if (!db->name)
+> > +		return ERR_PTR(-ENOMEM);
+> 
+> I don't think this could ever happen, since name is always from .rodata
+> and hence devm_kstrdup_const() never returns NULL. But formally this is
+> correct, so:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+Thanks for your reply, Thierry.
 
-Fix this by removing such comparison.
-
-Addresses-Coverity-ID: 1445492 ("Unsigned compared against 0")
-Fixes: cbebf5addec1 ("Input: qt1050 - add Microchip AT42QT1050 support")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/input/keyboard/qt1050.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/input/keyboard/qt1050.c b/drivers/input/keyboard/qt1050.c
-index 403060d05c3b..a9ac99f62e39 100644
---- a/drivers/input/keyboard/qt1050.c
-+++ b/drivers/input/keyboard/qt1050.c
-@@ -368,7 +368,7 @@ static int qt1050_parse_fw(struct qt1050_priv *ts)
- 			dev_err(dev, "Button without pad number\n");
- 			goto err;
- 		}
--		if (button.num < 0 || button.num > QT1050_MAX_KEYS - 1)
-+		if (button.num > QT1050_MAX_KEYS - 1)
- 			goto err;
- 
- 		ts->reg_keys |= BIT(button.num);
--- 
-2.21.0
-
+Thanks
+Gen
