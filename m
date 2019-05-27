@@ -2,67 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF0F52B9DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 20:08:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC1212C169
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:34:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbfE0SHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 14:07:49 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44802 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbfE0SHt (ORCPT
+        id S1726724AbfE1Iea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 04:34:30 -0400
+Received: from m9784.mail.qiye.163.com ([220.181.97.84]:51996 "EHLO
+        m9784.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbfE1Iea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 14:07:49 -0400
-Received: by mail-oi1-f193.google.com with SMTP id z65so12416276oia.11
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 11:07:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kcaNvQthNDxKMvADNpdrHbGy7J+JNlWa1s2SqBcaEbk=;
-        b=gIoH6vOWf1CUM7ihI4sZTjpRSzfhaHBkPyAifCAnj2KxZUk0kXB8nO9b9zBjtdIt82
-         FJcq+ZakIQnwNnpacSYY8Q9XZ3kACUtY36oD5HL1S3gSqZ5vbCeTUuOwZksxbVTsQSm4
-         alcasRAamdvLQYfcwt0PAKg1PMsEMaFSR8c2KJJ7H9g6GRtCYe84O3SbIcFrD/IgmdV5
-         8e8aFqQ59bLfBtQ2mGJnmcoeHbKaNxkaB39HeAujNjA4qO0ZKPz32/PgFt1tq2ZGtFqD
-         xkXhwYlpGhGgJa/+4y95Yt3riqa9me5+sGtg3lEwM84SJ840aVDldMz+OEol6TjSrWyy
-         AuKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kcaNvQthNDxKMvADNpdrHbGy7J+JNlWa1s2SqBcaEbk=;
-        b=ACXV5jR2X3EclMH5RO3pOwGMKqmtPQvQVDCI7QAJAQH78f09n7ciRVVWEgN90qt0P7
-         2KVLhEfkNx6buH8pkCCuWBAqyglanqyQwiiNCapJj9zed+lf8Hl2knvDMgx0B4wH6v4L
-         nkcZfVL7WeEjy2qowOgYHpLM41biFDds+ys7I2K0oHc7Poz3NkWU2tV+hxtQdu4SHP2q
-         v4BJ/k5yzY9KI3lN5qZmyzeUS1BJhgIlDEdF0njSpLEUrE0X8q1dMtIyAJECLF4sYsUZ
-         3QQflE3jQDJ4H6dWUwArdnPeNx/uJHVbICwQ757hLHzUaJF4qcwm7BbQeXg8xfZnZArj
-         quTw==
-X-Gm-Message-State: APjAAAXTbyGK/pZL/P6TEXg339gKGb9HfUfvKfKfaJQjJtsMzK5lg9Ul
-        wwJ+33smaxoY1wnsXcg1BZQjAyP6p/On1unKXqI=
-X-Google-Smtp-Source: APXvYqyKJgVpri79hGrpfwOvc1XUZLuwonSoBLbzelPi358W+vr2nCgaFj9A+/DdmdxrgBHpTBcRgN+TmPll0F1fK9s=
-X-Received: by 2002:aca:3545:: with SMTP id c66mr135571oia.129.1558980468560;
- Mon, 27 May 2019 11:07:48 -0700 (PDT)
+        Tue, 28 May 2019 04:34:30 -0400
+Received: from localhost (unknown [120.132.1.243])
+        by m9784.mail.qiye.163.com (Hmail) with ESMTPA id A3EFD419FD;
+        Tue, 28 May 2019 16:34:22 +0800 (CST)
+Date:   Tue, 28 May 2019 02:07:43 +0800
+From:   Yao Liu <yotta.liu@ucloud.cn>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        nbd <nbd@other.debian.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH 1/3] nbd: fix connection timed out error after
+ reconnecting to server
+Message-ID: <20190527180743.GA20702@192-168-150-246.7~>
+References: <1558691036-16281-1-git-send-email-yotta.liu@ucloud.cn>
+ <20190524130740.zfypc2j3q5e3gryr@MacBook-Pro-91.local.dhcp.thefacebook.com>
 MIME-Version: 1.0
-References: <20190527133857.30108-1-narmstrong@baylibre.com> <20190527133857.30108-9-narmstrong@baylibre.com>
-In-Reply-To: <20190527133857.30108-9-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 27 May 2019 20:07:37 +0200
-Message-ID: <CAFBinCBPH6pwxOEVJaJxpEqnbi1775a15Ec8Ac53nVpa6+8-Dw@mail.gmail.com>
-Subject: Re: [PATCH v2 08/10] ARM: dts: meson8b: update with SPDX Licence identifier
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190524130740.zfypc2j3q5e3gryr@MacBook-Pro-91.local.dhcp.thefacebook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-HM-Spam-Status: e1kIGBQJHllBWUtVTkhJQkJCQ0pITk5NTUxKWVdZKFlBSUI3V1ktWUFJV1
+        kJDhceCFlBWTU0KTY6NyQpLjc#WQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NjY6Kzo5DjgwNiNJIS4dCDoN
+        P01PCjpVSlVKTk5CS0hJT01JQ0JOVTMWGhIXVQIUDw8aVRcSDjsOGBcUDh9VGBVFWVdZEgtZQVlK
+        SUtVSkhJVUpVSU9IWVdZCAFZQU9KTk43Bg++
+X-HM-Tid: 0a6afd937d9b2086kuqya3efd419fd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 3:41 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> While the text specifies "of the GPL or the X11 license" the actual
-> license text matches the MIT license as specified at [0]
->
-> [0] https://spdx.org/licenses/MIT.html
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On Fri, May 24, 2019 at 09:07:42AM -0400, Josef Bacik wrote:
+> On Fri, May 24, 2019 at 05:43:54PM +0800, Yao Liu wrote:
+> > Some I/O requests that have been sent succussfully but have not yet been
+> > replied won't be resubmitted after reconnecting because of server restart,
+> > so we add a list to track them.
+> > 
+> > Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
+> 
+> Nack, this is what the timeout stuff is supposed to handle.  The commands will
+> timeout and we'll resubmit them if we have alive sockets.  Thanks,
+> 
+> Josef
+> 
+
+On the one hand, if num_connections == 1 and the only sock has dead,
+then we do nbd_genl_reconfigure to reconnect within dead_conn_timeout,
+nbd_xmit_timeout will not resubmit commands that have been sent
+succussfully but have not yet been replied. The log is as follows:
+ 
+[270551.108746] block nbd0: Receive control failed (result -104)
+[270551.108747] block nbd0: Send control failed (result -32)
+[270551.108750] block nbd0: Request send failed, requeueing
+[270551.116207] block nbd0: Attempted send on invalid socket
+[270556.119584] block nbd0: reconnected socket
+[270581.161751] block nbd0: Connection timed out
+[270581.165038] block nbd0: shutting down sockets
+[270581.165041] print_req_error: I/O error, dev nbd0, sector 5123224 flags 8801
+[270581.165149] print_req_error: I/O error, dev nbd0, sector 5123232 flags 8801
+[270581.165580] block nbd0: Connection timed out
+[270581.165587] print_req_error: I/O error, dev nbd0, sector 844680 flags 8801
+[270581.166184] print_req_error: I/O error, dev nbd0, sector 5123240 flags 8801
+[270581.166554] block nbd0: Connection timed out
+[270581.166576] print_req_error: I/O error, dev nbd0, sector 844688 flags 8801
+[270581.167124] print_req_error: I/O error, dev nbd0, sector 5123248 flags 8801
+[270581.167590] block nbd0: Connection timed out
+[270581.167597] print_req_error: I/O error, dev nbd0, sector 844696 flags 8801
+[270581.168021] print_req_error: I/O error, dev nbd0, sector 5123256 flags 8801
+[270581.168487] block nbd0: Connection timed out
+[270581.168493] print_req_error: I/O error, dev nbd0, sector 844704 flags 8801
+[270581.170183] print_req_error: I/O error, dev nbd0, sector 5123264 flags 8801
+[270581.170540] block nbd0: Connection timed out
+[270581.173333] block nbd0: Connection timed out
+[270581.173728] block nbd0: Connection timed out
+[270581.174135] block nbd0: Connection timed out
+ 
+On the other hand, if we wait nbd_xmit_timeout to handle resubmission,
+the I/O requests will have a big delay. For example, if timeout time is 30s,
+and from sock dead to nbd_genl_reconfigure returned OK we only spend
+2s, the I/O requests will still be handled by nbd_xmit_timeout after 30s.
