@@ -2,96 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D29FD2B719
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:58:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FC572B723
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 16:02:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfE0N6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:58:25 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17166 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726071AbfE0N6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:58:24 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A18F1DA764C56511616F;
-        Mon, 27 May 2019 21:58:22 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Mon, 27 May 2019
- 21:58:18 +0800
-Message-ID: <5CEBECF9.2060500@huawei.com>
-Date:   Mon, 27 May 2019 21:58:17 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        id S1726524AbfE0OCN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 10:02:13 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39569 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbfE0OCM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 10:02:12 -0400
+Received: by mail-wm1-f65.google.com with SMTP id z23so11898095wma.4
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 07:02:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/uTBfIzkKswT7Ff1/QE2n2AouJ/Ougb4/VDEgUdIRqs=;
+        b=poVOrEX1TwfxN0/t4+KDONVIES7GtfU0ZA+8LNhgcYVWDVKeytEMClNThxyj0JUlSa
+         0dx0wCZKUtXOM76Deh5ALVPWOBovWox8e/5ggcpNpF9wbMdHg/OrOZyRS8Q3kIR2g5hS
+         XJ5LJZ8oLCDV/A5f8z7AiD1TDA4nmYD7GexXPgB/byniXe3TyBtOJ/SFHXo71qBXJo/c
+         C/Ix1NFkPeD4JEqNQcqAoJ8KL2m1/4hBV06KI6q+dt0azYDKwpt5/na1H11V/EE/5+gF
+         lzAeWOJ/AtqWs1bGJUZ+oUsOJzz51VV357ESWnForolZ/GnT3WNxDI2srGDEKtM17TvJ
+         os1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/uTBfIzkKswT7Ff1/QE2n2AouJ/Ougb4/VDEgUdIRqs=;
+        b=B70ys/QyylzGhbRY3xNFDYE+kUlEaWUDxiSnzkoHeuPgnC2wWwvpElqqaIbwUDNzk0
+         CuRJWpanNcEO8oSIf9906adM5vTpuHZQJPB5qnt+moc2R+pGL22ThvnHziNeBCayZK9d
+         E/Ll3CeZU027WiE9YtFNhQUkZSD2nyCawAAXDwjE5oHDcdAijKP4Nl8Cejd7htLKZHyo
+         bgkIIisdKsuuT6CwiJcfkz/7LnFcVfTgcs3khAb13OW0GQMcXFrCiNAjYTP0StwaVk7+
+         4RAg2SLLjmsu1X6/4F/1dOVQ6bX8DxQOQI4gDzlLowwkAeYyo2NLdVOTs4hVfL7O5phf
+         jnvA==
+X-Gm-Message-State: APjAAAX4ABmjP9sPJNiEQkHcGfned1alAtPZwFmdRXCB17AZKqBbm5Dg
+        3voY0WbtMubz1/ClDL/PB+CKbg==
+X-Google-Smtp-Source: APXvYqzOpNufEDr+eiQXqZvSsV1YciB2MT0meHySLn86nd8G7TrvMMyWvAGHcfExDUbQ9R5TEgTCEA==
+X-Received: by 2002:a1c:65c3:: with SMTP id z186mr1504553wmb.116.1558965730045;
+        Mon, 27 May 2019 07:02:10 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id s17sm8231628wmj.15.2019.05.27.07.02.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 27 May 2019 07:02:09 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] arm64: Add initial support for Odroid-N2
+Date:   Mon, 27 May 2019 16:02:03 +0200
+Message-Id: <20190527140206.30392-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-To:     Vlastimil Babka <vbabka@suse.cz>
-CC:     Andrew Morton <akpm@linux-foundation.org>, <osalvador@suse.de>,
-        <khandual@linux.vnet.ibm.com>, <mhocko@suse.com>,
-        <mgorman@techsingularity.net>, <aarcange@redhat.com>,
-        <rcampbell@nvidia.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm/mempolicy: Fix an incorrect rebind node in mpol_rebind_nodemask
-References: <1558768043-23184-1-git-send-email-zhongjiang@huawei.com> <20190525112851.ee196bcbbc33bf9e0d869236@linux-foundation.org> <2ff829ea-1d74-9d4b-8501-e9c2ebdc36ef@suse.cz>
-In-Reply-To: <2ff829ea-1d74-9d4b-8501-e9c2ebdc36ef@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/5/27 20:23, Vlastimil Babka wrote:
-> On 5/25/19 8:28 PM, Andrew Morton wrote:
->> (Cc Vlastimil)
-> Oh dear, 2 years and I forgot all the details about how this works.
->
->> On Sat, 25 May 2019 15:07:23 +0800 zhong jiang <zhongjiang@huawei.com> wrote:
->>
->>> We bind an different node to different vma, Unluckily,
->>> it will bind different vma to same node by checking the /proc/pid/numa_maps.   
->>> Commit 213980c0f23b ("mm, mempolicy: simplify rebinding mempolicies when updating cpusets")
->>> has introduced the issue.  when we change memory policy by seting cpuset.mems,
->>> A process will rebind the specified policy more than one times. 
->>> if the cpuset_mems_allowed is not equal to user specified nodes. hence the issue will trigger.
->>> Maybe result in the out of memory which allocating memory from same node.
-> I have a hard time understanding what the problem is. Could you please
-> write it as a (pseudo) reproducer? I.e. an example of the process/admin
-> mempolicy/cpuset actions that have some wrong observed results vs the
-> correct expected result.
-Sorry, I havn't an testcase to reproduce the issue. At first, It was disappeared by
-my colleague to configure the xml to start an vm.  To his suprise, The bind mempolicy
-doesn't work.
+This patchset adds basic support for :
+- Amlogic G12B, which is very similar to G12A
+- The HardKernel Odroid-N2 based on the S922X SoC
 
-Thanks,
-zhong jiang
->>> --- a/mm/mempolicy.c
->>> +++ b/mm/mempolicy.c
->>> @@ -345,7 +345,7 @@ static void mpol_rebind_nodemask(struct mempolicy *pol, const nodemask_t *nodes)
->>>  	else {
->>>  		nodes_remap(tmp, pol->v.nodes,pol->w.cpuset_mems_allowed,
->>>  								*nodes);
->>> -		pol->w.cpuset_mems_allowed = tmp;
->>> +		pol->w.cpuset_mems_allowed = *nodes;
-> Looks like a mechanical error on my side when removing the code for
-> step1+step2 rebinding. Before my commit there was
->
-> pol->w.cpuset_mems_allowed = step ? tmp : *nodes;
->
-> Since 'step' was removed and thus 0, I should have used *nodes indeed.
-> Thanks for catching that.
->
->>>  	}
->>>  
->>>  	if (nodes_empty(tmp))
->> hm, I'm not surprised the code broke.  What the heck is going on in
->> there?  It used to have a perfunctory comment, but Vlastimil deleted
->> it.
-> Yeah the comment was specific for the case that was being removed.
->
->> Could someone please propose a comment for the above code block
->> explaining why we're doing what we do?
-> I'll have to relearn this first...
->
->
+The Amlogic G12B SoC is very similar with the G12A SoC, sharing
+most of the features and architecture, but with these differences :
+- The first CPU cluster only has 2xCortex-A53 instead of 4
+- G12B has a second cluster of 4xCortex-A73
+- Both cluster can achieve 2GHz instead of 1,8GHz for G12A
+- CPU Clock architecture is difference, thus needing a different
+  compatible to handle this slight difference
+- Supports a MIPI CSI input
+- Embeds a Mali-G52 instead of a Mali-G31, but integration is the same
 
+Actual support is done in the same way as for the GXM support, including
+the G12A dtsi and redefining the CPU clusters.
+Unlike GXM, the first cluster is different, thus needing to remove
+the last 2 cpu nodes of the first cluster.
+
+Dependencies :
+- Patch 1, 2 : YAML rewrite of amlogic.txt bindings at [7]
+- Patch 3 : None since clock + g12b bindings has been acked
+
+Changes since v3 at [8]:
+- Dropped arm,armv8
+- Dropped eee disable, not needed in further tests
+- Add comments about where are connected the regulators pins
+- Moved the phy0 regulator to the usb vbus regulator
+
+Changes since v2 at [5]:
+- sent the clk patches in standalone at [6]
+- rewrote the bindings on top of the YAML rewrite at [7]
+- Added MMC, SDCard and Network support to Odroid-N2
+
+Changes since v1 at [3]:
+- Renamed the g12b cpu clocks like g12a counterparts
+- Rebased clock patches on top of Guillaume's Temperature sensor Clock patches at [4]
+- Added AO-CEC-B support to N2 DTS
+
+Changes since RFC at [1]:
+- Added bindings review tags
+- Moved the fclk_div3 CRITICAL flags to the gate
+- Removed invalid CRITICAL flags on the cpu clocks
+
+[1] https://lkml.kernel.org/r/20190327103308.25058-1-narmstrong@baylibre.com
+[2] https://lkml.kernel.org/r/20190325145914.32391-1-narmstrong@baylibre.com
+[3] https://lkml.kernel.org/r/20190404150518.30337-1-narmstrong@baylibre.com
+[4] https://lkml.kernel.org/r/20190412100221.26740-1-glaroque@baylibre.com
+[5] https://lkml.kernel.org/r/20190423091503.10847-1-narmstrong@baylibre.com
+[6] https://lkml.kernel.org/r/20190521150130.31684-1-narmstrong@baylibre.com
+[7] https://lkml.kernel.org/r/20190517152723.28518-2-robh@kernel.org
+[8] https://lkml.kernel.org/r/20190521151952.2779-1-narmstrong@baylibre.com
+
+Neil Armstrong (3):
+  dt-bindings: arm: amlogic: add G12B bindings
+  dt-bindings: arm: amlogic: add Odroid-N2 binding
+  arm64: dts: meson: Add minimal support for Odroid-N2
+
+ .../devicetree/bindings/arm/amlogic.yaml      |   6 +
+ arch/arm64/boot/dts/amlogic/Makefile          |   1 +
+ .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 288 ++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/meson-g12b.dtsi   |  82 +++++
+ 4 files changed, 377 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-g12b.dtsi
+
+-- 
+2.21.0
 
