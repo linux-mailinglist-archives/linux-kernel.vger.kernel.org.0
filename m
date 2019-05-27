@@ -2,147 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A26192B205
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:22:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DC812B215
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:26:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfE0KWD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 06:22:03 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39825 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbfE0KWC (ORCPT
+        id S1726274AbfE0K02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 06:26:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38746 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbfE0K02 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 06:22:02 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e2so7610963wrv.6
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 03:22:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=b21qaBk7xgBLkh/tR0jiPGLO6jWcDKAw7epKgIMYkgI=;
-        b=gmNM+F46bBFRK67zBu1mFuHNdpxCSJHIQMxoudNsqtcoP3/m4EfosM2dTkFdM7+5Ut
-         apIiv5sM9yZWFPHnOiDfQYpSN+xva4MC6QToPeOiy5KANx95zna9gxUMnDukmeeXhaMi
-         MR2Zw4o79SqVsWB7KMea0aeZym4zCsIuBXM/84OF7hDf9eRYL8zhIQml0FERrhIvpk9K
-         RkkRa3HlBuFeunISCfLB0gQfMr/kf8T6cB2TKjHmGx6nz44DaEeTI0ZgPYg1nRPh1yMO
-         53MKZzoiW/KHryqph1HP6aNxI5KTZifVzGeT9H2pbJecwCfUkmZsp4hPTfX8H2nQtjNO
-         Batw==
-X-Gm-Message-State: APjAAAVxeYPaMj2d0wdS2Toa3oyT7pwaHlxqKGjbX62yw6Dx+lhYuZEy
-        NQNLHWN3r/m5srUiJrxZ34sr4Q==
-X-Google-Smtp-Source: APXvYqyHBiTtlTwjGNSoRY9mSrO2K+MXLJKpJDqJEZ9a29tUYpcW0gYHSxIWv7TusW+bveIx9CmIaw==
-X-Received: by 2002:adf:db87:: with SMTP id u7mr25167674wri.245.1558952521069;
-        Mon, 27 May 2019 03:22:01 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:c43e:46a8:e962:cee8? ([2001:b07:6468:f312:c43e:46a8:e962:cee8])
-        by smtp.gmail.com with ESMTPSA id a17sm8328827wrr.80.2019.05.27.03.21.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 03:22:00 -0700 (PDT)
-Subject: Re: [RFC PATCH 5/6] x86/mm/tlb: Flush remote and local TLBs
- concurrently
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Juergen Gross <jgross@suse.com>
-Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-hyperv@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20190525082203.6531-1-namit@vmware.com>
- <20190525082203.6531-6-namit@vmware.com>
- <08b21fb5-2226-7924-30e3-31e4adcfc0a3@suse.com>
- <20190527094710.GU2623@hirez.programming.kicks-ass.net>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <e9c0dc1f-799a-b6e3-8d41-58f0a6b693cd@redhat.com>
-Date:   Mon, 27 May 2019 12:21:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190527094710.GU2623@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 27 May 2019 06:26:28 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id AF0FF6087D; Mon, 27 May 2019 10:26:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1558952787;
+        bh=XSljrn9KDqKTIUNGpy8kHPqFJpqJPYruTEJmjtqHBIs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QjMR7B6ErfMHcKJ+RIA67MABL5bx97vFiabqkj0HiG+mdP5TapL3QfuWvnDZXDVrI
+         0rfHG8LPocC75zAltZaZrzOfOUebB35/PSxoenQpAGJ5iyGFE7G/FVVCOPEcF+89n1
+         4z7JYbpOt2qWg2k5unJo8XjQyr0aOCpf233W7eMU=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id ACFFC60252;
+        Mon, 27 May 2019 10:26:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1558952787;
+        bh=XSljrn9KDqKTIUNGpy8kHPqFJpqJPYruTEJmjtqHBIs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QjMR7B6ErfMHcKJ+RIA67MABL5bx97vFiabqkj0HiG+mdP5TapL3QfuWvnDZXDVrI
+         0rfHG8LPocC75zAltZaZrzOfOUebB35/PSxoenQpAGJ5iyGFE7G/FVVCOPEcF+89n1
+         4z7JYbpOt2qWg2k5unJo8XjQyr0aOCpf233W7eMU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ACFFC60252
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+To:     airlied@linux.ie, thierry.reding@gmail.com, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org, robdclark@gmail.com,
+        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH 1/1] drm/panel: truly: Add additional delay after pulling down reset gpio
+Date:   Mon, 27 May 2019 15:56:16 +0530
+Message-Id: <20190527102616.28315-1-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/05/19 11:47, Peter Zijlstra wrote:
-> On Sat, May 25, 2019 at 10:54:50AM +0200, Juergen Gross wrote:
->> On 25/05/2019 10:22, Nadav Amit wrote:
-> 
->>> diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
->>> index 946f8f1f1efc..3a156e63c57d 100644
->>> --- a/arch/x86/include/asm/paravirt_types.h
->>> +++ b/arch/x86/include/asm/paravirt_types.h
->>> @@ -211,6 +211,12 @@ struct pv_mmu_ops {
->>>  	void (*flush_tlb_user)(void);
->>>  	void (*flush_tlb_kernel)(void);
->>>  	void (*flush_tlb_one_user)(unsigned long addr);
->>> +	/*
->>> +	 * flush_tlb_multi() is the preferred interface. When it is used,
->>> +	 * flush_tlb_others() should return false.
->>
->> This comment does not make sense. flush_tlb_others() return type is
->> void.
-> 
-> I suspect that is an artifact from before the static_key; an attempt to
-> make the pv interface less awkward.
-> 
-> Something like the below would work for KVM I suspect, the others
-> (Hyper-V and Xen are more 'interesting').
-> 
-> ---
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -580,7 +580,7 @@ static void __init kvm_apf_trap_init(voi
->  
->  static DEFINE_PER_CPU(cpumask_var_t, __pv_tlb_mask);
->  
-> -static void kvm_flush_tlb_others(const struct cpumask *cpumask,
-> +static void kvm_flush_tlb_multi(const struct cpumask *cpumask,
->  			const struct flush_tlb_info *info)
->  {
->  	u8 state;
-> @@ -594,6 +594,9 @@ static void kvm_flush_tlb_others(const s
->  	 * queue flush_on_enter for pre-empted vCPUs
->  	 */
->  	for_each_cpu(cpu, flushmask) {
-> +		if (cpu == smp_processor_id())
-> +			continue;
-> +
+MTP SDM845 panel seems to need additional delay to bring panel
+to a workable state. Running modetest without this change displays
+blurry artifacts.
 
-Even this would be just an optimization; the vCPU you're running on
-cannot be preempted.  You can just change others to multi.
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
+ drivers/gpu/drm/panel/panel-truly-nt35597.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Paolo
-
->  		src = &per_cpu(steal_time, cpu);
->  		state = READ_ONCE(src->preempted);
->  		if ((state & KVM_VCPU_PREEMPTED)) {
-> @@ -603,7 +606,7 @@ static void kvm_flush_tlb_others(const s
->  		}
->  	}
->  
-> -	native_flush_tlb_others(flushmask, info);
-> +	native_flush_tlb_multi(flushmask, info);
->  }
->  
->  static void __init kvm_guest_init(void)
-> @@ -628,9 +631,8 @@ static void __init kvm_guest_init(void)
->  	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
->  	    !kvm_para_has_hint(KVM_HINTS_REALTIME) &&
->  	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
-> -		pv_ops.mmu.flush_tlb_others = kvm_flush_tlb_others;
-> +		pv_ops.mmu.flush_tlb_multi = kvm_flush_tlb_multi;
->  		pv_ops.mmu.tlb_remove_table = tlb_remove_table;
-> -		static_key_disable(&flush_tlb_multi_enabled.key);
->  	}
->  
->  	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
-> 
+diff --git a/drivers/gpu/drm/panel/panel-truly-nt35597.c b/drivers/gpu/drm/panel/panel-truly-nt35597.c
+index fc2a66c53db4..aa7153fd3be4 100644
+--- a/drivers/gpu/drm/panel/panel-truly-nt35597.c
++++ b/drivers/gpu/drm/panel/panel-truly-nt35597.c
+@@ -280,6 +280,7 @@ static int truly_35597_power_on(struct truly_nt35597 *ctx)
+ 	gpiod_set_value(ctx->reset_gpio, 1);
+ 	usleep_range(10000, 20000);
+ 	gpiod_set_value(ctx->reset_gpio, 0);
++	usleep_range(10000, 20000);
+ 
+ 	return 0;
+ }
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
