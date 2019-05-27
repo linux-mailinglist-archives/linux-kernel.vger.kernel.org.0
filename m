@@ -2,179 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D10952B7BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 16:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF922B7C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 16:44:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfE0Ojf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 10:39:35 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50370 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726302AbfE0Ojf (ORCPT
+        id S1726583AbfE0OoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 10:44:17 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36692 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbfE0OoR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 10:39:35 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4REbvlt106470
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 10:39:33 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2srf6p85xc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 10:39:33 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 27 May 2019 15:39:32 +0100
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 27 May 2019 15:39:29 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4REdTwF29556976
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 27 May 2019 14:39:29 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ECD53B2064;
-        Mon, 27 May 2019 14:39:28 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9E19B205F;
-        Mon, 27 May 2019 14:39:28 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.199.73])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 27 May 2019 14:39:28 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A016816C3473; Mon, 27 May 2019 07:39:32 -0700 (PDT)
-Date:   Mon, 27 May 2019 07:39:32 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     fweisbec@gmail.com, tglx@linutronix.de, mingo@kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] time/tick-broadcast: Fix tick_broadcast_offline() lockdep
- complaint
-Reply-To: paulmck@linux.ibm.com
+        Mon, 27 May 2019 10:44:17 -0400
+Received: by mail-wr1-f68.google.com with SMTP id s17so17180543wru.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 07:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rIgF7xVDbaJhNhkT1oh5cfzIY7s90LlJVnYRpFWsS0Q=;
+        b=QFaKOc6pMzB0FmBtt8ZehlKdjkgmC3jizvPS6unucxOPoEdC39a/y7HuRRiE6hT2/m
+         wWY/Nnm35Wyj73PvUAfL3SjyF9SvLRxMFF00XPU/b7PjvNorH8ZR/41ZhROfwFc8byU3
+         hyLxBQAS+iWE8jsVT4wnERgsy54HkGBPpok5qtr8vn1HxsMYO3uml84RYphkXR0qRyD/
+         kcMLMioKeiaHNUoY6ZAzFfO8kerTPsHojKTmljXjt+pw8Wt4yJ/owenaxsBo8rT2SHes
+         qQWRVzBr8d7Oq62IdQMosnTDusAL+gxpY96zFGyUZ8BnVhiYtQg1iqmVRFWNYjyZSy/b
+         Nqag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rIgF7xVDbaJhNhkT1oh5cfzIY7s90LlJVnYRpFWsS0Q=;
+        b=QExFVi8V9SxHcl6VDOYTHTa+/khDopZ1ruTIIGCzLSHt0T2mu4iFlTU288SG5ChDMX
+         A/4NGgw8VHXTIlD7dwOVLDKmBAc4aZhszffNekbLnfhbF6QZMQNMh0l2Vcr5iPh3oX1V
+         FzCmL+6Tnw9xKRUP1CMZi6JQp/SUDHrHQqacI3hdqgGEA8Sj51fiUQEJxZOtUBuJLtxl
+         yK72iVuSsom7qtNLGQqQ6eAZ9iQ+pcJjXyAf7WIo7xGEK5E64q3k3XDU9VGGbh6i76G1
+         XwcOH4JLCV/n2Yelr2vBqcGch+X5WIRHTpDmasm1NQYqZEU1mSDL14me1nUxjm+vzv++
+         bKzg==
+X-Gm-Message-State: APjAAAXRlhAO42xWLEsuTBQRUekUZMtg7g77XcRHNfvJzQ+UiUznNiWO
+        OEGrZxHhvASHxC7LA/61hA/zYrW+blmXAowm830s5Q==
+X-Google-Smtp-Source: APXvYqxt6xxV/5PxXtamSZZ0dnnDBlNoqz5BkRKvp9HFoI6M8x6CIvknGm0ooYEXbFVx1KWh3xPlUvM7IgMWD9vvRH4=
+X-Received: by 2002:adf:de11:: with SMTP id b17mr3329045wrm.19.1558968254980;
+ Mon, 27 May 2019 07:44:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19052714-0064-0000-0000-000003E588AA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011172; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01209348; UDB=6.00635289; IPR=6.00990375;
- MB=3.00027074; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-27 14:39:31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052714-0065-0000-0000-00003DA28D44
-Message-Id: <20190527143932.GA10527@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-27_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905270104
+References: <20190514135612.30822-1-mjourdan@baylibre.com> <20190514135612.30822-4-mjourdan@baylibre.com>
+ <07af1a22-d57c-aff6-b476-98fbf72135c1@xs4all.nl>
+In-Reply-To: <07af1a22-d57c-aff6-b476-98fbf72135c1@xs4all.nl>
+From:   Maxime Jourdan <mjourdan@baylibre.com>
+Date:   Mon, 27 May 2019 16:44:04 +0200
+Message-ID: <CAMO6naz-cG3F_h70Chjt+GprGWe2EShsMjrietu_JBAdLrPbpQ@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] media: meson: add v4l2 m2m video decoder driver
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TASKS03 and TREE04 rcutorture scenarios produce the following
-lockdep complaint:
+Hi Hans,
+On Mon, May 27, 2019 at 12:04 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> Hi Maxime,
+>
+> First a high-level comment: I think this driver should go to staging.
+> Once we finalize the stateful decoder spec, and we've updated the
+> v4l2-compliance test, then this needs to be tested against that and
+> only if it passes can it be moved out of staging.
+>
 
-================================
-WARNING: inconsistent lock state
-5.2.0-rc1+ #513 Not tainted
---------------------------------
-inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
-migration/1/14 [HC0[0]:SC0[0]:HE1:SE1] takes:
-(____ptrval____) (tick_broadcast_lock){?...}, at: tick_broadcast_offline+0xf/0x70
-{IN-HARDIRQ-W} state was registered at:
-  lock_acquire+0xb0/0x1c0
-  _raw_spin_lock_irqsave+0x3c/0x50
-  tick_broadcast_switch_to_oneshot+0xd/0x40
-  tick_switch_to_oneshot+0x4f/0xd0
-  hrtimer_run_queues+0xf3/0x130
-  run_local_timers+0x1c/0x50
-  update_process_times+0x1c/0x50
-  tick_periodic+0x26/0xc0
-  tick_handle_periodic+0x1a/0x60
-  smp_apic_timer_interrupt+0x80/0x2a0
-  apic_timer_interrupt+0xf/0x20
-  _raw_spin_unlock_irqrestore+0x4e/0x60
-  rcu_nocb_gp_kthread+0x15d/0x590
-  kthread+0xf3/0x130
-  ret_from_fork+0x3a/0x50
-irq event stamp: 171
-hardirqs last  enabled at (171): [<ffffffff8a201a37>] trace_hardirqs_on_thunk+0x1a/0x1c
-hardirqs last disabled at (170): [<ffffffff8a201a53>] trace_hardirqs_off_thunk+0x1a/0x1c
-softirqs last  enabled at (0): [<ffffffff8a264ee0>] copy_process.part.56+0x650/0x1cb0
-softirqs last disabled at (0): [<0000000000000000>] 0x0
+I chose to send the driver supporting only MPEG2 for now as it keeps
+it "to the point", but as it turns out it's one of the few formats on
+Amlogic that can't fully respect the spec at the moment because of the
+lack of support for V4L2_EVENT_SOURCE_CHANGE, thus the patch in the
+series that adds a new flag V4L2_FMT_FLAG_FIXED_RESOLUTION. It
+basically requires userspace to set the format (i.e coded resolution)
+since the driver/fw can't probe it.
+At the moment, this is described in the v3 spec like this:
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+>
+> 1. Set the coded format on ``OUTPUT`` via :c:func:`VIDIOC_S_FMT`
+>
+>   * **Required fields:**
+>
+>     ``type``
+>         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+>
+>     ``pixelformat``
+>         a coded pixel format
+>
+>     ``width``, ``height``
+>         required only if cannot be parsed from the stream for the given
+>         coded format; optional otherwise - set to zero to ignore
+>
 
-       CPU0
-       ----
-  lock(tick_broadcast_lock);
-  <Interrupt>
-    lock(tick_broadcast_lock);
+But MPEG2 being a format where the coded resolution is inside the
+bitstream, this is purely an Amlogic issue where the firmware doesn't
+extend the capability to do this.
 
- *** DEADLOCK ***
+Here's a proposal: if I were to resend the driver supporting only H264
+and conforming to the spec, would you be considering it for inclusion
+in the main tree ? Does your current iteration of v4l2-compliance
+support testing stateful decoders with H264 bitstreams ?
 
-1 lock held by migration/1/14:
- #0: (____ptrval____) (clockevents_lock){+.+.}, at: tick_offline_cpu+0xf/0x30
+> It is just a bit too soon to have this in mainline at this time.
+>
+> One other comment below:
+>
+> On 5/14/19 3:56 PM, Maxime Jourdan wrote:
+> > Amlogic SoCs feature a powerful video decoder unit able to
+> > decode many formats, with a performance of usually up to 4k60.
+> >
+> > This is a driver for this IP that is based around the v4l2 m2m framework.
+> >
+> > It features decoding for:
+> > - MPEG 1
+> > - MPEG 2
+> >
+> > Supported SoCs are: GXBB (S905), GXL (S905X/W/D), GXM (S912)
+> >
+> > There is also a hardware bitstream parser (ESPARSER) that is handled here.
+> >
+> > Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+> > Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+> > ---
+> >  drivers/media/platform/Kconfig                |   10 +
+> >  drivers/media/platform/meson/Makefile         |    1 +
+> >  drivers/media/platform/meson/vdec/Makefile    |    8 +
+> >  .../media/platform/meson/vdec/codec_mpeg12.c  |  209 ++++
+> >  .../media/platform/meson/vdec/codec_mpeg12.h  |   14 +
+> >  drivers/media/platform/meson/vdec/dos_regs.h  |   98 ++
+> >  drivers/media/platform/meson/vdec/esparser.c  |  323 +++++
+> >  drivers/media/platform/meson/vdec/esparser.h  |   32 +
+> >  drivers/media/platform/meson/vdec/vdec.c      | 1071 +++++++++++++++++
+> >  drivers/media/platform/meson/vdec/vdec.h      |  265 ++++
+> >  drivers/media/platform/meson/vdec/vdec_1.c    |  229 ++++
+> >  drivers/media/platform/meson/vdec/vdec_1.h    |   14 +
+> >  .../media/platform/meson/vdec/vdec_ctrls.c    |   51 +
+> >  .../media/platform/meson/vdec/vdec_ctrls.h    |   14 +
+> >  .../media/platform/meson/vdec/vdec_helpers.c  |  441 +++++++
+> >  .../media/platform/meson/vdec/vdec_helpers.h  |   80 ++
+> >  .../media/platform/meson/vdec/vdec_platform.c |  107 ++
+> >  .../media/platform/meson/vdec/vdec_platform.h |   30 +
+> >  18 files changed, 2997 insertions(+)
+> >  create mode 100644 drivers/media/platform/meson/vdec/Makefile
+> >  create mode 100644 drivers/media/platform/meson/vdec/codec_mpeg12.c
+> >  create mode 100644 drivers/media/platform/meson/vdec/codec_mpeg12.h
+> >  create mode 100644 drivers/media/platform/meson/vdec/dos_regs.h
+> >  create mode 100644 drivers/media/platform/meson/vdec/esparser.c
+> >  create mode 100644 drivers/media/platform/meson/vdec/esparser.h
+> >  create mode 100644 drivers/media/platform/meson/vdec/vdec.c
+> >  create mode 100644 drivers/media/platform/meson/vdec/vdec.h
+> >  create mode 100644 drivers/media/platform/meson/vdec/vdec_1.c
+> >  create mode 100644 drivers/media/platform/meson/vdec/vdec_1.h
+> >  create mode 100644 drivers/media/platform/meson/vdec/vdec_ctrls.c
+> >  create mode 100644 drivers/media/platform/meson/vdec/vdec_ctrls.h
+> >  create mode 100644 drivers/media/platform/meson/vdec/vdec_helpers.c
+> >  create mode 100644 drivers/media/platform/meson/vdec/vdec_helpers.h
+> >  create mode 100644 drivers/media/platform/meson/vdec/vdec_platform.c
+> >  create mode 100644 drivers/media/platform/meson/vdec/vdec_platform.h
+> >
+>
+> <snip>
+>
+> > diff --git a/drivers/media/platform/meson/vdec/vdec_ctrls.c b/drivers/media/platform/meson/vdec/vdec_ctrls.c
+> > new file mode 100644
+> > index 000000000000..d5d6b1b97aa5
+> > --- /dev/null
+> > +++ b/drivers/media/platform/meson/vdec/vdec_ctrls.c
+> > @@ -0,0 +1,51 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * Copyright (C) 2018 BayLibre, SAS
+> > + * Author: Maxime Jourdan <mjourdan@baylibre.com>
+> > + */
+> > +
+> > +#include "vdec_ctrls.h"
+> > +
+> > +static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+> > +{
+> > +     struct amvdec_session *sess =
+> > +           container_of(ctrl->handler, struct amvdec_session, ctrl_handler);
+> > +
+> > +     switch (ctrl->id) {
+> > +     case V4L2_CID_MIN_BUFFERS_FOR_CAPTURE:
+> > +             ctrl->val = sess->dpb_size;
+> > +             break;
+> > +     default:
+> > +             return -EINVAL;
+> > +     };
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct v4l2_ctrl_ops vdec_ctrl_ops = {
+> > +     .g_volatile_ctrl = vdec_op_g_volatile_ctrl,
+> > +};
+> > +
+> > +int amvdec_init_ctrls(struct v4l2_ctrl_handler *ctrl_handler)
+> > +{
+> > +     int ret;
+> > +     struct v4l2_ctrl *ctrl;
+> > +
+> > +     ret = v4l2_ctrl_handler_init(ctrl_handler, 1);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ctrl = v4l2_ctrl_new_std(ctrl_handler, &vdec_ctrl_ops,
+> > +             V4L2_CID_MIN_BUFFERS_FOR_CAPTURE, 1, 32, 1, 1);
+> > +     if (ctrl)
+> > +             ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
+>
+> Why is this volatile? That makes little sense.
+>
 
-stack backtrace:
-CPU: 1 PID: 14 Comm: migration/1 Not tainted 5.2.0-rc1+ #513
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS Bochs 01/01/2011
-Call Trace:
- dump_stack+0x5e/0x8b
- print_usage_bug+0x1fc/0x216
- ? print_shortest_lock_dependencies+0x1b0/0x1b0
- mark_lock+0x1f2/0x280
- __lock_acquire+0x1e0/0x18f0
- ? __lock_acquire+0x21b/0x18f0
- ? _raw_spin_unlock_irqrestore+0x4e/0x60
- lock_acquire+0xb0/0x1c0
- ? tick_broadcast_offline+0xf/0x70
- _raw_spin_lock+0x33/0x40
- ? tick_broadcast_offline+0xf/0x70
- tick_broadcast_offline+0xf/0x70
- tick_offline_cpu+0x16/0x30
- take_cpu_down+0x7d/0xa0
- multi_cpu_stop+0xa2/0xe0
- ? cpu_stop_queue_work+0xc0/0xc0
- cpu_stopper_thread+0x6d/0x100
- smpboot_thread_fn+0x169/0x240
- kthread+0xf3/0x130
- ? sort_range+0x20/0x20
- ? kthread_cancel_delayed_work_sync+0x10/0x10
- ret_from_fork+0x3a/0x50
+I copied this over from other stateful decoders, they all used
+volatile so it didn't cross my mind too much.
 
-It turns out that tick_broadcast_offline() can be invoked with interrupts
-enabled, so this commit fixes this issue by replacing the raw_spin_lock()
-with raw_spin_lock_irqsave().
+It seems that there are 2 cases:
+ - the control is actually volatile, e.g its value is read from firmware.
+ - the control is not really volatile, e.g its value is set by the driver
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
+My driver falls in the second case. Is the correct way to deal with
+that to use v4l2_ctrl_s_ctrl() and remove the volatile flag ?
 
-diff --git a/kernel/time/tick-broadcast.c b/kernel/time/tick-broadcast.c
-index e51778c312f1..1daf77020230 100644
---- a/kernel/time/tick-broadcast.c
-+++ b/kernel/time/tick-broadcast.c
-@@ -454,12 +454,14 @@ static void tick_shutdown_broadcast(void)
-  */
- void tick_broadcast_offline(unsigned int cpu)
- {
--	raw_spin_lock(&tick_broadcast_lock);
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&tick_broadcast_lock, flags);
- 	cpumask_clear_cpu(cpu, tick_broadcast_mask);
- 	cpumask_clear_cpu(cpu, tick_broadcast_on);
- 	tick_broadcast_oneshot_offline(cpu);
- 	tick_shutdown_broadcast();
--	raw_spin_unlock(&tick_broadcast_lock);
-+	raw_spin_unlock_irqrestore(&tick_broadcast_lock, flags);
- }
- 
- #endif
+Regards,
+Maxime
 
+
+> > +
+> > +     ret = ctrl_handler->error;
+> > +     if (ret) {
+> > +             v4l2_ctrl_handler_free(ctrl_handler);
+> > +             return ret;
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(amvdec_init_ctrls);
+>
+> <snip>
+>
+> Regards,
+>
+>         Hans
