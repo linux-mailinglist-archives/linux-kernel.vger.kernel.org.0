@@ -2,86 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF92B2B704
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:52:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBAA02B6E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:47:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbfE0Nwn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:52:43 -0400
-Received: from casper.infradead.org ([85.118.1.10]:49696 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726262AbfE0Nwn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:52:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=CxZUZvklOy8kGT0VQtbJNrmx3JMHiXG681xB01ACpdM=; b=JTGN+4aMhXvGVTU07miAtAI5jx
-        bh/tv/vMKWM2GedMiCYGu6ff1mmwGxOP3jUphIULFE+oNEw2g7p85UisDxGlJ3w6U9L1dttr6zdui
-        qsZja21N1AfJDxT+OoYY45tIxRKs1AQAEOt2yCJM4Z2IRo25aQkQAKxdrquhu62nQh5QJ3j/fJlon
-        Blp0Cg+63HTkQ9wHYBdyIHbJ9HLOdmUGk/ppgFJTWHHrM8zaXzWGSMGpGf8oKrxHttPuYewecdUcv
-        i/tdZLWA2cKm7ILrlJuQ6zclYXdk6tCaSARF5X01UqyCLA8i71EOYuVKdFxvi9CUKgSx82/zfsesu
-        Z1WDoVcQ==;
-Received: from [177.159.249.4] (helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hVG3K-0000X9-NI; Mon, 27 May 2019 13:52:39 +0000
-Date:   Mon, 27 May 2019 10:52:33 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     <lee.jones@linaro.org>, <arnd@arndb.de>,
-        <natechancellor@gmail.com>, <ottosabart@seberm.com>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: Re: [PATCH 2/4 RESEND] mfd: madera: Fix bad reference to
- pinctrl.txt file
-Message-ID: <20190527105233.77bacd8b@coco.lan>
-In-Reply-To: <20190520090628.29061-2-ckeepax@opensource.cirrus.com>
-References: <20190520090628.29061-1-ckeepax@opensource.cirrus.com>
-        <20190520090628.29061-2-ckeepax@opensource.cirrus.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1726761AbfE0NrD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:47:03 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59116 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726452AbfE0NrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 09:47:03 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6849A2532AFB42FAC215;
+        Mon, 27 May 2019 21:46:53 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 27 May 2019 21:46:44 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v2] pwm: rockchip: Use of_clk_get_parent_count()
+Date:   Mon, 27 May 2019 21:55:09 +0800
+Message-ID: <20190527135509.184544-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190525115941.108309-1-wangkefeng.wang@huawei.com>
+References: <20190525115941.108309-1-wangkefeng.wang@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 20 May 2019 10:06:26 +0100
-Charles Keepax <ckeepax@opensource.cirrus.com> escreveu:
+Use of_clk_get_parent_count() instead of open coding.
 
-> From: Otto Sabart <ottosabart@seberm.com>
-> 
-> The pinctrl.txt file was converted into reStructuredText and moved into
-> driver-api folder. This patch updates the broken reference.
-> 
-> Fixes: 5a9b73832e9e ("pinctrl.txt: move it to the driver-api book")
-> Signed-off-by: Otto Sabart <ottosabart@seberm.com>
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+v2:
+- add include <linux/of_clk.h>
+ drivers/pwm/pwm-rockchip.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
+index 4d99d468df09..d8f23daca290 100644
+--- a/drivers/pwm/pwm-rockchip.c
++++ b/drivers/pwm/pwm-rockchip.c
+@@ -13,6 +13,7 @@
+ #include <linux/io.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_clk.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pwm.h>
+@@ -329,8 +330,8 @@ static int rockchip_pwm_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	count = of_count_phandle_with_args(pdev->dev.of_node,
+-					   "clocks", "#clock-cells");
++	count = of_clk_get_parent_count(pdev->dev.of_node);
++
+ 	if (count == 2)
+ 		pc->pclk = devm_clk_get(&pdev->dev, "pclk");
+ 	else
+-- 
+2.20.1
 
-> ---
->  include/linux/mfd/madera/pdata.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/mfd/madera/pdata.h b/include/linux/mfd/madera/pdata.h
-> index 8dc852402dbb1..dd00ab824e5be 100644
-> --- a/include/linux/mfd/madera/pdata.h
-> +++ b/include/linux/mfd/madera/pdata.h
-> @@ -34,7 +34,8 @@ struct madera_codec_pdata;
->   * @micvdd:	    Substruct of pdata for the MICVDD regulator
->   * @irq_flags:	    Mode for primary IRQ (defaults to active low)
->   * @gpio_base:	    Base GPIO number
-> - * @gpio_configs:   Array of GPIO configurations (See Documentation/pinctrl.txt)
-> + * @gpio_configs:   Array of GPIO configurations (See
-> + *		    Documentation/driver-api/pinctl.rst)
->   * @n_gpio_configs: Number of entries in gpio_configs
->   * @gpsw:	    General purpose switch mode setting. Depends on the external
->   *		    hardware connected to the switch. (See the SW1_MODE field
-
-
-
-Thanks,
-Mauro
