@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 573D72BC12
+	by mail.lfdr.de (Postfix) with ESMTP id CA4112BC13
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 00:39:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbfE0Wiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 18:38:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44550 "EHLO mail.kernel.org"
+        id S1727752AbfE0Wi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 18:38:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727721AbfE0Wis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 18:38:48 -0400
+        id S1727721AbfE0Wix (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 18:38:53 -0400
 Received: from quaco.ghostprotocols.net (179-240-171-7.3g.claro.net.br [179.240.171.7])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F6C2208C3;
-        Mon, 27 May 2019 22:38:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCE22214D8;
+        Mon, 27 May 2019 22:38:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558996728;
-        bh=RnO4auYTI+mr8Vzp4tSiUkPlwS7Jvrw4n8IsvtHdCb0=;
+        s=default; t=1558996732;
+        bh=IQX/X9mHT0+/ptjruMQyG2V+KJR5hVZ2FACinDVI12w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C3SS0EwfXNYMQ/su2BU3zE5kcJhj7ohBQc0vSUYVjH62ban+CzaOBf19tKVsRzWkK
-         PRjnYHTgC0cfvpNfA5F44YvgoSX0e+Es1ktThpR9Xe/seg9k2tYELuumNkw0BizfLD
-         3SLcTetAcYchyxx82lLK0wKOgyhoFAu2MwjKZTi0=
+        b=og+ctruuj2iBDAYuSBY6N/K/mtR1kKNFs9E8IFbjSiunaVGb0MTPWbMCqdbZlbZ2s
+         f0vE9qj0aM5HXu5oc014JdGL+ia0z0hEknDHHWfXZqWjmAuJKqevqCypNQFDbaEO3N
+         iPwQpXP49gtdNFlmnwLEIg3odX1CUdjjXmuHY/G4=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -31,16 +31,17 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
         Brendan Gregg <brendan.d.gregg@gmail.com>,
-        David Howells <dhowells@redhat.com>
-Subject: [PATCH 15/44] perf beauty: Add generator for fsmount's 'attr_flags' arg values
-Date:   Mon, 27 May 2019 19:37:01 -0300
-Message-Id: <20190527223730.11474-16-acme@kernel.org>
+        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
+        <lclaudio@redhat.com>
+Subject: [PATCH 16/44] perf trace: Introduce syscall_arg__scnprintf_strarray_flags
+Date:   Mon, 27 May 2019 19:37:02 -0300
+Message-Id: <20190527223730.11474-17-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190527223730.11474-1-acme@kernel.org>
 References: <20190527223730.11474-1-acme@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,61 +50,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-  $ tools/perf/trace/beauty/fsmount.sh
-  static const char *fsmount_attr_flags[] = {
-          [ilog2(0x00000001) + 1] = "RDONLY",
-          [ilog2(0x00000002) + 1] = "NOSUID",
-          [ilog2(0x00000004) + 1] = "NODEV",
-          [ilog2(0x00000008) + 1] = "NOEXEC",
-          [ilog2(0x00000010) + 1] = "NOATIME",
-          [ilog2(0x00000020) + 1] = "STRICTATIME",
-          [ilog2(0x00000080) + 1] = "NODIRATIME",
-  }
-
-MOUNT_ATTR__ATIME and MOUNT_ATTR_RELATIME will be special cased in the
-fsmount__scnprintf_flags() beautifier.
+So that one can just define a strarray and process it as a set of flags,
+similar to syscall_arg__scnprintf_strarray() with plain arrays.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-sl24d7m2ge82mfmrbaf1mb0s@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-nnt25wkpkow2w0yefhi6sb7q@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/trace/beauty/fsmount.sh | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100755 tools/perf/trace/beauty/fsmount.sh
+ tools/perf/builtin-trace.c       | 5 +++++
+ tools/perf/trace/beauty/beauty.h | 3 +++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/tools/perf/trace/beauty/fsmount.sh b/tools/perf/trace/beauty/fsmount.sh
-new file mode 100755
-index 000000000000..615cc0fcf4f9
---- /dev/null
-+++ b/tools/perf/trace/beauty/fsmount.sh
-@@ -0,0 +1,22 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: LGPL-2.1
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 87b6dd3c33f5..16bb8c04c689 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -403,6 +403,11 @@ static size_t syscall_arg__scnprintf_strarray(char *bf, size_t size,
+ 
+ #define SCA_STRARRAY syscall_arg__scnprintf_strarray
+ 
++size_t syscall_arg__scnprintf_strarray_flags(char *bf, size_t size, struct syscall_arg *arg)
++{
++	return strarray__scnprintf_flags(arg->parm, bf, size, arg->show_string_prefix, arg->val);
++}
 +
-+if [ $# -ne 1 ] ; then
-+	linux_header_dir=tools/include/uapi/linux
-+else
-+	linux_header_dir=$1
-+fi
+ size_t strarrays__scnprintf(struct strarrays *sas, char *bf, size_t size, const char *intfmt, bool show_prefix, int val)
+ {
+ 	size_t printed;
+diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
+index 90c1ee708dc9..ad874e0beba5 100644
+--- a/tools/perf/trace/beauty/beauty.h
++++ b/tools/perf/trace/beauty/beauty.h
+@@ -108,6 +108,9 @@ struct syscall_arg {
+ 
+ unsigned long syscall_arg__val(struct syscall_arg *arg, u8 idx);
+ 
++size_t syscall_arg__scnprintf_strarray_flags(char *bf, size_t size, struct syscall_arg *arg);
++#define SCA_STRARRAY_FLAGS syscall_arg__scnprintf_strarray_flags
 +
-+linux_mount=${linux_header_dir}/mount.h
-+
-+# Remove MOUNT_ATTR_RELATIME as it is zeros, handle it a special way in the beautifier
-+# Only handle MOUNT_ATTR_ followed by a capital letter/num as __ is special case
-+# for things like MOUNT_ATTR__ATIME that is a mask for the possible ATIME handling
-+# bits. Special case it as well in the beautifier
-+
-+printf "static const char *fsmount_attr_flags[] = {\n"
-+regex='^[[:space:]]*#[[:space:]]*define[[:space:]]+MOUNT_ATTR_([[:alnum:]][[:alnum:]_]+)[[:space:]]+(0x[[:xdigit:]]+)[[:space:]]*.*'
-+egrep $regex ${linux_mount} | grep -v MOUNT_ATTR_RELATIME | \
-+	sed -r "s/$regex/\2 \1/g"	| \
-+	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n"
-+printf "};\n"
+ size_t syscall_arg__scnprintf_strarrays(char *bf, size_t size, struct syscall_arg *arg);
+ #define SCA_STRARRAYS syscall_arg__scnprintf_strarrays
+ 
 -- 
 2.20.1
 
