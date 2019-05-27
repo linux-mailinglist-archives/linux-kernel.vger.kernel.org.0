@@ -2,68 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C63622ADFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 07:24:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DC4F2AE02
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 07:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbfE0FYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 01:24:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34692 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725774AbfE0FYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 01:24:01 -0400
-Received: from localhost (unknown [171.61.91.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9648216FD;
-        Mon, 27 May 2019 05:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558934640;
-        bh=oqHyKLmqbmz83G7bOIGzPBCvDihDOBQfvCCdsIaxkoQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qUeiVe/NgRc8Q7rApCnxPrh+x8ci1o4I45nVg4YYqLGu80xuiq2QgVQR7d+APhL5F
-         EW/RzPuvOBI5Vopy+V8SID54PLNarCa+pXlubg3AO5xhY0U5JxTwaluE76J64O50l8
-         u9qZY8QVUFKgc/DE+Wrej54PC0DIs3RNARLzV8sA=
-Date:   Mon, 27 May 2019 10:53:56 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org
-Subject: Re: [PATCH v2 00/15] soundwire: corrections to ACPI/DisCo/Intel
- support
-Message-ID: <20190527052356.GA15118@vkoul-mobl>
-References: <20190522194732.25704-1-pierre-louis.bossart@linux.intel.com>
+        id S1726253AbfE0FgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 01:36:12 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38880 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfE0FgL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 01:36:11 -0400
+Received: by mail-pg1-f196.google.com with SMTP id v11so8443168pgl.5
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 22:36:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0Q+RZAfq2/iYUwVm8pEyCIzzp6Mp3PG1pvjpD0Wsst8=;
+        b=y4LhP/pQHr/aVhOdEQODLTvwAmzQ67WSkXpzCM/HejrDe230d148gN4Zts0idcGdtp
+         cW+9IThLSkY5AzVNjS3DeJOO6TVm6k9PY1QUtyZngouTPpDpcL2aT0G6HJ712nA+Shfs
+         JWiWvhkroDQCVT4Br4uZcJeoBxvUki8nX/ZenVYl8o222qwiqppQKHbnFsopGBQ3JTXL
+         kdeZ8TImTUXtAKBwaaiPPTgsUvWF5PWcSzpCxYCWn3ID2SnWMRBWLuDo28OdS9NTZjcE
+         QJB4/q8RAimf0U2giJd/wUu5uiqcNyZn//ROTsBgIHY4avUbe1Jd/pGeTNprUgeQ5FpL
+         gCQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0Q+RZAfq2/iYUwVm8pEyCIzzp6Mp3PG1pvjpD0Wsst8=;
+        b=NJj3Bg0bP8ZrcPu0ym0Osii3sqaOE6We7mZqmEzncaVe4WcloYTfrOG3qEQASe17Uv
+         J8X1VrcNjfcoNQJNuv54MP5/ByxKXtrd4X93j/z4gTkKSNyRjO5u//Fzjt/LJ0BGRipk
+         XVlVou3+fTdp/7oFffOUQn4btGIE0fTJe+URRh8Q8zNTFivr8dIppbs9HUL13A694Tvx
+         17gjCL9h8cB3aAeoctKv8kI9JeLwAQSTOw/ClBXPdEJ+MJMg/IeU8Gaq+EZp+ZvqUNze
+         RmIfRn7WXZauUQlaIuKACYRz8ThrvGxHo+PPw8jrAIgn5gSrUIonNXVZjZ/sqFcRFm3M
+         iADw==
+X-Gm-Message-State: APjAAAVnucDlJ2HwbjDFZ5Xzzf74mHAvyGBdIm7ZdpiV7HHPJ0+IOYA2
+        0hB9eJ4BM5i4qY4tsgoU5fEwXw==
+X-Google-Smtp-Source: APXvYqzFRF/BPlpg9hW/21jo+Byitv9HhiLCQ4GA/cvSqp0OGNLRNbe5FkFRRJM1JGCZFeOHofoKcw==
+X-Received: by 2002:a17:90a:af8d:: with SMTP id w13mr28696380pjq.143.1558935370849;
+        Sun, 26 May 2019 22:36:10 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id m101sm18083986pjb.2.2019.05.26.22.36.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 26 May 2019 22:36:09 -0700 (PDT)
+Date:   Sun, 26 May 2019 22:36:07 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Scott Branden <scott.branden@broadcom.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 3/3] soc: qcom: mdt_loader: add offset to
+ request_firmware_into_buf
+Message-ID: <20190527053607.GV31438@minitux>
+References: <20190523025113.4605-1-scott.branden@broadcom.com>
+ <20190523025113.4605-4-scott.branden@broadcom.com>
+ <20190523055212.GA22946@kroah.com>
+ <c12872f5-4dc3-9bc4-f89b-27037dc0b6ff@broadcom.com>
+ <20190523165605.GB21048@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190522194732.25704-1-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20190523165605.GB21048@kroah.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-05-19, 14:47, Pierre-Louis Bossart wrote:
-> Now that we are done with cleanups, we can start fixing the code with
-> actual semantic or functional changes.
-> 
-> This patchset corrects issues with Intel BIOS and hardware properties
-> that prevented a successful init, aligns the code with the MIPI DisCo
-> spec, adds rate-limiting for frequent errors and adds checks on number
-> of links and PDIs.
-> 
-> With all these changes, the hardware can be initialized correctly and
-> modules can be added/removed without issues on WhiskyLake and
-> IceLake.
-> 
-> Parts of this code was initially written by my Intel colleagues Vinod
-> Koul, Sanyog Kale, Shreyas Nc and Hardik Shah, who are either no
-> longer with Intel or no longer involved in SoundWire development. When
-> relevant, I explictly added a note in commit messages to give them
-> credit for their hard work, but I removed their signed-off-by tags to
-> avoid email bounces and avoid spamming them forever with SoundWire
-> patches.
+On Thu 23 May 09:56 PDT 2019, Greg Kroah-Hartman wrote:
 
-Applied all, thanks
--- 
-~Vinod
+> On Thu, May 23, 2019 at 09:41:49AM -0700, Scott Branden wrote:
+> > Hi Greg,
+> > 
+> > On 2019-05-22 10:52 p.m., Greg Kroah-Hartman wrote:
+> > > On Wed, May 22, 2019 at 07:51:13PM -0700, Scott Branden wrote:
+> > > > Adjust request_firmware_into_buf API to allow for portions
+> > > > of firmware file to be read into a buffer.  mdt_loader still
+> > > > retricts request fo whole file read into buffer.
+> > > > 
+> > > > Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+> > > > ---
+> > > >   drivers/soc/qcom/mdt_loader.c | 7 +++++--
+> > > >   1 file changed, 5 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+> > > > index 1c488024c698..ad20d159699c 100644
+> > > > --- a/drivers/soc/qcom/mdt_loader.c
+> > > > +++ b/drivers/soc/qcom/mdt_loader.c
+> > > > @@ -172,8 +172,11 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
+> > > >   		if (phdr->p_filesz) {
+> > > >   			sprintf(fw_name + fw_name_len - 3, "b%02d", i);
+> > > > -			ret = request_firmware_into_buf(&seg_fw, fw_name, dev,
+> > > > -							ptr, phdr->p_filesz);
+> > > > +			ret = request_firmware_into_buf
+> > > > +						(&seg_fw, fw_name, dev,
+> > > > +						 ptr, phdr->p_filesz,
+> > > > +						 0,
+> > > > +						 KERNEL_PREAD_FLAG_WHOLE);
+> > > So, all that work in the first 2 patches for no real change at all?  Why
+> > > are these changes even needed?
+> > 
+> > The first two patches allow partial read of files into memory.
+> > 
+> > Existing kernel drivers haven't need such functionality so, yes, there
+> > should be no real change
+> > 
+> > with first two patches other than adding such partial file read support.
+> > 
+> > We have a new driver in development which needs partial read of files
+> > supported in the kernel.
+> 
+> As I said before, I can not take new apis without any in-kernel user.
+> So let's wait for your new code that thinks it needs this, and then we
+> will be glad to evaluate all of this at that point in time.
+> 
+
+The .mdt files are ELF files split to avoid having to allocate large
+(5-60MB) chunks of temporary firmware buffers while installing the
+segments.
+
+But for multiple reasons it would be nice to be able to load the
+non-split ELF files and the proposed interface would allow this.
+
+So I definitely like the gist of the series.
+
+> To do so otherwise is to have loads of unused "features" aquiring cruft
+> in the kernel source, and you do not want that.
+> 
+
+Agreed.
+
+I'll take the opportunity and see if I can implement this (support for
+non-split Qualcomm firmware) based on the patches in this series.
+
+Regards,
+Bjorn
