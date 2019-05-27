@@ -2,123 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C15D02B2B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:07:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D20A2B2C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:08:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfE0LHx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 07:07:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57840 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbfE0LHs (ORCPT
+        id S1726976AbfE0LIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 07:08:20 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33778 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726476AbfE0LIT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 07:07:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tS6RAB6sVg+kJ3U+MKfWQpKGE8UFNU5HfgzkbdPGAmk=; b=G3MGG0KGi1GEDMk45x5Cqe45DL
-        i0C3iJCVGoqUnvkxkTg7LuUsAHIlhf/q6tnzqV7OQk6yQzEucjIkE7ebtEduJ3hfkN8ANGDgpEng/
-        tgGvJkxZigUcLf0dxqgruti/mlKNiQCSiVCVbERcp5JIIzCUibSd+YVBkJ4LCdniaM+TCd/OTKIzY
-        TQpV8LO9hP1s9q+/vVg+pKKCT1Ijm/5C1QDMv4q0hAt4y2cCgkIMyiD1YEgNziBpQWkzHe4tUGlb3
-        IYWljMTTkycEty5eFrlGN8vTqajO19PD+3P66TtSUxgj1Wi7OX4ayOm6LM3wHqC7RiPDxMbG0CLdT
-        0dWtbTfw==;
-Received: from [177.159.249.4] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hVDTn-00061x-OS; Mon, 27 May 2019 11:07:47 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hVDTi-0002cu-RM; Mon, 27 May 2019 08:07:42 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Joel Nider <joeln@il.ibm.com>
-Subject: [PATCH 5/5] docs: requirements.txt: recommend Sphinx 1.7.9
-Date:   Mon, 27 May 2019 08:07:41 -0300
-Message-Id: <2020d45c8f7ed71d5f66ba5d925ecdd81e044a9d.1558955082.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1558955082.git.mchehab+samsung@kernel.org>
-References: <cover.1558955082.git.mchehab+samsung@kernel.org>
+        Mon, 27 May 2019 07:08:19 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y17so3899079lfe.0;
+        Mon, 27 May 2019 04:08:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Amea0yxkLSVnpaE1taY7uaOdM5gfTzcYzLxuO6OKCas=;
+        b=BKs52VrGHojs+UDliJtM01DfUgVVHdsVVD5nzpm0ePBH9WsHF4xQhIyZCjdFlX9kvs
+         FD9qyFI7iZBjboRFl5Bl8uFNTTibGtV6bbBqF+L8/nqI4KWZla1bXFeB/JXayox5Fo7F
+         HrYumraLrj9FN3OK1AwuMZsFEgw84cK6wvRTBNtuY5OMvNd8biBtGqpCugtISBAe3nj/
+         mlgNFp+R8J4ve/Vc4uj8InYRrH16hg+GIl7O1yXTNBLaz7xPkr8txyRfYFogwU2mrb5w
+         A3wUlTFkWLsewA5h4zEvJTE6gnaFEkUmhmjpzV50zF13PcSKB+gi0Jpzf6ftC3eAYh+O
+         ax1g==
+X-Gm-Message-State: APjAAAUeXTNDE0xSOAiSALUTpYYSXqsrLsXQHulUthnOCkmduoYzQHP5
+        dnQsBa28ly4aemdAFlucVLeDx5iMi8hytC46y97JlYqS
+X-Google-Smtp-Source: APXvYqwcDy3XDaO0BzfXYp7vMfly1veQPO3ujWmlKLecl2HkSq5qfBAdcdVmkJpkAvRKefsRCQFJTTLWQ/j2c66om+Y=
+X-Received: by 2002:ac2:546a:: with SMTP id e10mr3644980lfn.75.1558955298038;
+ Mon, 27 May 2019 04:08:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190525120155.108948-1-wangkefeng.wang@huawei.com>
+In-Reply-To: <20190525120155.108948-1-wangkefeng.wang@huawei.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 27 May 2019 13:08:05 +0200
+Message-ID: <CAMuHMdX=o+gT6fbpZcj8jQbHi9LJci9CX72DG5j+DKYxuSkYvQ@mail.gmail.com>
+Subject: Re: [PATCH] drivers: base: power: Use of_clk_get_parent_count()
+To:     Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As discussed at the linux-doc ML, while we'll still support
-version 1.3, it is time to recommend a more modern version.
+Hi Kefeng,
 
-So, let's switch the minimal requirements to Sphinx 1.7.9,
-as it has the "-jauto" flag, with makes a lot faster when
-building documentation.
+On Sat, May 25, 2019 at 1:54 PM Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
+> Use of_clk_get_parent_count() instead of open coding.
+>
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/doc-guide/sphinx.rst    | 17 ++++++++---------
- Documentation/sphinx/requirements.txt |  4 ++--
- 2 files changed, 10 insertions(+), 11 deletions(-)
+Thanks for your patch!
 
-diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
-index c039224b404e..4ba081f43e98 100644
---- a/Documentation/doc-guide/sphinx.rst
-+++ b/Documentation/doc-guide/sphinx.rst
-@@ -27,8 +27,7 @@ Sphinx Install
- ==============
- 
- The ReST markups currently used by the Documentation/ files are meant to be
--built with ``Sphinx`` version 1.3 or higher. If you desire to build
--PDF output, it is recommended to use version 1.4.6 or higher.
-+built with ``Sphinx`` version 1.3 or higher.
- 
- There's a script that checks for the Sphinx requirements. Please see
- :ref:`sphinx-pre-install` for further details.
-@@ -56,13 +55,13 @@ or ``virtualenv``, depending on how your distribution packaged Python 3.
-       those expressions are written using LaTeX notation. It needs texlive
-       installed with amdfonts and amsmath in order to evaluate them.
- 
--In summary, if you want to install Sphinx version 1.4.9, you should do::
-+In summary, if you want to install Sphinx version 1.7.9, you should do::
- 
--       $ virtualenv sphinx_1.4
--       $ . sphinx_1.4/bin/activate
--       (sphinx_1.4) $ pip install -r Documentation/sphinx/requirements.txt
-+       $ virtualenv sphinx_1.7.9
-+       $ . sphinx_1.7.9/bin/activate
-+       (sphinx_1.7.9) $ pip install -r Documentation/sphinx/requirements.txt
- 
--After running ``. sphinx_1.4/bin/activate``, the prompt will change,
-+After running ``. sphinx_1.7.9/bin/activate``, the prompt will change,
- in order to indicate that you're using the new environment. If you
- open a new shell, you need to rerun this command to enter again at
- the virtual environment before building the documentation.
-@@ -105,8 +104,8 @@ command line options for your distro::
- 	You should run:
- 
- 		sudo dnf install -y texlive-luatex85
--		/usr/bin/virtualenv sphinx_1.4
--		. sphinx_1.4/bin/activate
-+		/usr/bin/virtualenv sphinx_1.7.9
-+		. sphinx_1.7.9/bin/activate
- 		pip install -r Documentation/sphinx/requirements.txt
- 
- 	Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pre-install line 468.
-diff --git a/Documentation/sphinx/requirements.txt b/Documentation/sphinx/requirements.txt
-index 742be3e12619..14e29a0ae480 100644
---- a/Documentation/sphinx/requirements.txt
-+++ b/Documentation/sphinx/requirements.txt
-@@ -1,3 +1,3 @@
--docutils==0.12
--Sphinx==1.4.9
-+docutils
-+Sphinx==1.7.9
- sphinx_rtd_theme
+> --- a/drivers/base/power/clock_ops.c
+> +++ b/drivers/base/power/clock_ops.c
+> @@ -195,8 +195,7 @@ int of_pm_clk_add_clks(struct device *dev)
+>         if (!dev || !dev->of_node)
+>                 return -EINVAL;
+>
+> -       count = of_count_phandle_with_args(dev->of_node, "clocks",
+> -                                          "#clock-cells");
+> +       count = of_clk_get_parent_count(dev->of_node);
+>         if (count <= 0)
+>                 return -ENODEV;
+
+
+Given of_clk_get_parent_count() is provided by <linux/of_clk.h>, I think
+you should add an include for that.
+
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.21.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
