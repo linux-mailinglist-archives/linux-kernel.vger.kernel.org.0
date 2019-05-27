@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 772432B016
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 10:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D5D12B00D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 10:23:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfE0IXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 04:23:30 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55454 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfE0IXK (ORCPT
+        id S1726634AbfE0IXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 04:23:16 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36956 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfE0IXL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 04:23:10 -0400
-Received: by mail-wm1-f67.google.com with SMTP id u78so2344347wmu.5
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 01:23:09 -0700 (PDT)
+        Mon, 27 May 2019 04:23:11 -0400
+Received: by mail-wr1-f65.google.com with SMTP id h1so1843844wro.4
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 01:23:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=omOq/JzjjXBt1z2M772CdUZvGc6HDPhhwS/eGDptw3A=;
-        b=FjKzq8TTsoWBgk4mu/GDTvAuxM4Ls9tSWI59jJoe94tDs04gg232DMCf7Famp8QO8n
-         Q4bhi/UIAPZWtSFFKuOZWLO2L6/3Avml1T1cC1PzDoJEp1BRI59efpkNpxpZqzNXf58+
-         YO7oKuX8xQbAwyUxYYgjmAOiwM1KquVzHlwGJKE70/gbbZkaYzzgEYiuL2Se+dLTDxQU
-         nZx8C0MO2Bu6Sb5lyHjVa5yNyS+Sx6AG1sIqr83JIH57MsLdVsOGPYawcRofquMgfpYe
-         6jy1oJQf/VNyjXNawFP45wi44yarrcenhxefteVfHS6Uh7laif+nPQWBGsw5cAE9LaWL
-         URDg==
+        bh=1P0YZo/wN9Hi4i3wVVtvZOC+PYc4GxlayMQxrDs2oJw=;
+        b=0r29VISI/sleJKF6HyZxAFrh2kh/YfBUsyXfqB+Uq7gencb0DLdj6ynAmT6lnnhfVI
+         u6b7Hdtwm11DUvMNlrTyiwVtmth2RmBJFfPktxKMqE1Ya8OFbJhTxzCzwAePG714BE6G
+         L8Er0ZafhWTDV+ungMYqXp40+4C7//Ipfn7Yorcz4A8bSwgJKW/u3yOPpvVsPD/05cyd
+         PXn/nY7SdkDO6B75GJFJUXr5iGEfv5muqWOXlz8BiztUeqCTDZ1lMJyMsuBx71jDnpi4
+         fRTAiFKEXtmJL267zY7ArQNWxUBTrqnjTgrmuHCeGY6x5SqsGsj9so5k7Roqwt8vfT6U
+         vCMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=omOq/JzjjXBt1z2M772CdUZvGc6HDPhhwS/eGDptw3A=;
-        b=NlleGymsv1hndr7ufwtwRJ952/Y1nSZJSEQz1ezf/6XVAoTHLqC3NhxNUpaMFZHoaY
-         jnZj8V7Y4rjlD27fXU20gtMAUNqeme65umONDiDoq0EFoOALPCMrPDTocXFb1wtd7ZMH
-         C/USotXTQeAHnzwsy2cxQfHBrpxViaGfOFhAa641HEm4JfIUKEgS8zfz4e31+ZgF2PBg
-         vUFYONOfCpsy6aBbNJ2I7CES0s47W6BcUrfW1IMWcDPu8cwSqGL1rlVm+fbNdDcJQF7Q
-         poVtctNtsSiwRM47XG3WbDix/F3KESkXT6+6XqCTigqUgYh2TKVlTzFAwtJq1M6ZrmiZ
-         H+XA==
-X-Gm-Message-State: APjAAAWhTjbS5/Joayj5eolAVtbj5rz6ounRa6I7D/pp3+1mb8zkVLAm
-        VYdW6X/4ue+Bmsfc58e0S3JQ6A==
-X-Google-Smtp-Source: APXvYqw5I9nI20nY+Mj14/1S+PWhVrqS9ssbcSuJLzY6vmxi0EmMFZ4YTlP7p1LnQstfSNZWxPv2Vg==
-X-Received: by 2002:a1c:eb07:: with SMTP id j7mr24735522wmh.138.1558945388585;
-        Mon, 27 May 2019 01:23:08 -0700 (PDT)
+        bh=1P0YZo/wN9Hi4i3wVVtvZOC+PYc4GxlayMQxrDs2oJw=;
+        b=NRFNaD5+K+sHmzpPUk7h9nzCkGIoTobqwANj/18tv6xstQRLcJlx0/faNUL/7Hw3OZ
+         y8LKl22tJtTLnRO1AJ4SeldAWhc38PfdOyiuJAC7J5exT7M/ZF7Fu11mk49ke3deg5ky
+         oGEX+Wr46nF218m+M3n/g16AqMKWOqZUBZnissfg5d8UqLELlcLopK/CZeNjCDlAQA0O
+         97H1y2X73itAMAnRm9Ze5+3igHJzCJNYNDCalTVGeoXfoV/YsIaZobPk4t6fhw4B5AvL
+         QXZYb6Lr0KG0aGyLRNPc6Dv4ZLshvSWjzImWd437fR/VKXiioMicfm9OWrYnCDjc0LpT
+         ukiw==
+X-Gm-Message-State: APjAAAW5JrmEmtIBr1QZxizarx7YxS2MyVHMs2NbMnQ9XV5IFPNKkq+G
+        4ap6csztxXOKjXJ36ai+KAFSwQ==
+X-Google-Smtp-Source: APXvYqyNwI/ePsL+r12MfFxLaq+cmuaSjCI/uIy3GarP8rEJKG3oAJbqaBtNW6Dt2CCfrWekKVz07g==
+X-Received: by 2002:adf:ea90:: with SMTP id s16mr7059760wrm.221.1558945389541;
+        Mon, 27 May 2019 01:23:09 -0700 (PDT)
 Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id n5sm14482754wrj.27.2019.05.27.01.23.07
+        by smtp.gmail.com with ESMTPSA id n5sm14482754wrj.27.2019.05.27.01.23.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 01:23:08 -0700 (PDT)
+        Mon, 27 May 2019 01:23:09 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -54,9 +54,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH v5 4/5] ARM: dts: da850-evm: enable cpufreq
-Date:   Mon, 27 May 2019 10:22:58 +0200
-Message-Id: <20190527082259.29237-5-brgl@bgdev.pl>
+Subject: [RESEND PATCH v5 5/5] ARM: davinci_all_defconfig: Enable CPUFREQ_DT
+Date:   Mon, 27 May 2019 10:22:59 +0200
+Message-Id: <20190527082259.29237-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190527082259.29237-1-brgl@bgdev.pl>
 References: <20190527082259.29237-1-brgl@bgdev.pl>
@@ -67,43 +67,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: David Lechner <david@lechnology.com>
 
-Enable cpufreq-dt support for da850-evm. The cvdd is supplied by the
-tps65070 pmic with configurable output voltage. By default da850-evm
-boards support frequencies up to 375MHz so enable this operating
-point.
+This sets CONFIG_CPUFREQ_DT=m in davinci_all_defconfig. This is used for
+frequency scaling on device tree boards.
 
+Signed-off-by: David Lechner <david@lechnology.com>
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Adam Ford <aford173@gmail.com>
 ---
- arch/arm/boot/dts/da850-evm.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/configs/davinci_all_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
-index f04bc3e15332..f94bb38fdad9 100644
---- a/arch/arm/boot/dts/da850-evm.dts
-+++ b/arch/arm/boot/dts/da850-evm.dts
-@@ -191,6 +191,19 @@
- 	};
- };
- 
-+&cpu {
-+	cpu-supply = <&vdcdc3_reg>;
-+};
-+
-+/*
-+ * The standard da850-evm kits and SOM's are 375MHz so enable this operating
-+ * point by default. Higher frequencies must be enabled for custom boards with
-+ * other variants of the SoC.
-+ */
-+&opp_375 {
-+	status = "okay";
-+};
-+
- &sata {
- 	status = "okay";
- };
+diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
+index 4a8cad4d3707..9a32a8c0f873 100644
+--- a/arch/arm/configs/davinci_all_defconfig
++++ b/arch/arm/configs/davinci_all_defconfig
+@@ -45,6 +45,7 @@ CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE=y
+ CONFIG_CPU_FREQ_GOV_PERFORMANCE=m
+ CONFIG_CPU_FREQ_GOV_POWERSAVE=m
+ CONFIG_CPU_FREQ_GOV_ONDEMAND=m
++CONFIG_CPUFREQ_DT=m
+ CONFIG_CPU_IDLE=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
 -- 
 2.21.0
 
