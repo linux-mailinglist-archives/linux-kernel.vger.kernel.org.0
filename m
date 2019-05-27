@@ -2,63 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 927302C1A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFD672BA10
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 20:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfE1IuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 04:50:07 -0400
-Received: from m9784.mail.qiye.163.com ([220.181.97.84]:52779 "EHLO
-        m9784.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbfE1IuH (ORCPT
+        id S1727247AbfE0SX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 14:23:57 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42213 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfE0SX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 04:50:07 -0400
-Received: from localhost (unknown [120.132.1.243])
-        by m9784.mail.qiye.163.com (Hmail) with ESMTPA id 4128A41B45;
-        Tue, 28 May 2019 16:50:03 +0800 (CST)
-Date:   Tue, 28 May 2019 02:23:23 +0800
-From:   Yao Liu <yotta.liu@ucloud.cn>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        nbd@other.debian.org, linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH 2/3] nbd: notify userland even if nbd has already
- disconnected
-Message-ID: <20190527182323.GB20702@192-168-150-246.7~>
-References: <1558691036-16281-1-git-send-email-yotta.liu@ucloud.cn>
- <1558691036-16281-2-git-send-email-yotta.liu@ucloud.cn>
- <20190524130856.zod5agp7hk74pcnr@MacBook-Pro-91.local.dhcp.thefacebook.com>
+        Mon, 27 May 2019 14:23:56 -0400
+Received: by mail-ot1-f65.google.com with SMTP id i2so15511759otr.9
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 11:23:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yAp05ZteI172+2ehJDHx5CjetukVgwIirAu6MSeV5Bc=;
+        b=gXbrkZHeoUgjKSE7PIBXVYeuyn93nqDPVilRWjegA9vEdkVjJKpM5Dp8XcYoYu3P60
+         2giEMyye9CnFMs4k6l4Zb8ONeJZofSJujLVuioZWKtcl9X3VDmaIGZR5jFWf8g2jWtyM
+         PhtdgOcbrJeF0YCo4lC0xAWPDy68kwPqvx2RiPJ9cTUbePW7R/nMC2SBZfWf1qCsWPLo
+         9XnAlOHhUd/ETM4QBLX8VZ9KK/SKJNZRDpuety3LopMHVSftzcyG2mOkncv0/K67gS2v
+         VbrUy1W3wzKZzeBe7blRPay9GZeW5Pa2qc0ORlNgCdk0raPeD+fKgV++Qp/2LTYsrMWD
+         xfiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yAp05ZteI172+2ehJDHx5CjetukVgwIirAu6MSeV5Bc=;
+        b=uL2BkQPFQ5xT/K8QxAh99NHD/lL4CkJ/wxwH3Sb+j3JZXOPbwmwa+Xs3ksX8hiItdY
+         YMqjIo8cNX3RM6X3bMLwWU1MAyvJys+7RcLC3QMpbsu12ToMppIzjCskkUWhvW8vLxWq
+         9f7ueYHWdCXR6qCGJMhr5SR+ra5EIt/kHOcD1QnfFCZrKV/NHfVInoypdHGBKJ1qauqV
+         RnCTiBgSMhbcerMOEBXgy2gQ9xhLIkgRjtmNvLi77wQAVjSTVIO+EsaOj4UYoNmkyJL3
+         gaTbE6VYpmv9DvhsbOIsQ+RJ5vgx2eD416GvkENn+a2q6CvZoT8stP5TZGnPwW987rAv
+         dQ+A==
+X-Gm-Message-State: APjAAAVF7PG8wnjfO/gFmKHiSBbqkQB/bt/3rDTuilF1ziS3EPo9Q1LF
+        Oa+TDLnF2D+yjq06xbCh1LP6nd0/3h+oDR5dNF8=
+X-Google-Smtp-Source: APXvYqysIaOypAAttCGsEzcLi66R8e4Aznpcqh9wB/pRH/Lk/MVeM9y6pA18bswmjtVq11U5LXpfUShz+nKPjQWx0/Y=
+X-Received: by 2002:a9d:32a6:: with SMTP id u35mr61348755otb.81.1558981436041;
+ Mon, 27 May 2019 11:23:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524130856.zod5agp7hk74pcnr@MacBook-Pro-91.local.dhcp.thefacebook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-HM-Spam-Status: e1kIGBQJHllBWUtVQ01DQkJCTExCSUlPSEJNWVdZKFlBSUI3V1ktWUFJV1
-        kJDhceCFlBWTU0KTY6NyQpLjc#WQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6M0k6Pio4HDg5OiM*SBc3Py4C
-        Qh0wCyxVSlVKTk5CS0hIT0tIT0lJVTMWGhIXVQIUDw8aVRcSDjsOGBcUDh9VGBVFWVdZEgtZQVlK
-        SUtVSkhJVUpVSU9IWVdZCAFZQUlIQk43Bg++
-X-HM-Tid: 0a6afda1d7ae2086kuqy4128a41b45
+References: <20190527132200.17377-1-narmstrong@baylibre.com> <20190527132200.17377-7-narmstrong@baylibre.com>
+In-Reply-To: <20190527132200.17377-7-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 27 May 2019 20:23:45 +0200
+Message-ID: <CAFBinCA=habC6ytrMG2HYw=e-ikmNNgy5jzUswZ-44K76r8LeQ@mail.gmail.com>
+Subject: Re: [PATCH 06/10] arm64: dts: meson-gxbb-vega-s95: add HDMI nodes
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
+        christianshewitt@gmail.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 09:08:58AM -0400, Josef Bacik wrote:
-> On Fri, May 24, 2019 at 05:43:55PM +0800, Yao Liu wrote:
-> > Some nbd client implementations have a userland's daemon, so we should
-> > inform client daemon to clean up and exit.
-> > 
-> > Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
-> 
-> Except the nbd_disconnected() check is for the case that the client told us
-> specifically to disconnect, so we don't want to send the notification to
-> re-connect because we've already been told we want to tear everything down.
-> Nack to this as well.  Thanks,
-> 
-> Josef
-> 
-
-But in userland, client daemon process and process which send disconnect
-command are not same process, so they are not clear to each other, so
-client daemon expect driver inform it to exit.
-In addition, client daemon will get nbd status with nbd_genl_status interface
-after it get notified and it should not re-connect if status connected == 0
+On Mon, May 27, 2019 at 3:23 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Add HDMI nodes to support graphics on Vega S95
+>
+> Suggested-by: Christian Hewitt <christianshewitt@gmail.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+just like on all other boards, so:
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
