@@ -2,84 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79C262B735
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 16:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F9272B73A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 16:04:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbfE0OEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 10:04:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38206 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726184AbfE0OEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 10:04:05 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B88047EBC1;
-        Mon, 27 May 2019 14:04:04 +0000 (UTC)
-Received: from gondolin (ovpn-204-109.brq.redhat.com [10.40.204.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E18BF7854F;
-        Mon, 27 May 2019 14:03:58 +0000 (UTC)
-Date:   Mon, 27 May 2019 16:03:55 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     "Thomas Meyer" <thomas@m3y3r.de>
-Cc:     alex.williamson@redhat.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: your patch
-Message-ID: <20190527160355.1cd446c4.cohuck@redhat.com>
-In-Reply-To: <E1hUrZM-0007qA-Q8@sslproxy01.your-server.de>
-References: <E1hUrZM-0007qA-Q8@sslproxy01.your-server.de>
-Organization: Red Hat GmbH
+        id S1726795AbfE0OEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 10:04:45 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:32824 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726184AbfE0OEo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 10:04:44 -0400
+Received: by mail-pg1-f194.google.com with SMTP id h17so9194977pgv.0;
+        Mon, 27 May 2019 07:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=yp6vwmQ3UFg1RpTqex0tXos3VmAEaOYrUMRIMtSICN0=;
+        b=juJeAFheYBekNJQSoLUu8sN+VcoG8lAExtn/Q2xLayDMWJ+rVcSx3A5dew4RTixMRj
+         3qh6nUbfTgGBLg5BZfcOuKzBjLmzObH911VnvKzeF7GZN/QjZ4i8sivx8htfkHnk9AL1
+         GBP3RqKQ2Q63Vj8j+OpR1cY3C1XHdFBRD8EAF+1xAzUvAlVTpsLHjoIQP33L4h6RVRA5
+         lmGhtSuT7hPuNZZUHpEW9qVdURrIY8fxTcCDMEaI81TEn1/PBlUNqhupoOgzgx9Oac6L
+         O1JVD9mdmfHx+9Aji6dPIRdU/bggPeD5quZ8hmUvrqvH47mdFk36XiZ/GVaYVqEyS6pZ
+         P/6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=yp6vwmQ3UFg1RpTqex0tXos3VmAEaOYrUMRIMtSICN0=;
+        b=Dhy9YHUEKM7HkjKznREQ2HhWpXjPp5sq8/P4IneW7IfxGS8pjyxZEcuXnmZLMGkLSJ
+         Jgmesrpx6YGtfxiIX7OFtwhWhUNBhJ+ynoKKTNBLScf15XGgROOL/vP5biymQs8mVxMz
+         PcFQPft+zimfqvX+gpJH41D0mAvzQGHyy4RaB+kmVs5e8BS/hw/QyHPtplNYX8JD9N05
+         mo307EeruQKPiD73yHqR5aRtQobyY/MLlWLcjgrLwKvdNCEo3QvoHclvkN+Q1LJoPgf5
+         wz+cMOPA4scFXWkiuzwc57I1LzGJV3rGqsW9namc78ak5LxqHbpHFMVzPDu5dqW0au8J
+         NOeA==
+X-Gm-Message-State: APjAAAWKf23VnrfiLgclyf80kqYdvrLtIHWuS8lO5/CxvsXxY9D58qCE
+        BGqEDfCdhzhCS7My8FFtUdA=
+X-Google-Smtp-Source: APXvYqxtbBeuoDpbhTG5L3tAXZltOcherIxuW06KFPkKsCurMO/cw0DJ9i8Nt4ta3zMX7YyoNsVJ8A==
+X-Received: by 2002:a63:e603:: with SMTP id g3mr17312029pgh.167.1558965883538;
+        Mon, 27 May 2019 07:04:43 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id b35sm9951845pjc.15.2019.05.27.07.04.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 07:04:42 -0700 (PDT)
+Date:   Mon, 27 May 2019 22:04:26 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: fix a missing-free bug in clk_cpy_name()
+Message-ID: <20190527140426.GA6078@zhanggen-UX430UQ>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 27 May 2019 14:04:04 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 26 May 2019 13:44:04 +0200
-"Thomas Meyer" <thomas@m3y3r.de> wrote:
+In clk_cpy_name(), '*dst_p'('parent->name'and 'parent->fw_name') and 
+'dst' are allcoted by kstrdup_const(). According to doc: "Strings 
+allocated by kstrdup_const should be freed by kfree_const". So 
+'parent->name', 'parent->fw_name' and 'dst' should be freed.
 
-> From thomas@m3y3r.de Sun May 26 00:13:26 2019
-> Subject: [PATCH] vfio-pci/nvlink2: Use vma_pages function instead of explicit
->  computation
-> To: alex.williamson@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-> Content-Type: text/plain; charset="UTF-8"
-> Mime-Version: 1.0
-> Content-Transfer-Encoding: 8bit
-> X-Patch: Cocci
-> X-Mailer: DiffSplit
-> Message-ID: <1558822461341-1674464153-1-diffsplit-thomas@m3y3r.de>
-> References: <1558822461331-726613767-0-diffsplit-thomas@m3y3r.de>
-> In-Reply-To: <1558822461331-726613767-0-diffsplit-thomas@m3y3r.de>
-> X-Serial-No: 1
-
-Hi,
-
-some kind of accident seems to have happened to your patch... maybe the
-missing colon after the 'From'?
-
-> 
-> Use vma_pages function on vma object instead of explicit computation.
-> 
-> Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
-> ---
-> 
-> diff -u -p a/drivers/vfio/pci/vfio_pci_nvlink2.c b/drivers/vfio/pci/vfio_pci_nvlink2.c
-> --- a/drivers/vfio/pci/vfio_pci_nvlink2.c
-> +++ b/drivers/vfio/pci/vfio_pci_nvlink2.c
-> @@ -161,7 +161,7 @@ static int vfio_pci_nvgpu_mmap(struct vf
->  
->  	atomic_inc(&data->mm->mm_count);
->  	ret = (int) mm_iommu_newdev(data->mm, data->useraddr,
-> -			(vma->vm_end - vma->vm_start) >> PAGE_SHIFT,
-> +			vma_pages(vma),
->  			data->gpu_hpa, &data->mem);
->  
->  	trace_vfio_pci_nvgpu_mmap(vdev->pdev, data->gpu_hpa, data->useraddr,
-
-The change looks good to me.
-
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+---
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index aa51756..85c4d3f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3435,6 +3435,7 @@ static int clk_cpy_name(const char **dst_p, const char *src, bool must_exist)
+ 	if (!dst)
+ 		return -ENOMEM;
+ 
++	kfree_const(dst);
+ 	return 0;
+ }
+ 
+@@ -3491,6 +3492,8 @@ static int clk_core_populate_parent_map(struct clk_core *core)
+ 				kfree_const(parents[i].name);
+ 				kfree_const(parents[i].fw_name);
+ 			} while (--i >= 0);
++			kfree_const(parent->name);
++			kfree_const(parent->fw_name);
+ 			kfree(parents);
+ 
+ 			return ret;
+---
