@@ -2,93 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EA9D2B842
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3304D2B851
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:20:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbfE0PTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 11:19:15 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39178 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726645AbfE0PTD (ORCPT
+        id S1727065AbfE0PUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 11:20:10 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:57512 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726996AbfE0PUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 11:19:03 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w22so9270921pgi.6;
-        Mon, 27 May 2019 08:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding:user-agent;
-        bh=wKRYLSYKzE2k4jFHpZmRlCn5LnNbsStdg5D8PnYwlpE=;
-        b=q7Xd8Lebsp1l3HocpLrwjIl0tM4rnRkL6po/MBApZ5k16ZVpXwa4aXsP2VNvOuIuXC
-         Je4JosdBHlyx8uMt4k0yidbWD72peNmSMiPm4ioIz7N3PqL2WyXC6FdfhfzpNsoELPOi
-         rdwNK8SSP0FYy2TMNgByTWF2eOkEeRYpCuTuvQi1llZE/XWNVqi2piTU6d3ySUaozZQI
-         2phU5bXOWeGHfHexudFhebBo5tMjRtaVpjsH7kQSNI/U5n2IVU6+/kriyR2M2qnFRYdw
-         y0qXo387I9QuTRjr0s4eQkSkYkCBCffEdn7iXisSGENViN37J+bJB2FuHkMrP1gT4U96
-         v/PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding:user-agent;
-        bh=wKRYLSYKzE2k4jFHpZmRlCn5LnNbsStdg5D8PnYwlpE=;
-        b=RJk9070P9764wT5R6f23J9cyT/k4sAtkCyGJFMlACfogUoQVr5tSQ43v2y01duSW+Z
-         HMwaif20dIhT7lYEeG89LDCCWd2n6T4ZscehOE3/BzbQ8IQSvDxjaseKIicaWOlvXxuI
-         sNdOm+gt7h0ibbTUNP0eHd/6gvjHCjdnEKH1WdHE6dTVWwgFF6eOfHksR2EFE42x2exx
-         j1fou4k4dhEnBVl/21nmKV3Aa9Mf4n0+5OLgrfPbF58qeYdLk9g+nF5gUDohOB95wee/
-         /9ZaU2wOsJ92HZnXBPmUWeVcg7Xzk9M1A9pq6fO0wgzEfSZc/Vyil/406AIpk90HLze6
-         GVYA==
-X-Gm-Message-State: APjAAAUdRZSP/GloaIKjJtiUBxZKdiCJ0Fnb18u5D+8HGZG3ut1e8JJ+
-        FS459EaY4hrWqbqqEXP/GSeEOrLP
-X-Google-Smtp-Source: APXvYqxMehS8QCzhcyqJ0WLGpmftug/4/G3fWnhju+fhqevVuE4AIJsX7qwJq+1QrO00UWRwmm2wMw==
-X-Received: by 2002:a17:90b:14e:: with SMTP id em14mr32106670pjb.19.1558970341885;
-        Mon, 27 May 2019 08:19:01 -0700 (PDT)
-Received: from ip-172-31-44-144.us-west-2.compute.internal (ec2-54-186-128-88.us-west-2.compute.amazonaws.com. [54.186.128.88])
-        by smtp.gmail.com with ESMTPSA id f20sm93168pgf.59.2019.05.27.08.19.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 May 2019 08:19:00 -0700 (PDT)
-Date:   Mon, 27 May 2019 15:18:59 +0000
-From:   Alakesh Haloi <alakesh.haloi@gmail.com>
-To:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Xu <peterx@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shuah Khan <shuah@kernel.org>
-Subject: [PATCH] userfaultfd: selftest: fix compiler warning
-Message-ID: <20190527151859.GA3217@ip-172-31-44-144.us-west-2.compute.internal>
+        Mon, 27 May 2019 11:20:02 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4RFJFZq030079;
+        Mon, 27 May 2019 10:19:34 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2sq24q28p5-1;
+        Mon, 27 May 2019 10:19:33 -0500
+Received: from EDIEX01.ad.cirrus.com (ediex01.ad.cirrus.com [198.61.84.80])
+        by mail4.cirrus.com (Postfix) with ESMTP id 8867A611C8AC;
+        Mon, 27 May 2019 10:20:24 -0500 (CDT)
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 27 May
+ 2019 16:19:32 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Mon, 27 May 2019 16:19:32 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 7A0ED44;
+        Mon, 27 May 2019 16:19:32 +0100 (BST)
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <wsa@the-dreams.de>, <mika.westerberg@linux.intel.com>
+CC:     <jarkko.nikula@linux.intel.com>,
+        <andriy.shevchenko@linux.intel.com>, <linux-i2c@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.tissoires@redhat.com>, <jbroadus@gmail.com>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH v2 1/6] i2c: core: Allow whole core to use i2c_dev_irq_from_resources
+Date:   Mon, 27 May 2019 16:19:27 +0100
+Message-ID: <20190527151932.14310-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=516 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905270108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes following compiler warning
+Remove the static from i2c_dev_irq_from _resources so that other parts
+of the core code can use this helper function.
 
-userfaultfd.c: In function ‘usage’:
-userfaultfd.c:126:2: warning: format not a string literal and no format
-	arguments [-Wformat-security]
-  fprintf(stderr, examples);
-
-Signed-off-by: Alakesh Haloi <alakesh.haloi@gmail.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- tools/testing/selftests/vm/userfaultfd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-index 5d1db824f73a..b3e6497b080c 100644
---- a/tools/testing/selftests/vm/userfaultfd.c
-+++ b/tools/testing/selftests/vm/userfaultfd.c
-@@ -123,7 +123,7 @@ static void usage(void)
- 	fprintf(stderr, "Supported <test type>: anon, hugetlb, "
- 		"hugetlb_shared, shmem\n\n");
- 	fprintf(stderr, "Examples:\n\n");
--	fprintf(stderr, examples);
-+	fprintf(stderr, "%s", examples);
- 	exit(1);
+Patch new since v1, factored out from Use available IRQ helper
+functions.
+
+Thanks,
+Charles
+
+ drivers/i2c/i2c-core-base.c | 4 ++--
+ drivers/i2c/i2c-core.h      | 2 ++
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+index d389d4fb0623a..84bf11b25a120 100644
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -687,8 +687,8 @@ static void i2c_dev_set_name(struct i2c_adapter *adap,
+ 		     i2c_encode_flags_to_addr(client));
  }
  
+-static int i2c_dev_irq_from_resources(const struct resource *resources,
+-				      unsigned int num_resources)
++int i2c_dev_irq_from_resources(const struct resource *resources,
++			       unsigned int num_resources)
+ {
+ 	struct irq_data *irqd;
+ 	int i;
+diff --git a/drivers/i2c/i2c-core.h b/drivers/i2c/i2c-core.h
+index c88cfef813431..8f3a08dc73a25 100644
+--- a/drivers/i2c/i2c-core.h
++++ b/drivers/i2c/i2c-core.h
+@@ -28,6 +28,8 @@ extern struct list_head	__i2c_board_list;
+ extern int		__i2c_first_dynamic_bus_num;
+ 
+ int i2c_check_7bit_addr_validity_strict(unsigned short addr);
++int i2c_dev_irq_from_resources(const struct resource *resources,
++			       unsigned int num_resources);
+ 
+ /*
+  * We only allow atomic transfers for very late communication, e.g. to send
 -- 
-2.17.1
+2.11.0
 
