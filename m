@@ -2,77 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5AA92AF5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 09:23:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9D7B2AF5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 09:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbfE0HXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 03:23:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32816 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726108AbfE0HXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 03:23:03 -0400
-Received: from localhost (unknown [84.241.203.246])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02B2D21734;
-        Mon, 27 May 2019 07:23:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558941782;
-        bh=DkUuoc02LMNVzqW31q31YJk6Lkll7SmCa0g24wRTrw0=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=HWyzED+XsXUB4UT+il2PmmV5ynBrIMCFuGKRXEr9/InHesUoAkR2w1L0gwxNH7lIR
-         a3cRoz/XuiUxk5qjuaAinh+IbkadXNEn6LA31A977Pda8e6csn7ApYXAhUnC1CJbqN
-         3mDC/07jYD70RYAm+ltyYc64shQHrnufhaXOthZw=
-Date:   Mon, 27 May 2019 09:22:58 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Jens Frederich <jfrederich@gmail.com>,
-        Daniel Drake <dsd@laptop.org>,
-        Jon Nettleton <jon.nettleton@gmail.com>
-Subject: Re: [PATCH 32/33] staging/olpc_dcon: Add drm conversion to TODO
-Message-ID: <20190527072258.GD7997@kroah.com>
-References: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
- <20190524085354.27411-33-daniel.vetter@ffwll.ch>
- <20190527071126.GL21222@phenom.ffwll.local>
+        id S1726470AbfE0HX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 03:23:27 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44589 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbfE0HX1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 03:23:27 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c5so6700889pll.11
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 00:23:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=prh0uJ2ftxqZOsyUAZqlgIZvwK7HkfsesW5zVqF193Q=;
+        b=G5ZYJlcHmbyc9z6HMPlqXQNOSYOSSZIP8I5jOB1MlGLTbCDk8GSoZ7BSKV9RYcinac
+         f2DhjeRU0gt2VC3B1jXc3H16bSj70OtXP8JJ8eAdrjvcsGV3y9S/CU7qVCM5uqoio1nX
+         bzqeFLb1RDP3k35EpPPgp05EUuKiCSCN8cQJpGAOXbiGvqclEgtNBd+ke6Y7WCzhC7yq
+         i+6I651do9j5P9Reh4v1L2gvdPiWonKs+fPGN33Llmelrm0xuicCVLa/T3xgengMr9U4
+         NOTTB4H1ReZP/SLrswwG6/GSUpMEdWp+uWrsOJDbo564w90XrId5YuDPTtlIMAToJfxN
+         bF6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=prh0uJ2ftxqZOsyUAZqlgIZvwK7HkfsesW5zVqF193Q=;
+        b=pzdRkZVqQBi3Wd425gMcNoq6sq5i6bapnsJJSdVWQa0xoysAnQtDx/bCXvOKjvs02Z
+         jHH4wh3Wm1DeXsR1sT66JSCHojndNqVZ/cWyWCTCHOVefjJLRqgzBkjaDYQqtbDTqcll
+         9YA0iL+fTqYBEUz0yxbEeIl1IetpeDiLsXpmmhT2ptnnZ2sqdvdKhfqzydE3NC+2f3jU
+         DG3GKt2abc6QdeajyCNK9xdYq0JXIwtVGyHr7bjTYsaczpacGl6u55GvVJHnEMQeG5jC
+         azHK7oQSCbNuaoKwUmM/rD83oHahpiXgAnhmY/+yKQhy/XlZhe3k/CzwwN/Y70Rvre4K
+         x3zQ==
+X-Gm-Message-State: APjAAAVtVtFhA1AXCvKS+hRfstrQ3YMLSRatdsKVX3D1B4JmBEhzkxD5
+        Hwvq0J/WecTa2CxJtExySA4=
+X-Google-Smtp-Source: APXvYqzGrZC9Z7tvPQ4SeApZPDy6fXQevcayk63ebbL+RZmSAOOqrJ7XOIaJihC6ZNN7BLY7/WLuRg==
+X-Received: by 2002:a17:902:2883:: with SMTP id f3mr18555036plb.111.1558941806917;
+        Mon, 27 May 2019 00:23:26 -0700 (PDT)
+Received: from tom-pc.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id v16sm12010373pfc.26.2019.05.27.00.23.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 27 May 2019 00:23:26 -0700 (PDT)
+From:   Dianzhang Chen <dianzhangchen0@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     gorcunov@gmail.com, kristina.martsenko@arm.com,
+        ebiederm@xmission.com, j.neuschaefer@gmx.net, jannh@google.com,
+        mortonm@chromium.org, yang.shi@linux.alibaba.com,
+        linux-kernel@vger.kernel.org,
+        Dianzhang Chen <dianzhangchen0@gmail.com>
+Subject: [PATCH] kernel/sys.c: fix possible spectre-v1 in do_prlimit()
+Date:   Mon, 27 May 2019 15:23:08 +0800
+Message-Id: <1558941788-969-1-git-send-email-dianzhangchen0@gmail.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190527071126.GL21222@phenom.ffwll.local>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 09:11:26AM +0200, Daniel Vetter wrote:
-> On Fri, May 24, 2019 at 10:53:53AM +0200, Daniel Vetter wrote:
-> > this driver is pretty horrible from a design pov, and needs a complete
-> > overhaul. Concrete thing that annoys me is that it looks at
-> > registered_fb, which is an internal thing to fbmem.c and fbcon.c. And
-> > ofc it gets the lifetime rules all wrong (it should at least use
-> > get/put_fb_info).
-> > 
-> > Looking at the history, there's been an attempt at dropping this from
-> > staging in 2016, but that had to be reverted. Since then not real
-> > effort except the usual stream of trivial patches, and fbdev has been
-> > formally closed for any new hw support. Time to try again and drop
-> > this?
-> > 
-> > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> > Cc: Jens Frederich <jfrederich@gmail.com>
-> > Cc: Daniel Drake <dsd@laptop.org>
-> > Cc: Jon Nettleton <jon.nettleton@gmail.com>
-> 
-> Hi Greg
-> 
-> Again get_mainatiners didn't pick you up on this somehow (I manually added
-> you now for the next round). Do you want to pick this up to staging, or
-> ack for merging through drm/fbdev as part of the larger fbdev/fbcon
-> rework?
-> 
-> Also, I think time to retry and attempt at dropping this imo ...
+The `resource` in do_prlimit() is controlled by userspace via syscall: setrlimit(defined in kernel/sys.c), hence leading to a potential exploitation of the Spectre variant 1 vulnerability.
+The relevant code in do_prlimit() is as below：
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+if (resource >= RLIM_NLIMITS)
+        return -EINVAL;
+...
+rlim = tsk->signal->rlim + resource;    // use resource as index
+...
+            *old_rlim = *rlim;
+
+Fix this by sanitizing resource before using it to index tsk->signal->rlim.
+
+Signed-off-by: Dianzhang Chen <dianzhangchen0@gmail.com>
+---
+ kernel/sys.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/sys.c b/kernel/sys.c
+index bdbfe8d..7eba1ca 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -1532,6 +1532,8 @@ int do_prlimit(struct task_struct *tsk, unsigned int resource,
+ 
+ 	if (resource >= RLIM_NLIMITS)
+ 		return -EINVAL;
++
++	resource = array_index_nospec(resource, RLIM_NLIMITS);
+ 	if (new_rlim) {
+ 		if (new_rlim->rlim_cur > new_rlim->rlim_max)
+ 			return -EINVAL;
+-- 
+2.7.4
+
