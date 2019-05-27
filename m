@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 028952B69E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 215F22B692
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:39:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbfE0Njg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:39:36 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52475 "EHLO
+        id S1726945AbfE0NjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:39:17 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36253 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726819AbfE0NjK (ORCPT
+        with ESMTP id S1726830AbfE0NjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 27 May 2019 09:39:10 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y3so16230681wmm.2
+Received: by mail-wm1-f65.google.com with SMTP id v22so8640112wml.1
         for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 06:39:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eOChpaEsOQLFv07SwDRnVxGpJlOXkRDlPY4sW9iIPa4=;
-        b=GwZ+2pxMpQAjtt4cyGo2vJZxYSkmzjAIdxdbIgWq6MaN7THXApB04YGh6YYdtM8lpT
-         nz6KJ1vSKqTmpDTANKwaDCleIek7Inve3a6rWWK4pRgDBIKd5kzSjkTvsRv6CWC1FcbU
-         C51QePs+QvBrGKedh+bfmJJcIz/TlCD+G3/nBgRFEwT+cm+Fkbd9Kfr+x5MiuCTlsL1v
-         I5na993FUbms1newegA2uqph28MPNOIlJ5gBgS7CgwJ2UPAwb7Ox+tV2sF+nf9GkglaK
-         0HsFwfNxx67/eljpGuW4uqoMTqZNhUxcXXEj454QBji8dW0/zhqdt8fmWv/gpUdn9+P+
-         OiGg==
+        bh=verJ2TtoOCB8JmW8F70UDjfoCp/cGBMV0EuzVh2W1as=;
+        b=di7iNvnui7FhLrNe5R7wm7HudrjyzbQi94oSfDaZu4LWq8akC9LiUFa+RHumrQcLEA
+         aOhH7queUJ9e0VbTh3LORPtzI+VWRq31fSwU0hCvOI554q1EXtLsxaWBRmo1x4ppmDDJ
+         +EIncHx/MDk0NuxHkyPuaStxM7Xfps2rGWP2k1fzRoWucdDtkJkpH6l9GfqtHIL5DdLq
+         XcImVYBi13I+SG39PDvZ8rfaxadr03MA/ZfHVK6LHCCmX2mpqy1TJZrchrtOCMx6K6JZ
+         DoFLVeVGp8SpmASbDcXGj9Xba7xZIn76sb2s9BKmDFbxnIaVlbLABt57dYK7QzKaF4tV
+         YCfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eOChpaEsOQLFv07SwDRnVxGpJlOXkRDlPY4sW9iIPa4=;
-        b=gTgjRlN8FBm9EF03r6h6X8oGaUO3HetB5YjrDtcplENyJMDelXap8DpCVV/fJfjXXT
-         Us7qPbi07HUrGoiz77vtfWpHND400ItNVeH40JDMg+hC3cvqSOyQ7X8vJcT+3qQ/rypM
-         92GEfWkQy6Jly8jIGLzwm7aLhKBlI0/14PKSL/4S0vg0ACJTozHU3qg3NSSeB40dzJ27
-         cM54sVIXrdFX0C7kTsMFJVLV3l3pfZfTA0hMfy6cvv7c3wnj5QOKF3qOAcIcoZHKgUSb
-         o7qLK5B7mFd2q9911wz8XbOSlYlCmJ8AvXyWRDQsou9OlSc1VnO7p6Z2b/JfDu1Oy4ai
-         488Q==
-X-Gm-Message-State: APjAAAWtGuPirs7We5Qq91W2jiVfBGPe8PQXGRHxeqZR1bce8r6uFqOS
-        cOCFBkOGvl277X/IAP6mDVP3UA==
-X-Google-Smtp-Source: APXvYqwi7sfSCd/vbnNO821w/TDC+t8BUGE4AWiH/oHHU4qt6i264xDT0IXdeP1lZo+hczzh2if5iA==
-X-Received: by 2002:a1c:ed16:: with SMTP id l22mr10304860wmh.96.1558964348240;
-        Mon, 27 May 2019 06:39:08 -0700 (PDT)
+        bh=verJ2TtoOCB8JmW8F70UDjfoCp/cGBMV0EuzVh2W1as=;
+        b=sJBrY+p7O6qRnei61C4L1xF0jiqGz3i0z5+Xm8R/XKR9TTkJ3fktJqPegbgSXhdb2n
+         Hq5QbwH7HuP3eo8+DPKKMQZnqXG6EnNwmvqQ2yx2tovdslg9Cgr5WkgBv8wVNmEVGMU4
+         7znzZER4kgN/I95C8v+nmQxciPtBy8nqhDWU/Ro4vBHXaGGSceVKCWNiDWn8uFDcEW02
+         MSQ8WjLSYGqbJBYB3b727WUrdEz5Xq7exTWj4ml6RWQtB+iDzetgm1NNrun1DvoHfjWF
+         srlsuhKE6dfSuDLXYRZLLZMQ7378g/8WfpgrBoDEj49Yqy0K4FzMPpECU2d7H5aEKCu8
+         xqtQ==
+X-Gm-Message-State: APjAAAWh+PQYvznsQa0qZCkmYdEPMrLfsh/0b2gtB/O7qUuVXDuhf9jE
+        9LQkApzCEYZdeXaDJ90ksQBStA==
+X-Google-Smtp-Source: APXvYqyd/kK2slKqdVMOm7do4U1lyX83rjJItaXdUFe1Fo2m7B4apmdNOOZfK2IQ34qBHCqw24Uajg==
+X-Received: by 2002:a7b:c3c3:: with SMTP id t3mr27136443wmj.88.1558964349041;
+        Mon, 27 May 2019 06:39:09 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id a124sm7838335wmh.3.2019.05.27.06.39.07
+        by smtp.gmail.com with ESMTPSA id a124sm7838335wmh.3.2019.05.27.06.39.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 27 May 2019 06:39:07 -0700 (PDT)
+        Mon, 27 May 2019 06:39:08 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com
 Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 07/10] ARM: dts: meson8b-odroidc1: update with SPDX Licence identifier
-Date:   Mon, 27 May 2019 15:38:54 +0200
-Message-Id: <20190527133857.30108-8-narmstrong@baylibre.com>
+Subject: [PATCH v2 08/10] ARM: dts: meson8b: update with SPDX Licence identifier
+Date:   Mon, 27 May 2019 15:38:55 +0200
+Message-Id: <20190527133857.30108-9-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190527133857.30108-1-narmstrong@baylibre.com>
 References: <20190527133857.30108-1-narmstrong@baylibre.com>
@@ -70,13 +70,13 @@ license text matches the MIT license as specified at [0]
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm/boot/dts/meson8b-odroidc1.dts | 42 +-------------------------
+ arch/arm/boot/dts/meson8b.dtsi | 42 +---------------------------------
  1 file changed, 1 insertion(+), 41 deletions(-)
 
-diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
-index f3ad9397f670..018695b2b83a 100644
---- a/arch/arm/boot/dts/meson8b-odroidc1.dts
-+++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index 800cd65fc50a..6e48182962de 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
 @@ -1,47 +1,7 @@
 +// SPDX-License-Identifier: GPL-2.0 OR MIT
  /*
@@ -125,7 +125,7 @@ index f3ad9397f670..018695b2b83a 100644
 - *     OTHER DEALINGS IN THE SOFTWARE.
   */
  
- /dts-v1/;
+ #include <dt-bindings/clock/meson8b-clkc.h>
 -- 
 2.21.0
 
