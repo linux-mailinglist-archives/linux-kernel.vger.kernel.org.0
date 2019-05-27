@@ -2,96 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 295102B493
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 14:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 169572B4B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 14:15:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbfE0MOg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 08:14:36 -0400
-Received: from muru.com ([72.249.23.125]:51250 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727222AbfE0MOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 08:14:34 -0400
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 4A3E280F3;
-        Mon, 27 May 2019 12:14:53 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-omap@vger.kernel.org
-Cc:     Dave Gerlach <d-gerlach@ti.com>, Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 12/12] ARM: dts: Drop legacy custom hwmods property for omap4 mmc
-Date:   Mon, 27 May 2019 05:13:48 -0700
-Message-Id: <20190527121348.45251-13-tony@atomide.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190527121348.45251-1-tony@atomide.com>
-References: <20190527121348.45251-1-tony@atomide.com>
+        id S1727328AbfE0MPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 08:15:11 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44525 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbfE0MOL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 08:14:11 -0400
+Received: by mail-wr1-f68.google.com with SMTP id w13so8345449wru.11
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 05:14:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=PE2qyWliumUSN347T63t3e5/xkurT9iBkthy1WXizA0=;
+        b=dhTS4Lyo6SbCjSE0fCEMltNu8hrg3FYreV6ihgKD/j5WlQmZ59l/hIEGDAS2WqhZmZ
+         MD+K9RIb5EUi9NdZnsBB3RTdFvv4BgR1o/M2VaiYcGnxPZEcgJcTCF9IUrDkLGxtLojN
+         uiryJJNMocYQifyuTO8UEQZjULzzqORfdm8GxBBLX7uhR4stQ1mR+LqM8oiICIgkfz5s
+         cHXU/cRd1XfmnM3TKS1ytiOTb3u+HjbphRNTHLKIwz0oiJAdPz9ZIz0+D+G22dSc/JaX
+         ZNcY9gexJzXKUMB5eD81sX/W4TlJUe0+ePBN5RUe05uuQ6F7tQd7qvgiphGssOwjBpjg
+         oN0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=PE2qyWliumUSN347T63t3e5/xkurT9iBkthy1WXizA0=;
+        b=dZ7aGCXdljSu5h7aMEQI4nQZkAcFqK0pP1p4xPOSYVOBa5G5/O0NLgjUHXwyqifF1l
+         FJS6N3XQ76mM6xRhk4piiUvavPy7aS2NTgjdSx19JDVp0JRiInjUyBOImPYwdgHQNHxa
+         1NIwmV+6i6q+/EDhFr2gov2/NZolWgg2K28a57IqZVWEUGD+fRNM3zRPqpRJZgyeZCMw
+         EajhqjzZzhyI1EHWqrWZdtuxHF9eKEYwpWSCXPbKjJpxnfSDeocarZuBrkfuYr/tiW4l
+         B6NXbKZBhgbgMS0DYPSr461wgdlOisVCEob1pvphfoixWXWs8kFSWaBSdHDMsGiji+kM
+         Hfgw==
+X-Gm-Message-State: APjAAAXpMm+ddHJIOuEIUF1J0F+yEfxr64wO6/tGd9zZIPI/Lf2o8cDH
+        a85IBB9yJ9TSrMbR5uCvypL0SQ==
+X-Google-Smtp-Source: APXvYqxFIeIFAETZTduZaUtWDN1ZmmLNb6kXNXnGerFOHnX/KETZawLZ46jctX7F/liDIJ5DEWDDew==
+X-Received: by 2002:adf:ee0c:: with SMTP id y12mr50236022wrn.34.1558959249250;
+        Mon, 27 May 2019 05:14:09 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id t7sm10699918wrq.76.2019.05.27.05.14.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 05:14:08 -0700 (PDT)
+From:   Loys Ollivier <lollivier@baylibre.com>
+To:     Atish Patra <atish.patra@wdc.com>, linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, Jonathan Corbet <corbet@lwn.net>,
+        Albert Ou <aou@eecs.berkeley.edu>, linux-doc@vger.kernel.org,
+        ard.biesheuvel@linaro.org, catalin.marinas@arm.com,
+        Anup Patel <Anup.Patel@wdc.com>, Zong Li <zong@andestech.com>,
+        Atish Patra <atish.patra@wdc.com>,
+        Nick Kossifidis <mick@ics.forth.gr>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "paul.walmsley\@sifive.com" <paul.walmsley@sifive.com>,
+        Karsten Merker <merker@debian.org>,
+        linux-riscv@lists.infradead.org,
+        "marek.vasut\@gmail.com" <marek.vasut@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [v4 PATCH] RISC-V: Add an Image header that boot loader can parse.
+In-Reply-To: <20190524041814.7497-1-atish.patra@wdc.com>
+References: <20190524041814.7497-1-atish.patra@wdc.com>
+Date:   Mon, 27 May 2019 14:14:03 +0200
+Message-ID: <86zhn8p01g.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With recent ti-sysc driver changes, we can now finally probe most
-modules without needing the custom ti,hwmods property.
+On Thu 23 May 2019 at 21:18, Atish Patra <atish.patra@wdc.com> wrote:
 
-Let's drop it for omap4 MMC as we can test that for runtime PM
-for core retention idle mode for wlcore WLAN.
+> Currently, the last stage boot loaders such as U-Boot can accept only
+> uImage which is an unnecessary additional step in automating boot
+> process.
+>
+> Add an image header that boot loader understands and boot Linux from
+> flat Image directly.
+>
+> This header is based on ARM64 boot image header and provides an
+> opportunity to combine both ARM64 & RISC-V image headers in future.
+>
+> Also make sure that PE/COFF header can co-exist in the same image so
+> that EFI stub can be supported for RISC-V in future. EFI specification
+> needs PE/COFF image header in the beginning of the kernel image in order
+> to load it as an EFI application. In order to support EFI stub, code0
+> should be replaced with "MZ" magic string and res4(at offset 0x3c)
+> should point to the rest of the PE/COFF header (which will be added
+> during EFI support).
+>
+> Tested on both QEMU and HiFive Unleashed using OpenSBI + U-Boot + Linux.
 
-Cc: devicetree@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/boot/dts/omap4-l4.dtsi | 5 -----
- 1 file changed, 5 deletions(-)
+Thanks Atish, happy to have this support that makes the boot process
+more straightforward.
+Tested on HiFive Unleashed using OpenSBI + U-Boot v2019.07-rc2 + Linux.
 
-diff --git a/arch/arm/boot/dts/omap4-l4.dtsi b/arch/arm/boot/dts/omap4-l4.dtsi
---- a/arch/arm/boot/dts/omap4-l4.dtsi
-+++ b/arch/arm/boot/dts/omap4-l4.dtsi
-@@ -2103,7 +2103,6 @@
- 
- 		target-module@9c000 {			/* 0x4809c000, ap 53 36.0 */
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "mmc1";
- 			reg = <0x9c000 0x4>,
- 			      <0x9c010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -2171,7 +2170,6 @@
- 
- 		target-module@ad000 {			/* 0x480ad000, ap 63 50.0 */
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "mmc3";
- 			reg = <0xad000 0x4>,
- 			      <0xad010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -2237,7 +2235,6 @@
- 
- 		target-module@b4000 {			/* 0x480b4000, ap 67 46.0 */
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "mmc2";
- 			reg = <0xb4000 0x4>,
- 			      <0xb4010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -2332,7 +2329,6 @@
- 
- 		target-module@d1000 {			/* 0x480d1000, ap 73 44.0 */
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "mmc4";
- 			reg = <0xd1000 0x4>,
- 			      <0xd1010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -2365,7 +2361,6 @@
- 
- 		target-module@d5000 {			/* 0x480d5000, ap 75 4e.0 */
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "mmc5";
- 			reg = <0xd5000 0x4>,
- 			      <0xd5010 0x4>;
- 			reg-names = "rev", "sysc";
--- 
-2.21.0
+>
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> Reviewed-by: Karsten Merker <merker@debian.org>
+> Tested-by: Karsten Merker <merker@debian.org> (QEMU+OpenSBI+U-Boot)
+Tested-by: Loys Ollivier <lollivier@baylibre.com>
