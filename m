@@ -2,98 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E83722B12B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 11:14:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CBF32B108
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 11:09:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfE0JOs convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 27 May 2019 05:14:48 -0400
-Received: from eros.hdm.de ([193.158.21.211]:21520 "EHLO eros.hdm.de"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726063AbfE0JOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 05:14:48 -0400
-X-Greylist: delayed 424 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 May 2019 05:14:46 EDT
-Received: from [37.49.225.207] ([37.49.225.207]) by eros.hdm.de with Microsoft SMTPSVC(6.0.3790.4675);
-         Mon, 27 May 2019 11:10:48 +0200
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1726772AbfE0JI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 05:08:59 -0400
+Received: from mga01.intel.com ([192.55.52.88]:58675 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726653AbfE0JI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 05:08:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 May 2019 02:08:58 -0700
+X-ExtLoop1: 1
+Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.116])
+  by orsmga004.jf.intel.com with ESMTP; 27 May 2019 02:08:55 -0700
+Date:   Mon, 27 May 2019 17:07:41 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     Tina Zhang <tina.zhang@intel.com>
+Cc:     intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kraxel@redhat.com,
+        zhenyuw@linux.intel.com, alex.williamson@redhat.com,
+        hang.yuan@intel.com, zhiyuan.lv@intel.com
+Subject: Re: [PATCH 1/2] vfio: ABI for setting mdev display flip eventfd
+Message-ID: <20190527090741.GE29553@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20190527084312.8872-1-tina.zhang@intel.com>
+ <20190527084312.8872-2-tina.zhang@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Samsung Win..Final Notification
-To:     linux-kernel@vger.kernel.org
-From:   "Samsung Europe" <europe.prize@samsung.com>
-Date:   Mon, 27 May 2019 02:07:39 -0700
-Reply-To: samsung.prize@europe.com
-Message-ID: <EROSX9F6JttDok40sAM0001bb87@eros.hdm.de>
-X-OriginalArrivalTime: 27 May 2019 09:10:48.0305 (UTC) FILETIME=[12E0E610:01D5146C]
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="hOcCNbCCxyk/YU74"
+Content-Disposition: inline
+In-Reply-To: <20190527084312.8872-2-tina.zhang@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-**************************DO NOT DELETE THIS MESSAGE****************************
 
+--hOcCNbCCxyk/YU74
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Samsung Europe
-Prize Office
-Evert van de Beekstraat 310
-1118 CX Schiphol-Holland
-www.samsung.com/europe
+On 2019.05.27 16:43:11 +0800, Tina Zhang wrote:
+> Add VFIO_DEVICE_SET_GFX_FLIP_EVENTFD ioctl command to set eventfd
+> based signaling mechanism to deliver vGPU framebuffer page flip
+> event to userspace.
+>
 
+Should we add probe to see if driver can support gfx flip event?
 
+> Signed-off-by: Tina Zhang <tina.zhang@intel.com>
+> ---
+>  include/uapi/linux/vfio.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>=20
+> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> index 02bb7ad6e986..27300597717f 100644
+> --- a/include/uapi/linux/vfio.h
+> +++ b/include/uapi/linux/vfio.h
+> @@ -696,6 +696,18 @@ struct vfio_device_ioeventfd {
+> =20
+>  #define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 16)
+> =20
+> +/**
+> + * VFIO_DEVICE_SET_GFX_FLIP_EVENTFD - _IOW(VFIO_TYPE, VFIO_BASE + 17, __=
+s32)
+> + *
+> + * Set eventfd based signaling mechanism to deliver vGPU framebuffer page
+> + * flip event to userspace. A value of -1 is used to stop the page flip
+> + * delivering.
+> + *
+> + * Return: 0 on success, -errno on failure.
+> + */
+> +
+> +#define VFIO_DEVICE_SET_GFX_FLIP_EVENTFD _IO(VFIO_TYPE, VFIO_BASE + 17)
+> +
+>  /* -------- API for Type1 VFIO IOMMU -------- */
+> =20
+>  /**
+> --=20
+> 2.17.1
+>=20
 
+--=20
+Open Source Technology Center, Intel ltd.
 
-OFFICIAL WIN NOTIFICATION.
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
 
-Email Prize Ticket Number: GLX/9627835/EU/PRIZE2ND.
+--hOcCNbCCxyk/YU74
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Dear Email User: 
+-----BEGIN PGP SIGNATURE-----
 
-Are you the owner of this email?
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXOuo3QAKCRCxBBozTXgY
+J7/dAJ9QLbQBdhMMbxjTKO1yebnD51NVUACcDHl7pOknebyQxRlI1LrDOuZu7Kw=
+=g5+1
+-----END PGP SIGNATURE-----
 
-Congratulations! Samsung Europe wishes to congratulate you for being one of the lucky
-winners in the Samsung Prize Ballot. Your email have been officially 
-selected as a winner and you are hereby awarded with your email in the 
-2nd category winning prize of Seven Hundred and Fifty Thousand Euros and a Samsung Galaxy S10+.
-
-With the introduction of new types of games, with the ushering in of online technology 
-and with the permit issued under EU laws to compete for concession to
-run games and give away prizes on the internet, we are launching our 1st international promotion.
-
-
-All contestants were selected through a computer ballot system
-drawn from email addresses from all over the world and your email address 
-have been selected as one of the lucky winners.
-
-Contact Notaris: Igo Jansen.
-Notarization Officer/Agent
-Tel: 0031 61 654 5088
-Email: samsung.notarization@europe.com
-
-For claims and notarisation you must be above 18yrs to fill the below form and 
-send to notaris contact:
-
-***************************************************************************************************************************
-First Name:
-Last Name:
-Occupation:
-Address:
-Country:
-Telephone:
-Win Email:
-EPTN: GLX/9627835/EU/PRIZE2ND
-****************************************************************************************************************************
-Claim expiry date is 29th May 2019, after this date all winning prizes will be filed as unclaimed.
-
-
-Keep this email confidential & away from public notice to prevent double 
-claim or impersonation with your EPTN.
-
-
-
-Best Regards,
-Cristian Bensila
-(Prize Co-ordinator)
-Samsung Europe.
-
-
-© 2019 Samsung Europe. All rights reserved .(Privacy Statement)
+--hOcCNbCCxyk/YU74--
