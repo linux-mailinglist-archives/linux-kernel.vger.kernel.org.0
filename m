@@ -2,83 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 901572B738
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 16:04:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A011F2B73C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 16:05:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbfE0OEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 10:04:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52159 "EHLO mx1.redhat.com"
+        id S1726580AbfE0OFV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 10:05:21 -0400
+Received: from 8bytes.org ([81.169.241.247]:40248 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726184AbfE0OEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 10:04:42 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4A91430833B5;
-        Mon, 27 May 2019 14:04:37 +0000 (UTC)
-Received: from x1.home (ovpn-116-22.phx2.redhat.com [10.3.116.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2777410027C5;
-        Mon, 27 May 2019 14:04:31 +0000 (UTC)
-Date:   Mon, 27 May 2019 08:04:30 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Tina Zhang <tina.zhang@intel.com>
-Cc:     intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kraxel@redhat.com,
-        zhenyuw@linux.intel.com, hang.yuan@intel.com, zhiyuan.lv@intel.com
-Subject: Re: [PATCH 1/2] vfio: ABI for setting mdev display flip eventfd
-Message-ID: <20190527080430.28f40888@x1.home>
-In-Reply-To: <20190527084312.8872-2-tina.zhang@intel.com>
-References: <20190527084312.8872-1-tina.zhang@intel.com>
-        <20190527084312.8872-2-tina.zhang@intel.com>
-Organization: Red Hat
+        id S1726184AbfE0OFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 10:05:21 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 6FB302E2; Mon, 27 May 2019 16:05:19 +0200 (CEST)
+Date:   Mon, 27 May 2019 16:05:15 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Lukasz Odzioba <lukasz.odzioba@intel.com>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        dwmw2@infradead.org, grzegorz.andrejczuk@intel.com
+Subject: Re: [PATCH 1/1] iommu/vt-d: Remove unnecessary rcu_read_locks
+Message-ID: <20190527140514.GE8420@8bytes.org>
+References: <1558359688-21804-1-git-send-email-lukasz.odzioba@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 27 May 2019 14:04:42 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1558359688-21804-1-git-send-email-lukasz.odzioba@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 May 2019 16:43:11 +0800
-Tina Zhang <tina.zhang@intel.com> wrote:
-
-> Add VFIO_DEVICE_SET_GFX_FLIP_EVENTFD ioctl command to set eventfd
-> based signaling mechanism to deliver vGPU framebuffer page flip
-> event to userspace.
+On Mon, May 20, 2019 at 03:41:28PM +0200, Lukasz Odzioba wrote:
+> We use RCU's for rarely updated lists like iommus, rmrr, atsr units.
 > 
-> Signed-off-by: Tina Zhang <tina.zhang@intel.com>
-> ---
->  include/uapi/linux/vfio.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> I'm not sure why domain_remove_dev_info() in domain_exit() was surrounded
+> by rcu_read_lock. Lock was present before refactoring in d160aca527,
+> but it was related to rcu list, not domain_remove_dev_info function.
 > 
-> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> index 02bb7ad6e986..27300597717f 100644
-> --- a/include/uapi/linux/vfio.h
-> +++ b/include/uapi/linux/vfio.h
-> @@ -696,6 +696,18 @@ struct vfio_device_ioeventfd {
->  
->  #define VFIO_DEVICE_IOEVENTFD		_IO(VFIO_TYPE, VFIO_BASE + 16)
->  
-> +/**
-> + * VFIO_DEVICE_SET_GFX_FLIP_EVENTFD - _IOW(VFIO_TYPE, VFIO_BASE + 17, __s32)
-> + *
-> + * Set eventfd based signaling mechanism to deliver vGPU framebuffer page
-> + * flip event to userspace. A value of -1 is used to stop the page flip
-> + * delivering.
-> + *
-> + * Return: 0 on success, -errno on failure.
-> + */
-> +
-> +#define VFIO_DEVICE_SET_GFX_FLIP_EVENTFD _IO(VFIO_TYPE, VFIO_BASE + 17)
-> +
->  /* -------- API for Type1 VFIO IOMMU -------- */
->  
->  /**
+> dmar_remove_one_dev_info() doesn't touch any of those lists, so it doesn't
+> require a lock. In fact it is called 6 times without it anyway.
+> 
+> Fixes: d160aca5276d ("iommu/vt-d: Unify domain->iommu attach/detachment")
+> 
+> Signed-off-by: Lukasz Odzioba <lukasz.odzioba@intel.com>
 
-Why can't we use VFIO_DEVICE_SET_IRQS for this?  We can add a
-capability to vfio_irq_info in the same way that we did for regions to
-describe device specific IRQ support.  Thanks,
+Applied, thanks.
 
-Alex
