@@ -2,78 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 844232ACDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 03:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 235322ACDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 03:58:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbfE0B4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 21:56:08 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40111 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbfE0B4H (ORCPT
+        id S1726163AbfE0B6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 21:58:09 -0400
+Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:55929 "EHLO
+        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725864AbfE0B6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 21:56:07 -0400
-Received: by mail-it1-f195.google.com with SMTP id h11so21980742itf.5;
-        Sun, 26 May 2019 18:56:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4riq5WOrC6jxJv+1e3ONXH5F0cl4unP+M0sgitUBG8A=;
-        b=F7B66fV4prSwIRfZawcHCapEbxTOWBuNBaZCIQ6EKpn3pkjpnaU2czUylmkzXzlmxZ
-         HmxRo+aD2j2gvXclYMexnD6hwOLonFPwXDUH+/IixOYGch84mgAAXREsk4msNRwi/h9I
-         HCo090HtDhVHdNDV5Qn6jyyoBpUpTpA49nns51My6WExajf8nG2B+OXvnDSHQTIeyYHS
-         kMpRa18MeLr/EZzs67xhiPD7irU1MA6t6Ulk+YtnhVTm273ovhoACo8b/JD4VfFbxmRH
-         qML6YVc+FTxO2IyD1fWKmkOYXNA3ce5AlwQwyvAnX6ebUtz9iwyHKBLp8bkaC0/wVE0r
-         jygg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4riq5WOrC6jxJv+1e3ONXH5F0cl4unP+M0sgitUBG8A=;
-        b=d/pCWuSETcpk3Y23+IwUemF+niJ7AXy9wKN5xH/Y+lrb6NQQbPQKHmz8ZcT7N0PdIg
-         LG6EYuaBB/rm3whwpyELuzW/mW0PTtHUDk8AzTGmGFpr6HKMTC3Nb7q4Ij7B9CJnTnnC
-         CRBLXS1HCQvuuUaTUzAAhcslgnOIWXvFQ+hdawAoUpbQWN9w3Al1zZ5OiWcSgkKiUcNe
-         +UlZH7+JP2SL01O1jdFd5AFEuZwfpawYp52TlODoYZNbsc97x4bHVhY1fhJZfc8te79o
-         IaDYrmS2ASX7V+9P1vLbV/AdrUnMzycFnDJsuiH6uybKyx33KPs6v06e0IyA/oVdMHHO
-         Tj7w==
-X-Gm-Message-State: APjAAAUYUNdrnAsAfjIO//iVVM5mqaH/6EUUNcjWcefDaEsIUCrYZcmV
-        DahLfy0pCJWgxPPqdapZl8jOPd2c0SUGRo+JMlA=
-X-Google-Smtp-Source: APXvYqywHGWRgscHD3wttrQTCBgSjiAHfAChFkGelESVt8gY5T7nllpYfOpg60tGtOEJ4v9Y/l/47i8eo83/eIeSbt8=
-X-Received: by 2002:a02:7420:: with SMTP id o32mr7347087jac.117.1558922166931;
- Sun, 26 May 2019 18:56:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190523060437.11059-1-peng.fan@nxp.com>
-In-Reply-To: <20190523060437.11059-1-peng.fan@nxp.com>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Sun, 26 May 2019 20:55:55 -0500
-Message-ID: <CABb+yY0r-njq2OGVP9xAh=-wgib5zk8XbS-vdY1jtz2R=rT4Nw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] mailbox: arm: introduce smc triggered mailbox
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "andre.przywara@arm.com" <andre.przywara@arm.com>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 26 May 2019 21:58:08 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TSlLoRp_1558922275;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TSlLoRp_1558922275)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 27 May 2019 09:58:04 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     ying.huang@intel.com, hannes@cmpxchg.org, mhocko@suse.com,
+        mgorman@techsingularity.net, kirill.shutemov@linux.intel.com,
+        josef@toxicpanda.com, hughd@google.com, shakeelb@google.com,
+        hdanton@sina.com, akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND v5 PATCH 1/2] mm: vmscan: remove double slab pressure by inc'ing sc->nr_scanned
+Date:   Mon, 27 May 2019 09:57:54 +0800
+Message-Id: <1558922275-31782-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 12:50 AM Peng Fan <peng.fan@nxp.com> wrote:
->
-> This is a modified version from Andre Przywara's patch series
-> https://lore.kernel.org/patchwork/cover/812997/.
->
-Can you please specify exact modifications on top of Andre's last
-submission? As in "Changes since v1: ...."
+The commit 9092c71bb724 ("mm: use sc->priority for slab shrink targets")
+has broken up the relationship between sc->nr_scanned and slab pressure.
+The sc->nr_scanned can't double slab pressure anymore.  So, it sounds no
+sense to still keep sc->nr_scanned inc'ed.  Actually, it would prevent
+from adding pressure on slab shrink since excessive sc->nr_scanned would
+prevent from scan->priority raise.
 
-Thanks.
+The bonnie test doesn't show this would change the behavior of
+slab shrinkers.
+
+				w/		w/o
+			  /sec    %CP      /sec      %CP
+Sequential delete: 	3960.6    94.6    3997.6     96.2
+Random delete: 		2518      63.8    2561.6     64.6
+
+The slight increase of "/sec" without the patch would be caused by the
+slight increase of CPU usage.
+
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+v4: Added Johannes's ack
+
+ mm/vmscan.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 7acd0af..b65bc50 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1137,11 +1137,6 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 		if (!sc->may_unmap && page_mapped(page))
+ 			goto keep_locked;
+ 
+-		/* Double the slab pressure for mapped and swapcache pages */
+-		if ((page_mapped(page) || PageSwapCache(page)) &&
+-		    !(PageAnon(page) && !PageSwapBacked(page)))
+-			sc->nr_scanned++;
+-
+ 		may_enter_fs = (sc->gfp_mask & __GFP_FS) ||
+ 			(PageSwapCache(page) && (sc->gfp_mask & __GFP_IO));
+ 
+-- 
+1.8.3.1
+
