@@ -2,140 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0AE32B35F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:42:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B2CF2B37F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:50:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbfE0Lmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 07:42:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38470 "EHLO mx1.suse.de"
+        id S1726569AbfE0Lu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 07:50:28 -0400
+Received: from app2.whu.edu.cn ([202.114.64.89]:56568 "EHLO whu.edu.cn"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725858AbfE0Lma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 07:42:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C8DDBAD03;
-        Mon, 27 May 2019 11:42:28 +0000 (UTC)
-Date:   Mon, 27 May 2019 13:42:28 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCHv2 3/4] printk: factor out register_console() code
-Message-ID: <20190527114228.uxg4awhtdovoi2cc@pathway.suse.cz>
-References: <20190426053302.4332-1-sergey.senozhatsky@gmail.com>
- <20190426053302.4332-4-sergey.senozhatsky@gmail.com>
- <20190515143631.vuhbda6btucrkskx@pathway.suse.cz>
- <20190523065144.GA18333@jagdpanzerIV>
+        id S1725991AbfE0Lu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 07:50:27 -0400
+Received: from localhost (unknown [111.202.192.3])
+        by email2 (Coremail) with SMTP id AgBjCgBntW3xzutcUsrjAA--.16709S2;
+        Mon, 27 May 2019 19:50:18 +0800 (CST)
+From:   Peng Wang <wangpeng15@xiaomi.com>
+To:     axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Wang <rocking@whu.edu.cn>
+Subject: [PATCH] block: use KMEM_CACHE macro
+Date:   Mon, 27 May 2019 19:48:35 +0800
+Message-Id: <20190527114835.2071-1-wangpeng15@xiaomi.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190523065144.GA18333@jagdpanzerIV>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AgBjCgBntW3xzutcUsrjAA--.16709S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7urWfGFy7Cw4rKFWrWr4kZwb_yoW8Jw45pF
+        Z5GFn8Cr1jgF4xuFWkAayxZry3Cw4vgF1xXa1Yvw1Yyr9rCwn2vF1vyr1UZrWxurWfCrW5
+        Xr48tryUXr1j9FJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUPIb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+        0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+        A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xII
+        jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwV
+        C2z280aVCY1x0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x0
+        82IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGw
+        Av7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48J
+        M4x0aVACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r4kMxAIw28IcxkI7VAKI4
+        8JMxAIw28IcVAKzI0EY4vE52x082I5MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
+        rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtw
+        CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
+        67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxV
+        WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jw
+        o7NUUUUU=
+X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-05-23 15:51:44, Sergey Senozhatsky wrote:
-> Hello,
-> 
-> On (05/15/19 16:36), Petr Mladek wrote:
-> [..]
-> > >  
-> > >  	console_unlock();
-> > >  	console_sysfs_notify();
-> > > +	console_lock();
-> > 
-> > I have got an idea how to get rid of this weirdness:
-> >
-> > 1. The check for bcon seems to be just an optimization. There is not need
-> >    to remove boot consoles when there are none.
-> > 
-> > 2. The condition (newcon->flags & (CON_CONSDEV|CON_BOOT)) == CON_CONSDEV)
-> >    is valid only when the preferred console was really added.
-> > 
-> > Therefore we could move the code to a separate function, e.g.
-> > 
-> > void unregister_boot_consoles(void)
-> > {
-> > 	struct console *bcon;
-> > 
-> > 	console_lock();
-> > 	for_each_console(bcon)
-> > 		if (bcon->flags & CON_BOOT)
-> > 			__unregister_console(bcon);
-> > 	}
-> > 	console_unlock();
-> > 	console_sysfs_notify();
-> > }
-> > 
-> > Then we could do something like:
-> > 
-> > void register_console(struct console *newcon)
-> > {
-> > 	bool newcon_is_preferred = false;
-> > 
-> > 	console_lock();
-> > 	__register_console(newcon);
-> > 	if ((newcon->flags & (CON_CONSDEV|CON_BOOT)) == CON_CONSDEV)
-> > 		newcon_is_preferred = true;
-> > 	console_unlock();
-> > 	console_sysfs_notify();
-> > 
-> > 	/*
-> > 	 * By unregistering the bootconsoles after we enable the real console
-> > 	 * we get the "console xxx enabled" message on all the consoles -
-> > 	 * boot consoles, real consoles, etc - this is to ensure that end
-> > 	 * users know there might be something in the kernel's log buffer that
-> > 	 * went to the bootconsole (that they do not see on the real console)
-> > 	 */
-> > 	if (newcon_is_preferred && !keep_bootcon)
-> > 		unregister_boot_consoles();
-> > }
-> > 
-> > How does that sound?
-> 
-> Hmm, may be I'm missing something. I think that the 'weirdness'
-> is still needed.
+From: Peng Wang <rocking@whu.edu.cn>
 
-I probably used wrong words. For me the most weird thing was
-that the original code temporary released a lock that
-was originally taken in another function.
+Use the preferred KMEM_CACHE helper for brevity.
 
-My proposal is just a refactoring. It allows to do all
-the locking/unlocking operations in a single function.
-It makes is easier to track.
+Signed-off-by: Peng Wang <rocking@whu.edu.cn>
+---
+ block/blk-core.c | 3 +--
+ block/blk-ioc.c  | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-> 
-> 	console_lock();
-> 	__unregister_console(bcon);  // pr_info("%sconsole disabled\n")
-> 	console_unlock();
-> 
-> is going to change the visible behaviour - we need to show
-> pr_info("%sconsole [%s%d] disabled\n") on all consoles, especially
-> on the console which we are disabling.
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 1bf83a0df0f6..841bf0b12755 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -1789,8 +1789,7 @@ int __init blk_dev_init(void)
+ 	if (!kblockd_workqueue)
+ 		panic("Failed to create kblockd\n");
+ 
+-	blk_requestq_cachep = kmem_cache_create("request_queue",
+-			sizeof(struct request_queue), 0, SLAB_PANIC, NULL);
++	blk_requestq_cachep = KMEM_CACHE(request_queue, SLAB_PANIC);
+ 
+ #ifdef CONFIG_DEBUG_FS
+ 	blk_debugfs_root = debugfs_create_dir("block", NULL);
+diff --git a/block/blk-ioc.c b/block/blk-ioc.c
+index 5ed59ac6ae58..58c79aeca955 100644
+--- a/block/blk-ioc.c
++++ b/block/blk-ioc.c
+@@ -408,8 +408,7 @@ struct io_cq *ioc_create_icq(struct io_context *ioc, struct request_queue *q,
+ 
+ static int __init blk_ioc_init(void)
+ {
+-	iocontext_cachep = kmem_cache_create("blkdev_ioc",
+-			sizeof(struct io_context), 0, SLAB_PANIC, NULL);
++	iocontext_cachep = KMEM_CACHE(io_context, SLAB_PANIC);
+ 	return 0;
+ }
+ subsys_initcall(blk_ioc_init);
+-- 
+2.19.1
 
-It was the 1st patch that changed the behavior. It moved
-the pr_info() under console_lock. Therefore it never
-appears on the console.
-
-The 4th patch tries to fix this but it looks racy. I am going
-to comment the race in the thread about the 4th patch.
-
-
-> Who knows, maybe that's the last remaining properly working
-> console. Doing __unregister_console() under console_sem will
-> end up in a lost/missing message on bcon (or
-> on any other console we are unregistering).
-
-I agree that we should make sure that the message is printed on
-the console that is being disabled.
-
-Sigh, I am afraid that a proper solution would result in a messy
-code. It would be pity. The original problem is rather theoretical.
-The fix is not worth making the code even more hairy.
-
-Best Regards,
-Petr
