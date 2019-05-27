@@ -2,95 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB7AB2B8B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 18:08:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E83F02B8B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 18:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbfE0QIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 12:08:46 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:61506 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725991AbfE0QIq (ORCPT
+        id S1726780AbfE0QJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 12:09:13 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:52674 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfE0QJM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 12:08:46 -0400
-X-UUID: f578e6e65ec34b80906ac5edcba129a2-20190528
-X-UUID: f578e6e65ec34b80906ac5edcba129a2-20190528
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1265670405; Tue, 28 May 2019 00:08:38 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 28 May 2019 00:08:36 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 28 May 2019 00:08:36 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>
-Subject: [PATCH] arm64: mm: make CONFIG_ZONE_DMA32 configurable
-Date:   Tue, 28 May 2019 00:08:35 +0800
-Message-ID: <1558973315-19655-1-git-send-email-miles.chen@mediatek.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 27 May 2019 12:09:12 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1hVIBK-0002F0-PF; Mon, 27 May 2019 12:09:02 -0400
+Message-ID: <05db73c0c4594d8428e30f15b09e6ae8c0da4e07.camel@surriel.com>
+Subject: Re: [PATCH 1/7] sched: Remove rq->cpu_load[] update code
+From:   Rik van Riel <riel@surriel.com>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 27 May 2019 12:09:02 -0400
+In-Reply-To: <20190527062116.11512-2-dietmar.eggemann@arm.com>
+References: <20190527062116.11512-1-dietmar.eggemann@arm.com>
+         <20190527062116.11512-2-dietmar.eggemann@arm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-cNrPoMQaGz8ZPHR4bhZP"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change makes CONFIG_ZONE_DMA32 defuly y and allows users
-to overwrite it.
 
-For the SoCs that do not need CONFIG_ZONE_DMA32, this is the
-first step to manage all available memory by a single
-zone(normal zone) to reduce the overhead of multiple zones.
+--=-cNrPoMQaGz8ZPHR4bhZP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The change also fixes a build error when CONFIG_NUMA=y and
-CONFIG_ZONE_DMA32=n.
+On Mon, 2019-05-27 at 07:21 +0100, Dietmar Eggemann wrote:
+> With LB_BIAS disabled, there is no need to update the rq-
+> >cpu_load[idx]
+> any more.
+>=20
+> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 
-arch/arm64/mm/init.c:195:17: error: use of undeclared identifier 'ZONE_DMA32'
-                max_zone_pfns[ZONE_DMA32] = PFN_DOWN(max_zone_dma_phys());
+Acked-by: Rik van Riel <riel@surriel.com>
 
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
----
- arch/arm64/Kconfig   | 3 ++-
- arch/arm64/mm/init.c | 2 ++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+--=-cNrPoMQaGz8ZPHR4bhZP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 76f6e4765f49..9d20a736d1d1 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -260,7 +260,8 @@ config GENERIC_CALIBRATE_DELAY
- 	def_bool y
- 
- config ZONE_DMA32
--	def_bool y
-+	bool "Support DMA32 zone"
-+	default y
- 
- config HAVE_GENERIC_GUP
- 	def_bool y
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index d2adffb81b5d..96829ce21f99 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -191,8 +191,10 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max)
- {
- 	unsigned long max_zone_pfns[MAX_NR_ZONES]  = {0};
- 
-+#ifdef CONFIG_ZONE_DMA32
- 	if (IS_ENABLED(CONFIG_ZONE_DMA32))
- 		max_zone_pfns[ZONE_DMA32] = PFN_DOWN(max_zone_dma_phys());
-+#endif
- 	max_zone_pfns[ZONE_NORMAL] = max;
- 
- 	free_area_init_nodes(max_zone_pfns);
--- 
-2.18.0
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlzsC54ACgkQznnekoTE
+3oOznwgAhyYzNT+IZaxzQR0GnIRvA6zvgAFnYavgEJ4u1Ho+/yN2A/j2zO21VADa
+4ePmUcF3t92Wje8kymUGTVpkJWhWDuH9g5KVo9Y9xRI3EIaZ+I0mTIG/klukiRYh
+kwBTwyMl/RHt00b6FqLn238Ld+jiICE/6IY3QzT0ZFLGAQyh8Vjg5mCHmH2RJAHa
+htfX71wMTevL3/3w3T+FBYUFo0pm77mqGzGVWHOwnViJbbkv7MYmEgZFi/vd9sJ1
+bfQw3ICb2CYq1XafP/o+buN0LVeVJtP+iwiqpbK28ga9ukNpJVApt0TrUdKvrAyx
+LcQZxqb1cWcwHR5NO0AGmBX0AVX57w==
+=ML4Y
+-----END PGP SIGNATURE-----
+
+--=-cNrPoMQaGz8ZPHR4bhZP--
 
