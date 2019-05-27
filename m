@@ -2,176 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6ECA2B2C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:10:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7CDC2B2CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:12:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfE0LKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 07:10:06 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:7959 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbfE0LKG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 07:10:06 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cebc58c0000>; Mon, 27 May 2019 04:10:04 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 27 May 2019 04:10:04 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 27 May 2019 04:10:04 -0700
-Received: from [10.24.45.112] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 27 May
- 2019 11:10:00 +0000
-Subject: Re: [PATCH V4 1/2] PCI: dwc: Add API support to de-initialize host
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     <jingoohan1@gmail.com>, <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <Jisheng.Zhang@synaptics.com>,
-        <thierry.reding@gmail.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
-References: <20190502170426.28688-1-vidyas@nvidia.com>
- <20190503112338.GA25649@e121166-lin.cambridge.arm.com>
- <dec5ecb2-863e-a1db-10c9-2d91f860a2c6@nvidia.com>
- <37697830-5a94-0f8e-a5cf-3347bc4850cb@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <b560f3c3-b69e-d9b5-2dae-1ede52af0ea6@nvidia.com>
-Date:   Mon, 27 May 2019 16:39:58 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726756AbfE0LMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 07:12:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35728 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725996AbfE0LMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 07:12:14 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CD8CF330259;
+        Mon, 27 May 2019 11:12:13 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-117-89.ams2.redhat.com [10.36.117.89])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 54D6E19C7F;
+        Mon, 27 May 2019 11:12:10 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        akpm@linux-foundation.org, Dan Williams <dan.j.williams@intel.com>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Igor Mammedov <imammedo@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Qian Cai <cai@lca.pw>, Arun KS <arunks@codeaurora.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: [PATCH v3 01/11] mm/memory_hotplug: Simplify and fix check_hotplug_memory_range()
+Date:   Mon, 27 May 2019 13:11:42 +0200
+Message-Id: <20190527111152.16324-2-david@redhat.com>
+In-Reply-To: <20190527111152.16324-1-david@redhat.com>
+References: <20190527111152.16324-1-david@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <37697830-5a94-0f8e-a5cf-3347bc4850cb@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1558955404; bh=nU2dra4R89mw+x+E2Tv1OoaiE1ccD4BKlZtlo7GdJ5Q=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=B5k+uzx3cwW6LzYoHxheWLsDgIX3MuJKvphicodmkeiMsE4FMPWlX/xjNQ8ZC0w7d
-         U/ZPBDYS5UWMLXY6jhGXhRiCsTWWZNkYaGgTaaWzRrQ1TIj6i4KP8MZ5RBVNUUcBlB
-         9w9MRrClVg5r0jvJFEHQY059Q9OKT4r+vqcUP96XZeqJabpzFjBsBhowk99mZ63Jys
-         02b1eAmceDVuPmMJbJXAgZw+9v1fn+eAgQn81k2Ob1PT893HZC1566LDp81Zt5qez3
-         RJjpP+oyszsSlatgDteNwhpZuajKLug+CJwj/0fbK/qsLOhcsqGfMWAfj2/g4SI3bu
-         5pjG22OZPXOmg==
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 27 May 2019 11:12:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/7/2019 12:25 PM, Vidya Sagar wrote:
-> On 5/7/2019 11:19 AM, Vidya Sagar wrote:
->> On 5/3/2019 4:53 PM, Lorenzo Pieralisi wrote:
->>> On Thu, May 02, 2019 at 10:34:25PM +0530, Vidya Sagar wrote:
->>>> Add an API to group all the tasks to be done to de-initialize host whi=
-ch
->>>> can then be called by any DesignWare core based driver implementations
->>>> while adding .remove() support in their respective drivers.
->>>>
->>>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->>>> Acked-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->>>> ---
->>>> Changes from v3:
->>>> * Added check if (pci_msi_enabled() && !pp->ops->msi_host_init) before=
- calling
->>>> =C2=A0=C2=A0 dw_pcie_free_msi() API to mimic init path
->>>>
->>>> Changes from v2:
->>>> * Rebased on top of linux-next top of the tree branch
->>>>
->>>> Changes from v1:
->>>> * s/Designware/DesignWare
->>>>
->>>> =C2=A0 drivers/pci/controller/dwc/pcie-designware-host.c | 8 ++++++++
->>>> =C2=A0 drivers/pci/controller/dwc/pcie-designware.h=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 5 +++++
->>>> =C2=A0 2 files changed, 13 insertions(+)
->>>
->>> Series doesn't apply to v5.1-rc1, what's based on ? I suspect
->>> there is a dependency on pci/keystone, given the tight timeline
->>> for the merge window, would you mind postponing it to v5.3 ?
->>>
->>> I do not think it is urgent, I am happy to create a branch
->>> for it as soon as v5.2-rc1 is released.
->> I rebased my changes on top of linux-next. I see that they have conflict=
-s
->> on top of v5.1-rc1. Do you want me to rebase them on top of v5.1-rc1 ins=
-tead
->> of linux-next?
->> I'm fine with v5.2-rc1 as well.I forgot to mention that these changes ar=
-e made on top of Jisheng's patches
-> FWIW, Jisheng's patches are approved and applied to pci/dwc for v5.2
-> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1968324.html
+By converting start and size to page granularity, we actually ignore
+unaligned parts within a page instead of properly bailing out with an
+error.
 
-Hi Lorenzo,
-Now that v5.2-rc2 is also available, could you please pick up this series?
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Wei Yang <richard.weiyang@gmail.com>
+Cc: Arun KS <arunks@codeaurora.org>
+Cc: Mathieu Malaterre <malat@debian.org>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Wei Yang <richardw.yang@linux.intel.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ mm/memory_hotplug.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-Thanks,
-Vidya Sagar
-
->=20
->>
->>>
->>> Thanks,
->>> Lorenzo
->>>
->>>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drive=
-rs/pci/controller/dwc/pcie-designware-host.c
->>>> index 77db32529319..d069e4290180 100644
->>>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
->>>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
->>>> @@ -496,6 +496,14 @@ int dw_pcie_host_init(struct pcie_port *pp)
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->>>> =C2=A0 }
->>>> +void dw_pcie_host_deinit(struct pcie_port *pp)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 pci_stop_root_bus(pp->root_bus);
->>>> +=C2=A0=C2=A0=C2=A0 pci_remove_root_bus(pp->root_bus);
->>>> +=C2=A0=C2=A0=C2=A0 if (pci_msi_enabled() && !pp->ops->msi_host_init)
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dw_pcie_free_msi(pp);
->>>> +}
->>>> +
->>>> =C2=A0 static int dw_pcie_access_other_conf(struct pcie_port *pp, stru=
-ct pci_bus *bus,
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 devfn, =
-int where, int size, u32 *val,
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool write)
->>>> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pc=
-i/controller/dwc/pcie-designware.h
->>>> index deab426affd3..4f48ec78c7b9 100644
->>>> --- a/drivers/pci/controller/dwc/pcie-designware.h
->>>> +++ b/drivers/pci/controller/dwc/pcie-designware.h
->>>> @@ -348,6 +348,7 @@ void dw_pcie_msi_init(struct pcie_port *pp);
->>>> =C2=A0 void dw_pcie_free_msi(struct pcie_port *pp);
->>>> =C2=A0 void dw_pcie_setup_rc(struct pcie_port *pp);
->>>> =C2=A0 int dw_pcie_host_init(struct pcie_port *pp);
->>>> +void dw_pcie_host_deinit(struct pcie_port *pp);
->>>> =C2=A0 int dw_pcie_allocate_domains(struct pcie_port *pp);
->>>> =C2=A0 #else
->>>> =C2=A0 static inline irqreturn_t dw_handle_msi_irq(struct pcie_port *p=
-p)
->>>> @@ -372,6 +373,10 @@ static inline int dw_pcie_host_init(struct pcie_p=
-ort *pp)
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>>> =C2=A0 }
->>>> +static inline void dw_pcie_host_deinit(struct pcie_port *pp)
->>>> +{
->>>> +}
->>>> +
->>>> =C2=A0 static inline int dw_pcie_allocate_domains(struct pcie_port *pp=
-)
->>>> =C2=A0 {
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>>> --=20
->>>> 2.17.1
->>>>
->>
->=20
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index e096c987d261..762887b2358b 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1051,16 +1051,11 @@ int try_online_node(int nid)
+ 
+ static int check_hotplug_memory_range(u64 start, u64 size)
+ {
+-	unsigned long block_sz = memory_block_size_bytes();
+-	u64 block_nr_pages = block_sz >> PAGE_SHIFT;
+-	u64 nr_pages = size >> PAGE_SHIFT;
+-	u64 start_pfn = PFN_DOWN(start);
+-
+ 	/* memory range must be block size aligned */
+-	if (!nr_pages || !IS_ALIGNED(start_pfn, block_nr_pages) ||
+-	    !IS_ALIGNED(nr_pages, block_nr_pages)) {
++	if (!size || !IS_ALIGNED(start, memory_block_size_bytes()) ||
++	    !IS_ALIGNED(size, memory_block_size_bytes())) {
+ 		pr_err("Block size [%#lx] unaligned hotplug range: start %#llx, size %#llx",
+-		       block_sz, start, size);
++		       memory_block_size_bytes(), start, size);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.20.1
 
