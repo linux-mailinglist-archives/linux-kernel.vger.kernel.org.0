@@ -2,108 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 387C62BA50
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 20:47:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 304772BA61
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 20:56:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbfE0Srr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 14:47:47 -0400
-Received: from sauhun.de ([88.99.104.3]:35778 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726598AbfE0Srq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 14:47:46 -0400
-Received: from localhost (p5486CF59.dip0.t-ipconnect.de [84.134.207.89])
-        by pokefinder.org (Postfix) with ESMTPSA id 5876B2C04C2;
-        Mon, 27 May 2019 20:47:44 +0200 (CEST)
-Date:   Mon, 27 May 2019 20:47:43 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Ruslan Babayev <ruslan@babayev.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        xe-linux-external@cisco.com, linux-i2c@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/2] i2c: acpi: export
- i2c_acpi_find_adapter_by_handle
-Message-ID: <20190527184743.GA8808@kunai>
-References: <20190505193435.3248-1-ruslan@babayev.com>
- <20190525005302.27164-1-ruslan@babayev.com>
+        id S1727326AbfE0S4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 14:56:35 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40711 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbfE0S4f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 14:56:35 -0400
+Received: by mail-lj1-f194.google.com with SMTP id q62so15466010ljq.7
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 11:56:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0M9+CuFDRY6zmkTMsFyEFGMzc2pk/FXTc+geD/xhgG8=;
+        b=IDb/hbyQgY21nuV2LBO2TNOaRE38NoV5Q4XHoHqiTOvqshvusynIuDSsYkw9iF2nFD
+         P22g7ZqLtG4bPc/b2ghLW9uSs/wM+jeoVRHpYQ6vVG+QMJM/0QapWZU445OWqOUdACPp
+         nxGsQsTufyxMtNW4p9qkFejvax39+NRHIkUz0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0M9+CuFDRY6zmkTMsFyEFGMzc2pk/FXTc+geD/xhgG8=;
+        b=hCuLIlmdYdi5Ib4264KpNo1G70bzvYT7e6jQBSUBVbSaY9jqWF3vr6wQ/mnliAkiyw
+         fA4SwwU+kXoQ9Yly31c7XTKxUeJd0xLJT+7WHz18r6Bh6EIb8vH85cjhSx1uDehuINjv
+         M84m+ee11d9ff85XLPQnekFQIS3ekigL8f0VpX1ue9ISHa+JtbM/x786tWjrIXx9peMC
+         CEvFuWZzJcliWiVcmgc83wbcLjmLz4H1cssoOeEoF8Cjtod8G35jl3EbQoNEWRGoRbO8
+         CptJQv7I3BclN/WQiGSU0/yKN0FgwWy0OmddZg9j9tlbT9fnQ+VlcxEsqwF9R7bSy21Z
+         XAeA==
+X-Gm-Message-State: APjAAAX34ke6Z/DxhYUsioichZgiMzqOZPVaF6gQSKTLy5x21zZ7Voc4
+        ZKdP2SmC7nh3Jg7XfpBnsbSrqPPKuWI=
+X-Google-Smtp-Source: APXvYqzMjhd7wNT1DJcaz+zaGaD9kkgy0sqMDExqqnSAHN5mMnI0atyMJXVJ1xTSXsrGF0jdzy564A==
+X-Received: by 2002:a2e:9897:: with SMTP id b23mr47775537ljj.157.1558983393116;
+        Mon, 27 May 2019 11:56:33 -0700 (PDT)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id v12sm2451382ljv.49.2019.05.27.11.56.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 11:56:32 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id b11so6332812lfa.5
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 11:56:32 -0700 (PDT)
+X-Received: by 2002:a19:ae01:: with SMTP id f1mr21133934lfc.29.1558982909294;
+ Mon, 27 May 2019 11:48:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
-Content-Disposition: inline
-In-Reply-To: <20190525005302.27164-1-ruslan@babayev.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190526102612.6970-1-christian@brauner.io> <20190526102612.6970-2-christian@brauner.io>
+ <CAK8P3a1Ltsna_rtKxhMU7X0t=UOXDA75tKpph6s=OZ4itJe7VQ@mail.gmail.com>
+ <20190527104528.cao7wamuj4vduh3u@brauner.io> <CAK8P3a3q=5Ca0xoMp+kyCvOqNDRzDTgu28f+U8J-buMVcZcVaw@mail.gmail.com>
+ <20190527123414.rv2r6g6de6y3ay6w@brauner.io>
+In-Reply-To: <20190527123414.rv2r6g6de6y3ay6w@brauner.io>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 27 May 2019 11:48:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgixXANa=2U0AeKud9zk9XvaV4mVRNNpkOWKpy+uuvtsg@mail.gmail.com>
+Message-ID: <CAHk-=wgixXANa=2U0AeKud9zk9XvaV4mVRNNpkOWKpy+uuvtsg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arch: wire-up clone6() syscall on x86
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-ia64@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 27, 2019 at 5:34 AM Christian Brauner <christian@brauner.io> wrote:
+>
+> Afaict, stack_size is *only* used on ia64:
 
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That's because ia64 "stacks" are an odd non-stack thing (like so much
+of the architecture).
 
-On Fri, May 24, 2019 at 05:53:01PM -0700, Ruslan Babayev wrote:
-> This allows drivers to lookup i2c adapters on ACPI based systems similar =
-to
-> of_get_i2c_adapter_by_node() with DT based systems.
->=20
-> Signed-off-by: Ruslan Babayev <ruslan@babayev.com>
-> Cc: xe-linux-external@cisco.com
+In computer science, a stack is a FIFO that grows/shrinks according to
+use. In practical implementations, it also has a direction, but the
+"size" is basically not relevant if you just allow it to grow
+dynamically. The key word here being "dynamically": the stack size is
+inherently a dynamic thing.
 
-Please have a look how your patches look in my inbox:
+So you don't really need a "stack size". The whole concept doesn't
+make sense, outside of the obvious maximum limit things (ie
+RLIMIT_STACK) and simply just hitting other allocations.
 
-May 05 Ruslan Babayev  ( 129) [PATCH] net: phy: sfp: enable i2c-bus detecti=
-on on ACPI based systems
-May 05 Ruslan Babayev  (  65) =E2=94=9C=E2=94=80>[PATCH 1/2] i2c: acpi: exp=
-ort i2c_acpi_find_adapter_by_handle
-May 24 Ruslan Babayev  (  65) =E2=94=94=E2=94=80>[PATCH net-next v2 1/2] i2=
-c: acpi: export i2c_acpi_find_adapter_by_handle
-May 05 Ruslan Babayev  (  65) [PATCH net-next 1/2] i2c: acpi: export i2c_ac=
-pi_find_adapter_by_handle
-May 06 Ruslan Babayev  (   3) =E2=94=9C=E2=94=80>[PATCH RFC v2 net-next] En=
-able SFP support on ACPI
-May 06 Ruslan Babayev  (  65) =E2=94=9C=E2=94=80>[PATCH RFC v2 net-next 1/2=
-] i2c: acpi: export i2c_acpi_find_adapter_by_handle
-May 06 Ruslan Babayev  ( 120) =E2=94=94=E2=94=80>[PATCH RFC v2 net-next 2/2=
-] net: phy: sfp: enable i2c-bus detection on ACPI based systems
-May 07 Ruslan Babayev  ( 154)   =E2=94=94=E2=94=80&=E2=94=80>
-May 07 Ruslan Babayev  (  10)     =E2=94=94=E2=94=80>
-May 22 Ruslan Babayev  (  29)       =E2=94=94=E2=94=80>
-May 05 Ruslan Babayev  (  93) [PATCH net-next 2/2] net: phy: sfp: enable i2=
-c-bus detection on ACPI based systems
-May 06 Ruslan Babayev  (  25) =E2=94=9C=E2=94=80&=E2=94=80>
-May 06 Ruslan Babayev  (  99) =E2=94=94=E2=94=80&=E2=94=80>
+But ia64 is "special".
 
-This is highly confusing, and super hard to find out which patches belong
-together. v2 2/2 seems even missing. Please resend this as a new series wit=
-hout
-any in-reply-to, and a fresh cover-letter, so I know which one to apply to =
-my
-tree.
+The ia64 stack isn't actually a stack. It's *two* stacks, growing in
+opposite directions. One for the hardware spilling of the register
+state and call frame ("backing store"), and one for the traditional
+software stack.
 
-Thanks,
+So on ia64, the stack size suddenly becomes a fixed thing, because
+it's not a dynamically growing single stack that grows in one
+direction, it's literally a fixed virtual area that has two different
+stacks growing towards each other.
 
-   Wolfram
+Btw, don't get me wrong. Two stacks can be a good thing, and a lot of
+security people want to have two stacks - one for actual call frame
+data, and a separate one for automatic stack variables that have their
+address taken.
 
+Having separate stacks avoids the whole traditional stack smash model
+(well, it avoids the one that overwrites the return frame - you can
+still possibly have security issues because one function smashes the
+automatic stack of a caller and then cause the caller to be confused
+and do something insecure).
 
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
+And the ia64 double stack kind of works that way automatically. So
+"double stack" very much isn't wrong per se, but doing it the way ia64
+did was too inflexible and the register stack (and rotation) was and
+is just a bad idea.
 
------BEGIN PGP SIGNATURE-----
+Two stacks without the hw register renaming and flushing can be
+lovely, and can even merit some hw support (ie the whole "Shadow
+stack" model).
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlzsMMsACgkQFA3kzBSg
-KbbJUw//ZjfgfbIi9s/dvsxSUH0zdiFzpTrxw/kK6vz8DoMVEvB7gZTQn+AGU9SX
-7rDxALpNLwpC6k6IYkDT1SW7FBxMHw3yMBVahyXTlZaTAIOW/iS2yctgCBLlVs+1
-zbGPIoEXobAY5kPgeb5ibpesN1UxmTBQOubp31RmOp87PInFCpo3czzvPhRxyCOs
-nWXSaTVGvkoLzBmLXcz1awje7FimsUHUPI3GITobxGXVl+6l2whN/a69hbgHRhpL
-5HbxaXt11oMTYI0QVBJ03Aqlu22nxZbW/YZV7P5cwrn7KaST04/8HTVxLhegPhog
-pQH3M9Gp/ANChZ3+EqFe3IVWakj6tkZRUluL3kp1qNagVJ+aGeOurJgtoubXRXVc
-hxOPPSrtHB90dWV+H/AieEIPwc7NFgbn6fOs4JLNGCvtc6ylEk/Yu6rFFIj9OuWN
-ndtK5RZLKXfjvuYptxnTX8hK1o74YAnrJ0YwmYiWi7gq14fSxQjcL6OHHJM8rVks
-zKHg2nA/2ikX9N6a+6TX3VkJkf9yPZb88S41onQuCfysW+tlmDYW9r4Nxp0U91bw
-vKs/uwsnzIY/ezGr3v8u82vqzyejMi3/ABqFiO+tlC4TNQj5wqZhiE/FXBZi30J5
-p/xcN6Pj8cNtAYWcPSd2kzBuLdqT9SF1XHRdMbtItkHYMJ3WIAo=
-=rpQu
------END PGP SIGNATURE-----
-
---+QahgC5+KEYLbs62--
+              Linus
