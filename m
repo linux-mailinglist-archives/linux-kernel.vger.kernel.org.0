@@ -2,126 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7339A2AF4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 09:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDC952AF53
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 09:20:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726326AbfE0HRe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 03:17:34 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36920 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfE0HRe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 03:17:34 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w37so25224998edw.4
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 00:17:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QwuBQ1X+pSV3hALrqNIHUzC0vaq4QLHWjQ6iDVz7qqA=;
-        b=jSNLMANJhUtiZO1sfreZI8f4UbUaZzz2BbU0j83vksvqO51XfHUOq995cZTVgnbJJ1
-         ggiJyDzSHqG4bQyAFah7qIr4Z8QBj9pmHuHpFH9ad2uH5zJfglL1zkKXWW0pVwo0en9i
-         km816R9F+OIYB4w5SBNI1vMIzhzODBDITe+xo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=QwuBQ1X+pSV3hALrqNIHUzC0vaq4QLHWjQ6iDVz7qqA=;
-        b=Ct/eHKtBumV1dZSmR5If4HVdyB/OFXrMJI1zvsmyEtm8JaZXzD3CQtBxAsH9QAX1Nl
-         ZvNCfKwq8u/+fZtKVaSMXLqggn2Q935smZIYpwYZkgz8cFcWkftixDmMrrTkT4FsM0FX
-         6DoLwhoETQIc3nyM4n+gAGlRKpg7xXLfLbUFFZ+oBX3Q0a+Y5g66EYaftT6MDpcikI5Q
-         HcFiqRivWH9H2VoRQ2Z56RlMWh8P76oU6TG+byTclcUsvZmlARDjE7AfjVGB/QrCsw8h
-         PChAxdR+aEavILA3vmjccTewkvrtFzRHph60P4Y1KBwqGvDCt9xvVbjZeqAW+rI+PJHK
-         NqPw==
-X-Gm-Message-State: APjAAAWZXZYZle7y9Y4SVjhnhZtHSkOOqTf2OSQ+fmybrmzgpw/PsDkp
-        aTeSpDh7/hsC5aNN6DV5PrS+Bg==
-X-Google-Smtp-Source: APXvYqyajJVzug0/cOZboL2gRmo5k48fYzLzelbPSB9nBVL3vfoMbrW3Svg7HlgWB+pN8HC2Ve1zaA==
-X-Received: by 2002:a50:9765:: with SMTP id d34mr121806735edb.195.1558941452773;
-        Mon, 27 May 2019 00:17:32 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id a17sm2992004edt.63.2019.05.27.00.17.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 May 2019 00:17:31 -0700 (PDT)
-Date:   Mon, 27 May 2019 09:17:29 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH 00/33] fbcon notifier begone!
-Message-ID: <20190527071729.GM21222@phenom.ffwll.local>
-Mail-Followup-To: Sam Ravnborg <sam@ravnborg.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>
-References: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
- <20190525171928.GA13526@ravnborg.org>
+        id S1726131AbfE0HUF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 03:20:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47302 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725869AbfE0HUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 03:20:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8AE6EAEEA;
+        Mon, 27 May 2019 07:20:02 +0000 (UTC)
+Date:   Mon, 27 May 2019 09:20:01 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        akpm@linux-foundation.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, mgorman@techsingularity.net,
+        james.morse@arm.com, robin.murphy@arm.com, cpandya@codeaurora.org,
+        arunks@codeaurora.org, dan.j.williams@intel.com, osalvador@suse.de,
+        david@redhat.com, cai@lca.pw, logang@deltatee.com,
+        ira.weiny@intel.com
+Subject: Re: [PATCH V3 2/4] arm64/mm: Hold memory hotplug lock while walking
+ for kernel page table dump
+Message-ID: <20190527072001.GB1658@dhcp22.suse.cz>
+References: <1557824407-19092-1-git-send-email-anshuman.khandual@arm.com>
+ <1557824407-19092-3-git-send-email-anshuman.khandual@arm.com>
+ <20190515165847.GH16651@dhcp22.suse.cz>
+ <20190516102354.GB40960@lakrids.cambridge.arm.com>
+ <20190516110529.GQ16651@dhcp22.suse.cz>
+ <20190522164212.GD23592@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190525171928.GA13526@ravnborg.org>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
+In-Reply-To: <20190522164212.GD23592@lakrids.cambridge.arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 25, 2019 at 07:19:28PM +0200, Sam Ravnborg wrote:
-> Hi Daniel.
-> 
-> Good work, nice cleanup all over.
-> 
-> A few comments to a few patches - not something that warrant a
-> new series to be posted as long as it is fixed before the patches are
-> applied.
-
-Hm yeah good idea, I'll add that to the next version.
-
-> > btw for future plans: I think this is tricky enough (it's old code and all
-> > that) that we should let this soak for 2-3 kernel releases. I think the
-> > following would be nice subsequent cleanup/fixes:
+On Wed 22-05-19 17:42:13, Mark Rutland wrote:
+> On Thu, May 16, 2019 at 01:05:29PM +0200, Michal Hocko wrote:
+> > On Thu 16-05-19 11:23:54, Mark Rutland wrote:
+> > > Hi Michal,
+> > > 
+> > > On Wed, May 15, 2019 at 06:58:47PM +0200, Michal Hocko wrote:
+> > > > On Tue 14-05-19 14:30:05, Anshuman Khandual wrote:
+> > > > > The arm64 pagetable dump code can race with concurrent modification of the
+> > > > > kernel page tables. When a leaf entries are modified concurrently, the dump
+> > > > > code may log stale or inconsistent information for a VA range, but this is
+> > > > > otherwise not harmful.
+> > > > > 
+> > > > > When intermediate levels of table are freed, the dump code will continue to
+> > > > > use memory which has been freed and potentially reallocated for another
+> > > > > purpose. In such cases, the dump code may dereference bogus addressses,
+> > > > > leading to a number of potential problems.
+> > > > > 
+> > > > > Intermediate levels of table may by freed during memory hot-remove, or when
+> > > > > installing a huge mapping in the vmalloc region. To avoid racing with these
+> > > > > cases, take the memory hotplug lock when walking the kernel page table.
+> > > > 
+> > > > Why is this a problem only on arm64 
+> > > 
+> > > It looks like it's not -- I think we're just the first to realise this.
+> > > 
+> > > AFAICT x86's debugfs ptdump has the same issue if run conccurently with
+> > > memory hot remove. If 32-bit arm supported hot-remove, its ptdump code
+> > > would have the same issue.
+> > > 
+> > > > and why do we even care for debugfs? Does anybody rely on this thing
+> > > > to be reliable? Do we even need it? Who is using the file?
+> > > 
+> > > The debugfs part is used intermittently by a few people working on the
+> > > arm64 kernel page tables. We use that both to sanity-check that kernel
+> > > page tables are created/updated correctly after changes to the arm64 mmu
+> > > code, and also to debug issues if/when we encounter issues that appear
+> > > to be the result of kernel page table corruption.
 > > 
-> > - push the console lock completely from fbmem.c to fbcon.c. I think we're
-> >   mostly there with prep, but needs to pondering of corner cases.
-> I wonder - should this code consistently use __acquire() etc so we could
-> get a little static analysis help for the locking?
-> 
-> I have not played with this for several years and I do not know the
-> maturity of this today.
-
-Ime these sparse annotations are pretty useless because too inflexible. I
-tend to use runtime locking checks based on lockdep. Those are more
-accurate, and work even when the place the lock is taken is very far away
-from where you're checking, without having to annoate all functions in
-between. We need that for something like console_lock which is a very big
-lock. Only downside is that only paths you hit at runtime are checked.
-
-> > - move fbcon.c from using indices for tracking fb_info (and accessing
-> >   registered_fbs without proper locking all the time) to real fb_info
-> >   pointers with the right amount of refcounting. Mostly motivated by the
-> >   fun I had trying to simplify fbcon_exit().
+> > OK, I see. Thanks for the clarification.
 > > 
-> > - make sure that fbcon call lock/unlock_fb when it calls fbmem.c
-> >   functions, and sprinkle assert_lockdep_held around in fbmem.c. This
-> >   needs the console_lock cleanups first.
+> > > So while it's rare to need it, it's really useful to have when we do
+> > > need it, and I'd rather not remove it. I'd also rather that it didn't
+> > > have latent issues where we can accidentally crash the kernel when using
+> > > it, which is what this patch is addressing.
 > > 
-> > But I think that's material for maybe next year or so.
-> Or maybe after next kernel release.
-> Could we put this nice plan into todo.rst or similar so we do not have
-> to hunt it down by asking google?
+> > While I agree, do we rather want to document that you shouldn't be using
+> > the debugging tool while the hotplug is ongoing because you might get a
+> > garbage or crash the kernel in the worst case? In other words is the
+> > absolute correctness worth the additional maint. burden wrt. to future
+> > hotplug changes?
 > 
-> For the whole series you can add my:
-> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> I don't think that it's reasonable for this code to bring down the
+> kernel unless the kernel page tables are already corrupt. I agree we
+> should minimize the impact on other code, and I'm happy to penalize
+> ptdump so long as it's functional and safe.
 > 
-> Some parts are reviewed as "this looks entirely correct", other parts
-> I would claim that I actually understood.
-> And after having spend some hours on this a r-b seems in order.
+> I would like it to be possible to use the ptdump code to debug
+> hot-remove, so I'd rather not make the two mutually exclusive. I'd also
+> like it to be possible to use this in-the-field, and for that asking an
+> admin to potentially crash their system isn't likely to fly.
 
-Thanks, Daniel
+OK, fair enough.
+
+> > > > I am asking because I would really love to make mem hotplug locking less
+> > > > scattered outside of the core MM than more. Most users simply shouldn't
+> > > > care. Pfn walkers should rely on pfn_to_online_page.
+> 
+> Jut to check, is your plan to limit access to the hotplug lock, or to
+> redesign the locking scheme?
+
+To change the locking to lock hotpluged ranges rather than having a
+global lock as the operation is inherently pfn range scoped.
+
+> > > I'm not sure if that would help us here; IIUC pfn_to_online_page() alone
+> > > doesn't ensure that the page remains online. Is there a way to achieve
+> > > that other than get_online_mems()?
+> > 
+> > You have to pin the page to make sure the hotplug is not going to
+> > offline it.
+> 
+> I'm not exactly sure how pinning works -- is there a particular set of
+> functions I should look at for that?
+
+Pinning (get_page) on any page of the range will deffer the hotremove
+operation and therefore the page tables cannot go away as well.
+
+That being said, I thought the API is mostly for debugging and "you
+should better know what you are doing" kinda thing (based on debugfs
+being used here). If this is really useful in its current form and
+should be used also while the hotremove is in progress then ok.
+Once we actually get to rework the locking then we will have another
+spot to handle but that's the life.
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Michal Hocko
+SUSE Labs
