@@ -2,63 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 866032B67F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84C082B66A
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:29:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbfE0NfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:35:05 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37370 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726479AbfE0NfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:35:05 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 08FEB6BAFE1C85BD5E7D;
-        Mon, 27 May 2019 21:34:59 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Mon, 27 May 2019
- 21:34:51 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <tyhicks@canonical.com>, <viro@zeniv.linux.org.uk>
-CC:     <linux-kernel@vger.kernel.org>, <ecryptfs@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] ecryptfs: remove unnessesary null check in ecryptfs_keyring_auth_tok_for_sig
-Date:   Mon, 27 May 2019 21:28:14 +0800
-Message-ID: <20190527132814.19600-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726609AbfE0N3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:29:06 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43092 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726264AbfE0N3G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 09:29:06 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l17so8549890wrm.10
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 06:29:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=m+dXzPFPF0QC/08N8/jLGXcjGIV+v/pjQg8Lvb1aVuM=;
+        b=WzL1+1C2hQtI9ONr/IqYQEZ+4v1XArIttWiAETlxVdn4U0Xd1Gr6peUX1hFoSTulxo
+         DOB5jUtmPKC9AOLSl7nkNoLllSdcLbKe/8sQsKDi3f9Ak0liBKjC/S39b3sLyJdkJCc0
+         5WKLezBgJUOPDVnZUgdTZyP85Qg4h94tAac+Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m+dXzPFPF0QC/08N8/jLGXcjGIV+v/pjQg8Lvb1aVuM=;
+        b=oGBbBI7cyVXOOBWhCkPv198GojNdv5cSdZvFuwEetHE6tHjBf68Z70u3dljCsoc4ba
+         Nm1mZi6qjAihWqkBzrQtudT3eoNmeDrycX6WWZjvpe1UPCNM4w0yFNgL/Z8x55P8794v
+         kBXTX7H4wh06yEpcnd+FStrz6dmCHWlaRVHY9fnKmGTHxFesb5rWGCfrPOj6amn0QoIL
+         2jPa0YN5za74Xx2W0psLouyssj85HkHFsMJd59a1q7yw419v/m1mJXXlElKw0FtMCsz4
+         w2Yy3Ppu4nZRA4keymfg4zru1Dzqu5S9GDNdEz/F48zMpQoLb8tlOQj11trb2sMdWcS+
+         OTmw==
+X-Gm-Message-State: APjAAAWbMJdG1AXa/f6GwgIffr6q8Z78SlmB4K/ivw7glqjf/5SrqRaF
+        ERW4NcUlXswGlMhY4g4JTCik5Q==
+X-Google-Smtp-Source: APXvYqx3FVL85vZsOLhYUKwWkJDyaB5qlY0duEg6rDcbtKj+K4FAMYFxlrwC4j8WWJveRBfJUvOY6Q==
+X-Received: by 2002:adf:8062:: with SMTP id 89mr3791540wrk.97.1558963744716;
+        Mon, 27 May 2019 06:29:04 -0700 (PDT)
+Received: from andrea (86.100.broadband17.iol.cz. [109.80.100.86])
+        by smtp.gmail.com with ESMTPSA id n10sm5377784wrr.11.2019.05.27.06.29.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 06:29:04 -0700 (PDT)
+Date:   Mon, 27 May 2019 15:28:57 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     "Huang, Ying" <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        David Rientjes <rientjes@google.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [PATCH -mm] mm, swap: Simplify total_swapcache_pages() with
+ get_swap_device()
+Message-ID: <20190527132857.GA1429@andrea>
+References: <20190527082714.12151-1-ying.huang@intel.com>
+ <20190527101536.GI28207@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190527101536.GI28207@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-request_key and ecryptfs_get_encrypted_key never
-return a NULL pointer, so no need do a null check.
+> But where do I find get_swap_device() and put_swap_device()?  I do not
+> see them in current mainline.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/ecryptfs/keystore.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+You should see them in the -mm tree:
 
-diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
-index 95662fd46b1d..a1afb162b9d2 100644
---- a/fs/ecryptfs/keystore.c
-+++ b/fs/ecryptfs/keystore.c
-@@ -1626,9 +1626,9 @@ int ecryptfs_keyring_auth_tok_for_sig(struct key **auth_tok_key,
- 	int rc = 0;
- 
- 	(*auth_tok_key) = request_key(&key_type_user, sig, NULL);
--	if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
-+	if (IS_ERR(*auth_tok_key)) {
- 		(*auth_tok_key) = ecryptfs_get_encrypted_key(sig);
--		if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
-+		if (IS_ERR(*auth_tok_key)) {
- 			printk(KERN_ERR "Could not find key with description: [%s]\n",
- 			      sig);
- 			rc = process_request_key_err(PTR_ERR(*auth_tok_key));
--- 
-2.17.1
+  https://ozlabs.org/~akpm/mmots/broken-out/mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
 
+or
 
+  http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/commit/?id=87efc56527b92a59d15c5d4e4b05f875b276a59a
+
+Thanks,
+  Andrea
