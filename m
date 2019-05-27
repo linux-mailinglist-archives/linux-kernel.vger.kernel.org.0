@@ -2,91 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 891402B29A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D81A2B29D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbfE0K6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 06:58:43 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40147 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfE0K6m (ORCPT
+        id S1726674AbfE0K7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 06:59:45 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36146 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfE0K7o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 06:58:42 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 15so15377823wmg.5
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 03:58:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
-        b=IKws2+O44O2mKdwEv3KzGwFtpzfm2Erh2H9Y4qxKuvYSe4EkEe6FiqyUySqJxG/kRc
-         O5DlTh7VXFdwJt9/o7aUbkaqQGOF2oUByYuPuDdCp6Q3h+9aa21U+u273LmRJIdJWo7P
-         mddAxiddbpkij1gxWgvbDVD4Z2ducfx34msdj3OuVAjqAmXe+hLKyd3/23ralIYU2AUa
-         DPXWMRgAYSpaj7ZSrYXFR1D1LHnqgYEg3/UR+dLOw9ThlP8WmDpFEt5xfx7HtV39LI5e
-         SXSYj4r+B6WJvafJHrDSfI/QD6A0URYz4LsY16UT7o5g8U4ekaL6HdTV/v7VWke1vZaj
-         bZ+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=SAoSdsefzzCmPOTzwU+Ovh/O9jS+esAN3o944dSuqEw=;
-        b=GbM5Ib5u6qdrCfHAov5lJFps79OqBT12dt5goxYGVFQaN7K/zdm7gYFZ5TaCePbYdt
-         yyEuQmdo2GyxrMg1tImwbuOJZGwsVaohmVuhs8TQDwwki7/jIorTemj6IR1X7KmSu4+8
-         9HZy1PkP6hOdAqZHdTzndop6MEczI4rji2jkfOQi1CyEh4sCJ1Dega9PDT+8Icd1eWFE
-         FVSYWNf3RJuNxkzrMINz3fa7UfUMuUqu5j4ttW7Vf2AnIKQRFIA075XchZkNk0ry4ozp
-         PxBgdCnFhlu1fVTm/Zrzjmt+HwD5sVchn4Ke0DhZf5Qd+mezxmIoXdCy1LwdVthovlUu
-         J0nQ==
-X-Gm-Message-State: APjAAAV0LHIg2Lhl5i3H3UhRWuhqnUJ0e4QvWilaANMdoQqSNTPMzH5k
-        cy+FCD0EOsf1CgsduSnArx4jqJkEzQWfv7Ld4nM=
-X-Google-Smtp-Source: APXvYqzl777syMv7Zl8Q1+QVnZ0qN1xbKORUo22SA6ckZsiFcJEjhrMdf/aaCKTR2u8s3bQaIdJ8pr9oufjJMEFP0XA=
-X-Received: by 2002:a1c:e702:: with SMTP id e2mr9419359wmh.38.1558954720790;
- Mon, 27 May 2019 03:58:40 -0700 (PDT)
+        Mon, 27 May 2019 06:59:44 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190527105942euoutp01a25f95b4c070268330b1e9a4ff1306b4~ihR2DmVN72436824368euoutp01M
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 10:59:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190527105942euoutp01a25f95b4c070268330b1e9a4ff1306b4~ihR2DmVN72436824368euoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1558954782;
+        bh=vmoddjQAdwfgajrjwjND/Fdm1rXcy9qvQd8vjTNxPS4=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=aBkH5UdgElHKDGMRk0CD0ZI+ILLNuxJNsZoFac21zBKRO5nVZFsQslA+XznbIsTtD
+         rHJhEFU6wfx6MAFvfFK+ltS3oqIAlLa5m74JfQNlAITYxbRHFTLfaGTK0nR0fRi8no
+         RoLqCeUl5cJtXTqiZKCgvLQ9QQBplhGItf9C2wuE=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190527105941eucas1p1a7d6c4eee1b1a4bc0d209195ba7c3c68~ihR1PIMxF0679606796eucas1p1b;
+        Mon, 27 May 2019 10:59:41 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id BD.2D.04325.D13CBEC5; Mon, 27
+        May 2019 11:59:41 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190527105941eucas1p12ed78aa5300b3c9275e33e67a4399fc7~ihR0d2C961963919639eucas1p1x;
+        Mon, 27 May 2019 10:59:41 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190527105940eusmtrp1db8c587aca936b183bbeeab353dfbcd2~ihR0PsEKM2396923969eusmtrp1Q;
+        Mon, 27 May 2019 10:59:40 +0000 (GMT)
+X-AuditID: cbfec7f5-fbbf09c0000010e5-10-5cebc31db9f8
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 12.96.04140.C13CBEC5; Mon, 27
+        May 2019 11:59:40 +0100 (BST)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190527105940eusmtip23c0a8f60802c4d3b70ae41d6701100cb~ihRzvRTRR0654906549eusmtip2F;
+        Mon, 27 May 2019 10:59:40 +0000 (GMT)
+Subject: Re: [PATCH 24/33] Revert "backlight/fbcon: Add FB_EVENT_CONBLANK"
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     Daniel Thompson <daniel.thompson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Richard Purdie <rpurdie@rpsys.net>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Yisheng Xie <ysxie@foxmail.com>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <ee90a071-74b4-e9f0-03f9-2e959c333b1f@samsung.com>
+Date:   Mon, 27 May 2019 12:59:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
 MIME-Version: 1.0
-Received: by 2002:adf:c007:0:0:0:0:0 with HTTP; Mon, 27 May 2019 03:58:40
- -0700 (PDT)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <missdonnahistory@gmail.com>
-Date:   Mon, 27 May 2019 12:58:40 +0200
-Message-ID: <CACROPfHWMmYZHboE-88MiwiPH9x4BZ7V57=gcTYTKigJ38SZKA@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAKMK7uHWOY97FqyJ6FU1SYTgegKxm2A+R+X6Vjs0_zn1QGN3KQ@mail.gmail.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju2zk7O45NjtPyzbJiUOC9i9JJQyqDTkFk/eoi1dKTipva5jXJ
+        NCTNS2hS4pRcBGkK09TUzak40xlqlplIZFpamRdm6Cq7aLqj5L/ney7v+z7wkZhkkO9EhkfG
+        sMpImVxKCPG6jvleD+e2yaCdjQYXuntqSEA/+DCE0aXdWozut5gJespUwKOLcmt4dNlcoYAe
+        trQjuvP2DJ9+rS8m6Eb9Jz7dq5cdEDFN3zU4o8nuxRidekjAPDR85THvBgwEM5xl4jHm5jcE
+        Yyj5yWdmq7cE2pwV7g9h5eFxrNLL/6Iw7H2ZGYt+aJegudHJS0F5tpnIhgTKG1rT27FMJCQl
+        VBkC7XiTYFmQUHMIjAYfTphFUNt9V7CaKNK24pxQiqBuckTAPaYRGNp/WF321DF4MTONL2MH
+        yhUyFtOsCYwax6A79Qm2LBCUL+Sll6NlLKb8oaXnvhXj1HYw32mw4vXUaRjuqOJzHjt4Xjhm
+        HWpDnYS01ArrHIxyhLdjJTwOb4X66WJrIaAsAigdrcS5uw9Da4FupYM9TJhqV/Bm6MrPxrmA
+        FsHfjPGVdD2C0vwFgnP5QZvp1dIZ5NIKF6jUe3H0QZjM+WKlgbKFwWk77ghbuFNXgHG0GDJu
+        Sjj3Dqh6VEWsrs3UPcZykVS9ppp6TR31mjrq/3s1CC9HjmysShHKqvZEsvGeKplCFRsZ6hkc
+        pahGS/+ta8FkaUDNfy4ZEUUiqUgc3TsRJOHL4lSJCiMCEpM6iH1qlyhxiCzxKquMuqCMlbMq
+        I9pE4lJHcdK6kXMSKlQWw0awbDSrXFV5pI1TCpJMNTfmeZTNtfSYvEM+Bwj6Liuc5bxBd+Tk
+        fEg3fMVTGbW4wW9gI3E054z5mpt+W/nHZwPZFgfb8wF7jyTo3LXKIEV8ya/dnX3NoorW0RMR
+        j04Fh9XsC05+KXI77jhvvFdwhHna3u/le0xo/iZMrg2IdkmypGXZy/uv36oJFP3OkuKqMNku
+        V0ypkv0DQyS7tmsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsVy+t/xe7oyh1/HGFy7bGJx5s1ddouFD+8y
+        Wyw/s47Z4srX92wWb45PZ7KYPWEzk8WKLzPZLe5/PcpocaLvA6vF5V1z2Cx273rKanF+V6ID
+        j8febwtYPBb0nGf22DnrLrvH4j0vmTzuXNvD5nG/+ziTx/t9V9k89sz/werxeZNcAGeUnk1R
+        fmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsa9Fe+ZCxYL
+        VixoOsHUwDiRr4uRk0NCwERi9rqDLF2MXBxCAksZJZa8PwLkcAAlZCSOry+DqBGW+HOtiw2i
+        5jWjxM9DC1hBEsICXhLnPrxlAbFFBLQkOv63gA1iFnjBLPHv7FtWiI7tTBIHTl5nB6liE7CS
+        mNi+ihHE5hWwk9h/dh6YzSKgKvF+0g4wW1QgQuLM+xUsEDWCEidnPgGzOQUCJVoaVzOD2MwC
+        6hJ/5l2CssUlbj2ZzwRhy0tsfzuHeQKj0Cwk7bOQtMxC0jILScsCRpZVjCKppcW56bnFRnrF
+        ibnFpXnpesn5uZsYgfG87djPLUD3vQs+xCjAwajEw1tw/lWMEGtiWXFl7iFGCQ5mJRFe0y1A
+        Id6UxMqq1KL8+KLSnNTiQ4ymQM9NZJYSTc4Hppq8knhDU0NzC0tDc2NzYzMLJXHeDoGDMUIC
+        6YklqdmpqQWpRTB9TBycUg2MDC015/zLzv2cH+XnKbpsKdOuZ/+l18XcvCZyc4r5kuYZcWJh
+        FUVSd2dqZq3ecIf3kXVsf0RpUfbF1QuM1rG92vYi6tMpkSWNs0Le8ln5zQotb4orF2QpLeae
+        +LX3YXiV9HJ7pfkff/i6GTFM611qJt7CNnF60yIuz+fPvTaaG7523Ce4u4VJiaU4I9FQi7mo
+        OBEAdCV2KP0CAAA=
+X-CMS-MailID: 20190527105941eucas1p12ed78aa5300b3c9275e33e67a4399fc7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190524152910epcas2p30be74545e6e0570ea42cef8e0b5b7da4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190524152910epcas2p30be74545e6e0570ea42cef8e0b5b7da4
+References: <20190524085354.27411-1-daniel.vetter@ffwll.ch>
+        <20190524085354.27411-25-daniel.vetter@ffwll.ch>
+        <20190524131453.e6mefygqyg46jeuf@holly.lan>
+        <CGME20190524152910epcas2p30be74545e6e0570ea42cef8e0b5b7da4@epcas2p3.samsung.com>
+        <CAKMK7uHWOY97FqyJ6FU1SYTgegKxm2A+R+X6Vjs0_zn1QGN3KQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mijn naam is Eddy William. Ik ben van beroep advocaat. Ik wil je aanbieden
-nabestaanden van mijn cli=C3=ABnt. Je ervaart de som van ($ 14,2 miljoen)
-dollars die mijn cli=C3=ABnt voor zijn overlijden op de bank heeft achterge=
-laten.
 
-Mijn klant is een burger van jouw land die stierf in auto-ongeluk met zijn =
-vrouw
-en alleen zoon. Ik krijg 50% van het totale fonds en 50% wel
-voor jou zijn.
+On 5/24/19 5:28 PM, Daniel Vetter wrote:
+> Hi Daniel,
+> 
+> On Fri, May 24, 2019 at 3:14 PM Daniel Thompson
+> <daniel.thompson@linaro.org> wrote:
+>>
+>> On Fri, May 24, 2019 at 10:53:45AM +0200, Daniel Vetter wrote:
+>>> This reverts commit 994efacdf9a087b52f71e620b58dfa526b0cf928.
+>>>
+>>> The justification is that if hw blanking fails (i.e. fbops->fb_blank)
+>>> fails, then we still want to shut down the backlight. Which is exactly
+>>> _not_ what fb_blank() does and so rather inconsistent if we end up
+>>> with different behaviour between fbcon and direct fbdev usage. Given
+>>> that the entire notifier maze is getting in the way anyway I figured
+>>> it's simplest to revert this not well justified commit.
+>>>
+>>> v2: Add static inline to the dummy version.
+>>>
+>>> Cc: Richard Purdie <rpurdie@rpsys.net>
+>>> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+>>> Cc: Lee Jones <lee.jones@linaro.org>
+>>> Cc: Daniel Thompson <daniel.thompson@linaro.org>
+>>> Cc: Jingoo Han <jingoohan1@gmail.com>
+>>> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+>>> Cc: Hans de Goede <hdegoede@redhat.com>
+>>> Cc: Yisheng Xie <ysxie@foxmail.com>
+>>> Cc: linux-fbdev@vger.kernel.org
+>>
+>> Hi Daniel
+>>
+>> When this goes round again could you add me to the covering letter?
+>>
+>> I looked at all three of the patches and no objections on my side but
+>> I'm reluctant to send out acks because I'm not sure I understood the
+>> wider picture well enough.
+> 
+> It's one of these patch series with some many different subsystems and
+> people you can't cc the cover to all of them or mailing lists start
+> rejecting you because too many recipients. I tried to spam sufficient
+> mailng lists, but I guess not enough.
 
-Neem hier voor meer informatie contact op met mijn priv=C3=A9mail:
-eddywilliam0002@gmail.com
+BTW Not all relevant patches were posted to linux-fbdev and me (i.e.
+"[PATCH 05/33] fbdev/sa1100fb: Remove dead code") - I found them on
+other mailing lists but it requires some additional work from me to
+find / process them. If possible please Cc: linux-fbdev & me on all
+patches in the patchset. Thanks!
 
-Bij voorbaat hartelijk dank,
-Eddy William,
-
-
-
-Hello
-
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($14.2 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-
-Please contact my private email here for more details:eddywilliam0002@gmail=
-.com
-
-Many thanks in advance,
-Mr.Eddy William,
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
