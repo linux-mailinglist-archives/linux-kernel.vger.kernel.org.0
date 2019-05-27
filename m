@@ -2,90 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6B332B638
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:22:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 266B42B646
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:23:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfE0NWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:22:18 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39311 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbfE0NWM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:22:12 -0400
-Received: by mail-wr1-f68.google.com with SMTP id e2so8162263wrv.6
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 06:22:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1P5QlVaHw/qutd0fn2pg3sEjq4K4xykyak/BNOBt7EY=;
-        b=MiJuoVo4XE9EvwCi1lJ/KTjNn5vkTGuOAboQ1357fR8CCKNsFMkHx7jbSvFLyf8nAK
-         lT0K3rrLl7Udusvz9kAPZ2Am/rHTN8UJMd2sjIQeV0EUo007PCehoOLFxmjZNm5VZY4r
-         DFPwp91uwX2GfPpY1/vvPH0Penf8j3IsYBnOJu3yTpXNEVMdNLFnyVeTf7xRpkTODG32
-         hRFdP+VZyIPkWJaHaiWHkrWfTleo4gO1n1ozF1DlcemA7hAzh1FDoyJgGNELfPPNkog1
-         pD9D6pirVHuUyUozIsY0z7VhmmegqBdW7iVCknjA9PIhemNQwpp0NhCCQwSQvOKlTabG
-         +CqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1P5QlVaHw/qutd0fn2pg3sEjq4K4xykyak/BNOBt7EY=;
-        b=niQl9zB+YslURf6XeQWy7Uuffsz0bUzmNNmwVoKBCDoippdjF7FCTBLfscUXwpqMQN
-         3oZsgsoLAejGPGWuZ7o+SM8h1ATAJarj38ZtZsN35n5HAI5F9wkDJ43R/DTzFy+ic5+f
-         0+6LWZlZHkevcITmnoRH0C1teYFD/jN4JILYs3wIWzZ4LXh2z+aczUSV/6yBkvukGF47
-         +UgqwWUw0NbMT+BraeCszJ9wPlHcZaM0n1+tfG3vj1HNzEq63INgT0tegPLgvw0ADhTe
-         7t6SmXiurfE6AZQSmBKMaREOCePRZTid4WSOwNTk15eJzt++gVniTUDQ5JELQ9b+CLeb
-         Dk/w==
-X-Gm-Message-State: APjAAAW42cxZKBI30NxI7wI7UhfJBeZXsp7HTtDuoFbb9IiXW3AtD6Yt
-        d5xDywm4IIq8jZRRL2qjOJibqQ==
-X-Google-Smtp-Source: APXvYqyWlquctEhMRszF7odvCHXFI0pvNktDwIVJZOgmAvW/p89BNtQ/h0utKRsS3NvmSJeu3FKaGQ==
-X-Received: by 2002:a5d:680f:: with SMTP id w15mr7705835wru.349.1558963331213;
-        Mon, 27 May 2019 06:22:11 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l12sm7019836wmj.22.2019.05.27.06.22.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 27 May 2019 06:22:10 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        christianshewitt@gmail.com
-Subject: [PATCH 10/10] arm64: dts: meson-gxbb-vega-s95: add ethernet PHY interrupt
-Date:   Mon, 27 May 2019 15:22:00 +0200
-Message-Id: <20190527132200.17377-11-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190527132200.17377-1-narmstrong@baylibre.com>
-References: <20190527132200.17377-1-narmstrong@baylibre.com>
+        id S1726797AbfE0NW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:22:57 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17165 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726515AbfE0NW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 09:22:57 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E56B778096EA122E6112;
+        Mon, 27 May 2019 21:22:54 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Mon, 27 May 2019
+ 21:22:53 +0800
+Subject: Re: [PATCH 1/4] ecryptfs: remove unnessesary null check in
+ ecryptfs_keyring_auth_tok_for_sig
+To:     <tyhicks@canonical.com>, <viro@zeniv.linux.org.uk>
+References: <20190527131559.16088-1-yuehaibing@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>, <ecryptfs@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <193c19d5-94df-de12-49a0-878c434a9069@huawei.com>
+Date:   Mon, 27 May 2019 21:22:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190527131559.16088-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the external ethernet PHY interrupt on the Vega S95 board.
+Pls ignore this, will fix patch title
 
-Suggested-by: Christian Hewitt <christianshewitt@gmail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-index 9b52f3dcdd49..18856f28fd60 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-@@ -128,6 +128,9 @@
- 		eth_phy0: ethernet-phy@0 {
- 			/* Realtek RTL8211F (0x001cc916) */
- 			reg = <0>;
-+			interrupt-parent = <&gpio_intc>;
-+			/* MAC_INTR on GPIOZ_15 */
-+			interrupts = <29 IRQ_TYPE_LEVEL_LOW>;
- 		};
- 	};
- };
--- 
-2.21.0
+On 2019/5/27 21:15, YueHaibing wrote:
+> request_key and ecryptfs_get_encrypted_key never
+> return a NULL pointer, so no need do a null check.
+> 
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  fs/ecryptfs/keystore.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
+> index 95662fd46b1d..a1afb162b9d2 100644
+> --- a/fs/ecryptfs/keystore.c
+> +++ b/fs/ecryptfs/keystore.c
+> @@ -1626,9 +1626,9 @@ int ecryptfs_keyring_auth_tok_for_sig(struct key **auth_tok_key,
+>  	int rc = 0;
+>  
+>  	(*auth_tok_key) = request_key(&key_type_user, sig, NULL);
+> -	if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
+> +	if (IS_ERR(*auth_tok_key)) {
+>  		(*auth_tok_key) = ecryptfs_get_encrypted_key(sig);
+> -		if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
+> +		if (IS_ERR(*auth_tok_key)) {
+>  			printk(KERN_ERR "Could not find key with description: [%s]\n",
+>  			      sig);
+>  			rc = process_request_key_err(PTR_ERR(*auth_tok_key));
+> 
 
