@@ -2,117 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 635752B60D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:11:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E49BB2B626
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:19:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbfE0NLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:11:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36942 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbfE0NLM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:11:12 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4D32D6019D; Mon, 27 May 2019 13:11:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1558962671;
-        bh=vgQHKjatuuR2l1jDszVWwCc/xyVrmWfL4GYi56xMaTY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MmnicGkRTYq9gwqqJLY1E7kWPavHb/K56l7da0LKv0ULSS2rKnxJW8l9EbvYtsmfn
-         ui2SsoLOaOVyQaI0pDhU6XO6vE8hElxq8lGy9eWlg8q5Sdk0g0wMY/Ex0boV4rOnk7
-         0kW7uvixMt4eHYuMzmL1PjmJIidau8jIB6ROp+tQ=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE,T_FILL_THIS_FORM_SHORT autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C3FDB6019D;
-        Mon, 27 May 2019 13:11:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1558962670;
-        bh=vgQHKjatuuR2l1jDszVWwCc/xyVrmWfL4GYi56xMaTY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VEWjIQOwqdA0P1ReYmBt320WWrqap1AU8BbKYGiflJ7uvOFqtZhtwQJF6xchI/528
-         eu2lAv2LCAlp6sGlXmqigxP0eSJENQlhW/1OJtQscI87gBosjv9oVtZiAzE98Erevo
-         0e49zF8c/L9J7rtMTRlkiZDz28+IXGjsedIs03NU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C3FDB6019D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Sahitya Tummala <stummala@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] f2fs: ratelimit recovery messages
-Date:   Mon, 27 May 2019 18:40:55 +0530
-Message-Id: <1558962655-25994-1-git-send-email-stummala@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S1726371AbfE0NTD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:19:03 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41652 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726063AbfE0NTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 09:19:03 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D34D62D9B9A9D570627A;
+        Mon, 27 May 2019 21:18:46 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Mon, 27 May 2019
+ 21:18:38 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <tyhicks@canonical.com>, <viro@zeniv.linux.org.uk>
+CC:     <linux-kernel@vger.kernel.org>, <ecryptfs@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH 1/4] ecryptfs: remove unnessesary null check in ecryptfs_keyring_auth_tok_for_sig
+Date:   Mon, 27 May 2019 21:15:59 +0800
+Message-ID: <20190527131559.16088-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ratelimit the recovery logs, which are expected in case
-of sudden power down and which could result into too
-many prints.
+request_key and ecryptfs_get_encrypted_key never
+return a NULL pointer, so no need do a null check.
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
-v2:
- - fix minor formatting and add new line for printk
+ fs/ecryptfs/keystore.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- fs/f2fs/recovery.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index e04f82b..60d7652 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -188,8 +188,8 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
- 		name = "<encrypted>";
- 	else
- 		name = raw_inode->i_name;
--	f2fs_msg(inode->i_sb, KERN_NOTICE,
--			"%s: ino = %x, name = %s, dir = %lx, err = %d",
-+	printk_ratelimited(KERN_NOTICE
-+			"%s: ino = %x, name = %s, dir = %lx, err = %d\n",
- 			__func__, ino_of_node(ipage), name,
- 			IS_ERR(dir) ? 0 : dir->i_ino, err);
- 	return err;
-@@ -292,8 +292,8 @@ static int recover_inode(struct inode *inode, struct page *page)
- 	else
- 		name = F2FS_INODE(page)->i_name;
+diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
+index 95662fd46b1d..a1afb162b9d2 100644
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@ -1626,9 +1626,9 @@ int ecryptfs_keyring_auth_tok_for_sig(struct key **auth_tok_key,
+ 	int rc = 0;
  
--	f2fs_msg(inode->i_sb, KERN_NOTICE,
--		"recover_inode: ino = %x, name = %s, inline = %x",
-+	printk_ratelimited(KERN_NOTICE
-+			"recover_inode: ino = %x, name = %s, inline = %x\n",
- 			ino_of_node(page), name, raw->i_inline);
- 	return 0;
- }
-@@ -642,11 +642,11 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- err:
- 	f2fs_put_dnode(&dn);
- out:
--	f2fs_msg(sbi->sb, KERN_NOTICE,
--		"recover_data: ino = %lx (i_size: %s) recovered = %d, err = %d",
--		inode->i_ino,
--		file_keep_isize(inode) ? "keep" : "recover",
--		recovered, err);
-+	printk_ratelimited(KERN_NOTICE
-+			"recover_data: ino = %lx (i_size: %s) recovered = %d, err = %d\n",
-+			inode->i_ino,
-+			file_keep_isize(inode) ? "keep" : "recover",
-+			recovered, err);
- 	return err;
- }
- 
+ 	(*auth_tok_key) = request_key(&key_type_user, sig, NULL);
+-	if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
++	if (IS_ERR(*auth_tok_key)) {
+ 		(*auth_tok_key) = ecryptfs_get_encrypted_key(sig);
+-		if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
++		if (IS_ERR(*auth_tok_key)) {
+ 			printk(KERN_ERR "Could not find key with description: [%s]\n",
+ 			      sig);
+ 			rc = process_request_key_err(PTR_ERR(*auth_tok_key));
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.17.1
+
 
