@@ -2,71 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDFC22B668
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:27:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 866032B67F
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbfE0N1p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:27:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726264AbfE0N1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:27:45 -0400
-Received: from localhost (unknown [171.61.91.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED6842075E;
-        Mon, 27 May 2019 13:27:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1558963664;
-        bh=5LGQZbcDiGADtRy7nX7CzuVlxf33jXUOVsnEJ3zPY0c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uUXx9qkdl3PVY7xkVd58jgCJb3Lp8OiMlxFqQAZ1sXvFApYBGITyi/UALTTG1JNUy
-         b4OWejyk5gOFmczJsWLyvzX/xMHkG9aA+Gs4E2Yyer9SEsRVyYUwwjJhI9jtNeZVmJ
-         yENXghH6AMpxYO/JJtw0k+PYaBdMKfJNOOojTcVI=
-Date:   Mon, 27 May 2019 18:57:39 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Weitao Hou <houweitaoo@gmail.com>
-Cc:     dan.j.williams@intel.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, dmaengine@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: use to_platform_device()
-Message-ID: <20190527132739.GJ15118@vkoul-mobl>
-References: <20190526071324.15307-1-houweitaoo@gmail.com>
- <20190527064303.GG15118@vkoul-mobl>
- <CAK98mP9teTxZn9mMZ_yXSmC7h8gimgN14kX=GT0Q43O58zC-rw@mail.gmail.com>
+        id S1726678AbfE0NfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:35:05 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37370 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726479AbfE0NfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 09:35:05 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 08FEB6BAFE1C85BD5E7D;
+        Mon, 27 May 2019 21:34:59 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Mon, 27 May 2019
+ 21:34:51 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <tyhicks@canonical.com>, <viro@zeniv.linux.org.uk>
+CC:     <linux-kernel@vger.kernel.org>, <ecryptfs@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ecryptfs: remove unnessesary null check in ecryptfs_keyring_auth_tok_for_sig
+Date:   Mon, 27 May 2019 21:28:14 +0800
+Message-ID: <20190527132814.19600-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK98mP9teTxZn9mMZ_yXSmC7h8gimgN14kX=GT0Q43O58zC-rw@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Weitao,
+request_key and ecryptfs_get_encrypted_key never
+return a NULL pointer, so no need do a null check.
 
-On 27-05-19, 21:10, Weitao Hou wrote:
-> Hi,Vinod
->     Need I add the stm32 driver tag and resend v2 patch?
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ fs/ecryptfs/keystore.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Please do not top post!
-
-As below says, the patch is applied and I corrected the tag and added
-stm32 while applying, so no change or v2 required.
-
-> Vinod Koul <vkoul@kernel.org> 于2019年5月27日周一 下午2:43写道：
-> 
-> > On 26-05-19, 15:13, Weitao Hou wrote:
-> > > Use to_platform_device() instead of open-coding it.
-> >
-> > Applied after adding stm32 driver tag, thanks
-> >
-> > --
-> > ~Vinod
-> >
-
+diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
+index 95662fd46b1d..a1afb162b9d2 100644
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@ -1626,9 +1626,9 @@ int ecryptfs_keyring_auth_tok_for_sig(struct key **auth_tok_key,
+ 	int rc = 0;
+ 
+ 	(*auth_tok_key) = request_key(&key_type_user, sig, NULL);
+-	if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
++	if (IS_ERR(*auth_tok_key)) {
+ 		(*auth_tok_key) = ecryptfs_get_encrypted_key(sig);
+-		if (!(*auth_tok_key) || IS_ERR(*auth_tok_key)) {
++		if (IS_ERR(*auth_tok_key)) {
+ 			printk(KERN_ERR "Could not find key with description: [%s]\n",
+ 			      sig);
+ 			rc = process_request_key_err(PTR_ERR(*auth_tok_key));
 -- 
-~Vinod
+2.17.1
+
+
