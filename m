@@ -2,170 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C9A82B64D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:23:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 397E22B620
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:17:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfE0NXL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:23:11 -0400
-Received: from webmail-smtp.domeneshop.no ([194.63.252.70]:55773 "EHLO
-        webmail-smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726515AbfE0NXL (ORCPT
+        id S1726313AbfE0NRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:17:43 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39883 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbfE0NRm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:23:11 -0400
-X-Greylist: delayed 412 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 May 2019 09:23:10 EDT
-Received: from webmail12.domeneshop.no ([2a01:5b40:0:2702::1]:58856)
-        by webmail-smtp.domeneshop.no with esmtp (Exim 4.80)
-        (envelope-from <notro@tronnes.org>)
-        id 1hVFU0-0000qt-8g; Mon, 27 May 2019 15:16:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Message-ID:References:In-Reply-To:Subject:Cc:To:From:Date:Content-Transfer-Encoding:Content-Type:MIME-Version; bh=STeVJYuzzC0vgEmbhzepGm0OXOHVmeFu4vSmMZlFZlc=;
-        b=oAHVaPZzRR1QLGVekAncfI5tmxdQiTAgKTFU/ZMdw9QcluflTLCtNLeboTUavW/9r2X9MGGbwnHAIHt2bqCxh8j4xSY3TTyUW2xM44O3Eq5WsqmIhjH3kQ/wo4zuc2aurtUp4f38wOEYJxODNJbkTrbLCV0KWW5rHz5MGuCFt9VnIy0m1DC7rHIHtk9P4Rph7HLydueHUJJJZT/ttQ0L97TaurXj+eYP4UpJTdbAH5CAUAWlBEEd12a2pCRFcxHSNO5reHCgZ84om7v9zp7i56VzLltT1eQP540T0P0JE225/hO3IqzMTTWHTzcQR3n5orE1d/YkZnDep2SDFE6m4g==;
-Received: from localhost ([::1]:34422 helo=webmail.domeneshop.no)
-        by webmail12.domeneshop.no with esmtpa (Exim 4.84_2)
-        (envelope-from <notro@tronnes.org>)
-        id 1hVFTz-0002ai-L0; Mon, 27 May 2019 15:16:07 +0200
+        Mon, 27 May 2019 09:17:42 -0400
+Received: by mail-wr1-f68.google.com with SMTP id e2so8147987wrv.6
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 06:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3CdhkKFfggu7RKyEGJPDR3uKtKfRfN9PzQkEoRGpys0=;
+        b=RbFHF85ICbSpB/QDeuBoxpPshiJs01zY4pu/8n9Lf3BNzE4SFyL/GyytRGewLvfrPo
+         2SDaDIMtzrrdACNFufY1J9BG5RMntHYFdQZ9KdGNiSpf5Ii+VdlPrRo2G7fsVxBRTNLN
+         J1iKR6bK3sZ4mw3u79gezUI2/eCWN45qwQ5RubnV6Zw6OQFLOJjrYcLr1erCTdw+iRac
+         CNbXnm+xzAIGSw5+CSghe/JflH4LpDc3NJzcQuBXR1X4Uv4W0o3pIxwV0zL0746Q6N7r
+         VifVZCTVWUSX+uChCR7uBMMOnUW+VjxnHyXA3VW+Dq5T8FXYBqg+DNAl0h7762vib/5/
+         oKvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3CdhkKFfggu7RKyEGJPDR3uKtKfRfN9PzQkEoRGpys0=;
+        b=VQqlg4QG1oRqlteYmkvi6Ofkbdiyaqpuq4IIVnn+4caY6BdkegAxSLx5wOYVKyuabu
+         SI1bT9fETzRh/gHzfcrhDi9JPn4tTKNtD+Z5VQPaaanKKf8AhwANP/gKg0P0phFlWprA
+         /lWTH4p3Ex/Hme6B/qJN04LYEQv5K0/FYYD6kqjTa02zAxGcBdh4YoW2AL/Alj7aCW3X
+         Epgg3XGr6LhkYyUBVxL3uqqSU/JzONqkWy0hz3RD9p2pfgNholGZoYburK1+bWQIIG2H
+         PvEif+V4DYhtlITp1Wr3CZyyQjy0eF7i+axOoEXhdvHHkH9frujLDExCI7dtwBD9ZEvQ
+         U7Wg==
+X-Gm-Message-State: APjAAAUQWSCNLruHjUeC62mRuzB1ho033JFmx/T1zpAkYSyfrWUg/a8W
+        bPD1IN0+toY03TDVu3DdEBMn49O07pmRO76XD/E=
+X-Google-Smtp-Source: APXvYqxwsgyqKq3v6r0+iHi/zVPWhJzn/oWLFri6jGvIXh+zaY6enrZ38Uj3PrCQ1+XWh5tnUc1T76NEJbrPh7coDvQ=
+X-Received: by 2002:a5d:5406:: with SMTP id g6mr9664403wrv.286.1558963061338;
+ Mon, 27 May 2019 06:17:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 27 May 2019 15:16:07 +0200
-From:   =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <notro@tronnes.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net,
-        merlijn@wizzup.org,
-        =?UTF-8?Q?No?= =?UTF-8?Q?ralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Subject: Re: 5.2-rc1 on droid4: spi crash
-In-Reply-To: <20190527055343.GG5447@atomide.com>
-References: <20190523090926.GA9106@amd>
- <20190523093325.6si5jpvrvyktpax6@earth.universe>
- <20190527055343.GG5447@atomide.com>
-Message-ID: <c741aa5b9d366b231b5c40899b1ef814@webmail.domeneshop.no>
-X-Sender: notro@tronnes.org
-User-Agent: Domeneshop Webmail/1.1.12
+References: <20190524181936.29470-1-martin.blumenstingl@googlemail.com> <20190524181936.29470-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20190524181936.29470-2-martin.blumenstingl@googlemail.com>
+From:   hex dump <hexdump0815@gmail.com>
+Date:   Mon, 27 May 2019 15:17:47 +0200
+Message-ID: <CAKTihDV-zee+rodgg=h1xgBnyiq2oSg4UcaURtCcGCN-Qa4rsw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ARM: dts: meson8b: mxq: improve support for the
+ TRONFY MXQ S805
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-amlogic@lists.infradead.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, May 24, 2019 at 8:19 PM Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+>
+> The TRONFY MXQ comes with either 1GB or 2GB RAM.
+>
+> Both variants share (like most boards based on Amlogic reference
+> designs):
+> - 10/100 PHY (IC Plus IP101GR) with GPIOH_4 being the reset line and
+>   GPIOH_3 the interrupt line
+> - SD card slot with the card detection GPIO at CARD_6
+> - VCCK is generated by PWM_C with a period of 1148ns and XTAL as input
+>   clock
+> - USB OTG exposed on one of the USB-A connectors
+> - 4-port USB hub with 3 ports exposed to the outside
+>
+> There seem the multiple board revision out there according to various
+> forum posts:
+> - storage: eMMC or NAND flash
+> - wifi: Ampak AP6210 or Realtek 8189
+>
+> Add support for the following functionality:
+> - SoC temperature (hwmon)
+> - changing the CPU voltage
+> - Ethernet connectivity
+> - SD card
+> - USB
+>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Tested-by: hexdump <hexdump0815@googlemail.com>
 
+BEFORE (no patches from this series applied):
+the mxq device was not really useable with the old mainline dtb as
+most peripeherals were not supported
 
-Den 2019-05-27 07:53, skrev Tony Lindgren:
-> Hi,
-> 
-> * Sebastian Reichel <sre@kernel.org> [190523 09:33]:
->> Hi,
->> 
->> On Thu, May 23, 2019 at 11:09:26AM +0200, Pavel Machek wrote:
->> > This was greeting me overnight... I don't yet know how reproducible it
->> > is, it happened once so far.
->> 
->> Please pipe the stacktrace into ./scripts/decode_stacktrace.sh
->> to get a readable stacktrace, otherwise this is pretty much useless.
->> FWIW the only SPI device in the Droid 4 is the PMIC.
-> 
-> I've seen this too, and looks like reverting commit c9ba7a16d0f1
-> ("spi: Release spi_res after finalizing message") fixes it based
-> several days of testing.
-> 
-> Noralf and Mark, any ideas what needs to be fixed here?
+AFTER (the patch applied):
+the rresulting dtb works perfectly fine with my mxq device and all
+mentioned supported functions work as expected
 
-Mark has a revert in his for-5.2 branch:
-spi: Fix Raspberry Pi breakage
-https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/commit/?h=for-5.2&id=0ed56252c9567351344cb7b5cff6140e1bcec943
-
-I don't know when or if he has sent a pull request.
-Sorry about the breakage.
-
-Noralf.
-
-> 
-> Below is the stacktrace I see without c9ba7a16d0f1 reverted,
-> not sure how to reproduce but it seems to happen within about
-> one to two days of uptime.
-> 
-> Regards,
-> 
-> Tony
-> 
-> 8< -----------------
-> Unable to handle kernel NULL pointer dereference at virtual address 
-> 00000008
-> pgd = 829f0a5b
-> [00000008] *pgd=00000000
-> Internal error: Oops: 80000005 [#1] SMP ARM
-> ...
-> CPU: 0 PID: 71 Comm: spi0 Tainted: G        W         5.2.0-rc1+ #5983
-> Hardware name: Generic OMAP4 (Flattened Device Tree)
-> PC is at 0x8
-> LR is at spi_res_release+0x54/0x80
-> pc : [<00000008>]    lr : [<c06faa48>]    psr: 20000113
-> sp : ed6e3e88  ip : ed6e3eb0  fp : ed6e3eac
-> r10: c0b9eca8  r9 : 00000100  r8 : 00000200
-> r7 : ed65bc00  r6 : ed6e5d3c  r5 : ed6e5d0c  r4 : c0d05254
-> r3 : 00000008  r2 : c0d05264  r1 : ed6e5d0c  r0 : ed65bc00
-> Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-> Control: 10c5387d  Table: abf3c04a  DAC: 00000051
-> Process spi0 (pid: 71, stack limit = 0x0ef66f65)
-> Stack: (0xed6e3e88 to 0xed6e4000)
-> 3e80:                   ed6e5cd0 ed6e5d0c ed65bc00 c0daf080 00000000 
-> ed510410
-> 3ea0: ed6e3eec ed6e3eb0 c06fd8c4 c06faa00 ed65b800 00000000 ed65ba20 
-> ed65bee0
-> 3ec0: ed6e3eec ed65bc00 ed6e5cd0 ed6e5d0c 00000000 ed510410 ed510410 
-> 00000001
-> 3ee0: ed6e3f2c ed6e3ef0 c06fdcd4 c06fd560 00000004 c0170948 ed6e3f20 
-> ed65bdfc
-> 3f00: ffffe000 ed65be68 ed65be44 ffffe000 c0dc7734 ed65be48 c0166f88 
-> 00000000
-> 3f20: ed6e3f3c ed6e3f30 c06fe10c c06fd9a4 ed6e3f74 ed6e3f40 c0166f54 
-> c06fe0f8
-> 3f40: ed6e3f74 6eb8f9ff c0166780 00000000 ed3bccc0 ed659c00 ed6e2000 
-> ed65be44
-> 3f60: c0166eac ed115c44 ed6e3fac ed6e3f78 c0166e58 c0166eb8 ed3bccdc 
-> ed3bccdc
-> 3f80: ed6e3fac ed659c00 c0166cf8 00000000 00000000 00000000 00000000 
-> 00000000
-> 3fa0: 00000000 ed6e3fb0 c01010e8 c0166d04 00000000 00000000 00000000 
-> 00000000
-> 3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
-> 00000000
-> 3fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 
-> 00000000
-> Backtrace:
-> [<c06fa9f4>] (spi_res_release) from [<c06fd8c4>]
-> (spi_transfer_one_message+0x370/0x444)
->  r9:ed510410 r8:00000000 r7:c0daf080 r6:ed65bc00 r5:ed6e5d0c 
-> r4:ed6e5cd0
-> [<c06fd554>] (spi_transfer_one_message) from [<c06fdcd4>]
-> (__spi_pump_messages+0x33c/0x754)
->  r10:00000001 r9:ed510410 r8:ed510410 r7:00000000 r6:ed6e5d0c 
-> r5:ed6e5cd0
->  r4:ed65bc00
-> [<c06fd998>] (__spi_pump_messages) from [<c06fe10c>]
-> (spi_pump_messages+0x20/0x24)
->  r10:00000000 r9:c0166f88 r8:ed65be48 r7:c0dc7734 r6:ffffe000 
-> r5:ed65be44
->  r4:ed65be68
-> [<c06fe0ec>] (spi_pump_messages) from [<c0166f54>]
-> (kthread_worker_fn+0xa8/0x268)
-> [<c0166eac>] (kthread_worker_fn) from [<c0166e58>] 
-> (kthread+0x160/0x178)
->  r10:ed115c44 r9:c0166eac r8:ed65be44 r7:ed6e2000 r6:ed659c00 
-> r5:ed3bccc0
->  r4:00000000
-> [<c0166cf8>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-> Exception stack(0xed6e3fb0 to 0xed6e3ff8)
-> 3fa0:                                     00000000 00000000 00000000 
-> 00000000
-> 3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
-> 00000000
-> 3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
->  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 
-> r5:c0166cf8
->  r4:ed659c00
-> Code: bad PC value
-> ---[ end trace a8011e9722dfda5e ]---
+best wishes - hexdump
