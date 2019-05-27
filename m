@@ -2,67 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7617B2B884
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:42:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F24472B899
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbfE0PmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 11:42:15 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:17582 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726420AbfE0PmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 11:42:15 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 8D3B2B8DE12E89E191CE;
-        Mon, 27 May 2019 23:42:06 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Mon, 27 May 2019
- 23:41:57 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <alexander.shishkin@linux.intel.com>, <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] intel_th: msu: Remove set but not used variable 'last'
-Date:   Mon, 27 May 2019 23:41:28 +0800
-Message-ID: <20190527154128.22328-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726723AbfE0Pt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 11:49:58 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:59553 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726397AbfE0Pt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 11:49:57 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 May 2019 11:49:57 EDT
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c250ad4e
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 27 May 2019 15:13:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to
+        :content-type; s=mail; bh=kHnd1JT4Od4VGrch3hXC3ov+0w0=; b=NxY0TL
+        bp41+jikqYCnnvfJIM0H3C0IWxgq34zh+7u8JzbUxtFOpb9kmLnV9G8GKLSt47DL
+        gEIkvNdzeivnmhkoesK0hMVjisqQxnzZ0t6n5z1kaKOx3q+a0upmIC6bqLAvmDRS
+        UZNPWDPf+bd+947NHWhokQlJIeg/WE8ccaHiuszl3duwj7HEhLZmjAh+lndaXfRU
+        JCnddj09t+ctMWeq4KJ676sAfufeDoQXQfnlPXCcfioOHo0I7zKkGPdV5XRNrKDe
+        RiIQVNw7MN+WSKYKgVB24VqgoIHjAoJEV9ZIhBrPCCvB3UCatCVaHXPcimHaH60Q
+        a1N6cDJ16oa/qrhw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id eb96b252 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 27 May 2019 15:13:03 +0000 (UTC)
+Received: by mail-ot1-f45.google.com with SMTP id l25so15139803otp.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 08:43:16 -0700 (PDT)
+X-Gm-Message-State: APjAAAUxFZgQCndf7Yekm5NN8KTa80ma5ECIwwRsM2O1chn6yVH4ebSb
+        lbDDpltxFDbGn6QL5/xt1felTgDSnxHvV1aRWQI=
+X-Google-Smtp-Source: APXvYqwSkmBzEbx09qA71YbHv3/5khjCRUWXKEIgS3R2RImfzEbI5tP1NgdUDTf8hdqtX5DV5A4t0ZmrX6RWqYONAko=
+X-Received: by 2002:a9d:7154:: with SMTP id y20mr5894480otj.369.1558971794577;
+ Mon, 27 May 2019 08:43:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+References: <20190527122627.GA15618@u> <20190527140643.GB8585@mit.edu>
+In-Reply-To: <20190527140643.GB8585@mit.edu>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Mon, 27 May 2019 17:43:03 +0200
+X-Gmail-Original-Message-ID: <CAHmME9qvdKy6zCHQEUp1zp-dL0Sco1Ujtn7jXK=EFde_yDx8wA@mail.gmail.com>
+Message-ID: <CAHmME9qvdKy6zCHQEUp1zp-dL0Sco1Ujtn7jXK=EFde_yDx8wA@mail.gmail.com>
+Subject: Re: [PATCH] random: urandom reads block when CRNG is not initialized.
+To:     "Theodore Ts'o" <tytso@mit.edu>,
+        Naveen Nathan <naveen@lastninja.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Kevin Easton <kevin@guarana.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Mon, May 27, 2019 at 4:07 PM Theodore Ts'o <tytso@mit.edu> wrote:
+>
+> This is guaranteed to cause the system to fail for systems using
+> systemd.  (Unless you are running an x86 with random.trust_cpu=1 ---
+> in which case, this patch/config is pointless.)  And many embedded
+> systems *do* use systemd.  I know lots of people like to wish that
+> systemd doesn't exist, but we need to face reality.
+>
+> *Seriously,* if this is something the system builder should be using,
+> they should be fixing userspace.  And if they care enough that they
+> would want to enable this patch, they could just scan dmesg looking
+> for the warnings from the kernel.
 
-drivers/hwtracing/intel_th/msu.c: In function msc_win_switch:
-drivers/hwtracing/intel_th/msu.c:1389:21: warning: variable last set but not used [-Wunused-but-set-variable]
+Really, it's a chicken & egg thing. If people who make userspaces
+never have an option to design around the correct behavior, they'll
+continue to rely on the broken behavior. But if we give them a way to
+compile their kernels with the correct behavior, eventually some
+userspaces will run fine with it. "But they should just use
+getrandom()!" you shout. Yes, and maybe the code most userspace
+builders provide does do this. But people like to plug-in plenty of
+third party things into their userspaces, and I think there's some
+value in a userspace being able to say, "we've dealt with the
+/dev/urandom situation, and we now do the right thing, so we can
+enable this option, and now the code you run on our userspace will
+give good randomness."
 
-It is never used since introduction in commit
-aad14ad3cf3a ("intel_th: msu: Add current window tracking")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/hwtracing/intel_th/msu.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
-index 81bb54fa3ce8..33072ca5fc4d 100644
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -1386,10 +1386,9 @@ static int intel_th_msc_init(struct msc *msc)
- 
- static void msc_win_switch(struct msc *msc)
- {
--	struct msc_window *last, *first;
-+	struct msc_window *first;
- 
- 	first = list_first_entry(&msc->win_list, struct msc_window, entry);
--	last = list_last_entry(&msc->win_list, struct msc_window, entry);
- 
- 	if (msc_is_last_win(msc->cur_win))
- 		msc->cur_win = first;
--- 
-2.17.1
-
-
+More concretely, distros might ship an init system that allows
+enabling this option without creating issues. Systemd might improve.
+OpenRC and runit-based distros appear to exist. Some folks do very
+custom stuff. If they manage to make it work with the correct urandom
+behavior, then that's a good situation for everything else to build
+on, and for providing better guarantees for third party software that
+runs on that distro. But none of this is possible without the ability
+to compile the kernel with the correct behavior.
