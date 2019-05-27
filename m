@@ -2,131 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1B2A2AD0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 04:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55F882ACF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 04:33:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbfE0Crz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 22:47:55 -0400
-Received: from gateway20.websitewelcome.com ([192.185.54.2]:37480 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725923AbfE0Crx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 22:47:53 -0400
-X-Greylist: delayed 1471 seconds by postgrey-1.27 at vger.kernel.org; Sun, 26 May 2019 22:47:52 EDT
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id F0ADC400C5945
-        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 20:23:07 -0500 (CDT)
-Received: from br164.hostgator.com.br ([192.185.176.180])
-        by cmsmtp with SMTP
-        id V5IGhcT3SdnCeV5IGhHjR1; Sun, 26 May 2019 21:23:20 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=castello.eng.br; s=default; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=I4VLnKJzdba2/tICr5vHEXDmUjBljIV86QHf5FlXteA=; b=pBZkokznjDxJn5J0nEp/+icHZt
-        YZukC0iqe8exicoGyoaaPdEHgzTPBSFsvRBwQ89W562CdIfWzRdc7i//G/aHpxbjSyDNfngXNx92V
-        pfKxPUwOuA0QrX8G9IBsO9vUXnw0Yx/E38IDVfhR39v0BWtKG7+FDfLGfBRz8kRPY7fVZ+PxCSdsL
-        e/f4tRW4IjuOOOaXY8YLrzuuOS7nJew6b+4S6Js6+n1X0gtq8zz9oIRBVUYCZCWoUHPGCG2wA3V/J
-        7QtxE1xobhSWBtwmx838KEf0O+VtjqKv2A09qHUhqiG9QU9k/W7YzG+OONtVXCIXDdgh4MKh3km7R
-        XrqP/Utg==;
-Received: from [177.34.20.96] (port=57660 helo=castello.castello.in)
-        by br164.hostgator.com.br with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <matheus@castello.eng.br>)
-        id 1hV5IF-003JNX-JQ; Sun, 26 May 2019 23:23:20 -0300
-From:   Matheus Castello <matheus@castello.eng.br>
-To:     sre@kernel.org, krzk@kernel.org, robh+dt@kernel.org
-Cc:     mark.rutland@arm.com, cw00.choi@samsung.com,
-        b.zolnierkie@samsung.com, lee.jones@linaro.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Matheus Castello <matheus@castello.eng.br>
-Subject: [PATCH v3 5/5] power: supply: max17040: Send uevent in SOC and status change
-Date:   Sun, 26 May 2019 23:22:58 -0300
-Message-Id: <20190527022258.32748-6-matheus@castello.eng.br>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190527022258.32748-1-matheus@castello.eng.br>
-References: <CAJKOXPf=nPrmw6Vzi_=LmO=dVsV4Gvoc-q75XP2FBEgm9Gxv0A@mail.gmail.com>
- <20190527022258.32748-1-matheus@castello.eng.br>
+        id S1726127AbfE0Cdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 22:33:36 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17162 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725973AbfE0Cdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 May 2019 22:33:36 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D7F0E9D3FE75A93C40BB;
+        Mon, 27 May 2019 10:33:33 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.96) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Mon, 27 May 2019
+ 10:33:29 +0800
+Subject: =?UTF-8?Q?Re:_[PATCH_net]_staging:_Remove_set_but_not_used_variable?=
+ =?UTF-8?B?IOKAmHN0YXR1c+KAmQ==?=
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+References: <20190525042642.78482-1-maowenan@huawei.com>
+ <CAGngYiX04W+-jxqnWUD6CLh8LAr61FhtADGM0zbGcdeArqzC-Q@mail.gmail.com>
+CC:     Greg KH <gregkh@linuxfoundation.org>,
+        Jeremy Sowden <jeremy@azazel.net>,
+        <devel@driverdev.osuosl.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        "Matt Sickler" <matt.sickler@daktronics.com>
+From:   maowenan <maowenan@huawei.com>
+Message-ID: <05c9bfac-c3ad-5889-8f47-0e6f53844a76@huawei.com>
+Date:   Mon, 27 May 2019 10:33:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - br164.hostgator.com.br
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - castello.eng.br
-X-BWhitelist: no
-X-Source-IP: 177.34.20.96
-X-Source-L: No
-X-Exim-ID: 1hV5IF-003JNX-JQ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (castello.castello.in) [177.34.20.96]:57660
-X-Source-Auth: matheus@castello.eng.br
-X-Email-Count: 68
-X-Source-Cap: Y2FzdGUyNDg7Y2FzdGUyNDg7YnIxNjQuaG9zdGdhdG9yLmNvbS5icg==
-X-Local-Domain: yes
+In-Reply-To: <CAGngYiX04W+-jxqnWUD6CLh8LAr61FhtADGM0zbGcdeArqzC-Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Notify core through power_supply_changed() in case of changes in state
-of charge and power supply status. This is useful for user-space to
-efficiently update current battery level.
 
-Signed-off-by: Matheus Castello <matheus@castello.eng.br>
----
- drivers/power/supply/max17040_battery.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supply/max17040_battery.c
-index 61e6fcfea8a1..34278845cfe5 100644
---- a/drivers/power/supply/max17040_battery.c
-+++ b/drivers/power/supply/max17040_battery.c
-@@ -176,6 +176,9 @@ static void max17040_get_online(struct i2c_client *client)
- static void max17040_get_status(struct i2c_client *client)
- {
- 	struct max17040_chip *chip = i2c_get_clientdata(client);
-+	int last_status;
+On 2019/5/25 20:59, Sven Van Asbroeck wrote:
+> On Sat, May 25, 2019 at 12:20 AM Mao Wenan <maowenan@huawei.com> wrote:
+>>
+>> The variable 'status' is not used any more, remve it.
+> 
+>>      /* do the transfers for this message */
+>>      list_for_each_entry(transfer, &m->transfers, transfer_list) {
+>>          if (transfer->tx_buf == NULL && transfer->rx_buf == NULL && transfer->len) {
+>> -            status = -EINVAL;
+>>              break;
+>>          }
+> 
+> This looks like an error condition that's not reported to the spi core.
+> 
+> Instead of removing the status variable (which also removes the error value!),
+> maybe this should be reported to the spi core instead ?
+> 
+> Other spi drivers appear to do the following on the error path:
+> m->status = status;
+> return status;
+
+I have reviewed the code again, and it is good idea to store m->status in error path, like below?
+
+@@ -374,7 +374,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+     list_for_each_entry(transfer, &m->transfers, transfer_list) {
+         if (transfer->tx_buf == NULL && transfer->rx_buf == NULL && transfer->len) {
+             status = -EINVAL;
+-            break;
++            goto error;
+         }
+
+         /* transfer */
+@@ -412,7 +412,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+
+             if (count != transfer->len) {
+                 status = -EIO;
+-                break;
++                goto error;
+             }
+         }
+
+
+...
+
+     /* done work */
+     spi_finalize_current_message(master);
+     return 0;
 +
-+	last_status = chip->status;
++ error:
++    m->status = status;
++    return status;
 
- 	if (!chip->pdata || !chip->pdata->charger_online
- 			|| !chip->pdata->charger_enable) {
-@@ -194,6 +197,9 @@ static void max17040_get_status(struct i2c_client *client)
-
- 	if (chip->soc > MAX17040_BATTERY_FULL)
- 		chip->status = POWER_SUPPLY_STATUS_FULL;
-+
-+	if (last_status != chip->status)
-+		power_supply_changed(chip->battery);
  }
 
- static void max17040_get_of_data(struct max17040_chip *chip)
-@@ -217,10 +223,18 @@ static void max17040_check_changes(struct i2c_client *client)
- static void max17040_work(struct work_struct *work)
- {
- 	struct max17040_chip *chip;
-+	int last_soc;
 
- 	chip = container_of(work, struct max17040_chip, work.work);
-+
-+	/* store SOC for check change */
-+	last_soc = chip->soc;
- 	max17040_check_changes(chip->client);
-
-+	/* check changes and send uevent */
-+	if (chip->soc >= 0 && last_soc != chip->soc)
-+		power_supply_changed(chip->battery);
-+
- 	queue_delayed_work(system_power_efficient_wq, &chip->work,
- 			   MAX17040_DELAY);
- }
---
-2.20.1
+> 
+>>
+>> @@ -370,7 +368,6 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+>>
+>>              if (count != transfer->len) {
+>> -                status = -EIO;
+>>                  break;
+> 
+> Same issue here.
+> 
+> 
 
