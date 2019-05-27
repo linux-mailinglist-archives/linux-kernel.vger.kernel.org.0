@@ -2,110 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E26B2B8FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 18:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA3CF2B90D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 18:25:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbfE0QWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 12:22:48 -0400
-Received: from vps.xff.cz ([195.181.215.36]:52634 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726881AbfE0QWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 12:22:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1558974161; bh=P6oNZcE8gnEVr+Noa52McnHoAnRWnYpUxI4CnwnbrFY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ocV3vRyhBQf437hemhd//ZsvcC9auXu2Dy2crS0ozbCVW3sZkzThqY7HaJ4qPlDa3
-         uRaHmdxNgb6DRf9FWPp1tMIdlHrYWFaYcunDB/b0NirutiULxbLFdbW595sQYgcna3
-         QcGXIVqY4W57EldweRz3JgvlGSq98yx7a0XH+F90=
-From:   megous@megous.com
-To:     linux-sunxi@googlegroups.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>
-Cc:     Ondrej Jirman <megous@megous.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v6 6/6] arm64: dts: allwinner: orange-pi-3: Enable HDMI output
-Date:   Mon, 27 May 2019 18:22:37 +0200
-Message-Id: <20190527162237.18495-7-megous@megous.com>
-In-Reply-To: <20190527162237.18495-1-megous@megous.com>
-References: <20190527162237.18495-1-megous@megous.com>
+        id S1726547AbfE0QYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 12:24:12 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:52766 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbfE0QYM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 12:24:12 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1hVIPw-0002KK-32; Mon, 27 May 2019 12:24:08 -0400
+Message-ID: <686351aab73911569a7c22a7e104d1b9f0d579b9.camel@surriel.com>
+Subject: Re: [PATCH 7/7] sched/fair: Rename weighted_cpuload() to cpu_load()
+From:   Rik van Riel <riel@surriel.com>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 27 May 2019 12:24:07 -0400
+In-Reply-To: <20190527062116.11512-8-dietmar.eggemann@arm.com>
+References: <20190527062116.11512-1-dietmar.eggemann@arm.com>
+         <20190527062116.11512-8-dietmar.eggemann@arm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-1BIZliyhtxK7tTR1Ish4"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Jirman <megous@megous.com>
 
-Orange Pi 3 has a DDC_CEC_EN signal connected to PH2, that enables the DDC
-I2C bus voltage shifter. Before EDID can be read, we need to pull PH2 high.
-This is realized by the ddc-en-gpios property.
+--=-1BIZliyhtxK7tTR1Ish4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Ondrej Jirman <megous@megous.com>
----
- .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 26 +++++++++++++++++++
- 1 file changed, 26 insertions(+)
+On Mon, 2019-05-27 at 07:21 +0100, Dietmar Eggemann wrote:
+> This is done to align the per cpu (i.e. per rq) load with the util
+> counterpart (cpu_util(int cpu)). The term 'weighted' is not needed
+> since there is no 'unweighted' load to distinguish it from.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-index 2c6807b74ff6..01bb1bafe284 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
-@@ -22,6 +22,18 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	connector {
-+		compatible = "hdmi-connector";
-+		ddc-en-gpios = <&pio 7 2 GPIO_ACTIVE_HIGH>; /* PH2 */
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -72,6 +84,10 @@
- 	cpu-supply = <&reg_dcdca>;
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -91,6 +107,16 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	ext_rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
--- 
-2.21.0
+I can see why you want to make cpu_util() and cpu_load()
+have the same parameter, but ...
+
+> @@ -7931,7 +7928,7 @@ static inline void update_sg_lb_stats(struct
+> lb_env *env,
+>  		if ((env->flags & LBF_NOHZ_STATS) &&
+> update_nohz_stats(rq, false))
+>  			env->flags |=3D LBF_NOHZ_AGAIN;
+> =20
+> -		sgs->group_load +=3D weighted_cpuload(rq);
+> +		sgs->group_load +=3D cpu_load(i);
+>  		sgs->group_util +=3D cpu_util(i);
+>  		sgs->sum_nr_running +=3D rq->cfs.h_nr_running;
+
+... now we end up dereferencing cpu_rq(cpu) 3 times.
+
+I guess per-cpu variables are so cheap that we should
+never notice, but I thought I'd ask anyway while looking
+over these patches :)
+
+Thank you for removing a bunch of code that slowed down
+my understanding of fair.c
+
+--=20
+All Rights Reversed.
+
+--=-1BIZliyhtxK7tTR1Ish4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlzsDycACgkQznnekoTE
+3oPOgAgAo1RMB85AKGO4kRE5mqnTAEqZ4XsVpWt82sdgqnEcRfcIBT65E2hnuNqL
+I0bYLuK6CRgrVP2gM9aScBzjznLoTvuxnss0zN3N/MCeOzkn4Ab58om5ojLD61aq
+WMW21wl0Hulm9Svwn/ZpN+KRPbdZrFpttcb7SdSIFVUvXz4g0YAe2kBlZ+8kfLp9
+7oXe6JGAOLtQDx+Z2LNZhZHfQVP+VgCLmtCFbE95bS8bvz86dnCJ1Dl5ULphULN3
+hMgeqGedAFgYX/CJgZoXhKWlox14pCA4ozeyKRiKhos5Uai/McBZkYr76W4FCtwY
+5GfOV8IzhoqIsfoKPXf0bBWKBAR/1A==
+=+DUJ
+-----END PGP SIGNATURE-----
+
+--=-1BIZliyhtxK7tTR1Ish4--
 
