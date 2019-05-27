@@ -2,51 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B672B88F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:45:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60A52B8B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 18:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfE0PpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 11:45:06 -0400
-Received: from 8bytes.org ([81.169.241.247]:40406 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726322AbfE0PpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 11:45:06 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id C7FCC244; Mon, 27 May 2019 17:45:04 +0200 (CEST)
-Date:   Mon, 27 May 2019 17:45:03 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tom Murphy <tmurphy@arista.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: implement generic dma_map_ops for IOMMUs v5
-Message-ID: <20190527154503.GH12745@8bytes.org>
-References: <20190520072948.11412-1-hch@lst.de>
- <20190527153751.GF12745@8bytes.org>
- <20190527153829.GA31620@lst.de>
+        id S1726859AbfE0QJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 12:09:39 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39848 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725991AbfE0QJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 12:09:39 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A9CCBA0048445AF8D72D;
+        Mon, 27 May 2019 23:49:28 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Mon, 27 May 2019
+ 23:49:19 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <ssantosh@kernel.org>, <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] memory: emif: Remove set but not used variables 'custom_configs' and 'cs1_used'
+Date:   Mon, 27 May 2019 23:45:25 +0800
+Message-ID: <20190527154525.19516-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190527153829.GA31620@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 05:38:29PM +0200, Christoph Hellwig wrote:
-> On Mon, May 27, 2019 at 05:37:51PM +0200, Joerg Roedel wrote:
-> > I applied this series to a new generic-dma-ops branch in the iommu
-> > tree and plan to send it upstream in the next merge window.
-> 
-> Thanks!  Can you push the branch out ASAP, as I'll need to pull it
-> into the dma-mapping tree to avoid creating nasty conflicts for the
-> pending rework of the DMA CMA and contigous allocators?
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Done, pushed this one branch. Have a lot of fun!
+drivers/memory/emif.c: In function get_emif_reg_values:
+drivers/memory/emif.c:1626:36: warning: variable custom_configs set but not used [-Wunused-but-set-variable]
+drivers/memory/emif.c: In function get_emif_reg_values:
+drivers/memory/emif.c:1618:9: warning: variable cs1_used set but not used [-Wunused-but-set-variable]
+
+They are not used since introduction in commit
+a93de288aad3 ("memory: emif: handle frequency and voltage change events")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/memory/emif.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/memory/emif.c b/drivers/memory/emif.c
+index 2f214440008c..1b262bbd1d65 100644
+--- a/drivers/memory/emif.c
++++ b/drivers/memory/emif.c
+@@ -1615,7 +1615,7 @@ static void emif_shutdown(struct platform_device *pdev)
+ static int get_emif_reg_values(struct emif_data *emif, u32 freq,
+ 		struct emif_regs *regs)
+ {
+-	u32				cs1_used, ip_rev, phy_type;
++	u32				ip_rev, phy_type;
+ 	u32				cl, type;
+ 	const struct lpddr2_timings	*timings;
+ 	const struct lpddr2_min_tck	*min_tck;
+@@ -1623,7 +1623,6 @@ static int get_emif_reg_values(struct emif_data *emif, u32 freq,
+ 	const struct lpddr2_addressing	*addressing;
+ 	struct emif_data		*emif_for_calc;
+ 	struct device			*dev;
+-	const struct emif_custom_configs *custom_configs;
+ 
+ 	dev = emif->dev;
+ 	/*
+@@ -1641,12 +1640,10 @@ static int get_emif_reg_values(struct emif_data *emif, u32 freq,
+ 
+ 	device_info	= emif_for_calc->plat_data->device_info;
+ 	type		= device_info->type;
+-	cs1_used	= device_info->cs1_used;
+ 	ip_rev		= emif_for_calc->plat_data->ip_rev;
+ 	phy_type	= emif_for_calc->plat_data->phy_type;
+ 
+ 	min_tck		= emif_for_calc->plat_data->min_tck;
+-	custom_configs	= emif_for_calc->plat_data->custom_configs;
+ 
+ 	set_ddr_clk_period(freq);
+ 
+-- 
+2.17.1
 
 
-	Joerg
