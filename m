@@ -2,78 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC2DE2B95F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 19:21:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BEF92B960
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 19:22:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfE0RV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 13:21:29 -0400
-Received: from smtprelay0012.hostedemail.com ([216.40.44.12]:36033 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726758AbfE0RV2 (ORCPT
+        id S1726996AbfE0RWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 13:22:01 -0400
+Received: from gateway31.websitewelcome.com ([192.185.144.218]:29780 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726517AbfE0RWB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 13:21:28 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id E4B51180206CE;
-        Mon, 27 May 2019 17:21:26 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:800:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2559:2563:2682:2685:2828:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6742:7808:7903:8957:9025:9040:10004:10400:10848:11026:11232:11658:11914:12043:12114:12555:12740:12760:12895:12986:13069:13311:13357:13439:14181:14659:14721:21080:21324:21451:21627:30054:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: lake84_639e874c37e55
-X-Filterd-Recvd-Size: 2297
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 27 May 2019 17:21:24 +0000 (UTC)
-Message-ID: <810a0dae47c90c39015903c413303fcee89ab5eb.camel@perches.com>
-Subject: Re: [PATCH v2] rcu: Don't return a value from rcu_assign_pointer()
-From:   Joe Perches <joe@perches.com>
-To:     paulmck@linux.ibm.com,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sasha Levin <sashal@kernel.org>, apw@canonical.com
-Date:   Mon, 27 May 2019 10:21:22 -0700
-In-Reply-To: <20190527161050.GK28207@linux.ibm.com>
-References: <1558946997-25559-1-git-send-email-andrea.parri@amarulasolutions.com>
-         <20190527161050.GK28207@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 27 May 2019 13:22:01 -0400
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 1D985BA621
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 12:22:00 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id VJJwh1UdCiQerVJJwhcK7W; Mon, 27 May 2019 12:22:00 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.47.159] (port=35202 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hVJJu-002THu-Vi; Mon, 27 May 2019 12:21:59 -0500
+Date:   Mon, 27 May 2019 12:21:58 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>
+Cc:     devel@lists.orangefs.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] orangefs: fix unused value in __orangefs_setattr
+Message-ID: <20190527172158.GA28107@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.47.159
+X-Source-L: No
+X-Exim-ID: 1hVJJu-002THu-Vi
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.47.159]:35202
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-05-27 at 09:10 -0700, Paul E. McKenney wrote:
-> On Mon, May 27, 2019 at 10:49:57AM +0200, Andrea Parri wrote:
-> > Quoting Paul [1]:
-> > 
-> >   "Given that a quick (and perhaps error-prone) search of the uses
-> >    of rcu_assign_pointer() in v5.1 didn't find a single use of the
-> >    return value, let's please instead change the documentation and
-> >    implementation to eliminate the return value."
-> > 
-> > [1] https://lkml.kernel.org/r/20190523135013.GL28207@linux.ibm.com
-> 
-> Queued, thank you!
-> 
-> Adding the checkpatch maintainers on CC as well.  The "do { } while
-> (0)" prevents the return value from being used, by design.  Given the
-> checkpatch complaint, is there some better way to achieve this?
+Add check for the return value of posix_acl_chmod() and
+fix unused value bug.
 
-Not sure what the checkpatch complaint is here.
-Reading the link above, there seems to be a compiler warning.
+Notice that if this check is not in place, the value in
+ret is overwritten at line 913, before it can be used:
 
-Perhaps a statement expression macro with no return value?
+913	ret = 0;
 
-#define rcu_assign_pointer(p, v)	({ (p) = (v); ; })
+Addresses-Coverity-ID: 1445565 ("Unused value")
+Fixes: df2d7337b570 ("orangefs: let setattr write to cached inode")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/orangefs/inode.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index 0c337d8bdaab..3608f183d075 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -906,9 +906,12 @@ int __orangefs_setattr(struct inode *inode, struct iattr *iattr)
+ 	spin_unlock(&inode->i_lock);
+ 	mark_inode_dirty(inode);
+ 
+-	if (iattr->ia_valid & ATTR_MODE)
++	if (iattr->ia_valid & ATTR_MODE) {
+ 		/* change mod on a file that has ACLs */
+ 		ret = posix_acl_chmod(inode, inode->i_mode);
++		if (ret)
++			goto out;
++	}
+ 
+ 	ret = 0;
+ out:
+-- 
+2.21.0
 
