@@ -2,62 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEB362B4EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 14:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 697902B4EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 14:23:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfE0MWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 08:22:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37288 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726071AbfE0MWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 08:22:40 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8A1FE309265A;
-        Mon, 27 May 2019 12:22:40 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-59.ams2.redhat.com [10.36.116.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1B84B46466;
-        Mon, 27 May 2019 12:22:38 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 57F9211AAB; Mon, 27 May 2019 14:22:37 +0200 (CEST)
-Date:   Mon, 27 May 2019 14:22:37 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Zhenyu Wang <zhenyuw@linux.intel.com>
-Cc:     Tina Zhang <tina.zhang@intel.com>,
-        intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alex.williamson@redhat.com,
-        hang.yuan@intel.com, zhiyuan.lv@intel.com
-Subject: Re: [PATCH 1/2] vfio: ABI for setting mdev display flip eventfd
-Message-ID: <20190527122237.uhd7qm62h6wfv5w7@sirius.home.kraxel.org>
-References: <20190527084312.8872-1-tina.zhang@intel.com>
- <20190527084312.8872-2-tina.zhang@intel.com>
- <20190527090741.GE29553@zhen-hp.sh.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190527090741.GE29553@zhen-hp.sh.intel.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 27 May 2019 12:22:40 +0000 (UTC)
+        id S1726903AbfE0MXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 08:23:13 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:47220 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbfE0MXM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 08:23:12 -0400
+Received: from ramsan ([84.194.111.163])
+        by baptiste.telenet-ops.be with bizsmtp
+        id HQPB200053XaVaC01QPBcm; Mon, 27 May 2019 14:23:11 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hVEel-0001Ts-0U; Mon, 27 May 2019 14:23:11 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hVEek-0001Wv-UV; Mon, 27 May 2019 14:23:10 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Kosina <trivial@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] [trivial] perf: Spelling s/EACCESS/EACCES/
+Date:   Mon, 27 May 2019 14:23:09 +0200
+Message-Id: <20190527122309.5840-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 05:07:41PM +0800, Zhenyu Wang wrote:
-> On 2019.05.27 16:43:11 +0800, Tina Zhang wrote:
-> > Add VFIO_DEVICE_SET_GFX_FLIP_EVENTFD ioctl command to set eventfd
-> > based signaling mechanism to deliver vGPU framebuffer page flip
-> > event to userspace.
-> 
-> Should we add probe to see if driver can support gfx flip event?
+The correct spelling is EACCES:
 
-Userspace can simply call VFIO_DEVICE_SET_GFX_FLIP_EVENTFD and see if it
-worked.  If so -> use the eventfd.  Otherwise take the fallback path
-(timer based polling).  I can't see any advantage a separate feature
-probe steps adds.
+include/uapi/asm-generic/errno-base.h:#define EACCES 13 /* Permission denied */
 
-cheers,
-  Gerd
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ include/linux/perf_event.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 0ab99c7b652d41b1..10569e25b5a9b656 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -289,7 +289,7 @@ struct pmu {
+ 	 *  -EBUSY	-- @event is for this PMU but PMU temporarily unavailable
+ 	 *  -EINVAL	-- @event is for this PMU but @event is not valid
+ 	 *  -EOPNOTSUPP -- @event is for this PMU, @event is valid, but not supported
+-	 *  -EACCESS	-- @event is for this PMU, @event is valid, but no privilidges
++	 *  -EACCES	-- @event is for this PMU, @event is valid, but no privilidges
+ 	 *
+ 	 *  0		-- @event is for this PMU and valid
+ 	 *
+-- 
+2.17.1
 
