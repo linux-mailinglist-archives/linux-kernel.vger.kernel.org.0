@@ -2,98 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8A532B54F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 14:32:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC59F2B55C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 14:33:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfE0McH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 08:32:07 -0400
-Received: from mail-eopbgr30056.outbound.protection.outlook.com ([40.107.3.56]:58963
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726599AbfE0McH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 08:32:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0wRumjJQB3ouNn4eLIeBn/rikleqowhhNTpCqONcaoQ=;
- b=gQLhIMoaNsCrGhAMz1ipvaLX4TnMfMpHw7sVKDavEiirOc2A9NYIYWdLwxrviSu6pfMRp26+abKg05RcwZSeZz1MF3rihUvF+uKChG+I7snW5TQgY+FXaGPLkgfg9oPzlJbgq6IA0rP1b/Z+s51MmqlRgpRGsERM6IuS885TBBI=
-Received: from AM6PR04MB5032.eurprd04.prod.outlook.com (20.177.34.92) by
- AM6PR04MB5094.eurprd04.prod.outlook.com (20.177.34.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.20; Mon, 27 May 2019 12:32:03 +0000
-Received: from AM6PR04MB5032.eurprd04.prod.outlook.com
- ([fe80::55a3:c244:9ba:6d21]) by AM6PR04MB5032.eurprd04.prod.outlook.com
- ([fe80::55a3:c244:9ba:6d21%4]) with mapi id 15.20.1922.021; Mon, 27 May 2019
- 12:32:03 +0000
-From:   Pramod Kumar <pramod.kumar_1@nxp.com>
-To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "Michal.Vokac@ysoft.com" <Michal.Vokac@ysoft.com>,
-        Leo Li <leoyang.li@nxp.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v3 0/3] arm64: dts: nxp: add ls1046a frwy board support 
-Thread-Topic: [PATCH v3 0/3] arm64: dts: nxp: add ls1046a frwy board support 
-Thread-Index: AQHVFIgwH93HgR+8M0C0MblbWTpfWA==
-Date:   Mon, 27 May 2019 12:32:03 +0000
-Message-ID: <20190527123404.30858-1-pramod.kumar_1@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.17.1
-x-clientproxiedby: PN1PR0101CA0055.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c00:d::17) To AM6PR04MB5032.eurprd04.prod.outlook.com
- (2603:10a6:20b:9::28)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pramod.kumar_1@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [92.120.1.70]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 51a2dcde-565f-4ebc-19dc-08d6e29f5281
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR04MB5094;
-x-ms-traffictypediagnostic: AM6PR04MB5094:
-x-microsoft-antispam-prvs: <AM6PR04MB5094520E9E4287F8FA2F56E8F61D0@AM6PR04MB5094.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3968;
-x-forefront-prvs: 0050CEFE70
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(39860400002)(396003)(366004)(199004)(189003)(99286004)(25786009)(1076003)(478600001)(256004)(7736002)(6116002)(316002)(6486002)(36756003)(71200400001)(81156014)(81166006)(71190400001)(50226002)(5660300002)(66066001)(6436002)(2501003)(305945005)(66476007)(3846002)(14454004)(4744005)(8676002)(6636002)(8936002)(486006)(102836004)(386003)(6506007)(6512007)(4326008)(2616005)(476003)(68736007)(2201001)(2906002)(86362001)(73956011)(66946007)(53936002)(66556008)(64756008)(66446008)(110136005)(52116002)(186003)(4743002)(26005)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5094;H:AM6PR04MB5032.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 0iEigfbRsVQR+AIdkdsULw/O/TKTKbHY5vksGNH2/OtOfeVDYHl3nKcFTQwPSEk63K+4jqC80Pdf2VrFSVH3B5b4iti47vZCOmnXl7oxuYqLoLpaI8pq8LuZ8xEkfAJy3QgJoxIOXkAiu0ZkgCo888KYaF0OH2T+1lRW9Iz9yhChXdgtkYS8wIPNFWwD4Yk8UlMySo2AHJ41Cd7jJwtJtaXgeEV50EglehDSar/lR6X6hNnk9TKLKBYf385GU2FyqI1yEad45aM4rUO7NniokqHwV7MtkhMlHfvlXSA6p9hjOaArkw9+xlJx6ckg9rfoj1Udxf3XX/5Fv0LUHJY5+jiDMGeCK1tM1P13oNHv9sCyJ1ORSwXWDYucFtzKnDoex574eKRfMX//ZhYZ7LfygcLZWZK70HLy2afvfSy5tw4=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727317AbfE0Mc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 08:32:58 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:39992 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbfE0Mc5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 08:32:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Bb4riJdUbAvU2dFDq22LE6R9qG/UUI43/Y/+y4V6Qvs=; b=c4TDFTpHK0CYd1vWu7R1zqW+/
+        2vf2CkvycdZ1TOZgh6586+6hBSUOonS4izJJJLlU/laLZdtRg9vo/tFqP67DP/DrVq5GNeyOXkp8N
+        ExSQgN5WmAiXgiz9FXGhkb7sqDhbv1+1n9qPgIj2TuqbkRY8ULdb/xs9kniGA0ESzx0t8DJo/mrAl
+        uLK3C6fLgcCbWbFpO9EhXKZtWIcTmu+x6Co60LQwrkDHUOi8//21mfSvFniFvyuP82yQFaVkGwBIf
+        aK/OeehLVOOzYZiUm+0l62ODKjdgrXRftiZCRVCOymL15JzQ7yEwGoiNpC9TkUxMutHPzfpYZgiur
+        Nuu3rPt0w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVEnP-0003D7-9F; Mon, 27 May 2019 12:32:07 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 10A95202BF3E2; Mon, 27 May 2019 14:32:06 +0200 (CEST)
+Date:   Mon, 27 May 2019 14:32:06 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Juergen Gross <jgross@suse.com>, Nadav Amit <namit@vmware.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-hyperv@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [RFC PATCH 5/6] x86/mm/tlb: Flush remote and local TLBs
+ concurrently
+Message-ID: <20190527123206.GC2623@hirez.programming.kicks-ass.net>
+References: <20190525082203.6531-1-namit@vmware.com>
+ <20190525082203.6531-6-namit@vmware.com>
+ <08b21fb5-2226-7924-30e3-31e4adcfc0a3@suse.com>
+ <20190527094710.GU2623@hirez.programming.kicks-ass.net>
+ <e9c0dc1f-799a-b6e3-8d41-58f0a6b693cd@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51a2dcde-565f-4ebc-19dc-08d6e29f5281
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2019 12:32:03.5631
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pramod.kumar_1@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5094
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e9c0dc1f-799a-b6e3-8d41-58f0a6b693cd@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Q2hhbmdlcyBmb3IgdjM6DQotIFJlbW92ZSB1bmRvY3VtZW50ZWQgcHJvcGVydCBpMmMtbXV4LW5l
-dmVyLWRpc2FibGUNCi0gU29ydCBub2RlcyBhdCBpMmMgbXV4IGluIHVuaXQtYWRkcmVzcw0KLSBS
-ZW1vdmUgVW5uZWNlc3NhcnkgbmV3bGluZQ0KDQpDaGFuZ2VzIGZvciB2MjoNCi0gTW9kaWZpZWQg
-Y29taXQgbWVzc2FnZQ0KLSBBZGQgZHRzIGVudHJ5IGZvciBxc3BpIG5vciBmbGFzaA0KDQpQcmFt
-b2QgS3VtYXIgKDMpOg0KICBkdC1iaW5kaW5nczogYXJtOiBueHA6IEFkZCBkZXZpY2UgdHJlZSBi
-aW5kaW5nIGZvciBsczEwNDZhLWZyd3kgYm9hcmQNCiAgYXJtNjQ6IGR0czogbnhwOiBhZGQgbHMx
-MDQ2YS1mcnd5IGJvYXJkIHN1cHBvcnQNCiAgYXJtNjQ6IGR0czogZnJ3eS1sczEwNDZhOiBhZGQg
-c3VwcG9ydCBmb3IgbWljcm9uIG5vciBmbGFzaA0KDQogLi4uL2RldmljZXRyZWUvYmluZGluZ3Mv
-YXJtL2ZzbC55YW1sICAgICAgICAgIHwgICAxICsNCiBhcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVz
-Y2FsZS9NYWtlZmlsZSAgICAgICAgfCAgIDEgKw0KIC4uLi9ib290L2R0cy9mcmVlc2NhbGUvZnNs
-LWxzMTA0NmEtZnJ3eS5kdHMgICB8IDE3MiArKysrKysrKysrKysrKysrKysNCiAzIGZpbGVzIGNo
-YW5nZWQsIDE3NCBpbnNlcnRpb25zKCspDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJtNjQv
-Ym9vdC9kdHMvZnJlZXNjYWxlL2ZzbC1sczEwNDZhLWZyd3kuZHRzDQoNCi0tIA0KMi4xNy4xDQoN
-Cg==
+On Mon, May 27, 2019 at 12:21:59PM +0200, Paolo Bonzini wrote:
+> On 27/05/19 11:47, Peter Zijlstra wrote:
+
+> > --- a/arch/x86/kernel/kvm.c
+> > +++ b/arch/x86/kernel/kvm.c
+> > @@ -580,7 +580,7 @@ static void __init kvm_apf_trap_init(voi
+> >  
+> >  static DEFINE_PER_CPU(cpumask_var_t, __pv_tlb_mask);
+> >  
+> > -static void kvm_flush_tlb_others(const struct cpumask *cpumask,
+> > +static void kvm_flush_tlb_multi(const struct cpumask *cpumask,
+> >  			const struct flush_tlb_info *info)
+> >  {
+> >  	u8 state;
+> > @@ -594,6 +594,9 @@ static void kvm_flush_tlb_others(const s
+> >  	 * queue flush_on_enter for pre-empted vCPUs
+> >  	 */
+> >  	for_each_cpu(cpu, flushmask) {
+> > +		if (cpu == smp_processor_id())
+> > +			continue;
+> > +
+> 
+> Even this would be just an optimization; the vCPU you're running on
+> cannot be preempted.  You can just change others to multi.
+
+Yeah, I know, but it felt weird so I added the explicit skip. No strong
+feelings though.
+
