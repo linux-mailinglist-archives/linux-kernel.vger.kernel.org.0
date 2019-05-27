@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8D0A2B636
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1F352B63C
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:22:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfE0NWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:22:15 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53472 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbfE0NWK (ORCPT
+        id S1726715AbfE0NW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:22:27 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37787 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbfE0NWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:22:10 -0400
-Received: by mail-wm1-f66.google.com with SMTP id d17so2981852wmb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 06:22:08 -0700 (PDT)
+        Mon, 27 May 2019 09:22:11 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h1so2789501wro.4
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 06:22:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DdDiX896+ezCVjE2omOCRKNF6RoJ/lx1xAP+K6/8hcI=;
-        b=0taidlTmPCtCcB4JDbNmutRrOjR5sU3c+dVwtPaU9IRCQ0DyzKTGsFCl93SVFTE3Ro
-         ccsPpDhPzt285NJdzFErdPt9OneOuVKy1/L1PDEl9dCYLm0T9UaLXGlEYyjhQtPCWriL
-         zrhOYbgtmK1Ugz4k915t5pngUL2+4rnS2a7HqWAhcQ6+FaanvxOO4NFuH7GQon8VnL++
-         Fhq50kZs28TwNur3YEFFbaU5B86p8vVGc7WGCryF0W1/ADPopbOehNDwlihgMmIZgIUc
-         nGNegBj2pyTbz+GlzpmImgUv2alNedlx60dzK54mdtA4lBTFjNv4T0Y9NU68Lit/I6n1
-         PaMw==
+        bh=4VtDGZ3OVSVw6HZggJOqUTRYqY5ZUaLIQ9cwARYH99A=;
+        b=U3aDFZjkZXFYe7wNf6AFeyb2CzT8QJzBjLaQiB1ybT58exOolffDkQZVEQs9IwqDlR
+         QupHWofac4pMpepiaHEoTBoAoDbCYUXpGZXPIAHJVsg6zrVjb/cSCHRMpR6uLZMrAIWk
+         6rBE8L+83X9MjSsf0nrI/eChI1+CYF18c7AFPIb/WYqBGhWRRW4wCj9IwngIHnLdodiD
+         vJcNQV1d2auvf/HD178QOgLZxp/OqkiTLwo7k2i+po9wNsk1Vih74NuIrIR3bKMaDjOQ
+         clJSY0WBe8PP72dtaaKri3ykd9nxXqPJnaz84BsPl6+rXtGdeqp0Pso3z9BhRNexq2PC
+         Yjug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DdDiX896+ezCVjE2omOCRKNF6RoJ/lx1xAP+K6/8hcI=;
-        b=s+BKhHV3LgP3QTZOaUFsiUtnEiUyHUyX+T3+dp9kArbBm5e1UCoz3ly6hKDPbia6PK
-         uy5JUC7jwEpufssRtUAyaCORwbXJ97A0hrEPmpo3hvqq+8dDgFxDlKQv/ghKemwPwt/u
-         Zrh3yDNawMWYXqZN09X4vW43i7DD7eecERVgNU3HpL3/u0quLNZ9/2m8z7lppel2qeqh
-         MvqRxsKTKNecsrnxKTQtTM55ejFfUk+TpDTJBM8HR5LgfCUFQCBMQxObOneObviDUUxo
-         ks5R7YOONzxUi0ppz2td/nxgQtiRrhgi4fpUqCbYHlIqwMJPpYhOBHVjDkgqrxqB2X1F
-         TeyQ==
-X-Gm-Message-State: APjAAAVIFXksgaPWheV1XpU6v05cTZX6gyKGDzY8R4Co9IITWm3n3+t+
-        u7Z5lRaC7ICfrL+GmyGPYSbzAfm+K5hHvQ==
-X-Google-Smtp-Source: APXvYqx9B1l8Wqo70PYjwXfiLcOmhOwoS7q8t+cSLTwJ7RDvTS2xOIFZIkC/7C8I34i8CtpyFtMlkg==
-X-Received: by 2002:a1c:7a0d:: with SMTP id v13mr9696782wmc.44.1558963328167;
-        Mon, 27 May 2019 06:22:08 -0700 (PDT)
+        bh=4VtDGZ3OVSVw6HZggJOqUTRYqY5ZUaLIQ9cwARYH99A=;
+        b=lHcFAYjuVnQKwGFPP94Z0Je8NzHWgYXzNKWCqX3MyJsaXTfmWDJUEl03XVDaCdSa16
+         +jviDezucl8GPCR8M6nbAoQnyoDu6ENkGmdfg2z8zBmczrJpBS0IFiQwrp8VFX3POHbl
+         wKJszjl7x01ZiXm/6exnN2E6L7ilK0ssSvxEulI+GqQLJir+eKnhVGRp7aaxeGoru7BL
+         FYoopxt+XoR02/Zo/cPqGggBNFZaVvcrrVf8aN0+c5cAbRUieYFBOMiNYFk01uTweWyA
+         sXAnHuAWmP/350C8Y21J+JCaMYfdIZc0Of1r83+cB/O82YiBLBcAYQSnvozOMwpBbiPu
+         PSmg==
+X-Gm-Message-State: APjAAAW6CG7rBAuOIbZoOt2vBqL8rA25baZpu0qp83lEviCmqnDzCw9x
+        3c8s25FV5lldEXb3ncs53fbdgg==
+X-Google-Smtp-Source: APXvYqxf3k/7Wb+ZKnTinne4Kei3iMcPjtfcFlS1vpIpQ2xmpLUmTWkDcbZC/+3pmja1wPjdeR5u2w==
+X-Received: by 2002:adf:ec8e:: with SMTP id z14mr45794613wrn.198.1558963329516;
+        Mon, 27 May 2019 06:22:09 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l12sm7019836wmj.22.2019.05.27.06.22.07
+        by smtp.gmail.com with ESMTPSA id l12sm7019836wmj.22.2019.05.27.06.22.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 27 May 2019 06:22:07 -0700 (PDT)
+        Mon, 27 May 2019 06:22:08 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         christianshewitt@gmail.com
-Subject: [PATCH 07/10] arm64: dts: meson-gxbb-vega-s95: enable CEC
-Date:   Mon, 27 May 2019 15:21:57 +0200
-Message-Id: <20190527132200.17377-8-narmstrong@baylibre.com>
+Subject: [PATCH 08/10] arm64: dts: meson-gxbb-vega-s95: enable SARADC
+Date:   Mon, 27 May 2019 15:21:58 +0200
+Message-Id: <20190527132200.17377-9-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190527132200.17377-1-narmstrong@baylibre.com>
 References: <20190527132200.17377-1-narmstrong@baylibre.com>
@@ -64,32 +64,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add CEC nodes to support CEC communication on Vega S95
+Add SARARC node and associated regulator to support reading the
+ADC inputs on the Vega S95
 
 Suggested-by: Christian Hewitt <christianshewitt@gmail.com>
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-index 6738b2aac9a0..be8799653ad7 100644
+index be8799653ad7..4d2aa4dc59e7 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-vega-s95.dtsi
-@@ -93,6 +93,13 @@
+@@ -54,6 +54,13 @@
+ 		regulator-max-microvolt = <3300000>;
  	};
+ 
++	vddio_ao18: regulator-vddio_ao18 {
++		compatible = "regulator-fixed";
++		regulator-name = "VDDIO_AO18";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++	};
++
+ 	vcc_3v3: regulator-vcc_3v3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "VCC_3V3";
+@@ -152,6 +159,11 @@
+ 	clock-names = "clkin0";
  };
  
-+&cec_AO {
++&saradc {
 +	status = "okay";
-+	pinctrl-0 = <&ao_cec_pins>;
-+	pinctrl-names = "default";
-+	hdmi-phandle = <&hdmi_tx>;
++	vref-supply = <&vddio_ao18>;
 +};
 +
- &ethmac {
+ /* Wireless SDIO Module */
+ &sd_emmc_a {
  	status = "okay";
- 	pinctrl-0 = <&eth_rgmii_pins>;
 -- 
 2.21.0
 
