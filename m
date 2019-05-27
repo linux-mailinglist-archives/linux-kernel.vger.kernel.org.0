@@ -2,86 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2B652B464
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 14:07:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF8042B3B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:57:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfE0MHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 08:07:01 -0400
-Received: from app1.whu.edu.cn ([202.114.64.88]:42472 "EHLO whu.edu.cn"
+        id S1726858AbfE0L5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 07:57:30 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17164 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725943AbfE0MGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 08:06:54 -0400
-Received: from localhost (unknown [111.202.192.3])
-        by email1 (Coremail) with SMTP id AQBjCgAniKXW0utcGsnjAA--.59650S2;
-        Mon, 27 May 2019 20:06:50 +0800 (CST)
-From:   Peng Wang <rocking@whu.edu.cn>
-To:     axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Wang <rocking@whu.edu.cn>
-Subject: [PATCH] block: use KMEM_CACHE macro
-Date:   Mon, 27 May 2019 20:05:18 +0800
-Message-Id: <20190527120518.3703-1-rocking@whu.edu.cn>
-X-Mailer: git-send-email 2.19.1
+        id S1726304AbfE0L5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 07:57:30 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id CF862B0A799E918D0980;
+        Mon, 27 May 2019 19:57:26 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 27 May 2019 19:57:19 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] drivers: base: power: Use of_clk_get_parent_count()
+Date:   Mon, 27 May 2019 20:05:35 +0800
+Message-ID: <20190527120535.176015-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <CAMuHMdX=o+gT6fbpZcj8jQbHi9LJci9CX72DG5j+DKYxuSkYvQ@mail.gmail.com>
+References: <CAMuHMdX=o+gT6fbpZcj8jQbHi9LJci9CX72DG5j+DKYxuSkYvQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQBjCgAniKXW0utcGsnjAA--.59650S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7urWfGFy7Cw4rKFWrWr4kZwb_yoW8JF4kpF
-        Z3GFn8Cr1jga1xuFWkAayxZry3Cw4vgF1xWa1Yv34Ykr9rCws2vF1vyr1UZrWxurWfCrW5
-        Xr48tryrXr1jkFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkm14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-        JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-        CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-        2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-        W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6ryU
-        MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
-        0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0E
-        wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
-        W8JwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-        IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfU0CJPDUUUU
-X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the preferred KMEM_CACHE helper for brevity.
+Use of_clk_get_parent_count() instead of open coding.
 
-Signed-off-by: Peng Wang <rocking@whu.edu.cn>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- block/blk-core.c | 3 +--
- block/blk-ioc.c  | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/base/power/clock_ops.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 1bf83a0df0f6..841bf0b12755 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1789,8 +1789,7 @@ int __init blk_dev_init(void)
- 	if (!kblockd_workqueue)
- 		panic("Failed to create kblockd\n");
+diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
+index 59d19dd64928..3e84e3085d43 100644
+--- a/drivers/base/power/clock_ops.c
++++ b/drivers/base/power/clock_ops.c
+@@ -12,6 +12,7 @@
+ #include <linux/pm_clock.h>
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
++#include <linux/of_clk.h>
+ #include <linux/slab.h>
+ #include <linux/err.h>
+ #include <linux/pm_domain.h>
+@@ -195,8 +196,7 @@ int of_pm_clk_add_clks(struct device *dev)
+ 	if (!dev || !dev->of_node)
+ 		return -EINVAL;
  
--	blk_requestq_cachep = kmem_cache_create("request_queue",
--			sizeof(struct request_queue), 0, SLAB_PANIC, NULL);
-+	blk_requestq_cachep = KMEM_CACHE(request_queue, SLAB_PANIC);
+-	count = of_count_phandle_with_args(dev->of_node, "clocks",
+-					   "#clock-cells");
++	count = of_clk_get_parent_count(dev->of_node);
+ 	if (count <= 0)
+ 		return -ENODEV;
  
- #ifdef CONFIG_DEBUG_FS
- 	blk_debugfs_root = debugfs_create_dir("block", NULL);
-diff --git a/block/blk-ioc.c b/block/blk-ioc.c
-index 5ed59ac6ae58..58c79aeca955 100644
---- a/block/blk-ioc.c
-+++ b/block/blk-ioc.c
-@@ -408,8 +408,7 @@ struct io_cq *ioc_create_icq(struct io_context *ioc, struct request_queue *q,
- 
- static int __init blk_ioc_init(void)
- {
--	iocontext_cachep = kmem_cache_create("blkdev_ioc",
--			sizeof(struct io_context), 0, SLAB_PANIC, NULL);
-+	iocontext_cachep = KMEM_CACHE(io_context, SLAB_PANIC);
- 	return 0;
- }
- subsys_initcall(blk_ioc_init);
 -- 
-2.19.1
+2.20.1
 
