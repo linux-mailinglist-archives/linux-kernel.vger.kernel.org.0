@@ -2,54 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 804AF2B9EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 20:14:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9C962B9F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 20:16:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbfE0SMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 14:12:45 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37231 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfE0SMp (ORCPT
+        id S1727175AbfE0SPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 14:15:40 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45973 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726839AbfE0SPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 14:12:45 -0400
-Received: by mail-oi1-f194.google.com with SMTP id f4so12434712oib.4
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 11:12:44 -0700 (PDT)
+        Mon, 27 May 2019 14:15:39 -0400
+Received: by mail-ot1-f66.google.com with SMTP id t24so15492692otl.12
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 11:15:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fdEdzKwrwwR+hZrRuekbTm4BMx8O7NzP4YL8a4f6Xyw=;
-        b=TCX5m6h3kSNswGNfH9xVf7MNEte1kWLAUZV2H9MaftkLrqoChQpWF9viqrvYi6oyn6
-         tMkNsoSpUVfYD/CCZosnrlppsI84qiMpucB5XKAzOQplFzM2KPYLEDMwfKyXFaG5RbO1
-         LjeZRTQ8cjEpmhm1Sy8uCqpD+io3/Cm0qwA84eSxw6osWF7EkPE/L2BoZPLI2SGA7aO3
-         NDcaBI3XhU0VFHOXVHwWcRXnr6l1uoOT6AIbk/0g1XMUq30s8F24O3na6AC+dtrGROBE
-         vqmZzoO6VI9MfrcgmrmHYS6/pPyFeezktzDMd7Bt7FZa2WF/szO/NCiryKq/lKy0KOeV
-         ErkA==
+        bh=CZXI0Vn72E/kvqUVtGm0iU9miuWChUM3kAYpzpVGfLI=;
+        b=tSvoWWkLsY1P3+leYGrD5X5mo8Xnvw2PuTio2xXbcEWt1z6dDw9GiJpKsm1oJTF99b
+         fua5Ifgyz51Rodgs5JkfzurKlGPoPYJdBuLN1m7OIvMoRemkDDdZ/DrNo7Tj6AT3/O+g
+         hvuX/BVFs+41JDZY87oxiQcURLyGoACEjyGRe+Kj/42h4Bjc2ddBpQwWxY3FuKhkUjw7
+         CzbYIRM24oxp75+WPr1CAzTjmoXRl74YS99VRGYTXjtF4u7pDRKaokdXGFuQ+/oZrbu4
+         7wfs10chpRgTZsdocsWxitwrK2bByBfUSMB3bpm/RC9AtGRaRTl9LGvp2Hu3xyfRyxEd
+         zQUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fdEdzKwrwwR+hZrRuekbTm4BMx8O7NzP4YL8a4f6Xyw=;
-        b=lJ7NQ9FXlVT5K+l4vptkMXwWbN56pNcj/KEXdbOPxQQ+mqfSiHD+c0If/NiCRBtgBm
-         so+DJr4efZo35cfN+reJx9rqrIaI+EjyzOZqttijEeG++hu0+4aJYE1v3KqYRepa0FuX
-         CC1W95W4KKOKKl9X7KkCcZpaFOQzX0DgEnqO39U7r4ppkq08eibPS6SiR24I9dItk6i6
-         23YqekguiOrpznv1Q5LTnC35l964B4mICbc1AXFdPxSOOGAq0k9oz/qpaJT4S1dabTNC
-         tQkmFotUdoLEcEFcn542bSi0J/moOHQDO3mZXBGfZdF12sQ9YI+o1IadRpXGdi43mADY
-         d/JA==
-X-Gm-Message-State: APjAAAVieZx/riXiAzYEuc8OZiPp5Vz6DS9jSviBFEnECQtM642PyMc+
-        UuCCN4z5KHvTT4HgzV9KIbPblOpI2ym6U6ZeqxvozKGavok=
-X-Google-Smtp-Source: APXvYqwmz7MYBR3RPfckjQ+bn80jPUguVMJFtd+LUXLXHyBI+ktAg+X8jo5YLRokDHP1QncBkXrVu3K0ewCBCk+mFp0=
-X-Received: by 2002:aca:4341:: with SMTP id q62mr175063oia.140.1558980764213;
- Mon, 27 May 2019 11:12:44 -0700 (PDT)
+        bh=CZXI0Vn72E/kvqUVtGm0iU9miuWChUM3kAYpzpVGfLI=;
+        b=IsB1bKHWLPwg3PY7xq8PuuVx1KSH0rzwRC83cqD7AFynEkC+iS7rAa7GNSUztRxHOQ
+         u8OqFvcT63jCiERbxrJVM0zdj3K7gfBAbzMjZVagH4u2+2631QxZJQuc7slRvAJQl+Iz
+         LwHWkP8Kn6vmziHqoK0Pb3EZZjVRH9fLrJRlNLER0tFbexQzcIPXjUimDXVOJx0V8GZy
+         doWcUrB3HInPxFmY5+BzpdHC38lKuel7lNqqB2ANLQC+AamFcavI/o5bzmsMKDZ0xxAE
+         zTY0NnJBJ+8b52UEfBFn8tGhS6zVIY5I7vKrwhtaNuWon6BJmaWU5gwf0mmuTXErp2NM
+         7uPA==
+X-Gm-Message-State: APjAAAXsYuvaphG6dZjfE1tHHfhjGPH1ybAU2yhrEazjQnHD/blEuJbk
+        zVDlKBiQw4Pbt3Lkg1ERrZdWSya0AQqtdIxjP3g=
+X-Google-Smtp-Source: APXvYqytYrC2eskykBQx9xuR6VQWqrtmKRbQrCEpy1SQnswhueDhG3nDNwT5nAwRtA3pcFaY0y+7otf8sm0gM0iP2V0=
+X-Received: by 2002:a9d:2f08:: with SMTP id h8mr71839920otb.42.1558980938237;
+ Mon, 27 May 2019 11:15:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190527140206.30392-1-narmstrong@baylibre.com> <20190527140206.30392-4-narmstrong@baylibre.com>
-In-Reply-To: <20190527140206.30392-4-narmstrong@baylibre.com>
+References: <20190527132200.17377-1-narmstrong@baylibre.com> <20190527132200.17377-4-narmstrong@baylibre.com>
+In-Reply-To: <20190527132200.17377-4-narmstrong@baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 27 May 2019 20:12:33 +0200
-Message-ID: <CAFBinCC+QrMhEErnt28ACe7x_VM65_envvOw7kFWAir53B=_nQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] arm64: dts: meson: Add minimal support for Odroid-N2
+Date:   Mon, 27 May 2019 20:15:27 +0200
+Message-ID: <CAFBinCBJwVT0uMx--NPuuAYS7k2Zx-X-Ew+qNmRQiPV+Cmv=KA@mail.gmail.com>
+Subject: Re: [PATCH 03/10] arm64: dts: meson-gxbb-wetek: enable SARADC
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
+        Christian Hewitt <christianshewitt@gmail.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,26 +58,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 4:03 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Mon, May 27, 2019 at 3:22 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
 >
-> This patch adds basic support for :
-> - Amlogic G12B, which is very similar to G12A
-> - The HardKernel Odroid-N2 based on the S922X SoC
+> From: Christian Hewitt <christianshewitt@gmail.com>
 >
-> The Amlogic G12B SoC is very similar with the G12A SoC, sharing
-> most of the features and architecture, but with these differences :
-> - The first CPU cluster only has 2xCortex-A53 instead of 4
-> - G12B has a second cluster of 4xCortex-A73
-> - Both cluster can achieve 2GHz instead of 1,8GHz for G12A
-> - CPU Clock architecture is difference, thus needing a different
->   compatible to handle this slight difference
-> - Supports a MIPI CSI input
-> - Embeds a Mali-G52 instead of a Mali-G31, but integration is the same
->
-> Actual support is done in the same way as for the GXM support, including
-> the G12A dtsi and redefining the CPU clusters.
-> Unlike GXM, the first cluster is different, thus needing to remove
-> the last 2 cpu nodes of the first cluster.
->
+> Enable SARADC on Wetek Boards.
+as far I as remember there's a story behind this (and it would be nice
+to have it documented here):
+some of the SCPI firmware revisions don't enable the SAR ADC clock
+when reading the SoCs temperature.
+if the SAR ADC is disabled in Linux then the common clock framework
+will disable the SAR ADC clock.
+now, when the SCPI firmware uses the SAR ADC to read the SoC
+temperature we only get garbage.
+
+enabling the SAR ADC in Linux "fixes" this issue
+
+> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+with that:
 Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
