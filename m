@@ -2,89 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52ABD2BAC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 21:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D3DF2BAC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 21:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbfE0TeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 15:34:18 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43464 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfE0TeS (ORCPT
+        id S1727172AbfE0Tgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 15:36:46 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:35595 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727105AbfE0Tgp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 15:34:18 -0400
-Received: by mail-lj1-f194.google.com with SMTP id z5so15539322lji.10
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 12:34:16 -0700 (PDT)
+        Mon, 27 May 2019 15:36:45 -0400
+Received: by mail-oi1-f195.google.com with SMTP id a132so12586481oib.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 12:36:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kre0Es/yKlsYi+IHH4KEeUS1CqkAvEHYl2+afvp4/1k=;
-        b=eeCf7ecg51/FYLge8TNO58pjRHJ4tdX6UaSrUoZX+tfItsH/toMl6OBx0OP4y88HRF
-         r3OjzQNG//M6Gg0Zlku+eoRhK1NIpswilYsfx6FtTB7jJrI7+qW5a8MIUaWItP3SpU+E
-         aWljlBTZZsZBBJ8KXlcm5t9/lyRuoHgwltBWY=
+        bh=8wOkTICbGGgSQKfMenc3seaDZ/KLgjroUdiof+HnQ4s=;
+        b=KyX4N9fqFU6gT9OH1da4ukXI54+PtAJWkozfkY5dUnyUl5SliiI+ox0dC1m6ecKZkq
+         2cbeynpQeQdlLyOhc4lLQPmNFVaaUFHrjJECflBdQMk+kPLdR9ZOcMMFL5uRCwKatFeb
+         tTuV1ATMZeoqPCVAxo0v7AvtjchgMA3H3KoZ4cGjCUSRYRZjRouCFPSdlCdiIYGaTkEL
+         N707cRBDzsjTd7MxleiRRg27FLy+pSktaDy092UqsDWvyOv01ZFtZ6aDYKcck3lXKsWQ
+         QYJk7Y8LfRDDa0Fx6Qylo9I0yvrAkm4kgPWIZUqvAg63Tjkxf/jCRM8G82NSuPvj6fkE
+         hHBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kre0Es/yKlsYi+IHH4KEeUS1CqkAvEHYl2+afvp4/1k=;
-        b=qKufpak62llHB1sAWqH0hNMQdc6tuRwxc0zevCj36h4skWctFh+8SQf0H+PS9b6fkl
-         lZa/0VXMA0aF5NeEgWnN8ur1iqVMV3Cqn9TPZvfovem1GhfRQazn8bry4mzzETWV1ecs
-         oakzaqIK1x0bASDh47IsRIoq3vA3VlpVHEEC0/T8njs5QuSBX/0r4JPFuBRtUVIPiubB
-         onL711TdnRlb41eVx1LDOWHTCGHSbk3N1U2gWHzCcO9a+3M26Jnr9N+vBUtogC7c1HyK
-         6RAp39aXWlgFwxtIjDyt7nJuiGCnvwBs8XRqhUJqPlKJjblNiquY2LbwBs1Jz8BaLYmh
-         mSMw==
-X-Gm-Message-State: APjAAAXX1NGeeRUZapULVy6tuvIjV+dy/NIWO6E0BGFv5ONHL52nYIbN
-        YCroZEYQOSlAGFznJLO33hebYVcZ/ck=
-X-Google-Smtp-Source: APXvYqz4P5r5Xz//pM2zBzkulB2YpmICNQpkHOX4OXBGiCmI37fKPw+aDBcLUYSM5DFkH2OITO22ow==
-X-Received: by 2002:a2e:8988:: with SMTP id c8mr52702983lji.99.1558985655564;
-        Mon, 27 May 2019 12:34:15 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id k21sm2862614lji.81.2019.05.27.12.34.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 12:34:13 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id n22so5069605lfe.12
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 12:34:12 -0700 (PDT)
-X-Received: by 2002:a19:ae01:: with SMTP id f1mr21220611lfc.29.1558985652245;
- Mon, 27 May 2019 12:34:12 -0700 (PDT)
+        bh=8wOkTICbGGgSQKfMenc3seaDZ/KLgjroUdiof+HnQ4s=;
+        b=iM3XmgdtO/9T8N2GZzsw9YcfbSauxW+htEvI6avMI/TkwXlmU1QF+0L0rNjARkrcBp
+         fDf7lgWu0A0Ww0homEs1YggmDznj+ai/Lyvw52IZYeko7/FTtgKoRfl08DIoJuy9hkPb
+         GvW+vJ3K83YHtIX1NDt8CZB0DKdehgJL5CqYagtnLYOwEi7v9K7EARvtZjwBFLLKql+x
+         FZ/+1ajMwOSZWqoE/CHT+NPFCTvaSz7SVvJDuSGj9vCfe2hlOkr8O+jDdGQDn1nnryKH
+         YAMX7wxjx9MOLkwAB0RTRo50bOSOguZKJ0Rd2sSfiyX60ZEoF6//XOaBP0zk3yTLjFLj
+         32Ug==
+X-Gm-Message-State: APjAAAXYyEJVp8c2pjXiaGq/4YJnDuoPqqXEDT4AO/Nb4Pug3g9HaRDM
+        YFHV56iawXTJ+eNBpnT3SsrwK1ZhrIZazNQoRFzw2A==
+X-Google-Smtp-Source: APXvYqzjis5QKOqN7UmcaChzDsoUV0+dmtf01xdFNdjoZUGPORQ++uXNnITdfqBZARKJxYLU5wQK2Caza/hcN5eqwcc=
+X-Received: by 2002:aca:c48c:: with SMTP id u134mr364457oif.39.1558985804503;
+ Mon, 27 May 2019 12:36:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190524194222.8398-1-longman@redhat.com> <20190527082326.GP2623@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190527082326.GP2623@hirez.programming.kicks-ass.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 27 May 2019 12:33:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgr-2kxGU=AXFbW=00qOHCA0eb_Ky0Bq9aeBKOegaFxNg@mail.gmail.com>
-Message-ID: <CAHk-=wgr-2kxGU=AXFbW=00qOHCA0eb_Ky0Bq9aeBKOegaFxNg@mail.gmail.com>
-Subject: Re: [PATCH v4] locking/lock_events: Use this_cpu_add() when necessary
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+References: <20190526102612.6970-1-christian@brauner.io> <CAHk-=wieuV4hGwznPsX-8E0G2FKhx3NjZ9X3dTKh5zKd+iqOBw@mail.gmail.com>
+ <20190527104239.fbnjzfyxa4y4acpf@brauner.io> <CAHk-=wjnbK5ob9JE0H1Ge_R4BL6D0ztsAvrM6DN+S+zyDWE=7A@mail.gmail.com>
+In-Reply-To: <CAHk-=wjnbK5ob9JE0H1Ge_R4BL6D0ztsAvrM6DN+S+zyDWE=7A@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 27 May 2019 21:36:18 +0200
+Message-ID: <CAG48ez2wyDhM-V1hs5ya1R4x7wHT=T8XLOYCPUyw97kzzLhbhg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fork: add clone6
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <christian@brauner.io>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        huang ying <huang.ying.caritas@gmail.com>
+        Florian Weimer <fweimer@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 1:23 AM Peter Zijlstra <peterz@infradead.org> wrote:
++Kees
+
+On Mon, May 27, 2019 at 9:27 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Mon, May 27, 2019 at 3:42 AM Christian Brauner <christian@brauner.io> wrote:
+> > Hm, still pondering whether having one unsigned int argument passed
+> > through registers that captures all the flags from the old clone() would
+> > be a good idea.
 >
-> That's disguisting... I see Linus already applied it, but yuck. That's
-> what we have raw_cpu_*() for.
+> That sounds like a reasonable thing to do.
+>
+> Maybe we could continue to call the old flags CLONE_XYZ and continue
+> to pass them in as "flags" argument, and then we have CLONE_EXT_XYZ
+> flags for a new 64-bit flag field that comes in through memory in the
+> new clone_args thing?
 
-Ahh, I tried to look for that, but there was enough indirection and
-confusion that I wasn't sure they were generically available.
+With the current seccomp model, that would have the unfortunate effect
+of making it impossible to filter out new clone flags - which would
+likely mean that people who want to sandbox their code would not use
+the new clone() because they don't want their sandboxed code to be
+able to create time namespaces and whatever other new fancy things
+clone() might support in the future. This is why I convinced Christian
+to pass flags in registers for the first patch version.
 
-And the "raw_cpu_*()" functions are rare enough that I'd never
-encountered them enough to really be aware of them. In fact, we seem
-to have exactly _one_ user of "raw_cpu_add()" in the whole kernel, and
-a handful of "raw_cpu_inc()".
-
-But ack on your patch, and a heartfelt "yeah, that's the right thing". Thanks,
-
-                Linus
+The alternative I see would be to somehow extend seccomp to support
+argument structures that are passed in memory - that would probably
+require quite a bit of new plumbing though, both in the kernel and in
+userspace code that configures seccomp filters.
