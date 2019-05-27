@@ -2,79 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2725B2AEAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 08:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6A0B2AEA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 08:28:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726454AbfE0G3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 02:29:11 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:50197 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725943AbfE0G3L (ORCPT
+        id S1726154AbfE0G2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 02:28:42 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:53304 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbfE0G2m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 02:29:11 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0TSmgVfX_1558938540;
-Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TSmgVfX_1558938540)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 27 May 2019 14:29:00 +0800
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-To:     cgroups@vger.kernel.org
-Cc:     Alex Shi <alex.shi@linux.alibaba.com>,
-        Shuah Khan <shuah@kernel.org>, Roman Gushchin <guro@fb.com>,
-        Tejun Heo <tj@kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jay Kamat <jgkamat@fb.com>, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Claudio Zumbo <claudioz@fb.com>,
-        Claudio <claudiozumbo@gmail.com>
-Subject: [PATCH v3 3/3] kselftest/cgroup: fix incorrect test_core skip
-Date:   Mon, 27 May 2019 14:28:07 +0800
-Message-Id: <20190527062807.93404-3-alex.shi@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.856.g8858448bb
-In-Reply-To: <20190527062807.93404-1-alex.shi@linux.alibaba.com>
-References: <20190527062807.93404-1-alex.shi@linux.alibaba.com>
+        Mon, 27 May 2019 02:28:42 -0400
+Received: by mail-it1-f195.google.com with SMTP id m141so25206948ita.3
+        for <linux-kernel@vger.kernel.org>; Sun, 26 May 2019 23:28:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y8EX+aBGSrqtOZLN7eyxUmkcUk0A/Ju5L1c1bYnhiNI=;
+        b=qLTQLOErkYiZCZWLZsydpUkomQMNXVQBdtMc9rB1CB8V7whpCNIF9Bj/qjVm2K8sDP
+         IkV9WUPa2vqEjNmemFw6A2MvtmhpRw/ohkvJQYh2T7l8WOQ8gou//bX60cBaoUF3jdZ8
+         r7xmMFLdHeKNFd/Hit+LDbnP+9RU965MtzyTUL3Rk1BJXAuMZqb/7+zBQrYDPzY3+SWJ
+         FjyuqEd94Db0nPijGELCONP04w568JS1aOWgDBCwI3CwOkab0OCBbNVojUTwWIbb3x4x
+         l/PX8cNg8zaU2FYiZfUfYgBG96wwd85DMAi04zfmNvVSp8wrU5j3p+x+eOeLzisCZAEG
+         NNUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y8EX+aBGSrqtOZLN7eyxUmkcUk0A/Ju5L1c1bYnhiNI=;
+        b=Vk1rQEWO60dLBCD3yzLOUJkhaAqAtzGIi62RnBXW6RU5sWcWDroIKqsFJzFS6CEXMN
+         Q6+5AfMPTSU0JPyJ0i8VBRg9jqcKg7dNeL+h3sB/POfdysCttBX8CMw9T3dEih5FB0gl
+         wglxCNZsX7/ouan2Fn0eQll5J6e9eycO3fJpc4UZ/OvYK+IooPLCKYmZLhZmS7g6kDe+
+         7WFMCYRtXUAWgXjIm15QMAN9XY44wc/xpaZyKi3MqroHKmW/K00Wuivamg5IZAyck0Ah
+         i5soXJCt1uUlaeiM2S+K9jkS3t/On4LS0erR2RxkufXI9oQdDbQOVFyqWjFHpLWv7Ta0
+         HIcQ==
+X-Gm-Message-State: APjAAAWL4IOoWgSlpWIdyRdLzyIt5jy8SSpJm2ja7NdlWjBGTyeFtOZk
+        n7QZR4EUGp8uMZ3d7M6yZ0YubVaF/WX1T/monXQAxSZiePU=
+X-Google-Smtp-Source: APXvYqxxUNY7KqIqSuNLvKP6LV6FwCHpAkbJoNgL93BLRqsLwPm99e8TItETb5FEBqsG1ivcn2EKLsn1genQRyxZU8o=
+X-Received: by 2002:a02:ce37:: with SMTP id v23mr5424290jar.2.1558938521247;
+ Sun, 26 May 2019 23:28:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1557310449-30450-1-git-send-email-sumit.garg@linaro.org> <CAFA6WYMPKxwxzbU=CFYLw83kpXP9LwMQ3-N-hp2NyExhs_HjSQ@mail.gmail.com>
+In-Reply-To: <CAFA6WYMPKxwxzbU=CFYLw83kpXP9LwMQ3-N-hp2NyExhs_HjSQ@mail.gmail.com>
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+Date:   Mon, 27 May 2019 08:28:30 +0200
+Message-ID: <CAHUa44FQKJDjSv+CirRVJBPEMMpZD4AtQSUZOb3P51wD9aq63g@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Add mailing list for the TEE subsystem
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The test_core will skip the
-test_cgcore_no_internal_process_constraint_on_threads test case if the
-'cpu' controller missing in root's subtree_control. In fact we need to
-set the 'cpu' in subtree_control, to make the testing meaningful.
+On Thu, May 9, 2019 at 11:33 AM Sumit Garg <sumit.garg@linaro.org> wrote:
+>
+> On Wed, 8 May 2019 at 15:44, Sumit Garg <sumit.garg@linaro.org> wrote:
+> >
+> > Add a mailing list for patch reviews and discussions related to TEE
+> > subsystem.
+> >
+> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+>
+> I forgot to include following tag as this change was suggested by Daniel. So:
+>
+> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
 
-./test_core
-...
-ok 4 # skip test_cgcore_no_internal_process_constraint_on_threads
-...
+Thanks, I'm picking this up.
 
-Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Claudio Zumbo <claudioz@fb.com>
-Cc: Claudio <claudiozumbo@gmail.com>
-Cc: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Roman Gushchin <guro@fb.com>
-Acked-by: Tejun Heo <tj@kernel.org>
----
- tools/testing/selftests/cgroup/test_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Cheers,
+Jens
 
-diff --git a/tools/testing/selftests/cgroup/test_core.c b/tools/testing/selftests/cgroup/test_core.c
-index d78f1c5366d3..79053a4f4783 100644
---- a/tools/testing/selftests/cgroup/test_core.c
-+++ b/tools/testing/selftests/cgroup/test_core.c
-@@ -198,7 +198,7 @@ static int test_cgcore_no_internal_process_constraint_on_threads(const char *roo
- 	char *parent = NULL, *child = NULL;
- 
- 	if (cg_read_strstr(root, "cgroup.controllers", "cpu") ||
--	    cg_read_strstr(root, "cgroup.subtree_control", "cpu")) {
-+	    cg_write(root, "cgroup.subtree_control", "+cpu")) {
- 		ret = KSFT_SKIP;
- 		goto cleanup;
- 	}
--- 
-2.19.1.856.g8858448bb
-
+>
+> -Sumit
+>
+> > ---
+> >  MAINTAINERS | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 920a0a1..c05dff7 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -11556,11 +11556,13 @@ F:    drivers/scsi/st.h
+> >
+> >  OP-TEE DRIVER
+> >  M:     Jens Wiklander <jens.wiklander@linaro.org>
+> > +L:     tee-dev@lists.linaro.org
+> >  S:     Maintained
+> >  F:     drivers/tee/optee/
+> >
+> >  OP-TEE RANDOM NUMBER GENERATOR (RNG) DRIVER
+> >  M:     Sumit Garg <sumit.garg@linaro.org>
+> > +L:     tee-dev@lists.linaro.org
+> >  S:     Maintained
+> >  F:     drivers/char/hw_random/optee-rng.c
+> >
+> > @@ -15312,6 +15314,7 @@ F:      include/media/i2c/tw9910.h
+> >
+> >  TEE SUBSYSTEM
+> >  M:     Jens Wiklander <jens.wiklander@linaro.org>
+> > +L:     tee-dev@lists.linaro.org
+> >  S:     Maintained
+> >  F:     include/linux/tee_drv.h
+> >  F:     include/uapi/linux/tee.h
+> > --
+> > 2.7.4
+> >
