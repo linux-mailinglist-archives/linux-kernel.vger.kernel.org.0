@@ -2,71 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2922A2B3BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95A622B3C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:58:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfE0L6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 07:58:31 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35146 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbfE0L6a (ORCPT
+        id S1727036AbfE0L6u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 07:58:50 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:23442 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726063AbfE0L6u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 07:58:30 -0400
-Received: by mail-lf1-f68.google.com with SMTP id a25so2006395lfg.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 04:58:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=/tNc7L9kwZgm4fEnPjkpjXG5yF0++wiZtEF9LhMhZHs=;
-        b=eJVoDcrF5DyyE/eLdO6/FBqkkQUoeN/LbjDhtTmVeunaJa67Mb6Io4I9ufKzczg3Gk
-         deBr1r8agl+w3BhOMMwCdqeLNdnMuevubL9I/PUpvH+5cmXPP5BOMXHXGv9YHEfb00b1
-         o7zeHLs4a6P5YWJh9VunM8H3rPWglmfvWe2pwkgzslrYwNZTDRZBQlmORHtMgbSbE6LA
-         gc1w4a9RCVPHD1BB7iCXTxKVQ+nuLcilbosmoe3zBllqK1YyVIURNxPU06SMkrFObbDV
-         WAV1VBn8Gfho33VD4x6kUAXyCUnJCY/uRdmefkoSphfwEAhMvEPdbWTuYAlHYIU2fBgB
-         8PCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=/tNc7L9kwZgm4fEnPjkpjXG5yF0++wiZtEF9LhMhZHs=;
-        b=GM0tfcMGPrqsWSPk0kBcF5gzc1pUT6kI1vAJmKMUeU/+qxRQQipisyoX4Kr577AXoe
-         w5HFJZZ0ECZKJECh8M6hCAa9OkU3WUboj/3c78Q5YRIKNAQa7yDHQ2xjJiDbx03Ul43w
-         valdCsh7X7qGez6k0WgjHzQo9WFjNZtdAMSk/TaZotJeXNWWxKhVzf+Zv5vH3TisUfmD
-         Kv5aaOS3ozMlyfxLK8rKEj9sKAVaRuIdL9ObPhkXK4YcMQpUFQgMtoKuxhO13/oAgOTG
-         MPRM+b/DjzUMSyhyJ07z2r48SLCJX3KW1/pDWNa6mO4vUE3ZQlXSJJ0EiJMvGPDrOLYS
-         uKbA==
-X-Gm-Message-State: APjAAAWVhXZawvnc0JZFvDyEi+XJm0kaQNF07h0pBusMV3wwMmzcCDHQ
-        SIT1vZp0u2K7zozRDZ4LNW38a0ESM1ioywf7tyw=
-X-Google-Smtp-Source: APXvYqwvPwMKryHSE1sGUHgT6zErIBHPIjlzJJsOnZ0IZX5tdDMakIbGoWQAXArmD8loX2xPTW41wO+qCvkNR+ABf38=
-X-Received: by 2002:ac2:51ab:: with SMTP id f11mr2371115lfk.55.1558958308969;
- Mon, 27 May 2019 04:58:28 -0700 (PDT)
+        Mon, 27 May 2019 07:58:50 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4RBqHta004118;
+        Mon, 27 May 2019 13:58:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=CHNiLECO7COJeJykJENYiJJ3vrh3cyTCAguGAsVnNK8=;
+ b=tg2zDJoONVSJEtDceghChtbL1O2vw81Tyd4NdODekOXiJzVpk2S/HtQ51BLR+lPFK8W8
+ 1yEOdH+MMu7kjaFpNVrBCOonUMEH6uS1ZeLgYr2keJZlGnKfR530U17kWDkTRAgkfw7t
+ i0YsN4zStVhAbPiDFefzLknaw3G1DbBwxiS/OetzihCaIraCIpmMwlvrZ07HkrdhKn/N
+ uU26gPuiccaXbcCRq/+xxq152uiZYl63BJtp7ShiUtErfPXC7SIQ2gtegYyxmUL4bg5R
+ HmYYjXp06iCTa5NzTp0+1bnjZ9aJWEJLgkf+PodDjij2fyY0S5NnhR9Y8CVLmbsFaN+j 6A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2sptu9k0sp-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 27 May 2019 13:58:37 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4E78138;
+        Mon, 27 May 2019 11:58:35 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2CF622A01;
+        Mon, 27 May 2019 11:58:35 +0000 (GMT)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.93) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 27 May
+ 2019 13:58:34 +0200
+Received: from localhost (10.201.20.122) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 27 May 2019 13:58:34
+ +0200
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <yannick.fertre@st.com>, <philippe.cornu@st.com>,
+        <airlied@linux.ie>, <daniel@ffwll.ch>, <alexandre.torgue@st.com>
+CC:     <dri-devel@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: [PATCH] drm/stm: ltdc: restore calls to clk_{enable/disable}
+Date:   Mon, 27 May 2019 13:58:30 +0200
+Message-ID: <20190527115830.15836-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Received: by 2002:a2e:b0d1:0:0:0:0:0 with HTTP; Mon, 27 May 2019 04:58:28
- -0700 (PDT)
-Reply-To: mrssonia001@gmail.com
-From:   HELP <tonywood.director111@gmail.com>
-Date:   Mon, 27 May 2019 04:58:28 -0700
-Message-ID: <CAEsP3Z7_wFhjaj_LRZWKHnUAC6jpbaC5V2os7+JuRg0cjZ6u6A@mail.gmail.com>
-Subject: HI
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.122]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-27_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My Dear, How are you today?  My name is  Mrs. Sonia Kennedy from U.K,
-I am 53 years old. I am suffering from Esophageal Liver Cancer for
-past 4 years now. Just yesterday my doctor privately told me that I
-might not survive this cancer illness in the next 2 weeks because of
-my present condition. My dear I am divinely touched in my heart to
-offer my inheritance fund to you the sum of (=E2=82=AC4,500,000.00 euro)  f=
-or
-Charity work to help the less privileges and orphans.  My dear please
-get back to me in my private email below so that I will give you all
-the information about this Fund. (mrssonia001@gmail.com).
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
 
-Regard
-Mr.Sonia Kennedy
+Restore calls to clk_{enable/disable} deleted after applying the wrong
+version of the patch
+
+Fixes: fd6905fca4f0 ("drm/stm: ltdc: remove clk_round_rate comment")
+
+Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+---
+ drivers/gpu/drm/stm/ltdc.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
+index ae2aaf2a62ee..ac29890edeb6 100644
+--- a/drivers/gpu/drm/stm/ltdc.c
++++ b/drivers/gpu/drm/stm/ltdc.c
+@@ -507,10 +507,12 @@ static bool ltdc_crtc_mode_fixup(struct drm_crtc *crtc,
+ 	struct ltdc_device *ldev = crtc_to_ltdc(crtc);
+ 	int rate = mode->clock * 1000;
+ 
++	clk_disable(ldev->pixel_clk);
+ 	if (clk_set_rate(ldev->pixel_clk, rate) < 0) {
+ 		DRM_ERROR("Cannot set rate (%dHz) for pixel clk\n", rate);
+ 		return false;
+ 	}
++	clk_enable(ldev->pixel_clk);
+ 
+ 	adjusted_mode->clock = clk_get_rate(ldev->pixel_clk) / 1000;
+ 
+-- 
+2.15.0
+
