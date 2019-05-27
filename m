@@ -2,94 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8310E2B69D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:39:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21AD72B71B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:59:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbfE0Nj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:39:27 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35806 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726871AbfE0NjM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:39:12 -0400
-Received: by mail-wm1-f68.google.com with SMTP id w9so9778854wmi.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 06:39:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dvB2+EbZJAEiPxI5LMXTznof0qGaQVfAy18zyWtxPt0=;
-        b=WtFYkrtFYIRoQD5BySh2Q4euh/1w/73nMtXzlp6fOr4QdtCp67NecdupuFYep2yx+o
-         bXdszZLxCNU0cXnVp5weVpCI+5Webe1BRaI8zeO2VS5lFgBDHc5HugKN/h5oa/+rr13j
-         l0p5hkbf7W02oisR6u47h+JmtThsqB2DcRyw5fePoD+/UK0sP5PzTpT7DP+TzwhF7Hzr
-         fLlphusxj+e4iY5eMC82Iab9unBz3wTBbrYvHB8cRilF0YwYYBxGdZK9TkP+EmtG4obw
-         A0oakQ1AsejJ5bZlLAXZ/Sxhc5qsO3A15kFhtQH1KUxLTIFxGjnnq6xN/Bzr8o3/n4Q7
-         i+kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dvB2+EbZJAEiPxI5LMXTznof0qGaQVfAy18zyWtxPt0=;
-        b=hH34hTwTyS+qysHI5SP8owlNUqFW0voQDT8fmPJZmtNWbtDDaJsOI9TN6E1xW4nubN
-         uuk5BGbJBtfNGhfnXb8J4wxNkm+AgXDQXrysyPfXGL3UFpdWnINDVSoviBp5efbfRPtz
-         2jeuWAIOKir9ifIuhY51F3ZQ1cV+MjBx+oViSb4WeCgf3h3+wVZH6MF/fpavz3yrfpZ2
-         NjcH3F0vIigHiDZDt3m8PBZJdT85A4dJCGCUUwwHtGxnpfTmesgpJcy+8TBPomO+KK0p
-         qNln6455mRrPP0a9P5ps1AjTMCgjAsjRor/NFnSr7bFNka3Pn9IzM7wKCHSrcGTs6wBx
-         DwdQ==
-X-Gm-Message-State: APjAAAW9wLwqsgJ5AahnvBPkWk4NW04K8pU0y2sHflXeue0wqUyNuq4D
-        O+7+LeAYnmqQSuv1L0M4BtVnVTnLUZkk0g==
-X-Google-Smtp-Source: APXvYqzKBKq2uRyEn9/t3GONp1WVHuQyd/kWy1EzaqK5fAviCM453t6ahqnjUeVYqdyG5IZiryic+w==
-X-Received: by 2002:a7b:c8c1:: with SMTP id f1mr6568223wml.164.1558964351405;
-        Mon, 27 May 2019 06:39:11 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id a124sm7838335wmh.3.2019.05.27.06.39.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 27 May 2019 06:39:10 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH v2 10/10] ARM: mach-meson: update with SPDX Licence identifier
-Date:   Mon, 27 May 2019 15:38:57 +0200
-Message-Id: <20190527133857.30108-11-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190527133857.30108-1-narmstrong@baylibre.com>
-References: <20190527133857.30108-1-narmstrong@baylibre.com>
+        id S1726490AbfE0N75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:59:57 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50108 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726185AbfE0N75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 09:59:57 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id BCDD59305DE19F6E293A;
+        Mon, 27 May 2019 21:44:03 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Mon, 27 May 2019
+ 21:43:55 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <amit.kucheria@linaro.org>, <agross@kernel.org>,
+        <david.brown@linaro.org>, <rui.zhang@intel.com>,
+        <edubezval@gmail.com>, <daniel.lezcano@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] drivers: thermal: tsens: Change hw_id type to int in is_sensor_enabled
+Date:   Mon, 27 May 2019 21:41:24 +0800
+Message-ID: <20190527134124.14784-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm/mach-meson/meson.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+Sensor hw_id is int type other u32, is_sensor_enabled
+should use int to compare, this fix smatch warning:
 
-diff --git a/arch/arm/mach-meson/meson.c b/arch/arm/mach-meson/meson.c
-index c8d99df32f9b..04ae414d88c9 100644
---- a/arch/arm/mach-meson/meson.c
-+++ b/arch/arm/mach-meson/meson.c
-@@ -1,16 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Copyright (C) 2014 Carlo Caione <carlo@caione.org>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-  */
+drivers/thermal/qcom/tsens-common.c:72
+ is_sensor_enabled() warn: unsigned 'hw_id' is never less than zero.
+
+Fixes: 3e6a8fb33084 ("drivers: thermal: tsens: Add new operation to check if a sensor is enabled")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/thermal/qcom/tsens-common.c | 2 +-
+ drivers/thermal/qcom/tsens.h        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+index 928e8e81ba69..5df4eed84535 100644
+--- a/drivers/thermal/qcom/tsens-common.c
++++ b/drivers/thermal/qcom/tsens-common.c
+@@ -64,7 +64,7 @@ void compute_intercept_slope(struct tsens_priv *priv, u32 *p1,
+ 	}
+ }
  
- #include <linux/of_platform.h>
+-bool is_sensor_enabled(struct tsens_priv *priv, u32 hw_id)
++bool is_sensor_enabled(struct tsens_priv *priv, int hw_id)
+ {
+ 	u32 val;
+ 	int ret;
+diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
+index eefe3844fb4e..15264806f6a8 100644
+--- a/drivers/thermal/qcom/tsens.h
++++ b/drivers/thermal/qcom/tsens.h
+@@ -315,7 +315,7 @@ void compute_intercept_slope(struct tsens_priv *priv, u32 *pt1, u32 *pt2, u32 mo
+ int init_common(struct tsens_priv *priv);
+ int get_temp_tsens_valid(struct tsens_priv *priv, int i, int *temp);
+ int get_temp_common(struct tsens_priv *priv, int i, int *temp);
+-bool is_sensor_enabled(struct tsens_priv *priv, u32 hw_id);
++bool is_sensor_enabled(struct tsens_priv *priv, int hw_id);
+ 
+ /* TSENS target */
+ extern const struct tsens_plat_data data_8960;
 -- 
-2.21.0
+2.17.1
+
 
