@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50CA22B83E
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:19:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FCEF2B840
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:19:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726748AbfE0PTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 11:19:04 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36607 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbfE0PTB (ORCPT
+        id S1726867AbfE0PTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 11:19:06 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44197 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfE0PTC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 11:19:01 -0400
-Received: by mail-lf1-f65.google.com with SMTP id y10so12355799lfl.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 08:18:59 -0700 (PDT)
+        Mon, 27 May 2019 11:19:02 -0400
+Received: by mail-lj1-f196.google.com with SMTP id e13so14961640ljl.11
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 08:19:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YcUVHwpttwwhej4P2HLvEtL1IO2oJH9O8jVbXiQY6lI=;
-        b=GRPf3w6HyTwo7+Fo2X1EhAbWqLgX0C2WyNlMmi8HLlVHeG7Fooq65mhrW1jxaJZ4lo
-         CBdc3l60xiGFTsJ6izeZPNITwmPXQEqzxNSIzebbpG8ln0HjSNuY0jWlTRsXtmWtQBL2
-         9BoVM3lqnBtKv16LUVur1SdybeygmhtIdrfiVnvRJglXJy/1E+RazNMieDjGfr8fdInY
-         556Xiy5gV+1Bf8g8nH5tBMAoBnPTpX+i9N6DTKJ+GK21dvPc/iS7Xc7hmdx9s2SEGc5f
-         THY6CE1zNStf/A590wMKqWW+A5CU0nS2u/xxzlJQXvnO2JNqnBoBCpgyiel/OiN8eZnt
-         V1Vw==
+        bh=v/69OPvwjOinzl+9ALg7GpdBlRB0Izx4CLNV/SO6CVY=;
+        b=sp5TtVt0QWossyePsI0pwfUwbXk0kwuyZ3Q6WK9mDv5RwWtoQH2e93S6VPSdJf2Pd7
+         ueQNA2nVax3EAVEuU8+zB9l+e6ZKexa0Sala5JZsZhaJkmkJcpYsiX2BtKsY6VLpRuaT
+         vz5fnHdqqbVuD1f6oHE4OTdmhb8AF9lGaT6wYx1HAS2P8EG6G7W2XULg76DyX3veqI56
+         aND2VwK69f/iqhtVR9U2YgL0Oui6eD75hK3Ld9JxCrOVIw5jKVlZDCRI5hdghprkXpe/
+         QazwvMFfeiMeEiR6SiWw/C3Rz70yvm0JA1FsRynowlMMKSyJTiry5opRgWMYWqNAP/H6
+         LYQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=YcUVHwpttwwhej4P2HLvEtL1IO2oJH9O8jVbXiQY6lI=;
-        b=ryWswgod9tZig7JJdSaB+8NH1289TfKZZyYOPEB1C6XtzN6mQM+YX6wZOA8o9dLY/p
-         HDuNw7llHjefeoPj3ftkIkMYvd9ct20YwSEHMXZaOewo/2IrRiRy4TOhbXnumt4Dr7Nv
-         v4yu5Y8atWnJkqwSPPKNWQaGFT8hobSGlI+QdWr6Q6r41UdXkimMR6DwdD2eyNkSUbUM
-         rkE71RrDn1OaoDMj/kQtF1ybwoWxaA4LcAYsw1DtsmUAZPD4QJKhem1YWjNr8x0r8DVD
-         SjY8DkZPeqA5E+nbk8VFDej1jLplc9v8k0M49ESTU380Zg33FteHjv2gLyxCtpwbN+V2
-         fs0w==
-X-Gm-Message-State: APjAAAUi0JGP5BTZ8ToAPRZcoN4GUAIT/NNM5nPPqM/IXUUvWRyz+GNp
-        nWwLbOCtwTzre3NQc3kmtkpkxGm7D/E=
-X-Google-Smtp-Source: APXvYqzQo8vRKuuRDWFg8/CKJYMSI+xoWSWF8WBR+DKBb8PShgEzqVzskrYUj2vWJf/7tX0bxA+aJg==
-X-Received: by 2002:ac2:5449:: with SMTP id d9mr17568669lfn.126.1558970339188;
-        Mon, 27 May 2019 08:18:59 -0700 (PDT)
+        bh=v/69OPvwjOinzl+9ALg7GpdBlRB0Izx4CLNV/SO6CVY=;
+        b=savOqdfgc2K9zNyAHWxKmNxslHyYhI1xZUAlD1nQeL98Lql+Lk06SxZ21beB3pOUvT
+         2fgSe8Pl87BQ8TKyKGcc9XHdCappq5NCfGR1+So6HcbEdxGwhxqaG6ko74yO/eHYDgBi
+         jAXgma+mxIbv40GvPxAktEgstQLUBaudJPbMe2/ZeP8YH6CfYY5TYV8nWzvF5xW1A1Uj
+         sRPeHEl2Mufo/bX0Dm5Ym/n1fn/+66IAPzDYaMj3g5MqdpWscObpdB22kT0Yo6IOFaQL
+         a++nucrZ3H2QXPVF/eeyjgK/AerCRVjAC1rLpg7UOPHfe1K3qH/gSYZ6xuIth2W68Bv2
+         AhbA==
+X-Gm-Message-State: APjAAAWAqejK5avoGMFtCDcorAGxZ1Apj9BUCB6uI6/1TtvT/MnzxET5
+        ryy0kgpR44T78qOrYE6dWCc=
+X-Google-Smtp-Source: APXvYqwCoutspyS+zZrN5ZysSrHKllwv2mgh3TpyyOJ5FW6lX7OaWsa0f9YLi2ui4UlgnpRQBjECXg==
+X-Received: by 2002:a2e:8796:: with SMTP id n22mr3489968lji.75.1558970340582;
+        Mon, 27 May 2019 08:19:00 -0700 (PDT)
 Received: from pc636.semobile.internal ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id h25sm2308701ljb.80.2019.05.27.08.18.57
+        by smtp.gmail.com with ESMTPSA id h25sm2308701ljb.80.2019.05.27.08.18.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 08:18:58 -0700 (PDT)
+        Mon, 27 May 2019 08:18:59 -0700 (PDT)
 From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
 To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
 Cc:     Roman Gushchin <guro@fb.com>, Uladzislau Rezki <urezki@gmail.com>,
@@ -57,9 +57,9 @@ Cc:     Roman Gushchin <guro@fb.com>, Uladzislau Rezki <urezki@gmail.com>,
         Joel Fernandes <joelaf@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
-Subject: [PATCH v4 3/4] mm/vmap: get rid of one single unlink_va() when merge
-Date:   Mon, 27 May 2019 17:18:42 +0200
-Message-Id: <20190527151843.27416-4-urezki@gmail.com>
+Subject: [PATCH v4 4/4] mm/vmap: switch to WARN_ON() and move it under unlink_va()
+Date:   Mon, 27 May 2019 17:18:43 +0200
+Message-Id: <20190527151843.27416-5-urezki@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190527151843.27416-1-urezki@gmail.com>
 References: <20190527151843.27416-1-urezki@gmail.com>
@@ -68,50 +68,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It does not make sense to try to "unlink" the node that is
-definitely not linked with a list nor tree. On the first
-merge step VA just points to the previously disconnected
-busy area.
-
-On the second step, check if the node has been merged and do
-"unlink" if so, because now it points to an object that must
-be linked.
+Trigger a warning if an object that is about to be freed is
+detached. We used to have a BUG_ON(), but even though it is
+considered as faulty behaviour that is not a good reason to
+break a system.
 
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-Acked-by: Hillf Danton <hdanton@sina.com>
 ---
- mm/vmalloc.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ mm/vmalloc.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index b553047aa05b..371aba9a4bf1 100644
+index 371aba9a4bf1..1dd459d0220a 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -718,9 +718,6 @@ merge_or_add_vmap_area(struct vmap_area *va,
- 			/* Check and update the tree if needed. */
- 			augment_tree_propagate_from(sibling);
+@@ -533,11 +533,7 @@ link_va(struct vmap_area *va, struct rb_root *root,
+ static __always_inline void
+ unlink_va(struct vmap_area *va, struct rb_root *root)
+ {
+-	/*
+-	 * During merging a VA node can be empty, therefore
+-	 * not linked with the tree nor list. Just check it.
+-	 */
+-	if (!RB_EMPTY_NODE(&va->rb_node)) {
++	if (!WARN_ON(RB_EMPTY_NODE(&va->rb_node))) {
+ 		if (root == &free_vmap_area_root)
+ 			rb_erase_augmented(&va->rb_node,
+ 				root, &free_vmap_area_rb_augment_cb);
+@@ -1187,8 +1183,6 @@ EXPORT_SYMBOL_GPL(unregister_vmap_purge_notifier);
  
--			/* Remove this VA, it has been merged. */
--			unlink_va(va, root);
+ static void __free_vmap_area(struct vmap_area *va)
+ {
+-	BUG_ON(RB_EMPTY_NODE(&va->rb_node));
 -
- 			/* Free vmap_area object. */
- 			kmem_cache_free(vmap_area_cachep, va);
- 
-@@ -745,12 +742,11 @@ merge_or_add_vmap_area(struct vmap_area *va,
- 			/* Check and update the tree if needed. */
- 			augment_tree_propagate_from(sibling);
- 
--			/* Remove this VA, it has been merged. */
--			unlink_va(va, root);
-+			if (merged)
-+				unlink_va(va, root);
- 
- 			/* Free vmap_area object. */
- 			kmem_cache_free(vmap_area_cachep, va);
--
- 			return;
- 		}
- 	}
+ 	/*
+ 	 * Remove from the busy tree/list.
+ 	 */
 -- 
 2.11.0
 
