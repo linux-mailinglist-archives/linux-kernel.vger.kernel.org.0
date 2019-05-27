@@ -2,78 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 246BF2B88B
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A3AE2B890
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:45:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbfE0PoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 11:44:10 -0400
-Received: from mail-wr1-f50.google.com ([209.85.221.50]:45511 "EHLO
-        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbfE0PoK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 11:44:10 -0400
-Received: by mail-wr1-f50.google.com with SMTP id b18so17259482wrq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 08:44:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2A4/Dy7CeUNWJQHbbLk0HO1r8qYMXPrMtWyOg+ikpyk=;
-        b=rn87ZKkRswkp6xaHFggHfpbYjtNTCW9E1rPbKwuFO3LdDBvYSK86wbp3vGylYb5D7G
-         9cD7N7I5dOQQaB2xxJDVmKbTtmtFAqBcqUp2IXltoElxv0xxYuL/LK/hdJH0gpKJsEcB
-         O6AYJQRm0y30oezGVlaf82HFvNx+9/UB29KLeKghWUatN94bZe07VMTYHZPyWknGhBkR
-         ei/BfVUf4Y6dtxQf6ZbxT1IUTwe0ibKOAOCzd/BJHYSBUBCzZ+DSqp7X76cx633wqCyw
-         ek/M0uCjtRXDiITHOMKUyb7gET6/+C8W10g8Lh/Bf2O2PL+WlYRsZE0rqHuLfFL5IeD2
-         djFg==
-X-Gm-Message-State: APjAAAXSA2EezQ8KUxDAW3PwOe+QUDRTI6m50qWlMgcHCgL+oG423hc0
-        lajrB6CPexa5RgglMqxAjuyE5A==
-X-Google-Smtp-Source: APXvYqxek10K/dO9NSTEttg+mnORuKnxwc7jyGofKaHXmyE/ma/6TRaCxUAv7G+DGuJ8bDopIl1MFQ==
-X-Received: by 2002:adf:ef8d:: with SMTP id d13mr6429556wro.60.1558971848967;
-        Mon, 27 May 2019 08:44:08 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:c92d:f9e8:f150:3553? ([2001:b07:6468:f312:c92d:f9e8:f150:3553])
-        by smtp.gmail.com with ESMTPSA id s62sm22814951wmf.24.2019.05.27.08.44.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 08:44:08 -0700 (PDT)
-Subject: Re: [RFC/PATCH] refs: tone down the dwimmery in refname_match() for
- {heads,tags,remotes}/*
-To:     Junio C Hamano <gitster@pobox.com>,
-        =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>
-Cc:     git@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM list <kvm@vger.kernel.org>,
-        Michael Haggerty <mhagger@alum.mit.edu>
-References: <CAHk-=wgzKzAwS=_ySikL1f=Gr62YXL_WXGh82wZKMOvzJ9+2VA@mail.gmail.com>
- <20190526225445.21618-1-avarab@gmail.com>
- <5c9ce55c-2c3a-fce0-d6e3-dfe5f8fc9b01@redhat.com>
- <874l5gezsn.fsf@evledraar.gmail.com>
- <xmqqef4jewj6.fsf@gitster-ct.c.googlers.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <a40c5388-4274-6bfa-4213-6013601c8fae@redhat.com>
-Date:   Mon, 27 May 2019 17:44:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726820AbfE0PpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 11:45:10 -0400
+Received: from mga07.intel.com ([134.134.136.100]:33673 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726322AbfE0PpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 11:45:08 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 May 2019 08:45:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,519,1549958400"; 
+   d="scan'208";a="178926384"
+Received: from ideak-desk.fi.intel.com ([10.237.72.204])
+  by fmsmga002.fm.intel.com with ESMTP; 27 May 2019 08:45:05 -0700
+Date:   Mon, 27 May 2019 18:44:29 +0300
+From:   Imre Deak <imre.deak@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2 2/2] lockdep: Fix merging of hlocks with non-zero
+ references
+Message-ID: <20190527154429.GC24536@ideak-desk.fi.intel.com>
+Reply-To: imre.deak@intel.com
+References: <20190524201509.9199-1-imre.deak@intel.com>
+ <20190524201509.9199-2-imre.deak@intel.com>
+ <20190527151438.GF2623@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <xmqqef4jewj6.fsf@gitster-ct.c.googlers.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190527151438.GF2623@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/05/19 17:39, Junio C Hamano wrote:
-> I do not think lightweight vs annotated should be the issue.  The
-> tag that the requestor asks to be pulled (from repository ../b)
-> should be what the requestor has locally when writing the request
-> (in repository .).  Even if both tags at remote and local are
-> annotated, we should still warn if they are different objects, no?
+On Mon, May 27, 2019 at 05:14:38PM +0200, Peter Zijlstra wrote:
+> On Fri, May 24, 2019 at 11:15:09PM +0300, Imre Deak wrote:
+> > diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> > index 967352d32af1..9e2a4ab6c731 100644
+> > --- a/kernel/locking/lockdep.c
+> > +++ b/kernel/locking/lockdep.c
+> > @@ -3637,6 +3637,11 @@ print_lock_nested_lock_not_held(struct task_struct *curr,
+> >  
+> >  static int __lock_is_held(const struct lockdep_map *lock, int read);
+> >  
+> > +static int hlock_reference(int reference)
+> > +{
+> > +	return reference ? : 1;
+> > +}
+> > +
+> >  /*
+> >   * This gets called for every mutex_lock*()/spin_lock*() operation.
+> >   * We maintain the dependency maps and validate the locking attempt:
+> > @@ -3702,17 +3707,15 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+> >  	if (depth) {
+> >  		hlock = curr->held_locks + depth - 1;
+> >  		if (hlock->class_idx == class_idx && nest_lock) {
+> > -			if (hlock->references) {
+> > -				/*
+> > -				 * Check: unsigned int references overflow.
+> > -				 */
+> > -				if (DEBUG_LOCKS_WARN_ON(hlock->references == UINT_MAX))
+> 
+> What tree is this against?
 
-Right, lightweight vs annotated then is the obvious special case where
-one of the two is a commit and the other is a tag, hence they ought not
-to have the same SHA1.  I'll take a look.
+I just used our
+	git://anongit.freedesktop.org/drm-tip
+and the most recent upstream commit in that is:
 
-Paolo
+$ git merge-base drm-tip origin/master
+6b0538da5a6ca2129b93cea5afc997226875c402
+
+which has the commit
+commit a188339ca5a396acc588e5851ed7e19f66b0ebd9
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun May 19 15:47:09 2019 -0700
+
+    Linux 5.2-rc1
+
+
+> Afaict this is still 12 bits ?!
+
+In the above tree I see
+	unsigned int references;
+in held_lock which is 32 bits.
+
+> 
+> > -					return 0;
+> > +			/*
+> > +			 * Check: unsigned int references overflow.
+> > +			 */
+> > +			if (DEBUG_LOCKS_WARN_ON(hlock_reference(hlock->references) >
+> > +						UINT_MAX - hlock_reference(references)))
+> 
+> Idem. Also very weird overflow check..
+
+We could have instead (replacing the addition itself too below):
+
+	if (DEBUG_LOCKS_WARN_ON(
+		check_add_overflow(hlock_reference(hlock->references),
+				   hlock_reference(references),
+				   &hlock_references)))
+		return 0;
+
+by having hlock_reference() take and return unsigned int too.
+
+> 
+> > +				return 0;
+> >  
+> > -				hlock->references++;
+> > -			} else {
+> > -				hlock->references = 2;
+> > -			}
+> > +			hlock->references = hlock_reference(hlock->references) +
+> > +					    hlock_reference(references);
+> >  
+> >  			return 2;
+> >  		}
+> > -- 
+> > 2.17.1
+> > 
