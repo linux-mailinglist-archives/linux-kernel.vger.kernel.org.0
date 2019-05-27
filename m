@@ -2,109 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCE52B555
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 14:32:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F289D2B55E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 14:33:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbfE0McU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 08:32:20 -0400
-Received: from mail-eopbgr80079.outbound.protection.outlook.com ([40.107.8.79]:31973
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726338AbfE0McS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 08:32:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z1tNCt1Zo2Elml1aZsL4ncYgBz1AR7VKcCef9PzKego=;
- b=dNrHQxEMEgU782kgomGo/Vpdjo+SDLbXhvq9ddT3MZoingEBuNRXQr6WgOeg8xWBz5mbAmx6I3r/Y8PLznZdGiWMTv88FcNNakXSRwHOUXr5AT9BxkOb82uAxokcqzaXzUyz4QQ6JTJeSfXRcBsVJYiwlWZCBJUhOFaChb0w5to=
-Received: from AM6PR04MB5032.eurprd04.prod.outlook.com (20.177.34.92) by
- AM6PR04MB5094.eurprd04.prod.outlook.com (20.177.34.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.20; Mon, 27 May 2019 12:32:15 +0000
-Received: from AM6PR04MB5032.eurprd04.prod.outlook.com
- ([fe80::55a3:c244:9ba:6d21]) by AM6PR04MB5032.eurprd04.prod.outlook.com
- ([fe80::55a3:c244:9ba:6d21%4]) with mapi id 15.20.1922.021; Mon, 27 May 2019
- 12:32:15 +0000
-From:   Pramod Kumar <pramod.kumar_1@nxp.com>
-To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "Michal.Vokac@ysoft.com" <Michal.Vokac@ysoft.com>,
-        Leo Li <leoyang.li@nxp.com>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Ashish Kumar <ashish.kumar@nxp.com>
-Subject: [PATCH v3 3/3] arm64: dts: frwy-ls1046a: add support for micron nor
- flash
-Thread-Topic: [PATCH v3 3/3] arm64: dts: frwy-ls1046a: add support for micron
- nor flash
-Thread-Index: AQHVFIg34aXFnhi0tE2hBO7a9Re2Cw==
-Date:   Mon, 27 May 2019 12:32:15 +0000
-Message-ID: <20190527123404.30858-4-pramod.kumar_1@nxp.com>
-References: <20190527123404.30858-1-pramod.kumar_1@nxp.com>
-In-Reply-To: <20190527123404.30858-1-pramod.kumar_1@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.17.1
-x-clientproxiedby: PN1PR0101CA0055.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c00:d::17) To AM6PR04MB5032.eurprd04.prod.outlook.com
- (2603:10a6:20b:9::28)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pramod.kumar_1@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [92.120.1.70]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b33d148b-bfc3-42d6-e72b-08d6e29f5982
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR04MB5094;
-x-ms-traffictypediagnostic: AM6PR04MB5094:
-x-microsoft-antispam-prvs: <AM6PR04MB509450DA952BCDD85AC8F43AF61D0@AM6PR04MB5094.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1079;
-x-forefront-prvs: 0050CEFE70
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(346002)(136003)(376002)(39860400002)(199004)(189003)(68736007)(476003)(2616005)(4326008)(2906002)(86362001)(2201001)(486006)(6512007)(102836004)(6506007)(386003)(76176011)(186003)(52116002)(110136005)(54906003)(26005)(11346002)(446003)(66446008)(53936002)(66946007)(73956011)(64756008)(66556008)(316002)(6486002)(7736002)(6116002)(36756003)(256004)(99286004)(14444005)(25786009)(478600001)(1076003)(4744005)(14454004)(6636002)(8936002)(8676002)(66066001)(5660300002)(50226002)(6436002)(81166006)(81156014)(71200400001)(71190400001)(3846002)(66476007)(305945005)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5094;H:AM6PR04MB5032.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: l1yjUCJyoMLeXgkuqJXEUxGfkxnwoYGAP6cjtmddZmW3e+/ahh2wpX/aJbLXCNCZK1Chbr/GzNI/YZXJAQQFGXCmGlf4B75gcYapE8Riq02vGvnRwBQBKJrYylN827kAw1DwBpZC8DevTI2NDwzu7ATWn5/KFd95+MYaTdaDNRvYTTmD3tDvmBBpPH68UII/OPCG6LeBVHQ/LlxRpp5eBQR3B5peiI/BPAuDcb0Y/ZfFshCXaTMr6/O3In8k1wX9daPodJhh0dBtr7xzQXyvBrSBAUGvuOezfDL29B/leQ0DuClwWHjTuqeCRdiA98azj9wDKfyWsRTJHqSAnFLk3CUkdXCU7GOMgm19iZJOzUUB4ZNyHRerHYkBf2kl9cHBzMh9D7bWk3Jew3nzQax5kNjvYBAYAiMLqaDqeETI0ic=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727338AbfE0MdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 08:33:13 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50214 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbfE0MdN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 08:33:13 -0400
+Received: by mail-wm1-f68.google.com with SMTP id f204so16010540wme.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 05:33:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2A04f9HaZNMB40s7FDmagBXi4VteUjR4wwzslZJ6poM=;
+        b=plj2/MgAHNOHfEqtwd1G8V8T41tSS4MgCL9I3weHiyG7maRBKmZDNVNo9MNGdgNwdU
+         6r98zgU7BrmMJ0R0O2W8Hb3hlB2UcKKtF379eVoqELxaqpSmXiFE+HBnHRu2Ni3cbmoK
+         0ZQIyxtIitBKyfYgNXBNIpjERhHiyLQZoWsmlq03W6+aVFtx3IgxJfGjw6c6H5x8xXd3
+         WXPfQsx52duVlUVEEIBtOtedkG0GrAgV/Zx9Poi7+i3cyYqWeogCXzqAtT9NgYS2QI6L
+         n7laAe/dOY1yM1XCs/M1gdDGGXDR1iz6w+aZ1tgYs2B6AWuSvqKiZGY0bFML68yNCtZ6
+         q3Vw==
+X-Gm-Message-State: APjAAAWMPgczEROnu+03GNyASrY1a2gwbUq9lulu/nN0QU+I8sTlCQLz
+        grPzjFvGsKgTB3bwDADOuMqxrEX9hpQ=
+X-Google-Smtp-Source: APXvYqyfyZiyQXGV6PqCF7c2IO5JUIC3+A6dAwpVyQH6lHro05CRPOzIynwiJ5C8FTv8HcDWWnAu7A==
+X-Received: by 2002:a7b:c943:: with SMTP id i3mr9080617wml.128.1558960391360;
+        Mon, 27 May 2019 05:33:11 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:c92d:f9e8:f150:3553? ([2001:b07:6468:f312:c92d:f9e8:f150:3553])
+        by smtp.gmail.com with ESMTPSA id s13sm12469362wmh.31.2019.05.27.05.33.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 05:33:10 -0700 (PDT)
+Subject: Re: [RFC/PATCH] refs: tone down the dwimmery in refname_match() for
+ {heads,tags,remotes}/*
+To:     =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>,
+        git@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Junio C Hamano <gitster@pobox.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Michael Haggerty <mhagger@alum.mit.edu>
+References: <CAHk-=wgzKzAwS=_ySikL1f=Gr62YXL_WXGh82wZKMOvzJ9+2VA@mail.gmail.com>
+ <20190526225445.21618-1-avarab@gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <5c9ce55c-2c3a-fce0-d6e3-dfe5f8fc9b01@redhat.com>
+Date:   Mon, 27 May 2019 14:33:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b33d148b-bfc3-42d6-e72b-08d6e29f5982
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2019 12:32:15.3229
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pramod.kumar_1@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5094
+In-Reply-To: <20190526225445.21618-1-avarab@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-YWRkIG1pY3JvbiBub3IgZmxhc2ggc3VwcG9ydCBmb3IgbHMxMDQ2YSBmcnd5IGJvYXJkLg0KDQpT
-aWduZWQtb2ZmLWJ5OiBBc2hpc2ggS3VtYXIgPGFzaGlzaC5rdW1hckBueHAuY29tPg0KU2lnbmVk
-LW9mZi1ieTogUHJhbW9kIEt1bWFyIDxwcmFtb2Qua3VtYXJfMUBueHAuY29tPg0KLS0tDQogLi4u
-L2Jvb3QvZHRzL2ZyZWVzY2FsZS9mc2wtbHMxMDQ2YS1mcnd5LmR0cyAgICB8IDE4ICsrKysrKysr
-KysrKysrKysrLQ0KIDEgZmlsZSBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9u
-KC0pDQoNCmRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9mc2wtbHMx
-MDQ2YS1mcnd5LmR0cyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2ZzbC1sczEwNDZh
-LWZyd3kuZHRzDQppbmRleCBjZGE0OTk4OGQ4YjguLjBmNjI2Yzk4NmE5YSAxMDA2NDQNCi0tLSBh
-L2FyY2gvYXJtNjQvYm9vdC9kdHMvZnJlZXNjYWxlL2ZzbC1sczEwNDZhLWZyd3kuZHRzDQorKysg
-Yi9hcmNoL2FybTY0L2Jvb3QvZHRzL2ZyZWVzY2FsZS9mc2wtbHMxMDQ2YS1mcnd5LmR0cw0KQEAg
-LTIsNyArMiw3IEBADQogLyoNCiAgKiBEZXZpY2UgVHJlZSBJbmNsdWRlIGZpbGUgZm9yIEZyZWVz
-Y2FsZSBMYXllcnNjYXBlLTEwNDZBIGZhbWlseSBTb0MuDQogICoNCi0gKiBDb3B5cmlnaHQgMjAx
-OSBOWFAuDQorICogQ29weXJpZ2h0IDIwMTkgTlhQDQogICoNCiAgKi8NCiANCkBAIC0xMTMsNiAr
-MTEzLDIyIEBADQogDQogfTsNCiANCismcXNwaSB7DQorCW51bS1jcyA9IDwxPjsNCisJYnVzLW51
-bSA9IDwwPjsNCisJc3RhdHVzID0gIm9rYXkiOw0KKw0KKwlxZmxhc2gwOiBmbGFzaEAwIHsNCisJ
-CWNvbXBhdGlibGUgPSAiamVkZWMsc3BpLW5vciI7DQorCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsN
-CisJCSNzaXplLWNlbGxzID0gPDE+Ow0KKwkJc3BpLW1heC1mcmVxdWVuY3kgPSA8NTAwMDAwMDA+
-Ow0KKwkJcmVnID0gPDA+Ow0KKwkJc3BpLXJ4LWJ1cy13aWR0aCA9IDw0PjsNCisJCXNwaS10eC1i
-dXMtd2lkdGggPSA8ND47DQorCX07DQorfTsNCisNCiAjaW5jbHVkZSAiZnNsLWxzMTA0Ni1wb3N0
-LmR0c2kiDQogDQogJmZtYW4wIHsNCi0tIA0KMi4xNy4xDQoNCg==
+On 27/05/19 00:54, Ævar Arnfjörð Bjarmason wrote:
+> This resulted in a case[1] where someone on LKML did:
+> 
+>     git push kvm +HEAD:tags/for-linus
+> 
+> Which would have created a new "tags/for-linus" branch in their "kvm"
+> repository, except because they happened to have an existing
+> "refs/tags/for-linus" reference we pushed there instead, and replaced
+> an annotated tag with a lightweight tag.
+
+Actually, I would not be surprised even if "git push foo
+someref:tags/foo" _always_ created a lightweight tag (i.e. push to
+refs/tags/foo).
+
+In my opinion, the bug is that "git request-pull" should warn if the tag
+is lightweight remotely but not locally, and possibly even vice versa.
+Here is a simple testcase:
+
+  # setup "local" repo
+  mkdir -p testdir/a
+  cd testdir/a
+  git init
+  echo a > test
+  git add test
+  git commit -minitial
+
+  # setup "remote" repo
+  git clone --bare . ../b
+
+  # setup "local" tag
+  echo b >> test
+  git commit -msecond test
+  git tag -mtag tag1
+
+  # create remote lightweight tag and prepare a pull request
+  git push ../b HEAD:refs/tags/tag1
+  git request-pull HEAD^ ../b tags/tag1
+
+Paolo
