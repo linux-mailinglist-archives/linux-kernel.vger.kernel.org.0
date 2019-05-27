@@ -2,93 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC1212C169
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CF262B9E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 20:08:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfE1Iea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 04:34:30 -0400
-Received: from m9784.mail.qiye.163.com ([220.181.97.84]:51996 "EHLO
-        m9784.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbfE1Iea (ORCPT
+        id S1727310AbfE0SIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 14:08:05 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42186 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbfE0SIE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 04:34:30 -0400
-Received: from localhost (unknown [120.132.1.243])
-        by m9784.mail.qiye.163.com (Hmail) with ESMTPA id A3EFD419FD;
-        Tue, 28 May 2019 16:34:22 +0800 (CST)
-Date:   Tue, 28 May 2019 02:07:43 +0800
-From:   Yao Liu <yotta.liu@ucloud.cn>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        nbd <nbd@other.debian.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Re: [PATCH 1/3] nbd: fix connection timed out error after
- reconnecting to server
-Message-ID: <20190527180743.GA20702@192-168-150-246.7~>
-References: <1558691036-16281-1-git-send-email-yotta.liu@ucloud.cn>
- <20190524130740.zfypc2j3q5e3gryr@MacBook-Pro-91.local.dhcp.thefacebook.com>
+        Mon, 27 May 2019 14:08:04 -0400
+Received: by mail-ot1-f66.google.com with SMTP id i2so15479214otr.9
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 11:08:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5Z8u+Mb6Dq9130guFLmfDlxiV/OSJhxaQytulTManxM=;
+        b=Md1/iNe3wpFg7pJRiiTPYACJft0AqPYLSVHS86cINONlNtBMoS6cwZSCdTtBdoIdm3
+         565psYs4LGlFtaqtO4X10qXVS+90VoiFiw49WiVbulPp1zyKccOaMC//TjCYszO7YshT
+         J8RmIhICklmIIASLuxIvS0m4qoT7WuLRhr7q0jKK/FIO3vRGmiMMNGz9iizEuPlmN7eg
+         LnJ7T3YvtS/R7phhUfIOWg1TgkLpecleLlJYMiPQYj63M/cdb1DX7ukZJG1PGDTaZe90
+         bXncpZ0Cq3feoQ6jOB7cghvn2/6dEhWqb8hCCMLRNm92CdyXdEew7H5rcIO9HxJBX9Vp
+         qyTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5Z8u+Mb6Dq9130guFLmfDlxiV/OSJhxaQytulTManxM=;
+        b=egkKacekDX8nmoibztilxwJRVM5qgZOdr+59sy2pQUqofz2wSM55bdUNg+PPkcPFaC
+         waxPwIVeBKW24tDZsoHSr1oh/TQ5n+VyrmQJyFJ+vJI043Xt8jYD+eeLJHmqwHW0i05y
+         WY4RPVQ7HZoJyMm2Y6syow7PH9mhjgefRonOwQEbsDxz8s59N49jawoS3x/Ejj41gQAx
+         8o7HcU4l+6p7YSsJAiYAAQqn8hVZW7MosnenRhlw6QHyeJDDHQMQ2Npt7hagdYCZUaBq
+         H4K2aN7EOVdtc9SMi4DR5DyEJuf2OU/sfVoOCHLAn8+vFgG2mvYjBU987xeL1KPLHcwV
+         L4ow==
+X-Gm-Message-State: APjAAAWR6A/Gy6JGiP9YX1snYluKTgat31/bEDU84xq0KyeUGLSXej3w
+        yy6UYf1grj1wilw67wQHq3gmKEnf0igcvizM7Gk=
+X-Google-Smtp-Source: APXvYqw1KCJR0ykK+JZRq5RQEXEcYYqCwA42UGA6D3HXVktBN7+YLknn2jRyumOKZM/ijc37rS9VkNSx4uS8BgfiZng=
+X-Received: by 2002:a9d:744d:: with SMTP id p13mr50955091otk.96.1558980483396;
+ Mon, 27 May 2019 11:08:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190524130740.zfypc2j3q5e3gryr@MacBook-Pro-91.local.dhcp.thefacebook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-HM-Spam-Status: e1kIGBQJHllBWUtVTkhJQkJCQ0pITk5NTUxKWVdZKFlBSUI3V1ktWUFJV1
-        kJDhceCFlBWTU0KTY6NyQpLjc#WQY+
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NjY6Kzo5DjgwNiNJIS4dCDoN
-        P01PCjpVSlVKTk5CS0hJT01JQ0JOVTMWGhIXVQIUDw8aVRcSDjsOGBcUDh9VGBVFWVdZEgtZQVlK
-        SUtVSkhJVUpVSU9IWVdZCAFZQU9KTk43Bg++
-X-HM-Tid: 0a6afd937d9b2086kuqya3efd419fd
+References: <20190527133857.30108-1-narmstrong@baylibre.com> <20190527133857.30108-11-narmstrong@baylibre.com>
+In-Reply-To: <20190527133857.30108-11-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 27 May 2019 20:07:52 +0200
+Message-ID: <CAFBinCD-rkB9_LDHAUL3oSD2iSmKHYctUY3_ZYdFNgfh3X4_NA@mail.gmail.com>
+Subject: Re: [PATCH v2 10/10] ARM: mach-meson: update with SPDX Licence identifier
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 09:07:42AM -0400, Josef Bacik wrote:
-> On Fri, May 24, 2019 at 05:43:54PM +0800, Yao Liu wrote:
-> > Some I/O requests that have been sent succussfully but have not yet been
-> > replied won't be resubmitted after reconnecting because of server restart,
-> > so we add a list to track them.
-> > 
-> > Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
-> 
-> Nack, this is what the timeout stuff is supposed to handle.  The commands will
-> timeout and we'll resubmit them if we have alive sockets.  Thanks,
-> 
-> Josef
-> 
-
-On the one hand, if num_connections == 1 and the only sock has dead,
-then we do nbd_genl_reconfigure to reconnect within dead_conn_timeout,
-nbd_xmit_timeout will not resubmit commands that have been sent
-succussfully but have not yet been replied. The log is as follows:
- 
-[270551.108746] block nbd0: Receive control failed (result -104)
-[270551.108747] block nbd0: Send control failed (result -32)
-[270551.108750] block nbd0: Request send failed, requeueing
-[270551.116207] block nbd0: Attempted send on invalid socket
-[270556.119584] block nbd0: reconnected socket
-[270581.161751] block nbd0: Connection timed out
-[270581.165038] block nbd0: shutting down sockets
-[270581.165041] print_req_error: I/O error, dev nbd0, sector 5123224 flags 8801
-[270581.165149] print_req_error: I/O error, dev nbd0, sector 5123232 flags 8801
-[270581.165580] block nbd0: Connection timed out
-[270581.165587] print_req_error: I/O error, dev nbd0, sector 844680 flags 8801
-[270581.166184] print_req_error: I/O error, dev nbd0, sector 5123240 flags 8801
-[270581.166554] block nbd0: Connection timed out
-[270581.166576] print_req_error: I/O error, dev nbd0, sector 844688 flags 8801
-[270581.167124] print_req_error: I/O error, dev nbd0, sector 5123248 flags 8801
-[270581.167590] block nbd0: Connection timed out
-[270581.167597] print_req_error: I/O error, dev nbd0, sector 844696 flags 8801
-[270581.168021] print_req_error: I/O error, dev nbd0, sector 5123256 flags 8801
-[270581.168487] block nbd0: Connection timed out
-[270581.168493] print_req_error: I/O error, dev nbd0, sector 844704 flags 8801
-[270581.170183] print_req_error: I/O error, dev nbd0, sector 5123264 flags 8801
-[270581.170540] block nbd0: Connection timed out
-[270581.173333] block nbd0: Connection timed out
-[270581.173728] block nbd0: Connection timed out
-[270581.174135] block nbd0: Connection timed out
- 
-On the other hand, if we wait nbd_xmit_timeout to handle resubmission,
-the I/O requests will have a big delay. For example, if timeout time is 30s,
-and from sock dead to nbd_genl_reconfigure returned OK we only spend
-2s, the I/O requests will still be handled by nbd_xmit_timeout after 30s.
+On Mon, May 27, 2019 at 3:41 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
