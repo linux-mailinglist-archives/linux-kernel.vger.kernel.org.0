@@ -2,52 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A015A2ADED
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 07:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F7AF2ADF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 07:16:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbfE0FOS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 01:14:18 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:50702 "EHLO
+        id S1726276AbfE0FQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 01:16:56 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:50744 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbfE0FOS (ORCPT
+        with ESMTP id S1726046AbfE0FQz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 01:14:18 -0400
+        Mon, 27 May 2019 01:16:55 -0400
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id EFCB6149027CA;
-        Sun, 26 May 2019 22:14:17 -0700 (PDT)
-Date:   Sun, 26 May 2019 22:14:17 -0700 (PDT)
-Message-Id: <20190526.221417.1145781030161269408.davem@davemloft.net>
-To:     ruslan@babayev.com
-Cc:     linux@armlinux.org.uk, andrew@lunn.ch, f.fainelli@gmail.com,
-        hkallweit1@gmail.com, xe-linux-external@cisco.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/2] net: phy: sfp: enable i2c-bus
- detection on ACPI based systems
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 81EF1149027E7;
+        Sun, 26 May 2019 22:16:55 -0700 (PDT)
+Date:   Sun, 26 May 2019 22:16:55 -0700 (PDT)
+Message-Id: <20190526.221655.1096972810391090808.davem@davemloft.net>
+To:     yuehaibing@huawei.com
+Cc:     vishal@chelsio.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] cxgb4: Make t4_get_tp_e2c_map static
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190525005302.27164-2-ruslan@babayev.com>
-References: <20190505193435.3248-1-ruslan@babayev.com>
-        <20190525005302.27164-2-ruslan@babayev.com>
+In-Reply-To: <20190525124510.13864-1-yuehaibing@huawei.com>
+References: <20190525124510.13864-1-yuehaibing@huawei.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 26 May 2019 22:14:18 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 26 May 2019 22:16:55 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ruslan Babayev <ruslan@babayev.com>
-Date: Fri, 24 May 2019 17:53:02 -0700
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Sat, 25 May 2019 20:45:10 +0800
 
-> Lookup I2C adapter using the "i2c-bus" device property on ACPI based
-> systems similar to how it's done with DT.
+> Fix sparse warning:
 > 
-> An example DSD describing an SFP on an ACPI based system:
+> drivers/net/ethernet/chelsio/cxgb4/t4_hw.c:6216:14:
+>  warning: symbol 't4_get_tp_e2c_map' was not declared. Should it be static?
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-I don't see patch #1.
-
-Please repost with both patches and your cover letter CC:'d to netdev.
+Applied.
