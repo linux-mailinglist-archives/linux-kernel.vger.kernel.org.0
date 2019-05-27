@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC25B2BB0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 22:10:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA5822BB17
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 22:10:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbfE0UKR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 16:10:17 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46199 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbfE0UKQ (ORCPT
+        id S1727239AbfE0UKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 16:10:21 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52243 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbfE0UKR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 16:10:16 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r7so17846344wrr.13;
-        Mon, 27 May 2019 13:10:14 -0700 (PDT)
+        Mon, 27 May 2019 16:10:17 -0400
+Received: by mail-wm1-f65.google.com with SMTP id y3so531325wmm.2;
+        Mon, 27 May 2019 13:10:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=n14EincEgyhHeNXBeUTMMuX2+QPgu7HvYrDyP4chhcI=;
-        b=Fmx9pXSzDyPlNYGqK+6K6rz5Arzts2WlpCEd3ci+ylhZxGPmFNMRPHmD9qXjT7aTmP
-         r6fSs0AnQZ5yU5E3Zhc7CYlR0LEMh7WvbzVA6GCoQymo70F2bOeDUvUwHnWHkWrbZj0E
-         zT2BLNWUsLSX/BQS7Wy+M4nZ6GF0JgfXxQAYpJhDh9WlbSFlcNK0Rp53cVruCNQLH4nQ
-         ouYBIQouyrsJ5376q0NBRb8oxpnNfaMfoUhJjSF+QP6ZdfmtjpyRRRDTMlWsA+UnQb7u
-         kxMeKzzEr5PmM/x/tGjvoczXHok5VOqZeTbgeoIq/9AxT4G17wBcWa0hGPUBDmjJ4tQS
-         Avig==
+        bh=t6VdND5amN3StrhVc/zIi7Y91LySYgcr3YUPE2udaNw=;
+        b=GLpFAL4wu2OrqSDvxzgInDtXCuimTNOqaHJziuaMoWOTVLMYBrJEbzRCGIVqQinpIS
+         xeY0389EDmZ4JpQYjVNdRo2DtKE9/Sje54FrxlxZOIAZjV5knm+sTOp68PqqNyDPvRM0
+         uUlLytSd2Zs/FxFU282CMHz4nx3Ha+th8GVF+13SuZEv+hndX+zmy/6zrIN3IOvfl3nN
+         ESYjm3YPKgBkqSRFMUY0WbkxdAwez86GmY6zf4rd+HFypmxYWV4uBcLvxwwLmC1CKgQ/
+         Giaiz+t2+C6sdmd3naO9c85x13RVAeqjMaFoN5fgp9LGewHYfwcRQNUvtO1D1lfa/zyB
+         ivog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=n14EincEgyhHeNXBeUTMMuX2+QPgu7HvYrDyP4chhcI=;
-        b=bAUWOn+PXtdoESZh2+8tCnL8uVeU6oC2xZO4DAStLYiFAHmfg8r9d8M4K2+TqWa1KL
-         Rcuakb3MR5duGpP2p862AWocGp1vMbGOUgYM8cNZWv8jKyexog1NMct1uAow8Nb1mqQy
-         gFBBVMhzkGlg2AXcjfB0J8DzvPpZyC1pzq0p+afN86B+uR9/x/gPI3nGmP2BkBiqG05H
-         gBXs5S11zl2GRmdKds23jr+hDyN8XZXA/u5oiLkVSGczac8GcUZTbWQHEqMGMsTsHkrM
-         LkMKHWbKymrY99ALl64DGGkfPgUWlbjEJSem2+Xylf5uV5y6SWODYycxFgbZ54vng66D
-         O8mg==
-X-Gm-Message-State: APjAAAXoF7062b11E6VWUS58vTVeeFhLRKJfEBHDY3k/N7y+uOXCWk5A
-        fbZRu9n2fT9TS0AI9Vw/s84=
-X-Google-Smtp-Source: APXvYqx7MnbzwbceeHK9CTEcjMFASegph4tm3AEkWAL8pUfeZb/J7jGTQ1b3jiXW3bJTwlKcDKlMdw==
-X-Received: by 2002:adf:fd0f:: with SMTP id e15mr12818497wrr.104.1558987813345;
-        Mon, 27 May 2019 13:10:13 -0700 (PDT)
+        bh=t6VdND5amN3StrhVc/zIi7Y91LySYgcr3YUPE2udaNw=;
+        b=WA35Wo6ppS8WVqd1k//OEshHG9Gcj64r+CbgN9O31/xcBm55cSMCZ7VDl8ifO+i0qM
+         20Qd6YexzjPfV6EvheZ/tabmpQ2wna9Cc1s2X5AWOTH0lYtA8d0VtkIyV28aP+QRU+Z4
+         TtBwRQig/+A2yZowjYWPJvhT/r5G0DFgc791XjNx4IhGyDaderh3LBy3FjGTxOa1btR6
+         DnZ1aSUJGs8f/6Xf6Z85FaLLwXFN9J2BUgyFIZJlITuCzNIDTZ3acfUegfR+aO7mIn9o
+         YtU5CRU5TlAKgCUN/1z0PfQMVAlemeUk58+ggNOk+mCebLESW+eRkubLBgWTVgOoppie
+         Bsyg==
+X-Gm-Message-State: APjAAAUdnVMNmDF62w5e0DiZsPsqODubgKpjhot90itlkDd+J3MBfXWj
+        oxnvPv1nK0Lf1w/z96Gd7pg=
+X-Google-Smtp-Source: APXvYqwhDPRjhw9OpYYCmRvpl9ZRKHy8xPORapsR6gjT3JrkGdCqImbpQ0zkOtaRtG4S2cd9sPO+9w==
+X-Received: by 2002:a7b:c549:: with SMTP id j9mr453146wmk.122.1558987814935;
+        Mon, 27 May 2019 13:10:14 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:1f1:d0f0::4e2b:d7ca])
-        by smtp.gmail.com with ESMTPSA id s127sm308523wmf.48.2019.05.27.13.10.12
+        by smtp.gmail.com with ESMTPSA id s127sm308523wmf.48.2019.05.27.13.10.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 13:10:12 -0700 (PDT)
+        Mon, 27 May 2019 13:10:13 -0700 (PDT)
 From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -57,11 +57,10 @@ To:     Liam Girdwood <lgirdwood@gmail.com>,
 Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 1/7] dt-bindings: sound: sun4i-spdif: Add Allwinner H6 compatible
-Date:   Mon, 27 May 2019 22:06:21 +0200
-Message-Id: <20190527200627.8635-2-peron.clem@gmail.com>
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Subject: [PATCH v4 2/7] ASoC: sun4i-spdif: Move quirks to the top
+Date:   Mon, 27 May 2019 22:06:22 +0200
+Message-Id: <20190527200627.8635-3-peron.clem@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190527200627.8635-1-peron.clem@gmail.com>
 References: <20190527200627.8635-1-peron.clem@gmail.com>
@@ -73,32 +72,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner H6 has a SPDIF controller with an increase of the fifo
-size and a sligher difference in memory mapping compare to H3/A64.
+The quirks are actually defines in the middle of the file with
+short explanation.
 
-This make it not compatible with the previous generation.
-
-Introduce a specific bindings for H6 SoC.
+Move this at the top and add a section to have coherency with
+sun4i-i2s.
 
 Signed-off-by: Clément Péron <peron.clem@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- .../devicetree/bindings/sound/allwinner,sun4i-a10-spdif.yaml     | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/sunxi/sun4i-spdif.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-spdif.yaml b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-spdif.yaml
-index a49ef2294a74..e0284d8c3b63 100644
---- a/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-spdif.yaml
-+++ b/Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-spdif.yaml
-@@ -21,6 +21,7 @@ properties:
-       - const: allwinner,sun4i-a10-spdif
-       - const: allwinner,sun6i-a31-spdif
-       - const: allwinner,sun8i-h3-spdif
-+      - const: allwinner,sun50i-h6-spdif
-       - items:
-           - const: allwinner,sun8i-a83t-spdif
-           - const: allwinner,sun8i-h3-spdif
+diff --git a/sound/soc/sunxi/sun4i-spdif.c b/sound/soc/sunxi/sun4i-spdif.c
+index b4af4aabead1..b6c66a62e915 100644
+--- a/sound/soc/sunxi/sun4i-spdif.c
++++ b/sound/soc/sunxi/sun4i-spdif.c
+@@ -161,6 +161,17 @@
+ #define SUN4I_SPDIF_SAMFREQ_176_4KHZ		0xc
+ #define SUN4I_SPDIF_SAMFREQ_192KHZ		0xe
+ 
++/**
++ * struct sun4i_spdif_quirks - Differences between SoC variants.
++ *
++ * @reg_dac_tx_data: TX FIFO offset for DMA config.
++ * @has_reset: SoC needs reset deasserted.
++ */
++struct sun4i_spdif_quirks {
++	unsigned int reg_dac_txdata;
++	bool has_reset;
++};
++
+ struct sun4i_spdif_dev {
+ 	struct platform_device *pdev;
+ 	struct clk *spdif_clk;
+@@ -405,11 +416,6 @@ static struct snd_soc_dai_driver sun4i_spdif_dai = {
+ 	.name = "spdif",
+ };
+ 
+-struct sun4i_spdif_quirks {
+-	unsigned int reg_dac_txdata;	/* TX FIFO offset for DMA config */
+-	bool has_reset;
+-};
+-
+ static const struct sun4i_spdif_quirks sun4i_a10_spdif_quirks = {
+ 	.reg_dac_txdata	= SUN4I_SPDIF_TXFIFO,
+ };
 -- 
 2.20.1
 
