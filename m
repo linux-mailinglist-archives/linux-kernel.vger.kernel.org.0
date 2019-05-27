@@ -2,167 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE0552B393
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FFE32B3A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:54:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfE0LxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 07:53:05 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:35120 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbfE0LxB (ORCPT
+        id S1727096AbfE0LyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 07:54:03 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36800 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbfE0LyC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 07:53:01 -0400
-Received: from ramsan ([84.194.111.163])
-        by laurent.telenet-ops.be with bizsmtp
-        id HPsy2000X3XaVaC01PsyfY; Mon, 27 May 2019 13:52:59 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hVEBW-0001OH-Il; Mon, 27 May 2019 13:52:58 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1hVEBW-0000bB-HV; Mon, 27 May 2019 13:52:58 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Magnus Damm <damm+renesas@opensource.se>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 6/6] iommu/ipmmu-vmsa: Add suspend/resume support
-Date:   Mon, 27 May 2019 13:52:53 +0200
-Message-Id: <20190527115253.2114-7-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190527115253.2114-1-geert+renesas@glider.be>
-References: <20190527115253.2114-1-geert+renesas@glider.be>
+        Mon, 27 May 2019 07:54:02 -0400
+Received: by mail-wm1-f65.google.com with SMTP id v22so8315505wml.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 04:54:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=P5EOrlyjnRiB+y/WPq9w3g8tKXEcoSy+dzLfiTqoBtI=;
+        b=UMinhSBQx1G26e6WT/gYwoMMJTV04LKtrNc+ZelA7KI5MBIBbNH+V+qWBwLj0mNnLd
+         pDi1LnLQ2Vhk/7eYL6MnV55ue2wIRNYq19g9BbZrRvIATWCvihrvR7UaB7ixi1H5ZJD/
+         yGUiMx0U854rlVmeU2tCv8lV17ntpxmTj9y0wvnIJal/fyrTMYwrVbbCF2E2pSx9M808
+         cHB4T6Fd9kolRRQovkw9qurC4fxcuOPo9UPrAI3j1fqo5rNRl1eKdLUXtiMtFwtiufat
+         koENfqdQpTH3/ZQ2dRdOOeIbS626q4+yQhGZELizGd2ajkjgyTR02T8WhkUKSKz26HBD
+         bkwg==
+X-Gm-Message-State: APjAAAU8IxrKRZM+UZyaUJcaEQXkN5SpHxTNnonZGOMGHbaImTd7eOAA
+        L8wSl3Rsp9mpaN1jECuhFAQiqA==
+X-Google-Smtp-Source: APXvYqxzDiEzyVy1UAaifd36atFjeFl7M914KMNNS1XYii7hm0Pb5j9z4gdY0m8pSq5ybhyLSkyCVA==
+X-Received: by 2002:a1c:ed07:: with SMTP id l7mr8825437wmh.148.1558958041069;
+        Mon, 27 May 2019 04:54:01 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:c43e:46a8:e962:cee8? ([2001:b07:6468:f312:c43e:46a8:e962:cee8])
+        by smtp.gmail.com with ESMTPSA id 16sm9799263wmx.45.2019.05.27.04.54.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 04:54:00 -0700 (PDT)
+Subject: Re: [PATCH 2/3] KVM: X86: Implement PV sched yield hypercall
+To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1558953255-9432-1-git-send-email-wanpengli@tencent.com>
+ <1558953255-9432-3-git-send-email-wanpengli@tencent.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <0b8525d8-e26b-e4df-508d-b6a4d9c06a76@redhat.com>
+Date:   Mon, 27 May 2019 13:53:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <1558953255-9432-3-git-send-email-wanpengli@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During PSCI system suspend, R-Car Gen3 SoCs are powered down, and all
-IPMMU state is lost.  Hence after s2ram, devices wired behind an IPMMU,
-and configured to use it, will see their DMA operations hang.
+On 27/05/19 12:34, Wanpeng Li wrote:
+> +	rcu_read_lock();
+> +	map = rcu_dereference(kvm->arch.apic_map);
+> +	target = map->phys_map[dest_id]->vcpu;
+> +	rcu_read_unlock();
+> +
+> +	kvm_vcpu_yield_to(target);
 
-To fix this, restore all IPMMU contexts, and re-enable all active
-micro-TLBs during system resume.
+This needs to check that map->phys_map[dest_id] is not NULL.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-This patch takes a different approach than the BSP, which implements a
-bulk save/restore of all registers during system suspend/resume.
-
-v4:
-  - Add Reviewed-by, Tested-by,
-
-v3:
-  - No changes,
-
-v2:
-  - Drop PSCI checks.
----
- drivers/iommu/ipmmu-vmsa.c | 47 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 46 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 56e84bcc9532e1ce..408ad0b2591925e0 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -36,7 +36,10 @@
- #define arm_iommu_detach_device(...)	do {} while (0)
- #endif
- 
--#define IPMMU_CTX_MAX 8U
-+#define IPMMU_CTX_MAX		8U
-+#define IPMMU_CTX_INVALID	-1
-+
-+#define IPMMU_UTLB_MAX		48U
- 
- struct ipmmu_features {
- 	bool use_ns_alias_offset;
-@@ -58,6 +61,7 @@ struct ipmmu_vmsa_device {
- 	spinlock_t lock;			/* Protects ctx and domains[] */
- 	DECLARE_BITMAP(ctx, IPMMU_CTX_MAX);
- 	struct ipmmu_vmsa_domain *domains[IPMMU_CTX_MAX];
-+	s8 utlb_ctx[IPMMU_UTLB_MAX];
- 
- 	struct iommu_group *group;
- 	struct dma_iommu_mapping *mapping;
-@@ -335,6 +339,7 @@ static void ipmmu_utlb_enable(struct ipmmu_vmsa_domain *domain,
- 	ipmmu_write(mmu, IMUCTR(utlb),
- 		    IMUCTR_TTSEL_MMU(domain->context_id) | IMUCTR_FLUSH |
- 		    IMUCTR_MMUEN);
-+	mmu->utlb_ctx[utlb] = domain->context_id;
- }
- 
- /*
-@@ -346,6 +351,7 @@ static void ipmmu_utlb_disable(struct ipmmu_vmsa_domain *domain,
- 	struct ipmmu_vmsa_device *mmu = domain->mmu;
- 
- 	ipmmu_write(mmu, IMUCTR(utlb), 0);
-+	mmu->utlb_ctx[utlb] = IPMMU_CTX_INVALID;
- }
- 
- static void ipmmu_tlb_flush_all(void *cookie)
-@@ -1043,6 +1049,7 @@ static int ipmmu_probe(struct platform_device *pdev)
- 	spin_lock_init(&mmu->lock);
- 	bitmap_zero(mmu->ctx, IPMMU_CTX_MAX);
- 	mmu->features = of_device_get_match_data(&pdev->dev);
-+	memset(mmu->utlb_ctx, IPMMU_CTX_INVALID, mmu->features->num_utlbs);
- 	dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(40));
- 
- 	/* Map I/O memory and request IRQ. */
-@@ -1158,10 +1165,48 @@ static int ipmmu_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int ipmmu_resume_noirq(struct device *dev)
-+{
-+	struct ipmmu_vmsa_device *mmu = dev_get_drvdata(dev);
-+	unsigned int i;
-+
-+	/* Reset root MMU and restore contexts */
-+	if (ipmmu_is_root(mmu)) {
-+		ipmmu_device_reset(mmu);
-+
-+		for (i = 0; i < mmu->num_ctx; i++) {
-+			if (!mmu->domains[i])
-+				continue;
-+
-+			ipmmu_domain_setup_context(mmu->domains[i]);
-+		}
-+	}
-+
-+	/* Re-enable active micro-TLBs */
-+	for (i = 0; i < mmu->features->num_utlbs; i++) {
-+		if (mmu->utlb_ctx[i] == IPMMU_CTX_INVALID)
-+			continue;
-+
-+		ipmmu_utlb_enable(mmu->root->domains[mmu->utlb_ctx[i]], i);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops ipmmu_pm  = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(NULL, ipmmu_resume_noirq)
-+};
-+#define DEV_PM_OPS	&ipmmu_pm
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static struct platform_driver ipmmu_driver = {
- 	.driver = {
- 		.name = "ipmmu-vmsa",
- 		.of_match_table = of_match_ptr(ipmmu_of_ids),
-+		.pm = DEV_PM_OPS,
- 	},
- 	.probe = ipmmu_probe,
- 	.remove	= ipmmu_remove,
--- 
-2.17.1
-
+Paolo
