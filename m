@@ -2,102 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8BD32B86D
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:35:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F34302B871
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbfE0Pfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 11:35:55 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:54221 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726094AbfE0Pfz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 11:35:55 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id E2D2C21B4C;
-        Mon, 27 May 2019 11:35:54 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Mon, 27 May 2019 11:35:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lastninja.net;
-         h=date:from:to:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=9Jn1nm1uX7H3z/48KwvctY3WW1t
-        ow+pLr7KMwn5fHww=; b=GWpex8vMUPLn8pp/7J5msTMw/Oi+GgrAjGwkQy7oNBZ
-        H0N2kF+xFhIcEnER/woaRMKmx1JdJsMlDyGTKRSG9a4j9dVVaxciqVcJL55Yj9A6
-        40Nobxh30EjXJhq31bseFa2hUfb764ovETSiH/TkVNeFCdQZlQIo9A2JvaqOEijS
-        Bsgu4Lm8E2K2yTCOFMc2yRtAJPZ/f8tr4sHnw7J7Nf+Krh14xhZoHTflvmDBC8GG
-        1SmI+QPzK89HLjI9aV7gKvnpalEutw8e4T4PZZLVKPCoO7eEQpvXCg9IDpUdQZ2e
-        nsGZBkVfUh1wMDBQiCpzQkHDM/Uze2FnqefNHh7VUig==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=9Jn1nm
-        1uX7H3z/48KwvctY3WW1tow+pLr7KMwn5fHww=; b=IpBQ0tsNVjfO74sOhs3B7a
-        Xnax+f86QpKaiU9mX97V/mqfpiYSQeawqg+WY38VLWEVk+PeT+wv3RXDALecdWzN
-        jUc7g+eZUX6cxCaK0J5QOpvB+6lXCzR94rIZOpa0Pkvj1N0MN3YaRVssFxiFY/eX
-        DCfcj/o9eOIVWcweZf9cvXPb55XHw6xOwPBUqKhKBO6acyYbrv9rtjEB2tGLonWp
-        1Mwlb0Pwod5igymgsoY05UiV+N1zOsvgvot8gh/WfJhLpGFVwr779TMqoY99APAJ
-        JXQPPBXLjvlJ+m5kfyjTi61BEwwecpFAiMIw2j4AsCFaXdswNSzQ3+PZGVizZpWA
-        ==
-X-ME-Sender: <xms:2QPsXOQ78a5gpo0IIeAI0oT1PfqVcu8ssyGlqmOnwdeH61mUdIZr_A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddvvddgledvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomheppfgrvhgv
-    vghnucfprghthhgrnhcuoehnrghvvggvnheslhgrshhtnhhinhhjrgdrnhgvtheqnecukf
-    hppedutdegrddugeelrdeirdduleenucfrrghrrghmpehmrghilhhfrhhomhepnhgrvhgv
-    vghnsehlrghsthhnihhnjhgrrdhnvghtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:2QPsXIBN2sfQdknnyE1_WbDoPn6QGH5T0QyGwBjsGN9bg5tyar1lbg>
-    <xmx:2QPsXG3sPm0MNAtI2oNW6Gwv03l5CDyrolwsYjpCCUslOADxL9BR0A>
-    <xmx:2QPsXOWhr5Wk065Tv7jukfVjTx7PNgbls8FJOqBtrixLRaQERmvbXg>
-    <xmx:2gPsXNhqxgHGFAtZ9X_gsv07Fzy9FsiHZB_vocKqCYPNOjsGLCrGyA>
-Received: from armakuni.lastninja.net (wbml.net [104.149.6.19])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 28EFF380085;
-        Mon, 27 May 2019 11:35:53 -0400 (EDT)
-Date:   Tue, 28 May 2019 01:35:51 +1000
-From:   Naveen Nathan <naveen@lastninja.net>
-To:     Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Kevin Easton <kevin@guarana.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] random: urandom reads block when CRNG is not initialized.
-Message-ID: <20190527153549.GA17775@armakuni.lastninja.net>
-References: <20190527122627.GA15618@u>
- <20190527140643.GB8585@mit.edu>
+        id S1726506AbfE0Phz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 11:37:55 -0400
+Received: from 8bytes.org ([81.169.241.247]:40386 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726094AbfE0Phy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 11:37:54 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 3162D244; Mon, 27 May 2019 17:37:53 +0200 (CEST)
+Date:   Mon, 27 May 2019 17:37:51 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tom Murphy <tmurphy@arista.com>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: implement generic dma_map_ops for IOMMUs v5
+Message-ID: <20190527153751.GF12745@8bytes.org>
+References: <20190520072948.11412-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190527140643.GB8585@mit.edu>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190520072948.11412-1-hch@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 10:06:43AM -0400, Theodore Ts'o wrote:
->> [...] 
->
-> This is guaranteed to cause the system to fail for systems using
-> systemd.  (Unless you are running an x86 with random.trust_cpu=1 ---
-> in which case, this patch/config is pointless.)  And many embedded
-> systems *do* use systemd.  I know lots of people like to wish that
-> systemd doesn't exist, but we need to face reality.
+Hi Christoph, Hi Robin,
 
-Hence a compile-time option; systemd systems need not use it yet.
-I would argue systemd needs to fix their randomness API (it's a sad
-joke), and use secure randomness only where required. For example,
-it is said that systemd relies on randomness to generate unique UUIDs
-where a UUIDv4 would suffice. I'm happy to add a disclaimer in the
-kernel config that this will break systemd.
+On Mon, May 20, 2019 at 09:29:24AM +0200, Christoph Hellwig wrote:
+> I think we are finally ready for the generic dma-iommu series.  I have
+> various DMA API changes pending, and Tom has patches ready to convert
+> the AMD and Intel iommu drivers over to it.  I'd love to have this
+> in a stable branch shared between the dma-mapping and iommu trees
+> the day after rc2 is released.  I volunteer to create the branch,
+> but I'm fine with it living in the iommu tree as well.  Before that
+> Will has already said he wants to send the first patch in the series
+> to Linus for this merge window.
 
-> *Seriously,* if this is something the system builder should be using,
-> they should be fixing userspace.  And if they care enough that they
-> would want to enable this patch, they could just scan dmesg looking
-> for the warnings from the kernel.
+First a big "THANK YOU" for working on this and getting it ready. It is
+an important step towards generic dma-ops for all iommu drivers,
+something I wished to have for years and planned to work on myself, but
+didn't find the time.
 
-And I think this is the more interesting case, system builders should
-ideally fix userspace and rely on getrandom (which is no different to
-this compile time option). But the reality is the boot entropy hole
-problem has been the source of many insecure cryptographic keys, and
-this provides a simple assurance that it can no longer be the cause
-of these issues (supposing good entropy is gathered).
+I applied this series to a new generic-dma-ops branch in the iommu
+tree and plan to send it upstream in the next merge window.
 
-- Naveen
+Thanks again,
+
+       Joerg
