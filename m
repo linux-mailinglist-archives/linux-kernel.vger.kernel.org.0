@@ -2,82 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A80E82B5FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:04:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62F672B619
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 15:15:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfE0NEk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 09:04:40 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34958 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbfE0NEk (ORCPT
+        id S1726234AbfE0NPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 09:15:07 -0400
+Received: from [101.13.1.131] ([101.13.1.131]:54272 "EHLO
+        E6440.gar.corp.intel.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726063AbfE0NPG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 09:04:40 -0400
-Received: by mail-pg1-f196.google.com with SMTP id t1so9100932pgc.2;
-        Mon, 27 May 2019 06:04:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=8nEvWdeXB353GkLTXsYXaoTX1Inedn4FgEz1vhTKYzA=;
-        b=jC7eajPWyBEabmQ+SQNNVO0g3VpabETTz1MQAxcpb4lMaooOZtMfF2zyYCjg/KAm0D
-         cwrzVt8ONAxQgODhnP68iH98DZSoWrT1CFBmt0j5RuMnR6+qf+WUtO/BCudQKVfRhrsL
-         FO1Os+mvVGbYcFPJhhMEDjbxtdCQkBC9z36ed5JVjnLrrtdHzGc4/gWh23nHPqUd/L6j
-         C1Jimi9wb7Gzuhwv8DgMFimajTwd98nT8owUy9DkOTFmNz8P3/BcGoOWCX2V8Zg6tito
-         7lIDkkcaH6ks9MuaWi6FLJu/dVWAKI0WL/cMt3OMlNBBtCU9SGDs3WnC8XpvKXXb5xrN
-         qkxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=8nEvWdeXB353GkLTXsYXaoTX1Inedn4FgEz1vhTKYzA=;
-        b=Z1c84XYtpinfU87T4lGQ6kbjpMAq31mG0oRM8PigiC46RHN91lPiMWrZqkd9zAh76N
-         2TBGClrlwcexE130SxBXHZ/bSWz+66bMBdPTt+yUjSB9usU1q4VLb+mFIppElHUPhbNi
-         DeE4zsLAYdKv9t8SU8trxka7LX/MCVRusyqTQgU1wB287oy+1OJvhO70HzoBZTMU8S1n
-         sgxvo16fFiBcNWrFGIZW+Ooe4JZecfxPrU9kGWkSOLauUfdHSuORSIjrM390m+hRYdsZ
-         frE4Vb6nHdZcBXaMSklPbd2sg9KeNbAR85+nAxQZlcmOmf+JyWR57dOLAGzHtoaAJXHm
-         aeXw==
-X-Gm-Message-State: APjAAAXLVsqre0V+qD2HfmfDbTVWfFz6Ws49ZPAwlVYyHhVmHuYFi5Rf
-        5/yoOraEEl0lvZM9shfHaXhNMaLf
-X-Google-Smtp-Source: APXvYqzhiX5WieFozlD4LN379CfF6I6m6azS3kWics+rEo7niYRAQW+W9n5n2Y4ph7YP2fkrrufjNg==
-X-Received: by 2002:a62:ee05:: with SMTP id e5mr133336776pfi.117.1558962279371;
-        Mon, 27 May 2019 06:04:39 -0700 (PDT)
-Received: from zhanggen-UX430UQ ([66.42.35.75])
-        by smtp.gmail.com with ESMTPSA id l7sm13469882pfl.9.2019.05.27.06.04.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 06:04:38 -0700 (PDT)
-Date:   Mon, 27 May 2019 21:04:30 +0800
-From:   Gen Zhang <blackgod016574@gmail.com>
-To:     jassisinghbrar@gmail.com, thierry.reding@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH] tegra-hsp: fix a missing-check bug in
- tegra_hsp_doorbell_create()
-Message-ID: <20190527130430.GA5367@zhanggen-UX430UQ>
+        Mon, 27 May 2019 09:15:06 -0400
+X-Greylist: delayed 379 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 May 2019 09:15:06 EDT
+Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
+        by E6440.gar.corp.intel.com (Postfix) with ESMTP id CAFC6C0765;
+        Mon, 27 May 2019 21:08:45 +0800 (CST)
+From:   Harry Pan <harry.pan@intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
+        Vishwanath Somayaji <vishwanath.somayaji@intel.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Darren Hart <dvhart@infradead.org>
+Subject: [PATCH] platform/x86: intel_pmc_core: transform Pkg C-state residency from TSC ticks into microseconds
+Date:   Mon, 27 May 2019 21:08:10 +0800
+Message-Id: <20190527130811.450-1-harry.pan@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In tegra_hsp_doorbell_create(), 'db->name' is allocated by 
-devm_kstrdup_const(). It returns NULL when fails. So 'db->name' should
-be checked.
+Refer to the Intel SDM Vol.4, the package C-state residency counters
+of modern IA micro-architecture are all ticking in TSC frequency,
+hence we can apply simple math to transform the ticks into microseconds.
+i.e.,
+residency (ms) = count / tsc_khz
+residency (us) = count / tsc_khz * 1000
 
-Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+This also aligns to other sysfs debug entries of residency counter in
+the same metric in microseconds, benefits reading and scripting.
+
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+
 ---
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 11fc9fd..b613c46 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -292,6 +292,8 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
- 	db->channel.hsp = hsp;
+
+ drivers/platform/x86/intel_pmc_core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+index f2c621b55f49..20e0843ebfb4 100644
+--- a/drivers/platform/x86/intel_pmc_core.c
++++ b/drivers/platform/x86/intel_pmc_core.c
+@@ -24,6 +24,7 @@
+ #include <asm/cpu_device_id.h>
+ #include <asm/intel-family.h>
+ #include <asm/msr.h>
++#include <asm/tsc.h>
  
- 	db->name = devm_kstrdup_const(hsp->dev, name, GFP_KERNEL);
-+	if (!db->name)
-+		return ERR_PTR(-ENOMEM);
- 	db->master = master;
- 	db->index = index;
+ #include "intel_pmc_core.h"
  
----
+@@ -726,7 +727,6 @@ static int pmc_core_ltr_show(struct seq_file *s, void *unused)
+ 	return 0;
+ }
+ DEFINE_SHOW_ATTRIBUTE(pmc_core_ltr);
+-
+ static int pmc_core_pkgc_show(struct seq_file *s, void *unused)
+ {
+ 	struct pmc_dev *pmcdev = s->private;
+@@ -738,8 +738,8 @@ static int pmc_core_pkgc_show(struct seq_file *s, void *unused)
+ 		if (rdmsrl_safe(map[index].bit_mask, &pcstate_count))
+ 			continue;
+ 
+-		seq_printf(s, "%-8s : 0x%llx\n", map[index].name,
+-			   pcstate_count);
++		seq_printf(s, "%-8s : %llu\n", map[index].name,
++			   pcstate_count * 1000 / tsc_khz);
+ 	}
+ 
+ 	return 0;
+-- 
+2.20.1
+
