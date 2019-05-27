@@ -2,162 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A66F12BB94
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 22:56:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE8EF2BB9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 23:11:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbfE0U4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 16:56:01 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35834 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727377AbfE0Uzx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 16:55:53 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m3so17972481wrv.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 13:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=dfUdgBJPtbCYc/uhDOpMaPmMlc4FCxxcnSQ96C7YgX8=;
-        b=pC54YjrChaPbEwjQzWzOtVgI4Qfy3JE7gSPnbvirKitnpg3zXdThxMKqBnbW0zLitf
-         jWYAtQll0nL4ZAuDMmHjmhAkzIf3BJu+eYMOe4FF/9oDdQtnjBlKRfwj12q83g+pP6Nf
-         N0TYoOM1d12w6pdxrm/ChgZ11uOOiGKs4fWblPpQis91t42RBRyKETFU1v9rtKpEOTW+
-         oYKjOELW3eM9GpBHBb+kTK/vpnn197yu+CoKaQigoLQI+JJiaNSMjekcIJERuCiwG9CW
-         kbtLh+PZXbaiooedeV2h00nqAD6L/4YJIcUHbNw+0UbWpP67iVJoMuF9MSPvHbGsPTJh
-         u1VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=dfUdgBJPtbCYc/uhDOpMaPmMlc4FCxxcnSQ96C7YgX8=;
-        b=fvctPqJ/fmwPbyWCEHJxrwgtye9gae44Te4NIDBS6h7v/v6R9Xh3IAQnPTDedDuHtI
-         U4l5AnMTVpOBmNCN/yp6fnOMj1tl/koQUU3aIE/ct0glGuEXZ7FRnBvMg8uNUzpHp/jw
-         JUdLKKKrVU761YewUO3hwL1LbnjO9tehlTvogEyagG69/QfjlfhhEWLe6+3R3KjWflmY
-         ip7jYC8jpBIYt4U98vWtA1Q7lNPH6kqErfSTTEvxDybLiuvgKIZYE7Um/LYNU0f/MqBz
-         iTSaRciSTrGC1+TuQgZpK4dV7sicTI5Tk7H3lurQAPDRXRdC/PWFn1o39qL2ZSPZIg4S
-         1gkQ==
-X-Gm-Message-State: APjAAAVWVghIr7U8k3ImBKw9e+j80bUVZH54wvbFET5aXUtiodYmK23Q
-        BNhoWdTB5nwFnjlGJYUvvDfDpQ==
-X-Google-Smtp-Source: APXvYqw9AWq7l/BVAos9otlLSQgDWYcyVUH+7bEP3nfgEk9gLPxJcG2TGcPln+j7HUcfkX9AF2n9QA==
-X-Received: by 2002:a5d:694a:: with SMTP id r10mr7803842wrw.345.1558990551007;
-        Mon, 27 May 2019 13:55:51 -0700 (PDT)
-Received: from clegane.local (30.94.129.77.rev.sfr.net. [77.129.94.30])
-        by smtp.gmail.com with ESMTPSA id a1sm388565wmj.23.2019.05.27.13.55.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 13:55:50 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com
-Subject: [PATCH V3 8/8] genirq/timings: Add selftest for next event computation
-Date:   Mon, 27 May 2019 22:55:21 +0200
-Message-Id: <20190527205521.12091-9-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190527205521.12091-1-daniel.lezcano@linaro.org>
-References: <20190527205521.12091-1-daniel.lezcano@linaro.org>
+        id S1727189AbfE0VLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 17:11:25 -0400
+Received: from mga04.intel.com ([192.55.52.120]:23653 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726801AbfE0VLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 17:11:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 May 2019 14:11:24 -0700
+X-ExtLoop1: 1
+Received: from rpedgeco-mobl.amr.corp.intel.com (HELO localhost.intel.com) ([10.251.0.167])
+  by orsmga008.jf.intel.com with ESMTP; 27 May 2019 14:11:23 -0700
+From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
+To:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        sparclinux@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, luto@kernel.org
+Cc:     dave.hansen@intel.com, namit@vmware.com,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v5 0/2] Fix issues with vmalloc flush flag
+Date:   Mon, 27 May 2019 14:10:56 -0700
+Message-Id: <20190527211058.2729-1-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The circular buffers are now validated at this point with the two
-previous patches. The next interrupt index algorithm which is the
-hardest part to validate can be validated with the tests provided with
-this patch.
+These two patches address issues with the recently added
+VM_FLUSH_RESET_PERMS vmalloc flag.
 
-It uses the intervals stored in the arrays and insert all the values
-except the last one. The next event computation must return the same
-value as the last element we did not inserted.
+Patch 1 addresses an issue that could cause a crash after other
+architectures besides x86 rely on this path.
 
-Add tests for the next event index computation.
+Patch 2 addresses an issue where in a rare case strange arguments
+could be provided to flush_tlb_kernel_range(). 
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- kernel/irq/timings.c | 66 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+v4->v5:
+ - Update commit messages with info that the first issue will actually
+   not cause problems today
+ - Avoid re-use of variable (PeterZ)
 
-diff --git a/kernel/irq/timings.c b/kernel/irq/timings.c
-index 5b13c2231d4f..e960d7ce7bcc 100644
---- a/kernel/irq/timings.c
-+++ b/kernel/irq/timings.c
-@@ -704,6 +704,68 @@ static struct timings_intervals tis[] __initdata = {
- 	{ intervals4, ARRAY_SIZE(intervals4) },
- };
- 
-+static int __init irq_timings_test_next_index(struct timings_intervals *ti)
-+{
-+	int _buffer[IRQ_TIMINGS_SIZE];
-+	int buffer[IRQ_TIMINGS_SIZE];
-+	int index, start, i, count, period_max;
-+
-+	count = ti->count - 1;
-+
-+	period_max = count > (3 * PREDICTION_PERIOD_MAX) ?
-+		PREDICTION_PERIOD_MAX : count / 3;
-+
-+	/*
-+	 * Inject all values except the last one which will be used
-+	 * to compare with the next index result.
-+	 */
-+	pr_debug("index suite: ");
-+
-+	for (i = 0; i < count; i++) {
-+		index = irq_timings_interval_index(ti->intervals[i]);
-+		_buffer[i & IRQ_TIMINGS_MASK] = index;
-+		pr_cont("%d ", index);
-+	}
-+
-+	start = count < IRQ_TIMINGS_SIZE ? 0 :
-+		count & IRQ_TIMINGS_MASK;
-+
-+	count = min_t(int, count, IRQ_TIMINGS_SIZE);
-+
-+	for (i = 0; i < count; i++) {
-+		int index = (start + i) & IRQ_TIMINGS_MASK;
-+		buffer[i] = _buffer[index];
-+	}
-+
-+	index = irq_timings_next_event_index(buffer, count, period_max);
-+	i = irq_timings_interval_index(ti->intervals[ti->count - 1]);
-+
-+	if (index != i) {
-+		pr_err("Expected (%d) and computed (%d) next indexes differ\n",
-+		       i, index);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __init irq_timings_next_index_selftest(void)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(tis); i++) {
-+
-+		pr_info("---> Injecting intervals number #%d (count=%zd)\n",
-+			i, tis[i].count);
-+
-+		ret = irq_timings_test_next_index(&tis[i]);
-+		if (ret)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
- static int __init irq_timings_test_irqs(struct timings_intervals *ti)
- {
- 	struct irqt_stat __percpu *s;
-@@ -875,6 +937,10 @@ static int __init irq_timings_selftest(void)
- 		goto out;
- 
- 	ret = irq_timings_irqs_selftest();
-+	if (ret)
-+		goto out;
-+
-+	ret = irq_timings_next_index_selftest();
- out:
- 	pr_info("---------- selftest end with %s -----------\n",
- 		ret ? "failure" : "success");
+v3->v4:
+ - Drop patch that switched vm_unmap_alias() calls to regular flush (Andy)
+ - Add patch to address correctness previously fixed in dropped patch
+
+v2->v3:
+ - Split into two patches (Andy)
+
+v1->v2:
+ - Update commit message with more detail
+ - Fix flush end range on !CONFIG_ARCH_HAS_SET_DIRECT_MAP case
+
+
+Rick Edgecombe (2):
+  vmalloc: Fix calculation of direct map addr range
+  vmalloc: Avoid rare case of flushing tlb with weird arguments
+
+ mm/vmalloc.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
 -- 
-2.17.1
+2.20.1
 
