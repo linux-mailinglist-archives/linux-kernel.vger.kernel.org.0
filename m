@@ -2,72 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E631D2B236
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:32:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 869432B224
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 12:32:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbfE0KcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 06:32:20 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50890 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbfE0KcU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 06:32:20 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id BF7BC80490; Mon, 27 May 2019 12:32:07 +0200 (CEST)
-Date:   Mon, 27 May 2019 12:31:55 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-        bp@suse.de, hpa@zytor.com, mingo@redhat.com, x86@kernel.org,
-        rjw@rjwysocki.net, lenb@kernel.org, linux-acpi@vger.kernel.org
-Cc:     pavel@ucw.cz
-Subject: ACPI enable on Thinkpad X60 hangs when temperatures are high
-Message-ID: <20190527103155.GB12391@xo-6d-61-c0.localdomain>
-References: <20190527085155.GA11421@xo-6d-61-c0.localdomain>
- <20190527093938.GA12391@xo-6d-61-c0.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190527093938.GA12391@xo-6d-61-c0.localdomain>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1726757AbfE0KcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 06:32:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52432 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726302AbfE0KcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 06:32:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4502AAE27;
+        Mon, 27 May 2019 10:32:12 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, devel@driverdev.osuosl.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-mm@kvack.org
+Cc:     Juergen Gross <jgross@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        ocfs2-devel@oss.oracle.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: [PATCH 0/3] remove tmem and code depending on it
+Date:   Mon, 27 May 2019 12:32:04 +0200
+Message-Id: <20190527103207.13287-1-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+Tmem has been an experimental Xen feature which has been dropped
+recently due to security problems and lack of maintainership.
 
-> > So if you compile a kernel, then reboot, boot will hang after "Freeing SMP
-> > alternatives memory" (and then wastes power, making thermal situation even worse).
-> 
-> Normally, next message is "smpboot: CPU0: Genuine Intel...".
-> 
-> I added some printks, and check_bugs() returns. Then it goes to ACPI and never
-> comes back...
-> 
-> kernel-parameters.txt points to Documentation/acpi/debug.txt, but that one does not exist.
-> 
-> Any ideas what debugging parameters to use for ACPI? I either get nothing or
-> so much that machine does not boot...
+So it is time now to drop it in Linux kernel, too.
 
-I ended up adding printks...
+Juergen Gross (3):
+  xen: remove tmem driver
+  mm: remove cleancache.c
+  mm: remove tmem specifics from frontswap
 
-It hangs in acpi_hw_set_mode().
-
-ACPI enable: set mode: acpi
-ACPI: hw_set_mode
-ACPI: hw_set_mode mode switch
-ACPI: write_port?
-ACPI: os write port
-
-we write to the port but that never returns.
-
-I assume SMM is doing its magic at that point. Any ideas how to debug it further?
-
-Is it possible that it is some kind of screaming interrupt?
-
-										Pavel
-
+ Documentation/admin-guide/kernel-parameters.txt |  21 -
+ Documentation/vm/cleancache.rst                 | 296 ------------
+ Documentation/vm/frontswap.rst                  |  27 +-
+ Documentation/vm/index.rst                      |   1 -
+ MAINTAINERS                                     |   7 -
+ drivers/staging/erofs/data.c                    |   6 -
+ drivers/staging/erofs/internal.h                |   1 -
+ drivers/xen/Kconfig                             |  23 -
+ drivers/xen/Makefile                            |   2 -
+ drivers/xen/tmem.c                              | 419 -----------------
+ drivers/xen/xen-balloon.c                       |   2 -
+ drivers/xen/xen-selfballoon.c                   | 579 ------------------------
+ fs/block_dev.c                                  |   5 -
+ fs/btrfs/extent_io.c                            |   9 -
+ fs/btrfs/super.c                                |   2 -
+ fs/ext4/readpage.c                              |   6 -
+ fs/ext4/super.c                                 |   2 -
+ fs/f2fs/data.c                                  |   3 +-
+ fs/mpage.c                                      |   7 -
+ fs/ocfs2/super.c                                |   2 -
+ fs/super.c                                      |   3 -
+ include/linux/cleancache.h                      | 124 -----
+ include/linux/frontswap.h                       |   5 -
+ include/linux/fs.h                              |   5 -
+ include/xen/balloon.h                           |   8 -
+ include/xen/tmem.h                              |  18 -
+ mm/Kconfig                                      |  38 +-
+ mm/Makefile                                     |   1 -
+ mm/cleancache.c                                 | 317 -------------
+ mm/filemap.c                                    |  11 -
+ mm/frontswap.c                                  | 156 +------
+ mm/truncate.c                                   |  15 +-
+ 32 files changed, 17 insertions(+), 2104 deletions(-)
+ delete mode 100644 Documentation/vm/cleancache.rst
+ delete mode 100644 drivers/xen/tmem.c
+ delete mode 100644 drivers/xen/xen-selfballoon.c
+ delete mode 100644 include/linux/cleancache.h
+ delete mode 100644 include/xen/tmem.h
+ delete mode 100644 mm/cleancache.c
 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+2.16.4
+
