@@ -2,90 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F24472B899
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 246BF2B88B
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:44:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfE0Pt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 11:49:58 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:59553 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726397AbfE0Pt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 11:49:57 -0400
-X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 May 2019 11:49:57 EDT
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c250ad4e
-        for <linux-kernel@vger.kernel.org>;
-        Mon, 27 May 2019 15:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to
-        :content-type; s=mail; bh=kHnd1JT4Od4VGrch3hXC3ov+0w0=; b=NxY0TL
-        bp41+jikqYCnnvfJIM0H3C0IWxgq34zh+7u8JzbUxtFOpb9kmLnV9G8GKLSt47DL
-        gEIkvNdzeivnmhkoesK0hMVjisqQxnzZ0t6n5z1kaKOx3q+a0upmIC6bqLAvmDRS
-        UZNPWDPf+bd+947NHWhokQlJIeg/WE8ccaHiuszl3duwj7HEhLZmjAh+lndaXfRU
-        JCnddj09t+ctMWeq4KJ676sAfufeDoQXQfnlPXCcfioOHo0I7zKkGPdV5XRNrKDe
-        RiIQVNw7MN+WSKYKgVB24VqgoIHjAoJEV9ZIhBrPCCvB3UCatCVaHXPcimHaH60Q
-        a1N6cDJ16oa/qrhw==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id eb96b252 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Mon, 27 May 2019 15:13:03 +0000 (UTC)
-Received: by mail-ot1-f45.google.com with SMTP id l25so15139803otp.8
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 08:43:16 -0700 (PDT)
-X-Gm-Message-State: APjAAAUxFZgQCndf7Yekm5NN8KTa80ma5ECIwwRsM2O1chn6yVH4ebSb
-        lbDDpltxFDbGn6QL5/xt1felTgDSnxHvV1aRWQI=
-X-Google-Smtp-Source: APXvYqwSkmBzEbx09qA71YbHv3/5khjCRUWXKEIgS3R2RImfzEbI5tP1NgdUDTf8hdqtX5DV5A4t0ZmrX6RWqYONAko=
-X-Received: by 2002:a9d:7154:: with SMTP id y20mr5894480otj.369.1558971794577;
- Mon, 27 May 2019 08:43:14 -0700 (PDT)
+        id S1726610AbfE0PoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 11:44:10 -0400
+Received: from mail-wr1-f50.google.com ([209.85.221.50]:45511 "EHLO
+        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfE0PoK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 11:44:10 -0400
+Received: by mail-wr1-f50.google.com with SMTP id b18so17259482wrq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 08:44:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2A4/Dy7CeUNWJQHbbLk0HO1r8qYMXPrMtWyOg+ikpyk=;
+        b=rn87ZKkRswkp6xaHFggHfpbYjtNTCW9E1rPbKwuFO3LdDBvYSK86wbp3vGylYb5D7G
+         9cD7N7I5dOQQaB2xxJDVmKbTtmtFAqBcqUp2IXltoElxv0xxYuL/LK/hdJH0gpKJsEcB
+         O6AYJQRm0y30oezGVlaf82HFvNx+9/UB29KLeKghWUatN94bZe07VMTYHZPyWknGhBkR
+         ei/BfVUf4Y6dtxQf6ZbxT1IUTwe0ibKOAOCzd/BJHYSBUBCzZ+DSqp7X76cx633wqCyw
+         ek/M0uCjtRXDiITHOMKUyb7gET6/+C8W10g8Lh/Bf2O2PL+WlYRsZE0rqHuLfFL5IeD2
+         djFg==
+X-Gm-Message-State: APjAAAXSA2EezQ8KUxDAW3PwOe+QUDRTI6m50qWlMgcHCgL+oG423hc0
+        lajrB6CPexa5RgglMqxAjuyE5A==
+X-Google-Smtp-Source: APXvYqxek10K/dO9NSTEttg+mnORuKnxwc7jyGofKaHXmyE/ma/6TRaCxUAv7G+DGuJ8bDopIl1MFQ==
+X-Received: by 2002:adf:ef8d:: with SMTP id d13mr6429556wro.60.1558971848967;
+        Mon, 27 May 2019 08:44:08 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:c92d:f9e8:f150:3553? ([2001:b07:6468:f312:c92d:f9e8:f150:3553])
+        by smtp.gmail.com with ESMTPSA id s62sm22814951wmf.24.2019.05.27.08.44.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 08:44:08 -0700 (PDT)
+Subject: Re: [RFC/PATCH] refs: tone down the dwimmery in refname_match() for
+ {heads,tags,remotes}/*
+To:     Junio C Hamano <gitster@pobox.com>,
+        =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>
+Cc:     git@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM list <kvm@vger.kernel.org>,
+        Michael Haggerty <mhagger@alum.mit.edu>
+References: <CAHk-=wgzKzAwS=_ySikL1f=Gr62YXL_WXGh82wZKMOvzJ9+2VA@mail.gmail.com>
+ <20190526225445.21618-1-avarab@gmail.com>
+ <5c9ce55c-2c3a-fce0-d6e3-dfe5f8fc9b01@redhat.com>
+ <874l5gezsn.fsf@evledraar.gmail.com>
+ <xmqqef4jewj6.fsf@gitster-ct.c.googlers.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <a40c5388-4274-6bfa-4213-6013601c8fae@redhat.com>
+Date:   Mon, 27 May 2019 17:44:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190527122627.GA15618@u> <20190527140643.GB8585@mit.edu>
-In-Reply-To: <20190527140643.GB8585@mit.edu>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Mon, 27 May 2019 17:43:03 +0200
-X-Gmail-Original-Message-ID: <CAHmME9qvdKy6zCHQEUp1zp-dL0Sco1Ujtn7jXK=EFde_yDx8wA@mail.gmail.com>
-Message-ID: <CAHmME9qvdKy6zCHQEUp1zp-dL0Sco1Ujtn7jXK=EFde_yDx8wA@mail.gmail.com>
-Subject: Re: [PATCH] random: urandom reads block when CRNG is not initialized.
-To:     "Theodore Ts'o" <tytso@mit.edu>,
-        Naveen Nathan <naveen@lastninja.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Kevin Easton <kevin@guarana.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <xmqqef4jewj6.fsf@gitster-ct.c.googlers.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 4:07 PM Theodore Ts'o <tytso@mit.edu> wrote:
->
-> This is guaranteed to cause the system to fail for systems using
-> systemd.  (Unless you are running an x86 with random.trust_cpu=1 ---
-> in which case, this patch/config is pointless.)  And many embedded
-> systems *do* use systemd.  I know lots of people like to wish that
-> systemd doesn't exist, but we need to face reality.
->
-> *Seriously,* if this is something the system builder should be using,
-> they should be fixing userspace.  And if they care enough that they
-> would want to enable this patch, they could just scan dmesg looking
-> for the warnings from the kernel.
+On 27/05/19 17:39, Junio C Hamano wrote:
+> I do not think lightweight vs annotated should be the issue.  The
+> tag that the requestor asks to be pulled (from repository ../b)
+> should be what the requestor has locally when writing the request
+> (in repository .).  Even if both tags at remote and local are
+> annotated, we should still warn if they are different objects, no?
 
-Really, it's a chicken & egg thing. If people who make userspaces
-never have an option to design around the correct behavior, they'll
-continue to rely on the broken behavior. But if we give them a way to
-compile their kernels with the correct behavior, eventually some
-userspaces will run fine with it. "But they should just use
-getrandom()!" you shout. Yes, and maybe the code most userspace
-builders provide does do this. But people like to plug-in plenty of
-third party things into their userspaces, and I think there's some
-value in a userspace being able to say, "we've dealt with the
-/dev/urandom situation, and we now do the right thing, so we can
-enable this option, and now the code you run on our userspace will
-give good randomness."
+Right, lightweight vs annotated then is the obvious special case where
+one of the two is a commit and the other is a tag, hence they ought not
+to have the same SHA1.  I'll take a look.
 
-More concretely, distros might ship an init system that allows
-enabling this option without creating issues. Systemd might improve.
-OpenRC and runit-based distros appear to exist. Some folks do very
-custom stuff. If they manage to make it work with the correct urandom
-behavior, then that's a good situation for everything else to build
-on, and for providing better guarantees for third party software that
-runs on that distro. But none of this is possible without the ability
-to compile the kernel with the correct behavior.
+Paolo
