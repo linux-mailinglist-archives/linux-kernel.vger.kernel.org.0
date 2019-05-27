@@ -2,117 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CD942AE08
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 07:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CE602AE3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 07:41:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbfE0Fiq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 01:38:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:55458 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725774AbfE0Fip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 01:38:45 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1783D374;
-        Sun, 26 May 2019 22:38:45 -0700 (PDT)
-Received: from [10.162.40.17] (p8cg001049571a15.blr.arm.com [10.162.40.17])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D7E53F690;
-        Sun, 26 May 2019 22:38:42 -0700 (PDT)
-Subject: Re: [PATCH] mm, compaction: Make sure we isolate a valid PFN
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>, linux-mm@kvack.org
-Cc:     mgorman@techsingularity.net, akpm@linux-foundation.org,
-        mhocko@suse.com, cai@lca.pw, linux-kernel@vger.kernel.org,
-        marc.zyngier@arm.com, kvmarm@lists.cs.columbia.edu,
-        kvm@vger.kernel.org
-References: <20190524103924.GN18914@techsingularity.net>
- <1558711908-15688-1-git-send-email-suzuki.poulose@arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <8068e2e2-e90d-e8b8-55dc-9dee7d73c5e3@arm.com>
-Date:   Mon, 27 May 2019 11:08:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1558711908-15688-1-git-send-email-suzuki.poulose@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726106AbfE0Fk4 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 27 May 2019 01:40:56 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:50692 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbfE0Fkz (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:6:1>);
+        Mon, 27 May 2019 01:40:55 -0400
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Sun, 26 May 2019 23:40:54 -0600
+Message-Id: <5CEB785F020000F900068371@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.1.1 
+Date:   Sun, 26 May 2019 23:40:47 -0600
+From:   "Gang He" <ghe@suse.com>
+To:     "Wengang" <wen.gang.wang@oracle.com>
+Cc:     <jlbec@evilplan.org>, <mark@fasheh.com>, <jiangqi903@gmail.com>,
+        <ocfs2-devel@oss.oracle.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [Ocfs2-devel] [PATCH V3 2/2] ocfs2: add locking filter
+ debugfs file
+References: <20190523104047.14794-1-ghe@suse.com>
+ <20190523104047.14794-2-ghe@suse.com>
+ <da93442d-3333-5bd6-ce0a-edb66a58109d@oracle.com>
+ <5CE753AB020000F900067E5D@prv1-mh.provo.novell.com>
+ <bcdefc65-7173-8911-3ba1-197b064b5fa5@oracle.com>
+In-Reply-To: <bcdefc65-7173-8911-3ba1-197b064b5fa5@oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello Wengang,
+
+Another patch will do the thing you mentioned.
+The patch link is here, https://marc.info/?l=ocfs2-devel&m=155860816602506&w=2
+
+Thanks
+Gang
 
 
-On 05/24/2019 09:01 PM, Suzuki K Poulose wrote:
-> When we have holes in a normal memory zone, we could endup having
-> cached_migrate_pfns which may not necessarily be valid, under heavy memory
-> pressure with swapping enabled ( via __reset_isolation_suitable(), triggered
-> by kswapd).
+>>> On 2019/5/25 at 3:52, in message
+<bcdefc65-7173-8911-3ba1-197b064b5fa5@oracle.com>, Wengang Wang
+<wen.gang.wang@oracle.com> wrote:
+> Hi Gang,
 > 
-> Later if we fail to find a page via fast_isolate_freepages(), we may
-> end up using the migrate_pfn we started the search with, as valid
-> page. This could lead to accessing NULL pointer derefernces like below,
-> due to an invalid mem_section pointer.
+> OK, I was thinking you are dumping the new last access time field too.
 > 
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000008 [47/1825]
->  Mem abort info:
->    ESR = 0x96000004
->    Exception class = DABT (current EL), IL = 32 bits
->    SET = 0, FnV = 0
->    EA = 0, S1PTW = 0
->  Data abort info:
->    ISV = 0, ISS = 0x00000004
->    CM = 0, WnR = 0
->  user pgtable: 4k pages, 48-bit VAs, pgdp = 0000000082f94ae9
->  [0000000000000008] pgd=0000000000000000
->  Internal error: Oops: 96000004 [#1] SMP
->  ...
->  CPU: 10 PID: 6080 Comm: qemu-system-aar Not tainted 510-rc1+ #6
->  Hardware name: AmpereComputing(R) OSPREY EV-883832-X3-0001/OSPREY, BIOS 4819 09/25/2018
->  pstate: 60000005 (nZCv daif -PAN -UAO)
->  pc : set_pfnblock_flags_mask+0x58/0xe8
->  lr : compaction_alloc+0x300/0x950
->  [...]
->  Process qemu-system-aar (pid: 6080, stack limit = 0x0000000095070da5)
->  Call trace:
->   set_pfnblock_flags_mask+0x58/0xe8
->   compaction_alloc+0x300/0x950
->   migrate_pages+0x1a4/0xbb0
->   compact_zone+0x750/0xde8
->   compact_zone_order+0xd8/0x118
->   try_to_compact_pages+0xb4/0x290
->   __alloc_pages_direct_compact+0x84/0x1e0
->   __alloc_pages_nodemask+0x5e0/0xe18
->   alloc_pages_vma+0x1cc/0x210
->   do_huge_pmd_anonymous_page+0x108/0x7c8
->   __handle_mm_fault+0xdd4/0x1190
->   handle_mm_fault+0x114/0x1c0
->   __get_user_pages+0x198/0x3c0
->   get_user_pages_unlocked+0xb4/0x1d8
->   __gfn_to_pfn_memslot+0x12c/0x3b8
->   gfn_to_pfn_prot+0x4c/0x60
->   kvm_handle_guest_abort+0x4b0/0xcd8
->   handle_exit+0x140/0x1b8
->   kvm_arch_vcpu_ioctl_run+0x260/0x768
->   kvm_vcpu_ioctl+0x490/0x898
->   do_vfs_ioctl+0xc4/0x898
->   ksys_ioctl+0x8c/0xa0
->   __arm64_sys_ioctl+0x28/0x38
->   el0_svc_common+0x74/0x118
->   el0_svc_handler+0x38/0x78
->   el0_svc+0x8/0xc
->  Code: f8607840 f100001f 8b011401 9a801020 (f9400400)
->  ---[ end trace af6a35219325a9b6 ]---
+> thanks,
+> wengang
 > 
-> The issue was reported on an arm64 server with 128GB with holes in the zone
-> (e.g, [32GB@4GB, 96GB@544GB]), with a swap device enabled, while running 100 KVM
-> guest instances.
-> 
-> This patch fixes the issue by ensuring that the page belongs to a valid PFN
-> when we fallback to using the lower limit of the scan range upon failure in
-> fast_isolate_freepages().
-> 
-> Fixes: 5a811889de10f1eb ("mm, compaction: use free lists to quickly locate a migration target")
-> Reported-by: Marc Zyngier <marc.zyngier@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> On 2019/5/23 19:15, Gang He wrote:
+>> Hello Wengang,
+>>
+>> This patch is used to add a filter attribute(the default value is 0), the 
+> kernel module can use this attribute value to filter the lock resources 
+> dumping.
+>> By default(the value is 0), the kernel module does not filter any lock 
+> resources dumping, the behavior is like before.
+>> If the user set a value(N) of this attribute, the kernel module will only 
+> dump the latest N seconds active lock resources, this will avoid dumping lots 
+> of inactive lock resources.
+>>
+>> Thanks
+>> Gang
+>>
+>>>>> On 2019/5/24 at 0:43, in message
+>> <da93442d-3333-5bd6-ce0a-edb66a58109d@oracle.com>, Wengang
+>> <wen.gang.wang@oracle.com> wrote:
+>>> Hi Gang,
+>>>
+>>> Could you paste an example of outputs before patch VS that after patch?
+>>> I think that would directly show what the patch does.
+>>>
+>>> thanks,
+>>> wengang
+>>>
+>>> On 05/23/2019 03:40 AM, Gang He wrote:
+>>>> Add locking filter debugfs file, which is used to filter lock
+>>>> resources dump from locking_state debugfs file.
+>>>> We use d_filter_secs field to filter lock resources dump,
+>>>> the default d_filter_secs(0) value filters nothing,
+>>>> otherwise, only dump the last N seconds active lock resources.
+>>>> This enhancement can avoid dumping lots of old records.
+>>>> The d_filter_secs value can be changed via locking_filter file.
+>>>>
+>>>> Compared with v2, ocfs2_dlm_init_debug() returns directly with
+>>>> error when creating locking filter debugfs file is failed, since
+>>>> ocfs2_dlm_shutdown_debug() will handle this failure perfectly.
+>>>> Compared with v1, the main change is to add CONFIG_OCFS2_FS_STATS
+>>>> macro definition judgment.
+>>>>
+>>>> Signed-off-by: Gang He <ghe@suse.com>
+>>>> Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+>>>> ---
+>>>>    fs/ocfs2/dlmglue.c | 36 ++++++++++++++++++++++++++++++++++++
+>>>>    fs/ocfs2/ocfs2.h   |  2 ++
+>>>>    2 files changed, 38 insertions(+)
+>>>>
+>>>> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+>>>> index dccf4136f8c1..fbe4562cf4fe 100644
+>>>> --- a/fs/ocfs2/dlmglue.c
+>>>> +++ b/fs/ocfs2/dlmglue.c
+>>>> @@ -3006,6 +3006,8 @@ struct ocfs2_dlm_debug *ocfs2_new_dlm_debug(void)
+>>>>    	kref_init(&dlm_debug->d_refcnt);
+>>>>    	INIT_LIST_HEAD(&dlm_debug->d_lockres_tracking);
+>>>>    	dlm_debug->d_locking_state = NULL;
+>>>> +	dlm_debug->d_locking_filter = NULL;
+>>>> +	dlm_debug->d_filter_secs = 0;
+>>>>    out:
+>>>>    	return dlm_debug;
+>>>>    }
+>>>> @@ -3104,11 +3106,33 @@ static int ocfs2_dlm_seq_show(struct seq_file *m,
+>>> void *v)
+>>>>    {
+>>>>    	int i;
+>>>>    	char *lvb;
+>>>> +	u32 now, last = 0;
+>>>>    	struct ocfs2_lock_res *lockres = v;
+>>>> +	struct ocfs2_dlm_debug *dlm_debug =
+>>>> +			((struct ocfs2_dlm_seq_priv *)m->private)->p_dlm_debug;
+>>>>    
+>>>>    	if (!lockres)
+>>>>    		return -EINVAL;
+>>>>    
+>>>> +	if (dlm_debug->d_filter_secs) {
+>>>> +		now = ktime_to_timespec(ktime_get()).tv_sec;
+>>>> +#ifdef CONFIG_OCFS2_FS_STATS
+>>>> +		if (lockres->l_lock_prmode.ls_last >
+>>>> +		    lockres->l_lock_exmode.ls_last)
+>>>> +			last = lockres->l_lock_prmode.ls_last;
+>>>> +		else
+>>>> +			last = lockres->l_lock_exmode.ls_last;
+>>>> +#endif
+>>>> +		/*
+>>>> +		 * Use d_filter_secs field to filter lock resources dump,
+>>>> +		 * the default d_filter_secs(0) value filters nothing,
+>>>> +		 * otherwise, only dump the last N seconds active lock
+>>>> +		 * resources.
+>>>> +		 */
+>>>> +		if ((now - last) > dlm_debug->d_filter_secs)
+>>>> +			return 0;
+>>>> +	}
+>>>> +
+>>>>    	seq_printf(m, "0x%x\t", OCFS2_DLM_DEBUG_STR_VERSION);
+>>>>    
+>>>>    	if (lockres->l_type == OCFS2_LOCK_TYPE_DENTRY)
+>>>> @@ -3258,6 +3282,17 @@ static int ocfs2_dlm_init_debug(struct ocfs2_super
+>>> *osb)
+>>>>    		goto out;
+>>>>    	}
+>>>>    
+>>>> +	dlm_debug->d_locking_filter = debugfs_create_u32("locking_filter",
+>>>> +						0600,
+>>>> +						osb->osb_debug_root,
+>>>> +						&dlm_debug->d_filter_secs);
+>>>> +	if (!dlm_debug->d_locking_filter) {
+>>>> +		ret = -EINVAL;
+>>>> +		mlog(ML_ERROR,
+>>>> +		     "Unable to create locking filter debugfs file.\n");
+>>>> +		goto out;
+>>>> +	}
+>>>> +
+>>>>    	ocfs2_get_dlm_debug(dlm_debug);
+>>>>    out:
+>>>>    	return ret;
+>>>> @@ -3269,6 +3304,7 @@ static void ocfs2_dlm_shutdown_debug(struct
+>>> ocfs2_super *osb)
+>>>>    
+>>>>    	if (dlm_debug) {
+>>>>    		debugfs_remove(dlm_debug->d_locking_state);
+>>>> +		debugfs_remove(dlm_debug->d_locking_filter);
+>>>>    		ocfs2_put_dlm_debug(dlm_debug);
+>>>>    	}
+>>>>    }
+>>>> diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
+>>>> index 8efa022684f4..f4da51099889 100644
+>>>> --- a/fs/ocfs2/ocfs2.h
+>>>> +++ b/fs/ocfs2/ocfs2.h
+>>>> @@ -237,6 +237,8 @@ struct ocfs2_orphan_scan {
+>>>>    struct ocfs2_dlm_debug {
+>>>>    	struct kref d_refcnt;
+>>>>    	struct dentry *d_locking_state;
+>>>> +	struct dentry *d_locking_filter;
+>>>> +	u32 d_filter_secs;
+>>>>    	struct list_head d_lockres_tracking;
+>>>>    };
+>>>>    
