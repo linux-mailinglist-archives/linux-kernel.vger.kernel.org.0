@@ -2,111 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F3812B895
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:47:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC3442B8A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 17:56:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbfE0PrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 11:47:15 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59835 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbfE0PrP (ORCPT
+        id S1726640AbfE0P44 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 11:56:56 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38563 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbfE0P44 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 11:47:15 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 72102804CA; Mon, 27 May 2019 17:47:02 +0200 (CEST)
-Date:   Mon, 27 May 2019 17:46:47 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     pavel@ucw.cz
-Cc:     linux-kernel@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH 4.19 049/114] iommu/tegra-smmu: Fix invalid ASID bits on
- Tegra30/114
-Message-ID: <20190527154647.GA4050@xo-6d-61-c0.localdomain>
-References: <20190523181731.372074275@linuxfoundation.org>
- <20190523181736.156742338@linuxfoundation.org>
+        Mon, 27 May 2019 11:56:56 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b76so9790288pfb.5;
+        Mon, 27 May 2019 08:56:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=d6VSBFNBtAbJpYlBgVyHpiunnCtg5nq2DJVgA1pCtMA=;
+        b=jtkyvqMqsBJBDfI+8Vyo9jx8Zu56SQR9OU96Wf8gn9qcqPL0dhirCkWpHS9Q4LJoTf
+         FnH8J7xFslp71OCeVd9OTKi8nuockChFDcyvMwY+XFnuRkpQxiIqaHPUQmH8Ntgxre28
+         x4Oec5b+wAAR8zX6mcArnvX7vfKrhwnrSaPsJ3bCJKlEq18rF5RLNbXP6gPlyeiDXYrB
+         VXYyXqsv57vT/jHgAOa1epzDJ68BPcIOjp2CM5usrOM5vvJTAnOVKdBPIDxGYWmmC3tW
+         YZ7KnYA5eI2kVA2HU2NDd+Pv9KQKc/YaSYmKqYaBcHrPovVeZ+NBUd8MBdkq5ABBuPSH
+         0u8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=d6VSBFNBtAbJpYlBgVyHpiunnCtg5nq2DJVgA1pCtMA=;
+        b=W+aNhwTKE+AssN2x/6Yzs5a1/AEMSBzqgznGr1vqgB5q3oKHq39h0weOIzpyC0XflW
+         Aj6v/dVSbJ9v55skCTixoEcc3WSJIdmCYvzVDED4Iu3nqpNPa8A5ruPP635YREc+bqjv
+         KPSQlpVp/liAE2nc7yuhhFcFIHytGIWTxvZrLec22v8mCQlOzBy4MXjEzOQrKrg4bSpX
+         vjagmhQV9SGzzuYAl1M2ERr0IYfJUA1Qe0m93rDDCr7m3DAHc44yf1DQTNjgz3JAcLYR
+         te8v8u7iYm8ZemktTaxNui00sDoZ5cXuiLtLe4PSJi6cS9YoYk7gTRkfXxMH6rijZr2g
+         9h4w==
+X-Gm-Message-State: APjAAAUKZqyWnNmlQ02K0/LkAXsaOtaUX0HamGrnC+nhF/XM4xX//W3S
+        0GgnDWXThPhEsqKMezsc3F08EkKI
+X-Google-Smtp-Source: APXvYqwcAY5U9y/EHrI4RzsmJwHSIzREkHux5n+Pnh+rJpV8l5dRNU8u/Pmwj5d1E4tkhpXhbdMBcw==
+X-Received: by 2002:a17:90a:b393:: with SMTP id e19mr32693682pjr.91.1558972615422;
+        Mon, 27 May 2019 08:56:55 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id q70sm19541411pja.31.2019.05.27.08.56.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 08:56:54 -0700 (PDT)
+Subject: Re: [Qemu-devel] Running linux on qemu omap
+To:     Tony Lindgren <tony@atomide.com>,
+        =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <philmd@redhat.com>
+Cc:     Thomas Huth <thuth@redhat.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        linux-omap@vger.kernel.org, qemu-devel@nongnu.org,
+        linux-kernel@vger.kernel.org,
+        Peter Maydell <peter.maydell@linaro.org>
+References: <20190520190533.GA28160@Red>
+ <20190521232323.GD3621@darkstar.musicnaut.iki.fi>
+ <20190522093341.GA32154@Red>
+ <20190522181904.GE3621@darkstar.musicnaut.iki.fi>
+ <8977e2bb-8d9e-f4fd-4c44-b4f67e0e7314@redhat.com>
+ <c2972889-fe60-7614-fb6e-e57ddf780a54@redhat.com>
+ <20190527063250.GI5447@atomide.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <5dbec436-4356-415e-eb1c-0f506af89744@roeck-us.net>
+Date:   Mon, 27 May 2019 08:56:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190523181736.156742338@linuxfoundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190527063250.GI5447@atomide.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-05-23 21:05:48, Greg Kroah-Hartman wrote:
-> From: Dmitry Osipenko <digetx@gmail.com>
+On 5/26/19 11:32 PM, Tony Lindgren wrote:
+> Hi,
 > 
-> commit 43a0541e312f7136e081e6bf58f6c8a2e9672688 upstream.
+> * Philippe Mathieu-Daudé <philmd@redhat.com> [190523 12:01]:
+>> What I use as reference for testing ARM boards [*] is the work of
+>> Guenter Roeck:
+>> https://github.com/groeck/linux-build-test/blob/master/rootfs/arm/run-qemu-arm.sh
 > 
-> Both Tegra30 and Tegra114 have 4 ASID's and the corresponding bitfield of
-> the TLB_FLUSH register differs from later Tegra generations that have 128
-> ASID's.
+> I think Guenter also has v2.3.50-local-linaro branch in his
+> github repo that has support for few extra boards like Beagleboard.
+> Not sure what's the current branch to use though.
 > 
-> In a result the PTE's are now flushed correctly from TLB and this fixes
-> problems with graphics (randomly failing tests) on Tegra30.
+I'd be happy to use a different (supported) branch, but the Linaro branch
+was the only one I could find that supports those boards. Unfortunately,
+qemu changed so much since 2.3 that it is all but impossible to merge
+the code into mainline qemu without spending a lot of effort on it.
 
-
-Three copies of same code... maybe its time to introduce helper function?
-
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -102,7 +102,6 @@ static inline u32 smmu_readl(struct tegr
->  #define  SMMU_TLB_FLUSH_VA_MATCH_ALL     (0 << 0)
->  #define  SMMU_TLB_FLUSH_VA_MATCH_SECTION (2 << 0)
->  #define  SMMU_TLB_FLUSH_VA_MATCH_GROUP   (3 << 0)
-> -#define  SMMU_TLB_FLUSH_ASID(x)          (((x) & 0x7f) << 24)
->  #define  SMMU_TLB_FLUSH_VA_SECTION(addr) ((((addr) & 0xffc00000) >> 12) | \
->  					  SMMU_TLB_FLUSH_VA_MATCH_SECTION)
->  #define  SMMU_TLB_FLUSH_VA_GROUP(addr)   ((((addr) & 0xffffc000) >> 12) | \
-> @@ -205,8 +204,12 @@ static inline void smmu_flush_tlb_asid(s
->  {
->  	u32 value;
->  
-> -	value = SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_ASID(asid) |
-> -		SMMU_TLB_FLUSH_VA_MATCH_ALL;
-> +	if (smmu->soc->num_asids == 4)
-> +		value = (asid & 0x3) << 29;
-> +	else
-> +		value = (asid & 0x7f) << 24;
-> +
-> +	value |= SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_VA_MATCH_ALL;
->  	smmu_writel(smmu, value, SMMU_TLB_FLUSH);
->  }
->  
-> @@ -216,8 +219,12 @@ static inline void smmu_flush_tlb_sectio
->  {
->  	u32 value;
->  
-> -	value = SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_ASID(asid) |
-> -		SMMU_TLB_FLUSH_VA_SECTION(iova);
-> +	if (smmu->soc->num_asids == 4)
-> +		value = (asid & 0x3) << 29;
-> +	else
-> +		value = (asid & 0x7f) << 24;
-> +
-> +	value |= SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_VA_SECTION(iova);
->  	smmu_writel(smmu, value, SMMU_TLB_FLUSH);
->  }
->  
-> @@ -227,8 +234,12 @@ static inline void smmu_flush_tlb_group(
->  {
->  	u32 value;
->  
-> -	value = SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_ASID(asid) |
-> -		SMMU_TLB_FLUSH_VA_GROUP(iova);
-> +	if (smmu->soc->num_asids == 4)
-> +		value = (asid & 0x3) << 29;
-> +	else
-> +		value = (asid & 0x7f) << 24;
-> +
-> +	value |= SMMU_TLB_FLUSH_ASID_MATCH | SMMU_TLB_FLUSH_VA_GROUP(iova);
->  	smmu_writel(smmu, value, SMMU_TLB_FLUSH);
->  }
->  
-> 
-
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Guenter
