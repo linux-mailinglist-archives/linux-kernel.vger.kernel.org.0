@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82AE42B011
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 10:23:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 772432B016
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 10:23:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726547AbfE0IXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 04:23:12 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43502 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726563AbfE0IXJ (ORCPT
+        id S1726663AbfE0IXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 04:23:30 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55454 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfE0IXK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 04:23:09 -0400
-Received: by mail-wr1-f65.google.com with SMTP id l17so7582066wrm.10
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 01:23:08 -0700 (PDT)
+        Mon, 27 May 2019 04:23:10 -0400
+Received: by mail-wm1-f67.google.com with SMTP id u78so2344347wmu.5
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 01:23:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oOz0LP9XTs5tIMlVAfAa4sEOphJ8DfIzZ/dQTkiG5RA=;
-        b=yCOHiHplnwXVnVvgMMq+WTfd08hSzLEbtyehNusK+SmHiWfDcF6ZStaxb8s2aBbO4o
-         0jobPG9WnWr65/a3rnnbaVi1mY2Cieh8lvmaoHAne1acn2J5r3eWXWRQ7Y3uI2osJAHS
-         6AfXeQgdAuFHiCOlaeZNIzOGgF7oReiIEv0MkVz1xnP1mrbWN9eEyEG21OnWSa8bnec2
-         2FeJ9hwiAE+UmtVEHiTjsynANIMSa0JDRo7IPW3LALW1ghlKsl22/Q8SuXoP/N/Mpmjs
-         S1aKHRA5p3ViE5aYVrN8/UqTt2smTAJhQsBdz5ppWpsjjY/VR1svGx10haDUnYkMtw9D
-         TeWg==
+        bh=omOq/JzjjXBt1z2M772CdUZvGc6HDPhhwS/eGDptw3A=;
+        b=FjKzq8TTsoWBgk4mu/GDTvAuxM4Ls9tSWI59jJoe94tDs04gg232DMCf7Famp8QO8n
+         Q4bhi/UIAPZWtSFFKuOZWLO2L6/3Avml1T1cC1PzDoJEp1BRI59efpkNpxpZqzNXf58+
+         YO7oKuX8xQbAwyUxYYgjmAOiwM1KquVzHlwGJKE70/gbbZkaYzzgEYiuL2Se+dLTDxQU
+         nZx8C0MO2Bu6Sb5lyHjVa5yNyS+Sx6AG1sIqr83JIH57MsLdVsOGPYawcRofquMgfpYe
+         6jy1oJQf/VNyjXNawFP45wi44yarrcenhxefteVfHS6Uh7laif+nPQWBGsw5cAE9LaWL
+         URDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oOz0LP9XTs5tIMlVAfAa4sEOphJ8DfIzZ/dQTkiG5RA=;
-        b=W2FSxsBtTCmeoRtA2eaJTCMD/Sbi1262lH/1ZIgNLRG1RNQheoob8MtuwKx88O4ose
-         VmymnHSW2fjt9Y0CZ/QE172JuO4tve10PeUay+piezZvwQ5d57RgTyiRk08Grs5lISPA
-         SfhV/2s+7CccoJyCKng2XBEcKQyhVGPRVTaXcSSNNXOHbgOVED+IIZTIw3qviUa5TwA/
-         L2cVRSXHVm1Tsz2tMkIfH1ENgEpfj4Wqn7aa7IhFNlpUD7xg1WHy2BjPFJe6kFVQKZMN
-         /IldqSCN7AzeaU33bkULG5Fr6rxpw95E+a7gv6HTc2S/f9bAgm4otTRhwba6wx99O+49
-         RuDw==
-X-Gm-Message-State: APjAAAWBDtr2drb/Atc2mfjHY6JIbfNwdtx1dVtalTN/ztkHUJ5krSY1
-        CRffAu43ftKVdHFr9dlY5q25yQ==
-X-Google-Smtp-Source: APXvYqyNYn3rnNZSWnBrcaeR6u4YqpqZBBBFmyW5rVTM0Wa8Fwkb1DC+23nrCA0lXM+xg4r3l/IWBA==
-X-Received: by 2002:adf:cf03:: with SMTP id o3mr10091252wrj.5.1558945387586;
-        Mon, 27 May 2019 01:23:07 -0700 (PDT)
+        bh=omOq/JzjjXBt1z2M772CdUZvGc6HDPhhwS/eGDptw3A=;
+        b=NlleGymsv1hndr7ufwtwRJ952/Y1nSZJSEQz1ezf/6XVAoTHLqC3NhxNUpaMFZHoaY
+         jnZj8V7Y4rjlD27fXU20gtMAUNqeme65umONDiDoq0EFoOALPCMrPDTocXFb1wtd7ZMH
+         C/USotXTQeAHnzwsy2cxQfHBrpxViaGfOFhAa641HEm4JfIUKEgS8zfz4e31+ZgF2PBg
+         vUFYONOfCpsy6aBbNJ2I7CES0s47W6BcUrfW1IMWcDPu8cwSqGL1rlVm+fbNdDcJQF7Q
+         poVtctNtsSiwRM47XG3WbDix/F3KESkXT6+6XqCTigqUgYh2TKVlTzFAwtJq1M6ZrmiZ
+         H+XA==
+X-Gm-Message-State: APjAAAWhTjbS5/Joayj5eolAVtbj5rz6ounRa6I7D/pp3+1mb8zkVLAm
+        VYdW6X/4ue+Bmsfc58e0S3JQ6A==
+X-Google-Smtp-Source: APXvYqw5I9nI20nY+Mj14/1S+PWhVrqS9ssbcSuJLzY6vmxi0EmMFZ4YTlP7p1LnQstfSNZWxPv2Vg==
+X-Received: by 2002:a1c:eb07:: with SMTP id j7mr24735522wmh.138.1558945388585;
+        Mon, 27 May 2019 01:23:08 -0700 (PDT)
 Received: from localhost.localdomain (amontpellier-652-1-281-69.w109-210.abo.wanadoo.fr. [109.210.96.69])
-        by smtp.gmail.com with ESMTPSA id n5sm14482754wrj.27.2019.05.27.01.23.06
+        by smtp.gmail.com with ESMTPSA id n5sm14482754wrj.27.2019.05.27.01.23.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 01:23:06 -0700 (PDT)
+        Mon, 27 May 2019 01:23:08 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -54,9 +54,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH v5 3/5] ARM: dts: da850-lcdk: enable cpufreq
-Date:   Mon, 27 May 2019 10:22:57 +0200
-Message-Id: <20190527082259.29237-4-brgl@bgdev.pl>
+Subject: [RESEND PATCH v5 4/5] ARM: dts: da850-evm: enable cpufreq
+Date:   Mon, 27 May 2019 10:22:58 +0200
+Message-Id: <20190527082259.29237-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190527082259.29237-1-brgl@bgdev.pl>
 References: <20190527082259.29237-1-brgl@bgdev.pl>
@@ -67,70 +67,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Lechner <david@lechnology.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add a fixed regulator for the da850-lcdk board along with board-specific
-CPU configuration.
+Enable cpufreq-dt support for da850-evm. The cvdd is supplied by the
+tps65070 pmic with configurable output voltage. By default da850-evm
+boards support frequencies up to 375MHz so enable this operating
+point.
 
-Signed-off-by: David Lechner <david@lechnology.com>
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Adam Ford <aford173@gmail.com>
 ---
- arch/arm/boot/dts/da850-lcdk.dts | 36 ++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ arch/arm/boot/dts/da850-evm.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/da850-lcdk.dts b/arch/arm/boot/dts/da850-lcdk.dts
-index 26f453dc8370..b36d5e36bcf1 100644
---- a/arch/arm/boot/dts/da850-lcdk.dts
-+++ b/arch/arm/boot/dts/da850-lcdk.dts
-@@ -155,12 +155,48 @@
- 			};
- 		};
+diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
+index f04bc3e15332..f94bb38fdad9 100644
+--- a/arch/arm/boot/dts/da850-evm.dts
++++ b/arch/arm/boot/dts/da850-evm.dts
+@@ -191,6 +191,19 @@
  	};
-+
-+	cvdd: regulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "cvdd";
-+		regulator-min-microvolt = <1300000>;
-+		regulator-max-microvolt = <1300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
- };
- 
- &ref_clk {
- 	clock-frequency = <24000000>;
  };
  
 +&cpu {
-+	cpu-supply = <&cvdd>;
++	cpu-supply = <&vdcdc3_reg>;
 +};
 +
 +/*
-+ * LCDK has a fixed CVDD of 1.3V, so only operating points >= 300MHz are
-+ * valid. Unfortunately due to a problem with the DA8XX OHCI controller, we
-+ * can't enable more than one OPP by default, since the controller sometimes
-+ * becomes unresponsive after a transition. Fix the frequency at 456 MHz.
++ * The standard da850-evm kits and SOM's are 375MHz so enable this operating
++ * point by default. Higher frequencies must be enabled for custom boards with
++ * other variants of the SoC.
 + */
-+
-+&opp_100 {
-+	status = "disabled";
-+};
-+
-+&opp_200 {
-+	status = "disabled";
-+};
-+
-+&opp_300 {
-+	status = "disabled";
-+};
-+
-+&opp_456 {
++&opp_375 {
 +	status = "okay";
 +};
 +
- &pmx_core {
+ &sata {
  	status = "okay";
- 
+ };
 -- 
 2.21.0
 
