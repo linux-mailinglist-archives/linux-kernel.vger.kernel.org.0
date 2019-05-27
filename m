@@ -2,243 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EE942ACE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 03:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8A652ACE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 04:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726205AbfE0B6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 26 May 2019 21:58:10 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:44831 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725973AbfE0B6J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 26 May 2019 21:58:09 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R561e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0TSlLoRp_1558922275;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TSlLoRp_1558922275)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 27 May 2019 09:58:04 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     ying.huang@intel.com, hannes@cmpxchg.org, mhocko@suse.com,
-        mgorman@techsingularity.net, kirill.shutemov@linux.intel.com,
-        josef@toxicpanda.com, hughd@google.com, shakeelb@google.com,
-        hdanton@sina.com, akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [RESEND v5 PATCH 2/2] mm: vmscan: correct some vmscan counters for THP swapout
-Date:   Mon, 27 May 2019 09:57:55 +0800
-Message-Id: <1558922275-31782-2-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1558922275-31782-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1558922275-31782-1-git-send-email-yang.shi@linux.alibaba.com>
+        id S1726264AbfE0CH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 26 May 2019 22:07:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17579 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725923AbfE0CHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 26 May 2019 22:07:55 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5FB2233BD9F184B792E4;
+        Mon, 27 May 2019 10:07:53 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 27 May 2019 10:07:45 +0800
+From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Sudeep Holla" <sudeep.holla@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v3 1/2] drivers: base: cacheinfo: Add variable to record max cache line size
+Date:   Mon, 27 May 2019 10:06:07 +0800
+Message-ID: <1558922768-29155-1-git-send-email-zhangshaokun@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit bd4c82c22c36 ("mm, THP, swap: delay splitting THP after
-swapped out"), THP can be swapped out in a whole.  But, nr_reclaimed
-and some other vm counters still get inc'ed by one even though a whole
-THP (512 pages) gets swapped out.
+Add coherency_max_size variable to record the maximum cache line size
+for different cache levels. We will synchronize it with CTR_EL0.CWG
+reporting in cache_line_size() for arm64.
 
-This doesn't make too much sense to memory reclaim.  For example, direct
-reclaim may just need reclaim SWAP_CLUSTER_MAX pages, reclaiming one THP
-could fulfill it.  But, if nr_reclaimed is not increased correctly,
-direct reclaim may just waste time to reclaim more pages,
-SWAP_CLUSTER_MAX * 512 pages in worst case.
-
-And, it may cause pgsteal_{kswapd|direct} is greater than
-pgscan_{kswapd|direct}, like the below:
-
-pgsteal_kswapd 122933
-pgsteal_direct 26600225
-pgscan_kswapd 174153
-pgscan_direct 14678312
-
-nr_reclaimed and nr_scanned must be fixed in parallel otherwise it would
-break some page reclaim logic, e.g.
-
-vmpressure: this looks at the scanned/reclaimed ratio so it won't
-change semantics as long as scanned & reclaimed are fixed in parallel.
-
-compaction/reclaim: compaction wants a certain number of physical pages
-freed up before going back to compacting.
-
-kswapd priority raising: kswapd raises priority if we scan fewer pages
-than the reclaim target (which itself is obviously expressed in order-0
-pages). As a result, kswapd can falsely raise its aggressiveness even
-when it's making great progress.
-
-Other than nr_scanned and nr_reclaimed, some other counters, e.g.
-pgactivate, nr_skipped, nr_ref_keep and nr_unmap_fail need to be fixed
-too since they are user visible via cgroup, /proc/vmstat or trace
-points, otherwise they would be underreported.
-
-When isolating pages from LRUs, nr_taken has been accounted in base
-page, but nr_scanned and nr_skipped are still accounted in THP.  It
-doesn't make too much sense too since this may cause trace point
-underreport the numbers as well.
-
-So accounting those counters in base page instead of accounting THP as
-one page.
-
-nr_dirty, nr_unqueued_dirty, nr_congested and nr_writeback are used by
-file cache, so they are not impacted by THP swap.
-
-This change may result in lower steal/scan ratio in some cases since
-THP may get split during page reclaim, then a part of tail pages get
-reclaimed instead of the whole 512 pages, but nr_scanned is accounted
-by 512, particularly for direct reclaim.  But, this should be not a
-significant issue.
-
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Jeremy Linton <jeremy.linton@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 ---
-v5: Fixed sc->nr_scanned double accounting per Huang Ying
-    Added some comments to address the concern about premature OOM per Hillf Danton 
-v4: Fixed the comments from Johannes and Huang Ying
-v3: Removed Shakeel's Reviewed-by since the patch has been changed significantly
-    Switched back to use compound_order per Matthew
-    Fixed more counters per Johannes
-v2: Added Shakeel's Reviewed-by
-    Use hpage_nr_pages instead of compound_order per Huang Ying and William Kucharski
+ChangeLog since v2:
+  -- Rebase to 5.2-rc2
+  -- Export cache_line_size for I/O driver
+ChangeLog since v1:
+  -- Move coherency_max_size to drivers/base/cacheinfo.c
+  -- Address Catalin's comments
+  Link: https://www.spinics.net/lists/arm-kernel/msg723615.html
 
- mm/vmscan.c | 42 +++++++++++++++++++++++++++++++-----------
- 1 file changed, 31 insertions(+), 11 deletions(-)
+ drivers/base/cacheinfo.c  | 5 +++++
+ include/linux/cacheinfo.h | 2 ++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index b65bc50..f4f4d57 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1118,6 +1118,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 		int may_enter_fs;
- 		enum page_references references = PAGEREF_RECLAIM_CLEAN;
- 		bool dirty, writeback;
-+		unsigned int nr_pages;
+diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+index a7359535caf5..8827c60f51e2 100644
+--- a/drivers/base/cacheinfo.c
++++ b/drivers/base/cacheinfo.c
+@@ -213,6 +213,8 @@ int __weak cache_setup_acpi(unsigned int cpu)
+ 	return -ENOTSUPP;
+ }
  
- 		cond_resched();
- 
-@@ -1129,6 +1130,13 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 
- 		VM_BUG_ON_PAGE(PageActive(page), page);
- 
-+		nr_pages = 1 << compound_order(page);
++unsigned int coherency_max_size;
 +
-+		/*
-+		 * Accounted one page for THP for now.  If THP gets swapped
-+		 * out in a whole, will account all tail pages later to
-+		 * avoid accounting tail pages twice.
-+		 */
- 		sc->nr_scanned++;
- 
- 		if (unlikely(!page_evictable(page)))
-@@ -1250,7 +1258,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 		case PAGEREF_ACTIVATE:
- 			goto activate_locked;
- 		case PAGEREF_KEEP:
--			stat->nr_ref_keep++;
-+			stat->nr_ref_keep += nr_pages;
- 			goto keep_locked;
- 		case PAGEREF_RECLAIM:
- 		case PAGEREF_RECLAIM_CLEAN:
-@@ -1292,7 +1300,9 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- #endif
- 					if (!add_to_swap(page))
- 						goto activate_locked;
--				}
-+				} else
-+					/* Account tail pages for THP */
-+					sc->nr_scanned += nr_pages - 1;
- 
- 				may_enter_fs = 1;
- 
-@@ -1315,7 +1325,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 			if (unlikely(PageTransHuge(page)))
- 				flags |= TTU_SPLIT_HUGE_PMD;
- 			if (!try_to_unmap(page, flags)) {
--				stat->nr_unmap_fail++;
-+				stat->nr_unmap_fail += nr_pages;
- 				goto activate_locked;
+ static int cache_shared_cpu_map_setup(unsigned int cpu)
+ {
+ 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+@@ -251,6 +253,9 @@ static int cache_shared_cpu_map_setup(unsigned int cpu)
+ 				cpumask_set_cpu(i, &this_leaf->shared_cpu_map);
  			}
  		}
-@@ -1442,7 +1452,11 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 
- 		unlock_page(page);
- free_it:
--		nr_reclaimed++;
-+		/*
-+		 * THP may get swapped out in a whole, need account
-+		 * all base pages.
-+		 */
-+		nr_reclaimed += (1 << compound_order(page));
- 
- 		/*
- 		 * Is there need to periodically free_page_list? It would
-@@ -1464,7 +1478,6 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 		if (!PageMlocked(page)) {
- 			int type = page_is_file_cache(page);
- 			SetPageActive(page);
--			pgactivate++;
- 			stat->nr_activate[type] += hpage_nr_pages(page);
- 			count_memcg_page_event(page, PGACTIVATE);
- 		}
-@@ -1475,6 +1488,8 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 		VM_BUG_ON_PAGE(PageLRU(page) || PageUnevictable(page), page);
++		/* record the maximum cache line size */
++		if (this_leaf->coherency_line_size > coherency_max_size)
++			coherency_max_size = this_leaf->coherency_line_size;
  	}
  
-+	pgactivate = stat->nr_activate[0] + stat->nr_activate[1];
+ 	return 0;
+diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
+index 70e19bc6cc9f..46b92cd61d0c 100644
+--- a/include/linux/cacheinfo.h
++++ b/include/linux/cacheinfo.h
+@@ -17,6 +17,8 @@ enum cache_type {
+ 	CACHE_TYPE_UNIFIED = BIT(2),
+ };
+ 
++extern unsigned int coherency_max_size;
 +
- 	mem_cgroup_uncharge_list(&free_pages);
- 	try_to_unmap_flush();
- 	free_unref_page_list(&free_pages);
-@@ -1646,10 +1661,9 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
- 	LIST_HEAD(pages_skipped);
- 	isolate_mode_t mode = (sc->may_unmap ? 0 : ISOLATE_UNMAPPED);
- 
-+	total_scan = 0;
- 	scan = 0;
--	for (total_scan = 0;
--	     scan < nr_to_scan && nr_taken < nr_to_scan && !list_empty(src);
--	     total_scan++) {
-+	while (scan < nr_to_scan && !list_empty(src)) {
- 		struct page *page;
- 
- 		page = lru_to_page(src);
-@@ -1657,9 +1671,12 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
- 
- 		VM_BUG_ON_PAGE(!PageLRU(page), page);
- 
-+		nr_pages = 1 << compound_order(page);
-+		total_scan += nr_pages;
-+
- 		if (page_zonenum(page) > sc->reclaim_idx) {
- 			list_move(&page->lru, &pages_skipped);
--			nr_skipped[page_zonenum(page)]++;
-+			nr_skipped[page_zonenum(page)] += nr_pages;
- 			continue;
- 		}
- 
-@@ -1668,11 +1685,14 @@ static unsigned long isolate_lru_pages(unsigned long nr_to_scan,
- 		 * return with no isolated pages if the LRU mostly contains
- 		 * ineligible pages.  This causes the VM to not reclaim any
- 		 * pages, triggering a premature OOM.
-+		 *
-+		 * Account all tail pages of THP.  This would not cause
-+		 * premature OOM since __isolate_lru_page() returns -EBUSY
-+		 * only when the page is being freed somewhere else.
- 		 */
--		scan++;
-+		scan += nr_pages;
- 		switch (__isolate_lru_page(page, mode)) {
- 		case 0:
--			nr_pages = hpage_nr_pages(page);
- 			nr_taken += nr_pages;
- 			nr_zone_taken[page_zonenum(page)] += nr_pages;
- 			list_move(&page->lru, dst);
+ /**
+  * struct cacheinfo - represent a cache leaf node
+  * @id: This cache's id. It is unique among caches with the same (type, level).
 -- 
-1.8.3.1
+2.7.4
 
