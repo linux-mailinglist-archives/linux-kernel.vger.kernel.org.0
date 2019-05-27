@@ -2,110 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DF532B341
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:28:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 171622B351
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 13:38:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbfE0L2w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 07:28:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36310 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726063AbfE0L2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 07:28:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C3A54ACFA;
-        Mon, 27 May 2019 11:28:50 +0000 (UTC)
-Message-ID: <e2dd83c5dbba1bb9bd300285285ab07135dc6166.camel@suse.de>
-Subject: Re: [PATCH] xhci: clear port_remote_wakeup after resume failure
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Mathias Nyman <mathias.nyman@intel.com>
-Cc:     oneukum@suse.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 27 May 2019 13:28:48 +0200
-In-Reply-To: <eb5d9252-1283-be73-96d6-c24a0fdf1eab@linux.intel.com>
-References: <20190524145231.6605-1-nsaenzjulienne@suse.de>
-         <eb5d9252-1283-be73-96d6-c24a0fdf1eab@linux.intel.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-f7bqoOZL4zNS+o7sGeVu"
-User-Agent: Evolution 3.32.2 
+        id S1726437AbfE0LiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 07:38:07 -0400
+Received: from mail-it1-f198.google.com ([209.85.166.198]:57077 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbfE0LiH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 07:38:07 -0400
+Received: by mail-it1-f198.google.com with SMTP id l124so10610102itg.6
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 04:38:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=EvVlLBGL0bMbZSXnS0Gdmap9SOaSaRB3to/I0YZeZYM=;
+        b=JIXrIaexzbCR0DCnpzjJVZ+mbJ4D5U7GqGfsW3FQGEnewBXIpb6qUGD0Wz5NLGXCJN
+         6LaFlATDL3ZykI09J5wptqBImvnl7jwh8ZpZvFb1zyaVLbqHYIz9JT/x0bwfCG+br+Wo
+         YcLBZPoy1n5/Wsn14ZVCrTYAqkthZpWHZwylk8uGOgH0jWWyEPaq46Hp9gab31C4GO4y
+         tBPOQfY4d1SbhhjST3o3GzrQDVNbuKbVX9iyg5GV8ZJxHcM0ofhaaxL35RVRaeszUFvM
+         GOl0utlmnSvFijT0E9awoMhY5JSEuRYkLsjfOSwvd46/uI4+PsdLcDtvgva2qjAvblTf
+         SIMQ==
+X-Gm-Message-State: APjAAAWPVWarDqkGCiWus6gYXXYAwobUc+GeOQ5/QocvhcI4+rFT8T78
+        Kma2LCEIig6TrlI1gEAeMUUzqZMUf4al0D4V8i9nKaIEC8hu
+X-Google-Smtp-Source: APXvYqw/eeDZQun7I1CmQXRbxyLVKcB6Jf3epBqJ0cS4pB78gs07wdj63cO49WXjDImlFDN0BdrV+pHBsS8KPUysPrHHURkA9uS+
 MIME-Version: 1.0
+X-Received: by 2002:a6b:7a42:: with SMTP id k2mr1902229iop.214.1558957085973;
+ Mon, 27 May 2019 04:38:05 -0700 (PDT)
+Date:   Mon, 27 May 2019 04:38:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005463aa0589dcfb85@google.com>
+Subject: INFO: trying to register non-static key in usbtouch_reset_resume
+From:   syzbot <syzbot+933daad9be4e67ba91a9@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, dmitry.torokhov@gmail.com,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, rydberg@bitmath.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---=-f7bqoOZL4zNS+o7sGeVu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+syzbot found the following crash on:
 
-Hi Matthias,
-thanks for the review.
+HEAD commit:    43151d6c usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=14a2b45ca00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=95aff7278e7ff25e
+dashboard link: https://syzkaller.appspot.com/bug?extid=933daad9be4e67ba91a9
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1776669aa00000
 
-On Mon, 2019-05-27 at 14:16 +0300, Mathias Nyman wrote:
-> On 24.5.2019 17.52, Nicolas Saenz Julienne wrote:
-> > This was seen on a Dell Precision 5520 using it's WD15 dock. The dock's
-> > Ethernet device interfaces with the laptop through one of it's USB3
-> > ports. While idle, the Ethernet device and HCD are suspended by runtime
-> > PM, being the only device connected on the bus. Then, both are resumed =
-on
-> > behalf of the Ethernet device, which has remote wake-up capabilities.
-> >=20
-> > The Ethernet device was observed to randomly disconnect from the USB
-> > port shortly after submitting it's remote wake-up request. Probably a
-> > weird timing issue yet to be investigated. This causes runtime PM to
-> > busyloop causing some tangible CPU load. The reason is the port gets
-> > stuck in the middle of a remote wake-up operation, waiting for the
-> > device to switch to U0. This never happens, leaving "port_remote_wakeup=
-"
-> > enabled, and automatically triggering a failure on any further suspend
-> > operation.
-> >=20
-> > This patch clears "port_remote_wakeup" upon detecting a device with a
-> > wrong resuming port state (see Table 4-9 in 4.15.2.3). Making sure the
-> > above mentioned situation doesn't trigger a PM busyloop.
-> >=20
->=20
-> There was a similar case where the USB3 link had transitioned to a
-> lower power U1 or U2 state after resume, before driver read the state,
-> leaving port_remote_wakeup flag uncleared.
->=20
-> This was fixed in 5.1 kernel by commit:
->=20
-> 6cbcf59 xhci: Fix port resume done detection for SS ports with LPM enable
->=20
-> Can you check if you have it?
-> It should be in recent stable releases as well.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+933daad9be4e67ba91a9@syzkaller.appspotmail.com
 
-I was aware of that patch, unfortunately it doesn't address the same issue.=
- In
-my case I never get a second port status event (so no PLC =3D=3D 1 or any s=
-tate
-change seen in PLS). The device simply disconnects from the bus.
+usb 1-1: config 0 descriptor??
+usb 1-1: string descriptor 0 read error: -71
+hub 1-1:0.189: ignoring external hub
+input: USB Touchscreen 08f2:007f as  
+/devices/platform/dummy_hcd.0/usb1/1-1/1-1:0.189/input/input6
+usb 1-1: reset high-speed USB device number 3 using dummy_hcd
+usb 1-1: Using ep0 maxpacket: 8
+INFO: trying to register non-static key.
+the code is fine but needs lockdep annotation.
+turning off the locking correctness validator.
+CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.1.0-rc3+ #8
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  assign_lock_key kernel/locking/lockdep.c:786 [inline]
+  register_lock_class+0x11ae/0x1240 kernel/locking/lockdep.c:1095
+  __lock_acquire+0xfb/0x37c0 kernel/locking/lockdep.c:3582
+  lock_acquire+0x100/0x2b0 kernel/locking/lockdep.c:4211
+  __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+  __mutex_lock+0xf9/0x12b0 kernel/locking/mutex.c:1072
+  usbtouch_reset_resume+0xb3/0x170  
+drivers/input/touchscreen/usbtouchscreen.c:1624
+  usb_resume_interface drivers/usb/core/driver.c:1242 [inline]
+  usb_resume_interface.isra.0+0x187/0x3a0 drivers/usb/core/driver.c:1210
+  usb_resume_both+0x23d/0x780 drivers/usb/core/driver.c:1412
+  __rpm_callback+0x287/0x3c0 drivers/base/power/runtime.c:357
+  rpm_callback+0x18f/0x230 drivers/base/power/runtime.c:487
+  rpm_resume+0x10c2/0x1840 drivers/base/power/runtime.c:851
+  __pm_runtime_resume+0x103/0x180 drivers/base/power/runtime.c:1078
+  pm_runtime_get_sync include/linux/pm_runtime.h:227 [inline]
+  usb_autoresume_device+0x1e/0x60 drivers/usb/core/driver.c:1599
+  usb_remote_wakeup+0x7b/0xb0 drivers/usb/core/hub.c:3600
+  hub_port_connect_change drivers/usb/core/hub.c:5190 [inline]
+  port_event drivers/usb/core/hub.c:5350 [inline]
+  hub_event+0x23c9/0x35a0 drivers/usb/core/hub.c:5432
+  process_one_work+0x90a/0x1580 kernel/workqueue.c:2269
+  process_scheduled_works kernel/workqueue.c:2331 [inline]
+  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
+  kthread+0x30e/0x420 kernel/kthread.c:253
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+dummy_hcd dummy_hcd.0: port status 0x00010100 has changes
+usb 1-1: USB disconnect, device number 3
+usb usb1: dummy_bus_suspend
+usb usb1: dummy_bus_resume
+dummy_hcd dummy_hcd.0: port status 0x00010101 has changes
+dummy_hcd dummy_hcd.0: port status 0x00100503 has changes
+usb 1-1: new high-speed USB device number 4 using dummy_hcd
+dummy_hcd dummy_hcd.0: port status 0x00100503 has changes
+usb 1-1: Using ep0 maxpacket: 8
+usb 1-1: config 0 has an invalid interface number: 189 but max is 0
+usb 1-1: config 0 has an invalid descriptor of length 0, skipping remainder  
+of the config
+usb 1-1: config 0 has no interface number 0
+usb 1-1: config 0 interface 189 altsetting 0 endpoint 0x82 has an invalid  
+bInterval 0, changing to 7
+usb 1-1: New USB device found, idVendor=08f2, idProduct=007f,  
+bcdDevice=97.17
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+usb 1-1: string descriptor 0 read error: -71
+hub 1-1:0.189: ignoring external hub
+input: USB Touchscreen 08f2:007f as  
+/devices/platform/dummy_hcd.0/usb1/1-1/1-1:0.189/input/input7
+dummy_hcd dummy_hcd.0: port status 0x00010101 has changes
+dummy_hcd dummy_hcd.0: port status 0x00010101 has changes
+dummy_hcd dummy_hcd.0: port status 0x00100503 has changes
+usb 1-1: reset high-speed USB device number 4 using dummy_hcd
+dummy_hcd dummy_hcd.0: port status 0x00100503 has changes
+usb 1-1: Using ep0 maxpacket: 8
+usb usb1: dummy_bus_suspend
+usb usb1: dummy_bus_resume
+dummy_hcd dummy_hcd.0: port status 0x00010100 has changes
+usb 1-1: USB disconnect, device number 6
+usb usb1: dummy_bus_suspend
+usb usb1: dummy_bus_resume
+dummy_hcd dummy_hcd.0: port status 0x00010101 has changes
+dummy_hcd dummy_hcd.0: port status 0x00100503 has changes
+usb 1-1: new high-speed USB device number 7 using dummy_hcd
+dummy_hcd dummy_hcd.0: port status 0x00100503 has changes
+usb 1-1: Using ep0 maxpacket: 8
+usb 1-1: config 0 has an invalid interface number: 189 but max is 0
+usb 1-1: config 0 has an invalid descriptor of length 0, skipping remainder  
+of the config
+usb 1-1: config 0 has no interface number 0
+usb 1-1: config 0 interface 189 altsetting 0 endpoint 0x82 has an invalid  
+bInterval 0, changing to 7
+usb 1-1: New USB device found, idVendor=08f2, idProduct=007f,  
+bcdDevice=97.17
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+usb 1-1: string descriptor 0 read error: -71
+hub 1-1:0.189: ignoring external hub
+input: USB Touchscreen 08f2:007f as  
+/devices/platform/dummy_hcd.0/usb1/1-1/1-1:0.189/input/input10
+dummy_hcd dummy_hcd.0: port status 0x00010101 has changes
+dummy_hcd dummy_hcd.0: port status 0x00010101 has changes
+dummy_hcd dummy_hcd.0: port status 0x00100503 has changes
+usb 1-1: reset high-speed USB device number 7 using dummy_hcd
+dummy_hcd dummy_hcd.0: port status 0x00100503 has changes
+usb 1-1: Using ep0 maxpacket: 8
+usb usb1: dummy_bus_suspend
 
-I did test both the issue and fix on top of last week's master branch.
 
-Regards,
-Nicolas
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-
---=-f7bqoOZL4zNS+o7sGeVu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlzryfAACgkQlfZmHno8
-x/7FdQf/U6VLTEYpri+b7l4Jk/VsmleJAOXb709TIDyiCJPapRA7jo0DVWUtwIm9
-dPfI8mJlVXCnIvL04p/tzfv8zxH6TDa6rV7//+71CqiRpg3KsYHoZWxS2X9X/W5i
-Vuj6hJAa7ziaZI1M5UEhjWXAX+8WF9bABcy2Wyrk2U5V+neadU70Fod5ap3fkZRT
-qELPOLsHRTorYIl9/Kj5M7vHEpJehaBJ8DZTjfGCunvDdeSNfA2nROBMZ3s1k/gq
-be8/lAoh3xX7Iv3KInny9QihssiHsMBHNjCb1aPnkw3oMM5CxNJLoCGGIO5pkExV
-UfACpCWZb0bIrZjUbsaYpIDDerlbHg==
-=d8YU
------END PGP SIGNATURE-----
-
---=-f7bqoOZL4zNS+o7sGeVu--
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
