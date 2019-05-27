@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B06522B0E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 11:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D14B12B0DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 11:05:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfE0JFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 05:05:43 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:39827 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726679AbfE0JFl (ORCPT
+        id S1726583AbfE0JF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 05:05:27 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:5242 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726071AbfE0JF1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 05:05:41 -0400
-X-UUID: 1c83c3fb139f473191e738106bd73d97-20190527
-X-UUID: 1c83c3fb139f473191e738106bd73d97-20190527
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        Mon, 27 May 2019 05:05:27 -0400
+X-UUID: e728d218b57b4afb849db300589e8f9e-20190527
+X-UUID: e728d218b57b4afb849db300589e8f9e-20190527
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
         (envelope-from <erin.lo@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 713099517; Mon, 27 May 2019 17:05:33 +0800
+        with ESMTP id 1800965651; Mon, 27 May 2019 17:05:18 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 27 May 2019 17:05:13 +0800
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 27 May 2019 17:05:16 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 27 May 2019 17:05:13 +0800
+ Transport; Mon, 27 May 2019 17:05:16 +0800
 From:   Erin Lo <erin.lo@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,15 +35,15 @@ CC:     <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <erin.lo@mediatek.com>,
         <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
         Zhiyong Tao <zhiyong.tao@mediatek.com>
-Subject: [PATCH v11 3/6] arm64: dts: mt8183: add pinctrl device node
-Date:   Mon, 27 May 2019 17:04:44 +0800
-Message-ID: <1558947887-31084-4-git-send-email-erin.lo@mediatek.com>
+Subject: [PATCH v11 4/6] arm64: dts: mt8183: Add auxadc device node
+Date:   Mon, 27 May 2019 17:04:45 +0800
+Message-ID: <1558947887-31084-5-git-send-email-erin.lo@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1558947887-31084-1-git-send-email-erin.lo@mediatek.com>
 References: <1558947887-31084-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 593806662260989B755519F8DD18FF0AFE68C3D77410E5BF232021706BEF43ED2000:8
+X-TM-SNTS-SMTP: 86344F063E3902451D494428EC4852C3D770CB4FF77B6F9EFE88C0BD1F55C02B2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,57 +52,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zhiyong Tao <zhiyong.tao@mediatek.com>
 
-The commit adds pinctrl device node for mt8183
+Add auxadc device node for MT8183
 
 Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
 Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+This patch is based on patch "https://patchwork.kernel.org/patch/10913941/".
+---
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts |  4 ++++
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 10 ++++++++++
+ 2 files changed, 14 insertions(+)
 
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+index 9b52559..49909ac 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+@@ -26,6 +26,10 @@
+ 	};
+ };
+ 
++&auxadc {
++	status = "okay";
++};
++
+ &uart0 {
+ 	status = "okay";
+ };
 diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 5b34ec6..e74ea21 100644
+index e74ea21..5672c18 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt8183-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include "mt8183-pinfunc.h"
- 
- / {
- 	compatible = "mediatek,mt8183";
-@@ -204,6 +205,30 @@
- 			#clock-cells = <1>;
+@@ -245,6 +245,16 @@
+ 			clock-names = "spi", "wrap";
  		};
  
-+		pio: pinctrl@10005000 {
-+			compatible = "mediatek,mt8183-pinctrl";
-+			reg = <0 0x10005000 0 0x1000>,
-+			      <0 0x11f20000 0 0x1000>,
-+			      <0 0x11e80000 0 0x1000>,
-+			      <0 0x11e70000 0 0x1000>,
-+			      <0 0x11e90000 0 0x1000>,
-+			      <0 0x11d30000 0 0x1000>,
-+			      <0 0x11d20000 0 0x1000>,
-+			      <0 0x11c50000 0 0x1000>,
-+			      <0 0x11f30000 0 0x1000>,
-+			      <0 0x1000b000 0 0x1000>;
-+			reg-names = "iocfg0", "iocfg1", "iocfg2",
-+				    "iocfg3", "iocfg4", "iocfg5",
-+				    "iocfg6", "iocfg7", "iocfg8",
-+				    "eint";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pio 0 0 192>;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <2>;
++		auxadc: auxadc@11001000 {
++			compatible = "mediatek,mt8183-auxadc",
++				     "mediatek,mt8173-auxadc";
++			reg = <0 0x11001000 0 0x1000>;
++			clocks = <&infracfg CLK_INFRA_AUXADC>;
++			clock-names = "main";
++			#io-channel-cells = <1>;
++			status = "disabled";
 +		};
 +
- 		apmixedsys: syscon@1000c000 {
- 			compatible = "mediatek,mt8183-apmixedsys", "syscon";
- 			reg = <0 0x1000c000 0 0x1000>;
+ 		uart0: serial@11002000 {
+ 			compatible = "mediatek,mt8183-uart",
+ 				     "mediatek,mt6577-uart";
 -- 
 1.8.1.1.dirty
 
