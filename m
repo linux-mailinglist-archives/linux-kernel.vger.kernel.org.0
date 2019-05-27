@@ -2,73 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 357472B04A
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 10:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2FE72B065
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 10:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfE0Iet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 04:34:49 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:47004 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfE0Ies (ORCPT
+        id S1726520AbfE0Ij3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 04:39:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:30690 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725869AbfE0Ij1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 04:34:48 -0400
-Received: from ip-37-201-4-247.hsi13.unitymediagroup.de ([37.201.4.247] helo=localhost.localdomain)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <manut@linutronix.de>)
-        id 1hVB5h-0006Ee-VL; Mon, 27 May 2019 10:34:46 +0200
-From:   Manuel Traut <manut@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     akpm@linux-foundation.org, marc.zyngier@arm.com,
-        khlebnikov@yandex-team.ru, Manuel Traut <manut@linutronix.de>
-Subject: [PATCH] scripts/decode_stacktrace.sh: prefix addr2line with $CROSS_COMPILE
-Date:   Mon, 27 May 2019 10:34:25 +0200
-Message-Id: <20190527083425.3763-1-manut@linutronix.de>
-X-Mailer: git-send-email 2.20.1
-Reply-To: manut@mecka.net
+        Mon, 27 May 2019 04:39:27 -0400
+X-UUID: 82d828f1785c4f68b51bf35d6d3c0b4a-20190527
+X-UUID: 82d828f1785c4f68b51bf35d6d3c0b4a-20190527
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <neal.liu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1990578935; Mon, 27 May 2019 16:39:15 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 27 May 2019 16:39:07 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 27 May 2019 16:39:07 +0800
+From:   Neal Liu <neal.liu@mediatek.com>
+To:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>
+CC:     Neal Liu <neal.liu@mediatek.com>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>, <wsd_upstream@mediatek.com>,
+        Crystal Guo <Crystal.Guo@mediatek.com>
+Subject: [PATCH v2 0/3] MediaTek Security random number generator support
+Date:   Mon, 27 May 2019 16:38:43 +0800
+Message-ID: <1558946326-13630-1-git-send-email-neal.liu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 230D15169F03B83C7C0D95C59BE03E1101255BC24DBD91EF7AD4844FB1453F612000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At least for ARM64 kernels compiled with the crosstoolchain from
-Debian/stretch or with the toolchain from kernel.org the line number is not
-decoded correctly by 'decode_stacktrace.sh':
+These patch series introduce a generic rng driver for Trustzone
+based kernel driver which would like to communicate with ATF
+SIP services.
 
-$ echo "[  136.513051]  f1+0x0/0xc [kcrash]" | \
-  CROSS_COMPILE=/opt/gcc-8.1.0-nolibc/aarch64-linux/bin/aarch64-linux- \
- ./scripts/decode_stacktrace.sh /scratch/linux-arm64/vmlinux \
-                                /scratch/linux-arm64 \
-                                /nfs/debian/lib/modules/4.20.0-devel
-[  136.513051] f1 (/linux/drivers/staging/kcrash/kcrash.c:68) kcrash
+Patch #1 initials SMC fid table for MediaTek SIP interfaces and
+adds HWRNG related SMC call.
 
-If addr2line from the toolchain is used the decoded line number is correct:
+Patch #2..3 adds mtk-sec-rng kernel driver for Trustzone based SoCs.
+For MediaTek SoCs on ARMv8 with TrustZone enabled, peripherals like
+entropy sources is not accessible from normal world (linux) and
+rather accessible from secure world (ATF/TEE) only. This driver aims
+to provide a generic interface to ATF rng service.
 
-[  136.513051] f1 (/linux/drivers/staging/kcrash/kcrash.c:57) kcrash
 
-Signed-off-by: Manuel Traut <manut@linutronix.de>
----
- scripts/decode_stacktrace.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+changes since v2:
+- rename mt67xx-rng to mtk-sec-rng since all MediaTek ARMv8 SoCs
+can reuse this driver.
+- refine coding style and unnecessary check.
 
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index bcdd45df3f51..a7a36209a193 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -73,7 +73,7 @@ parse_symbol() {
- 	if [[ "${cache[$module,$address]+isset}" == "isset" ]]; then
- 		local code=${cache[$module,$address]}
- 	else
--		local code=$(addr2line -i -e "$objfile" "$address")
-+		local code=$(${CROSS_COMPILE}addr2line -i -e "$objfile" "$address")
- 		cache[$module,$address]=$code
- 	fi
- 
+Neal Liu (3):
+  soc: mediatek: add SMC fid table for SIP interface
+  dt-bindings: rng: update bindings for MediaTek ARMv8 SoCs
+  hwrng: add mtk-sec-rng driver
+
+ .../devicetree/bindings/rng/mtk-rng.txt       | 13 ++-
+ drivers/char/hw_random/Kconfig                | 16 +++
+ drivers/char/hw_random/Makefile               |  1 +
+ drivers/char/hw_random/mtk-sec-rng.c          | 97 +++++++++++++++++++
+ include/linux/soc/mediatek/mtk_sip_svc.h      | 51 ++++++++++
+ 5 files changed, 175 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/char/hw_random/mtk-sec-rng.c
+ create mode 100644 include/linux/soc/mediatek/mtk_sip_svc.h
+
 -- 
-2.20.1
+2.18.0
 
