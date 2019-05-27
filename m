@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A89112BA16
-	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 20:26:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C43702BA1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 27 May 2019 20:28:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfE0S0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 14:26:04 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39105 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbfE0S0E (ORCPT
+        id S1727249AbfE0S2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 14:28:01 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42855 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726839AbfE0S2B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 14:26:04 -0400
-Received: by mail-ot1-f67.google.com with SMTP id r7so15529382otn.6
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 11:26:04 -0700 (PDT)
+        Mon, 27 May 2019 14:28:01 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w9so12454022oic.9
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 11:28:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kEK8YEn82uZl3KtekPFpQObwQps/VzOazNNdEv6HIBA=;
-        b=QDIRZ07yzcoElXx1D5ucFSGI3eU44JhkikzDlIE9bnlzRVnEM9LhsO50yqcl21AGha
-         9kmUcGS0oL53IGMo08aR3nyTp5v7yS48O08Am9Q6zNRoxi2hdAfm9MpMHGed/eSNMhpa
-         iLBCl+FLUYgSCC7gmBAQ7YDoxHRmex1pFUbX06J24JSTjn6yaNFjEmknNVP7k4luXkV6
-         6aI1+2hG4rnvkESpzhGGrJNWbUU6hhvQyecWN39Sl/nT1deo9xjaXOiN33n9HhZXl4Og
-         alAzIqNGSjcsErpW038oaoWDU2T/uGXpyh0NYmggXAAGNHqpvEuNXhuOiHbY/Sp6MAfM
-         mFRQ==
+        bh=wseEiwf2iDxEx0rB6+bstHWLvTH8+Jm8S/2DOnZEoi0=;
+        b=U4DCnRER3Bo6N+YBQxNx5r8BgFCch9KSnniaEr49R7m55UNQtYzfvpxNgR0+hZ07dk
+         ruQ0Sn/8fhPl2/tfFl6c2jn9N2fIdH+XhAAXLvCA4kqSAwyHFw7eHic6OZxxPXL+AE1k
+         H3TbEeSrYrXRSTzCaxdNCYQ0h4NhvWgLwWh6D4sufX/FXiEmldm7jgDK4QKI/LSRyWYS
+         Kz7OEw5lcbqIzeigKpu8jNJ9dCaIfJW8siWZZ8fDOa48812IBYJ/86Moowk9etD/dmWS
+         S5P5JVOBPr6OXKKwv1mvSuuYYiWNywvQSa66j+CN+AuD7RqiRbn8xIhIzUjRjhHPuM40
+         f0RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kEK8YEn82uZl3KtekPFpQObwQps/VzOazNNdEv6HIBA=;
-        b=Qv1N5eHKinxGXpGccEiF/hfEAiNjmLbbHzLwwVvv851gaUp+eqJHfs+M26nzXzKSaZ
-         NoenKM4EOG4x+VngLsioEmnRUTKKDMsLRhzXOdGhjO04NQQzrOvmxtVUHBFfZIhaT/dY
-         yXhlPuD+5tEKJvccyk3PAFRPgNIX/+gr4MvDglxeMwQdSUCapH44cXcNcFrIBUykw5a+
-         r/Pi2l8OM6E6WczcTVloQ+BwY/aCedfDD8+0sAI5SWtTut+u0fsB1EXSiCqLI71rngqj
-         gyu4QK0O/mxe7NfbpkEO0pAxSRD1YpCCTCGMDVgI0qKEwl8RnurY982oDrlbUy3lrabb
-         rHTQ==
-X-Gm-Message-State: APjAAAXrBMS54EXDm3M7vfnTnKSe8dX3zBYPqfwULhHe39EiXutYCrbp
-        fCBLOiou3WYc6Wezsa9sOKyFXDVOSY41J/ze8/w=
-X-Google-Smtp-Source: APXvYqxO8mD3SqAenWNr+oA/vGJ22mekTdcIzROJVXOaweez4x2pUntpBksdEFug2PfumowB8H85gwXbyoy3O0xWdDE=
-X-Received: by 2002:a9d:69c8:: with SMTP id v8mr18611131oto.6.1558981563581;
- Mon, 27 May 2019 11:26:03 -0700 (PDT)
+        bh=wseEiwf2iDxEx0rB6+bstHWLvTH8+Jm8S/2DOnZEoi0=;
+        b=DjRlJPPkmx5A+PeJFXtR268GBqKj/tvzkDNsignokCBJVNrfSLk/Q3m5RhyglsAo+g
+         Um+a49V7EUr5Nzoa0mJUQoKqHW6dRfmFuek/6MN67MUy2Sxqz1djnIJi98KCqrjRcJ1I
+         DlzGO57NlDy9TVKDfVDVh3w85tejbe7nW5ZMKrxovKALR2nJvCH1cM42mGZIatLIiGye
+         seh9RcZnSBVNjgOW5SoRHkK0p/w0H+dYtGM0oJtrrng69GfYJ3liBZY9DVMkx0qgyTa0
+         YvQCXzPKQd4A6KRROESjRHouX1hq929aJix66H1p0hmITaQhmrev2nsbJndWilmV9HfP
+         B7dQ==
+X-Gm-Message-State: APjAAAUtjvyw7UVohQC/i3R57SZWrW98pjKlDDnoUEQSHoFeDqlfDv7x
+        1aGxpbj8vCMIr7KGmMuvarw7t4glOkbH/DuigiE=
+X-Google-Smtp-Source: APXvYqwbfigH3TZlE9H2ckoSvg4wg8rLamp2jsQJnsfdYO0iUsmSoQWOoyFjfHYjDukhRzfcHFO1gwm7ahn3PyklXkU=
+X-Received: by 2002:aca:f144:: with SMTP id p65mr194565oih.47.1558981680480;
+ Mon, 27 May 2019 11:28:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190527132200.17377-1-narmstrong@baylibre.com> <20190527132200.17377-11-narmstrong@baylibre.com>
-In-Reply-To: <20190527132200.17377-11-narmstrong@baylibre.com>
+References: <20190527132200.17377-1-narmstrong@baylibre.com> <20190527132200.17377-10-narmstrong@baylibre.com>
+In-Reply-To: <20190527132200.17377-10-narmstrong@baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 27 May 2019 20:25:52 +0200
-Message-ID: <CAFBinCDDGPqnFQjtJx8Ny7nuoKScq4qYwkNhznU+3TMMDOFWfw@mail.gmail.com>
-Subject: Re: [PATCH 10/10] arm64: dts: meson-gxbb-vega-s95: add ethernet PHY interrupt
+Date:   Mon, 27 May 2019 20:27:49 +0200
+Message-ID: <CAFBinCBZr7nSnNTGO5upowuT48-pcR57VU7-zaxZ3Ocb-tZ1sA@mail.gmail.com>
+Subject: Re: [PATCH 09/10] arm64: dts: meson-gxbb-vega-s95: fix WiFi/BT module support
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
         christianshewitt@gmail.com, linux-kernel@vger.kernel.org,
@@ -60,10 +60,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, May 27, 2019 at 3:24 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
 >
-> Add the external ethernet PHY interrupt on the Vega S95 board.
+> Fix the SDIO WiFi support and add proper Bluetooth support on the
+> Vega S95 board.
 >
 > Suggested-by: Christian Hewitt <christianshewitt@gmail.com>
 > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-I don't have this board (anymore, mine died) nor the schematics but it
-matches other GXBB boards and looks correct so:
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+I'm the cause of everything that needed fixing here. thank you for
+taking care of this, the result looks much better now:
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
