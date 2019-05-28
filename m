@@ -2,103 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 511EE2BD3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AC152BD48
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:33:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbfE1CcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 22:32:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58800 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727313AbfE1CcE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 22:32:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5RRvYTM2e/gWTemJvl1KdhwwgyigP6WYDybbXx30ARA=; b=rH68e9QOC0T6i0j0JEOunQHUk
-        bSUHRoEG8nQBZVYuEdUfAQa5xwOVJBxARWlDxwTFfB9OfG7UE6fXQgSGpayk6K8qCUqEaAbiTIBxw
-        6fcRpqJ4+JtMcW4ZyfOBxSTBUlz9pguIowppJM9q/fnLBH93FNRe+5Fl0fmhfiJVLJCFk6/f6/6ll
-        pFOG8LtSDV4i+AwAoHFlLFJIec87JPrvyZccSKIyE2xadWbBtj8lXL6EgHfLmy4ErYBeD9PrBFZKz
-        HdBZZUrFWk7OrNeL2WhBHRAtV7OkTOXbOlBXWt9rT5eShGzAkcR+Dh0AzvnLFj+EdT6iBUP9snA0h
-        ZwtgpaOow==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hVRuF-0004PH-Q8; Tue, 28 May 2019 02:32:03 +0000
-Subject: Re: [PATCH] ia64: fix build errors by exporting paddr_to_nid()
-To:     LKML <linux-kernel@vger.kernel.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>
-Cc:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-        Fengguang Wu <fengguang.wu@intel.com>
-References: <eaa72e00-e1ea-4a86-327e-8b8cca8ea492@infradead.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <877e524b-6b84-740e-a79b-5cec378bb22d@infradead.org>
-Date:   Mon, 27 May 2019 19:32:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727858AbfE1Cdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 22:33:54 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:56997 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727313AbfE1Cdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 22:33:53 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45CdFL2nBkz9s3l;
+        Tue, 28 May 2019 12:33:41 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christian Brauner <christian@brauner.io>, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, torvalds@linux-foundation.org,
+        fweimer@redhat.com
+Cc:     jannh@google.com, oleg@redhat.com, tglx@linutronix.de,
+        arnd@arndb.de, shuah@kernel.org, dhowells@redhat.com,
+        tkjos@android.com, ldv@altlinux.org, miklos@szeredi.hu,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, x86@kernel.org,
+        Christian Brauner <christian@brauner.io>
+Subject: Re: [PATCH v2 2/2] tests: add close_range() tests
+In-Reply-To: <20190523154747.15162-3-christian@brauner.io>
+References: <20190523154747.15162-1-christian@brauner.io> <20190523154747.15162-3-christian@brauner.io>
+Date:   Tue, 28 May 2019 12:33:41 +1000
+Message-ID: <8736kzqpdm.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <eaa72e00-e1ea-4a86-327e-8b8cca8ea492@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping...
-
-On 5/3/19 9:42 PM, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix build errors on ia64 when DISCONTIGMEM=y and NUMA=y by
-> exporting paddr_to_nid().
-> 
-> Fixes these build errors:
-> 
-> ERROR: "paddr_to_nid" [sound/core/snd-pcm.ko] undefined!
-> ERROR: "paddr_to_nid" [net/sunrpc/sunrpc.ko] undefined!
-> ERROR: "paddr_to_nid" [fs/cifs/cifs.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/video/fbdev/core/fb.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/usb/mon/usbmon.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/usb/core/usbcore.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/md/raid1.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/md/dm-mod.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/md/dm-crypt.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/md/dm-bufio.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/ide/ide-core.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/ide/ide-cd_mod.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/gpu/drm/drm.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/char/agp/agpgart.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/block/nbd.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/block/loop.ko] undefined!
-> ERROR: "paddr_to_nid" [drivers/block/brd.ko] undefined!
-> ERROR: "paddr_to_nid" [crypto/ccm.ko] undefined!
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: Fenghua Yu <fenghua.yu@intel.com>
-> Cc: linux-ia64@vger.kernel.org
+Christian Brauner <christian@brauner.io> writes:
+> This adds basic tests for the new close_range() syscall.
+> - test that no invalid flags can be passed
+> - test that a range of file descriptors is correctly closed
+> - test that a range of file descriptors is correctly closed if there there
+>   are already closed file descriptors in the range
+> - test that max_fd is correctly capped to the current fdtable maximum
+>
+> Signed-off-by: Christian Brauner <christian@brauner.io>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Dmitry V. Levin <ldv@altlinux.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Florian Weimer <fweimer@redhat.com>
+> Cc: linux-api@vger.kernel.org
 > ---
->  arch/ia64/mm/numa.c |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> --- lnx-51-rc7.orig/arch/ia64/mm/numa.c
-> +++ lnx-51-rc7/arch/ia64/mm/numa.c
-> @@ -55,6 +55,7 @@ paddr_to_nid(unsigned long paddr)
->  
->  	return (i < num_node_memblks) ? node_memblk[i].nid : (num_node_memblks ? -1 : 0);
->  }
-> +EXPORT_SYMBOL(paddr_to_nid);
->  
->  #if defined(CONFIG_SPARSEMEM) && defined(CONFIG_NUMA)
->  /*
-> 
-> 
+> v1: unchanged
+> v2:
+> - Christian Brauner <christian@brauner.io>:
+>   - verify that close_range() correctly closes a single file descriptor
+> ---
+>  tools/testing/selftests/Makefile              |   1 +
+>  tools/testing/selftests/core/.gitignore       |   1 +
+>  tools/testing/selftests/core/Makefile         |   6 +
+>  .../testing/selftests/core/close_range_test.c | 142 ++++++++++++++++++
+>  4 files changed, 150 insertions(+)
+>  create mode 100644 tools/testing/selftests/core/.gitignore
+>  create mode 100644 tools/testing/selftests/core/Makefile
+>  create mode 100644 tools/testing/selftests/core/close_range_test.c
+>
+> diff --git a/tools/testing/selftests/core/.gitignore b/tools/testing/selftests/core/.gitignore
+> new file mode 100644
+> index 000000000000..6e6712ce5817
+> --- /dev/null
+> +++ b/tools/testing/selftests/core/.gitignore
+> @@ -0,0 +1 @@
+> +close_range_test
+> diff --git a/tools/testing/selftests/core/Makefile b/tools/testing/selftests/core/Makefile
+> new file mode 100644
+> index 000000000000..de3ae68aa345
+> --- /dev/null
+> +++ b/tools/testing/selftests/core/Makefile
+> @@ -0,0 +1,6 @@
+> +CFLAGS += -g -I../../../../usr/include/ -I../../../../include
+
+Your second -I pulls the unexported kernel headers in, userspace
+programs shouldn't include unexported kernel headers.
+
+It breaks the build on powerpc with eg:
+
+  powerpc64le-linux-gnu-gcc -g -I../../../../usr/include/ -I../../../../include    close_range_test.c  -o /output/kselftest/core/close_range_test
+  In file included from /usr/powerpc64le-linux-gnu/include/bits/fcntl-linux.h:346,
+                   from /usr/powerpc64le-linux-gnu/include/bits/fcntl.h:62,
+                   from /usr/powerpc64le-linux-gnu/include/fcntl.h:35,
+                   from close_range_test.c:5:
+  ../../../../include/linux/falloc.h:13:2: error: unknown type name '__s16'
+    __s16  l_type;
+    ^~~~~
 
 
--- 
-~Randy
+Did you do that on purpose or just copy it from one of the other
+Makefiles? :)
+
+If you're just wanting to get the syscall number when the headers
+haven't been exported, I think the best solution is to do eg:
+
+diff --git a/tools/testing/selftests/core/close_range_test.c b/tools/testing/selftests/core/close_range_test.c
+index d6e6079d3d53..34c6f02f25de 100644
+--- a/tools/testing/selftests/core/close_range_test.c
++++ b/tools/testing/selftests/core/close_range_test.c
+@@ -14,6 +14,10 @@
+
+ #include "../kselftest.h"
+
++#ifndef __NR_close_range
++#define __NR_close_range       435
++#endif
++
+ static inline int sys_close_range(unsigned int fd, unsigned int max_fd,
+                                  unsigned int flags)
+ {
+
+
+cheers
