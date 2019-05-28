@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C252BECA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 07:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F26B2BED6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 07:57:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbfE1F50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 01:57:26 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40947 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbfE1F5W (ORCPT
+        id S1727633AbfE1F5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 01:57:31 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37615 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727565AbfE1F5Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 01:57:22 -0400
-Received: by mail-pf1-f195.google.com with SMTP id u17so10772644pfn.7
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 22:57:22 -0700 (PDT)
+        Tue, 28 May 2019 01:57:25 -0400
+Received: by mail-pf1-f193.google.com with SMTP id a23so10788485pff.4
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 22:57:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dct7sUqIN4yTDR2HFtwSyXfQaPLYionNUf3R7g65wJc=;
-        b=hwSZWxSlG9xeAnA9TUeD7ON0voDdUj314TGa+yz9do/gM6mzbANrtu0Ks/sFbwBm63
-         rKJQTeV99HciujXRGhmL2Z91P9RLUC5gzPp/HTBeW0iwdSsZZPNvjc3r7EbGBrX8f2mR
-         1QJ1d3JZUAftEP/UEB13JiDPfSCNfe/IM6iME=
+        bh=bEBsXwaX/neCPcXyx6wXDJfeu95Gwu3oPLMhy1Vt32c=;
+        b=KSia6Ef358U7BfYZSB6heqJSuEOr86MTrC0gjINF+9RrZoyStLIrUEdaDPSawKcGlX
+         +XcIUuR923pbxBBZZCjm6hazvE2eNvf1GSQJ9STFZ6nKhpldVKbWoBu0EhYicPxCYcly
+         ngauHTDZ9EfGJLTSaOwN536YforCY5ucQjSTc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dct7sUqIN4yTDR2HFtwSyXfQaPLYionNUf3R7g65wJc=;
-        b=TG/kkoDr7sSNKrQDmvRcF5wnrn5PdMDbvUfAiGEMh7hI/RkWxlMBte0frjMD2e0uWc
-         OUm4+EFgCpH63HbnYgW9kECdKIrogw2MxeV4eE8hweXqt4o32gJz811cPVilJhR7ldKm
-         ICr1YPOmiUmVU2BwM0PfCM7oBWrK8LlCR+4W7ImIM0iyQPJP5+l9AENv+POkoQFe1/4I
-         Y4/ZneoTh1DHzb6VNaa+zS5qfwRJcCPFP6Q04JIjyjG76xfCNR63+6ii69Op5c6MSf3T
-         MEmscZUtSBmLfX97K+hN9OeWPmtMdyhSphUPM2rBGLNV7p0Q4fTyhI+26NBX44gFKqfT
-         r6TA==
-X-Gm-Message-State: APjAAAVEFw8jEfBviKPBpBele6JvCjrXyqsylMQKfhLv1Ej/lghZJaQh
-        1DZO3Uto6aQfymAtq9enwZZ0DQ==
-X-Google-Smtp-Source: APXvYqwgF6QrvKVy4NuktZ4Afik+l8WeNLrMISF78vUJAwwwPB3Dap6m/TxwNSRrS/H7YEFHvMRX2A==
-X-Received: by 2002:a17:90a:1aa8:: with SMTP id p37mr3381669pjp.17.1559023042073;
-        Mon, 27 May 2019 22:57:22 -0700 (PDT)
+        bh=bEBsXwaX/neCPcXyx6wXDJfeu95Gwu3oPLMhy1Vt32c=;
+        b=DOUQiehfukq53pwlNPtI/pQDhdJZTSvv7O1devA5DLjzf4npZXIp6mMBK7VF1gXqcj
+         e02yDU4zL3GHnLFDrhcO8zq0up9nU8PTWY0U92x5/U9DY9kyvNURvmQVbKfNaUyqYi9W
+         Fl17yA3TM8f5KlbO1btvG+AGejVYCYr+DwYsshNm769UTN+xWn9lON1/uaa+IxdyeFmi
+         PRHmtBWGOiclqZHeCXs1bl3kRwMF1ljoAYSJwgmUu6w/u3d110+jptDMGYN4G4j6KuGv
+         tjVZ+GVKYb56BM3c4se72u/CXLuonTloh/CBHpyxtfDQ4XIxCk3E08XvNgM+caYUhiGM
+         51yw==
+X-Gm-Message-State: APjAAAXkS+75GmpJVjzn8werZWOcvRq22EkUU5F/CCuUCI/JbUdr76hv
+        9i/D8dwEEZaciy/9uZPsxwLqug==
+X-Google-Smtp-Source: APXvYqytIqRF1dRFeewd0cIzKJxfcElwxHzRYE0XELvCK83wU5bqMoTXjVexePilluGJgoFTC1GvIg==
+X-Received: by 2002:a17:90a:4814:: with SMTP id a20mr3417520pjh.62.1559023044800;
+        Mon, 27 May 2019 22:57:24 -0700 (PDT)
 Received: from acourbot.tok.corp.google.com ([2401:fa00:4:4:9712:8cf1:d0f:7d33])
-        by smtp.gmail.com with ESMTPSA id w1sm13950551pfg.51.2019.05.27.22.57.19
+        by smtp.gmail.com with ESMTPSA id w1sm13950551pfg.51.2019.05.27.22.57.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 22:57:21 -0700 (PDT)
+        Mon, 27 May 2019 22:57:24 -0700 (PDT)
 From:   Alexandre Courbot <acourbot@chromium.org>
 To:     Yunfei Dong <yunfei.dong@mediatek.com>,
         Tiffany Lin <tiffany.lin@mediatek.com>,
@@ -51,9 +51,9 @@ To:     Yunfei Dong <yunfei.dong@mediatek.com>,
 Cc:     linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-kernel@vger.kernel.org,
         Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv1 04/12] media: mtk-vcodec: fix copyright indent
-Date:   Tue, 28 May 2019 14:56:27 +0900
-Message-Id: <20190528055635.12109-5-acourbot@chromium.org>
+Subject: [RFCv1 05/12] media: mtk-vcodec: support single-buffer frames
+Date:   Tue, 28 May 2019 14:56:28 +0900
+Message-Id: <20190528055635.12109-6-acourbot@chromium.org>
 X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
 In-Reply-To: <20190528055635.12109-1-acourbot@chromium.org>
 References: <20190528055635.12109-1-acourbot@chromium.org>
@@ -66,120 +66,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yunfei Dong <yunfei.dong@mediatek.com>
 
-Minor identation fix for copyright notice in a few source files.
+MT8183 will use a multi-planar format backed by a single buffer. Adapt
+the existing code to be able to handle such frames instead of assuming
+each frame is backed by two buffers.
 
 Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-[acourbot: refactor, cleanup and split]
+Co-developed-by: Alexandre Courbot <acourbot@chromium.org>
 Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+[acourbot: refactor, cleanup and split]
 ---
- .../platform/mtk-vcodec/mtk_vcodec_drv.h      | 26 +++++++++----------
- .../platform/mtk-vcodec/mtk_vcodec_enc.c      | 26 +++++++++----------
- .../platform/mtk-vcodec/mtk_vcodec_enc_pm.c   | 24 ++++++++---------
- 3 files changed, 38 insertions(+), 38 deletions(-)
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h b/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
-index 109c7578a8b2..76905e2d56a7 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
-@@ -1,17 +1,17 @@
- /*
--* Copyright (c) 2016 MediaTek Inc.
--* Author: PC Chen <pc.chen@mediatek.com>
--*         Tiffany Lin <tiffany.lin@mediatek.com>
--*
--* This program is free software; you can redistribute it and/or modify
--* it under the terms of the GNU General Public License version 2 as
--* published by the Free Software Foundation.
--*
--* This program is distributed in the hope that it will be useful,
--* but WITHOUT ANY WARRANTY; without even the implied warranty of
--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--* GNU General Public License for more details.
--*/
-+ * Copyright (c) 2016 MediaTek Inc.
-+ * Author: PC Chen <pc.chen@mediatek.com>
-+ *         Tiffany Lin <tiffany.lin@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
+index 2175883e22d4..2fdf23ce8ac4 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
+@@ -130,8 +130,9 @@ static struct vb2_buffer *get_display_buffer(struct mtk_vcodec_ctx *ctx)
+ 	if (dstbuf->used) {
+ 		vb2_set_plane_payload(&dstbuf->vb.vb2_buf, 0,
+ 					ctx->picinfo.fb_sz[0]);
+-		vb2_set_plane_payload(&dstbuf->vb.vb2_buf, 1,
+-					ctx->picinfo.fb_sz[1]);
++		if (ctx->q_data[MTK_Q_DATA_DST].fmt->num_planes == 2)
++			vb2_set_plane_payload(&dstbuf->vb.vb2_buf, 1,
++						ctx->picinfo.fb_sz[1]);
  
- #ifndef _MTK_VCODEC_DRV_H_
- #define _MTK_VCODEC_DRV_H_
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-index 2d5a61c06287..32d8ce9c8f6e 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c
-@@ -1,17 +1,17 @@
- /*
--* Copyright (c) 2016 MediaTek Inc.
--* Author: PC Chen <pc.chen@mediatek.com>
--*         Tiffany Lin <tiffany.lin@mediatek.com>
--*
--* This program is free software; you can redistribute it and/or modify
--* it under the terms of the GNU General Public License version 2 as
--* published by the Free Software Foundation.
--*
--* This program is distributed in the hope that it will be useful,
--* but WITHOUT ANY WARRANTY; without even the implied warranty of
--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--* GNU General Public License for more details.
--*/
-+ * Copyright (c) 2016 MediaTek Inc.
-+ * Author: PC Chen <pc.chen@mediatek.com>
-+ *         Tiffany Lin <tiffany.lin@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
+ 		mtk_v4l2_debug(2,
+ 				"[%d]status=%x queue id=%d to done_list %d",
+@@ -402,7 +403,8 @@ static void mtk_vdec_worker(struct work_struct *work)
+ 		vdec_if_decode(ctx, NULL, NULL, &res_chg);
+ 		clean_display_buffer(ctx);
+ 		vb2_set_plane_payload(&dst_buf_info->vb.vb2_buf, 0, 0);
+-		vb2_set_plane_payload(&dst_buf_info->vb.vb2_buf, 1, 0);
++		if (ctx->q_data[MTK_Q_DATA_DST].fmt->num_planes == 2)
++			vb2_set_plane_payload(&dst_buf_info->vb.vb2_buf, 1, 0);
+ 		dst_buf->flags |= V4L2_BUF_FLAG_LAST;
+ 		v4l2_m2m_buf_done(&dst_buf_info->vb, VB2_BUF_STATE_DONE);
+ 		clean_free_buffer(ctx);
+@@ -1333,7 +1335,8 @@ static void vb2ops_vdec_stop_streaming(struct vb2_queue *q)
  
- #include <media/v4l2-event.h>
- #include <media/v4l2-mem2mem.h>
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-index 39375b8ea27c..2fdae50173be 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-@@ -1,16 +1,16 @@
- /*
--* Copyright (c) 2016 MediaTek Inc.
--* Author: Tiffany Lin <tiffany.lin@mediatek.com>
--*
--* This program is free software; you can redistribute it and/or modify
--* it under the terms of the GNU General Public License version 2 as
--* published by the Free Software Foundation.
--*
--* This program is distributed in the hope that it will be useful,
--* but WITHOUT ANY WARRANTY; without even the implied warranty of
--* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--* GNU General Public License for more details.
--*/
-+ * Copyright (c) 2016 MediaTek Inc.
-+ * Author: Tiffany Lin <tiffany.lin@mediatek.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
+ 	while ((dst_buf = v4l2_m2m_dst_buf_remove(ctx->m2m_ctx))) {
+ 		vb2_set_plane_payload(&dst_buf->vb2_buf, 0, 0);
+-		vb2_set_plane_payload(&dst_buf->vb2_buf, 1, 0);
++		if (ctx->q_data[MTK_Q_DATA_DST].fmt->num_planes == 2)
++			vb2_set_plane_payload(&dst_buf->vb2_buf, 1, 0);
+ 		v4l2_m2m_buf_done(dst_buf, VB2_BUF_STATE_ERROR);
+ 	}
  
- #include <linux/clk.h>
- #include <linux/of_address.h>
 -- 
 2.22.0.rc1.257.g3120a18244-goog
 
