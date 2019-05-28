@@ -2,80 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 068EC2C2D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:13:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 592AC2C2EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:18:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbfE1JNF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:13:05 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:37709 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbfE1JNF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:13:05 -0400
-X-Originating-IP: 90.89.68.76
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 75A91FF808;
-        Tue, 28 May 2019 09:13:00 +0000 (UTC)
-Date:   Tue, 28 May 2019 11:12:59 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     =?utf-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 3/7] ASoC: sun4i-spdif: Add TX fifo bit flush quirks
-Message-ID: <20190528091259.qrzegazyilviuy2n@flea>
-References: <20190527200627.8635-1-peron.clem@gmail.com>
- <20190527200627.8635-4-peron.clem@gmail.com>
+        id S1726844AbfE1JS2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:18:28 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17597 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725943AbfE1JS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:18:28 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7534E5D4545AA8DA46A7;
+        Tue, 28 May 2019 17:18:26 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Tue, 28 May 2019
+ 17:18:20 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <linus.walleij@linaro.org>, <rafal@milecki.pl>,
+        <gregkh@linuxfoundation.org>, <opendmb@gmail.com>,
+        <eric@anholt.net>, <tglx@linutronix.de>, <matheus@castello.eng.br>
+CC:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] pinctrl: bcm2835: Fix build error without CONFIG_OF
+Date:   Tue, 28 May 2019 17:13:04 +0800
+Message-ID: <20190528091304.9932-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zi3crwvz5dqqoqhp"
-Content-Disposition: inline
-In-Reply-To: <20190527200627.8635-4-peron.clem@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+drivers/pinctrl/bcm/pinctrl-bcm2835.c: In function bcm2835_pctl_dt_node_to_map:
+drivers/pinctrl/bcm/pinctrl-bcm2835.c:720:8: error: implicit declaration of function pinconf_generic_dt_node_to_map_all;
+drivers/pinctrl/bcm/pinctrl-bcm2835.c: In function bcm2835_pinctrl_probe:
+drivers/pinctrl/bcm/pinctrl-bcm2835.c:1022:15: error: struct gpio_chip has no member named of_node
+  pc->gpio_chip.of_node = np;
 
---zi3crwvz5dqqoqhp
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 0de704955ee4 ("pinctrl: bcm2835: Add support for generic pinctrl binding")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/pinctrl/bcm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, May 27, 2019 at 10:06:23PM +0200, Cl=E9ment P=E9ron wrote:
-> Allwinner H6 has a different bit to flush the TX FIFO.
->
-> Add a quirks to prepare introduction of H6 SoC.
->
-> Signed-off-by: Cl=E9ment P=E9ron <peron.clem@gmail.com>
+diff --git a/drivers/pinctrl/bcm/Kconfig b/drivers/pinctrl/bcm/Kconfig
+index 4b5842c..dcf7df7 100644
+--- a/drivers/pinctrl/bcm/Kconfig
++++ b/drivers/pinctrl/bcm/Kconfig
+@@ -19,7 +19,7 @@ config PINCTRL_BCM281XX
+ 
+ config PINCTRL_BCM2835
+ 	bool "Broadcom BCM2835 GPIO (with PINCONF) driver"
+-	depends on ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST
++	depends on OF && (ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST)
+ 	select PINMUX
+ 	select PINCONF
+ 	select GENERIC_PINCONF
+-- 
+2.7.4
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---zi3crwvz5dqqoqhp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXOz7mwAKCRDj7w1vZxhR
-xYHnAQCF0T/LyvPDLxyjIVgapteJRIIteH2cyprro9XfsXCZKAEA/Jy3TK1gXH37
-KQ0w0ZON8xPR32fd/FxWTsrhVYDGswU=
-=xOqB
------END PGP SIGNATURE-----
-
---zi3crwvz5dqqoqhp--
