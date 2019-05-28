@@ -2,169 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 182372C6E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 14:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5500E2C6D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 14:43:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbfE1Mow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 08:44:52 -0400
-Received: from out30-45.freemail.mail.aliyun.com ([115.124.30.45]:42281 "EHLO
-        out30-45.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727209AbfE1Mou (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 08:44:50 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TStMl0v_1559047475;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TStMl0v_1559047475)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 28 May 2019 20:44:42 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     ktkhai@virtuozzo.com, hannes@cmpxchg.org, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, hughd@google.com,
-        shakeelb@google.com, akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] mm: shrinker: make shrinker not depend on memcg kmem
-Date:   Tue, 28 May 2019 20:44:24 +0800
-Message-Id: <1559047464-59838-4-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1559047464-59838-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1559047464-59838-1-git-send-email-yang.shi@linux.alibaba.com>
+        id S1727488AbfE1MnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 08:43:22 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:40078 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727219AbfE1MnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 08:43:21 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8132B200E6C;
+        Tue, 28 May 2019 14:43:19 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C001B200E6A;
+        Tue, 28 May 2019 14:43:15 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CC687402C9;
+        Tue, 28 May 2019 20:43:10 +0800 (SGT)
+From:   Chuanhua Han <chuanhua.han@nxp.com>
+To:     shawnguo@kernel.org, leoyang.li@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuanhua Han <chuanhua.han@nxp.com>
+Subject: [PATCH v2] arm64: dts: ls1028a: fix watchdog device node
+Date:   Tue, 28 May 2019 20:45:06 +0800
+Message-Id: <20190528124506.9339-1-chuanhua.han@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently shrinker is just allocated and can work when memcg kmem is
-enabled.  But, THP deferred split shrinker is not slab shrinker, it
-doesn't make too much sense to have such shrinker depend on memcg kmem.
-It should be able to reclaim THP even though memcg kmem is disabled.
+ls1028a platform uses sp805 watchdog, and use 1/16 platform clock as
+timer clock, this patch fix device tree node.
 
-Introduce a new shrinker flag, SHRINKER_NONSLAB, for non-slab shrinker,
-i.e. THP deferred split shrinker.  When memcg kmem is disabled, just
-such shrinkers can be called in shrinking memcg slab.
-
-Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
 ---
- include/linux/shrinker.h |  3 +--
- mm/huge_memory.c         |  3 ++-
- mm/vmscan.c              | 27 ++++++---------------------
- 3 files changed, 9 insertions(+), 24 deletions(-)
+Changes in v2: 
+	- Replace 'wdt' with 'watchdog' as the node name.
+	- Keep nodes sort in unit-address.
 
-diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-index 9443caf..e18dc00 100644
---- a/include/linux/shrinker.h
-+++ b/include/linux/shrinker.h
-@@ -69,10 +69,8 @@ struct shrinker {
+ .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 23 +++++++++++--------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index ceb608d0e622..bb386dd1d1b1 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -306,15 +306,6 @@
+ 			#interrupt-cells = <2>;
+ 		};
  
- 	/* These are for internal use */
- 	struct list_head list;
--#ifdef CONFIG_MEMCG_KMEM
- 	/* ID in shrinker_idr */
- 	int id;
--#endif
- 	/* objs pending delete, per node */
- 	atomic_long_t *nr_deferred;
- };
-@@ -81,6 +79,7 @@ struct shrinker {
- /* Flags */
- #define SHRINKER_NUMA_AWARE	(1 << 0)
- #define SHRINKER_MEMCG_AWARE	(1 << 1)
-+#define SHRINKER_NONSLAB	(1 << 3)
- 
- extern int prealloc_shrinker(struct shrinker *shrinker);
- extern void register_shrinker_prepared(struct shrinker *shrinker);
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 91a709e..b01fdc3 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2963,7 +2963,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 	.count_objects = deferred_split_count,
- 	.scan_objects = deferred_split_scan,
- 	.seeks = DEFAULT_SEEKS,
--	.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE,
-+	.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE |
-+		 SHRINKER_NONSLAB,
- };
- 
- #ifdef CONFIG_DEBUG_FS
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 7acd0af..62000ae 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -174,8 +174,6 @@ struct scan_control {
- static LIST_HEAD(shrinker_list);
- static DECLARE_RWSEM(shrinker_rwsem);
- 
--#ifdef CONFIG_MEMCG_KMEM
+-		wdog0: watchdog@23c0000 {
+-			compatible = "fsl,ls1028a-wdt", "fsl,imx21-wdt";
+-			reg = <0x0 0x23c0000 0x0 0x10000>;
+-			interrupts = <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+-			clocks = <&clockgen 4 1>;
+-			big-endian;
+-			status = "disabled";
+-		};
 -
- /*
-  * We allow subsystems to populate their shrinker-related
-  * LRU lists before register_shrinker_prepared() is called
-@@ -227,16 +225,6 @@ static void unregister_memcg_shrinker(struct shrinker *shrinker)
- 	idr_remove(&shrinker_idr, id);
- 	up_write(&shrinker_rwsem);
- }
--#else /* CONFIG_MEMCG_KMEM */
--static int prealloc_memcg_shrinker(struct shrinker *shrinker)
--{
--	return 0;
--}
--
--static void unregister_memcg_shrinker(struct shrinker *shrinker)
--{
--}
--#endif /* CONFIG_MEMCG_KMEM */
+ 		usb0: usb@3100000 {
+ 			compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
+ 			reg = <0x0 0x3100000 0x0 0x10000>;
+@@ -397,6 +388,20 @@
+ 				     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
  
- #ifdef CONFIG_MEMCG
- static bool global_reclaim(struct scan_control *sc)
-@@ -579,7 +567,6 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 	return freed;
- }
- 
--#ifdef CONFIG_MEMCG_KMEM
- static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
- 			struct mem_cgroup *memcg, int priority)
- {
-@@ -587,7 +574,7 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
- 	unsigned long ret, freed = 0;
- 	int i;
- 
--	if (!memcg_kmem_enabled() || !mem_cgroup_online(memcg))
-+	if (!mem_cgroup_online(memcg))
- 		return 0;
- 
- 	if (!down_read_trylock(&shrinker_rwsem))
-@@ -613,6 +600,11 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
- 			continue;
- 		}
- 
-+		/* Call non-slab shrinkers even though kmem is disabled */
-+		if (!memcg_kmem_enabled() &&
-+		    !(shrinker->flags & SHRINKER_NONSLAB))
-+			continue;
++		cluster1_core0_watchdog: watchdog@c000000 {
++			compatible = "arm,sp805", "arm,primecell";
++			reg = <0x0 0xc000000 0x0 0x1000>;
++			clocks = <&clockgen 4 15>, <&clockgen 4 15>;
++			clock-names = "apb_pclk", "wdog_clk";
++		};
 +
- 		ret = do_shrink_slab(&sc, shrinker, priority);
- 		if (ret == SHRINK_EMPTY) {
- 			clear_bit(i, map->map);
-@@ -649,13 +641,6 @@ static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
- 	up_read(&shrinker_rwsem);
- 	return freed;
- }
--#else /* CONFIG_MEMCG_KMEM */
--static unsigned long shrink_slab_memcg(gfp_t gfp_mask, int nid,
--			struct mem_cgroup *memcg, int priority)
--{
--	return 0;
--}
--#endif /* CONFIG_MEMCG_KMEM */
- 
- /**
-  * shrink_slab - shrink slab caches
++		cluster1_core1_watchdog: watchdog@c010000 {
++			compatible = "arm,sp805", "arm,primecell";
++			reg = <0x0 0xc010000 0x0 0x1000>;
++			clocks = <&clockgen 4 15>, <&clockgen 4 15>;
++			clock-names = "apb_pclk", "wdog_clk";
++		};
++
+ 		sai1: audio-controller@f100000 {
+ 			#sound-dai-cells = <0>;
+ 			compatible = "fsl,vf610-sai";
 -- 
-1.8.3.1
+2.17.1
 
