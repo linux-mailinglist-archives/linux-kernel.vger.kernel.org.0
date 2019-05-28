@@ -2,141 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D6202BD95
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 05:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 441932BD9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 05:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbfE1DSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 23:18:06 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:17587 "EHLO huawei.com"
+        id S1727959AbfE1DUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 23:20:32 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60692 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727562AbfE1DSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 23:18:06 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 18C09329113E43BBD8AE;
-        Tue, 28 May 2019 11:18:04 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 28 May
- 2019 11:17:58 +0800
-Subject: Re: [PATCH v2] f2fs: ratelimit recovery messages
-To:     Sahitya Tummala <stummala@codeaurora.org>
-CC:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1558962655-25994-1-git-send-email-stummala@codeaurora.org>
- <94025a6d-f485-3811-5521-ed5c9b4d1d77@huawei.com>
- <20190528030509.GE10043@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <2575bd54-d67c-6b26-ebf7-d6adb2e193a7@huawei.com>
-Date:   Tue, 28 May 2019 11:17:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727342AbfE1DUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 23:20:31 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B5E2EF06512F3E944D5E;
+        Tue, 28 May 2019 11:20:29 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 28 May
+ 2019 11:20:23 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v3 1/2] staging: erofs: support statx
+Date:   Tue, 28 May 2019 11:19:42 +0800
+Message-ID: <20190528031943.239665-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190528023147.94117-2-gaoxiang25@huawei.com>
+References: <20190528023147.94117-2-gaoxiang25@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190528030509.GE10043@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sahitya,
+statx() has already been supported in commit a528d35e8bfc
+("statx: Add a system call to make enhanced file info available"),
+user programs can get more useful attributes.
 
-On 2019/5/28 11:05, Sahitya Tummala wrote:
-> Hi Chao,
-> 
-> On Tue, May 28, 2019 at 09:23:15AM +0800, Chao Yu wrote:
->> Hi Sahitya,
->>
->> On 2019/5/27 21:10, Sahitya Tummala wrote:
->>> Ratelimit the recovery logs, which are expected in case
->>> of sudden power down and which could result into too
->>> many prints.
->>
->> FYI
->>
->> https://lore.kernel.org/patchwork/patch/973837/
->>
->> IMO, we need those logs to provide evidence during trouble-shooting of file data
->> corruption or file missing problem...
->>
-> In one of the logs, I have noticed there were ~400 recovery prints in the
-
-I think its order of magnitudes is not such bad, if there is redundant logs such
-as the one in do_recover_data(), we can improve it.
-
-> kernel bootup. I noticed your patch above and with that now we can always get
-> the error returned by f2fs_recover_fsync_data(), which should be good enough
-> for knowing the status of recovered files I thought. Do you think we need
-> individually each file status as well?
-
-Yes, I think so, we need them for the detailed info. :)
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+change log v3:
+ - update attributes_mask to indicate bits which erofs support
+   as Chao pointed out;
+ - already tested with samples/vfs/test-statx.c;
 
 Thanks,
+Gao Xiang
 
-> 
-> Thanks,
-> 
->> So I suggest we can keep log as it is in recover_dentry/recover_inode, and for
->> the log in do_recover_data, we can record recovery info [isize_kept,
->> recovered_count, err ...] into struct fsync_inode_entry, and print them in
->> batch, how do you think?
->>
->> Thanks,
->>
->>>
->>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>> ---
->>> v2:
->>>  - fix minor formatting and add new line for printk
->>>
->>>  fs/f2fs/recovery.c | 18 +++++++++---------
->>>  1 file changed, 9 insertions(+), 9 deletions(-)
->>>
->>> diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
->>> index e04f82b..60d7652 100644
->>> --- a/fs/f2fs/recovery.c
->>> +++ b/fs/f2fs/recovery.c
->>> @@ -188,8 +188,8 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
->>>  		name = "<encrypted>";
->>>  	else
->>>  		name = raw_inode->i_name;
->>> -	f2fs_msg(inode->i_sb, KERN_NOTICE,
->>> -			"%s: ino = %x, name = %s, dir = %lx, err = %d",
->>> +	printk_ratelimited(KERN_NOTICE
->>> +			"%s: ino = %x, name = %s, dir = %lx, err = %d\n",
->>>  			__func__, ino_of_node(ipage), name,
->>>  			IS_ERR(dir) ? 0 : dir->i_ino, err);
->>>  	return err;
->>> @@ -292,8 +292,8 @@ static int recover_inode(struct inode *inode, struct page *page)
->>>  	else
->>>  		name = F2FS_INODE(page)->i_name;
->>>  
->>> -	f2fs_msg(inode->i_sb, KERN_NOTICE,
->>> -		"recover_inode: ino = %x, name = %s, inline = %x",
->>> +	printk_ratelimited(KERN_NOTICE
->>> +			"recover_inode: ino = %x, name = %s, inline = %x\n",
->>>  			ino_of_node(page), name, raw->i_inline);
->>>  	return 0;
->>>  }
->>> @@ -642,11 +642,11 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
->>>  err:
->>>  	f2fs_put_dnode(&dn);
->>>  out:
->>> -	f2fs_msg(sbi->sb, KERN_NOTICE,
->>> -		"recover_data: ino = %lx (i_size: %s) recovered = %d, err = %d",
->>> -		inode->i_ino,
->>> -		file_keep_isize(inode) ? "keep" : "recover",
->>> -		recovered, err);
->>> +	printk_ratelimited(KERN_NOTICE
->>> +			"recover_data: ino = %lx (i_size: %s) recovered = %d, err = %d\n",
->>> +			inode->i_ino,
->>> +			file_keep_isize(inode) ? "keep" : "recover",
->>> +			recovered, err);
->>>  	return err;
->>>  }
->>>  
->>>
-> 
+ drivers/staging/erofs/inode.c    | 20 ++++++++++++++++++++
+ drivers/staging/erofs/internal.h |  2 ++
+ drivers/staging/erofs/namei.c    |  1 +
+ 3 files changed, 23 insertions(+)
+
+diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
+index c7d3b815a798..1c220900e1a0 100644
+--- a/drivers/staging/erofs/inode.c
++++ b/drivers/staging/erofs/inode.c
+@@ -285,7 +285,25 @@ struct inode *erofs_iget(struct super_block *sb,
+ 	return inode;
+ }
+ 
++int erofs_getattr(const struct path *path, struct kstat *stat,
++		  u32 request_mask, unsigned int query_flags)
++{
++	struct inode *const inode = d_inode(path->dentry);
++	struct erofs_vnode *const vi = EROFS_V(inode);
++
++	if (vi->data_mapping_mode == EROFS_INODE_LAYOUT_COMPRESSION)
++		stat->attributes |= STATX_ATTR_COMPRESSED;
++
++	stat->attributes |= STATX_ATTR_IMMUTABLE;
++	stat->attributes_mask |= (STATX_ATTR_COMPRESSED |
++				  STATX_ATTR_IMMUTABLE);
++
++	generic_fillattr(inode, stat);
++	return 0;
++}
++
+ const struct inode_operations erofs_generic_iops = {
++	.getattr = erofs_getattr,
+ #ifdef CONFIG_EROFS_FS_XATTR
+ 	.listxattr = erofs_listxattr,
+ #endif
+@@ -294,6 +312,7 @@ const struct inode_operations erofs_generic_iops = {
+ 
+ const struct inode_operations erofs_symlink_iops = {
+ 	.get_link = page_get_link,
++	.getattr = erofs_getattr,
+ #ifdef CONFIG_EROFS_FS_XATTR
+ 	.listxattr = erofs_listxattr,
+ #endif
+@@ -302,6 +321,7 @@ const struct inode_operations erofs_symlink_iops = {
+ 
+ const struct inode_operations erofs_fast_symlink_iops = {
+ 	.get_link = simple_get_link,
++	.getattr = erofs_getattr,
+ #ifdef CONFIG_EROFS_FS_XATTR
+ 	.listxattr = erofs_listxattr,
+ #endif
+diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+index c47778b3fabd..911333cdeef4 100644
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -556,6 +556,8 @@ static inline bool is_inode_fast_symlink(struct inode *inode)
+ }
+ 
+ struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid, bool dir);
++int erofs_getattr(const struct path *path, struct kstat *stat,
++		  u32 request_mask, unsigned int query_flags);
+ 
+ /* namei.c */
+ extern const struct inode_operations erofs_dir_iops;
+diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
+index d8d9dc9dab43..fd3ae78d0ba5 100644
+--- a/drivers/staging/erofs/namei.c
++++ b/drivers/staging/erofs/namei.c
+@@ -247,6 +247,7 @@ static struct dentry *erofs_lookup(struct inode *dir,
+ 
+ const struct inode_operations erofs_dir_iops = {
+ 	.lookup = erofs_lookup,
++	.getattr = erofs_getattr,
+ #ifdef CONFIG_EROFS_FS_XATTR
+ 	.listxattr = erofs_listxattr,
+ #endif
+-- 
+2.17.1
+
