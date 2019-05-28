@@ -2,139 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E69632CA9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 258FD2CA7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:42:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbfE1PtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 11:49:04 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:46458 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbfE1PtC (ORCPT
+        id S1726969AbfE1Pmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 11:42:35 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46236 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbfE1Pme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 11:49:02 -0400
-Received: by mail-vs1-f68.google.com with SMTP id x8so422303vsx.13
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 08:49:01 -0700 (PDT)
+        Tue, 28 May 2019 11:42:34 -0400
+Received: by mail-ed1-f67.google.com with SMTP id f37so32360255edb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 08:42:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rVVCM3oss6fFLEowwE8V1IlUxZzOfvY2hKZ39Ilquf4=;
-        b=IqZUUEJieiqEbr+TQYYtAXgNVwAK7MzBBm9XlY9GGI+WKamSi1KFzW43xncmxVl8Ui
-         N5P4dPR+/E+LhBunyC95WAbkS0Og8TTm+OpBRx5yLU8NnS++izYync66K3+ssPoVmVBp
-         41R+hbkwY2q8btHusadzE8i4NyCimBvpQ5KV4=
+        bh=qeekGI+uXQy3jlEv+N7GO97qVs9m18isKX3ghrVsYNg=;
+        b=BTxm2JN4TnZY5oEIAoAuBlUzwOpA0fyAfDXZy5d0jtPqAmRgGbeuWhtxJZr0h9LN1E
+         s1P2f3XKDDvGy1o+LQWaU65kn5WNVoQqA/I3y1Ca/1152RmednbWHuttXBYLUFkYByvg
+         sOFq9xhZCzsG/md6F2JpwpIi4g1panvaJ3JMNnde48voptkpmy4Z8mmwvEUEd+rkPpiH
+         1eHhqEWZO9Ah3PY+/Nxjn1SM3XOFdvQCIXS7WZN5EVgk5rq2GKCaberchbEmQzZSDT2i
+         ixIqEDqbdeSpo+6lLo+j6SxZUCV42jjvCmzEbOAzc42x1G35yMwVPpE2b6pNAnYfg5qw
+         OL/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rVVCM3oss6fFLEowwE8V1IlUxZzOfvY2hKZ39Ilquf4=;
-        b=HigTfoXRnuMgakzVPBS3C2nRxx42ZrYZ0tsdgehz+jsa5stEaoBMOByrXwLECL5f4b
-         rypcymsnzCkmnEAC4RbfjzmoqMOyK9Kq2gh29F2KAvFbyzinR6DFHy0KrP04clIsL/k3
-         TAcHAlvWx8zO4gToEcP261RDw2HBHfAcIH4JYQtOQ9dFJPIBJlmJwAvgQcGRRuaI/aO/
-         8iUeR5adg418IbWcBeyEMT8AtapANbfOl/IgPpcGI/+ovUrgRmVGZhfcwwIkzRs7CF5G
-         CYQxS5oC61ZUqA7X0nFjGQkk8Jtmo5facrkKc2q7hzErk5IDywj1fbpoeFZp8u6IhfJt
-         zLlw==
-X-Gm-Message-State: APjAAAUdjrm8s7KjW2aLSk8F/5CVgmpq0EmLsDQ2eqCRtrOh0nbsXCEt
-        7XrVmhsFrCJnOzbSCyavYxHj0pMrk00=
-X-Google-Smtp-Source: APXvYqywRE9+sVIudp0zsMPD0HY1xX0SFb33591CpPmWIAOvPxZZhUzEK+YqjY0t+H0lZtTANkRyyA==
-X-Received: by 2002:a67:7dd1:: with SMTP id y200mr40503606vsc.213.1559058541202;
-        Tue, 28 May 2019 08:49:01 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id p20sm4977512uaa.4.2019.05.28.08.49.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 08:49:00 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id o5so467284vsq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 08:49:00 -0700 (PDT)
-X-Received: by 2002:a67:f60b:: with SMTP id k11mr68126066vso.111.1559058141025;
- Tue, 28 May 2019 08:42:21 -0700 (PDT)
+        bh=qeekGI+uXQy3jlEv+N7GO97qVs9m18isKX3ghrVsYNg=;
+        b=SZPez5HTC5xdjcuK8PqcWfab/b8YSL4Yua0Vj0M3+EqtEb+mK6jUqMj11lJoEPTQ/2
+         ohkcPXgpX+MFNGHLW+oBYK95n7bN68cxHTHOG8jakxHgNNgZ37jXrAxEDlAq7mPtzyyU
+         rjl2krCidVrQd0vmN2YEpEZzKc8hf+WuvXniybNhpSjiMkz3WVLvThb5ubCXDkvzO1Cn
+         yOyIlvX5gCEa4cyNgNTmYaVNm+gnJ9P1UzcSJKPC2bF/lb18vDmcLPZzP0v5cktxsJs2
+         U7xn6AS6jo/OQeBnN8JJhiQ6acx864k2xjiuOBoWUTz8glxmHRiytwuHjmzBQeuVF8t0
+         Bztw==
+X-Gm-Message-State: APjAAAUdqFDaQp3w0EVvLq5LWCoaEn7SWcoIV3V8np+sGZ9voR3cwu0d
+        gwFbOh73jUdJO+tKPGY0RJtDnePX6R1VGR+CCnM=
+X-Google-Smtp-Source: APXvYqzK5ecXGBnnhHqTBpPNezM4AvVoE3btCq3oudOjiiLkpzhZIdIWfnUH5yuztayDSkpXA7Sl31CoDbjf0TWHoA4=
+X-Received: by 2002:a17:906:f48:: with SMTP id h8mr58704847ejj.142.1559058153169;
+ Tue, 28 May 2019 08:42:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190517225420.176893-1-dianders@chromium.org>
- <20190517225420.176893-3-dianders@chromium.org> <05af228c-139b-2b7f-f626-36fb34634be5@broadcom.com>
- <4f39e152-04ba-a64e-985a-df93e6d15ff8@intel.com> <aa8e526f-b382-f3b7-74a5-e0fee09ae096@broadcom.com>
- <2d6fa51d-27af-4f90-2bd6-144112ce75ad@intel.com>
-In-Reply-To: <2d6fa51d-27af-4f90-2bd6-144112ce75ad@intel.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 28 May 2019 08:42:08 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XV1oudf-xW_s9CQMgF7MryX-UJRrqsUFDQE0DF8Yf80w@mail.gmail.com>
-Message-ID: <CAD=FV=XV1oudf-xW_s9CQMgF7MryX-UJRrqsUFDQE0DF8Yf80w@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mmc: core: API for temporarily disabling
- auto-retuning due to errors
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Arend Van Spriel <arend.vanspriel@broadcom.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Double Lo <double.lo@cypress.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Madhan Mohan R <madhanmohan.r@cypress.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Wright Feng <wright.feng@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Jiong Wu <lohengrin1024@gmail.com>,
-        Ritesh Harjani <riteshh@codeaurora.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Avri Altman <avri.altman@wdc.com>, Martin Hicks <mort@bork.org>
+References: <20190527165413.GA26714@embeddedor>
+In-Reply-To: <20190527165413.GA26714@embeddedor>
+From:   Marc Dionne <marc.c.dionne@gmail.com>
+Date:   Tue, 28 May 2019 12:42:21 -0300
+Message-ID: <CAB9dFdtT0p+Sg5=qt=Te9FEkASXcH=ZQZRHyN1UQ3nYkDLHMpQ@mail.gmail.com>
+Subject: Re: [PATCH] afs: Fix logically dead code in afs_update_cell
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, May 28, 2019 at 4:45 AM Adrian Hunter <adrian.hunter@intel.com> wrote:
+On Mon, May 27, 2019 at 1:54 PM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
 >
-> On 28/05/19 2:21 PM, Arend Van Spriel wrote:
-> >
-> >
-> > On 5/28/2019 12:04 PM, Adrian Hunter wrote:
-> >> On 26/05/19 9:42 PM, Arend Van Spriel wrote:
-> >>> On 5/18/2019 12:54 AM, Douglas Anderson wrote:
-> >>>> Normally when the MMC core sees an "-EILSEQ" error returned by a host
-> >>>> controller then it will trigger a retuning of the card.  This is
-> >>>> generally a good idea.
-> >>>
-> >>> Probably a question for Adrian, but how is this retuning scheduled. I recall
-> >>> seeing something in mmc_request_done. How about deferring the retuning upon
-> >>> a release host or is that too sdio specific.
-> >>
-> >> Below is what I have been carrying the last 4 years.  But according to
-> >> Douglas'
-> >> patch, the release would need to be further down.  See 2nd diff below.
-> >> Would that work?
-> >
-> > That makes sense. The loop is needed because the device can be a bit bone
-> > headed. So indeed after the loop the device should be awake and able to
-> > handle CMD19.
+> Fix logically dead code in switch statement.
+>
+> Notice that *ret* is updated with -ENOMEM before the switch statement
+> at 395:
+>
+> 395                 switch (ret) {
+> 396                 case -ENODATA:
+> 397                 case -EDESTADDRREQ:
+> 398                         vllist->status = DNS_LOOKUP_GOT_NOT_FOUND;
+> 399                         break;
+> 400                 case -EAGAIN:
+> 401                 case -ECONNREFUSED:
+> 402                         vllist->status = DNS_LOOKUP_GOT_TEMP_FAILURE;
+> 403                         break;
+> 404                 default:
+> 405                         vllist->status = DNS_LOOKUP_GOT_LOCAL_FAILURE;
+> 406                         break;
+> 407                 }
+>
+> hence, the code in the switch (except for the default case) makes
+> no sense and is logically dead.
+>
+> Fix this by removing the *ret* assignment at 390:
+>
+> 390     ret = -ENOMEM;
+>
+> which is apparently wrong.
+>
+> Addresses-Coverity-ID: 1445439 ("Logically dead code")
+> Fixes: d5c32c89b208 ("afs: Fix cell DNS lookup")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  fs/afs/cell.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+> index 9c3b07ba2222..980de60bf060 100644
+> --- a/fs/afs/cell.c
+> +++ b/fs/afs/cell.c
+> @@ -387,7 +387,6 @@ static int afs_update_cell(struct afs_cell *cell)
+>                 if (ret == -ENOMEM)
+>                         goto out_wake;
+>
+> -               ret = -ENOMEM;
+>                 vllist = afs_alloc_vlserver_list(0);
+>                 if (!vllist)
+>                         goto out_wake;
 
-IMO I'd rather not _defer_ the re-tuning.  I believe the correct thing
-is to not schedule the re-tuning at all in response to the IO errors.
-That's what my patch does.
+Looks like the intention here was to return -ENOMEM when
+afs_alloc_vlserver_list fails, which would mean that the fix should
+move the assignment within if (!vllist), rather than just removing it.
+Although it might be fine to just return the error that came from
+afs_dns_query instead, as you do in this patch.
 
-Specifically the IO errors that come up in this case are not due to
-being "out of tune".  They are due to the fact that the other SDIO
-card may be in a transitory state and putting garbage on the bus.
-Scheduling a retuning for later would be just a waste of time and
-needlessly tie up the bus for the retune.
-
-...or am I confused?
-
-
-> What if tuning is needed to read SBSDIO_FUNC1_SLEEPCSR successfully?
-
-Personally I think this would be pretty unlikely.  If we're at this
-point we've already talked to the card quite a bit so we should have a
-tuning that's pretty good.  If we're just slightly out of tune then we
-should still get through the loop with a few retries and then we can
-detect that we're out of tune later, with a more reliable command.
-
-However, if you're worried about this, I can always re-enable the old
-behavior if we have already looped a few times.  I suppose I could
-increase the loop duration/count slightly too...  Please let me know
-one way or the other.
-
-
--Doug
+Marc
