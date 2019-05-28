@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11C442C29F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:06:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A9CF2C214
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727681AbfE1JGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:06:41 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42999 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbfE1JD2 (ORCPT
+        id S1727065AbfE1JDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:03:35 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41988 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbfE1JDb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:03:28 -0400
-Received: by mail-ed1-f66.google.com with SMTP id g24so2698266eds.9
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:26 -0700 (PDT)
+        Tue, 28 May 2019 05:03:31 -0400
+Received: by mail-ed1-f68.google.com with SMTP id g24so2698486eds.9
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eWzvBOSi043NlPhBjWBcZ5gYsPOn0TslCCY3OR85nNc=;
-        b=AxHczMPWvdB0duF+TZIkUR7zn9ttLdk/LQJ410Odk6YrE3Ov+Xj8w2xf8WBWz+h8zh
-         hWr4b6fx9GdaTYN4B8ue+7obfo93vkEkYnyUUC5slS0fTzODA8qH0Dh4vIKG/yUsL9Dl
-         k1KBtJQ7JTBTxRPR6NwEJyDK2bQCgXhLRM7hA=
+        bh=UVMz2IJ4/RyaqNE4ZvaPs86LwJMcSiemc8l514rOxoE=;
+        b=YwRF4P97LOBFhUta0OKI5wlSv1Ox7DssXRuK+2PmuzP3Bb2FNwARl2akdmKCZyXlht
+         lHNH4diyj6fBWHpDeH4K0gYOQYM0gek4oMHoK34CxS4WpKKsdP2bhwltVDvw34z8ct3A
+         BwBi6OjIWHKaCQP3HMqUL0tNKRaKaadMkDaxA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eWzvBOSi043NlPhBjWBcZ5gYsPOn0TslCCY3OR85nNc=;
-        b=Rv62+gHE30iftcKEobrSDDJKhojvLzO1inXW7eAbbG/fEhRv8vezJ4QMcI6TdQc7tj
-         5dEakOCSXKuXiVQzWsjSREeFm6GG7SSNw+AJIaKWWrpWY4tlNDou1JpZTSjwGprkxuPq
-         TlT7TIKfksA1ooyJEmqP0gPtyw+N329GpIIqKk2gqPyf6VOO1fyjmZrjKI+E8CfI37d1
-         wf4y6uTNbZWO6a3nMIlLeCiiuy61kZJA6JNT9cDvWagpZP2oCiQsL6Lri3BBhmiJA2Pv
-         mQb8dheexhTyLhA3z8EalfOwc46PgZkNEgeOYpIm2fQfc2Ja3wg+Y5TL64pSWPv/3QE8
-         /aHQ==
-X-Gm-Message-State: APjAAAVfqBL7Pzh7Xk4MnFSjqTQ0GaO4b0SkL6I+mS6TGzGSI+tnJU70
-        nIk/OjjE7pQdiBVEeJIyUyXYTq9dJtY=
-X-Google-Smtp-Source: APXvYqxwYBWK+S/Sn+nc60pnOFDN3a1NVbrdhjndc/zKC3s0aq0anlm33HbTi0toBUJUK+1EhIP7hw==
-X-Received: by 2002:a50:918b:: with SMTP id g11mr128303052eda.24.1559034205270;
-        Tue, 28 May 2019 02:03:25 -0700 (PDT)
+        bh=UVMz2IJ4/RyaqNE4ZvaPs86LwJMcSiemc8l514rOxoE=;
+        b=FVfbRY4L6XReLKFZzzgSThQ2d7qX6SuDpUtmKkN9jh+Q44N7UH00aor8YJxfIzLC26
+         m5OUZ06hQAVfv2DwKMozSAuZBtcng3e0MdGsz9jGcBIZNBJ6scWIwUhrSou6/i1wtTmh
+         BopIx9WT3lRkvdogKiNnma5uNckZInFYG9eXJ7kx5n2cEER8bKjAfrXrtdXrm9YxQsXx
+         E6ZL1p3Fj9QVTe6S5eVsVHm9w3FZUWoHjAGgcmjnyHUHUdqUJltclcRXArDA80Cx3Acw
+         uad8CdAZPSB9shl/+Kx5PPyqMXz6yD4Hjxh5ZokRZBoFFaoj8ZVrMcOtmrmU1DajIBru
+         puww==
+X-Gm-Message-State: APjAAAUvtc1Bh0bZcGJbY45elg0T+IEeCatd0oEjZdPvo561iLSxBaGM
+        2lFA8ncQJcMelxqll2/GNHrgvoRI5s0=
+X-Google-Smtp-Source: APXvYqzzJazZYKbqsmGP/BM9TTGVXR1j+0xbyiZYi+o+JaVEFP6ppO34Lw/fLHCAVJ+XHdehH4WMbA==
+X-Received: by 2002:a50:be42:: with SMTP id b2mr129139954edi.228.1559034206926;
+        Tue, 28 May 2019 02:03:26 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.23
+        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 02:03:24 -0700 (PDT)
+        Tue, 28 May 2019 02:03:26 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
@@ -50,18 +50,28 @@ Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
         Daniel Thompson <daniel.thompson@linaro.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@intel.com>,
         Sam Ravnborg <sam@ravnborg.org>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
         Hans de Goede <hdegoede@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Yisheng Xie <ysxie@foxmail.com>,
+        Yisheng Xie <ysxie@foxmail.com>, Peter Rosin <peda@axentia.se>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
         Konstantin Khorenko <khorenko@virtuozzo.com>,
         Prarit Bhargava <prarit@redhat.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 09/33] fbcon: Remove fbcon_has_exited
-Date:   Tue, 28 May 2019 11:02:40 +0200
-Message-Id: <20190528090304.9388-10-daniel.vetter@ffwll.ch>
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Steve Sakoman <sakoman@gmail.com>,
+        Steve Sakoman <steve@sakoman.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 10/33] fbcon: call fbcon_fb_(un)registered directly
+Date:   Tue, 28 May 2019 11:02:41 +0200
+Message-Id: <20190528090304.9388-11-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
 References: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
@@ -73,7 +83,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is unused code since
+With
 
 commit 6104c37094e729f3d4ce65797002112735d49cd1
 Author: Daniel Vetter <daniel.vetter@ffwll.ch>
@@ -81,199 +91,236 @@ Date:   Tue Aug 1 17:32:07 2017 +0200
 
     fbcon: Make fbcon a built-time depency for fbdev
 
-when fbcon was made a compile-time static dependency of fbdev. We
-can't exit fbcon anymore without exiting fbdev first, which only works
-if all fbdev drivers have unloaded already. Hence this is all dead
-code.
+we have a static dependency between fbcon and fbdev, and we can
+replace the indirection through the notifier chain with a function
+call.
 
-v2: I missed that fbcon_exit is also called from con_deinit stuff, and
-there fbcon_has_exited prevents double-cleanup. But we can fix that
-by properly resetting con2fb_map[] to all -1, which is used everywhere
-else to indicate "no fb_info allocate to this console". With that
-change the double-cleanup (which resulted in a module refcount underflow,
-among other things) is prevented.
+v2: Sam Ravnborg noticed that mach-pxa/am200epd.c has a notifier too,
+and listens to this.
 
-Aside: con2fb_map is a signed char, so don't register more than 128 fb_info
-or hilarity will ensue.
+...
 
-v3: CI showed me that I still didn't fully understand what's going on
-here. The leaked references in con2fb_map have been used upon
-rebinding the fb console in fbcon_init. It worked because fbdev
-unregistering still cleaned out con2fb_map, and reset it to info_idx.
-If the last fbdev driver unregistered, then it also reset info_idx,
-and unregistered the fbcon driver.
+Looking at the code it seems to wait for some fb to show up, so that
+it can get the framebuffer base address from the fb_info struct. I
+suspect his is some firmware fbdev. Then it uses that information to
+let the real fbdev driver (metronomefb.c by the looks) get at the
+framebuffer memory.
 
-Imo that's all a bit fragile, so let's keep the con2fb_map reset to
--1, and in fbcon_init pick info_idx if we're starting fresh. That
-means unbinding and rebinding will cleanse the mapping, but why are
-you doing that if you want to retain the mapping, so should be fine.
+This doesn't looke like it's easy to fix (except by deleting the
+entire thing, seems untouched since 2008, we might be able to get away
+with that), so let's just stuff a few #ifdef into fb.h and fbmem.c and
+cry over them for a bit.
 
-Also, I think info_idx == -1 is impossible in fbcon_init - we
-unregister the fbcon in that case. So catch&warn about that.
-
-v4: Drop unecessary assignment - I forgot to delete the first
-assignment of info in fbcon_init.
-
-Cc: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: "Noralf Trønnes" <noralf@tronnes.org>
 Cc: Yisheng Xie <ysxie@foxmail.com>
+Cc: Peter Rosin <peda@axentia.se>
+Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: linux-fbdev@vger.kernel.org
+Cc: Daniel Mack <daniel@zonque.org>
+Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
 Cc: Konstantin Khorenko <khorenko@virtuozzo.com>
 Cc: Prarit Bhargava <prarit@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
+Cc: Gerd Hoffmann <kraxel@redhat.com>
+Cc: Steve Sakoman <sakoman@gmail.com>
+Cc: Steve Sakoman <steve@sakoman.com>
+Cc: linux-arm-kernel@lists.infradead.org
 ---
- drivers/video/fbdev/core/fbcon.c | 41 ++++++--------------------------
- 1 file changed, 7 insertions(+), 34 deletions(-)
+ arch/arm/mach-pxa/am200epd.c     | 13 +++++++++++--
+ drivers/video/fbdev/core/fbcon.c | 14 +++-----------
+ drivers/video/fbdev/core/fbmem.c | 24 +++++++++++++++++-------
+ include/linux/fb.h               |  7 +++++--
+ include/linux/fbcon.h            |  4 ++++
+ 5 files changed, 40 insertions(+), 22 deletions(-)
 
+diff --git a/arch/arm/mach-pxa/am200epd.c b/arch/arm/mach-pxa/am200epd.c
+index 50e18ed37fa6..cac0bb09db14 100644
+--- a/arch/arm/mach-pxa/am200epd.c
++++ b/arch/arm/mach-pxa/am200epd.c
+@@ -347,8 +347,17 @@ int __init am200_init(void)
+ {
+ 	int ret;
+ 
+-	/* before anything else, we request notification for any fb
+-	 * creation events */
++	/*
++	 * Before anything else, we request notification for any fb
++	 * creation events.
++	 *
++	 * FIXME: This is terrible and needs to be nuked. The notifier is used
++	 * to get at the fb base address from the boot splash fb driver, which
++	 * is then passed to metronomefb. Instaed of metronomfb or this board
++	 * support file here figuring this out on their own.
++	 *
++	 * See also the #ifdef in fbmem.c.
++	 */
+ 	fb_register_client(&am200_fb_notif);
+ 
+ 	pxa2xx_mfp_config(ARRAY_AND_SIZE(am200_pin_config));
 diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index 5424051c8e1a..e11bae2787e6 100644
+index e11bae2787e6..5a9fe0c0dd3c 100644
 --- a/drivers/video/fbdev/core/fbcon.c
 +++ b/drivers/video/fbdev/core/fbcon.c
-@@ -112,7 +112,6 @@ static int softback_lines;
- static int first_fb_vc;
- static int last_fb_vc = MAX_NR_CONSOLES - 1;
- static int fbcon_is_default = 1; 
--static int fbcon_has_exited;
- static int primary_device = -1;
- static int fbcon_has_console_bind;
- 
-@@ -1050,13 +1049,12 @@ static const char *fbcon_startup(void)
- 		info->var.bits_per_pixel);
- 
- 	fbcon_add_cursor_timer(info);
--	fbcon_has_exited = 0;
- 	return display_desc;
+@@ -3119,14 +3119,14 @@ static int fbcon_fb_unbind(int idx)
  }
  
- static void fbcon_init(struct vc_data *vc, int init)
+ /* called with console_lock held */
+-static int fbcon_fb_unregistered(struct fb_info *info)
++void fbcon_fb_unregistered(struct fb_info *info)
  {
--	struct fb_info *info = registered_fb[con2fb_map[vc->vc_num]];
-+	struct fb_info *info;
- 	struct fbcon_ops *ops;
- 	struct vc_data **default_mode = vc->vc_display_fg;
- 	struct vc_data *svc = *default_mode;
-@@ -1064,9 +1062,13 @@ static void fbcon_init(struct vc_data *vc, int init)
- 	int logo = 1, new_rows, new_cols, rows, cols, charcnt = 256;
- 	int cap, ret;
+ 	int i, idx;
  
--	if (info_idx == -1 || info == NULL)
-+	if (WARN_ON(info_idx == -1))
- 	    return;
+ 	WARN_CONSOLE_UNLOCKED();
  
-+	if (con2fb_map[vc->vc_num] == -1)
-+		con2fb_map[vc->vc_num] = info_idx;
-+
-+	info = registered_fb[con2fb_map[vc->vc_num]];
- 	cap = info->flags;
+ 	if (deferred_takeover)
+-		return 0;
++		return;
  
- 	if (logo_shown < 0 && console_loglevel <= CONSOLE_LOGLEVEL_QUIET)
-@@ -3336,14 +3338,6 @@ static int fbcon_event_notify(struct notifier_block *self,
- 	struct fb_blit_caps *caps;
- 	int idx, ret = 0;
+ 	idx = info->node;
+ 	for (i = first_fb_vc; i <= last_fb_vc; i++) {
+@@ -3155,8 +3155,6 @@ static int fbcon_fb_unregistered(struct fb_info *info)
  
--	/*
--	 * ignore all events except driver registration and deregistration
--	 * if fbcon is not active
--	 */
--	if (fbcon_has_exited && !(action == FB_EVENT_FB_REGISTERED ||
--				  action == FB_EVENT_FB_UNREGISTERED))
--		goto done;
+ 	if (!num_registered_fb)
+ 		do_unregister_con_driver(&fb_con);
 -
- 	switch(action) {
- 	case FB_EVENT_SUSPEND:
- 		fbcon_suspended(info);
-@@ -3396,7 +3390,6 @@ static int fbcon_event_notify(struct notifier_block *self,
- 		fbcon_remap_all(idx);
+-	return 0;
+ }
+ 
+ /* called with console_lock held */
+@@ -3215,7 +3213,7 @@ static inline void fbcon_select_primary(struct fb_info *info)
+ #endif /* CONFIG_FRAMEBUFFER_DETECT_PRIMARY */
+ 
+ /* called with console_lock held */
+-static int fbcon_fb_registered(struct fb_info *info)
++int fbcon_fb_registered(struct fb_info *info)
+ {
+ 	int ret = 0, i, idx;
+ 
+@@ -3359,12 +3357,6 @@ static int fbcon_event_notify(struct notifier_block *self,
+ 		idx = info->node;
+ 		ret = fbcon_fb_unbind(idx);
  		break;
+-	case FB_EVENT_FB_REGISTERED:
+-		ret = fbcon_fb_registered(info);
+-		break;
+-	case FB_EVENT_FB_UNREGISTERED:
+-		ret = fbcon_fb_unregistered(info);
+-		break;
+ 	case FB_EVENT_SET_CONSOLE_MAP:
+ 		/* called with console lock held */
+ 		con2fb = event->data;
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 8ba674ffb3c9..bed7698ad18a 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -1660,7 +1660,6 @@ MODULE_PARM_DESC(lockless_register_fb,
+ static int do_register_framebuffer(struct fb_info *fb_info)
+ {
+ 	int i, ret;
+-	struct fb_event event;
+ 	struct fb_videomode mode;
+ 
+ 	if (fb_check_foreignness(fb_info))
+@@ -1723,7 +1722,14 @@ static int do_register_framebuffer(struct fb_info *fb_info)
+ 	fb_add_videomode(&mode, &fb_info->modelist);
+ 	registered_fb[i] = fb_info;
+ 
+-	event.info = fb_info;
++#ifdef CONFIG_GUMSTIX_AM200EPD
++	{
++		struct fb_event event;
++		event.info = fb_info;
++		fb_notifier_call_chain(FB_EVENT_FB_REGISTERED, &event);
++	}
++#endif
++
+ 	if (!lockless_register_fb)
+ 		console_lock();
+ 	else
+@@ -1732,9 +1738,8 @@ static int do_register_framebuffer(struct fb_info *fb_info)
+ 		ret = -ENODEV;
+ 		goto unlock_console;
  	}
--done:
- 	return ret;
- }
+-	ret = 0;
  
-@@ -3443,9 +3436,6 @@ static ssize_t store_rotate(struct device *device,
- 	int rotate, idx;
- 	char **last = NULL;
+-	fb_notifier_call_chain(FB_EVENT_FB_REGISTERED, &event);
++	ret = fbcon_fb_registered(fb_info);
+ 	unlock_fb_info(fb_info);
+ unlock_console:
+ 	if (!lockless_register_fb)
+@@ -1771,7 +1776,6 @@ static int __unlink_framebuffer(struct fb_info *fb_info);
  
--	if (fbcon_has_exited)
--		return count;
--
+ static int do_unregister_framebuffer(struct fb_info *fb_info)
+ {
+-	struct fb_event event;
+ 	int ret;
+ 
+ 	ret = unbind_console(fb_info);
+@@ -1789,9 +1793,15 @@ static int do_unregister_framebuffer(struct fb_info *fb_info)
+ 	registered_fb[fb_info->node] = NULL;
+ 	num_registered_fb--;
+ 	fb_cleanup_device(fb_info);
+-	event.info = fb_info;
++#ifdef CONFIG_GUMSTIX_AM200EPD
++	{
++		struct fb_event event;
++		event.info = fb_info;
++		fb_notifier_call_chain(FB_EVENT_FB_UNREGISTERED, &event);
++	}
++#endif
  	console_lock();
- 	idx = con2fb_map[fg_console];
+-	fb_notifier_call_chain(FB_EVENT_FB_UNREGISTERED, &event);
++	fbcon_fb_unregistered(fb_info);
+ 	console_unlock();
  
-@@ -3468,9 +3458,6 @@ static ssize_t store_rotate_all(struct device *device,
- 	int rotate, idx;
- 	char **last = NULL;
+ 	/* this may free fb info */
+diff --git a/include/linux/fb.h b/include/linux/fb.h
+index f52ef0ad6781..288175fafaf6 100644
+--- a/include/linux/fb.h
++++ b/include/linux/fb.h
+@@ -136,10 +136,13 @@ struct fb_cursor_user {
+ #define FB_EVENT_RESUME			0x03
+ /*      An entry from the modelist was removed */
+ #define FB_EVENT_MODE_DELETE            0x04
+-/*      A driver registered itself */
++
++#ifdef CONFIG_GUMSTIX_AM200EPD
++/* only used by mach-pxa/am200epd.c */
+ #define FB_EVENT_FB_REGISTERED          0x05
+-/*      A driver unregistered itself */
+ #define FB_EVENT_FB_UNREGISTERED        0x06
++#endif
++
+ /*      CONSOLE-SPECIFIC: get console to framebuffer mapping */
+ #define FB_EVENT_GET_CONSOLE_MAP        0x07
+ /*      CONSOLE-SPECIFIC: set console to framebuffer mapping */
+diff --git a/include/linux/fbcon.h b/include/linux/fbcon.h
+index f68a7db14165..94a71e9e1257 100644
+--- a/include/linux/fbcon.h
++++ b/include/linux/fbcon.h
+@@ -4,9 +4,13 @@
+ #ifdef CONFIG_FRAMEBUFFER_CONSOLE
+ void __init fb_console_init(void);
+ void __exit fb_console_exit(void);
++int fbcon_fb_registered(struct fb_info *info);
++void fbcon_fb_unregistered(struct fb_info *info);
+ #else
+ static inline void fb_console_init(void) {}
+ static inline void fb_console_exit(void) {}
++static inline int fbcon_fb_registered(struct fb_info *info) { return 0; }
++static inline void fbcon_fb_unregistered(struct fb_info *info) {}
+ #endif
  
--	if (fbcon_has_exited)
--		return count;
--
- 	console_lock();
- 	idx = con2fb_map[fg_console];
- 
-@@ -3491,9 +3478,6 @@ static ssize_t show_rotate(struct device *device,
- 	struct fb_info *info;
- 	int rotate = 0, idx;
- 
--	if (fbcon_has_exited)
--		return 0;
--
- 	console_lock();
- 	idx = con2fb_map[fg_console];
- 
-@@ -3514,9 +3498,6 @@ static ssize_t show_cursor_blink(struct device *device,
- 	struct fbcon_ops *ops;
- 	int idx, blink = -1;
- 
--	if (fbcon_has_exited)
--		return 0;
--
- 	console_lock();
- 	idx = con2fb_map[fg_console];
- 
-@@ -3543,9 +3524,6 @@ static ssize_t store_cursor_blink(struct device *device,
- 	int blink, idx;
- 	char **last = NULL;
- 
--	if (fbcon_has_exited)
--		return count;
--
- 	console_lock();
- 	idx = con2fb_map[fg_console];
- 
-@@ -3668,9 +3646,6 @@ static void fbcon_exit(void)
- 	struct fb_info *info;
- 	int i, j, mapped;
- 
--	if (fbcon_has_exited)
--		return;
--
- #ifdef CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER
- 	if (deferred_takeover) {
- 		dummycon_unregister_output_notifier(&fbcon_output_nb);
-@@ -3695,7 +3670,7 @@ static void fbcon_exit(void)
- 		for (j = first_fb_vc; j <= last_fb_vc; j++) {
- 			if (con2fb_map[j] == i) {
- 				mapped = 1;
--				break;
-+				con2fb_map[j] = -1;
- 			}
- 		}
- 
-@@ -3718,8 +3693,6 @@ static void fbcon_exit(void)
- 				info->queue.func = NULL;
- 		}
- 	}
--
--	fbcon_has_exited = 1;
- }
- 
- void __init fb_console_init(void)
+ #endif /* _LINUX_FBCON_H */
 -- 
 2.20.1
 
