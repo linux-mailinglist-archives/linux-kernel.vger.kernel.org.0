@@ -2,94 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F2F62C7FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FBA82C7FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbfE1Nlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 09:41:52 -0400
-Received: from mail-ot1-f41.google.com ([209.85.210.41]:38675 "EHLO
-        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727038AbfE1Nlv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 09:41:51 -0400
-Received: by mail-ot1-f41.google.com with SMTP id s19so17778134otq.5
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 06:41:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tKsXUMCakUWgErOsaRITqa4FxEz2qOwMXsf6lvlti0M=;
-        b=oqcxK4FaFOcW5GwJTKUXr7vekNKKcFx7LWt8JHxUwbg+cWVAhaEWYDNG6A+B3gN4K2
-         cnua/jNczN9pL0pWaSmbMB5ANrUyJRTuCEFo43geNZw3B6W+VEb1akn9j10v/RIr87W1
-         NUNN4Sj85NkLZgQysRZbSyqBShe1YNitUo2QS/nciFTGAds3pKrN8x4aeFn2oD3Z2FZU
-         S92G5951kPvhevqgnn/CNkBhdGHWwnhZJx5fDBwfIBH5DeTd3Es/C7jWR/0qzk2MYcth
-         A+k5puS4IulBgv3mGQnnzAgYTD/HarbY7Pi2E9twTv2/i89DeDlFprt6nL+AxKCQL8Kr
-         swzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tKsXUMCakUWgErOsaRITqa4FxEz2qOwMXsf6lvlti0M=;
-        b=Y3YZYzXRu2qSSuDi8j+Nqg2qiHkJBTSnn088tLxzUeV28mQY4NjA1jq41trm1u+e2p
-         8IooZzeaD1FWgtaDtR9yHRIfGSwK9yNstFha4lP4W4VCfk1/rn4ZPrJV2E0JU49LG+Ph
-         1J9fs1UstF60ZbEd03sVv6f0vLvPUTF8CbhaLmVcYugtROzOcy/q5kAV+6f5jb78OubM
-         PTPWRTDXFogCZgzjG5+8pzFdbWXJjCbJdPnSY8xKoSTJZtvNxii3CGVeHkidTlbZwfxv
-         pcWe00UVPa4PUpCUehzv/v9gVSaSvyCpuAAUqDHQaBthA5fxaCYjISVMr7Wo6InLkR3g
-         x5Jw==
-X-Gm-Message-State: APjAAAVvpOUOb3WxnSDGSvOINKn1ZyUuCsw6YIiTnjyOow9eBD2t3RmP
-        bPbW5N4Byiah7iJ0hR88XG2WZ+MFd1V0q0o4dfo=
-X-Google-Smtp-Source: APXvYqzP0qT8QbEIUpML4WTjIG+mQEqMSn1zb42i3wQL0nMKL3SIL2EiVoclQJqCaUtFHCZ6Dsnjzh0AJHFZtS3EkXo=
-X-Received: by 2002:a9d:68c5:: with SMTP id i5mr25567214oto.224.1559050910868;
- Tue, 28 May 2019 06:41:50 -0700 (PDT)
+        id S1727628AbfE1Nm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 09:42:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53888 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727038AbfE1Nm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 09:42:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 256C4AF6A;
+        Tue, 28 May 2019 13:42:28 +0000 (UTC)
+Date:   Tue, 28 May 2019 15:42:27 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Subject: Re: [RFC] printk/sysrq: Don't play with console_loglevel
+Message-ID: <20190528134227.xyb3622gjwu52q4r@pathway.suse.cz>
+References: <20190528002412.1625-1-dima@arista.com>
+ <20190528041500.GB26865@jagdpanzerIV>
+ <20190528044619.GA3429@jagdpanzerIV>
 MIME-Version: 1.0
-References: <20190528133214.21776-1-yuehaibing@huawei.com>
-In-Reply-To: <20190528133214.21776-1-yuehaibing@huawei.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Tue, 28 May 2019 09:41:40 -0400
-Message-ID: <CAGngYiU=uFjJFEoiHFUr+ab73sJksaTBkfxvQwL1X6WJnhchqw@mail.gmail.com>
-Subject: Re: [PATCH -next] staging: fieldbus: Fix build error without CONFIG_REGMAP_MMIO
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devel@driverdev.osuosl.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190528044619.GA3429@jagdpanzerIV>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello YueHaibing,
+On Tue 2019-05-28 13:46:19, Sergey Senozhatsky wrote:
+> On (05/28/19 13:15), Sergey Senozhatsky wrote:
+> > On (05/28/19 01:24), Dmitry Safonov wrote:
+> > [..]
+> > > While handling sysrq the console_loglevel is bumped to default to print
+> > > sysrq headers. It's done to print sysrq messages with WARNING level for
+> > > consumers of /proc/kmsg, though it sucks by the following reasons:
+> > > - changing console_loglevel may produce tons of messages (especially on
+> > >   bloated with debug/info prints systems)
+> > > - it doesn't guarantee that the message will be printed as printk may
+> > >   deffer the actual console output from buffer (see the comment near
+> > >   printk() in kernel/printk/printk.c)
+> > > 
+> > > Provide KERN_UNSUPPRESSED printk() annotation for such legacy places.
+> > > Make sysrq print the headers unsuppressed instead of changing
+> > > console_loglevel.
 
-On Tue, May 28, 2019 at 9:33 AM YueHaibing <yuehaibing@huawei.com> wrote:
->
-> Fix gcc build error while CONFIG_REGMAP_MMIO is not set
->
-> drivers/staging/fieldbus/anybuss/arcx-anybus.o: In function `controller_probe':
-> arcx-anybus.c:(.text+0x9d6): undefined reference to `__devm_regmap_init_mmio_clk'
->
-> Select REGMAP_MMIO to fix it.
+I like this idea. console_loglevel is temporary manipulated only
+when some messages should or should never appear on the console.
+Storing this information in the message flags would help
+to solve all the related races.
 
-Thank you for noticing this, I appreciate it !
+> > I've been thinking about this a while ago... So what I thought back
+> > then was that affected paths are atomic: sysrq, irqs, NMI, etc. Well
+> > at leasted it seemed to be so.
 
-However, when I run this patch through the scripts/checkpatch.pl
-script, it reports
-some issues. Could you fix and post v2 please?
+Yes, this would be useful for the other situations when all printk's
+in a particular context should be handled this way. We could build
+it on top of this patch.
 
-checkpatch.pl output follows:
+> Ahh.. OK, now I sort of remember why I gave up on this idea (see [1]
+> at the bottom, when it comes to uv_nmi_dump_state()) - printk_NMI and
+> printk-safe redirections.
+> 
+> 	NMI
+> 		loglevel = NEW
+> 		printk -> printk_safe_nmi
+> 		loglevel = OLD
+> 
+> 	iret
+> 
+> 	IRQ
+> 		flush printk_safe_nmi -> printk
+> 		// At this point we don't remember about
+> 		// loglevel manipulation anymore
+> 	iret
 
-WARNING: Possible unwrapped commit description (prefer a maximum 75
-chars per line)
-#68:
-arcx-anybus.c:(.text+0x9d6): undefined reference to
-`__devm_regmap_init_mmio_clk'
+printk_safe buffer preserves KERN_* headers. It should be
+possible to insert KERN_UNSUPPRESSED there.
 
-ERROR: DOS line endings
-#87: FILE: drivers/staging/fieldbus/anybuss/Kconfig:17:
-+^Iselect REGMAP_MMIO^M$
+The patch itself looks fine on the first sight. If we go
+forward, please, split the printk and sysrq part
+into two patches.
 
-total: 1 errors, 1 warnings, 0 checks, 7 lines checked
-
-NOTE: For some of the reported defects, checkpatch may be able to
-      mechanically convert to the typical style using --fix or --fix-inplace.
-
-Your patch has style problems, please review.
+Best Regards,
+Petr
