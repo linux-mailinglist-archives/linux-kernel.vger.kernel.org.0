@@ -2,84 +2,267 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D9F32C365
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 426712C36B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:41:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbfE1Jj5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:39:57 -0400
-Received: from muru.com ([72.249.23.125]:51514 "EHLO muru.com"
+        id S1726574AbfE1Jla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:41:30 -0400
+Received: from mga03.intel.com ([134.134.136.65]:8912 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726236AbfE1Jj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:39:56 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 5C1A780F3;
-        Tue, 28 May 2019 09:40:15 +0000 (UTC)
-Date:   Tue, 28 May 2019 02:39:52 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Keerthy <j-keerthy@ti.com>
-Subject: Re: [PATCHv6 0/4] omapdrm: DSI command mode panel support
-Message-ID: <20190528093952.GM5447@atomide.com>
-References: <20190523200756.25314-1-sebastian.reichel@collabora.com>
- <60c45d23-de2f-d94a-c3d7-146a2bee538f@ti.com>
- <20190527112122.GJ5447@atomide.com>
- <e507c415-38de-86fe-9265-4b0aed0d7224@ti.com>
+        id S1726203AbfE1Jla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:41:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 02:41:29 -0700
+X-ExtLoop1: 1
+Received: from ideak-desk.fi.intel.com ([10.237.72.204])
+  by orsmga003.jf.intel.com with ESMTP; 28 May 2019 02:41:27 -0700
+From:   Imre Deak <imre.deak@intel.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v3 1/2] lockdep: Fix OOO unlock when hlocks need merging
+Date:   Tue, 28 May 2019 12:40:50 +0300
+Message-Id: <20190528094051.22840-1-imre.deak@intel.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e507c415-38de-86fe-9265-4b0aed0d7224@ti.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The sequence
 
-* Tomi Valkeinen <tomi.valkeinen@ti.com> [190528 09:19]:
-> On 27/05/2019 14:21, Tony Lindgren wrote:
-> 
-> >> Looks good to me. For some reason I can't boot 5.2-rc2 (on x15) so I haven't
-> >> been able to test yet. I'll pick the series up in any case, and I'll test it
-> >> when I get the kernel booting.
-> > 
-> > Great good to have these merged finally :)
-> > 
-> > Hmm I wonder if some x15 models are affected by the SoC variant
-> > changes queued in my fixes branch?
-> 
-> This is what I see with earlycon, on linux-omap fixes branch. I think this looks
-> similar to what I saw with dra76 _without_ the fixes.
+	static DEFINE_WW_CLASS(test_ww_class);
 
-OK sounds like we need to use some different SoC specific .dtsi file,
-is this maybe x15 rev c?
+	struct ww_acquire_ctx ww_ctx;
+	struct ww_mutex ww_lock_a;
+	struct ww_mutex ww_lock_b;
+	struct mutex lock_c;
+	struct mutex lock_d;
 
-You can detect which modules fail based on the module base address
-for revision register seen with the following debug patch. Then
-those need to be tagged with status = "disabled" at the module
-level in the SoC specific dtsi file.
+	ww_acquire_init(&ww_ctx, &test_ww_class);
 
-Regards,
+	ww_mutex_init(&ww_lock_a, &test_ww_class);
+	ww_mutex_init(&ww_lock_b, &test_ww_class);
 
-Tony
+	mutex_init(&lock_c);
 
-8< --------------
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -2069,6 +2069,8 @@ static int sysc_probe(struct platform_device *pdev)
- 	struct sysc *ddata;
- 	int error;
+	ww_mutex_lock(&ww_lock_a, &ww_ctx);
+
+	mutex_lock(&lock_c);
+
+	ww_mutex_lock(&ww_lock_b, &ww_ctx);
+
+	mutex_unlock(&lock_c);		(*)
+
+	ww_mutex_unlock(&ww_lock_b);
+	ww_mutex_unlock(&ww_lock_a);
+
+	ww_acquire_fini(&ww_ctx);
+
+triggers the following WARN in __lock_release() when doing the unlock at *:
+
+	DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth - 1);
+
+The problem is that the WARN check doesn't take into account the merging
+of ww_lock_a and ww_lock_b which results in decreasing curr->lockdep_depth
+by 2 not only 1.
+
+Note that the following sequence doesn't trigger the WARN, since there
+won't be any hlock merging.
+
+	ww_acquire_init(&ww_ctx, &test_ww_class);
+
+	ww_mutex_init(&ww_lock_a, &test_ww_class);
+	ww_mutex_init(&ww_lock_b, &test_ww_class);
+
+	mutex_init(&lock_c);
+	mutex_init(&lock_d);
+
+	ww_mutex_lock(&ww_lock_a, &ww_ctx);
+
+	mutex_lock(&lock_c);
+	mutex_lock(&lock_d);
+
+	ww_mutex_lock(&ww_lock_b, &ww_ctx);
+
+	mutex_unlock(&lock_d);
+
+	ww_mutex_unlock(&ww_lock_b);
+	ww_mutex_unlock(&ww_lock_a);
+
+	mutex_unlock(&lock_c);
+
+	ww_acquire_fini(&ww_ctx);
+
+In general both of the above two sequences are valid and shouldn't
+trigger any lockdep warning.
+
+Fix this by taking the decrement due to the hlock merging into account
+during lock release and hlock class re-setting. Merging can't happen
+during lock downgrading since there won't be a new possibility to merge
+hlocks in that case, so add a WARN if merging still happens then.
+
+v2:
+- Clarify the commit log and use mutex_lock() instead of mutex_trylock()
+  in the example sequences for simplicity.
+v3: (Peter)
+- Sanitize counting the merge in reacquire_held_locks().
+- Optimize calculating the new expected lockdep depth in __lock_release().
+
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Imre Deak <imre.deak@intel.com>
+---
+ kernel/locking/lockdep.c | 41 ++++++++++++++++++++++++++++------------
+ 1 file changed, 29 insertions(+), 12 deletions(-)
+
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index c47788fa85f9..7a48649ce6bc 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -3715,7 +3715,7 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 				hlock->references = 2;
+ 			}
  
-+	dev_info(&pdev->dev, "probing device\n");
+-			return 1;
++			return 2;
+ 		}
+ 	}
+ 
+@@ -3921,22 +3921,33 @@ static struct held_lock *find_held_lock(struct task_struct *curr,
+ }
+ 
+ static int reacquire_held_locks(struct task_struct *curr, unsigned int depth,
+-			      int idx)
++				int idx, unsigned int *merged)
+ {
+ 	struct held_lock *hlock;
++	int first_idx = idx;
+ 
+ 	if (DEBUG_LOCKS_WARN_ON(!irqs_disabled()))
+ 		return 0;
+ 
+ 	for (hlock = curr->held_locks + idx; idx < depth; idx++, hlock++) {
+-		if (!__lock_acquire(hlock->instance,
++		switch (__lock_acquire(hlock->instance,
+ 				    hlock_class(hlock)->subclass,
+ 				    hlock->trylock,
+ 				    hlock->read, hlock->check,
+ 				    hlock->hardirqs_off,
+ 				    hlock->nest_lock, hlock->acquire_ip,
+-				    hlock->references, hlock->pin_count))
++				    hlock->references, hlock->pin_count)) {
++		case 0:
+ 			return 1;
++		case 1:
++			break;
++		case 2:
++			*merged += (idx == first_idx);
++			break;
++		default:
++			WARN_ON(1);
++			return 0;
++		}
+ 	}
+ 	return 0;
+ }
+@@ -3947,9 +3958,9 @@ __lock_set_class(struct lockdep_map *lock, const char *name,
+ 		 unsigned long ip)
+ {
+ 	struct task_struct *curr = current;
++	unsigned int depth, merged = 0;
+ 	struct held_lock *hlock;
+ 	struct lock_class *class;
+-	unsigned int depth;
+ 	int i;
+ 
+ 	if (unlikely(!debug_locks))
+@@ -3974,14 +3985,14 @@ __lock_set_class(struct lockdep_map *lock, const char *name,
+ 	curr->lockdep_depth = i;
+ 	curr->curr_chain_key = hlock->prev_chain_key;
+ 
+-	if (reacquire_held_locks(curr, depth, i))
++	if (reacquire_held_locks(curr, depth, i, &merged))
+ 		return 0;
+ 
+ 	/*
+ 	 * I took it apart and put it back together again, except now I have
+ 	 * these 'spare' parts.. where shall I put them.
+ 	 */
+-	if (DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth))
++	if (DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth - merged))
+ 		return 0;
+ 	return 1;
+ }
+@@ -3989,8 +4000,8 @@ __lock_set_class(struct lockdep_map *lock, const char *name,
+ static int __lock_downgrade(struct lockdep_map *lock, unsigned long ip)
+ {
+ 	struct task_struct *curr = current;
++	unsigned int depth, merged = 0;
+ 	struct held_lock *hlock;
+-	unsigned int depth;
+ 	int i;
+ 
+ 	if (unlikely(!debug_locks))
+@@ -4015,7 +4026,7 @@ static int __lock_downgrade(struct lockdep_map *lock, unsigned long ip)
+ 	hlock->read = 1;
+ 	hlock->acquire_ip = ip;
+ 
+-	if (reacquire_held_locks(curr, depth, i))
++	if (reacquire_held_locks(curr, depth, i, &merged))
+ 		return 0;
+ 
+ 	/*
+@@ -4024,6 +4035,11 @@ static int __lock_downgrade(struct lockdep_map *lock, unsigned long ip)
+ 	 */
+ 	if (DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth))
+ 		return 0;
 +
- 	ddata = devm_kzalloc(&pdev->dev, sizeof(*ddata), GFP_KERNEL);
- 	if (!ddata)
- 		return -ENOMEM;
++	/* Merging can't happen with unchanged classes.. */
++	if (DEBUG_LOCKS_WARN_ON(merged))
++		return 0;
++
+ 	return 1;
+ }
+ 
+@@ -4038,8 +4054,8 @@ static int
+ __lock_release(struct lockdep_map *lock, int nested, unsigned long ip)
+ {
+ 	struct task_struct *curr = current;
++	unsigned int depth, merged = 1;
+ 	struct held_lock *hlock;
+-	unsigned int depth;
+ 	int i;
+ 
+ 	if (unlikely(!debug_locks))
+@@ -4094,14 +4110,15 @@ __lock_release(struct lockdep_map *lock, int nested, unsigned long ip)
+ 	if (i == depth-1)
+ 		return 1;
+ 
+-	if (reacquire_held_locks(curr, depth, i + 1))
++	if (reacquire_held_locks(curr, depth, i + 1, &merged))
+ 		return 0;
+ 
+ 	/*
+ 	 * We had N bottles of beer on the wall, we drank one, but now
+ 	 * there's not N-1 bottles of beer left on the wall...
++	 * Pouring two of the bottles together is acceptable.
+ 	 */
+-	DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth-1);
++	DEBUG_LOCKS_WARN_ON(curr->lockdep_depth != depth - merged);
+ 
+ 	/*
+ 	 * Since reacquire_held_locks() would have called check_chain_key()
+-- 
+2.17.1
+
