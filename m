@@ -2,91 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF0662D298
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:58:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B3442D288
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbfE1X6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 19:58:55 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40409 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727397AbfE1X6f (ORCPT
+        id S1726722AbfE1X5s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 19:57:48 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43114 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfE1X5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 19:58:35 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 15so276974wmg.5;
-        Tue, 28 May 2019 16:58:34 -0700 (PDT)
+        Tue, 28 May 2019 19:57:48 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w33so599069edb.10
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 16:57:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GZyffYfMPKchEX6Qggp4RmN0jCDvBMdBfEYe+t4NqOI=;
-        b=klV+0RK4nucqfGR5SkClN8gc6IeW37MGz7hTGRPx+FjPQuxx+A04zkL7YhCEEKk0aq
-         9ODqW+VYhuW+J2e0zDQ1cldPWagbdG8s0l5Qt4fclEN8TNS4hbt2T+WE2kfPRqBNIxsH
-         X9Gq/BpOM52B4kjtuhph8L5iwk/VVY4sM0N51MISCReUgkeN8x4ADGwYeXORUcDd2c34
-         pC4URtjRcV+sucBMA+3WDdkYWY37EX4nh304bSJZHkVGU/YQjrwIllV87U3NgX2K/wq8
-         e7g2Fu90gR2+lqJLe1eolgRpGogvLOjispZXqYp8Ev7HAoJR9TYLZyLzVCZGHs2JxWn+
-         qUcA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tY1S9QD7vrCtWoh/cKmDSkmGt1HGWJIL0pZvj39EZVc=;
+        b=JI5A5RfOFw7zOIGH20VztXP0bA2BvcknRnm0vFZRC3rSsuffHbE7bgrV9ZVhUenjBH
+         PSug/nv+vELoCpRaNVwey/8uixFj8fMi/O+9mYe+HSkse6CsLZnYP04lRBQsMBthTRs3
+         2RmR8I4z+x6MODC5cdThOQrYER+d0kg5skVN2WAkU7AEIoYTkxUglfTfVCxackfHR1qi
+         7FcwGF5FbgrlcZ3OMCkUSYakKTtnVkHD8yscBKtVvSittUlBw1W0ZyWJllZml7InwpLC
+         NrSQJ39xiWtSyVaNN3+sxnM6l8IgncM8c/PQXM61UtfTBgbYtGDPnksQf6rUhwZGMnTo
+         ndkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=GZyffYfMPKchEX6Qggp4RmN0jCDvBMdBfEYe+t4NqOI=;
-        b=i3B40czSDWSz/Tsxz9oZ+xQoaW3NYMyfAnA4EwiaspJEp5mXL6xUThMvLFDw1DTVZF
-         ffkmoLNCXsYKQNJILgWo0gL6Gw6XVvCP8FiufDAvLccL/YfYwIlR9aACdVmTVFA2mHyO
-         bnY2AGidHgTGDJtrGKy/maWLHxUPWxiPOaGlr54UY+xFfU1QLVse8Lzl/hQ4CIB3RMjx
-         YsPWCSQ55WIk3auU1pHm1Z8tHLGydBwtMhI6/yOZsNLP38OTVE00PQV7ThCrqa+qK836
-         cNDJO/VNKRG6NvKqyjCzuTCA4BMBHWoDZBI2xqGGG3jKLwjR5VGR8kFxthgB6ceJqej4
-         IPlg==
-X-Gm-Message-State: APjAAAVZhd1BhszRuUi7kvLlRiju2Pz6odSOV/MBZHxJsR9vTeOyQLJ0
-        ZxeAfkeXym5vzYkuDBfKvK4=
-X-Google-Smtp-Source: APXvYqx3YdxtxXesAGbrLO/pWGatsVocFLEqcvKamxWqcYKnHWWlO1ncmg76clzk4SnfvTlOQ5tlxw==
-X-Received: by 2002:a05:600c:2187:: with SMTP id e7mr4723813wme.16.1559087913612;
-        Tue, 28 May 2019 16:58:33 -0700 (PDT)
-Received: from localhost.localdomain ([86.121.27.188])
-        by smtp.gmail.com with ESMTPSA id f3sm1207505wre.93.2019.05.28.16.58.32
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tY1S9QD7vrCtWoh/cKmDSkmGt1HGWJIL0pZvj39EZVc=;
+        b=OGnf4LiifsCqQU5xKse9kI3Xo6YrM/oAYQKoZq1PrwVdit1yE/3rMTottUthSM5AFZ
+         AmSSZJU+eGe4WBk/RZNzpq/wlkHYy7F6t90yf/5bzEB1W9WuUW2+GLroagDYioEciBqa
+         H7bjLD+dK7mrb1pnSTDPs7Zv46PSvZvA4sgrRfTCtdrEGZbOc5PIhSdJhjb3p38YECjL
+         JggM0CmiJzpZVY3YBgs6hfo68k/W33OoOFo04HIXHZMWlFkcBX+bexP6R4iG6JRhISsK
+         vK1439JXW5uBpPIzzvDn1x74PRQhaehcJzA7unYCsmj9yYS7/0fUDR8OKlkCbXPhrBDb
+         zFeg==
+X-Gm-Message-State: APjAAAU2KWVtBV3Pk2+tew+nn1JW1o94A8p08tEcNw37aplokn5QS3qN
+        xSECCRmmfVtvXcNtPj5lQ08=
+X-Google-Smtp-Source: APXvYqwe8zzoO0T1q2g/lUQM7eKqTZrrvLgQ/+AH38CB0uekNs1XDc1NdxoBewlXX0FRRvcFAk/Ayg==
+X-Received: by 2002:a17:906:ca5b:: with SMTP id jx27mr94012887ejb.233.1559087866574;
+        Tue, 28 May 2019 16:57:46 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f9:2b:2b15::2])
+        by smtp.gmail.com with ESMTPSA id v22sm2499638eji.13.2019.05.28.16.57.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 16:58:33 -0700 (PDT)
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     f.fainelli@gmail.com, vivien.didelot@gmail.com, andrew@lunn.ch,
-        davem@davemloft.net, richardcochran@gmail.com,
-        john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Vladimir Oltean <olteanv@gmail.com>
-Subject: [PATCH net-next 5/5] net: dsa: sja1105: Increase priority of CPU-trapped frames
-Date:   Wed, 29 May 2019 02:56:27 +0300
-Message-Id: <20190528235627.1315-6-olteanv@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190528235627.1315-1-olteanv@gmail.com>
-References: <20190528235627.1315-1-olteanv@gmail.com>
+        Tue, 28 May 2019 16:57:45 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Nicolas Pitre <nico@fluxnic.net>, Stefan Agner <stefan@agner.ch>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: [PATCH] ARM: xor-neon: Replace __GNUC__ checks with CONFIG_CC_IS_GCC
+Date:   Tue, 28 May 2019 16:57:42 -0700
+Message-Id: <20190528235742.105510-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.22.0.rc1
+MIME-Version: 1.0
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Without noticing any particular issue, this patch ensures that
-management traffic is treated with the maximum priority on RX by the
-switch.  This is generally desirable, as the driver keeps a state
-machine that waits for metadata follow-up frames as soon as a management
-frame is received.  Increasing the priority helps expedite the reception
-(and further reconstruction) of the RX timestamp to the driver after the
-MAC has generated it.
+Currently, when compiling this code with clang, the following warning is
+emitted:
 
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+    CC      arch/arm/lib/xor-neon.o
+  arch/arm/lib/xor-neon.c:33:2: warning: This code requires at least
+  version 4.6 of GCC [-W#warnings]
+
+This is because clang poses as GCC 4.2.1 with its __GNUC__ conditionals
+for glibc compatibility[1]:
+
+$ echo | clang -dM -E -x c /dev/null | grep GNUC | awk '{print $2" "$3}'
+__GNUC_MINOR__ 2
+__GNUC_PATCHLEVEL__ 1
+__GNUC_STDC_INLINE__ 1
+__GNUC__ 4
+
+As pointed out by Ard Biesheuvel and Arnd Bergmann in an earlier
+thread[2], the oldest version of GCC that is currently supported is gcc
+4.6 after commit cafa0010cd51 ("Raise the minimum required gcc version
+to 4.6") so we do not need to check for anything older anymore.
+
+However, just removing the version check is not enough to silence clang
+because it does not recognize '#pragma GCC optimize':
+
+  arch/arm/lib/xor-neon.c:25:13: warning: unknown pragma ignored
+  [-Wunknown-pragmas]
+  #pragma GCC optimize "tree-vectorize"
+
+Looking into it further, -ftree-vectorize (which '#pragma GCC optimize
+"tree-vectorize"' enables) is an alias in clang for -fvectorize[3],
+which according to the documentation is on by default[4] (at least at
+-O2 or -Os).
+
+Just add the pragma when compiling with GCC so that clang does not
+unnecessarily warn.
+
+[1]: https://reviews.llvm.org/D51011#1206981
+[2]: https://lore.kernel.org/lkml/CAK8P3a3NjTCgFd2dQ9KbHP8DpXf6s-ULfeU6acAYC4SDi+2qvw@mail.gmail.com/
+[3]: https://github.com/llvm/llvm-project/blob/eafe8ef6f2b44ba/clang/include/clang/Driver/Options.td#L1729
+[4]: https://llvm.org/docs/Vectorizers.html#usage
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/496
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/net/dsa/sja1105/sja1105_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/lib/xor-neon.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
-index ce516615536d..3bd250e4e070 100644
---- a/drivers/net/dsa/sja1105/sja1105_main.c
-+++ b/drivers/net/dsa/sja1105/sja1105_main.c
-@@ -380,7 +380,7 @@ static int sja1105_init_general_params(struct sja1105_private *priv)
- 		.mirr_ptacu = 0,
- 		.switchid = priv->ds->index,
- 		/* Priority queue for link-local frames trapped to CPU */
--		.hostprio = 0,
-+		.hostprio = 7,
- 		.mac_fltres1 = SJA1105_LINKLOCAL_FILTER_A,
- 		.mac_flt1    = SJA1105_LINKLOCAL_FILTER_A_MASK,
- 		.incl_srcpt1 = true,
+diff --git a/arch/arm/lib/xor-neon.c b/arch/arm/lib/xor-neon.c
+index c691b901092f..d532bc072ee4 100644
+--- a/arch/arm/lib/xor-neon.c
++++ b/arch/arm/lib/xor-neon.c
+@@ -22,15 +22,8 @@ MODULE_LICENSE("GPL");
+  * -ftree-vectorize) to attempt to exploit implicit parallelism and emit
+  * NEON instructions.
+  */
+-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
++#ifdef CONFIG_CC_IS_GCC
+ #pragma GCC optimize "tree-vectorize"
+-#else
+-/*
+- * While older versions of GCC do not generate incorrect code, they fail to
+- * recognize the parallel nature of these functions, and emit plain ARM code,
+- * which is known to be slower than the optimized ARM code in asm-arm/xor.h.
+- */
+-#warning This code requires at least version 4.6 of GCC
+ #endif
+ 
+ #pragma GCC diagnostic ignored "-Wunused-variable"
 -- 
-2.17.1
+2.22.0.rc1
 
