@@ -2,110 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32FEA2C0B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 09:56:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2FBF2C0BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfE1H4s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 03:56:48 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45685 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbfE1H4q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 03:56:46 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w34so5804347pga.12;
-        Tue, 28 May 2019 00:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=i/suq6wlpwcJ3ogbpvRkyctj8x187X3vDma99VWceU4=;
-        b=ECYqfw7gsUzl3sA/NMdyK82zPejq0iU0eFkiPFVAoME0Qa3iZzAwZNgvBuXJkmdANB
-         c1xG8te3/3BcbDvLIdQwEuw3vO/W8Cb7R1MwBfUs2fLqFvKl3/ubr3/aS4/PcjQahdQg
-         g6ZIide7yY0c4/NlSxHoYnryflJTZuCqc9I7vgLuNsb5gGsnvvJcugKVzwZPTbPap7ll
-         2sXVDzGcaaVaGvzfsczAL9f7/UEoy4qWfn7Z3LvgNKzDXWtBxEOT/qdamNv5l9X5SY9X
-         2+LbJ7KKndXocJxlSlwkd0YUcf/vtsC3f+pGQTxX7AHHk7Xgz8V45Hgc9SApTu98iqDS
-         FemQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=i/suq6wlpwcJ3ogbpvRkyctj8x187X3vDma99VWceU4=;
-        b=kvA83/YRWTyQGGdJd/6/2DeAKLaoCNXmVokPzqitFyPrPQ1wL6fP/DkyyucImeZ7QO
-         eg3BV/qIKpZ5gIigbQfKXFV9fLFXDxXj00AkEbLWydw950NbMgfSeA/sfshyL2ZWc0bp
-         obmNaUkWiPDzhF48/afPBHQgCBVKZXkk852QB0CcUr7qU/9zpjSn6iwPz6Y4mpar1mUH
-         tjPhfSMl60yJ3MbOwRNvzOBk7q12mtYAOEF+othPoZEjZO4C6mMw6JytSpnF6TyMsLMm
-         gc+iEDPO4HFnvNq1A0AebFF3vezp+Q4K9Ez4IxYHEHZGQZV7OgYe4AHsEJouAf0ijV1o
-         Qizw==
-X-Gm-Message-State: APjAAAVyqNaPrtIaIwB3vI2rbrWQhzXNr8IKzJe4qSooY4pXlwmkON5n
-        6Mo233sUOqkWDPuuXEUsQ5HqUy7M
-X-Google-Smtp-Source: APXvYqzLwS6S67O6iGxhlvp+de+SklbtDAPQhSBt8APPY0ylnxElE1Ll524sT2mFjHjyUjXlhQH+Aw==
-X-Received: by 2002:a65:4b88:: with SMTP id t8mr131708342pgq.374.1559030205498;
-        Tue, 28 May 2019 00:56:45 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id t64sm2906920pjb.0.2019.05.28.00.56.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 28 May 2019 00:56:45 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH RESEND v2 3/3] KVM: X86: Expose PV_SCHED_YIELD CPUID feature bit to guest
-Date:   Tue, 28 May 2019 15:56:35 +0800
-Message-Id: <1559030195-2872-4-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559030195-2872-1-git-send-email-wanpengli@tencent.com>
-References: <1559030195-2872-1-git-send-email-wanpengli@tencent.com>
+        id S1727339AbfE1IBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 04:01:10 -0400
+Received: from mail-eopbgr50095.outbound.protection.outlook.com ([40.107.5.95]:43671
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726203AbfE1IBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 04:01:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sJPgPdHHnlForisO3pAkOACZSKSAG4puJlmGkzfQmcU=;
+ b=Rr7cRtyFWo8AexGHuZGSvchjaKcFG3uTEgD83Lo5MbF7Uk44FmYeKzly2dVQ9GvLQAM0I59/kydku1W9C1iQzeVFGkzREjiL8o0wNp93PAbKTeQJs4pzoOGGZk1GjI9wX+apxxVz8NjzIeN+xEeBVVJHFvNPOx1ogZ8FBOR9mus=
+Received: from VI1PR07MB3165.eurprd07.prod.outlook.com (10.175.243.15) by
+ VI1PR07MB6144.eurprd07.prod.outlook.com (20.178.124.159) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.10; Tue, 28 May 2019 08:01:04 +0000
+Received: from VI1PR07MB3165.eurprd07.prod.outlook.com
+ ([fe80::1403:5377:c11d:a41a]) by VI1PR07MB3165.eurprd07.prod.outlook.com
+ ([fe80::1403:5377:c11d:a41a%7]) with mapi id 15.20.1943.016; Tue, 28 May 2019
+ 08:01:04 +0000
+From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+To:     "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Vas Dias <jason.vas.dias@gmail.com>
+Subject: [PATCH] x86/vdso: implement clock_gettime(CLOCK_MONOTONIC_RAW, ...)
+Thread-Topic: [PATCH] x86/vdso: implement clock_gettime(CLOCK_MONOTONIC_RAW,
+ ...)
+Thread-Index: AQHVFSt/mcyouz98qE++y6I2rpiWQg==
+Date:   Tue, 28 May 2019 08:01:04 +0000
+Message-ID: <20190528080034.31259-1-alexander.sverdlin@nokia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [131.228.32.181]
+x-mailer: git-send-email 2.21.0
+x-clientproxiedby: HE1P191CA0014.EURP191.PROD.OUTLOOK.COM (2603:10a6:3:cf::24)
+ To VI1PR07MB3165.eurprd07.prod.outlook.com (2603:10a6:802:21::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=alexander.sverdlin@nokia.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c918ba8c-7058-4950-86fb-08d6e342a203
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR07MB6144;
+x-ms-traffictypediagnostic: VI1PR07MB6144:
+x-ms-exchange-purlcount: 2
+x-microsoft-antispam-prvs: <VI1PR07MB6144A3AA8AD442F0167E6A75881E0@VI1PR07MB6144.eurprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2958;
+x-forefront-prvs: 00514A2FE6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(136003)(346002)(39860400002)(376002)(189003)(199004)(99286004)(8936002)(508600001)(14454004)(386003)(52116002)(81156014)(8676002)(81166006)(66066001)(26005)(71200400001)(71190400001)(53936002)(186003)(6506007)(6436002)(6486002)(102836004)(14444005)(256004)(6306002)(6512007)(66946007)(25786009)(2501003)(66446008)(66476007)(68736007)(2906002)(50226002)(54906003)(110136005)(486006)(476003)(2616005)(36756003)(966005)(86362001)(4326008)(6116002)(3846002)(1076003)(316002)(305945005)(7736002)(66556008)(64756008)(73956011)(5660300002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB6144;H:VI1PR07MB3165.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: sI+Qf3Od+tGroWMBV3uVwRBbj/HW2NZdV7ROk3yg0zfwWmggaGDx62xVwutNPLjikYVS+aZpgpMmDih3S5ppo8VH4ganeZD2+lYaYOVq72GC3y3xDStgs83mwaHjvfzkuVcU8P71dGNqSYT5aLwKyd4Sgp7Fuxcc4XiS6fjoRHrY8nWNbLLJx5lUChQ4OrOuOSigFPB75XJEyzk9QazI8vjlaqvU9vnWyh+IfmujOWU/GdiBaiDFg4rx7z9gmjUQjDFVDpxYP2swal7NCS6Gush3V3BO4s39lezlgnjLa3idb2vlZCsFPTA2O/6r/UXrEOU2rLD9eITGWImjm4ZG4Kp6LcGFSaiTS3lxn9R3zXueBGuOcMGh4pyeCmECrAD0eXf0m4a+q/6raQFdW5KxI6qNDUNSWKnJm0XTOYAIDAE=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c918ba8c-7058-4950-86fb-08d6e342a203
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2019 08:01:04.8038
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: alexander.sverdlin@nokia.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB6144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
-
-Expose PV_SCHED_YIELD feature bit to guest, the guest can check this
-feature bit before using paravirtualized sched yield.
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- Documentation/virtual/kvm/cpuid.txt | 4 ++++
- arch/x86/kvm/cpuid.c                | 3 ++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
-index 97ca194..1c39683 100644
---- a/Documentation/virtual/kvm/cpuid.txt
-+++ b/Documentation/virtual/kvm/cpuid.txt
-@@ -66,6 +66,10 @@ KVM_FEATURE_PV_SEND_IPI            ||    11 || guest checks this feature bit
-                                    ||       || before using paravirtualized
-                                    ||       || send IPIs.
- ------------------------------------------------------------------------------
-+KVM_FEATURE_PV_SHED_YIELD          ||    12 || guest checks this feature bit
-+                                   ||       || before using paravirtualized
-+                                   ||       || sched yield.
-+------------------------------------------------------------------------------
- KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
-                                    ||       || per-cpu warps are expected in
-                                    ||       || kvmclock.
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index e18a9f9..c018fc8 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -643,7 +643,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 			     (1 << KVM_FEATURE_PV_UNHALT) |
- 			     (1 << KVM_FEATURE_PV_TLB_FLUSH) |
- 			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT) |
--			     (1 << KVM_FEATURE_PV_SEND_IPI);
-+			     (1 << KVM_FEATURE_PV_SEND_IPI) |
-+			     (1 << KVM_FEATURE_PV_SCHED_YIELD);
- 
- 		if (sched_info_on())
- 			entry->eax |= (1 << KVM_FEATURE_STEAL_TIME);
--- 
-2.7.4
-
+RnJvbTogQWxleGFuZGVyIFN2ZXJkbGluIDxhbGV4YW5kZXIuc3ZlcmRsaW5Abm9raWEuY29tPg0K
+DQpBZGQgQ0xPQ0tfTU9OT1RPTklDX1JBVyB0byB0aGUgZXhpc3RpbmcgY2xvY2tfZ2V0dGltZSgp
+IHZEU08NCmltcGxlbWVudGF0aW9uLiBUaGlzIGlzIGJhc2VkIG9uIHRoZSBpZGVhcyBvZiBKYXNv
+biBWYXMgRGlhcyBhbmQgY29tbWVudHMNCm9mIFRob21hcyBHbGVpeG5lci4NCg0KLS0tLSBUZXN0
+IGNvZGUgLS0tLQ0KICNpbmNsdWRlIDxlcnJuby5oPg0KICNpbmNsdWRlIDxzdGRpby5oPg0KICNp
+bmNsdWRlIDxzdGRsaWIuaD4NCiAjaW5jbHVkZSA8dGltZS5oPg0KICNpbmNsdWRlIDx1bmlzdGQu
+aD4NCg0KICNkZWZpbmUgQ0xPQ0tfVFlQRSBDTE9DS19NT05PVE9OSUNfUkFXDQogI2RlZmluZSBE
+VVJBVElPTl9TRUMgMTANCg0KaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KQ0Kew0KCXN0
+cnVjdCB0aW1lc3BlYyB0LCBlbmQ7DQoJdW5zaWduZWQgbG9uZyBsb25nIGNudCA9IDA7DQoNCglj
+bG9ja19nZXR0aW1lKENMT0NLX1RZUEUsICZlbmQpOw0KCWVuZC50dl9zZWMgKz0gRFVSQVRJT05f
+U0VDOw0KDQoJZG8gew0KCQljbG9ja19nZXR0aW1lKENMT0NLX1RZUEUsICZ0KTsNCgkJKytjbnQ7
+DQoJfSB3aGlsZSAodC50dl9zZWMgPCBlbmQudHZfc2VjIHx8IHQudHZfbnNlYyA8IGVuZC50dl9u
+c2VjKTsNCg0KCWRwcmludGYoU1RET1VUX0ZJTEVOTywgIiVsbHUiLCBjbnQpOw0KDQoJcmV0dXJu
+IEVYSVRfU1VDQ0VTUzsNCn0NCi0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KVGhlIHJlc3VsdHMgZnJv
+bSB0aGUgYWJvdmUgdGVzdCBwcm9ncmFtOg0KDQpDbG9jawkJCUJlZm9yZQkJQWZ0ZXIJCURpZmYN
+Ci0tLS0tCQkJLS0tLS0tCQktLS0tLQkJLS0tLQ0KQ0xPQ0tfTU9OT1RPTklDCQkzNTU1MzE3MjAJ
+MzM4MDM5MzczCS01JQ0KQ0xPQ0tfTU9OT1RPTklDX1JBVwk0NDgzMTczOAkzMzYwNjQ5MTIJKzY1
+MCUNCkNMT0NLX1JFQUxUSU1FCQkzNDc2NjUxMzMJMzM4MTAyOTA3CS0zJQ0KDQpMaW5rOiBodHRw
+czovL2xvcmUua2VybmVsLm9yZy9wYXRjaHdvcmsvcGF0Y2gvOTMzNTgzLw0KTGluazogaHR0cHM6
+Ly9idWd6aWxsYS5rZXJuZWwub3JnL3Nob3dfYnVnLmNnaT9pZD0xOTg5NjENCkNjOiBUaG9tYXMg
+R2xlaXhuZXIgPHRnbHhAbGludXRyb25peC5kZT4NCkNjOiBKYXNvbiBWYXMgRGlhcyA8amFzb24u
+dmFzLmRpYXNAZ21haWwuY29tPg0KU2lnbmVkLW9mZi1ieTogQWxleGFuZGVyIFN2ZXJkbGluIDxh
+bGV4YW5kZXIuc3ZlcmRsaW5Abm9raWEuY29tPg0KLS0tDQogYXJjaC94ODYvZW50cnkvdmRzby92
+Y2xvY2tfZ2V0dGltZS5jICAgIHwgMTEgKysrKysrKysrLS0NCiBhcmNoL3g4Ni9lbnRyeS92c3lz
+Y2FsbC92c3lzY2FsbF9ndG9kLmMgfCAgNiArKysrKysNCiBhcmNoL3g4Ni9pbmNsdWRlL2FzbS92
+Z3RvZC5oICAgICAgICAgICAgfCAgNSArKysrLQ0KIDMgZmlsZXMgY2hhbmdlZCwgMTkgaW5zZXJ0
+aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2FyY2gveDg2L2VudHJ5L3Zk
+c28vdmNsb2NrX2dldHRpbWUuYyBiL2FyY2gveDg2L2VudHJ5L3Zkc28vdmNsb2NrX2dldHRpbWUu
+Yw0KaW5kZXggOThjN2QxMi4uN2M5ZGIyNiAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L2VudHJ5L3Zk
+c28vdmNsb2NrX2dldHRpbWUuYw0KKysrIGIvYXJjaC94ODYvZW50cnkvdmRzby92Y2xvY2tfZ2V0
+dGltZS5jDQpAQCAtMTQ0LDYgKzE0NCwxMyBAQCBub3RyYWNlIHN0YXRpYyBpbnQgZG9faHJlcyhj
+bG9ja2lkX3QgY2xrLCBzdHJ1Y3QgdGltZXNwZWMgKnRzKQ0KIAlzdHJ1Y3Qgdmd0b2RfdHMgKmJh
+c2UgPSAmZ3RvZC0+YmFzZXRpbWVbY2xrXTsNCiAJdTY0IGN5Y2xlcywgbGFzdCwgc2VjLCBuczsN
+CiAJdW5zaWduZWQgaW50IHNlcTsNCisJdTMyIG11bHQgPSBndG9kLT5tdWx0Ow0KKwl1MzIgc2hp
+ZnQgPSBndG9kLT5zaGlmdDsNCisNCisJaWYgKGNsayA9PSBDTE9DS19NT05PVE9OSUNfUkFXKSB7
+DQorCQltdWx0ID0gZ3RvZC0+cmF3X211bHQ7DQorCQlzaGlmdCA9IGd0b2QtPnJhd19zaGlmdDsN
+CisJfQ0KIA0KIAlkbyB7DQogCQlzZXEgPSBndG9kX3JlYWRfYmVnaW4oZ3RvZCk7DQpAQCAtMTUz
+LDggKzE2MCw4IEBAIG5vdHJhY2Ugc3RhdGljIGludCBkb19ocmVzKGNsb2NraWRfdCBjbGssIHN0
+cnVjdCB0aW1lc3BlYyAqdHMpDQogCQlpZiAodW5saWtlbHkoKHM2NCljeWNsZXMgPCAwKSkNCiAJ
+CQlyZXR1cm4gdmRzb19mYWxsYmFja19nZXR0aW1lKGNsaywgdHMpOw0KIAkJaWYgKGN5Y2xlcyA+
+IGxhc3QpDQotCQkJbnMgKz0gKGN5Y2xlcyAtIGxhc3QpICogZ3RvZC0+bXVsdDsNCi0JCW5zID4+
+PSBndG9kLT5zaGlmdDsNCisJCQlucyArPSAoY3ljbGVzIC0gbGFzdCkgKiBtdWx0Ow0KKwkJbnMg
+Pj49IHNoaWZ0Ow0KIAkJc2VjID0gYmFzZS0+c2VjOw0KIAl9IHdoaWxlICh1bmxpa2VseShndG9k
+X3JlYWRfcmV0cnkoZ3RvZCwgc2VxKSkpOw0KIA0KZGlmZiAtLWdpdCBhL2FyY2gveDg2L2VudHJ5
+L3ZzeXNjYWxsL3ZzeXNjYWxsX2d0b2QuYyBiL2FyY2gveDg2L2VudHJ5L3ZzeXNjYWxsL3ZzeXNj
+YWxsX2d0b2QuYw0KaW5kZXggY2ZjZGJhMC4uYTk2N2YwMiAxMDA2NDQNCi0tLSBhL2FyY2gveDg2
+L2VudHJ5L3ZzeXNjYWxsL3ZzeXNjYWxsX2d0b2QuYw0KKysrIGIvYXJjaC94ODYvZW50cnkvdnN5
+c2NhbGwvdnN5c2NhbGxfZ3RvZC5jDQpAQCAtNDYsMTEgKzQ2LDE3IEBAIHZvaWQgdXBkYXRlX3Zz
+eXNjYWxsKHN0cnVjdCB0aW1la2VlcGVyICp0aykNCiAJdmRhdGEtPm1hc2sJCT0gdGstPnRrcl9t
+b25vLm1hc2s7DQogCXZkYXRhLT5tdWx0CQk9IHRrLT50a3JfbW9uby5tdWx0Ow0KIAl2ZGF0YS0+
+c2hpZnQJCT0gdGstPnRrcl9tb25vLnNoaWZ0Ow0KKwl2ZGF0YS0+cmF3X211bHQJCT0gdGstPnRr
+cl9yYXcubXVsdDsNCisJdmRhdGEtPnJhd19zaGlmdAk9IHRrLT50a3JfcmF3LnNoaWZ0Ow0KIA0K
+IAliYXNlID0gJnZkYXRhLT5iYXNldGltZVtDTE9DS19SRUFMVElNRV07DQogCWJhc2UtPnNlYyA9
+IHRrLT54dGltZV9zZWM7DQogCWJhc2UtPm5zZWMgPSB0ay0+dGtyX21vbm8ueHRpbWVfbnNlYzsN
+CiANCisJYmFzZSA9ICZ2ZGF0YS0+YmFzZXRpbWVbQ0xPQ0tfTU9OT1RPTklDX1JBV107DQorCWJh
+c2UtPnNlYyA9IHRrLT5yYXdfc2VjOw0KKwliYXNlLT5uc2VjID0gdGstPnRrcl9yYXcueHRpbWVf
+bnNlYzsNCisNCiAJYmFzZSA9ICZ2ZGF0YS0+YmFzZXRpbWVbQ0xPQ0tfVEFJXTsNCiAJYmFzZS0+
+c2VjID0gdGstPnh0aW1lX3NlYyArIChzNjQpdGstPnRhaV9vZmZzZXQ7DQogCWJhc2UtPm5zZWMg
+PSB0ay0+dGtyX21vbm8ueHRpbWVfbnNlYzsNCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9pbmNsdWRl
+L2FzbS92Z3RvZC5oIGIvYXJjaC94ODYvaW5jbHVkZS9hc20vdmd0b2QuaA0KaW5kZXggOTEzYTEz
+My4uZjY1YzQyYiAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3ZndG9kLmgNCisr
+KyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL3ZndG9kLmgNCkBAIC0yOCw3ICsyOCw4IEBAIHN0cnVj
+dCB2Z3RvZF90cyB7DQogfTsNCiANCiAjZGVmaW5lIFZHVE9EX0JBU0VTCShDTE9DS19UQUkgKyAx
+KQ0KLSNkZWZpbmUgVkdUT0RfSFJFUwkoQklUKENMT0NLX1JFQUxUSU1FKSB8IEJJVChDTE9DS19N
+T05PVE9OSUMpIHwgQklUKENMT0NLX1RBSSkpDQorI2RlZmluZSBWR1RPRF9IUkVTCShCSVQoQ0xP
+Q0tfUkVBTFRJTUUpIHwgQklUKENMT0NLX01PTk9UT05JQykgfCBcDQorCQkJIEJJVChDTE9DS19N
+T05PVE9OSUNfUkFXKSB8IEJJVChDTE9DS19UQUkpKQ0KICNkZWZpbmUgVkdUT0RfQ09BUlNFCShC
+SVQoQ0xPQ0tfUkVBTFRJTUVfQ09BUlNFKSB8IEJJVChDTE9DS19NT05PVE9OSUNfQ09BUlNFKSkN
+CiANCiAvKg0KQEAgLTQzLDYgKzQ0LDggQEAgc3RydWN0IHZzeXNjYWxsX2d0b2RfZGF0YSB7DQog
+CXU2NAkJbWFzazsNCiAJdTMyCQltdWx0Ow0KIAl1MzIJCXNoaWZ0Ow0KKwl1MzIJCXJhd19tdWx0
+Ow0KKwl1MzIJCXJhd19zaGlmdDsNCiANCiAJc3RydWN0IHZndG9kX3RzCWJhc2V0aW1lW1ZHVE9E
+X0JBU0VTXTsNCiANCi0tIA0KMi40LjYNCg0K
