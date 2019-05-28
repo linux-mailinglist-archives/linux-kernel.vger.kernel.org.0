@@ -2,64 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 905B92D278
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E97F2D28F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfE1XkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 19:40:11 -0400
-Received: from smtprelay0052.hostedemail.com ([216.40.44.52]:49715 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726511AbfE1XkL (ORCPT
+        id S1727240AbfE1X6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 19:58:30 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42934 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbfE1X63 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 19:40:11 -0400
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave03.hostedemail.com (Postfix) with ESMTP id 06BE01802F4BE
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 23:40:10 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 29600837F24C;
-        Tue, 28 May 2019 23:40:09 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1568:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:4321:5007:8603:10004:10400:10848:11026:11232:11658:11914:12296:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21451:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
-X-HE-Tag: wind74_7597841c10f1a
-X-Filterd-Recvd-Size: 1440
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf01.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 28 May 2019 23:40:07 +0000 (UTC)
-Message-ID: <7cf0e30a7309008a81cc65e692511a1e8e6b544f.camel@perches.com>
-Subject: Re: [PATCH] lib: test_overflow: Avoid taining the kernel and fix
- wrap size
-From:   Joe Perches <joe@perches.com>
-To:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 28 May 2019 16:40:06 -0700
-In-Reply-To: <201905281550.4E3CB258F@keescook>
-References: <201905281550.4E3CB258F@keescook>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 28 May 2019 19:58:29 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l2so338641wrb.9;
+        Tue, 28 May 2019 16:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=wBV1CSR3vVyHfNto7yRouBVz1R8yuynnCNl8Neb34NM=;
+        b=IJ/A94UIsDCM8xWC56JjA3JO1ZE1NUzlU2+UcQNYajTtNbBlDz3qDeeAPfq5/jnuRO
+         MhcP1EjvO1bNX80Nj9wRoK1Fdf2mzQkNhSyHztT/hwnZwirsGMAfmrdplWdQdMBeI4WA
+         ZcQkAJ8HaF1Hx2veNcmySLGK2ShHy2h6Y9mJwjCP74pm4M0kfe+BixR0DIJkYJdKUqle
+         k1u7KTB9MwQhrXsgNPJAHxVh8eCB9EtzckF8fw/1zV8nYmBtY7S+NVltfkc7vJa2iewB
+         Ixtbh/4J39RBNxpOSH77L5mi0+g0fUap9RdVw8h/UKBSSAGr3JNLuzSyrMiLt0YMFpf5
+         MbPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wBV1CSR3vVyHfNto7yRouBVz1R8yuynnCNl8Neb34NM=;
+        b=EzMGAvo/gGDGAy5K71DkTq8EhPnpH4nQr6XD9Km0EPtlA1LIezNt5jzhNpxayIQyrV
+         Wfcct63fgAFTg8TAV1umowR7tlr5qWNO83z7KRzYmxOH5l7PIJb7WIBiiQWmf9qfAsbH
+         YzDL2XJwaSPYQtENr5EqxfKbpKgrT91ROvmuwbl8yUnh+1f/X6fVJT8h9I98lT2WhqAr
+         rJ0iCLSEmCOncrWUKoiqvPFly1EsS0v3KSHWLJnQy9/PzE8tV9j2BHvLIy0rRSmcr7/s
+         EC/t2unJSsLlW26w93IWsdkQhcNAedSyT9t2ySG3mQiSrasaWVcPrmUvGgCZqHdNx5sG
+         lAig==
+X-Gm-Message-State: APjAAAUB+GdIU8VypZQHnFQPjnIjhrp7n1n7kYeStkv43N1jYAeRDYjs
+        5SdJw8250TSOKJWLgnnbSJM=
+X-Google-Smtp-Source: APXvYqzzwZVUPlF+z3R0vmOrg/BfKllRyS5AJlWrc0w6Fnjgg6XoYMtWQscS/t7L8PSAUA0Wqvr6JQ==
+X-Received: by 2002:adf:a749:: with SMTP id e9mr11524121wrd.64.1559087907529;
+        Tue, 28 May 2019 16:58:27 -0700 (PDT)
+Received: from localhost.localdomain ([86.121.27.188])
+        by smtp.gmail.com with ESMTPSA id f3sm1207505wre.93.2019.05.28.16.58.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 16:58:26 -0700 (PDT)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     f.fainelli@gmail.com, vivien.didelot@gmail.com, andrew@lunn.ch,
+        davem@davemloft.net, richardcochran@gmail.com,
+        john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Vladimir Oltean <olteanv@gmail.com>
+Subject: [PATCH net-next 0/5] PTP support for the SJA1105 DSA driver
+Date:   Wed, 29 May 2019 02:56:22 +0300
+Message-Id: <20190528235627.1315-1-olteanv@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-05-28 at 15:51 -0700, Kees Cook wrote:
-> This adds __GFP_NOWARN to the kmalloc()-portions of the overflow test to
-> avoid tainting the kernel. Additionally fixes up the math on wrap size
-> to be architecture and page size agnostic.
-[]
-> diff --git a/lib/test_overflow.c b/lib/test_overflow.c
-[]
-> @@ -486,16 +486,17 @@ static int __init test_overflow_shift(void)
-[]
-> +#define alloc_GFP		 (GFP_KERNEL | __GFP_NOWARN)
-[]
-> +#define alloc110(alloc, arg, sz) alloc(arg, sz, alloc_GFP | __GFP_NOWARN)
+This patchset adds the following:
 
-seems redundant.
+ - A timecounter/cyclecounter based PHC for the free-running
+   timestamping clock of this switch.
 
+ - A state machine implemented in the DSA tagger for SJA1105, which
+   keeps track of metadata follow-up Ethernet frames (the switch's way
+   of transmitting RX timestamps).
+
+ - Some common-sense on whether or not frames should be timestamped was
+   taken out of the mv88e6xxx driver (the only other DSA driver with PTP
+   support) and moved to the generic framework.  An option was also
+   added for drivers to override these common-sense decisions, and
+   timestamp some more frames.  This was the path of least resistance
+   after implementing the aforementioned state machine - metadata
+   follow-up frames need to be tracked anyway even if only to discard
+   them and not pass them up the network stack.  And since the switch
+   can't just be told to timestamp only what the kernel wants (PTP
+   frames), simply use all the timestamps it provides.
+
+ - A generic helper in the timecounter/cyclecounter code for
+   reconstructing partial PTP timestamps, such as those generated by the
+   SJA1105.
+
+Not all is rosy, though.
+
+PTP timestamping will only work when the ports are bridged. Otherwise,
+the metadata follow-up frames holding RX timestamps won't be received
+because they will be blocked by the master port's MAC filter. Linuxptp
+tries to put the net device in ALLMULTI/PROMISC mode, but DSA doesn't
+pass this on to the master port, which does the actual reception.
+The master port is put in promiscous mode when the slave ports are
+enslaved to a bridge.
+
+Also, even with software-corrected timestamps, one can observe a
+negative path delay reported by linuxptp:
+
+ptp4l[55.600]: master offset          8 s2 freq  +83677 path delay     -2390
+ptp4l[56.600]: master offset         17 s2 freq  +83688 path delay     -2391
+ptp4l[57.601]: master offset          6 s2 freq  +83682 path delay     -2391
+ptp4l[58.601]: master offset         -1 s2 freq  +83677 path delay     -2391
+
+Without investigating too deeply, this appears to be introduced by the
+correction applied by linuxptp to t4 (t4c: corrected master rxtstamp)
+during the path delay estimation process (removing the correction makes
+the path delay positive).  This does not appear to have an obvious
+negative effect upon the synchronization.
+
+Lastly, clock manipulations on the actual hardware PTP clock will have
+to be implemented anyway, for the TTEthernet block and the time-based
+ingress policer.
+
+Vladimir Oltean (5):
+  timecounter: Add helper for reconstructing partial timestamps
+  net: dsa: sja1105: Add support for the PTP clock
+  net: dsa: mv88e6xxx: Let taggers specify a can_timestamp function
+  net: dsa: sja1105: Add support for PTP timestamping
+  net: dsa: sja1105: Increase priority of CPU-trapped frames
+
+ drivers/net/dsa/mv88e6xxx/hwtstamp.c          |  25 +-
+ drivers/net/dsa/mv88e6xxx/hwtstamp.h          |   4 +-
+ drivers/net/dsa/sja1105/Kconfig               |   7 +
+ drivers/net/dsa/sja1105/Makefile              |   1 +
+ drivers/net/dsa/sja1105/sja1105.h             |  30 ++
+ .../net/dsa/sja1105/sja1105_dynamic_config.c  |   2 +
+ drivers/net/dsa/sja1105/sja1105_main.c        | 272 ++++++++++++-
+ drivers/net/dsa/sja1105/sja1105_ptp.c         | 357 ++++++++++++++++++
+ drivers/net/dsa/sja1105/sja1105_ptp.h         |  48 +++
+ drivers/net/dsa/sja1105/sja1105_spi.c         |  28 ++
+ .../net/dsa/sja1105/sja1105_static_config.c   |  59 +++
+ .../net/dsa/sja1105/sja1105_static_config.h   |  10 +
+ include/linux/dsa/sja1105.h                   |  15 +
+ include/linux/timecounter.h                   |   7 +
+ include/net/dsa.h                             |   6 +-
+ kernel/time/timecounter.c                     |  33 ++
+ net/dsa/dsa.c                                 |  25 +-
+ net/dsa/slave.c                               |  20 +-
+ net/dsa/tag_sja1105.c                         | 135 ++++++-
+ 19 files changed, 1043 insertions(+), 41 deletions(-)
+ create mode 100644 drivers/net/dsa/sja1105/sja1105_ptp.c
+ create mode 100644 drivers/net/dsa/sja1105/sja1105_ptp.h
+
+-- 
+2.17.1
 
