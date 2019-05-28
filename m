@@ -2,81 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A809F2BD66
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC6F42BD6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:52:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbfE1CuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 22:50:06 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54902 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727525AbfE1CuG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 22:50:06 -0400
-Received: by mail-it1-f196.google.com with SMTP id h20so1882155itk.4
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 19:50:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h8xDYjwWtMzw7kKK4/8CQKmcJnsMDJUuPxql44H0bgI=;
-        b=AMXZYOPd3K0uo+rn8fd/kPI/GoQtv3GxiX5Cy3es2o5H/C3XCrAhooA6oXPMpzAf2L
-         O3mnoesEE0Sh02OEwB9I3wXb3SERssI4VQpS9XFQDlHMrnBrVSZvgHRxy9AFc9WmVwq4
-         mGQTXfpRIutPOxNX+NyM2ayMhrKzLOcauG5MBVIDDyXRF2kA7PF/p1zBBY55gE/KefYX
-         hbBazLXIbkhqmGwD5fBlQZ/0tW/AAR6DNogUuGVKJZke5+8o6Sm9+2k+B639qxxrfuVC
-         r4E8XK3k2JRYUFAUB6ZqU/kKXHdHnRZWeODEWc5j2PCLpTzKLJQDRfRkIGshvFAr3WHD
-         vzwQ==
-X-Gm-Message-State: APjAAAWb7ekqC5tBJs0W2wqcJvikrnb5B5pkugigiD1J9OGVP3aSjiLE
-        k+9Ts2ghGbxO/TNlkQrHqXNuj5kQ5WMR2+n0+Jb1KA==
-X-Google-Smtp-Source: APXvYqzcrvMD1G/2IfSPGE8fRNddmu61fH78L5xrp4cLcuFruI7q7nk+hb/HK8TTn9wN2yqynY6wWowySagIjUB7tvM=
-X-Received: by 2002:a24:6cd5:: with SMTP id w204mr1486520itb.12.1559011805500;
- Mon, 27 May 2019 19:50:05 -0700 (PDT)
+        id S1727845AbfE1Cwp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 22:52:45 -0400
+Received: from mga17.intel.com ([192.55.52.151]:9222 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727507AbfE1Cwp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 22:52:45 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 May 2019 19:52:44 -0700
+X-ExtLoop1: 1
+Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.116])
+  by orsmga002.jf.intel.com with ESMTP; 27 May 2019 19:52:42 -0700
+Date:   Tue, 28 May 2019 10:51:27 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     Tina Zhang <tina.zhang@intel.com>,
+        intel-gvt-dev@lists.freedesktop.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alex.williamson@redhat.com,
+        hang.yuan@intel.com, zhiyuan.lv@intel.com
+Subject: Re: [PATCH 1/2] vfio: ABI for setting mdev display flip eventfd
+Message-ID: <20190528025127.GI29553@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <20190527084312.8872-1-tina.zhang@intel.com>
+ <20190527084312.8872-2-tina.zhang@intel.com>
+ <20190527090741.GE29553@zhen-hp.sh.intel.com>
+ <20190527122237.uhd7qm62h6wfv5w7@sirius.home.kraxel.org>
 MIME-Version: 1.0
-References: <20190429135536.GC2324@zn.tnic> <20190513014248.GA16774@MiWiFi-R3L-srv>
- <20190513070725.GA20105@zn.tnic> <20190513073254.GB16774@MiWiFi-R3L-srv>
- <20190513075006.GB20105@zn.tnic> <20190513080210.GC16774@MiWiFi-R3L-srv>
- <20190515051717.GA13703@jeru.linux.bs1.fc.nec.co.jp> <20190515065843.GA24212@zn.tnic>
- <20190515070942.GA17154@jeru.linux.bs1.fc.nec.co.jp> <CACPcB9cyiPc8JYmt1QhYNipSsJ5z3wTOJ90LS5LTx4YqwaG8rA@mail.gmail.com>
- <20190521180855.GA7793@cz.tnic>
-In-Reply-To: <20190521180855.GA7793@cz.tnic>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Tue, 28 May 2019 10:49:54 +0800
-Message-ID: <CACPcB9fg5RGXcBbESNnn9rV0DSoh4jYkVWZrdcRWay5KKAjLww@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] x86/kexec: Build identity mapping for EFI systab
- and ACPI tables
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Baoquan He <bhe@redhat.com>,
-        "dyoung@redhat.com" <dyoung@redhat.com>,
-        "fanc.fnst@cn.fujitsu.com" <fanc.fnst@cn.fujitsu.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="z9ECzHErBrwFF8sy"
+Content-Disposition: inline
+In-Reply-To: <20190527122237.uhd7qm62h6wfv5w7@sirius.home.kraxel.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 2:09 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Tue, May 21, 2019 at 05:02:59PM +0800, Kairui Song wrote:
-> > Hi Boris, would you prefer to just fold Junichi update patch into the
-> > previous one or I should send an updated patch?
->
-> Please send a patch ontop after Ingo queues your old one, which should
-> happen soon. This way it would also document the fact that there are
-> machines with NVS regions only.
->
-> Thx.
->
 
-Hi, by now, I still didn't see any tip branch pick up this patch yet,
-any update?
+--z9ECzHErBrwFF8sy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---
-Best Regards,
-Kairui Song
+On 2019.05.27 14:22:37 +0200, Gerd Hoffmann wrote:
+> On Mon, May 27, 2019 at 05:07:41PM +0800, Zhenyu Wang wrote:
+> > On 2019.05.27 16:43:11 +0800, Tina Zhang wrote:
+> > > Add VFIO_DEVICE_SET_GFX_FLIP_EVENTFD ioctl command to set eventfd
+> > > based signaling mechanism to deliver vGPU framebuffer page flip
+> > > event to userspace.
+> >=20
+> > Should we add probe to see if driver can support gfx flip event?
+>=20
+> Userspace can simply call VFIO_DEVICE_SET_GFX_FLIP_EVENTFD and see if it
+> worked.  If so -> use the eventfd.  Otherwise take the fallback path
+> (timer based polling).  I can't see any advantage a separate feature
+> probe steps adds.
+>=20
+
+Then we need to define error return which means driver doesn't support
+e.g -ENOTTY, and driver shouldn't return that for other possible
+failure, so user space won't get confused.
+
+I think if we can define this as generic display event notification?
+Not necessarily just for flip, just a display change notification to
+let user space query current state.
+
+--=20
+Open Source Technology Center, Intel ltd.
+
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--z9ECzHErBrwFF8sy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCXOyiLwAKCRCxBBozTXgY
+Jy7ZAJ9IHhuCGPDYDK9ZUsQm0JS1aSlYrQCfZ2G/aRCELpKd+cSxiSFDvUAuhnM=
+=AbnB
+-----END PGP SIGNATURE-----
+
+--z9ECzHErBrwFF8sy--
