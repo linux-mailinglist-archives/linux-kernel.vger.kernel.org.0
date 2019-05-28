@@ -2,89 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A34272CF26
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 21:03:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B51A2D931
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:38:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfE1TDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 15:03:54 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44197 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbfE1TDy (ORCPT
+        id S1726062AbfE2JiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 05:38:09 -0400
+Received: from m9783.mail.qiye.163.com ([220.181.97.83]:2787 "EHLO
+        m9783.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbfE2JiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 15:03:54 -0400
-Received: by mail-lf1-f68.google.com with SMTP id r15so5989823lfm.11
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 12:03:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xNIfN8iP61jt3zQccTc9JxOkZ8J4CEm1u7qbNWzRMOM=;
-        b=Pd06yysCLBSycRTXjmvKdW4Y+phHo573v+/6jzUP+xP3ps/hunOO1mtGrJzymmotMx
-         7zR1oU8ZhbJj6VR78NkwLbJCmbgDlR7RA9b9wJIKnVnlN5jzcYV8+ATU/fkJ7tc8ab7w
-         /+hb4CRqYA40DegwtV/SFf/6I8uHmFQixBD+OW25ggCJjCc/O1z+7TaZwvyE+BSibKBd
-         v93/MxXRvgdq3Jkw7MhzduiRY55JyN6o3S0bwW10eo6Jd0abP542DYqBvpjnY3ssA5md
-         rH5mrArbilaSYpjmru+39iJLPZupA8VX4KmPS+PI8UW6HiWd17rLGY9+/NKCIy47WG2d
-         lNbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xNIfN8iP61jt3zQccTc9JxOkZ8J4CEm1u7qbNWzRMOM=;
-        b=bp6VZrzSCyXI7od1JUfG2kviK/HB8v92qB/jZp3GGDqkGRzHAPQVPbGOOLcVBjveAx
-         zdcVftqwtP8O259J7z7DLap5omXmAhQ0+RStQ5UHagI1M7FeGXzYqqUxB1+sQiHKP4uO
-         mMTneQEERehP7mxxasmWR4VQHTuFsIeUjz5gAtyVxy6N/CfxJ2xLEIpIQoiNaCrImLpN
-         g/5oiDaI/jC16ChwM6ikJoZutwsa6DEY20Zwtm5Olwvg6vqgTA5yrgoyBfksWmAe5jL8
-         MRMa7xGkumoQZl4JS+OJiL8oOIOlgaHPoij+0TMtycgQ9EMhbUoA+qJeNtyFwUfJyoJ4
-         S+DQ==
-X-Gm-Message-State: APjAAAUxGXa2Z2NmQ9xZ4e4oW4XpOMEEdDLB8CR1gICLHHgSNO+3XdEi
-        ZrQKGCNH1Cu0Yo3vd/lqR4fjgfHTIeVi6Oyqdn0=
-X-Google-Smtp-Source: APXvYqxOnR1QAtlj4QPyaxK/bP27aOlkgoiK+XMInOl7nujBMV3IZ3Lpodwe6l5EmMlVNYQnEc9yesNbk20aP1l6zrU=
-X-Received: by 2002:ac2:598d:: with SMTP id w13mr2369750lfn.165.1559070232676;
- Tue, 28 May 2019 12:03:52 -0700 (PDT)
+        Wed, 29 May 2019 05:38:09 -0400
+X-Greylist: delayed 398 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 May 2019 05:38:06 EDT
+Received: from localhost (unknown [120.132.1.243])
+        by m9783.mail.qiye.163.com (Hmail) with ESMTPA id A1BD9C1A9B;
+        Wed, 29 May 2019 17:31:24 +0800 (CST)
+Date:   Wed, 29 May 2019 03:04:46 +0800
+From:   Yao Liu <yotta.liu@ucloud.cn>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        nbd <nbd@other.debian.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] nbd: fix connection timed out error after
+ reconnecting to server
+Message-ID: <20190528190446.GA21513@192-168-150-246.7~>
+References: <1558691036-16281-1-git-send-email-yotta.liu@ucloud.cn>
+ <20190524130740.zfypc2j3q5e3gryr@MacBook-Pro-91.local.dhcp.thefacebook.com>
+ <20190527180743.GA20702@192-168-150-246.7~>
+ <20190528165758.zxfrv6fum4vwcv4e@MacBook-Pro-91.local>
 MIME-Version: 1.0
-References: <1558366258-3808-1-git-send-email-jrdr.linux@gmail.com>
- <20190521085547.58e1650c@erd987> <CAFqt6zZA32QA-6VtaKcrEtq=qkoGLHpirSvXb5wt7-wd_-74hQ@mail.gmail.com>
- <CANiq72nd5i4ADU1GbEt1Dkhp-5YkC9ip-h4a0G64oN+b95wAXA@mail.gmail.com>
- <CANiq72=zCD7AAE-OBzDYm5GXenoF48SdzwO1LunWSfexqBuH7A@mail.gmail.com> <CAFqt6zaUhPJYozmq-m_BjJTh5EUmsQoE4yZ+Ovv6F-ymns+JGA@mail.gmail.com>
-In-Reply-To: <CAFqt6zaUhPJYozmq-m_BjJTh5EUmsQoE4yZ+Ovv6F-ymns+JGA@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Tue, 28 May 2019 21:03:41 +0200
-Message-ID: <CANiq72miwcM8Jt1pFeCKs=rstbSB70wyPGPSiC7Mgf3f=Z44Lg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] auxdisplay/ht16k33.c: Convert to use vm_map_pages_zero()
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Robin van der Gracht <robin@protonic.nl>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190528165758.zxfrv6fum4vwcv4e@MacBook-Pro-91.local>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-HM-Spam-Status: e1kIGBQJHllBWUtVQ01OQkJCQ0xMT05JQ05ZV1koWUFJQjdXWS1ZQUlXWQ
+        kOFx4IWUFZNTQpNjo3JCkuNz5ZBg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NAw6Hzo4Ezg3USJLOikVPU09
+        OggaCRlVSlVKTk5CSklJSUNPQ05IVTMWGhIXVQIUDw8aVRcSDjsOGBcUDh9VGBVFWVdZEgtZQVlK
+        SUtVSkhJVUpVSU9IWVdZCAFZQU5OSU43Bg++
+X-HM-Tid: 0a6b02ee10a32085kuqya1bd9c1a9b
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 8:07 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> > > Taking a quick look now, by the way, why does vm_map_pages_zero() (and
-> > > __vm_map_pages() etc.) get a pointer to an array instead of a pointer
-> > > to the first element?
->
-> For this particular driver, one page is getting mapped into vma. But
-> there are other
-> places where a entire page array ( with more than one pages) mapped into
-> vma. That's the reason to pass pointer to an array and do rest of the operations
-> inside __vm_map_pages().
+On Tue, May 28, 2019 at 12:57:59PM -0400, Josef Bacik wrote:
+> On Tue, May 28, 2019 at 02:07:43AM +0800, Yao Liu wrote:
+> > On Fri, May 24, 2019 at 09:07:42AM -0400, Josef Bacik wrote:
+> > > On Fri, May 24, 2019 at 05:43:54PM +0800, Yao Liu wrote:
+> > > > Some I/O requests that have been sent succussfully but have not yet been
+> > > > replied won't be resubmitted after reconnecting because of server restart,
+> > > > so we add a list to track them.
+> > > > 
+> > > > Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
+> > > 
+> > > Nack, this is what the timeout stuff is supposed to handle.  The commands will
+> > > timeout and we'll resubmit them if we have alive sockets.  Thanks,
+> > > 
+> > > Josef
+> > > 
+> > 
+> > On the one hand, if num_connections == 1 and the only sock has dead,
+> > then we do nbd_genl_reconfigure to reconnect within dead_conn_timeout,
+> > nbd_xmit_timeout will not resubmit commands that have been sent
+> > succussfully but have not yet been replied. The log is as follows:
+> >  
+> > [270551.108746] block nbd0: Receive control failed (result -104)
+> > [270551.108747] block nbd0: Send control failed (result -32)
+> > [270551.108750] block nbd0: Request send failed, requeueing
+> > [270551.116207] block nbd0: Attempted send on invalid socket
+> > [270556.119584] block nbd0: reconnected socket
+> > [270581.161751] block nbd0: Connection timed out
+> > [270581.165038] block nbd0: shutting down sockets
+> > [270581.165041] print_req_error: I/O error, dev nbd0, sector 5123224 flags 8801
+> > [270581.165149] print_req_error: I/O error, dev nbd0, sector 5123232 flags 8801
+> > [270581.165580] block nbd0: Connection timed out
+> > [270581.165587] print_req_error: I/O error, dev nbd0, sector 844680 flags 8801
+> > [270581.166184] print_req_error: I/O error, dev nbd0, sector 5123240 flags 8801
+> > [270581.166554] block nbd0: Connection timed out
+> > [270581.166576] print_req_error: I/O error, dev nbd0, sector 844688 flags 8801
+> > [270581.167124] print_req_error: I/O error, dev nbd0, sector 5123248 flags 8801
+> > [270581.167590] block nbd0: Connection timed out
+> > [270581.167597] print_req_error: I/O error, dev nbd0, sector 844696 flags 8801
+> > [270581.168021] print_req_error: I/O error, dev nbd0, sector 5123256 flags 8801
+> > [270581.168487] block nbd0: Connection timed out
+> > [270581.168493] print_req_error: I/O error, dev nbd0, sector 844704 flags 8801
+> > [270581.170183] print_req_error: I/O error, dev nbd0, sector 5123264 flags 8801
+> > [270581.170540] block nbd0: Connection timed out
+> > [270581.173333] block nbd0: Connection timed out
+> > [270581.173728] block nbd0: Connection timed out
+> > [270581.174135] block nbd0: Connection timed out
+> >  
+> > On the other hand, if we wait nbd_xmit_timeout to handle resubmission,
+> > the I/O requests will have a big delay. For example, if timeout time is 30s,
+> > and from sock dead to nbd_genl_reconfigure returned OK we only spend
+> > 2s, the I/O requests will still be handled by nbd_xmit_timeout after 30s.
+> 
+> We have to wait for the full timeout anyway to know that the socket went down,
+> so it'll be re-submitted right away and then we'll wait on the new connection.
+> 
+> Now we could definitely have requests that were submitted well after the first
+> thing that failed, so their timeout would be longer than simply retrying them,
+> but we have no idea of knowing which ones timed out and which ones didn't.  This
+> way lies pain, because we have to matchup tags with handles.  This is why we
+> rely on the generic timeout infrastructure, so everything is handled correctly
+> without ending up with duplicate submissions/replies.  Thanks,
+> 
+> Josef
+> 
 
-Ah, "pointer to array of source kernel pages" made me think the actual
-`struct page`s were the ones consecutive in memory, not the pointers.
-Maybe "array of page pointers" is more clear.
-
-> > Also, in __vm_map_pages(), semantically w.r.t. to the comment,
-> > shouldn't the first check test for equality too? (i.e. for vm_pgoff ==
-> > num)? (even if such case fails in the second test anyway).
->
-> Sorry, didn't get it. Do you mean there should be a separate check for
-> *vm_pgoff == num* ?
-
-No, that the first check should be widened. I will send a patch.
-
-Cheers,
-Miguel
+But as I mentioned before, if num_connections == 1, nbd_xmit_timeout won't re-submit
+commands and I/O error will occur. Should we change the condition
+		if (config->num_connections > 1)
+to
+		if (config->num_connections >= 1)
+?
