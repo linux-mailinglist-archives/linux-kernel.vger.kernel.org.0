@@ -2,155 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E45F2BD09
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 03:55:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1E452BD12
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 03:58:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbfE1ByW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 21:54:22 -0400
-Received: from alpha.anastas.io ([104.248.188.109]:35907 "EHLO
-        alpha.anastas.io" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727890AbfE1ByV (ORCPT
+        id S1727941AbfE1B6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 21:58:06 -0400
+Received: from mail-it1-f197.google.com ([209.85.166.197]:37852 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727865AbfE1B6F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 21:54:21 -0400
-Received: from authenticated-user (alpha.anastas.io [104.248.188.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by alpha.anastas.io (Postfix) with ESMTPSA id 4DE997F8F9;
-        Mon, 27 May 2019 20:54:19 -0500 (CDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=anastas.io; s=mail;
-        t=1559008460; bh=S+yWBPX56gfd9GxiSJQNtc5ODUe0FOjbu3z+0qj/29c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hyf9Q8Z6xg0ysEC/qTcXj7HEMeWHbzE0s06MANDXAnsuBi38wlXhQrGcK6vLLNIm0
-         Y7IgJ4MStJzZB4qAMay5MRaL4bzraWcNmTOO8iZ2dZ/n0f2MKd788Hp6wWhouURh0m
-         OnDXjA1OqKWM7kf30vLOmIwpeXTZpZxmVtLpRpOEjZoz8t08xKPJNwAEZjlGdH6um+
-         xokMNSqeVrqVt4LU6bQdfkv4JnM8c7i2Mn/KaQHuJWAQCc1a19PKGKmPFnwdzOmsNu
-         kPwTvvbkypcduuXoNdARh2upcVQxQccxneXayHdxQ4c7R2JmuPJ11hkKOp0qyfoYkv
-         VwOK6mi0QWWaA==
-From:   Shawn Anastasio <shawn@anastas.io>
-To:     linux-pci@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc:     bhelgaas@google.com, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, sbobroff@linux.ibm.com,
-        xyjxie@linux.vnet.ibm.com, rppt@linux.ibm.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] powerpc/pseries: Allow user-specified PCI resource alignment after init
-Date:   Mon, 27 May 2019 20:54:12 -0500
-Message-Id: <20190528015412.30521-4-shawn@anastas.io>
-In-Reply-To: <20190528015412.30521-1-shawn@anastas.io>
-References: <20190528015412.30521-1-shawn@anastas.io>
+        Mon, 27 May 2019 21:58:05 -0400
+Received: by mail-it1-f197.google.com with SMTP id n10so1048834ita.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 18:58:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=f50L0/gM15p3IwCPfAp/JpyNmK+MV7NE0qtjgZoia8w=;
+        b=AUIBsx07iX+nQ3EapE4ECkPT4XyekQqHzS5iFyOL+NXsVqfwiglLZqK724BIFR8Zgh
+         a3xWk4gKEtbfMm8NrwGofue4sqHst2O3fjmpznAvsG7Z5SOEOhYluZDZ5pHvi1LbeSXk
+         n5xrELOPhWETy6QTU7zIQLsAyfq94I6sy+lIhhonyejD5jyOP3VID2+TwwyQnSHbqALZ
+         V8X5jRJq43qMfA2qH5i414WCNfxLcWmKcf8F4KLjjX68QeuFTLqkvbaHFpSIZFzIbNKr
+         aReJjdQq2kJhXnpy0Q6WMxXC3GM1J/8mmqt44pQLMDMVxlB14IoiEAg37vIEGVDixJpR
+         4CIA==
+X-Gm-Message-State: APjAAAX9Mvo0+O5ngX6SCGNzgLYEXmk+ld8zTujizltDAyQl+TB+Z1Db
+        cacsKyqqJMeoPAt4atyKypZrx32WLvXI6w3FihfozOuKAmfn
+X-Google-Smtp-Source: APXvYqzVah2+cIKF3bNv+ldrb/eL3LShn6Bo3r2PtgArFDsnpRzi6BB9x7k7hUGuAqFYiZ6g0C8CpB6LIWzOBGdB4kBxtF29IOrF
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a6b:7605:: with SMTP id g5mr2679266iom.79.1559008684703;
+ Mon, 27 May 2019 18:58:04 -0700 (PDT)
+Date:   Mon, 27 May 2019 18:58:04 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000da88840589e8fe2c@google.com>
+Subject: memory leak in nr_rx_frame
+From:   syzbot <syzbot+d6636a36d3c34bd88938@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-hams@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On pseries, custom PCI resource alignment specified with the commandline
-argument pci=resource_alignment is disabled due to PCI resources being
-managed by the firmware. However, in the case of PCI hotplug the
-resources are managed by the kernel, so custom alignments should be
-honored in these cases. This is done by only honoring custom
-alignments after initial PCI initialization is done, to ensure that
-all devices managed by the firmware are excluded.
+Hello,
 
-Without this ability, sub-page BARs sometimes get mapped in between
-page boundaries for hotplugged devices and are therefore unusable
-with the VFIO framework. This change allows users to request
-page alignment for devices they wish to access via VFIO using
-the pci=resource_alignment commandline argument.
+syzbot found the following crash on:
 
-In the future, this could be extended to provide page-aligned
-resources by default for hotplugged devices, similar to what is
-done on powernv by commit 382746376993 ("powerpc/powernv: Override
-pcibios_default_alignment() to force PCI devices to be page aligned")
+HEAD commit:    c5b44095 Merge tag 'trace-v5.2-rc1-2' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=135dcac4a00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61dd9e15a761691d
+dashboard link: https://syzkaller.appspot.com/bug?extid=d6636a36d3c34bd88938
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159ca182a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ac4c5ca00000
 
-Signed-off-by: Shawn Anastasio <shawn@anastas.io>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+d6636a36d3c34bd88938@syzkaller.appspotmail.com
+
+DRCONF(NETDEV_CHANGE): hsr_slave_0: link becomes ready
+executing program
+executing program
+BUG: memory leak
+unreferenced object 0xffff88812393a800 (size 2048):
+   comm "softirq", pid 0, jiffies 4294941705 (age 14.320s)
+   hex dump (first 32 bytes):
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+     06 00 07 40 00 00 00 00 00 00 00 00 00 00 00 00  ...@............
+   backtrace:
+     [<0000000040c90168>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:55 [inline]
+     [<0000000040c90168>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<0000000040c90168>] slab_alloc mm/slab.c:3326 [inline]
+     [<0000000040c90168>] __do_kmalloc mm/slab.c:3658 [inline]
+     [<0000000040c90168>] __kmalloc+0x161/0x2c0 mm/slab.c:3669
+     [<00000000cf430504>] kmalloc include/linux/slab.h:552 [inline]
+     [<00000000cf430504>] sk_prot_alloc+0xd6/0x170 net/core/sock.c:1608
+     [<00000000d895dd9d>] sk_alloc+0x35/0x2f0 net/core/sock.c:1662
+     [<000000006dfffbd8>] nr_make_new net/netrom/af_netrom.c:479 [inline]
+     [<000000006dfffbd8>] nr_rx_frame+0x3ba/0x8a0 net/netrom/af_netrom.c:962
+     [<000000007e984676>] nr_loopback_timer+0x4e/0xd0  
+net/netrom/nr_loopback.c:62
+     [<0000000080a4b335>] call_timer_fn+0x45/0x1e0 kernel/time/timer.c:1322
+     [<00000000b58aba8b>] expire_timers kernel/time/timer.c:1366 [inline]
+     [<00000000b58aba8b>] __run_timers kernel/time/timer.c:1685 [inline]
+     [<00000000b58aba8b>] __run_timers kernel/time/timer.c:1653 [inline]
+     [<00000000b58aba8b>] run_timer_softirq+0x256/0x740  
+kernel/time/timer.c:1698
+     [<00000000c8260f2e>] __do_softirq+0x115/0x35e kernel/softirq.c:293
+     [<00000000a50d1686>] invoke_softirq kernel/softirq.c:374 [inline]
+     [<00000000a50d1686>] irq_exit+0xbb/0xe0 kernel/softirq.c:414
+     [<00000000fb3290a8>] exiting_irq arch/x86/include/asm/apic.h:536  
+[inline]
+     [<00000000fb3290a8>] smp_apic_timer_interrupt+0x7b/0x170  
+arch/x86/kernel/apic/apic.c:1068
+     [<000000001caa821f>] apic_timer_interrupt+0xf/0x20  
+arch/x86/entry/entry_64.S:806
+     [<0000000092c5e05c>] native_safe_halt+0xe/0x10  
+arch/x86/include/asm/irqflags.h:60
+     [<000000006b3a6a48>] arch_cpu_idle+0xa/0x10  
+arch/x86/kernel/process.c:571
+     [<00000000a7e7084a>] default_idle_call+0x1e/0x40 kernel/sched/idle.c:94
+     [<00000000f6ad9bb1>] cpuidle_idle_call kernel/sched/idle.c:154 [inline]
+     [<00000000f6ad9bb1>] do_idle+0x1ea/0x2c0 kernel/sched/idle.c:263
+     [<00000000711ac4f4>] cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:354
+
+BUG: memory leak
+unreferenced object 0xffff88811f3ca1e0 (size 32):
+   comm "softirq", pid 0, jiffies 4294941705 (age 14.320s)
+   hex dump (first 32 bytes):
+     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+     03 00 00 00 03 00 00 00 0f 00 00 00 00 00 00 00  ................
+   backtrace:
+     [<000000005fe8e8f4>] kmemleak_alloc_recursive  
+include/linux/kmemleak.h:55 [inline]
+     [<000000005fe8e8f4>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<000000005fe8e8f4>] slab_alloc mm/slab.c:3326 [inline]
+     [<000000005fe8e8f4>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+     [<000000003ffaa535>] kmalloc include/linux/slab.h:547 [inline]
+     [<000000003ffaa535>] kzalloc include/linux/slab.h:742 [inline]
+     [<000000003ffaa535>] selinux_sk_alloc_security+0x48/0xb0  
+security/selinux/hooks.c:5059
+     [<000000001306812e>] security_sk_alloc+0x49/0x70  
+security/security.c:2030
+     [<00000000bbbf2d36>] sk_prot_alloc+0xf1/0x170 net/core/sock.c:1611
+     [<00000000d895dd9d>] sk_alloc+0x35/0x2f0 net/core/sock.c:1662
+     [<000000006dfffbd8>] nr_make_new net/netrom/af_netrom.c:479 [inline]
+     [<000000006dfffbd8>] nr_rx_frame+0x3ba/0x8a0 net/netrom/af_netrom.c:962
+     [<000000007e984676>] nr_loopback_timer+0x4e/0xd0  
+net/netrom/nr_loopback.c:62
+     [<0000000080a4b335>] call_timer_fn+0x45/0x1e0 kernel/time/timer.c:1322
+     [<00000000b58aba8b>] expire_timers kernel/time/timer.c:1366 [inline]
+     [<00000000b58aba8b>] __run_timers kernel/time/timer.c:1685 [inline]
+     [<00000000b58aba8b>] __run_timers kernel/time/timer.c:1653 [inline]
+     [<00000000b58aba8b>] run_timer_softirq+0x256/0x740  
+kernel/time/timer.c:1698
+     [<00000000c8260f2e>] __do_softirq+0x115/0x35e kernel/softirq.c:293
+     [<00000000a50d1686>] invoke_softirq kernel/softirq.c:374 [inline]
+     [<00000000a50d1686>] irq_exit+0xbb/0xe0 kernel/softirq.c:414
+     [<00000000fb3290a8>] exiting_irq arch/x86/include/asm/apic.h:536  
+[inline]
+     [<00000000fb3290a8>] smp_apic_timer_interrupt+0x7b/0x170  
+arch/x86/kernel/apic/apic.c:1068
+     [<000000001caa821f>] apic_timer_interrupt+0xf/0x20  
+arch/x86/entry/entry_64.S:806
+     [<0000000092c5e05c>] native_safe_halt+0xe/0x10  
+arch/x86/include/asm/irqflags.h:60
+     [<000000006b3a6a48>] arch_cpu_idle+0xa/0x10  
+arch/x86/kernel/process.c:571
+     [<00000000a7e7084a>] default_idle_call+0x1e/0x40 kernel/sched/idle.c:94
+
+
+
 ---
- arch/powerpc/include/asm/machdep.h     |  3 +++
- arch/powerpc/kernel/pci-common.c       |  9 +++++++++
- arch/powerpc/platforms/pseries/setup.c | 22 ++++++++++++++++++++++
- 3 files changed, 34 insertions(+)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/powerpc/include/asm/machdep.h b/arch/powerpc/include/asm/machdep.h
-index 2fbfaa9176ed..46eb62c0954e 100644
---- a/arch/powerpc/include/asm/machdep.h
-+++ b/arch/powerpc/include/asm/machdep.h
-@@ -179,6 +179,9 @@ struct machdep_calls {
- 
- 	resource_size_t (*pcibios_default_alignment)(void);
- 
-+	/* Called when determining PCI resource alignment */
-+	int (*pcibios_ignore_alignment_request)(void);
-+
- #ifdef CONFIG_PCI_IOV
- 	void (*pcibios_fixup_sriov)(struct pci_dev *pdev);
- 	resource_size_t (*pcibios_iov_resource_alignment)(struct pci_dev *, int resno);
-diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
-index ff4b7539cbdf..1a6ded45a701 100644
---- a/arch/powerpc/kernel/pci-common.c
-+++ b/arch/powerpc/kernel/pci-common.c
-@@ -238,6 +238,15 @@ resource_size_t pcibios_default_alignment(void)
- 	return 0;
- }
- 
-+resource_size_t pcibios_ignore_alignment_request(void)
-+{
-+	if (ppc_md.pcibios_ignore_alignment_request)
-+		return ppc_md.pcibios_ignore_alignment_request();
-+
-+	/* Fall back to default method of checking PCI_PROBE_ONLY */
-+	return pci_has_flag(PCI_PROBE_ONLY);
-+}
-+
- #ifdef CONFIG_PCI_IOV
- resource_size_t pcibios_iov_resource_alignment(struct pci_dev *pdev, int resno)
- {
-diff --git a/arch/powerpc/platforms/pseries/setup.c b/arch/powerpc/platforms/pseries/setup.c
-index e4f0dfd4ae33..07f03be02afe 100644
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -82,6 +82,8 @@ EXPORT_SYMBOL(CMO_PageSize);
- 
- int fwnmi_active;  /* TRUE if an FWNMI handler is present */
- 
-+static int initial_pci_init_done; /* TRUE if initial pcibios init has completed */
-+
- static void pSeries_show_cpuinfo(struct seq_file *m)
- {
- 	struct device_node *root;
-@@ -749,6 +751,23 @@ static resource_size_t pseries_pci_iov_resource_alignment(struct pci_dev *pdev,
- }
- #endif
- 
-+static void pseries_after_init(void)
-+{
-+	initial_pci_init_done = 1;
-+}
-+
-+static int pseries_ignore_alignment_request(void)
-+{
-+	if (initial_pci_init_done)
-+		/*
-+		 * Allow custom alignments after init for things
-+		 * like PCI hotplugging.
-+		 */
-+		return 0;
-+
-+	return pci_has_flag(PCI_PROBE_ONLY);
-+}
-+
- static void __init pSeries_setup_arch(void)
- {
- 	set_arch_panic_timeout(10, ARCH_PANIC_TIMEOUT);
-@@ -797,6 +816,9 @@ static void __init pSeries_setup_arch(void)
- 	}
- 
- 	ppc_md.pcibios_root_bridge_prepare = pseries_root_bridge_prepare;
-+	ppc_md.pcibios_after_init = pseries_after_init;
-+	ppc_md.pcibios_ignore_alignment_request =
-+		pseries_ignore_alignment_request;
- }
- 
- static void pseries_panic(char *str)
--- 
-2.20.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
