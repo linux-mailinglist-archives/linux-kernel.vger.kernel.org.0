@@ -2,136 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F9B92C538
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 13:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1DFC2C53F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 13:17:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726619AbfE1LQJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 07:16:09 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36275 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726345AbfE1LQI (ORCPT
+        id S1726753AbfE1LRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 07:17:00 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34155 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726345AbfE1LRA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 07:16:08 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s17so19774553wru.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 04:16:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=m2nsIiu2xmXeWsYUgRHVpMlsXmoMPRxeUORAALMIKSI=;
-        b=F8AFn2T8q0YuEbe8O1YmusdB4KKX4+W7+bSwB31soLQqW7nM+xmlU7TAZMFkFdHJLB
-         Jy1WVb8qw8KkVqWiofCzb5Ey2TiQlhTVZFu8lRZeL0GtHBtn4yicUcWTdye2K+uayqkC
-         jqFubNh1Hl8MPRKXzBgIS8CoL7co65suY5UoU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m2nsIiu2xmXeWsYUgRHVpMlsXmoMPRxeUORAALMIKSI=;
-        b=NknNhEzlTG5TzQ6aMtQ8BlX0gE4hUZzqkk9vdZQZjuLrYkNlj+kQuvuPyGylFgOGXL
-         q+mGQupt5ACHyHsf0uW6ga/ij7z86u4u+4fBNZd6kdUJGGNgAyiwNkq4NSpJfuEAmEpK
-         qq/2A8h9k5YOnr8ksb6/Z3QWBdvonNKLT8OAweVMfWBQ9ujQI6oz5eZABhZD2CN0WmfR
-         NA9qNDjWGsWbR2/IimhV0c3WHGRKdCIvlyT2d1UhF99TPjQNeAkbBeOLtUUMe7jcy8oe
-         P6sK/kENkd0RoeOeumxh5jziNAiitfLcCsZFEEtdAz41jJTHz4iGGPPc/Tkp+nwmJME2
-         8x0w==
-X-Gm-Message-State: APjAAAXKSA4sJ0GcZ2A2mgIpHQjPYFMhUsAJ1OYuN3Z8fvjf7DtlZRwn
-        zInXQph7NFsSsDOGsPg0vaNCxQ==
-X-Google-Smtp-Source: APXvYqz5nIcFjokXYBk+792MqQz8LkCQtBXoFpS+E23Bk9wHZ1kkRwZndDs817gSoTcwICsJyRkaDQ==
-X-Received: by 2002:adf:9bd2:: with SMTP id e18mr27122695wrc.210.1559042166403;
-        Tue, 28 May 2019 04:16:06 -0700 (PDT)
-Received: from andrea (86.100.broadband17.iol.cz. [109.80.100.86])
-        by smtp.gmail.com with ESMTPSA id h17sm16048029wrq.79.2019.05.28.04.16.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 04:16:05 -0700 (PDT)
-Date:   Tue, 28 May 2019 13:15:58 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu, arnd@arndb.de,
-        bp@alien8.de, catalin.marinas@arm.com, davem@davemloft.net,
-        fenghua.yu@intel.com, heiko.carstens@de.ibm.com,
-        herbert@gondor.apana.org.au, ink@jurassic.park.msu.ru,
-        jhogan@kernel.org, linux@armlinux.org.uk, mattst88@gmail.com,
-        mingo@kernel.org, mpe@ellerman.id.au, palmer@sifive.com,
-        paul.burton@mips.com, paulus@samba.org, ralf@linux-mips.org,
-        rth@twiddle.net, stable@vger.kernel.org, tglx@linutronix.de,
-        tony.luck@intel.com, vgupta@synopsys.com,
-        gregkh@linuxfoundation.org, jhansen@vmware.com, vdasa@vmware.com,
-        aditr@vmware.com, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 00/18] locking/atomic: atomic64 type cleanup
-Message-ID: <20190528111558.GA9106@andrea>
-References: <20190522132250.26499-1-mark.rutland@arm.com>
- <20190523083013.GA4616@andrea>
- <20190523101926.GA3370@lakrids.cambridge.arm.com>
- <20190524103731.GN2606@hirez.programming.kicks-ass.net>
- <20190524111807.GS2650@hirez.programming.kicks-ass.net>
- <20190524114220.GA4260@fuggles.cambridge.arm.com>
- <20190524115231.GN2623@hirez.programming.kicks-ass.net>
- <20190524224340.GA3792@andrea>
- <20190528104719.GN2623@hirez.programming.kicks-ass.net>
+        Tue, 28 May 2019 07:17:00 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 696BC803CA; Tue, 28 May 2019 13:16:48 +0200 (CEST)
+Date:   Tue, 28 May 2019 13:16:58 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     pavel@ucw.cz
+Cc:     linux-kernel@vger.kernel.org, Kirill Smelkov <kirr@nexedi.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: Re: [PATCH 4.19 082/114] fuse: Add FOPEN_STREAM to use stream_open()
+Message-ID: <20190528111657.GA23674@amd>
+References: <20190523181731.372074275@linuxfoundation.org>
+ <20190523181739.135794147@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
 Content-Disposition: inline
-In-Reply-To: <20190528104719.GN2623@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190523181739.135794147@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 12:47:19PM +0200, Peter Zijlstra wrote:
-> On Sat, May 25, 2019 at 12:43:40AM +0200, Andrea Parri wrote:
-> > > ---
-> > > Subject: Documentation/atomic_t.txt: Clarify pure non-rmw usage
-> > > 
-> > > Clarify that pure non-RMW usage of atomic_t is pointless, there is
-> > > nothing 'magical' about atomic_set() / atomic_read().
-> > > 
-> > > This is something that seems to confuse people, because I happen upon it
-> > > semi-regularly.
-> > > 
-> > > Acked-by: Will Deacon <will.deacon@arm.com>
-> > > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > ---
-> > >  Documentation/atomic_t.txt | 6 ++++--
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
-> > > index dca3fb0554db..89eae7f6b360 100644
-> > > --- a/Documentation/atomic_t.txt
-> > > +++ b/Documentation/atomic_t.txt
-> > > @@ -81,9 +81,11 @@ SEMANTICS
-> > >  
-> > >  The non-RMW ops are (typically) regular LOADs and STOREs and are canonically
-> > >  implemented using READ_ONCE(), WRITE_ONCE(), smp_load_acquire() and
-> > > -smp_store_release() respectively.
-> > > +smp_store_release() respectively. Therefore, if you find yourself only using
-> > > +the Non-RMW operations of atomic_t, you do not in fact need atomic_t at all
-> > > +and are doing it wrong.
-> > 
-> > The counterargument (not so theoretic, just look around in the kernel!) is:
-> > we all 'forget' to use READ_ONCE() and WRITE_ONCE(), it should be difficult
-> > or more difficult to forget to use atomic_read() and atomic_set()...   IAC,
-> > I wouldn't call any of them 'wrong'.
-> 
-> I'm thinking you mean that the type system isn't helping us with
-> READ/WRITE_ONCE() like it does with atomic_t ?
 
-Yep.
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi!
 
-> And while I agree that
-> there is room for improvement there, that doesn't mean we should start
-> using atomic*_t all over the place for that.
+> +++ b/include/uapi/linux/fuse.h
+> @@ -219,10 +219,12 @@ struct fuse_file_lock {
+>   * FOPEN_DIRECT_IO: bypass page cache for this open file
+>   * FOPEN_KEEP_CACHE: don't invalidate the data cache on open
+>   * FOPEN_NONSEEKABLE: the file is not seekable
+> + * FOPEN_STREAM: the file is stream-like (no file position at all)
+>   */
+>  #define FOPEN_DIRECT_IO		(1 << 0)
+>  #define FOPEN_KEEP_CACHE	(1 << 1)
+>  #define FOPEN_NONSEEKABLE	(1 << 2)
+> +#define FOPEN_STREAM		(1 << 4)
 
-Agreed.  But this still doesn't explain that "and are doing it wrong",
-AFAICT; maybe just remove that part?
+Interesting choice of constants. It is too late to change it now, but
+was (1 << 3) meant here?
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-  Andrea
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-> 
-> Part of the problem with READ/WRITE_ONCE() is that it serves a dual
-> purpose; we've tried to untangle that at some point, but Linus wasn't
-> having it.
+iEYEARECAAYFAlztGKkACgkQMOfwapXb+vLX3ACdGqLX+DFoYE64Oxz33y2VQL2O
++RcAoLwY/oFFXTwZOBVTJdr0oqoXPDTR
+=KbD4
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
