@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C90B2D0FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 23:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B83492D0FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 23:30:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbfE1V21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 17:28:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37041 "EHLO
+        id S1727981AbfE1VaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 17:30:21 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57419 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbfE1V21 (ORCPT
+        with ESMTP id S1727379AbfE1VaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 17:28:27 -0400
+        Tue, 28 May 2019 17:30:20 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4SLSJIe2240637
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4SLT0ME2240691
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 28 May 2019 14:28:19 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4SLSJIe2240637
+        Tue, 28 May 2019 14:29:01 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4SLT0ME2240691
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559078899;
-        bh=Bt5J+EsvFH3qvx1qAg47/7/iv3RMbgLKff9eXUtcgJs=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=NbUdK7q2/pcKZzJRu3cumvienVbzu60/RzjjvzuFP5zq6LiO3sKCbIoyADjfnuzuu
-         jwxIKKKMhfZJ+SomTZ29dHhPrFYQq39SAenJuo9Vpfj9aSVy3PjgvqdvZCYda1foHt
-         QkQ0dTKNEEEwoLpiIOIlJc4rLgKSKlyzfSKdRLU4HhyhByiPoj9ZG6FFgfAYtMDj7Q
-         fPurcbrd1z0HvE/TXTUcHD/AZc7RhK1Qq4VWZVyiAlu02HTdPWG9hxfaSD0winR+uI
-         cfRjRtMo+G7nA+nYYHMlgZM1MSXQddNOFc8r5SZOz9gVyPVfk/iCzw33+20wfMiABp
-         xc9831IrHj+yw==
+        s=2019051801; t=1559078941;
+        bh=tQNsMs0TRa8lDs2oQqcZTf0IymSwdCblBMJnjnLXlWE=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=eylaPdfEeZG0FBijKssapop7ZdiwiiTyVP950jC4Rz3b0ulQzHoeeSzvpXecCg7Vi
+         OtPAtI+uL6cSRv8R5NnkEaMiBEN83nBY4cY1wNvNGp87hzFpqQuZ5dKj+B67/Z38g1
+         Bem5mCFnw9Jhqk/XyoXMGsxHyMr9f4fyw+8kOLwKr/2qhEXuuf8Z+jtp0nyJmMpq7C
+         NOePNs6HJ0cHf+elvoNCo5KJ+Ry6ZhUbzbbJosbtLXtvc4uf76FuLGqHTNZp4vGuHd
+         XM5qAWIJ9VeTMKehwJflR6S9pRcdS9sLA3aH+U9F4/2rXQgdOz4hnAIj6ucJ1conu4
+         xFZgMCTzSdeaw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4SLSJ5w2240634;
-        Tue, 28 May 2019 14:28:19 -0700
-Date:   Tue, 28 May 2019 14:28:19 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4SLT0382240688;
+        Tue, 28 May 2019 14:29:00 -0700
+Date:   Tue, 28 May 2019 14:29:00 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Namhyung Kim <tipbot@zytor.com>
-Message-ID: <tip-acd244b84b80d53fa2cee98659b55d3f09b4f5a7@git.kernel.org>
-Cc:     jolsa@redhat.com, tglx@linutronix.de, acme@redhat.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com,
-        hbathini@linux.vnet.ibm.com, kjlx@templeofstupid.com,
-        mingo@kernel.org, namhyung@kernel.org
-Reply-To: jolsa@redhat.com, tglx@linutronix.de, acme@redhat.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com,
-          kjlx@templeofstupid.com, hbathini@linux.vnet.ibm.com,
-          namhyung@kernel.org, mingo@kernel.org
-In-Reply-To: <20190522053250.207156-3-namhyung@kernel.org>
-References: <20190522053250.207156-3-namhyung@kernel.org>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-qfwuih8cvmk9doh7k5k244eq@git.kernel.org>
+Cc:     peterz@infradead.org, namhyung@kernel.org, acme@redhat.com,
+        ak@linux.intel.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        tmricht@linux.ibm.com, adrian.hunter@intel.com,
+        songliubraving@fb.com, alexander.shishkin@linux.intel.com,
+        mingo@kernel.org, tglx@linutronix.de, sdf@google.com, hpa@zytor.com
+Reply-To: jolsa@kernel.org, tmricht@linux.ibm.com, adrian.hunter@intel.com,
+          linux-kernel@vger.kernel.org, ak@linux.intel.com,
+          acme@redhat.com, namhyung@kernel.org, peterz@infradead.org,
+          hpa@zytor.com, tglx@linutronix.de, sdf@google.com,
+          alexander.shishkin@linux.intel.com, mingo@kernel.org,
+          songliubraving@fb.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf session: Add missing swap ops for namespace
- events
-Git-Commit-ID: acd244b84b80d53fa2cee98659b55d3f09b4f5a7
+Subject: [tip:perf/urgent] perf test vmlinux-kallsyms: Ignore aliases to
+ _etext when searching on kallsyms
+Git-Commit-ID: 93f678b9ae8feb7f7cec29c2dcbb5756ad22d9a1
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -65,64 +66,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  acd244b84b80d53fa2cee98659b55d3f09b4f5a7
-Gitweb:     https://git.kernel.org/tip/acd244b84b80d53fa2cee98659b55d3f09b4f5a7
-Author:     Namhyung Kim <namhyung@kernel.org>
-AuthorDate: Wed, 22 May 2019 14:32:49 +0900
+Commit-ID:  93f678b9ae8feb7f7cec29c2dcbb5756ad22d9a1
+Gitweb:     https://git.kernel.org/tip/93f678b9ae8feb7f7cec29c2dcbb5756ad22d9a1
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 24 May 2019 15:39:00 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 28 May 2019 09:52:23 -0300
 
-perf session: Add missing swap ops for namespace events
+perf test vmlinux-kallsyms: Ignore aliases to _etext when searching on kallsyms
 
-In case it's recorded in a different arch.
+No need to search for aliases for the symbol that marks the end of the
+kernel text segment, the following patch will make such symbols not to
+be found when searching in the kallsyms maps causing this test to fail.
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Hari Bathini <hbathini@linux.vnet.ibm.com> <hbathini@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Krister Johansen <kjlx@templeofstupid.com>
-Fixes: f3b3614a284d ("perf tools: Add PERF_RECORD_NAMESPACES to include namespaces related info")
-Link: http://lkml.kernel.org/r/20190522053250.207156-3-namhyung@kernel.org
+So as a prep patch to avoid breaking bisection, ignore such symbols.
+
+Tested-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stanislav Fomichev <sdf@google.com>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Link: https://lkml.kernel.org/n/tip-qfwuih8cvmk9doh7k5k244eq@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/session.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ tools/perf/tests/vmlinux-kallsyms.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 2310a1752983..54cf163347f7 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -647,6 +647,26 @@ static void perf_event__throttle_swap(union perf_event *event,
- 		swap_sample_id_all(event, &event->throttle + 1);
- }
+diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
+index 7691980b7df1..f101576d1c72 100644
+--- a/tools/perf/tests/vmlinux-kallsyms.c
++++ b/tools/perf/tests/vmlinux-kallsyms.c
+@@ -161,9 +161,16 @@ next_pair:
  
-+static void perf_event__namespaces_swap(union perf_event *event,
-+					bool sample_id_all)
-+{
-+	u64 i;
-+
-+	event->namespaces.pid		= bswap_32(event->namespaces.pid);
-+	event->namespaces.tid		= bswap_32(event->namespaces.tid);
-+	event->namespaces.nr_namespaces	= bswap_64(event->namespaces.nr_namespaces);
-+
-+	for (i = 0; i < event->namespaces.nr_namespaces; i++) {
-+		struct perf_ns_link_info *ns = &event->namespaces.link_info[i];
-+
-+		ns->dev = bswap_64(ns->dev);
-+		ns->ino = bswap_64(ns->ino);
-+	}
-+
-+	if (sample_id_all)
-+		swap_sample_id_all(event, &event->namespaces.link_info[i]);
-+}
-+
- static u8 revbyte(u8 b)
- {
- 	int rev = (b >> 4) | ((b & 0xf) << 4);
-@@ -887,6 +907,7 @@ static perf_event__swap_op perf_event__swap_ops[] = {
- 	[PERF_RECORD_LOST_SAMPLES]	  = perf_event__all64_swap,
- 	[PERF_RECORD_SWITCH]		  = perf_event__switch_swap,
- 	[PERF_RECORD_SWITCH_CPU_WIDE]	  = perf_event__switch_swap,
-+	[PERF_RECORD_NAMESPACES]	  = perf_event__namespaces_swap,
- 	[PERF_RECORD_HEADER_ATTR]	  = perf_event__hdr_attr_swap,
- 	[PERF_RECORD_HEADER_EVENT_TYPE]	  = perf_event__event_type_swap,
- 	[PERF_RECORD_HEADER_TRACING_DATA] = perf_event__tracing_data_swap,
+ 				continue;
+ 			}
+-		} else
++		} else if (mem_start == kallsyms.vmlinux_map->end) {
++			/*
++			 * Ignore aliases to _etext, i.e. to the end of the kernel text area,
++			 * such as __indirect_thunk_end.
++			 */
++			continue;
++		} else {
+ 			pr_debug("ERR : %#" PRIx64 ": %s not on kallsyms\n",
+ 				 mem_start, sym->name);
++		}
+ 
+ 		err = -1;
+ 	}
