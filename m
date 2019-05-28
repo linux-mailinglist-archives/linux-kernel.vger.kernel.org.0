@@ -2,113 +2,302 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 544762C9BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:10:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A0202C9C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:12:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfE1PKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 11:10:46 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39780 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727133AbfE1PKq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 11:10:46 -0400
-Received: by mail-wr1-f66.google.com with SMTP id x4so1534941wrt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 08:10:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:in-reply-to:references:date:message-id:mime-version;
-        bh=IwupYC6xi4DYfXNloebS/EzHvJ+kcOXkGGvamraya8k=;
-        b=SWqib+RjvuSA0pkdMulAC7TUcNtEIOmE0PqA/3HgHnbM7FdKYrFVSizn/vxAJlnnbs
-         mxsfyhq5ARmCHU/9WtBEow2q9/CHD+2DdrKKFlgXCHysSGrQBvooj8o+RDNJctKPc28K
-         GkUdEpBEz4vAgwxe9suCGQPMbpzhKhRcXOIehJF14FOrjJ3MzWEX3A2dYQQoB0HZry8C
-         RCyq5xXPiIWBsw8oUkcVbVoOcDx+qaUvEClC718UYPPDYJKBiEFdqZl+xemHqJ8ov71z
-         xlczHPRJrFkMs7kz+c8ws0Ci+fQRYc3j53wbDlinNexwjTco+bUuJ/SscsDIk8BhD/zf
-         jJfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=IwupYC6xi4DYfXNloebS/EzHvJ+kcOXkGGvamraya8k=;
-        b=doLK51iFE8giR7XhiiZxw8NllBJ3A0coKNnAl+/JIC2z+ciESzNhXxztKSV/wTdJuh
-         BocmyUHCKh1cDECpbh6FsJv/JD7o2vNylwDMjd661baQm1FZ9s77Swbv/DdInLh9RbAt
-         MnJ5BA74Am+NOyGGoT4nYG1MRfgcRwLnkUxWnBYDpAHFDeIpVzIfGEP+UICiVq/HcW8b
-         NKyu2KXbSOP33StdnLA9T4kLse14uDPNuAuL7nYYLF+iUA1cMqHd24nSMnjlBi3q6Dy7
-         2TW+rPSJWMrVRn4fxAkyo5fiGrpvfo0FUXdlOru39LTsnYUh6pikzg5EN2AD2ita0Wpi
-         +VDg==
-X-Gm-Message-State: APjAAAX54Y8UIofLsY0ygziDJ/aHdKy6LMt3SzJ1XoB9SfbjptsMj6LI
-        lWGN+A0XwBJhMCzgDRwMPIEs6t8wruo=
-X-Google-Smtp-Source: APXvYqx2E1K293if2pQbJSO36uG0+c3aHjQfuHAD2cQORP0LPLtuUKW+4qbGcqc/Xe5f94NhI2Z+CQ==
-X-Received: by 2002:adf:eb09:: with SMTP id s9mr20380369wrn.127.1559056244724;
-        Tue, 28 May 2019 08:10:44 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id n4sm17053526wrp.61.2019.05.28.08.10.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 08:10:43 -0700 (PDT)
-From:   Loys Ollivier <lollivier@baylibre.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: Testing the recent RISC-V DT patchsets
-In-Reply-To: <alpine.DEB.2.21.9999.1905280105110.20842@viisi.sifive.com>
-References: <alpine.DEB.2.21.9999.1904221705170.18377@viisi.sifive.com> <alpine.DEB.2.21.9999.1905280105110.20842@viisi.sifive.com>
-Date:   Tue, 28 May 2019 17:10:42 +0200
-Message-ID: <86o93mpqbx.fsf@baylibre.com>
+        id S1727504AbfE1PLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 11:11:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55686 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726719AbfE1PLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 11:11:06 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4450330C0DFC;
+        Tue, 28 May 2019 15:11:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-125-65.rdu2.redhat.com [10.10.125.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 287CA5D784;
+        Tue, 28 May 2019 15:11:02 +0000 (UTC)
+Subject: [PATCH 00/25] VFS: Introduce filesystem information query syscall
+ [ver #13]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, raven@themaw.net, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mszeredi@redhat.com
+Date:   Tue, 28 May 2019 16:11:01 +0100
+Message-ID: <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 28 May 2019 15:11:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 28 May 2019 at 01:32, Paul Walmsley <paul.walmsley@sifive.com> wrote:
 
-> An update for those testing RISC-V patches: here's a new branch of 
-> riscv-pk/bbl that doesn't try to read or modify the DT data at all, which 
-> should be useful until U-Boot settles down.  This new riscv-pk version 
-> should be easier to use than the previous version for those testing 
-> upstream-bound kernel DT data on SiFive hardware:
->
->    https://github.com/sifive/riscv-pk/tree/dev/paulw/configurable-machine-data-methods-v1
->
-> To build a BBL that doesn't touch the DT data, use the 
-> "--with-config-method=hifive_unleashed" switch for the "configure" script.  
-> As before, this version of riscv-pk can take a DTB that can be passed 
-> along to the kernel.  But this time the path to the DTB can be specified 
-> on the "configure" script command line.
->
-> Below is an example of how to configure it.  (The directory structure 
-> should be familiar to those using the v1_0 tag of freedom-u-sdk, with the 
-> kernel source in ./linux, riscv-pk source in ./riscv-pk, and build trees 
-> in work/{linux,riscv-pk}.)
->
->    cd work/riscv-pk
->    CC=/opt/rv64gc-mmu-linux-8.2.0/bin/riscv64-unknown-linux-gnu-gcc ../../riscv-pk/configure \
->                 --host=riscv64-unknown-linux-gnu \
->                 --with-payload=../../work/linux/vmlinux-stripped \
->                 --with-config-method=hifive_unleashed \
->                 --enable-dtb \
->                 --with-dtb-path=../../work/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dtb
->   
->
-> Here is an Linux kernel branch with updated DT data that can be booted 
-> with the above bootloader:
->
->    https://github.com/sifive/riscv-linux/tree/dev/paulw/dts-v5.2-rc1-experimental
->
-> A sample boot log follows, using a 'defconfig' build from that branch.  
+Hi Al,
 
-Thanks Paul, I can confirm that it works.
+Here are a set of patches that adds a syscall, fsinfo(), that allows
+attributes of a filesystem/superblock to be queried.  Attribute values are
+of four basic types:
 
-Something is still unclear to myself.
-Using FSBL + riscv-pk/bbl the linux kernel + device tree boots.
-Neither FSBL nor riscv-pk/bbl are modifying the DT.
+ (1) Version dependent-length structure (size defined by type).
 
-Using FSBL + OpenSBI + U-Boot the same kernel + device tree hangs on
-running /init.
+ (2) Variable-length string (up to PAGE_SIZE).
 
-Would you have any pointer on what riscv-pk does that OpenSBI/U-boot doesn't ?
-Or maybe it is the other way around - OpenSBI/U-boot does something that
-extra that should not happen.
+ (3) Array of fixed-length structures (up to INT_MAX size).
 
-Thanks,
+ (4) Opaque blob (up to INT_MAX size).
 
-Loys
+Attributes can have multiple values in up to two dimensions and all the
+values of a particular attribute must have the same type.
+
+Note that the attribute values *are* allowed to vary between dentries
+within a single superblock, depending on the specific dentry that you're
+looking at.
+
+I've tried to make the interface as light as possible, so integer/enum
+attribute selector rather than string and the core does all the allocation
+and extensibility support work rather than leaving that to the filesystems.
+That means that for the first two attribute types, sb->s_op->fsinfo() may
+assume that the provided buffer is always present and always big enough.
+
+Further, this removes the possibility of the filesystem gaining access to the
+userspace buffer.
+
+
+fsinfo() allows a variety of information to be retrieved about a filesystem
+and the mount topology:
+
+ (1) General superblock attributes:
+
+      - The amount of space/free space in a filesystem (as statfs()).
+      - Filesystem identifiers (UUID, volume label, device numbers, ...)
+      - The limits on a filesystem's capabilities
+      - Information on supported statx fields and attributes and IOC flags.
+      - A variety single-bit flags indicating supported capabilities.
+      - Timestamp resolution and range.
+      - Sources (as per mount(2), but fsconfig() allows multiple sources).
+      - In-filesystem filename format information.
+      - Filesystem parameters ("mount -o xxx"-type things).
+      - LSM parameters (again "mount -o xxx"-type things).
+
+ (2) Filesystem-specific superblock attributes:
+
+      - Server names and addresses.
+      - Cell name.
+
+ (3) Filesystem configuration metadata attributes:
+
+      - Filesystem parameter type descriptions.
+      - Name -> parameter mappings.
+      - Simple enumeration name -> value mappings.
+
+ (4) Mount topology:
+
+      - General information about a mount object.
+      - Mount device name(s).
+      - Children of a mount object and their relative paths.
+
+ (5) Information about what the fsinfo() syscall itself supports, including
+     the number of attibutes supported and the number of capability bits
+     supported.
+
+
+The system is extensible:
+
+ (1) New attributes can be added.  There is no requirement that a
+     filesystem implement every attribute.  Note that the core VFS keeps a
+     table of types and sizes so it can handle future extensibility rather
+     than delegating this to the filesystems.
+
+ (2) Version length-dependent structure attributes can be made larger and
+     have additional information tacked on the end, provided it keeps the
+     layout of the existing fields.  If an older process asks for a shorter
+     structure, it will only be given the bits it asks for.  If a newer
+     process asks for a longer structure on an older kernel, the extra
+     space will be set to 0.  In all cases, the size of the data actually
+     available is returned.
+
+     In essence, the size of a structure is that structure's version: a
+     smaller size is an earlier version and a later version includes
+     everything that the earlier version did.
+
+ (3) New single-bit capability flags can be added.  This is a structure-typed
+     attribute and, as such, (2) applies.  Any bits you wanted but the kernel
+     doesn't support are automatically set to 0.
+
+If a filesystem-specific attribute is added, it should just take up the next
+number in the enumeration.  Currently, I do not intend that the number space
+should be subdivided between interested parties.
+
+
+fsinfo() may be called like the following, for example:
+
+	struct fsinfo_params params = {
+		.at_flags	= AT_SYMLINK_NOFOLLOW,
+		.request	= FSINFO_ATTR_SERVER_ADDRESS;
+		.Nth		= 2;
+		.Mth		= 1;
+	};
+	struct fsinfo_server_address address;
+
+	len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
+		     &address, sizeof(address));
+
+The above example would query a network filesystem, such as AFS or NFS, and
+ask what the 2nd address (Mth) of the 3rd server (Nth) that the superblock is
+using is.  Whereas:
+
+	struct fsinfo_params params = {
+		.at_flags	= AT_SYMLINK_NOFOLLOW,
+		.request	= FSINFO_ATTR_CELL_NAME;
+	};
+	char cell_name[256];
+
+	len = fsinfo(AT_FDCWD, "/afs/grand.central.org/doc", &params,
+		     &cell_name, sizeof(cell_name));
+
+would retrieve the name of an AFS cell as a string.
+
+fsinfo() can also be used to query a context from fsopen() or fspick():
+
+	fd = fsopen("ext4", 0);
+	struct fsinfo_params params = {
+		.request	= FSINFO_ATTR_PARAM_DESCRIPTION;
+	};
+	struct fsinfo_param_description desc;
+	fsinfo(fd, NULL, &params, &desc, sizeof(desc));
+
+even if that context doesn't currently have a superblock attached (though if
+there's no superblock attached, only filesystem-specific things like parameter
+descriptions can be accessed).
+
+The patches can be found here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+
+on branch:
+
+	fsinfo
+
+
+===================
+SIGNIFICANT CHANGES
+===================
+
+ ver #13:
+
+ (*) Provided a "fixed-struct array" type so that the list of children of a
+     mount and all their change counters can be read atomically.
+
+ (*) Additional filesystem examples.
+
+ (*) Documented the API.
+
+ ver #12:
+
+ (*) Rename ->get_fsinfo() to ->fsinfo().
+
+ (*) Pass the path through to to ->fsinfo() as it's needed for NFS to
+     retrocalculate the source name.
+
+ (*) Indicated which is the source parameter in the param-description
+     attribute.
+
+ (*) Dropped the realm attribute.
+
+David
+---
+David Howells (17):
+      vfs: syscall: Add fsinfo() to query filesystem information
+      vfs: Allow fsinfo() to query what's in an fs_context
+      vfs: Allow fsinfo() to be used to query an fs parameter description
+      vfs: Implement parameter value retrieval with fsinfo()
+      fsinfo: Implement retrieval of LSM parameters with fsinfo()
+      vfs: Introduce a non-repeating system-unique superblock ID
+      vfs: Allow fsinfo() to look up a mount object by ID
+      vfs: Add mount notification count
+      vfs: Allow mount information to be queried by fsinfo()
+      vfs: fsinfo sample: Mount listing program
+      hugetlbfs: Add support for fsinfo()
+      kernfs, cgroup: Add fsinfo support
+      fsinfo: Support SELinux superblock parameter retrieval
+      fsinfo: Support Smack superblock parameter retrieval
+      afs: Support fsinfo()
+      nfs: Support fsinfo()
+      fsinfo: Add API documentation
+
+Ian Kent (8):
+      fsinfo: autofs - add sb operation fsinfo()
+      fsinfo: shmem - add tmpfs sb operation fsinfo()
+      fsinfo: proc - add sb operation fsinfo()
+      fsinfo: devpts - add sb operation fsinfo()
+      fsinfo: pstore - add sb operation fsinfo()
+      fsinfo: debugfs - add sb operation fsinfo()
+      fsinfo: bpf - add sb operation fsinfo()
+      fsinfo: ufs - add sb operation fsinfo()
+
+
+ Documentation/filesystems/fsinfo.rst   |  571 ++++++++++++++++++++++
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 
+ fs/Kconfig                             |    7 
+ fs/Makefile                            |    1 
+ fs/afs/internal.h                      |    1 
+ fs/afs/super.c                         |  155 ++++++
+ fs/autofs/inode.c                      |   63 ++
+ fs/d_path.c                            |    2 
+ fs/debugfs/inode.c                     |   37 +
+ fs/devpts/inode.c                      |   42 ++
+ fs/fsinfo.c                            |  835 ++++++++++++++++++++++++++++++++
+ fs/hugetlbfs/inode.c                   |   56 ++
+ fs/internal.h                          |   11 
+ fs/kernfs/mount.c                      |   20 +
+ fs/mount.h                             |   22 +
+ fs/namespace.c                         |  305 ++++++++++++
+ fs/nfs/fs_context.c                    |  163 ++++++
+ fs/nfs/internal.h                      |    6 
+ fs/nfs/nfs4super.c                     |    3 
+ fs/nfs/super.c                         |   77 +++
+ fs/proc/inode.c                        |   36 +
+ fs/pstore/inode.c                      |   31 +
+ fs/statfs.c                            |    2 
+ fs/super.c                             |   24 +
+ fs/ufs/super.c                         |   57 ++
+ include/linux/fs.h                     |    8 
+ include/linux/fsinfo.h                 |   69 +++
+ include/linux/kernfs.h                 |    4 
+ include/linux/lsm_hooks.h              |   13 
+ include/linux/security.h               |   11 
+ include/linux/syscalls.h               |    4 
+ include/uapi/linux/fcntl.h             |    2 
+ include/uapi/linux/fsinfo.h            |  311 ++++++++++++
+ kernel/bpf/inode.c                     |   24 +
+ kernel/cgroup/cgroup-v1.c              |   44 ++
+ kernel/cgroup/cgroup.c                 |   19 +
+ kernel/sys_ni.c                        |    3 
+ mm/shmem.c                             |   71 +++
+ samples/vfs/Makefile                   |    9 
+ samples/vfs/test-fs-query.c            |  139 +++++
+ samples/vfs/test-fsinfo.c              |  675 ++++++++++++++++++++++++++
+ samples/vfs/test-mntinfo.c             |  239 +++++++++
+ security/security.c                    |   12 
+ security/selinux/hooks.c               |   41 ++
+ security/selinux/include/security.h    |    2 
+ security/selinux/ss/services.c         |   49 ++
+ security/smack/smack_lsm.c             |   43 ++
+ 48 files changed, 4313 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/filesystems/fsinfo.rst
+ create mode 100644 fs/fsinfo.c
+ create mode 100644 include/linux/fsinfo.h
+ create mode 100644 include/uapi/linux/fsinfo.h
+ create mode 100644 samples/vfs/test-fs-query.c
+ create mode 100644 samples/vfs/test-fsinfo.c
+ create mode 100644 samples/vfs/test-mntinfo.c
+
