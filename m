@@ -2,205 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 298402C91F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 16:43:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13FAB2C8F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 16:40:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbfE1Onr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 10:43:47 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:33165 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726345AbfE1Onr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 10:43:47 -0400
-Received: by mail-vs1-f66.google.com with SMTP id y6so299544vsb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 07:43:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xoaLrOaVKIM8ESM/O0FPRf0nY0zEO7GufQin910pcKk=;
-        b=irftUQkii/33TKs92nEGhu6oEm/EW/DyqkbJsM8saeMvXwkfZS4WGQ/dEu6pFb6gGg
-         0d1zWvIPJGBgIBmCeReqSQgMzYAPsgVxJF2pBEkSYRpOkTQBLERmkeYhgvUWbzeITOcZ
-         DQFrs7MUbN0sMHD30cVrw4wDXvPXgNm24GlwI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xoaLrOaVKIM8ESM/O0FPRf0nY0zEO7GufQin910pcKk=;
-        b=lVnkNTxzw2AvwOViMmitpht7V2Pw9ybuCuacJkLwH+AMWDclhFA02JXCSvFVuDIBCc
-         OTPvjNivZtEzl8EIFw7I7UedwDx3LWSOw8UAFv9OMeDo2inYhUKz/XYOn/pnKwzGaxyg
-         7UEWMn1DhYN5y0gku97ZP5DJ5yNaCVpc6AtDoJkHyYh5yJsKTckta6EqeEL2DG/cf09L
-         THmpnjGpNq2T4PYkL4R31P4z3YlPi1rSLA48LkueGkyRx6DTX/Kf+VG08Fvd3aEcNKWJ
-         2fyqD04jViKoRg8pjXIQ0b+DsaT4f5pwINvSp9sxiqiSRiIJMM3jmfIt3MmrmraSGdG7
-         iM/g==
-X-Gm-Message-State: APjAAAVKhnQ1b9Gwb3ES/tshGKyD0PK9D+SQxFAXvCdCS0oQUq+fmH68
-        A4mNEk4J607LLH5niUCaXanR84AGeIQ=
-X-Google-Smtp-Source: APXvYqxC9XXEyG0BMFTXi41T7LcTEj9rRTtkrHbTJox+QKhBYEL3ofHUPIoXgzUeH4LHnegX3CBRFQ==
-X-Received: by 2002:a67:8b44:: with SMTP id n65mr54936928vsd.99.1559054625281;
-        Tue, 28 May 2019 07:43:45 -0700 (PDT)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id l132sm1438635vkd.39.2019.05.28.07.43.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 07:43:45 -0700 (PDT)
-Received: by mail-ua1-f45.google.com with SMTP id r19so7979204uap.5
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 07:43:44 -0700 (PDT)
-X-Received: by 2002:ab0:4a97:: with SMTP id s23mr27884679uae.19.1559054305839;
- Tue, 28 May 2019 07:38:25 -0700 (PDT)
+        id S1726654AbfE1OkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 10:40:13 -0400
+Received: from mail-eopbgr40067.outbound.protection.outlook.com ([40.107.4.67]:8762
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726481AbfE1OkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 10:40:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qGDwWypZZ4eJ/C1s8L1Asfv3QGVTeLnW226BrN1Qhsc=;
+ b=YQGVulZ5z7NJ6Y+7Ncw81kQTJTMvi/yaAkx9J6Lfh3Cln1v8qpTAA7t6WmcKRuWBsr9Xhd8Ve0zHECa6KNfSRl+nNrnKw/YH+LeyjG+lv4ts/dGuNSbQ9MYT54CdkgCWeoVne2I9il9y6KlEJcaZgUtI7sgSK8WbCPXEhY+rBEA=
+Received: from AM0PR0502MB4068.eurprd05.prod.outlook.com (52.133.38.142) by
+ AM0PR0502MB3892.eurprd05.prod.outlook.com (52.133.50.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1943.16; Tue, 28 May 2019 14:40:08 +0000
+Received: from AM0PR0502MB4068.eurprd05.prod.outlook.com
+ ([fe80::6073:86f:d8a5:e427]) by AM0PR0502MB4068.eurprd05.prod.outlook.com
+ ([fe80::6073:86f:d8a5:e427%6]) with mapi id 15.20.1922.021; Tue, 28 May 2019
+ 14:40:08 +0000
+From:   Eran Ben Elisha <eranbe@mellanox.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Igor Konopko <igor.j.konopko@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        "Mohit P . Tahiliani" <tahiliani@nitk.edu.in>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Matias Bjorling <mb@lightnvm.io>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Joe Perches <joe@perches.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+CC:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-afs@lists.infradead.org" <linux-afs@lists.infradead.org>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/5] [RFC] devlink: Fix uninitialized error code in
+ devlink_fmsg_prepare_skb()
+Thread-Topic: [PATCH 5/5] [RFC] devlink: Fix uninitialized error code in
+ devlink_fmsg_prepare_skb()
+Thread-Index: AQHVFWEYr6PWoO5LskiotnwgE/6kraaAm7cA
+Date:   Tue, 28 May 2019 14:40:08 +0000
+Message-ID: <0f92eb11-20b5-c50b-1577-d3896f28c73b@mellanox.com>
+References: <20190528142424.19626-1-geert@linux-m68k.org>
+ <20190528142424.19626-6-geert@linux-m68k.org>
+In-Reply-To: <20190528142424.19626-6-geert@linux-m68k.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6P192CA0056.EURP192.PROD.OUTLOOK.COM
+ (2603:10a6:209:82::33) To AM0PR0502MB4068.eurprd05.prod.outlook.com
+ (2603:10a6:208:d::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=eranbe@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [193.47.165.251]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4a896751-60d3-4369-5f3e-08d6e37a616d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR0502MB3892;
+x-ms-traffictypediagnostic: AM0PR0502MB3892:
+x-microsoft-antispam-prvs: <AM0PR0502MB38928ECA25430C114C430CC3BA1E0@AM0PR0502MB3892.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 00514A2FE6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(39860400002)(346002)(376002)(189003)(199004)(305945005)(4326008)(6512007)(66946007)(66446008)(64756008)(66556008)(66476007)(7736002)(73956011)(7416002)(6436002)(6246003)(229853002)(2171002)(6486002)(25786009)(14454004)(53936002)(31686004)(316002)(54906003)(110136005)(6116002)(3846002)(6506007)(386003)(52116002)(99286004)(66066001)(2906002)(8936002)(5660300002)(8676002)(53546011)(81166006)(2616005)(81156014)(476003)(71200400001)(71190400001)(186003)(102836004)(256004)(446003)(478600001)(14444005)(68736007)(36756003)(86362001)(26005)(11346002)(486006)(76176011)(31696002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR0502MB3892;H:AM0PR0502MB4068.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: lE27RtcEefp9ltSt6Kv+xlAnNQ3LF7Dytl0hgc7GSB/ClPcCgdkne7kqy1z3lQ59g1O0T7jLwbt47LXR0y4P2uvx7jIyFnHNXeibMbMxVtrBJ6cJus8d/fb11Po7iHU8DDSOQMTK0iWyvQcDkjvMwkrGwY1aFe+sD/K6npafjBu/fovDJVP0GroIG83LBn1tXbshl19+i69yntq9bMc6D9pWH/YRNdwVLi4bwXt1JFLvarMwqImNAQx9QyJP9/IPiAEkm7pk4kzscHEuml1xqZMKamVoUv9zE52z8ZwdBmZgf9Yc/Bar7MLYat3KUJpcMy2lEplcyBQZvPG4BkT+kz6B/JpjoD8kZMj9nTnPx/DzewsjApugXV3tjMEiyppOXeF18i4fKDjQAHjf+kvluhiZMiTTO9yjKdKjEFjg6xE=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <CEDEDE15ABD92A47A1D0AAA6F6441A4F@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190429204040.18725-1-dianders@chromium.org> <CAD=FV=WEDkufoEUYv9U+c+Y_bm8MYEWS25n63vUeNG0LLCFnuw@mail.gmail.com>
- <CAPDyKFoKN2zUNvDkgciO6r_ohdh2Vaj5qQaAPwMq21y02XAK8A@mail.gmail.com>
-In-Reply-To: <CAPDyKFoKN2zUNvDkgciO6r_ohdh2Vaj5qQaAPwMq21y02XAK8A@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 28 May 2019 07:38:14 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VqqDK6SLC_1_cFUjjEdTNUU09GJi4ZEMNwt_mgjnVRdg@mail.gmail.com>
-Message-ID: <CAD=FV=VqqDK6SLC_1_cFUjjEdTNUU09GJi4ZEMNwt_mgjnVRdg@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: dw_mmc: Disable SDIO interrupts while suspended
- to fix suspend/resume
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Sonny Rao <sonnyrao@chromium.org>,
-        Emil Renner Berthing <emil.renner.berthing@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Ryan Case <ryandcase@chromium.org>,
-        "# 4.0+" <stable@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a896751-60d3-4369-5f3e-08d6e37a616d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2019 14:40:08.5523
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: eranbe@mellanox.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR0502MB3892
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tue, May 28, 2019 at 6:12 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> On Mon, 20 May 2019 at 20:41, Doug Anderson <dianders@chromium.org> wrote:
-> >
-> > Hi,
-> >
-> > On Mon, Apr 29, 2019 at 1:41 PM Douglas Anderson <dianders@chromium.org> wrote:
-> > >
-> > > Processing SDIO interrupts while dw_mmc is suspended (or partly
-> > > suspended) seems like a bad idea.  We really don't want to be
-> > > processing them until we've gotten ourselves fully powered up.
-> > >
-> > > You might be wondering how it's even possible to become suspended when
-> > > an SDIO interrupt is active.  As can be seen in
-> > > dw_mci_enable_sdio_irq(), we explicitly keep dw_mmc out of runtime
-> > > suspend when the SDIO interrupt is enabled.  ...but even though we
-> > > stop normal runtime suspend transitions when SDIO interrupts are
-> > > enabled, the dw_mci_runtime_suspend() can still get called for a full
-> > > system suspend.
-> > >
-> > > Let's handle all this by explicitly masking SDIO interrupts in the
-> > > suspend call and unmasking them later in the resume call.  To do this
-> > > cleanly I'll keep track of whether the client requested that SDIO
-> > > interrupts be enabled so that we can reliably restore them regardless
-> > > of whether we're masking them for one reason or another.
-> > >
-> > > It should be noted that if dw_mci_enable_sdio_irq() is never called
-> > > (for instance, if we don't have an SDIO card plugged in) that
-> > > "client_sdio_enb" will always be false.  In those cases this patch
-> > > adds a tiny bit of overhead to suspend/resume (a spinlock and a
-> > > read/write of INTMASK) but other than that is a no-op.  The
-> > > SDMMC_INT_SDIO bit should always be clear and clearing it again won't
-> > > hurt.
-> > >
-> > > Without this fix it can be seen that rk3288-veyron Chromebooks with
-> > > Marvell WiFi would sometimes fail to resume WiFi even after picking my
-> > > recent mwifiex patch [1].  Specifically you'd see messages like this:
-> > >   mwifiex_sdio mmc1:0001:1: Firmware wakeup failed
-> > >   mwifiex_sdio mmc1:0001:1: PREP_CMD: FW in reset state
-> > >
-> > > ...and tracing through the resume code in the failing cases showed
-> > > that we were processing a SDIO interrupt really early in the resume
-> > > call.
-> > >
-> > > NOTE: downstream in Chrome OS 3.14 and 3.18 kernels (both of which
-> > > support the Marvell SDIO WiFi card) we had a patch ("CHROMIUM: sdio:
-> > > Defer SDIO interrupt handling until after resume") [2].  Presumably
-> > > this is the same problem that was solved by that patch.
-> > >
-> > > [1] https://lkml.kernel.org/r/20190404040106.40519-1-dianders@chromium.org
-> > > [2] https://crrev.com/c/230765
-> > >
-> > > Cc: <stable@vger.kernel.org> # 4.14.x
-> > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > > ---
-> > > I didn't put any "Fixes" tag here, but presumably this could be
-> > > backported to whichever kernels folks found it useful for.  I have at
-> > > least confirmed that kernels v4.14 and v4.19 (as well as v5.1-rc2)
-> > > show the problem.  It is very easy to pick this to v4.19 and it
-> > > definitely fixes the problem there.
-> > >
-> > > I haven't spent the time to pick this to 4.14 myself, but presumably
-> > > it wouldn't be too hard to backport this as far as v4.13 since that
-> > > contains commit 32dba73772f8 ("mmc: dw_mmc: Convert to use
-> > > MMC_CAP2_SDIO_IRQ_NOTHREAD for SDIO IRQs").  Prior to that it might
-> > > make sense for anyone experiencing this problem to just pick the old
-> > > CHROMIUM patch to fix them.
-> > >
-> > > Changes in v2:
-> > > - Suggested 4.14+ in the stable tag (Sasha-bot)
-> > > - Extra note that this is a noop on non-SDIO (Shawn / Emil)
-> > > - Make boolean logic cleaner as per https://crrev.com/c/1586207/1
-> > > - Hopefully clear comments as per https://crrev.com/c/1586207/1
-> > >
-> > >  drivers/mmc/host/dw_mmc.c | 27 +++++++++++++++++++++++----
-> > >  drivers/mmc/host/dw_mmc.h |  3 +++
-> > >  2 files changed, 26 insertions(+), 4 deletions(-)
-> >
-> > Ulf: are you the right person to land this?  With 5.2-rc1 out it might
-> > be a good time for it?  To refresh your memory about this patch:
-> >
-> > * Patch v1 was posted back on April 10th [1] so we're at about 1.5
-> > months of time for people to comment about it now.  Should be more
-> > than enough.
->
-> Apologize for the delay, not sure why this has slipped through my
-> filters. Anyway, let me have a look at it now.
-
-No worries.  If there's something better I can do in the future to
-avoid problems, please let me know.
-
-
-> > * Shawn Lin saw it and didn't hate it.  He had some confusion about
-> > how it worked and I've hopefully alleviated via extra comments / text.
-> >
-> > * Emil Renner Berthing thought it caused a regression for him but then
-> > tested further and was convinced that it didn't.  This is extra
-> > confirmation that someone other than me did try the patch and found it
-> > to not break things.  ;-)
-> >
-> > * It has been reviewed by Guenter Roeck (in v2)
->
-> One question, I am guessing you are considering
-> https://lkml.org/lkml/2019/5/17/761 as the long term solution, and
-> thus $subject patch should go as fix+stable? No?
-
-No, the two problems are completely separate.  ${SUBJECT} patch deals
-with full system suspend/resume.  I originally reproduced the problems
-on a device with Marvell WiFi, though it could possibly affect
-Broadcom parts on dw_mmc too.  ${SUBJECT} patch is ready to land on
-mainline Linux at your leisure.  Also: in case you didn't notice
-(since it didn't thread properly for me), Shawn Lin gave it a reviewed
-by [1].
-
-The patch you refer to [2] is related to something akin to an idle
-state (more like Runtime PM) and only affects Broadcom parts.  Also
-the Broadcom issue ought to happen across all host controllers (AKA
-not just dw_mmc).
-
-[1] https://lkml.kernel.org/r/982ffba1-c599-e73d-e5e0-b1be5668851c@rock-chips.com
-[2] https://lkml.org/lkml/2019/5/17/761
-
--Doug
+DQoNCk9uIDUvMjgvMjAxOSA1OjI0IFBNLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6DQo+IFdp
+dGggZ2NjIDQuMToNCj4gDQo+ICAgICAgbmV0L2NvcmUvZGV2bGluay5jOiBJbiBmdW5jdGlvbiDi
+gJhkZXZsaW5rX2Ztc2dfcHJlcGFyZV9za2LigJk6DQo+ICAgICAgbmV0L2NvcmUvZGV2bGluay5j
+OjQzMjU6IHdhcm5pbmc6IOKAmGVycuKAmSBtYXkgYmUgdXNlZCB1bmluaXRpYWxpemVkIGluIHRo
+aXMgZnVuY3Rpb24NCj4gDQo+IEluZGVlZCwgaWYgdGhlIGxpc3QgaGFzIGxlc3MgdGhhbiAqc3Rh
+cnQgZW50cmllcywgYW4gdW5pbml0aWFsaXplZCBlcnJvcg0KPiBjb2RlIHdpbGwgYmUgcmV0dXJu
+ZWQuDQoNClRoZSBsb2dpYyBndWFyYW50ZWVzIHRoYXQgc3RhcnQgaXMgc21hbGxlciB0aGFuIHRo
+ZSBsZW5ndGggb2YgdGhlIGxpc3QuDQpidXQgSSBndWVzcyB0aGF0IHRoZSBjb21waWxlciBjYW4n
+dCBkZXRlY3QgdGhhdC4NCg0KUmV2aWV3ZWQtYnk6IEVyYW4gQmVuIEVsaXNoYSA8ZXJhbmJlQG1l
+bGxhbm94LmNvbT4NCg0KPiANCj4gRml4IHRoaXMgYnkgcHJlaW5pdGlhbGl6aW5nIGVyciB0byB6
+ZXJvLg0KPiANCj4gRml4ZXM6IDFkYjY0ZTg3MzNmNjUzODEgKCJkZXZsaW5rOiBBZGQgZGV2bGlu
+ayBmb3JtYXR0ZWQgbWVzc2FnZSAoZm1zZykgQVBJIikNCj4gU2lnbmVkLW9mZi1ieTogR2VlcnQg
+VXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCj4gLS0tDQo+IEkgZG9uJ3Qga25v
+dyBpZiB0aGlzIGNhbiByZWFsbHkgaGFwcGVuLCBhbmQgaWYgdGhpcyBpcyB0aGUgcmlnaHQgZml4
+Lg0KPiBQZXJoYXBzIGVyciBzaG91bGQgYmUgaW5pdGlhbGl6ZWQgdG8gc29tZSB2YWxpZCBlcnJv
+ciBjb2RlIGluc3RlYWQ/DQo+IC0tLQ0KPiAgIG5ldC9jb3JlL2RldmxpbmsuYyB8IDIgKy0NCj4g
+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRp
+ZmYgLS1naXQgYS9uZXQvY29yZS9kZXZsaW5rLmMgYi9uZXQvY29yZS9kZXZsaW5rLmMNCj4gaW5k
+ZXggZDQzYmM1MmI4ODQwZDc2Yi4uOTEzNzdlNGVhZTlhNDNjMSAxMDA2NDQNCj4gLS0tIGEvbmV0
+L2NvcmUvZGV2bGluay5jDQo+ICsrKyBiL25ldC9jb3JlL2RldmxpbmsuYw0KPiBAQCAtNDMyMSw4
+ICs0MzIxLDggQEAgZGV2bGlua19mbXNnX3ByZXBhcmVfc2tiKHN0cnVjdCBkZXZsaW5rX2Ztc2cg
+KmZtc2csIHN0cnVjdCBza19idWZmICpza2IsDQo+ICAgew0KPiAgIAlzdHJ1Y3QgZGV2bGlua19m
+bXNnX2l0ZW0gKml0ZW07DQo+ICAgCXN0cnVjdCBubGF0dHIgKmZtc2dfbmxhdHRyOw0KPiArCWlu
+dCBlcnIgPSAwOw0KPiAgIAlpbnQgaSA9IDA7DQo+IC0JaW50IGVycjsNCj4gICANCj4gICAJZm1z
+Z19ubGF0dHIgPSBubGFfbmVzdF9zdGFydF9ub2ZsYWcoc2tiLCBERVZMSU5LX0FUVFJfRk1TRyk7
+DQo+ICAgCWlmICghZm1zZ19ubGF0dHIpDQo+IA0K
