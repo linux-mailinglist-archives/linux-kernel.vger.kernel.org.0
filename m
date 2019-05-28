@@ -2,111 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23FF32BE9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 07:34:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A79CA2BEA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 07:35:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbfE1FeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 01:34:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39822 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726693AbfE1FeF (ORCPT
+        id S1727415AbfE1Ffi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 01:35:38 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:42827 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726269AbfE1Ffh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 01:34:05 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4S5Rcsn017019
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 01:34:04 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2srxuy0cdr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 01:34:04 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 28 May 2019 06:34:02 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 28 May 2019 06:33:59 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4S5Xwa963176916
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 May 2019 05:33:58 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 150A511C070;
-        Tue, 28 May 2019 05:33:58 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7345F11C077;
-        Tue, 28 May 2019 05:33:57 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.53])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 28 May 2019 05:33:57 +0000 (GMT)
-Date:   Tue, 28 May 2019 08:33:55 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Alakesh Haloi <alakesh.haloi@gmail.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Xu <peterx@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH] userfaultfd: selftest: fix compiler warning
-References: <20190527151859.GA3217@ip-172-31-44-144.us-west-2.compute.internal>
+        Tue, 28 May 2019 01:35:37 -0400
+X-UUID: be5130a6a2bb477e8ab994be11f10e88-20190528
+X-UUID: be5130a6a2bb477e8ab994be11f10e88-20190528
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 649026001; Tue, 28 May 2019 13:35:30 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 28 May 2019 13:35:29 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 28 May 2019 13:35:29 +0800
+Message-ID: <1559021729.15879.1.camel@mtksdaap41>
+Subject: Re: [PATCH v2 22/25] drm/mediatek: adjust ddp clock control flow
+From:   CK Hu <ck.hu@mediatek.com>
+To:     <yongqiang.niu@mediatek.com>
+CC:     <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+        <matthias.bgg@gmail.com>, <airlied@linux.ie>,
+        <mark.rutland@arm.com>, <dri-devel@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <Bibby.Hsieh@mediatek.com>,
+        <yt.shen@mediatek.com>
+Date:   Tue, 28 May 2019 13:35:29 +0800
+In-Reply-To: <1555403090.11519.7.camel@mtksdaap41>
+References: <1553667561-25447-1-git-send-email-yongqiang.niu@mediatek.com>
+         <1553667561-25447-23-git-send-email-yongqiang.niu@mediatek.com>
+         <1555403090.11519.7.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190527151859.GA3217@ip-172-31-44-144.us-west-2.compute.internal>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19052805-0008-0000-0000-000002EB13DF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052805-0009-0000-0000-00002257DEF8
-Message-Id: <20190528053355.GB5055@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-28_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905280038
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 03:18:59PM +0000, Alakesh Haloi wrote:
-> Fixes following compiler warning
-> 
-> userfaultfd.c: In function ‘usage’:
-> userfaultfd.c:126:2: warning: format not a string literal and no format
-> 	arguments [-Wformat-security]
->   fprintf(stderr, examples);
-> 
-> Signed-off-by: Alakesh Haloi <alakesh.haloi@gmail.com>
+Hi, Yongqiang:
 
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+On Tue, 2019-04-16 at 16:24 +0800, CK Hu wrote:
+> Hi, Yongqiang:
+> 
+> On Wed, 2019-03-27 at 14:19 +0800, yongqiang.niu@mediatek.com wrote:
+> > From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> > 
+> > display hardware clock will not unprepare when
+> > crtc is disable, until crtc is destroyed.
+> > with this patch, hard clock will disable and unprepare
+> > at the same time.
+> 
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
 
-> ---
->  tools/testing/selftests/vm/userfaultfd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+This patch looks independent, so I've applied it to
+mediatek-drm-fixes-5.2 [1], thanks.
+
+[1]
+https://github.com/ckhu-mediatek/linux.git-tags/commits/mediatek-drm-fixes-5.2
+
+Regards,
+CK
 > 
-> diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-> index 5d1db824f73a..b3e6497b080c 100644
-> --- a/tools/testing/selftests/vm/userfaultfd.c
-> +++ b/tools/testing/selftests/vm/userfaultfd.c
-> @@ -123,7 +123,7 @@ static void usage(void)
->  	fprintf(stderr, "Supported <test type>: anon, hugetlb, "
->  		"hugetlb_shared, shmem\n\n");
->  	fprintf(stderr, "Examples:\n\n");
-> -	fprintf(stderr, examples);
-> +	fprintf(stderr, "%s", examples);
->  	exit(1);
->  }
-> 
-> -- 
-> 2.17.1
+> > 
+> > Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 26 ++++++--------------------
+> >  1 file changed, 6 insertions(+), 20 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> > index 0f97ee3..606c6e2 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> > @@ -195,7 +195,7 @@ static int mtk_crtc_ddp_clk_enable(struct mtk_drm_crtc *mtk_crtc)
+> >  
+> >  	DRM_DEBUG_DRIVER("%s\n", __func__);
+> >  	for (i = 0; i < mtk_crtc->ddp_comp_nr; i++) {
+> > -		ret = clk_enable(mtk_crtc->ddp_comp[i]->clk);
+> > +		ret = clk_prepare_enable(mtk_crtc->ddp_comp[i]->clk);
+> >  		if (ret) {
+> >  			DRM_ERROR("Failed to enable clock %d: %d\n", i, ret);
+> >  			goto err;
+> > @@ -205,7 +205,7 @@ static int mtk_crtc_ddp_clk_enable(struct mtk_drm_crtc *mtk_crtc)
+> >  	return 0;
+> >  err:
+> >  	while (--i >= 0)
+> > -		clk_disable(mtk_crtc->ddp_comp[i]->clk);
+> > +		clk_disable_unprepare(mtk_crtc->ddp_comp[i]->clk);
+> >  	return ret;
+> >  }
+> >  
+> > @@ -215,7 +215,7 @@ static void mtk_crtc_ddp_clk_disable(struct mtk_drm_crtc *mtk_crtc)
+> >  
+> >  	DRM_DEBUG_DRIVER("%s\n", __func__);
+> >  	for (i = 0; i < mtk_crtc->ddp_comp_nr; i++)
+> > -		clk_disable(mtk_crtc->ddp_comp[i]->clk);
+> > +		clk_disable_unprepare(mtk_crtc->ddp_comp[i]->clk);
+> >  }
+> >  
+> >  static int mtk_crtc_ddp_hw_init(struct mtk_drm_crtc *mtk_crtc)
+> > @@ -615,15 +615,7 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
+> >  		if (!comp) {
+> >  			dev_err(dev, "Component %pOF not initialized\n", node);
+> >  			ret = -ENODEV;
+> > -			goto unprepare;
+> > -		}
+> > -
+> > -		ret = clk_prepare(comp->clk);
+> > -		if (ret) {
+> > -			dev_err(dev,
+> > -				"Failed to prepare clock for component %pOF: %d\n",
+> > -				node, ret);
+> > -			goto unprepare;
+> > +			return ret;
+> >  		}
+> >  
+> >  		mtk_crtc->ddp_comp[i] = comp;
+> > @@ -649,23 +641,17 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
+> >  		ret = mtk_plane_init(drm_dev, &mtk_crtc->planes[zpos],
+> >  				     BIT(pipe), type);
+> >  		if (ret)
+> > -			goto unprepare;
+> > +			return ret;
+> >  	}
+> >  
+> >  	ret = mtk_drm_crtc_init(drm_dev, mtk_crtc, &mtk_crtc->planes[0],
+> >  				mtk_crtc->layer_nr > 1 ? &mtk_crtc->planes[1] :
+> >  				NULL, pipe);
+> >  	if (ret < 0)
+> > -		goto unprepare;
+> > +		return ret;
+> >  	drm_mode_crtc_set_gamma_size(&mtk_crtc->base, MTK_LUT_SIZE);
+> >  	drm_crtc_enable_color_mgmt(&mtk_crtc->base, 0, false, MTK_LUT_SIZE);
+> >  	priv->num_pipes++;
+> >  
+> >  	return 0;
+> > -
+> > -unprepare:
+> > -	while (--i >= 0)
+> > -		clk_unprepare(mtk_crtc->ddp_comp[i]->clk);
+> > -
+> > -	return ret;
+> >  }
 > 
 
--- 
-Sincerely yours,
-Mike.
 
