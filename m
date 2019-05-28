@@ -2,86 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 471DC2BE2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 06:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E01082BE5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 06:31:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbfE1EWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 00:22:13 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43014 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725817AbfE1EWN (ORCPT
+        id S1727535AbfE1Ebb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 00:31:31 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41216 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfE1Ebb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 00:22:13 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c6so10626741pfa.10
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 21:22:13 -0700 (PDT)
+        Tue, 28 May 2019 00:31:31 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q17so5804398pfq.8
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 21:31:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DeVRVtvo+X+I5ImBe9C0dDj60lKHwgi7pzEoydA8Ywo=;
-        b=jndXadi6lbC6yEcMoPo7/WKVH5GT3Lyf8QI2tyNA91LFhgb1IeHDGL8AqMDpz7QsfB
-         u+xslzdn68hnaPo1Lkx6MSeX2znNX2/loejw+b/rV+ggVgXwfTVHgeh0tpEyqsdNtpoB
-         DnaGhNd0cLZnVmgu/tpQq6vIyKXP2LyqL2IPyWhnoOSvphn7Ay0skojq2+zqXm7uZChG
-         W1LpgOsIqlfnDehjbi5u/CjvENhcthO43JgcaoU7uN+hXbarJ7gm61tcRyPkLw4gcHDI
-         PwYY5afu9oqQGMQ4BuSM056EQ7vnVQTf0Otfxhe4iogzkRNVIKtc0pwddga9KBTIH4JO
-         URsw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=D9P09ET3lHKfQiCPrh2AxK6gKOQt7ghR7HUM0eo8OdI=;
+        b=k7uKqwq9bZqFUKAqPtguHHw3HhdORsREe8G/3ZhMJQi3bmeegHUURhCZqRPruvTccs
+         hr9CngPXacVjKJMb56+pubc0e9i26ao4jTtUtPjObfqCNBFtfeIWGyLNVsgJ2G7RsRk3
+         zh7AMgzDOUwmWmyViBuqtY0Ggpmp2+iDiVuyNxAFbc2kg6MyZbRWSlXEzxJrcBzTGyv3
+         jc7bu9zKObBQVV7B1dk4p4jY+koLgXbWC1dTdemtR911IJNVrJr+l/6RfdJ+iLe9EDen
+         f+tsQe39mwr4lq96x7q8PZx4YdcL411CKP1GrrzlLqxSHAVQpE/vkt/3ioUSkn1PhcGJ
+         uKrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DeVRVtvo+X+I5ImBe9C0dDj60lKHwgi7pzEoydA8Ywo=;
-        b=LfTLVg6sz7vh1OXchwreYaF3fYV8QQnCy7w8ehsis8HlefSqVU42z7SBvrQAiQLVyw
-         KoRI4WPCghBRWKBi1Y7Oe90CKq6QAYsSpXkFSKs056Fk0hLNCvaLyYB7SB6M08tp7F7c
-         OnyVLqCdDOyQ5fFZgygJd2GPuhxzsWS0EfKRKzY4AjfW3t8q9VaCwY9438ctjeRhE5F+
-         NKBhNkUixoMv4ROhZYX6c35SolYSKIB5O+mR7CoJZcYDdRZXyLh9TY+f9VvxTDYJGURo
-         zDRzqAyooOp3EZbva80VFWFlmLNgjAAlp+LWNf5E2D2HcyGdsO/qefy1AqT1U6RJmTw6
-         nTOw==
-X-Gm-Message-State: APjAAAW/ZScQ0ln96/mtAg97mmcvr9h/cXaIbfkQq/XXB0fpHvlGqRDQ
-        lb1SIfSeexG6CwP1kEmhVEU=
-X-Google-Smtp-Source: APXvYqyph2kqOR+gIGTJcCfaIpzZiAm3HxP8jb+36XA5eaesu5+21KNsO8z7E/qX5xRPC/5Y98JuDg==
-X-Received: by 2002:aa7:8c10:: with SMTP id c16mr93515095pfd.89.1559017333050;
-        Mon, 27 May 2019 21:22:13 -0700 (PDT)
-Received: from localhost ([175.223.45.124])
-        by smtp.gmail.com with ESMTPSA id z9sm11584620pgc.82.2019.05.27.21.22.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 May 2019 21:22:12 -0700 (PDT)
-Date:   Tue, 28 May 2019 13:22:08 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC] printk/sysrq: Don't play with console_loglevel
-Message-ID: <20190528042208.GD26865@jagdpanzerIV>
-References: <20190528002412.1625-1-dima@arista.com>
- <4a9c1b20-777d-079a-33f5-ddf0a39ff788@i-love.sakura.ne.jp>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=D9P09ET3lHKfQiCPrh2AxK6gKOQt7ghR7HUM0eo8OdI=;
+        b=NwTijNCZLsuGXDG1e0J+8Rh2/qzwq8XuKH2VEPU8vU5UdUiTYrSNYuQ1S3ltLzor3c
+         A+GJrGqhE0MclvJM3baFEB6ea0BxrwGRsCLWBt95k96scPDBzZL0CdCteiUGRGE5k1pX
+         JhrrBSghmr8AgqJBsbropQVc8Jphi5dfpz55cPkGkEs4d6McIJpv/txTQ2K/vpRSsABe
+         qpEPlnd4nBvRNi9dx1ZUG4Z7Wwc7RUgPE1mgsAww8CbHB1RKnzHbfX1ax8JSBlzqTk81
+         Q+59qXrNcNR1Xk5+Lqg4U+OmvjQ32vAL8wHMW32tmwWFeC+c/wczoOdmQc5CAUomTpoV
+         3lfg==
+X-Gm-Message-State: APjAAAUkm6iIQTI+6ZjZo1LaGDqfLbv+CsWWqYZHmPJtD/+rH46P8kw6
+        abZlEhg9uovmc67D9BrxiMk=
+X-Google-Smtp-Source: APXvYqxXkWRZCb5ZO1h9FXtzO/gBcbF/dUKrpPNA/6gd/uJRgzrbox6YkKsm+JOH2Xqp4uHfdktybg==
+X-Received: by 2002:a17:90a:a616:: with SMTP id c22mr3081536pjq.46.1559017890382;
+        Mon, 27 May 2019 21:31:30 -0700 (PDT)
+Received: from bourget-gt.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
+        by smtp.gmail.com with ESMTPSA id h5sm13575075pfk.163.2019.05.27.21.31.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 21:31:29 -0700 (PDT)
+From:   Trevor Bourget <tgb.kernel@gmail.com>
+To:     jslaby@suse.com, gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] vt: configurable number of console devices
+Date:   Mon, 27 May 2019 21:31:17 -0700
+Message-Id: <20190528043117.169987-1-tgb.kernel@gmail.com>
+X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a9c1b20-777d-079a-33f5-ddf0a39ff788@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (05/28/19 12:21), Tetsuo Handa wrote:
-[..]
-> What I suggested in my proposal ("printk: Introduce "store now but print later" prefix." at
-> https://lore.kernel.org/lkml/1550896930-12324-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp/T/#u )
-> is "whether the caller wants to defer printing to consoles regarding
-> this printk() call". And your suggestion is "whether the caller wants
-> to apply ignore_loglevel regarding this printk() call".
+Having 63 vt devices for embedded systems might be overkill,
+so provide a configuration MAX_NR_CONSOLES to allow this
+consumption to be reduced.
 
-I'm not sure about "store now but print later" here. What Dmitry is
-talking about:
+Signed-off-by: Trevor Bourget <tgb.kernel@gmail.com>
+---
+ drivers/tty/Kconfig     | 9 +++++++++
+ include/uapi/linux/vt.h | 4 ++++
+ 2 files changed, 13 insertions(+)
 
-     bump console_loglevel on *this* particular CPU only,
-     not system-wide.
-     /* Which is implemented in a form of - all messages from this-CPU
-      * only should be printed regardless the loglevel, the rest should
-      * pass the usual suppress_message_printing() check. */
+diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+index 3b1d312bb175..98e21589f4af 100644
+--- a/drivers/tty/Kconfig
++++ b/drivers/tty/Kconfig
+@@ -42,6 +42,15 @@ config VT
+ 	  If unsure, say Y, or else you won't be able to do much with your new
+ 	  shiny Linux system :-)
+ 
++config MAX_NR_CONSOLES
++	int "Maximum number of consoles to permit"
++	depends on VT
++	range 1 63
++	default "63"
++	---help---
++	  The maximum number of consoles that can be used.
++	  The default is 63.
++
+ config CONSOLE_TRANSLATIONS
+ 	depends on VT
+ 	default y
+diff --git a/include/uapi/linux/vt.h b/include/uapi/linux/vt.h
+index e9d39c48520a..3567dd239758 100644
+--- a/include/uapi/linux/vt.h
++++ b/include/uapi/linux/vt.h
+@@ -8,9 +8,13 @@
+  * resizing).
+  */
+ #define MIN_NR_CONSOLES 1       /* must be at least 1 */
++#ifdef CONFIG_MAX_NR_CONSOLES
++#define MAX_NR_CONSOLES CONFIG_MAX_NR_CONSOLES
++#else
+ #define MAX_NR_CONSOLES	63	/* serial lines start at 64 */
+ 		/* Note: the ioctl VT_GETSTATE does not work for
+ 		   consoles 16 and higher (since it returns a short) */
++#endif
+ 
+ /* 0x56 is 'V', to avoid collision with termios and kd */
+ 
+-- 
+2.22.0.rc1.257.g3120a18244-goog
 
-	-ss
