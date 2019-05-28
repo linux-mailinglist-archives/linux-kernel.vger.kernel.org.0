@@ -2,112 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC2102CC1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 18:34:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9B9B2CC21
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 18:34:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbfE1QeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 12:34:10 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60968 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726600AbfE1QeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 12:34:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D37F1341;
-        Tue, 28 May 2019 09:34:08 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2754A3F59C;
-        Tue, 28 May 2019 09:34:03 -0700 (PDT)
-Date:   Tue, 28 May 2019 17:34:00 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     Andrew Murray <andrew.murray@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        Lee Smith <Lee.Smith@arm.com>, linux-kselftest@vger.kernel.org,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Evgeniy Stepanov <eugenis@google.com>,
-        linux-media@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        linux-kernel@vger.kernel.org,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: Re: [PATCH v15 05/17] arms64: untag user pointers passed to memory
- syscalls
-Message-ID: <20190528163400.GE32006@arrakis.emea.arm.com>
-References: <cover.1557160186.git.andreyknvl@google.com>
- <00eb4c63fefc054e2c8d626e8fedfca11d7c2600.1557160186.git.andreyknvl@google.com>
- <20190527143719.GA59948@MBP.local>
- <20190528145411.GA709@e119886-lin.cambridge.arm.com>
- <20190528154057.GD32006@arrakis.emea.arm.com>
- <20190528155644.GD28398@e103592.cambridge.arm.com>
+        id S1727175AbfE1Qey (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 12:34:54 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34326 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbfE1Qey (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 12:34:54 -0400
+Received: by mail-lf1-f68.google.com with SMTP id v18so15127094lfi.1;
+        Tue, 28 May 2019 09:34:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1myZtded1RLBPOtfFMrOo9NJSxPtLPt4RXZAdQZ1vIU=;
+        b=IE8ur7agfZBBCR5CIL7GjM8g8jWr7z/JqzqNUZX8/3off9XT23B7JKi8BKXausnRk+
+         cBiSFCJ8giUiLxAIa49C6Oq/qSpeGkDcfxu1UR+WBzJNB6H0VrzKWOoYYp23yYJ/zG4l
+         jNcHQ9LEj3lsRFnee3CIDa1fVW/lNtZi2uscScbiiVc7YuMLP/kQUuI6sNlH0NtHm2n9
+         SyWAiHdIJxrmiQH3Ah7BImRFa7W1PSevo5kCSBwOfsLn3gHe2jgUISC3nudQBlILdKJY
+         0v9lNBL9wgGo5UmCv7BOm2Dxev70vRHMEOIGZ2A41KLMAJWI/Vvapuz04EdXc66hQsis
+         /PYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1myZtded1RLBPOtfFMrOo9NJSxPtLPt4RXZAdQZ1vIU=;
+        b=DRZ8EKrw7JxuNmUKmACwrqJyqVnaZG/izC/W9fknoheMpRMDXvL0ZfQWF2YPlrncLG
+         UIpB7H1A68sf7iwA0cX4HwCSmXJLLNMLF1dgbhE10097qs7/iRV4kbna4bkZQTlXIccs
+         jrptisNba03l+WrdExVxDU/VEuwxRtr6bzvQSPCAQOGUmdprcCog/RHk/sIuII6aVKpv
+         KmKGcgZrscfReqobumUgcl+DxenIPYiWg5sZPC6q4oBUEI2GXNF6G1fPcMC9bBh/URz4
+         QJM0P31JhRp4G0u6qkhEhn8wUsAhVZzFXU1JpWnQkmP9rUQGpai33Y5kSWkn354JHGpc
+         f3Ug==
+X-Gm-Message-State: APjAAAVeNN8WGX3/2V73dGaBrJiG3vrgM3CIIk56e147haDUxorewkGG
+        75UnWPfCbw5/9r9gIMjk7Dwawf3SFTxHSYnPxp4=
+X-Google-Smtp-Source: APXvYqwgypbdahAcVJbJiaN2+ExTZHRmO5VZL7WOt6lerC+6PmktCeYjhQJxChF0TBELsaSmv3piePXZcOMTSAOs1Pg=
+X-Received: by 2002:a19:d612:: with SMTP id n18mr50173592lfg.162.1559061291994;
+ Tue, 28 May 2019 09:34:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190528155644.GD28398@e103592.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190525163742.2616471-1-guro@fb.com>
+In-Reply-To: <20190525163742.2616471-1-guro@fb.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Tue, 28 May 2019 09:34:40 -0700
+Message-ID: <CAADnVQJ7DpjeyAu28qtYymXxcWBa5SGxvW-JOTWyY-gJ6gmX9A@mail.gmail.com>
+Subject: Re: [PATCH v5 bpf-next 0/4] cgroup bpf auto-detachment
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>, Kernel Team <kernel-team@fb.com>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        Stanislav Fomichev <sdf@fomichev.me>,
+        Yonghong Song <yhs@fb.com>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 04:56:45PM +0100, Dave P Martin wrote:
-> On Tue, May 28, 2019 at 04:40:58PM +0100, Catalin Marinas wrote:
-> 
-> [...]
-> 
-> > My thoughts on allowing tags (quick look):
-> >
-> > brk - no
-> 
-> [...]
-> 
-> > mlock, mlock2, munlock - yes
-> > mmap - no (we may change this with MTE but not for TBI)
-> 
-> [...]
-> 
-> > mprotect - yes
-> 
-> I haven't following this discussion closely... what's the rationale for
-> the inconsistencies here (feel free to refer me back to the discussion
-> if it's elsewhere).
+On Sat, May 25, 2019 at 9:37 AM Roman Gushchin <guro@fb.com> wrote:
+>
+> This patchset implements a cgroup bpf auto-detachment functionality:
+> bpf programs are detached as soon as possible after removal of the
+> cgroup, without waiting for the release of all associated resources.
+>
+> Patches 2 and 3 are required to implement a corresponding kselftest
+> in patch 4.
+>
+> v5:
+>   1) rebase
+>
+> v4:
+>   1) release cgroup bpf data using a workqueue
+>   2) add test_cgroup_attach to .gitignore
+>
+> v3:
+>   1) some minor changes and typo fixes
+>
+> v2:
+>   1) removed a bogus check in patch 4
+>   2) moved buf[len] = 0 in patch 2
 
-_My_ rationale (feel free to disagree) is that mmap() by default would
-not return a tagged address (ignoring MTE for now). If it gets passed a
-tagged address or a "tagged NULL" (for lack of a better name) we don't
-have clear semantics of whether the returned address should be tagged in
-this ABI relaxation. I'd rather reserve this specific behaviour if we
-overload the non-zero tag meaning of mmap() for MTE. Similar reasoning
-for mremap(), at least on the new_address argument (not entirely sure
-about old_address).
-
-munmap() should probably follow the mmap() rules.
-
-As for brk(), I don't see why the user would need to pass a tagged
-address, we can't associate any meaning to this tag.
-
-For the rest, since it's likely such addresses would have been tagged by
-malloc() in user space, we should allow tagged pointers.
-
--- 
-Catalin
+Applied. Thanks!
