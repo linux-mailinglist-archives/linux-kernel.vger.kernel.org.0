@@ -2,102 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4132D2C8D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 16:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D6B2C8DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 16:35:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbfE1OaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 10:30:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36530 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726313AbfE1OaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 10:30:01 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B8E7A7E42F;
-        Tue, 28 May 2019 14:30:01 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1796C10027C5;
-        Tue, 28 May 2019 14:30:00 +0000 (UTC)
-Subject: Re: [PATCH] modules: fix livelock in add_unformed_module()
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     Barret Rhoden <brho@google.com>, Jessica Yu <jeyu@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Arcari <darcari@redhat.com>
-References: <be47ac01-a5ac-7be1-d387-5c841007b45f@google.com>
- <20190510184204.225451-1-brho@google.com>
- <dd48a3a4-9046-3917-55ba-d9eb391052b3@redhat.com>
- <d968a588-c43b-cfe1-6358-6c5d99f916a3@google.com>
- <ba46f7c1-caee-4237-b6c5-7edec0eaaac3@redhat.com>
-Message-ID: <e5f7f37b-5c99-f9de-61ce-5b3394caf0d2@redhat.com>
-Date:   Tue, 28 May 2019 10:30:00 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726601AbfE1OfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 10:35:22 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38134 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbfE1OfV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 10:35:21 -0400
+Received: by mail-ot1-f66.google.com with SMTP id s19so17963961otq.5
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 07:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RkzNKIRiEzcSbm+tX81QK9PaQwoVmPZvfI0mhyqI/yw=;
+        b=t2DGp7sN8sVDLXOxZJFvCBGPvVLq+HnkhgcsmhYupokEyvzfHN2p1xvO5klVLV9DL9
+         Viv+m96xmESsM7MPNQnbS+9iC/UHCZLiTEOkngSjrgPweccvgM23B/zy1tNUZpsJYc9r
+         envjIOeTJ1R9mVIgi2Sr20aaSjHzJ9/sV8XpZEe7hYnChRynDtDOkfEsF/Up3KCs50Qa
+         KbfoLY20J70fNihtXZuZuFX3NtakuPvefpWPfc/g+K9/FLgrWLLEuEOEBZkQzhK1PnjU
+         8w8de8yvie0p11C1a0wzRJti9yuDp+/vLcFoX+bwitObdmIp8MS5I21AtARZ3z5EJv2I
+         nC6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RkzNKIRiEzcSbm+tX81QK9PaQwoVmPZvfI0mhyqI/yw=;
+        b=qgFTf8EoqXHRlrLvhDgkJwevMpHnKBUtiWsKDUQ65TyWhgNnZ9FdebOi0tqgDMk3H2
+         C9JkQo+23OuJnmY+cUtXhuUvp1nyfKOKu8zBI+bL8Qloz3+wwTTEVftNObyfEouJOpEe
+         v04b2qgXz2xVMAhAN8mmdzlppHf90o2p7KcD8Ye4HnDqP4L3Ob40SYkBemL6s31z9o/b
+         7TTmsoszJTmf95NOJ1VEL1ahRM9bQbvYvIV9/FywXBwTydvadujFeDxWDSeEFGFoobg7
+         8zx+VwLejkaHFFWE30LmH+00IyDmZ/xUc1tD6yqyV+/ISNHMnhddGRnugaUPMc1wTzdb
+         /uPA==
+X-Gm-Message-State: APjAAAU2jcmA05/iGHpiupj02NtFeo3DG2gbkxk76fxZRAGnBFznbLrG
+        rHhelweQUz0q81nPydDQTAo7shswX0ijis2wx80=
+X-Google-Smtp-Source: APXvYqwmqSAV2f2zETkGMF8GguAlSVn6CSaem6SwBvSoEhh6XVyZPxvKm7nnj3Z03zi/JU1waoGInRTQTVetVLY7cNQ=
+X-Received: by 2002:a9d:6e0f:: with SMTP id e15mr67099046otr.0.1559054120960;
+ Tue, 28 May 2019 07:35:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <ba46f7c1-caee-4237-b6c5-7edec0eaaac3@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 28 May 2019 14:30:01 +0000 (UTC)
+References: <CAGngYiU=uFjJFEoiHFUr+ab73sJksaTBkfxvQwL1X6WJnhchqw@mail.gmail.com>
+ <20190528142912.13224-1-yuehaibing@huawei.com>
+In-Reply-To: <20190528142912.13224-1-yuehaibing@huawei.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Tue, 28 May 2019 10:35:10 -0400
+Message-ID: <CAGngYiW_hCDPRWao+389BfUH_2sP4S6pL+gteim=kDrnb9UDzQ@mail.gmail.com>
+Subject: Re: [PATCH v2 -next] staging: fieldbus: Fix build error without CONFIG_REGMAP_MMIO
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devel@driverdev.osuosl.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 28, 2019 at 10:31 AM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fix gcc build error while CONFIG_REGMAP_MMIO is not set
+>
 
+checkpatch.pl errors remain:
 
-On 5/22/19 1:08 PM, Prarit Bhargava wrote:
-> 
-> 
-> On 5/13/19 10:37 AM, Barret Rhoden wrote:
->> Hi -
->>
-> 
-> Hey Barret, my apologies for not getting back to you earlier.  I got caught up
-> in something that took me away from this issue.
-> 
->> On 5/13/19 7:23 AM, Prarit Bhargava wrote:
->> [snip]
->>> A module is loaded once for each cpu.
->>
->> Does one CPU succeed in loading the module, and the others fail with EEXIST?
->>
->>> My follow-up patch changes from wait_event_interruptible() to
->>> wait_event_interruptible_timeout() so the CPUs are no longer sleeping and can
->>> make progress on other tasks, which changes the return values from
->>> wait_event_interruptible().
->>>
->>> https://marc.info/?l=linux-kernel&m=155724085927589&w=2
->>>
->>> I believe this also takes your concern into account?
->>
->> That patch might work for me, but I think it papers over the bug where the check
->> on old->state that you make before sleeping (was COMING || UNFORMED, now !LIVE)
->> doesn't match the check to wake up in finished_loading().
->>
->> The reason the issue might not show up in practice is that your patch basically
->> polls, so the condition checks in finished_loading() are only a quicker exit.
->>
->> If you squash my patch into yours, I think it will cover that case. Though if
->> polling is the right answer here, it also raises the question of whether or not
->> we even need finished_loading().
->>
-> 
-> The more I look at this I think you're right.  Let me do some additional testing
-> with your patch + my original patch.
-> 
+$ ./scripts/checkpatch.pl < ~/Downloads/YueHaibing.eml
+ERROR: DOS line endings
+#92: FILE: drivers/staging/fieldbus/anybuss/Kconfig:17:
++^Iselect REGMAP_MMIO^M$
 
-I have done testing on arm64, s390x, ppc64le, ppc64, and x86 and have not seen
-any issues.
-
-Jessica, how would you like me to proceed?  Would you like an updated patch with
-Signed-off's from both Barret & myself?
-
-P.
-
-> P.
-> 
-> 
->> Barret
+total: 1 errors, 0 warnings, 0 checks, 7 lines checked
