@@ -2,31 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B4752C284
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:05:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 171482C2AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:07:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbfE1JFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:05:32 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57890 "EHLO huawei.com"
+        id S1727484AbfE1JHM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:07:12 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17595 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726883AbfE1JFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:05:15 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 929DD88CD603B13F05D2;
-        Tue, 28 May 2019 17:05:12 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Tue, 28 May 2019
- 17:04:56 +0800
+        id S1727322AbfE1JHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:07:11 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 86761B8F878AA4309DF5;
+        Tue, 28 May 2019 17:07:08 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 28 May 2019
+ 17:07:01 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-serial@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] serial: stm32: Make stm32_get_databits static
-Date:   Tue, 28 May 2019 17:04:49 +0800
-Message-ID: <20190528090449.22868-1-yuehaibing@huawei.com>
+To:     <bfields@fieldses.org>, <jlayton@kernel.org>,
+        <trond.myklebust@hammerspace.com>, <anna.schumaker@netapp.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] lockd: Make two symbols static
+Date:   Tue, 28 May 2019 17:06:52 +0800
+Message-ID: <20190528090652.13288-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -37,30 +35,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warning:
+Fix sparse warnings:
 
-drivers/tty/serial/stm32-usart.c:603:14: warning:
- symbol 'stm32_get_databits' was not declared. Should it be static?
+fs/lockd/clntproc.c:57:6: warning: symbol 'nlmclnt_put_lockowner' was not declared. Should it be static?
+fs/lockd/svclock.c:409:35: warning: symbol 'nlmsvc_lock_ops' was not declared. Should it be static?
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/tty/serial/stm32-usart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/lockd/clntproc.c | 2 +-
+ fs/lockd/svclock.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
-index 9c2b04e..4517f2b 100644
---- a/drivers/tty/serial/stm32-usart.c
-+++ b/drivers/tty/serial/stm32-usart.c
-@@ -600,7 +600,7 @@ static void stm32_shutdown(struct uart_port *port)
- 	free_irq(port->irq, port);
+diff --git a/fs/lockd/clntproc.c b/fs/lockd/clntproc.c
+index 0ff8ad4..b11f2af 100644
+--- a/fs/lockd/clntproc.c
++++ b/fs/lockd/clntproc.c
+@@ -54,7 +54,7 @@ nlmclnt_get_lockowner(struct nlm_lockowner *lockowner)
+ 	return lockowner;
  }
  
--unsigned int stm32_get_databits(struct ktermios *termios)
-+static unsigned int stm32_get_databits(struct ktermios *termios)
+-void nlmclnt_put_lockowner(struct nlm_lockowner *lockowner)
++static void nlmclnt_put_lockowner(struct nlm_lockowner *lockowner)
  {
- 	unsigned int bits;
+ 	if (!refcount_dec_and_lock(&lockowner->count, &lockowner->host->h_lock))
+ 		return;
+diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
+index 5f9f19b..61d3cc2 100644
+--- a/fs/lockd/svclock.c
++++ b/fs/lockd/svclock.c
+@@ -406,7 +406,7 @@ static void nlmsvc_locks_release_private(struct file_lock *fl)
+ 	nlmsvc_put_lockowner((struct nlm_lockowner *)fl->fl_owner);
+ }
  
+-const struct file_lock_operations nlmsvc_lock_ops = {
++static const struct file_lock_operations nlmsvc_lock_ops = {
+ 	.fl_copy_lock = nlmsvc_locks_copy_lock,
+ 	.fl_release_private = nlmsvc_locks_release_private,
+ };
 -- 
 2.7.4
 
