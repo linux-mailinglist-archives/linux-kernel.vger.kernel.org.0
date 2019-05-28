@@ -2,118 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B51A2D931
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7EED2CF29
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 21:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbfE2JiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 05:38:09 -0400
-Received: from m9783.mail.qiye.163.com ([220.181.97.83]:2787 "EHLO
-        m9783.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbfE2JiJ (ORCPT
+        id S1727551AbfE1TFr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 15:05:47 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51180 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbfE1TFr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 05:38:09 -0400
-X-Greylist: delayed 398 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 May 2019 05:38:06 EDT
-Received: from localhost (unknown [120.132.1.243])
-        by m9783.mail.qiye.163.com (Hmail) with ESMTPA id A1BD9C1A9B;
-        Wed, 29 May 2019 17:31:24 +0800 (CST)
-Date:   Wed, 29 May 2019 03:04:46 +0800
-From:   Yao Liu <yotta.liu@ucloud.cn>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        nbd <nbd@other.debian.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] nbd: fix connection timed out error after
- reconnecting to server
-Message-ID: <20190528190446.GA21513@192-168-150-246.7~>
-References: <1558691036-16281-1-git-send-email-yotta.liu@ucloud.cn>
- <20190524130740.zfypc2j3q5e3gryr@MacBook-Pro-91.local.dhcp.thefacebook.com>
- <20190527180743.GA20702@192-168-150-246.7~>
- <20190528165758.zxfrv6fum4vwcv4e@MacBook-Pro-91.local>
+        Tue, 28 May 2019 15:05:47 -0400
+Received: from static-50-53-34-51.bvtn.or.frontiernet.net ([50.53.34.51] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1hVhPs-0003DX-Gn; Tue, 28 May 2019 19:05:44 +0000
+Subject: Re: [PATCH] apparmor: enforce nullbyte at end of tag string
+To:     Jann Horn <jannh@google.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190528153226.248785-1-jannh@google.com>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <25ad5770-2ab3-10d0-8d51-62d7c5f9aeda@canonical.com>
+Date:   Tue, 28 May 2019 12:05:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190528165758.zxfrv6fum4vwcv4e@MacBook-Pro-91.local>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-HM-Spam-Status: e1kIGBQJHllBWUtVQ01OQkJCQ0xMT05JQ05ZV1koWUFJQjdXWS1ZQUlXWQ
-        kOFx4IWUFZNTQpNjo3JCkuNz5ZBg++
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NAw6Hzo4Ezg3USJLOikVPU09
-        OggaCRlVSlVKTk5CSklJSUNPQ05IVTMWGhIXVQIUDw8aVRcSDjsOGBcUDh9VGBVFWVdZEgtZQVlK
-        SUtVSkhJVUpVSU9IWVdZCAFZQU5OSU43Bg++
-X-HM-Tid: 0a6b02ee10a32085kuqya1bd9c1a9b
+In-Reply-To: <20190528153226.248785-1-jannh@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 12:57:59PM -0400, Josef Bacik wrote:
-> On Tue, May 28, 2019 at 02:07:43AM +0800, Yao Liu wrote:
-> > On Fri, May 24, 2019 at 09:07:42AM -0400, Josef Bacik wrote:
-> > > On Fri, May 24, 2019 at 05:43:54PM +0800, Yao Liu wrote:
-> > > > Some I/O requests that have been sent succussfully but have not yet been
-> > > > replied won't be resubmitted after reconnecting because of server restart,
-> > > > so we add a list to track them.
-> > > > 
-> > > > Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
-> > > 
-> > > Nack, this is what the timeout stuff is supposed to handle.  The commands will
-> > > timeout and we'll resubmit them if we have alive sockets.  Thanks,
-> > > 
-> > > Josef
-> > > 
-> > 
-> > On the one hand, if num_connections == 1 and the only sock has dead,
-> > then we do nbd_genl_reconfigure to reconnect within dead_conn_timeout,
-> > nbd_xmit_timeout will not resubmit commands that have been sent
-> > succussfully but have not yet been replied. The log is as follows:
-> >  
-> > [270551.108746] block nbd0: Receive control failed (result -104)
-> > [270551.108747] block nbd0: Send control failed (result -32)
-> > [270551.108750] block nbd0: Request send failed, requeueing
-> > [270551.116207] block nbd0: Attempted send on invalid socket
-> > [270556.119584] block nbd0: reconnected socket
-> > [270581.161751] block nbd0: Connection timed out
-> > [270581.165038] block nbd0: shutting down sockets
-> > [270581.165041] print_req_error: I/O error, dev nbd0, sector 5123224 flags 8801
-> > [270581.165149] print_req_error: I/O error, dev nbd0, sector 5123232 flags 8801
-> > [270581.165580] block nbd0: Connection timed out
-> > [270581.165587] print_req_error: I/O error, dev nbd0, sector 844680 flags 8801
-> > [270581.166184] print_req_error: I/O error, dev nbd0, sector 5123240 flags 8801
-> > [270581.166554] block nbd0: Connection timed out
-> > [270581.166576] print_req_error: I/O error, dev nbd0, sector 844688 flags 8801
-> > [270581.167124] print_req_error: I/O error, dev nbd0, sector 5123248 flags 8801
-> > [270581.167590] block nbd0: Connection timed out
-> > [270581.167597] print_req_error: I/O error, dev nbd0, sector 844696 flags 8801
-> > [270581.168021] print_req_error: I/O error, dev nbd0, sector 5123256 flags 8801
-> > [270581.168487] block nbd0: Connection timed out
-> > [270581.168493] print_req_error: I/O error, dev nbd0, sector 844704 flags 8801
-> > [270581.170183] print_req_error: I/O error, dev nbd0, sector 5123264 flags 8801
-> > [270581.170540] block nbd0: Connection timed out
-> > [270581.173333] block nbd0: Connection timed out
-> > [270581.173728] block nbd0: Connection timed out
-> > [270581.174135] block nbd0: Connection timed out
-> >  
-> > On the other hand, if we wait nbd_xmit_timeout to handle resubmission,
-> > the I/O requests will have a big delay. For example, if timeout time is 30s,
-> > and from sock dead to nbd_genl_reconfigure returned OK we only spend
-> > 2s, the I/O requests will still be handled by nbd_xmit_timeout after 30s.
+On 5/28/19 8:32 AM, Jann Horn wrote:
+> A packed AppArmor policy contains null-terminated tag strings that are read
+> by unpack_nameX(). However, unpack_nameX() uses string functions on them
+> without ensuring that they are actually null-terminated, potentially
+> leading to out-of-bounds accesses.
 > 
-> We have to wait for the full timeout anyway to know that the socket went down,
-> so it'll be re-submitted right away and then we'll wait on the new connection.
+> Make sure that the tag string is null-terminated before passing it to
+> strcmp().
 > 
-> Now we could definitely have requests that were submitted well after the first
-> thing that failed, so their timeout would be longer than simply retrying them,
-> but we have no idea of knowing which ones timed out and which ones didn't.  This
-> way lies pain, because we have to matchup tags with handles.  This is why we
-> rely on the generic timeout infrastructure, so everything is handled correctly
-> without ending up with duplicate submissions/replies.  Thanks,
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jann Horn <jannh@google.com>
+
+gah! yes!
+
+Acked-by: John Johansen <john.johansen@canonical.com>
+
+
+> ---
+> Warning: The existence of this bug has not been verified at runtime, and
+> the patch is compile-tested only. I noticed this while browsing through
+> the code, but didn't want to spend the time necessary to figure out how
+> to actually test this at runtime.
 > 
-> Josef
+> 
+>  security/apparmor/policy_unpack.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> index f6c2bcb2ab14..33041c4fb69f 100644
+> --- a/security/apparmor/policy_unpack.c
+> +++ b/security/apparmor/policy_unpack.c
+> @@ -276,7 +276,7 @@ static bool unpack_nameX(struct aa_ext *e, enum aa_code code, const char *name)
+>  		char *tag = NULL;
+>  		size_t size = unpack_u16_chunk(e, &tag);
+>  		/* if a name is specified it must match. otherwise skip tag */
+> -		if (name && (!size || strcmp(name, tag)))
+> +		if (name && (!size || tag[size-1] != '\0' || strcmp(name, tag)))
+>  			goto fail;
+>  	} else if (name) {
+>  		/* if a name is specified and there is no name tag fail */
 > 
 
-But as I mentioned before, if num_connections == 1, nbd_xmit_timeout won't re-submit
-commands and I/O error will occur. Should we change the condition
-		if (config->num_connections > 1)
-to
-		if (config->num_connections >= 1)
-?
