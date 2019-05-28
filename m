@@ -2,108 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 863C82C91D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 16:43:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6611A2C921
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 16:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfE1Oni (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 10:43:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57674 "EHLO mx1.redhat.com"
+        id S1727161AbfE1OoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 10:44:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726504AbfE1Onh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 10:43:37 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726720AbfE1OoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 10:44:02 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6432130833AF;
-        Tue, 28 May 2019 14:43:37 +0000 (UTC)
-Received: from treble (ovpn-122-72.rdu2.redhat.com [10.10.122.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 488B37C550;
-        Tue, 28 May 2019 14:43:34 +0000 (UTC)
-Date:   Tue, 28 May 2019 09:43:28 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Matt Helsley <mhelsley@vmware.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC][PATCH 00/13] Cleanup recordmcount and begin objtool
- conversion
-Message-ID: <20190528144328.6wygc2ofk5oaggaf@treble>
-References: <cover.1558569448.git.mhelsley@vmware.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E12820679;
+        Tue, 28 May 2019 14:44:01 +0000 (UTC)
+Date:   Tue, 28 May 2019 10:44:00 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tomas Bortoli <tomasbortoli@gmail.com>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] trace: Avoid memory leak in predicate_parse()
+Message-ID: <20190528104400.388e4c3f@gandalf.local.home>
+In-Reply-To: <20190528134659.4041-1-tomasbortoli@gmail.com>
+References: <20190528134659.4041-1-tomasbortoli@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1558569448.git.mhelsley@vmware.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 28 May 2019 14:43:37 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 05:03:23PM -0700, Matt Helsley wrote:
-> This series cleans up recordmcount and then makes it into
-> an objtool subcommand.
+On Tue, 28 May 2019 15:46:59 +0200
+Tomas Bortoli <tomasbortoli@gmail.com> wrote:
+
+> In case of errors, predicate_parse() goes to the out_free label
+> to free memory and to return an error code.
 > 
-> The series starts with 8 cleanup patches which make recordmcount
-> easier to review and integrate with objtool. The final 5 patches
-> show the beginning steps of converting recordmcount to use objtool's
-> ELF code rather than its own open-coded methods of accessing ELF
-> files.
-
-Hi Matt,
-
-Thanks for the patches.  This looks like a good step in the right
-direction.
-
-What's the performance difference between the old recordmcount and the
-new version which relies on elf_open()?  It would be useful to compare
-kernel build times, before and after.
-
-Would it be feasible to eventually combine subcommands so that objtool
-could do both ORC and mcount generation in a single invocation?  I
-wonder what what the interface would look like.
-
-> Matt Helsley (13):
->   recordmcount: Remove redundant strcmp
->   recordmcount: Remove uread()
->   recordmcount: Remove unused fd from uwrite() and ulseek()
->   recordmcount: Rewrite error/success handling
->   recordmcount: Kernel style function signature formatting
->   recordmcount: Kernel style formatting
->   recordmcount: Remove redundant cleanup() calls
->   recordmcount: Clarify what cleanup() does
->   objtool: Prepare to merge recordmcount
->   objtool: Make recordmcount into an objtool subcmd
->   objtool: recordmcount: Start using objtool's elf wrapper
->   objtool: recordmcount: Search for __mcount_loc before walking the
->     sections
->   objtool: recordmcount: Convert do_func() relhdrs
+> However, predicate_parse() does not free the predicates of the
+> temporary prog_stack array, thence leaking them.
 > 
->  scripts/.gitignore                         |   1 -
->  scripts/Makefile                           |   1 -
->  scripts/Makefile.build                     |  22 +-
->  tools/objtool/.gitignore                   |   1 +
->  tools/objtool/Build                        |   1 +
->  tools/objtool/Makefile                     |   7 +-
->  tools/objtool/builtin-mcount.c             |  72 +++++
->  tools/objtool/builtin-mcount.h             |  23 ++
->  tools/objtool/builtin.h                    |   6 +
->  tools/objtool/objtool.c                    |   6 +
->  {scripts => tools/objtool}/recordmcount.c  | 350 ++++++++++-----------
->  {scripts => tools/objtool}/recordmcount.h  | 197 +++++++-----
->  {scripts => tools/objtool}/recordmcount.pl |   0
->  13 files changed, 420 insertions(+), 267 deletions(-)
->  create mode 100644 tools/objtool/builtin-mcount.c
->  create mode 100644 tools/objtool/builtin-mcount.h
->  rename {scripts => tools/objtool}/recordmcount.c (78%)
->  rename {scripts => tools/objtool}/recordmcount.h (78%)
->  rename {scripts => tools/objtool}/recordmcount.pl (100%)
 > 
-> -- 
-> 2.20.1
+> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+> Reported-by: syzbot+6b8e0fb820e570c59e19@syzkaller.appspotmail.com
+> ---
+>  kernel/trace/trace_events_filter.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
+> diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+> index d3e59312ef40..98eafad750d3 100644
+> --- a/kernel/trace/trace_events_filter.c
+> +++ b/kernel/trace/trace_events_filter.c
+> @@ -433,6 +433,8 @@ predicate_parse(const char *str, int nr_parens, int nr_preds,
+>  		parse_error(pe, -ENOMEM, 0);
+>  		goto out_free;
+>  	}
+> +	memset(prog_stack, 0, nr_preds * sizeof(*prog_stack));
+> +
 
--- 
-Josh
+Can you instead just switch the allocation of prog_stack to use
+kcalloc()?
+
+Thanks,
+
+-- Steve
+
+
+>  	inverts = kmalloc_array(nr_preds, sizeof(*inverts), GFP_KERNEL);
+>  	if (!inverts) {
+>  		parse_error(pe, -ENOMEM, 0);
+> @@ -579,6 +581,8 @@ predicate_parse(const char *str, int nr_parens, int nr_preds,
+>  out_free:
+>  	kfree(op_stack);
+>  	kfree(inverts);
+> +	for (i = 0; prog_stack[i].pred; i++)
+> +		kfree(prog_stack[i].pred);
+>  	kfree(prog_stack);
+>  	return ERR_PTR(ret);
+>  }
+
