@@ -2,73 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C1902BDA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 05:23:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 015FB2BD9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 05:22:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbfE1DWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 23:22:23 -0400
-Received: from ozlabs.org ([203.11.71.1]:42241 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728012AbfE1DWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 23:22:22 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45CfKQ6Xj1z9s5c;
-        Tue, 28 May 2019 13:22:17 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christian Brauner <christian@brauner.io>, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org, fweimer@redhat.com
-Cc:     jannh@google.com, oleg@redhat.com, tglx@linutronix.de,
-        arnd@arndb.de, shuah@kernel.org, dhowells@redhat.com,
-        tkjos@android.com, ldv@altlinux.org, miklos@szeredi.hu,
-        Christian Brauner <christian@brauner.io>,
-        linux-api@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] tests: add close_range() tests
-In-Reply-To: <20190524111047.6892-4-christian@brauner.io>
-References: <20190524111047.6892-1-christian@brauner.io> <20190524111047.6892-4-christian@brauner.io>
-Date:   Tue, 28 May 2019 13:22:10 +1000
-Message-ID: <87zhn7p8kd.fsf@concordia.ellerman.id.au>
+        id S1728008AbfE1DWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 23:22:15 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46694 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727342AbfE1DWP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 23:22:15 -0400
+Received: by mail-pl1-f194.google.com with SMTP id bb3so94619plb.13
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 20:22:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=babayev.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=txkPYx4kl/dbr2peXVzI1JFIF8M0v7UB6YuZExmYRSc=;
+        b=RPgmgTE070YVO9U/nSaukvceq0z2LI7bXy7zOuS7TU8p0LInnNih5j7BECvhrURzaA
+         mxTWhkNYa0Z3IJYe8lRswb0XVbKZ1NPbn9sPGi4X3Xyox5YK5GvS7Co/yvOtqoxfx/4h
+         k+xL8PEz2ZonoAumksNuC7eI6sg2A3y13B01I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=txkPYx4kl/dbr2peXVzI1JFIF8M0v7UB6YuZExmYRSc=;
+        b=LgeguwuMRl0TnjwMIrGtK3CYJM+QrTv37a5tEyW3Z7tjOwO3n/IZZaLtki9555LlNo
+         gCepKhD4F+Q9ziw3AVHP4eiDjv7IPr8jLF2UFpL9rhXWBImcAw3rX3D34uSqKA4khQ2z
+         3hVnuEFnFvmkmaP/pSoZlG13QZZuoyoRQTtbA4jjjPc8SZBi1rgvVRsokYHrTOh8aB/W
+         oSOHm5wo+bvGNecV8upwSVBAzuERVMZaxRg5NZFFXEDgZYW2cVGZ44qyYjPtNwSjnC26
+         mEn3gyH179OYHstCcUyyhZAX3cmxYgM9L0Zfrcxauj3MT+cIpx+eZpOZkForxgnADF1s
+         jIug==
+X-Gm-Message-State: APjAAAWO8ajn8gXss4Ynk40KWQAlozweijoRZ+ThdI2eMbqh9YXGAWRO
+        8mNes3gn9BQpZEe13oJ9CBqhjA==
+X-Google-Smtp-Source: APXvYqxZ6q0wb4tst0o7iW9zQi1zpzrRqJ4aOJnY2Q1Qy1NYBL2UVXh9DmnyYdL6fagHbkPJ7Ew49w==
+X-Received: by 2002:a17:902:121:: with SMTP id 30mr2837278plb.314.1559013734376;
+        Mon, 27 May 2019 20:22:14 -0700 (PDT)
+Received: from p50.cisco.com ([128.107.241.177])
+        by smtp.gmail.com with ESMTPSA id h71sm933042pje.11.2019.05.27.20.22.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 20:22:13 -0700 (PDT)
+From:   Ruslan Babayev <ruslan@babayev.com>
+To:     mika.westerberg@linux.intel.com, wsa@the-dreams.de,
+        linux@armlinux.org.uk, andrew@lunn.ch, f.fainelli@gmail.com,
+        hkallweit1@gmail.com, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: [net-next,v3 0/2] Enable SFP on ACPI based systems
+Date:   Mon, 27 May 2019 20:22:11 -0700
+Message-Id: <20190528032213.19839-1-ruslan@babayev.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian@brauner.io> writes:
-> This adds basic tests for the new close_range() syscall.
-> - test that no invalid flags can be passed
-> - test that a range of file descriptors is correctly closed
-> - test that a range of file descriptors is correctly closed if there there
->   are already closed file descriptors in the range
-> - test that max_fd is correctly capped to the current fdtable maximum
->
-> Signed-off-by: Christian Brauner <christian@brauner.io>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Dmitry V. Levin <ldv@altlinux.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Florian Weimer <fweimer@redhat.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: linux-api@vger.kernel.org
-> Cc: linux-kselftest@vger.kernel.org
-> ---
-> v1: unchanged
-> v2:
-> - Christian Brauner <christian@brauner.io>:
->   - verify that close_range() correctly closes a single file descriptor
-> v3:
-> - Christian Brauner <christian@brauner.io>:
->   - add missing Cc for Shuah
->   - add missing Cc for linux-kselftest
+Changes:
+v2: more descriptive commit body
+v3: made 'i2c_acpi_find_adapter_by_handle' static inline
 
-Sorry I replied to v2, but I think my comments still apply:
+Ruslan Babayev (2):
+  i2c: acpi: export i2c_acpi_find_adapter_by_handle
+  net: phy: sfp: enable i2c-bus detection on ACPI based systems
 
-https://lore.kernel.org/lkml/8736kzqpdm.fsf@concordia.ellerman.id.au/
+ drivers/i2c/i2c-core-acpi.c |  3 ++-
+ drivers/net/phy/sfp.c       | 33 +++++++++++++++++++++++++--------
+ include/linux/i2c.h         |  6 ++++++
+ 3 files changed, 33 insertions(+), 9 deletions(-)
 
-cheers
+-- 
+2.19.2
+
