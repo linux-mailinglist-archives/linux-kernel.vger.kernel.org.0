@@ -2,135 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A0862C898
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 16:20:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03D322C851
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 16:09:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbfE1OT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 10:19:56 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39098 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726532AbfE1OT4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 10:19:56 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4SEIfCE098398
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 10:19:54 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ss5m2kfqq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 10:19:53 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 28 May 2019 15:09:39 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 28 May 2019 15:09:34 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4SE9XAf34406474
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 May 2019 14:09:33 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 606A0AE053;
-        Tue, 28 May 2019 14:09:33 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4FED4AE051;
-        Tue, 28 May 2019 14:09:31 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.109.224])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 28 May 2019 14:09:31 +0000 (GMT)
-Subject: Re: [PATCH v10 12/12] ima: Store the measurement again when
- appraising a modsig
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
-Date:   Tue, 28 May 2019 10:09:20 -0400
-In-Reply-To: <20190418035120.2354-13-bauerman@linux.ibm.com>
-References: <20190418035120.2354-1-bauerman@linux.ibm.com>
-         <20190418035120.2354-13-bauerman@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19052814-4275-0000-0000-0000033962A2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052814-4276-0000-0000-000038490AD0
-Message-Id: <1559052560.4090.14.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-28_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905280093
+        id S1726532AbfE1OJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 10:09:41 -0400
+Received: from foss.arm.com ([217.140.101.70]:58202 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726371AbfE1OJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 10:09:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0836D80D;
+        Tue, 28 May 2019 07:09:40 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F8363F5AF;
+        Tue, 28 May 2019 07:09:36 -0700 (PDT)
+Date:   Tue, 28 May 2019 15:09:34 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        akpm@linux-foundation.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, mgorman@techsingularity.net,
+        james.morse@arm.com, robin.murphy@arm.com, cpandya@codeaurora.org,
+        arunks@codeaurora.org, dan.j.williams@intel.com, osalvador@suse.de,
+        david@redhat.com, cai@lca.pw, logang@deltatee.com,
+        ira.weiny@intel.com
+Subject: Re: [PATCH V3 2/4] arm64/mm: Hold memory hotplug lock while walking
+ for kernel page table dump
+Message-ID: <20190528140934.GC26178@lakrids.cambridge.arm.com>
+References: <1557824407-19092-1-git-send-email-anshuman.khandual@arm.com>
+ <1557824407-19092-3-git-send-email-anshuman.khandual@arm.com>
+ <20190515165847.GH16651@dhcp22.suse.cz>
+ <20190516102354.GB40960@lakrids.cambridge.arm.com>
+ <20190516110529.GQ16651@dhcp22.suse.cz>
+ <20190522164212.GD23592@lakrids.cambridge.arm.com>
+ <20190527072001.GB1658@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190527072001.GB1658@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thiago,
+On Mon, May 27, 2019 at 09:20:01AM +0200, Michal Hocko wrote:
+> On Wed 22-05-19 17:42:13, Mark Rutland wrote:
+> > On Thu, May 16, 2019 at 01:05:29PM +0200, Michal Hocko wrote:
+> > > On Thu 16-05-19 11:23:54, Mark Rutland wrote:
+> > > > On Wed, May 15, 2019 at 06:58:47PM +0200, Michal Hocko wrote:
+> > > > > On Tue 14-05-19 14:30:05, Anshuman Khandual wrote:
 
-On Thu, 2019-04-18 at 00:51 -0300, Thiago Jung Bauermann wrote:
-> If the IMA template contains the "modsig" or "d-modsig" field, then the
-> modsig should be added to the measurement list when the file is appraised.
+> > I don't think that it's reasonable for this code to bring down the
+> > kernel unless the kernel page tables are already corrupt. I agree we
+> > should minimize the impact on other code, and I'm happy to penalize
+> > ptdump so long as it's functional and safe.
+> > 
+> > I would like it to be possible to use the ptdump code to debug
+> > hot-remove, so I'd rather not make the two mutually exclusive. I'd also
+> > like it to be possible to use this in-the-field, and for that asking an
+> > admin to potentially crash their system isn't likely to fly.
 > 
-> And that is what normally happens, but if a measurement rule caused a file
-> containing a modsig to be measured before a different rule causes it to be
-> appraised, the resulting measurement entry will not contain the modsig
-> because it is only fetched during appraisal. When the appraisal rule
-> triggers, it won't store a new measurement containing the modsig because
-> the file was already measured.
+> OK, fair enough.
 > 
-> We need to detect that situation and store an additional measurement with
-> the modsig. This is done by adding an IMA_MEASURE action flag if we read a
-> modsig and the IMA template contains a modsig field.
-
-With the new per policy rule "template" support being added, this
-patch needs to be modified so that the per policy "template" format is
-checked.  ima_template_has_modsig() should be called with the
-template_desc being used.
-
-thanks,
-
-Mimi
-
-
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 8e6475854351..f91ed4189f98 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -282,9 +282,17 @@ static int process_measurement(struct file *file, const struct cred *cred,
->  		/* read 'security.ima' */
->  		xattr_len = ima_read_xattr(file_dentry(file), &xattr_value);
->  
-> -		/* Read the appended modsig if allowed by the policy. */
-> -		if (iint->flags & IMA_MODSIG_ALLOWED)
-> -			ima_read_modsig(func, buf, size, &modsig);
-> +		/*
-> +		 * Read the appended modsig, if allowed by the policy, and allow
-> +		 * an additional measurement list entry, if needed, based on the
-> +		 * template format.
-> +		 */
-> +		if (iint->flags & IMA_MODSIG_ALLOWED) {
-> +			rc = ima_read_modsig(func, buf, size, &modsig);
-> +
-> +			if (!rc && ima_template_has_modsig())
-> +				action |= IMA_MEASURE;
-> +		}
+> > > > > I am asking because I would really love to make mem hotplug locking less
+> > > > > scattered outside of the core MM than more. Most users simply shouldn't
+> > > > > care. Pfn walkers should rely on pfn_to_online_page.
+> > 
+> > Jut to check, is your plan to limit access to the hotplug lock, or to
+> > redesign the locking scheme?
 > 
+> To change the locking to lock hotpluged ranges rather than having a
+> global lock as the operation is inherently pfn range scoped.
 
+Ok. That sounds like something we could adapt the ptdump code to handle
+without too much pain (modulo how much of that you want to expose
+outside of the core mm code).
+
+> > > > I'm not sure if that would help us here; IIUC pfn_to_online_page() alone
+> > > > doesn't ensure that the page remains online. Is there a way to achieve
+> > > > that other than get_online_mems()?
+> > > 
+> > > You have to pin the page to make sure the hotplug is not going to
+> > > offline it.
+> > 
+> > I'm not exactly sure how pinning works -- is there a particular set of
+> > functions I should look at for that?
+> 
+> Pinning (get_page) on any page of the range will deffer the hotremove
+> operation and therefore the page tables cannot go away as well.
+> 
+> That being said, I thought the API is mostly for debugging and "you
+> should better know what you are doing" kinda thing (based on debugfs
+> being used here). If this is really useful in its current form and
+> should be used also while the hotremove is in progress then ok.
+> Once we actually get to rework the locking then we will have another
+> spot to handle but that's the life.
+
+Great.
+
+FWIW, I'm happy to rework the ptdump code to help with that.
+
+Thanks,
+Mark.
