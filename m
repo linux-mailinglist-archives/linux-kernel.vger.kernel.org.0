@@ -2,147 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FAD42CB3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 18:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4F5E2CB3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 18:11:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbfE1QLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 12:11:06 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36495 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbfE1QLF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 12:11:05 -0400
-Received: by mail-ed1-f67.google.com with SMTP id a8so32578141edx.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 09:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:date:message-id:in-reply-to:references:user-agent
-         :subject:mime-version:content-transfer-encoding;
-        bh=5NKCxpzbXsbsdqOSjRjf5/FGHtpKxTTM//85T6IDabE=;
-        b=cLpFVXoOfaeKqTCGXaNtMKnxeMWVwEjeFGu03K3vyZC6eBv0PiWQv6yuwybs3T2QSE
-         Abu1D0JQfhjjZTh1U/U+E+6dBESTJ+sDP24AwcxnZnZW6Wdhzzspgr7zVgt+ePfOJRYf
-         kVHnHSVp6kD9vLVC2eOZMhKim+NPnN2ssaoZk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:date:message-id:in-reply-to
-         :references:user-agent:subject:mime-version
-         :content-transfer-encoding;
-        bh=5NKCxpzbXsbsdqOSjRjf5/FGHtpKxTTM//85T6IDabE=;
-        b=n/ASGrHc5PgIC1+yfBGv2aBk6t9HHuxJQJ0GBYHfhTAWzDoQKfoc4z/RcVsKTuvpBj
-         j04Jqb8pzs61lVSGAJdlLnBclF2S27SohYnVOEYn9jW2Zmf3nTVCp9YkovXo0r1k7DhN
-         yF3oCMLZih2EUU1hfBJ77wDuwx3EEXAAGORUi6JiHdSL0/fkN4LmJ856XVJIQc9+VotX
-         AEgPNcQciS6FPj67cZfnYJAYjsFsvLm2vhtnHDPaDvgqweEFKPbhiysx3IaxdE4SWMdg
-         Fxs2ffR9/s3e5pzB9W5ZBz6ODntoz7UtlvtAIb69vTzaXnPUFZ5N1XqGtK5PolIodYkz
-         zCVg==
-X-Gm-Message-State: APjAAAX1aFVjkSmpiaSo6E04bSp9SduBuUiAkgNSJr68DJ6bFTwoGQmi
-        G2WgQJ9Wbwnu5gyJrImX8vFcPg==
-X-Google-Smtp-Source: APXvYqzO78eTgJM+fsJJF5GBrbnmxF7cyzHQDEkxqk1bfWfaLwgdTR6aYkCkV+M7paGXI74GmgyYWA==
-X-Received: by 2002:a17:906:ccd8:: with SMTP id ot24mr38325047ejb.263.1559059863761;
-        Tue, 28 May 2019 09:11:03 -0700 (PDT)
-Received: from [192.168.178.17] (f140230.upc-f.chello.nl. [80.56.140.230])
-        by smtp.gmail.com with ESMTPSA id m16sm2268549ejj.57.2019.05.28.09.11.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 28 May 2019 09:11:03 -0700 (PDT)
-From:   Arend Van Spriel <arend.vanspriel@broadcom.com>
-To:     Doug Anderson <dianders@chromium.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-CC:     Madhan Mohan R <MadhanMohan.R@cypress.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        "Chi-Hsien Lin" <chi-hsien.lin@cypress.com>,
-        Brian Norris <briannorris@chromium.org>,
-        "linux-wireless" <linux-wireless@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        <brcm80211-dev-list.pdl@broadcom.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Naveen Gupta <naveen.gupta@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        <brcm80211-dev-list@cypress.com>,
-        Double Lo <double.lo@cypress.com>,
-        Franky Lin <franky.lin@broadcom.com>
-Date:   Tue, 28 May 2019 18:11:00 +0200
-Message-ID: <16aff358a20.2764.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-In-Reply-To: <16aff33f3e0.2764.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-References: <20190517225420.176893-2-dianders@chromium.org>
- <20190528121833.7D3A460A00@smtp.codeaurora.org>
- <CAD=FV=VtxdEeFQsdF=U7-_7R+TXfVmA2_JMB_-WYidGHTLDgLw@mail.gmail.com>
- <16aff33f3e0.2764.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
-User-Agent: AquaMail/1.20.0-1451 (build: 102000001)
-Subject: Re: [PATCH 1/3] brcmfmac: re-enable command decode in sdio_aos for BRCM 4354
-MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+        id S1727279AbfE1QLR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 12:11:17 -0400
+Received: from node.akkea.ca ([192.155.83.177]:49692 "EHLO node.akkea.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726604AbfE1QLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 12:11:15 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id CF3004E204E;
+        Tue, 28 May 2019 16:11:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1559059874; bh=OT6Dn+VZn9tZ3DTf3tjazgTtPicDCyht9awlqDytBXs=;
+        h=From:To:Cc:Subject:Date;
+        b=KX06IYOzL6lGh15W/wG/F0dmzpZQMPv/jl7zW19y7lMeRctceEgRuEEVQf7CpBmYQ
+         hnWdoZp56UJ5vSmpdvK89wbE061fgJ5KBZwHnzn9XWkcaTDEv6hkoIt+0tvChfYE/5
+         frTNKqQl/5sIWCSc2NiYOGDNGkiFfLTI09WOQ8Cc=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id BZwGAX36mlMG; Tue, 28 May 2019 16:11:14 +0000 (UTC)
+Received: from midas.localdomain (S0106788a2041785e.gv.shawcable.net [70.66.86.75])
+        by node.akkea.ca (Postfix) with ESMTPSA id C9D244E204B;
+        Tue, 28 May 2019 16:11:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1559059874; bh=OT6Dn+VZn9tZ3DTf3tjazgTtPicDCyht9awlqDytBXs=;
+        h=From:To:Cc:Subject:Date;
+        b=KX06IYOzL6lGh15W/wG/F0dmzpZQMPv/jl7zW19y7lMeRctceEgRuEEVQf7CpBmYQ
+         hnWdoZp56UJ5vSmpdvK89wbE061fgJ5KBZwHnzn9XWkcaTDEv6hkoIt+0tvChfYE/5
+         frTNKqQl/5sIWCSc2NiYOGDNGkiFfLTI09WOQ8Cc=
+From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
+To:     angus.ainslie@puri.sm
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Carlo Caione <ccaione@baylibre.com>,
+        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] arm64: dts: fsl: imx8mq: add the snvs power key node
+Date:   Tue, 28 May 2019 09:11:01 -0700
+Message-Id: <20190528161101.28919-1-angus@akkea.ca>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On May 28, 2019 6:09:21 PM Arend Van Spriel <arend.vanspriel@broadcom.com> 
-wrote:
+Add a node for the snvs power key, "disabled" by default.
 
-> On May 28, 2019 5:52:10 PM Doug Anderson <dianders@chromium.org> wrote:
->
->> Hi,
->>
->> On Tue, May 28, 2019 at 5:18 AM Kalle Valo <kvalo@codeaurora.org> wrote:
->>>
->>> Douglas Anderson <dianders@chromium.org> wrote:
->>>
->>> > In commit 29f6589140a1 ("brcmfmac: disable command decode in
->>> > sdio_aos") we disabled something called "command decode in sdio_aos"
->>> > for a whole bunch of Broadcom SDIO WiFi parts.
->>> >
->>> > After that patch landed I find that my kernel log on
->>> > rk3288-veyron-minnie and rk3288-veyron-speedy is filled with:
->>> >   brcmfmac: brcmf_sdio_bus_sleep: error while changing bus sleep state -110
->>> >
->>> > This seems to happen every time the Broadcom WiFi transitions out of
->>> > sleep mode.  Reverting the part of the commit that affects the WiFi on
->>> > my boards fixes the problem for me, so that's what this patch does.
->>> >
->>> > Note that, in general, the justification in the original commit seemed
->>> > a little weak.  It looked like someone was testing on a SD card
->>> > controller that would sometimes die if there were CRC errors on the
->>> > bus.  This used to happen back in early days of dw_mmc (the controller
->>> > on my boards), but we fixed it.  Disabling a feature on all boards
->>> > just because one SD card controller is broken seems bad.  ...so
->>> > instead of just this patch possibly the right thing to do is to fully
->>> > revert the original commit.
->>> >
->>> > Fixes: 29f6589140a1 ("brcmfmac: disable command decode in sdio_aos")
->>> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
->>>
->>> I don't see patch 2 in patchwork and I assume discussion continues.
->>
->> Apologies.  I made sure to CC you individually on all the patches but
->> didn't think about the fact that you use patchwork to manage and so
->> didn't ensure all patches made it to all lists (by default each patch
->> gets recipients individually from get_maintainer).  I'll make sure to
->> fix for patch set #2.  If you want to see all the patches, you can at
->> least find them on lore.kernel.org linked from the cover:
->>
->> https://lore.kernel.org/patchwork/cover/1075373/
->>
->>
->>> Please resend if/when I need to apply something.
->>>
->>> 2 patches set to Changes Requested.
->>>
->>> 10948785 [1/3] brcmfmac: re-enable command decode in sdio_aos for BRCM 4354
->>
->> As per Arend I'll change patch #1 to a full revert instead of a
->> partial revert.  Arend: please yell if you want otherwise.
->
-> No yelling here. If any it is expected from Cypress. Maybe good to add them
-> specifically in Cc:
+Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+---
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Of the revert patch that is.
-
-Gr. AvS
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+index 45d10d8efd14..85008dc6e663 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -8,6 +8,7 @@
+ #include <dt-bindings/power/imx8mq-power.h>
+ #include <dt-bindings/reset/imx8mq-reset.h>
+ #include <dt-bindings/gpio/gpio.h>
++#include "dt-bindings/input/input.h"
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/thermal/thermal.h>
+ #include "imx8mq-pinfunc.h"
+@@ -463,6 +464,15 @@
+ 					interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+ 						<GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
+ 				};
++
++				snvs_pwrkey: snvs-powerkey {
++					compatible = "fsl,sec-v4.0-pwrkey";
++					regmap = <&snvs>;
++					interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++					linux,keycode = <KEY_POWER>;
++					wakeup-source;
++					status = "disabled";
++				};
+ 			};
+ 
+ 			clk: clock-controller@30380000 {
+-- 
+2.17.1
 
