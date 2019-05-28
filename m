@@ -2,95 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB61D2BEA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 07:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 498AE2BEA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 07:36:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727356AbfE1Ff0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 01:35:26 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48830 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726269AbfE1Ff0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 01:35:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB1C8A78;
-        Mon, 27 May 2019 22:35:25 -0700 (PDT)
-Received: from [10.162.40.141] (p8cg001049571a15.blr.arm.com [10.162.40.141])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 004CB3F690;
-        Mon, 27 May 2019 22:35:21 -0700 (PDT)
-Subject: Re: [PATCH 1/4] arm64: module: create module allocations without exec
- permissions
-To:     Ard Biesheuvel <ard.biesheuvel@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     mark.rutland@arm.com, marc.zyngier@arm.com,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <namit@vmware.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-References: <20190523102256.29168-1-ard.biesheuvel@arm.com>
- <20190523102256.29168-2-ard.biesheuvel@arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <d82eb4fe-8113-3f8e-f465-26679ebae2df@arm.com>
-Date:   Tue, 28 May 2019 11:05:33 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727452AbfE1FgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 01:36:12 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:2077 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726269AbfE1FgM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 01:36:12 -0400
+X-UUID: 431b29fe870c431c9b09dc0979a77c29-20190528
+X-UUID: 431b29fe870c431c9b09dc0979a77c29-20190528
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1074673266; Tue, 28 May 2019 13:36:00 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 28 May 2019 13:35:59 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 28 May 2019 13:35:59 +0800
+Message-ID: <1559021759.15879.2.camel@mtksdaap41>
+Subject: Re: [PATCH v2 24/25] drm/mediatek: respect page offset for PRIME
+ mmap calls
+From:   CK Hu <ck.hu@mediatek.com>
+To:     <yongqiang.niu@mediatek.com>
+CC:     <p.zabel@pengutronix.de>, <robh+dt@kernel.org>,
+        <matthias.bgg@gmail.com>, <airlied@linux.ie>,
+        <mark.rutland@arm.com>, <dri-devel@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <Bibby.Hsieh@mediatek.com>,
+        <yt.shen@mediatek.com>
+Date:   Tue, 28 May 2019 13:35:59 +0800
+In-Reply-To: <1555403634.11519.11.camel@mtksdaap41>
+References: <1553667561-25447-1-git-send-email-yongqiang.niu@mediatek.com>
+         <1553667561-25447-25-git-send-email-yongqiang.niu@mediatek.com>
+         <1555403634.11519.11.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20190523102256.29168-2-ard.biesheuvel@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Yongqiang:
+
+On Tue, 2019-04-16 at 16:33 +0800, CK Hu wrote:
+> Hi, Yongqiang:
+> 
+> On Wed, 2019-03-27 at 14:19 +0800, yongqiang.niu@mediatek.com wrote:
+> > From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> > 
+> > Respect page offset for PRIME mmap calls
+> 
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
 
 
-On 05/23/2019 03:52 PM, Ard Biesheuvel wrote:
-> Now that the core code manages the executable permissions of code
-> regions of modules explicitly, it is no longer necessary to create
+This patch looks independent, so I've applied it to
+mediatek-drm-fixes-5.2 [1], thanks.
 
-I guess the permission transition for various module sections happen
-through module_enable_[ro|nx]() after allocating via module_alloc().
+[1]
+https://github.com/ckhu-mediatek/linux.git-tags/commits/mediatek-drm-fixes-5.2
 
-> the module vmalloc regions with RWX permissions, and we can create
-> them with RW- permissions instead, which is preferred from a
-> security perspective.
-
-Makes sense. Will this be followed in all architectures now ?
+Regards,
+CK
 
 > 
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@arm.com>
-> ---
->  arch/arm64/kernel/module.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
-> index 2e4e3915b4d0..88f0ed31d9aa 100644
-> --- a/arch/arm64/kernel/module.c
-> +++ b/arch/arm64/kernel/module.c
-> @@ -41,7 +41,7 @@ void *module_alloc(unsigned long size)
->  
->  	p = __vmalloc_node_range(size, MODULE_ALIGN, module_alloc_base,
->  				module_alloc_base + MODULES_VSIZE,
-> -				gfp_mask, PAGE_KERNEL_EXEC, 0,
-> +				gfp_mask, PAGE_KERNEL, 0,
->  				NUMA_NO_NODE, __builtin_return_address(0));
->  
->  	if (!p && IS_ENABLED(CONFIG_ARM64_MODULE_PLTS) &&
-> @@ -57,7 +57,7 @@ void *module_alloc(unsigned long size)
->  		 */
->  		p = __vmalloc_node_range(size, MODULE_ALIGN, module_alloc_base,
->  				module_alloc_base + SZ_4G, GFP_KERNEL,
-> -				PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
-> +				PAGE_KERNEL, 0, NUMA_NO_NODE,
->  				__builtin_return_address(0));
->  
->  	if (p && (kasan_module_alloc(p, size) < 0)) {
+> > 
+> > Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_drm_gem.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_gem.c b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
+> > index c230237..524e494 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_gem.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_gem.c
+> > @@ -144,7 +144,6 @@ static int mtk_drm_gem_object_mmap(struct drm_gem_object *obj,
+> >  	 * VM_PFNMAP flag that was set by drm_gem_mmap_obj()/drm_gem_mmap().
+> >  	 */
+> >  	vma->vm_flags &= ~VM_PFNMAP;
+> > -	vma->vm_pgoff = 0;
+> >  
+> >  	ret = dma_mmap_attrs(priv->dma_dev, vma, mtk_gem->cookie,
+> >  			     mtk_gem->dma_addr, obj->size, mtk_gem->dma_attrs);
+> > @@ -183,6 +182,12 @@ int mtk_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+> >  
+> >  	obj = vma->vm_private_data;
+> >  
+> > +	/*
+> > +	 * Set vm_pgoff (used as a fake buffer offset by DRM) to 0 and map the
+> > +	 * whole buffer from the start.
+> > +	 */
+> > +	vma->vm_pgoff = 0;
+> > +
+> >  	return mtk_drm_gem_object_mmap(obj, vma);
+> >  }
+> >  
 > 
 
-Which just makes sure that PTE_PXN never gets dropped while creating
-these mappings.
+
