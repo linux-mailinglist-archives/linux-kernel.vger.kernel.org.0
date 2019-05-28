@@ -2,60 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 203552C31E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1C92C3BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:58:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfE1J0m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:26:42 -0400
-Received: from www62.your-server.de ([213.133.104.62]:38192 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbfE1J0l (ORCPT
+        id S1726706AbfE1J65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:58:57 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:49982 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726334AbfE1J64 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:26:41 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hVYNO-0007wR-MJ; Tue, 28 May 2019 11:26:34 +0200
-Received: from [178.197.249.12] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1hVYNO-000NMe-EI; Tue, 28 May 2019 11:26:34 +0200
-Subject: Re: [PATCH] libbpf: fix warning PTR_ERR_OR_ZERO can be used
-To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xdp-newbies@vger.kernel.org
-References: <20190525090257.GA12104@hari-Inspiron-1545>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <a5b68a2e-b9a6-7ad4-62a0-007f815be780@iogearbox.net>
-Date:   Tue, 28 May 2019 11:26:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 28 May 2019 05:58:56 -0400
+X-Greylist: delayed 1899 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 May 2019 05:58:55 EDT
+Received: from ATCSQR.andestech.com (localhost [127.0.0.2] (may be forged))
+        by ATCSQR.andestech.com with ESMTP id x4S9LnXV081387
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 17:21:49 +0800 (GMT-8)
+        (envelope-from nickhu@andestech.com)
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id x4S9LYv8081364;
+        Tue, 28 May 2019 17:21:34 +0800 (GMT-8)
+        (envelope-from nickhu@andestech.com)
+Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Tue, 28 May 2019
+ 17:27:00 +0800
+From:   Nick Hu <nickhu@andestech.com>
+To:     <greentime@andestech.com>, <palmer@sifive.com>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC:     Nick Hu <nickhu@andestech.com>, <green.hu@gmail.com>
+Subject: [PATCH] riscv: Fix udelay in RV32.
+Date:   Tue, 28 May 2019 17:26:49 +0800
+Message-ID: <381ee6950c84b868ca6a3c676eb981a1980889a3.1559035050.git.nickhu@andestech.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190525090257.GA12104@hari-Inspiron-1545>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.3/25463/Tue May 28 09:57:22 2019)
+Content-Type: text/plain
+X-Originating-IP: [10.0.15.65]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com x4S9LYv8081364
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/25/2019 11:02 AM, Hariprasad Kelam wrote:
-> fix below warning reported by coccicheck
-> 
-> /tools/lib/bpf/libbpf.c:3461:1-3: WARNING: PTR_ERR_OR_ZERO can be used
-> 
-> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+In RV32, udelay would delay the wrong cycle.
+When it shifts right "UDELAY_SHITFT" bits, it
+either delays 0 cycle or 1 cycle. It only works
+correctly in RV64. Because the 'ucycles' always
+needs to be 64 bits variable.
 
-Applied, thanks!
+Signed-off-by: Nick Hu <nickhu@andestech.com>
+---
+ arch/riscv/lib/delay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/riscv/lib/delay.c b/arch/riscv/lib/delay.c
+index dce8ae24c6d3..da847f49fb74 100644
+--- a/arch/riscv/lib/delay.c
++++ b/arch/riscv/lib/delay.c
+@@ -88,7 +88,7 @@ EXPORT_SYMBOL(__delay);
+ 
+ void udelay(unsigned long usecs)
+ {
+-	unsigned long ucycles = usecs * lpj_fine * UDELAY_MULT;
++	unsigned long long ucycles = (unsigned long long)usecs * lpj_fine * UDELAY_MULT;
+ 
+ 	if (unlikely(usecs > MAX_UDELAY_US)) {
+ 		__delay((u64)usecs * riscv_timebase / 1000000ULL);
+-- 
+2.17.0
+
