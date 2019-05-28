@@ -2,75 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 505922C286
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:05:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 227F82C240
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:04:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbfE1JFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:05:44 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17610 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726574AbfE1JEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:04:38 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 553566C73F7D2B25D6E7;
-        Tue, 28 May 2019 17:04:36 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 28 May 2019 17:04:28 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>
-Subject: [PATCH net-next 12/12] net: hns3: fix a memory leak issue for hclge_map_unmap_ring_to_vf_vector
-Date:   Tue, 28 May 2019 17:03:02 +0800
-Message-ID: <1559034182-24737-13-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559034182-24737-1-git-send-email-tanhuazhong@huawei.com>
-References: <1559034182-24737-1-git-send-email-tanhuazhong@huawei.com>
+        id S1727360AbfE1JEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:04:09 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36052 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727296AbfE1JD5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:03:57 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a8so30641126edx.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=KOGyYDuulYoZlGMMrGlYnho9Xow/hNHN2r6g5KqqxbA=;
+        b=LmD9YyG7s+OqvV8GaC+iTvVDRdtjPeq/zghiL4J+/ZI7u5Eg21vxnuzwTFovpBti8O
+         3LjHgkfSbO5QNC3qJK3ek9epxYfj2V3oUkdq1yYwA2dDDqa0UrVbBDP43PYt6yNfhlLc
+         AWLn+vFL5yhJ8lJhJdU43jJDDzQDEKyiJifa4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KOGyYDuulYoZlGMMrGlYnho9Xow/hNHN2r6g5KqqxbA=;
+        b=NiNbkrbQ28lP+njWdmc23AOOzDj7cLEGYsZPwEjZAx5zO87rvixxhs5I9CO9UXBZ1l
+         im61ciwBghAoynJh7qVE2YQIuMzfw+1ScRzy13DX1/0tLreZ0glR5pj80ost1nIvA0S3
+         KdfidlVTCY40z+o/qRNtA5JgtqVME4BCEkFREadAr2uI8WnI4pmwEiYrN3sOYguOZzhS
+         fJtzLwXvhwF6/HG6F9BGjykDMAB25xn0A5vHLpYQgyjfZYViSdE2AvpJMNUw53qwMC3N
+         g4tTy4EfGdrbDZdf7SfOiA3BXh7ojUEgpVELvfeQJDB9nmc86c06MVhkH/Lo4RTcVycI
+         W8NA==
+X-Gm-Message-State: APjAAAWwFzsjj4BuZNxi4Wgjtp5vJZ+0HHtAVrNsiYEO/I+Midmj1XC2
+        pamA2EQtEaJv7o4Xek9xNhUupz6b+N8=
+X-Google-Smtp-Source: APXvYqyUrqB+xoH0ka3duTbZa5FPC3QZa0uDwLH0U5RXdNxaQd1JKD8pOMMaPMJ2kKeKORQcacvUQg==
+X-Received: by 2002:a50:e048:: with SMTP id g8mr128055262edl.26.1559034236177;
+        Tue, 28 May 2019 02:03:56 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 02:03:55 -0700 (PDT)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        linux-fbdev@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Yisheng Xie <ysxie@foxmail.com>
+Subject: [PATCH 31/33] fbcon: Document what I learned about fbcon locking
+Date:   Tue, 28 May 2019 11:03:02 +0200
+Message-Id: <20190528090304.9388-32-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
+References: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When hclge_bind_ring_with_vector() fails,
-hclge_map_unmap_ring_to_vf_vector() returns the error
-directly, so nobody will free the memory allocated by
-hclge_get_ring_chain_from_mbx().
+It's not pretty.
 
-So hclge_free_vector_ring_chain() should be called no matter
-hclge_bind_ring_with_vector() fails or not.
-
-Fixes: 84e095d64ed9 ("net: hns3: Change PF to add ring-vect binding & resetQ to mailbox")
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Yisheng Xie <ysxie@foxmail.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/video/fbdev/core/fbcon.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-index 0e04e63..d20f017 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
-@@ -192,12 +192,10 @@ static int hclge_map_unmap_ring_to_vf_vector(struct hclge_vport *vport, bool en,
- 		return ret;
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index fbd28aeff307..d6ba3610ee83 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -88,6 +88,25 @@
+ #  define DPRINTK(fmt, args...)
+ #endif
  
- 	ret = hclge_bind_ring_with_vector(vport, vector_id, en, &ring_chain);
--	if (ret)
--		return ret;
- 
- 	hclge_free_vector_ring_chain(&ring_chain);
- 
--	return 0;
-+	return ret;
- }
- 
- static int hclge_set_vf_promisc_mode(struct hclge_vport *vport,
++/*
++ * FIXME: Locking
++ *
++ * - fbcon state itself is protected by the console_lock, and the code does a
++ *   pretty good job at making sure that lock is held everywhere it's needed.
++ *
++ * - access to the registered_fb array is entirely unprotected. This should use
++ *   proper object lifetime handling, i.e. get/put_fb_info. This also means
++ *   switching from indices to proper pointers for fb_info everywhere.
++ *
++ * - fbcon doesn't bother with fb_lock/unlock at all. This is buggy, since it
++ *   means concurrent access to the same fbdev from both fbcon and userspace
++ *   will blow up. To fix this all fbcon calls from fbmem.c need to be moved out
++ *   of fb_lock/unlock protected sections, since otherwise we'll recurse and
++ *   deadlock eventually. Aside: Due to these deadlock issues the fbdev code in
++ *   fbmem.c cannot use locking asserts, and there's lots of callers which get
++ *   the rules wrong, e.g. fbsysfs.c entirely missed fb_lock/unlock calls too.
++ */
++
+ enum {
+ 	FBCON_LOGO_CANSHOW	= -1,	/* the logo can be shown */
+ 	FBCON_LOGO_DRAW		= -2,	/* draw the logo to a console */
 -- 
-2.7.4
+2.20.1
 
