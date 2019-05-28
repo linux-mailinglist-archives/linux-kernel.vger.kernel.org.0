@@ -2,101 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B23D2C751
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D525C2C759
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:07:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbfE1NGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 09:06:08 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:39098 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726897AbfE1NGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 09:06:08 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9196F290A5DB12249000;
-        Tue, 28 May 2019 21:06:03 +0800 (CST)
-Received: from [127.0.0.1] (10.177.23.164) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Tue, 28 May 2019
- 21:05:52 +0800
-Subject: Re: [PATCH v7 1/1] iommu: enhance IOMMU dma mode build options
-To:     Joerg Roedel <joro@8bytes.org>
-References: <20190520135947.14960-1-thunder.leizhen@huawei.com>
- <20190520135947.14960-2-thunder.leizhen@huawei.com>
- <20190527142140.GH8420@8bytes.org>
-CC:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        John Garry <john.garry@huawei.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        "Gerald Schaefer" <gerald.schaefer@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        x86 <x86@kernel.org>, linux-ia64 <linux-ia64@vger.kernel.org>,
-        Hanjun Guo <guohanjun@huawei.com>
-From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <5CED322E.20102@huawei.com>
-Date:   Tue, 28 May 2019 21:05:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1727413AbfE1NHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 09:07:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38452 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726897AbfE1NHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 09:07:15 -0400
+Received: from localhost (unknown [8.46.75.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45A8B20B7C;
+        Tue, 28 May 2019 13:07:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559048834;
+        bh=VzsVEvAq8tygdfW60cYWIE/ki7uCW1+/apdqUOSuWQU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wpfMQIYFGZrdyT3fQtUyVjvw6NFoIuXtKC17QpRelWavVqviih0DqBkDVq4fXJeyd
+         19DVu/6It2VvRlpGjP9F+e3M8cOq2bkUIa/6necEESWkNG5NJGtp1ZuSOP7NdV4fPN
+         b5hB30Bt4cPtV+avmZkyQA7UincopzDe7XQGH83U=
+Date:   Tue, 28 May 2019 15:07:03 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel@vger.kernel.org,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        kernel@collabora.com, Dan Carpenter <dan.carpenter@oracle.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        linux-pm@vger.kernel.org
+Subject: Re: [RESEND PATCH] PM / devfreq: Fix static checker warning in
+ try_then_request_governor
+Message-ID: <20190528130703.GD6104@kroah.com>
+References: <CGME20190313122310epcas4p4152c2c30d7a2971e44ddc7c5b64b7744@epcas4p4.samsung.com>
+ <20190313122253.24355-1-enric.balletbo@collabora.com>
+ <4535a997-e583-da83-0cdd-0433dd798f50@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20190527142140.GH8420@8bytes.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4535a997-e583-da83-0cdd-0433dd798f50@samsung.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 28, 2019 at 10:15:59AM +0900, Chanwoo Choi wrote:
+> Cc: stable@vger.kernel.org
+> 
+> Dear all,
+> 
+> It missed to send this patch to 'stable@vger.kernel.org'.
+> So, I add it to mailing list.
 
+<formletter>
 
-On 2019/5/27 22:21, Joerg Roedel wrote:
-> Hi Zhen Lei,
-> 
-> On Mon, May 20, 2019 at 09:59:47PM +0800, Zhen Lei wrote:
->>  arch/ia64/kernel/pci-dma.c                |  2 +-
->>  arch/powerpc/platforms/powernv/pci-ioda.c |  3 ++-
->>  arch/s390/pci/pci_dma.c                   |  2 +-
->>  arch/x86/kernel/pci-dma.c                 |  7 ++---
->>  drivers/iommu/Kconfig                     | 44 ++++++++++++++++++++++++++-----
->>  drivers/iommu/amd_iommu_init.c            |  3 ++-
->>  drivers/iommu/intel-iommu.c               |  2 +-
->>  drivers/iommu/iommu.c                     |  3 ++-
->>  8 files changed, 48 insertions(+), 18 deletions(-)
-> 
-> This needs Acks from the arch maintainers of ia64, powerpc, s390 and
-> x86, at least.
-> 
-> It is easier for them if you split it up into the Kconfig change and
-> separete patches per arch and per iommu driver. Then collect the Acks on
-> the individual patches.
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
 
-OK, thanks. I will do it tomorrow.
-
-> 
-> Thanks,
-> 
-> 	Joerg
-> 
-> .
-> 
-
--- 
-Thanks!
-BestRegards
-
+</formletter>
