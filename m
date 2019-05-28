@@ -2,84 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95BAE2C5DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 13:53:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 701F02C5E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 13:55:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbfE1Lxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 07:53:51 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50285 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbfE1Lxu (ORCPT
+        id S1726991AbfE1LzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 07:55:04 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:56691 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726580AbfE1LzE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 07:53:50 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hVafq-0003mE-N3; Tue, 28 May 2019 13:53:46 +0200
-Date:   Tue, 28 May 2019 13:53:46 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Yury Norov <ynorov@marvell.com>,
-        Andrew Morton <akpm@linux-foundation.org>, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: LZ4 decompressor broken on ARM due to missing strchrnul() string
- traverse in cpumask_parse"
-Message-ID: <20190528115346.f5a7kn3hdnuf5rts@linutronix.de>
-References: <20190528110412.gg66fl67yahtwb6i@linutronix.de>
- <ffc779fe-3735-9665-8ee2-6a3ff1a7dd83@rasmusvillemoes.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ffc779fe-3735-9665-8ee2-6a3ff1a7dd83@rasmusvillemoes.dk>
-User-Agent: NeoMutt/20180716
+        Tue, 28 May 2019 07:55:04 -0400
+X-IronPort-AV: E=Sophos;i="5.60,521,1549897200"; 
+   d="scan'208";a="16978896"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 28 May 2019 20:55:01 +0900
+Received: from renesas-VirtualBox.ree.adwin.renesas.com (unknown [10.226.37.56])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id DBC8A4007541;
+        Tue, 28 May 2019 20:54:58 +0900 (JST)
+From:   Gareth Williams <gareth.williams.jx@renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] clk: renesas: r9a06g032: Add clock domain support
+Date:   Tue, 28 May 2019 12:54:25 +0100
+Message-Id: <1559044467-2639-1-git-send-email-gareth.williams.jx@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-05-28 13:33:12 [+0200], Rasmus Villemoes wrote:
-> > How do we deal with this one?
-> 
-> Urgh. The problem is really in arch/arm/boot/compressed/decompress.c
-> which does
-> 
-> #define _LINUX_STRING_H_
-> 
-> preventing linux/string.h from providing strchrnul. It also #includes
-> asm/string.h, which for arm has a declaration of strchr(), explaining
-> why this didn't use to fail.
-> 
-> However, the solution is also in the same file, it already has a section
-> 
-> /* Not needed, but used in some headers pulled in by decompressors */
-> extern char * strstr(const char * s1, const char *s2);
-> extern size_t strlen(const char *s);
-> extern int memcmp(const void *cs, const void *ct, size_t count);
-> 
-> so just add another declaration to that list - I strongly assume we
-> won't get a link failure since I find it hard to believe the
-> decompressor would actually call cpumask_parse...
+There are several clocks on the r9a06g032 which are currently not enabled
+in their drivers that can be delegated to clock domain system for power
+management. Therefore add support for clock domain functionality to the
+r9a06g032 clock driver after updating the relevant dt-bindings file.
 
-The hunk at the bottom of this mail compiles. Care to send to formal
-patch?
+v4:
+ - Removed unneeded initialisation of "error" in 
+   create_add_module_clock.
+ - Moved declaration of "index" to the start of r9a06g032_attach_dev.
+ - Moved of_node_put(clkspec.np) call to after create_add_module_clock
+   call in r9a06g032_attach_dev.
+ - Added missing HCLK to UART0 example to show the clock added
+   to the driver.
+v3:
+ - "managed" flag integrated into existing bit field.
+ - Removed unneeded initialisation inside D_MODULE.
+ - Removed the use of unneeded r9a06g032_clk_domain variable.
+ - Removed error message prints that cannot occur.
+ - Removed __init and __initconst from attach function and
+   r9a06g032_clocks[].
+ - Reordered r9a06g032_add_clk_domain call to after 
+   devm_add_action_or_reset during probe.
+ - Added clock type check when retrieving clocks from device tree.
+ - Reordered of_node_put call to before error check in
+   create_add_module_clock.
+ - changed r9a06g032_detach_dev to a static function.
+ - Added new #power-domain-cells property to the required properties.
+ - Added "#power-domain-cells" and "power-domains" lines to examples.
+v2:
+ - Rebased onto kernel/git/geert/renesas-drivers.git
 
-> I'm wondering why this wasn't caught by 0day and/or while in -next?
+Gareth Williams (2):
+  dt-bindings: clock: renesas,r9a06g032-sysctrl: Document power Domains
+  clk: renesas: r9a06g032: Add clock domain support
 
-must be related to lz4 usage in the configs tested :) A few set
-XZ/LZO/LZMA. Majority falls back to GZIP.
+ .../bindings/clock/renesas,r9a06g032-sysctrl.txt   |   7 +-
+ drivers/clk/renesas/r9a06g032-clocks.c             | 230 ++++++++++++++-------
+ 2 files changed, 166 insertions(+), 71 deletions(-)
 
-> Rasmus
+-- 
+2.7.4
 
-diff --git a/arch/arm/boot/compressed/decompress.c b/arch/arm/boot/compressed/decompress.c
-index c16c1829a5e4f..05814c2b382a3 100644
---- a/arch/arm/boot/compressed/decompress.c
-+++ b/arch/arm/boot/compressed/decompress.c
-@@ -32,6 +32,7 @@
- extern char * strstr(const char * s1, const char *s2);
- extern size_t strlen(const char *s);
- extern int memcmp(const void *cs, const void *ct, size_t count);
-+extern char * strchrnul(const char *,int);
- 
- #ifdef CONFIG_KERNEL_GZIP
- #include "../../../../lib/decompress_inflate.c"
-
-Sebastian
