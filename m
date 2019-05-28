@@ -2,102 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5BE32D15C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 00:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62A212D162
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 00:13:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728154AbfE1WJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 18:09:22 -0400
-Received: from mga01.intel.com ([192.55.52.88]:11133 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728123AbfE1WJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 18:09:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 15:09:16 -0700
-X-ExtLoop1: 1
-Received: from otc-lr-04.jf.intel.com ([10.54.39.157])
-  by orsmga002.jf.intel.com with ESMTP; 28 May 2019 15:09:16 -0700
-From:   kan.liang@linux.intel.com
-To:     mingo@kernel.org, acme@redhat.com, peterz@infradead.org,
-        vincent.weaver@maine.edu, linux-kernel@vger.kernel.org
-Cc:     alexander.shishkin@linux.intel.com, ak@linux.intel.com,
-        jolsa@redhat.com, eranian@google.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 5/5] perf regs x86: Use PERF_REG_EXTENDED_MASK
-Date:   Tue, 28 May 2019 15:08:34 -0700
-Message-Id: <1559081314-9714-5-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559081314-9714-1-git-send-email-kan.liang@linux.intel.com>
-References: <1559081314-9714-1-git-send-email-kan.liang@linux.intel.com>
+        id S1727343AbfE1WNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 18:13:07 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:46968 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbfE1WNH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 18:13:07 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 2CE81806B7;
+        Wed, 29 May 2019 10:13:05 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1559081585;
+        bh=+2CkAXJ98WAkefkx5rtcAJw6vq2W+At457odAut87wE=;
+        h=From:To:Cc:Subject:Date;
+        b=WAptlmw2ams8Vlx0OfMXiDKgKilEpn6PnKKxS4QuV/kdXe4D3nFisZYPSlicbZ29J
+         2WFhyD/wqIbWRrkiGkEegabcG3DdWAOt001SSTZ2Vq8UfKqjQX8lTYQN7G7hGr6tg+
+         5ZBQwtFSklvoqf0Vi9sIijbotnK2L5b8Ue6YH6YFQ63wj7ZI19d4qQy8ZPUplo+Nv3
+         KF+g4IoZj6AjTuvbWZiTMAMIJDkjX/i79rhdDRKCWs2ritS+pMcxcOqqP4f6cA1GxT
+         HM22O8lPsyFb9Arr9Oh5PGFFc97oxqeOlvLyd8Z56DzMeZIgkxOhI/qTXT8Ea7xPTO
+         IR4I9gKotIl5A==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5cedb26e0000>; Wed, 29 May 2019 10:13:03 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id DD06613ED45;
+        Wed, 29 May 2019 10:13:04 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 287221E1E3F; Wed, 29 May 2019 10:13:04 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org
+Cc:     Hamish Martin <hamish.martin@alliedtelesis.co.nz>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH] MIPS: mm: Use SMP safe operations for flush_cache_vmap
+Date:   Wed, 29 May 2019 10:12:54 +1200
+Message-Id: <20190528221255.22460-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+flush_cache_vmap() and flush_cache_vunmap() were calling
+r4k_blast_dcache() which is not safe to do on a SMP system. Redefine
+them to call r4k_flush_kernel_vmap_range() which will correctly handle
+the SMP/UP cases.
 
-Use the macro defined in kernel ABI header to replace the local name.
-
-No functional change.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
+I don't know if passing 0, dcache_size to r4k_flush_kernel_vmap_range is
+a good idea. It does have the desired outcome but it could be a bit
+fragile.
 
-Changes since V2:
-- Rename PERF_REG_NON_GENERIC_MASK to PERF_REG_EXTENDED_MASK
+Getting the address and size through to r4k__flush_cache_vmap involves
+updating the prototype for __flush_cache_vmap() which meant touching
+more code than I was comfortable doing. It would be relatively straight
+forward to do but then I'd hit things I have no way of testing.
 
- tools/arch/x86/include/uapi/asm/perf_regs.h | 3 +++
- tools/perf/arch/x86/include/perf_regs.h     | 1 -
- tools/perf/arch/x86/util/perf_regs.c        | 4 ++--
- 3 files changed, 5 insertions(+), 3 deletions(-)
+ arch/mips/mm/c-r4k.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/tools/arch/x86/include/uapi/asm/perf_regs.h b/tools/arch/x86/include/uapi/asm/perf_regs.h
-index ac67bbe..7c9d2bb 100644
---- a/tools/arch/x86/include/uapi/asm/perf_regs.h
-+++ b/tools/arch/x86/include/uapi/asm/perf_regs.h
-@@ -52,4 +52,7 @@ enum perf_event_x86_regs {
- 	/* These include both GPRs and XMMX registers */
- 	PERF_REG_X86_XMM_MAX = PERF_REG_X86_XMM15 + 2,
- };
+diff --git a/arch/mips/mm/c-r4k.c b/arch/mips/mm/c-r4k.c
+index 5166e38cd1c6..976c54268456 100644
+--- a/arch/mips/mm/c-r4k.c
++++ b/arch/mips/mm/c-r4k.c
+@@ -559,16 +559,6 @@ static inline int has_valid_asid(const struct mm_str=
+uct *mm, unsigned int type)
+ 	return 0;
+ }
+=20
+-static void r4k__flush_cache_vmap(void)
+-{
+-	r4k_blast_dcache();
+-}
+-
+-static void r4k__flush_cache_vunmap(void)
+-{
+-	r4k_blast_dcache();
+-}
+-
+ /*
+  * Note: flush_tlb_range() assumes flush_cache_range() sufficiently flus=
+hes
+  * whole caches when vma is executable.
+@@ -986,6 +976,16 @@ static void r4k_flush_kernel_vmap_range(unsigned lon=
+g vaddr, int size)
+ 				&args);
+ }
+=20
++static void r4k__flush_cache_vmap(void)
++{
++	r4k_flush_kernel_vmap_range(0, dcache_size);
++}
 +
-+#define PERF_REG_EXTENDED_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
++static void r4k__flush_cache_vunmap(void)
++{
++	r4k_flush_kernel_vmap_range(0, dcache_size);
++}
 +
- #endif /* _ASM_X86_PERF_REGS_H */
-diff --git a/tools/perf/arch/x86/include/perf_regs.h b/tools/perf/arch/x86/include/perf_regs.h
-index b7cd91a..b732133 100644
---- a/tools/perf/arch/x86/include/perf_regs.h
-+++ b/tools/perf/arch/x86/include/perf_regs.h
-@@ -9,7 +9,6 @@
- void perf_regs_load(u64 *regs);
- 
- #define PERF_REGS_MAX PERF_REG_X86_XMM_MAX
--#define PERF_XMM_REGS_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
- #ifndef HAVE_ARCH_X86_64_SUPPORT
- #define PERF_REGS_MASK ((1ULL << PERF_REG_X86_32_MAX) - 1)
- #define PERF_SAMPLE_REGS_ABI PERF_SAMPLE_REGS_ABI_32
-diff --git a/tools/perf/arch/x86/util/perf_regs.c b/tools/perf/arch/x86/util/perf_regs.c
-index 7886ca5..3666c00 100644
---- a/tools/perf/arch/x86/util/perf_regs.c
-+++ b/tools/perf/arch/x86/util/perf_regs.c
-@@ -277,7 +277,7 @@ uint64_t arch__intr_reg_mask(void)
- 		.type			= PERF_TYPE_HARDWARE,
- 		.config			= PERF_COUNT_HW_CPU_CYCLES,
- 		.sample_type		= PERF_SAMPLE_REGS_INTR,
--		.sample_regs_intr	= PERF_XMM_REGS_MASK,
-+		.sample_regs_intr	= PERF_REG_EXTENDED_MASK,
- 		.precise_ip		= 1,
- 		.disabled 		= 1,
- 		.exclude_kernel		= 1,
-@@ -293,7 +293,7 @@ uint64_t arch__intr_reg_mask(void)
- 	fd = sys_perf_event_open(&attr, 0, -1, -1, 0);
- 	if (fd != -1) {
- 		close(fd);
--		return (PERF_XMM_REGS_MASK | PERF_REGS_MASK);
-+		return (PERF_REG_EXTENDED_MASK | PERF_REGS_MASK);
- 	}
- 
- 	return PERF_REGS_MASK;
--- 
-2.7.4
+ static inline void rm7k_erratum31(void)
+ {
+ 	const unsigned long ic_lsize =3D 32;
+--=20
+2.21.0
 
