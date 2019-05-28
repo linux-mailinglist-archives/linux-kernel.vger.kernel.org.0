@@ -2,96 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FBA82C7FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01A122C805
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:43:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbfE1Nm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 09:42:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53888 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727038AbfE1Nm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 09:42:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 256C4AF6A;
-        Tue, 28 May 2019 13:42:28 +0000 (UTC)
-Date:   Tue, 28 May 2019 15:42:27 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [RFC] printk/sysrq: Don't play with console_loglevel
-Message-ID: <20190528134227.xyb3622gjwu52q4r@pathway.suse.cz>
-References: <20190528002412.1625-1-dima@arista.com>
- <20190528041500.GB26865@jagdpanzerIV>
- <20190528044619.GA3429@jagdpanzerIV>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190528044619.GA3429@jagdpanzerIV>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        id S1727654AbfE1Nnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 09:43:39 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44726 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbfE1Nnh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 09:43:37 -0400
+Received: by mail-lj1-f193.google.com with SMTP id e13so17715613ljl.11;
+        Tue, 28 May 2019 06:43:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=SEeFPNZj/QO+Z5ptX7FeXaKpRH7B0reByetK9LT1X/k=;
+        b=PdRwG4zq5zSdU3T15Hg5FQW72sJm9Xilyt6hLsn4kEJM4f8G9ZsQIBWFEv2q1wXmxf
+         Y5aOr1J0fpIA3Jd2t8NSj4dhuCS+9JL7vYheNSB51MfKKwb5DyGDbz5bfhgrusxESLs+
+         Azqu2GQY1yrMjlp3+aoWziNZGojdiyU+c2jRddwj7BnPjLGebPAjtJU18Sl2iFtehrAU
+         TpnbTea6rHYys21N565ODk9QGgJplKZdwgVMdNZgQSMQo5c4eR/BCk7vX4NcmxtmGTyh
+         n/1GFAyJS/uZdYr+NEI8YVU0IOP3ZKEICo36wVdDRd9t3rJ5VZ1TzAFMYWzdZVvYCt5l
+         BXXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SEeFPNZj/QO+Z5ptX7FeXaKpRH7B0reByetK9LT1X/k=;
+        b=Xe2eJL1mu0rTOPMfonJaj5bPuTSOAsw0mPCG3TExmbUeJn0xc/57ztRb+a4nV1qKLg
+         yqFMI5W786J6wXAF8MauBCT/jmciXv238Y19SVeROyxhUgiwvR/Zuy+bi61rEj5sQr8p
+         PxrGmA/N+j4VYFs+hOBoVFtVdjnRX3kL51fWjleavdly93sQK6u+byUPpLLWH4ji5rmu
+         g5rbyjIndR1U62U6qNAlFk1OezHTJgdP3qyXB6R1W4HlKTs8BLnTxXBmbk+q5ESGqcQe
+         u9EQszit/CvAU/49nRjc7ptJB/gkmR8w/MPHkvozru0gwqm1DvM7uFoyf2NyG6CoQ9qc
+         vvbQ==
+X-Gm-Message-State: APjAAAUynyAGs+fqYW5YU5bOtwmhDhJQwoBJtsZe4RSTzVVmbu3t7mYN
+        5P1Wr3zrUjVPdj1VhAh+H/E=
+X-Google-Smtp-Source: APXvYqxStbxzyJFXJ5WkJVr2tAGR2m+ZHWj82uRBpgjE1M56nMKRDyDnsDLJ98QOztN5buJ/FSk9QQ==
+X-Received: by 2002:a2e:3818:: with SMTP id f24mr38832479lja.13.1559051015719;
+        Tue, 28 May 2019 06:43:35 -0700 (PDT)
+Received: from debian-tom.home (2-111-15-75-dynamic.dk.customer.tdc.net. [2.111.15.75])
+        by smtp.gmail.com with ESMTPSA id d2sm2237177lfj.0.2019.05.28.06.43.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 06:43:35 -0700 (PDT)
+From:   Tomas Bortoli <tomasbortoli@gmail.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomas Bortoli <tomasbortoli@gmail.com>
+Subject: [PATCH] Bluetooth: hci_bcsp: Fix memory leak in rx_skb
+Date:   Tue, 28 May 2019 15:42:58 +0200
+Message-Id: <20190528134258.3743-1-tomasbortoli@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-05-28 13:46:19, Sergey Senozhatsky wrote:
-> On (05/28/19 13:15), Sergey Senozhatsky wrote:
-> > On (05/28/19 01:24), Dmitry Safonov wrote:
-> > [..]
-> > > While handling sysrq the console_loglevel is bumped to default to print
-> > > sysrq headers. It's done to print sysrq messages with WARNING level for
-> > > consumers of /proc/kmsg, though it sucks by the following reasons:
-> > > - changing console_loglevel may produce tons of messages (especially on
-> > >   bloated with debug/info prints systems)
-> > > - it doesn't guarantee that the message will be printed as printk may
-> > >   deffer the actual console output from buffer (see the comment near
-> > >   printk() in kernel/printk/printk.c)
-> > > 
-> > > Provide KERN_UNSUPPRESSED printk() annotation for such legacy places.
-> > > Make sysrq print the headers unsuppressed instead of changing
-> > > console_loglevel.
+Syzkaller found that it is possible to provoke a memory leak by
+never freeing rx_skb in struct bcsp_struct.
 
-I like this idea. console_loglevel is temporary manipulated only
-when some messages should or should never appear on the console.
-Storing this information in the message flags would help
-to solve all the related races.
+Fix by freeing in bcsp_close()
 
-> > I've been thinking about this a while ago... So what I thought back
-> > then was that affected paths are atomic: sysrq, irqs, NMI, etc. Well
-> > at leasted it seemed to be so.
+Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+Reported-by: syzbot+98162c885993b72f19c4@syzkaller.appspotmail.com
+---
+ drivers/bluetooth/hci_bcsp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Yes, this would be useful for the other situations when all printk's
-in a particular context should be handled this way. We could build
-it on top of this patch.
+diff --git a/drivers/bluetooth/hci_bcsp.c b/drivers/bluetooth/hci_bcsp.c
+index 1a7f0c82fb36..550ab5b4c8be 100644
+--- a/drivers/bluetooth/hci_bcsp.c
++++ b/drivers/bluetooth/hci_bcsp.c
+@@ -759,6 +759,10 @@ static int bcsp_close(struct hci_uart *hu)
+ 	skb_queue_purge(&bcsp->rel);
+ 	skb_queue_purge(&bcsp->unrel);
+ 
++	if (bcsp->rx_skb) {
++		kfree_skb(bcsp->rx_skb); bcsp->rx_skb = NULL;
++	}
++
+ 	kfree(bcsp);
+ 	return 0;
+ }
+-- 
+2.11.0
 
-> Ahh.. OK, now I sort of remember why I gave up on this idea (see [1]
-> at the bottom, when it comes to uv_nmi_dump_state()) - printk_NMI and
-> printk-safe redirections.
-> 
-> 	NMI
-> 		loglevel = NEW
-> 		printk -> printk_safe_nmi
-> 		loglevel = OLD
-> 
-> 	iret
-> 
-> 	IRQ
-> 		flush printk_safe_nmi -> printk
-> 		// At this point we don't remember about
-> 		// loglevel manipulation anymore
-> 	iret
-
-printk_safe buffer preserves KERN_* headers. It should be
-possible to insert KERN_UNSUPPRESSED there.
-
-The patch itself looks fine on the first sight. If we go
-forward, please, split the printk and sysrq part
-into two patches.
-
-Best Regards,
-Petr
