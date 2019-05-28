@@ -2,121 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 403AE2C1BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37E672C1C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:53:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfE1Ixb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 04:53:31 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:54814 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726702AbfE1Ixa (ORCPT
+        id S1726798AbfE1Ixp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 04:53:45 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:42615 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbfE1Ixo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 04:53:30 -0400
-X-UUID: 3bf0cdba7e454cf191ca3bdb5d6ffc8c-20190528
-X-UUID: 3bf0cdba7e454cf191ca3bdb5d6ffc8c-20190528
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 919406679; Tue, 28 May 2019 16:53:07 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 28 May
- 2019 16:53:06 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 28 May 2019 16:53:06 +0800
-Message-ID: <1559033586.5141.3.camel@mtksdaap41>
-Subject: Re: [PATCH v3] gpu/drm: mediatek: call mtk_dsi_stop() after
- mtk_drm_crtc_atomic_disable()
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Hsin-Yi Wang <hsinyi@chromium.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        <linux-mediatek@lists.infradead.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-Date:   Tue, 28 May 2019 16:53:06 +0800
-In-Reply-To: <20190528073908.633-1-hsinyi@chromium.org>
-References: <20190528073908.633-1-hsinyi@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 28 May 2019 04:53:44 -0400
+Received: by mail-vs1-f65.google.com with SMTP id z11so12285022vsq.9
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 01:53:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JK8sXLOpeE59ctJhIGQXI4PJ5csZ63YIoouIc8eVvlQ=;
+        b=beeOLpTn6dEhGK2x2cOMzIlqsqMvmIskU+3zj2td/JAHweIkHwsGSOCuZ2BNtShVfW
+         ojZm7JltVswNRjQrAyyhfogLUUUc/ypyLH+b6mvmTaYJf3yHfg452kPBxC3xwy44Ykkx
+         XAUSRhvsanhr7cF/pVFTLi/ZejG8/qqlZp/qAceW8f0EC/SC2EFuAdGW0PbA+ncE5FLh
+         rGkfa69HeX3u9vEOqx+OR51Eta3WKyGDU1kSbvz9qM6gL83lg97Iy0iUJ17NZMrf11p8
+         a4XoSPbOLSAtI2oaV/Ro21bq29xyMTNT0bUfv9JW0b6dcvLgdj160wj3r/8L99ZaWbRr
+         UwuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JK8sXLOpeE59ctJhIGQXI4PJ5csZ63YIoouIc8eVvlQ=;
+        b=O8yPhdaSyKdFTXpamcfXVm9JwtJk9s+8QGqiKjP5PbFIZYuRBCb0TeY50Vghx0OUVq
+         dw6wi69DgBuKwe4Om3ni8N4DXwflcu2WBtWPyOLtbPVSSeg1ehVkAmEUoftCzwsYL9+J
+         nMyAnujS/UjzLeZUVlKLOk2mXXtWXG6Z+1UbZNTuacfXFmqXBPq4vUB9NSNpsUkCcUdG
+         923Zc7z52tVX2D1TJ/Z9uKt5vMFsv8OF+ySZA0B6UgtL0NMy9bEjFa2G/z90+NTnGZ9o
+         kC8rWJc6LXyJ25zUg9a1PlWGj5SBEF+3afNX2YuPb/6zzvo1x4jMFSop6+yhu+TK7LQc
+         Xltg==
+X-Gm-Message-State: APjAAAUajI7mNJmS32WSecxAf62CssZZWIwBCWIP/7w40PYMwm9YfIjt
+        SItN3HiC1URZk/zRM7OBSyiez+Fw9Hu/x49URdv/ytza
+X-Google-Smtp-Source: APXvYqyV42QW96AtdeRCcdHraepjNDakDyDlAXtMCzOqU39H7gTnczCehB508e06zRvxSR8sret8bHhLSi04YwV/s5I=
+X-Received: by 2002:a67:d815:: with SMTP id e21mr45786479vsj.35.1559033623410;
+ Tue, 28 May 2019 01:53:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+References: <20190520143647.2503-1-narmstrong@baylibre.com>
+In-Reply-To: <20190520143647.2503-1-narmstrong@baylibre.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 28 May 2019 10:53:07 +0200
+Message-ID: <CAPDyKFoOHnYiYogjogRr=7PBjqHOseDDS6L0eirTo7Y+F449ow@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mmc: meson: update with SPDX Licence identifier
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Hsin-Yi:
+On Mon, 20 May 2019 at 16:36, Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Update the SPDX Licence identifier for the Amlogic MMC drivers.
+>
+> Neil Armstrong (2):
+>   mmc: meson-gx-mmc: update with SPDX Licence identifier
+>   mmc: meson-mx-sdio: update with SPDX Licence identifier
+>
+>  drivers/mmc/host/meson-gx-mmc.c  | 15 +--------------
+>  drivers/mmc/host/meson-mx-sdio.c |  6 +-----
+>  2 files changed, 2 insertions(+), 19 deletions(-)
 
-On Tue, 2019-05-28 at 15:39 +0800, Hsin-Yi Wang wrote:
-> mtk_dsi_stop() should be called after mtk_drm_crtc_atomic_disable(), which needs
-> ovl irq for drm_crtc_wait_one_vblank(), since after mtk_dsi_stop() is called,
-> ovl irq will be disabled. If drm_crtc_wait_one_vblank() is called after last
-> irq, it will timeout with this message: "vblank wait timed out on crtc 0". This
-> happens sometimes when turning off the screen.
-> 
-> In drm_atomic_helper.c#disable_outputs(),
-> the calling sequence when turning off the screen is:
-> 
-> 1. mtk_dsi_encoder_disable()
->      --> mtk_output_dsi_disable()
->        --> mtk_dsi_stop();  // sometimes make vblank timeout in atomic_disable
->        --> mtk_dsi_poweroff();
-> 2. mtk_drm_crtc_atomic_disable()
->      --> drm_crtc_wait_one_vblank();
->      ...
->        --> mtk_dsi_ddp_stop()
->          --> mtk_dsi_poweroff();
-> 
-> mtk_dsi_poweroff() has reference count design, change to make mtk_dsi_stop()
-> called in mtk_dsi_poweroff() when refcount is 0.
-> 
-> Fixes: 0707632b5bac ("drm/mediatek: update DSI sub driver flow for sending commands to panel")
-> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> ---
-> change log v2->v3:
-> * remove unnecessary codes in unbind
-> * based on discussion in v2, if we move mtk_dsi_start() to mtk_dsi_poweron(),
-> in order to make mtk_dsi_start() and mtk_dsi_stop() symmetric, will results in
-> no irq for panel with bridge. So we keep mtk_dsi_start() in original place.
+Applied for next, thanks!
 
-I think we've already discussed in [1]. I need a reason to understand
-this is hardware behavior or software bug. If this is a software bug, we
-need to fix the bug and code could be symmetric.
-
-[1]
-http://lists.infradead.org/pipermail/linux-mediatek/2019-March/018423.html
-
-Regards,
-CK
-
-> ---
->  drivers/gpu/drm/mediatek/mtk_dsi.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> index b00eb2d2e086..b7f829ecd3ad 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> @@ -630,6 +630,8 @@ static void mtk_dsi_poweroff(struct mtk_dsi *dsi)
->  	if (--dsi->refcount != 0)
->  		return;
->  
-> +	mtk_dsi_stop(dsi);
-> +
->  	if (!mtk_dsi_switch_to_cmd_mode(dsi, VM_DONE_INT_FLAG, 500)) {
->  		if (dsi->panel) {
->  			if (drm_panel_unprepare(dsi->panel)) {
-> @@ -696,7 +698,6 @@ static void mtk_output_dsi_disable(struct mtk_dsi *dsi)
->  		}
->  	}
->  
-> -	mtk_dsi_stop(dsi);
->  	mtk_dsi_poweroff(dsi);
->  
->  	dsi->enabled = false;
-
-
+Kind regards
+Uffe
