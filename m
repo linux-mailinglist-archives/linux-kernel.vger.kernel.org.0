@@ -2,88 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1722C2CDDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 19:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC12D2CDDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 19:46:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfE1RpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 13:45:25 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39584 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbfE1RpZ (ORCPT
+        id S1727342AbfE1Rqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 13:46:40 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46855 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbfE1Rqj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 13:45:25 -0400
-Received: by mail-lj1-f195.google.com with SMTP id a10so7776547ljf.6
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 10:45:24 -0700 (PDT)
+        Tue, 28 May 2019 13:46:39 -0400
+Received: by mail-pl1-f196.google.com with SMTP id bb3so1020573plb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 10:46:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=RXcKDhl1/lg8QsNl5iEDoBd0XtlOjaQwgqCDwv2KMDg=;
-        b=QHdeLAVsj/k0xgjOu78MvnPoW0OGewTnKPEDc6yXnK0I0QMUhgvXkVtehPtfqq3rQp
-         z/jVEBJOswzVIzCI5f4daULX+2taP8XtYqpBQbCZUm/7rQiwCUFaNxFcyENCEG7wNGQZ
-         vKrx8mtFPGGuhdhDpK6WiHcdSbeJDEvD4EHpRVGXbo6VURcLKZvlJMrijPkYvY0NYULd
-         YOxG03EVdbngWJOFUTgQr7B4wbxDuN7shGI7Yd5anwxniD8fYYabJm7eJfm7RyEzJaM3
-         cE/X9qFpQi9Dxeag62dTbnizFN3F3F5g+eMhSxVYvotkEy+dkYpVRC4s8ORlN6wr/qRo
-         tTtw==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wY82HrCXC9QDXU5bRNjvssd+tA05bUg151lPfy3cTs8=;
+        b=wUceDG+2+NcHsQ1DywnJSqBjcRsvqC3nkJYqAlkaiuODqiUjprIgQeRiOoLxGvt9gm
+         +xEsuLIBihqGYcomYAVvZCxIDVeBRVL47nluCaFUAOqKBeml7mFY/I6/nPr5yWVyGtoH
+         40r4/w1cjJBJm7XNsAKqJRUxRpASvWZbxNKJs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RXcKDhl1/lg8QsNl5iEDoBd0XtlOjaQwgqCDwv2KMDg=;
-        b=teipXaugDmiDJd8bLc/bVBcjLXrEFzH6hyp7OTaoRf/ypGj8maFT55CkgG4nXWAvY4
-         EpfcXo7WW2ZfcZlIVNkiONE12BUkI2B2v3qoChXS5tb+zaNZzQ8RtM9ucKqqvgaPAIVA
-         ZF+L70pOZaB5b4wxI+qvwt0z0NfmOHHongOGxzDO28qlw0g8a0m3K7PxlYECB/Ir9yO8
-         TDhdNtbSGOjl3ZOWbZ3ZipjIOvWa/ZBHLHQ/2dA+WZxe38xA8zB1/ug0IIpuQe7v1sNl
-         gRECeLLrMnKWJon/QTY4UBmcsbtaVJ+nRVQ4MUgtTmYjQ+zNKDnUUx1q6zWhiTrQ+Z1g
-         DzCA==
-X-Gm-Message-State: APjAAAWR9Fny3siNuvdp/+AsvJR/NrBqIqDJ6loDa0DHAAAIDVHUnSjI
-        PfMchP6C9zAK9/0ThUjT3oFgDg==
-X-Google-Smtp-Source: APXvYqxGDMDd1MvOGsC1hoUoR7O9APfjgGZ+8m5LRtBxrC4Ox+HpuKvb+njET9x+zDuYeLOqcrp32Q==
-X-Received: by 2002:a2e:9410:: with SMTP id i16mr36430055ljh.152.1559065523333;
-        Tue, 28 May 2019 10:45:23 -0700 (PDT)
-Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id x16sm3042049lji.3.2019.05.28.10.45.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 10:45:22 -0700 (PDT)
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     grygorii.strashko@ti.com
-Cc:     davem@davemloft.net, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v2 net-next] net: ethernet: ti: cpsw: correct .ndo_open error path
-Date:   Tue, 28 May 2019 20:45:19 +0300
-Message-Id: <20190528174519.7370-1-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wY82HrCXC9QDXU5bRNjvssd+tA05bUg151lPfy3cTs8=;
+        b=q0RbcNe7yb4k9v+hfLEhgY4/RgDlWU4BqVSi/Hj0nYqAVjcd8ZhAAwGKOe2KpU0/K4
+         ix9VNiJTZur3PEFQRIRuTfgLHlX8I++DWIH6KAig0FuAFzyH9fieQ2q0geVCVTwrQ8vY
+         nV7GFlZjNkECsP+iYdvZeaba6dp1wObL4/GFIbR6nqLdTwvs6hW2VUHrqVYA4HmKCFv8
+         rx/tTGlqtH9Ge6xrwVoflvwsyQdXUhHyiP4vQqZ6KtWCekJAKac2IGamvryQAcljuSbV
+         1rh6+QCg+1nLgnPx+jBGLusIQQGjWcYlZ+myYCj3rCs51lnivgt+8PTqAWYAnpckitFV
+         s9UQ==
+X-Gm-Message-State: APjAAAWkNsKbGruaxUtbmd9FBsqbT4kBK825tHTcQJ87OBMsOXPyrooq
+        K9OPXzytiuRObMVGZlo3JCO8dQ==
+X-Google-Smtp-Source: APXvYqwdyPYojRIA2z8GMRGnytDASupR49P5Sjr1ylm3GCVoGDqEFamKZTZh4ZTGHSDtlYhu12Cfsw==
+X-Received: by 2002:a17:902:148:: with SMTP id 66mr75747265plb.143.1559065598901;
+        Tue, 28 May 2019 10:46:38 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id x28sm16584048pfo.78.2019.05.28.10.46.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 May 2019 10:46:36 -0700 (PDT)
+Date:   Tue, 28 May 2019 13:46:35 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Frank Ch. Eigler" <fche@redhat.com>
+Subject: Re: [PATCH 01/16 v3] function_graph: Convert ret_stack to a series
+ of longs
+Message-ID: <20190528174635.GB252809@google.com>
+References: <20190525031633.811342628@goodmis.org>
+ <20190525031745.235716308@goodmis.org>
+ <20190528095043.GA252809@google.com>
+ <20190528085826.796157de@gandalf.local.home>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190528085826.796157de@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's found while review and probably never happens, but real number
-of queues is set per device, and error path should be per device.
-So split error path based on usage_count.
+On Tue, May 28, 2019 at 08:58:26AM -0400, Steven Rostedt wrote:
+> On Tue, 28 May 2019 05:50:43 -0400
+> Joel Fernandes <joel@joelfernandes.org> wrote:
+> 
+> > On Fri, May 24, 2019 at 11:16:34PM -0400, Steven Rostedt wrote:
+> > > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > > 
+> > > In order to make it possible to have multiple callbacks registered with the
+> > > function_graph tracer, the retstack needs to be converted from an array of
+> > > ftrace_ret_stack structures to an array of longs. This will allow to store
+> > > the list of callbacks on the stack for the return side of the functions.
+> > > 
+> > > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > > ---
+> > >  include/linux/sched.h |   2 +-
+> > >  kernel/trace/fgraph.c | 124 ++++++++++++++++++++++++------------------
+> > >  2 files changed, 71 insertions(+), 55 deletions(-)
+> > > 
+> > > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > > index 11837410690f..1850d8a3c3f0 100644
+> > > --- a/include/linux/sched.h
+> > > +++ b/include/linux/sched.h
+> > > @@ -1113,7 +1113,7 @@ struct task_struct {
+> > >  	int				curr_ret_depth;
+> > >  
+> > >  	/* Stack of return addresses for return function tracing: */
+> > > -	struct ftrace_ret_stack		*ret_stack;
+> > > +	unsigned long			*ret_stack;  
+> > 
+> > Can it be converted to an array of unsigned int so the shadown stack space
+> > can be better used? This way stack overflow chance is lesser if there are too
+> > many registered fgraph users and the function call depth is too deep.
+> > AFAICS from patch 5/13, you need only 32-bits for the ftrace_ret_stack
+> > offset, type and array index, so the upper 32-bit would not be used.
+> > 
+> 
+> We can look to improve that later on. This is complex enough and I kept
+> some features (like 4 byte minimum) out of this series to keep the
+> complexity down. I believe there are some archs that require 64bit
+> aligned access for 64 bit words and pointers. And the retstack
+> structure still has longs on it. If we need to adapt to making sure we
+> are aligned, I rather keep that complexity out for now.
+> 
+> That said, I just did a git grep HAVE_64BIT_ALIGNED_ACCESS and only
+> found the kconfig where it is defined and the ring buffer code that
+> deals with it. We recently removed a bunch of archs, and it could very
+> well be that this requirement no longer exists.
+> 
+> Regardless, I've been testing this code quite heavily, and changing the
+> stack from moving up to moving down already put me behind. I'd like to
+> pull this code into linux-next soon. Converting to ints can be done for
+> the release after we get this in.
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
----
- drivers/net/ethernet/ti/cpsw.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Ok sure, I agree the conversion to ints can be done at a later time. thanks!
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 634fc484a0b3..6d3f1f3f90cb 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -1423,8 +1423,11 @@ static int cpsw_ndo_open(struct net_device *ndev)
- 	return 0;
- 
- err_cleanup:
--	cpdma_ctlr_stop(cpsw->dma);
--	for_each_slave(priv, cpsw_slave_stop, cpsw);
-+	if (!cpsw->usage_count) {
-+		cpdma_ctlr_stop(cpsw->dma);
-+		for_each_slave(priv, cpsw_slave_stop, cpsw);
-+	}
-+
- 	pm_runtime_put_sync(cpsw->dev);
- 	netif_carrier_off(priv->ndev);
- 	return ret;
--- 
-2.17.1
+ - Joel
 
