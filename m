@@ -2,102 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 959A82BC7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 02:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E59E2BC82
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 02:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbfE1Afq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 20:35:46 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:46349 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbfE1Afp (ORCPT
+        id S1727599AbfE1AqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 20:46:04 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35972 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbfE1AqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 20:35:45 -0400
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x4S0ZMSm021349;
-        Tue, 28 May 2019 09:35:23 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x4S0ZMSm021349
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1559003723;
-        bh=ZrnfQGP3U7n4WOAOji/GRy+OIeHaMp/+iXRai5SU7wQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ixSWdT8ppBAChw6vM/HosZZcEyU8b/NAGH5YZO7j/vhhIRJnxnQkpg7HAWR2B1ojN
-         bkFytrQtIBPkdxCEH1GQ3F9F9VA/J6TCuiAoPln6jWRA7hhoBiFikMDjwp5RHJh7Q5
-         AioOyO9CDKG3fLqhJmRo1GlTtWOzGQsfjQyld1ZF/zxTcUACfruBWI/LuKQ67r/2fF
-         +l9lpO/7HSGwi8tVUQuVyWZ2crudqRhKCEWmrFIcgAolgWuQEV8VV+P4vwbJbqc0qo
-         A/6gXdCe1hbcPqLudyyUoVV8W/fpNoXD/XsBdNdUWSgVgibQNmaMr+bIvW/fcv/+Z1
-         6zscD3UI3egwA==
-X-Nifty-SrcIP: [209.85.222.45]
-Received: by mail-ua1-f45.google.com with SMTP id e9so7141612uar.9;
-        Mon, 27 May 2019 17:35:23 -0700 (PDT)
-X-Gm-Message-State: APjAAAWkQ+KK2f/gMTzZxKzxMDGebzf+4BaG+YdbPsbS+ZZy6xI697nK
-        Oa2oJbELUin43e15ORUsD69QUnN11gBAnKj9DYY=
-X-Google-Smtp-Source: APXvYqy8LV8t35Sn6WgYDnkjgZXIO1Pit+u3Tt/SpuNlp6FdfPNgoFxm+nPXEG1meBCQnWztRia8dlXY40a9Z+X0P4g=
-X-Received: by 2002:a9f:366b:: with SMTP id s40mr23027906uad.121.1559003722296;
- Mon, 27 May 2019 17:35:22 -0700 (PDT)
+        Mon, 27 May 2019 20:46:04 -0400
+Received: by mail-pg1-f195.google.com with SMTP id a3so9865644pgb.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 17:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=iByH5cRdkrBlU0cWCYNL4Lwn5aV82NXZYp0iP2XtmzY=;
+        b=lBxXRNMYOFCEom2dMcyQiJUOVpIkLoT2tAh7sb5qJ5bOohLO+bNISPUIw+OvXKpKoq
+         CI7ulyPrFR1MfYBdwHyCg54Bg69ny/rD3474/QtVgmY5bJSPSFIC1pzGRsCvmjuzZTWl
+         AHNzX97JCup841KDy4hyEVRgTeXoF5TWZp8e+yFUT2sAWOwKPqGMqh2Xa9mIcLXB6mfS
+         +x4Vqi5rsLhLM0ujnpH7XtniTDpYuJ/xyW2J3h+R+xV+SEIsXQB1j5djFnQkzkN9P0Ff
+         nh9IG02q3MyY9xh6zdSZbXqkcEug+nXsbblqOfFgU/R0hDw1zYtSnHQAPRdulPuNbsQY
+         ZNKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=iByH5cRdkrBlU0cWCYNL4Lwn5aV82NXZYp0iP2XtmzY=;
+        b=UeNneWEZEa0+XKvVCxGUsORzlqj4UFhe2O5uwNnjzow9jfHDPZFL4xNKR2QlWwQ9Ko
+         3LmkxvA1w9v20run13aBZ80gwE88yzujI03pKXzIZHm9h1cprCq4LmB5sBgm+MZyzCuA
+         wcPrlEjSRwnF2de8fFOC21znuuq3BrWFI+eFD0OFQONcbzWMZYT6bSydpj/T7TCGUzPu
+         3UZ65t3dZmw1934WQsYaoxcRlmvVuBVNAZcplabc54ojSYvFIoXpTrpbJQpWyTShY66W
+         +dD867+P5fpDJOmVpzlL1wiAfUG/NumxPAuv1DbCJdRwJer3D897zaBAALfMIupBGX8D
+         F9HA==
+X-Gm-Message-State: APjAAAXfOOBkfcN43PFcIsaOnM2GJGrKOXa2R3SK7efXJzpSZbTDIopa
+        YicpFn1BBpX/+wamK5LkkigKu9Fw
+X-Google-Smtp-Source: APXvYqygVq7XUqI2HwHaWKnh1r6W9Hhj3+NiQsCCaNTVkp9JXotrql3EePYzwvpYc4B4Yv/CSYqUNA==
+X-Received: by 2002:a62:81c1:: with SMTP id t184mr136612246pfd.221.1559004363670;
+        Mon, 27 May 2019 17:46:03 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id x16sm11868577pff.30.2019.05.27.17.45.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 17:46:03 -0700 (PDT)
+Date:   Tue, 28 May 2019 08:45:29 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     gregkh@linuxfoundation.org, jslaby@suse.com, nico@fluxnic.net,
+        kilobyte@angband.pl, textshell@uchuujin.de, mpatocka@redhat.com,
+        daniel.vetter@ffwll.ch
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH v3] vt: Fix a missing-check bug in con_init()
+Message-ID: <20190528004529.GA12388@zhanggen-UX430UQ>
 MIME-Version: 1.0
-References: <20190525114919.26188-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20190525114919.26188-1-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 28 May 2019 09:34:46 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATQCpNp4azKE4YJDpC-gSTRBYe6Lj7dTX+1N=7iqKsMXw@mail.gmail.com>
-Message-ID: <CAK7LNATQCpNp4azKE4YJDpC-gSTRBYe6Lj7dTX+1N=7iqKsMXw@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: tests: fix recursive inclusion unit test
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 25, 2019 at 8:49 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Adding SPDX license identifier is pretty safe; however, here is one
-> exception.
->
-> Since commit ec8f24b7faaf ("treewide: Add SPDX license identifier -
-> Makefile/Kconfig"), "make testconfig" would not pass.
->
-> When Kconfig detects a circular file inclusion, it displays error
-> messages with a file name and a line number prefixed to each line.
->
-> The unit test checks if Kconfig emits the error messages correctly
-> (this also checks the line number correctness).
->
-> Now that the test input has the SPDX license identifier at the very top,
-> the line numbers in the expected stderr should be incremented by 1.
->
-> Fixes: ec8f24b7faaf ("treewide: Add SPDX license identifier - Makefile/Kconfig")
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+In function con_init(), the pointer variable vc_cons[currcons].d, vc and
+vc->vc_screenbuf is allocated by kzalloc(). And they are used in the 
+following codes. However, kzalloc() returns NULL when fails, and null 
+pointer dereference may happen. And it will cause the kernel to crash. 
+Therefore, we should check the return value and handle the error.
 
-Applied to linux-kbuild/fixes.
+Further, since the allcoation is in a loop, we should free all the 
+allocated memory in a loop.
 
-
->
->  scripts/kconfig/tests/err_recursive_inc/expected_stderr | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/scripts/kconfig/tests/err_recursive_inc/expected_stderr b/scripts/kconfig/tests/err_recursive_inc/expected_stderr
-> index 6b582eee2176..b070a31fdfeb 100644
-> --- a/scripts/kconfig/tests/err_recursive_inc/expected_stderr
-> +++ b/scripts/kconfig/tests/err_recursive_inc/expected_stderr
-> @@ -1,6 +1,6 @@
->  Recursive inclusion detected.
->  Inclusion path:
->    current file : Kconfig.inc1
-> -  included from: Kconfig.inc3:1
-> -  included from: Kconfig.inc2:3
-> -  included from: Kconfig.inc1:4
-> +  included from: Kconfig.inc3:2
-> +  included from: Kconfig.inc2:4
-> +  included from: Kconfig.inc1:5
-> --
-> 2.17.1
->
-
-
--- 
-Best Regards
-Masahiro Yamada
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+Reviewed-by: Nicolas Pitre <nico@fluxnic.net>
+---
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index fdd12f8..d50f68f 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -3350,10 +3350,14 @@ static int __init con_init(void)
+ 
+ 	for (currcons = 0; currcons < MIN_NR_CONSOLES; currcons++) {
+ 		vc_cons[currcons].d = vc = kzalloc(sizeof(struct vc_data), GFP_NOWAIT);
++		if (!vc)
++			goto fail1;
+ 		INIT_WORK(&vc_cons[currcons].SAK_work, vc_SAK);
+ 		tty_port_init(&vc->port);
+ 		visual_init(vc, currcons, 1);
+ 		vc->vc_screenbuf = kzalloc(vc->vc_screenbuf_size, GFP_NOWAIT);
++		if (!vc->vc_screenbuf)
++			goto fail2;
+ 		vc_init(vc, vc->vc_rows, vc->vc_cols,
+ 			currcons || !vc->vc_sw->con_save_screen);
+ 	}
+@@ -3375,6 +3379,16 @@ static int __init con_init(void)
+ 	register_console(&vt_console_driver);
+ #endif
+ 	return 0;
++fail1:
++	while (currcons > 0) {
++		currcons--;
++		kfree(vc_cons[currcons].d->vc_screenbuf);
++fail2:
++		kfree(vc_cons[currcons].d);
++		vc_cons[currcons].d = NULL;
++	}
++	console_unlock();
++	return -ENOMEM;
+ }
+ console_initcall(con_init);
+ 
+---
