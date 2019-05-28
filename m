@@ -2,97 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95D982C2EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF32C2C2ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:18:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbfE1JR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:17:56 -0400
-Received: from mail-eopbgr150048.outbound.protection.outlook.com ([40.107.15.48]:5764
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725943AbfE1JR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:17:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AWj5naSzV0ySCY1ZNrovPMjNnQtCqGhYnXGehj0aWog=;
- b=FJV+vbNnNMhJZJmUnGDbo8Kf7dY5d1wX0nBDeOkRsGlftG7UdrnCBn6bkrun7sJ+h5TwRKwLyWHL6xClLAZV827pXKTIkxN5GOEiZa2C3PLR+gOqChPsCZr2zBqMW9mC+6G62MYazs23NUNTsyfGALSDNcBqkxzqXWZXvrnumkA=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3885.eurprd04.prod.outlook.com (52.134.17.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.16; Tue, 28 May 2019 09:17:52 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::ccaf:f4a1:704a:e745]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::ccaf:f4a1:704a:e745%4]) with mapi id 15.20.1922.021; Tue, 28 May 2019
- 09:17:52 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v1 00/15] Fixing selftests failure on Talitos driver
-Thread-Topic: [PATCH v1 00/15] Fixing selftests failure on Talitos driver
-Thread-Index: AQHVD9neuB3rF5DbdU6FGGdK8ciL0Q==
-Date:   Tue, 28 May 2019 09:17:52 +0000
-Message-ID: <VI1PR0402MB34850975FDD8F5F1CE366A9C981E0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <cover.1558445259.git.christophe.leroy@c-s.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b6462515-2c1f-44c4-b3cd-08d6e34d5cd4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3885;
-x-ms-traffictypediagnostic: VI1PR0402MB3885:
-x-microsoft-antispam-prvs: <VI1PR0402MB3885CA9DEAB69658D6DE6EE9981E0@VI1PR0402MB3885.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5236;
-x-forefront-prvs: 00514A2FE6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(376002)(366004)(136003)(189003)(199004)(68736007)(486006)(476003)(4326008)(186003)(446003)(53936002)(6246003)(9686003)(5660300002)(55016002)(66066001)(76176011)(478600001)(4744005)(316002)(74316002)(26005)(66946007)(76116006)(73956011)(52536014)(25786009)(66446008)(66476007)(66556008)(64756008)(6506007)(14444005)(14454004)(99286004)(8676002)(81156014)(256004)(81166006)(110136005)(6116002)(3846002)(54906003)(33656002)(71190400001)(53546011)(44832011)(71200400001)(7696005)(305945005)(7736002)(102836004)(2906002)(6436002)(8936002)(229853002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3885;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: dRJv2WAxvIzDvLYch559MunUOf5sxswNfkQ6O4ceognW7o5TCBPliiPn3i/0jvJ5VoYTGyDDy1MTqumAjBwEx7FOKaautF4t2bsy+BIZI2Y+ghEywTcK/IRf+Zw7zUrFOSJisrqyaIey8eJzh3IIb0pjv2NLD6qDh/DgRTllCW8YuGgZM3AW1a/ENj53/vTLShbS/WAWg4O3tbcI1GrJNmJy80W1nW+fWcWidYCvYkr+XeZcgQ92vVtSWywSidPIfa9BKUn7+Uo5IGEXeyRCfm65mof4vfcijT+omLQFJ0BZnMURy32FE4+KZjSxYBs5sChvvU593IEMPjYlJyIIHNvMDR+TGjM2cQRcZmmeums0uNQ5u0+Vl2ovb1EBLNEbOiO2srX55paaVlrinQgy4WFat6lqrlM+d/VN08p6cko=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+        id S1726910AbfE1JSd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:18:33 -0400
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:55403 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725943AbfE1JSc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:18:32 -0400
+Received: from [IPv6:2001:983:e9a7:1:10b2:2e62:e4b1:bd13] ([IPv6:2001:983:e9a7:1:10b2:2e62:e4b1:bd13])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id VYFZhh8VhsDWyVYFahcRZ2; Tue, 28 May 2019 11:18:30 +0200
+Subject: Re: [RFCv1 00/12] media: mtk-vcodec: support for MT8183 decoder
+To:     Alexandre Courbot <acourbot@chromium.org>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20190528055635.12109-1-acourbot@chromium.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <f143b2e2-45ab-9d59-a607-f2032206e4e0@xs4all.nl>
+Date:   Tue, 28 May 2019 11:18:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6462515-2c1f-44c4-b3cd-08d6e34d5cd4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2019 09:17:52.7205
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3885
+In-Reply-To: <20190528055635.12109-1-acourbot@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfMM8dvHjwzwUAfKnKoP8luEtEGaVf32kshxDabImXd9jy0WyZNQu0oWcDuCA15v9nj/65NQVATJO4tPv31EblnvNkBcLyM0GlUCHRM2mkscgsxSaiswR
+ z+uWhE+HAnoTjmtUpDFDsRwqLldLpm10GCvThGRZS9AwpB6rYzpOoJACHAi+y7ayANPTsKM8eXP10lvHUMh3XG3vFDJmZyk+ZKi4hili3Ha6LsQVHdZ1Kq3v
+ vKz7PBFkC289Svxv/UAK1HyqfzxsmMyvf3hgblMRlP6QCjItw2KzTaQuDPaDKe25huRnygLIgRxG5gND9j3oXY1Z1GJ8dz7N4yXj4S9m59bZfu7ZZABtfHe3
+ xnEJWDQZmDvZFYRZWNECTI8f1mrue7Twz7xEv+XgXHHNARAg5dowSUiLwU3VaLo7hq3660hThRLml4Z47FJzmQHHI23PFddGlMShAwD4IcU9WP0Gm3pZagt5
+ uj3w07yiQs3Z5ISYUg9Ic/KY+HpW5qmmXcqyIeQwT3ro8nPkQ5zdw8Ifphm4h2EKGIXgHZae/WMch5Sz9rDGyVUtTyRv4tUkPXalEvIEwlgMP4zknzhckwVy
+ kYI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/21/2019 4:34 PM, Christophe Leroy wrote:=0A=
-> Several test failures have popped up following recent changes to crypto=
-=0A=
-> selftests.=0A=
-> =0A=
-> This series fixes (most of) them.=0A=
-> =0A=
-> The last three patches are trivial cleanups.=0A=
-> =0A=
-Thanks Christophe.=0A=
-=0A=
-For the series:=0A=
-Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-=0A=
-Have you validated the changes also on SEC 2.x+?=0A=
-Asking since IIRC you mentioned having only HW with SEC 1 and changes in pa=
-tch=0A=
-"crypto: talitos - fix AEAD processing." look quite complex.=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
-=0A=
+On 5/28/19 7:56 AM, Alexandre Courbot wrote:
+> This series is a refactoring/split of the initial patch for MT8183 codec support
+> that was posted for Chrome OS [1] in order to make it upstreamable.
+> 
+> The line count has been significantly reduced compared to the initial patch,
+> although support for the MT8183 encoder is not here yet to limit the amount of
+> code to review.
+> 
+> Although the series applies on top of today's media tree, it will not compile
+> until support for the SCP is merged, hence the RFC status. Note also that the
+> H.264 structures used and implementation of the stateless codec API may not be
+> completely up-to-date. So the goal of this publication is to review the general
+> idea (especially split unto stateful and stateless ops), and maybe merge the
+> first 5 patches.
+> 
+> Patches 1-5 are cleanup/small fixes that came while working on this series. They
+> should be harmless and can be merged.
+
+Merging these makes sense. I should be able to do that when v2 is posted with the
+SPDX conversion.
+
+Regards,
+
+	Hans
