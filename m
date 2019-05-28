@@ -2,83 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A086A2C6CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 14:43:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 241732C6D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 14:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfE1MnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 08:43:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52428 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbfE1MnJ (ORCPT
+        id S1727506AbfE1Mn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 08:43:56 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49718 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727239AbfE1Mn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 08:43:09 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9879C60850; Tue, 28 May 2019 12:43:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559047388;
-        bh=lCVRucRy9Sh6Z/3jPpo/oYImhufsBY/lliFa5yolGa4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=o25HtyBqfNi2i01JLZ5hxBYQjJ7vyTAKInSln/u1L+DO0giyKEgKn/FpCsMoR2jaO
-         AcvOYi0p0bedIgz6LLgIUvsX28CApYTkpMxbugUvZdDxiM4Fmt9vjj/n0HdA5Qlc6u
-         nqdxJiet48XhlVRYxzH9dHenkxiu4z5fEtpjs8qo=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7736B6070D;
-        Tue, 28 May 2019 12:43:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559047387;
-        bh=lCVRucRy9Sh6Z/3jPpo/oYImhufsBY/lliFa5yolGa4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=awL5ZifMTWVpkswr4/nnP/KgwlWZaQqhJMqj+EwH2ZKy9jFreXTNSPTrqSsNTDnoy
-         ZeXeLFO95+9oBDBHIbTvrC+1Ka7a8mldwzNljH7gnV0ejZmnshlkoX9O2SuEqArqDp
-         /MaJbIZ3YTzR3Fx6TNH+hG/GOmGNsMH6/rMh2oqc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7736B6070D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 28 May 2019 08:43:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=d1+i8FlqvZy+DZCyf6x+0+OU5pzU76eA12cyixRHZMw=; b=d0ZmRbMZ2FxnVIyiCx1WmtxZb
+        ykmUwzb2v1f/D9dWvWix6OWElCYB7UAhbTgbY/f248GD00SyMm1UeaSVCp2BefOoIxbVXcjYOhpPb
+        kGzdl2M0lT2Cgs012Ca1LCopXW//8EyG1tfwImOSAdmmw19G6OZH/YFR0rcu6BhehnnesYo/H7BvD
+        tCzMzkOIyVaiMNiV7D6F1MwGC1h5uXD9RrddhosnRiWiglrS+X+IjOO5REaBOOk+yb/y92Nqw22rn
+        a3SRPTqFAoXuZkvwBaeHJPcoBTmNfmZSKaMRmstp5dZy/usXi0jyzX2/n0+Xl09mbLonNqRGyWYEc
+        gzzxJg96w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVbSI-0003Zr-Lp; Tue, 28 May 2019 12:43:50 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 663E4200A0444; Tue, 28 May 2019 14:43:49 +0200 (CEST)
+Date:   Tue, 28 May 2019 14:43:49 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com
+Subject: Re: [PATCH 4/9] perf/x86/intel: Support hardware TopDown metrics
+Message-ID: <20190528124349.GU2606@hirez.programming.kicks-ass.net>
+References: <20190521214055.31060-1-kan.liang@linux.intel.com>
+ <20190521214055.31060-5-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] libertas: fix spelling mistake "Donwloading" ->
- "Downloading"
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190514211406.6353-1-colin.king@canonical.com>
-References: <20190514211406.6353-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        libertas-dev@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190528124308.9879C60850@smtp.codeaurora.org>
-Date:   Tue, 28 May 2019 12:43:08 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521214055.31060-5-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
-
-> From: Colin Ian King <colin.king@canonical.com>
+On Tue, May 21, 2019 at 02:40:50PM -0700, kan.liang@linux.intel.com wrote:
+> The 8bit metrics ratio values lose precision when the measurement period
+> gets longer.
 > 
-> There is are two spelling mistakes in lbtf_deb_usb2 messages, fix these.
+> To avoid this we always reset the metric value when reading, as we
+> already accumulate the count in the perf count value.
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+> For a long period read, low precision is acceptable.
+> For a short period read, the register will be reset often enough that it
+> is not a problem.
 
-Patch applied to wireless-drivers-next.git, thanks.
+> The PERF_METRICS may report wrong value if its delta was less than 1/255
+> of SLOTS (Fixed counter 3).
+> 
+> To avoid this, the PERF_METRICS and SLOTS registers have to be reset
+> simultaneously. The slots value has to be cached as well.
 
-aeffda6b10f8 libertas: fix spelling mistake "Donwloading" -> "Downloading"
+That doesn't sound like it is NMI-safe.
 
--- 
-https://patchwork.kernel.org/patch/10943765/
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
+> RDPMC
+> =========
+> The TopDown can be collected per thread/process. To use TopDown
+> through RDPMC in applications on Icelake, the metrics and slots values
+> have to be saved/restored during context switching.
+> 
+> Add specific set_period() to specially handle the slots and metrics
+> event. Because,
+>  - The initial value must be 0.
+>  - Only need to restore the value in context switch. For other cases,
+>    the counters have been cleared after read.
+
+So the above claims to explain RDPMC, but doesn't mention that magic
+value below at all. In fact, I don't see how the above relates to RDPMC
+at all.
+
+> @@ -2141,7 +2157,9 @@ static int x86_pmu_event_idx(struct perf_event *event)
+>  	if (!(event->hw.flags & PERF_X86_EVENT_RDPMC_ALLOWED))
+>  		return 0;
+>  
+> -	if (x86_pmu.num_counters_fixed && idx >= INTEL_PMC_IDX_FIXED) {
+> +	if (is_metric_idx(idx))
+> +		idx = 1 << 29;
+
+I can't find this in the SDM RDPMC description. What does it return?
+
+> +	else if (x86_pmu.num_counters_fixed && idx >= INTEL_PMC_IDX_FIXED) {
+>  		idx -= INTEL_PMC_IDX_FIXED;
+>  		idx |= 1 << 30;
+>  	}
