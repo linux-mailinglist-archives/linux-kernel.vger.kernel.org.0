@@ -2,155 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C6FE2BE16
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 06:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05BA32BE59
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 06:28:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbfE1EDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 00:03:33 -0400
-Received: from alpha.anastas.io ([104.248.188.109]:39219 "EHLO
-        alpha.anastas.io" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbfE1EDX (ORCPT
+        id S1727254AbfE1E2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 00:28:08 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:17042 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbfE1E2H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 00:03:23 -0400
-Received: from authenticated-user (alpha.anastas.io [104.248.188.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by alpha.anastas.io (Postfix) with ESMTPSA id 479367F8F9;
-        Mon, 27 May 2019 23:03:22 -0500 (CDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=anastas.io; s=mail;
-        t=1559016203; bh=d7HSj1NeiZzN0IBJ4m95CWLCN7fcLkCyyM2sJV0Fuxc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S0LRDY54DafHLUD4yrYY7MWwE7LixJzPImPGQVlhthp6CDeOGpNuDni5ud9Isc1aW
-         z5pPl3ifzkyHMF8vi23njGBNXh3B5MPVwo+Z/Px2t/tMlq08Uw/B5X5W3aw3a0NMKP
-         WB8F10Z46YIjGM3Zbu1w+iAwwf6cXVkYsfNcAtOHsRd2HWKXEkrs+0kpSb51jxV/Lr
-         YrE+B2F8b654IBPCIg6c/lqP0ASpslV/yGY+CTTJDHfJ5sYc6KxeOs2gauObfC73lC
-         /EGvH6utCSYZXFd4fKQl9ZEUF92mnKBs5jmbzah2j1mW/PpakeEP8PgoE7BP5o2vTl
-         RnW20pxCO8Dcw==
-From:   Shawn Anastasio <shawn@anastas.io>
-To:     linux-pci@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc:     bhelgaas@google.com, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, sbobroff@linux.ibm.com,
-        xyjxie@linux.vnet.ibm.com, rppt@linux.ibm.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] powerpc/pseries: Allow user-specified PCI resource alignment after init
-Date:   Mon, 27 May 2019 23:03:13 -0500
-Message-Id: <20190528040313.35582-4-shawn@anastas.io>
-In-Reply-To: <20190528040313.35582-1-shawn@anastas.io>
-References: <20190528040313.35582-1-shawn@anastas.io>
+        Tue, 28 May 2019 00:28:07 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190528042804epoutp0240851ac720e651017291ebcd9a2e6e39~ivlLgGsQb2249522495epoutp02_
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 04:28:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190528042804epoutp0240851ac720e651017291ebcd9a2e6e39~ivlLgGsQb2249522495epoutp02_
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1559017684;
+        bh=bQu5BjQ3jzLNW/T4QuFjc+aW8c+wXrn8uNE3SokrEY4=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=rAGOG/Z386FfWG/zMGIvk1qid9pkIB/e0T1eNUJvzWFEo3x79EnJ3+b4jiR5XKKfl
+         33HZYUOSeCGzeK0shRT43fWgBa6DYFDqzCyJGw+PgW+1UYEFko2kFwm6mkpsorvaQg
+         zCdvR5VNhIUOdZLFXIMt7Agi9UFbZs4mxT/2HvRw=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20190528042803epcas5p24124ee639e59191ce3e787e5fcbf26df~ivlLJzHfP1276912769epcas5p2K;
+        Tue, 28 May 2019 04:28:03 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        91.60.04071.3D8BCEC5; Tue, 28 May 2019 13:28:03 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190528042802epcas5p3bbc42e5efadc2476f711960767feb067~ivlKNeJFC2518425184epcas5p3_;
+        Tue, 28 May 2019 04:28:02 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190528042802epsmtrp1b4cc8a7fe63e79feeb3ceff9b281a611~ivlKMhb_J2768927689epsmtrp1G;
+        Tue, 28 May 2019 04:28:02 +0000 (GMT)
+X-AuditID: b6c32a49-5b7ff70000000fe7-47-5cecb8d3e2b5
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B1.17.03662.2D8BCEC5; Tue, 28 May 2019 13:28:02 +0900 (KST)
+Received: from [107.108.73.28] (unknown [107.108.73.28]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190528042801epsmtip17efcc98ae55c763df5d9e500bef3799e~ivlIw6-rq0870108701epsmtip1G;
+        Tue, 28 May 2019 04:28:01 +0000 (GMT)
+Subject: Re: [PATCH] scsi: ufs: Check that space was properly alloced in
+ copy_query_response
+To:     Avri Altman <avri.altman@wdc.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        Bean Huo <beanhuo@micron.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>
+Cc:     Avi Shchislowski <avi.shchislowski@wdc.com>,
+        Alex Lemberg <alex.lemberg@wdc.com>
+From:   Alim Akhtar <alim.akhtar@samsung.com>
+Message-ID: <cd9f0d7b-8ce6-e432-e1df-c4316b191156@samsung.com>
+Date:   Tue, 28 May 2019 09:37:38 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1558427062-5084-1-git-send-email-avri.altman@wdc.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMKsWRmVeSWpSXmKPExsWy7bCmlu7lHW9iDCYu1LW4ti7Y4uuuBcwW
+        L39eZbM4+LCTxaL1/nQmi1UT8ywu75rDZtF9fQebxfLj/5gsWo59ZXHg8pjdcJHF48GhzSwe
+        39d3sHl8fHqLxWPL/s+MHp83yXm0H+hmCmCP4rJJSc3JLEst0rdL4Mr49fQGU8Fn7op/+1cw
+        NTDe5uxi5OSQEDCR+LtqOWsXIxeHkMBuRom/HcuYIJxPjBKnNr9jhHC+MUqsPbedHaalc95a
+        ZhBbSGAvo8T9N+4QRW8ZJT7ev8kKkhAWiJP48egLG0hCRGA7k0T39nNsIAlmgTCJczv3gU1i
+        E9CWuDt9CxOIzStgJ3F/90oWEJtFQFXi6PxPYINEBSIk7h/bwApRIyhxcuYTsBpOAWeJ04/3
+        Q80Ul7j1ZD4ThC0vsf3tHGaIS5vZJf7eFYWwXSTm3W1jhLCFJV4d3wL1jZTEy/42IJsDyM6W
+        6NllDBGukVg67xgLhG0vceDKHBaQEmYBTYn1u/QhNvFJ9P5+wgTRySvR0SYEUa0q0fzuKlSn
+        tMTE7m5WCNtDonnleWh4TmOUaHyxkG0Co8IsJI/NQvLMLCTPzELYvICRZRWjZGpBcW56arFp
+        gWFearlecWJucWleul5yfu4mRnDS0vLcwTjrnM8hRgEORiUeXotTr2OEWBPLiitzDzFKcDAr
+        ifDaTnkTI8SbklhZlVqUH19UmpNafIhRmoNFSZx3EuvVGCGB9MSS1OzU1ILUIpgsEwenVAOj
+        oY2Xz/qS38tVu840eTP+tr6f98Hys+Sti+tWvBNPT5V9G2U3eUpvWcN9/hf5Zz7Htx3vm6Vw
+        dnLrTSvj8yE25kYnxErWSy03vHjmTqSnS7fmb6Xdk2vOX9CZOT1vD/f5HUYCOQX/zn1O8E1P
+        mL68/ufK2a6b19wXNonhEObYUcfZsZHpeiCjEktxRqKhFnNRcSIAd1Tl/lYDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsWy7bCSnO6lHW9iDJ5u0bK4ti7Y4uuuBcwW
+        L39eZbM4+LCTxaL1/nQmi1UT8ywu75rDZtF9fQebxfLj/5gsWo59ZXHg8pjdcJHF48GhzSwe
+        39d3sHl8fHqLxWPL/s+MHp83yXm0H+hmCmCP4rJJSc3JLEst0rdL4Mr49fQGU8Fn7op/+1cw
+        NTDe5uxi5OSQEDCR6Jy3lrmLkYtDSGA3o8SmrmssEAlpiesbJ7BD2MISK/89Z4coes0o8WBJ
+        P1hCWCBO4sejL2wgCRGBnUwSP1s3soEkmAXCJL6sWw41dhqjRNfRycwgCTYBbYm707cwgdi8
+        AnYS93evBFvHIqAqcXT+J1YQW1QgQuLM+xUsEDWCEidnPgGzOQWcJU4/3g+1wExi3uaHzBC2
+        uMStJ/OZIGx5ie1v5zBPYBSahaR9FpKWWUhaZiFpWcDIsopRMrWgODc9t9iwwCgvtVyvODG3
+        uDQvXS85P3cTIzjStLR2MJ44EX+IUYCDUYmH1+LU6xgh1sSy4srcQ4wSHMxKIry2U97ECPGm
+        JFZWpRblxxeV5qQWH2KU5mBREueVzz8WKSSQnliSmp2aWpBaBJNl4uCUamBkfsgS9DoqY453
+        0IVH/tMcX5+4psskfIPx89mnUfeOCaz3evX75DHXs66Pzy6KmTFdNPHbh8jv16/O6HMzX/Tb
+        k7npKvNKB9/gt7eMaz6c6DZS7eZVfWf09VL7swN+Tkc6pF8ufsq7qiOus8Vk/tLnbXKnVP9s
+        1pA9oWeyoOGyckf7ze3GjnfVlViKMxINtZiLihMBSaFThLACAAA=
+X-CMS-MailID: 20190528042802epcas5p3bbc42e5efadc2476f711960767feb067
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20190521082527epcas1p44fe0c4659549ae265c9d59ef7844e57e
+References: <CGME20190521082527epcas1p44fe0c4659549ae265c9d59ef7844e57e@epcas1p4.samsung.com>
+        <1558427062-5084-1-git-send-email-avri.altman@wdc.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On pseries, custom PCI resource alignment specified with the commandline
-argument pci=resource_alignment is disabled due to PCI resources being
-managed by the firmware. However, in the case of PCI hotplug the
-resources are managed by the kernel, so custom alignments should be
-honored in these cases. This is done by only honoring custom
-alignments after initial PCI initialization is done, to ensure that
-all devices managed by the firmware are excluded.
+Hi Avri
 
-Without this ability, sub-page BARs sometimes get mapped in between
-page boundaries for hotplugged devices and are therefore unusable
-with the VFIO framework. This change allows users to request
-page alignment for devices they wish to access via VFIO using
-the pci=resource_alignment commandline argument.
-
-In the future, this could be extended to provide page-aligned
-resources by default for hotplugged devices, similar to what is
-done on powernv by commit 382746376993 ("powerpc/powernv: Override
-pcibios_default_alignment() to force PCI devices to be page aligned")
-
-Signed-off-by: Shawn Anastasio <shawn@anastas.io>
----
- arch/powerpc/include/asm/machdep.h     |  3 +++
- arch/powerpc/kernel/pci-common.c       |  9 +++++++++
- arch/powerpc/platforms/pseries/setup.c | 22 ++++++++++++++++++++++
- 3 files changed, 34 insertions(+)
-
-diff --git a/arch/powerpc/include/asm/machdep.h b/arch/powerpc/include/asm/machdep.h
-index 2fbfaa9176ed..46eb62c0954e 100644
---- a/arch/powerpc/include/asm/machdep.h
-+++ b/arch/powerpc/include/asm/machdep.h
-@@ -179,6 +179,9 @@ struct machdep_calls {
- 
- 	resource_size_t (*pcibios_default_alignment)(void);
- 
-+	/* Called when determining PCI resource alignment */
-+	int (*pcibios_ignore_alignment_request)(void);
-+
- #ifdef CONFIG_PCI_IOV
- 	void (*pcibios_fixup_sriov)(struct pci_dev *pdev);
- 	resource_size_t (*pcibios_iov_resource_alignment)(struct pci_dev *, int resno);
-diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
-index ff4b7539cbdf..8e0d73b4c188 100644
---- a/arch/powerpc/kernel/pci-common.c
-+++ b/arch/powerpc/kernel/pci-common.c
-@@ -238,6 +238,15 @@ resource_size_t pcibios_default_alignment(void)
- 	return 0;
- }
- 
-+int pcibios_ignore_alignment_request(void)
-+{
-+	if (ppc_md.pcibios_ignore_alignment_request)
-+		return ppc_md.pcibios_ignore_alignment_request();
-+
-+	/* Fall back to default method of checking PCI_PROBE_ONLY */
-+	return pci_has_flag(PCI_PROBE_ONLY);
-+}
-+
- #ifdef CONFIG_PCI_IOV
- resource_size_t pcibios_iov_resource_alignment(struct pci_dev *pdev, int resno)
- {
-diff --git a/arch/powerpc/platforms/pseries/setup.c b/arch/powerpc/platforms/pseries/setup.c
-index e4f0dfd4ae33..07f03be02afe 100644
---- a/arch/powerpc/platforms/pseries/setup.c
-+++ b/arch/powerpc/platforms/pseries/setup.c
-@@ -82,6 +82,8 @@ EXPORT_SYMBOL(CMO_PageSize);
- 
- int fwnmi_active;  /* TRUE if an FWNMI handler is present */
- 
-+static int initial_pci_init_done; /* TRUE if initial pcibios init has completed */
-+
- static void pSeries_show_cpuinfo(struct seq_file *m)
- {
- 	struct device_node *root;
-@@ -749,6 +751,23 @@ static resource_size_t pseries_pci_iov_resource_alignment(struct pci_dev *pdev,
- }
- #endif
- 
-+static void pseries_after_init(void)
-+{
-+	initial_pci_init_done = 1;
-+}
-+
-+static int pseries_ignore_alignment_request(void)
-+{
-+	if (initial_pci_init_done)
-+		/*
-+		 * Allow custom alignments after init for things
-+		 * like PCI hotplugging.
-+		 */
-+		return 0;
-+
-+	return pci_has_flag(PCI_PROBE_ONLY);
-+}
-+
- static void __init pSeries_setup_arch(void)
- {
- 	set_arch_panic_timeout(10, ARCH_PANIC_TIMEOUT);
-@@ -797,6 +816,9 @@ static void __init pSeries_setup_arch(void)
- 	}
- 
- 	ppc_md.pcibios_root_bridge_prepare = pseries_root_bridge_prepare;
-+	ppc_md.pcibios_after_init = pseries_after_init;
-+	ppc_md.pcibios_ignore_alignment_request =
-+		pseries_ignore_alignment_request;
- }
- 
- static void pseries_panic(char *str)
--- 
-2.20.1
+On 5/21/19 1:54 PM, Avri Altman wrote:
+> struct ufs_dev_cmd is the main container that supports device management
+> commands. In the case of a read descriptor request, we assume that the
+> proper space was allocated in dev_cmd to hold the returning descriptor.
+> 
+> This is no longer true, as there are flows that doesn't use dev_cmd
+> for device management requests, and was wrong in the first place.
+> 
+Can you please put some light on those flows? Are those platform 
+specific? Just curious.
+> fixes: d44a5f98bb49 (ufs: query descriptor API)
+> 
+> Signed-off-by: Avri Altman <avri.altman@wdc.com>
+> ---
+>   drivers/scsi/ufs/ufshcd.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 8c1c551..3fe3029 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -1917,7 +1917,8 @@ int ufshcd_copy_query_response(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
+>   	memcpy(&query_res->upiu_res, &lrbp->ucd_rsp_ptr->qr, QUERY_OSF_SIZE);
+>   
+>   	/* Get the descriptor */
+> -	if (lrbp->ucd_rsp_ptr->qr.opcode == UPIU_QUERY_OPCODE_READ_DESC) {
+> +	if (hba->dev_cmd.query.descriptor &&
+> +	    lrbp->ucd_rsp_ptr->qr.opcode == UPIU_QUERY_OPCODE_READ_DESC) {
+>   		u8 *descp = (u8 *)lrbp->ucd_rsp_ptr +
+>   				GENERAL_UPIU_REQUEST_SIZE;
+>   		u16 resp_len;
+> 
+This change looks ok to me. I hope you have tested this patch.
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
