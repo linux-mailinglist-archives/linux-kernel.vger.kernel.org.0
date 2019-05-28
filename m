@@ -2,129 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2F3E2BD23
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88CDF2BD2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:20:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbfE1CQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 22:16:01 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35317 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727271AbfE1CQA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 22:16:00 -0400
-Received: by mail-pg1-f194.google.com with SMTP id t1so9979654pgc.2;
-        Mon, 27 May 2019 19:16:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/ZDBl1BXJV4gRCiUXkGA71uLQKwoJlajjwqJkajUw+4=;
-        b=UhuemyhGRRjpvjo5qVobP06kmI59kx+xyITzbazqCStpqZ97FJYVn8OTECed0kbTDB
-         Kdwn02w1ZFAgYBYqhaJed3Bbdb79C1flxTAvxTnpLfQvnY4qChYZYEukAZYTl/WFu0XN
-         MdiHX14Omw5l1lOKKJGr54Q+t2oLZlJuVm+pv76MeVgjT9OyBdwGBBkArl8dvr/rFg+S
-         ztYiwoSaZm+WGfMhznmTRNdS3Z5lTr5dAuHhygrMqPpNY/iVLMNASMRkTMaEADuG5GsC
-         mNII9V/PlJW1XlcQBREfPOw6Hkm7NQFc5M98s/jspk8zldav+ELzQEJzbCN2Wg9FbeA9
-         /9wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/ZDBl1BXJV4gRCiUXkGA71uLQKwoJlajjwqJkajUw+4=;
-        b=rOzg3mR8HMWTpA/bgsFQUsowfBO0E3RgfWwQiOGOzZgs7s19VVIR1YkxnrTqFFL5vy
-         aEzMF71m1gPJAzhpZxEH8r8FFoUws+o+GV3JdTld1p+a4y+eJwU+eoAb6rxOECs+fEIa
-         LgKO/kOD4zu7SyZ/Nr/Aiok31kV4Ei58/9uIQGn9Sl/GvWH039hip1s68aybdkqXJ6Jd
-         XNSN6szKvNyLR9GPqGVLPpWWslggCJ5SoI0nkx8NEp64/m+ZTENpFr7emRCVZiLYqtKM
-         dAkQaTFdPJ89Mtk1v2V5FxWQ+BFPKF1I8f1vZARjiPi2F9SFemdlzzJqScpImXHYZ4eR
-         QoDA==
-X-Gm-Message-State: APjAAAVAEShS5/2UMxyL4Jm6ZMdxbRXwCzE+OVurX4ddhU6SHmABXay0
-        04719IXTvrcBehEe92Px/vcjZYzN
-X-Google-Smtp-Source: APXvYqyZGwJxos1Cv1mf9pb4RExFP7Gu1enbMh3+ke3oKkyto5myX+hvjI6a7SDcbuslxz3SfhVkUg==
-X-Received: by 2002:a17:90a:1ac5:: with SMTP id p63mr2316194pjp.8.1559009759712;
-        Mon, 27 May 2019 19:15:59 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id z11sm16816991pfg.187.2019.05.27.19.15.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 27 May 2019 19:15:58 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH RESEND v2] KVM: X86: Implement PV sched yield hypercall
-Date:   Tue, 28 May 2019 10:15:52 +0800
-Message-Id: <1559009752-8536-1-git-send-email-wanpengli@tencent.com>
+        id S1727981AbfE1CSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 22:18:40 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17584 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727313AbfE1CSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 22:18:39 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A04CAB7387BA1A0B5B88;
+        Tue, 28 May 2019 10:18:37 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 28 May 2019 10:18:29 +0800
+From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Sudeep Holla" <sudeep.holla@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v4 1/2] drivers: base: cacheinfo: Add variable to record max cache line size
+Date:   Tue, 28 May 2019 10:16:53 +0800
+Message-ID: <1559009814-17004-1-git-send-email-zhangshaokun@hisilicon.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559004795-19927-3-git-send-email-wanpengli@tencent.com>
-References: <1559004795-19927-3-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Add coherency_max_size variable to record the maximum cache line size
+for different cache levels. If it is available, we will synchronize
+it as cache line size, otherwise we will use CTR_EL0.CWG reporting
+in cache_line_size() for arm64.
 
-The target vCPUs are in runnable state after vcpu_kick and suitable 
-as a yield target. This patch implements the sched yield hypercall.
-
-17% performance increase of ebizzy benchmark can be observed in an 
-over-subscribe environment. (w/ kvm-pv-tlb disabled, testing TLB flush 
-call-function IPI-many since call-function is not easy to be trigged 
-by userspace workload).
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Jeremy Linton <jeremy.linton@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 ---
- arch/x86/kvm/x86.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ChangeLog since v3:
+  -- Address Greg's comments
+  -- Fix some commit information
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index e7e57de..2f9ec08 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7172,6 +7172,28 @@ void kvm_vcpu_deactivate_apicv(struct kvm_vcpu *vcpu)
- 	kvm_x86_ops->refresh_apicv_exec_ctrl(vcpu);
+ChangeLog since v2:
+  -- Rebase to 5.2-rc2
+  -- Export cache_line_size for I/O driver
+
+ChangeLog since v1:
+  -- Move coherency_max_size to drivers/base/cacheinfo.c
+  -- Address Catalin's comments
+  Link: https://www.spinics.net/lists/arm-kernel/msg723615.html
+
+ drivers/base/cacheinfo.c  | 5 +++++
+ include/linux/cacheinfo.h | 2 ++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+index a7359535caf5..8827c60f51e2 100644
+--- a/drivers/base/cacheinfo.c
++++ b/drivers/base/cacheinfo.c
+@@ -213,6 +213,8 @@ int __weak cache_setup_acpi(unsigned int cpu)
+ 	return -ENOTSUPP;
  }
  
-+void kvm_sched_yield(struct kvm *kvm, u64 dest_id)
-+{
-+	struct kvm_vcpu *target;
-+	struct kvm_apic_map *map;
++unsigned int coherency_max_size;
 +
-+	rcu_read_lock();
-+	map = rcu_dereference(kvm->arch.apic_map);
-+
-+	if (unlikely(!map))
-+		goto out;
-+
-+	if (map->phys_map[dest_id]->vcpu) {
-+		target = map->phys_map[dest_id]->vcpu;
-+		rcu_read_unlock();
-+		kvm_vcpu_yield_to(target);
-+	}
-+
-+out:
-+	if (!target)
-+		rcu_read_unlock();
-+}
-+
- int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
+ static int cache_shared_cpu_map_setup(unsigned int cpu)
  {
- 	unsigned long nr, a0, a1, a2, a3, ret;
-@@ -7218,6 +7240,10 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
- 	case KVM_HC_SEND_IPI:
- 		ret = kvm_pv_send_ipi(vcpu->kvm, a0, a1, a2, a3, op_64_bit);
- 		break;
-+	case KVM_HC_SCHED_YIELD:
-+		kvm_sched_yield(vcpu->kvm, a0);
-+		ret = 0;
-+		break;
- 	default:
- 		ret = -KVM_ENOSYS;
- 		break;
+ 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+@@ -251,6 +253,9 @@ static int cache_shared_cpu_map_setup(unsigned int cpu)
+ 				cpumask_set_cpu(i, &this_leaf->shared_cpu_map);
+ 			}
+ 		}
++		/* record the maximum cache line size */
++		if (this_leaf->coherency_line_size > coherency_max_size)
++			coherency_max_size = this_leaf->coherency_line_size;
+ 	}
+ 
+ 	return 0;
+diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
+index 70e19bc6cc9f..46b92cd61d0c 100644
+--- a/include/linux/cacheinfo.h
++++ b/include/linux/cacheinfo.h
+@@ -17,6 +17,8 @@ enum cache_type {
+ 	CACHE_TYPE_UNIFIED = BIT(2),
+ };
+ 
++extern unsigned int coherency_max_size;
++
+ /**
+  * struct cacheinfo - represent a cache leaf node
+  * @id: This cache's id. It is unique among caches with the same (type, level).
 -- 
 2.7.4
 
