@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F21882C0A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 09:54:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C31772C0A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 09:54:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbfE1HyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 03:54:04 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:17594 "EHLO huawei.com"
+        id S1727872AbfE1HyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 03:54:05 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17593 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726203AbfE1HyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 03:54:03 -0400
+        id S1726921AbfE1HyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 03:54:04 -0400
 Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 18DB99DC278E877CA54E;
+        by Forcepoint Email with ESMTP id 1F21FD6DC32BF474A829;
         Tue, 28 May 2019 15:54:01 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
@@ -22,12 +22,13 @@ To:     <gregkh@linuxfoundation.org>, <jeremy@azazel.net>
 CC:     <thesven73@gmail.com>, <devel@driverdev.osuosl.org>,
         <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
         <matt.sickler@daktronics.com>, Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH -next v3 0/2] cleanup for kpc2000_spi.c
-Date:   Tue, 28 May 2019 16:02:12 +0800
-Message-ID: <20190528080214.18382-1-maowenan@huawei.com>
+Subject: [PATCH -next v3 1/2] staging: kpc2000: report error status to spi core
+Date:   Tue, 28 May 2019 16:02:13 +0800
+Message-ID: <20190528080214.18382-2-maowenan@huawei.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190525081321.121294-1-maowenan@huawei.com>
+In-Reply-To: <20190528080214.18382-1-maowenan@huawei.com>
 References: <20190525081321.121294-1-maowenan@huawei.com>
+ <20190528080214.18382-1-maowenan@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -38,23 +39,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The error status should resotre to m->status in kp_spi_transfer_one_message(),
-and many white spaces in kpc2000_spi.c. patch 1 is to fix the error path, and
-patch 2 is to cleanup kpc2000_spi.c.
+There is an error condition that's not reported to
+the spi core in kp_spi_transfer_one_message().
+It should restore status value to m->status, and
+return it in error path.
 
-v1: remove set but not used variable 'status'.
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/staging/kpc2000/kpc2000_spi.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-v2: fix the subject tile.
-
-v3: add another patch to fix the error condition path and do some clean work for kpc2000_spi.c.
-
-Mao Wenan (2):
-  staging: kpc2000: report error status to spi core
-  staging: kpc2000: replace white spaces with tabs for kpc2000_spi.c
-
- drivers/staging/kpc2000/kpc2000_spi.c | 718 +++++++++++++-------------
- 1 file changed, 361 insertions(+), 357 deletions(-)
-
+diff --git a/drivers/staging/kpc2000/kpc2000_spi.c b/drivers/staging/kpc2000/kpc2000_spi.c
+index 075ae4fafa7d..628a447642ad 100644
+--- a/drivers/staging/kpc2000/kpc2000_spi.c
++++ b/drivers/staging/kpc2000/kpc2000_spi.c
+@@ -374,7 +374,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+     list_for_each_entry(transfer, &m->transfers, transfer_list) {
+         if (transfer->tx_buf == NULL && transfer->rx_buf == NULL && transfer->len) {
+             status = -EINVAL;
+-            break;
++            goto error;
+         }
+         
+         /* transfer */
+@@ -412,7 +412,7 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+             
+             if (count != transfer->len) {
+                 status = -EIO;
+-                break;
++                goto error;
+             }
+         }
+         
+@@ -430,6 +430,10 @@ kp_spi_transfer_one_message(struct spi_master *master, struct spi_message *m)
+     /* done work */
+     spi_finalize_current_message(master);
+     return 0;
++
++ error:
++    m->status = status;
++    return status;
+ }
+ 
+ static void
 -- 
 2.20.1
 
