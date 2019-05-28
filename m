@@ -2,57 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D5B82BD27
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:17:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D3872BD30
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:20:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727970AbfE1CRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 22:17:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49398 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727313AbfE1CRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 22:17:20 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8BF99C0528AC;
-        Tue, 28 May 2019 02:17:20 +0000 (UTC)
-Received: from xz-x1 (dhcp-15-205.nay.redhat.com [10.66.15.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 605301A918;
-        Tue, 28 May 2019 02:17:18 +0000 (UTC)
-Date:   Tue, 28 May 2019 10:17:16 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Alakesh Haloi <alakesh.haloi@gmail.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH] userfaultfd: selftest: fix compiler warning
-Message-ID: <20190528021716.GC22519@xz-x1>
-References: <20190527151859.GA3217@ip-172-31-44-144.us-west-2.compute.internal>
+        id S1728025AbfE1CTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 22:19:15 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40843 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727763AbfE1CTO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 22:19:14 -0400
+Received: by mail-pf1-f195.google.com with SMTP id u17so10467527pfn.7;
+        Mon, 27 May 2019 19:19:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ElrAVYgD/pSAQ+6wQeGjrI42nh6rZoHmZOAfKuzcT8A=;
+        b=vIc21H9T5LGBgUwhAb/LkJd3XusoSLmb4Q14pPQ5a9BIlSGrc3P3Jjs+ShUFsvA7S1
+         x2VL371PJR10mD2sZhvpZZ7chIBmKgAFze604Ij1JHj9P4mcwK5Id0v2/a3I/tMg4Bza
+         xtGCQ3NNVBxsBoC1XQ9GG92hrSa3mIoVKhZyU7eq6WRCT0xuUtTkWZY+g1ycIyFW6QhO
+         gMrYlsY/xrlAIbN9E/QLVvU3eCJaF+RAQmGIpH3fsdCr5GnImqUH89lMcEX5OxcrzoWi
+         qw5iKfVVnbuZru0kuNoTLm8DsMm3F/eyPXVxU4VN8nCKr+kKFrqtEgFkXZ0Ee/OIHxeo
+         vUzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ElrAVYgD/pSAQ+6wQeGjrI42nh6rZoHmZOAfKuzcT8A=;
+        b=WzIKQak6jimLDRESfnkF5kLQjoqvU7OrbiQhVWeuRDiDkkYeTMFnh07VB8hliUC0BU
+         khhKljDXBq0st4U8xjFaH28yV6p6TFTY7Q284OnwguS4BNT5zpsFJJ4lijHyJW+HHRKA
+         UTEEDr8qumBHbGLtG5THjG7kXXsLulMe1ZYBQG9hAJqfelbClU0pZIRAUCxUaQYSdw4m
+         MWGZFA53p8uyeGFhJCqnpHoJeOLavE55saTzB1POHARQY/rB3Rhz/WX/C8QwACn4Szyl
+         NqiAaCZ+54LP0i1RjFkVKQ293kOp03pigXnEISeIMEQ0GEUkNiM8hVUozV7sOcz6am0+
+         iGdg==
+X-Gm-Message-State: APjAAAVdWsQ+B+Ikxp/F1NytFIiGfjx8PWxc91kSKr0+/J8ytGL2afhT
+        Z3kcZweP+9MrNZVLFpkGl0s=
+X-Google-Smtp-Source: APXvYqyJg8sXr+xQ9KqbTq8xkIhL3JBqyrbB/O7RzkwuyYMQNIFZxwzPKpJQsz1wMhFHwE8RQ7PWeA==
+X-Received: by 2002:a17:90a:8586:: with SMTP id m6mr2256305pjn.129.1559009954183;
+        Mon, 27 May 2019 19:19:14 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id b4sm12463484pfd.120.2019.05.27.19.19.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 May 2019 19:19:13 -0700 (PDT)
+Date:   Tue, 28 May 2019 10:18:51 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     emilio@elopez.com.ar, mturquette@baylibre.com, sboyd@kernel.org,
+        maxime.ripard@bootlin.com, wens@csie.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk-sunxi: fix a missing-check bug in sunxi_divs_clk_setup()
+Message-ID: <20190528021851.GA14526@zhanggen-UX430UQ>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190527151859.GA3217@ip-172-31-44-144.us-west-2.compute.internal>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 28 May 2019 02:17:20 +0000 (UTC)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 03:18:59PM +0000, Alakesh Haloi wrote:
-> Fixes following compiler warning
-> 
-> userfaultfd.c: In function ‘usage’:
-> userfaultfd.c:126:2: warning: format not a string literal and no format
-> 	arguments [-Wformat-security]
->   fprintf(stderr, examples);
-> 
-> Signed-off-by: Alakesh Haloi <alakesh.haloi@gmail.com>
+In sunxi_divs_clk_setup(), 'derived_name' is allocated by kstrndup().
+It returns NULL when fails. 'derived_name' should be checked.
 
-Reviewed-by: Peter Xu <peterx@redhat.com>
-
--- 
-Peter Xu
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+---
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index f5b1c00..830bfb7 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -989,6 +989,8 @@ static struct clk ** __init sunxi_divs_clk_setup(struct device_node *node,
+ 		if (endp) {
+ 			derived_name = kstrndup(clk_name, endp - clk_name,
+ 						GFP_KERNEL);
++			if (!derived_name)
++				return NULL;
+ 			factors.name = derived_name;
+ 		} else {
+ 			factors.name = clk_name;
+---
