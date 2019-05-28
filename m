@@ -2,212 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F232C5E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 13:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 791DE2C5EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 13:56:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfE1Lys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 07:54:48 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35181 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726580AbfE1Lyr (ORCPT
+        id S1727085AbfE1Lz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 07:55:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42538 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbfE1Lz4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 07:54:47 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 7B43E80324; Tue, 28 May 2019 13:54:34 +0200 (CEST)
-Date:   Tue, 28 May 2019 13:54:44 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>, x86@kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: My emacs problem -- was Re: [PATCH] x86/fpu: Use
- fault_in_pages_writeable() for pre-faulting
-Message-ID: <20190528115443.GA27627@amd>
-References: <20190526173325.lpt5qtg7c6rnbql5@linutronix.de>
- <20190526173501.6pdufup45rc2omeo@linutronix.de>
- <alpine.LSU.2.11.1905261211400.2004@eggly.anvils>
+        Tue, 28 May 2019 07:55:56 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 301E760F3C; Tue, 28 May 2019 11:55:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1559044555;
+        bh=k813bqE5/UfBXGr5ARK+Gx4QKOpZv/nuAkDg3b3jzBQ=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=JUZBtdgJYCs5pblKIc0RuQHtvm6TnBNEVhH8aoqE71dcShKITPGDsMnvnPPmPvHla
+         LSWMrEhVGZdChMYtAZcoNU6PYY9OwM6UpZoqLKHS85MtGrrctE2H+Vl6d13GWSLfRK
+         N1hVofqV4A4eBNF1OisaJKWSkL41tfN4nb7JjlSk=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5FD3560EA5;
+        Tue, 28 May 2019 11:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1559044550;
+        bh=k813bqE5/UfBXGr5ARK+Gx4QKOpZv/nuAkDg3b3jzBQ=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=WOvlO9OiVt/8dVWyeJQBAOLYO+j8JM2gLCQRAgk5U9cO7vYYd2hVBhSBDn8Yic4mP
+         gLeREwi2xjWCnce+jNnmZU1EpjP7pLVFJ65dljaJ1re9TosnZampAEcLgvdHn4Tsc/
+         0HF4c0DbiFI5ds0Qa6wLLVuGDWmuxq+Hh1ntp+Hk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5FD3560EA5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.11.1905261211400.2004@eggly.anvils>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] rtlwifi: Fix null-pointer dereferences in error handling
+ code of rtl_pci_probe()
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190514123439.10524-1-baijiaju1990@gmail.com>
+References: <20190514123439.10524-1-baijiaju1990@gmail.com>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     pkshih@realtek.com, davem@davemloft.net,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190528115555.301E760F3C@smtp.codeaurora.org>
+Date:   Tue, 28 May 2019 11:55:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
 
---3V7upXqbjpZ4EhLz
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> *BUG 1:
+> In rtl_pci_probe(), when rtlpriv->cfg->ops->init_sw_vars() fails,
+> rtl_deinit_core() in the error handling code is executed.
+> rtl_deinit_core() calls rtl_free_entries_from_scan_list(), which uses
+> rtlpriv->scan_list.list in list_for_each_entry_safe(), but it has been
+> initialized. Thus a null-pointer dereference occurs.
+> The reason is that rtlpriv->scan_list.list is initialized by
+> INIT_LIST_HEAD() in rtl_init_core(), which has not been called.
+> 
+> To fix this bug, rtl_deinit_core() should not be called when
+> rtlpriv->cfg->ops->init_sw_vars() fails.
+> 
+> *BUG 2:
+> In rtl_pci_probe(), rtl_init_core() can fail when rtl_regd_init() in
+> this function fails, and rtlpriv->scan_list.list has not been
+> initialized by INIT_LIST_HEAD(). Then, rtl_deinit_core() in the error
+> handling code of rtl_pci_probe() is executed. Finally, a null-pointer
+> dereference occurs due to the same reason of the above bug.
+> 
+> To fix this bug, the initialization of lists in rtl_init_core() are
+> performed before the call to rtl_regd_init().
+> 
+> These bugs are found by a runtime fuzzing tool named FIZZER written by
+> us.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-Hi!
+Ping & Larry, is this ok to take?
 
-On Sun 2019-05-26 12:25:27, Hugh Dickins wrote:
-> On Sun, 26 May 2019, Sebastian Andrzej Siewior wrote:
-> > On 2019-05-26 19:33:25 [+0200], To Hugh Dickins wrote:
-> > From: Hugh Dickins <hughd@google.com>
-> > =E2=80=A6
-> > > Signed-off-by: Hugh Dickins <hughd@google.com>
-> >=20
-> > Hugh, I took your patch, slapped a signed-off-by line. Please say that
-> > you are fine with it (or object otherwise).
->=20
-> I'm fine with it, thanks Sebastian. Sorry if I wasted your time by not
-> giving it my sign-off in the first place, but I was not comfortable to
-> dabble there without your sign-off too - which it now has. (And thought
-> you might already have your own version anyway: just provided mine as
-> illustration, so that we could be sure of exactly what I'd been testing.)
+-- 
+https://patchwork.kernel.org/patch/10942971/
 
-I applied Hugh's patch on top of -rc2, but still get emacs problems:
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-But this time I'm not sure if it is same emacs problem or different
-emacs problem....
-
-X protocol error: BadValue (integer parameter out of range for
-operation) on protocol request 139
-When compiled with GTK, Emacs cannot recover from X disconnects.
-This is a GTK bug: https://bugzilla.gnome.org/show_bug.cgi?id=3D85715
-For details, see etc/PROBLEMS.
-
-(emacs:8175): GLib-WARNING **: g_main_context_prepare() called
-recursively from within a source's check() or prepare() member.
-
-(emacs:8175): GLib-WARNING **: g_main_context_check() called
-recursively from within a source's check() or prepare() member.
-Fatal error 6: Aborted
-Backtrace:
-emacs[0x8138719]
-emacs[0x8120446]
-emacs[0x813875c]
-emacs[0x80f54c0]
-emacs[0x80f6f3f]
-emacs[0x80f6fab]
-/usr/lib/i386-linux-gnu/libX11.so.6(_XError+0x11a)[0xf6ea1b3a]
-/usr/lib/i386-linux-gnu/libX11.so.6(+0x39b5b)[0xf6e9eb5b]
-/usr/lib/i386-linux-gnu/libX11.so.6(+0x39c26)[0xf6e9ec26]
-/usr/lib/i386-linux-gnu/libX11.so.6(_XEventsQueued+0x6e)[0xf6e9f4be]
-/usr/lib/i386-linux-gnu/libX11.so.6(XPending+0x62)[0xf6e90752]
-/usr/lib/i386-linux-gnu/libgdk-3.so.0(+0x48073)[0xf7566073]
-/lib/i386-linux-gnu/libglib-2.0.so.0(g_main_context_prepare+0x17b)[0xf70244=
-fb]
-/lib/i386-linux-gnu/libglib-2.0.so.0(+0x46f74)[0xf7024f74]
-/lib/i386-linux-gnu/libglib-2.0.so.0(g_main_context_pending+0x34)[0xf702514=
-4]
-/usr/lib/i386-linux-gnu/libgtk-3.so.0(gtk_events_pending+0x1f)[0xf77c9a8f]
-emacs[0x80f55a9]
-emacs[0x812714f]
-emacs[0x8126a95]
-emacs[0x8172db9]
-emacs[0x8192bd7]
-emacs[0x819312d]
-emacs[0x8125634]
-emacs[0x8125c6d]
-emacs[0x812725b]
-emacs[0x8129eaa]
-emacs[0x81c7c90]
-emacs[0x8127815]
-emacs[0x812ada3]
-emacs[0x812bdad]
-emacs[0x812d838]
-emacs[0x818b76c]
-emacs[0x8120890]
-emacs[0x818b66b]
-emacs[0x8124b84]
-emacs[0x8124e3f]
-emacs[0x8059cb0]
-/lib/i386-linux-gnu/i686/cmov/libc.so.6(__libc_start_main+0xf3)[0xf61a7a63]
-emacs[0x805a76f]
-Aborted (core dumped)
-
-Best regards,
-									Pavel
-
-
-commit 018c9da72adf920efd0ba250fcf433b836d3cfbc
-Author: Hugh Dickins <hughd@google.com>
-Date:   Sun May 26 19:33:25 2019 +0200
-
-    x86/fpu: Use fault_in_pages_writeable() for pre-faulting
-   =20
-    Since commit
-   =20
-       d9c9ce34ed5c8 ("x86/fpu: Fault-in user stack if copy_fpstate_to_sigf=
-rame() fails")
-   =20
-    we use get_user_pages_unlocked() to pre-faulting user's memory if a
-    write generates a page fault while the handler is disabled.
-    This works in general and uncovered a bug as reported by Mike Rapoport.
-   =20
-    It has been pointed out that this function may be fragile and a
-    simple pre-fault as in fault_in_pages_writeable() would be a better
-    solution. Better as in taste and simplicity: That write (as performed by
-    the alternative function) performs exactly the same faulting of memory
-    that we had before. This was suggested by Hugh Dickins and Andrew
-    Morton.
-   =20
-    Use fault_in_pages_writeable() for pre-faulting of user's stack.
-   =20
-    Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-    Signed-off-by: Hugh Dickins <hughd@google.com>
-    Link: https://lkml.kernel.org/r/alpine.LSU.2.11.1905251033230.1112@eggl=
-y.anvils
-    [bigeasy: patch description]
-    Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 5a8d118..060d618 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -5,6 +5,7 @@
-=20
- #include <linux/compat.h>
- #include <linux/cpu.h>
-+#include <linux/pagemap.h>
-=20
- #include <asm/fpu/internal.h>
- #include <asm/fpu/signal.h>
-@@ -189,15 +190,7 @@ int copy_fpstate_to_sigframe(void __user *buf, void __=
-user *buf_fx, int size)
- 	fpregs_unlock();
-=20
- 	if (ret) {
--		int aligned_size;
--		int nr_pages;
--
--		aligned_size =3D offset_in_page(buf_fx) + fpu_user_xstate_size;
--		nr_pages =3D DIV_ROUND_UP(aligned_size, PAGE_SIZE);
--
--		ret =3D get_user_pages_unlocked((unsigned long)buf_fx, nr_pages,
--					      NULL, FOLL_WRITE);
--		if (ret =3D=3D nr_pages)
-+		if (!fault_in_pages_writeable(buf_fx, fpu_user_xstate_size))
- 			goto retry;
- 		return -EFAULT;
- 	}
-
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---3V7upXqbjpZ4EhLz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlztIYMACgkQMOfwapXb+vI75ACdHJt+UjplhowDy8ZXEkJhicP0
-z70Anih1OGc59Aa8Dl3kUnN28Z4i83Dy
-=94bm
------END PGP SIGNATURE-----
-
---3V7upXqbjpZ4EhLz--
