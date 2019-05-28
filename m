@@ -2,103 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F45E2C550
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 13:22:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC09A2C555
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 13:23:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbfE1LWG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 07:22:06 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34387 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbfE1LWF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 07:22:05 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w7so8220982plz.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 04:22:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Yh3DAsuBc4gaJRrR/0YoTC38OI767n+zAes4csgVWko=;
-        b=elVmDm2gsK/dIGoNpFbZIl22gU7w01mHXsboFCvVWGWWAqbunekdZawS9aQsnHtYvY
-         yeQDeDCZs2lKT5IMCh+4RuK5NE/eyeg91lZJTiukTaGHDDlzgtSq85TNuI7PEDpblfaM
-         6rHkI7gu//zI5NedRhf5VpsXnLSwFDw32G33w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Yh3DAsuBc4gaJRrR/0YoTC38OI767n+zAes4csgVWko=;
-        b=q1kjGUls8imqMiHZ0tR50jfJoHTbru28vIWbgtT2xT8x5faa3gfZ9Ud4c7OKAmtyi5
-         FUkqd3h7bL883CqDN1U7w3bmnvo+1KmGIswsdqekCeoP8B/C58VBdofWC5YHVVOWZ4wg
-         70K+NIwmrY0LjlliOwd99M69wYWHKRdmzpgEJfIgfQ4Mezh58NwBV21vsaM6J3kE/hKD
-         WJMXu9VwNUI97QWJipjZYxmZR+4WOo2Vb0yYVDlqWiG95bwv1H2wH9iGyspY5EyQR5bp
-         7QvsjtdXUpUXrrs/kgOqhTMhEusU8nfjNFnAF0YC3tS11c8cWVXq4pn4ihNB3T8JDXgk
-         bljg==
-X-Gm-Message-State: APjAAAXlXEFhmfs955BD23rr/EPxDAAFUiLj4NVzIUQITgZ9dfpf4rll
-        Cjk3Nn6cnE0VsazUKpkgorwTDQ==
-X-Google-Smtp-Source: APXvYqwwzVy5Av2JOK5uYN5DGO0T44ahiMxb2TOXN05vS25P0a/7S3kdg9t9OcwT5IQOnJ3KQizstg==
-X-Received: by 2002:a17:902:868c:: with SMTP id g12mr27817259plo.323.1559042525002;
-        Tue, 28 May 2019 04:22:05 -0700 (PDT)
-Received: from [10.176.68.125] ([192.19.248.250])
-        by smtp.gmail.com with ESMTPSA id v9sm13241440pfm.34.2019.05.28.04.22.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 04:22:04 -0700 (PDT)
-Subject: Re: [PATCH 2/3] mmc: core: API for temporarily disabling
- auto-retuning due to errors
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Cc:     linux-rockchip@lists.infradead.org,
-        Double Lo <double.lo@cypress.com>, briannorris@chromium.org,
-        Madhan Mohan R <madhanmohan.r@cypress.com>, mka@chromium.org,
-        Wright Feng <wright.feng@cypress.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Jiong Wu <lohengrin1024@gmail.com>,
-        Ritesh Harjani <riteshh@codeaurora.org>,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Avri Altman <avri.altman@wdc.com>, Martin Hicks <mort@bork.org>
-References: <20190517225420.176893-1-dianders@chromium.org>
- <20190517225420.176893-3-dianders@chromium.org>
- <05af228c-139b-2b7f-f626-36fb34634be5@broadcom.com>
- <4f39e152-04ba-a64e-985a-df93e6d15ff8@intel.com>
-From:   Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <aa8e526f-b382-f3b7-74a5-e0fee09ae096@broadcom.com>
-Date:   Tue, 28 May 2019 13:21:59 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726760AbfE1LXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 07:23:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47690 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726313AbfE1LXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 07:23:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1EFA0AF42;
+        Tue, 28 May 2019 11:23:07 +0000 (UTC)
+Date:   Tue, 28 May 2019 13:23:05 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     jmorris@namei.org, sashal@kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-nvdimm@lists.01.org,
+        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
+        dan.j.williams@intel.com, keith.busch@intel.com,
+        vishal.l.verma@intel.com, dave.jiang@intel.com, zwisler@kernel.org,
+        thomas.lendacky@amd.com, ying.huang@intel.com,
+        fengguang.wu@intel.com, bp@suse.de, bhelgaas@google.com,
+        baiyaowei@cmss.chinamobile.com, tiwai@suse.de, jglisse@redhat.com,
+        david@redhat.com
+Subject: Re: [v6 2/3] mm/hotplug: make remove_memory() interface useable
+Message-ID: <20190528112305.GX1658@dhcp22.suse.cz>
+References: <20190517215438.6487-1-pasha.tatashin@soleen.com>
+ <20190517215438.6487-3-pasha.tatashin@soleen.com>
 MIME-Version: 1.0
-In-Reply-To: <4f39e152-04ba-a64e-985a-df93e6d15ff8@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190517215438.6487-3-pasha.tatashin@soleen.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 5/28/2019 12:04 PM, Adrian Hunter wrote:
-> On 26/05/19 9:42 PM, Arend Van Spriel wrote:
->> On 5/18/2019 12:54 AM, Douglas Anderson wrote:
->>> Normally when the MMC core sees an "-EILSEQ" error returned by a host
->>> controller then it will trigger a retuning of the card.  This is
->>> generally a good idea.
->>
->> Probably a question for Adrian, but how is this retuning scheduled. I recall
->> seeing something in mmc_request_done. How about deferring the retuning upon
->> a release host or is that too sdio specific.
+On Fri 17-05-19 17:54:37, Pavel Tatashin wrote:
+> As of right now remove_memory() interface is inherently broken. It tries
+> to remove memory but panics if some memory is not offline. The problem
+> is that it is impossible to ensure that all memory blocks are offline as
+> this function also takes lock_device_hotplug that is required to
+> change memory state via sysfs.
 > 
-> Below is what I have been carrying the last 4 years.  But according to Douglas'
-> patch, the release would need to be further down.  See 2nd diff below.
-> Would that work?
+> So, between calling this function and offlining all memory blocks there
+> is always a window when lock_device_hotplug is released, and therefore,
+> there is always a chance for a panic during this window.
+> 
+> Make this interface to return an error if memory removal fails. This way
+> it is safe to call this function without panicking machine, and also
+> makes it symmetric to add_memory() which already returns an error.
 
-That makes sense. The loop is needed because the device can be a bit 
-bone headed. So indeed after the loop the device should be awake and 
-able to handle CMD19.
+I was about to object because of the acpi hotremove but looking closer
+acpi_memory_remove_memory and few others already do use __remove_memory
+instead of remove_memory so this is good to go. I really hate how we had
+to BUG in remove_memory as well so this is definitely a good change.
 
-Regards,
-Arend
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  include/linux/memory_hotplug.h |  8 +++--
+>  mm/memory_hotplug.c            | 64 +++++++++++++++++++++++-----------
+>  2 files changed, 49 insertions(+), 23 deletions(-)
+> 
+> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+> index ae892eef8b82..988fde33cd7f 100644
+> --- a/include/linux/memory_hotplug.h
+> +++ b/include/linux/memory_hotplug.h
+> @@ -324,7 +324,7 @@ static inline void pgdat_resize_init(struct pglist_data *pgdat) {}
+>  extern bool is_mem_section_removable(unsigned long pfn, unsigned long nr_pages);
+>  extern void try_offline_node(int nid);
+>  extern int offline_pages(unsigned long start_pfn, unsigned long nr_pages);
+> -extern void remove_memory(int nid, u64 start, u64 size);
+> +extern int remove_memory(int nid, u64 start, u64 size);
+>  extern void __remove_memory(int nid, u64 start, u64 size);
+>  
+>  #else
+> @@ -341,7 +341,11 @@ static inline int offline_pages(unsigned long start_pfn, unsigned long nr_pages)
+>  	return -EINVAL;
+>  }
+>  
+> -static inline void remove_memory(int nid, u64 start, u64 size) {}
+> +static inline int remove_memory(int nid, u64 start, u64 size)
+> +{
+> +	return -EBUSY;
+> +}
+> +
+>  static inline void __remove_memory(int nid, u64 start, u64 size) {}
+>  #endif /* CONFIG_MEMORY_HOTREMOVE */
+>  
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index 328878b6799d..ace2cc614da4 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1735,9 +1735,10 @@ static int check_memblock_offlined_cb(struct memory_block *mem, void *arg)
+>  		endpa = PFN_PHYS(section_nr_to_pfn(mem->end_section_nr + 1))-1;
+>  		pr_warn("removing memory fails, because memory [%pa-%pa] is onlined\n",
+>  			&beginpa, &endpa);
+> -	}
+>  
+> -	return ret;
+> +		return -EBUSY;
+> +	}
+> +	return 0;
+>  }
+>  
+>  static int check_cpu_on_node(pg_data_t *pgdat)
+> @@ -1820,19 +1821,9 @@ static void __release_memory_resource(resource_size_t start,
+>  	}
+>  }
+>  
+> -/**
+> - * remove_memory
+> - * @nid: the node ID
+> - * @start: physical address of the region to remove
+> - * @size: size of the region to remove
+> - *
+> - * NOTE: The caller must call lock_device_hotplug() to serialize hotplug
+> - * and online/offline operations before this call, as required by
+> - * try_offline_node().
+> - */
+> -void __ref __remove_memory(int nid, u64 start, u64 size)
+> +static int __ref try_remove_memory(int nid, u64 start, u64 size)
+>  {
+> -	int ret;
+> +	int rc = 0;
+>  
+>  	BUG_ON(check_hotplug_memory_range(start, size));
+>  
+> @@ -1840,13 +1831,13 @@ void __ref __remove_memory(int nid, u64 start, u64 size)
+>  
+>  	/*
+>  	 * All memory blocks must be offlined before removing memory.  Check
+> -	 * whether all memory blocks in question are offline and trigger a BUG()
+> +	 * whether all memory blocks in question are offline and return error
+>  	 * if this is not the case.
+>  	 */
+> -	ret = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1), NULL,
+> -				check_memblock_offlined_cb);
+> -	if (ret)
+> -		BUG();
+> +	rc = walk_memory_range(PFN_DOWN(start), PFN_UP(start + size - 1), NULL,
+> +			       check_memblock_offlined_cb);
+> +	if (rc)
+> +		goto done;
+>  
+>  	/* remove memmap entry */
+>  	firmware_map_remove(start, start + size, "System RAM");
+> @@ -1858,14 +1849,45 @@ void __ref __remove_memory(int nid, u64 start, u64 size)
+>  
+>  	try_offline_node(nid);
+>  
+> +done:
+>  	mem_hotplug_done();
+> +	return rc;
+>  }
+>  
+> -void remove_memory(int nid, u64 start, u64 size)
+> +/**
+> + * remove_memory
+> + * @nid: the node ID
+> + * @start: physical address of the region to remove
+> + * @size: size of the region to remove
+> + *
+> + * NOTE: The caller must call lock_device_hotplug() to serialize hotplug
+> + * and online/offline operations before this call, as required by
+> + * try_offline_node().
+> + */
+> +void __remove_memory(int nid, u64 start, u64 size)
+> +{
+> +
+> +	/*
+> +	 * trigger BUG() is some memory is not offlined prior to calling this
+> +	 * function
+> +	 */
+> +	if (try_remove_memory(nid, start, size))
+> +		BUG();
+> +}
+> +
+> +/*
+> + * Remove memory if every memory block is offline, otherwise return -EBUSY is
+> + * some memory is not offline
+> + */
+> +int remove_memory(int nid, u64 start, u64 size)
+>  {
+> +	int rc;
+> +
+>  	lock_device_hotplug();
+> -	__remove_memory(nid, start, size);
+> +	rc  = try_remove_memory(nid, start, size);
+>  	unlock_device_hotplug();
+> +
+> +	return rc;
+>  }
+>  EXPORT_SYMBOL_GPL(remove_memory);
+>  #endif /* CONFIG_MEMORY_HOTREMOVE */
+> -- 
+> 2.21.0
+> 
+
+-- 
+Michal Hocko
+SUSE Labs
