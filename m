@@ -2,127 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A252E2C9A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A15F82C9AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:09:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbfE1PIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 11:08:24 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45976 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbfE1PIY (ORCPT
+        id S1727380AbfE1PJr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 11:09:47 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35916 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbfE1PJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 11:08:24 -0400
-Received: by mail-pl1-f196.google.com with SMTP id a5so8451342pls.12;
-        Tue, 28 May 2019 08:08:23 -0700 (PDT)
+        Tue, 28 May 2019 11:09:47 -0400
+Received: by mail-wr1-f65.google.com with SMTP id s17so20650965wru.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 08:09:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cVQZn5lz3Q0vs7h+4/FnhMNYBgv4Mcb2jY7H9Fnu5BY=;
-        b=R1oqg2H/IFKhwqITMjbZ0xsM7Lrc1zRBej67W3Bd5+aiVUrFvQrxurlpzWPfYjWMlw
-         Ua/8h4tCSu/n5qHHq0TOHtjLxuR5O8eSE6FvuMuExF+YUsxhn27I+AD9Fq8UZzC08IuU
-         0euDcGFe/js5tpey1yoDCZOD2ds0ocvC4N+d/Gxes4b60MsQxhflY1YYRaIWMrawUxwo
-         5PoZNQmsoelYbJ1q7gzyqUDMtjkiGXsGMAvZ27cS6qQkfkQQkpMGyUFVfpb6yKBuOell
-         v0IdwBpO7GeEdTjNuib1wKNUX4mu+b7Eb6ZhRx5sqS77LlgjfGhqtzrmfNcnx9yCIh+l
-         wzFA==
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=75ZL3pIfL3dGmPPRYb+LTkSC/IF0uVMpALzsYtJ/Ivw=;
+        b=UFZoz3sjTsHrA2xQmESKW39Nxo5Fa9hoR5CkiAVdhUyGaT9djQIWGKLIy24BjWoMhn
+         K3tpd7Fp7oIFh0VEzwLfFyHBUuQ6LGfJd73M5r1Rr3jwjKiAdQU1CEOJsss1MAnnB1WD
+         p/Hv3sD3DqPJM2PF/Hum9DRlyzCbe5fpESfOnaTJg7ysuviNM+G9YVPL1IjIKanYNTk5
+         inVGV4JeKSP4/LdWrkX/IfQdyUnF7loVHf1FdpHrRWUZhBSgFl91I9mFmG+LqJy8w2fv
+         TEh0B4LVW93Nd3eA0+pjd9IFJPkSxweCWKY0jL6QM67aioIN5k5WDe1CXforWh/aiaTS
+         5ftw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cVQZn5lz3Q0vs7h+4/FnhMNYBgv4Mcb2jY7H9Fnu5BY=;
-        b=pphjOTa3gPJovu7oU2/F/JqsYkWo7o0zygWgKW/Sn8vIwfAIYZh3wUexi5urw8nZ9Z
-         kCpCatrrNbJGrXVRySw/DEVjQq/vyx1s1oBKs9Zy1DpptlAH9PkDzhJUiM6ykUmavLss
-         3os46AV8XjvnyH2aI+AlhaOoxwLvXgDhHhLqIg53Cj+ZjbDolsDFs5G4F3t/ye7vudo+
-         sAA0tYFPVnRrb4pKpOiyPRjpwG7l2lXCrbnixf0QhYRViQEG81Jw6AAu7EpWqo7rGCIO
-         HdGotIjyW3x9Q48pJj7JqGTf5NXvjvd5rI12xbkYCC1f7snSDVbYr3mQdMQqd7574wlw
-         WqmQ==
-X-Gm-Message-State: APjAAAU44mySOcAsk3WoE6Wcw9ACCn0HXR8AQSLi3y5qRnZqB4H7IYy3
-        z+uysSx73QMNfay1HbuvZTTJSsrL
-X-Google-Smtp-Source: APXvYqxosQULHSJqsIKUCgxAVAdKBtywjSteeCZXeX7U+E0iv/a+Ioa6cRUqtq3rcsvRJPXsz39H5A==
-X-Received: by 2002:a17:902:1347:: with SMTP id r7mr91812677ple.45.1559056103539;
-        Tue, 28 May 2019 08:08:23 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e66sm17724593pfe.50.2019.05.28.08.08.22
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=75ZL3pIfL3dGmPPRYb+LTkSC/IF0uVMpALzsYtJ/Ivw=;
+        b=Q+rJWYHdfntfKEGaZQ44p6NY297JK5CTwpNpRlnZGMnBm2TTVwTsGFbX0QM27qtj8W
+         YScdxumYwsp7WuqZ6MrpIqDQGl4RsqbPb+4s5Py9kOMBfbb4RR9YFuF6SIdmBwQU66xX
+         N9A6VVw2TiZKKcf/HqVYUJlmOYvsdHdp6BdxuVobDOadVn0EUcvQryGVHzRGwLYHodHi
+         j/qPNyHLGAq/0r6UkIJ+9hVv5roCulVOiqxxVH8fJgXfbzRCEJuOpvM5iGEiKMA+dzYY
+         5eC+qcM6mVdCn/Yl8MqZaXiiD6T6vyoFDM4ebrchfE3O+dmTdfcuaeShI7cZAODBl73U
+         nB+Q==
+X-Gm-Message-State: APjAAAX8/ZPKs8y7smXyxA0AERzwcSCksL4YTKYIAwuBeyQCSpYnVkOJ
+        OklhV/aIAUxYPfPx5DtunftvdRZiv3Q=
+X-Google-Smtp-Source: APXvYqz7XvXIaJHz2/ebZiHNj271t0NW9547U92SYQlC6lRwF512nztTw3ES99AKxnDI5IpihSkt6g==
+X-Received: by 2002:adf:c506:: with SMTP id q6mr17196082wrf.219.1559056185144;
+        Tue, 28 May 2019 08:09:45 -0700 (PDT)
+Received: from balsini.lon.corp.google.com ([2a00:79e0:d:203:fc05:dec:5003:37b1])
+        by smtp.gmail.com with ESMTPSA id o8sm12457966wrx.50.2019.05.28.08.09.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 08:08:22 -0700 (PDT)
-Date:   Tue, 28 May 2019 08:08:21 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Eduardo Valentin <eduval@amazon.com>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] hwmon: core: add thermal sensors only if
- dev->of_node is present
-Message-ID: <20190528150821.GB5516@roeck-us.net>
-References: <20190517231337.27859-1-eduval@amazon.com>
- <20190517231337.27859-2-eduval@amazon.com>
+        Tue, 28 May 2019 08:09:44 -0700 (PDT)
+From:   Alessio Balsini <balsini@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Alessio Balsini <balsini@android.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH] sched/deadline: Minor typos in dl_entity_overflow comment
+Date:   Tue, 28 May 2019 16:08:40 +0100
+Message-Id: <20190528150840.65581-1-balsini@android.com>
+X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190517231337.27859-2-eduval@amazon.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eduardo,
+Fix two non-critical typos in the documentation of the dl_entity_overflow
+function:
+- "rather then" --> "rather than";
+- "in such way that" --> "in such a way that".
 
-On Fri, May 17, 2019 at 04:13:36PM -0700, Eduardo Valentin wrote:
-> Drivers may register to hwmon and request for also registering
-> with the thermal subsystem (HWMON_C_REGISTER_TZ). However,
-> some of these driver, e.g. marvell phy, may be probed from
-> Device Tree or being dynamically allocated, and in the later
-> case, it will not have a dev->of_node entry.
-> 
-> Registering with hwmon without the dev->of_node may result in
-> different outcomes depending on the device tree, which may
-> be a bit misleading. If the device tree blob has no 'thermal-zones'
-> node, the *hwmon_device_register*() family functions are going
-> to gracefully succeed, because of-thermal,
-> *thermal_zone_of_sensor_register() return -ENODEV in this case,
-> and the hwmon error path handles this error code as success to
-> cover for the case where CONFIG_THERMAL_OF is not set.
-> However, if the device tree blob has the 'thermal-zones'
-> entry, the *hwmon_device_register*() will always fail on callers
-> with no dev->of_node, propagating -EINVAL.
-> 
-> If dev->of_node is not present, calling of-thermal does not
-> make sense. For this reason, this patch checks first if the
-> device has a of_node before going over the process of registering
-> with the thermal subsystem of-thermal interface. And in this case,
-> when a caller of *hwmon_device_register*() with HWMON_C_REGISTER_TZ
-> and no dev->of_node will still register with hwmon, but not with
-> the thermal subsystem. If all the hwmon part bits are in place,
-> the registration will succeed.
-> 
-Makes sense. I'd apply it as-is, but it would be better if you resend
-it to the list to give others a chance to comment.
+Signed-off-by: Alessio Balsini <balsini@android.com>
+---
+ kernel/sched/deadline.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Guenter
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 43901fa3f2693..9b3987b74ca64 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -769,7 +769,7 @@ static bool dl_entity_overflow(struct sched_dl_entity *dl_se,
+ }
+ 
+ /*
+- * Revised wakeup rule [1]: For self-suspending tasks, rather then
++ * Revised wakeup rule [1]: For self-suspending tasks, rather than
+  * re-initializing task's runtime and deadline, the revised wakeup
+  * rule adjusts the task's runtime to avoid the task to overrun its
+  * density.
+@@ -780,7 +780,7 @@ static bool dl_entity_overflow(struct sched_dl_entity *dl_se,
+  * Therefore, runtime can be adjusted to:
+  *     runtime = (dl_runtime / dl_deadline) * (deadline - t)
+  *
+- * In such way that runtime will be equal to the maximum density
++ * In such a way that runtime will be equal to the maximum density
+  * the task can use without breaking any rule.
+  *
+  * [1] Luca Abeni, Giuseppe Lipari, and Juri Lelli. 2015. Constant
+-- 
+2.22.0.rc1.257.g3120a18244-goog
 
-> Cc: Jean Delvare <jdelvare@suse.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: linux-hwmon@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Eduardo Valentin <eduval@amazon.com>
-> ---
->  drivers/hwmon/hwmon.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-> index fcdbac4a56e3..6b3559f58b67 100644
-> --- a/drivers/hwmon/hwmon.c
-> +++ b/drivers/hwmon/hwmon.c
-> @@ -619,7 +619,7 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
->  	if (err)
->  		goto free_hwmon;
->  
-> -	if (dev && chip && chip->ops->read &&
-> +	if (dev && dev->of_node && chip && chip->ops->read &&
->  	    chip->info[0]->type == hwmon_chip &&
->  	    (chip->info[0]->config[0] & HWMON_C_REGISTER_TZ)) {
->  		const struct hwmon_channel_info **info = chip->info;
-> -- 
-> 2.21.0
-> 
