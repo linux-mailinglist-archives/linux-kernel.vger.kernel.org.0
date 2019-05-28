@@ -2,88 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B71992D14F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 00:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E01412D153
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 00:05:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfE1WD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 18:03:56 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45500 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726576AbfE1WD4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 18:03:56 -0400
-Received: by mail-pf1-f196.google.com with SMTP id s11so136659pfm.12
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 15:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZB6HVXPOZ6dJd49xc2bEcD13tElE9byJqAMfahspmoo=;
-        b=ToLngH1jdhNI9UHTF8mqD15qUyNQONEg/Z1t3IceMNsoGy9/azm9l4mpXuBFjzeaNU
-         DF0dDXbXAvHbBYG0zaQQPpZ/V9sOMriSfNAjQuG5jB3Z+5sMan2GbE4PmLqavh+/yWBT
-         dBgFl+Y0x0ZlpdGRI0ttZdHXZKhRYg/Mc4cf+maDZn3pGpuX+sEs1wWdvYCtv4U6SS8v
-         2sZKF5aqRSTCE8fqQLDzWJzu+yMg5zVT2DhXjcFim48rFB+G6IWcYilRZeLczdJ2Jm8l
-         iNuAb1Z6C7WuucQuNmOjutEP7zMEQcJU0AxxjHeZCcGSZVyvtBwq7unQv0RRuwvFOdlg
-         hntQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZB6HVXPOZ6dJd49xc2bEcD13tElE9byJqAMfahspmoo=;
-        b=pPsOVS2ajZY1+a1aHg5f4NDtwHMop+04nqjv6osH2ScVVei9Ofr3t0248fkuzQR4Ed
-         wfRoii0R8U6hEIzAjQguPQbJgM3awqQiJbRdUq8sUaybBTVigdq8qMYst7Baq8+SMKZr
-         MvBz1v28gXOsA8NiOM51KTOvVvDCfMou4Hf1wdIVVHPOReY1L7bPWiRHVZxCd6gIXWZu
-         W1dB0kEOnHKc0KydFvz/D5RNuLhvc1xr1S6UUG/NAw02pzxtnPxj4xv7kDtHCf/VmZqD
-         IWRrFMvViJ9qaq1R2HQ49PAbdfOVPfHUFtSVO9xlcNHE5F4C+aZwwtq84HsTWQn2ouf7
-         GCVg==
-X-Gm-Message-State: APjAAAVz6SZ31T+33Jx+0ceo7EdIsDho2rSTbo15StlLJRIqz9n0p2jl
-        8ocBQ1ZIJaruBdeujCa7Ogne1Q==
-X-Google-Smtp-Source: APXvYqzrWHTxmX3tkqxvO2eICb8IW51vt1RCtasgNZVBi3RMlnod6+qiquwYFm4jFkcJvnbuNsMD4Q==
-X-Received: by 2002:a62:75c6:: with SMTP id q189mr143220121pfc.98.1559081035831;
-        Tue, 28 May 2019 15:03:55 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::1:77ab])
-        by smtp.gmail.com with ESMTPSA id c97sm3674631pje.5.2019.05.28.15.03.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 May 2019 15:03:55 -0700 (PDT)
-Date:   Tue, 28 May 2019 18:03:53 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        cgroups@vger.kernel.org, Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH v5 5/7] mm: rework non-root kmem_cache lifecycle
- management
-Message-ID: <20190528220353.GC26614@cmpxchg.org>
-References: <20190521200735.2603003-1-guro@fb.com>
- <20190521200735.2603003-6-guro@fb.com>
+        id S1728104AbfE1WFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 18:05:25 -0400
+Received: from ja.ssi.bg ([178.16.129.10]:55672 "EHLO ja.ssi.bg"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726576AbfE1WFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 18:05:25 -0400
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id x4SM4E6G010937;
+        Wed, 29 May 2019 01:04:14 +0300
+Date:   Wed, 29 May 2019 01:04:14 +0300 (EEST)
+From:   Julian Anastasov <ja@ssi.bg>
+To:     Jacky Hu <hengqing.hu@gmail.com>
+cc:     jacky.hu@walmart.com, jason.niesz@walmart.com,
+        Wensong Zhang <wensong@linux-vs.org>,
+        Simon Horman <horms@verge.net.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Subject: Re: [PATCH v2] ipvs: add checksum support for gue encapsulation
+In-Reply-To: <20190526064819.16420-1-hengqing.hu@gmail.com>
+Message-ID: <alpine.LFD.2.21.1905290059380.4284@ja.home.ssi.bg>
+References: <20190526064819.16420-1-hengqing.hu@gmail.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521200735.2603003-6-guro@fb.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 01:07:33PM -0700, Roman Gushchin wrote:
-> +	arr = rcu_dereference(cachep->memcg_params.memcg_caches);
-> +
-> +	/*
-> +	 * Make sure we will access the up-to-date value. The code updating
-> +	 * memcg_caches issues a write barrier to match this (see
-> +	 * memcg_create_kmem_cache()).
-> +	 */
-> +	memcg_cachep = READ_ONCE(arr->entries[kmemcg_id]);
 
-READ_ONCE() isn't an SMP barrier, it just prevents compiler
-muckery. This needs an explicit smp_rmb() to pair with the smp_wmb()
-on the other side.
+	Hello,
 
-I realize you're only moving this code, but it would be good to fix
-that up while you're there.
+On Sun, 26 May 2019, Jacky Hu wrote:
+
+> +/* Tunnel encapsulation flags */
+> +#define IP_VS_TUNNEL_ENCAP_FLAG_NOCSUM		(0)
+> +#define IP_VS_TUNNEL_ENCAP_FLAG_CSUM		(1<<0)
+> +#define IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM		(1<<1)
+
+	scripts/checkpatch.pl --strict file.patch
+reports for some issues you should resolve for v3.
+Otherwise, the patch looks good to me.
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
