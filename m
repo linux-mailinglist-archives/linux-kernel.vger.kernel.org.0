@@ -2,143 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA352C223
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:03:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D5092C28C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:06:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfE1JDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:03:53 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37313 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbfE1JDu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:03:50 -0400
-Received: by mail-ed1-f66.google.com with SMTP id w37so30610835edw.4
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xdSAzTv9tDPr6PTxvMhXZVM/Er2L9zs7q0S7NNjW/ok=;
-        b=XG2Xk6QdQnFvZNtT1FJSbJRUie40rMANdM0srLaNSg5DjS2kagtuP2RFgL4VendVOT
-         BabNgErILkSIbHiZbTBTMTYqlOuoHuDBbXOVrWrUlgwpokq6/Wf0htlfVQ/vZhH8sFl9
-         dkgrYC8vItg/cnP9Ums7sqMpu0F3/0mku30MA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xdSAzTv9tDPr6PTxvMhXZVM/Er2L9zs7q0S7NNjW/ok=;
-        b=P+9qdHwr8gbc4gHw+3MpiYpujRCbath22BD0GUa06l7wql0oUtd2IduLP77B09+CbR
-         sEBMjnTeDfoy9ukDXXuQKmGak/uv7WZOMOlPWUyhXSV2hWj+4F4Gl/844KWtYKQ0qLqc
-         X5Onj1GRfLNoSEobWHxTuEDv+UPxHfY1K67caCV7W3LCL6lvfDPMEKKbt6kdnnkTBN0x
-         pGe9WYigTAG/+w55b4EqnLZCppzUUZEKwzvBy+o4z4MPIjKd76tChMDZNjv3xRr7bDfr
-         ALH1Rr/dm7oLmiSDT6Wfff1y+kNE0KO/FkiMBYQGgPZKIUgKSZhWYgYvK0ZOqBKfO/aG
-         Y9zw==
-X-Gm-Message-State: APjAAAXCubrz1vPm2quCK/7wx3e8LlPyOVd+1M7Qf+g93kXdly+87vjj
-        bCpAgK54RoN+/L5f+IfhpfUHnKKHcmU=
-X-Google-Smtp-Source: APXvYqz7N+WGbx3CGIzAcTP4j/O/T91KOj5m1m+2vfXlGhtH0z7XZhnZ1uDp1ATj69H/KzvnZS3Kaw==
-X-Received: by 2002:a50:f4fb:: with SMTP id v56mr128756589edm.13.1559034228987;
-        Tue, 28 May 2019 02:03:48 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 02:03:48 -0700 (PDT)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        linux-fbdev@vger.kernel.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Yisheng Xie <ysxie@foxmail.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Peter Rosin <peda@axentia.se>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Rob Clark <robdclark@gmail.com>
-Subject: [PATCH 26/33] fbdev: remove FBINFO_MISC_USEREVENT around fb_blank
-Date:   Tue, 28 May 2019 11:02:57 +0200
-Message-Id: <20190528090304.9388-27-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
-References: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
+        id S1727225AbfE1JFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:05:41 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:17612 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727461AbfE1JEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:04:38 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 50CE98CBB0DF2193D2C2;
+        Tue, 28 May 2019 17:04:36 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 28 May 2019 17:04:27 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>
+Subject: [PATCH net-next 07/12] net: hns3: modify hclge_init_client_instance()
+Date:   Tue, 28 May 2019 17:02:57 +0800
+Message-ID: <1559034182-24737-8-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1559034182-24737-1-git-send-email-tanhuazhong@huawei.com>
+References: <1559034182-24737-1-git-send-email-tanhuazhong@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the recursion broken in the previous patch we can drop the
-FBINFO_MISC_USEREVENT flag around calls to fb_blank - recursion
-prevention was it's only job.
+hclge_init_client_instance() is a little bloated and there is
+some duplicated code. This patch adds some cleanup for it.
 
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Yisheng Xie <ysxie@foxmail.com>
-Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
-Cc: Peter Rosin <peda@axentia.se>
-Cc: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
 ---
- drivers/video/fbdev/core/fbcon.c   | 5 ++---
- drivers/video/fbdev/core/fbmem.c   | 3 ---
- drivers/video/fbdev/core/fbsysfs.c | 2 --
- 3 files changed, 2 insertions(+), 8 deletions(-)
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 90 +++++++++++++---------
+ 1 file changed, 53 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index a4617067ff24..b5ee89f16d6c 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -2386,9 +2386,8 @@ static int fbcon_blank(struct vc_data *vc, int blank, int mode_switch)
- 			fbcon_cursor(vc, blank ? CM_ERASE : CM_DRAW);
- 			ops->cursor_flash = (!blank);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 02a0698..b7106a5 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -8169,6 +8169,52 @@ static void hclge_info_show(struct hclge_dev *hdev)
+ 	dev_info(dev, "PF info end.\n");
+ }
  
--			if (!(info->flags & FBINFO_MISC_USEREVENT))
--				if (fb_blank(info, blank))
--					fbcon_generic_blank(vc, info, blank);
-+			if (fb_blank(info, blank))
-+				fbcon_generic_blank(vc, info, blank);
- 		}
++static int hclge_init_nic_client_instance(struct hnae3_ae_dev *ae_dev,
++					  struct hclge_vport *vport)
++{
++	struct hnae3_client *client = vport->nic.client;
++	struct hclge_dev *hdev = ae_dev->priv;
++	int ret;
++
++	ret = client->ops->init_instance(&vport->nic);
++	if (ret)
++		return ret;
++
++	set_bit(HCLGE_STATE_NIC_REGISTERED, &hdev->state);
++	hnae3_set_client_init_flag(client, ae_dev, 1);
++
++	if (netif_msg_drv(&hdev->vport->nic))
++		hclge_info_show(hdev);
++
++	return 0;
++}
++
++static int hclge_init_roce_client_instance(struct hnae3_ae_dev *ae_dev,
++					   struct hclge_vport *vport)
++{
++	struct hnae3_client *client = vport->roce.client;
++	struct hclge_dev *hdev = ae_dev->priv;
++	int ret;
++
++	if (!hnae3_dev_roce_supported(hdev) || !hdev->roce_client ||
++	    !hdev->nic_client)
++		return 0;
++
++	client = hdev->roce_client;
++	ret = hclge_init_roce_base_info(vport);
++	if (ret)
++		return ret;
++
++	ret = client->ops->init_instance(&vport->roce);
++	if (ret)
++		return ret;
++
++	set_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state);
++	hnae3_set_client_init_flag(client, ae_dev, 1);
++
++	return 0;
++}
++
+ static int hclge_init_client_instance(struct hnae3_client *client,
+ 				      struct hnae3_ae_dev *ae_dev)
+ {
+@@ -8184,33 +8230,13 @@ static int hclge_init_client_instance(struct hnae3_client *client,
  
- 		if (!blank)
-diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-index d6713dce9e31..25ae466ba593 100644
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -1194,10 +1194,7 @@ static long do_fb_ioctl(struct fb_info *info, unsigned int cmd,
- 	case FBIOBLANK:
- 		console_lock();
- 		lock_fb_info(info);
--		info->flags |= FBINFO_MISC_USEREVENT;
- 		ret = fb_blank(info, arg);
--		info->flags &= ~FBINFO_MISC_USEREVENT;
+ 			hdev->nic_client = client;
+ 			vport->nic.client = client;
+-			ret = client->ops->init_instance(&vport->nic);
++			ret = hclge_init_nic_client_instance(ae_dev, vport);
+ 			if (ret)
+ 				goto clear_nic;
+ 
+-			hnae3_set_client_init_flag(client, ae_dev, 1);
+-			set_bit(HCLGE_STATE_NIC_REGISTERED, &hdev->state);
 -
- 		/* might again call into fb_blank */
- 		fbcon_fb_blanked(info, arg);
- 		unlock_fb_info(info);
-diff --git a/drivers/video/fbdev/core/fbsysfs.c b/drivers/video/fbdev/core/fbsysfs.c
-index 252d4f52d2a5..882b471d619e 100644
---- a/drivers/video/fbdev/core/fbsysfs.c
-+++ b/drivers/video/fbdev/core/fbsysfs.c
-@@ -310,9 +310,7 @@ static ssize_t store_blank(struct device *device,
+-			if (netif_msg_drv(&hdev->vport->nic))
+-				hclge_info_show(hdev);
+-
+-			if (hdev->roce_client &&
+-			    hnae3_dev_roce_supported(hdev)) {
+-				struct hnae3_client *rc = hdev->roce_client;
+-
+-				ret = hclge_init_roce_base_info(vport);
+-				if (ret)
+-					goto clear_roce;
+-
+-				ret = rc->ops->init_instance(&vport->roce);
+-				if (ret)
+-					goto clear_roce;
+-
+-				set_bit(HCLGE_STATE_ROCE_REGISTERED,
+-					&hdev->state);
+-				hnae3_set_client_init_flag(hdev->roce_client,
+-							   ae_dev, 1);
+-			}
++			ret = hclge_init_roce_client_instance(ae_dev, vport);
++			if (ret)
++				goto clear_roce;
  
- 	arg = simple_strtoul(buf, &last, 0);
- 	console_lock();
--	fb_info->flags |= FBINFO_MISC_USEREVENT;
- 	err = fb_blank(fb_info, arg);
--	fb_info->flags &= ~FBINFO_MISC_USEREVENT;
- 	/* might again call into fb_blank */
- 	fbcon_fb_blanked(fb_info, arg);
- 	console_unlock();
+ 			break;
+ 		case HNAE3_CLIENT_UNIC:
+@@ -8230,19 +8256,9 @@ static int hclge_init_client_instance(struct hnae3_client *client,
+ 				vport->roce.client = client;
+ 			}
+ 
+-			if (hdev->roce_client && hdev->nic_client) {
+-				ret = hclge_init_roce_base_info(vport);
+-				if (ret)
+-					goto clear_roce;
+-
+-				ret = client->ops->init_instance(&vport->roce);
+-				if (ret)
+-					goto clear_roce;
+-
+-				set_bit(HCLGE_STATE_ROCE_REGISTERED,
+-					&hdev->state);
+-				hnae3_set_client_init_flag(client, ae_dev, 1);
+-			}
++			ret = hclge_init_roce_client_instance(ae_dev, vport);
++			if (ret)
++				goto clear_roce;
+ 
+ 			break;
+ 		default:
 -- 
-2.20.1
+2.7.4
 
