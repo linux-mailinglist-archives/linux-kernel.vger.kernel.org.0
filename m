@@ -2,118 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEFA42C99F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:07:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97CD92C9A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:08:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbfE1PHa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 11:07:30 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43550 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727296AbfE1PH3 (ORCPT
+        id S1727372AbfE1PIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 11:08:53 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33216 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbfE1PIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 11:07:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=LoZEWGcak24f+2R8BSnDVZaJoSe5u7tIU54xxb61pjk=; b=lVMVifvy8qRU
-        HQ36W9DZRRRfMc6MRaTrRKwZKo++pYkdrUF7BX8C01jv7YIVGLalDRUwvpG7qnRNv9AuDDbRLbeHQ
-        iTUyVEbHQAQPXM48oOmiyLp8bBI/NYZJAck+xkpSofr45TfxAVjpLQS5SWTn3EUo9i1aWjmus4eVR
-        5UTxM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hVdhE-0002qV-3i; Tue, 28 May 2019 15:07:24 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 46DD7440046; Tue, 28 May 2019 16:07:23 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Applied "spi: sh-msiof: Reduce delays in sh_msiof_modify_ctr_wait()" to the spi tree
-In-Reply-To: <20190527121935.5370-1-geert+renesas@glider.be>
-X-Patchwork-Hint: ignore
-Message-Id: <20190528150723.46DD7440046@finisterre.sirena.org.uk>
-Date:   Tue, 28 May 2019 16:07:23 +0100 (BST)
+        Tue, 28 May 2019 11:08:53 -0400
+Received: by mail-ed1-f68.google.com with SMTP id n17so32324372edb.0;
+        Tue, 28 May 2019 08:08:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jDdJ/NRaP92Ox58Zhjk692io8dr+523CgmX10VYba/k=;
+        b=Xgt390RJIOeuEaZWZ83yyVSoRjvEf6KsiWFb7JM45ddWl4FaH0PRjOgU301TB5fP7C
+         nTE3jo11iY7vTD3zObE0aYnYmtMYreFA/gRsnsgcreOlLwmPTOj6NBP+JnkjWmYxVGOX
+         BA8ifI5+muF5efo5PZvz6WrRu4kPCBn/3H4XeMZVP7ftAW7Hd1zGCceVIEGOTnCsUZK7
+         GzRLutJYy12o9jRUiSvmJ+zWNYJg36m8/r1yVJrV4O+Soi3rO3e1jQM4JoB4UJqQhnVF
+         5/1wa/N+6P/zTgBQCQnrhOc8mtnE1dbaGXgCtV0tW9LTTOtNlt5kyWZnBGk95ane/660
+         G1Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jDdJ/NRaP92Ox58Zhjk692io8dr+523CgmX10VYba/k=;
+        b=s30NscFIcOce4bwqi3fUS4HsN8t6Ngw83RWM5zUVbpm13t6/fLdFKLyeRfNgVqXLGJ
+         iE5U86O/qUBCMUXd5sagAo4HYwy2Js9pHHA19gVf4Z0D9TXHc5Pyf1eTj4SDedsbX32N
+         z/Ax4RVTG6V4dh8KbdLddhaufBtpHueP9zpDk/o2+WDD6KdGbd3SoxuPyctbP7y2iFO+
+         ej7zrNqNXPr1hGOhwVmvyhwwvl61mXz2E/1dyCWc2kLYExM6d8+FtSLNLORM/t1uRAIS
+         vxk5p6DPZhyMzDD38i+bKrrR0Gb/4ShOIPAbDb7mwNwfwGgPIy80Q+LmV93otH3/HosT
+         SoLw==
+X-Gm-Message-State: APjAAAUs+aaHuLwhy7Z459icTVboHt758rIIei1z8d3YC/rJvrw3bU2S
+        iSE70oJJu1HA5NCzKMle4KdVhuy0GC8CcgarT60=
+X-Google-Smtp-Source: APXvYqweIelL6MQ2Wpx7+71MEU3iT4OcAg/Sc+V/fWOxiY0eNihtdLD4XF79A4cpdSkjbJ0Xr1Baeuj6EDmbqjcyMKE=
+X-Received: by 2002:a17:906:2acf:: with SMTP id m15mr86421981eje.31.1559056131034;
+ Tue, 28 May 2019 08:08:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190523210651.80902-1-fklassen@appneta.com> <20190523210651.80902-5-fklassen@appneta.com>
+ <CAF=yD-KBNLr5KY-YQ1KMmZGCpYNefSJKaJkZNOwd8nRiedpQtA@mail.gmail.com>
+ <879E5DA6-3A4F-4CE1-9DA5-480EE30109DE@appneta.com> <CAF=yD-LQT7=4vvMwMa96_SFuUd5GywMoae7hGi9n6rQeuhhxuQ@mail.gmail.com>
+ <5BB184F2-6C20-416B-B2AF-A678400CFE3E@appneta.com> <CAF=yD-+6CRyqL6Fq5y2zpw5nnDitYC7G1c2JAVHZTjyw68DYJg@mail.gmail.com>
+ <903DEC70-845B-4C4B-911D-2F203C191C27@appneta.com>
+In-Reply-To: <903DEC70-845B-4C4B-911D-2F203C191C27@appneta.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Tue, 28 May 2019 11:08:14 -0400
+Message-ID: <CAF=yD-Le0XKCfyDBvHmBRVqkwn1D6ZoG=12gss5T62VcN5+1_w@mail.gmail.com>
+Subject: Re: [PATCH net 4/4] net/udpgso_bench_tx: audit error queue
+To:     Fred Klassen <fklassen@appneta.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+> >> I have been wondering about xmit_more
+> >> myself. I don=E2=80=99t think it changes anything for software timesta=
+mps,
+> >> but it may with hardware timestamps.
+> >
+> > It arguably makes the software timestamp too early if taken on the
+> > first segment, as the NIC is only informed of all the new descriptors
+> > when the last segment is written and the doorbell is rung.
+> >
+>
+> Totally makes sense. Possibly this can be improved software TX
+> timestamps by delaying until just before ring buffer is advanced.
+> It would have to be updated in each driver. I may have a look at
+> this once I am complete this patch. Hopefully that one will be a bit
+> smoother.
 
-   spi: sh-msiof: Reduce delays in sh_msiof_modify_ctr_wait()
+How do you see that? The skb_tstamp_tx call currently is already the
+last action before ringing the doorbell, after setting up the
+descriptor. It cannot be set later.
 
-has been applied to the spi tree at
+The only issue specific to GSO is that xmit_more can forego this
+doorbell until the last segment. We want to complicate this logic with
+a special case based on tx_flags. A process that cares should either
+not use GSO, or the timestamp should be associated with the last
+segment as I've been arguing so far.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.3
+> >>> Can you elaborate on this suspected memory leak?
+> >>
+> >> A user program cannot free a zerocopy buffer until it is reported as f=
+ree.
+> >> If zerocopy events are not reported, that could be a memory leak.
+> >>
+> >> I may have a fix. I have added a -P option when I am running an audit.
+> >> It doesn=E2=80=99t appear to affect performance, and since implementin=
+g it I have
+> >> received all error messages expected for both timestamp and zerocopy.
+> >>
+> >> I am still testing.
+> >
+> > I see, a userspace leak from lack of completion notification.
+> >
+> > If the issue is a few missing notifications at the end of the run,
+> > then perhaps cfg_waittime_ms is too short.
+> >
+>
+> I=E2=80=99ll get back to you when I have tested this more thoroughly. Ear=
+ly results
+> suggest that adding the -P poll() option has fixed it without any appreci=
+able
+> performance hit. I=E2=80=99ll share raw results with you, and we can make=
+ a final
+> decision together.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+In the main loop? It still is peculiar that notifications appear to go
+missing unless the process blocks waiting for them. Nothing in
+sock_zerocopy_callback or the queueing onto the error queue should
+cause drops, as far as I know.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+>
+> >> Should the test have failed at this point? I did return an error(), bu=
+t
+> >> the script kept running.
+> >
+> > This should normally be cause for test failure, I think yes. Though
+> > it's fine to send the code for review and possibly even merge, so that
+> > I can take a look.
+> >
+>
+> Sounds like udpgso_bench.sh needs a =E2=80=99set -e=E2=80=99 to ensure it=
+ stops on
+> first error.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Indeed. Ideally even run all tests, but return error if any failed,
+like this recent patch
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+  selftests/bpf: fail test_tunnel.sh if subtests fail
+  https://patchwork.ozlabs.org/patch/1105221/
 
-Thanks,
-Mark
-
-From 635bdb7a3e1fe1531573ff87b92c2506adafe7f7 Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Date: Mon, 27 May 2019 14:19:35 +0200
-Subject: [PATCH] spi: sh-msiof: Reduce delays in sh_msiof_modify_ctr_wait()
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-While the Hardware User Manual does not document the maximum time needed
-for modifying bits in the MSIOF Control Register, experiments on R-Car
-Gen2/Gen3 and SH-Mobile AG5 revealed the following typical modification
-times for the various bits:
-  - CTR.TXE and CTR.RXE: no delay,
-  - CTR.TSCKE: less than 10 ns,
-  - CTR.TFSE: up to a few hundred ns (depending on SPI transfer clock,
-    i.e. less for faster transfers).
-There are no reasons to believe these figures are different for
-SH-MobileR2 SoCs (SH7723/SH7724).
-
-Hence the minimum busy-looping delay of 10 µs is excessive.
-Reduce the delay per loop iteration from 10 to 1 us, and the maximum
-delay from 1000 to 100 µs.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-sh-msiof.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index 6aab7b2136db..b50bdbc27e58 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -229,7 +229,7 @@ static int sh_msiof_modify_ctr_wait(struct sh_msiof_spi_priv *p,
- 	sh_msiof_write(p, CTR, data);
- 
- 	return readl_poll_timeout_atomic(p->mapbase + CTR, data,
--					 (data & mask) == set, 10, 1000);
-+					 (data & mask) == set, 1, 100);
- }
- 
- static irqreturn_t sh_msiof_spi_irq(int irq, void *data)
--- 
-2.20.1
-
+but that may be a lot of code churn and better left to a separate patch.
