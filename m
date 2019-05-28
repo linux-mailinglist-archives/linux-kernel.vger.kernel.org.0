@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51FFB2D15B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 00:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F52D2D15D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 00:09:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbfE1WJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 18:09:16 -0400
+        id S1728166AbfE1WJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 18:09:28 -0400
 Received: from mga01.intel.com ([192.55.52.88]:11133 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726497AbfE1WJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 18:09:13 -0400
+        id S1727684AbfE1WJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 18:09:14 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 15:09:12 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 15:09:13 -0700
 X-ExtLoop1: 1
 Received: from otc-lr-04.jf.intel.com ([10.54.39.157])
-  by orsmga002.jf.intel.com with ESMTP; 28 May 2019 15:09:12 -0700
+  by orsmga002.jf.intel.com with ESMTP; 28 May 2019 15:09:13 -0700
 From:   kan.liang@linux.intel.com
 To:     mingo@kernel.org, acme@redhat.com, peterz@infradead.org,
         vincent.weaver@maine.edu, linux-kernel@vger.kernel.org
 Cc:     alexander.shishkin@linux.intel.com, ak@linux.intel.com,
         jolsa@redhat.com, eranian@google.com,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 2/5] perf/x86/regs: Check reserved bits
-Date:   Tue, 28 May 2019 15:08:31 -0700
-Message-Id: <1559081314-9714-2-git-send-email-kan.liang@linux.intel.com>
+Subject: [PATCH V3 3/5] perf/x86: Clean up PEBS_XMM_REGS
+Date:   Tue, 28 May 2019 15:08:32 -0700
+Message-Id: <1559081314-9714-3-git-send-email-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1559081314-9714-1-git-send-email-kan.liang@linux.intel.com>
 References: <1559081314-9714-1-git-send-email-kan.liang@linux.intel.com>
@@ -37,59 +37,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-The perf fuzzer triggers a warning which map to:
+Use generic macro PERF_REG_EXTENDED_MASK to replace PEBS_XMM_REGS to
+avoid duplication.
 
-        if (WARN_ON_ONCE(idx >= ARRAY_SIZE(pt_regs_offset)))
-                return 0;
-
-The bits between XMM registers and generic registers are reserved.
-But perf_reg_validate() doesn't check these bits.
-
-Add PERF_REG_X86_RESERVED for reserved bits on X86.
-Check the reserved bits in perf_reg_validate().
-
-Fixes: 878068ea270e ("perf/x86: Support outputting XMM registers")
-Reported-by: Vince Weaver <vincent.weaver@maine.edu>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
-No changes since V2
+New for V3
 
- arch/x86/kernel/perf_regs.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/events/core.c       |  4 ++--
+ arch/x86/events/intel/ds.c   |  2 +-
+ arch/x86/events/perf_event.h | 18 ------------------
+ 3 files changed, 3 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
-index 07c30ee..bb7e113 100644
---- a/arch/x86/kernel/perf_regs.c
-+++ b/arch/x86/kernel/perf_regs.c
-@@ -74,6 +74,9 @@ u64 perf_reg_value(struct pt_regs *regs, int idx)
- 	return regs_get_register(regs, pt_regs_offset[idx]);
- }
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index f315425..7708a6f 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -561,13 +561,13 @@ int x86_pmu_hw_config(struct perf_event *event)
+ 	}
  
-+#define PERF_REG_X86_RESERVED	(((1ULL << PERF_REG_X86_XMM0) - 1) & \
-+				 ~((1ULL << PERF_REG_X86_MAX) - 1))
-+
- #ifdef CONFIG_X86_32
- #define REG_NOSUPPORT ((1ULL << PERF_REG_X86_R8) | \
- 		       (1ULL << PERF_REG_X86_R9) | \
-@@ -86,7 +89,7 @@ u64 perf_reg_value(struct pt_regs *regs, int idx)
- 
- int perf_reg_validate(u64 mask)
- {
--	if (!mask || (mask & REG_NOSUPPORT))
-+	if (!mask || (mask & (REG_NOSUPPORT | PERF_REG_X86_RESERVED)))
+ 	/* sample_regs_user never support XMM registers */
+-	if (unlikely(event->attr.sample_regs_user & PEBS_XMM_REGS))
++	if (unlikely(event->attr.sample_regs_user & PERF_REG_EXTENDED_MASK))
  		return -EINVAL;
+ 	/*
+ 	 * Besides the general purpose registers, XMM registers may
+ 	 * be collected in PEBS on some platforms, e.g. Icelake
+ 	 */
+-	if (unlikely(event->attr.sample_regs_intr & PEBS_XMM_REGS)) {
++	if (unlikely(event->attr.sample_regs_intr & PERF_REG_EXTENDED_MASK)) {
+ 		if (x86_pmu.pebs_no_xmm_regs)
+ 			return -EINVAL;
  
- 	return 0;
-@@ -112,7 +115,7 @@ void perf_get_regs_user(struct perf_regs *regs_user,
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index f860cdd..e6a0fa9 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -987,7 +987,7 @@ static u64 pebs_update_adaptive_cfg(struct perf_event *event)
+ 		pebs_data_cfg |= PEBS_DATACFG_GP;
  
- int perf_reg_validate(u64 mask)
- {
--	if (!mask || (mask & REG_NOSUPPORT))
-+	if (!mask || (mask & (REG_NOSUPPORT | PERF_REG_X86_RESERVED)))
- 		return -EINVAL;
+ 	if ((sample_type & PERF_SAMPLE_REGS_INTR) &&
+-	    (attr->sample_regs_intr & PEBS_XMM_REGS))
++	    (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK))
+ 		pebs_data_cfg |= PEBS_DATACFG_XMMS;
  
- 	return 0;
+ 	if (sample_type & PERF_SAMPLE_BRANCH_STACK) {
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index a6ac2f4..d3b6e90 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -121,24 +121,6 @@ struct amd_nb {
+ 	 (1ULL << PERF_REG_X86_R14)   | \
+ 	 (1ULL << PERF_REG_X86_R15))
+ 
+-#define PEBS_XMM_REGS                   \
+-	((1ULL << PERF_REG_X86_XMM0)  | \
+-	 (1ULL << PERF_REG_X86_XMM1)  | \
+-	 (1ULL << PERF_REG_X86_XMM2)  | \
+-	 (1ULL << PERF_REG_X86_XMM3)  | \
+-	 (1ULL << PERF_REG_X86_XMM4)  | \
+-	 (1ULL << PERF_REG_X86_XMM5)  | \
+-	 (1ULL << PERF_REG_X86_XMM6)  | \
+-	 (1ULL << PERF_REG_X86_XMM7)  | \
+-	 (1ULL << PERF_REG_X86_XMM8)  | \
+-	 (1ULL << PERF_REG_X86_XMM9)  | \
+-	 (1ULL << PERF_REG_X86_XMM10) | \
+-	 (1ULL << PERF_REG_X86_XMM11) | \
+-	 (1ULL << PERF_REG_X86_XMM12) | \
+-	 (1ULL << PERF_REG_X86_XMM13) | \
+-	 (1ULL << PERF_REG_X86_XMM14) | \
+-	 (1ULL << PERF_REG_X86_XMM15))
+-
+ /*
+  * Per register state.
+  */
 -- 
 2.7.4
 
