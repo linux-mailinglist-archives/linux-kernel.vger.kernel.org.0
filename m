@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC3122D1E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A9DD2D1D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:02:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbfE1XC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 19:02:57 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36606 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbfE1XCP (ORCPT
+        id S1727670AbfE1XCU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 19:02:20 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34480 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727592AbfE1XCR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 19:02:15 -0400
-Received: by mail-pf1-f194.google.com with SMTP id u22so261559pfm.3;
-        Tue, 28 May 2019 16:02:15 -0700 (PDT)
+        Tue, 28 May 2019 19:02:17 -0400
+Received: by mail-pg1-f196.google.com with SMTP id h2so115729pgg.1;
+        Tue, 28 May 2019 16:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SeJxePvC4sabxiRHYAabfO1ipBpmHj92mjpgW9k3e3s=;
-        b=IRA6tw2I1cstnL3LtM4RRGS2qL9ertV8mv5Uw5LUAQlQ8Zit2XhesSqI4EPtxtceaw
-         cmMvvOorT/cz66YR9oBtcLh9DJ/LLqHSOSA0MeYaxFtfwdh9ymlhmdqlZ/NNG3sWGzPY
-         0cF4ekr5bkE2gJFcGa4iVB+YADFXl5wnIFQ9XRtXbiyId7AFybqBZxN0bszXTmmIAErq
-         lj3/VWtLFo3LlPVld63mQPI+TVGCzebU5RHXp13R0OzFwe01YiqHMYt0VFviS+O9xv3T
-         vulDDSQJQApO7poz1PVasIgrxaL9ykCEb45uLxYKw+Qbt41l2mAmtT331UwEbSEumu3K
-         nuBw==
+        bh=TYxqVL6ya69qBm4d49uLd/seawSvaqtAiTG+XLQaxa8=;
+        b=MJ0SeKUfWyrctojOBtc2sUIRaYZjaPr/SfW6rtwAj13+sI6jDqQ8wpcYbyqf8JBgTp
+         3K/2kDdfdDdKj8vAFxNjPobsLjXBIbGOgv56DB/ngzeAt00MKfI0WHMaZ2gaBCqKIMxL
+         jEfgENpp3+blpCPEks+/TVdmAGZqqdyc57pGju8LIku/a1prFdsYMuygNueazoK0JS1f
+         LhZ95SPE67XH8nyKJskl2AV43xc3sm6JzDA0DEHhKyWB2iWDZOOXDMKDLj3ePXCo5qWn
+         nUNj1RYlOANAvKcncMGI+gdRrNfRTaxdzDMEIaMEcWhKz7dPKAPFOeey5b9+i1djez+g
+         YuvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SeJxePvC4sabxiRHYAabfO1ipBpmHj92mjpgW9k3e3s=;
-        b=ava5LA9xueFSV532JhKdcNYAIQ3MNTsPLyS7BLxQj7FTyKiLq7CQkeyVTuQ7cv6zzZ
-         nRqzo0duKEb5QQQBuBcgKumvgtSt+avtojKPderGFhS5Q6aGOTGITh71ot3PY51EiwwZ
-         LA09ffF6jXFdwkpXC9KMpYqzw6BHm2Tzu5jBNN2t2j38DIEcJ9yggGLEMA6mv/QZSKHI
-         B1cbeJtVcrz3jR0mtt7M1Nf7FnOmKv/QYQ2mAb9oz0CROzDx625z+BnEglRK0q3Wj8OP
-         Kp0Skb0ySec4PtuD5XhlDl7pQz4Tzs+8H/FZXB7SLAwEGBSKIuyD2HcZ1WZF8jc9tLCH
-         UjCQ==
-X-Gm-Message-State: APjAAAXAUNRUnc5G5CL3NpgrrXW+i5mV9lgnJvGc0vHFc3g/Ue+EViZd
-        0po7K2OjDT7rIDBEDLjbwEc=
-X-Google-Smtp-Source: APXvYqxi9YK6HGk2Gh1uvuFERX3GE48Kp223TejwXLP240IqtsOu+uDEpzZgTxbUhc0z5eH+IFnOqA==
-X-Received: by 2002:a17:90a:b388:: with SMTP id e8mr8676659pjr.97.1559084534943;
-        Tue, 28 May 2019 16:02:14 -0700 (PDT)
+        bh=TYxqVL6ya69qBm4d49uLd/seawSvaqtAiTG+XLQaxa8=;
+        b=T79QbtorNjXdVKPISEKSouRiqS93P2lLq1yQzuWwHeajLe85+3f2PAva9pTyi3Qz8J
+         zq+eOQIqlJ8hBaEYT2n+Zi6jOUym85zDlM22qLI5jCMKq/qW1m7ku0A1SBtr38cICQXA
+         4hJm9yjE5MnOktAlE5uIhbyoBReD4i5vLUVkmZ9JKVlGakZRrq+pEnW8LnoHgm8rClMA
+         8WgjT4sWC8L+3WxuhrZY5YBUjAmXwC6BUdpCLdAeuC0rd3oNjwT87Xv0xiGYN5AujlfL
+         uaqYy52Yn+Fe+EbLECkKE8xTVSwD4PtUrTycbTaVx8Y6It1zuqWe6FjzcvZyRI8fb+2a
+         s/Ng==
+X-Gm-Message-State: APjAAAVuEJw63WkJju+yDQH/YMm4oqnuQgiw6BoMDp4JGsU2fDf6c4IX
+        Zuat9Y893v/Tqis2QDXSHT4=
+X-Google-Smtp-Source: APXvYqyO9aGngsIKVqNqsAs0/kG5aaHpoSPbIa3wS0StMA1Ypw++h0bJTbJ1hAlqIYYRutjO6nnBmA==
+X-Received: by 2002:a62:cfc4:: with SMTP id b187mr147977844pfg.134.1559084536452;
+        Tue, 28 May 2019 16:02:16 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id j13sm14369573pfh.13.2019.05.28.16.02.13
+        by smtp.gmail.com with ESMTPSA id j13sm14369573pfh.13.2019.05.28.16.02.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 16:02:14 -0700 (PDT)
+        Tue, 28 May 2019 16:02:15 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -58,9 +58,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         Gregory Fong <gregory.0xf0@gmail.com>,
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 4/7] ARM: dts: BCM53573: Fix DTC W=1 warnings
-Date:   Tue, 28 May 2019 16:01:31 -0700
-Message-Id: <20190528230134.27007-5-f.fainelli@gmail.com>
+Subject: [PATCH 5/7] ARM: dts: BCM63xx: Fix DTC W=1 warnings
+Date:   Tue, 28 May 2019 16:01:32 -0700
+Message-Id: <20190528230134.27007-6-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190528230134.27007-1-f.fainelli@gmail.com>
 References: <20190528230134.27007-1-f.fainelli@gmail.com>
@@ -69,120 +69,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the the unit_address_vs_reg warnings and unnecessary
+Fix the bulk of the unit_address_vs_reg warnings and unnecessary
 \#address-cells/#size-cells without "ranges" or child "reg" property
-warnings.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- arch/arm/boot/dts/bcm47189-luxul-xap-1440.dts | 4 +---
- arch/arm/boot/dts/bcm47189-luxul-xap-810.dts  | 4 +---
- arch/arm/boot/dts/bcm47189-tenda-ac9.dts      | 4 +---
- arch/arm/boot/dts/bcm53573.dtsi               | 2 +-
- arch/arm/boot/dts/bcm947189acdbmr.dts         | 4 +---
- 5 files changed, 5 insertions(+), 13 deletions(-)
+ arch/arm/boot/dts/bcm63138.dtsi    | 9 +++------
+ arch/arm/boot/dts/bcm963138dvt.dts | 2 +-
+ 2 files changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm47189-luxul-xap-1440.dts b/arch/arm/boot/dts/bcm47189-luxul-xap-1440.dts
-index eb59508578e4..57ca1cfaecd8 100644
---- a/arch/arm/boot/dts/bcm47189-luxul-xap-1440.dts
-+++ b/arch/arm/boot/dts/bcm47189-luxul-xap-1440.dts
-@@ -15,7 +15,7 @@
- 		bootargs = "earlycon";
+diff --git a/arch/arm/boot/dts/bcm63138.dtsi b/arch/arm/boot/dts/bcm63138.dtsi
+index e6a41e1b27fd..9c0325cf9e22 100644
+--- a/arch/arm/boot/dts/bcm63138.dtsi
++++ b/arch/arm/boot/dts/bcm63138.dtsi
+@@ -41,9 +41,6 @@
  	};
  
--	memory {
-+	memory@0 {
- 		device_type = "memory";
- 		reg = <0x00000000 0x08000000>;
- 	};
-@@ -38,8 +38,6 @@
- 
- 	gpio-keys {
- 		compatible = "gpio-keys";
+ 	clocks {
 -		#address-cells = <1>;
 -		#size-cells = <0>;
- 
- 		restart {
- 			label = "Reset";
-diff --git a/arch/arm/boot/dts/bcm47189-luxul-xap-810.dts b/arch/arm/boot/dts/bcm47189-luxul-xap-810.dts
-index 4c71f5e95e00..2e1a7e382cb7 100644
---- a/arch/arm/boot/dts/bcm47189-luxul-xap-810.dts
-+++ b/arch/arm/boot/dts/bcm47189-luxul-xap-810.dts
-@@ -15,7 +15,7 @@
- 		bootargs = "earlycon";
- 	};
- 
--	memory {
-+	memory@0 {
- 		device_type = "memory";
- 		reg = <0x00000000 0x08000000>;
- 	};
-@@ -48,8 +48,6 @@
- 
- 	gpio-keys {
- 		compatible = "gpio-keys";
--		#address-cells = <1>;
--		#size-cells = <0>;
- 
- 		restart {
- 			label = "Reset";
-diff --git a/arch/arm/boot/dts/bcm47189-tenda-ac9.dts b/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
-index 5ad53ea52d0a..049cdfd92706 100644
---- a/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
-+++ b/arch/arm/boot/dts/bcm47189-tenda-ac9.dts
-@@ -15,7 +15,7 @@
- 		bootargs = "console=ttyS0,115200 earlycon";
- 	};
- 
--	memory {
-+	memory@0 {
- 		device_type = "memory";
- 		reg = <0x00000000 0x08000000>;
- 	};
-@@ -58,8 +58,6 @@
- 
- 	gpio-keys {
- 		compatible = "gpio-keys";
--		#address-cells = <1>;
--		#size-cells = <0>;
- 
- 		rfkill {
- 			label = "WiFi";
-diff --git a/arch/arm/boot/dts/bcm53573.dtsi b/arch/arm/boot/dts/bcm53573.dtsi
-index b29695bd4855..4af8e3293cff 100644
---- a/arch/arm/boot/dts/bcm53573.dtsi
-+++ b/arch/arm/boot/dts/bcm53573.dtsi
-@@ -32,7 +32,7 @@
+-
+ 		/* UBUS peripheral clock */
+ 		periph_clk: periph_clk {
+ 			#clock-cells = <0>;
+@@ -94,7 +91,7 @@
+ 			reg = <0x1e000 0x100>;
  		};
- 	};
  
--	mpcore {
-+	mpcore@18310000 {
- 		compatible = "simple-bus";
- 		ranges = <0x00000000 0x18310000 0x00008000>;
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/bcm947189acdbmr.dts b/arch/arm/boot/dts/bcm947189acdbmr.dts
-index 4991700ae6b0..b0b8c774a37f 100644
---- a/arch/arm/boot/dts/bcm947189acdbmr.dts
-+++ b/arch/arm/boot/dts/bcm947189acdbmr.dts
-@@ -17,7 +17,7 @@
- 		bootargs = "console=ttyS0,115200 earlycon";
+-		gic: interrupt-controller@1e100 {
++		gic: interrupt-controller@1f000 {
+ 			compatible = "arm,cortex-a9-gic";
+ 			reg = <0x1f000 0x1000
+ 				0x1e100 0x100>;
+@@ -125,7 +122,7 @@
+ 						  IRQ_TYPE_LEVEL_HIGH)>;
+ 		};
+ 
+-		armpll: armpll {
++		armpll: armpll@20000 {
+ 			#clock-cells = <0>;
+ 			compatible = "brcm,bcm63138-armpll";
+ 			clocks = <&periph_clk>;
+@@ -144,7 +141,7 @@
+ 			#reset-cells = <2>;
+ 		};
+ 
+-		ahci: sata@8000 {
++		ahci: sata@a000 {
+ 			compatible = "brcm,bcm63138-ahci", "brcm,sata3-ahci";
+ 			reg-names = "ahci", "top-ctrl";
+ 			reg = <0xa000 0x9ac>, <0x8040 0x24>;
+diff --git a/arch/arm/boot/dts/bcm963138dvt.dts b/arch/arm/boot/dts/bcm963138dvt.dts
+index 8dca97eeaf57..43a5f78acd5e 100644
+--- a/arch/arm/boot/dts/bcm963138dvt.dts
++++ b/arch/arm/boot/dts/bcm963138dvt.dts
+@@ -16,7 +16,7 @@
+ 		stdout-path = &serial0;
  	};
  
 -	memory {
 +	memory@0 {
- 		device_type = "memory";
- 		reg = <0x00000000 0x08000000>;
+ 		reg = <0x0 0x08000000>;
  	};
-@@ -43,8 +43,6 @@
  
- 	gpio-keys {
- 		compatible = "gpio-keys";
--		#address-cells = <1>;
--		#size-cells = <0>;
- 
- 		restart {
- 			label = "Reset";
 -- 
 2.17.1
 
