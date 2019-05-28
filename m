@@ -2,86 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E61D42C17A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D7D22C17D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:38:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfE1IhL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 04:37:11 -0400
-Received: from sonic312-20.consmr.mail.bf2.yahoo.com ([74.6.128.82]:42225 "EHLO
-        sonic312-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726371AbfE1IhK (ORCPT
+        id S1726789AbfE1IiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 04:38:09 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:34852 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726557AbfE1IiI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 04:37:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559032629; bh=tPMFdTY+0vCEHEJdls+8ad0RGQoZkRGbQBF0vnIRvYg=; h=Date:From:Reply-To:Subject:References:From:Subject; b=hE6RNa1pAEP8Wz+7orRGbO9okjLovRx55aF152AvzjXp1dBZzs6KiKrBrDtDJlay1rHFmjeRqDwmbqHWY6Y1439jl5Y4d42VJco5TQbvgf35FnowuzDGYRwelkJdVjNgm769BrXNs9lnP1PTEbKVs7gMusi/nZdy1p6qWLvMKcMaNqOHh0ltSCtZjhYIs6/jR+cDdYPZhzgAnQDDjaEydZYz2ZucVDuqL+BFpgB2iKuQpyhgAU+9XoN7a8DyhcvsHyZm4xyPp4TUQ/wb8KMJC3QBiNk/fW8SyDnRiRrGpN04m0ZHi1ru/W6FtTM9REHRruhzJPET4hnhugCp7T8myA==
-X-YMail-OSG: W._gMq0VM1m2mgIMUSxtGQXXvbs0qOL7BGw1WywoExvTOl8TKU2eHSrQ9_mcfp3
- Zy95HIuWIrvQdRGU8b7rGYkO8axoLFNHQsSXKzAGQ.5Kr20PORUlcLk36NA1.RzTSyetrXIM84c1
- .AWgGv41uCXYgcdmQye1GQxEm5IBYs6Ztn31yv2RLbBvEtJfQcRc.D8D_PNvwdDjnbLzV3UgrTul
- kCfjr3CZ5Epj64HUywPHcaV7FBk5oehyaw1sJa9GCE73Enk37vyb0PlrzaHc_a8yy2fE6U7cGWVn
- n8Nv1hcssqql_kZF1cVE0UpI8fQEvotteOEDOVJ.HratlJsgeygdN3FLddVNTKtRfekr.RG9EB9i
- 9VeGRzzxwwFSlVu2QsgsbZKOTesTFCedNYyWQouxAN50z83QM3uqARz1cIddy5nExjaxsbuTZ24A
- Sm8hbhLOGzVpctaaJHZnsjYzSKtX946uJx9i_qnsDVDGsKEEDVyZHEqO9x0b5arZur3w5ZHqrzvM
- eYom9w8fiN3lcOQ8kOZ6oTlpoldEyxrX0fHmKBIuOFS4mzkhqOGVNhXbFFI8vS4Yc9vuju9JggbL
- zVHoV3gWc05jw_7jugmCYNKhBxXsJuJTDUPGaOhvzPMthS0rhXC_dBICJW4bP9_BncisANA6pMBW
- KlguWxrvt0pgYuSUH7WnO9NQAtqm3.98NKxtoBRtXuTq4Sml0JBWyxegEZ92gvrFLlxgv7GFh2La
- gNM2ESa0iT4nfg5n_Cd5DAAoLnzi6_6rPy5g.sH_bQ2g_8vEZZsoGAACWCn39DB81uxUDNFz2Ag4
- CXDUF.5nUeAhZsUX8ElayL7xHGUUWEsGONzTAlXbReOxqRaKuVmQXtwmRGuU.o1wZCzpVWSLLvjh
- 8Vq0yJpZ1f2VSvLCmnLySpBnN.F0wWx6xI8nrVYDome8RuqMbzWOBzY10UQPBqXbjT1LUqYVIups
- pmNdtNVisx0ap6LQlEZqPkWQAjd20LW10abh6vsFyP3yQ7oHlnc4rlT7YC517DeLpdL7p3iOrm93
- wzMYSlkStug6.qGzIihkGZWrLhDwDxjcSSHxuTZiyztu37DEB8oKmL4d8eSt82X_VfYnkEQkH9Bh
- W7ohLGu4zqlhA7QWP56QT.lCjx7DWrUAZtoSWNNilhivB_zrgGVrfkkPd6gtO3cI3zqs32e66mbO
- NNKZZnNaYv19SiFb_y4fLQ3mPciu_dMoYs4TEorH4oNm2RFeMJn3WFkM-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.bf2.yahoo.com with HTTP; Tue, 28 May 2019 08:37:09 +0000
-Date:   Tue, 28 May 2019 08:37:06 +0000 (UTC)
-From:   DR Rhama David Benson <bensondrrdavid@gmail.com>
-Reply-To: DR Rhama David Benson <bdrrhamadavid221@gmail.com>
-Message-ID: <2802253.5593824.1559032626895@mail.yahoo.com>
-Subject: Please read carefully,
+        Tue, 28 May 2019 04:38:08 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4S8Ypex005799;
+        Tue, 28 May 2019 03:38:01 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2sq24q31hw-1;
+        Tue, 28 May 2019 03:38:01 -0500
+Received: from EDIEX02.ad.cirrus.com (unknown [198.61.84.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 995EB611C8B3;
+        Tue, 28 May 2019 03:38:00 -0500 (CDT)
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 28 May
+ 2019 09:38:00 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Tue, 28 May 2019 09:38:00 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id EE3A22A1;
+        Tue, 28 May 2019 09:37:59 +0100 (BST)
+Date:   Tue, 28 May 2019 09:37:59 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <wsa@the-dreams.de>, <mika.westerberg@linux.intel.com>
+CC:     <jarkko.nikula@linux.intel.com>,
+        <andriy.shevchenko@linux.intel.com>, <linux-i2c@vger.kernel.org>,
+        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.tissoires@redhat.com>, <jbroadus@gmail.com>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH v2 3/6] i2c: acpi: Factor out getting the IRQ from ACPI
+Message-ID: <20190528083759.GE28362@ediswmail.ad.cirrus.com>
+References: <20190527151932.14310-1-ckeepax@opensource.cirrus.com>
+ <20190527151932.14310-3-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <2802253.5593824.1559032626895.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.13634 YahooMailBasic Mozilla/5.0 (Windows NT 6.1; rv:67.0) Gecko/20100101 Firefox/67.0
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190527151932.14310-3-ckeepax@opensource.cirrus.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=815 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905280058
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 27, 2019 at 04:19:29PM +0100, Charles Keepax wrote:
+> In preparation for future refactoring factor out the fetch of the IRQ
+> into its own helper function.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> ---
+>  
+> +static int i2c_acpi_get_irq(struct acpi_device *adev)
+> +{
+> +	struct list_head resource_list;
+> +	int irq = -ENOENT;
+> +	int ret;
+> +
+> +	INIT_LIST_HEAD(&resource_list);
+> +
+> +	ret = acpi_dev_get_resources(adev, &resource_list,
+> +				     i2c_acpi_add_resource, &irq);
+> +	if (ret < 0)
+> +		return -EINVAL;
+> +
+> +	acpi_dev_free_resource_list(&resource_list);
+> +
+> +	return irq;
+> +}
+> +
 
+Sorry just noticed I forgot to add the kernel doc. Will fix that
+up in the next spin, or do an incremental patch.
 
-From: Dr Rhama David Benson,
-Please read carefully,
-
-This message might meet you in utmost surprise. However, it's just my
-urgent need for foreign partner that made me to contact you for this
-transaction. I got your contact from yahoo tourist search while I was
-searching for a foreign partner. I am assured of your capability and
-reliability to champion this business opportunity when I prayed about
-you.
-
-I am a banker by profession in Burkina-Faso, West Africa and currently
-holding the post of manager in account and auditing department in our
-bank. I have the opportunity of transferring the left over funds ($
-5.5 Million Dollars) belonging to our deceased customer who died along
-with his entire family in a plane crash
-
-Hence; I am inviting you for a business deal where this money can be
-shared between us in the ratio of 60/40 if you agree to my business
-proposal. Further details of the transfer will be forwarded to you as
-soon as I receive your return mail as soon as you receive this letter.
-
-Please indicate your willingness by sending the below information for
-more clarification and easy communication.
-For more details, Contact me for more details.
-
-(1) YOUR FULL NAME...............................
-(2) YOUR AGE AND SEX............................
-(3) YOUR CONTACT ADDRESS..................
-(4) YOUR PRIVATE PHONE N0..........
-(5) FAX NUMBER..............
-(6) YOUR COUNTRY OF ORIGIN..................
-(7) YOUR OCCUPATION.........................
-
-Trusting to hear from you immediately.
-Thanks & Best Regards,
- Dr Rhama David Benson.
+Thanks,
+Charles
