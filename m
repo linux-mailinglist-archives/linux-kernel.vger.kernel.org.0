@@ -2,184 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A3252C2D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58D552C2D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:12:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbfE1JMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:12:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51332 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726515AbfE1JMC (ORCPT
+        id S1726911AbfE1JM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:12:56 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:40653 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726515AbfE1JMz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:12:02 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4S93SEn136897
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 05:12:01 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ss1n09bba-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 05:12:01 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Tue, 28 May 2019 10:11:59 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 28 May 2019 10:11:56 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4S9Bt1w58654790
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 May 2019 09:11:55 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 539AC11C054;
-        Tue, 28 May 2019 09:11:55 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 247ED11C04C;
-        Tue, 28 May 2019 09:11:55 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.152.224.177])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 28 May 2019 09:11:55 +0000 (GMT)
-Subject: Re: [PATCH v2 2/3] KVM: X86: Implement PV sched yield hypercall
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <1559004795-19927-1-git-send-email-wanpengli@tencent.com>
- <1559004795-19927-3-git-send-email-wanpengli@tencent.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- mQINBE6cPPgBEAC2VpALY0UJjGmgAmavkL/iAdqul2/F9ONz42K6NrwmT+SI9CylKHIX+fdf
- J34pLNJDmDVEdeb+brtpwC9JEZOLVE0nb+SR83CsAINJYKG3V1b3Kfs0hydseYKsBYqJTN2j
- CmUXDYq9J7uOyQQ7TNVoQejmpp5ifR4EzwIFfmYDekxRVZDJygD0wL/EzUr8Je3/j548NLyL
- 4Uhv6CIPf3TY3/aLVKXdxz/ntbLgMcfZsDoHgDk3lY3r1iwbWwEM2+eYRdSZaR4VD+JRD7p8
- 0FBadNwWnBce1fmQp3EklodGi5y7TNZ/CKdJ+jRPAAnw7SINhSd7PhJMruDAJaUlbYaIm23A
- +82g+IGe4z9tRGQ9TAflezVMhT5J3ccu6cpIjjvwDlbxucSmtVi5VtPAMTLmfjYp7VY2Tgr+
- T92v7+V96jAfE3Zy2nq52e8RDdUo/F6faxcumdl+aLhhKLXgrozpoe2nL0Nyc2uqFjkjwXXI
- OBQiaqGeWtxeKJP+O8MIpjyGuHUGzvjNx5S/592TQO3phpT5IFWfMgbu4OreZ9yekDhf7Cvn
- /fkYsiLDz9W6Clihd/xlpm79+jlhm4E3xBPiQOPCZowmHjx57mXVAypOP2Eu+i2nyQrkapaY
- IdisDQfWPdNeHNOiPnPS3+GhVlPcqSJAIWnuO7Ofw1ZVOyg/jwARAQABtDRDaHJpc3RpYW4g
- Qm9ybnRyYWVnZXIgKElCTSkgPGJvcm50cmFlZ2VyQGRlLmlibS5jb20+iQI4BBMBAgAiBQJO
- nDz4AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRARe7yAtaYcfOYVD/9sqc6ZdYKD
- bmDIvc2/1LL0g7OgiA8pHJlYN2WHvIhUoZUIqy8Sw2EFny/nlpPVWfG290JizNS2LZ0mCeGZ
- 80yt0EpQNR8tLVzLSSr0GgoY0lwsKhAnx3p3AOrA8WXsPL6prLAu3yJI5D0ym4MJ6KlYVIjU
- ppi4NLWz7ncA2nDwiIqk8PBGxsjdc/W767zOOv7117rwhaGHgrJ2tLxoGWj0uoH3ZVhITP1z
- gqHXYaehPEELDV36WrSKidTarfThCWW0T3y4bH/mjvqi4ji9emp1/pOWs5/fmd4HpKW+44tD
- Yt4rSJRSa8lsXnZaEPaeY3nkbWPcy3vX6qafIey5d8dc8Uyaan39WslnJFNEx8cCqJrC77kI
- vcnl65HaW3y48DezrMDH34t3FsNrSVv5fRQ0mbEed8hbn4jguFAjPt4az1xawSp0YvhzwATJ
- YmZWRMa3LPx/fAxoolq9cNa0UB3D3jmikWktm+Jnp6aPeQ2Db3C0cDyxcOQY/GASYHY3KNra
- z8iwS7vULyq1lVhOXg1EeSm+lXQ1Ciz3ub3AhzE4c0ASqRrIHloVHBmh4favY4DEFN19Xw1p
- 76vBu6QjlsJGjvROW3GRKpLGogQTLslbjCdIYyp3AJq2KkoKxqdeQYm0LZXjtAwtRDbDo71C
- FxS7i/qfvWJv8ie7bE9A6Wsjn7kCDQROnDz4ARAAmPI1e8xB0k23TsEg8O1sBCTXkV8HSEq7
- JlWz7SWyM8oFkJqYAB7E1GTXV5UZcr9iurCMKGSTrSu3ermLja4+k0w71pLxws859V+3z1jr
- nhB3dGzVZEUhCr3EuN0t8eHSLSMyrlPL5qJ11JelnuhToT6535cLOzeTlECc51bp5Xf6/XSx
- SMQaIU1nDM31R13o98oRPQnvSqOeljc25aflKnVkSfqWSrZmb4b0bcWUFFUKVPfQ5Z6JEcJg
- Hp7qPXHW7+tJTgmI1iM/BIkDwQ8qe3Wz8R6rfupde+T70NiId1M9w5rdo0JJsjKAPePKOSDo
- RX1kseJsTZH88wyJ30WuqEqH9zBxif0WtPQUTjz/YgFbmZ8OkB1i+lrBCVHPdcmvathknAxS
- bXL7j37VmYNyVoXez11zPYm+7LA2rvzP9WxR8bPhJvHLhKGk2kZESiNFzP/E4r4Wo24GT4eh
- YrDo7GBHN82V4O9JxWZtjpxBBl8bH9PvGWBmOXky7/bP6h96jFu9ZYzVgIkBP3UYW+Pb1a+b
- w4A83/5ImPwtBrN324bNUxPPqUWNW0ftiR5b81ms/rOcDC/k/VoN1B+IHkXrcBf742VOLID4
- YP+CB9GXrwuF5KyQ5zEPCAjlOqZoq1fX/xGSsumfM7d6/OR8lvUPmqHfAzW3s9n4lZOW5Jfx
- bbkAEQEAAYkCHwQYAQIACQUCTpw8+AIbDAAKCRARe7yAtaYcfPzbD/9WNGVf60oXezNzSVCL
- hfS36l/zy4iy9H9rUZFmmmlBufWOATjiGAXnn0rr/Jh6Zy9NHuvpe3tyNYZLjB9pHT6mRZX7
- Z1vDxeLgMjTv983TQ2hUSlhRSc6e6kGDJyG1WnGQaqymUllCmeC/p9q5m3IRxQrd0skfdN1V
- AMttRwvipmnMduy5SdNayY2YbhWLQ2wS3XHJ39a7D7SQz+gUQfXgE3pf3FlwbwZhRtVR3z5u
- aKjxqjybS3Ojimx4NkWjidwOaUVZTqEecBV+QCzi2oDr9+XtEs0m5YGI4v+Y/kHocNBP0myd
- pF3OoXvcWdTb5atk+OKcc8t4TviKy1WCNujC+yBSq3OM8gbmk6NwCwqhHQzXCibMlVF9hq5a
- FiJb8p4QKSVyLhM8EM3HtiFqFJSV7F+h+2W0kDyzBGyE0D8z3T+L3MOj3JJJkfCwbEbTpk4f
- n8zMboekuNruDw1OADRMPlhoWb+g6exBWx/YN4AY9LbE2KuaScONqph5/HvJDsUldcRN3a5V
- RGIN40QWFVlZvkKIEkzlzqpAyGaRLhXJPv/6tpoQaCQQoSAc5Z9kM/wEd9e2zMeojcWjUXgg
- oWj8A/wY4UXExGBu+UCzzP/6sQRpBiPFgmqPTytrDo/gsUGqjOudLiHQcMU+uunULYQxVghC
- syiRa+UVlsKmx1hsEg==
-Date:   Tue, 28 May 2019 11:11:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <1559004795-19927-3-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
+        Tue, 28 May 2019 05:12:55 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-161-gTnKQjRxNjino90nSZuzuA-1; Tue, 28 May 2019 10:12:52 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 28 May 2019 10:12:51 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 28 May 2019 10:12:51 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Deepa Dinamani' <deepa.kernel@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Arnd Bergmann" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        "Linux FS-devel Mailing List" <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Thread-Topic: [PATCH v2] signal: Adjust error codes according to
+ restore_user_sigmask()
+Thread-Index: AQHVELwtsgR+BAQFXk2JV68Wk/7LjKZ4aINAgABVkoCAAB2x0P///TgAgAARdkCAAZjWloAFw/iw
+Date:   Tue, 28 May 2019 09:12:51 +0000
+Message-ID: <ea7a1808990a4c319faa38d5d08d8f19@AcuMS.aculab.com>
+References: <20190522161407.GB4915@redhat.com>
+ <CABeXuvpjrW5Gt95JC-_rYkOA=6RCD5OtkEQdwZVVqGCE3GkQOQ@mail.gmail.com>
+ <4f7b6dbeab1d424baaebd7a5df116349@AcuMS.aculab.com>
+ <20190523145944.GB23070@redhat.com>
+ <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
+ <20190523163604.GE23070@redhat.com>
+ <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+ <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
+ <20190524141054.GB2655@redhat.com>
+ <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
+ <20190524163310.GG2655@redhat.com>
+ <CABeXuvrUKZnECj+NgLdpe5uhKBEmSynrakD-3q9XHqk8Aef5UQ@mail.gmail.com>
+In-Reply-To: <CABeXuvrUKZnECj+NgLdpe5uhKBEmSynrakD-3q9XHqk8Aef5UQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19052809-0012-0000-0000-000003202809
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052809-0013-0000-0000-00002158EE7A
-Message-Id: <9f3ff1f4-8173-3037-0a3f-a6036076bca5@de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-28_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=979 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905280061
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: gTnKQjRxNjino90nSZuzuA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.05.19 02:53, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> The target vCPUs are in runnable state after vcpu_kick and suitable 
-> as a yield target. This patch implements the sched yield hypercall.
-> 
-> 17% performace increase of ebizzy benchmark can be observed in an 
-> over-subscribe environment. (w/ kvm-pv-tlb disabled, testing TLB flush 
-> call-function IPI-many since call-function is not easy to be trigged 
-> by userspace workload).
-> 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-
-FWIW, we do have a similar interface in s390.
-
-See arch/s390/kvm/diag.c  __diag_time_slice_end_directed for our implementation.
-> ---
->  arch/x86/kvm/x86.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index e7e57de..2ceef51 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -7172,6 +7172,26 @@ void kvm_vcpu_deactivate_apicv(struct kvm_vcpu *vcpu)
->  	kvm_x86_ops->refresh_apicv_exec_ctrl(vcpu);
->  }
-> 
-> +void kvm_sched_yield(struct kvm *kvm, u64 dest_id)
-> +{
-> +	struct kvm_vcpu *target;
-> +	struct kvm_apic_map *map;
-> +
-> +	rcu_read_lock();
-> +	map = rcu_dereference(kvm->arch.apic_map);
-> +
-> +	if (unlikely(!map))
-> +		goto out;
-> +
-> +	if (map->phys_map[dest_id]->vcpu) {
-> +		target = map->phys_map[dest_id]->vcpu;
-> +		kvm_vcpu_yield_to(target);
-> +	}
-> +
-> +out:
-> +	rcu_read_unlock();
-> +}
-> +
->  int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
->  {
->  	unsigned long nr, a0, a1, a2, a3, ret;
-> @@ -7218,6 +7238,10 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
->  	case KVM_HC_SEND_IPI:
->  		ret = kvm_pv_send_ipi(vcpu->kvm, a0, a1, a2, a3, op_64_bit);
->  		break;
-> +	case KVM_HC_SCHED_YIELD:
-> +		kvm_sched_yield(vcpu->kvm, a0);
-> +		ret = 0;
-> +		break;
->  	default:
->  		ret = -KVM_ENOSYS;
->  		break;
-> 
+RnJvbTogRGVlcGEgRGluYW1hbmkNCj4gU2VudDogMjQgTWF5IDIwMTkgMTg6MDINCi4uLg0KPiBM
+b29rIGF0IHRoZSBjb2RlIGJlZm9yZSA4NTRhNmVkNTY4MzlhOg0KPiANCj4gICAvKg0KPiAgICAg
+ICAgICogSWYgd2UgY2hhbmdlZCB0aGUgc2lnbmFsIG1hc2ssIHdlIG5lZWQgdG8gcmVzdG9yZSB0
+aGUgb3JpZ2luYWwgb25lLg0KPiAgICAgICAgICogSW4gY2FzZSB3ZSd2ZSBnb3QgYSBzaWduYWwg
+d2hpbGUgd2FpdGluZywgd2UgZG8gbm90IHJlc3RvcmUgdGhlDQo+ICAgICAgICAgKiBzaWduYWwg
+bWFzayB5ZXQsIGFuZCB3ZSBhbGxvdyBkb19zaWduYWwoKSB0byBkZWxpdmVyIHRoZSBzaWduYWwg
+b24NCj4gICAgICAgICAqIHRoZSB3YXkgYmFjayB0byB1c2Vyc3BhY2UsIGJlZm9yZSB0aGUgc2ln
+bmFsIG1hc2sgaXMgcmVzdG9yZWQuDQo+ICAgICAgICAgKi8NCj4gICAgICAgIGlmIChzaWdtYXNr
+KSB7DQo+ICAgICAgICAgICAgICAgIyMjIyMjIyBUaGlzIGVyciBoYXMgbm90IGJlZW4gY2hhbmdl
+ZCBzaW5jZSBlcF9wb2xsKCkNCj4gICAgICAgICAgICAgICAjIyMjIyMjIFNvIGlmIHRoZXJlIGlz
+IGEgc2lnbmFsIGJlZm9yZSB0aGlzIHBvaW50LCBidXQNCj4gZXJyID0gMCwgdGhlbiB3ZSBnb3Rv
+IGVsc2UuDQo+ICAgICAgICAgICAgICAgIGlmIChlcnIgPT0gLUVJTlRSKSB7DQo+ICAgICAgICAg
+ICAgICAgICAgICAgICAgbWVtY3B5KCZjdXJyZW50LT5zYXZlZF9zaWdtYXNrLCAmc2lnc2F2ZWQs
+DQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNpemVvZihzaWdzYXZlZCkpOw0KPiAg
+ICAgICAgICAgICAgICAgICAgICAgIHNldF9yZXN0b3JlX3NpZ21hc2soKTsNCj4gICAgICAgICAg
+ICAgICAgfSBlbHNlDQo+ICAgICAgICAgICAgICAgICAgICAgICMjIyMjIyMjIyMjIyBUaGlzIGlz
+IGEgcHJvYmxlbSBpZiB0aGVyZSBpcyBzaWduYWwNCj4gcGVuZGluZyB0aGF0IGlzIHNpZ21hc2sg
+c2hvdWxkIGJsb2NrLg0KPiAgICAgICAgICAgICAgICAgICAgICAjIyMjIyMjIyMjIyBUaGlzIGlz
+IHRoZSB3aG9sZSByZWFzb24gd2UgaGF2ZQ0KPiBjdXJyZW50LT5zYXZlZF9zaWdtYXNrPw0KPiAg
+ICAgICAgICAgICAgICAgICAgICAgIHNldF9jdXJyZW50X2Jsb2NrZWQoJnNpZ3NhdmVkKTsNCj4g
+ICAgICAgIH0NCg0KV2hhdCBoYXBwZW5zIGlmIGFsbCB0aGF0IGNyYXAgaXMganVzdCBkZWxldGVk
+IChJIHByZXN1bWUgZnJvbSB0aGUNCmJvdHRvbSBvZiBlcF93YWl0KCkpID8NCg0KSSdtIGd1ZXNz
+aW5nIHRoYXQgb24gdGhlIHdheSBiYWNrIHRvIHVzZXJzcGFjZSBzaWduYWwgaGFuZGxlcnMgZm9y
+DQpzaWduYWxzIGVuYWJsZWQgaW4gdGhlIHByb2Nlc3MncyBjdXJyZW50IG1hc2sgKHRoZSBvbmUg
+c3BlY2lmaWVkDQp0byBlcG9sbF9wd2FpdCkgZ2V0IGNhbGxlZC4NClRoZW4gdGhlIHNpZ25hbCBt
+YXNrIGlzIGxvYWRlZCBmcm9tIGN1cnJlbnQtPnNhdmVkX3NpZ21hc2sgYW5kDQphbmQgZW5hYmxl
+ZCBzaWduYWwgaGFuZGxlcnMgYXJlIGNhbGxlZCBhZ2Fpbi4NCk5vIHNwZWNpYWwgY29kZSB0aGVy
+ZSB0aGF0IGRlcGVuZHMgb24gdGhlIHN5c2NhbGwgcmVzdWx0LCBlcnJubw0Kb2YgdGhlIHN5c2Nh
+bGwgbnVtYmVyLg0KDQpUaGF0IHNlZW1zIGV4YWN0bHkgY29ycmVjdCENCg0KCURhdmlkDQoNCi0N
+ClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBN
+aWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxl
+cykNCg==
 
