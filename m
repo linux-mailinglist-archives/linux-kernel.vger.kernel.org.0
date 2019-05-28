@@ -2,102 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9999B2BD43
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 511EE2BD3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbfE1Ccm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 22:32:42 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17170 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727313AbfE1Ccl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 22:32:41 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A01172B9E052B8072D83;
-        Tue, 28 May 2019 10:32:39 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 28 May
- 2019 10:32:29 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 2/2] staging: erofs: fix i_blocks calculation
-Date:   Tue, 28 May 2019 10:31:47 +0800
-Message-ID: <20190528023147.94117-2-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190528023147.94117-1-gaoxiang25@huawei.com>
-References: <20190528023147.94117-1-gaoxiang25@huawei.com>
+        id S1727582AbfE1CcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 22:32:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58800 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727313AbfE1CcE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 22:32:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5RRvYTM2e/gWTemJvl1KdhwwgyigP6WYDybbXx30ARA=; b=rH68e9QOC0T6i0j0JEOunQHUk
+        bSUHRoEG8nQBZVYuEdUfAQa5xwOVJBxARWlDxwTFfB9OfG7UE6fXQgSGpayk6K8qCUqEaAbiTIBxw
+        6fcRpqJ4+JtMcW4ZyfOBxSTBUlz9pguIowppJM9q/fnLBH93FNRe+5Fl0fmhfiJVLJCFk6/f6/6ll
+        pFOG8LtSDV4i+AwAoHFlLFJIec87JPrvyZccSKIyE2xadWbBtj8lXL6EgHfLmy4ErYBeD9PrBFZKz
+        HdBZZUrFWk7OrNeL2WhBHRAtV7OkTOXbOlBXWt9rT5eShGzAkcR+Dh0AzvnLFj+EdT6iBUP9snA0h
+        ZwtgpaOow==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVRuF-0004PH-Q8; Tue, 28 May 2019 02:32:03 +0000
+Subject: Re: [PATCH] ia64: fix build errors by exporting paddr_to_nid()
+To:     LKML <linux-kernel@vger.kernel.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>
+Cc:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        Fengguang Wu <fengguang.wu@intel.com>
+References: <eaa72e00-e1ea-4a86-327e-8b8cca8ea492@infradead.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <877e524b-6b84-740e-a79b-5cec378bb22d@infradead.org>
+Date:   Mon, 27 May 2019 19:32:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+In-Reply-To: <eaa72e00-e1ea-4a86-327e-8b8cca8ea492@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For compressed files, i_blocks should not be calculated
-by using i_size. i_u.compressed_blocks is used instead.
+ping...
 
-In addition, i_blocks is miscalculated for non-compressed
-files previously, fix it as well.
+On 5/3/19 9:42 PM, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix build errors on ia64 when DISCONTIGMEM=y and NUMA=y by
+> exporting paddr_to_nid().
+> 
+> Fixes these build errors:
+> 
+> ERROR: "paddr_to_nid" [sound/core/snd-pcm.ko] undefined!
+> ERROR: "paddr_to_nid" [net/sunrpc/sunrpc.ko] undefined!
+> ERROR: "paddr_to_nid" [fs/cifs/cifs.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/video/fbdev/core/fb.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/usb/mon/usbmon.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/usb/core/usbcore.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/md/raid1.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/md/dm-mod.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/md/dm-crypt.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/md/dm-bufio.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/ide/ide-core.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/ide/ide-cd_mod.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/gpu/drm/drm.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/char/agp/agpgart.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/block/nbd.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/block/loop.ko] undefined!
+> ERROR: "paddr_to_nid" [drivers/block/brd.ko] undefined!
+> ERROR: "paddr_to_nid" [crypto/ccm.ko] undefined!
+> 
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Fenghua Yu <fenghua.yu@intel.com>
+> Cc: linux-ia64@vger.kernel.org
+> ---
+>  arch/ia64/mm/numa.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- lnx-51-rc7.orig/arch/ia64/mm/numa.c
+> +++ lnx-51-rc7/arch/ia64/mm/numa.c
+> @@ -55,6 +55,7 @@ paddr_to_nid(unsigned long paddr)
+>  
+>  	return (i < num_node_memblks) ? node_memblk[i].nid : (num_node_memblks ? -1 : 0);
+>  }
+> +EXPORT_SYMBOL(paddr_to_nid);
+>  
+>  #if defined(CONFIG_SPARSEMEM) && defined(CONFIG_NUMA)
+>  /*
+> 
+> 
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/inode.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
-index 8da144943ed6..b1b790767089 100644
---- a/drivers/staging/erofs/inode.c
-+++ b/drivers/staging/erofs/inode.c
-@@ -20,6 +20,7 @@ static int read_inode(struct inode *inode, void *data)
- 	struct erofs_vnode *vi = EROFS_V(inode);
- 	struct erofs_inode_v1 *v1 = data;
- 	const unsigned int advise = le16_to_cpu(v1->i_advise);
-+	erofs_blk_t nblks = 0;
- 
- 	vi->data_mapping_mode = __inode_data_mapping(advise);
- 
-@@ -60,6 +61,10 @@ static int read_inode(struct inode *inode, void *data)
- 			le32_to_cpu(v2->i_ctime_nsec);
- 
- 		inode->i_size = le64_to_cpu(v2->i_size);
-+
-+		/* total blocks for compressed files */
-+		if (vi->data_mapping_mode == EROFS_INODE_LAYOUT_COMPRESSION)
-+			nblks = v2->i_u.compressed_blocks;
- 	} else if (__inode_version(advise) == EROFS_INODE_LAYOUT_V1) {
- 		struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
- 
-@@ -90,6 +95,8 @@ static int read_inode(struct inode *inode, void *data)
- 			sbi->build_time_nsec;
- 
- 		inode->i_size = le32_to_cpu(v1->i_size);
-+		if (vi->data_mapping_mode == EROFS_INODE_LAYOUT_COMPRESSION)
-+			nblks = v1->i_u.compressed_blocks;
- 	} else {
- 		errln("unsupported on-disk inode version %u of nid %llu",
- 		      __inode_version(advise), vi->nid);
-@@ -97,8 +104,11 @@ static int read_inode(struct inode *inode, void *data)
- 		return -EIO;
- 	}
- 
--	/* measure inode.i_blocks as the generic filesystem */
--	inode->i_blocks = ((inode->i_size - 1) >> 9) + 1;
-+	if (!nblks)
-+		/* measure inode.i_blocks as generic filesystems */
-+		inode->i_blocks = roundup(inode->i_size, EROFS_BLKSIZ) >> 9;
-+	else
-+		inode->i_blocks = nblks >> LOG_SECTORS_PER_BLOCK;
- 	return 0;
- }
- 
 -- 
-2.17.1
-
+~Randy
