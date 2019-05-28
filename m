@@ -2,176 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 584A02CEE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 20:47:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA2DD2CF18
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 21:02:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbfE1Sr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 14:47:28 -0400
-Received: from mail-pg1-f172.google.com ([209.85.215.172]:40747 "EHLO
-        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728201AbfE1SrZ (ORCPT
+        id S1727443AbfE1TCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 15:02:23 -0400
+Received: from mail179-11.suw41.mandrillapp.com ([198.2.179.11]:55267 "EHLO
+        mail179-11.suw41.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726961AbfE1TCW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 14:47:25 -0400
-Received: by mail-pg1-f172.google.com with SMTP id d30so11504440pgm.7
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 11:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=appneta.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GEQ1n/oEBDlyMtci6j+nHwcG1xlJk5jGvn6FttMMa9I=;
-        b=nHz6brCdXv1SBf9KOaNq4ai8ItEU7CXjscWf/3mCEp9Or8drqkwYVLi3XGHxegLHs7
-         PaQMR6YE4AcPTwMGpxM0fqHz/LABU8osUQ0+t1eYJ/OiOqhjkpk40sdQrqwMHJUuXamr
-         DEwARfif1xO0sT52llKEg7onOa/HooMFn0z2Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=GEQ1n/oEBDlyMtci6j+nHwcG1xlJk5jGvn6FttMMa9I=;
-        b=KljpfrZQcN1sqWKgrumlacwUoXos1M1q3GdS2zdTaJA7iXLTr70FaaXEzAgRDPZYTU
-         Bxh9sLIMc5OiqwrdlQU5Zcx8iqHRafdRxkVRWymRcrJtaUVDFY31d3EVEBOXPrbhqILu
-         ODs8HwM+NfnF/1bNM7vnCR5CgyaWiZJwUVk25w2x8SKz53by0NhVZc1nGKq2wMIkEOq7
-         3kN0hRP6jl46/GuFGz2tSUqhmPe0RH/O2aydHfZD0RT+IRlNogIbc70/kiEMg+dq9duA
-         /m1P1/yuzIqXfiixhaL4kSpNZULdnj613NbLAMdE58bcJutcXVbXQWonlhfcfNZ6qMNd
-         lngw==
-X-Gm-Message-State: APjAAAU+dNDrTrg6yvNzt4+5bYvZNfgZuugm0O0FTlxV8ovdNlLeryYR
-        PJmljr+i4mDlWwA3GfWOh12yRmK242ICag==
-X-Google-Smtp-Source: APXvYqwpEQ4jyPsyWGKKc/+WwpmgAnxiutsae8V7JtWRZWdcxcAezFCLp8r5bP3IT9KQQQVPleqdOw==
-X-Received: by 2002:a17:90a:21ce:: with SMTP id q72mr7372750pjc.3.1559069244681;
-        Tue, 28 May 2019 11:47:24 -0700 (PDT)
-Received: from linux-net-fred.jaalam.net ([2001:4958:15a0:24:5054:ff:fecb:7a95])
-        by smtp.googlemail.com with ESMTPSA id m6sm3323766pjl.18.2019.05.28.11.47.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 11:47:24 -0700 (PDT)
-From:   Fred Klassen <fklassen@appneta.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Willem de Bruijn <willemb@google.com>
-Cc:     Fred Klassen <fklassen@appneta.com>
-Subject: [PATCH net-next v2 3/3] net/udpgso_bench.sh test fails on error
-Date:   Tue, 28 May 2019 11:47:08 -0700
-Message-Id: <20190528184708.16516-4-fklassen@appneta.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190528184708.16516-1-fklassen@appneta.com>
-References: <20190528184708.16516-1-fklassen@appneta.com>
+        Tue, 28 May 2019 15:02:22 -0400
+X-Greylist: delayed 900 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 May 2019 15:02:21 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
+ h=From:Subject:To:Cc:Message-Id:References:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=LojlEPe8YR70GfOe6f/ftvxLfgd8jqj7S65SitE1l4c=;
+ b=TXfkP60AvsSN5mk0Qy5l2u4NO/ZXLPtD30y1zgr7WkPaQxeSuHHAG7VcQ3gSRahkKWlOsGMTT35e
+   oWrfm2SPLRiewZt5UvkFItp/dq3tBjCyix00M274BOIhVvXPD5JU4Dq07el4g9XzqYjQY2H2+FTd
+   a1WyU2yLamHxAnqXxbQ=
+Received: from pmta04.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail179-11.suw41.mandrillapp.com id htm2rq22s28f for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 18:47:18 +0000 (envelope-from <bounce-md_31050260.5ced8236.v1-bfcc271fb3a2477ea827fd474912cc3d@mandrillapp.com>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1559069238; h=From : 
+ Subject : To : Cc : Message-Id : References : In-Reply-To : Date : 
+ MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
+ Subject : Date : X-Mandrill-User : List-Unsubscribe; 
+ bh=LojlEPe8YR70GfOe6f/ftvxLfgd8jqj7S65SitE1l4c=; 
+ b=pNBW4xRBG/Rfu8SQI2XJbOdJzB+cW0yJlmwOa2KlfwoE+MbJmZertWr5t1k+IwOokTQ4ow
+ UalryLJF+1F9ILzXOOx9jwtRPiVcmgvIRjDxU72/LQpA9ey96NZ3rYtrbH6mq3lXU3BP/DA+
+ WLXqzlDNHhby+rbtrO+Emc8MZs3u0=
+From:   Kirill Smelkov <kirr@nexedi.com>
+Subject: Re: [PATCH 4.19 082/114] fuse: Add FOPEN_STREAM to use stream_open()
+Received: from [87.98.221.171] by mandrillapp.com id bfcc271fb3a2477ea827fd474912cc3d; Tue, 28 May 2019 18:47:18 +0000
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Message-Id: <20190528184712.GA3483@deco.navytux.spb.ru>
+References: <20190523181731.372074275@linuxfoundation.org> <20190523181739.135794147@linuxfoundation.org> <20190528111657.GA23674@amd>
+In-Reply-To: <20190528111657.GA23674@amd>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.bfcc271fb3a2477ea827fd474912cc3d
+X-Mandrill-User: md_31050260
+Date:   Tue, 28 May 2019 18:47:18 +0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ensure that failure on any individual test results in an overall
-failure of the test script.
+On Tue, May 28, 2019 at 01:16:58PM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -219,10 +219,12 @@ struct fuse_file_lock {
+> >   * FOPEN_DIRECT_IO: bypass page cache for this open file
+> >   * FOPEN_KEEP_CACHE: don't invalidate the data cache on open
+> >   * FOPEN_NONSEEKABLE: the file is not seekable
+> > + * FOPEN_STREAM: the file is stream-like (no file position at all)
+> >   */
+> >  #define FOPEN_DIRECT_IO		(1 << 0)
+> >  #define FOPEN_KEEP_CACHE	(1 << 1)
+> >  #define FOPEN_NONSEEKABLE	(1 << 2)
+> > +#define FOPEN_STREAM		(1 << 4)
+> 
+> Interesting choice of constants. It is too late to change it now, but
+> was (1 << 3) meant here?
 
-Signed-off-by: Fred Klassen <fklassen@appneta.com>
----
- tools/testing/selftests/net/udpgso_bench.sh | 33 +++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+It is just because this is 4.19 backport of original patch. There (on
+5.2) it was like this:
 
-diff --git a/tools/testing/selftests/net/udpgso_bench.sh b/tools/testing/selftests/net/udpgso_bench.sh
-index 89c7de97b832..3a8543b14d3f 100755
---- a/tools/testing/selftests/net/udpgso_bench.sh
-+++ b/tools/testing/selftests/net/udpgso_bench.sh
-@@ -3,6 +3,10 @@
- #
- # Run a series of udpgso benchmarks
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -232,11 +232,13 @@ struct fuse_file_lock {
+  * FOPEN_KEEP_CACHE: don't invalidate the data cache on open
+  * FOPEN_NONSEEKABLE: the file is not seekable
+  * FOPEN_CACHE_DIR: allow caching this directory
++ * FOPEN_STREAM: the file is stream-like (no file position at all)
+  */
+ #define FOPEN_DIRECT_IO        (1 << 0)
+ #define FOPEN_KEEP_CACHE       (1 << 1)
+ #define FOPEN_NONSEEKABLE      (1 << 2)
+ #define FOPEN_CACHE_DIR        (1 << 3)
++#define FOPEN_STREAM           (1 << 4)
  
-+GREEN='\033[0;92m'
-+RED='\033[0;31m'
-+NC='\033[0m' # No Color
-+
- wake_children() {
- 	local -r jobs="$(jobs -p)"
- 
-@@ -29,59 +33,88 @@ run_in_netns() {
- 
- run_udp() {
- 	local -r args=$@
-+	local errors=0
- 
- 	echo "udp"
- 	run_in_netns ${args}
-+	errors=$(( $errors + $? ))
- 
- 	echo "udp gso"
- 	run_in_netns ${args} -S 0
-+	errors=$(( $errors + $? ))
- 
- 	echo "udp gso zerocopy"
- 	run_in_netns ${args} -S 0 -z
-+	errors=$(( $errors + $? ))
- 
- 	echo "udp gso timestamp"
- 	run_in_netns ${args} -S 0 -T
-+	errors=$(( $errors + $? ))
- 
- 	echo "udp gso zerocopy audit"
- 	run_in_netns ${args} -S 0 -z -a
-+	errors=$(( $errors + $? ))
- 
- 	echo "udp gso timestamp audit"
- 	run_in_netns ${args} -S 0 -T -a
-+	errors=$(( $errors + $? ))
- 
- 	echo "udp gso zerocopy timestamp audit"
- 	run_in_netns ${args} -S 0 -T -z -a
-+	errors=$(( $errors + $? ))
-+
-+	return $errors
- }
- 
- run_tcp() {
- 	local -r args=$@
-+	local errors=0
- 
- 	echo "tcp"
- 	run_in_netns ${args} -t
-+	errors=$(( $errors + $? ))
- 
- 	echo "tcp zerocopy"
- 	run_in_netns ${args} -t -z
-+	errors=$(( $errors + $? ))
- 
- 	# excluding for now because test fails intermittently
- 	#echo "tcp zerocopy audit"
- 	#run_in_netns ${args} -t -z -P -a
-+	#errors=$(( $errors + $? ))
-+
-+	return $errors
- }
- 
- run_all() {
- 	local -r core_args="-l 3"
- 	local -r ipv4_args="${core_args} -4 -D 127.0.0.1"
- 	local -r ipv6_args="${core_args} -6 -D ::1"
-+	local errors=0
- 
- 	echo "ipv4"
- 	run_tcp "${ipv4_args}"
-+	errors=$(( $errors + $? ))
- 	run_udp "${ipv4_args}"
-+	errors=$(( $errors + $? ))
- 
- 	echo "ipv6"
- 	run_tcp "${ipv4_args}"
-+	errors=$(( $errors + $? ))
- 	run_udp "${ipv6_args}"
-+	errors=$(( $errors + $? ))
-+
-+	return $errors
- }
- 
- if [[ $# -eq 0 ]]; then
- 	run_all
-+	if [ $? -ne 0 ]; then
-+		echo -e "$(basename $0): ${RED}FAIL${NC}"
-+		exit 1
-+	fi
-+
-+	echo -e "$(basename $0): ${GREEN}PASS${NC}"
- elif [[ $1 == "__subprocess" ]]; then
- 	shift
- 	run_one $@
--- 
-2.11.0
 
+i.e. (1 << 3) was already occupied by FOPEN_CACHE_DIR which was added by commit
+6433b8998a21 (fuse: add FOPEN_CACHE_DIR)
+
+Kirill
