@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 749402C98C
+	by mail.lfdr.de (Postfix) with ESMTP id 0B95B2C98B
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727157AbfE1PHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 11:07:09 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42758 "EHLO
+        id S1727103AbfE1PHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 11:07:08 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42796 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbfE1PHF (ORCPT
+        with ESMTP id S1726963AbfE1PHG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 11:07:05 -0400
+        Tue, 28 May 2019 11:07:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=fVgcuqF7q19syIEOumZgng3f1f8DLd588A3MOka13os=; b=x1Mm+kz2fvrr
-        s2jvA/MfeLVJ/A6vI7LN1JF9Q2WxT5/NP0KM4niu4d8o36srAbLODy1CQL4KlKOePovMfKsl2zVTx
-        UU2Xb4aw7XoU0vAQfE/WdpZ0P+v872PfwYeN/rl0yMI2BTaPkRbJj+vcXVwFnPJE2f1j01e/60x9R
-        eui5I=;
+        List-Archive; bh=PUvnzbZrTZ31zd48XHGvEZHvYsigwu0xnoy3Ezetm/0=; b=gnZ1JzN8Sj4F
+        uwv4A+rAOJ5Gn9rPnW4+ArTSB2btmpcVIgGZIirNzUf73F6ED69MrAu/ycA+bi+4JphzFPii50s1k
+        Fm3hPCOTXPOn2tnTKWyW3r/+53g0rNXPqj+ilwZSkiH04E7eG1mgbi4NiFAbgeHEMDZ5kIEa9aO+U
+        Kq9/k=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hVdgl-0002ne-Gh; Tue, 28 May 2019 15:06:55 +0000
+        id 1hVdgm-0002nf-3V; Tue, 28 May 2019 15:06:56 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id CCB04440046; Tue, 28 May 2019 16:06:54 +0100 (BST)
+        id 5341D440049; Tue, 28 May 2019 16:06:55 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Colin Ian King <colin.king@canonical.com>
 Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
         kernel-janitors@vger.kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: cx2072x: fix spelling mistake "configued" -> "configured"" to the asoc tree
-In-Reply-To: <20190525203244.7829-1-colin.king@canonical.com>
+        Simon Ho <simon.ho@conexant.com>, Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: cx2072x: fix integer overflow on unsigned int multiply" to the asoc tree
+In-Reply-To: <20190524222551.26573-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190528150654.CCB04440046@finisterre.sirena.org.uk>
-Date:   Tue, 28 May 2019 16:06:54 +0100 (BST)
+Message-Id: <20190528150655.5341D440049@finisterre.sirena.org.uk>
+Date:   Tue, 28 May 2019 16:06:55 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,7 +48,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: cx2072x: fix spelling mistake "configued" -> "configured"
+   ASoC: cx2072x: fix integer overflow on unsigned int multiply
 
 has been applied to the asoc tree at
 
@@ -73,14 +73,19 @@ to this mail.
 Thanks,
 Mark
 
-From 9aa37874d1930da139a08f4db1eff5d305f2ddc8 Mon Sep 17 00:00:00 2001
+From be0461048b60066eaba9046178fb96e78579af21 Mon Sep 17 00:00:00 2001
 From: Colin Ian King <colin.king@canonical.com>
-Date: Sat, 25 May 2019 21:32:44 +0100
-Subject: [PATCH] ASoC: cx2072x: fix spelling mistake "configued" ->
- "configured"
+Date: Fri, 24 May 2019 23:25:51 +0100
+Subject: [PATCH] ASoC: cx2072x: fix integer overflow on unsigned int multiply
 
-There is a spelling mistake in a dev_err error message. Fit it.
+In the case where frac_div larger than 96 the result of an unsigned
+multiplication overflows an unsigned int.  For example, this can
+happen when the sample_rate is 192000 and pll_input is 122.  Fix
+this by casing the first term of the mutiply to a u64. Also remove
+the extraneous parentheses around the expression.
 
+Addresses-Coverity: ("Unintentional integer overflow")
+Fixes: a497a4363706 ("ASoC: Add support for Conexant CX2072X CODEC")
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Reviewed-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
@@ -89,18 +94,18 @@ Signed-off-by: Mark Brown <broonie@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/sound/soc/codecs/cx2072x.c b/sound/soc/codecs/cx2072x.c
-index ed762546eaee..8b0830854bb3 100644
+index c11a585bbf70..ed762546eaee 100644
 --- a/sound/soc/codecs/cx2072x.c
 +++ b/sound/soc/codecs/cx2072x.c
-@@ -933,7 +933,7 @@ static int cx2072x_hw_params(struct snd_pcm_substream *substream,
- 		return frame_size;
- 
- 	if (cx2072x->mclk_rate == 0) {
--		dev_err(dev, "Master clock rate is not configued\n");
-+		dev_err(dev, "Master clock rate is not configured\n");
- 		return -EINVAL;
+@@ -627,7 +627,7 @@ static int cx2072x_config_pll(struct cx2072x_priv *cx2072x)
+ 	if (frac_div) {
+ 		frac_div *= 1000;
+ 		frac_div /= pll_input;
+-		frac_num = ((4000 + frac_div) * ((1 << 20) - 4));
++		frac_num = (u64)(4000 + frac_div) * ((1 << 20) - 4);
+ 		do_div(frac_num, 7);
+ 		frac = ((u32)frac_num + 499) / 1000;
  	}
- 
 -- 
 2.20.1
 
