@@ -2,45 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DE412BEED
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 07:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27ACE2BEF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 08:04:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbfE1F64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 01:58:56 -0400
-Received: from verein.lst.de ([213.95.11.211]:44892 "EHLO newverein.lst.de"
+        id S1727529AbfE1GEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 02:04:54 -0400
+Received: from verein.lst.de ([213.95.11.211]:44974 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725904AbfE1F64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 01:58:56 -0400
+        id S1726693AbfE1GEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 02:04:53 -0400
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 4AAA668AA6; Tue, 28 May 2019 07:58:31 +0200 (CEST)
-Date:   Tue, 28 May 2019 07:58:31 +0200
+        id 2D98A68BFE; Tue, 28 May 2019 08:04:25 +0200 (CEST)
+Date:   Tue, 28 May 2019 08:04:24 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, laurentiu.tudor@nxp.com,
-        stern@rowland.harvard.edu, linux-usb@vger.kernel.org,
-        marex@denx.de, leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
-        robin.murphy@arm.com, noring@nocrew.org, JuergenUrban@gmx.de
-Subject: Re: [PATCH v6 0/5] prerequisites for device reserved local mem
- rework
-Message-ID: <20190528055831.GA11279@lst.de>
-References: <20190522142748.10078-1-laurentiu.tudor@nxp.com> <20190523065602.GA11928@lst.de> <20190523070755.GA23832@kroah.com>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     hch@lst.de, robin.murphy@arm.com, m.szyprowski@samsung.com,
+        vdumpa@nvidia.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        joro@8bytes.org, dwmw2@infradead.org, tony@atomide.com,
+        akpm@linux-foundation.org, sfr@canb.auug.org.au,
+        treding@nvidia.com, keescook@chromium.org, iamjoonsoo.kim@lge.com,
+        wsa+renesas@sang-engineering.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org,
+        dann.frazier@canonical.com
+Subject: Re: [PATCH v3 0/2] Optimize dma_*_from_contiguous calls
+Message-ID: <20190528060424.GA11521@lst.de>
+References: <20190524040633.16854-1-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190523070755.GA23832@kroah.com>
+In-Reply-To: <20190524040633.16854-1-nicoleotsuka@gmail.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 23, 2019 at 09:07:55AM +0200, Greg KH wrote:
-> I have no objection for you just taking this whole series as-is, no need
-> to worry about merge conflicts with the USB tree, I doubt anything will
-> be touching this area of code anytime soon.
-> 
-> So if you want to take it now, feel free to add:
-> 
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Thanks,
 
-Given that I'll pull it in, shouldn't this be a Reviewed-by or Acked-by?
+applied to dma-mapping for-next.
+
+Can you also send a conversion of drivers/iommu/dma-iommu.c to your
+new helpers against this tree?
+
+http://git.infradead.org/users/hch/dma-mapping.git/shortlog/refs/heads/for-next
