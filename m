@@ -2,110 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 165432C233
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B4752C284
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:05:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfE1JEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:04:02 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37330 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727321AbfE1JEA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:04:00 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w37so30611563edw.4
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HU1EQ+v38P9QJolnmXZTrOO2rSD6T7u0Lqw2ZLkiLWs=;
-        b=I/7AsYIlcIbykNwShZDT9vqdf0W2l+mAfbQvvY1pNwfgs1W0LbkA4t+YgIW85/3uHO
-         bTSykFOJBi17eYvOrMy8aAuO/GbqB2OLqAj4V9SBcfmO69y+tfbM0o7u5JDDHKRZ4I+y
-         c4JkYTOM0jo97idl5z+S/KV2EusVrq92+9MXo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HU1EQ+v38P9QJolnmXZTrOO2rSD6T7u0Lqw2ZLkiLWs=;
-        b=tGgHvKzKnBTVma1+CuMDVQeySLJUSTKEj/NdGykMuV6xy7lgRhOM6nDwTldTw9zTdv
-         8yPmj2If3Quty3GIIlrd15QXogqXpgGJX6iweEe1lg378nCIp6i0lhPyUL2oMjefHH2T
-         Q9Pnw6ZBSEyu21UQ6jR5OUiMNQaVH+x+YdM9keuvsii3akvGjSbwYOwOE8Ygl+FhBuxl
-         8hTzu2M6noWrC66S6vT3MyT/ahXI44foxG2Nizs8/CRDpx+rPn0nWvndeir7lAtMlIdl
-         /YbZfmZq4aIpJIGCFPV9IKD4SComr7Spp+sl54uFu5d0O/bKyGymgUcvszopwR2aYdeE
-         h7dQ==
-X-Gm-Message-State: APjAAAVIovfNt0Z2HmaZPSOHRv0QrNVMB5nEF+2e7o0N8jVt+1Do98xU
-        I85/kJr+OT/s/FWduhER77hS6TEiP3s=
-X-Google-Smtp-Source: APXvYqz9RdhfaDx2JF7fgePZMlTSmHplGB4DlBCTqMFDkYawJ7AszXHKVriOXKY3FK7S7TQRU+5DbA==
-X-Received: by 2002:a50:b3a6:: with SMTP id s35mr129117953edd.220.1559034238538;
-        Tue, 28 May 2019 02:03:58 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 02:03:57 -0700 (PDT)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        linux-fbdev@vger.kernel.org,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>
-Subject: [PATCH 33/33] backlight: simplify lcd notifier
-Date:   Tue, 28 May 2019 11:03:04 +0200
-Message-Id: <20190528090304.9388-34-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
-References: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
+        id S1727100AbfE1JFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:05:32 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57890 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726883AbfE1JFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:05:15 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 929DD88CD603B13F05D2;
+        Tue, 28 May 2019 17:05:12 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Tue, 28 May 2019
+ 17:04:56 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-serial@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] serial: stm32: Make stm32_get_databits static
+Date:   Tue, 28 May 2019 17:04:49 +0800
+Message-ID: <20190528090449.22868-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With all the work I've done on replacing fb notifier calls with direct
-calls into fbcon the backlight/lcd notifier is the only user left.
+Fix sparse warning:
 
-It will only receive events now that it cares about, hence we can
-remove this check.
+drivers/tty/serial/stm32-usart.c:603:14: warning:
+ symbol 'stm32_get_databits' was not declared. Should it be static?
 
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/video/backlight/lcd.c | 11 -----------
- 1 file changed, 11 deletions(-)
+ drivers/tty/serial/stm32-usart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/backlight/lcd.c b/drivers/video/backlight/lcd.c
-index ecdda06989d0..d6b653aa4ee9 100644
---- a/drivers/video/backlight/lcd.c
-+++ b/drivers/video/backlight/lcd.c
-@@ -30,17 +30,6 @@ static int fb_notifier_callback(struct notifier_block *self,
- 	struct lcd_device *ld;
- 	struct fb_event *evdata = data;
+diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
+index 9c2b04e..4517f2b 100644
+--- a/drivers/tty/serial/stm32-usart.c
++++ b/drivers/tty/serial/stm32-usart.c
+@@ -600,7 +600,7 @@ static void stm32_shutdown(struct uart_port *port)
+ 	free_irq(port->irq, port);
+ }
  
--	/* If we aren't interested in this event, skip it immediately ... */
--	switch (event) {
--	case FB_EVENT_BLANK:
--	case FB_EVENT_MODE_CHANGE:
--	case FB_EARLY_EVENT_BLANK:
--	case FB_R_EARLY_EVENT_BLANK:
--		break;
--	default:
--		return 0;
--	}
--
- 	ld = container_of(self, struct lcd_device, fb_notif);
- 	if (!ld->ops)
- 		return 0;
+-unsigned int stm32_get_databits(struct ktermios *termios)
++static unsigned int stm32_get_databits(struct ktermios *termios)
+ {
+ 	unsigned int bits;
+ 
 -- 
-2.20.1
+2.7.4
+
 
