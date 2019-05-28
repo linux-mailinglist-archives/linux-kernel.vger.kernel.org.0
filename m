@@ -2,67 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A88C32CA78
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:42:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E69632CA9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfE1PmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 11:42:11 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38678 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726602AbfE1PmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 11:42:11 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A53B968E89E32545B015;
-        Tue, 28 May 2019 23:42:00 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Tue, 28 May 2019
- 23:41:57 +0800
-Subject: Re: [PATCH v2 -next] staging: fieldbus: Fix build error without
- CONFIG_REGMAP_MMIO
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-References: <CAGngYiU=uFjJFEoiHFUr+ab73sJksaTBkfxvQwL1X6WJnhchqw@mail.gmail.com>
- <20190528142912.13224-1-yuehaibing@huawei.com>
- <CAGngYiW_hCDPRWao+389BfUH_2sP4S6pL+gteim=kDrnb9UDzQ@mail.gmail.com>
-CC:     Greg KH <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <3f4c1d4c-656b-8266-38c4-3f7c36a2bd7e@huawei.com>
-Date:   Tue, 28 May 2019 23:41:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1726910AbfE1PtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 11:49:04 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:46458 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbfE1PtC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 11:49:02 -0400
+Received: by mail-vs1-f68.google.com with SMTP id x8so422303vsx.13
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 08:49:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rVVCM3oss6fFLEowwE8V1IlUxZzOfvY2hKZ39Ilquf4=;
+        b=IqZUUEJieiqEbr+TQYYtAXgNVwAK7MzBBm9XlY9GGI+WKamSi1KFzW43xncmxVl8Ui
+         N5P4dPR+/E+LhBunyC95WAbkS0Og8TTm+OpBRx5yLU8NnS++izYync66K3+ssPoVmVBp
+         41R+hbkwY2q8btHusadzE8i4NyCimBvpQ5KV4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rVVCM3oss6fFLEowwE8V1IlUxZzOfvY2hKZ39Ilquf4=;
+        b=HigTfoXRnuMgakzVPBS3C2nRxx42ZrYZ0tsdgehz+jsa5stEaoBMOByrXwLECL5f4b
+         rypcymsnzCkmnEAC4RbfjzmoqMOyK9Kq2gh29F2KAvFbyzinR6DFHy0KrP04clIsL/k3
+         TAcHAlvWx8zO4gToEcP261RDw2HBHfAcIH4JYQtOQ9dFJPIBJlmJwAvgQcGRRuaI/aO/
+         8iUeR5adg418IbWcBeyEMT8AtapANbfOl/IgPpcGI/+ovUrgRmVGZhfcwwIkzRs7CF5G
+         CYQxS5oC61ZUqA7X0nFjGQkk8Jtmo5facrkKc2q7hzErk5IDywj1fbpoeFZp8u6IhfJt
+         zLlw==
+X-Gm-Message-State: APjAAAUdjrm8s7KjW2aLSk8F/5CVgmpq0EmLsDQ2eqCRtrOh0nbsXCEt
+        7XrVmhsFrCJnOzbSCyavYxHj0pMrk00=
+X-Google-Smtp-Source: APXvYqywRE9+sVIudp0zsMPD0HY1xX0SFb33591CpPmWIAOvPxZZhUzEK+YqjY0t+H0lZtTANkRyyA==
+X-Received: by 2002:a67:7dd1:: with SMTP id y200mr40503606vsc.213.1559058541202;
+        Tue, 28 May 2019 08:49:01 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id p20sm4977512uaa.4.2019.05.28.08.49.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 08:49:00 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id o5so467284vsq.4
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 08:49:00 -0700 (PDT)
+X-Received: by 2002:a67:f60b:: with SMTP id k11mr68126066vso.111.1559058141025;
+ Tue, 28 May 2019 08:42:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGngYiW_hCDPRWao+389BfUH_2sP4S6pL+gteim=kDrnb9UDzQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+References: <20190517225420.176893-1-dianders@chromium.org>
+ <20190517225420.176893-3-dianders@chromium.org> <05af228c-139b-2b7f-f626-36fb34634be5@broadcom.com>
+ <4f39e152-04ba-a64e-985a-df93e6d15ff8@intel.com> <aa8e526f-b382-f3b7-74a5-e0fee09ae096@broadcom.com>
+ <2d6fa51d-27af-4f90-2bd6-144112ce75ad@intel.com>
+In-Reply-To: <2d6fa51d-27af-4f90-2bd6-144112ce75ad@intel.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 28 May 2019 08:42:08 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XV1oudf-xW_s9CQMgF7MryX-UJRrqsUFDQE0DF8Yf80w@mail.gmail.com>
+Message-ID: <CAD=FV=XV1oudf-xW_s9CQMgF7MryX-UJRrqsUFDQE0DF8Yf80w@mail.gmail.com>
+Subject: Re: [PATCH 2/3] mmc: core: API for temporarily disabling
+ auto-retuning due to errors
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Arend Van Spriel <arend.vanspriel@broadcom.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Double Lo <double.lo@cypress.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Madhan Mohan R <madhanmohan.r@cypress.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Wright Feng <wright.feng@cypress.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Jiong Wu <lohengrin1024@gmail.com>,
+        Ritesh Harjani <riteshh@codeaurora.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Avri Altman <avri.altman@wdc.com>, Martin Hicks <mort@bork.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/5/28 22:35, Sven Van Asbroeck wrote:
-> On Tue, May 28, 2019 at 10:31 AM YueHaibing <yuehaibing@huawei.com> wrote:
->>
->> Fix gcc build error while CONFIG_REGMAP_MMIO is not set
->>
-> 
-> checkpatch.pl errors remain:
-> 
-> $ ./scripts/checkpatch.pl < ~/Downloads/YueHaibing.eml
-> ERROR: DOS line endings
-> #92: FILE: drivers/staging/fieldbus/anybuss/Kconfig:17:
-> +^Iselect REGMAP_MMIO^M$
+Hi,
 
-This seems text/plain messages have crlf set when saved as .eml file,
+On Tue, May 28, 2019 at 4:45 AM Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 28/05/19 2:21 PM, Arend Van Spriel wrote:
+> >
+> >
+> > On 5/28/2019 12:04 PM, Adrian Hunter wrote:
+> >> On 26/05/19 9:42 PM, Arend Van Spriel wrote:
+> >>> On 5/18/2019 12:54 AM, Douglas Anderson wrote:
+> >>>> Normally when the MMC core sees an "-EILSEQ" error returned by a host
+> >>>> controller then it will trigger a retuning of the card.  This is
+> >>>> generally a good idea.
+> >>>
+> >>> Probably a question for Adrian, but how is this retuning scheduled. I recall
+> >>> seeing something in mmc_request_done. How about deferring the retuning upon
+> >>> a release host or is that too sdio specific.
+> >>
+> >> Below is what I have been carrying the last 4 years.  But according to
+> >> Douglas'
+> >> patch, the release would need to be further down.  See 2nd diff below.
+> >> Would that work?
+> >
+> > That makes sense. The loop is needed because the device can be a bit bone
+> > headed. So indeed after the loop the device should be awake and able to
+> > handle CMD19.
 
-I do check my v2 patch is not crlf ending, but when save as eml file in
+IMO I'd rather not _defer_ the re-tuning.  I believe the correct thing
+is to not schedule the re-tuning at all in response to the IO errors.
+That's what my patch does.
 
-my thunderbird, it becomes crlf ending.
+Specifically the IO errors that come up in this case are not due to
+being "out of tune".  They are due to the fact that the other SDIO
+card may be in a transitory state and putting garbage on the bus.
+Scheduling a retuning for later would be just a waste of time and
+needlessly tie up the bus for the retune.
 
-> 
-> total: 1 errors, 0 warnings, 0 checks, 7 lines checked
-> 
-> 
+...or am I confused?
 
+
+> What if tuning is needed to read SBSDIO_FUNC1_SLEEPCSR successfully?
+
+Personally I think this would be pretty unlikely.  If we're at this
+point we've already talked to the card quite a bit so we should have a
+tuning that's pretty good.  If we're just slightly out of tune then we
+should still get through the loop with a few retries and then we can
+detect that we're out of tune later, with a more reliable command.
+
+However, if you're worried about this, I can always re-enable the old
+behavior if we have already looped a few times.  I suppose I could
+increase the loop duration/count slightly too...  Please let me know
+one way or the other.
+
+
+-Doug
