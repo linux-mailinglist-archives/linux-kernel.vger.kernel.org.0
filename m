@@ -2,50 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 657792D02E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 22:23:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A0B52D033
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 22:24:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727644AbfE1UXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 16:23:37 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49233 "EHLO
+        id S1727719AbfE1UYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 16:24:14 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44417 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726425AbfE1UXh (ORCPT
+        with ESMTP id S1726425AbfE1UYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 16:23:37 -0400
+        Tue, 28 May 2019 16:24:11 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4SKNFUo2218253
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4SKNwmq2218325
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 28 May 2019 13:23:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4SKNFUo2218253
+        Tue, 28 May 2019 13:23:58 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4SKNwmq2218325
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559074995;
-        bh=dbKBuz+yvTlisXWUqNvZXnegXSorIEnr5uNUAaWn2zA=;
+        s=2019051801; t=1559075039;
+        bh=tlehJrju+Lh8zMfh1YbmXh3aTwOQejrF3vthB7kN5mQ=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=B6FDdLEtiJ0huLjpyftYEi1iNDKb52YXlYmYLYwtLTIHlod7qZp7Pc/WcFX7NM80n
-         XxG3P/1xZGu7C3lkeOil0QV2D84qeje21yrx2BYBKM9yFiiA8PZyzE+Jv9X1u+obuW
-         QYFdQuRiTDfwshxIZeACQfhYSk69pXHVk2v+PtxYj2KVn/hanBMEH/0ulLASvJWc0R
-         HU8qQNyNNlgttMdEPKaKqjsvXELbRTzY1gwiRuKnIkrs3kUgmZ7VvZQpwC8DlT9Dkt
-         8I6Mo1xjoq5CCbS5Z1kfJ6MdC0Kramn5+6zcAacNxEiaKFGJCfQw3NJRBPtJxQ9DMy
-         zq9oxoMgYlerg==
+        b=I3I/eDxLdINs2v5hsmVT+No9QQhH6vTnq9J1Hn2g4zYV5cTdb8fqxiSwHoThqTIFQ
+         JDcC6D3MQasqIyyvxlAasG9PAfO8HTISRlZrmecQYIJboa3cT+XKtNpv0Y9rdhoj8c
+         tg9JX3dY6AXxmZ/Lptx+3Q7qalMHDPRR7l5Fw0xSsIwhi1iYuZW7DAvd2CB8aHF4Ya
+         +cLrFkhoYeMbQmsKWZiy7LaWGvi+pFLLlm18IgjsUgb7JpcQquVWVpdEDIrEZmsOji
+         JhCn3y4B3M2ptZlif3ZmwMAASSGEhf+dGhXW2LIFSms/r/FxTs/EvQDRl0rOyU6CY5
+         lQHBNnyRogYOg==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4SKNFmH2218245;
-        Tue, 28 May 2019 13:23:15 -0700
-Date:   Tue, 28 May 2019 13:23:15 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4SKNvoN2218322;
+        Tue, 28 May 2019 13:23:57 -0700
+Date:   Tue, 28 May 2019 13:23:57 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Kosina <tipbot@zytor.com>
-Message-ID: <tip-f560201102035ba9def2fc21827dd34690dd126e@git.kernel.org>
-Cc:     hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
-        jpoimboe@redhat.com, jkosina@suse.cz, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de
-Reply-To: mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, jpoimboe@redhat.com,
-          peterz@infradead.org, jkosina@suse.cz
-In-Reply-To: <nycvar.YFH.7.76.1905282128100.1962@cbobk.fhfr.pm>
-References: <nycvar.YFH.7.76.1905282128100.1962@cbobk.fhfr.pm>
+From:   tip-bot for Geert Uytterhoeven <tipbot@zytor.com>
+Message-ID: <tip-43b98d876f89dce732f50b71607b6d2bbb8d8e6a@git.kernel.org>
+Cc:     hpa@zytor.com, geert+renesas@glider.be, marc.zyngier@arm.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org
+Reply-To: mingo@kernel.org, marc.zyngier@arm.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          geert+renesas@glider.be
+In-Reply-To: <20190527115742.2693-1-geert+renesas@glider.be>
+References: <20190527115742.2693-1-geert+renesas@glider.be>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:smp/hotplug] cpu/hotplug: Fix notify_cpu_starting() reference
- in bringup_wait_for_ap()
-Git-Commit-ID: f560201102035ba9def2fc21827dd34690dd126e
+Subject: [tip:irq/core] genirq/irqdomain: Remove WARN_ON() on out-of-memory
+ condition
+Git-Commit-ID: 43b98d876f89dce732f50b71607b6d2bbb8d8e6a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -63,38 +62,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f560201102035ba9def2fc21827dd34690dd126e
-Gitweb:     https://git.kernel.org/tip/f560201102035ba9def2fc21827dd34690dd126e
-Author:     Jiri Kosina <jkosina@suse.cz>
-AuthorDate: Tue, 28 May 2019 21:31:49 +0200
+Commit-ID:  43b98d876f89dce732f50b71607b6d2bbb8d8e6a
+Gitweb:     https://git.kernel.org/tip/43b98d876f89dce732f50b71607b6d2bbb8d8e6a
+Author:     Geert Uytterhoeven <geert+renesas@glider.be>
+AuthorDate: Mon, 27 May 2019 13:57:42 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 28 May 2019 12:59:03 -0700
+CommitDate: Tue, 28 May 2019 13:10:55 -0700
 
-cpu/hotplug: Fix notify_cpu_starting() reference in bringup_wait_for_ap()
+genirq/irqdomain: Remove WARN_ON() on out-of-memory condition
 
-bringup_wait_for_ap() comment references cpu_notify_starting(), but the 
-function is actually called notify_cpu_starting(). Fix that.
+There is no need to print a backtrace when memory allocation fails, as
+the memory allocation core already takes care of that.
 
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1905282128100.1962@cbobk.fhfr.pm
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Link: https://lkml.kernel.org/r/20190527115742.2693-1-geert+renesas@glider.be
 
 ---
- kernel/cpu.c | 2 +-
+ kernel/irq/irqdomain.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index f2ef10460698..be82cbc11a8a 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -522,7 +522,7 @@ static int bringup_wait_for_ap(unsigned int cpu)
- 	/*
- 	 * SMT soft disabling on X86 requires to bring the CPU out of the
- 	 * BIOS 'wait for SIPI' state in order to set the CR4.MCE bit.  The
--	 * CPU marked itself as booted_once in cpu_notify_starting() so the
-+	 * CPU marked itself as booted_once in notify_cpu_starting() so the
- 	 * cpu_smt_allowed() check will now return false if this is not the
- 	 * primary sibling.
- 	 */
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index a453e229f99c..e7d17cc3a3d7 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -139,7 +139,7 @@ struct irq_domain *__irq_domain_add(struct fwnode_handle *fwnode, int size,
+ 
+ 	domain = kzalloc_node(sizeof(*domain) + (sizeof(unsigned int) * size),
+ 			      GFP_KERNEL, of_node_to_nid(of_node));
+-	if (WARN_ON(!domain))
++	if (!domain)
+ 		return NULL;
+ 
+ 	if (fwnode && is_fwnode_irqchip(fwnode)) {
