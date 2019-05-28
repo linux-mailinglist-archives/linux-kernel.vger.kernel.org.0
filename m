@@ -2,83 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9D212D02C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 22:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B29AA2D007
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 22:08:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbfE1USy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 16:18:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40827 "EHLO mx1.redhat.com"
+        id S1727684AbfE1UIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 16:08:31 -0400
+Received: from mga17.intel.com ([192.55.52.151]:48366 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727075AbfE1USx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 16:18:53 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3A0ED9FFC5;
-        Tue, 28 May 2019 20:18:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C803D60C47;
-        Tue, 28 May 2019 20:18:50 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <6e061326-5feb-5471-c0c0-a364af5e82c3@schaufler-ca.com>
-References: <6e061326-5feb-5471-c0c0-a364af5e82c3@schaufler-ca.com> <6889f4f9-4ae0-8a92-a2fc-04151ad8ed9f@schaufler-ca.com> <10710.1559070135@warthog.procyon.org.uk>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com, James Morris <jmorris@namei.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PULL] Smack: Restore the smackfsdef mount option
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <15804.1559074726.1@warthog.procyon.org.uk>
-Date:   Tue, 28 May 2019 21:18:46 +0100
-Message-ID: <15805.1559074726@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 28 May 2019 20:18:53 +0000 (UTC)
+        id S1726668AbfE1UI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 16:08:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 13:08:29 -0700
+X-ExtLoop1: 1
+Received: from marshy.an.intel.com ([10.122.105.159])
+  by fmsmga006.fm.intel.com with ESMTP; 28 May 2019 13:08:27 -0700
+From:   richard.gong@linux.intel.com
+To:     gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, dinguyen@kernel.org, atull@kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sen.li@intel.com, richard.gong@linux.intel.com,
+        Richard Gong <richard.gong@intel.com>
+Subject: [PATCHv4 0/4] add Intel Stratix10 remote system update driver
+Date:   Tue, 28 May 2019 15:20:29 -0500
+Message-Id: <1559074833-1325-1-git-send-email-richard.gong@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+From: Richard Gong <richard.gong@intel.com>
 
-> > 	 static const struct fs_parameter_spec smack_param_specs[] = {
-> > 	+	fsparam_string("fsdef",		Opt_fsdefault),
-> > 		fsparam_string("fsdefault",	Opt_fsdefault),
-> > 		fsparam_string("fsfloor",	Opt_fsfloor),
-> > 		fsparam_string("fshat",		Opt_fshat),
-> >
-> > but that all the option names in that table *do* need prefixing with
-> > "smack".
+This is the 4th submission of Intel Stratix10 remote system update (RSU)
+driver.
 
-Actually, you're right, we do need to add that *and* prefix it with "smack".
+Intel Stratix10 remote system update driver patches have been reviewed by
+Alan Tull and other colleagues at Intel.
 
-> I'm not sure I follow the logic, because "mount -o smackfsdefault=Pop"
-> does what I would expect it to.
+The Intel Stratix10 Remote System Update driver exposes interfaces
+access through the Intel Stratix10 Service Layer to user space via sysfs
+interface. The RSU interfaces report and control some of the optional RSU
+features on Intel Stratix 10 SoC.
 
-Yes, I'm sure it does - for the cases you're testing - but it's filesystem and
-syscall dependent.  None of the filesystems currently ported to the mount API
-upstream override ->parse_monolithic(), but that changes with nfs, shmem and
-coda and will change with cifs too.
+The RSU feature provides a way for customers to update the boot
+configuration of a Intel Stratix 10 SoC device with significantly reduced
+risk of corrupting the bitstream storage and bricking the system.
 
-It also changes if you use fsconfig() to supply the options because that goes
-through a different LSM hook (it uses fs_context_parse_param rather than
-sb_eat_lsm_opts).
+v4: removed devm_device_add_groups() & devm_device_remove_groups(), then
+    utilized groups at struct device_driver
+    replaced /sys/devices/platform/stratix10-rsu.0/ with /sys/devices/.../
+    stratix10-rsu.0/driver/
+    removed spaces
+v3: changed kernel version from 5.2 to 5.3 in RSU sysfs interface document
+v2: removed compatible = "intel,stratix10-rsu"
+    added intel stratix10 RSU device
+    changed to support RSU in handling watchdog timeout
+    s/attr_group/ATTRIBUTE_GROUPS, use devm_device_add_groups() and
+    devm_device_remove_groups()
+    added check the return value from rsu_send_msg()
+    removed RSU binding text file
+    other corrections/change 
 
-> > The way you enter the LSM is going to depend on whether
-> > generic_parse_monolithic() is called.  You're only going to enter this way
-> > if mount(2) is the syscall of entry and the filesystem doesn't override
-> > the ->parse_monolithic() option (none in the upstream kernel).
-> 
-> So you're saying that the code works for the mount(2) case,
-> but won't work for some other case? Are you planning a fix?
-> Will that fix include restoration of smackfsdef?
+Richard Gong (4):
+  firmware: stratix10-svc: extend svc to support RSU notify and WD
+    features
+  firmware: add Intel Stratix10 remote system update driver
+  firmware: rsu: document sysfs interface
+  MAINTAINERS: add maintainer for Intel Stratix10 FW drivers
 
-I can do a fix, but testing it is a pain.
+ .../testing/sysfs-devices-platform-stratix10-rsu   | 100 +++++
+ MAINTAINERS                                        |  11 +
+ drivers/firmware/Kconfig                           |  18 +
+ drivers/firmware/Makefile                          |   1 +
+ drivers/firmware/stratix10-rsu.c                   | 403 +++++++++++++++++++++
+ drivers/firmware/stratix10-svc.c                   |  74 +++-
+ include/linux/firmware/intel/stratix10-smc.h       |  48 ++-
+ .../linux/firmware/intel/stratix10-svc-client.h    |  12 +-
+ 8 files changed, 657 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-devices-platform-stratix10-rsu
+ create mode 100644 drivers/firmware/stratix10-rsu.c
 
-David
+-- 
+2.7.4
+
