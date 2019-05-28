@@ -2,179 +2,259 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3D3B2C268
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:04:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25FC12C25C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:04:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbfE1JEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:04:43 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17175 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727459AbfE1JEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:04:39 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4BBDEBBDC9C5E5778912;
-        Tue, 28 May 2019 17:04:36 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 28 May 2019 17:04:26 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, Zhongzhu Liu <liuzhongzhu@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 03/12] net: hns3: add support for dump firmware statistics by debugfs
-Date:   Tue, 28 May 2019 17:02:53 +0800
-Message-ID: <1559034182-24737-4-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559034182-24737-1-git-send-email-tanhuazhong@huawei.com>
-References: <1559034182-24737-1-git-send-email-tanhuazhong@huawei.com>
+        id S1727416AbfE1JEe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:04:34 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33607 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727179AbfE1JDq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:03:46 -0400
+Received: by mail-ed1-f68.google.com with SMTP id n17so30689151edb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rNBJhiQm3QtWHoSITdA9k7CBQWZOP0J/7NNptnKcbZo=;
+        b=dYYBlrvtmXuD/rIq0AB0jguBiU/CNNLAbA6WmSlJQIZ+yRCtx/LctjbM1MQD0W/b1y
+         qLcBRd2UA/UxgxFxWmst9VBs+4cNWDRtceOXBTs/vxprZ2s4IAYBexP6TqvhJX1JQKPQ
+         7DiZ1IZlG5hVp9FoIf3aOBg1jXZNd+XeHj29g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rNBJhiQm3QtWHoSITdA9k7CBQWZOP0J/7NNptnKcbZo=;
+        b=lFN72gwSkngkMcGZsgB3EdZK5pisED0o7MV/GD1Zc95JZ/R8XzJhcOB+rIDtpTZLB9
+         xPs2PI2ItKGGDdGoXCyOYAdBOKd/reHmfcYg137KBDoNfW/Wl61ow6kf7D4l51zgfNsC
+         cmA6Zu0Q2I61gMFTx8Zf3+T442eXbb33GmHmIFA99t7+HtN0y5KR08uRrwjD89h2Iy+b
+         Y241N8/tfm2LQWyYewwsCxTqKQeIfSK7j0KOmv7H33OWHx4W1gG6Zbu6QCcSLCg96y7C
+         bSgSW6EpPRmGKlnxfLuf1pN9VaVBRQ9Av8Y+U0174Gcv9xz9z+NtCc0zh3tD9oL5XEuq
+         7a4A==
+X-Gm-Message-State: APjAAAVYZId0c+AF58IAkOUkV5VAyl1bRtEvDvlZaZpaAe0djGUXFUND
+        76VH+kJ2GFOnItXmSTolBGR/WaAgBh8=
+X-Google-Smtp-Source: APXvYqxNNixKWrlzaYumQEkWdIfNSLuYtCKS5s2p8GnMvuoJF4Q+3V//pjVusGXfoJ8b89my2E1rng==
+X-Received: by 2002:a17:906:cd08:: with SMTP id oz8mr55467207ejb.67.1559034223020;
+        Tue, 28 May 2019 02:03:43 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 02:03:42 -0700 (PDT)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        linux-fbdev@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Rosin <peda@axentia.se>, Yisheng Xie <ysxie@foxmail.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH 22/33] fbcon: Call fbcon_mode_deleted/new_modelist directly
+Date:   Tue, 28 May 2019 11:02:53 +0200
+Message-Id: <20190528090304.9388-23-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
+References: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhongzhu Liu <liuzhongzhu@huawei.com>
+I'm not entirely clear on what new_modelist actually does, it seems
+exclusively for a sysfs interface. Which in the end does amount to a
+normal fb_set_par to check the mode, but then takes a different path
+in both fbmem.c and fbcon.c.
 
-This patch prints firmware statistics information.
+I have no idea why these 2 paths are different, but then I also don't
+really want to find out. So just do the simple conversion to a direct
+function call.
 
-debugfs command:
-echo dump m7 info > cmd
+v2: static inline for the dummy versions, I forgot.
 
-estuary:/dbg/hns3/0000:7d:00.0$ echo dump m7 info > cmd
-[  172.577240] hns3 0000:7d:00.0: 0x00000000  0x00000000  0x00000000
-[  172.583471] hns3 0000:7d:00.0: 0x00000000  0x00000000  0x00000000
-[  172.589552] hns3 0000:7d:00.0: 0x00000030  0x00000000  0x00000000
-[  172.595632] hns3 0000:7d:00.0: 0x00000000  0x00000000  0x00000000
-estuary:/dbg/hns3/0000:7d:00.0$
-
-Signed-off-by: Zhongzhu Liu <liuzhongzhu@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Rosin <peda@axentia.se>
+Cc: Yisheng Xie <ysxie@foxmail.com>
+Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
+Cc: linux-fbdev@vger.kernel.org
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |  1 +
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  8 +++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 57 ++++++++++++++++++++++
- 3 files changed, 66 insertions(+)
+ drivers/video/fbdev/core/fbcon.c | 14 +++-----------
+ drivers/video/fbdev/core/fbmem.c | 22 +++++++---------------
+ include/linux/fb.h               |  5 -----
+ include/linux/fbcon.h            |  6 ++++++
+ 4 files changed, 16 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-index fc4917a..30354fa 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-@@ -252,6 +252,7 @@ static void hns3_dbg_help(struct hnae3_handle *h)
- 	dev_info(&h->pdev->dev, "dump qos buf cfg\n");
- 	dev_info(&h->pdev->dev, "dump mng tbl\n");
- 	dev_info(&h->pdev->dev, "dump reset info\n");
-+	dev_info(&h->pdev->dev, "dump m7 info\n");
- 	dev_info(&h->pdev->dev, "dump ncl_config <offset> <length>(in hex)\n");
- 	dev_info(&h->pdev->dev, "dump mac tnl status\n");
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index d79a209..61cb10d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -243,6 +243,9 @@ enum hclge_opcode_type {
- 
- 	/* NCL config command */
- 	HCLGE_OPC_QUERY_NCL_CONFIG	= 0x7011,
-+	/* M7 stats command */
-+	HCLGE_OPC_M7_STATS_BD		= 0x7012,
-+	HCLGE_OPC_M7_STATS_INFO		= 0x7013,
- 
- 	/* SFP command */
- 	HCLGE_OPC_GET_SFP_INFO		= 0x7104,
-@@ -970,6 +973,11 @@ struct hclge_fd_ad_config_cmd {
- 	u8 rsv2[8];
- };
- 
-+struct hclge_get_m7_bd_cmd {
-+	__le32 bd_num;
-+	u8 rsv[20];
-+};
-+
- int hclge_cmd_init(struct hclge_dev *hdev);
- static inline void hclge_write_reg(void __iomem *base, u32 reg, u32 value)
- {
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-index a9ffb57..ed1f533 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c
-@@ -921,6 +921,61 @@ static void hclge_dbg_dump_rst_info(struct hclge_dev *hdev)
- 		 hdev->rst_stats.reset_cnt);
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index e3267d71395c..515366308537 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -3019,8 +3019,8 @@ static void fbcon_set_all_vcs(struct fb_info *info)
+ 		fbcon_modechanged(info);
  }
  
-+void hclge_dbg_get_m7_stats_info(struct hclge_dev *hdev)
-+{
-+	struct hclge_desc *desc_src, *desc_tmp;
-+	struct hclge_get_m7_bd_cmd *req;
-+	struct hclge_desc desc;
-+	u32 bd_num, buf_len;
-+	int ret, i;
-+
-+	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_M7_STATS_BD, true);
-+
-+	req = (struct hclge_get_m7_bd_cmd *)desc.data;
-+	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+	if (ret) {
-+		dev_err(&hdev->pdev->dev,
-+			"get firmware statistics bd number failed, ret=%d\n",
-+			ret);
-+		return;
-+	}
-+
-+	bd_num = le32_to_cpu(req->bd_num);
-+
-+	buf_len	 = sizeof(struct hclge_desc) * bd_num;
-+	desc_src = kzalloc(buf_len, GFP_KERNEL);
-+	if (!desc_src) {
-+		dev_err(&hdev->pdev->dev,
-+			"allocate desc for get_m7_stats failed\n");
-+		return;
-+	}
-+
-+	desc_tmp = desc_src;
-+	ret  = hclge_dbg_cmd_send(hdev, desc_tmp, 0, bd_num,
-+				  HCLGE_OPC_M7_STATS_INFO);
-+	if (ret) {
-+		kfree(desc_src);
-+		dev_err(&hdev->pdev->dev,
-+			"get firmware statistics failed, ret=%d\n", ret);
-+		return;
-+	}
-+
-+	for (i = 0; i < bd_num; i++) {
-+		dev_info(&hdev->pdev->dev, "0x%08x  0x%08x  0x%08x\n",
-+			 le32_to_cpu(desc_tmp->data[0]),
-+			 le32_to_cpu(desc_tmp->data[1]),
-+			 le32_to_cpu(desc_tmp->data[2]));
-+		dev_info(&hdev->pdev->dev, "0x%08x  0x%08x  0x%08x\n",
-+			 le32_to_cpu(desc_tmp->data[3]),
-+			 le32_to_cpu(desc_tmp->data[4]),
-+			 le32_to_cpu(desc_tmp->data[5]));
-+
-+		desc_tmp++;
-+	}
-+
-+	kfree(desc_src);
-+}
-+
- /* hclge_dbg_dump_ncl_config: print specified range of NCL_CONFIG file
-  * @hdev: pointer to struct hclge_dev
-  * @cmd_buf: string that contains offset and length
-@@ -1029,6 +1084,8 @@ int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf)
- 		hclge_dbg_dump_reg_cmd(hdev, cmd_buf);
- 	} else if (strncmp(cmd_buf, "dump reset info", 15) == 0) {
- 		hclge_dbg_dump_rst_info(hdev);
-+	} else if (strncmp(cmd_buf, "dump m7 info", 12) == 0) {
-+		hclge_dbg_get_m7_stats_info(hdev);
- 	} else if (strncmp(cmd_buf, "dump ncl_config", 15) == 0) {
- 		hclge_dbg_dump_ncl_config(hdev,
- 					  &cmd_buf[sizeof("dump ncl_config")]);
+-static int fbcon_mode_deleted(struct fb_info *info,
+-			      struct fb_videomode *mode)
++int fbcon_mode_deleted(struct fb_info *info,
++		       struct fb_videomode *mode)
+ {
+ 	struct fb_info *fb_info;
+ 	struct fbcon_display *p;
+@@ -3262,7 +3262,7 @@ static void fbcon_fb_blanked(struct fb_info *info, int blank)
+ 	ops->blank_state = blank;
+ }
+ 
+-static void fbcon_new_modelist(struct fb_info *info)
++void fbcon_new_modelist(struct fb_info *info)
+ {
+ 	int i;
+ 	struct vc_data *vc;
+@@ -3324,7 +3324,6 @@ static int fbcon_event_notify(struct notifier_block *self,
+ {
+ 	struct fb_event *event = data;
+ 	struct fb_info *info = event->info;
+-	struct fb_videomode *mode;
+ 	struct fb_con2fbmap *con2fb;
+ 	struct fb_blit_caps *caps;
+ 	int idx, ret = 0;
+@@ -3336,10 +3335,6 @@ static int fbcon_event_notify(struct notifier_block *self,
+ 	case FB_EVENT_MODE_CHANGE_ALL:
+ 		fbcon_set_all_vcs(info);
+ 		break;
+-	case FB_EVENT_MODE_DELETE:
+-		mode = event->data;
+-		ret = fbcon_mode_deleted(info, mode);
+-		break;
+ 	case FB_EVENT_SET_CONSOLE_MAP:
+ 		/* called with console lock held */
+ 		con2fb = event->data;
+@@ -3353,9 +3348,6 @@ static int fbcon_event_notify(struct notifier_block *self,
+ 	case FB_EVENT_BLANK:
+ 		fbcon_fb_blanked(info, *(int *)event->data);
+ 		break;
+-	case FB_EVENT_NEW_MODELIST:
+-		fbcon_new_modelist(info);
+-		break;
+ 	case FB_EVENT_GET_REQ:
+ 		caps = event->data;
+ 		fbcon_get_requirement(info, caps);
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 73269dedcd45..cbdd141e7695 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -966,16 +966,11 @@ fb_set_var(struct fb_info *info, struct fb_var_screeninfo *var)
+ 		/* make sure we don't delete the videomode of current var */
+ 		ret = fb_mode_is_equal(&mode1, &mode2);
+ 
+-		if (!ret) {
+-		    struct fb_event event;
+-
+-		    event.info = info;
+-		    event.data = &mode1;
+-		    ret = fb_notifier_call_chain(FB_EVENT_MODE_DELETE, &event);
+-		}
++		if (!ret)
++			fbcon_mode_deleted(info, &mode1);
+ 
+ 		if (!ret)
+-		    fb_delete_videomode(&mode1, &info->modelist);
++			fb_delete_videomode(&mode1, &info->modelist);
+ 
+ 
+ 		ret = (ret) ? -EINVAL : 0;
+@@ -1992,7 +1987,6 @@ subsys_initcall(fbmem_init);
+ 
+ int fb_new_modelist(struct fb_info *info)
+ {
+-	struct fb_event event;
+ 	struct fb_var_screeninfo var = info->var;
+ 	struct list_head *pos, *n;
+ 	struct fb_modelist *modelist;
+@@ -2012,14 +2006,12 @@ int fb_new_modelist(struct fb_info *info)
+ 		}
+ 	}
+ 
+-	err = 1;
++	if (list_empty(&info->modelist))
++		return 1;
+ 
+-	if (!list_empty(&info->modelist)) {
+-		event.info = info;
+-		err = fb_notifier_call_chain(FB_EVENT_NEW_MODELIST, &event);
+-	}
++	fbcon_new_modelist(info);
+ 
+-	return err;
++	return 0;
+ }
+ 
+ MODULE_LICENSE("GPL");
+diff --git a/include/linux/fb.h b/include/linux/fb.h
+index 794b386415b7..7a788ed8c7b5 100644
+--- a/include/linux/fb.h
++++ b/include/linux/fb.h
+@@ -126,8 +126,6 @@ struct fb_cursor_user {
+ 
+ /*	The resolution of the passed in fb_info about to change */ 
+ #define FB_EVENT_MODE_CHANGE		0x01
+-/*      An entry from the modelist was removed */
+-#define FB_EVENT_MODE_DELETE            0x04
+ 
+ #ifdef CONFIG_GUMSTIX_AM200EPD
+ /* only used by mach-pxa/am200epd.c */
+@@ -142,9 +140,6 @@ struct fb_cursor_user {
+ /*      A hardware display blank change occurred */
+ #define FB_EVENT_BLANK                  0x09
+ /*      Private modelist is to be replaced */
+-#define FB_EVENT_NEW_MODELIST           0x0A
+-/*	The resolution of the passed in fb_info about to change and
+-        all vc's should be changed         */
+ #define FB_EVENT_MODE_CHANGE_ALL	0x0B
+ /*	A software display blank change occurred */
+ #define FB_EVENT_CONBLANK               0x0C
+diff --git a/include/linux/fbcon.h b/include/linux/fbcon.h
+index 790c42ec7b5d..c139834342f5 100644
+--- a/include/linux/fbcon.h
++++ b/include/linux/fbcon.h
+@@ -9,6 +9,9 @@ void fbcon_fb_unregistered(struct fb_info *info);
+ void fbcon_fb_unbind(struct fb_info *info);
+ void fbcon_suspended(struct fb_info *info);
+ void fbcon_resumed(struct fb_info *info);
++int fbcon_mode_deleted(struct fb_info *info,
++		       struct fb_videomode *mode);
++void fbcon_new_modelist(struct fb_info *info);
+ #else
+ static inline void fb_console_init(void) {}
+ static inline void fb_console_exit(void) {}
+@@ -17,6 +20,9 @@ static inline void fbcon_fb_unregistered(struct fb_info *info) {}
+ static inline void fbcon_fb_unbind(struct fb_info *info) {}
+ static inline void fbcon_suspended(struct fb_info *info) {}
+ static inline void fbcon_resumed(struct fb_info *info) {}
++static inline int fbcon_mode_deleted(struct fb_info *info,
++				     struct fb_videomode *mode) { return 0; }
++static inline void fbcon_new_modelist(struct fb_info *info) {}
+ #endif
+ 
+ #endif /* _LINUX_FBCON_H */
 -- 
-2.7.4
+2.20.1
 
