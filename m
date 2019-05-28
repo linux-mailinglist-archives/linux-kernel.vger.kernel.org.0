@@ -2,55 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AFD42D0FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 23:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 413A72D0FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 23:30:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727970AbfE1VaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 17:30:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56785 "EHLO
+        id S1728003AbfE1Vag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 17:30:36 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50499 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbfE1VaA (ORCPT
+        with ESMTP id S1727144AbfE1Vaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 17:30:00 -0400
+        Tue, 28 May 2019 17:30:35 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4SLTgsE2240754
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x4SLUQSV2241056
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 28 May 2019 14:29:42 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4SLTgsE2240754
+        Tue, 28 May 2019 14:30:26 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x4SLUQSV2241056
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019051801; t=1559078983;
-        bh=zNtj7Mc4odQZV1gNb3k8TscpppokV5E18Uq/s9FRLwk=;
+        s=2019051801; t=1559079026;
+        bh=WMY9e1Hmdj3BEHeJW4NnRb/RYti1H2T4KQ1xQJTxRNU=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=tnck3TexNg8bL1B6Kce8eulx9ajAxEhdzBOBhcqPbtXytQFwDi7uLdNjeT37Usgrg
-         g5xLhtUmpWsEgcH/oTo9XmvAI2u9p8b4ef0mgUco5T3JjNBNoVl9VQ/50rfLnwW0xJ
-         MvR8qSxv5mGRY2ei1gFoCSS5Nnnzp2zVhGnFvMtMYNWdQ7h9LftnN1DZVeV+QPhb59
-         ojMsSlkfZNT6rtb2N9TAVYiVCnUW8sC1Olz4uwAz2fVXM8ciqSZiv8j38rK6aQYPEI
-         V3Qh95MQ7C0xbEU3BSxf5nOAey6ZIib167zgFs2i7DKv4Oz2sXGXMMZiXPgDBrDAJf
-         cin5lmoS1Bz6A==
+        b=yqFzMuaPum2/RnatIpymLHwLJi/hec75esQQt6qulrFpX7MUcENMU1boz+uZ32QXr
+         A+0FaFVCShLPXjWU5Rd4uoOEt0vUWNDYRyvKpHQBs0ulDsAM4B/11+YVkOMKnhx6yP
+         O/Ja/x7h5/XTAouEGWjoIfX9krhC+iga0q+sz7veGhxqzeysph3E3JmBMJzxOcC8yA
+         cF3OuhNCCQm37CaISlxkXlxwBvidHrBTwh/1hl4LReaVJthz6Bmj5qQRWszQL4mTOC
+         jF58g0MGBSDiG8sdmOFidP3LuB1bA8AG5dYTn680WdJYr39PSEUMe/SKyePGUA7qMY
+         VB7U0J627t7dw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4SLTgv32240751;
-        Tue, 28 May 2019 14:29:42 -0700
-Date:   Tue, 28 May 2019 14:29:42 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x4SLUPtA2241053;
+        Tue, 28 May 2019 14:30:25 -0700
+Date:   Tue, 28 May 2019 14:30:25 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-ed9adb2035b5be5896d465b19040262be5f4a824@git.kernel.org>
-Cc:     peterz@infradead.org, songliubraving@fb.com, sdf@google.com,
-        ak@linux.intel.com, jolsa@kernel.org, tmricht@linux.ibm.com,
-        mingo@kernel.org, acme@redhat.com, tglx@linutronix.de,
-        namhyung@kernel.org, alexander.shishkin@linux.intel.com,
-        adrian.hunter@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-          acme@redhat.com, alexander.shishkin@linux.intel.com,
-          adrian.hunter@intel.com, namhyung@kernel.org,
-          tmricht@linux.ibm.com, jolsa@kernel.org, mingo@kernel.org,
-          songliubraving@fb.com, peterz@infradead.org, ak@linux.intel.com,
-          sdf@google.com
-In-Reply-To: <20190508132010.14512-6-jolsa@kernel.org>
-References: <20190508132010.14512-6-jolsa@kernel.org>
+From:   tip-bot for Thomas Richter <tipbot@zytor.com>
+Message-ID: <tip-6738028dd57df064b969d8392c943ef3b3ae705d@git.kernel.org>
+Cc:     tglx@linutronix.de, mingo@kernel.org, brueckner@linux.ibm.com,
+        tmricht@linux.ibm.com, linux-kernel@vger.kernel.org,
+        heiko.carstens@de.ibm.com, acme@redhat.com, hpa@zytor.com
+Reply-To: mingo@kernel.org, tglx@linutronix.de, brueckner@linux.ibm.com,
+          heiko.carstens@de.ibm.com, linux-kernel@vger.kernel.org,
+          tmricht@linux.ibm.com, acme@redhat.com, hpa@zytor.com
+In-Reply-To: <20190522144601.50763-4-tmricht@linux.ibm.com>
+References: <20190522144601.50763-4-tmricht@linux.ibm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf machine: Read also the end of the kernel
-Git-Commit-ID: ed9adb2035b5be5896d465b19040262be5f4a824
+Subject: [tip:perf/urgent] perf record: Fix s390 missing module symbol and
+ warning for non-root users
+Git-Commit-ID: 6738028dd57df064b969d8392c943ef3b3ae705d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -68,103 +63,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ed9adb2035b5be5896d465b19040262be5f4a824
-Gitweb:     https://git.kernel.org/tip/ed9adb2035b5be5896d465b19040262be5f4a824
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Wed, 8 May 2019 15:20:03 +0200
+Commit-ID:  6738028dd57df064b969d8392c943ef3b3ae705d
+Gitweb:     https://git.kernel.org/tip/6738028dd57df064b969d8392c943ef3b3ae705d
+Author:     Thomas Richter <tmricht@linux.ibm.com>
+AuthorDate: Wed, 22 May 2019 16:46:01 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 28 May 2019 09:52:23 -0300
 
-perf machine: Read also the end of the kernel
+perf record: Fix s390 missing module symbol and warning for non-root users
 
-We mark the end of kernel based on the first module, but that could
-cover some bpf program maps. Reading _etext symbol if it's present to
-get precise kernel map end.
+Command 'perf record' and 'perf report' on a system without kernel
+debuginfo packages uses /proc/kallsyms and /proc/modules to find
+addresses for kernel and module symbols. On x86 this works for root and
+non-root users.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Song Liu <songliubraving@fb.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stanislav Fomichev <sdf@google.com>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Link: http://lkml.kernel.org/r/20190508132010.14512-6-jolsa@kernel.org
+On s390, when invoked as non-root user, many of the following warnings
+are shown and module symbols are missing:
+
+    proc/{kallsyms,modules} inconsistency while looking for
+        "[sha1_s390]" module!
+
+Command 'perf record' creates a list of module start addresses by
+parsing the output of /proc/modules and creates a PERF_RECORD_MMAP
+record for the kernel and each module. The following function call
+sequence is executed:
+
+  machine__create_kernel_maps
+    machine__create_module
+      modules__parse
+        machine__create_module --> for each line in /proc/modules
+          arch__fix_module_text_start
+
+Function arch__fix_module_text_start() is s390 specific. It opens
+file /sys/module/<name>/sections/.text to extract the module's .text
+section start address. On s390 the module loader prepends a header
+before the first section, whereas on x86 the module's text section
+address is identical the the module's load address.
+
+However module section files are root readable only. For non-root the
+read operation fails and machine__create_module() returns an error.
+Command perf record does not generate any PERF_RECORD_MMAP record
+for loaded modules. Later command perf report complains about missing
+module maps.
+
+To fix this function arch__fix_module_text_start() always returns
+success. For root users there is no change, for non-root users
+the module's load address is used as module's text start address
+(the prepended header then counts as part of the text section).
+
+This enable non-root users to use module symbols and avoid the
+warning when perf report is executed.
+
+Output before:
+
+  [tmricht@m83lp54 perf]$ ./perf report -D | fgrep MMAP
+  0 0x168 [0x50]: PERF_RECORD_MMAP ... x [kernel.kallsyms]_text
+
+Output after:
+
+  [tmricht@m83lp54 perf]$ ./perf report -D | fgrep MMAP
+  0 0x168 [0x50]: PERF_RECORD_MMAP ... x [kernel.kallsyms]_text
+  0 0x1b8 [0x98]: PERF_RECORD_MMAP ... x /lib/modules/.../autofs4.ko.xz
+  0 0x250 [0xa8]: PERF_RECORD_MMAP ... x /lib/modules/.../sha_common.ko.xz
+  0 0x2f8 [0x98]: PERF_RECORD_MMAP ... x /lib/modules/.../des_generic.ko.xz
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Link: http://lkml.kernel.org/r/20190522144601.50763-4-tmricht@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/machine.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
+ tools/perf/arch/s390/util/machine.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 28a9541c4835..dc7aafe45a2b 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -924,7 +924,8 @@ const char *ref_reloc_sym_names[] = {"_text", "_stext", NULL};
-  * symbol_name if it's not that important.
-  */
- static int machine__get_running_kernel_start(struct machine *machine,
--					     const char **symbol_name, u64 *start)
-+					     const char **symbol_name,
-+					     u64 *start, u64 *end)
- {
- 	char filename[PATH_MAX];
- 	int i, err = -1;
-@@ -949,6 +950,11 @@ static int machine__get_running_kernel_start(struct machine *machine,
- 		*symbol_name = name;
+diff --git a/tools/perf/arch/s390/util/machine.c b/tools/perf/arch/s390/util/machine.c
+index 0b2054007314..a19690a17291 100644
+--- a/tools/perf/arch/s390/util/machine.c
++++ b/tools/perf/arch/s390/util/machine.c
+@@ -5,16 +5,19 @@
+ #include "util.h"
+ #include "machine.h"
+ #include "api/fs/fs.h"
++#include "debug.h"
  
- 	*start = addr;
-+
-+	err = kallsyms__get_function_start(filename, "_etext", &addr);
-+	if (!err)
-+		*end = addr;
-+
+ int arch__fix_module_text_start(u64 *start, const char *name)
+ {
++	u64 m_start = *start;
+ 	char path[PATH_MAX];
+ 
+ 	snprintf(path, PATH_MAX, "module/%.*s/sections/.text",
+ 				(int)strlen(name) - 2, name + 1);
+-
+-	if (sysfs__read_ull(path, (unsigned long long *)start) < 0)
+-		return -1;
++	if (sysfs__read_ull(path, (unsigned long long *)start) < 0) {
++		pr_debug2("Using module %s start:%#lx\n", path, m_start);
++		*start = m_start;
++	}
+ 
  	return 0;
  }
- 
-@@ -1441,7 +1447,7 @@ int machine__create_kernel_maps(struct machine *machine)
- 	struct dso *kernel = machine__get_kernel(machine);
- 	const char *name = NULL;
- 	struct map *map;
--	u64 addr = 0;
-+	u64 start = 0, end = ~0ULL;
- 	int ret;
- 
- 	if (kernel == NULL)
-@@ -1460,9 +1466,9 @@ int machine__create_kernel_maps(struct machine *machine)
- 				 "continuing anyway...\n", machine->pid);
- 	}
- 
--	if (!machine__get_running_kernel_start(machine, &name, &addr)) {
-+	if (!machine__get_running_kernel_start(machine, &name, &start, &end)) {
- 		if (name &&
--		    map__set_kallsyms_ref_reloc_sym(machine->vmlinux_map, name, addr)) {
-+		    map__set_kallsyms_ref_reloc_sym(machine->vmlinux_map, name, start)) {
- 			machine__destroy_kernel_maps(machine);
- 			ret = -1;
- 			goto out_put;
-@@ -1472,16 +1478,19 @@ int machine__create_kernel_maps(struct machine *machine)
- 		 * we have a real start address now, so re-order the kmaps
- 		 * assume it's the last in the kmaps
- 		 */
--		machine__update_kernel_mmap(machine, addr, ~0ULL);
-+		machine__update_kernel_mmap(machine, start, end);
- 	}
- 
- 	if (machine__create_extra_kernel_maps(machine, kernel))
- 		pr_debug("Problems creating extra kernel maps, continuing anyway...\n");
- 
--	/* update end address of the kernel map using adjacent module address */
--	map = map__next(machine__kernel_map(machine));
--	if (map)
--		machine__set_kernel_mmap(machine, addr, map->start);
-+	if (end == ~0ULL) {
-+		/* update end address of the kernel map using adjacent module address */
-+		map = map__next(machine__kernel_map(machine));
-+		if (map)
-+			machine__set_kernel_mmap(machine, start, map->start);
-+	}
-+
- out_put:
- 	dso__put(kernel);
- 	return ret;
