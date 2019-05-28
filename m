@@ -2,114 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3631A2CF60
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 21:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 297912CF71
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 21:27:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbfE1TYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 15:24:09 -0400
-Received: from mail-eopbgr30057.outbound.protection.outlook.com ([40.107.3.57]:18339
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726787AbfE1TYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 15:24:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ai9jwiNPVbNdbcJ/T84LdDnIB5vxKJDYi8EuBQKg02s=;
- b=cBkcZmNWxtxHIKfhWmHJ1RuLpMdI7Tz2xr6AAOB4w/wkpO2sNnDTKm3IxTnMcizgj52YW3Ws1s/7QerNPWmZOKcBpqzKtny67p+OxaNqDn9h5uJ6ca9KpjdHRRrFKyDmv/1JrDxeU4YOhylGZ4olu2gwqGftr9YfV5ug6uNIm58=
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com (20.177.50.140) by
- VI1PR04MB4557.eurprd04.prod.outlook.com (20.177.55.215) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.16; Tue, 28 May 2019 19:24:05 +0000
-Received: from VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::9577:379c:2078:19a1]) by VI1PR04MB5055.eurprd04.prod.outlook.com
- ([fe80::9577:379c:2078:19a1%7]) with mapi id 15.20.1922.021; Tue, 28 May 2019
- 19:24:05 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Anson Huang <anson.huang@nxp.com>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH RESEND 2/5] ARM: dts: imx7d-sdb: Assign corresponding
- power supply for LDOs
-Thread-Topic: [PATCH RESEND 2/5] ARM: dts: imx7d-sdb: Assign corresponding
- power supply for LDOs
-Thread-Index: AQHVCKkZHNdBkg2sXkeS6OCWrMrKwQ==
-Date:   Tue, 28 May 2019 19:24:04 +0000
-Message-ID: <VI1PR04MB5055647612FAC2FE6FBE139FEE1E0@VI1PR04MB5055.eurprd04.prod.outlook.com>
-References: <1557654739-12564-1-git-send-email-Anson.Huang@nxp.com>
- <1557654739-12564-2-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a7eaac96-865a-4e83-fbc3-08d6e3a20c55
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4557;
-x-ms-traffictypediagnostic: VI1PR04MB4557:
-x-microsoft-antispam-prvs: <VI1PR04MB4557DCB8F61FA857AE351E1FEE1E0@VI1PR04MB4557.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4502;
-x-forefront-prvs: 00514A2FE6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(346002)(136003)(366004)(396003)(199004)(189003)(229853002)(446003)(74316002)(9686003)(5660300002)(6436002)(55016002)(6862004)(6246003)(76176011)(6636002)(4326008)(7696005)(54906003)(53936002)(99286004)(66066001)(256004)(71190400001)(71200400001)(478600001)(14454004)(316002)(4744005)(33656002)(3846002)(476003)(6116002)(2906002)(44832011)(486006)(305945005)(186003)(81166006)(52536014)(102836004)(73956011)(66946007)(68736007)(66556008)(81156014)(86362001)(7736002)(64756008)(66446008)(8936002)(66476007)(76116006)(8676002)(25786009)(53546011)(6506007)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4557;H:VI1PR04MB5055.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 0j+DgTF6NH1DBCGTSwBl0+4yMycwEiAvvQ4QXasZWxZxIYXpescSRWXRqyuVaN0tzhlSjL9wWgepDghtc0XRNKCxbOfBP/TMffyfYBhNyHPJnFnHgIpoAUtoNN/g38N0KFPOVxfApM2mSdJagd9Q5NXMq7tWpBkS/M93fFNErwMwsUTJHKa3c8MdyWbOF6gY7nmR2AB7IJ/4K9Yqs0Q000MVcORtfSnqds8CMmFF7t93wlqY630KJAaq3VtK73Pk6rpoHL8KMRO0wafb1om5vRu5uwVyAelOYCVUR4cL8F3K7zTgOuR43SMjiU/VmRx1d/mojE87fNHns6+fGNita8dXa5fo3IB/QhQjL3UMKty8k8UMsYQ8oUHgW3jameE4xPhDCQ/dNPddP27TN+3wqymAZr036kfjCBBIVVbOS6U=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727837AbfE1T1F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 15:27:05 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35247 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbfE1T1F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 15:27:05 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t1so11581106pgc.2;
+        Tue, 28 May 2019 12:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Xe88rAERhIcClUtIYYLdUcTXLi7UODZokIaGblwAr7s=;
+        b=CoUGc1riuI5y7RU6MLiZ4kGMYmyME4qYlStwlZfualUUcgGd6Vmrm0jvToE9vzKTke
+         ej8UwnRgUxxbsw2Vj3bbYkrIzfeP1PbgJmUvqIldgsPusgD5gQfOf+mVLU/4fqWueDcw
+         RqhteZ6ZzWuLJw0mYLV4Cr2gAxKkhCy4OKx/ay9v9eb0Mh3FZuz12501mgQnInOTSQGo
+         4tpr2/MK6B4d2cjwgZ5JlwO0iIwsVf2RasJHHVDndAvVPA+ftH9rBjCezfWg+i59J7Tn
+         V5o/i3Ec6I2OvpegKRc1jDPwSncc9KMvv+nRvYci/5Lctl9FEQNB02M6C1hDZb4caYNR
+         ePDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Xe88rAERhIcClUtIYYLdUcTXLi7UODZokIaGblwAr7s=;
+        b=LavCMdxinMh60CmaNMxjBM+x3RYnGyfglO6lVSzLlFSQN9Rfwe5Ykpm0u3E5jIM7+X
+         5q5Nrypmt+oMJ0r+hUjrEsu0IqAu263HlF2CIK7r9LtRzdoEXMzuMgvO3qR/1hVxdSbv
+         JGJwA9fRC6aG9ye9qxsX0btErpanuXRtuIxKT3Usj3bQHxCsin4VTlXHN5zKzKh+9p/E
+         RBLa4QomzGV2SzO9GvfNqXUCv/EhqpjyjVjE9B5bXdQoWYquGM3uItA5u2FOgLupbE7M
+         NO1RJZUnXHzMJOe26LMOp5/qRiAMCgpCEV/lWUadPQuj0ZYIlcqS4tdzbpwiTDEfa64O
+         wMZg==
+X-Gm-Message-State: APjAAAXO7lkrLtimxiz9xoUNimJNn/+qk7LovhZm/b3R2eV6VQ0WtAV+
+        Mn92DCKPxCt043cRG2IeWdBC/0tT
+X-Google-Smtp-Source: APXvYqx8tCWj7JEqV7YpDaDKH+lUnilfA4UH8oEOmJynC2Hy4jABa6MkhlAIj4La3KLQqQGw8XEL8g==
+X-Received: by 2002:a62:386:: with SMTP id 128mr121183450pfd.10.1559071624383;
+        Tue, 28 May 2019 12:27:04 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id l1sm16345613pgi.91.2019.05.28.12.27.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 12:27:03 -0700 (PDT)
+Date:   Tue, 28 May 2019 12:27:02 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>, od@zcrc.me,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] watchdog: jz4740: Avoid starting watchdog in
+ set_timeout
+Message-ID: <20190528192702.GB24853@roeck-us.net>
+References: <20190521155313.19326-1-paul@crapouillou.net>
+ <20190521155313.19326-2-paul@crapouillou.net>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7eaac96-865a-4e83-fbc3-08d6e3a20c55
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2019 19:24:04.9423
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: leonard.crestez@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4557
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521155313.19326-2-paul@crapouillou.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.05.2019 12:57, Anson Huang wrote:=0A=
-> On i.MX7D SDB board, sw2 supplies 1p0d/1p2 LDO, this patch assigns=0A=
-> corresponding power supply for 1p0d/1p2 LDO to avoid confusion by=0A=
-> below log:=0A=
-> =0A=
-> vdd1p0d: supplied by regulator-dummy=0A=
-> vdd1p2: supplied by regulator-dummy=0A=
-> =0A=
-> With this patch, the power supply is more accurate:=0A=
-> =0A=
-> vdd1p0d: supplied by SW2=0A=
-> vdd1p2: supplied by SW2=0A=
-> =0A=
-> diff --git a/arch/arm/boot/dts/imx7d-sdb.dts b/arch/arm/boot/dts/imx7d-sd=
-b.dts=0A=
->=0A=
-> +&reg_1p0d {=0A=
-> +	vin-supply =3D <&sw2_reg>;=0A=
-> +};=0A=
-> +=0A=
-> +&reg_1p2 {=0A=
-> +	vin-supply =3D <&sw2_reg>;=0A=
-> +};=0A=
-=0A=
-It's not clear why but this patch breaks imx7d-sdb boot. Checked two =0A=
-boards: in a board farm and on my desk.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+On Tue, May 21, 2019 at 05:53:11PM +0200, Paul Cercueil wrote:
+> Previously the jz4740_wdt_set_timeout() function was starting the timer
+> unconditionally, even if it was stopped when that function was entered.
+> 
+> Now, the timer will be restarted only if it was already running before
+> this function is called.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+
+Comment inline, but not worth a respin (and I don't have a good idea how to
+improve it).
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+>  drivers/watchdog/jz4740_wdt.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
+> index 51be321c775a..f970a7a53084 100644
+> --- a/drivers/watchdog/jz4740_wdt.c
+> +++ b/drivers/watchdog/jz4740_wdt.c
+> @@ -77,6 +77,7 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+>  	unsigned int rtc_clk_rate;
+>  	unsigned int timeout_value;
+>  	unsigned short clock_div = JZ_WDT_CLOCK_DIV_1;
+> +	u8 tcer;
+>  
+>  	rtc_clk_rate = clk_get_rate(drvdata->rtc_clk);
+>  
+> @@ -92,6 +93,7 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+>  		clock_div += (1 << TCU_TCSR_PRESCALE_LSB);
+>  	}
+>  
+> +	tcer = readb(drvdata->base + TCU_REG_WDT_TCER);
+>  	writeb(0x0, drvdata->base + TCU_REG_WDT_TCER);
+>  	writew(clock_div, drvdata->base + TCU_REG_WDT_TCSR);
+>  
+> @@ -99,7 +101,7 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+>  	writew(0x0, drvdata->base + TCU_REG_WDT_TCNT);
+>  	writew(clock_div | JZ_WDT_CLOCK_RTC, drvdata->base + TCU_REG_WDT_TCSR);
+>  
+> -	writeb(0x1, drvdata->base + TCU_REG_WDT_TCER);
+> +	writeb(tcer & TCU_WDT_TCER_TCEN, drvdata->base + TCU_REG_WDT_TCER);
+
+This unnecessarily writes 0 if the timer is not running.
+
+>  
+>  	wdt_dev->timeout = new_timeout;
+>  	return 0;
+> @@ -107,8 +109,11 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
+>  
+>  static int jz4740_wdt_start(struct watchdog_device *wdt_dev)
+>  {
+> +	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
+> +
+>  	jz4740_timer_enable_watchdog();
+>  	jz4740_wdt_set_timeout(wdt_dev, wdt_dev->timeout);
+> +	writeb(TCU_WDT_TCER_TCEN, drvdata->base + TCU_REG_WDT_TCER);
+
+This unnecessarily enables the timer even if it is already enabled (that should not
+happen, but does if the watchdog is already running at boot).
+
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.21.0.593.g511ec345e18
+> 
