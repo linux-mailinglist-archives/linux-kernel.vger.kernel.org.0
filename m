@@ -2,94 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DC072C4BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:49:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC0412C4CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:50:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfE1KtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 06:49:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52738 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726437AbfE1KtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 06:49:20 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B3B7F3086224;
-        Tue, 28 May 2019 10:49:17 +0000 (UTC)
-Received: from [10.10.66.2] (ovpn-66-2.rdu2.redhat.com [10.10.66.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 96D8E5D6A9;
-        Tue, 28 May 2019 10:49:15 +0000 (UTC)
-From:   "Benjamin Coddington" <bcodding@redhat.com>
-To:     YueHaibing <yuehaibing@huawei.com>, bfields@fieldses.org
-Cc:     jlayton@kernel.org, trond.myklebust@hammerspace.com,
-        anna.schumaker@netapp.com, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [PATCH -next] lockd: Make two symbols static
-Date:   Tue, 28 May 2019 06:49:13 -0400
-Message-ID: <97D052EC-1F07-4210-81CC-7E0085C095BD@redhat.com>
-In-Reply-To: <20190528090652.13288-1-yuehaibing@huawei.com>
-References: <20190528090652.13288-1-yuehaibing@huawei.com>
+        id S1726939AbfE1Kud (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 06:50:33 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:42586 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbfE1Kud (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 06:50:33 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4SAo9M5071145;
+        Tue, 28 May 2019 05:50:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1559040609;
+        bh=3KI4TZCi5svmvrs/+WfaxacZZlvuTjo1DGtT0rt3dWA=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=jKZXaT5vjwf3nk0m/96lzgkrJiflhp3wRwspDaqU2XvZVmj+06hjp/D/7qSOxA4fh
+         Sr/q/h5y1kp62fONWkVhpP0HakggdKA5c7ztnHyAg9UV1BJ4opX9qMvGya2Xtv1Nt3
+         1O38sDyVizyeYv7Q5gxjnv+cYJic/w/03BzKfr4w=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4SAo9XG043109
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 28 May 2019 05:50:09 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 28
+ May 2019 05:50:09 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 28 May 2019 05:50:09 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4SAo5Pl127389;
+        Tue, 28 May 2019 05:50:06 -0500
+Subject: Re: [PATCH] drm/omap: Make sure device_id tables are NULL terminated
+To:     Thomas Meyer <thomas@m3y3r.de>, <airlied@linux.ie>,
+        <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1558989631144-20791398-0-diffsplit-thomas@m3y3r.de>
+ <1558989631162-1860150863-1-diffsplit-thomas@m3y3r.de>
+From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <7bb26068-36fe-33d2-b374-079cdedab76d@ti.com>
+Date:   Tue, 28 May 2019 13:50:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 28 May 2019 10:49:20 +0000 (UTC)
+In-Reply-To: <1558989631162-1860150863-1-diffsplit-thomas@m3y3r.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Maintainers, what's the best thing to do here: fold these into another 
-patch version and post it (add attribution)?  Add it as another patch at 
-the end of the series?
-
-I have learned my lesson: add sparse to my workflow.
-
-Ben
-
-On 28 May 2019, at 5:06, YueHaibing wrote:
-
-> Fix sparse warnings:
->
-> fs/lockd/clntproc.c:57:6: warning: symbol 'nlmclnt_put_lockowner' was 
-> not declared. Should it be static?
-> fs/lockd/svclock.c:409:35: warning: symbol 'nlmsvc_lock_ops' was not 
-> declared. Should it be static?
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On 27/05/2019 23:41, Thomas Meyer wrote:
+> Make sure (of/i2c/platform)_device_id tables are NULL terminated.
+> 
+> Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
 > ---
->  fs/lockd/clntproc.c | 2 +-
->  fs/lockd/svclock.c  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/lockd/clntproc.c b/fs/lockd/clntproc.c
-> index 0ff8ad4..b11f2af 100644
-> --- a/fs/lockd/clntproc.c
-> +++ b/fs/lockd/clntproc.c
-> @@ -54,7 +54,7 @@ nlmclnt_get_lockowner(struct nlm_lockowner 
-> *lockowner)
->  	return lockowner;
->  }
->
-> -void nlmclnt_put_lockowner(struct nlm_lockowner *lockowner)
-> +static void nlmclnt_put_lockowner(struct nlm_lockowner *lockowner)
->  {
->  	if (!refcount_dec_and_lock(&lockowner->count, 
-> &lockowner->host->h_lock))
->  		return;
-> diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
-> index 5f9f19b..61d3cc2 100644
-> --- a/fs/lockd/svclock.c
-> +++ b/fs/lockd/svclock.c
-> @@ -406,7 +406,7 @@ static void nlmsvc_locks_release_private(struct 
-> file_lock *fl)
->  	nlmsvc_put_lockowner((struct nlm_lockowner *)fl->fl_owner);
->  }
->
-> -const struct file_lock_operations nlmsvc_lock_ops = {
-> +static const struct file_lock_operations nlmsvc_lock_ops = {
->  	.fl_copy_lock = nlmsvc_locks_copy_lock,
->  	.fl_release_private = nlmsvc_locks_release_private,
->  };
-> -- 
-> 2.7.4
+> 
+> diff -u -p a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
+> --- a/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
+> +++ b/drivers/gpu/drm/omapdrm/dss/omapdss-boot-init.c
+> @@ -198,6 +198,7 @@ static const struct of_device_id omapdss
+>   	{ .compatible = "toppoly,td028ttec1" },
+>   	{ .compatible = "tpo,td028ttec1" },
+>   	{ .compatible = "tpo,td043mtea1" },
+> +	{},
+>   };
+>   
+>   static int __init omapdss_boot_init(void)
+> 
+
+Thanks! I've picked this up.
+
+  Tomi
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
