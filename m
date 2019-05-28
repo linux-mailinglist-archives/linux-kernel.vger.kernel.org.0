@@ -2,241 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4486A2C160
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:32:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66AFC2C16A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfE1Icz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 04:32:55 -0400
-Received: from mail-pg1-f171.google.com ([209.85.215.171]:34919 "EHLO
-        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbfE1Icz (ORCPT
+        id S1726823AbfE1Ief (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 04:34:35 -0400
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:59488 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726557AbfE1Iee (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 04:32:55 -0400
-Received: by mail-pg1-f171.google.com with SMTP id t1so10547702pgc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 01:32:54 -0700 (PDT)
+        Tue, 28 May 2019 04:34:34 -0400
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4S8WjYr016093;
+        Tue, 28 May 2019 01:34:30 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pfpt0818;
+ bh=IuklDDH21MYIVeuL01ZQnCZb5D6D3+lgcMFYhAzktGU=;
+ b=RQkJJHu0RUNltlRbq01PXim+lWQ5jXleq1FaMlamvxMflKLzJqBBxegg51OoVUmiM+hl
+ HMbuZ7cGD+ynTIWayj3XTqsN0cXui9FDfz6D8fjxNaKBzuoAkU2x9eCqPeaBk1GmoGci
+ CA1pTnJjSBDswXQLkUvJWK48fyq4Eanm9CQssQF0f6EcISOh5yBRxKCrlu9D9WeO9RjV
+ 7ekA0r6szWSRYV6EwaANYZB+fXZ0uerY/yUwdwnXlkMYzUC4X2FTf8UfuBJPeEBHXP/m
+ 6Dsj9LU+lfjZhmy3a06I54CWHOlkS19f71Obg2SKGJuScQDW8LrXtQxbMEbVIVF+ZvGk qw== 
+Received: from sc-exch04.marvell.com ([199.233.58.184])
+        by mx0b-0016f401.pphosted.com with ESMTP id 2sr7e4dg3r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 28 May 2019 01:34:30 -0700
+Received: from SC-EXCH03.marvell.com (10.93.176.83) by SC-EXCH04.marvell.com
+ (10.93.176.84) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Tue, 28 May
+ 2019 01:34:29 -0700
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (104.47.50.56) by
+ SC-EXCH03.marvell.com (10.93.176.83) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Tue, 28 May 2019 01:34:29 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=r7RtTX0GvNXmCocyF2J/4LAIgY3UxyXekfP4HELOf8A=;
-        b=HVju5Bmc1pMd7q2Sd6k3DfcdwywXzZ7TW27/F2uLoBjTP/wOVlHfOYToq9uGQT9Ab3
-         4h6hQ9DnWMqP4Ks9YYv5gFpqvJrZ03DRs5PZUL/ZrO3XKtqpguo4eHtWDgeAPAxVMAN3
-         mQmQEP/Or6ZlNhLbxcKdcoAAoOBmQde5VO9yw6/R4sIDJTyQGlgzBnGN0rCpc1iR4qiY
-         RfI8sFSvSTWgs238qFSq1Y6SsNbFk7NidZv3cViPIDEsaInGx4JklniYGs+AhJnqCmLo
-         Xq3S4o5N+kGWl2uMsRSPGSCzn6RJpdkWcBGHRs13LJFHN2EB0UXEh7IJ/EOmG4mBO53s
-         YpbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=r7RtTX0GvNXmCocyF2J/4LAIgY3UxyXekfP4HELOf8A=;
-        b=ld2vTqp/yzwFB5NepaZt2fXez3MhKyWCsr26Ehu2LePckwu+XuIhcidP7l1lT6Ml9w
-         sEkmjVZ+Het/Rtda8JyAkxM9RE84rXrgG0Pwdy98lRVSxqVnFhc3Z+THv21dqLUuAFjg
-         G9nGm38Sf0+iX1Z9ecARx8UnyFvztLt2BVUQ1mzAIQ0L1AEDFIQGO27i7sREEqXiiw0p
-         /fkGWsX+/thUEMiYIzpDckho7b8ylyv/tUTXKNCj/QSQLTfx3gVbS22TPVvTy930mQMg
-         /DmIYa90uudWQ7qrJ1he9i+Pi2rDNpsEMINhax0IM9WCgyWXdhywYCMWKkyXHfR+kRxW
-         DD0w==
-X-Gm-Message-State: APjAAAWhqjHeQd8itV/vq/kFnBqtAco9Bry8UM+VQN67xajaR/5HihE/
-        batB3G2DWgdQZw8o8hLjvAaeAAPpBoI=
-X-Google-Smtp-Source: APXvYqxTh8XLKukgj/UVjOwbqueD7BSfmJKsHnytZ+syTMYapV/s5WDqwOCxL7utcmhI//fSDu9B2g==
-X-Received: by 2002:a17:90a:5d15:: with SMTP id s21mr3992710pji.125.1559032373900;
-        Tue, 28 May 2019 01:32:53 -0700 (PDT)
-Received: from localhost ([76.14.6.29])
-        by smtp.gmail.com with ESMTPSA id a12sm11926252pgq.0.2019.05.28.01.32.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 May 2019 01:32:52 -0700 (PDT)
-Date:   Tue, 28 May 2019 01:32:51 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-cc:     lollivier@baylibre.com
-Subject: Re: Testing the recent RISC-V DT patchsets
-In-Reply-To: <alpine.DEB.2.21.9999.1904221705170.18377@viisi.sifive.com>
-Message-ID: <alpine.DEB.2.21.9999.1905280105110.20842@viisi.sifive.com>
-References: <alpine.DEB.2.21.9999.1904221705170.18377@viisi.sifive.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+ d=marvell.onmicrosoft.com; s=selector2-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IuklDDH21MYIVeuL01ZQnCZb5D6D3+lgcMFYhAzktGU=;
+ b=PQsAEkEJ+qsthEVy32wjb9RSuW3wNl/yyDrSisRfGFDO1CwaBa8Zl8tWsrRvquwxN9LLSJ1LMVbO3FVz1IZjRIEm4OGwljfS3Hk1565mzHLPU4TaWNX6ocr1huix1arw7K2ZBicqMPmW92jLlazR80vKRj5MFj3DIoVRPf+M5WI=
+Received: from MN2PR18MB3182.namprd18.prod.outlook.com (10.255.236.143) by
+ MN2PR18MB2672.namprd18.prod.outlook.com (20.179.84.74) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1922.15; Tue, 28 May 2019 08:34:23 +0000
+Received: from MN2PR18MB3182.namprd18.prod.outlook.com
+ ([fe80::9880:2b8b:52e5:b413]) by MN2PR18MB3182.namprd18.prod.outlook.com
+ ([fe80::9880:2b8b:52e5:b413%3]) with mapi id 15.20.1922.021; Tue, 28 May 2019
+ 08:34:23 +0000
+From:   Michal Kalderon <mkalderon@marvell.com>
+To:     Colin King <colin.king@canonical.com>,
+        Ariel Elior <aelior@marvell.com>,
+        GR-everest-linux-l2 <GR-everest-linux-l2@marvell.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [EXT] [PATCH][next] qed: fix spelling mistake "inculde" ->
+ "include"
+Thread-Topic: [EXT] [PATCH][next] qed: fix spelling mistake "inculde" ->
+ "include"
+Thread-Index: AQHVFSHr8lMSvwYvE06Dm65I9JgLzaaANeoQ
+Date:   Tue, 28 May 2019 08:34:23 +0000
+Message-ID: <MN2PR18MB3182F2B217A519FA20F3427AA11E0@MN2PR18MB3182.namprd18.prod.outlook.com>
+References: <20190528065217.7311-1-colin.king@canonical.com>
+In-Reply-To: <20190528065217.7311-1-colin.king@canonical.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [212.199.69.1]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9ee0233e-78de-48d5-d5df-08d6e34749c7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR18MB2672;
+x-ms-traffictypediagnostic: MN2PR18MB2672:
+x-microsoft-antispam-prvs: <MN2PR18MB2672AB82C128A3803B627620A11E0@MN2PR18MB2672.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 00514A2FE6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(39850400004)(366004)(396003)(376002)(199004)(189003)(74316002)(7696005)(73956011)(81166006)(14454004)(2501003)(229853002)(6506007)(305945005)(186003)(26005)(14444005)(256004)(81156014)(25786009)(66066001)(53936002)(8936002)(76116006)(11346002)(102836004)(2906002)(7736002)(76176011)(478600001)(3846002)(99286004)(6116002)(5660300002)(71190400001)(6246003)(66476007)(486006)(6436002)(8676002)(71200400001)(9686003)(33656002)(4326008)(52536014)(66556008)(66446008)(64756008)(55016002)(446003)(66946007)(110136005)(86362001)(476003)(68736007)(54906003)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB2672;H:MN2PR18MB3182.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: GJ1SR5m/XZuS+I7l7qtd1XVnDAoe4P7hg4QHdHLxJ/zXDETULp6HZRJBWO7AMbq8wHou5csJ1/qkdu8GRBBJwA9Z/46X/v55FhkFXMmfHsAGZUnwhPVlSJvt/mCqa/VM8soEJfHp1eW23ZlFtflwRB/pW2fvm27H7vkqRsKw3tuVARMuhfN15ERxSkYawaON4F1XNmuRRuUJqQg71E7N7bckvsO/OynE5f0FcbvQBtlQ0Yrrx9AxxMX4CUIx+hCVzuHz49CJDRdwH8vy/lDPFNQ4aSEZjOTXw1CNes9rJaiFeSGSyh54ztMbxDpCm0o41VqJijyS3qJdekKsW181awUdCkwLszXy2W1CMLz6qDxAhZCOxh+PLlOmdVEGdUBla9MQL25JqwAtXFvju5NDz6iE3UZhKwxv44JEAueQpM8=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ee0233e-78de-48d5-d5df-08d6e34749c7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2019 08:34:23.8390
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mkalderon@marvell.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2672
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-28_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-An update for those testing RISC-V patches: here's a new branch of 
-riscv-pk/bbl that doesn't try to read or modify the DT data at all, which 
-should be useful until U-Boot settles down.  This new riscv-pk version 
-should be easier to use than the previous version for those testing 
-upstream-bound kernel DT data on SiFive hardware:
-
-   https://github.com/sifive/riscv-pk/tree/dev/paulw/configurable-machine-data-methods-v1
-
-To build a BBL that doesn't touch the DT data, use the 
-"--with-config-method=hifive_unleashed" switch for the "configure" script.  
-As before, this version of riscv-pk can take a DTB that can be passed 
-along to the kernel.  But this time the path to the DTB can be specified 
-on the "configure" script command line.
-
-Below is an example of how to configure it.  (The directory structure 
-should be familiar to those using the v1_0 tag of freedom-u-sdk, with the 
-kernel source in ./linux, riscv-pk source in ./riscv-pk, and build trees 
-in work/{linux,riscv-pk}.)
-
-   cd work/riscv-pk
-   CC=/opt/rv64gc-mmu-linux-8.2.0/bin/riscv64-unknown-linux-gnu-gcc ../../riscv-pk/configure \
-                --host=riscv64-unknown-linux-gnu \
-                --with-payload=../../work/linux/vmlinux-stripped \
-                --with-config-method=hifive_unleashed \
-                --enable-dtb \
-                --with-dtb-path=../../work/linux/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dtb
-  
-
-Here is an Linux kernel branch with updated DT data that can be booted 
-with the above bootloader:
-
-   https://github.com/sifive/riscv-linux/tree/dev/paulw/dts-v5.2-rc1-experimental
-
-A sample boot log follows, using a 'defconfig' build from that branch.  
-
-
-- Paul
-
-
-iFive FSBL:       2019-04-22-1081db9
-Using FSBL DTB
-HiFive-U serial #: 0000002d
-Loading boot payload................................
-
-bbl loader
-Relocated DTB from 0000000080007040 to 0000000083200000
-
-[    0.000000] OF: fdt: Ignoring memory range 0x80000000 - 0x80200000
-[    0.000000] Linux version 5.2.0-rc1-00006-ge4a86563f655 (paulw@viisi) (gcc version 8.2.0 (GCC)) #65 SMP Mon May 27 23:36:33 PDT 2019
-[    0.000000] earlycon: sifive0 at MMIO 0x0000000010010000 (options '')
-[    0.000000] printk: bootconsole [sifive0] enabled
-[    0.000000] printk: debug: ignoring loglevel setting.
-[    0.000000] initrd not found or empty - disabling initrd
-[    0.000000] Zone ranges:
-[    0.000000]   DMA32    [mem 0x0000000080200000-0x00000000ffffffff]
-[    0.000000]   Normal   [mem 0x0000000100000000-0x000000027fffffff]
-[    0.000000] Movable zone start for each node
-[    0.000000] Early memory node ranges
-[    0.000000]   node   0: [mem 0x0000000080200000-0x000000027fffffff]
-[    0.000000] Initmem setup node 0 [mem 0x0000000080200000-0x000000027fffffff]
-[    0.000000] On node 0 totalpages: 2096640
-[    0.000000]   DMA32 zone: 7161 pages used for memmap
-[    0.000000]   DMA32 zone: 0 pages reserved
-[    0.000000]   DMA32 zone: 523776 pages, LIFO batch:63
-[    0.000000]   Normal zone: 21504 pages used for memmap
-[    0.000000]   Normal zone: 1572864 pages, LIFO batch:63
-[    0.000000] software IO TLB: mapped [mem 0xfbfff000-0xfffff000] (64MB)
-[    0.000000] CPU with hartid=0 is not available
-[    0.000000] CPU with hartid=0 is not available
-[    0.000000] elf_hwcap is 0x112d
-[    0.000000] percpu: Embedded 17 pages/cpu s30184 r8192 d31256 u69632
-[    0.000000] pcpu-alloc: s30184 r8192 d31256 u69632 alloc=17*4096
-[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3 
-[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 2067975
-[    0.000000] Kernel command line: earlycon=sifive,0x10010000 console=ttySIF0,115200 ignore_loglevel debug root=/dev/ram0
-[    0.000000] Dentry cache hash table entries: 1048576 (order: 11, 8388608 bytes)
-[    0.000000] Inode-cache hash table entries: 524288 (order: 10, 4194304 bytes)
-[    0.000000] Sorting __ex_table...
-[    0.000000] Memory: 8178620K/8386560K available (5806K kernel code, 395K rwdata, 1851K rodata, 5853K init, 806K bss, 207940K reserved, 0K cma-reserved)
-[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
-[    0.000000] rcu: Hierarchical RCU implementation.
-[    0.000000] rcu:     RCU restricting CPUs from NR_CPUS=8 to nr_cpu_ids=4.
-[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
-[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=4
-[    0.000000] NR_IRQS: 0, nr_irqs: 0, preallocated irqs: 0
-[    0.000000] plic: mapped 53 interrupts with 4 handlers for 9 contexts.
-[    0.000000] riscv_timer_init_dt: Registering clocksource cpuid [0] hartid [3]
-[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x1d854df40, max_idle_ns: 3526361616960 ns
-[    0.000006] sched_clock: 64 bits at 1000kHz, resolution 1000ns, wraps every 2199023255500ns
-[    0.008456] Console: colour dummy device 80x25
-[    0.012813] Calibrating delay loop (skipped), value calculated using timer frequency.. 2.00 BogoMIPS (lpj=4000)
-[    0.022841] pid_max: default: 32768 minimum: 301
-[    0.027939] Mount-cache hash table entries: 16384 (order: 5, 131072 bytes)
-[    0.034634] Mountpoint-cache hash table entries: 16384 (order: 5, 131072 bytes)
-[    0.042315] *** VALIDATE proc ***
-[    0.045010] *** VALIDATE cgroup1 ***
-[    0.048462] *** VALIDATE cgroup2 ***
-[    0.053000] rcu: Hierarchical SRCU implementation.
-[    0.057473] smp: Bringing up secondary CPUs ...
-[    0.063256] smp: Brought up 1 node, 4 CPUs
-[    0.068186] devtmpfs: initialized
-[    0.072404] random: get_random_u32 called from bucket_table_alloc.isra.10+0x4e/0x15e with crng_init=0
-[    0.081020] random: get_random_bytes called from setup_net+0x3a/0x1b8 with crng_init=0
-[    0.088974] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
-[    0.098480] futex hash table entries: 1024 (order: 4, 65536 bytes)
-[    0.105299] NET: Registered protocol family 16
-[    0.109683] random: get_random_bytes called from kcmp_cookies_init+0x1c/0x4a with crng_init=0
-[    0.129984] vgaarb: loaded
-[    0.132159] SCSI subsystem initialized
-[    0.135927] libata version 3.00 loaded.
-[    0.139630] usbcore: registered new interface driver usbfs
-[    0.144998] usbcore: registered new interface driver hub
-[    0.150360] usbcore: registered new device driver usb
-[    0.156037] clocksource: Switched to clocksource riscv_clocksource
-[    0.167530] NET: Registered protocol family 2
-[    0.171747] tcp_listen_portaddr_hash hash table entries: 4096 (order: 5, 163840 bytes)
-[    0.179576] TCP established hash table entries: 65536 (order: 7, 524288 bytes)
-[    0.188249] TCP bind hash table entries: 65536 (order: 9, 2097152 bytes)
-[    0.201277] TCP: Hash tables configured (established 65536 bind 65536)
-[    0.207506] UDP hash table entries: 4096 (order: 6, 393216 bytes)
-[    0.214439] UDP-Lite hash table entries: 4096 (order: 6, 393216 bytes)
-[    0.221731] NET: Registered protocol family 1
-[    0.225830] RPC: Registered named UNIX socket transport module.
-[    0.231226] RPC: Registered udp transport module.
-[    0.235906] RPC: Registered tcp transport module.
-[    0.240593] RPC: Registered tcp NFSv4.1 backchannel transport module.
-[    0.247018] PCI: CLS 0 bytes, default 64
-[    0.665279] workingset: timestamp_bits=62 max_order=21 bucket_order=0
-[    0.680212] NFS: Registering the id_resolver key type
-[    0.684561] Key type id_resolver registered
-[    0.688653] Key type id_legacy registered
-[    0.692654] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
-[    0.699720] NET: Registered protocol family 38
-[    0.703819] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 254)
-[    0.711145] io scheduler mq-deadline registered
-[    0.715653] io scheduler kyber registered
-[    0.757094] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
-[    0.763685] 10010000.serial: ttySIF0 at MMIO 0x10010000 (irq = 4, base_baud = 0) is a SiFive UART v0
-[    0.772072] printk: console [ttySIF0] enabled
-[    0.772072] printk: console [ttySIF0] enabled
-[    0.780723] printk: bootconsole [sifive0] disabled
-[    0.780723] printk: bootconsole [sifive0] disabled
-[    0.790539] 10011000.serial: ttySIF1 at MMIO 0x10011000 (irq = 1, base_baud = 0) is a SiFive UART v0
-[    0.799641] [drm] radeon kernel modesetting enabled.
-[    0.813383] loop: module loaded
-[    0.816227] libphy: Fixed MDIO Bus: probed
-[    0.820345] e1000e: Intel(R) PRO/1000 Network Driver - 3.2.6-k
-[    0.825645] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
-[    0.831647] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
-[    0.838065] ehci-pci: EHCI PCI platform driver
-[    0.842520] ehci-platform: EHCI generic platform driver
-[    0.847757] ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
-[    0.853865] ohci-pci: OHCI PCI platform driver
-[    0.858329] ohci-platform: OHCI generic platform driver
-[    0.863771] usbcore: registered new interface driver uas
-[    0.868853] usbcore: registered new interface driver usb-storage
-[    0.874961] mousedev: PS/2 mouse device common for all mice
-[    0.880734] usbcore: registered new interface driver usbhid
-[    0.885901] usbhid: USB HID core driver
-[    0.890586] NET: Registered protocol family 10
-[    0.895181] Segment Routing with IPv6
-[    0.898160] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
-[    0.904576] NET: Registered protocol family 17
-[    0.908487] Key type dns_resolver registered
-[    0.913352] Warning: unable to open an initial console.
-[    0.933780] Freeing unused kernel memory: 5852K
-[    0.937543] This architecture does not have kernel memory protection.
-[    0.943960] Run /init as init process
-[    1.531025] random: dd: uninitialized urandom read (512 bytes read)
-[   16.657284] random: dropbear: uninitialized urandom read (32 bytes read)
-[   16.669210] _warn_unseeded_randomness: 11 callbacks suppressed
-[   16.669230] random: get_random_bytes called from tcp_fastopen_init_key_once+0x40/0x58 with crng_init=0
-[   16.686212] random: get_random_bytes called from load_elf_binary+0x7c0/0xca4 with crng_init=0
-
-Welcome to Buildroot
-buildroot login: 
-
+PiBGcm9tOiBDb2xpbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IFNlbnQ6IFR1
+ZXNkYXksIE1heSAyOCwgMjAxOSA5OjUyIEFNDQo+IA0KPiBFeHRlcm5hbCBFbWFpbA0KPiANCj4g
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLQ0KPiBGcm9tOiBDb2xpbiBJYW4gS2luZyA8Y29saW4ua2luZ0BjYW5vbmlj
+YWwuY29tPg0KPiANCj4gVGhlcmUgaXMgYSBzcGVsbGluZyBtaXN0YWtlIGluIGEgRFBfSU5GTyBt
+ZXNzYWdlLiBGaXggaXQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29s
+aW4ua2luZ0BjYW5vbmljYWwuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvbmV0L2V0aGVybmV0L3Fs
+b2dpYy9xZWQvcWVkX2Rldi5jIHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
+KCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJu
+ZXQvcWxvZ2ljL3FlZC9xZWRfZGV2LmMNCj4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9xbG9naWMv
+cWVkL3FlZF9kZXYuYw0KPiBpbmRleCA2MWNhNDlhOTY3ZGYuLmE5NzE0MTg3NTVlOSAxMDA2NDQN
+Cj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvcWxvZ2ljL3FlZC9xZWRfZGV2LmMNCj4gKysr
+IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvcWxvZ2ljL3FlZC9xZWRfZGV2LmMNCj4gQEAgLTM4MzYs
+NyArMzgzNiw3IEBAIHN0YXRpYyBpbnQgcWVkX2h3X2dldF9wcGZpZF9iaXRtYXAoc3RydWN0DQo+
+IHFlZF9od2ZuICpwX2h3Zm4sDQo+IA0KPiAgCWlmICghKGNkZXYtPnBwZmlkX2JpdG1hcCAmICgw
+eDEgPDwgbmF0aXZlX3BwZmlkX2lkeCkpKSB7DQo+ICAJCURQX0lORk8ocF9od2ZuLA0KPiAtCQkJ
+IkZpeCB0aGUgUFBGSUQgYml0bWFwIHRvIGluY3VsZGUgdGhlIG5hdGl2ZSBQUEZJRA0KPiBbbmF0
+aXZlX3BwZmlkX2lkeCAlaGhkLCBvcmlnX2JpdG1hcCAweCVoaHhdXG4iLA0KPiArCQkJIkZpeCB0
+aGUgUFBGSUQgYml0bWFwIHRvIGluY2x1ZGUgdGhlIG5hdGl2ZSBQUEZJRA0KPiBbbmF0aXZlX3Bw
+ZmlkX2lkeCAlaGhkLCBvcmlnX2JpdG1hcCAweCVoaHhdXG4iLA0KPiAgCQkJbmF0aXZlX3BwZmlk
+X2lkeCwgY2Rldi0+cHBmaWRfYml0bWFwKTsNCj4gIAkJY2Rldi0+cHBmaWRfYml0bWFwID0gMHgx
+IDw8IG5hdGl2ZV9wcGZpZF9pZHg7DQo+ICAJfQ0KPiAtLQ0KPiAyLjIwLjENCg0KVGhhbmtzLMKg
+DQoNCkFja2VkLWJ5OiBNaWNoYWwgS2FsZGVyb27CoDxtaWNoYWwua2FsZGVyb25AbWFydmVsbC5j
+b20+DQoNCg0K
