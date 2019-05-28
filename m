@@ -2,95 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11C482C815
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68E572C819
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:49:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbfE1NrD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 09:47:03 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36428 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbfE1NrC (ORCPT
+        id S1727360AbfE1NtA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 09:49:00 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50440 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726867AbfE1Ns7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 09:47:02 -0400
-Received: by mail-lj1-f193.google.com with SMTP id w16so143490ljd.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 06:47:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Q+SZZ5tAxQ4Vd5Xnbbh6RAt+ZJ/b62Vu/qDWIJpgIhE=;
-        b=FWnGvhyEBNmhNxNSrgWwbzncb9k0YMERtYSVSG7lyintd5ILGxxXIhUiN2BSzD7sIq
-         bHNuU9ONhfMvK7QKNx4V+hyTJOrrfSzt58rB8hM9ZNMz3HCnq/fwsOWlXt26qI2PnOhS
-         +p7pAFzxilifE6ILwHAZPW11vvAYBQNtqbkNn2ev+5LgkYH1KZ4wp1TyM8t4uDe/c30q
-         aD8MSvAMYrV2zI8FzzLI++s2UPj9oGhE4GE+5CGUjEJK9rPsxvH28iUtHZxoG0TRQmPW
-         PAzSq2BDZuVWBajlbx0hvUEpcru6hXVtY+hC9VBBilxblaXm+nDZTT7jrdfh3YQUaHAi
-         XaBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Q+SZZ5tAxQ4Vd5Xnbbh6RAt+ZJ/b62Vu/qDWIJpgIhE=;
-        b=mAyCaM2ZRrEPj4MJ4kNgRLZj2Em2ovTlUIB7mdbOatRMaZ2RVsKUNCF6Y24AUe6pyM
-         yvG7JBcksg5qsDeEbWf+O4N8uAF7FWITyns8gbL/gq1f+KMXowxtEYdXPpSZnOhQSaWA
-         4eeOkdIxc4sGBv6mr8LLuKV6V4FQJmkwzblinTNYb8iZtp3s5wXJkOmvjZTLb9hwkp+T
-         8wtWvdGfjzFCfxrpebV4xijim75S6sEu9LA20w8zsY9ME4kH2CxMrXzMF7NFSVbqnsi2
-         sdcrW0MfkIJZ3zNWE8snEKx+pABXN31a8YMK9k7tzlHGcwHBKpyE4CcxOhROPsOf8D6x
-         73pA==
-X-Gm-Message-State: APjAAAXGFctkS/lqZvoGFywouUJ9cumbCAVK8j4tGfrbl87PCG3YPpH2
-        xPo/n4/VGqB4mpe6w4QXnsSWBJrWG0Y=
-X-Google-Smtp-Source: APXvYqxDN0+TuOpLaiAYxDuXvI165ZLjkEU7mESeGzTAOWl5cfG0dkxoAOlSrKoHx/t/fcWF5wrSzg==
-X-Received: by 2002:a2e:6a01:: with SMTP id f1mr64179834ljc.21.1559051221612;
-        Tue, 28 May 2019 06:47:01 -0700 (PDT)
-Received: from debian-tom.home (2-111-15-75-dynamic.dk.customer.tdc.net. [2.111.15.75])
-        by smtp.gmail.com with ESMTPSA id b16sm1590109ljb.20.2019.05.28.06.47.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 06:47:01 -0700 (PDT)
-From:   Tomas Bortoli <tomasbortoli@gmail.com>
-To:     rostedt@goodmis.org, mingo@redhat.com
-Cc:     linux-kernel@vger.kernel.org,
-        Tomas Bortoli <tomasbortoli@gmail.com>
-Subject: [PATCH] trace: Avoid memory leak in predicate_parse()
-Date:   Tue, 28 May 2019 15:46:59 +0200
-Message-Id: <20190528134659.4041-1-tomasbortoli@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Tue, 28 May 2019 09:48:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qgTnBXEzwmfX6lbLKAn+6i4FK+YKb4F4c1v8oOpqOnQ=; b=tRxTW6FbPmzoq52/Y2rIsSGM1
+        7XlUyuEkXMaawJG9xRNbo5MvuUf24kGtHSJub61k9DjaNEpLYMRC2pC2x1BC41OxMSQ+kZtgWESqH
+        WLHri6asNVqcZjWpye7Y32ZoEWyemGQTNTvxJphIK2DUbiDUrIvHq2W7OIH6nHpGfSibSOLOga4R1
+        78RjMJj80fAyDqt0xU4Amr8B4AXdlHUedpjjMowRu43ypsc6pRJe7ddW/LaEi3aw8hn3qSxWdeKuH
+        qql772bBRILsbs6QrnSXvZ+CGDamzZ7XrawT3K2c6RFJgEbtqZ6dwU1Ly6+slaaH82Sjhc0DbnggU
+        Ma70lJ5KA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVcT8-0004Ky-Ns; Tue, 28 May 2019 13:48:46 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 818C420756A00; Tue, 28 May 2019 15:48:45 +0200 (CEST)
+Date:   Tue, 28 May 2019 15:48:45 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com
+Subject: Re: [PATCH 4/9] perf/x86/intel: Support hardware TopDown metrics
+Message-ID: <20190528134845.GQ2623@hirez.programming.kicks-ass.net>
+References: <20190521214055.31060-1-kan.liang@linux.intel.com>
+ <20190521214055.31060-5-kan.liang@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190521214055.31060-5-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case of errors, predicate_parse() goes to the out_free label
-to free memory and to return an error code.
+On Tue, May 21, 2019 at 02:40:50PM -0700, kan.liang@linux.intel.com wrote:
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index b980b9e95d2a..0d7081434d1d 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -133,6 +133,11 @@ struct hw_perf_event {
+>  
+>  			struct hw_perf_event_extra extra_reg;
+>  			struct hw_perf_event_extra branch_reg;
+> +
+> +			u64		saved_metric;
+> +			u64		saved_slots;
+> +			u64		last_slots;
+> +			u64		last_metric;
 
-However, predicate_parse() does not free the predicates of the
-temporary prog_stack array, thence leaking them.
+This is really sad, and I'm thinking much of that really isn't needed
+anyway, due to how you're not using some of the other fields.
 
-
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+6b8e0fb820e570c59e19@syzkaller.appspotmail.com
----
- kernel/trace/trace_events_filter.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index d3e59312ef40..98eafad750d3 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -433,6 +433,8 @@ predicate_parse(const char *str, int nr_parens, int nr_preds,
- 		parse_error(pe, -ENOMEM, 0);
- 		goto out_free;
- 	}
-+	memset(prog_stack, 0, nr_preds * sizeof(*prog_stack));
-+
- 	inverts = kmalloc_array(nr_preds, sizeof(*inverts), GFP_KERNEL);
- 	if (!inverts) {
- 		parse_error(pe, -ENOMEM, 0);
-@@ -579,6 +581,8 @@ predicate_parse(const char *str, int nr_parens, int nr_preds,
- out_free:
- 	kfree(op_stack);
- 	kfree(inverts);
-+	for (i = 0; prog_stack[i].pred; i++)
-+		kfree(prog_stack[i].pred);
- 	kfree(prog_stack);
- 	return ERR_PTR(ret);
- }
--- 
-2.11.0
-
+>  		};
+>  		struct { /* software */
+>  			struct hrtimer	hrtimer;
+> -- 
+> 2.14.5
+> 
