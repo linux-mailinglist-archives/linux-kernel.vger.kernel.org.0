@@ -2,216 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 307472C1AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8927E2C1C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbfE1IxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 04:53:17 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:32867 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbfE1IxQ (ORCPT
+        id S1726779AbfE1Ixk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 04:53:40 -0400
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:42762 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbfE1Ixk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 04:53:16 -0400
-Received: by mail-vs1-f68.google.com with SMTP id y6so12298310vsb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 01:53:15 -0700 (PDT)
+        Tue, 28 May 2019 04:53:40 -0400
+Received: by mail-vk1-f196.google.com with SMTP id x196so4294863vkd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 01:53:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6DOKZZBuQ4FIK7BFhI7zXJDJCYNb+EAsV49etM5Qw9E=;
-        b=dTx5iUnHM/CY9J8aWugKpVrabCL/wQnfT4iMvXtQvLqdukV5bMttr04yeu8LBwLeWt
-         WezYDrZAWZKOkwhj05aQ7cZdjzEkItKVpPpW09nsvEgl7gVfv3Oa/zDrGAMUqloDAtuL
-         aISBEVB2/kZjuUrikfpL7wjqqvROQ45cXGcJEAJLH8oXMO/brzwkk9lJO0SUNDPi/yPp
-         OK6Y25R3e3t4KlQEXl15ODbujKaLkxSQUQeGt6UIluKXCOKz/rKberoFA7swcNT0fkFf
-         c2f8q1nktBqGEYHP3UVoJGm8Yc8mMcSZIXXlB06UE0chLRK0DC3NYWG/RSZr4QjtW+xo
-         1TYw==
+        bh=otb7m42zmtPMOYxJa9kTVp/RQpjQZPIYcZ41JiBmWlg=;
+        b=wLR382+hSCCxe2T5KPiqQBij5emBSGtbTPhaRBS9h03dRVeb5PdP0uUYfn6ZK/qUuO
+         uPARe7O14ZcvmqESFJZD/XmklLrVblH18k+17bLWxZ0VdYrc0Kxynq7Ugob/STGYOM0i
+         o39R15/vk4DZzDcyv0u+upAiydk/l0XLTL0a3bBgEvAGdQyvH5Brwu7Jy6Z9wekFvDpu
+         37QQL7Oh+MjTvJSUFff5HIzhMMRjAaO6kfgq0yFnfFj1areAkVnPWE+o/Fi2DlOkfEuN
+         blwIOF5zr/1WhAHdMpbznU8UXCnQ7XHy9rXRoktOw6/Wdc8EJRnV+x9Ty18nbKxJv8uF
+         cUyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6DOKZZBuQ4FIK7BFhI7zXJDJCYNb+EAsV49etM5Qw9E=;
-        b=HeWppA298EXgXTTvdALN7+JQb4bQKbQkH3HYgjwDWhMiT2ay3pONceOJEaya7dABNR
-         RpD7AFWhQphOrHUWeRRw4ciT17aCxqO746M0S79iGGHlhc2uXQeIXQW0XrEHxcWVKVXW
-         y/gYHxwDnlYFzqG+sRInxIT8kkMnMDD/pjHjtKZujW7hXo5CocGEgUiTKBBX+aG0jJee
-         8IFT7K6TC+/5eY7IbgrLq0Rm6aZjjP6hgLQUXYIOss+xAIJIviHJaan0WMxZnYNua8Cf
-         ic6RO7rl1WIVmC1v4vvnrdjx3MujxLkqSThD7eDn5HiQL/dIZdrzt9KtfdlB7CIdDGfp
-         31/g==
-X-Gm-Message-State: APjAAAVmvdXeqHYpQQe5lYDJI/jmDphz72tNmPrSLpURGjkBQi2/o7Fh
-        gGaqHQJTvvhSWenMB1rUyNyWDiZHHrIEjn8y/mM98Q==
-X-Google-Smtp-Source: APXvYqyt1Oz/elOHJJHAbCdWazjC8Ws+luiU4VvF3+goqXkou1XWl5bSM5jGjiPpsuYuWWGfyOR4xd5YGC++/cob+z0=
-X-Received: by 2002:a67:7c58:: with SMTP id x85mr37939407vsc.191.1559033595375;
- Tue, 28 May 2019 01:53:15 -0700 (PDT)
+        bh=otb7m42zmtPMOYxJa9kTVp/RQpjQZPIYcZ41JiBmWlg=;
+        b=ARRJ/mOGbUGQf6Gga9jsvS+Y9Fvwjjn54zNi5xfUKtz3VaUBPsJTMTsbp+8pa1NlD7
+         ifYWfVFbe1TH8nLeuDJSp3DW+HToZ4uAVYvPFUSYxrHDDiWqIv89MbNdMVOf7FM/q0yd
+         QB/nqVeyHAAInOABFdn7EEtMaw6ySA2v1wedIMik7VbRpY3XvECDSssS/tpMVE6yvgJf
+         KWDPuyNC6GRLZaDTh+wT44kUasfdH92VYC16Ck+6aljx7Lz9Ng6Pqf9Ok52JBwYZGR6X
+         J9kliOCfhGnM3fqvXzTumaLG+5++yKSx1WXvnq+9X0cevXj82/Z1fj+xfCSicJ8/wskM
+         hCBA==
+X-Gm-Message-State: APjAAAVEjJX5pg3yRW5JMFfMeUITni2rMjTP/2qHqIJmq93XURQgHeKH
+        qJFqMaifIPOD/jrPSQlSEYOHYdt6TIkDMHF8iI6oAnn8
+X-Google-Smtp-Source: APXvYqzWzuRafMU/CWmBJC1DK8ofL6hlLAW9j7GgoAJuKT4UQIsembnmRVv2I2SevxQOTjujtjzzRe7TN55tQI2r+AU=
+X-Received: by 2002:a1f:bd13:: with SMTP id n19mr8576569vkf.17.1559033619270;
+ Tue, 28 May 2019 01:53:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <1557258749-29009-1-git-send-email-kamlesh.gurudasani@gmail.com>
-In-Reply-To: <1557258749-29009-1-git-send-email-kamlesh.gurudasani@gmail.com>
+References: <20190523145950.7030-1-jbrunet@baylibre.com>
+In-Reply-To: <20190523145950.7030-1-jbrunet@baylibre.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 28 May 2019 10:52:39 +0200
-Message-ID: <CAPDyKFpbYWdLfecru4+Y9zRrdpnzgwwMmCbqDZUwaXoei5o28Q@mail.gmail.com>
-Subject: Re: [PATCH] mmc: android-goldfish: Drop pointer to mmc_host from goldfish_mmc_host
-To:     Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+Date:   Tue, 28 May 2019 10:53:03 +0200
+Message-ID: <CAPDyKFp8KErOHTZTg+DdqRvURjG4ohTXiZ-FQd7yKvkpL0z15A@mail.gmail.com>
+Subject: Re: [PATCH] mmc: meson-gx: fix irq ack
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Lockwood <lockwood@android.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Gustavo A . R . Silva" <garsilva@embeddedor.com>
+        Neil Armstrong <narmstrong@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 7 May 2019 at 21:53, Kamlesh Gurudasani
-<kamlesh.gurudasani@gmail.com> wrote:
+On Thu, 23 May 2019 at 16:59, Jerome Brunet <jbrunet@baylibre.com> wrote:
 >
-> The driver for android-goldfish uses a pointer to get from the private
-> goldfish_mmc_host structure to the generic mmc_host structure.
-> However the latter is always immediately preceding the former in
-> memory, so compute its address with a subtraction (which is cheaper than a
-> dereference) and drop the superfluous pointer.
+> While cleaning the ISR of the meson-gx and acking only raised irqs,
+> the ack of the irq was moved at the very last stage of the function.
 >
-> No functional change intended.
+> This was stable during the initial tests but it triggered issues with
+> hs200, under specific loads (like booting android). Acking the irqs
+> after calling the mmc_request_done() causes the problem.
 >
-> Signed-off-by: Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>
+> Moving the ack back to the original place solves the issue. Since the
+> irq is edge triggered, it does not hurt to ack irq even earlier, so
+> let's do it early in the ISR.
+>
+> Fixes: 9c5fdb07a28d ("mmc: meson-gx: ack only raised irq")
+> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+> Tested-by: Kevin Hilman <khilman@baylibre.com>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Applied for next, thanks!
+Applied for fixes, thanks!
 
 Kind regards
 Uffe
 
 
 > ---
->  drivers/mmc/host/android-goldfish.c | 31 +++++++++++++++----------------
->  1 file changed, 15 insertions(+), 16 deletions(-)
+>  drivers/mmc/host/meson-gx-mmc.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> diff --git a/drivers/mmc/host/android-goldfish.c b/drivers/mmc/host/android-goldfish.c
-> index 61e4e2a..f6334c2 100644
-> --- a/drivers/mmc/host/android-goldfish.c
-> +++ b/drivers/mmc/host/android-goldfish.c
-> @@ -113,7 +113,6 @@ struct goldfish_mmc_host {
->         struct mmc_request      *mrq;
->         struct mmc_command      *cmd;
->         struct mmc_data         *data;
-> -       struct mmc_host         *mmc;
->         struct device           *dev;
->         unsigned char           id; /* 16xx chips have 2 MMC blocks */
->         void                    *virt_base;
-> @@ -175,7 +174,7 @@ goldfish_mmc_start_command(struct goldfish_mmc_host *host, struct mmc_command *c
->                 resptype = 3;
->                 break;
->         default:
-> -               dev_err(mmc_dev(host->mmc),
-> +               dev_err(mmc_dev(mmc_from_priv(host)),
->                         "Invalid response type: %04x\n", mmc_resp_type(cmd));
->                 break;
->         }
-> @@ -221,8 +220,8 @@ static void goldfish_mmc_xfer_done(struct goldfish_mmc_host *host,
->                                         data->sg->length);
->                 }
->                 host->data->bytes_xfered += data->sg->length;
-> -               dma_unmap_sg(mmc_dev(host->mmc), data->sg, host->sg_len,
-> -                            dma_data_dir);
-> +               dma_unmap_sg(mmc_dev(mmc_from_priv(host)), data->sg,
-> +                            host->sg_len, dma_data_dir);
->         }
+> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
+> index 6ef465304052..cb3f6811d69a 100644
+> --- a/drivers/mmc/host/meson-gx-mmc.c
+> +++ b/drivers/mmc/host/meson-gx-mmc.c
+> @@ -873,6 +873,9 @@ static irqreturn_t meson_mmc_irq(int irq, void *dev_id)
+>         if (WARN_ON(!host) || WARN_ON(!host->cmd))
+>                 return IRQ_NONE;
 >
->         host->data = NULL;
-> @@ -236,7 +235,7 @@ static void goldfish_mmc_xfer_done(struct goldfish_mmc_host *host,
+> +       /* ack all raised interrupts */
+> +       writel(status, host->regs + SD_EMMC_STATUS);
+> +
+>         cmd = host->cmd;
+>         data = cmd->data;
+>         cmd->error = 0;
+> @@ -919,9 +922,6 @@ static irqreturn_t meson_mmc_irq(int irq, void *dev_id)
+>         if (ret == IRQ_HANDLED)
+>                 meson_mmc_request_done(host->mmc, cmd->mrq);
 >
->         if (!data->stop) {
->                 host->mrq = NULL;
-> -               mmc_request_done(host->mmc, data->mrq);
-> +               mmc_request_done(mmc_from_priv(host), data->mrq);
->                 return;
->         }
->
-> @@ -278,7 +277,7 @@ static void goldfish_mmc_cmd_done(struct goldfish_mmc_host *host,
->
->         if (host->data == NULL || cmd->error) {
->                 host->mrq = NULL;
-> -               mmc_request_done(host->mmc, cmd->mrq);
-> +               mmc_request_done(mmc_from_priv(host), cmd->mrq);
->         }
->  }
->
-> @@ -313,7 +312,7 @@ static irqreturn_t goldfish_mmc_irq(int irq, void *dev_id)
->                 struct mmc_request *mrq = host->mrq;
->                 mrq->cmd->error = -ETIMEDOUT;
->                 host->mrq = NULL;
-> -               mmc_request_done(host->mmc, mrq);
-> +               mmc_request_done(mmc_from_priv(host), mrq);
->         }
->
->         if (end_command)
-> @@ -339,12 +338,13 @@ static irqreturn_t goldfish_mmc_irq(int irq, void *dev_id)
->                 u32 state = GOLDFISH_MMC_READ(host, MMC_STATE);
->                 pr_info("%s: Card detect now %d\n", __func__,
->                         (state & MMC_STATE_INSERTED));
-> -               mmc_detect_change(host->mmc, 0);
-> +               mmc_detect_change(mmc_from_priv(host), 0);
->         }
->
->         if (!end_command && !end_transfer && !state_changed && !cmd_timeout) {
->                 status = GOLDFISH_MMC_READ(host, MMC_INT_STATUS);
-> -               dev_info(mmc_dev(host->mmc),"spurious irq 0x%04x\n", status);
-> +               dev_info(mmc_dev(mmc_from_priv(host)), "spurious irq 0x%04x\n",
-> +                        status);
->                 if (status != 0) {
->                         GOLDFISH_MMC_WRITE(host, MMC_INT_STATUS, status);
->                         GOLDFISH_MMC_WRITE(host, MMC_INT_ENABLE, 0);
-> @@ -383,7 +383,7 @@ static void goldfish_mmc_prepare_data(struct goldfish_mmc_host *host,
->
->         dma_data_dir = mmc_get_dma_dir(data);
->
-> -       host->sg_len = dma_map_sg(mmc_dev(host->mmc), data->sg,
-> +       host->sg_len = dma_map_sg(mmc_dev(mmc_from_priv(host)), data->sg,
->                                   sg_len, dma_data_dir);
->         host->dma_done = 0;
->         host->dma_in_use = 1;
-> @@ -461,7 +461,6 @@ static int goldfish_mmc_probe(struct platform_device *pdev)
->         }
->
->         host = mmc_priv(mmc);
-> -       host->mmc = mmc;
->
->         pr_err("mmc: Mapping %lX to %lX\n", (long)res->start, (long)res->end);
->         host->reg_base = ioremap(res->start, resource_size(res));
-> @@ -508,8 +507,7 @@ static int goldfish_mmc_probe(struct platform_device *pdev)
->
->         ret = device_create_file(&pdev->dev, &dev_attr_cover_switch);
->         if (ret)
-> -               dev_warn(mmc_dev(host->mmc),
-> -                        "Unable to create sysfs attributes\n");
-> +               dev_warn(mmc_dev(mmc), "Unable to create sysfs attributes\n");
->
->         GOLDFISH_MMC_WRITE(host, MMC_SET_BUFFER, host->phys_base);
->         GOLDFISH_MMC_WRITE(host, MMC_INT_ENABLE,
-> @@ -525,7 +523,7 @@ static int goldfish_mmc_probe(struct platform_device *pdev)
->  dma_alloc_failed:
->         iounmap(host->reg_base);
->  ioremap_failed:
-> -       mmc_free_host(host->mmc);
-> +       mmc_free_host(mmc);
->  err_alloc_host_failed:
+> -       /* ack all raised interrupts */
+> -       writel(status, host->regs + SD_EMMC_STATUS);
+> -
 >         return ret;
->  }
-> @@ -533,14 +531,15 @@ static int goldfish_mmc_probe(struct platform_device *pdev)
->  static int goldfish_mmc_remove(struct platform_device *pdev)
->  {
->         struct goldfish_mmc_host *host = platform_get_drvdata(pdev);
-> +       struct mmc_host *mmc = mmc_from_priv(host);
->
->         BUG_ON(host == NULL);
->
-> -       mmc_remove_host(host->mmc);
-> +       mmc_remove_host(mmc);
->         free_irq(host->irq, host);
->         dma_free_coherent(&pdev->dev, BUFFER_SIZE, host->virt_base, host->phys_base);
->         iounmap(host->reg_base);
-> -       mmc_free_host(host->mmc);
-> +       mmc_free_host(mmc);
->         return 0;
 >  }
 >
 > --
-> 2.7.4
+> 2.20.1
 >
