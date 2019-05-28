@@ -2,88 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44BD22BD34
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:26:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C062BD3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:32:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbfE1C0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 22:26:55 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38058 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727525AbfE1C0y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 22:26:54 -0400
-Received: by mail-pg1-f194.google.com with SMTP id v11so9987985pgl.5
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 19:26:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=babayev.com; s=google;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=PbAlnbMG3ZQsuTiPzcj5dR2K8h+JQcEEAbcsQKzHrp8=;
-        b=VTiNwQT9ngEv4fGQldDwmwNpeLWpsu6SR50x7OfHNIq+PZbu2FxUchJjUWpV1KG9W7
-         +O09yXGsURhBHPPerTLS84kxR/Ze8kuYI75fVsmtS0eaDe9+r+frVodGkjQ/XNg27AZm
-         Q5Ojd70jtTWIhCAD1gkxDMePKzeKRwyRrUmuA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=PbAlnbMG3ZQsuTiPzcj5dR2K8h+JQcEEAbcsQKzHrp8=;
-        b=rMJQdyuIyTEpfRWT++DO0qbW3B9mqKLBBWWAh83yg6ndcOn0Hxz4hjaqGcJz4lxxz5
-         kztH34d/NobrzS9g/Ru+0S6O7YOWDNQGMY0MA06YQEybX8hU5a6gYysL5INaKy7b/z3V
-         3p95vicd6dBwHoNDK6CW0CFx0idDL+NDOGAcZYHGs5Iwjx1Oldngx5vQRcfS/6K3bCks
-         d8K6lCOAHeRsXNBCzF5Wup8jbpmpkO+zCPEkb43v8Jlg/0WHbNIsng10RU4LOiKVHw6l
-         8gYVmgzj+0zge6J4kWxJXJtxP2dPld1mcAse5Kp6FMTDWe3UqUyJ8MHcgZtf2usN0P5Y
-         SrwA==
-X-Gm-Message-State: APjAAAU0m1Qr/Osl5fyV0ylKG/1NeSe1vuVcPCohBfHuXilQM1x0bn7S
-        Pl740NaZrc19YzXjwl1Y13FG+g==
-X-Google-Smtp-Source: APXvYqx+VY3FarvHW7iBaypvG6dz7YPmC7OnZveSMATrcMjnfNcPSxPUaSYfs1JcSyOp5shSR2CCYA==
-X-Received: by 2002:a17:90a:bb8d:: with SMTP id v13mr2260630pjr.79.1559010414042;
-        Mon, 27 May 2019 19:26:54 -0700 (PDT)
-Received: from localhost ([128.107.241.177])
-        by smtp.gmail.com with ESMTPSA id l38sm720404pje.12.2019.05.27.19.26.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 27 May 2019 19:26:53 -0700 (PDT)
-References: <20190505193435.3248-1-ruslan@babayev.com> <20190525005302.27164-1-ruslan@babayev.com> <20190527083943.GX2781@lahna.fi.intel.com>
-User-agent: mu4e 1.0; emacs 26.1
-From:   Ruslan Babayev <ruslan@babayev.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Ruslan Babayev <ruslan@babayev.com>,
-        Wolfram Sang <wsa@the-dreams.de>, xe-linux-external@cisco.com,
-        linux-i2c@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/2] i2c: acpi: export i2c_acpi_find_adapter_by_handle
-In-reply-to: <20190527083943.GX2781@lahna.fi.intel.com>
-Date:   Mon, 27 May 2019 19:26:53 -0700
-Message-ID: <8736kz9uvm.fsf@babayev.com>
+        id S1727718AbfE1Ccg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 22:32:36 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:41084 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727313AbfE1Ccg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 22:32:36 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8EADA6FD8AA61A335DF6;
+        Tue, 28 May 2019 10:32:34 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 28 May
+ 2019 10:32:27 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH 1/2] staging: erofs: support statx
+Date:   Tue, 28 May 2019 10:31:46 +0800
+Message-ID: <20190528023147.94117-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+statx() has already been supported in commit a528d35e8bfc
+("statx: Add a system call to make enhanced file info available"),
+user programs can get more useful attributes.
 
-Mika Westerberg writes:
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ drivers/staging/erofs/inode.c    | 18 ++++++++++++++++++
+ drivers/staging/erofs/internal.h |  2 ++
+ drivers/staging/erofs/namei.c    |  1 +
+ 3 files changed, 21 insertions(+)
 
-> On Fri, May 24, 2019 at 05:53:01PM -0700, Ruslan Babayev wrote:
->> +struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle);
->>  #else
->>  static inline bool i2c_acpi_get_i2c_resource(struct acpi_resource *ares,
->>  					     struct acpi_resource_i2c_serialbus **i2c)
->> @@ -996,6 +998,10 @@ static inline struct i2c_client *i2c_acpi_new_device(struct device *dev,
->>  {
->>  	return NULL;
->>  }
->> +struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle)
->
-> This should be static inline, I think.
->
->> +{
->> +	return NULL;
->> +}
->>  #endif /* CONFIG_ACPI */
->>  
->>  #endif /* _LINUX_I2C_H */
->> -- 
->> 2.17.1
+diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
+index c7d3b815a798..8da144943ed6 100644
+--- a/drivers/staging/erofs/inode.c
++++ b/drivers/staging/erofs/inode.c
+@@ -285,7 +285,23 @@ struct inode *erofs_iget(struct super_block *sb,
+ 	return inode;
+ }
+ 
++int erofs_getattr(const struct path *path, struct kstat *stat,
++		  u32 request_mask, unsigned int query_flags)
++{
++	struct inode *const inode = d_inode(path->dentry);
++	struct erofs_vnode *const vi = EROFS_V(inode);
++
++	if (vi->data_mapping_mode == EROFS_INODE_LAYOUT_COMPRESSION)
++		stat->attributes |= STATX_ATTR_COMPRESSED;
++
++	stat->attributes |= STATX_ATTR_IMMUTABLE;
++
++	generic_fillattr(inode, stat);
++	return 0;
++}
++
+ const struct inode_operations erofs_generic_iops = {
++	.getattr = erofs_getattr,
+ #ifdef CONFIG_EROFS_FS_XATTR
+ 	.listxattr = erofs_listxattr,
+ #endif
+@@ -294,6 +310,7 @@ const struct inode_operations erofs_generic_iops = {
+ 
+ const struct inode_operations erofs_symlink_iops = {
+ 	.get_link = page_get_link,
++	.getattr = erofs_getattr,
+ #ifdef CONFIG_EROFS_FS_XATTR
+ 	.listxattr = erofs_listxattr,
+ #endif
+@@ -302,6 +319,7 @@ const struct inode_operations erofs_symlink_iops = {
+ 
+ const struct inode_operations erofs_fast_symlink_iops = {
+ 	.get_link = simple_get_link,
++	.getattr = erofs_getattr,
+ #ifdef CONFIG_EROFS_FS_XATTR
+ 	.listxattr = erofs_listxattr,
+ #endif
+diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+index c47778b3fabd..911333cdeef4 100644
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -556,6 +556,8 @@ static inline bool is_inode_fast_symlink(struct inode *inode)
+ }
+ 
+ struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid, bool dir);
++int erofs_getattr(const struct path *path, struct kstat *stat,
++		  u32 request_mask, unsigned int query_flags);
+ 
+ /* namei.c */
+ extern const struct inode_operations erofs_dir_iops;
+diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
+index d8d9dc9dab43..fd3ae78d0ba5 100644
+--- a/drivers/staging/erofs/namei.c
++++ b/drivers/staging/erofs/namei.c
+@@ -247,6 +247,7 @@ static struct dentry *erofs_lookup(struct inode *dir,
+ 
+ const struct inode_operations erofs_dir_iops = {
+ 	.lookup = erofs_lookup,
++	.getattr = erofs_getattr,
+ #ifdef CONFIG_EROFS_FS_XATTR
+ 	.listxattr = erofs_listxattr,
+ #endif
+-- 
+2.17.1
 
-Thanks Mika, will make the change and repost the patches.
