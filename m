@@ -2,95 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E05EA2D010
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 22:09:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E7702DADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:32:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbfE1UIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 16:08:50 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46526 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727668AbfE1UIb (ORCPT
+        id S1726670AbfE2Kcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 06:32:41 -0400
+Received: from m97179.mail.qiye.163.com ([220.181.97.179]:6940 "EHLO
+        m97179.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbfE2Kcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 16:08:31 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r7so3086wrr.13
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 13:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=FwyZOikIAHRFT3QzU5wwJvymvoehhUYtGScgb3Iy2KU=;
-        b=sPR2LkbHDwHBTrxKddz4MuIh6aBwoiLqSbdvQbRKGiA5Aqukg3caA5AvXt6kAxSkTL
-         sb0u1UNAWSM6ztF0l3FGHD4AK2BOg/fFM0i9KpDsoZOEovrdKkxgxhU26wADOC34XQ94
-         j33ud1TudwfJjNOyyMCzHvtB7I+lzLZNxrWoZsoq2yg8bWbmhJLxxrwZKwQK8E8iNzIX
-         yeA27iq4cdSD0bOEL8ih2aHe1EzuAwhPdpl8zAbmkm6ZrddC0BkRRoy0l5W/BXLY8D/c
-         oysvMAlxRqGB7lXUbCJEGjC5cD+dQ510HpQ34tosTrJUR79g5esZauTc3f7gy7xRiCUL
-         obuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=FwyZOikIAHRFT3QzU5wwJvymvoehhUYtGScgb3Iy2KU=;
-        b=PjD5jF83vMA/ZTwZY8gKKt3rzZjvzv3ft3VskKPZaDRojKPnsb/J5T95J1jn0VUfEk
-         v6z988Wp3KfV3YeP1zNJKEx87/8FsYnMbOalwirs59Q4iRQamu1Ikz64j+syGAu8Mpm0
-         iJz+W8cB2awj68OKfJvwnlXvwhDr8QUEAYYCzNP/y0vgZmuZ9LVbjUIQvp7qGRKbgqoV
-         uMBz4Klgflq1VuceXJS/hUggYfCGcldOtjtMQ263RLYEbtTjXfIuEAAbIQ8SxrPcVlmR
-         bqUVg7ARE7TA3OA6o197bPTHQKZOyUMOuwZr1lyneG8aSu5s8LEHFH6GuhP/5QUf//OH
-         yS3g==
-X-Gm-Message-State: APjAAAWvTTI6KlxzvDgsPLadT347XOM0ZaDa6vERIVfGB75XWUSr1ZR6
-        JfvJhCkD9mh1Xb7u9TEwyqY=
-X-Google-Smtp-Source: APXvYqxLdRrmpq0R7779TRRUtBGMMOCmaLOaFGClALZCcIJ45dYfe6GOEIs7RwPFEkvgZ47KlrVspA==
-X-Received: by 2002:a5d:554b:: with SMTP id g11mr601730wrw.10.1559074110241;
-        Tue, 28 May 2019 13:08:30 -0700 (PDT)
-Received: from gmail.com (79.108.96.12.dyn.user.ono.com. [79.108.96.12])
-        by smtp.gmail.com with ESMTPSA id g2sm14396336wru.37.2019.05.28.13.08.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 May 2019 13:08:29 -0700 (PDT)
-Date:   Tue, 28 May 2019 22:05:40 +0200
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Huang Ying <ying.huang@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm: Fail when offset == num in first check of
- vm_map_pages_zero()
-Message-ID: <20190528193004.GA7744@gmail.com>
+        Wed, 29 May 2019 06:32:41 -0400
+Received: from localhost (unknown [120.132.1.243])
+        by m97179.mail.qiye.163.com (Hmail) with ESMTPA id 1966BE01AC1;
+        Wed, 29 May 2019 18:32:33 +0800 (CST)
+Date:   Wed, 29 May 2019 04:05:54 +0800
+From:   Yao Liu <yotta.liu@ucloud.cn>
+To:     Mike Christie <mchristi@redhat.com>
+Cc:     Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, nbd@other.debian.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] nbd: notify userland even if nbd has already
+ disconnected
+Message-ID: <20190528200554.GA21633@192-168-150-246.7~>
+References: <1558691036-16281-1-git-send-email-yotta.liu@ucloud.cn>
+ <1558691036-16281-2-git-send-email-yotta.liu@ucloud.cn>
+ <20190524130856.zod5agp7hk74pcnr@MacBook-Pro-91.local.dhcp.thefacebook.com>
+ <20190527182323.GB20702@192-168-150-246.7~>
+ <5CED6385.3000802@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: elm/2
+In-Reply-To: <5CED6385.3000802@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-HM-Spam-Status: e1kIGBQJHllBWUtVQ01JQkJCQ05NT0xJS0pOWVdZKFlBSUI3V1ktWUFJV1
+        kJDhceCFlBWTU0KTY6NyQpLjc#WQY+
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nxw6USo*Vjg0OiI9KgoSPyhD
+        OBNPCzhVSlVKTk5CSklOQk5ISUtIVTMWGhIXVQIUDw8aVRcSDjsOGBcUDh9VGBVFWVdZEgtZQVlK
+        SUtVSkhJVUpVSU9IWVdZCAFZQUhOTk83Bg++
+X-HM-Tid: 0a6b03260a5320bdkuqy1966be01ac1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the user asks us for offset == num, we should already fail in the
-first check, i.e. the one testing for offsets beyond the object.
+On Tue, May 28, 2019 at 11:36:21AM -0500, Mike Christie wrote:
+> On 05/27/2019 01:23 PM, Yao Liu wrote:
+> > On Fri, May 24, 2019 at 09:08:58AM -0400, Josef Bacik wrote:
+> >> On Fri, May 24, 2019 at 05:43:55PM +0800, Yao Liu wrote:
+> >>> Some nbd client implementations have a userland's daemon, so we should
+> >>> inform client daemon to clean up and exit.
+> >>>
+> >>> Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
+> >>
+> >> Except the nbd_disconnected() check is for the case that the client told us
+> >> specifically to disconnect, so we don't want to send the notification to
+> >> re-connect because we've already been told we want to tear everything down.
+> >> Nack to this as well.  Thanks,
+> >>
+> >> Josef
+> >>
+> > 
+> > But in userland, client daemon process and process which send disconnect
+> > command are not same process, so they are not clear to each other, so
+> > client daemon expect driver inform it to exit.
+> > In addition, client daemon will get nbd status with nbd_genl_status interface
+> > after it get notified and it should not re-connect if status connected == 0
+> > 
+> 
+> When using the netlink interface you get the NBD_CMD_LINK_DEAD first
+> then the configs_refs goes to zero right?
+> 
+> nbd_disconnect_and_put -> sock_shutdown -> nbd_mark_nsock_dead
+> 
+> then later we do the final nbd_config_put?
+> 
+> Maybe it would be best to add a new netlink event to signal what has
+> happened, because the above nl and stat algorithm seems like a pain. The
+> NBD_CMD_LINK_DEAD will be sent, then userspace has to possibly poll the
+> status to check if this was caused due to nbd_genl_disconnect instead of
+> a downed link due to something like a command timeout, because the
+> refcount may not be down when userspace gets the NL event.
+> 
+> Or, I guess the admin/tool process could just send a msg to the daemon
+> process to tell it to do the netlink disconnect request.
+> 
 
-At the moment, we are failing on the second test anyway,
-since count cannot be 0. Still, to agree with the comment of the first
-test, we should first there.
-
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
----
- mm/memory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/memory.c b/mm/memory.c
-index ddf20bd0c317..74cf8b0ce353 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1547,7 +1547,7 @@ static int __vm_map_pages(struct vm_area_struct *vma, struct page **pages,
- 	int ret, i;
- 
- 	/* Fail if the user requested offset is beyond the end of the object */
--	if (offset > num)
-+	if (offset >= num)
- 		return -ENXIO;
- 
- 	/* Fail if the user requested size exceeds available object size */
--- 
-2.17.1
-
+Adding a new netlink event sames good.
