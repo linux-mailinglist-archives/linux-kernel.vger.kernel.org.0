@@ -2,91 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6A152D150
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 00:05:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E91412D159
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 00:09:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728052AbfE1WFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 18:05:01 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:57083 "EHLO ozlabs.org"
+        id S1727604AbfE1WJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 18:09:12 -0400
+Received: from mga01.intel.com ([192.55.52.88]:11133 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726576AbfE1WFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 18:05:01 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45D7Dm0s2wz9sBb;
-        Wed, 29 May 2019 08:04:56 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1559081096;
-        bh=latartSpAexslz84ppDW3m6VjQvcega24simC5z4y2A=;
-        h=Date:From:To:Cc:Subject:From;
-        b=G3Jezmv4sMoCRolnG8T+dT5mw4caYYJSx9zGELDnclxHYb5ZeQ4GyXSrsrVvYmo42
-         0gfhSqMeRqhG0lV+o5I1PR/NRjn34CDjYCW4XL/b8f1UDLYHPHfvMkZiiuKgsyx7di
-         SPkrG6nzObzVwo7A4ZzG8ak0maaKl7Osqrokpg4pIc+7ByUPZ0Vl7pKuRcn+NXz4qg
-         TC9lruBBY6EKmS8/PwHXHcm2S4+CCeUzvGFdB2yIU5Q4+hChXIRvup0MTtMhqC9/LR
-         w61d35JwF5U9vJqnPw8ze3qBvIoDhxv5VjQBxZuA82pDheAic+wlM27TeeNUL2OMUO
-         crqUok1mEBXhA==
-Date:   Wed, 29 May 2019 08:04:54 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: linux-next: Fixes tag needs some work in the v4l-dvb tree
-Message-ID: <20190529080454.6d62a7fd@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.d=BWJoTy6lPfZL4/CmtHiY"; protocol="application/pgp-signature"
+        id S1726497AbfE1WJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 18:09:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 15:09:10 -0700
+X-ExtLoop1: 1
+Received: from otc-lr-04.jf.intel.com ([10.54.39.157])
+  by orsmga002.jf.intel.com with ESMTP; 28 May 2019 15:09:10 -0700
+From:   kan.liang@linux.intel.com
+To:     mingo@kernel.org, acme@redhat.com, peterz@infradead.org,
+        vincent.weaver@maine.edu, linux-kernel@vger.kernel.org
+Cc:     alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+        jolsa@redhat.com, eranian@google.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V3 1/5] perf: Disable extended registers for non-support PMUs
+Date:   Tue, 28 May 2019 15:08:30 -0700
+Message-Id: <1559081314-9714-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/.d=BWJoTy6lPfZL4/CmtHiY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Hi Mauro,
+The perf fuzzer caused skylake machine to crash.
 
-In commit
+[ 9680.085831] Call Trace:
+[ 9680.088301]  <IRQ>
+[ 9680.090363]  perf_output_sample_regs+0x43/0xa0
+[ 9680.094928]  perf_output_sample+0x3aa/0x7a0
+[ 9680.099181]  perf_event_output_forward+0x53/0x80
+[ 9680.103917]  __perf_event_overflow+0x52/0xf0
+[ 9680.108266]  ? perf_trace_run_bpf_submit+0xc0/0xc0
+[ 9680.113108]  perf_swevent_hrtimer+0xe2/0x150
+[ 9680.117475]  ? check_preempt_wakeup+0x181/0x230
+[ 9680.122091]  ? check_preempt_curr+0x62/0x90
+[ 9680.126361]  ? ttwu_do_wakeup+0x19/0x140
+[ 9680.130355]  ? try_to_wake_up+0x54/0x460
+[ 9680.134366]  ? reweight_entity+0x15b/0x1a0
+[ 9680.138559]  ? __queue_work+0x103/0x3f0
+[ 9680.142472]  ? update_dl_rq_load_avg+0x1cd/0x270
+[ 9680.147194]  ? timerqueue_del+0x1e/0x40
+[ 9680.151092]  ? __remove_hrtimer+0x35/0x70
+[ 9680.155191]  __hrtimer_run_queues+0x100/0x280
+[ 9680.159658]  hrtimer_interrupt+0x100/0x220
+[ 9680.163835]  smp_apic_timer_interrupt+0x6a/0x140
+[ 9680.168555]  apic_timer_interrupt+0xf/0x20
+[ 9680.172756]  </IRQ>
 
-  0c310868826e ("media: rcar-csi2: Fix coccinelle warning for PTR_ERR_OR_ZE=
-RO()")
+The XMM registers can only be collected by PEBS hardware events on the
+platforms with PEBS baseline support, e.g. Icelake, not software/probe
+events.
 
-Fixes tag
+Add capabilities flag PERF_PMU_CAP_EXTENDED_REGS to indicate the PMU
+which support extended registers. For X86, the extended registers are
+XMM registers.
 
-  Fixes: 3ae854cafd76 ("rcar-csi2: Use standby mode instead of resetting")
+Add has_extended_regs() to check if extended registers are applied.
 
-has these problem(s):
+The generic code define the mask of extended registers as 0 if arch
+headers haven't overridden it.
 
-  - Target SHA1 does not exist
+Fixes: 878068ea270e ("perf/x86: Support outputting XMM registers")
+Reported-by: Vince Weaver <vincent.weaver@maine.edu>
+Originally-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
 
-Did you mean
+Changes since V2:
+- Rename PERF_REG_NON_GENERIC_MASK to PERF_REG_EXTENDED_MASK
+- Rename has_non_generic_regs() to has_extended_regs()
+- Add capabilities flag PERF_PMU_CAP_EXTENDED_REGS
+- Don't check separately. Check extended regs and flag in global
+  perf_try_init_event()
 
-Fixes: d245a940d97b ("media: rcar-csi2: Use standby mode instead of resetti=
-ng")
+ arch/x86/events/intel/ds.c            |  1 +
+ arch/x86/include/uapi/asm/perf_regs.h |  3 +++
+ include/linux/perf_event.h            |  1 +
+ include/linux/perf_regs.h             |  8 ++++++++
+ kernel/events/core.c                  | 18 ++++++++++++++----
+ 5 files changed, 27 insertions(+), 4 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index 7a9f5da..f860cdd 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -2020,6 +2020,7 @@ void __init intel_ds_init(void)
+ 					PERF_SAMPLE_TIME;
+ 				x86_pmu.flags |= PMU_FL_PEBS_ALL;
+ 				pebs_qual = "-baseline";
++				x86_get_pmu()->capabilities |= PERF_PMU_CAP_EXTENDED_REGS;
+ 			} else {
+ 				/* Only basic record supported */
+ 				x86_pmu.pebs_no_xmm_regs = 1;
+diff --git a/arch/x86/include/uapi/asm/perf_regs.h b/arch/x86/include/uapi/asm/perf_regs.h
+index ac67bbe..7c9d2bb 100644
+--- a/arch/x86/include/uapi/asm/perf_regs.h
++++ b/arch/x86/include/uapi/asm/perf_regs.h
+@@ -52,4 +52,7 @@ enum perf_event_x86_regs {
+ 	/* These include both GPRs and XMMX registers */
+ 	PERF_REG_X86_XMM_MAX = PERF_REG_X86_XMM15 + 2,
+ };
++
++#define PERF_REG_EXTENDED_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
++
+ #endif /* _ASM_X86_PERF_REGS_H */
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 0ab99c7..2bca72f 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -241,6 +241,7 @@ struct perf_event;
+ #define PERF_PMU_CAP_NO_INTERRUPT		0x01
+ #define PERF_PMU_CAP_NO_NMI			0x02
+ #define PERF_PMU_CAP_AUX_NO_SG			0x04
++#define PERF_PMU_CAP_EXTENDED_REGS		0x08
+ #define PERF_PMU_CAP_EXCLUSIVE			0x10
+ #define PERF_PMU_CAP_ITRACE			0x20
+ #define PERF_PMU_CAP_HETEROGENEOUS_CPUS		0x40
+diff --git a/include/linux/perf_regs.h b/include/linux/perf_regs.h
+index 4767474..2d12e97 100644
+--- a/include/linux/perf_regs.h
++++ b/include/linux/perf_regs.h
+@@ -11,6 +11,11 @@ struct perf_regs {
+ 
+ #ifdef CONFIG_HAVE_PERF_REGS
+ #include <asm/perf_regs.h>
++
++#ifndef PERF_REG_EXTENDED_MASK
++#define PERF_REG_EXTENDED_MASK	0
++#endif
++
+ u64 perf_reg_value(struct pt_regs *regs, int idx);
+ int perf_reg_validate(u64 mask);
+ u64 perf_reg_abi(struct task_struct *task);
+@@ -18,6 +23,9 @@ void perf_get_regs_user(struct perf_regs *regs_user,
+ 			struct pt_regs *regs,
+ 			struct pt_regs *regs_user_copy);
+ #else
++
++#define PERF_REG_EXTENDED_MASK	0
++
+ static inline u64 perf_reg_value(struct pt_regs *regs, int idx)
+ {
+ 	return 0;
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index abbd4b3..62d8190 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -10033,6 +10033,12 @@ void perf_pmu_unregister(struct pmu *pmu)
+ }
+ EXPORT_SYMBOL_GPL(perf_pmu_unregister);
+ 
++static inline bool has_extended_regs(struct perf_event *event)
++{
++	return (event->attr.sample_regs_user & PERF_REG_EXTENDED_MASK) ||
++	       (event->attr.sample_regs_intr & PERF_REG_EXTENDED_MASK);
++}
++
+ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+ {
+ 	struct perf_event_context *ctx = NULL;
+@@ -10064,12 +10070,16 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+ 		perf_event_ctx_unlock(event->group_leader, ctx);
+ 
+ 	if (!ret) {
++		if (!(pmu->capabilities & PERF_PMU_CAP_EXTENDED_REGS) &&
++		    has_extended_regs(event))
++			ret = -EOPNOTSUPP;
++
+ 		if (pmu->capabilities & PERF_PMU_CAP_NO_EXCLUDE &&
+-				event_has_any_exclude_flag(event)) {
+-			if (event->destroy)
+-				event->destroy(event);
++		    event_has_any_exclude_flag(event))
+ 			ret = -EINVAL;
+-		}
++
++		if (ret && event->destroy)
++			event->destroy(event);
+ 	}
+ 
+ 	if (ret)
+-- 
+2.7.4
 
---Sig_/.d=BWJoTy6lPfZL4/CmtHiY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlztsIYACgkQAVBC80lX
-0Gz+/gf/T31KoLazyjEW89krmzM2wgc40Sab/m3NnCGPtDAzT4itrTJbP7xHwKts
-R+MpjXiHQ5CtUdZnaBT9o4jsHQYR0gZNiqCxAC2gTok1tZkZHRzsU18LzRHcwLCE
-bV4QzTxH4JJJwNZCeG90AsZsG2NLvE3M/DRneZ48TcstMk1rOqrp+C/8SX5Af6Qx
-vovVBPfg5KokPSd76NnTZSJT+r8GV67CmoYXfVLsEiCOnAhFPkDAPLe7rhXjl8bg
-lwDJuxDk/lSzfZqr9Q+zeeU1qucx5SLx1jMYB1CMMl3c/8+lamlnn/w8iPNar+Y6
-MGnT8yyWWd5tAESGkM7wD9agYrJfBQ==
-=Y/Qv
------END PGP SIGNATURE-----
-
---Sig_/.d=BWJoTy6lPfZL4/CmtHiY--
