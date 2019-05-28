@@ -2,72 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9B082BD0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 03:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA48C2BD1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 04:03:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727914AbfE1B4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 21:56:08 -0400
-Received: from mga09.intel.com ([134.134.136.24]:1564 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727654AbfE1B4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 21:56:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 May 2019 18:56:07 -0700
-X-ExtLoop1: 1
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by orsmga002.jf.intel.com with ESMTP; 27 May 2019 18:56:06 -0700
-Message-ID: <5CEC9667.30100@intel.com>
-Date:   Tue, 28 May 2019 10:01:11 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1727908AbfE1CDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 22:03:46 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42490 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727763AbfE1CDq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 22:03:46 -0400
+Received: by mail-pf1-f195.google.com with SMTP id r22so7566921pfh.9
+        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 19:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=babayev.com; s=google;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=JaRPKvxw8+L+l1OScOFu7hcSbVbLQEUBHgcFnYYHmu4=;
+        b=UoloAsRruBW1XQDpfAyHrpJiDnUusRnJGYAd3/CPmhR9+d00govfBjxS7ZRMtQs0DT
+         pkp3tpflZlxImlkyMcfYcKdblDGWPHVZJLZOpaioebFMoPJsWLyVyOMalaIxVh1s3GV6
+         IxFv2mFwubmVUqaI2Ubqa3MFjUyaEgK/Ehidg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version:content-transfer-encoding;
+        bh=JaRPKvxw8+L+l1OScOFu7hcSbVbLQEUBHgcFnYYHmu4=;
+        b=l+1WjhY37fyD/uX84CZqI4WpBTYslFg0na8Xfh4o4HkSK4AdCDLPzO/SSBohvvDVA0
+         5tbxhUBkdrdhoNJT7ladHbGwOynLrdjrJecvjbMEl6cyWsws3T6AzOS3OMfUUNNqXeo0
+         hRq2oHkax8kkFp5v7Lwgnskv7l17qbRM6e8gfdBNdpbXd7lewMW53rD6HGA4f5uoveZO
+         3W6i7WXXlUN6j/vfAy4aGgvsSLsFcxK3PidT7J+8Povu46hdYpwNYRWKCIqdDNc7LiFM
+         ulzZCUHenAY4GLE4IVN8cMaZR4Rdqo3ZxGzWbGAWnGpNSQ5QegEs9pyHSD9AEpXOy3lZ
+         Lj5w==
+X-Gm-Message-State: APjAAAXNQ55Ee6FLyEBiAzEcGVzzhYMGJB09Fek3iHYZunWuAux8VfLn
+        y6QSS6xWN4mEKINAKmZMCZk1PgrF5smqfQ==
+X-Google-Smtp-Source: APXvYqw2SNP/oW+Z1HqXmWCh/MRHPfCU1W0Ako0J9SiTpph/+j3M6XiUeGDrvUXSkpmF5PVfGG+p2w==
+X-Received: by 2002:a17:90a:2042:: with SMTP id n60mr2230768pjc.8.1559009025213;
+        Mon, 27 May 2019 19:03:45 -0700 (PDT)
+Received: from localhost ([128.107.241.177])
+        by smtp.gmail.com with ESMTPSA id u6sm6899535pgm.22.2019.05.27.19.03.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 27 May 2019 19:03:44 -0700 (PDT)
+References: <20190505193435.3248-1-ruslan@babayev.com> <20190525005302.27164-1-ruslan@babayev.com> <20190527184743.GA8808@kunai>
+User-agent: mu4e 1.0; emacs 26.1
+From:   Ruslan Babayev <ruslan@babayev.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Ruslan Babayev <ruslan@babayev.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        xe-linux-external@cisco.com, linux-i2c@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/2] i2c: acpi: export i2c_acpi_find_adapter_by_handle
+In-reply-to: <20190527184743.GA8808@kunai>
+Date:   Mon, 27 May 2019 19:03:44 -0700
+Message-ID: <874l5f9vy7.fsf@babayev.com>
 MIME-Version: 1.0
-To:     Eric Hankland <ehankland@google.com>, pbonzini@redhat.com,
-        rkrcmar@redhat.com
-CC:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v1] KVM: x86: PMU Whitelist
-References: <CAOyeoRWfPNmaWY6Lifdkdj3KPPM654vzDO+s3oduEMCJP+Asow@mail.gmail.com>
-In-Reply-To: <CAOyeoRWfPNmaWY6Lifdkdj3KPPM654vzDO+s3oduEMCJP+Asow@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/23/2019 06:23 AM, Eric Hankland wrote:
-> - Add a VCPU ioctl that can control which events the guest can monitor.
+
+Wolfram Sang writes:
+
+> On Fri, May 24, 2019 at 05:53:01PM -0700, Ruslan Babayev wrote:
+>> This allows drivers to lookup i2c adapters on ACPI based systems similar=
+ to
+>> of_get_i2c_adapter_by_node() with DT based systems.
+>>=20
+>> Signed-off-by: Ruslan Babayev <ruslan@babayev.com>
+>> Cc: xe-linux-external@cisco.com
 >
-> Signed-off-by: ehankland <ehankland@google.com>
-> ---
-> Some events can provide a guest with information about other guests or the
-> host (e.g. L3 cache stats); providing the capability to restrict access
-> to a "safe" set of events would limit the potential for the PMU to be used
-> in any side channel attacks. This change introduces a new vcpu ioctl that
-> sets an event whitelist. If the guest attempts to program a counter for
-> any unwhitelisted event, the kernel counter won't be created, so any
-> RDPMC/RDMSR will show 0 instances of that event.
+> Please have a look how your patches look in my inbox:
+>
+> May 05 Ruslan Babayev  ( 129) [PATCH] net: phy: sfp: enable i2c-bus detec=
+tion on ACPI based systems
+> May 05 Ruslan Babayev  (  65) =E2=94=9C=E2=94=80>[PATCH 1/2] i2c: acpi: e=
+xport i2c_acpi_find_adapter_by_handle
+> May 24 Ruslan Babayev  (  65) =E2=94=94=E2=94=80>[PATCH net-next v2 1/2] =
+i2c: acpi: export i2c_acpi_find_adapter_by_handle
+> May 05 Ruslan Babayev  (  65) [PATCH net-next 1/2] i2c: acpi: export i2c_=
+acpi_find_adapter_by_handle
+> May 06 Ruslan Babayev  (   3) =E2=94=9C=E2=94=80>[PATCH RFC v2 net-next] =
+Enable SFP support on ACPI
+> May 06 Ruslan Babayev  (  65) =E2=94=9C=E2=94=80>[PATCH RFC v2 net-next 1=
+/2] i2c: acpi: export i2c_acpi_find_adapter_by_handle
+> May 06 Ruslan Babayev  ( 120) =E2=94=94=E2=94=80>[PATCH RFC v2 net-next 2=
+/2] net: phy: sfp: enable i2c-bus detection on ACPI based systems
+> May 07 Ruslan Babayev  ( 154)   =E2=94=94=E2=94=80&=E2=94=80>
+> May 07 Ruslan Babayev  (  10)     =E2=94=94=E2=94=80>
+> May 22 Ruslan Babayev  (  29)       =E2=94=94=E2=94=80>
+> May 05 Ruslan Babayev  (  93) [PATCH net-next 2/2] net: phy: sfp: enable =
+i2c-bus detection on ACPI based systems
+> May 06 Ruslan Babayev  (  25) =E2=94=9C=E2=94=80&=E2=94=80>
+> May 06 Ruslan Babayev  (  99) =E2=94=94=E2=94=80&=E2=94=80>
+>
+> This is highly confusing, and super hard to find out which patches belong
+> together. v2 2/2 seems even missing. Please resend this as a new series w=
+ithout
+> any in-reply-to, and a fresh cover-letter, so I know which one to apply t=
+o my
+> tree.
+>
+> Thanks,
+>
+>    Wolfram
 
-The general idea sounds good to me :)
-
-For the implementation, I would have the following suggestions:
-
-1) Instead of using a whitelist, it would be better to use a blacklist to
-forbid the guest from counting any core level information. So by default,
-kvm maintains a list of those core level events, which are not supported to
-the guest.
-
-The userspace ioctl removes the related events from the blacklist to
-make them usable by the guest.
-
-2) Use vm ioctl, instead of vcpu ioctl. The blacklist-ed events can be 
-VM wide
-(unnecessary to make each CPU to maintain the same copy).
-Accordingly, put the pmu event blacklist into kvm->arch.
-
-3) Returning 1 when the guest tries to set the evetlsel msr to count an
-event which is on the blacklist.
-
-Best,
-Wei
+Will do, sorry about that.
