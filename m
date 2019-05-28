@@ -2,80 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 104CB2C42B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:22:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BADD32C42F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:25:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbfE1KWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 06:22:33 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48640 "EHLO mx1.redhat.com"
+        id S1726678AbfE1KY7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 06:24:59 -0400
+Received: from foss.arm.com ([217.140.101.70]:54328 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726203AbfE1KWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 06:22:33 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DA7FCF4943;
-        Tue, 28 May 2019 10:22:29 +0000 (UTC)
-Received: from krava (unknown [10.43.17.32])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 0FE0E2D1BC;
-        Tue, 28 May 2019 10:22:20 +0000 (UTC)
-Date:   Tue, 28 May 2019 12:22:20 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
+        id S1726203AbfE1KY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 06:24:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A2CC341;
+        Tue, 28 May 2019 03:24:59 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6EFAE3F59C;
+        Tue, 28 May 2019 03:24:55 -0700 (PDT)
+Subject: Re: [PATCH 2/7] sched/fair: Replace source_load() & target_load() w/
+ weighted_cpuload()
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Vince Weaver <vincent.weaver@maine.edu>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 0/8] perf/x86: Rework msr probe interface
-Message-ID: <20190528102220.GA4917@krava>
-References: <20190527215129.10000-1-jolsa@kernel.org>
- <20190528100147.GM2623@hirez.programming.kicks-ass.net>
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Rik van Riel <riel@surriel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        linux-kernel@vger.kernel.org
+References: <20190527062116.11512-1-dietmar.eggemann@arm.com>
+ <20190527062116.11512-3-dietmar.eggemann@arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <63ee8775-f159-e172-15f4-2ddf941870ee@arm.com>
+Date:   Tue, 28 May 2019 12:24:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190528100147.GM2623@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 28 May 2019 10:22:32 +0000 (UTC)
+In-Reply-To: <20190527062116.11512-3-dietmar.eggemann@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 12:01:47PM +0200, Peter Zijlstra wrote:
-> On Mon, May 27, 2019 at 11:51:21PM +0200, Jiri Olsa wrote:
-> > hi,
-> > following up on [1], [2] and [3], this patchset adds update
-> > attribute groups to pmu, factors out the MSR probe code and
-> > use it in msr,cstate* and rapl PMUs.
-> > 
-> > The functionality stays the same with one exception:
-> > the event is not exported if the rdmsr return zero
-> > on event's msr.
+On 5/28/19 6:42 AM, Hillf Danton wrote:
 > 
-> That seems a wee bit dangerous, are we sure none of these counters are 0
-> by 'accident' when we probe them? I'm thinking esp. things like the Cn
-> residency stuff could be 0 simply because we've not been into that state
-> yet.
+> On Mon, 27 May 2019 07:21:11 +0100 Dietmar Eggemann wrote:
 
-ah right, I can disable that check for cstate pmu
-and perhaps for msr pmu as well
+[...]
 
-It's aiming for rapl counters which could return 0
-for unsupported counters, agreed by Kan before:
-
-https://lore.kernel.org/lkml/5fcaf3ae-00d3-f635-74bd-8b81a089133f@linux.intel.com/
-
-jirka
-
+>> @@ -5500,7 +5464,7 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
+>>   		this_eff_load *= 100;
+>>   	this_eff_load *= capacity_of(prev_cpu);
+>>   
+>> -	prev_eff_load = source_load(prev_cpu, sd->wake_idx);
+>> +	prev_eff_load = weighted_cpuload(cpu_rq(this_cpu));
+> 					 cpu_rq(prev_cpu)
 > 
-> Other than that, this looks good. Kan?
+> Seems we have no need to see this cpu's load more than once.
+
+Thanks for catching this! Will fix it in v2.
