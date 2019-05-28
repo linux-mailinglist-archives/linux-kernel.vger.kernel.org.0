@@ -2,65 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 061382C7CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:34:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3F7E2C7CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:32:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbfE1NeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 09:34:00 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34584 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727057AbfE1NeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 09:34:00 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 135BE88B20B302BDCEF9;
-        Tue, 28 May 2019 21:33:49 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Tue, 28 May 2019
- 21:33:39 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <TheSven73@gmail.com>, <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] staging: fieldbus: Fix build error without CONFIG_REGMAP_MMIO
-Date:   Tue, 28 May 2019 21:32:14 +0800
-Message-ID: <20190528133214.21776-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727508AbfE1Ncj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 09:32:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43528 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbfE1Nci (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 09:32:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gyDEltUy8Mkp5tNzv09VqhaOmTEcIorOyMwFp/rum1s=; b=jYZJixTtaT+g13+zPNmjkuMXi
+        /+zlQr1UgFTCDju2uPbOIWr9uuW+kwX4H+rfvXloRl87RJHAH0/ZVmUe8LOvsrYpD9qTthNH0oeu4
+        1mLK8vsahxIFUYe5Q/Vw7eLT8+LOfdEdRNDfahJBrde5b+UvizDuPgTbLzwUXfg0YrfgWVTQxpAw2
+        U/PCN4aGDM+d/7G83tEhscSJWeRvLXwSYqw3IzZhcTueFeXKcsEmzf0QlaCfMqHzFVFZuvURAYYow
+        G7f5r5jB2zKg+GTbl1daD3Py56KfIC8rD/lrwIdfX0mP1Feg50MCgKGlUjICB+CNjAY7lRT9RUSyx
+        yAtIBUTrQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVcDR-0005te-QD; Tue, 28 May 2019 13:32:33 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2C2552074C650; Tue, 28 May 2019 15:32:32 +0200 (CEST)
+Date:   Tue, 28 May 2019 15:32:32 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com
+Subject: Re: [PATCH 4/9] perf/x86/intel: Support hardware TopDown metrics
+Message-ID: <20190528133232.GU2650@hirez.programming.kicks-ass.net>
+References: <20190521214055.31060-1-kan.liang@linux.intel.com>
+ <20190521214055.31060-5-kan.liang@linux.intel.com>
+ <20190528125615.GW2606@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190528125615.GW2606@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix gcc build error while CONFIG_REGMAP_MMIO is not set
+On Tue, May 28, 2019 at 02:56:15PM +0200, Peter Zijlstra wrote:
+> On Tue, May 21, 2019 at 02:40:50PM -0700, kan.liang@linux.intel.com wrote:
+> 
+> > diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> > index e9075d57853d..07ecfe75f0e6 100644
+> > --- a/arch/x86/events/core.c
+> > +++ b/arch/x86/events/core.c
+> > @@ -91,16 +91,20 @@ u64 x86_perf_event_update(struct perf_event *event)
+> >  					new_raw_count) != prev_raw_count)
+> >  		goto again;
 
-drivers/staging/fieldbus/anybuss/arcx-anybus.o: In function `controller_probe':
-arcx-anybus.c:(.text+0x9d6): undefined reference to `__devm_regmap_init_mmio_clk'
+AFAICT, you don't actually need that cmpxchg loop for the metric crud.
 
-Select REGMAP_MMIO to fix it.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 2411a336c8ce ("staging: fieldbus: arcx-anybus: change custom -> mmio regmap")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/staging/fieldbus/anybuss/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/fieldbus/anybuss/Kconfig b/drivers/staging/fieldbus/anybuss/Kconfig
-index 8bc3d9a..635a0a7 100644
---- a/drivers/staging/fieldbus/anybuss/Kconfig
-+++ b/drivers/staging/fieldbus/anybuss/Kconfig
-@@ -14,6 +14,7 @@ if HMS_ANYBUSS_BUS
- config ARCX_ANYBUS_CONTROLLER
- 	tristate "Arcx Anybus-S Controller"
- 	depends on OF && GPIOLIB && HAS_IOMEM && REGULATOR
-+	select REGMAP_MMIO
- 	help
- 	  Select this to get support for the Arcx Anybus controller.
- 	  It connects to the SoC via a parallel memory bus, and
--- 
-2.7.4
-
-
+> >  
+> > -	/*
+> > -	 * Now we have the new raw value and have updated the prev
+> > -	 * timestamp already. We can now calculate the elapsed delta
+> > -	 * (event-)time and add that to the generic event.
+> > -	 *
+> > -	 * Careful, not all hw sign-extends above the physical width
+> > -	 * of the count.
+> > -	 */
+> > -	delta = (new_raw_count << shift) - (prev_raw_count << shift);
+> > -	delta >>= shift;
+> > +	if (unlikely(hwc->flags & PERF_X86_EVENT_UPDATE))
+> > +		delta = x86_pmu.metric_update_event(event, new_raw_count);
+> > +	else {
+> > +		/*
+> > +		 * Now we have the new raw value and have updated the prev
+> > +		 * timestamp already. We can now calculate the elapsed delta
+> > +		 * (event-)time and add that to the generic event.
+> > +		 *
+> > +		 * Careful, not all hw sign-extends above the physical width
+> > +		 * of the count.
+> > +		 */
+> > +		delta = (new_raw_count << shift) - (prev_raw_count << shift);
+> > +		delta >>= shift;
+> > +	}
+> >  
+> >  	local64_add(delta, &event->count);
+> >  	local64_sub(delta, &hwc->period_left);
+> 
+> > @@ -1186,6 +1194,9 @@ int x86_perf_event_set_period(struct perf_event *event)
+> >  	if (idx == INTEL_PMC_IDX_FIXED_BTS)
+> >  		return 0;
+> >  
+> > +	if (x86_pmu.set_period && x86_pmu.set_period(event))
+> > +		goto update_userpage;
+> > +
+> >  	/*
+> >  	 * If we are way outside a reasonable range then just skip forward:
+> >  	 */
+> > @@ -1234,6 +1245,7 @@ int x86_perf_event_set_period(struct perf_event *event)
+> >  			(u64)(-left) & x86_pmu.cntval_mask);
+> >  	}
+> >  
+> > +update_userpage:
+> >  	perf_event_update_userpage(event);
+> >  
+> >  	return ret;
+> 
+> 
+> *groan*.... that's pretty terrible.
