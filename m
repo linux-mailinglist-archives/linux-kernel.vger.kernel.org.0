@@ -2,73 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BCD12C8E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 16:36:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 298402C91F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 16:43:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726576AbfE1Ogw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 10:36:52 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:17600 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726371AbfE1Ogw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 10:36:52 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D565B3A651F320E2EBF3;
-        Tue, 28 May 2019 22:36:49 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Tue, 28 May 2019
- 22:36:44 +0800
-Subject: Re: [PATCH v2 -next] staging: fieldbus: Fix build error without
- CONFIG_REGMAP_MMIO
-To:     <TheSven73@gmail.com>, <gregkh@linuxfoundation.org>
-References: <CAGngYiU=uFjJFEoiHFUr+ab73sJksaTBkfxvQwL1X6WJnhchqw@mail.gmail.com>
- <20190528142912.13224-1-yuehaibing@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <428cde8a-00cd-9023-9f09-deec4834507d@huawei.com>
-Date:   Tue, 28 May 2019 22:36:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1727054AbfE1Onr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 10:43:47 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:33165 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726345AbfE1Onr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 10:43:47 -0400
+Received: by mail-vs1-f66.google.com with SMTP id y6so299544vsb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 07:43:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xoaLrOaVKIM8ESM/O0FPRf0nY0zEO7GufQin910pcKk=;
+        b=irftUQkii/33TKs92nEGhu6oEm/EW/DyqkbJsM8saeMvXwkfZS4WGQ/dEu6pFb6gGg
+         0d1zWvIPJGBgIBmCeReqSQgMzYAPsgVxJF2pBEkSYRpOkTQBLERmkeYhgvUWbzeITOcZ
+         DQFrs7MUbN0sMHD30cVrw4wDXvPXgNm24GlwI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xoaLrOaVKIM8ESM/O0FPRf0nY0zEO7GufQin910pcKk=;
+        b=lVnkNTxzw2AvwOViMmitpht7V2Pw9ybuCuacJkLwH+AMWDclhFA02JXCSvFVuDIBCc
+         OTPvjNivZtEzl8EIFw7I7UedwDx3LWSOw8UAFv9OMeDo2inYhUKz/XYOn/pnKwzGaxyg
+         7UEWMn1DhYN5y0gku97ZP5DJ5yNaCVpc6AtDoJkHyYh5yJsKTckta6EqeEL2DG/cf09L
+         THmpnjGpNq2T4PYkL4R31P4z3YlPi1rSLA48LkueGkyRx6DTX/Kf+VG08Fvd3aEcNKWJ
+         2fyqD04jViKoRg8pjXIQ0b+DsaT4f5pwINvSp9sxiqiSRiIJMM3jmfIt3MmrmraSGdG7
+         iM/g==
+X-Gm-Message-State: APjAAAVKhnQ1b9Gwb3ES/tshGKyD0PK9D+SQxFAXvCdCS0oQUq+fmH68
+        A4mNEk4J607LLH5niUCaXanR84AGeIQ=
+X-Google-Smtp-Source: APXvYqxC9XXEyG0BMFTXi41T7LcTEj9rRTtkrHbTJox+QKhBYEL3ofHUPIoXgzUeH4LHnegX3CBRFQ==
+X-Received: by 2002:a67:8b44:: with SMTP id n65mr54936928vsd.99.1559054625281;
+        Tue, 28 May 2019 07:43:45 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id l132sm1438635vkd.39.2019.05.28.07.43.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 07:43:45 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id r19so7979204uap.5
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 07:43:44 -0700 (PDT)
+X-Received: by 2002:ab0:4a97:: with SMTP id s23mr27884679uae.19.1559054305839;
+ Tue, 28 May 2019 07:38:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190528142912.13224-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+References: <20190429204040.18725-1-dianders@chromium.org> <CAD=FV=WEDkufoEUYv9U+c+Y_bm8MYEWS25n63vUeNG0LLCFnuw@mail.gmail.com>
+ <CAPDyKFoKN2zUNvDkgciO6r_ohdh2Vaj5qQaAPwMq21y02XAK8A@mail.gmail.com>
+In-Reply-To: <CAPDyKFoKN2zUNvDkgciO6r_ohdh2Vaj5qQaAPwMq21y02XAK8A@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 28 May 2019 07:38:14 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VqqDK6SLC_1_cFUjjEdTNUU09GJi4ZEMNwt_mgjnVRdg@mail.gmail.com>
+Message-ID: <CAD=FV=VqqDK6SLC_1_cFUjjEdTNUU09GJi4ZEMNwt_mgjnVRdg@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: dw_mmc: Disable SDIO interrupts while suspended
+ to fix suspend/resume
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Sonny Rao <sonnyrao@chromium.org>,
+        Emil Renner Berthing <emil.renner.berthing@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>,
+        "# 4.0+" <stable@vger.kernel.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, this is broken, Pls igore this.
+Hi,
 
-On 2019/5/28 22:29, YueHaibing wrote:
-> Fix gcc build error while CONFIG_REGMAP_MMIO is not set
-> 
-> drivers/staging/fieldbus/anybuss/arcx-anybus.o: In function `controller_probe':
-> arcx-anybus.c: undefined reference to `__devm_regmap_init_mmio_clk'
-> 
-> Select REGMAP_MMIO to fix it.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 2411a336c8ce ("staging: fieldbus: arcx-anybus: change custom -> mmio regmap")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> v2: fix patch style warning
-> ---
->  drivers/staging/fieldbus/anybuss/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/staging/fieldbus/anybuss/Kconfig b/drivers/staging/fieldbus/anybuss/Kconfig
-> index 8bc3d9a..635a0a7 100644
-> --- a/drivers/staging/fieldbus/anybuss/Kconfig
-> +++ b/drivers/staging/fieldbus/anybuss/Kconfig
-> @@ -14,6 +14,7 @@ if HMS_ANYBUSS_BUS
->  config ARCX_ANYBUS_CONTROLLER
->  	tristate "Arcx Anybus-S Controller"
->  	depends on OF && GPIOLIB && HAS_IOMEM && REGULATOR
-> +	select REGMAP_MMIO
->  	help
->  	  Select this to get support for the Arcx Anybus controller.
->  	  It connects to the SoC via a parallel memory bus, and
-> 
+On Tue, May 28, 2019 at 6:12 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>
+> On Mon, 20 May 2019 at 20:41, Doug Anderson <dianders@chromium.org> wrote:
+> >
+> > Hi,
+> >
+> > On Mon, Apr 29, 2019 at 1:41 PM Douglas Anderson <dianders@chromium.org> wrote:
+> > >
+> > > Processing SDIO interrupts while dw_mmc is suspended (or partly
+> > > suspended) seems like a bad idea.  We really don't want to be
+> > > processing them until we've gotten ourselves fully powered up.
+> > >
+> > > You might be wondering how it's even possible to become suspended when
+> > > an SDIO interrupt is active.  As can be seen in
+> > > dw_mci_enable_sdio_irq(), we explicitly keep dw_mmc out of runtime
+> > > suspend when the SDIO interrupt is enabled.  ...but even though we
+> > > stop normal runtime suspend transitions when SDIO interrupts are
+> > > enabled, the dw_mci_runtime_suspend() can still get called for a full
+> > > system suspend.
+> > >
+> > > Let's handle all this by explicitly masking SDIO interrupts in the
+> > > suspend call and unmasking them later in the resume call.  To do this
+> > > cleanly I'll keep track of whether the client requested that SDIO
+> > > interrupts be enabled so that we can reliably restore them regardless
+> > > of whether we're masking them for one reason or another.
+> > >
+> > > It should be noted that if dw_mci_enable_sdio_irq() is never called
+> > > (for instance, if we don't have an SDIO card plugged in) that
+> > > "client_sdio_enb" will always be false.  In those cases this patch
+> > > adds a tiny bit of overhead to suspend/resume (a spinlock and a
+> > > read/write of INTMASK) but other than that is a no-op.  The
+> > > SDMMC_INT_SDIO bit should always be clear and clearing it again won't
+> > > hurt.
+> > >
+> > > Without this fix it can be seen that rk3288-veyron Chromebooks with
+> > > Marvell WiFi would sometimes fail to resume WiFi even after picking my
+> > > recent mwifiex patch [1].  Specifically you'd see messages like this:
+> > >   mwifiex_sdio mmc1:0001:1: Firmware wakeup failed
+> > >   mwifiex_sdio mmc1:0001:1: PREP_CMD: FW in reset state
+> > >
+> > > ...and tracing through the resume code in the failing cases showed
+> > > that we were processing a SDIO interrupt really early in the resume
+> > > call.
+> > >
+> > > NOTE: downstream in Chrome OS 3.14 and 3.18 kernels (both of which
+> > > support the Marvell SDIO WiFi card) we had a patch ("CHROMIUM: sdio:
+> > > Defer SDIO interrupt handling until after resume") [2].  Presumably
+> > > this is the same problem that was solved by that patch.
+> > >
+> > > [1] https://lkml.kernel.org/r/20190404040106.40519-1-dianders@chromium.org
+> > > [2] https://crrev.com/c/230765
+> > >
+> > > Cc: <stable@vger.kernel.org> # 4.14.x
+> > > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > > ---
+> > > I didn't put any "Fixes" tag here, but presumably this could be
+> > > backported to whichever kernels folks found it useful for.  I have at
+> > > least confirmed that kernels v4.14 and v4.19 (as well as v5.1-rc2)
+> > > show the problem.  It is very easy to pick this to v4.19 and it
+> > > definitely fixes the problem there.
+> > >
+> > > I haven't spent the time to pick this to 4.14 myself, but presumably
+> > > it wouldn't be too hard to backport this as far as v4.13 since that
+> > > contains commit 32dba73772f8 ("mmc: dw_mmc: Convert to use
+> > > MMC_CAP2_SDIO_IRQ_NOTHREAD for SDIO IRQs").  Prior to that it might
+> > > make sense for anyone experiencing this problem to just pick the old
+> > > CHROMIUM patch to fix them.
+> > >
+> > > Changes in v2:
+> > > - Suggested 4.14+ in the stable tag (Sasha-bot)
+> > > - Extra note that this is a noop on non-SDIO (Shawn / Emil)
+> > > - Make boolean logic cleaner as per https://crrev.com/c/1586207/1
+> > > - Hopefully clear comments as per https://crrev.com/c/1586207/1
+> > >
+> > >  drivers/mmc/host/dw_mmc.c | 27 +++++++++++++++++++++++----
+> > >  drivers/mmc/host/dw_mmc.h |  3 +++
+> > >  2 files changed, 26 insertions(+), 4 deletions(-)
+> >
+> > Ulf: are you the right person to land this?  With 5.2-rc1 out it might
+> > be a good time for it?  To refresh your memory about this patch:
+> >
+> > * Patch v1 was posted back on April 10th [1] so we're at about 1.5
+> > months of time for people to comment about it now.  Should be more
+> > than enough.
+>
+> Apologize for the delay, not sure why this has slipped through my
+> filters. Anyway, let me have a look at it now.
 
+No worries.  If there's something better I can do in the future to
+avoid problems, please let me know.
+
+
+> > * Shawn Lin saw it and didn't hate it.  He had some confusion about
+> > how it worked and I've hopefully alleviated via extra comments / text.
+> >
+> > * Emil Renner Berthing thought it caused a regression for him but then
+> > tested further and was convinced that it didn't.  This is extra
+> > confirmation that someone other than me did try the patch and found it
+> > to not break things.  ;-)
+> >
+> > * It has been reviewed by Guenter Roeck (in v2)
+>
+> One question, I am guessing you are considering
+> https://lkml.org/lkml/2019/5/17/761 as the long term solution, and
+> thus $subject patch should go as fix+stable? No?
+
+No, the two problems are completely separate.  ${SUBJECT} patch deals
+with full system suspend/resume.  I originally reproduced the problems
+on a device with Marvell WiFi, though it could possibly affect
+Broadcom parts on dw_mmc too.  ${SUBJECT} patch is ready to land on
+mainline Linux at your leisure.  Also: in case you didn't notice
+(since it didn't thread properly for me), Shawn Lin gave it a reviewed
+by [1].
+
+The patch you refer to [2] is related to something akin to an idle
+state (more like Runtime PM) and only affects Broadcom parts.  Also
+the Broadcom issue ought to happen across all host controllers (AKA
+not just dw_mmc).
+
+[1] https://lkml.kernel.org/r/982ffba1-c599-e73d-e5e0-b1be5668851c@rock-chips.com
+[2] https://lkml.org/lkml/2019/5/17/761
+
+-Doug
