@@ -2,44 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CBB42BC87
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 02:48:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C745D2BC8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 02:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbfE1AsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 20:48:07 -0400
-Received: from mail-it1-f200.google.com ([209.85.166.200]:43235 "EHLO
+        id S1727723AbfE1AsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 20:48:19 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:50748 "EHLO
         mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727648AbfE1AsH (ORCPT
+        with ESMTP id S1727649AbfE1AsH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 27 May 2019 20:48:07 -0400
-Received: by mail-it1-f200.google.com with SMTP id z66so893875itc.8
+Received: by mail-it1-f200.google.com with SMTP id o128so979966ita.0
         for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 17:48:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=xml11WvwFdV80pdeUjkzRE4uuCvHaxcj9X4mv2XPj2M=;
-        b=gONlNSPtVS2KoiEgC5XOGsp7FXFfAGYSsJVw5YnhDK62IZlD1mbT96E+yHrt+fUVkU
-         U8j61ZGAZOm0z2SlpTXAbFPz8P4GbL7DvncoS9BClEKvDXiHbPiTcTvn3lMa2wRiM8we
-         +swe61rVx4L98FRk+1ENfsJiS7SVlsDJV1nBjV1mZwga6171SmsJQqNnW4rZZS37V2Mg
-         e0xAgeSwqMJPzqeGdzT//MLg5bPW9QGDfJY3Ml7X11LOe22BDAhbBB2QB52KwCPSanx+
-         CTI1Uj792f07YqyWLVg2uwbobXw/F7+SHTgqbWtvCmmVavr6pBqwi/yAs26wVCL/stNo
-         rm1Q==
-X-Gm-Message-State: APjAAAUiTwBP8N7HKeQSgI3aiPIwpYMnw20cZDu5+f6jgzNXhjrch7TI
-        2Bd1oaLKNuAfSW5oPw5PgxZ+wcQe7ntO/eGsnNmU3lxgP3tR
-X-Google-Smtp-Source: APXvYqwzgrJoawmh/pkdI9g2/2cXXUBrXGI/R88w7CqqYUEM1U3tKKLlEBhMtDBlzvUEfHB5iUsPmfRrSbu1tFSQ34NoXZCeL4Kz
+        bh=B8TLbNnekm690lD0gw+CWGYXJ9HPtvnhpzUnBpwMz+4=;
+        b=aINgmkKjN9eI0sUBjhNJ+VHVrRafYnWYWwmlTud5hmdF58D2J+P3ErC9PFAcSFi6EI
+         ndLqxOEMiKweoup67ZCZYwLRpZLm5BYZqicbL+9X9ywA0IX6C+Zp9i+4eX/ew3V6CrV6
+         eRbRIrE3SQ8WwfKxUkKIRCB/+cC9prU0y1ylY6GKUft77FUSvWN9vKByRj7iC6LDFuvX
+         CAms9oxe0Pxgg0C6oL5F/VguKdwHiGhlDtQsnoKwcQL+h29yjGutH830dTYNx6EA9Ztf
+         B6k6HUJTivFB6L6y7XUsV2zuyoaToJohlDmA8cN3dZoh/hQ2KBWnNOjoKPVyx6Jne7ec
+         pbDQ==
+X-Gm-Message-State: APjAAAUFp0ofrOW5Hwfhg/+LIeu5aGqnFoybJACWc0bu7b9u9tlYoSsG
+        fKbQDrP8tkVaXR6pFO06RdydBg7SEDiPDfqXrRYiSpc5hTMM
+X-Google-Smtp-Source: APXvYqxk76tkYBlrLMKsfqr4G+r4h5pxL2KBmGEGYoNWdpXqnAe7YCR//Wh/T/Mbc8/XQz3xb2rGbhA6ApQFiHm75U0GHtc+3cmw
 MIME-Version: 1.0
-X-Received: by 2002:a6b:e412:: with SMTP id u18mr2625846iog.132.1559004486017;
+X-Received: by 2002:a24:7592:: with SMTP id y140mr1343744itc.47.1559004486272;
  Mon, 27 May 2019 17:48:06 -0700 (PDT)
 Date:   Mon, 27 May 2019 17:48:06 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000097abb90589e804fd@google.com>
-Subject: memory leak in sctp_process_init
-From:   syzbot <syzbot+f7e9153b037eac9b1df8@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
-        netdev@vger.kernel.org, nhorman@tuxdriver.com,
-        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Message-ID: <0000000000009b950f0589e804b3@google.com>
+Subject: memory leak in get_device_parent
+From:   syzbot <syzbot+02e97e2ad931a981e568@syzkaller.appspotmail.com>
+To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,373 +48,97 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    9c7db500 Merge tag 'selinux-pr-20190521' of git://git.kern..
+HEAD commit:    35efb51e Merge tag 'ext4_for_linus_stable' of git://git.ke..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10388530a00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16577182a00000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=61dd9e15a761691d
-dashboard link: https://syzkaller.appspot.com/bug?extid=f7e9153b037eac9b1df8
+dashboard link: https://syzkaller.appspot.com/bug?extid=02e97e2ad931a981e568
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e32f8ca00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177fa530a00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12dd6b06a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1128ae9aa00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f7e9153b037eac9b1df8@syzkaller.appspotmail.com
+Reported-by: syzbot+02e97e2ad931a981e568@syzkaller.appspotmail.com
 
-  0 to HW filter on device batadv0
-executing program
-executing program
-executing program
+8.129630][ T6979] RDX: 0000000000000000 RSI: 00000000400455c8 RDI:  
+0000000000000003
 BUG: memory leak
-unreferenced object 0xffff88810ef68400 (size 1024):
-   comm "syz-executor273", pid 7046, jiffies 4294945598 (age 28.770s)
+unreferenced object 0xffff88812a7a6a80 (size 96):
+   comm "syz-executor898", pid 6976, jiffies 4295010285 (age 25.620s)
    hex dump (first 32 bytes):
-     1d de 28 8d de 0b 1b e3 b5 c2 f9 68 fd 1a 97 25  ..(........h...%
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+     88 e0 e8 83 ff ff ff ff 88 6a 7a 2a 81 88 ff ff  .........jz*....
+     88 6a 7a 2a 81 88 ff ff 00 00 00 00 00 00 00 00  .jz*............
    backtrace:
-     [<00000000a02cebbd>] kmemleak_alloc_recursive  
+     [<00000000b0c40ba3>] kmemleak_alloc_recursive  
 include/linux/kmemleak.h:55 [inline]
-     [<00000000a02cebbd>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000a02cebbd>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000a02cebbd>] __do_kmalloc mm/slab.c:3658 [inline]
-     [<00000000a02cebbd>] __kmalloc_track_caller+0x15d/0x2c0 mm/slab.c:3675
-     [<000000009e6245e6>] kmemdup+0x27/0x60 mm/util.c:119
-     [<00000000dfdc5d2d>] kmemdup include/linux/string.h:432 [inline]
-     [<00000000dfdc5d2d>] sctp_process_init+0xa7e/0xc20  
-net/sctp/sm_make_chunk.c:2437
-     [<00000000b58b62f8>] sctp_cmd_process_init net/sctp/sm_sideeffect.c:682  
+     [<00000000b0c40ba3>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<00000000b0c40ba3>] slab_alloc mm/slab.c:3326 [inline]
+     [<00000000b0c40ba3>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+     [<00000000799c79a9>] kmalloc include/linux/slab.h:547 [inline]
+     [<00000000799c79a9>] kzalloc include/linux/slab.h:742 [inline]
+     [<00000000799c79a9>] class_dir_create_and_add drivers/base/core.c:1723  
 [inline]
-     [<00000000b58b62f8>] sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1384  
-[inline]
-     [<00000000b58b62f8>] sctp_side_effects net/sctp/sm_sideeffect.c:1194  
-[inline]
-     [<00000000b58b62f8>] sctp_do_sm+0xbdc/0x1d60  
-net/sctp/sm_sideeffect.c:1165
-     [<0000000044e11f96>] sctp_assoc_bh_rcv+0x13c/0x200  
-net/sctp/associola.c:1074
-     [<00000000ec43804d>] sctp_inq_push+0x7f/0xb0 net/sctp/inqueue.c:95
-     [<00000000726aa954>] sctp_backlog_rcv+0x5e/0x2a0 net/sctp/input.c:354
-     [<00000000d9e249a8>] sk_backlog_rcv include/net/sock.h:950 [inline]
-     [<00000000d9e249a8>] __release_sock+0xab/0x110 net/core/sock.c:2418
-     [<00000000acae44fa>] release_sock+0x37/0xd0 net/core/sock.c:2934
-     [<00000000963cc9ae>] sctp_sendmsg+0x2c0/0x990 net/sctp/socket.c:2122
-     [<00000000a7fc7565>] inet_sendmsg+0x64/0x120 net/ipv4/af_inet.c:802
-     [<00000000b732cbd3>] sock_sendmsg_nosec net/socket.c:652 [inline]
-     [<00000000b732cbd3>] sock_sendmsg+0x54/0x70 net/socket.c:671
-     [<00000000274c57ab>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2292
-     [<000000008252aedb>] __sys_sendmsg+0x80/0xf0 net/socket.c:2330
-     [<00000000f7bf23d1>] __do_sys_sendmsg net/socket.c:2339 [inline]
-     [<00000000f7bf23d1>] __se_sys_sendmsg net/socket.c:2337 [inline]
-     [<00000000f7bf23d1>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2337
-     [<00000000a8b4131f>] do_syscall_64+0x76/0x1a0  
+     [<00000000799c79a9>] get_device_parent.isra.0+0x1a8/0x240  
+drivers/base/core.c:1787
+     [<00000000b241fc22>] device_add+0x136/0x890 drivers/base/core.c:2048
+     [<00000000ee099a63>] hci_register_dev+0x166/0x380  
+net/bluetooth/hci_core.c:3305
+     [<00000000c362a920>] hci_uart_register_dev  
+drivers/bluetooth/hci_ldisc.c:676 [inline]
+     [<00000000c362a920>] hci_uart_set_proto  
+drivers/bluetooth/hci_ldisc.c:700 [inline]
+     [<00000000c362a920>] hci_uart_tty_ioctl+0x221/0x350  
+drivers/bluetooth/hci_ldisc.c:754
+     [<00000000de259614>] tty_ioctl+0x6e2/0xa30 drivers/tty/tty_io.c:2664
+     [<00000000f5bde6a4>] vfs_ioctl fs/ioctl.c:46 [inline]
+     [<00000000f5bde6a4>] file_ioctl fs/ioctl.c:509 [inline]
+     [<00000000f5bde6a4>] do_vfs_ioctl+0x62a/0x810 fs/ioctl.c:696
+     [<0000000040a4c505>] ksys_ioctl+0x86/0xb0 fs/ioctl.c:713
+     [<00000000e454fe0b>] __do_sys_ioctl fs/ioctl.c:720 [inline]
+     [<00000000e454fe0b>] __se_sys_ioctl fs/ioctl.c:718 [inline]
+     [<00000000e454fe0b>] __x64_sys_ioctl+0x1e/0x30 fs/ioctl.c:718
+     [<00000000475478db>] do_syscall_64+0x76/0x1a0  
 arch/x86/entry/common.c:301
+     [<00000000708a3428>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
 BUG: memory leak
-unreferenced object 0xffff88810ef68400 (size 1024):
-   comm "syz-executor273", pid 7046, jiffies 4294945598 (age 28.840s)
+unreferenced object 0xffff88811893cf00 (size 96):
+   comm "syz-executor898", pid 6978, jiffies 4295011473 (age 13.740s)
    hex dump (first 32 bytes):
-     1d de 28 8d de 0b 1b e3 b5 c2 f9 68 fd 1a 97 25  ..(........h...%
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+     88 e0 e8 83 ff ff ff ff 08 cf 93 18 81 88 ff ff  ................
+     08 cf 93 18 81 88 ff ff 00 00 00 00 00 00 00 00  ................
    backtrace:
-     [<00000000a02cebbd>] kmemleak_alloc_recursive  
+     [<00000000b0c40ba3>] kmemleak_alloc_recursive  
 include/linux/kmemleak.h:55 [inline]
-     [<00000000a02cebbd>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000a02cebbd>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000a02cebbd>] __do_kmalloc mm/slab.c:3658 [inline]
-     [<00000000a02cebbd>] __kmalloc_track_caller+0x15d/0x2c0 mm/slab.c:3675
-     [<000000009e6245e6>] kmemdup+0x27/0x60 mm/util.c:119
-     [<00000000dfdc5d2d>] kmemdup include/linux/string.h:432 [inline]
-     [<00000000dfdc5d2d>] sctp_process_init+0xa7e/0xc20  
-net/sctp/sm_make_chunk.c:2437
-     [<00000000b58b62f8>] sctp_cmd_process_init net/sctp/sm_sideeffect.c:682  
+     [<00000000b0c40ba3>] slab_post_alloc_hook mm/slab.h:439 [inline]
+     [<00000000b0c40ba3>] slab_alloc mm/slab.c:3326 [inline]
+     [<00000000b0c40ba3>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+     [<00000000799c79a9>] kmalloc include/linux/slab.h:547 [inline]
+     [<00000000799c79a9>] kzalloc include/linux/slab.h:742 [inline]
+     [<00000000799c79a9>] class_dir_create_and_add drivers/base/core.c:1723  
 [inline]
-     [<00000000b58b62f8>] sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1384  
-[inline]
-     [<00000000b58b62f8>] sctp_side_effects net/sctp/sm_sideeffect.c:1194  
-[inline]
-     [<00000000b58b62f8>] sctp_do_sm+0xbdc/0x1d60  
-net/sctp/sm_sideeffect.c:1165
-     [<0000000044e11f96>] sctp_assoc_bh_rcv+0x13c/0x200  
-net/sctp/associola.c:1074
-     [<00000000ec43804d>] sctp_inq_push+0x7f/0xb0 net/sctp/inqueue.c:95
-     [<00000000726aa954>] sctp_backlog_rcv+0x5e/0x2a0 net/sctp/input.c:354
-     [<00000000d9e249a8>] sk_backlog_rcv include/net/sock.h:950 [inline]
-     [<00000000d9e249a8>] __release_sock+0xab/0x110 net/core/sock.c:2418
-     [<00000000acae44fa>] release_sock+0x37/0xd0 net/core/sock.c:2934
-     [<00000000963cc9ae>] sctp_sendmsg+0x2c0/0x990 net/sctp/socket.c:2122
-     [<00000000a7fc7565>] inet_sendmsg+0x64/0x120 net/ipv4/af_inet.c:802
-     [<00000000b732cbd3>] sock_sendmsg_nosec net/socket.c:652 [inline]
-     [<00000000b732cbd3>] sock_sendmsg+0x54/0x70 net/socket.c:671
-     [<00000000274c57ab>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2292
-     [<000000008252aedb>] __sys_sendmsg+0x80/0xf0 net/socket.c:2330
-     [<00000000f7bf23d1>] __do_sys_sendmsg net/socket.c:2339 [inline]
-     [<00000000f7bf23d1>] __se_sys_sendmsg net/socket.c:2337 [inline]
-     [<00000000f7bf23d1>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2337
-     [<00000000a8b4131f>] do_syscall_64+0x76/0x1a0  
+     [<00000000799c79a9>] get_device_parent.isra.0+0x1a8/0x240  
+drivers/base/core.c:1787
+     [<00000000b241fc22>] device_add+0x136/0x890 drivers/base/core.c:2048
+     [<00000000ee099a63>] hci_register_dev+0x166/0x380  
+net/bluetooth/hci_core.c:3305
+     [<00000000c362a920>] hci_uart_register_dev  
+drivers/bluetooth/hci_ldisc.c:676 [inline]
+     [<00000000c362a920>] hci_uart_set_proto  
+drivers/bluetooth/hci_ldisc.c:700 [inline]
+     [<00000000c362a920>] hci_uart_tty_ioctl+0x221/0x350  
+drivers/bluetooth/hci_ldisc.c:754
+     [<00000000de259614>] tty_ioctl+0x6e2/0xa30 drivers/tty/tty_io.c:2664
+     [<00000000f5bde6a4>] vfs_ioctl fs/ioctl.c:46 [inline]
+     [<00000000f5bde6a4>] file_ioctl fs/ioctl.c:509 [inline]
+     [<00000000f5bde6a4>] do_vfs_ioctl+0x62a/0x810 fs/ioctl.c:696
+     [<0000000040a4c505>] ksys_ioctl+0x86/0xb0 fs/ioctl.c:713
+     [<00000000e454fe0b>] __do_sys_ioctl fs/ioctl.c:720 [inline]
+     [<00000000e454fe0b>] __se_sys_ioctl fs/ioctl.c:718 [inline]
+     [<00000000e454fe0b>] __x64_sys_ioctl+0x1e/0x30 fs/ioctl.c:718
+     [<00000000475478db>] do_syscall_64+0x76/0x1a0  
 arch/x86/entry/common.c:301
-
-BUG: memory leak
-unreferenced object 0xffff88810ef68400 (size 1024):
-   comm "syz-executor273", pid 7046, jiffies 4294945598 (age 28.910s)
-   hex dump (first 32 bytes):
-     1d de 28 8d de 0b 1b e3 b5 c2 f9 68 fd 1a 97 25  ..(........h...%
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000a02cebbd>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000a02cebbd>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000a02cebbd>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000a02cebbd>] __do_kmalloc mm/slab.c:3658 [inline]
-     [<00000000a02cebbd>] __kmalloc_track_caller+0x15d/0x2c0 mm/slab.c:3675
-     [<000000009e6245e6>] kmemdup+0x27/0x60 mm/util.c:119
-     [<00000000dfdc5d2d>] kmemdup include/linux/string.h:432 [inline]
-     [<00000000dfdc5d2d>] sctp_process_init+0xa7e/0xc20  
-net/sctp/sm_make_chunk.c:2437
-     [<00000000b58b62f8>] sctp_cmd_process_init net/sctp/sm_sideeffect.c:682  
-[inline]
-     [<00000000b58b62f8>] sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1384  
-[inline]
-     [<00000000b58b62f8>] sctp_side_effects net/sctp/sm_sideeffect.c:1194  
-[inline]
-     [<00000000b58b62f8>] sctp_do_sm+0xbdc/0x1d60  
-net/sctp/sm_sideeffect.c:1165
-     [<0000000044e11f96>] sctp_assoc_bh_rcv+0x13c/0x200  
-net/sctp/associola.c:1074
-     [<00000000ec43804d>] sctp_inq_push+0x7f/0xb0 net/sctp/inqueue.c:95
-     [<00000000726aa954>] sctp_backlog_rcv+0x5e/0x2a0 net/sctp/input.c:354
-     [<00000000d9e249a8>] sk_backlog_rcv include/net/sock.h:950 [inline]
-     [<00000000d9e249a8>] __release_sock+0xab/0x110 net/core/sock.c:2418
-     [<00000000acae44fa>] release_sock+0x37/0xd0 net/core/sock.c:2934
-     [<00000000963cc9ae>] sctp_sendmsg+0x2c0/0x990 net/sctp/socket.c:2122
-     [<00000000a7fc7565>] inet_sendmsg+0x64/0x120 net/ipv4/af_inet.c:802
-     [<00000000b732cbd3>] sock_sendmsg_nosec net/socket.c:652 [inline]
-     [<00000000b732cbd3>] sock_sendmsg+0x54/0x70 net/socket.c:671
-     [<00000000274c57ab>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2292
-     [<000000008252aedb>] __sys_sendmsg+0x80/0xf0 net/socket.c:2330
-     [<00000000f7bf23d1>] __do_sys_sendmsg net/socket.c:2339 [inline]
-     [<00000000f7bf23d1>] __se_sys_sendmsg net/socket.c:2337 [inline]
-     [<00000000f7bf23d1>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2337
-     [<00000000a8b4131f>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-
-BUG: memory leak
-unreferenced object 0xffff88810ef68400 (size 1024):
-   comm "syz-executor273", pid 7046, jiffies 4294945598 (age 28.980s)
-   hex dump (first 32 bytes):
-     1d de 28 8d de 0b 1b e3 b5 c2 f9 68 fd 1a 97 25  ..(........h...%
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000a02cebbd>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000a02cebbd>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000a02cebbd>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000a02cebbd>] __do_kmalloc mm/slab.c:3658 [inline]
-     [<00000000a02cebbd>] __kmalloc_track_caller+0x15d/0x2c0 mm/slab.c:3675
-     [<000000009e6245e6>] kmemdup+0x27/0x60 mm/util.c:119
-     [<00000000dfdc5d2d>] kmemdup include/linux/string.h:432 [inline]
-     [<00000000dfdc5d2d>] sctp_process_init+0xa7e/0xc20  
-net/sctp/sm_make_chunk.c:2437
-     [<00000000b58b62f8>] sctp_cmd_process_init net/sctp/sm_sideeffect.c:682  
-[inline]
-     [<00000000b58b62f8>] sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1384  
-[inline]
-     [<00000000b58b62f8>] sctp_side_effects net/sctp/sm_sideeffect.c:1194  
-[inline]
-     [<00000000b58b62f8>] sctp_do_sm+0xbdc/0x1d60  
-net/sctp/sm_sideeffect.c:1165
-     [<0000000044e11f96>] sctp_assoc_bh_rcv+0x13c/0x200  
-net/sctp/associola.c:1074
-     [<00000000ec43804d>] sctp_inq_push+0x7f/0xb0 net/sctp/inqueue.c:95
-     [<00000000726aa954>] sctp_backlog_rcv+0x5e/0x2a0 net/sctp/input.c:354
-     [<00000000d9e249a8>] sk_backlog_rcv include/net/sock.h:950 [inline]
-     [<00000000d9e249a8>] __release_sock+0xab/0x110 net/core/sock.c:2418
-     [<00000000acae44fa>] release_sock+0x37/0xd0 net/core/sock.c:2934
-     [<00000000963cc9ae>] sctp_sendmsg+0x2c0/0x990 net/sctp/socket.c:2122
-     [<00000000a7fc7565>] inet_sendmsg+0x64/0x120 net/ipv4/af_inet.c:802
-     [<00000000b732cbd3>] sock_sendmsg_nosec net/socket.c:652 [inline]
-     [<00000000b732cbd3>] sock_sendmsg+0x54/0x70 net/socket.c:671
-     [<00000000274c57ab>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2292
-     [<000000008252aedb>] __sys_sendmsg+0x80/0xf0 net/socket.c:2330
-     [<00000000f7bf23d1>] __do_sys_sendmsg net/socket.c:2339 [inline]
-     [<00000000f7bf23d1>] __se_sys_sendmsg net/socket.c:2337 [inline]
-     [<00000000f7bf23d1>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2337
-     [<00000000a8b4131f>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-
-BUG: memory leak
-unreferenced object 0xffff88810ef68400 (size 1024):
-   comm "syz-executor273", pid 7046, jiffies 4294945598 (age 29.050s)
-   hex dump (first 32 bytes):
-     1d de 28 8d de 0b 1b e3 b5 c2 f9 68 fd 1a 97 25  ..(........h...%
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000a02cebbd>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000a02cebbd>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000a02cebbd>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000a02cebbd>] __do_kmalloc mm/slab.c:3658 [inline]
-     [<00000000a02cebbd>] __kmalloc_track_caller+0x15d/0x2c0 mm/slab.c:3675
-     [<000000009e6245e6>] kmemdup+0x27/0x60 mm/util.c:119
-     [<00000000dfdc5d2d>] kmemdup include/linux/string.h:432 [inline]
-     [<00000000dfdc5d2d>] sctp_process_init+0xa7e/0xc20  
-net/sctp/sm_make_chunk.c:2437
-     [<00000000b58b62f8>] sctp_cmd_process_init net/sctp/sm_sideeffect.c:682  
-[inline]
-     [<00000000b58b62f8>] sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1384  
-[inline]
-     [<00000000b58b62f8>] sctp_side_effects net/sctp/sm_sideeffect.c:1194  
-[inline]
-     [<00000000b58b62f8>] sctp_do_sm+0xbdc/0x1d60  
-net/sctp/sm_sideeffect.c:1165
-     [<0000000044e11f96>] sctp_assoc_bh_rcv+0x13c/0x200  
-net/sctp/associola.c:1074
-     [<00000000ec43804d>] sctp_inq_push+0x7f/0xb0 net/sctp/inqueue.c:95
-     [<00000000726aa954>] sctp_backlog_rcv+0x5e/0x2a0 net/sctp/input.c:354
-     [<00000000d9e249a8>] sk_backlog_rcv include/net/sock.h:950 [inline]
-     [<00000000d9e249a8>] __release_sock+0xab/0x110 net/core/sock.c:2418
-     [<00000000acae44fa>] release_sock+0x37/0xd0 net/core/sock.c:2934
-     [<00000000963cc9ae>] sctp_sendmsg+0x2c0/0x990 net/sctp/socket.c:2122
-     [<00000000a7fc7565>] inet_sendmsg+0x64/0x120 net/ipv4/af_inet.c:802
-     [<00000000b732cbd3>] sock_sendmsg_nosec net/socket.c:652 [inline]
-     [<00000000b732cbd3>] sock_sendmsg+0x54/0x70 net/socket.c:671
-     [<00000000274c57ab>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2292
-     [<000000008252aedb>] __sys_sendmsg+0x80/0xf0 net/socket.c:2330
-     [<00000000f7bf23d1>] __do_sys_sendmsg net/socket.c:2339 [inline]
-     [<00000000f7bf23d1>] __se_sys_sendmsg net/socket.c:2337 [inline]
-     [<00000000f7bf23d1>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2337
-     [<00000000a8b4131f>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-
-BUG: memory leak
-unreferenced object 0xffff88810ef68400 (size 1024):
-   comm "syz-executor273", pid 7046, jiffies 4294945598 (age 29.120s)
-   hex dump (first 32 bytes):
-     1d de 28 8d de 0b 1b e3 b5 c2 f9 68 fd 1a 97 25  ..(........h...%
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000a02cebbd>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000a02cebbd>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000a02cebbd>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000a02cebbd>] __do_kmalloc mm/slab.c:3658 [inline]
-     [<00000000a02cebbd>] __kmalloc_track_caller+0x15d/0x2c0 mm/slab.c:3675
-     [<000000009e6245e6>] kmemdup+0x27/0x60 mm/util.c:119
-     [<00000000dfdc5d2d>] kmemdup include/linux/string.h:432 [inline]
-     [<00000000dfdc5d2d>] sctp_process_init+0xa7e/0xc20  
-net/sctp/sm_make_chunk.c:2437
-     [<00000000b58b62f8>] sctp_cmd_process_init net/sctp/sm_sideeffect.c:682  
-[inline]
-     [<00000000b58b62f8>] sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1384  
-[inline]
-     [<00000000b58b62f8>] sctp_side_effects net/sctp/sm_sideeffect.c:1194  
-[inline]
-     [<00000000b58b62f8>] sctp_do_sm+0xbdc/0x1d60  
-net/sctp/sm_sideeffect.c:1165
-     [<0000000044e11f96>] sctp_assoc_bh_rcv+0x13c/0x200  
-net/sctp/associola.c:1074
-     [<00000000ec43804d>] sctp_inq_push+0x7f/0xb0 net/sctp/inqueue.c:95
-     [<00000000726aa954>] sctp_backlog_rcv+0x5e/0x2a0 net/sctp/input.c:354
-     [<00000000d9e249a8>] sk_backlog_rcv include/net/sock.h:950 [inline]
-     [<00000000d9e249a8>] __release_sock+0xab/0x110 net/core/sock.c:2418
-     [<00000000acae44fa>] release_sock+0x37/0xd0 net/core/sock.c:2934
-     [<00000000963cc9ae>] sctp_sendmsg+0x2c0/0x990 net/sctp/socket.c:2122
-     [<00000000a7fc7565>] inet_sendmsg+0x64/0x120 net/ipv4/af_inet.c:802
-     [<00000000b732cbd3>] sock_sendmsg_nosec net/socket.c:652 [inline]
-     [<00000000b732cbd3>] sock_sendmsg+0x54/0x70 net/socket.c:671
-     [<00000000274c57ab>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2292
-     [<000000008252aedb>] __sys_sendmsg+0x80/0xf0 net/socket.c:2330
-     [<00000000f7bf23d1>] __do_sys_sendmsg net/socket.c:2339 [inline]
-     [<00000000f7bf23d1>] __se_sys_sendmsg net/socket.c:2337 [inline]
-     [<00000000f7bf23d1>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2337
-     [<00000000a8b4131f>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-
-BUG: memory leak
-unreferenced object 0xffff88810ef68400 (size 1024):
-   comm "syz-executor273", pid 7046, jiffies 4294945598 (age 29.190s)
-   hex dump (first 32 bytes):
-     1d de 28 8d de 0b 1b e3 b5 c2 f9 68 fd 1a 97 25  ..(........h...%
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000a02cebbd>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000a02cebbd>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000a02cebbd>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000a02cebbd>] __do_kmalloc mm/slab.c:3658 [inline]
-     [<00000000a02cebbd>] __kmalloc_track_caller+0x15d/0x2c0 mm/slab.c:3675
-     [<000000009e6245e6>] kmemdup+0x27/0x60 mm/util.c:119
-     [<00000000dfdc5d2d>] kmemdup include/linux/string.h:432 [inline]
-     [<00000000dfdc5d2d>] sctp_process_init+0xa7e/0xc20  
-net/sctp/sm_make_chunk.c:2437
-     [<00000000b58b62f8>] sctp_cmd_process_init net/sctp/sm_sideeffect.c:682  
-[inline]
-     [<00000000b58b62f8>] sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1384  
-[inline]
-     [<00000000b58b62f8>] sctp_side_effects net/sctp/sm_sideeffect.c:1194  
-[inline]
-     [<00000000b58b62f8>] sctp_do_sm+0xbdc/0x1d60  
-net/sctp/sm_sideeffect.c:1165
-     [<0000000044e11f96>] sctp_assoc_bh_rcv+0x13c/0x200  
-net/sctp/associola.c:1074
-     [<00000000ec43804d>] sctp_inq_push+0x7f/0xb0 net/sctp/inqueue.c:95
-     [<00000000726aa954>] sctp_backlog_rcv+0x5e/0x2a0 net/sctp/input.c:354
-     [<00000000d9e249a8>] sk_backlog_rcv include/net/sock.h:950 [inline]
-     [<00000000d9e249a8>] __release_sock+0xab/0x110 net/core/sock.c:2418
-     [<00000000acae44fa>] release_sock+0x37/0xd0 net/core/sock.c:2934
-     [<00000000963cc9ae>] sctp_sendmsg+0x2c0/0x990 net/sctp/socket.c:2122
-     [<00000000a7fc7565>] inet_sendmsg+0x64/0x120 net/ipv4/af_inet.c:802
-     [<00000000b732cbd3>] sock_sendmsg_nosec net/socket.c:652 [inline]
-     [<00000000b732cbd3>] sock_sendmsg+0x54/0x70 net/socket.c:671
-     [<00000000274c57ab>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2292
-     [<000000008252aedb>] __sys_sendmsg+0x80/0xf0 net/socket.c:2330
-     [<00000000f7bf23d1>] __do_sys_sendmsg net/socket.c:2339 [inline]
-     [<00000000f7bf23d1>] __se_sys_sendmsg net/socket.c:2337 [inline]
-     [<00000000f7bf23d1>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2337
-     [<00000000a8b4131f>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
-
-BUG: memory leak
-unreferenced object 0xffff88810ef68400 (size 1024):
-   comm "syz-executor273", pid 7046, jiffies 4294945598 (age 29.260s)
-   hex dump (first 32 bytes):
-     1d de 28 8d de 0b 1b e3 b5 c2 f9 68 fd 1a 97 25  ..(........h...%
-     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-   backtrace:
-     [<00000000a02cebbd>] kmemleak_alloc_recursive  
-include/linux/kmemleak.h:55 [inline]
-     [<00000000a02cebbd>] slab_post_alloc_hook mm/slab.h:439 [inline]
-     [<00000000a02cebbd>] slab_alloc mm/slab.c:3326 [inline]
-     [<00000000a02cebbd>] __do_kmalloc mm/slab.c:3658 [inline]
-     [<00000000a02cebbd>] __kmalloc_track_caller+0x15d/0x2c0 mm/slab.c:3675
-     [<000000009e6245e6>] kmemdup+0x27/0x60 mm/util.c:119
-     [<00000000dfdc5d2d>] kmemdup include/linux/string.h:432 [inline]
-     [<00000000dfdc5d2d>] sctp_process_init+0xa7e/0xc20  
-net/sctp/sm_make_chunk.c:2437
-     [<00000000b58b62f8>] sctp_cmd_process_init net/sctp/sm_sideeffect.c:682  
-[inline]
-     [<00000000b58b62f8>] sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1384  
-[inline]
-     [<00000000b58b62f8>] sctp_side_effects net/sctp/sm_sideeffect.c:1194  
-[inline]
-     [<00000000b58b62f8>] sctp_do_sm+0xbdc/0x1d60  
-net/sctp/sm_sideeffect.c:1165
-     [<0000000044e11f96>] sctp_assoc_bh_rcv+0x13c/0x200  
-net/sctp/associola.c:1074
-     [<00000000ec43804d>] sctp_inq_push+0x7f/0xb0 net/sctp/inqueue.c:95
-     [<00000000726aa954>] sctp_backlog_rcv+0x5e/0x2a0 net/sctp/input.c:354
-     [<00000000d9e249a8>] sk_backlog_rcv include/net/sock.h:950 [inline]
-     [<00000000d9e249a8>] __release_sock+0xab/0x110 net/core/sock.c:2418
-     [<00000000acae44fa>] release_sock+0x37/0xd0 net/core/sock.c:2934
-     [<00000000963cc9ae>] sctp_sendmsg+0x2c0/0x990 net/sctp/socket.c:2122
-     [<00000000a7fc7565>] inet_sendmsg+0x64/0x120 net/ipv4/af_inet.c:802
-     [<00000000b732cbd3>] sock_sendmsg_nosec net/socket.c:652 [inline]
-     [<00000000b732cbd3>] sock_sendmsg+0x54/0x70 net/socket.c:671
-     [<00000000274c57ab>] ___sys_sendmsg+0x393/0x3c0 net/socket.c:2292
-     [<000000008252aedb>] __sys_sendmsg+0x80/0xf0 net/socket.c:2330
-     [<00000000f7bf23d1>] __do_sys_sendmsg net/socket.c:2339 [inline]
-     [<00000000f7bf23d1>] __se_sys_sendmsg net/socket.c:2337 [inline]
-     [<00000000f7bf23d1>] __x64_sys_sendmsg+0x23/0x30 net/socket.c:2337
-     [<00000000a8b4131f>] do_syscall_64+0x76/0x1a0  
-arch/x86/entry/common.c:301
+     [<00000000708a3428>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
 
 
