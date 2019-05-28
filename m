@@ -2,144 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AAEC2C36C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 275142C369
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:41:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfE1Jld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:41:33 -0400
-Received: from mga03.intel.com ([134.134.136.65]:8912 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726203AbfE1Jlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:41:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 02:41:31 -0700
-X-ExtLoop1: 1
-Received: from ideak-desk.fi.intel.com ([10.237.72.204])
-  by orsmga003.jf.intel.com with ESMTP; 28 May 2019 02:41:29 -0700
-From:   Imre Deak <imre.deak@intel.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v3 2/2] lockdep: Fix merging of hlocks with non-zero references
-Date:   Tue, 28 May 2019 12:40:51 +0300
-Message-Id: <20190528094051.22840-2-imre.deak@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190528094051.22840-1-imre.deak@intel.com>
-References: <20190528094051.22840-1-imre.deak@intel.com>
+        id S1726439AbfE1JlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:41:16 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:39838 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726203AbfE1JlQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:41:16 -0400
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id D5D61C1DBA;
+        Tue, 28 May 2019 09:41:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1559036484; bh=D731wz21YeITb5xPmWrEYvvhxG+m4OVL0X26qnGuol4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JqvTk2uSNMc3IlMREczO8QhAGmcQmdtNdaKnvNnTaT/Q7jAgKoqgC/vf4M5XjCIaX
+         J5WHi0/I4pYBP8d9tjEoYDPIiwtepRVy4ZMG5hkRMZbJ5SZ05doYoSCvGGjIR9Sua5
+         3G8iNWZsZaUU1eDN/0sN8MUdnlsA9EUZgOw9M8xHqHArJ13HWQaAWd7k/PYkog51Mi
+         fOKXj8Yae7hfys5Rem0wnXmNSAcvVYPF6B+/JGYJOwZwgV1F0I1QT0n+PLKafxq2BL
+         5DFTjMNk9nCpAWJvxVD/4K70CxCgENW793Y3LOQejVHfAeZGcr75fulqNkZSapq548
+         vmQkdFGK6CXkg==
+Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.58])
+        by mailhost.synopsys.com (Postfix) with ESMTP id CDF31A0093;
+        Tue, 28 May 2019 09:41:11 +0000 (UTC)
+From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Subject: [PATCH] ARC: [plat-hsdk]: enable creg-gpio controller
+Date:   Tue, 28 May 2019 12:40:52 +0300
+Message-Id: <20190528094052.2393-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sequence
+HSDK SOC has CREG GPIO controller which can be used to control
+SPI chip select lines.
+Enable it in preparation of enabling SPI peripherals.
 
-	static DEFINE_WW_CLASS(test_ww_class);
-
-	struct ww_acquire_ctx ww_ctx;
-	struct ww_mutex ww_lock_a;
-	struct ww_mutex ww_lock_b;
-	struct ww_mutex ww_lock_c;
-	struct mutex lock_c;
-
-	ww_acquire_init(&ww_ctx, &test_ww_class);
-
-	ww_mutex_init(&ww_lock_a, &test_ww_class);
-	ww_mutex_init(&ww_lock_b, &test_ww_class);
-	ww_mutex_init(&ww_lock_c, &test_ww_class);
-
-	mutex_init(&lock_c);
-
-	ww_mutex_lock(&ww_lock_a, &ww_ctx);
-
-	mutex_lock(&lock_c);
-
-	ww_mutex_lock(&ww_lock_b, &ww_ctx);
-	ww_mutex_lock(&ww_lock_c, &ww_ctx);
-
-	mutex_unlock(&lock_c);	(*)
-
-	ww_mutex_unlock(&ww_lock_c);
-	ww_mutex_unlock(&ww_lock_b);
-	ww_mutex_unlock(&ww_lock_a);
-
-	ww_acquire_fini(&ww_ctx); (**)
-
-will trigger the following error in __lock_release() when calling
-mutex_release() at **:
-
-	DEBUG_LOCKS_WARN_ON(depth <= 0)
-
-The problem is that the hlock merging happening at * updates the
-references for test_ww_class incorrectly to 3 whereas it should've
-updated it to 4 (representing all the instances for ww_ctx and
-ww_lock_[abc]).
-
-Fix this by updating the references during merging correctly taking into
-account that we can have non-zero references (both for the hlock that we
-merge into another hlock or for the hlock we are merging into).
-
-v2: (Peter)
-- Rebase on latest upstream tree.
-- Sanitize overflow check and hlock_references() helper.
-
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Imre Deak <imre.deak@intel.com>
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
- kernel/locking/lockdep.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ arch/arc/boot/dts/hsdk.dts      | 8 ++++++++
+ arch/arc/configs/hsdk_defconfig | 1 +
+ 2 files changed, 9 insertions(+)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 7a48649ce6bc..1aa6dff3c12c 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3638,6 +3638,11 @@ print_lock_nested_lock_not_held(struct task_struct *curr,
+diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
+index 7425bb0f2d1b..83e163e51b34 100644
+--- a/arch/arc/boot/dts/hsdk.dts
++++ b/arch/arc/boot/dts/hsdk.dts
+@@ -237,6 +237,14 @@
+ 			dma-coherent;
+ 		};
  
- static int __lock_is_held(const struct lockdep_map *lock, int read);
- 
-+static inline int hlock_references(struct held_lock *hlock)
-+{
-+	return hlock->references ? : 1;
-+}
++		creg_gpio: gpio@14b0 {
++			compatible = "snps,creg-gpio-hsdk";
++			reg = <0x14b0 0x4>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			ngpios = <2>;
++		};
 +
- /*
-  * This gets called for every mutex_lock*()/spin_lock*() operation.
-  * We maintain the dependency maps and validate the locking attempt:
-@@ -3703,17 +3708,14 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 	if (depth) {
- 		hlock = curr->held_locks + depth - 1;
- 		if (hlock->class_idx == class_idx && nest_lock) {
--			if (hlock->references) {
--				/*
--				 * Check: unsigned int references:12, overflow.
--				 */
--				if (DEBUG_LOCKS_WARN_ON(hlock->references == (1 << 12)-1))
--					return 0;
-+			if (!references)
-+				references++;
- 
--				hlock->references++;
--			} else {
--				hlock->references = 2;
--			}
-+			hlock->references = hlock_references(hlock) + references;
-+
-+			/* Overflow */
-+			if (DEBUG_LOCKS_WARN_ON(hlock->references < references))
-+				return 0;
- 
- 			return 2;
- 		}
+ 		gpio: gpio@3000 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = <0x3000 0x20>;
+diff --git a/arch/arc/configs/hsdk_defconfig b/arch/arc/configs/hsdk_defconfig
+index 0e5fd29ed238..0c4411f50948 100644
+--- a/arch/arc/configs/hsdk_defconfig
++++ b/arch/arc/configs/hsdk_defconfig
+@@ -49,6 +49,7 @@ CONFIG_SERIAL_OF_PLATFORM=y
+ CONFIG_GPIOLIB=y
+ CONFIG_GPIO_SYSFS=y
+ CONFIG_GPIO_DWAPB=y
++CONFIG_GPIO_SNPS_CREG=y
+ # CONFIG_HWMON is not set
+ CONFIG_DRM=y
+ # CONFIG_DRM_FBDEV_EMULATION is not set
 -- 
-2.17.1
+2.21.0
 
