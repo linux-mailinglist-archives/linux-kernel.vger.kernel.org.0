@@ -2,192 +2,442 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D86942D23E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:12:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D91472D247
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:13:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbfE1XMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 19:12:03 -0400
-Received: from mta02.svc.cra.dublin.eircom.net ([159.134.118.53]:40044 "HELO
-        mta02.svc.cra.dublin.eircom.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1726463AbfE1XMC (ORCPT
+        id S1727406AbfE1XNj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 19:13:39 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38996 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbfE1XNj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 19:12:02 -0400
-Received: (qmail 12069 messnum 10241954 invoked from network[213.94.190.12/avas01.vendorsvc.cra.dublin.eircom.net]); 28 May 2019 23:12:00 -0000
-Received: from avas01.vendorsvc.cra.dublin.eircom.net (HELO avas01) (213.94.190.12)
-  by mta02.svc.cra.dublin.eircom.net (qp 12069) with SMTP; 28 May 2019 23:12:00 -0000
-Received: from vzmbx18.eircom.net ([86.43.60.98])
-        by Cloudmark Gateway with SMTP
-        id VlFDhWEL8Cz2IVlFDhTnXp; Wed, 29 May 2019 00:10:59 +0100
-X-Spam-Flag: NO
-X-CNFS-Analysis: v=2.2 cv=IdL3YSia c=1 sm=1 tr=0
- a=e7gqILOnBbllteVy7xBg4A==:117 a=9cW_t1CCXrUA:10 a=FKkrIqjQGGEA:10
- a=QJwwEeekgOwA:10 a=IkcTkHD0fZMA:10 a=RPWlQTTofGUA:10 a=QZNrH5zMtEkA:10
- a=ZZnuYtJkoWoA:10 a=UqCG9HQmAAAA:8 a=aT487e2zXnyrqf7MiZkA:9
- a=uMFumc3QCvUZ-Su6:21 a=QlkqY2GRC_Z79fmE:21 a=QEXdDO2ut3YA:10
- a=dRqJYu-X7R0A:10 a=UuxKnNfG_hQA:10
-Date:   Wed, 29 May 2019 00:10:59 +0100 (IST)
-From:   Ahmed <ptp859d55@eircom.net>
-Message-ID: <412446129.128662.1559085059480.JavaMail.zimbra@eircom.net>
-Subject: I need your cooperation.
+        Tue, 28 May 2019 19:13:39 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w22so119943pgi.6;
+        Tue, 28 May 2019 16:13:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BI7Du5iAm9w0yP+GB/oFh20PQ+Dje/x5TifIT+xhg3o=;
+        b=SKDhhaQj6evLNiumlwkxYXyxxyhy7/quyu3pM9dn/tkIrSpSD3RMJ/0+I9+UlH7xRO
+         EUSZGtPEpyHlYQNdZXyq6VBfCl6ZJtcVu75mhqjB7YZFqKSATepvPYDRDSUBLyiMPVoV
+         xpBz9YdTV8DQThrjs0zqsIPce09s1YwKwhlD8vp2O7PdkzmtVwsNT0ZJOLoZ2eLAWdME
+         qPUgrA9Zf9al9NDcZAm/LXCNeuT7GALU0THUlJa8JJJOloO6mpu2DC3axj9QNd+MoQ5C
+         z1/5Uoug6Wf+UprQQ0K2Ji3kh9IXdHA1mwyUxApokw60VuEiYks5CXPPCIXF1uAU32vk
+         1Cdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BI7Du5iAm9w0yP+GB/oFh20PQ+Dje/x5TifIT+xhg3o=;
+        b=Q74mhoBgr5zCLX94s99Vs4fh6OlUMIV6CcFfIumCXTwdNjX9umly1y5ufUOyf42VQ1
+         m3aQcmMq49m/jIqtATzAjCtKxMmRaZolepkaSXaeMt+y+LC2dqsJcJDzTKTwqVhugi11
+         jXy0/fFd2UAnJ6j7DEWUyEXJIAMX7Mplw5ZZFnj6CZguPUmIVgdhSc6Braa3jY3/qyV3
+         c0eUNw/EjK5cM0b4HQiXHUdsrqeVJIl3WcvxCGgShZ8pdW10g+FtApDkmCWClQNktgFN
+         95UIqgvT9pEf3pHdWx6y0sFSyijdnitQ1esVoPmAWlGzVVg1gY6nAxIPhBaC5z2EeNPV
+         tZXw==
+X-Gm-Message-State: APjAAAWvVmYWGpaDORyy+oI3QfG6lYymGSdgTgm/BdAPgDKgpcTheSMj
+        rHJl+wzZTMeTBuv2ayOU7Q==
+X-Google-Smtp-Source: APXvYqyDM7f+GBwFCz7qPkr8GK8cRgMx5PiozNiFRiqpO12tsZRArtT9aFBvcrh5rmqdcf/9XURcXQ==
+X-Received: by 2002:a63:2844:: with SMTP id o65mr48959788pgo.297.1559085217901;
+        Tue, 28 May 2019 16:13:37 -0700 (PDT)
+Received: from localhost (2.172.220.35.bc.googleusercontent.com. [35.220.172.2])
+        by smtp.gmail.com with ESMTPSA id l141sm19191876pfd.24.2019.05.28.16.13.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 May 2019 16:13:36 -0700 (PDT)
+From:   Jacky Hu <hengqing.hu@gmail.com>
+To:     hengqing.hu@gmail.com
+Cc:     jacky.hu@walmart.com, jason.niesz@walmart.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Wensong Zhang <wensong@linux-vs.org>,
+        Simon Horman <horms@verge.net.au>,
+        Julian Anastasov <ja@ssi.bg>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Subject: [PATCH v3] ipvs: add checksum support for gue encapsulation
+Date:   Wed, 29 May 2019 07:11:07 +0800
+Message-Id: <20190528231107.14197-1-hengqing.hu@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [41.138.102.66]
-X-Mailer: Zimbra 8.6.0_GA_1194 (zclient/8.6.0_GA_1194)
-Thread-Topic: I need your cooperation.
-Thread-Index: L0yA7IqBcjEHoKZCEjABNR3HJU1mpQ==
-X-CMAE-Envelope: MS4wfFqFvkj21cgmNPuA2BiHGy5uGxdJu7t+UM9oo9qIvTMnXBnq7HKrj4R4DH6lMllWE3Polw0CRf9lKxH8hR0wPr+2uMEUvrPwoCmeOSoWcLQ0GIIep3YS
- feXxAuNCHNpF0pspiI9aOgGrdzxDcIyOZWEdCAdAXz8kALn1AApf6ZoP0/h3/Qy0jk+QUOQtweZ0v4bYOktxVRk/PuuO09oNym6w0Z48gz4fy5nH/kkzFstg
- 0HfW3zB6SUoXMu32feDgf6Pg14zvqty+0+CwuqDcbDzOyt7mucrjH2vSuSMM8OVvvaTnujRIn0ey+hE5Eb7GmZ7RoZmKeImnLHgOmJoGNSLRcTWI+qKU+JU9
- eCfzaBBl4OFG68nYcBSLFEkTZ8koLWMRQyVQKgG8Ywm3vyjfWodeD9LVnJ9aBehfH/SCyO8e272uLEqDOn29L9XDpb3cDNb3IYPbEar9zkSXx8pxcJr1Eato
- lFZ4xgL2qTBVUa6OIhdxT7umUt+l9jQTxXcwBv/XAT8N0qZlpkgk5D3Upbd5H3Y3VsAg0ZYwkUVoR/X3B0v0BNO1vxX6a3hO4xxR6Kid+CNx75VJOKH/M6gQ
- V3wxCCYfg3+HLZmmnY/Nkqidr/5PAone8HGexubWtetsgRR81iHPMKdMJ7zfiYVUNP58/9yoyb1aJVU86XQpzrehjtF+7AhGMzaQXqtdxav8/0hbDYwjRPW5
- HA5h7vg+NbOZMOFkdxRn4oVf3HI59/03R1+3ZBRajgHIHvPrQbQQbH5w3nA1cOO8ezgQSjDbF6reyaf6nFq7jpmJflr6KQGCox5Gb2Qkx+W8eLkRnSOxe/dh
- tPdzpiIN/W2AIFn9oIT0Bz55deUyY4zIQ56DdKKItg/cSFCVashBZrj09C3ELw3jgLvrwB7rZ1LjV+hd2N+rTD/SUKG3+Eg431nvEC82ROXLtx8b11MUKtPE
- Rq+F0pOhSue55uo+wMOpip5IOLerjVsUGyE7QnsN7uPWryI5C1KEmjFedYbQvHR02SXETe31OK28wJ3e/In6boFu+OlULzC2oJlhDUN6LQEn8FevstAuLu1N
- +A1Dw5XxcrYbUV4gK3AMbSQn6B0YZe+P0if1gvM1j5dAjsqs2pbyMdUQqIaz+zEKbnawRlkh8XcOq7N42pF/cDXCn/mVC1rO4nPHofBlkFtPyfYw8nEQBt86
- qfvBZQ+qhS/HKHpcaCjJKskfz3sfC//+F2iuVUBfYavBQ+HRMBtIbHiNSW0YiE+AQhTYx/a5oyeEx7g0kvIatg6RSTP5X5OW5y6xvhFPyOOeC+ZoN8J6CvWp
- 6Cs8V/doWBFqCKEpkgPucbI6jzVpvjISNM5tQm+IOAYn6OcUUmXQ7r03U0QbSrpJbKcyNs1yZdURFsTTrM6W8jTBnwsdKj0+vteP0OuzdeOD1GdwuSINrpBu
- MOduDK/LxB/w5gjYf2r7kvHpXzweHjK9jPq/JYbmTCQctdaXLHzZG2TlwAaMmUFeYZKv2lMyWBW3cvefkU8dcD6iWSM0cPNaJdSMMLuBQ2QkbQchxF9LIKX/
- Zwp5xnZMb/sBGb8twvmwa7q5ZryAmJkDlD7zKHZKWHgbCBYxgnPoTRaCBCF1dtoPZp8+8TFttrJQnj7LEvW7cLDRCP8EC6A8FXVaJnrTtWeS9v+SAf5LvY7R
- +ot+w16nvelde3smL+tB1mMexO8R1M0iGg+yQBoE9uDR/w0BpMf8kfYO0AL0M9URcGYbtNC9SQtaswXhZ+MumyVMEj1Gvlqr3snXv/adVUSY6d269izLKzCC
- DSbO6f9N+ieWxNJalsIMf2li/0ZScy+vQlXMCsTorcUUpElaztOU2ltM3OV9H8aBtL8JWzQMUlU9r1KGnnNPqFqgBZ0sTP94Rj+O1m4vyqKNLiTLbOhyTC7t
- PRxHIdMA0uXxIrXi/wnBP1qtbhGYsKNanpiMf5xj2BxgRXJOuwV4T6XYVYYsLqaUqAL3ZmD7rsqey3GD/3KwBWB8bcrKwjvFuCkfHLC+zl269sJN9QDhZM1o
- nfSLdZQq4Ba6HESgWJ81TLDXrRgAB89Tahuq2l9Er/7TrCsCLYWD4uY7dHvf1cFg81H3wS0gM1pnp4H6qOMK+PVu2vb5n3ABTa7fmHXwpbu2YMSq+d10z1Ps
- wnXhkphwV51ptjIZU1dbpqbpEkLChCKe2NNiatufxhXKtB6wPFFNV+IaLjrx/kH8T5k5rNrpkRqC+HFZ7Y6duasPDCbiS22AK6IEnNr/fyqaqGc7nWvEUdv4
- EF+c474SMeaBx0PKvaP7u+rtf1POWiJKkLmDmqcLTteIib33iO9YcwH9PnNqg+oxo7uubMCAug3VUAU51GZUmoVfV9TDVKE3lj9BHTQiqjemC1igA4/cfIxH
- UCPuf22DSkAV122h9InSSwxiwZXtdc3PDKmEOo6M8VU+j4zOKSiW5p5WGeuBynri48UHfl8G75O3+Q3AVJE4KxTw9hDKCVsXgGhZIkAcQJZl1SG/AZj2hHtu
- bA78wr1bEey+dbDw/TZNscNtA8Z2fWawpo2Gc6qnWC0wBLzMVeqAgzmRTAvSXUgGu+vR0W4kZtKBaaIiqpH3WAv+nz4UC5boQwNupxt4Ls+RjjYm2KDQMGVw
- 8e+pwpNwBlmyLqAMulPo8XIhMrV2rpFP76/enCr2HkuHdHaQ2zpx4wpjpuuKTB4sKGlXQ1o/kfKV2ZPLClHVZo6jkGBKmiZ7DvYKntgaPFMv9mXHcHXWH3A/
- lgFst6WJ3cERZW40I+bBZY/wTIVwBswe/IbTg7l31/lzhMucoq8ZL1tZf/frs1Q2tHLbaKDr0JUyzpJQfAQGAbYsa3kn47dix76gEKQL4Z+mGLvjdFjMVY22
- 5bGrx7CNJI8jSPYxTSHzOn72TaOEF5NSbwAFJV7aM/ZA3u/lFaavDTchLiPWwmnrifPS2YY14lsAHuTlVD9+Y9mjKQHZYnmWz3Hn0AZEpZH3ZymIfWoDFoUA
- i19QUiXqVtoF0O2gyVLXweX3hB7RhJoap9ttpKVZhyVM9GooDedcTfejjiPmYMt3I4oBooDQLGgZBIIRx6gafbqqpxTXLiMWy5hJj0rLW5kP4H3Q7O8KMu/i
- 1FYxuSB5IKfXV0Ih9hIKQDtjXfatnkRlZEs5NUYAME0hx7dczzhGivaKmPvNV/Amj+5JzDOZcFMGRdVyFgDXwsGYi6Lh9s2XMww0Latn3+VDFW8UnZJWI3OX
- 7SXInS2j61jdZ8x/K1vNojP9UOoGF4z2UDPsXFBsMyp3Rvqz0uR1stO1P1Rl5+cRP9Mh5lGcn0VoVXRCRq+zUxq07zY3RSLyJKMkR+9toyB4pb4Pdf+lUFUS
- 1H1fqd0PDm/JBISINCbFgemFHi5ByvOEJAcZdMhF5NmYDpSDkk/HFZ50E9I4V1SA1e9MfNkYFyLLEH5s1AKfowirnEhuyC9YWjOF0VRwjxNQpPeXkPtt6hei
- uezYPbqimNr5GIY1Qyn3lSi/XhARV7d6hBAOldMzchV9ZyR7eVGZelOVN13wT5/j4GF9jV8ZwBKzRosNnQdq+S0l2FFPfhDgn0VG3AmGtr51Aq+DBAMQkzeh
- L956L4N3MGihOCLoLgjQEqv/OKJjhV1EBF/wdWGZObSiKIv8nkXwntskweNgDjSKOoN9tK+UeefhuG3UzObRD2WE8VDJziMO5t/6PzQvMHL8gsnp0v4SiXof
- Qkb++R4kTvFw0iYMI4sD/EUACsKEkV1UAdkFVF3yzLz2oFL1cwPBl7D1O+IGJUzkI4ZHz5o3yA/qIipMBW5TtOD+hQUe87N+Mjk8mYQJrnz1ro2JiP8VGJvT
- P8vhpbE9ZZUJFb2i+MKAuuO8MFFbZDlhuB0/V2lkYCcaw3ExVL3CNN/dBRPUX1UyDNih9Ov1IPZiHEX+meQJrerU4kS94JU3Q8Hta4uHAOToYsDuoCbS7ren
- 4hWV5GemDNFybRs9su/ZbVcZZ2sUrz3RsOxgViROfFkdD+qRo2V9b1+DhYbdQbuAGsU9/Uw2hZKXr59kvY6qGnIyFoIFU23WoU+NY7TL8qGcMF0UqDSMdCkI
- xHyiXp9Yy047wq+JyEkL7ZFqverISs9FWRMstQMaqYshY+vxMfESOxByyRD67ZQDSuYtQMJMiBfvAjtbOfWOoGe9aphazHdXZifXO293gP6bH/UNQ6RldIPU
- kUjXFsYy5ePFpZ6WFs2syDXCJja65nfN3milAa0tjkKjFLc2/bQ5VOXWD3nfV0a7oj+5ijlGWDcOK3/LA8Yr8+grlR5vnyv9wBcnwHZhKIt1JftUEamNjknu
- ECzwbIFGeaBzhef0eAbphq1j+A+bzXbUasjr8kdY1RvZGyBpJ9RodUETzpMcP7pRXSL/du6ePdb+5QQCgzDUwkgR3CMnP2cXTGJTCpaQ/ZdGDixwmPntWXJr
- QYqsPgqclfg59iPP0sm0lWEVR26AZAy9aEiCKLVvLKjY8lKmLAsAT6jqcNoALnIec0tEKZzxO6F9ghPYxLhl4IE/br2KLOmCnF9h5DXqtQP2CIbIsAA8gKJG
- dxbXzcfoGsFBVJ0n/1iKeoiwNjhQnTvvz4gCwKFf3pgBHnjjs5d7Z+/Fx7FYg5LwCUWstEnaOpebXv3k5WuU4psGHwRykCLVN+VzDxdpaKKPz+VeF7ODPYoR
- 9IHDEgskcnVMvSbDGSnf/gGeCJs2BXM5SbzRM9lZDC6bI2TKzRPWO+rf2SSEe6YgGwZEPjgz40QqAdhXCy20dKLaXf1RLhGKveUI0GsNtuVczWKEWtyQIP/0
- ZFHdagHyh1I18ZAr2AQzidMB+R0kAFRflW3qxWejuX4oe6ERr9gXqA8ZZ0dXaXemdOfKsA4fhEFcK/HDZi6DmbuLYscsw09pYNsMW1JjFEB4ohjlhzbJl8Sy
- 9I+Ej+fVEqnkuOgTn0FGaGLYoNJS3exwyoEztBvyRN+lNamtgRLZmdjVLTN+kn+Ru5jyisS5Uv8vq/tX0wso5Y91io2/jG6P0NOXZpxJUTUdZ6SDrK+p4HoZ
- rj2LZfhPX7ujdsoCa2DoBcZ3JJuTyCMUIHtZq1t9huaW0S56kaqFO7giaC71CJaFzvcOLDeQiit/LhxoOVHmXTw+nHZEII+XmspDu+tPruGOfriQAzHCMMj9
- nmnUFjYiAL8vI6CO06GsqKRBtsCvc+1xqYsTTFmTnHHkQusfIhVyLoqzGJ+tBXp3s+QG1LRl8xO6ZsosHm0+oFEwX2yfWGzVXWWkNqnztunTn5B+i9lZ1/lX
- HkoG/cDgoYOum+zxDlcw1ov6jQr85r3ThCWJEerA68TptphBghequ+xVr1E8USREV0uV7t9SUy1qd7u8QXafAr0j2/BXo3YHQ2vvFmdN0/hL6a/F6IVCr1v3
- tDV03SltysQjmxQF1gzHJHTnrxNsanCwMyLw2+2GUQsA9Wz4vBBTW1m+KGWg/o87ypbbpRR4XFOHENflKXOYJsnGgfrxa2Qi4an9cx6APP1IR70mYjwhpp3U
- mle6QvjWhFOOTC5q0br5v4TJMHnpQJgcnVUTgAJUFoXBeneg2xf7jAibgaHfnT8bQzr0dUKtqrQR4UOzVhTmwBprqWV9yVvsnMFsrqbf1J/AZfy8xxMSQu0i
- bwXCBEgbOK+nv7oVDkcNooFRbvXHPiW6z3Ev7uvNbi7Q7FtSID/CoJKu1z23yUnCcSdTLx+Li4eD3wyKFZzVk8LH8CkkS0xmY7vX+9oz2wHJAErt6mIch/ix
- 8NN0Q2/NKCenFJGOPl31tdqyGow0QpOvyERd8nDQ46cmr79OYjK2TzyY/zjrNFVrZSkYfGb+ZMdPmUBUEZ4Zr9+IlWFtUb67eBls+0kLpV0ADWC981R1O4Ud
- Y2KFBHeKiwzvHRY8h28PplBRCooD3Ktj2774lOk5vSHwJ5bo0lUg+rDJTH7LzDELNFRiNovsH00BLYbAgBSGoCkLTK9X0jZSlLwMcEu0bd0VW2wpFWeFT2nj
- QBGg2wS+jrt7icbtzMUkGvWxkXziPVLOV++EDnUzAxWsPH8XGoDQeT0qiSA/bCJaXzxTpHFEu1xHBHuiDM84Pz23bFtvWEHI7sSTPqryR7jOdLTeiyfU36ut
- lDXkbEbCYamszqkYLi+KvseLW0KSlVOeujiPCporSTsw3Nl+KiJrBCaO3k8BZAbT/5R445RcPGgBoDuRtbml/O6ex7JfJUSExrrJ/yqUXz2HYulRqH2+4RUG
- aHYv9ZD+WnMiFG23TLTUQJ9K/6JDFpUN4DZWxPX5Pg7WQSYSFlemJFPfwZHi93/KiZbeHHKVilleOVVmnAu1yXzF/aC6N2KxHsuTrtqpN6/gESlvPiN7uAAn
- d+e+tMduVu9yKJWvrNvxyqejT3BwXwQBMGhhA+J1q/gIMY/bHw68UMFM59Vrzg1MRDDAq+gec2L0g5Exre6US5s3qQqSLGFlb9FiDBdntnyErJrsAhoo4qzV
- 9Hm7sCGwrn/qkh2i9A6qLCprckoO0nr+nzExDXf3Av6KIV4+nxC0ph5uYdM/Q9rJsfx4FnGhrltKNrDJBfrrRbusgjq30c3l5ot6HqAoNpJzMIc7pp6AlCOv
- DfTWnvPE9IVQ68a1pZzPAUC141x9UtPEwBFhGG8XjJz0kQuxaBOlOv24uam7GymvcyVfngbbcze1k1TOPT8zonIv+EuAA8r8RwTiU3x5StaGfvZ7Mbk5G+iD
- FbOS34wfzZcCoa+9a7yHg1Fz6xWsGc3VdYr1hUy1yteyNhGGCL8mGkpHSkByNXTN+AHlqTS0fWwYczR3K+UK8lfC+zpt3i+d0flRBIP9hqGTIXmZTH1D1lN4
- WRAwWrw/WGFGnFYauwywXX42tid+CO953Bec5mqLpdGq6NP4l/ki8Vst8t+/DMwT9QVcivqJrd6JU42ggpaAQcAhmVunHRLDbzfJLTVVABSUEKMZGj2UwStr
- 7ypSrd/YgZRHOHIOLtVAQEWylyzNd2CiNbZMCAOxsQfd6ud5wrwxVr7lbO+sbJY2+58XHEF1qe5Br5pRSYSg3DOza5sqOUTbLnydLOnRzm+WMOHdM1RQ8bGO
- F5g9i47xDLziISXatEoxMNrziTD4Ud1Gh5mFs4Gn+69V3Q830uzFX2DSr25RAK72WAxgVd/M3KglNSnRWMXCc+sVkZE+b1I/+0fIz16YdAEEtxuw/mhXsgW6
- IEso+Yrfnv9Nf/s7pTa8aowEc+xazV1sjoVw63eXFpuz2KCRMXhwLHHwW4P+kqQ/KoC/q29KrusUBT8JurwOkF9wWpIaZLeFhJF+wUK1vqSuAYpduCRpLC66
- QtAF/KvR62YD/Rf3H5sk9O3Z/i7NnHwxCtw+4fBSo2WSP1+ghBKse+7b+Y4VpdDSPZsDrS3iqS9qkSNRordvmcu48pGDgot2IxljPydUrXm8CPmbP8gjmWzU
- 1a5UuCl/vf6ZeB8fj4gGh1gMB52gQTaNuUr+rREQNU+7E8D9H+S6BITN+IohcViJ8PkpI+3rlg1lgdnzBNClD0fIxb+ciu/PzgxfIl7NZhva/iO4Td/l2p5D
- tnerie4chLdHgWrtKLhOUhhof06y7XdqmFXSYZm1aCH/xVW9F5MeLZf4db0ede+nClblCTrLpsCT5kM27uIOvhy9GE6tjWoMhKUNkqyAxhOBnUq9Cg0WSlLM
- ZvoySFcEXFtShP7srMKKrAO41+0Ic29plUMIrky/Me/OnPj8XoAv7n0+GnOhOtZ5CLT8rHHhkjNH8fBXRgvxEshNI2vWZhpKduosIIABBcILOzjpPlHSkO8N
- sqKRHVVcM0oaC/9jBCmE+G9+THYABJeGjiexd2GcrrC3ipKwdaLEefRfEMMJfyUooHGrpVFsJoJZ6udtko7v9sJZQBsdEP5psdXdmUzsu/d7XoQzWtGAMJoY
- UYhUD4srmKmkrH4iteQwYNfmT009bNLBBY+3hITdxC0MLpHiKFiyrkJfikzKwc7TJqAjlNLlK1LpNAMkSpu8gofxuJGyeVsiF4+O2+Looh8BqRA7btY8j22f
- B/oP0t33U7ZhAL/mCdD1j/NP2D7PPAy5TmIhOLSb3OuRkqK2mXLy0xnF2mAGS824aQxgOI0/VIQ8i7zDy26BJq7vvh+qmmoqyhjQLO7WbABBQLZ5QI3QtBQd
- 03R/OZx+igBpzVN6rDXPE9Ni71Kv7t1N65kj0fZ64VcXOUYlsetPhXctfwgMbus+ETsSjL3iKdJVxj5Z/ouAU3YZdJv4oIJT+CG9wK/jq7VsmaubppH8mull
- ooZsQaHFQhS0fYOcmNHswrIWSZKKDqnP0giGPLJFzAgn+/kSnMJaRVw+Em7+HE0HwDrBp5LLwMSVLHgKqi/J5Vbebp4cRrde1Srfi3enyjOrRrYVvnLHBvUt
- GAA4cqMHWF3JVTqtqNsKyQZnBiXU7sDhLpxQprFEAD/pcWnTlVABg8kQo/d1FYhmgEQitg93ShUV7qTqUhL4GCsP8jLlMqj6CnqG9MV6k1revDaQ78+UruaN
- 4/y4TZH4PRHpVXuAOPSOxFwShAotGY7QCYJgL7gGg/45JT2WUntktexJ42m9GXZZE7SDWP33FHyV+p5hGDeW1WXgQjX6wQg8ygEFdkkvQRyMu7kcA5Chm5AZ
- sasqVb2SByELjGm5YlwOCcKVCPsfJ2VGEtmCd33e4JabsIIJvZcSFbcHQENpCkdRB/5jICOjamH05H8m6BLqKo61F24gMiIIJIuCxDpBnppp+8rJx5VupyQl
- 8RQGKeDNA3G0NDXMDEm4ECTspFhG/04Ci5r2J8aF8eK6dWhLRz9PPkXaJygbb7FtgpdDd8w4xfIoUhuTTk6Ni1hqZhlfy3xeXCXb/99SrutX/FLwkb9Vh8+q
- 6aBXCoS96D+cJcLxtB2QNCsFqwdPbQokme3kM+ua+BeJDy7Y4E9Aenc6tE5tChFDN5BZALpu+nST4ndQxADDBy0Zde3ljmqkPlUov7M3X2XDDIbfpzVTerMQ
- xoByZsIeoHUWbqXX3zZLTltQQHD2VZ9fBaMtbD3FtcEpwFr6dlBuSjsjfTkbQ8zDotU4a1c62kSz0hk+EPMSKPN28iAfc+v0KcmU7kwsrcONLrygVG9xQUrF
- fx8D8rR7jKkF67PGFUKtrx9CFOw5UMk6BvXuEVUenhqdmmvnq7TjTznhm73x6rnoP8VpYtLSHX2vhWy+dm2cXiULpc4td0YMzUS75LVbBIY3ioKn/FcRu7l2
- wUCNi2IBrTD2sZ58lYK9ySoamzl7JlPPv5rxkeTdUCIFH642/XWuFM+b4GNjwo6Nc0+MozU/dNuNTmeBCmGleuNJRRgK+xJ1IDEee+uWGgosOcJr1OjutcSn
- YOo0WUlV4CaBgfMl3wpGFZcndCakOBkNcW0eXtYSBa6A3OHtFr6D3fg1qJb5uj/VsOLBkyF1oJ5ppi6j7ts9lyEd0Cp4JwOeCZlWkT1WFybdZ2SPrpYRaKj/
- 6YbZ2kWu2AxQxmI3elXFnWx7768OrvsRCkzj771qWeJT2FhDkWPl50Tf5EA9G/7VNbmKvFE9MjZuoXWevEIxkIcdlle+WrliTbNQsm47qhAqISR0NOipOx2h
- vrp24k8yFfkPqJwNKWKUT7mGNzzOvNBCnFK9wUn6fZ7flX8fPC94mbxqN+JtGLCf25G6Bu45K4i9UVMOPy6Ozmc0/Z0PJ3i//SIZgJufimjoM1jtjG7+MGmL
- 3/oKi2hcrZWV6vYyQc8JhX4XYwUn2VuUEHg5dUynIklhseKqO5mWZx1eMcPMjzAOwglVhSdaE+WB+643rngbzdZp2qt8ZtZUc8/XGrZSfEXm0+fk60dhxsms
- 4IOxlNXT88ObP2WQSKBLHs9q5AFA8zS3G8TiEShyZ4IJEeNAqYCIfeS4aemwdVUY/5Wc4Mv4ao3b4h0QgMbi8GJ8q4ec/n8EH4k+QykFLQNv1BpUddAtzduK
- Sp+KfrLm6rxU2tm8RGD6nZkONOL0nMtU3ZmRmwe1ndzrVYJGe7vjuP6hboqFIDCvmjUqQ6kfyVS98pOV+ppsU3lgVkZoVvmyj2+hd/hbx7Z73/iBftB/fMuy
- tsUVigqH27k9x9Px45NfGK4k9+U103sb34TRPnNlAALg7Z4GKDBxylBgXHtfqEpSwEYDTJ80tQFgNMyhjDj5nXzMzEXIGlDosOD/7paHnYxhPIgI0fghZVVb
- 8uDBSR5xj8TcIJouT7SNvPJzQZHCkutrj0KhimJtHSy6SMhMG87yHE4jVlCC51/JI1HaIIpXZFsBrYUdZeyktRK7i4AZVN2LOLPdXnmuOIBWmhUMLkrGqXua
- zFZ/ozEm1F9imhgJOvHt6eMsDTZFGijNgTfQgXEtYqeFe51iCddI0+zF1UG4kvtuetnKQi8FbgB8fEJmkP68Kduf9ig5t8dr1hlYPPa4vXzsHpWkrPOrp4pw
- 2s/qPbuvan+4mXn3e6BFR7yF+TvAxyP3OnekBtgcDcfXj0Ln9BDPxjzVF3lOWO0xUWTsTrUH8I2JgSgV+qz3jzCGDgGLGBSlX9VLwLW0RHfAzq1uHL7k0bxp
- 51L5utAruD2n28Z7J2kyRBEZmpbncDdjfdN0aKatKHMUtqDoU5kIZ1jupyrCRQRyS3M+EFrsFZndqMsHRcv9taqVDZeVZb2od1uBkyuV3ARbT7Bx5jhULwZL
- krR/WUgMUg7PjsUU6uxWtPpDIoTA5O7zgVnaiqxE7WKN5LBuMD/MXfCRj9D4gAqN7cpaOfqTbOprxQGATomYobhnL/hEEevfq54GPCfhXuYD/jlje/S9wO08
- +f4N4wi4iXJTjPJIfzaV8j9zek1Qykl0DhS/DkBv5xfVc3VtWDVDMI5LRUtdQlZkDhjzqFoXAQTywbZmB9ojs4WfQ1WCpaukNRC5EDgYhvFzKIi8e3CslAEu
- YRut12AbRaphXZN1b0wX7gXdQYNmyV2d6TpoduFgtVSNmeULl4k3sMSutV20GGSjWU01vqVo3BVPGBVi1AVumi3m7J0D3YSbAwYpglXqQGOttnvrOjfLWst+
- ele88c6knW1vesslUxU9GB3WDAlBIS0wvwDUYS2vYsePun/MlAA+Q9DVUmVuzK0zcaV/qvgg10Z+bFObG/PmEACmm4NP/8OpZqBfbbGJubkjK9fVXZhdxugB
- 08zx6++MPfZ9giJYlJPgFjB9zVkwdBY0OfrHemKkChyiazXMICYbUObtrJAt2JPFEnaqSACMxTu+JsvXP1KTyi7rdXwQgmAPSeM0nyfzfEVNgTqEqqislkH8
- Q/85gmBa60p88M5jZiwH2lFUpaje0qAZe9UpXkJW0ZPdHxbFRTHy+nX4CvhokV42KWTGnqA2D4oCscjqoqziajxMo+OHkpqA9nY+7GGttIIKr33vo1D5WF1W
- SRc51k2cLxgIqYbgL+Px9YLvDLt+CVz8KEDs1SH5LPHOgq9kDDpf9TvH9Q8cWZIMb6LKu5hRq3Gig2EmcZqwvrnjWVaRQ1j2FGRweRV+tQlfjvAThgdZxUZN
- xMU9aVE4tOPzmbwAxXb7QX/IgoFXD0Nne+DUnNAcgHvboLdoKJliturjJ8vWMbHImsgzuj4ski/lsTDHMRwZs+yR/fShD9H9rPryDnvVg195zjLoQS4unB8H
- 1jNyE5FTJV8QFLLeL5AxKFfSTnKC+1EreGwgedHMdXqVnda3ndwsXW8DKyaeGqbUCLWTUi28P5AfpSLxMAKyYx2DvfldHL6wbW3hn8vaKXnqUOVjk6TvZXGg
- jz4sSsREA/ANARJDSOhP1mn2gxLc+EpY1InWyut76XyaY5ZPMn1bTp9Oct3xisV4VUbo/Xp4knZOrotr4MaysYIjwz9FsVQ8rdPdkljn9ycAI1xx2Ox79PcQ
- 74KDWIBXklhpjRQxYzUYjGsIUPbdZ/RXy8pAutkrtrQC1KrilsRSFS0N1O4+39200cgkq6hs0+JF77NSYUh5pBQlkQeHYd/eDV3ftg/bfBTpNpAD1aUYHSBW
- +rhSLbVWtLzZ2XBfJWRm2I2n+imbY2Ly6etHHprjxCXG3oBCdplL6QlMNpt0gNBC6VdUXC6AtK4vXJ84FEqs461P1KiEctCZDuBXO0fUXsjX3EeJKKabGsER
- 3pcAAc9YCqWCxsb8BaAhxv3cB0KB2Zsu4O8ATgKWgoQobnIt3tIfrm22tV00yMD/nWcJ0UVbC98+3qIMjSkIxULc9aSAh1TSbNezmxpALs/Caig1r50QJXyj
- ItNE8OtwIA6Dhc8ut/DaMbWJXynb+IlP3hVQKBH4ngzolhIxBOjkQPTF1Lmoq16/14T41Jr8miOwkk+kJvKvHzYBke8MFg6zvYaLIG2CtkspHFNLZzTG3Pol
- W4i4LZWUKxuPwX1jy1ILGzGCBDpGRLFdkDjFa4VtriPfhyeXBbxmA0I8N4V63gKO5IBw0chlac9CpVWg1DwDnI7cCtmSJ8MOWDoKxjsvU8/TXkE9/O72Htxs
- JmjB8oo0Ime5LgpLTVrp4NJokrv/YfFwWJz0QqgSXJmE4Zei8kFEoPTt2x4DvNhntWPEqJ3AwshaA8/llKdtISKYvfIjHdmvW+IorqS/k68SxYeAZ1uEO3JH
- OLAM5gfKZQh27pcgIJ1dBeUyjzUC1UtcccxMNkAwYsjIztvG0dvQkohIfHRT977HuTw0tEotUwFOEQ1ah/ADsndu15Ei2cdFYIVMuPq1Dq+Rl5H1PhuOKGFF
- Ir/QN+mm670GiSE9z0sIsxkH2A8MuuHkbpk8y3qHF/Tmutz+/ivSBymEfZDR1XGU6wNT/iJ9dmc3Cm95eAsaBAcmxC/UmebnZf0F1qF+Lvk274dbyPiHtJN8
- ce13Ho7KcSxc57e7BDUOqUP60PFz8g4gWWm0y01DCWtJuCf92KAc6+p2DT99CYY6gIH/jLrSh/iuBoHRQcYJfliaw0ZHGbVnA87vhancAPfY4BiAIrmCuSUC
- 59rEyLgkK0CX057yStRL4+22PF8xX3m7P7XKx7K9dfzsfl1ieXZBSwKVDElQIOlBjmJrwuAGSBx1n3EWwLDtZwiS/MPevrRT90CPEgJhSEZRD9EBT543mhxw
- vhZDqM0Ldws67tW2vEgMkrZ/EbirYN8wL0ewqGv5gEsGuyhSjPoLN4UTQmBX1zVIZ1edVJ8ZO45GMTkgQPZBKBtHQhTBPtzSDjXPhv41v3LpapwB+kxFsw3U
- 6z0sje3P1RKZVPKzj6U06DwhH37eY25RiC+MuFn5V6O2hKuO3oOEXCsD7O5d0ola+f3P7tvdZ6BJUj4i3oNbw5t5fs/IzRzOV8oR5VNXAmx3/hmYeA4hR59K
- 3Xn/sPt/OieRC8uoT/4dk9rLcplKvTtR/YTWIuj9vrDSoiWyDoWcG0U7dljoVsq1EHn6vl6qvwn92OijtbDI39a3r8Msosv0i9TeF2gwxKIdGVNr02WYq3rj
- NiE0RAvIN/tA4bE5CbiaSeGobqHZ11pVQZYpvwzLq01D9QsITKIjQMSqa5V1QIn5C4B+z5tao41hCVGp+i+7J0H3K1xJk3I0aDmZopxt7AIVLGHdXlMED0hz
- xWMBRnqWlvEUomkt17Xffs2jHnQ3/7nSkArKT4HVGr+ASN72BWBW0nDoGlC6v9MQWdVS2R0LKwXT/kwlWU+2L9M+wOkF8wrK6nHHE+bsBLWjtvPWzuT3DGzW
- dSYBSq/9cNZHiQdrZe88MsGoQaHLYH3LgYIIya4Ztgc94jBntFnytCHjJ7KoHhY85ZS/iRQLbyIJuV/XvTEjn008tQ8SloaJ0s0t0rKr4ruRzb1n/SoysfiX
- j1QfZrP7jE0ChZwYRIImp2/RlrJVpGdU2EH/Z91PEwnI3+KpBuRNlxZiBqyio7D3/QzwHtBrHuUg1vi+OaVNmBIyebkiqYoSWsnryTXoAB4hkoKRut+TQ8UA
- zg+sug9E/pnObpSmLuT2boLUxK7PSR6QEtWJaj7L+66antLqAd6XYlc4nNzoDwRKj/7sA13iKiTY8HRY6KJYlVFi/DYY6eoFjKFXHGiajPwCuX0AGLECCsWQ
- tGEaX6Qh9KaDSEjygjhcsIzUzZs1Sw+Ozst5g65oLysSJwV+9CwK8R/y9xry0wWiSxCFmXuI5nBCjfd8xzeE89FKCzEs4H9y7p78peg3rYOyK/7frkgXbDJ9
- 2cdCjgAm3ILIAih0QXXzsS6LHoHGo0BzY/E1jb3rE5926Sl/HFUKCeXxVEHRfUNpJczJyxksBAw7X5Z6KdGXiAqXTTofPjXL6yrx1j8gu6oa0w/+q7wmt27j
- XGvfo4ARFP/S08TO/U7L1fa5Q9vkJ633XyjoBAZTLDr//SGLBGd7zZTvQ6+UKNma2SHJuiGSTfG2OiDpxiQTHK+ubtmcbmUHp6b4iUK05v4PQUJihfiy7LOn
- 27zKwLboWzurrSbAqKZEUtDGjk4DYKwMA9BCI27EjMql1jLCl7+WLmEaqq0BrMTaoW4+nJC2UejFteZZaYW/UmafDQo5YpoVX2j9YOZ5CNjFdSUksaOKh6MX
- nx6H6BWg9aelK59Bc1i7sVn9sQDMghv+rSDupVDy7UVc8+mP/pdBoDtkn7ttR//m0TIJjI97Rikh9le2VDjSzEcXxdTqlxWCzG52v11Zyxb60FBDliQPREtp
- RhWGbTlALt0otzMsRF6cwBHYlizwvjIO19pOnD3/WjnQU9rOSebGWpLCTPsD+rXyxbRdl1Nfi7Gbbuqww+/p0ZeYv2I3csR1NuWPNYjTQJniqgbGWw9uUOYA
- mIb7phKqPaLHE6eyM/DU3dfZo61EWKF/XGByAAsF2hAPNk55QECHrDwNfUZmQhTmGX9HUSlaN8Kpewbe7XH3cpJIr0zp9bh+h0Dkb31F1829xCYabbrGxtZh
- 6AURS28yn9X05djocQanZczCq5TO+LWWmdCZuaqThe9dtYaa/VhSjzLMEwu4XzPxh9Uxr3xyg+NzsCvgwuPvnXHO6VjarDvKMVJAUJobvlpBCduODaAHLgSo
- vag7axAQqc9vwZ1JEq3LEmWQvZmsTMc0A7WoFNKcIKgz+1qbu9hth5rjhXv/rzbV+IbT98BmRy4WQFeJdqrYpoVI+8v2RpajvxtpUqdmSNcWpR321n3G6hIY
- gLqAhlsaAuGywzDSHGLTiqUqJiz201xiEPw25iq2Vy8Ach7x7f22emv1sDRO+4spztxt24avTDU71shRphoFVvg54Ms0FGYA41bJ7QK64BzokHc5oxR0G5kN
- s8HMCOByNanjaIm3R7JY6z3EtgND7602BQxMwgzyyJHALGNvTKZztrQwNJFAJsCdv9KN6onXouS3AwhBR3RdtgqUxf3s2YlrmK0DdRd0MzYj7yqgmcCDIMXC
- DuKCwTfTGD7T02gBOIVm8XV5Yf6OVi8hMwE+QybP4pnaPMnrwL9NUqOKHKBTWAUQG90ZNlMX97qqV0io1AGNfrNteJOo4jHhGGRXFcQAg86YHkzdg1xl3oEj
- 3R22H9q7QDDqmd+KR7PAFQWJkNBCzKniW7CwR2nglq4tigT7HD0fOjEEDsKahkRQMBmXIpC03Zd2W7QgB4bul32ShU1WjB9mF/7cLnjOr5ZepVMUZ5J13MtM
- e9mDxmec/gtfc8kH80+4C0wfH9jUPtN1EiNUPwT7GXzjpGCZEo7oApq1QgSBY/yOWcCp3r6hHOsTp1oYzyPLOKb/eJNJhYHeJTxdvXYGUgtTpSjRa6pFeAgF
- Msaavsz12wSBcOyTNknhvmMy2gQduhyULjAHpMiA50nifQuPwlEFdhMxHYKTJsRmIZlHsSZyhnJcshnhIOYNlp/x6Gc0h6B0MhpCIEuaZHwRQ/ZXbgplVIMq
- N1cDEJQ//8xzs+uziIf2wyQ0xf2sJ/AejXtxoxGWLnEqr4KssUEmgdRULun8l5BbgXz80IfZZSESmUvmwDrj75e8s7r0ftEMbu+dowQ09UOJed1iz17iHgX6
- NIQGwP/W/6R8KVx3bsTJq7ZfRUbvdzi3FTQ2WHrBSxZP5ANGsrFW9P3tNk9OLfBx/c8PZkZKsDX6LPE16yv4ux/wzYPSK8uIhWusen6OAVo+CDXbBh1UYuj7
- H46xnRa3mvHOUp7GchHySGxeHcw3LoOY7f5bB/UGhblzfM7lrJBY9t/9SJVGmmQsIGtywNhOdYR8S1/S7SCEKTO4qEi5dT4lfUKjX4xR3fHZA5Fg36FJba3H
- IemkkmCGSzRfIz4zaiRCscLOdgzHGL62XfV4I78NRHRpXY2E1RMBgZWOGW0U2nLS3BRzxrm2QZpJDehrAtj4enjzCq7TLjkzECvN5nxbZeDDhsFPekF3CY2a
- RwSZL7yEEt5qr0XA4jInWUO9N1limx0Kd6OebIe7wSXyIc8ubHxtPu8zeWDafKPtSce3QlTSe8kzPVRtGAvPbNye0YWqocOeXtSZ735c0V4vqL7bEgm+j1Ed
- rVsilijn6olzLFegWXEhORtnwc+0UwRbDgOhkrYshaqzr++ONomFXbsCX+QU0H3mAo3BQFh6kuxduMUWA7qdudxm4r4RoEdfVIrE1f8tPFygnxJJ74jLYjX7
- GprqFAPlhVoI0+uOkblIqKByLPQIZ7TfwFk97VgDoNzdB1B9e9PV2sW1rDm4E0p7vOJYpKobXiZblx7t5mXIrCecfZQHkCSZIqGtIlEpDiN8NYCh8e1PtUyV
- yJ6ZJ5bei8qSQl+bGdnalUXOyChHZT/YWRKb/AgbDfk/l77zjc/u7K8LQTaVBe3fJ1paOio7djjHFOkQ99ppYip9iW4O17/laOeW6fTfIh2seqSEc/p4Ow7B
- 7baxviCVll7T9Vzx966UiYcfwDdnDnK4JsvEw8ThrvwRsrsF0fsLpPX9C6CIznAG5lH8xQbuII1nwrSSDc13dME5VaJkPFWPvZhHjkyVO/fcLWO4j1rT9zm1
- 4mC57IHo0Vbx2ZWRtOBXnRyDdUTRD/b5+zXosbDWyiVRFQ==
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add checksum support for gue encapsulation with the tun_flags parameter,
+which could be one of the values below:
+IP_VS_TUNNEL_ENCAP_FLAG_NOCSUM
+IP_VS_TUNNEL_ENCAP_FLAG_CSUM
+IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM
 
+Signed-off-by: Jacky Hu <hengqing.hu@gmail.com>
+---
+v3->v2:
+  1) fixed CHECK: spaces preferred around that '<<' (ctx:VxV)
 
-With due respect, I am inviting you for a business deal of Eleven Million Three hundred thousand united states dollars where this money can be shared between us if you agree to my business proposal.
+v2->v1:
+  1) removed unnecessary changes to ip_vs_core.c
+  2) use correct nla_get/put function for tun_flags
+  3) use correct gue hdrlen for skb_push in ipvs_gue_encap
+  4) moved declaration of gue_hdrlen and gue_optlen
 
-By indicating your interest I will send you the full details on how the business will be executed.
+ include/net/ip_vs.h             |   2 +
+ include/uapi/linux/ip_vs.h      |   7 ++
+ net/netfilter/ipvs/ip_vs_ctl.c  |  11 ++-
+ net/netfilter/ipvs/ip_vs_xmit.c | 142 ++++++++++++++++++++++++++++----
+ 4 files changed, 145 insertions(+), 17 deletions(-)
 
-If you are interested please send your reply to my private email --- ouedraogoahmed@outlook.com
+diff --git a/include/net/ip_vs.h b/include/net/ip_vs.h
+index b01a94ebfc0e..cb1ad0cc5c7b 100644
+--- a/include/net/ip_vs.h
++++ b/include/net/ip_vs.h
+@@ -603,6 +603,7 @@ struct ip_vs_dest_user_kern {
+ 
+ 	u16			tun_type;	/* tunnel type */
+ 	__be16			tun_port;	/* tunnel port */
++	u16			tun_flags;	/* tunnel flags */
+ };
+ 
+ 
+@@ -665,6 +666,7 @@ struct ip_vs_dest {
+ 	atomic_t		last_weight;	/* server latest weight */
+ 	__u16			tun_type;	/* tunnel type */
+ 	__be16			tun_port;	/* tunnel port */
++	__u16			tun_flags;	/* tunnel flags */
+ 
+ 	refcount_t		refcnt;		/* reference counter */
+ 	struct ip_vs_stats      stats;          /* statistics */
+diff --git a/include/uapi/linux/ip_vs.h b/include/uapi/linux/ip_vs.h
+index e34f436fc79d..e4f18061a4fd 100644
+--- a/include/uapi/linux/ip_vs.h
++++ b/include/uapi/linux/ip_vs.h
+@@ -131,6 +131,11 @@ enum {
+ 	IP_VS_CONN_F_TUNNEL_TYPE_MAX,
+ };
+ 
++/* Tunnel encapsulation flags */
++#define IP_VS_TUNNEL_ENCAP_FLAG_NOCSUM		(0)
++#define IP_VS_TUNNEL_ENCAP_FLAG_CSUM		(1 << 0)
++#define IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM		(1 << 1)
++
+ /*
+  *	The struct ip_vs_service_user and struct ip_vs_dest_user are
+  *	used to set IPVS rules through setsockopt.
+@@ -403,6 +408,8 @@ enum {
+ 
+ 	IPVS_DEST_ATTR_TUN_PORT,	/* tunnel port */
+ 
++	IPVS_DEST_ATTR_TUN_FLAGS,	/* tunnel flags */
++
+ 	__IPVS_DEST_ATTR_MAX,
+ };
+ 
+diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+index d5847e06350f..ad19ac08622f 100644
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -893,6 +893,7 @@ __ip_vs_update_dest(struct ip_vs_service *svc, struct ip_vs_dest *dest,
+ 	/* set the tunnel info */
+ 	dest->tun_type = udest->tun_type;
+ 	dest->tun_port = udest->tun_port;
++	dest->tun_flags = udest->tun_flags;
+ 
+ 	/* set the IP_VS_CONN_F_NOOUTPUT flag if not masquerading/NAT */
+ 	if ((conn_flags & IP_VS_CONN_F_FWD_MASK) != IP_VS_CONN_F_MASQ) {
+@@ -2967,6 +2968,7 @@ static const struct nla_policy ip_vs_dest_policy[IPVS_DEST_ATTR_MAX + 1] = {
+ 	[IPVS_DEST_ATTR_ADDR_FAMILY]	= { .type = NLA_U16 },
+ 	[IPVS_DEST_ATTR_TUN_TYPE]	= { .type = NLA_U8 },
+ 	[IPVS_DEST_ATTR_TUN_PORT]	= { .type = NLA_U16 },
++	[IPVS_DEST_ATTR_TUN_FLAGS]	= { .type = NLA_U16 },
+ };
+ 
+ static int ip_vs_genl_fill_stats(struct sk_buff *skb, int container_type,
+@@ -3273,6 +3275,8 @@ static int ip_vs_genl_fill_dest(struct sk_buff *skb, struct ip_vs_dest *dest)
+ 		       dest->tun_type) ||
+ 	    nla_put_be16(skb, IPVS_DEST_ATTR_TUN_PORT,
+ 			 dest->tun_port) ||
++	    nla_put_u16(skb, IPVS_DEST_ATTR_TUN_FLAGS,
++			dest->tun_flags) ||
+ 	    nla_put_u32(skb, IPVS_DEST_ATTR_U_THRESH, dest->u_threshold) ||
+ 	    nla_put_u32(skb, IPVS_DEST_ATTR_L_THRESH, dest->l_threshold) ||
+ 	    nla_put_u32(skb, IPVS_DEST_ATTR_ACTIVE_CONNS,
+@@ -3393,7 +3397,8 @@ static int ip_vs_genl_parse_dest(struct ip_vs_dest_user_kern *udest,
+ 	/* If a full entry was requested, check for the additional fields */
+ 	if (full_entry) {
+ 		struct nlattr *nla_fwd, *nla_weight, *nla_u_thresh,
+-			      *nla_l_thresh, *nla_tun_type, *nla_tun_port;
++			      *nla_l_thresh, *nla_tun_type, *nla_tun_port,
++			      *nla_tun_flags;
+ 
+ 		nla_fwd		= attrs[IPVS_DEST_ATTR_FWD_METHOD];
+ 		nla_weight	= attrs[IPVS_DEST_ATTR_WEIGHT];
+@@ -3401,6 +3406,7 @@ static int ip_vs_genl_parse_dest(struct ip_vs_dest_user_kern *udest,
+ 		nla_l_thresh	= attrs[IPVS_DEST_ATTR_L_THRESH];
+ 		nla_tun_type	= attrs[IPVS_DEST_ATTR_TUN_TYPE];
+ 		nla_tun_port	= attrs[IPVS_DEST_ATTR_TUN_PORT];
++		nla_tun_flags	= attrs[IPVS_DEST_ATTR_TUN_FLAGS];
+ 
+ 		if (!(nla_fwd && nla_weight && nla_u_thresh && nla_l_thresh))
+ 			return -EINVAL;
+@@ -3416,6 +3422,9 @@ static int ip_vs_genl_parse_dest(struct ip_vs_dest_user_kern *udest,
+ 
+ 		if (nla_tun_port)
+ 			udest->tun_port = nla_get_be16(nla_tun_port);
++
++		if (nla_tun_flags)
++			udest->tun_flags = nla_get_u16(nla_tun_flags);
+ 	}
+ 
+ 	return 0;
+diff --git a/net/netfilter/ipvs/ip_vs_xmit.c b/net/netfilter/ipvs/ip_vs_xmit.c
+index 8d6f94b67772..d3392b5b243f 100644
+--- a/net/netfilter/ipvs/ip_vs_xmit.c
++++ b/net/netfilter/ipvs/ip_vs_xmit.c
+@@ -40,6 +40,7 @@
+ #include <net/ipv6.h>
+ #include <net/ip6_route.h>
+ #include <net/ip_tunnels.h>
++#include <net/ip6_checksum.h>
+ #include <net/addrconf.h>
+ #include <linux/icmpv6.h>
+ #include <linux/netfilter.h>
+@@ -385,8 +386,13 @@ __ip_vs_get_out_rt(struct netns_ipvs *ipvs, int skb_af, struct sk_buff *skb,
+ 		mtu = dst_mtu(&rt->dst) - sizeof(struct iphdr);
+ 		if (!dest)
+ 			goto err_put;
+-		if (dest->tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
++		if (dest->tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
+ 			mtu -= sizeof(struct udphdr) + sizeof(struct guehdr);
++			if ((dest->tun_flags &
++			     IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
++			    skb->ip_summed == CHECKSUM_PARTIAL)
++				mtu -= GUE_PLEN_REMCSUM + GUE_LEN_PRIV;
++		}
+ 		if (mtu < 68) {
+ 			IP_VS_DBG_RL("%s(): mtu less than 68\n", __func__);
+ 			goto err_put;
+@@ -540,8 +546,13 @@ __ip_vs_get_out_rt_v6(struct netns_ipvs *ipvs, int skb_af, struct sk_buff *skb,
+ 		mtu = dst_mtu(&rt->dst) - sizeof(struct ipv6hdr);
+ 		if (!dest)
+ 			goto err_put;
+-		if (dest->tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
++		if (dest->tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
+ 			mtu -= sizeof(struct udphdr) + sizeof(struct guehdr);
++			if ((dest->tun_flags &
++			     IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
++			    skb->ip_summed == CHECKSUM_PARTIAL)
++				mtu -= GUE_PLEN_REMCSUM + GUE_LEN_PRIV;
++		}
+ 		if (mtu < IPV6_MIN_MTU) {
+ 			IP_VS_DBG_RL("%s(): mtu less than %d\n", __func__,
+ 				     IPV6_MIN_MTU);
+@@ -1006,17 +1017,55 @@ ipvs_gue_encap(struct net *net, struct sk_buff *skb,
+ 	__be16 sport = udp_flow_src_port(net, skb, 0, 0, false);
+ 	struct udphdr  *udph;	/* Our new UDP header */
+ 	struct guehdr  *gueh;	/* Our new GUE header */
++	size_t hdrlen, optlen = 0;
++	void *data;
++	bool need_priv = false;
++
++	if ((cp->dest->tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
++	    skb->ip_summed == CHECKSUM_PARTIAL) {
++		optlen += GUE_PLEN_REMCSUM + GUE_LEN_PRIV;
++		need_priv = true;
++	}
+ 
+-	skb_push(skb, sizeof(struct guehdr));
++	hdrlen = sizeof(struct guehdr) + optlen;
++
++	skb_push(skb, hdrlen);
+ 
+ 	gueh = (struct guehdr *)skb->data;
+ 
+ 	gueh->control = 0;
+ 	gueh->version = 0;
+-	gueh->hlen = 0;
++	gueh->hlen = optlen >> 2;
+ 	gueh->flags = 0;
+ 	gueh->proto_ctype = *next_protocol;
+ 
++	data = &gueh[1];
++
++	if (need_priv) {
++		__be32 *flags = data;
++		u16 csum_start = skb_checksum_start_offset(skb);
++		__be16 *pd = data;
++
++		gueh->flags |= GUE_FLAG_PRIV;
++		*flags = 0;
++		data += GUE_LEN_PRIV;
++
++		if (csum_start < hdrlen)
++			return -EINVAL;
++
++		csum_start -= hdrlen;
++		pd[0] = htons(csum_start);
++		pd[1] = htons(csum_start + skb->csum_offset);
++
++		if (!skb_is_gso(skb)) {
++			skb->ip_summed = CHECKSUM_NONE;
++			skb->encapsulation = 0;
++		}
++
++		*flags |= GUE_PFLAG_REMCSUM;
++		data += GUE_PLEN_REMCSUM;
++	}
++
+ 	skb_push(skb, sizeof(struct udphdr));
+ 	skb_reset_transport_header(skb);
+ 
+@@ -1070,6 +1119,7 @@ ip_vs_tunnel_xmit(struct sk_buff *skb, struct ip_vs_conn *cp,
+ 	unsigned int max_headroom;		/* The extra header space needed */
+ 	int ret, local;
+ 	int tun_type, gso_type;
++	int tun_flags;
+ 
+ 	EnterFunction(10);
+ 
+@@ -1092,9 +1142,19 @@ ip_vs_tunnel_xmit(struct sk_buff *skb, struct ip_vs_conn *cp,
+ 	max_headroom = LL_RESERVED_SPACE(tdev) + sizeof(struct iphdr);
+ 
+ 	tun_type = cp->dest->tun_type;
++	tun_flags = cp->dest->tun_flags;
+ 
+-	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
+-		max_headroom += sizeof(struct udphdr) + sizeof(struct guehdr);
++	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
++		size_t gue_hdrlen, gue_optlen = 0;
++
++		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
++		    skb->ip_summed == CHECKSUM_PARTIAL) {
++			gue_optlen += GUE_PLEN_REMCSUM + GUE_LEN_PRIV;
++		}
++		gue_hdrlen = sizeof(struct guehdr) + gue_optlen;
++
++		max_headroom += sizeof(struct udphdr) + gue_hdrlen;
++	}
+ 
+ 	/* We only care about the df field if sysctl_pmtu_disc(ipvs) is set */
+ 	dfp = sysctl_pmtu_disc(ipvs) ? &df : NULL;
+@@ -1105,8 +1165,17 @@ ip_vs_tunnel_xmit(struct sk_buff *skb, struct ip_vs_conn *cp,
+ 		goto tx_error;
+ 
+ 	gso_type = __tun_gso_type_mask(AF_INET, cp->af);
+-	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
+-		gso_type |= SKB_GSO_UDP_TUNNEL;
++	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
++		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_CSUM) ||
++		    (tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM))
++			gso_type |= SKB_GSO_UDP_TUNNEL_CSUM;
++		else
++			gso_type |= SKB_GSO_UDP_TUNNEL;
++		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
++		    skb->ip_summed == CHECKSUM_PARTIAL) {
++			gso_type |= SKB_GSO_TUNNEL_REMCSUM;
++		}
++	}
+ 
+ 	if (iptunnel_handle_offloads(skb, gso_type))
+ 		goto tx_error;
+@@ -1115,8 +1184,19 @@ ip_vs_tunnel_xmit(struct sk_buff *skb, struct ip_vs_conn *cp,
+ 
+ 	skb_set_inner_ipproto(skb, next_protocol);
+ 
+-	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
+-		ipvs_gue_encap(net, skb, cp, &next_protocol);
++	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
++		bool check = false;
++
++		if (ipvs_gue_encap(net, skb, cp, &next_protocol))
++			goto tx_error;
++
++		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_CSUM) ||
++		    (tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM))
++			check = true;
++
++		udp_set_csum(!check, skb, saddr, cp->daddr.ip, skb->len);
++	}
++
+ 
+ 	skb_push(skb, sizeof(struct iphdr));
+ 	skb_reset_network_header(skb);
+@@ -1174,6 +1254,7 @@ ip_vs_tunnel_xmit_v6(struct sk_buff *skb, struct ip_vs_conn *cp,
+ 	unsigned int max_headroom;	/* The extra header space needed */
+ 	int ret, local;
+ 	int tun_type, gso_type;
++	int tun_flags;
+ 
+ 	EnterFunction(10);
+ 
+@@ -1197,9 +1278,19 @@ ip_vs_tunnel_xmit_v6(struct sk_buff *skb, struct ip_vs_conn *cp,
+ 	max_headroom = LL_RESERVED_SPACE(tdev) + sizeof(struct ipv6hdr);
+ 
+ 	tun_type = cp->dest->tun_type;
++	tun_flags = cp->dest->tun_flags;
+ 
+-	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
+-		max_headroom += sizeof(struct udphdr) + sizeof(struct guehdr);
++	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
++		size_t gue_hdrlen, gue_optlen = 0;
++
++		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
++		    skb->ip_summed == CHECKSUM_PARTIAL) {
++			gue_optlen += GUE_PLEN_REMCSUM + GUE_LEN_PRIV;
++		}
++		gue_hdrlen = sizeof(struct guehdr) + gue_optlen;
++
++		max_headroom += sizeof(struct udphdr) + gue_hdrlen;
++	}
+ 
+ 	skb = ip_vs_prepare_tunneled_skb(skb, cp->af, max_headroom,
+ 					 &next_protocol, &payload_len,
+@@ -1208,8 +1299,17 @@ ip_vs_tunnel_xmit_v6(struct sk_buff *skb, struct ip_vs_conn *cp,
+ 		goto tx_error;
+ 
+ 	gso_type = __tun_gso_type_mask(AF_INET6, cp->af);
+-	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
+-		gso_type |= SKB_GSO_UDP_TUNNEL;
++	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
++		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_CSUM) ||
++		    (tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM))
++			gso_type |= SKB_GSO_UDP_TUNNEL_CSUM;
++		else
++			gso_type |= SKB_GSO_UDP_TUNNEL;
++		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM) &&
++		    skb->ip_summed == CHECKSUM_PARTIAL) {
++			gso_type |= SKB_GSO_TUNNEL_REMCSUM;
++		}
++	}
+ 
+ 	if (iptunnel_handle_offloads(skb, gso_type))
+ 		goto tx_error;
+@@ -1218,8 +1318,18 @@ ip_vs_tunnel_xmit_v6(struct sk_buff *skb, struct ip_vs_conn *cp,
+ 
+ 	skb_set_inner_ipproto(skb, next_protocol);
+ 
+-	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE)
+-		ipvs_gue_encap(net, skb, cp, &next_protocol);
++	if (tun_type == IP_VS_CONN_F_TUNNEL_TYPE_GUE) {
++		bool check = false;
++
++		if (ipvs_gue_encap(net, skb, cp, &next_protocol))
++			goto tx_error;
++
++		if ((tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_CSUM) ||
++		    (tun_flags & IP_VS_TUNNEL_ENCAP_FLAG_REMCSUM))
++			check = true;
++
++		udp6_set_csum(!check, skb, &saddr, &cp->daddr.in6, skb->len);
++	}
+ 
+ 	skb_push(skb, sizeof(struct ipv6hdr));
+ 	skb_reset_network_header(skb);
+-- 
+2.21.0
+
