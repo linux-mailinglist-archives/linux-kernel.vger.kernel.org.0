@@ -2,91 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2DD2CF18
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 21:02:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76F8A2CEF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 20:51:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbfE1TCX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 15:02:23 -0400
-Received: from mail179-11.suw41.mandrillapp.com ([198.2.179.11]:55267 "EHLO
-        mail179-11.suw41.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726961AbfE1TCW (ORCPT
+        id S1726819AbfE1SvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 14:51:02 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36092 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbfE1SvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 15:02:22 -0400
-X-Greylist: delayed 900 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 May 2019 15:02:21 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
- h=From:Subject:To:Cc:Message-Id:References:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=LojlEPe8YR70GfOe6f/ftvxLfgd8jqj7S65SitE1l4c=;
- b=TXfkP60AvsSN5mk0Qy5l2u4NO/ZXLPtD30y1zgr7WkPaQxeSuHHAG7VcQ3gSRahkKWlOsGMTT35e
-   oWrfm2SPLRiewZt5UvkFItp/dq3tBjCyix00M274BOIhVvXPD5JU4Dq07el4g9XzqYjQY2H2+FTd
-   a1WyU2yLamHxAnqXxbQ=
-Received: from pmta04.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail179-11.suw41.mandrillapp.com id htm2rq22s28f for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 18:47:18 +0000 (envelope-from <bounce-md_31050260.5ced8236.v1-bfcc271fb3a2477ea827fd474912cc3d@mandrillapp.com>)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1559069238; h=From : 
- Subject : To : Cc : Message-Id : References : In-Reply-To : Date : 
- MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
- Subject : Date : X-Mandrill-User : List-Unsubscribe; 
- bh=LojlEPe8YR70GfOe6f/ftvxLfgd8jqj7S65SitE1l4c=; 
- b=pNBW4xRBG/Rfu8SQI2XJbOdJzB+cW0yJlmwOa2KlfwoE+MbJmZertWr5t1k+IwOokTQ4ow
- UalryLJF+1F9ILzXOOx9jwtRPiVcmgvIRjDxU72/LQpA9ey96NZ3rYtrbH6mq3lXU3BP/DA+
- WLXqzlDNHhby+rbtrO+Emc8MZs3u0=
-From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: Re: [PATCH 4.19 082/114] fuse: Add FOPEN_STREAM to use stream_open()
-Received: from [87.98.221.171] by mandrillapp.com id bfcc271fb3a2477ea827fd474912cc3d; Tue, 28 May 2019 18:47:18 +0000
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Message-Id: <20190528184712.GA3483@deco.navytux.spb.ru>
-References: <20190523181731.372074275@linuxfoundation.org> <20190523181739.135794147@linuxfoundation.org> <20190528111657.GA23674@amd>
-In-Reply-To: <20190528111657.GA23674@amd>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.bfcc271fb3a2477ea827fd474912cc3d
-X-Mandrill-User: md_31050260
-Date:   Tue, 28 May 2019 18:47:18 +0000
+        Tue, 28 May 2019 14:51:01 -0400
+Received: by mail-pl1-f194.google.com with SMTP id d21so8714214plr.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 11:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lf1AnB62qhw98+618ZGhLajUkR17f9jQjLMbh4Rz9FI=;
+        b=kJXW1iPNTRcAE9Q9c+VH9v1aGEM2iCTBz5wN+z65UUimrkHePkXEv0b0l1oY+anN4l
+         WIsHpNLC3mTITPs6iksgTo9vXGR7iiVtMgupJnyesqRdsCU7XksSIfRX6SkUDr9Ua0NT
+         6AlMO9VI9Z+gbyDrgMlrmb6zTJHLo4RwNbIMbpWdkvcgq+abFWdy2ljeukAmGlyZajgd
+         zkAemVggg2YN9e3RhMvUvBcU6gibx35AyMsE+/MWTuxHtwWM2cBccZWOC2sQ3gt6mG5W
+         86BQVnqAvexCPVBnKG/IbNWS4udQRaIMj+RnmDtF1wANiK65u4qnneGcmQ1X/LK36tIw
+         AyjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lf1AnB62qhw98+618ZGhLajUkR17f9jQjLMbh4Rz9FI=;
+        b=HpIxu9VS962xjxjNIJ8fikoONJMShC8mHLZ2lOcxKreVzCB9RSBa+GaS764T6ThPPx
+         U4McKnyAfRvZuBHmTGdmIivdXSYvAz8NYPgitC66kKDQTbuR2KvC1XBIrPirL6k0dGo/
+         FzevLLIcIOZXJdZZe3MXeM4X0/Pi6bJfkKlzGvXB9f8jva9SZ/7xxPNcLRIcsBpAgWew
+         CMOVKzgDhPVJfKT+uPts41WdQZGS2sqe5ua/BIP6g/Akn9ddGcJK5TeYSKIig5hxvCV2
+         Ft7q7MvsYFcbBN6EJ5It5XcNqwZjRauEg64oh3LynfIOKs+WOZm94yJVrxX9WoXJ5Mzi
+         TeSQ==
+X-Gm-Message-State: APjAAAWYfjyA2Xeg6yBqob7CC8hlfJB/xeJqJl2FlRmx7aXCjOFiJjin
+        bJQNAjVMB53lNBhQfqovdE1q1g==
+X-Google-Smtp-Source: APXvYqzvnaB3xomsPWJIxIOMgQ7SOE8O+VgQEpFlys1d3ApVfYJPufOQP6OgNmLxk/I7PpRdHvAZTQ==
+X-Received: by 2002:a17:902:a982:: with SMTP id bh2mr32098325plb.224.1559069460961;
+        Tue, 28 May 2019 11:51:00 -0700 (PDT)
+Received: from vader ([2620:10d:c090:200::3:6f81])
+        by smtp.gmail.com with ESMTPSA id i7sm15109099pfo.19.2019.05.28.11.50.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 28 May 2019 11:51:00 -0700 (PDT)
+Date:   Tue, 28 May 2019 11:50:59 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Peng Wang <wangpeng15@xiaomi.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peng Wang <rocking@whu.edu.cn>
+Subject: Re: [PATCH] block: use KMEM_CACHE macro
+Message-ID: <20190528185059.GB25022@vader>
+References: <20190527114835.2071-1-wangpeng15@xiaomi.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190527114835.2071-1-wangpeng15@xiaomi.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 01:16:58PM +0200, Pavel Machek wrote:
-> Hi!
+On Mon, May 27, 2019 at 07:48:35PM +0800, Peng Wang wrote:
+> From: Peng Wang <rocking@whu.edu.cn>
 > 
-> > +++ b/include/uapi/linux/fuse.h
-> > @@ -219,10 +219,12 @@ struct fuse_file_lock {
-> >   * FOPEN_DIRECT_IO: bypass page cache for this open file
-> >   * FOPEN_KEEP_CACHE: don't invalidate the data cache on open
-> >   * FOPEN_NONSEEKABLE: the file is not seekable
-> > + * FOPEN_STREAM: the file is stream-like (no file position at all)
-> >   */
-> >  #define FOPEN_DIRECT_IO		(1 << 0)
-> >  #define FOPEN_KEEP_CACHE	(1 << 1)
-> >  #define FOPEN_NONSEEKABLE	(1 << 2)
-> > +#define FOPEN_STREAM		(1 << 4)
+> Use the preferred KMEM_CACHE helper for brevity.
+
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+
+> Signed-off-by: Peng Wang <rocking@whu.edu.cn>
+> ---
+>  block/blk-core.c | 3 +--
+>  block/blk-ioc.c  | 3 +--
+>  2 files changed, 2 insertions(+), 4 deletions(-)
 > 
-> Interesting choice of constants. It is too late to change it now, but
-> was (1 << 3) meant here?
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index 1bf83a0df0f6..841bf0b12755 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -1789,8 +1789,7 @@ int __init blk_dev_init(void)
+>  	if (!kblockd_workqueue)
+>  		panic("Failed to create kblockd\n");
+>  
+> -	blk_requestq_cachep = kmem_cache_create("request_queue",
+> -			sizeof(struct request_queue), 0, SLAB_PANIC, NULL);
+> +	blk_requestq_cachep = KMEM_CACHE(request_queue, SLAB_PANIC);
+>  
+>  #ifdef CONFIG_DEBUG_FS
+>  	blk_debugfs_root = debugfs_create_dir("block", NULL);
+> diff --git a/block/blk-ioc.c b/block/blk-ioc.c
+> index 5ed59ac6ae58..58c79aeca955 100644
+> --- a/block/blk-ioc.c
+> +++ b/block/blk-ioc.c
+> @@ -408,8 +408,7 @@ struct io_cq *ioc_create_icq(struct io_context *ioc, struct request_queue *q,
+>  
+>  static int __init blk_ioc_init(void)
+>  {
+> -	iocontext_cachep = kmem_cache_create("blkdev_ioc",
+> -			sizeof(struct io_context), 0, SLAB_PANIC, NULL);
+> +	iocontext_cachep = KMEM_CACHE(io_context, SLAB_PANIC);
 
-It is just because this is 4.19 backport of original patch. There (on
-5.2) it was like this:
+This will change the name of the slab in slabinfo, but I can't imagine
+that matters.
 
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -232,11 +232,13 @@ struct fuse_file_lock {
-  * FOPEN_KEEP_CACHE: don't invalidate the data cache on open
-  * FOPEN_NONSEEKABLE: the file is not seekable
-  * FOPEN_CACHE_DIR: allow caching this directory
-+ * FOPEN_STREAM: the file is stream-like (no file position at all)
-  */
- #define FOPEN_DIRECT_IO        (1 << 0)
- #define FOPEN_KEEP_CACHE       (1 << 1)
- #define FOPEN_NONSEEKABLE      (1 << 2)
- #define FOPEN_CACHE_DIR        (1 << 3)
-+#define FOPEN_STREAM           (1 << 4)
- 
-
-i.e. (1 << 3) was already occupied by FOPEN_CACHE_DIR which was added by commit
-6433b8998a21 (fuse: add FOPEN_CACHE_DIR)
-
-Kirill
+>  	return 0;
+>  }
+>  subsys_initcall(blk_ioc_init);
+> -- 
+> 2.19.1
+> 
