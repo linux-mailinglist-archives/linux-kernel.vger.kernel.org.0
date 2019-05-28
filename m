@@ -2,110 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F34102CD36
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 19:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8B5E2CD4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 19:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfE1RKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 13:10:33 -0400
-Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:37146 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726515AbfE1RKd (ORCPT
+        id S1727344AbfE1RMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 13:12:03 -0400
+Received: from mail-ed1-f47.google.com ([209.85.208.47]:45417 "EHLO
+        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbfE1RMD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 13:10:33 -0400
-Received: from mailhost.synopsys.com (dc2-mailhost1.synopsys.com [10.12.135.161])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id BBDB7C0B37;
-        Tue, 28 May 2019 17:10:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1559063441; bh=LchI2eWfLBDHMLZRyfaGiC/saqLcWbp3hOs/bfvfbrY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=ZuoI4pQ4ItVFWgjcOnCDAzkER0o3GiRepAg+qbxBXVk09GNtOIT1IVLXimzvvIogF
-         vyuvHWmAr4lnojsdHWVWcLS0efphX/dHRzlQlQF5GDGab/H1lCRp3/y96837fXE7zl
-         9yRLLIig7ZHbAvukNMnv/VnjMvzC3oFsQ++qxZfJ4X0ySZSZUZJ6jVVPG9SrbKQNvv
-         QpaAJ70VMUMXrkZOz0jGW4Uv8OW+H7n/BeOCDA2UjXlUhEnoi4QuoXi9Oidkc2O1++
-         s62gB3Tq08uU/C5kVP5lAjk4JxvVLwZA3VhOzE93xzF1mpzYyJ6TlAA5fYOqrSJF1c
-         wSqGnNKd4a/bQ==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id CF0B7A009C;
-        Tue, 28 May 2019 17:10:32 +0000 (UTC)
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
- us01wehtc1.internal.synopsys.com (10.12.239.231) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 28 May 2019 10:10:32 -0700
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 28 May 2019 22:40:29 +0530
-Received: from [10.13.182.230] (10.13.182.230) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 28 May 2019 22:40:42 +0530
-Subject: Re: [PATCH] ARC: [plat-hsdk] Get rid of inappropriate PHY settings
-To:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        <linux-snps-arc@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>, Trent Piepho <tpiepho@impinj.com>,
-        "Rob Herring" <robh+dt@kernel.org>
-Newsgroups: gmane.linux.kernel,gmane.linux.kernel.arc
-References: <20190515153340.40074-1-abrodkin@synopsys.com>
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- mQINBFEffBMBEADIXSn0fEQcM8GPYFZyvBrY8456hGplRnLLFimPi/BBGFA24IR+B/Vh/EFk
- B5LAyKuPEEbR3WSVB1x7TovwEErPWKmhHFbyugdCKDv7qWVj7pOB+vqycTG3i16eixB69row
- lDkZ2RQyy1i/wOtHt8Kr69V9aMOIVIlBNjx5vNOjxfOLux3C0SRl1veA8sdkoSACY3McOqJ8
- zR8q1mZDRHCfz+aNxgmVIVFN2JY29zBNOeCzNL1b6ndjU73whH/1hd9YMx2Sp149T8MBpkuQ
- cFYUPYm8Mn0dQ5PHAide+D3iKCHMupX0ux1Y6g7Ym9jhVtxq3OdUI5I5vsED7NgV9c8++baM
- 7j7ext5v0l8UeulHfj4LglTaJIvwbUrCGgtyS9haKlUHbmey/af1j0sTrGxZs1ky1cTX7yeF
- nSYs12GRiVZkh/Pf3nRLkjV+kH++ZtR1GZLqwamiYZhAHjo1Vzyl50JT9EuX07/XTyq/Bx6E
- dcJWr79ZphJ+mR2HrMdvZo3VSpXEgjROpYlD4GKUApFxW6RrZkvMzuR2bqi48FThXKhFXJBd
- JiTfiO8tpXaHg/yh/V9vNQqdu7KmZIuZ0EdeZHoXe+8lxoNyQPcPSj7LcmE6gONJR8ZqAzyk
- F5voeRIy005ZmJJ3VOH3Gw6Gz49LVy7Kz72yo1IPHZJNpSV5xwARAQABtCpWaW5lZXQgR3Vw
- dGEgKGFsaWFzKSA8dmd1cHRhQHN5bm9wc3lzLmNvbT6JAj4EEwECACgCGwMGCwkIBwMCBhUI
- AgkKCwQWAgMBAh4BAheABQJbBYpwBQkLx0HcAAoJEGnX8d3iisJeChAQAMR2UVbJyydOv3aV
- jmqP47gVFq4Qml1weP5z6czl1I8n37bIhdW0/lV2Zll+yU1YGpMgdDTHiDqnGWi4pJeu4+c5
- xsI/VqkH6WWXpfruhDsbJ3IJQ46//jb79ogjm6VVeGlOOYxx/G/RUUXZ12+CMPQo7Bv+Jb+t
- NJnYXYMND2Dlr2TiRahFeeQo8uFbeEdJGDsSIbkOV0jzrYUAPeBwdN8N0eOB19KUgPqPAC4W
- HCg2LJ/o6/BImN7bhEFDFu7gTT0nqFVZNXlOw4UcGGpM3dq/qu8ZgRE0turY9SsjKsJYKvg4
- djAaOh7H9NJK72JOjUhXY/sMBwW5vnNwFyXCB5t4ZcNxStoxrMtyf35synJVinFy6wCzH3eJ
- XYNfFsv4gjF3l9VYmGEJeI8JG/ljYQVjsQxcrU1lf8lfARuNkleUL8Y3rtxn6eZVtAlJE8q2
- hBgu/RUj79BKnWEPFmxfKsaj8of+5wubTkP0I5tXh0akKZlVwQ3lbDdHxznejcVCwyjXBSny
- d0+qKIXX1eMh0/5sDYM06/B34rQyq9HZVVPRHdvsfwCU0s3G+5Fai02mK68okr8TECOzqZtG
- cuQmkAeegdY70Bpzfbwxo45WWQq8dSRURA7KDeY5LutMphQPIP2syqgIaiEatHgwetyVCOt6
- tf3ClCidHNaGky9KcNSQ
-Message-ID: <968eb5f2-1a9b-f9bb-8a49-ad5221c4d274@synopsys.com>
-Date:   Tue, 28 May 2019 10:10:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 28 May 2019 13:12:03 -0400
+Received: by mail-ed1-f47.google.com with SMTP id g57so18002494edc.12;
+        Tue, 28 May 2019 10:12:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lYImdE1K3cUe2xPFfKctCk0xbs1kFjS1GtFoys4OKEc=;
+        b=elCiHPbeF+3BBhnD/fPMTklieZ6tyszuUka6t0KBE7hW2jdKkIboHAtr25j9U95Ikf
+         SR3t7R2wiTTMWcxf6u57nFDB1rYVtF62i57wVAJy1V+qT3ODXA7vw+48/1p9QfEAw9vY
+         DJl0xtovDV+V4awLz00+qFO1WJDc8lLT7dkPYd6XqRr70FHdTOUG/5hF9qC4mmAkntHu
+         bcyEqiiMQXF9pVYSYJrJI3prNpAgmZBe15Z9fNX+yf9F644uNPXzhU1sSOshy8aDUp/W
+         feiD9ySMIUcHhvNQ6Kb7ctoHYRqqebGN6QPFHqzlxm6aBLO3Y6Wx0OygowJJiPaIpyaQ
+         +aAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lYImdE1K3cUe2xPFfKctCk0xbs1kFjS1GtFoys4OKEc=;
+        b=gkjukjqnUTTW2RRr6sLqd7HEDChRs8F98gW7M4X9Q3p93CzPU9Vio4U9aEeP4j3mpN
+         2WKiLbyMPdNKnO/6VFgLZbP6TA6XyQ7bC5/9235SgJcG1GD5ZK8kiJAcn9TMeJAAI3N2
+         rrIQ83g0WBx7JErCFY0JATzSvqqqwQktboSjZSE/J86urFE7C9jQ19TKIXZgSQpinqSl
+         yqj8P3seFh5mzGnJkDs/JoRG9FiI5wADeBHJIjywPmrXvqmL1MFxY1EYrcNlxz4UwH3s
+         AuFUlsdXN9j5KG11T3ZbbbGHhSpQ10Pqm0W2eFGshSaDFSD1IIrjbb3rpaAiiDPWsRNQ
+         llpg==
+X-Gm-Message-State: APjAAAXl7Ynb9TsUtGqrCzBHaWN+Tp+3Mx53A12D/VcQ1rRJ/IlWtk2Z
+        ntkVoLRLVwXZzbugpSwbXQgWIf0ja37i1cyKBZA=
+X-Google-Smtp-Source: APXvYqyAvOfbFAAK6aMyy93n7UREJlpiHInet91UkneecigYVrJX7593QPls/vDRXj8AibJ87Uas7h5rWHEPU6WqUys=
+X-Received: by 2002:a17:906:76c8:: with SMTP id q8mr70324783ejn.229.1559063521332;
+ Tue, 28 May 2019 10:12:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190515153340.40074-1-abrodkin@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.13.182.230]
+References: <20190523210651.80902-1-fklassen@appneta.com> <20190523210651.80902-5-fklassen@appneta.com>
+ <CAF=yD-KBNLr5KY-YQ1KMmZGCpYNefSJKaJkZNOwd8nRiedpQtA@mail.gmail.com>
+ <879E5DA6-3A4F-4CE1-9DA5-480EE30109DE@appneta.com> <CAF=yD-LQT7=4vvMwMa96_SFuUd5GywMoae7hGi9n6rQeuhhxuQ@mail.gmail.com>
+ <5BB184F2-6C20-416B-B2AF-A678400CFE3E@appneta.com> <CAF=yD-+6CRyqL6Fq5y2zpw5nnDitYC7G1c2JAVHZTjyw68DYJg@mail.gmail.com>
+ <903DEC70-845B-4C4B-911D-2F203C191C27@appneta.com> <CAF=yD-Le0XKCfyDBvHmBRVqkwn1D6ZoG=12gss5T62VcN5+1_w@mail.gmail.com>
+ <9811659B-6D5A-4C4F-9CF8-735E9CA6DE4E@appneta.com> <CAF=yD-KcX-zCgZFVVVMU7JFy+gJwRpUoViA_mWdM4QtHNr685g@mail.gmail.com>
+In-Reply-To: <CAF=yD-KcX-zCgZFVVVMU7JFy+gJwRpUoViA_mWdM4QtHNr685g@mail.gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Tue, 28 May 2019 13:11:24 -0400
+Message-ID: <CAF=yD-J2eNn4xNu37ekXfDGMtzQjOPVrWJ+EaLqdJmFcrnk8pA@mail.gmail.com>
+Subject: Re: [PATCH net 4/4] net/udpgso_bench_tx: audit error queue
+To:     Fred Klassen <fklassen@appneta.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Willem de Bruijn <willemb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/15/19 8:33 AM, Alexey Brodkin wrote:
-> Initial bring-up of the platform was done on FPGA prototype
-> where TI's DP83867 PHY was used. And so some specific PHY
-> options were added.
-> 
-> Just to confirm this is what we get on FPGA prototype in the bootlog:
-> | TI DP83867 stmmac-0:00: attached PHY driver [TI DP83867] ...
-> 
-> On real board though we have Micrel KZS9031 PHY and we even have
-> CONFIG_MICREL_PHY=y set in hsdk_defconfig. That's what we see in the bootlog:
-> | Micrel KSZ9031 Gigabit PHY stmmac-0:00: ...
-> 
-> So essentially all TI-related bits have to go away.
-> 
-> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
-> Cc: Trent Piepho <tpiepho@impinj.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
+ > Now that I know the issue is only in TCP, I can speculate that all bytes are
+> > being reported, but done with fewer messages. It may warrant some
+> > investigation in case there is some kind of bug.
+>
+> This would definitely still be a bug and should not happen. We have
+> quite a bit of experience with TCP zerocopy and I have not run into
+> this in practice, so I do think that it is somehow a test artifact.
 
-Added to for-curr.
-
-Thx,
--Vineet
+To be clear, I'm not saying that it is an artifact of your extensions.
+It's quite likely that the zerocopy benchmark was a bit flaky in that
+regard all along. No need to spend further time on that for this
+patchset.
