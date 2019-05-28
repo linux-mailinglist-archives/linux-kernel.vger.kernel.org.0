@@ -2,82 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08C512C2BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:08:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 461A82C2C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:08:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727618AbfE1JIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:08:18 -0400
-Received: from mail-oi1-f179.google.com ([209.85.167.179]:45668 "EHLO
-        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727467AbfE1JIO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:08:14 -0400
-Received: by mail-oi1-f179.google.com with SMTP id w144so13663224oie.12
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kDByEXQ6Hf0CbYi5tGfeP4Y/wNBK9tNQLpjcw1bOeZo=;
-        b=OP/IgysQdXyBC7aWcc8ztRELyrZYczvf6ydXAFrauGcAeQPQ0aQnrLJXIIYpVOmxav
-         P0uChtMDV5cZ69pAuopjFCS5FE2RovXlnTPZzChBtLIav+10P9CnxY/BWxIGjVBzCQeP
-         6TjLD3xAnXvZm6vT318aWMnXZamSlqFjbL0Oo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kDByEXQ6Hf0CbYi5tGfeP4Y/wNBK9tNQLpjcw1bOeZo=;
-        b=k03N1h0KIi5FXXDdV1gCvb3XFWPAd1OTvkWw4TA7ZE4NWIR0aMpp1O/tXvZO+GSkv8
-         F2xJbAUYGpniftGg3iCDinTtC5RFhwTO4opbqcjXJbOfCIDucjGLFzb5eeRpDvMOclqf
-         t2Tb0zTHW/NVsM1uOLu9yKUygmNmZupGxyOmnF3Gi2uT1AcARCQJ0FDwFTN9aIktes9U
-         HycXp5HngtYxZWneNdwYQuKdMCWpyqpGpiIz1LGYrWrcvmk2YGIslW/MPr9EjF5E+EnP
-         ydfKOKuEG6d4XaJI0gNWNuMo1e6h9QLsufy1jDbwkG2kSun2fmiWWJ+mzw95+SjNU0sG
-         V62A==
-X-Gm-Message-State: APjAAAWTGeM14LUW74bhGW333PbaIX3QVWw+xous5ry8bC1Pc7Vz+wyp
-        EUSWlBszEUkKGgZSJ8GvcknotDhaOpU=
-X-Google-Smtp-Source: APXvYqw1+KEfXSdPe2JjK6lBZWtDD5lKwgKVwFT7jPa9WFdUG9hi+yH8yfPofONPP2cstSGePt0qLw==
-X-Received: by 2002:aca:ac0f:: with SMTP id v15mr1970460oie.147.1559034493589;
-        Tue, 28 May 2019 02:08:13 -0700 (PDT)
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com. [209.85.167.182])
-        by smtp.gmail.com with ESMTPSA id g23sm4585252otr.71.2019.05.28.02.08.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 02:08:12 -0700 (PDT)
-Received: by mail-oi1-f182.google.com with SMTP id 203so13657892oid.13
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:08:12 -0700 (PDT)
-X-Received: by 2002:aca:3c1:: with SMTP id 184mr2080922oid.170.1559034491936;
- Tue, 28 May 2019 02:08:11 -0700 (PDT)
+        id S1727673AbfE1JIg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:08:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45920 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727401AbfE1JIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:08:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 784DAB010;
+        Tue, 28 May 2019 09:08:23 +0000 (UTC)
+Date:   Tue, 28 May 2019 11:08:21 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Daniel Colascione <dancol@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Sonny Rao <sonnyrao@google.com>,
+        Brian Geffon <bgeffon@google.com>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [RFC 7/7] mm: madvise support MADV_ANONYMOUS_FILTER and
+ MADV_FILE_FILTER
+Message-ID: <20190528090821.GU1658@dhcp22.suse.cz>
+References: <20190520092801.GA6836@dhcp22.suse.cz>
+ <20190521025533.GH10039@google.com>
+ <20190521062628.GE32329@dhcp22.suse.cz>
+ <20190527075811.GC6879@google.com>
+ <20190527124411.GC1658@dhcp22.suse.cz>
+ <20190528032632.GF6879@google.com>
+ <20190528062947.GL1658@dhcp22.suse.cz>
+ <20190528081351.GA159710@google.com>
+ <CAKOZuesnS6kBFX-PKJ3gvpkv8i-ysDOT2HE2Z12=vnnHQv0FDA@mail.gmail.com>
+ <20190528084927.GB159710@google.com>
 MIME-Version: 1.0
-References: <20190528055635.12109-1-acourbot@chromium.org> <20190528055635.12109-5-acourbot@chromium.org>
- <fa11a504-071e-f786-8564-cb7e95248f64@xs4all.nl>
-In-Reply-To: <fa11a504-071e-f786-8564-cb7e95248f64@xs4all.nl>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Tue, 28 May 2019 18:08:00 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MWKm2DxRdtWur80EkxvLYj_t7Dr62E2h0Xdm5A6wURV5A@mail.gmail.com>
-Message-ID: <CAPBb6MWKm2DxRdtWur80EkxvLYj_t7Dr62E2h0Xdm5A6wURV5A@mail.gmail.com>
-Subject: Re: [RFCv1 04/12] media: mtk-vcodec: fix copyright indent
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Yunfei Dong <yunfei.dong@mediatek.com>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190528084927.GB159710@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 6:07 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> On 5/28/19 7:56 AM, Alexandre Courbot wrote:
-> > From: Yunfei Dong <yunfei.dong@mediatek.com>
-> >
-> > Minor identation fix for copyright notice in a few source files.
->
-> How about converting to using SPDX as well?
+On Tue 28-05-19 17:49:27, Minchan Kim wrote:
+> On Tue, May 28, 2019 at 01:31:13AM -0700, Daniel Colascione wrote:
+> > On Tue, May 28, 2019 at 1:14 AM Minchan Kim <minchan@kernel.org> wrote:
+> > > if we went with the per vma fd approach then you would get this
+> > > > feature automatically because map_files would refer to file backed
+> > > > mappings while map_anon could refer only to anonymous mappings.
+> > >
+> > > The reason to add such filter option is to avoid the parsing overhead
+> > > so map_anon wouldn't be helpful.
+> > 
+> > Without chiming on whether the filter option is a good idea, I'd like
+> > to suggest that providing an efficient binary interfaces for pulling
+> > memory map information out of processes.  Some single-system-call
+> > method for retrieving a binary snapshot of a process's address space
+> > complete with attributes (selectable, like statx?) for each VMA would
+> > reduce complexity and increase performance in a variety of areas,
+> > e.g., Android memory map debugging commands.
+> 
+> I agree it's the best we can get *generally*.
+> Michal, any opinion?
 
-Yeah, that would be much better. Should have thought about it.
+I am not really sure this is directly related. I think the primary
+question that we have to sort out first is whether we want to have
+the remote madvise call process or vma fd based. This is an important
+distinction wrt. usability. I have only seen pid vs. pidfd discussions
+so far unfortunately.
+
+An interface to query address range information is a separate but
+although a related topic. We have /proc/<pid>/[s]maps for that right
+now and I understand it is not a general win for all usecases because
+it tends to be slow for some. I can see how /proc/<pid>/map_anons could
+provide per vma information in a binary form via a fd based interface.
+But I would rather not conflate those two discussions much - well except
+if it could give one of the approaches more justification but let's
+focus on the madvise part first.
+-- 
+Michal Hocko
+SUSE Labs
