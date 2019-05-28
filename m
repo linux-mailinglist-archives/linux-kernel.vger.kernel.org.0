@@ -2,66 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FFE72BDAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 05:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1902BDA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 05:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbfE1DXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 23:23:06 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52677 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727775AbfE1DXF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 23:23:05 -0400
-Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4S3LsiP018860;
-        Tue, 28 May 2019 12:21:54 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
- Tue, 28 May 2019 12:21:54 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4S3Lo5X018841
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 28 May 2019 12:21:54 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC] printk/sysrq: Don't play with console_loglevel
-To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-References: <20190528002412.1625-1-dima@arista.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <4a9c1b20-777d-079a-33f5-ddf0a39ff788@i-love.sakura.ne.jp>
-Date:   Tue, 28 May 2019 12:21:47 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728090AbfE1DWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 23:22:23 -0400
+Received: from ozlabs.org ([203.11.71.1]:42241 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728012AbfE1DWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 23:22:22 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45CfKQ6Xj1z9s5c;
+        Tue, 28 May 2019 13:22:17 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christian Brauner <christian@brauner.io>, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        torvalds@linux-foundation.org, fweimer@redhat.com
+Cc:     jannh@google.com, oleg@redhat.com, tglx@linutronix.de,
+        arnd@arndb.de, shuah@kernel.org, dhowells@redhat.com,
+        tkjos@android.com, ldv@altlinux.org, miklos@szeredi.hu,
+        Christian Brauner <christian@brauner.io>,
+        linux-api@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] tests: add close_range() tests
+In-Reply-To: <20190524111047.6892-4-christian@brauner.io>
+References: <20190524111047.6892-1-christian@brauner.io> <20190524111047.6892-4-christian@brauner.io>
+Date:   Tue, 28 May 2019 13:22:10 +1000
+Message-ID: <87zhn7p8kd.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20190528002412.1625-1-dima@arista.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/05/28 9:24, Dmitry Safonov wrote:
-> Provide KERN_UNSUPPRESSED printk() annotation for such legacy places.
-> Make sysrq print the headers unsuppressed instead of changing
-> console_loglevel.
+Christian Brauner <christian@brauner.io> writes:
+> This adds basic tests for the new close_range() syscall.
+> - test that no invalid flags can be passed
+> - test that a range of file descriptors is correctly closed
+> - test that a range of file descriptors is correctly closed if there there
+>   are already closed file descriptors in the range
+> - test that max_fd is correctly capped to the current fdtable maximum
+>
+> Signed-off-by: Christian Brauner <christian@brauner.io>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Dmitry V. Levin <ldv@altlinux.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Florian Weimer <fweimer@redhat.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: linux-api@vger.kernel.org
+> Cc: linux-kselftest@vger.kernel.org
+> ---
+> v1: unchanged
+> v2:
+> - Christian Brauner <christian@brauner.io>:
+>   - verify that close_range() correctly closes a single file descriptor
+> v3:
+> - Christian Brauner <christian@brauner.io>:
+>   - add missing Cc for Shuah
+>   - add missing Cc for linux-kselftest
 
-I think that kdb also wants to use KERN_UNSUPPRESSED for making sure
-that messages are printed. But that user calls dump function which is
-indirectly calling printk() many times. Thus, I think that we need a
-way to explicitly pass "how the message should be treated" as a
-function argument.
+Sorry I replied to v2, but I think my comments still apply:
 
-What I suggested in my proposal ("printk: Introduce "store now but print later" prefix." at
-https://lore.kernel.org/lkml/1550896930-12324-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp/T/#u )
-is "whether the caller wants to defer printing to consoles regarding
-this printk() call". And your suggestion is "whether the caller wants
-to apply ignore_loglevel regarding this printk() call".
+https://lore.kernel.org/lkml/8736kzqpdm.fsf@concordia.ellerman.id.au/
 
+cheers
