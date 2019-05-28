@@ -2,141 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A74232C4B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:48:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 750C52C4BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:49:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbfE1KsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 06:48:06 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:55177 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726547AbfE1KsG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 06:48:06 -0400
-Received: by mail-io1-f70.google.com with SMTP id t7so15557267iof.21
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 03:48:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=0nui5Erb9mPjKkGbLUOeBj8g+XDIbbULEjjyl9kXiHU=;
-        b=OjkHHYCGwQjRCaUnfMcb6cTjMzxierh9x9e3q6Ae9y5zNadfK6VQA3xm0jju6AwQVm
-         ICnlqK1sp2J4HuWPCzb6CjAxTwalvCjxbOGXvsLVS4iysd+4SZkmNmONGBcsnIuobUSZ
-         tLcsq8uV00NL8DP9dJUJHE5SJD5j9aCfEqIl4HT7UlKhqhXdRlynyBRwribd4zjTDTgr
-         hAjvtpYHZys34WxyY1xp4GaS9Coq4OLJ5KibMgTUAR0eQliRaYpO35Z8jc367TZWx/08
-         6pwq/iWFR//QsUxP7W4tSZyMsJOunIj2ipeYyQz7VBNs3j6lRqItIIeInJEoH/PI04bx
-         9EoA==
-X-Gm-Message-State: APjAAAWI+PZqNVLk+UHLP4hdcnlplisb3tYSPfqLh0ZU0VJ/+Fmv/b0t
-        tJ3hP0CX66EF/NBpKtJeOD/YoA0+HbMnut6iXtQkjR27Db1K
-X-Google-Smtp-Source: APXvYqwOl9+z3XSVgq/rWqTJjMm0wzXaZIrMXRTXxNwn6ciNwHUq+gQi/t8avgjA3A9klnIUAhByu5nHzGzhvdjuep01l8PC9bDC
+        id S1726734AbfE1KtD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 06:49:03 -0400
+Received: from foss.arm.com ([217.140.101.70]:54900 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726282AbfE1KtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 06:49:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25BF3341;
+        Tue, 28 May 2019 03:49:03 -0700 (PDT)
+Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7C4173F59C;
+        Tue, 28 May 2019 03:49:01 -0700 (PDT)
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-sh@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-m68k@lists.linux-m68k.org
+Subject: [PATCH RESEND 0/7] entry: preempt_schedule_irq() callers scrub
+Date:   Tue, 28 May 2019 11:48:41 +0100
+Message-Id: <20190528104848.13160-1-valentin.schneider@arm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:5547:: with SMTP id e68mr2727057itb.83.1559040485433;
- Tue, 28 May 2019 03:48:05 -0700 (PDT)
-Date:   Tue, 28 May 2019 03:48:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000532b860589f0669a@google.com>
-Subject: general protection fault in cdev_del
-From:   syzbot <syzbot+67b2bd0e34f952d0321e@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi,
 
-syzbot found the following crash on:
+This is the (RESEND of the) continuation of [1] where I'm hunting down
+preempt_schedule_irq() callers because of [2].
 
-HEAD commit:    69bbe8c7 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=178e4526a00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c309d28e15db39c5
-dashboard link: https://syzkaller.appspot.com/bug?extid=67b2bd0e34f952d0321e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10dc5d54a00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17cae526a00000
+I told myself the best way to get this moving forward wouldn't be to write
+doc about it, but to go write some fixes and get some discussions going,
+which is what this patch-set is about.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+67b2bd0e34f952d0321e@syzkaller.appspotmail.com
+I've looked at users of preempt_schedule_irq(), and made sure they didn't
+have one of those useless loops. The list of offenders is:
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN PTI
-CPU: 1 PID: 2486 Comm: kworker/1:2 Not tainted 5.2.0-rc1+ #9
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:cdev_del+0x22/0x90 fs/char_dev.c:592
-Code: cf 0f 1f 80 00 00 00 00 55 48 89 fd 48 83 ec 08 e8 93 a5 d5 ff 48 8d  
-7d 64 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
-89 f8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 4f 48
-RSP: 0018:ffff8881d18e7218 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: ffff8881d249a100 RCX: ffffffff820d879e
-RDX: 000000000000000c RSI: ffffffff8167705d RDI: 0000000000000064
-RBP: 0000000000000000 R08: ffff8881d18d1800 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff8881d25c9100 R14: 0000000000000000 R15: ffff8881cc2a8070
-FS:  0000000000000000(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f35af318000 CR3: 00000001cc182000 CR4: 00000000001406e0
-Call Trace:
-  tty_unregister_device drivers/tty/tty_io.c:3192 [inline]
-  tty_unregister_device+0x10d/0x1a0 drivers/tty/tty_io.c:3187
-  hso_serial_tty_unregister drivers/net/usb/hso.c:2245 [inline]
-  hso_create_bulk_serial_device drivers/net/usb/hso.c:2682 [inline]
-  hso_probe.cold+0xc8/0x120 drivers/net/usb/hso.c:2948
-  usb_probe_interface+0x30b/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x287/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:777
-  bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e6/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x1700 drivers/base/core.c:2111
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0xa2/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x287/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c4/0x230 drivers/base/dd.c:777
-  bus_for_each_drv+0x15e/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e6/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x1700 drivers/base/core.c:2111
-  usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
-  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
-  port_event drivers/usb/core/hub.c:5350 [inline]
-  hub_event+0x1adc/0x35a0 drivers/usb/core/hub.c:5432
-  process_one_work+0x90a/0x1580 kernel/workqueue.c:2268
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2414
-  kthread+0x30e/0x420 kernel/kthread.c:254
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 3b56fa5a205cba42 ]---
-RIP: 0010:cdev_del+0x22/0x90 fs/char_dev.c:592
-Code: cf 0f 1f 80 00 00 00 00 55 48 89 fd 48 83 ec 08 e8 93 a5 d5 ff 48 8d  
-7d 64 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
-89 f8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 4f 48
-RSP: 0018:ffff8881d18e7218 EFLAGS: 00010207
-RAX: dffffc0000000000 RBX: ffff8881d249a100 RCX: ffffffff820d879e
-RDX: 000000000000000c RSI: ffffffff8167705d RDI: 0000000000000064
-RBP: 0000000000000000 R08: ffff8881d18d1800 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff8881d25c9100 R14: 0000000000000000 R15: ffff8881cc2a8070
-FS:  0000000000000000(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f35af318000 CR3: 00000001cc182000 CR4: 00000000001406e0
+$ grep -r -I "preempt_schedule_irq" arch/ | cut -d/ -f2 | sort | uniq
+
+  arc
+  arm
+  arm64
+  c6x
+  csky
+  h8300
+  ia64
+  m68k
+  microblaze
+  mips
+  nds32
+  nios2
+  parisc
+  powerpc
+  riscv
+  s390
+  sh
+  sparc
+  x86
+  xtensa
+
+Regarding that loop, archs seem to fall in 3 categories:
+A) Those that don't have the loop
+B) Those that have a small need_resched() loop around the
+   preempt_schedule_irq() callsite
+C) Those that branch to some more generic code further up the entry code
+   and eventually branch back to preempt_schedule_irq()
+
+arc, m68k, nios2 fall in A)
+sparc, ia64, s390 fall in C)
+all the others fall in B)
+
+I've written patches for B). As of 5.2-rc2 mainline contains those for:
+- arm64
+- mips
+- x86
+- powerpc
+- nds32
+
+I've also got acks for:
+- c6x
+- xtensa
+
+The remaining ones for which I haven't had a reply yet (hence the RESEND) are:
+- csky
+- h8300
+- microblaze
+- riscv
+- sh
+- sh64
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Build-tested on:
+- h8300
+- c6x
+- microblaze
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Thanks,
+Valentin
+
+[1]: https://lore.kernel.org/lkml/20190131182339.9835-1-valentin.schneider@arm.com/
+[2]: https://lore.kernel.org/lkml/cc989920-a13b-d53b-db83-1584a7f53edc@arm.com/
+
+Valentin Schneider (7):
+  sched/core: Fix preempt_schedule() interrupt return comment
+  csky: entry: Remove unneeded need_resched() loop
+  h8300: entry: Remove unneeded need_resched() loop
+  microblaze: entry: Remove unneeded need_resched() loop
+  RISC-V: entry: Remove unneeded need_resched() loop
+  sh: entry: Remove unneeded need_resched() loop
+  sh64: entry: Remove unneeded need_resched() loop
+
+ arch/csky/kernel/entry.S       | 4 ----
+ arch/h8300/kernel/entry.S      | 3 +--
+ arch/microblaze/kernel/entry.S | 5 -----
+ arch/riscv/kernel/entry.S      | 3 +--
+ arch/sh/kernel/cpu/sh5/entry.S | 5 +----
+ arch/sh/kernel/entry-common.S  | 4 +---
+ kernel/sched/core.c            | 7 +++----
+ 7 files changed, 7 insertions(+), 24 deletions(-)
+
+--
+2.20.1
+
