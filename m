@@ -2,89 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86E922C096
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 09:51:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92BD02C0A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 09:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbfE1Hv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 03:51:28 -0400
-Received: from mail-eopbgr710084.outbound.protection.outlook.com ([40.107.71.84]:2923
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727803AbfE1Hv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 03:51:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m+ZGXyNlu+DEZIzl3oJPMCulW9rKxU8isikVn4/nLUY=;
- b=mT9JjZ5/wtUuLc2UJDX/US5d/5bTWeE1opnYpSfNLWz9kqUOyF/HjVRqrCEda+PG70hSqiOYnl+fsJyUZzEkUyCpIK8Rbn2T8iT8dyOR9o0r/tE2QNZqmp1QPN7BwWP/923ybSrf45XvCiYTmrJeuVMzCVBl+LAJbPO/GMhjNrw=
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.31.141) by
- BN7PR08MB5522.namprd08.prod.outlook.com (20.176.29.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.22; Tue, 28 May 2019 07:51:22 +0000
-Received: from BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::8d6c:f350:4859:e532]) by BN7PR08MB5684.namprd08.prod.outlook.com
- ([fe80::8d6c:f350:4859:e532%4]) with mapi id 15.20.1922.021; Tue, 28 May 2019
- 07:51:22 +0000
-From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To:     Avri Altman <avri.altman@wdc.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-CC:     Avi Shchislowski <avi.shchislowski@wdc.com>,
-        Alex Lemberg <alex.lemberg@wdc.com>
-Subject: RE: [EXT] [PATCH] scsi: ufs: Check that space was properly alloced in
- copy_query_response
-Thread-Topic: [EXT] [PATCH] scsi: ufs: Check that space was properly alloced
- in copy_query_response
-Thread-Index: AQHVD669lSVnBatUYkear3B63M9d+aZ+2CBA
-Date:   Tue, 28 May 2019 07:51:22 +0000
-Message-ID: <BN7PR08MB5684B0A4DB8BC0A00D9D6877DB1E0@BN7PR08MB5684.namprd08.prod.outlook.com>
-References: <1558427062-5084-1-git-send-email-avri.altman@wdc.com>
-In-Reply-To: <1558427062-5084-1-git-send-email-avri.altman@wdc.com>
-Accept-Language: en-150, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=beanhuo@micron.com; 
-x-originating-ip: [195.89.176.137]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 660ec111-b5d8-4f2f-f582-08d6e3414736
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN7PR08MB5522;
-x-ms-traffictypediagnostic: BN7PR08MB5522:|BN7PR08MB5522:
-x-microsoft-antispam-prvs: <BN7PR08MB5522E98CDE2793EB9850D4FDDB1E0@BN7PR08MB5522.namprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:608;
-x-forefront-prvs: 00514A2FE6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39860400002)(396003)(136003)(376002)(199004)(189003)(2501003)(110136005)(54906003)(2201001)(86362001)(68736007)(4326008)(316002)(6116002)(3846002)(25786009)(6246003)(2906002)(66446008)(186003)(26005)(558084003)(14454004)(478600001)(476003)(64756008)(446003)(11346002)(486006)(66946007)(76116006)(73956011)(66476007)(66556008)(7696005)(8936002)(8676002)(229853002)(6436002)(81156014)(81166006)(52536014)(5660300002)(7736002)(305945005)(66066001)(99286004)(7416002)(33656002)(71190400001)(71200400001)(53936002)(102836004)(6506007)(76176011)(74316002)(256004)(55016002)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB5522;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: micron.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: oibEA+6PsQrHBjpIaJ6Q/YuPbF9u1Ku8U+IaDE4qaSJ4JgnkFhcaYLu2NGaL+7/qyPYW3g1ldkBY8ULI5nN4rUQzHg8+a3sJlEknXzeFKs0mQWPyKRyfJfMKgjKnN14dtT1v7vIqIg495S1sLH97Lyh4W9TIyowNrxEqiu+6eyR8jbHyKSha3uY+h10XvvEv8It5ahdSHnoB3QeF+3MJRpZPb29a8F01JUMCc30XE256mUPpnoHH6SqUUqd++9eErvlxC922v9qqWjCEx8rqPXknva08PR28wuH4cYpJKw5GzjkeOhpK6AonUpixWS7vnXkBanq0Kg33bBgY1zK4klDJ9l1zUSE0h1XAHmib/i8SQ8qHxI3D8Z9sHIuYGqsUtuDfbmz3PSEF5zUGwSMaSKwgyBuGcoAFLqzIjUDOAVo=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727688AbfE1Hxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 03:53:37 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52881 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbfE1Hxf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 03:53:35 -0400
+Received: by mail-it1-f193.google.com with SMTP id t184so2767560itf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 00:53:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PwpZM8H7YLCCXst1uTeA0ehiQjYxPanrQx8rycjOA8Q=;
+        b=PaDGUarqrwpn2WcZZXubIFwn/6XV9UCbOFvCg6kTbDsTzqCLbHOOZ7QtA06c8hxWTV
+         vP8X9KiDQuqkX+tx7S57VyKMl/UK4cHRxZMJWdx33DW2ImQsx2YVeFYbnbEMODSZfaZW
+         cYTIhj5G5/ydQa71BrGhnw5rQHltAXiD3tX1ZDbrHd6eFJn+oDnwZ+ranKYrTHKbhAcz
+         w/x8Cc4gS2RkQh+i2xStLMXPa9FyrgscAalR1ecTPhTwm1kUMAETKylg0DPBDWLIq376
+         0M7m/jtHooSIK41pslNmsCzUETVmsCXJ8kEn5GTx1DhynYTeIKSdSj5E/UjUEnurRoZe
+         geqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PwpZM8H7YLCCXst1uTeA0ehiQjYxPanrQx8rycjOA8Q=;
+        b=flejNce1f+hpDGZDTzag/TmNKt+ZK3FxawTg71bJX0zDCAry9JeYu5ocmdSVwc5/Fz
+         K1wppN671nQgH5o3LSW9ctNDPs/mPw0Rsar+motjbf/f5lExaIRjlY9ZiA1v9vQ6dUTz
+         u4FPWnuuSn+Fw8vYpS99PnVc3tuc4G52PC4tvU7kx3t6euc8qLZ7rPQOwd/FWda5Mlwm
+         jjFM3+Q/gMM/M3BJQQ6lsTkycnaqKEfmApr1Kb0/IgOeKRSzq96GbRIl/wSGAtypJvJh
+         o93dtdCYjTiUcLjaDHerE0ulbMhv+wEKM93cBPGdlzz4tgixhLC1cyH1weuTvA7sk6dP
+         5lcA==
+X-Gm-Message-State: APjAAAWmL3+zjw7fqI8n4xB7dQSUFFlFbsCGvX7iHSJQTMMe4kFqQDJX
+        Bs6fmqwR1rCGEr/IYRh8Ac8zGYTmOlZq9zZyufrOXw==
+X-Google-Smtp-Source: APXvYqx4v3128ddJmwxIcyynhnVz7bSpXbvNiRgGqgnx1+rCJVGoTIJ3VybznY4MnF7+otMs/Z93UfFghNBLkkLjS4c=
+X-Received: by 2002:a24:3cb:: with SMTP id e194mr1991692ite.132.1559030014542;
+ Tue, 28 May 2019 00:53:34 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 660ec111-b5d8-4f2f-f582-08d6e3414736
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2019 07:51:22.5907
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: beanhuo@micron.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB5522
+References: <20190521105203.154043-1-darekm@google.com> <16889839-b4e9-9984-2e36-5f07ceb7d7f2@xs4all.nl>
+In-Reply-To: <16889839-b4e9-9984-2e36-5f07ceb7d7f2@xs4all.nl>
+From:   Dariusz Marcinkiewicz <darekm@google.com>
+Date:   Tue, 28 May 2019 09:53:23 +0200
+Message-ID: <CALFZZQH7-mzRZbji1w-UwRLdw6c8+CThn0e96oG8E2Eq1ivANQ@mail.gmail.com>
+Subject: Re: [PATCH v7 1/3] media: cec: expose HDMI connector to CEC dev mapping
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     linux-media@vger.kernel.org, hans.verkuil@cisco.com,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Avri
+On Fri, May 24, 2019 at 11:21 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
 >
->Signed-off-by: Avri Altman <avri.altman@wdc.com>
-Acked-by: Bean Huo <beanhuo@micron.com>
+> Hi Dariusz,
+>
+> I did some more testing with the Khadas VIM2 and found another problem,
+> something that will, unfortunately, require some redesign.
+>
+...
+>
+> The other problem is in the CEC driver: it creates the CEC device as
+> soon as the HDMI device is found (cec_notifier_parse_hdmi_phandle).
+>
+> But that doesn't mean that the HDMI device also had registered itself
+> as a CEC notifier.
+>
+> Until now that never mattered: as long as the HDMI device was found
+> the CEC adapter would function fine, it would just have no physical
+> address until so notified by the HDMI device once it registered its
+> CEC notifier.
+>
+> But if we want to have valid connector info during the lifetime of
+> the CEC adapter, then this no longer works.
+>
+> I'm not entirely sure how to handle this.
+>
+> Another issue here is that when the HDMI driver removes the notifier,
+> then it should also zero the connector info. Remember that both the
+> HDMI and the CEC drivers can be loaded and unloaded independently from
+> one another.
+>
+Given all of the above, what do you think about coming back to the v1
+of the patch, where a connector info could be set on an adapter at any
+time and an event was used to notify userland when that happened? That
+approach seems to cover all the scenarios mentioned above.
 
-Thanks,
-//Bean
+Thank you for testing the patches!
+
+Best regards.
