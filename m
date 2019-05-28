@@ -2,266 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6428B2C4B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:47:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58A8D2C4B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbfE1Kq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 06:46:59 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54330 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfE1Kq6 (ORCPT
+        id S1726711AbfE1KsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 06:48:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47004 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbfE1KsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 06:46:58 -0400
-Received: by mail-it1-f193.google.com with SMTP id h20so3485609itk.4
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 03:46:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=F3TeIN+4xcJEdyAPxkfOrWv1K9CVlbB4++P0LsFRYE0=;
-        b=rRgPqZE/dtEvwpAz9wajK/4aWnoPku5uQ4Uv01lw+jheieupAmztxpIq1/R7sxe0GO
-         pLgHf/vxJYkopZgmezoTHs6ZhKSfPX3TDNKW5XG/PNg0JmqlYrSAzc2mqSiFDxJzbaBI
-         uNhdISENBC0OIpMGeQI0THDWIMJ1eX24yJfRCYMO067jj6GExVbvUnJKWsGxO+cUiCO+
-         3rHVEniWsxNVaOrkw4C9JqKO48OlX1P0XbncTvyI/7JmF1QZXFFfwtdPEtwzfVBP7qB+
-         5kzo0X6nl86AXduQzjlqgQgazW1mp9SHx8xWomJlL18/oWnOSwFLgWF5Zc7q4nYyGdld
-         AshA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=F3TeIN+4xcJEdyAPxkfOrWv1K9CVlbB4++P0LsFRYE0=;
-        b=EDGiS+dDkqv+XDTHCg7SYemaGCFf2Dqir2cPFtOKeNbtB4soLNaHZB6qzcOQnnPy35
-         g+VzYQ92FmMxq3lUedSp3gfWUfpvxzNp4ldkK0Duo6hWdPEEtcXVaLESTBd+yBnx69go
-         F1mfqOgxvSb5HZpCUu8IP6GbB4EpQ+bG3fsbfcjK8+IPgAss3bL4eT4pAs/D8h+Pka0s
-         jE0REqzWnlMrl+TGmLXKixeGb5lRJ2gyIgPIzz1fOrSvSk7Hqrs2A6N3Y3jHyoDT7GsN
-         AIJ7/F44vZ3IWlCenfMhGpWLxHtdouyv3U2Phb0r3MQK8gTsv8bHvK7VGYO/hK1TvrYh
-         k1Zw==
-X-Gm-Message-State: APjAAAU18e295dxSWEEYRbehs5fTWtzV5ep/ADkCnpI/5SCsb1fu8grN
-        e0VyVlaVFdljdHnxBk94HB75Qw6In8TLdGkrgrwpsg==
-X-Google-Smtp-Source: APXvYqzS64YNrK2eO1HuvnNjODThawRTxy4oRRn8E9tbFsdmKUL7lOhiKbT5+XxghKkcPcwZ6TRc6I35tY1FjSgJKQU=
-X-Received: by 2002:a24:910b:: with SMTP id i11mr2778804ite.76.1559040417731;
- Tue, 28 May 2019 03:46:57 -0700 (PDT)
+        Tue, 28 May 2019 06:48:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RkNAaQnFGQavYiriTPKlPs3zV7ehPx3Q5wBuIkfcSyQ=; b=N5gqwYZkhKw5xd3HaXD+oKNxk
+        7cRQ/oGaV9aX3rkUf1/5FQZvH0tG0X10+CakLOYduKuyAweNgLDRjVZLuAfR5zF78tlCFV5cG12O0
+        Kax9nSIj/coHdRxD34yq9onu0e9K1Mr44je4DrL6JDwx+4oh3fcA5VVZ2wGvbCMPvYbc1Z4XwoHiq
+        r0zY0HFL8GBkP5HgiyfQeWSWB4sXQF1YADcr9jy16IyVumfhGZf9hEbfNJ5B2KMXjC06XUQ0WBf4S
+        vqzvEOhRbrWwZPUwjlviUQEOuppvCpbmPhtc1XdKrYnD7mPn7Pf6/Oko6DmCTy8yR5tZDMyTjyQKe
+        ygubRKysA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVZda-00033A-HC; Tue, 28 May 2019 10:47:22 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0AB552072908C; Tue, 28 May 2019 12:47:20 +0200 (CEST)
+Date:   Tue, 28 May 2019 12:47:19 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, aou@eecs.berkeley.edu, arnd@arndb.de,
+        bp@alien8.de, catalin.marinas@arm.com, davem@davemloft.net,
+        fenghua.yu@intel.com, heiko.carstens@de.ibm.com,
+        herbert@gondor.apana.org.au, ink@jurassic.park.msu.ru,
+        jhogan@kernel.org, linux@armlinux.org.uk, mattst88@gmail.com,
+        mingo@kernel.org, mpe@ellerman.id.au, palmer@sifive.com,
+        paul.burton@mips.com, paulus@samba.org, ralf@linux-mips.org,
+        rth@twiddle.net, stable@vger.kernel.org, tglx@linutronix.de,
+        tony.luck@intel.com, vgupta@synopsys.com,
+        gregkh@linuxfoundation.org, jhansen@vmware.com, vdasa@vmware.com,
+        aditr@vmware.com, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 00/18] locking/atomic: atomic64 type cleanup
+Message-ID: <20190528104719.GN2623@hirez.programming.kicks-ass.net>
+References: <20190522132250.26499-1-mark.rutland@arm.com>
+ <20190523083013.GA4616@andrea>
+ <20190523101926.GA3370@lakrids.cambridge.arm.com>
+ <20190524103731.GN2606@hirez.programming.kicks-ass.net>
+ <20190524111807.GS2650@hirez.programming.kicks-ass.net>
+ <20190524114220.GA4260@fuggles.cambridge.arm.com>
+ <20190524115231.GN2623@hirez.programming.kicks-ass.net>
+ <20190524224340.GA3792@andrea>
 MIME-Version: 1.0
-References: <20190524041814.7497-1-atish.patra@wdc.com> <CAKv+Gu9U56b50TrfriBfRFed_1aoXg2Y624tu7v5m2y+6DVq5w@mail.gmail.com>
- <20190527221619.fkxtzk4jpeyfoptf@excalibur.cnev.de> <3178D175-18AD-47D0-8D51-CB2900DFA572@sifive.com>
- <MN2PR04MB60610CF4829D5251A112CF9C8D1E0@MN2PR04MB6061.namprd04.prod.outlook.com>
- <20190528082248.awjwbz44lp6ak3m3@excalibur.cnev.de> <MN2PR04MB6061590CE56092CB79D96AA48D1E0@MN2PR04MB6061.namprd04.prod.outlook.com>
-In-Reply-To: <MN2PR04MB6061590CE56092CB79D96AA48D1E0@MN2PR04MB6061.namprd04.prod.outlook.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 28 May 2019 12:46:45 +0200
-Message-ID: <CAKv+Gu_7bQaBf8+94VKHT3bYGWbTnHoTWy20pa1Bj9e1o3cAOA@mail.gmail.com>
-Subject: Re: [v4 PATCH] RISC-V: Add an Image header that boot loader can parse.
-To:     Anup Patel <Anup.Patel@wdc.com>
-Cc:     Karsten Merker <merker@debian.org>,
-        Troy Benjegerdes <troy.benjegerdes@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Zong Li <zong@andestech.com>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        Nick Kossifidis <mick@ics.forth.gr>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190524224340.GA3792@andrea>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 May 2019 at 12:34, Anup Patel <Anup.Patel@wdc.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Karsten Merker <merker@debian.org>
-> > Sent: Tuesday, May 28, 2019 1:53 PM
-> > To: Anup Patel <Anup.Patel@wdc.com>
-> > Cc: Troy Benjegerdes <troy.benjegerdes@sifive.com>; Karsten Merker
-> > <merker@debian.org>; Albert Ou <aou@eecs.berkeley.edu>; Jonathan
-> > Corbet <corbet@lwn.net>; Ard Biesheuvel <ard.biesheuvel@linaro.org>;
-> > linux-kernel@vger.kernel.org List <linux-kernel@vger.kernel.org>; Zong =
-Li
-> > <zong@andestech.com>; Atish Patra <Atish.Patra@wdc.com>; Palmer
-> > Dabbelt <palmer@sifive.com>; paul.walmsley@sifive.com; Nick Kossifidis
-> > <mick@ics.forth.gr>; linux-riscv@lists.infradead.org;
-> > marek.vasut@gmail.com
-> > Subject: Re: [v4 PATCH] RISC-V: Add an Image header that boot loader ca=
-n
-> > parse.
-> >
-> > On Tue, May 28, 2019 at 03:54:02AM +0000, Anup Patel wrote:
-> > > > From: Troy Benjegerdes <troy.benjegerdes@sifive.com>
-> > > > > On May 27, 2019, at 5:16 PM, Karsten Merker <merker@debian.org>
-> > > > wrote:
-> > > > >
-> > > > > On Mon, May 27, 2019 at 04:34:57PM +0200, Ard Biesheuvel wrote:
-> > > > >> On Fri, 24 May 2019 at 06:18, Atish Patra <atish.patra@wdc.com>
-> > wrote:
-> > > > >>> Currently, the last stage boot loaders such as U-Boot can accep=
-t
-> > > > >>> only uImage which is an unnecessary additional step in
-> > > > >>> automating boot process.
-> > > > >>>
-> > > > >>> Add an image header that boot loader understands and boot Linux
-> > > > >>> from flat Image directly.
-> > > > >>>
-> > > > >>> This header is based on ARM64 boot image header and provides an
-> > > > >>> opportunity to combine both ARM64 & RISC-V image headers in
-> > future.
-> > > > >>>
-> > > > >>> Also make sure that PE/COFF header can co-exist in the same
-> > > > >>> image so that EFI stub can be supported for RISC-V in future.
-> > > > >>> EFI specification needs PE/COFF image header in the beginning o=
-f
-> > > > >>> the kernel image in order to load it as an EFI application. In
-> > > > >>> order to support EFI stub, code0 should be replaced with "MZ"
-> > > > >>> magic string and res4(at offset 0x3c) should point to the rest
-> > > > >>> of the PE/COFF header (which will be added during EFI support).
-> > > > > [...]
-> > > > >>> Documentation/riscv/boot-image-header.txt | 50
-> > > > ++++++++++++++++++
-> > > > >>> arch/riscv/include/asm/image.h            | 64
-> > +++++++++++++++++++++++
-> > > > >>> arch/riscv/kernel/head.S                  | 32 ++++++++++++
-> > > > >>> 3 files changed, 146 insertions(+) create mode 100644
-> > > > >>> Documentation/riscv/boot-image-header.txt
-> > > > >>> create mode 100644 arch/riscv/include/asm/image.h
-> > > > >>>
-> > > > >>> diff --git a/Documentation/riscv/boot-image-header.txt
-> > > > >>> b/Documentation/riscv/boot-image-header.txt
-> > > > >>> new file mode 100644
-> > > > >>> index 000000000000..68abc2353cec
-> > > > >>> --- /dev/null
-> > > > >>> +++ b/Documentation/riscv/boot-image-header.txt
-> > > > >>> @@ -0,0 +1,50 @@
-> > > > >>> +                               Boot image header in RISC-V
-> > > > >>> + Linux
-> > > > >>> +
-> > > > >>> + =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > >>> +
-> > > > >>> +Author: Atish Patra <atish.patra@wdc.com> Date  : 20 May 2019
-> > > > >>> +
-> > > > >>> +This document only describes the boot image header details for
-> > > > >>> +RISC-V
-> > > > Linux.
-> > > > >>> +The complete booting guide will be available at
-> > > > Documentation/riscv/booting.txt.
-> > > > >>> +
-> > > > >>> +The following 64-byte header is present in decompressed Linux
-> > > > >>> +kernel
-> > > > image.
-> > > > >>> +
-> > > > >>> +       u32 code0;                /* Executable code */
-> > > > >>> +       u32 code1;                /* Executable code */
-> > > > >>
-> > > > >> Apologies for not mentioning this in my previous reply, but give=
-n
-> > > > >> that you already know that you will need to put the magic string
-> > > > >> MZ at offset 0x0, it makes more sense to not put any code there
-> > > > >> at all, but educate the bootloader that the first executable
-> > > > >> instruction is at offset 0x20, and put the spare fields right
-> > > > >> after it in case you ever need more than 2 slots. (On arm64, we
-> > > > >> were lucky to be able to find an opcode that happened to contain
-> > > > >> the MZ bit pattern and act almost like a NOP, but it seems silly
-> > > > >> to rely on that for RISC-V as
-> > > > >> well)
-> > > > >>
-> > > > >> So something like
-> > > > >>
-> > > > >> u16 pe_res1;  /* MZ for EFI bootable images, don't care otherwis=
-e */
-> > > > >> u8 magic[6];    /* "RISCV\0"
-> > > > >>
-> > > > >> u64 text_offset;          /* Image load offset, little endian */
-> > > > >> u64 image_size;           /* Effective Image size, little endian=
- */
-> > > > >> u64 flags;                /* kernel flags, little endian */
-> > > > >>
-> > > > >> u32 code0;                /* Executable code */
-> > > > >> u32 code1;                /* Executable code */
-> > > > >>
-> > > > >> u64 reserved[2];     /* reserved for future use */
-> > > > >>
-> > > > >> u32 version;              /* Version of this header */
-> > > > >> u32 pe_res2;                 /* Reserved for PE COFF offset */
-> > > > >
-> > > > > Hello,
-> > > > >
-> > > > > wouldn't that immediately break existing systems (including qemu
-> > > > > when loading kernels with the "-kernel" option) that rely on the
-> > > > > fact that the kernel entry point is always at the kernel load
-> > > > > address?  The
-> > > > > ARM64 header and Atish's original RISC-V proposal based on the
-> > > > > ARM64 header keep the property that jumping to the kernel load
-> > > > > address always works, regardless of what the particular header
-> > > > > looks like and which potential future extensions it includes, but
-> > > > > the proposed change above wouldn't do that.
-> > > > >
-> > > > > Although I agree that having to integrate the "MZ" string as an
-> > > > > instruction isn't particularly nice, I don't think that this is a
-> > > > > sufficient justification for breaking compatibility with prior
-> > > > > kernel releases and/or existing boot firmware.  On RISC-V, the
-> > > > > "MZ" string is a compressed load immediate to x20/s4, i.e. an
-> > > > > instruction that should be "harmless" as far as the kernel boot
-> > > > > flow is concerned as the
-> > > > > x20/s4 register AFAIK doesn't contain any information that the
-> > > > > kernel would use.
-> > > > >
-> > > > > Regards,
-> > > > > Karsten
-> > > > >
-> > > >
-> > > > Yes, that would break existing systems. Besides, the qemu -kernel
-> > > > option uses the vmlinux elf file, and I think a better solution is
-> > > > make =E2=80=98loadelf=E2=80=99 work, and include a second method fo=
-r EFI.
-> > > >
-> > > > (unfortunately, I had to drop some lists as I=E2=80=99m having trou=
-ble
-> > > > sending to them via gmail, so the CC list on my response has been
-> > > > limited)
-> > >
-> > > Nopes, it works perfectly fine on QEMU RISC-V.
-> > >
-> > > Just like ARM64, we are lucky for RISC-V as well. The "MZ" string is =
-a
-> > > harmless load instruction in RISC-V so we don't need any changes in Q=
-EMU.
-> >
-> > Hello,
-> >
-> > just to avoid misunderstandings: Atish, does your "Nopes, it works perf=
-ectly
-> > fine on QEMU RISC-V" refer to your original header proposal or to Ard's
-> > modified header proposal?  For your proposal I agree that it works with=
-out
->
-> Sorry for the confusion. I meant here that adding "MZ" at start in Atish'=
-s
-> proposed header works fine on QEMU.
->
-> > problems in all cases that have worked before introduction of the heade=
-r,
-> > i.e. adding your proposed header is completely transparent, but as desc=
-ribed
-> > above I have doubts that the same is true for the (different) header fo=
-rmat
-> > that Ard has proposed above.
->
-> Yes, Ard's proposed header will break booting on current QEMU and
-> existing HW. I think Ard's proposed header was to address the case if
-> "MZ" was not a valid and harmless instruction in RISC-V. Other than
-> that Ard's proposal is similar to Atish's proposal but organized differen=
-tly.
->
-> For Atish's proposed header, we are certainly relying on the fact that
-> "MZ" represents a valid and harmless instruction (just like ARM64) but
-> this approach is allowing us to boot Linux RISC-V kernel without breaking
-> existing booting methods.
->
+On Sat, May 25, 2019 at 12:43:40AM +0200, Andrea Parri wrote:
+> > ---
+> > Subject: Documentation/atomic_t.txt: Clarify pure non-rmw usage
+> > 
+> > Clarify that pure non-RMW usage of atomic_t is pointless, there is
+> > nothing 'magical' about atomic_set() / atomic_read().
+> > 
+> > This is something that seems to confuse people, because I happen upon it
+> > semi-regularly.
+> > 
+> > Acked-by: Will Deacon <will.deacon@arm.com>
+> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  Documentation/atomic_t.txt | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/atomic_t.txt b/Documentation/atomic_t.txt
+> > index dca3fb0554db..89eae7f6b360 100644
+> > --- a/Documentation/atomic_t.txt
+> > +++ b/Documentation/atomic_t.txt
+> > @@ -81,9 +81,11 @@ SEMANTICS
+> >  
+> >  The non-RMW ops are (typically) regular LOADs and STOREs and are canonically
+> >  implemented using READ_ONCE(), WRITE_ONCE(), smp_load_acquire() and
+> > -smp_store_release() respectively.
+> > +smp_store_release() respectively. Therefore, if you find yourself only using
+> > +the Non-RMW operations of atomic_t, you do not in fact need atomic_t at all
+> > +and are doing it wrong.
+> 
+> The counterargument (not so theoretic, just look around in the kernel!) is:
+> we all 'forget' to use READ_ONCE() and WRITE_ONCE(), it should be difficult
+> or more difficult to forget to use atomic_read() and atomic_set()...   IAC,
+> I wouldn't call any of them 'wrong'.
 
-Fair enough. If you guys can live with it, then so can I :-)
+I'm thinking you mean that the type system isn't helping us with
+READ/WRITE_ONCE() like it does with atomic_t ? And while I agree that
+there is room for improvement there, that doesn't mean we should start
+using atomic*_t all over the place for that.
+
+Part of the problem with READ/WRITE_ONCE() is that it serves a dual
+purpose; we've tried to untangle that at some point, but Linus wasn't
+having it.
