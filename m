@@ -2,110 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31CC22CA36
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A92B82CA3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:20:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbfE1PTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 11:19:43 -0400
-Received: from mail-qk1-f175.google.com ([209.85.222.175]:42695 "EHLO
-        mail-qk1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbfE1PTm (ORCPT
+        id S1727732AbfE1PUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 11:20:45 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37790 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727157AbfE1PUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 11:19:42 -0400
-Received: by mail-qk1-f175.google.com with SMTP id b18so17244063qkc.9
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 08:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AgIhMjtQNDDLn24P5b2RW+PI0xzMqgCFH6A7C0wsOiI=;
-        b=m7fyQeV7CZ6ZSShPV+qHLYPEyovT0Pf1jg9sUYkXEGGGuQHlUcqvStoublnPJRGznl
-         f9N5qiUBxw3wM8fPfbs2QheWVQHb82/A0Yw7an8Xzpey7H3vb4si0MxsMA2oZT+vf+o0
-         LOrWeyd60+5oofoNbhC60aUrvy9WnZ+FeygDKJ3zJI3mr6G58NFWSDLvGKQ2g777kEkD
-         JShm/3o1wN4kV9AR2iCWi0e7ZwVAB60aNMii47BN/2PD5xvA2kAQEhYx6o/jocvPzxGm
-         l7k+n9GkiT6wNe4/67lGFjx2FCuaw+gWzqyKY7xhnfw2vFMJgPK7R0qq8BuIJYTFeCXk
-         +TMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AgIhMjtQNDDLn24P5b2RW+PI0xzMqgCFH6A7C0wsOiI=;
-        b=SP/jOnVncow3W9tnsJv/itfWbEwSj5foQ09U63dqSoLCzUrMHtAkVJ1Gbmo+tBZY1U
-         N3bduG3ndl8P6VUYm9HwkaiXWiWTjYI4zbKhp7Ne9X6L7v5HoRQC7IGJSb048vRFR3Fu
-         8ADbn8DJy/PSQgIXll260pqfV3spsN+mCr4DU+ebcEQXZRsZirAm9jCuVCER3Rpcgznl
-         5EzwhSqhWVPknQG43eFY4LNUkm8hiHSeORidDfscSZieA0mYlXr4KomI43R/Ut7Sf6L+
-         RT8jmrbJTZqmgTuPytuZQKGITWusL2OuHIp5jkAJXAEiEvt8efxKzEFO+4tIfLFjMq45
-         eSrg==
-X-Gm-Message-State: APjAAAUXUD1OZKydLOfByafs/BvAM3YqQzsF2DZ4VZzLbzM7fTF92hFN
-        rK3Tbk8fV8rMhQ9+mwyVoYU=
-X-Google-Smtp-Source: APXvYqypvW8CIf8Szln6z6gT7Hd5MCneaucTQoe3QXTh/l4QZR2vPpDxb3LhXgbFxDXNuZpg696+0w==
-X-Received: by 2002:ac8:4442:: with SMTP id m2mr8678987qtn.107.1559056781293;
-        Tue, 28 May 2019 08:19:41 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.11])
-        by smtp.gmail.com with ESMTPSA id 39sm6552033qtx.71.2019.05.28.08.19.40
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 28 May 2019 08:19:40 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 4491841149; Tue, 28 May 2019 12:19:38 -0300 (-03)
-Date:   Tue, 28 May 2019 12:19:38 -0300
-To:     Raphael Gault <raphael.gault@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, mark.rutland@arm.com
-Subject: Re: [RFC 1/7] perf: arm64: Compile tests unconditionally
-Message-ID: <20190528151938.GC13830@kernel.org>
-References: <20190528150320.25953-1-raphael.gault@arm.com>
- <20190528150320.25953-2-raphael.gault@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190528150320.25953-2-raphael.gault@arm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Tue, 28 May 2019 11:20:44 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4SFIwUs106082;
+        Tue, 28 May 2019 15:20:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=BraWV+myHX0oYeZ82rQTj5/p9jWbV8UVzgAblODYn0k=;
+ b=FTK7Qq63tc6cG2Rz/0P6mHUausYK+89T2+BkneNc45MDacXTfIuBg7hzn/N5m3SNEh8N
+ thj1me47t11r4snz4mcSrT0i3pkRvUqyqBHW0aEzzsO5CyPpKNBiy6b6M7nvHDPNaZsJ
+ Vs1gKcGjP33o7uodGUlnBmtF5cjHWxj8WVwhyprjOiF9/ovrLPXt2p7Y1CnA1gd0Hcb5
+ 45vLkyYROIWaERoDq5+LeeP4S6prRPWGNZlwgUuDnFLLsYh8VXU9uadVjZ5c989OYNYX
+ LtpR5BVgUKm4sg/LhJrCT/9S5hofAYJRHI+j/QYZahcSQOLcdGHceR2C9RvRoAjDAXY5 aQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2spxbq3u5h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 May 2019 15:20:00 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4SFJwR1143353;
+        Tue, 28 May 2019 15:20:00 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2sr31uqjay-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 May 2019 15:20:00 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4SFJtt2012670;
+        Tue, 28 May 2019 15:19:55 GMT
+Received: from anon-dhcp-171.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 28 May 2019 08:19:55 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH -next] lockd: Make two symbols static
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <20190528151331.GA29554@fieldses.org>
+Date:   Tue, 28 May 2019 11:19:53 -0400
+Cc:     Benjamin Coddington <bcodding@redhat.com>,
+        YueHaibing <yuehaibing@huawei.com>, jlayton@kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <534DECA5-DFC5-497C-8023-6D7F859F8148@oracle.com>
+References: <20190528090652.13288-1-yuehaibing@huawei.com>
+ <97D052EC-1F07-4210-81CC-7E0085C095BD@redhat.com>
+ <20190528151331.GA29554@fieldses.org>
+To:     Bruce Fields <bfields@fieldses.org>
+X-Mailer: Apple Mail (2.3445.104.11)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9270 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=960
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905280099
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9270 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=994 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905280099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, May 28, 2019 at 04:03:14PM +0100, Raphael Gault escreveu:
-> In order to subsequently add more tests for the arm64 architecture
-> we compile the tests target for arm64 systematically.
 
-Humm, the subject doesn't match the description? I.e. it _was_
-unconditionally built, now it is only built if CONFIG_DWARF_UNWIND is
-set to 'y'.
 
-- Arnaldo
- 
-> Signed-off-by: Raphael Gault <raphael.gault@arm.com>
-> ---
->  tools/perf/arch/arm64/Build       | 2 +-
->  tools/perf/arch/arm64/tests/Build | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> On May 28, 2019, at 11:13 AM, J. Bruce Fields <bfields@fieldses.org> wrote:
 > 
-> diff --git a/tools/perf/arch/arm64/Build b/tools/perf/arch/arm64/Build
-> index 36222e64bbf7..a7dd46a5b678 100644
-> --- a/tools/perf/arch/arm64/Build
-> +++ b/tools/perf/arch/arm64/Build
-> @@ -1,2 +1,2 @@
->  perf-y += util/
-> -perf-$(CONFIG_DWARF_UNWIND) += tests/
-> +perf-y += tests/
-> diff --git a/tools/perf/arch/arm64/tests/Build b/tools/perf/arch/arm64/tests/Build
-> index 41707fea74b3..a61c06bdb757 100644
-> --- a/tools/perf/arch/arm64/tests/Build
-> +++ b/tools/perf/arch/arm64/tests/Build
-> @@ -1,4 +1,4 @@
->  perf-y += regs_load.o
-> -perf-y += dwarf-unwind.o
-> +perf-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
->  
->  perf-y += arch-tests.o
-> -- 
-> 2.17.1
+> On Tue, May 28, 2019 at 06:49:13AM -0400, Benjamin Coddington wrote:
+>> Maintainers, what's the best thing to do here: fold these into
+>> another patch version and post it (add attribution)?  Add it as
+>> another patch at the end of the series?
+> 
+> Either would be fine.  Yeah, if it was folded in then we'd add a line
+> like
+> 
+> 	[hulkci@huawei.com: make symbols static to fix sparse warnings]
+> 
+> But I'll probably just add it on to the end for now.  No need for you to
+> do anything.
+> 
+>> I have learned my lesson: add sparse to my workflow.
+> 
+> I dunno, I wonder if we're better off just leaving it to this CI bot.
+> It seems like a more efficient use of time overall than making every
+> contributor run it.
 
--- 
+Occasionally sparse can catch a real problem that breaks bisectability.
+Better to do this kind of checking early, and ensure that you test those
+sparse-fixed bits.
 
-- Arnaldo
+
+--
+Chuck Lever
+
+
+
