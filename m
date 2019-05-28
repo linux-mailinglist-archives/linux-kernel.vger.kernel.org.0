@@ -2,113 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACB532BD9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 05:21:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FFE72BDAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 05:23:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728003AbfE1DUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 27 May 2019 23:20:37 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17171 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727342AbfE1DUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 27 May 2019 23:20:37 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id CD19AA2EA6348A357050;
-        Tue, 28 May 2019 11:20:34 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 28 May
- 2019 11:20:24 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v3 2/2] staging: erofs: fix i_blocks calculation
-Date:   Tue, 28 May 2019 11:19:43 +0800
-Message-ID: <20190528031943.239665-2-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190528031943.239665-1-gaoxiang25@huawei.com>
-References: <20190528023147.94117-2-gaoxiang25@huawei.com>
- <20190528031943.239665-1-gaoxiang25@huawei.com>
+        id S1728126AbfE1DXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 27 May 2019 23:23:06 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52677 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727775AbfE1DXF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 27 May 2019 23:23:05 -0400
+Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x4S3LsiP018860;
+        Tue, 28 May 2019 12:21:54 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
+ Tue, 28 May 2019 12:21:54 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126012062002.bbtec.net [126.12.62.2])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x4S3Lo5X018841
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 28 May 2019 12:21:54 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC] printk/sysrq: Don't play with console_loglevel
+To:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <20190528002412.1625-1-dima@arista.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <4a9c1b20-777d-079a-33f5-ddf0a39ff788@i-love.sakura.ne.jp>
+Date:   Tue, 28 May 2019 12:21:47 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190528002412.1625-1-dima@arista.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For compressed files, i_blocks should not be calculated
-by using i_size. use i_u.compressed_blocks instead.
+On 2019/05/28 9:24, Dmitry Safonov wrote:
+> Provide KERN_UNSUPPRESSED printk() annotation for such legacy places.
+> Make sysrq print the headers unsuppressed instead of changing
+> console_loglevel.
 
-In addition, i_blocks was miscalculated for non-compressed
-files previously, fix it as well.
+I think that kdb also wants to use KERN_UNSUPPRESSED for making sure
+that messages are printed. But that user calls dump function which is
+indirectly calling printk() many times. Thus, I think that we need a
+way to explicitly pass "how the message should be treated" as a
+function argument.
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
-change log v3:
- - wrap i.u.compressed_blocks with le32_to_cpu() as Chao pointed out;
-
-change log v2:
- - fix description in commit message;
- - fix to 'inode->i_blocks = nblks << LOG_SECTORS_PER_BLOCK'.
-
-Thanks,
-Gao Xiang
-
- drivers/staging/erofs/inode.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
-index 1c220900e1a0..9520419f746c 100644
---- a/drivers/staging/erofs/inode.c
-+++ b/drivers/staging/erofs/inode.c
-@@ -20,6 +20,7 @@ static int read_inode(struct inode *inode, void *data)
- 	struct erofs_vnode *vi = EROFS_V(inode);
- 	struct erofs_inode_v1 *v1 = data;
- 	const unsigned int advise = le16_to_cpu(v1->i_advise);
-+	erofs_blk_t nblks = 0;
- 
- 	vi->data_mapping_mode = __inode_data_mapping(advise);
- 
-@@ -60,6 +61,10 @@ static int read_inode(struct inode *inode, void *data)
- 			le32_to_cpu(v2->i_ctime_nsec);
- 
- 		inode->i_size = le64_to_cpu(v2->i_size);
-+
-+		/* total blocks for compressed files */
-+		if (vi->data_mapping_mode == EROFS_INODE_LAYOUT_COMPRESSION)
-+			nblks = le32_to_cpu(v2->i_u.compressed_blocks);
- 	} else if (__inode_version(advise) == EROFS_INODE_LAYOUT_V1) {
- 		struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
- 
-@@ -90,6 +95,8 @@ static int read_inode(struct inode *inode, void *data)
- 			sbi->build_time_nsec;
- 
- 		inode->i_size = le32_to_cpu(v1->i_size);
-+		if (vi->data_mapping_mode == EROFS_INODE_LAYOUT_COMPRESSION)
-+			nblks = le32_to_cpu(v1->i_u.compressed_blocks);
- 	} else {
- 		errln("unsupported on-disk inode version %u of nid %llu",
- 		      __inode_version(advise), vi->nid);
-@@ -97,8 +104,11 @@ static int read_inode(struct inode *inode, void *data)
- 		return -EIO;
- 	}
- 
--	/* measure inode.i_blocks as the generic filesystem */
--	inode->i_blocks = ((inode->i_size - 1) >> 9) + 1;
-+	if (!nblks)
-+		/* measure inode.i_blocks as generic filesystems */
-+		inode->i_blocks = roundup(inode->i_size, EROFS_BLKSIZ) >> 9;
-+	else
-+		inode->i_blocks = nblks << LOG_SECTORS_PER_BLOCK;
- 	return 0;
- }
- 
--- 
-2.17.1
+What I suggested in my proposal ("printk: Introduce "store now but print later" prefix." at
+https://lore.kernel.org/lkml/1550896930-12324-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp/T/#u )
+is "whether the caller wants to defer printing to consoles regarding
+this printk() call". And your suggestion is "whether the caller wants
+to apply ignore_loglevel regarding this printk() call".
 
