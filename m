@@ -2,97 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C4B2C310
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:24:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 203552C31E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfE1JX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:23:59 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:48790 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726279AbfE1JX7 (ORCPT
+        id S1726856AbfE1J0m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:26:42 -0400
+Received: from www62.your-server.de ([213.133.104.62]:38192 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726279AbfE1J0l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:23:59 -0400
-X-UUID: dca10c745676424ba6419324265dc3a6-20190528
-X-UUID: dca10c745676424ba6419324265dc3a6-20190528
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 762711357; Tue, 28 May 2019 17:23:52 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
- (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 28 May
- 2019 17:23:51 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 28 May 2019 17:23:50 +0800
-Message-ID: <1559035430.8487.11.camel@mhfsdcap03>
-Subject: RE: [PATCH v5 4/6] usb: roles: add API to get usb_role_switch by
- node
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Biju Das <biju.das@bp.renesas.com>
-CC:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Chen Yu <chenyu56@huawei.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Li Jun <jun.li@nxp.com>,
-        "Badhri Jagan Sridharan" <badhri@google.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Min Guo <min.guo@mediatek.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 28 May 2019 17:23:50 +0800
-In-Reply-To: <OSBPR01MB2103B7E9BB12FDCEB4105BAFB81E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <20190520080359.GC1887@kuha.fi.intel.com>
-         <OSBPR01MB2103385D996762FA54F8E437B8060@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-         <20190520083601.GE1887@kuha.fi.intel.com>
-         <OSBPR01MB2103C4C8920C40E42BC1B2A9B8060@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-         <20190521095839.GI1887@kuha.fi.intel.com>
-         <OSBPR01MB21032206146152983C8F4E8EB8000@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-         <1558517436.10179.388.camel@mhfsdcap03>
-         <OSBPR01MB21038F2B99EF74831A22727BB8000@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-         <20190522142640.GN1887@kuha.fi.intel.com>
-         <OSBPR01MB2103B669C24E9E261B4AFA73B8000@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-         <20190524124445.GP1887@kuha.fi.intel.com>
-         <1558926515.10179.439.camel@mhfsdcap03>
-         <OSBPR01MB2103B7E9BB12FDCEB4105BAFB81E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 28 May 2019 05:26:41 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hVYNO-0007wR-MJ; Tue, 28 May 2019 11:26:34 +0200
+Received: from [178.197.249.12] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1hVYNO-000NMe-EI; Tue, 28 May 2019 11:26:34 +0200
+Subject: Re: [PATCH] libbpf: fix warning PTR_ERR_OR_ZERO can be used
+To:     Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xdp-newbies@vger.kernel.org
+References: <20190525090257.GA12104@hari-Inspiron-1545>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <a5b68a2e-b9a6-7ad4-62a0-007f815be780@iogearbox.net>
+Date:   Tue, 28 May 2019 11:26:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <20190525090257.GA12104@hari-Inspiron-1545>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25463/Tue May 28 09:57:22 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Biju & Yu,
+On 05/25/2019 11:02 AM, Hariprasad Kelam wrote:
+> fix below warning reported by coccicheck
+> 
+> /tools/lib/bpf/libbpf.c:3461:1-3: WARNING: PTR_ERR_OR_ZERO can be used
+> 
+> Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 
-On Tue, 2019-05-28 at 06:52 +0000, Biju Das wrote:
-> Hi Chunfeng Yun,
-> 
-> + Chen Yu
-> 
-> Thanks for the feedback.
-[...]
-> 
-> Just a suggestion, Do you think, is it worth to add the below  patch[1] also part of this series? So that we have all common patches in this series.
-> 
-Or resend it as a single patch?
-
-> "usb: roles: Introduce stubs for the exiting functions in role.h."
-> [1] https://patchwork.kernel.org/patch/10909971/
-> 
- 
-> Regards,
-> Biju
-
-
+Applied, thanks!
