@@ -2,113 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C95902CEDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 20:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95C8C2CF2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 21:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbfE1Sov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 14:44:51 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35369 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728102AbfE1Sou (ORCPT
+        id S1727695AbfE1TIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 15:08:41 -0400
+Received: from se14p.web-hosting.com ([198.54.122.234]:58230 "EHLO
+        se14p.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbfE1TIk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 14:44:50 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d126so9828818pfd.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 11:44:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=appneta.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ze8jepWGPJAMG1ZkYXRAZC7ie5pYIznlEj3Thcizxdc=;
-        b=Lk2CACNhUfJOlEsrpdkwp3TsobL5jgP8Odt2x4Yhj04b/CWFh9hbjkadTy5/1DdxIc
-         YdHZJFey0T9ojsU6acWxmLHbDbw431gfyYpW884YqAgrL3pUfynITUIe+O6ChdzRkSBL
-         LV3eTFqCrxTqPn08pzYOyNA4mzpUkSJYnk0zQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ze8jepWGPJAMG1ZkYXRAZC7ie5pYIznlEj3Thcizxdc=;
-        b=bId0CcVdC0UyTgInpUkNpb5b0gHMs7cKpZqqkoIdwO9ilRUT7Y4lMgA6MhMi5Em/Rj
-         rav03lKAhYdWqyfwu7tGE/U7G9H3/bxruOyvGazko0yLNDLJLy0e0tlZU0ipdDBgPJiI
-         UWm1r7YAX0XPEXn4fP8dbVQYSXtS0kUPayUeS4vyz+gi0U2NJkEWwUDimBTqesP0LLUE
-         h2DMSced85XFdSqTHjVS8MnNzWIBjTxj7dXeFJKoRVnwQX1F7hnPS2XjJ8GrVHpMs8Eq
-         fs7nxsD8zahUFPgAC74sKde3sVegcWYRMsF+aBoypfy8TMe1TZhRhLyVxIE3aJFrgHle
-         sXWw==
-X-Gm-Message-State: APjAAAVGdov/du0Z4XZ3V0cT+z8olFQrR9lgR5QWbmkwoh9Gw0lvpjO9
-        sKCWOp3nzOzb7Bif9zVLRTjL6Q==
-X-Google-Smtp-Source: APXvYqwRIFHxCOzNUoN9Zu949YKegjPx4slN0w0F1ZPNzNriC5ijJegKz8DEZgkpbW3xbpluDZlVsQ==
-X-Received: by 2002:a63:2315:: with SMTP id j21mr39559244pgj.414.1559069089903;
-        Tue, 28 May 2019 11:44:49 -0700 (PDT)
-Received: from linux-net-fred.jaalam.net ([2001:4958:15a0:24:5054:ff:fecb:7a95])
-        by smtp.googlemail.com with ESMTPSA id j72sm3534085pje.12.2019.05.28.11.44.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 11:44:49 -0700 (PDT)
-From:   Fred Klassen <fklassen@appneta.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Willem de Bruijn <willemb@google.com>
-Cc:     Fred Klassen <fklassen@appneta.com>
-Subject: [PATCH net-next v3 1/1] net/udp_gso: Allow TX timestamp with UDP GSO
-Date:   Tue, 28 May 2019 11:44:15 -0700
-Message-Id: <20190528184415.16020-2-fklassen@appneta.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190528184415.16020-1-fklassen@appneta.com>
-References: <20190528184415.16020-1-fklassen@appneta.com>
+        Tue, 28 May 2019 15:08:40 -0400
+X-Greylist: delayed 1250 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 May 2019 15:08:40 EDT
+Received: from [68.65.123.203] (helo=server153.web-hosting.com)
+        by se14.registrar-servers.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <akash@openedev.com>)
+        id 1hVh8N-0009x3-QN; Tue, 28 May 2019 11:47:44 -0700
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=openedev.com; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=HFvG/LahunJTKLXZcRrXptt2DckpdKXTkifmZXFipgQ=; b=PJiGVMZgVGjIgbDCNwmZ/BYqnX
+        fXKKx7yfLlCHwNukhMHUcNOocKv77y7xf8izZNV6Ppo791w9CKK+Sr1CgT3z0SC1jwKeH60STKItJ
+        kQg+sYfjzMZ5NwY5yCxUQ9UWwcp1g82nQCV3P1YGiBs3JalER9nYivypJdri+6mFX3zPJJ5YEcZ0w
+        PHluyjCLBSBRUuWnh/xep34EGeusUaiX14k/257ZXAdMFBxG7bg2IdlduvFpYXz9fvrGazsiq2tph
+        /L3ZKh3KEhc5nX2oM2RlkEwOYcqXfkI7nhBQfHoAdPB7Yn20dHN6mqxgafZg+N+/ZGFa0+9KHizZa
+        ZWxG4BXg==;
+Received: from [49.36.134.52] (port=58630 helo=localhost.localdomain)
+        by server153.web-hosting.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <akash@openedev.com>)
+        id 1hVh8B-000LWm-RB; Tue, 28 May 2019 14:47:32 -0400
+From:   Akash Gajjar <akash@openedev.com>
+To:     heiko@sntech.de
+Cc:     Akash Gajjar <akash@openedev.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: add WiFi+BT support on ROCK Pi4 board
+Date:   Wed, 29 May 2019 00:16:58 +0530
+Message-Id: <20190528184705.5240-1-akash@openedev.com>
+X-Mailer: git-send-email 2.17.1
+X-OutGoing-Spam-Status: No, score=-1.0
+X-Originating-IP: 68.65.123.203
+X-SpamExperts-Domain: nctest.net
+X-SpamExperts-Username: whmcalls3
+Authentication-Results: registrar-servers.com; auth=pass (login) smtp.auth=whmcalls3@nctest.net
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.02)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0fHWENUdqj+4JDN3TQDP3eCpSDasLI4SayDByyq9LIhVZoh+GYOxeKhX
+ 0rYQmz6690TNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3Kk502M/hntTzIKfCMISdhHXTA
+ YTyyIfs1cqM+JexaJLwYntLwFjolRFhTnXQDnB9P2e84PReenR5LSk2iUS2Af528AOBrEuOevXI0
+ ebdgRKCIKg/aUy1+rC+nt9YJr0O6xUx7ZqtwsMDZ69b8b7zqxI+lL5NhqHMWktMqMo9GxlRpzx17
+ fEWeVBQjTCzPj3JfZsHc9iz9sphsbcEfYLbbA/Vq7f6BdqHymHnsz2U1vrjjPk6p1XF7W+y4zutd
+ yrLieQwtaT8LS8s2UvPGuarJq5V04g3+jzRT0rWpGx2J7RisI4GNUZN9o6JCIHO0bcEXRyryw85/
+ rAZb27+VZ3biGpeRn+vXyl2rp3c+WLIsa2xTYi2bf0F0JzgUQ/o6tR7CyoeT9VtB9syzdRQvkcqf
+ 34ZQDkS0DHehuOHWuM7Vjf4BoMdMi3MTHLPLkhmyzwKCoSgrSPwK7H7GiJo2l1dsJpcM7kMJvj0O
+ sEsYG6FZSA0KvSDgkCQq49Bwhmr0QiXBtIgA7rb5Xakftk+kQbpsGMceNxO+7BxamuC10Aq7F6rO
+ /YET258p5gS3Y/tQ+7wViH3SZTmW3KAG173wuvejUvo9EUE9MbHVS3r/mgHJnIRYw1BzDqNFGZrh
+ +TVo3LXlhgkjL4M2T1qqsnPjyphw8gjQbS46n+oec+xQytaJegt1cLqOJqfuEFfuEby07ONb4LOp
+ SgtUXs0lCO/QMtPNbzkjHv8L1XCo8f/lClCdnQGCmomWoKHQTtA/vxRp3BmjRFUZkz7XBxuphczf
+ K2a9sHP9vI3sVqNiY7IcsXSdRq0BIkUL/j1Y48GvmeURQjjE+CVHssiRKJOGVnhkTYtSIth1Taei
+ g8OGCxX9BeyO5Yx635mhoDTZ7tQJkImekwqesW0Fhika04lb89teM7jCHuolsEZDZij6HLxcjD4A
+ kjrzujHpSlY2Fr2WwzhRAoSw64oN2HxlNw5KgUUaTYIpDCz9FipvlGvdczGojXbA7Kmf/z2jyiGR
+ IooMdE2solbjhZES3yaCYnD0cFyGWzVHlRxwEiTVJqDh0qKoKsXx5lloGmtNVzr+QC4y+mGx45d+
+ 3Lqf0a+sK979BKHqhPATJSQCCJdpTZ0kmYMGtdFn1fl+TqEWOdbpokqh9QirvZzP9FuHbI/2PO15
+ wkM9AzOwAoKm7RdD7DhCg+2QoWbS5It/atGmSN6m4V7Gg3S4FvW6J98p+AxeVIeDFBo6QTq+8ulz
+ /zXcOmPBLTmIxb/wPGs8LFudSgPI2QH+nhyrWSrH
+X-Report-Abuse-To: spam@se16.registrar-servers.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes an issue where TX Timestamps are not arriving on the error queue
-when UDP_SEGMENT CMSG type is combined with CMSG type SO_TIMESTAMPING.
-This can be illustrated with an updated updgso_bench_tx program which
-includes the '-T' option to test for this condition.
+Rock Pi 4 has a on board AP6256 WiFi/BT Module. enable wifi and bluetooth
+support on Rock Pi 4 board.
 
-    ./udpgso_bench_tx -4ucTPv -S 1472 -l2 -D 172.16.120.18
-    poll timeout
-    udp tx:      0 MB/s        1 calls/s      1 msg/s
-
-The "poll timeout" message above indicates that TX timestamp never
-arrived.
-
-It also appears that other TX CMSG types cause similar issues, for
-example trying to set SOL_IP/IP_TOS.
-
-    ./udpgso_bench_tx -4ucPv -S 1472 -q 182 -l2 -D 172.16.120.18
-    poll timeout
-    udp tx:      0 MB/s        1 calls/s      1 msg/s
-
-This patch preserves tx_flags for the first UDP GSO segment.
-
-v2: Remove tests as noted by Willem de Bruijn <willemb@google.com>
-    Moving tests from net to net-next
-
-v3: Update only relevant tx_flag bits as per
-    Willem de Bruijn <willemb@google.com>
-
-Fixes: ee80d1ebe5ba ("udp: add udp gso")
-Signed-off-by: Fred Klassen <fklassen@appneta.com>
+Signed-off-by: Akash Gajjar <akash@openedev.com>
 ---
- net/ipv4/udp_offload.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../boot/dts/rockchip/rk3399-rock-pi-4.dts    | 97 +++++++++++++++++++
+ 1 file changed, 97 insertions(+)
 
-diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
-index 065334b41d57..de8ecba42d55 100644
---- a/net/ipv4/udp_offload.c
-+++ b/net/ipv4/udp_offload.c
-@@ -228,6 +228,11 @@ struct sk_buff *__udp_gso_segment(struct sk_buff *gso_skb,
- 	seg = segs;
- 	uh = udp_hdr(seg);
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
+index e030627159c6..55e74f4d5cd0 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock-pi-4.dts
+@@ -25,6 +25,15 @@
+ 		#clock-cells = <0>;
+ 	};
  
-+	/* preserve TX timestamp and zero-copy info for first segment */
-+	skb_shinfo(seg)->tskey = skb_shinfo(gso_skb)->tskey;
-+	skb_shinfo(seg)->tx_flags |=
-+			(skb_shinfo(gso_skb)->tx_flags & SKBTX_ANY_TSTAMP);
++	sdio_pwrseq: sdio-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		clocks = <&rk808 1>;
++		clock-names = "ext_clock";
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_enable_h>;
++		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
++	};
 +
- 	/* compute checksum adjustment based on old length versus new */
- 	newlen = htons(sizeof(*uh) + mss);
- 	check = csum16_add(csum16_sub(uh->check, uh->len), newlen);
+ 	vcc12v_dcin: dc-12v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc12v_dcin";
+@@ -451,12 +460,46 @@
+ };
+ 
+ &pinctrl {
++	bt {
++		bt_enable_h: bt-enable-h {
++			rockchip,pins = <0 RK_PB1 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		bt_host_wake_l: bt-host-wake-l {
++			rockchip,pins = <0 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		bt_wake_l: bt-wake-l {
++			rockchip,pins = <2 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
+ 	pcie {
+ 		pcie_pwr_en: pcie-pwr-en {
+ 			rockchip,pins = <2 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
+ 		};
+ 	};
+ 
++	sdio0 {
++		sdio0_bus4: sdio0-bus4 {
++			rockchip,pins =
++				<2 20 RK_FUNC_1 &pcfg_pull_up_20ma>,
++				<2 21 RK_FUNC_1 &pcfg_pull_up_20ma>,
++				<2 22 RK_FUNC_1 &pcfg_pull_up_20ma>,
++				<2 23 RK_FUNC_1 &pcfg_pull_up_20ma>;
++		};
++
++		sdio0_cmd: sdio0-cmd {
++			rockchip,pins =
++				<2 24 RK_FUNC_1 &pcfg_pull_up_20ma>;
++		};
++
++		sdio0_clk: sdio0-clk {
++			rockchip,pins =
++				<2 25 RK_FUNC_1 &pcfg_pull_none_20ma>;
++		};
++	};
++
+ 	pmic {
+ 		pmic_int_l: pmic-int-l {
+ 			rockchip,pins = <1 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>;
+@@ -482,6 +525,17 @@
+ 			rockchip,pins = <4 RK_PD1 RK_FUNC_GPIO &pcfg_pull_none>;
+ 		};
+ 	};
++
++	wifi {
++		wifi_enable_h: wifi-enable-h {
++			rockchip,pins =
++				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		wifi_host_wake_l: wifi-host-wake-l {
++			rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
+ };
+ 
+ &pwm2 {
+@@ -494,6 +548,32 @@
+ 	vref-supply = <&vcc_1v8>;
+ };
+ 
++&sdio0 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	bus-width = <4>;
++	clock-frequency = <50000000>;
++	cap-sdio-irq;
++	cap-sd-highspeed;
++	keep-power-in-suspend;
++	mmc-pwrseq = <&sdio_pwrseq>;
++	non-removable;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
++	sd-uhs-sdr104;
++	status = "okay";
++
++	brcmf: wifi@1 {
++		compatible = "brcm,bcm4329-fmac";
++		reg = <1>;
++		interrupt-parent = <&gpio0>;
++		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
++		interrupt-names = "host-wake";
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_host_wake_l>;
++	};
++};
++
+ &sdmmc {
+ 	bus-width = <4>;
+ 	cap-mmc-highspeed;
+@@ -557,6 +637,23 @@
+ 	};
+ };
+ 
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
++	status = "okay";
++
++	bluetooth {
++		compatible = "brcm,bcm43438-bt";
++		clocks = <&rk808 1>;
++		clock-names = "ext_clock";
++		device-wakeup-gpios = <&gpio2 RK_PD3 GPIO_ACTIVE_HIGH>;
++		host-wakeup-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
++		shutdown-gpios = <&gpio0 RK_PB1 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&bt_host_wake_l &bt_wake_l &bt_enable_h>;
++	};
++};
++
+ &uart2 {
+ 	status = "okay";
+ };
 -- 
-2.11.0
+2.17.1
 
