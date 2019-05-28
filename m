@@ -2,122 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D2352C988
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 749402C98C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfE1PGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 11:06:44 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45810 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbfE1PGo (ORCPT
+        id S1727157AbfE1PHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 11:07:09 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42758 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726439AbfE1PHF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 11:06:44 -0400
-Received: by mail-pf1-f194.google.com with SMTP id s11so11651577pfm.12;
-        Tue, 28 May 2019 08:06:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mm2eg5VvBxWkTD+xyKpkkSmitl4OkwjYISivJ/RPFTo=;
-        b=m1gv8NEyhr5iGJZTmKRVo6dWfuvkiP68dIT1XD5P1l0CjFL3A+5K14UmwEQgVrgHbE
-         zuF7s5hzluEkLOjCCx0Sovww4luN6X8OhkHkuOpKVhez5lPMiYV7jRlMxzPuo3zBnx0b
-         GXnifUd9P7Yc36Tp4vZqTLHEin3IYOExQjxoaL2sSd5I7bDQPvnVLxbocNjL90LQRtSx
-         fXtW8uEaseCV4oy8rZ/Js+4TyQV6VCZ81IpiZK/6xBsQl4Xpk3WRSNkyrSFao2ESfWRr
-         wSgBHcvHggwEi31SuWwMNmVcV3dREZj5MT7ZxrI9r+kTIKRk4QnHWzYENP/9azBmDzpm
-         v20Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mm2eg5VvBxWkTD+xyKpkkSmitl4OkwjYISivJ/RPFTo=;
-        b=WNAZdmMCnNynkZFDsPhQ9njDgzcnZGyW5BXZavHoCtlodGYWHS37XkymUr3HrdpJt/
-         kFfOjMpr+rqmVAauaXbhEZbktLUjYnw6VYJzAjkDXxtdBT6kwxcwrJrJ2+aW/MUTap5u
-         puFRk2VeV7SDd4U1duyga3+w7qSusXXVnuTI81IWyh4okOCTVvIaLKjR/0QUlMGmpVgj
-         awg1s773AEYhlq/LJDziF0fYJZMaCce7tNv31bwG84i+bEx4fmo4Z2uN2namby0yxJZx
-         YXAQKVYpAUcofOJa5MpkticZLQo7C/13fSvqAo1o2eFcu4LSK5KGWihh8TB8KKg0XqCJ
-         FTqA==
-X-Gm-Message-State: APjAAAVCVioWOavhTXuYyVfcXUxtnnqLAxYrMraHp+yRUia3nQkDY/d8
-        C+xXZZLZI6aAr0HcsC5j43udever
-X-Google-Smtp-Source: APXvYqzRF+4I2yVFArh9jdQwAK+CNlNUXHU+L4V8cuhCR8gytl9r2S/2Ep0orCThJo74ZH/Y9TOOyw==
-X-Received: by 2002:aa7:8a95:: with SMTP id a21mr82896169pfc.215.1559056003383;
-        Tue, 28 May 2019 08:06:43 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id c127sm15415538pfb.107.2019.05.28.08.06.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 08:06:42 -0700 (PDT)
-Date:   Tue, 28 May 2019 08:06:40 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Eduardo Valentin <eduval@amazon.com>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] hwmon: core: fix potential memory leak in
- *hwmon_device_register*
-Message-ID: <20190528150640.GA5516@roeck-us.net>
-References: <20190517231337.27859-1-eduval@amazon.com>
- <20190517231337.27859-3-eduval@amazon.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190517231337.27859-3-eduval@amazon.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 28 May 2019 11:07:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=fVgcuqF7q19syIEOumZgng3f1f8DLd588A3MOka13os=; b=x1Mm+kz2fvrr
+        s2jvA/MfeLVJ/A6vI7LN1JF9Q2WxT5/NP0KM4niu4d8o36srAbLODy1CQL4KlKOePovMfKsl2zVTx
+        UU2Xb4aw7XoU0vAQfE/WdpZ0P+v872PfwYeN/rl0yMI2BTaPkRbJj+vcXVwFnPJE2f1j01e/60x9R
+        eui5I=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hVdgl-0002ne-Gh; Tue, 28 May 2019 15:06:55 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id CCB04440046; Tue, 28 May 2019 16:06:54 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: cx2072x: fix spelling mistake "configued" -> "configured"" to the asoc tree
+In-Reply-To: <20190525203244.7829-1-colin.king@canonical.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190528150654.CCB04440046@finisterre.sirena.org.uk>
+Date:   Tue, 28 May 2019 16:06:54 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eduardo,
+The patch
 
-On Fri, May 17, 2019 at 04:13:37PM -0700, Eduardo Valentin wrote:
-> When registering a hwmon device with HWMON_C_REGISTER_TZ flag
-> in place, the hwmon subsystem will attempt to register the device
-> also with the thermal subsystem. When the of-thermal registration
-> fails, __hwmon_device_register jumps to ida_remove, leaving
-> the locally allocated hwdev pointer and also the hdev registered.
-> 
-> This patch fixes both issues by jumping to a new label that
-> will first unregister hdev and the fall into the kfree of hwdev
-> to finally remove the idas and propagate the error code.
-> 
-> Cc: Jean Delvare <jdelvare@suse.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: linux-hwmon@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Eduardo Valentin <eduval@amazon.com>
-> ---
->  drivers/hwmon/hwmon.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-> index 6b3559f58b67..6f1194952189 100644
-> --- a/drivers/hwmon/hwmon.c
-> +++ b/drivers/hwmon/hwmon.c
-> @@ -637,7 +637,7 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
->  								hwdev, j);
->  					if (err) {
->  						device_unregister(hdev);
-> -						goto ida_remove;
-> +						goto device_unregister;
+   ASoC: cx2072x: fix spelling mistake "configued" -> "configured"
 
-Good find, but device_unregister() is already called above.
-You need to either remove that, or replace the goto to point to free_hwmon.
-The new label would probably the cleaner solution since it follows the
-coding style.
+has been applied to the asoc tree at
 
-Thanks
-Guenter
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
->  					}
->  				}
->  			}
-> @@ -646,6 +646,8 @@ __hwmon_device_register(struct device *dev, const char *name, void *drvdata,
->  
->  	return hdev;
->  
-> +device_unregister:
-> +	device_unregister(hdev);
->  free_hwmon:
->  	kfree(hwdev);
->  ida_remove:
-> -- 
-> 2.21.0
-> 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 9aa37874d1930da139a08f4db1eff5d305f2ddc8 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Sat, 25 May 2019 21:32:44 +0100
+Subject: [PATCH] ASoC: cx2072x: fix spelling mistake "configued" ->
+ "configured"
+
+There is a spelling mistake in a dev_err error message. Fit it.
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/cx2072x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/cx2072x.c b/sound/soc/codecs/cx2072x.c
+index ed762546eaee..8b0830854bb3 100644
+--- a/sound/soc/codecs/cx2072x.c
++++ b/sound/soc/codecs/cx2072x.c
+@@ -933,7 +933,7 @@ static int cx2072x_hw_params(struct snd_pcm_substream *substream,
+ 		return frame_size;
+ 
+ 	if (cx2072x->mclk_rate == 0) {
+-		dev_err(dev, "Master clock rate is not configued\n");
++		dev_err(dev, "Master clock rate is not configured\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.20.1
+
