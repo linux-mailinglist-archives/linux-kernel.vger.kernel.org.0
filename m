@@ -2,67 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BF582C09A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 09:51:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 885202C090
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 09:51:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbfE1Hvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 03:51:48 -0400
-Received: from mail.tastiess.eu ([194.182.86.235]:59421 "EHLO mail.tastiess.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727373AbfE1Hvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 03:51:48 -0400
-Received: by mail.tastiess.eu (Postfix, from userid 1001)
-        id 052518A08A; Tue, 28 May 2019 09:50:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tastiess.eu; s=mail;
-        t=1559029877; bh=1wXsRnVQKyR5953v1mK5+VSjATpkqCFjMxx9a9NW6X4=;
-        h=Date:From:To:Subject:From;
-        b=KM+0BK2vBNhsOar5HrcBB415hXFwMBAHVxJ56owSwzJvYH0B9aVtMK2fQpt5Rjk5k
-         vynrLfFk/Dnc/NRk4M/51Jarvu2siJOYx2xdI0aGvNovSCpJ7sBVgvjYMLr7Qzjjfk
-         lYGWiG5eKNW9Do2oDoKujFfjAPTq0MFf0C6HSp5k=
-Received: by mail.tastiess.eu for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 07:50:23 GMT
-Message-ID: <20190528084501-0.1.10.h1z.0.n2p0m5to11@tastiess.eu>
-Date:   Tue, 28 May 2019 07:50:23 GMT
-From:   =?UTF-8?Q? "Kapolcs_M=C3=A1ty=C3=A1s" ?= 
-        <kapolcs.matyas@tastiess.eu>
-To:     <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?Q?Dolgoz=C3=B3i_juttat=C3=A1sok?=
-X-Mailer: mail.tastiess.eu
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1727327AbfE1HvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 03:51:11 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40362 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbfE1HvK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 03:51:10 -0400
+Received: by mail-pf1-f195.google.com with SMTP id u17so10960002pfn.7;
+        Tue, 28 May 2019 00:51:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=gYEx0O9ga7gmezM3UNZfMFOuMaxOrET+sxlSycHSkpM=;
+        b=Spvfdfdf5+Hi2ME1dkkbMVU8kp4BoweT58Z1VEE9RMlUgy8GpnZD+AUdy5k3qvw8ym
+         gIy4ALuQ5dY+KnR6zwSy5ch77NxR/ksaw/yLMJHWimaS2BZ6O96vVQQYDh8jBdHCUH/4
+         as9FjWWRyM4L4aKAexJG4dburCrm34tOvrhAakfzJkLGs30ACmoHl1nSPnI3dq4FX/Ax
+         6r+aGBs0ir/gjSAZJWw7MHkHK+hwDQekbYudbKDvCjlDXVk0L5Cq1G6jknYbE0GLSBfN
+         6OCx6w0tVYPMjBl4YgVddiF4L5JHloBhpKjczFSNmbhzgupE2r2mHedu50fTIgK4cTdQ
+         0tUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=gYEx0O9ga7gmezM3UNZfMFOuMaxOrET+sxlSycHSkpM=;
+        b=j6oFoSKwMlY1TmdIlxjE/vEamkF8xWu9GGNWTvOC78EMYJ5dIRd5G3CyJgGL6i2EDN
+         Kv6VN7hcs8Xfkqx+TSLr5jZbXp95FfyNkDC6znMMS+RGDJUWjmieuCTf71oKlPxzltFR
+         2ysevLUaB7ozYCCmML98k4Dm2sDvfTbGyaJQN1VJnJvHmt6ESPWF5jJSko2TnUkMbV7X
+         RWUA5m9PEDYI6bwHePcrK0uVxoe2BlIbchAVQGBgRhb8hGkjPPRVEGDgPxGS/P9yMAFq
+         HieWt7y1HRaZW1lOC6uOhRVUGzh9x7ftq6GOCrQetQIbHUizAr5wAJhDk/lKtjmD4p8i
+         y+hw==
+X-Gm-Message-State: APjAAAXUsE9pNNMbzBJG272CCtFJnWfYlC8CNpmRDSUVi8w3Z7eqy7XD
+        smWlfeQ5BWpebywNPMwSDgJqgMJc
+X-Google-Smtp-Source: APXvYqwj+NMpZ1s2uvQ6p3HZ/6VzNBEgzCObP3JqgJ8XjZRHDT3HlFY5f5ns5FEetoV9q50P8zcIdg==
+X-Received: by 2002:aa7:951c:: with SMTP id b28mr120419717pfp.99.1559029869814;
+        Tue, 28 May 2019 00:51:09 -0700 (PDT)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id q20sm18201400pgq.66.2019.05.28.00.51.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 28 May 2019 00:51:09 -0700 (PDT)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH RESEND v2 0/3] KVM: Yield to IPI target if necessary
+Date:   Tue, 28 May 2019 15:50:54 +0800
+Message-Id: <1559029857-2750-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1559004795-19927-3-git-send-email-wanpengli@tencent.com>
+References: <1559004795-19927-3-git-send-email-wanpengli@tencent.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C3=9Cdv=C3=B6zl=C3=B6m!
-=20
-2019 janu=C3=A1rt=C3=B3l v=C3=A1ltozik a nem b=C3=A9r jelleg=C5=B1 juttat=
-=C3=A1sok rendje.
-=20
-Egy kiv=C3=A1l=C3=B3 lehet=C5=91s=C3=A9ggel =C3=A9lehet, amennyiben a mi =
-k=C3=A1rty=C3=A1nkat v=C3=A1lasztja!
-=20
-Ez a k=C3=A1rtya:
-=20
-Korl=C3=A1tlanul felhaszn=C3=A1lhat=C3=B3:
-=20
-k=C3=A9szp=C3=A9nzfelv=C3=A9tel
-=C3=A9lelmiszer v=C3=A1s=C3=A1rl=C3=A1s
-eg=C3=A9szs=C3=A9g=C3=BCgyi ell=C3=A1t=C3=A1s
-elektronikai term=C3=A9kek v=C3=A1s=C3=A1rl=C3=A1sa
-oktat=C3=A1s
-sz=C3=A1ll=C3=A1s
-=20
-K=C3=A1rty=C3=A1nk az egyetlen olyan val=C3=B3ban szabadfelhaszn=C3=A1l=C3=
-=A1s=C3=BA k=C3=A1rtya, melyet minden POS termin=C3=A1l elfogad!
-=20
-Amennyiben k=C3=A1rty=C3=A1nk felkeltette =C3=A9rdekl=C5=91d=C3=A9s=C3=A9=
-t, mint dolgoz=C3=B3i juttat=C3=A1s, k=C3=A9rem keressen fel a tov=C3=A1b=
-bi t=C3=A1j=C3=A9koztat=C3=A1s =C3=A9rdek=C3=A9ben!
-=20
-=C3=96r=C3=B6mmel =C3=A1llunk rendelkez=C3=A9s=C3=A9re mindenben!
+The idea is from Xen, when sending a call-function IPI-many to vCPUs, 
+yield if any of the IPI target vCPUs was preempted. 17% performance 
+increase of ebizzy benchmark can be observed in an over-subscribe 
+environment. (w/ kvm-pv-tlb disabled, testing TLB flush call-function 
+IPI-many since call-function is not easy to be trigged by userspace 
+workload).
 
+v1 -> v2:
+ * check map is not NULL
+ * check map->phys_map[dest_id] is not NULL
+ * make kvm_sched_yield static
+ * change dest_id to unsinged long
 
-Kapolcs M=C3=A1ty=C3=A1s
-Hungary Team Leader
+Wanpeng Li (3):
+  KVM: X86: Implement PV sched yield in linux guest
+  KVM: X86: Implement PV sched yield hypercall
+  KVM: X86: Expose PV_SCHED_YIELD CPUID feature bit to guest
+
+ Documentation/virtual/kvm/cpuid.txt      |  4 ++++
+ Documentation/virtual/kvm/hypercalls.txt | 11 +++++++++++
+ arch/x86/include/uapi/asm/kvm_para.h     |  1 +
+ arch/x86/kernel/kvm.c                    | 21 +++++++++++++++++++++
+ arch/x86/kvm/cpuid.c                     |  3 ++-
+ arch/x86/kvm/x86.c                       | 26 ++++++++++++++++++++++++++
+ include/uapi/linux/kvm_para.h            |  1 +
+ 7 files changed, 66 insertions(+), 1 deletion(-)
+
+-- 
+2.7.4
+
