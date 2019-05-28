@@ -2,97 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DFCD2CB3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 18:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71DC02CB44
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 18:12:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727243AbfE1QLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 12:11:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57142 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726604AbfE1QLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 12:11:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 08E1FAF3B;
-        Tue, 28 May 2019 16:11:11 +0000 (UTC)
-Date:   Tue, 28 May 2019 18:11:09 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Daniel Colascione <dancol@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Sonny Rao <sonnyrao@google.com>,
-        Brian Geffon <bgeffon@google.com>
-Subject: Re: [RFC 1/7] mm: introduce MADV_COOL
-Message-ID: <20190528161109.GF1658@dhcp22.suse.cz>
-References: <20190528153811.7684-1-hdanton@sina.com>
+        id S1727310AbfE1QMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 12:12:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34318 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726515AbfE1QMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 12:12:00 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 30A6F3D95D;
+        Tue, 28 May 2019 16:12:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 270FF2F28D;
+        Tue, 28 May 2019 16:11:58 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAB9dFdtT0p+Sg5=qt=Te9FEkASXcH=ZQZRHyN1UQ3nYkDLHMpQ@mail.gmail.com>
+References: <CAB9dFdtT0p+Sg5=qt=Te9FEkASXcH=ZQZRHyN1UQ3nYkDLHMpQ@mail.gmail.com> <20190527165413.GA26714@embeddedor>
+To:     Marc Dionne <marc.c.dionne@gmail.com>
+Cc:     dhowells@redhat.com,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-afs@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] afs: Fix logically dead code in afs_update_cell
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190528153811.7684-1-hdanton@sina.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <8580.1559059917.1@warthog.procyon.org.uk>
+Date:   Tue, 28 May 2019 17:11:57 +0100
+Message-ID: <8581.1559059917@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 28 May 2019 16:12:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 28-05-19 23:38:11, Hillf Danton wrote:
-> 
-> On Tue, 28 May 2019 20:39:36 +0800 Minchan Kim wrote:
-> > On Tue, May 28, 2019 at 08:15:23PM +0800, Hillf Danton wrote:
-> > < snip >
-> > > > > > +	orig_pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
-> > > > > > +	for (pte = orig_pte; addr < end; pte++, addr += PAGE_SIZE) {
-> > > > >
-> > > > > s/end/next/ ?
-> > > >
-> > > > Why do you think it should be next?
-> > > >
-> > > Simply based on the following line, and afraid that next != end
-> > > 	> > > +	next = pmd_addr_end(addr, end);
-> > 
-> > pmd_addr_end will return smaller address so end is more proper.
-> > 
-> Fair.
-> 
-> > > > > > +static long madvise_cool(struct vm_area_struct *vma,
-> > > > > > +			unsigned long start_addr, unsigned long end_addr)
-> > > > > > +{
-> > > > > > +	struct mm_struct *mm = vma->vm_mm;
-> > > > > > +	struct mmu_gather tlb;
-> > > > > > +
-> > > > > > +	if (vma->vm_flags & (VM_LOCKED|VM_HUGETLB|VM_PFNMAP))
-> > > > > > +		return -EINVAL;
-> > > > >
-> > > > > No service in case of VM_IO?
-> > > >
-> > > > I don't know VM_IO would have regular LRU pages but just follow normal
-> > > > convention for DONTNEED and FREE.
-> > > > Do you have anything in your mind?
-> > > >
-> > > I want to skip a mapping set up for DMA.
-> > 
-> > What you meant is those pages in VM_IO vma are not in LRU list?
-> 
-> What I concern is the case that there are IO pages on lru list.
-> > Or
-> > pages in the vma are always pinned so no worth to deactivate or reclaim?
-> > 
-> I will not be nervous or paranoid if they are pinned.
-> 
-> In short, I prefer to skip IO mapping since any kind of address range
-> can be expected from userspace, and it may probably cover an IO mapping.
-> And things can get out of control, if we reclaim some IO pages while
-> underlying device is trying to fill data into any of them, for instance.
+Marc Dionne <marc.c.dionne@gmail.com> wrote:
 
-What do you mean by IO pages why what is the actual problem?
--- 
-Michal Hocko
-SUSE Labs
+> > diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+> > index 9c3b07ba2222..980de60bf060 100644
+> > --- a/fs/afs/cell.c
+> > +++ b/fs/afs/cell.c
+> > @@ -387,7 +387,6 @@ static int afs_update_cell(struct afs_cell *cell)
+> >                 if (ret == -ENOMEM)
+> >                         goto out_wake;
+> >
+> > -               ret = -ENOMEM;
+> >                 vllist = afs_alloc_vlserver_list(0);
+> >                 if (!vllist)
+> >                         goto out_wake;
+> 
+> Looks like the intention here was to return -ENOMEM when
+> afs_alloc_vlserver_list fails, which would mean that the fix should
+> move the assignment within if (!vllist), rather than just removing it.
+> Although it might be fine to just return the error that came from
+> afs_dns_query instead, as you do in this patch.
+
+I think I'd rather return the original error as this patch effects.  I'm
+having a ponder on it.
+
+David
