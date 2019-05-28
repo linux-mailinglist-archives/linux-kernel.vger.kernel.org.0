@@ -2,92 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A6FD2C25E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28AD02C291
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:06:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfE1JEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:04:37 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57234 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727179AbfE1JEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:04:35 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9D46887CCD71EEB7D550;
-        Tue, 28 May 2019 17:04:31 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 28 May 2019 17:04:25 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 00/12] code optimizations & bugfixes for HNS3 driver
-Date:   Tue, 28 May 2019 17:02:50 +0800
-Message-ID: <1559034182-24737-1-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727339AbfE1JGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:06:08 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:47074 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727139AbfE1JDk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:03:40 -0400
+Received: by mail-ed1-f68.google.com with SMTP id f37so30562767edb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jemw2QjWxU+UFHjYLKdEyQ9knTBj8Nqm3v5Mrc95+O8=;
+        b=Q2Q/sGFS+3ztGuIG6HjyW4WqtF83a09htVuw4GKSsgH3cHm7dGKzhjvGuCPzzPDkgL
+         E1/NRgZTaeTYcHOps+FhdcT1PbSFGvlgKFkIBRaH+zrG9UMsmLLURLcCTjDwxR0xLIN3
+         KwwuXSGHz0AEiTSHK9LXqpPeWcu8jfLUGcaEQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jemw2QjWxU+UFHjYLKdEyQ9knTBj8Nqm3v5Mrc95+O8=;
+        b=rgeU529eemuJ9TYcRgP8Lx++LMZ3UcXe9qCzoK3SVQ5z3fwtAaahVvEsuZAsEWOppE
+         vT6YMYDLN7k6RQq74LLkTDYtefjjoGcxHhttfxP4SoTq3vaPfEvZdQccSReTHD2EjVPV
+         8w5DKZlpXxyImzV8fCHhVovjRxV6r0L9Pq/sRklJBwZoWi5LLgbMW0Oq1J6LKh4rtHQt
+         UFrkuymJqDgqyXtgdN/lfItYu1F9zPA0mZF/XoxjH+pEbUi2uUYHpMlmTiAcr+ZqZ+gF
+         mIR6NwBAEtkoRZIKSORB+/W47oGNXjFdWAIVmaCdp5/oJE1FWuYx8nVbpCWlTD1rKU5A
+         AX3A==
+X-Gm-Message-State: APjAAAXv1dOMYX2gAPSocIqWT/WJcaypExMViJ3XmIQAU9sV9Dr/JDYo
+        5zUqZqrZi4HSwNt4gJSbKSQCM2ZbFVQ=
+X-Google-Smtp-Source: APXvYqzRmMQx8hio/CkC+ykYBbXTDds6GiLnz4oTtSmCC0xHsSsFWfJG1JCAR/ZOcV6FU9c5NjgHVQ==
+X-Received: by 2002:a50:ad2b:: with SMTP id y40mr126347451edc.237.1559034218893;
+        Tue, 28 May 2019 02:03:38 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 02:03:38 -0700 (PDT)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        linux-fbdev@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Peter Rosin <peda@axentia.se>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mikulas Patocka <mpatocka@redhat.com>
+Subject: [PATCH 19/33] fbdev: unify unlink_framebuffer paths
+Date:   Tue, 28 May 2019 11:02:50 +0200
+Message-Id: <20190528090304.9388-20-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
+References: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch-set includes code optimizations and bugfixes for the HNS3
-ethernet controller driver.
+For some reasons the pm_vt_switch_unregister call was missing from the
+direct unregister_framebuffer path. Fix this.
 
-[patch 1/12] fixes a compile warning reported by kbuild test robot.
+v2: fbinfo->dev is used to decided whether unlink_framebuffer has been
+called already. I botched that in v1. Make this all clearer by
+inlining __unlink_framebuffer.
 
-[patch 2/12] fixes HNS3_RXD_GRO_SIZE_M macro definition error.
+v3: Fix typoe in subject (Maarten).
 
-[patch 3/12] adds a debugfs command to dump firmware information.
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
+Cc: Peter Rosin <peda@axentia.se>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+---
+ drivers/video/fbdev/core/fbmem.c | 47 ++++++++++++++------------------
+ 1 file changed, 20 insertions(+), 27 deletions(-)
 
-[patch 4/12 - 10/12] adds some code optimizaions and cleanups for
-reset and driver unloading.
-
-[patch 11/12 - 12/12] adds two bugfixes.
-
-Huazhong Tan (9):
-  net: hns3: use HCLGE_STATE_NIC_REGISTERED to indicate PF NIC client
-    has registered
-  net: hns3: use HCLGE_STATE_ROCE_REGISTERED to indicate PF ROCE client
-    has registered
-  net: hns3: use HCLGEVF_STATE_NIC_REGISTERED to indicate VF NIC client
-    has registered
-  net: hns3: modify hclge_init_client_instance()
-  net: hns3: modify hclgevf_init_client_instance()
-  net: hns3: add handshake with hardware while doing reset
-  net: hns3: stop schedule reset service while unloading driver
-  net: hns3: adjust hns3_uninit_phy()'s location in the
-    hns3_client_uninit()
-  net: hns3: fix a memory leak issue for
-    hclge_map_unmap_ring_to_vf_vector
-
-Jian Shen (1):
-  net: hns3: fix compile warning without CONFIG_RFS_ACCEL
-
-Yunsheng Lin (1):
-  net: hns3: fix for HNS3_RXD_GRO_SIZE_M macro
-
-Zhongzhu Liu (1):
-  net: hns3: add support for dump firmware statistics by debugfs
-
- drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |   1 +
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |   4 +-
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   2 +-
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c |   6 +-
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |   8 ++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c |  57 +++++++++++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 110 ++++++++++++++-------
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   2 +
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c |   4 +-
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c   |   2 -
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  95 ++++++++++++------
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h  |   2 +
- 12 files changed, 213 insertions(+), 80 deletions(-)
-
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index f3bcad30d3ba..bee45e9405b8 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -1722,15 +1722,30 @@ static void unbind_console(struct fb_info *fb_info)
+ 	console_unlock();
+ }
+ 
+-static void __unlink_framebuffer(struct fb_info *fb_info);
+-
+-static void do_unregister_framebuffer(struct fb_info *fb_info)
++void unlink_framebuffer(struct fb_info *fb_info)
+ {
+-	unbind_console(fb_info);
++	int i;
++
++	i = fb_info->node;
++	if (WARN_ON(i < 0 || i >= FB_MAX || registered_fb[i] != fb_info))
++		return;
++
++	if (!fb_info->dev)
++		return;
++
++	device_destroy(fb_class, MKDEV(FB_MAJOR, i));
+ 
+ 	pm_vt_switch_unregister(fb_info->dev);
+ 
+-	__unlink_framebuffer(fb_info);
++	unbind_console(fb_info);
++
++	fb_info->dev = NULL;
++}
++EXPORT_SYMBOL(unlink_framebuffer);
++
++static void do_unregister_framebuffer(struct fb_info *fb_info)
++{
++	unlink_framebuffer(fb_info);
+ 	if (fb_info->pixmap.addr &&
+ 	    (fb_info->pixmap.flags & FB_PIXMAP_DEFAULT))
+ 		kfree(fb_info->pixmap.addr);
+@@ -1753,28 +1768,6 @@ static void do_unregister_framebuffer(struct fb_info *fb_info)
+ 	put_fb_info(fb_info);
+ }
+ 
+-static void __unlink_framebuffer(struct fb_info *fb_info)
+-{
+-	int i;
+-
+-	i = fb_info->node;
+-	if (WARN_ON(i < 0 || i >= FB_MAX || registered_fb[i] != fb_info))
+-		return;
+-
+-	if (fb_info->dev) {
+-		device_destroy(fb_class, MKDEV(FB_MAJOR, i));
+-		fb_info->dev = NULL;
+-	}
+-}
+-
+-void unlink_framebuffer(struct fb_info *fb_info)
+-{
+-	__unlink_framebuffer(fb_info);
+-
+-	unbind_console(fb_info);
+-}
+-EXPORT_SYMBOL(unlink_framebuffer);
+-
+ /**
+  * remove_conflicting_framebuffers - remove firmware-configured framebuffers
+  * @a: memory range, users of which are to be removed
 -- 
-2.7.4
+2.20.1
 
