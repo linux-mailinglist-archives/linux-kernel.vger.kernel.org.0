@@ -2,68 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 474E12D28A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:58:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEAAA2D296
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfE1X6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 19:58:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47246 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726576AbfE1X6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 19:58:12 -0400
-Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92D2D206A2;
-        Tue, 28 May 2019 23:58:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559087891;
-        bh=2/9Fxe21+aSpbnetaRujBaWdJtuoEjDDkYN8K88SIFk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WG2LdxJyprEyxX57qo3pc4GeSrD1bjohQDzHZ8JGZCCCb8p9opJf8UZTn/Als63Ww
-         gIYK+hmpYUySg112uWTnR9XNdYTs1yGdVoC3jca2USk9yRLvoboFFb69J08kMjYXgp
-         JkJlpiZsacDuiWEYHJ6WhxvIP9kjs+62ZS7qqayI=
-Date:   Tue, 28 May 2019 16:58:10 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
-Message-ID: <20190528235810.GA5776@kroah.com>
-References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+        id S1727624AbfE1X6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 19:58:49 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53600 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbfE1X6s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 19:58:48 -0400
+Received: by mail-wm1-f66.google.com with SMTP id d17so294269wmb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 16:58:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xi6hRmlV/rkYRZXwRwO7EpD99nzQCtGBu1E4jVd0OG0=;
+        b=Ab2zrIKXDuM3wH/3vleTi9v18qOFqdElCjs6oFhjb0djlC1D9ABTLkHJK3UUsZgwsn
+         jkWx9AIzJuBInwij1Athq5uxujlQ8llomV1NukkmT+HEajHepYwsPCG7hOzYGSp4CVwB
+         /xnLRtkwb+vs1A9OpiQgHt4Ic1Wb3TwQxOgrbXA/mdbVY6Bu/bilMA6EE62L9Sc2/ZIY
+         8MoeGrKF2udYBK6Ddqb9dfCYOzSu7by1RizrxXIdaEnKCjJbcE4sL57OGwAToYqUrr2M
+         rnlSp5Fvic8JvHEOwPAidOhkq7QukxXwY8lYCjk05Eh49qFcWUjiRyyMUk/DOm5wStfT
+         s2tw==
+X-Gm-Message-State: APjAAAXKSjAcuirMZ8qRiHnlGJrCjSi3h2U7AK7p6Ip+7eRei5ESowew
+        nVEN7gPAmdz/aVWxK17qdOXXrofjOcQ=
+X-Google-Smtp-Source: APXvYqxfl6xm2qcJA8awYqlEkYvzsKyFY1ok6e7KAzVB9YFi3gVE4bn35EcLiejKxDcMlJOYMcHy+Q==
+X-Received: by 2002:a05:600c:1109:: with SMTP id b9mr4658543wma.107.1559087926470;
+        Tue, 28 May 2019 16:58:46 -0700 (PDT)
+Received: from raver.teknoraver.net (net-93-144-152-91.cust.vodafonedsl.it. [93.144.152.91])
+        by smtp.gmail.com with ESMTPSA id a10sm17826941wrm.94.2019.05.28.16.58.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 28 May 2019 16:58:45 -0700 (PDT)
+From:   Matteo Croce <mcroce@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: avoid indirect calls in L4 checksum calculation
+Date:   Wed, 29 May 2019 01:58:44 +0200
+Message-Id: <20190528235844.19360-1-mcroce@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 05:01:47PM +0100, David Howells wrote:
-> Things I want to avoid:
-> 
->  (1) Introducing features that make the core VFS dependent on the network
->      stack or networking namespaces (ie. usage of netlink).
-> 
->  (2) Dumping all this stuff into dmesg and having a daemon that sits there
->      parsing the output and distributing it as this then puts the
->      responsibility for security into userspace and makes handling
->      namespaces tricky.  Further, dmesg might not exist or might be
->      inaccessible inside a container.
-> 
->  (3) Letting users see events they shouldn't be able to see.
+Commit 283c16a2dfd3 ("indirect call wrappers: helpers to speed-up
+indirect calls of builtin") introduces some macros to avoid doing
+indirect calls.
 
-How are you handling namespaces then?  Are they determined by the
-namespace of the process that opened the original device handle, or the
-namespace that made the new syscall for the events to "start flowing"?
+Use these helpers to remove two indirect calls in the L4 checksum
+calculation for devices which don't have hardware support for it.
 
-Am I missing the logic that determines this in the patches, or is that
-not implemented yet?
+As a test I generate packets with pktgen out to a dummy interface
+with HW checksumming disabled, to have the checksum calculated in
+every sent packet.
+The packet rate measured with an i7-6700K CPU and a single pktgen
+thread raised from 6143 to 6608 Kpps, an increase by 7.5%
 
-thanks,
+Suggested-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
+---
+ net/core/skbuff.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-greg k-h
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index e89be6282693..a24a7ef55ce9 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -69,6 +69,7 @@
+ #include <net/sock.h>
+ #include <net/checksum.h>
+ #include <net/ip6_checksum.h>
++#include <net/sctp/checksum.h>
+ #include <net/xfrm.h>
+ 
+ #include <linux/uaccess.h>
+@@ -76,9 +77,22 @@
+ #include <linux/highmem.h>
+ #include <linux/capability.h>
+ #include <linux/user_namespace.h>
++#include <linux/indirect_call_wrapper.h>
+ 
+ #include "datagram.h"
+ 
++#if IS_ENABLED(CONFIG_IP_SCTP)
++#define CSUM_UPDATE(f, ...) \
++	INDIRECT_CALL_2(f, csum_partial_ext, sctp_csum_update, __VA_ARGS__)
++#define CSUM_COMBINE(f, ...) \
++	INDIRECT_CALL_2(f, csum_block_add_ext, sctp_csum_combine, __VA_ARGS__)
++#else
++#define CSUM_UPDATE(f, ...) \
++	INDIRECT_CALL_1(f, csum_partial_ext, __VA_ARGS__)
++#define CSUM_COMBINE(f, ...) \
++	INDIRECT_CALL_1(f, csum_block_add_ext, __VA_ARGS__)
++#endif
++
+ struct kmem_cache *skbuff_head_cache __ro_after_init;
+ static struct kmem_cache *skbuff_fclone_cache __ro_after_init;
+ #ifdef CONFIG_SKB_EXTENSIONS
+@@ -2507,7 +2521,7 @@ __wsum __skb_checksum(const struct sk_buff *skb, int offset, int len,
+ 	if (copy > 0) {
+ 		if (copy > len)
+ 			copy = len;
+-		csum = ops->update(skb->data + offset, copy, csum);
++		csum = CSUM_UPDATE(ops->update, skb->data + offset, copy, csum);
+ 		if ((len -= copy) == 0)
+ 			return csum;
+ 		offset += copy;
+@@ -2534,9 +2548,9 @@ __wsum __skb_checksum(const struct sk_buff *skb, int offset, int len,
+ 					      frag->page_offset + offset - start,
+ 					      copy, p, p_off, p_len, copied) {
+ 				vaddr = kmap_atomic(p);
+-				csum2 = ops->update(vaddr + p_off, p_len, 0);
++				csum2 = CSUM_UPDATE(ops->update, vaddr + p_off, p_len, 0);
+ 				kunmap_atomic(vaddr);
+-				csum = ops->combine(csum, csum2, pos, p_len);
++				csum = CSUM_COMBINE(ops->combine, csum, csum2, pos, p_len);
+ 				pos += p_len;
+ 			}
+ 
+@@ -2559,7 +2573,7 @@ __wsum __skb_checksum(const struct sk_buff *skb, int offset, int len,
+ 				copy = len;
+ 			csum2 = __skb_checksum(frag_iter, offset - start,
+ 					       copy, 0, ops);
+-			csum = ops->combine(csum, csum2, pos, copy);
++			csum = CSUM_COMBINE(ops->combine, csum, csum2, pos, copy);
+ 			if ((len -= copy) == 0)
+ 				return csum;
+ 			offset += copy;
+-- 
+2.21.0
+
