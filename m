@@ -2,93 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1574E2CDD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 19:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FB4E2CDDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 19:45:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbfE1Rou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 13:44:50 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43451 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbfE1Rot (ORCPT
+        id S1727508AbfE1Rp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 13:45:29 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:36571 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbfE1Rp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 13:44:49 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z5so18530930lji.10;
-        Tue, 28 May 2019 10:44:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vTNP3WJ8o78sxVeNIgMEXhpfs7BXqTtYopTEC44B8ak=;
-        b=qMqdOG52OQW+ngYpp0JOZVGR966Sd/+p/f8O2IZ05WDqnd3XDow1WCmv2t7pAjvDKI
-         XtN36OY1eBI9L1wimg4doI+H3E+K0ibYmitTPZPDcQi0DEZgiRqFcNK98J1PjL6NuaYb
-         xxxNrYGfJT865QE43eomKy9dZvTaii/tJEtRFfgMEZCC7IYDb0c8otUvl24NAworuXrq
-         S1JdoMWVn8NorzuFeZnjDUuLcVY17pp+PiupstGgdSofUZ1G5hIxrSJRcPtV+Pwbbo/+
-         6epxwSYKUOwV8QOG+DtFaqA6sU+A98OCnAVXg9cBilg03z0bVHF2cl8+huXfdNZOmS/S
-         Gc0g==
+        Tue, 28 May 2019 13:45:27 -0400
+Received: by mail-qk1-f194.google.com with SMTP id g18so2021363qkl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 10:45:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vTNP3WJ8o78sxVeNIgMEXhpfs7BXqTtYopTEC44B8ak=;
-        b=b5paq/g3HwH9ftCdJWzWvQkxvEc7vFE1HiOhG2W8vr0S1tr+Lajq8NFAZFZ6U09A6Y
-         6rK9Jt6ykCoZf1ZmljqiuE9P7JEPP6Ius3h9ezEO1KbDIzBSQ68tZ/sPVHFDztUVVPaQ
-         vNcPtYpX1Xs/rZ8wnJFyVBeEN3f1tdEZtkKpQmOemz+CAh+9YVG0DA1Hrt0pE331fMpF
-         NKSkXLQUnEL69AefEDOgELMCEhLNdaaLsJDDqiPxPF4VF32rkd6rBpVh6O2vIXsTFCS8
-         XN9z7I3tVIjjCIbir3IlYvbjEH6DyQ9ekATvXWmbGzWKkpHxv5cRby9c9//2ksDYqTd8
-         8qaw==
-X-Gm-Message-State: APjAAAX/QWGK6t5jm9cARi0c5VGbufhfN+ceLHStShNdE4vMf4SnxnfV
-        /PnbFpfHqXkThRVCncx3ccwnEo3z
-X-Google-Smtp-Source: APXvYqxQtQp0L0utIZAfGgofQxKTXH23puQ73wGwN4T/GGH4c4IHkzlgFe/BhnD3T9B62z9pFtD/ZQ==
-X-Received: by 2002:a2e:6817:: with SMTP id c23mr43378392lja.145.1559065487084;
-        Tue, 28 May 2019 10:44:47 -0700 (PDT)
-Received: from [192.168.1.17] (cis152.neoplus.adsl.tpnet.pl. [83.31.42.152])
-        by smtp.gmail.com with ESMTPSA id 20sm3032506ljw.7.2019.05.28.10.44.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 10:44:46 -0700 (PDT)
-Subject: Re: [PATCH v3 1/9] leds: multicolor: Add sysfs interface definition
-To:     Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz, robh+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190523190820.29375-1-dmurphy@ti.com>
- <20190523190820.29375-2-dmurphy@ti.com>
- <f01ac400-efda-80a8-4d63-1e2add5e054a@gmail.com>
- <185abdd6-100c-0a71-2da9-8f556d8ea701@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <333167d0-4615-2fbe-e933-cbca623998ef@gmail.com>
-Date:   Tue, 28 May 2019 19:44:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AAYtqa2DAr5N77/OMPYjghZagaZbPGB+Zztk+7V5jgU=;
+        b=pBGxVv5URZQMuCOReMNbscBbHwsvp+4KbjtQJRdduQNg6PMzHC1r4HbL5BB3wcP0zn
+         5h2fsmGzBrprmBt0Bp8OUnyAaPqSHkTRQuVN8zU+8VCHaa15yiV9TJLQX3tN/fupDaU5
+         P1CfgwJw98TdnFRZhWRVoBJQ9wxnxczHatu0LOumEK+jt9JmLhA3wY0TV3PZcClMGM4J
+         aqERBdzrzVHunvj0x/0em2HVGdPEfSWZ/FZafcdNacTUBOJuSHYpUFjYG2NZMpo2KbHk
+         Uym19q8hqnx2Fs/4zD9YhilOQ5dc/2RYxU12Oqn8fQCDF7M7dlhVE+A/acbmXDhMECix
+         Vryg==
+X-Gm-Message-State: APjAAAW89RGhKOa/ZJeMRMpxEyHJTqcAE9usTOMsuxFDS6rZYXoBd9eT
+        LWE4L9k1TQneipXw+60FAaT6gAdSyps0YjUL9R1tIg==
+X-Google-Smtp-Source: APXvYqz1xnUIVAN8WZEme5sRuWkK0m2Sb1s8935RgGJHI43BAZQampPfuKMjgr/Icm7bFwaGd4NsYX+joPPkLxIDo7g=
+X-Received: by 2002:ac8:303c:: with SMTP id f57mr13204817qte.294.1559065526243;
+ Tue, 28 May 2019 10:45:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <185abdd6-100c-0a71-2da9-8f556d8ea701@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <2c1684f6-9def-93dc-54ab-888142fd5e71@intel.com> <nycvar.YFH.7.76.1905281913140.1962@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1905281913140.1962@cbobk.fhfr.pm>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Tue, 28 May 2019 19:45:15 +0200
+Message-ID: <CAO-hwJJzNAuFbdMVFZ4+h7J=bh6QHr_MioyK2yTV=M5R6CTm=A@mail.gmail.com>
+Subject: Re: hid-related 5.2-rc1 boot hang
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan,
+On Tue, May 28, 2019 at 7:15 PM Jiri Kosina <jikos@kernel.org> wrote:
+>
+> On Tue, 28 May 2019, Dave Hansen wrote:
+>
+> > I have a system that works fine on 5.1.  When updating to 5.2-rc1, it
+> > hangs at boot waiting on an instance of systemd-udevd.  The kernel
+> > backtrace (https://photos.app.goo.gl/EV8rf7FofWouvdeE8) looks like it's
+> > doing an finit_module() that dives into the hid code and is waiting on a
+> > request_module().
+>
+> Dave,
+>
+> thanks for the report.
+>
+> Just to confirm -- I guess reverting 4ceabaf79 and a025a18fe would work
+> this around, right?
+>
 
-On 5/28/19 7:32 PM, Dan Murphy wrote:
-> Jacek
-> 
-> On 5/27/19 3:00 PM, Jacek Anaszewski wrote:
->> Hi Dan,
->>
->> Thank you for the update.
->>
->> One thing is missing here - we need to document how legacy brightness
->> levels map to the sub-LED color levels, i.e. what you do in
->> multicolor_set_brightness().
-> 
-> 
-> Ok so i will need to document the algorithm that is used to determine 
-> the color LED brightness.
+It would be also interesting to know which distribution and which
+systemd version you are running (if you are on systemd).
 
-Right, and please send just an update of that single patch.
+This rings a bell as I recall  playing with
+request_module/request_firmware a while ago, but Hans convinced me
+that no such delay would be induced.
 
--- 
-Best regards,
-Jacek Anaszewski
+Cheers,
+Benjamin
