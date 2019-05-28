@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B6D82CE01
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 19:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E3482CE02
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 19:51:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbfE1RvK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 13:51:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54858 "EHLO mail.kernel.org"
+        id S1727825AbfE1RvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 13:51:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726827AbfE1RvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 13:51:08 -0400
+        id S1726827AbfE1RvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 13:51:13 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 011852183F;
-        Tue, 28 May 2019 17:51:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC304217F9;
+        Tue, 28 May 2019 17:51:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559065868;
-        bh=ua6I4CLzAefT55wVsbJQWhe6NsT3WuAgTj2A2upB0No=;
+        s=default; t=1559065872;
+        bh=UBvHPaQgIdgKfR0wa7tm2/SxmKb4dsvvEt/XAplS+1c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hFH37FdvA2gU7HQul1yRZ/PXd4c3y1PQHOZgqcCiZOv7EDXFlbMoFdUiHUKbMXM0c
-         Hi6yq5DpWPRncwNWP0q8e0NDTNYDwpAY14el5JJoPOhmvfwhlWJ5qxvzN+/jlV7YeX
-         tZgi71FXlQN8OWPfxvctsUEErESKeQFfy2FGLtUI=
+        b=klL5nltHmpEuNUNw8V0mR+lVLWpD4UfT5Y4PLEp8GDJ+qfiqkcKmf5N9wAxuhioMI
+         KQwNDI6AfYKrLoZ9ZGmGqg9ougBmuQxJiqNivfEOJZoPtBfAGBu782yz+ofmJfbYuP
+         zhGa61/yHg4SMcZyRvnAg6Bx6PrKT4nW2W8UvyKI=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Krister Johansen <kjlx@templeofstupid.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 10/14] perf session: Add missing swap ops for namespace events
-Date:   Tue, 28 May 2019 14:50:16 -0300
-Message-Id: <20190528175020.13343-11-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH 11/14] perf test vmlinux-kallsyms: Ignore aliases to _etext when searching on kallsyms
+Date:   Tue, 28 May 2019 14:50:17 -0300
+Message-Id: <20190528175020.13343-12-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190528175020.13343-1-acme@kernel.org>
 References: <20190528175020.13343-1-acme@kernel.org>
@@ -46,60 +50,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Namhyung Kim <namhyung@kernel.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-In case it's recorded in a different arch.
+No need to search for aliases for the symbol that marks the end of the
+kernel text segment, the following patch will make such symbols not to
+be found when searching in the kallsyms maps causing this test to fail.
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Hari Bathini <hbathini@linux.vnet.ibm.com> <hbathini@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Krister Johansen <kjlx@templeofstupid.com>
-Fixes: f3b3614a284d ("perf tools: Add PERF_RECORD_NAMESPACES to include namespaces related info")
-Link: http://lkml.kernel.org/r/20190522053250.207156-3-namhyung@kernel.org
+So as a prep patch to avoid breaking bisection, ignore such symbols.
+
+Tested-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stanislav Fomichev <sdf@google.com>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Link: https://lkml.kernel.org/n/tip-qfwuih8cvmk9doh7k5k244eq@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/session.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ tools/perf/tests/vmlinux-kallsyms.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 2310a1752983..54cf163347f7 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -647,6 +647,26 @@ static void perf_event__throttle_swap(union perf_event *event,
- 		swap_sample_id_all(event, &event->throttle + 1);
- }
+diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
+index 7691980b7df1..f101576d1c72 100644
+--- a/tools/perf/tests/vmlinux-kallsyms.c
++++ b/tools/perf/tests/vmlinux-kallsyms.c
+@@ -161,9 +161,16 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
  
-+static void perf_event__namespaces_swap(union perf_event *event,
-+					bool sample_id_all)
-+{
-+	u64 i;
-+
-+	event->namespaces.pid		= bswap_32(event->namespaces.pid);
-+	event->namespaces.tid		= bswap_32(event->namespaces.tid);
-+	event->namespaces.nr_namespaces	= bswap_64(event->namespaces.nr_namespaces);
-+
-+	for (i = 0; i < event->namespaces.nr_namespaces; i++) {
-+		struct perf_ns_link_info *ns = &event->namespaces.link_info[i];
-+
-+		ns->dev = bswap_64(ns->dev);
-+		ns->ino = bswap_64(ns->ino);
-+	}
-+
-+	if (sample_id_all)
-+		swap_sample_id_all(event, &event->namespaces.link_info[i]);
-+}
-+
- static u8 revbyte(u8 b)
- {
- 	int rev = (b >> 4) | ((b & 0xf) << 4);
-@@ -887,6 +907,7 @@ static perf_event__swap_op perf_event__swap_ops[] = {
- 	[PERF_RECORD_LOST_SAMPLES]	  = perf_event__all64_swap,
- 	[PERF_RECORD_SWITCH]		  = perf_event__switch_swap,
- 	[PERF_RECORD_SWITCH_CPU_WIDE]	  = perf_event__switch_swap,
-+	[PERF_RECORD_NAMESPACES]	  = perf_event__namespaces_swap,
- 	[PERF_RECORD_HEADER_ATTR]	  = perf_event__hdr_attr_swap,
- 	[PERF_RECORD_HEADER_EVENT_TYPE]	  = perf_event__event_type_swap,
- 	[PERF_RECORD_HEADER_TRACING_DATA] = perf_event__tracing_data_swap,
+ 				continue;
+ 			}
+-		} else
++		} else if (mem_start == kallsyms.vmlinux_map->end) {
++			/*
++			 * Ignore aliases to _etext, i.e. to the end of the kernel text area,
++			 * such as __indirect_thunk_end.
++			 */
++			continue;
++		} else {
+ 			pr_debug("ERR : %#" PRIx64 ": %s not on kallsyms\n",
+ 				 mem_start, sym->name);
++		}
+ 
+ 		err = -1;
+ 	}
 -- 
 2.20.1
 
