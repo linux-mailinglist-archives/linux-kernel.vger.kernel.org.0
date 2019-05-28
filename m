@@ -2,93 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91BE92CB63
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 18:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC992CB73
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 18:15:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbfE1QPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 12:15:14 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37217 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbfE1QPK (ORCPT
+        id S1727529AbfE1QPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 12:15:30 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38553 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727489AbfE1QP1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 12:15:10 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 7so3539986wmo.2;
-        Tue, 28 May 2019 09:15:09 -0700 (PDT)
+        Tue, 28 May 2019 12:15:27 -0400
+Received: by mail-ed1-f65.google.com with SMTP id g13so2791928edu.5
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 09:15:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ky+CVe/5shquKmn2x9Mkd4t0sluqJy1OgxXU5TLlF8Y=;
-        b=E3Lep2geQq3zVSCzebhNkS3T9inq3OCueWMHe4pDmLcsO1M0O0vD3a0CDoF92LLXwO
-         Nz5TQgnw1xrjeY2Au1f3rWtJsEzTIlU0mLfWa1rwN06OekvVmhYkXclZN0LdwsZiPwgt
-         KMclb5s2kOOk233GeXOT+bAH3AK8Eip8RTaA1Eo4BGdR4Wx/tYpoA+1ikhdeVrFbXug6
-         yclYK2mjqAm4FTrUjHrm9Q2SZLJocPLbYAk8W+7ArF8Y3uRgzaWTXMkpE0GqTu9yxGD4
-         5Tap0nfXEO9LVnkwe1ZCpp0Gwst8F2h7VQxP6iidYVptlYtXTPDtrZjKcsDNahCwXu9x
-         hlcA==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=APCrAvO45WxG2Z8dfWcCRk4DUY8ED5a7eiZnfDHqXrg=;
+        b=XY50YErwMzcK4b2EJ3Yqe+d4nhkKDipKsPAIbaHdLbnMaCRTQt/7KSd6+32LoUKpqz
+         aeGT5DX+k3xCrJEqMWxCAmUD5bbqYrWItKYmrTdKl/kAA/yZNnaP3BlMcDQxKT1Mo8AQ
+         WriwTcpqeJiu2CFEVqE1RutpiTmZmyifR4RjQfNQv9b5EDaN0TyBhloQk0R1fKchYvWi
+         Jg8fPa+tSeRcs+Ble2TqgN1WPji/7X2dnFhnX0LRsjWX6SLhoy2k+JPRUUmGgecmcJyF
+         hzgmMT7CQcM6wCJD52eYLRScxcoABgs1FelkHFrgu4NOqBlkeJ/Ff0EebUcl5L0dBOoo
+         FtCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ky+CVe/5shquKmn2x9Mkd4t0sluqJy1OgxXU5TLlF8Y=;
-        b=CQb4E14gz/ONdeqYinN036rsZeLXcwiN8ZqLMC6Cawr1RDaldTFLB+VllzUKdloG5k
-         XBdcGQlxrPt0J5DgXY2mK1jAheq2PNXsQ+dPKIr0fq5v68zYUch7gQ3AE5rGZX+vh/EA
-         qF95D2T3OjTHflNmKq6a2vH2PVVssBNZVK4UaD6w30UEspQlAyhwV+1JwpC+kCHbpw4J
-         16PqrSe7Lll/8xAqqRe8xY9+tNbqMQ12jtNelQdPoh+g+890vcl0ON+hu3P4pbF9iYGi
-         Q0zrbkk4JIC4zKlO3dz6TZ5HVcv16SUZf+HSM4BVxWfuIPYol7V4jzjRfzCwLxCbHwMv
-         k74Q==
-X-Gm-Message-State: APjAAAVYZJCtrIQ83y7tM6GKqL3JnwNHFhSwAxsmAg3BPT5Rz6BVJa9H
-        EW++axB/C6wMRljbGvLx+sg=
-X-Google-Smtp-Source: APXvYqwSx3LBjIiXJlHZ0KEyW3LlJCkYvmLFLaa0jci2PbxVYuIlNtgU3EY60lhlduo6pyd6PZ0MyQ==
-X-Received: by 2002:a1c:730d:: with SMTP id d13mr3665311wmb.88.1559060108493;
-        Tue, 28 May 2019 09:15:08 -0700 (PDT)
-Received: from localhost.localdomain (18.189-60-37.rdns.acropolistelecom.net. [37.60.189.18])
-        by smtp.gmail.com with ESMTPSA id l14sm13678787wrt.57.2019.05.28.09.15.07
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 28 May 2019 09:15:07 -0700 (PDT)
-From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH v3 12/12] arm64: defconfig: enable IR SUNXI option
-Date:   Tue, 28 May 2019 18:14:40 +0200
-Message-Id: <20190528161440.27172-13-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190528161440.27172-1-peron.clem@gmail.com>
-References: <20190528161440.27172-1-peron.clem@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=APCrAvO45WxG2Z8dfWcCRk4DUY8ED5a7eiZnfDHqXrg=;
+        b=d+QuTHxWV5cyO0Qf7m9DRrm5kSleVOyk1X8KXydul77/K2IY3NNv3jAGpBulv78W8X
+         5xkeubEfkvyI2oDVAIRYpYVTi6yKLX2SjA6z6EsorpTyeH6FfADKL1xI4JyDk86hNYpS
+         l/cxoQ2s/MyNAvZIVjXReoauYG2F0GQXMASEpVKptYHtRfFX0db5WGfCjHIy+NLExuts
+         1vd31asyTZKL7Ok9oXi6bGPCYK5TUTa7TPgftI43RFSms7y5fEN1XSyuqQDjBpaLGyfm
+         zAGzKQGPNapx1lGWMaJLR4rIyjjBXbbS3UkVcNbRnIJL2+I6l90cMM1uECWvU3yZkvCw
+         3tVA==
+X-Gm-Message-State: APjAAAUrthfGTCKnAv00yCH4Rwpb+Nn2TnQ4FDeogvDqPfBmYo0ilyYF
+        eGmWs25/qngEIFcYQVmYnzyuYQ==
+X-Google-Smtp-Source: APXvYqxplFSWKYUVi8zFdC6FL9P2zZJFxS1PTqk9F8PBPaSKcxV4aV+QR+60zNN6XgknS5phD8dk4Q==
+X-Received: by 2002:a50:91cc:: with SMTP id h12mr129701698eda.3.1559060125768;
+        Tue, 28 May 2019 09:15:25 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id b4sm4393511eda.9.2019.05.28.09.15.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 09:15:24 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 0F0A21041E5; Tue, 28 May 2019 19:15:24 +0300 (+03)
+Date:   Tue, 28 May 2019 19:15:24 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     akpm@linux-foundation.org, dan.j.williams@intel.com,
+        mhocko@suse.com, keith.busch@intel.com,
+        kirill.shutemov@linux.intel.com, alexander.h.duyck@linux.intel.com,
+        ira.weiny@intel.com, andreyknvl@google.com, arunks@codeaurora.org,
+        vbabka@suse.cz, cl@linux.com, riel@surriel.com,
+        keescook@chromium.org, hannes@cmpxchg.org, npiggin@gmail.com,
+        mathieu.desnoyers@efficios.com, shakeelb@google.com, guro@fb.com,
+        aarcange@redhat.com, hughd@google.com, jglisse@redhat.com,
+        mgorman@techsingularity.net, daniel.m.jordan@oracle.com,
+        jannh@google.com, kilobyte@angband.pl, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2 0/7] mm: process_vm_mmap() -- syscall for duplication
+ a process mapping
+Message-ID: <20190528161524.tn5sqzhmhgyuwrmy@box>
+References: <155836064844.2441.10911127801797083064.stgit@localhost.localdomain>
+ <20190522152254.5cyxhjizuwuojlix@box>
+ <358bb95e-0dca-6a82-db39-83c0cf09a06c@virtuozzo.com>
+ <20190524115239.ugxv766doolc6nsc@box>
+ <c3cd3719-0a5e-befe-89f2-328526bb714d@virtuozzo.com>
+ <20190527233030.hpnnbi4aqnu34ova@box>
+ <de6e4e89-66ac-da2f-48a6-4d98a728687a@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <de6e4e89-66ac-da2f-48a6-4d98a728687a@virtuozzo.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable CONFIG_IR_SUNXI option for ARM64, so that Allwinner A64/H6 SoCs
-can use their IR receiver controller.
+On Tue, May 28, 2019 at 12:15:16PM +0300, Kirill Tkhai wrote:
+> On 28.05.2019 02:30, Kirill A. Shutemov wrote:
+> > On Fri, May 24, 2019 at 05:00:32PM +0300, Kirill Tkhai wrote:
+> >> On 24.05.2019 14:52, Kirill A. Shutemov wrote:
+> >>> On Fri, May 24, 2019 at 01:45:50PM +0300, Kirill Tkhai wrote:
+> >>>> On 22.05.2019 18:22, Kirill A. Shutemov wrote:
+> >>>>> On Mon, May 20, 2019 at 05:00:01PM +0300, Kirill Tkhai wrote:
+> >>>>>> This patchset adds a new syscall, which makes possible
+> >>>>>> to clone a VMA from a process to current process.
+> >>>>>> The syscall supplements the functionality provided
+> >>>>>> by process_vm_writev() and process_vm_readv() syscalls,
+> >>>>>> and it may be useful in many situation.
+> >>>>>
+> >>>>> Kirill, could you explain how the change affects rmap and how it is safe.
+> >>>>>
+> >>>>> My concern is that the patchset allows to map the same page multiple times
+> >>>>> within one process or even map page allocated by child to the parrent.
+> >>>>>
+> >>>>> It was not allowed before.
+> >>>>>
+> >>>>> In the best case it makes reasoning about rmap substantially more difficult.
+> >>>>>
+> >>>>> But I'm worry it will introduce hard-to-debug bugs, like described in
+> >>>>> https://lwn.net/Articles/383162/.
+> >>>>
+> >>>> Andy suggested to unmap PTEs from source page table, and this make the single
+> >>>> page never be mapped in the same process twice. This is OK for my use case,
+> >>>> and here we will just do a small step "allow to inherit VMA by a child process",
+> >>>> which we didn't have before this. If someone still needs to continue the work
+> >>>> to allow the same page be mapped twice in a single process in the future, this
+> >>>> person will have a supported basis we do in this small step. I believe, someone
+> >>>> like debugger may want to have this to make a fast snapshot of a process private
+> >>>> memory (when the task is stopped for a small time to get its memory). But for
+> >>>> me remapping is enough at the moment.
+> >>>>
+> >>>> What do you think about this?
+> >>>
+> >>> I don't think that unmapping alone will do. Consider the following
+> >>> scenario:
+> >>>
+> >>> 1. Task A creates and populates the mapping.
+> >>> 2. Task A forks. We have now Task B mapping the same pages, but
+> >>> write-protected.
+> >>> 3. Task B calls process_vm_mmap() and passes the mapping to the parent.
+> >>>
+> >>> After this Task A will have the same anon pages mapped twice.
+> >>
+> >> Ah, sure.
+> >>
+> >>> One possible way out would be to force CoW on all pages in the mapping,
+> >>> before passing the mapping to the new process.
+> >>
+> >> This will pop all swapped pages up, which is the thing the patchset aims
+> >> to prevent.
+> >>
+> >> Hm, what about allow remapping only VMA, which anon_vma::rb_root contain
+> >> only chain and which vma->anon_vma_chain contains single entry? This is
+> >> a vma, which were faulted, but its mm never were duplicated (or which
+> >> forks already died).
+> > 
+> > The requirement for the VMA to be faulted (have any pages mapped) looks
+> > excessive to me, but the general idea may work.
+> > 
+> > One issue I see is that userspace may not have full control to create such
+> > VMA. vma_merge() can merge the VMA to the next one without any consent
+> > from userspace and you'll get anon_vma inherited from the VMA you've
+> > justed merged with.
+> > 
+> > I don't have any valid idea on how to get around this.
+> 
+> Technically it is possible by creating boundary 1-page VMAs with another protection:
+> one above and one below the desired region, then map the desired mapping. But this
+> is not comfortable.
+> 
+> I don't think it's difficult to find a natural limitation, which prevents mapping
+> a single page twice if we want to avoid this at least on start. Another suggestion:
+> 
+> prohibit to map a remote process's VMA only in case of its vm_area_struct::anon_vma::root
+> is the same as root of one of local process's VMA.
+> 
+> What about this?
 
-Signed-off-by: Clément Péron <peron.clem@gmail.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+I don't see anything immediately wrong with this, but it's still going to
+produce puzzling errors for a user. How would you document such limitation
+in the way it makes sense for userspace developer?
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 4d583514258c..5128029100d2 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -460,6 +460,7 @@ CONFIG_RC_CORE=m
- CONFIG_RC_DECODERS=y
- CONFIG_RC_DEVICES=y
- CONFIG_IR_MESON=m
-+CONFIG_IR_SUNXI=m
- CONFIG_MEDIA_SUPPORT=m
- CONFIG_MEDIA_CAMERA_SUPPORT=y
- CONFIG_MEDIA_ANALOG_TV_SUPPORT=y
 -- 
-2.20.1
-
+ Kirill A. Shutemov
