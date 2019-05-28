@@ -2,172 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35DED2C27B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A837E2C22E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:04:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbfE1JFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:05:03 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17615 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727488AbfE1JEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:04:41 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 61BEE4B246610A3D1FE3;
-        Tue, 28 May 2019 17:04:36 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 28 May 2019 17:04:28 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>
-Subject: [PATCH net-next 09/12] net: hns3: add handshake with hardware while doing reset
-Date:   Tue, 28 May 2019 17:02:59 +0800
-Message-ID: <1559034182-24737-10-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559034182-24737-1-git-send-email-tanhuazhong@huawei.com>
-References: <1559034182-24737-1-git-send-email-tanhuazhong@huawei.com>
+        id S1727316AbfE1JD6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:03:58 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38172 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbfE1JDz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:03:55 -0400
+Received: by mail-ed1-f66.google.com with SMTP id g13so838094edu.5
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=cIvSBS1B4MGUlvtXGtjMOQmcHlrlcr23oBPyjEdIMqw=;
+        b=kEX1dBYsfLZqMz1zXWP5urOCL4wj3GR50ijZkMz53o+IqxGumJznNh5bWHFqzz/57F
+         g2GIL+FYqK5zeRJoDlXmOwePs6wvEYLvE/nkB5jnXi45FLkvBnGQbiXCyV5IfNvHSdoU
+         Rfo20w4pFvtVPLYS9Hx6btvQPMdK9n+DhCJB0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=cIvSBS1B4MGUlvtXGtjMOQmcHlrlcr23oBPyjEdIMqw=;
+        b=VOLb5pqXZzclXd1p4NiXsjJPNr51kAijn1xcr9078YFjCrkuTnvqrLhD93a0scjtUK
+         5oSBsmztY+PBn6y8+TXD+PCJfMpXfA3bYclP77wLfLUEuAhu3C51CeQ5QsfTZAyPieBr
+         U1Wi0QbJ7JCvHdvvOJvzDULkT2GOmLmhx6MsMacY0NzJXShlqKVSoCe7UozkyGGM9ta9
+         vxtLdmHPSrX2aRbdic3VL80EsliZy5Prjvv2HvJ2VCKVt/fYb2p+38cWikq3dpm0tC7I
+         l7CNL/dF9ZSSvJWbNeFcwG2EmuI1tD3XINB5A6MgC5Kvcs5SQJ+QwDPBRRZY8iaRcTBw
+         1ZmA==
+X-Gm-Message-State: APjAAAVSWZrXEitFPdsoWofm1TIMXKObLW/dpinlr5Z2AxBv7RU0UDTp
+        FE7cpacJDZddqf9q3BvxPSnngSTVAsI=
+X-Google-Smtp-Source: APXvYqzrT5yIPISvSHUclVX4EyZRCO+vxYwOVOnyeJaJPQCsiQ0H7rBwVIiiDjjc89dl8HybwqjL5A==
+X-Received: by 2002:a17:906:f14a:: with SMTP id gw10mr94060688ejb.158.1559034233120;
+        Tue, 28 May 2019 02:03:53 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 02:03:52 -0700 (PDT)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        linux-fbdev@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Yisheng Xie <ysxie@foxmail.com>
+Subject: [PATCH 29/33] vgaswitcheroo: call fbcon_remap_all directly
+Date:   Tue, 28 May 2019 11:03:00 +0200
+Message-Id: <20190528090304.9388-30-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
+References: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When reset happens, the hardware reset should begin after the
-driver has finished its preparatory work, otherwise it may cause
-some hardware error.
+While at it, clean up the interface a bit and push the console locking
+into fbcon.c.
 
-Before Hardware's reset, it will wait for the driver to write
-bit HCLGE_NIC_CMQ_ENABLE of register HCLGE_NIC_CSQ_DEPTH_REG
-to 1, while the driver finishes its preparatory work will do that.
-BTW, since some cases this register will be cleared, so it needs
-some sync time before driver's writing.
+v2: Remove now outdated comment (Lukas).
 
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
+v3: Forgot to add static inline to the dummy function.
+
+Acked-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Yisheng Xie <ysxie@foxmail.com>
+Cc: linux-fbdev@vger.kernel.org
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c    |  6 ++----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   | 10 ++++++++--
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c  |  2 --
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c |  7 ++++++-
- 4 files changed, 16 insertions(+), 9 deletions(-)
+ drivers/gpu/vga/vga_switcheroo.c | 11 +++--------
+ drivers/video/fbdev/core/fbcon.c | 14 +++++---------
+ include/linux/fb.h               |  2 --
+ include/linux/fbcon.h            |  2 ++
+ 4 files changed, 10 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-index fbd904e..e532905 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
-@@ -110,8 +110,7 @@ static void hclge_cmd_config_regs(struct hclge_cmq_ring *ring)
- 		hclge_write_dev(hw, HCLGE_NIC_CSQ_BASEADDR_H_REG,
- 				upper_32_bits(dma));
- 		hclge_write_dev(hw, HCLGE_NIC_CSQ_DEPTH_REG,
--				(ring->desc_num >> HCLGE_NIC_CMQ_DESC_NUM_S) |
--				HCLGE_NIC_CMQ_ENABLE);
-+				ring->desc_num >> HCLGE_NIC_CMQ_DESC_NUM_S);
- 		hclge_write_dev(hw, HCLGE_NIC_CSQ_HEAD_REG, 0);
- 		hclge_write_dev(hw, HCLGE_NIC_CSQ_TAIL_REG, 0);
- 	} else {
-@@ -120,8 +119,7 @@ static void hclge_cmd_config_regs(struct hclge_cmq_ring *ring)
- 		hclge_write_dev(hw, HCLGE_NIC_CRQ_BASEADDR_H_REG,
- 				upper_32_bits(dma));
- 		hclge_write_dev(hw, HCLGE_NIC_CRQ_DEPTH_REG,
--				(ring->desc_num >> HCLGE_NIC_CMQ_DESC_NUM_S) |
--				HCLGE_NIC_CMQ_ENABLE);
-+				ring->desc_num >> HCLGE_NIC_CMQ_DESC_NUM_S);
- 		hclge_write_dev(hw, HCLGE_NIC_CRQ_HEAD_REG, 0);
- 		hclge_write_dev(hw, HCLGE_NIC_CRQ_TAIL_REG, 0);
- 	}
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index b7106a5..a563815 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3197,6 +3197,8 @@ static int hclge_reset_prepare_down(struct hclge_dev *hdev)
+diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
+index a132c37d7334..65d7541c413a 100644
+--- a/drivers/gpu/vga/vga_switcheroo.c
++++ b/drivers/gpu/vga/vga_switcheroo.c
+@@ -35,6 +35,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/fb.h>
+ #include <linux/fs.h>
++#include <linux/fbcon.h>
+ #include <linux/module.h>
+ #include <linux/pci.h>
+ #include <linux/pm_domain.h>
+@@ -736,14 +737,8 @@ static int vga_switchto_stage2(struct vga_switcheroo_client *new_client)
+ 	if (!active->driver_power_control)
+ 		set_audio_state(active->id, VGA_SWITCHEROO_OFF);
  
- static int hclge_reset_prepare_wait(struct hclge_dev *hdev)
- {
-+#define HCLGE_RESET_SYNC_TIME 100
-+
- 	u32 reg_val;
- 	int ret = 0;
- 
-@@ -3205,7 +3207,7 @@ static int hclge_reset_prepare_wait(struct hclge_dev *hdev)
- 		/* There is no mechanism for PF to know if VF has stopped IO
- 		 * for now, just wait 100 ms for VF to stop IO
- 		 */
--		msleep(100);
-+		msleep(HCLGE_RESET_SYNC_TIME);
- 		ret = hclge_func_reset_cmd(hdev, 0);
- 		if (ret) {
- 			dev_err(&hdev->pdev->dev,
-@@ -3225,7 +3227,7 @@ static int hclge_reset_prepare_wait(struct hclge_dev *hdev)
- 		/* There is no mechanism for PF to know if VF has stopped IO
- 		 * for now, just wait 100 ms for VF to stop IO
- 		 */
--		msleep(100);
-+		msleep(HCLGE_RESET_SYNC_TIME);
- 		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
- 		set_bit(HNAE3_FLR_DOWN, &hdev->flr_state);
- 		hdev->rst_stats.flr_rst_cnt++;
-@@ -3239,6 +3241,10 @@ static int hclge_reset_prepare_wait(struct hclge_dev *hdev)
- 		break;
- 	}
- 
-+	/* inform hardware that preparatory work is done */
-+	msleep(HCLGE_RESET_SYNC_TIME);
-+	hclge_write_dev(&hdev->hw, HCLGE_NIC_CSQ_DEPTH_REG,
-+			HCLGE_NIC_CMQ_ENABLE);
- 	dev_info(&hdev->pdev->dev, "prepare wait ok\n");
- 
- 	return ret;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-index 71f356f..e1588c0 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c
-@@ -98,7 +98,6 @@ static void hclgevf_cmd_config_regs(struct hclgevf_cmq_ring *ring)
- 		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_BASEADDR_H_REG, reg_val);
- 
- 		reg_val = (ring->desc_num >> HCLGEVF_NIC_CMQ_DESC_NUM_S);
--		reg_val |= HCLGEVF_NIC_CMQ_ENABLE;
- 		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_DEPTH_REG, reg_val);
- 
- 		hclgevf_write_dev(hw, HCLGEVF_NIC_CSQ_HEAD_REG, 0);
-@@ -110,7 +109,6 @@ static void hclgevf_cmd_config_regs(struct hclgevf_cmq_ring *ring)
- 		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_BASEADDR_H_REG, reg_val);
- 
- 		reg_val = (ring->desc_num >> HCLGEVF_NIC_CMQ_DESC_NUM_S);
--		reg_val |= HCLGEVF_NIC_CMQ_ENABLE;
- 		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_DEPTH_REG, reg_val);
- 
- 		hclgevf_write_dev(hw, HCLGEVF_NIC_CRQ_HEAD_REG, 0);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 9d5a4f8..ee1eeca 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1414,6 +1414,8 @@ static int hclgevf_reset_stack(struct hclgevf_dev *hdev)
- 
- static int hclgevf_reset_prepare_wait(struct hclgevf_dev *hdev)
- {
-+#define HCLGEVF_RESET_SYNC_TIME 100
-+
- 	int ret = 0;
- 
- 	switch (hdev->reset_type) {
-@@ -1431,7 +1433,10 @@ static int hclgevf_reset_prepare_wait(struct hclgevf_dev *hdev)
- 	}
- 
- 	set_bit(HCLGEVF_STATE_CMD_DISABLE, &hdev->state);
+-	if (new_client->fb_info) {
+-		struct fb_event event;
 -
-+	/* inform hardware that preparatory work is done */
-+	msleep(HCLGEVF_RESET_SYNC_TIME);
-+	hclgevf_write_dev(&hdev->hw, HCLGEVF_NIC_CSQ_DEPTH_REG,
-+			  HCLGEVF_NIC_CMQ_ENABLE);
- 	dev_info(&hdev->pdev->dev, "prepare reset(%d) wait done, ret:%d\n",
- 		 hdev->reset_type, ret);
+-		console_lock();
+-		event.info = new_client->fb_info;
+-		fb_notifier_call_chain(FB_EVENT_REMAP_ALL_CONSOLE, &event);
+-		console_unlock();
+-	}
++	if (new_client->fb_info)
++		fbcon_remap_all(new_client->fb_info);
  
+ 	mutex_lock(&vgasr_priv.mux_hw_lock);
+ 	ret = vgasr_priv.handler->switchto(new_client->id);
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index e98551f96138..158b9d5233e1 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -3149,17 +3149,16 @@ void fbcon_fb_unregistered(struct fb_info *info)
+ 		do_unregister_con_driver(&fb_con);
+ }
+ 
+-/* called with console_lock held */
+-static void fbcon_remap_all(int idx)
++void fbcon_remap_all(struct fb_info *info)
+ {
+-	int i;
+-
+-	WARN_CONSOLE_UNLOCKED();
++	int i, idx = info->node;
+ 
++	console_lock();
+ 	if (deferred_takeover) {
+ 		for (i = first_fb_vc; i <= last_fb_vc; i++)
+ 			con2fb_map_boot[i] = idx;
+ 		fbcon_map_override();
++		console_unlock();
+ 		return;
+ 	}
+ 
+@@ -3172,6 +3171,7 @@ static void fbcon_remap_all(int idx)
+ 		       first_fb_vc + 1, last_fb_vc + 1);
+ 		info_idx = idx;
+ 	}
++	console_unlock();
+ }
+ 
+ #ifdef CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY
+@@ -3337,10 +3337,6 @@ static int fbcon_event_notify(struct notifier_block *self,
+ 		con2fb = event->data;
+ 		con2fb->framebuffer = con2fb_map[con2fb->console - 1];
+ 		break;
+-	case FB_EVENT_REMAP_ALL_CONSOLE:
+-		idx = info->node;
+-		fbcon_remap_all(idx);
+-		break;
+ 	}
+ 	return ret;
+ }
+diff --git a/include/linux/fb.h b/include/linux/fb.h
+index f9c212f9b661..25e4b885f5b3 100644
+--- a/include/linux/fb.h
++++ b/include/linux/fb.h
+@@ -139,8 +139,6 @@ struct fb_cursor_user {
+ #define FB_EVENT_SET_CONSOLE_MAP        0x08
+ /*      A display blank is requested       */
+ #define FB_EVENT_BLANK                  0x09
+-/*      CONSOLE-SPECIFIC: remap all consoles to new fb - for vga_switcheroo */
+-#define FB_EVENT_REMAP_ALL_CONSOLE      0x0F
+ /*      A hardware display blank early change occurred */
+ #define FB_EARLY_EVENT_BLANK		0x10
+ /*      A hardware display blank revert early change occurred */
+diff --git a/include/linux/fbcon.h b/include/linux/fbcon.h
+index de31eeb22c97..69f900d289b2 100644
+--- a/include/linux/fbcon.h
++++ b/include/linux/fbcon.h
+@@ -16,6 +16,7 @@ void fbcon_get_requirement(struct fb_info *info,
+ 			   struct fb_blit_caps *caps);
+ void fbcon_fb_blanked(struct fb_info *info, int blank);
+ void fbcon_update_vcs(struct fb_info *info, bool all);
++void fbcon_remap_all(struct fb_info *info);
+ #else
+ static inline void fb_console_init(void) {}
+ static inline void fb_console_exit(void) {}
+@@ -31,6 +32,7 @@ static inline void fbcon_get_requirement(struct fb_info *info,
+ 					 struct fb_blit_caps *caps) {}
+ static inline void fbcon_fb_blanked(struct fb_info *info, int blank) {}
+ static inline void fbcon_update_vcs(struct fb_info *info, bool all) {}
++static inline void fbcon_remap_all(struct fb_info *info) {}
+ #endif
+ 
+ #endif /* _LINUX_FBCON_H */
 -- 
-2.7.4
+2.20.1
 
