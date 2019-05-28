@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F02B2C209
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:03:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9207B2C29E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:06:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfE1JDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:03:24 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35101 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726619AbfE1JDP (ORCPT
+        id S1726945AbfE1JDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:03:22 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37232 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726833AbfE1JDQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:03:15 -0400
-Received: by mail-ed1-f65.google.com with SMTP id p26so30641670edr.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:14 -0700 (PDT)
+        Tue, 28 May 2019 05:03:16 -0400
+Received: by mail-ed1-f68.google.com with SMTP id w37so30608223edw.4
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zV1k/wyKbSK4unVk9Zsa3jP6q9n4lvzRcxAhP6ZZB9c=;
-        b=Jr4diFnn4D12FEqGpJQ+RuXfm8du2nWF1rRHD4W7cIEGcbaXABy4y7PYtm1RWYCGsM
-         4VUgAtZNFYUQNW5orIhfjotHfmaMRBcdXOU7lv9qvqyzRqJa5qThyVjqHAx5MH9qVK6q
-         lTOmQV05XsP0H1DMu730MHM4S7AOOkuX/FVNA=
+        bh=MkPaiys1FHkvX5Xasbg4uMlexzhS3Oo0c8bAmpggR9g=;
+        b=chjJHMWFVuPfhW3A7wneTkspRz2zd+mGVI0vCAF6liTiOmsE5RMJw1G5cMrRnyNngC
+         W2oQnkMN6UocrhEJ8dL6n810MNsuqxnBqMe8cuwYvDOWo8W60y/cNQRvGXu+RScDN24b
+         yIAQaBhqHR1mwDhUGgUGALBnoax8FwNCAT8Ho=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zV1k/wyKbSK4unVk9Zsa3jP6q9n4lvzRcxAhP6ZZB9c=;
-        b=R6sxvtdlBn7z4SIjbkgV56kOrO40RZ3CZvf1WH29oE3WxfYyToybmfkLwEBLGSToU6
-         hScazwdQOMo7jaBqSoHrCghOcUv8pI5cL5uLV45eZSLGEd18nkroc5Inq1f8ULZnRoMn
-         Q36QgHU+sEJYN295eWnGPRL4SqnJUWTBP7fGN7NzEbUQ7pHosm7SdmgFu9TpkwYnTF0d
-         CkGLgz9qEe+5SlUYsK8mGWR5myHDjnItsvC/U2qRhQq9xAtcFeDtRyRbAbEJEWqsoppA
-         c9k9lxGoNZFhi/Zwboiz2ENMF1pQs+Zwpj4bU6auOWDIQPyYqj8TTNXHWC/I/4n/5lFp
-         jpmg==
-X-Gm-Message-State: APjAAAVQlzKlnVuonKMpnB3O7glLI/eRppQBsOEqjXd15lVMa91GLMXr
-        z/vdXeqixJf+46mg8op+BDtEMAqY7Hw=
-X-Google-Smtp-Source: APXvYqzAGcPvnepTOvwWRDQxzLcJ/M058MuV1V355eV9v96p3PIpDSwE+P8RHoMQgcX7eCRUeENRAg==
-X-Received: by 2002:a50:8a46:: with SMTP id i64mr126930218edi.177.1559034193385;
-        Tue, 28 May 2019 02:03:13 -0700 (PDT)
+        bh=MkPaiys1FHkvX5Xasbg4uMlexzhS3Oo0c8bAmpggR9g=;
+        b=T87d5gWf+U0SZ3iCbfY7v1WT7g931toSXE5wB43TydxavvsLwKyObFn3FCsIuZKyCW
+         kGsPdjYiFS4r0XR56zHu+Gp7leV63erG1TB0MQYaJwgt21HV8VSQhBkglNrDprjOM+g6
+         KUjg6KV4HFHVfCOW1RhMC1zsttnuSNf+znHjc3KzIEFzLb2I/wzRlqmQekfCMd4pH11F
+         JzGeTMdohDe5d9xy6/0LhJKUdV/o3pPExf/35JStnYIu/yGnHwxWDauEIL/19w2uwkin
+         LG8oN0B9bNseudGAU2novx57fTUlcXCp8qstXc9wZcHnU79TbFlml340hjPV9lg5sMiI
+         /0jw==
+X-Gm-Message-State: APjAAAXrO/a6BV6FF3/auThuuhOL6xcrTmssCp0AEypNkUDRFRJDIYm1
+        yKTJYN/GOBZw8q7k5BjtRVJXO65YsGk=
+X-Google-Smtp-Source: APXvYqxNUG3PIbLtvNeH5i4uB4mGfl/Vclh7rWNvv07X8NGzMdCrtTYqdpxbhNGmaVceS0uzEWD3gQ==
+X-Received: by 2002:a50:b7bc:: with SMTP id h57mr111959297ede.77.1559034194600;
+        Tue, 28 May 2019 02:03:14 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.11
+        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 02:03:12 -0700 (PDT)
+        Tue, 28 May 2019 02:03:13 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
@@ -52,59 +52,58 @@ Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
         Daniel Vetter <daniel.vetter@intel.com>,
         Sam Ravnborg <sam@ravnborg.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Peter Rosin <peda@axentia.se>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH 02/33] fbdev: locking check for fb_set_suspend
-Date:   Tue, 28 May 2019 11:02:33 +0200
-Message-Id: <20190528090304.9388-3-daniel.vetter@ffwll.ch>
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Adam Borowski <kilobyte@angband.pl>,
+        Martin Hostettler <textshell@uchuujin.de>,
+        Mikulas Patocka <mpatocka@redhat.com>
+Subject: [PATCH 03/33] vt: might_sleep() annotation for do_blank_screen
+Date:   Tue, 28 May 2019 11:02:34 +0200
+Message-Id: <20190528090304.9388-4-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
 References: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just drive-by, nothing systematic yet.
+For symmetry reasons with do_unblank_screen, except without the
+oops_in_progress special case.
+
+Just a drive-by annotation while I'm trying to untangle the fbcon vs.
+fbdev screen blank/unblank maze.
 
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Adam Borowski <kilobyte@angband.pl>
+Cc: Martin Hostettler <textshell@uchuujin.de>
 Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
-Cc: Peter Rosin <peda@axentia.se>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
 Cc: Mikulas Patocka <mpatocka@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
 ---
- drivers/video/fbdev/core/fbmem.c | 2 ++
+ drivers/tty/vt/vt.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-index d1949c92be98..8ba674ffb3c9 100644
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -1985,6 +1985,8 @@ void fb_set_suspend(struct fb_info *info, int state)
- {
- 	struct fb_event event;
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index fdd12f8c3deb..bc9813b14c58 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -4159,6 +4159,8 @@ void do_blank_screen(int entering_gfx)
+ 	struct vc_data *vc = vc_cons[fg_console].d;
+ 	int i;
  
-+	WARN_CONSOLE_UNLOCKED();
++	might_sleep();
 +
- 	event.info = info;
- 	if (state) {
- 		fb_notifier_call_chain(FB_EVENT_SUSPEND, &event);
+ 	WARN_CONSOLE_UNLOCKED();
+ 
+ 	if (console_blanked) {
 -- 
 2.20.1
 
