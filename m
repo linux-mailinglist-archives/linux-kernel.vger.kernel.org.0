@@ -2,96 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38AD32BF60
+	by mail.lfdr.de (Postfix) with ESMTP id A382A2BF61
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 08:25:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbfE1GYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 02:24:51 -0400
-Received: from muru.com ([72.249.23.125]:51474 "EHLO muru.com"
+        id S1727911AbfE1GZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 02:25:02 -0400
+Received: from foss.arm.com ([217.140.101.70]:49616 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727815AbfE1GYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 02:24:49 -0400
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 0FEA98125;
-        Tue, 28 May 2019 06:25:07 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-omap@vger.kernel.org
-Cc:     Dave Gerlach <d-gerlach@ti.com>, Faiz Abbas <faiz_abbas@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 13/13] ARM: dts: Drop legacy custom hwmods property for omap4 mmc
-Date:   Mon, 27 May 2019 23:24:14 -0700
-Message-Id: <20190528062414.27192-14-tony@atomide.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190528062414.27192-1-tony@atomide.com>
-References: <20190528062414.27192-1-tony@atomide.com>
+        id S1726305AbfE1GY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 02:24:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6CF1AA78;
+        Mon, 27 May 2019 23:24:59 -0700 (PDT)
+Received: from [192.168.1.27] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EDF5D3F690;
+        Mon, 27 May 2019 23:24:56 -0700 (PDT)
+Subject: Re: [PATCH 1/4] arm64: module: create module allocations without exec
+ permissions
+To:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     mark.rutland@arm.com, marc.zyngier@arm.com,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <namit@vmware.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+References: <20190523102256.29168-1-ard.biesheuvel@arm.com>
+ <20190523102256.29168-2-ard.biesheuvel@arm.com>
+ <d82eb4fe-8113-3f8e-f465-26679ebae2df@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@arm.com>
+Message-ID: <f67efae5-1565-5459-2877-31bdd1a40c0f@arm.com>
+Date:   Tue, 28 May 2019 08:24:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <d82eb4fe-8113-3f8e-f465-26679ebae2df@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With recent ti-sysc driver changes, we can now finally probe most
-modules without needing the custom ti,hwmods property.
+On 5/28/19 7:35 AM, Anshuman Khandual wrote:
+> 
+> 
+> On 05/23/2019 03:52 PM, Ard Biesheuvel wrote:
+>> Now that the core code manages the executable permissions of code
+>> regions of modules explicitly, it is no longer necessary to create
+> 
+> I guess the permission transition for various module sections happen
+> through module_enable_[ro|nx]() after allocating via module_alloc().
+> 
 
-Let's drop it for omap4 MMC as we can test that for runtime PM
-for core retention idle mode for wlcore WLAN.
+Indeed.
 
-Cc: devicetree@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/boot/dts/omap4-l4.dtsi | 5 -----
- 1 file changed, 5 deletions(-)
+>> the module vmalloc regions with RWX permissions, and we can create
+>> them with RW- permissions instead, which is preferred from a
+>> security perspective.
+> 
+> Makes sense. Will this be followed in all architectures now ?
+> 
 
-diff --git a/arch/arm/boot/dts/omap4-l4.dtsi b/arch/arm/boot/dts/omap4-l4.dtsi
---- a/arch/arm/boot/dts/omap4-l4.dtsi
-+++ b/arch/arm/boot/dts/omap4-l4.dtsi
-@@ -2103,7 +2103,6 @@
- 
- 		target-module@9c000 {			/* 0x4809c000, ap 53 36.0 */
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "mmc1";
- 			reg = <0x9c000 0x4>,
- 			      <0x9c010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -2171,7 +2170,6 @@
- 
- 		target-module@ad000 {			/* 0x480ad000, ap 63 50.0 */
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "mmc3";
- 			reg = <0xad000 0x4>,
- 			      <0xad010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -2237,7 +2235,6 @@
- 
- 		target-module@b4000 {			/* 0x480b4000, ap 67 46.0 */
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "mmc2";
- 			reg = <0xb4000 0x4>,
- 			      <0xb4010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -2332,7 +2329,6 @@
- 
- 		target-module@d1000 {			/* 0x480d1000, ap 73 44.0 */
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "mmc4";
- 			reg = <0xd1000 0x4>,
- 			      <0xd1010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -2365,7 +2361,6 @@
- 
- 		target-module@d5000 {			/* 0x480d5000, ap 75 4e.0 */
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "mmc5";
- 			reg = <0xd5000 0x4>,
- 			      <0xd5010 0x4>;
- 			reg-names = "rev", "sysc";
--- 
-2.21.0
+I am not sure if every architecture implements module_enable_[ro|nx](), 
+but if they do, they should probably apply this change as well.
+
+>>
+>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@arm.com>
+>> ---
+>>   arch/arm64/kernel/module.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
+>> index 2e4e3915b4d0..88f0ed31d9aa 100644
+>> --- a/arch/arm64/kernel/module.c
+>> +++ b/arch/arm64/kernel/module.c
+>> @@ -41,7 +41,7 @@ void *module_alloc(unsigned long size)
+>>   
+>>   	p = __vmalloc_node_range(size, MODULE_ALIGN, module_alloc_base,
+>>   				module_alloc_base + MODULES_VSIZE,
+>> -				gfp_mask, PAGE_KERNEL_EXEC, 0,
+>> +				gfp_mask, PAGE_KERNEL, 0,
+>>   				NUMA_NO_NODE, __builtin_return_address(0));
+>>   
+>>   	if (!p && IS_ENABLED(CONFIG_ARM64_MODULE_PLTS) &&
+>> @@ -57,7 +57,7 @@ void *module_alloc(unsigned long size)
+>>   		 */
+>>   		p = __vmalloc_node_range(size, MODULE_ALIGN, module_alloc_base,
+>>   				module_alloc_base + SZ_4G, GFP_KERNEL,
+>> -				PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
+>> +				PAGE_KERNEL, 0, NUMA_NO_NODE,
+>>   				__builtin_return_address(0));
+>>   
+>>   	if (p && (kasan_module_alloc(p, size) < 0)) {
+>>
+> 
+> Which just makes sure that PTE_PXN never gets dropped while creating
+> these mappings.
+> 
+
+Not sure what you mean. Is there a question here?
+
+
