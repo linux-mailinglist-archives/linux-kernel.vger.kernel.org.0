@@ -2,110 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF64A2C6AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 14:36:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 037A72C6B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 14:37:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbfE1Mge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 08:36:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727175AbfE1Mgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 08:36:33 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        id S1727321AbfE1Mha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 08:37:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48140 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726824AbfE1Mh3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 08:37:29 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1708B606FC; Tue, 28 May 2019 12:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1559047049;
+        bh=GjdZgF383TFHDYhYNOQSAnFBkS9jHN+K2M3uXmBh/5A=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=T+IIbrdsjC4arqVbuzO4fyc0HkxHlinCNSnc5SzZYOOapasYqNRJWDR5s07Q8/lPV
+         7YRmWV8ckdbEYG7hx4e+1245IoBeezlqf7nPDMmlpp98K4vrp5OvAwFFvT5yfpB1ws
+         87udwbaxkCSMfs0nUx4Bf7cEaBz7fj8G2g8sOsN4=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF96E208C3;
-        Tue, 28 May 2019 12:36:31 +0000 (UTC)
-Date:   Tue, 28 May 2019 08:36:29 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] tracing/kprobe: Add kprobe_event= boot parameter
-Message-ID: <20190528083629.3c100256@gandalf.local.home>
-In-Reply-To: <CADYN=9KHQPQTgy==TYZ5iD_zViPbHq4hgOUwuX69aQWV6vZOQg@mail.gmail.com>
-References: <155851393823.15728.9489409117921369593.stgit@devnote2>
-        <155851395498.15728.830529496248543583.stgit@devnote2>
-        <CADYN=9KHQPQTgy==TYZ5iD_zViPbHq4hgOUwuX69aQWV6vZOQg@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DC2766034D;
+        Tue, 28 May 2019 12:37:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1559047048;
+        bh=GjdZgF383TFHDYhYNOQSAnFBkS9jHN+K2M3uXmBh/5A=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=JQ4nJhozQRUORTMmtOJja8shJ0vRZnXO4/M60qEBHMVATMHEpHBmPT9znaeZc4tND
+         /oMH/PzZNcISfX2XMmPayIaf69VOrUPOH+h6DhPRSykNrPL6IJkLgEByJlhvxqDWZs
+         2hrULve39PAXGdXF96TKfIh2aVeqzOxIERJHV98Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC2766034D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] rtlwifi: rtl8821ae: Remove set but not used variables
+ 'cur_txokcnt' and 'b_last_is_cur_rdl_state'
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190525144332.17268-1-yuehaibing@huawei.com>
+References: <20190525144332.17268-1-yuehaibing@huawei.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <pkshih@realtek.com>, <davem@davemloft.net>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190528123729.1708B606FC@smtp.codeaurora.org>
+Date:   Tue, 28 May 2019 12:37:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 May 2019 14:23:43 +0200
-Anders Roxell <anders.roxell@linaro.org> wrote:
+YueHaibing <yuehaibing@huawei.com> wrote:
 
-> On Wed, 22 May 2019 at 10:32, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > Add kprobe_event= boot parameter to define kprobe events
-> > at boot time.
-> > The definition syntax is similar to tracefs/kprobe_events
-> > interface, but use ',' and ';' instead of ' ' and '\n'
-> > respectively. e.g.
-> >
-> >   kprobe_event=p,vfs_read,$arg1,$arg2
-> >
-> > This puts a probe on vfs_read with argument1 and 2, and
-> > enable the new event.
-> >
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>  
+> Fixes gcc '-Wunused-but-set-variable' warning:
 > 
-> I built an arm64 kernel from todays linux-next tag next-20190528 and
-> ran in to this issue when I booted it up in qemu:
+> drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c: In function rtl8821ae_dm_check_rssi_monitor:
+> drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c:658:6: warning: variable cur_txokcnt set but not used [-Wunused-but-set-variable]
+> drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c: In function rtl8821ae_dm_check_edca_turbo:
+> drivers/net/wireless/realtek/rtlwifi/rtl8821ae/dm.c:2657:7: warning: variable b_last_is_cur_rdl_state set but not used [-Wunused-but-set-variable]
 > 
-
-This is partial output from the crash. There should be more output
-before this that says what happened to cause the crash.
-
--- Steve
-
-
-> [    9.068772][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-> 5.2.0-rc2-next-20190528-00019-g9a6008710716 #8
-> [    9.072893][    T1] Hardware name: linux,dummy-virt (DT)
-> [    9.075143][    T1] pstate: 80400005 (Nzcv daif +PAN -UAO)
-> [    9.077528][    T1] pc : kprobe_target+0x0/0x30
-> [    9.079479][    T1] lr : init_test_probes+0x134/0x540
-> [    9.081611][    T1] sp : ffff80003f51fbe0
-> [    9.083331][    T1] x29: ffff80003f51fbe0 x28: ffff200013c17820
-> [    9.085906][    T1] x27: ffff200015d3ab40 x26: ffff2000122bb120
-> [    9.088491][    T1] x25: 0000000000000000 x24: ffff200013c08ae0
-> [    9.091068][    T1] x23: ffff200015d39000 x22: ffff200013a15ac8
-> [    9.093667][    T1] x21: 1ffff00007ea3f86 x20: ffff200015d39420
-> [    9.096214][    T1] x19: ffff2000122bad20 x18: 0000000000001400
-> [    9.098831][    T1] x17: 0000000000000000 x16: ffff80003f510040
-> [    9.101410][    T1] x15: 0000000000001480 x14: 1ffff00007ea3ea2
-> [    9.103963][    T1] x13: 00000000f1f1f1f1 x12: ffff040002782e0d
-> [    9.106549][    T1] x11: 1fffe40002782e0c x10: ffff040002782e0c
-> [    9.109120][    T1] x9 : 1fffe40002782e0c x8 : dfff200000000000
-> [    9.111676][    T1] x7 : ffff040002782e0d x6 : ffff200013c17067
-> [    9.114234][    T1] x5 : ffff80003f510040 x4 : 0000000000000000
-> [    9.116843][    T1] x3 : ffff200010427508 x2 : 0000000000000000
-> [    9.119409][    T1] x1 : ffff200010426e10 x0 : 0000000000a6326b
-> [    9.121980][    T1] Call trace:
-> [    9.123380][    T1]  kprobe_target+0x0/0x30
-> [    9.125205][    T1]  init_kprobes+0x2b8/0x300
-> [    9.127074][    T1]  do_one_initcall+0x4c0/0xa68
-> [    9.129076][    T1]  kernel_init_freeable+0x3c4/0x4e4
-> [    9.131234][    T1]  kernel_init+0x14/0x1fc
-> [    9.133032][    T1]  ret_from_fork+0x10/0x18
-> [    9.134908][    T1] Code: a9446bf9 f9402bfb a8d87bfd d65f03c0 (d4200080)
-> [    9.137845][    T1] ---[ end trace 49243ee03446b072 ]---
-> [    9.140114][    T1] Kernel panic - not syncing: Fatal exception
-> [    9.142684][    T1] ---[ end Kernel panic - not syncing: Fatal exception ]---
+> They are never used so can be removed.
 > 
-> I bisected down to this commit as the one that introduces this issue.
-> I'm unsure why this causes the call trace though, any ideas?
-> 
-> Cheers,
-> Anders
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Patch applied to wireless-drivers-next.git, thanks.
+
+3e42a66dfd15 rtlwifi: rtl8821ae: Remove set but not used variables 'cur_txokcnt' and 'b_last_is_cur_rdl_state'
+
+-- 
+https://patchwork.kernel.org/patch/10960841/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
