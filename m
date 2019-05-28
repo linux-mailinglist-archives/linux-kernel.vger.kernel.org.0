@@ -2,101 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21BD02C3C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:00:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E27732C3D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:02:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbfE1KAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 06:00:46 -0400
-Received: from mga03.intel.com ([134.134.136.65]:9963 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbfE1KAq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 06:00:46 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 03:00:45 -0700
-X-ExtLoop1: 1
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 28 May 2019 03:00:42 -0700
-Received: by lahna (sSMTP sendmail emulation); Tue, 28 May 2019 13:00:42 +0300
-Date:   Tue, 28 May 2019 13:00:42 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Stefan Roese <sr@denx.de>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: Re: [PATCH 1/2 v3] serial: mctrl_gpio: Check if GPIO property
- exisits before requesting it
-Message-ID: <20190528100042.GT2781@lahna.fi.intel.com>
-References: <20190527111805.876-1-sr@denx.de>
+        id S1726808AbfE1KCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 06:02:03 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:48070 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbfE1KCD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 06:02:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=LusDKMLS+m4sZJCVghZn+t8ht/w0Gel9LIuZv0e2CfE=; b=04iorG8B7OxjkIlDfmg0N623K
+        H0TsySypnUjwPRESiBehwoKjnD1Cus2xp8T0m28bKV4uAd3/u/8XF8S/mk00S5tFvFPy2Nw+Sh+QK
+        lXYYhf+ncCwtmUK1VdJ4E/9zJY4YnYnVTsSfA8AFpcLFjhchF/8bo8q5iYPtdpksQuL88M87PSXTI
+        bd9PfxOFgqw/ILtCyCv6+0OhZPDQZbzHj3/jTVm5uWjcuyKuBzUxpF1Ip9ur1fbAIOFIoSKprOVte
+        k4Err2llUFCEsd97Cu2xqd58dKJkcQerpbGU31KLl35l1LKIcyG4AHKbZUFVdIdpBGVWmzd0wbnBL
+        0qj+2lcAw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVYvW-0002XR-Pq; Tue, 28 May 2019 10:01:51 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AB5552065C636; Tue, 28 May 2019 12:01:47 +0200 (CEST)
+Date:   Tue, 28 May 2019 12:01:47 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     "Liang, Kan" <kan.liang@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 0/8] perf/x86: Rework msr probe interface
+Message-ID: <20190528100147.GM2623@hirez.programming.kicks-ass.net>
+References: <20190527215129.10000-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190527111805.876-1-sr@denx.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190527215129.10000-1-jolsa@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 01:18:04PM +0200, Stefan Roese wrote:
-> This patch adds a check for the GPIOs property existence, before the
-> GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
-> support is added (2nd patch in this patch series) on x86 platforms using
-> ACPI.
+On Mon, May 27, 2019 at 11:51:21PM +0200, Jiri Olsa wrote:
+> hi,
+> following up on [1], [2] and [3], this patchset adds update
+> attribute groups to pmu, factors out the MSR probe code and
+> use it in msr,cstate* and rapl PMUs.
 > 
-> Here Mika's comments from 2016-08-09:
-> 
-> "
-> I noticed that with v4.8-rc1 serial console of some of our Broxton
-> systems does not work properly anymore. I'm able to see output but input
-> does not work.
-> 
-> I bisected it down to commit 4ef03d328769eddbfeca1f1c958fdb181a69c341
-> ("tty/serial/8250: use mctrl_gpio helpers").
-> 
-> The reason why it fails is that in ACPI we do not have names for GPIOs
-> (except when _DSD is used) so we use the "idx" to index into _CRS GPIO
-> resources. Now mctrl_gpio_init_noauto() goes through a list of GPIOs
-> calling devm_gpiod_get_index_optional() passing "idx" of 0 for each. The
-> UART device in Broxton has following (simplified) ACPI description:
-> 
->     Device (URT4)
->     {
->         ...
->         Name (_CRS, ResourceTemplate () {
->             GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
->                     "\\_SB.GPO0", 0x00, ResourceConsumer)
->             {
->                 0x003A
->             }
->             GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
->                     "\\_SB.GPO0", 0x00, ResourceConsumer)
->             {
->                 0x003D
->             }
->         })
-> 
-> In this case it finds the first GPIO (0x003A which happens to be RX pin
-> for that UART), turns it into GPIO which then breaks input for the UART
-> device. This also breaks systems with bluetooth connected to UART (those
-> typically have some GPIOs in their _CRS).
-> 
-> Any ideas how to fix this?
-> 
-> We cannot just drop the _CRS index lookup fallback because that would
-> break many existing machines out there so maybe we can limit this to
-> only DT enabled machines. Or alternatively probe if the property first
-> exists before trying to acquire the GPIOs (using
-> device_property_present()).
-> "
-> 
-> This patch implements the fix suggested by Mika in his statement above.
-> 
-> Signed-off-by: Stefan Roese <sr@denx.de>
-> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> The functionality stays the same with one exception:
+> the event is not exported if the rdmsr return zero
+> on event's msr.
 
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+That seems a wee bit dangerous, are we sure none of these counters are 0
+by 'accident' when we probe them? I'm thinking esp. things like the Cn
+residency stuff could be 0 simply because we've not been into that state
+yet.
+
+Other than that, this looks good. Kan?
