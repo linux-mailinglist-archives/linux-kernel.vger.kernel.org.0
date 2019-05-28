@@ -2,73 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E97B2C4C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DC072C4BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 12:49:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfE1Kti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 06:49:38 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54966 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726896AbfE1Ktf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 06:49:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BBBA415AD;
-        Tue, 28 May 2019 03:49:34 -0700 (PDT)
-Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9F5CA3F59C;
-        Tue, 28 May 2019 03:49:33 -0700 (PDT)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org
-Subject: [PATCH RESEND 7/7] sh64: entry: Remove unneeded need_resched() loop
-Date:   Tue, 28 May 2019 11:48:48 +0100
-Message-Id: <20190528104848.13160-8-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190528104848.13160-1-valentin.schneider@arm.com>
-References: <20190528104848.13160-1-valentin.schneider@arm.com>
+        id S1726787AbfE1KtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 06:49:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52738 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726437AbfE1KtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 06:49:20 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B3B7F3086224;
+        Tue, 28 May 2019 10:49:17 +0000 (UTC)
+Received: from [10.10.66.2] (ovpn-66-2.rdu2.redhat.com [10.10.66.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 96D8E5D6A9;
+        Tue, 28 May 2019 10:49:15 +0000 (UTC)
+From:   "Benjamin Coddington" <bcodding@redhat.com>
+To:     YueHaibing <yuehaibing@huawei.com>, bfields@fieldses.org
+Cc:     jlayton@kernel.org, trond.myklebust@hammerspace.com,
+        anna.schumaker@netapp.com, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org
+Subject: Re: [PATCH -next] lockd: Make two symbols static
+Date:   Tue, 28 May 2019 06:49:13 -0400
+Message-ID: <97D052EC-1F07-4210-81CC-7E0085C095BD@redhat.com>
+In-Reply-To: <20190528090652.13288-1-yuehaibing@huawei.com>
+References: <20190528090652.13288-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; format=flowed
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 28 May 2019 10:49:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the enabling and disabling of IRQs within preempt_schedule_irq()
-is contained in a need_resched() loop, we don't need the outer arch
-code loop.
+Maintainers, what's the best thing to do here: fold these into another 
+patch version and post it (add attribution)?  Add it as another patch at 
+the end of the series?
 
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: linux-sh@vger.kernel.org
----
- arch/sh/kernel/cpu/sh5/entry.S | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+I have learned my lesson: add sparse to my workflow.
 
-diff --git a/arch/sh/kernel/cpu/sh5/entry.S b/arch/sh/kernel/cpu/sh5/entry.S
-index de68ffdfffbf..40e6d9a7a6a2 100644
---- a/arch/sh/kernel/cpu/sh5/entry.S
-+++ b/arch/sh/kernel/cpu/sh5/entry.S
-@@ -897,7 +897,6 @@ resume_kernel:
- 	ld.l	r6, TI_PRE_COUNT, r7
- 	beq/u	r7, ZERO, tr0
- 
--need_resched:
- 	ld.l	r6, TI_FLAGS, r7
- 	movi	(1 << TIF_NEED_RESCHED), r8
- 	and	r8, r7, r8
-@@ -911,9 +910,7 @@ need_resched:
- 	ori	r7, 1, r7
- 	ptabs	r7, tr1
- 	blink	tr1, LINK
--
--	pta	need_resched, tr1
--	blink	tr1, ZERO
-+	blink   tr0, ZERO
- #endif
- 
- 	.global ret_from_syscall
--- 
-2.20.1
+Ben
 
+On 28 May 2019, at 5:06, YueHaibing wrote:
+
+> Fix sparse warnings:
+>
+> fs/lockd/clntproc.c:57:6: warning: symbol 'nlmclnt_put_lockowner' was 
+> not declared. Should it be static?
+> fs/lockd/svclock.c:409:35: warning: symbol 'nlmsvc_lock_ops' was not 
+> declared. Should it be static?
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  fs/lockd/clntproc.c | 2 +-
+>  fs/lockd/svclock.c  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/lockd/clntproc.c b/fs/lockd/clntproc.c
+> index 0ff8ad4..b11f2af 100644
+> --- a/fs/lockd/clntproc.c
+> +++ b/fs/lockd/clntproc.c
+> @@ -54,7 +54,7 @@ nlmclnt_get_lockowner(struct nlm_lockowner 
+> *lockowner)
+>  	return lockowner;
+>  }
+>
+> -void nlmclnt_put_lockowner(struct nlm_lockowner *lockowner)
+> +static void nlmclnt_put_lockowner(struct nlm_lockowner *lockowner)
+>  {
+>  	if (!refcount_dec_and_lock(&lockowner->count, 
+> &lockowner->host->h_lock))
+>  		return;
+> diff --git a/fs/lockd/svclock.c b/fs/lockd/svclock.c
+> index 5f9f19b..61d3cc2 100644
+> --- a/fs/lockd/svclock.c
+> +++ b/fs/lockd/svclock.c
+> @@ -406,7 +406,7 @@ static void nlmsvc_locks_release_private(struct 
+> file_lock *fl)
+>  	nlmsvc_put_lockowner((struct nlm_lockowner *)fl->fl_owner);
+>  }
+>
+> -const struct file_lock_operations nlmsvc_lock_ops = {
+> +static const struct file_lock_operations nlmsvc_lock_ops = {
+>  	.fl_copy_lock = nlmsvc_locks_copy_lock,
+>  	.fl_release_private = nlmsvc_locks_release_private,
+>  };
+> -- 
+> 2.7.4
