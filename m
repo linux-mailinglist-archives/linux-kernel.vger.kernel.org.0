@@ -2,43 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 972962C98A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:07:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDC962C98D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfE1PHE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 11:07:04 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42668 "EHLO
+        id S1727240AbfE1PHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 11:07:10 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42856 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbfE1PHD (ORCPT
+        with ESMTP id S1726984AbfE1PHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 11:07:03 -0400
+        Tue, 28 May 2019 11:07:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=JM3qRMN//XQkEzha8BwkptVAMHDC1JT9yLpWp/WNy+Q=; b=alBfWdH97QFV
-        rl5ebffxdYAcNUb/YC9augb8ux5i+vgh/20QjOn2IdXaim4tA89L54nS21hil5bhv9m1UL0AnjeDV
-        Ilig5WHdZGFegIjM/luJ6vZ37ZXlnrOz/pzZtYtQmitU8cZSnwDsz4oJ5EDBgG+SGyfC75Xe9x4/7
-        wSxLY=;
+        List-Archive; bh=DRrmUfZErlU0wblgTemga0P+08sSa7slNopRc/Wl/bM=; b=vXgRzWpF6smn
+        +rDhJ9B6evMagY+iFx+xzZkbVqYI//DRzVwbBoH4u+RPwj1dX+cQ7frf09DbtFsVHsACbGreiwQzB
+        3xXoi5GZnHXJNuM5KlAJHsvWEBkXxsnfC7RUoJujjMsBpHcsPUGWu/aWaK1vP94V95aHPa9+r8qOP
+        BwUeE=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hVdgp-0002o5-7z; Tue, 28 May 2019 15:06:59 +0000
+        id 1hVdgr-0002oR-BF; Tue, 28 May 2019 15:07:01 +0000
 Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 8B8C7440049; Tue, 28 May 2019 16:06:58 +0100 (BST)
+        id A5290440046; Tue, 28 May 2019 16:07:00 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Maxime Jourdan <mjourdan@baylibre.com>
-Cc:     alsa-devel@alsa-project.org, Jerome Brunet <jbrunet@baylibre.com>,
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: max98357a: Show KConfig entry" to the asoc tree
-In-Reply-To: <20190527163809.28104-1-mjourdan@baylibre.com>
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Simon Ho <simon.ho@conexant.com>, Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: cx2072x: remove redundant assignment to pulse_len" to the asoc tree
+In-Reply-To: <20190524214419.25075-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190528150658.8B8C7440049@finisterre.sirena.org.uk>
-Date:   Tue, 28 May 2019 16:06:58 +0100 (BST)
+Message-Id: <20190528150700.A5290440046@finisterre.sirena.org.uk>
+Date:   Tue, 28 May 2019 16:07:00 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -46,7 +48,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: max98357a: Show KConfig entry
+   ASoC: cx2072x: remove redundant assignment to pulse_len
 
 has been applied to the asoc tree at
 
@@ -71,34 +73,36 @@ to this mail.
 Thanks,
 Mark
 
-From 99afc8df8b6f2d039b1ab20d879e4721068a6c34 Mon Sep 17 00:00:00 2001
-From: Maxime Jourdan <mjourdan@baylibre.com>
-Date: Mon, 27 May 2019 18:38:09 +0200
-Subject: [PATCH] ASoC: max98357a: Show KConfig entry
+From 9b33d2e526c53b0339ddba8b875bb8b8b3a11207 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 24 May 2019 22:44:19 +0100
+Subject: [PATCH] ASoC: cx2072x: remove redundant assignment to pulse_len
 
-The SEI510 board features a standalone MAX98357A codec.
-Add a tristate prompt to allow selecting the codec.
+Variable pulse_len is being initialized to 1 however this value is
+never read and pulse_len is being re-assigned later in a switch
+statement.  Clean up the code by removing the redundant initialization.
 
-Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/codecs/cx2072x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 472bde124ebe..0835d4b0d8c3 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -714,7 +714,8 @@ config SND_SOC_MAX98095
-        tristate
- 
- config SND_SOC_MAX98357A
--       tristate
-+	tristate "Maxim MAX98357A CODEC"
-+	depends on GPIOLIB
- 
- config SND_SOC_MAX98371
-        tristate
+diff --git a/sound/soc/codecs/cx2072x.c b/sound/soc/codecs/cx2072x.c
+index 23d2b25fe04c..c11a585bbf70 100644
+--- a/sound/soc/codecs/cx2072x.c
++++ b/sound/soc/codecs/cx2072x.c
+@@ -679,7 +679,7 @@ static int cx2072x_config_i2spcm(struct cx2072x_priv *cx2072x)
+ 	int is_right_j = 0;
+ 	int is_frame_inv = 0;
+ 	int is_bclk_inv = 0;
+-	int pulse_len = 1;
++	int pulse_len;
+ 	int frame_len = cx2072x->frame_size;
+ 	int sample_size = cx2072x->sample_size;
+ 	int i2s_right_slot;
 -- 
 2.20.1
 
