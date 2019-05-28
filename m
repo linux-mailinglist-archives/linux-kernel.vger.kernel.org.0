@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A9CF2C214
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 331302C29D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:06:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbfE1JDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:03:35 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41988 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbfE1JDb (ORCPT
+        id S1727377AbfE1JGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:06:36 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35982 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726458AbfE1JD3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:03:31 -0400
-Received: by mail-ed1-f68.google.com with SMTP id g24so2698486eds.9
+        Tue, 28 May 2019 05:03:29 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a8so30638942edx.3
         for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=UVMz2IJ4/RyaqNE4ZvaPs86LwJMcSiemc8l514rOxoE=;
-        b=YwRF4P97LOBFhUta0OKI5wlSv1Ox7DssXRuK+2PmuzP3Bb2FNwARl2akdmKCZyXlht
-         lHNH4diyj6fBWHpDeH4K0gYOQYM0gek4oMHoK34CxS4WpKKsdP2bhwltVDvw34z8ct3A
-         BwBi6OjIWHKaCQP3HMqUL0tNKRaKaadMkDaxA=
+        bh=3WPeIDAqtSnPbDcxMeR1LaTs5pcjbLLnzUOYFaYwyy4=;
+        b=KjLil2b0YP+O0+LLoKZvoQsb+o+ksT4MFgBy/gHuXSCAAGP6P6cA5C0cJ0Q064y4qh
+         MGbSN9Y6fh5TrgSLKOYg3g3hchsqbQ/zTnXkZdsWXQ2yOLHhKkE88weQaBaJDRahFgfh
+         kXldbmLz0TAZjV2rhJuHrpHFHPulmv4hUL1sE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=UVMz2IJ4/RyaqNE4ZvaPs86LwJMcSiemc8l514rOxoE=;
-        b=FVfbRY4L6XReLKFZzzgSThQ2d7qX6SuDpUtmKkN9jh+Q44N7UH00aor8YJxfIzLC26
-         m5OUZ06hQAVfv2DwKMozSAuZBtcng3e0MdGsz9jGcBIZNBJ6scWIwUhrSou6/i1wtTmh
-         BopIx9WT3lRkvdogKiNnma5uNckZInFYG9eXJ7kx5n2cEER8bKjAfrXrtdXrm9YxQsXx
-         E6ZL1p3Fj9QVTe6S5eVsVHm9w3FZUWoHjAGgcmjnyHUHUdqUJltclcRXArDA80Cx3Acw
-         uad8CdAZPSB9shl/+Kx5PPyqMXz6yD4Hjxh5ZokRZBoFFaoj8ZVrMcOtmrmU1DajIBru
-         puww==
-X-Gm-Message-State: APjAAAUvtc1Bh0bZcGJbY45elg0T+IEeCatd0oEjZdPvo561iLSxBaGM
-        2lFA8ncQJcMelxqll2/GNHrgvoRI5s0=
-X-Google-Smtp-Source: APXvYqzzJazZYKbqsmGP/BM9TTGVXR1j+0xbyiZYi+o+JaVEFP6ppO34Lw/fLHCAVJ+XHdehH4WMbA==
-X-Received: by 2002:a50:be42:: with SMTP id b2mr129139954edi.228.1559034206926;
-        Tue, 28 May 2019 02:03:26 -0700 (PDT)
+        bh=3WPeIDAqtSnPbDcxMeR1LaTs5pcjbLLnzUOYFaYwyy4=;
+        b=MbReNSdMeHfMOAV3j9a9C4UkYeH8tHDqMFc1fXUrZhfVxkIPthuPTzhlJEibFwuZ6I
+         nayudIiFSkxygZe9mRPEGINjbob1VHdCiGCPWW8Uwd2rM6Gl/gtUYUP+M+K4l1khpfXz
+         lfaxoBYGrSPpcTfOZYATiAWOaBC1iLzHaYJ68y44mbQOJkxG3EX7fkDn02yExMOPRXLB
+         LReOwfROcpnfjljrGia+arWxMnIABl55BW+X9wxTzEcr9LOevJ33sKYTjpZUjPZDVBTI
+         /pzsTNSKS86BOW62tYmeKaPhD9gl8H5s8pkuoxndgeoBdH2Ft0TcYh2Qbf74yccrORZF
+         c3lw==
+X-Gm-Message-State: APjAAAUXeUbOzyZQCaF2ZciTRdUwG+EwMxtPaXwZ9HKqa23wj6aw5U1C
+        b7fUzzbo3JK8CeIqj04nHkIwYYw2a+c=
+X-Google-Smtp-Source: APXvYqwMsg+ox2j7/vocxj31v97alIwDq1JoAS4rf3ZZsaq9cI9N6Nbl/phYJ9vu/CPVcy0X+VXgjw==
+X-Received: by 2002:a05:6402:12ce:: with SMTP id k14mr1550281edx.169.1559034208108;
+        Tue, 28 May 2019 02:03:28 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.25
+        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 02:03:26 -0700 (PDT)
+        Tue, 28 May 2019 02:03:27 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
@@ -50,277 +50,158 @@ Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
         Daniel Thompson <daniel.thompson@linaro.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sam Ravnborg <sam@ravnborg.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Yisheng Xie <ysxie@foxmail.com>, Peter Rosin <peda@axentia.se>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Konstantin Khorenko <khorenko@virtuozzo.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Steve Sakoman <sakoman@gmail.com>,
-        Steve Sakoman <steve@sakoman.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 10/33] fbcon: call fbcon_fb_(un)registered directly
-Date:   Tue, 28 May 2019 11:02:41 +0200
-Message-Id: <20190528090304.9388-11-daniel.vetter@ffwll.ch>
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: [PATCH 11/33] fbdev/sh_mobile: remove sh_mobile_lcdc_display_notify
+Date:   Tue, 28 May 2019 11:02:42 +0200
+Message-Id: <20190528090304.9388-12-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
 References: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With
+It's dead code, and removing it avoids me having to understand
+what it's doing with lock_fb_info.
 
-commit 6104c37094e729f3d4ce65797002112735d49cd1
-Author: Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Tue Aug 1 17:32:07 2017 +0200
+v2: Also remove sh_mobile_lcdc_must_reconfigure, now unused (Sam).
 
-    fbcon: Make fbcon a built-time depency for fbdev
-
-we have a static dependency between fbcon and fbdev, and we can
-replace the indirection through the notifier chain with a function
-call.
-
-v2: Sam Ravnborg noticed that mach-pxa/am200epd.c has a notifier too,
-and listens to this.
-
-...
-
-Looking at the code it seems to wait for some fb to show up, so that
-it can get the framebuffer base address from the fb_info struct. I
-suspect his is some firmware fbdev. Then it uses that information to
-let the real fbdev driver (metronomefb.c by the looks) get at the
-framebuffer memory.
-
-This doesn't looke like it's easy to fix (except by deleting the
-entire thing, seems untouched since 2008, we might be able to get away
-with that), so let's just stuff a few #ifdef into fb.h and fbmem.c and
-cry over them for a bit.
-
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> (v1)
 Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Noralf Trønnes" <noralf@tronnes.org>
-Cc: Yisheng Xie <ysxie@foxmail.com>
-Cc: Peter Rosin <peda@axentia.se>
-Cc: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Mikulas Patocka <mpatocka@redhat.com>
-Cc: linux-fbdev@vger.kernel.org
-Cc: Daniel Mack <daniel@zonque.org>
-Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: Konstantin Khorenko <khorenko@virtuozzo.com>
-Cc: Prarit Bhargava <prarit@redhat.com>
-Cc: Gerd Hoffmann <kraxel@redhat.com>
-Cc: Steve Sakoman <sakoman@gmail.com>
-Cc: Steve Sakoman <steve@sakoman.com>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Sam Ravnborg <sam@ravnborg.org>
 ---
- arch/arm/mach-pxa/am200epd.c     | 13 +++++++++++--
- drivers/video/fbdev/core/fbcon.c | 14 +++-----------
- drivers/video/fbdev/core/fbmem.c | 24 +++++++++++++++++-------
- include/linux/fb.h               |  7 +++++--
- include/linux/fbcon.h            |  4 ++++
- 5 files changed, 40 insertions(+), 22 deletions(-)
+ drivers/video/fbdev/sh_mobile_lcdcfb.c | 82 --------------------------
+ drivers/video/fbdev/sh_mobile_lcdcfb.h |  5 --
+ 2 files changed, 87 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/am200epd.c b/arch/arm/mach-pxa/am200epd.c
-index 50e18ed37fa6..cac0bb09db14 100644
---- a/arch/arm/mach-pxa/am200epd.c
-+++ b/arch/arm/mach-pxa/am200epd.c
-@@ -347,8 +347,17 @@ int __init am200_init(void)
- {
- 	int ret;
- 
--	/* before anything else, we request notification for any fb
--	 * creation events */
-+	/*
-+	 * Before anything else, we request notification for any fb
-+	 * creation events.
-+	 *
-+	 * FIXME: This is terrible and needs to be nuked. The notifier is used
-+	 * to get at the fb base address from the boot splash fb driver, which
-+	 * is then passed to metronomefb. Instaed of metronomfb or this board
-+	 * support file here figuring this out on their own.
-+	 *
-+	 * See also the #ifdef in fbmem.c.
-+	 */
- 	fb_register_client(&am200_fb_notif);
- 
- 	pxa2xx_mfp_config(ARRAY_AND_SIZE(am200_pin_config));
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index e11bae2787e6..5a9fe0c0dd3c 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -3119,14 +3119,14 @@ static int fbcon_fb_unbind(int idx)
+diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+index dc46be38c970..1437695415c9 100644
+--- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
++++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+@@ -534,89 +534,9 @@ static void sh_mobile_lcdc_display_off(struct sh_mobile_lcdc_chan *ch)
+ 		ch->tx_dev->ops->display_off(ch->tx_dev);
  }
  
- /* called with console_lock held */
--static int fbcon_fb_unregistered(struct fb_info *info)
-+void fbcon_fb_unregistered(struct fb_info *info)
- {
- 	int i, idx;
- 
- 	WARN_CONSOLE_UNLOCKED();
- 
- 	if (deferred_takeover)
--		return 0;
-+		return;
- 
- 	idx = info->node;
- 	for (i = first_fb_vc; i <= last_fb_vc; i++) {
-@@ -3155,8 +3155,6 @@ static int fbcon_fb_unregistered(struct fb_info *info)
- 
- 	if (!num_registered_fb)
- 		do_unregister_con_driver(&fb_con);
+-static bool
+-sh_mobile_lcdc_must_reconfigure(struct sh_mobile_lcdc_chan *ch,
+-				const struct fb_videomode *new_mode)
+-{
+-	dev_dbg(ch->info->dev, "Old %ux%u, new %ux%u\n",
+-		ch->display.mode.xres, ch->display.mode.yres,
+-		new_mode->xres, new_mode->yres);
 -
--	return 0;
- }
+-	/* It can be a different monitor with an equal video-mode */
+-	if (fb_mode_is_equal(&ch->display.mode, new_mode))
+-		return false;
+-
+-	dev_dbg(ch->info->dev, "Switching %u -> %u lines\n",
+-		ch->display.mode.yres, new_mode->yres);
+-	ch->display.mode = *new_mode;
+-
+-	return true;
+-}
+-
+ static int sh_mobile_lcdc_check_var(struct fb_var_screeninfo *var,
+ 				    struct fb_info *info);
  
- /* called with console_lock held */
-@@ -3215,7 +3213,7 @@ static inline void fbcon_select_primary(struct fb_info *info)
- #endif /* CONFIG_FRAMEBUFFER_DETECT_PRIMARY */
- 
- /* called with console_lock held */
--static int fbcon_fb_registered(struct fb_info *info)
-+int fbcon_fb_registered(struct fb_info *info)
- {
- 	int ret = 0, i, idx;
- 
-@@ -3359,12 +3357,6 @@ static int fbcon_event_notify(struct notifier_block *self,
- 		idx = info->node;
- 		ret = fbcon_fb_unbind(idx);
- 		break;
--	case FB_EVENT_FB_REGISTERED:
--		ret = fbcon_fb_registered(info);
+-static int sh_mobile_lcdc_display_notify(struct sh_mobile_lcdc_chan *ch,
+-					 enum sh_mobile_lcdc_entity_event event,
+-					 const struct fb_videomode *mode,
+-					 const struct fb_monspecs *monspec)
+-{
+-	struct fb_info *info = ch->info;
+-	struct fb_var_screeninfo var;
+-	int ret = 0;
+-
+-	switch (event) {
+-	case SH_MOBILE_LCDC_EVENT_DISPLAY_CONNECT:
+-		/* HDMI plug in */
+-		console_lock();
+-		if (lock_fb_info(info)) {
+-
+-
+-			ch->display.width = monspec->max_x * 10;
+-			ch->display.height = monspec->max_y * 10;
+-
+-			if (!sh_mobile_lcdc_must_reconfigure(ch, mode) &&
+-			    info->state == FBINFO_STATE_RUNNING) {
+-				/* First activation with the default monitor.
+-				 * Just turn on, if we run a resume here, the
+-				 * logo disappears.
+-				 */
+-				info->var.width = ch->display.width;
+-				info->var.height = ch->display.height;
+-				sh_mobile_lcdc_display_on(ch);
+-			} else {
+-				/* New monitor or have to wake up */
+-				fb_set_suspend(info, 0);
+-			}
+-
+-
+-			unlock_fb_info(info);
+-		}
+-		console_unlock();
 -		break;
--	case FB_EVENT_FB_UNREGISTERED:
--		ret = fbcon_fb_unregistered(info);
+-
+-	case SH_MOBILE_LCDC_EVENT_DISPLAY_DISCONNECT:
+-		/* HDMI disconnect */
+-		console_lock();
+-		if (lock_fb_info(info)) {
+-			fb_set_suspend(info, 1);
+-			unlock_fb_info(info);
+-		}
+-		console_unlock();
 -		break;
- 	case FB_EVENT_SET_CONSOLE_MAP:
- 		/* called with console lock held */
- 		con2fb = event->data;
-diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-index 8ba674ffb3c9..bed7698ad18a 100644
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -1660,7 +1660,6 @@ MODULE_PARM_DESC(lockless_register_fb,
- static int do_register_framebuffer(struct fb_info *fb_info)
- {
- 	int i, ret;
--	struct fb_event event;
- 	struct fb_videomode mode;
+-
+-	case SH_MOBILE_LCDC_EVENT_DISPLAY_MODE:
+-		/* Validate a proposed new mode */
+-		fb_videomode_to_var(&var, mode);
+-		var.bits_per_pixel = info->var.bits_per_pixel;
+-		var.grayscale = info->var.grayscale;
+-		ret = sh_mobile_lcdc_check_var(&var, info);
+-		break;
+-	}
+-
+-	return ret;
+-}
+-
+ /* -----------------------------------------------------------------------------
+  * Format helpers
+  */
+@@ -2540,8 +2460,6 @@ sh_mobile_lcdc_channel_init(struct sh_mobile_lcdc_chan *ch)
+ 	unsigned int max_size;
+ 	unsigned int i;
  
- 	if (fb_check_foreignness(fb_info))
-@@ -1723,7 +1722,14 @@ static int do_register_framebuffer(struct fb_info *fb_info)
- 	fb_add_videomode(&mode, &fb_info->modelist);
- 	registered_fb[i] = fb_info;
+-	ch->notify = sh_mobile_lcdc_display_notify;
+-
+ 	/* Validate the format. */
+ 	format = sh_mobile_format_info(cfg->fourcc);
+ 	if (format == NULL) {
+diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.h b/drivers/video/fbdev/sh_mobile_lcdcfb.h
+index b8e47a8bd8ab..589400372098 100644
+--- a/drivers/video/fbdev/sh_mobile_lcdcfb.h
++++ b/drivers/video/fbdev/sh_mobile_lcdcfb.h
+@@ -87,11 +87,6 @@ struct sh_mobile_lcdc_chan {
+ 	unsigned long base_addr_c;
+ 	unsigned int line_size;
  
--	event.info = fb_info;
-+#ifdef CONFIG_GUMSTIX_AM200EPD
-+	{
-+		struct fb_event event;
-+		event.info = fb_info;
-+		fb_notifier_call_chain(FB_EVENT_FB_REGISTERED, &event);
-+	}
-+#endif
-+
- 	if (!lockless_register_fb)
- 		console_lock();
- 	else
-@@ -1732,9 +1738,8 @@ static int do_register_framebuffer(struct fb_info *fb_info)
- 		ret = -ENODEV;
- 		goto unlock_console;
- 	}
--	ret = 0;
- 
--	fb_notifier_call_chain(FB_EVENT_FB_REGISTERED, &event);
-+	ret = fbcon_fb_registered(fb_info);
- 	unlock_fb_info(fb_info);
- unlock_console:
- 	if (!lockless_register_fb)
-@@ -1771,7 +1776,6 @@ static int __unlink_framebuffer(struct fb_info *fb_info);
- 
- static int do_unregister_framebuffer(struct fb_info *fb_info)
- {
--	struct fb_event event;
- 	int ret;
- 
- 	ret = unbind_console(fb_info);
-@@ -1789,9 +1793,15 @@ static int do_unregister_framebuffer(struct fb_info *fb_info)
- 	registered_fb[fb_info->node] = NULL;
- 	num_registered_fb--;
- 	fb_cleanup_device(fb_info);
--	event.info = fb_info;
-+#ifdef CONFIG_GUMSTIX_AM200EPD
-+	{
-+		struct fb_event event;
-+		event.info = fb_info;
-+		fb_notifier_call_chain(FB_EVENT_FB_UNREGISTERED, &event);
-+	}
-+#endif
- 	console_lock();
--	fb_notifier_call_chain(FB_EVENT_FB_UNREGISTERED, &event);
-+	fbcon_fb_unregistered(fb_info);
- 	console_unlock();
- 
- 	/* this may free fb info */
-diff --git a/include/linux/fb.h b/include/linux/fb.h
-index f52ef0ad6781..288175fafaf6 100644
---- a/include/linux/fb.h
-+++ b/include/linux/fb.h
-@@ -136,10 +136,13 @@ struct fb_cursor_user {
- #define FB_EVENT_RESUME			0x03
- /*      An entry from the modelist was removed */
- #define FB_EVENT_MODE_DELETE            0x04
--/*      A driver registered itself */
-+
-+#ifdef CONFIG_GUMSTIX_AM200EPD
-+/* only used by mach-pxa/am200epd.c */
- #define FB_EVENT_FB_REGISTERED          0x05
--/*      A driver unregistered itself */
- #define FB_EVENT_FB_UNREGISTERED        0x06
-+#endif
-+
- /*      CONSOLE-SPECIFIC: get console to framebuffer mapping */
- #define FB_EVENT_GET_CONSOLE_MAP        0x07
- /*      CONSOLE-SPECIFIC: set console to framebuffer mapping */
-diff --git a/include/linux/fbcon.h b/include/linux/fbcon.h
-index f68a7db14165..94a71e9e1257 100644
---- a/include/linux/fbcon.h
-+++ b/include/linux/fbcon.h
-@@ -4,9 +4,13 @@
- #ifdef CONFIG_FRAMEBUFFER_CONSOLE
- void __init fb_console_init(void);
- void __exit fb_console_exit(void);
-+int fbcon_fb_registered(struct fb_info *info);
-+void fbcon_fb_unregistered(struct fb_info *info);
- #else
- static inline void fb_console_init(void) {}
- static inline void fb_console_exit(void) {}
-+static inline int fbcon_fb_registered(struct fb_info *info) { return 0; }
-+static inline void fbcon_fb_unregistered(struct fb_info *info) {}
- #endif
- 
- #endif /* _LINUX_FBCON_H */
+-	int (*notify)(struct sh_mobile_lcdc_chan *ch,
+-		      enum sh_mobile_lcdc_entity_event event,
+-		      const struct fb_videomode *mode,
+-		      const struct fb_monspecs *monspec);
+-
+ 	/* Backlight */
+ 	struct backlight_device *bl;
+ 	unsigned int bl_brightness;
 -- 
 2.20.1
 
