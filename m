@@ -2,96 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92BD02C0A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 09:53:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B40F12C0B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 09:55:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbfE1Hxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 03:53:37 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52881 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727039AbfE1Hxf (ORCPT
+        id S1727934AbfE1HzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 03:55:23 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:14207 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726789AbfE1HzW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 03:53:35 -0400
-Received: by mail-it1-f193.google.com with SMTP id t184so2767560itf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 00:53:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PwpZM8H7YLCCXst1uTeA0ehiQjYxPanrQx8rycjOA8Q=;
-        b=PaDGUarqrwpn2WcZZXubIFwn/6XV9UCbOFvCg6kTbDsTzqCLbHOOZ7QtA06c8hxWTV
-         vP8X9KiDQuqkX+tx7S57VyKMl/UK4cHRxZMJWdx33DW2ImQsx2YVeFYbnbEMODSZfaZW
-         cYTIhj5G5/ydQa71BrGhnw5rQHltAXiD3tX1ZDbrHd6eFJn+oDnwZ+ranKYrTHKbhAcz
-         w/x8Cc4gS2RkQh+i2xStLMXPa9FyrgscAalR1ecTPhTwm1kUMAETKylg0DPBDWLIq376
-         0M7m/jtHooSIK41pslNmsCzUETVmsCXJ8kEn5GTx1DhynYTeIKSdSj5E/UjUEnurRoZe
-         geqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PwpZM8H7YLCCXst1uTeA0ehiQjYxPanrQx8rycjOA8Q=;
-        b=flejNce1f+hpDGZDTzag/TmNKt+ZK3FxawTg71bJX0zDCAry9JeYu5ocmdSVwc5/Fz
-         K1wppN671nQgH5o3LSW9ctNDPs/mPw0Rsar+motjbf/f5lExaIRjlY9ZiA1v9vQ6dUTz
-         u4FPWnuuSn+Fw8vYpS99PnVc3tuc4G52PC4tvU7kx3t6euc8qLZ7rPQOwd/FWda5Mlwm
-         jjFM3+Q/gMM/M3BJQQ6lsTkycnaqKEfmApr1Kb0/IgOeKRSzq96GbRIl/wSGAtypJvJh
-         o93dtdCYjTiUcLjaDHerE0ulbMhv+wEKM93cBPGdlzz4tgixhLC1cyH1weuTvA7sk6dP
-         5lcA==
-X-Gm-Message-State: APjAAAWmL3+zjw7fqI8n4xB7dQSUFFlFbsCGvX7iHSJQTMMe4kFqQDJX
-        Bs6fmqwR1rCGEr/IYRh8Ac8zGYTmOlZq9zZyufrOXw==
-X-Google-Smtp-Source: APXvYqx4v3128ddJmwxIcyynhnVz7bSpXbvNiRgGqgnx1+rCJVGoTIJ3VybznY4MnF7+otMs/Z93UfFghNBLkkLjS4c=
-X-Received: by 2002:a24:3cb:: with SMTP id e194mr1991692ite.132.1559030014542;
- Tue, 28 May 2019 00:53:34 -0700 (PDT)
+        Tue, 28 May 2019 03:55:22 -0400
+X-UUID: 2c54a368901941008760f6ac2ddf19e5-20190528
+X-UUID: 2c54a368901941008760f6ac2ddf19e5-20190528
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1469220644; Tue, 28 May 2019 15:55:16 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 28 May 2019 15:55:15 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 28 May 2019 15:55:14 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [v3 PATCH] usb: create usb_debug_root for gadget only
+Date:   Tue, 28 May 2019 15:54:59 +0800
+Message-ID: <cffd6d75f69e4d908c8f39b8a60ddae27d6b7c88.1559028752.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-References: <20190521105203.154043-1-darekm@google.com> <16889839-b4e9-9984-2e36-5f07ceb7d7f2@xs4all.nl>
-In-Reply-To: <16889839-b4e9-9984-2e36-5f07ceb7d7f2@xs4all.nl>
-From:   Dariusz Marcinkiewicz <darekm@google.com>
-Date:   Tue, 28 May 2019 09:53:23 +0200
-Message-ID: <CALFZZQH7-mzRZbji1w-UwRLdw6c8+CThn0e96oG8E2Eq1ivANQ@mail.gmail.com>
-Subject: Re: [PATCH v7 1/3] media: cec: expose HDMI connector to CEC dev mapping
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, hans.verkuil@cisco.com,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 24, 2019 at 11:21 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> Hi Dariusz,
->
-> I did some more testing with the Khadas VIM2 and found another problem,
-> something that will, unfortunately, require some redesign.
->
-...
->
-> The other problem is in the CEC driver: it creates the CEC device as
-> soon as the HDMI device is found (cec_notifier_parse_hdmi_phandle).
->
-> But that doesn't mean that the HDMI device also had registered itself
-> as a CEC notifier.
->
-> Until now that never mattered: as long as the HDMI device was found
-> the CEC adapter would function fine, it would just have no physical
-> address until so notified by the HDMI device once it registered its
-> CEC notifier.
->
-> But if we want to have valid connector info during the lifetime of
-> the CEC adapter, then this no longer works.
->
-> I'm not entirely sure how to handle this.
->
-> Another issue here is that when the HDMI driver removes the notifier,
-> then it should also zero the connector info. Remember that both the
-> HDMI and the CEC drivers can be loaded and unloaded independently from
-> one another.
->
-Given all of the above, what do you think about coming back to the v1
-of the patch, where a connector info could be set on an adapter at any
-time and an event was used to notify userland when that happened? That
-approach seems to cover all the scenarios mentioned above.
+When CONFIG_USB is not set, and CONFIG_USB_GADGET is set,
+there is an issue, e.g.:
 
-Thank you for testing the patches!
+drivers/usb/mtu3/mtu3_debugfs.o: in function 'ssusb_debugfs_create_root':
+mtu3_debugfs.c:(.text+0xba3): undefined reference to 'usb_debug_root'
 
-Best regards.
+usb_debug_root is currently only built when host is supported
+(CONFIG_USB is set), for convenience, we also want it created when
+gadget only is enabled, this patch try to support it.
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+v3:
+  1. still create usb_debug_root for gadget only
+  2. abandon mtu3's change
+  3. drop acked-by Randy
+
+v2(resend): add acked-by Randy
+
+v1: fix mtu3's build error, replace usb_debug_root by NULL;
+---
+ drivers/usb/core/usb.c        |  2 +-
+ drivers/usb/gadget/udc/core.c | 27 +++++++++++++++++++++++++++
+ include/linux/usb.h           |  1 +
+ 3 files changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+index 7fcb9f782931..88b3ee03a12d 100644
+--- a/drivers/usb/core/usb.c
++++ b/drivers/usb/core/usb.c
+@@ -1190,7 +1190,7 @@ EXPORT_SYMBOL_GPL(usb_debug_root);
+ 
+ static void usb_debugfs_init(void)
+ {
+-	usb_debug_root = debugfs_create_dir("usb", NULL);
++	usb_debug_root = debugfs_create_dir(USB_DEBUG_ROOT_NAME, NULL);
+ 	debugfs_create_file("devices", 0444, usb_debug_root, NULL,
+ 			    &usbfs_devices_fops);
+ }
+diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+index 7cf34beb50df..ed45f9429e58 100644
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -8,6 +8,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/debugfs.h>
+ #include <linux/device.h>
+ #include <linux/list.h>
+ #include <linux/err.h>
+@@ -1587,12 +1588,37 @@ static int usb_udc_uevent(struct device *dev, struct kobj_uevent_env *env)
+ 	return 0;
+ }
+ 
++/* if CONFIG_USB is set, leave USB core to create usb_debug_root */
++#ifndef CONFIG_USB
++struct dentry *usb_debug_root;
++EXPORT_SYMBOL_GPL(usb_debug_root);
++
++static void usb_debugfs_init(void)
++{
++	usb_debug_root = debugfs_create_dir(USB_DEBUG_ROOT_NAME, NULL);
++}
++
++static void usb_debugfs_cleanup(void)
++{
++	debugfs_remove_recursive(usb_debug_root);
++}
++#else
++static void usb_debugfs_init(void)
++{}
++
++static void usb_debugfs_cleanup(void)
++{}
++#endif
++
+ static int __init usb_udc_init(void)
+ {
++	usb_debugfs_init();
++
+ 	udc_class = class_create(THIS_MODULE, "udc");
+ 	if (IS_ERR(udc_class)) {
+ 		pr_err("failed to create udc class --> %ld\n",
+ 				PTR_ERR(udc_class));
++		usb_debugfs_cleanup();
+ 		return PTR_ERR(udc_class);
+ 	}
+ 
+@@ -1604,6 +1630,7 @@ subsys_initcall(usb_udc_init);
+ static void __exit usb_udc_exit(void)
+ {
+ 	class_destroy(udc_class);
++	usb_debugfs_cleanup();
+ }
+ module_exit(usb_udc_exit);
+ 
+diff --git a/include/linux/usb.h b/include/linux/usb.h
+index ae82d9d1112b..9c6e7b3265af 100644
+--- a/include/linux/usb.h
++++ b/include/linux/usb.h
+@@ -1994,6 +1994,7 @@ extern void usb_register_notify(struct notifier_block *nb);
+ extern void usb_unregister_notify(struct notifier_block *nb);
+ 
+ /* debugfs stuff */
++#define USB_DEBUG_ROOT_NAME	"usb"
+ extern struct dentry *usb_debug_root;
+ 
+ /* LED triggers */
+-- 
+2.21.0
+
