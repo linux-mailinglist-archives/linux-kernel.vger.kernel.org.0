@@ -2,82 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 742912C813
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:46:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F01A52C817
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 15:47:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbfE1Nq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 09:46:28 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38568 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbfE1Nq1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 09:46:27 -0400
-Received: by mail-lf1-f67.google.com with SMTP id b11so8217342lfa.5
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 06:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uimJHxg6x5yQ0SkHYR4jhNo2jzcs/560scjjidJxXaA=;
-        b=wIhuxC/qafCCzj9xj0e1GyrPTHQ9LBOu5VnQiwMSnJKjudJatYnjbRzVzl7upG0ngG
-         cWtzKZmvp4vPIiRmvem2OWDEplCrgRfOuYzeq7EjL6eblc1GzwDuuKZ/uZmXUkyNAH6M
-         h9ICrKl5D7CVaL58rjVCvLBqaPUOu/RAf73EcQDaGcodz0JIMVeJAaFbOlYrV7vaY7hb
-         QOvaCL5bfa8tmpaGCOdUxmeU8tEyo+OhnsBwZdL+LTvxyjKmLP60bPkiyBYGH1eR6nw8
-         87ZbuRmU9ShywtYnKzjS+OIQJmbJ9jsjjuUx2i0hIDJr5LWtHvg2bAOY8ivWaoxDmWM0
-         b3Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uimJHxg6x5yQ0SkHYR4jhNo2jzcs/560scjjidJxXaA=;
-        b=gN8b2pLVkvpLKz2mc3+OExPveAaEo5q5pMp4ySRhLsvwHM/oSzxSlLwJO1KPKv5rYS
-         yux/SDLdrEmKcia3W/+2OHoXwvbc9A6oy4yaEnvUTWYbUciimR/EqZeINaqHiVlqD0sL
-         ljUWo6eQKDGUoCXRGO7D2tYGTfIeDKDSTCSrW1frixwQXGt5+QIkwyUYm6obsQG6jrM2
-         /sH3JuQZ8hMZ/YFgd2ViXNrr4yxXwtcxurKilhE0F740gzhhQ+tIVCxGwPchOoj+qu1Q
-         bOsMi09ojgUtMZZ/vfueEEd/yC/95gcWatoWS8yAg63qOTq6/vJ1qmsY5CY+eC/c05Sl
-         oV1A==
-X-Gm-Message-State: APjAAAV14K1H1Y7MGeO/IJ5ItqklAQkpdqH6FOf/MOrxuvPh2NYaR292
-        hpqTUQcgx2Ec8VltK5Y5v2xWfzNUEumr2U0LVWXsOw==
-X-Google-Smtp-Source: APXvYqy4gMwzBlvFh/Ib5gpRrpfYM0F0Z553OBKhHwqFjc4A6FVcEqQkL1jjwcIYhdWJgpLzcJ0GmyoVFzYPjUkcRek=
-X-Received: by 2002:ac2:48ad:: with SMTP id u13mr33425124lfg.60.1559051186146;
- Tue, 28 May 2019 06:46:26 -0700 (PDT)
+        id S1727670AbfE1NrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 09:47:09 -0400
+Received: from foss.arm.com ([217.140.101.70]:58010 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726925AbfE1NrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 09:47:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56D3F80D;
+        Tue, 28 May 2019 06:47:08 -0700 (PDT)
+Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 22C303F5AF;
+        Tue, 28 May 2019 06:47:06 -0700 (PDT)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     will.deacon@arm.com, catalin.marinas@arm.com,
+        akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3.1 4/4] arm64: mm: Implement pte_devmap support
+Date:   Tue, 28 May 2019 14:46:59 +0100
+Message-Id: <13026c4e64abc17133bbfa07d7731ec6691c0bcd.1559050949.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.21.0.dirty
+In-Reply-To: <817d92886fc3b33bcbf6e105ee83a74babb3a5aa.1558547956.git.robin.murphy@arm.com>
+References: <cover.1558547956.git.robin.murphy@arm.com> <817d92886fc3b33bcbf6e105ee83a74babb3a5aa.1558547956.git.robin.murphy@arm.com>
 MIME-Version: 1.0
-References: <20190509020352.14282-1-masneyb@onstation.org>
-In-Reply-To: <20190509020352.14282-1-masneyb@onstation.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 28 May 2019 15:46:14 +0200
-Message-ID: <CACRpkda-7+ggoeMD9=erPX09OWteX0bt+qP60_Yv6=4XLqNDZQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 0/6] ARM: qcom: initial Nexus 5 display support
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        freedreno@lists.freedesktop.org, Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 9, 2019 at 4:04 AM Brian Masney <masneyb@onstation.org> wrote:
+In order for things like get_user_pages() to work on ZONE_DEVICE memory,
+we need a software PTE bit to identify device-backed PFNs. Hook this up
+along with the relevant helpers to join in with ARCH_HAS_PTE_DEVMAP.
 
-> Here is a patch series that adds initial display support for the LG
-> Nexus 5 (hammerhead) phone. It's not fully working so that's why some
-> of these patches are RFC until we can get it fully working.
->
-> The phones boots into terminal mode, however there is a several second
-> (or more) delay when writing to tty1 compared to when the changes are
-> actually shown on the screen. The following errors are in dmesg:
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
 
-I tested to apply patches 2-6 and got the console up on the phone as well.
-I see the same timouts, and I also notice the update is slow in the
-display, as if the DSI panel was running in low power (LP) mode.
+Fix to build correctly under all combinations of
+CONFIG_PGTABLE_LEVELS and CONFIG_TRANSPARENT_HUGEPAGE.
 
-Was booting this to do some other work, but happy to see the progress!
+ arch/arm64/Kconfig                    |  1 +
+ arch/arm64/include/asm/pgtable-prot.h |  1 +
+ arch/arm64/include/asm/pgtable.h      | 21 +++++++++++++++++++++
+ 3 files changed, 23 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 4780eb7af842..b5a4611fa4c6 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -23,6 +23,7 @@ config ARM64
+ 	select ARCH_HAS_KCOV
+ 	select ARCH_HAS_KEEPINITRD
+ 	select ARCH_HAS_MEMBARRIER_SYNC_CORE
++	select ARCH_HAS_PTE_DEVMAP
+ 	select ARCH_HAS_PTE_SPECIAL
+ 	select ARCH_HAS_SETUP_DMA_OPS
+ 	select ARCH_HAS_SET_MEMORY
+diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
+index 986e41c4c32b..af0b372d15e5 100644
+--- a/arch/arm64/include/asm/pgtable-prot.h
++++ b/arch/arm64/include/asm/pgtable-prot.h
+@@ -28,6 +28,7 @@
+ #define PTE_WRITE		(PTE_DBM)		 /* same as DBM (51) */
+ #define PTE_DIRTY		(_AT(pteval_t, 1) << 55)
+ #define PTE_SPECIAL		(_AT(pteval_t, 1) << 56)
++#define PTE_DEVMAP		(_AT(pteval_t, 1) << 57)
+ #define PTE_PROT_NONE		(_AT(pteval_t, 1) << 58) /* only when !PTE_VALID */
+ 
+ #ifndef __ASSEMBLY__
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 2c41b04708fe..7a2cf6939311 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -90,6 +90,7 @@ extern unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)];
+ #define pte_write(pte)		(!!(pte_val(pte) & PTE_WRITE))
+ #define pte_user_exec(pte)	(!(pte_val(pte) & PTE_UXN))
+ #define pte_cont(pte)		(!!(pte_val(pte) & PTE_CONT))
++#define pte_devmap(pte)		(!!(pte_val(pte) & PTE_DEVMAP))
+ 
+ #define pte_cont_addr_end(addr, end)						\
+ ({	unsigned long __boundary = ((addr) + CONT_PTE_SIZE) & CONT_PTE_MASK;	\
+@@ -217,6 +218,11 @@ static inline pmd_t pmd_mkcont(pmd_t pmd)
+ 	return __pmd(pmd_val(pmd) | PMD_SECT_CONT);
+ }
+ 
++static inline pte_t pte_mkdevmap(pte_t pte)
++{
++	return set_pte_bit(pte, __pgprot(PTE_DEVMAP));
++}
++
+ static inline void set_pte(pte_t *ptep, pte_t pte)
+ {
+ 	WRITE_ONCE(*ptep, pte);
+@@ -381,6 +387,11 @@ static inline int pmd_protnone(pmd_t pmd)
+ 
+ #define pmd_mkhuge(pmd)		(__pmd(pmd_val(pmd) & ~PMD_TABLE_BIT))
+ 
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++#define pmd_devmap(pmd)		pte_devmap(pmd_pte(pmd))
++#endif
++#define pmd_mkdevmap(pmd)	pte_pmd(pte_mkdevmap(pmd_pte(pmd)))
++
+ #define __pmd_to_phys(pmd)	__pte_to_phys(pmd_pte(pmd))
+ #define __phys_to_pmd_val(phys)	__phys_to_pte_val(phys)
+ #define pmd_pfn(pmd)		((__pmd_to_phys(pmd) & PMD_MASK) >> PAGE_SHIFT)
+@@ -666,6 +677,16 @@ static inline int pmdp_set_access_flags(struct vm_area_struct *vma,
+ {
+ 	return ptep_set_access_flags(vma, address, (pte_t *)pmdp, pmd_pte(entry), dirty);
+ }
++
++static inline int pud_devmap(pud_t pud)
++{
++	return 0;
++}
++
++static inline int pgd_devmap(pgd_t pgd)
++{
++	return 0;
++}
+ #endif
+ 
+ /*
+-- 
+2.21.0.dirty
+
