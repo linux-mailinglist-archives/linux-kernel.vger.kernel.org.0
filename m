@@ -2,56 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DB0B2D1D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 507262D1E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:03:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbfE1XCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 19:02:37 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42028 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727772AbfE1XCf (ORCPT
+        id S1727957AbfE1XCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 19:02:52 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33708 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727572AbfE1XCg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 19:02:35 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 33so94599pgv.9
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 16:02:35 -0700 (PDT)
+        Tue, 28 May 2019 19:02:36 -0400
+Received: by mail-pg1-f193.google.com with SMTP id h17so118783pgv.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 16:02:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=babayev.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OsPnb68aqrZ2ZEL+Z6uQ/zgrptCfKlha02TX65CwO3k=;
-        b=ORAXNYMduQ2zCqLfbl+PxYq02uNrg1zkNt12Vxh3KYFmCaONYogJWuwMacCSmBUB3z
-         sUTcCbL2dIhxwLIWC8pm3Q1vlYhtC0pc+er+aNxdVUT0xOw1QAwpPv/mZHHGMeIglJmX
-         abhnqKEuJEkn7LnH0WEWffxTmLD/g8IBJZPio=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=s2ViynWJZEyN8mcu6TmbFxSpMS7SsoypON3/YHWH96A=;
+        b=St/vjj6Qqr4VrnqnZt7lhqXW524lNYAN8dAdBgBacW3KRPKYy8Wg6HrwtcmYXieLsr
+         2kwhx8/aTOPSBOgQBUK747dtMYB+e43bhpyGGz3RjdfZ+fUUYAxE0/TivmEU1fy9ZhQF
+         8x+OP7ChowWrXUwDhs0nuQce21mTBh4CPydsM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OsPnb68aqrZ2ZEL+Z6uQ/zgrptCfKlha02TX65CwO3k=;
-        b=d0XssD7yLIY/vuKuS10mtyR7O/uKSsUSho3MO9hKXie6vGIqBx+ARmv9dB2Ec3aASF
-         Qa62+1ujMiwB9w0QIRo9YGP4byjbPXm3iV3Bu3WUnQ3MwfVsA7/h03QVeetem0nvYAG5
-         /yp5/qVB4wK/Rj2NSCWCvPvsUJDq0dK0mzBPOjVqZSL9iGhyubJq0hmFav5g0pmxfZyL
-         4ivf7OgkKj8tJUccKwU/jbi2UoJdj8tt/K2LrpTgvgahgl/ihDIZjGR6tNfHquEF1PQr
-         s+6HS1ANhvmeN5X3r5nRwWID22hG9QWNZeEhsRiEzBW/ZiX7/eIWsmvjpdFeXTLxqM4B
-         Ql9Q==
-X-Gm-Message-State: APjAAAU85KxDKWH6y9CxgK+1Mma8AbkpNaIqgDUofDtJPZOswZbRqRxh
-        EEILy2JJqsfNJpjQTcyJVvUkkA==
-X-Google-Smtp-Source: APXvYqwoC/5IrkvcojJ1aNUdOQY1Rohcd2/rY0qY3WWwFrIz2yGjIqSW0v5fwGvlczNGaeU5LXG1cQ==
-X-Received: by 2002:a63:1e62:: with SMTP id p34mr49696657pgm.49.1559084554448;
-        Tue, 28 May 2019 16:02:34 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=s2ViynWJZEyN8mcu6TmbFxSpMS7SsoypON3/YHWH96A=;
+        b=HiOLkHWkWMuuLjhcJ/Ivc00WryrKpzRUU15wTDCpGi3wQN2PQO3Hg3JLDzwhyWkLDO
+         OO97E4qCutBKP4LjtJ8aDCJE7X51f/MY2Un8b2IIc722SnYSsDnRrO1pQ1q21fGJ9jbw
+         mI+jxnxhEXXHu+WQEgoQHQluqP0+RDAonF9JzBg/PA5MW5dIYIr5iPxqa0bqA+wrkO3x
+         APrP4LLcVP7q1MJG37Nq/1xW0NgrltMQPoxresUx5KzjSFEzmGkfE4cWNi04IdoKrcor
+         gFWCG3C3vx2vCOnQooy1UUcOMKFptfmCauRf7aNzPnSQ7yT0YIjYTgLWeCMHh5jd5FLq
+         TEAw==
+X-Gm-Message-State: APjAAAUwduJu6bW94GE4uzPYj9TjalMc+moSzVAH625whOpaU+IDTGcd
+        wbqGheNt1hSwXITTLBt0wXC6pPyY5WOiwA==
+X-Google-Smtp-Source: APXvYqxkjw4TsyenlTd45BRn+EsgZDClxPQgonXCVk8Xvy+wPAE8+WBlyAt1u5RrmXA1QHPFV4LWSw==
+X-Received: by 2002:a62:5244:: with SMTP id g65mr23525695pfb.237.1559084555903;
+        Tue, 28 May 2019 16:02:35 -0700 (PDT)
 Received: from p50.cisco.com ([128.107.241.183])
-        by smtp.gmail.com with ESMTPSA id p16sm27028196pfq.153.2019.05.28.16.02.32
+        by smtp.gmail.com with ESMTPSA id p16sm27028196pfq.153.2019.05.28.16.02.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 May 2019 16:02:33 -0700 (PDT)
+        Tue, 28 May 2019 16:02:35 -0700 (PDT)
 From:   Ruslan Babayev <ruslan@babayev.com>
 To:     mika.westerberg@linux.intel.com, wsa@the-dreams.de,
         linux@armlinux.org.uk, andrew@lunn.ch, f.fainelli@gmail.com,
         hkallweit1@gmail.com, davem@davemloft.net
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: [net-next,v4 0/2] Enable SFP on ACPI based systems
-Date:   Tue, 28 May 2019 16:02:31 -0700
-Message-Id: <20190528230233.26772-1-ruslan@babayev.com>
+        linux-i2c@vger.kernel.org, linux-acpi@vger.kernel.org,
+        xe-linux-external@cisco.com
+Subject: [net-next,v4 1/2] i2c: acpi: export i2c_acpi_find_adapter_by_handle
+Date:   Tue, 28 May 2019 16:02:32 -0700
+Message-Id: <20190528230233.26772-2-ruslan@babayev.com>
 X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190528230233.26772-1-ruslan@babayev.com>
+References: <20190528230233.26772-1-ruslan@babayev.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,28 +62,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changes:
-v2:
-	- more descriptive commit body
-v3:
-	- made 'i2c_acpi_find_adapter_by_handle' static inline
-v4:
-	- don't initialize i2c_adapter to NULL. Instead see below...
-	- handle the case of neither DT nor ACPI present as invalid.
-	- alphabetical includes.
-	- use has_acpi_companion().
-	- use the same argument name in i2c_acpi_find_adapter_by_handle()
-	  in both stubbed and non-stubbed cases.
+This allows drivers to lookup i2c adapters on ACPI based systems similar to
+of_get_i2c_adapter_by_node() with DT based systems.
 
-Ruslan Babayev (2):
-  i2c: acpi: export i2c_acpi_find_adapter_by_handle
-  net: phy: sfp: enable i2c-bus detection on ACPI based systems
+Signed-off-by: Ruslan Babayev <ruslan@babayev.com>
+Cc: xe-linux-external@cisco.com
+---
+ drivers/i2c/i2c-core-acpi.c | 3 ++-
+ include/linux/i2c.h         | 6 ++++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
- drivers/i2c/i2c-core-acpi.c |  3 ++-
- drivers/net/phy/sfp.c       | 35 +++++++++++++++++++++++++++--------
- include/linux/i2c.h         |  6 ++++++
- 3 files changed, 35 insertions(+), 9 deletions(-)
-
+diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
+index 272800692088..964687534754 100644
+--- a/drivers/i2c/i2c-core-acpi.c
++++ b/drivers/i2c/i2c-core-acpi.c
+@@ -337,7 +337,7 @@ static int i2c_acpi_find_match_device(struct device *dev, void *data)
+ 	return ACPI_COMPANION(dev) == data;
+ }
+ 
+-static struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle)
++struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle)
+ {
+ 	struct device *dev;
+ 
+@@ -345,6 +345,7 @@ static struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle)
+ 			      i2c_acpi_find_match_adapter);
+ 	return dev ? i2c_verify_adapter(dev) : NULL;
+ }
++EXPORT_SYMBOL_GPL(i2c_acpi_find_adapter_by_handle);
+ 
+ static struct i2c_client *i2c_acpi_find_client_by_adev(struct acpi_device *adev)
+ {
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 1308126fc384..e982b8913b73 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -14,6 +14,7 @@
+ #ifndef _LINUX_I2C_H
+ #define _LINUX_I2C_H
+ 
++#include <linux/acpi.h>		/* for acpi_handle */
+ #include <linux/mod_devicetable.h>
+ #include <linux/device.h>	/* for struct device */
+ #include <linux/sched.h>	/* for completion */
+@@ -981,6 +982,7 @@ bool i2c_acpi_get_i2c_resource(struct acpi_resource *ares,
+ u32 i2c_acpi_find_bus_speed(struct device *dev);
+ struct i2c_client *i2c_acpi_new_device(struct device *dev, int index,
+ 				       struct i2c_board_info *info);
++struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle);
+ #else
+ static inline bool i2c_acpi_get_i2c_resource(struct acpi_resource *ares,
+ 					     struct acpi_resource_i2c_serialbus **i2c)
+@@ -996,6 +998,10 @@ static inline struct i2c_client *i2c_acpi_new_device(struct device *dev,
+ {
+ 	return NULL;
+ }
++static inline struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle)
++{
++	return NULL;
++}
+ #endif /* CONFIG_ACPI */
+ 
+ #endif /* _LINUX_I2C_H */
 -- 
 2.19.2
 
