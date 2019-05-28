@@ -2,67 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 107922C70B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 14:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71C552C710
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 14:54:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfE1Mxg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 08:53:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33888 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbfE1Mxg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 08:53:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AXx+SzZ6K/ciPLwW8Q9L3pq12ZrCV5cYZu0brp2oNvM=; b=d3G6MP5s/bqNkzZZKI6qQor18
-        8IbUPbqkG/57v/Vr6MI4frRhYqJLSkvJkdTvdAMH9LDuFmDgttQdLHEAGyoduw62U5gkDC0s+YPi7
-        NUZjQeduZyMN3+GSuIMOBskK9zjfY3w6GyJRusLzlCNZg5T1w7IPTDCeC2XR44+o/LQSahzZuZE5E
-        Pe7RdzHoi9gLswkF7UEiEyGCD1DXtOFK3cW9TDz0AQEIEu4KTMreuI8Xvm2ClkTPV0AfdUFAvZRGb
-        v1I5mO/ccaHY/WkQOB1R28CEMrNTcwwqjorvFMoqRZOY2U3mnkEIt8vbu6suuPhg1zivAKIoEDt0R
-        zpB1xwXRg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hVbbg-00046h-Jl; Tue, 28 May 2019 12:53:32 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E9B022072908B; Tue, 28 May 2019 14:53:30 +0200 (CEST)
-Date:   Tue, 28 May 2019 14:53:30 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
-        alexander.shishkin@linux.intel.com, ak@linux.intel.com
-Subject: Re: [PATCH 4/9] perf/x86/intel: Support hardware TopDown metrics
-Message-ID: <20190528125330.GV2606@hirez.programming.kicks-ass.net>
-References: <20190521214055.31060-1-kan.liang@linux.intel.com>
- <20190521214055.31060-5-kan.liang@linux.intel.com>
+        id S1727228AbfE1Mxu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 08:53:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54224 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726620AbfE1Mxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 08:53:49 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 84CE8A3B6C;
+        Tue, 28 May 2019 12:53:49 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 85B2B1972C;
+        Tue, 28 May 2019 12:53:47 +0000 (UTC)
+Date:   Tue, 28 May 2019 14:53:44 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Huth <thuth@redhat.com>, kvm@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Jones <drjones@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re:  [PATCH 8/9] KVM: s390: Do not report unusabled IDs via
+ KVM_CAP_MAX_VCPU_ID
+Message-ID: <20190528145344.42fe6bc5.cohuck@redhat.com>
+In-Reply-To: <1deb73ac-9589-89cb-9a9b-f9957584733e@de.ibm.com>
+References: <20190523164309.13345-1-thuth@redhat.com>
+        <20190523164309.13345-9-thuth@redhat.com>
+        <1deb73ac-9589-89cb-9a9b-f9957584733e@de.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190521214055.31060-5-kan.liang@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 28 May 2019 12:53:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 02:40:50PM -0700, kan.liang@linux.intel.com wrote:
-> +		x86_pmu.has_metric = x86_pmu.intel_cap.perf_metrics;
+On Tue, 28 May 2019 13:00:30 +0200
+Christian Borntraeger <borntraeger@de.ibm.com> wrote:
 
-It makes sense to duplicate that state because?
+> Paolo, Radim,
+> 
+> would you consider this patch (or the full series) as 5.2 material or 5.3 material?
 
-> @@ -717,6 +729,8 @@ struct x86_pmu {
->  	struct extra_reg *extra_regs;
->  	unsigned int flags;
->  
-> +	bool has_metric;
-> +
->  	/*
->  	 * Intel host/guest support (KVM)
->  	 */
+FWIW, I'd consider this patch 5.2 material, as we're currently relaying
+wrong values to userspace.
 
-You forgot how I feel about _Bool in composite types _again_ ?
-
+> 
+> 
+> On 23.05.19 18:43, Thomas Huth wrote:
+> > KVM_CAP_MAX_VCPU_ID is currently always reporting KVM_MAX_VCPU_ID on all
+> > architectures. However, on s390x, the amount of usable CPUs is determined
+> > during runtime - it is depending on the features of the machine the code
+> > is running on. Since we are using the vcpu_id as an index into the SCA
+> > structures that are defined by the hardware (see e.g. the sca_add_vcpu()
+> > function), it is not only the amount of CPUs that is limited by the hard-
+> > ware, but also the range of IDs that we can use.
+> > Thus KVM_CAP_MAX_VCPU_ID must be determined during runtime on s390x, too.
+> > So the handling of KVM_CAP_MAX_VCPU_ID has to be moved from the common
+> > code into the architecture specific code, and on s390x we have to return
+> > the same value here as for KVM_CAP_MAX_VCPUS.
+> > This problem has been discovered with the kvm_create_max_vcpus selftest.
+> > With this change applied, the selftest now passes on s390x, too.
+> > 
+> > Signed-off-by: Thomas Huth <thuth@redhat.com>
+> > ---
+> >  arch/mips/kvm/mips.c       | 3 +++
+> >  arch/powerpc/kvm/powerpc.c | 3 +++
+> >  arch/s390/kvm/kvm-s390.c   | 1 +
+> >  arch/x86/kvm/x86.c         | 3 +++
+> >  virt/kvm/arm/arm.c         | 3 +++
+> >  virt/kvm/kvm_main.c        | 2 --
+> >  6 files changed, 13 insertions(+), 2 deletions(-)
