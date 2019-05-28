@@ -2,57 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D8B02CA5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50B5E2CA60
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 17:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbfE1Pcr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 11:32:47 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:35688 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727401AbfE1Pcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 11:32:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=++rLbXxo4bi+XXtwzmWsoqtfNeuWm1VHi8j7nqrGnoo=; b=XWqU7cYWfZcvtOy+pxtHLz3Dq9
-        Ta7JcZn4VP7sCc2f2Tm+BOuNJiRg24BI6dS+lCdTC0J7qyjHVTyPSi0N7TMr6R0OluZXwJacSdV6O
-        8Di2nuoJWih+I31GECdyc6LlfhX7n83WrG9HLRSLzoHDbtYi1sfMsf+iKQPOpLcpYHcE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hVe5h-0007vs-UH; Tue, 28 May 2019 17:32:41 +0200
-Date:   Tue, 28 May 2019 17:32:41 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, ioana.ciornei@nxp.com, olteanv@gmail.com,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] Documentation: net-sysfs: Remove duplicate PHY
- device documentation
-Message-ID: <20190528153241.GN18059@lunn.ch>
-References: <20190528020643.646-1-f.fainelli@gmail.com>
+        id S1727786AbfE1PdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 11:33:04 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38263 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727612AbfE1PdD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 11:33:03 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 14so18160497ljj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 08:33:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GFLFkfjER8yL0H13A8BMLU3btt+GcTnhvj0Q8M7v0E4=;
+        b=sUW0yH/DHleYp4sJI/bVaDZt5qvr8E6UIkaysC4wZPNI6XDJxwa+CKO4WnHcm1X9OZ
+         /8DSnruvVAETlk/ATFMFFxgQgkG0K2bkAaTFDYQqQ06O0cH77QiYapa6H7c/rDtW45ok
+         4lSAIbfXrX7CwarfK3aoEMDunQsHt0JilelbA/AvZbTacD5d4Tqu5GnHO5jUlp4bMsfT
+         qAbJasWJLtPmhpwvIXEI4iCcJa107QL5m+Afe45M/ufQxQBGTKmtuA/eAnlvwe2FsugX
+         eguwVDyN4a/KTlmjAo9gP3G3Vp+x5TBOWTxhgSPKIAJ/2q0zfbfHe/DYh3I9wf2mvxMa
+         zDXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=GFLFkfjER8yL0H13A8BMLU3btt+GcTnhvj0Q8M7v0E4=;
+        b=EbHwusy0xhPWSl7g5PNAME38vuwU/Pfy0x9LqOeRCd0aPDs1YXTJlOFy303JdN2gWd
+         p/LOb/CBLqknbwUUxC3BJ579I5KI9aFvYlRzFm33waVZorUPVHI+euU8ubHbAx3i/n5B
+         ZjNuX9zDA3qPtGRzjnxTBDviz6r/y2bqNq09BHskIueIzV1swHUgKjvGeuA2uKxsC0aS
+         g5v2WzoQfw7q2TcAmWJSkDgxgQ0yqLvWDwo+GyyVSecR557V4QXQfsIt5yBtyXABHJa0
+         IrxDNzJKQKUzdtxbFCix/x+fVIdCr3w1ecomDmCuvkYJoQv1EJ/D6iUxVhfKMd6xBsj+
+         FXfA==
+X-Gm-Message-State: APjAAAUY/Ps5ZXsU9D4rDRKFZu6uLOSpTgS8hASG1N8CqhSpV2fKX3kw
+        KTw0hgQreq0Ozb6FpPM6iS6KtGyk/5c=
+X-Google-Smtp-Source: APXvYqxLYiaF2ZOfIffa+xDKkNnBnwp+g8saMY9mxAWYXdcb2Vl+IGE8J579xnYxRHQpoDf5p3qqjg==
+X-Received: by 2002:a2e:7212:: with SMTP id n18mr12309566ljc.209.1559057580562;
+        Tue, 28 May 2019 08:33:00 -0700 (PDT)
+Received: from [192.168.1.15] (2-111-15-75-dynamic.dk.customer.tdc.net. [2.111.15.75])
+        by smtp.gmail.com with ESMTPSA id c10sm2935951lfh.79.2019.05.28.08.32.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 08:32:59 -0700 (PDT)
+Subject: Re: [PATCH] trace: Avoid memory leak in predicate_parse()
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org
+References: <20190528134659.4041-1-tomasbortoli@gmail.com>
+ <20190528104400.388e4c3f@gandalf.local.home>
+ <1a9137e1-bcc3-787f-267c-8b76dea41fbb@gmail.com>
+ <20190528112956.4cf2dd9c@gandalf.local.home>
+From:   Tomas Bortoli <tomasbortoli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tomasbortoli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <7abc7172-11fd-b0e3-6381-f976c5450d4f@gmail.com>
+Date:   Tue, 28 May 2019 17:32:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190528020643.646-1-f.fainelli@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190528112956.4cf2dd9c@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 07:06:38PM -0700, Florian Fainelli wrote:
-> Both sysfs-bus-mdio and sysfs-class-net-phydev contain the same
-> duplication information. There is not currently any MDIO bus specific
-> attribute, but there are PHY device (struct phy_device) specific
-> attributes. Use the more precise description from sysfs-bus-mdio and
-> carry that over to sysfs-class-net-phydev.
+On 5/28/19 5:29 PM, Steven Rostedt wrote:
+> On Tue, 28 May 2019 17:18:59 +0200
+> Tomas Bortoli <tomasbortoli@gmail.com> wrote:
 > 
-> Fixes: 86f22d04dfb5 ("net: sysfs: Document PHY device sysfs attributes")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+>>>> +	memset(prog_stack, 0, nr_preds * sizeof(*prog_stack));
+>>>> +  
+>>>
+>>> Can you instead just switch the allocation of prog_stack to use
+>>> kcalloc()?  
+>>
+>> kmalloc_array() is safe against arithmetic overflow of the arguments.
+>> Using kcalloc() directly we wouldn't check for that. Not really ideal in
+>> my opinion. And there's no kcalloc_array() apparently!
+> 
+> But doesn't kcalloc() simply call kmalloc_array() with the GFP_ZERO
+> flag?
+> 
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+It does! Oops, I'll send it shortly
 
-    Andrew
+Tomas
+
