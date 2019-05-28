@@ -2,243 +2,250 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D7FA2C1D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E6C32C1DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 10:56:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfE1IzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 04:55:09 -0400
-Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:41742 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726394AbfE1IzI (ORCPT
+        id S1726773AbfE1I4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 04:56:31 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47338 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbfE1I4b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 04:55:08 -0400
-Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id F349FC1F35;
-        Tue, 28 May 2019 08:54:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1559033692; bh=FkFfnY0AkDJgmG4XxsfFGaS/2mNpPB8fw/BMIeXFMC4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=lM6Gbu7jXInf5Y5jrz79PdnBXnnBuP6dikSLo2CT1t8xVwLnWuyt0d2EIXmY0GHVd
-         AspwvtbFdMXxeBe9SlI5QtiW9x76iDvfoNOxP8sAwRsUSlxXHJUcTBYeYoJDB/bOqA
-         WpEi+++uqInF/WOR12NKGCR0nrcCgjYZZmkDnhFWnY+4uoYANCpMD7PefQHwbZJwKg
-         7ZcaCYoCJhsjc+gsR3CzNWGDp5iU4KkcW9wSA2vFInM0qm9pxT6+qAjgZ1Vn6hnztj
-         aNPzJ/4v1qXEHRWk7y6rQiprD9WjhD9Crt2Qca0ZfR+L6GdC2qMwTgUOM0i8QuNW3x
-         FrfFRiCsIMvxA==
-Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.58])
-        by mailhost.synopsys.com (Postfix) with ESMTP id CF2DBA0099;
-        Tue, 28 May 2019 08:55:06 +0000 (UTC)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH] ARC: [plat-hsdk]: unify memory apertures configuration
-Date:   Tue, 28 May 2019 11:54:44 +0300
-Message-Id: <20190528085444.3813-1-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.21.0
+        Tue, 28 May 2019 04:56:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1ErGdicB+w9Y3BzUXB1wjL/BN0mlHZyHPJdb8JJGWqo=; b=i/Gk0mBOYMGn76jX1pbR8imiF
+        ChvOgexW5irG9RifGeReWzRTYJe7O0jaOesXLYOeya5Z9zcFdzNz0Xg9Dfoagek002mVmRxlKGu49
+        X+/9vuO6Fzzbew0L3gVzrd4PnBUwBtFIrj0a3ws+FL5f/N/k/M12NxUPhmKZ7klY3n1+hVZA5RQXC
+        AhrXTXKDClnUqFoQ8/ohCAX+tgnEFF/PySj1DPz07ozYFAKjQ7C/CxIurUdKdc40HgHyLmWeky69u
+        BteG7+lTigBI+Rg1EbsqwAneXetBKsGvCQIONql7yCXpy9CRrHeLQ3OvUEJYp6JghZBEFGncdCtMl
+        G9ueEolAA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVXtr-00024t-64; Tue, 28 May 2019 08:56:03 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 251EA2072908D; Tue, 28 May 2019 10:56:01 +0200 (CEST)
+Date:   Tue, 28 May 2019 10:56:01 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     mingo@kernel.org, acme@redhat.com, vincent.weaver@maine.edu,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        ak@linux.intel.com, jolsa@redhat.com, eranian@google.com
+Subject: Re: [PATCH V2 1/3] perf/x86: Disable non generic regs for
+ software/probe events
+Message-ID: <20190528085601.GL2623@hirez.programming.kicks-ass.net>
+References: <1558984077-7773-1-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1558984077-7773-1-git-send-email-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HSDK SOC has memory bridge which allows to configure memory map
-for different AXI masters in runtime.
-As of today we adjust memory apertures configuration in U-boot
-so we have different configuration in case of loading kernel
-via U-boot and JTAG.
+On Mon, May 27, 2019 at 12:07:55PM -0700, kan.liang@linux.intel.com wrote:
+> diff --git a/arch/x86/include/uapi/asm/perf_regs.h b/arch/x86/include/uapi/asm/perf_regs.h
+> index ac67bbe..3a96971 100644
+> --- a/arch/x86/include/uapi/asm/perf_regs.h
+> +++ b/arch/x86/include/uapi/asm/perf_regs.h
+> @@ -52,4 +52,7 @@ enum perf_event_x86_regs {
+>  	/* These include both GPRs and XMMX registers */
+>  	PERF_REG_X86_XMM_MAX = PERF_REG_X86_XMM15 + 2,
+>  };
+> +
+> +#define PERF_REG_NON_GENERIC_MASK	(~((1ULL << PERF_REG_X86_XMM0) - 1))
+> +
+>  #endif /* _ASM_X86_PERF_REGS_H */
+> diff --git a/include/linux/perf_regs.h b/include/linux/perf_regs.h
+> index 4767474..1d794355 100644
+> --- a/include/linux/perf_regs.h
+> +++ b/include/linux/perf_regs.h
+> @@ -11,6 +11,11 @@ struct perf_regs {
+>  
+>  #ifdef CONFIG_HAVE_PERF_REGS
+>  #include <asm/perf_regs.h>
+> +
+> +#ifndef PERF_REG_NON_GENERIC_MASK
+> +#define PERF_REG_NON_GENERIC_MASK	0
+> +#endif
+> +
+>  u64 perf_reg_value(struct pt_regs *regs, int idx);
+>  int perf_reg_validate(u64 mask);
+>  u64 perf_reg_abi(struct task_struct *task);
+> @@ -18,6 +23,9 @@ void perf_get_regs_user(struct perf_regs *regs_user,
+>  			struct pt_regs *regs,
+>  			struct pt_regs *regs_user_copy);
+>  #else
+> +
+> +#define PERF_REG_NON_GENERIC_MASK	0
+> +
+>  static inline u64 perf_reg_value(struct pt_regs *regs, int idx)
+>  {
+>  	return 0;
 
-It isn't really critical in case of existing platform configuration
-as configuration differs for <currently> unused address space
-regions or unused AXI masters. However we may face with this
-issue when we'll bringup new peripherals or touch their address
-space.
+Much better than the last version; however..
 
-Fix that by copy memory apertures configuration from U-boot to
-HSDK platform code.
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index abbd4b3..4865bdf 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -8457,6 +8457,12 @@ static void sw_perf_event_destroy(struct perf_event *event)
+>  	swevent_hlist_put();
+>  }
+>  
+> +static inline bool has_non_generic_regs(struct perf_event *event)
+> +{
+> +	return (event->attr.sample_regs_user & PERF_REG_NON_GENERIC_MASK) ||
+> +	       (event->attr.sample_regs_intr & PERF_REG_NON_GENERIC_MASK);
+> +}
+> +
+>  static int perf_swevent_init(struct perf_event *event)
+>  {
+>  	u64 event_id = event->attr.config;
+> @@ -8470,6 +8476,10 @@ static int perf_swevent_init(struct perf_event *event)
+>  	if (has_branch_stack(event))
+>  		return -EOPNOTSUPP;
+>  
+> +	/* Only support generic registers */
+> +	if (has_non_generic_regs(event))
+> +		return -EOPNOTSUPP;
+> +
+>  	switch (event_id) {
+>  	case PERF_COUNT_SW_CPU_CLOCK:
+>  	case PERF_COUNT_SW_TASK_CLOCK:
+> @@ -8633,6 +8643,10 @@ static int perf_tp_event_init(struct perf_event *event)
+>  	if (has_branch_stack(event))
+>  		return -EOPNOTSUPP;
+>  
+> +	/* Only support generic registers */
+> +	if (has_non_generic_regs(event))
+> +		return -EOPNOTSUPP;
+> +
+>  	err = perf_trace_init(event);
+>  	if (err)
+>  		return err;
+> @@ -8722,6 +8736,10 @@ static int perf_kprobe_event_init(struct perf_event *event)
+>  	if (has_branch_stack(event))
+>  		return -EOPNOTSUPP;
+>  
+> +	/* Only support generic registers */
+> +	if (has_non_generic_regs(event))
+> +		return -EOPNOTSUPP;
+> +
+>  	is_retprobe = event->attr.config & PERF_PROBE_CONFIG_IS_RETPROBE;
+>  	err = perf_kprobe_init(event, is_retprobe);
+>  	if (err)
+> @@ -8782,6 +8800,10 @@ static int perf_uprobe_event_init(struct perf_event *event)
+>  	if (has_branch_stack(event))
+>  		return -EOPNOTSUPP;
+>  
+> +	/* Only support generic registers */
+> +	if (has_non_generic_regs(event))
+> +		return -EOPNOTSUPP;
+> +
+>  	is_retprobe = event->attr.config & PERF_PROBE_CONFIG_IS_RETPROBE;
+>  	ref_ctr_offset = event->attr.config >> PERF_UPROBE_REF_CTR_OFFSET_SHIFT;
+>  	err = perf_uprobe_init(event, ref_ctr_offset, is_retprobe);
+> @@ -9562,6 +9584,10 @@ static int cpu_clock_event_init(struct perf_event *event)
+>  	if (has_branch_stack(event))
+>  		return -EOPNOTSUPP;
+>  
+> +	/* Only support generic registers */
+> +	if (has_non_generic_regs(event))
+> +		return -EOPNOTSUPP;
+> +
+>  	perf_swevent_init_hrtimer(event);
+>  
+>  	return 0;
+> @@ -9643,6 +9669,10 @@ static int task_clock_event_init(struct perf_event *event)
+>  	if (has_branch_stack(event))
+>  		return -EOPNOTSUPP;
+>  
+> +	/* Only support generic registers */
+> +	if (has_non_generic_regs(event))
+> +		return -EOPNOTSUPP;
+> +
+>  	perf_swevent_init_hrtimer(event);
+>  
+>  	return 0;
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+I don't think this is anywhere near sufficient. What happens if we
+request XMM regs for an uncore PMU ?
+
+I'm thinking you want something along these lines...
+
 ---
-This should be done a long time ago and this could save me from a lot
-of debugging while bringing up GPU on HSDKv2...
-
- arch/arc/plat-hsdk/platform.c | 144 ++++++++++++++++++++++++++++++++--
- 1 file changed, 136 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arc/plat-hsdk/platform.c b/arch/arc/plat-hsdk/platform.c
-index 2588b842407c..e336e34925b7 100644
---- a/arch/arc/plat-hsdk/platform.c
-+++ b/arch/arc/plat-hsdk/platform.c
-@@ -35,8 +35,6 @@ static void __init hsdk_init_per_cpu(unsigned int cpu)
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index a5436cee20b1..3ef1c2e0b177 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3281,7 +3281,13 @@ static int intel_pmu_hw_config(struct perf_event *event)
  
- #define ARC_PERIPHERAL_BASE	0xf0000000
- #define CREG_BASE		(ARC_PERIPHERAL_BASE + 0x1000)
--#define CREG_PAE		(CREG_BASE + 0x180)
--#define CREG_PAE_UPDATE		(CREG_BASE + 0x194)
+ 		if (event->attr.sample_type & PERF_SAMPLE_CALLCHAIN)
+ 			event->attr.sample_type |= __PERF_SAMPLE_CALLCHAIN_EARLY;
+-	}
++
++		/* we only support extended (XMM) registers for sample_regs_intr */
++		if (event->attr.sample_regs_user & PERF_REGS_EXTENDED_MASK)
++			return -EOPNOTSUPP;
++
++	} else if (has_extended_regs(event))
++		return -EOPNOTSUPP;
  
- #define SDIO_BASE		(ARC_PERIPHERAL_BASE + 0xA000)
- #define SDIO_UHS_REG_EXT	(SDIO_BASE + 0x108)
-@@ -102,20 +100,150 @@ static void __init hsdk_enable_gpio_intc_wire(void)
- 	iowrite32(GPIO_INT_CONNECTED_MASK, (void __iomem *) GPIO_INTEN);
- }
+ 	if (needs_branch_stack(event)) {
+ 		ret = intel_pmu_setup_lbr_filter(event);
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index 5e9bb246b3a6..4fae37f8c7c2 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -2020,6 +2020,7 @@ void __init intel_ds_init(void)
+ 					PERF_SAMPLE_TIME;
+ 				x86_pmu.flags |= PMU_FL_PEBS_ALL;
+ 				pebs_qual = "-baseline";
++				x86_get_pmu()->capabilities |= PERF_PMU_CAP_EXTENDED_REGS;
+ 			} else {
+ 				/* Only basic record supported */
+ 				x86_pmu.pebs_no_xmm_regs = 1;
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 0ab99c7b652d..2bca72f3028b 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -241,6 +241,7 @@ struct perf_event;
+ #define PERF_PMU_CAP_NO_INTERRUPT		0x01
+ #define PERF_PMU_CAP_NO_NMI			0x02
+ #define PERF_PMU_CAP_AUX_NO_SG			0x04
++#define PERF_PMU_CAP_EXTENDED_REGS		0x08
+ #define PERF_PMU_CAP_EXCLUSIVE			0x10
+ #define PERF_PMU_CAP_ITRACE			0x20
+ #define PERF_PMU_CAP_HETEROGENEOUS_CPUS		0x40
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index abbd4b3b96c2..0c4872426b70 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -10064,12 +10064,16 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
+ 		perf_event_ctx_unlock(event->group_leader, ctx);
  
--static void __init hsdk_init_early(void)
-+enum hsdk_axi_masters {
-+	M_HS_CORE = 0,
-+	M_HS_RTT,
-+	M_AXI_TUN,
-+	M_HDMI_VIDEO,
-+	M_HDMI_AUDIO,
-+	M_USB_HOST,
-+	M_ETHERNET,
-+	M_SDIO,
-+	M_GPU,
-+	M_DMAC_0,
-+	M_DMAC_1,
-+	M_DVFS
-+};
+ 	if (!ret) {
++		if (!(pmu->capabilities & PERF_PMU_CAP_EXTENDED_REGS) &&
++		    has_extended_regs(event))
++			ret = -EOPNOTSUPP;
 +
-+#define UPDATE_VAL	1
+ 		if (pmu->capabilities & PERF_PMU_CAP_NO_EXCLUDE &&
+-				event_has_any_exclude_flag(event)) {
+-			if (event->destroy)
+-				event->destroy(event);
++				event_has_any_exclude_flag(event))
+ 			ret = -EINVAL;
+-		}
 +
-+/*
-+ * m	master		AXI_M_m_SLV0	AXI_M_m_SLV1	AXI_M_m_OFFSET0	AXI_M_m_OFFSET1
-+ * 0	HS (CBU)	0x11111111	0x63111111	0xFEDCBA98	0x0E543210
-+ * 1	HS (RTT)	0x77777777	0x77777777	0xFEDCBA98	0x76543210
-+ * 2	AXI Tunnel	0x88888888	0x88888888	0xFEDCBA98	0x76543210
-+ * 3	HDMI-VIDEO	0x77777777	0x77777777	0xFEDCBA98	0x76543210
-+ * 4	HDMI-ADUIO	0x77777777	0x77777777	0xFEDCBA98	0x76543210
-+ * 5	USB-HOST	0x77777777	0x77999999	0xFEDCBA98	0x76DCBA98
-+ * 6	ETHERNET	0x77777777	0x77999999	0xFEDCBA98	0x76DCBA98
-+ * 7	SDIO		0x77777777	0x77999999	0xFEDCBA98	0x76DCBA98
-+ * 8	GPU		0x77777777	0x77777777	0xFEDCBA98	0x76543210
-+ * 9	DMAC (port #1)	0x77777777	0x77777777	0xFEDCBA98	0x76543210
-+ * 10	DMAC (port #2)	0x77777777	0x77777777	0xFEDCBA98	0x76543210
-+ * 11	DVFS		0x00000000	0x60000000	0x00000000	0x00000000
-+ *
-+ * Please read ARC HS Development IC Specification, section 17.2 for more
-+ * information about apertures configuration.
-+ * NOTE: we intentionally modify default settings in U-boot. Default settings
-+ * are specified in "Table 111 CREG Address Decoder register reset values".
-+ */
-+
-+#define CREG_AXI_M_SLV0(m)  ((void __iomem *)(CREG_BASE + 0x020 * (m)))
-+#define CREG_AXI_M_SLV1(m)  ((void __iomem *)(CREG_BASE + 0x020 * (m) + 0x004))
-+#define CREG_AXI_M_OFT0(m)  ((void __iomem *)(CREG_BASE + 0x020 * (m) + 0x008))
-+#define CREG_AXI_M_OFT1(m)  ((void __iomem *)(CREG_BASE + 0x020 * (m) + 0x00C))
-+#define CREG_AXI_M_UPDT(m)  ((void __iomem *)(CREG_BASE + 0x020 * (m) + 0x014))
-+
-+#define CREG_AXI_M_HS_CORE_BOOT	((void __iomem *)(CREG_BASE + 0x010))
-+
-+#define CREG_PAE		((void __iomem *)(CREG_BASE + 0x180))
-+#define CREG_PAE_UPDT		((void __iomem *)(CREG_BASE + 0x194))
-+
-+static void __init hsdk_init_memory_bridge(void)
- {
-+	u32 reg;
-+
-+	/*
-+	 * M_HS_CORE has one unic register - BOOT.
-+	 * We need to clean boot mirror (BOOT[1:0]) bits in them.
-+	 */
-+	reg = readl(CREG_AXI_M_HS_CORE_BOOT) & (~0x3);
-+	writel(reg, CREG_AXI_M_HS_CORE_BOOT);
-+	writel(0x11111111, CREG_AXI_M_SLV0(M_HS_CORE));
-+	writel(0x63111111, CREG_AXI_M_SLV1(M_HS_CORE));
-+	writel(0xFEDCBA98, CREG_AXI_M_OFT0(M_HS_CORE));
-+	writel(0x0E543210, CREG_AXI_M_OFT1(M_HS_CORE));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_HS_CORE));
-+
-+	writel(0x77777777, CREG_AXI_M_SLV0(M_HS_RTT));
-+	writel(0x77777777, CREG_AXI_M_SLV1(M_HS_RTT));
-+	writel(0xFEDCBA98, CREG_AXI_M_OFT0(M_HS_RTT));
-+	writel(0x76543210, CREG_AXI_M_OFT1(M_HS_RTT));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_HS_RTT));
-+
-+	writel(0x88888888, CREG_AXI_M_SLV0(M_AXI_TUN));
-+	writel(0x88888888, CREG_AXI_M_SLV1(M_AXI_TUN));
-+	writel(0xFEDCBA98, CREG_AXI_M_OFT0(M_AXI_TUN));
-+	writel(0x76543210, CREG_AXI_M_OFT1(M_AXI_TUN));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_AXI_TUN));
-+
-+	writel(0x77777777, CREG_AXI_M_SLV0(M_HDMI_VIDEO));
-+	writel(0x77777777, CREG_AXI_M_SLV1(M_HDMI_VIDEO));
-+	writel(0xFEDCBA98, CREG_AXI_M_OFT0(M_HDMI_VIDEO));
-+	writel(0x76543210, CREG_AXI_M_OFT1(M_HDMI_VIDEO));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_HDMI_VIDEO));
-+
-+	writel(0x77777777, CREG_AXI_M_SLV0(M_HDMI_AUDIO));
-+	writel(0x77777777, CREG_AXI_M_SLV1(M_HDMI_AUDIO));
-+	writel(0xFEDCBA98, CREG_AXI_M_OFT0(M_HDMI_AUDIO));
-+	writel(0x76543210, CREG_AXI_M_OFT1(M_HDMI_AUDIO));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_HDMI_AUDIO));
-+
-+	writel(0x77777777, CREG_AXI_M_SLV0(M_USB_HOST));
-+	writel(0x77999999, CREG_AXI_M_SLV1(M_USB_HOST));
-+	writel(0xFEDCBA98, CREG_AXI_M_OFT0(M_USB_HOST));
-+	writel(0x76DCBA98, CREG_AXI_M_OFT1(M_USB_HOST));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_USB_HOST));
-+
-+	writel(0x77777777, CREG_AXI_M_SLV0(M_ETHERNET));
-+	writel(0x77999999, CREG_AXI_M_SLV1(M_ETHERNET));
-+	writel(0xFEDCBA98, CREG_AXI_M_OFT0(M_ETHERNET));
-+	writel(0x76DCBA98, CREG_AXI_M_OFT1(M_ETHERNET));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_ETHERNET));
-+
-+	writel(0x77777777, CREG_AXI_M_SLV0(M_SDIO));
-+	writel(0x77999999, CREG_AXI_M_SLV1(M_SDIO));
-+	writel(0xFEDCBA98, CREG_AXI_M_OFT0(M_SDIO));
-+	writel(0x76DCBA98, CREG_AXI_M_OFT1(M_SDIO));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_SDIO));
-+
-+	writel(0x77777777, CREG_AXI_M_SLV0(M_GPU));
-+	writel(0x77777777, CREG_AXI_M_SLV1(M_GPU));
-+	writel(0xFEDCBA98, CREG_AXI_M_OFT0(M_GPU));
-+	writel(0x76543210, CREG_AXI_M_OFT1(M_GPU));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_GPU));
-+
-+	writel(0x77777777, CREG_AXI_M_SLV0(M_DMAC_0));
-+	writel(0x77777777, CREG_AXI_M_SLV1(M_DMAC_0));
-+	writel(0xFEDCBA98, CREG_AXI_M_OFT0(M_DMAC_0));
-+	writel(0x76543210, CREG_AXI_M_OFT1(M_DMAC_0));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_DMAC_0));
-+
-+	writel(0x77777777, CREG_AXI_M_SLV0(M_DMAC_1));
-+	writel(0x77777777, CREG_AXI_M_SLV1(M_DMAC_1));
-+	writel(0xFEDCBA98, CREG_AXI_M_OFT0(M_DMAC_1));
-+	writel(0x76543210, CREG_AXI_M_OFT1(M_DMAC_1));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_DMAC_1));
-+
-+	writel(0x00000000, CREG_AXI_M_SLV0(M_DVFS));
-+	writel(0x60000000, CREG_AXI_M_SLV1(M_DVFS));
-+	writel(0x00000000, CREG_AXI_M_OFT0(M_DVFS));
-+	writel(0x00000000, CREG_AXI_M_OFT1(M_DVFS));
-+	writel(UPDATE_VAL, CREG_AXI_M_UPDT(M_DVFS));
-+
- 	/*
- 	 * PAE remapping for DMA clients does not work due to an RTL bug, so
- 	 * CREG_PAE register must be programmed to all zeroes, otherwise it
- 	 * will cause problems with DMA to/from peripherals even if PAE40 is
- 	 * not used.
- 	 */
-+	writel(0x00000000, CREG_PAE);
-+	writel(UPDATE_VAL, CREG_PAE_UPDT);
-+}
++		if (ret && event->destroy)
++			event->destroy(event);
+ 	}
  
--	/* Default is 1, which means "PAE offset = 4GByte" */
--	writel_relaxed(0, (void __iomem *) CREG_PAE);
--
--	/* Really apply settings made above */
--	writel(1, (void __iomem *) CREG_PAE_UPDATE);
-+static void __init hsdk_init_early(void)
-+{
-+	hsdk_init_memory_bridge();
- 
- 	/*
- 	 * Switch SDIO external ciu clock divider from default div-by-8 to
--- 
-2.21.0
-
+ 	if (ret)
