@@ -2,110 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F161F2C536
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 13:14:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A7342C53C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 13:16:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbfE1LOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 07:14:23 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:44280 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726345AbfE1LOX (ORCPT
+        id S1726715AbfE1LQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 07:16:34 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:36292 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbfE1LQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 07:14:23 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4SB9FKR016551;
-        Tue, 28 May 2019 06:13:10 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2sq340k99g-1;
-        Tue, 28 May 2019 06:13:10 -0500
-Received: from EDIEX01.ad.cirrus.com (unknown [198.61.84.80])
-        by mail1.cirrus.com (Postfix) with ESMTP id 8C146611C8C0;
-        Tue, 28 May 2019 06:13:09 -0500 (CDT)
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 28 May
- 2019 12:13:08 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Tue, 28 May 2019 12:13:08 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id D534745;
-        Tue, 28 May 2019 12:13:08 +0100 (BST)
-Date:   Tue, 28 May 2019 12:13:08 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-CC:     <wsa@the-dreams.de>, <jarkko.nikula@linux.intel.com>,
-        <andriy.shevchenko@linux.intel.com>, <linux-i2c@vger.kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.tissoires@redhat.com>, <jbroadus@gmail.com>,
-        <patches@opensource.cirrus.com>
-Subject: Re: [PATCH v2 2/6] i2c: acpi: Use available IRQ helper functions
-Message-ID: <20190528111308.GF28362@ediswmail.ad.cirrus.com>
-References: <20190527151932.14310-1-ckeepax@opensource.cirrus.com>
- <20190527151932.14310-2-ckeepax@opensource.cirrus.com>
- <20190528103028.GA2781@lahna.fi.intel.com>
+        Tue, 28 May 2019 07:16:33 -0400
+Received: from cpe-2606-a000-111b-405a-0-0-0-162e.dyn6.twc.com ([2606:a000:111b:405a::162e] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1hVa5a-0003j5-P3; Tue, 28 May 2019 07:16:26 -0400
+Date:   Tue, 28 May 2019 07:15:50 -0400
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc:     syzbot <syzbot+f7e9153b037eac9b1df8@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Subject: Re: memory leak in sctp_process_init
+Message-ID: <20190528111550.GA4658@hmswarspite.think-freely.org>
+References: <00000000000097abb90589e804fd@google.com>
+ <20190528013600.GM5506@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190528103028.GA2781@lahna.fi.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=889 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905280073
+In-Reply-To: <20190528013600.GM5506@localhost.localdomain>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Spam-Score: -2.9 (--)
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 01:30:28PM +0300, Mika Westerberg wrote:
-> On Mon, May 27, 2019 at 04:19:28PM +0100, Charles Keepax wrote:
-> >  static int i2c_acpi_get_info(struct acpi_device *adev,
-> >  			     struct i2c_board_info *info,
-> >  			     struct i2c_adapter *adapter,
-> >  			     acpi_handle *adapter_handle)
-> >  {
-> >  	struct list_head resource_list;
-> > -	struct resource_entry *entry;
-> >  	struct i2c_acpi_lookup lookup;
-> > +	int irq = -ENOENT;
-> >  	int ret;
-> >  
-> >  	memset(&lookup, 0, sizeof(lookup));
-> > @@ -176,16 +187,13 @@ static int i2c_acpi_get_info(struct acpi_device *adev,
-> >  
-> >  	/* Then fill IRQ number if any */
-> >  	INIT_LIST_HEAD(&resource_list);
-> > -	ret = acpi_dev_get_resources(adev, &resource_list, NULL, NULL);
-> > +	ret = acpi_dev_get_resources(adev, &resource_list,
-> > +				     i2c_acpi_add_resource, &irq);
-> >  	if (ret < 0)
-> >  		return -EINVAL;
-> >  
-> > -	resource_list_for_each_entry(entry, &resource_list) {
-> > -		if (resource_type(entry->res) == IORESOURCE_IRQ) {
-> > -			info->irq = entry->res->start;
-> > -			break;
-> > -		}
-> > -	}
-> > +	if (irq >= 0)
+On Mon, May 27, 2019 at 10:36:00PM -0300, Marcelo Ricardo Leitner wrote:
+> On Mon, May 27, 2019 at 05:48:06PM -0700, syzbot wrote:
+> > Hello,
+> > 
+> > syzbot found the following crash on:
+> > 
+> > HEAD commit:    9c7db500 Merge tag 'selinux-pr-20190521' of git://git.kern..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=10388530a00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=61dd9e15a761691d
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=f7e9153b037eac9b1df8
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e32f8ca00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177fa530a00000
+> > 
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+f7e9153b037eac9b1df8@syzkaller.appspotmail.com
+> > 
+> >  0 to HW filter on device batadv0
+> > executing program
+> > executing program
+> > executing program
+> > BUG: memory leak
+> > unreferenced object 0xffff88810ef68400 (size 1024):
+> >   comm "syz-executor273", pid 7046, jiffies 4294945598 (age 28.770s)
+> >   hex dump (first 32 bytes):
+> >     1d de 28 8d de 0b 1b e3 b5 c2 f9 68 fd 1a 97 25  ..(........h...%
+> >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> >   backtrace:
+> >     [<00000000a02cebbd>] kmemleak_alloc_recursive
+> > include/linux/kmemleak.h:55 [inline]
+> >     [<00000000a02cebbd>] slab_post_alloc_hook mm/slab.h:439 [inline]
+> >     [<00000000a02cebbd>] slab_alloc mm/slab.c:3326 [inline]
+> >     [<00000000a02cebbd>] __do_kmalloc mm/slab.c:3658 [inline]
+> >     [<00000000a02cebbd>] __kmalloc_track_caller+0x15d/0x2c0 mm/slab.c:3675
+> >     [<000000009e6245e6>] kmemdup+0x27/0x60 mm/util.c:119
+> >     [<00000000dfdc5d2d>] kmemdup include/linux/string.h:432 [inline]
+> >     [<00000000dfdc5d2d>] sctp_process_init+0xa7e/0xc20
+> > net/sctp/sm_make_chunk.c:2437
+> >     [<00000000b58b62f8>] sctp_cmd_process_init net/sctp/sm_sideeffect.c:682
+> > [inline]
+> >     [<00000000b58b62f8>] sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1384
+> > [inline]
+> >     [<00000000b58b62f8>] sctp_side_effects net/sctp/sm_sideeffect.c:1194
+> > [inline]
+> >     [<00000000b58b62f8>] sctp_do_sm+0xbdc/0x1d60
+> > net/sctp/sm_sideeffect.c:1165
 > 
-> Since 0 is not valid IRQ, I think this should be written like:
+> Note that this is on the client side. It was handling the INIT_ACK
+> chunk, from sctp_sf_do_5_1C_ack().
 > 
-> 	if (irg > 0)
+> I'm not seeing anything else other than sctp_association_free()
+> releasing this memory. This means 2 things:
+> - Every time the cookie is retransmitted, it leaks. As shown by the
+>   repetitive leaks here.
+> - The cookie remains allocated throughout the association, which is
+>   also not good as that's a 1k that we could have released back to the
+>   system right after the handshake.
 > 
+>   Marcelo
+> 
+If we have an INIT chunk bundled with a COOKIE_ECHO chunk in the same packet,
+this might occur.  Processing for each chunk (via sctp_cmd_process_init and
+sctp_sf_do_5_1D_ce both call sctp_process_init, which would cause a second write
+to asoc->peer.cookie, leaving the first write (set via kmemdup), to be orphaned
+and leak.  Seems like we should set a flag to determine if we've already cloned
+the cookie, and free the old one if its set.  If we wanted to do that on the
+cheap, we might be able to get away with checking asoc->stream->[in|out]cnt for
+being non-zero as an indicator if we've already cloned the cookie
 
-Yeah sorry thought IRQs were like GPIOs where 0 is a valid
-number, will update the patches.
+Neil
 
-Thanks,
-Charles
-> > +		info->irq = irq;
-> >  
-> >  	acpi_dev_free_resource_list(&resource_list);
-> >  
-> > -- 
-> > 2.11.0
