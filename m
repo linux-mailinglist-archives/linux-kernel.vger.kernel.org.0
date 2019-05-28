@@ -2,245 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC08E2C1F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:02:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38EEA2C1FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 11:03:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfE1JCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 05:02:06 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56828 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726418AbfE1JCG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 05:02:06 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3AF07C05D266;
-        Tue, 28 May 2019 09:01:55 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A1815611BB;
-        Tue, 28 May 2019 09:01:38 +0000 (UTC)
-Date:   Tue, 28 May 2019 11:01:35 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Yan Zhao <yan.y.zhao@intel.com>
-Cc:     intel-gvt-dev@lists.freedesktop.org, aik@ozlabs.ru,
-        Zhengxiao.zx@alibaba-inc.com, shuangtai.tst@alibaba-inc.com,
-        qemu-devel@nongnu.org, eauger@redhat.com, yi.l.liu@intel.com,
-        ziye.yang@intel.com, mlevitsk@redhat.com, pasic@linux.ibm.com,
-        felipe@nutanix.com, changpeng.liu@intel.com, Ken.Xue@amd.com,
-        jonathan.davies@nutanix.com, shaopeng.he@intel.com,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        libvir-list@redhat.com, alex.williamson@redhat.com,
-        eskultet@redhat.com, dgilbert@redhat.com, kevin.tian@intel.com,
-        zhenyuw@linux.intel.com, zhi.a.wang@intel.com, cjia@nvidia.com,
-        kwankhede@nvidia.com, berrange@redhat.com, dinechin@redhat.com
-Subject: Re: [PATCH v3 2/2] drm/i915/gvt: export migration_version to mdev
- sysfs for Intel vGPU
-Message-ID: <20190528110135.222aa24e.cohuck@redhat.com>
-In-Reply-To: <20190527034437.31594-1-yan.y.zhao@intel.com>
-References: <20190527034155.31473-1-yan.y.zhao@intel.com>
-        <20190527034437.31594-1-yan.y.zhao@intel.com>
-Organization: Red Hat GmbH
+        id S1726823AbfE1JDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 05:03:13 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34529 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbfE1JDM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 05:03:12 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p27so30685393eda.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 02:03:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EgSXKnnbthFa+BVtr8CIKNdBRHzhOkAmepQQupXINAw=;
+        b=ZbvA8JMDPA8UKWkVW0fDPJYPgNM/qme0D2u3OuCEQgzZDEHOZHaesbUUUW9pc6eOXX
+         Pra5QPai2Eftegqz/RD6sKf8inVzLSC2i1Kt7V2g0dQOXZhc3S9C1yChRVYjuyk3ravr
+         ptG87vU+ZbFxA4tWVN8f3JcptvdIXBAlxjUeY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EgSXKnnbthFa+BVtr8CIKNdBRHzhOkAmepQQupXINAw=;
+        b=g7bHV94Kc7wpSX45/UQnYsABj5oSo5glPCJ/jcAO7S88lyTRl6ScElwmGygXcvLURU
+         YN34PtDx0+bVb5W7FmoQKyOiR/e24PX+Oq6lcUJjZDklWpUnh1BmhyIHbZeGTbjyI55m
+         5N4glOpOKxIsC5YaaAD4bBNop1v8P/YVBnuBAqHgUE/+OvL2TaBisjlZ/19KCE5pF+iR
+         9I7UP27YCm79vXMtChDhqkrDpK6x63jEPrxhSfz75CaThrc5Kcqw5rWXeL5amOJBXJ+l
+         0Oa9XLMwl4EBBxNfZsAD3NthvoVMOggmNzbKlWykD5b22lSIIsI74afCClEVFEtEbcpy
+         PPkg==
+X-Gm-Message-State: APjAAAVVlvKM7M2TyACqH1nLOZKX0H+Z9gP2ODsAF6B39JqW7b5nr5y9
+        rZXyjRsDmx5FR2J08QrgOcghI6lhIIo=
+X-Google-Smtp-Source: APXvYqxFKg5PoHISf+/wwlWefI+MAwlWhDiGjXDcxrr5Tnt58NGG9OppyNgoo9Eac+/2sKa3Knstmg==
+X-Received: by 2002:a50:ac68:: with SMTP id w37mr3821095edc.282.1559034190494;
+        Tue, 28 May 2019 02:03:10 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id x49sm4072656edm.25.2019.05.28.02.03.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 02:03:09 -0700 (PDT)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        linux-fbdev@vger.kernel.org,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 00/33] fbcon notifier begone v3!
+Date:   Tue, 28 May 2019 11:02:31 +0200
+Message-Id: <20190528090304.9388-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 28 May 2019 09:02:05 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 26 May 2019 23:44:37 -0400
-Yan Zhao <yan.y.zhao@intel.com> wrote:
+Hi all,
 
-> This feature implements the migration_version attribute for Intel's vGPU
-> mdev devices.
-> 
-> migration_version attribute is rw.
-> It's used to check migration compatibility for two mdev devices of the
-> same mdev type.
-> migration_version string is defined by vendor driver and opaque to
-> userspace.
-> 
-> For Intel vGPU of gen8 and gen9, the format of migration_version string
-> is:
->   <vendor id>-<device id>-<vgpu type>-<software version>.
-> 
-> For future platforms, the format of migration_version string is to be
-> expanded to include more meta data to identify Intel vGPUs for live
-> migration compatibility check
-> 
-> For old platforms, and for GVT not supporting vGPU live migration
-> feature, -ENODEV is returned on read(2)/write(2) of migration_version
-> attribute.
-> For vGPUs running old GVT who do not expose migration_version
-> attribute, live migration is regarded as not supported for those vGPUs.
-> 
-> Cc: Alex Williamson <alex.williamson@redhat.com>
-> Cc: Erik Skultety <eskultet@redhat.com>
-> Cc: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-> Cc: Cornelia Huck <cohuck@redhat.com>
-> Cc: "Tian, Kevin" <kevin.tian@intel.com>
-> Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
-> Cc: "Wang, Zhi A" <zhi.a.wang@intel.com>
-> c: Neo Jia <cjia@nvidia.com>
-> Cc: Kirti Wankhede <kwankhede@nvidia.com>
-> 
-> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> 
-> ---
-> v3:
-> 1. renamed version to migration_version
-> (Christophe de Dinechin, Cornelia Huck, Alex Williamson)
-> 2. instead of generating migration version strings each time, storing
-> them in vgpu types generated during initialization.
-> (Zhenyu Wang, Cornelia Huck)
-> 3. replaced multiple snprintf to one big snprintf in
-> intel_gvt_get_vfio_migration_version()
-> (Dr. David Alan Gilbert)
-> 4. printed detailed error log
-> (Alex Williamson, Erik Skultety, Cornelia Huck, Dr. David Alan Gilbert)
-> 5. incorporated <software version> into migration_version string
-> (Alex Williamson)
-> 6. do not use ifndef macro to switch off migration_version attribute
-> (Zhenyu Wang)
-> 
-> v2:
-> 1. removed 32 common part of version string
-> (Alex Williamson)
-> 2. do not register version attribute for GVT not supporting live
-> migration.(Cornelia Huck)
-> 3. for platforms out of gen8, gen9, return -EINVAL --> -ENODEV for
-> incompatible. (Cornelia Huck)
-> ---
->  drivers/gpu/drm/i915/gvt/Makefile            |   2 +-
->  drivers/gpu/drm/i915/gvt/gvt.c               |  39 +++++
->  drivers/gpu/drm/i915/gvt/gvt.h               |   5 +
->  drivers/gpu/drm/i915/gvt/migration_version.c | 167 +++++++++++++++++++
->  drivers/gpu/drm/i915/gvt/vgpu.c              |  13 +-
->  5 files changed, 223 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/gpu/drm/i915/gvt/migration_version.c
-> 
+I think we're slowly getting there. Previous cover letters with more
+context:
 
-(...)
+https://lists.freedesktop.org/archives/dri-devel/2019-May/218362.html
 
-> diff --git a/drivers/gpu/drm/i915/gvt/gvt.c b/drivers/gpu/drm/i915/gvt/gvt.c
-> index 43f4242062dd..be2980e8ac75 100644
-> --- a/drivers/gpu/drm/i915/gvt/gvt.c
-> +++ b/drivers/gpu/drm/i915/gvt/gvt.c
-> @@ -105,14 +105,53 @@ static ssize_t description_show(struct kobject *kobj, struct device *dev,
->  		       type->weight);
->  }
->  
-> +static ssize_t migration_version_show(struct kobject *kobj, struct device *dev,
-> +		char *buf)
+tldr; I have a multi-year plan to improve fbcon locking, because the
+current thing is a bit a mess.
 
-Indentation looks a bit odd? (Also below.)
+Cover letter of this version, where I detail a bit more the details
+fixed in this one here:
 
-> +{
-> +	struct intel_vgpu_type *type;
-> +	void *gvt = kdev_to_i915(dev)->gvt;
-> +
-> +	type = intel_gvt_find_vgpu_type(gvt, kobject_name(kobj));
-> +	if (!type || !type->migration_version) {
-> +		gvt_err("Does not support migraion on type %s. Please search previous detailed log\n",
+https://lists.freedesktop.org/archives/dri-devel/2019-May/218984.html
 
-s/migraion/migration/ (also below)
+Note that the locking plan in this one is already outdated, I overlooked a
+few fun issues around any printk() going back to console_lock.
 
-Or reword to "Migration not supported on type %s."?
+I think remaining bits:
 
-> +				kobject_name(kobj));
-> +		return -ENODEV;
-> +	}
-> +
-> +	return snprintf(buf, strlen(type->migration_version) + 2,
-> +			"%s\n", type->migration_version);
-> +}
-> +
-> +static ssize_t migration_version_store(struct kobject *kobj, struct device *dev,
-> +		const char *buf, size_t count)
-> +{
-> +	int ret = 0;
-> +	struct intel_vgpu_type *type;
-> +	void *gvt = kdev_to_i915(dev)->gvt;
-> +
-> +	type = intel_gvt_find_vgpu_type(gvt, kobject_name(kobj));
-> +	if (!type || !type->migration_version) {
-> +		gvt_err("Does not support migraion on type %s. Please search previous detailed log\n",
-> +				kobject_name(kobj));
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = intel_gvt_check_vfio_migration_version(gvt,
-> +			type->migration_version, buf);
-> +
-> +	return (ret < 0 ? ret : count);
-> +}
-> +
->  static MDEV_TYPE_ATTR_RO(available_instances);
->  static MDEV_TYPE_ATTR_RO(device_api);
->  static MDEV_TYPE_ATTR_RO(description);
-> +static MDEV_TYPE_ATTR_RW(migration_version);
->  
->  static struct attribute *gvt_type_attrs[] = {
->  	&mdev_type_attr_available_instances.attr,
->  	&mdev_type_attr_device_api.attr,
->  	&mdev_type_attr_description.attr,
-> +	&mdev_type_attr_migration_version.attr,
->  	NULL,
->  };
+- Ack from Daniel Thompson for the backlight bits, he wanted to check the
+  big picture.
 
-(...)
+- Hash out actual merge plan.
 
-> +char *
-> +intel_gvt_get_vfio_migration_version(struct intel_gvt *gvt,
-> +		const char *vgpu_type)
-> +{
-> +	int cnt = 0;
-> +	struct drm_i915_private *dev_priv = gvt->dev_priv;
-> +	char *version = NULL;
-> +
-> +	/* currently only gen8 & gen9 are supported */
-> +	if (!IS_GEN(dev_priv, 8) && !IS_GEN(dev_priv, 9)) {
-> +		gvt_err("Local hardware does not support migration on %d\n",
-> +				INTEL_INFO(dev_priv)->gen);
-> +		return NULL;
-> +	}
-> +
-> +	if (GVT_VFIO_MIGRATION_SOFTWARE_VERSION == INV_SOFTWARE_VERSION) {
-> +		gvt_err("Local GVT does not support migration\n");
-> +		return NULL;
-> +	}
-> +
-> +	version = kzalloc(MIGRATION_VERSION_TOTAL_LEN, GFP_KERNEL);
-> +
-> +	if (unlikely(!version)) {
-> +		gvt_err("memory allocation failed when get local migraiton version\n");
+I'm also cc'ing the entire pile to a lot more people on request.
 
-s/migraiton/migration/
+Thanks, Daniel
 
-Or "cannot allocate memory for local migration version"?
+Daniel Vetter (33):
+  dummycon: Sprinkle locking checks
+  fbdev: locking check for fb_set_suspend
+  vt: might_sleep() annotation for do_blank_screen
+  vt: More locking checks
+  fbdev/sa1100fb: Remove dead code
+  fbdev/cyber2000: Remove struct display
+  fbdev/aty128fb: Remove dead code
+  fbcon: s/struct display/struct fbcon_display/
+  fbcon: Remove fbcon_has_exited
+  fbcon: call fbcon_fb_(un)registered directly
+  fbdev/sh_mobile: remove sh_mobile_lcdc_display_notify
+  fbdev/omap: sysfs files can't disappear before the device is gone
+  fbdev: sysfs files can't disappear before the device is gone
+  staging/olpc: lock_fb_info can't fail
+  fbdev/atyfb: lock_fb_info can't fail
+  fbdev: lock_fb_info cannot fail
+  fbcon: call fbcon_fb_bind directly
+  fbdev: make unregister/unlink functions not fail
+  fbdev: unify unlink_framebuffer paths
+  fbdev/sh_mob: Remove fb notifier callback
+  fbdev: directly call fbcon_suspended/resumed
+  fbcon: Call fbcon_mode_deleted/new_modelist directly
+  fbdev: Call fbcon_get_requirement directly
+  Revert "backlight/fbcon: Add FB_EVENT_CONBLANK"
+  fbmem: pull fbcon_fb_blanked out of fb_blank
+  fbdev: remove FBINFO_MISC_USEREVENT around fb_blank
+  fb: Flatten control flow in fb_set_var
+  fbcon: replace FB_EVENT_MODE_CHANGE/_ALL with direct calls
+  vgaswitcheroo: call fbcon_remap_all directly
+  fbcon: Call con2fb_map functions directly
+  fbcon: Document what I learned about fbcon locking
+  staging/olpc_dcon: Add drm conversion to TODO
+  backlight: simplify lcd notifier
 
-> +		return NULL;
-> +	}
-> +
-> +	/* vendor id + device id + vgpu type + software version */
-> +	cnt = snprintf(version, MIGRATION_VERSION_TOTAL_LEN, PRINTF_FORMAT,
-> +			PCI_VENDOR_ID_INTEL,
-> +			INTEL_DEVID(dev_priv),
-> +			vgpu_type,
-> +			GVT_VFIO_MIGRATION_SOFTWARE_VERSION);
-> +
-> +	if (cnt)
-> +		return version;
-> +
-> +	gvt_err("string generation failed when get local migration version\n");
-> +	return NULL;
-> +}
+ arch/arm/mach-pxa/am200epd.c                  |  13 +-
+ drivers/gpu/vga/vga_switcheroo.c              |  11 +-
+ drivers/media/pci/ivtv/ivtvfb.c               |   6 +-
+ drivers/staging/fbtft/fbtft-core.c            |   4 +-
+ drivers/staging/olpc_dcon/TODO                |   7 +
+ drivers/staging/olpc_dcon/olpc_dcon.c         |   6 +-
+ drivers/tty/vt/vt.c                           |  18 +
+ drivers/video/backlight/backlight.c           |   2 +-
+ drivers/video/backlight/lcd.c                 |  12 -
+ drivers/video/console/dummycon.c              |   6 +
+ drivers/video/fbdev/aty/aty128fb.c            |  64 ---
+ drivers/video/fbdev/aty/atyfb_base.c          |   3 +-
+ drivers/video/fbdev/core/fbcmap.c             |   6 +-
+ drivers/video/fbdev/core/fbcon.c              | 313 ++++++--------
+ drivers/video/fbdev/core/fbcon.h              |   6 +-
+ drivers/video/fbdev/core/fbmem.c              | 399 +++++++-----------
+ drivers/video/fbdev/core/fbsysfs.c            |  20 +-
+ drivers/video/fbdev/cyber2000fb.c             |   1 -
+ drivers/video/fbdev/neofb.c                   |   9 +-
+ .../video/fbdev/omap2/omapfb/omapfb-sysfs.c   |  21 +-
+ drivers/video/fbdev/sa1100fb.c                |  25 --
+ drivers/video/fbdev/savage/savagefb_driver.c  |   9 +-
+ drivers/video/fbdev/sh_mobile_lcdcfb.c        | 132 +-----
+ drivers/video/fbdev/sh_mobile_lcdcfb.h        |   5 -
+ include/linux/console_struct.h                |   5 +-
+ include/linux/fb.h                            |  45 +-
+ include/linux/fbcon.h                         |  30 ++
+ 27 files changed, 396 insertions(+), 782 deletions(-)
 
-(...)
+-- 
+2.20.1
 
-Only some nitpicks from me, but I'm not really familiar with this
-driver. Overall, this looks sane to me, so have an
-
-Acked-by: Cornelia Huck <cohuck@redhat.com>
