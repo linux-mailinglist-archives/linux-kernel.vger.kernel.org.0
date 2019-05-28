@@ -2,102 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 261D32CB9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 18:17:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C536B2CBA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 18:17:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727320AbfE1QRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 12:17:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35082 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbfE1QQ7 (ORCPT
+        id S1727368AbfE1QRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 12:17:32 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43171 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726371AbfE1QRc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 12:16:59 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 387BF6188E; Tue, 28 May 2019 16:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559060219;
-        bh=NZZxhr/Jde6iwR3plkTJWmJgNv290hmJqEH8yoF/dOE=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=m6MP/xrw8LbKlYy3Am484x8NVoogtjAdQFQ+SzkWdvbl79o3tCdAqu7ogk7klXSZz
-         pXmW1gxlX3iPEFqgdD27SqqldFkWvqOHTiDLCW3gu/1U3ZIobYyrMLjSUZLR9f5PYz
-         eehn9QsUmbMDxqS2cJyYV7o8j9xS2Z3+XnMoct+c=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.204.79.15] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 582FC61B6A;
-        Tue, 28 May 2019 16:16:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559060212;
-        bh=NZZxhr/Jde6iwR3plkTJWmJgNv290hmJqEH8yoF/dOE=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=hvwoMvcFHdinPmCvtky2U3w5mqiaWtS3H3yzP01VpBZSHg5+52w1o8bVxGgUvjUpT
-         eCQSnnm4+T4wXCp8co+a46KYttuBX5oKproWtJfqnbIAzPkbAIM+kmBVPEk5XyswvU
-         b85ufxgfXFz5Wv3xExY6mZ3L43Yp3fJM+6TKoDag=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 582FC61B6A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-Subject: Re: Perf: Preserving the event across CPU hotunplug/plug and Creation
- of an event on offine CPU
-From:   Mukesh Ojha <mojha@codeaurora.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <b94d3165-9870-9aa3-f76c-38383b649398@codeaurora.org>
-Message-ID: <4f276f87-b6d8-f868-b3e7-9951d1383070@codeaurora.org>
-Date:   Tue, 28 May 2019 21:46:42 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 28 May 2019 12:17:32 -0400
+Received: by mail-lf1-f66.google.com with SMTP id u27so15058780lfg.10;
+        Tue, 28 May 2019 09:17:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=0mCOvPTQFt06F/boW4vTUbBF7nJMno4atGIvwcskOpo=;
+        b=kj6ZrRo1HJLZsUgUXJnuRb8eNZE1GMLEFbPyLa2GNepvLvteouHbmc4f0/q867Iy38
+         V0u7l8xEbnAb/y/urqyqBNkm/sqOs3qjgxGyGBkkQ6ej2RkqaiejUiShHSKN8UQi8SLv
+         H3wwPlSOmo+SsSxVgb/hX2F56KYcTW4LaFVpdxT9CmhrnWJqyBR4d+VIAm9fz8PoRzhi
+         XlFmyuN0aV2VLYxcHXHialTBfq/0AVa+2ICL7KX/QAiAggqmKugXbgOP3yl+6mKsO2s9
+         8vCDMro65rnkazT4LLI0HD03ntEe/CBiCGvhN7FPB3z9rVdnxz6lI0pyH773tnqOFsvi
+         oKMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=0mCOvPTQFt06F/boW4vTUbBF7nJMno4atGIvwcskOpo=;
+        b=qdwFgCBDqsd5uZHfutJtHGk1yf6m9GSaglSYFlsK3w3ViI7lembLBfspLgbu5oXPaE
+         +ouhL4+1ZF0GsMcBuEeQXDm8PlQlaE7KCG4VAADuZWjfLZh7V14hWLcEdi64oKjqFCkS
+         XH4PxIPKV/7gvjXJ8rXPDS9TuQw1y66XG7018WgGM+Wehxy5DxQIwK2JZi6NJs+LeC2i
+         KBx1equTjE3kA01vCWzznvjC+Pmvjl7nd/ScSU3N69KddIWKrHaPr5KRYBHnSpm/GuXz
+         0izna/lThl/7GMd439jmnVerVqOf16BJBS5rjeDsNqrwEp23ZZ9OHS3rYE4mViPt+wRx
+         hqRQ==
+X-Gm-Message-State: APjAAAWH3GRtBB3AkXC3ZbZONJLbJ3/RwTxnWuROv40pbDPBMntF25ld
+        J/lNab5/5QNzaMP1TlCDKYw=
+X-Google-Smtp-Source: APXvYqzidImAk0jrnotbs+JaG3aAxRd0IUUyMuMdd3z8pk3Igq9cdLgxNRlfKUbza70ckuuscZ7yxQ==
+X-Received: by 2002:a19:6517:: with SMTP id z23mr11104789lfb.98.1559060250080;
+        Tue, 28 May 2019 09:17:30 -0700 (PDT)
+Received: from [10.17.182.120] (ll-22.209.223.85.sovam.net.ua. [85.223.209.22])
+        by smtp.gmail.com with ESMTPSA id o184sm802131lfo.37.2019.05.28.09.17.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 09:17:29 -0700 (PDT)
+Subject: Re: [PATCH V5] ARM: mach-shmobile: Don't init CNTVOFF/counter if PSCI
+ is available
+To:     Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Julien Grall <julien.grall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+References: <1558087093-22113-1-git-send-email-olekstysh@gmail.com>
+ <CAMuHMdVC=aNQTZ0r+7qpiWEyEaoQ587pm1FxhWqR3pwHwv2ARg@mail.gmail.com>
+ <20190528160509.5vunuxxxcjduobpb@verge.net.au>
+From:   Oleksandr <olekstysh@gmail.com>
+Message-ID: <95324d18-651b-4b9c-1016-5d669b1c810a@gmail.com>
+Date:   Tue, 28 May 2019 19:17:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <b94d3165-9870-9aa3-f76c-38383b649398@codeaurora.org>
+In-Reply-To: <20190528160509.5vunuxxxcjduobpb@verge.net.au>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Friendly Ping.
+> Oleksandr, could I trouble you to respin with the
+> changes suggested by Geert?
+
+Hi, Simon.
+
+Sure, will send an updated patch tomorrow.
 
 
-On 5/23/2019 6:39 PM, Mukesh Ojha wrote:
-> Hi Peter/All,
 >
-> This is regarding the discussion happen in the past about 
-> https://lkml.org/lkml/2018/2/15/1324
->
-> Where the exact ask is to allow preserving and creation of events on a 
-> offline CPU, so that when the CPU
-> comes online it will start counting.
->
-> I had a look at your patch too and resolve crash during while trying 
-> to create an event on an offline cpu.
->
-> In your patch,  you seem to disable event when cpu goes offline which 
-> is exactly deleting the event
-> from the pmu and add when it comes online, it seems to  work.
->
-> But, For the purpose of allowing the creation of event while CPU is 
-> offline is not able to count event while
-> CPU coming online, for that i did some change, that did work.
->
-> Also, I have query about the events which gets destroyed while CPU is 
-> offline and we need to remove them
-> once cpu comes online right ? As Raghavendra also queried the same in 
-> the above thread.
->
-> Don't we need  a list where we maintain the events which gets 
-> destroyed while CPU is dead ?
-> and clean it  up when CPU comes online ?
->
-> Thanks.
-> Mukesh
->
->
+-- 
+Regards,
+
+Oleksandr Tyshchenko
+
