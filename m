@@ -2,85 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F5502CF17
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 21:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19CB32CF1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 21:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbfE1TCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 15:02:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33534 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbfE1TCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 15:02:17 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 92379821EF;
-        Tue, 28 May 2019 19:02:17 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3152C1001DD8;
-        Tue, 28 May 2019 19:02:16 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <6889f4f9-4ae0-8a92-a2fc-04151ad8ed9f@schaufler-ca.com>
-References: <6889f4f9-4ae0-8a92-a2fc-04151ad8ed9f@schaufler-ca.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com, James Morris <jmorris@namei.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PULL] Smack: Restore the smackfsdef mount option
+        id S1727501AbfE1TC0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 15:02:26 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44550 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727418AbfE1TCX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 15:02:23 -0400
+Received: by mail-pf1-f196.google.com with SMTP id g9so12036332pfo.11;
+        Tue, 28 May 2019 12:02:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=ZBw/tQUR3N++vfWCWRHOlyMoJfJVoXaITb7wqbYIEwU=;
+        b=SDOtLbxOfqFOsS3tfWf/NPMQ9agnoEnzEmJwhDansmY94g8VfpV+K/aK98EF0FGzOB
+         QRm5N4O9EYRfrQ054SLOZWXH0nFk2FN0ccKjRlfXwzyikmBGApI+BPcXEm9a4pfzWAm8
+         bY10bMLwoMQbG/scodaCfipQxzoWAWNMNmN7v0dqRtPzqvQ0kvA/e6MUKGF0iYgNmwHi
+         FTLhnW6VZyFouBCBr1oEt5eEX2ToFmH1hyDIT1VB7gXYC1ubI2tDzFtw4wl9sWqGDSF+
+         OWrkyyhkW5xkv8ei+mwLRNn8oooU985YF5oDGV/bSatVdgNq/47+R3q61lq4rlEHtCH9
+         A9/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=ZBw/tQUR3N++vfWCWRHOlyMoJfJVoXaITb7wqbYIEwU=;
+        b=FtEdkp+u73PEfx9QeYUSn85egtAvBM6iAgUZF9kahvjYJlqMdwgdAKD3XHEYgyVxTP
+         L22SJN3WzLIEfLvnU6QtC4FWRGI2OWSbdI+0jS9JLXjB84dchykvagUO/0WRkBhlE+Z4
+         iR+I8c2x+JrMWms7VafAYfrj5m0I1e+ZTzIh0G7ENZGZW3Xosi8TenqNbfMByW6tEmN0
+         Ns3Ix7KXVTW/Zvm2oTs/VUxxM3eRQOE3FcgFEHPiPKvCp8cTaFnFFYg5MV07w8NWI5ys
+         64ZPdq+q0Hq8tAq8z6vCzzTHG9o9uva+3fIdrF6eBg+QI6WobiVHPx9AcbmJFy84U86X
+         IWfw==
+X-Gm-Message-State: APjAAAUK4zWHHG7hdulPet872YoCG9u/55Lphl6a9xWYKWZnObjzRG5H
+        aJ5DXfN44YdDU5m5Ufs30ksoxqgTToc=
+X-Google-Smtp-Source: APXvYqxAa+2eW4sDFyzdz7rQk/+G3nl/DKbvFLVCpB/Y6eqzAcCw/hbo/pUs+DOywsXNrTY3o5r0NQ==
+X-Received: by 2002:a63:6bc3:: with SMTP id g186mr122564882pgc.21.1559070141977;
+        Tue, 28 May 2019 12:02:21 -0700 (PDT)
+Received: from ip-172-31-44-144.us-west-2.compute.internal (ec2-54-186-128-88.us-west-2.compute.amazonaws.com. [54.186.128.88])
+        by smtp.gmail.com with ESMTPSA id 124sm16374430pfe.124.2019.05.28.12.02.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 28 May 2019 12:02:20 -0700 (PDT)
+Date:   Tue, 28 May 2019 19:02:18 +0000
+From:   Alakesh Haloi <alakesh.haloi@gmail.com>
+To:     linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Shuah Khan <shuah@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Stanislav Fomichev <sdf@google.com>
+Subject: [PATCH bpf v2] selftests: bpf: fix compiler warning
+Message-ID: <20190528190218.GA6950@ip-172-31-44-144.us-west-2.compute.internal>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <10709.1559070135.1@warthog.procyon.org.uk>
-Date:   Tue, 28 May 2019 20:02:15 +0100
-Message-ID: <10710.1559070135@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 28 May 2019 19:02:17 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+Add missing header file following compiler warning
 
-> James, this is a repair for a regression introduced in 5.1.
-> It should be pulled for 5.2 and added to 5.1.
-> 
-> The following changes since commit 619ae03e922b65a1a5d4269ceae1e9e13a058d6b:
-> 
->   Smack: Fix kbuild reported build error (2019-04-30 14:13:32 -0700)
-> 
-> are available in the git repository at:
-> 
->   https://github.com/cschaufler/next-smack.git smack-for-5.2-b
-> 
-> for you to fetch changes up to a5765ce797070d046dc53ccceeb0ed304cb918eb:
-> 
->   Smack: Restore the smackfsdef mount option (2019-05-28 10:22:04 -0700)
+prog_tests/flow_dissector.c: In function ‘tx_tap’:
+prog_tests/flow_dissector.c:175:9: warning: implicit declaration of function ‘writev’; did you mean ‘write’? [-Wimplicit-function-declaration]
+  return writev(fd, iov, ARRAY_SIZE(iov));
+         ^~~~~~
+         write
 
-Can you hold this for the moment, please?
+Fixes: 0905beec9f52 ("selftests/bpf: run flow dissector tests in skb-less mode")
+Signed-off-by: Alakesh Haloi <alakesh.haloi@gmail.com>
+---
+ tools/testing/selftests/bpf/prog_tests/flow_dissector.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Note that there appears to be another problem by inspection of the code.  I
-think that smack_sb_eat_lsm_opts() strips the "smack" prefix off of the
-options, whereas smack_fs_context_parse_param() does not.
+diff --git a/tools/testing/selftests/bpf/prog_tests/flow_dissector.c b/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
+index fbd1d88a6095..c938283ac232 100644
+--- a/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
++++ b/tools/testing/selftests/bpf/prog_tests/flow_dissector.c
+@@ -3,6 +3,7 @@
+ #include <error.h>
+ #include <linux/if.h>
+ #include <linux/if_tun.h>
++#include <sys/uio.h>
+ 
+ #define CHECK_FLOW_KEYS(desc, got, expected)				\
+ 	CHECK_ATTR(memcmp(&got, &expected, sizeof(got)) != 0,		\
+-- 
+2.17.1
 
-This means that there's no need to do this:
-
-	 static const struct fs_parameter_spec smack_param_specs[] = {
-	+	fsparam_string("fsdef",		Opt_fsdefault),
-		fsparam_string("fsdefault",	Opt_fsdefault),
-		fsparam_string("fsfloor",	Opt_fsfloor),
-		fsparam_string("fshat",		Opt_fshat),
-
-but that all the option names in that table *do* need prefixing with "smack".
-
-The way you enter the LSM is going to depend on whether
-generic_parse_monolithic() is called.  You're only going to enter this way if
-mount(2) is the syscall of entry and the filesystem doesn't override the
-->parse_monolithic() option (none in the upstream kernel).
-
-David
