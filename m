@@ -2,98 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 096112BEDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 07:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 938292BEE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 May 2019 07:58:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbfE1F5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 01:57:53 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41915 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727895AbfE1F5p (ORCPT
+        id S1728132AbfE1F6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 01:58:17 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:55449 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727641AbfE1F6P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 01:57:45 -0400
-Received: by mail-pl1-f193.google.com with SMTP id d14so2329139pls.8
-        for <linux-kernel@vger.kernel.org>; Mon, 27 May 2019 22:57:44 -0700 (PDT)
+        Tue, 28 May 2019 01:58:15 -0400
+Received: by mail-it1-f195.google.com with SMTP id g24so2328794iti.5;
+        Mon, 27 May 2019 22:58:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GqYVB277WEFaDrjqHl9u9gzan9xp6pYbuiY2CwT3+wA=;
-        b=AadNY3xF3iC0+GIj+AEcn/1/ebmF5bRb4x1ra9pHFJ24l47TmWvTXmPE7BrP8SspLO
-         SgbojQcgijYA22qNoy/MhFCU4A2X+iyJdfyLFYTbao2CqYB4Ilo+6qs6fee9BcslVD93
-         myeKCwSC+QF2PDXzcx/2qaV9jofGKwHdNF+D8=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=odR3o6CMyRH3wObElyo5BKximj0lALrUbiN5mIFDiWM=;
+        b=ktSRR/kzcbwIESnMhqdmv2FDSiujXQz3ez+OhDejezkWBn3GD/Z3VZxLoh11anoIzl
+         OBjtzYJq35FPVqVB9AH+JaNW5T3VtISXvVtPVon4v4DunsD/m7326n0VfEIou8ZVjD6D
+         JV4PS/3HFkew8CfuDSmKdCmNs/LpvzB9e9M6dCp7jdK7fgSguN/hSM7zPExBUxqwtTqM
+         ROb5alazkJ+Yi8VsZY+aLteSXTKm/KHsl9Z74beaoWenfyiBePeZN2yPpuPSlQGrh1EH
+         8kUjdoIFOMPX53IMKhZykE7QhO3zS2PnWFllKKR3NPknYKRwgw7lB6uWIh5lIP6c6Qjf
+         VoJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GqYVB277WEFaDrjqHl9u9gzan9xp6pYbuiY2CwT3+wA=;
-        b=LlHcantl/bJslupbFI/8WTez3+qjsSOd0ddZNbU6mT6UEaTZzGudhgN3vKt0hXcyt6
-         DiRgQQLz2+bRjDpKLkd+XhkaaR3oobbxLN+qzxB2Gq/nt8SPdJUzQABCYe47Wmyjr3br
-         m6hSPNX/88f2upCdjjQH+Z+oZoaDsGuVPkeUczJbqB9hnJIwRtXhKJICQQSecSz10JMs
-         85ELcbhECXMXp+8hODVmzfUtvvWO8AGMQ9u3Ix3z6wYXaeV9dNRf/w3fKkT4jG4SGQ0w
-         DO7mxkJHdsJePlYV+aKuvbUSzD0VOvNUq3pKe7DYbV7z3WXEo9qbxsRaRmoK6HJVnJy1
-         xzSg==
-X-Gm-Message-State: APjAAAWjV4Wrksnj7a2wPZB/yaQawndy28WzTB3Vka9OFGokp4tRq8m4
-        AG7/74aEUztRzgF3Qf5l5YfEW5CHN3Y=
-X-Google-Smtp-Source: APXvYqxIBAI0HKWcz4VbpCo99CLIBzk+Qjzv17nOkj2dGauUT7BgjmEXMM+WYYbthMzYg7QjlTOctg==
-X-Received: by 2002:a17:902:bf08:: with SMTP id bi8mr20531914plb.206.1559023064671;
-        Mon, 27 May 2019 22:57:44 -0700 (PDT)
-Received: from acourbot.tok.corp.google.com ([2401:fa00:4:4:9712:8cf1:d0f:7d33])
-        by smtp.gmail.com with ESMTPSA id w1sm13950551pfg.51.2019.05.27.22.57.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 May 2019 22:57:44 -0700 (PDT)
-From:   Alexandre Courbot <acourbot@chromium.org>
-To:     Yunfei Dong <yunfei.dong@mediatek.com>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Courbot <acourbot@chromium.org>
-Subject: [RFCv1 12/12] media: mtk-vcodec: enable MT8183 decoder
-Date:   Tue, 28 May 2019 14:56:35 +0900
-Message-Id: <20190528055635.12109-13-acourbot@chromium.org>
-X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
-In-Reply-To: <20190528055635.12109-1-acourbot@chromium.org>
-References: <20190528055635.12109-1-acourbot@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=odR3o6CMyRH3wObElyo5BKximj0lALrUbiN5mIFDiWM=;
+        b=ByZHbj5s1YpmIiWqy8jsxyLsETJgyrvCAVeMB29QekGbtUGN3nivEb1oDpARAJA6ND
+         SxmuS2HcX5wLuQqrlDLY1UI7WXy1+BoNxRLOG7Lcet+FCYWtxTiB8yvWdBovV9y6/Yy/
+         txtz116VH3meRizwEwB44ZPgSOUThcrje5JVf6NXjfGlwzBf+BQpDXZHCvti9rTVsoHf
+         t4oKmF8VVATNlHAvh71R0s2Tg4W6ztBhzn071tdUkdkjEYE29CgUsJ7puz3KdhFcWkBI
+         7EyVTfrIEYx6m7ZvP6u+BYNwyyuqrtllDii4MmBgvXw13fesr/SSC0+1jWVI+xt7Z4bv
+         719Q==
+X-Gm-Message-State: APjAAAVUfldqtoh91ghPj3KbiBTt7VaCToUzBeDY6ZP2GQl8+cSCCZKs
+        fRmS71D38/8E3wpkQx6kW6Fk1df2TVebtw7A1FiPKSKrlSE=
+X-Google-Smtp-Source: APXvYqwBUNTDDSl/fu7eVxGiQw2CLUqCg3XeJOmgxVZ4RyS2IOjJ/bQ/1phmC+6OwaW9oh9IE2lppa+uNxqTI5ibFL4=
+X-Received: by 2002:a24:5094:: with SMTP id m142mr1960400itb.96.1559023094144;
+ Mon, 27 May 2019 22:58:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CABXGCsNPMSQgBjnFarYaxuQEGpA1G=U4U9OHqT0E53pNL2BK8g@mail.gmail.com>
+ <CABXGCsNV6EQq0EG=iO8mWCCv9da__9iyLmwyzS3nGtjjvhShfg@mail.gmail.com> <CABXGCsNvYVL6SMO_0PXxiZwWJyBi3rD-jjxnmnY3KL0M7haJbA@mail.gmail.com>
+In-Reply-To: <CABXGCsNvYVL6SMO_0PXxiZwWJyBi3rD-jjxnmnY3KL0M7haJbA@mail.gmail.com>
+From:   Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Date:   Tue, 28 May 2019 10:58:03 +0500
+Message-ID: <CABXGCsOvTyL5W1qm0DzTuS4juo6ya+XSxMESGsP2RqtSSzpdfg@mail.gmail.com>
+Subject: Re: [bugreport] kernel 5.2 pblk bad header/extent: invalid extent entries
+To:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunfei Dong <yunfei.dong@mediatek.com>
+On Mon, 27 May 2019 at 21:16, Mikhail Gavrilov
+<mikhail.v.gavrilov@gmail.com> wrote:
+>
+> I am bisected issue. I hope it help understand what is happened on my computer.
+>
+> $ git bisect log
+> git bisect start
+> # good: [e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd] Linux 5.1
+> git bisect good e93c9c99a629c61837d5a7fc2120cd2b6c70dbdd
+> # bad: [7e9890a3500d95c01511a4c45b7e7192dfa47ae2] Merge tag
+> 'ovl-update-5.2' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs
+> git bisect bad 7e9890a3500d95c01511a4c45b7e7192dfa47ae2
+> # good: [80f232121b69cc69a31ccb2b38c1665d770b0710] Merge
+> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
+> git bisect good 80f232121b69cc69a31ccb2b38c1665d770b0710
+> # good: [a2d635decbfa9c1e4ae15cb05b68b2559f7f827c] Merge tag
+> 'drm-next-2019-05-09' of git://anongit.freedesktop.org/drm/drm
+> git bisect good a2d635decbfa9c1e4ae15cb05b68b2559f7f827c
+> # good: [ea5aee6d97fd2d4499b1eebc233861c1def70f06] Merge tag
+> 'clk-for-linus' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
+> git bisect good ea5aee6d97fd2d4499b1eebc233861c1def70f06
+> # good: [47782361aca21a32ad4198f1b72f1655a7c9f7e5] Merge tag
+> 'tag-chrome-platform-for-v5.2' of
+> ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux
+> git bisect good 47782361aca21a32ad4198f1b72f1655a7c9f7e5
+> # bad: [55472bae5331f33582d9f0e8919fed8bebcda0da] Merge tag
+> 'linux-watchdog-5.2-rc1' of
+> git://www.linux-watchdog.org/linux-watchdog
+> git bisect bad 55472bae5331f33582d9f0e8919fed8bebcda0da
+> # good: [4dbf09fea60d158e60a30c419e0cfa1ea138dd57] Merge tag
+> 'mtd/for-5.2' of
+> ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/mtd/linux
+> git bisect good 4dbf09fea60d158e60a30c419e0cfa1ea138dd57
+> # good: [44affc086e6d5ea868c1184cdc5e1159e90ffb71] watchdog:
+> ts4800_wdt: Convert to use device managed functions and other
+> improvements
+> git bisect good 44affc086e6d5ea868c1184cdc5e1159e90ffb71
+> # good: [5c09980d9f9de2dc6b255f4f0229aeff0eb2c723] watchdog:
+> imx_sc_wdt: drop warning after calling watchdog_init_timeout
+> git bisect good 5c09980d9f9de2dc6b255f4f0229aeff0eb2c723
+> # good: [345f16251063bcef5828f17fe90aa7f7a5019aab] watchdog: Improve
+> Kconfig entry ordering and dependencies
+> git bisect good 345f16251063bcef5828f17fe90aa7f7a5019aab
+> # good: [988bec41318f3fa897e2f8af271bd456936d6caf] ubifs: orphan:
+> Handle xattrs like files
+> git bisect good 988bec41318f3fa897e2f8af271bd456936d6caf
+> # good: [a65d10f3ce657aa4542b5de78933053f6d1a9e97] ubifs: Drop
+> unnecessary setting of zbr->znode
+> git bisect good a65d10f3ce657aa4542b5de78933053f6d1a9e97
+> # good: [a9f0bda567e32a2b44165b067adfc4a4f56d1815] watchdog: Enforce
+> that at least one pretimeout governor is enabled
+> git bisect good a9f0bda567e32a2b44165b067adfc4a4f56d1815
+> # bad: [d7a02fa0a8f9ec1b81d57628ca9834563208ef33] Merge tag
+> 'upstream-5.2-rc1' of
+> ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/rw/ubifs
+> git bisect bad d7a02fa0a8f9ec1b81d57628ca9834563208ef33
+> # good: [04d37e5a8b1fad2d625727af3d738c6fd9491720] ubi: wl: Fix
+> uninitialized variable
+> git bisect good 04d37e5a8b1fad2d625727af3d738c6fd9491720
+> # first bad commit: [d7a02fa0a8f9ec1b81d57628ca9834563208ef33] Merge
+> tag 'upstream-5.2-rc1' of
+> ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/rw/ubifs
+>
 
-Now that all the supporting blocks are present, enable decoder for
-MT8183.
 
-Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-Co-developed-by: Alexandre Courbot <acourbot@chromium.org>
-Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-[acourbot: refactor, cleanup and split]
 
-Change-Id: I5696b186fae16f12b97745247331732beb1192e2
----
- drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Why no one answers?
+Even if the problem is known and already fixed, I would be nice to
+know that I spent 10 days for searching a problem commit not in vain
+and someone reads my messages.
 
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c
-index 8be0c04f7e81..60dd312500a4 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_drv.c
-@@ -401,6 +401,10 @@ static const struct of_device_id mtk_vcodec_match[] = {
- 		.compatible = "mediatek,mt8173-vcodec-dec",
- 		.data = &mtk_frame_8173_pdata,
- 	},
-+	{
-+		.compatible = "mediatek,mt8183-vcodec-dec",
-+		.data = &mtk_req_8183_pdata,
-+	},
- 	{},
- };
- 
--- 
-2.22.0.rc1.257.g3120a18244-goog
 
+--
+Best Regards,
+Mike Gavrilov.
