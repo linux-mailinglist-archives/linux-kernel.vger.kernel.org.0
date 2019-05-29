@@ -2,67 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10C8B2D9C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:58:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A00222D9CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:58:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbfE2J6S convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 29 May 2019 05:58:18 -0400
-Received: from ZXSHCAS2.zhaoxin.com ([203.148.12.82]:56703 "EHLO
-        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725861AbfE2J6S (ORCPT
+        id S1726759AbfE2J62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 05:58:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57592 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfE2J61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 05:58:18 -0400
-Received: from zxbjmbx2.zhaoxin.com (10.29.252.164) by ZXSHCAS2.zhaoxin.com
- (10.28.252.162) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Wed, 29 May
- 2019 17:58:09 +0800
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by zxbjmbx2.zhaoxin.com
- (10.29.252.164) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Wed, 29 May
- 2019 17:58:08 +0800
-Received: from zxbjmbx1.zhaoxin.com ([fe80::b41a:737:a784:b70d]) by
- zxbjmbx1.zhaoxin.com ([fe80::b41a:737:a784:b70d%16]) with mapi id
- 15.01.1261.035; Wed, 29 May 2019 17:58:08 +0800
-From:   Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-To:     "tipbot@zytor.com" <tipbot@zytor.com>
-CC:     "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        "bp@suse.de" <bp@suse.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tip-commits@vger.kernel.org" 
-        <linux-tip-commits@vger.kernel.org>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        David Wang <DavidWang@zhaoxin.com>
-Subject: Re: [tip:x86/urgent] x86/mce: Ensure offline CPUs don' t participate
- in rendezvous process
-Thread-Topic: Re: [tip:x86/urgent] x86/mce: Ensure offline CPUs don' t
- participate in rendezvous process
-Thread-Index: AdUV/LHofhz829fxQm+1FlrtATZuKw==
-Date:   Wed, 29 May 2019 09:58:08 +0000
-Message-ID: <ff0c714d200c487fac15da7e4003c1b4@zhaoxin.com>
-Accept-Language: en-US, zh-CN
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.32.64.23]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 29 May 2019 05:58:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=40Ww1U6jHSA8ZmRiYmC+C6BB0Qna+KOdSYwCoTc6YjQ=; b=C+ffkDjw2i3zSjdGxEQOsrfOH
+        jSMeUDcWszjB+A92PhqCZvDq+vh8wGldURKlX1YAQwKZgkhMMvYqkFq8LGqKX8jva0zDJ3ORzSlsX
+        MaKjQ+Ieoxv81e+y4Gsz6mFjtUNC0f3v1/DhP5Y8NWHiXxW3EGcVX3joDeTLdstcEjqZo0QRU5B+w
+        EULJ8NsytdoVUO5LK8rAjtJr+wk4SofyiE316JL3oLdW1tsoiK9SEbFhTETQlgLJn6Z5HEyhBUWct
+        VrDUO50e+8JUivouEmG0dgWrpCgem4+W55v+t5/wR9jl2mmkrTaXLluOEmoUTZgXHtK2lL7IbWt6I
+        M1nRZeIBw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVvLc-0002EX-JV; Wed, 29 May 2019 09:58:16 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 22A822065C636; Wed, 29 May 2019 11:58:15 +0200 (CEST)
+Date:   Wed, 29 May 2019 11:58:15 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Marco Elver <elver@google.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Subject: Re: [PATCH 2/3] tools/objtool: add kasan_check_* to uaccess whitelist
+Message-ID: <20190529095815.GL2623@hirez.programming.kicks-ass.net>
+References: <20190528163258.260144-1-elver@google.com>
+ <20190528163258.260144-2-elver@google.com>
+ <20190528171942.GV2623@hirez.programming.kicks-ass.net>
+ <CACT4Y+ZK5i0r0GSZUOBGGOE0bzumNor1d89W8fvphF6EDqKqHg@mail.gmail.com>
+ <CANpmjNP7nNO36p03_1fksx1O2-MNevHzF7revUwQ3b7+RR0y+w@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNP7nNO36p03_1fksx1O2-MNevHzF7revUwQ3b7+RR0y+w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-	This patch requires all #MC exception errors set MCG_STATUS_RIPV = 1?
-Because on offline CPUs, for #MC exception errors set MCG_STATUS_RIPV = 0
-(like "Recoverable-not-continuable SRAR Type" Errors), this patch doesn't seem
-to work. if this patch's "return; " in a wrong place?
+On Wed, May 29, 2019 at 11:46:10AM +0200, Marco Elver wrote:
+> On Wed, 29 May 2019 at 10:55, Dmitry Vyukov <dvyukov@google.com> wrote:
+> >
+> > On Tue, May 28, 2019 at 7:19 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > >
+> > > On Tue, May 28, 2019 at 06:32:57PM +0200, Marco Elver wrote:
+> > > > This is a pre-requisite for enabling bitops instrumentation. Some bitops
+> > > > may safely be used with instrumentation in uaccess regions.
+> > > >
+> > > > For example, on x86, `test_bit` is used to test a CPU-feature in a
+> > > > uaccess region:   arch/x86/ia32/ia32_signal.c:361
+> > >
+> > > That one can easily be moved out of the uaccess region. Any else?
+> >
+> > Marco, try to update config with "make allyesconfig" and then build
+> > the kernel without this change.
+> >
+> 
+> Done. The only instance of the uaccess warning is still in
+> arch/x86/ia32/ia32_signal.c.
+> 
+> Change the patch to move this access instead? Let me know what you prefer.
 
-Thanks
-Tony W Wang-oc
+Yes, I think that might be best. The whitelist should be minimal.
