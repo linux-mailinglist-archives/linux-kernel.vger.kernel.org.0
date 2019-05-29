@@ -2,149 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7156C2E02E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:53:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D30A2E036
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:53:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfE2OxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 10:53:18 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47446 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726626AbfE2OxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 10:53:17 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07741341;
-        Wed, 29 May 2019 07:53:17 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A3F8E3F5AF;
-        Wed, 29 May 2019 07:53:15 -0700 (PDT)
-Date:   Wed, 29 May 2019 15:53:13 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: Re: [PATCH 3/4] arm64/mm: Consolidate page fault information capture
-Message-ID: <20190529145312.GG31777@lakrids.cambridge.arm.com>
-References: <1559133285-27986-1-git-send-email-anshuman.khandual@arm.com>
- <1559133285-27986-4-git-send-email-anshuman.khandual@arm.com>
+        id S1726877AbfE2Oxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:53:39 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40898 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbfE2Oxb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 10:53:31 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 15so1822562wmg.5;
+        Wed, 29 May 2019 07:53:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V8YS4yymyIJQGrMMcy8svUF2AoqiD+RwwGe4T+u/tvI=;
+        b=cPwDgmdNH0Kt2d+P5AQL/GVo0J0j2E6mJeWrvlYBknQMzj7KRC3ROjz/Ld4psuTqh9
+         7Hd7VNtPd2NRobiXhOX/87F41FHnheQSS/iZT2MIlj1YKF79hdQar+xS4iN+crjJLvJo
+         9uXmXKoN8eZLRDvxzMtqTdNywDvJQs1eOQz+p+9JH05szfP+7qIDx1X3gNcj4J9+/LkD
+         piuN2PzJsDOhwqtma0aZOFmuZ8TcihxteLJ7QkHSULtNu87W7WFq+rqwSKKj7cuHnTyU
+         2mH8r7LQkCnPHKXe7zqOTToljSBTvSjvm2HapNYxad9BGNgp2dVk8nEN9PkHzbicGget
+         XYUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=V8YS4yymyIJQGrMMcy8svUF2AoqiD+RwwGe4T+u/tvI=;
+        b=X5tKRhj0WYW3y6kRVqYxw1f7T6hDZt5zyG5K/0u7bBpLbxpVInEz/WA/CfnpIOWmzs
+         EuLSr1NuXO4WNOuqlUYBIBsFArmSoECfSEyunOm03QAU3fYVKWhBTS4YlJ8xQaqDSrnv
+         iFP4Tdv+3zhAvHAZf/rqsWzkSPHutcNlvMJe9T0LX0sv0Uwr5m/75eeJJWVHzHkBhDWr
+         wQtGcRupedLjbvjwLtr0LMkU8S6aI4m4YehSKSLr0M6cledgDE3nucD+qR9kIMCMG2mz
+         zn05iMPO6AlksDHDXmUya7qNl+rt4bWVH9ECjAlEfLvifSndlhjBnrASz1Fl8UyHkDc1
+         l+PA==
+X-Gm-Message-State: APjAAAXECSwbFNlu3zY/oxdDilx+KRwbEeHFPivneTV+pvPTgY3ix1Bk
+        Ii+7uBvY3PP9ModYIXjvlOw=
+X-Google-Smtp-Source: APXvYqwSeV7F8N0/DKUi/jbr2lZV7RO9hHsArEclGOMv/01BQW2+13qxM+DQSJfOtr07iomxLI0myw==
+X-Received: by 2002:a7b:c939:: with SMTP id h25mr7294735wml.7.1559141604564;
+        Wed, 29 May 2019 07:53:24 -0700 (PDT)
+Received: from localhost (p2E5BEF36.dip0.t-ipconnect.de. [46.91.239.54])
+        by smtp.gmail.com with ESMTPSA id y16sm17925234wru.28.2019.05.29.07.53.23
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 29 May 2019 07:53:23 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Bitan Biswas <bbiswas@nvidia.com>, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] Implement wake event support on Tegra186 and later
+Date:   Wed, 29 May 2019 16:53:20 +0200
+Message-Id: <20190529145322.20630-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1559133285-27986-4-git-send-email-anshuman.khandual@arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 06:04:44PM +0530, Anshuman Khandual wrote:
-> This consolidates page fault information capture and move them bit earlier.
-> While here it also adds an wrapper is_write_abort(). It also saves some
-> cycles by replacing multiple user_mode() calls into a single one earlier
-> during the fault.
+From: Thierry Reding <treding@nvidia.com>
 
-To be honest, I doubt this has any measureable impact, but I agree that
-using variables _may_ make the flow control easier to understand.
+Hi,
 
-> 
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: James Morse <james.morse@arm.com> 
-> Cc: Andrey Konovalov <andreyknvl@google.com>
-> ---
->  arch/arm64/mm/fault.c | 22 +++++++++++++++-------
->  1 file changed, 15 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index da02678..170c71f 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -435,6 +435,11 @@ static bool is_el0_instruction_abort(unsigned int esr)
->  	return ESR_ELx_EC(esr) == ESR_ELx_EC_IABT_LOW;
->  }
->  
-> +static bool is_write_abort(unsigned int esr)
-> +{
-> +	return (esr & ESR_ELx_WNR) && !(esr & ESR_ELx_CM);
-> +}
+The following is a set of patches that allow certain interrupts to be
+used as wakeup sources on Tegra186 and later. To implement this, each
+of the GPIO controllers' IRQ domain needs to become hierarchical, and
+parented to the PMC domain. The PMC domain in turn implements a new
+IRQ domain that is a child to the GIC IRQ domain.
 
-In off-list review, I mentioned that this isn't true for EL1, and I
-think that we should name this 'is_el0_write_abort()' or add a comment
-explaining the caveats if factored into a helper.
+The above ensures that the interrupt chip implementation of the PMC is
+called at the correct time. The ->irq_set_type() and ->irq_set_wake()
+implementations program the PMC wake registers in a way to enable the
+given interrupts as wakeup sources.
 
-Thanks,
-Mark.
+This is based on a suggestion from Thomas Gleixner that resulted from
+the following thread:
 
-> +
->  static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
->  				   struct pt_regs *regs)
->  {
-> @@ -443,6 +448,9 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
->  	vm_fault_t fault, major = 0;
->  	unsigned long vm_flags = VM_READ | VM_WRITE;
->  	unsigned int mm_flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
-> +	bool is_user = user_mode(regs);
-> +	bool is_el0_exec = is_el0_instruction_abort(esr);
-> +	bool is_write = is_write_abort(esr);
->  
->  	if (notify_page_fault(regs, esr))
->  		return 0;
-> @@ -454,12 +462,12 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
->  	if (faulthandler_disabled() || !mm)
->  		goto no_context;
->  
-> -	if (user_mode(regs))
-> +	if (is_user)
->  		mm_flags |= FAULT_FLAG_USER;
->  
-> -	if (is_el0_instruction_abort(esr)) {
-> +	if (is_el0_exec) {
->  		vm_flags = VM_EXEC;
-> -	} else if ((esr & ESR_ELx_WNR) && !(esr & ESR_ELx_CM)) {
-> +	} else if (is_write) {
->  		vm_flags = VM_WRITE;
->  		mm_flags |= FAULT_FLAG_WRITE;
->  	}
-> @@ -487,7 +495,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
->  	 * we can bug out early if this is from code which shouldn't.
->  	 */
->  	if (!down_read_trylock(&mm->mmap_sem)) {
-> -		if (!user_mode(regs) && !search_exception_tables(regs->pc))
-> +		if (!is_user && !search_exception_tables(regs->pc))
->  			goto no_context;
->  retry:
->  		down_read(&mm->mmap_sem);
-> @@ -498,7 +506,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
->  		 */
->  		might_sleep();
->  #ifdef CONFIG_DEBUG_VM
-> -		if (!user_mode(regs) && !search_exception_tables(regs->pc)) {
-> +		if (!is_user && !search_exception_tables(regs->pc)) {
->  			up_read(&mm->mmap_sem);
->  			goto no_context;
->  		}
-> @@ -516,7 +524,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
->  		 * in __lock_page_or_retry in mm/filemap.c.
->  		 */
->  		if (fatal_signal_pending(current)) {
-> -			if (!user_mode(regs))
-> +			if (!is_user)
->  				goto no_context;
->  			return 0;
->  		}
-> @@ -561,7 +569,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
->  	 * If we are in kernel mode at this point, we have no context to
->  	 * handle this fault with.
->  	 */
-> -	if (!user_mode(regs))
-> +	if (!is_user)
->  		goto no_context;
->  
->  	if (fault & VM_FAULT_OOM) {
-> -- 
-> 2.7.4
-> 
+        https://lkml.org/lkml/2018/9/13/1042
+
+Changes in v3:
+- use irq_create_fwspec_mapping() instead of irq_domain_alloc_irqs()
+- drop preparatory patch exporting irq_domain_alloc_irqs()
+- properly set GPIO instance on Tegra186
+
+Changes in v2:
+- dropped the Tegra PMC specific patches to simplify the series
+- drop wakeup-parent usage, lookup up PMC by compatible
+- convert Tegra186 GPIO driver to use valid mask
+- move hierarchy support code into gpiolib core
+
+Linus, this is a new revision based on our previous discussion. Sorry it
+took so long to get back to this. I also verified that with this series
+I can make things work with gpio-keys whether I use the "gpios" property
+or the "interrupts" property, which was your primary concern.
+
+I'm also adding Lina to the thread since she's been basing her QCOM
+series on top of this patch. Lina, it'd be great if you could confirm
+that the changes I made in this version continue to work for you.
+
+Thierry
+
+Thierry Reding (2):
+  gpio: Add support for hierarchical IRQ domains
+  gpio: tegra186: Implement wake event support
+
+ drivers/gpio/Kconfig         |   1 +
+ drivers/gpio/gpio-tegra186.c | 120 +++++++++++++++++++++++++++++++----
+ drivers/gpio/gpiolib.c       |  33 ++++++++--
+ include/linux/gpio/driver.h  |   8 +++
+ 4 files changed, 144 insertions(+), 18 deletions(-)
+
+-- 
+2.21.0
+
