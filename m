@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FE4B2E947
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 01:26:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 001FB2E8FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 01:24:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbfE2XZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 19:25:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49114 "EHLO
+        id S1726693AbfE2XYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 19:24:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49070 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726489AbfE2XYA (ORCPT
+        with ESMTP id S1726240AbfE2XYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 May 2019 19:24:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,33 +18,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=L/KP7KtqGaaaZ8mlQ/XMLM6HWoK8YMA1PHFDlloUkgo=; b=MOOKPUeO+LTuutF6OVA+jK9SHX
-        6P4dAHjIordM9yPqhEbOp6QAbSTEyWSs5JBx59FZHOxoNqFRhpxA7GLPamO1N4ZfBJS9xCIP1N2Rt
-        6qWDQMo4SpWawPWUfZ8E0yJl/mteYkPZcwY3hDr/R35ddvYPqFV0zhrKkx2bGQu8ZkHfGbEHMQ6/l
-        Zevs3KdSkY1PXCgam3SVor1plwIUqOVmRL6smq1AxU5W+G9z3bg3hHzmSFeTrgI0iHfNSCtYbZ1gP
-        aPST8V1jEXmbH9LYehX+lFG8FEZZTwBCuS20HibMza5ypwg/nSuzUHgAmnBDyD0j+mI1xvCNCzI7q
-        CxaLecNA==;
+        bh=1DGih5hxjM3hCpgxfZAZGkcczMEB+Oahf4kiHIhmR2E=; b=YquDx8C/wGbwAhowj6901ldCuk
+        v0Qije4lyOHJB6BozDmJSn/jC5TFTFY10RKQDQQrMTlRQF2i3r3DlJd7M1ORzfmJN/tKJnR/uYc7l
+        wwpM3AO1/i9pZPGThbdto34o4nEdLiwcxLhFJxJy4YIbdR1eZbfmH3n6i7rUZOibFU/S0cJiRGiLq
+        6IUw1CGVhAqNWYeb003h/1YpTx9G0IxripXhSVHHuLO3B/NIiQmW+FJt+hSZ32NSdK8wkTRs0Jivg
+        fitw81aJUhhxcx5VHoiFEe7WIWHbg8c7x7GBZn3MSHzPnISEHYhztKRh7Fe/TmlS77B2SJA3xKLrc
+        oMS1UNYg==;
 Received: from 177.132.232.81.dynamic.adsl.gvt.net.br ([177.132.232.81] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hW7vL-0005Rl-3t; Wed, 29 May 2019 23:23:59 +0000
+        id 1hW7vL-0005Re-2m; Wed, 29 May 2019 23:23:59 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hW7vI-0007wj-Go; Wed, 29 May 2019 20:23:56 -0300
+        id 1hW7vI-0007wn-Hb; Wed, 29 May 2019 20:23:56 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jon Masters <jcm@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Borislav Petkov <bp@suse.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 01/22] ABI: sysfs-devices-system-cpu: point to the right docs
-Date:   Wed, 29 May 2019 20:23:32 -0300
-Message-Id: <557b33a4ed53fb1cd5da927c533e7fe283629869.1559171394.git.mchehab+samsung@kernel.org>
+        Karsten Keil <isdn@linux-pingi.de>, netdev@vger.kernel.org
+Subject: [PATCH 02/22] isdn: mISDN: remove a bogus reference to a non-existing doc
+Date:   Wed, 29 May 2019 20:23:33 -0300
+Message-Id: <2a135f7a5ee5b165ea62d4be211e9fd8c012f6cc.1559171394.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1559171394.git.mchehab+samsung@kernel.org>
 References: <cover.1559171394.git.mchehab+samsung@kernel.org>
@@ -55,30 +49,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpuidle doc was split on two, one at the admin guide
-and another one at the driver API guide. Instead of pointing
-to a non-existent file, point to both (admin guide being
-the first one).
+The mISDN driver was added on those commits:
+
+	960366cf8dbb ("Add mISDN DSP")
+	1b2b03f8e514 ("Add mISDN core files")
+	04578dd330f1 ("Define AF_ISDN and PF_ISDN")
+	e4ac9bc1f668 ("Add mISDN driver")
+
+None of them added a Documentation/isdn/mISDN.cert file.
+Also, whatever were supposed to be written there on that time,
+probably doesn't make any sense nowadays, as I doubt isdn would
+have any massive changes.
+
+So, let's just get rid of the broken reference, in order to
+shut up a warning produced by ./scripts/documentation-file-ref-check.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/ABI/testing/sysfs-devices-system-cpu | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/isdn/mISDN/dsp_core.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
-index 1528239f69b2..87478ac6c2af 100644
---- a/Documentation/ABI/testing/sysfs-devices-system-cpu
-+++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
-@@ -137,7 +137,8 @@ Description:	Discover cpuidle policy and mechanism
- 		current_governor: (RW) displays current idle policy. Users can
- 		switch the governor at runtime by writing to this file.
- 
--		See files in Documentation/cpuidle/ for more information.
-+		See Documentation/admin-guide/pm/cpuidle.rst and
-+		Documentation/driver-api/pm/cpuidle.rst for more information.
- 
- 
- What:		/sys/devices/system/cpu/cpuX/cpuidle/stateN/name
+diff --git a/drivers/isdn/mISDN/dsp_core.c b/drivers/isdn/mISDN/dsp_core.c
+index cd036e87335a..038e72a84b33 100644
+--- a/drivers/isdn/mISDN/dsp_core.c
++++ b/drivers/isdn/mISDN/dsp_core.c
+@@ -4,8 +4,6 @@
+  *		Karsten Keil (keil@isdn4linux.de)
+  *
+  *		This file is (c) under GNU PUBLIC LICENSE
+- *		For changes and modifications please read
+- *		../../../Documentation/isdn/mISDN.cert
+  *
+  * Thanks to    Karsten Keil (great drivers)
+  *              Cologne Chip (great chips)
 -- 
 2.21.0
 
