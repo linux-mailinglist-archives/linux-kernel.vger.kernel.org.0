@@ -2,123 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E33592DBA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 13:21:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 305D02DBB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 13:23:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726231AbfE2LVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 07:21:01 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:20192 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725894AbfE2LVA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 07:21:00 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-175-n6S3TAExMKGEa1CSkKSjew-1; Wed, 29 May 2019 12:20:57 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 29 May 2019 12:20:56 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 29 May 2019 12:20:56 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Dmitry Vyukov' <dvyukov@google.com>,
-        Peter Zijlstra <peterz@infradead.org>
-CC:     Marco Elver <elver@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Subject: RE: [PATCH 3/3] asm-generic, x86: Add bitops instrumentation for
- KASAN
-Thread-Topic: [PATCH 3/3] asm-generic, x86: Add bitops instrumentation for
- KASAN
-Thread-Index: AQHVFg1T4KMnNqJYZ0KJ/Gnew5X/QaaB8uxw
-Date:   Wed, 29 May 2019 11:20:56 +0000
-Message-ID: <a0157a8d778a48b7ba3935f3e6840d30@AcuMS.aculab.com>
-References: <20190528163258.260144-1-elver@google.com>
- <20190528163258.260144-3-elver@google.com>
- <20190528165036.GC28492@lakrids.cambridge.arm.com>
- <CACT4Y+bV0CczjRWgHQq3kvioLaaKgN+hnYEKCe5wkbdngrm+8g@mail.gmail.com>
- <CANpmjNNtjS3fUoQ_9FQqANYS2wuJZeFRNLZUq-ku=v62GEGTig@mail.gmail.com>
- <20190529100116.GM2623@hirez.programming.kicks-ass.net>
- <CANpmjNMvwAny54udYCHfBw1+aphrQmiiTJxqDq7q=h+6fvpO4w@mail.gmail.com>
- <20190529103010.GP2623@hirez.programming.kicks-ass.net>
- <CACT4Y+aVB3jK_M0-2D_QTq=nncVXTsNp77kjSwBwjqn-3hAJmA@mail.gmail.com>
-In-Reply-To: <CACT4Y+aVB3jK_M0-2D_QTq=nncVXTsNp77kjSwBwjqn-3hAJmA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1726787AbfE2LXi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 07:23:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60974 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725914AbfE2LXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 07:23:36 -0400
+Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F18B920B1F;
+        Wed, 29 May 2019 11:23:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559129015;
+        bh=McAELd9X83y5uf1BerOqhmU3UNbPRNL3esrqC1Crr/s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OM5NOuMbLNjTabGDh5c1RGgC+P8hNBmHsNvToIku8DC8bSi6hSWaVyNWDlgLes/Ih
+         3JBZygq8VnCDIV5HJOPoBDXFGEyWlp7a8XaNpgmuixo13REHhNauwNkUzxgA5hwOCY
+         QandglykZUmcAfpw4V6peTXTNmo3hyrHmTWY3xKk=
+Date:   Wed, 29 May 2019 04:23:34 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Cc:     "hch@lst.de" <hch@lst.de>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "marex@denx.de" <marex@denx.de>, Leo Li <leoyang.li@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "noring@nocrew.org" <noring@nocrew.org>,
+        "JuergenUrban@gmx.de" <JuergenUrban@gmx.de>
+Subject: Re: [PATCH v7 2/5] USB: use genalloc for USB HCs with local memory
+Message-ID: <20190529112334.GA11368@kroah.com>
+References: <20190529102843.13174-1-laurentiu.tudor@nxp.com>
+ <20190529102843.13174-3-laurentiu.tudor@nxp.com>
+ <20190529103838.GC7383@kroah.com>
+ <34a83e74-4c85-cf9f-54c3-b69b0dcb628e@nxp.com>
 MIME-Version: 1.0
-X-MC-Unique: n6S3TAExMKGEa1CSkKSjew-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34a83e74-4c85-cf9f-54c3-b69b0dcb628e@nxp.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogRG1pdHJ5IFZ5dWtvdg0KPiBTZW50OiAyOSBNYXkgMjAxOSAxMTo1Nw0KPiBPbiBXZWQs
-IE1heSAyOSwgMjAxOSBhdCAxMjozMCBQTSBQZXRlciBaaWpsc3RyYSA8cGV0ZXJ6QGluZnJhZGVh
-ZC5vcmc+IHdyb3RlOg0KPiA+DQo+ID4gT24gV2VkLCBNYXkgMjksIDIwMTkgYXQgMTI6MTY6MzFQ
-TSArMDIwMCwgTWFyY28gRWx2ZXIgd3JvdGU6DQo+ID4gPiBPbiBXZWQsIDI5IE1heSAyMDE5IGF0
-IDEyOjAxLCBQZXRlciBaaWpsc3RyYSA8cGV0ZXJ6QGluZnJhZGVhZC5vcmc+IHdyb3RlOg0KPiA+
-ID4gPg0KPiA+ID4gPiBPbiBXZWQsIE1heSAyOSwgMjAxOSBhdCAxMToyMDoxN0FNICswMjAwLCBN
-YXJjbyBFbHZlciB3cm90ZToNCj4gPiA+ID4gPiBGb3IgdGhlIGRlZmF1bHQsIHdlIGRlY2lkZWQg
-dG8gZXJyIG9uIHRoZSBjb25zZXJ2YXRpdmUgc2lkZSBmb3Igbm93LA0KPiA+ID4gPiA+IHNpbmNl
-IGl0IHNlZW1zIHRoYXQgZS5nLiB4ODYgb3BlcmF0ZXMgb25seSBvbiB0aGUgYnl0ZSB0aGUgYml0
-IGlzIG9uLg0KPiA+ID4gPg0KPiA+ID4gPiBUaGlzIGlzIG5vdCBjb3JyZWN0LCBzZWUgZm9yIGlu
-c3RhbmNlIHNldF9iaXQoKToNCj4gPiA+ID4NCj4gPiA+ID4gc3RhdGljIF9fYWx3YXlzX2lubGlu
-ZSB2b2lkDQo+ID4gPiA+IHNldF9iaXQobG9uZyBuciwgdm9sYXRpbGUgdW5zaWduZWQgbG9uZyAq
-YWRkcikNCj4gPiA+ID4gew0KPiA+ID4gPiAgICAgICAgIGlmIChJU19JTU1FRElBVEUobnIpKSB7
-DQo+ID4gPiA+ICAgICAgICAgICAgICAgICBhc20gdm9sYXRpbGUoTE9DS19QUkVGSVggIm9yYiAl
-MSwlMCINCj4gPiA+ID4gICAgICAgICAgICAgICAgICAgICAgICAgOiBDT05TVF9NQVNLX0FERFIo
-bnIsIGFkZHIpDQo+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIDogImlxIiAoKHU4KUNP
-TlNUX01BU0sobnIpKQ0KPiA+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICA6ICJtZW1vcnki
-KTsNCj4gPiA+ID4gICAgICAgICB9IGVsc2Ugew0KPiA+ID4gPiAgICAgICAgICAgICAgICAgYXNt
-IHZvbGF0aWxlKExPQ0tfUFJFRklYIF9fQVNNX1NJWkUoYnRzKSAiICUxLCUwIg0KPiA+ID4gPiAg
-ICAgICAgICAgICAgICAgICAgICAgICA6IDogUkxPTkdfQUREUihhZGRyKSwgIklyIiAobnIpIDog
-Im1lbW9yeSIpOw0KPiA+ID4gPiAgICAgICAgIH0NCj4gPiA+ID4gfQ0KPiA+ID4gPg0KPiA+ID4g
-PiBUaGF0IHJlc3VsdHMgaW46DQo+ID4gPiA+DQo+ID4gPiA+ICAgICAgICAgTE9DSyBCVFNRIG5y
-LCAoYWRkcikNCj4gPiA+ID4NCj4gPiA+ID4gd2hlbiBAbnIgaXMgbm90IGFuIGltbWVkaWF0ZS4N
-Cj4gPiA+DQo+ID4gPiBUaGFua3MgZm9yIHRoZSBjbGFyaWZpY2F0aW9uLiBHaXZlbiB0aGF0IGFy
-bTY0IGFscmVhZHkgaW5zdHJ1bWVudHMNCj4gPiA+IGJpdG9wcyBhY2Nlc3MgdG8gd2hvbGUgd29y
-ZHMsIGFuZCB4ODYgbWF5IGFsc28gZG8gc28gZm9yIHNvbWUgYml0b3BzLA0KPiA+ID4gaXQgc2Vl
-bXMgZmluZSB0byBpbnN0cnVtZW50IHdvcmQtc2l6ZWQgYWNjZXNzZXMgYnkgZGVmYXVsdC4gSXMg
-dGhhdA0KPiA+ID4gcmVhc29uYWJsZT8NCj4gPg0KPiA+IEVtaW5lbnRseSAtLSB0aGUgQVBJIGlz
-IGRlZmluZWQgc3VjaDsgZm9yIGJvbnVzIHBvaW50cyBLQVNBTiBzaG91bGQgYWxzbw0KPiA+IGRv
-IGFsaWdubWVudCBjaGVja3Mgb24gYXRvbWljIG9wcy4gRnV0dXJlIGhhcmR3YXJlIHdpbGwgI0FD
-IG9uIHVuYWxpZ25lZA0KPiA+IFsqXSBMT0NLIHByZWZpeCBpbnN0cnVjdGlvbnMuDQo+ID4NCj4g
-PiAoKikgbm90IGVudGlyZWx5IGFjY3VyYXRlLCBpdCB3aWxsIG9ubHkgdHJhcCB3aGVuIGNyb3Nz
-aW5nIGEgbGluZS4NCj4gPiAgICAgaHR0cHM6Ly9sa21sLmtlcm5lbC5vcmcvci8xNTU2MTM0Mzgy
-LTU4ODE0LTEtZ2l0LXNlbmQtZW1haWwtZmVuZ2h1YS55dUBpbnRlbC5jb20NCj4gDQo+IEludGVy
-ZXN0aW5nLiBEb2VzIGFuIGFkZHJlc3MgcGFzc2VkIHRvIGJpdG9wcyBhbHNvIHNob3VsZCBiZSBh
-bGlnbmVkLA0KPiBvciBhbGlnbm1lbnQgaXMgc3VwcG9zZWQgdG8gYmUgaGFuZGxlZCBieSBiaXRv
-cHMgdGhlbXNlbHZlcz8NCg0KVGhlIGJpdG9wcyBhcmUgZGVmaW5lZCBvbiAnbG9uZyBbXScgYW5k
-IGl0IGlzIGV4cGVjdGVkIHRvIGJlIGFsaWduZWQuDQpBbnkgY29kZSB0aGF0IGNhc3RzIHRoZSBh
-cmd1bWVudCBpcyBsaWtlbHkgdG8gYmUgYnJva2VuIG9uIGJpZy1lbmRpYW4uDQpJIGRpZCBhIHF1
-aWNrIGdyZXAgYSBmZXcgd2Vla3MgYWdvIGFuZCBmb3VuZCBzb21lIHZlcnkgZHViaW91cyBjb2Rl
-Lg0KTm90IGFsbCB0aGUgY2FzdHMgc2VlbWVkIHRvIGJlIG9uIGNvZGUgdGhhdCB3YXMgTEUgb25s
-eSAoYWx0aG91Z2gNCkkgZGlkbid0IHRyeSB0byBmaW5kIG91dCB3aGF0IHRoZSBjYXN0cyB3ZXJl
-IGZyb20pLg0KDQpUaGUgYWxpZ25tZW50IHRyYXAgb24geDg2IGNvdWxkIGJlIGF2b2lkZWQgYnkg
-b25seSBldmVyIHJlcXVlc3RpbmcgMzJiaXQNCmN5Y2xlcyAtIGFuZCBhc3N1bWluZyB0aGUgYnVm
-ZmVyIGlzIGFsd2F5cyAzMmJpdCBhbGlnbmVkIChlZyBpbnQgW10pLg0KQnV0IG9uIEJFIHBhc3Np
-bmcgYW4gJ2ludCBbXScgaXMganVzdCBzbyB3cm9uZyAuLi4uDQoNCglEYXZpZA0KDQotDQpSZWdp
-c3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9u
-IEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+On Wed, May 29, 2019 at 11:15:54AM +0000, Laurentiu Tudor wrote:
+> 
+> 
+> On 29.05.2019 13:38, Greg KH wrote:
+> > On Wed, May 29, 2019 at 01:28:40PM +0300, laurentiu.tudor@nxp.com wrote:
+> >> From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+> >>
+> >> For HCs that have local memory, replace the current DMA API usage
+> >> with a genalloc generic allocator to manage the mappings for these
+> >> devices. To help users, introduce a new HCD API,
+> >> usb_hcd_setup_local_mem() that will setup up the genalloc backing
+> >> up the device local memory. It will be used in subsequent patches.
+> >> This is in preparation for dropping the existing "coherent" dma
+> >> mem declaration APIs. Current implementation was relying on a short
+> >> circuit in the DMA API that in the end, was acting as an allocator
+> >> for these type of devices.
+> >> For sh arch to compile GENERIC_ALLOCATOR needs to be selected in
+> >> Kconfig.
+> >>
+> >> For context, see thread here: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flkml.org%2Flkml%2F2019%2F4%2F22%2F357&amp;data=02%7C01%7Claurentiu.tudor%40nxp.com%7Cade28e1f322c4502cd4808d6e421d0ba%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C636947231220264072&amp;sdata=xvmzDztMbeD9GwlcAfx7bBoxhARWgB3vmQkqiE81Lbg%3D&amp;reserved=0
+> >>
+> >> Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+> >> Signed-off-by: Fredrik Noring <noring@nocrew.org>
+> >> Tested-by: Fredrik Noring <noring@nocrew.org>
+> >> Reported-by: kbuild test robot <lkp@intel.com>
+> >> ---
+> >>   drivers/usb/Kconfig         |  1 +
+> >>   drivers/usb/core/buffer.c   |  9 +++++++++
+> >>   drivers/usb/core/hcd.c      | 36 ++++++++++++++++++++++++++++++++++++
+> >>   drivers/usb/host/ohci-hcd.c | 23 ++++++++++++++++++-----
+> >>   drivers/usb/host/ohci-mem.c | 35 +++++++++++++++++++++++++++++++----
+> >>   drivers/usb/host/ohci.h     |  2 ++
+> >>   include/linux/usb/hcd.h     |  5 +++++
+> >>   7 files changed, 102 insertions(+), 9 deletions(-)
+> >>
+> >> diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
+> >> index e4b27413f528..389c57d8eba7 100644
+> >> --- a/drivers/usb/Kconfig
+> >> +++ b/drivers/usb/Kconfig
+> >> @@ -45,6 +45,7 @@ config USB_ARCH_HAS_HCD
+> >>   config USB
+> >>   	tristate "Support for Host-side USB"
+> >>   	depends on USB_ARCH_HAS_HCD
+> >> +	select GENERIC_ALLOCATOR
+> > 
+> > Are there any arches that does not have GENERIC_ALLOCATOR?  I don't want
+> > to suddenly cut off a bunch of working systems from having USB support.
+> > 
+> 
+> lkp report mentions only sh, but even if there are others, I think that 
+> now having the explicit select should cover them, right?
 
+As long as GENERIC_ALLOCATOR works on all arches, yes, that's fine, but
+please verify that this is the case.
+
+thanks,
+
+greg k-h
