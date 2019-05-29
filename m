@@ -2,92 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C2B82E014
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AE712E01E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbfE2Orp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 10:47:45 -0400
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:58203 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726106AbfE2Orp (ORCPT
+        id S1726713AbfE2OuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:50:21 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:37242 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfE2OuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 10:47:45 -0400
-Received: from [IPv6:2001:983:e9a7:1:c843:3d28:cba4:8b6e] ([IPv6:2001:983:e9a7:1:c843:3d28:cba4:8b6e])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id VzrihqjyRsDWyVzrjhhsMi; Wed, 29 May 2019 16:47:43 +0200
-Subject: Re: [PATCH v7 1/3] media: cec: expose HDMI connector to CEC dev
- mapping
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-To:     Dariusz Marcinkiewicz <darekm@google.com>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190521105203.154043-1-darekm@google.com>
- <16889839-b4e9-9984-2e36-5f07ceb7d7f2@xs4all.nl>
- <CALFZZQH7-mzRZbji1w-UwRLdw6c8+CThn0e96oG8E2Eq1ivANQ@mail.gmail.com>
- <8e575d0b-4765-ae54-019e-0fab522fe1d5@xs4all.nl>
-Message-ID: <a421ff13-c8ee-b72c-3e1e-376b9e426064@xs4all.nl>
-Date:   Wed, 29 May 2019 16:47:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <8e575d0b-4765-ae54-019e-0fab522fe1d5@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 29 May 2019 10:50:21 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TEmj59055774;
+        Wed, 29 May 2019 14:49:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : subject
+ : from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=corp-2018-07-02;
+ bh=bdiE7HWyHmzeDdhgcpTkxNwVwsKMW5J4u0bwenhkW2I=;
+ b=vAYGK9KOQKh1ci+61dIXEhKr/6PuEl3w9nerHoG2o6KZcTmroHCycrPlXsSVYoCc1D9e
+ u53Af15v96j6SPmPoJ+syGA6mCGI1yCiY2PcW+gMzZiVseWDKwRqdfQ/vA5LKK20Ou6S
+ qqH1kgPXhEpgNiGNUtFLQ9cNrcGvNjpxe3Gfdd5qauvpSfl3hiaspyOm5mJhBkWRqvwm
+ IYx2v4CAD32zNH3jZdsRIlmsjtuapA8CQI+GAGIf1qsl+aD1+DqMFhyfxIFAGNXJW+cz
+ 9a5PK1sw72WXYdjOuDHWee7Q0Jai2TlWbMJfUWHm89DxiTdsjrZTZi400nmT0P2EZndw JQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2130.oracle.com with ESMTP id 2spu7djgus-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 May 2019 14:49:23 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TEnL0O140618;
+        Wed, 29 May 2019 14:49:22 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2ss1fngsh2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 May 2019 14:49:22 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4TEnF2L021623;
+        Wed, 29 May 2019 14:49:16 GMT
+Received: from concerto-wl.internal (/24.9.64.241)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 29 May 2019 07:49:15 -0700
+Message-ID: <3ade20696cc772772f5362fea02ede81c4a0fad3.camel@oracle.com>
+Subject: Re: [PATCH v15 01/17] uaccess: add untagged_addr definition for
+ other arches
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+To:     Andrey Konovalov <andreyknvl@google.com>,
+        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Date:   Wed, 29 May 2019 08:49:09 -0600
+In-Reply-To: <67ae3bd92e590d42af22ef2de0ad37b730a13837.1557160186.git.andreyknvl@google.com>
+References: <cover.1557160186.git.andreyknvl@google.com>
+         <67ae3bd92e590d42af22ef2de0ad37b730a13837.1557160186.git.andreyknvl@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfOFT+KbQpijqyY5R6EctfAmZFUWcR7Yo8VtDvKyY1iseCfmQislEu119ZXE7vyKuwoWGVlrk+vRYss4UV7TI8lpabv6A4Ezf/SBF9CeiZfUq0sePM05e
- klvYpdsrUkSKH2hKRVUZ1ZAeP0aAob/B/vnp76BTChU1VyxDtyuYsYr0o9Hdy+U7dgTuyiYF3rHTAH9oYrUS9Q2nMMMUWBlGV9iCOaC8uSe99TNO1rPcszYo
- Nzu1hK4y16hkHF8msZQxpkL5JfsrZGydglixkKiYet2TKPe7rYJu6upOAlaXYloccL2jEDt0MakXY9bc2OZ72gj8JjsGUCWl+NNQJAzeUXqpoT9MgPQoYjnt
- tHyGHbib
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905290098
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905290098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/28/19 10:05 AM, Hans Verkuil wrote:
-> On 5/28/19 9:53 AM, Dariusz Marcinkiewicz wrote:
->> On Fri, May 24, 2019 at 11:21 AM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>>
->>> Hi Dariusz,
->>>
->>> I did some more testing with the Khadas VIM2 and found another problem,
->>> something that will, unfortunately, require some redesign.
->>>
->> ...
->>>
->>> The other problem is in the CEC driver: it creates the CEC device as
->>> soon as the HDMI device is found (cec_notifier_parse_hdmi_phandle).
->>>
->>> But that doesn't mean that the HDMI device also had registered itself
->>> as a CEC notifier.
->>>
->>> Until now that never mattered: as long as the HDMI device was found
->>> the CEC adapter would function fine, it would just have no physical
->>> address until so notified by the HDMI device once it registered its
->>> CEC notifier.
->>>
->>> But if we want to have valid connector info during the lifetime of
->>> the CEC adapter, then this no longer works.
->>>
->>> I'm not entirely sure how to handle this.
->>>
->>> Another issue here is that when the HDMI driver removes the notifier,
->>> then it should also zero the connector info. Remember that both the
->>> HDMI and the CEC drivers can be loaded and unloaded independently from
->>> one another.
->>>
->> Given all of the above, what do you think about coming back to the v1
->> of the patch, where a connector info could be set on an adapter at any
->> time and an event was used to notify userland when that happened? That
->> approach seems to cover all the scenarios mentioned above.
+On Mon, 2019-05-06 at 18:30 +0200, Andrey Konovalov wrote:
+> To allow arm64 syscalls to accept tagged pointers from userspace, we
+> must
+> untag them when they are passed to the kernel. Since untagging is
+> done in
+> generic parts of the kernel, the untagged_addr macro needs to be
+> defined
+> for all architectures.
 > 
-> That's just hiding the real problems :-)
+> Define it as a noop for architectures other than arm64.
 > 
-> I hope to spend some time on CEC tomorrow and I'll get back to you then.
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> ---
+>  include/linux/mm.h | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Unfortunately I had too many other things going on to spend time on this.
+As discussed in the other thread Chris started, there is a generic need
+to untag addresses in kernel and this patch gets us ready for that.
 
-Hopefully next week.
+Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
 
-Regards,
-
-	Hans
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 6b10c21630f5..44041df804a6 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -99,6 +99,10 @@ extern int mmap_rnd_compat_bits __read_mostly;
+>  #include <asm/pgtable.h>
+>  #include <asm/processor.h>
+>  
+> +#ifndef untagged_addr
+> +#define untagged_addr(addr) (addr)
+> +#endif
+> +
+>  #ifndef __pa_symbol
+>  #define __pa_symbol(x)  __pa(RELOC_HIDE((unsigned long)(x), 0))
+>  #endif
 
