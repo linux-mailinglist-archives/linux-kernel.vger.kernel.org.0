@@ -2,292 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A7922E07E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1D5E2E086
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:07:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbfE2PEq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 11:04:46 -0400
-Received: from mail-it1-f177.google.com ([209.85.166.177]:36457 "EHLO
-        mail-it1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbfE2PEq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:04:46 -0400
-Received: by mail-it1-f177.google.com with SMTP id e184so4101662ite.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 08:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language;
-        bh=PJh+tH51cISlc+k9PbZLzCDGkI7OQ7r7QdvsJfI3jok=;
-        b=M0PmkRdXy/Uh6tT+dTOa7sF8GwOwvbkOKp4wzg9ZQqY6So8nr9kP6XyU3EW86/72lM
-         3iMzv1uo9iQKkuhBcp0mrtRK03Mfo4ZQdU9SwdnIqRrMv8ohyJSC3xkTY5Zu31df3lKY
-         p3Je0CbMINCyUU047VHJIqnVF0cUhVKkiUYWU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language;
-        bh=PJh+tH51cISlc+k9PbZLzCDGkI7OQ7r7QdvsJfI3jok=;
-        b=CrJa5igboe8hNrLe8mEyciJQscqqSxFWz9KdopfyH8hloaCL0XosgrfZky8aGizz5M
-         wCoxmffQVYqozfeZueGgeBkkHtmcjQGB7bapKqzE0pGxM9rB8qe4iL1Kprs2nuwVPwv0
-         smyfZ1Ho+JnjcaiafQjx6ajZNwf9lmTrAnwKbitQCOsjuU0IZn3aqrwP64HHT3xT8/eI
-         thPm6bt9ajrq2lT760yaxgOcv5LMpwGETQ+9iR+pGe3Nh3+ASyqUXETIoXlH4EIDbnqH
-         zf0onx7WbqeR29UdzlfqgT34Cy37K/kwnXx2ISq8jyPa2Wym4q9LOt40vWC/NgxxfmrU
-         BBBw==
-X-Gm-Message-State: APjAAAV8I7mP8ERpyptW7rbR5evtbgpFZZPdT1JFXJe2HVY6HD7DA2Gn
-        bdz5jtmH859vp9fKoy9m9aGUoQ==
-X-Google-Smtp-Source: APXvYqyLllj2g4BWTx5k2+IbxSQPgM8xKi6MjTV5gtgLhB9rrvSOmJdS71KFKEBL3tiGe1vmxNe7sg==
-X-Received: by 2002:a02:930d:: with SMTP id d13mr35648476jah.48.1559142284118;
-        Wed, 29 May 2019 08:04:44 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id v190sm1234957ita.14.2019.05.29.08.04.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 08:04:43 -0700 (PDT)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        skhan@linuxfoundation.org
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] Kselftest fixes update for Linux 5.2-rc3
-Message-ID: <966d12fc-d32e-c72c-7996-34b8250388dc@linuxfoundation.org>
-Date:   Wed, 29 May 2019 09:04:42 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        id S1726504AbfE2PG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 11:06:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47656 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726069AbfE2PG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 11:06:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7C37341;
+        Wed, 29 May 2019 08:06:58 -0700 (PDT)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 967EF3F5AF;
+        Wed, 29 May 2019 08:06:57 -0700 (PDT)
+Subject: Re: [PATCH 13/21] EDAC, ghes: Rework memory hierarchy detection
+To:     Robert Richter <rrichter@marvell.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190529084344.28562-1-rrichter@marvell.com>
+ <20190529084344.28562-14-rrichter@marvell.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <068e31b4-43e8-c1ab-194e-f2b41c1534f9@arm.com>
+Date:   Wed, 29 May 2019 16:06:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------FFEEB26E0F873E8A7C0FD295"
-Content-Language: en-US
+In-Reply-To: <20190529084344.28562-14-rrichter@marvell.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------FFEEB26E0F873E8A7C0FD295
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi Robert,
 
-Hi Linus,
+On 29/05/2019 09:44, Robert Richter wrote:
+> In a later patch we want add more information about the memory
+> hierarchy (NUMA topology, DIMM label information). Rework memory
+> hierarchy detection to make the code extendable for this.
+> 
+> The general approach is roughly like:
+> 
+> 	mem_info_setup();
+> 	for_each_node(nid) {
+> 		mci = edac_mc_alloc(nid);
+> 		mci_add_dimm_info(mci);
+> 		edac_mc_add_mc(mci);
+> 	};
+> 
+> This patch introduces mem_info_setup() and mci_add_dimm_info().
+> 
+> All data of the memory hierarchy is collected in a local struct
+> ghes_mem_info.
+> 
+> Note: Per (NUMA) node registration will be implemented in a later
+> patch.
 
-Please pull the following Kselftest fixes update for Linux 5.2-rc3.
 
-This Kselftest update for Linux 5.2-rc3 consists of
+> diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
+> index ea4d53043199..50f4ee36b755 100644
+> --- a/drivers/edac/ghes_edac.c
+> +++ b/drivers/edac/ghes_edac.c
+> @@ -67,17 +67,38 @@ struct memdev_dmi_entry {
+>  	u16 conf_mem_clk_speed;
+>  } __attribute__((__packed__));
+>  
+> -struct ghes_edac_dimm_fill {
+> -	struct mem_ctl_info *mci;
+> -	unsigned count;
 
-- Alexandre Belloni's fixes to rtc regressions introduced in kselftest
-   Makefile test run output refactoring work from Kees Cook.
+> +struct ghes_dimm_info {
+> +	struct dimm_info dimm_info;
+> +	int		idx;
+> +};
 
-- ftrace test checkbashisms fixes from Masami Hiramatsu
+> +struct ghes_mem_info {
+> +	int num_dimm;
+> +	struct ghes_dimm_info *dimms;
+>  };
+>  
+> +struct ghes_mem_info mem_info;
 
-As a note, it is an usual and expected outcome to see a few regressions
-when Kselftest run-time scripts are enhanced. No surprises there.
+static?
 
-I am glad we are finding these problems early on in the rc cycle.
 
-diff is attached.
+> @@ -94,18 +115,17 @@ static int get_dimm_smbios_index(u16 handle)
+>  
+>  static void ghes_edac_dmidecode(const struct dmi_header *dh, void *arg)
+>  {
+> -	struct ghes_edac_dimm_fill *dimm_fill = arg;
+> -	struct mem_ctl_info *mci = dimm_fill->mci;
+> -
+>  	if (dh->type == DMI_ENTRY_MEM_DEVICE) {
+> +		int *idx = arg;
+>  		struct memdev_dmi_entry *entry = (struct memdev_dmi_entry *)dh;
+> -		struct dimm_info *dimm = edac_get_dimm(mci, dimm_fill->count,
+> -						       0, 0);
+> +		struct ghes_dimm_info *mi = &mem_info.dimms[*idx];
+> +		struct dimm_info *dimm = &mi->dimm_info;
+>  		u16 rdr_mask = BIT(7) | BIT(13);
 
-thanks,
--- Shuah
 
-----------------------------------------------------------------
-The following changes since commit a188339ca5a396acc588e5851ed7e19f66b0ebd9:
+> +		mi->phys_handle = entry->phys_mem_array_handle;
 
-   Linux 5.2-rc1 (2019-05-19 15:47:09 -0700)
+Where did this come from, and what is it for?
 
-are available in the Git repository at:
+...
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest 
-tags/linux-kselftest-5.2-rc3
+Should this be in a later patch? (did you bisect build this?)
 
-for you to fetch changes up to eff82a263b5cfa3427fd9dbfedd96da94fdc9f19:
 
-   selftests: rtc: rtctest: specify timeouts (2019-05-24 13:39:58 -0600)
+>  		if (entry->size == 0xffff) {
+> -			pr_info("Can't get DIMM%i size\n",
+> -				dimm_fill->count);
+> +			pr_info("Can't get DIMM%i size\n", mi->idx);
+>  			dimm->nr_pages = MiB_TO_PAGES(32);/* Unknown */
+>  		} else if (entry->size == 0x7fff) {
+>  			dimm->nr_pages = MiB_TO_PAGES(entry->extended_size);
 
-----------------------------------------------------------------
-linux-kselftest-5.2-rc3
 
-This Kselftest update for Linux 5.2-rc3 consists of
+> +static int mem_info_setup(void)
+> +{
+> +	int idx = 0;
+> +
+> +	memset(&mem_info, 0, sizeof(mem_info));
 
-- Alexandre Belloni's fixes to rtc regressions introduced in kselftest
-   Makefile test run output refactoring work from Kees Cook.
+Is this necessary? Isn't mem_info in the BSS, it will zero'd already.
 
-- ftrace test checkbashisms fixes from Masami Hiramatsu
 
-----------------------------------------------------------------
-Alexandre Belloni (2):
-       selftests/harness: Allow test to configure timeout
-       selftests: rtc: rtctest: specify timeouts
+> +	/* Get the number of DIMMs */
+> +	dmi_walk(ghes_edac_count_dimms, NULL);
+> +	if (!mem_info.num_dimm)
+> +		return -EINVAL;
 
-Masami Hiramatsu (2):
-       selftests/ftrace: Make a script checkbashisms clean
-       selftests/ftrace: Add checkbashisms meta-testcase
+> +	mem_info.dimms = kcalloc(mem_info.num_dimm,
+> +				sizeof(*mem_info.dimms), GFP_KERNEL);
+> +	if (!mem_info.dimms)
+> +		return -ENOMEM;
 
-  tools/testing/selftests/ftrace/ftracetest           |  1 +
-  .../selftests/ftrace/test.d/kprobe/kprobe_ftrace.tc |  2 +-
-  .../selftests/ftrace/test.d/selftest/bashisms.tc    | 21 
-+++++++++++++++++++++
-  tools/testing/selftests/kselftest_harness.h         | 17 ++++++++++++-----
-  tools/testing/selftests/rtc/rtctest.c               |  6 +++---
-  5 files changed, 38 insertions(+), 9 deletions(-)
-  create mode 100644 
-tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc
-----------------------------------------------------------------
+> +	ghes_dimm_info_init();
 
---------------FFEEB26E0F873E8A7C0FD295
-Content-Type: text/x-patch;
- name="linux-kselftest-5.2-rc3.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="linux-kselftest-5.2-rc3.diff"
+Could you move the kcalloc() into ghes_dimm_info_init()? This would save you having a
+unnecessarily-different version in mem_info_setup_fake().
 
-diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-index 136387422b00..7da5e31fa0ed 100755
---- a/tools/testing/selftests/ftrace/ftracetest
-+++ b/tools/testing/selftests/ftrace/ftracetest
-@@ -318,6 +318,7 @@ run_test() { # testfile
-     local testlog=/proc/self/fd/1
-   fi
-   export TMPDIR=`mktemp -d /tmp/ftracetest-dir.XXXXXX`
-+  export FTRACETEST_ROOT=$TOP_DIR
-   echo "execute$INSTANCE: "$1 > $testlog
-   SIG_RESULT=0
-   if [ $VERBOSE -eq -1 ]; then
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_ftrace.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_ftrace.tc
-index 492426e95e09..7650a82db3f5 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_ftrace.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_ftrace.tc
-@@ -3,7 +3,7 @@
- # description: Kprobe dynamic event with function tracer
- 
- [ -f kprobe_events ] || exit_unsupported # this is configurable
--grep function available_tracers || exit_unsupported # this is configurable
-+grep "function" available_tracers || exit_unsupported # this is configurable
- 
- # prepare
- echo nop > current_tracer
-diff --git a/tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc b/tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc
-new file mode 100644
-index 000000000000..1b081e910e14
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/selftest/bashisms.tc
-@@ -0,0 +1,21 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: Meta-selftest: Checkbashisms
-+
-+if [ ! -f $FTRACETEST_ROOT/ftracetest ]; then
-+  echo "Hmm, we can not find ftracetest"
-+  exit_unresolved
-+fi
-+
-+if ! which checkbashisms > /dev/null 2>&1 ; then
-+  echo "No checkbashisms found. skipped."
-+  exit_unresolved
-+fi
-+
-+checkbashisms $FTRACETEST_ROOT/ftracetest
-+checkbashisms $FTRACETEST_ROOT/test.d/functions
-+for t in $(find $FTRACETEST_ROOT/test.d -name \*.tc); do
-+  checkbashisms $t
-+done
-+
-+exit 0
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index 941d9391377f..2067c6b0e8a1 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -62,6 +62,7 @@
- #include <sys/wait.h>
- #include <unistd.h>
- 
-+#define TEST_TIMEOUT_DEFAULT 30
- 
- /* Utilities exposed to the test definitions */
- #ifndef TH_LOG_STREAM
-@@ -169,7 +170,8 @@
- 	static void test_name(struct __test_metadata *_metadata); \
- 	static struct __test_metadata _##test_name##_object = \
- 		{ .name = "global." #test_name, \
--		  .fn = &test_name, .termsig = _signal }; \
-+		  .fn = &test_name, .termsig = _signal, \
-+		  .timeout = TEST_TIMEOUT_DEFAULT, }; \
- 	static void __attribute__((constructor)) _register_##test_name(void) \
- 	{ \
- 		__register_test(&_##test_name##_object); \
-@@ -280,12 +282,15 @@
-  */
- /* TODO(wad) register fixtures on dedicated test lists. */
- #define TEST_F(fixture_name, test_name) \
--	__TEST_F_IMPL(fixture_name, test_name, -1)
-+	__TEST_F_IMPL(fixture_name, test_name, -1, TEST_TIMEOUT_DEFAULT)
- 
- #define TEST_F_SIGNAL(fixture_name, test_name, signal) \
--	__TEST_F_IMPL(fixture_name, test_name, signal)
-+	__TEST_F_IMPL(fixture_name, test_name, signal, TEST_TIMEOUT_DEFAULT)
- 
--#define __TEST_F_IMPL(fixture_name, test_name, signal) \
-+#define TEST_F_TIMEOUT(fixture_name, test_name, timeout) \
-+	__TEST_F_IMPL(fixture_name, test_name, -1, timeout)
-+
-+#define __TEST_F_IMPL(fixture_name, test_name, signal, tmout) \
- 	static void fixture_name##_##test_name( \
- 		struct __test_metadata *_metadata, \
- 		FIXTURE_DATA(fixture_name) *self); \
-@@ -307,6 +312,7 @@
- 		.name = #fixture_name "." #test_name, \
- 		.fn = &wrapper_##fixture_name##_##test_name, \
- 		.termsig = signal, \
-+		.timeout = tmout, \
- 	 }; \
- 	static void __attribute__((constructor)) \
- 			_register_##fixture_name##_##test_name(void) \
-@@ -632,6 +638,7 @@ struct __test_metadata {
- 	int termsig;
- 	int passed;
- 	int trigger; /* extra handler after the evaluation */
-+	int timeout;
- 	__u8 step;
- 	bool no_print; /* manual trigger when TH_LOG_STREAM is not available */
- 	struct __test_metadata *prev, *next;
-@@ -696,7 +703,7 @@ void __run_test(struct __test_metadata *t)
- 	t->passed = 1;
- 	t->trigger = 0;
- 	printf("[ RUN      ] %s\n", t->name);
--	alarm(30);
-+	alarm(t->timeout);
- 	child_pid = fork();
- 	if (child_pid < 0) {
- 		printf("ERROR SPAWNING TEST CHILD\n");
-diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
-index b2065536d407..66af608fb4c6 100644
---- a/tools/testing/selftests/rtc/rtctest.c
-+++ b/tools/testing/selftests/rtc/rtctest.c
-@@ -49,7 +49,7 @@ TEST_F(rtc, date_read) {
- 	       rtc_tm.tm_hour, rtc_tm.tm_min, rtc_tm.tm_sec);
- }
- 
--TEST_F(rtc, uie_read) {
-+TEST_F_TIMEOUT(rtc, uie_read, NUM_UIE + 2) {
- 	int i, rc, irq = 0;
- 	unsigned long data;
- 
-@@ -211,7 +211,7 @@ TEST_F(rtc, alarm_wkalm_set) {
- 	ASSERT_EQ(new, secs);
- }
- 
--TEST_F(rtc, alarm_alm_set_minute) {
-+TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
- 	struct timeval tv = { .tv_sec = 62 };
- 	unsigned long data;
- 	struct rtc_time tm;
-@@ -264,7 +264,7 @@ TEST_F(rtc, alarm_alm_set_minute) {
- 	ASSERT_EQ(new, secs);
- }
- 
--TEST_F(rtc, alarm_wkalm_set_minute) {
-+TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
- 	struct timeval tv = { .tv_sec = 62 };
- 	struct rtc_wkalrm alarm = { 0 };
- 	struct rtc_time tm;
 
---------------FFEEB26E0F873E8A7C0FD295--
+> +	dmi_walk(ghes_edac_dmidecode, &idx);
+> +
+> +	return 0;
+> +}
+
+> +static int mem_info_setup_fake(void)
+> +{
+> +	struct ghes_dimm_info *ghes_dimm;
+> +	struct dimm_info *dimm;
+> +
+> +	memset(&mem_info, 0, sizeof(mem_info));
+
+Is this necessary? Its only been touched by mem_info_setup(), and you get in here because
+mem_info.num_dimm == 0...
+
+
+> +	ghes_dimm = kzalloc(sizeof(*mem_info.dimms), GFP_KERNEL);
+> +	if (!ghes_dimm)
+> +		return -ENOMEM;
+
+This is common with mem_info_setup(). If ghes_dimm_info_init() read mem_info.num_dimm and
+did the rest, you'd avoid some duplication here.
+
+
+> +	mem_info.num_dimm = 1;
+> +	mem_info.dimms = ghes_dimm;
+> +
+> +	ghes_dimm_info_init();
+> +
+> +	dimm = &ghes_dimm->dimm_info;
+> +	dimm->nr_pages = 1;
+> +	dimm->grain = 128;
+> +	dimm->mtype = MEM_UNKNOWN;
+> +	dimm->dtype = DEV_UNKNOWN;
+> +	dimm->edac_mode = EDAC_SECDED;
+> +
+> +	return 0;
+> +}
+
+
+> +static void mci_add_dimm_info(struct mem_ctl_info *mci)
+
+(From the name I expected this to be in edac_mc.c)
+
+
+> +{
+> +	struct dimm_info *mci_dimm, *dmi_dimm;
+> +	struct ghes_dimm_info *dimm;
+> +	int index = 0;
+> +
+> +	for_each_dimm(dimm) {
+> +		dmi_dimm = &dimm->dimm_info;
+> +		mci_dimm = edac_get_dimm_by_index(mci, index);
+> +
+> +		index++;
+> +		if (index > mci->tot_dimms)
+> +			break;
+> +
+> +		mci_dimm->nr_pages	= dmi_dimm->nr_pages;
+> +		mci_dimm->mtype		= dmi_dimm->mtype;
+> +		mci_dimm->edac_mode	= dmi_dimm->edac_mode;
+> +		mci_dimm->dtype		= dmi_dimm->dtype;
+> +		mci_dimm->grain		= dmi_dimm->grain;
+> +		mci_dimm->smbios_handle = dmi_dimm->smbios_handle;
+>  	}
+
+This isn't fun. I guess 'numa' is the reason for generating a shadow copy of all this, and
+then having to copy it into edac. But surely that isn't a problem unique to ghes_edac.c?
+
+Can't you add the nid, and any other properties to struct dimm_info? It already has
+smbios_handle, which is hardly useful to other drivers!
+
+
+> +	if (index != mci->tot_dimms)
+> +		pr_warn("Unexpected number of DIMMs: %d (exp. %d)\n",
+> +			index, mci->tot_dimms);
+>  }
+
+
+> @@ -472,22 +566,24 @@ int ghes_edac_register(struct ghes *ghes, struct device *dev)
+
+>  	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers, sizeof(struct ghes_edac_pvt));
+>  	if (!mci) {
+> -		pr_info("Can't allocate memory for EDAC data\n");
+> +		pr_err("Can't allocate memory for EDAC data\n");
+
+Leftover debug?
+
+		kfree(mem_info.dimms); ?
+
+>  		return -ENOMEM;
+>  	}
+>  
+> @@ -513,26 +609,14 @@ int ghes_edac_register(struct ghes *ghes, struct device *dev)
+
+> -	if (!fake) {
+> -		dimm_fill.count = 0;
+> -		dimm_fill.mci = mci;
+> -		dmi_walk(ghes_edac_dmidecode, &dimm_fill);
+> -	} else {
+> -		struct dimm_info *dimm = edac_get_dimm(mci, 0, 0, 0);
+> -
+> -		dimm->nr_pages = 1;
+> -		dimm->grain = 128;
+> -		dimm->mtype = MEM_UNKNOWN;
+> -		dimm->dtype = DEV_UNKNOWN;
+> -		dimm->edac_mode = EDAC_SECDED;
+> -	}
+> +	mci_add_dimm_info(mci);
+>  
+>  	rc = edac_mc_add_mc(mci);
+>  	if (rc < 0) {
+> -		pr_info("Can't register at EDAC core\n");
+> +		pr_err("Can't register at EDAC core\n");
+
+Leftover debug?
+
+>  		edac_mc_free(mci);
+
+		kfree(mem_info.dimms); ?
+
+>  		return -ENODEV;
+>  	}
+
+
+Thanks!
+
+James
