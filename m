@@ -2,276 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6CE52DFB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D7692DFC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:30:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbfE2O1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 10:27:22 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46794 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbfE2O1V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 10:27:21 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m15so2638829ljg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 07:27:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=txpjRqYYOZS/ShrVU6bXWv+qUy5T0vwzzaHXMZH9BOU=;
-        b=uAmDYZgjUx18rTghGSreZ2ScwAmCoyJOdnrFBi6ptsxhagi/ce47qucnOXUOM/Tyv+
-         TRzShMAWLjojmNsQL/VjuaCPwtqj01laNNolm62wJ8wV8x7vCBKih4FMz28nW4mJXu67
-         Vsz/C2cPu9g4hF7vy9dtNtzMK3nEXsFczuLjqVPN/uo9+oZejH/96fBwlEdgCsJO+tY4
-         bzRgJqPX2b9VYVcZJoQ0P7cEzZJC3UHWKSBImlCPt+SZG1c5TE8Zh3wc8fWRKmR1hRKp
-         FoB0pF4m/QVRpUKvjRDN6g3wAUT/DzgALpzbuuUn12Z6PjIRbSA8ZLdzFHuLgqR6Hn81
-         tBtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=txpjRqYYOZS/ShrVU6bXWv+qUy5T0vwzzaHXMZH9BOU=;
-        b=m+n6TrlZN1XpxBpUtPNS38ws533gb+TAOjHMV3UQ/q2QlJ9QU+dWN9o1huyL2y6UsV
-         Ijl6QrJmIPmmmMUuk52xfskIKwUiYizjwozuOlcT17+JEnFnDL/TwIlaIU3o6RZe49G1
-         Uem2u/hj5Jr7tcQGK13f9hTIGyBep0oPy5zP7U4NIFo+p7cpQBIY5sCj+nuDileQRkNz
-         pndqKszENLXs+dLZINLSAKd/O3pN73eE3Yo+YwI4MndY1CPpb6zWInRrCXhISFNLHVPb
-         Kz0Jwv7owOgBhzgkwN2j/gI6giDQqaK633xdqdMtV6VtiL/6r8uf9vhZFhQd3OVtzrBP
-         jMFQ==
-X-Gm-Message-State: APjAAAVvZb5p2agHsNygt/pJQOBkFahzZybddDGdFhahGaIBWyp56uX0
-        cW1gMiiA7SupwJdGn1a9JFwGrVMgzik=
-X-Google-Smtp-Source: APXvYqy+KK61FLPg3ccG6ErfwW09hYPA1YPZRGlYX9JcVUajhRDTFh8WV3sCPQlsg2as8CG6+LAHPg==
-X-Received: by 2002:a2e:9cc4:: with SMTP id g4mr59470737ljj.47.1559140038726;
-        Wed, 29 May 2019 07:27:18 -0700 (PDT)
-Received: from pc636 ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id j10sm4069946lfc.45.2019.05.29.07.27.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 07:27:17 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Wed, 29 May 2019 16:27:15 +0200
-To:     Roman Gushchin <guro@fb.com>
-Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Hillf Danton <hdanton@sina.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v3 2/4] mm/vmap: preload a CPU with one object for split
- purpose
-Message-ID: <20190529142715.pxzrjthsthqudgh2@pc636>
-References: <20190527093842.10701-1-urezki@gmail.com>
- <20190527093842.10701-3-urezki@gmail.com>
- <20190528224217.GG27847@tower.DHCP.thefacebook.com>
+        id S1726761AbfE2OaZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:30:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33709 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726012AbfE2OaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 10:30:24 -0400
+Received: from [172.20.5.109] (207-225-69-115.dia.static.qwest.net [207.225.69.115] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x4TET5Ip2561081
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Wed, 29 May 2019 07:29:05 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x4TET5Ip2561081
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019051801; t=1559140147;
+        bh=0QBCMhL0UtNfpa1/nHPwY54RLtb1R1cG9r3yArQfJtw=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=JzlSyO5eP+ZYLQHrdvCzaFyQ8yV9k74Kwz9U3ZBRjGi+VZ2tnTPD79icUl023IVaa
+         lorhYOOJ39lVimV25yC8m2dMXeg0m03X5EGPWuJ6QzpjHbUcuWphp4BFY7sIrz4FgP
+         TT9aVIxbcqZR5INiHae7timA+hTN2S6EkuNTGTj9j10QfOQA1Zm/XchNd7ZDZPeTkx
+         EFwSJMe3MEfRQ9KoN1PHX3oJZFhRT7M0C8qaTRhDfALGrRbpwmV6xNHrucaWs+HEIg
+         x3oclNc0c4VudCFk50ebDNaxcIoemxYdHIzudfM9TPcv//LgFBeKs0qxuOyvB2RC6f
+         KoMPScX/VGQxA==
+Date:   Wed, 29 May 2019 07:29:01 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190529141500.193390-3-elver@google.com>
+References: <20190529141500.193390-1-elver@google.com> <20190529141500.193390-3-elver@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190528224217.GG27847@tower.DHCP.thefacebook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/3] x86: Move CPU feature test out of uaccess region
+To:     Marco Elver <elver@google.com>, peterz@infradead.org,
+        aryabinin@virtuozzo.com, dvyukov@google.com, glider@google.com,
+        andreyknvl@google.com, mark.rutland@arm.com
+CC:     corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        x86@kernel.org, arnd@arndb.de, jpoimboe@redhat.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
+From:   hpa@zytor.com
+Message-ID: <EE911EC6-344B-4EB2-90A4-B11E8D96BEDC@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Roman!
+On May 29, 2019 7:15:00 AM PDT, Marco Elver <elver@google=2Ecom> wrote:
+>This patch is a pre-requisite for enabling KASAN bitops
+>instrumentation:
+>moves boot_cpu_has feature test out of the uaccess region, as
+>boot_cpu_has uses test_bit=2E With instrumentation, the KASAN check would
+>otherwise be flagged by objtool=2E
+>
+>This approach is preferred over adding the explicit kasan_check_*
+>functions to the uaccess whitelist of objtool, as the case here appears
+>to be the only one=2E
+>
+>Signed-off-by: Marco Elver <elver@google=2Ecom>
+>---
+>v1:
+>* This patch replaces patch: 'tools/objtool: add kasan_check_* to
+>  uaccess whitelist'
+>---
+> arch/x86/ia32/ia32_signal=2Ec | 9 ++++++++-
+> 1 file changed, 8 insertions(+), 1 deletion(-)
+>
+>diff --git a/arch/x86/ia32/ia32_signal=2Ec b/arch/x86/ia32/ia32_signal=2E=
+c
+>index 629d1ee05599=2E=2E12264e3c9c43 100644
+>--- a/arch/x86/ia32/ia32_signal=2Ec
+>+++ b/arch/x86/ia32/ia32_signal=2Ec
+>@@ -333,6 +333,7 @@ int ia32_setup_rt_frame(int sig, struct ksignal
+>*ksig,
+> 	void __user *restorer;
+> 	int err =3D 0;
+> 	void __user *fpstate =3D NULL;
+>+	bool has_xsave;
+>=20
+> 	/* __copy_to_user optimizes that into a single 8 byte store */
+> 	static const struct {
+>@@ -352,13 +353,19 @@ int ia32_setup_rt_frame(int sig, struct ksignal
+>*ksig,
+> 	if (!access_ok(frame, sizeof(*frame)))
+> 		return -EFAULT;
+>=20
+>+	/*
+>+	 * Move non-uaccess accesses out of uaccess region if not strictly
+>+	 * required; this also helps avoid objtool flagging these accesses
+>with
+>+	 * instrumentation enabled=2E
+>+	 */
+>+	has_xsave =3D boot_cpu_has(X86_FEATURE_XSAVE);
+> 	put_user_try {
+> 		put_user_ex(sig, &frame->sig);
+> 		put_user_ex(ptr_to_compat(&frame->info), &frame->pinfo);
+> 		put_user_ex(ptr_to_compat(&frame->uc), &frame->puc);
+>=20
+> 		/* Create the ucontext=2E  */
+>-		if (boot_cpu_has(X86_FEATURE_XSAVE))
+>+		if (has_xsave)
+> 			put_user_ex(UC_FP_XSTATE, &frame->uc=2Euc_flags);
+> 		else
+> 			put_user_ex(0, &frame->uc=2Euc_flags);
 
-> On Mon, May 27, 2019 at 11:38:40AM +0200, Uladzislau Rezki (Sony) wrote:
-> > Refactor the NE_FIT_TYPE split case when it comes to an
-> > allocation of one extra object. We need it in order to
-> > build a remaining space.
-> > 
-> > Introduce ne_fit_preload()/ne_fit_preload_end() functions
-> > for preloading one extra vmap_area object to ensure that
-> > we have it available when fit type is NE_FIT_TYPE.
-> > 
-> > The preload is done per CPU in non-atomic context thus with
-> > GFP_KERNEL allocation masks. More permissive parameters can
-> > be beneficial for systems which are suffer from high memory
-> > pressure or low memory condition.
-> > 
-> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > ---
-> >  mm/vmalloc.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
-> >  1 file changed, 76 insertions(+), 3 deletions(-)
-> 
-> Hi Uladzislau!
-> 
-> This patch generally looks good to me (see some nits below),
-> but it would be really great to add some motivation, e.g. numbers.
-> 
-The main goal of this patch to get rid of using GFP_NOWAIT since it is
-more restricted due to allocation from atomic context. IMHO, if we can
-avoid of using it that is a right way to go.
-
-From the other hand, as i mentioned before i have not seen any issues
-with that on all my test systems during big rework. But it could be
-beneficial for tiny systems where we do not have any swap and are
-limited in memory size.
-
-> > 
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index ea1b65fac599..b553047aa05b 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -364,6 +364,13 @@ static LIST_HEAD(free_vmap_area_list);
-> >   */
-> >  static struct rb_root free_vmap_area_root = RB_ROOT;
-> >  
-> > +/*
-> > + * Preload a CPU with one object for "no edge" split case. The
-> > + * aim is to get rid of allocations from the atomic context, thus
-> > + * to use more permissive allocation masks.
-> > + */
-> > +static DEFINE_PER_CPU(struct vmap_area *, ne_fit_preload_node);
-> > +
-> >  static __always_inline unsigned long
-> >  va_size(struct vmap_area *va)
-> >  {
-> > @@ -950,9 +957,24 @@ adjust_va_to_fit_type(struct vmap_area *va,
-> >  		 *   L V  NVA  V R
-> >  		 * |---|-------|---|
-> >  		 */
-> > -		lva = kmem_cache_alloc(vmap_area_cachep, GFP_NOWAIT);
-> > -		if (unlikely(!lva))
-> > -			return -1;
-> > +		lva = __this_cpu_xchg(ne_fit_preload_node, NULL);
-> > +		if (unlikely(!lva)) {
-> > +			/*
-> > +			 * For percpu allocator we do not do any pre-allocation
-> > +			 * and leave it as it is. The reason is it most likely
-> > +			 * never ends up with NE_FIT_TYPE splitting. In case of
-> > +			 * percpu allocations offsets and sizes are aligned to
-> > +			 * fixed align request, i.e. RE_FIT_TYPE and FL_FIT_TYPE
-> > +			 * are its main fitting cases.
-> > +			 *
-> > +			 * There are a few exceptions though, as an example it is
-> > +			 * a first allocation (early boot up) when we have "one"
-> > +			 * big free space that has to be split.
-> > +			 */
-> > +			lva = kmem_cache_alloc(vmap_area_cachep, GFP_NOWAIT);
-> > +			if (!lva)
-> > +				return -1;
-> > +		}
-> >  
-> >  		/*
-> >  		 * Build the remainder.
-> > @@ -1023,6 +1045,48 @@ __alloc_vmap_area(unsigned long size, unsigned long align,
-> >  }
-> >  
-> >  /*
-> > + * Preload this CPU with one extra vmap_area object to ensure
-> > + * that we have it available when fit type of free area is
-> > + * NE_FIT_TYPE.
-> > + *
-> > + * The preload is done in non-atomic context, thus it allows us
-> > + * to use more permissive allocation masks to be more stable under
-> > + * low memory condition and high memory pressure.
-> > + *
-> > + * If success it returns 1 with preemption disabled. In case
-> > + * of error 0 is returned with preemption not disabled. Note it
-> > + * has to be paired with ne_fit_preload_end().
-> > + */
-> > +static int
-> 
-> Cosmetic nit: you don't need a new line here.
-> 
-> > +ne_fit_preload(int nid)
-> 
-I can fix that.
-
-> > +{
-> > +	preempt_disable();
-> > +
-> > +	if (!__this_cpu_read(ne_fit_preload_node)) {
-> > +		struct vmap_area *node;
-> > +
-> > +		preempt_enable();
-> > +		node = kmem_cache_alloc_node(vmap_area_cachep, GFP_KERNEL, nid);
-> > +		if (node == NULL)
-> > +			return 0;
-> > +
-> > +		preempt_disable();
-> > +
-> > +		if (__this_cpu_cmpxchg(ne_fit_preload_node, NULL, node))
-> > +			kmem_cache_free(vmap_area_cachep, node);
-> > +	}
-> > +
-> > +	return 1;
-> > +}
-> > +
-> > +static void
-> 
-> Here too.
-> 
-> > +ne_fit_preload_end(int preloaded)
-> > +{
-> > +	if (preloaded)
-> > +		preempt_enable();
-> > +}
-I can fix that.
-
-> 
-> I'd open code it. It's used only once, but hiding preempt_disable()
-> behind a helper makes it harder to understand and easier to mess.
-> 
-> Then ne_fit_preload() might require disabled preemption (which it can
-> temporarily re-enable), so that preempt_enable()/disable() logic
-> will be in one place.
-> 
-I see your point. One of the aim was to make less clogged the
-alloc_vmap_area() function. But we can refactor it like you say:
-
-<snip>
- static void
-@@ -1091,7 +1089,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
-                                unsigned long vstart, unsigned long vend,
-                                int node, gfp_t gfp_mask)
- {
--       struct vmap_area *va;
-+       struct vmap_area *va, *pva;
-        unsigned long addr;
-        int purged = 0;
-        int preloaded;
-@@ -1122,16 +1120,26 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
-         * Just proceed as it is. "overflow" path will refill
-         * the cache we allocate from.
-         */
--       ne_fit_preload(&preloaded);
-+       preempt_disable();
-+       if (!__this_cpu_read(ne_fit_preload_node)) {
-+               preempt_enable();
-+               pva = kmem_cache_alloc_node(vmap_area_cachep, GFP_KERNEL, node);
-+               preempt_disable();
-+
-+               if (__this_cpu_cmpxchg(ne_fit_preload_node, NULL, pva)) {
-+                       if (pva)
-+                               kmem_cache_free(vmap_area_cachep, pva);
-+               }
-+       }
-+
-        spin_lock(&vmap_area_lock);
-+       preempt_enable();
- 
-        /*
-         * If an allocation fails, the "vend" address is
-         * returned. Therefore trigger the overflow path.
-         */
-        addr = __alloc_vmap_area(size, align, vstart, vend);
--       ne_fit_preload_end(preloaded);
--
-        if (unlikely(addr == vend))
-                goto overflow;
-<snip>
-
-Do you mean something like that? If so, i can go with that, unless there are no
-any objections from others.
-
-Thank you for your comments, Roman!
-
---
-Vlad Rezki
+This was meant to use static_cpu_has()=2E Why did that get dropped?
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
