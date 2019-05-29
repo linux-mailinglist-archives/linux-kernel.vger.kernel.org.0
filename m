@@ -2,94 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A1262D899
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:07:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 381B92D877
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbfE2JHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 05:07:41 -0400
-Received: from mail.eatforyou.eu ([80.211.90.82]:46276 "EHLO mail.eatforyou.eu"
+        id S1726192AbfE2JHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 05:07:10 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:47806 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726253AbfE2JHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 05:07:39 -0400
-Received: by mail.eatforyou.eu (Postfix, from userid 1001)
-        id E3CDD87620; Wed, 29 May 2019 11:07:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=eatforyou.eu; s=mail;
-        t=1559120854; bh=vyeMfvM9p5OpBZcpaixj7OR3/HmtYFl6oOgS3h1qK0U=;
-        h=Date:From:To:Subject:From;
-        b=WjhpjINApSeNGd/OWo8BPgfr+rfMmD+BBSd4+8J9oC9lDcC2qTXSn4PhnBfRduElk
-         N7dPq3X9TX/5rKugl7+Dh/qgdbwNyApzDhRcP/1TgdqvuhWo/VvpMoTyWoQBck4dK/
-         c5RjZMNaFfYx6ex08S+CU5Kw5/NPGxdRBsWtdSaQ=
-Received: by mail.eatforyou.eu for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 09:07:16 GMT
-Message-ID: <20190529105212-0.1.c.mvd.0.0jfof6v2e5@eatforyou.eu>
-Date:   Wed, 29 May 2019 09:07:16 GMT
-From:   "Radoslav Dobrev" <radoslav.dobrev@eatforyou.eu>
-To:     <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?Q?=D0=92=D0=B5=D0=BB=D0=B8=D0=BA=D0=B4=D0=B5=D0=BD=D1=81=D0=BA=D0=B8_=D0=B1=D0=BE=D0=BD=D1=83=D1=81=D0=B8?=
-X-Mailer: mail.eatforyou.eu
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1725861AbfE2JHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 05:07:10 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A6D841A0006;
+        Wed, 29 May 2019 11:07:07 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F33EE1A03C1;
+        Wed, 29 May 2019 11:07:01 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B97EE402E6;
+        Wed, 29 May 2019 17:06:54 +0800 (SGT)
+From:   yibin.gong@nxp.com
+To:     robh@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        festevam@gmail.com, mark.rutland@arm.com, vkoul@kernel.org,
+        dan.j.williams@intel.com
+Cc:     linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, kernel@pengutronix.de
+Subject: [PATCH v3 0/8] add edma2 for i.mx7ulp
+Date:   Wed, 29 May 2019 17:08:40 +0800
+Message-Id: <20190529090848.34350-1-yibin.gong@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=97=D0=B4=D1=80=D0=B0=D0=B2=D0=B5=D0=B9=D1=82=D0=B5,
+From: Robin Gong <yibin.gong@nxp.com>
 
-=D1=81=D1=8A=D0=B2=D1=80=D0=B5=D0=BC=D0=B5=D0=BD=D0=BD=D0=BE=D1=82=D0=BE =
-=D0=B4=D0=BE=D0=BF=D0=BB=D0=B0=D1=89=D0=B0=D0=BD=D0=B5 =D0=BD=D0=B0 =D1=85=
-=D1=80=D0=B0=D0=BD=D0=B0 =D0=BF=D0=BE=D0=B4 =D1=84=D0=BE=D1=80=D0=BC=D0=B0=
-=D1=82=D0=B0 =D0=BD=D0=B0 =D0=B2=D0=B0=D1=83=D1=87=D0=B5=D1=80=D0=B8 =D0=B7=
-=D0=B0 =D1=85=D1=80=D0=B0=D0=BD=D0=B0, =D0=BA=D0=BE=D0=B8=D1=82=D0=BE =D0=
-=BC=D0=BE=D0=B3=D0=B0=D1=82 =D0=B4=D0=B0 =D0=B1=D1=8A=D0=B4=D0=B0=D1=82 =D0=
-=B8=D0=B7=D0=BF=D0=BE=D0=BB=D0=B7=D0=B2=D0=B0=D0=BD=D0=B8 =D0=B2 =D0=BD=D0=
-=B0=D0=B9-=D0=B3=D0=BE=D0=BB=D1=8F=D0=BC=D0=B0=D1=82=D0=B0 =D0=BC=D1=80=D0=
-=B5=D0=B6=D0=B0 =D0=BE=D1=82 =D0=B7=D0=B0=D0=B2=D0=B5=D0=B4=D0=B5=D0=BD=D0=
-=B8=D1=8F =D0=B7=D0=B0 =D1=85=D1=80=D0=B0=D0=BD=D0=B5=D0=BD=D0=B5 =D0=B2 =
-=D1=81=D1=82=D1=80=D0=B0=D0=BD=D0=B0=D1=82=D0=B0, =D0=B5 =D0=B8=D0=BD=D1=81=
-=D1=82=D1=80=D1=83=D0=BC=D0=B5=D0=BD=D1=82, =D0=BA=D0=BE=D0=B9=D1=82=D0=BE=
- =D0=B5=D1=84=D0=B5=D0=BA=D1=82=D0=B8=D0=B2=D0=BD=D0=BE =D0=BF=D0=BE=D0=B2=
-=D0=B8=D1=88=D0=B0=D0=B2=D0=B0 =D0=B5=D1=84=D0=B5=D0=BA=D1=82=D0=B8=D0=B2=
-=D0=BD=D0=BE=D1=81=D1=82=D1=82=D0=B0 =D0=BD=D0=B0 =D0=BF=D0=B5=D1=80=D1=81=
-=D0=BE=D0=BD=D0=B0=D0=BB=D0=B0.
+  This patch set add new version of edma for i.mx7ulp, the main changes
+are as belows:
+  1. only one dmamux.
+  2. another clock dma_clk except dmamux clk.
+  3. 16 independent interrupts instead of only one interrupt for
+     all channels.
+  For the first change, need modify fsl-edma-common.c and mcf-edma,
+so create the first two patches to prepare without any function impact.
+  For the third change, need request single irq for every channel with
+the legacy handler. But actually 2 dma channels share one interrupt(16
+channel interrupts, but 32 channels.),ch0/ch16,ch1/ch17... For now, just
+simply request irq without IRQF_SHARED flag, since 16 channels are enough
+on i.mx7ulp whose M4 domain own some peripherals.
 
-=D0=98=D0=B7=D0=B1=D0=BE=D1=80=D1=8A=D1=82 =D0=BD=D0=B0 =D0=BD=D0=B0=D1=88=
-=D0=B8=D1=82=D0=B5 =D0=B2=D0=B0=D1=83=D1=87=D0=B5=D1=80=D0=B8 =D0=B7=D0=B0=
- =D1=85=D1=80=D0=B0=D0=BD=D0=B0 =D0=BA=D0=B0=D1=82=D0=BE =D1=84=D0=BE=D1=80=
-=D0=BC=D0=B0 =D0=BD=D0=B0 =D1=81=D0=BE=D1=86=D0=B8=D0=B0=D0=BB=D0=BD=D0=B0=
- =D0=BF=D1=80=D0=B8=D0=B4=D0=BE=D0=B1=D0=B8=D0=B2=D0=BA=D0=B0 =D1=81=D0=B0=
- =D0=B7=D0=B0 =D1=80=D0=B0=D0=B1=D0=BE=D1=82=D0=BE=D0=B4=D0=B0=D1=82=D0=B5=
-=D0=BB=D1=8F =D0=BD=D0=B5 =D1=81=D0=B0=D0=BC=D0=BE =D0=BF=D1=80=D0=B8=D0=B4=
-=D0=BE=D0=B1=D0=B8=D0=B2=D0=B0=D0=BD=D0=B5 =D0=BD=D0=B0 =D0=BF=D1=80=D0=BE=
-=D0=B4=D1=83=D0=BA=D1=82=D0=B8=D0=B2=D0=B5=D0=BD =D0=B8 =D0=BC=D0=BE=D1=82=
-=D0=B8=D0=B2=D0=B8=D1=80=D0=B0=D0=BD =D0=B5=D0=BA=D0=B8=D0=BF, =D0=BD=D0=BE=
- =D0=B8 =D0=BD=D0=BE=D1=81=D1=8F=D1=82 =D1=84=D0=B8=D0=BD=D0=B0=D0=BD=D1=81=
-=D0=BE=D0=B2=D0=B8 =D0=BE=D0=B1=D0=BB=D0=B0=D0=B3=D0=B8 - =D1=81=D1=82=D0=
-=BE=D0=B9=D0=BD=D0=BE=D1=81=D1=82=D1=82=D0=B0 =D0=BD=D0=B0 =D0=B8=D0=B7=D1=
-=80=D0=B0=D0=B7=D1=85=D0=BE=D0=B4=D0=B2=D0=B0=D0=BD=D0=B8=D1=82=D0=B5 =D1=
-=81=D1=80=D0=B5=D0=B4=D1=81=D1=82=D0=B2=D0=B0 =D0=BD=D0=B5 =D1=81=D0=B5 =D0=
-=BE=D0=B1=D0=BB=D0=B0=D0=B3=D0=B0=D1=82 =D1=81 =D0=B4=D0=B0=D0=BD=D1=8A=D0=
-=BA.
+change from v1:
+  1. check .data of 'of_device_id' in probe instead of compatible name. 
 
-=D0=A0=D0=B0=D0=B4=D0=B2=D0=B0=D0=BC=D0=B5 =D1=81=D0=B5 =D0=B4=D0=B0 =D0=92=
-=D0=B8 =D0=BF=D1=80=D0=B5=D0=B4=D1=81=D1=82=D0=B0=D0=B2=D0=B8=D0=BC =D0=BE=
-=D1=89=D0=B5 =D0=BF=D0=BE=D0=B2=D0=B5=D1=87=D0=B5 =D0=BF=D1=80=D0=B5=D0=B4=
-=D0=B8=D0=BC=D1=81=D1=82=D0=B2=D0=B0, =D0=BA=D0=BE=D0=B8=D1=82=D0=BE =D0=B1=
-=D0=B8=D1=85=D1=82=D0=B5 =D0=BF=D0=BE=D0=BB=D1=83=D1=87=D0=B8=D0=BB=D0=B8=
- =D1=81 =D0=BF=D0=BE=D0=BB=D0=B7=D0=B2=D0=B0=D0=BD=D0=B5=D1=82=D0=BE =D0=BD=
-=D0=B0 =D0=BD=D0=B0=D1=88=D0=B8=D1=82=D0=B5 =D0=B2=D0=B0=D1=83=D1=87=D0=B5=
-=D1=80=D0=B8, =D0=BA=D0=B0=D1=82=D0=BE =D0=BD=D0=B0=D0=BF=D1=80=D0=B8=D0=BC=
-=D0=B5=D1=80 =D0=BF=D0=BE=D0=BB=D0=B7=D0=B8=D1=82=D0=B5 =D0=B7=D0=B0 =D1=81=
-=D0=BB=D1=83=D0=B6=D0=B8=D1=82=D0=B5=D0=BB=D0=B8=D1=82=D0=B5 =D0=92=D0=B8=
- =D0=B8 =D1=89=D0=B5 =D0=92=D0=B8 =D1=80=D0=B0=D0=B7=D0=BA=D0=B0=D0=B6=D0=
-=B0 =D0=B7=D0=B0 =D0=B2=D1=8A=D0=B7=D0=BC=D0=BE=D0=B6=D0=BD=D0=BE=D1=81=D1=
-=82=D0=B8=D1=82=D0=B5 =D0=BF=D1=80=D0=B8 =D1=82=D1=8F=D1=85=D0=BD=D0=BE=D1=
-=82=D0=BE =D0=B8=D0=B7=D0=BF=D0=BE=D0=BB=D0=B7=D0=B2=D0=B0=D0=BD=D0=B5 - =
-=D0=BC=D0=BE=D0=BB=D1=8F, =D0=BE=D0=B1=D0=B0=D0=B4=D0=B5=D1=82=D0=B5 =D1=81=
-=D0=B5.
+change from v2:
+  1. move the difference between edma and edma2 into driver data so that
+     no need version checking in fsl-edma.c.
 
+Robin Gong (8):
+  dmaengine: fsl-edma: add dmamux_nr for next version
+  dmaengine: mcf-edma: update to 'dmamux_nr'
+  dmaengine: fsl-edma-common: move dmamux register to another single
+    function
+  dmaengine: fsl-edma-common: version check for v2 instead
+  dmaengine: fsl-edma: add drvdata for vf610
+  dt-bindings: dma: fsl-edma: add new i.mx7ulp-edma
+  dmaengine: fsl-edma: add i.mx7ulp edma2 version support
+  ARM: dts: imx7ulp: add edma device node
 
-=D0=A0=D0=B0=D0=B4=D0=BE=D1=81=D0=BB=D0=B0=D0=B2 =D0=94=D0=BE=D0=B1=D1=80=
-=D0=B5=D0=B2
-Head of HR Benefit Team
-www.eatforyou.eu
+ Documentation/devicetree/bindings/dma/fsl-edma.txt |  44 +++++++-
+ arch/arm/boot/dts/imx7ulp.dtsi                     |  28 ++++++
+ drivers/dma/fsl-edma-common.c                      |  74 +++++++++-----
+ drivers/dma/fsl-edma-common.h                      |  13 +++
+ drivers/dma/fsl-edma.c                             | 112 ++++++++++++++++++---
+ drivers/dma/mcf-edma.c                             |   1 +
+ 6 files changed, 230 insertions(+), 42 deletions(-)
+
+-- 
+2.7.4
+
