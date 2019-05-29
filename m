@@ -2,59 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 229422DA3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:17:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A4592DA35
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:16:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfE2KRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 06:17:12 -0400
-Received: from cmccmta1.chinamobile.com ([221.176.66.79]:2482 "EHLO
-        cmccmta1.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfE2KRM (ORCPT
+        id S1726238AbfE2KQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 06:16:44 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33959 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbfE2KQn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 06:17:12 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.17]) by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee15cee5c1c5ec-e1cb0; Wed, 29 May 2019 18:17:01 +0800 (CST)
-X-RM-TRANSID: 2ee15cee5c1c5ec-e1cb0
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost.localdomain (unknown[223.105.0.243])
-        by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee95cee5c1c2ed-2ea11;
-        Wed, 29 May 2019 18:17:01 +0800 (CST)
-X-RM-TRANSID: 2ee95cee5c1c2ed-2ea11
-From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
-To:     ysato@users.sourceforge.jp, dalias@libc.org
-Cc:     linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] sh/intc: Fix obsolete function
-Date:   Wed, 29 May 2019 18:16:11 +0800
-Message-Id: <1559124971-13074-1-git-send-email-dingxiang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 29 May 2019 06:16:43 -0400
+Received: by mail-ot1-f66.google.com with SMTP id l17so1481281otq.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 03:16:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Abxu/H1sImqXuhwWhYSOk5xvOYnoBkkpjqInhihBcCI=;
+        b=uPCsWh9fRkWJuwlKpXHz/RZG8nW7YVKwC5/i0AHmBQAElVNCKYPnYDRGPWr2Sdiy7J
+         FGbrAZmtywaEWHYlECjBy38lyCo+kUWgsOoyLdN9JcCHLXuHsVfd0CNld++/Ri8YnZAJ
+         /wEL+fD8DmpH+o4Nkygolmx0hfSISheT3J6qbDzFobiY0PK2bQiYhh7ywr38sKK0BfCi
+         bKrsgKW4qELWcwep0HGbl3J/E2D/Bx3IVrWqSQnvtjtFNFIflWwXuZAN5zDPK0liW9L8
+         JPaEVv4Vgk0MKUmIcicVi2gUce7F86R9k6BO/LqHPVAm0TaPXLX2Ht8Eb3X9GKl6IB8C
+         Gp/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Abxu/H1sImqXuhwWhYSOk5xvOYnoBkkpjqInhihBcCI=;
+        b=McniaomAJ3Ykw8rd1oRN392cJu6+2Hi2NPh8PEIfZF41cFt7OUX71aZKlOK42q+6cf
+         ZFF2n/zXHIIW7OFqkJjCfi4dbtsqWyuF5DRPE+URHGBZ0HHQQOYXUxbdSVZn+H6CwOxN
+         s9eJ+vCwce+nBgLq0WivpYtcS9g0gMcRvRmRJ9MJeC480nLl6NXaJoSnOT925zyroIuW
+         ybhus7w3MaDAxVWNcNqjPYouN1sTcrXRLaodrvGRmAVgH/JYfEiMko7HOtaVsYIaSlEC
+         oxEZGXxcYuRD+UzbEPdjy/ArZYeN0OzQ1neRegm8eV2row8l66rbgvOH9pTPKkc42v/G
+         sgeg==
+X-Gm-Message-State: APjAAAVFGb+JT6WrjQEVGtm3fD+AB36zbajEkqs5ZHgbDuo7bTvAhh3P
+        HwkHa6mSZj2izHBrS+d40Zmwi+1pERb6hsXxOIr0Jg==
+X-Google-Smtp-Source: APXvYqyIW+HHgmO4UbA1lWAYQ9U1IvOgE1sk2LyiOyRvq+lk+NzeDhjzN0ojhEHe/Jj7gOCSDDh+51NrikrTdytRzS0=
+X-Received: by 2002:a9d:362:: with SMTP id 89mr37406316otv.17.1559125002323;
+ Wed, 29 May 2019 03:16:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190528163258.260144-1-elver@google.com> <20190528163258.260144-3-elver@google.com>
+ <20190528165036.GC28492@lakrids.cambridge.arm.com> <CACT4Y+bV0CczjRWgHQq3kvioLaaKgN+hnYEKCe5wkbdngrm+8g@mail.gmail.com>
+ <CANpmjNNtjS3fUoQ_9FQqANYS2wuJZeFRNLZUq-ku=v62GEGTig@mail.gmail.com> <20190529100116.GM2623@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190529100116.GM2623@hirez.programming.kicks-ass.net>
+From:   Marco Elver <elver@google.com>
+Date:   Wed, 29 May 2019 12:16:31 +0200
+Message-ID: <CANpmjNMvwAny54udYCHfBw1+aphrQmiiTJxqDq7q=h+6fvpO4w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] asm-generic, x86: Add bitops instrumentation for KASAN
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-simple_strtoul is obsolete, use kstrtoul instead.
+On Wed, 29 May 2019 at 12:01, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Wed, May 29, 2019 at 11:20:17AM +0200, Marco Elver wrote:
+> > For the default, we decided to err on the conservative side for now,
+> > since it seems that e.g. x86 operates only on the byte the bit is on.
+>
+> This is not correct, see for instance set_bit():
+>
+> static __always_inline void
+> set_bit(long nr, volatile unsigned long *addr)
+> {
+>         if (IS_IMMEDIATE(nr)) {
+>                 asm volatile(LOCK_PREFIX "orb %1,%0"
+>                         : CONST_MASK_ADDR(nr, addr)
+>                         : "iq" ((u8)CONST_MASK(nr))
+>                         : "memory");
+>         } else {
+>                 asm volatile(LOCK_PREFIX __ASM_SIZE(bts) " %1,%0"
+>                         : : RLONG_ADDR(addr), "Ir" (nr) : "memory");
+>         }
+> }
+>
+> That results in:
+>
+>         LOCK BTSQ nr, (addr)
+>
+> when @nr is not an immediate.
 
-Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
----
- drivers/sh/intc/userimask.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/sh/intc/userimask.c b/drivers/sh/intc/userimask.c
-index 87d69e7..d1d8e9b 100644
---- a/drivers/sh/intc/userimask.c
-+++ b/drivers/sh/intc/userimask.c
-@@ -33,7 +33,8 @@
- {
- 	unsigned long level;
- 
--	level = simple_strtoul(buf, NULL, 10);
-+	if (kstrtoul(buf, 10, &level))
-+		return -EINVAL;
- 
- 	/*
- 	 * Minimal acceptable IRQ levels are in the 2 - 16 range, but
--- 
-1.9.1
-
-
-
+Thanks for the clarification. Given that arm64 already instruments
+bitops access to whole words, and x86 may also do so for some bitops,
+it seems fine to instrument word-sized accesses by default. Is that
+reasonable?
