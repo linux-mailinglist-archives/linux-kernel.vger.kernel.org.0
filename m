@@ -2,128 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BF6F2E470
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F363E2E47E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:31:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727540AbfE2S0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 14:26:14 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:38460 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725917AbfE2S0O (ORCPT
+        id S1727542AbfE2SbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 14:31:01 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:44705 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbfE2SbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 14:26:14 -0400
-Received: by mail-it1-f194.google.com with SMTP id i63so898763ita.3;
-        Wed, 29 May 2019 11:26:14 -0700 (PDT)
+        Wed, 29 May 2019 14:31:00 -0400
+Received: by mail-ua1-f67.google.com with SMTP id i48so1398031uae.11
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 11:31:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=TPw4eflGaKI/OKKxvlJQ22C2ftNP7pXq0GeN7f/mbOQ=;
-        b=AH62/ckYQ4jBdFzIhVm6Y9tX+W+XJ8LN+DSBwBYxk7Bm9tdpsUtfMOXWZrdZa23+N1
-         u52GCBTu11nt5boSjHA+BOio3ozjlwTYumDqAnoM/cr8AxTxvzxvvaCvKnYlSH8h8uvt
-         8Wmn/eEVEosthorZkMwvgqH5oelyyuwoLIc/9mKcqnd5MNYls7F3IPlPdwh3pD0gysxe
-         Kfu1ovDYlRu6LKMs6HeAy3oIlVcwzFFzgd1N7lHIWyNfomtNweNbdWNwSgiR1z9qSHjp
-         Y+8edTj7EW2rS1Bksua0OTS9fhE4BuUGvgAcC7WLnFps5AMZCypbpRQ29+6AvMSnBbPl
-         +Trg==
+        bh=Icd3S6fysa6PQB1IvdBLYuy5pEg+pRKkO0zAPB11e+s=;
+        b=h1/b3YNFUzwwTW33Zipxw/L27jtJJFS/uoN5p2DdHA3M3G0nsuslv5HtLyXAslZXBF
+         YXAYkYJ+OdVsCg3Cs+bwX5YoW2csbYBr+38xCAWFrcpCvxMr33VPJrhXTHQcgYCjSgz1
+         pXEoQmXGAOMsFQDNtFtHcRBZEmaeM3orpTlPw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TPw4eflGaKI/OKKxvlJQ22C2ftNP7pXq0GeN7f/mbOQ=;
-        b=lHhSgSNkcQ49bkv0GZujWBxlBiWn4QRkrCnSkAAdl04PjgifrmcADqlYKc2K9hHGim
-         Ydabg82Pfgi+NV8zih0UU4700i45kC3NsyQqWDIceSLPKiEd3HhAcb/t638WO/EH5LJp
-         Ii8eiybUCu4Pp0ejJkJjqCvMQ4WYlSSp4QwPLu7GsDC0IMBHpxYkefpNhScUti4G3GRm
-         Kur6sEuU6GRrkYVYp4VmsyHkCrjlkOURndaDFv15boog71C+mJ+EBGqu/NwcArKlkviW
-         314eJVnuELAbfrClBsYR5H4xJPcqZvBbnOC3ucVnVU7p1jPmfALd0lq9JpUajeaZEyT7
-         yQBw==
-X-Gm-Message-State: APjAAAXZaCxNBfQEOUbTo5dQ0nN4JbRDbFvhWWdZAmZPQfAHFtg+xHw2
-        vE9Lk/mUkSwfuoSiFPQZmfIz+ti4+4eNTpwefMc=
-X-Google-Smtp-Source: APXvYqx8sMU5apXzIWkFBSnAKL1oaiM1V8pYGkVXuq937bPfxzmSeuyTclm131eEYdgapPgXhjvxc6wWp+f8woEXtKc=
-X-Received: by 2002:a02:bb83:: with SMTP id g3mr11149521jan.139.1559154373608;
- Wed, 29 May 2019 11:26:13 -0700 (PDT)
+        bh=Icd3S6fysa6PQB1IvdBLYuy5pEg+pRKkO0zAPB11e+s=;
+        b=DjyrhD/LlNjEWOJqM6Oaa7Z1A1XBbv+OWKdxhX+xF2R1pgOJAYXX2MGsibuh+BI/2+
+         ub5b8cJope69dAY2RSij2+hinXpdgXm1JYJSnrodbxLewEUp3VDcOnGzh88ZF3fPFxOw
+         io7WipQ+7bJ8Rc0+XV6Rl7lVjtZ6HD5DV1qZEOpxcntpiB9RB42gJbg2B78Vv4ioMPGf
+         8TLZT0Ch++gZuIG+oMBgzuA5TDOaJJihaTyzk8RXl4wzYGts01a3AM4A9jiLBMcxoe4I
+         gnQtWkHQDE/KG3bmEo58Zgxz5TS4enrjhJpR+79lCMB0KDAUTRLUyI+Nhanc83iNLcKQ
+         Z1Mg==
+X-Gm-Message-State: APjAAAVCyARR8aCHjvFSUbcqx+9h9CbXaTJMb+ONQ4pGob/gDcsTHhle
+        PCUMXvmKmHuLEghLUC6Hmr0AWHAfx7s=
+X-Google-Smtp-Source: APXvYqzMFRTFeoNy9o/ALfb+tIOu1XQVvB3QdVx6XJLWGce6EIswMeNCLptBeAUvFayUpCOuuVslFQ==
+X-Received: by 2002:ab0:620e:: with SMTP id m14mr54418035uao.68.1559154654312;
+        Wed, 29 May 2019 11:30:54 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id l10sm13350uak.9.2019.05.29.11.30.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 11:30:52 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id q64so2620235vsd.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 11:30:52 -0700 (PDT)
+X-Received: by 2002:a67:ebd6:: with SMTP id y22mr63801054vso.87.1559154652088;
+ Wed, 29 May 2019 11:30:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190522032144.10995-1-deepa.kernel@gmail.com> <20190529161157.GA27659@redhat.com>
-In-Reply-To: <20190529161157.GA27659@redhat.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Wed, 29 May 2019 11:26:02 -0700
-Message-ID: <CABeXuvpUQ8rDZYOi8bzq_yAy8Nt4RLwSEGwpk_Pbwd90Q0u7sg@mail.gmail.com>
-Subject: Re: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error codes
- according to restore_user_sigmask())
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, dbueso@suse.de, axboe@kernel.dk,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org
+References: <20190218063730.26870-1-ms@dev.tdt.de>
+In-Reply-To: <20190218063730.26870-1-ms@dev.tdt.de>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 29 May 2019 11:30:39 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Viag00jL-QRLsnyDoXWT5KFyZ3TnMdTPSJ-dbuNNiFVQ@mail.gmail.com>
+Message-ID: <CAD=FV=Viag00jL-QRLsnyDoXWT5KFyZ3TnMdTPSJ-dbuNNiFVQ@mail.gmail.com>
+Subject: Re: [PATCH] usb: dwc2: Fix DMA cache alignment issues
+To:     Martin Schiller <ms@dev.tdt.de>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc:     Minas Harutyunyan <hminas@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QW50dGkgU2VwcMOkbMOk?= <a.seppala@gmail.com>,
+        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 9:12 AM Oleg Nesterov <oleg@redhat.com> wrote:
->
-> Al, Linus, Eric, please help.
->
-> The previous discussion was very confusing, we simply can not understand each
-> other.
->
-> To me everything looks very simple and clear, but perhaps I missed something
-> obvious? Please correct me.
->
-> I think that the following code is correct
->
->         int interrupted = 0;
->
->         void sigint_handler(int sig)
->         {
->                 interrupted = 1;
->         }
->
->         int main(void)
->         {
->                 sigset_t sigint, empty;
->
->                 sigemptyset(&sigint);
->                 sigaddset(&sigint, SIGINT);
->                 sigprocmask(SIG_BLOCK, &sigint, NULL);
->
->                 signal(SIGINT, sigint_handler);
->
->                 sigemptyset(&empty);    // so pselect() unblocks SIGINT
->
->                 ret = pselect(..., &empty);
->
->                 if (ret >= 0)           // sucess or timeout
->                         assert(!interrupted);
->
->                 if (interrupted)
->                         assert(ret == -EINTR);
->         }
->
-> IOW, if pselect(sigmask) temporary unblocks SIGINT according to sigmask, this
-> signal should not be delivered if a ready fd was found or timeout. The signal
-> handle should only run if ret == -EINTR.
+Hi,
 
-I do not think we discussed this part earlier. But, if this is true
-then this is what is wrong as part of 854a6ed56839a. I missed that
-before.
+On Sun, Feb 17, 2019 at 10:37 PM Martin Schiller <ms@dev.tdt.de> wrote:
+>
+> Insert a padding between data and the stored_xfer_buffer pointer to
+> ensure they are not on the same cache line.
+>
+> Otherwise, the stored_xfer_buffer gets corrupted for IN URBs on
+> non-cache-coherent systems. (In my case: Lantiq xRX200 MIPS)
+>
+> Fixes: 3bc04e28a030 ("usb: dwc2: host: Get aligned DMA in a more supported way")
+> Fixes: 56406e017a88 ("usb: dwc2: Fix DMA alignment to start at allocated boundary")
+> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+> ---
+>  drivers/usb/dwc2/hcd.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
 
-> (pselect() can be interrupted by any other signal which has a handler. In this
->  case the handler can be called even if ret >= 0. This is correct, I fail to
->  understand why some people think this is wrong, and in any case we simply can't
->  avoid this).
+This patch has been in the back of my mind for a while bug I never got
+around to it.  Today I was debugging memory corruption problems when
+using a webcam on dwc2 on rk3288-veyron-jerry.  This patch appears to
+solve my problems nicely.  Thanks!
 
-This patch is wrong because I did not know that it was ok to deliver a
-signal and not set the errno before. I also admitted to this. And
-proposed another way to revert the patch.:
-https://lore.kernel.org/lkml/CABeXuvouBzZuNarmNcd9JgZgvonL1N_p21gat=O_x0-1hMx=6A@mail.gmail.com/
-
--Deepa
+Tested-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Cc: <stable@vger.kernel.org>
