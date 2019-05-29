@@ -2,122 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A972E034
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 896502E043
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:55:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfE2Oxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 10:53:32 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:54885 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbfE2Ox3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 10:53:29 -0400
-Received: from p200300d06f28ff00b92b307fdbdaf2b9.dip0.t-ipconnect.de ([2003:d0:6f28:ff00:b92b:307f:dbda:f2b9] helo=somnus.fritz.box)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <anna-maria@linutronix.de>)
-        id 1hVzxG-00063R-Hd; Wed, 29 May 2019 16:53:26 +0200
-Date:   Wed, 29 May 2019 16:53:26 +0200 (CEST)
-From:   Anna-Maria Gleixner <anna-maria@linutronix.de>
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-cc:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Haris Okanovic <haris.okanovic@ni.com>
-Subject: Re: [patch 2/3] timers: do not raise softirq unconditionally
- (spinlockless version)
-In-Reply-To: <20190415201429.427759476@amt.cnet>
-Message-ID: <alpine.DEB.2.21.1905291653120.1395@somnus>
-References: <20190415201213.600254019@amt.cnet> <20190415201429.427759476@amt.cnet>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1726845AbfE2Ozc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:55:32 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17606 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726240AbfE2Ozc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 10:55:32 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CE637923F8ECAF1FEEB2;
+        Wed, 29 May 2019 22:55:27 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 29 May 2019
+ 22:55:20 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <nbd@nbd.name>, <lorenzo.bianconi83@gmail.com>,
+        <ryder.lee@mediatek.com>, <royluo@google.com>,
+        <kvalo@codeaurora.org>, <matthias.bgg@gmail.com>,
+        <sgruszka@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <davem@davemloft.net>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] mt76: Remove set but not used variables 'pid' and 'final_mpdu'
+Date:   Wed, 29 May 2019 22:53:56 +0800
+Message-ID: <20190529145356.13872-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 15 Apr 2019, Marcelo Tosatti wrote:
+Fixes gcc '-Wunused-but-set-variable' warnings:
 
-> Check base->pending_map locklessly and skip raising timer softirq 
-> if empty.
-> 
-> What allows the lockless (and potentially racy against mod_timer) 
-> check is that mod_timer will raise another timer softirq after
-> modifying base->pending_map.
+drivers/net/wireless/mediatek/mt76/mt7603/mac.c: In function mt7603_fill_txs:
+drivers/net/wireless/mediatek/mt76/mt7603/mac.c:969:5: warning: variable pid set but not used [-Wunused-but-set-variable]
+drivers/net/wireless/mediatek/mt76/mt7603/mac.c:961:7: warning: variable final_mpdu set but not used [-Wunused-but-set-variable]
+drivers/net/wireless/mediatek/mt76/mt7615/mac.c: In function mt7615_fill_txs:
+drivers/net/wireless/mediatek/mt76/mt7615/mac.c:555:5: warning: variable pid set but not used [-Wunused-but-set-variable]
+drivers/net/wireless/mediatek/mt76/mt7615/mac.c:552:19: warning: variable final_mpdu set but not used [-Wunused-but-set-variable]
 
-The raise of the timer softirq after adding the timer is done
-unconditionally - so there are timer softirqs raised which are not required
-at all, as mentioned before.
+They are never used, so can be removed.
 
-This check is for !CONFIG_PREEMPT_RT_FULL only implemented. The commit
-message totally igonres that you are implementing something
-CONFIG_PREEMPT_RT_FULL dependent as well.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/mediatek/mt76/mt7603/mac.c | 4 ----
+ drivers/net/wireless/mediatek/mt76/mt7615/mac.c | 5 +----
+ 2 files changed, 1 insertion(+), 8 deletions(-)
 
-> Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
-> 
-> ---
->  kernel/time/timer.c |   18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> Index: linux-rt-devel/kernel/time/timer.c
-> ===================================================================
-> --- linux-rt-devel.orig/kernel/time/timer.c	2019-04-15 14:21:02.788704354 -0300
-> +++ linux-rt-devel/kernel/time/timer.c	2019-04-15 14:22:56.755047354 -0300
-> @@ -1776,6 +1776,24 @@
->  		if (time_before(jiffies, base->clk))
->  			return;
->  	}
-> +
-> +#ifdef CONFIG_PREEMPT_RT_FULL
-> +/* On RT, irq work runs from softirq */
-> +	if (irq_work_needs_cpu())
-> +		goto raise;
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7603/mac.c b/drivers/net/wireless/mediatek/mt76/mt7603/mac.c
+index 6d506e34c3ee..5182a36276fc 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7603/mac.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7603/mac.c
+@@ -958,7 +958,6 @@ mt7603_fill_txs(struct mt7603_dev *dev, struct mt7603_sta *sta,
+ 	int final_idx = 0;
+ 	u32 final_rate;
+ 	u32 final_rate_flags;
+-	bool final_mpdu;
+ 	bool ack_timeout;
+ 	bool fixed_rate;
+ 	bool probe;
+@@ -966,7 +965,6 @@ mt7603_fill_txs(struct mt7603_dev *dev, struct mt7603_sta *sta,
+ 	bool cck = false;
+ 	int count;
+ 	u32 txs;
+-	u8 pid;
+ 	int idx;
+ 	int i;
+ 
+@@ -974,9 +972,7 @@ mt7603_fill_txs(struct mt7603_dev *dev, struct mt7603_sta *sta,
+ 	probe = !!(info->flags & IEEE80211_TX_CTL_RATE_CTRL_PROBE);
+ 
+ 	txs = le32_to_cpu(txs_data[4]);
+-	final_mpdu = txs & MT_TXS4_ACKED_MPDU;
+ 	ampdu = !fixed_rate && (txs & MT_TXS4_AMPDU);
+-	pid = FIELD_GET(MT_TXS4_PID, txs);
+ 	count = FIELD_GET(MT_TXS4_TX_COUNT, txs);
+ 
+ 	txs = le32_to_cpu(txs_data[0]);
+diff --git a/drivers/net/wireless/mediatek/mt76/mt7615/mac.c b/drivers/net/wireless/mediatek/mt76/mt7615/mac.c
+index b8f48d10f27a..a51bfb6990b3 100644
+--- a/drivers/net/wireless/mediatek/mt76/mt7615/mac.c
++++ b/drivers/net/wireless/mediatek/mt76/mt7615/mac.c
+@@ -549,23 +549,20 @@ static bool mt7615_fill_txs(struct mt7615_dev *dev, struct mt7615_sta *sta,
+ {
+ 	struct ieee80211_supported_band *sband;
+ 	int i, idx, count, final_idx = 0;
+-	bool fixed_rate, final_mpdu, ack_timeout;
++	bool fixed_rate, ack_timeout;
+ 	bool probe, ampdu, cck = false;
+ 	u32 final_rate, final_rate_flags, final_nss, txs;
+-	u8 pid;
+ 
+ 	fixed_rate = info->status.rates[0].count;
+ 	probe = !!(info->flags & IEEE80211_TX_CTL_RATE_CTRL_PROBE);
+ 
+ 	txs = le32_to_cpu(txs_data[1]);
+-	final_mpdu = txs & MT_TXS1_ACKED_MPDU;
+ 	ampdu = !fixed_rate && (txs & MT_TXS1_AMPDU);
+ 
+ 	txs = le32_to_cpu(txs_data[3]);
+ 	count = FIELD_GET(MT_TXS3_TX_COUNT, txs);
+ 
+ 	txs = le32_to_cpu(txs_data[0]);
+-	pid = FIELD_GET(MT_TXS0_PID, txs);
+ 	final_rate = FIELD_GET(MT_TXS0_TX_RATE, txs);
+ 	ack_timeout = txs & MT_TXS0_ACK_TIMEOUT;
+ 
+-- 
+2.17.1
 
-So with this patch and the change you made in the patch before, timers on
-RT are expired only when there is pending irq work or after modifying a
-timer on a non housekeeping cpu?
-
-With your patches I could create the following problematic situation on RT
-(if I understood everything properly): I add a timer which should expire in
-50 jiffies to the wheel of a non housekeeping cpu. So it ends up 50 buckets
-away form now in the first wheel. This timer is the only timer in the wheel
-and the next timer softirq raise is required in 50 jiffies. After adding
-the timer, the timer interrupt is raised, and no timer has to be expired,
-because there is no timer pending. If there is no irq work required during
-the next 51 jiffies and also no timer changed, the timer I added, will not
-expire in time. The timer_base will come out of idle but will not forward
-the base clk. This makes it even worse: When then adding a timer, the timer
-base is forwarded - but without checking for the next pending timer, so the
-first added timer will be delayed even more.
-
-So your implementation lacks forwarding the timer_base->clk when timer_base
-comes out of idle with respect to the next pending timer.
-
-
-> +#endif
-> +	base = this_cpu_ptr(&timer_bases[BASE_STD]);
-> +	if (!housekeeping_cpu(base->cpu, HK_FLAG_TIMER)) {
-> +		if (!bitmap_empty(base->pending_map, WHEEL_SIZE))
-> +			goto raise;
-> +		base++;
-> +		if (!bitmap_empty(base->pending_map, WHEEL_SIZE))
-> +			goto raise;
-> +
-> +		return;
-> +	}
-> +
-> +raise:
->  	raise_softirq(TIMER_SOFTIRQ);
->  }
->  
->
-
-Thanks,
-
-	Anna-Maria
 
