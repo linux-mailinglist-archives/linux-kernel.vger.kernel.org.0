@@ -2,132 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA0DE2D3A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 04:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11B942D39F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 04:14:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbfE2CPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 22:15:06 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35163 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfE2CPF (ORCPT
+        id S1726341AbfE2COc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 22:14:32 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34168 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbfE2COb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 22:15:05 -0400
-Received: by mail-ed1-f68.google.com with SMTP id p26so1131852edr.2;
-        Tue, 28 May 2019 19:15:04 -0700 (PDT)
+        Tue, 28 May 2019 22:14:31 -0400
+Received: by mail-pf1-f193.google.com with SMTP id n19so554884pfa.1;
+        Tue, 28 May 2019 19:14:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MVuq7lYaXanQ2+muRBv1fL9MjUsN0jmBARMWs3+IXa4=;
-        b=TI6pGipGG6Tmo7+0fwdqTp7wV3+aiOpsbht6be1dsWP2ku4I1dSCYO4gVu6KPzUuZS
-         NnX8I9sQKcYRBPlwfle7uM66O8mHfggCXWP7BGbCb3beoGCVCid6ik75HNmMbeMgjHvx
-         eDZwhDHipnxUE0I4rPjzPGXq1mqPyXndXUFxPWkR2kT3LLfC7nZ+KKyae6VYlFh6cKhT
-         j9rZFyCnO3myUsy15l36yvHsrhFRGq9XCTJfVpBKyVSLJJ4x955ScGyl4wGeAJdPEkCD
-         Tky+G1WtRi6GRjqJGi33sUaYvVSc0yMtncd6Rtxl2+KeBIHLIY3iWAJsvyyyqSwWxUrY
-         lutw==
+        h=from:to:cc:subject:date:message-id;
+        bh=eibd82PDYGzjDHcvf9kKMO0L4SQdQbd6quNdYGpibfM=;
+        b=k72j/tM5Giqi+1CvS28Pmto4rtL65GYTAyQZaiQiVZociIrgV+4rhYE61LAQS/5BF0
+         ji+2cmQ5YRlE5icSR75OU0T40TdrlkF75HLZhh7Q0KHABeQWpP2aHNEMgqVt+ag7Gka8
+         slw/FuY0VootE8uzvDnC4KlZgD+C1+CXjOVmzXIfKOQ8dY6IDeSsvVzJpodNup+Yb9PF
+         68ZkLM8obhQz4+Je0pCLTZKiG1MUvltPN9OhYaLl7BhjoAHuaY18Hijr+DhKa2e8ynaR
+         iZgzmK1vh0iezrfEVm9AAWJlBnnkP1CM23ybK5f7WHDfThOjfcIpjHB9ZodKkwE1fCVu
+         zcpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MVuq7lYaXanQ2+muRBv1fL9MjUsN0jmBARMWs3+IXa4=;
-        b=br4Y9QlqKW0SJKIAK8GX1l053V1ZlJ4H3Ds+QmjpCbudfWLfkfoyDscMbQHSmUFWXE
-         aFjyqL/ikpbm+TJIfYTR6M9vfRE/HI7iLwHc0P4QedYYcqGo52d2S5Gj1EzZ4qvkdoq3
-         B6YqwaAtSIj8Ca6fNYEGSCY2u0GEUiJZBFypPsWwlHzQSDpBCgalRWO3OMZXfiTu5xDm
-         nAYhfoOaCee6TJAevaFX6PuDpax4VGq4V9jUoEHI4mReUhOu7fn07SkexSs5HmICM3xh
-         FH2sbfkkuLyYyaBoBH0ZzgGfBLUUg4qsJBtDvT8xC7ukETW1UMiMQihv91AO/J08xzHY
-         JGoQ==
-X-Gm-Message-State: APjAAAVeiHvwhxczgfO1y6Awur3fcjdwebKs+rULlfKv8rtNOuHw45YD
-        fiXrBh4+rOD7ECQkoKPSnJuvyTN12J2vI0BLfLE=
-X-Google-Smtp-Source: APXvYqyOg5fgYNs1hVcgXxnSIALAf/v2b0IbtA6UkMpm8Me8LtYEdvXve0H0HiVXQItgpL6SOU+F0L3Z0HgnhF+z4oc=
-X-Received: by 2002:a05:6402:1484:: with SMTP id e4mr2931835edv.57.1559096103705;
- Tue, 28 May 2019 19:15:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190509020352.14282-1-masneyb@onstation.org> <CACRpkda-7+ggoeMD9=erPX09OWteX0bt+qP60_Yv6=4XLqNDZQ@mail.gmail.com>
- <20190529011705.GA12977@basecamp>
-In-Reply-To: <20190529011705.GA12977@basecamp>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Tue, 28 May 2019 19:14:50 -0700
-Message-ID: <CAF6AEGu4JNePimAmBG6GFT8DAaQ56OXYqu5BSN_JQB4KaBt29Q@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 0/6] ARM: qcom: initial Nexus 5 display support
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eibd82PDYGzjDHcvf9kKMO0L4SQdQbd6quNdYGpibfM=;
+        b=djN+MKLDTZkiRCKzX1S+Sx04uEcKra+FrGVn9OiNY8Y5hUW3Paj2QvKlz++0C2xdY0
+         Q+rJmV7Etu7SZpvWdl/89XVzz+bASd3eFHtl2w6toWOWZEk7Wvfj9hBbJlZKeBXt8L12
+         qO/m5E75eMkQ9O9nJKZDt4AewlavYHhTVSxIWD/ipKUTyq0dGsLr4a9F8KSbypWdOcJU
+         BtpnKu5n/tpxe65pjn1NvMNqjskBfNJZTppZeVu4B16GIuiBtwTwly3TAgKDL0Y5iEws
+         S0f3szAttC8/QB1sALs+rnSA5CETZJaBoytSp0JYrzljcxudKyIzcUnJEfmz+g5AiEPs
+         wSxg==
+X-Gm-Message-State: APjAAAUq5h/7ZQQPZMRJehbKvXMPmw7DcF7Iui6Cxx/xMYl45jK4xZAw
+        owustf9D3nX+mdLNmxB1XUc=
+X-Google-Smtp-Source: APXvYqyBsBONvrPCzpGFfP8/a/GfBRbtaVlnB6/6M9FXkCxG7un0Wp+FJI4Bj9fcqaSzr5Hl9EDQDw==
+X-Received: by 2002:a63:1b0e:: with SMTP id b14mr25084443pgb.365.1559096071272;
+        Tue, 28 May 2019 19:14:31 -0700 (PDT)
+Received: from xy-data.openstacklocal (ecs-159-138-22-150.compute.hwclouds-dns.com. [159.138.22.150])
+        by smtp.gmail.com with ESMTPSA id e8sm4738669pgj.2.2019.05.28.19.14.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 28 May 2019 19:14:30 -0700 (PDT)
+From:   Young Xiao <92siuyang@gmail.com>
+To:     ecree@solarflare.com, mhabets@solarflare.com, davem@davemloft.net,
+        fw@strlen.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Young Xiao <92siuyang@gmail.com>
+Subject: [PATCH] falcon: pass valid pointer from ef4_enqueue_unwind.
+Date:   Wed, 29 May 2019 10:15:39 +0800
+Message-Id: <1559096139-25698-1-git-send-email-92siuyang@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 6:17 PM Brian Masney <masneyb@onstation.org> wrote:
->
-> On Tue, May 28, 2019 at 03:46:14PM +0200, Linus Walleij wrote:
-> > On Thu, May 9, 2019 at 4:04 AM Brian Masney <masneyb@onstation.org> wrote:
-> >
-> > > Here is a patch series that adds initial display support for the LG
-> > > Nexus 5 (hammerhead) phone. It's not fully working so that's why some
-> > > of these patches are RFC until we can get it fully working.
-> > >
-> > > The phones boots into terminal mode, however there is a several second
-> > > (or more) delay when writing to tty1 compared to when the changes are
-> > > actually shown on the screen. The following errors are in dmesg:
-> >
-> > I tested to apply patches 2-6 and got the console up on the phone as well.
-> > I see the same timouts, and I also notice the update is slow in the
-> > display, as if the DSI panel was running in low power (LP) mode.
-> >
-> > Was booting this to do some other work, but happy to see the progress!
->
-> Thanks!
->
-> I've had three people email me off list regarding the display working on
-> 4.17 before the msm kms/drm driver was converted to the DRM atomic API so
-> this email is to get some more information out publicly.
->
-> I pushed up a branch to my github with 15 patches applied against 4.17
-> that has a working display:
->
-> https://github.com/masneyb/linux/commits/display-works-4.17
->
-> It's in low speed mode but its usable. The first 10 patches are in
-> mainline now and the last 5 are in essence this patch series with the
-> exception of 'drm/atomic+msm: add helper to implement legacy dirtyfb'.
-> There's a slightly different version of that patch in mainline now.
->
-> I'm planning to work on the msm8974 interconnect support once some of
-> the outstanding interconnect patches for the msm kms/drm driver arrive
-> in mainline. I'd really like to understand why the display works on
-> 4.17 with those patches though. I assume that it's related to the
-> vblank events not working properly? Let me preface this with I'm a
-> total DRM newbie, but it looked like the pre-DRM-atomic driver wasn't
-> looking for these events in the atomic commits before the migration?
-> See commit 70db18dca4e0 ("drm/msm: Remove msm_commit/worker, use atomic
-> helper commit"), specifically the drm_atomic_helper_wait_for_vblanks()
-> call that was added.
+The bytes_compl and pkts_compl pointers passed to ef4_dequeue_buffers
+cannot be NULL. Add a paranoid warning to check this condition and fix
+the one case where they were NULL.
 
-interconnect probably good to get going anyways (and I need to find
-some time to respin those mdp5/dpu patches) but I guess not related to
-what you see (ie. I'd expect interconnect issue would trigger
-underflow irq's)..
+Signed-off-by: Young Xiao <92siuyang@gmail.com>
+---
+ drivers/net/ethernet/sfc/falcon/tx.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-I'm not entirely sure why atomic would break things but cmd mode
-panels aren't especially well tested.  I can't find it now but there
-was a thread (or IRC discussion?) that intf2vblank() should be
-returning MDP5_IRQ_PING_PONG_<n>_DONE instead of
-MDP5_IRQ_PING_PONG_<n>_RD_PTR, which seems likely and possibly related
-to vblank timing issues..
+diff --git a/drivers/net/ethernet/sfc/falcon/tx.c b/drivers/net/ethernet/sfc/falcon/tx.c
+index c5059f4..ed89bc6 100644
+--- a/drivers/net/ethernet/sfc/falcon/tx.c
++++ b/drivers/net/ethernet/sfc/falcon/tx.c
+@@ -69,6 +69,7 @@ static void ef4_dequeue_buffer(struct ef4_tx_queue *tx_queue,
+ 	}
+ 
+ 	if (buffer->flags & EF4_TX_BUF_SKB) {
++		EF4_WARN_ON_PARANOID(!pkts_compl || !bytes_compl);
+ 		(*pkts_compl)++;
+ 		(*bytes_compl) += buffer->skb->len;
+ 		dev_consume_skb_any((struct sk_buff *)buffer->skb);
+@@ -271,12 +272,14 @@ static int ef4_tx_map_data(struct ef4_tx_queue *tx_queue, struct sk_buff *skb)
+ static void ef4_enqueue_unwind(struct ef4_tx_queue *tx_queue)
+ {
+ 	struct ef4_tx_buffer *buffer;
++	unsigned int bytes_compl = 0;
++	unsigned int pkts_compl = 0;
+ 
+ 	/* Work backwards until we hit the original insert pointer value */
+ 	while (tx_queue->insert_count != tx_queue->write_count) {
+ 		--tx_queue->insert_count;
+ 		buffer = __ef4_tx_queue_get_insert_buffer(tx_queue);
+-		ef4_dequeue_buffer(tx_queue, buffer, NULL, NULL);
++		ef4_dequeue_buffer(tx_queue, buffer, &pkts_compl, &bytes_compl);
+ 	}
+ }
+ 
+-- 
+2.7.4
 
-BR,
--R
-
-
-
->
-> Brian
