@@ -2,95 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77CFE2E2AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 18:58:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AEF62D853
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbfE2Q6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 12:58:23 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37930 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfE2Q6X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 12:58:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rXrAP+Iga6tJQXISDarBkMhgvbgqdtXIqdRXFbJlkWA=; b=B6922hLcB0oohhBRVWjTiL+o9
-        N0MaAGDDi+9EOp9r0yySf+n7xAs47uxLR1Z+X40pj2kf4o2m+TohopTubZAmJgIEd4a0ML8/tG0AS
-        PtCcU0pudTtT+YdSnE9dP68eH49SbaHnxlbMVsnHmnkP7U1gWiMmOq7aA5HyR3ZxcnEot9aGJUa1F
-        26YsuJoYiNEWznbP7+NTNVu1iWY7L62sPTDrZwlbQqUPmO8CuQN+UeeyKhFP/Qi/d05R25hsHfvty
-        oF9iQPUp1luwWXwhl7s2pdKsJPh5S/ghup86TbtzCLvTx7ogslehlxRe8VQ2KYwMKQe6o6p0jMFlP
-        jPiigmHzw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hW1u3-00085d-J1; Wed, 29 May 2019 16:58:15 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 68562201B8CFD; Wed, 29 May 2019 18:58:13 +0200 (CEST)
-Date:   Wed, 29 May 2019 18:58:13 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Liang, Kan" <kan.liang@linux.intel.com>
-Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
-        alexander.shishkin@linux.intel.com, ak@linux.intel.com
-Subject: Re: [PATCH 4/9] perf/x86/intel: Support hardware TopDown metrics
-Message-ID: <20190529165813.GC2623@hirez.programming.kicks-ass.net>
-References: <20190521214055.31060-1-kan.liang@linux.intel.com>
- <20190521214055.31060-5-kan.liang@linux.intel.com>
- <20190528134354.GP2623@hirez.programming.kicks-ass.net>
- <561ec469-2e0b-4749-c184-d07e4f4eaf40@linux.intel.com>
- <20190529075426.GA2623@hirez.programming.kicks-ass.net>
- <110d6e3e-9f50-ad47-5a12-1ccf0b756602@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <110d6e3e-9f50-ad47-5a12-1ccf0b756602@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726518AbfE2I57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:57:59 -0400
+Received: from mga02.intel.com ([134.134.136.20]:22391 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725948AbfE2I56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 04:57:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 01:57:58 -0700
+X-ExtLoop1: 1
+Received: from wvoon-ilbpg2.png.intel.com ([10.88.227.88])
+  by fmsmga005.fm.intel.com with ESMTP; 29 May 2019 01:57:54 -0700
+From:   Voon Weifeng <weifeng.voon@intel.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jose Abreu <joabreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        biao huang <biao.huang@mediatek.com>,
+        Ong Boon Leong <boon.leong.ong@intel.com>,
+        Kweh Hock Leong <hock.leong.kweh@intel.com>,
+        Voon Weifeng <weifeng.voon@intel.com>
+Subject: [PATCH net-next v4 0/5] net: stmmac: enable EHL SGMI
+Date:   Thu, 30 May 2019 00:58:22 +0800
+Message-Id: <1559149107-14631-1-git-send-email-weifeng.voon@intel.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 10:42:10AM -0400, Liang, Kan wrote:
-> On 5/29/2019 3:54 AM, Peter Zijlstra wrote:
+This patch-set is to enable Ethernet controller
+(DW Ethernet QoS and DW Ethernet PCS) with SGMII interface in Elkhart Lake.
+The DW Ethernet PCS is the Physical Coding Sublayer that is between Ethernet
+MAC and PHY and uses MDIO Clause-45 as Communication.
 
-> > cd09c0c40a97 ("perf events: Enable raw event support for Intel unhalted_reference_cycles event")
-> > 
-> > We used the fake event=0x00, umask=0x03 for CPU_CLK_UNHALTED.REF_TSC,
-> > because that was not available as a generic event, *until now* it seems.
-> > I see ICL actually has it as a generic event, which means we need to fix
-> > up the constraint mask for that differently.
-> > 
-> 
-> There is no change for REF_TSC on ICL.
+Kweh Hock Leong (1):
+  net: stmmac: enable clause 45 mdio support
 
-Well, if I look at the SDM for May'19 (latest afaict), Volume 3, Chapter
-19.3 'Performance Monitoring Events for Future Intel (C) Core(tm)
-Processors' the table lists:
+Ong Boon Leong (3):
+  net: stmmac: introducing support for DWC xPCS logics
+  net: stmmac: add xpcs function hooks into main driver and ethtool
+  net: stmmac: add xPCS functions for device with DWMACv5.1
 
- Event Num.	Umask Value	Event Mask Mnemonic
+Voon Weifeng (1):
+  net: stmmac: add EHL SGMII 1Gbps PCI info and PCI ID
 
- 00H		03H		CPU_CLK_UNHALTED.REF_TSC
+ drivers/net/ethernet/stmicro/stmmac/Makefile       |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |  33 ++++
+ drivers/net/ethernet/stmicro/stmmac/dwxpcs.c       | 198 +++++++++++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/dwxpcs.h       |  51 ++++++
+ drivers/net/ethernet/stmicro/stmmac/hwif.c         |  42 ++++-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  21 +++
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |   2 +
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |  50 ++++--
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 152 ++++++++++++----
+ drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c  |  40 ++++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c   | 111 ++++++++++++
+ include/linux/phy.h                                |   2 +
+ include/linux/stmmac.h                             |   3 +
+ 14 files changed, 650 insertions(+), 58 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxpcs.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxpcs.h
 
-as a generic event, without constraints, unlike any of the preceding
-uarchs, where that event was not available except through FIXED2.
+-- 
+Changelog v2:
+*Added support for the C37 AN for 1000BASE-X and SGMII (MAC side SGMII only)
+*removed and submitted the fix patch to net
+ "net: stmmac: dma channel control register need to be init first"
+*Squash the following 2 patches and move it to the end of the patch set:
+ "net: stmmac: add EHL SGMII 1Gbps platform data and PCI ID"
+ "net: stmmac: add xPCS platform data for EHL"
+Changelog v3:
+*Applied reversed christmas tree
+Changelog v4:
+*Rebased to latest net-next
+1.9.1
 
-That is most certainly a change.
-
-> > But note that for all previous uarchs this event did not in fact exist.
-> > 
-> > It appears the TOPDOWN.SLOTS thing, which is available in in FIXED3 is
-> > event=0x00, umask=0x04, is indeed a generic event too.
-> 
-> The SLOTS do have a generic event, TOPDOWN.SLOTS_P, event=0xA4, umask=0x1.
-> 
-> I think we need a fix as below for ICL, so the SLOT event can be extended to
-> generic event.
-> -	FIXED_EVENT_CONSTRAINT(0x0400, 3),	/* SLOTS */
-> +	FIXED_EVENT_CONSTRAINT(0x01a4, 3),	/* TOPDOWN.SLOTS */
-
-Then WTH is that 00H, 04H event listed in the table? Note the distinct
-lack of 'Fixed Counter' or any other contraints in the 'Comments'
-column.
