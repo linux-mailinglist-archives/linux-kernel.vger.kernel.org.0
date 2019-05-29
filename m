@@ -2,109 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F86D2D7ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:35:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 251142D7EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:35:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbfE2IfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 04:35:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49042 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfE2IfL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:35:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=n7yoVkhKpAqi+lqCMTPRH0YV1JfvuDb3vl6aJ/78F2g=; b=dNeWGeHlt/e1Aj/mSEc3wilX7
-        kMnI9uP0ujtPmAUt+RNwXBVjMxK1v01Teu17CJgIBx5o22KKzpUtMlTZ5ifv4FO90xSozEVyyZGpV
-        Z0S89tDNA/INzYRs/YW1suB3njaOOwvbQXVXIlHW6h0Vz3B8ARo88NUoWolIe7HlA/GEWOw/HTZQe
-        4SJyHemdSSjunl50faFlyf0KKVYfOI4Y/TDFbDbgu6TMAFyTh65tRB+cfrv3Jtn/PgO2YWa/7a7P8
-        EA6yLGu9NYTDH+u1CzgPJKSx00X2Bq0IZdNqFGeJUclAmP+4yo341kw86K8CkVagwYQfdr0JW/C5W
-        sHFdBAj9w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hVu23-0006jN-SI; Wed, 29 May 2019 08:34:00 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C66AB201A7E41; Wed, 29 May 2019 10:33:57 +0200 (CEST)
-Date:   Wed, 29 May 2019 10:33:57 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, williams@redhat.com,
-        daniel@bristot.me, "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Subject: Re: [RFC 2/3] preempt_tracer: Disable IRQ while starting/stopping
- due to a preempt_counter change
-Message-ID: <20190529083357.GF2623@hirez.programming.kicks-ass.net>
-References: <cover.1559051152.git.bristot@redhat.com>
- <f2ca7336162b6dc45f413cfe4e0056e6aa32e7ed.1559051152.git.bristot@redhat.com>
+        id S1726054AbfE2IfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:35:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54252 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbfE2IfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 04:35:00 -0400
+Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FF8920665;
+        Wed, 29 May 2019 08:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559118899;
+        bh=PwMHl6kzXAgZU6O8Wb+qU/u156Ml30/pnf+ppc3VTXM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZmLYSOLViieq+93kZwIToL1XKoluaLJxjU4GV+LyPIXUDM3P89DDRuH+XWzGEncGt
+         /atHE3S7b1Ly3ABGq+7P6bWPYxxKBW5W+WCuxH3oykDv6qL3L6Qf5IxVHei+2vgcf3
+         RhV/6clg6PbTV4GWS7xqBRpXjndvOXUwCqD3G0bc=
+Date:   Wed, 29 May 2019 01:34:59 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Young Xiao <92siuyang@gmail.com>
+Cc:     airlied@linux.ie, arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] amd64-agp: fix arbitrary kernel memory writes
+Message-ID: <20190529083459.GA1936@kroah.com>
+References: <1559105521-27053-1-git-send-email-92siuyang@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f2ca7336162b6dc45f413cfe4e0056e6aa32e7ed.1559051152.git.bristot@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1559105521-27053-1-git-send-email-92siuyang@gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 05:16:23PM +0200, Daniel Bristot de Oliveira wrote:
-> The preempt_disable/enable tracepoint only traces in the disable <-> enable
-> case, which is correct. But think about this case:
+On Wed, May 29, 2019 at 12:52:01PM +0800, Young Xiao wrote:
+> pg_start is copied from userspace on AGPIOC_BIND and AGPIOC_UNBIND ioctl
+> cmds of agp_ioctl() and passed to agpioc_bind_wrap().  As said in the
+> comment, (pg_start + mem->page_count) may wrap in case of AGPIOC_BIND,
+> and it is not checked at all in case of AGPIOC_UNBIND.  As a result, user
+> with sufficient privileges (usually "video" group) may generate either
+> local DoS or privilege escalation.
 > 
-> ---------------------------- %< ------------------------------
-> 	THREAD					IRQ
-> 	   |					 |
-> preempt_disable() {
->     __preempt_count_add(1)
-> 	------->	    smp_apic_timer_interrupt() {
-> 				preempt_disable()
-> 				    do not trace (preempt count >= 1)
-> 				    ....
-> 				preempt_enable()
-> 				    do not trace (preempt count >= 1)
-> 			    }
->     trace_preempt_disable();
-> }
-> ---------------------------- >% ------------------------------
+> See commit 194b3da873fd ("agp: fix arbitrary kernel memory writes")
+> for details.
 > 
-> The tracepoint will be skipped.
-
-.... for the IRQ. But IRQs are not preemptible anyway, so what the
-problem?
-
-> To avoid skipping the trace, the change in the counter should be "atomic"
-> with the start/stop, w.r.t the interrupts.
+> Signed-off-by: Young Xiao <92siuyang@gmail.com>
+> ---
+>  drivers/char/agp/amd64-agp.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Disable interrupts while the adding/starting stopping/subtracting.
+> diff --git a/drivers/char/agp/amd64-agp.c b/drivers/char/agp/amd64-agp.c
+> index c69e39f..5daa0e3 100644
+> --- a/drivers/char/agp/amd64-agp.c
+> +++ b/drivers/char/agp/amd64-agp.c
+> @@ -60,7 +60,8 @@ static int amd64_insert_memory(struct agp_memory *mem, off_t pg_start, int type)
+>  
+>  	/* Make sure we can fit the range in the gatt table. */
+>  	/* FIXME: could wrap */
+> -	if (((unsigned long)pg_start + mem->page_count) > num_entries)
+> +	if (((pg_start + mem->page_count) > num_entries) ||
+> +	    ((pg_start + mem->page_count) < pg_start))
 
-> +static inline void preempt_add_start_latency(int val)
-> +{
-> +	unsigned long flags;
-> +
-> +	raw_local_irq_save(flags);
-> +	__preempt_count_add(val);
-> +	preempt_latency_start(val);
-> +	raw_local_irq_restore(flags);
-> +}
+Why did you take off the cast for the first test?
 
-> +static inline void preempt_sub_stop_latency(int val)
-> +{
-> +	unsigned long flags;
-> +
-> +	raw_local_irq_save(flags);
-> +	preempt_latency_stop(val);
-> +	__preempt_count_sub(val);
-> +	raw_local_irq_restore(flags);
-> +}
+And if this really does fix this issue, should you remove the FIXME
+line?
 
-That is hideously expensive :/
+thanks,
+
+greg k-h
