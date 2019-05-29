@@ -2,194 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB1032D3E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 04:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C532D3D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 04:34:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbfE2ClB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 22:41:01 -0400
-Received: from mga07.intel.com ([134.134.136.100]:34620 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbfE2ClA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 22:41:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 19:41:00 -0700
-X-ExtLoop1: 1
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga004.jf.intel.com with ESMTP; 28 May 2019 19:40:57 -0700
-Cc:     baolu.lu@linux.intel.com, alex.williamson@redhat.com,
-        shameerali.kolothum.thodi@huawei.com, jean-philippe.brucker@arm.com
-Subject: Re: [PATCH v5 7/7] iommu/vt-d: Differentiate relaxable and non
- relaxable RMRRs
-To:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
-        joro@8bytes.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dwmw2@infradead.org,
-        robin.murphy@arm.com
-References: <20190528115025.17194-1-eric.auger@redhat.com>
- <20190528115025.17194-8-eric.auger@redhat.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <13a77738-5e85-ea62-aab1-384c75bde8bd@linux.intel.com>
-Date:   Wed, 29 May 2019 10:34:06 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726224AbfE2Ce3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 22:34:29 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:37206 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725816AbfE2Ce3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 22:34:29 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TSvOYQ4_1559097264;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TSvOYQ4_1559097264)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 29 May 2019 10:34:25 +0800
+Subject: Re: [RFC PATCH 0/3] Make deferred split shrinker memcg aware
+To:     David Rientjes <rientjes@google.com>
+Cc:     ktkhai@virtuozzo.com, hannes@cmpxchg.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, hughd@google.com,
+        shakeelb@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1559047464-59838-1-git-send-email-yang.shi@linux.alibaba.com>
+ <alpine.DEB.2.21.1905281817090.86034@chino.kir.corp.google.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <2e23bd8c-6120-5a86-9e9e-ab43b02ce150@linux.alibaba.com>
+Date:   Wed, 29 May 2019 10:34:24 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190528115025.17194-8-eric.auger@redhat.com>
+In-Reply-To: <alpine.DEB.2.21.1905281817090.86034@chino.kir.corp.google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 5/28/19 7:50 PM, Eric Auger wrote:
-> Now we have a new IOMMU_RESV_DIRECT_RELAXABLE reserved memory
-> region type, let's report USB and GFX RMRRs as relaxable ones.
-> 
-> We introduce a new device_rmrr_is_relaxable() helper to check
-> whether the rmrr belongs to the relaxable category.
-> 
-> This allows to have a finer reporting at IOMMU API level of
-> reserved memory regions. This will be exploitable by VFIO to
-> define the usable IOVA range and detect potential conflicts
-> between the guest physical address space and host reserved
-> regions.
-> 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> 
-> ---
-> 
-> v3 -> v4:
-> - introduce device_rmrr_is_relaxable and reshuffle the comments
-> ---
->   drivers/iommu/intel-iommu.c | 55 +++++++++++++++++++++++++++----------
->   1 file changed, 40 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 9302351818ab..01c82f848470 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -2920,6 +2920,36 @@ static bool device_has_rmrr(struct device *dev)
->   	return false;
->   }
->   
-> +/*
-> + * device_rmrr_is_relaxable - Test whether the RMRR of this device
-> + * is relaxable (ie. is allowed to be not enforced under some conditions)
-> + *
-> + * @dev: device handle
-> + *
-> + * We assume that PCI USB devices with RMRRs have them largely
-> + * for historical reasons and that the RMRR space is not actively used post
-> + * boot.  This exclusion may change if vendors begin to abuse it.
-> + *
-> + * The same exception is made for graphics devices, with the requirement that
-> + * any use of the RMRR regions will be torn down before assigning the device
-> + * to a guest.
-> + *
-> + * Return: true if the RMRR is relaxable
-> + */
-> +static bool device_rmrr_is_relaxable(struct device *dev)
-> +{
-> +	struct pci_dev *pdev;
-> +
-> +	if (!dev_is_pci(dev))
-> +		return false;
-> +
-> +	pdev = to_pci_dev(dev);
-> +	if (IS_USB_DEVICE(pdev) || IS_GFX_DEVICE(pdev))
-> +		return true;
-> +	else
-> +		return false;
-> +}
 
-I know this is only code refactoring. But strictly speaking, the rmrr of
-any USB host device is ignorable only if quirk_usb_early_handoff() has
-been called. There, the control of USB host controller will be handed
-over from BIOS to OS and the corresponding SMI are disabled.
+On 5/29/19 9:22 AM, David Rientjes wrote:
+> On Tue, 28 May 2019, Yang Shi wrote:
+>
+>> I got some reports from our internal application team about memcg OOM.
+>> Even though the application has been killed by oom killer, there are
+>> still a lot THPs reside, page reclaim doesn't reclaim them at all.
+>>
+>> Some investigation shows they are on deferred split queue, memcg direct
+>> reclaim can't shrink them since THP deferred split shrinker is not memcg
+>> aware, this may cause premature OOM in memcg.  The issue can be
+>> reproduced easily by the below test:
+>>
+> Right, we've also encountered this.  I talked to Kirill about it a week or
+> so ago where the suggestion was to split all compound pages on the
+> deferred split queues under the presence of even memory pressure.
+>
+> That breaks cgroup isolation and perhaps unfairly penalizes workloads that
+> are running attached to other memcg hierarchies that are not under
+> pressure because their compound pages are now split as a side effect.
+> There is a benefit to keeping these compound pages around while not under
+> memory pressure if all pages are subsequently mapped again.
 
-This function is registered in drivers/usb/host/pci-quirks.c
+Yes, I do agree. I tried other approaches too, it sounds making deferred 
+split queue per memcg is the optimal one.
 
-DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_ANY_ID, PCI_ANY_ID,
-                         PCI_CLASS_SERIAL_USB, 8, quirk_usb_early_handoff);
+>
+>> $ cgcreate -g memory:thp
+>> $ echo 4G > /sys/fs/cgroup/memory/thp/memory/limit_in_bytes
+>> $ cgexec -g memory:thp ./transhuge-stress 4000
+>>
+>> transhuge-stress comes from kernel selftest.
+>>
+>> It is easy to hit OOM, but there are still a lot THP on the deferred split
+>> queue, memcg direct reclaim can't touch them since the deferred split
+>> shrinker is not memcg aware.
+>>
+> Yes, we have seen this on at least 4.15 as well.
+>
+>> Convert deferred split shrinker memcg aware by introducing per memcg deferred
+>> split queue.  The THP should be on either per node or per memcg deferred
+>> split queue if it belongs to a memcg.  When the page is immigrated to the
+>> other memcg, it will be immigrated to the target memcg's deferred split queue
+>> too.
+>>
+>> And, move deleting THP from deferred split queue in page free before memcg
+>> uncharge so that the page's memcg information is available.
+>>
+>> Reuse the second tail page's deferred_list for per memcg list since the same
+>> THP can't be on multiple deferred split queues at the same time.
+>>
+>> Remove THP specific destructor since it is not used anymore with memcg aware
+>> THP shrinker (Please see the commit log of patch 2/3 for the details).
+>>
+>> Make deferred split shrinker not depend on memcg kmem since it is not slab.
+>> It doesn't make sense to not shrink THP even though memcg kmem is disabled.
+>>
+>> With the above change the test demonstrated above doesn't trigger OOM anymore
+>> even though with cgroup.memory=nokmem.
+>>
+> I'm curious if your internal applications team is also asking for
+> statistics on how much memory can be freed if the deferred split queues
+> can be shrunk?  We have applications that monitor their own memory usage
 
-and only get compiled if CONFIG_USB_PCI is enabled.
+No, but this reminds me. The THPs on deferred split queue should be 
+accounted into available memory too.
 
-Hence, it's safer to say:
+> through memcg stats or usage and proactively try to reduce that usage when
+> it is growing too large.  The deferred split queues have significantly
+> increased both memcg usage and rss when they've upgraded kernels.
+>
+> How are your applications monitoring how much memory from deferred split
+> queues can be freed on memory pressure?  Any thoughts on providing it as a
+> memcg stat?
 
-+#ifdef CONFIG_USB_PCI
-+	if (IS_USB_DEVICE(pdev))
-+		return true;
-+#endif /* CONFIG_USB_PCI */
+I don't think they have such monitor. I saw rss_huge is abormal in memcg 
+stat even after the application is killed by oom, so I realized the 
+deferred split queue may play a role here.
 
-I am okay if we keep this untouched and make this change within a
-separated patch.
+The memcg stat doesn't have counters for available memory as global 
+vmstat. It may be better to have such statistics, or extending 
+reclaimable "slab" to shrinkable/reclaimable "memory".
 
-> +
->   /*
->    * There are a couple cases where we need to restrict the functionality of
->    * devices associated with RMRRs.  The first is when evaluating a device for
-> @@ -2934,25 +2964,16 @@ static bool device_has_rmrr(struct device *dev)
->    * We therefore prevent devices associated with an RMRR from participating in
->    * the IOMMU API, which eliminates them from device assignment.
->    *
-> - * In both cases we assume that PCI USB devices with RMRRs have them largely
-> - * for historical reasons and that the RMRR space is not actively used post
-> - * boot.  This exclusion may change if vendors begin to abuse it.
-> - *
-> - * The same exception is made for graphics devices, with the requirement that
-> - * any use of the RMRR regions will be torn down before assigning the device
-> - * to a guest.
-> + * In both cases, devices which have relaxable RMRRs are not concerned by this
-> + * restriction. See device_rmrr_is_relaxable comment.
->    */
->   static bool device_is_rmrr_locked(struct device *dev)
->   {
->   	if (!device_has_rmrr(dev))
->   		return false;
->   
-> -	if (dev_is_pci(dev)) {
-> -		struct pci_dev *pdev = to_pci_dev(dev);
-> -
-> -		if (IS_USB_DEVICE(pdev) || IS_GFX_DEVICE(pdev))
-> -			return false;
-> -	}
-> +	if (device_rmrr_is_relaxable(dev))
-> +		return false;
->   
->   	return true;
->   }
-> @@ -5494,6 +5515,7 @@ static void intel_iommu_get_resv_regions(struct device *device,
->   		for_each_active_dev_scope(rmrr->devices, rmrr->devices_cnt,
->   					  i, i_dev) {
->   			struct iommu_resv_region *resv;
-> +			enum iommu_resv_type type;
->   			size_t length;
->   
->   			if (i_dev != device &&
-> @@ -5501,9 +5523,12 @@ static void intel_iommu_get_resv_regions(struct device *device,
->   				continue;
->   
->   			length = rmrr->end_address - rmrr->base_address + 1;
-> +
-> +			type = device_rmrr_is_relaxable(device) ?
-> +				IOMMU_RESV_DIRECT_RELAXABLE : IOMMU_RESV_DIRECT;
-> +
->   			resv = iommu_alloc_resv_region(rmrr->base_address,
-> -						       length, prot,
-> -						       IOMMU_RESV_DIRECT);
-> +						       length, prot, type);
->   			if (!resv)
->   				break;
->   
-> 
+>
+> Thanks!
 
-Other looks good to me.
-
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-
-Best regards,
-Baolu
