@@ -2,273 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E736E2D92D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8ED2D939
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:39:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbfE2JgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 05:36:09 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35444 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfE2JgI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 05:36:08 -0400
-Received: by mail-ed1-f66.google.com with SMTP id p26so2768077edr.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 02:36:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+JR93oPof/EMEek7mDnj8OOcvuCQwdSytsivGNj6W1k=;
-        b=CQuhh3oErg65As/6XAqVzQGZOVsv0W6wPwistMYwn3NuCBofjGHd3+HGXdsV9hXI/8
-         ByGqbGJmVjph0b/yCrdxPpburiKSDF2WcR4ptCI9oHyLDHSHNeVXwZLNhqiNu4PCFCYO
-         6FI7WbC9uHCj++pbomeUEOcgaG8O5YiRaaslP0ag3XH50aSOVU2PZyFyrnD2zWYtXx3K
-         2uqKUsAqSB9MfiuGfHJb7/OWuuhAPaFStKfKnbphBo0zILadaVYVK/kTQ5GgSQsjG1KY
-         L9RsCrgNaZMsH7LC6tVV3vRbw888ixbOxwZutXj/ODfCMqRDWzes8EC6HpC6XHSxfA+c
-         qF5w==
-X-Gm-Message-State: APjAAAVRcNKpI0NzmFKpKSTqOKLDoWUlLCEc7Pr2rhKuYrzhUPN3AJWM
-        I/qiTsuffHCVQzRct2e7dxfECA==
-X-Google-Smtp-Source: APXvYqxmNiiFw39c3SbWZfLqlEtorg7H+UdPzQ5FPoaOQL1v6449ESbGUuWLrRRxwJMxnqoxrSoAqA==
-X-Received: by 2002:a50:b7f8:: with SMTP id i53mr134880111ede.196.1559122566947;
-        Wed, 29 May 2019 02:36:06 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:1c0c:6c86:46e0:a7ad:5246:f04d])
-        by smtp.gmail.com with ESMTPSA id x22sm5024494edd.59.2019.05.29.02.36.05
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 02:36:06 -0700 (PDT)
-Subject: Re: [PATCH v4 15/16] platform/x86: intel_cht_int33fe: Supply fwnodes
- for the external dependencies
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org
-References: <20190522105113.11153-1-heikki.krogerus@linux.intel.com>
- <20190522105113.11153-16-heikki.krogerus@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <d174e7e9-f44c-b257-4678-d53676265d44@redhat.com>
-Date:   Wed, 29 May 2019 11:36:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726224AbfE2Jjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 05:39:53 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17604 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725894AbfE2Jjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 05:39:53 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A197A194D203AE1D13FD;
+        Wed, 29 May 2019 17:39:50 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 29 May 2019
+ 17:39:41 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <tony@atomide.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v3] clk: ti: Remove unused functions
+Date:   Wed, 29 May 2019 17:39:37 +0800
+Message-ID: <20190529093937.21748-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190512100328.27136-1-yuehaibing@huawei.com>
+References: <20190512100328.27136-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190522105113.11153-16-heikki.krogerus@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+They are not used any more since
+commit 7558562a70fb ("clk: ti: Drop legacy clk-3xxx-legacy code")
 
-On 5/22/19 12:51 PM, Heikki Krogerus wrote:
-> Supplying also external devices, the DisplayPort connector
-> and the USB role switch, software fwnodes. After this the
-> driver has access to all the components tied to the USB
-> Type-C connector and can start creating software node
-> references to actually associate them with the USB Type-C
-> connector device.
-> 
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> ---
->   drivers/platform/x86/intel_cht_int33fe.c | 128 ++++++++++++++++++++++-
->   1 file changed, 125 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-> index 34bc2d178760..e5c0b6573618 100644
-> --- a/drivers/platform/x86/intel_cht_int33fe.c
-> +++ b/drivers/platform/x86/intel_cht_int33fe.c
-> @@ -21,6 +21,7 @@
->   #include <linux/i2c.h>
->   #include <linux/interrupt.h>
->   #include <linux/module.h>
-> +#include <linux/pci.h>
->   #include <linux/platform_device.h>
->   #include <linux/regulator/consumer.h>
->   #include <linux/slab.h>
-> @@ -32,6 +33,8 @@ enum {
->   	INT33FE_NODE_FUSB302,
->   	INT33FE_NODE_MAX17047,
->   	INT33FE_NODE_PI3USB30532,
-> +	INT33FE_NODE_DISPLAYPORT,
-> +	INT33FE_NODE_ROLE_SWITCH,
->   	INT33FE_NODE_USB_CONNECTOR,
->   	INT33FE_NODE_MAX,
->   };
-> @@ -42,6 +45,9 @@ struct cht_int33fe_data {
->   	struct i2c_client *pi3usb30532;
->   	/* Contain a list-head must be per device */
->   	struct device_connection connections[4];
-> +
-> +	struct fwnode_handle *dp;
-> +	struct fwnode_handle *mux;
->   };
->   
->   /*
-> @@ -110,10 +116,126 @@ static const struct software_node nodes[] = {
->   	{ "fusb302", NULL, fusb302_props },
->   	{ "max17047", NULL, max17047_props },
->   	{ "pi3usb30532" },
-> +	{ "displayport" },
-> +	{ "usb-role-switch" },
->   	{ "connector", &nodes[0], usb_connector_props },
->   	{ }
->   };
->   
-> +static int cht_int33fe_setup_mux(struct cht_int33fe_data *data)
-> +{
-> +	struct fwnode_handle *fwnode;
-> +	struct device *dev;
-> +	struct device *p;
-> +
-> +	fwnode = software_node_fwnode(&nodes[INT33FE_NODE_ROLE_SWITCH]);
-> +	if (!fwnode)
-> +		return -ENODEV;
-> +
-> +	/* First finding the platform device */
-> +	p = bus_find_device_by_name(&platform_bus_type, NULL,
-> +				    "intel_xhci_usb_sw");
-> +	if (!p)
-> +		return -EPROBE_DEFER;
-> +
-> +	/* Then the mux child device */
-> +	dev = device_find_child_by_name(p, "intel_xhci_usb_sw-role-switch");
-> +	put_device(p);
-> +	if (!dev)
-> +		return -EPROBE_DEFER;
-> +
-> +	/* If there already is a node for the mux, using that one. */
-> +	if (dev->fwnode)
-> +		fwnode_remove_software_node(fwnode);
-> +	else
-> +		dev->fwnode = fwnode;
-> +
-> +	data->mux = fwnode_handle_get(dev->fwnode);
-> +	put_device(dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static int cht_int33fe_setup_dp(struct cht_int33fe_data *data)
-> +{
-> +	struct fwnode_handle *fwnode;
-> +	struct pci_dev *pdev;
-> +
-> +	fwnode = software_node_fwnode(&nodes[INT33FE_NODE_DISPLAYPORT]);
-> +	if (!fwnode)
-> +		return -ENODEV;
-> +
-> +	/* First let's find the GPU PCI device */
-> +	pdev = pci_get_class(PCI_CLASS_DISPLAY_VGA << 8, NULL);
-> +	if (!pdev || pdev->vendor != PCI_VENDOR_ID_INTEL) {
-> +		pci_dev_put(pdev);
-> +		return -ENODEV;
-> +	}
-> +
-> +	/* Then the DP child device node */
-> +	data->dp = device_get_named_child_node(&pdev->dev, "DD02");
-> +	pci_dev_put(pdev);
-> +	if (!data->dp)
-> +		return -ENODEV;
-> +
-> +	fwnode->secondary = ERR_PTR(-ENODEV);
-> +	data->dp->secondary = fwnode;
-> +
-> +	return 0;
-> +}
-> +
-> +static void cht_int33fe_remove_nodes(struct cht_int33fe_data *data)
-> +{
-> +	software_node_unregister_nodes(nodes);
-> +
-> +	if (data->mux) {
-> +		fwnode_handle_put(data->mux);
-> +		data->mux = NULL;
-> +	}
-> +
-> +	if (data->dp) {
-> +		data->dp->secondary = NULL;
-> +		fwnode_handle_put(data->dp);
-> +		data->dp = NULL;
-> +	}
-> +}
-> +
-> +static int cht_int33fe_add_nodes(struct cht_int33fe_data *data)
-> +{
-> +	int ret;
-> +
-> +	ret = software_node_register_nodes(nodes);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* The devices that are not created in this driver need extra steps. */
-> +
-> +	/*
-> +	 * There is no ACPI device node for the USB role mux, so we need to find
-> +	 * the mux device and assign our node directly to it. That means we
-> +	 * depend on the mux driver. This function will return -PROBE_DEFER
-> +	 * until the mux device is registered.
-> +	 */
-> +	ret = cht_int33fe_setup_mux(data);
-> +	if (ret)
-> +		goto err_remove_nodes;
-> +
-> +	/*
-> +	 * The DP connector does have ACPI device node. In this case we can just
-> +	 * find that ACPI node and assing our node as the secondary node to it.
-> +	 */
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Suggested-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v3: remove ti_clk_build_component_div and _get_div_table_from_setup
+v2: also remove mux/div unused functions
+---
+ drivers/clk/ti/divider.c | 85 ----------------------------------------
+ drivers/clk/ti/gate.c    | 30 --------------
+ drivers/clk/ti/mux.c     | 31 ---------------
+ 3 files changed, 146 deletions(-)
+
+diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+index 4786e0ebc2e8..6cb863c13648 100644
+--- a/drivers/clk/ti/divider.c
++++ b/drivers/clk/ti/divider.c
+@@ -425,91 +425,6 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
+ 	return 0;
+ }
+ 
+-static const struct clk_div_table *
+-_get_div_table_from_setup(struct ti_clk_divider *setup, u8 *width)
+-{
+-	const struct clk_div_table *table = NULL;
+-
+-	ti_clk_parse_divider_data(setup->dividers, setup->num_dividers,
+-				  setup->max_div, setup->flags, width,
+-				  &table);
+-
+-	return table;
+-}
+-
+-struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
+-{
+-	struct clk_omap_divider *div;
+-	struct clk_omap_reg *reg;
+-	int ret;
+-
+-	if (!setup)
+-		return NULL;
+-
+-	div = kzalloc(sizeof(*div), GFP_KERNEL);
+-	if (!div)
+-		return ERR_PTR(-ENOMEM);
+-
+-	reg = (struct clk_omap_reg *)&div->reg;
+-	reg->index = setup->module;
+-	reg->offset = setup->reg;
+-
+-	if (setup->flags & CLKF_INDEX_STARTS_AT_ONE)
+-		div->flags |= CLK_DIVIDER_ONE_BASED;
+-
+-	if (setup->flags & CLKF_INDEX_POWER_OF_TWO)
+-		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
+-
+-	div->table = _get_div_table_from_setup(setup, &div->width);
+-	if (IS_ERR(div->table)) {
+-		ret = PTR_ERR(div->table);
+-		kfree(div);
+-		return ERR_PTR(ret);
+-	}
+-
+-
+-	div->shift = setup->bit_shift;
+-	div->latch = -EINVAL;
+-
+-	return &div->hw;
+-}
+-
+-struct clk *ti_clk_register_divider(struct ti_clk *setup)
+-{
+-	struct ti_clk_divider *div = setup->data;
+-	struct clk_omap_reg reg = {
+-		.index = div->module,
+-		.offset = div->reg,
+-	};
+-	u8 width;
+-	u32 flags = 0;
+-	u8 div_flags = 0;
+-	const struct clk_div_table *table;
+-	struct clk *clk;
+-
+-	if (div->flags & CLKF_INDEX_STARTS_AT_ONE)
+-		div_flags |= CLK_DIVIDER_ONE_BASED;
+-
+-	if (div->flags & CLKF_INDEX_POWER_OF_TWO)
+-		div_flags |= CLK_DIVIDER_POWER_OF_TWO;
+-
+-	if (div->flags & CLKF_SET_RATE_PARENT)
+-		flags |= CLK_SET_RATE_PARENT;
+-
+-	table = _get_div_table_from_setup(div, &width);
+-	if (IS_ERR(table))
+-		return (struct clk *)table;
+-
+-	clk = _register_divider(NULL, setup->name, div->parent,
+-				flags, &reg, div->bit_shift,
+-				width, -EINVAL, div_flags, table);
+-
+-	if (IS_ERR(clk))
+-		kfree(table);
+-
+-	return clk;
+-}
+-
+ static struct clk_div_table *
+ __init ti_clk_get_div_table(struct device_node *node)
+ {
+diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
+index 504c0e91cdc7..42389558418c 100644
+--- a/drivers/clk/ti/gate.c
++++ b/drivers/clk/ti/gate.c
+@@ -131,36 +131,6 @@ static struct clk *_register_gate(struct device *dev, const char *name,
+ 	return clk;
+ }
+ 
+-struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup)
+-{
+-	struct clk_hw_omap *gate;
+-	struct clk_omap_reg *reg;
+-	const struct clk_hw_omap_ops *ops = &clkhwops_wait;
+-
+-	if (!setup)
+-		return NULL;
+-
+-	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+-	if (!gate)
+-		return ERR_PTR(-ENOMEM);
+-
+-	reg = (struct clk_omap_reg *)&gate->enable_reg;
+-	reg->index = setup->module;
+-	reg->offset = setup->reg;
+-
+-	gate->enable_bit = setup->bit_shift;
+-
+-	if (setup->flags & CLKF_NO_WAIT)
+-		ops = NULL;
+-
+-	if (setup->flags & CLKF_INTERFACE)
+-		ops = &clkhwops_iclk_wait;
+-
+-	gate->ops = ops;
+-
+-	return &gate->hw;
+-}
+-
+ static void __init _of_ti_gate_clk_setup(struct device_node *node,
+ 					 const struct clk_ops *ops,
+ 					 const struct clk_hw_omap_ops *hw_ops)
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index b7f9a4f068bf..0069e7cf3ebc 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -164,37 +164,6 @@ static struct clk *_register_mux(struct device *dev, const char *name,
+ 	return clk;
+ }
+ 
+-struct clk *ti_clk_register_mux(struct ti_clk *setup)
+-{
+-	struct ti_clk_mux *mux;
+-	u32 flags;
+-	u8 mux_flags = 0;
+-	struct clk_omap_reg reg;
+-	u32 mask;
+-
+-	mux = setup->data;
+-	flags = CLK_SET_RATE_NO_REPARENT;
+-
+-	mask = mux->num_parents;
+-	if (!(mux->flags & CLKF_INDEX_STARTS_AT_ONE))
+-		mask--;
+-
+-	mask = (1 << fls(mask)) - 1;
+-	reg.index = mux->module;
+-	reg.offset = mux->reg;
+-	reg.ptr = NULL;
+-
+-	if (mux->flags & CLKF_INDEX_STARTS_AT_ONE)
+-		mux_flags |= CLK_MUX_INDEX_ONE;
+-
+-	if (mux->flags & CLKF_SET_RATE_PARENT)
+-		flags |= CLK_SET_RATE_PARENT;
+-
+-	return _register_mux(NULL, setup->name, mux->parents, mux->num_parents,
+-			     flags, &reg, mux->bit_shift, mask, -EINVAL,
+-			     mux_flags, NULL);
+-}
+-
+ /**
+  * of_mux_clk_setup - Setup function for simple mux rate clock
+  * @node: DT node for the clock
+-- 
+2.17.1
 
 
-s/assing/adding/  I presume ?
-
-Regards,
-
-Hans
-
-
-
-> +	ret = cht_int33fe_setup_dp(data);
-> +	if (ret)
-> +		goto err_remove_nodes;
-> +
-> +	return 0;
-> +
-> +err_remove_nodes:
-> +	cht_int33fe_remove_nodes(data);
-> +
-> +	return ret;
-> +}
-> +
->   static int
->   cht_int33fe_register_max17047(struct device *dev, struct cht_int33fe_data *data)
->   {
-> @@ -211,7 +333,7 @@ static int cht_int33fe_probe(struct platform_device *pdev)
->   	if (!data)
->   		return -ENOMEM;
->   
-> -	ret = software_node_register_nodes(nodes);
-> +	ret = cht_int33fe_add_nodes(data);
->   	if (ret)
->   		return ret;
->   
-> @@ -280,7 +402,7 @@ static int cht_int33fe_probe(struct platform_device *pdev)
->   	device_connections_remove(data->connections);
->   
->   out_remove_nodes:
-> -	software_node_unregister_nodes(nodes);
-> +	cht_int33fe_remove_nodes(data);
->   
->   	return ret;
->   }
-> @@ -294,7 +416,7 @@ static int cht_int33fe_remove(struct platform_device *pdev)
->   	i2c_unregister_device(data->max17047);
->   
->   	device_connections_remove(data->connections);
-> -	software_node_unregister_nodes(nodes);
-> +	cht_int33fe_remove_nodes(data);
->   
->   	return 0;
->   }
-> 
