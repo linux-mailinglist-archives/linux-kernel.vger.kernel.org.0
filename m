@@ -2,150 +2,317 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAE6A2DC0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 13:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1D932DC17
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 13:45:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfE2Lkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 07:40:49 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36548 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbfE2Lkt (ORCPT
+        id S1726892AbfE2LpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 07:45:00 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:35612 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726256AbfE2Lo7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 07:40:49 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s17so1541282wru.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 04:40:47 -0700 (PDT)
+        Wed, 29 May 2019 07:44:59 -0400
+Received: by mail-qk1-f193.google.com with SMTP id l128so1221465qke.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 04:44:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=R/ybEZYJx9L5gstwNmUBOZDipfPhMff15CJyfuNZs9M=;
-        b=xmJMKT2jY49cTQEWaZwqfim84XibWhGi5wKW8mj9KX2e7Zn5B2PtN4xrfRZeneo5Iz
-         E7mha2hYbFWWrwMmEbleRD4qTClUduXVUxo5tSwttbjvl7HQolGbpEvSk790KR19CKm2
-         BXz9fuMc89cj6GcHnStWS3rKwmoyabu7TgWNxow26ICFXRgNTk3fru5+Qc9gatCqsDfr
-         9ehF1Vkiau5Pmcw8PK4YalcJHhUhtn+3iEJgptjQE1iTi1pwfPIxVD+U7MYlcYioyh/g
-         nb89SC8wABDqu6WfCWLOjRs4XqlsvSlDkIZk6yACZ7yHtW5AGsR2BY+H1Dzu4cIH4SWr
-         sH3Q==
+         :content-disposition:in-reply-to:user-agent;
+        bh=saTss3WI4v6NFzjGLfT7HQ5xbm2l2+yyVHdCJ+dqTy0=;
+        b=ZanEG8f6daZ6KHNn/3CokKUxEz4szRiJWaFDVc2AnzBbLWG9bQY/uZWmRoN7XMwiY+
+         7ZXDUvXIiLdEAyzgj849pP+dgDDBxZTZTScctzwO/G1i4EA3kVjTMxC+zvhG4gk+cgup
+         T/9IkbXPIJRHOQ1VuP8SVumqDTURuImbEaeNF3MHcjT3EztTTCMUI30ckr9EZ8QwD+V7
+         kCE9Tp1tNQC7ElBhOPaQ/sWaQZE49PiLQTHKBdKLaxf5re8vClN0ibK2r6tZH/pr/3dV
+         72Ck+DkKyK0p58plgzsYsq7PrhaKzlzx2UKuQubcxS7wq9ULYkHttujgHifYiV7a4gIk
+         fneg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=R/ybEZYJx9L5gstwNmUBOZDipfPhMff15CJyfuNZs9M=;
-        b=CeGaXSVh2S0YFVbqjVHncLNIf7P9QyF0Z1iMBLoHvqTFkuHLUUNdueMfwpvUbiSiNg
-         VKhinhKwqlKkGI+A5OTT3aznrTYyhSufjB9/DrR/3ebHf7Vz0ViytFwwgUD3UeZEfs8W
-         PhW1pQTcJUv62wJRfT22sCKE22mgn/JF03JYcq4DakOlkDuXU/IGeZAN6c6b/pxtE/2g
-         2+8RnOe0Ss+cWMUZv6fXvFz8gs8r+25VLFQD7+czcs4AnUocCVDEKE3rX+DK0i/GJD6s
-         JjrfokAtWW6sY7+KzvXo/VSnQxqMr6QvrA2IpafP4qaidrFW5y5JE1dWDk+/UIPZ2Pe8
-         xgfQ==
-X-Gm-Message-State: APjAAAWyo8C6xatHK5+rvXzqXmf3cO6i0JRUweGRcUtpvtNkmjZVsaEj
-        g1aFQV6XvIrErczPs5rhBg2fDQ==
-X-Google-Smtp-Source: APXvYqwgdQ7bjEGnWWxkk5S/5ADrffCPJ8mJTC+tkY+MY9Oku9d0sJrdTzQIdSLW7ceJ4QttwvNw1g==
-X-Received: by 2002:adf:f246:: with SMTP id b6mr8369479wrp.92.1559130041455;
-        Wed, 29 May 2019 04:40:41 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id a124sm8113980wmh.3.2019.05.29.04.40.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 04:40:40 -0700 (PDT)
-Date:   Wed, 29 May 2019 12:40:38 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: cross-merges with MFD tree (was: Re: GFS2: Pull Request)
-Message-ID: <20190529114038.GI4574@dell>
-References: <CAHc6FU5Yd9EVju+kY8228n-Ccm7F2ZBRJUbesT-HYsy2YjKc_w@mail.gmail.com>
- <CAHk-=wj_L9d8P0Kmtb5f4wudm=KGZ5z0ijJ-NxTY-CcNcNDP5A@mail.gmail.com>
- <61f6987a-5502-f119-6595-fc6badb864fb@gmail.com>
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=saTss3WI4v6NFzjGLfT7HQ5xbm2l2+yyVHdCJ+dqTy0=;
+        b=ulgGphX+8DLv91+jBd0CPxVLQeW5tMivxNedDdDKZFEXd8AoLGFjT6ia6s2dUl1ryc
+         WGzZBy3gYnGv+Ym5HdqhsJgPZNc+gat3r6H2uI23XDqYmxSKZQYdajBhMYWSTaialVga
+         Lqy8yxw/wR6tC2xci+2pgl58uCs8EahUmPCYE95nedm393yqElEkRKzXAoeirAjgSsi+
+         r2QNh/eQGMMo5VeMaf1CKnUcG00xz0rHhUa00kymvEiN3SwlG9XYo+pf3tW7rtC4BXuK
+         gAJeoCx0UmzgrKLxtFwvD0ZgxmrjjWNQI1qdn0WisinFBrzq4zN5zE4b6/+yX7MHk9Ud
+         PWbw==
+X-Gm-Message-State: APjAAAVII6yre7VnXshBlyKlCFlDgkFNJN4LGi8z7WWv+uoxVmakFX4V
+        7pJrrTJkkcD4QuXcynFo3as=
+X-Google-Smtp-Source: APXvYqyWqBcoZYdtH7zKBoHPQSY5syLt2sOBYEjoVtmJdxh6Jnzcfi3hXMkHz9hXT8qF/4rJ4koRpQ==
+X-Received: by 2002:a37:a4d3:: with SMTP id n202mr13523412qke.84.1559130298504;
+        Wed, 29 May 2019 04:44:58 -0700 (PDT)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id n26sm554309qtn.36.2019.05.29.04.44.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 04:44:57 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailauth.nyi.internal (Postfix) with ESMTP id C89EE22095;
+        Wed, 29 May 2019 07:44:56 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Wed, 29 May 2019 07:44:56 -0400
+X-ME-Sender: <xms:t3DuXPIN55-r_6nfIGPOsvCjiFk5LFIEeXBsewZ0M3peGBAxNGyVXg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddvjedggeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesghdtreertdervdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucfkphepge
+    ehrdefvddruddvkedruddtleenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
+    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
+    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
+    mhgvnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:t3DuXHZRJQRhjETX_U_AK8CnFJU37LyaC4xk3EbLcHcMpYaW9xky2Q>
+    <xmx:t3DuXCughnmlzww6rWXGWHg6r8M5Lo4RYfoez9IfNmy1Ls2J1GYbkA>
+    <xmx:t3DuXMvd27K5b4D9Q5CvMsOC2cvuyvY7v4ivWtlhrhV0hYt74M9njQ>
+    <xmx:uHDuXOW_v1M9RxFnJzoHeQOMor1w4x3dCJDnc1cufq8ZJfustai7rMebrbY>
+Received: from localhost (unknown [45.32.128.109])
+        by mail.messagingengine.com (Postfix) with ESMTPA id DAA40380073;
+        Wed, 29 May 2019 07:44:54 -0400 (EDT)
+Date:   Wed, 29 May 2019 19:44:51 +0800
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     Yuyang Du <duyuyang@gmail.com>
+Cc:     peterz@infradead.org, will.deacon@arm.com, mingo@kernel.org,
+        bvanassche@acm.org, ming.lei@redhat.com, frederic@kernel.org,
+        tglx@linutronix.de, paulmck@linux.ibm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 11/17] locking/lockdep: Adjust lockdep selftest cases
+Message-ID: <20190529114451.GA12812@tardis>
+References: <20190516080015.16033-1-duyuyang@gmail.com>
+ <20190516080015.16033-12-duyuyang@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <61f6987a-5502-f119-6595-fc6badb864fb@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190516080015.16033-12-duyuyang@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 May 2019, Jacek Anaszewski wrote:
 
-> Hi Linus,
-> 
-> On 5/8/19 7:55 PM, Linus Torvalds wrote:
-> > On Wed, May 8, 2019 at 4:49 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
-> > > 
-> > > There was a conflict with commit 2b070cfe582b ("block: remove the i
-> > > argument to bio_for_each_segment_all") on Jens's block layer changes
-> > > which you've already merged. I've resolved that by merging those block
-> > > layer changes; please let me know if you want this done differently.
-> > 
-> > PLEASE.
-> > 
-> > I say this to somebody pretty much every single merge window: don't do
-> > merges for me.
-> > 
-> > You are actually just hurting, not helping. I want to know what the
-> > conflicts are, not by being told after-the-fact, but by just seeing
-> > them and resolving them.
-> > 
-> > Yes, I like being _warned_ ahead of time - partly just as a heads up
-> > to me, but partly also to show that the maintainers are aware of the
-> > notifications from linux-next, and that linux-next is working as
-> > intended, and people aren't just ignoring what it reports.
-> > 
-> > But I do *NOT* want to see maintainers cross-merging each others trees.
-> 
-> I would like to clarify if this applies to immutable integration
-> branches that are usually created for MFD subsystem. That subsystem
-> is somehow specific since changes made to MFD drivers are often a part
-> of bigger patch sets that add drivers of MFD cells to the other
-> subsystems.
-> 
-> Like in my area of interest an addition of a driver for LED cell
-> of MFD device must be followed by addition of a corresponding entry to
-> struct mfd_cell array in the related MFD driver.
-> 
-> And sometimes even another subsystem is involved, like e.g. regulator
-> framework in case of recent extension of ti-lmu driver.
-> 
-> So far you haven't complained about this specific workflow, but I'd like
-> to make sure how you see it.
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-After you bought this conversation to my attention last week, I took
-the initiative and spoke to a few senior maintainers (Mark Brown,
-Linus Walleij, etc) for their views.  I choose these guys because they
-are commonly on the receiving end of my Pull Requests when we need to
-do this.
+On Thu, May 16, 2019 at 04:00:09PM +0800, Yuyang Du wrote:
+> With read-write lock support, some read-write lock cases need to be updat=
+ed,
+> specifically, some read-lock involved deadlocks are actually not deadlock=
+s.
+> Hope I am not wildly wrong.
+>=20
+> Signed-off-by: Yuyang Du <duyuyang@gmail.com>
+> ---
+>  lib/locking-selftest.c | 44 +++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 33 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
+> index a170554..f83f047 100644
+> --- a/lib/locking-selftest.c
+> +++ b/lib/locking-selftest.c
+> @@ -424,7 +424,7 @@ static void rwsem_ABBA2(void)
+>  	ML(Y1);
+>  	RSL(X1);
+>  	RSU(X1);
+> -	MU(Y1); // should fail
+> +	MU(Y1); // should NOT fail
 
-Due to its inherent nature, MFD usually finds itself interacting with
-other subsystems in ways which deal with both physical merge conflicts
-and build dependencies.  For some time now the vast majority of the
-other maintainers I work with and I have believed, and still do, that
-the best way to mitigate these issues is to produce small, succinct,
-immutable topic branches.  These branches only usually contain a few 
-patches and serve to solve a specific potential issue - usually
-build-time problems, but also have the added bonus of preventing merge
-conflicts and keeping us out of the forefront of Linus' mind (and out
-of trouble!)
+I'm afraid you get this wrong ;-) reader of rwsem is non-recursive if I
+understand correctly, so case like:
 
-We've been doing this for some time and have interacted with many
-subsystems (ACPI, ASoC, ARM-SoC, Clocksource, Excon, GPIO, Hwmon, I2C,
-IIO, Input, IRQChip, LED, PWM, Media, Net, Pinctrl, Platform, Power,
-Regulator, RTC, USB, Video, Watchdog, etc, etc) over the years [0].
+	Task 0			Task 1
 
-In my mind, small, immutable topic branches is still the cleanest way
-to deal with the issues facing MFD currently.  And is not what Linus
-is detailing in his recent mail(s) on the subject.  We are not "doing
-merges on his behalf", we are ensuring; buildable, bisectable,
-error-free branches/history that will also merge cleanly.
+	down_read(A);
+				mutex_lock(B);
 
-[0] `git log --oneline --grep ib-mfd mainline/master`
+				down_read(A);
+	mutex_lock(B);
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+can be a deadlock, if we consider a third independent task:
+
+	Task 0			Task 1			Task 2
+
+	down_read(A);
+				mutex_lock(B);
+							down_write(A);
+				down_read(A);
+	mutex_lock(B);
+
+in this case, Task 1 can not get it's lock for A, therefore, deadlock.
+
+Regards,
+Boqun
+
+>  }
+> =20
+> =20
+> @@ -462,12 +462,13 @@ static void rwsem_ABBA3(void)
+> =20
+>  /*
+>   * ABBA deadlock:
+> + *
+> + * Should fail except for either A or B is read lock.
+>   */
+> -
+>  #define E()					\
+>  						\
+>  	LOCK_UNLOCK_2(A, B);			\
+> -	LOCK_UNLOCK_2(B, A); /* fail */
+> +	LOCK_UNLOCK_2(B, A);
+> =20
+>  /*
+>   * 6 testcases:
+> @@ -494,13 +495,15 @@ static void rwsem_ABBA3(void)
+> =20
+>  /*
+>   * AB BC CA deadlock:
+> + *
+> + * Should fail except for read or recursive-read locks.
+>   */
+> =20
+>  #define E()					\
+>  						\
+>  	LOCK_UNLOCK_2(A, B);			\
+>  	LOCK_UNLOCK_2(B, C);			\
+> -	LOCK_UNLOCK_2(C, A); /* fail */
+> +	LOCK_UNLOCK_2(C, A);
+> =20
+>  /*
+>   * 6 testcases:
+> @@ -527,13 +530,15 @@ static void rwsem_ABBA3(void)
+> =20
+>  /*
+>   * AB CA BC deadlock:
+> + *
+> + * Should fail except for read or recursive-read locks.
+>   */
+> =20
+>  #define E()					\
+>  						\
+>  	LOCK_UNLOCK_2(A, B);			\
+>  	LOCK_UNLOCK_2(C, A);			\
+> -	LOCK_UNLOCK_2(B, C); /* fail */
+> +	LOCK_UNLOCK_2(B, C);
+> =20
+>  /*
+>   * 6 testcases:
+> @@ -560,6 +565,8 @@ static void rwsem_ABBA3(void)
+> =20
+>  /*
+>   * AB BC CD DA deadlock:
+> + *
+> + * Should fail except for read or recursive-read locks.
+>   */
+> =20
+>  #define E()					\
+> @@ -567,7 +574,7 @@ static void rwsem_ABBA3(void)
+>  	LOCK_UNLOCK_2(A, B);			\
+>  	LOCK_UNLOCK_2(B, C);			\
+>  	LOCK_UNLOCK_2(C, D);			\
+> -	LOCK_UNLOCK_2(D, A); /* fail */
+> +	LOCK_UNLOCK_2(D, A);
+> =20
+>  /*
+>   * 6 testcases:
+> @@ -594,13 +601,15 @@ static void rwsem_ABBA3(void)
+> =20
+>  /*
+>   * AB CD BD DA deadlock:
+> + *
+> + * Should fail except for read or recursive-read locks.
+>   */
+>  #define E()					\
+>  						\
+>  	LOCK_UNLOCK_2(A, B);			\
+>  	LOCK_UNLOCK_2(C, D);			\
+>  	LOCK_UNLOCK_2(B, D);			\
+> -	LOCK_UNLOCK_2(D, A); /* fail */
+> +	LOCK_UNLOCK_2(D, A);
+> =20
+>  /*
+>   * 6 testcases:
+> @@ -627,13 +636,15 @@ static void rwsem_ABBA3(void)
+> =20
+>  /*
+>   * AB CD BC DA deadlock:
+> + *
+> + * Should fail except for read or recursive-read locks.
+>   */
+>  #define E()					\
+>  						\
+>  	LOCK_UNLOCK_2(A, B);			\
+>  	LOCK_UNLOCK_2(C, D);			\
+>  	LOCK_UNLOCK_2(B, C);			\
+> -	LOCK_UNLOCK_2(D, A); /* fail */
+> +	LOCK_UNLOCK_2(D, A);
+> =20
+>  /*
+>   * 6 testcases:
+> @@ -1238,7 +1249,7 @@ static inline void print_testname(const char *testn=
+ame)
+>  /*
+>   * 'read' variant: rlocks must not trigger.
+>   */
+> -#define DO_TESTCASE_6R(desc, name)				\
+> +#define DO_TESTCASE_6AA(desc, name)				\
+>  	print_testname(desc);					\
+>  	dotest(name##_spin, FAILURE, LOCKTYPE_SPIN);		\
+>  	dotest(name##_wlock, FAILURE, LOCKTYPE_RWLOCK);		\
+> @@ -1249,6 +1260,17 @@ static inline void print_testname(const char *test=
+name)
+>  	dotest_rt(name##_rtmutex, FAILURE, LOCKTYPE_RTMUTEX);	\
+>  	pr_cont("\n");
+> =20
+> +#define DO_TESTCASE_6R(desc, name)				\
+> +	print_testname(desc);					\
+> +	dotest(name##_spin, FAILURE, LOCKTYPE_SPIN);		\
+> +	dotest(name##_wlock, FAILURE, LOCKTYPE_RWLOCK);		\
+> +	dotest(name##_rlock, SUCCESS, LOCKTYPE_RWLOCK);		\
+> +	dotest(name##_mutex, FAILURE, LOCKTYPE_MUTEX);		\
+> +	dotest(name##_wsem, FAILURE, LOCKTYPE_RWSEM);		\
+> +	dotest(name##_rsem, SUCCESS, LOCKTYPE_RWSEM);		\
+> +	dotest_rt(name##_rtmutex, FAILURE, LOCKTYPE_RTMUTEX);	\
+> +	pr_cont("\n");
+> +
+>  #define DO_TESTCASE_2I(desc, name, nr)				\
+>  	DO_TESTCASE_1("hard-"desc, name##_hard, nr);		\
+>  	DO_TESTCASE_1("soft-"desc, name##_soft, nr);
+> @@ -1991,7 +2013,7 @@ void locking_selftest(void)
+>  	debug_locks_silent =3D !debug_locks_verbose;
+>  	lockdep_set_selftest_task(current);
+> =20
+> -	DO_TESTCASE_6R("A-A deadlock", AA);
+> +	DO_TESTCASE_6AA("A-A deadlock", AA);
+>  	DO_TESTCASE_6R("A-B-B-A deadlock", ABBA);
+>  	DO_TESTCASE_6R("A-B-B-C-C-A deadlock", ABBCCA);
+>  	DO_TESTCASE_6R("A-B-C-A-B-C deadlock", ABCABC);
+> @@ -2048,7 +2070,7 @@ void locking_selftest(void)
+>  	pr_cont("             |");
+>  	dotest(rlock_ABBA2, SUCCESS, LOCKTYPE_RWLOCK);
+>  	pr_cont("             |");
+> -	dotest(rwsem_ABBA2, FAILURE, LOCKTYPE_RWSEM);
+> +	dotest(rwsem_ABBA2, SUCCESS, LOCKTYPE_RWSEM);
+> =20
+>  	print_testname("mixed write-lock/lock-write ABBA");
+>  	pr_cont("             |");
+> --=20
+> 1.8.3.1
+>=20
+
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlzucK8ACgkQSXnow7UH
++riNDAf+MRdBMrKvao3O0YfV7Rg8vEb2/KwZVHdj78NXb+1rkkK9EbP7pGomyp+u
+f8gr5mAm014BOZe5cd1pvyDrS+ZxA7monBzqNRpFXTbgcmrKV3H+09mK3vrj3XhY
+92x5Y+6uyY5Bf4kToz5k+qzyXDGoYXvGCKqimzWbASM+PAa6XFn2VOBYtD+04aeE
+AUNva+H8RUbkX1qrflr0jozdWpnL/ELuK0fVpRS8W32Cy3dQxZs4qpj2djO/Tnza
+gANrdIWLuERDlelXec00Q2O0qXjZKwgSFURCYhjYcH8rrq+F8UBmfC9fy42VA14C
+0IMQW4dUBC9guMRKttCKkBOsF9a8wQ==
+=/l2M
+-----END PGP SIGNATURE-----
+
+--fUYQa+Pmc3FrFX/N--
