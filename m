@@ -2,105 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 705192D409
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 04:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C622A2D40B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 05:00:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbfE2C6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 22:58:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60214 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725816AbfE2C6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 22:58:37 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3552C21721;
-        Wed, 29 May 2019 02:58:36 +0000 (UTC)
-Date:   Tue, 28 May 2019 22:58:34 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tomas Bortoli <tomasbortoli@gmail.com>
-Subject: [GIT PULL] tracing: Avoid memory leak in predicate_parse()
-Message-ID: <20190528225834.7428baf9@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726495AbfE2DAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 23:00:41 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:34842 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725816AbfE2DAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 23:00:41 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BEBA775CA4A0DB04526B;
+        Wed, 29 May 2019 11:00:33 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 29 May 2019
+ 11:00:26 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <maxime.chevallier@bootlin.com>,
+        <antoine.tenart@bootlin.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2 net-next] net: mvpp2: cls: Remove unnessesary check in mvpp2_ethtool_cls_rule_ins
+Date:   Wed, 29 May 2019 10:59:06 +0800
+Message-ID: <20190529025906.17452-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190527134646.21804-1-yuehaibing@huawei.com>
+References: <20190527134646.21804-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fix smatch warning:
 
-Linus,
+drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c:1236
+ mvpp2_ethtool_cls_rule_ins() warn: unsigned 'info->fs.location' is never less than zero.
 
-This fixes a memory leak from the error path in the event filter logic.
+'info->fs.location' is u32 type, never less than zero.
 
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: rework patch based net-next
+---
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Please pull the latest trace-v5.2-rc2 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v5.2-rc2
-
-Tag SHA1: 0658b13d1bfd40bda1c2bd1ef3738857e1bf4000
-Head SHA1: dfb4a6f2191a80c8b790117d0ff592fd712d3296
-
-
-Tomas Bortoli (1):
-      tracing: Avoid memory leak in predicate_parse()
-
-----
- kernel/trace/trace_events_filter.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
----------------------------
-commit dfb4a6f2191a80c8b790117d0ff592fd712d3296
-Author: Tomas Bortoli <tomasbortoli@gmail.com>
-Date:   Tue May 28 17:43:38 2019 +0200
-
-    tracing: Avoid memory leak in predicate_parse()
-    
-    In case of errors, predicate_parse() goes to the out_free label
-    to free memory and to return an error code.
-    
-    However, predicate_parse() does not free the predicates of the
-    temporary prog_stack array, thence leaking them.
-    
-    Link: http://lkml.kernel.org/r/20190528154338.29976-1-tomasbortoli@gmail.com
-    
-    Cc: stable@vger.kernel.org
-    Fixes: 80765597bc587 ("tracing: Rewrite filter logic to be simpler and faster")
-    Reported-by: syzbot+6b8e0fb820e570c59e19@syzkaller.appspotmail.com
-    Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-    [ Added protection around freeing prog_stack[i].pred ]
-    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index d3e59312ef40..5079d1db3754 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -428,7 +428,7 @@ predicate_parse(const char *str, int nr_parens, int nr_preds,
- 	op_stack = kmalloc_array(nr_parens, sizeof(*op_stack), GFP_KERNEL);
- 	if (!op_stack)
- 		return ERR_PTR(-ENOMEM);
--	prog_stack = kmalloc_array(nr_preds, sizeof(*prog_stack), GFP_KERNEL);
-+	prog_stack = kcalloc(nr_preds, sizeof(*prog_stack), GFP_KERNEL);
- 	if (!prog_stack) {
- 		parse_error(pe, -ENOMEM, 0);
- 		goto out_free;
-@@ -579,7 +579,11 @@ predicate_parse(const char *str, int nr_parens, int nr_preds,
- out_free:
- 	kfree(op_stack);
- 	kfree(inverts);
--	kfree(prog_stack);
-+	if (prog_stack) {
-+		for (i = 0; prog_stack[i].pred; i++)
-+			kfree(prog_stack[i].pred);
-+		kfree(prog_stack);
-+	}
- 	return ERR_PTR(ret);
- }
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+index bd19a910dc90..e1c90adb2982 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+@@ -1300,8 +1300,7 @@ int mvpp2_ethtool_cls_rule_ins(struct mvpp2_port *port,
+ 	struct mvpp2_ethtool_fs *efs, *old_efs;
+ 	int ret = 0;
  
+-	if (info->fs.location >= MVPP2_N_RFS_ENTRIES_PER_FLOW ||
+-	    info->fs.location < 0)
++	if (info->fs.location >= MVPP2_N_RFS_ENTRIES_PER_FLOW)
+ 		return -EINVAL;
+ 
+ 	efs = kzalloc(sizeof(*efs), GFP_KERNEL);
+-- 
+2.20.1
+
+
