@@ -2,58 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28B532E751
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 23:19:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E71862E75C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 23:23:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726543AbfE2VTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 17:19:19 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:41964 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbfE2VTT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 17:19:19 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 5E3FE136DF6FB;
-        Wed, 29 May 2019 14:19:18 -0700 (PDT)
-Date:   Wed, 29 May 2019 14:19:15 -0700 (PDT)
-Message-Id: <20190529.141915.945026439348535112.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next] net: stmmac: Fix build error without
- CONFIG_INET
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190528091040.20288-1-yuehaibing@huawei.com>
-References: <20190528091040.20288-1-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1726649AbfE2VX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 17:23:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36758 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726326AbfE2VX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 17:23:56 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4E9C63082B40;
+        Wed, 29 May 2019 21:23:56 +0000 (UTC)
+Received: from x1.home (ovpn-116-22.phx2.redhat.com [10.3.116.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 129FA60C4E;
+        Wed, 29 May 2019 21:23:56 +0000 (UTC)
+Date:   Wed, 29 May 2019 15:23:55 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     "Thomas Meyer" <thomas@m3y3r.de>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfio-pci/nvlink2: Use vma_pages function instead of
+ explicit computation
+Message-ID: <20190529152355.5ea4823f@x1.home>
+In-Reply-To: <1559160524648-1049343203-1-diffsplit-thomas@m3y3r.de>
+References: <1559160524618-2047588593-0-diffsplit-thomas@m3y3r.de>
+        <1559160524648-1049343203-1-diffsplit-thomas@m3y3r.de>
+Organization: Red Hat
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 29 May 2019 14:19:18 -0700 (PDT)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 29 May 2019 21:23:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 28 May 2019 17:10:40 +0800
+On Wed, 29 May 2019 22:11:06 +0200
+"Thomas Meyer" <thomas@m3y3r.de> wrote:
 
-> Fix gcc build error while CONFIG_INET is not set
+> Use vma_pages function on vma object instead of explicit computation.
 > 
-> drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.o: In function `__stmmac_test_loopback':
-> stmmac_selftests.c:(.text+0x8ec): undefined reference to `ip_send_check'
-> stmmac_selftests.c:(.text+0xacc): undefined reference to `udp4_hwcsum'
+> Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
+> ---
 > 
-> Add CONFIG_INET dependency to fix this.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 091810dbded9 ("net: stmmac: Introduce selftests support")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> diff -u -p a/drivers/vfio/pci/vfio_pci_nvlink2.c b/drivers/vfio/pci/vfio_pci_nvlink2.c
+> --- a/drivers/vfio/pci/vfio_pci_nvlink2.c
+> +++ b/drivers/vfio/pci/vfio_pci_nvlink2.c
+> @@ -161,7 +161,7 @@ static int vfio_pci_nvgpu_mmap(struct vf
+>  
+>  	atomic_inc(&data->mm->mm_count);
+>  	ret = (int) mm_iommu_newdev(data->mm, data->useraddr,
+> -			(vma->vm_end - vma->vm_start) >> PAGE_SHIFT,
+> +			vma_pages(vma),
+>  			data->gpu_hpa, &data->mem);
+>  
+>  	trace_vfio_pci_nvgpu_mmap(vdev->pdev, data->gpu_hpa, data->useraddr,
 
-Applied.
+Not sure if our emails crossed in flight[1], but the other patch[2]
+still has precedence.  You're welcome to add a reviewed-by.  Thanks,
+
+Alex
+
+[1]https://lkml.org/lkml/2019/5/29/871
+[2]https://lkml.org/lkml/2019/5/16/658
