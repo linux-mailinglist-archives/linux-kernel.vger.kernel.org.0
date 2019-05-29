@@ -2,95 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B0182D911
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:31:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55F5C2D90C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfE2JbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 05:31:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49464 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726038AbfE2JbJ (ORCPT
+        id S1726106AbfE2JbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 05:31:00 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46058 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbfE2Ja7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 05:31:09 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4T9RXDx006968
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 05:31:08 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ssq2vs4bm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 05:31:08 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <huntbag@linux.vnet.ibm.com>;
-        Wed, 29 May 2019 10:31:06 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 May 2019 10:31:03 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4T9V2n028049590
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 May 2019 09:31:02 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8B242AE045;
-        Wed, 29 May 2019 09:31:02 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9CB81AE053;
-        Wed, 29 May 2019 09:31:01 +0000 (GMT)
-Received: from boston16h.aus.stglabs.ibm.com (unknown [9.3.23.78])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 29 May 2019 09:31:01 +0000 (GMT)
-From:   Abhishek Goel <huntbag@linux.vnet.ibm.com>
-To:     trenn@suse.com, shuah@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Abhishek Goel <huntbag@linux.vnet.ibm.com>
-Subject: [PATCH] cpupower : frequency-set -r option misses the last cpu in related cpu list
-Date:   Wed, 29 May 2019 04:30:33 -0500
-X-Mailer: git-send-email 2.17.1
-X-TM-AS-GCONF: 00
-x-cbid: 19052909-0016-0000-0000-0000028091A9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052909-0017-0000-0000-000032DDA13B
-Message-Id: <20190529093033.30068-1-huntbag@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-29_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905290063
+        Wed, 29 May 2019 05:30:59 -0400
+Received: by mail-pf1-f195.google.com with SMTP id s11so1231542pfm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 02:30:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ohlWmHHIFRkvqwfurOwZvhZIyOaX8C5tuNXmlsaf2Zg=;
+        b=OyJ+5Ff8qJKE4/SrSJjVedT9u/JhuA89rp+gKRux0xOcrVQdr0DCLLDSJUNszi2QSK
+         rrnxsCj327DtOgihPRi8eeJoNQKuG/IkQLCadjzsSa5ZkLPngaiq3StBEzzeawMKH19S
+         oCTk6l8vQZQSR6I09YtyEoRwlvPz+cgGEneCw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ohlWmHHIFRkvqwfurOwZvhZIyOaX8C5tuNXmlsaf2Zg=;
+        b=JOHH784XytZHFPLQUfU4PWbdh6ABMU3m+OhTfEx8PktwSPeU/MwO9J6jG5Xyk8YnOi
+         dABHMo6a0aNX/OuZghpL55vZKz1b8yEDG0xu2lScJQmWYVdX0obN0hVJpTXNfN9fvI0G
+         71cr2wo2mq6gSpUlHb8FRtn85a/eqHcnAfvTdDWkmg/jpR/ENis5XhRjSj2qYdt6ZKP+
+         l4YoKUu/l5a3kdk3aGCJ+8fiYQjMMeMCH+eR5W1Sy66Y1OVPlHlNYJD1zgklqrhtnwnG
+         dryBT7XyVHANTLP3pOlG9YjcDoUjzxaWp0Ac9nlO81afYVK+lrOkk/xzFf2PKNpc+Y5W
+         RiiQ==
+X-Gm-Message-State: APjAAAVZn8CeKszP8ZKCtHDrQlq7vnVDoyQoqbomrJ3am5/mRECz3lhn
+        HczlW1HwoxE8Wf3p7MPo4QlK3g==
+X-Google-Smtp-Source: APXvYqxgioU9CZJfrCSlykl2+7r5vNeFy9ypEHEzhyeGwV/Z5mUxy8uPnOjYSAl3KzFRAaYwViW48w==
+X-Received: by 2002:a62:ae05:: with SMTP id q5mr32947270pff.13.1559122258736;
+        Wed, 29 May 2019 02:30:58 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id l13sm4806102pjq.20.2019.05.29.02.30.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 May 2019 02:30:57 -0700 (PDT)
+Date:   Wed, 29 May 2019 05:30:56 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, williams@redhat.com,
+        daniel@bristot.me, "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Subject: Re: [RFC 1/3] softirq: Use preempt_latency_stop/start to trace
+ preemption
+Message-ID: <20190529093056.GA146079@google.com>
+References: <cover.1559051152.git.bristot@redhat.com>
+ <b6bb4705efb0c01c11008ae3c46bc74555245303.1559051152.git.bristot@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b6bb4705efb0c01c11008ae3c46bc74555245303.1559051152.git.bristot@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To set frequency on specific cpus using cpupower, following syntax can
-be used :
-cpupower -c #i frequency-set -f #f -r
+On Tue, May 28, 2019 at 05:16:22PM +0200, Daniel Bristot de Oliveira wrote:
+> prempt_disable/enable tracepoints occurs only in the preemption
+> enabled <-> disable transition. As preempt_latency_stop() and
+> preempt_latency_start() already do this control, avoid code
+> duplication by using these functions in the softirq code as well.
+> 
+> RFC: Should we move preempt_latency_start/preempt_latency_stop
+> to a trace source file... or even a header?
 
-While setting frequency using cpupower frequency-set command, if we use
-'-r' option, it is expected to set frequency for all cpus related to
-cpu #i. But it is observed to be missing the last cpu in related cpu
-list. This patch fixes the problem.
+Yes, I think so. Also this patch changes CALLER_ADDR0 passed to the
+tracepoint because there's one more level of a non-inlined function call
+in the call chain right?  Very least the changelog should document this
+change in functional behavior, IMO.
 
-Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
----
- tools/power/cpupower/utils/cpufreq-set.c | 2 ++
- 1 file changed, 2 insertions(+)
+Looks like a nice change otherwise, thanks!
 
-diff --git a/tools/power/cpupower/utils/cpufreq-set.c b/tools/power/cpupower/utils/cpufreq-set.c
-index 1eef0aed6..08a405593 100644
---- a/tools/power/cpupower/utils/cpufreq-set.c
-+++ b/tools/power/cpupower/utils/cpufreq-set.c
-@@ -306,6 +306,8 @@ int cmd_freq_set(int argc, char **argv)
- 				bitmask_setbit(cpus_chosen, cpus->cpu);
- 				cpus = cpus->next;
- 			}
-+			/* Set the last cpu in related cpus list */
-+			bitmask_setbit(cpus_chosen, cpus->cpu);
- 			cpufreq_put_related_cpus(cpus);
- 		}
- 	}
--- 
-2.17.1
 
+> Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> Cc: Matthias Kaehlcke <mka@chromium.org>
+> Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+> Cc: Frederic Weisbecker <frederic@kernel.org>
+> Cc: Yangtao Li <tiny.windzz@gmail.com>
+> Cc: Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  kernel/sched/core.c |  4 ++--
+>  kernel/softirq.c    | 13 +++++--------
+>  2 files changed, 7 insertions(+), 10 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 874c427742a9..8c0b414e45dc 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3152,7 +3152,7 @@ static inline void sched_tick_stop(int cpu) { }
+>   * If the value passed in is equal to the current preempt count
+>   * then we just disabled preemption. Start timing the latency.
+>   */
+> -static inline void preempt_latency_start(int val)
+> +void preempt_latency_start(int val)
+>  {
+>  	if (preempt_count() == val) {
+>  		unsigned long ip = get_lock_parent_ip();
+> @@ -3189,7 +3189,7 @@ NOKPROBE_SYMBOL(preempt_count_add);
+>   * If the value passed in equals to the current preempt count
+>   * then we just enabled preemption. Stop timing the latency.
+>   */
+> -static inline void preempt_latency_stop(int val)
+> +void preempt_latency_stop(int val)
+>  {
+>  	if (preempt_count() == val)
+>  		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
+> diff --git a/kernel/softirq.c b/kernel/softirq.c
+> index 2c3382378d94..c9ad89c3dfed 100644
+> --- a/kernel/softirq.c
+> +++ b/kernel/softirq.c
+> @@ -108,6 +108,8 @@ static bool ksoftirqd_running(unsigned long pending)
+>   * where hardirqs are disabled legitimately:
+>   */
+>  #ifdef CONFIG_TRACE_IRQFLAGS
+> +extern void preempt_latency_start(int val);
+> +extern void preempt_latency_stop(int val);
+>  void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
+>  {
+>  	unsigned long flags;
+> @@ -130,12 +132,8 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
+>  		trace_softirqs_off(ip);
+>  	raw_local_irq_restore(flags);
+>  
+> -	if (preempt_count() == cnt) {
+> -#ifdef CONFIG_DEBUG_PREEMPT
+> -		current->preempt_disable_ip = get_lock_parent_ip();
+> -#endif
+> -		trace_preempt_off(CALLER_ADDR0, get_lock_parent_ip());
+> -	}
+> +	preempt_latency_start(cnt);
+> +
+>  }
+>  EXPORT_SYMBOL(__local_bh_disable_ip);
+>  #endif /* CONFIG_TRACE_IRQFLAGS */
+> @@ -144,8 +142,7 @@ static void __local_bh_enable(unsigned int cnt)
+>  {
+>  	lockdep_assert_irqs_disabled();
+>  
+> -	if (preempt_count() == cnt)
+> -		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
+> +	preempt_latency_stop(cnt);
+>  
+>  	if (softirq_count() == (cnt & SOFTIRQ_MASK))
+>  		trace_softirqs_on(_RET_IP_);
+> -- 
+> 2.20.1
+> 
