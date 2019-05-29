@@ -2,97 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11B942D39F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 04:14:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD2272D7AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:23:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726341AbfE2COc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 22:14:32 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34168 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfE2COb (ORCPT
+        id S1726547AbfE2IXP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 29 May 2019 04:23:15 -0400
+Received: from mail.jk-t.co.kr ([211.174.176.35]:50510 "EHLO
+        mail.toshibateckorea.com" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1725948AbfE2IXO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 22:14:31 -0400
-Received: by mail-pf1-f193.google.com with SMTP id n19so554884pfa.1;
-        Tue, 28 May 2019 19:14:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=eibd82PDYGzjDHcvf9kKMO0L4SQdQbd6quNdYGpibfM=;
-        b=k72j/tM5Giqi+1CvS28Pmto4rtL65GYTAyQZaiQiVZociIrgV+4rhYE61LAQS/5BF0
-         ji+2cmQ5YRlE5icSR75OU0T40TdrlkF75HLZhh7Q0KHABeQWpP2aHNEMgqVt+ag7Gka8
-         slw/FuY0VootE8uzvDnC4KlZgD+C1+CXjOVmzXIfKOQ8dY6IDeSsvVzJpodNup+Yb9PF
-         68ZkLM8obhQz4+Je0pCLTZKiG1MUvltPN9OhYaLl7BhjoAHuaY18Hijr+DhKa2e8ynaR
-         iZgzmK1vh0iezrfEVm9AAWJlBnnkP1CM23ybK5f7WHDfThOjfcIpjHB9ZodKkwE1fCVu
-         zcpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=eibd82PDYGzjDHcvf9kKMO0L4SQdQbd6quNdYGpibfM=;
-        b=djN+MKLDTZkiRCKzX1S+Sx04uEcKra+FrGVn9OiNY8Y5hUW3Paj2QvKlz++0C2xdY0
-         Q+rJmV7Etu7SZpvWdl/89XVzz+bASd3eFHtl2w6toWOWZEk7Wvfj9hBbJlZKeBXt8L12
-         qO/m5E75eMkQ9O9nJKZDt4AewlavYHhTVSxIWD/ipKUTyq0dGsLr4a9F8KSbypWdOcJU
-         BtpnKu5n/tpxe65pjn1NvMNqjskBfNJZTppZeVu4B16GIuiBtwTwly3TAgKDL0Y5iEws
-         S0f3szAttC8/QB1sALs+rnSA5CETZJaBoytSp0JYrzljcxudKyIzcUnJEfmz+g5AiEPs
-         wSxg==
-X-Gm-Message-State: APjAAAUq5h/7ZQQPZMRJehbKvXMPmw7DcF7Iui6Cxx/xMYl45jK4xZAw
-        owustf9D3nX+mdLNmxB1XUc=
-X-Google-Smtp-Source: APXvYqyBsBONvrPCzpGFfP8/a/GfBRbtaVlnB6/6M9FXkCxG7un0Wp+FJI4Bj9fcqaSzr5Hl9EDQDw==
-X-Received: by 2002:a63:1b0e:: with SMTP id b14mr25084443pgb.365.1559096071272;
-        Tue, 28 May 2019 19:14:31 -0700 (PDT)
-Received: from xy-data.openstacklocal (ecs-159-138-22-150.compute.hwclouds-dns.com. [159.138.22.150])
-        by smtp.gmail.com with ESMTPSA id e8sm4738669pgj.2.2019.05.28.19.14.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 28 May 2019 19:14:30 -0700 (PDT)
-From:   Young Xiao <92siuyang@gmail.com>
-To:     ecree@solarflare.com, mhabets@solarflare.com, davem@davemloft.net,
-        fw@strlen.de, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Young Xiao <92siuyang@gmail.com>
-Subject: [PATCH] falcon: pass valid pointer from ef4_enqueue_unwind.
-Date:   Wed, 29 May 2019 10:15:39 +0800
-Message-Id: <1559096139-25698-1-git-send-email-92siuyang@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 29 May 2019 04:23:14 -0400
+X-Greylist: delayed 21919 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 May 2019 04:23:14 EDT
+Received: from [37.49.225.207] ([37.49.225.207])
+        (authenticated bits=0)
+        by mail.toshibateckorea.com (8.13.8/8.13.8) with ESMTP id x4T1w1vV030549
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 11:17:50 +0900
+Message-Id: <201905290217.x4T1w1vV030549@mail.toshibateckorea.com>
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Email Win Final Notification
+To:     linux-kernel@vger.kernel.org
+From:   "Samsung Europe" <europe.prize@samsung.com>
+Date:   Tue, 28 May 2019 19:17:50 -0700
+Reply-To: samsung.prize@europe.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bytes_compl and pkts_compl pointers passed to ef4_dequeue_buffers
-cannot be NULL. Add a paranoid warning to check this condition and fix
-the one case where they were NULL.
+**************************DO NOT DELETE THIS MESSAGE****************************
 
-Signed-off-by: Young Xiao <92siuyang@gmail.com>
----
- drivers/net/ethernet/sfc/falcon/tx.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/sfc/falcon/tx.c b/drivers/net/ethernet/sfc/falcon/tx.c
-index c5059f4..ed89bc6 100644
---- a/drivers/net/ethernet/sfc/falcon/tx.c
-+++ b/drivers/net/ethernet/sfc/falcon/tx.c
-@@ -69,6 +69,7 @@ static void ef4_dequeue_buffer(struct ef4_tx_queue *tx_queue,
- 	}
- 
- 	if (buffer->flags & EF4_TX_BUF_SKB) {
-+		EF4_WARN_ON_PARANOID(!pkts_compl || !bytes_compl);
- 		(*pkts_compl)++;
- 		(*bytes_compl) += buffer->skb->len;
- 		dev_consume_skb_any((struct sk_buff *)buffer->skb);
-@@ -271,12 +272,14 @@ static int ef4_tx_map_data(struct ef4_tx_queue *tx_queue, struct sk_buff *skb)
- static void ef4_enqueue_unwind(struct ef4_tx_queue *tx_queue)
- {
- 	struct ef4_tx_buffer *buffer;
-+	unsigned int bytes_compl = 0;
-+	unsigned int pkts_compl = 0;
- 
- 	/* Work backwards until we hit the original insert pointer value */
- 	while (tx_queue->insert_count != tx_queue->write_count) {
- 		--tx_queue->insert_count;
- 		buffer = __ef4_tx_queue_get_insert_buffer(tx_queue);
--		ef4_dequeue_buffer(tx_queue, buffer, NULL, NULL);
-+		ef4_dequeue_buffer(tx_queue, buffer, &pkts_compl, &bytes_compl);
- 	}
- }
- 
--- 
-2.7.4
+Samsung Europe
+Prize Office
+Evert van de Beekstraat 310
+1118 CX Schiphol-Holland
+www.samsung.com/europe
 
+
+
+
+OFFICIAL WIN NOTIFICATION.
+
+Email Prize Ticket Number: GLX/9627835/EU/PRIZE2ND.
+
+Dear Email User: 
+
+Are you the owner of this email?
+
+Congratulations! Samsung Europe wishes to congratulate you for being one of the lucky
+winners in the Samsung Prize Ballot. Your email have been officially 
+selected as a winner and you are hereby awarded with your email in the 
+2nd category winning prize of Seven Hundred and Fifty Thousand Euros and a Samsung Galaxy S10+.
+
+With the introduction of new types of games, with the ushering in of online technology 
+and with the permit issued under EU laws to compete for concession to
+run games and give away prizes on the internet, we are launching our 1st international promotion.
+
+
+All contestants were selected through a computer ballot system
+drawn from email addresses from all over the world and your email address 
+have been selected as one of the lucky winners.
+
+Contact Notaris: Igo Jansen.
+Notarization Officer/Agent
+Tel: 0031 61 654 5088
+Email: samsung.notarization@europe.com
+
+For claims and notarisation you must be above 18yrs to fill the below form and 
+send to notaris contact:
+
+***************************************************************************************************************************
+First Name:
+Last Name:
+Occupation:
+Address:
+Country:
+Telephone:
+Win Email:
+EPTN: GLX/9627835/EU/PRIZE2ND
+****************************************************************************************************************************
+Claim expiry date is 29th May 2019, after this date all winning prizes will be filed as unclaimed.
+
+
+Keep this email confidential & away from public notice to prevent double 
+claim or impersonation with your EPTN.
+
+
+
+Best Regards,
+Cristian Bensila
+(Prize Co-ordinator)
+Samsung Europe.
+
+
+© 2019 Samsung Europe. All rights reserved .(Privacy Statement)
