@@ -2,121 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE5A52D7F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE8F62D7F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:42:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbfE2Ilh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 04:41:37 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17619 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725935AbfE2Ilg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:41:36 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4C206269DD259F2AAC39;
-        Wed, 29 May 2019 16:41:33 +0800 (CST)
-Received: from [127.0.0.1] (10.74.191.121) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Wed, 29 May 2019
- 16:41:26 +0800
-Subject: Re: [PATCH net-next] net: link_watch: prevent starvation when
- processing linkwatch wq
-To:     Salil Mehta <salil.mehta@huawei.com>,
-        Stephen Hemminger <stephen@networkplumber.org>
-CC:     "davem@davemloft.net" <davem@davemloft.net>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>
-References: <1558921674-158349-1-git-send-email-linyunsheng@huawei.com>
- <20190527075838.5a65abf9@hermes.lan>
- <a0fe690b-2bfa-7d1a-40c5-5fb95cf57d0b@huawei.com>
- <cddd414bbf454cbaa8321a92f0d1b9b2@huawei.com>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <aa8d92eb-5683-9b7d-1c3f-69eec30f3a61@huawei.com>
-Date:   Wed, 29 May 2019 16:41:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1726396AbfE2ImN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:42:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725917AbfE2ImN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 04:42:13 -0400
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DC632081C;
+        Wed, 29 May 2019 08:42:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559119332;
+        bh=kLcWkuMUD1c9UKeh1Icn/by3J3KUqRiWwfXRFd6P5x8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TpzDSS2RYXCTm80dxTw9lE8EUlXiI94NlWx9ro3r8TnxPR1QYZFdHgBvQgtL3AGoO
+         8epxsYy9MpT3LjEr3evqQesj4oMRKkK/VIuSDK9u6y3OLQEtScwMDfNa/GnwXzM5F5
+         +G9B5pr36kY5XqsaRKjnZBikURUEDj2GfLK6MAik=
+Received: by mail-lj1-f181.google.com with SMTP id e13so1553655ljl.11;
+        Wed, 29 May 2019 01:42:12 -0700 (PDT)
+X-Gm-Message-State: APjAAAUFtWprd4rks9Qn/r6JVxomoxzzB9dSlwI7nwhVlRYQ1RVMwnaz
+        rMSVFzLBzLhxKCXx150ydP68jnwahhQ/0s/oEQo=
+X-Google-Smtp-Source: APXvYqzUzMIm/yFZwUkBnd9PJV+6XSRK74Of5UYSuWnDEXSI3A+Id6tCaQkHsfE2heRDgEkW5hmncH1hvrpO/lvVcHY=
+X-Received: by 2002:a2e:9a9a:: with SMTP id p26mr3098090lji.64.1559119330847;
+ Wed, 29 May 2019 01:42:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cddd414bbf454cbaa8321a92f0d1b9b2@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.191.121]
-X-CFilter-Loop: Reflected
+References: <CGME20190528082903eucas1p1ef54fa6aee420bffa11be61d5efb4c46@eucas1p1.samsung.com>
+ <20190528082846.21625-1-m.szyprowski@samsung.com>
+In-Reply-To: <20190528082846.21625-1-m.szyprowski@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 29 May 2019 10:41:59 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcgbSHDAnRc+9dtiuLOQ2Ah9mVrYvEdd33M_AAuC5Z5xg@mail.gmail.com>
+Message-ID: <CAJKOXPcgbSHDAnRc+9dtiuLOQ2Ah9mVrYvEdd33M_AAuC5Z5xg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: Add workaround for I-Cache line size mismatch
+ between CPU cores
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/5/29 16:12, Salil Mehta wrote:
->> From: netdev-owner@vger.kernel.org [mailto:netdev-owner@vger.kernel.org] On Behalf Of Yunsheng Lin
->> Sent: Tuesday, May 28, 2019 2:04 AM
->>
->> On 2019/5/27 22:58, Stephen Hemminger wrote:
->>> On Mon, 27 May 2019 09:47:54 +0800
->>> Yunsheng Lin <linyunsheng@huawei.com> wrote:
->>>
->>>> When user has configured a large number of virtual netdev, such
->>>> as 4K vlans, the carrier on/off operation of the real netdev
->>>> will also cause it's virtual netdev's link state to be processed
->>>> in linkwatch. Currently, the processing is done in a work queue,
->>>> which may cause worker starvation problem for other work queue.
-> 
-> 
-> I think we had already discussed about this internally and using separate
-> workqueue with WQ_UNBOUND should solve this problem. HNS3 driver was sharing
-> workqueue with the system workqueue. 
+On Tue, 28 May 2019 at 10:29, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+> Some big.LITTLE systems have I-Cache line size mismatch between
+> LITTLE and big cores. This patch adds a workaround for proper I-Cache
+> support on such systems. Without it, some class of the userspace code
+> (typically self-modifying) might suffer from random SIGILL failures.
+>
+> Similar workaround already exists for ARM64 architecture. I has been
+> added by commit 116c81f427ff ("arm64: Work around systems with mismatched
+> cache line sizes").
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> This workaround is needed on all supported Exynos big.LITTLE SoCs: 5420,
+> 5422 and 5800.
+>
+> Resend reason: removed RFC tag as there are no comments, I will upload
+> this patch to the patch tracking system
 
-Yes, using WQ_UNBOUND wq in hns3 solved the cpu starvation for hns3
-workqueue.
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-But the rtnl_lock taken by linkwatch is still a problem for hns3's
-reset workqueue to do the down operation, which need a rtnl_lock.
-
-> 
-> 
->>>> This patch releases the cpu when link watch worker has processed
->>>> a fixed number of netdev' link watch event, and schedule the
->>>> work queue again when there is still link watch event remaining.
-> 
-> 
-> We need proper examples/use-cases because of which we require above
-> kind of co-operative scheduling. Touching the common shared queue logic
-> which solid argument might invite for more problem to other modules.
-> 
-> 
->>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->>>
->>> Why not put link watch in its own workqueue so it is scheduled
->>> separately from the system workqueue?
->>
->> From testing and debuging, the workqueue runs on the cpu where the
->> workqueue is schedule when using normal workqueue, even using its
->> own workqueue instead of system workqueue. So if the cpu is busy
->> processing the linkwatch event, it is not able to process other
->> workqueue' work when the workqueue is scheduled on the same cpu.
->>
->> Using unbound workqueue may solve the cpu starvation problem.
-> 
-> [...]
-> 
->> But the __linkwatch_run_queue is called with rtnl_lock, so if it
->> takes a lot time to process, other need to take the rtnl_lock may
->> not be able to move forward.
-> 
-> Please help me in understanding, Are you trying to pitch this patch
-> to solve more general system issue OR still your argument/concern
-> is related to the HNS3 driver problem mentioned in this patch?
-
-As about.
-
-> 
-> Salil.
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-
+Best regards,
+Krzysztof
