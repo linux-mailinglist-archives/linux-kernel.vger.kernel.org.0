@@ -2,170 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C781E2D42C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 05:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A87472D425
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 05:12:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfE2DSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 23:18:04 -0400
-Received: from rcdn-iport-1.cisco.com ([173.37.86.72]:19620 "EHLO
-        rcdn-iport-1.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfE2DSE (ORCPT
+        id S1726658AbfE2DMX convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 28 May 2019 23:12:23 -0400
+Received: from twhmllg3.macronix.com ([211.75.127.131]:20961 "EHLO
+        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbfE2DMX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 23:18:04 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 May 2019 23:18:04 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=1352; q=dns/txt; s=iport;
-  t=1559099884; x=1560309484;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=Sdulz10sBIhnJIx8fDZdylJ9FoEjzCor9wR+V9xoFE0=;
-  b=bmWMbHDpQre9FgsIk38rRo+BEc1kDiju4Qkk+rxhPB1UQAZG6zhEQRcQ
-   LwMRkpirKBrNnQOkYnLxE9Kv2427oQ4RneDfzBo2PqlJEl8BS1UhHs20L
-   SbNeA1vvEhYSdYuNUZinT6KlGVqZjqV/6YdOG34kxDxGaPfZuZYqhp5pz
-   k=;
-IronPort-PHdr: =?us-ascii?q?9a23=3AzjqGjxQkDbo/uCXTgBZNRqHDmNpsv++ubAcI9p?=
- =?us-ascii?q?oqja5Pea2//pPkeVbS/uhpkESXBNfA8/wRje3QvuigQmEG7Zub+FE6OJ1XH1?=
- =?us-ascii?q?5g640NmhA4RsuMCEn1NvnvOjchF8RLWVRm13q6KkNSXs35Yg6arw=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0ChAABp9+1c/4kNJK1lHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBUwUBAQsBgT1QA4E+IAQLKIdaA48AgleXLYEuFIEQA1QJAQEBDAEBLQI?=
- =?us-ascii?q?BAYRAAoJjIzYHDgEDAQEEAQECAQRtHAyFSwEBBBIVGQEBNwEPAgEIGB0RMiU?=
- =?us-ascii?q?CBAENBSKDAIFrAx0BnhoCgTiIX4FtM4J5AQEFgQYBhAMYgg8JgTQBi1IXgUA?=
- =?us-ascii?q?/gREnH4IeLj6ELBiDPIImk2CUeQkCgg2TFhuWS4xwlXgCBAIEBQIOAQEFgVY?=
- =?us-ascii?q?LJoFXcBVlAYJBgg8MF4NNihwBNnKBKY1jAQE?=
-X-IronPort-AV: E=Sophos;i="5.60,525,1549929600"; 
-   d="scan'208";a="564674925"
-Received: from alln-core-4.cisco.com ([173.36.13.137])
-  by rcdn-iport-1.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 29 May 2019 03:10:57 +0000
-Received: from XCH-ALN-017.cisco.com (xch-aln-017.cisco.com [173.36.7.27])
-        by alln-core-4.cisco.com (8.15.2/8.15.2) with ESMTPS id x4T3Avv5019255
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 29 May 2019 03:10:57 GMT
-Received: from xhs-aln-003.cisco.com (173.37.135.120) by XCH-ALN-017.cisco.com
- (173.36.7.27) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 May
- 2019 22:10:56 -0500
-Received: from xhs-rcd-003.cisco.com (173.37.227.248) by xhs-aln-003.cisco.com
- (173.37.135.120) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 May
- 2019 22:10:56 -0500
-Received: from NAM05-DM3-obe.outbound.protection.outlook.com (72.163.14.9) by
- xhs-rcd-003.cisco.com (173.37.227.248) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3 via Frontend Transport; Tue, 28 May 2019 22:10:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cisco.onmicrosoft.com;
- s=selector2-cisco-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B59HeDLnmBJtwbhJij9ITHV/Zkb7RsiodX/MnX980z8=;
- b=Tqd35wk0xDYKzIlbG48ztOKMex2MD0vIRm9+YZzkCLujvZY9y00ASkDOiFiUgwRptysloaaK14XeGa0IPvuZxwhXioDkJcefkGsLKK8jXeElAODhLyw5eV4cHUS6NwndeQLVrGzjAIkrsLSze88bOEtrqhzX7XaZ3AnoOk1kRYk=
-Received: from BY5PR11MB4007.namprd11.prod.outlook.com (10.255.161.92) by
- BY5PR11MB4183.namprd11.prod.outlook.com (10.255.162.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.23; Wed, 29 May 2019 03:10:54 +0000
-Received: from BY5PR11MB4007.namprd11.prod.outlook.com
- ([fe80::1de7:32f5:3a7b:ae21]) by BY5PR11MB4007.namprd11.prod.outlook.com
- ([fe80::1de7:32f5:3a7b:ae21%5]) with mapi id 15.20.1922.021; Wed, 29 May 2019
- 03:10:54 +0000
-From:   "Stefan Schaeckeler (sschaeck)" <sschaeck@cisco.com>
-To:     Andrew Jeffery <andrew@aj.id.au>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "james.morse@arm.com" <james.morse@arm.com>,
-        Joel Stanley <joel@jms.id.au>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH -next] EDAC: aspeed: Remove set but not used variable 'np'
-Thread-Topic: [PATCH -next] EDAC: aspeed: Remove set but not used variable
- 'np'
-Thread-Index: AQHVEwgkpwm7NMGqKUyhE4ayNBdRIKaBVTwA//+nlwA=
-Date:   Wed, 29 May 2019 03:10:54 +0000
-Message-ID: <960D5667-41E7-47F3-9C0A-726CA919B82D@cisco.com>
-References: <20190525144153.2028-1-yuehaibing@huawei.com>
- <04f103fb-54b1-4911-8164-44b20bfd1e72@www.fastmail.com>
-In-Reply-To: <04f103fb-54b1-4911-8164-44b20bfd1e72@www.fastmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.19.0.190512
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sschaeck@cisco.com; 
-x-originating-ip: [2001:420:c0c8:1002::23a]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: da4acbc0-d7fa-40d7-c0d6-08d6e3e34381
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BY5PR11MB4183;
-x-ms-traffictypediagnostic: BY5PR11MB4183:
-x-microsoft-antispam-prvs: <BY5PR11MB4183B04A05AC67C88A772AC0C71F0@BY5PR11MB4183.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3173;
-x-forefront-prvs: 0052308DC6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(136003)(376002)(346002)(189003)(199004)(6436002)(6246003)(6486002)(4326008)(71190400001)(71200400001)(83716004)(66476007)(99286004)(14444005)(76116006)(73956011)(66446008)(64756008)(66556008)(2501003)(229853002)(82746002)(256004)(36756003)(86362001)(305945005)(54906003)(25786009)(66946007)(6512007)(8936002)(186003)(68736007)(476003)(446003)(11346002)(6116002)(14454004)(7736002)(53936002)(5660300002)(2906002)(7416002)(486006)(81156014)(58126008)(81166006)(316002)(6506007)(102836004)(8676002)(110136005)(53546011)(76176011)(478600001)(33656002)(2616005)(46003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY5PR11MB4183;H:BY5PR11MB4007.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cisco.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: AghqIJs59cYjUuUMuNNC5Q4ehQp8qSYJum6+gIx7AhhZQBQo7KWB3jXiBi7dIsX6BnLF1+HuS2yi7NoJdH/Bo1Z/mD321tvHvMLP7G+Hd8tElngXXNfnE3PUJR7wxKxnKwrPy6GukNZaBeOEhI9LrGXWO29Y2g2yCEXon0F329khucXeuAAnBjguh6/9wXl7PdAwG/Np7pLOAujZ21UY3COWwmT7Yepb9Ped2DgIIZ3HDhfLjv742N/RWL5//23H+E2YOl9NNcuN4tTyZlCk+jExupEjVcTUAEH9V6Xabzbjskpj7pX5D9Bvpvp2oNLZMbigBeEaoEY2+t3BRAs2Pma2H/keeMf/zegmWiQnEg8atCpRmrst5z8ZB7GhcfRLGATc4n1ynuqDb1xiMbcowSMh+HkZZCcGq3XQ6uz9jZM=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <3293C5D8B6EA624CB924C20630669181@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 28 May 2019 23:12:23 -0400
+Received: from twhfmlp1.macronix.com (twhfm1p1.macronix.com [172.17.20.91])
+        by TWHMLLG3.macronix.com with ESMTP id x4T3C9Cr060053;
+        Wed, 29 May 2019 11:12:09 +0800 (GMT-8)
+        (envelope-from masonccyang@mxic.com.tw)
+Received: from MXML06C.mxic.com.tw (mxml06c.macronix.com [172.17.14.55])
+        by Forcepoint Email with ESMTP id EDCE24567F9C6873D729;
+        Wed, 29 May 2019 11:12:08 +0800 (CST)
+In-Reply-To: <20190527144250.71908bd9@xps13>
+References: <1555320234-15802-1-git-send-email-masonccyang@mxic.com.tw> <1555320234-15802-3-git-send-email-masonccyang@mxic.com.tw>
+        <20190512151820.4f2dd9da@xps13> <OF074A1F06.5C1A58BE-ON482583FD.0031CD95-482583FD.003437AD@mxic.com.tw>
+        <20190520142333.390091d5@xps13> <OFADC47344.0F9941B2-ON48258403.002336E3-48258403.003141F0@mxic.com.tw> <20190527144250.71908bd9@xps13>
+To:     "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc:     bbrezillon@kernel.org, broonie@kernel.org,
+        christophe.kerello@st.com, computersforpeace@gmail.com,
+        devicetree@vger.kernel.org, dwmw2@infradead.org,
+        geert@linux-m68k.org, juliensu@mxic.com.tw, lee.jones@linaro.org,
+        liang.yang@amlogic.com, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        marcel.ziswiler@toradex.com, marek.vasut@gmail.com,
+        mark.rutland@arm.com, paul.burton@mips.com, richard@nod.at,
+        robh+dt@kernel.org, stefan@agner.ch, zhengxunli@mxic.com.tw
+Subject: Re: [PATCH v3 2/4] mtd: rawnand: Add Macronix MX25F0A NAND controller
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: da4acbc0-d7fa-40d7-c0d6-08d6e3e34381
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2019 03:10:54.7573
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sschaeck@cisco.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR11MB4183
-X-OriginatorOrg: cisco.com
-X-Outbound-SMTP-Client: 173.36.7.27, xch-aln-017.cisco.com
-X-Outbound-Node: alln-core-4.cisco.com
+X-KeepSent: E923A8E5:50375C30-48258409:0009AE1B;
+ type=4; name=$KeepSent
+X-Mailer: Lotus Notes Release 8.5.3FP4 SHF90 June 10, 2013
+Message-ID: <OFE923A8E5.50375C30-ON48258409.0009AE1B-48258409.00119767@mxic.com.tw>
+From:   masonccyang@mxic.com.tw
+Date:   Wed, 29 May 2019 11:12:08 +0800
+X-MIMETrack: Serialize by Router on MXML06C/TAIWAN/MXIC(Release 9.0.1FP10 HF265|July 25, 2018) at
+ 2019/05/29 AM 11:12:09,
+        Serialize complete at 2019/05/29 AM 11:12:09
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+X-MAIL: TWHMLLG3.macronix.com x4T3C9Cr060053
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On  Tuesday, May 28, 2019 at 6:27 PM, Andrew Jeffery wrote:
-> On Sun, 26 May 2019, at 00:12, YueHaibing wrote:
-> > Fixes gcc '-Wunused-but-set-variable' warning:
-> >
-> > drivers/edac/aspeed_edac.c: In function aspeed_probe:
-> > drivers/edac/aspeed_edac.c:284:22: warning: variable np set but not
-> > used [-Wunused-but-set-variable]
-> >
-> > It is never used and can be removed.
-> >
-> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 
-Reviewed-by: Stefan Schaeckeler <sschaeck@cisco.com>
+Hi Miquel,
 
-> > ---
-> >  drivers/edac/aspeed_edac.c | 4 ----
-> >  1 file changed, 4 deletions(-)
-> >
-> > diff --git a/drivers/edac/aspeed_edac.c b/drivers/edac/aspeed_edac.c
-> > index 11833c0a5d07..5634437bb39d 100644
-> > --- a/drivers/edac/aspeed_edac.c
-> > +++ b/drivers/edac/aspeed_edac.c
-> > @@ -281,15 +281,11 @@ static int aspeed_probe(struct platform_device *p=
-dev)
-> >  	struct device *dev =3D &pdev->dev;
-> >  	struct edac_mc_layer layers[2];
-> >  	struct mem_ctl_info *mci;
-> > -	struct device_node *np;
-> >  	struct resource *res;
-> >  	void __iomem *regs;
-> >  	u32 reg04;
-> > 	int rc;
-> >
-> > -	/* setup regmap */
-> > -	np =3D dev->of_node;
-> > -
-> >  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >  	if (!res)
-> >  		return -ENOENT;
-> > --
-> > 2.17.1
+> > > > > > +static void mxic_nand_select_chip(struct nand_chip *chip, int 
+ 
+> > chipnr) 
+> > > > > 
+> > > > > _select_target() is preferred now 
+> > > > 
+> > > > Do you mean I implement mxic_nand_select_target() to control #CS ?
+> > > > 
+> > > > If so, I need to call mxic_nand_select_target( ) to control #CS ON
+> > > > and then #CS OFF in _exec_op() due to nand_select_target()<in 
+> > nand_base,c> 
+> > > > is still calling chip->legacy.select_chip ? 
+> > > 
+> > > You must forget about the ->select_chip() callback. Now it should be
+> > > handled directly from the controller driver. Please have a look at 
+the
+> > > commit pointed against the marvell_nand.c driver. 
+> > 
+> > I have no Marvell NFC datasheet and have one question.
+> > 
+> > In marvell_nand.c, there is no xxx_deselect_target() or 
+> > something like that doing #CS OFF.
+> > marvell_nfc_select_target() seems always to make one of chip or die
+> > #CS keep low.
+> > 
+> > Is it right ?
+> 
+> Yes, AFAIR there is no "de-assert" mechanism in this controller.
+> 
+> > 
+> > How to make all #CS keep high for NAND to enter 
+> > low-power standby mode if driver don't use "legacy.select_chip()" ?
+> 
+> See commit 02b4a52604a4 ("mtd: rawnand: Make ->select_chip() optional
+> when ->exec_op() is implemented") which states:
+> 
+>         "When [->select_chip() is] not implemented, the core is assuming
+>    the CS line is automatically asserted/deasserted by the driver
+>    ->exec_op() implementation."
+> 
+> Of course, the above is right only when the controller driver supports
+> the ->exec_op() interface. 
+
+Currently, it seems that we will get the incorrect data and error
+operation due to CS in error toggling if CS line is controlled in 
+->exec_op().
+i.e,. 
+
+1) In nand_onfi_detect() to call nand_exec_op() twice by 
+nand_read_param_page_op() and annd_read_data_op()
+
+2) In nand_write_page_xxx to call nand_exec_op() many times by
+nand_prog_page_begin_op(), nand_write_data_op() and 
+nand_prog_page_end_op().
+
+
+Should we consider to add a CS line controller in struct nand_controller
+i.e,.
+
+struct nand_controller {
+         struct mutex lock;
+         const struct nand_controller_ops *ops;
++          void (*select_chip)(struct nand_chip *chip, int cs);
+};
+
+to replace legacy.select_chip() ?
+
+
+To patch in nand_select_target() and nand_deselect_target()
+
+void nand_select_target(struct nand_chip *chip, unsigned int cs)
+{
+        /*
+         * cs should always lie between 0 and chip->numchips, when that's 
+not
+         * the case it's a bug and the caller should be fixed.
+         */
+        if (WARN_ON(cs > chip->numchips))
+                return;
+
+        chip->cur_cs = cs;
+
++       if (chip->controller->select_chip)
++               chip->controller->select_chip(chip, cs);
++
+        if (chip->legacy.select_chip)
+                chip->legacy.select_chip(chip, cs);
+}
+
+void nand_deselect_target(struct nand_chip *chip)
+{
++       if (chip->controller->select_chip)
++               chip->controller->select_chip(chip, -1);
++
+        if (chip->legacy.select_chip)
+                chip->legacy.select_chip(chip, -1);
+
+        chip->cur_cs = -1;
+}
+
+
+> 
+> So if you think it is not too time consuming and worth the trouble to
+> assert/deassert the CS at each operation, you may do it in your driver.
+> 
+> 
+> Thanks,
+> Miquèl
+
+thanks & best regards,
+Mason
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information 
+and/or personal data, which is protected by applicable laws. Please be 
+reminded that duplication, disclosure, distribution, or use of this e-mail 
+(and/or its attachments) or any part thereof is prohibited. If you receive 
+this e-mail in error, please notify us immediately and delete this mail as 
+well as its attachment(s) from your system. In addition, please be 
+informed that collection, processing, and/or use of personal data is 
+prohibited unless expressly permitted by personal data protection laws. 
+Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
+
+
+
+============================================================================
+
+CONFIDENTIALITY NOTE:
+
+This e-mail and any attachments may contain confidential information and/or personal data, which is protected by applicable laws. Please be reminded that duplication, disclosure, distribution, or use of this e-mail (and/or its attachments) or any part thereof is prohibited. If you receive this e-mail in error, please notify us immediately and delete this mail as well as its attachment(s) from your system. In addition, please be informed that collection, processing, and/or use of personal data is prohibited unless expressly permitted by personal data protection laws. Thank you for your attention and cooperation.
+
+Macronix International Co., Ltd.
+
+=====================================================================
 
