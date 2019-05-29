@@ -2,102 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 429A42D75F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:09:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF0922D76C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:12:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbfE2IJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 04:09:54 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33945 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbfE2IJy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:09:54 -0400
-Received: by mail-pl1-f193.google.com with SMTP id w7so738925plz.1;
-        Wed, 29 May 2019 01:09:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=LNT+zg4PSbt9K3xm52PuCoDPdKgmlpZ10u0AIkhHmCQ=;
-        b=Ns7/gQCueH8qkz32nkdpNHhe+fi78Ls6j23hl1x4ARc8ypJClLRrkh6FEFr/403n8w
-         F3/ElRwB6sJN17ug4AHJLr63hKJnsQVTCjNNEqPktHmpikJ5zo9bKHrwHgs0VF0q6XKl
-         Jdc72B5Ul20qtENh6ByszFC5qtSKfkYbY9RvE8XjDDx41tL6MRYPE4rFYvz9EuQS1qIg
-         2UM3UcW/nqMOTmMpTBk/MNqOf0Tauqikthr+u8KWD4S+HjvDHg54D9xQ5spRTHMzYjvY
-         WHJKVtOAuaT9ah/G3YkdljIufmqxFYw65eSBdyE69krqTnRdK0OKV1CM3fxMrvQXZhis
-         c5+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LNT+zg4PSbt9K3xm52PuCoDPdKgmlpZ10u0AIkhHmCQ=;
-        b=Ae2Silv3dc1AFskC3yfl/GlIWjUg8Mc7HKam5EatFdtofU08C157oZcPlcjzeAO9tF
-         Kiegkp3QoJAGdKhX+QEUZwSQZ2jR5Eom7HhSVLnZlqiR9N3+v9gAVcAwUi95YJ6LgpzF
-         s2SeaiHzRTxwlON0fB6X3u4tQUUNGi4oTosQt528KrxxfOW25oUcNeoky7+pu97lB9nq
-         nlM4Iaq4cShWNYLDR4pKv+ZUiVjbhWq2PjjqdRFSz+hWEMF2wnyWNH1ZE1ONAeUR4IYV
-         LoX4NTC1qOX2yEZCsaK8IEbzuEU9YF+D4VpBLpLf7S5hvOSQNJi3Bnws1ohmgnHRu+MH
-         NySA==
-X-Gm-Message-State: APjAAAVgn27PxJo8fDvvQc8N7J/C1QQbO6ipJ1WWtewd7iSZPLEGToXx
-        1uOWgWLKrfZ1gXxATHLVJNo=
-X-Google-Smtp-Source: APXvYqwus4Qs9oLutePxkzGgcVLVX25FwdXFYB0UOW45rzdhECkOdH69gzUmV/QlaYUnOTa/ujS8kQ==
-X-Received: by 2002:a17:902:b215:: with SMTP id t21mr21964991plr.152.1559117393602;
-        Wed, 29 May 2019 01:09:53 -0700 (PDT)
-Received: from xy-data.openstacklocal (ecs-159-138-22-150.compute.hwclouds-dns.com. [159.138.22.150])
-        by smtp.gmail.com with ESMTPSA id p7sm16645973pgb.92.2019.05.29.01.09.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 29 May 2019 01:09:53 -0700 (PDT)
-From:   Young Xiao <92siuyang@gmail.com>
-To:     edumazet@google.com, davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Young Xiao <92siuyang@gmail.com>
-Subject: [PATCH] ipv4: tcp_input: fix stack out of bounds when parsing TCP options.
-Date:   Wed, 29 May 2019 16:10:59 +0800
-Message-Id: <1559117459-27353-1-git-send-email-92siuyang@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726676AbfE2IMP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 29 May 2019 04:12:15 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:48275 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbfE2IMO (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:6:1>);
+        Wed, 29 May 2019 04:12:14 -0400
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Wed, 29 May 2019 02:12:13 -0600
+Message-Id: <5CEE3ED8020000F900068B85@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.1.1 
+Date:   Wed, 29 May 2019 02:12:08 -0600
+From:   "Gang He" <ghe@suse.com>
+To:     <jlbec@evilplan.org>, <mark@fasheh.com>, <jiangqi903@gmail.com>,
+        "Wengang" <wen.gang.wang@oracle.com>
+Cc:     <ocfs2-devel@oss.oracle.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [Ocfs2-devel] [PATCH 1/2] ocfs2: add last unlock times in
+ locking_state
+References: <20190523104047.14794-1-ghe@suse.com>
+ <66083663-1d25-437b-ce98-07d200f446ab@oracle.com>
+In-Reply-To: <66083663-1d25-437b-ce98-07d200f446ab@oracle.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The TCP option parsing routines in tcp_parse_options function could
-read one byte out of the buffer of the TCP options.
+Hi Wengang,
 
-1         while (length > 0) {
-2                 int opcode = *ptr++;
-3                 int opsize;
-4
-5                 switch (opcode) {
-6                 case TCPOPT_EOL:
-7                         return;
-8                 case TCPOPT_NOP:        /* Ref: RFC 793 section 3.1 */
-9                         length--;
-10                        continue;
-11                default:
-12                        opsize = *ptr++; //out of bound access
+>>> On 2019/5/29 at 1:22, in message
+<66083663-1d25-437b-ce98-07d200f446ab@oracle.com>, Wengang
+<wen.gang.wang@oracle.com> wrote:
+> Hi Gang,
+> 
+> This idea sounds cool!
+> Some comments in lines:
+> 
+> On 05/23/2019 03:40 AM, Gang He wrote:
+>> ocfs2 file system uses locking_state file under debugfs to dump
+>> each ocfs2 file system's dlm lock resources, but the dlm lock
+>> resources in memory are becoming more and more after the files
+>> were touched by the user. it will become a bit difficult to analyze
+>> these dlm lock resource records in locking_state file by the upper
+>> scripts, though some files are not active for now, which were
+>> accessed long time ago.
+>> Then, I'd like to add last pr/ex unlock times in locking_state file
+>> for each dlm lock resource record, the the upper scripts can use
+>> last unlock time to filter inactive dlm lock resource record.
+>>
+>> Signed-off-by: Gang He <ghe@suse.com>
+>> Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+>> ---
+>>   fs/ocfs2/dlmglue.c | 21 +++++++++++++++++----
+>>   fs/ocfs2/ocfs2.h   |  1 +
+>>   2 files changed, 18 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+>> index af405586c5b1..dccf4136f8c1 100644
+>> --- a/fs/ocfs2/dlmglue.c
+>> +++ b/fs/ocfs2/dlmglue.c
+>> @@ -448,7 +448,7 @@ static void ocfs2_update_lock_stats(struct 
+> ocfs2_lock_res *res, int level,
+>>   				    struct ocfs2_mask_waiter *mw, int ret)
+>>   {
+>>   	u32 usec;
+>> -	ktime_t kt;
+>> +	ktime_t last, kt;
+>>   	struct ocfs2_lock_stats *stats;
+>>   
+>>   	if (level == LKM_PRMODE)
+>> @@ -458,7 +458,8 @@ static void ocfs2_update_lock_stats(struct 
+> ocfs2_lock_res *res, int level,
+>>   	else
+>>   		return;
+>>   
+>> -	kt = ktime_sub(ktime_get(), mw->mw_lock_start);
+>> +	last = ktime_get();
+> Will ktime_get_real() be better than ktime_get() here?
+> Per description,
+> ktime_get:
+> Useful for reliable timestamps and measuring short time intervals 
+> accurately. Starts at system boot time but stops during suspend.
+> ktime_get_real:
+> Returns the time in relative to the UNIX epoch starting in 1970 using 
+> the Coordinated Universal Time (UTC), same as gettimeofday() user space.
+> 
+> Since ktime_get() returnis time since boot time, this value is 
+> meaningless when compared to those from a different node in cluster, right?
+Ok, maybe we can use ktime_get_real_seconds to get the seconds, but we 
+need to use 64bit time64_t type to save the value and dump to the user-space.
 
-If length = 1, then there is an access in line2.
-And another access is occurred in line 12.
-This would lead to out-of-bound access.
+Thanks
+Gang
 
-Therefore, in the patch we check that the available data length is
-larger enough to pase both TCP option code and size.
-
-Signed-off-by: Young Xiao <92siuyang@gmail.com>
----
- net/ipv4/tcp_input.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 20f6fac..9775825 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -3791,6 +3791,8 @@ void tcp_parse_options(const struct net *net,
- 			length--;
- 			continue;
- 		default:
-+			if (length < 2)
-+				return;
- 			opsize = *ptr++;
- 			if (opsize < 2) /* "silly options" */
- 				return;
--- 
-2.7.4
-
+> 
+> And we need a "__kernel_long_t" to rather than a "u32"?
+> 
+> 
+>> +	kt = ktime_sub(last, mw->mw_lock_start);
+>>   	usec = ktime_to_us(kt);
+>>   
+>>   	stats->ls_gets++;
+>> @@ -474,6 +475,8 @@ static void ocfs2_update_lock_stats(struct 
+> ocfs2_lock_res *res, int level,
+>>   
+>>   	if (ret)
+>>   		stats->ls_fail++;
+>> +
+>> +	stats->ls_last = ktime_to_timespec(last).tv_sec;
+>>   }
+>>   
+> Though maybe ocfs2_update_lock_stats() is designed to be called for each 
+> successful lock request,
+> seems current code calls it even when it returns with -EAGAIN which 
+> breaks the design.  That's not introduced by your change, well, it may 
+> lead to wrong stats...
+> 
+> thanks,
+> wengang
+> 
+>>   static inline void ocfs2_track_lock_refresh(struct ocfs2_lock_res 
+> *lockres)
+>> @@ -3093,8 +3096,10 @@ static void *ocfs2_dlm_seq_next(struct seq_file *m, 
+> void *v, loff_t *pos)
+>>    *	- Lock stats printed
+>>    * New in version 3
+>>    *	- Max time in lock stats is in usecs (instead of nsecs)
+>> + * New in version 4
+>> + *	- Add last pr/ex unlock times in secs
+>>    */
+>> -#define OCFS2_DLM_DEBUG_STR_VERSION 3
+>> +#define OCFS2_DLM_DEBUG_STR_VERSION 4
+>>   static int ocfs2_dlm_seq_show(struct seq_file *m, void *v)
+>>   {
+>>   	int i;
+>> @@ -3145,6 +3150,8 @@ static int ocfs2_dlm_seq_show(struct seq_file *m, void 
+> *v)
+>>   # define lock_max_prmode(_l)		((_l)->l_lock_prmode.ls_max)
+>>   # define lock_max_exmode(_l)		((_l)->l_lock_exmode.ls_max)
+>>   # define lock_refresh(_l)		((_l)->l_lock_refresh)
+>> +# define lock_last_prmode(_l)		((_l)->l_lock_prmode.ls_last)
+>> +# define lock_last_exmode(_l)		((_l)->l_lock_exmode.ls_last)
+>>   #else
+>>   # define lock_num_prmode(_l)		(0)
+>>   # define lock_num_exmode(_l)		(0)
+>> @@ -3155,6 +3162,8 @@ static int ocfs2_dlm_seq_show(struct seq_file *m, void 
+> *v)
+>>   # define lock_max_prmode(_l)		(0)
+>>   # define lock_max_exmode(_l)		(0)
+>>   # define lock_refresh(_l)		(0)
+>> +# define lock_last_prmode(_l)		(0)
+>> +# define lock_last_exmode(_l)		(0)
+>>   #endif
+>>   	/* The following seq_print was added in version 2 of this output */
+>>   	seq_printf(m, "%u\t"
+>> @@ -3165,6 +3174,8 @@ static int ocfs2_dlm_seq_show(struct seq_file *m, void 
+> *v)
+>>   		   "%llu\t"
+>>   		   "%u\t"
+>>   		   "%u\t"
+>> +		   "%u\t"
+>> +		   "%u\t"
+>>   		   "%u\t",
+>>   		   lock_num_prmode(lockres),
+>>   		   lock_num_exmode(lockres),
+>> @@ -3174,7 +3185,9 @@ static int ocfs2_dlm_seq_show(struct seq_file *m, void 
+> *v)
+>>   		   lock_total_exmode(lockres),
+>>   		   lock_max_prmode(lockres),
+>>   		   lock_max_exmode(lockres),
+>> -		   lock_refresh(lockres));
+>> +		   lock_refresh(lockres),
+>> +		   lock_last_prmode(lockres),
+>> +		   lock_last_exmode(lockres));
+>>   
+>>   	/* End the line */
+>>   	seq_printf(m, "\n");
+>> diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
+>> index 1f029fbe8b8d..8efa022684f4 100644
+>> --- a/fs/ocfs2/ocfs2.h
+>> +++ b/fs/ocfs2/ocfs2.h
+>> @@ -164,6 +164,7 @@ struct ocfs2_lock_stats {
+>>   
+>>   	/* Storing max wait in usecs saves 24 bytes per inode */
+>>   	u32		ls_max;		/* Max wait in USEC */
+>> +	u32		ls_last;	/* Last unlock time in SEC */
+>>   };
+>>   #endif
+>>   
