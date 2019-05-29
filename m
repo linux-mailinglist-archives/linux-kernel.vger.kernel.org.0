@@ -2,131 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 898D32DAA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E388C2DAC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbfE2K2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 06:28:49 -0400
-Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:42222 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725956AbfE2K2t (ORCPT
+        id S1726741AbfE2Kad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 06:30:33 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:33956 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfE2Kad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 06:28:49 -0400
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 5E999C0B4F;
-        Wed, 29 May 2019 10:28:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1559125737; bh=l3Ry4dJcHNnCIlaMLKaBRH28TBvJqRSfyTN6AhOAOps=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=AUkzjL2sJ/RHTPWV0YyfM+WfRjwl0vRQaMLM4EfQtnSszrhAkAiGlVC3mRg0l3x/H
-         DGkB/9Nqv8CEXr6Y3vSdEyQto50HfjC+Y3vZ51CvMerBAGkEJ6skUcxVBgzA0ExMTj
-         1AtQrZAuSuJP8K4shfKdF0gT//z19Y8cCEHNi1a0RFtRlCPDIAVZNPuEM6IgbqCNb0
-         RnRQJPgFMPxnNOqvkN+9B/5F4WXu8OKor6MdEBJa79ja3sIDemh+qVUnXx8g9q9lfl
-         8WXo41jBI6KlM4qqHbRs6IHMxGaTsQrAIILFJCgEdnT3mZPXc/c7Z1sfFUATXf45ND
-         z5Ej+ZB783DSA==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 0BA77A0067;
-        Wed, 29 May 2019 10:28:47 +0000 (UTC)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 29 May 2019 03:28:46 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
- 29 May 2019 12:28:45 +0200
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     Voon Weifeng <weifeng.voon@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Giuseppe Cavallaro" <peppe.cavallaro@st.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "Florian Fainelli" <f.fainelli@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        biao huang <biao.huang@mediatek.com>,
-        Ong Boon Leong <boon.leong.ong@intel.com>,
-        Kweh Hock Leong <hock.leong.kweh@intel.com>
-Subject: RE: [PATCH net-next v4 5/5] net: stmmac: add EHL SGMII 1Gbps PCI
- info and PCI ID
-Thread-Topic: [PATCH net-next v4 5/5] net: stmmac: add EHL SGMII 1Gbps PCI
- info and PCI ID
-Thread-Index: AQHVFfypuDuCTZxVpkmcX+fHfGINwqaB5e4g
-Date:   Wed, 29 May 2019 10:28:44 +0000
-Message-ID: <78EB27739596EE489E55E81C33FEC33A0B933497@DE02WEMBXB.internal.synopsys.com>
-References: <1559149107-14631-1-git-send-email-weifeng.voon@intel.com>
- <1559149107-14631-6-git-send-email-weifeng.voon@intel.com>
-In-Reply-To: <1559149107-14631-6-git-send-email-weifeng.voon@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.107.19.176]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 29 May 2019 06:30:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1dAPKEgrdA77wQkAtd5gC6oh+a8AzS+LHB60Y9C2ymk=; b=XQxR27+WnVTmp5Ulgy4i5STtT
+        Tah9eldsP7kIUyYVcFMpcV2yfiLUNrTuxq7NrctEBZY/BTA5VkVO0y3AG0JU1L7l3DIUdZ0uGqe+W
+        HGj2dMWylU+fuC3tbzcuTHkxanPs5RpoOrF0KRZyUwXHA1i3y/6asMWyvb9MPjfDtrLeTYdRgat96
+        PV++Vrl5gIlZyVldbQpRWiv71ourwwNj2fyMFURDzRnQUjQ3RXsab5FDy3brTD6QFF79shi3VMh5D
+        IXzqdS1f8pqvORPrdrbvVa7LdmBiFmkwRPBPKWrz/uvWtx/hb5UMphU2JrU2FaVKbJ6TWE2pB8A7H
+        alLHgBeWw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVvqV-0003TW-Mw; Wed, 29 May 2019 10:30:12 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 45FBD201A7E6D; Wed, 29 May 2019 12:30:10 +0200 (CEST)
+Date:   Wed, 29 May 2019 12:30:10 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Marco Elver <elver@google.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>
+Subject: Re: [PATCH 3/3] asm-generic, x86: Add bitops instrumentation for
+ KASAN
+Message-ID: <20190529103010.GP2623@hirez.programming.kicks-ass.net>
+References: <20190528163258.260144-1-elver@google.com>
+ <20190528163258.260144-3-elver@google.com>
+ <20190528165036.GC28492@lakrids.cambridge.arm.com>
+ <CACT4Y+bV0CczjRWgHQq3kvioLaaKgN+hnYEKCe5wkbdngrm+8g@mail.gmail.com>
+ <CANpmjNNtjS3fUoQ_9FQqANYS2wuJZeFRNLZUq-ku=v62GEGTig@mail.gmail.com>
+ <20190529100116.GM2623@hirez.programming.kicks-ass.net>
+ <CANpmjNMvwAny54udYCHfBw1+aphrQmiiTJxqDq7q=h+6fvpO4w@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNMvwAny54udYCHfBw1+aphrQmiiTJxqDq7q=h+6fvpO4w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Voon Weifeng <weifeng.voon@intel.com>
-Date: Wed, May 29, 2019 at 17:58:27
+On Wed, May 29, 2019 at 12:16:31PM +0200, Marco Elver wrote:
+> On Wed, 29 May 2019 at 12:01, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Wed, May 29, 2019 at 11:20:17AM +0200, Marco Elver wrote:
+> > > For the default, we decided to err on the conservative side for now,
+> > > since it seems that e.g. x86 operates only on the byte the bit is on.
+> >
+> > This is not correct, see for instance set_bit():
+> >
+> > static __always_inline void
+> > set_bit(long nr, volatile unsigned long *addr)
+> > {
+> >         if (IS_IMMEDIATE(nr)) {
+> >                 asm volatile(LOCK_PREFIX "orb %1,%0"
+> >                         : CONST_MASK_ADDR(nr, addr)
+> >                         : "iq" ((u8)CONST_MASK(nr))
+> >                         : "memory");
+> >         } else {
+> >                 asm volatile(LOCK_PREFIX __ASM_SIZE(bts) " %1,%0"
+> >                         : : RLONG_ADDR(addr), "Ir" (nr) : "memory");
+> >         }
+> > }
+> >
+> > That results in:
+> >
+> >         LOCK BTSQ nr, (addr)
+> >
+> > when @nr is not an immediate.
+> 
+> Thanks for the clarification. Given that arm64 already instruments
+> bitops access to whole words, and x86 may also do so for some bitops,
+> it seems fine to instrument word-sized accesses by default. Is that
+> reasonable?
 
-> +	plat->axi =3D devm_kzalloc(&pdev->dev, sizeof(*plat->axi),
-> +				 GFP_KERNEL);
-> +	if (!plat->axi)
-> +		return -ENOMEM;
+Eminently -- the API is defined such; for bonus points KASAN should also
+do alignment checks on atomic ops. Future hardware will #AC on unaligned
+[*] LOCK prefix instructions.
 
-Missing line break here.
-
-> +	plat->axi->axi_lpi_en =3D 0;
-> +	plat->axi->axi_xit_frm =3D 0;
-> +	plat->axi->axi_wr_osr_lmt =3D 0;
-
-This is not a valid value.
-
-> +	plat->axi->axi_rd_osr_lmt =3D 2;
-> +	plat->axi->axi_blen[0] =3D 4;
-> +	plat->axi->axi_blen[1] =3D 8;
-> +	plat->axi->axi_blen[2] =3D 16;
-> +
-> +	/* Set default value for multicast hash bins */
-> +	plat->multicast_filter_bins =3D HASH_TABLE_SIZE;
-> +
-> +	/* Set default value for unicast filter entries */
-> +	plat->unicast_filter_entries =3D 1;
-> +
-> +	/* Set the maxmtu to a default of JUMBO_LEN */
-> +	plat->maxmtu =3D JUMBO_LEN;
-> +
-> +	/* Set 32KB fifo size as the advertised fifo size in
-> +	 * the HW features is not the same as the HW implementation
-> +	 */
-
-Hmm ? I'm curious, can you explain ?
-
-> +	plat->tx_fifo_size =3D 32768;
-> +	plat->rx_fifo_size =3D 32768;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ehl_sgmii1g_data(struct pci_dev *pdev,
-> +			    struct plat_stmmacenet_data *plat)
-> +{
-> +	int ret;
-> +
-> +	/* Set common default data first */
-> +	ret =3D ehl_common_data(pdev, plat);
-> +
-
-Remove the extra line break please.
-
-> +	if (ret)
-> +		return ret;
-> +
-
+(*) not entirely accurate, it will only trap when crossing a line.
+    https://lkml.kernel.org/r/1556134382-58814-1-git-send-email-fenghua.yu@intel.com
