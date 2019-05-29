@@ -2,77 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C99522DB79
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 13:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C2012DB7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 13:16:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbfE2LPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 07:15:42 -0400
-Received: from mga06.intel.com ([134.134.136.31]:38906 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725894AbfE2LPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 07:15:42 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 04:15:41 -0700
-X-ExtLoop1: 1
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 May 2019 04:15:39 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id B02C22091F; Wed, 29 May 2019 14:15:38 +0300 (EEST)
-Date:   Wed, 29 May 2019 14:15:38 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 0/3] media: v4l2-subdev: Verify arguments in
- v4l2_subdev_call()
-Message-ID: <20190529111538.uny5x4fulzi4rd2w@paasikivi.fi.intel.com>
-References: <20190520212747.368-1-jmkrzyszt@gmail.com>
+        id S1726807AbfE2LQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 07:16:08 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40862 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725894AbfE2LQH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 07:16:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ymvUg06cR3uVZAead0DxphjXjeUzgb2DfPShyNmSrOo=; b=xbHC+5IWGUh9LKH0aRq2nPxa4
+        LwaWJNwmKQv6ACpskI7sYOoUkKbMyixIy+n4hidK/Xkgm8J5i2QkajPPUG+Q151eYhiqqtkLe4XX1
+        UMbr7tF+RfSPxyhkga2xetXnRgB7ZxwrP2d4eyWc9Qhg5e9cuuNju+Xtz2LKqOM+KdOm0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hVwYl-0004pw-Ml; Wed, 29 May 2019 11:15:55 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id AD492440046; Wed, 29 May 2019 12:15:54 +0100 (BST)
+Date:   Wed, 29 May 2019 12:15:54 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Andy Duan <fugang.duan@nxp.com>
+Cc:     "david@lechnology.com" <david@lechnology.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        Robby Cai <robby.cai@nxp.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [EXT] Re: Issue: regmap: use debugfs even when no device
+Message-ID: <20190529111554.GO2456@sirena.org.uk>
+References: <VI1PR0402MB3600F0FB1A031BE502588C93FF1E0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+ <20190528132632.GJ2456@sirena.org.uk>
+ <VI1PR0402MB3600AD425469BAF9BCC5CC2FFF1F0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kUBUi7JBpjcBtem/"
 Content-Disposition: inline
-In-Reply-To: <20190520212747.368-1-jmkrzyszt@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <VI1PR0402MB3600AD425469BAF9BCC5CC2FFF1F0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+X-Cookie: The other line moves faster.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Janusz,
 
-On Mon, May 20, 2019 at 11:27:44PM +0200, Janusz Krzysztofik wrote:
-> Correctness of format type (try or active) and pad ID parameters passed
-> to subdevice operation callbacks is now verified only for IOCTL calls.
-> However, those callbacks are also used by drivers, e.g., V4L2 host
-> interfaces.
-> 
-> Since both subdev_do_ioctl() and drivers are using v4l2_subdev_call()
-> macro while calling subdevice operations, move those parameter checks
-> from subdev_do_ioctl() to v4l2_subdev_call().  Also, add check for
-> non-NULL pointers, including pad config if V4L2_SUBDEV_FORMAT_TRY is
-> requested.
-> 
-> Having that done, we can avoid taking care of those checks inside
-> drivers.
-> 
-> Janusz Krzysztofik (3):
->   media: v4l2-subdev: Verify arguments in v4l2_subdev_call()
->   media: v4l2-subdev: Verify v4l2_subdev_call() pointer arguments
->   media: v4l2-subdev: Verify v4l2_subdev_call() pad config argument
+--kUBUi7JBpjcBtem/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For the set:
+On Wed, May 29, 2019 at 01:33:46AM +0000, Andy Duan wrote:
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Correct, regmap without device also has issue when power if off, because =
+regmap
+> doesn't implement runtime pm for the device, but maybe device driver impl=
+ement
+> the runtime pm for the device.=20
 
-On the 1st patch __u32 should be u32. I'd suggest to fix that in a separate
-patch.
+> So regmap how to manage the clock and power when access registers by debu=
+gfs ?
 
-This was a really nice set. Thank you!
+Like I say the basic recommendation is to use a cache.
 
--- 
-Kind regards,
+--kUBUi7JBpjcBtem/
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlzuaekACgkQJNaLcl1U
+h9D7agf/dSRk9A2I23hG8npW4JstXPO1trIkiV7i6P6GTvY9ujiGfWA1Q5JcHH4F
+K5pVSvuD5gGnSpY3OaPsJv15NW9E6K3XPZmkc/TP4nbbiHM3DZLeXByF/5h9mYtM
+LEl6SzxaIrwt5IQ3HdyppH3Ipp0wf7C7RxomSwlTU5PMxu1nGSIRcjtCWJBGGM6J
+YAWCP6flJL7Ddcibvx4dhxv5VPFLMg9YEfZNWZYnAk1/YECxgW5SbSsMFqtJNTw6
+DokoaLn8K0xCuYfsZnSI3qnIlYXhIcI5Inloylgl+6fzpKf3BRBd+Zcy/DD1ALex
+KHMcrFAr5lEAQXSV9mpdpYo4RvEzkw==
+=+KcL
+-----END PGP SIGNATURE-----
+
+--kUBUi7JBpjcBtem/--
