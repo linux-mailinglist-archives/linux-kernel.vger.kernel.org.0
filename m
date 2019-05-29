@@ -2,119 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3434E2DE0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA6B2DDF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:19:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbfE2NYP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 09:24:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58596 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726702AbfE2NYP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 09:24:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UAADxwxT6tx6lBr1tunJYn8T5v+uyVuwmaIKsyOB1k8=; b=AKgbZi0KQ1t2Byq/+qYeTQlx8
-        5Zk6Wh1iPXKpKZjKkRe0R461W9XyCy56UX3A2h6knc4wXd0aEWQBIcBQ5cV8dp2iMnSPn2F4sXjDs
-        7U7GyCSUxopx6delIu2Odqo9AGVC2/4Y1YErsibRbj2Y7Os4fez8ueckeVNOs02iFqUmwU3Ps5Kqr
-        +cSOs01pQFgYSMx15l1nxBOU98MwJiQS/8Ohw6Hp8Uyv4SRiZMPwO3KZVF+ggau43CLLZeEUlLOUl
-        YG1iskTIMI6GwzZ0W8pYfWoIVl/pf8+SUXoA1A0jEvnfGBCW+hAqIvfrwpfMrYOwFMvj/o6Fva/bC
-        b4TlKMLfA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hVyUq-00012k-4l; Wed, 29 May 2019 13:20:00 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 91307201DB7FA; Wed, 29 May 2019 15:19:57 +0200 (CEST)
-Date:   Wed, 29 May 2019 15:19:57 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-kernel@vger.kernel.org, williams@redhat.com,
-        daniel@bristot.me, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Subject: Re: [RFC 2/3] preempt_tracer: Disable IRQ while starting/stopping
- due to a preempt_counter change
-Message-ID: <20190529131957.GV2623@hirez.programming.kicks-ass.net>
-References: <cover.1559051152.git.bristot@redhat.com>
- <f2ca7336162b6dc45f413cfe4e0056e6aa32e7ed.1559051152.git.bristot@redhat.com>
- <20190529083357.GF2623@hirez.programming.kicks-ass.net>
- <b47631c3-d65a-4506-098a-355c8cf50601@redhat.com>
- <20190529102038.GO2623@hirez.programming.kicks-ass.net>
- <20190529083930.5541130e@oasis.local.home>
+        id S1727240AbfE2NS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 09:18:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41218 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726863AbfE2NS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 09:18:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 27A7DAEB7;
+        Wed, 29 May 2019 13:18:57 +0000 (UTC)
+From:   Michal Rostecki <mrostecki@opensuse.org>
+Cc:     Michal Rostecki <mrostecki@opensuse.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        netdev@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
+        bpf@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH bpf v2] libbpf: Return btf_fd in libbpf__probe_raw_btf
+Date:   Wed, 29 May 2019 15:20:00 +0200
+Message-Id: <20190529132000.24942-1-mrostecki@opensuse.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529083930.5541130e@oasis.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 08:39:30AM -0400, Steven Rostedt wrote:
-> I believe I see what Daniel is talking about, but I hate the proposed
-> solution ;-)
-> 
-> First, if you care about real times that the CPU can't preempt
-> (preempt_count != 0 or interrupts disabled), then you want the
-> preempt_irqsoff tracer. The preempt_tracer is more academic where it
-> just shows you when we disable preemption via the counter. But even
-> with the preempt_irqsoff tracer you may not get the full length of time
-> due to the above explained race.
+Function load_sk_storage_btf expects that libbpf__probe_raw_btf is
+returning a BTF descriptor, but before this change it was returning
+an information about whether the probe was successful (0 or 1).
+load_sk_storage_btf was using that value as an argument of the close
+function, which was resulting in closing stdout and thus terminating the
+process which called that function.
 
-IOW, that tracer gives a completely 'make believe' number? What's the
-point? Just delete the pure preempt tracer.
+That bug was visible in bpftool. `bpftool feature` subcommand was always
+exiting too early (because of closed stdout) and it didn't display all
+requested probes. `bpftool -j feature` or `bpftool -p feature` were not
+returning a valid json object.
 
-And the preempt_irqoff tracer had better also consume the IRQ events,
-and if it does that it can DTRT without extra bits on, even with that
-race.
+v2:
+- Fix typo in the commit message.
 
-Consider:
+Fixes: d7c4b3980c18 ("libbpf: detect supported kernel BTF features and sanitize BTF")
+Signed-off-by: Michal Rostecki <mrostecki@opensuse.org>
+---
+ tools/lib/bpf/libbpf.c        | 36 +++++++++++++++++++++--------------
+ tools/lib/bpf/libbpf_probes.c |  7 +------
+ 2 files changed, 23 insertions(+), 20 deletions(-)
 
-	preempt_disable()
-	  preempt_count += 1;
-	  <IRQ>
-	    trace_irq_enter();
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 197b574406b3..bc2dca36bced 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -1645,15 +1645,19 @@ static int bpf_object__probe_btf_func(struct bpf_object *obj)
+ 		/* FUNC x */                                    /* [3] */
+ 		BTF_TYPE_ENC(5, BTF_INFO_ENC(BTF_KIND_FUNC, 0, 0), 2),
+ 	};
+-	int res;
++	int btf_fd;
++	int ret;
+ 
+-	res = libbpf__probe_raw_btf((char *)types, sizeof(types),
+-				    strs, sizeof(strs));
+-	if (res < 0)
+-		return res;
+-	if (res > 0)
++	btf_fd = libbpf__probe_raw_btf((char *)types, sizeof(types),
++				       strs, sizeof(strs));
++	if (btf_fd < 0)
++		ret = 0;
++	else {
++		ret = 1;
+ 		obj->caps.btf_func = 1;
+-	return 0;
++	}
++	close(btf_fd);
++	return ret;
+ }
+ 
+ static int bpf_object__probe_btf_datasec(struct bpf_object *obj)
+@@ -1670,15 +1674,19 @@ static int bpf_object__probe_btf_datasec(struct bpf_object *obj)
+ 		BTF_TYPE_ENC(3, BTF_INFO_ENC(BTF_KIND_DATASEC, 0, 1), 4),
+ 		BTF_VAR_SECINFO_ENC(2, 0, 4),
+ 	};
+-	int res;
++	int btf_fd;
++	int ret;
+ 
+-	res = libbpf__probe_raw_btf((char *)types, sizeof(types),
+-				    strs, sizeof(strs));
+-	if (res < 0)
+-		return res;
+-	if (res > 0)
++	btf_fd = libbpf__probe_raw_btf((char *)types, sizeof(types),
++				       strs, sizeof(strs));
++	if (btf_fd < 0)
++		ret = 0;
++	else {
++		ret = 1;
+ 		obj->caps.btf_datasec = 1;
+-	return 0;
++	}
++	close(btf_fd);
++	return ret;
+ }
+ 
+ static int
+diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
+index 5e2aa83f637a..2c2828345514 100644
+--- a/tools/lib/bpf/libbpf_probes.c
++++ b/tools/lib/bpf/libbpf_probes.c
+@@ -157,14 +157,9 @@ int libbpf__probe_raw_btf(const char *raw_types, size_t types_len,
+ 	memcpy(raw_btf + hdr.hdr_len + hdr.type_len, str_sec, hdr.str_len);
+ 
+ 	btf_fd = bpf_load_btf(raw_btf, btf_len, NULL, 0, false);
+-	if (btf_fd < 0) {
+-		free(raw_btf);
+-		return 0;
+-	}
+ 
+-	close(btf_fd);
+ 	free(raw_btf);
+-	return 1;
++	return btf_fd;
+ }
+ 
+ static int load_sk_storage_btf(void)
+-- 
+2.21.0
 
-	    trace_irq_exit();
-	  </IRQ>
-	  trace_preempt_disable();
-
-	/* does stuff */
-
-	preempt_enable()
-	  preempt_count -= 1;
-	  trace_preempt_enable();
-
-You're saying preempt_irqoff() fails to connect the two because of the
-hole between trace_irq_exit() and trace_preempt_disable() ?
-
-But trace_irq_exit() can see the raised preempt_count and set state for
-trace_preempt_disable() to connect.
-
-> What I would recommend is adding a flag to the task_struct that gets
-> set before the __preempt_count_add() and cleared by the tracing
-> function. If an interrupt goes off during this time, it will start the
-> total time to record, and not end it on the trace_hardirqs_on() part.
-> Now since we set this flag before disabling preemption, what if we get
-> preempted before calling __preempt_count_add()?. Simple, have a hook in
-> the scheduler (just connect to the sched_switch tracepoint) that checks
-> that flag, and if it is set, it ends the preempt disable recording
-> time. Also on scheduling that task back in, if that flag is set, start
-> the preempt disable timer.
-
-I don't think that works, you also have to consider softirq. And yes you
-can make it more complicated, but I still don't see the point.
-
-And none of this is relevant for Daniels model stuff. He just needs to
-consider in-IRQ as !preempt.
