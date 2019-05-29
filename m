@@ -2,84 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5016F2E410
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EB742E418
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:09:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfE2SIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 14:08:37 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45822 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727276AbfE2SIh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 14:08:37 -0400
-Received: by mail-ot1-f66.google.com with SMTP id t24so2943933otl.12
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 11:08:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZqciIyIwhNV/sHfg7yKs2DBtNwzOc9301XGXD64ZpLU=;
-        b=F6umrA5vVhg7FYm3YxM9CPXIT1/fC0p8oz3rQuWtSZIr1DLRRLP447fdg1z10a8RXA
-         s3stQquLSBD9WnhT/YctqoLpNa8q1A/NhiirquY7/qTDqQHbGvnKWMdTeyhV8tRhgjap
-         p5nbNeWyi9P1yOZ7PicltL76xoa1CVyEFvCxJxDwyTK2fSQBnJO685cEmgSVf9od4FVS
-         ruUm2h138e6Fc0WLClAarGD6gppw0TSgWM/XWXztUvBLRjrzhC45oVCfmpfazbskvTMw
-         mO96D5V0oyU0ZxLYS2S+aueSYQJwV9nebXl8BKT+D1JAhuBvBFXTT8wvilCA34xA7+xz
-         DA/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZqciIyIwhNV/sHfg7yKs2DBtNwzOc9301XGXD64ZpLU=;
-        b=d7T0zKfQ5WdEJzEa89aIyqdcuXTnjJLSYBCkrKfTsIOMiOR7nt8J3MMjBs6llWfklW
-         pjZOcouWruw8Q3D+W2YMXJRox6sCH13bP/YqUf12L86m66i2hlUiC2kAkVW1fK2SWpJ/
-         6JZPPGbL7JMtk1eIjC+X651tuQ+OdXCgaryjfoemaJMsI1OFNRbh0LQ8hS4Hgo19ipYU
-         wdIickrj6s7yrrmgRx94sRKGQt23bvl4bLYadHitFuiFb4j7UltupimB8cyP6nRaVzSW
-         1/OAfM1OLUu/rNWKvczMKUK/0fUN2hfiwayeaU83NF+Mm+JIrPofxeEfoPTc2JFRV32j
-         XkJg==
-X-Gm-Message-State: APjAAAU7OZ31QvgXItUarnDeq8VsZAez9Z2ZdKcTysM3xRVsI1AuDXcw
-        CX1Aogh5xJ3D84whTs5oN8NKszhLqEhIN9ZZGs4U9HSY
-X-Google-Smtp-Source: APXvYqxwk7iPwTnvooR6G+8asbXi2Yw5DbYyD1vDk+TyUrgU9x/Eq/8XReg/kqx8GMzQxm6aPn58ViHbD6tOsA/Ctv4=
-X-Received: by 2002:a9d:32a6:: with SMTP id u35mr69739914otb.81.1559153316582;
- Wed, 29 May 2019 11:08:36 -0700 (PDT)
+        id S1727489AbfE2SJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 14:09:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39026 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727227AbfE2SJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 14:09:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0BD96AD89;
+        Wed, 29 May 2019 18:09:32 +0000 (UTC)
+Date:   Wed, 29 May 2019 20:09:31 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+Subject: Re: kernel BUG at mm/swap_state.c:170!
+Message-ID: <20190529180931.GI18589@dhcp22.suse.cz>
+References: <CABXGCsN9mYmBD-4GaaeW_NrDu+FDXLzr_6x+XNxfmFV6QkYCDg@mail.gmail.com>
+ <CABXGCsNq4xTFeeLeUXBj7vXBz55aVu31W9q74r+pGM83DrPjfA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190527132200.17377-1-narmstrong@baylibre.com>
- <20190527132200.17377-3-narmstrong@baylibre.com> <CAFBinCBTK=6OW4kG=i0KZe-+AzGVXyou9g0frnh9yqLsdmB5+w@mail.gmail.com>
- <b54c7899-95b3-1202-d70b-9b8ee2955164@baylibre.com>
-In-Reply-To: <b54c7899-95b3-1202-d70b-9b8ee2955164@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 29 May 2019 20:08:25 +0200
-Message-ID: <CAFBinCB9PZ-mjyjCafK24cH3sN5E1r4vt1z=m+uvkHsmRW2PFQ@mail.gmail.com>
-Subject: Re: [PATCH 02/10] arm64: dts: meson-gxm-khadas-vim2: fix Bluetooth support
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        Christian Hewitt <christianshewitt@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABXGCsNq4xTFeeLeUXBj7vXBz55aVu31W9q74r+pGM83DrPjfA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 12:25 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> On 27/05/2019 20:36, Martin Blumenstingl wrote:
-> > On Mon, May 27, 2019 at 3:22 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
-> >>
-> >> From: Christian Hewitt <christianshewitt@gmail.com>
-> >>
-> >> - Remove serial1 alias
-> >> - Add support for uart_A rts/cts
-> >> - Add bluetooth uart_A subnode qith shutdown gpio
-> > I tried this on my own Khadas VIM2:
-> > Bluetooth: hci0: command 0x1001 tx timeout
-> > Bluetooth: hci0: BCM: Reading local version info failed (-110)
+On Wed 29-05-19 22:32:08, Mikhail Gavrilov wrote:
+> On Wed, 29 May 2019 at 09:05, Mikhail Gavrilov
+> <mikhail.v.gavrilov@gmail.com> wrote:
 > >
-> > I'm not sure whether this is specific to my board or what causes this.
->
-> Which kernel version ?
-5.2-rc2
+> > Hi folks.
+> > I am observed kernel panic after update to git tag 5.2-rc2.
+> > This crash happens at memory pressing when swap being used.
+> >
+> > Unfortunately in journalctl saved only this:
+> >
+> 
+> Now I captured better trace.
+> 
+> : page:ffffd6d34dff0000 refcount:1 mapcount:1 mapping:ffff97812323a689
+> index:0xfecec363
+> : anon
+> : flags: 0x17fffe00080034(uptodate|lru|active|swapbacked)
+> : raw: 0017fffe00080034 ffffd6d34c67c508 ffffd6d3504b8d48 ffff97812323a689
+> : raw: 00000000fecec363 0000000000000000 0000000100000000 ffff978433ace000
+> : page dumped because: VM_BUG_ON_PAGE(entry != page)
+> : page->mem_cgroup:ffff978433ace000
+> : ------------[ cut here ]------------
+> : kernel BUG at mm/swap_state.c:170!
 
-it's a Khadas VIM2 Basic (thus it has a AP6356S), board revision v1.2
-
-
-Martin
+Do you see the same with 5.2-rc1 resp. 5.1?
+-- 
+Michal Hocko
+SUSE Labs
