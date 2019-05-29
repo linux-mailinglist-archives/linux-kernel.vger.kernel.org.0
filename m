@@ -2,136 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 647402D33D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 03:22:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 667832D341
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 03:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726304AbfE2BWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 21:22:52 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38344 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbfE2BWv (ORCPT
+        id S1726076AbfE2BYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 21:24:18 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35530 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfE2BYS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 21:22:51 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b76so459457pfb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 18:22:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=7hiqTDVHP7ycUHBATDRFOTjH/h1L38jFsXVu8jDFuS0=;
-        b=v5k5yiAEtdR51yLQSHl2C6JH8A1Af23+g41mDYdOwzAoVr8XvhXKy1cPAVR6T0zU9o
-         LKnKBxafam9LaCEh3d+X5rKOkdouDjXgxTU6wQdOdlH4rUoGs1PTtm0H8aqJft+sNE/a
-         Dw5goKxS0owGNFLVDkYUFBHumuPjbss/4pvtFMe30flVdpHTQRcqv6CtN7yfsHfQvsmY
-         LZlFDrSof0jt1RVozI2kRAsyiKNrNpK7UKuZvdFmVfuwmq7CZMGeLiaJc+/zlBjvW1Oc
-         x+HA1SC43P3UPEpLYGOotPb8OTta16UBQX0fl66ySL8X1HM9OFvIPgcCpoQt0Vw9J8E1
-         pVMA==
+        Tue, 28 May 2019 21:24:18 -0400
+Received: by mail-wm1-f66.google.com with SMTP id w9so378219wmi.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 18:24:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=7hiqTDVHP7ycUHBATDRFOTjH/h1L38jFsXVu8jDFuS0=;
-        b=P0BffdpdD+JiCLN2mrQ0kKdWC7dSTEyyH96ReBZbrOGUNuLAZHOXvS5C6Aj7owbRFt
-         OXR11FwQDxHQbXCuhiN682+RaEOBJ+CwMpSdv9IghNisJWwQtLJXpy0u3wLs/xb6Av0p
-         JFOlbNlj0OsBW/IakhfGnm03V9EkfTuBH8KEVwGqxnV4ioT8g31/rx8H7UW/EtMQb6Cl
-         RiE4c0UlwX+bMIpON6jMrbvx4snM0nrxexha+r3WlKDiemAWA5BHLGYIDVP4SOKn54pb
-         G1LxLkSNzPOo3YC+Ek3Ka3csYmTmaXz/dzQBkuo4LJWFa3nNL9vBC7uMG1yc12YylfrY
-         FS8g==
-X-Gm-Message-State: APjAAAW+RHxzBipR8YOh7q76gpltXfBNZ5SdPLW5H6H8jcUdGUpwxusW
-        gsdB8s4aGd8Yj2Ub3+n+I/ldUg==
-X-Google-Smtp-Source: APXvYqy1irI5QOZSUt4gtC8U1zUDRgiytinvm+UkUXfHcoCwlJ2WUV+f+Jk3GqWNPCEJQLSYfQ0+Ew==
-X-Received: by 2002:a63:490a:: with SMTP id w10mr32183693pga.6.1559092970775;
-        Tue, 28 May 2019 18:22:50 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id a7sm15705665pgj.42.2019.05.28.18.22.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 May 2019 18:22:50 -0700 (PDT)
-Date:   Tue, 28 May 2019 18:22:49 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-cc:     ktkhai@virtuozzo.com, hannes@cmpxchg.org, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, hughd@google.com,
-        shakeelb@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] Make deferred split shrinker memcg aware
-In-Reply-To: <1559047464-59838-1-git-send-email-yang.shi@linux.alibaba.com>
-Message-ID: <alpine.DEB.2.21.1905281817090.86034@chino.kir.corp.google.com>
-References: <1559047464-59838-1-git-send-email-yang.shi@linux.alibaba.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UiPLvWA/ifZmBgOu5RY7iG79Uns1KHbXQ9v+2ITYDvE=;
+        b=GEQ23c7YfN3I0Y/KoU+KhFDqjOPLVnUuwHfJueiHEeGQ09gF2GpiX7F//yDnQYmFBO
+         Bi4SBIwAxhI9vry9ARNbdj1+aqORebqqxnJJRYvJTaorR4vAvbSKnzxYwnuWJvHvB6pQ
+         IQchkMyYjTcdO+KVkK0FxTkT9sO81V7rcCNwDmal0oGb6UpmVvT8+q+Z7DZIT5AwBzfg
+         YuuwMarD2Tj0TyjU9AY3hLfTzEdogEDVEMMpjDeRXPEhZXCiLUwysDR5f33RIGzIoLcJ
+         cGAFiEhLjcdU2onaj7fx1Fw+yUrzOQkRyuI16HHKccGXuB+rw3dGaANMEkuyXkvOKhIb
+         iSlg==
+X-Gm-Message-State: APjAAAWFlOpq7F7dVpylvkdnnyCTHX3etCvBoJKiRUM6mnQa0kidFIYC
+        1Gw7PrcpvSTgkCks2WXqZqnYBQ==
+X-Google-Smtp-Source: APXvYqyXLAZxyqIf9pbTP7YEBWBAjL4jFU3SBYm8nLl1/MmAXqgwazyQevT5XTPPFzfWUQKFyN+3qw==
+X-Received: by 2002:a1c:23c4:: with SMTP id j187mr4908475wmj.176.1559093055974;
+        Tue, 28 May 2019 18:24:15 -0700 (PDT)
+Received: from [192.168.10.150] ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id f2sm7111992wrq.48.2019.05.28.18.24.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 28 May 2019 18:24:15 -0700 (PDT)
+Subject: Re: [PATCH v2 1/3] KVM: x86: add support for user wait instructions
+To:     Tao Xu <tao3.xu@intel.com>, rkrcmar@redhat.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        sean.j.christopherson@intel.com
+Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jingqi.liu@intel.com
+References: <20190524075637.29496-1-tao3.xu@intel.com>
+ <20190524075637.29496-2-tao3.xu@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <419f62f3-69a8-7ec0-5eeb-20bed69925f2@redhat.com>
+Date:   Wed, 29 May 2019 03:24:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190524075637.29496-2-tao3.xu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 May 2019, Yang Shi wrote:
+On 24/05/19 09:56, Tao Xu wrote:
+> +7.19 KVM_CAP_ENABLE_USR_WAIT_PAUSE
+> +
+> +Architectures: x86
+> +Parameters: args[0] whether feature should be enabled or not
+> +
+> +With this capability enabled, a VM can use UMONITOR, UMWAIT and TPAUSE
+> +instructions. If the instruction causes a delay, the amount of
+> +time delayed is called here the physical delay. The physical delay is
+> +first computed by determining the virtual delay (the time to delay
+> +relative to the VM’s timestamp counter). Otherwise, UMONITOR, UMWAIT
+> +and TPAUSE cause an invalid-opcode exception(#UD).
+> +
 
-> 
-> I got some reports from our internal application team about memcg OOM.
-> Even though the application has been killed by oom killer, there are
-> still a lot THPs reside, page reclaim doesn't reclaim them at all.
-> 
-> Some investigation shows they are on deferred split queue, memcg direct
-> reclaim can't shrink them since THP deferred split shrinker is not memcg
-> aware, this may cause premature OOM in memcg.  The issue can be
-> reproduced easily by the below test:
-> 
+There is no need to make it a capability.  You can just check the guest
+CPUID and see if it includes X86_FEATURE_WAITPKG.
 
-Right, we've also encountered this.  I talked to Kirill about it a week or 
-so ago where the suggestion was to split all compound pages on the 
-deferred split queues under the presence of even memory pressure.
-
-That breaks cgroup isolation and perhaps unfairly penalizes workloads that 
-are running attached to other memcg hierarchies that are not under 
-pressure because their compound pages are now split as a side effect.  
-There is a benefit to keeping these compound pages around while not under 
-memory pressure if all pages are subsequently mapped again.
-
-> $ cgcreate -g memory:thp
-> $ echo 4G > /sys/fs/cgroup/memory/thp/memory/limit_in_bytes
-> $ cgexec -g memory:thp ./transhuge-stress 4000
-> 
-> transhuge-stress comes from kernel selftest.
-> 
-> It is easy to hit OOM, but there are still a lot THP on the deferred split
-> queue, memcg direct reclaim can't touch them since the deferred split
-> shrinker is not memcg aware.
-> 
-
-Yes, we have seen this on at least 4.15 as well.
-
-> Convert deferred split shrinker memcg aware by introducing per memcg deferred
-> split queue.  The THP should be on either per node or per memcg deferred
-> split queue if it belongs to a memcg.  When the page is immigrated to the
-> other memcg, it will be immigrated to the target memcg's deferred split queue
-> too.
-> 
-> And, move deleting THP from deferred split queue in page free before memcg
-> uncharge so that the page's memcg information is available.
-> 
-> Reuse the second tail page's deferred_list for per memcg list since the same
-> THP can't be on multiple deferred split queues at the same time.
-> 
-> Remove THP specific destructor since it is not used anymore with memcg aware
-> THP shrinker (Please see the commit log of patch 2/3 for the details).
-> 
-> Make deferred split shrinker not depend on memcg kmem since it is not slab.
-> It doesn't make sense to not shrink THP even though memcg kmem is disabled.
-> 
-> With the above change the test demonstrated above doesn't trigger OOM anymore
-> even though with cgroup.memory=nokmem.
-> 
-
-I'm curious if your internal applications team is also asking for 
-statistics on how much memory can be freed if the deferred split queues 
-can be shrunk?  We have applications that monitor their own memory usage 
-through memcg stats or usage and proactively try to reduce that usage when 
-it is growing too large.  The deferred split queues have significantly 
-increased both memcg usage and rss when they've upgraded kernels.
-
-How are your applications monitoring how much memory from deferred split 
-queues can be freed on memory pressure?  Any thoughts on providing it as a 
-memcg stat?
-
-Thanks!
+Paolo
