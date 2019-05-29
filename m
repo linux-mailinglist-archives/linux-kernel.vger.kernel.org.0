@@ -2,84 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4054C2D55A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 08:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 490642D575
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 08:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725956AbfE2GIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 02:08:45 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45264 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbfE2GIo (ORCPT
+        id S1726275AbfE2GYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 02:24:24 -0400
+Received: from mail-m975.mail.163.com ([123.126.97.5]:59992 "EHLO
+        mail-m975.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbfE2GYX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 02:08:44 -0400
-Received: by mail-qt1-f194.google.com with SMTP id t1so1146627qtc.12
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 23:08:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9m6XmpcV32pBGRaKWaAZOu/nkbXf9RLY5czIdmVMIiE=;
-        b=Vk/pDafXgg2bzDpfTFeKjsIp8WdKd3TNKbs23N/It+yi/CVfzyhiySQJ8J4jtLszAi
-         LFiveV8PEpd6y+Dsh/gNPfB9fYQ5zv+RrOkISmmXalE+GzteLeypk6R36MTVSR1m/T6a
-         wfTXpmePwdYxnvW4o3FzOIubaWyRpDgNwMyP8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9m6XmpcV32pBGRaKWaAZOu/nkbXf9RLY5czIdmVMIiE=;
-        b=jkSWu6KG7DPvYcjDsncj+k81Q/nAEvtNnFA63Nimfl41sJSNZmIcF7MGsKn5yhd7EC
-         GRBRTsmOwVa5oHCLUqfWwVgYluICRp8wsfFCRRC62Cm/Gz3AZYx1WiCA+kVNoHLbu7hB
-         U6QNzvJyRGydNpYibrXHzM/PB1ZvxNwv7VkhWG+vXq4Yccfe+Z62W6mIymmZbS+UY5Xa
-         G8WG5fE2hEPC2sI+7wu3M1vb1X2dYipLS5ImDsI8qDHjK3v15aP/Ho4xV//MCLlfgvLZ
-         +WtXBP8QAt8a9hUbXJ/SFw1+GTW85cdZc2C63wROBsl/124fZUUEWAyFZiKB1ihvpKQG
-         e7fw==
-X-Gm-Message-State: APjAAAWr40pA7Qv06EHnauCZRGjCjPrRyZla7ssYaD72gvCLjAckBRNh
-        mjBEjHcDfsw5QH1Q5XZ2n7fKt1z74mjzYAxARUqwjg==
-X-Google-Smtp-Source: APXvYqy1lIVHOTaLcihvMF7zGLF3pmNL3AVewtEF/CAwLER2Lc1MzHGPozPVQVC8HRo0kHV7SIzbmTEe6U0L3SD3dn4=
-X-Received: by 2002:a0c:b621:: with SMTP id f33mr68502313qve.199.1559110123624;
- Tue, 28 May 2019 23:08:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190527045054.113259-1-hsinyi@chromium.org> <20190527045054.113259-3-hsinyi@chromium.org>
- <1559109490.15592.6.camel@mtksdaap41>
-In-Reply-To: <1559109490.15592.6.camel@mtksdaap41>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Wed, 29 May 2019 14:08:17 +0800
-Message-ID: <CAJMQK-gQ_j4ma_EjGbFJOz6WGXy3UZA0F9JZYnFHPZ0F08rXog@mail.gmail.com>
-Subject: Re: [PATCH 2/3] drm: mediatek: remove clk_unprepare() in mtk_drm_crtc_destroy()
-To:     CK Hu <ck.hu@mediatek.com>
-Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 29 May 2019 02:24:23 -0400
+X-Greylist: delayed 906 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 May 2019 02:24:22 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=ZdPphefzlMESscBLlx
+        sYKjtJRw7OPChqniARbyt54IE=; b=pWuUDd9HnWKG6/VDfV1I7jIR1j8INfRD9l
+        YIe/arGo5g4RsptJOPT0KjMU0nOWyfVX5pG6Mr+hAk1pX3vooE2k59YlKxI3Nqw3
+        YANXb+oyLSV8YCKjjlN+kQuDfGwjfHczaspMw+OGP5VRDzW1uHfuuX3sMTtebZEO
+        2ueK34pF4=
+Received: from localhost.localdomain (unknown [218.106.182.173])
+        by smtp19 (Coremail) with SMTP id HdxpCgCH9Yv_Ie5cxgcSAA--.153S3;
+        Wed, 29 May 2019 14:09:07 +0800 (CST)
+From:   Xidong Wang <wangxidong_97@163.com>
+To:     "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Xidong Wang <wangxidong_97@163.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] scsi: esas2r: esas2r_init: check return value
+Date:   Wed, 29 May 2019 14:09:00 +0800
+Message-Id: <1559110140-3544-1-git-send-email-wangxidong_97@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: HdxpCgCH9Yv_Ie5cxgcSAA--.153S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7JF1ruFW5CFWkJFW3GF17ZFb_yoWxKFg_Wr
+        ZrAr1xZr47CF1xtryftFy3ArZ09r48ZFsYgr1rtayfZ34xWr1DWr4UXr17Zws7W3y8uFyU
+        Aa90vryFyr1jyjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRlAp3UUUUU==
+X-Originating-IP: [218.106.182.173]
+X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/1tbivgPD81ZcV9Zx0AAAsn
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 1:58 PM CK Hu <ck.hu@mediatek.com> wrote:
->
-> Hi, Hsin-Yi:
->
-> On Mon, 2019-05-27 at 12:50 +0800, Hsin-Yi Wang wrote:
-> > There is no clk_prepare() called in mtk_drm_crtc_reset(), when unbinding
-> > drm device, mtk_drm_crtc_destroy() will be triggered, and the clocks will
-> > be disabled and unprepared in mtk_crtc_ddp_clk_disable. If clk_unprepare()
-> > is called here, we'll get warnings[1], so remove clk_unprepare() here.
->
-> In original code, clk_prepare() is called in mtk_drm_crtc_create() and
-> clk_unprepare() is called in mtk_drm_crtc_destroy(). This looks correct.
+In esas2r_resume(), the return value of pci_enable_device() is not
+checked before pdev is used.
 
-clk_prepare() is removed in https://patchwork.kernel.org/patch/10872777/.
+Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+---
+ drivers/scsi/esas2r/esas2r_init.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> I don't know why we should do any thing about clock in
-> mtk_drm_crtc_reset(). To debug this, the first step is to print message
-> when mediatek drm call clk_prepare() and clk_unprepare(). If these two
-> interface is called in pair, I think we should not modify mediatek drm
-> driver, the bug maybe in clock driver.
->
+diff --git a/drivers/scsi/esas2r/esas2r_init.c b/drivers/scsi/esas2r/esas2r_init.c
+index 950cd92..883d35f 100644
+--- a/drivers/scsi/esas2r/esas2r_init.c
++++ b/drivers/scsi/esas2r/esas2r_init.c
+@@ -686,6 +686,9 @@ int esas2r_resume(struct pci_dev *pdev)
+ 	esas2r_log_dev(ESAS2R_LOG_INFO, &(pdev->dev),
+ 		       "pci_enable_device() called");
+ 	rez = pci_enable_device(pdev);
++	if (rez < 0) {
++		goto error_exit;
++	}
+ 	pci_set_master(pdev);
+ 
+ 	if (!a) {
+-- 
+2.7.4
+
