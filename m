@@ -2,101 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C4292D4E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 06:52:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36C132D675
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:36:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbfE2EwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 00:52:11 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40911 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfE2EwK (ORCPT
+        id S1726818AbfE2Hge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 03:36:34 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:49044 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbfE2Hge (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 00:52:10 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u17so780104pfn.7;
-        Tue, 28 May 2019 21:52:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oOyS0vBmfamb8+yO3gJqspDXkEPlXAfKJCpG2N2EeyM=;
-        b=QbwoGt5Uz2JJgJIR8grk5mFsVJuw+N08pb3u7+eLVXlQfYduk4sRjKenlblF1sKKCO
-         TqO/plVTKwynlb1ADimBQOhmudFBemGld7wkzAVw+sJidC0KCRuehDfExq+/R4pjETNB
-         3CqRzqRmSjIP/UtDdNvTmOFc9lewarNDiL7zGvUl+aEbaxFtzhgUNhtSdmyV8crlLePF
-         g2snFqcaSCTt8mdhk9GE+9ciYu5fyhx/FsYkHCp1HuNCGrZaxsFZEdsGUeaTZKx25ASC
-         C8EXKbvlG1qfUGdw8FChAAqm0VhUTToUUg79ZMljF36wL0Ok3hJZF4kLRod09PTbIB3C
-         rGSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oOyS0vBmfamb8+yO3gJqspDXkEPlXAfKJCpG2N2EeyM=;
-        b=qi6tvL1GAmU8BqHHeLtLY5E9/S586irVZRoIueKPe/0Yf55yUfmRBbPbeAuacwY7Hh
-         CyZi6TZ9EsVxT3ja2c+2TJlSIZx8zE1wojwxcFBdcPJZrbC5U3IbW1URzFavAf/sk30F
-         G6BS8WPmPbtGCdjxJXanBHDTcodrCZqEqACkoptqVi0bIBQDDGL2onfeJo8CJaVeChjo
-         A4hI9LvqTuXNHhsXhFNKh7C/cERKsPuLCG5P6A/HBLD53i/ftsTWozFjCV63lClUvcT9
-         9y8jGdcNhuZV7f/rRTlhhXNNl73qGYsmZsdXgDWokY2Yq7nl0N//OATenjLj+kLSS7Im
-         cHvA==
-X-Gm-Message-State: APjAAAWWVg1jLnhUfPK/QjpDQXNXLJue9DVB4pcD2dzgzWJhCRaIDegq
-        4+jxDuKxB34L13IBVllKGzU=
-X-Google-Smtp-Source: APXvYqwgLum9Em/F8hygcLRS0GKIDiYKDpIp4VCUji/EOks6RDGleFyc+3SH5I9e5beVsooBV1n0jg==
-X-Received: by 2002:a17:90a:c583:: with SMTP id l3mr9343876pjt.55.1559105530237;
-        Tue, 28 May 2019 21:52:10 -0700 (PDT)
-Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
-        by smtp.gmail.com with ESMTPSA id u1sm16125184pfh.85.2019.05.28.21.52.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 May 2019 21:52:09 -0700 (PDT)
-Date:   Tue, 28 May 2019 21:52:07 -0700
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     f.fainelli@gmail.com, vivien.didelot@gmail.com, andrew@lunn.ch,
-        davem@davemloft.net, john.stultz@linaro.org, tglx@linutronix.de,
-        sboyd@kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net-next 0/5] PTP support for the SJA1105 DSA driver
-Message-ID: <20190529045207.fzvhuu6d6jf5p65t@localhost>
-References: <20190528235627.1315-1-olteanv@gmail.com>
+        Wed, 29 May 2019 03:36:34 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4T4s9jf141872;
+        Wed, 29 May 2019 04:55:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : message-id : date : mime-version : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=xO/I95wa/BDchQFoLjVha8GkTVVJiQMKwy7fu/wkxYA=;
+ b=P5KPPLS2UzjMJn6rGUCVjhYHj8LaJwoGOxhnoVHzWY+CmNEcnqmounAsekASPzNLBOro
+ MaXZltz3kUZk/zCQoeyPB6vOfizOZyGpKOj9ez31MiimJ1LBuinzD1XDAvZO21j4ddeD
+ vm3qPI94Hu3mANEt5VILtTSbGR+kD4wLVvmAqIpp4ieESvWfzO9biPI3ZS2hR0gIIvgZ
+ eJohCUeOWnwh7B8mQ+eXwqSkc+KCKqD8lFE71DecQ3wpEziD05jDCH5HCGZDPcmSAGtl
+ MAzisqiEfgOq0kKmC935/NBp4Z4gUgmAp4O8dCVHDw8x1zZw2N5BhYKW/qnTnpuk3XKN ow== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 2spu7dfc6x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 May 2019 04:55:07 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4T4sHBi124365;
+        Wed, 29 May 2019 04:55:06 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2sr31v1hy8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 May 2019 04:55:06 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4T4t5v9001280;
+        Wed, 29 May 2019 04:55:05 GMT
+Received: from [192.168.0.139] (/118.26.137.196)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 28 May 2019 21:55:05 -0700
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Organization: Oracle Corporation
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     riel@surriel.com
+Subject: question on lazy tlb flush
+Message-ID: <cd421c2c-8507-6652-2ef7-a6f3b20efcd2@oracle.com>
+Date:   Wed, 29 May 2019 12:54:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190528235627.1315-1-olteanv@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9271 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905290032
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9271 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905290032
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 02:56:22AM +0300, Vladimir Oltean wrote:
-> Not all is rosy, though.
+Hi Maintainers,
 
-You can sure say that again!
- 
-> PTP timestamping will only work when the ports are bridged. Otherwise,
-> the metadata follow-up frames holding RX timestamps won't be received
-> because they will be blocked by the master port's MAC filter. Linuxptp
-> tries to put the net device in ALLMULTI/PROMISC mode,
+A question raised when I learned below code.  Appreciate any help me 
+understand the code.
 
-Untrue.
+void native_flush_tlb_others(const struct cpumask *cpumask,
+                              const struct flush_tlb_info *info)
 
-> but DSA doesn't
-> pass this on to the master port, which does the actual reception.
-> The master port is put in promiscous mode when the slave ports are
-> enslaved to a bridge.
-> 
-> Also, even with software-corrected timestamps, one can observe a
-> negative path delay reported by linuxptp:
-> 
-> ptp4l[55.600]: master offset          8 s2 freq  +83677 path delay     -2390
-> ptp4l[56.600]: master offset         17 s2 freq  +83688 path delay     -2391
-> ptp4l[57.601]: master offset          6 s2 freq  +83682 path delay     -2391
-> ptp4l[58.601]: master offset         -1 s2 freq  +83677 path delay     -2391
-> 
-> Without investigating too deeply, this appears to be introduced by the
-> correction applied by linuxptp to t4 (t4c: corrected master rxtstamp)
-> during the path delay estimation process (removing the correction makes
-> the path delay positive).
+{
 
-No.  The root cause is the time stamps delivered by the hardware or
-your driver.  That needs to be addressed before going forward.
+...
 
-Thanks,
-Richard
+         /*
+          * If no page tables were freed, we can skip sending IPIs to
+          * CPUs in lazy TLB mode. They will flush the CPU themselves
+          * at the next context switch.
+          *
+          * However, if page tables are getting freed, we need to send the
+          * IPI everywhere, to prevent CPUs in lazy TLB mode from tripping
+          * up on the new contents of what used to be page tables, while
+          * doing a speculative memory access.
+          */
+         if (info->freed_tables)
+                 smp_call_function_many(cpumask, flush_tlb_func_remote,
+                                (void *)info, 1);
+         else
+                 on_each_cpu_cond_mask(tlb_is_not_lazy, 
+flush_tlb_func_remote,
+                                 (void *)info, 1, GFP_ATOMIC, cpumask);
+
+}
+
+I just didn't understand how a kernel thread could trip up on the new 
+contents of what used to be page tables. I presume the freed page tables 
+are user mapping?
+
+But kernel thread only access kernel address space, is kernel space also 
+freed?
+
+
+thanks
+
+Zhenzhong
+
