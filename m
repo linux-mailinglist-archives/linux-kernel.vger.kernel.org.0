@@ -2,91 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC30D2E685
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A753E2E68F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:55:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbfE2Ux3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 16:53:29 -0400
-Received: from mail-ot1-f46.google.com ([209.85.210.46]:40221 "EHLO
-        mail-ot1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbfE2Ux2 (ORCPT
+        id S1726718AbfE2UzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 16:55:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55244 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbfE2UzI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 16:53:28 -0400
-Received: by mail-ot1-f46.google.com with SMTP id u11so3466665otq.7;
-        Wed, 29 May 2019 13:53:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D2+H7EZcpvU21TkBJqjVERhn4aghur1shp/MYn/imNU=;
-        b=m+/sPdWc7eaXJhnfKEBLgk8Rmx0byEo9ZcvMEYGlRDmvpvNw89EfzD7FZmTYMsjo2E
-         oGOwSgsOKAXqcXDMzkkN/3+aKBkzxjVKC3/ha0YVYksOpj7c0C0+DHisu4zV3Ju+uzya
-         vRHJuBS4PDH9EFzWEXKNBxt6rYztxVpgpBYKMzPumIz8ZP2TDkEOtmQ8Z33rVFMpQ06s
-         +BVlnA9XUFM1wJXAdxuKxih6xV+P3zgcTiMuwhsCaIngTa5x6g3rf1+ZPulUtBnkHT7R
-         g9F1XDEhN3o+JUR4D9gUHrfUsYZ6XcMx6vlHVUTxFwwS41MEhpchtTsmw2Tvun9N7UcP
-         LS3Q==
-X-Gm-Message-State: APjAAAW/GwpB+/wAOJsq83tVF/q8lf7xQD66Pc7G29nmx3w006TOymP/
-        fmIH1tsNa4ivVRyQ22QbeDT77cV9
-X-Google-Smtp-Source: APXvYqze83Zg9NsuFA/4G0fUXNF0IB2o4nEyhx+YjVb9jk83eZEMbhjWnb5oXGp8UiBCfrM5CPqvwQ==
-X-Received: by 2002:a9d:4b15:: with SMTP id q21mr10964705otf.139.1559163207455;
-        Wed, 29 May 2019 13:53:27 -0700 (PDT)
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com. [209.85.210.49])
-        by smtp.gmail.com with ESMTPSA id j189sm226274oia.2.2019.05.29.13.53.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 13:53:26 -0700 (PDT)
-Received: by mail-ot1-f49.google.com with SMTP id r7so3480576otn.6;
-        Wed, 29 May 2019 13:53:26 -0700 (PDT)
-X-Received: by 2002:a9d:7343:: with SMTP id l3mr58178960otk.63.1559163206194;
- Wed, 29 May 2019 13:53:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190521085624.13665-1-colin.king@canonical.com>
-In-Reply-To: <20190521085624.13665-1-colin.king@canonical.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Wed, 29 May 2019 15:53:15 -0500
-X-Gmail-Original-Message-ID: <CADRPPNS5EbVrQ_ayvs=s7fYAc4JM1DfNeXwrmCXMvk6HzPouEQ@mail.gmail.com>
-Message-ID: <CADRPPNS5EbVrQ_ayvs=s7fYAc4JM1DfNeXwrmCXMvk6HzPouEQ@mail.gmail.com>
-Subject: Re: [PATCH][next] soc: fsl: fix spelling mistake "Firmaware" -> "Firmware"
-To:     Colin King <colin.king@canonical.com>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        kernel-janitors@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 29 May 2019 16:55:08 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 556C260E3E; Wed, 29 May 2019 20:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1559163306;
+        bh=a10cqXD3K1rvMJw3L43nt+iaIhgdpjlzVZD15xJBhaA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Vp0ytwik6JEWAQFO/yG5VFu3Z6MkCfPENawBVa/y59bquj5SpgduvRjs2xXk0Pdrg
+         xAShGzTeW+ZhTTQJhO/ke4tluOhH90QajK5uXiU5Odl6uJsGHhWHgplxm1hmnN+M9s
+         WYMKWEjF49mjefdBuETfWF9op/mMPhoYsCjvOGFs=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00F036030E;
+        Wed, 29 May 2019 20:54:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1559163304;
+        bh=a10cqXD3K1rvMJw3L43nt+iaIhgdpjlzVZD15xJBhaA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cSnhvA7BCJGATHq0sbtLanP6Lv34+whQEyH5M/1UWMBpLxrtk5CUaKV7c2SE1lSQd
+         3/RMJ4i5inUbtIPaeQtlZgTz/sjprVqxt79t2tdd0hrHLlltv1Ng8V263HFJzEQIKv
+         05ODYE8MeXimWoQrEpyB//MZ6ROo8rVnPKiBQOC0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00F036030E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     freedreno@lists.freedesktop.org
+Cc:     jean-philippe.brucker@arm.com, linux-arm-msm@vger.kernel.org,
+        hoegsberg@google.com, dianders@chromium.org,
+        Sean Paul <sean@poorly.run>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        dri-devel@lists.freedesktop.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Joerg Roedel <joro@8bytes.org>,
+        Zhen Lei <thunder.leizhen@huawei.com>,
+        Rob Clark <robdclark@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Jonathan Marek <jonathan@marek.ca>,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v3 00/16] drm/msm: Per-instance pagetable support
+Date:   Wed, 29 May 2019 14:54:36 -0600
+Message-Id: <1559163292-4792-1-git-send-email-jcrouse@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 21, 2019 at 3:57 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> There is a spelling mistake in a pr_err message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This is v3 of the per-instance pagetable support. Biggest change in this
+revision is moving nearly all of the split pagetable support into
+io-pgtable-arm and setting up specific ops to handle the unique behavior
+of the split pagetables. Now that I've spent some time with it, I like how
+it turned out.
 
-Applied.  Thanks!
+For background:
 
-Regards,
-Leo
-> ---
->  drivers/soc/fsl/dpaa2-console.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/fsl/dpaa2-console.c b/drivers/soc/fsl/dpaa2-console.c
-> index 9168d8ddc932..27243f706f37 100644
-> --- a/drivers/soc/fsl/dpaa2-console.c
-> +++ b/drivers/soc/fsl/dpaa2-console.c
-> @@ -73,7 +73,7 @@ static u64 get_mc_fw_base_address(void)
->
->         mcfbaregs = ioremap(mc_base_addr.start, resource_size(&mc_base_addr));
->         if (!mcfbaregs) {
-> -               pr_err("could not map MC Firmaware Base registers\n");
-> +               pr_err("could not map MC Firmware Base registers\n");
->                 return 0;
->         }
->
-> --
-> 2.20.1
->
+Per-instance pagetables allow the target GPU driver to create and manage
+an individual pagetable for each file descriptor instance and switch
+between them asynchronously using the GPU to reprogram the pagetable
+registers on the fly.
+
+Most of the heavy lifting for this is done in the arm-smmu-v2 driver by
+taking advantage of the newly added multiple domain API. The first patch in the
+series allows opted-in clients to direct map a device with
+iommu_request_dm_for_dev(). This bypasses the DMA domain creation in the IOMMU
+core which serves several purposes for the GPU by skipping the otherwise unused
+DMA domain and also keeping context bank 0 unused on the hardware (for better or
+worse, the GPU is hardcoded to only use context bank 0 for switching).
+
+The next several patches enable split pagetable support. This is used to map
+global buffers for the GPU so we can safely switch the TTBR0 pagetable for the
+instance.
+
+The last two arm-smmu-v2 patches enable auxillary domain support. Again the
+SMMU client can opt-in to allow auxiliary domains, and if enabled will create
+a pagetable but not otherwise touch the hardware. The client can get the address
+of the pagetable through an attribute to perform its own switching.
+
+After the arm-smmu-v2 patches are more than several msm/gpu patches to allow
+for target specific address spaces, enable 64 bit virtual addressing and
+implement the mechanics of pagetable switching.
+
+For the purposes of merging all the patches between
+
+drm/msm/adreno: Enable 64 bit mode by default on a5xx and a6xx targets
+
+and
+
+drm/msm: Add support to create target specific address spaces
+
+can be merged to the msm-next tree without dependencies on the IOMMU changes.
+Only the last three patches will require coordination between the two areas.
+
+Jordan Crouse (16):
+  iommu/arm-smmu: Allow client devices to select direct mapping
+  iommu: Add DOMAIN_ATTR_SPLIT_TABLES
+  iommu/io-pgtable-arm: Add support for AARCH64 split pagetables
+  iommu/arm-smmu: Add support for DOMAIN_ATTR_SPLIT_TABLES
+  iommu: Add DOMAIN_ATTR_PTBASE
+  iommu/arm-smmu: Add auxiliary domain support for arm-smmuv2
+  drm/msm/adreno: Enable 64 bit mode by default on a5xx and a6xx targets
+  drm/msm: Print all 64 bits of the faulting IOMMU address
+  drm/msm: Pass the MMU domain index in struct msm_file_private
+  drm/msm/gpu: Move address space setup to the GPU targets
+  drm/msm: Add support for IOMMU auxiliary domains
+  drm/msm: Add a helper function for a per-instance address space
+  drm/msm: Add support to create target specific address spaces
+  drm/msm/gpu: Add ttbr0 to the memptrs
+  drm/msm/a6xx: Support per-instance pagetables
+  drm/msm/a5xx: Support per-instance pagetables
+
+ drivers/gpu/drm/msm/adreno/a2xx_gpu.c     |  37 +++--
+ drivers/gpu/drm/msm/adreno/a3xx_gpu.c     |  50 ++++--
+ drivers/gpu/drm/msm/adreno/a4xx_gpu.c     |  51 ++++--
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c     | 163 ++++++++++++++++++-
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.h     |  19 +++
+ drivers/gpu/drm/msm/adreno/a5xx_preempt.c |  70 ++++++--
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 166 ++++++++++++++++++-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |   1 +
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c   |   7 -
+ drivers/gpu/drm/msm/msm_drv.c             |  25 ++-
+ drivers/gpu/drm/msm/msm_drv.h             |   5 +
+ drivers/gpu/drm/msm/msm_gem.h             |   2 +
+ drivers/gpu/drm/msm/msm_gem_submit.c      |  13 +-
+ drivers/gpu/drm/msm/msm_gem_vma.c         |  53 +++---
+ drivers/gpu/drm/msm/msm_gpu.c             |  59 +------
+ drivers/gpu/drm/msm/msm_gpu.h             |   3 +
+ drivers/gpu/drm/msm/msm_iommu.c           |  99 +++++++++++-
+ drivers/gpu/drm/msm/msm_mmu.h             |   4 +
+ drivers/gpu/drm/msm/msm_ringbuffer.h      |   1 +
+ drivers/iommu/arm-smmu.c                  | 176 ++++++++++++++++++--
+ drivers/iommu/io-pgtable-arm.c            | 261 +++++++++++++++++++++++++++---
+ drivers/iommu/io-pgtable.c                |   1 +
+ include/linux/io-pgtable.h                |   2 +
+ include/linux/iommu.h                     |   2 +
+ 24 files changed, 1082 insertions(+), 188 deletions(-)
+
+-- 
+2.7.4
+
