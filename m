@@ -2,237 +2,633 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 311022E676
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D1612E681
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbfE2UuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 16:50:10 -0400
-Received: from sonic305-9.consmr.mail.bf2.yahoo.com ([74.6.133.48]:40673 "EHLO
-        sonic305-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726139AbfE2UuJ (ORCPT
+        id S1726697AbfE2UwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 16:52:02 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:47256 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfE2UwC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 16:50:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559163007; bh=0j4xWCjJSnnfEX9Oj7YQAfIa1sBCj93Pr5M4xfg2mlA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=UeB2wysZt491MoyYpbYlEdorrkMRYQnizhhklaFpC/ReZJatWO15BNtLjGSiUdV7+HFXNefPv78Ou2RgGWao74iBtNjgCoDZUMOfMeMNVpgvqZkp3nDL5dRV6lhw7VjtInUkoB+cGNp6z3ky5jR2x+TLn+EDxJuzSmQhlzpsa6QcEMf5NqME6SlQkdtJjZESIzxBnuIXla1BXpTusBYMoGx5Eh1TCBPYPDalu4qpG6eAXz3jAx7kdoDLlFXhIHPyHJl70f4jKhWZJI1ec7lTnzvFh2qHMOziCUSLSCxsZOTX4HhwUcSg9mwquQO2A/K7PpNsVyzr8mltoIyz4FxsXA==
-X-YMail-OSG: eFyQxLcVM1k7kWv5Gd_huV9Gj8nF9xAxCEMUU3i8UfCODhmNZ_vIt3UzS6.rs3f
- k9Z.9BlYo4jwQk.sWAlT1PDYZ.hby823xjPkDnRSdz1w2EFRpxQ63IVgBP0GsSzkM7GEHsLUZ1bm
- 3LEb5Xz6nS4AsahO.6L9gdqif3iuoWpeQle9w5pzBPenhw8aBC_5K4RGTrMcsLfzMAQ4.Nu5ccAJ
- vl3vkBWIcaLFjDJRtRRicE52hBeCPYzB79t_Jb2AOcku4sGThNglxA3JTR5GFWiF4bOdPy11T2lk
- vruv8aRAQgNWB0_vvtLpLS1Cv6pw_q0bjtDzdV5zt.tSdtync7IF935CPVNPbo6dOFKInZ2RL5ht
- Sk7Z._KQ0AK7uqw3oOvHKaG2xZLPTpOFvYyaNZkucUHt1XrZajUhPDcuVAcTlZaEMMiTQaHXwISE
- DVid_UIxBWGlTfJ7P5WH2v.3GM_d47Gbe410WbgSJHfsFSnh_lYHhJEzdZI5MTMtGHsPrRiW.FSc
- lZeaHXPZe1ODUNHNIyt.dDaXsNGijvv2Dtq9DIOaZ91GRxLJjEEEN0awaOdTX9wLDmQWALdcLo4v
- Uy9jjRVxd2PTrBOIpGcAHs_fjXpyPhK647RmTTc3OrbqCXQ30F9a424WYemWeCpN4qW.FGQplf4N
- o9WkWQi1rls8VpSuj1OBJrQ_aSj4N8wa7VRujcrY9CD6Ird8EMY7hH8nQyIoD_JYLubY626tsilD
- T6sUPPzIeaVJMI6ziRVdBGIK3EcK7c0eoM0TlNvWKOVzIuecqtbk7eK4Z_lkpNOBfT2EFPsiI_3C
- WnnYtDYVOHgL08EKzDSS7jcQObzvswlUfss5Nau40DUI2a5AK7ZU9vLB5HBwCVhn6Xa.aqXmnkkN
- wpMDQqc0TQDe8U1KYP6anQ9H7RsvQy60lV51ATgoQeA3t6CRqtuUyZ9_i04_p_iQUGTxGqxQ5Tfw
- .q1S.CgQPWDJ3IrbSQm3UW2sYOWmMqb5NIixySoL76gu27QJ4L3HSPkLdqII.1hMlYALkhTHRcJI
- toPD4vHydi_SEETw3AG8G8jbBBmVLQN7Wc_vnwFXWnTCGT5YCt.7O.qf_8szAEU4_O8L72ntgu0B
- dK9YxuDNS6ADXgq0Kb5y_yEmLv.llcHOKK1qbtKiAOEzibrxpYFEp7yyQqkmZ9psbejPQbHqNtmM
- LUCXrb9CQfqJD025tAzJpR_lE85_vgqdhUGuawW_X.tiUGT5ZZpsQ1dQ6QRdoRivdRC5sExOtwIp
- y0DGs_TA5RAkTlKou0nGKrY.Ax92BevVl
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Wed, 29 May 2019 20:50:07 +0000
-Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
-          by smtp422.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a8ff822a29296d665b1079c6eff5b23d;
-          Wed, 29 May 2019 20:50:02 +0000 (UTC)
-Subject: Re: [PATCH 3/7] vfs: Add a mount-notification facility
-To:     Jann Horn <jannh@google.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        casey@schaufler-ca.com
-References: <CAG48ez2rRh2_Kq_EGJs5k-ZBNffGs_Q=vkQdinorBgo58tbGpg@mail.gmail.com>
- <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <155905933492.7587.6968545866041839538.stgit@warthog.procyon.org.uk>
- <14347.1559127657@warthog.procyon.org.uk>
- <312a138c-e5b2-4bfb-b50b-40c82c55773f@schaufler-ca.com>
- <4552118F-BE9B-4905-BF0F-A53DC13D5A82@amacapital.net>
- <058f227c-71ab-a6f4-00bf-b8782b3b2956@schaufler-ca.com>
- <CAG48ez2S+i2wxpWXVGpEAprgY9gtjxyejLfbZtrqu5YOkQ81Nw@mail.gmail.com>
- <0cd823ca-4733-19ef-c13e-ed5ac8c63a0f@schaufler-ca.com>
- <CAG48ez0X7rKw-qfZm9i+8OLq7YccBRtV3aF-7hkQsfWaiTbuXg@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Message-ID: <1f09b97e-9533-dc27-2524-ca0a4c9d4664@schaufler-ca.com>
-Date:   Wed, 29 May 2019 13:50:00 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 29 May 2019 16:52:02 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TKcb9H153712;
+        Wed, 29 May 2019 20:50:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=UEVjydkCiSNXBnxPUv8ZPRtyzn2pRdmlL8Y0MMMRS90=;
+ b=JjkSvx+I/jOJ1R55SJ9XTx3aJdMo6srOfR7bY39nKueu9xTbA3TP1z86EBVVQtLRcFX4
+ NTJnFOlMUgercHroPKflAKP0zrU4z2Tj3hbr5W/f+7A1ObUht4XcNXRhLmVednMZpG/F
+ pG5kfmEvgrD/TWtLirzReJCAWcokxiWj3tNbgOJPRYJA55jvFRqOPYeK417+zKem8O9b
+ HCOKUk74lKFOaDUZcpv//SPd1LEyN58nft9EQ64c7mueIcIQFTvsTo38XNIDD0ukVyHQ
+ wHPYIA6W1/ESw93USm7ioq+/NgqShXxtUiB0zIPx+ovrQpp9t1oUULZ6KL7x3FdCxn0h Yw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2spw4tmfgv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 May 2019 20:50:48 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TKoSMl163806;
+        Wed, 29 May 2019 20:50:47 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2sqh73xegs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 May 2019 20:50:46 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4TKoZ3O027508;
+        Wed, 29 May 2019 20:50:35 GMT
+Received: from localhost.localdomain (/73.60.114.248)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 29 May 2019 13:50:34 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     akpm@linux-foundation.org
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Alan Tull <atull@kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christoph Lameter <cl@linux.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Moritz Fischer <mdf@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Steve Sistare <steven.sistare@oracle.com>,
+        Wu Hao <hao.wu@intel.com>, linux-mm@kvack.org,
+        kvm@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] mm: add account_locked_vm utility function
+Date:   Wed, 29 May 2019 16:50:19 -0400
+Message-Id: <20190529205019.20927-1-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190529125627.0cb5b704@x1.home>
+References: <20190529125627.0cb5b704@x1.home>
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez0X7rKw-qfZm9i+8OLq7YccBRtV3aF-7hkQsfWaiTbuXg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=62 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905290130
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=62 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905290130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/29/2019 12:47 PM, Jann Horn wrote:
-> On Wed, May 29, 2019 at 9:28 PM Casey Schaufler <casey@schaufler-ca.com=
-> wrote:
->> On 5/29/2019 11:11 AM, Jann Horn wrote:
->>> On Wed, May 29, 2019 at 7:46 PM Casey Schaufler <casey@schaufler-ca.c=
-om> wrote:
->>>> On 5/29/2019 10:13 AM, Andy Lutomirski wrote:
->>>>>> On May 29, 2019, at 8:53 AM, Casey Schaufler <casey@schaufler-ca.c=
-om> wrote:
->>>>>>> On 5/29/2019 4:00 AM, David Howells wrote:
->>>>>>> Jann Horn <jannh@google.com> wrote:
->>>>>>>
->>>>>>>>> +void post_mount_notification(struct mount *changed,
->>>>>>>>> +                            struct mount_notification *notify)=
+locked_vm accounting is done roughly the same way in five places, so
+unify them in a helper.
 
->>>>>>>>> +{
->>>>>>>>> +       const struct cred *cred =3D current_cred();
->>>>>>>> This current_cred() looks bogus to me. Can't mount topology chan=
-ges
->>>>>>>> come from all sorts of places? For example, umount_mnt() from
->>>>>>>> umount_tree() from dissolve_on_fput() from __fput(), which could=
+Include the helper's caller in the debug print to distinguish between
+callsites.
 
->>>>>>>> happen pretty much anywhere depending on where the last referenc=
-e gets
->>>>>>>> dropped?
->>>>>>> IIRC, that's what Casey argued is the right thing to do from a se=
-curity PoV.
->>>>>>> Casey?
->>>>>> You need to identify the credential of the subject that triggered
->>>>>> the event. If it isn't current_cred(), the cred needs to be passed=
+Error codes stay the same, so user-visible behavior does too.  The one
+exception is that the -EPERM case in tce_account_locked_vm is removed
+because Alexey has never seen it triggered.
 
->>>>>> in to post_mount_notification(), or derived by some other means.
->>>>> Taking a step back, why do we care who triggered the event?  It see=
-ms to me that we should care whether the event happened and whether the *=
-receiver* is permitted to know that.
->>>> There are two filesystems, "dot" and "dash". I am not allowed
->>>> to communicate with Fred on the system, and all precautions have
->>>> been taken to ensure I cannot. Fred asks for notifications on
->>>> all mount activity. I perform actions that result in notifications
->>>> on "dot" and "dash". Fred receives notifications and interprets
->>>> them using Morse code. This is not OK. If Wilma, who *is* allowed
->>>> to communicate with Fred, does the same actions, he should be
->>>> allowed to get the messages via Morse.
->>> In other words, a classic covert channel. You can't really prevent tw=
-o
->>> cooperating processes from communicating through a covert channel on =
-a
->>> modern computer.
->> That doesn't give you permission to design them in.
->> Plus, the LSMs that implement mandatory access controls
->> are going to want to intervene. No unclassified user
->> should see notifications caused by Top Secret users.
-> But that's probably because they're worried about *side* channels, not
-> covert channels?
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Tested-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc: Alan Tull <atull@kernel.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Moritz Fischer <mdf@kernel.org>
+Cc: Paul Mackerras <paulus@ozlabs.org>
+Cc: Steve Sistare <steven.sistare@oracle.com>
+Cc: Wu Hao <hao.wu@intel.com>
+Cc: linux-mm@kvack.org
+Cc: kvm@vger.kernel.org
+Cc: kvm-ppc@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-fpga@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+v3:
+ - uninline account_locked_vm (Andrew)
+ - fix doc comment (Ira)
+ - retain down_write_killable in vfio type1 (Alex)
+ - leave Alexey's T-b since the code is the same aside from uninlining
+ - sanity tested with vfio type1, sanity-built on ppc
 
-The security evaluators from the 1990's considered any channel
-with greater than 1 bit/second bandwidth a show-stopper. That was
-true for covert and side channels. Further, if you knew that a
-mechanism had a channel, as this one does, and you didn't fix it,
-you didn't get your certificate. If you know about a problem
-during the design/implementation phase it's really inexcusable not
-to fix it before "completing" the code.
+ arch/powerpc/kvm/book3s_64_vio.c     | 44 ++--------------
+ arch/powerpc/mm/book3s64/iommu_api.c | 41 ++-------------
+ drivers/fpga/dfl-afu-dma-region.c    | 53 ++------------------
+ drivers/vfio/vfio_iommu_spapr_tce.c  | 54 ++------------------
+ drivers/vfio/vfio_iommu_type1.c      | 17 +------
+ include/linux/mm.h                   |  4 ++
+ mm/util.c                            | 75 ++++++++++++++++++++++++++++
+ 7 files changed, 98 insertions(+), 190 deletions(-)
 
-> Talking about this in the context of (small) side channels: The
-> notification types introduced in this patch are mostly things that a
-> user would be able to observe anyway if they polled /proc/self/mounts,
-> right?
+diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
+index 66270e07449a..768b645c7edf 100644
+--- a/arch/powerpc/kvm/book3s_64_vio.c
++++ b/arch/powerpc/kvm/book3s_64_vio.c
+@@ -30,6 +30,7 @@
+ #include <linux/anon_inodes.h>
+ #include <linux/iommu.h>
+ #include <linux/file.h>
++#include <linux/mm.h>
+ 
+ #include <asm/kvm_ppc.h>
+ #include <asm/kvm_book3s.h>
+@@ -56,43 +57,6 @@ static unsigned long kvmppc_stt_pages(unsigned long tce_pages)
+ 	return tce_pages + ALIGN(stt_bytes, PAGE_SIZE) / PAGE_SIZE;
+ }
+ 
+-static long kvmppc_account_memlimit(unsigned long stt_pages, bool inc)
+-{
+-	long ret = 0;
+-
+-	if (!current || !current->mm)
+-		return ret; /* process exited */
+-
+-	down_write(&current->mm->mmap_sem);
+-
+-	if (inc) {
+-		unsigned long locked, lock_limit;
+-
+-		locked = current->mm->locked_vm + stt_pages;
+-		lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+-		if (locked > lock_limit && !capable(CAP_IPC_LOCK))
+-			ret = -ENOMEM;
+-		else
+-			current->mm->locked_vm += stt_pages;
+-	} else {
+-		if (WARN_ON_ONCE(stt_pages > current->mm->locked_vm))
+-			stt_pages = current->mm->locked_vm;
+-
+-		current->mm->locked_vm -= stt_pages;
+-	}
+-
+-	pr_debug("[%d] RLIMIT_MEMLOCK KVM %c%ld %ld/%ld%s\n", current->pid,
+-			inc ? '+' : '-',
+-			stt_pages << PAGE_SHIFT,
+-			current->mm->locked_vm << PAGE_SHIFT,
+-			rlimit(RLIMIT_MEMLOCK),
+-			ret ? " - exceeded" : "");
+-
+-	up_write(&current->mm->mmap_sem);
+-
+-	return ret;
+-}
+-
+ static void kvm_spapr_tce_iommu_table_free(struct rcu_head *head)
+ {
+ 	struct kvmppc_spapr_tce_iommu_table *stit = container_of(head,
+@@ -302,7 +266,7 @@ static int kvm_spapr_tce_release(struct inode *inode, struct file *filp)
+ 
+ 	kvm_put_kvm(stt->kvm);
+ 
+-	kvmppc_account_memlimit(
++	account_locked_vm(current->mm,
+ 		kvmppc_stt_pages(kvmppc_tce_pages(stt->size)), false);
+ 	call_rcu(&stt->rcu, release_spapr_tce_table);
+ 
+@@ -327,7 +291,7 @@ long kvm_vm_ioctl_create_spapr_tce(struct kvm *kvm,
+ 		return -EINVAL;
+ 
+ 	npages = kvmppc_tce_pages(size);
+-	ret = kvmppc_account_memlimit(kvmppc_stt_pages(npages), true);
++	ret = account_locked_vm(current->mm, kvmppc_stt_pages(npages), true);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -373,7 +337,7 @@ long kvm_vm_ioctl_create_spapr_tce(struct kvm *kvm,
+ 
+ 	kfree(stt);
+  fail_acct:
+-	kvmppc_account_memlimit(kvmppc_stt_pages(npages), false);
++	account_locked_vm(current->mm, kvmppc_stt_pages(npages), false);
+ 	return ret;
+ }
+ 
+diff --git a/arch/powerpc/mm/book3s64/iommu_api.c b/arch/powerpc/mm/book3s64/iommu_api.c
+index 5c521f3924a5..18d22eec0ebd 100644
+--- a/arch/powerpc/mm/book3s64/iommu_api.c
++++ b/arch/powerpc/mm/book3s64/iommu_api.c
+@@ -19,6 +19,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/swap.h>
+ #include <linux/sizes.h>
++#include <linux/mm.h>
+ #include <asm/mmu_context.h>
+ #include <asm/pte-walk.h>
+ #include <linux/mm_inline.h>
+@@ -51,40 +52,6 @@ struct mm_iommu_table_group_mem_t {
+ 	u64 dev_hpa;		/* Device memory base address */
+ };
+ 
+-static long mm_iommu_adjust_locked_vm(struct mm_struct *mm,
+-		unsigned long npages, bool incr)
+-{
+-	long ret = 0, locked, lock_limit;
+-
+-	if (!npages)
+-		return 0;
+-
+-	down_write(&mm->mmap_sem);
+-
+-	if (incr) {
+-		locked = mm->locked_vm + npages;
+-		lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+-		if (locked > lock_limit && !capable(CAP_IPC_LOCK))
+-			ret = -ENOMEM;
+-		else
+-			mm->locked_vm += npages;
+-	} else {
+-		if (WARN_ON_ONCE(npages > mm->locked_vm))
+-			npages = mm->locked_vm;
+-		mm->locked_vm -= npages;
+-	}
+-
+-	pr_debug("[%d] RLIMIT_MEMLOCK HASH64 %c%ld %ld/%ld\n",
+-			current ? current->pid : 0,
+-			incr ? '+' : '-',
+-			npages << PAGE_SHIFT,
+-			mm->locked_vm << PAGE_SHIFT,
+-			rlimit(RLIMIT_MEMLOCK));
+-	up_write(&mm->mmap_sem);
+-
+-	return ret;
+-}
+-
+ bool mm_iommu_preregistered(struct mm_struct *mm)
+ {
+ 	return !list_empty(&mm->context.iommu_group_mem_list);
+@@ -101,7 +68,7 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
+ 	unsigned long entry, chunk;
+ 
+ 	if (dev_hpa == MM_IOMMU_TABLE_INVALID_HPA) {
+-		ret = mm_iommu_adjust_locked_vm(mm, entries, true);
++		ret = account_locked_vm(mm, entries, true);
+ 		if (ret)
+ 			return ret;
+ 
+@@ -216,7 +183,7 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
+ 	kfree(mem);
+ 
+ unlock_exit:
+-	mm_iommu_adjust_locked_vm(mm, locked_entries, false);
++	account_locked_vm(mm, locked_entries, false);
+ 
+ 	return ret;
+ }
+@@ -316,7 +283,7 @@ long mm_iommu_put(struct mm_struct *mm, struct mm_iommu_table_group_mem_t *mem)
+ unlock_exit:
+ 	mutex_unlock(&mem_list_mutex);
+ 
+-	mm_iommu_adjust_locked_vm(mm, unlock_entries, false);
++	account_locked_vm(mm, unlock_entries, false);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/fpga/dfl-afu-dma-region.c b/drivers/fpga/dfl-afu-dma-region.c
+index c438722bf4e1..0a532c602d8f 100644
+--- a/drivers/fpga/dfl-afu-dma-region.c
++++ b/drivers/fpga/dfl-afu-dma-region.c
+@@ -12,6 +12,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/sched/signal.h>
+ #include <linux/uaccess.h>
++#include <linux/mm.h>
+ 
+ #include "dfl-afu.h"
+ 
+@@ -31,52 +32,6 @@ void afu_dma_region_init(struct dfl_feature_platform_data *pdata)
+ 	afu->dma_regions = RB_ROOT;
+ }
+ 
+-/**
+- * afu_dma_adjust_locked_vm - adjust locked memory
+- * @dev: port device
+- * @npages: number of pages
+- * @incr: increase or decrease locked memory
+- *
+- * Increase or decrease the locked memory size with npages input.
+- *
+- * Return 0 on success.
+- * Return -ENOMEM if locked memory size is over the limit and no CAP_IPC_LOCK.
+- */
+-static int afu_dma_adjust_locked_vm(struct device *dev, long npages, bool incr)
+-{
+-	unsigned long locked, lock_limit;
+-	int ret = 0;
+-
+-	/* the task is exiting. */
+-	if (!current->mm)
+-		return 0;
+-
+-	down_write(&current->mm->mmap_sem);
+-
+-	if (incr) {
+-		locked = current->mm->locked_vm + npages;
+-		lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+-
+-		if (locked > lock_limit && !capable(CAP_IPC_LOCK))
+-			ret = -ENOMEM;
+-		else
+-			current->mm->locked_vm += npages;
+-	} else {
+-		if (WARN_ON_ONCE(npages > current->mm->locked_vm))
+-			npages = current->mm->locked_vm;
+-		current->mm->locked_vm -= npages;
+-	}
+-
+-	dev_dbg(dev, "[%d] RLIMIT_MEMLOCK %c%ld %ld/%ld%s\n", current->pid,
+-		incr ? '+' : '-', npages << PAGE_SHIFT,
+-		current->mm->locked_vm << PAGE_SHIFT, rlimit(RLIMIT_MEMLOCK),
+-		ret ? "- exceeded" : "");
+-
+-	up_write(&current->mm->mmap_sem);
+-
+-	return ret;
+-}
+-
+ /**
+  * afu_dma_pin_pages - pin pages of given dma memory region
+  * @pdata: feature device platform data
+@@ -92,7 +47,7 @@ static int afu_dma_pin_pages(struct dfl_feature_platform_data *pdata,
+ 	struct device *dev = &pdata->dev->dev;
+ 	int ret, pinned;
+ 
+-	ret = afu_dma_adjust_locked_vm(dev, npages, true);
++	ret = account_locked_vm(current->mm, npages, true);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -121,7 +76,7 @@ static int afu_dma_pin_pages(struct dfl_feature_platform_data *pdata,
+ free_pages:
+ 	kfree(region->pages);
+ unlock_vm:
+-	afu_dma_adjust_locked_vm(dev, npages, false);
++	account_locked_vm(current->mm, npages, false);
+ 	return ret;
+ }
+ 
+@@ -141,7 +96,7 @@ static void afu_dma_unpin_pages(struct dfl_feature_platform_data *pdata,
+ 
+ 	put_all_pages(region->pages, npages);
+ 	kfree(region->pages);
+-	afu_dma_adjust_locked_vm(dev, npages, false);
++	account_locked_vm(current->mm, npages, false);
+ 
+ 	dev_dbg(dev, "%ld pages unpinned\n", npages);
+ }
+diff --git a/drivers/vfio/vfio_iommu_spapr_tce.c b/drivers/vfio/vfio_iommu_spapr_tce.c
+index 40ddc0c5f677..d06e8e291924 100644
+--- a/drivers/vfio/vfio_iommu_spapr_tce.c
++++ b/drivers/vfio/vfio_iommu_spapr_tce.c
+@@ -22,6 +22,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/sched/mm.h>
+ #include <linux/sched/signal.h>
++#include <linux/mm.h>
+ 
+ #include <asm/iommu.h>
+ #include <asm/tce.h>
+@@ -34,51 +35,6 @@
+ static void tce_iommu_detach_group(void *iommu_data,
+ 		struct iommu_group *iommu_group);
+ 
+-static long try_increment_locked_vm(struct mm_struct *mm, long npages)
+-{
+-	long ret = 0, locked, lock_limit;
+-
+-	if (WARN_ON_ONCE(!mm))
+-		return -EPERM;
+-
+-	if (!npages)
+-		return 0;
+-
+-	down_write(&mm->mmap_sem);
+-	locked = mm->locked_vm + npages;
+-	lock_limit = rlimit(RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+-	if (locked > lock_limit && !capable(CAP_IPC_LOCK))
+-		ret = -ENOMEM;
+-	else
+-		mm->locked_vm += npages;
+-
+-	pr_debug("[%d] RLIMIT_MEMLOCK +%ld %ld/%ld%s\n", current->pid,
+-			npages << PAGE_SHIFT,
+-			mm->locked_vm << PAGE_SHIFT,
+-			rlimit(RLIMIT_MEMLOCK),
+-			ret ? " - exceeded" : "");
+-
+-	up_write(&mm->mmap_sem);
+-
+-	return ret;
+-}
+-
+-static void decrement_locked_vm(struct mm_struct *mm, long npages)
+-{
+-	if (!mm || !npages)
+-		return;
+-
+-	down_write(&mm->mmap_sem);
+-	if (WARN_ON_ONCE(npages > mm->locked_vm))
+-		npages = mm->locked_vm;
+-	mm->locked_vm -= npages;
+-	pr_debug("[%d] RLIMIT_MEMLOCK -%ld %ld/%ld\n", current->pid,
+-			npages << PAGE_SHIFT,
+-			mm->locked_vm << PAGE_SHIFT,
+-			rlimit(RLIMIT_MEMLOCK));
+-	up_write(&mm->mmap_sem);
+-}
+-
+ /*
+  * VFIO IOMMU fd for SPAPR_TCE IOMMU implementation
+  *
+@@ -336,7 +292,7 @@ static int tce_iommu_enable(struct tce_container *container)
+ 		return ret;
+ 
+ 	locked = table_group->tce32_size >> PAGE_SHIFT;
+-	ret = try_increment_locked_vm(container->mm, locked);
++	ret = account_locked_vm(container->mm, locked, true);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -355,7 +311,7 @@ static void tce_iommu_disable(struct tce_container *container)
+ 	container->enabled = false;
+ 
+ 	BUG_ON(!container->mm);
+-	decrement_locked_vm(container->mm, container->locked_pages);
++	account_locked_vm(container->mm, container->locked_pages, false);
+ }
+ 
+ static void *tce_iommu_open(unsigned long arg)
+@@ -659,7 +615,7 @@ static long tce_iommu_create_table(struct tce_container *container,
+ 	if (!table_size)
+ 		return -EINVAL;
+ 
+-	ret = try_increment_locked_vm(container->mm, table_size >> PAGE_SHIFT);
++	ret = account_locked_vm(container->mm, table_size >> PAGE_SHIFT, true);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -678,7 +634,7 @@ static void tce_iommu_free_table(struct tce_container *container,
+ 	unsigned long pages = tbl->it_allocated_size >> PAGE_SHIFT;
+ 
+ 	iommu_tce_table_put(tbl);
+-	decrement_locked_vm(container->mm, pages);
++	account_locked_vm(container->mm, pages, false);
+ }
+ 
+ static long tce_iommu_create_window(struct tce_container *container,
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 3ddc375e7063..bf449ace1676 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -275,21 +275,8 @@ static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
+ 
+ 	ret = down_write_killable(&mm->mmap_sem);
+ 	if (!ret) {
+-		if (npage > 0) {
+-			if (!dma->lock_cap) {
+-				unsigned long limit;
+-
+-				limit = task_rlimit(dma->task,
+-						RLIMIT_MEMLOCK) >> PAGE_SHIFT;
+-
+-				if (mm->locked_vm + npage > limit)
+-					ret = -ENOMEM;
+-			}
+-		}
+-
+-		if (!ret)
+-			mm->locked_vm += npage;
+-
++		ret = __account_locked_vm(mm, abs(npage), npage > 0, dma->task,
++					  dma->lock_cap);
+ 		up_write(&mm->mmap_sem);
+ 	}
+ 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 0e8834ac32b7..95510f6fad45 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1564,6 +1564,10 @@ long get_user_pages_unlocked(unsigned long start, unsigned long nr_pages,
+ int get_user_pages_fast(unsigned long start, int nr_pages,
+ 			unsigned int gup_flags, struct page **pages);
+ 
++int account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc);
++int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
++			struct task_struct *task, bool bypass_rlim);
++
+ /* Container for pinned pfns / pages */
+ struct frame_vector {
+ 	unsigned int nr_allocated;	/* Number of frames we have space for */
+diff --git a/mm/util.c b/mm/util.c
+index 91682a2090ee..cbbcc035b12b 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -7,6 +7,7 @@
+ #include <linux/err.h>
+ #include <linux/sched.h>
+ #include <linux/sched/mm.h>
++#include <linux/sched/signal.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/security.h>
+ #include <linux/swap.h>
+@@ -347,6 +348,80 @@ int __weak get_user_pages_fast(unsigned long start,
+ }
+ EXPORT_SYMBOL_GPL(get_user_pages_fast);
+ 
++/**
++ * __account_locked_vm - account locked pages to an mm's locked_vm
++ * @mm:          mm to account against
++ * @pages:       number of pages to account
++ * @inc:         %true if @pages should be considered positive, %false if not
++ * @task:        task used to check RLIMIT_MEMLOCK
++ * @bypass_rlim: %true if checking RLIMIT_MEMLOCK should be skipped
++ *
++ * Assumes @task and @mm are valid (i.e. at least one reference on each), and
++ * that mmap_sem is held as writer.
++ *
++ * Return:
++ * * 0       on success
++ * * -ENOMEM if RLIMIT_MEMLOCK would be exceeded.
++ */
++int __account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc,
++			struct task_struct *task, bool bypass_rlim)
++{
++	unsigned long locked_vm, limit;
++	int ret = 0;
++
++	lockdep_assert_held_exclusive(&mm->mmap_sem);
++
++	locked_vm = mm->locked_vm;
++	if (inc) {
++		if (!bypass_rlim) {
++			limit = task_rlimit(task, RLIMIT_MEMLOCK) >> PAGE_SHIFT;
++			if (locked_vm + pages > limit)
++				ret = -ENOMEM;
++		}
++		if (!ret)
++			mm->locked_vm = locked_vm + pages;
++	} else {
++		WARN_ON_ONCE(pages > locked_vm);
++		mm->locked_vm = locked_vm - pages;
++	}
++
++	pr_debug("%s: [%d] caller %ps %c%lu %lu/%lu%s\n", __func__, task->pid,
++		 (void *)_RET_IP_, (inc) ? '+' : '-', pages << PAGE_SHIFT,
++		 locked_vm << PAGE_SHIFT, task_rlimit(task, RLIMIT_MEMLOCK),
++		 ret ? " - exceeded" : "");
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(__account_locked_vm);
++
++/**
++ * account_locked_vm - account locked pages to an mm's locked_vm
++ * @mm:          mm to account against, may be NULL
++ * @pages:       number of pages to account
++ * @inc:         %true if @pages should be considered positive, %false if not
++ *
++ * Assumes a non-NULL @mm is valid (i.e. at least one reference on it).
++ *
++ * Return:
++ * * 0       on success, or if mm is NULL
++ * * -ENOMEM if RLIMIT_MEMLOCK would be exceeded.
++ */
++int account_locked_vm(struct mm_struct *mm, unsigned long pages, bool inc)
++{
++	int ret;
++
++	if (pages == 0 || !mm)
++		return 0;
++
++	down_write(&mm->mmap_sem);
++	ret = __account_locked_vm(mm, pages, inc, current,
++				  capable(CAP_IPC_LOCK));
++	up_write(&mm->mmap_sem);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(account_locked_vm);
++
+ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
+ 	unsigned long len, unsigned long prot,
+ 	unsigned long flag, unsigned long pgoff)
 
-It's supposed to be a general mechanism. Of course it would
-be simpler if is was restricted to things you can get at via
-/proc/self.
-
->  It might make sense to align access controls based on that - if
-> you don't want it to be possible to observe events happening on some
-> mount points through this API, you should probably lock down
-> /proc/*/mounts equivalently, by introducing an LSM hook for "is @cred
-> allowed to see @mnt" or something like that - and if you want to
-> compare two cred structures, you could record the cred structure that
-> is responsible for the creation of the mount point, or something like
-> that.
-
-I'm not going to argue against that.
-
-> For some of the other patches, I guess things get more tricky because
-> the notification exposes new information that wasn't really available
-> before.
-
-We have to look not just at the information being available,
-but the mechanism used. Being able to look at information about
-a process in /proc doesn't mean I should be able to look at it
-using ptrace(). Access control isn't done on data, it's done on
-objects. That I can get information by looking in one object provides
-no assurance that I can get it through a different object containing
-the same information. This happens in /dev all over the place. A
-file with hard links may be accessible by one path but not another.
-
->
->>>  You can transmit information through the scheduler,
->>> through hyperthread resource sharing, through CPU data caches, throug=
-h
->>> disk contention, through page cache state, through RAM contention, an=
-d
->>> probably dozens of other ways that I can't think of right now.
->> Yeah, and there's been a lot of activity to reduce those,
->> which are hard to exploit, as opposed to this, which would
->> be trivial and obvious.
->>
->>> There
->>> have been plenty of papers that demonstrated things like an SSH
->>> connection between two virtual machines without network access runnin=
-g
->>> on the same physical host (<https://gruss.cc/files/hello.pdf>),
->>> communication between a VM and a browser running on the host system,
->>> and so on.
->> So you're saying we shouldn't have mode bits on files because
->> spectre/meltdown makes them pointless?
-> spectre/meltdown are vulnerabilities that are being mitigated.
-> Microarchitectural covert channels are an accepted fact and I haven't
-> heard of anyone seriously considering trying to get rid of them all.
+base-commit: cd6c84d8f0cdc911df435bb075ba22ce3c605b07
+-- 
+2.21.0
 
