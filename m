@@ -2,141 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2232B2D9F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50BA42D9FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:07:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbfE2KEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 06:04:45 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42669 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbfE2KEo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 06:04:44 -0400
-Received: by mail-wr1-f67.google.com with SMTP id l2so1278806wrb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 03:04:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=EvRHuK8mz2NMxeqe94A9v/S9Mu1WuY4pJlAWP/0yaCU=;
-        b=V+CQc1Uawwh7H+49Sc63wT1Z0PeCzOUvhYN0X5juPv/tDrEQfn4viRo7A4giKds037
-         FIxwvb6pfHvuaKYB1ogomOuc7GBDUpF1aRTl9Rh6vI3G9TmNKj2wgM1zJQJGQ3YzyxoF
-         ROlkb4JfXfnuzYHTXcBmxNyoZRJLBBJGSKJ1fkHk0OOM/VhyxPH1BYYyAUXfpsCFaUaO
-         KXcbZuY+nm3NoAJL7VFoswDkS6gCkQaEGHlsfdn0/y8lN7p7PSNgCFeQbaBSc94dMMxW
-         MYywOeqF6i0VEmmzgHxhri84uURb59HPScaQVwezeuZbVu7e51kRAGGqHVlYr/u8dOtH
-         pt5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=EvRHuK8mz2NMxeqe94A9v/S9Mu1WuY4pJlAWP/0yaCU=;
-        b=m6sEPMlCPPgsKLkN5IF4IJ7iPESfRNr2hHQxNe0cxkJycUpt965rEvgICoIxv614fn
-         YwRCSjf6cKX0JKN+jOfabNPX8zg2Mn4ulyQka0y6Fnl4SaG5eVugUuQafR/Wboknghz9
-         zcJdJ7LZa8W65+JiSfJJ1gtfJMuG8oQh7XqFVUcydKmBWtwnel6qqYqIKKhOfNZtZv6K
-         M3calrWujE561mReqJOj2RzS/0vqjS0tskDueeQNfeHnhyyHkIm7cGwerI3ep0f8Mx3X
-         lOm2DB7IQlTakJ1frdHtSVr/Fd8zFqmAWjahz1aVstfyxMEldSkK/+mzdoPgTR9iMK+i
-         TdWA==
-X-Gm-Message-State: APjAAAUR4D4FSF2SdNe+bS/rKHy89zAB1+/4Gnjqaj462vCyU+wLZOFM
-        hF3koGFlhOw9T5l/7hcY2rwEqQ==
-X-Google-Smtp-Source: APXvYqwg+x1MOMT+WmH/pBDUnkvqMWetCPalCNp+MayuVaC4AMRbrLW0huzcYAbqvXQX+V0Si1OQrQ==
-X-Received: by 2002:a05:6000:12:: with SMTP id h18mr4283978wrx.29.1559124281873;
-        Wed, 29 May 2019 03:04:41 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id f197sm5965858wme.39.2019.05.29.03.04.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 03:04:41 -0700 (PDT)
-From:   Loys Ollivier <lollivier@baylibre.com>
-To:     Atish Patra <atish.patra@wdc.com>,
-        Karsten Merker <merker@debian.org>
-Cc:     "linux-riscv\@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: Testing the recent RISC-V DT patchsets
-In-Reply-To: <081611ea-a0d3-b0c9-3e08-8946513f2174@wdc.com>
-References: <alpine.DEB.2.21.9999.1904221705170.18377@viisi.sifive.com> <alpine.DEB.2.21.9999.1905280105110.20842@viisi.sifive.com> <86o93mpqbx.fsf@baylibre.com> <20190528153542.jfkkwycyc3vu6hld@excalibur.cnev.de> <081611ea-a0d3-b0c9-3e08-8946513f2174@wdc.com>
-Date:   Wed, 29 May 2019 12:04:39 +0200
-Message-ID: <86woi94lvs.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726543AbfE2KHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 06:07:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60502 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726326AbfE2KHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 06:07:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E36FFAEFF;
+        Wed, 29 May 2019 10:07:15 +0000 (UTC)
+Date:   Wed, 29 May 2019 12:07:13 +0200
+Message-ID: <s5hsgsxtvzi.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Takashi Sakamoto" <o-takashi@sakamocchi.jp>
+Cc:     "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        <alsa-devel@alsa-project.org>, "Arnd Bergmann" <arnd@arndb.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Cong Wang" <xiyou.wangcong@gmail.com>,
+        "Igor Konopko" <igor.j.konopko@intel.com>,
+        "Clemens Ladisch" <clemens@ladisch.de>,
+        "Matias Bjorling" <mb@lightnvm.io>,
+        <linux-afs@lists.infradead.org>,
+        "Eran Ben Elisha" <eranbe@mellanox.com>,
+        "Jiri Pirko" <jiri@mellanox.com>,
+        "Jamal Hadi Salim" <jhs@mojatatu.com>,
+        "Mohit P . Tahiliani" <tahiliani@nitk.edu.in>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>,
+        "Joe Perches" <joe@perches.com>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        "David Howells" <dhowells@redhat.com>,
+        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+Subject: Re: [PATCH 4/5] ALSA: fireface: Use ULL suffixes for 64-bit constants
+In-Reply-To: <20190529095730.GA7089@workstation>
+References: <20190528142424.19626-1-geert@linux-m68k.org>
+        <20190528142424.19626-5-geert@linux-m68k.org>
+        <20190529095730.GA7089@workstation>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 29 May 2019 at 00:50, Atish Patra <atish.patra@wdc.com> wrote:
+On Wed, 29 May 2019 11:57:31 +0200,
+Takashi Sakamoto wrote:
+> 
+> Hi,
+> 
+> On Tue, May 28, 2019 at 04:24:23PM +0200, Geert Uytterhoeven wrote:
+> > With gcc 4.1:
+> > 
+> >     sound/firewire/fireface/ff-protocol-latter.c: In function ‘latter_switch_fetching_mode’:
+> >     sound/firewire/fireface/ff-protocol-latter.c:97: warning: integer constant is too large for ‘long’ type
+> >     sound/firewire/fireface/ff-protocol-latter.c: In function ‘latter_begin_session’:
+> >     sound/firewire/fireface/ff-protocol-latter.c:170: warning: integer constant is too large for ‘long’ type
+> >     sound/firewire/fireface/ff-protocol-latter.c:197: warning: integer constant is too large for ‘long’ type
+> >     sound/firewire/fireface/ff-protocol-latter.c:205: warning: integer constant is too large for ‘long’ type
+> >     sound/firewire/fireface/ff-protocol-latter.c: In function ‘latter_finish_session’:
+> >     sound/firewire/fireface/ff-protocol-latter.c:214: warning: integer constant is too large for ‘long’ type
+> > 
+> > Fix this by adding the missing "ULL" suffixes.
+> > Add the same suffix to the last constant, to maintain consistency.
+> > 
+> > Fixes: fd1cc9de64c2ca6c ("ALSA: fireface: add support for Fireface UCX")
+> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > ---
+> >  sound/firewire/fireface/ff-protocol-latter.c | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> Thanks for your care.
+> 
+> Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-> On 5/28/19 8:36 AM, Karsten Merker wrote:
->> On Tue, May 28, 2019 at 05:10:42PM +0200, Loys Ollivier wrote:
->>> On Tue 28 May 2019 at 01:32, Paul Walmsley <paul.walmsley@sifive.com> wrote:
->>>
->>>> An update for those testing RISC-V patches: here's a new branch of
->>>> riscv-pk/bbl that doesn't try to read or modify the DT data at all, which
->>>> should be useful until U-Boot settles down.
->> [...]
->>>> Here is an Linux kernel branch with updated DT data that can be booted
->>>> with the above bootloader:
->>>>
->>>>     https://github.com/sifive/riscv-linux/tree/dev/paulw/dts-v5.2-rc1-experimental
->>>>
->>>> A sample boot log follows, using a 'defconfig' build from that branch.
->>>
->>> Thanks Paul, I can confirm that it works.
->>>
->>> Something is still unclear to myself.
->>> Using FSBL + riscv-pk/bbl the linux kernel + device tree boots.
->>> Neither FSBL nor riscv-pk/bbl are modifying the DT.
->>>
->>> Using FSBL + OpenSBI + U-Boot the same kernel + device tree hangs on
->>> running /init.
->>>
->>> Would you have any pointer on what riscv-pk does that OpenSBI/U-boot doesn't ?
->>> Or maybe it is the other way around - OpenSBI/U-boot does something that
->>> extra that should not happen.
->> 
->> Hello,
->> 
->> I don't know which version of OpenSBI you are using, but there is
->> a problem with the combination of kernel 5.2-rc1 and OpenSBI
->> versions before commit
->> 
->>    https://github.com/riscv/opensbi/commit/4e2cd478208531c47343290f15b577d40c82649c
->> 
->> that can result in a hang on executing init, so in case you
->> should be using an older OpenSBI build that might be the source
->> of the problem that you are experiencing.
->> 
->> Regards,
->> Karsten
->> 
->
-> I verified the updated DT with upstream kernel for the boot flow OpenSBI 
-> + U-Boot + Linux or OpenSBI + Linux.
->
-> OpenSBI should be compiled for sifive platform with following additional 
-> argument
->
-> FW_PAYLOAD_FDT_PATH=<linux kernel 
-> source>/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dtb
->
-> FYI: It will only work when kernel is given a payload to U-Boot/OpenSBI 
-> directly.
->
+Applied to sound git tree now.  Thanks.
 
-Hum, I am surprised by this statement.
-I was able to verify the latest DT patch serie from Paul with:
-OpenSBI + U-Boot + Linux & DT.
 
-Following the OpenSBI documentation [0] with U-Boot payload:
-FW_PAYLOAD_PATH=<u-boot_build_dir>/u-boot.bin
-
-I get an U-Boot prompt and then I can just load the linux kernel and
-device tree from the network.
-
-[0]: https://github.com/riscv/opensbi/blob/master/docs/platform/sifive_fu540.md#building-sifive-fu540-platform
-
-> Network booting is still not working as the clock driver probe doesn't 
-> happen because of the updated DT.
->
-> -- 
-> Regards,
-> Atish
+Takashi
