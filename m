@@ -2,69 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25EE22D7D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 534542D7D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:30:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbfE2IaP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 04:30:15 -0400
-Received: from relay.sw.ru ([185.231.240.75]:42042 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbfE2IaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:30:15 -0400
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1hVtyM-0001yM-CE; Wed, 29 May 2019 11:30:10 +0300
-Subject: Re: [PATCH] mm: Fix recent_rotated history
-To:     akpm@linux-foundation.org, daniel.m.jordan@oracle.com,
-        mhocko@suse.com, hannes@cmpxchg.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <155905972210.26456.11178359431724024112.stgit@localhost.localdomain>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <0354e97d-ecc5-f150-7b36-410984c666db@virtuozzo.com>
-Date:   Wed, 29 May 2019 11:30:09 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <155905972210.26456.11178359431724024112.stgit@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726670AbfE2Iam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:30:42 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.61.142]:41644 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725936AbfE2Ial (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 04:30:41 -0400
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id D29C4C2638;
+        Wed, 29 May 2019 08:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1559118623; bh=rInhU8MnwkeLaie1bXq7wmLepGsEHuCTeR1Qz68mYgg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jHTCFQW5RMWHbUMlHoAcr2S5w1r/0tv2YdVD4QXe/qefQ2yeKc0e6TLY4PxL1LOZu
+         5u/sYcj8UEiU2VLy/VQzX3EPxjqUS7fFfAerqIaNeMO7tSCXwc8Jw6WehNAe0hs2Uo
+         +vMPrDWUc+CXTbwo63NC+aTXa88y0REJaEwQWQOL47WaQ8jfGqm6hXTPqaoO8tzh/K
+         ou5rpFLGDzmLqTTIF+ETadz0mMfwQNnyuosq38urwZ0AhvwSZr1lVo6u1ezqB3mF7B
+         NmPzyKpzViN1nx1mNY6mLGhFULHMkagdlZ2nQc36hVdD4l2KB7/IVYYnk6Py1zshw1
+         3urd56RihyyNA==
+Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 3ADFDA00A0;
+        Wed, 29 May 2019 08:30:40 +0000 (UTC)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id 3FDEC3E88A;
+        Wed, 29 May 2019 10:30:39 +0200 (CEST)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Cc:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [PATCH net-next 0/2] net: stmmac: selftests: Two fixes
+Date:   Wed, 29 May 2019 10:30:24 +0200
+Message-Id: <cover.1559118521.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Missed Johannes :(
+Two fixes reported by kbuild.
 
-CC
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
 
-On 28.05.2019 19:09, Kirill Tkhai wrote:
-> Johannes pointed that after commit 886cf1901db9
-> we lost all zone_reclaim_stat::recent_rotated
-> history. This commit fixes that.
-> 
-> Fixes: 886cf1901db9 "mm: move recent_rotated pages calculation to shrink_inactive_list()"
-> Reported-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> ---
->  mm/vmscan.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index d9c3e873eca6..1d49329a4d7d 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -1953,8 +1953,8 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
->  	if (global_reclaim(sc))
->  		__count_vm_events(item, nr_reclaimed);
->  	__count_memcg_events(lruvec_memcg(lruvec), item, nr_reclaimed);
-> -	reclaim_stat->recent_rotated[0] = stat.nr_activate[0];
-> -	reclaim_stat->recent_rotated[1] = stat.nr_activate[1];
-> +	reclaim_stat->recent_rotated[0] += stat.nr_activate[0];
-> +	reclaim_stat->recent_rotated[1] += stat.nr_activate[1];
->  
->  	move_pages_to_lru(lruvec, &page_list);
->  
-> 
+Jose Abreu (2):
+  net: stmmac: selftests: Fix sparse warning
+  net: stmmac: selftests: Use kfree_skb() instead of kfree()
+
+ drivers/net/ethernet/stmicro/stmmac/stmmac_selftests.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.7.4
 
