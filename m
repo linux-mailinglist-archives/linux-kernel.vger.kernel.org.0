@@ -2,246 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C022F2DAAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 898D32DAA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:28:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfE2K3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 06:29:09 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:51944 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726784AbfE2K2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 06:28:55 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7A7B42003F5;
-        Wed, 29 May 2019 12:28:53 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6B9872003E8;
-        Wed, 29 May 2019 12:28:53 +0200 (CEST)
-Received: from fsr-ub1864-101.ea.freescale.net (fsr-ub1864-101.ea.freescale.net [10.171.82.13])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E0403205E4;
-        Wed, 29 May 2019 12:28:52 +0200 (CEST)
-From:   laurentiu.tudor@nxp.com
-To:     hch@lst.de, stern@rowland.harvard.edu, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, marex@denx.de
-Cc:     leoyang.li@nxp.com, linux-kernel@vger.kernel.org,
-        robin.murphy@arm.com, noring@nocrew.org, JuergenUrban@gmx.de,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: [PATCH v7 5/5] USB: drop HCD_LOCAL_MEM flag
-Date:   Wed, 29 May 2019 13:28:43 +0300
-Message-Id: <20190529102843.13174-6-laurentiu.tudor@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190529102843.13174-1-laurentiu.tudor@nxp.com>
-References: <20190529102843.13174-1-laurentiu.tudor@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726719AbfE2K2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 06:28:49 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:42222 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725956AbfE2K2t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 06:28:49 -0400
+Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 5E999C0B4F;
+        Wed, 29 May 2019 10:28:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1559125737; bh=l3Ry4dJcHNnCIlaMLKaBRH28TBvJqRSfyTN6AhOAOps=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=AUkzjL2sJ/RHTPWV0YyfM+WfRjwl0vRQaMLM4EfQtnSszrhAkAiGlVC3mRg0l3x/H
+         DGkB/9Nqv8CEXr6Y3vSdEyQto50HfjC+Y3vZ51CvMerBAGkEJ6skUcxVBgzA0ExMTj
+         1AtQrZAuSuJP8K4shfKdF0gT//z19Y8cCEHNi1a0RFtRlCPDIAVZNPuEM6IgbqCNb0
+         RnRQJPgFMPxnNOqvkN+9B/5F4WXu8OKor6MdEBJa79ja3sIDemh+qVUnXx8g9q9lfl
+         8WXo41jBI6KlM4qqHbRs6IHMxGaTsQrAIILFJCgEdnT3mZPXc/c7Z1sfFUATXf45ND
+         z5Ej+ZB783DSA==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 0BA77A0067;
+        Wed, 29 May 2019 10:28:47 +0000 (UTC)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 29 May 2019 03:28:46 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
+ 29 May 2019 12:28:45 +0200
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     Voon Weifeng <weifeng.voon@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Giuseppe Cavallaro" <peppe.cavallaro@st.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "Florian Fainelli" <f.fainelli@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        biao huang <biao.huang@mediatek.com>,
+        Ong Boon Leong <boon.leong.ong@intel.com>,
+        Kweh Hock Leong <hock.leong.kweh@intel.com>
+Subject: RE: [PATCH net-next v4 5/5] net: stmmac: add EHL SGMII 1Gbps PCI
+ info and PCI ID
+Thread-Topic: [PATCH net-next v4 5/5] net: stmmac: add EHL SGMII 1Gbps PCI
+ info and PCI ID
+Thread-Index: AQHVFfypuDuCTZxVpkmcX+fHfGINwqaB5e4g
+Date:   Wed, 29 May 2019 10:28:44 +0000
+Message-ID: <78EB27739596EE489E55E81C33FEC33A0B933497@DE02WEMBXB.internal.synopsys.com>
+References: <1559149107-14631-1-git-send-email-weifeng.voon@intel.com>
+ <1559149107-14631-6-git-send-email-weifeng.voon@intel.com>
+In-Reply-To: <1559149107-14631-6-git-send-email-weifeng.voon@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.107.19.176]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+From: Voon Weifeng <weifeng.voon@intel.com>
+Date: Wed, May 29, 2019 at 17:58:27
 
-With the addition of the local memory allocator, the HCD_LOCAL_MEM
-flag can be dropped and the checks against it replaced with a check
-for the localmem_pool ptr being initialized.
+> +	plat->axi =3D devm_kzalloc(&pdev->dev, sizeof(*plat->axi),
+> +				 GFP_KERNEL);
+> +	if (!plat->axi)
+> +		return -ENOMEM;
 
-Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Tested-by: Fredrik Noring <noring@nocrew.org>
----
- drivers/usb/core/buffer.c      |  8 +++-----
- drivers/usb/core/hcd.c         | 15 ++++++---------
- drivers/usb/host/ehci-hcd.c    |  2 +-
- drivers/usb/host/fotg210-hcd.c |  2 +-
- drivers/usb/host/ohci-hcd.c    |  2 +-
- drivers/usb/host/ohci-sm501.c  |  5 +++--
- drivers/usb/host/ohci-tmio.c   |  2 +-
- drivers/usb/host/uhci-hcd.c    |  2 +-
- include/linux/usb/hcd.h        |  1 -
- 9 files changed, 17 insertions(+), 22 deletions(-)
+Missing line break here.
 
-diff --git a/drivers/usb/core/buffer.c b/drivers/usb/core/buffer.c
-index d2064ad7ad14..1359b78a624e 100644
---- a/drivers/usb/core/buffer.c
-+++ b/drivers/usb/core/buffer.c
-@@ -68,7 +68,7 @@ int hcd_buffer_create(struct usb_hcd *hcd)
- 
- 	if (!IS_ENABLED(CONFIG_HAS_DMA) ||
- 	    (!is_device_dma_capable(hcd->self.sysdev) &&
--	     !(hcd->driver->flags & HCD_LOCAL_MEM)))
-+	     !hcd->localmem_pool))
- 		return 0;
- 
- 	for (i = 0; i < HCD_BUFFER_POOLS; i++) {
-@@ -130,8 +130,7 @@ void *hcd_buffer_alloc(
- 
- 	/* some USB hosts just use PIO */
- 	if (!IS_ENABLED(CONFIG_HAS_DMA) ||
--	    (!is_device_dma_capable(bus->sysdev) &&
--	     !(hcd->driver->flags & HCD_LOCAL_MEM))) {
-+	    !is_device_dma_capable(bus->sysdev)) {
- 		*dma = ~(dma_addr_t) 0;
- 		return kmalloc(size, mem_flags);
- 	}
-@@ -162,8 +161,7 @@ void hcd_buffer_free(
- 	}
- 
- 	if (!IS_ENABLED(CONFIG_HAS_DMA) ||
--	    (!is_device_dma_capable(bus->sysdev) &&
--	     !(hcd->driver->flags & HCD_LOCAL_MEM))) {
-+	    !is_device_dma_capable(bus->sysdev)) {
- 		kfree(addr);
- 		return;
- 	}
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index 29b96e5e8621..fe631d18c1ed 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -1347,14 +1347,14 @@ EXPORT_SYMBOL_GPL(usb_hcd_unlink_urb_from_ep);
-  * using regular system memory - like pci devices doing bus mastering.
-  *
-  * To support host controllers with limited dma capabilities we provide dma
-- * bounce buffers. This feature can be enabled using the HCD_LOCAL_MEM flag.
-+ * bounce buffers. This feature can be enabled by initializing
-+ * hcd->localmem_pool using usb_hcd_setup_local_mem().
-  * For this to work properly the host controller code must first use the
-  * function dma_declare_coherent_memory() to point out which memory area
-  * that should be used for dma allocations.
-  *
-- * The HCD_LOCAL_MEM flag then tells the usb code to allocate all data for
-- * dma using dma_alloc_coherent() which in turn allocates from the memory
-- * area pointed out with dma_declare_coherent_memory().
-+ * The initialized hcd->localmem_pool then tells the usb code to allocate all
-+ * data for dma using the genalloc API.
-  *
-  * So, to summarize...
-  *
-@@ -1364,9 +1364,6 @@ EXPORT_SYMBOL_GPL(usb_hcd_unlink_urb_from_ep);
-  *   (a) "normal" kernel memory is no good, and
-  *   (b) there's not enough to share
-  *
-- * - The only *portable* hook for such stuff in the
-- *   DMA framework is dma_declare_coherent_memory()
-- *
-  * - So we use that, even though the primary requirement
-  *   is that the memory be "local" (hence addressable
-  *   by that device), not "coherent".
-@@ -1533,7 +1530,7 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
- 						urb->setup_dma))
- 				return -EAGAIN;
- 			urb->transfer_flags |= URB_SETUP_MAP_SINGLE;
--		} else if (hcd->driver->flags & HCD_LOCAL_MEM) {
-+		} else if (hcd->localmem_pool) {
- 			ret = hcd_alloc_coherent(
- 					urb->dev->bus, mem_flags,
- 					&urb->setup_dma,
-@@ -1603,7 +1600,7 @@ int usb_hcd_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
- 				else
- 					urb->transfer_flags |= URB_DMA_MAP_SINGLE;
- 			}
--		} else if (hcd->driver->flags & HCD_LOCAL_MEM) {
-+		} else if (hcd->localmem_pool) {
- 			ret = hcd_alloc_coherent(
- 					urb->dev->bus, mem_flags,
- 					&urb->transfer_dma,
-diff --git a/drivers/usb/host/ehci-hcd.c b/drivers/usb/host/ehci-hcd.c
-index cdafa97f632d..9da7e22848c9 100644
---- a/drivers/usb/host/ehci-hcd.c
-+++ b/drivers/usb/host/ehci-hcd.c
-@@ -559,7 +559,7 @@ static int ehci_init(struct usb_hcd *hcd)
- 	ehci->command = temp;
- 
- 	/* Accept arbitrarily long scatter-gather lists */
--	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
-+	if (!hcd->localmem_pool)
- 		hcd->self.sg_tablesize = ~0;
- 
- 	/* Prepare for unlinking active QHs */
-diff --git a/drivers/usb/host/fotg210-hcd.c b/drivers/usb/host/fotg210-hcd.c
-index 0da68df259c8..5d74ff61fa4c 100644
---- a/drivers/usb/host/fotg210-hcd.c
-+++ b/drivers/usb/host/fotg210-hcd.c
-@@ -4995,7 +4995,7 @@ static int hcd_fotg210_init(struct usb_hcd *hcd)
- 	fotg210->command = temp;
- 
- 	/* Accept arbitrarily long scatter-gather lists */
--	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
-+	if (!hcd->localmem_pool)
- 		hcd->self.sg_tablesize = ~0;
- 	return 0;
- }
-diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
-index b200b19b44fa..5801858d867e 100644
---- a/drivers/usb/host/ohci-hcd.c
-+++ b/drivers/usb/host/ohci-hcd.c
-@@ -448,7 +448,7 @@ static int ohci_init (struct ohci_hcd *ohci)
- 	struct usb_hcd *hcd = ohci_to_hcd(ohci);
- 
- 	/* Accept arbitrarily long scatter-gather lists */
--	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
-+	if (!hcd->localmem_pool)
- 		hcd->self.sg_tablesize = ~0;
- 
- 	if (distrust_firmware)
-diff --git a/drivers/usb/host/ohci-sm501.c b/drivers/usb/host/ohci-sm501.c
-index b710e100aec9..c158cda9e4b9 100644
---- a/drivers/usb/host/ohci-sm501.c
-+++ b/drivers/usb/host/ohci-sm501.c
-@@ -49,7 +49,7 @@ static const struct hc_driver ohci_sm501_hc_driver = {
- 	 * generic hardware linkage
- 	 */
- 	.irq =			ohci_irq,
--	.flags =		HCD_USB11 | HCD_MEMORY | HCD_LOCAL_MEM,
-+	.flags =		HCD_USB11 | HCD_MEMORY,
- 
- 	/*
- 	 * basic lifecycle operations
-@@ -153,7 +153,8 @@ static int ohci_hcd_sm501_drv_probe(struct platform_device *pdev)
- 	 * fine. This is however not always the case - buffers may be allocated
- 	 * using kmalloc() - so the usb core needs to be told that it must copy
- 	 * data into our local memory if the buffers happen to be placed in
--	 * regular memory. The HCD_LOCAL_MEM flag does just that.
-+	 * regular memory. A non-null hcd->localmem_pool initialized by the
-+	 * the call to usb_hcd_setup_local_mem() below does just that.
- 	 */
- 
- 	if (usb_hcd_setup_local_mem(hcd, mem->start,
-diff --git a/drivers/usb/host/ohci-tmio.c b/drivers/usb/host/ohci-tmio.c
-index 3b84ce0c3f29..d5a293a707b6 100644
---- a/drivers/usb/host/ohci-tmio.c
-+++ b/drivers/usb/host/ohci-tmio.c
-@@ -153,7 +153,7 @@ static const struct hc_driver ohci_tmio_hc_driver = {
- 
- 	/* generic hardware linkage */
- 	.irq =			ohci_irq,
--	.flags =		HCD_USB11 | HCD_MEMORY | HCD_LOCAL_MEM,
-+	.flags =		HCD_USB11 | HCD_MEMORY,
- 
- 	/* basic lifecycle operations */
- 	.start =		ohci_tmio_start,
-diff --git a/drivers/usb/host/uhci-hcd.c b/drivers/usb/host/uhci-hcd.c
-index 98deb5f64268..03bc59755123 100644
---- a/drivers/usb/host/uhci-hcd.c
-+++ b/drivers/usb/host/uhci-hcd.c
-@@ -581,7 +581,7 @@ static int uhci_start(struct usb_hcd *hcd)
- 
- 	hcd->uses_new_polling = 1;
- 	/* Accept arbitrarily long scatter-gather lists */
--	if (!(hcd->driver->flags & HCD_LOCAL_MEM))
-+	if (!hcd->localmem_pool)
- 		hcd->self.sg_tablesize = ~0;
- 
- 	spin_lock_init(&uhci->lock);
-diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
-index 127560a4bfa0..bab27ccc8ff5 100644
---- a/include/linux/usb/hcd.h
-+++ b/include/linux/usb/hcd.h
-@@ -256,7 +256,6 @@ struct hc_driver {
- 
- 	int	flags;
- #define	HCD_MEMORY	0x0001		/* HC regs use memory (else I/O) */
--#define	HCD_LOCAL_MEM	0x0002		/* HC needs local memory */
- #define	HCD_SHARED	0x0004		/* Two (or more) usb_hcds share HW */
- #define	HCD_USB11	0x0010		/* USB 1.1 */
- #define	HCD_USB2	0x0020		/* USB 2.0 */
--- 
-2.17.1
+> +	plat->axi->axi_lpi_en =3D 0;
+> +	plat->axi->axi_xit_frm =3D 0;
+> +	plat->axi->axi_wr_osr_lmt =3D 0;
+
+This is not a valid value.
+
+> +	plat->axi->axi_rd_osr_lmt =3D 2;
+> +	plat->axi->axi_blen[0] =3D 4;
+> +	plat->axi->axi_blen[1] =3D 8;
+> +	plat->axi->axi_blen[2] =3D 16;
+> +
+> +	/* Set default value for multicast hash bins */
+> +	plat->multicast_filter_bins =3D HASH_TABLE_SIZE;
+> +
+> +	/* Set default value for unicast filter entries */
+> +	plat->unicast_filter_entries =3D 1;
+> +
+> +	/* Set the maxmtu to a default of JUMBO_LEN */
+> +	plat->maxmtu =3D JUMBO_LEN;
+> +
+> +	/* Set 32KB fifo size as the advertised fifo size in
+> +	 * the HW features is not the same as the HW implementation
+> +	 */
+
+Hmm ? I'm curious, can you explain ?
+
+> +	plat->tx_fifo_size =3D 32768;
+> +	plat->rx_fifo_size =3D 32768;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ehl_sgmii1g_data(struct pci_dev *pdev,
+> +			    struct plat_stmmacenet_data *plat)
+> +{
+> +	int ret;
+> +
+> +	/* Set common default data first */
+> +	ret =3D ehl_common_data(pdev, plat);
+> +
+
+Remove the extra line break please.
+
+> +	if (ret)
+> +		return ret;
+> +
 
