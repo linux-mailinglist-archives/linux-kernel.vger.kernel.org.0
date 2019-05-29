@@ -2,102 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 639EB2D6F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:49:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A9EA2D71B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:55:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbfE2Htm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 03:49:42 -0400
-Received: from mga11.intel.com ([192.55.52.93]:44671 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbfE2Htm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 03:49:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 00:49:41 -0700
-X-ExtLoop1: 1
-Received: from unknown (HELO [10.239.13.7]) ([10.239.13.7])
-  by orsmga006.jf.intel.com with ESMTP; 29 May 2019 00:49:39 -0700
-Message-ID: <5CEE3AC4.3020904@intel.com>
-Date:   Wed, 29 May 2019 15:54:44 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1726645AbfE2Hzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 03:55:50 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:51286 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726016AbfE2Hzu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 03:55:50 -0400
+Received: by mail-it1-f194.google.com with SMTP id m3so2192671itl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 00:55:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=op4791qBHMjDCQdV9txK9mbzIX+WhgzeovFSwUXqaFQ=;
+        b=YbZYex+MkYR9h819JTNbMfn9OoTfQc0WfMl0pIniSUlyhGceEB4vQ8StrtFyuiAy4w
+         V/rdXa8qsaNoWL4xwbh2GBDzhIEKxgBZMsNRyZjGgmPoBJPWEYu2f0YjJis9SSPtC26W
+         UD998MyvHLyBc5OYtLE92jxNIzzt5APPCEtC8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=op4791qBHMjDCQdV9txK9mbzIX+WhgzeovFSwUXqaFQ=;
+        b=lZU9DWDT2yDX9By2aVaFKYCAx1OOF91/M3Wx3Ti6nXb6PRGjY0if8ogqztu1SUa0I0
+         nMpIFCrqT3nses/X0xx2MB6MmasCOdSGIDaoSnWxxLjB7l+N1tfZhfpu/fAxG2mHCtme
+         UXAyPF2y5tRCkxKoZaKU9XdhIU/865c+F6LeXxkXrk1ceTNs4y1pF1GR887mzYhU41fR
+         ov30K+tCoJF6r8mHm9Q+i0HcVjKh21PENINvT4iDjlcbWc7kH12IRxxFPE+GyY68s0hr
+         m7qzDBW2AC9h8KndVHdChWsxw7Ge3q1sK86yG7pP7zgcAC99eF3cqmUjjGa1Yko7P6O1
+         GOcQ==
+X-Gm-Message-State: APjAAAUgNpNzLgCKqbddcE+Uj3IZHWRcmQ3KPm3Pxa5wInQwuTDN/Sb4
+        NHhY1oywkIIfcgHgheL7Wfs5k6aWUJLlyhMFO8x8cg==
+X-Google-Smtp-Source: APXvYqy/whcusTY4hHDoC4X+OnP9aaNKf6KjmFpD6uW6iIEpnRrUQmEJ77wekoH11aNFI99khObtXhKqxO04kVXVSD0=
+X-Received: by 2002:a24:4dd4:: with SMTP id l203mr6105131itb.118.1559116549227;
+ Wed, 29 May 2019 00:55:49 -0700 (PDT)
 MIME-Version: 1.0
-To:     Eric Hankland <ehankland@google.com>
-CC:     pbonzini@redhat.com, rkrcmar@redhat.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH v1] KVM: x86: PMU Whitelist
-References: <CAOyeoRWfPNmaWY6Lifdkdj3KPPM654vzDO+s3oduEMCJP+Asow@mail.gmail.com> <5CEC9667.30100@intel.com> <CAOyeoRWhfyuuYdguE6Wrzd7GOdow9qRE4MZ4OKkMc5cdhDT53g@mail.gmail.com>
-In-Reply-To: <CAOyeoRWhfyuuYdguE6Wrzd7GOdow9qRE4MZ4OKkMc5cdhDT53g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <155905621951.1304.5956310120238620025.stgit@warthog.procyon.org.uk>
+ <155905622921.1304.8775688192987027250.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155905622921.1304.8775688192987027250.stgit@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 29 May 2019 09:55:38 +0200
+Message-ID: <CAJfpeguPTQ00zVjpwVQ4R8mEqE3aijCzNMAz6Wvr56xE-jfJag@mail.gmail.com>
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring
+ buffer [ver #13]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/29/2019 02:14 AM, Eric Hankland wrote:
-> On Mon, May 27, 2019 at 6:56 PM Wei Wang <wei.w.wang@intel.com> wrote:
->> On 05/23/2019 06:23 AM, Eric Hankland wrote:
->>> - Add a VCPU ioctl that can control which events the guest can monitor.
->>>
->>> Signed-off-by: ehankland <ehankland@google.com>
->>> ---
->>> Some events can provide a guest with information about other guests or the
->>> host (e.g. L3 cache stats); providing the capability to restrict access
->>> to a "safe" set of events would limit the potential for the PMU to be used
->>> in any side channel attacks. This change introduces a new vcpu ioctl that
->>> sets an event whitelist. If the guest attempts to program a counter for
->>> any unwhitelisted event, the kernel counter won't be created, so any
->>> RDPMC/RDMSR will show 0 instances of that event.
->> The general idea sounds good to me :)
->>
->> For the implementation, I would have the following suggestions:
->>
->> 1) Instead of using a whitelist, it would be better to use a blacklist to
->> forbid the guest from counting any core level information. So by default,
->> kvm maintains a list of those core level events, which are not supported to
->> the guest.
->>
->> The userspace ioctl removes the related events from the blacklist to
->> make them usable by the guest.
->>
->> 2) Use vm ioctl, instead of vcpu ioctl. The blacklist-ed events can be
->> VM wide
->> (unnecessary to make each CPU to maintain the same copy).
->> Accordingly, put the pmu event blacklist into kvm->arch.
->>
->> 3) Returning 1 when the guest tries to set the evetlsel msr to count an
->> event which is on the blacklist.
->>
->> Best,
->> Wei
-> Thanks for the feedback. I have a couple concerns with a KVM
-> maintained blacklist. First, I'm worried it will be difficult to keep
-> such a list up to date and accurate (both coming up with the initial
-> list since there are so many events, and updating it whenever any new
-> events are published or vulnerabilities are discovered).
+On Tue, May 28, 2019 at 5:10 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Implement a misc device that implements a general notification queue as a
+> ring buffer that can be mmap()'d from userspace.
+>
+> The way this is done is:
+>
+>  (1) An application opens the device and indicates the size of the ring
+>      buffer that it wants to reserve in pages (this can only be set once):
+>
+>         fd = open("/dev/watch_queue", O_RDWR);
+>         ioctl(fd, IOC_WATCH_QUEUE_NR_PAGES, nr_of_pages);
+>
+>  (2) The application should then map the pages that the device has
+>      reserved.  Each instance of the device created by open() allocates
+>      separate pages so that maps of different fds don't interfere with one
+>      another.  Multiple mmap() calls on the same fd, however, will all work
+>      together.
+>
+>         page_size = sysconf(_SC_PAGESIZE);
+>         mapping_size = nr_of_pages * page_size;
+>         char *buf = mmap(NULL, mapping_size, PROT_READ|PROT_WRITE,
+>                          MAP_SHARED, fd, 0);
 
-Not sure about "so many" above. I think there should be much
-fewer events that may need to be blacklisted.
+Would it make sense to use relayfs for the implementation of the
+mapped ring buffer?
 
-For example the event table 19-3 from SDM 19.2 shows hundreds of
-events, how many of them would you think that need to be blacklisted?
-
-> Second, users
-> may want to differentiate between whole-socket and sub-socket VMs
-> (some events may be fine for the whole-socket case) - keeping a single
-> blacklist wouldn't allow for this.
-
-Why wouldn't?
-In any case (e.g. the whole socket dedicated to the single VM) we
-want to unlock the blacklisted events, we can have the userspace
-(e.g. qemu command line options "+event1, +event2") do ioctl to
-have KVM do that.
-
-Btw, for the L3 cache stats event example, I'm not sure if that could
-be an issue if we have "AnyThread=0". I'll double confirm with
-someone.
-
-Best,
-Wei
+Thanks,
+Miklos
