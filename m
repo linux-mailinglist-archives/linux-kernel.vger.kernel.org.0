@@ -2,153 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 095832D6EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:48:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 427A42D6F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:50:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfE2HsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 03:48:06 -0400
-Received: from regular1.263xmail.com ([211.150.70.198]:53544 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbfE2HsG (ORCPT
+        id S1726871AbfE2HuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 03:50:18 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:48034 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbfE2HuR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 03:48:06 -0400
-Received: from jay.xu?rock-chips.com (unknown [192.168.167.83])
-        by regular1.263xmail.com (Postfix) with ESMTP id DE17130E;
-        Wed, 29 May 2019 15:47:57 +0800 (CST)
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P11557T140190921455360S1559116073988880_;
-        Wed, 29 May 2019 15:47:56 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <2eda5746483fc101b21695d172a79742>
-X-RL-SENDER: jay.xu@rock-chips.com
-X-SENDER: xjq@rock-chips.com
-X-LOGIN-NAME: jay.xu@rock-chips.com
-X-FST-TO: xjq@rock-chips.com
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From:   Jianqun Xu <jay.xu@rock-chips.com>
-To:     jay.xu@rock-chips.com, heiko@sntech.de, mark.rutland@arm.com,
-        robh+dt@kernel.org
-Cc:     zhangzj@rock-chips.com, manivannan.sadhasivam@linaro.org,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 1/1] arm64: dts: rockchip: add core dtsi file for RK3399Pro SoCs
-Date:   Wed, 29 May 2019 15:47:52 +0800
-Message-Id: <20190529074752.19388-1-jay.xu@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190528044850.23703-1-jay.xu@rock-chips.com>
-References: <20190528044850.23703-1-jay.xu@rock-chips.com>
+        Wed, 29 May 2019 03:50:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1559116217; x=1590652217;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=KUVsQw7OgW/kdN3Vvw/e1KcDS8jMukqEr8h0mTR4QQk=;
+  b=TXb3gGTAnjroO+ro2iRDvBsatmWNHW646zDmwZyn9d9nXQbhYfTq/d5z
+   GcIO0cyMRoH0FROfIF5DwjC4hzBPFrgQHnb7Ln5v8/U1elM+f7Qn5hoEq
+   rwFWj2NCxbvbyKNb08yxmg3H4DZ+KoX2G4saS6dfJVfyxH/6+TNLbGI2x
+   ktkkJehtsi1UyATAXWVYUqF0kscSNUqDerGXfSpI0SLL0oXy1TSXlujRl
+   De1Htx6crluJFajBqgheuoWX8t1AZLgrvlUHXs+muU5LXqEJW0DB1dYUn
+   W2zVyD8B8peL+x7WcukXhklKBY6Ku1kYDQBCnLINGyNHgOKQCMVrlU8xl
+   w==;
+X-IronPort-AV: E=Sophos;i="5.60,526,1549900800"; 
+   d="scan'208";a="215531276"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 29 May 2019 15:50:16 +0800
+IronPort-SDR: tWGaSU8anzwuhC93Hh/lDH4Dvpm+pzymcPo4WVh++eSeY4ufPROP5yOmekwOZ8OtI96j04NJcR
+ 6YbtABjEk+UObacjVNiL1BK/0WNcmlJsMDdw+fvg+wq7Izdvdlp7Df1McKL83MSFltU5zxCaBI
+ 3667C8Phr1yAsom47bd9uoNPT0DRZFmM48m/9A6S2ismIs0yeAy+Lgz8sl0FyY6mmsPJHyLh/U
+ RHHcNGDIrab52bUSluV3BcDFSwl8uPdMkiMEitF107nDssAtnmc3O8/kiffw4TkOc+FQhZgRwj
+ ylthN1QLbNRQOuLf2JZryhWk
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 29 May 2019 00:25:28 -0700
+IronPort-SDR: xgvvJZ5deWaOIO4dZ++h7DKDc/Cjk9TLmq5ZqsgkARLjYeR5t1clzE+y3g3BB3DHU8MlAVzV4b
+ 9WMG7D6ByQ04ssYtfwwIApBxqODRk50i9uq+dfWugwiyuDihWnS+2hN9hpQ1dbI0kPCLbgK5GV
+ zTdm7+HrMdleOrbFpAQG0zB0TWtagGba4wytnnbwkjvb5ZZ7ssoT59+mPxZwFP/wFQPRnQW7Th
+ IdPRKcXLjTcCK6wXmO1paOgSnqDfeAAjgmxrTmEdWJCRmbd0dcV4+KbckZRYDLNhVbxTqKCsyN
+ 4gI=
+Received: from unknown (HELO [10.225.100.40]) ([10.225.100.40])
+  by uls-op-cesaip01.wdc.com with ESMTP; 29 May 2019 00:50:16 -0700
+Subject: Re: Testing the recent RISC-V DT patchsets
+To:     Karsten Merker <merker@debian.org>,
+        Loys Ollivier <lollivier@baylibre.com>
+Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+References: <alpine.DEB.2.21.9999.1904221705170.18377@viisi.sifive.com>
+ <alpine.DEB.2.21.9999.1905280105110.20842@viisi.sifive.com>
+ <86o93mpqbx.fsf@baylibre.com>
+ <20190528153542.jfkkwycyc3vu6hld@excalibur.cnev.de>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <081611ea-a0d3-b0c9-3e08-8946513f2174@wdc.com>
+Date:   Wed, 29 May 2019 00:50:16 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190528153542.jfkkwycyc3vu6hld@excalibur.cnev.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds core dtsi file for Rockchip RK3399Pro SoCs,
-include rk3399.dtsi. Also enable these nodes:
-- pcie/pcie_phy
-- sdhci/sdio/emmc/sdmmc
+On 5/28/19 8:36 AM, Karsten Merker wrote:
+> On Tue, May 28, 2019 at 05:10:42PM +0200, Loys Ollivier wrote:
+>> On Tue 28 May 2019 at 01:32, Paul Walmsley <paul.walmsley@sifive.com> wrote:
+>>
+>>> An update for those testing RISC-V patches: here's a new branch of
+>>> riscv-pk/bbl that doesn't try to read or modify the DT data at all, which
+>>> should be useful until U-Boot settles down.
+> [...]
+>>> Here is an Linux kernel branch with updated DT data that can be booted
+>>> with the above bootloader:
+>>>
+>>>     https://github.com/sifive/riscv-linux/tree/dev/paulw/dts-v5.2-rc1-experimental
+>>>
+>>> A sample boot log follows, using a 'defconfig' build from that branch.
+>>
+>> Thanks Paul, I can confirm that it works.
+>>
+>> Something is still unclear to myself.
+>> Using FSBL + riscv-pk/bbl the linux kernel + device tree boots.
+>> Neither FSBL nor riscv-pk/bbl are modifying the DT.
+>>
+>> Using FSBL + OpenSBI + U-Boot the same kernel + device tree hangs on
+>> running /init.
+>>
+>> Would you have any pointer on what riscv-pk does that OpenSBI/U-boot doesn't ?
+>> Or maybe it is the other way around - OpenSBI/U-boot does something that
+>> extra that should not happen.
+> 
+> Hello,
+> 
+> I don't know which version of OpenSBI you are using, but there is
+> a problem with the combination of kernel 5.2-rc1 and OpenSBI
+> versions before commit
+> 
+>    https://github.com/riscv/opensbi/commit/4e2cd478208531c47343290f15b577d40c82649c
+> 
+> that can result in a hang on executing init, so in case you
+> should be using an older OpenSBI build that might be the source
+> of the problem that you are experiencing.
+> 
+> Regards,
+> Karsten
+> 
 
-Signed-off-by: Jianqun Xu <jay.xu@rock-chips.com>
----
-changes since v1:
-- remove dfi and dmc
+I verified the updated DT with upstream kernel for the boot flow OpenSBI 
++ U-Boot + Linux or OpenSBI + Linux.
 
- arch/arm64/boot/dts/rockchip/rk3399pro.dtsi | 74 +++++++++++++++++++++
- 1 file changed, 74 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3399pro.dtsi
+OpenSBI should be compiled for sifive platform with following additional 
+argument
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro.dtsi b/arch/arm64/boot/dts/rockchip/rk3399pro.dtsi
-new file mode 100644
-index 000000000000..b6d433ffa67d
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3399pro.dtsi
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+// Copyright (c) 2019 Fuzhou Rockchip Electronics Co., Ltd.
-+
-+#include "rk3399.dtsi"
-+
-+/ {
-+	compatible = "rockchip,rk3399pro";
-+
-+	xin32k: xin32k {
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		clock-output-names = "xin32k";
-+		#clock-cells = <0>;
-+	};
-+};
-+
-+&emmc_phy {
-+	status = "okay";
-+};
-+
-+&pcie_phy {
-+	status = "okay";
-+};
-+
-+&pcie0 {
-+	ep-gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
-+	num-lanes = <4>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pcie_clkreqn_cpm>;
-+	status = "okay";
-+};
-+
-+&sdhci {
-+	bus-width = <8>;
-+	mmc-hs400-1_8v;
-+	supports-emmc;
-+	non-removable;
-+	keep-power-in-suspend;
-+	mmc-hs400-enhanced-strobe;
-+	status = "okay";
-+};
-+
-+&sdio0 {
-+	clock-frequency = <150000000>;
-+	clock-freq-min-max = <200000 150000000>;
-+	supports-sdio;
-+	bus-width = <4>;
-+	disable-wp;
-+	cap-sd-highspeed;
-+	cap-sdio-irq;
-+	keep-power-in-suspend;
-+	mmc-pwrseq = <&sdio_pwrseq>;
-+	non-removable;
-+	num-slots = <1>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
-+
-+&sdmmc {
-+	clock-frequency = <150000000>;
-+	clock-freq-min-max = <400000 150000000>;
-+	supports-sd;
-+	bus-width = <4>;
-+	cap-mmc-highspeed;
-+	cap-sd-highspeed;
-+	disable-wp;
-+	num-slots = <1>;
-+	vqmmc-supply = <&vccio_sd>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_cd &sdmmc_bus4>;
-+	status = "okay";
-+};
+FW_PAYLOAD_FDT_PATH=<linux kernel 
+source>/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dtb
+
+FYI: It will only work when kernel is given a payload to U-Boot/OpenSBI 
+directly.
+
+Network booting is still not working as the clock driver probe doesn't 
+happen because of the updated DT.
+
 -- 
-2.17.1
-
-
-
+Regards,
+Atish
