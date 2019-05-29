@@ -2,112 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37E242D5FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:11:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D59B02D600
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:12:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbfE2HLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 03:11:31 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40872 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbfE2HLa (ORCPT
+        id S1726538AbfE2HMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 03:12:51 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:10586 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725882AbfE2HMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 03:11:30 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g69so657123plb.7;
-        Wed, 29 May 2019 00:11:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0qigX1mJNTElLHAS9uWeOS6rmTLOEOvDTk1cuKvKYM4=;
-        b=Ex6AyfvK8A1cFi8X4iMds24aE6z3i/KWLhxOPOya0hzGAJzl++SeV8LRbuS2OaxVn9
-         tmY35aPfTZzQy5pLEKRViYMS2HDWWvAEpHCawxD4w503h65weXl7oGYd4qi0AmmV+azl
-         13xtQhwA3Q8sq0yybTObP2bs6VqkUsyyfwCEYOqqlCCdKzQQE5CFgFWuF9d4BVw8ltr2
-         +EXi9OE1jnqhqiIydg1ym6Gg2mDJzHv++spL/OixOjYPk4i289YEyMZdyRgxZnzKKpfq
-         4zYCd1BlM/UKYsMCZ8Zd2stMdPigCJpDTolSPXzrdMYsclw+U3Z6cxHnVwVyYCGRmfCv
-         1WAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0qigX1mJNTElLHAS9uWeOS6rmTLOEOvDTk1cuKvKYM4=;
-        b=WDlAdhKcsKPm5Vcu8aWFmF5KMDL3ecZyDWiIRXEJsaB/wYNQrizUzuND6vjecTaQbM
-         4EOGj2nukh3tLMItVUTVelnJMfMijrTsn36r8JBHzQho/oszRECqoaN5aVyke2hdRtBV
-         r/Hkr7h5bcSo5mdydSZJH9TIk0yNW/J+Av6C/Thw1T+ATlm/7KqF46DIDgZ1GI265N5g
-         urQgeXkBIDnn09FGbwj4ga8JKPB5FziVI+Ur0EF11+kseowGVdXZvpMsy56Pl1u9aCfv
-         Sjajo2NQFZzdYuxBLBLmdsZu2bP29+6Tk5t35C5e0vqYr1gT0XxvGOCvg03+l9ll0Men
-         Vucg==
-X-Gm-Message-State: APjAAAWfPnqc5xWr+z5pvwPHvrDosesWbyVHp4Xi1Tc00YWy+9yb+t7E
-        F4m4Rk30h9DRPDFfutQP1Jgh3+qXlK4=
-X-Google-Smtp-Source: APXvYqx8FD5B0sMQ8Jni2x7WsXqeLZatQCCizEvafp2Qq4ANhjXD+zILaltPXLv9vbhdXmofYrt2qw==
-X-Received: by 2002:a17:902:e40f:: with SMTP id ci15mr142351041plb.280.1559113889861;
-        Wed, 29 May 2019 00:11:29 -0700 (PDT)
-Received: from localhost.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id u20sm18083307pfm.145.2019.05.29.00.11.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 00:11:29 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-pm@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] power: supply: ucs1002: Add HWMON interface
-Date:   Wed, 29 May 2019 00:11:12 -0700
-Message-Id: <20190529071112.16849-3-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190529071112.16849-1-andrew.smirnov@gmail.com>
-References: <20190529071112.16849-1-andrew.smirnov@gmail.com>
+        Wed, 29 May 2019 03:12:51 -0400
+X-UUID: 73955fc45ed844b99226497a96ed2407-20190529
+X-UUID: 73955fc45ed844b99226497a96ed2407-20190529
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1270081599; Wed, 29 May 2019 15:12:37 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 29 May 2019 15:12:35 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 29 May 2019 15:12:35 +0800
+Message-ID: <1559113955.4226.1.camel@mtksdaap41>
+Subject: Re: [PATCH 2/3] drm: mediatek: remove clk_unprepare() in
+ mtk_drm_crtc_destroy()
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Hsin-Yi Wang <hsinyi@chromium.org>
+CC:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Date:   Wed, 29 May 2019 15:12:35 +0800
+In-Reply-To: <CAJMQK-gQ_j4ma_EjGbFJOz6WGXy3UZA0F9JZYnFHPZ0F08rXog@mail.gmail.com>
+References: <20190527045054.113259-1-hsinyi@chromium.org>
+         <20190527045054.113259-3-hsinyi@chromium.org>
+         <1559109490.15592.6.camel@mtksdaap41>
+         <CAJMQK-gQ_j4ma_EjGbFJOz6WGXy3UZA0F9JZYnFHPZ0F08rXog@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expose current sensors found on UCS1002 via HWMON.
+Hi, Hsin-Yi:
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
----
- drivers/power/supply/ucs1002_power.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+On Wed, 2019-05-29 at 14:08 +0800, Hsin-Yi Wang wrote:
+> On Wed, May 29, 2019 at 1:58 PM CK Hu <ck.hu@mediatek.com> wrote:
+> >
+> > Hi, Hsin-Yi:
+> >
+> > On Mon, 2019-05-27 at 12:50 +0800, Hsin-Yi Wang wrote:
+> > > There is no clk_prepare() called in mtk_drm_crtc_reset(), when unbinding
+> > > drm device, mtk_drm_crtc_destroy() will be triggered, and the clocks will
+> > > be disabled and unprepared in mtk_crtc_ddp_clk_disable. If clk_unprepare()
+> > > is called here, we'll get warnings[1], so remove clk_unprepare() here.
+> >
+> > In original code, clk_prepare() is called in mtk_drm_crtc_create() and
+> > clk_unprepare() is called in mtk_drm_crtc_destroy(). This looks correct.
+> 
+> clk_prepare() is removed in https://patchwork.kernel.org/patch/10872777/.
+> 
 
-diff --git a/drivers/power/supply/ucs1002_power.c b/drivers/power/supply/ucs1002_power.c
-index 1c89d030c045..1faf2ef7d3f0 100644
---- a/drivers/power/supply/ucs1002_power.c
-+++ b/drivers/power/supply/ucs1002_power.c
-@@ -491,7 +491,7 @@ static const struct regulator_desc ucs1002_regulator_descriptor = {
- static int ucs1002_probe(struct i2c_client *client,
- 			 const struct i2c_device_id *dev_id)
- {
--	struct device *dev = &client->dev;
-+	struct device *hwmon, *dev = &client->dev;
- 	struct power_supply_config charger_config = {};
- 	const struct regmap_config regmap_config = {
- 		.reg_bits = 8,
-@@ -571,6 +571,13 @@ static int ucs1002_probe(struct i2c_client *client,
- 		return ret;
- 	}
- 
-+	hwmon = devm_power_supply_add_hwmon_sysfs(info->charger);
-+	ret = PTR_ERR_OR_ZERO(hwmon);
-+	if (ret) {
-+		dev_err(dev, "Failed to add hmwon attributes: %d\n", ret);
-+		return ret;
-+	}
-+
- 	ret = regmap_read(info->regmap, UCS1002_REG_PIN_STATUS, &regval);
- 	if (ret) {
- 		dev_err(dev, "Failed to read pin status: %d\n", ret);
--- 
-2.21.0
+I think this patch is a fix of that patch, and I've already applied that
+patch, so I merge this patch with that patch in my tree [1], thanks.
+
+[1]
+https://github.com/ckhu-mediatek/linux.git-tags/commit/937f861def1a1d49abb92e041efaa5c259281fbf
+
+Regards,
+CK
+
+> > I don't know why we should do any thing about clock in
+> > mtk_drm_crtc_reset(). To debug this, the first step is to print message
+> > when mediatek drm call clk_prepare() and clk_unprepare(). If these two
+> > interface is called in pair, I think we should not modify mediatek drm
+> > driver, the bug maybe in clock driver.
+> >
+
 
