@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C08322E651
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 132D62E647
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:37:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfE2Uhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 16:37:50 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40338 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbfE2UhF (ORCPT
+        id S1726747AbfE2UhI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 16:37:08 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50795 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbfE2UhG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 16:37:05 -0400
-Received: by mail-io1-f68.google.com with SMTP id n5so3063416ioc.7
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 13:37:04 -0700 (PDT)
+        Wed, 29 May 2019 16:37:06 -0400
+Received: by mail-it1-f194.google.com with SMTP id a186so6287933itg.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 13:37:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=digitalocean.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=mxMDXOH11CG9HkxEHER6u//QzdgDeYc242m4FO3zHhs=;
-        b=VQwl52pfbj2HNX+AUbmZeECsVhh7wZ0t9zb0xkLDHiQAGt2iBVcQ/ejQ6xRJA8Fp15
-         HASY5F1j0/yj7iSpimUspru643Fz0OgdcWmPNiqneBaDtDWz2wNSR2+zVhQY/jOdTlFS
-         kyzFIfsEB9Vw3KLLmspAZdSPpDkVvL8LKaiJM=
+        bh=t2l+sqgr7O73nEmNn9CIDFh9ZiHiuExAcOisxb6OFaA=;
+        b=W73JHc4Dv/GEdub8AxKJiXSFe8VL1gmWJ7bPRwxi3SqsFQFMO99izks1B88h0O8aQA
+         +qaoplZ9RdQot0CLca8UopUuNnAWiyrEI3GYmzrgCK2z99q5TJHY+2RIMcki0J2ekTud
+         5YoAWmU0es4BAqfp21mBSNOuEQnHDzxKgMVYU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=mxMDXOH11CG9HkxEHER6u//QzdgDeYc242m4FO3zHhs=;
-        b=BVOjA04GBGdh3bii7t0YzBLxYt9ostKW35zkQPuYw3limyKWbCXkKvDe5NrhX7q2V+
-         feL5BheCQPSN9lehQYL7JDBq9paDj1MoO4V3LyezzfP3+ZttO2qc9Io6sy4f0UeZBoC/
-         r0R2z5Ezs8fydfgxwEteuVHTMdOQ8Hy9BR1YnKK3hEpKvs/Dxaa6YtxKats3bT0YXzEI
-         EvLY62WrlYKXgcpsiyyiMGkPDeAI4k4onXLm4SssiJzdZPn7cLKAktV7kL5wMIQeoq/7
-         DJgrPcL+ZI52e+uC466MKU/5hA5f6BhN5NCgjDzTcLsu4dGob0V4naQPDl+vZNf5ZL9/
-         SKlg==
-X-Gm-Message-State: APjAAAXFhNv/DNJA/uK/BWhciAOK1/IYHWpWrbVdU/lXWANEguFccuFQ
-        5MV/GIV3zv1Efm0BiYc/1RyCsQ==
-X-Google-Smtp-Source: APXvYqxkW13RPtDLKh9rmPsHJcTDyDIlmW7QV9Z+9HD171M5MCD5mb9zf5cCoFq+ssLihO4xUvNvvw==
-X-Received: by 2002:a5e:8704:: with SMTP id y4mr7244581ioj.135.1559162224143;
-        Wed, 29 May 2019 13:37:04 -0700 (PDT)
+        bh=t2l+sqgr7O73nEmNn9CIDFh9ZiHiuExAcOisxb6OFaA=;
+        b=HlTmRd93Scoth9WUKbO6QGkYYL1jMAeRBVzIlaZsGKHN2gMXXq/fKNiU4HK/OE+q2e
+         wgxExniRsvXzsQAg+enIXAl3yEID9vXY488hcuazftXRefKKPI3cPaZZhrRnJK4rMyFX
+         WJsZEBbTi6O/v+e5ONasoVNejvn/aBcoV88qBsj1W/Pd2htmRu5oO3crWUyJWnpwW9fS
+         Q+ha9hBrh9/9cdU78db3wyQ2qmjT1vOuOJV45ksUdXtEBGyLvpe5zz2PwdC7mKuhrAio
+         l/3J5kWe49gy4TCLlKdbqJ3lWo18foWjmuaXohag843DDT9LgqlCqxiGCMDLvsXdFd38
+         V0Jw==
+X-Gm-Message-State: APjAAAWFZolYhMcqDYUUOfkcBI+hALml0Q/eEHGwVH5mbSzPUc3OyQvc
+        73pqxF/saJRnq9bp1rdUpGrKnA==
+X-Google-Smtp-Source: APXvYqy9otfCARDsTSjO5uyZDXnbGavbTNNvEKEU5RmnrGfim4iGlflvXq0DDVYRN9F9tqM2LvBdUA==
+X-Received: by 2002:a24:16c6:: with SMTP id a189mr119955ita.179.1559162225022;
+        Wed, 29 May 2019 13:37:05 -0700 (PDT)
 Received: from swap-tester ([178.128.225.14])
-        by smtp.gmail.com with ESMTPSA id c18sm156012iob.80.2019.05.29.13.37.03
+        by smtp.gmail.com with ESMTPSA id 62sm192384itx.8.2019.05.29.13.37.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 13:37:03 -0700 (PDT)
+        Wed, 29 May 2019 13:37:04 -0700 (PDT)
 From:   Vineeth Remanan Pillai <vpillai@digitalocean.com>
 To:     Nishanth Aravamudan <naravamudan@digitalocean.com>,
         Julien Desfossez <jdesfossez@digitalocean.com>,
@@ -56,9 +56,9 @@ Cc:     linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
         Mel Gorman <mgorman@techsingularity.net>,
         Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [RFC PATCH v3 07/16] sched: Allow put_prev_task() to drop rq->lock
-Date:   Wed, 29 May 2019 20:36:43 +0000
-Message-Id: <e4519f6850477ab7f3d257062796e6425ee4ba7c.1559129225.git.vpillai@digitalocean.com>
+Subject: [RFC PATCH v3 08/16] sched: Rework pick_next_task() slow-path
+Date:   Wed, 29 May 2019 20:36:44 +0000
+Message-Id: <aa34d24b36547139248f32a30138791ac6c02bd6.1559129225.git.vpillai@digitalocean.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1559129225.git.vpillai@digitalocean.com>
 References: <cover.1559129225.git.vpillai@digitalocean.com>
@@ -71,161 +71,247 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-Currently the pick_next_task() loop is convoluted and ugly because of
-how it can drop the rq->lock and needs to restart the picking.
+Avoid the RETRY_TASK case in the pick_next_task() slow path.
 
-For the RT/Deadline classes, it is put_prev_task() where we do
-balancing, and we could do this before the picking loop. Make this
-possible.
+By doing the put_prev_task() early, we get the rt/deadline pull done,
+and by testing rq->nr_running we know if we need newidle_balance().
+
+This then gives a stable state to pick a task from.
+
+Since the fast-path is fair only; it means the other classes will
+always have pick_next_task(.prev=NULL, .rf=NULL) and we can simplify.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/core.c      |  2 +-
- kernel/sched/deadline.c  | 14 +++++++++++++-
- kernel/sched/fair.c      |  2 +-
- kernel/sched/idle.c      |  2 +-
- kernel/sched/rt.c        | 14 +++++++++++++-
- kernel/sched/sched.h     |  4 ++--
- kernel/sched/stop_task.c |  2 +-
- 7 files changed, 32 insertions(+), 8 deletions(-)
+ kernel/sched/core.c      | 19 ++++++++++++-------
+ kernel/sched/deadline.c  | 30 ++----------------------------
+ kernel/sched/fair.c      |  9 ++++++---
+ kernel/sched/idle.c      |  4 +++-
+ kernel/sched/rt.c        | 29 +----------------------------
+ kernel/sched/sched.h     | 13 ++++++++-----
+ kernel/sched/stop_task.c |  3 ++-
+ 7 files changed, 34 insertions(+), 73 deletions(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 32ea79fb8d29..9dfa0c53deb3 100644
+index 9dfa0c53deb3..b883c70674ba 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -5595,7 +5595,7 @@ static void calc_load_migrate(struct rq *rq)
- 		atomic_long_add(delta, &calc_load_tasks);
- }
+@@ -3363,7 +3363,7 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
  
--static void put_prev_task_fake(struct rq *rq, struct task_struct *prev)
-+static void put_prev_task_fake(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- {
- }
+ 		p = fair_sched_class.pick_next_task(rq, prev, rf);
+ 		if (unlikely(p == RETRY_TASK))
+-			goto again;
++			goto restart;
  
+ 		/* Assumes fair_sched_class->next == idle_sched_class */
+ 		if (unlikely(!p))
+@@ -3372,14 +3372,19 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 		return p;
+ 	}
+ 
+-again:
++restart:
++	/*
++	 * Ensure that we put DL/RT tasks before the pick loop, such that they
++	 * can PULL higher prio tasks when we lower the RQ 'priority'.
++	 */
++	prev->sched_class->put_prev_task(rq, prev, rf);
++	if (!rq->nr_running)
++		newidle_balance(rq, rf);
++
+ 	for_each_class(class) {
+-		p = class->pick_next_task(rq, prev, rf);
+-		if (p) {
+-			if (unlikely(p == RETRY_TASK))
+-				goto again;
++		p = class->pick_next_task(rq, NULL, NULL);
++		if (p)
+ 			return p;
+-		}
+ 	}
+ 
+ 	/* The idle class should always have a runnable task: */
 diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index c02b3229e2c3..45425f971eec 100644
+index 45425f971eec..d3904168857a 100644
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -1772,13 +1772,25 @@ pick_next_task_dl(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 	return p;
- }
+@@ -1729,39 +1729,13 @@ pick_next_task_dl(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 	struct task_struct *p;
+ 	struct dl_rq *dl_rq;
  
--static void put_prev_task_dl(struct rq *rq, struct task_struct *p)
-+static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
- {
- 	update_curr_dl(rq);
+-	dl_rq = &rq->dl;
+-
+-	if (need_pull_dl_task(rq, prev)) {
+-		/*
+-		 * This is OK, because current is on_cpu, which avoids it being
+-		 * picked for load-balance and preemption/IRQs are still
+-		 * disabled avoiding further scheduler activity on it and we're
+-		 * being very careful to re-start the picking loop.
+-		 */
+-		rq_unpin_lock(rq, rf);
+-		pull_dl_task(rq);
+-		rq_repin_lock(rq, rf);
+-		/*
+-		 * pull_dl_task() can drop (and re-acquire) rq->lock; this
+-		 * means a stop task can slip in, in which case we need to
+-		 * re-start task selection.
+-		 */
+-		if (rq->stop && task_on_rq_queued(rq->stop))
+-			return RETRY_TASK;
+-	}
++	WARN_ON_ONCE(prev || rf);
  
- 	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 1);
- 	if (on_dl_rq(&p->dl) && p->nr_cpus_allowed > 1)
- 		enqueue_pushable_dl_task(rq, p);
-+
-+	if (rf && !on_dl_rq(&p->dl) && need_pull_dl_task(rq, p)) {
-+		/*
-+		 * This is OK, because current is on_cpu, which avoids it being
-+		 * picked for load-balance and preemption/IRQs are still
-+		 * disabled avoiding further scheduler activity on it and we've
-+		 * not yet started the picking loop.
-+		 */
-+		rq_unpin_lock(rq, rf);
-+		pull_dl_task(rq);
-+		rq_repin_lock(rq, rf);
-+	}
- }
+-	/*
+-	 * When prev is DL, we may throttle it in put_prev_task().
+-	 * So, we update time before we check for dl_nr_running.
+-	 */
+-	if (prev->sched_class == &dl_sched_class)
+-		update_curr_dl(rq);
++	dl_rq = &rq->dl;
  
- /*
+ 	if (unlikely(!dl_rq->dl_nr_running))
+ 		return NULL;
+ 
+-	put_prev_task(rq, prev);
+-
+ 	dl_se = pick_next_dl_entity(rq, dl_rq);
+ 	BUG_ON(!dl_se);
+ 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 49707b4797de..8e3eb243fd9f 100644
+index 8e3eb243fd9f..e65f2dfda77a 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7110,7 +7110,7 @@ done: __maybe_unused;
- /*
-  * Account for a descheduled task:
-  */
--static void put_prev_task_fair(struct rq *rq, struct task_struct *prev)
-+static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- {
- 	struct sched_entity *se = &prev->se;
- 	struct cfs_rq *cfs_rq;
+@@ -6979,7 +6979,7 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
+ 		goto idle;
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+-	if (prev->sched_class != &fair_sched_class)
++	if (!prev || prev->sched_class != &fair_sched_class)
+ 		goto simple;
+ 
+ 	/*
+@@ -7056,8 +7056,8 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
+ 	goto done;
+ simple:
+ #endif
+-
+-	put_prev_task(rq, prev);
++	if (prev)
++		put_prev_task(rq, prev);
+ 
+ 	do {
+ 		se = pick_next_entity(cfs_rq, NULL);
+@@ -7085,6 +7085,9 @@ done: __maybe_unused;
+ 	return p;
+ 
+ idle:
++	if (!rf)
++		return NULL;
++
+ 	new_tasks = newidle_balance(rq, rf);
+ 
+ 	/*
 diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index dd64be34881d..1b65a4c3683e 100644
+index 1b65a4c3683e..7ece8e820b5d 100644
 --- a/kernel/sched/idle.c
 +++ b/kernel/sched/idle.c
-@@ -373,7 +373,7 @@ static void check_preempt_curr_idle(struct rq *rq, struct task_struct *p, int fl
- 	resched_curr(rq);
- }
- 
--static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
-+static void put_prev_task_idle(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+@@ -388,7 +388,9 @@ pick_next_task_idle(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
  {
- }
+ 	struct task_struct *next = rq->idle;
  
+-	put_prev_task(rq, prev);
++	if (prev)
++		put_prev_task(rq, prev);
++
+ 	set_next_task_idle(rq, next);
+ 
+ 	return next;
 diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index adec98a94f2b..51ee87c5a28a 100644
+index 51ee87c5a28a..79f2e60516ef 100644
 --- a/kernel/sched/rt.c
 +++ b/kernel/sched/rt.c
-@@ -1593,7 +1593,7 @@ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 	return p;
- }
+@@ -1554,38 +1554,11 @@ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 	struct task_struct *p;
+ 	struct rt_rq *rt_rq = &rq->rt;
  
--static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
-+static void put_prev_task_rt(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
- {
- 	update_curr_rt(rq);
+-	if (need_pull_rt_task(rq, prev)) {
+-		/*
+-		 * This is OK, because current is on_cpu, which avoids it being
+-		 * picked for load-balance and preemption/IRQs are still
+-		 * disabled avoiding further scheduler activity on it and we're
+-		 * being very careful to re-start the picking loop.
+-		 */
+-		rq_unpin_lock(rq, rf);
+-		pull_rt_task(rq);
+-		rq_repin_lock(rq, rf);
+-		/*
+-		 * pull_rt_task() can drop (and re-acquire) rq->lock; this
+-		 * means a dl or stop task can slip in, in which case we need
+-		 * to re-start task selection.
+-		 */
+-		if (unlikely((rq->stop && task_on_rq_queued(rq->stop)) ||
+-			     rq->dl.dl_nr_running))
+-			return RETRY_TASK;
+-	}
+-
+-	/*
+-	 * We may dequeue prev's rt_rq in put_prev_task().
+-	 * So, we update time before rt_queued check.
+-	 */
+-	if (prev->sched_class == &rt_sched_class)
+-		update_curr_rt(rq);
++	WARN_ON_ONCE(prev || rf);
  
-@@ -1605,6 +1605,18 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
- 	 */
- 	if (on_rt_rq(&p->rt) && p->nr_cpus_allowed > 1)
- 		enqueue_pushable_task(rq, p);
-+
-+	if (rf && !on_rt_rq(&p->rt) && need_pull_rt_task(rq, p)) {
-+		/*
-+		 * This is OK, because current is on_cpu, which avoids it being
-+		 * picked for load-balance and preemption/IRQs are still
-+		 * disabled avoiding further scheduler activity on it and we've
-+		 * not yet started the picking loop.
-+		 */
-+		rq_unpin_lock(rq, rf);
-+		pull_rt_task(rq);
-+		rq_repin_lock(rq, rf);
-+	}
- }
+ 	if (!rt_rq->rt_queued)
+ 		return NULL;
  
- #ifdef CONFIG_SMP
+-	put_prev_task(rq, prev);
+-
+ 	p = _pick_next_task_rt(rq);
+ 
+ 	set_next_task_rt(rq, p);
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index bfcbcbb25646..4cbe2bef92e4 100644
+index 4cbe2bef92e4..460dd04e76af 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -1675,7 +1675,7 @@ struct sched_class {
+@@ -1665,12 +1665,15 @@ struct sched_class {
+ 	void (*check_preempt_curr)(struct rq *rq, struct task_struct *p, int flags);
+ 
+ 	/*
+-	 * It is the responsibility of the pick_next_task() method that will
+-	 * return the next task to call put_prev_task() on the @prev task or
+-	 * something equivalent.
++	 * Both @prev and @rf are optional and may be NULL, in which case the
++	 * caller must already have invoked put_prev_task(rq, prev, rf).
+ 	 *
+-	 * May return RETRY_TASK when it finds a higher prio class has runnable
+-	 * tasks.
++	 * Otherwise it is the responsibility of the pick_next_task() to call
++	 * put_prev_task() on the @prev task or something equivalent, IFF it
++	 * returns a next task.
++	 *
++	 * In that case (@rf != NULL) it may return RETRY_TASK when it finds a
++	 * higher prio class has runnable tasks.
+ 	 */
  	struct task_struct * (*pick_next_task)(struct rq *rq,
  					       struct task_struct *prev,
- 					       struct rq_flags *rf);
--	void (*put_prev_task)(struct rq *rq, struct task_struct *p);
-+	void (*put_prev_task)(struct rq *rq, struct task_struct *p, struct rq_flags *rf);
- 	void (*set_next_task)(struct rq *rq, struct task_struct *p);
- 
- #ifdef CONFIG_SMP
-@@ -1721,7 +1721,7 @@ struct sched_class {
- static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
- {
- 	WARN_ON_ONCE(rq->curr != prev);
--	prev->sched_class->put_prev_task(rq, prev);
-+	prev->sched_class->put_prev_task(rq, prev, NULL);
- }
- 
- static inline void set_next_task(struct rq *rq, struct task_struct *next)
 diff --git a/kernel/sched/stop_task.c b/kernel/sched/stop_task.c
-index 47a3d2a18a9a..8f414018d5e0 100644
+index 8f414018d5e0..7e1cee4e65b2 100644
 --- a/kernel/sched/stop_task.c
 +++ b/kernel/sched/stop_task.c
-@@ -59,7 +59,7 @@ static void yield_task_stop(struct rq *rq)
- 	BUG(); /* the stop task should never yield, its pointless. */
- }
- 
--static void put_prev_task_stop(struct rq *rq, struct task_struct *prev)
-+static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+@@ -33,10 +33,11 @@ pick_next_task_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
  {
- 	struct task_struct *curr = rq->curr;
- 	u64 delta_exec;
+ 	struct task_struct *stop = rq->stop;
+ 
++	WARN_ON_ONCE(prev || rf);
++
+ 	if (!stop || !task_on_rq_queued(stop))
+ 		return NULL;
+ 
+-	put_prev_task(rq, prev);
+ 	set_next_task_stop(rq, stop);
+ 
+ 	return stop;
 -- 
 2.17.1
 
