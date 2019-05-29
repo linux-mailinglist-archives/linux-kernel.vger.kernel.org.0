@@ -2,80 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70C7E2E073
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DFBB2E080
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:05:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfE2PB3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 11:01:29 -0400
-Received: from mga07.intel.com ([134.134.136.100]:23070 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726012AbfE2PB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:01:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 08:01:26 -0700
-X-ExtLoop1: 1
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
-  by fmsmga001.fm.intel.com with ESMTP; 29 May 2019 08:01:23 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Colin King <colin.king@canonical.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stuart Summers <stuart.summers@intel.com>,
-        Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>
-Subject: Re: [PATCH][next] drm/i915: fix uninitialized variable 'subslice_mask'
-In-Reply-To: <20190529144325.17235-1-colin.king@canonical.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190529144325.17235-1-colin.king@canonical.com>
-Date:   Wed, 29 May 2019 18:04:35 +0300
-Message-ID: <87lfyp47zw.fsf@intel.com>
+        id S1726708AbfE2PFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 11:05:02 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17607 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726068AbfE2PFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 11:05:02 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5B4D2DBC006830ABF8D4;
+        Wed, 29 May 2019 23:05:00 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Wed, 29 May 2019
+ 23:04:53 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <matthias.bgg@gmail.com>,
+        <kaichieh.chuang@mediatek.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <alsa-devel@alsa-project.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ASoC: mediatek: Make some symbols static
+Date:   Wed, 29 May 2019 23:04:37 +0800
+Message-ID: <20190529150437.19004-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 May 2019, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently subslice_mask is not initialized and so data is being
-> bit-wise or'd into a garbage value. Fix this by inintializing
-> subslice_mask to zero.
->
-> Addresses-Coverity: ("Uninitialized scalar variable")
-> Fixes: 1ac159e23c2c ("drm/i915: Expand subslice mask")
+Fix sparse warnings:
 
-This was already reverted for other reasons. Need to be fixed on the
-next round. For future reference, please Cc: author and reviewers of the
-referenced commit.
+sound/soc/mediatek/common/mtk-btcvsd.c:410:5: warning: symbol 'mtk_btcvsd_write_to_bt' was not declared. Should it be static?
+sound/soc/mediatek/common/mtk-btcvsd.c:698:9: warning: symbol 'mtk_btcvsd_snd_read' was not declared. Should it be static?
+sound/soc/mediatek/common/mtk-btcvsd.c:779:9: warning: symbol 'mtk_btcvsd_snd_write' was not declared. Should it be static?
 
-BR,
-Jani.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/soc/mediatek/common/mtk-btcvsd.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/i915/intel_device_info.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/intel_device_info.c b/drivers/gpu/drm/i915/intel_device_info.c
-> index 3625f777f3a3..d395a09b994f 100644
-> --- a/drivers/gpu/drm/i915/intel_device_info.c
-> +++ b/drivers/gpu/drm/i915/intel_device_info.c
-> @@ -298,7 +298,7 @@ static void cherryview_sseu_info_init(struct drm_i915_private *dev_priv)
->  {
->  	struct sseu_dev_info *sseu = &RUNTIME_INFO(dev_priv)->sseu;
->  	u32 fuse;
-> -	u8 subslice_mask;
-> +	u8 subslice_mask = 0;
->  
->  	fuse = I915_READ(CHV_FUSE_GT);
-
+diff --git a/sound/soc/mediatek/common/mtk-btcvsd.c b/sound/soc/mediatek/common/mtk-btcvsd.c
+index bd55c546e790..c7a81c4be068 100644
+--- a/sound/soc/mediatek/common/mtk-btcvsd.c
++++ b/sound/soc/mediatek/common/mtk-btcvsd.c
+@@ -407,11 +407,11 @@ static int mtk_btcvsd_read_from_bt(struct mtk_btcvsd_snd *bt,
+ 	return 0;
+ }
+ 
+-int mtk_btcvsd_write_to_bt(struct mtk_btcvsd_snd *bt,
+-			   enum bt_sco_packet_len packet_type,
+-			   unsigned int packet_length,
+-			   unsigned int packet_num,
+-			   unsigned int blk_size)
++static int mtk_btcvsd_write_to_bt(struct mtk_btcvsd_snd *bt,
++				  enum bt_sco_packet_len packet_type,
++				  unsigned int packet_length,
++				  unsigned int packet_num,
++				  unsigned int blk_size)
+ {
+ 	unsigned int i;
+ 	unsigned long flags;
+@@ -695,9 +695,9 @@ static int wait_for_bt_irq(struct mtk_btcvsd_snd *bt,
+ 	return 0;
+ }
+ 
+-ssize_t mtk_btcvsd_snd_read(struct mtk_btcvsd_snd *bt,
+-			    char __user *buf,
+-			    size_t count)
++static ssize_t mtk_btcvsd_snd_read(struct mtk_btcvsd_snd *bt,
++				   char __user *buf,
++				   size_t count)
+ {
+ 	ssize_t read_size = 0, read_count = 0, cur_read_idx, cont;
+ 	unsigned int cur_buf_ofs = 0;
+@@ -776,9 +776,9 @@ ssize_t mtk_btcvsd_snd_read(struct mtk_btcvsd_snd *bt,
+ 	return read_count;
+ }
+ 
+-ssize_t mtk_btcvsd_snd_write(struct mtk_btcvsd_snd *bt,
+-			     char __user *buf,
+-			     size_t count)
++static ssize_t mtk_btcvsd_snd_write(struct mtk_btcvsd_snd *bt,
++				    char __user *buf,
++				    size_t count)
+ {
+ 	int written_size = count, avail = 0, cur_write_idx, write_size, cont;
+ 	unsigned int cur_buf_ofs = 0;
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.17.1
+
+
