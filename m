@@ -2,179 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A30F2D33E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 03:22:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC2C2D33B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 03:22:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbfE2BWx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 21:22:53 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:11864 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725828AbfE2BWw (ORCPT
+        id S1726154AbfE2BWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 21:22:43 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:53491 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725805AbfE2BWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 21:22:52 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=teawaterz@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TSv6CYB_1559092963;
-Received: from localhost(mailfrom:teawaterz@linux.alibaba.com fp:SMTPD_---0TSv6CYB_1559092963)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 29 May 2019 09:22:50 +0800
-From:   Hui Zhu <teawaterz@linux.alibaba.com>
-To:     minchan@kernel.org, ngupta@vflare.org,
-        sergey.senozhatsky.work@gmail.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     Hui Zhu <teawaterz@linux.alibaba.com>
-Subject: [UPSTREAM KERNEL] mm/zsmalloc.c: Add module parameter malloc_force_movable
-Date:   Wed, 29 May 2019 09:22:30 +0800
-Message-Id: <20190529012230.89042-1-teawaterz@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1 (Apple Git-117)
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 28 May 2019 21:22:42 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 084352203E;
+        Tue, 28 May 2019 21:22:39 -0400 (EDT)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Tue, 28 May 2019 21:22:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm2; bh=O3Xkv3EI6y00AB2M6iUlJwWyBdvRoMi
+        nM2rnAHW1aYg=; b=hOV871nmAdvpcLrcayvkgFn0OV342CHDmf9kRVh6YDNmapN
+        fJb/O6F+9R4mH5T2vUaw/G/lAjwe1k35zu/KVu376BtR7EMzdjcWH9srREK6cmwe
+        mPrU+UuN9nSCLzEJr5KwObQEP8qgH+qWdsIZR6O1ksL5VoRb/APcKCGZyciXMzAg
+        0bK5svhKSY/ZUx7jCipcmflg+MfIxXSDVXKcMeEJ2S9T2O2EB/WV+vrFDtTZeniQ
+        9uocJZZ2+5sX1XfbDZ6pcoVIaL+v3nfWlbRrfT4MzCd05XZKk7rAdvwqJ3NqcUC3
+        cjPOVgfq29rA/oq50mMHOJvpVP8ev72bcJDVCmQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=O3Xkv3
+        EI6y00AB2M6iUlJwWyBdvRoMinM2rnAHW1aYg=; b=nYZSZa2jMoyk0fHbHbePYC
+        GFW/9W5yQC4kMgPoLN7SlHkfxWroFiLVNRyPRcoktMVkSYZyKyIzP5oBKRJTHBcu
+        X3Tg4xxvy0eKxst8OKBpCV6NXhuN+E33sZrKPK5EhTd6z0OY3K4JYsbXhn0MOjv5
+        TxK6JQMn/5/pfeOiyEMFoy/aud+7JIoqWVCKROVlJypkLRvbdxnaaOwnk7bWlb5Z
+        2LrABS+yVXintxlj6vOBljfKpnsaLgscHaCtgTTnT6fkfMVIvfJOUDnC8aoZTQuV
+        jHATHUB5AGUFHD8qsSFFA/FYZ+tx8uogNEBWUOvWZRUJXgRTNskpf3R/Wk4Szy/Q
+        ==
+X-ME-Sender: <xms:3d7tXKQ_mHmvNk8LYkpIljRURpmhytPa06O4NBRV1egLyXIuEyolqw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddviedggeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
+    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
+    rhfuihiivgeptd
+X-ME-Proxy: <xmx:3d7tXFQHu7jR7Vh8F975N4hdkfE8Jvw6GtZjT_KasakbDHkvaP8hsw>
+    <xmx:3d7tXG5opnSsYQh9XuURjuUhGMxzAXlIFfjMNM_ddsDKtU5zNJEtyw>
+    <xmx:3d7tXKVYrp-nVot3T4GLSTfXXoqv8Scjl8fGLSdSu2wmvFXXYIETBA>
+    <xmx:3t7tXL14R3RvaZCn_gnQ2MRGOzKNMaHfplYh8XlawYvBZGEjy61q4A>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 42D6FE00A2; Tue, 28 May 2019 21:22:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.6-555-g49357e1-fmstable-20190528v2
+Mime-Version: 1.0
+Message-Id: <c0e01b11-5ea2-42d1-be67-2998809e310c@www.fastmail.com>
+In-Reply-To: <20190527112753.1681-1-a.filippov@yadro.com>
+References: <20190527112753.1681-1-a.filippov@yadro.com>
+Date:   Wed, 29 May 2019 10:52:36 +0930
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Alexander A. Filippov" <a.filippov@yadro.com>,
+        linux-aspeed@lists.ozlabs.org
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        "Joel Stanley" <joel@jms.id.au>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        "Rob Herring" <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: aspeed: g4: add video engine support
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-zswap compresses swap pages into a dynamically allocated RAM-based
-memory pool.  The memory pool should be zbud, z3fold or zsmalloc.
-All of them will allocate unmovable pages.  It will increase the
-number of unmovable page blocks that will bad for anti-fragment.
 
-zsmalloc support page migration if request movable page:
-        handle = zs_malloc(zram->mem_pool, comp_len,
-                GFP_NOIO | __GFP_HIGHMEM |
-                __GFP_MOVABLE);
 
-This commit adds module parameter malloc_force_movable to enable
-or disable zs_malloc force allocate block with gfp
-__GFP_HIGHMEM | __GFP_MOVABLE (disabled by default).
+On Mon, 27 May 2019, at 20:58, Alexander Filippov wrote:
+> Add a node to describe the video engine and VGA scratch registers on
+> AST2400.
+> 
+> These changes were copied from aspeed-g5.dtsi
+> 
+> Signed-off-by: Alexander Filippov <a.filippov@yadro.com>
 
-Following part is test log in a pc that has 8G memory and 2G swap.
+Ugh, I should really sort out the bmc-misc stuff, I don't like to see it propagate
+in its current form. That's not your problem though, and I hope to address it in
+the near future.
 
-When it disabled:
-~# echo lz4 > /sys/module/zswap/parameters/compressor
-~# echo zsmalloc > /sys/module/zswap/parameters/zpool
-~# echo 1 > /sys/module/zswap/parameters/enabled
-~# swapon /swapfile
-~# cd /home/teawater/kernel/vm-scalability/
-/home/teawater/kernel/vm-scalability# export unit_size=$((9 * 1024 * 1024 * 1024))
-/home/teawater/kernel/vm-scalability# ./case-anon-w-seq
-2717908992 bytes / 4410183 usecs = 601836 KB/s
-2717908992 bytes / 4524375 usecs = 586646 KB/s
-2717908992 bytes / 4558583 usecs = 582244 KB/s
-2717908992 bytes / 4824261 usecs = 550179 KB/s
-348046 usecs to free memory
-401680 usecs to free memory
-369660 usecs to free memory
-180867 usecs to free memory
-/home/teawater/kernel/vm-scalability# cat /proc/pagetypeinfo
-Page block order: 9
-Pages per block:  512
+For the OpenBMC kernel tree:
 
-Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
-Node    0, zone      DMA, type    Unmovable      1      1      1      0      2      1      1      0      1      0      0
-Node    0, zone      DMA, type      Movable      0      0      0      0      0      0      0      0      0      1      3
-Node    0, zone      DMA, type  Reclaimable      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone      DMA, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone      DMA, type          CMA      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone      DMA, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone    DMA32, type    Unmovable     13     11     10     11     10      6      7      3      1      0      0
-Node    0, zone    DMA32, type      Movable     36     26     39     40     37     36     24     29     14      6    767
-Node    0, zone    DMA32, type  Reclaimable      0      0      0      0      0      0      0      0      0      0      1
-Node    0, zone    DMA32, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone    DMA32, type          CMA      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone    DMA32, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone   Normal, type    Unmovable   7744   7519   6900   5964   4583   2878   1346    448    146      1      0
-Node    0, zone   Normal, type      Movable    645   1930   1685   1339   1020    670    363    210    106    310    399
-Node    0, zone   Normal, type  Reclaimable     53     70    116     48     13      0      0      0      0      0      0
-Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone   Normal, type          CMA      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone   Normal, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
+Acked-by: Andrew Jeffery <andrew@aj.id.au>
 
-Number of blocks type     Unmovable      Movable  Reclaimable   HighAtomic          CMA      Isolate
-Node 0, zone      DMA            1            7            0            0            0            0
-Node 0, zone    DMA32            4         1650            2            0            0            0
-Node 0, zone   Normal          947         1469           15            0            0            0
-
-When it enabled:
-~# echo 1 > /sys/module/zsmalloc/parameters/malloc_force_movable
-~# echo lz4 > /sys/module/zswap/parameters/compressor
-~# echo zsmalloc > /sys/module/zswap/parameters/zpool
-~# echo 1 > /sys/module/zswap/parameters/enabled
-~# swapon /swapfile
-~# cd /home/teawater/kernel/vm-scalability/
-/home/teawater/kernel/vm-scalability# export unit_size=$((9 * 1024 * 1024 * 1024))
-/home/teawater/kernel/vm-scalability# ./case-anon-w-seq
-2717908992 bytes / 4779235 usecs = 555362 KB/s
-2717908992 bytes / 4856673 usecs = 546507 KB/s
-2717908992 bytes / 4920079 usecs = 539464 KB/s
-2717908992 bytes / 4935505 usecs = 537778 KB/s
-354839 usecs to free memory
-368167 usecs to free memory
-355460 usecs to free memory
-385452 usecs to free memory
-/home/teawater/kernel/vm-scalability# cat /proc/pagetypeinfo
-Page block order: 9
-Pages per block:  512
-
-Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
-Node    0, zone      DMA, type    Unmovable      1      1      1      0      2      1      1      0      1      0      0
-Node    0, zone      DMA, type      Movable      0      0      0      0      0      0      0      0      0      1      3
-Node    0, zone      DMA, type  Reclaimable      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone      DMA, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone      DMA, type          CMA      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone      DMA, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone    DMA32, type    Unmovable      9     15     13     10     13      9      3      2      2      0      0
-Node    0, zone    DMA32, type      Movable     16     19     10     14     17     17     16      8      5      6    775
-Node    0, zone    DMA32, type  Reclaimable      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone    DMA32, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone    DMA32, type          CMA      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone    DMA32, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone   Normal, type    Unmovable   2525   1347    603    181     55     14      4      1      6      0      0
-Node    0, zone   Normal, type      Movable   5255   6069   5007   3978   2885   1940   1164    732    485    276    511
-Node    0, zone   Normal, type  Reclaimable    103    104    140     87     31     21      7      3      2      1      1
-Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone   Normal, type          CMA      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone   Normal, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
-
-Number of blocks type     Unmovable      Movable  Reclaimable   HighAtomic          CMA      Isolate
-Node 0, zone      DMA            1            7            0            0            0            0
-Node 0, zone    DMA32            4         1652            0            0            0            0
-Node 0, zone   Normal           78         2330           23            0            0            0
-
-You can see that the number of unmovable page blocks is decreased
-when malloc_force_movable is enabled.
-
-Signed-off-by: Hui Zhu <teawaterz@linux.alibaba.com>
----
- mm/zsmalloc.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 0787d33b80d8..7d44c7ccd882 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -178,6 +178,13 @@ static struct dentry *zs_stat_root;
- static struct vfsmount *zsmalloc_mnt;
- #endif
- 
-+/* Enable/disable zs_malloc force allocate block with
-+ *  gfp __GFP_HIGHMEM | __GFP_MOVABLE (disabled by default).
-+ */
-+static bool __read_mostly zs_malloc_force_movable;
-+module_param_cb(malloc_force_movable, &param_ops_bool,
-+		&zs_malloc_force_movable, 0644);
-+
- /*
-  * We assign a page to ZS_ALMOST_EMPTY fullness group when:
-  *	n <= N / f, where
-@@ -1479,6 +1486,9 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
- 	if (unlikely(!size || size > ZS_MAX_ALLOC_SIZE))
- 		return 0;
- 
-+	if (zs_malloc_force_movable)
-+		gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
-+
- 	handle = cache_alloc_handle(pool, gfp);
- 	if (!handle)
- 		return 0;
--- 
-2.20.1 (Apple Git-117)
-
+> ---
+>  arch/arm/boot/dts/aspeed-g4.dtsi | 62 ++++++++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed-g4.dtsi
+> index 6011692df15a..adc1804918df 100644
+> --- a/arch/arm/boot/dts/aspeed-g4.dtsi
+> +++ b/arch/arm/boot/dts/aspeed-g4.dtsi
+> @@ -168,6 +168,10 @@
+>  					compatible = "aspeed,g4-pinctrl";
+>  				};
+>  
+> +				vga_scratch: scratch {
+> +					compatible = "aspeed,bmc-misc";
+> +				};
+> +
+>  				p2a: p2a-control {
+>  					compatible = "aspeed,ast2400-p2a-ctrl";
+>  					status = "disabled";
+> @@ -195,6 +199,16 @@
+>  				reg = <0x1e720000 0x8000>;	// 32K
+>  			};
+>  
+> +			video: video@1e700000 {
+> +				compatible = "aspeed,ast2400-video-engine";
+> +				reg = <0x1e700000 0x1000>;
+> +				clocks = <&syscon ASPEED_CLK_GATE_VCLK>,
+> +					 <&syscon ASPEED_CLK_GATE_ECLK>;
+> +				clock-names = "vclk", "eclk";
+> +				interrupts = <7>;
+> +				status = "disabled";
+> +			};
+> +
+>  			gpio: gpio@1e780000 {
+>  				#gpio-cells = <2>;
+>  				gpio-controller;
+> @@ -1408,6 +1422,54 @@
+>  	};
+>  };
+>  
+> +&vga_scratch {
+> +	dac_mux {
+> +		offset = <0x2c>;
+> +		bit-mask = <0x3>;
+> +		bit-shift = <16>;
+> +	};
+> +	vga0 {
+> +		offset = <0x50>;
+> +		bit-mask = <0xffffffff>;
+> +		bit-shift = <0>;
+> +	};
+> +	vga1 {
+> +		offset = <0x54>;
+> +		bit-mask = <0xffffffff>;
+> +		bit-shift = <0>;
+> +	};
+> +	vga2 {
+> +		offset = <0x58>;
+> +		bit-mask = <0xffffffff>;
+> +		bit-shift = <0>;
+> +	};
+> +	vga3 {
+> +		offset = <0x5c>;
+> +		bit-mask = <0xffffffff>;
+> +		bit-shift = <0>;
+> +	};
+> +	vga4 {
+> +		offset = <0x60>;
+> +		bit-mask = <0xffffffff>;
+> +		bit-shift = <0>;
+> +	};
+> +	vga5 {
+> +		offset = <0x64>;
+> +		bit-mask = <0xffffffff>;
+> +		bit-shift = <0>;
+> +	};
+> +	vga6 {
+> +		offset = <0x68>;
+> +		bit-mask = <0xffffffff>;
+> +		bit-shift = <0>;
+> +	};
+> +	vga7 {
+> +		offset = <0x6c>;
+> +		bit-mask = <0xffffffff>;
+> +		bit-shift = <0>;
+> +	};
+> +};
+> +
+>  &sio_regs {
+>  	sio_2b {
+>  		offset = <0xf0>;
+> -- 
+> 2.20.1
+> 
+>
