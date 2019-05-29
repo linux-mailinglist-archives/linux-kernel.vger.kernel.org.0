@@ -2,70 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC2C82E0A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B77072E0AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:12:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfE2PKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 11:10:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726489AbfE2PKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:10:55 -0400
-Received: from localhost (unknown [207.225.69.115])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BD4C23B8C;
-        Wed, 29 May 2019 15:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559142654;
-        bh=Mr53O7RleTzao/dC3tr4uYgD841gD6k8Bfp9NeUAZNk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cyZDYlLhz99DlaSRHVOISk3X1d11X1h9Fiz3jTrszIeyByTGLo2bl0E7oNhgidbW/
-         VJ8N+GNkh9ZZy3qTa+Vmy92q5T2mmnFSfExvTgnpUfERO9Qe7mgd5l1GOtalC9z9xE
-         RTTffwT/PNMfhmHHx+8OlwnVhmiphlqO2+oGPpvk=
-Date:   Wed, 29 May 2019 08:10:53 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
-Message-ID: <20190529151053.GA10231@kroah.com>
-References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
- <CAOQ4uxjC1M7jwjd9zSaSa6UW2dbEjc+ZbFSo7j9F1YHAQxQ8LQ@mail.gmail.com>
- <20190529142504.GC32147@quack2.suse.cz>
+        id S1726955AbfE2PL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 11:11:57 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:36693 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfE2PL4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 11:11:56 -0400
+Received: by mail-vs1-f68.google.com with SMTP id l20so2103663vsp.3;
+        Wed, 29 May 2019 08:11:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UIVDIT77fklabMXqDAOJeTqVDgwvqkeiaJrtX84VDSg=;
+        b=SCQOExSDY4j6nVitwzKonoEiLkjv+AyqGbzWrSdcW35kQZOpct9Bl6m3yZYRqlA710
+         AIABGbyP7sqKZEJrI11hdVw4wQee6PyT6NV0BKeCM5QO9d2iHqsH2KjR+L+GcaT8eqzC
+         UIG5j5D17DiT3itUYV4M17aQeZ7bttrh9TPhT8d0TExkePwT6D/Y9d68sV4sNYdWTPL2
+         GGE3S9kvtzDBCRXNm6paAlcQ5ypSB0ItaPxlfVVYTHW6N7akoi/ExAClCGclLQ3ZGuUb
+         RDYYDIIT33PyHsRCyT3nI4g+a7/MFxLR29+EgR5EJElJxxmlKS72UxjOPPruey5ZmQ/x
+         ILBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UIVDIT77fklabMXqDAOJeTqVDgwvqkeiaJrtX84VDSg=;
+        b=Idf3trS3owjSmL1RKIFRUN0o1tfCuplOM+ExDldngLeCEsjR8ZZswinWqKGz8nO005
+         MT+sYemAnPNOOSHaKZaAOa60ue0WRMhYxlyOLjhVWaAkYevir7d5R0UWRrd6uSDdVf4k
+         2gfnHlnCWs8b5KWADm9sQV8cxERrmeOQ2XqQ0VWtXHWB9bsjMUT6VxCmwKkDupcTPMkK
+         Xmq2pexnMYwoiYT7Hx0Atyl8Ouh1kwSU85/eC5yIta9ExoZGPsBebPnNxm27c2qHQC7W
+         xNlxM+vcY0Ya2AfpJTKlJ6RbI+BMcMPpWu1Su1Iw3Z/JgAHqgcJiHcDTDrtBANwsvML4
+         xqXQ==
+X-Gm-Message-State: APjAAAVxqS5DXNOM26oB1WH26XvcOyPQMrh39kDsm/QbOFTdE2SQdw8h
+        wW8YbE4GhtIb1MrtQltIlmWlZlYYJHJB88i05So=
+X-Google-Smtp-Source: APXvYqyVbpePc0qw8XIy67sCbwpzdYgls/MnhlRZ0Dyy1OOs6HY2INwn/MYYV2OhRgbS31JA1j5o3HdTJ+sd5SNzK2M=
+X-Received: by 2002:a67:8747:: with SMTP id j68mr38428396vsd.212.1559142715413;
+ Wed, 29 May 2019 08:11:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529142504.GC32147@quack2.suse.cz>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <1559117459-27353-1-git-send-email-92siuyang@gmail.com> <CANn89iLxxiX+4E7EURNKb=xRkk97rPaKTkpSc6Yu7fZbiwPT6w@mail.gmail.com>
+In-Reply-To: <CANn89iLxxiX+4E7EURNKb=xRkk97rPaKTkpSc6Yu7fZbiwPT6w@mail.gmail.com>
+From:   Yang Xiao <92siuyang@gmail.com>
+Date:   Wed, 29 May 2019 23:11:17 +0800
+Message-ID: <CAKgHYH2uW=iSUM1j5pLhaQXpm35XK2rWq45M2Yih1-Dn=es0SA@mail.gmail.com>
+Subject: Re: [PATCH] ipv4: tcp_input: fix stack out of bounds when parsing TCP options.
+To:     Eric Dumazet <edumazet@google.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 04:25:04PM +0200, Jan Kara wrote:
-> > I am not asking that you implement fs_notify() before merging sb_notify()
-> > and I understand that you have a use case for sb_notify().
-> > I am asking that you show me the path towards a unified API (how a
-> > typical program would look like), so that we know before merging your
-> > new API that it could be extended to accommodate fsnotify events
-> > where the final result will look wholesome to users.
-> 
-> Are you sure we want to combine notification about file changes etc. with
-> administrator-type notifications about the filesystem? To me these two
-> sound like rather different (although sometimes related) things.
+Indeed, condition opsize < 2 and opsize > length can deduce that length >= 2.
+However, before the condition (if opsize < 2), there may be one-byte
+out-of-bound access in line 12.
+I'm not sure whether I have put it very clearly.
 
-This patchset is looking to create a "generic" kernel notification
-system, so I think the question is valid.  It's up to the requestor to
-ask for the specific type of notification.
+On Wed, May 29, 2019 at 10:20 PM Eric Dumazet <edumazet@google.com> wrote:
+>
+> On Wed, May 29, 2019 at 1:10 AM Young Xiao <92siuyang@gmail.com> wrote:
+> >
+> > The TCP option parsing routines in tcp_parse_options function could
+> > read one byte out of the buffer of the TCP options.
+> >
+> > 1         while (length > 0) {
+> > 2                 int opcode = *ptr++;
+> > 3                 int opsize;
+> > 4
+> > 5                 switch (opcode) {
+> > 6                 case TCPOPT_EOL:
+> > 7                         return;
+> > 8                 case TCPOPT_NOP:        /* Ref: RFC 793 section 3.1 */
+> > 9                         length--;
+> > 10                        continue;
+> > 11                default:
+> > 12                        opsize = *ptr++; //out of bound access
+> >
+> > If length = 1, then there is an access in line2.
+> > And another access is occurred in line 12.
+> > This would lead to out-of-bound access.
+> >
+> > Therefore, in the patch we check that the available data length is
+> > larger enough to pase both TCP option code and size.
+> >
+> > Signed-off-by: Young Xiao <92siuyang@gmail.com>
+> > ---
+> >  net/ipv4/tcp_input.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+> > index 20f6fac..9775825 100644
+> > --- a/net/ipv4/tcp_input.c
+> > +++ b/net/ipv4/tcp_input.c
+> > @@ -3791,6 +3791,8 @@ void tcp_parse_options(const struct net *net,
+> >                         length--;
+> >                         continue;
+> >                 default:
+> > +                       if (length < 2)
+> > +                               return;
+> >                         opsize = *ptr++;
+> >                         if (opsize < 2) /* "silly options" */
+> >                                 return;
+>
+> In practice we are good, since we have at least 320 bytes of room there,
+> and the test done later catches silly options.
+>
+> if (opsize < 2) /* "silly options" */
+>     return;
+> if (opsize > length)   /* remember, opsize >= 2 here */
+>      return; /* don't parse partial options */
+>
+> I guess adding yet another conditional will make this code obviously
+> correct for all eyes
+> and various tools.
+>
+> Thanks.
+>
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
 
-thanks,
 
-greg k-h
+
+-- 
+Best regards!
+
+Young
+-----------------------------------------------------------
