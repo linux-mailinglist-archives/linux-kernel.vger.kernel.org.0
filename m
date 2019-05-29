@@ -2,69 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 726322E96A
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 01:32:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB2B72E978
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 01:35:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726581AbfE2Xce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 19:32:34 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:42020 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726189AbfE2Xcd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 19:32:33 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-109.corp.google.com [104.133.0.109] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4TNVk1Q018708
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 29 May 2019 19:31:47 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 444C0420481; Wed, 29 May 2019 19:31:46 -0400 (EDT)
-Date:   Wed, 29 May 2019 19:31:46 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Trevor Bourget <tgb.kernel@gmail.com>
-Cc:     Jiri Slaby <jslaby@suse.cz>, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com
-Subject: Re: [PATCH] vt: configurable number of console devices
-Message-ID: <20190529233146.GA3671@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        Trevor Bourget <tgb.kernel@gmail.com>, Jiri Slaby <jslaby@suse.cz>,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com
-References: <20190528043117.169987-1-tgb.kernel@gmail.com>
- <b52aaaed-5efb-ae1f-68c0-80b150388219@suse.cz>
- <CAG0f_nYQSn8eFHH3EcV4zxia0C6v7PfCvXybx40em9KgtzMGqQ@mail.gmail.com>
+        id S1726535AbfE2Xfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 19:35:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54544 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726454AbfE2Xfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 19:35:48 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7F6F2435D;
+        Wed, 29 May 2019 23:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559172947;
+        bh=aHRGWmrf5rXnGBiMo5ak6Pc0Hv90kyBqNX7HV998xic=;
+        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
+        b=jaP6SePRwzRnxN+ij5bLWVtNYpu/iF9tyV5WGHmrc8Q5SzcUP2k2bI/+uvhOKqeaT
+         hJUM0s/lPFbJHfEiJ7AhNx7ktcnq+WFF8qVegWcHmNX9L3ZpK49i93+RAHpYAXwoLo
+         ivyZqOm4nh2trqHx4QCtEtnTzdy3P1IDNhF3B9+M=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG0f_nYQSn8eFHH3EcV4zxia0C6v7PfCvXybx40em9KgtzMGqQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190523132235.GZ9261@dragon>
+References: <20190522014832.29485-1-peng.fan@nxp.com> <20190523132235.GZ9261@dragon>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+To:     Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: imx: imx8mm: correct audio_pll2_clk to audio_pll2_out
+User-Agent: alot/0.8.1
+Date:   Wed, 29 May 2019 16:35:46 -0700
+Message-Id: <20190529233547.B7F6F2435D@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 03:09:11PM -0700, Trevor Bourget wrote:
-> Sorry, I hadn't registered that was uapi. You are right, as a
-> configuration setting it's an odd thing to expose there.
-> That define won't really be any use to user space except for type
-> range validation, and as such it would actually be unhelpful for it to
-> be other than 63.
-> 
-> I will add if defined(__KERNEL__) to improve that, so that it will be
-> constant for uapi.
+Quoting Shawn Guo (2019-05-23 06:22:36)
+> On Wed, May 22, 2019 at 01:34:46AM +0000, Peng Fan wrote:
+> > There is no audio_pll2_clk registered, it should be audio_pll2_out.
+> >=20
+> > Cc: <stable@vger.kernel.org>
+> > Fixes: ba5625c3e27 ("clk: imx: Add clock driver support for imx8mm")
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>=20
+> Stephen,
+>=20
+> I leave this to you, since it's a fix.
+>=20
 
-It's by design that MAX_NR_CONSOLES is defined in a uapi header.
-There are userspace programs that rely on this value (they use it to
-declare arrays, so the version that we export to userspace MUST be
-largest value that any kernel might support).
+Is it a critical fix? Or is it an annoyance that can wait in -next until
+the next merge window?
 
-That being said, I've done an eyeball inspection to see how manytes
-might be saved if we were to shirnk MAX_NR_CONSOLES, and... I don't
-see that many bytes.  Maybe 24 bytes per console, so that maximum
-savings would less than 1.5k?   Am I missing something?
-
-Yes, we should all worry about kernel bloat; but it's not clear to me
-this is a great place to start.  :-)
-
-					- Ted
