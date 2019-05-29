@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 686FB2E8C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 01:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A4972E8CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 01:11:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbfE2XJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 19:09:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47594 "EHLO
+        id S1726859AbfE2XJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 19:09:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47582 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfE2XJh (ORCPT
+        with ESMTP id S1726399AbfE2XJh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 May 2019 19:09:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,26 +18,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=wCq8wzGw72uiJf8YTianNOUvn6pWVH3JtoQXOBTmG7c=; b=KZCCgVwN4/7fZXkfXyahTcPfB5
-        3vhvf4VTIFFeMlZJwPJfA1oZnu5+f5FuDlqP0g0ygvsdXV94pvM5B8GtuA0wpT3P+TDBhYOAVqhcm
-        QEjo0whAHRLFsap3aLw2XaqO8yecfweB28Px+qnx10+yX7H+aTXt5C1pYejj3gyf8EHNirKzwD8IA
-        GYQ0cG+IAs1XUgrCatNeRDdkrmakdWI3S/+S0TOh+tlRy9N4EokGZ0s79/r6g7JS8AFpfWdlwvckb
-        xrjQrozrcnGrrUZmEuJTqmfAv12NlVc6BN4nSXaAy62c+XdD18O67UAVSB47tYj3zCscfvUOs9qDG
-        dUG04c0Q==;
+        bh=t7V/jAIyRWeGVCJDZeH1LhdUcZQK43LHg68xT8DRQOM=; b=gwVvUgnXfZyNeurHHgH90G15vz
+        QUWoJ6dIMEAOTt8/Oq5juFdsLVVXXvXJIqv3dB7r75ikwSlHpbgsYP3ea/i+swQzYp9bGESSCcevy
+        yA7+A25AE/5DBMUsh47XGJdqOyo/JuCb85Yf32Cg614KX+z6ac9kaeez7UlGjhAjbGmB0yxrORDIg
+        Rep1gYn9l74D2KEYHj1Fa+Mbd5DpGhf01ph4dFbFh+Oyp0BF1yBVCKBgMnR4G6nnTfxpEliaADEQC
+        xqGdFe1l+/hfCnl8YZpfM02Ss/wjvd5cZnWhxbD9kghzmkAozG87LlozG3MTdjUzyTPJiAJgipUX5
+        P8uLfM0A==;
 Received: from 177.132.232.81.dynamic.adsl.gvt.net.br ([177.132.232.81] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hW7hQ-0000lF-GZ; Wed, 29 May 2019 23:09:36 +0000
+        id 1hW7hQ-0000lH-Hw; Wed, 29 May 2019 23:09:36 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hW7hN-0007Td-Lw; Wed, 29 May 2019 20:09:33 -0300
+        id 1hW7hN-0007Th-Mf; Wed, 29 May 2019 20:09:33 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 06/10] scripts/documentation-file-ref-check: exclude false-positives
-Date:   Wed, 29 May 2019 20:09:28 -0300
-Message-Id: <cfc75c5e965884d64579e99e2189a94bf3f30ce4.1559170790.git.mchehab+samsung@kernel.org>
+Subject: [PATCH 07/10] scripts/documentation-file-ref-check: improve tools ref handling
+Date:   Wed, 29 May 2019 20:09:29 -0300
+Message-Id: <9992ab4f4728b99dddf2eb018b5a47509d0ebf24.1559170790.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1559170790.git.mchehab+samsung@kernel.org>
 References: <cover.1559170790.git.mchehab+samsung@kernel.org>
@@ -48,57 +48,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are at least two cases where a documentation file was gone
-for good, but the text still mentions it:
+There's a false positive on perf/util:
 
-1) drivers/vhost/vhost.c:
-   the reference for Documentation/virtual/lguest/lguest.c is just
-   to give credits to the original work that vhost replaced;
+	tools/perf/util/s390-cpumsf.c: Documentation/perf.data-file-format.txt
 
-2) Documentation/scsi/scsi_mid_low_api.txt:
-   It gives credit and mentions the old Documentation/Configure.help
-   file that used to be part of Kernel 2.4.x
+The file is there at tools/perf/Documentation/, but the logic
+with detects relative documentation references inside tools is
+not capable of detecting it.
 
-As we don't want to keep the script to keep pinpoint to those
-every time, let's add a logic at the script to allow it to ignore
-valid false-positives like the above.
+So, improve it.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- scripts/documentation-file-ref-check | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ scripts/documentation-file-ref-check | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/scripts/documentation-file-ref-check b/scripts/documentation-file-ref-check
-index 6b622b88f4cf..05235775cc71 100755
+index 05235775cc71..5d775ca7469b 100755
 --- a/scripts/documentation-file-ref-check
 +++ b/scripts/documentation-file-ref-check
-@@ -8,6 +8,14 @@ use warnings;
- use strict;
- use Getopt::Long qw(:config no_auto_abbrev);
- 
-+# NOTE: only add things here when the file was gone, but the text wants
-+# to mention a past documentation file, for example, to give credits for
-+# the original work.
-+my %false_positives = (
-+	"Documentation/scsi/scsi_mid_low_api.txt" => "Documentation/Configure.help",
-+	"drivers/vhost/vhost.c" => "Documentation/virtual/lguest/lguest.c",
-+);
-+
- my $scriptname = $0;
- $scriptname =~ s,.*/([^/]+/),$1,;
- 
-@@ -122,6 +130,11 @@ while (<IN>) {
- 			next if (grep -e, glob("$path/$ref $path/$fulref"));
+@@ -127,7 +127,7 @@ while (<IN>) {
+ 		if ($f =~ m/tools/) {
+ 			my $path = $f;
+ 			$path =~ s,(.*)/.*,$1,;
+-			next if (grep -e, glob("$path/$ref $path/$fulref"));
++			next if (grep -e, glob("$path/$ref $path/../$ref $path/$fulref"));
  		}
  
-+		# Discard known false-positives
-+		if (defined($false_positives{$f})) {
-+			next if ($false_positives{$f} eq $fulref);
-+		}
-+
- 		if ($fix) {
- 			if (!($ref =~ m/(scripts|Kconfig|Kbuild)/)) {
- 				$broken_ref{$ref}++;
+ 		# Discard known false-positives
 -- 
 2.21.0
 
