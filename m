@@ -2,158 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC8342DC16
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 13:45:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E9132DC29
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 13:49:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbfE2Lo7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 07:44:59 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53135 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbfE2Lo7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 07:44:59 -0400
-Received: by mail-wm1-f68.google.com with SMTP id y3so1457356wmm.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 04:44:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=vOYxrsUIUSoP7Y+ENnCbLglQ1sy//0LmbmH3hv/U97g=;
-        b=xYCl4p6zSWJBz4+FQ4b2mZo88LjOoSZzjOg94PGpQx5SUTLGzSnhfUZb/hN0Ur165l
-         F3CGXUkiGa0mC/w5mmjShjDY7kIg04gkF4YrWnfIjcAqkqTZZ8mIfG+KauaaDz2lfZrR
-         PiARvKqvx9ZPTk/R1XFhMcnT6zO450FXlcVHYm12wSrvfa9TJ/LQ76e5TdajP7HfygE6
-         lwcrs6x6Mc6mursv+eB4KP5FEfUg4QzzhYrkTU3SdSuCWl4GNr9KwzxHbiP0AP1RghyJ
-         D5qLl5CzglkfnCz0kfWA50uE94M+uRZl+dyJDJl0Ep1x1WyfKhEG4ZtxiKXS5FJUUefu
-         0eZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=vOYxrsUIUSoP7Y+ENnCbLglQ1sy//0LmbmH3hv/U97g=;
-        b=Rb6OsHq0O1blDQSDMOJQb0IXj3wbKabAJZcc7zA3L5LhUNmpTDqzMJ4hJbG4psJPak
-         lr3T+cjqA2hJ2bKIfHDMZ7SYULyiXOKockOI4ge7IsNn9U8UVzabm/Jc0ltqJXqB/UqE
-         LMsnP6/hWAXTZ2Cfh2GsZE5Ktg/Mr9miV9w0EAis0qe/Cc8rkszMRnleakcTbMdb82tm
-         Thnkg4OWfmMHX1ER2Bk9gSFAo4L5MTY4HxoOeLVf2bMTElIJruFw4DwgCwpVoGYTROpI
-         pMyu+LKVtMWSCiiuORUb3Ja0vr0OlslnjF8DR1z1z5gfQyhuOt5G+kGbfYsynv6P0ClP
-         nA6A==
-X-Gm-Message-State: APjAAAWaflgFjFFFBRCrv6xh8PYI3zpBS/wVuC7oA/pI9R06rViBtf7L
-        8P00BqIVLNW6qsMYNHkLGtHlXg==
-X-Google-Smtp-Source: APXvYqyihUIJ+blE414ToWc5cD257jWRdTiXQa+UKJcF5nfktFLcwkHIjYbt6IshNWU/O+/orT2PMw==
-X-Received: by 2002:a7b:c001:: with SMTP id c1mr6643728wmb.49.1559130296085;
-        Wed, 29 May 2019 04:44:56 -0700 (PDT)
-Received: from dell ([2.27.167.43])
-        by smtp.gmail.com with ESMTPSA id v13sm4748348wmj.46.2019.05.29.04.44.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 04:44:55 -0700 (PDT)
-Date:   Wed, 29 May 2019 12:44:54 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Gwendal Grignou <gwendal@chromium.org>
-Cc:     andy.shevchenko@gmail.com, Guenter Roeck <groeck@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
-Subject: Re: [PATCH v5] mfd: cros_ec_dev: Register cros_ec_accel_legacy
- driver as a subdevice
-Message-ID: <20190529114454.GJ4574@dell>
-References: <CAMHSBOWZHLnGWXU_z1ouCVuRRWKg_59P5++zwhJOWrWJoNv=GA@mail.gmail.com>
- <20190228013541.76792-1-gwendal@chromium.org>
- <20190402034610.GG4187@dell>
- <CAPUE2usfB3i4J7P4e_XdsMLV+VK7s+nS-mrD=D_WMpOHiouG2w@mail.gmail.com>
+        id S1726998AbfE2LtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 07:49:14 -0400
+Received: from mail-eopbgr20042.outbound.protection.outlook.com ([40.107.2.42]:8933
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726101AbfE2LtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 07:49:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cIiSuFGTVl9m/ZTNoQ/FCHYPKxVgP6vxQTjp2VbdnMU=;
+ b=coO59u9dqTCJrfNqWgP4RLmuZEGK0SL58ZBtzn4ByJBkZ4Jveoq7koB4FHKOXkt6S6xwTyjlzUjafw7kW4TPCOeSLFmD/PRgn/0oye18MxIixaUVslBGM34M0op+/L5JF5AVjOBU48tcQPR/3/qhYXoS1FIgEJhg1pglRG0IXXI=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4065.eurprd04.prod.outlook.com (52.134.90.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1922.17; Wed, 29 May 2019 11:48:30 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::3173:24:d401:2378]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::3173:24:d401:2378%6]) with mapi id 15.20.1922.021; Wed, 29 May 2019
+ 11:48:30 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>,
+        "srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+CC:     "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC 1/2] dt-bindings: imx-ocotp: Add fusable-node property
+Thread-Topic: [RFC 1/2] dt-bindings: imx-ocotp: Add fusable-node property
+Thread-Index: AQHVDrkIcB6j+hDf/kC51b4HJvSviKaCCwCg
+Date:   Wed, 29 May 2019 11:48:29 +0000
+Message-ID: <AM0PR04MB44810069F874677C6A2DE795881F0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <20190520032020.7920-1-peng.fan@nxp.com>
+In-Reply-To: <20190520032020.7920-1-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [180.110.22.24]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7e8061f8-c6bb-4868-b89c-08d6e42b91e4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:AM0PR04MB4065;
+x-ms-traffictypediagnostic: AM0PR04MB4065:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <AM0PR04MB4065767687E27F78D7B9D080881F0@AM0PR04MB4065.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0052308DC6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(396003)(136003)(39860400002)(346002)(199004)(189003)(4326008)(2201001)(110136005)(54906003)(68736007)(102836004)(76116006)(7416002)(8936002)(71200400001)(256004)(44832011)(6436002)(33656002)(73956011)(66066001)(305945005)(26005)(14444005)(71190400001)(25786009)(53936002)(2501003)(7736002)(52536014)(9686003)(55016002)(186003)(6306002)(14454004)(99286004)(86362001)(6506007)(81166006)(2906002)(81156014)(5660300002)(11346002)(7696005)(76176011)(3846002)(316002)(478600001)(6116002)(229853002)(966005)(64756008)(66556008)(74316002)(8676002)(476003)(446003)(66476007)(66446008)(486006)(6246003)(66946007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4065;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: yxkVRGT4pg0n6za3JUiANNNdkcEtPnVhRutj6kBt/l+JExpKOfmt7P+jyeAi2HTxL82A8FEY9zabUR6uvqatee26d+NOMW48EajsCqBewzNketENMIF6nVLu1yI2Mr5obew/c8MIPyqDtPv8nZDYugNGsyGyc2/enR8COl8qmdvjsoG2JB6ESDi7J8fpUxsx+h1+LTIUJIT4F1/0exD+I/Xu+UKtuq9G04Z+Ui0nq8hD1c7CkXH449JsvR/6DAamO9DSu7Aw8NeutEPRFSGLPTB8h7JzAsOraEn/zS/kJWeNIAdLMOJrdsZpfexcmvfXsWQBFg+cG/1a7a/FPlvNgjDXj7ayQapTiw/uD556R3Cg266YgxEmMSGD/jzb7udggogoh9jxJ5jSUJBTlI6UX3Y46Cpq8kjLK36wDJ6uV7M=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPUE2usfB3i4J7P4e_XdsMLV+VK7s+nS-mrD=D_WMpOHiouG2w@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e8061f8-c6bb-4868-b89c-08d6e42b91e4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2019 11:48:30.1316
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: peng.fan@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4065
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 May 2019, Gwendal Grignou wrote:
-
-> On Mon, Apr 1, 2019 at 8:46 PM Lee Jones <lee.jones@linaro.org> wrote:
-> >
-> > On Wed, 27 Feb 2019, Gwendal Grignou wrote:
-> >
-> > > From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > >
-> > > With this patch, the cros_ec_ctl driver will register the legacy
-> > > accelerometer driver (named cros_ec_accel_legacy) if it fails to
-> > > register sensors through the usual path cros_ec_sensors_register().
-> > > This legacy device is present on Chromebook devices with older EC
-> > > firmware only supporting deprecated EC commands (Glimmer based devices).
-> > >
-> > > Tested-by: Gwendal Grignou <gwendal@chromium.org>
-> > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > > Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-> > > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > > ---
-> > > Changes in v5:
-> > > - Remove unnecessary white lines.
-> > >
-> > > Changes in v4:
-> > > - [5/8] Nit: EC -> ECs (Lee Jones)
-> > > - [5/8] Statically define cros_ec_accel_legacy_cells (Lee Jones)
-> > >
-> > > Changes in v3:
-> > > - [5/8] Add the Reviewed-by Andy Shevchenko.
-> > >
-> > > Changes in v2:
-> > > - [5/8] Add the Reviewed-by Gwendal.
-> > >
-> > >  drivers/mfd/cros_ec_dev.c | 66 +++++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 66 insertions(+)
-> > >
-> > > diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> > > index d275deaecb12..64567bd0a081 100644
-> > > --- a/drivers/mfd/cros_ec_dev.c
-> > > +++ b/drivers/mfd/cros_ec_dev.c
-> > > @@ -376,6 +376,69 @@ static void cros_ec_sensors_register(struct cros_ec_dev *ec)
-> > >       kfree(msg);
-> > >  }
-> > >
-> > > +static struct cros_ec_sensor_platform sensor_platforms[] = {
-> > > +     { .sensor_num = 0 },
-> > > +     { .sensor_num = 1 }
-> > > +};
-> >
-> > I'm still very uncomfortable with this struct.
-> >
-> > Other than these indices, the sensors have no other distinguishing
-> > features, thus there should be no need to identify or distinguish
-> > between them in this way.
-> When initializing the sensors, the IIO driver expect to find in the
-> data  structure pointed by dev_get_platdata(dev), in field sensor_num
-> is stored the index assigned by the embedded controller to talk to a
-> given sensor.
-> cros_ec_sensors_register() use the same mechanism; in that function,
-> the sensor_num field is populated from the output of an EC command
-> MOTIONSENSE_CMD_INFO. In case of legacy mode, that command may not be
-> available and in any case we know the EC has only either 2
-> accelerometers present or nothing.
-> 
-> For instance, let's compare a legacy device with a more recent one:
-> 
-> legacy:
-> type                  |   id          | sensor_num   | device name
-> accelerometer  |   0           |   0                  | cros-ec-accel.0
-> accelerometer  |   1           |   1                  | cros-ec-accel.1
-> 
-> Modern:
-> type                  |   id          | sensor_num   | device name
-> accelerometer  |   0           |   0                  | cros-ec-accel.0
-> accelerometer  |   1           |   1                  | cros-ec-accel.1
-> gyroscope        |    0          |    2                 | cros-ec-gyro.0
-> magnetometer |    0          |   3                  | cros-ec-mag.0
-> light                  |    0          |   4                  | cros-ec-light.0
-> ...
-
-Why can't these numbers be assigned at runtime?
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+SGkgUm9iLCBTcmluaXZhcw0KDQo+IFN1YmplY3Q6IFtSRkMgMS8yXSBkdC1iaW5kaW5nczogaW14
+LW9jb3RwOiBBZGQgZnVzYWJsZS1ub2RlIHByb3BlcnR5DQoNCkRvIHlvdSBoYXZlIGFueSBjb21t
+ZW50cyBhYm91dCB0aGlzIHBhdGNoPw0KDQpUaGFua3MsDQpQZW5nLg0KDQo+IA0KPiBJbnRyb2R1
+Y2UgZnVzYWJsZS1ub2RlIHByb3BlcnR5IGZvciBpLk1YIE9DT1RQIGRyaXZlci4NCj4gVGhlIHBy
+b3BlcnR5IHdpbGwgb25seSBiZSB1c2VkIGJ5IEZpcm13YXJlKGVnLiBVLUJvb3QpIHRvIHJ1bnRp
+bWUgZGlzYWJsZSB0aGUNCj4gbm9kZXMuDQo+IA0KPiBUYWtlIGkuTVg2VUxMIGZvciBleGFtcGxl
+LCB0aGVyZSBhcmUgc2V2ZXJhbCBwYXJ0cyB0aGF0IG9ubHkgaGF2ZSBsaW1pdGVkDQo+IG1vZHVs
+ZXMgZW5hYmxlZCBjb250cm9sbGVkIGJ5IE9DT1RQIGZ1c2UuIEl0IGlzIG5vdCBmbGV4aWJsZSB0
+byBwcm92aWRlIHNldmVyYWwNCj4gZHRzIGZvciB0aGUgc2VydmFsIHBhcnRzLCBpbnN0ZWFkIHdl
+IGNvdWxkIHByb3ZpZGUgb25lIGRldmljZSB0cmVlIGFuZCBsZXQNCj4gRmlybXdhcmUgdG8gcnVu
+dGltZSBkaXNhYmxlIHRoZSBkZXZpY2UgdHJlZSBub2RlcyBmb3IgdGhvc2UgbW9kdWxlcyB0aGF0
+IGFyZQ0KPiBkaXNhYmxlKGZ1c2VkKS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFBlbmcgRmFuIDxw
+ZW5nLmZhbkBueHAuY29tPg0KPiAtLS0NCj4gDQo+IEN1cnJlbnRseSBOWFAgdmVuZG9yIHVzZSBV
+LUJvb3QgdG8gc2V0IHN0YXR1cyB0byBkaXNhYmxlZCBmb3IgZGV2aWNlcyB0aGF0DQo+IGNvdWxk
+IG5vdCBmdW5jdGlvbiwNCj4gaHR0cHM6Ly9zb3VyY2UuY29kZWF1cm9yYS5vcmcvZXh0ZXJuYWwv
+aW14L3Vib290LWlteC90cmVlL2FyY2gvYXJtL21hY2gNCj4gLWlteC9teDYvbW9kdWxlX2Z1c2Uu
+Yz9oPWlteF92MjAxOC4wM180LjE0Ljk4XzIuMC4wX2dhI24xNDkNCj4gQnV0IHRoaXMgYXBwcm9h
+Y2ggaXMgd2lsbCBub3Qgd29yayBpZiBrZXJuZWwgZHRzIG5vZGUgcGF0aCBjaGFuZ2VkLg0KPiAN
+Cj4gVGhlcmUgYXJlIHR3byBhcHByb2FjaGVzIHRvIHJlc29sdmU6DQo+IA0KPiAxLiBUaGlzIHBh
+dGNoIGlzIHRvIGFkZCBhIGZ1c2FibGUtbm9kZSBwcm9wZXJ0eSwgYW5kIEZpcm13YXJlIHdpbGwg
+cGFyc2UNCj4gICAgdGhlIHByb3BlcnR5IGFuZCByZWFkIGZ1c2UgdG8gZGVjaWRlIHdoZXRoZXIg
+dG8gZGlzYWJsZSBvciBrZWVlcCBlbmFibGUNCj4gICAgdGhlIG5vZGVzLg0KPiANCj4gMi4gVGhl
+cmUgaXMgYW5vdGhlciBhcHByb2FjaCBpcyB0aGF0IGFkZCBudm1lbS1jZWxscyBmb3IgYWxsIG5v
+ZGVzIHRoYXQNCj4gICAgY291bGQgYmUgZGlzYWJsZWQoZnVzZWQpLiBUaGVuIGluIGVhY2ggbGlu
+dXggZHJpdmVyIHRvIHVzZSBudm1lbQ0KPiAgICBhcGkgdG8gZGV0ZWN0IGZ1c2VkIG9yIG5vdCwg
+b3IgaW4gbGludXggZHJpdmVyIGNvbW1vbiBjb2RlIHRvIGNoZWNrDQo+ICAgIGRldmljZSBmdW5j
+dGlvbmFibGUgb3Igbm90IHdpdGggbnZtZW0gQVBJLg0KPiANCj4gDQo+IFRvIG1ha2UgaXQgZWFz
+eSB0byB3b3JrLCB3ZSBjaG9vc2UgWzFdIGhlcmUuIFBsZWFzZSBhZHZpc2Ugd2hldGhlciBpdCBp
+cw0KPiBhY2NlcHRhYmxlLCBiZWNhdXNlIHRoZSBwcm9wZXJ0eSBpcyBub3QgdXNlZCBieSBsaW51
+eCBkcml2ZXIgaW4gYXBwcm9hY2ggWzFdLg0KPiBPciB5b3UgcHJlZmVyIFsyXSBvciBwbGVhc2Ug
+YWR2aXNlIGlmIGFueSBiZXR0ZXIgc29sdXRpb24uDQo+IA0KPiBUaGFua3MuDQo+IA0KPiAgRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL252bWVtL2lteC1vY290cC50eHQgfCA1ICsr
+KysrDQo+ICAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0
+IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL252bWVtL2lteC1vY290cC50eHQN
+Cj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbnZtZW0vaW14LW9jb3RwLnR4
+dA0KPiBpbmRleCA3YTk5OWExMzVlNTYuLmU5YTk5ODU4OGRiZCAxMDA2NDQNCj4gLS0tIGEvRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL252bWVtL2lteC1vY290cC50eHQNCj4gKysr
+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL252bWVtL2lteC1vY290cC50eHQN
+Cj4gQEAgLTIxLDYgKzIxLDggQEAgUmVxdWlyZWQgcHJvcGVydGllczoNCj4gDQo+ICBPcHRpb25h
+bCBwcm9wZXJ0aWVzOg0KPiAgLSByZWFkLW9ubHk6IGRpc2FibGUgd3JpdGUgYWNjZXNzDQo+ICst
+IGZ1c2FibGUtbm9kZTogYXJyYXkgb2YgcGhhbmRsZXMgd2l0aCByZWcgYmFzZSBhbmQgYml0IG9m
+ZnNldCwgdGhpcw0KPiArCQlwcm9wZXJ0eSBpcyB1c2VkIGJ5IEZpcm13YXJlIHRvIHJ1bnRpbWUg
+ZGlzYWJsZSBub2Rlcy4NCj4gDQo+ICBPcHRpb25hbCBDaGlsZCBub2RlczoNCj4gDQo+IEBAIC00
+Miw0ICs0NCw3IEBAIEV4YW1wbGU6DQo+ICAJCXRlbXBtb25fdGVtcF9ncmFkZTogdGVtcC1ncmFk
+ZUAyMCB7DQo+ICAJCQlyZWcgPSA8MHgyMCA0PjsNCj4gIAkJfTsNCj4gKw0KPiArCQlmdXNhYmxl
+LW5vZGUgPSA8JnVzZGhjMSAweDEwIDQNCj4gKwkJCQkmdXNkaGMyIDB4MTAgNT47DQo+ICAJfTsN
+Cj4gLS0NCj4gMi4xNi40DQoNCg==
