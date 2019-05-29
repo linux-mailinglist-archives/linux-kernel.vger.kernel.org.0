@@ -2,171 +2,265 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 258782D518
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 07:36:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 745F42D527
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 07:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbfE2FfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 01:35:19 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:11635 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbfE2FfS (ORCPT
+        id S1726029AbfE2Fmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 01:42:44 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4302 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbfE2Fmo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 01:35:18 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190529053517epoutp047a566939eef4b4cfc325c964f8d3c47f~jEJJrQpZD1955619556epoutp04R
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 05:35:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190529053517epoutp047a566939eef4b4cfc325c964f8d3c47f~jEJJrQpZD1955619556epoutp04R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1559108117;
-        bh=2s6Oe+gsFNiN+ImRl7C8UouIiq0O4ZmyklQfAC8Zd6g=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=QfJALDn9TYmO2djODMyMNT2el3ZPvfdAAcr0/nWHUk8Jh1g2R+zaiaHmtGfdnLmvP
-         9ycpprbtTLmfIQG/kFkcUW1BX5zmc811LtKiZxZ85nWyB1xSYfFcGZS9lC5iUI9VMx
-         eYvftoExLyhaTQXS5u2Kd3kT1L+ff4VtJ86Tp6Bw=
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.152]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20190529053514epcas1p34e3dea5f8d76c3dfa1e359ab7bff523d~jEJHLWum10672706727epcas1p3P;
-        Wed, 29 May 2019 05:35:14 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        75.6E.04142.E0A1EEC5; Wed, 29 May 2019 14:35:10 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190529053509epcas1p2fbd4b2bef8879e722fdbbeb46ff4b179~jEJDDNRx41192811928epcas1p2P;
-        Wed, 29 May 2019 05:35:09 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190529053509epsmtrp146e7c904b91c4281ac059ce604c7fc5e~jEJDCfSBl3032030320epsmtrp1W;
-        Wed, 29 May 2019 05:35:09 +0000 (GMT)
-X-AuditID: b6c32a36-cf9ff7000000102e-42-5cee1a0e00c6
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0D.BC.03692.D0A1EEC5; Wed, 29 May 2019 14:35:09 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190529053509epsmtip1bf2e104ab0980517cbfc096b5f5a15b3~jEJC52aHh2112821128epsmtip1Q;
-        Wed, 29 May 2019 05:35:09 +0000 (GMT)
-Subject: Re: [PATCH] extcon: arizona: Correct error handling on
- regmap_update_bits_check
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     myungjoo.ham@samsung.com, patches@opensource.cirrus.com,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <92a28c6f-9c58-d762-f635-f5a93e602843@samsung.com>
-Date:   Wed, 29 May 2019 14:37:06 +0900
+        Wed, 29 May 2019 01:42:44 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cee1bd10001>; Tue, 28 May 2019 22:42:41 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 28 May 2019 22:42:41 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 28 May 2019 22:42:41 -0700
+Received: from [10.19.108.127] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 May
+ 2019 05:42:36 +0000
+Subject: Re: [PATCH V2 09/12] soc/tegra: pmc: add pmc wake support for
+ tegra210
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <josephl@nvidia.com>,
+        <talho@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mperttunen@nvidia.com>,
+        <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
+ <1559084936-4610-10-git-send-email-skomatineni@nvidia.com>
+From:   JC Kuo <jckuo@nvidia.com>
+Message-ID: <ddf07eae-a933-9d2e-94f9-3893b4e09db0@nvidia.com>
+Date:   Wed, 29 May 2019 13:42:35 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.6.1
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190528165020.10320-1-ckeepax@opensource.cirrus.com>
+In-Reply-To: <1559084936-4610-10-git-send-email-skomatineni@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUhTURjHObvb9c5anqbW48CyG5UKU69rtqSFppWklFBQmLEuepni3tjd
-        ovSLkeVLpfYC5XJkhWFWZLZMRRktqSyzohdKs4IislIpUYSy2vUu8tvveTv/53/OoQjlYVJF
-        FVocnN3CmmgyWNp2J0atnqcazU3wTa/QPT/YinTPOutJ3eD+JlI3PuaVpUgzTtX/QRnVnmaU
-        Md66KJvIKVpTwLH5nD2Ks+RZ8wstRj2dudWQZtAmJTBqZrVuFR1lYc2cnk7PylZvKDT51eio
-        PazJ6U9lszxPx69dY7c6HVxUgZV36GnOlm+yrbbF8ayZd1qMcXlWczKTkJCo9TfuLiq4PPJY
-        ZusP3Ts9OoxK0URIFZJTgFfCy4kRVIWCKSVuR/Cyr4UUgx8IHg31BInBJILq42VB/0YqL7YF
-        Ct0IXJMeUigo8RiC2q9bBA7FOdB99srMQBhOhO/3BiQCE3gnNIxfnOkncSx4P7+a4RC8BF5M
-        ffDvQVEKvBaO9mYJaSleBtc7fYTA4XgHvLvbIhNYgedDb91HqcBynAYn33QS4vELYeDj2YDU
-        Yjhw8wwh7Am4j4SHrl4kGkiHjqtTATOh8OWeJ8AqGK45FOASuNTbQ4rDFQg83icysaABb+MJ
-        ibAogWPgWme8mF4CHT/dSBSeB6MTR2RCC2AFVBxSii1L4dn7IYnIEXChvJKsRbRrlh3XLAuu
-        WRZc/8UakLQZLeBsvNnI8YwtcfZjt6KZjxib1I7O92f5EKYQPVexO2IkVylj9/D7zD4EFEGH
-        KfQnv+UqFfnsvmLObjXYnSaO9yGt/7aPEarwPKv/W1scBkabqNFodCuZJC3D0AsVhjmvc5XY
-        yDq4Io6zcfZ/cxJKripF0Z8a0YP1+5tKBxXbUNyNyMOa6I4Wt3P69lRNZMz2vuRzm7A7ODXb
-        Ubf5rXGBtwtSWivPR7ie6uPKr5W8jZy0br6lLtsmp4qHvp0eLGvqKX+6rqokSJka07Bc9erL
-        rojxVKIytXhMklwx8nusrMmjTRtIn5Rv3G7r+tXDuDPvX6elfAHLxBJ2nv0LmOjWHZ4DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGLMWRmVeSWpSXmKPExsWy7bCSnC6v1LsYg3/TTS2utG5itLi8aw6b
-        xe3GFWwWn9/vZ3Vg8Zg+5z+jR9+WVYwenzfJBTBHcdmkpOZklqUW6dslcGWsfnueteCccMXf
-        dy8ZGxi/8ncxcnJICJhIdC7bxt7FyMUhJLCbUeJn12J2iISkxLSLR5m7GDmAbGGJw4eLIWre
-        Mkps2PyLCaRGWCBKYu/8NWD1IgJGEh+P3wKLMwtES1zq/8oC0TCNUaJz9mtmkASbgJbE/hc3
-        2EBsfgFFias/HjOCLOAVsJPoPekDEmYRUJXYuOsQWLmoQITEmfcrWEBsXgFBiZMzn4DZnALO
-        ElPu7GKG2KUu8WfeJShbXOLWk/lQN8hLNG+dzTyBUXgWkvZZSFpmIWmZhaRlASPLKkbJ1ILi
-        3PTcYsMCw7zUcr3ixNzi0rx0veT83E2M4NjQ0tzBeHlJ/CFGAQ5GJR7eBMm3MUKsiWXFlbmH
-        GCU4mJVEeG2nvIkR4k1JrKxKLcqPLyrNSS0+xCjNwaIkzvs071ikkEB6YklqdmpqQWoRTJaJ
-        g1OqgTHz+on09lxZ/p/8xw6q62481qs8I9Oi0VZu2f3O+w2CO0NWLL4ldDnifXKv/4nQux6P
-        dl7dyn2N7/HRrop+7xirgKTO242r94b92j/rlGuQi4KLYomvbrsJQ+aF5EMHpirazp3JEuf+
-        pHObW3V0osBcj5mGswvyNxbvmuwye88LA4nVU+3FpiqxFGckGmoxFxUnAgD1WmSsiQIAAA==
-X-CMS-MailID: 20190529053509epcas1p2fbd4b2bef8879e722fdbbeb46ff4b179
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190528165025epcas5p41d2a0c9b244532709135ab96da73e27c
-References: <CGME20190528165025epcas5p41d2a0c9b244532709135ab96da73e27c@epcas5p4.samsung.com>
-        <20190528165020.10320-1-ckeepax@opensource.cirrus.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559108561; bh=7ahERssj3Ya7BbN2GOfMLoQovuYCFnBedCRnhZury04=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=Mi7n4lK36ZH8qYlfUuFIGtM30pPDk1Mfwd3un1JpIalBUYUdWAdCPLy3vGHSgH09L
+         AYe1Z3pVzzCD+zreHWGQZEH67cGXZ8v10HD51Z1yzUOptEf/maRXGq8dOHHBXVP0vY
+         qbdihLtx8qXSxFuivzebwpSRxlq5tMWEQd+jFQJE3VQOqtB/PJhxGwtqn70GtrINT/
+         ZOYuM9GLnkCfh3qnLJrk6CcvdalGW/fC9Y8HY3H2SgKYG+egSUPSU3t0TMe4RlONNh
+         9jc4dGktPlBW9Kfo8Lmp2/FhwcefxvIhG98z6hPfMIFcI3hDx18UpdiHA9/ZKU77Zx
+         OsMpjr+U6FtUw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Sowjanya,
 
-On 19. 5. 29. 오전 1:50, Charles Keepax wrote:
-> Ensure the case when regmap_update_bits_check fails and the change
-> variable is not updated is handled correctly.
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+usleep_range() in tegra210_pmc_irq_set_wake() should be replaced with 
+udelay() because caller irq_set_irq_wake() acquired spinlock and made 
+this context atomic.
+
+Thanks,
+
+JC
+
+On 5/29/19 7:08 AM, Sowjanya Komatineni wrote:
+> This patch implements PMC wakeup sequence for Tegra210 and defines
+> common used wake events of RTC alarm and power key.
+>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/extcon/extcon-arizona.c | 22 +++++++++++++---------
->  1 file changed, 13 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-arizona.c b/drivers/extcon/extcon-arizona.c
-> index 9327479c719c2..ba2d16de161f8 100644
-> --- a/drivers/extcon/extcon-arizona.c
-> +++ b/drivers/extcon/extcon-arizona.c
-> @@ -335,10 +335,12 @@ static void arizona_start_mic(struct arizona_extcon_info *info)
->  
->  	arizona_extcon_pulse_micbias(info);
->  
-> -	regmap_update_bits_check(arizona->regmap, ARIZONA_MIC_DETECT_1,
-> -				 ARIZONA_MICD_ENA, ARIZONA_MICD_ENA,
-> -				 &change);
-> -	if (!change) {
-> +	ret = regmap_update_bits_check(arizona->regmap, ARIZONA_MIC_DETECT_1,
-> +				       ARIZONA_MICD_ENA, ARIZONA_MICD_ENA,
-> +				       &change);
-> +	if (ret < 0) {
-> +		dev_err(arizona->dev, "Failed to enable micd: %d\n", ret);
-> +	} else if (!change) {
->  		regulator_disable(info->micvdd);
->  		pm_runtime_put_autosuspend(info->dev);
->  	}
-> @@ -350,12 +352,14 @@ static void arizona_stop_mic(struct arizona_extcon_info *info)
->  	const char *widget = arizona_extcon_get_micbias(info);
->  	struct snd_soc_dapm_context *dapm = arizona->dapm;
->  	struct snd_soc_component *component = snd_soc_dapm_to_component(dapm);
-> -	bool change;
-> +	bool change = false;
->  	int ret;
->  
-> -	regmap_update_bits_check(arizona->regmap, ARIZONA_MIC_DETECT_1,
-> -				 ARIZONA_MICD_ENA, 0,
-> -				 &change);
-> +	ret = regmap_update_bits_check(arizona->regmap, ARIZONA_MIC_DETECT_1,
-> +				       ARIZONA_MICD_ENA, 0,
-> +				       &change);
-> +	if (ret < 0)
-> +		dev_err(arizona->dev, "Failed to disable micd: %d\n", ret);
->  
->  	ret = snd_soc_component_disable_pin(component, widget);
->  	if (ret != 0)
-> @@ -1726,7 +1730,7 @@ static int arizona_extcon_remove(struct platform_device *pdev)
->  	struct arizona_extcon_info *info = platform_get_drvdata(pdev);
->  	struct arizona *arizona = info->arizona;
->  	int jack_irq_rise, jack_irq_fall;
-> -	bool change;
-> +	bool change = false;
->  
->  	regmap_update_bits_check(arizona->regmap, ARIZONA_MIC_DETECT_1,
->  				 ARIZONA_MICD_ENA, 0,
-
-You better to check the return value as the part of this patch.
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+>   drivers/soc/tegra/pmc.c | 113 ++++++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 113 insertions(+)
+>
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 974b4c9f6ada..54dc8409e353 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -57,6 +57,7 @@
+>   #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+>   #include <dt-bindings/gpio/tegra186-gpio.h>
+>   #include <dt-bindings/gpio/tegra194-gpio.h>
+> +#include <dt-bindings/gpio/tegra-gpio.h>
+>   
+>   #define PMC_CNTRL			0x0
+>   #define  PMC_CNTRL_INTR_POLARITY	BIT(17) /* inverts INTR polarity */
+> @@ -66,6 +67,12 @@
+>   #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+>   #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
+>   #define  PMC_CNTRL_MAIN_RST		BIT(4)
+> +#define  PMC_CNTRL_LATCH_WAKEUPS	BIT(5)
+> +
+> +#define PMC_WAKE_MASK			0x0c
+> +#define PMC_WAKE_LEVEL			0x10
+> +#define PMC_WAKE_STATUS			0x14
+> +#define PMC_SW_WAKE_STATUS		0x18
+>   
+>   #define DPD_SAMPLE			0x020
+>   #define  DPD_SAMPLE_ENABLE		BIT(0)
+> @@ -96,6 +103,11 @@
+>   
+>   #define PMC_SCRATCH41			0x140
+>   
+> +#define PMC_WAKE2_MASK			0x160
+> +#define PMC_WAKE2_LEVEL			0x164
+> +#define PMC_WAKE2_STATUS		0x168
+> +#define PMC_SW_WAKE2_STATUS		0x16c
+> +
+>   #define PMC_SENSOR_CTRL			0x1b0
+>   #define  PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
+>   #define  PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
+> @@ -245,6 +257,7 @@ struct tegra_pmc_soc {
+>   
+>   	const struct tegra_wake_event *wake_events;
+>   	unsigned int num_wake_events;
+> +	unsigned int max_supported_wake_events;
+>   };
+>   
+>   static const char * const tegra186_reset_sources[] = {
+> @@ -1917,6 +1930,54 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
+>   	.alloc = tegra_pmc_irq_alloc,
+>   };
+>   
+> +static int tegra210_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+> +{
+> +	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+> +	unsigned int offset, bit;
+> +	u32 value;
+> +
+> +	if (data->hwirq == ULONG_MAX)
+> +		return 0;
+> +
+> +	offset = data->hwirq / 32;
+> +	bit = data->hwirq % 32;
+> +
+> +	/*
+> +	 * latch wakeups to SW_WAKE_STATUS register to capture events
+> +	 * that would not make it into wakeup event register during LP0 exit.
+> +	 */
+> +	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+> +	value |= PMC_CNTRL_LATCH_WAKEUPS;
+> +	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+> +	usleep_range(110, 120);
+> +
+> +	value &= ~PMC_CNTRL_LATCH_WAKEUPS;
+> +	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+> +	usleep_range(110, 120);
+> +
+> +	tegra_pmc_writel(pmc, 0, PMC_SW_WAKE_STATUS);
+> +	if (pmc->soc->max_supported_wake_events > 32)
+> +		tegra_pmc_writel(pmc, 0, PMC_SW_WAKE2_STATUS);
+> +
+> +	tegra_pmc_writel(pmc, 0, PMC_WAKE_STATUS);
+> +	if (pmc->soc->max_supported_wake_events > 32)
+> +		tegra_pmc_writel(pmc, 0, PMC_WAKE2_STATUS);
+> +
+> +	/* enable PMC wake */
+> +	if (data->hwirq >= 32)
+> +		offset = PMC_WAKE2_MASK;
+> +	else
+> +		offset = PMC_WAKE_MASK;
+> +	value = tegra_pmc_readl(pmc, offset);
+> +	if (on)
+> +		value |= 1 << bit;
+> +	else
+> +		value &= ~(1 << bit);
+> +	tegra_pmc_writel(pmc, value, offset);
+> +
+> +	return 0;
+> +}
+> +
+>   static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>   {
+>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+> @@ -1948,6 +2009,48 @@ static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
+>   	return 0;
+>   }
+>   
+> +static int tegra210_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+> +{
+> +	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+> +	unsigned int offset, bit;
+> +	u32 value;
+> +
+> +	if (data->hwirq == ULONG_MAX)
+> +		return 0;
+> +
+> +	offset = data->hwirq / 32;
+> +	bit = data->hwirq % 32;
+> +
+> +	if (data->hwirq >= 32)
+> +		offset = PMC_WAKE2_LEVEL;
+> +	else
+> +		offset = PMC_WAKE_LEVEL;
+> +	value = tegra_pmc_readl(pmc, offset);
+> +
+> +	switch (type) {
+> +	case IRQ_TYPE_EDGE_RISING:
+> +	case IRQ_TYPE_LEVEL_HIGH:
+> +		value |= 1 << bit;
+> +		break;
+> +
+> +	case IRQ_TYPE_EDGE_FALLING:
+> +	case IRQ_TYPE_LEVEL_LOW:
+> +		value &= ~(1 << bit);
+> +		break;
+> +
+> +	case IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING:
+> +		value ^= 1 << bit;
+> +		break;
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	tegra_pmc_writel(pmc, value, offset);
+> +
+> +	return 0;
+> +}
+> +
+>   static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
+>   {
+>   	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
+> @@ -2535,6 +2638,11 @@ static const struct pinctrl_pin_desc tegra210_pin_descs[] = {
+>   	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
+>   };
+>   
+> +static const struct tegra_wake_event tegra210_wake_events[] = {
+> +	TEGRA_WAKE_GPIO("power", 24, 0, 189),
+> +	TEGRA_WAKE_IRQ("rtc", 16, 2),
+> +};
+> +
+>   static const struct tegra_pmc_soc tegra210_pmc_soc = {
+>   	.num_powergates = ARRAY_SIZE(tegra210_powergates),
+>   	.powergates = tegra210_powergates,
+> @@ -2552,10 +2660,15 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+>   	.regs = &tegra20_pmc_regs,
+>   	.init = tegra20_pmc_init,
+>   	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
+> +	.irq_set_wake = tegra210_pmc_irq_set_wake,
+> +	.irq_set_type = tegra210_pmc_irq_set_type,
+>   	.reset_sources = tegra210_reset_sources,
+>   	.num_reset_sources = ARRAY_SIZE(tegra210_reset_sources),
+>   	.reset_levels = NULL,
+>   	.num_reset_levels = 0,
+> +	.num_wake_events = ARRAY_SIZE(tegra210_wake_events),
+> +	.wake_events = tegra210_wake_events,
+> +	.max_supported_wake_events = 64,
+>   };
+>   
+>   #define TEGRA186_IO_PAD_TABLE(_pad)					     \
