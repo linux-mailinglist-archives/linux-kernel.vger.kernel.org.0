@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E70012DA93
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:27:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA1DD2DA96
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbfE2K0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 06:26:49 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45350 "EHLO
+        id S1727042AbfE2K0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 06:26:54 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41308 "EHLO
         mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725894AbfE2K0s (ORCPT
+        with ESMTP id S1727015AbfE2K0w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 06:26:48 -0400
-Received: by mail-pf1-f195.google.com with SMTP id s11so1326776pfm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 03:26:48 -0700 (PDT)
+        Wed, 29 May 2019 06:26:52 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q17so1339285pfq.8
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 03:26:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zkf9FoxdryyDt1X+5P+GJSoX1FiD3J3GXj2LP0N8rdU=;
-        b=KrJR7S9O4TEFHPeGH3rkqlofANGLf5xPlPIkRdAwYAC4yHaXwn/r/L5YxrLyP6L7K5
-         qaAvmgB0+oizqOfAJqwCXO6Bb570+HJHpI4ecYCXN0wEWCx0ClL1x6NMDWXAVOfvHBRR
-         rfpWfc3r/oA8m007TQhh7sV5qE4QAleSuWEsI=
+        bh=YcCSMOQNkzGaXhDk0okGAy0XqAbQi4G2u6aLWlPaPBw=;
+        b=Cuhppf15fgs+ro5fQzou91thI1XLxU4KioJr8st6A+3rShMcYV8fSqZOp424wsNyS7
+         Yjt8ZDWKI8t5jY8/w/olvN9NejpmeXI58p0vNnxcpidO9I9OYs9PLq5hcAy2JUfwloW/
+         0z63BUjUnVKb52ngcrkoQKYOWPV2zpLSKFZpM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zkf9FoxdryyDt1X+5P+GJSoX1FiD3J3GXj2LP0N8rdU=;
-        b=LkPCpz7mU+F2gtsW1p7dFd2EhRW5uYfHNgnwR7+XTPCBIj6HmKimSIpSL3KnzB32lB
-         opS7A5F7jkC24U83ltovZXjk39XewNS0NgvMcGcyhTmRN9zMIZQPOH1+4ziSKTG5uoMB
-         JJHamO9N8+DHHmcWImxxJTWsGnse0BxVwx0wgnK4z2v22twWFi5VnB3/5rCkXzmFzKNc
-         LInYXVp7cqdSOYLNiv/FS/X1QduA51rRCbWAg8+8DPGANAyXUNH93JlHX4Gov6vvFjTl
-         ryQMMh8Oimcg7+6RcGUPoIiWE1v9Tsk2D4kESJnowiYcV7CxThjOZEopUb9F88WikC0V
-         Jdvw==
-X-Gm-Message-State: APjAAAUMSzTFOA0N4yA8+PPLRsSMCZqZqXxTG+JgBDuZYZNQa78Wxr8r
-        JGnRRj+Xc9YGPDPn5mIJmae82g==
-X-Google-Smtp-Source: APXvYqwnrc9pdx47YY9TRS/DoiPhrNWvI1W5hjidPKQ2diP8prk0BV504pPU4kJBaFleNW4weG407w==
-X-Received: by 2002:a62:d244:: with SMTP id c65mr111971351pfg.173.1559125608082;
-        Wed, 29 May 2019 03:26:48 -0700 (PDT)
+        bh=YcCSMOQNkzGaXhDk0okGAy0XqAbQi4G2u6aLWlPaPBw=;
+        b=GA1pfKPoZwowsehaq6GCEmF3pqmtFXMxKahPkfZhzUGPMHx6GfQs5qY8Q+C+PwYVFN
+         TkbgP+r2qrmL7tjFGySP1PNa4Va2jcRkLAwmQKN3LuSxhbeENCnsknibA4jGfp45NM/C
+         RahWXZvBzj7NOSAnVq+/yY+kNGF+gsLIi7j6sJa3pnWTSED8fIVCUXHdUKUVuXfsZ7km
+         WgMiEVnw5woHS0c8GrscAyz3qqB4KRMonATqmj+BwbdxUlmGbHxNMo744ADAAKeJms3I
+         kJxxNTiLKI0EXClbEd3IjlfOPzPXzViItzOD04Ew95NKCkxrMLjOoxUogXV6UUtD09Lb
+         Dplg==
+X-Gm-Message-State: APjAAAXZrVXfUI5E1suJzxd3Ivqz+3RZh4y8vuJl12257Ni0/0nbx0K1
+        6t9Egd0YJkpw+z+joOv6yfUipA==
+X-Google-Smtp-Source: APXvYqyyaROmC37HXAcccgz51No+HwGj0nRGT99eAspxv1IL1mnTD2gRQ1iaLO7Rvi00xcw+ddOyEQ==
+X-Received: by 2002:a17:90a:ac0d:: with SMTP id o13mr11037075pjq.139.1559125611164;
+        Wed, 29 May 2019 03:26:51 -0700 (PDT)
 Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
-        by smtp.gmail.com with ESMTPSA id e12sm18992183pfl.122.2019.05.29.03.26.46
+        by smtp.gmail.com with ESMTPSA id e12sm18992183pfl.122.2019.05.29.03.26.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 29 May 2019 03:26:47 -0700 (PDT)
+        Wed, 29 May 2019 03:26:50 -0700 (PDT)
 From:   Hsin-Yi Wang <hsinyi@chromium.org>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
@@ -50,9 +50,9 @@ Cc:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         dri-devel@lists.freedesktop.org,
         linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/4] drm: mediatek: call drm_atomic_helper_shutdown() when unbinding driver
-Date:   Wed, 29 May 2019 18:25:54 +0800
-Message-Id: <20190529102555.251579-4-hsinyi@chromium.org>
+Subject: [PATCH v2 4/4] drm: mediatek: clear num_pipes when unbind driver
+Date:   Wed, 29 May 2019 18:25:55 +0800
+Message-Id: <20190529102555.251579-5-hsinyi@chromium.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190529102555.251579-1-hsinyi@chromium.org>
 References: <20190529102555.251579-1-hsinyi@chromium.org>
@@ -63,7 +63,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-shutdown all CRTC when unbinding drm driver.
+num_pipes is used for mutex created in mtk_drm_crtc_create(). If we
+don't clear num_pipes count, when rebinding driver, the count will
+be accumulated. From mtk_disp_mutex_get(), there can only be at most
+10 mutex id. Clear this number so it starts from 0 in every rebind.
 
 Fixes: 119f5173628a ("drm/mediatek: Add DRM Driver for Mediatek SoC MT8173.")
 Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
@@ -72,17 +75,17 @@ Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index e7362bdafa82..8718d123ccaa 100644
+index 8718d123ccaa..bbfe3a464aea 100644
 --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
 +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -311,6 +311,7 @@ static int mtk_drm_kms_init(struct drm_device *drm)
- static void mtk_drm_kms_deinit(struct drm_device *drm)
- {
- 	drm_kms_helper_poll_fini(drm);
-+	drm_atomic_helper_shutdown(drm);
+@@ -400,6 +400,7 @@ static void mtk_drm_unbind(struct device *dev)
+ 	drm_dev_unregister(private->drm);
+ 	mtk_drm_kms_deinit(private->drm);
+ 	drm_dev_put(private->drm);
++	private->num_pipes = 0;
+ 	private->drm = NULL;
+ }
  
- 	component_unbind_all(drm->dev, drm);
- 	drm_mode_config_cleanup(drm);
 -- 
 2.20.1
 
