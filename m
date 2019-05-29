@@ -2,101 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A02A42E0B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 491F42E0B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:13:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfE2PMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 11:12:53 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.120]:44373 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725936AbfE2PMx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:12:53 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 088EAED0E
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 10:12:52 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id W0G4hpJoT4FKpW0G4hAXR6; Wed, 29 May 2019 10:12:52 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.47.159] (port=47380 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hW0G2-001J3u-VH; Wed, 29 May 2019 10:12:51 -0500
-Date:   Wed, 29 May 2019 10:12:48 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] IB/rdmavt: Use struct_size() helper
-Message-ID: <20190529151248.GA24080@embeddedor>
+        id S1727012AbfE2PNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 11:13:07 -0400
+Received: from foss.arm.com ([217.140.101.70]:47912 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725936AbfE2PNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 11:13:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91E53341;
+        Wed, 29 May 2019 08:13:04 -0700 (PDT)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7EFAB3F5AF;
+        Wed, 29 May 2019 08:13:03 -0700 (PDT)
+Subject: Re: [PATCH 12/21] EDAC, ghes: Add support for legacy API counters
+To:     Robert Richter <rrichter@marvell.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190529084344.28562-1-rrichter@marvell.com>
+ <20190529084344.28562-13-rrichter@marvell.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <92eda11f-dad9-bb2b-3a87-80b6c8d8e228@arm.com>
+Date:   Wed, 29 May 2019 16:13:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.47.159
-X-Source-L: No
-X-Exim-ID: 1hW0G2-001J3u-VH
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.47.159]:47380
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190529084344.28562-13-rrichter@marvell.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of the struct_size() helper instead of an open-coded version
-in order to avoid any potential type mistakes, in particular in the
-context in which this code is being used.
+Hi Robert,
 
-So, replace the following form:
+On 29/05/2019 09:44, Robert Richter wrote:
+> The ghes driver is not able yet to count legacy API counters in sysfs,
+> e.g.:
+> 
+>  /sys/devices/system/edac/mc/mc0/csrow2/ce_count
+>  /sys/devices/system/edac/mc/mc0/csrow2/ch0_ce_count
+>  /sys/devices/system/edac/mc/mc0/csrow2/ch1_ce_count
+> 
+> Make counting csrows/channels generic so that the ghes driver can use
+> it too.
 
-sizeof(struct rvt_sge) * init_attr->cap.max_send_sge + sizeof(struct rvt_swqe)
+What for?
 
-with:
+Is this for an arm64 system? Surely we don't have any systems that used to work with these
+legacy counters. Aren't they legacy because we want new software to stop using them!
 
-struct_size(swq, sg_list, init_attr->cap.max_send_sge)
 
-and so on...
+Thanks,
 
-Also, notice that variable size is unnecessary, hence it is removed.
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/infiniband/sw/rdmavt/qp.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/infiniband/sw/rdmavt/qp.c b/drivers/infiniband/sw/rdmavt/qp.c
-index 31a2e65e4906..a60f5faea198 100644
---- a/drivers/infiniband/sw/rdmavt/qp.c
-+++ b/drivers/infiniband/sw/rdmavt/qp.c
-@@ -988,9 +988,7 @@ struct ib_qp *rvt_create_qp(struct ib_pd *ibpd,
- 	case IB_QPT_UC:
- 	case IB_QPT_RC:
- 	case IB_QPT_UD:
--		sz = sizeof(struct rvt_sge) *
--			init_attr->cap.max_send_sge +
--			sizeof(struct rvt_swqe);
-+		sz = struct_size(swq, sg_list, init_attr->cap.max_send_sge);
- 		swq = vzalloc_node(array_size(sz, sqsize), rdi->dparms.node);
- 		if (!swq)
- 			return ERR_PTR(-ENOMEM);
--- 
-2.21.0
-
+James
