@@ -2,123 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 027DC2E49A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:39:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD6662E496
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:37:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726495AbfE2SjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 14:39:07 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37352 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfE2SjG (ORCPT
+        id S1726428AbfE2ShV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 14:37:21 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38458 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725956AbfE2ShU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 14:39:06 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TIXRk1051803;
-        Wed, 29 May 2019 18:38:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=THamC/necnAG3k0b6m2lzotQxZzYf7wS5P936VQIGeY=;
- b=WrBZnM6ZmVcJlPylNNIR/dfOAgxQ1n5mBVtox4d3xjQyTPWqyy6eMNHnrmBnlkjatlvA
- uGOysuC9TQIkhHoRn4A0EY8PusDh25gpV/Wi4bOglzrKwaHlZYMsOaCkMAEh7Oc1zG4H
- o5aBY3h0pke87yaD6FFtpEWCGOFT3e22OuLLNMpFqQBRqJf1s1U9+ZhsZbUHtiEJimhk
- CCZzlWi4wabkYmp44sPv7LEg5Mh5sXvNW2aC2mg7bGejM8GPo82kSDE92MGxM5yTU4Sv
- FYNjz+9EfB1A2l+UFVFPM/S+5WCUb8cfNrvM8MGDkLXLQ+KQUnKnAuC5N9DwD7JNDbJI ZQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2spw4tktvv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 May 2019 18:38:10 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TIa26f039849;
-        Wed, 29 May 2019 18:36:10 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2sr31ve7qt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 May 2019 18:36:09 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4TIZxGZ002287;
-        Wed, 29 May 2019 18:35:59 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 29 May 2019 11:35:59 -0700
-Date:   Wed, 29 May 2019 14:35:59 -0400
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        akpm@linux-foundation.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Alan Tull <atull@kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Lameter <cl@linux.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Moritz Fischer <mdf@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Steve Sistare <steven.sistare@oracle.com>,
-        Wu Hao <hao.wu@intel.com>, linux-mm@kvack.org,
-        kvm@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm: add account_locked_vm utility function
-Message-ID: <20190529183559.jzkpvbdiimnp3n2m@ca-dmjordan1.us.oracle.com>
-References: <de375582-2c35-8e8a-4737-c816052a8e58@ozlabs.ru>
- <20190524175045.26897-1-daniel.m.jordan@oracle.com>
- <20190529180547.GA16182@iweiny-DESK2.sc.intel.com>
+        Wed, 29 May 2019 14:37:20 -0400
+Received: by mail-pg1-f195.google.com with SMTP id v11so403936pgl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 11:37:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=SxLHP6OsBSFBHfXsjyle6HK6OxP8uorD2s0mT+kaxlI=;
+        b=ZJnvsiZfD896d8Ck9n1bdw3mump/AlALJB5fwIzPOA+C33mqxnYVAfEZ5o+whJAwIm
+         1GBP1aRsHCuezNBr49RvOw7cvjJSq1VBTBHhkaQN5w+KT7ghtAX+lR9xmMb8fa/yXXXy
+         bp9CUbT7rz8KKjzE0NgMCBXs4Hgri8+6rXxZ0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SxLHP6OsBSFBHfXsjyle6HK6OxP8uorD2s0mT+kaxlI=;
+        b=Nyr+xbnXsKU6CqxTr+yA88KVk4LDMDDn4ujrzEWYIAR2yXExdBUkLiQ1qm8+IwfkbP
+         vvG7ASuJP2Z67AjwWSpOq6fLeosyWLtQJD9RNMDOPpCxDu7Mnczm0qCU0hdDCYpFzIVD
+         528FRF4jmc2zYyLfKG2nmVzqJVIwUHgbIeiPsRbaIza5/aMxTrFekRdUvadebeSX94DG
+         oij9fBtbeoBonSelp+yR3bcF1DTdL7Z89zXH0AnJHrn47hLpFGTg9WboSiUIaJJi8Jjl
+         4+0r5YJPFOx3F6PKdTh+Uolq+wtJRyIMRdlAsZ4s9XNqKPwxISiL6w92mmqlL2u6CpdG
+         5EFQ==
+X-Gm-Message-State: APjAAAUCuZOB4N0DFZjrexTPbPeDA9UQNN4OL/G8HH86wHK1mnQc143M
+        4ECGHQw2GfnNal/CC9dY6oCKFg==
+X-Google-Smtp-Source: APXvYqwy5lBhcAUW8t02TCyQUB8BoXv9KBqAwvEAH9L9D1mvgGjG2UAFgsqFr5o8/VNlHt3zFLQLHw==
+X-Received: by 2002:a63:5c4c:: with SMTP id n12mr142269302pgm.111.1559155040001;
+        Wed, 29 May 2019 11:37:20 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b3sm363961pfr.146.2019.05.29.11.37.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 May 2019 11:37:18 -0700 (PDT)
+Date:   Wed, 29 May 2019 11:37:17 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        Eric Biggers <ebiggers3@gmail.com>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "Perla, Enrico" <enrico.perla@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
+Message-ID: <201905291136.FD61FF42@keescook>
+References: <20190509055915.GA58462@gmail.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4C7741F@IRSMSX102.ger.corp.intel.com>
+ <20190509084352.GA96236@gmail.com>
+ <CALCETrV1067Es=KEjkz=CtdoT79a2EJg4dJDae6oGDiTaubL1A@mail.gmail.com>
+ <201905111703.5998DF5F@keescook>
+ <20190512080245.GA7827@gmail.com>
+ <201905120705.4F27DF3244@keescook>
+ <2236FBA76BA1254E88B949DDB74E612BA4CA8DBF@IRSMSX102.ger.corp.intel.com>
+ <20190528133347.GD19149@mit.edu>
+ <2236FBA76BA1254E88B949DDB74E612BA4CABA56@IRSMSX102.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190529180547.GA16182@iweiny-DESK2.sc.intel.com>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=18 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905290120
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=18 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905290120
+In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4CABA56@IRSMSX102.ger.corp.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 11:05:48AM -0700, Ira Weiny wrote:
-> On Fri, May 24, 2019 at 01:50:45PM -0400, Daniel Jordan wrote:
-> > +static inline int account_locked_vm(struct mm_struct *mm, unsigned long pages,
-> > +				    bool inc)
-> > +{
-> > +	int ret;
-> > +
-> > +	if (pages == 0 || !mm)
-> > +		return 0;
-> > +
-> > +	down_write(&mm->mmap_sem);
-> > +	ret = __account_locked_vm(mm, pages, inc, current,
-> > +				  capable(CAP_IPC_LOCK));
-> > +	up_write(&mm->mmap_sem);
-> > +
-> > +	return ret;
-> > +}
-> > +
-...snip...
-> > +/**
-> > + * __account_locked_vm - account locked pages to an mm's locked_vm
-> > + * @mm:          mm to account against, may be NULL
+On Wed, May 29, 2019 at 10:13:43AM +0000, Reshetova, Elena wrote:
+> On related note: the current prng we have in kernel (prandom) is based on a
+> *very old* style of prngs, which is basically 4 linear LFSRs xored together. 
+> Nowadays, we have much more powerful prngs that show much better
+> statistical and even security properties (not cryptographically secure, but still
+> not so linear like the one above). 
+> What is the reason why we still use a prng that is couple of decades away from the
+> state of art in the area? It is actively used, especially by network stack,
+> should we update it to smth that is more appropriate (speed would be comparable)?
 > 
-> This kernel doc is wrong.  You dereference mm straight away...
-...snip...
-> > +
-> > +	locked_vm = mm->locked_vm;
+> I am mostly talking about PCG-based generators:
+> http://www.pcg-random.org/
 > 
-> here...
-> 
-> Perhaps the comment was meant to document account_locked_vm()?
+> If people are interested, I could put together a PoC and we have an expert here we can
+> consult for providing calculations for min-entropy, HILL entropy and whatever 
+> is requested. 
 
-Yes, the comment got out of sync when I moved the !mm check outside
-__account_locked_vm.  Thanks for catching, will fix.
+If we get better generators with no speed loss, I can't imagine anyone
+objecting. :)
+
+-- 
+Kees Cook
