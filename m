@@ -2,223 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D9E42D630
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 754E42D682
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfE2HW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 03:22:29 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:50486 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfE2HW2 (ORCPT
+        id S1726816AbfE2HiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 03:38:24 -0400
+Received: from mail-m972.mail.163.com ([123.126.97.2]:60186 "EHLO
+        mail-m972.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbfE2HiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 03:22:28 -0400
-Received: by mail-it1-f196.google.com with SMTP id a186so2068011itg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 00:22:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8PdySaW5/M3o7kkYS3QjGAsNuUlBv0LoNmhCVAMchU0=;
-        b=T9TPZUyUCmcKrtg2yY2ON08nKW6RVV80EBeBttIi75vabWW44DKxbpht0xyvAoRMgj
-         ibT+uaYcrnQOAnYHRcGQ/9rdZ22+IPHQ8rko9b13cMOPGQrdf19bFWgV+vIX1WhSaIIr
-         8AZLnqtTgjvG/zpKo4nCO/bt1bUYKfa82foNbByK+OxrDBzpX7a9AOaYHYfT1780Tks0
-         oyTkVKhs/kM2XVYHtUViPUSB3yGyqjJDlBDDO/+ZNMWPQWJkFumhaCA4WyLsauYEU18t
-         LcRfvGfoZwj5me6sfb0hWOJefXLi7TqoZW2LBg4wVgW7AyjYcyL8kePaRGqDLG0BYdqu
-         QTqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8PdySaW5/M3o7kkYS3QjGAsNuUlBv0LoNmhCVAMchU0=;
-        b=fpYYNgku7j0T3D+51DZGI09dvv8i3GGYEoqdu6Q/k3tx3aSsc2i0W+760Y/OB338C6
-         T3OFY7dL5Qf0Cf9OWgbZt8E8KnAM5OH0eAtKqF1eQPGeO7gpyOBU0infMRgWtIf5tzLL
-         mjpsnV+phoy46rL7ezc6/5BCLnO5RLY9IP1Z4GLhAceaLIjzcj3IoCoAsIydJH5LZvGU
-         gN7KKgqca1wcfKQXBsaydVFMliu70rkpxiXwEcC7XV2n85aTAgYgcXawx4E49l6CBny4
-         pBB53E+V2rlJu80NYz/Tn7PZH3FNqfM7TGZXeAVMnt2oWhAEZQEYbVMZZz0NF7+beCJx
-         1QFw==
-X-Gm-Message-State: APjAAAW+Ar8QTGfcQ0jkiEHKePbGP+hYJAe0KaY7iuv515M3hxbV5YmX
-        j2gtnAroMvXX7cnyv825ITrHHRu+qHmULOOEGLJ3qqZPMMk=
-X-Google-Smtp-Source: APXvYqxkZxQm2qtMOkWOJxLWeY/4J+xFkHGALhKS18VP9SiHIHbuR36TZL4ewm0+Z0rbmywU1DIfqoG8h1L2SB2ZUIc=
-X-Received: by 2002:a24:97d2:: with SMTP id k201mr5944306ite.151.1559114547584;
- Wed, 29 May 2019 00:22:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190529071843.24767-1-andrew.smirnov@gmail.com>
-In-Reply-To: <20190529071843.24767-1-andrew.smirnov@gmail.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Wed, 29 May 2019 00:22:16 -0700
-Message-ID: <CAHQ1cqFb2f6TvWVzwsHq=mWmheLZ82rMDjoMwgrJmyXCdqrJKw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ARM: dts: imx6: rdu2: Add node for UCS1002 USB
- charger chip
-To:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Chris Healy <cphealy@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 29 May 2019 03:38:23 -0400
+X-Greylist: delayed 919 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 May 2019 03:38:23 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=BX/qclNsTllMYtxUyN
+        znnvi5uS276rsIV4MQsuNVavs=; b=QyM70De9F0iMSyvqNNouTCOiJTuwr4OeBO
+        tRvrY6YIgMJK2lLrr1Kv1dqX+NKVLeOJCn3iKHH0bYZxNg2Dii5xxVEYcc9/rHyh
+        hbe++uFPovLA1MzgC+EIa35iVdvnpSNHi56FKlgYr4CACknYBEGWQ9rGOv/VEpxL
+        SKXKI3Aog=
+Received: from localhost.localdomain (unknown [218.106.182.173])
+        by smtp16 (Coremail) with SMTP id GtxpCgBXE7M_M+5cnbSYAA--.352S3;
+        Wed, 29 May 2019 15:22:44 +0800 (CST)
+From:   Xidong Wang <wangxidong_97@163.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Xidong Wang <wangxidong_97@163.com>, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] rtc: rv3028: check return value
+Date:   Wed, 29 May 2019 15:22:20 +0800
+Message-Id: <1559114540-30878-1-git-send-email-wangxidong_97@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: GtxpCgBXE7M_M+5cnbSYAA--.352S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrZrWUAFyUuF48ZF4DWrW7urg_yoW3GFX_Ka
+        4ayryfJa4DGF1YgwnrZr95ZryUKF40qryIvr1xKa93Aw47JFn2vas7uFZrJw1DWry8Z3yY
+        grnruryxurnxJjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRZqXtUUUUU==
+X-Originating-IP: [218.106.182.173]
+X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/xtbBFQTD81XlgQH9kgAAs+
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 12:18 AM Andrey Smirnov
-<andrew.smirnov@gmail.com> wrote:
->
-> Add node for UCS1002 USB charger chip connected to front panel USB and
-> replace "regulator-fixed" previously used to control VBUS.
->
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
+In rv3028_probe(), the return value of devm_regmap_init_i2c() should
+be checked before it is used.
 
-Ugh, forgot to properly update reroll counter. This and the rest of
-the series is a v2. Sorry about that.
+Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+---
+ drivers/rtc/rtc-rv3028.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks,
-Andrey Smirnov
+diff --git a/drivers/rtc/rtc-rv3028.c b/drivers/rtc/rtc-rv3028.c
+index 06884eb..29a8c4e 100644
+--- a/drivers/rtc/rtc-rv3028.c
++++ b/drivers/rtc/rtc-rv3028.c
+@@ -626,6 +626,10 @@ static int rv3028_probe(struct i2c_client *client)
+ 
+ 	rv3028->regmap = devm_regmap_init_i2c(client, &regmap_config);
+ 
++	if (IS_ERR(rv3028->regmap)) {
++		return PTR_ERR(rv3028->regmap);
++	}
++
+ 	i2c_set_clientdata(client, rv3028);
+ 
+ 	ret = regmap_read(rv3028->regmap, RV3028_STATUS, &status);
+-- 
+2.7.4
 
-> ---
->
-> Changes since [v1]:
->
->     - Added GPIO hog configuration to put UCS1002 into correct mode
->       even before its driver takes over. The code for that is taken
->       from similar patch from Lucas, so I added his Signed-off-by as
->       well.
->
-> [v1] lore.kernel.org/r/20190522071227.31488-1-andrew.smirnov@gmail.com
->
->  arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi | 77 +++++++++++++++++++------
->  1 file changed, 59 insertions(+), 18 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-> index 93be00a60c88..07e21d1e5b4c 100644
-> --- a/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl-zii-rdu2.dtsi
-> @@ -60,18 +60,6 @@
->                 regulator-always-on;
->         };
->
-> -       reg_5p0v_user_usb: regulator-5p0v-user-usb {
-> -               compatible = "regulator-fixed";
-> -               pinctrl-names = "default";
-> -               pinctrl-0 = <&pinctrl_reg_user_usb>;
-> -               vin-supply = <&reg_5p0v_main>;
-> -               regulator-name = "5V_USER_USB";
-> -               regulator-min-microvolt = <5000000>;
-> -               regulator-max-microvolt = <5000000>;
-> -               gpio = <&gpio3 22 GPIO_ACTIVE_LOW>;
-> -               startup-delay-us = <1000>;
-> -       };
-> -
->         reg_3p3v_pmic: regulator-3p3v-pmic {
->                 compatible = "regulator-fixed";
->                 vin-supply = <&reg_12p0v>;
-> @@ -331,6 +319,39 @@
->         };
->  };
->
-> +&gpio3 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_gpio3_hog>;
-> +
-> +       usb-emulation {
-> +               gpio-hog;
-> +               gpios = <19 GPIO_ACTIVE_HIGH>;
-> +               output-low;
-> +               line-name = "usb-emulation";
-> +       };
-> +
-> +       usb-mode1 {
-> +               gpio-hog;
-> +               gpios = <20 GPIO_ACTIVE_HIGH>;
-> +               output-high;
-> +               line-name = "usb-mode1";
-> +       };
-> +
-> +       usb-pwr {
-> +               gpio-hog;
-> +               gpios = <22 GPIO_ACTIVE_LOW>;
-> +               output-high;
-> +               line-name = "usb-pwr-ctrl-en-n";
-> +       };
-> +
-> +       usb-mode2 {
-> +               gpio-hog;
-> +               gpios = <23 GPIO_ACTIVE_HIGH>;
-> +               output-high;
-> +               line-name = "usb-mode2";
-> +       };
-> +};
-> +
->  &i2c1 {
->         pinctrl-names = "default";
->         pinctrl-0 = <&pinctrl_i2c1>;
-> @@ -590,6 +611,16 @@
->                 status = "disabled";
->         };
->
-> +       reg_5p0v_user_usb: charger@32 {
-> +               compatible = "microchip,ucs1002";
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&pinctrl_ucs1002_pins>;
-> +               reg = <0x32>;
-> +               interrupts-extended = <&gpio5 2 IRQ_TYPE_EDGE_BOTH>,
-> +                                     <&gpio3 21 IRQ_TYPE_EDGE_BOTH>;
-> +               interrupt-names = "a_det", "alert";
-> +       };
-> +
->         hpa1: amp@60 {
->                 compatible = "ti,tpa6130a2";
->                 pinctrl-names = "default";
-> @@ -935,6 +966,15 @@
->                 >;
->         };
->
-> +       pinctrl_gpio3_hog: gpio3hoggrp {
-> +               fsl,pins = <
-> +                       MX6QDL_PAD_EIM_D19__GPIO3_IO19          0x1b0b0
-> +                       MX6QDL_PAD_EIM_D20__GPIO3_IO20          0x1b0b0
-> +                       MX6QDL_PAD_EIM_D22__GPIO3_IO22          0x1b0b0
-> +                       MX6QDL_PAD_EIM_D23__GPIO3_IO23          0x1b0b0
-> +               >;
-> +       };
-> +
->         pinctrl_i2c1: i2c1grp {
->                 fsl,pins = <
->                         MX6QDL_PAD_CSI0_DAT8__I2C1_SDA          0x4001b8b1
-> @@ -982,12 +1022,6 @@
->                 >;
->         };
->
-> -       pinctrl_reg_user_usb: usbotggrp {
-> -               fsl,pins = <
-> -                       MX6QDL_PAD_EIM_D22__GPIO3_IO22          0x40000038
-> -               >;
-> -       };
-> -
->         pinctrl_rmii_phy_irq: phygrp {
->                 fsl,pins = <
->                         MX6QDL_PAD_EIM_D30__GPIO3_IO30          0x40010000
-> @@ -1047,6 +1081,13 @@
->                 >;
->         };
->
-> +       pinctrl_ucs1002_pins: ucs1002grp {
-> +               fsl,pins = <
-> +                       MX6QDL_PAD_EIM_A25__GPIO5_IO02          0x1b0b0
-> +                       MX6QDL_PAD_EIM_D21__GPIO3_IO21          0x1b0b0
-> +               >;
-> +       };
-> +
->         pinctrl_usdhc2: usdhc2grp {
->                 fsl,pins = <
->                         MX6QDL_PAD_SD2_CMD__SD2_CMD             0x10059
-> --
-> 2.21.0
->
