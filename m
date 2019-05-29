@@ -2,106 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B554A2DDD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:14:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31B452DDDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:15:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbfE2NOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 09:14:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40366 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbfE2NOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 09:14:53 -0400
-Received: from localhost (unknown [23.100.24.84])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43F372081C;
-        Wed, 29 May 2019 13:14:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559135692;
-        bh=xKlA2g0wIi0S7QT1ghsj/kNXtl6yCp86bG8AATUDAzk=;
-        h=Date:From:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:From;
-        b=AVJjj8POoTrQ4M7YeIyqLpk553l1+dSgSikMjhX+vYUMNAKXNliKLQQGPNBYstW1w
-         XZ4o/uG+HMJljqzFV5GehPQSqkLoa0zd+dKCy0bWBzv0W6KDjCogzb6hg8X4rWbCyc
-         nfDQzzou7D2nvunV+KUtGTpA/cXDRyO+nSg72EL0=
-Date:   Wed, 29 May 2019 13:14:51 +0000
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-To:     "Yan, Zheng" <zyan@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     idryomov@redhat.com, jlayton@redhat.com
-Cc:     stable@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH 8/8] ceph: hold i_ceph_lock when removing caps for freeing inode
-In-Reply-To: <20190523080646.19632-8-zyan@redhat.com>
-References: <20190523080646.19632-8-zyan@redhat.com>
-Message-Id: <20190529131452.43F372081C@mail.kernel.org>
+        id S1727133AbfE2NPs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 09:15:48 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42523 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbfE2NPs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 09:15:48 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 33so1352748pgv.9
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 06:15:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xN5neQLEPuy8rf1hiSBhjEvuwhf5Or8I1z3QH2reqRo=;
+        b=KB/ZAgwVtpsscHpxRL2WxEnZSjd07Gwyz2fitS1PZiXG05ZDobhExv0V3qnjvyd5u1
+         IQ9J9BTglpmDw0bu8hG5dkRuNsrk8peU3jiDOnhitl1YfMgq1x1OG9zwddO7K8QCiQcL
+         yYbEaDkBlTyxSKY5Az8//PsZMu9hRaHjjylWtv8Mm93hliHX8wl/rQmOu0UpzUa5z2Ni
+         syP6arMk6/g+h0pRaE6Z+/OuQQeogHLblUZyFQ7mxjFdi1JCizncxqQ0NBZB8438Fz7l
+         4XmvoJJsbeEcOSlCIZsRYFNiKQqi74X096iz9lgxtysgSLcsgL3/+sac2FmVr1HTYWFh
+         CvZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xN5neQLEPuy8rf1hiSBhjEvuwhf5Or8I1z3QH2reqRo=;
+        b=irihqoydtV5wgXYCtenlU6E6DFQJKGET4EB3myWnklLBLcxjdrmp30NtWnNUulsA/j
+         Exyo3LljcNmNmPHp9sAjhZNdTsjmH5CJ/oaiunxsDQwzu1VVDPZc7pinKwbU214iPeMW
+         0kaTZt6RlL0mnkKSxY0tM1PoTD9Zh6HbWxvCv7/HWtUV2wcTysFmSZwUGajvCbKFrjXc
+         jXMSyfgjZBAnGwDgpD0OdhnpYSYEhGq/C93S1Ov0N3+mS5CB+s1mLXZEnQVaedtj3zrr
+         2gC1syd9SX8/yRZcxYwQxPtlL/E2nHw82rwNa0BUmrF2RQoLTzPdIY+Ig6E7Uy/yns2G
+         +KEw==
+X-Gm-Message-State: APjAAAWOnxO7AEXLefpB1oBfszKG5yr8nJeLfgT54FkPKvPqyDbvl/+8
+        PI+1qFI4O6QWKjkpHU0MRRI=
+X-Google-Smtp-Source: APXvYqxqk6JDonQnV/wxu8JWsy8K0bS3rk427TwK4U+WoZy6ABfTmVuXj+UIawze5M0YKtA8Sa13ig==
+X-Received: by 2002:a62:4d03:: with SMTP id a3mr152436226pfb.2.1559135747593;
+        Wed, 29 May 2019 06:15:47 -0700 (PDT)
+Received: from localhost.localdomain ([122.163.67.155])
+        by smtp.gmail.com with ESMTPSA id o6sm17900752pfo.164.2019.05.29.06.15.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 06:15:46 -0700 (PDT)
+From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
+To:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, arnd@arndb.de, qader.aymen@gmail.com,
+        kim.jamie.bradley@gmail.com, keescook@chromium.org
+Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Subject: [PATCH] staging: rts5208: Remove negations
+Date:   Wed, 29 May 2019 18:45:31 +0530
+Message-Id: <20190529131531.6368-1-nishkadg.linux@gmail.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Previously return variable fake_para was being negated before return.
+For simplification, fake_para can be changed to valid_para, which is
+returned without negation (corresponding values swapped accordingly).
+Further, the function names check_sd_current_prior and check_sd_speed_prior
+can be changed to valid_sd_current_prior and valid_sd_speed_prior
+respectively for greater clarity on the purpose of the functions.
 
-[This is an automated email]
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+---
+ drivers/staging/rts5208/rtsx_chip.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-This commit has been processed because it contains a -stable tag.
-The stable tag indicates that it's relevant for the following trees: all
+diff --git a/drivers/staging/rts5208/rtsx_chip.c b/drivers/staging/rts5208/rtsx_chip.c
+index 76c35f3c0208..17c4131f5f62 100644
+--- a/drivers/staging/rts5208/rtsx_chip.c
++++ b/drivers/staging/rts5208/rtsx_chip.c
+@@ -598,38 +598,38 @@ int rtsx_reset_chip(struct rtsx_chip *chip)
+ 	return STATUS_SUCCESS;
+ }
+ 
+-static inline int check_sd_speed_prior(u32 sd_speed_prior)
++static inline int valid_sd_speed_prior(u32 sd_speed_prior)
+ {
+-	bool fake_para = false;
++	bool valid_para = true;
+ 	int i;
+ 
+ 	for (i = 0; i < 4; i++) {
+ 		u8 tmp = (u8)(sd_speed_prior >> (i * 8));
+ 
+ 		if ((tmp < 0x01) || (tmp > 0x04)) {
+-			fake_para = true;
++			valid_para = false;
+ 			break;
+ 		}
+ 	}
+ 
+-	return !fake_para;
++	return valid_para;
+ }
+ 
+-static inline int check_sd_current_prior(u32 sd_current_prior)
++static inline int valid_sd_current_prior(u32 sd_current_prior)
+ {
+-	bool fake_para = false;
++	bool valid_para = true;
+ 	int i;
+ 
+ 	for (i = 0; i < 4; i++) {
+ 		u8 tmp = (u8)(sd_current_prior >> (i * 8));
+ 
+ 		if (tmp > 0x03) {
+-			fake_para = true;
++			valid_para = false;
+ 			break;
+ 		}
+ 	}
+ 
+-	return !fake_para;
++	return valid_para;
+ }
+ 
+ static int rts5208_init(struct rtsx_chip *chip)
+@@ -796,13 +796,13 @@ int rtsx_init_chip(struct rtsx_chip *chip)
+ 		chip->rw_fail_cnt[i] = 0;
+ 	}
+ 
+-	if (!check_sd_speed_prior(chip->sd_speed_prior))
++	if (!valid_sd_speed_prior(chip->sd_speed_prior))
+ 		chip->sd_speed_prior = 0x01040203;
+ 
+ 	dev_dbg(rtsx_dev(chip), "sd_speed_prior = 0x%08x\n",
+ 		chip->sd_speed_prior);
+ 
+-	if (!check_sd_current_prior(chip->sd_current_prior))
++	if (!valid_sd_current_prior(chip->sd_current_prior))
+ 		chip->sd_current_prior = 0x00010203;
+ 
+ 	dev_dbg(rtsx_dev(chip), "sd_current_prior = 0x%08x\n",
+-- 
+2.19.1
 
-The bot has tested the following trees: v5.1.4, v5.0.18, v4.19.45, v4.14.121, v4.9.178, v4.4.180, v3.18.140.
-
-v5.1.4: Build OK!
-v5.0.18: Failed to apply! Possible dependencies:
-    e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-
-v4.19.45: Failed to apply! Possible dependencies:
-    e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-
-v4.14.121: Failed to apply! Possible dependencies:
-    a1c6b8358171c ("ceph: define argument structure for handle_cap_grant")
-    a57d9064e4ee4 ("ceph: flush pending works before shutdown super")
-    e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-
-v4.9.178: Failed to apply! Possible dependencies:
-    a1c6b8358171c ("ceph: define argument structure for handle_cap_grant")
-    a57d9064e4ee4 ("ceph: flush pending works before shutdown super")
-    e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-
-v4.4.180: Failed to apply! Possible dependencies:
-    13d1ad16d05ee ("libceph: move message allocation out of ceph_osdc_alloc_request()")
-    34b759b4a22b0 ("ceph: kill ceph_empty_snapc")
-    3f1af42ad0fad ("libceph: enable large, variable-sized OSD requests")
-    5be0389dac662 ("ceph: re-send AIO write request when getting -EOLDSNAP error")
-    7627151ea30bc ("libceph: define new ceph_file_layout structure")
-    779fe0fb8e188 ("ceph: rados pool namespace support")
-    922dab6134178 ("libceph, rbd: ceph_osd_linger_request, watch/notify v2")
-    a1c6b8358171c ("ceph: define argument structure for handle_cap_grant")
-    ae458f5a171ba ("libceph: make r_request msg_size calculation clearer")
-    c41d13a31fefe ("rbd: use header_oid instead of header_name")
-    c8fe9b17d055f ("ceph: Asynchronous IO support")
-    d30291b985d18 ("libceph: variable-sized ceph_object_id")
-    e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-
-v3.18.140: Failed to apply! Possible dependencies:
-    10183a69551f7 ("ceph: check OSD caps before read/write")
-    28127bdd2f843 ("ceph: convert inline data to normal data before data write")
-    31c542a199d79 ("ceph: add inline data to pagecache")
-    5be0389dac662 ("ceph: re-send AIO write request when getting -EOLDSNAP error")
-    70db4f3629b34 ("ceph: introduce a new inode flag indicating if cached dentries are ordered")
-    745a8e3bccbc6 ("ceph: don't pre-allocate space for cap release messages")
-    7627151ea30bc ("libceph: define new ceph_file_layout structure")
-    779fe0fb8e188 ("ceph: rados pool namespace support")
-    83701246aee8f ("ceph: sync read inline data")
-    a1c6b8358171c ("ceph: define argument structure for handle_cap_grant")
-    affbc19a68f99 ("ceph: make sure syncfs flushes all cap snaps")
-    c8fe9b17d055f ("ceph: Asynchronous IO support")
-    d30291b985d18 ("libceph: variable-sized ceph_object_id")
-    d3383a8e37f80 ("ceph: avoid block operation when !TASK_RUNNING (ceph_mdsc_sync)")
-    e3ec8d6898f71 ("ceph: send cap releases more aggressively")
-    e96a650a8174e ("ceph, rbd: delete unnecessary checks before two function calls")
-
-
-How should we proceed with this patch?
-
---
-Thanks,
-Sasha
