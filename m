@@ -2,153 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C54B2DF4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:09:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E3BE2DF58
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:11:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbfE2OI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 10:08:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58834 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727123AbfE2OI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 10:08:59 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C629130044C9;
-        Wed, 29 May 2019 14:08:47 +0000 (UTC)
-Received: from x1.home (ovpn-116-22.phx2.redhat.com [10.3.116.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B9C560FAF;
-        Wed, 29 May 2019 14:08:36 +0000 (UTC)
-Date:   Wed, 29 May 2019 08:08:36 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Boris Fiuczynski <fiuczy@linux.ibm.com>
-Cc:     "cjia@nvidia.com" <cjia@nvidia.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "aik@ozlabs.ru" <aik@ozlabs.ru>,
-        "Zhengxiao.zx@alibaba-inc.com" <Zhengxiao.zx@alibaba-inc.com>,
-        "shuangtai.tst@alibaba-inc.com" <shuangtai.tst@alibaba-inc.com>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
-        "eauger@redhat.com" <eauger@redhat.com>,
-        "Liu, Yi L" <yi.l.liu@intel.com>,
-        "eskultet@redhat.com" <eskultet@redhat.com>,
-        "Yang, Ziye" <ziye.yang@intel.com>,
-        "mlevitsk@redhat.com" <mlevitsk@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        "libvir-list@redhat.com" <libvir-list@redhat.com>,
-        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
-        "felipe@nutanix.com" <felipe@nutanix.com>,
-        "Ken.Xue@amd.com" <Ken.Xue@amd.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Yan Zhao <yan.y.zhao@intel.com>,
-        "dgilbert@redhat.com" <dgilbert@redhat.com>,
-        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
-        "jonathan.davies@nutanix.com" <jonathan.davies@nutanix.com>,
-        "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "Liu, Changpeng" <changpeng.liu@intel.com>,
-        Krowiak <akrowiak@linux.ibm.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wang, Zhi A" <zhi.a.wang@intel.com>,
-        "dinechin@redhat.com" <dinechin@redhat.com>,
-        "He, Shaopeng" <shaopeng.he@intel.com>
-Subject: Re: [libvirt] [PATCH v2 1/2] vfio/mdev: add version attribute for
- mdev device
-Message-ID: <20190529080836.007b8755@x1.home>
-In-Reply-To: <0c1f5f03-1895-b9a2-999f-f611dd295732@linux.ibm.com>
-References: <20190506014514.3555-1-yan.y.zhao@intel.com>
- <20190506014904.3621-1-yan.y.zhao@intel.com>
- <20190507151826.502be009@x1.home>
- <20190508112740.GA24397@joy-OptiPlex-7040>
- <20190508152242.4b54a5e7@x1.home>
- <5eac912c-e753-b5f6-83a4-b646f991d858@linux.ibm.com>
- <20190514093140.68cc6f7a@x1.home>
- <0c1f5f03-1895-b9a2-999f-f611dd295732@linux.ibm.com>
-Organization: Red Hat
+        id S1727329AbfE2OLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:11:08 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:59107 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbfE2OLH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 10:11:07 -0400
+X-Originating-IP: 90.88.147.134
+Received: from mc-bl-xps13.lan (aaubervilliers-681-1-27-134.w90-88.abo.wanadoo.fr [90.88.147.134])
+        (Authenticated sender: maxime.chevallier@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 6B558FF811;
+        Wed, 29 May 2019 14:11:03 +0000 (UTC)
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     davem@davemloft.net, Pablo Neira Ayuso <pablo@netfilter.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com
+Subject: [PATCH net-next] ethtool: Drop check for vlan etype and vlan tci when parsing flow_rule
+Date:   Wed, 29 May 2019 16:10:44 +0200
+Message-Id: <20190529141044.24669-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 29 May 2019 14:08:58 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 May 2019 22:57:15 +0200
-Boris Fiuczynski <fiuczy@linux.ibm.com> wrote:
+When parsing an ethtool flow spec to build a flow_rule, the code checks
+if both the vlan etype and the vlan tci are specified by the user to add
+a FLOW_DISSECTOR_KEY_VLAN match.
 
-> On 5/14/19 5:31 PM, Alex Williamson wrote:
-> > On Wed, 8 May 2019 17:27:47 +0200
-> > Boris Fiuczynski <fiuczy@linux.ibm.com> wrote:
-> >   
-> >> On 5/8/19 11:22 PM, Alex Williamson wrote:  
-> >>>>> I thought there was a request to make this more specific to migration
-> >>>>> by renaming it to something like migration_version.  Also, as an
-> >>>>>        
-> >>>> so this attribute may not only include a mdev device's parent device info and
-> >>>> mdev type, but also include numeric software version of vendor specific
-> >>>> migration code, right?  
-> >>> It's a vendor defined string, it should be considered opaque to the
-> >>> user, the vendor can include whatever they feel is relevant.
-> >>>      
-> >> Would a vendor also be allowed to provide a string expressing required
-> >> features as well as containing backend resource requirements which need
-> >> to be compatible for a successful migration? Somehow a bit like a cpu
-> >> model... maybe even as json or xml...
-> >> I am asking this with vfio-ap in mind. In that context checking
-> >> compatibility of two vfio-ap mdev devices is not as simple as checking
-> >> if version A is smaller or equal to version B.  
-> > 
-> > Two pieces to this, the first is that the string is opaque exactly so
-> > that the vendor driver can express whatever they need in it.  The user
-> > should never infer that two devices are compatible.  The second is that  
-> I agree.
-> 
-> > this is not a resource availability or reservation interface.  The fact  
-> I also agree. The migration_version (version in this case is not really 
-> a good fit) is a summary of requirements the source mdev has which a 
-> target mdev needs to be able to fulfill in order to allow migration.
-> The target mdev already exists and was already configured by other means 
-> not involved in the migration check process.
+However, when the user only specified a vlan etype or a vlan tci, this
+check silently ignores these parameters.
 
-Just a nit here (I hope), the target mdev does not necessarily exist at
-the time we're testing migration version compatibility.  The intention
-is that this feature can be used to select a target host system which
-can possibly generate a compatible target mdev device before committing
-to create that device.  For instance a management tool might test for
-migration compatibility across a data center, narrowing the set of
-potential target hosts, then proceed to select a best choice based on
-factors including the ability to actually instantiate such a device on
-the host.
+For example, the following rule :
 
-> Using the migrations_version as some kind of configuration transport 
-> and/or reservation mechanism wasn't my intention and IMHO would both be 
-> wrong.
+ethtool -N eth0 flow-type udp4 vlan 0x0010 action -1 loc 0
 
-Sounds good.  Thanks,
+will result in no error being issued, but the equivalent rule will be
+created and passed to the NIC driver :
 
-Alex
+ethtool -N eth0 flow-type udp4 action -1 loc 0
 
-> > that a target device would be compatible for migration should not take
-> > into account whether the target has the resources to actually create
-> > such a device.  Doing so would imply some sort of resource reservation
-> > support that does not exist.  Matrix devices are clearly a bit
-> > complicated here since maybe the source is expressing a component of
-> > the device that doesn't exist on the target.  In such a "resource not
-> > available at all" case, it might be fair to nak the compatibility test,
-> > but a "ok, but resource not currently available" case should pass,
-> > imo.  Thanks,
-> > 
-> > Alex
-> > 
-> > --
-> > libvir-list mailing list
-> > libvir-list@redhat.com
-> > https://www.redhat.com/mailman/listinfo/libvir-list
-> >   
-> 
-> 
+In the end, neither the NIC driver using the rule nor the end user have
+a way to know that these keys were dropped along the way, or that
+incorrect parameters were entered.
+
+This kind of check should be left to either the driver, or the ethtool
+flow spec layer.
+
+This commit makes so that ethtool parameters are forwarded as-is to the
+NIC driver.
+
+Since none of the users of ethtool_rx_flow_rule_create are using the
+VLAN dissector, I don't think this qualifies as a regression.
+
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+ net/core/ethtool.c | 31 ++++++++++++++-----------------
+ 1 file changed, 14 insertions(+), 17 deletions(-)
+
+diff --git a/net/core/ethtool.c b/net/core/ethtool.c
+index 4a593853cbf2..2fe86893e9b5 100644
+--- a/net/core/ethtool.c
++++ b/net/core/ethtool.c
+@@ -3010,26 +3010,23 @@ ethtool_rx_flow_rule_create(const struct ethtool_rx_flow_spec_input *input)
+ 		const struct ethtool_flow_ext *ext_h_spec = &fs->h_ext;
+ 		const struct ethtool_flow_ext *ext_m_spec = &fs->m_ext;
+ 
+-		if (ext_m_spec->vlan_etype &&
+-		    ext_m_spec->vlan_tci) {
+-			match->key.vlan.vlan_tpid = ext_h_spec->vlan_etype;
+-			match->mask.vlan.vlan_tpid = ext_m_spec->vlan_etype;
++		match->key.vlan.vlan_tpid = ext_h_spec->vlan_etype;
++		match->mask.vlan.vlan_tpid = ext_m_spec->vlan_etype;
+ 
+-			match->key.vlan.vlan_id =
+-				ntohs(ext_h_spec->vlan_tci) & 0x0fff;
+-			match->mask.vlan.vlan_id =
+-				ntohs(ext_m_spec->vlan_tci) & 0x0fff;
++		match->key.vlan.vlan_id =
++			ntohs(ext_h_spec->vlan_tci) & 0x0fff;
++		match->mask.vlan.vlan_id =
++			ntohs(ext_m_spec->vlan_tci) & 0x0fff;
+ 
+-			match->key.vlan.vlan_priority =
+-				(ntohs(ext_h_spec->vlan_tci) & 0xe000) >> 13;
+-			match->mask.vlan.vlan_priority =
+-				(ntohs(ext_m_spec->vlan_tci) & 0xe000) >> 13;
++		match->key.vlan.vlan_priority =
++			(ntohs(ext_h_spec->vlan_tci) & 0xe000) >> 13;
++		match->mask.vlan.vlan_priority =
++			(ntohs(ext_m_spec->vlan_tci) & 0xe000) >> 13;
+ 
+-			match->dissector.used_keys |=
+-				BIT(FLOW_DISSECTOR_KEY_VLAN);
+-			match->dissector.offset[FLOW_DISSECTOR_KEY_VLAN] =
+-				offsetof(struct ethtool_rx_flow_key, vlan);
+-		}
++		match->dissector.used_keys |=
++			BIT(FLOW_DISSECTOR_KEY_VLAN);
++		match->dissector.offset[FLOW_DISSECTOR_KEY_VLAN] =
++			offsetof(struct ethtool_rx_flow_key, vlan);
+ 	}
+ 	if (fs->flow_type & FLOW_MAC_EXT) {
+ 		const struct ethtool_flow_ext *ext_h_spec = &fs->h_ext;
+-- 
+2.20.1
 
