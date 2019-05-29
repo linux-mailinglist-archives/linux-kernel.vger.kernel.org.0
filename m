@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7CCD2DE80
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 412A92DE81
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:38:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbfE2NiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 09:38:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53640 "EHLO mail.kernel.org"
+        id S1727657AbfE2NiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 09:38:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727171AbfE2NiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 09:38:08 -0400
+        id S1727171AbfE2NiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 09:38:12 -0400
 Received: from quaco.ghostprotocols.net (unknown [177.195.211.85])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CBB122353;
-        Wed, 29 May 2019 13:38:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A3F622389;
+        Wed, 29 May 2019 13:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559137086;
-        bh=VHKZYlYltrWBtqaHB1hbRv+QeXeovC2XnQqU04505R8=;
+        s=default; t=1559137092;
+        bh=LI+1NE8W6QnWQh+jNaxqjajm5NEEX9BIy8mk3cg+sxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OEjCWV/L5WKZZ1GMXelQ3yyEI6n5ymReF2k1O7BNpuT+7yrPKs88BT7tO4FmHkz7R
-         LgWXtom9pUVP5vG+bNDVDPnRPE2r/40BNLTla9cFpBRzzQRcC+os/mipQfGvFWgPrU
-         dA1ISX+NC5HkObLCQiykUaNgOaduDTf9SPKczwGc=
+        b=CB+HQ+YQPNVs3dR5q8x1iesKF4+W+tlGP/6Cn6Gma6EZy7Sch47WUwSXWk+bKUB4y
+         65PrMjg9jduUZ07WM/Nq9rAnHnQL42aIceVsk0A2nFd8L+FqprJd4S2JjDEO5Ppwx7
+         idnTC2kOAP2YmePa5jxSgGuS98dDyOinzD2NFonc=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -36,9 +36,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Stanislav Fomichev <sdf@google.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 23/41] perf dso: Separate generic code in dso_cache__read
-Date:   Wed, 29 May 2019 10:35:47 -0300
-Message-Id: <20190529133605.21118-24-acme@kernel.org>
+Subject: [PATCH 24/41] perf dso: Simplify dso_cache__read function
+Date:   Wed, 29 May 2019 10:35:48 -0300
+Message-Id: <20190529133605.21118-25-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190529133605.21118-1-acme@kernel.org>
 References: <20190529133605.21118-1-acme@kernel.org>
@@ -51,9 +51,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-Move the file specific code in the dso_cache__read function to a
-separate file_read function. I'll add BPF specific code in the following
-patches.
+There's no need for the while loop now, also we can connect two (ret >
+0) condition legs together.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Acked-by: Song Liu <songliubraving@fb.com>
@@ -62,89 +61,50 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
 Cc: Stanislav Fomichev <sdf@google.com>
-Link: http://lkml.kernel.org/r/20190508132010.14512-3-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190508132010.14512-4-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/dso.c | 48 ++++++++++++++++++++++++-------------------
- 1 file changed, 27 insertions(+), 21 deletions(-)
+ tools/perf/util/dso.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
 diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
-index cb6199c1390a..7734f50a6912 100644
+index 7734f50a6912..1e6a045adb8c 100644
 --- a/tools/perf/util/dso.c
 +++ b/tools/perf/util/dso.c
-@@ -794,6 +794,31 @@ dso_cache__memcpy(struct dso_cache *cache, u64 offset,
- 	return cache_size;
- }
- 
-+static ssize_t file_read(struct dso *dso, struct machine *machine,
-+			 u64 offset, char *data)
-+{
-+	ssize_t ret;
-+
-+	pthread_mutex_lock(&dso__data_open_lock);
-+
-+	/*
-+	 * dso->data.fd might be closed if other thread opened another
-+	 * file (dso) due to open file limit (RLIMIT_NOFILE).
-+	 */
-+	try_to_open_dso(dso, machine);
-+
-+	if (dso->data.fd < 0) {
-+		dso->data.status = DSO_DATA_STATUS_ERROR;
-+		ret = -errno;
-+		goto out;
-+	}
-+
-+	ret = pread(dso->data.fd, data, DSO__DATA_CACHE_SIZE, offset);
-+out:
-+	pthread_mutex_unlock(&dso__data_open_lock);
-+	return ret;
-+}
-+
- static ssize_t
+@@ -823,25 +823,20 @@ static ssize_t
  dso_cache__read(struct dso *dso, struct machine *machine,
  		u64 offset, u8 *data, ssize_t size)
-@@ -803,37 +828,18 @@ dso_cache__read(struct dso *dso, struct machine *machine,
+ {
++	u64 cache_offset = offset & DSO__DATA_CACHE_MASK;
+ 	struct dso_cache *cache;
+ 	struct dso_cache *old;
  	ssize_t ret;
  
- 	do {
--		u64 cache_offset;
-+		u64 cache_offset = offset & DSO__DATA_CACHE_MASK;
+-	do {
+-		u64 cache_offset = offset & DSO__DATA_CACHE_MASK;
+-
+-		cache = zalloc(sizeof(*cache) + DSO__DATA_CACHE_SIZE);
+-		if (!cache)
+-			return -ENOMEM;
+-
+-		ret = file_read(dso, machine, cache_offset, cache->data);
++	cache = zalloc(sizeof(*cache) + DSO__DATA_CACHE_SIZE);
++	if (!cache)
++		return -ENOMEM;
  
- 		cache = zalloc(sizeof(*cache) + DSO__DATA_CACHE_SIZE);
- 		if (!cache)
- 			return -ENOMEM;
- 
--		pthread_mutex_lock(&dso__data_open_lock);
--
--		/*
--		 * dso->data.fd might be closed if other thread opened another
--		 * file (dso) due to open file limit (RLIMIT_NOFILE).
--		 */
--		try_to_open_dso(dso, machine);
--
--		if (dso->data.fd < 0) {
--			ret = -errno;
--			dso->data.status = DSO_DATA_STATUS_ERROR;
--			break;
--		}
--
--		cache_offset = offset & DSO__DATA_CACHE_MASK;
--
--		ret = pread(dso->data.fd, cache->data, DSO__DATA_CACHE_SIZE, cache_offset);
--		if (ret <= 0)
--			break;
-+		ret = file_read(dso, machine, cache_offset, cache->data);
- 
++	ret = file_read(dso, machine, cache_offset, cache->data);
++	if (ret > 0) {
  		cache->offset = cache_offset;
  		cache->size   = ret;
- 	} while (0);
+-	} while (0);
+-
  
--	pthread_mutex_unlock(&dso__data_open_lock);
- 
- 	if (ret > 0) {
+-	if (ret > 0) {
  		old = dso_cache__insert(dso, cache);
+ 		if (old) {
+ 			/* we lose the race */
 -- 
 2.20.1
 
