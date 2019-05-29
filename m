@@ -2,137 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEAAA2D296
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 01:58:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B4FD2D2A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 02:02:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbfE1X6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 19:58:49 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53600 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbfE1X6s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 19:58:48 -0400
-Received: by mail-wm1-f66.google.com with SMTP id d17so294269wmb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 16:58:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xi6hRmlV/rkYRZXwRwO7EpD99nzQCtGBu1E4jVd0OG0=;
-        b=Ab2zrIKXDuM3wH/3vleTi9v18qOFqdElCjs6oFhjb0djlC1D9ABTLkHJK3UUsZgwsn
-         jkWx9AIzJuBInwij1Athq5uxujlQ8llomV1NukkmT+HEajHepYwsPCG7hOzYGSp4CVwB
-         /xnLRtkwb+vs1A9OpiQgHt4Ic1Wb3TwQxOgrbXA/mdbVY6Bu/bilMA6EE62L9Sc2/ZIY
-         8MoeGrKF2udYBK6Ddqb9dfCYOzSu7by1RizrxXIdaEnKCjJbcE4sL57OGwAToYqUrr2M
-         rnlSp5Fvic8JvHEOwPAidOhkq7QukxXwY8lYCjk05Eh49qFcWUjiRyyMUk/DOm5wStfT
-         s2tw==
-X-Gm-Message-State: APjAAAXKSjAcuirMZ8qRiHnlGJrCjSi3h2U7AK7p6Ip+7eRei5ESowew
-        nVEN7gPAmdz/aVWxK17qdOXXrofjOcQ=
-X-Google-Smtp-Source: APXvYqxfl6xm2qcJA8awYqlEkYvzsKyFY1ok6e7KAzVB9YFi3gVE4bn35EcLiejKxDcMlJOYMcHy+Q==
-X-Received: by 2002:a05:600c:1109:: with SMTP id b9mr4658543wma.107.1559087926470;
-        Tue, 28 May 2019 16:58:46 -0700 (PDT)
-Received: from raver.teknoraver.net (net-93-144-152-91.cust.vodafonedsl.it. [93.144.152.91])
-        by smtp.gmail.com with ESMTPSA id a10sm17826941wrm.94.2019.05.28.16.58.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 28 May 2019 16:58:45 -0700 (PDT)
-From:   Matteo Croce <mcroce@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: avoid indirect calls in L4 checksum calculation
-Date:   Wed, 29 May 2019 01:58:44 +0200
-Message-Id: <20190528235844.19360-1-mcroce@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        id S1727535AbfE2AAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 20:00:40 -0400
+Received: from ozlabs.org ([203.11.71.1]:37685 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726683AbfE2AAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 20:00:39 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45D9pD4tq5z9sBb;
+        Wed, 29 May 2019 10:00:36 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1559088037;
+        bh=GZ0gAzbgJ+60g8ErhosKnQ3VNb9AmTQTKEt9SuzsKzg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=slXpqHLPimqX2oEkSgsk07NdCq3rdyVs/+gs5hqghSeMJs+NocykfGO+an1kDeKZX
+         VFB3V1q8RxxDH5WlFKmciegMK+toraXU/a+ELnGUlrfJhotQyd5TV3MK+EXNRUbBDC
+         WrSYARv037p+cX9jN9mJSttWg9+OqEBnEiX8AaFA48O/fkYJRIXFNEpd5be2OgUPU+
+         kwhTUWlSy4pwuV7lMp7pvL3RiAOg19YDcYLehjggCbPel/adBGoyzu3BpKsbj+LYBW
+         3YkidV6Lqdx5Qydz95rZil/oG2b8jZxSJcy5Wo2d1dCBsv4JaQd1fV+IEo2Lgfh0aN
+         MYPUMKZ6nKmtA==
+Date:   Wed, 29 May 2019 10:00:23 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Zhu Yingjiang <yingjiang.zhu@linux.intel.com>,
+        Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
+        Keyon Jie <yang.jie@linux.intel.com>,
+        Libin Yang <libin.yang@intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Subject: Re: linux-next: Fixes tags need some work in the sound-asoc tree
+Message-ID: <20190529100023.4a7cfacc@canb.auug.org.au>
+In-Reply-To: <44bbb3f1-5674-6431-5818-d8b5cca708dd@linux.intel.com>
+References: <20190529075614.150b1877@canb.auug.org.au>
+        <44bbb3f1-5674-6431-5818-d8b5cca708dd@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/F8gLjB5fcrXmqdy+Qe2tDr8"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 283c16a2dfd3 ("indirect call wrappers: helpers to speed-up
-indirect calls of builtin") introduces some macros to avoid doing
-indirect calls.
+--Sig_/F8gLjB5fcrXmqdy+Qe2tDr8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Use these helpers to remove two indirect calls in the L4 checksum
-calculation for devices which don't have hardware support for it.
+Hi Pierre-Louis,
 
-As a test I generate packets with pktgen out to a dummy interface
-with HW checksumming disabled, to have the checksum calculated in
-every sent packet.
-The packet rate measured with an i7-6700K CPU and a single pktgen
-thread raised from 6143 to 6608 Kpps, an increase by 7.5%
+On Tue, 28 May 2019 17:22:40 -0500 Pierre-Louis Bossart <pierre-louis.bossa=
+rt@linux.intel.com> wrote:
+>
+> On 5/28/19 4:56 PM, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > In commit
+> >=20
+> >    be1b577d0178 ("ASoC: SOF: Intel: hda: fix the hda init chip")
+> >=20
+> > Fixes tag
+> >=20
+> >    Fixes: 8a300c8fb17 ("ASoC: SOF: Intel: Add HDA controller for Intel =
+DSP") =20
+>=20
+> Sorry about that, not sure how I managed to add an off-by-one in all=20
+> these tags. Checkpatch.pl --strict did not report any issues, something=20
+> must be broken either in my setup or the script.
+> Not sure how I can fix this now?
 
-Suggested-by: Davide Caratti <dcaratti@redhat.com>
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
----
- net/core/skbuff.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+Its not worth the rebase necessary to fix them.  Just use it as a
+learning experience.
 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index e89be6282693..a24a7ef55ce9 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -69,6 +69,7 @@
- #include <net/sock.h>
- #include <net/checksum.h>
- #include <net/ip6_checksum.h>
-+#include <net/sctp/checksum.h>
- #include <net/xfrm.h>
- 
- #include <linux/uaccess.h>
-@@ -76,9 +77,22 @@
- #include <linux/highmem.h>
- #include <linux/capability.h>
- #include <linux/user_namespace.h>
-+#include <linux/indirect_call_wrapper.h>
- 
- #include "datagram.h"
- 
-+#if IS_ENABLED(CONFIG_IP_SCTP)
-+#define CSUM_UPDATE(f, ...) \
-+	INDIRECT_CALL_2(f, csum_partial_ext, sctp_csum_update, __VA_ARGS__)
-+#define CSUM_COMBINE(f, ...) \
-+	INDIRECT_CALL_2(f, csum_block_add_ext, sctp_csum_combine, __VA_ARGS__)
-+#else
-+#define CSUM_UPDATE(f, ...) \
-+	INDIRECT_CALL_1(f, csum_partial_ext, __VA_ARGS__)
-+#define CSUM_COMBINE(f, ...) \
-+	INDIRECT_CALL_1(f, csum_block_add_ext, __VA_ARGS__)
-+#endif
-+
- struct kmem_cache *skbuff_head_cache __ro_after_init;
- static struct kmem_cache *skbuff_fclone_cache __ro_after_init;
- #ifdef CONFIG_SKB_EXTENSIONS
-@@ -2507,7 +2521,7 @@ __wsum __skb_checksum(const struct sk_buff *skb, int offset, int len,
- 	if (copy > 0) {
- 		if (copy > len)
- 			copy = len;
--		csum = ops->update(skb->data + offset, copy, csum);
-+		csum = CSUM_UPDATE(ops->update, skb->data + offset, copy, csum);
- 		if ((len -= copy) == 0)
- 			return csum;
- 		offset += copy;
-@@ -2534,9 +2548,9 @@ __wsum __skb_checksum(const struct sk_buff *skb, int offset, int len,
- 					      frag->page_offset + offset - start,
- 					      copy, p, p_off, p_len, copied) {
- 				vaddr = kmap_atomic(p);
--				csum2 = ops->update(vaddr + p_off, p_len, 0);
-+				csum2 = CSUM_UPDATE(ops->update, vaddr + p_off, p_len, 0);
- 				kunmap_atomic(vaddr);
--				csum = ops->combine(csum, csum2, pos, p_len);
-+				csum = CSUM_COMBINE(ops->combine, csum, csum2, pos, p_len);
- 				pos += p_len;
- 			}
- 
-@@ -2559,7 +2573,7 @@ __wsum __skb_checksum(const struct sk_buff *skb, int offset, int len,
- 				copy = len;
- 			csum2 = __skb_checksum(frag_iter, offset - start,
- 					       copy, 0, ops);
--			csum = ops->combine(csum, csum2, pos, copy);
-+			csum = CSUM_COMBINE(ops->combine, csum, csum2, pos, copy);
- 			if ((len -= copy) == 0)
- 				return csum;
- 			offset += copy;
--- 
-2.21.0
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/F8gLjB5fcrXmqdy+Qe2tDr8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzty5cACgkQAVBC80lX
+0GyG7Qf+MdPBfzF8R7UaulnuAKN1HfNFWuY3VXVToBvsKdOTLE0EfIQyDfEc2qxa
+fq8v+ZOA+rSSgsyxE6LJMy+KhVhm7jzQO7Uoxp+5dxTWVA5+XysKrDsgoe1p/7+i
+n0JUeguYaHwVam+YbWHNFRItx9qi/mMLIrnGSe0O+84rtrsQRGGPbVZE7Uv7CbLv
+lyeqDw/s7+NXMI2EKX4YolwkjAnonfPOsM8VZ1oBLE+FdtFl5cVWBgKm4YskzAPh
+CjCZVquLmrg2zvFbof6Oin4rU7fTpQimvXDaU2beoeW/fXkEmJyZrbpXtV+39R+f
+n6jHvA07GMDPyOyx/nVtQTDwgELNmA==
+=na2v
+-----END PGP SIGNATURE-----
+
+--Sig_/F8gLjB5fcrXmqdy+Qe2tDr8--
