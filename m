@@ -2,97 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6FB12DEDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBCB82DED9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:50:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfE2NvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 09:51:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41142 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfE2NvE (ORCPT
+        id S1727279AbfE2Nu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 09:50:27 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41616 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbfE2Nu1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 09:51:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IpEYYRtOcuoBCe0NJPft5Tkz/UAzt+RuLMsB2MN2GaE=; b=H0/es3dSmh57wK1K3O8+kBAg3
-        ChXfTK85OzhoOPfgTevzcNUrAqF6pQpqmybER+BZc+AVcUbvYZpA8jiqqYbcgy/Ixvs/EXzVCBKuL
-        gWbl33SyM+tWo/GpkuFb9/pJWPfbVYxYvZE5dyEpx6SY+BfMCidVAlyRjZf1/htQPJ20px3gEuHzd
-        PNI6EPxn01Ft3nIv//XLyAPLpH2i8bxEJ3lkzj3fLxr4KeLindTwHAFIl6fUh+VnkWSIb6DURsTEa
-        N1IRGMF+BF96BbGkldDqaqslVHn8XV2FOcH4RYBCSvu4OxxuhWfMzGibLOdXGqBwD3jU8iQtW+k8Z
-        LQ1T6AKBQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hVyxf-0004uF-Rj; Wed, 29 May 2019 13:49:48 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2EC04201CF1B6; Wed, 29 May 2019 15:49:46 +0200 (CEST)
-Date:   Wed, 29 May 2019 15:49:46 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-kernel@vger.kernel.org, williams@redhat.com,
-        daniel@bristot.me, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Subject: Re: [RFC 2/3] preempt_tracer: Disable IRQ while starting/stopping
- due to a preempt_counter change
-Message-ID: <20190529134946.GY2623@hirez.programming.kicks-ass.net>
-References: <cover.1559051152.git.bristot@redhat.com>
- <f2ca7336162b6dc45f413cfe4e0056e6aa32e7ed.1559051152.git.bristot@redhat.com>
- <20190529083357.GF2623@hirez.programming.kicks-ass.net>
- <b47631c3-d65a-4506-098a-355c8cf50601@redhat.com>
- <20190529102038.GO2623@hirez.programming.kicks-ass.net>
- <20190529083930.5541130e@oasis.local.home>
- <20190529131957.GV2623@hirez.programming.kicks-ass.net>
- <20190529094213.3e344965@oasis.local.home>
+        Wed, 29 May 2019 09:50:27 -0400
+Received: by mail-qt1-f196.google.com with SMTP id s57so2613394qte.8
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 06:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YZ+pg8aR5qtYQVgChplcfMUX8pIrRvMgQQ9ehzYO2NY=;
+        b=Gv0ccnGUxwVA4CTo/MYZhnLEFa+NMtfNA1dXp7D65wkDSPkL7/+ggsF0C/UDeGkJGC
+         gVMx9cP8UCjFB82NPeXC1HyYatRf7zEYiMfEd90UB8H6ubBRiYwnOVjyjfxrmFB64EJS
+         459UY3oBceABLZ7+b1T19Ucuh58Xu2owPXLhWWP6WrdovjznYkXFl/EKJKNXoPu/OYeV
+         6PjCnVolGMPeGhOdaTq/q1Yyfy+stN9uS68Ti3umLmlPH/SeYdHT+3J09kv+fqDOcipY
+         REDPY83if8k2P3r22QjZc0VBnbYLOIdhe5OWvzlpzcqPMuBR/WYmypooktiqqy3WDP9o
+         7wFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YZ+pg8aR5qtYQVgChplcfMUX8pIrRvMgQQ9ehzYO2NY=;
+        b=M/Fq/n3MGt87lkAZZiG5x07rluYLDNfyS97V1aBGJbiWIcC0EtQKiB1KLZ2hFKBVWM
+         jNKKqZqAKAoLijMyyQjyqs3zU02SSd8mxXIUvDkAv/qoemNiCSzh/WVo2SO/a6BZMd7e
+         Fim8BGElRBBt5EyIR9yy8x7/PKa/H3VoU418NEbLbbBhPWOR+mpWirNwpi2N1BxjhtZE
+         Cf4p7sSJE2ZOWeIYHRlVSjFs7AVYZWM0YXEYsMnnmyVeTyBsJ3gJ6qKUhECVx0/Wre6a
+         +PeK4yLrL5K+YpEYXBw7xKQQ+S14N75uIGMeMsOqcjLpTmAzyHpaGJMBFHz/ixzfrdj/
+         ph/A==
+X-Gm-Message-State: APjAAAW5CDQVCa/e1c+UYjxSjfYdXh6Z/J45upDEQtJEXPeo1oHHev4H
+        pOc0UGcfIYYEjDJhz9olKY4/4w==
+X-Google-Smtp-Source: APXvYqwEtNwAR1RkkEX4AEuf9rsrRVXIcPejqHjeKH7c+7L9tPPaz3vt4LvVFSsUtK81/8sbDa/Pfw==
+X-Received: by 2002:a0c:d13a:: with SMTP id a55mr58174644qvh.111.1559137821888;
+        Wed, 29 May 2019 06:50:21 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::d8f])
+        by smtp.gmail.com with ESMTPSA id n26sm739941qtn.36.2019.05.29.06.50.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 06:50:20 -0700 (PDT)
+Date:   Wed, 29 May 2019 09:50:19 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     xiubli@redhat.com
+Cc:     josef@toxicpanda.com, axboe@kernel.dk, nbd@other.debian.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        atumball@redhat.com
+Subject: Re: [PATCH] nbd: fix crash when the blksize is zero
+Message-ID: <20190529135018.6vbhxkuyppctqtco@MacBook-Pro-91.local>
+References: <20190527054438.13548-1-xiubli@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190529094213.3e344965@oasis.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190527054438.13548-1-xiubli@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 09:42:13AM -0400, Steven Rostedt wrote:
-> > And the preempt_irqoff tracer had better also consume the IRQ events,
-> > and if it does that it can DTRT without extra bits on, even with that
-> > race.
-> > 
-> > Consider:
-> > 
-> > 	preempt_disable()
-> > 	  preempt_count += 1;
-> > 	  <IRQ>
-> > 	    trace_irq_enter();
-> > 
-> > 	    trace_irq_exit();
-> > 	  </IRQ>
-> > 	  trace_preempt_disable();
-> > 
-> > 	/* does stuff */
-> > 
-> > 	preempt_enable()
-> > 	  preempt_count -= 1;
-> > 	  trace_preempt_enable();
-> > 
-> > You're saying preempt_irqoff() fails to connect the two because of the
-> > hole between trace_irq_exit() and trace_preempt_disable() ?
-> > 
-> > But trace_irq_exit() can see the raised preempt_count and set state
-> > for trace_preempt_disable() to connect.
+On Mon, May 27, 2019 at 01:44:38PM +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
 > 
-> That's basically what I was suggesting as the solution to this ;-)
+> This will allow the blksize to be set zero and then use 1024 as
+> default.
+> 
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 
-You were wanting changes to preempt_disable() and task_struct, neither
-of which is required. The above only needs some per-cpu storage in the
-tracer implementation.
+Hmm sorry I missed this somehow
+
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+
+Thanks,
+
+Josef
