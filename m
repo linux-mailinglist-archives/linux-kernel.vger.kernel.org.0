@@ -2,109 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD32B2DBEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 13:33:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE2FB2DBF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 13:34:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbfE2LdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 07:33:01 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55127 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725894AbfE2LdA (ORCPT
+        id S1726858AbfE2Le3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 07:34:29 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35766 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfE2Le2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 07:33:00 -0400
-Received: by mail-wm1-f66.google.com with SMTP id i3so1424341wml.4
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 04:32:59 -0700 (PDT)
+        Wed, 29 May 2019 07:34:28 -0400
+Received: by mail-wm1-f65.google.com with SMTP id w9so1368003wmi.0;
+        Wed, 29 May 2019 04:34:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=fghY+BZG9jzLH9CkfdGMJemIUFdCRHcuHHhTEZX8sh0=;
-        b=L+C/lE+FoHWyOoKPusjaa84mUfC5vwra665gmIPOHxtpeKaROW6pH6HWhk7bB99zDx
-         0pTtMvF4Ey0i4wH88VMwcD5bz3bSDGlMesqI/bW7UJzVjpAFV1XpvVPkW+F5baqsncXe
-         A5RkrHuYBJxrWlfomO4FDAIFqItODvK2WIgYe5B0+Fj/y9ITA1Gw5GJxEZ/dQ7YPOzXG
-         htCeZbJhccM4fT+tdo6xXN/McOmQVTH8rrOLHGNVYpWiAxKxcxp9leWir5f9rt3M6o8Y
-         AeFALuV7F022LnFUNFCIEWx7RgXkGBgVIMg3jXEawHzIhAed8IvmrYGoxD/0Cw+2Eqry
-         pPHA==
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lv+811UxRTiA1eeuITfBrlSYFc5i58j28rlvkjD03rM=;
+        b=U3liTC6ZJCIAPgF5ohxRWUtSnwmEiVfVxH123hEmKBAPGu1Y5oKRc8WphyyDe/PIM7
+         gGvxiCoFK+cdsXt9S2AV+ajjs3bFZeHbHZqG/y9gcDj/XxFQKm6bmDbmhjhcbqkBqyZW
+         EjAPYDtVXjDf2B2lWTE2T/vmI53a4MF2JoxInqrV2Z0zkV6fRqDxpQQvEmPwneoYFGB0
+         GzfZOG7hrw/pQQSMolG5O/ycikS1Vttz3N+wH0zjpJ+6dGd9kAFx+HZPlhoVFXovljBZ
+         Eb8VLEwZ1pVb5/V+NOOh5UcdlFxRePuLcNDv6BEB1zAKFbPPUqAYUhxa0v3PYs9yx1TE
+         xORQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=fghY+BZG9jzLH9CkfdGMJemIUFdCRHcuHHhTEZX8sh0=;
-        b=SDZHhjDuks8gA3nULN3H9Ia+UWnVXqmWaGc2a5u0akWLuwWzb50cxw072LVreNM97k
-         pedCF9UavPi21+a/1m3Jm5bKmhWMrb3/gGNH3VPafdEEwPP3R5VlUfpjbjkF/13Jlefg
-         XDJ1BpBXfezSUfJsZPDl1JsAdC/z6+ovOro7a1seI22rLKRkLB6+xogJIyHhLwfmQ/1D
-         kC/3yZWpLXc7+CtVXHwtuDzb7U5DfycXwUhs02Y4J4ruhcbtisGD0Db5jpXwQgu4Iohm
-         RxAx62Jo26jWStf7psuIskk9hD/liVy28xBkyKjtdNT3whs4L7D2rAcLlWXwbl6bjyXG
-         g+xw==
-X-Gm-Message-State: APjAAAUh9mAlRhl8rG+/BGtvpWURucfPvA76DvXu9uBpdH1gsCC3hwmS
-        vT4JHLA29lsb9T6i0z8hH/Y4/w==
-X-Google-Smtp-Source: APXvYqxjNj2+u5xGz/WmE+sFhfaNSVZwlhC/y4svXXUWEjG6Pe2nusU5fvTjI8ygUg0gNdTV1HYmSw==
-X-Received: by 2002:a1c:cb49:: with SMTP id b70mr7029966wmg.80.1559129578915;
-        Wed, 29 May 2019 04:32:58 -0700 (PDT)
-Received: from hackbox2.linaro.org ([81.128.185.34])
-        by smtp.gmail.com with ESMTPSA id t6sm12253565wmt.34.2019.05.29.04.32.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 04:32:58 -0700 (PDT)
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-To:     stable@vger.kernel.org
-Cc:     linux-media@vger.kernel.org, hverkuil-cisco@xs4all.nl,
-        linux-kernel@vger.kernel.org,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH] media: v4l2-ioctl: clear fields in s_parm
-Date:   Wed, 29 May 2019 12:32:47 +0100
-Message-Id: <20190529113247.21188-1-naresh.kamboju@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=lv+811UxRTiA1eeuITfBrlSYFc5i58j28rlvkjD03rM=;
+        b=PktOTs23TbjR8NCGwjVMt+F18vuWN1994TpJAoE0pVoPY9Cw/2oYEfauSs0l9jUCZF
+         CZtdAC+M7dDpI8N5ksYisqbRGvI07+4gXS/d6S4010K9vHP6wZI4izeREY3WdInx9uGn
+         SjawFBh9wM2270PNaf69lu/sE+dATszeS10xE0aP455tgP1kmj9vaQZ/cbKWyp7VdJZ9
+         XNRphED9hAGeu6PWbT8x2HslJRXd+7AbG93pj9QIs2xNwRCcLMoXhxSSjqpvEj3V0Ikt
+         269IYFZeI9rKkvfKdjwA+FYJqh5l8KPHkvTpLcaeFMaXUxzXSvXvUyyXXKGQkTjPJU0R
+         lj4A==
+X-Gm-Message-State: APjAAAW/dpglNOoXMUtBOvij6Yt7fmKRem54i1UHQv8MbVvc1/+JT3/2
+        1F+jafLmYsa000k//jzRjpE=
+X-Google-Smtp-Source: APXvYqxnCd912qjQWgtXe92WAl/vOIzwax4AWMMD54q443N3LcvMovQ4/4Lre+VsMfb/2oFNQMFFXA==
+X-Received: by 2002:a1c:487:: with SMTP id 129mr5896823wme.143.1559129666196;
+        Wed, 29 May 2019 04:34:26 -0700 (PDT)
+Received: from macbookpro.malat.net ([2a01:e34:ee1e:860:6f23:82e6:aa2d:bbd1])
+        by smtp.gmail.com with ESMTPSA id d9sm15219388wro.26.2019.05.29.04.34.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 May 2019 04:34:25 -0700 (PDT)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 6A99211415A8; Wed, 29 May 2019 13:34:19 +0200 (CEST)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hfsplus: Replace strncpy with memcpy
+Date:   Wed, 29 May 2019 13:33:41 +0200
+Message-Id: <20190529113341.11972-1-malat@debian.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+Function strncpy was used to copy a fixed size buffer. Since
+NUL-terminating string is not required here, prefer a memcpy function.
+The generated code (ppc32) remains the same.
 
-commit 8a7c5594c02022ca5fa7fb603e11b3e1feb76ed5 upstream.
+Silence the following warning triggered using W=1:
 
-Zero the reserved capture/output array.
+  fs/hfsplus/xattr.c:410:3: warning: 'strncpy' output truncated before terminating nul copying 4 bytes from a string of the same length [-Wstringop-truncation]
 
-Zero the extendedmode (it is never used in drivers).
-
-Clear all flags in capture/outputmode except for V4L2_MODE_HIGHQUALITY,
-as that is the only valid flag.
-
-Cc: <stable@vger.kernel.org> # v4.9 v4.14
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ fs/hfsplus/xattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 4510e8a37244..699e5f8e0a71 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1959,7 +1959,22 @@ static int v4l_s_parm(const struct v4l2_ioctl_ops *ops,
- 	struct v4l2_streamparm *p = arg;
- 	int ret = check_fmt(file, p->type);
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index d5403b4004c9..bb0b27d88e50 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -407,7 +407,7 @@ static int copy_name(char *buffer, const char *xattr_name, int name_len)
+ 	int offset = 0;
  
--	return ret ? ret : ops->vidioc_s_parm(file, fh, p);
-+	if (ret)
-+		return ret;
-+
-+	/* Note: extendedmode is never used in drivers */
-+	if (V4L2_TYPE_IS_OUTPUT(p->type)) {
-+		memset(p->parm.output.reserved, 0,
-+		       sizeof(p->parm.output.reserved));
-+		p->parm.output.extendedmode = 0;
-+		p->parm.output.outputmode &= V4L2_MODE_HIGHQUALITY;
-+	} else {
-+		memset(p->parm.capture.reserved, 0,
-+		       sizeof(p->parm.capture.reserved));
-+		p->parm.capture.extendedmode = 0;
-+		p->parm.capture.capturemode &= V4L2_MODE_HIGHQUALITY;
-+	}
-+	return ops->vidioc_s_parm(file, fh, p);
- }
- 
- static int v4l_queryctrl(const struct v4l2_ioctl_ops *ops,
+ 	if (!is_known_namespace(xattr_name)) {
+-		strncpy(buffer, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN);
++		memcpy(buffer, XATTR_MAC_OSX_PREFIX, XATTR_MAC_OSX_PREFIX_LEN);
+ 		offset += XATTR_MAC_OSX_PREFIX_LEN;
+ 		len += XATTR_MAC_OSX_PREFIX_LEN;
+ 	}
 -- 
-2.17.1
+2.20.1
 
