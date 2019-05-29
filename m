@@ -2,65 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 231492D9BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 561782D9F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:06:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbfE2J51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 05:57:27 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36702 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbfE2J5Z (ORCPT
+        id S1726522AbfE2KGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 06:06:14 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:60151 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725956AbfE2KGN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 05:57:25 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a8so2838921edx.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 02:57:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=y53TCSsKTwv22KtbB3ddc4kHEiT+bShgIe40w1C8rMU=;
-        b=ON48xYcDy6j5xGXVcNk6UjJQBOGrqWy5nOJZgPy2aE/FqglBzvFJdVfPmOxxpxvF+W
-         JkZwx/rkAwRETLrgw4hvSNiY7dKy0HKW7Y/8/PLqpb7pbCvCC56oEJNb/JRITJiPp481
-         be7pcNPBI7e9j1/1Df63sOf2MBvEE8RkrxJaAG0tbo/SmNG/0dZzbjXcn3zXHYDpla59
-         nm8bTCqoOqS+cB172i6Fy33GRET5mkl0ciEJPiFZ1XVPOowD89QAtcqjAFA5mtG3KZMq
-         Pk9qLJbM1DUAwZlZBVgrrlP7z18h+a0pkhJD+grX2JxmdAj4y1awt5INXRzOmvpZxLrT
-         Iq0w==
-X-Gm-Message-State: APjAAAVsmNo1MI2DtqSeMnJfh+il3pwvUJU1vTS7dW4sDzmS5UalfTpY
-        o/TOpVta4qt2P6fCeYgnyWq/9Alti8g=
-X-Google-Smtp-Source: APXvYqwNHlzl9kDv8S9x+Dd8wJ1lRnWXnH4Y32FWMp33oafgyOQFZtLTd7J1a0aKoDkTQgOPNhq0yQ==
-X-Received: by 2002:a50:b56a:: with SMTP id z39mr134800736edd.91.1559123838596;
-        Wed, 29 May 2019 02:57:18 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:1c0c:6c86:46e0:a7ad:5246:f04d])
-        by smtp.gmail.com with ESMTPSA id l11sm2726493ejr.46.2019.05.29.02.57.17
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 02:57:17 -0700 (PDT)
-Subject: Re: [PATCH] iio: accel: add missing sensor for some 2-in-1 based
- ultrabooks
-To:     =?UTF-8?Q?Lu=c3=ads_Ferreira?= <luis@aurorafoss.org>
-Cc:     jic23@kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <c2f3c22c-d491-17e7-ede7-54f9df11e064@redhat.com>
- <20190402160433.15810-1-luis@aurorafoss.org>
- <55a52a4e-01d1-2f4c-25e3-0047537bef86@redhat.com>
- <CAPyOxm8DyFjRxeL9QFHGW084cg5vhsKrwqGFy5rp8MEEZ3AHEQ@mail.gmail.com>
- <c34e15ec4be9d783c7134491639eb176@_>
- <9d8458a1-fc47-0727-4dc8-1d1eb185886d@redhat.com>
- <CAPyOxm9Q0Chq+TVjyK1eFWXCSJb0d-pttnEFVRB0Sw4QZnMM+Q@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <96658776-bd09-4b2d-2049-f2b213d60f8a@redhat.com>
-Date:   Wed, 29 May 2019 11:57:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 29 May 2019 06:06:13 -0400
+X-Greylist: delayed 510 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 May 2019 06:06:12 EDT
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailnew.nyi.internal (Postfix) with ESMTP id A37261B2A;
+        Wed, 29 May 2019 05:57:41 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Wed, 29 May 2019 05:57:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+         h=date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:content-transfer-encoding:in-reply-to; s=fm1; bh=U
+        v/IO1lpsMhYefZCZE7IzUSu7PAH6TRG1LbnuRgviM4=; b=mn/7Y1LZeF5WEZX9C
+        kyxZtrcWF3ULGfrAWaVTCu5SVtlugVE3VqZmjWKq6xRLw16HfohMo8gWCyfoiTDU
+        8ddDr3hcah8IDP6Hys4o8IC2EdotB5aWhP8EraoIMIJh7rSxM+BKMMZLl9NkVZnK
+        u8d8d3Tq/d+bMYPb6BDrLZqiB9tpWxyCpNDdk+W8+YDBdrWfUs98RZG9TU53K7Dz
+        JzBTbjFIf3kdd64Cj3KvVjOeVIk0m+zXZwZfm3VO+qvQIqvJ5VIncx8ff7FI9cB1
+        yNg71nTx/SLC0V1NRLStXOGxLLLNq2SftFdwZcoJwvxVzm0f9yJ9xJHcvbMQXOqS
+        f9JWA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=Uv/IO1lpsMhYefZCZE7IzUSu7PAH6TRG1LbnuRgvi
+        M4=; b=XISi7eb0l5udJyx94Grx8xbNBu9uDmTspw9Ab8MZI6lurhPep2RI+RxCG
+        ZQTte0gx97SzC5lbqL/OsmzePdtwqlKhCnCKwx+J0wQH/g8awSkdq4a1owukWtLA
+        pSl7na4swI9Jn5vGwVD9JNDTU+FqQo7zHiwOYrXVPzhmvKU0bhF2leedTKJqnsWJ
+        ZtZ3NyH7sqtqulHulH6p8cFT/inzGk9BoRibxUJQCqYn7HfABDtSJ4wgJtcE93Dn
+        ubSwIKAl5IYPjRHsfy/9y3A9uQnHlGjBxilfoFBwIobYLPZxf0MeJIy/dpZ66Cd6
+        VespO6do/dcNZaF/vdhqkw+ACdFLw==
+X-ME-Sender: <xms:k1fuXLxZbQcc-ANNiTUK7UBI2sL_vR5WZupSdrUc2A253Dtx8L_3pw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddvjedgvdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtugfgjggfsehtkeertddtreejnecuhfhrohhmpefvrghk
+    rghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhih
+    drjhhpqeenucfkphepudegrdefrdejhedrudekudenucfrrghrrghmpehmrghilhhfrhho
+    mhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjphenucevlhhushhtvghruf
+    hiiigvpedt
+X-ME-Proxy: <xmx:k1fuXDqJLSpSTXkTZTciZs27YxisYeoGB6fGIVbV6inmjPgmkZdzug>
+    <xmx:k1fuXDzlPHfLKSKrwsKOVVoZfcm6NUzgWaAMmPe5QrZQEgSnVBAz3g>
+    <xmx:k1fuXCurnFtFsjwzcDFGDUTFxiwmFbRMHUebTfAZecsGB5BQqUsLjQ>
+    <xmx:lVfuXHp1xBd2evfpTHfjZBexRzt3oLWMlb8KBbQqAvRZxYLnnEZERg>
+Received: from workstation (ae075181.dynamic.ppp.asahi-net.or.jp [14.3.75.181])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 59261380084;
+        Wed, 29 May 2019 05:57:34 -0400 (EDT)
+Date:   Wed, 29 May 2019 18:57:31 +0900
+From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Igor Konopko <igor.j.konopko@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        "Mohit P . Tahiliani" <tahiliani@nitk.edu.in>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Matias Bjorling <mb@lightnvm.io>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Joe Perches <joe@perches.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-block@vger.kernel.org, netdev@vger.kernel.org,
+        linux-afs@lists.infradead.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] ALSA: fireface: Use ULL suffixes for 64-bit constants
+Message-ID: <20190529095730.GA7089@workstation>
+Mail-Followup-To: Geert Uytterhoeven <geert@linux-m68k.org>,
+        Igor Konopko <igor.j.konopko@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        "Mohit P . Tahiliani" <tahiliani@nitk.edu.in>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Matias Bjorling <mb@lightnvm.io>, Jiri Pirko <jiri@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-block@vger.kernel.org, netdev@vger.kernel.org,
+        linux-afs@lists.infradead.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+References: <20190528142424.19626-1-geert@linux-m68k.org>
+ <20190528142424.19626-5-geert@linux-m68k.org>
 MIME-Version: 1.0
-In-Reply-To: <CAPyOxm9Q0Chq+TVjyK1eFWXCSJb0d-pttnEFVRB0Sw4QZnMM+Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190528142424.19626-5-geert@linux-m68k.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -68,134 +108,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 5/23/19 2:03 PM, Luís Ferreira wrote:
-> Hi Hams,
+On Tue, May 28, 2019 at 04:24:23PM +0200, Geert Uytterhoeven wrote:
+> With gcc 4.1:
 > 
-> https://github.com/systemd/systemd/pull/12322
-> https://github.com/hadess/iio-sensor-proxy/pull/262
+>     sound/firewire/fireface/ff-protocol-latter.c: In function ‘latter_switch_fetching_mode’:
+>     sound/firewire/fireface/ff-protocol-latter.c:97: warning: integer constant is too large for ‘long’ type
+>     sound/firewire/fireface/ff-protocol-latter.c: In function ‘latter_begin_session’:
+>     sound/firewire/fireface/ff-protocol-latter.c:170: warning: integer constant is too large for ‘long’ type
+>     sound/firewire/fireface/ff-protocol-latter.c:197: warning: integer constant is too large for ‘long’ type
+>     sound/firewire/fireface/ff-protocol-latter.c:205: warning: integer constant is too large for ‘long’ type
+>     sound/firewire/fireface/ff-protocol-latter.c: In function ‘latter_finish_session’:
+>     sound/firewire/fireface/ff-protocol-latter.c:214: warning: integer constant is too large for ‘long’ type
 > 
-> As all the pull requests to systemd and iio-sensor-proxy has already
-> been merged, I just need your review on this:
-> https://github.com/systemd/systemd/pull/12449
+> Fix this by adding the missing "ULL" suffixes.
+> Add the same suffix to the last constant, to maintain consistency.
 > 
-> Then, I guess this patch is ready to go. Please let me know if theres any issue.
+> Fixes: fd1cc9de64c2ca6c ("ALSA: fireface: add support for Fireface UCX")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>  sound/firewire/fireface/ff-protocol-latter.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
-Thank you for your work on this. I've given a favorable review to the
+Thanks for your care.
 
-last systemd  pull-req.
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-Regards,
+> diff --git a/sound/firewire/fireface/ff-protocol-latter.c b/sound/firewire/fireface/ff-protocol-latter.c
+> index c8236ff89b7fb9de..b30d02d359b1d21b 100644
+> --- a/sound/firewire/fireface/ff-protocol-latter.c
+> +++ b/sound/firewire/fireface/ff-protocol-latter.c
+> @@ -9,11 +9,11 @@
+>  
+>  #include "ff.h"
+>  
+> -#define LATTER_STF		0xffff00000004
+> -#define LATTER_ISOC_CHANNELS	0xffff00000008
+> -#define LATTER_ISOC_START	0xffff0000000c
+> -#define LATTER_FETCH_MODE	0xffff00000010
+> -#define LATTER_SYNC_STATUS	0x0000801c0000
+> +#define LATTER_STF		0xffff00000004ULL
+> +#define LATTER_ISOC_CHANNELS	0xffff00000008ULL
+> +#define LATTER_ISOC_START	0xffff0000000cULL
+> +#define LATTER_FETCH_MODE	0xffff00000010ULL
+> +#define LATTER_SYNC_STATUS	0x0000801c0000ULL
+>  
+>  static int parse_clock_bits(u32 data, unsigned int *rate,
+>  			    enum snd_ff_clock_src *src)
+> -- 
+> 2.17.1
+> 
 
-Hans
 
+Regards
 
-> On Wed, 17 Apr 2019 at 16:08, Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Hi,
->>
->> On 15-04-19 17:40, luis@aurorafoss.org wrote:
->>> April 6, 2019 10:36 AM, "Hans de Goede" <hdegoede@redhat.com> wrote:
->>>
->>> Hi,
->>>
->>>> Yes that seems the best way forward with this.
->>>>
->>>> Note I think "base" is better then "keyboard" for the sensor which
->>>> is in the base/keyboard. But neither is perfect, so go which whatever
->>>> you prefer.
->>>
->>> Reference to:
->>> - https://github.com/hadess/iio-sensor-proxy/pull/262 > - https://github.com/systemd/systemd/pull/12322
->>
->> Thank you for your work on this, I see that Bastien has
->> already reviewed the iio-sensor-proxy changes.
->>
->> I've just added one small remark to the systemd changes,
->> except for that small remark the systemd changes look good to me.
->>
->> Regards,
->>
->> Hams
->>
->>
->>
->>
->>>> On 06-04-19 01:01, Luís Ferreira wrote:
->>>>
->>>>> Hi,
->>>>> Basically we need to come up with a convention to (optionally) indicate
->>>>
->>>> the sensors location with a udev attribute set by:
->>>> /lib/udev/hwdb.d/60-sensor.hwdb
->>>>> So should we start adding `ACCEL_LOCATION=display` and
->>>>> `ACCEL_LOCATION=keyboard` attributes to that file and patch
->>>>> iio-sensor-proxy to ignore the keyboard ones as a first step ?
->>>>
->>>> Yes that seems the best way forward with this.
->>>>
->>>> Note I think "base" is better then "keyboard" for the sensor which
->>>> is in the base/keyboard. But neither is perfect, so go which whatever
->>>> you prefer.
->>>>
->>>> Thanks & Regards,
->>>>
->>>> Hans
->>>>
->>>>> On Wed, 3 Apr 2019 at 10:10, Hans de Goede <hdegoede@redhat.com> wrote:
->>>>
->>>> Hi,
->>>>
->>>> On 02-04-19 18:04, Luís Ferreira wrote:
->>>>> Some ultrabooks, like Teclast F6 Pro, use KIOX010A sensor on display
->>>>> and KIOX020A sensor on keyboard base, to detect tablet mode or screen
->>>>> orientation.
->>>>
->>>> I deliberately left out the KIOX020A id for now, because currently
->>>> userspace cannot really deal with having 2 sensors.
->>>>
->>>> See:
->>>> https://github.com/systemd/systemd/issues/6557
->>>> https://github.com/hadess/iio-sensor-proxy/issues/166
->>>>
->>>> Basically we need to come up with a convention to (optionally) indicate
->>>> the sensors location with a udev attribute set by:
->>>> /lib/udev/hwdb.d/60-sensor.hwdb
->>>>
->>>> And then patch iio-sensor-proxy to consume that attribute and ignore
->>>> the one which has e.g. ACCEL_LOCATION=keyboard in its udev properties
->>>>
->>>> Ignoring would be a first step, maybe later it can do something useful
->>>> with it, see e.g. : https://github.com/alesguzik/linux_detect_tablet_mode
->>>>
->>>> IMHO we really should minimally get code in place for iio-sensor-proxy
->>>> to ignore the keyboard accelerometer before merging this patch.
->>>>
->>>> I realize that having the code in place will not magically get it on
->>>> all users machines, but I believe this is the minimum which needs to
->>>> happen before we push this out and potentially breaks people screen
->>>> rotation.
->>>>
->>>> I've had working on this on my TODO list for a long long time now,
->>>> but -ENOTIME. If you have some time to work on this then that would
->>>> be great.
->>>>
->>>> Regards,
->>>>
->>>> Hans
->>>>> Signed-off-by: Luís Ferreira <luis@aurorafoss.org>
->>>>> ---
->>>>> drivers/iio/accel/kxcjk-1013.c | 1 +
->>>>> 1 file changed, 1 insertion(+)
->>>>>
->>>>> diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
->>>>> index 7096e577b23f..9a5e445facc1 100644
->>>>> --- a/drivers/iio/accel/kxcjk-1013.c
->>>>> +++ b/drivers/iio/accel/kxcjk-1013.c
->>>>> @@ -1492,6 +1492,7 @@ static const struct acpi_device_id kx_acpi_match[] = {
->>>>> {"KIOX0009", KXTJ21009},
->>>>> {"KIOX000A", KXCJ91008},
->>>>> {"KIOX010A", KXCJ91008}, /* KXCJ91008 inside the display of a 2-in-1 */
->>>>> + {"KIOX020A", KXCJ91008},
->>>>> {"KXTJ1009", KXTJ21009},
->>>>> {"KXJ2109", KXTJ21009},
->>>>> {"SMO8500", KXCJ91008},
+Takashi Sakamoto
