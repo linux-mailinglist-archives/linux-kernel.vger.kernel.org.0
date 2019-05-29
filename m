@@ -2,105 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 849A72D8D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F4952D8E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:20:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbfE2JR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 05:17:56 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41186 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfE2JRz (ORCPT
+        id S1726426AbfE2JTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 05:19:53 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:48898 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbfE2JTt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 05:17:55 -0400
-Received: by mail-ed1-f68.google.com with SMTP id m4so2629849edd.8
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 02:17:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=R3M9/Nb+iAWv/ivQtmJwp21umz3a07n0D41zlbH+5Vg=;
-        b=s3T2GSdphAWkYobC3Max9vR57e6XQgriTnSmDtIrqf+d4b93noxJvMPW/11iZzsSZo
-         w3i+CYfAR+D3lMkz6uD6M5+6bKeuoMhjtEO7DvbsRSWD3T1BW5pvyTpFhNMUw+CARQgg
-         E5jJFFeBkXSmdOvf6T2PrBtJ8WecCrbRXRppkovHfY48D2dER8t3qF7PdboI7U84OEuM
-         HPb8z96BBEiMDXNx8jOe1ng5u1Mei1OdKXiiQhMwZJTxM4qK32di5Wp2uiLorn4bQYwh
-         lsENU70R0cY53xhNxmNXTkBCNGt2PT3ppk4spwUDxrSu4Rr1YBBDpSsqaBs+DgpvaYjy
-         QcRw==
-X-Gm-Message-State: APjAAAXzLIqvY9mJMEsJjr/Cjoh6GXiCIgX0/LvcwNepDvyaOOMP2piu
-        69i7B6Fe3ME0lzPh88pHjiRtYSpHxnU=
-X-Google-Smtp-Source: APXvYqzDN/m677MUndnaGXnszTXxjNj7JaHW/w/uv+QBZba0k9DL4JeHhTsUPJBOX1W+yTOiYDL77Q==
-X-Received: by 2002:a50:b487:: with SMTP id w7mr136594551edd.45.1559121473400;
-        Wed, 29 May 2019 02:17:53 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:1c0c:6c86:46e0:a7ad:5246:f04d])
-        by smtp.gmail.com with ESMTPSA id x49sm5023051edm.25.2019.05.29.02.17.52
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 02:17:52 -0700 (PDT)
-Subject: Re: hid-related 5.2-rc1 boot hang
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>
-Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <2c1684f6-9def-93dc-54ab-888142fd5e71@intel.com>
- <nycvar.YFH.7.76.1905281913140.1962@cbobk.fhfr.pm>
- <CAO-hwJJzNAuFbdMVFZ4+h7J=bh6QHr_MioyK2yTV=M5R6CTm=A@mail.gmail.com>
- <8a17e6e2-b468-28fd-5b40-0c258ca7efa9@intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <4689a737-6c40-b4ae-cc38-5df60318adce@redhat.com>
-Date:   Wed, 29 May 2019 11:17:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 29 May 2019 05:19:49 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4T9JZpG094297;
+        Wed, 29 May 2019 04:19:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1559121575;
+        bh=pD2afg8ofvK0cb0RAbvjzW2bemZQRBl5lxbbNYc8M6A=;
+        h=From:To:CC:Subject:Date;
+        b=dDDtLYSmu2+5NXhWw1v5uwk8764xa6V5fUSx23k+6TLcnEm9X5MwlguJhGd5If2Uy
+         3DdNsNLDtSwtwQZxXifvRQe37A0IrGY8KzVe8qcO9nWBz4JYUZN+L4+5fa25V+s1ii
+         wxEmkiHE0hHQ7EyH5oL9iw6gwfhwqYNpJTkaMK0E=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4T9JZ2G049785
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 29 May 2019 04:19:35 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 29
+ May 2019 04:19:35 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 29 May 2019 04:19:35 -0500
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4T9JVxN079377;
+        Wed, 29 May 2019 04:19:32 -0500
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 0/6] AM654: Add PCIe and SERDES DT nodes 
+Date:   Wed, 29 May 2019 14:48:06 +0530
+Message-ID: <20190529091812.20764-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <8a17e6e2-b468-28fd-5b40-0c258ca7efa9@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Patch series adds PCIe and SERDES DT nodes to k3-am65.dtsi and keeps
+them disabled in k3-am654-base-board.dts since there are no PCIe
+slots in the base board.
 
-On 5/28/19 8:11 PM, Dave Hansen wrote:
-> On 5/28/19 10:45 AM, Benjamin Tissoires wrote:
->> On Tue, May 28, 2019 at 7:15 PM Jiri Kosina <jikos@kernel.org> wrote:
->>> Just to confirm -- I guess reverting 4ceabaf79 and a025a18fe would work
->>> this around, right?
-> 
-> Yes, reverting that pair on top of 5.2-rc1 works around the issue.
+PCIe slots are actually present in add on boards. Once overlay support
+is merged, I'll add overlay DTS files to enable PCIe.
 
-Thank you for catching this and for testing the reverts. We've several bug
-reports which I suspect are related to this.
+All the driver patches and binding documentation patches for PCIe and
+SERDES are already merged.
 
-/sbin/modprobe really should not hang when called by the kernel, as the
-kernel does this in several other places too.
+Kishon Vijay Abraham I (6):
+  arm64: dts: k3-am6: Add "socionext,synquacer-pre-its" property to
+    gic_its
+  arm64: dts: k3-am6: Add mux-controller DT node required for muxing
+    SERDES
+  arm64: dts: k3-am6: Add SERDES DT node
+  arm64: dts: k3-am6: Add PCIe Root Complex DT node
+  arm64: dts: k3-am6: Add PCIe Endpoint DT node
+  arm64: dts: ti: am654-base-board: Disable SERDES and PCIe
 
-At the same time this clearly is a regression, so I'm afraid we will need
-to revert the 2 commits.
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi      | 128 ++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am65.dtsi           |   1 +
+ .../arm64/boot/dts/ti/k3-am654-base-board.dts |  24 ++++
+ 3 files changed, 153 insertions(+)
 
-Benjamin, Jiri, I really like the improvements these 2 commits bring
-combined with Benjamin's changes removing the need for all the device specific
-drivers to have  HID_QUIRK_HAVE_SPECIAL_DRIVER quirk.
-
-Maybe instead of reverting them, we wrap them in a Kconfig option, which
-defaults to N, with a warning that this requires an userspace where
-/sbin/modprobe does not hang ?  It would be useful for the Kconfig
-help text if we knew why it hangs. I guess this may have something to do
-with it running from the initrd? Maybe this is not the real modprobe but
-busybox's modprobe?
-
-Dave, can you try building your initrd without the hid-logitech-dj module
-included in the initrd?
-
-
-Also can you check if your modprobe is provided by module-init-tools
-or by kmod ?
-
-I believe we really need more information before we can properly decide
-how to deal with this. Luckily we still have same time.
-
-Regards,
-
-Hans
+-- 
+2.17.1
 
