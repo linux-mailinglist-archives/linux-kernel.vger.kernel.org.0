@@ -2,76 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74C802D765
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 429A42D75F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:09:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbfE2IKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 04:10:43 -0400
-Received: from muru.com ([72.249.23.125]:51648 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726005AbfE2IKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:10:42 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 851638027;
-        Wed, 29 May 2019 08:11:01 +0000 (UTC)
-Date:   Wed, 29 May 2019 01:10:38 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Keerthy <j-keerthy@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [PATCHv6 0/4] omapdrm: DSI command mode panel support
-Message-ID: <20190529081038.GP5447@atomide.com>
-References: <20190523200756.25314-1-sebastian.reichel@collabora.com>
- <60c45d23-de2f-d94a-c3d7-146a2bee538f@ti.com>
- <20190527112122.GJ5447@atomide.com>
- <e507c415-38de-86fe-9265-4b0aed0d7224@ti.com>
- <20190528093952.GM5447@atomide.com>
- <14c6c702-844b-756d-2d97-44e8f5a169df@ti.com>
- <20190528101847.GN5447@atomide.com>
- <ac487765-01a3-2c82-d86e-db00451563a9@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac487765-01a3-2c82-d86e-db00451563a9@ti.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S1726857AbfE2IJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:09:54 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33945 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbfE2IJy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 04:09:54 -0400
+Received: by mail-pl1-f193.google.com with SMTP id w7so738925plz.1;
+        Wed, 29 May 2019 01:09:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=LNT+zg4PSbt9K3xm52PuCoDPdKgmlpZ10u0AIkhHmCQ=;
+        b=Ns7/gQCueH8qkz32nkdpNHhe+fi78Ls6j23hl1x4ARc8ypJClLRrkh6FEFr/403n8w
+         F3/ElRwB6sJN17ug4AHJLr63hKJnsQVTCjNNEqPktHmpikJ5zo9bKHrwHgs0VF0q6XKl
+         Jdc72B5Ul20qtENh6ByszFC5qtSKfkYbY9RvE8XjDDx41tL6MRYPE4rFYvz9EuQS1qIg
+         2UM3UcW/nqMOTmMpTBk/MNqOf0Tauqikthr+u8KWD4S+HjvDHg54D9xQ5spRTHMzYjvY
+         WHJKVtOAuaT9ah/G3YkdljIufmqxFYw65eSBdyE69krqTnRdK0OKV1CM3fxMrvQXZhis
+         c5+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LNT+zg4PSbt9K3xm52PuCoDPdKgmlpZ10u0AIkhHmCQ=;
+        b=Ae2Silv3dc1AFskC3yfl/GlIWjUg8Mc7HKam5EatFdtofU08C157oZcPlcjzeAO9tF
+         Kiegkp3QoJAGdKhX+QEUZwSQZ2jR5Eom7HhSVLnZlqiR9N3+v9gAVcAwUi95YJ6LgpzF
+         s2SeaiHzRTxwlON0fB6X3u4tQUUNGi4oTosQt528KrxxfOW25oUcNeoky7+pu97lB9nq
+         nlM4Iaq4cShWNYLDR4pKv+ZUiVjbhWq2PjjqdRFSz+hWEMF2wnyWNH1ZE1ONAeUR4IYV
+         LoX4NTC1qOX2yEZCsaK8IEbzuEU9YF+D4VpBLpLf7S5hvOSQNJi3Bnws1ohmgnHRu+MH
+         NySA==
+X-Gm-Message-State: APjAAAVgn27PxJo8fDvvQc8N7J/C1QQbO6ipJ1WWtewd7iSZPLEGToXx
+        1uOWgWLKrfZ1gXxATHLVJNo=
+X-Google-Smtp-Source: APXvYqwus4Qs9oLutePxkzGgcVLVX25FwdXFYB0UOW45rzdhECkOdH69gzUmV/QlaYUnOTa/ujS8kQ==
+X-Received: by 2002:a17:902:b215:: with SMTP id t21mr21964991plr.152.1559117393602;
+        Wed, 29 May 2019 01:09:53 -0700 (PDT)
+Received: from xy-data.openstacklocal (ecs-159-138-22-150.compute.hwclouds-dns.com. [159.138.22.150])
+        by smtp.gmail.com with ESMTPSA id p7sm16645973pgb.92.2019.05.29.01.09.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 29 May 2019 01:09:53 -0700 (PDT)
+From:   Young Xiao <92siuyang@gmail.com>
+To:     edumazet@google.com, davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Young Xiao <92siuyang@gmail.com>
+Subject: [PATCH] ipv4: tcp_input: fix stack out of bounds when parsing TCP options.
+Date:   Wed, 29 May 2019 16:10:59 +0800
+Message-Id: <1559117459-27353-1-git-send-email-92siuyang@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Tomi Valkeinen <tomi.valkeinen@ti.com> [190529 07:06]:
-> On 28/05/2019 13:18, Tony Lindgren wrote:
-> 
-> > > My board is x15 rev A3, attached to AM5 EVM. I've also attached my kernel
-> > > config.
-> > 
-> > Strange that this is not affecting other x15? I think timer12 would
-> > be blocked on HS devices though?
-> 
-> Seems that the kernel config affects. omap2plus_defconfig boots ok.
+The TCP option parsing routines in tcp_parse_options function could
+read one byte out of the buffer of the TCP options.
 
-OK, this line in your oops:
+1         while (length > 0) {
+2                 int opcode = *ptr++;
+3                 int opsize;
+4
+5                 switch (opcode) {
+6                 case TCPOPT_EOL:
+7                         return;
+8                 case TCPOPT_NOP:        /* Ref: RFC 793 section 3.1 */
+9                         length--;
+10                        continue;
+11                default:
+12                        opsize = *ptr++; //out of bound access
 
-Unable to handle kernel paging request at virtual address 5a5a5a5a
+If length = 1, then there is an access in line2.
+And another access is occurred in line 12.
+This would lead to out-of-bound access.
 
-Probably means we hit some slab poison with DEBUG_SLAB set.
-Looks like your config boots fine with DEBUG_SLAB disabled
-for me.
+Therefore, in the patch we check that the available data length is
+larger enough to pase both TCP option code and size.
 
-As this only happens for timer12, I wonder if we're again
-hitting some uncompress issue with corrupted dtb. Changing
-u-boot ftdaddr higher up might possibly make it go away.
-Or else there's a bug elsewhere :)
+Signed-off-by: Young Xiao <92siuyang@gmail.com>
+---
+ net/ipv4/tcp_input.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Regards,
-
-Tony
-
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 20f6fac..9775825 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -3791,6 +3791,8 @@ void tcp_parse_options(const struct net *net,
+ 			length--;
+ 			continue;
+ 		default:
++			if (length < 2)
++				return;
+ 			opsize = *ptr++;
+ 			if (opsize < 2) /* "silly options" */
+ 				return;
+-- 
+2.7.4
 
