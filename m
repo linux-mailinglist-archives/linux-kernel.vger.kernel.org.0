@@ -2,99 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A1012E4E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C112E4E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 21:01:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbfE2S5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 14:57:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42626 "EHLO mail.kernel.org"
+        id S1726508AbfE2TBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 15:01:05 -0400
+Received: from mga14.intel.com ([192.55.52.115]:5371 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbfE2S5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 14:57:01 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05F98240BF;
-        Wed, 29 May 2019 18:57:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559156221;
-        bh=S92FRQ7dyKYko217YiiM11iAM5GvH8wftShpAUwcqsk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yrY04BA/fXWeYpgp3ZTfjEb/TMsbPETo+eYApOvOZpQUZ5u9hwZ0jl9+CjquaDjWn
-         F6TZxtUW3whkczMuSa5Gp62U988vvNIQEY6qmtmVGTiVtyiFZ+Fu3LqbN1eJetYVza
-         DtQCHGq7hVfaimNRdlSBMXtvf4QHXUKNJ5yLq6OA=
-Date:   Wed, 29 May 2019 14:57:00 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Subject: Re: [PATCH AUTOSEL 5.0 070/317] driver core: platform: Fix the usage
- of platform device name(pdev->name)
-Message-ID: <20190529185700.GJ12898@sasha-vm>
-References: <20190522192338.23715-1-sashal@kernel.org>
- <20190522192338.23715-70-sashal@kernel.org>
- <20190522200452.GA3598@kroah.com>
+        id S1726015AbfE2TBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 15:01:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 12:00:59 -0700
+X-ExtLoop1: 1
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 29 May 2019 12:00:59 -0700
+Received: from msakib-mobl2.amr.corp.intel.com (unknown [10.254.189.121])
+        by linux.intel.com (Postfix) with ESMTP id F18B05802C9;
+        Wed, 29 May 2019 12:00:53 -0700 (PDT)
+Subject: Re: ERROR: "hdac_hdmi_jack_port_init"
+ [sound/soc/intel/boards/snd-soc-sof_rt5682.ko] undefined!
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        kbuild test robot <lkp@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Sathya Prakash M R <sathya.prakash.m.r@intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+References: <201905281758.K64LbM6G%lkp@intel.com>
+ <30d084d6-207a-053d-6ab4-0096a1d8d216@infradead.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <03c70038-4ec7-c218-fb85-feda40c3dcd3@linux.intel.com>
+Date:   Wed, 29 May 2019 14:00:50 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190522200452.GA3598@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <30d084d6-207a-053d-6ab4-0096a1d8d216@infradead.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 22, 2019 at 10:04:52PM +0200, Greg Kroah-Hartman wrote:
->On Wed, May 22, 2019 at 03:19:31PM -0400, Sasha Levin wrote:
->> From: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+On 5/29/19 12:54 PM, Randy Dunlap wrote:
+> On 5/28/19 2:54 AM, kbuild test robot wrote:
+>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>> head:   cd6c84d8f0cdc911df435bb075ba22ce3c605b07
+>> commit: f70abd75b7c6c04d3219d0b3a0f3f15411b042fb ASoC: Intel: add sof-rt5682 machine driver
+>> date:   4 weeks ago
+>> config: x86_64-randconfig-b005272310-05281357 (attached as .config)
+>> compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
+>> reproduce:
+>>          git checkout f70abd75b7c6c04d3219d0b3a0f3f15411b042fb
+>>          # save the attached .config to linux build tree
+>>          make ARCH=x86_64
 >>
->> [ Upstream commit edb16da34b084c66763f29bee42b4e6bb33c3d66 ]
+>> If you fix the issue, kindly add following tag
+>> Reported-by: kbuild test robot <lkp@intel.com>
 >>
->> Platform core is using pdev->name as the platform device name to do
->> the binding of the devices with the drivers. But, when the platform
->> driver overrides the platform device name with dev_set_name(),
->> the pdev->name is pointing to a location which is freed and becomes
->> an invalid parameter to do the binding match.
+>> All errors (new ones prefixed by >>):
 >>
->> use-after-free instance:
->>
->> [   33.325013] BUG: KASAN: use-after-free in strcmp+0x8c/0xb0
->> [   33.330646] Read of size 1 at addr ffffffc10beae600 by task modprobe
->> [   33.339068] CPU: 5 PID: 518 Comm: modprobe Tainted:
->> 			G S      W  O      4.19.30+ #3
->> [   33.346835] Hardware name: MTP (DT)
->> [   33.350419] Call trace:
->> [   33.352941]  dump_backtrace+0x0/0x3b8
->> [   33.356713]  show_stack+0x24/0x30
->> [   33.360119]  dump_stack+0x160/0x1d8
->> [   33.363709]  print_address_description+0x84/0x2e0
->> [   33.368549]  kasan_report+0x26c/0x2d0
->> [   33.372322]  __asan_report_load1_noabort+0x2c/0x38
->> [   33.377248]  strcmp+0x8c/0xb0
->> [   33.380306]  platform_match+0x70/0x1f8
->> [   33.384168]  __driver_attach+0x78/0x3a0
->> [   33.388111]  bus_for_each_dev+0x13c/0x1b8
->> [   33.392237]  driver_attach+0x4c/0x58
->> [   33.395910]  bus_add_driver+0x350/0x560
->> [   33.399854]  driver_register+0x23c/0x328
->> [   33.403886]  __platform_driver_register+0xd0/0xe0
->>
->> So, use dev_name(&pdev->dev), which fetches the platform device name from
->> the kobject(dev->kobj->name) of the device instead of the pdev->name.
->>
->> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
->> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->> ---
->>  drivers/base/platform.c | 8 ++++----
->>  1 file changed, 4 insertions(+), 4 deletions(-)
->
->This patch was broken and got reverted in commit 391c0325cc5f ("Revert
->"driver core: platform: Fix the usage of platform device
->name(pdev->name)"") so please do not include it here, or anywhere.
+>>>> ERROR: "hdac_hdmi_jack_port_init" [sound/soc/intel/boards/snd-soc-sof_rt5682.ko] undefined!
+>>>> ERROR: "hdac_hdmi_jack_init" [sound/soc/intel/boards/snd-soc-sof_rt5682.ko] undefined!
+> 
+> Confirmed on 5.2-rc2.
 
-Dropped everywhere, thanks!
+fixed yesterday by patch "ASoC: Intel: sof-rt5682: fix undefined 
+references with Baytrail-only support", already merged by Mark.
 
---
-Thanks,
-Sasha
+> 
+> Needs CONFIG_SND_SOC_HDAC_HDMI to be set for those functions to be built.
+> 
+> CONFIG_SND_SOC_SOF_BAYTRAIL=m
+> CONFIG_SND_SOC_INTEL_SOF_RT5682_MACH=m
+> 
+> CONFIG_SND_SOC_SOF_HDA_COMMON is not set; the "select ... if" in the middle
+> [<<<<<<<<<<] of this Kconfig entry is preventing SND_SOC_HDAC_HDMI from being set:
+> 
+> if SND_SOC_SOF_HDA_COMMON || SND_SOC_SOF_BAYTRAIL
+> config SND_SOC_INTEL_SOF_RT5682_MACH
+> 	tristate "SOF with rt5682 codec in I2S Mode"
+> 	depends on I2C && ACPI
+> 	depends on (SND_SOC_SOF_HDA_COMMON && MFD_INTEL_LPSS) ||\
+> 		   (SND_SOC_SOF_BAYTRAIL && X86_INTEL_LPSS)
+> 	select SND_SOC_RT5682
+> 	select SND_SOC_DMIC
+> 	select SND_SOC_HDAC_HDMI if SND_SOC_SOF_HDA_COMMON <<<<<<<<<<
+> 	help
+> 	   This adds support for ASoC machine driver for SOF platforms
+> 	   with rt5682 codec.
+> 	   Say Y if you have such a device.
+> 	   If unsure select "N".
+> endif ## SND_SOC_SOF_HDA_COMMON || SND_SOC_SOF_BAYTRAIL
+> 
+> 
+> 
+> 
+
