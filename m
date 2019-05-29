@@ -2,130 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A89D2DEB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2A5B2DEBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:44:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbfE2NmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 09:42:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57210 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726612AbfE2NmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 09:42:17 -0400
-Received: from oasis.local.home (unknown [12.156.218.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15313229F7;
-        Wed, 29 May 2019 13:42:16 +0000 (UTC)
-Date:   Wed, 29 May 2019 09:42:13 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-kernel@vger.kernel.org, williams@redhat.com,
-        daniel@bristot.me, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Subject: Re: [RFC 2/3] preempt_tracer: Disable IRQ while starting/stopping
- due to a preempt_counter change
-Message-ID: <20190529094213.3e344965@oasis.local.home>
-In-Reply-To: <20190529131957.GV2623@hirez.programming.kicks-ass.net>
-References: <cover.1559051152.git.bristot@redhat.com>
-        <f2ca7336162b6dc45f413cfe4e0056e6aa32e7ed.1559051152.git.bristot@redhat.com>
-        <20190529083357.GF2623@hirez.programming.kicks-ass.net>
-        <b47631c3-d65a-4506-098a-355c8cf50601@redhat.com>
-        <20190529102038.GO2623@hirez.programming.kicks-ass.net>
-        <20190529083930.5541130e@oasis.local.home>
-        <20190529131957.GV2623@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727348AbfE2Noc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 09:44:32 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42222 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbfE2Noc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 09:44:32 -0400
+Received: by mail-lf1-f68.google.com with SMTP id y13so2103082lfh.9;
+        Wed, 29 May 2019 06:44:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FyDp/Sea9Ytj79ykUYdPjN3F1ceX0kmZop3ND/MuQ8k=;
+        b=Ezn75/K23ZKYppz1TPsH5dr9ZLefX4v+6+1FttqhEPObxCSFV/F73dB30hx/XJYdTq
+         M6E1/yxSQkqfAGnogEbn1cZw/lqkL5RYHWu6qLwr0MKPbISxxS7ezfvI9UFkbGSrbxBM
+         qWENxt+ue9YPhi1whEWCR9svk/2pln81brry5p1UAC06E/3txFZKBCuXkKvrKwlFHjYj
+         2aUL1G5HwkIlGWx7yIB9DAMUiF7mySNxZ8udH8XPORxLt6ZGR3PFGbeudpbdwCKJkcmU
+         k98jtRk1D2YpJf7shdd3rQla0JxnW/jeymkjkPUmZWZ50F5oU3LNubq+azzKikYPIskB
+         k5xA==
+X-Gm-Message-State: APjAAAUNKPsbygRx5aep6544KDqEvRtdGKjLLFpn5uh8juV4QB7cPC/n
+        GZvRi9LOZzubNcbCKNqIhfM=
+X-Google-Smtp-Source: APXvYqyRdWhNSYk7M2iTK+aQ8Fl6loE39UE8WgE0C4Ft4MsJbrZrFuqdmPun7lzQzXH0UPfHycNM2A==
+X-Received: by 2002:ac2:494f:: with SMTP id o15mr4449106lfi.22.1559137470075;
+        Wed, 29 May 2019 06:44:30 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id p5sm3434957lfc.80.2019.05.29.06.44.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 06:44:29 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1hVysd-00084k-KS; Wed, 29 May 2019 15:44:35 +0200
+Date:   Wed, 29 May 2019 15:44:35 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Stefan Roese <sr@denx.de>
+Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Yegor Yefremov <yegorslists@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: Re: [PATCH 1/2 v3] serial: mctrl_gpio: Check if GPIO property
+ exisits before requesting it
+Message-ID: <20190529134435.GR568@localhost>
+References: <20190527111805.876-1-sr@denx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190527111805.876-1-sr@denx.de>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 May 2019 15:19:57 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Mon, May 27, 2019 at 01:18:04PM +0200, Stefan Roese wrote:
+> This patch adds a check for the GPIOs property existence, before the
+> GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
+> support is added (2nd patch in this patch series) on x86 platforms using
+> ACPI.
 
-> On Wed, May 29, 2019 at 08:39:30AM -0400, Steven Rostedt wrote:
-> > I believe I see what Daniel is talking about, but I hate the proposed
-> > solution ;-)
-> > 
-> > First, if you care about real times that the CPU can't preempt
-> > (preempt_count != 0 or interrupts disabled), then you want the
-> > preempt_irqsoff tracer. The preempt_tracer is more academic where it
-> > just shows you when we disable preemption via the counter. But even
-> > with the preempt_irqsoff tracer you may not get the full length of time
-> > due to the above explained race.  
+> Signed-off-by: Stefan Roese <sr@denx.de>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Yegor Yefremov <yegorslists@googlemail.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>
+> ---
+> v3:
+> - No change
 > 
-> IOW, that tracer gives a completely 'make believe' number? What's the
-> point? Just delete the pure preempt tracer.
+> v2:
+> - Include the problem description and analysis from Mika into the commit
+>   text, as suggested by Greg.
+> 
+>  drivers/tty/serial/serial_mctrl_gpio.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
+> index 39ed56214cd3..cac50b20a119 100644
+> --- a/drivers/tty/serial/serial_mctrl_gpio.c
+> +++ b/drivers/tty/serial/serial_mctrl_gpio.c
+> @@ -116,6 +116,13 @@ struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev, unsigned int idx)
+>  
+>  	for (i = 0; i < UART_GPIO_MAX; i++) {
+>  		enum gpiod_flags flags;
+> +		char *gpio_str;
+> +
+> +		/* Check if GPIO property exists and continue if not */
+> +		gpio_str = kasprintf(GFP_KERNEL, "%s-gpios",
+> +				     mctrl_gpios_desc[i].name);
 
-The preempt_tracer is there as part of the preempt_irqsoff tracer
-implementation. By removing it, the only code we would remove is
-displaying preemptoff as a tracer. I stated this when it was created,
-that it was more of an academic exercise if you use it, but that code
-was required to get preempt_irqsoff working.
+Where's the corresponding kfree?
 
-> 
-> And the preempt_irqoff tracer had better also consume the IRQ events,
-> and if it does that it can DTRT without extra bits on, even with that
-> race.
-> 
-> Consider:
-> 
-> 	preempt_disable()
-> 	  preempt_count += 1;
-> 	  <IRQ>
-> 	    trace_irq_enter();
-> 
-> 	    trace_irq_exit();
-> 	  </IRQ>
-> 	  trace_preempt_disable();
-> 
-> 	/* does stuff */
-> 
-> 	preempt_enable()
-> 	  preempt_count -= 1;
-> 	  trace_preempt_enable();
-> 
-> You're saying preempt_irqoff() fails to connect the two because of the
-> hole between trace_irq_exit() and trace_preempt_disable() ?
-> 
-> But trace_irq_exit() can see the raised preempt_count and set state
-> for trace_preempt_disable() to connect.
+> +		if (!device_property_present(dev, gpio_str))
+> +			continue;
+>  
+>  		if (mctrl_gpios_desc[i].dir_out)
+>  			flags = GPIOD_OUT_LOW;
 
-That's basically what I was suggesting as the solution to this ;-)
-
-> 
-> > What I would recommend is adding a flag to the task_struct that gets
-> > set before the __preempt_count_add() and cleared by the tracing
-> > function. If an interrupt goes off during this time, it will start
-> > the total time to record, and not end it on the trace_hardirqs_on()
-> > part. Now since we set this flag before disabling preemption, what
-> > if we get preempted before calling __preempt_count_add()?. Simple,
-> > have a hook in the scheduler (just connect to the sched_switch
-> > tracepoint) that checks that flag, and if it is set, it ends the
-> > preempt disable recording time. Also on scheduling that task back
-> > in, if that flag is set, start the preempt disable timer.  
-> 
-> I don't think that works, you also have to consider softirq. And yes
-> you can make it more complicated, but I still don't see the point.
-
-Note, there's places that disable preemption without being traced. If
-we trigger only on preemption being disabled and start the "timer",
-there may not be any code to stop it. That was why I recommended the
-flag in the code that starts the timing.
-
-> 
-> And none of this is relevant for Daniels model stuff. He just needs to
-> consider in-IRQ as !preempt.
-
-But he does bring up an issues that preempt_irqsoff fails.
-
--- Steve
+Johan
