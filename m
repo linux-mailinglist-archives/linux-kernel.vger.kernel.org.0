@@ -2,105 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E05C72E171
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3E2B2E17B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:48:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfE2Ppg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 11:45:36 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41484 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfE2Ppf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:45:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=rp4ARE/txgmWIiLjaBU33yEAvu9H/UEQOwbwY0L4/HM=; b=DA+VfPAveRlI
-        LGNKsUTSfU0iEQPQwALmuW0UMk0LivRlRyVDSgAJWXld4aapIZ+d/1NOLmI1/Nf0+/+YHu5EtLDea
-        D5XgzHzWShmh3QoaJicT98+He73Loh9yHwefAy3IjNck/8SPq6SAhjmCaEwpymDkYD5+PIJnxtj7A
-        4F5PM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hW0ld-00051n-Oa; Wed, 29 May 2019 15:45:29 +0000
-Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
-        id 3178944004A; Wed, 29 May 2019 16:45:29 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Gen Zhang <blackgod016574@gmail.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, perex@perex.cz,
-        wen.yang99@zte.com.cn
-Subject: Applied "wcd9335: fix a incorrect use of kstrndup()" to the asoc tree
-In-Reply-To: <20190529015305.GA4700@zhanggen-UX430UQ>
-X-Patchwork-Hint: ignore
-Message-Id: <20190529154529.3178944004A@finisterre.sirena.org.uk>
-Date:   Wed, 29 May 2019 16:45:29 +0100 (BST)
+        id S1726649AbfE2PsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 11:48:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48108 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725914AbfE2PsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 11:48:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E4C6BAF3E;
+        Wed, 29 May 2019 15:48:10 +0000 (UTC)
+Date:   Wed, 29 May 2019 15:48:06 +0000
+From:   Michal Rostecki <mrostecki@suse.de>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Michal Rostecki <mrostecki@opensuse.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Networking <netdev@vger.kernel.org>, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf] libbpf: Return btf_fd in libbpf__probe_raw_btf
+Message-ID: <20190529154806.GA11936@wotan.suse.de>
+References: <20190529082941.9440-1-mrostecki@opensuse.org>
+ <CAEf4Bza2cUvSsncsKe4vX4GPRgAvaDcHXTsp+q4tf5ADA0GaLg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4Bza2cUvSsncsKe4vX4GPRgAvaDcHXTsp+q4tf5ADA0GaLg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Wed, May 29, 2019 at 08:35:25AM -0700, Andrii Nakryiko wrote:
+> On Wed, May 29, 2019 at 1:30 AM Michal Rostecki <mrostecki@opensuse.org> wrote:
+> >
+> > Function load_sk_storage_btf expects that libbpf__probe_raw_btf is
+> > returning a btf descriptor, but before this change it was returning
+> > an information about whether the probe was successful (0 or 1).
+> > load_sk_storage_btf was using that value as an argument to the close
+> > function, which was resulting in closing stdout and thus terminating the
+> > process which used that dunction.
+> >
+> > That bug was visible in bpftool. `bpftool feature` subcommand was always
+> > exiting too early (because of closed stdout) and it didn't display all
+> > requested probes. `bpftool -j feature` or `bpftool -p feature` were not
+> > returning a valid json object.
+> >
+> 
+> Thanks for the fix!
+> 
+> > Fixes: d7c4b3980c18 ("libbpf: detect supported kernel BTF features and sanitize BTF")
+> > Signed-off-by: Michal Rostecki <mrostecki@opensuse.org>
+> > ---
+> >  tools/lib/bpf/libbpf.c        | 36 +++++++++++++++++++++--------------
+> >  tools/lib/bpf/libbpf_probes.c |  7 +------
+> >  2 files changed, 23 insertions(+), 20 deletions(-)
+> >
+> > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> > index 197b574406b3..bc2dca36bced 100644
+> > --- a/tools/lib/bpf/libbpf.c
+> > +++ b/tools/lib/bpf/libbpf.c
+> > @@ -1645,15 +1645,19 @@ static int bpf_object__probe_btf_func(struct bpf_object *obj)
+> >                 /* FUNC x */                                    /* [3] */
+> >                 BTF_TYPE_ENC(5, BTF_INFO_ENC(BTF_KIND_FUNC, 0, 0), 2),
+> >         };
+> > -       int res;
+> > +       int btf_fd;
+> > +       int ret;
+> >
+> > -       res = libbpf__probe_raw_btf((char *)types, sizeof(types),
+> > -                                   strs, sizeof(strs));
+> > -       if (res < 0)
+> > -               return res;
+> > -       if (res > 0)
+> > +       btf_fd = libbpf__probe_raw_btf((char *)types, sizeof(types),
+> > +                                      strs, sizeof(strs));
+> > +       if (btf_fd < 0)
+> > +               ret = 0;
+> > +       else {
+> > +               ret = 1;
+> 
+> This whole ret variable seems unnecessary. Also if btf_fd is invalid,
+> we probably shouldn't close it. So just this should work:
+> 
+> btf_fd = libbpf__probe_raw_btf(...);
+> if (btf_fd >= 0) {
+>     obj->caps.btf_func = 1;
+>     close(btf_fd);
+> }
+> return btf_fd >= 0;
+> 
 
-   wcd9335: fix a incorrect use of kstrndup()
+Makes sense, I will do it in v3.
 
-has been applied to the asoc tree at
+> >                 obj->caps.btf_func = 1;
+> > -       return 0;
+> > +       }
+> > +       close(btf_fd);
+> > +       return ret;
+> >  }
+> >
+> >  static int bpf_object__probe_btf_datasec(struct bpf_object *obj)
+> > @@ -1670,15 +1674,19 @@ static int bpf_object__probe_btf_datasec(struct bpf_object *obj)
+> >                 BTF_TYPE_ENC(3, BTF_INFO_ENC(BTF_KIND_DATASEC, 0, 1), 4),
+> >                 BTF_VAR_SECINFO_ENC(2, 0, 4),
+> >         };
+> > -       int res;
+> > +       int btf_fd;
+> > +       int ret;
+> >
+> > -       res = libbpf__probe_raw_btf((char *)types, sizeof(types),
+> > -                                   strs, sizeof(strs));
+> > -       if (res < 0)
+> > -               return res;
+> > -       if (res > 0)
+> > +       btf_fd = libbpf__probe_raw_btf((char *)types, sizeof(types),
+> > +                                      strs, sizeof(strs));
+> > +       if (btf_fd < 0)
+> > +               ret = 0;
+> > +       else {
+> > +               ret = 1;
+> >                 obj->caps.btf_datasec = 1;
+> > -       return 0;
+> > +       }
+> > +       close(btf_fd);
+> 
+> Same as above.
+> 
+> > +       return ret;
+> >  }
+> >
+> >  static int
+> > diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
+> > index 5e2aa83f637a..2c2828345514 100644
+> > --- a/tools/lib/bpf/libbpf_probes.c
+> > +++ b/tools/lib/bpf/libbpf_probes.c
+> > @@ -157,14 +157,9 @@ int libbpf__probe_raw_btf(const char *raw_types, size_t types_len,
+> 
+> I'm wondering if it's better to rename this function to something like
+> libbpf__load_raw_btf? probe (at least to me) implies true/false
+> result, so feels like it might be easily misused.
+> 
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+Good idea.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From a54988113985ca22e414e132054f234fc8a92604 Mon Sep 17 00:00:00 2001
-From: Gen Zhang <blackgod016574@gmail.com>
-Date: Wed, 29 May 2019 09:53:05 +0800
-Subject: [PATCH] wcd9335: fix a incorrect use of kstrndup()
-
-In wcd9335_codec_enable_dec(), 'widget_name' is allocated by kstrndup().
-However, according to doc: "Note: Use kmemdup_nul() instead if the size
-is known exactly." So we should use kmemdup_nul() here instead of
-kstrndup().
-
-Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/wcd9335.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
-index a04a7cedd99d..85737fe54474 100644
---- a/sound/soc/codecs/wcd9335.c
-+++ b/sound/soc/codecs/wcd9335.c
-@@ -2734,7 +2734,7 @@ static int wcd9335_codec_enable_dec(struct snd_soc_dapm_widget *w,
- 	char *dec;
- 	u8 hpf_coff_freq;
- 
--	widget_name = kstrndup(w->name, 15, GFP_KERNEL);
-+	widget_name = kmemdup_nul(w->name, 15, GFP_KERNEL);
- 	if (!widget_name)
- 		return -ENOMEM;
- 
--- 
-2.20.1
-
+> >         memcpy(raw_btf + hdr.hdr_len + hdr.type_len, str_sec, hdr.str_len);
+> >
+> >         btf_fd = bpf_load_btf(raw_btf, btf_len, NULL, 0, false);
+> > -       if (btf_fd < 0) {
+> > -               free(raw_btf);
+> > -               return 0;
+> > -       }
+> >
+> > -       close(btf_fd);
+> >         free(raw_btf);
+> > -       return 1;
+> > +       return btf_fd;
+> >  }
+> >
+> >  static int load_sk_storage_btf(void)
+> > --
+> > 2.21.0
+> >
