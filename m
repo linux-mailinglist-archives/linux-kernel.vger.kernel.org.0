@@ -2,100 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC4E52DF62
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12E7F2DF98
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:23:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbfE2ONF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 10:13:05 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:55202 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727056AbfE2ONF (ORCPT
+        id S1727211AbfE2OX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:23:26 -0400
+Received: from mail-yb1-f202.google.com ([209.85.219.202]:51324 "EHLO
+        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbfE2OX0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 10:13:05 -0400
-Received: (qmail 1762 invoked by uid 2102); 29 May 2019 10:13:04 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 29 May 2019 10:13:04 -0400
-Date:   Wed, 29 May 2019 10:13:04 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     syzbot <syzbot+c2a1fa67c02faa0de723@syzkaller.appspotmail.com>
-cc:     andreyknvl@google.com, <gregkh@linuxfoundation.org>,
-        <gustavo@embeddedor.com>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: WARNING in submit_rx_urb/usb_submit_urb
-In-Reply-To: <0000000000004da71e058a06318b@google.com>
-Message-ID: <Pine.LNX.4.44L0.1905291006110.1536-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Wed, 29 May 2019 10:23:26 -0400
+Received: by mail-yb1-f202.google.com with SMTP id e139so664407ybf.18
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 07:23:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=PLHql6HuZD0bzmA8PfaTdvUizoR7LXyZ6UL9cOmZOnQ=;
+        b=Guy5Xjr5Wholvk2wwpj43VueywLu/AoMNYGYxpgCWt0djZBOVn5FgcePWoupL6XXsj
+         7IPSG1wBXeae7XBJIn7bzmUq8mJ9wuBxmhbor+E5UQqqV2K7PEeEDgWhrtOEFMi8cHUG
+         VUrxUug7tZaBxJoM+N3GXVlsx6vGe+QFZ/l76oKzcR1wyxSC7jXJxYr8+RaJHSEDq8uX
+         DP98R4+p+DEeSThMxTKmQwKbeqViUNQty3XNKqErwgKL0Q0E5ScNtJuO322XY0yhLcuM
+         Ze8YkXH+MMzFzPo/7YnKbKetJ4TLvtyCIlNAKD+IKXQmcSIL+tRecQXIiCW9eYpJfTZr
+         Tq5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=PLHql6HuZD0bzmA8PfaTdvUizoR7LXyZ6UL9cOmZOnQ=;
+        b=jnkfME3mLZFDrSnZZaOk/750FxJ6OXKXzkPDzd9oEiI5draW0sy0Ok0wZPhB055WdC
+         2q0dP0rvvSXz4TRo0KX+kwUDvHyOacylT4Kf+RJppUZQD0/Vol6HIjGmB2rTtN72eg+M
+         MALk/mKLcvwxqYV0HpWZPjepVY6NNKbkirl2BgcwrVmzSLFivhEdtX6U3whYo66Giybi
+         8A1OI+vcX97wpBjVM9Xv5giN2u4aGMibR1RV0NrF7tvyRxGhJfXiK9Y3mXEGG9Fc8xvJ
+         CeQfNo/obrj5iHj4zi7nwWzRc6znmyBI0XwDFes2Itlok4M5AX+wFaUggxwfcWShiTwk
+         XeVw==
+X-Gm-Message-State: APjAAAUGkXhluTYdtfTmxT0JzT4vyuB59S7+z55zIEHCGRjF9MGFDJdN
+        xZR+4mEgLeKXr78ASu1EosPdWq/76Q==
+X-Google-Smtp-Source: APXvYqxLC6zyJv0xSSACzvKIA6nLKuJm7cRRhTv9ht3NB5WR/ekCb4ojh+2GmRIqJexYFBRx2sWzsjgesw==
+X-Received: by 2002:a25:c0c6:: with SMTP id c189mr43131422ybf.339.1559139805383;
+ Wed, 29 May 2019 07:23:25 -0700 (PDT)
+Date:   Wed, 29 May 2019 16:14:58 +0200
+Message-Id: <20190529141500.193390-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
+Subject: [PATCH v2 0/3] Bitops instrumentation for KASAN
+From:   Marco Elver <elver@google.com>
+To:     peterz@infradead.org, aryabinin@virtuozzo.com, dvyukov@google.com,
+        glider@google.com, andreyknvl@google.com, mark.rutland@arm.com
+Cc:     corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        hpa@zytor.com, x86@kernel.org, arnd@arndb.de, jpoimboe@redhat.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com,
+        Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 May 2019, syzbot wrote:
+The previous version of this patch series and discussion can be found
+here:  https://lkml.org/lkml/2019/5/28/769
 
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    69bbe8c7 usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=143d5972a00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c309d28e15db39c5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c2a1fa67c02faa0de723
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+c2a1fa67c02faa0de723@syzkaller.appspotmail.com
-> 
-> usb 2-1: Direct firmware load for prism2_ru.fw failed with error -2
-> prism2_usb 2-1:0.191 (unnamed net_device) (uninitialized): prism2_usb:  
-> Firmware not available, but not essential
-> prism2_usb 2-1:0.191 (unnamed net_device) (uninitialized): prism2_usb: can  
-> continue to use card anyway.
-> ------------[ cut here ]------------
-> usb 2-1: BOGUS urb xfer, pipe 3 != type 1
-> WARNING: CPU: 0 PID: 5587 at drivers/usb/core/urb.c:477  
-> usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 0 PID: 5587 Comm: kworker/0:2 Not tainted 5.2.0-rc1+ #9
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> Google 01/01/2011
-> Workqueue: usb_hub_wq hub_event
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0xca/0x13e lib/dump_stack.c:113
->   panic+0x292/0x6df kernel/panic.c:218
->   __warn.cold+0x20/0x45 kernel/panic.c:575
->   report_bug+0x262/0x2a0 lib/bug.c:186
->   fixup_bug arch/x86/kernel/traps.c:179 [inline]
->   fixup_bug arch/x86/kernel/traps.c:174 [inline]
->   do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
->   do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
->   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
-> RIP: 0010:usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
-> Code: 4d 85 ed 74 2c e8 b8 de e5 fd 4c 89 f7 e8 b0 7e 11 ff 41 89 d8 44 89  
-> e1 4c 89 ea 48 89 c6 48 c7 c7 80 a3 17 86 e8 73 9b bb fd <0f> 0b e9 20 f4  
-> ff ff e8 8c de e5 fd 4c 89 f2 48 b8 00 00 00 00 00
-> RSP: 0018:ffff8881cb876f98 EFLAGS: 00010286
-> RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
-> RDX: 0000000000040000 RSI: ffffffff812824fd RDI: ffffed103970ede5
-> RBP: ffff8881d33a5c00 R08: ffff8881cbf5b000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000003
-> R13: ffff8881d2fa3918 R14: ffff8881d5feab20 R15: ffff8881d60e8008
->   submit_rx_urb+0x2e1/0x3e0 drivers/staging/wlan-ng/hfa384x_usb.c:353
->   hfa384x_drvr_start+0x1cb/0x420 drivers/staging/wlan-ng/hfa384x_usb.c:2484
->   prism2sta_ifstate+0x2ea/0x4a0 drivers/staging/wlan-ng/prism2sta.c:471
->   prism2sta_probe_usb.cold+0x1c8/0x49e  
-> drivers/staging/wlan-ng/prism2usb.c:112
+The most significant change is the change of the instrumented access
+size to cover the entire word of a bit.
 
-The problem is that hfa384x_create() in hfa384x_usb.c assumes ep1-IN
-and ep2-OUT exist and are bulk endpoints, without actually checking.
+Marco Elver (3):
+  lib/test_kasan: Add bitops tests
+  x86: Move CPU feature test out of uaccess region
+  asm-generic, x86: Add bitops instrumentation for KASAN
 
-Since this function does not return an error code, it's not clear how 
-to respond when the expected endpoints do not exist.
+ Documentation/core-api/kernel-api.rst     |   2 +-
+ arch/x86/ia32/ia32_signal.c               |   9 +-
+ arch/x86/include/asm/bitops.h             | 210 ++++----------
+ include/asm-generic/bitops-instrumented.h | 317 ++++++++++++++++++++++
+ lib/test_kasan.c                          |  75 ++++-
+ 5 files changed, 450 insertions(+), 163 deletions(-)
+ create mode 100644 include/asm-generic/bitops-instrumented.h
 
-Alan Stern
+-- 
+2.22.0.rc1.257.g3120a18244-goog
 
