@@ -2,106 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F9AB2E782
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 23:37:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 357892E799
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 23:45:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbfE2VhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 17:37:13 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46325 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbfE2VhN (ORCPT
+        id S1726649AbfE2VpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 17:45:20 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44687 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726311AbfE2VpT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 17:37:13 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r7so2729863wrr.13;
-        Wed, 29 May 2019 14:37:12 -0700 (PDT)
+        Wed, 29 May 2019 17:45:19 -0400
+Received: by mail-io1-f68.google.com with SMTP id f22so3201959iol.11;
+        Wed, 29 May 2019 14:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=Z/j/DHIs2LqXKNaoMidLfEH1GNjBTo+f8bWLzrCEysU=;
-        b=Bv1ATfN1zsW6uwRy1fi6lD0r6158DlYKWB1iHSlxbtZLTCLWO48hXOcjLTsvfukM0c
-         uZc4mQN63CrBjtfNEUsMTEtqpBcbKwC8WvG/VJpaOnQtqewPJV/WX9/R+IRegg7koMZr
-         VkzIgnSs2A2SdDmY9ufjuzDt0yG6U+rt+L5orEXCmkmyNfXJJ9F2rKialWY+BzlZz4qQ
-         HZ7dcmKvt2ZEC1dnGoxlgH+zq2w5L/QqStA145O3dGzkb3aPy111zy6YvwuF5HLgl3gz
-         9p+hUA9e5didovXiUbxrZ36gTbwPScINaO+bhd1EDrizJQbqTRxhKWnsLyKiAdXU9DjR
-         xtsw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xore5EbM1RPfaLGDfwvhBCS+nazjtQv0oHu+w4QdH3A=;
+        b=PNLKJhpev592jajRJweAd6ImF/wZIJ9YUIGUSqTBtUSiUhlTIrxrN9PmdrAhG1UvWU
+         2mYWvkBW+ZyalqKAWpjwq+jqOB2ozxHzr6Wqj9g4HvRwPNTApf19g+/t/19uu+gPHLpg
+         4D9Y2L7KYq0bI1IqIM6tZ0wbfPdXx8E4CE1Uk4lmADOuhgLg8fRHSakyWCPfq46H/CgF
+         M4MMxqZ7hgvadjj6JV+7mnaAenPGpQcwNi1Tux65omB4Ds1BCwcKWLalcwfz0Bc0wjjw
+         CqRmxnWABROB1QQRALB3mRl5Mkqr7MJZmzKhEIdJe5Xxuxnh9I9PaVv2wWsVSYpVVI0r
+         GiWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Z/j/DHIs2LqXKNaoMidLfEH1GNjBTo+f8bWLzrCEysU=;
-        b=SZT2aKqYn5zrJEWvq9t0WIoPmTmibX1bKJ7PpeaaammIkW0b9BR4cBpgbjQJxHS8hX
-         qbC91okrs7McV3Oywq5cz/pzKs8dgPewMouiUJ50so3rStNxKcWG2JtcLSqbMneJGQx0
-         eLfl3Hmlbf1KQtfiYkiMLbr6Tx7HuuB8shiRDcSf4UKl0Uz6BwGNxVnpy51IW3JnY8Iy
-         FXT2NYVvscRMZead9fnW5Oe7+wHD3SFM3o5t9m6Mw8FNxWvs3zKiOn8Mif61o+pe6PIu
-         hUpZiHvh37EYL0g5tJph7jkcGl1Oetg+SZLXkiWeVFeX5aaoe6N0GsvuSaEFuIUEhPzb
-         0hkQ==
-X-Gm-Message-State: APjAAAWKPBHHJ77mtwoJLikU6V2d+KEGn+GXGJS95bdrLLeAOy1zxo1R
-        mqMWM2yQxZNyGcLEHa4Jdgybdg8=
-X-Google-Smtp-Source: APXvYqz5Xs2abGWOV1nrmofmFEGyNuelZ+2JOzdItYbOs4FrMLpP6BFT+kh/GE1JcLfJTv/k9T06/A==
-X-Received: by 2002:a5d:4fc1:: with SMTP id h1mr105094wrw.323.1559165831399;
-        Wed, 29 May 2019 14:37:11 -0700 (PDT)
-Received: from avx2 ([46.53.251.224])
-        by smtp.gmail.com with ESMTPSA id 67sm1083679wmd.38.2019.05.29.14.37.10
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xore5EbM1RPfaLGDfwvhBCS+nazjtQv0oHu+w4QdH3A=;
+        b=s9Pi6bVX/rudiajGcM0Vjv9uleZnniQkNrchCYeJPzcSdCNvryO2x+F9qi+pQRnJYi
+         MhqZSgarKQSJRPjaY0F+rGybk/FS+Ez7c8lEbPGuKUYjTv3JKKRfiazJOOuV7JPiF2E5
+         0sLDbYXXvBriCm+PkBL1+2syADVb9Z4offkQ/IbX6gdLv4SbmxbsPUxG2cUJljQhM6Nj
+         8Aca3fijLyReUymrgxg5QhCiYbQKyYoogYMP067zPdRV/ToQC49T9Quqse773fkGdl+s
+         lz5FUUTkBAEEKrHFqPRtHKL7BtL1KJ8JBgZ9aUwupi7vWYhlEHr1dJPguy6oYhKegYbO
+         5fvg==
+X-Gm-Message-State: APjAAAVz/AN8Au0s89jnawaBkUoX/WdXtPL6grFn2RAuNEHX/Ooex3tx
+        V6KWUFvNrW2kF8zxgAnf4dI=
+X-Google-Smtp-Source: APXvYqyZrKJjM9qRtO2iSZD3sXsntg5OG3mNUdRz0cpJ9sP9DLJh3Rb6v5ULOHPHFoseVQFmAwXqZA==
+X-Received: by 2002:a6b:b7d5:: with SMTP id h204mr214015iof.188.1559166318332;
+        Wed, 29 May 2019 14:45:18 -0700 (PDT)
+Received: from localhost.localdomain ([94.29.35.141])
+        by smtp.gmail.com with ESMTPSA id n193sm259992itn.27.2019.05.29.14.45.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 14:37:10 -0700 (PDT)
-Date:   Thu, 30 May 2019 00:37:08 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: [PATCH] elf: align AT_RANDOM bytes
-Message-ID: <20190529213708.GA10729@avx2>
+        Wed, 29 May 2019 14:45:17 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ben Dooks <ben.dooks@codethink.co.uk>
+Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] dmaengine: tegra-apb: Error out if DMA_PREP_INTERRUPT flag is unset
+Date:   Thu, 30 May 2019 00:43:55 +0300
+Message-Id: <20190529214355.15339-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AT_RANDOM content is always misaligned on x86_64:
+Apparently driver was never tested with DMA_PREP_INTERRUPT flag being
+unset since it completely disables interrupt handling instead of skipping
+the callbacks invocations, hence putting channel into unusable state.
 
-	$ LD_SHOW_AUXV=1 /bin/true | grep AT_RANDOM
-	AT_RANDOM:       0x7fff02101019
+The flag is always set by all of kernel drivers that use APB DMA, so let's
+error out in otherwise case for consistency. It won't be difficult to
+support that case properly if ever will be needed.
 
-glibc copies first few bytes for stack protector stuff, aligned
-access should be slightly faster.
-
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
+ drivers/dma/tegra20-apb-dma.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
- fs/binfmt_elf.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
-
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -144,11 +144,15 @@ static int padzero(unsigned long elf_bss)
- #define STACK_ALLOC(sp, len) ({ \
- 	elf_addr_t __user *old_sp = (elf_addr_t __user *)sp; sp += len; \
- 	old_sp; })
-+#define STACK_ALIGN(sp, align)	\
-+	((typeof(sp))(((unsigned long)sp + (int)align - 1) & ~((int)align - 1)))
- #else
- #define STACK_ADD(sp, items) ((elf_addr_t __user *)(sp) - (items))
- #define STACK_ROUND(sp, items) \
- 	(((unsigned long) (sp - items)) &~ 15UL)
- #define STACK_ALLOC(sp, len) ({ sp -= len ; sp; })
-+#define STACK_ALIGN(sp, align)	\
-+	((typeof(sp))((unsigned long)sp & ~((int)align - 1)))
- #endif
- 
- #ifndef ELF_BASE_PLATFORM
-@@ -217,6 +221,12 @@ create_elf_tables(struct linux_binprm *bprm, struct elfhdr *exec,
- 			return -EFAULT;
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index cf462b1abc0b..2c84a660ba36 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -988,8 +988,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+ 		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
  	}
  
-+	/*
-+	 * glibc copies first bytes for stack protector purposes
-+	 * which are misaligned on x86_64 because strlen("x86_64") + 1 == 7.
-+	 */
-+	p = STACK_ALIGN(p, sizeof(long));
-+
- 	/*
- 	 * Generate 16 random bytes for userspace PRNG seeding.
- 	 */
+-	if (flags & DMA_PREP_INTERRUPT)
++	if (flags & DMA_PREP_INTERRUPT) {
+ 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
++	} else {
++		WARN_ON_ONCE(1);
++		return NULL;
++	}
+ 
+ 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+ 
+@@ -1131,8 +1135,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+ 	}
+ 
+-	if (flags & DMA_PREP_INTERRUPT)
++	if (flags & DMA_PREP_INTERRUPT) {
+ 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
++	} else {
++		WARN_ON_ONCE(1);
++		return NULL;
++	}
+ 
+ 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+ 
+-- 
+2.21.0
+
