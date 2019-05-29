@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48A6D2D6B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 929112D6B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:44:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfE2HoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 03:44:21 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:10434 "EHLO
+        id S1726980AbfE2HoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 03:44:23 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:21768 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726104AbfE2HoO (ORCPT
+        with ESMTP id S1726102AbfE2HoR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 03:44:14 -0400
-X-UUID: 901cb59dda324d9ca9e1a2dee2790b74-20190529
-X-UUID: 901cb59dda324d9ca9e1a2dee2790b74-20190529
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        Wed, 29 May 2019 03:44:17 -0400
+X-UUID: d237d60669ce4ec1af933cfac3fb09a2-20190529
+X-UUID: d237d60669ce4ec1af933cfac3fb09a2-20190529
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1677181078; Wed, 29 May 2019 15:44:09 +0800
+        with ESMTP id 1371895552; Wed, 29 May 2019 15:44:11 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 29 May 2019 15:44:07 +0800
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 29 May 2019 15:44:10 +0800
 Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 29 May 2019 15:44:06 +0800
+ Transport; Wed, 29 May 2019 15:44:07 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -43,9 +43,9 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Yu Chen <chenyu56@huawei.com>
-Subject: [PATCH v6 02/10] dt-bindings: connector: add optional properties for Type-B
-Date:   Wed, 29 May 2019 15:43:40 +0800
-Message-ID: <1559115828-19146-3-git-send-email-chunfeng.yun@mediatek.com>
+Subject: [PATCH v6 03/10] dt-bindings: usb: add binding for Type-B GPIO connector driver
+Date:   Wed, 29 May 2019 15:43:41 +0800
+Message-ID: <1559115828-19146-4-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <1559115828-19146-1-git-send-email-chunfeng.yun@mediatek.com>
 References: <1559115828-19146-1-git-send-email-chunfeng.yun@mediatek.com>
@@ -57,54 +57,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add id-gpios, vbus-gpios, vbus-supply and pinctrl properties for
-usb-b-connector
+It's used to support dual role switch via GPIO when use Type-B
+receptacle, typically the USB ID pin is connected to an input
+GPIO pin
 
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-v6 no changes
+v6 changes:
+ 1. remove status and port nodes in example
+ 2. make vbus-supply as optional property
 
 v5 changes:
- 1. add reviewed by Rob
+ 1. treat type-B connector as child device of USB controller's, but not
+    as a separate virtual device, suggested by Rob
+ 2. put connector's port node under connector node, suggested by Rob
 
 v4 no changes
 
 v3 changes:
- 1. add GPIO direction, and use fixed-regulator for GPIO controlled
-    VBUS regulator suggested by Rob;
+ 1. treat type-B connector as a virtual device, but not child device of
+    USB controller's
 
 v2 changes:
- 1. describe more clear for vbus-gpios and vbus-supply suggested by Hans
+  1. new patch to make binding clear suggested by Hans
 ---
- .../bindings/connector/usb-connector.txt           | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ .../bindings/usb/typeb-conn-gpio.txt          | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/typeb-conn-gpio.txt
 
-diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
-index cef556d4e5ee..d357987181ee 100644
---- a/Documentation/devicetree/bindings/connector/usb-connector.txt
-+++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
-@@ -17,6 +17,20 @@ Optional properties:
- - self-powered: Set this property if the usb device that has its own power
-   source.
- 
-+Optional properties for usb-b-connector:
-+- id-gpios: an input gpio for USB ID pin.
-+- vbus-gpios: an input gpio for USB VBUS pin, used to detect presence of
-+  VBUS 5V.
-+  see gpio/gpio.txt.
-+- vbus-supply: a phandle to the regulator for USB VBUS if needed when host
-+  mode or dual role mode is supported.
-+  Particularly, if use an output GPIO to control a VBUS regulator, should
-+  model it as a regulator.
-+  see regulator/fixed-regulator.yaml
-+- pinctrl-names : a pinctrl state named "default" is optional
-+- pinctrl-0 : pin control group
-+  see pinctrl/pinctrl-bindings.txt
+diff --git a/Documentation/devicetree/bindings/usb/typeb-conn-gpio.txt b/Documentation/devicetree/bindings/usb/typeb-conn-gpio.txt
+new file mode 100644
+index 000000000000..5be443a16c6b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/typeb-conn-gpio.txt
+@@ -0,0 +1,30 @@
++USB Type-B GPIO Connector
 +
- Optional properties for usb-c-connector:
- - power-role: should be one of "source", "sink" or "dual"(DRP) if typec
-   connector has power support.
++This is typically used to switch dual role mode from the USB ID pin connected
++to an input GPIO pin.
++
++Required properties:
++- compatible : should include "linux,typeb-conn-gpio" and "usb-b-connector".
++- id-gpios, vbus-gpios : input gpios, either one of them must be present,
++	and both can be present as well.
++	see connector/usb-connector.txt
++
++Optional properties:
++- vbus-supply : can be present if needed when supports dual role mode.
++	see connector/usb-connector.txt
++
++- Sub-nodes:
++	- port : can be present.
++		see graph.txt
++
++Example:
++
++&mtu3 {
++	connector {
++		compatible = "linux,typeb-conn-gpio", "usb-b-connector";
++		label = "micro-USB";
++		type = "micro";
++		id-gpios = <&pio 12 GPIO_ACTIVE_HIGH>;
++		vbus-supply = <&usb_p0_vbus>;
++	};
++};
 -- 
 2.21.0
 
