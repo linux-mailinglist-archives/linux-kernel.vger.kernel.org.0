@@ -2,96 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B034F2D77D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 257FE2D738
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:04:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbfE2IQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 04:16:20 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36774 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725987AbfE2IQU (ORCPT
+        id S1726162AbfE2IEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:04:55 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38838 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbfE2IEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:16:20 -0400
-Received: by mail-wm1-f68.google.com with SMTP id v22so889203wml.1;
-        Wed, 29 May 2019 01:16:18 -0700 (PDT)
+        Wed, 29 May 2019 04:04:55 -0400
+Received: by mail-lf1-f68.google.com with SMTP id b11so1241626lfa.5
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 01:04:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JAIjeJA5pieWYxedW2lPGCUTsVd6pWQMhlBtAouoTmQ=;
-        b=GOOYO5uxivJVRh/xk/zr0iCasF7ir02JitV4OIzRYgS2Mvgz4coRAmdpVbInb20CRf
-         43Sj5TCBKfQh9HR2oZYLwvJCkYIacSXUXi5vnr/SpyXHAVfG2ybeO0cCe5army09C4lw
-         d38abLP1xrz04F2l0qoNPbRJaAsQdMgEDZZGlK4Mc1nFYT76y6ZAgIdhXztHzKxzL5xe
-         D73qocAYJYNAGTxRMjTQJb49EfiHPCGJX+NyJJ9OWfkubEpP6s5AaDRJ9oljYeujvBEn
-         mg7VD+bz9flVOTlK7amOgK0czkoqp43b475SEw17dZ8zvicKUVM+azDVdeIAkalYA4nC
-         CmLQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1LIOku9W0w6jyilHULXZM0qJLovMNSsThL0PJAa4R6s=;
+        b=cChtVJTAkdUeB569BzFxW+lkBv7RfvyARS1+90S3q0TPpHzTNLxCWGjgwut75/WYHZ
+         CQ9XfGod9nJpU5BjcSlJyGmMzlSkH569SwBTcbB9Hg7jZTwZdfOfeeWP2oc2MJKZwMiW
+         kYz9kLS/NVsgGustKQHks5T0k1EOf3OwfcwoMTZIn5LIJ2h3oDzvilSVIOJpzqUHD0Qh
+         Io1B9qE1nYXUFSIBylfBsvLgZBYmIByUJzMPyFR56uHECQLCJrdIXEG5oXM+wrtyqdBn
+         NwWeexMTd9waVGwrIeFxp/jE71lcpq9O9JeJ+tRcfj+6BXyU9vzfBWUuEJbO9nKdDTIX
+         pmvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=JAIjeJA5pieWYxedW2lPGCUTsVd6pWQMhlBtAouoTmQ=;
-        b=noNs/ViL3I9gMqmuir42sidDL2joAoSLD9oMO9jbeba3NqXG+0uzpV5H/W21DnnC6/
-         ELHQp5EQ7UmoauSkAeEABOi3qRAeMWFmuot9gqjj3027HYc51YOdlW2yJ1dbT2RNGRI4
-         Z+uL2cUvsNawPKbCN6cDySzypNOIa0kahA/JyEYOTdCXyXB4KDVuQEW7A0O9UUtrEiSP
-         g2Q6GaRwly35lvtE8UpGxtJCa1XtChEQxHhvOmaeiWVC0hjOapI6c3IJ4GZhB72tWPkX
-         3blnupyIlwORNdzJ03BIuufX8xpKOyf0N3nw0uSR0ycTJiTW3DozEroGr8XxSoSF4hwc
-         yd5g==
-X-Gm-Message-State: APjAAAW4+XKMAonhqBPTzbIpjIzkjETEPyLDMgQpJ0GZE4+xlhP6y3zo
-        jgf4rLaV1TeFfRdi7vEHyE4=
-X-Google-Smtp-Source: APXvYqyGSyvhN3/M/wGK1MB8/Loq9okLbB2YGmJmemOMF44S8TGMYvvgIgxWRGkea3U9lPFoDBk+Qg==
-X-Received: by 2002:a7b:c8c1:: with SMTP id f1mr5472410wml.159.1559117773340;
-        Wed, 29 May 2019 01:16:13 -0700 (PDT)
-Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
-        by smtp.gmail.com with ESMTPSA id k13sm3308997wmj.10.2019.05.29.01.16.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 01:16:11 -0700 (PDT)
-Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 7776211402E3; Wed, 29 May 2019 10:04:40 +0200 (CEST)
-From:   Mathieu Malaterre <malat@debian.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: Remove -Waggregate-return from scripts/Makefile.extrawarn
-Date:   Wed, 29 May 2019 10:04:34 +0200
-Message-Id: <20190529080434.1409-1-malat@debian.org>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1LIOku9W0w6jyilHULXZM0qJLovMNSsThL0PJAa4R6s=;
+        b=RtfTrOXqj4DUGc5xrXMwM1gfMHb2U+EYQ5zOMEC7wWiEbKWemX1ldsVa8lN0j3HVRZ
+         Ukcg0bq+lu1U004GcDP7XbzRGlXkOnRx6/wur20+pGd0xJ+uleg9pjkFg4kQpHhddo2j
+         GR2xUxvrQAL3Y/buN8HUfKf4hqGCilQTtEE0ghEhp01fN3w8h7Oay1nhM4ncxmlmEPUG
+         9JbVpx2efa6a4/hpXeYcH+gOb4lSGtUImm4kU7g1uDd1L/fra4FS9/r9QBrmOmkdGFXQ
+         ekeLG50atEGk0qSvHKfuqytpa3FNm/dtsIec4YFtAmv2b5VW1/T8E9hTa3zXWf+TfpLJ
+         aXcA==
+X-Gm-Message-State: APjAAAV3mK45kj5R2IB4XKuWLdjoNGa09VNSIp9kfTQA8ZQulb4TmJvd
+        XG20xNG2aTQ1Ab/iu62iv1Kxz6CiiChwUxMf5Ajbixuijr0=
+X-Google-Smtp-Source: APXvYqzGg3PfDli6WYmdX+mVXkhECaeIUHXaK/vTD7ZvztMnsVmqR0e2YR/cufgv/gQgmROlPOEQ02URCK8zPU2nObI=
+X-Received: by 2002:ac2:4428:: with SMTP id w8mr3070736lfl.99.1559117093345;
+ Wed, 29 May 2019 01:04:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190529025256.GB22325@shao2-debian> <20190529035613.GA6210@mit.edu>
+In-Reply-To: <20190529035613.GA6210@mit.edu>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 29 May 2019 13:34:42 +0530
+Message-ID: <CA+G9fYtVH0UF55Xins22sXCvcOLN+JGv-p2brj58BjzNGqdE2A@mail.gmail.com>
+Subject: Re: [LKP] [ext4] 079f9927c7: ltp.mmap16.fail
+To:     "Theodore Ts'o" <tytso@mit.edu>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org,
+        ltp@lists.linux.it
+Cc:     lkft-triage@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It makes little sense to pass -Waggregate-return these days since large
-part of the linux kernel rely on returning struct(s). For instance:
+Hi Ted,
 
-  ../include/linux/timekeeping.h: In function 'show_uptime':
-  ../include/linux/ktime.h:91:34: error: function call has aggregate value [-Werror=aggregate-return]
-   #define ktime_to_timespec64(kt)  ns_to_timespec64((kt))
-                                    ^~~~~~~~~~~~~~~~~~~~~~
-  ../include/linux/timekeeping.h:166:8: note: in expansion of macro 'ktime_to_timespec64'
-    *ts = ktime_to_timespec64(ktime_get_coarse_boottime());
+On Wed, 29 May 2019 at 09:26, Theodore Ts'o <tytso@mit.edu> wrote:
+>
+> On Wed, May 29, 2019 at 10:52:56AM +0800, kernel test robot wrote:
+> > FYI, we noticed the following commit (built with gcc-7):
+> >
+> > commit: 079f9927c7bfa026d963db1455197159ebe5b534 ("ext4: gracefully handle ext4_break_layouts() failure during truncate")
+> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
 
-Remove this warning from W=2 completely.
+I do have found this problem on linux next 20190528 on x86_64, i386,
+arm64 and arm architectures.
+But, this failure is not easy to reproduce.
+so thought of sharing report with steps to reproduce and got delayed.
 
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
----
- scripts/Makefile.extrawarn | 1 -
- 1 file changed, 1 deletion(-)
+>
+> Jan --- this is the old version of your patch, which I had dropped
+> before sending a push request to Linus.  However, I forgot to reset
+> the dev branch so it still had the old patch on it, and so it got
+> picked up in linux-next.  Apologies for the confusion.
+>
+> I've reset the dev branch on ext4.git, and the new version of your
+> patch will show up there shortly, as I start reviewing patches for the
+> next merge window.
 
-diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-index 3ab8d1a303cd..98081ab300e5 100644
---- a/scripts/Makefile.extrawarn
-+++ b/scripts/Makefile.extrawarn
-@@ -34,7 +34,6 @@ warning-1 += $(call cc-option, -Wstringop-truncation)
- warning-1 += -Wno-missing-field-initializers
- warning-1 += -Wno-sign-compare
- 
--warning-2 := -Waggregate-return
- warning-2 += -Wcast-align
- warning-2 += -Wdisabled-optimization
- warning-2 += -Wnested-externs
--- 
-2.20.1
+However, Thanks for looking into this problem.
+I will keep monitoring this mmap16 failure and let you know when it
+will get fixed.
 
+- Naresh
