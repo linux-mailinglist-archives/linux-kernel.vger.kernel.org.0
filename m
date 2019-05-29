@@ -2,123 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04E612E8D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 01:11:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4F652E8CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 01:11:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfE2XKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 19:10:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47634 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbfE2XJh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 19:09:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tS6RAB6sVg+kJ3U+MKfWQpKGE8UFNU5HfgzkbdPGAmk=; b=DY723L1SVURiF1RxxMu67JEPU8
-        sOnmm/V2LW5VVq0b3tPMBaff70qGg4rmlldRv4Yhzgz+bkNtsgDlu4otE4AjugsLzGQ7PNCRYFJQK
-        /IxM1+xa6Fy18mm2HJgW8BtjMqP/1TPoW7ohhXGifT1jVVa9GuXnzE/+2TXngwxWezlpNxf/rxGeg
-        kEdS+T/15qp08ZAKpQN0gQ7lYyk5VU4GWj6KODkcI41Hftq/70Ki4sKgMWYtWCPCjCiH+q1Y3Y49Y
-        3xaRkApKqMF4V5uWhEWWmhZ1+RtlEPTS3IfOByzkfGu6Wd7PyWGIcqDeUTlNeXWSu3A6Mlp54GN5w
-        Uc2EbUaA==;
-Received: from 177.132.232.81.dynamic.adsl.gvt.net.br ([177.132.232.81] helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hW7hQ-0000lL-FV; Wed, 29 May 2019 23:09:36 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hW7hN-0007Tt-Oy; Wed, 29 May 2019 20:09:33 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Joel Nider <joeln@il.ibm.com>
-Subject: [PATCH 10/10] docs: requirements.txt: recommend Sphinx 1.7.9
-Date:   Wed, 29 May 2019 20:09:32 -0300
-Message-Id: <08e7f5227b4e79d37e0e9afe7fba7cbc8476e4a2.1559170790.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1559170790.git.mchehab+samsung@kernel.org>
-References: <cover.1559170790.git.mchehab+samsung@kernel.org>
+        id S1726901AbfE2XJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 19:09:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33854 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726411AbfE2XJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 19:09:56 -0400
+Received: from localhost (unknown [207.225.69.115])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 247012431F;
+        Wed, 29 May 2019 23:09:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559171395;
+        bh=RYgrpGQlV6JhNVFewZg8lfQgvdy68HtrQSwL8rOWAVc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vcn5pbNeMnyZtaY1Dky6rkxgROL4EN3gp+VJHTsLmtdV8lXVVCMY6PxcElXWfeVdm
+         GDbcBiViw66eGS7+ROANo46uH4/K5+D5UqUAz8o2Y0fGnvRRRP33XAiFMGfedITQfR
+         3uouPh+qo2WDtYIkx6bhGj6rXy+RyVJi2DmKYZV0=
+Date:   Wed, 29 May 2019 16:09:54 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able
+ ring buffer
+Message-ID: <20190529230954.GA3164@kroah.com>
+References: <20190528231218.GA28384@kroah.com>
+ <20190528162603.GA24097@kroah.com>
+ <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+ <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk>
+ <4031.1559064620@warthog.procyon.org.uk>
+ <31936.1559146000@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <31936.1559146000@warthog.procyon.org.uk>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As discussed at the linux-doc ML, while we'll still support
-version 1.3, it is time to recommend a more modern version.
+On Wed, May 29, 2019 at 05:06:40PM +0100, David Howells wrote:
+> Greg KH <gregkh@linuxfoundation.org> wrote:
+> 
+> > > kref_put() could potentially add an unnecessary extra stack frame and would
+> > > seem to be best avoided, though an optimising compiler ought to be able to
+> > > inline if it can.
+> > 
+> > If kref_put() is on your fast path, you have worse problems (kfree isn't
+> > fast, right?)
+> > 
+> > Anyway, it's an inline function, how can it add an extra stack frame?
+> 
+> The call to the function pointer.  Hopefully the compiler will optimise that
+> away for an inlineable function.
 
-So, let's switch the minimal requirements to Sphinx 1.7.9,
-as it has the "-jauto" flag, with makes a lot faster when
-building documentation.
+The function pointer only gets called for the last "put", and then kfree
+will be called so you should not have to worry about speed/stack frames
+at that point in time.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/doc-guide/sphinx.rst    | 17 ++++++++---------
- Documentation/sphinx/requirements.txt |  4 ++--
- 2 files changed, 10 insertions(+), 11 deletions(-)
+> > > Are you now on the convert all refcounts to krefs path?
+> > 
+> > "now"?  Remember, I wrote kref all those years ago,
+> 
+> Yes - and I thought it wasn't a good idea at the time.  But this is the first
+> time you've mentioned it to me, let alone pushed to change to it, that I
+> recall.
 
-diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
-index c039224b404e..4ba081f43e98 100644
---- a/Documentation/doc-guide/sphinx.rst
-+++ b/Documentation/doc-guide/sphinx.rst
-@@ -27,8 +27,7 @@ Sphinx Install
- ==============
- 
- The ReST markups currently used by the Documentation/ files are meant to be
--built with ``Sphinx`` version 1.3 or higher. If you desire to build
--PDF output, it is recommended to use version 1.4.6 or higher.
-+built with ``Sphinx`` version 1.3 or higher.
- 
- There's a script that checks for the Sphinx requirements. Please see
- :ref:`sphinx-pre-install` for further details.
-@@ -56,13 +55,13 @@ or ``virtualenv``, depending on how your distribution packaged Python 3.
-       those expressions are written using LaTeX notation. It needs texlive
-       installed with amdfonts and amsmath in order to evaluate them.
- 
--In summary, if you want to install Sphinx version 1.4.9, you should do::
-+In summary, if you want to install Sphinx version 1.7.9, you should do::
- 
--       $ virtualenv sphinx_1.4
--       $ . sphinx_1.4/bin/activate
--       (sphinx_1.4) $ pip install -r Documentation/sphinx/requirements.txt
-+       $ virtualenv sphinx_1.7.9
-+       $ . sphinx_1.7.9/bin/activate
-+       (sphinx_1.7.9) $ pip install -r Documentation/sphinx/requirements.txt
- 
--After running ``. sphinx_1.4/bin/activate``, the prompt will change,
-+After running ``. sphinx_1.7.9/bin/activate``, the prompt will change,
- in order to indicate that you're using the new environment. If you
- open a new shell, you need to rerun this command to enter again at
- the virtual environment before building the documentation.
-@@ -105,8 +104,8 @@ command line options for your distro::
- 	You should run:
- 
- 		sudo dnf install -y texlive-luatex85
--		/usr/bin/virtualenv sphinx_1.4
--		. sphinx_1.4/bin/activate
-+		/usr/bin/virtualenv sphinx_1.7.9
-+		. sphinx_1.7.9/bin/activate
- 		pip install -r Documentation/sphinx/requirements.txt
- 
- 	Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pre-install line 468.
-diff --git a/Documentation/sphinx/requirements.txt b/Documentation/sphinx/requirements.txt
-index 742be3e12619..14e29a0ae480 100644
---- a/Documentation/sphinx/requirements.txt
-+++ b/Documentation/sphinx/requirements.txt
-@@ -1,3 +1,3 @@
--docutils==0.12
--Sphinx==1.4.9
-+docutils
-+Sphinx==1.7.9
- sphinx_rtd_theme
--- 
-2.21.0
+I bring up using a kref any time I see a usage that could use it as it
+makes it easier for people to understand and "know" you are doing your
+reference counting for your object "correctly".  It's an abstraction
+that is used to make it easier for us developers to understand.
+Otherwise you have to hand-roll the same logic here.  Yes, refcounts
+have made it easier to do it in your own (which was their goal), but you
+still don't have to do it "on your own".
 
+Anyway, I'll not push the issue here, if you want to stick to a
+refcount_t, that's enough for now.  We can worry about changing this
+later after you have debugged all the corner conditions :)
+
+> > everyone should use
+> > it.  It saves us having to audit the same pattern over and over again.
+> > And, even nicer, it uses a refcount now, and as you are trying to
+> > reference count an object, it is exactly what this was written for.
+> > 
+> > So yes, I do think it should be used here, unless it is deemed to not
+> > fit the pattern/usage model.
+> 
+> kref_put() enforces a very specific destructor signature.  I know of places
+> where that doesn't work because the destructor takes more than one argument
+> (granted that this is not the case here).  So why does kref_put() exist at
+> all?  Why not kref_dec_and_test()?
+
+The destructor only takes one object pointer as you are finally freeing
+that object.  What more do you need/want to "know" at that point in
+time?
+
+What would kref_dec_and_test() be needed for?
+
+> Why doesn't refcount_t get merged into kref, or vice versa?  Having both would
+> seem redundant.
+
+kref uses refcount_t and provides a different functionality on top of
+it.  Not all uses of a refcount in the kernel is for object lifecycle
+reference counting, as you know :)
+
+> Mind you, I've been gradually reverting atomic_t-to-refcount_t conversions
+> because it seems I'm not allowed refcount_inc/dec_return() and I want to get
+> at the point refcount for tracing purposes.
+
+That's not good, we should address that independently as you are loosing
+functionality/protection when doing that.
+
+thanks,
+
+greg k-h
