@@ -2,140 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06B682D851
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:57:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63EAC2D862
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:59:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbfE2I4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 04:56:55 -0400
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:38349 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725948AbfE2I4x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:56:53 -0400
-Received: from [IPv6:2001:983:e9a7:1:352c:d076:e7aa:19ae] ([IPv6:2001:983:e9a7:1:352c:d076:e7aa:19ae])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id VuO8h4USX3qlsVuO9hsPNJ; Wed, 29 May 2019 10:56:51 +0200
-Subject: Re: [PATCH 4/4] media: xilinx: fix leaked of_node references
-To:     Wen Yang <wen.yang99@zte.com.cn>, linux-kernel@vger.kernel.org
-Cc:     wang.yi59@zte.com.cn, Patrice Chotard <patrice.chotard@st.com>,
-        Hyun Kwon <hyun.kwon@xilinx.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1557126318-21487-1-git-send-email-wen.yang99@zte.com.cn>
- <1557126318-21487-5-git-send-email-wen.yang99@zte.com.cn>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <e557b5a7-524b-56e0-0642-7f9c04c136f9@xs4all.nl>
-Date:   Wed, 29 May 2019 10:56:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726799AbfE2I70 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:59:26 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17603 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725911AbfE2I7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 04:59:25 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7F31D5AE3A8FF4DC23B1;
+        Wed, 29 May 2019 16:59:23 +0800 (CST)
+Received: from [127.0.0.1] (10.74.191.121) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 29 May 2019
+ 16:59:13 +0800
+Subject: Re: [PATCH net-next] net: link_watch: prevent starvation when
+ processing linkwatch wq
+To:     David Miller <davem@davemloft.net>
+CC:     <hkallweit1@gmail.com>, <f.fainelli@gmail.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+References: <1558921674-158349-1-git-send-email-linyunsheng@huawei.com>
+ <20190528.235806.323127882998745493.davem@davemloft.net>
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <6e9b41c9-6edb-be7f-07ee-5480162a227e@huawei.com>
+Date:   Wed, 29 May 2019 16:59:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <1557126318-21487-5-git-send-email-wen.yang99@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190528.235806.323127882998745493.davem@davemloft.net>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfCNcQwo2tuDr/le+vUGvfG5jmsmcDf9YkYYz99PHycHPmKjCwQlYKvxglDv57a3asuiBY5gKxAEKqAKjFc3lu2ZDtAslmARGu7eN1mc1tICkwrBtrRHf
- jETldO7ENIaH2fYtCZa/jD7AxE9q1CAbUGMt1a8I5v5wFd7bSIxyT7b/3sKSZp7oJMDyr6CUNt6HoGn2YWiU5+GcUsoXjpM8Pc+shfRL1wxAx3m4MqOPgmB8
- nsusfRls9FAQ0N3gedQv9uF1D0i7yN02Xg0g5gDG4nGL2N7GiZ2FQPIaW+ie4kwQ/Gj2ZsAegb4rK8gMy8dhNhKhysa5bTmT2uKO+ReHJJ2w5he2Csd/Vl4p
- l8l28GeEUPq0xeflpZ2iE0cHY81U0zQfutkAM7pGNxk5AEGrsR0y6xpoXw9981qK4kklNbnqvb3aVKIdYUCwmTCofERU0yrjY4lk25P+4JpgzTEZHdnaMuH4
- nl6AbgRZYZoa66bsIu3U2qHzj2GHmXFvoJIW23v+ACJSAD8d9g403vBZc/tvdYSdn2OFqot0GZg0YegL02ignZKzTGObZ3Je5nqDEh9PuWlx4KeGDDwKdwqI
- zVaalO86OUNbdiaWzg8SWOK9
+X-Originating-IP: [10.74.191.121]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/6/19 9:05 AM, Wen Yang wrote:
-> The call to of_get_child_by_name returns a node pointer with refcount
-> incremented thus it must be explicitly decremented after the last
-> usage.
+On 2019/5/29 14:58, David Miller wrote:
+> From: Yunsheng Lin <linyunsheng@huawei.com>
+> Date: Mon, 27 May 2019 09:47:54 +0800
 > 
-> Detected by coccinelle with the following warnings:
-> drivers/media/platform/xilinx/xilinx-vipp.c:487:3-9: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 477, but without a corresponding object release within this function.
-> drivers/media/platform/xilinx/xilinx-vipp.c:491:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 477, but without a corresponding object release within this function.
+>> When user has configured a large number of virtual netdev, such
+>> as 4K vlans, the carrier on/off operation of the real netdev
+>> will also cause it's virtual netdev's link state to be processed
+>> in linkwatch. Currently, the processing is done in a work queue,
+>> which may cause worker starvation problem for other work queue.
+>>
+>> This patch releases the cpu when link watch worker has processed
+>> a fixed number of netdev' link watch event, and schedule the
+>> work queue again when there is still link watch event remaining.
+>>
+>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 > 
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Cc: Patrice Chotard <patrice.chotard@st.com>
-> Cc: Hyun Kwon <hyun.kwon@xilinx.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Michal Simek <michal.simek@xilinx.com>
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/media/platform/exynos4-is/fimc-is.c   | 1 +
->  drivers/media/platform/exynos4-is/media-dev.c | 1 +
-
-Huh? This patch changes exynos4 as well, not just xilinx.
-
-Please split this up into two patches, one for each driver.
-
->  drivers/media/platform/xilinx/xilinx-vipp.c   | 8 +++++---
->  3 files changed, 7 insertions(+), 3 deletions(-)
+> Why not rtnl_unlock(); yield(); rtnl_lock(); every "100" events
+> processed?
 > 
-> diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-> index 02da0b0..25df4c6 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-is.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-is.c
-> @@ -809,6 +809,7 @@ static int fimc_is_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  
->  	is->pmu_regs = of_iomap(node, 0);
-> +	of_node_put(node);
->  	if (!is->pmu_regs)
->  		return -ENOMEM;
->  
-> diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-> index 463f2d8..a31dacf 100644
-> --- a/drivers/media/platform/exynos4-is/media-dev.c
-> +++ b/drivers/media/platform/exynos4-is/media-dev.c
-> @@ -450,6 +450,7 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
->  	else
->  		pd->fimc_bus_type = pd->sensor_bus_type;
->  
-> +	of_node_put(np);
->  	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor))) {
->  		of_node_put(rem);
->  		return -EINVAL;
-> diff --git a/drivers/media/platform/xilinx/xilinx-vipp.c b/drivers/media/platform/xilinx/xilinx-vipp.c
-> index edce040..307717c 100644
-> --- a/drivers/media/platform/xilinx/xilinx-vipp.c
-> +++ b/drivers/media/platform/xilinx/xilinx-vipp.c
-> @@ -472,7 +472,7 @@ static int xvip_graph_dma_init(struct xvip_composite_device *xdev)
->  {
->  	struct device_node *ports;
->  	struct device_node *port;
-> -	int ret;
-> +	int ret = 0;
->  
->  	ports = of_get_child_by_name(xdev->dev->of_node, "ports");
->  	if (ports == NULL) {
-> @@ -484,11 +484,13 @@ static int xvip_graph_dma_init(struct xvip_composite_device *xdev)
->  		ret = xvip_graph_dma_init_one(xdev, port);
->  		if (ret < 0) {
->  			of_node_put(port);
-> -			return ret;
-> +			goto out_put_node;
+> That seems better than adding all of this overhead to reschedule the
+> workqueue every 100 items.
 
-Just do a break here,
+One minor concern, the above solution does not seem to solve the cpu
+starvation for other normal workqueue which was scheduled on the same
+cpu as linkwatch. Maybe I misunderstand the workqueue or there is other
+consideration here? :)
 
->  		}
->  	}
->  
-> -	return 0;
-> +out_put_node:
+Anyway, I will implemet it as you suggested and test it before posting V2.
+Thanks.
 
-and drop this label.
-
-> +	of_node_put(ports);
-> +	return ret;
->  }
->  
->  static void xvip_graph_cleanup(struct xvip_composite_device *xdev)
+> 
+> .
 > 
 
-Regards,
-
-	Hans
