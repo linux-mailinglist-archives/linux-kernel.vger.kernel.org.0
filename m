@@ -2,138 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73E2E2E0AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 783BC2E062
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:00:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfE2PLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 11:11:40 -0400
-Received: from foss.arm.com ([217.140.101.70]:47848 "EHLO foss.arm.com"
+        id S1726617AbfE2O77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:59:59 -0400
+Received: from mga05.intel.com ([192.55.52.43]:42541 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbfE2PLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:11:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19717341;
-        Wed, 29 May 2019 08:11:39 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B701F3F5AF;
-        Wed, 29 May 2019 08:11:37 -0700 (PDT)
-Date:   Wed, 29 May 2019 16:11:35 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-Subject: Re: [PATCH 4/4] arm64/mm: Drop vm_fault_t argument from
- __do_page_fault()
-Message-ID: <20190529151134.GH31777@lakrids.cambridge.arm.com>
-References: <1559133285-27986-1-git-send-email-anshuman.khandual@arm.com>
- <1559133285-27986-5-git-send-email-anshuman.khandual@arm.com>
+        id S1726069AbfE2O77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 10:59:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 07:59:58 -0700
+X-ExtLoop1: 1
+Received: from marshy.an.intel.com (HELO [10.122.105.159]) ([10.122.105.159])
+  by fmsmga004.fm.intel.com with ESMTP; 29 May 2019 07:59:58 -0700
+Subject: Re: [PATCHv4 2/4] firmware: add Intel Stratix10 remote system update
+ driver
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, dinguyen@kernel.org,
+        atull@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sen.li@intel.com,
+        Richard Gong <richard.gong@intel.com>
+References: <1559074833-1325-1-git-send-email-richard.gong@linux.intel.com>
+ <1559074833-1325-3-git-send-email-richard.gong@linux.intel.com>
+ <20190528232400.GB29225@kroah.com>
+From:   Richard Gong <richard.gong@linux.intel.com>
+Message-ID: <ac379a9a-9613-3f66-78ff-a38c0045764d@linux.intel.com>
+Date:   Wed, 29 May 2019 10:12:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1559133285-27986-5-git-send-email-anshuman.khandual@arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <20190528232400.GB29225@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 06:04:45PM +0530, Anshuman Khandual wrote:
-> __do_page_fault() is over complicated with multiple goto statements. This
-> cleans up code flow and while there drops the vm_fault_t argument.
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: James Morse <james.morse@arm.com> 
-> Cc: Andrey Konovalov <andreyknvl@google.com>
-> ---
->  arch/arm64/mm/fault.c | 38 ++++++++++++++++----------------------
->  1 file changed, 16 insertions(+), 22 deletions(-)
+
+Hi Greg,
+
+On 5/28/19 6:24 PM, Greg KH wrote:
+> On Tue, May 28, 2019 at 03:20:31PM -0500, richard.gong@linux.intel.com wrote:
+>> +static int rsu_send_msg(struct stratix10_rsu_priv *priv,
+>> +			enum stratix10_svc_command_code command,
+>> +	unsigned long arg,
+>> +	void (*callback)(struct stratix10_svc_client *client,
+>> +			 struct stratix10_svc_cb_data *data))
 > 
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index 170c71f..a53a30e 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -397,37 +397,31 @@ static void do_bad_area(unsigned long addr, unsigned int esr, struct pt_regs *re
->  static vm_fault_t __do_page_fault(struct mm_struct *mm, unsigned long addr,
->  			   unsigned int mm_flags, unsigned long vm_flags)
->  {
-> -	struct vm_area_struct *vma;
-> -	vm_fault_t fault;
-> +	struct vm_area_struct *vma = find_vma(mm, addr);
->  
-> -	vma = find_vma(mm, addr);
-> -	fault = VM_FAULT_BADMAP;
->  	if (unlikely(!vma))
-> -		goto out;
-> -	if (unlikely(vma->vm_start > addr))
-> -		goto check_stack;
-> +		return VM_FAULT_BADMAP;
->  
->  	/*
-> -	 * Ok, we have a good vm_area for this memory access, so we can handle
-> -	 * it.
-> +	 * Check if the VMA has got the required permssion with respect
-> +	 * to the access fault here.
->  	 */
+> Odd indentation for arg, and then callback.
+> 
+> Why isn't callback a typedef to make this simpler to use?
+> 
 
-We already had a perfectly good comment for this check:
+I will make correction in the next submission.
 
-	/*
-	 * Check that the permissions on the VMA allow for the fault which
-	 * occurred.
-	 */
+> thanks,
+> 
+> greg k-h
+> 
 
-... so please keep that and minimize the diff.
-
-> -good_area:
-> +	if (!(vma->vm_flags & vm_flags))
-> +		return VM_FAULT_BADACCESS;
-> +
->  	/*
-> -	 * Check that the permissions on the VMA allow for the fault which
-> -	 * occurred.
-> +	 * There is a valid VMA for this access. But before proceeding
-> +	 * make sure that it has required flags if there is an attempt
-> +	 * to expand the stack downwards.
->  	 */
-
-I think we can drop this comment, given we didn't have it previously.
-
-> -	if (!(vma->vm_flags & vm_flags)) {
-> -		fault = VM_FAULT_BADACCESS;
-> -		goto out;
-> -	}
-> +	if (unlikely(vma->vm_start > addr)) {
-> +		if (!(vma->vm_flags & VM_GROWSDOWN))
-> +			return VM_FAULT_BADMAP;
->  
-> +		if (expand_stack(vma, addr))
-> +			return VM_FAULT_BADMAP;
-
-You can drop the line space between these two if statements.
-
-> +	}
->  	return handle_mm_fault(vma, addr & PAGE_MASK, mm_flags);
-> -
-> -check_stack:
-> -	if (vma->vm_flags & VM_GROWSDOWN && !expand_stack(vma, addr))
-> -		goto good_area;
-> -out:
-> -	return fault;
-
-We used to check the stack before the checknig the rest of the vm_flags,
-so this changes the precedence of the VM_FAULT_BADMAP and
-VM_FAULT_BADACCESS return codes.
-
-Please check the stack before checking the other vm_flags.
-
-Otherwise, this looks like a nice cleanup -- the old control flow was
-hideous.
-
-Thanks,
-Mark.
+Regards,
+Richard
