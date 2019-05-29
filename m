@@ -2,180 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 181F92E4A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:42:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C68C72E4AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:46:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbfE2SmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 14:42:23 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:35100 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbfE2SmX (ORCPT
+        id S1726396AbfE2SqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 14:46:02 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:58012 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfE2SqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 14:42:23 -0400
-Received: by mail-io1-f66.google.com with SMTP id p2so2775974iol.2;
-        Wed, 29 May 2019 11:42:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ac4wfHXOGpPwgmU9+NyMZSbTQr/j+BDgOZSJk6FL+cU=;
-        b=pz4dftM4fTpg7Y0etCDItJltv1TiXyMGLurzZkTgC82QCcMycu+LXgi6ynxqt27jOI
-         tv0ZDDfcyNcGZNWZMDeEkoOJzcIxqKnVhMeI0RooHtMkgokw+eDE+wGRX+NS68icKKDR
-         LsYD5yoS58k7hDYhkj/ijTP1S9U9SqNegRH6WMTPEQjWZGCId36KmNr2PcRRhDBzTIXH
-         gyQi0cqJ5mc9Pen0AjXg0CH17gPGI8Wet+zHnRq6LnZbvJUGzFw3wH2VEK+Re6pvZrA5
-         Dcap5QyONoSMp4ZcUHcFcJccKd9chk88/RhpR3XueX2OpX/famGA1D0TbGA0NEMgUdrB
-         PPhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ac4wfHXOGpPwgmU9+NyMZSbTQr/j+BDgOZSJk6FL+cU=;
-        b=QQkQ725MMp/KD8hmqUjA4+5WEheXVGVuiCI+PWmWNVRMqQTtSJUSGoFg4k3KVqkX0j
-         +V1Q7Ypac3MGttMDGkX/qQfq5zaHCFBLlQytabu3U5ZELhjDY5b6yn4iChQT/q7MkjaR
-         mjorpeXSPqLbh3jz05NlJcYuJGpQMg6RMD8+zkRhS8TGX0fmbQMouC7cuTKbSjAZOHTs
-         Xh5VQXH9P3TMW/Mc6L2PCkup35UtP+xOonMgLFwxd9VlEUYncWAdGQf6JDTzywXZHw79
-         hvlEED5Lc1GS5ID8lpVMA9jZKGdqfXOLHcWsDhcEmWphaT3ohGTinwCLNy/njLbX+81l
-         ru1A==
-X-Gm-Message-State: APjAAAXWfwSEZzhMSSgTAREHiwhZ6lfEePubbmBsJSXRg8x9/lUODei2
-        aRBQBjJDkHVOoFP20ZAlihIdYXznFEjNq3GBuXg=
-X-Google-Smtp-Source: APXvYqzQDio796G4Lx7zeBpaekA8t5Ss1nQFheXwKT3BzHWDoYIvDIez2PAO6oHIVKTGTiRNKqYB5znXP2b/LOi4buQ=
-X-Received: by 2002:a6b:c411:: with SMTP id y17mr13876076ioa.265.1559155340985;
- Wed, 29 May 2019 11:42:20 -0700 (PDT)
+        Wed, 29 May 2019 14:46:01 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TIhrIS067356;
+        Wed, 29 May 2019 18:45:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ message-id : date : from : to : cc : subject : references : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Up1cNIFFuc0gcQ797CpxaLKPJsnQBzZUtc04vOlvi54=;
+ b=MkI1d9HHwYgDzT6yM0ArD2VvvJiVyJKogI3qHgMF5OOb6TnaxCvoh1YuSLdW+nBIqERC
+ U1SYmdCwrcXdlol6VeT+n+mx9DLHBBJBIcCl6rsHhYMvJOVTpiRJsYuATL/ydWy38yHa
+ aXWEvLqnZlAv+mNnRq0Dzm18CHEDldJe0y3IsVOoxV8u3XI/ZRmzotN7PNTUcjSeAP5h
+ B6JIHb2Z8/LRzle5FbDPk15hARZ57J65H7aksS8TtquiU2xqcuflhb1jJtO+7Arkcyub
+ N5l/kHvnr7jRk+Vu8oXxHuLWYkYiom6mteVeM63Rsr4+EOJspR6aon/BCv9KTg4BFlK6 uQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2spxbqbr4x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 May 2019 18:45:48 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TIi2Uu062527;
+        Wed, 29 May 2019 18:45:48 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2sr31ved92-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 May 2019 18:45:48 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4TIjihN008886;
+        Wed, 29 May 2019 18:45:44 GMT
+Received: from [192.168.1.222] (/71.63.128.209) by default (Oracle Beehive
+ Gateway v4.0) with ESMTP ; Wed, 29 May 2019 11:44:52 -0700
+USER-AGENT: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+Content-Language: en-US
 MIME-Version: 1.0
-References: <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
- <20190523163604.GE23070@redhat.com> <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
- <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
- <20190524141054.GB2655@redhat.com> <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
- <20190524163310.GG2655@redhat.com> <CABeXuvrUKZnECj+NgLdpe5uhKBEmSynrakD-3q9XHqk8Aef5UQ@mail.gmail.com>
- <20190527150409.GA8961@redhat.com> <CABeXuvouBzZuNarmNcd9JgZgvonL1N_p21gat=O_x0-1hMx=6A@mail.gmail.com>
- <20190529165717.GC27659@redhat.com>
-In-Reply-To: <20190529165717.GC27659@redhat.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Wed, 29 May 2019 11:42:09 -0700
-Message-ID: <CABeXuvrFqGySKNLFK4f5er2ahQpz_eTbF+RfXCis1TZNT16Ddg@mail.gmail.com>
-Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>,
-        Omar Kilani <omar.kilani@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <81a37f9c-4a85-c18d-b882-f361c4998d45@oracle.com>
+Date:   Wed, 29 May 2019 11:44:50 -0700 (PDT)
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        xishi.qiuxishi@alibaba-inc.com,
+        "Chen, Jerry T" <jerry.t.chen@intel.com>,
+        "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mm: hugetlb: soft-offline: fix wrong return value of
+ soft offline
+References: <1558937200-18544-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+In-Reply-To: <1558937200-18544-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905290121
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905290121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 9:57 AM Oleg Nesterov <oleg@redhat.com> wrote:
->
-> On 05/28, Deepa Dinamani wrote:
-> >
-> > I agree that signal handller being called and return value not being
-> > altered is an issue with other syscalls also. I was just wondering if
-> > some userspace code assumption would be assuming this. This is not a
-> > kernel bug.
-> >
-> > But, I do not think we have an understanding of what was wrong in
-> > 854a6ed56839a anymore since you pointed out that my assumption was not
-> > correct that the signal handler being called without errno being set
-> > is wrong.
->
-> Deepa, sorry, I simply can't parse the above... most probably because of
-> my bad English.
+On 5/26/19 11:06 PM, Naoya Horiguchi wrote:
+> Soft offline events for hugetlb pages return -EBUSY when page migration
+> succeeded and dissolve_free_huge_page() failed, which can happen when
+> there're surplus hugepages. We should judge pass/fail of soft offline by
+> checking whether the raw error page was finally contained or not (i.e.
+> the result of set_hwpoison_free_buddy_page()), so this behavior is wrong.
+> 
+> This problem was introduced by the following change of commit 6bc9b56433b76
+> ("mm: fix race on soft-offlining"):
+> 
+>                     if (ret > 0)
+>                             ret = -EIO;
+>             } else {
+>     -               if (PageHuge(page))
+>     -                       dissolve_free_huge_page(page);
+>     +               /*
+>     +                * We set PG_hwpoison only when the migration source hugepage
+>     +                * was successfully dissolved, because otherwise hwpoisoned
+>     +                * hugepage remains on free hugepage list, then userspace will
+>     +                * find it as SIGBUS by allocation failure. That's not expected
+>     +                * in soft-offlining.
+>     +                */
+>     +               ret = dissolve_free_huge_page(page);
+>     +               if (!ret) {
+>     +                       if (set_hwpoison_free_buddy_page(page))
+>     +                               num_poisoned_pages_inc();
+>     +               }
+>             }
+>             return ret;
+>      }
+> 
+> , so a simple fix is to restore the PageHuge precheck, but my code
+> reading shows that we already have PageHuge check in
+> dissolve_free_huge_page() with hugetlb_lock, which is better place to
+> check it.  And currently dissolve_free_huge_page() returns -EBUSY for
+> !PageHuge but that's simply wrong because that that case should be
+> considered as success (meaning that "the given hugetlb was already
+> dissolved.")
 
-Ok, All I meant was that I had thought a signal handler being invoked
-without the error value reflecting it was wrong. That is what I had
-thought was wrong with 854a6ed56839a. Now, that we agree that signal
-handler can be invoked without the errno returning success, I thought
-I did not know what is wrong with 854a6ed56839a anymore.
+Hello Naoya,
 
-But, you now pointed out that the signals we care about should not be
-delivered after an event has been ready. This points out to what was
-wrong with 854a6ed56839a. Thanks.
+I am having a little trouble understanding the situation.  The code above is
+in the routine soft_offline_huge_page, and occurs immediately after a call to
+migrate_pages() with 'page' being the only on the list of pages to be migrated.
+In addition, since we are in soft_offline_huge_page, we know that page is
+a huge page (PageHuge) before the call to migrate_pages.
 
-> > One open question: this part of epoll_pwait was already broken before
-> > 854a6ed56839a. Do you agree?
-> >
-> > if (err == -EINTR) {
-> >                    memcpy(&current->saved_sigmask, &sigsaved,
-> >                           sizeof(sigsaved));
-> >                     set_restore_sigmask();
-> >   } else
-> >                    set_current_blocked(&sigsaved);
->
-> I do not understand why do you think this part was broken :/
+IIUC, the issue is that the migrate_pages call results in 'page' being
+dissolved into regular base pages.  Therefore, the call to
+dissolve_free_huge_page returns -EBUSY and we never end up setting PageHWPoison
+on the (base) page which had the error.
 
-Ok, because of your other statement that the signals the application
-cares about do not want to know about signals they care about after an
-event is ready this is also not a problem.
+It seems that for the original page to be dissolved, it must go through the
+free_huge_page routine.  Once that happens, it is possible for the (dissolved)
+pages to be allocated again.  Is that just a known race, or am I missing
+something?
 
-> > Or, I could revert the signal_pending() check and provide a fix
-> > something like below(not a complete patch)
->
-> ...
->
-> > -void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
-> > +int restore_user_sigmask(const void __user *usigmask, sigset_t
-> > *sigsaved, int sig_pending)
-> >  {
-> >
-> >         if (!usigmask)
-> >                return;
-> >
-> >         /*
-> >          * When signals are pending, do not restore them here.
-> >          * Restoring sigmask here can lead to delivering signals that the above
-> >          * syscalls are intended to block because of the sigmask passed in.
-> >          */
-> > +       if (sig_pending) {
-> >                 current->saved_sigmask = *sigsaved;
-> >                 set_restore_sigmask();
-> >                return;
-> >            }
-> >
-> > @@ -2330,7 +2330,8 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct
-> > epoll_event __user *, events,
-> >
-> >         error = do_epoll_wait(epfd, events, maxevents, timeout);
-> >
-> > -       restore_user_sigmask(sigmask, &sigsaved);
-> > +       signal_detected = restore_user_sigmask(sigmask, &sigsaved,
-> > error == -EINTR);
->
-> I fail to understand this pseudo-code, sorry. In particular, do not understand
-> why restore_user_sigmask() needs to return a boolean.
+> This change affects other callers of dissolve_free_huge_page(),
+> which are also cleaned up by this patch.
 
-That was a remnant from the other patch. Return type needs to be void.
+It may just be me, but I am having a hard time separating the fix for this
+issue from the change to the dissolve_free_huge_page routine.  Would it be
+more clear or possible to create separate patches for these?
 
-> The only thing I _seem to_ understand is the "sig_pending" flag passed by the
-> caller which replaces the signal_pending() check.
-
-Correct. This is what is the main change I was proposing.
-
-> Yes, this is what I think we
-> should do, and this is what I tried to propose from the very beginning in my
-> 1st email in this thread.
-
-This was not clear to me in your first response that you did not want
-the signal_pending() check in restore_user_sigmask(). :
-https://lore.kernel.org/lkml/20190522150505.GA4915@redhat.com/
-
-"Ugh. I need to re-check, but at first glance I really dislike this change.
-
-I think we can fix the problem _and_ simplify the code. Something like below.
-The patch is obviously incomplete, it changes only only one caller of
-set_user_sigmask(), epoll_pwait() to explain what I mean.
-
-restore_user_sigmask() should simply die. Although perhaps another helper
-makes sense to add WARN_ON(test_tsk_restore_sigmask() && !signal_pending)."
-
--Deepa
+-- 
+Mike Kravetz
