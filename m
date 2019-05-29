@@ -2,88 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FFB62DEFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:57:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F28722DF01
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:58:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbfE2N5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 09:57:42 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:25484 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726702AbfE2N5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 09:57:41 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id AEAC050261;
-        Wed, 29 May 2019 15:57:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
-        with ESMTP id Nea8omml6Tf8; Wed, 29 May 2019 15:57:33 +0200 (CEST)
-Subject: Re: [PATCH 1/2 v3] serial: mctrl_gpio: Check if GPIO property exisits
- before requesting it
-To:     Johan Hovold <johan@kernel.org>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>
-References: <20190527111805.876-1-sr@denx.de> <20190529134435.GR568@localhost>
-From:   Stefan Roese <sr@denx.de>
-Message-ID: <4e45b298-78bf-c2a0-fcbe-45c10674990f@denx.de>
-Date:   Wed, 29 May 2019 15:57:31 +0200
+        id S1727495AbfE2N63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 09:58:29 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34824 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbfE2N62 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 09:58:28 -0400
+Received: by mail-lj1-f196.google.com with SMTP id h11so2596670ljb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 06:58:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FvnuOzvWWHxvWxRXVyec6ngD8uETWcADOgiOUZyOXOI=;
+        b=uXjwPjRZCt5+NzEnNPmdCCkF3iYjQdmKQjzHPmIBvcHk21+tVcQk6R/TffAC7mbzK7
+         3OwgsrDjSkovmg4CpeCxkjLO/kQQvYs0pmQohCNI7L8gZdD8RGrfY4VGJdYTU4SoFB3v
+         vxOJmH2NmOUBLSaEMsTV4T0d7uI//nBlM9nMZjIItiftF4IVJAOz7r5HkBkNRO1ocej9
+         uSw6MboF7GCpcr9BVSt1oVeMNInBa+xY8WKUwIpqaSATf3Ri/vgGphqjpJDKCfIuJNPw
+         2XVz/73HtiI5Ls00TDoUhrA2TsMBVDDDh2a2MIgaAD8+i7k63TUUX87Zz6QC0oBlSFQ1
+         qdNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FvnuOzvWWHxvWxRXVyec6ngD8uETWcADOgiOUZyOXOI=;
+        b=IB4u2HMrPDiAfJsqlHFdM8iroYEZuh1/pPdrcYNEIBCMtwm4Q41BxPWVROfw6vrEj+
+         maJo9iUxgclFzELJvoFyDVwCKj169ryf1MeiRyQMVnam9J2Qk3ORNJATN+7KEXTQf/Py
+         UEQHdaMgNnhc7rrFgh/WIqCM5d47jLpratn++kD/0E9/FMOG2wpAZHA6GmJPvLSZ154v
+         iaKSBuZ3vq5+2LtQSZhz3UUk9mPErGbgD6YKyN5ZHBKICOvMBf2UM4IIKWwYJRuA6Imb
+         KqMDC6fXo7+Tggwi5qu2Rbzr2vQ69zwsyRwOIBR81Wnkh+RU5Izb4BYuF+SXNzAdecWa
+         t6aw==
+X-Gm-Message-State: APjAAAVe3UG6IgmIgH15P2YMBPLcVuAJamEFyAa7i6+IvnzyfDQp0MNq
+        QphImuqckkLHju0KyR17fFg=
+X-Google-Smtp-Source: APXvYqxJcXNy9tjvGvb6p0Lmjk07Ff52IXEus1xxpwJYnnL8XqCx75U51Gw9O4dVXAeZBa+45pmDaQ==
+X-Received: by 2002:a2e:a0ca:: with SMTP id f10mr1708409ljm.113.1559138306581;
+        Wed, 29 May 2019 06:58:26 -0700 (PDT)
+Received: from pc636 ([37.139.158.167])
+        by smtp.gmail.com with ESMTPSA id d18sm3473580lfl.95.2019.05.29.06.58.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 May 2019 06:58:25 -0700 (PDT)
+From:   Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date:   Wed, 29 May 2019 15:58:17 +0200
+To:     Roman Gushchin <guro@fb.com>
+Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Hillf Danton <hdanton@sina.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v3 4/4] mm/vmap: move BUG_ON() check to the unlink_va()
+Message-ID: <20190529135817.tr7usoi2xwx5zl2s@pc636>
+References: <20190527093842.10701-1-urezki@gmail.com>
+ <20190527093842.10701-5-urezki@gmail.com>
+ <20190528225001.GI27847@tower.DHCP.thefacebook.com>
 MIME-Version: 1.0
-In-Reply-To: <20190529134435.GR568@localhost>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190528225001.GI27847@tower.DHCP.thefacebook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.05.19 15:44, Johan Hovold wrote:
-> On Mon, May 27, 2019 at 01:18:04PM +0200, Stefan Roese wrote:
->> This patch adds a check for the GPIOs property existence, before the
->> GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
->> support is added (2nd patch in this patch series) on x86 platforms using
->> ACPI.
-> 
->> Signed-off-by: Stefan Roese <sr@denx.de>
->> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
->> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> Cc: Yegor Yefremov <yegorslists@googlemail.com>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>
->> ---
->> v3:
->> - No change
->>
->> v2:
->> - Include the problem description and analysis from Mika into the commit
->>    text, as suggested by Greg.
->>
->>   drivers/tty/serial/serial_mctrl_gpio.c | 7 +++++++
->>   1 file changed, 7 insertions(+)
->>
->> diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
->> index 39ed56214cd3..cac50b20a119 100644
->> --- a/drivers/tty/serial/serial_mctrl_gpio.c
->> +++ b/drivers/tty/serial/serial_mctrl_gpio.c
->> @@ -116,6 +116,13 @@ struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev, unsigned int idx)
->>   
->>   	for (i = 0; i < UART_GPIO_MAX; i++) {
->>   		enum gpiod_flags flags;
->> +		char *gpio_str;
->> +
->> +		/* Check if GPIO property exists and continue if not */
->> +		gpio_str = kasprintf(GFP_KERNEL, "%s-gpios",
->> +				     mctrl_gpios_desc[i].name);
-> 
-> Where's the corresponding kfree?
+Hello, Roman!
 
-Its missing. I'll add it in v4.
+> > Move the BUG_ON()/RB_EMPTY_NODE() check under unlink_va()
+> > function, it means if an empty node gets freed it is a BUG
+> > thus is considered as faulty behaviour.
+> 
+> It's not exactly clear from the description, why it's better.
+> 
+It is rather about if "unlink" happens on unhandled node it is
+faulty behavior. Something that clearly written in stone. We used
+to call "unlink" on detached node during merge, but after:
 
-Thanks,
-Stefan
+[PATCH v3 3/4] mm/vmap: get rid of one single unlink_va() when merge
+
+it is not supposed to be ever happened across the logic.
+
+>
+> Also, do we really need a BUG_ON() in either place?
+> 
+Historically we used to have the BUG_ON there. We can get rid of it
+for sure. But in this case, it would be harder to find a head or tail
+of it when the crash occurs, soon or later.
+
+> Isn't something like this better?
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index c42872ed82ac..2df0e86d6aff 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -1118,7 +1118,8 @@ EXPORT_SYMBOL_GPL(unregister_vmap_purge_notifier);
+>  
+>  static void __free_vmap_area(struct vmap_area *va)
+>  {
+> -       BUG_ON(RB_EMPTY_NODE(&va->rb_node));
+> +       if (WARN_ON_ONCE(RB_EMPTY_NODE(&va->rb_node)))
+> +               return;
+>
+I was thinking about WARN_ON_ONCE. The concern was about if the
+message gets lost due to kernel ring buffer. Therefore i used that.
+I am not sure if we have something like WARN_ONE_RATELIMIT that
+would be the best i think. At least it would indicate if a warning
+happens periodically or not.
+
+Any thoughts?
+
+Thanks for the comments!
+
+--
+Vlad Rezki
