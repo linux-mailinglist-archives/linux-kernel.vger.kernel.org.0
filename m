@@ -2,78 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D93222D7F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:39:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60772D7B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:25:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726141AbfE2IjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 04:39:22 -0400
-Received: from mail-m974.mail.163.com ([123.126.97.4]:33394 "EHLO
-        mail-m974.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725917AbfE2IjW (ORCPT
+        id S1726323AbfE2IZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:25:14 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:49206 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725914AbfE2IZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:39:22 -0400
-X-Greylist: delayed 908 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 May 2019 04:39:21 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=VizZIOSYyTUJLioFyx
-        PymTPM95wmzjKyh7sAkeKcjRQ=; b=Etlk5mfgxnnxso3YgP+V7ewCwqr8n96Tcj
-        WkkV6ZQQDJAt9j7smYMJWOGqTDGN5HHmnQXYforO+YEuitoyBTYS48Y0vT9hhlrJ
-        A3s6SZgoTAs5phHWrB3dyNjhdQQja7gqxV3Wshjsq7FIUEvIYNq+kbqKcldUL/oo
-        lRHzmy6T8=
-Received: from localhost.localdomain (unknown [218.106.182.173])
-        by smtp18 (Coremail) with SMTP id HNxpCgCXMtmIQe5c3OOhAA--.380S3;
-        Wed, 29 May 2019 16:23:41 +0800 (CST)
-From:   Xidong Wang <wangxidong_97@163.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Xidong Wang <wangxidong_97@163.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] clocksource/drivers/integrator: check return value
-Date:   Wed, 29 May 2019 16:23:28 +0800
-Message-Id: <1559118208-28049-1-git-send-email-wangxidong_97@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: HNxpCgCXMtmIQe5c3OOhAA--.380S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GFyDtryrWF4rCw43Gw1xZrb_yoWDurc_WF
-        s2gryfJr9Y934xArZxC3W2qr929rs7uFyFgFW0yFZxCa47XF1rury7XwnrCrWxXwsrKFy7
-        C3yDCr47AF43GjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRR4SrUUUUUU==
-X-Originating-IP: [218.106.182.173]
-X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/1tbivg3D81ZcV9i4GgAAsk
+        Wed, 29 May 2019 04:25:14 -0400
+X-UUID: 49a926170b95400d8375011865a37b7b-20190529
+X-UUID: 49a926170b95400d8375011865a37b7b-20190529
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <jamesjj.liao@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1050078162; Wed, 29 May 2019 16:25:07 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 29 May 2019 16:25:06 +0800
+Received: from mtksdaap41.mediatek.inc (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 29 May 2019 16:25:06 +0800
+From:   James Liao <jamesjj.liao@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        James Liao <jamesjj.liao@mediatek.com>
+Subject: [PATCH] arm64: dts: mt8183: Enable CPU idle-states
+Date:   Wed, 29 May 2019 16:25:03 +0800
+Message-ID: <1559118303-31875-1-git-send-email-jamesjj.liao@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In integrator_ap_timer_init_of(), the return value of
-clk_prepare_enable() should be checked before clk is used.
+Enable mcdi-cpu and mcdi-cluster on MT8183 CPUs.
 
-Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+Signed-off-by: James Liao <jamesjj.liao@mediatek.com>
 ---
- drivers/clocksource/timer-integrator-ap.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+This patch bases on v5.1-rc1 and [1], adds idle-states for MT8183 CPUs.
 
-diff --git a/drivers/clocksource/timer-integrator-ap.c b/drivers/clocksource/timer-integrator-ap.c
-index 19fb7de..72d5bdc 100644
---- a/drivers/clocksource/timer-integrator-ap.c
-+++ b/drivers/clocksource/timer-integrator-ap.c
-@@ -177,6 +177,7 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
- {
- 	const char *path;
- 	void __iomem *base;
-+	int ret;
- 	int err;
- 	int irq;
- 	struct clk *clk;
-@@ -192,7 +193,10 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
- 		pr_err("No clock for %pOFn\n", node);
- 		return PTR_ERR(clk);
- 	}
--	clk_prepare_enable(clk);
-+	ret = clk_prepare_enable(clk);
-+	if (ret) {
-+		return ret;
-+	}
- 	rate = clk_get_rate(clk);
- 	writel(0, base + TIMER_CTRL);
+[1] https://patchwork.kernel.org/patch/10962375/
+
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index 08274bf..ef4b054 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -56,6 +56,7 @@
+ 			compatible = "arm,cortex-a53";
+ 			reg = <0x000>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&MCDI_CPU &MCDI_CLUSTER>;
+ 		};
+ 
+ 		cpu1: cpu@1 {
+@@ -63,6 +64,7 @@
+ 			compatible = "arm,cortex-a53";
+ 			reg = <0x001>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&MCDI_CPU &MCDI_CLUSTER>;
+ 		};
+ 
+ 		cpu2: cpu@2 {
+@@ -70,6 +72,7 @@
+ 			compatible = "arm,cortex-a53";
+ 			reg = <0x002>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&MCDI_CPU &MCDI_CLUSTER>;
+ 		};
+ 
+ 		cpu3: cpu@3 {
+@@ -77,6 +80,7 @@
+ 			compatible = "arm,cortex-a53";
+ 			reg = <0x003>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&MCDI_CPU &MCDI_CLUSTER>;
+ 		};
+ 
+ 		cpu4: cpu@100 {
+@@ -84,6 +88,7 @@
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x100>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&MCDI_CPU &MCDI_CLUSTER>;
+ 		};
+ 
+ 		cpu5: cpu@101 {
+@@ -91,6 +96,7 @@
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x101>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&MCDI_CPU &MCDI_CLUSTER>;
+ 		};
+ 
+ 		cpu6: cpu@102 {
+@@ -98,6 +104,7 @@
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x102>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&MCDI_CPU &MCDI_CLUSTER>;
+ 		};
+ 
+ 		cpu7: cpu@103 {
+@@ -105,6 +112,29 @@
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x103>;
+ 			enable-method = "psci";
++			cpu-idle-states = <&MCDI_CPU &MCDI_CLUSTER>;
++		};
++
++		idle-states {
++			entry-method = "arm,psci";
++
++			MCDI_CPU: mcdi-cpu {
++				compatible = "arm,idle-state";
++				local-timer-stop;
++				arm,psci-suspend-param = <0x00010001>;
++				entry-latency-us = <200>;
++				exit-latency-us = <200>;
++				min-residency-us = <800>;
++			};
++
++			MCDI_CLUSTER: mcdi-cluster {
++				compatible = "arm,idle-state";
++				local-timer-stop;
++				arm,psci-suspend-param = <0x01010001>;
++				entry-latency-us = <250>;
++				exit-latency-us = <400>;
++				min-residency-us = <1300>;
++			};
+ 		};
+ 	};
  
 -- 
-2.7.4
+1.9.1
 
