@@ -2,139 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F6FB2E16F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:45:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4708E2E174
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:45:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfE2PpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 11:45:13 -0400
-Received: from mail.efficios.com ([167.114.142.138]:46590 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfE2PpM (ORCPT
+        id S1727106AbfE2Ppv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 11:45:51 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42018 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbfE2Ppv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:45:12 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 5C5E520E810;
-        Wed, 29 May 2019 11:45:11 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 06Uex-ntIi6b; Wed, 29 May 2019 11:45:10 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id C762520E80B;
-        Wed, 29 May 2019 11:45:10 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com C762520E80B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1559144710;
-        bh=Z8u/h+OkjMEmjPJ6ylYRgvClv2UsRwp41k4WjCc8j/0=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=ViqyNnKao9tEaN867vuBuAYQVDaw826E1hgVaz5U8GY9XZRZMApV6dp8PUcC6qnsk
-         +o0dC6tPNyGGjG9x7qDHmlwtk9GKPP63jK+XJnsXXuFG+lfXTtIurAuphyL2PEC1si
-         rlWL8eJyrWq7eEPcITpC1O0xGLROp+sH+thw7gWpGNbfCgalOVbzJAfyN7ZASz72ZB
-         kP1lFDRCvpiVRQUNaIdpKo4dODwQcVR1bV/sdBoUJQ/mU2SlAzHIT5Vyf1qPKMUiqm
-         llCSbpGVtnQyqYP0bIKpxpLiQVlFrQGpJbFImbtRhvJbcNQXU+cBUnm7YAFgVWsYLw
-         S0TzC/XTwigbw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id D_tNcsrx8C2x; Wed, 29 May 2019 11:45:10 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id AA0FE20E7FE;
-        Wed, 29 May 2019 11:45:10 -0400 (EDT)
-Date:   Wed, 29 May 2019 11:45:10 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     carlos <carlos@redhat.com>, Joseph Myers <joseph@codesourcery.com>,
-        Szabolcs Nagy <szabolcs.nagy@arm.com>,
-        libc-alpha <libc-alpha@sourceware.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Maurer <bmaurer@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
-        Rich Felker <dalias@libc.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api <linux-api@vger.kernel.org>
-Message-ID: <140718133.18261.1559144710554.JavaMail.zimbra@efficios.com>
-In-Reply-To: <1239705947.14878.1558985272873.JavaMail.zimbra@efficios.com>
-References: <20190503184219.19266-1-mathieu.desnoyers@efficios.com> <20190503184219.19266-2-mathieu.desnoyers@efficios.com> <87h89gjgaf.fsf@oldenburg2.str.redhat.com> <1239705947.14878.1558985272873.JavaMail.zimbra@efficios.com>
-Subject: Re: [PATCH 1/5] glibc: Perform rseq(2) registration at C startup
- and thread creation (v10)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.12_GA_3803 (ZimbraWebClient - FF67 (Linux)/8.8.12_GA_3794)
-Thread-Topic: glibc: Perform rseq(2) registration at C startup and thread creation (v10)
-Thread-Index: 18yTu+T8PFt4cXiNhOg61XhmaTl3EWs0GkO7
+        Wed, 29 May 2019 11:45:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=MbU9KTY7lRDIVaXn8e0mtzlZsMKjQlL1HDMtTrGcWVU=; b=RpxO9O0fZlZc
+        SlD3qDONZ4mfn9y7+lab4VuQdISTMB2Fh66MCYFDjfDo48bOHj4vzbfJF8uZEA5c+adurrrwii8cx
+        ozEhbLsRiGTKQhUHyuXzi4CgrzUalLqria5uKMVljkwNG9f1HNaBiHkQZKuLJT/TAJWfErdISVyac
+        q544U=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hW0lh-00051h-5v; Wed, 29 May 2019 15:45:33 +0000
+Received: by finisterre.sirena.org.uk (Postfix, from userid 1000)
+        id 8B003440049; Wed, 29 May 2019 16:45:27 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     alsa-devel@alsa-project.org, brian.austin@cirrus.com,
+        broonie@kernel.org, kbuild test robot <lkp@intel.com>,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, Paul.Handrigan@cirrus.com,
+        perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: cs42xx8: Fix build error with CONFIG_GPIOLIB is not set" to the asoc tree
+In-Reply-To: <20190529033002.16606-1-shengjiu.wang@nxp.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190529154527.8B003440049@finisterre.sirena.org.uk>
+Date:   Wed, 29 May 2019 16:45:27 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On May 27, 2019, at 3:27 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
+The patch
 
-> ----- On May 27, 2019, at 7:19 AM, Florian Weimer fweimer@redhat.com wrote:
-> 
+   ASoC: cs42xx8: Fix build error with CONFIG_GPIOLIB is not set
 
-[...]
+has been applied to the asoc tree at
 
->> 
->> Furthermore, the reference to ELF constructors is misleading.  I believe
->> the code you added to __libc_start_main to initialize __rseq_handled and
->> register __seq_abi with the kernel runs *after* ELF constructors have
->> executed (and not at all if the main program is written in Go, alas).
->> All initialization activity for the shared case needs to happen in
->> elf/rtld.c or called from there, probably as part of the security
->> initialization code or thereabouts.
-> 
-> in elf/rtld.c:dl_main() we have the following code:
-> 
->  /* We do not initialize any of the TLS functionality unless any of the
->     initial modules uses TLS.  This makes dynamic loading of modules with
->     TLS impossible, but to support it requires either eagerly doing setup
->     now or lazily doing it later.  Doing it now makes us incompatible with
->     an old kernel that can't perform TLS_INIT_TP, even if no TLS is ever
->     used.  Trying to do it lazily is too hairy to try when there could be
->     multiple threads (from a non-TLS-using libpthread).  */
->  bool was_tls_init_tp_called = tls_init_tp_called;
->  if (tcbp == NULL)
->    tcbp = init_tls ();
-> 
-> If I understand your point correctly, I should move the rseq_init() and
-> rseq_register_current_thread() for the SHARED case just after this
-> initialization, otherwise calling those from LIBC_START_MAIN() is too
-> late and it runs after initial modules constructors (or not at all for
-> Go). However, this means glibc will start using TLS internally. I'm
-> concerned that this is not quite in line with the above comment which
-> states that TLS is not initialized if no initial modules use TLS.
-> 
-> For the !SHARED use-case, if my understanding is correct, I should keep
-> rseq_init() and rseq_register_current_thread() calls within LIBC_START_MAIN().
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
-I've moved the rseq initialization for SHARED case to the very end of
-elf/rtld.c:init_tls(), and get the following error on make check:
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Generating locale am_ET.UTF-8: this might take a while...
-Inconsistency detected by ld.so: get-dynamic-info.h: 143: elf_get_dynamic_info: Assertion `info[DT_FLAGS] == NULL || (info[DT_FLAGS]->d_un.d_val & ~DF_BIND_NOW) == 0' failed!
-Charmap: "UTF-8" Inputfile: "am_ET" Outputdir: "am_ET.UTF-8" failed
-/bin/sh: 4: cannot create /home/efficios/git/glibc-build/localedata/am_ET.UTF-8/LC_CTYPE.test-result: Directory nonexistent
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-This error goes away if I comment out the call to rseq_register_current_thread (),
-which touches the __rseq_abi __thread variable and issues a system call.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Currently, the __rseq_abi __thread variable is within
-sysdeps/unix/sysv/linux/rseq-sym.c, which is added to the
-sysdep_routines within sysdeps/unix/sysv/linux/Makefile. I
-suspect it may need to be moved elsewhere.
-
-Any thoughts on how to solve this ?
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
+Mark
 
-Mathieu
+From 7cda6223503d592f980a222811355ab07611b821 Mon Sep 17 00:00:00 2001
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+Date: Wed, 29 May 2019 11:30:02 +0800
+Subject: [PATCH] ASoC: cs42xx8: Fix build error with CONFIG_GPIOLIB is not set
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+config: x86_64-randconfig-x000201921-201921
+compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+reproduce:
+        make ARCH=x86_64
+
+sound/soc/codecs/cs42xx8.c: In function ‘cs42xx8_probe’:
+sound/soc/codecs/cs42xx8.c:472:25: error: implicit declaration of function ‘devm_gpiod_get_optional’; did you mean ‘devm_clk_get_optional’? [-Werror=implicit-function-declaration]
+  cs42xx8->gpiod_reset = devm_gpiod_get_optional(dev, "reset",
+                         ^~~~~~~~~~~~~~~~~~~~~~~
+                         devm_clk_get_optional
+sound/soc/codecs/cs42xx8.c:473:8: error: ‘GPIOD_OUT_HIGH’ undeclared (first use in this function); did you mean ‘GPIOF_INIT_HIGH’?
+        GPIOD_OUT_HIGH);
+        ^~~~~~~~~~~~~~
+        GPIOF_INIT_HIGH
+sound/soc/codecs/cs42xx8.c:473:8: note: each undeclared identifier is reported only once for each function it appears in
+sound/soc/codecs/cs42xx8.c:477:2: error: implicit declaration of function ‘gpiod_set_value_cansleep’; did you mean ‘gpio_set_value_cansleep’? [-Werror=implicit-function-declaration]
+  gpiod_set_value_cansleep(cs42xx8->gpiod_reset, 0);
+  ^~~~~~~~~~~~~~~~~~~~~~~~
+  gpio_set_value_cansleep
+
+Fixes: bfe95dfa4dac ("ASoC: cs42xx8: Add reset gpio handling")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/cs42xx8.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/cs42xx8.c b/sound/soc/codecs/cs42xx8.c
+index b377cddaf2e6..6203f54d9f25 100644
+--- a/sound/soc/codecs/cs42xx8.c
++++ b/sound/soc/codecs/cs42xx8.c
+@@ -14,7 +14,7 @@
+ #include <linux/delay.h>
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+-#include <linux/of_gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regulator/consumer.h>
+ #include <sound/pcm_params.h>
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+2.20.1
+
