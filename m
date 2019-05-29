@@ -2,102 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 066CB2D8E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F28DC2D8D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:18:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbfE2JUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 05:20:09 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:52500 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbfE2JUE (ORCPT
+        id S1726668AbfE2JSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 05:18:34 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:5485 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726012AbfE2JSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 05:20:04 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4T9JsGR024114;
-        Wed, 29 May 2019 04:19:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1559121594;
-        bh=AfXj0dA2uE7BKjcDG8GO32yzKz/LyY/lufBnllEBR0U=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=FhZiU6rxSv4DdnO7G88rRlXzAbf/Qxc5XjgIISCLEldIVxBaBcPLa018KSIL4UyyH
-         VZakdBy3r9ZrKw7JDaoFryE18gSkNIdHU5bMBdqEJdtooi+PvIb4FLTxY5gb8K7LVk
-         PTIoLUQ/11ARk02YXgYUZkzWNkjVcnTEQ8rkY38E=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4T9Js3g050576
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 May 2019 04:19:54 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 29
- May 2019 04:19:53 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 29 May 2019 04:19:53 -0500
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4T9JVxT079377;
-        Wed, 29 May 2019 04:19:51 -0500
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 6/6] arm64: dts: ti: am654-base-board: Disable SERDES and PCIe
-Date:   Wed, 29 May 2019 14:48:12 +0530
-Message-ID: <20190529091812.20764-7-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190529091812.20764-1-kishon@ti.com>
-References: <20190529091812.20764-1-kishon@ti.com>
+        Wed, 29 May 2019 05:18:34 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cee4e690000>; Wed, 29 May 2019 02:18:33 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 29 May 2019 02:18:33 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 29 May 2019 02:18:33 -0700
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 May
+ 2019 09:18:33 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 29 May 2019 09:18:33 +0000
+Received: from moonraker.nvidia.com (Not Verified[10.21.132.148]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5cee4e670004>; Wed, 29 May 2019 02:18:32 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Sameer Pujar <spujar@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH] clk: tegra210: Fix default rates for HDA clocks
+Date:   Wed, 29 May 2019 10:18:21 +0100
+Message-ID: <1559121501-8566-1-git-send-email-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559121513; bh=R5/eMVjqBGrmlh8gW6+X0+5WtMkn8HWkBhV9avG/N5Q=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=Jn3w4pERFvmYGnGKNbHOxcFr7QJNb39Zj3bROvKf0F4AxSQZF1kaWs1RMVNohBnF2
+         1RwdwKPpoXzKhr5VXVT5kaUuT1Czn/BmlR4hVzA9tbciN2JGK+2yMCyR0LF1CggEww
+         qV9R5waeZEoeZbpMHAiYAxm+OIb4eL+zxBGUXir2DzjEwQYcxup+SPC2qVpT1xx/VB
+         VtwRviEd9DblR/hnhsqB2vnrDvO1NP8Msa9vTOxhKbJSW30LfNuozW8BuqVwRST9Cx
+         ItsMK427/aWfvsLAG23MO/N94A7JoGpQaZhCKVW5J/8HwhJRT+oUZASv2khTjGsh8f
+         4N2Pl5ffVfySA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AM654 base board does not have any PCIe slots. Disable all the
-SERDES and PCIe instances.
+Currently the default clock rates for the HDA and HDA2CODEC_2X clocks
+are both 19.2MHz. However, the default rates for these clocks should
+actually be 51MHz and 48MHz, respectively. Correct the default clock
+rates for these clocks by specifying them in the clock init table for
+Tegra210.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- .../arm64/boot/dts/ti/k3-am654-base-board.dts | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/clk/tegra/clk-tegra210.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-index cf1aa276a1ea..abd7e4e218f2 100644
---- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
-@@ -228,3 +228,27 @@
- 		ti,adc-channels = <0 1 2 3 4 5 6 7>;
- 	};
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index ed3c7df75d1e..8b3b3d771813 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3377,6 +3377,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_I2S3_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	{ TEGRA210_CLK_I2S4_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	{ TEGRA210_CLK_VIMCLK_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
++	{ TEGRA210_CLK_HDA, TEGRA210_CLK_PLL_P, 51000000, 0 },
++	{ TEGRA210_CLK_HDA2CODEC_2X, TEGRA210_CLK_PLL_P, 48000000, 0 },
+ 	/* This MUST be the last entry. */
+ 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
  };
-+
-+&serdes0 {
-+	status = "disabled";
-+};
-+
-+&serdes1 {
-+	status = "disabled";
-+};
-+
-+&pcie0_rc {
-+	status = "disabled";
-+};
-+
-+&pcie0_ep {
-+	status = "disabled";
-+};
-+
-+&pcie1_rc {
-+	status = "disabled";
-+};
-+
-+&pcie1_ep {
-+	status = "disabled";
-+};
 -- 
-2.17.1
+2.7.4
 
