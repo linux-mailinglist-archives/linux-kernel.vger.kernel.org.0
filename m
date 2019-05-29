@@ -2,236 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E8ED2D939
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B56A2D93C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726224AbfE2Jjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 05:39:53 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:17604 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725894AbfE2Jjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 05:39:53 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A197A194D203AE1D13FD;
-        Wed, 29 May 2019 17:39:50 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 29 May 2019
- 17:39:41 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <tony@atomide.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v3] clk: ti: Remove unused functions
-Date:   Wed, 29 May 2019 17:39:37 +0800
-Message-ID: <20190529093937.21748-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190512100328.27136-1-yuehaibing@huawei.com>
-References: <20190512100328.27136-1-yuehaibing@huawei.com>
+        id S1726504AbfE2Jko (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 05:40:44 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43681 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbfE2Jkm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 05:40:42 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l17so1209588wrm.10
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 02:40:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=j0hlqpO7DoKf0qS7cy3GbaeQGV5MXFN+9TtToWsTFR4=;
+        b=Uo1WZSoyhUVGRj2+3MOJxfJXM+P7v0LSEDHlcQSFGEhHHPCaoqk1454kY5k+dzExg9
+         us2AtiZjrMNOPDi64X95de+ylMMtOL6qNtz3pQUP52aPgOW94RuGLiVmLDp8+g0VPYAh
+         6Mi0M2qTjKFeF6Mfc8gdi0Cp75PrGNfrrNxS0MNa5laFBesch2XEdoI2trSj8VP9p+kU
+         DU/WPlQ5+bPV907ofgyW8fIOLZXl5I8bF1IQGA8sxmXbXEH87c1yJVE+GFIF20Ga0kT5
+         RQn5VL2hIaKWCJhqeCJJYdMd9e1Ub8ulDQbynjSwcboBJ/xCCoA9If0IeDnHej8BR0R7
+         uqDQ==
+X-Gm-Message-State: APjAAAUUrheAjiwhxS16IxaXvZTLvFr6FO5P76B85ln41J/bWULnRTc/
+        Eawrys8po8JYBvfpIY+eaYEN8A==
+X-Google-Smtp-Source: APXvYqyRIrS086KqDZkfV5shjvt8JPfS49t4cis64k1qznhZfvFuYib2I/GTimQKUmJBe4apkmsFfQ==
+X-Received: by 2002:a5d:4089:: with SMTP id o9mr6276933wrp.6.1559122836612;
+        Wed, 29 May 2019 02:40:36 -0700 (PDT)
+Received: from t460s.bristot.redhat.com ([193.205.81.200])
+        by smtp.gmail.com with ESMTPSA id f3sm2461336wre.93.2019.05.29.02.40.35
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 02:40:35 -0700 (PDT)
+Subject: Re: [RFC 2/3] preempt_tracer: Disable IRQ while starting/stopping due
+ to a preempt_counter change
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, williams@redhat.com,
+        daniel@bristot.me, "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+References: <cover.1559051152.git.bristot@redhat.com>
+ <f2ca7336162b6dc45f413cfe4e0056e6aa32e7ed.1559051152.git.bristot@redhat.com>
+ <20190529083357.GF2623@hirez.programming.kicks-ass.net>
+From:   Daniel Bristot de Oliveira <bristot@redhat.com>
+Message-ID: <b47631c3-d65a-4506-098a-355c8cf50601@redhat.com>
+Date:   Wed, 29 May 2019 11:40:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190529083357.GF2623@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-They are not used any more since
-commit 7558562a70fb ("clk: ti: Drop legacy clk-3xxx-legacy code")
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Suggested-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
-v3: remove ti_clk_build_component_div and _get_div_table_from_setup
-v2: also remove mux/div unused functions
----
- drivers/clk/ti/divider.c | 85 ----------------------------------------
- drivers/clk/ti/gate.c    | 30 --------------
- drivers/clk/ti/mux.c     | 31 ---------------
- 3 files changed, 146 deletions(-)
-
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index 4786e0ebc2e8..6cb863c13648 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -425,91 +425,6 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
- 	return 0;
- }
- 
--static const struct clk_div_table *
--_get_div_table_from_setup(struct ti_clk_divider *setup, u8 *width)
--{
--	const struct clk_div_table *table = NULL;
--
--	ti_clk_parse_divider_data(setup->dividers, setup->num_dividers,
--				  setup->max_div, setup->flags, width,
--				  &table);
--
--	return table;
--}
--
--struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
--{
--	struct clk_omap_divider *div;
--	struct clk_omap_reg *reg;
--	int ret;
--
--	if (!setup)
--		return NULL;
--
--	div = kzalloc(sizeof(*div), GFP_KERNEL);
--	if (!div)
--		return ERR_PTR(-ENOMEM);
--
--	reg = (struct clk_omap_reg *)&div->reg;
--	reg->index = setup->module;
--	reg->offset = setup->reg;
--
--	if (setup->flags & CLKF_INDEX_STARTS_AT_ONE)
--		div->flags |= CLK_DIVIDER_ONE_BASED;
--
--	if (setup->flags & CLKF_INDEX_POWER_OF_TWO)
--		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
--
--	div->table = _get_div_table_from_setup(setup, &div->width);
--	if (IS_ERR(div->table)) {
--		ret = PTR_ERR(div->table);
--		kfree(div);
--		return ERR_PTR(ret);
--	}
--
--
--	div->shift = setup->bit_shift;
--	div->latch = -EINVAL;
--
--	return &div->hw;
--}
--
--struct clk *ti_clk_register_divider(struct ti_clk *setup)
--{
--	struct ti_clk_divider *div = setup->data;
--	struct clk_omap_reg reg = {
--		.index = div->module,
--		.offset = div->reg,
--	};
--	u8 width;
--	u32 flags = 0;
--	u8 div_flags = 0;
--	const struct clk_div_table *table;
--	struct clk *clk;
--
--	if (div->flags & CLKF_INDEX_STARTS_AT_ONE)
--		div_flags |= CLK_DIVIDER_ONE_BASED;
--
--	if (div->flags & CLKF_INDEX_POWER_OF_TWO)
--		div_flags |= CLK_DIVIDER_POWER_OF_TWO;
--
--	if (div->flags & CLKF_SET_RATE_PARENT)
--		flags |= CLK_SET_RATE_PARENT;
--
--	table = _get_div_table_from_setup(div, &width);
--	if (IS_ERR(table))
--		return (struct clk *)table;
--
--	clk = _register_divider(NULL, setup->name, div->parent,
--				flags, &reg, div->bit_shift,
--				width, -EINVAL, div_flags, table);
--
--	if (IS_ERR(clk))
--		kfree(table);
--
--	return clk;
--}
--
- static struct clk_div_table *
- __init ti_clk_get_div_table(struct device_node *node)
- {
-diff --git a/drivers/clk/ti/gate.c b/drivers/clk/ti/gate.c
-index 504c0e91cdc7..42389558418c 100644
---- a/drivers/clk/ti/gate.c
-+++ b/drivers/clk/ti/gate.c
-@@ -131,36 +131,6 @@ static struct clk *_register_gate(struct device *dev, const char *name,
- 	return clk;
- }
- 
--struct clk_hw *ti_clk_build_component_gate(struct ti_clk_gate *setup)
--{
--	struct clk_hw_omap *gate;
--	struct clk_omap_reg *reg;
--	const struct clk_hw_omap_ops *ops = &clkhwops_wait;
--
--	if (!setup)
--		return NULL;
--
--	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
--	if (!gate)
--		return ERR_PTR(-ENOMEM);
--
--	reg = (struct clk_omap_reg *)&gate->enable_reg;
--	reg->index = setup->module;
--	reg->offset = setup->reg;
--
--	gate->enable_bit = setup->bit_shift;
--
--	if (setup->flags & CLKF_NO_WAIT)
--		ops = NULL;
--
--	if (setup->flags & CLKF_INTERFACE)
--		ops = &clkhwops_iclk_wait;
--
--	gate->ops = ops;
--
--	return &gate->hw;
--}
--
- static void __init _of_ti_gate_clk_setup(struct device_node *node,
- 					 const struct clk_ops *ops,
- 					 const struct clk_hw_omap_ops *hw_ops)
-diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
-index b7f9a4f068bf..0069e7cf3ebc 100644
---- a/drivers/clk/ti/mux.c
-+++ b/drivers/clk/ti/mux.c
-@@ -164,37 +164,6 @@ static struct clk *_register_mux(struct device *dev, const char *name,
- 	return clk;
- }
- 
--struct clk *ti_clk_register_mux(struct ti_clk *setup)
--{
--	struct ti_clk_mux *mux;
--	u32 flags;
--	u8 mux_flags = 0;
--	struct clk_omap_reg reg;
--	u32 mask;
--
--	mux = setup->data;
--	flags = CLK_SET_RATE_NO_REPARENT;
--
--	mask = mux->num_parents;
--	if (!(mux->flags & CLKF_INDEX_STARTS_AT_ONE))
--		mask--;
--
--	mask = (1 << fls(mask)) - 1;
--	reg.index = mux->module;
--	reg.offset = mux->reg;
--	reg.ptr = NULL;
--
--	if (mux->flags & CLKF_INDEX_STARTS_AT_ONE)
--		mux_flags |= CLK_MUX_INDEX_ONE;
--
--	if (mux->flags & CLKF_SET_RATE_PARENT)
--		flags |= CLK_SET_RATE_PARENT;
--
--	return _register_mux(NULL, setup->name, mux->parents, mux->num_parents,
--			     flags, &reg, mux->bit_shift, mask, -EINVAL,
--			     mux_flags, NULL);
--}
--
- /**
-  * of_mux_clk_setup - Setup function for simple mux rate clock
-  * @node: DT node for the clock
--- 
-2.17.1
+On 29/05/2019 10:33, Peter Zijlstra wrote:
+> On Tue, May 28, 2019 at 05:16:23PM +0200, Daniel Bristot de Oliveira wrote:
+>> The preempt_disable/enable tracepoint only traces in the disable <-> enable
+>> case, which is correct. But think about this case:
+>>
+>> ---------------------------- %< ------------------------------
+>> 	THREAD					IRQ
+>> 	   |					 |
+>> preempt_disable() {
+>>     __preempt_count_add(1)
+>> 	------->	    smp_apic_timer_interrupt() {
+>> 				preempt_disable()
+>> 				    do not trace (preempt count >= 1)
+>> 				    ....
+>> 				preempt_enable()
+>> 				    do not trace (preempt count >= 1)
+>> 			    }
+>>     trace_preempt_disable();
+>> }
+>> ---------------------------- >% ------------------------------
+>>
+>> The tracepoint will be skipped.
+> 
+> .... for the IRQ. But IRQs are not preemptible anyway, so what the
+> problem?
 
 
+right, they are.
+
+exposing my problem in a more specific way:
+
+To show in a model that an event always takes place with preemption disabled,
+but not necessarily with IRQs disabled, it is worth having the preemption
+disable events separated from IRQ disable ones.
+
+The main reason is that, although IRQs disabled postpone the execution of the
+scheduler, it is more pessimistic, as it also delays IRQs. So the more precise
+the model is, the less pessimistic the analysis will be.
+
+But there are other use-cases, for instance:
+
+(Steve, correct me if I am wrong)
+
+The preempt_tracer will not notice a "preempt disabled" section in an IRQ
+handler if the problem above happens.
+
+(Yeah, I know these problems are very specific... but...)
+
+>> To avoid skipping the trace, the change in the counter should be "atomic"
+>> with the start/stop, w.r.t the interrupts.
+>>
+>> Disable interrupts while the adding/starting stopping/subtracting.
+> 
+>> +static inline void preempt_add_start_latency(int val)
+>> +{
+>> +	unsigned long flags;
+>> +
+>> +	raw_local_irq_save(flags);
+>> +	__preempt_count_add(val);
+>> +	preempt_latency_start(val);
+>> +	raw_local_irq_restore(flags);
+>> +}
+> 
+>> +static inline void preempt_sub_stop_latency(int val)
+>> +{
+>> +	unsigned long flags;
+>> +
+>> +	raw_local_irq_save(flags);
+>> +	preempt_latency_stop(val);
+>> +	__preempt_count_sub(val);
+>> +	raw_local_irq_restore(flags);
+>> +}
+> 
+> That is hideously expensive :/
+
+Yeah... :-( Is there another way to provide such "atomicity"?
+
+Can I use the argument "if one has these tracepoints enabled, they are not
+considering it as a hot-path?"
+
+-- Daniel
