@@ -2,176 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F2822E251
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 18:35:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C56E2E260
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 18:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfE2QfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 12:35:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34316 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726140AbfE2QfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 12:35:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 44FF8ACC5;
-        Wed, 29 May 2019 16:35:08 +0000 (UTC)
-From:   Michal Rostecki <mrostecki@opensuse.org>
-Cc:     Michal Rostecki <mrostecki@opensuse.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        netdev@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
-        bpf@vger.kernel.org (open list:BPF (Safe dynamic programs and tools)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH bpf v3] libbpf: Return btf_fd for load_sk_storage_btf
-Date:   Wed, 29 May 2019 18:36:16 +0200
-Message-Id: <20190529163616.8418-1-mrostecki@opensuse.org>
-X-Mailer: git-send-email 2.21.0
+        id S1727217AbfE2QjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 12:39:00 -0400
+Received: from foss.arm.com ([217.140.101.70]:49276 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726162AbfE2QjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 12:39:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B84DE341;
+        Wed, 29 May 2019 09:38:59 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E64703F5AF;
+        Wed, 29 May 2019 09:38:56 -0700 (PDT)
+Date:   Wed, 29 May 2019 17:38:54 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Young Xiao <92siuyang@gmail.com>, linux@armlinux.org.uk,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        kan.liang@linux.intel.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, ravi.bangoria@linux.vnet.ibm.com,
+        mpe@ellerman.id.au, acme@redhat.com, eranian@google.com,
+        fweisbec@gmail.com, jolsa@redhat.com
+Subject: Re: [PATCH] perf: Fix oops when kthread execs user process
+Message-ID: <20190529163854.GN31777@lakrids.cambridge.arm.com>
+References: <20190528173228.GW2623@hirez.programming.kicks-ass.net>
+ <20190529091733.GA4485@fuggles.cambridge.arm.com>
+ <20190529101042.GN2623@hirez.programming.kicks-ass.net>
+ <20190529102022.GC4485@fuggles.cambridge.arm.com>
+ <20190529125557.GU2623@hirez.programming.kicks-ass.net>
+ <20190529130521.GA11023@fuggles.cambridge.arm.com>
+ <20190529132515.GW2623@hirez.programming.kicks-ass.net>
+ <20190529143510.GA11154@fuggles.cambridge.arm.com>
+ <20190529161955.GZ2623@hirez.programming.kicks-ass.net>
+ <20190529162435.GM31777@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190529162435.GM31777@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before this change, function load_sk_storage_btf expected that
-libbpf__probe_raw_btf was returning a BTF descriptor, but in fact it was
-returning an information about whether the probe was successful (0 or
-1). load_sk_storage_btf was using that value as an argument of the close
-function, which was resulting in closing stdout and thus terminating the
-process which called that function.
+On Wed, May 29, 2019 at 05:24:36PM +0100, Mark Rutland wrote:
+> On Wed, May 29, 2019 at 06:19:55PM +0200, Peter Zijlstra wrote:
+> > On Wed, May 29, 2019 at 03:35:10PM +0100, Will Deacon wrote:
+> > > On Wed, May 29, 2019 at 03:25:15PM +0200, Peter Zijlstra wrote:
+> > > > On Wed, May 29, 2019 at 02:05:21PM +0100, Will Deacon wrote:
+> > > > > On Wed, May 29, 2019 at 02:55:57PM +0200, Peter Zijlstra wrote:
+> > > > 
+> > > > > >  	if (user_mode(regs)) {
+> > > > > 
+> > > > > Hmm, so it just occurred to me that Mark's observation is that the regs
+> > > > > can be junk in some cases. In which case, should we be checking for
+> > > > > kthreads first?
+> > > > 
+> > > > task_pt_regs() can return garbage, but @regs is the exception (or
+> > > > perf_arch_fetch_caller_regs()) regs, and for those user_mode() had
+> > > > better be correct.
+> > > 
+> > > So what should we report for the idle task?
+> > 
+> > If an interrupt hits the idle task, @regs would be !user_mode(regs),
+> > we'll find current->flags & PF_KTHREAD (idle not having passed through
+> > exec()) and therefore we'll take ABI_NONE for the user regs.
+> > 
+> > Or am I not getting it?
+> 
+> If the contents of task_pt_regs(current) is garbage, then the result of
+> user_mode(task_pt_regs(current)) is also garbage, no?
 
-That bug was visible in bpftool. `bpftool feature` subcommand was always
-exiting too early (because of closed stdout) and it didn't display all
-requested probes. `bpftool -j feature` or `bpftool -p feature` were not
-returning a valid json object.
+Ugh; I was being thick here and assuming regs was the result of
+task_pt_regs() when it's actually the interrupted regs.
 
-This change remnames the libbpf__probe_raw_btf function to
-libbpf__load_raw_btf, which now returns a BTF descriptor, as expected in
-load_sk_storage_btf.
+Sorry for the noise.
 
-v2:
-- Fix typo in the commit message.
+Generally speaking though, if we ever task task_pt_regs() of an idle
+task we'll get junk, and user_mode() could be true.
 
-v3:
-- Simplify BTF descriptor handling in bpf_object__probe_btf_* functions.
-- Rename libbpf__probe_raw_btf function to libbpf__load_raw_btf and
-return a BTF descriptor.
-
-Fixes: d7c4b3980c18 ("libbpf: detect supported kernel BTF features and sanitize BTF")
-Signed-off-by: Michal Rostecki <mrostecki@opensuse.org>
----
- tools/lib/bpf/libbpf.c          | 28 ++++++++++++++++------------
- tools/lib/bpf/libbpf_internal.h |  4 ++--
- tools/lib/bpf/libbpf_probes.c   | 13 ++++---------
- 3 files changed, 22 insertions(+), 23 deletions(-)
-
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 197b574406b3..5d046cc7b207 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -1645,14 +1645,16 @@ static int bpf_object__probe_btf_func(struct bpf_object *obj)
- 		/* FUNC x */                                    /* [3] */
- 		BTF_TYPE_ENC(5, BTF_INFO_ENC(BTF_KIND_FUNC, 0, 0), 2),
- 	};
--	int res;
-+	int btf_fd;
- 
--	res = libbpf__probe_raw_btf((char *)types, sizeof(types),
--				    strs, sizeof(strs));
--	if (res < 0)
--		return res;
--	if (res > 0)
-+	btf_fd = libbpf__load_raw_btf((char *)types, sizeof(types),
-+				      strs, sizeof(strs));
-+	if (btf_fd >= 0) {
- 		obj->caps.btf_func = 1;
-+		close(btf_fd);
-+		return 1;
-+	}
-+
- 	return 0;
- }
- 
-@@ -1670,14 +1672,16 @@ static int bpf_object__probe_btf_datasec(struct bpf_object *obj)
- 		BTF_TYPE_ENC(3, BTF_INFO_ENC(BTF_KIND_DATASEC, 0, 1), 4),
- 		BTF_VAR_SECINFO_ENC(2, 0, 4),
- 	};
--	int res;
-+	int btf_fd;
- 
--	res = libbpf__probe_raw_btf((char *)types, sizeof(types),
--				    strs, sizeof(strs));
--	if (res < 0)
--		return res;
--	if (res > 0)
-+	btf_fd = libbpf__load_raw_btf((char *)types, sizeof(types),
-+				      strs, sizeof(strs));
-+	if (btf_fd >= 0) {
- 		obj->caps.btf_datasec = 1;
-+		close(btf_fd);
-+		return 1;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/tools/lib/bpf/libbpf_internal.h b/tools/lib/bpf/libbpf_internal.h
-index f3025b4d90e1..dfab8012185c 100644
---- a/tools/lib/bpf/libbpf_internal.h
-+++ b/tools/lib/bpf/libbpf_internal.h
-@@ -34,7 +34,7 @@ do {				\
- #define pr_info(fmt, ...)	__pr(LIBBPF_INFO, fmt, ##__VA_ARGS__)
- #define pr_debug(fmt, ...)	__pr(LIBBPF_DEBUG, fmt, ##__VA_ARGS__)
- 
--int libbpf__probe_raw_btf(const char *raw_types, size_t types_len,
--			  const char *str_sec, size_t str_len);
-+int libbpf__load_raw_btf(const char *raw_types, size_t types_len,
-+			 const char *str_sec, size_t str_len);
- 
- #endif /* __LIBBPF_LIBBPF_INTERNAL_H */
-diff --git a/tools/lib/bpf/libbpf_probes.c b/tools/lib/bpf/libbpf_probes.c
-index 5e2aa83f637a..6635a31a7a16 100644
---- a/tools/lib/bpf/libbpf_probes.c
-+++ b/tools/lib/bpf/libbpf_probes.c
-@@ -133,8 +133,8 @@ bool bpf_probe_prog_type(enum bpf_prog_type prog_type, __u32 ifindex)
- 	return errno != EINVAL && errno != EOPNOTSUPP;
- }
- 
--int libbpf__probe_raw_btf(const char *raw_types, size_t types_len,
--			  const char *str_sec, size_t str_len)
-+int libbpf__load_raw_btf(const char *raw_types, size_t types_len,
-+			 const char *str_sec, size_t str_len)
- {
- 	struct btf_header hdr = {
- 		.magic = BTF_MAGIC,
-@@ -157,14 +157,9 @@ int libbpf__probe_raw_btf(const char *raw_types, size_t types_len,
- 	memcpy(raw_btf + hdr.hdr_len + hdr.type_len, str_sec, hdr.str_len);
- 
- 	btf_fd = bpf_load_btf(raw_btf, btf_len, NULL, 0, false);
--	if (btf_fd < 0) {
--		free(raw_btf);
--		return 0;
--	}
- 
--	close(btf_fd);
- 	free(raw_btf);
--	return 1;
-+	return btf_fd;
- }
- 
- static int load_sk_storage_btf(void)
-@@ -190,7 +185,7 @@ static int load_sk_storage_btf(void)
- 		BTF_MEMBER_ENC(23, 2, 32),/* struct bpf_spin_lock l; */
- 	};
- 
--	return libbpf__probe_raw_btf((char *)types, sizeof(types),
-+	return libbpf__load_raw_btf((char *)types, sizeof(types),
- 				     strs, sizeof(strs));
- }
- 
--- 
-2.21.0
-
+Thanks,
+Mark.
