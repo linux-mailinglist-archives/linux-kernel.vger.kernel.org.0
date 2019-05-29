@@ -2,67 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B02022DFF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:39:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B5562DFF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:40:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbfE2OjN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 10:39:13 -0400
-Received: from mga05.intel.com ([192.55.52.43]:40996 "EHLO mga05.intel.com"
+        id S1726470AbfE2Ok3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:40:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726012AbfE2OjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 10:39:13 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 07:39:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,527,1549958400"; 
-   d="scan'208";a="179598110"
-Received: from ehallina-mobl.ger.corp.intel.com (HELO localhost) ([10.252.1.77])
-  by fmsmga002.fm.intel.com with ESMTP; 29 May 2019 07:39:08 -0700
-Date:   Wed, 29 May 2019 17:39:07 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     "Winkler, Tomas" <tomas.winkler@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Phil Baker <baker1tex@gmail.com>,
-        Craig Robson <craig@zhatt.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Subject: Re: [PATCH v3] tpm: Actually fail on TPM errors during "get random"
-Message-ID: <20190529143907.GA7984@linux.intel.com>
-References: <20190401190607.GA23795@beast>
- <20190401234625.GA29016@linux.intel.com>
- <20190402164057.GA4544@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DAE2759@hasmsx108.ger.corp.intel.com>
- <20190403175207.GC13396@linux.intel.com>
- <bfcb58ef-98b3-a663-c249-3940ec9a39d3@redhat.com>
+        id S1726012AbfE2Ok3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 10:40:29 -0400
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3202323A82;
+        Wed, 29 May 2019 14:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559140828;
+        bh=EAdtr7sRR0pl/EFHtygZt/Pp3BubgxUN3LjE7D6cOlk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Ao2UBId6fsrnjUhuVoz6EJkA6GBDiM237jsCkERiAcLuVEJzhicF1ZqGKUx9BeyXo
+         BHFsJrCUR/wHqtB+c1ttFIp1jVQIl4sRydzpPaUGpcH9euyaqyF+muzyT5+xw2av5D
+         szPdjEW6MCHzJ+gAOzBCeR8nJQ35SKzXf58VWQbo=
+Received: by mail-lf1-f43.google.com with SMTP id v18so2312709lfi.1;
+        Wed, 29 May 2019 07:40:28 -0700 (PDT)
+X-Gm-Message-State: APjAAAX667em/enyT5T9gTnLllqVXaYr1g3CwEr/uks+NIhD2ksjEgve
+        mRiWQU97TKDf0rQMfcJXxsAfZDBLfOe6g/Bxjdk=
+X-Google-Smtp-Source: APXvYqzGwBFLfzLcIP1wJ+4vix58xGXZlLe1e6Gmb4rGT85Ek2cI7Vkp9JES0OgdOXg8ziQZzIohPTW6iOjEkmCNDlw=
+X-Received: by 2002:ac2:4d0d:: with SMTP id r13mr16779577lfi.30.1559140826498;
+ Wed, 29 May 2019 07:40:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bfcb58ef-98b3-a663-c249-3940ec9a39d3@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAJKOXPf=nPrmw6Vzi_=LmO=dVsV4Gvoc-q75XP2FBEgm9Gxv0A@mail.gmail.com>
+ <20190527022258.32748-1-matheus@castello.eng.br> <20190527022258.32748-3-matheus@castello.eng.br>
+In-Reply-To: <20190527022258.32748-3-matheus@castello.eng.br>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 29 May 2019 16:40:15 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcigVQEzR3xQMcc9hcSXn0VVCvNR+U2F0the62orR98qw@mail.gmail.com>
+Message-ID: <CAJKOXPcigVQEzR3xQMcc9hcSXn0VVCvNR+U2F0the62orR98qw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] dt-bindings: power: supply: Max17040: Add low
+ level SOC alert threshold
+To:     Matheus Castello <matheus@castello.eng.br>
+Cc:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, lee.jones@linaro.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 03:02:49PM -0400, Laura Abbott wrote:
-> > Great, I'll add it. Thank you. Just want to be explicit with these
-> > things as I consider them as if I was asking a signature from someone
-> > :-)
-> > 
-> > /Jarkko
-> > 
-> Was this intended to go in for 5.2? I still don't see it in the tree.
+On Mon, 27 May 2019 at 04:45, Matheus Castello <matheus@castello.eng.br> wrote:
+>
+> For configure low level state of charge threshold alert signaled from
+> max17040 we add "maxim,alert-low-soc-level" property.
+>
+> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
+> ---
+>  .../power/supply/max17040_battery.txt         | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+>
+> diff --git a/Documentation/devicetree/bindings/power/supply/max17040_battery.txt b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+> new file mode 100644
+> index 000000000000..a13e8d50ff7b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
+> @@ -0,0 +1,28 @@
+> +max17040_battery
+> +~~~~~~~~~~~~~~~~
+> +
+> +Required properties :
+> + - compatible : "maxim,max17040" or "maxim,max77836-battery"
+> +
+> +Optional properties :
+> +- maxim,alert-low-soc-level :  The alert threshold that sets the state of
+> +                               charge level (%) where an interrupt is
+> +                               generated. Can be configured from 1 up to 32
+> +                               (%). If skipped the power up default value of
+> +                               4 (%) will be used.
+> +- interrupts :                         Interrupt line see Documentation/devicetree/
+> +                               bindings/interrupt-controller/interrupts.txt
 
-Was intended but I failed to notice that I should start to send PRs
-to Linus instead of security tree and was waiting for security tree
-to be rebased. I'll include to the next PR.
+Based on driver's behavior, I understand that these two properties
+come in pair so maxim,alert-low-soc-level (or its default value) will
+be used if and only if interrupts property is present. Maybe mention
+this? In general looks fine to me:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-/Jarkko
+Best regards,
+Krzysztof
+
+> +- wakeup-source :              This device has wakeup capabilities. Use this
+> +                               property to use alert low SOC level interrupt
+> +                               as wake up source.
+> +
+> +Example:
+> +
+> +       battery-fuel-gauge@36 {
+> +               compatible = "maxim,max17040";
+> +               reg = <0x36>;
+> +               maxim,alert-low-soc-level = <10>;
+> +               interrupt-parent = <&gpio7>;
+> +               interrupts = <2 IRQ_TYPE_EDGE_FALLING>;
+> +               wakeup-source;
+> +       };
+> --
+> 2.20.1
+>
