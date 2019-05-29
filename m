@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDC842DCF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 14:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAB752DCC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 14:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbfE2M1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 08:27:47 -0400
-Received: from mail-eopbgr30051.outbound.protection.outlook.com ([40.107.3.51]:23783
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        id S1727210AbfE2M1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 08:27:03 -0400
+Received: from mail-eopbgr70079.outbound.protection.outlook.com ([40.107.7.79]:5830
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727041AbfE2M04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 08:26:56 -0400
+        id S1727151AbfE2M06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 08:26:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WlZjdPJCp1MCmge1PPrAOrbXmogdvICvsR0Bf95MuxI=;
- b=SRsMJ20WG7/B1E4flM/ZO2JNiTCKRwgt1MUDoAvey4qTt16N7JrYTMJX840wUrODKQOwICfLcxipVqs34DZ3jS63tP9I+Q5TPW4IBLnzda6VFlekFmwsR1feYLy1VQTs8k5qWiwI89q6Gy9rf3fj/CUP2PjVx+cV0ginwG/yF50=
+ bh=t8rlSu4NycoYaeBoIMrwBz49h9AqacUShrIygP+EAe4=;
+ b=TpnsDIYAd+uKR28RMAbx8U177jsH4TnKVKQ+k1LF7EV9la3M34klfANxMMpH5pWdBF7K8xVbTRDODNh3fN/gix1gZs/WOMaqvkfjdts77ovOE3l0AVMmK1mX4BrWmLASjwB3deoWlHqwoJx3FalK7KaDxoF0fJNUXpSYjcMbe+0=
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
  AM0PR04MB6049.eurprd04.prod.outlook.com (20.179.32.138) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.17; Wed, 29 May 2019 12:26:45 +0000
+ 15.20.1922.17; Wed, 29 May 2019 12:26:47 +0000
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::c19b:5964:bfcb:96a8]) by AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::c19b:5964:bfcb:96a8%7]) with mapi id 15.20.1922.021; Wed, 29 May 2019
- 12:26:45 +0000
+ 12:26:47 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -38,13 +38,12 @@ CC:     Fabio Estevam <fabio.estevam@nxp.com>,
         <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Abel Vesa <abel.vesa@nxp.com>
-Subject: [RESEND 09/18] clk: imx: clk-gate-exclusive: Switch to clk_hw based
+Subject: [RESEND 11/18] clk: imx: clk-fixup-mux: Switch to clk_hw based API
+Thread-Topic: [RESEND 11/18] clk: imx: clk-fixup-mux: Switch to clk_hw based
  API
-Thread-Topic: [RESEND 09/18] clk: imx: clk-gate-exclusive: Switch to clk_hw
- based API
-Thread-Index: AQHVFhnGT3lmZG8wxEOdWY3zvgoVIA==
-Date:   Wed, 29 May 2019 12:26:43 +0000
-Message-ID: <1559132773-12884-10-git-send-email-abel.vesa@nxp.com>
+Thread-Index: AQHVFhnH4Nk5mvjvukedO4eroeg2tw==
+Date:   Wed, 29 May 2019 12:26:44 +0000
+Message-ID: <1559132773-12884-12-git-send-email-abel.vesa@nxp.com>
 References: <1559132773-12884-1-git-send-email-abel.vesa@nxp.com>
 In-Reply-To: <1559132773-12884-1-git-send-email-abel.vesa@nxp.com>
 Accept-Language: en-US
@@ -55,25 +54,25 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com; 
 x-originating-ip: [89.37.124.34]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: cdef34c2-068f-4398-d839-08d6e430e9e1
+x-ms-office365-filtering-correlation-id: 8aa1f3b6-6c1f-45b5-9a13-08d6e430eae8
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6049;
 x-ms-traffictypediagnostic: AM0PR04MB6049:
-x-microsoft-antispam-prvs: <AM0PR04MB604999E4CF823094188AEA00F61F0@AM0PR04MB6049.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM0PR04MB60492D86CFB40A4F0550E40CF61F0@AM0PR04MB6049.eurprd04.prod.outlook.com>
 x-ms-oob-tlc-oobclassifiers: OLM:2657;
 x-forefront-prvs: 0052308DC6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(366004)(346002)(376002)(199004)(189003)(6436002)(476003)(73956011)(53936002)(486006)(11346002)(446003)(76116006)(186003)(5660300002)(102836004)(66446008)(66476007)(66946007)(26005)(44832011)(64756008)(36756003)(91956017)(66556008)(8936002)(316002)(2616005)(66066001)(99286004)(256004)(6116002)(6512007)(3846002)(76176011)(68736007)(305945005)(81156014)(81166006)(6486002)(6506007)(54906003)(110136005)(478600001)(2906002)(7736002)(8676002)(14454004)(86362001)(71190400001)(71200400001)(25786009)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6049;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(1496009)(396003)(136003)(39860400002)(366004)(346002)(376002)(199004)(189003)(6436002)(476003)(73956011)(53936002)(486006)(11346002)(446003)(76116006)(186003)(5660300002)(102836004)(66446008)(66476007)(66946007)(26005)(44832011)(64756008)(36756003)(91956017)(66556008)(8936002)(316002)(2616005)(66066001)(99286004)(256004)(6116002)(6512007)(3846002)(76176011)(68736007)(305945005)(81156014)(81166006)(6486002)(6506007)(54906003)(110136005)(478600001)(2906002)(7736002)(8676002)(14454004)(86362001)(71190400001)(71200400001)(25786009)(6666004)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6049;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: mks3SNtiZ9jyk4uEbpJSUJJvvmO8JpaMAWCM/hUNDfBs+tLlfq1CriUpt1AL0CX93eu0KF8ZnmHELlKej1+z5jC2arJ6s2jExfFYPpgItrgS3rNvdBlQo/uO/G3gwDzBQQTL7eVjNq8EcCXKc/yHku9NsFbhSgUf1eBz/uyY1caMODiu62Xsi8rXcXl4zJ1QT37lOtH9a3V8icBNKWUWralCDwfdLKSOR+bNmaI+I9CWf8l2C02Swi6eglkcIFcxrd76H3FMh8cBurBaBMxLeAIyr5Upyyio8qJg/QRVXkKlrQITRttN6jnlugCKnp2LItT2V6bBpvsHO3mrpH+HoXisn2JdNZ+FR8pVppQBGTvNIPZ0ZOE0ORj6enES6OVpp2AROkIzaS0Vd7YZQfxvehOvTtboHH5YJnwhO4tJTAo=
+x-microsoft-antispam-message-info: GNqK4pWpJ7fUscnI378wUF1FhUkdEI13FHMWM5zQFjKNmeb+dfSQS7yW+fPlVBV9J93P+mNIA00nJdkC48THXH4A/FQYyAi/ZgZVdry67xSQpjMI8CRKumHKDGbQcaP3zoeAEc0mJR7KEoIackRe49c+diNxUvMf1Tj6U1/5w61aDvUtz/ouAOmBzNDRUiRg23jepLzjw05SS9gawNMkHL9kEVZUZHngU7cDyZzaLukAhK4GsVeKzt1w4p6Tvt7xcDnuQ+BogOgFaovTNvetNe17kq7e56oY34pnzyPXfWhUPXnK9YjXhmatBjcA9JqCHr3Tv4d8rpuGUicrVQ6jdZCOkOf/v0q5J4y9WI6HmTpDh07ZAv/TGm4Q9MNxxSL6abr32D/vJFDF54FAtiKW4yU43uFeOXf9pc56Lkjf7IQ=
 Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <87F380E5A3F9404BA3C8F9B0E29A4C57@eurprd04.prod.outlook.com>
+Content-ID: <04DFB09EA899414B8A0B6A19D4F2AD68@eurprd04.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdef34c2-068f-4398-d839-08d6e430e9e1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2019 12:26:44.0326
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8aa1f3b6-6c1f-45b5-9a13-08d6e430eae8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2019 12:26:44.7862
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -85,82 +84,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch the imx_clk_gate_exclusive function to clk_hw based API, rename
-accordingly and add a macro for clk based legacy. This allows us to move
-closer to a clear split between consumer and provider clk APIs.
+Switch the imx_clk_fixup_mux function to clk_hw based API, rename
+accordingly and add a macro for clk based legacy. a macro for clk
+based legacy. This allows us to move closer to a clear split between
+consumer and provider clk APIs.
 
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- drivers/clk/imx/clk-gate-exclusive.c | 17 +++++++++++------
- drivers/clk/imx/clk.h                |  5 ++++-
- 2 files changed, 15 insertions(+), 7 deletions(-)
+ drivers/clk/imx/clk-fixup-mux.c | 15 ++++++++++-----
+ drivers/clk/imx/clk.h           |  3 +++
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-gate-exclusive.c b/drivers/clk/imx/clk-gat=
-e-exclusive.c
-index 3bd9dee..7bd9f14 100644
---- a/drivers/clk/imx/clk-gate-exclusive.c
-+++ b/drivers/clk/imx/clk-gate-exclusive.c
-@@ -58,13 +58,14 @@ static const struct clk_ops clk_gate_exclusive_ops =3D =
-{
- 	.is_enabled =3D clk_gate_exclusive_is_enabled,
+diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mu=
+x.c
+index 44817c1..f3c4ec2 100644
+--- a/drivers/clk/imx/clk-fixup-mux.c
++++ b/drivers/clk/imx/clk-fixup-mux.c
+@@ -69,13 +69,14 @@ static const struct clk_ops clk_fixup_mux_ops =3D {
+ 	.set_parent =3D clk_fixup_mux_set_parent,
  };
 =20
--struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
-+struct clk_hw *imx_clk_hw_gate_exclusive(const char *name, const char *par=
-ent,
- 	 void __iomem *reg, u8 shift, u32 exclusive_mask)
+-struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
++struct clk_hw *imx_clk_hw_fixup_mux(const char *name, void __iomem *reg,
+ 			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val))
  {
- 	struct clk_gate_exclusive *exgate;
- 	struct clk_gate *gate;
+ 	struct clk_fixup_mux *fixup_mux;
 -	struct clk *clk;
 +	struct clk_hw *hw;
  	struct clk_init_data init;
 +	int ret;
 =20
- 	if (exclusive_mask =3D=3D 0)
+ 	if (!fixup)
  		return ERR_PTR(-EINVAL);
-@@ -86,9 +87,13 @@ struct clk *imx_clk_gate_exclusive(const char *name, con=
-st char *parent,
- 	gate->hw.init =3D &init;
- 	exgate->exclusive_mask =3D exclusive_mask;
+@@ -98,9 +99,13 @@ struct clk *imx_clk_fixup_mux(const char *name, void __i=
+omem *reg,
+ 	fixup_mux->ops =3D &clk_mux_ops;
+ 	fixup_mux->fixup =3D fixup;
 =20
--	clk =3D clk_register(NULL, &gate->hw);
+-	clk =3D clk_register(NULL, &fixup_mux->mux.hw);
 -	if (IS_ERR(clk))
--		kfree(exgate);
-+	hw =3D &gate->hw;
-=20
--	return clk;
++	hw =3D &fixup_mux->mux.hw;
++
 +	ret =3D clk_hw_register(NULL, hw);
 +	if (ret) {
-+		kfree(gate);
+ 		kfree(fixup_mux);
 +		return ERR_PTR(ret);
 +	}
-+
+=20
+-	return clk;
 +	return hw;
  }
 diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 87a1a88..1c6300a 100644
+index e199d73..5fa8b7c 100644
 --- a/drivers/clk/imx/clk.h
 +++ b/drivers/clk/imx/clk.h
-@@ -70,6 +70,9 @@ struct imx_pll14xx_clk {
- #define imx_clk_pfd(name, parent_name, reg, idx) \
- 	imx_clk_hw_pfd(name, parent_name, reg, idx)->clk
+@@ -76,6 +76,9 @@ struct imx_pll14xx_clk {
+ #define imx_clk_fixup_divider(name, parent, reg, shift, width, fixup) \
+ 	imx_clk_hw_fixup_divider(name, parent, reg, shift, width, fixup)->clk
 =20
-+#define imx_clk_gate_exclusive(name, parent, reg, shift, exclusive_mask) \
-+	imx_clk_hw_gate_exclusive(name, parent, reg, shift, exclusive_mask)->clk
++#define imx_clk_fixup_mux(name, reg, shift, width, parents, num_parents, f=
+ixup) \
++	imx_clk_hw_fixup_mux(name, reg, shift, width, parents, num_parents, fixup=
+)->clk
 +
  struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
  		 void __iomem *base, const struct imx_pll14xx_clk *pll_clk);
 =20
-@@ -123,7 +126,7 @@ struct clk_hw *imx_obtain_fixed_clock_hw(
- struct clk_hw *imx_obtain_fixed_clk_hw(struct device_node *np,
- 				       const char *name);
-=20
--struct clk *imx_clk_gate_exclusive(const char *name, const char *parent,
-+struct clk_hw *imx_clk_hw_gate_exclusive(const char *name, const char *par=
-ent,
- 	 void __iomem *reg, u8 shift, u32 exclusive_mask);
-=20
- struct clk_hw *imx_clk_hw_pfd(const char *name, const char *parent_name,
 --=20
 2.7.4
