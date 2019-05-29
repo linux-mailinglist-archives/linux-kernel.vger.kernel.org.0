@@ -2,158 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC2822D337
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 03:22:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A30F2D33E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 03:22:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbfE2BWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 21:22:05 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:34684 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbfE2BWE (ORCPT
+        id S1726408AbfE2BWx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 21:22:53 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:11864 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725828AbfE2BWw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 21:22:04 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hVnI2-0006Nu-JG; Tue, 28 May 2019 19:22:02 -0600
-Received: from ip72-206-97-68.om.om.cox.net ([72.206.97.68] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1hVnI1-0006bg-Ei; Tue, 28 May 2019 19:22:02 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     arnd@arndb.de, christian@brauner.io, deepa.kernel@gmail.com,
-        glider@google.com, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        Oleg Nesterov <oleg@redhat.com>,
-        syzbot <syzbot+0d602a1b0d8c95bdf299@syzkaller.appspotmail.com>,
-        Andrei Vagin <avagin@gmail.com>
-References: <000000000000410d500588adf637@google.com>
-        <87woia5vq3.fsf@xmission.com>
-        <20190528124746.ac703cd668ca9409bb79100b@linux-foundation.org>
-Date:   Tue, 28 May 2019 20:21:53 -0500
-In-Reply-To: <20190528124746.ac703cd668ca9409bb79100b@linux-foundation.org>
-        (Andrew Morton's message of "Tue, 28 May 2019 12:47:46 -0700")
-Message-ID: <87pno23vim.fsf_-_@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 28 May 2019 21:22:52 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=teawaterz@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TSv6CYB_1559092963;
+Received: from localhost(mailfrom:teawaterz@linux.alibaba.com fp:SMTPD_---0TSv6CYB_1559092963)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 29 May 2019 09:22:50 +0800
+From:   Hui Zhu <teawaterz@linux.alibaba.com>
+To:     minchan@kernel.org, ngupta@vflare.org,
+        sergey.senozhatsky.work@gmail.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Hui Zhu <teawaterz@linux.alibaba.com>
+Subject: [UPSTREAM KERNEL] mm/zsmalloc.c: Add module parameter malloc_force_movable
+Date:   Wed, 29 May 2019 09:22:30 +0800
+Message-Id: <20190529012230.89042-1-teawaterz@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1hVnI1-0006bg-Ei;;;mid=<87pno23vim.fsf_-_@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=72.206.97.68;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/T4NCzU3tLfZqu3MG9V5m6cAEXyeUSV48=
-X-SA-Exim-Connect-IP: 72.206.97.68
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,XMSubLong autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4997]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Andrew Morton <akpm@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 746 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 2.4 (0.3%), b_tie_ro: 1.61 (0.2%), parse: 1.21
-        (0.2%), extract_message_metadata: 27 (3.6%), get_uri_detail_list: 3.4
-        (0.5%), tests_pri_-1000: 21 (2.9%), tests_pri_-950: 1.30 (0.2%),
-        tests_pri_-900: 1.06 (0.1%), tests_pri_-90: 25 (3.4%), check_bayes: 24
-        (3.2%), b_tokenize: 8 (1.0%), b_tok_get_all: 8 (1.1%), b_comp_prob:
-        2.5 (0.3%), b_tok_touch_all: 3.7 (0.5%), b_finish: 0.57 (0.1%),
-        tests_pri_0: 307 (41.1%), check_dkim_signature: 0.69 (0.1%),
-        check_dkim_adsp: 2.3 (0.3%), poll_dns_idle: 343 (46.0%), tests_pri_10:
-        2.3 (0.3%), tests_pri_500: 354 (47.4%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH] signal/ptrace: Don't leak unitialized kernel memory with PTRACE_PEEK_SIGINFO
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+zswap compresses swap pages into a dynamically allocated RAM-based
+memory pool.  The memory pool should be zbud, z3fold or zsmalloc.
+All of them will allocate unmovable pages.  It will increase the
+number of unmovable page blocks that will bad for anti-fragment.
 
-Recently syzbot in conjunction with KMSAN reported that
-ptrace_peek_siginfo can copy an uninitialized siginfo to userspace.
-Inspecting ptrace_peek_siginfo confirms this.
+zsmalloc support page migration if request movable page:
+        handle = zs_malloc(zram->mem_pool, comp_len,
+                GFP_NOIO | __GFP_HIGHMEM |
+                __GFP_MOVABLE);
 
-The problem is that off when initialized from args.off can be
-initialized to a negaive value.  At which point the "if (off >= 0)"
-test to see if off became negative fails because off started off
-negative.
+This commit adds module parameter malloc_force_movable to enable
+or disable zs_malloc force allocate block with gfp
+__GFP_HIGHMEM | __GFP_MOVABLE (disabled by default).
 
-Prevent the core problem by adding a variable found that is only true
-if a siginfo is found and copied to a temporary in preparation for
-being copied to userspace.
+Following part is test log in a pc that has 8G memory and 2G swap.
 
-Prevent args.off from being truncated when being assigned to off by
-testing that off is <= the maximum possible value of off.  Convert off
-to an unsigned long so that we should not have to truncate args.off,
-we have well defined overflow behavior so if we add another check we
-won't risk fighting undefined compiler behavior, and so that we have a
-type whose maximum value is easy to test for.
+When it disabled:
+~# echo lz4 > /sys/module/zswap/parameters/compressor
+~# echo zsmalloc > /sys/module/zswap/parameters/zpool
+~# echo 1 > /sys/module/zswap/parameters/enabled
+~# swapon /swapfile
+~# cd /home/teawater/kernel/vm-scalability/
+/home/teawater/kernel/vm-scalability# export unit_size=$((9 * 1024 * 1024 * 1024))
+/home/teawater/kernel/vm-scalability# ./case-anon-w-seq
+2717908992 bytes / 4410183 usecs = 601836 KB/s
+2717908992 bytes / 4524375 usecs = 586646 KB/s
+2717908992 bytes / 4558583 usecs = 582244 KB/s
+2717908992 bytes / 4824261 usecs = 550179 KB/s
+348046 usecs to free memory
+401680 usecs to free memory
+369660 usecs to free memory
+180867 usecs to free memory
+/home/teawater/kernel/vm-scalability# cat /proc/pagetypeinfo
+Page block order: 9
+Pages per block:  512
 
-Cc: Andrei Vagin <avagin@gmail.com>
-Cc: stable@vger.kernel.org
-Reported-by: syzbot+0d602a1b0d8c95bdf299@syzkaller.appspotmail.com
-Fixes: 84c751bd4aeb ("ptrace: add ability to retrieve signals without removing from a queue (v4)")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
+Node    0, zone      DMA, type    Unmovable      1      1      1      0      2      1      1      0      1      0      0
+Node    0, zone      DMA, type      Movable      0      0      0      0      0      0      0      0      0      1      3
+Node    0, zone      DMA, type  Reclaimable      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone      DMA, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone      DMA, type          CMA      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone      DMA, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone    DMA32, type    Unmovable     13     11     10     11     10      6      7      3      1      0      0
+Node    0, zone    DMA32, type      Movable     36     26     39     40     37     36     24     29     14      6    767
+Node    0, zone    DMA32, type  Reclaimable      0      0      0      0      0      0      0      0      0      0      1
+Node    0, zone    DMA32, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone    DMA32, type          CMA      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone    DMA32, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone   Normal, type    Unmovable   7744   7519   6900   5964   4583   2878   1346    448    146      1      0
+Node    0, zone   Normal, type      Movable    645   1930   1685   1339   1020    670    363    210    106    310    399
+Node    0, zone   Normal, type  Reclaimable     53     70    116     48     13      0      0      0      0      0      0
+Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone   Normal, type          CMA      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone   Normal, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
+
+Number of blocks type     Unmovable      Movable  Reclaimable   HighAtomic          CMA      Isolate
+Node 0, zone      DMA            1            7            0            0            0            0
+Node 0, zone    DMA32            4         1650            2            0            0            0
+Node 0, zone   Normal          947         1469           15            0            0            0
+
+When it enabled:
+~# echo 1 > /sys/module/zsmalloc/parameters/malloc_force_movable
+~# echo lz4 > /sys/module/zswap/parameters/compressor
+~# echo zsmalloc > /sys/module/zswap/parameters/zpool
+~# echo 1 > /sys/module/zswap/parameters/enabled
+~# swapon /swapfile
+~# cd /home/teawater/kernel/vm-scalability/
+/home/teawater/kernel/vm-scalability# export unit_size=$((9 * 1024 * 1024 * 1024))
+/home/teawater/kernel/vm-scalability# ./case-anon-w-seq
+2717908992 bytes / 4779235 usecs = 555362 KB/s
+2717908992 bytes / 4856673 usecs = 546507 KB/s
+2717908992 bytes / 4920079 usecs = 539464 KB/s
+2717908992 bytes / 4935505 usecs = 537778 KB/s
+354839 usecs to free memory
+368167 usecs to free memory
+355460 usecs to free memory
+385452 usecs to free memory
+/home/teawater/kernel/vm-scalability# cat /proc/pagetypeinfo
+Page block order: 9
+Pages per block:  512
+
+Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
+Node    0, zone      DMA, type    Unmovable      1      1      1      0      2      1      1      0      1      0      0
+Node    0, zone      DMA, type      Movable      0      0      0      0      0      0      0      0      0      1      3
+Node    0, zone      DMA, type  Reclaimable      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone      DMA, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone      DMA, type          CMA      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone      DMA, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone    DMA32, type    Unmovable      9     15     13     10     13      9      3      2      2      0      0
+Node    0, zone    DMA32, type      Movable     16     19     10     14     17     17     16      8      5      6    775
+Node    0, zone    DMA32, type  Reclaimable      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone    DMA32, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone    DMA32, type          CMA      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone    DMA32, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone   Normal, type    Unmovable   2525   1347    603    181     55     14      4      1      6      0      0
+Node    0, zone   Normal, type      Movable   5255   6069   5007   3978   2885   1940   1164    732    485    276    511
+Node    0, zone   Normal, type  Reclaimable    103    104    140     87     31     21      7      3      2      1      1
+Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone   Normal, type          CMA      0      0      0      0      0      0      0      0      0      0      0
+Node    0, zone   Normal, type      Isolate      0      0      0      0      0      0      0      0      0      0      0
+
+Number of blocks type     Unmovable      Movable  Reclaimable   HighAtomic          CMA      Isolate
+Node 0, zone      DMA            1            7            0            0            0            0
+Node 0, zone    DMA32            4         1652            0            0            0            0
+Node 0, zone   Normal           78         2330           23            0            0            0
+
+You can see that the number of unmovable page blocks is decreased
+when malloc_force_movable is enabled.
+
+Signed-off-by: Hui Zhu <teawaterz@linux.alibaba.com>
 ---
+ mm/zsmalloc.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Comments?
-Concerns?
-
-Otherwise I will queue this up and send it to Linus.
-
- kernel/ptrace.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 6f357f4fc859..4c2b24a885d3 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -704,6 +704,10 @@ static int ptrace_peek_siginfo(struct task_struct *child,
- 	if (arg.nr < 0)
- 		return -EINVAL;
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 0787d33b80d8..7d44c7ccd882 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -178,6 +178,13 @@ static struct dentry *zs_stat_root;
+ static struct vfsmount *zsmalloc_mnt;
+ #endif
  
-+	/* Ensure arg.off fits in an unsigned */
-+	if (arg.off > ULONG_MAX)
-+		return 0;
++/* Enable/disable zs_malloc force allocate block with
++ *  gfp __GFP_HIGHMEM | __GFP_MOVABLE (disabled by default).
++ */
++static bool __read_mostly zs_malloc_force_movable;
++module_param_cb(malloc_force_movable, &param_ops_bool,
++		&zs_malloc_force_movable, 0644);
 +
- 	if (arg.flags & PTRACE_PEEKSIGINFO_SHARED)
- 		pending = &child->signal->shared_pending;
- 	else
-@@ -711,18 +715,20 @@ static int ptrace_peek_siginfo(struct task_struct *child,
+ /*
+  * We assign a page to ZS_ALMOST_EMPTY fullness group when:
+  *	n <= N / f, where
+@@ -1479,6 +1486,9 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
+ 	if (unlikely(!size || size > ZS_MAX_ALLOC_SIZE))
+ 		return 0;
  
- 	for (i = 0; i < arg.nr; ) {
- 		kernel_siginfo_t info;
--		s32 off = arg.off + i;
-+		unsigned long off = arg.off + i;
-+		bool found = false;
- 
- 		spin_lock_irq(&child->sighand->siglock);
- 		list_for_each_entry(q, &pending->list, list) {
- 			if (!off--) {
-+				found = true;
- 				copy_siginfo(&info, &q->info);
- 				break;
- 			}
- 		}
- 		spin_unlock_irq(&child->sighand->siglock);
- 
--		if (off >= 0) /* beyond the end of the list */
-+		if (!found) /* beyond the end of the list */
- 			break;
- 
- #ifdef CONFIG_COMPAT
++	if (zs_malloc_force_movable)
++		gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
++
+ 	handle = cache_alloc_handle(pool, gfp);
+ 	if (!handle)
+ 		return 0;
 -- 
-2.21.0.dirty
+2.20.1 (Apple Git-117)
 
