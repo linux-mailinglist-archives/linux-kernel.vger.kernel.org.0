@@ -2,97 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 902E22E936
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 01:26:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B8892E913
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 01:26:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfE2XZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 19:25:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49170 "EHLO
+        id S1726806AbfE2XYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 19:24:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49084 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726540AbfE2XYB (ORCPT
+        with ESMTP id S1726411AbfE2XYB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 29 May 2019 19:24:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
+        To:From:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=101NUubdgdQ5XTreIrPkh1wQNPvLvYeTkirlA9vazw4=; b=cKuo/zXENJygACfL65gsogn05p
-        6dIGhbpUvFYawarAVSJsma9Vw6fOxOHyu/mwvi/d2ZVecEoeeaXAA68FOLsQFeeOV7XdYvxNjX0mG
-        cJWjhDNATPJktdkHX7JOxE9x+5obzsy0G37bhR67isEeziusXUCWAsMW5xJYOvnmCWIKtX3YX0nFG
-        +uOIVLVbZWtqA5XFmDCrA2mzsR0DEPFuIK2HxD5Su9WXdseaROor5JXldCnoQ27RF6+oYgEbM4+vl
-        jYF/RlcmyGsWvbMuxWI9Yeqrfic+T2ivdtVfxO8KlfDTkuM+xWP7oK+BX2V1mKaeooKXxyw+SEx0m
-        nK53Q09w==;
+        bh=vV/6SDE/E7zcgK8uc3lPPsLgLzmr7K6D9Lr4cA++5kk=; b=ZKiNc9vAH6atsmbeWicMMvUVDX
+        0lPfX5z4PAxqzmwWfwZF3ecQWJEXtp+TQXxyDySdsL8PC6bQIl483oCp3qDUFGROXvHiU/bRg+tt7
+        62PnTOE5u7qOFESgDfDZ/gTahD/v1bDIm21Dg3kCoUs2QeQWlHUi0hkCTvw+3fb2nSjn1KY6NizBA
+        iHFjTI2UVEB3tCl3o9PxwPpinSEPpITr8iVxYWvJ47B4cpSIanoW65alIOvLZjxrrcOiLZixKakPl
+        TmPdZmC94LyGFAjTmptp6CWjN3tyaQLMqlMlp/vhsn9/dNVc2ew4fgOSR2VRPzYm8hwoCepfgiGf6
+        nH6ZAAjw==;
 Received: from 177.132.232.81.dynamic.adsl.gvt.net.br ([177.132.232.81] helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hW7vL-0005Rq-9i; Wed, 29 May 2019 23:23:59 +0000
+        id 1hW7vL-0005Rk-8x; Wed, 29 May 2019 23:23:59 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hW7vI-0007xU-Pz; Wed, 29 May 2019 20:23:56 -0300
+        id 1hW7vI-0007xY-Qo; Wed, 29 May 2019 20:23:56 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH 12/22] gpu: i915.rst: Fix references to renamed files
-Date:   Wed, 29 May 2019 20:23:43 -0300
-Message-Id: <5ecde05364284f6845b651297fd9ce8225af2bcd.1559171394.git.mchehab+samsung@kernel.org>
+        Harry Wei <harryxiyou@gmail.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>
+Subject: [PATCH 13/22] docs: zh_CN: avoid duplicate citation references
+Date:   Wed, 29 May 2019 20:23:44 -0300
+Message-Id: <9d3b9729663f75249b514dd3910309eb418d9e46.1559171394.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1559171394.git.mchehab+samsung@kernel.org>
 References: <cover.1559171394.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -function Hardware workarounds ./drivers/gpu/drm/i915/intel_workarounds.c' failed with return code 1
-WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -function Logical Rings, Logical Ring Contexts and Execlists ./drivers/gpu/drm/i915/intel_lrc.c' failed with return code 1
-WARNING: kernel-doc './scripts/kernel-doc -rst -enable-lineno -internal ./drivers/gpu/drm/i915/intel_lrc.c' failed with return code 2
+    Documentation/process/management-style.rst:35: WARNING: duplicate label decisions, other instance in     Documentation/translations/zh_CN/process/management-style.rst
+    Documentation/process/programming-language.rst:37: WARNING: duplicate citation c-language, other instance in     Documentation/translations/zh_CN/process/programming-language.rst
+    Documentation/process/programming-language.rst:38: WARNING: duplicate citation gcc, other instance in     Documentation/translations/zh_CN/process/programming-language.rst
+    Documentation/process/programming-language.rst:39: WARNING: duplicate citation clang, other instance in     Documentation/translations/zh_CN/process/programming-language.rst
+    Documentation/process/programming-language.rst:40: WARNING: duplicate citation icc, other instance in     Documentation/translations/zh_CN/process/programming-language.rst
+    Documentation/process/programming-language.rst:41: WARNING: duplicate citation gcc-c-dialect-options, other instance in     Documentation/translations/zh_CN/process/programming-language.rst
+    Documentation/process/programming-language.rst:42: WARNING: duplicate citation gnu-extensions, other instance in     Documentation/translations/zh_CN/process/programming-language.rst
+    Documentation/process/programming-language.rst:43: WARNING: duplicate citation gcc-attribute-syntax, other instance in     Documentation/translations/zh_CN/process/programming-language.rst
+    Documentation/process/programming-language.rst:44: WARNING: duplicate citation n2049, other instance in     Documentation/translations/zh_CN/process/programming-language.rst
 
-Fixes: 112ed2d31a46 ("drm/i915: Move GraphicsTechnology files under gt/")
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/gpu/i915.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../zh_CN/process/management-style.rst        |  4 +--
+ .../zh_CN/process/programming-language.rst    | 28 +++++++++----------
+ 2 files changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/gpu/i915.rst b/Documentation/gpu/i915.rst
-index 055df45596c1..38fefeb99bba 100644
---- a/Documentation/gpu/i915.rst
-+++ b/Documentation/gpu/i915.rst
-@@ -61,7 +61,7 @@ Intel GVT-g Host Support(vGPU device model)
- Workarounds
- -----------
+diff --git a/Documentation/translations/zh_CN/process/management-style.rst b/Documentation/translations/zh_CN/process/management-style.rst
+index a181fa56d19e..c6a5bb285797 100644
+--- a/Documentation/translations/zh_CN/process/management-style.rst
++++ b/Documentation/translations/zh_CN/process/management-style.rst
+@@ -28,7 +28,7 @@ Linux内核管理风格
  
--.. kernel-doc:: drivers/gpu/drm/i915/intel_workarounds.c
-+.. kernel-doc:: drivers/gpu/drm/i915/gt/selftest_workarounds.c
-    :doc: Hardware workarounds
+ 不管怎样，这里是：
  
- Display Hardware Handling
-@@ -379,10 +379,10 @@ User Batchbuffer Execution
- Logical Rings, Logical Ring Contexts and Execlists
- --------------------------------------------------
+-.. _decisions:
++.. _cn_decisions:
  
--.. kernel-doc:: drivers/gpu/drm/i915/intel_lrc.c
-+.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_lrc.c
-    :doc: Logical Rings, Logical Ring Contexts and Execlists
+ 1）决策
+ -------
+@@ -108,7 +108,7 @@ Linux内核管理风格
+ 但是，为了做好作为内核管理者的准备，最好记住不要烧掉任何桥梁，不要轰炸任何
+ 无辜的村民，也不要疏远太多的内核开发人员。事实证明，疏远人是相当容易的，而
+ 亲近一个疏远的人是很难的。因此，“疏远”立即属于“不可逆”的范畴，并根据
+-:ref:`decisions` 成为绝不可以做的事情。
++:ref:`cn_decisions` 成为绝不可以做的事情。
  
--.. kernel-doc:: drivers/gpu/drm/i915/intel_lrc.c
-+.. kernel-doc:: drivers/gpu/drm/i915/gt/intel_lrc.c
-    :internal:
+ 这里只有几个简单的规则：
  
- Global GTT views
+diff --git a/Documentation/translations/zh_CN/process/programming-language.rst b/Documentation/translations/zh_CN/process/programming-language.rst
+index 51fd4ef48ea1..9de9a3108c4d 100644
+--- a/Documentation/translations/zh_CN/process/programming-language.rst
++++ b/Documentation/translations/zh_CN/process/programming-language.rst
+@@ -8,21 +8,21 @@
+ 程序设计语言
+ ============
+ 
+-内核是用C语言 [c-language]_ 编写的。更准确地说，内核通常是用 ``gcc`` [gcc]_
+-在 ``-std=gnu89`` [gcc-c-dialect-options]_ 下编译的：ISO C90的 GNU 方言（
++内核是用C语言 [cn_c-language]_ 编写的。更准确地说，内核通常是用 ``gcc`` [cn_gcc]_
++在 ``-std=gnu89`` [cn_gcc-c-dialect-options]_ 下编译的：ISO C90的 GNU 方言（
+ 包括一些C99特性）
+ 
+-这种方言包含对语言 [gnu-extensions]_ 的许多扩展，当然，它们许多都在内核中使用。
++这种方言包含对语言 [cn_gnu-extensions]_ 的许多扩展，当然，它们许多都在内核中使用。
+ 
+-对于一些体系结构，有一些使用 ``clang`` [clang]_ 和 ``icc`` [icc]_ 编译内核
++对于一些体系结构，有一些使用 ``clang`` [cn_clang]_ 和 ``icc`` [cn_icc]_ 编译内核
+ 的支持，尽管在编写此文档时还没有完成，仍需要第三方补丁。
+ 
+ 属性
+ ----
+ 
+-在整个内核中使用的一个常见扩展是属性（attributes） [gcc-attribute-syntax]_
++在整个内核中使用的一个常见扩展是属性（attributes） [cn_gcc-attribute-syntax]_
+ 属性允许将实现定义的语义引入语言实体（如变量、函数或类型），而无需对语言进行
+-重大的语法更改（例如添加新关键字） [n2049]_
++重大的语法更改（例如添加新关键字） [cn_n2049]_
+ 
+ 在某些情况下，属性是可选的（即不支持这些属性的编译器仍然应该生成正确的代码，
+ 即使其速度较慢或执行的编译时检查/诊断次数不够）
+@@ -31,11 +31,11 @@
+ ``__attribute__((__pure__))`` ），以检测可以使用哪些关键字和/或缩短代码, 具体
+ 请参阅 ``include/linux/compiler_attributes.h``
+ 
+-.. [c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
+-.. [gcc] https://gcc.gnu.org
+-.. [clang] https://clang.llvm.org
+-.. [icc] https://software.intel.com/en-us/c-compilers
+-.. [gcc-c-dialect-options] https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
+-.. [gnu-extensions] https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
+-.. [gcc-attribute-syntax] https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
+-.. [n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
++.. [cn_c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
++.. [cn_gcc] https://gcc.gnu.org
++.. [cn_clang] https://clang.llvm.org
++.. [cn_icc] https://software.intel.com/en-us/c-compilers
++.. [cn_gcc-c-dialect-options] https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
++.. [cn_gnu-extensions] https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
++.. [cn_gcc-attribute-syntax] https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
++.. [cn_n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
 -- 
 2.21.0
 
