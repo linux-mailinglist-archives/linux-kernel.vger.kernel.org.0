@@ -2,115 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36C132D675
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B74932D4F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 06:58:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfE2Hge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 03:36:34 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:49044 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbfE2Hge (ORCPT
+        id S1726076AbfE2E6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 00:58:20 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33166 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbfE2E6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 03:36:34 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4T4s9jf141872;
-        Wed, 29 May 2019 04:55:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : message-id : date : mime-version : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=xO/I95wa/BDchQFoLjVha8GkTVVJiQMKwy7fu/wkxYA=;
- b=P5KPPLS2UzjMJn6rGUCVjhYHj8LaJwoGOxhnoVHzWY+CmNEcnqmounAsekASPzNLBOro
- MaXZltz3kUZk/zCQoeyPB6vOfizOZyGpKOj9ez31MiimJ1LBuinzD1XDAvZO21j4ddeD
- vm3qPI94Hu3mANEt5VILtTSbGR+kD4wLVvmAqIpp4ieESvWfzO9biPI3ZS2hR0gIIvgZ
- eJohCUeOWnwh7B8mQ+eXwqSkc+KCKqD8lFE71DecQ3wpEziD05jDCH5HCGZDPcmSAGtl
- MAzisqiEfgOq0kKmC935/NBp4Z4gUgmAp4O8dCVHDw8x1zZw2N5BhYKW/qnTnpuk3XKN ow== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 2spu7dfc6x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 May 2019 04:55:07 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4T4sHBi124365;
-        Wed, 29 May 2019 04:55:06 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 2sr31v1hy8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 May 2019 04:55:06 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4T4t5v9001280;
-        Wed, 29 May 2019 04:55:05 GMT
-Received: from [192.168.0.139] (/118.26.137.196)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 28 May 2019 21:55:05 -0700
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Organization: Oracle Corporation
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     riel@surriel.com
-Subject: question on lazy tlb flush
-Message-ID: <cd421c2c-8507-6652-2ef7-a6f3b20efcd2@oracle.com>
-Date:   Wed, 29 May 2019 12:54:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Wed, 29 May 2019 00:58:19 -0400
+Received: by mail-lj1-f194.google.com with SMTP id w1so1092847ljw.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 21:58:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ePGVAC0GNzUZZi8eiSYsJvmbAo5ymaerGq4lv8lKk4c=;
+        b=iyHRVqvZBRvqcqUGmQ3YgkqZFu8Z5MaEL0TFBpzg3kE+MBA+qMfPIXmK25atKxti78
+         rlFLK1x/PIrWO4DR9ZyGf6g5uKNwsjNF9MNrcs+aEx6DPXZ/I9baFAVx7dXqA+/8tcfm
+         26BlPtHRbMlurN3u5m/u199QorongZ5DsYrCs7MQBWB03PYMkrqPRDSBl42oMUmYItdo
+         24j+0WdAS14F49EMcZDi+bqDZ8VkCeFHaWoSgvN+axz36kvBLd3GqIsDL0J9+dRyvWWb
+         J/vtyFyAk9Wou9f1A/N9sRBJUYp+wvN3xwMAQ5nLr8KS3p/b5tLZsI4AvrGC9BTmZQ2Z
+         XLRw==
+X-Gm-Message-State: APjAAAVohFwkSmKunhg5sC1oSXH23tavrM3fVI4rsDZEGf7VuUPjVOgL
+        /742Vqx9i05AGqHGAwVkQSAajy9+SpUWLuS8TvudRQ==
+X-Google-Smtp-Source: APXvYqwTGyPTj0EJgY0RuUWu8GMZyOowrbszRu0R0TdFn2PDGBmjoBv1NtDQlYfPkAEIirjzwLr6LRgZX1KyvR3ZcRE=
+X-Received: by 2002:a2e:9e14:: with SMTP id e20mr11944731ljk.172.1559105897613;
+ Tue, 28 May 2019 21:58:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9271 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905290032
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9271 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905290032
+References: <20190528111856.7276-1-kasong@redhat.com>
+In-Reply-To: <20190528111856.7276-1-kasong@redhat.com>
+From:   Bhupesh Sharma <bhsharma@redhat.com>
+Date:   Wed, 29 May 2019 10:28:05 +0530
+Message-ID: <CACi5LpNae1PuW48ceH6+-t7TokT8yQeKKLt5eNYUNMMAvnV0cQ@mail.gmail.com>
+Subject: Re: [PATCH v4] vmcore: Add a kernel parameter novmcoredd
+To:     Kairui Song <kasong@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rahul Lakkireddy <rahul.lakkireddy@chelsio.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Young <dyoung@redhat.com>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        Baoquan He <bhe@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maintainers,
+On Tue, May 28, 2019 at 4:52 PM Kairui Song <kasong@redhat.com> wrote:
+>
+> Since commit 2724273e8fd0 ("vmcore: add API to collect hardware dump in
+> second kernel"), drivers is allowed to add device related dump data to
+> vmcore as they want by using the device dump API. This have a potential
+> issue, the data is stored in memory, drivers may append too much data
+> and use too much memory. The vmcore is typically used in a kdump kernel
+> which runs in a pre-reserved small chunk of memory. So as a result it
+> will make kdump unusable at all due to OOM issues.
+>
+> So introduce new 'novmcoredd' command line option. User can disable
+> device dump to reduce memory usage. This is helpful if device dump is
+> using too much memory, disabling device dump could make sure a regular
+> vmcore without device dump data is still available.
+>
+> Signed-off-by: Kairui Song <kasong@redhat.com>
+>
+> ---
+>  Update from V3:
+>   - Use novmcoredd instead of vmcore_device_dump. Use
+>     vmcore_device_dump and make it off by default is confusing,
+>     novmcoredd is a cleaner way to let user space be able to disable
+>     device dump to save memory.
+>
+>  Update from V2:
+>   - Improve related docs
+>
+>  Update from V1:
+>   - Use bool parameter to turn it on/off instead of letting user give
+>     the size limit. Size of device dump is hard to determine.
+>
+>  Documentation/admin-guide/kernel-parameters.txt | 11 +++++++++++
+>  fs/proc/Kconfig                                 |  3 ++-
+>  fs/proc/vmcore.c                                |  8 ++++++++
+>  3 files changed, 21 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 138f6664b2e2..1b900d262680 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2872,6 +2872,17 @@
+>                         /sys/module/printk/parameters/console_suspend) to
+>                         turn on/off it dynamically.
+>
+> +       novmcoredd      [KNL,KDUMP]
+> +                       Disable device dump. Device dump allows drivers to
+> +                       append dump data to vmcore so you can collect driver
+> +                       specified debug info. The drivers could append the
+> +                       data without any limit, and the data is stored in
+> +                       memory, this may bring a significant memory stress.
+> +                       Disable device dump can help save memory but driver
+> +                       debug data will be no longer available.
+> +                       Only available when CONFIG_PROC_VMCORE_DEVICE_DUMP
+> +                       is set.
+> +
+>         noaliencache    [MM, NUMA, SLAB] Disables the allocation of alien
+>                         caches in the slab allocator.  Saves per-node memory,
+>                         but will impact performance.
+> diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+> index 817c02b13b1d..62b19162d198 100644
+> --- a/fs/proc/Kconfig
+> +++ b/fs/proc/Kconfig
+> @@ -57,7 +57,8 @@ config PROC_VMCORE_DEVICE_DUMP
+>           snapshot.
+>
+>           If you say Y here, the collected device dumps will be added
+> -         as ELF notes to /proc/vmcore.
+> +         as ELF notes to /proc/vmcore. You can still disabled device
+> +         dump by command line option 'novmcoredd'.
+>
+>  config PROC_SYSCTL
+>         bool "Sysctl support (/proc/sys)" if EXPERT
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index 3fe90443c1bb..e815fd035fc0 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -53,6 +53,9 @@ static struct proc_dir_entry *proc_vmcore;
+>  /* Device Dump list and mutex to synchronize access to list */
+>  static LIST_HEAD(vmcoredd_list);
+>  static DEFINE_MUTEX(vmcoredd_mutex);
+> +
+> +static bool vmcoredd_disabled;
+> +core_param(novmcoredd, vmcoredd_disabled, bool, 0);
+>  #endif /* CONFIG_PROC_VMCORE_DEVICE_DUMP */
+>
+>  /* Device Dump Size */
+> @@ -1451,6 +1454,11 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
+>         size_t data_size;
+>         int ret;
+>
+> +       if (vmcoredd_disabled) {
+> +               pr_err_once("Device dump is disabled\n");
+> +               return -EINVAL;
+> +       }
+> +
+>         if (!data || !strlen(data->dump_name) ||
+>             !data->vmcoredd_callback || !data->size)
+>                 return -EINVAL;
+> --
+> 2.21.0
 
-A question raised when I learned below code.  Appreciate any help me 
-understand the code.
+LGTM, so:
 
-void native_flush_tlb_others(const struct cpumask *cpumask,
-                              const struct flush_tlb_info *info)
-
-{
-
-...
-
-         /*
-          * If no page tables were freed, we can skip sending IPIs to
-          * CPUs in lazy TLB mode. They will flush the CPU themselves
-          * at the next context switch.
-          *
-          * However, if page tables are getting freed, we need to send the
-          * IPI everywhere, to prevent CPUs in lazy TLB mode from tripping
-          * up on the new contents of what used to be page tables, while
-          * doing a speculative memory access.
-          */
-         if (info->freed_tables)
-                 smp_call_function_many(cpumask, flush_tlb_func_remote,
-                                (void *)info, 1);
-         else
-                 on_each_cpu_cond_mask(tlb_is_not_lazy, 
-flush_tlb_func_remote,
-                                 (void *)info, 1, GFP_ATOMIC, cpumask);
-
-}
-
-I just didn't understand how a kernel thread could trip up on the new 
-contents of what used to be page tables. I presume the freed page tables 
-are user mapping?
-
-But kernel thread only access kernel address space, is kernel space also 
-freed?
-
-
-thanks
-
-Zhenzhong
-
+Reviewed-by: Bhupesh Sharma <bhsharma@redhat.com>
