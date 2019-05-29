@@ -2,87 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4D5E2D7E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:31:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F86D2D7ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:35:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfE2IbV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 04:31:21 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:60842 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726068AbfE2IbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:31:14 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 77FB92011CA;
-        Wed, 29 May 2019 10:31:11 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8E10D200272;
-        Wed, 29 May 2019 10:31:06 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 418BA402FA;
-        Wed, 29 May 2019 16:31:00 +0800 (SGT)
-From:   Chuanhua Han <chuanhua.han@nxp.com>
-To:     shawnguo@kernel.org, leoyang.li@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Chuanhua Han <chuanhua.han@nxp.com>
-Subject: [PATCH 3/3] arm64: dts: ls1088a: Revise gpio registers to little-endian
-Date:   Wed, 29 May 2019 16:32:54 +0800
-Message-Id: <20190529083254.39581-3-chuanhua.han@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190529083254.39581-1-chuanhua.han@nxp.com>
-References: <20190529083254.39581-1-chuanhua.han@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726121AbfE2IfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:35:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49042 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfE2IfL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 04:35:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=n7yoVkhKpAqi+lqCMTPRH0YV1JfvuDb3vl6aJ/78F2g=; b=dNeWGeHlt/e1Aj/mSEc3wilX7
+        kMnI9uP0ujtPmAUt+RNwXBVjMxK1v01Teu17CJgIBx5o22KKzpUtMlTZ5ifv4FO90xSozEVyyZGpV
+        Z0S89tDNA/INzYRs/YW1suB3njaOOwvbQXVXIlHW6h0Vz3B8ARo88NUoWolIe7HlA/GEWOw/HTZQe
+        4SJyHemdSSjunl50faFlyf0KKVYfOI4Y/TDFbDbgu6TMAFyTh65tRB+cfrv3Jtn/PgO2YWa/7a7P8
+        EA6yLGu9NYTDH+u1CzgPJKSx00X2Bq0IZdNqFGeJUclAmP+4yo341kw86K8CkVagwYQfdr0JW/C5W
+        sHFdBAj9w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVu23-0006jN-SI; Wed, 29 May 2019 08:34:00 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C66AB201A7E41; Wed, 29 May 2019 10:33:57 +0200 (CEST)
+Date:   Wed, 29 May 2019 10:33:57 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, williams@redhat.com,
+        daniel@bristot.me, "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Subject: Re: [RFC 2/3] preempt_tracer: Disable IRQ while starting/stopping
+ due to a preempt_counter change
+Message-ID: <20190529083357.GF2623@hirez.programming.kicks-ass.net>
+References: <cover.1559051152.git.bristot@redhat.com>
+ <f2ca7336162b6dc45f413cfe4e0056e6aa32e7ed.1559051152.git.bristot@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2ca7336162b6dc45f413cfe4e0056e6aa32e7ed.1559051152.git.bristot@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since fsl-ls1088a Soc GPIO registers are used as little endian,
-the patch adds the little-endian attribute to each gpio node.
+On Tue, May 28, 2019 at 05:16:23PM +0200, Daniel Bristot de Oliveira wrote:
+> The preempt_disable/enable tracepoint only traces in the disable <-> enable
+> case, which is correct. But think about this case:
+> 
+> ---------------------------- %< ------------------------------
+> 	THREAD					IRQ
+> 	   |					 |
+> preempt_disable() {
+>     __preempt_count_add(1)
+> 	------->	    smp_apic_timer_interrupt() {
+> 				preempt_disable()
+> 				    do not trace (preempt count >= 1)
+> 				    ....
+> 				preempt_enable()
+> 				    do not trace (preempt count >= 1)
+> 			    }
+>     trace_preempt_disable();
+> }
+> ---------------------------- >% ------------------------------
+> 
+> The tracepoint will be skipped.
 
-Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+.... for the IRQ. But IRQs are not preemptible anyway, so what the
+problem?
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-index 661137ffa319..3e6d20d065bd 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-@@ -272,6 +272,7 @@
- 			compatible = "fsl,qoriq-gpio";
- 			reg = <0x0 0x2300000 0x0 0x10000>;
- 			interrupts = <0 36 IRQ_TYPE_LEVEL_HIGH>;
-+			little-endian;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
-@@ -282,6 +283,7 @@
- 			compatible = "fsl,qoriq-gpio";
- 			reg = <0x0 0x2310000 0x0 0x10000>;
- 			interrupts = <0 36 IRQ_TYPE_LEVEL_HIGH>;
-+			little-endian;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
-@@ -292,6 +294,7 @@
- 			compatible = "fsl,qoriq-gpio";
- 			reg = <0x0 0x2320000 0x0 0x10000>;
- 			interrupts = <0 37 IRQ_TYPE_LEVEL_HIGH>;
-+			little-endian;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
-@@ -302,6 +305,7 @@
- 			compatible = "fsl,qoriq-gpio";
- 			reg = <0x0 0x2330000 0x0 0x10000>;
- 			interrupts = <0 37 IRQ_TYPE_LEVEL_HIGH>;
-+			little-endian;
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 			interrupt-controller;
--- 
-2.17.1
+> To avoid skipping the trace, the change in the counter should be "atomic"
+> with the start/stop, w.r.t the interrupts.
+> 
+> Disable interrupts while the adding/starting stopping/subtracting.
 
+> +static inline void preempt_add_start_latency(int val)
+> +{
+> +	unsigned long flags;
+> +
+> +	raw_local_irq_save(flags);
+> +	__preempt_count_add(val);
+> +	preempt_latency_start(val);
+> +	raw_local_irq_restore(flags);
+> +}
+
+> +static inline void preempt_sub_stop_latency(int val)
+> +{
+> +	unsigned long flags;
+> +
+> +	raw_local_irq_save(flags);
+> +	preempt_latency_stop(val);
+> +	__preempt_count_sub(val);
+> +	raw_local_irq_restore(flags);
+> +}
+
+That is hideously expensive :/
