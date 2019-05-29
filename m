@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D3782D5D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:00:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDFCD2D5DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfE2HAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 03:00:16 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:58394 "EHLO
+        id S1726563AbfE2HBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 03:01:55 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:58410 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725894AbfE2HAP (ORCPT
+        with ESMTP id S1725895AbfE2HBy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 03:00:15 -0400
+        Wed, 29 May 2019 03:01:54 -0400
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 44A9F1000478F;
-        Wed, 29 May 2019 00:00:15 -0700 (PDT)
-Date:   Wed, 29 May 2019 00:00:14 -0700 (PDT)
-Message-Id: <20190529.000014.920973579137715506.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 537A61478A00B;
+        Wed, 29 May 2019 00:01:54 -0700 (PDT)
+Date:   Wed, 29 May 2019 00:01:53 -0700 (PDT)
+Message-Id: <20190529.000153.1480129500988688576.davem@davemloft.net>
 To:     gustavo@embeddedor.com
 Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH net-next] macvlan: Replace strncpy() by strscpy()
@@ -30,7 +30,7 @@ X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 29 May 2019 00:00:15 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 29 May 2019 00:01:54 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
