@@ -2,87 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9479B2D5E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:06:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7A92D5EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbfE2HGv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 03:06:51 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:50666 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfE2HGv (ORCPT
+        id S1726453AbfE2HJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 03:09:41 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46123 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbfE2HJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 03:06:51 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4T76XlJ104973;
-        Wed, 29 May 2019 02:06:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1559113593;
-        bh=SB026D3ajxFdRIc7n9qxk9u1vBZJWW0jZuTDSvXX7t4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=tA5SEkJn+6HHVMgi/Z+ltEZKF4o4sH9ly30+SnU0y0h6Oa6gbczSq+B9hWXzqX8L7
-         R+pIFBZerml9joHBI9VKUgA61hhSY1VdN1yGdPbMXI8XpAEtHHo+SmPfzPSGZfQC7B
-         e270M0jtMkAU3U4y+MkpjUv/iOxhTg9KbGMJzOrs=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4T76Was037571
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 May 2019 02:06:33 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 29
- May 2019 02:06:32 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 29 May 2019 02:06:32 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4T76TGH091555;
-        Wed, 29 May 2019 02:06:30 -0500
-Subject: Re: [PATCHv6 0/4] omapdrm: DSI command mode panel support
-To:     Tony Lindgren <tony@atomide.com>
-CC:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@collabora.com>,
-        Keerthy <j-keerthy@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-References: <20190523200756.25314-1-sebastian.reichel@collabora.com>
- <60c45d23-de2f-d94a-c3d7-146a2bee538f@ti.com>
- <20190527112122.GJ5447@atomide.com>
- <e507c415-38de-86fe-9265-4b0aed0d7224@ti.com>
- <20190528093952.GM5447@atomide.com>
- <14c6c702-844b-756d-2d97-44e8f5a169df@ti.com>
- <20190528101847.GN5447@atomide.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <ac487765-01a3-2c82-d86e-db00451563a9@ti.com>
-Date:   Wed, 29 May 2019 10:06:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 29 May 2019 03:09:41 -0400
+Received: by mail-lj1-f195.google.com with SMTP id m15so1295175ljg.13
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 00:09:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0hmEt8XBAszMFOt/NHrMak9iR4Ln+O6rhKTThaepQX0=;
+        b=p49ChQ13CkTgafcWq6Mx8FOk/3a/AeGpi05o5uxn0TRjMP7yQKQUwXpN1bbkt6bsUL
+         BOp03/oTIkbFDCJgo8EFfNE0dDIo9i7rKReMyFNF1dZ/M1Tga6IFPJqU6RNwQ9ztAKEi
+         kVPSOn09OJUcGey1NdvjzyLfUrSxYu2LvzfPCvj/ykDhrPxYoFREu8hf7+IFKkVuznxg
+         wzzsesZ5sTsck6PUx8smbK+YfBzvT0kXI2A1La8N2CmQUuFn1pR26ai5oseyyE1t//7M
+         Jp5OBTnFMGRX4xsL05DMLjI183G/vREXuSDRD9tAOSzGCVHCv3Od22rktQlI1NPK0/Wh
+         hWLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0hmEt8XBAszMFOt/NHrMak9iR4Ln+O6rhKTThaepQX0=;
+        b=n+VW0VvtJ6xS5GzeRNo78U9H48ms2BOpcKA3Ce/G0hwPVIysTFDqh4GJ8JrbuALCRk
+         SzwpvlBcbdOOGK8uGU8JAKEnu8N743BVl5N4yyCPXbQHmA7au3artTfsXnPZOQrgRcJb
+         HiStFb/CZ3evEBC3MS5vWYciYw+GbHouZfPy+T9T2ZYq6aru+mjwvRabmanspJIFaB42
+         6QlSjhm5W+fwWFugPRYEXYGTm0B+uyHrhbM4HF4LBDQrUWoF8SK3MLkVTPVlgdOJox1Y
+         GS/QBXwEHNpOrl2aNmtRMPAPJxmHgT0g+RiAASLneFIybQcvZWE5vIGY9EVs5cjXSvOh
+         u/OA==
+X-Gm-Message-State: APjAAAX1qow/Q0UkQGFG+K1SUpJa1ZAL2/DWXccs1tRaHqouwSpXyKjy
+        VvV08yIzXvQ2n5nLToSyTdU5kIB+31Gm30fQ7iI=
+X-Google-Smtp-Source: APXvYqzPybpE3leNNpeYsxD/syHNbqQB4AamoUBooFN787Z8X3jpIs8qqKLWY3d8qJDJTDSMGWjIGZogbhlUDWuIO+4=
+X-Received: by 2002:a2e:9dc6:: with SMTP id x6mr1537784ljj.27.1559113778900;
+ Wed, 29 May 2019 00:09:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190528101847.GN5447@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190528193004.GA7744@gmail.com>
+In-Reply-To: <20190528193004.GA7744@gmail.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Wed, 29 May 2019 12:39:27 +0530
+Message-ID: <CAFqt6zZ0SHXddLoQMoO3LHT=50Br0x4r3Wn4XviypRxRUtn9zQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: Fail when offset == num in first check of vm_map_pages_zero()
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/05/2019 13:18, Tony Lindgren wrote:
+On Wed, May 29, 2019 at 1:38 AM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> If the user asks us for offset == num, we should already fail in the
+> first check, i.e. the one testing for offsets beyond the object.
+>
+> At the moment, we are failing on the second test anyway,
+> since count cannot be 0. Still, to agree with the comment of the first
+> test, we should first there.
 
->> My board is x15 rev A3, attached to AM5 EVM. I've also attached my kernel
->> config.
-> 
-> Strange that this is not affecting other x15? I think timer12 would
-> be blocked on HS devices though?
-
-Seems that the kernel config affects. omap2plus_defconfig boots ok.
-
-  Tomi
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+I think, we need to cc linux-mm.
+>
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> ---
+>  mm/memory.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/mm/memory.c b/mm/memory.c
+> index ddf20bd0c317..74cf8b0ce353 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -1547,7 +1547,7 @@ static int __vm_map_pages(struct vm_area_struct *vma, struct page **pages,
+>         int ret, i;
+>
+>         /* Fail if the user requested offset is beyond the end of the object */
+> -       if (offset > num)
+> +       if (offset >= num)
+>                 return -ENXIO;
+>
+>         /* Fail if the user requested size exceeds available object size */
+> --
+> 2.17.1
+>
