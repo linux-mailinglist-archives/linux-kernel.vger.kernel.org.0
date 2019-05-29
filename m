@@ -2,148 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5475D2D45D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 05:55:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D7DB2D467
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 06:05:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfE2DzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 23:55:19 -0400
-Received: from mga02.intel.com ([134.134.136.20]:44796 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725832AbfE2DzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 23:55:19 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 20:55:18 -0700
-X-ExtLoop1: 1
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by FMSMGA003.fm.intel.com with ESMTP; 28 May 2019 20:55:18 -0700
-Date:   Tue, 28 May 2019 20:56:19 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v2] mm/swap: Fix release_pages() when releasing devmap
- pages
-Message-ID: <20190529035618.GA21745@iweiny-DESK2.sc.intel.com>
-References: <20190524173656.8339-1-ira.weiny@intel.com>
- <20190527150107.GG1658@dhcp22.suse.cz>
+        id S1725888AbfE2EFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 00:05:18 -0400
+Received: from mail-io1-f49.google.com ([209.85.166.49]:43896 "EHLO
+        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbfE2EFS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 00:05:18 -0400
+Received: by mail-io1-f49.google.com with SMTP id k20so609927ios.10
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 21:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=qoCRgKEqb2cNIP9iBbmcP+1MshPj3Nktj6OiPwbarXY=;
+        b=Ta44pz2N6vCsDgFB/YzCguDFPvKoN0XrV1PKQ4fEBWZ2ERaHYWnbT/J29GnDrAm3Q7
+         AM3uZD1QG2eRlrvcinZcs+1PQMK4LTC9YezWYBUZJjfV0pnyMCfIAYJvDNLAzG9vU3pd
+         ZmqqDS3xlEC0dFbnkg8AFgLdi8qp+/J9e/SCpqQZUkMua6FjYoQPGJ/LlWLrApM+j5cW
+         nugMzWpzkjSlBmEBIygtEQDay08/Ot0Y4z2MUYdVUgzKbMkj6Lou7ahZJWPwW63K1xFu
+         e9KoBVdHojf4Tc2uQhUtLlrd8GVkuDSuvPw5JW6NObfBF1ZsnfMG3LOOx45242BscHQW
+         /Nxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=qoCRgKEqb2cNIP9iBbmcP+1MshPj3Nktj6OiPwbarXY=;
+        b=ctBVUHNvonWWyWWv0IKJOk6Pval72Ww66lpwdQdtPJzpKHnkEUJ1bkZOa8ifqupgxh
+         C1fEUoraLaKmsKzVL9NPCTUXkO5IH9h7rBJer2DIbza5vzd8Z69M4U1+lweFWIYTbxp9
+         k47L3ZltEogHsXt4qP58K7qXLdi9r/v7YL7Zj5FdzxqY0gj59gyWVehiz0JJ4zzhs+lR
+         qtxd7C6/5mYipCt3AxGmxhnsrNe4HGldn9OWxaq2lTBrj0Uum4c43V1wB0o64lFp7V1x
+         6Y075oPKMPjlAmlqKURWf2bow/TJErXCmKGpiEcG0UcKGf1esp5s/+xo/SKofKR5PZNF
+         2sUw==
+X-Gm-Message-State: APjAAAVmujbwiIeTqyyGmM+vLsAZzQnyN4+saGRV7YdPhZBPUku3Ycmu
+        6530Jl5dpy5VR/Is6cVOPqAr2LrAvwXMQD70RE9o9iCs3k32jQ==
+X-Google-Smtp-Source: APXvYqzUgiVnU+ecS/L3fcr3coeSpkq06FPF9E/xGA0Vgap0A2MpheGiZZG3Yep4zHc/xlpCpJr4mEN0UD4EDpMfJ4s=
+X-Received: by 2002:a5e:c24b:: with SMTP id w11mr1108900iop.111.1559102717163;
+ Tue, 28 May 2019 21:05:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190527150107.GG1658@dhcp22.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+From:   Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Date:   Wed, 29 May 2019 09:05:06 +0500
+Message-ID: <CABXGCsN9mYmBD-4GaaeW_NrDu+FDXLzr_6x+XNxfmFV6QkYCDg@mail.gmail.com>
+Subject: kernel BUG at mm/swap_state.c:170!
+To:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 05:01:07PM +0200, Michal Hocko wrote:
-> On Fri 24-05-19 10:36:56, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > Device pages can be more than type MEMORY_DEVICE_PUBLIC.
-> > 
-> > Handle all device pages within release_pages()
-> > 
-> > This was found via code inspection while determining if release_pages()
-> > and the new put_user_pages() could be interchangeable.
-> 
-> Please expand more about who is such a user and why does it use
-> release_pages rather than put_*page API.
+Hi folks.
+I am observed kernel panic after update to git tag 5.2-rc2.
+This crash happens at memory pressing when swap being used.
 
-Sorry for not being more clear.   The error was discovered while discussing a
-proposal to change a use of release_pages() to put_user_pages()[1]
+Unfortunately in journalctl saved only this:
 
-[1] https://lore.kernel.org/lkml/20190523172852.GA27175@iweiny-DESK2.sc.intel.com/
+May 29 08:02:02 localhost.localdomain kernel: page:ffffe90958230000
+refcount:1 mapcount:1 mapping:ffff8f3ffeb36949 index:0x625002ab2
+May 29 08:02:02 localhost.localdomain kernel: anon
+May 29 08:02:02 localhost.localdomain kernel: flags:
+0x17fffe00080034(uptodate|lru|active|swapbacked)
+May 29 08:02:02 localhost.localdomain kernel: raw: 0017fffe00080034
+ffffe90944640888 ffffe90956e208c8 ffff8f3ffeb36949
+May 29 08:02:02 localhost.localdomain kernel: raw: 0000000625002ab2
+0000000000000000 0000000100000000 ffff8f41aeeff000
+May 29 08:02:02 localhost.localdomain kernel: page dumped because:
+VM_BUG_ON_PAGE(entry != page)
+May 29 08:02:02 localhost.localdomain kernel: page->mem_cgroup:ffff8f41aeeff000
+May 29 08:02:02 localhost.localdomain kernel: ------------[ cut here
+]------------
+May 29 08:02:02 localhost.localdomain kernel: kernel BUG at mm/swap_state.c:170!
 
-In that thread John was saying that release_pages() was functionally equivalent
-to a loop around put_page().  He also suggested implementing put_user_pages()
-by using release_pages().  On the surface they did not seem the same to me so I
-did a deep dive to make sure they were and found this error.
 
->
-> The above changelog doesn't
-> really help understanding what is the actual problem. I also do not
-> understand the fix and a failure mode from release_pages is just scary.
 
-This is not failing release_pages().  The fix is that not all devmap pages are
-"public" type.  So previous to this change devmap pages of other types would
-not correctly be accounted for.
 
-The discussion about put_devmap_managed_page() "failing" is not about it
-failing directly but rather in how these pages should be accounted for.  Only
-devmap pages which require pagemap ops (specifically page_free()) require
-put_devmap_managed_page() processing.   Because of the optimized locking in
-release_pages() the zone device check is required to release the lock even if
-put_devmap_managed_page() does not handle the put.
-
-> It is basically impossible to handle the error case. So what is going on
-> here?
-
-I think what has happened is the code in release_pages() and put_page()
-diverged at some point.  I think it is worth a clean up in this area but I
-don't see way to do it at the moment which would be any cleaner than what is
-there.  So I've refrained from doing so.
-
-Does this help?  Would you like to roll a V3 with some of this in the commit
-message?
-
-Ira
-
->
->
->
-> 
-> > Cc: Jérôme Glisse <jglisse@redhat.com>
-> > Cc: Michal Hocko <mhocko@suse.com>
-> > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> > Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > ---
-> > Changes from V1:
-> > 	Add comment clarifying that put_devmap_managed_page() can still
-> > 	fail.
-> > 	Add Reviewed-by tags.
-> > 
-> >  mm/swap.c | 11 +++++++----
-> >  1 file changed, 7 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/mm/swap.c b/mm/swap.c
-> > index 9d0432baddb0..f03b7b4bfb4f 100644
-> > --- a/mm/swap.c
-> > +++ b/mm/swap.c
-> > @@ -740,15 +740,18 @@ void release_pages(struct page **pages, int nr)
-> >  		if (is_huge_zero_page(page))
-> >  			continue;
-> >  
-> > -		/* Device public page can not be huge page */
-> > -		if (is_device_public_page(page)) {
-> > +		if (is_zone_device_page(page)) {
-> >  			if (locked_pgdat) {
-> >  				spin_unlock_irqrestore(&locked_pgdat->lru_lock,
-> >  						       flags);
-> >  				locked_pgdat = NULL;
-> >  			}
-> > -			put_devmap_managed_page(page);
-> > -			continue;
-> > +			/*
-> > +			 * zone-device-pages can still fail here and will
-> > +			 * therefore need put_page_testzero()
-> > +			 */
-> > +			if (put_devmap_managed_page(page))
-> > +				continue;
-> >  		}
-> >  
-> >  		page = compound_head(page);
-> > -- 
-> > 2.20.1
-> > 
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+--
+Best Regards,
+Mike Gavrilov.
