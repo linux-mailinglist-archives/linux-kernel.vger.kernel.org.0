@@ -2,188 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B186B2D2B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 02:12:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B44122D2CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 02:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfE2AMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 20:12:25 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44669 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbfE2AMZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 20:12:25 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n2so185616pgp.11
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 17:12:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=LNTyn5rchJW4MmryhfQlOh+K3KT5VsOVQqxARSU5a5Y=;
-        b=GLrQuc8zvIQ9LqRDpZL+InFTHuHVBXyl5wM6E6Sh92l9bW5OSzGUc0Ytg36DUxyAFO
-         /Zk7ByaMl+LSBP8e2ZF3/15UWSIx8wokhWJWrhGY5Y6aKqu+GvlwEkeZfKjz1CV4qizr
-         v08tzdALVjk6vCqjNiBYYRVnB9TtCyAENKbIw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=LNTyn5rchJW4MmryhfQlOh+K3KT5VsOVQqxARSU5a5Y=;
-        b=GPN/6iJHINMB+MrglQUy+XCl6j4tCrqeHcurNmSakKpVPW3zZJoo26iWKGgsVsW0m7
-         8fbO5kwvEH/qCmkfHi6uylWPvaVFTJOE3RyEmrrRm1/nnPqLaogwbhO4rOdVgy1Ey4lm
-         hyz2YocqZ3yWFHkIDPU4b13gWeOTDqhTp16VlFkVKu7lopUvYquY2ZD4pZRVfl+OF840
-         blgkowJiuUyLSOGdUbFeJqKVNmxjRhkcKWphTqtoGqrsU4szIruz/yyLaN2erBVXf9kF
-         Gq2PJDGVPDpVIGvmLoyl3KVurA4f9kzc96EjAfUGcxQcMPI8xoEwPgz4opIFgeyOrCTz
-         JXZw==
-X-Gm-Message-State: APjAAAWElUHqz9ciKGBv30f7Oq/hgVwXJptbJUjNC+kd7SqHj5q8zZpZ
-        N3CTEVro83OYW/hPfs44nIuw0jJes4zYhTmbXybebg==
-X-Google-Smtp-Source: APXvYqzrIwNPLIdmXwLRMGzet52o+hE+W9RSDh7AWebEvlLNrdUllaWE/Z8q1yjFRcK8e2eWGV4bmFNOxlPrnUvHPPw=
-X-Received: by 2002:a17:90a:33c5:: with SMTP id n63mr9111023pjb.16.1559088743794;
- Tue, 28 May 2019 17:12:23 -0700 (PDT)
+        id S1727059AbfE2AWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 20:22:16 -0400
+Received: from mga18.intel.com ([134.134.136.126]:26926 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726515AbfE2AWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 20:22:15 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 17:22:14 -0700
+X-ExtLoop1: 1
+Received: from joy-optiplex-7040.sh.intel.com (HELO joy-OptiPlex-7040) ([10.239.13.9])
+  by orsmga005.jf.intel.com with ESMTP; 28 May 2019 17:22:09 -0700
+Date:   Tue, 28 May 2019 20:16:25 -0400
+From:   Yan Zhao <yan.y.zhao@intel.com>
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     "cjia@nvidia.com" <cjia@nvidia.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "aik@ozlabs.ru" <aik@ozlabs.ru>,
+        "Zhengxiao.zx@alibaba-inc.com" <Zhengxiao.zx@alibaba-inc.com>,
+        "shuangtai.tst@alibaba-inc.com" <shuangtai.tst@alibaba-inc.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "eauger@redhat.com" <eauger@redhat.com>,
+        "Liu, Yi L" <yi.l.liu@intel.com>,
+        "eskultet@redhat.com" <eskultet@redhat.com>,
+        "Yang, Ziye" <ziye.yang@intel.com>,
+        "mlevitsk@redhat.com" <mlevitsk@redhat.com>,
+        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
+        "libvir-list@redhat.com" <libvir-list@redhat.com>,
+        "felipe@nutanix.com" <felipe@nutanix.com>,
+        "Ken.Xue@amd.com" <Ken.Xue@amd.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "dgilbert@redhat.com" <dgilbert@redhat.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "dinechin@redhat.com" <dinechin@redhat.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "Liu, Changpeng" <changpeng.liu@intel.com>,
+        "berrange@redhat.com" <berrange@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "jonathan.davies@nutanix.com" <jonathan.davies@nutanix.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>
+Subject: Re: [PATCH v3 1/2] vfio/mdev: add migration_version attribute for
+ mdev device
+Message-ID: <20190529001625.GG27438@joy-OptiPlex-7040>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20190527034155.31473-1-yan.y.zhao@intel.com>
+ <20190527034342.31523-1-yan.y.zhao@intel.com>
+ <20190528105332.7c5a2f82.cohuck@redhat.com>
 MIME-Version: 1.0
-References: <20190521132712.2818-1-benjamin.tissoires@redhat.com>
- <20190521132712.2818-9-benjamin.tissoires@redhat.com> <CAO-hwJJXGTZq7zRVhcFNwh-kOo0rUhZOsNtFX1yA93Km=L+ynA@mail.gmail.com>
- <00f901d5143f$f5ea8420$e1bf8c60$@emc.com.tw> <20190528012101.GA193221@dtor-ws>
- <CA+jURcsWe=fZ-catnCaH=A85vAhrv1w1E5nSwpJvBAwgCTNYfw@mail.gmail.com>
-In-Reply-To: <CA+jURcsWe=fZ-catnCaH=A85vAhrv1w1E5nSwpJvBAwgCTNYfw@mail.gmail.com>
-From:   "Sean O'Brien" <seobrien@chromium.org>
-Date:   Tue, 28 May 2019 17:12:12 -0700
-Message-ID: <CAOOzhkq+vD034Q2FKB2ryR7Q9nY=iQjdrREuihkZTaVcg+E_Xg@mail.gmail.com>
-Subject: Re: [PATCH v2 08/10] Input: elan_i2c - export true width/height
-To:     Harry Cutts <hcutts@chromium.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        =?UTF-8?B?5buW5bSH5qau?= <kt.liao@emc.com.tw>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Aaron Ma <aaron.ma@canonical.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190528105332.7c5a2f82.cohuck@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We do still use a maxed out major axis as a signal for a palm in the touchs=
-creen
-logic, but I'm not too concerned because if that axis is maxed out, the con=
-tact
-should probably be treated as a palm anyway...
-
-I'm more concerned with this affecting our gesture detection for
-touchpad. It looks
-like this change would cause all contacts to reported as some percentage bi=
-gger
-than they are currently. Can you give me an idea of how big that percentage=
- is?
-
-On Tue, May 28, 2019 at 11:13 AM Harry Cutts <hcutts@chromium.org> wrote:
+On Tue, May 28, 2019 at 04:53:32PM +0800, Cornelia Huck wrote:
+> On Sun, 26 May 2019 23:43:42 -0400
+> Yan Zhao <yan.y.zhao@intel.com> wrote:
+> 
+> > migration_version attribute is used to check migration compatibility
+> > between two mdev device of the same mdev type.
+> 
+> s/device/devices/
 >
-> On Mon, 27 May 2019 at 18:21, Dmitry Torokhov <dmitry.torokhov@gmail.com>=
- wrote:
-> >
-> > Hi Benjamin, KT,
-> >
-> > On Mon, May 27, 2019 at 11:55:01AM +0800, =E5=BB=96=E5=B4=87=E6=A6=AE w=
-rote:
-> > > Hi
-> > >
-> > > -----Original Message-----
-> > > From: Benjamin Tissoires [mailto:benjamin.tissoires@redhat.com]
-> > > Sent: Friday, May 24, 2019 5:37 PM
-> > > To: Dmitry Torokhov; KT Liao; Rob Herring; Aaron Ma; Hans de Goede
-> > > Cc: open list:HID CORE LAYER; lkml; devicetree@vger.kernel.org
-> > > Subject: Re: [PATCH v2 08/10] Input: elan_i2c - export true width/hei=
-ght
-> > >
-> > > On Tue, May 21, 2019 at 3:28 PM Benjamin Tissoires <benjamin.tissoire=
-s@redhat.com> wrote:
-> > > >
-> > > > The width/height is actually in the same unit than X and Y. So we
-> > > > should not tamper the data, but just set the proper resolution, so
-> > > > that userspace can correctly detect which touch is a palm or a fing=
-er.
-> > > >
-> > > > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> > > >
-> > > > --
-> > > >
-> > > > new in v2
-> > > > ---
-> > > >  drivers/input/mouse/elan_i2c_core.c | 11 ++++-------
-> > > >  1 file changed, 4 insertions(+), 7 deletions(-)
-> > > >
-> > > > diff --git a/drivers/input/mouse/elan_i2c_core.c
-> > > > b/drivers/input/mouse/elan_i2c_core.c
-> > > > index 7ff044c6cd11..6f4feedb7765 100644
-> > > > --- a/drivers/input/mouse/elan_i2c_core.c
-> > > > +++ b/drivers/input/mouse/elan_i2c_core.c
-> > > > @@ -45,7 +45,6 @@
-> > > >  #define DRIVER_NAME            "elan_i2c"
-> > > >  #define ELAN_VENDOR_ID         0x04f3
-> > > >  #define ETP_MAX_PRESSURE       255
-> > > > -#define ETP_FWIDTH_REDUCE      90
-> > > >  #define ETP_FINGER_WIDTH       15
-> > > >  #define ETP_RETRY_COUNT                3
-> > > >
-> > > > @@ -915,12 +914,8 @@ static void elan_report_contact(struct elan_tp=
-_data *data,
-> > > >                         return;
-> > > >                 }
-> > > >
-> > > > -               /*
-> > > > -                * To avoid treating large finger as palm, let's re=
-duce the
-> > > > -                * width x and y per trace.
-> > > > -                */
-> > > > -               area_x =3D mk_x * (data->width_x - ETP_FWIDTH_REDUC=
-E);
-> > > > -               area_y =3D mk_y * (data->width_y - ETP_FWIDTH_REDUC=
-E);
-> > > > +               area_x =3D mk_x * data->width_x;
-> > > > +               area_y =3D mk_y * data->width_y;
-> > > >
-> > > >                 major =3D max(area_x, area_y);
-> > > >                 minor =3D min(area_x, area_y); @@ -1123,8 +1118,10 =
-@@
-> > > > static int elan_setup_input_device(struct elan_tp_data *data)
-> > > >                              ETP_MAX_PRESSURE, 0, 0);
-> > > >         input_set_abs_params(input, ABS_MT_TOUCH_MAJOR, 0,
-> > > >                              ETP_FINGER_WIDTH * max_width, 0, 0);
-> > > > +       input_abs_set_res(input, ABS_MT_TOUCH_MAJOR, data->x_res);
-> > > >         input_set_abs_params(input, ABS_MT_TOUCH_MINOR, 0,
-> > > >                              ETP_FINGER_WIDTH * min_width, 0, 0);
-> > > > +       input_abs_set_res(input, ABS_MT_TOUCH_MINOR, data->y_res);
-> > >
-> > > I had a chat with Peter on Wednesday, and he mentioned that this is d=
-angerous as Major/Minor are max/min of the width and height. And given that=
- we might have 2 different resolutions, we would need to do some computatio=
-n in the kernel to ensure the data is correct with respect to the resolutio=
-n.
-> > >
-> > > TL;DR: I don't think we should export the resolution there :(
-> > >
-> > > KT, should I drop the patch entirely, or is there a strong argument f=
-or keeping the ETP_FWIDTH_REDUCE around?
-> > > I suggest you apply the patch, I have no idea why ETP_FWIDTH_REDUCE e=
-xisted.
-> > > Our FW team know nothing about ETP_FWIDTH_REDUCE ether.
-> > >
-> > > The only side effect will happen on Chromebook because such computati=
-on have stayed in ChromeOS' kernel for four years.
-> > > Chrome's finger/palm threshold may be different from other Linux dist=
-ribution.
-> > > We will discuss it with Google once the patch picked by chrome and ca=
-use something wrong.
-> >
-> > Chrome has logic that contact with maximum major/minor is treated as a
-> > palm, so here the driver (which originally came from Chrome OS)
-> > artificially reduces the contact size to ensure that palm rejection
-> > logic does not trigger.
-> >
-> > I'm adding Harry to confirm whether we are still using this logic and t=
-o
-> > see if we can adjust it to be something else.
->
-> I'm not very familiar with our touchpad code, so adding Sean O'Brien, who=
- is.
+yes... sorry and thanks :)
+
+> > The key is that it's rw and its data is opaque to userspace.
+> > 
+> > Userspace reads migration_version of mdev device at source side and
+> > writes the value to migration_version attribute of mdev device at target
+> > side. It judges migration compatibility according to whether the read
+> > and write operations succeed or fail.
+> > 
+> > As this attribute is under mdev_type node, userspace is able to know
+> > whether two mdev devices are compatible before a mdev device is created.
+> > 
+> > userspace needs to check whether the two mdev devices are of the same
+> > mdev type before checking the migration_version attribute. It also needs
+> > to check device creation parameters if aggregation is supported in
+> > future.
+> > 
+> >              __    userspace
+> >               /\              \
+> >              /                 \write
+> >             / read              \
+> >    ________/__________       ___\|/_____________
+> >   | migration_version |     | migration_version |-->check migration
+> >   ---------------------     ---------------------   compatibility
+> >     mdev device A               mdev device B
+> > 
+> > Cc: Alex Williamson <alex.williamson@redhat.com>
+> > Cc: Erik Skultety <eskultet@redhat.com>
+> > Cc: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+> > Cc: Cornelia Huck <cohuck@redhat.com>
+> > Cc: "Tian, Kevin" <kevin.tian@intel.com>
+> > Cc: Zhenyu Wang <zhenyuw@linux.intel.com>
+> > Cc: "Wang, Zhi A" <zhi.a.wang@intel.com>
+> > Cc: Neo Jia <cjia@nvidia.com>
+> > Cc: Kirti Wankhede <kwankhede@nvidia.com>
+> > Cc: Daniel P. Berrangé <berrange@redhat.com>
+> > Cc: Christophe de Dinechin <dinechin@redhat.com>
+> > 
+> > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> > 
+> > ---
+> > v3:
+> > 1. renamed version to migration_version
+> > (Christophe de Dinechin, Cornelia Huck, Alex Williamson)
+> > 2. let errno to be freely defined by vendor driver
+> > (Alex Williamson, Erik Skultety, Cornelia Huck, Dr. David Alan Gilbert)
+> > 3. let checking mdev_type be prerequisite of migration compatibility
+> > check. (Alex Williamson)
+> > 4. reworded example usage section.
+> > (most of this section came from Alex Williamson)
+> > 5. reworded attribute intention section (Cornelia Huck)
+> > 
+> > v2:
+> > 1. added detailed intent and usage
+> > 2. made definition of version string completely private to vendor driver
+> >    (Alex Williamson)
+> > 3. abandoned changes to sample mdev drivers (Alex Williamson)
+> > 4. mandatory --> optional (Cornelia Huck)
+> > 5. added description for errno (Cornelia Huck)
+> > ---
+> >  Documentation/vfio-mediated-device.txt | 113 +++++++++++++++++++++++++
+> >  1 file changed, 113 insertions(+)
+> > 
+> 
+> While I probably would have written a more compact description, your
+> version is fine with me as well.
+> 
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Thank you Cornelia!
+
+> _______________________________________________
+> intel-gvt-dev mailing list
+> intel-gvt-dev@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gvt-dev
