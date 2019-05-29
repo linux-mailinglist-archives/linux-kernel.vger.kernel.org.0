@@ -2,114 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BB032E43B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:12:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 988022E40E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:08:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbfE2SMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 14:12:12 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39344 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727195AbfE2SMK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 14:12:10 -0400
-Received: by mail-qt1-f195.google.com with SMTP id i34so3791860qta.6
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 11:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ViODfuhWnYhc2s3Kjea5F7ZIJ8Ml/xHbr11ntjMzkwg=;
-        b=hfFSlTtHf223et1zp+zz4Fft/wcc9MB9YlSBND/88dfUQDV8o2hrr8X077o4+DX6ED
-         udJQ5BVvWDtu+f6v77bjmSJs3N8kmDv1b8CcUXlmCK5qpnJ6oq3RdjEBuDIy7ASj/h3h
-         bQotgD7n8ejIKLbCXzWI+Y0OpPIwp2Q9apDj4WQ9pVWRWzrdQiuWvkX4H6x4VVuzdvXn
-         kR1Y5GSMkhLNnC1Nfr9mteFhaFil97va81T/sy/2voPtFc4bvg/5QcHaimDLYorXtqY6
-         db08Zg5JLqly5ozBatzETFl0Ec7JdDrI4R8CtxgVM06U/oseASC6mHza1fefFRzXZIuw
-         lGlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ViODfuhWnYhc2s3Kjea5F7ZIJ8Ml/xHbr11ntjMzkwg=;
-        b=HeljYIwlFsZ0q4uXghYLVYbHw6Lt06lOEFRRp/PrvlI7YS9Md8G0prU2XRxX4deBxl
-         nz85Oj6smN/EqXahkSbyD+TmDgTLVanZ9vk58tiYk9UFav4YBIYyac5zwOhVNhVEqxxI
-         rVu89YuHPmov9uOu2xUFl2oUjl1K8gjKyUCDzaK1yqrxHyecUoR/by8i3EEXwNqJ1+Et
-         nZBtya57BCt9TZnvxirjNWBlc/5pLJ7X4tOUbZXnXTM5bIWazq6SPCo+5VjgOJ3J4liq
-         fg/kOF229LGiLySFd4KtMuPuzzxjysGlhTNKsHZtNNfKtzn2uXdObPWAR4jRpb1C7CHO
-         DLRQ==
-X-Gm-Message-State: APjAAAU7LMgwZ4HWeLLRMbgCX1m66SpyHjTI/0iS/sUlA4X2QsXZTTVp
-        L9LmLdMGb0o5sefjoO7gojp7ZIPLBkRQvnd1QAZ5nw==
-X-Google-Smtp-Source: APXvYqyxAS6nfNEEguifsrx3x6g5lgGT4VyR8//RpwjqFTV2M0Aw3Jpm9dumVCfx0v/V68hCmEGgrHA6vjJNBAlb+LU=
-X-Received: by 2002:ac8:6b06:: with SMTP id w6mr5556447qts.80.1559153529538;
- Wed, 29 May 2019 11:12:09 -0700 (PDT)
+        id S1727240AbfE2SIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 14:08:22 -0400
+Received: from mga18.intel.com ([134.134.136.126]:64735 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725917AbfE2SIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 14:08:22 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 11:08:21 -0700
+X-ExtLoop1: 1
+Received: from alison-desk.jf.intel.com ([10.54.74.53])
+  by fmsmga004.fm.intel.com with ESMTP; 29 May 2019 11:08:20 -0700
+Date:   Wed, 29 May 2019 11:12:11 -0700
+From:   Alison Schofield <alison.schofield@intel.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        David Howells <dhowells@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>, linux-mm@kvack.org,
+        kvm@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH, RFC 43/62] syscall/x86: Wire up a system call for MKTME
+ encryption keys
+Message-ID: <20190529181211.GA32533@alison-desk.jf.intel.com>
+References: <20190508144422.13171-1-kirill.shutemov@linux.intel.com>
+ <20190508144422.13171-44-kirill.shutemov@linux.intel.com>
+ <20190529072136.GD3656@rapoport-lnx>
 MIME-Version: 1.0
-References: <20190529050335.72061-1-chiu@endlessm.com>
-In-Reply-To: <20190529050335.72061-1-chiu@endlessm.com>
-From:   Daniel Drake <drake@endlessm.com>
-Date:   Wed, 29 May 2019 12:11:58 -0600
-Message-ID: <CAD8Lp46on32VgWtCe7WsGHXp3Jk16qTh6saf0Vj0Y4Ry5z1n7g@mail.gmail.com>
-Subject: Re: [RFC PATCH v3] rtl8xxxu: Improve TX performance of RTL8723BU on
- rtl8xxxu driver
-To:     Chris Chiu <chiu@endlessm.com>
-Cc:     Jes Sorensen <jes.sorensen@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        David Miller <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190529072136.GD3656@rapoport-lnx>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chris,
+On Wed, May 29, 2019 at 10:21:37AM +0300, Mike Rapoport wrote:
+> On Wed, May 08, 2019 at 05:44:03PM +0300, Kirill A. Shutemov wrote:
+> > From: Alison Schofield <alison.schofield@intel.com>
+> > 
+> > encrypt_mprotect() is a new system call to support memory encryption.
+> > 
+> > It takes the same parameters as legacy mprotect, plus an additional
+> > key serial number that is mapped to an encryption keyid.
+> 
+> Shouldn't this patch be after the encrypt_mprotect() is added?
 
-On Tue, May 28, 2019 at 11:03 PM Chris Chiu <chiu@endlessm.com> wrote:
-> +       /*
-> +        * Single virtual interface permitted since the driver supports STATION
-> +        * mode only.
+COND_SYSCALL(encrypt_mprotect) defined in kernel/sys_ni.c, allowed
+it to build in this order, but the order is not logical. Thanks for
+pointing it out. I will reorder the two patches.
 
-I think you can be a bit more explicit by saying e.g.:
+Alison
 
-Only one virtual interface permitted because only STA mode is
-supported and no iface_combinations are provided.
-
-> diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> index 039e5ca9d2e4..2d612c2df5b2 100644
-> --- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> +++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> @@ -4345,7 +4345,7 @@ void rtl8xxxu_gen2_update_rate_mask(struct rtl8xxxu_priv *priv,
->         h2c.b_macid_cfg.ramask3 = (ramask >> 24) & 0xff;
->
->         h2c.ramask.arg = 0x80;
-> -       h2c.b_macid_cfg.data1 = 0;
-> +       h2c.b_macid_cfg.data1 = priv->ratr_index;
-
-I think ratr_index can be moved to be a function parameter of the
-update_rate_mask function. It looks like all callsites already know
-which value they want to set. Then you don't have to store it in the
-priv structure.
-
-> @@ -5471,6 +5509,10 @@ static int rtl8xxxu_add_interface(struct ieee80211_hw *hw,
->
->         switch (vif->type) {
->         case NL80211_IFTYPE_STATION:
-> +               if (!priv->vif)
-> +                       priv->vif = vif;
-> +               else
-> +                       return -EOPNOTSUPP;
->                 rtl8xxxu_stop_tx_beacon(priv);
-
-rtl8xxxu_remove_interface should also set priv->vif back to NULL.
-
-> @@ -6183,6 +6259,8 @@ static void rtl8xxxu_disconnect(struct usb_interface *interface)
->         mutex_destroy(&priv->usb_buf_mutex);
->         mutex_destroy(&priv->h2c_mutex);
->
-> +       cancel_delayed_work_sync(&priv->ra_watchdog);
-
-Given that the work was started in rtl8xxxu_start, I think it should
-be cancelled in rtl8xxxu_stop() instead.
-
-Daniel
