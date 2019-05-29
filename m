@@ -2,85 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BDD62E053
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:57:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C79C42E05A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:58:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbfE2O5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 10:57:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726012AbfE2O5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 10:57:37 -0400
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A89EE23B3D;
-        Wed, 29 May 2019 14:57:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559141857;
-        bh=2MoQ/9VJSoMM91O20PGB4ivHrG38q1xe5mQzrD6t5u4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Z8rQXb4doZm6pmJlbN5cIaka5qDTgBcJUIrtSaBiuMVoEQ3F2z0sm7M5+GSwqmQh9
-         MWyU/cJV6ZU7Wzw0Wxqd5t66DziNeA3KCfXs+caIbv3+IYpHXwL2KBOYEI7aMmB1sG
-         1EOUEsTYwtVtq62mGC2Ttmw2HCeTUvldL93x6Q6Q=
-Received: by mail-lj1-f178.google.com with SMTP id z5so2766533lji.10;
-        Wed, 29 May 2019 07:57:36 -0700 (PDT)
-X-Gm-Message-State: APjAAAUnI8jboP7u6NtIXMNtvCeiOaMMVkLs3b8Qe+ZmPx4icZO5c4fs
-        zmwEIirTwpHtK2wavNNk6yyhFoI765XUQbt0fbA=
-X-Google-Smtp-Source: APXvYqzkAqGwLKzbKAnsKsG2Y7Ep/sgbV/2n7wYZZVclmQvLpywZUeB/D8r3hLefKeJGrJDwfAiDkd8IQ9GPjiSYc1E=
-X-Received: by 2002:a2e:9a9a:: with SMTP id p26mr4214188lji.64.1559141855017;
- Wed, 29 May 2019 07:57:35 -0700 (PDT)
+        id S1726806AbfE2O6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:58:25 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55022 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726087AbfE2O6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 10:58:24 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 0D5251411A3C0405980B;
+        Wed, 29 May 2019 22:58:05 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Wed, 29 May 2019
+ 22:57:56 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <yhchuang@realtek.com>, <kvalo@codeaurora.org>,
+        <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] rtw88: Remove set but not used variable 'ip_sel' and 'orig'
+Date:   Wed, 29 May 2019 22:57:40 +0800
+Message-ID: <20190529145740.22804-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <CAJKOXPf=nPrmw6Vzi_=LmO=dVsV4Gvoc-q75XP2FBEgm9Gxv0A@mail.gmail.com>
- <20190527022258.32748-1-matheus@castello.eng.br> <20190527022258.32748-3-matheus@castello.eng.br>
-In-Reply-To: <20190527022258.32748-3-matheus@castello.eng.br>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 29 May 2019 16:57:23 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdtsyY_GhniBAb0yV=HOhGx+x4xRPqNgdO+d0MDZRZ_7w@mail.gmail.com>
-Message-ID: <CAJKOXPdtsyY_GhniBAb0yV=HOhGx+x4xRPqNgdO+d0MDZRZ_7w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] dt-bindings: power: supply: Max17040: Add low
- level SOC alert threshold
-To:     Matheus Castello <matheus@castello.eng.br>
-Cc:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, lee.jones@linaro.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 27 May 2019 at 04:45, Matheus Castello <matheus@castello.eng.br> wrote:
->
-> For configure low level state of charge threshold alert signaled from
-> max17040 we add "maxim,alert-low-soc-level" property.
->
-> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
-> ---
->  .../power/supply/max17040_battery.txt         | 28 +++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/supply/max17040_battery.txt
->
-> diff --git a/Documentation/devicetree/bindings/power/supply/max17040_battery.txt b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
-> new file mode 100644
-> index 000000000000..a13e8d50ff7b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/supply/max17040_battery.txt
-> @@ -0,0 +1,28 @@
-> +max17040_battery
-> +~~~~~~~~~~~~~~~~
-> +
-> +Required properties :
-> + - compatible : "maxim,max17040" or "maxim,max77836-battery"
+Fixes gcc '-Wunused-but-set-variable' warnings:
 
-One more comment. The datasheet for max17040 says that there is on
-ALERT pin and ALERT bits in RCOMP register. Which device are you
-using? If it turns out that max17040 does not support it, then the
-driver and bindings should reflect this - interrupts should not be set
-on max17040.
+drivers/net/wireless/realtek/rtw88/pci.c: In function rtw_pci_phy_cfg:
+drivers/net/wireless/realtek/rtw88/pci.c:978:6: warning: variable ip_sel set but not used [-Wunused-but-set-variable]
+drivers/net/wireless/realtek/rtw88/phy.c: In function phy_tx_power_limit_config:
+drivers/net/wireless/realtek/rtw88/phy.c:1607:11: warning: variable orig set but not used [-Wunused-but-set-variable]
 
-Best regards,
-Krzysztof
+They are never used, so can be removed.
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/realtek/rtw88/pci.c | 3 ---
+ drivers/net/wireless/realtek/rtw88/phy.c | 3 +--
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtw88/pci.c b/drivers/net/wireless/realtek/rtw88/pci.c
+index 353871c27779..8329f4e447b7 100644
+--- a/drivers/net/wireless/realtek/rtw88/pci.c
++++ b/drivers/net/wireless/realtek/rtw88/pci.c
+@@ -977,7 +977,6 @@ static void rtw_pci_phy_cfg(struct rtw_dev *rtwdev)
+ 	u16 cut;
+ 	u16 value;
+ 	u16 offset;
+-	u16 ip_sel;
+ 	int i;
+ 
+ 	cut = BIT(0) << rtwdev->hal.cut_version;
+@@ -990,7 +989,6 @@ static void rtw_pci_phy_cfg(struct rtw_dev *rtwdev)
+ 			break;
+ 		offset = para->offset;
+ 		value = para->value;
+-		ip_sel = para->ip_sel;
+ 		if (para->ip_sel == RTW_IP_SEL_PHY)
+ 			rtw_mdio_write(rtwdev, offset, value, true);
+ 		else
+@@ -1005,7 +1003,6 @@ static void rtw_pci_phy_cfg(struct rtw_dev *rtwdev)
+ 			break;
+ 		offset = para->offset;
+ 		value = para->value;
+-		ip_sel = para->ip_sel;
+ 		if (para->ip_sel == RTW_IP_SEL_PHY)
+ 			rtw_mdio_write(rtwdev, offset, value, false);
+ 		else
+diff --git a/drivers/net/wireless/realtek/rtw88/phy.c b/drivers/net/wireless/realtek/rtw88/phy.c
+index 404d89432c96..c3e75ffe27b5 100644
+--- a/drivers/net/wireless/realtek/rtw88/phy.c
++++ b/drivers/net/wireless/realtek/rtw88/phy.c
+@@ -1604,12 +1604,11 @@ void rtw_phy_tx_power_by_rate_config(struct rtw_hal *hal)
+ static void
+ phy_tx_power_limit_config(struct rtw_hal *hal, u8 regd, u8 bw, u8 rs)
+ {
+-	s8 base, orig;
++	s8 base;
+ 	u8 ch;
+ 
+ 	for (ch = 0; ch < RTW_MAX_CHANNEL_NUM_2G; ch++) {
+ 		base = hal->tx_pwr_by_rate_base_2g[0][rs];
+-		orig = hal->tx_pwr_limit_2g[regd][bw][rs][ch];
+ 		hal->tx_pwr_limit_2g[regd][bw][rs][ch] -= base;
+ 	}
+ 
+-- 
+2.17.1
+
+
