@@ -2,200 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 666762E14D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C13A72E152
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:41:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfE2Pkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 11:40:31 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46631 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbfE2Pka (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:40:30 -0400
-Received: by mail-ot1-f65.google.com with SMTP id j49so2449147otc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 08:40:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UdjXt9MPMtTsYy13tJGECQSLwoGNk530tR9PZnS8SV0=;
-        b=lxpQoNYtfbcVHuaarJlPRBLYqMd3oX0LnCasVn8DvMZp/Ml0J0zPtyx2YlMtI86R4S
-         Xe//kgvAT8wYp/tjKYplxgA8a/wUz3gqBTeA6LuZBaHJXU3hRcS6Eg1PkabLLtcQLI9z
-         CVSTpOE/28yfFo1KuLECCxdc37ol3Oy4E8M0GJjLhe1frWGO098cLp3Q+bBKrW+4mRDS
-         WqZ3KRaW2huSPHvc8DTGV896G5nwFRJPr5k0Wvbah75O/PvIMmGARrZb7lmBdkQhM8jE
-         E/bw2cApRAoi6X38rwzAicGsZ3rURGR2CBQfh58fhpbV+4dNyLOlja2G+szLNU7DkItB
-         LarQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UdjXt9MPMtTsYy13tJGECQSLwoGNk530tR9PZnS8SV0=;
-        b=LThY2HRNLuQyf2Og1/K608kPAYOQJt+o0T6hC1s+6GxoZqNYPqzrUcKEAKNCG2noAW
-         TJ26dIk1mL32KX+jtZotAnNWRigbdQPQP+/ObWujIZiG9bmG25D8VafrQ1AlgbLH55Ic
-         79j78vZXqG/PvAPZrRmPQDOi/E0HhL9buxRLfBPPlKKoX3EBSSyJqEh7elcRz+0m0o7O
-         4LKKHy+3mHvquz0olYNZOJUFQrGg0QukND9nMbjNZhhALQtZnGmqYOf/FltYoJ8QrUl5
-         uov2SnOiF6HtUprHIWafxNXT+J2GVdEWJoj2gINL1Vt0u0/fkLtmPa8JL15rpfbBPUNY
-         dF1A==
-X-Gm-Message-State: APjAAAVJG7JsW5rxo1/ticW7L8KX/gBaXu2doLEZoifELtEuItrOX3vx
-        srTy8Shq+W1yck31yF8wjeRTTcWkjP51KgniAO4Ahw==
-X-Google-Smtp-Source: APXvYqw1Kvf/KG9+pbXJwOl2Q9jQOCPgPD0KcEdkRGa+GeXZckfSD9VS/z7qJVB7IyjqWJdoOHM+di2lPCnN45Hu/eg=
-X-Received: by 2002:a9d:6f8a:: with SMTP id h10mr30106057otq.2.1559144429648;
- Wed, 29 May 2019 08:40:29 -0700 (PDT)
+        id S1726984AbfE2PlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 11:41:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42246 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726069AbfE2PlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 11:41:08 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6DD88F0D15;
+        Wed, 29 May 2019 15:41:02 +0000 (UTC)
+Received: from [10.36.116.67] (ovpn-116-67.ams2.redhat.com [10.36.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 41CEB1019612;
+        Wed, 29 May 2019 15:40:53 +0000 (UTC)
+Subject: Re: [PATCH v5 2/7] iommu/vt-d: Duplicate iommu_resv_region objects
+ per device list
+To:     Lu Baolu <baolu.lu@linux.intel.com>, eric.auger.pro@gmail.com,
+        joro@8bytes.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dwmw2@infradead.org,
+        robin.murphy@arm.com
+Cc:     alex.williamson@redhat.com, shameerali.kolothum.thodi@huawei.com,
+        jean-philippe.brucker@arm.com
+References: <20190528115025.17194-1-eric.auger@redhat.com>
+ <20190528115025.17194-3-eric.auger@redhat.com>
+ <e22ccc46-7c37-c8d2-784b-3d4168512772@linux.intel.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <a4b991b1-53c8-bb72-a981-67d02763873e@redhat.com>
+Date:   Wed, 29 May 2019 17:40:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190529141500.193390-1-elver@google.com> <20190529141500.193390-4-elver@google.com>
- <20190529153258.GJ31777@lakrids.cambridge.arm.com>
-In-Reply-To: <20190529153258.GJ31777@lakrids.cambridge.arm.com>
-From:   Marco Elver <elver@google.com>
-Date:   Wed, 29 May 2019 17:40:18 +0200
-Message-ID: <CANpmjNPPKaURFT=HDSy9K3MBHoJgAz-+Z1zN38GMZdqNXDMsuQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] asm-generic, x86: Add bitops instrumentation for KASAN
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     peterz@infradead.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de, jpoimboe@redhat.com,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arch@vger.kernel.org, kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e22ccc46-7c37-c8d2-784b-3d4168512772@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 29 May 2019 15:41:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 May 2019 at 17:33, Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On Wed, May 29, 2019 at 04:15:01PM +0200, Marco Elver wrote:
-> > This adds a new header to asm-generic to allow optionally instrumenting
-> > architecture-specific asm implementations of bitops.
-> >
-> > This change includes the required change for x86 as reference and
-> > changes the kernel API doc to point to bitops-instrumented.h instead.
-> > Rationale: the functions in x86's bitops.h are no longer the kernel API
-> > functions, but instead the arch_ prefixed functions, which are then
-> > instrumented via bitops-instrumented.h.
-> >
-> > Other architectures can similarly add support for asm implementations of
-> > bitops.
-> >
-> > The documentation text has been copied/moved, and *no* changes to it
-> > have been made in this patch.
-> >
-> > Tested: using lib/test_kasan with bitops tests (pre-requisite patch).
-> >
-> > Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=198439
-> > Signed-off-by: Marco Elver <elver@google.com>
-> > ---
-> > Changes in v2:
-> > * Instrument word-sized accesses, as specified by the interface.
-> > ---
-> >  Documentation/core-api/kernel-api.rst     |   2 +-
-> >  arch/x86/include/asm/bitops.h             | 210 ++++----------
-> >  include/asm-generic/bitops-instrumented.h | 317 ++++++++++++++++++++++
-> >  3 files changed, 370 insertions(+), 159 deletions(-)
-> >  create mode 100644 include/asm-generic/bitops-instrumented.h
->
-> [...]
->
-> > diff --git a/include/asm-generic/bitops-instrumented.h b/include/asm-generic/bitops-instrumented.h
-> > new file mode 100644
-> > index 000000000000..b01b0dd93964
-> > --- /dev/null
-> > +++ b/include/asm-generic/bitops-instrumented.h
-> > @@ -0,0 +1,317 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +
-> > +/*
-> > + * This file provides wrappers with sanitizer instrumentation for bit
-> > + * operations.
-> > + *
-> > + * To use this functionality, an arch's bitops.h file needs to define each of
-> > + * the below bit operations with an arch_ prefix (e.g. arch_set_bit(),
-> > + * arch___set_bit(), etc.), #define each provided arch_ function, and include
-> > + * this file after their definitions. For undefined arch_ functions, it is
-> > + * assumed that they are provided via asm-generic/bitops, which are implicitly
-> > + * instrumented.
-> > + */
->
-> If using the asm-generic/bitops.h, all of the below will be defined
-> unconditionally, so I don't believe we need the ifdeffery for each
-> function.
->
-> > +#ifndef _ASM_GENERIC_BITOPS_INSTRUMENTED_H
-> > +#define _ASM_GENERIC_BITOPS_INSTRUMENTED_H
-> > +
-> > +#include <linux/kasan-checks.h>
-> > +
-> > +#if defined(arch_set_bit)
-> > +/**
-> > + * set_bit - Atomically set a bit in memory
-> > + * @nr: the bit to set
-> > + * @addr: the address to start counting from
-> > + *
-> > + * This function is atomic and may not be reordered.  See __set_bit()
-> > + * if you do not require the atomic guarantees.
-> > + *
-> > + * Note: there are no guarantees that this function will not be reordered
-> > + * on non x86 architectures, so if you are writing portable code,
-> > + * make sure not to rely on its reordering guarantees.
->
-> These two paragraphs are contradictory.
->
-> Since this is not under arch/x86, please fix this to describe the
-> generic semantics; any x86-specific behaviour should be commented under
-> arch/x86.
->
-> AFAICT per include/asm-generic/bitops/atomic.h, generically this
-> provides no ordering guarantees. So I think this can be:
->
-> /**
->  * set_bit - Atomically set a bit in memory
->  * @nr: the bit to set
->  * @addr: the address to start counting from
->  *
->  * This function is atomic and may be reordered.
->  *
->  * Note that @nr may be almost arbitrarily large; this function is not
->  * restricted to acting on a single-word quantity.
->  */
->
-> ... with the x86 ordering beahviour commented in x86's arch_set_bit.
->
-> Peter, do you have a better wording for the above?
->
-> [...]
->
-> > +#if defined(arch___test_and_clear_bit)
-> > +/**
-> > + * __test_and_clear_bit - Clear a bit and return its old value
-> > + * @nr: Bit to clear
-> > + * @addr: Address to count from
-> > + *
-> > + * This operation is non-atomic and can be reordered.
-> > + * If two examples of this operation race, one can appear to succeed
-> > + * but actually fail.  You must protect multiple accesses with a lock.
-> > + *
-> > + * Note: the operation is performed atomically with respect to
-> > + * the local CPU, but not other CPUs. Portable code should not
-> > + * rely on this behaviour.
-> > + * KVM relies on this behaviour on x86 for modifying memory that is also
-> > + * accessed from a hypervisor on the same CPU if running in a VM: don't change
-> > + * this without also updating arch/x86/kernel/kvm.c
-> > + */
->
-> Likewise, please only specify the generic semantics in this header, and
-> leave the x86-specific behaviour commented under arch/x86.
+Hi Lu,
 
-The current official API documentation refers to x86 bitops.h (also
-see the Documentation/core-api/kernel-api.rst change):
-https://www.kernel.org/doc/htmldocs/kernel-api/API-set-bit.html
+On 5/29/19 4:04 AM, Lu Baolu wrote:
+> Hi Eric,
+> 
+> On 5/28/19 7:50 PM, Eric Auger wrote:
+>> intel_iommu_get_resv_regions() aims to return the list of
+>> reserved regions accessible by a given @device. However several
+>> devices can access the same reserved memory region and when
+>> building the list it is not safe to use a single iommu_resv_region
+>> object, whose container is the RMRR. This iommu_resv_region must
+>> be duplicated per device reserved region list.
+>>
+>> Let's remove the struct iommu_resv_region from the RMRR unit
+>> and allocate the iommu_resv_region directly in
+>> intel_iommu_get_resv_regions(). We hold the dmar_global_lock instead
+>> of the rcu-lock to allow sleeping.
+>>
+>> Fixes: 0659b8dc45a6 ("iommu/vt-d: Implement reserved region get/put
+>> callbacks")
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>
+>> ---
+>>
+>> v4 -> v5
+>> - replace rcu-lock by the dmar_global_lock
+>> ---
+>>   drivers/iommu/intel-iommu.c | 34 +++++++++++++++++-----------------
+>>   1 file changed, 17 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+>> index a209199f3af6..5ec8b5bd308f 100644
+>> --- a/drivers/iommu/intel-iommu.c
+>> +++ b/drivers/iommu/intel-iommu.c
+>> @@ -322,7 +322,6 @@ struct dmar_rmrr_unit {
+>>       u64    end_address;        /* reserved end address */
+>>       struct dmar_dev_scope *devices;    /* target devices */
+>>       int    devices_cnt;        /* target device count */
+>> -    struct iommu_resv_region *resv; /* reserved region handle */
+>>   };
+>>     struct dmar_atsr_unit {
+>> @@ -4205,7 +4204,6 @@ static inline void init_iommu_pm_ops(void) {}
+>>   int __init dmar_parse_one_rmrr(struct acpi_dmar_header *header, void
+>> *arg)
+>>   {
+>>       struct acpi_dmar_reserved_memory *rmrr;
+>> -    int prot = DMA_PTE_READ|DMA_PTE_WRITE;
+>>       struct dmar_rmrr_unit *rmrru;
+>>       size_t length;
+>>   @@ -4219,22 +4217,16 @@ int __init dmar_parse_one_rmrr(struct
+>> acpi_dmar_header *header, void *arg)
+>>       rmrru->end_address = rmrr->end_address;
+>>         length = rmrr->end_address - rmrr->base_address + 1;
+>> -    rmrru->resv = iommu_alloc_resv_region(rmrr->base_address, length,
+>> prot,
+>> -                          IOMMU_RESV_DIRECT);
+>> -    if (!rmrru->resv)
+>> -        goto free_rmrru;
+>>         rmrru->devices = dmar_alloc_dev_scope((void *)(rmrr + 1),
+>>                   ((void *)rmrr) + rmrr->header.length,
+>>                   &rmrru->devices_cnt);
+>>       if (rmrru->devices_cnt && rmrru->devices == NULL)
+>> -        goto free_all;
+>> +        goto free_rmrru;
+>>         list_add(&rmrru->list, &dmar_rmrr_units);
+>>         return 0;
+>> -free_all:
+>> -    kfree(rmrru->resv);
+>>   free_rmrru:
+>>       kfree(rmrru);
+>>   out:
+>> @@ -4452,7 +4444,6 @@ static void intel_iommu_free_dmars(void)
+>>       list_for_each_entry_safe(rmrru, rmrr_n, &dmar_rmrr_units, list) {
+>>           list_del(&rmrru->list);
+>>           dmar_free_dev_scope(&rmrru->devices, &rmrru->devices_cnt);
+>> -        kfree(rmrru->resv);
+>>           kfree(rmrru);
+>>       }
+>>   @@ -5470,22 +5461,33 @@ static void intel_iommu_remove_device(struct
+>> device *dev)
+>>   static void intel_iommu_get_resv_regions(struct device *device,
+>>                        struct list_head *head)
+>>   {
+>> +    int prot = DMA_PTE_READ|DMA_PTE_WRITE;
+> 
+> I know this is moved from above. How about adding spaces around the '|'?
+sure
+> 
+>>       struct iommu_resv_region *reg;
+>>       struct dmar_rmrr_unit *rmrr;
+>>       struct device *i_dev;
+>>       int i;
+>>   -    rcu_read_lock();
+>> +    down_write(&dmar_global_lock);
+> 
+> Just out of curiosity, why not down_read()? We don't change the rmrr
+> list here, right?
+you're right, my mistake.
+> 
+>>       for_each_rmrr_units(rmrr) {
+>>           for_each_active_dev_scope(rmrr->devices, rmrr->devices_cnt,
+>>                         i, i_dev) {
+>> +            struct iommu_resv_region *resv;
+>> +            size_t length;
+>> +
+>>               if (i_dev != device)
+>>                   continue;
+>>   -            list_add_tail(&rmrr->resv->list, head);
+>> +            length = rmrr->end_address - rmrr->base_address + 1;
+>> +            resv = iommu_alloc_resv_region(rmrr->base_address,
+>> +                               length, prot,
+>> +                               IOMMU_RESV_DIRECT);
+>> +            if (!resv)
+>> +                break;
+>> +
+>> +            list_add_tail(&resv->list, head);
+>>           }
+>>       }
+>> -    rcu_read_unlock();
+>> +    up_write(&dmar_global_lock);
+>>         reg = iommu_alloc_resv_region(IOAPIC_RANGE_START,
+>>                         IOAPIC_RANGE_END - IOAPIC_RANGE_START + 1,
+>> @@ -5500,10 +5502,8 @@ static void intel_iommu_put_resv_regions(struct
+>> device *dev,
+>>   {
+>>       struct iommu_resv_region *entry, *next;
+>>   -    list_for_each_entry_safe(entry, next, head, list) {
+>> -        if (entry->type == IOMMU_RESV_MSI)
+>> -            kfree(entry);
+>> -    }
+>> +    list_for_each_entry_safe(entry, next, head, list)
+>> +        kfree(entry);
+>>   }
+>>     int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct
+>> device *dev)
+>>
+> 
+> Other looks good to me.
+> 
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Thanks!
 
-I'm happy to change in this patch, but note that this would change the
-official API documentation.  Alternatively it could be done in a
-separate patch.
-
-Let me know what you prefer.
-
-Thanks,
--- Marco
+Eric
+> 
+> Best regards,
+> Baolu
