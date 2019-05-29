@@ -2,208 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F9552E64E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:37:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBDB12E658
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726889AbfE2Uh3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 16:37:29 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50829 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbfE2UhT (ORCPT
+        id S1726534AbfE2Ul1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 16:41:27 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54081 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfE2Ul1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 16:37:19 -0400
-Received: by mail-it1-f194.google.com with SMTP id a186so6289176itg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 13:37:18 -0700 (PDT)
+        Wed, 29 May 2019 16:41:27 -0400
+Received: by mail-wm1-f66.google.com with SMTP id d17so2527036wmb.3;
+        Wed, 29 May 2019 13:41:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digitalocean.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=yEC2+0WbuuZvbN9MF45zkkqCR1Y7Z1sJ51mOopvbHAk=;
-        b=hKVDrehSDieR9MoJvSMG7Xqzi1n92lgzoTohYWiGf/plciqM42g2cQZnvd/w3NkoF7
-         hZgv6jpp9pj45C+kYb8bhqxE0M/gqLrLuQD99z+p62vx1/+b9FDY/4bqoA58/wiIywPQ
-         YUXDo1hMYdigFK37dWXScJgMJe+nHzTu9lrQY=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9Tz0UIzcufcpr4ojWSAEz0BFZ3UGJduWbz8lnUbkZVU=;
+        b=WhMrQeiq7mQ0jLHtX70gCs13o4iNFOcAp42oU07/flu4B8w4YXaamkfijEmCOY0rwH
+         qaNVqy6X8inEKI8ORD6whNNywqdKbZIctR8GnON5I1pamJi902YAuDWCKYxytoE1F4iR
+         EXjItTYhvpODOz5mmln+08nfmPF2VHJRq5m7QyQn63bhnqFhbHH6PwJGjkvX17DiwJmZ
+         Zb2O3WSpRZ+tLgfE+hI/I0UGbiqprxY836aDUWMDaPk25ulpRnmA/MPUMLGdqF/PIvt/
+         62JcVAxWe0gHjizy0i+nO8kh75n3OL2BjxYQfIslus09LuAUo84Jn9Y/Bb/PrInzOjXd
+         L5Ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=yEC2+0WbuuZvbN9MF45zkkqCR1Y7Z1sJ51mOopvbHAk=;
-        b=FcmMOY+4XH2YSXV6sZQlLMegYh69lwwMqTuWa/rFxeIeaK8n0fOWM/+nB2WMxuw3rs
-         sPoLnRSNEqYkSF00ybME5sBPU6S83hTEyq6K2FxHQlAqPxPc2FT0p91Zk2DboYrnItfG
-         cXN9+zb2jEZWWxkigxlalC45lH91azi3jcTqyNUFX0n59505S0pHcHllrJHxdirB79t4
-         Enj9MTbHuRu3Uxsbmr1VmVcYVrdFrAj6FgzAkMX30gPxYjVblxG0IYHz44P5k1Pqtm9Y
-         Zm3GWbWwvukiSWeAotFD5OflH6AllausbUIxW/MuT5OQMVO/08GxC0ph0OFCRLWrnKpD
-         T/mw==
-X-Gm-Message-State: APjAAAU8F5rgfR5MPQcitL3G7ithDupyhE69Tj+VjKWQl4f8GrGgmnUe
-        daAcS6cYL9/KRHt1NJ4dGftjKg==
-X-Google-Smtp-Source: APXvYqzpHUgm1M0B0O7mm8LRVDyAgyq6PZCteW6QL0Isd7Qi9BjXYkORb5rlea6kiWaBAqi50Uo5aw==
-X-Received: by 2002:a02:2b1d:: with SMTP id h29mr28154932jaa.76.1559162233048;
-        Wed, 29 May 2019 13:37:13 -0700 (PDT)
-Received: from swap-tester ([178.128.225.14])
-        by smtp.gmail.com with ESMTPSA id k203sm159596itk.41.2019.05.29.13.37.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 13:37:12 -0700 (PDT)
-From:   Vineeth Remanan Pillai <vpillai@digitalocean.com>
-To:     Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>, mingo@kernel.org,
-        tglx@linutronix.de, pjt@google.com, torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
-        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com,
-        Phil Auld <pauld@redhat.com>, Aaron Lu <aaron.lwe@gmail.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [RFC PATCH v3 16/16] sched: Debug bits...
-Date:   Wed, 29 May 2019 20:36:52 +0000
-Message-Id: <c1fd166d42ded9cc9839eb2722174549059dd36f.1559129225.git.vpillai@digitalocean.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1559129225.git.vpillai@digitalocean.com>
-References: <cover.1559129225.git.vpillai@digitalocean.com>
-In-Reply-To: <cover.1559129225.git.vpillai@digitalocean.com>
-References: <cover.1559129225.git.vpillai@digitalocean.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9Tz0UIzcufcpr4ojWSAEz0BFZ3UGJduWbz8lnUbkZVU=;
+        b=Mj+0h1eKxoVwj9Ewpf8pam1CQrGXfYGWqvFCXPVazepvQsG+BQg04HRahT7TQg9bME
+         vgG8sVA6PcQ/xAS2SuB1v09BQGk9ybaiy0CBAwpqhe28OUa2lW6SCuAc6xwZgOjPs0Hb
+         47H6UJSPn5foO/FC0UCCftgJ2fuxh9C1ORui5/bF1NR7Xb185hGhyPpjsyBzELLtx54Q
+         p1BEDF8u1H12XouYWTrugOX+oZ5U0vyFNgMS3uYKKzeIwp+H1Rj+5e8v08DEM3ipiJ5T
+         tEyHpVo2+JRm7u2d1qugpsd5T7UJBWNKp7lOjaV+016+nC8M8LVs3j4HUDeb2jveiaWc
+         25Yw==
+X-Gm-Message-State: APjAAAUvlK7TjdIuoQ5l10udRasCLqeaYKO5sqzn8RDSkfzuNaumCYXu
+        amTxVA6L6gC2dO0/ulaIb42D/wE80H4=
+X-Google-Smtp-Source: APXvYqw/wsOiMDiZXdeIVgYS6OVEQNEqK/s0KQT2rLtryJYiwgP1BG72GC2iSHrdec4UDyAJE9p4KQ==
+X-Received: by 2002:a1c:ca01:: with SMTP id a1mr26694wmg.30.1559162484282;
+        Wed, 29 May 2019 13:41:24 -0700 (PDT)
+Received: from [192.168.1.2] ([86.121.27.188])
+        by smtp.gmail.com with ESMTPSA id l190sm701763wml.25.2019.05.29.13.41.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 13:41:23 -0700 (PDT)
+Subject: Re: [PATCH net-next 0/5] PTP support for the SJA1105 DSA driver
+To:     Richard Cochran <richardcochran@gmail.com>
+Cc:     f.fainelli@gmail.com, vivien.didelot@gmail.com, andrew@lunn.ch,
+        davem@davemloft.net, john.stultz@linaro.org, tglx@linutronix.de,
+        sboyd@kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <20190528235627.1315-1-olteanv@gmail.com>
+ <20190529045207.fzvhuu6d6jf5p65t@localhost>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Message-ID: <dbe0a38f-8b48-06dd-cc2c-676e92ba0e74@gmail.com>
+Date:   Wed, 29 May 2019 23:41:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190529045207.fzvhuu6d6jf5p65t@localhost>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+On 5/29/19 7:52 AM, Richard Cochran wrote:
+> On Wed, May 29, 2019 at 02:56:22AM +0300, Vladimir Oltean wrote:
+>> Not all is rosy, though.
+> 
+> You can sure say that again!
+>   
+>> PTP timestamping will only work when the ports are bridged. Otherwise,
+>> the metadata follow-up frames holding RX timestamps won't be received
+>> because they will be blocked by the master port's MAC filter. Linuxptp
+>> tries to put the net device in ALLMULTI/PROMISC mode,
+> 
+> Untrue.
+> 
 
-Not-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- kernel/sched/core.c | 44 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 42 insertions(+), 2 deletions(-)
+I'm sorry, then what does this code from raw.c do?
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 5b8223c9a723..90655c9ad937 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -92,6 +92,10 @@ static inline bool prio_less(struct task_struct *a, struct task_struct *b)
- 
- 	int pa = __task_prio(a), pb = __task_prio(b);
- 
-+	trace_printk("(%s/%d;%d,%Lu,%Lu) ?< (%s/%d;%d,%Lu,%Lu)\n",
-+		     a->comm, a->pid, pa, a->se.vruntime, a->dl.deadline,
-+		     b->comm, b->pid, pb, b->se.vruntime, b->dl.deadline);
-+
- 	if (-pa < -pb)
- 		return true;
- 
-@@ -246,6 +250,8 @@ static void __sched_core_enable(void)
- 
- 	static_branch_enable(&__sched_core_enabled);
- 	stop_machine(__sched_core_stopper, (void *)true, NULL);
-+
-+	printk("core sched enabled\n");
- }
- 
- static void __sched_core_disable(void)
-@@ -254,6 +260,8 @@ static void __sched_core_disable(void)
- 
- 	stop_machine(__sched_core_stopper, (void *)false, NULL);
- 	static_branch_disable(&__sched_core_enabled);
-+
-+	printk("core sched disabled\n");
- }
- 
- void sched_core_get(void)
-@@ -3707,6 +3715,14 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 			put_prev_task(rq, prev);
- 			set_next_task(rq, next);
- 		}
-+
-+		trace_printk("pick pre selected (%u %u %u): %s/%d %lx\n",
-+			     rq->core->core_task_seq,
-+			     rq->core->core_pick_seq,
-+			     rq->core_sched_seq,
-+			     next->comm, next->pid,
-+			     next->core_cookie);
-+
- 		return next;
- 	}
- 
-@@ -3786,6 +3802,9 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 			 */
- 			if (i == cpu && !need_sync && !p->core_cookie) {
- 				next = p;
-+				trace_printk("unconstrained pick: %s/%d %lx\n",
-+					     next->comm, next->pid, next->core_cookie);
-+
- 				goto done;
- 			}
- 
-@@ -3794,6 +3813,9 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 
- 			rq_i->core_pick = p;
- 
-+			trace_printk("cpu(%d): selected: %s/%d %lx\n",
-+				     i, p->comm, p->pid, p->core_cookie);
-+
- 			/*
- 			 * If this new candidate is of higher priority than the
- 			 * previous; and they're incompatible; we need to wipe
-@@ -3810,6 +3832,8 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 				rq->core->core_cookie = p->core_cookie;
- 				max = p;
- 
-+				trace_printk("max: %s/%d %lx\n", max->comm, max->pid, max->core_cookie);
-+
- 				if (old_max) {
- 					for_each_cpu(j, smt_mask) {
- 						if (j == i)
-@@ -3837,6 +3861,7 @@ next_class:;
- 	rq->core->core_pick_seq = rq->core->core_task_seq;
- 	next = rq->core_pick;
- 	rq->core_sched_seq = rq->core->core_pick_seq;
-+	trace_printk("picked: %s/%d %lx\n", next->comm, next->pid, next->core_cookie);
- 
- 	/*
- 	 * Reschedule siblings
-@@ -3862,11 +3887,20 @@ next_class:;
- 		if (i == cpu)
- 			continue;
- 
--		if (rq_i->curr != rq_i->core_pick)
-+		if (rq_i->curr != rq_i->core_pick) {
-+			trace_printk("IPI(%d)\n", i);
- 			resched_curr(rq_i);
-+		}
- 
- 		/* Did we break L1TF mitigation requirements? */
--		WARN_ON_ONCE(!cookie_match(next, rq_i->core_pick));
-+		if (unlikely(!cookie_match(next, rq_i->core_pick))) {
-+			trace_printk("[%d]: cookie mismatch. %s/%d/0x%lx/0x%lx\n",
-+				     rq_i->cpu, rq_i->core_pick->comm,
-+				     rq_i->core_pick->pid,
-+				     rq_i->core_pick->core_cookie,
-+				     rq_i->core->core_cookie);
-+			WARN_ON_ONCE(1);
-+		}
- 	}
- 
- done:
-@@ -3905,6 +3939,10 @@ static bool try_steal_cookie(int this, int that)
- 		if (p->core_occupation > dst->idle->core_occupation)
- 			goto next;
- 
-+		trace_printk("core fill: %s/%d (%d->%d) %d %d %lx\n",
-+			     p->comm, p->pid, that, this,
-+			     p->core_occupation, dst->idle->core_occupation, cookie);
-+
- 		p->on_rq = TASK_ON_RQ_MIGRATING;
- 		deactivate_task(src, p, 0);
- 		set_task_cpu(p, this);
-@@ -6501,6 +6539,8 @@ int sched_cpu_starting(unsigned int cpu)
- 		WARN_ON_ONCE(rq->core && rq->core != core_rq);
- 		rq->core = core_rq;
- 	}
-+
-+	printk("core: %d -> %d\n", cpu, cpu_of(core_rq));
- #endif /* CONFIG_SCHED_CORE */
- 
- 	sched_rq_cpu_starting(cpu);
--- 
-2.17.1
+> 	mreq.mr_ifindex = index;
+> 	mreq.mr_type = PACKET_MR_ALLMULTI;
+> 	mreq.mr_alen = 0;
+> 	if (!setsockopt(fd, SOL_PACKET, option, &mreq, sizeof(mreq))) {
+> 		return 0;
+> 	}
+> 	pr_warning("setsockopt PACKET_MR_ALLMULTI failed: %m");
+> 
+> 	mreq.mr_ifindex = index;
+> 	mreq.mr_type = PACKET_MR_PROMISC;
+> 	mreq.mr_alen = 0;
+> 	if (!setsockopt(fd, SOL_PACKET, option, &mreq, sizeof(mreq))) {
+> 		return 0;
+> 	}
+> 	pr_warning("setsockopt PACKET_MR_PROMISC failed: %m");
+
+
+>> but DSA doesn't
+>> pass this on to the master port, which does the actual reception.
+>> The master port is put in promiscous mode when the slave ports are
+>> enslaved to a bridge.
+>>
+>> Also, even with software-corrected timestamps, one can observe a
+>> negative path delay reported by linuxptp:
+>>
+>> ptp4l[55.600]: master offset          8 s2 freq  +83677 path delay     -2390
+>> ptp4l[56.600]: master offset         17 s2 freq  +83688 path delay     -2391
+>> ptp4l[57.601]: master offset          6 s2 freq  +83682 path delay     -2391
+>> ptp4l[58.601]: master offset         -1 s2 freq  +83677 path delay     -2391
+>>
+>> Without investigating too deeply, this appears to be introduced by the
+>> correction applied by linuxptp to t4 (t4c: corrected master rxtstamp)
+>> during the path delay estimation process (removing the correction makes
+>> the path delay positive).
+> 
+> No.  The root cause is the time stamps delivered by the hardware or
+> your driver.  That needs to be addressed before going forward.
+> 
+
+How can I check that the timestamps are valid?
+
+Regards,
+-Vladimir
+
+> Thanks,
+> Richard
+> 
 
