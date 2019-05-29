@@ -2,173 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB12B2E497
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 181F92E4A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:42:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbfE2Si0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 14:38:26 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:43261 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfE2SiZ (ORCPT
+        id S1726173AbfE2SmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 14:42:23 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35100 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfE2SmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 14:38:25 -0400
-Received: by mail-io1-f68.google.com with SMTP id k20so2732078ios.10
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 11:38:24 -0700 (PDT)
+        Wed, 29 May 2019 14:42:23 -0400
+Received: by mail-io1-f66.google.com with SMTP id p2so2775974iol.2;
+        Wed, 29 May 2019 11:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=VToC0WE9Dh7JrQD0pBq5SyQVnx7ZcQeb3eSMqn+9dN0=;
-        b=LVkf3MAEUlO6rx5UMKazGHhK3z7LKymiNiPP+vsFfhul6Sv375QcSJAKdyfDX9myki
-         8154NOEiQ4nHYf7+8mHxfyEwoBWYuZe1POSVA7Yk8dYpLWZd0gDBKa1PNtJMPr4ah2AP
-         y8SBlwNyQiqVqKdY2Wbed3qaf/rAL1xXYLy7Y=
+         :cc;
+        bh=ac4wfHXOGpPwgmU9+NyMZSbTQr/j+BDgOZSJk6FL+cU=;
+        b=pz4dftM4fTpg7Y0etCDItJltv1TiXyMGLurzZkTgC82QCcMycu+LXgi6ynxqt27jOI
+         tv0ZDDfcyNcGZNWZMDeEkoOJzcIxqKnVhMeI0RooHtMkgokw+eDE+wGRX+NS68icKKDR
+         LsYD5yoS58k7hDYhkj/ijTP1S9U9SqNegRH6WMTPEQjWZGCId36KmNr2PcRRhDBzTIXH
+         gyQi0cqJ5mc9Pen0AjXg0CH17gPGI8Wet+zHnRq6LnZbvJUGzFw3wH2VEK+Re6pvZrA5
+         Dcap5QyONoSMp4ZcUHcFcJccKd9chk88/RhpR3XueX2OpX/famGA1D0TbGA0NEMgUdrB
+         PPhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=VToC0WE9Dh7JrQD0pBq5SyQVnx7ZcQeb3eSMqn+9dN0=;
-        b=A8CvO8tciNsjXGcxT8Rw7Dg4sZNZ5/KI/S2kocl6A3Gn86uA4ShPzU30uBWoY2mN5x
-         wEA7sV6Yzz+MiLCgfeFGHcMgXe30cWzAbOPQFam+Fe/bd2vXUICEdRn//N1XENN6Yn/N
-         exAYiYtT3vJYAmdu2O2CAT7ufX8l7bRmv7zRuLVGWy16sELxem7Jh/vP/lZG2Z6OryW5
-         57fhVokox0V7dIh8gvM0cdjlkTnmjH1C3gdJBM5iScjPd4qshQbjCrNmU/zNFLfO0+zT
-         f6WOq1Hn7pCqYo5xxO3m6WczYeLTKOm37/vCQO/OH/w0MRssAiFCrIal2Lz2fW4cyyqr
-         tfnw==
-X-Gm-Message-State: APjAAAU4baQ8yQo9gFvhxgOYJ0ADhqIudo2NIQ3fd1wTq3G+5obRh45G
-        TuC8YqYqM8622kRvglI6N8yVJUZuhEZNZlWfOds0dQ==
-X-Google-Smtp-Source: APXvYqwRJ9GbWYAJjV4yTvXa0R9z0uuGCAUEMG2wDwhksLV5HcIA2AOf8UOenRtaWNfe1I95F29XRVobAk3trbMCRts=
-X-Received: by 2002:a5d:9dc7:: with SMTP id 7mr3521803ioo.237.1559155104410;
- Wed, 29 May 2019 11:38:24 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=ac4wfHXOGpPwgmU9+NyMZSbTQr/j+BDgOZSJk6FL+cU=;
+        b=QQkQ725MMp/KD8hmqUjA4+5WEheXVGVuiCI+PWmWNVRMqQTtSJUSGoFg4k3KVqkX0j
+         +V1Q7Ypac3MGttMDGkX/qQfq5zaHCFBLlQytabu3U5ZELhjDY5b6yn4iChQT/q7MkjaR
+         mjorpeXSPqLbh3jz05NlJcYuJGpQMg6RMD8+zkRhS8TGX0fmbQMouC7cuTKbSjAZOHTs
+         Xh5VQXH9P3TMW/Mc6L2PCkup35UtP+xOonMgLFwxd9VlEUYncWAdGQf6JDTzywXZHw79
+         hvlEED5Lc1GS5ID8lpVMA9jZKGdqfXOLHcWsDhcEmWphaT3ohGTinwCLNy/njLbX+81l
+         ru1A==
+X-Gm-Message-State: APjAAAXWfwSEZzhMSSgTAREHiwhZ6lfEePubbmBsJSXRg8x9/lUODei2
+        aRBQBjJDkHVOoFP20ZAlihIdYXznFEjNq3GBuXg=
+X-Google-Smtp-Source: APXvYqzQDio796G4Lx7zeBpaekA8t5Ss1nQFheXwKT3BzHWDoYIvDIez2PAO6oHIVKTGTiRNKqYB5znXP2b/LOi4buQ=
+X-Received: by 2002:a6b:c411:: with SMTP id y17mr13876076ioa.265.1559155340985;
+ Wed, 29 May 2019 11:42:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAMHSBOWZHLnGWXU_z1ouCVuRRWKg_59P5++zwhJOWrWJoNv=GA@mail.gmail.com>
- <20190228013541.76792-1-gwendal@chromium.org> <20190402034610.GG4187@dell>
- <CAPUE2usfB3i4J7P4e_XdsMLV+VK7s+nS-mrD=D_WMpOHiouG2w@mail.gmail.com> <20190529114454.GJ4574@dell>
-In-Reply-To: <20190529114454.GJ4574@dell>
-From:   Gwendal Grignou <gwendal@chromium.org>
-Date:   Wed, 29 May 2019 11:38:13 -0700
-Message-ID: <CAPUE2usYa3z3mcxo6fGsBL-FXLcNy1-Pr+WoQsKmTjhNZCZwSA@mail.gmail.com>
-Subject: Re: [PATCH v5] mfd: cros_ec_dev: Register cros_ec_accel_legacy driver
- as a subdevice
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     andy.shevchenko@gmail.com, Guenter Roeck <groeck@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com
+References: <345cfba5edde470f9a68d913f44fa342@AcuMS.aculab.com>
+ <20190523163604.GE23070@redhat.com> <f0eced5677c144debfc5a69d0d327bc1@AcuMS.aculab.com>
+ <CABeXuvo-wey+NHWb4gi=FSRrjJOKkVcLPQ-J+dchJeHEbhGQ6g@mail.gmail.com>
+ <20190524141054.GB2655@redhat.com> <CABeXuvqSzy+v=3Y5NnMmfob7bvuNkafmdDqoex8BVENN3atqZA@mail.gmail.com>
+ <20190524163310.GG2655@redhat.com> <CABeXuvrUKZnECj+NgLdpe5uhKBEmSynrakD-3q9XHqk8Aef5UQ@mail.gmail.com>
+ <20190527150409.GA8961@redhat.com> <CABeXuvouBzZuNarmNcd9JgZgvonL1N_p21gat=O_x0-1hMx=6A@mail.gmail.com>
+ <20190529165717.GC27659@redhat.com>
+In-Reply-To: <20190529165717.GC27659@redhat.com>
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+Date:   Wed, 29 May 2019 11:42:09 -0700
+Message-ID: <CABeXuvrFqGySKNLFK4f5er2ahQpz_eTbF+RfXCis1TZNT16Ddg@mail.gmail.com>
+Subject: Re: [PATCH v2] signal: Adjust error codes according to restore_user_sigmask()
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "dbueso@suse.de" <dbueso@suse.de>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Davidlohr Bueso <dave@stgolabs.net>, Eric Wong <e@80x24.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>,
+        Omar Kilani <omar.kilani@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 4:44 AM Lee Jones <lee.jones@linaro.org> wrote:
+On Wed, May 29, 2019 at 9:57 AM Oleg Nesterov <oleg@redhat.com> wrote:
 >
-> On Tue, 28 May 2019, Gwendal Grignou wrote:
->
-> > On Mon, Apr 1, 2019 at 8:46 PM Lee Jones <lee.jones@linaro.org> wrote:
-> > >
-> > > On Wed, 27 Feb 2019, Gwendal Grignou wrote:
-> > >
-> > > > From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > > >
-> > > > With this patch, the cros_ec_ctl driver will register the legacy
-> > > > accelerometer driver (named cros_ec_accel_legacy) if it fails to
-> > > > register sensors through the usual path cros_ec_sensors_register().
-> > > > This legacy device is present on Chromebook devices with older EC
-> > > > firmware only supporting deprecated EC commands (Glimmer based devi=
-ces).
-> > > >
-> > > > Tested-by: Gwendal Grignou <gwendal@chromium.org>
-> > > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com=
->
-> > > > Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-> > > > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > > > ---
-> > > > Changes in v5:
-> > > > - Remove unnecessary white lines.
-> > > >
-> > > > Changes in v4:
-> > > > - [5/8] Nit: EC -> ECs (Lee Jones)
-> > > > - [5/8] Statically define cros_ec_accel_legacy_cells (Lee Jones)
-> > > >
-> > > > Changes in v3:
-> > > > - [5/8] Add the Reviewed-by Andy Shevchenko.
-> > > >
-> > > > Changes in v2:
-> > > > - [5/8] Add the Reviewed-by Gwendal.
-> > > >
-> > > >  drivers/mfd/cros_ec_dev.c | 66 +++++++++++++++++++++++++++++++++++=
-++++
-> > > >  1 file changed, 66 insertions(+)
-> > > >
-> > > > diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> > > > index d275deaecb12..64567bd0a081 100644
-> > > > --- a/drivers/mfd/cros_ec_dev.c
-> > > > +++ b/drivers/mfd/cros_ec_dev.c
-> > > > @@ -376,6 +376,69 @@ static void cros_ec_sensors_register(struct cr=
-os_ec_dev *ec)
-> > > >       kfree(msg);
-> > > >  }
-> > > >
-> > > > +static struct cros_ec_sensor_platform sensor_platforms[] =3D {
-> > > > +     { .sensor_num =3D 0 },
-> > > > +     { .sensor_num =3D 1 }
-> > > > +};
-> > >
-> > > I'm still very uncomfortable with this struct.
-> > >
-> > > Other than these indices, the sensors have no other distinguishing
-> > > features, thus there should be no need to identify or distinguish
-> > > between them in this way.
-> > When initializing the sensors, the IIO driver expect to find in the
-> > data  structure pointed by dev_get_platdata(dev), in field sensor_num
-> > is stored the index assigned by the embedded controller to talk to a
-> > given sensor.
-> > cros_ec_sensors_register() use the same mechanism; in that function,
-> > the sensor_num field is populated from the output of an EC command
-> > MOTIONSENSE_CMD_INFO. In case of legacy mode, that command may not be
-> > available and in any case we know the EC has only either 2
-> > accelerometers present or nothing.
+> On 05/28, Deepa Dinamani wrote:
 > >
-> > For instance, let's compare a legacy device with a more recent one:
+> > I agree that signal handller being called and return value not being
+> > altered is an issue with other syscalls also. I was just wondering if
+> > some userspace code assumption would be assuming this. This is not a
+> > kernel bug.
 > >
-> > legacy:
-> > type                  |   id          | sensor_num   | device name
-> > accelerometer  |   0           |   0                  | cros-ec-accel.0
-> > accelerometer  |   1           |   1                  | cros-ec-accel.1
+> > But, I do not think we have an understanding of what was wrong in
+> > 854a6ed56839a anymore since you pointed out that my assumption was not
+> > correct that the signal handler being called without errno being set
+> > is wrong.
+>
+> Deepa, sorry, I simply can't parse the above... most probably because of
+> my bad English.
+
+Ok, All I meant was that I had thought a signal handler being invoked
+without the error value reflecting it was wrong. That is what I had
+thought was wrong with 854a6ed56839a. Now, that we agree that signal
+handler can be invoked without the errno returning success, I thought
+I did not know what is wrong with 854a6ed56839a anymore.
+
+But, you now pointed out that the signals we care about should not be
+delivered after an event has been ready. This points out to what was
+wrong with 854a6ed56839a. Thanks.
+
+> > One open question: this part of epoll_pwait was already broken before
+> > 854a6ed56839a. Do you agree?
 > >
-> > Modern:
-> > type                  |   id          | sensor_num   | device name
-> > accelerometer  |   0           |   0                  | cros-ec-accel.0
-> > accelerometer  |   1           |   1                  | cros-ec-accel.1
-> > gyroscope        |    0          |    2                 | cros-ec-gyro.=
-0
-> > magnetometer |    0          |   3                  | cros-ec-mag.0
-> > light                  |    0          |   4                  | cros-ec=
--light.0
-> > ...
+> > if (err == -EINTR) {
+> >                    memcpy(&current->saved_sigmask, &sigsaved,
+> >                           sizeof(sigsaved));
+> >                     set_restore_sigmask();
+> >   } else
+> >                    set_current_blocked(&sigsaved);
 >
-> Why can't these numbers be assigned at runtime?
-I assume you want to know why IIO drivers need to know "sensor_num"
-ahead of time. It is because each IIO driver is independent from the
-other.
-Let assume there was 2 light sensors in the device:
-type                  |   id          | sensor_num   | device name
- light                  |    0          |   4                  | cros-ec-li=
-ght.0
- light                  |    1          |   5                  | cros-ec-li=
-ght.1
+> I do not understand why do you think this part was broken :/
 
-In case of sensors of the same type without sensor_num, cros-ec-light
-driver has no information at probe time if it should bind to sensors
-named by the EC 4 or 5.
+Ok, because of your other statement that the signals the application
+cares about do not want to know about signals they care about after an
+event is ready this is also not a problem.
 
-We could get away with cros-ec-accel, as EC always presents
-accelerometers with sensor_num  0 and 1, but I don't want to rely on
-this property in the general case.
-Only cros_ec_dev MFD driver has the global view of all sensors available.
-
+> > Or, I could revert the signal_pending() check and provide a fix
+> > something like below(not a complete patch)
 >
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+> ...
+>
+> > -void restore_user_sigmask(const void __user *usigmask, sigset_t *sigsaved)
+> > +int restore_user_sigmask(const void __user *usigmask, sigset_t
+> > *sigsaved, int sig_pending)
+> >  {
+> >
+> >         if (!usigmask)
+> >                return;
+> >
+> >         /*
+> >          * When signals are pending, do not restore them here.
+> >          * Restoring sigmask here can lead to delivering signals that the above
+> >          * syscalls are intended to block because of the sigmask passed in.
+> >          */
+> > +       if (sig_pending) {
+> >                 current->saved_sigmask = *sigsaved;
+> >                 set_restore_sigmask();
+> >                return;
+> >            }
+> >
+> > @@ -2330,7 +2330,8 @@ SYSCALL_DEFINE6(epoll_pwait, int, epfd, struct
+> > epoll_event __user *, events,
+> >
+> >         error = do_epoll_wait(epfd, events, maxevents, timeout);
+> >
+> > -       restore_user_sigmask(sigmask, &sigsaved);
+> > +       signal_detected = restore_user_sigmask(sigmask, &sigsaved,
+> > error == -EINTR);
+>
+> I fail to understand this pseudo-code, sorry. In particular, do not understand
+> why restore_user_sigmask() needs to return a boolean.
+
+That was a remnant from the other patch. Return type needs to be void.
+
+> The only thing I _seem to_ understand is the "sig_pending" flag passed by the
+> caller which replaces the signal_pending() check.
+
+Correct. This is what is the main change I was proposing.
+
+> Yes, this is what I think we
+> should do, and this is what I tried to propose from the very beginning in my
+> 1st email in this thread.
+
+This was not clear to me in your first response that you did not want
+the signal_pending() check in restore_user_sigmask(). :
+https://lore.kernel.org/lkml/20190522150505.GA4915@redhat.com/
+
+"Ugh. I need to re-check, but at first glance I really dislike this change.
+
+I think we can fix the problem _and_ simplify the code. Something like below.
+The patch is obviously incomplete, it changes only only one caller of
+set_user_sigmask(), epoll_pwait() to explain what I mean.
+
+restore_user_sigmask() should simply die. Although perhaps another helper
+makes sense to add WARN_ON(test_tsk_restore_sigmask() && !signal_pending)."
+
+-Deepa
