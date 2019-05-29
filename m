@@ -2,63 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB352E6F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 23:03:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 399812E704
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 23:05:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbfE2VDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 17:03:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38918 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726411AbfE2VDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 17:03:04 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 419FD308213F;
-        Wed, 29 May 2019 21:02:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7EC755DD95;
-        Wed, 29 May 2019 21:02:44 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com>
-References: <CAG48ez0R-R3Xs+3Xg9T9qcV3Xv6r4pnx1Z2y=Ltx7RGOayte_w@mail.gmail.com> <20190528162603.GA24097@kroah.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk> <155905931502.7587.11705449537368497489.stgit@warthog.procyon.org.uk> <4031.1559064620@warthog.procyon.org.uk> <20190528231218.GA28384@kroah.com> <31936.1559146000@warthog.procyon.org.uk>
-To:     Jann Horn <jannh@google.com>
-Cc:     dhowells@redhat.com, Greg KH <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH 1/7] General notification queue with user mmap()'able ring buffer
+        id S1726604AbfE2VFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 17:05:16 -0400
+Received: from mail-lj1-f179.google.com ([209.85.208.179]:33592 "EHLO
+        mail-lj1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726508AbfE2VFQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 17:05:16 -0400
+Received: by mail-lj1-f179.google.com with SMTP id w1so3964502ljw.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 14:05:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=W9tjnUx4VNSKH9uRUiVgoOzrlN+0bCdbE4xMKDl4byY=;
+        b=YHpaHeen9oOqwE8n+QEO9DJ9gMuBJbrXcrYjEPz/rWBQxOf+xD216e6HgUSuoPzXJh
+         Ru4iX6MrHOUCY2I/Qg31rtslU3FsGrPB5xunkdg0uOx82uzvaH39MJisYPyGJo74v8vt
+         rPNi229OQYDmaBetkOtIK1ROewNfDJ1gSiCtahoDXLlHDEQ7F43Qp9uWfgNRVuCpFuNF
+         /uvg/Orz2MJbNkzbdEA6OQ7x3hXrIMi9Y2qK6BDPSs4TCpZ4ODGL+QvrKrpdqiAtF+d2
+         xQQosAmop4cIJjuFX3PrK03FRatnQ0Qu3z9xir3OvP1gfuKDACsycC9eenvH/Gpe8kgN
+         oItw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=W9tjnUx4VNSKH9uRUiVgoOzrlN+0bCdbE4xMKDl4byY=;
+        b=IgWUX1NPhFlt83G1X+/Cj7iT7MafulxczaQ6IWYcwUkwruf6iM4Dep3dzuYBFKqzt7
+         +08dV4pGKs63CsvY3LBh6lBFyANgAjD3qjQg+27LZzBOfZr+CRNLCPlNtnl6goVXjHlP
+         V2yjhlIwAeihufZe/+PtwdDxGoddMLzgx3NHXj2UUYrYmT3Mk33Dcw0KQC8GGAqzzHVZ
+         Uh2iBMQuhhco8s2ca/Xf4deg09riqZRlx+JyBUzpX1Yks5jAi7IM7VnSzNbccLd6EGC7
+         wp9C3uBKwForEaCbB6DsIgeHbHVFq8rhEM5xU8LEFJebg9en/GEHI/t6EuZygbhc2aPD
+         Dk5g==
+X-Gm-Message-State: APjAAAUQQzxhdbEWpzeNAyLvfc6IsOl/3IdCaFAhsWXzE/mCxqiYazfg
+        Vu78msQnlPqYamt+UeJ8n0jw2Q==
+X-Google-Smtp-Source: APXvYqwR3Nuq4X2E76sDNIhmSH2nLHEtjytO+gAjxiFimgrzY8/ZceCJZb5whpEZRo8/a+fpOLb9/A==
+X-Received: by 2002:a2e:1412:: with SMTP id u18mr35023523ljd.197.1559163913754;
+        Wed, 29 May 2019 14:05:13 -0700 (PDT)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id u11sm120354lfb.60.2019.05.29.14.05.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 May 2019 14:05:12 -0700 (PDT)
+From:   "Niklas =?iso-8859-1?Q?S=F6derlund?=" <niklas.soderlund@ragnatech.se>
+X-Google-Original-From: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Date:   Wed, 29 May 2019 23:05:11 +0200
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: Re: linux-next: Fixes tag needs some work in the v4l-dvb tree
+Message-ID: <20190529210511.GM1651@bigcity.dyn.berto.se>
+References: <20190529080454.6d62a7fd@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <16192.1559163763.1@warthog.procyon.org.uk>
-Date:   Wed, 29 May 2019 22:02:43 +0100
-Message-ID: <16193.1559163763@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 29 May 2019 21:03:04 +0000 (UTC)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190529080454.6d62a7fd@canb.auug.org.au>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jann Horn <jannh@google.com> wrote:
+Hi Stephen, Mauro,
 
-> Does this mean that refcount_read() isn't sufficient for what you want
-> to do with tracing (because for some reason you actually need to know
-> the values atomically at the time of increment/decrement)?
+On 2019-05-29 08:04:54 +1000, Stephen Rothwell wrote:
+> Hi Mauro,
+> 
+> In commit
+> 
+>   0c310868826e ("media: rcar-csi2: Fix coccinelle warning for PTR_ERR_OR_ZERO()")
+> 
+> Fixes tag
+> 
+>   Fixes: 3ae854cafd76 ("rcar-csi2: Use standby mode instead of resetting")
+> 
+> has these problem(s):
+> 
+>   - Target SHA1 does not exist
+> 
+> Did you mean
+> 
+> Fixes: d245a940d97b ("media: rcar-csi2: Use standby mode instead of resetting")
 
-Correct.  There's a gap and if an interrupt or something occurs, it's
-sufficiently big for the refcount trace to go weird.
+Yes I meant d245a940d97b commit, for some reason I was on the wrong 
+branch when looking up the sha1 for the fixes tag and used one from a 
+local development branch.
 
-I've seen it in afs/rxrpc where the incoming network packets that are part of
-the rxrpc call flow disrupt the refcounts noted in trace lines.
+This is my mess, sorry about that. What can I do to help fix it?
 
-David
+-- 
+Regards,
+Niklas Söderlund
