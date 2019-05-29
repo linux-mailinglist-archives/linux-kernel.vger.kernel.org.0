@@ -2,234 +2,502 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B16BF2D918
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:31:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DC5C2D93B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:40:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfE2Jbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 05:31:33 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:48026 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726474AbfE2Jba (ORCPT
+        id S1726396AbfE2JkH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 05:40:07 -0400
+Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:52620 "EHLO
+        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725874AbfE2JkH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 05:31:30 -0400
-X-UUID: a7791a899d114a958fee4bf55bd1eb7a-20190529
-X-UUID: a7791a899d114a958fee4bf55bd1eb7a-20190529
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <biao.huang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1633047466; Wed, 29 May 2019 17:31:19 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 29 May 2019 17:31:12 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 29 May 2019 17:31:11 +0800
-From:   Biao Huang <biao.huang@mediatek.com>
-To:     Jose Abreu <joabreu@synopsys.com>
-CC:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>,
-        <biao.huang@mediatek.com>, <jianguo.zhang@mediatek.com>,
-        <boon.leong.ong@intel.com>, <andrew@lunn.ch>
-Subject: [v5, PATCH] net: stmmac: add support for hash table size 128/256 in dwmac4
-Date:   Wed, 29 May 2019 17:31:08 +0800
-Message-ID: <1559122268-22545-2-git-send-email-biao.huang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1559122268-22545-1-git-send-email-biao.huang@mediatek.com>
-References: <1559122268-22545-1-git-send-email-biao.huang@mediatek.com>
+        Wed, 29 May 2019 05:40:07 -0400
+X-Greylist: delayed 383 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 May 2019 05:40:04 EDT
+Received: from faui03f.informatik.uni-erlangen.de (faui03f.informatik.uni-erlangen.de [IPv6:2001:638:a000:4130:131:188:30:118])
+        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 4C7FF241306;
+        Wed, 29 May 2019 11:33:25 +0200 (CEST)
+Received: by faui03f.informatik.uni-erlangen.de (Postfix, from userid 30501)
+        id 38749341CD4; Wed, 29 May 2019 11:33:25 +0200 (CEST)
+From:   Thomas Preisner <linux@tpreisner.de>
+Cc:     linux@tpreisner.de, Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ftrace: add simple oneshot function tracer
+Date:   Wed, 29 May 2019 11:31:23 +0200
+Message-Id: <20190529093124.2872-1-linux@tpreisner.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. get hash table size in hw feature reigster, and add support
-for taller hash table(128/256) in dwmac4.
-2. only clear GMAC_PACKET_FILTER bits used in this function,
-to avoid side effect to functions of other bits.
+The "oneshot" tracer records every address (ip, parent_ip) exactly once.
+As a result, "oneshot" can be used to efficiently create kernel function
+coverage/usage reports such as in undertaker-tailor[0].
 
-stmmac selftests output log:
-	ethtool -t eth0
-	The test result is FAIL
-	The test extra info:
-	 1. MAC Loopback                 0
-	 2. PHY Loopback                 -95
-	 3. MMC Counters                 0
-	 4. EEE                          -95
-	 5. Hash Filter MC               0
-	 6. Perfect Filter UC            0
-	 7. MC Filter                    0
-	 8. UC Filter                    0
-	 9. Flow Control                 1
+In order to provide this functionality, "oneshot" uses a
+configurable hashset for blacklisting already recorded addresses. This
+way, no user space application is required to parse the function
+tracer's output and to deactivate functions after they have been
+recorded once. Additionally, the tracer's output is reduced to a bare
+mininum so that it can be passed directly to undertaker-tailor.
 
-Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+Further information regarding this oneshot function tracer can also be
+found at [1].
+
+[0]: https://undertaker.cs.fau.de
+[1]: https://tpreisner.de/pub/ba-thesis.pdf
+
+Signed-off-by: Thomas Preisner <linux@tpreisner.de>
 ---
- drivers/net/ethernet/stmicro/stmmac/common.h      |    7 +--
- drivers/net/ethernet/stmicro/stmmac/dwmac4.h      |    4 +-
- drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c |   49 ++++++++++++---------
- drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c  |    1 +
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |    6 +++
- 5 files changed, 42 insertions(+), 25 deletions(-)
+ Documentation/trace/ftrace.rst |   7 ++
+ kernel/trace/Kconfig           |  68 ++++++++++
+ kernel/trace/Makefile          |   1 +
+ kernel/trace/trace.h           |   4 +
+ kernel/trace/trace_entries.h   |  13 ++
+ kernel/trace/trace_oneshot.c   | 220 +++++++++++++++++++++++++++++++++
+ kernel/trace/trace_selftest.c  |  38 ++++++
+ 7 files changed, 351 insertions(+)
+ create mode 100644 kernel/trace/trace_oneshot.c
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-index 1961fe9..26bbcd8 100644
---- a/drivers/net/ethernet/stmicro/stmmac/common.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-@@ -335,6 +335,7 @@ struct dma_features {
- 	/* 802.3az - Energy-Efficient Ethernet (EEE) */
- 	unsigned int eee;
- 	unsigned int av;
-+	unsigned int hash_tb_sz;
- 	unsigned int tsoen;
- 	/* TX and RX csum */
- 	unsigned int tx_coe;
-@@ -428,9 +429,9 @@ struct mac_device_info {
- 	struct mii_regs mii;	/* MII register Addresses */
- 	struct mac_link link;
- 	void __iomem *pcsr;     /* vpointer to device CSRs */
--	int multicast_filter_bins;
--	int unicast_filter_entries;
--	int mcast_bits_log2;
-+	unsigned int multicast_filter_bins;
-+	unsigned int unicast_filter_entries;
-+	unsigned int mcast_bits_log2;
- 	unsigned int rx_csum;
- 	unsigned int pcs;
- 	unsigned int pmt;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4.h b/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-index 01c1089..b68785f7 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4.h
-@@ -18,8 +18,7 @@
- /*  MAC registers */
- #define GMAC_CONFIG			0x00000000
- #define GMAC_PACKET_FILTER		0x00000008
--#define GMAC_HASH_TAB_0_31		0x00000010
--#define GMAC_HASH_TAB_32_63		0x00000014
-+#define GMAC_HASH_TAB(x)		(0x10 + (x) * 4)
- #define GMAC_RX_FLOW_CTRL		0x00000090
- #define GMAC_QX_TX_FLOW_CTRL(x)		(0x70 + x * 4)
- #define GMAC_TXQ_PRTY_MAP0		0x98
-@@ -184,6 +183,7 @@ enum power_event {
- #define GMAC_HW_FEAT_MIISEL		BIT(0)
+diff --git a/Documentation/trace/ftrace.rst b/Documentation/trace/ftrace.rst
+index f60079259669..ee56d9f9b246 100644
+--- a/Documentation/trace/ftrace.rst
++++ b/Documentation/trace/ftrace.rst
+@@ -759,6 +759,13 @@ Here is the list of current tracers that may be configured.
+ 	unlikely branch is hit and if it was correct in its prediction
+ 	of being correct.
  
- /* MAC HW features1 bitmap */
-+#define GMAC_HW_HASH_TB_SZ		GENMASK(25, 24)
- #define GMAC_HW_FEAT_AVSEL		BIT(20)
- #define GMAC_HW_TSOEN			BIT(18)
- #define GMAC_HW_TXFIFOSIZE		GENMASK(10, 6)
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-index 5e98da4..4183607 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
-@@ -403,41 +403,50 @@ static void dwmac4_set_filter(struct mac_device_info *hw,
- 			      struct net_device *dev)
- {
- 	void __iomem *ioaddr = (void __iomem *)dev->base_addr;
--	unsigned int value = 0;
-+	int numhashregs = (hw->multicast_filter_bins >> 5);
-+	int mcbitslog2 = hw->mcast_bits_log2;
-+	unsigned int value;
-+	int i;
++  "oneshot"
++
++	Traces every kernel function and originating address exactly
++	once. For kernel modules the offset together with the module
++	name is printed. As a result, this tracer can be used to
++	efficiently create kernel function coverage/usage reports.
++
+   "nop"
  
-+	value = readl(ioaddr + GMAC_PACKET_FILTER);
-+	value &= ~GMAC_PACKET_FILTER_HMC;
-+	value &= ~GMAC_PACKET_FILTER_HPF;
-+	value &= ~GMAC_PACKET_FILTER_PCF;
-+	value &= ~GMAC_PACKET_FILTER_PM;
-+	value &= ~GMAC_PACKET_FILTER_PR;
- 	if (dev->flags & IFF_PROMISC) {
- 		value = GMAC_PACKET_FILTER_PR | GMAC_PACKET_FILTER_PCF;
- 	} else if ((dev->flags & IFF_ALLMULTI) ||
--			(netdev_mc_count(dev) > HASH_TABLE_SIZE)) {
-+		   (netdev_mc_count(dev) > hw->multicast_filter_bins)) {
- 		/* Pass all multi */
--		value = GMAC_PACKET_FILTER_PM;
--		/* Set the 64 bits of the HASH tab. To be updated if taller
--		 * hash table is used
--		 */
--		writel(0xffffffff, ioaddr + GMAC_HASH_TAB_0_31);
--		writel(0xffffffff, ioaddr + GMAC_HASH_TAB_32_63);
-+		value |= GMAC_PACKET_FILTER_PM;
-+		/* Set all the bits of the HASH tab */
-+		for (i = 0; i < numhashregs; i++)
-+			writel(0xffffffff, ioaddr + GMAC_HASH_TAB(i));
- 	} else if (!netdev_mc_empty(dev)) {
--		u32 mc_filter[2];
- 		struct netdev_hw_addr *ha;
-+		u32 mc_filter[8];
+ 	This is the "trace nothing" tracer. To remove all
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index 5d965cef6c77..3b5c2650763a 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -279,6 +279,74 @@ config HWLAT_TRACER
+ 	 file. Every time a latency is greater than tracing_thresh, it will
+ 	 be recorded into the ring buffer.
  
- 		/* Hash filter for multicast */
--		value = GMAC_PACKET_FILTER_HMC;
-+		value |= GMAC_PACKET_FILTER_HMC;
++menuconfig ONESHOT_TRACER
++	bool "Oneshot Function Tracer"
++	default n
++	depends on HAVE_FUNCTION_TRACER
++	select GENERIC_TRACER
++	help
++	  This tracer records every function call (and callee) exactly once per
++	  cpu. It uses a separate hashtable for each cpu core to keep track of
++	  already recorded functions.
++
++	  Very useful for efficiently creating kernel function coverage/usage
++	  reports. Can also be used for mostly automated kernel-tailoring in
++	  conjunction with the undertaker toolchain as this tracer produces
++	  significantly less output in comparison to the normal function
++	  tracer.
++
++	  If unsure, say N.
++
++if ONESHOT_TRACER
++
++config ONESHOT_HASHTABLE_DYNAMIC_ALLOC
++	bool "Dynamic Hashtable Allocation"
++	default y
++	help
++	  When this is enabled (default) the oneshot tracer will try to allocate
++	  memory for one hashtable per cpu. This method should always work but
++	  might not be the most efficient way as vmalloc only allocates a
++	  contiguous memory region in the virtual address space instead of the
++	  physical one.
++
++	  When this is disabled the oneshot tracer will use static allocation to
++	  allocate memory for NR_CPUS hashtables. Keep in mind that this will
++	  drastically increase the size of the compiled kernel and may even succeed
++	  the kernel size restrictions thus failing the build. If that happens you
++	  may decrease NR_CPUS to a more fitting value as it is not possible to
++	  detect the exact amount of cpu cores beforehand.
++
++	  If unsure, say Y.
++
++config ONESHOT_HASHTABLE_BUCKET_COUNT
++	int "Hashtable bucket count"
++	default 24
++	help
++	  Sets the hashtable bucket count to be reserved for every cpu core.
++
++	  Be aware that this value represents magnitudes of 2 so increasing this
++	  number results in a much higher memory usage.
++
++	  If unsure, keep the default.
++
++config ONESHOT_HASHTABLE_ELEMENT_COUNT
++	int "Hashtable element count"
++	default 500000
++	help
++	  Sets the hashtable element count to be reserved for every cpu core.
++
++	  Depending on how many kernel features you have selected it might be
++	  useful to increase this number to be able to memorize more already
++	  visited function to decrease the generated output.
++
++	  Be aware that this number determines a huge amount of memory to be
++	  reserved for the hashtables so increasing this will result in a higher
++	  memory usage.
++
++	  If unsure, keep the default.
++
++endif # ONESHOT_TRACER
++
+ config ENABLE_DEFAULT_TRACERS
+ 	bool "Trace process context switches and events"
+ 	depends on !GENERIC_TRACER
+diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
+index c2b2148bb1d2..25b66b759bd8 100644
+--- a/kernel/trace/Makefile
++++ b/kernel/trace/Makefile
+@@ -51,6 +51,7 @@ obj-$(CONFIG_IRQSOFF_TRACER) += trace_irqsoff.o
+ obj-$(CONFIG_PREEMPT_TRACER) += trace_irqsoff.o
+ obj-$(CONFIG_SCHED_TRACER) += trace_sched_wakeup.o
+ obj-$(CONFIG_HWLAT_TRACER) += trace_hwlat.o
++obj-$(CONFIG_ONESHOT_TRACER) += trace_oneshot.o
+ obj-$(CONFIG_NOP_TRACER) += trace_nop.o
+ obj-$(CONFIG_STACK_TRACER) += trace_stack.o
+ obj-$(CONFIG_MMIOTRACE) += trace_mmiotrace.o
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 005f08629b8b..e1e1d28a2914 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -40,6 +40,7 @@ enum trace_type {
+ 	TRACE_BLK,
+ 	TRACE_BPUTS,
+ 	TRACE_HWLAT,
++	TRACE_ONESHOT,
+ 	TRACE_RAW_DATA,
  
- 		memset(mc_filter, 0, sizeof(mc_filter));
- 		netdev_for_each_mc_addr(ha, dev) {
--			/* The upper 6 bits of the calculated CRC are used to
--			 * index the content of the Hash Table Reg 0 and 1.
-+			/* The upper n bits of the calculated CRC are used to
-+			 * index the contents of the hash table. The number of
-+			 * bits used depends on the hardware configuration
-+			 * selected at core configuration time.
- 			 */
--			int bit_nr =
--				(bitrev32(~crc32_le(~0, ha->addr, 6)) >> 26);
--			/* The most significant bit determines the register
--			 * to use while the other 5 bits determines the bit
--			 * within the selected register
-+			int bit_nr = bitrev32(~crc32_le(~0, ha->addr,
-+					ETH_ALEN)) >> (32 - mcbitslog2);
-+			/* The most significant bit determines the register to
-+			 * use (H/L) while the other 5 bits determine the bit
-+			 * within the register.
- 			 */
--			mc_filter[bit_nr >> 5] |= (1 << (bit_nr & 0x1F));
-+			mc_filter[bit_nr >> 5] |= (1 << (bit_nr & 0x1f));
- 		}
--		writel(mc_filter[0], ioaddr + GMAC_HASH_TAB_0_31);
--		writel(mc_filter[1], ioaddr + GMAC_HASH_TAB_32_63);
-+		for (i = 0; i < numhashregs; i++)
-+			writel(mc_filter[i], ioaddr + GMAC_HASH_TAB(i));
- 	}
+ 	__TRACE_LAST_TYPE,
+@@ -398,6 +399,7 @@ extern void __ftrace_bad_type(void);
+ 		IF_ASSIGN(var, ent, struct bprint_entry, TRACE_BPRINT);	\
+ 		IF_ASSIGN(var, ent, struct bputs_entry, TRACE_BPUTS);	\
+ 		IF_ASSIGN(var, ent, struct hwlat_entry, TRACE_HWLAT);	\
++		IF_ASSIGN(var, ent, struct oneshot_entry, TRACE_ONESHOT);\
+ 		IF_ASSIGN(var, ent, struct raw_data_entry, TRACE_RAW_DATA);\
+ 		IF_ASSIGN(var, ent, struct trace_mmiotrace_rw,		\
+ 			  TRACE_MMIO_RW);				\
+@@ -828,6 +830,8 @@ extern int trace_selftest_startup_preemptirqsoff(struct tracer *trace,
+ 						 struct trace_array *tr);
+ extern int trace_selftest_startup_wakeup(struct tracer *trace,
+ 					 struct trace_array *tr);
++extern int trace_selftest_startup_oneshot(struct tracer *trace,
++					  struct trace_array *tr);
+ extern int trace_selftest_startup_nop(struct tracer *trace,
+ 					 struct trace_array *tr);
+ extern int trace_selftest_startup_branch(struct tracer *trace,
+diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+index fc8e97328e54..fbf3c813721f 100644
+--- a/kernel/trace/trace_entries.h
++++ b/kernel/trace/trace_entries.h
+@@ -366,3 +366,16 @@ FTRACE_ENTRY(hwlat, hwlat_entry,
  
- 	value |= GMAC_PACKET_FILTER_HPF;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-index edb6053..59afb53 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c
-@@ -354,6 +354,7 @@ static void dwmac4_get_hw_feature(void __iomem *ioaddr,
+ 	FILTER_OTHER
+ );
++
++FTRACE_ENTRY(oneshot, oneshot_entry,
++
++	TRACE_ONESHOT,
++
++	F_STRUCT(
++		__field(	unsigned long,	ip	)
++	),
++
++	F_printk("%lx\n", __entry->ip),
++
++	FILTER_OTHER
++);
+diff --git a/kernel/trace/trace_oneshot.c b/kernel/trace/trace_oneshot.c
+new file mode 100644
+index 000000000000..931925aff20b
+--- /dev/null
++++ b/kernel/trace/trace_oneshot.c
+@@ -0,0 +1,220 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * oneshot tracer
++ *
++ * Copyright (C) 2019 Thomas Preisner <linux@tpreisner.de>
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/ftrace.h>
++#include <linux/hashtable.h>
++#include <linux/percpu.h>
++
++#include "trace.h"
++#include "trace_output.h"
++
++#ifdef CONFIG_ONESHOT_TRACER
++
++static struct trace_array	*oneshot_trace;
++
++struct ip_entry {
++	unsigned long address;
++	struct hlist_node next;
++};
++
++struct oneshot_hashtable {
++	DECLARE_HASHTABLE(functions, CONFIG_ONESHOT_HASHTABLE_BUCKET_COUNT);
++	int size;
++	struct ip_entry elements[CONFIG_ONESHOT_HASHTABLE_ELEMENT_COUNT];
++};
++
++static DEFINE_PER_CPU(struct oneshot_hashtable *, visited);
++#ifndef CONFIG_ONESHOT_HASHTABLE_DYNAMIC_ALLOC
++static oneshot_hashtable visited_functions[NR_CPUS];
++#endif /* CONFIG_ONESHOT_HASHTABLE_DYNAMIC_ALLOC */
++
++
++/*
++ * returns true if value has been inserted or if hashtable is full
++ */
++static inline bool
++oneshot_lookup_and_insert(struct oneshot_hashtable *curr_visited,
++			  unsigned long address)
++{
++	struct ip_entry *entry;
++
++	hash_for_each_possible(curr_visited->functions, entry, next, address) {
++		if (entry->address == address)
++			return false;
++	}
++
++	if (curr_visited->size >= CONFIG_ONESHOT_HASHTABLE_ELEMENT_COUNT)
++		return true;
++
++	entry = &curr_visited->elements[curr_visited->size++];
++	entry->address = address;
++
++	hash_add(curr_visited->functions, &entry->next, address);
++
++	return true;
++}
++
++static void trace_oneshot(struct trace_array *tr, unsigned long ip)
++{
++	struct trace_event_call *call = &event_oneshot;
++	struct ring_buffer *buffer = tr->trace_buffer.buffer;
++	struct ring_buffer_event *event;
++	struct oneshot_entry *entry;
++
++	event = trace_buffer_lock_reserve(buffer, TRACE_ONESHOT, sizeof(*entry),
++					  0, 0);
++	if (!event)
++		return;
++
++	entry = ring_buffer_event_data(event);
++	entry->ip = ip;
++
++	if (!call_filter_check_discard(call, entry, buffer, event))
++		trace_buffer_unlock_commit_nostack(buffer, event);
++}
++
++static void
++oneshot_tracer_call(unsigned long ip, unsigned long parent_ip,
++		    struct ftrace_ops *op, struct pt_regs *pt_regs)
++{
++	struct trace_array *tr = op->private;
++	struct oneshot_hashtable *curr_visited;
++
++	if (unlikely(!tr->function_enabled))
++		return;
++
++	preempt_disable_notrace();
++	curr_visited = this_cpu_read(visited);
++
++	if (oneshot_lookup_and_insert(curr_visited, ip))
++		trace_oneshot(oneshot_trace, ip);
++
++	if (oneshot_lookup_and_insert(curr_visited, parent_ip))
++		trace_oneshot(oneshot_trace, parent_ip);
++
++	preempt_enable_notrace();
++}
++
++static int start_oneshot_tracer(struct trace_array *tr)
++{
++	int ret;
++
++	if (unlikely(tr->function_enabled))
++		return 0;
++
++	ret = register_ftrace_function(tr->ops);
++	if (!ret)
++		tr->function_enabled = 1;
++
++	return ret;
++}
++
++static void stop_oneshot_tracer(struct trace_array *tr)
++{
++	if (unlikely(!tr->function_enabled))
++		return;
++
++	unregister_ftrace_function(tr->ops);
++	tr->function_enabled = 0;
++}
++
++static int oneshot_trace_init(struct trace_array *tr)
++{
++	int cpu;
++
++	oneshot_trace = tr;
++
++	for_each_possible_cpu(cpu) {
++#ifdef CONFIG_ONESHOT_HASHTABLE_DYNAMIC_ALLOC
++		struct oneshot_hashtable *tmp;
++
++		tmp = vmalloc(sizeof(struct oneshot_hashtable));
++		if (!tmp)
++			return 1;
++
++		per_cpu(visited, cpu) = tmp;
++#else
++		per_cpu(visited, cpu) = &visited_functions[cpu];
++#endif /* CONFIG_ONESHOT_HASHTABLE_DYNAMIC_ALLOC */
++
++		per_cpu(visited, cpu)->size = 0;
++		hash_init(per_cpu(visited, cpu)->functions);
++	}
++
++	ftrace_init_array_ops(tr, oneshot_tracer_call);
++
++	start_oneshot_tracer(tr);
++	return 0;
++}
++
++static void oneshot_trace_reset(struct trace_array *tr)
++{
++	int cpu;
++
++	stop_oneshot_tracer(tr);
++	ftrace_reset_array_ops(tr);
++
++	for_each_possible_cpu(cpu) {
++		vfree(per_cpu(visited, cpu));
++	}
++}
++
++static void oneshot_print_header(struct seq_file *s)
++{
++	// do not print anything!
++}
++
++static enum print_line_t oneshot_print_line(struct trace_iterator *iter)
++{
++	struct trace_seq *s = &iter->seq;
++	struct trace_entry *entry = iter->ent;
++	struct oneshot_entry *field;
++	struct module *mod;
++
++	trace_assign_type(field, entry);
++
++	mod = __module_address(field->ip);
++	if (mod) {
++		unsigned long addr;
++
++		addr = field->ip - (unsigned long) mod->core_layout.base;
++		trace_seq_printf(s, "%lx %s\n", addr, mod->name);
++	} else {
++		trace_seq_printf(s, "%lx\n", field->ip);
++	}
++
++	return trace_handle_return(s);
++}
++
++struct tracer oneshot_tracer __read_mostly = {
++	.name		= "oneshot",
++	.init		= oneshot_trace_init,
++	.reset		= oneshot_trace_reset,
++	.print_header	= oneshot_print_header,
++	.print_line	= oneshot_print_line,
++#ifdef CONFIG_FTRACE_SELFTEST
++	.selftest	= trace_selftest_startup_oneshot,
++#endif
++	.allow_instances = true,
++};
++
++
++__init static int init_oneshot_tracer(void)
++{
++	int ret;
++
++	ret = register_tracer(&oneshot_tracer);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++core_initcall(init_oneshot_tracer);
++#endif /* CONFIG_ONESHOT_TRACER */
+diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
+index 69ee8ef12cee..95449ecfaca7 100644
+--- a/kernel/trace/trace_selftest.c
++++ b/kernel/trace/trace_selftest.c
+@@ -1028,6 +1028,44 @@ trace_selftest_startup_preemptirqsoff(struct tracer *trace, struct trace_array *
+ }
+ #endif /* CONFIG_IRQSOFF_TRACER && CONFIG_PREEMPT_TRACER */
  
- 	/* MAC HW feature1 */
- 	hw_cap = readl(ioaddr + GMAC_HW_FEATURE1);
-+	dma_cap->hash_tb_sz = (hw_cap & GMAC_HW_HASH_TB_SZ) >> 24;
- 	dma_cap->av = (hw_cap & GMAC_HW_FEAT_AVSEL) >> 20;
- 	dma_cap->tsoen = (hw_cap & GMAC_HW_TSOEN) >> 18;
- 	/* RX and TX FIFO sizes are encoded as log2(n / 128). Undo that by
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 8fcbf22..f7aac15 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -4166,6 +4166,12 @@ static int stmmac_hw_init(struct stmmac_priv *priv)
- 		priv->plat->enh_desc = priv->dma_cap.enh_desc;
- 		priv->plat->pmt = priv->dma_cap.pmt_remote_wake_up;
- 		priv->hw->pmt = priv->plat->pmt;
-+		if (priv->dma_cap.hash_tb_sz) {
-+			priv->hw->multicast_filter_bins =
-+					(BIT(priv->dma_cap.hash_tb_sz) << 5);
-+			priv->hw->mcast_bits_log2 =
-+					ilog2(priv->hw->multicast_filter_bins);
-+		}
- 
- 		/* TXCOE doesn't work in thresh DMA mode */
- 		if (priv->plat->force_thresh_dma_mode)
++#ifdef CONFIG_ONESHOT_TRACER
++__init int
++trace_selftest_startup_oneshot(struct tracer *trace, struct trace_array *tr)
++{
++	unsigned long count;
++	int ret;
++
++	/* make sure msleep has been recorded */
++	msleep(1);
++
++	/* start the tracing */
++	ret = tracer_init(trace, tr);
++	if (ret) {
++		warn_failed_init_tracer(trace, ret);
++		return ret;
++	}
++
++	/* Sleep for a 1/10 of a second */
++	msleep(100);
++
++	/* stop the tracing. */
++	tracing_stop();
++
++	/* check the trace buffer */
++	ret = trace_test_buffer(&tr->trace_buffer, &count);
++
++	trace->reset(tr);
++	tracing_start();
++
++	if (!ret && !count) {
++		printk(KERN_CONT ".. no entries found ..");
++		ret = -1;
++	}
++
++	return ret;
++}
++#endif /* CONFIG_ONESHOT_TRACER */
++
+ #ifdef CONFIG_NOP_TRACER
+ int
+ trace_selftest_startup_nop(struct tracer *trace, struct trace_array *tr)
 -- 
-1.7.9.5
+2.19.1
 
