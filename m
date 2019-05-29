@@ -2,177 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09BB32E0CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B2FA2E0D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfE2PPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 11:15:14 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47994 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726012AbfE2PPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:15:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7737341;
-        Wed, 29 May 2019 08:15:12 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E0F0A3F5AF;
-        Wed, 29 May 2019 08:15:09 -0700 (PDT)
-Date:   Wed, 29 May 2019 16:15:07 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Marco Elver <elver@google.com>
-Cc:     peterz@infradead.org, aryabinin@virtuozzo.com, dvyukov@google.com,
-        glider@google.com, andreyknvl@google.com, corbet@lwn.net,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, arnd@arndb.de, jpoimboe@redhat.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH v2 1/3] lib/test_kasan: Add bitops tests
-Message-ID: <20190529151507.GI31777@lakrids.cambridge.arm.com>
-References: <20190529141500.193390-1-elver@google.com>
- <20190529141500.193390-2-elver@google.com>
+        id S1727147AbfE2PPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 11:15:31 -0400
+Received: from gateway22.websitewelcome.com ([192.185.47.206]:21860 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725914AbfE2PPb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 11:15:31 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 9DBAF14D37
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 10:15:30 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id W0IchQ4AZdnCeW0Ich4pwv; Wed, 29 May 2019 10:15:30 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.47.159] (port=47392 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hW0Ib-001KQP-2O; Wed, 29 May 2019 10:15:29 -0500
+Date:   Wed, 29 May 2019 10:15:28 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH][next] IB/hfi1: Use struct_size() helper
+Message-ID: <20190529151528.GA24148@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190529141500.193390-2-elver@google.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.47.159
+X-Source-L: No
+X-Exim-ID: 1hW0Ib-001KQP-2O
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.47.159]:47392
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 18
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 04:14:59PM +0200, Marco Elver wrote:
-> This adds bitops tests to the test_kasan module. In a follow-up patch,
-> support for bitops instrumentation will be added.
-> 
-> Signed-off-by: Marco Elver <elver@google.com>
-> ---
-> Changes in v2:
-> * Use BITS_PER_LONG.
-> * Use heap allocated memory for test, as newer compilers (correctly)
->   warn on OOB stack access.
-> ---
->  lib/test_kasan.c | 75 ++++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 72 insertions(+), 3 deletions(-)
-> 
-> diff --git a/lib/test_kasan.c b/lib/test_kasan.c
-> index 7de2702621dc..6562df0ca30d 100644
-> --- a/lib/test_kasan.c
-> +++ b/lib/test_kasan.c
-> @@ -11,16 +11,17 @@
->  
->  #define pr_fmt(fmt) "kasan test: %s " fmt, __func__
->  
-> +#include <linux/bitops.h>
->  #include <linux/delay.h>
-> +#include <linux/kasan.h>
->  #include <linux/kernel.h>
-> -#include <linux/mman.h>
->  #include <linux/mm.h>
-> +#include <linux/mman.h>
-> +#include <linux/module.h>
->  #include <linux/printk.h>
->  #include <linux/slab.h>
->  #include <linux/string.h>
->  #include <linux/uaccess.h>
-> -#include <linux/module.h>
-> -#include <linux/kasan.h>
->  
->  /*
->   * Note: test functions are marked noinline so that their names appear in
-> @@ -623,6 +624,73 @@ static noinline void __init kasan_strings(void)
->  	strnlen(ptr, 1);
->  }
->  
-> +static noinline void __init kasan_bitops(void)
-> +{
-> +	long *bits = kmalloc(sizeof(long), GFP_KERNEL | __GFP_ZERO);
+Make use of the struct_size() helper instead of an open-coded version
+in order to avoid any potential type mistakes, in particular in the
+context in which this code is being used.
 
-Trivial nit, but this can/should be:
+So, replace the following form:
 
-	long *bits = kzalloc(sizeof(*bits), GFP_KERNEL);
+sizeof(struct opa_port_status_rsp) + num_vls * sizeof(struct _vls_pctrs)
 
+with:
 
-... which is the usual style for sizeof() to keep the LHS and RHS types
-the same, and using kzalloc avoids the need to explicitly pass
-__GFP_ZERO.
+struct_size(rsp, vls, num_vls)
 
-Otherwise, this looks good to me.
+and so on...
 
-> +	if (!bits)
-> +		return;
-> +
-> +	pr_info("within-bounds in set_bit");
-> +	set_bit(0, bits);
-> +
-> +	pr_info("within-bounds in set_bit");
-> +	set_bit(BITS_PER_LONG - 1, bits);
-> +
-> +	pr_info("out-of-bounds in set_bit\n");
-> +	set_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in __set_bit\n");
-> +	__set_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in clear_bit\n");
-> +	clear_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in __clear_bit\n");
-> +	__clear_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in clear_bit_unlock\n");
-> +	clear_bit_unlock(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in __clear_bit_unlock\n");
-> +	__clear_bit_unlock(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in change_bit\n");
-> +	change_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in __change_bit\n");
-> +	__change_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in test_and_set_bit\n");
-> +	test_and_set_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in __test_and_set_bit\n");
-> +	__test_and_set_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in test_and_set_bit_lock\n");
-> +	test_and_set_bit_lock(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in test_and_clear_bit\n");
-> +	test_and_clear_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in __test_and_clear_bit\n");
-> +	__test_and_clear_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in test_and_change_bit\n");
-> +	test_and_change_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in __test_and_change_bit\n");
-> +	__test_and_change_bit(BITS_PER_LONG, bits);
-> +
-> +	pr_info("out-of-bounds in test_bit\n");
-> +	(void)test_bit(BITS_PER_LONG, bits);
-> +
-> +#if defined(clear_bit_unlock_is_negative_byte)
-> +	pr_info("out-of-bounds in clear_bit_unlock_is_negative_byte\n");
-> +	clear_bit_unlock_is_negative_byte(BITS_PER_LONG, bits);
-> +#endif
-> +	kfree(bits);
-> +}
-> +
->  static int __init kmalloc_tests_init(void)
->  {
->  	/*
-> @@ -664,6 +732,7 @@ static int __init kmalloc_tests_init(void)
->  	kasan_memchr();
->  	kasan_memcmp();
->  	kasan_strings();
-> +	kasan_bitops();
->  
->  	kasan_restore_multi_shot(multishot);
->  
-> -- 
-> 2.22.0.rc1.257.g3120a18244-goog
-> 
+Also, notice that variable size is unnecessary, hence it is removed.
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/infiniband/hw/hfi1/mad.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/infiniband/hw/hfi1/mad.c b/drivers/infiniband/hw/hfi1/mad.c
+index 4228393e6c4c..184dba3c2828 100644
+--- a/drivers/infiniband/hw/hfi1/mad.c
++++ b/drivers/infiniband/hw/hfi1/mad.c
+@@ -2744,8 +2744,7 @@ static int pma_get_opa_portstatus(struct opa_pma_mad *pmp,
+ 	u16 link_width;
+ 	u16 link_speed;
+ 
+-	response_data_size = sizeof(struct opa_port_status_rsp) +
+-				num_vls * sizeof(struct _vls_pctrs);
++	response_data_size = struct_size(rsp, vls, num_vls);
+ 	if (response_data_size > sizeof(pmp->data)) {
+ 		pmp->mad_hdr.status |= OPA_PM_STATUS_REQUEST_TOO_LARGE;
+ 		return reply((struct ib_mad_hdr *)pmp);
+@@ -3014,8 +3013,7 @@ static int pma_get_opa_datacounters(struct opa_pma_mad *pmp,
+ 	}
+ 
+ 	/* Sanity check */
+-	response_data_size = sizeof(struct opa_port_data_counters_msg) +
+-				num_vls * sizeof(struct _vls_dctrs);
++	response_data_size = struct_size(req, port[0].vls, num_vls);
+ 
+ 	if (response_data_size > sizeof(pmp->data)) {
+ 		pmp->mad_hdr.status |= IB_SMP_INVALID_FIELD;
+@@ -3232,8 +3230,7 @@ static int pma_get_opa_porterrors(struct opa_pma_mad *pmp,
+ 		return reply((struct ib_mad_hdr *)pmp);
+ 	}
+ 
+-	response_data_size = sizeof(struct opa_port_error_counters64_msg) +
+-				num_vls * sizeof(struct _vls_ectrs);
++	response_data_size = struct_size(req, port[0].vls, num_vls);
+ 
+ 	if (response_data_size > sizeof(pmp->data)) {
+ 		pmp->mad_hdr.status |= IB_SMP_INVALID_FIELD;
+-- 
+2.21.0
+
