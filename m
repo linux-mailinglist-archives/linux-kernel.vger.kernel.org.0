@@ -2,115 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3E692E004
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EB3C2E04A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:56:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbfE2On2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 10:43:28 -0400
-Received: from mga18.intel.com ([134.134.136.126]:49062 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726118AbfE2On1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 10:43:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 07:43:09 -0700
-X-ExtLoop1: 1
-Received: from marshy.an.intel.com (HELO [10.122.105.159]) ([10.122.105.159])
-  by fmsmga004.fm.intel.com with ESMTP; 29 May 2019 07:43:09 -0700
-Subject: Re: [PATCHv4 2/4] firmware: add Intel Stratix10 remote system update
- driver
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, dinguyen@kernel.org,
-        atull@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sen.li@intel.com,
-        Richard Gong <richard.gong@intel.com>
-References: <1559074833-1325-1-git-send-email-richard.gong@linux.intel.com>
- <1559074833-1325-3-git-send-email-richard.gong@linux.intel.com>
- <20190528232224.GA29225@kroah.com>
-From:   Richard Gong <richard.gong@linux.intel.com>
-Message-ID: <1e3b5447-b776-f929-bca6-306f90ac0856@linux.intel.com>
-Date:   Wed, 29 May 2019 09:55:32 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726869AbfE2Ozz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:55:55 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4363 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbfE2Ozz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 10:55:55 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5cee9d710000>; Wed, 29 May 2019 07:55:45 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 29 May 2019 07:55:54 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 29 May 2019 07:55:54 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 May
+ 2019 14:55:54 +0000
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 May
+ 2019 14:55:54 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 29 May 2019 14:55:54 +0000
+Received: from jilin-desktop.nvidia.com (Not Verified[10.19.120.158]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5cee9d780000>; Wed, 29 May 2019 07:55:53 -0700
+From:   Jim Lin <jilin@nvidia.com>
+To:     <gregkh@linuxfoundation.org>, <mathias.nyman@intel.com>,
+        <stern@rowland.harvard.edu>, <kai.heng.feng@canonical.com>,
+        <drinkcat@chromium.org>, <Thinh.Nguyen@synopsys.com>,
+        <nsaenzjulienne@suse.de>, <jflat@chromium.org>, <malat@debian.org>
+CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jim Lin <jilin@nvidia.com>
+Subject: [PATCH v11 0/2] usb: xhci: Add Clear_TT_Buffer
+Date:   Wed, 29 May 2019 22:55:47 +0800
+Message-ID: <1559141749-5159-1-git-send-email-jilin@nvidia.com>
+X-Mailer: git-send-email 2.1.4
 MIME-Version: 1.0
-In-Reply-To: <20190528232224.GA29225@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1559141745; bh=9P1Kz4O/jSg8ZsRPR4q5epOTj+e9MWcHICCyeQn5/x0=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:Content-Type;
+        b=ScDsWpp7QSegG36TJT3nabvv1K4yabITtxhAQrfO/5CDeNAnMITOMAOD65J3cO2ft
+         igJguqhsleFMyhNGe7isMeRJ1WAdAQ1UzV8FpR46+m1mS0GBnDGwe4E+Ymf7Jt14Kc
+         K1wC1jut8D2jHuchotXXu6XkJZkBlzucHL0flS64YFhpuK2mjITC24OBkl0SQth2wo
+         gonOSvHnxqajmIBVlmT9G8EXPw4Uz+KIKBi7pmTiAyRNa5k4psxri3ZtERifsAH4Ai
+         /Wk0RyGYup75HzuZSGDESh4KPL4rUFYSMeGqql1qakgmG+88Pu29S/DNJBv93ormMC
+         6/eAkx8CeLeVA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+USB 2.0 specification chapter 11.17.5 says "as part of endpoint halt
+processing for full-/low-speed endpoints connected via a TT, the host
+software must use the Clear_TT_Buffer request to the TT to ensure
+that the buffer is not in the busy state".
 
-Hi Greg,
+In our case, a full-speed speaker (ConferenceCam) is behind a high-
+speed hub (ConferenceCam Connect), sometimes once we get STALL on a
+request we may continue to get STALL with the folllowing requests,
+like Set_Interface.
 
-On 5/28/19 6:22 PM, Greg KH wrote:
-> On Tue, May 28, 2019 at 03:20:31PM -0500, richard.gong@linux.intel.com wrote:
->> +/**
->> + * rsu_send_msg() - send a message to Intel service layer
->> + * @priv: pointer to rsu private data
->> + * @command: RSU status or update command
->> + * @arg: the request argument, the bitstream address or notify status
->> + * @callback: function pointer for the callback (status or update)
->> + *
->> + * Start an Intel service layer transaction to perform the SMC call that
->> + * is necessary to get RSU boot log or set the address of bitstream to
->> + * boot after reboot.
->> + *
->> + * Returns 0 on success or -ETIMEDOUT on error.
->> + */
->> +static int rsu_send_msg(struct stratix10_rsu_priv *priv,
->> +			enum stratix10_svc_command_code command,
->> +	unsigned long arg,
->> +	void (*callback)(struct stratix10_svc_client *client,
->> +			 struct stratix10_svc_cb_data *data))
->> +{
->> +	struct stratix10_svc_client_msg msg;
->> +	int ret;
->> +
->> +	mutex_lock(&priv->lock);
->> +	reinit_completion(&priv->completion);
->> +	priv->client.receive_cb = callback;
->> +
->> +	msg.command = command;
->> +	if (arg)
->> +		msg.arg[0] = arg;
->> +
->> +	ret = stratix10_svc_send(priv->chan, &msg);
-> 
-> meta-question, can you send messages that are on the stack and not in
-> DMA-able memory?  Or should this be a dynamicly created variable so you
-> know it can work properly with DMA?
-> 
-> And how big is that structure, will it mess with stack sizes?
-> 
+Solution is to invoke usb_hub_clear_tt_buffer() to send
+Clear_TT_Buffer request to the hub of the device for the following
+Set_Interface requests to the device to get ACK successfully.
 
-stratix10_svc_send() is a function from Intel Stratix10 service layer 
-driver, which is used by service clients (RSU and FPGA manager drivers 
-as now) to add a message to the service layer driver's queue for being 
-sent to the secure world via SMC call.
+The Clear_TT_Buffer request sent to the hub includes the address of
+the LS/FS child device in wValue field. usb_hub_clear_tt_buffer()
+uses udev->devnum to set the address wValue. This won't work for
+devices connected to xHC.
 
-It is not DMA related, we send messages via FIFO API.
+For other host controllers udev->devnum is the same as the address of
+the usb device, chosen and set by usb core. With xHC the controller
+hardware assigns the address, and won't be the same as devnum.
 
-The size of FIFO is sizeof(struct stratix10_svc_data) * 
-SVC_NUM_DATA_IN_FIFO, SVC_NUM_DATA_IN_FIFO is defined as 32.
+Here we have two patches.
+One is to add devaddr in struct usb_device for
+usb_hub_clear_tt_buffer() to use.
+Another is to invoke usb_hub_clear_tt_buffer() for halt processing.
+ 
+Signed-off-by: Jim Lin <jilin@nvidia.com>
 
-fifo_size = sizeof(struct stratix10_svc_data) * 	SVC_NUM_DATA_IN_FIFO;
-ret = kfifo_alloc(&controller->svc_fifo, fifo_size, GFP_KERNEL);
-if (ret) {
-	dev_err(dev, "failed to allocate FIFO\n");
-         return ret;
-}
-spin_lock_init(&controller->svc_fifo_lock);
+Jim Lin (2):
+  usb: Add devaddr in struct usb_device
+  usb: xhci: Add Clear_TT_Buffer
 
-It will not mess with stack sizes.
+ drivers/usb/core/hub.c       |  4 +++-
+ drivers/usb/host/xhci-ring.c | 27 ++++++++++++++++++++++++++-
+ drivers/usb/host/xhci.c      | 23 +++++++++++++++++++++++
+ drivers/usb/host/xhci.h      |  5 +++++
+ include/linux/usb.h          |  2 ++
+ 5 files changed, 59 insertions(+), 2 deletions(-)
 
-> thanks,
-> 
-> greg k-h
-> 
+-- 
+2.1.4
 
-Regards,
-Richard
