@@ -2,73 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E7962D7EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A34A2D7F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:41:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbfE2IjP convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 29 May 2019 04:39:15 -0400
-Received: from mga09.intel.com ([134.134.136.24]:1548 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725917AbfE2IjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:39:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 01:39:14 -0700
-X-ExtLoop1: 1
-Received: from pgsmsx105.gar.corp.intel.com ([10.221.44.96])
-  by orsmga001.jf.intel.com with ESMTP; 29 May 2019 01:39:11 -0700
-Received: from pgsmsx103.gar.corp.intel.com ([169.254.2.93]) by
- PGSMSX105.gar.corp.intel.com ([169.254.4.53]) with mapi id 14.03.0415.000;
- Wed, 29 May 2019 16:39:10 +0800
-From:   "Voon, Weifeng" <weifeng.voon@intel.com>
-To:     Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Giuseppe Cavallaro" <peppe.cavallaro@st.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "Florian Fainelli" <f.fainelli@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        biao huang <biao.huang@mediatek.com>,
-        "Ong, Boon Leong" <boon.leong.ong@intel.com>,
-        "Kweh, Hock Leong" <hock.leong.kweh@intel.com>
-Subject: RE: [PATCH net-next v3 0/5] net: stmmac: enable EHL SGMII
-Thread-Topic: [PATCH net-next v3 0/5] net: stmmac: enable EHL SGMII
-Thread-Index: AQHVFcTZLHl57v7lrUiIrmrnYDAoDqaBNN0AgACP6TA=
-Date:   Wed, 29 May 2019 08:39:09 +0000
-Message-ID: <D6759987A7968C4889FDA6FA91D5CBC81470697E@PGSMSX103.gar.corp.intel.com>
-References: <1559125118-24324-1-git-send-email-weifeng.voon@intel.com>
- <78EB27739596EE489E55E81C33FEC33A0B932F7F@DE02WEMBXB.internal.synopsys.com>
-In-Reply-To: <78EB27739596EE489E55E81C33FEC33A0B932F7F@DE02WEMBXB.internal.synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.600.7
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726238AbfE2Ilz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:41:55 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60480 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbfE2Ily (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 04:41:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ex7cwI1Y+T7IBQhxpqiVOAaTe/SzLACjja508VX2LQU=; b=gpWtvEz6EvTgc7TnciPDmZ0uZ
+        nx6WzAdVB3SRP9VM+MVa2CYPHzeMWWzyMVIbRoNzwNqi9536+ODL7a5KcpE9D0mETIaVnuCP7Ghbj
+        sxPjkMgUkCw/x78xOg15xQ+JR1isDEFx63hR5afjPWLdBhYEF4Qf9hZgiWpZ6HNKccLQh+ElgnplW
+        RiBArqSiFDwFMdesPZSRP/yhzWz0GJaYA5tKORPTWGSxAcQ96dVO40xuK2ditoUdPISAOmRnJ/s3v
+        LFtEQQlsXv394dFVSuvtKgMwEMhXQ8j9bHW+EhZmisHjMGbVaScf7bkXY8qP4EcasYZcMvig25eI6
+        chdgLXsMQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVu9B-0002aD-8s; Wed, 29 May 2019 08:41:21 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D228E201A7E41; Wed, 29 May 2019 10:41:18 +0200 (CEST)
+Date:   Wed, 29 May 2019 10:41:18 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, williams@redhat.com,
+        daniel@bristot.me, "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Subject: Re: [RFC 3/3] preempt_tracer: Use a percpu variable to control
+ traceble calls
+Message-ID: <20190529084118.GG2623@hirez.programming.kicks-ass.net>
+References: <cover.1559051152.git.bristot@redhat.com>
+ <9b0698774be3bb406e2b8b2c12dc1fb91532bff0.1559051152.git.bristot@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b0698774be3bb406e2b8b2c12dc1fb91532bff0.1559051152.git.bristot@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> Did you rebase this series against latest net-next tree ?
-> 
-> Because you are missing MMC module in your HWIF table entry. This module
-> was recently added with the addition of selftests.
+On Tue, May 28, 2019 at 05:16:24PM +0200, Daniel Bristot de Oliveira wrote:
+>  #if defined(CONFIG_PREEMPT) && (defined(CONFIG_DEBUG_PREEMPT) || \
+>  				defined(CONFIG_TRACE_PREEMPT_TOGGLE))
+> +
+> +DEFINE_PER_CPU(int, __traced_preempt_count) = 0;
+>  /*
+>   * If the value passed in is equal to the current preempt count
+>   * then we just disabled preemption. Start timing the latency.
+>   */
+>  void preempt_latency_start(int val)
+>  {
+> -	if (preempt_count() == val) {
+> +	int curr = this_cpu_read(__traced_preempt_count);
 
-No, the base is on last Thursday. Let me rebased on the latest net-next and submit for v4.
+We actually have this_cpu_add_return();
 
-Thanks,
-Weifeng
+> +
+> +	if (!curr) {
+>  		unsigned long ip = get_lock_parent_ip();
+>  #ifdef CONFIG_DEBUG_PREEMPT
+>  		current->preempt_disable_ip = ip;
+>  #endif
+>  		trace_preempt_off(CALLER_ADDR0, ip);
+>  	}
+> +
+> +	this_cpu_write(__traced_preempt_count, curr + val);
+>  }
+>  
+>  static inline void preempt_add_start_latency(int val)
+> @@ -3200,8 +3206,12 @@ NOKPROBE_SYMBOL(preempt_count_add);
+>   */
+>  void preempt_latency_stop(int val)
+>  {
+> -	if (preempt_count() == val)
+> +	int curr = this_cpu_read(__traced_preempt_count) - val;
 
-> 
-> Thanks,
-> Jose Miguel Abreu
+this_cpu_sub_return();
+
+> +
+> +	if (!curr)
+>  		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
+> +
+> +	this_cpu_write(__traced_preempt_count, curr);
+>  }
+
+Can't say I love this, but it is miles better than the last patch.
