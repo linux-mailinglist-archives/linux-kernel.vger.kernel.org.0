@@ -2,128 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01BDE2E870
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 00:44:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD0F12E881
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 00:49:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbfE2Wo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 18:44:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726099AbfE2Wo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 18:44:27 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47F55242B7;
-        Wed, 29 May 2019 22:44:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559169865;
-        bh=aKHSIkDbzxATBUyOwATnE+u9n6O5//MnT+XxsgiEgMw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Lua8D0OEdQGWNihWIIxnwi8g2DSd4p3FPHXUy/wPDm2mJJFGtr9iud1QVtqcVZ6nY
-         JjU1tC6/svRlClz2RLkeEg487A1MsvGqcAmQhInkA6731FKKDXGUVB4BtZZvHthQLM
-         YtliyN5/GyYmIF4EAyFC4b2Zxh+Ilh06OTNDKszc=
-Date:   Wed, 29 May 2019 15:44:24 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     axboe@kernel.dk, hch@lst.de, peterz@infradead.org, oleg@redhat.com,
-        gkohli@codeaurora.org, mingo@redhat.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/page_io: fix a crash in do_task_dead()
-Message-Id: <20190529154424.c0fe2758cf5af42ff258714a@linux-foundation.org>
-In-Reply-To: <1559156813-30681-1-git-send-email-cai@lca.pw>
-References: <1559156813-30681-1-git-send-email-cai@lca.pw>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726674AbfE2WtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 18:49:21 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36837 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbfE2WtV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 18:49:21 -0400
+Received: by mail-pg1-f196.google.com with SMTP id a3so757303pgb.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 15:49:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OtENOwKeHAEIcv8DtGFlUjGL0dIz5rExz7T3XsDoNZ8=;
+        b=kxP3qDMIzoaU9z24i/FcOYvYCdzGKPbAwkgXh8mqLAlP0h6YYo+/xQkfBD8OHVleuJ
+         DTOXqzHo7+JcQKVqt0qI9IZGLyOqPuB2qbQid2aOXHv4OAXoZlYdsSKK5MollRuLb9Ai
+         nZiV78bSfNZUhc6EzNm2LeUa0hFEVomLt1iCe3erhmMyjyBw1VknYFNCdHQXSa9q10d8
+         u+OD0jTmFnoiN7gNA0+uHiahUFn1N8IQOIEJCTnHGbMZpjm0FGw0Lsqly/w1z8yq46JC
+         2CvgPcS9CjCkPhSCXQ4dObIlGL4C+A87Fm7uL3juH7YzM7uIqfeTSDuW+iGxx5+jdD9d
+         UdTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OtENOwKeHAEIcv8DtGFlUjGL0dIz5rExz7T3XsDoNZ8=;
+        b=GpjwmBrcwydPd0wn806Bu1aMAFD/YeiaY9icsBEcZ6HboxLwstp8aGGOEq13V7EbD5
+         enFfHNn5ZfnycGt/lIvVP4Jnr1DkRVrcBNnrQ1EQpvJI0vRwsbKNTDPQyuiU0Lq+BnTX
+         E0/Qwd0a1PzkQitdGzEfRw6rva7H+yUAd1gYEgJjlfroCjt5L60TPML8FoydvmZAxlAJ
+         MJIc8W0arNsug2YpaBjhmIrSH0JMLyfPJXqmwymK46W7H262FvV9Bp/eQqttPKdhEmke
+         O2W+jn4pRMx6MbirCBkYlmUHG5SA1a1kMIeY6FqQ6YzfEGSlUSAEZXTzbFxCzAxeCjQP
+         FDzw==
+X-Gm-Message-State: APjAAAVLtX3unKktQ97yIkNRkl9ZEtsZYImxWio4Ql5zqLHRqdp4SxOX
+        z1SpxTjY6wa7lU1suWlNWZM=
+X-Google-Smtp-Source: APXvYqxCUru4wlx+HuYWWTkP4QLXjDPZV6qos9q5kkqjQNUFnwCoUEdp8vdWj72Y5aCS7V0F6OIzFw==
+X-Received: by 2002:a62:4ed8:: with SMTP id c207mr44834pfb.241.1559170160671;
+        Wed, 29 May 2019 15:49:20 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id j72sm637334pje.12.2019.05.29.15.49.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 May 2019 15:49:19 -0700 (PDT)
+Date:   Wed, 29 May 2019 15:48:07 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     hch@lst.de, robin.murphy@arm.com, m.szyprowski@samsung.com,
+        vdumpa@nvidia.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, chris@zankel.net, jcmvbkbc@gmail.com,
+        joro@8bytes.org, dwmw2@infradead.org, tony@atomide.com,
+        akpm@linux-foundation.org, sfr@canb.auug.org.au,
+        treding@nvidia.com, keescook@chromium.org, iamjoonsoo.kim@lge.com,
+        wsa+renesas@sang-engineering.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org,
+        dann.frazier@canonical.com, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH v3 1/2] dma-contiguous: Abstract
+ dma_{alloc,free}_contiguous()
+Message-ID: <20190529224806.GA3270@Asurada-Nvidia.nvidia.com>
+References: <20190524040633.16854-1-nicoleotsuka@gmail.com>
+ <20190524040633.16854-2-nicoleotsuka@gmail.com>
+ <20190529183546.GA12747@archlinux-epyc>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190529183546.GA12747@archlinux-epyc>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 May 2019 15:06:53 -0400 Qian Cai <cai@lca.pw> wrote:
+Hi Nathan,
 
-> The commit 0619317ff8ba ("block: add polled wakeup task helper")
-> replaced wake_up_process() with blk_wake_io_task() in
-> end_swap_bio_read() which triggers a crash when running heavy swapping
-> workloads.
+On Wed, May 29, 2019 at 11:35:46AM -0700, Nathan Chancellor wrote:
+> This commit is causing boot failures in QEMU on x86_64 defconfig:
 > 
-> [T114538] kernel BUG at kernel/sched/core.c:3462!
-> [T114538] Process oom01 (pid: 114538, stack limit = 0x000000004f40e0c1)
-> [T114538] Call trace:
-> [T114538]  do_task_dead+0xf0/0xf8
-> [T114538]  do_exit+0xd5c/0x10fc
-> [T114538]  do_group_exit+0xf4/0x110
-> [T114538]  get_signal+0x280/0xdd8
-> [T114538]  do_notify_resume+0x720/0x968
-> [T114538]  work_pending+0x8/0x10
+> https://travis-ci.com/ClangBuiltLinux/continuous-integration/jobs/203825363
 > 
-> This is because shortly after set_special_state(TASK_DEAD),
-> end_swap_bio_read() is called from an interrupt handler that revive the
-> task state to TASK_RUNNING causes __schedule() to return and trip the
-> BUG() later.
+> Attached is a bisect log and a boot log with GCC (just to show it is not
+> a compiler thing).
 > 
-> [  C206] Call trace:
-> [  C206]  dump_backtrace+0x0/0x268
-> [  C206]  show_stack+0x20/0x2c
-> [  C206]  dump_stack+0xb4/0x108
-> [  C206]  blk_wake_io_task+0x7c/0x80
-> [  C206]  end_swap_bio_read+0x22c/0x31c
-> [  C206]  bio_endio+0x3d8/0x414
-> [  C206]  dec_pending+0x280/0x378 [dm_mod]
-> [  C206]  clone_endio+0x128/0x2ac [dm_mod]
-> [  C206]  bio_endio+0x3d8/0x414
-> [  C206]  blk_update_request+0x3ac/0x924
-> [  C206]  scsi_end_request+0x54/0x350
-> [  C206]  scsi_io_completion+0xf0/0x6f4
-> [  C206]  scsi_finish_command+0x214/0x228
-> [  C206]  scsi_softirq_done+0x170/0x1a4
-> [  C206]  blk_done_softirq+0x100/0x194
-> [  C206]  __do_softirq+0x350/0x790
-> [  C206]  irq_exit+0x200/0x26c
-> [  C206]  handle_IPI+0x2e8/0x514
-> [  C206]  gic_handle_irq+0x224/0x228
-> [  C206]  el1_irq+0xb8/0x140
-> [  C206]  _raw_spin_unlock_irqrestore+0x3c/0x74
-> [  C206]  do_task_dead+0x88/0xf8
-> [  C206]  do_exit+0xd5c/0x10fc
-> [  C206]  do_group_exit+0xf4/0x110
-> [  C206]  get_signal+0x280/0xdd8
-> [  C206]  do_notify_resume+0x720/0x968
-> [  C206]  work_pending+0x8/0x10
+> My QEMU command line is:
 > 
-> Before the offensive commit, wake_up_process() will prevent this from
-> happening by taking the pi_lock and bail out immediately if TASK_DEAD is
-> set.
+> qemu-system-x86_64 -m 512m \
+>                    -drive file=images/x86_64/rootfs.ext4,format=raw,if=ide \
+>                    -append 'console=ttyS0 root=/dev/sda' \
+>                    -nographic \
+>                    -kernel arch/x86_64/boot/bzImage
 > 
-> if (!(p->state & TASK_NORMAL))
-> 	goto out;
+> and the rootfs is available here:
+> 
+> https://github.com/ClangBuiltLinux/continuous-integration/raw/master/images/x86_64/rootfs.ext4
 
-Nice description, thanks.
+Thanks for reporting the bug.
 
-And...  ouch.  blk_wake_io_task() is a scary thing - changing a task to
-TASK_RUNNING state from interrupt context.  I wonder whether the
-assumptions which that is making hold true in all situations even after
-this change.
+I am able to repro the issue with the given command and rootfs. The
+problem is that x86_64 has CONFIG_DMA_CMA=n so the helper function
+is blank on x86_64 while dma-direct should be platform independent.
 
-Is polled block IO important enough for doing this stuff?
-
-> Fixes: 0619317ff8ba ("block: add polled wakeup task helper")
-
-That will be needing a cc:stable, no?
-
-> ...
->
-> --- a/mm/page_io.c
-> +++ b/mm/page_io.c
-> @@ -140,7 +140,8 @@ static void end_swap_bio_read(struct bio *bio)
->  	unlock_page(page);
->  	WRITE_ONCE(bio->bi_private, NULL);
->  	bio_put(bio);
-> -	blk_wake_io_task(waiter);
-> +	/* end_swap_bio_read() could be called from an interrupt handler. */
-> +	wake_up_process(waiter);
->  	put_task_struct(waiter);
->  }
-
+A simple fix is to add alloc_pages_node() for !CONFIG_DMA_CMA. I'll
+submit a fix soon -- need to figure out a good way though. It seems
+that adding the fallback to the !CONFIG_DMA_CMA version would cause
+some recipe errors when building the kernel...
