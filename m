@@ -2,157 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F208D2E4EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 21:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48A462E4FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 21:07:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbfE2TDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 15:03:38 -0400
-Received: from mout1.fh-giessen.de ([212.201.18.42]:59600 "EHLO
-        mout1.fh-giessen.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbfE2TDh (ORCPT
+        id S1726453AbfE2THE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 15:07:04 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41745 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfE2THE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 15:03:37 -0400
-Received: from mx3.fh-giessen.de ([212.201.18.28])
-        by mout1.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1hW3rK-0007Qc-BO; Wed, 29 May 2019 21:03:34 +0200
-Received: from mailgate-1.its.fh-giessen.de ([212.201.18.15])
-        by mx3.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1hW3rK-004aeu-6m; Wed, 29 May 2019 21:03:34 +0200
-Received: from p2e5610f3.dip0.t-ipconnect.de ([46.86.16.243] helo=zwei.fritz.box)
-        by mailgate-1.its.fh-giessen.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1hW3rJ-0006F9-UO; Wed, 29 May 2019 21:03:34 +0200
-Subject: Re: [PATCH v2] drivers/media/dvb-frontends: Implement probe/remove
- for stv6110x
-To:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, mchehab@kernel.org, sean@mess.org
-References: <20190509195118.23027-1-tobias.johannes.klausmann@mni.thm.de>
- <20190529165633.8779-1-tobias.johannes.klausmann@mni.thm.de>
- <bcd12350374533ef090ae911be444e702e85134b.camel@perches.com>
-From:   Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
-Message-ID: <d1afd4d3-0dc5-718d-f7b4-f763f367ca1e@mni.thm.de>
-Date:   Wed, 29 May 2019 21:03:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Gecko/20100101
- Thunderbird/69.0a1
-MIME-Version: 1.0
-In-Reply-To: <bcd12350374533ef090ae911be444e702e85134b.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Wed, 29 May 2019 15:07:04 -0400
+Received: by mail-qt1-f194.google.com with SMTP id s57so3993332qte.8
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 12:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=2eusIL/nzSK2s9R9uc1xL5ZfmWg5RxkuxNc2ZFp/bBI=;
+        b=TuRLwggTqjMk7XmDlvWEFh9TFVyhGFcP7cAa/rG7hovF99AkCIp+gida+yKpx6zNRb
+         yxMzh2uQwoBuEv6qaVnjzfEhTgU7ZWKvASfjQabJ2eezbDEMvEagbhBL+Qqcv1GGVGTm
+         XxJ6fOaxTePIzwvUt0QyNMExAEKu6tLSeGZKX3InC/0HeGHLFG1Zkyf2cz7iWzgr50X4
+         tE0B31jOexY9fX8m7TLidU7CneRK3ddym1jAOkJOxpxRFiBvSWhwz+TtseXerHWOpYtQ
+         zzzyu61XjgMWMYkDQxCGgosvaoNbqOV4I80TH2d4+q+jsewB63jnJKbKK6duJswnTZZT
+         WUNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=2eusIL/nzSK2s9R9uc1xL5ZfmWg5RxkuxNc2ZFp/bBI=;
+        b=bxOwnaipenvnxMshBKQsUtaLtIx+Wx7jYLvdfWEdJAQHeZdZ4bgHSTaN+FIzRkUQeK
+         rDlvD3nn7O5LIOrs/8l5L/D65msiYaQCjNm4QMztMADHm+w+QpC5UPwvDjuv7BPY+eDn
+         gPQJmxfo22o0bqvRyzMBIwsvBKagQHpIMk8UQjlGa61rTjEzHwat+uxikafgrQd2TMzd
+         T5E1sb1s7yR0GMeVxxp4rC0HcxrtjG47txr067r1ygoLfyJGmW8t62lx1MR3FQU72O80
+         wKGPdRDnY3oC3550HFI30pGTHNoPpaqQgcvjQEzd/xFKBcfTQi1enViEw7xqtyNXhkYz
+         eeuQ==
+X-Gm-Message-State: APjAAAUw7Zg2bjit9k8UcsMtqpsHymW7wg3l8chozeD1XOejrQO733lj
+        vJCXfxBfVRetKYZ0IxQVbNSDJg==
+X-Google-Smtp-Source: APXvYqxChkKR1X4fRnQAKSVqrxHnQmFnpt86QUnpPveJVHSvTdcVeXPOSAggtkZ1iv79Bum90D+Wgw==
+X-Received: by 2002:ac8:1608:: with SMTP id p8mr58204451qtj.81.1559156823359;
+        Wed, 29 May 2019 12:07:03 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id g124sm168098qkf.55.2019.05.29.12.07.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 12:07:02 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     axboe@kernel.dk, hch@lst.de, peterz@infradead.org, oleg@redhat.com,
+        gkohli@codeaurora.org, mingo@redhat.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH] mm/page_io: fix a crash in do_task_dead()
+Date:   Wed, 29 May 2019 15:06:53 -0400
+Message-Id: <1559156813-30681-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The commit 0619317ff8ba ("block: add polled wakeup task helper")
+replaced wake_up_process() with blk_wake_io_task() in
+end_swap_bio_read() which triggers a crash when running heavy swapping
+workloads.
 
-On 29.05.19 20:45, Joe Perches wrote:
-> On Wed, 2019-05-29 at 18:56 +0200, Tobias Klausmann wrote:
->> Refactor out the common parts of stv6110x_probe() and stv6110x_attach()
->> into separate functions.
->>
->> This provides the needed functionality to use dvb_module_probe() instead
->> of dvb_attach()!
->>
->> v2:
->> - Impovments based on comments by Sean Young
->> - Fix checkpatch.pl --strict errors
-> trivia:
->
->> diff --git a/drivers/media/dvb-frontends/stv6110x.c b/drivers/media/dvb-frontends/stv6110x.c
-> []
->> @@ -333,6 +333,41 @@ static void stv6110x_release(struct dvb_frontend *fe)
->>   	kfree(stv6110x);
->>   }
->>   
->> +void st6110x_init_regs(struct stv6110x_state *stv6110x)
->> +{
->> +	u8 default_regs[] = {0x07, 0x11, 0xdc, 0x85, 0x17, 0x01, 0xe6, 0x1e};
-> static const u8...
->
->> +
->> +	memcpy(stv6110x->regs, default_regs, 8);
-> 	memcpy(stv6110x->regs, default_regs, ARRAY_SIZE(default_regs));
->
->> +}
->> +
->> +void stv6110x_setup_divider(struct stv6110x_state *stv6110x)
->> +{
->> +	switch (stv6110x->config->clk_div) {
->> +	default:
->> +	case 1:
->> +		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2],
->> +				  CTRL2_CO_DIV,
->> +				  0);
->> +		break;
->> +	case 2:
->> +		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2],
->> +				  CTRL2_CO_DIV,
->> +				  1);
->> +		break;
->> +	case 4:
->> +		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2],
->> +				  CTRL2_CO_DIV,
->> +				  2);
->> +		break;
->> +	case 8:
->> +	case 0:
->> +		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2],
->> +				  CTRL2_CO_DIV,
->> +				  3);
->> +		break;
->> +	}
->> +}
-> Probably more sensible (and smaller object code) written using
-> an automatic like:
->
-> {
-> 	int div;
->
-> 	switch (stv6110x->config->clk_div) {
-> 	case 8:
-> 		div = 3;
-> 		break;
-> 	case 4:
-> 		div = 2;
-> 		break;
-> 	case 2:
-> 		div = 1;
-> 		break;
-> 	case 1:
-> 	default:
-> 		div = 0;
-> 		break;
-> 	}
-> 	STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, div);
-> }
->
->> diff --git a/drivers/media/dvb-frontends/stv6110x_priv.h b/drivers/media/dvb-frontends/stv6110x_priv.h
-> []
->> @@ -54,11 +54,12 @@
->>   #define REFCLOCK_MHz				(stv6110x->config->refclk / 1000000)
->>   
->>   struct stv6110x_state {
->> +	struct dvb_frontend		*frontend;
->>   	struct i2c_adapter		*i2c;
->>   	const struct stv6110x_config	*config;
->>   	u8				regs[8];
-> Perhaps this 8 should be a define?
->
->
+[T114538] kernel BUG at kernel/sched/core.c:3462!
+[T114538] Process oom01 (pid: 114538, stack limit = 0x000000004f40e0c1)
+[T114538] Call trace:
+[T114538]  do_task_dead+0xf0/0xf8
+[T114538]  do_exit+0xd5c/0x10fc
+[T114538]  do_group_exit+0xf4/0x110
+[T114538]  get_signal+0x280/0xdd8
+[T114538]  do_notify_resume+0x720/0x968
+[T114538]  work_pending+0x8/0x10
 
-Hi,
+This is because shortly after set_special_state(TASK_DEAD),
+end_swap_bio_read() is called from an interrupt handler that revive the
+task state to TASK_RUNNING causes __schedule() to return and trip the
+BUG() later.
 
-thanks for the comments! If really desired i can change the code 
-further, adapting to your comments, but note that the code was 
-essentially just moved around to cater to both _probe() and attach(), 
-intentionally leaving it as it was before the patch!
+[  C206] Call trace:
+[  C206]  dump_backtrace+0x0/0x268
+[  C206]  show_stack+0x20/0x2c
+[  C206]  dump_stack+0xb4/0x108
+[  C206]  blk_wake_io_task+0x7c/0x80
+[  C206]  end_swap_bio_read+0x22c/0x31c
+[  C206]  bio_endio+0x3d8/0x414
+[  C206]  dec_pending+0x280/0x378 [dm_mod]
+[  C206]  clone_endio+0x128/0x2ac [dm_mod]
+[  C206]  bio_endio+0x3d8/0x414
+[  C206]  blk_update_request+0x3ac/0x924
+[  C206]  scsi_end_request+0x54/0x350
+[  C206]  scsi_io_completion+0xf0/0x6f4
+[  C206]  scsi_finish_command+0x214/0x228
+[  C206]  scsi_softirq_done+0x170/0x1a4
+[  C206]  blk_done_softirq+0x100/0x194
+[  C206]  __do_softirq+0x350/0x790
+[  C206]  irq_exit+0x200/0x26c
+[  C206]  handle_IPI+0x2e8/0x514
+[  C206]  gic_handle_irq+0x224/0x228
+[  C206]  el1_irq+0xb8/0x140
+[  C206]  _raw_spin_unlock_irqrestore+0x3c/0x74
+[  C206]  do_task_dead+0x88/0xf8
+[  C206]  do_exit+0xd5c/0x10fc
+[  C206]  do_group_exit+0xf4/0x110
+[  C206]  get_signal+0x280/0xdd8
+[  C206]  do_notify_resume+0x720/0x968
+[  C206]  work_pending+0x8/0x10
 
-Greetings,
+Before the offensive commit, wake_up_process() will prevent this from
+happening by taking the pi_lock and bail out immediately if TASK_DEAD is
+set.
 
-Tobias
+if (!(p->state & TASK_NORMAL))
+	goto out;
+
+Fixes: 0619317ff8ba ("block: add polled wakeup task helper")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ mm/page_io.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mm/page_io.c b/mm/page_io.c
+index 2e8019d0e048..dc2d3e037ccf 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -140,7 +140,8 @@ static void end_swap_bio_read(struct bio *bio)
+ 	unlock_page(page);
+ 	WRITE_ONCE(bio->bi_private, NULL);
+ 	bio_put(bio);
+-	blk_wake_io_task(waiter);
++	/* end_swap_bio_read() could be called from an interrupt handler. */
++	wake_up_process(waiter);
+ 	put_task_struct(waiter);
+ }
+ 
+-- 
+1.8.3.1
 
