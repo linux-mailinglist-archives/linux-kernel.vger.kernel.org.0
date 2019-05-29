@@ -2,116 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15B302E707
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 23:06:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA7DA2E710
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 23:08:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfE2VGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 17:06:00 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34949 "EHLO
+        id S1726649AbfE2VIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 17:08:02 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43689 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726454AbfE2VF7 (ORCPT
+        with ESMTP id S1726428AbfE2VIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 17:05:59 -0400
-Received: by mail-pg1-f193.google.com with SMTP id t1so619316pgc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 14:05:59 -0700 (PDT)
+        Wed, 29 May 2019 17:08:02 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f25so597109pgv.10
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 14:08:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=from:to:cc:subject:references:date:in-reply-to:message-id
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
          :user-agent:mime-version;
-        bh=IK6TE1g/zjrlYdKpXduba6GIWdiYkCXHBc8wY5Q2h6c=;
-        b=vtINRHGv9pOMzEibPlyS5UheCDyPErD1isWONiJgdUP9nFIKtlhvlR8khJ6OGtj8Ub
-         2wdHJ81EyLkh+O2THYqHMuUQbZJF51XI2o7C4rXJKaweU9flDgqo6sZDLCB0F0IFFr3o
-         XqnUqkKAZMp1Fis0qGAWaWgx5BHhAoA8b1/epmScbDLNT3udqtjsXbQv7IDkMa30s/4G
-         TamPt5Ni00hfDsvhp5BYEE1NK/vbSsMEkiDZqBc9TmZUl3WysTgYsyGgX0XmeD1uB6W5
-         Er8tVXbeNNpFaTnDtxluP9+RPFR/EDG7A/hRp71FY8UUlceZIoQggoxcp7CX9wYlac9A
-         /HXg==
+        bh=JDuSTehyNdkjsOxtouLoAdMdAueINAK3K8uBz+p0jwg=;
+        b=iCu9MPsyqSyo52dk3bz2YcMkQmNZYRBnUvKfoC/4nlsyxR2kImqL5WSQ/tyUgbQGS5
+         tWRxoAuFxGICRlXINV3c2tZaoNnVTDCu3AQWUlvkm0C+fQdRbz4FGqR1DvMkNENEbQCo
+         4mLnFfcmw7g7RiFYFM3uP/L9kskO6vNvXIOsYcoEhUccyXOhOgTv1ZIoqlt4GkhouIyt
+         NoatEjQ0v842w1+LfUE6qcm/wVA+RI1gtWZSmg7y9eYS/xmE8gKbr0HdmnWyXfEA8pYA
+         D2roDVoI+GkFybcqvS37aJdhvvXWEunPHYJZmGU1JBmPeR7muDxlo4h6jHkWn7gz9wTu
+         D19Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=IK6TE1g/zjrlYdKpXduba6GIWdiYkCXHBc8wY5Q2h6c=;
-        b=e8wjFE/ZVxrqU73Ihfr02YdgHcGkuIWzOcGWaintvg1Y3UpC6wbUiNUWatE26Zeklp
-         ovBA54H+93eK4zVONx6UedfW1a0z3YFg/V/SAHxCkl7inV+I7Sqq1bw/hwlmj/6k3D9j
-         1ekcI+uS0t5o/M87LWlm3GZKDw/v+I65JAAosdEc/gix+qMjWxrab2WarzJdQsBPWd5M
-         ugHEtLw5zbuA9NK7jezPf0pRrya7qoHbdsgdfJbOw60elJ+7c0SmY08AcOnIpvMZ4L6a
-         rYb/FjyBly8cUDUVHxX7pJaIBHZHMlcDUpwZjYy2QNT8vwmsu3Co7nsXODI8CmHedrqF
-         LN8w==
-X-Gm-Message-State: APjAAAVPawE6AwIKPyiwXT4VYSNnKoSpFRe4mqoPR/CCFh/7Qb84dQsq
-        I2YSbot95Sc+FHgN+cZizDAt9Q==
-X-Google-Smtp-Source: APXvYqziz3dX83BfWwOt4Dg3dahd01BeeDJYhvSZSrbtcPTk/gYYJdIsVLXiqebnxwhOWddLSw5chQ==
-X-Received: by 2002:a63:1460:: with SMTP id 32mr141850372pgu.319.1559163958462;
-        Wed, 29 May 2019 14:05:58 -0700 (PDT)
-Received: from bsegall-linux.svl.corp.google.com.localhost ([2620:15c:2cd:202:39d7:98b3:2536:e93f])
-        by smtp.gmail.com with ESMTPSA id z9sm254119pgc.82.2019.05.29.14.05.56
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=JDuSTehyNdkjsOxtouLoAdMdAueINAK3K8uBz+p0jwg=;
+        b=PZINtSUWLZCN2hIEn4jKmOnae1IfUjduYoqJkE4jwwGNIjmW77xxUlH868LHKfo08Y
+         YeSKIeX8QZsPBdRka0+noTtxHj8eG0Yw3kz9Wi3TPIAl5kMVKPou/XC2f+mmPn6+kD5K
+         rSKi/oK1WxV4LCN32DpfauutXsgvJmIa1MA+5GM+FPNCrSHwsR+S3ZzFlhoG80CHVxM/
+         DxZkfYFUdu3tiFV6OZb8toqcbPTG6SljiRpJ1sNr66mm4biaEypk6f0sBzR0qCVGjFe0
+         5b4KhvdeK+o+1KpGTq/vE1sdQOxN9DIFvkZIhLUydIpLGZP4EtMVjyhlPGjwUG0B++k1
+         S18Q==
+X-Gm-Message-State: APjAAAUQRd3qahqXekKXz4wVfEIWu8CkeFvKFbIUx1y05R+xupqhLtF3
+        jZvepmoUJWlUlERrccfSqqmXAQ==
+X-Google-Smtp-Source: APXvYqz7P8HgjdZeBHIm1rggdqtNB5srYYVApd3MRmDP73Wpy18Y0LXtAZVWv+Kw+t04RSc4FWh44w==
+X-Received: by 2002:a62:e303:: with SMTP id g3mr150555799pfh.220.1559164080811;
+        Wed, 29 May 2019 14:08:00 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id 25sm574143pfp.76.2019.05.29.14.07.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 14:05:57 -0700 (PDT)
-From:   bsegall@google.com
-To:     Dave Chiluk <chiluk+linux@indeed.com>
-Cc:     Phil Auld <pauld@redhat.com>, Peter Oskolkov <posk@posk.io>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Brendan Gregg <bgregg@netflix.com>,
-        Kyle Anderson <kwa@yelp.com>,
-        Gabriel Munos <gmunoz@netflix.com>,
-        John Hammond <jhammond@indeed.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        pjt@google.com
-Subject: Re: [PATCH v3 1/1] sched/fair: Fix low cpu usage with high throttling by removing expiration of cpu-local slices
-References: <1558121424-2914-1-git-send-email-chiluk+linux@indeed.com>
-        <1559156926-31336-1-git-send-email-chiluk+linux@indeed.com>
-        <1559156926-31336-2-git-send-email-chiluk+linux@indeed.com>
-Date:   Wed, 29 May 2019 14:05:55 -0700
-In-Reply-To: <1559156926-31336-2-git-send-email-chiluk+linux@indeed.com> (Dave
-        Chiluk's message of "Wed, 29 May 2019 14:08:46 -0500")
-Message-ID: <xm264l5dynrg.fsf@bsegall-linux.svl.corp.google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        Wed, 29 May 2019 14:07:58 -0700 (PDT)
+Date:   Wed, 29 May 2019 14:07:58 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+cc:     ktkhai@virtuozzo.com, hannes@cmpxchg.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, hughd@google.com,
+        shakeelb@google.com, Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] Make deferred split shrinker memcg aware
+In-Reply-To: <2e23bd8c-6120-5a86-9e9e-ab43b02ce150@linux.alibaba.com>
+Message-ID: <alpine.DEB.2.21.1905291402360.242480@chino.kir.corp.google.com>
+References: <1559047464-59838-1-git-send-email-yang.shi@linux.alibaba.com> <alpine.DEB.2.21.1905281817090.86034@chino.kir.corp.google.com> <2e23bd8c-6120-5a86-9e9e-ab43b02ce150@linux.alibaba.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dave Chiluk <chiluk+linux@indeed.com> writes:
+On Wed, 29 May 2019, Yang Shi wrote:
 
-> It has been observed, that highly-threaded, non-cpu-bound applications
-> running under cpu.cfs_quota_us constraints can hit a high percentage of
-> periods throttled while simultaneously not consuming the allocated
-> amount of quota.  This use case is typical of user-interactive non-cpu
-> bound applications, such as those running in kubernetes or mesos when
-> run on multiple cpu cores.
->
-> This has been root caused to threads being allocated per cpu bandwidth
-> slices, and then not fully using that slice within the period. At which
-> point the slice and quota expires.  This expiration of unused slice
-> results in applications not being able to utilize the quota for which
-> they are allocated.
->
-> The expiration of per-cpu slices was recently fixed by
-> 'commit 512ac999d275 ("sched/fair: Fix bandwidth timer clock drift
-> condition")'.  Prior to that it appears that this has been broken since
-> at least 'commit 51f2176d74ac ("sched/fair: Fix unlocked reads of some
-> cfs_b->quota/period")' which was introduced in v3.16-rc1 in 2014.  That
-> added the following conditional which resulted in slices never being
-> expired.
+> > Right, we've also encountered this.  I talked to Kirill about it a week or
+> > so ago where the suggestion was to split all compound pages on the
+> > deferred split queues under the presence of even memory pressure.
+> > 
+> > That breaks cgroup isolation and perhaps unfairly penalizes workloads that
+> > are running attached to other memcg hierarchies that are not under
+> > pressure because their compound pages are now split as a side effect.
+> > There is a benefit to keeping these compound pages around while not under
+> > memory pressure if all pages are subsequently mapped again.
+> 
+> Yes, I do agree. I tried other approaches too, it sounds making deferred split
+> queue per memcg is the optimal one.
+> 
 
+The approach we went with were to track the actual counts of compound 
+pages on the deferred split queue for each pgdat for each memcg and then 
+invoke the shrinker for memcg reclaim and iterate those not charged to the 
+hierarchy under reclaim.  That's suboptimal and was a stop gap measure 
+under time pressure: it's refreshing to see the optimal method being 
+pursued, thanks!
 
-Yeah, having run the test, stranding only 1 ms per cpu rather than 5
-doesn't help if you only have 10 ms of quota and even 10 threads/cpus.
-The slack timer isn't important in this test, though I think it probably
-should be changed.
+> > I'm curious if your internal applications team is also asking for
+> > statistics on how much memory can be freed if the deferred split queues
+> > can be shrunk?  We have applications that monitor their own memory usage
+> 
+> No, but this reminds me. The THPs on deferred split queue should be accounted
+> into available memory too.
+> 
 
-Decreasing min_cfs_rq_runtime helps, but would mean that we have to pull
-quota more often / always. The worst case here I think is where you
-run/sleep for ~1ns, so you wind up taking the lock twice every
-min_cfs_rq_runtime: once for assign and once to return all but min,
-which you then use up doing short run/sleep. I suppose that determines
-how much we care about this overhead at all.
+Right, and we have also seen this for users of MADV_FREE that have both an 
+increased rss and memcg usage that don't realize that the memory is freed 
+under pressure.  I'm thinking that we need some kind of MemAvailable for 
+memcg hierarchies to be the authoritative source of what can be reclaimed 
+under pressure.
 
-Removing expiration means that in the worst case period and quota can be
-effectively twice what the user specified, but only on very particular
-workloads.
+> > through memcg stats or usage and proactively try to reduce that usage when
+> > it is growing too large.  The deferred split queues have significantly
+> > increased both memcg usage and rss when they've upgraded kernels.
+> > 
+> > How are your applications monitoring how much memory from deferred split
+> > queues can be freed on memory pressure?  Any thoughts on providing it as a
+> > memcg stat?
+> 
+> I don't think they have such monitor. I saw rss_huge is abormal in memcg stat
+> even after the application is killed by oom, so I realized the deferred split
+> queue may play a role here.
+> 
 
-I think we should at least think about instead lowering
-min_cfs_rq_runtime to some smaller value.
+Exactly the same in my case :)  We were likely looking at the exact same 
+issue at the same time.
+
+> The memcg stat doesn't have counters for available memory as global vmstat. It
+> may be better to have such statistics, or extending reclaimable "slab" to
+> shrinkable/reclaimable "memory".
+> 
+
+Have you considered following how NR_ANON_MAPPED is tracked for each pgdat 
+and using that as an indicator of when the modify a memcg stat to track 
+the amount of memory on a compound page?  I think this would be necessary 
+for userspace to know what their true memory usage is.
