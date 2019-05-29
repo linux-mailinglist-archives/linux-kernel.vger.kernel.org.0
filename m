@@ -2,187 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AD952E5FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:23:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2E752E607
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:26:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbfE2UXZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 16:23:25 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45626 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbfE2UXZ (ORCPT
+        id S1726643AbfE2U0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 16:26:08 -0400
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:38137 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfE2U0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 16:23:25 -0400
-Received: by mail-ed1-f66.google.com with SMTP id f20so5559504edt.12;
-        Wed, 29 May 2019 13:23:23 -0700 (PDT)
+        Wed, 29 May 2019 16:26:06 -0400
+Received: by mail-ua1-f66.google.com with SMTP id r19so1598649uap.5
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 13:26:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Gj4vz0BGKXUgHJIxFFhu0LjPh9MmI0i8cM1MVMHpNXU=;
-        b=pb/HkhkNK9dn/jM5IxeXqJl+j0jRBb+Nn98t0z9L0oMjEduFBL/zlhPaGLiB8AUI3Q
-         0t5x+Yh2MOpB62mO/xj2m/eVYFHfW5hX10n6oLh+DtoIBRV3XBq8EU7FdVWTGDAwodHt
-         HuG7NzenFCvPZ5rpAcoQmuumbt7kEGWrfgqf3C7Jw2ee0mHXo0hW6G1nuSicWDVQ3rm7
-         KEltz5eWpQ3cU0Mljjo1yXP9Ts98PF8KQZZzbt4j98Vc15OpkVul4xslUBV5Mc6URt5s
-         9mmv11fwO22QS7TpHlKsZTb8HdOUq/fwAUprwLIW1lyqFtnmdHA+T7pIyZdQJPhBXoFg
-         hDAw==
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=1ST3Wiu11ivfdAEvM0Ly2pAInzScgdv/JYNtE1R9Tmw=;
+        b=Hvkcvhl5O83DvR3Z5w+npUq2XaOH0e5T7Y4TtsY60VcZ065NPPR3kIlKZon29rTSYD
+         7eO4uppCfMTiUDxe5U9/9UmoBETLTT4j4wbl7qfn7uU4El0XH8sd8sXSSh3i+ePtVfPm
+         vEqMBs8AWM0fw5Bu1oLmmwoCvHkEKvNKgcB7t0Czfh5v0jCapVVg9ZToNQJrdS7oAsHx
+         fYqJJWj38HEKsuPY4QYlk2oh1+PKmndwwUAhsIA9+VluWUfdvjCuzs6TrGgwjBQ6512G
+         /VyZA5K+gi8yFk4/1t1ISqaRHAKQG8PLwNduWaBN645MgEThjBiiL+YyXA8rAVt7h1o6
+         lOqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Gj4vz0BGKXUgHJIxFFhu0LjPh9MmI0i8cM1MVMHpNXU=;
-        b=Hq136Cg7E4NrJeX9fFTgW/JmykQkUBQw7ATKd4M9OMILl5uODaqvYj9D/qlEuKrLMp
-         fsGkdjlrZs065QVEuYyzuBkaB2vTF3sxWaELqXXNKLjCI4WCvQ2ufDFtky8EG2OADn0a
-         0yGhpBj8HH9eNm9lVFMlQ1FN03MlBYSh1O6YUeYOfGlc2jCG9hJXW58FpZiP6oTk8gaj
-         0w39bcERjIfSH4E46SuzLRImd2UuI9ljUC2GSv7EfwyPEP86ODr0x6Ey4jpqABORcvzG
-         GP1eIf+kRO9gAmPeA1v4EPPA3tYGVZ+D2dnAcxpteJK0ERlvaKSMUtZGvxB7uc1uQKfA
-         J+KQ==
-X-Gm-Message-State: APjAAAWEjHAMoID06HxLF1sycMe2fT/V5ffQxujJSWpw1x4iqRLCoY3b
-        b9zWWQA00nueOyh4jqoul0C5vx8p2A2tq7oB08U=
-X-Google-Smtp-Source: APXvYqzpgPq4A6VzBKdh+gPHSU3+JZoMyepYWUYiLS9a2Dw2j1Q+wH5/Kl9CUek8B/idodVdai5RsjMIlcY0h4D7FEA=
-X-Received: by 2002:a50:92a3:: with SMTP id k32mr165996eda.123.1559161403202;
- Wed, 29 May 2019 13:23:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190528235627.1315-1-olteanv@gmail.com> <20190528235627.1315-2-olteanv@gmail.com>
- <CALAqxLWjT0ZJerFa+BVCKW+-ws6DYFy7kqEfNVK8ioGdY=VQeQ@mail.gmail.com>
-In-Reply-To: <CALAqxLWjT0ZJerFa+BVCKW+-ws6DYFy7kqEfNVK8ioGdY=VQeQ@mail.gmail.com>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Wed, 29 May 2019 23:23:12 +0300
-Message-ID: <CA+h21hqV_YzunTa3BqXr76HYfFCUj2S+1tzqDotyh3rYd8HK2Q@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/5] timecounter: Add helper for reconstructing
- partial timestamps
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1ST3Wiu11ivfdAEvM0Ly2pAInzScgdv/JYNtE1R9Tmw=;
+        b=ZPLRz3QfnEjyev21YlwDSwVTQTQTdgRudXJJpBJJCq9ndhoLB6Zq3Zzb2v0aNeyI7E
+         UyxLcoVXBvf4id3R3Nac1nWKli/7dw1kTsgwFQNieUnlANMxXLVeN1SZVWabK7eVjErl
+         WjwADnneZE+lbyS1tDZyveBmQ94bqi41NM2oKtll6pIAFZgAjnJDXS9Ecn2aHl9I+m+p
+         dRTUvGfPyl8zGJ1HtUJ8wsaK1AgyKz5BQOuwT5lseZuvNio4lBexM2ysd4odoyS4Gl2J
+         xY7suxJ6fKWUV90iJbIMxGX/iNQJX9kFKVLGjTdOxrqppHSYdmEm3KAYCmEZJJzI/oQ5
+         d4Mw==
+X-Gm-Message-State: APjAAAXW/ueZwMkyh0R8cJXy7hAZFcs66R6P3XjH+iO4+xPn1F3dbza4
+        yigKGT44gFGi6SaKvgJtq7Gpqg==
+X-Google-Smtp-Source: APXvYqxY9aOuURIZ1sHkvE/NIWxwvXR+y0F7Q2SE+lU807QKHa4GSW8TKn/Q5MBJV2wxoWDCGBgXtA==
+X-Received: by 2002:ab0:5a07:: with SMTP id l7mr30621189uad.78.1559161565870;
+        Wed, 29 May 2019 13:26:05 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id x71sm329206vkd.24.2019.05.29.13.26.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 13:26:05 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     axboe@kernel.dk
+Cc:     akpm@linux-foundation.org, hch@lst.de, peterz@infradead.org,
+        oleg@redhat.com, gkohli@codeaurora.org, mingo@redhat.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] block: fix a crash in do_task_dead()
+Date:   Wed, 29 May 2019 16:25:26 -0400
+Message-Id: <1559161526-618-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 May 2019 at 05:14, John Stultz <john.stultz@linaro.org> wrote:
->
-> On Tue, May 28, 2019 at 4:58 PM Vladimir Oltean <olteanv@gmail.com> wrote:
-> >
-> > Some PTP hardware offers a 64-bit free-running counter whose snapshots
-> > are used for timestamping, but only makes part of that snapshot
-> > available as timestamps (low-order bits).
-> >
-> > In that case, timecounter/cyclecounter users must bring the cyclecounter
-> > and timestamps to the same bit width, and they currently have two
-> > options of doing so:
-> >
-> > - Trim the higher bits of the timecounter itself to the number of bits
-> >   of the timestamps.  This might work for some setups, but if the
-> >   wraparound of the timecounter in this case becomes high (~10 times per
-> >   second) then this causes additional strain on the system, which must
-> >   read the clock that often just to avoid missing the wraparounds.
-> >
-> > - Reconstruct the timestamp by racing to read the PTP time within one
-> >   wraparound cycle since the timestamp was generated.  This is
-> >   preferable when the wraparound time is small (do a time-critical
-> >   readout once vs doing it periodically), and it has no drawback even
-> >   when the wraparound is comfortably sized.
-> >
-> > Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
-> > ---
-> >  include/linux/timecounter.h |  7 +++++++
-> >  kernel/time/timecounter.c   | 33 +++++++++++++++++++++++++++++++++
-> >  2 files changed, 40 insertions(+)
-> >
-> > diff --git a/include/linux/timecounter.h b/include/linux/timecounter.h
-> > index 2496ad4cfc99..03eab1f3bb9c 100644
-> > --- a/include/linux/timecounter.h
-> > +++ b/include/linux/timecounter.h
-> > @@ -30,6 +30,9 @@
-> >   *     by the implementor and user of specific instances of this API.
-> >   *
-> >   * @read:              returns the current cycle value
-> > + * @partial_tstamp_mask:bitmask in case the hardware emits timestamps
-> > + *                     which only capture low-order bits of the full
-> > + *                     counter, and should be reconstructed.
-> >   * @mask:              bitmask for two's complement
-> >   *                     subtraction of non 64 bit counters,
-> >   *                     see CYCLECOUNTER_MASK() helper macro
-> > @@ -38,6 +41,7 @@
-> >   */
-> >  struct cyclecounter {
-> >         u64 (*read)(const struct cyclecounter *cc);
-> > +       u64 partial_tstamp_mask;
-> >         u64 mask;
-> >         u32 mult;
-> >         u32 shift;
-> > @@ -136,4 +140,7 @@ extern u64 timecounter_read(struct timecounter *tc);
-> >  extern u64 timecounter_cyc2time(struct timecounter *tc,
-> >                                 u64 cycle_tstamp);
-> >
-> > +extern u64 cyclecounter_reconstruct(const struct cyclecounter *cc,
-> > +                                   u64 ts_partial);
-> > +
-> >  #endif
-> > diff --git a/kernel/time/timecounter.c b/kernel/time/timecounter.c
-> > index 85b98e727306..d4657d64e38d 100644
-> > --- a/kernel/time/timecounter.c
-> > +++ b/kernel/time/timecounter.c
-> > @@ -97,3 +97,36 @@ u64 timecounter_cyc2time(struct timecounter *tc,
-> >         return nsec;
-> >  }
-> >  EXPORT_SYMBOL_GPL(timecounter_cyc2time);
-> > +
-> > +/**
-> > + * cyclecounter_reconstruct - reconstructs @ts_partial
-> > + * @cc:                Pointer to cycle counter.
-> > + * @ts_partial:        Typically RX or TX NIC timestamp, provided by hardware as
-> > + *             the lower @partial_tstamp_mask bits of the cycle counter,
-> > + *             sampled at the time the timestamp was collected.
-> > + *             To reconstruct into a full @mask bit-wide timestamp, the
-> > + *             cycle counter is read and the high-order bits (up to @mask) are
-> > + *             filled in.
-> > + *             Must be called within one wraparound of @partial_tstamp_mask
-> > + *             bits of the cycle counter.
-> > + */
-> > +u64 cyclecounter_reconstruct(const struct cyclecounter *cc, u64 ts_partial)
-> > +{
-> > +       u64 ts_reconstructed;
-> > +       u64 cycle_now;
-> > +
-> > +       cycle_now = cc->read(cc);
-> > +
-> > +       ts_reconstructed = (cycle_now & ~cc->partial_tstamp_mask) |
-> > +                           ts_partial;
-> > +
-> > +       /* Check lower bits of current cycle counter against the timestamp.
-> > +        * If the current cycle counter is lower than the partial timestamp,
-> > +        * then wraparound surely occurred and must be accounted for.
-> > +        */
-> > +       if ((cycle_now & cc->partial_tstamp_mask) <= ts_partial)
-> > +               ts_reconstructed -= (cc->partial_tstamp_mask + 1);
-> > +
-> > +       return ts_reconstructed;
-> > +}
-> > +EXPORT_SYMBOL_GPL(cyclecounter_reconstruct);
->
-> Hrm. Is this actually generic? Would it make more sense to have the
-> specific implementations with this quirk implement this in their
-> read() handler? If not, why?
+The commit 0619317ff8ba ("block: add polled wakeup task helper")
+replaced wake_up_process() with blk_wake_io_task() in
+end_swap_bio_read() which triggers a crash when running heavy swapping
+workloads.
 
-Hi John, Richard,
+[T114538] kernel BUG at kernel/sched/core.c:3462!
+[T114538] Process oom01 (pid: 114538, stack limit = 0x000000004f40e0c1)
+[T114538] Call trace:
+[T114538]  do_task_dead+0xf0/0xf8
+[T114538]  do_exit+0xd5c/0x10fc
+[T114538]  do_group_exit+0xf4/0x110
+[T114538]  get_signal+0x280/0xdd8
+[T114538]  do_notify_resume+0x720/0x968
+[T114538]  work_pending+0x8/0x10
 
-It's not the cycle counter that needs reconstruction, but hardware
-timestamps based on it.  Hence not possible to add a workaround in the
-read() handler.
-If it's not desirable to have this helper function in the cyclecounter
-I'll move it to the driver in v2.
+This is because shortly after set_special_state(TASK_DEAD),
+end_swap_bio_read() is called from an interrupt handler that revive the
+task state to TASK_RUNNING causes __schedule() to return and trip the
+BUG() later.
 
-Thanks,
--Vladimir
+[  C206] Call trace:
+[  C206]  dump_backtrace+0x0/0x268
+[  C206]  show_stack+0x20/0x2c
+[  C206]  dump_stack+0xb4/0x108
+[  C206]  blk_wake_io_task+0x7c/0x80
+[  C206]  end_swap_bio_read+0x22c/0x31c
+[  C206]  bio_endio+0x3d8/0x414
+[  C206]  dec_pending+0x280/0x378 [dm_mod]
+[  C206]  clone_endio+0x128/0x2ac [dm_mod]
+[  C206]  bio_endio+0x3d8/0x414
+[  C206]  blk_update_request+0x3ac/0x924
+[  C206]  scsi_end_request+0x54/0x350
+[  C206]  scsi_io_completion+0xf0/0x6f4
+[  C206]  scsi_finish_command+0x214/0x228
+[  C206]  scsi_softirq_done+0x170/0x1a4
+[  C206]  blk_done_softirq+0x100/0x194
+[  C206]  __do_softirq+0x350/0x790
+[  C206]  irq_exit+0x200/0x26c
+[  C206]  handle_IPI+0x2e8/0x514
+[  C206]  gic_handle_irq+0x224/0x228
+[  C206]  el1_irq+0xb8/0x140
+[  C206]  _raw_spin_unlock_irqrestore+0x3c/0x74
+[  C206]  do_task_dead+0x88/0xf8
+[  C206]  do_exit+0xd5c/0x10fc
+[  C206]  do_group_exit+0xf4/0x110
+[  C206]  get_signal+0x280/0xdd8
+[  C206]  do_notify_resume+0x720/0x968
+[  C206]  work_pending+0x8/0x10
 
->
-> thanks
-> -john
+Before the offensive commit, wake_up_process() will prevent this from
+happening by taking the pi_lock and bail out immediately if TASK_DEAD is
+set.
+
+if (!(p->state & TASK_NORMAL))
+	goto out;
+
+Fix it by calling wake_up_process() if it is in a non-task context.
+
+Fixes: 0619317ff8ba ("block: add polled wakeup task helper")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ include/linux/blkdev.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 592669bcc536..290eb7528f54 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -1803,7 +1803,7 @@ static inline void blk_wake_io_task(struct task_struct *waiter)
+ 	 * that case, we don't need to signal a wakeup, it's enough to just
+ 	 * mark us as RUNNING.
+ 	 */
+-	if (waiter == current)
++	if (waiter == current && in_task())
+ 		__set_current_state(TASK_RUNNING);
+ 	else
+ 		wake_up_process(waiter);
+-- 
+1.8.3.1
+
