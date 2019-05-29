@@ -2,146 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0695E2DD48
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 14:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43AF22DD4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 14:40:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfE2Mjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 08:39:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbfE2Mjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 08:39:36 -0400
-Received: from oasis.local.home (unknown [12.156.218.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0E03208C3;
-        Wed, 29 May 2019 12:39:33 +0000 (UTC)
-Date:   Wed, 29 May 2019 08:39:30 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
+        id S1727138AbfE2Mj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 08:39:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45222 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726779AbfE2Mj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 08:39:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8569080D;
+        Wed, 29 May 2019 05:39:55 -0700 (PDT)
+Received: from [10.1.196.108] (e121650-lin.cambridge.arm.com [10.1.196.108])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2E023F59C;
+        Wed, 29 May 2019 05:39:53 -0700 (PDT)
+Subject: Re: [RFC 4/7] arm64: pmu: Add function implementation to update event
+ index in userpage.
 To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Daniel Bristot de Oliveira <bristot@redhat.com>,
-        linux-kernel@vger.kernel.org, williams@redhat.com,
-        daniel@bristot.me, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Subject: Re: [RFC 2/3] preempt_tracer: Disable IRQ while starting/stopping
- due to a preempt_counter change
-Message-ID: <20190529083930.5541130e@oasis.local.home>
-In-Reply-To: <20190529102038.GO2623@hirez.programming.kicks-ass.net>
-References: <cover.1559051152.git.bristot@redhat.com>
-        <f2ca7336162b6dc45f413cfe4e0056e6aa32e7ed.1559051152.git.bristot@redhat.com>
-        <20190529083357.GF2623@hirez.programming.kicks-ass.net>
-        <b47631c3-d65a-4506-098a-355c8cf50601@redhat.com>
-        <20190529102038.GO2623@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Cc:     Robin Murphy <robin.murphy@arm.com>, mark.rutland@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, acme@kernel.org, mingo@redhat.com,
+        linux-arm-kernel@lists.infradead.org
+References: <20190528150320.25953-1-raphael.gault@arm.com>
+ <20190528150320.25953-5-raphael.gault@arm.com>
+ <20190529094659.GK2623@hirez.programming.kicks-ass.net>
+ <42a937dd-5cf6-6738-6f69-005fce64138f@arm.com>
+ <d6f40c6c-6a73-bd7f-e384-050bd9428631@arm.com>
+ <0100f2bd-7940-0b81-4c03-205b295a048f@arm.com>
+ <20190529123256.GT2623@hirez.programming.kicks-ass.net>
+From:   Raphael Gault <raphael.gault@arm.com>
+Message-ID: <7178bdfe-92d0-22b5-60cf-b67a976dc6a2@arm.com>
+Date:   Wed, 29 May 2019 13:39:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190529123256.GT2623@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 29 May 2019 12:20:38 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+Hi Peter,
 
-> On Wed, May 29, 2019 at 11:40:34AM +0200, Daniel Bristot de Oliveira wrote:
-> > On 29/05/2019 10:33, Peter Zijlstra wrote:  
-> > > On Tue, May 28, 2019 at 05:16:23PM +0200, Daniel Bristot de Oliveira wrote:  
-> > >> The preempt_disable/enable tracepoint only traces in the disable <-> enable
-> > >> case, which is correct. But think about this case:
-> > >>
-> > >> ---------------------------- %< ------------------------------
-> > >> 	THREAD					IRQ
-> > >> 	   |					 |
-> > >> preempt_disable() {
-> > >>     __preempt_count_add(1)  
-> > >> 	------->	    smp_apic_timer_interrupt() {  
-> > >> 				preempt_disable()
-> > >> 				    do not trace (preempt count >= 1)
-> > >> 				    ....
-> > >> 				preempt_enable()
-> > >> 				    do not trace (preempt count >= 1)
-> > >> 			    }
-> > >>     trace_preempt_disable();
-> > >> }  
-> > >> ---------------------------- >% ------------------------------  
-> > >>
-> > >> The tracepoint will be skipped.  
-> > > 
-> > > .... for the IRQ. But IRQs are not preemptible anyway, so what the
-> > > problem?  
-> > 
-> > 
-> > right, they are.
-> > 
-> > exposing my problem in a more specific way:
-> > 
-> > To show in a model that an event always takes place with preemption disabled,
-> > but not necessarily with IRQs disabled, it is worth having the preemption
-> > disable events separated from IRQ disable ones.
-> > 
-> > The main reason is that, although IRQs disabled postpone the execution of the
-> > scheduler, it is more pessimistic, as it also delays IRQs. So the more precise
-> > the model is, the less pessimistic the analysis will be.  
+On 5/29/19 1:32 PM, Peter Zijlstra wrote:
+> On Wed, May 29, 2019 at 01:25:46PM +0100, Raphael Gault wrote:
+>> Hi Robin, Hi Peter,
+>>
+>> On 5/29/19 11:50 AM, Robin Murphy wrote:
+>>> On 29/05/2019 11:46, Raphael Gault wrote:
+>>>> Hi Peter,
+>>>>
+>>>> On 5/29/19 10:46 AM, Peter Zijlstra wrote:
+>>>>> On Tue, May 28, 2019 at 04:03:17PM +0100, Raphael Gault wrote:
+>>>>>> +static int armv8pmu_access_event_idx(struct perf_event *event)
+>>>>>> +{
+>>>>>> +    if (!(event->hw.flags & ARMPMU_EL0_RD_CNTR))
+>>>>>> +        return 0;
+>>>>>> +
+>>>>>> +    /*
+>>>>>> +     * We remap the cycle counter index to 32 to
+>>>>>> +     * match the offset applied to the rest of
+>>>>>> +     * the counter indeces.
+>>>>>> +     */
+>>>>>> +    if (event->hw.idx == ARMV8_IDX_CYCLE_COUNTER)
+>>>>>> +        return 32;
+>>>>>> +
+>>>>>> +    return event->hw.idx;
+>>>>>
+>>>>> Is there a guarantee event->hw.idx is never 0? Or should you, just like
+>>>>> x86, use +1 here?
+>>>>>
+>>>>
+>>>> You are right, I should use +1 here. Thanks for pointing that out.
+>>>
+>>> Isn't that already the case though, since we reserve index 0 for the
+>>> cycle counter? I'm looking at ARMV8_IDX_TO_COUNTER() here...
+>>>
+>>
+>> Well the current behaviour is correct and takes care of the zero case with
+>> the ARMV8_IDX_CYCLE_COUNTER check. But using ARMV8_IDX_TO_COUNTER() and add
+>> 1 would also work. However this seems indeed redundant with the current
+>> value held in event->hw.idx.
 > 
-> I'm not sure I follow, IRQs disabled fully implies !preemptible. I don't
-> see how the model would be more pessimistic than reality if it were to
-> use this knowledge.
+> Note that whatever you pick now will become ABI. Also note that the
+> comment/pseudo-code in perf_event_mmap_page suggests to use idx-1 for
+> the actual hardware access.
 > 
-> Any !0 preempt_count(), which very much includes (Hard)IRQ and SoftIRQ
-> counts, means non-preemptible.
 
-I believe I see what Daniel is talking about, but I hate the proposed
-solution ;-)
+Indeed that's true. As for the pseudo-code in perf_event_mmap_page. It 
+is compatible with what I do here. The two approach are only different 
+in form but it is in both case necessary to subtract 1 on the returned 
+value in order to access the correct hardware counter.
 
-First, if you care about real times that the CPU can't preempt
-(preempt_count != 0 or interrupts disabled), then you want the
-preempt_irqsoff tracer. The preempt_tracer is more academic where it
-just shows you when we disable preemption via the counter. But even
-with the preempt_irqsoff tracer you may not get the full length of time
-due to the above explained race.
+Thank you,
 
-	__preempt_count_add(1) <-- CPU now prevents preemption
-
-	<interrupt>
-		---->
-			trace_hardirqs_off() <-- Start preempt disable timer
-			handler();
-			trace_hardirqs_on() <-- Stop preempt disable timer (Diff A)
-		<----
-	trace_preempt_disable() <-- Start preempt disable timer
-
-	[..]
-
-	trace_preempt_enable() <-- Stop preempt disable timer (Diff B)
-
-	__preempt_count_sub(1) <-- CPU re-enables preemption
-
-The preempt_irqsoff tracer will break this into two parts: Diff A and
-Diff B, when in reality, the total time the CPU prevented preemption
-was A + B.
-
-Note, we can have the same race if an interrupt came in just after
-calling trace_preempt_enable() and before the __preempt_count_sub().
-
-What I would recommend is adding a flag to the task_struct that gets
-set before the __preempt_count_add() and cleared by the tracing
-function. If an interrupt goes off during this time, it will start the
-total time to record, and not end it on the trace_hardirqs_on() part.
-Now since we set this flag before disabling preemption, what if we get
-preempted before calling __preempt_count_add()?. Simple, have a hook in
-the scheduler (just connect to the sched_switch tracepoint) that checks
-that flag, and if it is set, it ends the preempt disable recording
-time. Also on scheduling that task back in, if that flag is set, start
-the preempt disable timer.
-
-It may get a bit more complex, but we can contain that complexity
-within the tracing code, and we don't have to do added irq disabling.
-
--- Steve
+-- 
+Raphael Gault
