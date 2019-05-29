@@ -2,516 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32ADB2E150
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C22D32E158
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:41:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbfE2Pk7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 11:40:59 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42928 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726069AbfE2Pk7 (ORCPT
+        id S1727020AbfE2Plw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 11:41:52 -0400
+Received: from sonic303-8.consmr.mail.bf2.yahoo.com ([74.6.131.47]:41634 "EHLO
+        sonic303-8.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726885AbfE2Plv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:40:59 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l2so2117299wrb.9
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 08:40:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:cc:subject:in-reply-to:references
-         :date:message-id:mime-version;
-        bh=OI3Jy/JrWiMzHeNTOD5NNihuGI91P2IEqFwXVIq1WNY=;
-        b=MI5Wv4dxZwtd255I8MZjAT6uNvFeGvIvkaV/oRTLPPkgzrXfRDyghcrAiy2H3tmAZZ
-         BD9JeeymDvtmeusVIJ5aQhnJlIItQG2wp9k+ip3uajJZdS5Akz4yQrb6Pp1sO0NH1qS5
-         FPRYOJN6umFh2Cjlk70K0Xi29mlUXJAO3v5qGPIURiCD8BlJk2O4APKR4jaSksgwxXdS
-         BlY4KzDezEMHUVkC8hPNekkaKN83Q7oYUloLzrFI841g+0A29JLRsNKLPZhKimEm3EFd
-         CTvK1tzyqKHN+h8YeHuZMIdnA0Y3OBqZygPsLtjneocKapUut0VqT2ulw3p03KWnj+iD
-         vd1A==
-X-Gm-Message-State: APjAAAXmjuCg0/0/TvwRuO6HV8+FoN2nqlAEsAHqZCRgQgYY0+3IHBJL
-        DyjZ0Qiweju0REA6MbLQ7ZtdWQ==
-X-Google-Smtp-Source: APXvYqxaQxnsVNEKgj8MQ464Hm1KuMOdf7uPK43mmqaBRnRgbux0C+DSc1ZX2T2bTs8jkMUSOKKfvw==
-X-Received: by 2002:a5d:444c:: with SMTP id x12mr12559927wrr.234.1559144456936;
-        Wed, 29 May 2019 08:40:56 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id z65sm9507093wme.37.2019.05.29.08.40.55
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 29 May 2019 08:40:56 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-hyperv\@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "olaf\@aepfle.de" <olaf@aepfle.de>,
-        "apw\@canonical.com" <apw@canonical.com>,
-        "jasowang\@redhat.com" <jasowang@redhat.com>,
-        "marcelo.cerri\@canonical.com" <marcelo.cerri@canonical.com>,
-        Sunil Muthuswamy <sunilmut@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>
-Cc:     Michael Kelley <mikelley@microsoft.com>
-Subject: Re: [PATCH 1/1] Drivers: hv: vmbus: Break out ISA independent parts of mshyperv.h
-In-Reply-To: <1559101942-4232-1-git-send-email-mikelley@microsoft.com>
-References: <1559101942-4232-1-git-send-email-mikelley@microsoft.com>
-Date:   Wed, 29 May 2019 17:40:55 +0200
-Message-ID: <875zptmfp4.fsf@vitty.brq.redhat.com>
+        Wed, 29 May 2019 11:41:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1559144509; bh=fIF8FHrdxkMOIaxKZ14fK2jsxLnWhP2FKBQ5OFGZvLk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=VJSAKcoTcK42fOZgEvm/NJt22/xiFB+818scenfqJv6WUv+OaiE6Z5uPGkgEkVUbsqMWRBaboGPF/inRn9pCCNa9Gr30S+o5qmsbR2VVPGZq636/eTUsZX402RIuUAjNzvo6ZMXkkNYAkm5Vkwf+VytR222WrH1L/r5jiiuHo6d2ARxXdrU35TVOujh/xj7LsFwHxqxczF1UHzvVUZthtODimR3YcOdI2RUTs490D8SB389wuqeSvwEA/f0dmndp9hTXyy7Vsr7+ozXll/g7KgvJL372LpsvaK4BSAOzFCTJNmracGluBnICe1CHZaY2XkCc2PGollL5c0wt8pxw2g==
+X-YMail-OSG: MsmGAukVM1mBdI3BtiJ8eZ8btC_ZI31E.AscaDvep.YvrbbjmnV_TirFFioysaT
+ YlHWtYzGcnGT65jKZgEdItX8Bm.cfPny8tW89N8yIqeCDedQXkIUyfENbWMOmZqek0ZMi3TjhNQs
+ tWn28v1LkEqKY0SXZbpO1j67BjPkiQEElY9VFwZIrBhRZeX5ohxXtBdK1xRDA2uZYdnoa2mGEZx6
+ zKFihzzYcQwO5mOFA3LFC_dTnk3r_4i7Fx4ILdHTi663PVtW.tCOrsOld438WBMiIm1LJOrybzUM
+ jS2I82a2OjVldWsoJVmr9EuOjXJ428zbRAZS_xch0TFrQgqEsvUsJpJybRm1Z5_MRi75aZ4YhpN9
+ FsqIl19HmQIbnax1dtulwxZnYbHQ2t3NGN0.s4k8qfu1Mk2XG2FDBC1Hii18qrfyQauoLqz7.9qJ
+ BCe5RsahVnLIvGDisC22Rrfqto90DbLdmj9Yt4d53FigKXZVcr4HBB0sxt26ZFg.A81ZzlSrr_EC
+ kkLYB28AlSGBzU_9hPfL93C9GNN1suCxrIQRAsrNrqJlhuIGGP6mv6Twgt3e3Oj48gHCU66ZKLzm
+ xatT7Cr1eEgrzMQhWT0VXGpp0nYdgBGN6BB3LwsHaYY_uWEObd15Xqy9_vQpTh_7AZDZc8005l8U
+ ilwPfztsMovuhWvTvJOR.fiwGwTPBe8fcVdOqcMMph2SHFkSEUVabfOpzzkH.R1zYXXuvkH0BvZC
+ 17jRzAzGUPjkl5DbRUYZcjr1pwnEqaKqjKFz7dDM0riNJ8RISn1cQhluzFco4Acmbic3eOXRI493
+ 6JSiH_EeBhpCu7MqsetK2OoZyh_a89Y5ma4J2pXvXqw8djLqseRndmHoKjDsiW65xUNPhMHr7G4R
+ pt203vN3KsdICxmASCwOGD5izTjDD9FgyP224SUCWoOhrfPIA0LC5iLoxxUAd5DobIEbOFhkLnTj
+ MGp4I16IFhpHY3Mms9zMtkpF6l03jRoDTC1aLVutDj1E2dNU2w8V5ENTR_JOA_4KvnVsuZlDXF4Y
+ EQpPZQnvL0vCjYvAmDYIZQ.M2cPtR797SslPc6NBEXErbPAc9b4LFwCWf8iuWR7._Slr6xd55xRn
+ ZsUML47cyyApxA7D7YEEeb9ge5kw_6I_w6c.Zq96D6DRJgh_rUgQRlvRywvAIzdE1kbfaN8womuH
+ JzziQdbl6Rkv_dvGE5kv7PuKL2_faAT_AbSruW1MOBqjx_xgDwBx0K1_VTUFh1h2PdwqIdcr7
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Wed, 29 May 2019 15:41:48 +0000
+Received: from c-73-223-4-185.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([73.223.4.185])
+          by smtp415.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 53cac997c7a8b6f08ba08da82c1b2c81;
+          Wed, 29 May 2019 15:41:45 +0000 (UTC)
+Subject: Re: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
+To:     David Howells <dhowells@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     viro@zeniv.linux.org.uk, raven@themaw.net,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, casey@schaufler-ca.com
+References: <20190528235810.GA5776@kroah.com>
+ <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+ <31751.1559120984@warthog.procyon.org.uk>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=casey@schaufler-ca.com; keydata=
+ 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
+ abzjfg==
+Message-ID: <c3d76089-cd0a-a378-f6e8-2fe6e9a5c254@schaufler-ca.com>
+Date:   Wed, 29 May 2019 08:41:43 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <31751.1559120984@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael Kelley <mikelley@microsoft.com> writes:
-
-> Break out parts of mshyperv.h that are ISA independent into a
-> separate file in include/asm-generic. This move facilitates
-> ARM64 code reusing these definitions and avoids code
-> duplication. No functionality or behavior is changed.
+On 5/29/2019 2:09 AM, David Howells wrote:
+> Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-> ---
->  MAINTAINERS                     |   1 +
->  arch/x86/include/asm/mshyperv.h | 147 +-------------------------------
->  include/asm-generic/mshyperv.h  | 182 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 187 insertions(+), 143 deletions(-)
->  create mode 100644 include/asm-generic/mshyperv.h
+>>>  (3) Letting users see events they shouldn't be able to see.
+>> How are you handling namespaces then?  Are they determined by the
+>> namespace of the process that opened the original device handle, or th=
+e
+>> namespace that made the new syscall for the events to "start flowing"?=
+
+> So far I haven't had to deal directly with namespaces.
 >
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cf2a5b7..521192d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7308,6 +7308,7 @@ F:	net/vmw_vsock/hyperv_transport.c
->  F:	include/clocksource/hyperv_timer.h
->  F:	include/linux/hyperv.h
->  F:	include/uapi/linux/hyperv.h
-> +F:	include/asm-generic/mshyperv.h
->  F:	tools/hv/
->  F:	Documentation/ABI/stable/sysfs-bus-vmbus
->  
-> diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-> index f4fa8a9..2a793bf 100644
-> --- a/arch/x86/include/asm/mshyperv.h
-> +++ b/arch/x86/include/asm/mshyperv.h
-> @@ -3,84 +3,15 @@
->  #define _ASM_X86_MSHYPER_H
->  
->  #include <linux/types.h>
-> -#include <linux/atomic.h>
->  #include <linux/nmi.h>
->  #include <asm/io.h>
->  #include <asm/hyperv-tlfs.h>
->  #include <asm/nospec-branch.h>
->  
-> -#define VP_INVAL	U32_MAX
-> -
-> -struct ms_hyperv_info {
-> -	u32 features;
-> -	u32 misc_features;
-> -	u32 hints;
-> -	u32 nested_features;
-> -	u32 max_vp_index;
-> -	u32 max_lp_index;
-> -};
-> -
-> -extern struct ms_hyperv_info ms_hyperv;
-> -
-> -
->  typedef int (*hyperv_fill_flush_list_func)(
->  		struct hv_guest_mapping_flush_list *flush,
->  		void *data);
->  
-> -/*
-> - * Generate the guest ID.
-> - */
-> -
-> -static inline  __u64 generate_guest_id(__u64 d_info1, __u64 kernel_version,
-> -				       __u64 d_info2)
-> -{
-> -	__u64 guest_id = 0;
-> -
-> -	guest_id = (((__u64)HV_LINUX_VENDOR_ID) << 48);
-> -	guest_id |= (d_info1 << 48);
-> -	guest_id |= (kernel_version << 16);
-> -	guest_id |= d_info2;
-> -
-> -	return guest_id;
-> -}
-> -
-> -
-> -/* Free the message slot and signal end-of-message if required */
-> -static inline void vmbus_signal_eom(struct hv_message *msg, u32 old_msg_type)
-> -{
-> -	/*
-> -	 * On crash we're reading some other CPU's message page and we need
-> -	 * to be careful: this other CPU may already had cleared the header
-> -	 * and the host may already had delivered some other message there.
-> -	 * In case we blindly write msg->header.message_type we're going
-> -	 * to lose it. We can still lose a message of the same type but
-> -	 * we count on the fact that there can only be one
-> -	 * CHANNELMSG_UNLOAD_RESPONSE and we don't care about other messages
-> -	 * on crash.
-> -	 */
-> -	if (cmpxchg(&msg->header.message_type, old_msg_type,
-> -		    HVMSG_NONE) != old_msg_type)
-> -		return;
-> -
-> -	/*
-> -	 * Make sure the write to MessageType (ie set to
-> -	 * HVMSG_NONE) happens before we read the
-> -	 * MessagePending and EOMing. Otherwise, the EOMing
-> -	 * will not deliver any more messages since there is
-> -	 * no empty slot
-> -	 */
-> -	mb();
-> -
-> -	if (msg->header.message_flags.msg_pending) {
-> -		/*
-> -		 * This will cause message queue rescan to
-> -		 * possibly deliver another msg from the
-> -		 * hypervisor
-> -		 */
-> -		wrmsrl(HV_X64_MSR_EOM, 0);
-> -	}
-> -}
-> -
->  #define hv_init_timer(timer, tick) \
->  	wrmsrl(HV_X64_MSR_STIMER0_COUNT + (2*timer), tick)
->  #define hv_init_timer_config(timer, val) \
-> @@ -97,6 +28,8 @@ static inline void vmbus_signal_eom(struct hv_message *msg, u32 old_msg_type)
->  
->  #define hv_get_vp_index(index) rdmsrl(HV_X64_MSR_VP_INDEX, index)
->  
-> +#define hv_signal_eom() wrmsrl(HV_X64_MSR_EOM, 0)
-> +
->  #define hv_get_synint_state(int_num, val) \
->  	rdmsrl(HV_X64_MSR_SINT0 + int_num, val)
->  #define hv_set_synint_state(int_num, val) \
-> @@ -122,13 +55,6 @@ static inline void vmbus_signal_eom(struct hv_message *msg, u32 old_msg_type)
->  #define trace_hyperv_callback_vector hyperv_callback_vector
->  #endif
->  void hyperv_vector_handler(struct pt_regs *regs);
-> -void hv_setup_vmbus_irq(void (*handler)(void));
-> -void hv_remove_vmbus_irq(void);
-> -
-> -void hv_setup_kexec_handler(void (*handler)(void));
-> -void hv_remove_kexec_handler(void);
-> -void hv_setup_crash_handler(void (*handler)(struct pt_regs *regs));
-> -void hv_remove_crash_handler(void);
->  
->  /*
->   * Routines for stimer0 Direct Mode handling.
-> @@ -136,8 +62,6 @@ static inline void vmbus_signal_eom(struct hv_message *msg, u32 old_msg_type)
->   */
->  void hv_stimer0_vector_handler(struct pt_regs *regs);
->  void hv_stimer0_callback_vector(void);
-> -int hv_setup_stimer0_irq(int *irq, int *vector, void (*handler)(void));
-> -void hv_remove_stimer0_irq(int irq);
->  
->  static inline void hv_enable_stimer0_percpu_irq(int irq) {}
->  static inline void hv_disable_stimer0_percpu_irq(int irq) {}
-> @@ -282,14 +206,6 @@ static inline u64 hv_do_rep_hypercall(u16 code, u16 rep_count, u16 varhead_size,
->  	return status;
->  }
->  
-> -/*
-> - * Hypervisor's notion of virtual processor ID is different from
-> - * Linux' notion of CPU ID. This information can only be retrieved
-> - * in the context of the calling CPU. Setup a map for easy access
-> - * to this information.
-> - */
-> -extern u32 *hv_vp_index;
-> -extern u32 hv_max_vp_index;
->  extern struct hv_vp_assist_page **hv_vp_assist_page;
->  
->  static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
-> @@ -300,63 +216,8 @@ static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
->  	return hv_vp_assist_page[cpu];
->  }
->  
-> -/**
-> - * hv_cpu_number_to_vp_number() - Map CPU to VP.
-> - * @cpu_number: CPU number in Linux terms
-> - *
-> - * This function returns the mapping between the Linux processor
-> - * number and the hypervisor's virtual processor number, useful
-> - * in making hypercalls and such that talk about specific
-> - * processors.
-> - *
-> - * Return: Virtual processor number in Hyper-V terms
-> - */
-> -static inline int hv_cpu_number_to_vp_number(int cpu_number)
-> -{
-> -	return hv_vp_index[cpu_number];
-> -}
-> -
-> -static inline int cpumask_to_vpset(struct hv_vpset *vpset,
-> -				    const struct cpumask *cpus)
-> -{
-> -	int cpu, vcpu, vcpu_bank, vcpu_offset, nr_bank = 1;
-> -
-> -	/* valid_bank_mask can represent up to 64 banks */
-> -	if (hv_max_vp_index / 64 >= 64)
-> -		return 0;
-> -
-> -	/*
-> -	 * Clear all banks up to the maximum possible bank as hv_tlb_flush_ex
-> -	 * structs are not cleared between calls, we risk flushing unneeded
-> -	 * vCPUs otherwise.
-> -	 */
-> -	for (vcpu_bank = 0; vcpu_bank <= hv_max_vp_index / 64; vcpu_bank++)
-> -		vpset->bank_contents[vcpu_bank] = 0;
-> -
-> -	/*
-> -	 * Some banks may end up being empty but this is acceptable.
-> -	 */
-> -	for_each_cpu(cpu, cpus) {
-> -		vcpu = hv_cpu_number_to_vp_number(cpu);
-> -		if (vcpu == VP_INVAL)
-> -			return -1;
-> -		vcpu_bank = vcpu / 64;
-> -		vcpu_offset = vcpu % 64;
-> -		__set_bit(vcpu_offset, (unsigned long *)
-> -			  &vpset->bank_contents[vcpu_bank]);
-> -		if (vcpu_bank >= nr_bank)
-> -			nr_bank = vcpu_bank + 1;
-> -	}
-> -	vpset->valid_bank_mask = GENMASK_ULL(nr_bank - 1, 0);
-> -	return nr_bank;
-> -}
-> -
->  void __init hyperv_init(void);
+> mount_notify() requires you to have access to the mountpoint you want t=
+o watch
+> - and the entire tree rooted there is in one namespace, so your event s=
+ources
+> are restricted to that namespace.  Further, mount objects don't themsel=
+ves
+> have any other namespaces, not even a user_ns.
+>
+> sb_notify() requires you to have access to the superblock you want to w=
+atch.
+> superblocks aren't directly namespaced as a class, though individual
+> superblocks may participate in particular namespaces (ipc, net, etc.). =
+ I'm
+> thinking some of these should be marked unwatchable (all pseudo superbl=
+ocks,
+> kernfs-class, proc, for example).
+>
+> Superblocks, however, do each have a user_ns - but you were allowed to =
+access
+> the superblock by pathwalk, so you must have some access to the user_ns=
+ - I
+> think.
+>
+> KEYCTL_NOTIFY requires you to have View access on the key you're watchi=
+ng.
+> Currently, keys have no real namespace restrictions, though I have patc=
+hes to
+> include a namespace tag in the lookup criteria.
+>
+> block_notify() doesn't require any direct access since you're watching =
+a
+> global queue and there is no blockdev namespacing.  LSMs are given the =
+option
+> to filter events, though.  The thought here is that if you can access d=
+mesg,
+> you should be able to watch for blockdev events.
+>
+>
+> Actually, thinking further on this, restricting access to events is tri=
+ckier
+> than I thought and than perhaps Casey was suggesting.
+>
+> Say you're watching a mount object and someone in a different user_ns
+> namespace or with a different security label mounts on it.  What govern=
+s
+> whether you are allowed to see the event?
 
-I would actually expect to see hyperv_init() on all architectures so it
-can probably go to 'generic' too.
+Conceptually it should be simple, but we have a variety of different
+policies in the core OS, never mind what goes on inside the LSMs.
+If you want to treat a notification like a signal you would only deliver
+it if the process that performed the action that triggered the event
+has the same UID as the process receiving the notification. Should you
+decide to treat it like an IP packet only the LSMs would filter delivery.=
 
->  void hyperv_setup_mmu_ops(void);
-> -void hyperv_report_panic(struct pt_regs *regs, long err);
-> -void hyperv_report_panic_msg(phys_addr_t pa, size_t size);
-> -bool hv_is_hyperv_initialized(void);
-> -void hyperv_cleanup(void);
->  
->  void hyperv_reenlightenment_intr(struct pt_regs *regs);
->  void set_hv_tscchange_cb(void (*cb)(void));
-> @@ -379,8 +240,6 @@ static inline void hv_apic_init(void) {}
->  
->  #else /* CONFIG_HYPERV */
->  static inline void hyperv_init(void) {}
-> -static inline bool hv_is_hyperv_initialized(void) { return false; }
-> -static inline void hyperv_cleanup(void) {}
->  static inline void hyperv_setup_mmu_ops(void) {}
->  static inline void set_hv_tscchange_cb(void (*cb)(void)) {}
->  static inline void clear_hv_tscchange_cb(void) {}
-> @@ -397,4 +256,6 @@ static inline int hyperv_flush_guest_mapping_range(u64 as,
->  }
->  #endif /* CONFIG_HYPERV */
->  
-> +#include <asm-generic/mshyperv.h>
-> +
->  #endif
-> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
-> new file mode 100644
-> index 0000000..d4eaa07
-> --- /dev/null
-> +++ b/include/asm-generic/mshyperv.h
-> @@ -0,0 +1,182 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +/*
-> + * Linux-specific definitions for managing interactions with Microsoft's
-> + * Hyper-V hypervisor. The definitions in this file are architecture
-> + * independent. See arch/<arch>/include/asm/mshyperv.h for definitions
-> + * that are specific to architecture <arch>.
-> + *
-> + * Definitions that are specified in the Hyper-V Top Level Functional
-> + * Spec (TLFS) should not go in this file, but should instead go in
-> + * hyperv-tlfs.h.
-> + *
-> + * Copyright (C) 2019, Microsoft, Inc.
-> + *
-> + * Author : Michael Kelley <mikelley@microsoft.com>
-> + */
-> +
-> +#ifndef _ASM_GENERIC_MSHYPERV_H
-> +#define _ASM_GENERIC_MSHYPERV_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/atomic.h>
-> +#include <linux/bitops.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/clocksource.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqdesc.h>
-> +#include <asm/hyperv-tlfs.h>
+If there are mode bits on the thing being watched shouldn't you respect
+them?
 
-This seems a little bit too much, in particular, I think we don't need
+> You're watching the object for changes - and it *has* changed.  Further=
+, you
+> might be able to see the result of this change by other means (/proc/mo=
+unts,
+> for instance).
+>
+> Should you be denied the event based on the security model?
 
- #include <linux/interrupt.h>
- #include <linux/clocksource.h>
- #include <linux/irq.h>
- #include <linux/irqdesc.h>
+=46rom a subject/object model view there are two objects and one
+subject involved. The subject (active entity) is the process that
+changes the first object, triggering an event. The watching process
+(that will receive the notification) is the second object, because
+its state will change (be written to) when the notification is
+delivered. For the watching process to receive the notification
+the changing process needs write access to the watching process.
+The indirection of the notification mechanism isn't relevant.
+If the changing process couldn't directly notify the watching process
+it shouldn't be able to do it indirectly, either.
 
-we'll need 'struct pt_regs' definition but I'd suggest we use 
+> On the other hand, if you're watching a tree of mount objects, it could=
+ be
+> argued that you should be denied access to events on any mount object y=
+ou
+> can't reach by pathwalk.
+>
+> On the third hand, if you can see it in /proc/mounts or by fsinfo(), yo=
+u
+> should get an event for it.
 
- #include <linux/ptrace.h>
+Right. We've done a pretty good job of muddling the security
+landscape by adding spiffy features to make life easier for
+particular use cases. /proc is chuck full of examples. Objects
+that can be viewed in many different ways make for confusing
+security models. Try explaining /proc/234/fd/2 to a security
+theory student.
 
-or even
+>> How are you handling namespaces then?
+> So to go back to the original question.  At the moment they haven't imp=
+inged
+> directly and I haven't had to deal with them directly.  There are indir=
+ect
+> namespace restrictions that I get for free just due to pathwalk, for in=
+stance.
+>
+> David
 
- #include <asm/ptrace.h>
-
-> +
-> +struct ms_hyperv_info {
-> +	u32 features;
-> +	u32 misc_features;
-> +	u32 hints;
-> +	u32 nested_features;
-> +	u32 max_vp_index;
-> +	u32 max_lp_index;
-> +};
-> +extern struct ms_hyperv_info ms_hyperv;
-> +
-> +extern u64 hv_do_hypercall(u64 control, void *inputaddr, void *outputaddr);
-> +extern u64 hv_do_fast_hypercall8(u16 control, u64 input8);
-> +
-> +
-> +/* Generate the guest OS identifier as described in the Hyper-V TLFS */
-> +static inline  __u64 generate_guest_id(__u64 d_info1, __u64 kernel_version,
-> +				       __u64 d_info2)
-> +{
-> +	__u64 guest_id = 0;
-> +
-> +	guest_id = (((__u64)HV_LINUX_VENDOR_ID) << 48);
-> +	guest_id |= (d_info1 << 48);
-> +	guest_id |= (kernel_version << 16);
-> +	guest_id |= d_info2;
-> +
-> +	return guest_id;
-> +}
-> +
-> +
-> +/* Free the message slot and signal end-of-message if required */
-> +static inline void vmbus_signal_eom(struct hv_message *msg, u32 old_msg_type)
-> +{
-> +	/*
-> +	 * On crash we're reading some other CPU's message page and we need
-> +	 * to be careful: this other CPU may already had cleared the header
-> +	 * and the host may already had delivered some other message there.
-> +	 * In case we blindly write msg->header.message_type we're going
-> +	 * to lose it. We can still lose a message of the same type but
-> +	 * we count on the fact that there can only be one
-> +	 * CHANNELMSG_UNLOAD_RESPONSE and we don't care about other messages
-> +	 * on crash.
-> +	 */
-> +	if (cmpxchg(&msg->header.message_type, old_msg_type,
-> +		    HVMSG_NONE) != old_msg_type)
-> +		return;
-> +
-> +	/*
-> +	 * The cmxchg() above does an implicit memory barrier to
-> +	 * ensure the write to MessageType (ie set to
-> +	 * HVMSG_NONE) happens before we read the
-> +	 * MessagePending and EOMing. Otherwise, the EOMing
-> +	 * will not deliver any more messages since there is
-> +	 * no empty slot
-> +	 */
-> +	if (msg->header.message_flags.msg_pending) {
-> +		/*
-> +		 * This will cause message queue rescan to
-> +		 * possibly deliver another msg from the
-> +		 * hypervisor
-> +		 */
-> +		hv_signal_eom();
-> +	}
-> +}
-> +
-> +void hv_setup_vmbus_irq(void (*handler)(void));
-> +void hv_remove_vmbus_irq(void);
-> +void hv_enable_vmbus_irq(void);
-> +void hv_disable_vmbus_irq(void);
-> +
-> +void hv_setup_kexec_handler(void (*handler)(void));
-> +void hv_remove_kexec_handler(void);
-> +void hv_setup_crash_handler(void (*handler)(struct pt_regs *regs));
-> +void hv_remove_crash_handler(void);
-> +
-> +#if IS_ENABLED(CONFIG_HYPERV)
-> +/*
-> + * Hypervisor's notion of virtual processor ID is different from
-> + * Linux' notion of CPU ID. This information can only be retrieved
-> + * in the context of the calling CPU. Setup a map for easy access
-> + * to this information.
-> + */
-> +extern u32 *hv_vp_index;
-> +extern u32 hv_max_vp_index;
-> +
-> +/* Sentinel value for an uninitialized entry in hv_vp_index array */
-> +#define VP_INVAL	U32_MAX
-> +
-> +/**
-> + * hv_cpu_number_to_vp_number() - Map CPU to VP.
-> + * @cpu_number: CPU number in Linux terms
-> + *
-> + * This function returns the mapping between the Linux processor
-> + * number and the hypervisor's virtual processor number, useful
-> + * in making hypercalls and such that talk about specific
-> + * processors.
-> + *
-> + * Return: Virtual processor number in Hyper-V terms
-> + */
-> +static inline int hv_cpu_number_to_vp_number(int cpu_number)
-> +{
-> +	return hv_vp_index[cpu_number];
-> +}
-> +
-> +static inline int cpumask_to_vpset(struct hv_vpset *vpset,
-> +				    const struct cpumask *cpus)
-> +{
-> +	int cpu, vcpu, vcpu_bank, vcpu_offset, nr_bank = 1;
-> +
-> +	/* valid_bank_mask can represent up to 64 banks */
-> +	if (hv_max_vp_index / 64 >= 64)
-> +		return 0;
-> +
-> +	/*
-> +	 * Clear all banks up to the maximum possible bank as hv_tlb_flush_ex
-> +	 * structs are not cleared between calls, we risk flushing unneeded
-> +	 * vCPUs otherwise.
-> +	 */
-> +	for (vcpu_bank = 0; vcpu_bank <= hv_max_vp_index / 64; vcpu_bank++)
-> +		vpset->bank_contents[vcpu_bank] = 0;
-> +
-> +	/*
-> +	 * Some banks may end up being empty but this is acceptable.
-> +	 */
-> +	for_each_cpu(cpu, cpus) {
-> +		vcpu = hv_cpu_number_to_vp_number(cpu);
-> +		if (vcpu == VP_INVAL)
-> +			return -1;
-> +		vcpu_bank = vcpu / 64;
-> +		vcpu_offset = vcpu % 64;
-> +		__set_bit(vcpu_offset, (unsigned long *)
-> +			  &vpset->bank_contents[vcpu_bank]);
-> +		if (vcpu_bank >= nr_bank)
-> +			nr_bank = vcpu_bank + 1;
-> +	}
-> +	vpset->valid_bank_mask = GENMASK_ULL(nr_bank - 1, 0);
-> +	return nr_bank;
-> +}
-> +
-> +void hyperv_report_panic(struct pt_regs *regs, long err);
-> +void hyperv_report_panic_msg(phys_addr_t pa, size_t size);
-> +bool hv_is_hyperv_initialized(void);
-> +void hyperv_cleanup(void);
-> +#else /* CONFIG_HYPERV */
-> +static inline bool hv_is_hyperv_initialized(void) { return false; }
-> +static inline void hyperv_cleanup(void) {}
-> +#endif /* CONFIG_HYPERV */
-> +
-> +#if IS_ENABLED(CONFIG_HYPERV)
-> +extern int hv_setup_stimer0_irq(int *irq, int *vector, void (*handler)(void));
-> +extern void hv_remove_stimer0_irq(int irq);
-> +#endif
-> +
-> +#endif
-
-With the nitpicks above,
-
-Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-
--- 
-Vitaly
