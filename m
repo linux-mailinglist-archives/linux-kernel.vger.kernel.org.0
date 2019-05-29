@@ -2,70 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 754E42D682
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 022572D63B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 09:24:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbfE2HiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 03:38:24 -0400
-Received: from mail-m972.mail.163.com ([123.126.97.2]:60186 "EHLO
-        mail-m972.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbfE2HiX (ORCPT
+        id S1726676AbfE2HY1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 03:24:27 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:52793 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725894AbfE2HY0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 03:38:23 -0400
-X-Greylist: delayed 919 seconds by postgrey-1.27 at vger.kernel.org; Wed, 29 May 2019 03:38:23 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=BX/qclNsTllMYtxUyN
-        znnvi5uS276rsIV4MQsuNVavs=; b=QyM70De9F0iMSyvqNNouTCOiJTuwr4OeBO
-        tRvrY6YIgMJK2lLrr1Kv1dqX+NKVLeOJCn3iKHH0bYZxNg2Dii5xxVEYcc9/rHyh
-        hbe++uFPovLA1MzgC+EIa35iVdvnpSNHi56FKlgYr4CACknYBEGWQ9rGOv/VEpxL
-        SKXKI3Aog=
-Received: from localhost.localdomain (unknown [218.106.182.173])
-        by smtp16 (Coremail) with SMTP id GtxpCgBXE7M_M+5cnbSYAA--.352S3;
-        Wed, 29 May 2019 15:22:44 +0800 (CST)
-From:   Xidong Wang <wangxidong_97@163.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Xidong Wang <wangxidong_97@163.com>, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] rtc: rv3028: check return value
-Date:   Wed, 29 May 2019 15:22:20 +0800
-Message-Id: <1559114540-30878-1-git-send-email-wangxidong_97@163.com>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: GtxpCgBXE7M_M+5cnbSYAA--.352S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZrWUAFyUuF48ZF4DWrW7urg_yoW3GFX_Ka
-        4ayryfJa4DGF1YgwnrZr95ZryUKF40qryIvr1xKa93Aw47JFn2vas7uFZrJw1DWry8Z3yY
-        grnruryxurnxJjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRZqXtUUUUU==
-X-Originating-IP: [218.106.182.173]
-X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/xtbBFQTD81XlgQH9kgAAs+
+        Wed, 29 May 2019 03:24:26 -0400
+X-Originating-IP: 90.88.147.134
+Received: from localhost (aaubervilliers-681-1-27-134.w90-88.abo.wanadoo.fr [90.88.147.134])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 375D31C000C;
+        Wed, 29 May 2019 07:24:24 +0000 (UTC)
+Date:   Wed, 29 May 2019 09:24:23 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] [RESEND PATCH] ARM: dts: sun7i: olimex-lime2:
+ Enable ac and power supplies
+Message-ID: <20190529072423.5wg5lejgy3ece77i@flea>
+References: <20190528063544.17408-1-plaes@plaes.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bqgbfzxuw6hkna6w"
+Content-Disposition: inline
+In-Reply-To: <20190528063544.17408-1-plaes@plaes.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In rv3028_probe(), the return value of devm_regmap_init_i2c() should
-be checked before it is used.
 
-Signed-off-by: Xidong Wang <wangxidong_97@163.com>
----
- drivers/rtc/rtc-rv3028.c | 4 ++++
- 1 file changed, 4 insertions(+)
+--bqgbfzxuw6hkna6w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/rtc/rtc-rv3028.c b/drivers/rtc/rtc-rv3028.c
-index 06884eb..29a8c4e 100644
---- a/drivers/rtc/rtc-rv3028.c
-+++ b/drivers/rtc/rtc-rv3028.c
-@@ -626,6 +626,10 @@ static int rv3028_probe(struct i2c_client *client)
- 
- 	rv3028->regmap = devm_regmap_init_i2c(client, &regmap_config);
- 
-+	if (IS_ERR(rv3028->regmap)) {
-+		return PTR_ERR(rv3028->regmap);
-+	}
-+
- 	i2c_set_clientdata(client, rv3028);
- 
- 	ret = regmap_read(rv3028->regmap, RV3028_STATUS, &status);
--- 
-2.7.4
+On Tue, May 28, 2019 at 09:35:44AM +0300, Priit Laes wrote:
+> Lime2 has battery connector so enable these supplies.
+>
+> Signed-off-by: Priit Laes <plaes@plaes.org>
 
+Applied, thanks!
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--bqgbfzxuw6hkna6w
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXO4zpwAKCRDj7w1vZxhR
+xYGHAQCFpruzYdm052STiAsBGpDwgCbHAlK1s6j7Dla6ESbgYAEAglb2c7bgVX0p
+vF9PXHhhe2aWbVr7yMHMmmiU53akGwY=
+=88nu
+-----END PGP SIGNATURE-----
+
+--bqgbfzxuw6hkna6w--
