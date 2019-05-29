@@ -2,144 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD1872D2C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 02:19:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFB322D2D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 02:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbfE2ATI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 20:19:08 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42074 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbfE2ATH (ORCPT
+        id S1727528AbfE2AX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 20:23:29 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:54434 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbfE2AX2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 20:19:07 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 188so614377ljf.9
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 17:19:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BtTsiX9fLP1ilIjEBEUD3JJBC+K61VnyY/gr7l2/6Ws=;
-        b=NnONe+izAdPLfKUy8Po++z1ngR/rXmo0Qsl+xByZnGpvVdobMUqZHmA5KwfW7WvWn+
-         3ANkzwb2vuN5lZMvzrHLkb+z4R+UVi8444eOuoN5YW4HeBzb8Z2ZJAWD69jp6XUnHar1
-         +qNsraJtJTttKc32/+WD3i0TVrlFXtFKXk+jc37zgkA+cqBcCfGpqCAMo35/NJ4l2bsd
-         O12WI/FQQAfYCWItMDxaZTQFN3AKY88Rif42fUDNgbOVSGUJge4tIMx2SCB0GioKjJXY
-         9eQvgJudtOsEagr/IGzUNyv1kzMbDwpA4Ln4bQ/v5PcIdgTOKT6D+P/I4DS1JyUEU/X+
-         T/FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BtTsiX9fLP1ilIjEBEUD3JJBC+K61VnyY/gr7l2/6Ws=;
-        b=R9A1sVo7Syju7LFHbOvaPn0olXhbCD7rbf3mdsipqd7a2ZUTQE0/Iv6JrRgOpKE7ih
-         f/M0Zx5xaQOKk/kUzF5035QjUmFL5/Y/IIU2h8lA30b5Kondk09zT6hDmW4mX14Ip3Kh
-         /3VYFDMx2XqhcTRzYmaw4XhLtnWpw438E4mN3kCTzEKlodGQepZanxIXhvnehJpc5E0q
-         k6myGs/BwHIKZTjU5/L8po/wHdp3GP8iuJsW5QX200wsXArZx2c2Q5Y1Jhk32VttsQ3C
-         gRdfZPfYavW7knUm/E34xee2/0MUPpSjquIaqR2XnM/8ykD1RIGdyT2y7PRgk1a08Q6C
-         DqPw==
-X-Gm-Message-State: APjAAAX2432hNA4nUjFZMyVnOhgQIdwXk+ZNt7ijSvld7X7HbpTJCYZB
-        wcLZTDtE+DNBZU2ixIS5X+QWXU4es2oEvZ7+XLQ=
-X-Google-Smtp-Source: APXvYqwplNqkarrINTuU9IxbWBiqARqN45Gt9GkeoXDEmXe+Phow9DEhwG8Xi+THEJBYMpPcbgnAI2uVS2yJev3oqO0=
-X-Received: by 2002:a2e:9b54:: with SMTP id o20mr4446799ljj.95.1559089145667;
- Tue, 28 May 2019 17:19:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190522004655.20138-1-fabiolima39@gmail.com> <20190522094130.GS31203@kadam>
-In-Reply-To: <20190522094130.GS31203@kadam>
-From:   Fabio Lima <fabiolima39@gmail.com>
-Date:   Tue, 28 May 2019 21:18:47 -0300
-Message-ID: <CAAM19CGt1UoAXgQWoO85k7UQ8r3rBx6S7-po1aC5OfQZbcO55Q@mail.gmail.com>
-Subject: Re: [PATCH] staging: rtl8723bs: Add missing blank lines
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     gregkh@linuxfoundation.org, jeremy@azazel.net,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        lkcamp@lists.libreplanetbr.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 28 May 2019 20:23:28 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3319E1400E0D1;
+        Tue, 28 May 2019 17:23:28 -0700 (PDT)
+Date:   Tue, 28 May 2019 17:23:27 -0700 (PDT)
+Message-Id: <20190528.172327.2113097810388476996.davem@davemloft.net>
+To:     rick.p.edgecombe@intel.com
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        sparclinux@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, luto@kernel.org, dave.hansen@intel.com,
+        namit@vmware.com
+Subject: Re: [PATCH v5 0/2] Fix issues with vmalloc flush flag
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190527211058.2729-1-rick.p.edgecombe@intel.com>
+References: <20190527211058.2729-1-rick.p.edgecombe@intel.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 28 May 2019 17:23:28 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em qua, 22 de mai de 2019 06:41, Dan Carpenter
-<dan.carpenter@oracle.com> escreveu:
->
-> On Tue, May 21, 2019 at 09:46:55PM -0300, Fabio Lima wrote:
-> > This patch resolves the following warning from checkpatch.pl
-> > WARNING: Missing a blank line after declarations
-> >
-> > Signed-off-by: Fabio Lima <fabiolima39@gmail.com>
-> > ---
-> >  drivers/staging/rtl8723bs/core/rtw_debug.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/staging/rtl8723bs/core/rtw_debug.c b/drivers/staging/rtl8723bs/core/rtw_debug.c
-> > index 9f8446ccf..853362381 100644
-> > --- a/drivers/staging/rtl8723bs/core/rtw_debug.c
-> > +++ b/drivers/staging/rtl8723bs/core/rtw_debug.c
-> > @@ -382,6 +382,7 @@ ssize_t proc_set_roam_tgt_addr(struct file *file, const char __user *buffer, siz
-> >       if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp))) {
-> >
-> >               int num = sscanf(tmp, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", addr, addr+1, addr+2, addr+3, addr+4, addr+5);
-> > +
-> >               if (num == 6)
-> >                       memcpy(adapter->mlmepriv.roam_tgt_addr, addr, ETH_ALEN);
-> >
->
-> I'm sorry but this function is really such nonsense.  Can you send a
-> patch to re-write it instead?
->
-> drivers/staging/rtl8723bs/core/rtw_debug.c
->    371  ssize_t proc_set_roam_tgt_addr(struct file *file, const char __user *buffer, size_t count, loff_t *pos, void *data)
->    372  {
->    373          struct net_device *dev = data;
->    374          struct adapter *adapter = (struct adapter *)rtw_netdev_priv(dev);
->    375
->    376          char tmp[32];
->    377          u8 addr[ETH_ALEN];
->    378
->    379          if (count < 1)
->
-> This check is silly.  I guess the safest thing is to change it to:
->                 if (count < sizeof(tmp))
->
->    380                  return -EFAULT;
->
-> It should be return -EINVAL;
->
->    381
->    382          if (buffer && !copy_from_user(tmp, buffer, sizeof(tmp))) {
->
-> Remove the check for if the user passes a NULL buffer, because that's
-> already handled in copy_from_user().  Return -EFAULT if copy_from_user()
-> fails.
->
->         if (copy_from_user(tmp, buffer, sizeof(tmp)))
->                 return -EFAULT;
->
->
->    383
->
-> Extra blank line.
->
->    384                  int num = sscanf(tmp, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", addr, addr+1, addr+2, addr+3, addr+4, addr+5);
->
-> You will need to move the num declaration to the start of the function.
->
->    385                  if (num == 6)
->    386                          memcpy(adapter->mlmepriv.roam_tgt_addr, addr, ETH_ALEN);
->
-> If num != 6 then return -EINVAL;
->
->    387
->    388                  DBG_871X("set roam_tgt_addr to "MAC_FMT"\n", MAC_ARG(adapter->mlmepriv.roam_tgt_addr));
->    389          }
->    390
->    391          return count;
->    392  }
->
-> regards,
-> dan carpenter
+From: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Date: Mon, 27 May 2019 14:10:56 -0700
 
-Thanks for your feedback.
-This is my first patch and I will send the second patch with
-modifications that you suggest.
+> These two patches address issues with the recently added
+> VM_FLUSH_RESET_PERMS vmalloc flag.
+> 
+> Patch 1 addresses an issue that could cause a crash after other
+> architectures besides x86 rely on this path.
+> 
+> Patch 2 addresses an issue where in a rare case strange arguments
+> could be provided to flush_tlb_kernel_range(). 
 
-Fabio Lima
+It just occurred to me another situation that would cause trouble on
+sparc64, and that's if someone the address range of the main kernel
+image ended up being passed to flush_tlb_kernel_range().
+
+That would flush the locked kernel mapping and crash the kernel
+instantly in a completely non-recoverable way.
