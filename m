@@ -2,212 +2,278 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63B242E297
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 18:54:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 922812E2A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 18:57:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbfE2Qyq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 29 May 2019 12:54:46 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:22801 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726330AbfE2Qyp (ORCPT
+        id S1727147AbfE2Q5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 12:57:03 -0400
+Received: from mout2.fh-giessen.de ([212.201.18.46]:38474 "EHLO
+        mout2.fh-giessen.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbfE2Q5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 12:54:45 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-148-Bqtj4QOpPZGUSdn79nts1w-1; Wed, 29 May 2019 17:54:41 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 29 May 2019 17:54:40 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 29 May 2019 17:54:40 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Oleg Nesterov' <oleg@redhat.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>, "dbueso@suse.de" <dbueso@suse.de>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "dave@stgolabs.net" <dave@stgolabs.net>,
-        "e@80x24.org" <e@80x24.org>,
-        "jbaron@akamai.com" <jbaron@akamai.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "omar.kilani@gmail.com" <omar.kilani@gmail.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error codes
- according to restore_user_sigmask())
-Thread-Topic: pselect/etc semantics (Was: [PATCH v2] signal: Adjust error
- codes according to restore_user_sigmask())
-Thread-Index: AQHVFjlRjDlHH6TU60ajIVKPNNmjrqaCR7xw
-Date:   Wed, 29 May 2019 16:54:40 +0000
-Message-ID: <b05cec7f9e8f457281e689576a7a360f@AcuMS.aculab.com>
-References: <20190522032144.10995-1-deepa.kernel@gmail.com>
- <20190529161157.GA27659@redhat.com>
-In-Reply-To: <20190529161157.GA27659@redhat.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 29 May 2019 12:57:02 -0400
+Received: from mx3.fh-giessen.de ([212.201.18.28])
+        by mout2.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
+        id 1hW1sq-0002O2-GZ; Wed, 29 May 2019 18:57:00 +0200
+Received: from mailgate-1.its.fh-giessen.de ([212.201.18.15])
+        by mx3.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
+        id 1hW1sq-004TMw-Br; Wed, 29 May 2019 18:57:00 +0200
+Received: from p2e5610f3.dip0.t-ipconnect.de ([46.86.16.243] helo=zwei.fritz.box)
+        by mailgate-1.its.fh-giessen.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
+        id 1hW1sq-0000rQ-14; Wed, 29 May 2019 18:57:00 +0200
+From:   Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
+To:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        mchehab@kernel.org, sean@mess.org
+Cc:     Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
+Subject: [PATCH v2] drivers/media/dvb-frontends: Implement probe/remove for stv6110x
+Date:   Wed, 29 May 2019 18:56:33 +0200
+Message-Id: <20190529165633.8779-1-tobias.johannes.klausmann@mni.thm.de>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190509195118.23027-1-tobias.johannes.klausmann@mni.thm.de>
+References: <20190509195118.23027-1-tobias.johannes.klausmann@mni.thm.de>
 MIME-Version: 1.0
-X-MC-Unique: Bqtj4QOpPZGUSdn79nts1w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleg Nesterov
-> Sent: 29 May 2019 17:12
-> Al, Linus, Eric, please help.
-> 
-> The previous discussion was very confusing, we simply can not understand each
-> other.
-> 
-> To me everything looks very simple and clear, but perhaps I missed something
-> obvious? Please correct me.
-> 
-> I think that the following code is correct
-> 
-> 	int interrupted = 0;
-> 
-> 	void sigint_handler(int sig)
-> 	{
-> 		interrupted = 1;
-> 	}
-> 
-> 	int main(void)
-> 	{
-> 		sigset_t sigint, empty;
-> 
-> 		sigemptyset(&sigint);
-> 		sigaddset(&sigint, SIGINT);
-> 		sigprocmask(SIG_BLOCK, &sigint, NULL);
-> 
-> 		signal(SIGINT, sigint_handler);
-> 
-> 		sigemptyset(&empty);	// so pselect() unblocks SIGINT
-> 
-> 		ret = pselect(..., &empty);
-                                ^^^^^ sigint
-> 
-> 		if (ret >= 0)		// sucess or timeout
-> 			assert(!interrupted);
-> 
-> 		if (interrupted)
-> 			assert(ret == -EINTR);
-> 	}
-> 
-> IOW, if pselect(sigmask) temporary unblocks SIGINT according to sigmask, this
-> signal should not be delivered if a ready fd was found or timeout. The signal
-> handle should only run if ret == -EINTR.
+Refactor out the common parts of stv6110x_probe() and stv6110x_attach()
+into separate functions.
 
-Personally I think that is wrong.
-Given code like the above that has:
-		while (!interrupted) {
-			pselect(..., &sigint);
-			// process available data
-		}
+This provides the needed functionality to use dvb_module_probe() instead
+of dvb_attach()!
 
-You want the signal handler to be executed even if one of the fds
-always has available data.
-Otherwise you can't interrupt a process that is always busy.
+v2:
+- Impovments based on comments by Sean Young
+- Fix checkpatch.pl --strict errors
 
-One option is to return -EINTR if a signal is pending when the mask
-is updated - before even looking at anything else.
-Signals that happen later on (eg after a timeout) need not be reported
-(until the next time around the loop).
+Signed-off-by: Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
+---
+ drivers/media/dvb-frontends/stv6110x.c      | 135 ++++++++++++++++----
+ drivers/media/dvb-frontends/stv6110x.h      |   3 +
+ drivers/media/dvb-frontends/stv6110x_priv.h |   3 +-
+ 3 files changed, 118 insertions(+), 23 deletions(-)
 
-> (pselect() can be interrupted by any other signal which has a handler. In this
->  case the handler can be called even if ret >= 0. This is correct, I fail to
->  understand why some people think this is wrong, and in any case we simply can't
->  avoid this).
-
-You mean any signal that isn't blocked when pselect() is called....
-
-> This was true until 854a6ed56839a ("signal: Add restore_user_sigmask()"),
-> now this is broken by the signal_pending() check in restore_user_sigmask().
-> 
-> This patch https://lore.kernel.org/lkml/20190522032144.10995-1-deepa.kernel@gmail.com/
-> turns 0 into -EINTR if signal_pending(), but I think we should simply restore
-> the old behaviour and simplify the code.
-> 
-> See the compile-tested patch at the end. Of course, the new _xxx() helpers
-> should be renamed somehow. fs/aio.c doesn't look right with or without this
-> patch, but iiuc this is what it did before 854a6ed56839a.
-> 
-> Let me show the code with the patch applied. I am using epoll_pwait() as an
-> example because it looks very simple.
-> 
-> 
-> 	static inline void set_restore_sigmask(void)
-> 	{
-> // WARN_ON(!TIF_SIGPENDING) was removed by this patch
-> 		current->restore_sigmask = true;
-> 	}
-> 
-> 	int set_xxx(const sigset_t __user *umask, size_t sigsetsize)
-> 	{
-> 		sigset_t *kmask;
-                     ^ no '*' here, add & before uses.
-> 
-> 		if (!umask)
-> 			return 0;
-> 		if (sigsetsize != sizeof(sigset_t))
-> 			return -EINVAL;
-> 		if (copy_from_user(kmask, umask, sizeof(sigset_t)))
-> 			return -EFAULT;
-> 
-> // we can safely modify ->saved_sigmask/restore_sigmask, they has no meaning
-> // until the syscall returns.
-> 		set_restore_sigmask();
-> 		current->saved_sigmask = current->blocked;
-> 		set_current_blocked(kmask);
-> 
-> 		return 0;
-> 	}
-> 
-> 
-> 	void update_xxx(bool interrupted)
-> 	{
-> // the main reason for this helper is WARN_ON(!TIF_SIGPENDING) which was "moved"
-> // from set_restore_sigmask() above.
-> 		if (interrupted)
-> 			WARN_ON(!test_thread_flag(TIF_SIGPENDING));
-> 		else
-> 			restore_saved_sigmask();
-> 	}
-
-I looked at the code earlier, but failed to find the code that actually
-delivers the signals.
-It may be 'racy' with update_xxx() regardless of whether that is
-looking for -EINTR or just a pending signal.
-
-I assume that TIF_SIGPENGING is used to (not) short-circuit the
-system call return path so that signals get delivered.
-So that it is important that update_xxx() calls restore_saved_sigmask()
-if there is no signal pending.
-(Although a signal can happen after the test - which can/will be ignored
-until the signal is enabled again.)
-
-restore_saved_sigmask() must itself be able to set TIF_SIGPENDING
-(the inner sigmask could be more restrictive!).
-
-If restore_saved_sigmask() isn't called here, the syscall return
-path must do it after calling all the handlers and after clearing
-TIF_SIGPENDING, and then call unmasked handlers again.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+diff --git a/drivers/media/dvb-frontends/stv6110x.c b/drivers/media/dvb-frontends/stv6110x.c
+index 0126cfae2e03..f2368ed20bc1 100644
+--- a/drivers/media/dvb-frontends/stv6110x.c
++++ b/drivers/media/dvb-frontends/stv6110x.c
+@@ -333,6 +333,41 @@ static void stv6110x_release(struct dvb_frontend *fe)
+ 	kfree(stv6110x);
+ }
+ 
++void st6110x_init_regs(struct stv6110x_state *stv6110x)
++{
++	u8 default_regs[] = {0x07, 0x11, 0xdc, 0x85, 0x17, 0x01, 0xe6, 0x1e};
++
++	memcpy(stv6110x->regs, default_regs, 8);
++}
++
++void stv6110x_setup_divider(struct stv6110x_state *stv6110x)
++{
++	switch (stv6110x->config->clk_div) {
++	default:
++	case 1:
++		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2],
++				  CTRL2_CO_DIV,
++				  0);
++		break;
++	case 2:
++		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2],
++				  CTRL2_CO_DIV,
++				  1);
++		break;
++	case 4:
++		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2],
++				  CTRL2_CO_DIV,
++				  2);
++		break;
++	case 8:
++	case 0:
++		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2],
++				  CTRL2_CO_DIV,
++				  3);
++		break;
++	}
++}
++
+ static const struct dvb_tuner_ops stv6110x_ops = {
+ 	.info = {
+ 		.name		  = "STV6110(A) Silicon Tuner",
+@@ -342,7 +377,7 @@ static const struct dvb_tuner_ops stv6110x_ops = {
+ 	.release		= stv6110x_release
+ };
+ 
+-static const struct stv6110x_devctl stv6110x_ctl = {
++static struct stv6110x_devctl stv6110x_ctl = {
+ 	.tuner_init		= stv6110x_init,
+ 	.tuner_sleep		= stv6110x_sleep,
+ 	.tuner_set_mode		= stv6110x_set_mode,
+@@ -356,48 +391,104 @@ static const struct stv6110x_devctl stv6110x_ctl = {
+ 	.tuner_get_status	= stv6110x_get_status,
+ };
+ 
++void stv6110x_set_frontend_opts(struct stv6110x_state *stv6110x)
++{
++	stv6110x->frontend->tuner_priv		= stv6110x;
++	stv6110x->frontend->ops.tuner_ops	= stv6110x_ops;
++}
++
++static struct stv6110x_devctl *stv6110x_get_devctl(struct i2c_client *client)
++{
++	struct stv6110x_state *stv6110x = i2c_get_clientdata(client);
++
++	dev_dbg(&client->dev, "\n");
++
++	return stv6110x->devctl;
++}
++
++static int stv6110x_probe(struct i2c_client *client,
++			  const struct i2c_device_id *id)
++{
++	struct stv6110x_config *config = client->dev.platform_data;
++
++	struct stv6110x_state *stv6110x;
++
++	stv6110x = kzalloc(sizeof(*stv6110x), GFP_KERNEL);
++	if (!stv6110x)
++		return -ENOMEM;
++
++	stv6110x->frontend	= config->frontend;
++	stv6110x->i2c		= client->adapter;
++	stv6110x->config	= config;
++	stv6110x->devctl	= &stv6110x_ctl;
++
++	st6110x_init_regs(stv6110x);
++	stv6110x_setup_divider(stv6110x);
++	stv6110x_set_frontend_opts(stv6110x);
++
++	dev_info(&stv6110x->i2c->dev, "Probed STV6110x\n");
++
++	i2c_set_clientdata(client, stv6110x);
++
++	/* setup callbacks */
++	config->get_devctl = stv6110x_get_devctl;
++
++	return 0;
++}
++
++static int stv6110x_remove(struct i2c_client *client)
++{
++	struct stv6110x_state *stv6110x = i2c_get_clientdata(client);
++
++	stv6110x_release(stv6110x->frontend);
++	return 0;
++}
++
+ const struct stv6110x_devctl *stv6110x_attach(struct dvb_frontend *fe,
+ 					const struct stv6110x_config *config,
+ 					struct i2c_adapter *i2c)
+ {
+ 	struct stv6110x_state *stv6110x;
+-	u8 default_regs[] = {0x07, 0x11, 0xdc, 0x85, 0x17, 0x01, 0xe6, 0x1e};
+ 
+-	stv6110x = kzalloc(sizeof (struct stv6110x_state), GFP_KERNEL);
++	stv6110x = kzalloc(sizeof(*stv6110x), GFP_KERNEL);
+ 	if (!stv6110x)
+ 		return NULL;
+ 
++	stv6110x->frontend	= fe;
+ 	stv6110x->i2c		= i2c;
+ 	stv6110x->config	= config;
+ 	stv6110x->devctl	= &stv6110x_ctl;
+-	memcpy(stv6110x->regs, default_regs, 8);
+ 
+-	/* setup divider */
+-	switch (stv6110x->config->clk_div) {
+-	default:
+-	case 1:
+-		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 0);
+-		break;
+-	case 2:
+-		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 1);
+-		break;
+-	case 4:
+-		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 2);
+-		break;
+-	case 8:
+-	case 0:
+-		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 3);
+-		break;
+-	}
++	st6110x_init_regs(stv6110x);
++	stv6110x_setup_divider(stv6110x);
++	stv6110x_set_frontend_opts(stv6110x);
+ 
+ 	fe->tuner_priv		= stv6110x;
+ 	fe->ops.tuner_ops	= stv6110x_ops;
+ 
+-	printk(KERN_INFO "%s: Attaching STV6110x\n", __func__);
++	dev_info(&stv6110x->i2c->dev, "Attaching STV6110x\n");
+ 	return stv6110x->devctl;
+ }
+ EXPORT_SYMBOL(stv6110x_attach);
+ 
++static const struct i2c_device_id stv6110x_id_table[] = {
++	{"stv6110x", 0},
++	{}
++};
++MODULE_DEVICE_TABLE(i2c, stv6110x_id_table);
++
++static struct i2c_driver stv6110x_driver = {
++	.driver = {
++		.name	= "stv6110x",
++		.suppress_bind_attrs = true,
++	},
++	.probe		= stv6110x_probe,
++	.remove		= stv6110x_remove,
++	.id_table	= stv6110x_id_table,
++};
++
++module_i2c_driver(stv6110x_driver);
++
+ MODULE_AUTHOR("Manu Abraham");
+ MODULE_DESCRIPTION("STV6110x Silicon tuner");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/media/dvb-frontends/stv6110x.h b/drivers/media/dvb-frontends/stv6110x.h
+index 1630e55255fd..1feade3158c2 100644
+--- a/drivers/media/dvb-frontends/stv6110x.h
++++ b/drivers/media/dvb-frontends/stv6110x.h
+@@ -15,6 +15,9 @@ struct stv6110x_config {
+ 	u8	addr;
+ 	u32	refclk;
+ 	u8	clk_div; /* divisor value for the output clock */
++	struct dvb_frontend		*frontend;
++
++	struct stv6110x_devctl* (*get_devctl)(struct i2c_client *i2c);
+ };
+ 
+ enum tuner_mode {
+diff --git a/drivers/media/dvb-frontends/stv6110x_priv.h b/drivers/media/dvb-frontends/stv6110x_priv.h
+index 909094df28df..b27769558f78 100644
+--- a/drivers/media/dvb-frontends/stv6110x_priv.h
++++ b/drivers/media/dvb-frontends/stv6110x_priv.h
+@@ -54,11 +54,12 @@
+ #define REFCLOCK_MHz				(stv6110x->config->refclk / 1000000)
+ 
+ struct stv6110x_state {
++	struct dvb_frontend		*frontend;
+ 	struct i2c_adapter		*i2c;
+ 	const struct stv6110x_config	*config;
+ 	u8				regs[8];
+ 
+-	const struct stv6110x_devctl	*devctl;
++	struct stv6110x_devctl	*devctl;
+ };
+ 
+ #endif /* __STV6110x_PRIV_H */
+-- 
+2.21.0
 
