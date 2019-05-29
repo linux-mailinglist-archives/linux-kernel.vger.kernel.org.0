@@ -2,68 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07A412DEAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:42:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1DCD2DEBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 15:43:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbfE2NmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 09:42:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39738 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbfE2NmN (ORCPT
+        id S1727379AbfE2Nnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 09:43:37 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:48400 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726702AbfE2Nng (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 09:42:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=10Sgr4KoOvxj5IRiocrEj1QA9w+FzRZ30VNM6K3+zD4=; b=UitTYw7U2uWW2cHi64yEuejtX
-        4R+jVh2r4FK0YjiPB62XRVxFNFpvCiYGj1ZxrsXXvv08ZneciW6FAaR+eKuqWGciqqulGYiBi8vxB
-        wXKZZCIkcvMvnvAZnGUjq/TLLA1ANy0nL8/h1cDatE2wi1w7FktHa11xfCDDNLyxC85/wxjbyU5md
-        LzcsHV/fba8ydkl7mXrFsLT6j4mRNYYXDbNKoS9nAtRCTYzdQ/eltfaG7CigapT4R5vsdNQM3MTYW
-        fSZAEXuODNB4gRoPcYnIRRRCeQQ9bC8GwtdGYTIxSCS6T3KHf60/CAOGxzJ+Y56O+YXj8GKLaCmKs
-        yuxzlVYCA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hVyq2-0002Ct-Iu; Wed, 29 May 2019 13:41:54 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BB12A201D5AB1; Wed, 29 May 2019 15:41:52 +0200 (CEST)
-Date:   Wed, 29 May 2019 15:41:52 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Matt Helsley <mhelsley@vmware.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC][PATCH 00/13] Cleanup recordmcount and begin objtool
- conversion
-Message-ID: <20190529134152.GX2623@hirez.programming.kicks-ass.net>
-References: <cover.1558569448.git.mhelsley@vmware.com>
- <20190528144328.6wygc2ofk5oaggaf@treble>
+        Wed, 29 May 2019 09:43:36 -0400
+Received: from cpe-2606-a000-111b-405a-0-0-0-162e.dyn6.twc.com ([2606:a000:111b:405a::162e] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1hVyqZ-0000lu-Gj; Wed, 29 May 2019 09:43:34 -0400
+Date:   Wed, 29 May 2019 09:42:00 -0400
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Steve Grubb <sgrubb@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] Fix xoring of arch_get_random_long into crng->state array
+Message-ID: <20190529134200.GA31099@hmswarspite.think-freely.org>
+References: <20190402220025.14499-1-nhorman@tuxdriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190528144328.6wygc2ofk5oaggaf@treble>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190402220025.14499-1-nhorman@tuxdriver.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Spam-Score: -2.9 (--)
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 09:43:28AM -0500, Josh Poimboeuf wrote:
-> Would it be feasible to eventually combine subcommands so that objtool
-> could do both ORC and mcount generation in a single invocation?  I
-> wonder what what the interface would look like.
+On Tue, Apr 02, 2019 at 06:00:25PM -0400, Neil Horman wrote:
+> When _crng_extract is called, any arch that has a registered
+> arch_get_random_long method, attempts to mix an unsigned long value into
+> the crng->state buffer, it only mixes in 32 of the 64 bits available,
+> because the state buffer is an array of u32 values, even though 2 u32
+> are expected to be filled (owing to the fact that it expects indexes 14
+> and 15 to be filled).
+> 
+> Bring the expected behavior into alignment by casting index 14 to an
+> unsignled long pointer, and xoring that in instead.
+> 
+> Tested successfully by myself
+> 
+> Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+> Reported-by: Steve Grubb <sgrubb@redhat.com>
+> CC: "Theodore Ts'o" <tytso@mit.edu>
+> CC: Arnd Bergmann <arnd@arndb.de>
+> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/char/random.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/random.c b/drivers/char/random.c
+> index 38c6d1af6d1c..8178618458ac 100644
+> --- a/drivers/char/random.c
+> +++ b/drivers/char/random.c
+> @@ -975,14 +975,16 @@ static void _extract_crng(struct crng_state *crng,
+>  			  __u8 out[CHACHA_BLOCK_SIZE])
+>  {
+>  	unsigned long v, flags;
+> -
+> +	unsigned long *archrnd;
+>  	if (crng_ready() &&
+>  	    (time_after(crng_global_init_time, crng->init_time) ||
+>  	     time_after(jiffies, crng->init_time + CRNG_RESEED_INTERVAL)))
+>  		crng_reseed(crng, crng == &primary_crng ? &input_pool : NULL);
+>  	spin_lock_irqsave(&crng->lock, flags);
+> -	if (arch_get_random_long(&v))
+> -		crng->state[14] ^= v;
+> +	if (arch_get_random_long(&v)) {
+> +		archrnd = (unsigned long *)&crng->state[14];
+> +		*archrnd ^= v;
+> +	}
+>  	chacha20_block(&crng->state[0], out);
+>  	if (crng->state[12] == 0)
+>  		crng->state[13]++;
+> -- 
+> 2.20.1
+> 
+> 
 
-objtool orc+mcount ?
+Ping, Arnd, Ted, Greg, any comment here?
+Neil
 
-That is, have '+' be a separator for cmd thingies. That would of course
-require all other arguments to be shared between all commands, which is
-currently already so, but I've not checked the mcount patches.
-
-Alternatively, we ditch the command thing entirely and live off of pure
-flags:
-
- 'o', "orc", "Generate ORC data"
- 'c', "mcount', "Generate mcount() location data"
