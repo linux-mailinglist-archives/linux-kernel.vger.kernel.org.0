@@ -2,92 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6985C2DA4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:20:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46EE82DA58
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 12:22:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbfE2KU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 06:20:28 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42778 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbfE2KU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 06:20:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31E86341;
-        Wed, 29 May 2019 03:20:27 -0700 (PDT)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED5933F59C;
-        Wed, 29 May 2019 03:20:24 -0700 (PDT)
-Date:   Wed, 29 May 2019 11:20:22 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Young Xiao <92siuyang@gmail.com>, linux@armlinux.org.uk,
-        mark.rutland@arm.com, mingo@redhat.com, bp@alien8.de,
-        hpa@zytor.com, x86@kernel.org, kan.liang@linux.intel.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ravi.bangoria@linux.vnet.ibm.com, mpe@ellerman.id.au
-Subject: Re: [PATCH] perf: Fix oops when kthread execs user process
-Message-ID: <20190529102022.GC4485@fuggles.cambridge.arm.com>
-References: <1559046689-24091-1-git-send-email-92siuyang@gmail.com>
- <20190528140103.GT2623@hirez.programming.kicks-ass.net>
- <20190528153224.GE20758@fuggles.cambridge.arm.com>
- <20190528173228.GW2623@hirez.programming.kicks-ass.net>
- <20190529091733.GA4485@fuggles.cambridge.arm.com>
- <20190529101042.GN2623@hirez.programming.kicks-ass.net>
+        id S1726694AbfE2KV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 06:21:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48220 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfE2KV4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 06:21:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eaEmReJoktuMTB5S11KlWyhQ5sxMXJSXYo6lfdIwCU0=; b=jLRarsIRHF5opjV03oHEIT31q
+        L8F8AKqtF9E3O5dU3TYoZ2PkJVrTJxhCBB84PoR1ODhLVpvYh7h+xtdIoallzxZ4KfnH/rStJD6N1
+        PdR5Vw2uNE/QphhjaUUH48JadN3STvyKVw4oT0iKXOtqHSzh01xpAMiRNy3AarVAzoUgFbYiC5B0O
+        BSQNFWU+nT8MlbD+Jl98kL6a7TynzXrP0Ovj9PacgMBo+wDbSIiraOhEoWxaBo38Ir50RSgbTsLkl
+        BECzNv7lF2m6RMtySUzSzo3H8BUUacLlIB/PoCuDBj3XzNA8GNAl/w3H9KdxwwrexhRSVKVbJpYse
+        gI4unhMAA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hVvhI-0005BK-F2; Wed, 29 May 2019 10:20:40 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1D5E8207762A4; Wed, 29 May 2019 12:20:38 +0200 (CEST)
+Date:   Wed, 29 May 2019 12:20:38 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, williams@redhat.com,
+        daniel@bristot.me, "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Subject: Re: [RFC 2/3] preempt_tracer: Disable IRQ while starting/stopping
+ due to a preempt_counter change
+Message-ID: <20190529102038.GO2623@hirez.programming.kicks-ass.net>
+References: <cover.1559051152.git.bristot@redhat.com>
+ <f2ca7336162b6dc45f413cfe4e0056e6aa32e7ed.1559051152.git.bristot@redhat.com>
+ <20190529083357.GF2623@hirez.programming.kicks-ass.net>
+ <b47631c3-d65a-4506-098a-355c8cf50601@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190529101042.GN2623@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+In-Reply-To: <b47631c3-d65a-4506-098a-355c8cf50601@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 12:10:42PM +0200, Peter Zijlstra wrote:
-> On Wed, May 29, 2019 at 10:17:33AM +0100, Will Deacon wrote:
-> > On Tue, May 28, 2019 at 07:32:28PM +0200, Peter Zijlstra wrote:
-> 
-> > > 'funny' thing that, perf_sample_regs_user() seems to assume that
-> > > anything with current->mm is in fact a user task, and that assumption is
-> > > just plain wrong, consider use_mm().
+On Wed, May 29, 2019 at 11:40:34AM +0200, Daniel Bristot de Oliveira wrote:
+> On 29/05/2019 10:33, Peter Zijlstra wrote:
+> > On Tue, May 28, 2019 at 05:16:23PM +0200, Daniel Bristot de Oliveira wrote:
+> >> The preempt_disable/enable tracepoint only traces in the disable <-> enable
+> >> case, which is correct. But think about this case:
+> >>
+> >> ---------------------------- %< ------------------------------
+> >> 	THREAD					IRQ
+> >> 	   |					 |
+> >> preempt_disable() {
+> >>     __preempt_count_add(1)
+> >> 	------->	    smp_apic_timer_interrupt() {
+> >> 				preempt_disable()
+> >> 				    do not trace (preempt count >= 1)
+> >> 				    ....
+> >> 				preempt_enable()
+> >> 				    do not trace (preempt count >= 1)
+> >> 			    }
+> >>     trace_preempt_disable();
+> >> }
+> >> ---------------------------- >% ------------------------------
+> >>
+> >> The tracepoint will be skipped.
 > > 
-> > Right, I suppose that was attempting to handle interrupt skid from the PMU
-> > overflow?
+> > .... for the IRQ. But IRQs are not preemptible anyway, so what the
+> > problem?
 > 
-> Nah, just a broken test to determine if there is userspace at all. It is
-> mostly right, just not completely :-)
 > 
-> > > So I'm thinking the right thing to do here is something like the below;
-> > > umh should get PF_KTHREAD cleared when it passes exec(). And this should
-> > > also fix the power splat I'm thinking.
-> > > 
-> > > ---
-> > > 
-> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > > index abbd4b3b96c2..9929404b6eb9 100644
-> > > --- a/kernel/events/core.c
-> > > +++ b/kernel/events/core.c
-> > > @@ -5923,7 +5923,7 @@ static void perf_sample_regs_user(struct perf_regs *regs_user,
-> > >  	if (user_mode(regs)) {
-> > >  		regs_user->abi = perf_reg_abi(current);
-> > >  		regs_user->regs = regs;
-> > > -	} else if (current->mm) {
-> > > +	} else if (!(current->flags & PF_KTHREAD) && current->mm) {
-> > >  		perf_get_regs_user(regs_user, regs, regs_user_copy);
-> > 
-> > Makes sense, but under which circumstances would we have a NULL mm here?
+> right, they are.
 > 
-> Dunno; I'm paranoid, and also:
+> exposing my problem in a more specific way:
 > 
->   mm/memcontrol.c:        if (in_interrupt() || !current->mm || (current->flags & PF_KTHREAD))
+> To show in a model that an event always takes place with preemption disabled,
+> but not necessarily with IRQs disabled, it is worth having the preemption
+> disable events separated from IRQ disable ones.
+> 
+> The main reason is that, although IRQs disabled postpone the execution of the
+> scheduler, it is more pessimistic, as it also delays IRQs. So the more precise
+> the model is, the less pessimistic the analysis will be.
 
-So this one I also don't understand...
+I'm not sure I follow, IRQs disabled fully implies !preemptible. I don't
+see how the model would be more pessimistic than reality if it were to
+use this knowledge.
 
->   mm/vmacache.c:  return current->mm == mm && !(current->flags & PF_KTHREAD);
+Any !0 preempt_count(), which very much includes (Hard)IRQ and SoftIRQ
+counts, means non-preemptible.
 
-... but this one is just about an mm mismatch, rather than a NULL mm.
-
-Anyway, you can add my ack to your patch, but I bet we can remove that mm
-check :D
-
-Will
