@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 365A42D8DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:19:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F2A2D8E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 11:20:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbfE2JTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 05:19:48 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:39702 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfE2JTs (ORCPT
+        id S1726546AbfE2JT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 05:19:56 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:54898 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbfE2JTy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 05:19:48 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4T9Jfk8009982;
-        Wed, 29 May 2019 04:19:41 -0500
+        Wed, 29 May 2019 05:19:54 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x4T9JifF009253;
+        Wed, 29 May 2019 04:19:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1559121581;
-        bh=f9yWrCu6QwQFUN0RZDguN6Dz/yvzTBh+L7s5j+aLQro=;
+        s=ti-com-17Q1; t=1559121584;
+        bh=+xTE10V8aohxT+Kq0AQML6/+dZPD7lAi9/07SdRegaY=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=PziiElItn97hefl6Dg1dYBIIJl5zziulP+vKFY/z6mpiQW/amqpmpJrtpNQinikRJ
-         zTdaRTIPpxDRDdfZBYVyoMsEhZ0nFW6OqPIQ7ahBtHVV9Ug6gtlOGvAcwcn/oOMmvR
-         S1XArXgIptIyk5zRVkzZ8mrKdpBvfi6FpevByoOM=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4T9Jf3r050378
+        b=OxggvS07d1QGnNPKT2xbYCr3tGN+bMA8m0Ihxjwyo40LB1Hp+asIBeUbURCPcRF8Z
+         DH90Bn7NhVBADXtAYfHCm2BTzSKq6KD92ix/tcDxUiVYJx/g8pTPwGCsHh2fCbxitC
+         +O+hccVq9rrguRi5XWooDJ0TqFlA7Oxkxu/YIcFA=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x4T9JiUl032612
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 May 2019 04:19:41 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 29 May 2019 04:19:44 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 29
- May 2019 04:19:41 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ May 2019 04:19:44 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 29 May 2019 04:19:41 -0500
+ Frontend Transport; Wed, 29 May 2019 04:19:44 -0500
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4T9JVxP079377;
-        Wed, 29 May 2019 04:19:38 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x4T9JVxQ079377;
+        Wed, 29 May 2019 04:19:42 -0500
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
 CC:     Rob Herring <robh+dt@kernel.org>,
@@ -44,9 +44,9 @@ CC:     Rob Herring <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 2/6] arm64: dts: k3-am6: Add mux-controller DT node required for muxing SERDES
-Date:   Wed, 29 May 2019 14:48:08 +0530
-Message-ID: <20190529091812.20764-3-kishon@ti.com>
+Subject: [PATCH 3/6] arm64: dts: k3-am6: Add SERDES DT node
+Date:   Wed, 29 May 2019 14:48:09 +0530
+Message-ID: <20190529091812.20764-4-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190529091812.20764-1-kishon@ti.com>
 References: <20190529091812.20764-1-kishon@ti.com>
@@ -58,32 +58,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add mux-controller DT node as a child node of scm_conf. This is
-required for muxing SERDES between USB, PCIe and ICSS2 SGMII.
+Add DT node for SERDES0 and SERDES1.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 41 ++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index 81e97d7adcc9..99d2402455d1 100644
+index 99d2402455d1..443de60576f8 100644
 --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
 +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -233,6 +233,13 @@
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 		ranges = <0x0 0x0 0x00100000 0x1c000>;
-+
-+		serdes_mux: mux-controller {
-+			compatible = "mmio-mux";
-+			#mux-control-cells = <1>;
-+			mux-reg-masks = <0x4080 0x3>, /* SERDES0 lane select */
-+					<0x4090 0x3>; /* SERDES1 lane select */
-+		};
+@@ -4,6 +4,7 @@
+  *
+  * Copyright (C) 2016-2018 Texas Instruments Incorporated - http://www.ti.com/
+  */
++#include <dt-bindings/phy/phy-am654-serdes.h>
+ 
+ &cbass_main {
+ 	msmc_ram: sram@70000000 {
+@@ -61,6 +62,36 @@
+ 		interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
  	};
  
- 	dwc3_0: dwc3@4000000 {
++	serdes0: serdes@900000 {
++		compatible = "ti,phy-am654-serdes";
++		reg = <0x0 0x900000 0x0 0x2000>;
++		reg-names = "serdes";
++		#phy-cells = <2>;
++		power-domains = <&k3_pds 153>;
++		clocks = <&k3_clks 153 4>, <&k3_clks 153 1>, <&serdes1 AM654_SERDES_LO_REFCLK>;
++		clock-output-names = "serdes0_cmu_refclk", "serdes0_lo_refclk", "serdes0_ro_refclk";
++		assigned-clocks = <&k3_clks 153 4>, <&serdes0 AM654_SERDES_CMU_REFCLK>;
++		assigned-clock-parents = <&k3_clks 153 8>, <&k3_clks 153 4>;
++		ti,serdes-clk = <&serdes0_clk>;
++		#clock-cells = <1>;
++		mux-controls = <&serdes_mux 0>;
++	};
++
++	serdes1: serdes@910000 {
++		compatible = "ti,phy-am654-serdes";
++		reg = <0x0 0x910000 0x0 0x2000>;
++		reg-names = "serdes";
++		#phy-cells = <2>;
++		power-domains = <&k3_pds 154>;
++		clocks = <&serdes0 AM654_SERDES_RO_REFCLK>, <&k3_clks 154 1>, <&k3_clks 154 5>;
++		clock-output-names = "serdes1_cmu_refclk", "serdes1_lo_refclk", "serdes1_ro_refclk";
++		assigned-clocks = <&k3_clks 154 5>, <&serdes1 AM654_SERDES_CMU_REFCLK>;
++		assigned-clock-parents = <&k3_clks 154 9>, <&k3_clks 154 5>;
++		ti,serdes-clk = <&serdes1_clk>;
++		#clock-cells = <1>;
++		mux-controls = <&serdes_mux 1>;
++	};
++
+ 	main_uart0: serial@2800000 {
+ 		compatible = "ti,am654-uart";
+ 		reg = <0x00 0x02800000 0x00 0x100>;
+@@ -234,6 +265,16 @@
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0x0 0x00100000 0x1c000>;
+ 
++		serdes0_clk: serdes_clk@4080 {
++			compatible = "syscon";
++			reg = <0x00004080 0x4>;
++		};
++
++		serdes1_clk: serdes_clk@4090 {
++			compatible = "syscon";
++			reg = <0x00004090 0x4>;
++		};
++
+ 		serdes_mux: mux-controller {
+ 			compatible = "mmio-mux";
+ 			#mux-control-cells = <1>;
 -- 
 2.17.1
 
