@@ -2,77 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B201F2DF11
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEFAA2DF6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:16:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbfE2OCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 10:02:43 -0400
-Received: from mga02.intel.com ([134.134.136.20]:43018 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727081AbfE2OCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 10:02:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 May 2019 07:02:42 -0700
-X-ExtLoop1: 1
-Received: from marshy.an.intel.com (HELO [10.122.105.159]) ([10.122.105.159])
-  by fmsmga004.fm.intel.com with ESMTP; 29 May 2019 07:02:41 -0700
-From:   Richard Gong <richard.gong@linux.intel.com>
-Subject: Re: [PATCHv4 2/4] firmware: add Intel Stratix10 remote system update
- driver
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, dinguyen@kernel.org,
-        atull@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sen.li@intel.com,
-        Richard Gong <richard.gong@intel.com>
-References: <1559074833-1325-1-git-send-email-richard.gong@linux.intel.com>
- <1559074833-1325-3-git-send-email-richard.gong@linux.intel.com>
- <20190528231557.GA28886@kroah.com>
-Message-ID: <a68355e1-762b-0a22-7037-c06036717609@linux.intel.com>
-Date:   Wed, 29 May 2019 09:15:05 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1727021AbfE2OQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:16:38 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:32880 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbfE2OQi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 10:16:38 -0400
+Received: by mail-ot1-f68.google.com with SMTP id n18so2194891otq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 07:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LPIxbFckpmqavIl60mnhGb6C8rcrkiaOP2OfEidBo5E=;
+        b=PRVorFm2Okq9hP5kqFH4ZiGr/E/Zu5eJY3MGXXFHxfdpmEdO3GutJJMHvfi09HYlYk
+         SnDTz9Jq0D6SvbjJsXUxw5SPAGf64dGBdkqzG7gBAtOGooyMlAvl8mmczoLi90evYR0A
+         PoHHqSU1LxoqR2wdSfJkTL18f/IZSr+Mc0D+armTgiJNv2KbxIbIGzPnKannBmXr5ZoL
+         onXscwCND5pzd7qsQ+4DRiaG4VALoZaDIZlGVD+Au9+DrLehAtdeFUdLTVj+n3sjvpTd
+         19cYxGogHm6iK4AXItVQ8hkyokyg4Cjwng+d2g0cb8MTYxZRlHB62qmC+BHhUJPQbJyg
+         MxTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LPIxbFckpmqavIl60mnhGb6C8rcrkiaOP2OfEidBo5E=;
+        b=R+ioCNvKC9Npc1KmkntDmvh6qTsvNlB1vv8vC6l9RlfL+JLL+Omo8N1lx1rFRt1RmW
+         zY5KX8kOJCdU6J1gSqSUJlf/zmHEzWXN9RRa9BODCWF3sIoGC6J4dR3f6MTYlisyquXo
+         nrAvgMPx6wXRzLQvfxxY2tCoid4ZQMT0B9/FjHXK0cVSff8+RtjhUQiAjSP6cCsiZBQk
+         dV9hcbudIRQ0VqBkWurZH3yvYgXoIRCFGf0bPRtyfATo+5cDq5FP9r0RxR9PXCsYVj1J
+         RcOEpe04Ko66+dwatKtQvAgRnwyEHvIFxfJhe/evTg7v2sdZ+qNQPy9H8k+wlUPtWzRT
+         iIHQ==
+X-Gm-Message-State: APjAAAVR0GP9T3q38ZjZ3h7GiNa0Fo/vMPiN3QyHBYwSjYajqT7Bcsbv
+        iwU1j8Q3SpIzL+1bfmCYs0Q5gYv3QlW4+KhJvNA7hg==
+X-Google-Smtp-Source: APXvYqwFTJrhrhEsjfOGtxnb29he2Fqyf9z7Tcu+GzobGgP0NfT3JF16fdsQq+/5jwCnLYlKlqDC3v5fUc8xIPyeFeo=
+X-Received: by 2002:a9d:7f8b:: with SMTP id t11mr37188otp.110.1559139396903;
+ Wed, 29 May 2019 07:16:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190528231557.GA28886@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+ <155905934373.7587.10824503964531598726.stgit@warthog.procyon.org.uk>
+ <CAG48ez2o1egR13FDd3=CgdXP_MbBsZM4SX=+aqvR6eheWddhFg@mail.gmail.com> <24577.1559134719@warthog.procyon.org.uk>
+In-Reply-To: <24577.1559134719@warthog.procyon.org.uk>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 29 May 2019 16:16:10 +0200
+Message-ID: <CAG48ez0Ugv=cfj-v6DaYma0HgyiBjpykSkCr7mCAcMx13LEncg@mail.gmail.com>
+Subject: Re: [PATCH 4/7] vfs: Add superblock notifications
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Wed, May 29, 2019 at 2:58 PM David Howells <dhowells@redhat.com> wrote:
+> Jann Horn <jannh@google.com> wrote:
+> > It might make sense to require that the path points to the root inode
+> > of the superblock? That way you wouldn't be able to do this on a bind
+> > mount that exposes part of a shared filesystem to a container.
+>
+> Why prevent that?  It doesn't prevent the container denizen from watching a
+> bind mount that exposes the root of a shared filesystem into a container.
 
+Well, yes, but if you expose the root of the shared filesystem to the
+container, the container is probably meant to have a higher level of
+access than if only a bind mount is exposed? But I don't know.
 
-On 5/28/19 6:15 PM, Greg KH wrote:
-> On Tue, May 28, 2019 at 03:20:31PM -0500, richard.gong@linux.intel.com wrote:
->> From: Richard Gong <richard.gong@intel.com>
->>
->> The Intel Remote System Update (RSU) driver exposes interfaces access
->> through the Intel Service Layer to user space via sysfs interface.
->> The RSU interfaces report and control some of the optional RSU features
->> on Intel Stratix 10 SoC.
->>
->> The RSU feature provides a way for customers to update the boot
->> configuration of a Intel Stratix 10 SoC device with significantly reduced
->> risk of corrupting the bitstream storage and bricking the system.
->>
->> Signed-off-by: Richard Gong <richard.gong@intel.com>
->> Reviewed-by: Alan Tull <atull@kernel.org>
-> 
-> Is Alan reviewing all of these new versions before you post them
-> publicly?  If so, great, if not, don't add tags to new versions when you
-> change things around...
-Yes, Alan reviewed all of these new versions before I submitted for 
-upstream.
+> It probably makes sense to permit the LSM to rule on whether a watch may be
+> emplaced, however.
 
-> 
-> thanks,
-> 
-> greg k-h
-> 
+We should have some sort of reasonable policy outside of LSM code
+though - the kernel should still be secure even if no LSMs are built
+into it.
 
-Regards,
-Richard
+> > > +                       }
+> > > +               }
+> > > +               up_write(&s->s_umount);
+> > > +               if (ret < 0)
+> > > +                       kfree(watch);
+> > > +       } else if (s->s_watchers) {
+> >
+> > This should probably have something like a READ_ONCE() for clarity?
+>
+> Note that I think I'll rearrange this to:
+>
+>         } else {
+>                 ret = -EBADSLT;
+>                 if (s->s_watchers) {
+>                         down_write(&s->s_umount);
+>                         ret = remove_watch_from_object(s->s_watchers, wqueue,
+>                                                        s->s_unique_id, false);
+>                         up_write(&s->s_umount);
+>                 }
+>         }
+>
+> I'm not sure READ_ONCE() is necessary, since s_watchers can only be
+> instantiated once and the watch list then persists until the superblock is
+> deactivated.  Furthermore, by the time deactivate_locked_super() is called, we
+> can't be calling sb_notify() on it as it's become inaccessible.
+>
+> So if we see s->s_watchers as non-NULL, we should not see anything different
+> inside the lock.  In fact, I should be able to rewrite the above to:
+>
+>         } else {
+>                 ret = -EBADSLT;
+>                 wlist = s->s_watchers;
+>                 if (wlist) {
+>                         down_write(&s->s_umount);
+>                         ret = remove_watch_from_object(wlist, wqueue,
+>                                                        s->s_unique_id, false);
+>                         up_write(&s->s_umount);
+>                 }
+>         }
+
+I'm extremely twitchy when it comes to code like this because AFAIK
+gcc at least used to sometimes turn code that read a value from memory
+and then used it multiple times into something with multiple memory
+reads, leading to critical security vulnerabilities; see e.g. slide 36
+of <https://www.blackhat.com/docs/us-16/materials/us-16-Wilhelm-Xenpwn-Breaking-Paravirtualized-Devices.pdf>.
+I am not aware of any spec that requires the compiler to only perform
+one read from the memory location in code like this.
