@@ -2,106 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CB312D429
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 05:14:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6A062D42E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 05:19:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbfE2DOg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 23:14:36 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39504 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfE2DOg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 23:14:36 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j2so635862pfe.6
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 20:14:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=hD/eJ0/FJOjJOhuFxohI1wWz9d45OVxi6wPvvITBEzk=;
-        b=UbDeFUbn6+H+7cDeCBdyyk2/pkbuQGRbapGZgpbw+YvfBTA69qzhmj6RalY4Z1GmAJ
-         96gemqkCUdIvOuPoweAspuOAY/TgWjSYW8thxTPbEyg0REegsCxLL/vRjdYCZ+4dgKoR
-         WaUwQmow4vMUmd9h3WSp7QzvesPGtAe6Cm8Ao=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=hD/eJ0/FJOjJOhuFxohI1wWz9d45OVxi6wPvvITBEzk=;
-        b=JDvwiVbMcevl0r3TLr68PDF3U1PzBYX0dt+J97RaqIt/WJd8V/vFeuoXLwJvB4x23d
-         ttc+NaystphABhj4mroLJqYYJcbGTJ4bbfAPYMJKFGnbvOlAL75J+XniQv/iiU9c+lLt
-         Je/7igARiYmCla5Zq/9UoN/tYaAaJq6htFztprLxxb4eJ6k8tU7hJPvhEfB05I7Cxc6K
-         Wa/Q+bmqn1K/8IFU1iE4D2eVcUKPnsvl4lbLHBB2ZR/74xjCa5smAO/91OxKX3vqIqZ3
-         FHmeeV20v1TChu63wt+jqc0x7xJrwbbAQEdx8g/mGVer10P7ZwYiaZXv4LsDBGYqo3aM
-         AelA==
-X-Gm-Message-State: APjAAAXG83d8mlplvhxCUFc0/thqU8GXm39OlqsE5UMVKOCWXSIf7CK+
-        7q1yhTgH3KDTdFxHJd4iDyUfKQ==
-X-Google-Smtp-Source: APXvYqxmJv/VPGnK416S7vhHeM+oice+FG61M0S6FIzZnz8d3dcshEcT5b2j0z0QEcuNWcvK8NcenA==
-X-Received: by 2002:aa7:99dd:: with SMTP id v29mr147185661pfi.252.1559099675572;
-        Tue, 28 May 2019 20:14:35 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h123sm17558075pfe.80.2019.05.28.20.14.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 28 May 2019 20:14:34 -0700 (PDT)
-Date:   Tue, 28 May 2019 20:14:33 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] lib: test_overflow: Avoid tainting the kernel and fix
- wrap size
-Message-ID: <201905282012.0A8767E24@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        id S1726566AbfE2DTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 23:19:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46786 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725856AbfE2DTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 23:19:07 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 927352173B;
+        Wed, 29 May 2019 03:19:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559099946;
+        bh=jE0bNLaY53Z8nSUY6OlnLjAN+ljsrbXhvZ38e1WAjwE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=KI/PZTV86LTUcP5/Gx7wEH90yj01lgOrWLmjQH2twd7jBSscERnYIsZuLRYM+RbFC
+         h75NCqTgFnpWugEO9dOCFCHNTF1m76GxQnfmljvLHmW8UhBaQAOkbDY5AlmiYu8klV
+         SRi1tJQPFBMutzkdRGAkIc4eCwHXtRucqHbbETok=
+Date:   Tue, 28 May 2019 20:19:06 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpumask: Remove error message and backtrace on
+ out-of-memory condition
+Message-Id: <20190528201906.c0a5fb647b070c462bd7de1e@linux-foundation.org>
+In-Reply-To: <20190527122958.6667-1-geert+renesas@glider.be>
+References: <20190527122958.6667-1-geert+renesas@glider.be>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds __GFP_NOWARN to the kmalloc()-portions of the overflow test to
-avoid tainting the kernel. Additionally fixes up the math on wrap size
-to be architecture and page size agnostic.
+On Mon, 27 May 2019 14:29:58 +0200 Geert Uytterhoeven <geert+renesas@glider.be> wrote:
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Fixes: ca90800a91ba ("test_overflow: Add memory allocation overflow tests")
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-v2: fix leftover __GFP_NOWARN (joe)
----
- lib/test_overflow.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+> There is no need to print an error message and backtrace if
+> kmalloc_node() fails, as the memory allocation core already takes care
+> of that.
+> 
+> ...
+>
+> --- a/lib/cpumask.c
+> +++ b/lib/cpumask.c
+> @@ -114,13 +114,6 @@ bool alloc_cpumask_var_node(cpumask_var_t *mask, gfp_t flags, int node)
+>  {
+>  	*mask = kmalloc_node(cpumask_size(), flags, node);
+>  
+> -#ifdef CONFIG_DEBUG_PER_CPU_MAPS
+> -	if (!*mask) {
+> -		printk(KERN_ERR "=> alloc_cpumask_var: failed!\n");
+> -		dump_stack();
+> -	}
+> -#endif
+> -
+>  	return *mask != NULL;
+>  }
+>  EXPORT_SYMBOL(alloc_cpumask_var_node);
 
-diff --git a/lib/test_overflow.c b/lib/test_overflow.c
-index fc680562d8b6..7a4b6f6c5473 100644
---- a/lib/test_overflow.c
-+++ b/lib/test_overflow.c
-@@ -486,16 +486,17 @@ static int __init test_overflow_shift(void)
-  * Deal with the various forms of allocator arguments. See comments above
-  * the DEFINE_TEST_ALLOC() instances for mapping of the "bits".
-  */
--#define alloc010(alloc, arg, sz) alloc(sz, GFP_KERNEL)
--#define alloc011(alloc, arg, sz) alloc(sz, GFP_KERNEL, NUMA_NO_NODE)
-+#define alloc_GFP		 (GFP_KERNEL | __GFP_NOWARN)
-+#define alloc010(alloc, arg, sz) alloc(sz, alloc_GFP)
-+#define alloc011(alloc, arg, sz) alloc(sz, alloc_GFP, NUMA_NO_NODE)
- #define alloc000(alloc, arg, sz) alloc(sz)
- #define alloc001(alloc, arg, sz) alloc(sz, NUMA_NO_NODE)
--#define alloc110(alloc, arg, sz) alloc(arg, sz, GFP_KERNEL)
-+#define alloc110(alloc, arg, sz) alloc(arg, sz, alloc_GFP)
- #define free0(free, arg, ptr)	 free(ptr)
- #define free1(free, arg, ptr)	 free(arg, ptr)
- 
--/* Wrap around to 8K */
--#define TEST_SIZE		(9 << PAGE_SHIFT)
-+/* Wrap around to 16K */
-+#define TEST_SIZE		(5 * 4096)
- 
- #define DEFINE_TEST_ALLOC(func, free_func, want_arg, want_gfp, want_node)\
- static int __init test_ ## func (void *arg)				\
--- 
-2.17.1
+Well, not really - as it stands CONFIG_DEBUG_PER_CPU_MAPS=y can override a
+caller's __GFP_NOWARN.
 
-
--- 
-Kees Cook
+I wonder if anyone ever sets CONFIG_DEBUG_PER_CPU_MAPS any more...
