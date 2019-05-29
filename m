@@ -2,80 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A76622E095
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7D172E0CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:15:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726842AbfE2PJe convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 29 May 2019 11:09:34 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40752 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbfE2PJe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:09:34 -0400
-Received: by mail-io1-f66.google.com with SMTP id n5so2116316ioc.7;
-        Wed, 29 May 2019 08:09:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZnaDev0tj+heu2iB5lB6hq5yDeKgLXO4KFHMV/Qt+5k=;
-        b=HhRQ4iY1Dg2OjS5vw1kfJlHWgsoEd8OliHnrcv6gwwgwKycHafISYKNP+czvWjASQd
-         RS2+gomWhKrOE7PX0lMS1p8oy/AJfuJ2JUNTlJC0l1X2kelNzaG9/Ip49JJh7aWd7C5E
-         thlrf4XXxDrpfJ47KME9bFjXiyIgVjTYrrgQevkRfh7IdPQyXpnTOaWGpB3K23GVQtK9
-         SxXmBQWSII/w5Q9JubTdBinOw3c/u+r13XOJwWygU4DMgk4lpGzUSkTW9fXy0Ly7b7e9
-         dsFeDvEtW3Lvg/2AXtWhez9j/3DKXPbYSjasp4z2gMHz1nNqFZABjD6naDQ/rvHjedCa
-         enTQ==
-X-Gm-Message-State: APjAAAUsavQI4ewtFB745rk7/u2vUG8r7tfI5NdksInV6+VYFVkvcD2f
-        RHuS3rZnNvpsfLHKSbnOsqo8fefVtWn50dd7KRA=
-X-Google-Smtp-Source: APXvYqySOnocW0FtjyGqwuP2FQxhmxY7P/texfW33GuY5PwHsuap8yTRqkoaWNnTkj3NpjtfrGddYcbbqyuWzUYQqNA=
-X-Received: by 2002:a6b:7:: with SMTP id 7mr828192ioa.253.1559142573556; Wed,
- 29 May 2019 08:09:33 -0700 (PDT)
+        id S1727140AbfE2PPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 11:15:17 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43138 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725914AbfE2PPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 11:15:14 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DE78CCC4E649143F95DF;
+        Wed, 29 May 2019 23:10:30 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Wed, 29 May 2019
+ 23:10:25 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] usb: phy: mv-usb: Remove set but not used variable 'phy'
+Date:   Wed, 29 May 2019 23:09:39 +0800
+Message-ID: <20190529150939.24368-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <20190521161102.29620-1-peron.clem@gmail.com>
-In-Reply-To: <20190521161102.29620-1-peron.clem@gmail.com>
-From:   Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Date:   Wed, 29 May 2019 17:09:22 +0200
-Message-ID: <CAAObsKD8bij1ANLqX6y11Y6mDEXiymNjrDkmHmvGWiFLKWu_FA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/6] Allwinner H6 Mali GPU support
-To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Steven Price <steven.price@arm.com>,
-        devicetree@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 21 May 2019 at 18:11, Clément Péron <peron.clem@gmail.com> wrote:
->
-[snip]
-> [  345.204813] panfrost 1800000.gpu: mmu irq status=1
-> [  345.209617] panfrost 1800000.gpu: Unhandled Page fault in AS0 at VA
-> 0x0000000002400400
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-From what I can see here, 0x0000000002400400 points to the first byte
-of the first submitted job descriptor.
+drivers/usb/phy/phy-mv-usb.c: In function mv_otg_work:
+drivers/usb/phy/phy-mv-usb.c:404:18: warning: variable phy set but not used [-Wunused-but-set-variable]
 
-So mapping buffers for the GPU doesn't seem to be working at all on
-64-bit T-760.
+It's no used since commit e47d92545c29 ("usb: move
+the OTG state from the USB PHY to the OTG structure")
 
-Steven, Robin, do you have any idea of why this could be?
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/usb/phy/phy-mv-usb.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks,
+diff --git a/drivers/usb/phy/phy-mv-usb.c b/drivers/usb/phy/phy-mv-usb.c
+index cfd9add10bf4..cf7ecdc9a9d4 100644
+--- a/drivers/usb/phy/phy-mv-usb.c
++++ b/drivers/usb/phy/phy-mv-usb.c
+@@ -401,7 +401,6 @@ static void mv_otg_update_state(struct mv_otg *mvotg)
+ static void mv_otg_work(struct work_struct *work)
+ {
+ 	struct mv_otg *mvotg;
+-	struct usb_phy *phy;
+ 	struct usb_otg *otg;
+ 	int old_state;
+ 
+@@ -409,7 +408,6 @@ static void mv_otg_work(struct work_struct *work)
+ 
+ run:
+ 	/* work queue is single thread, or we need spin_lock to protect */
+-	phy = &mvotg->phy;
+ 	otg = mvotg->phy.otg;
+ 	old_state = otg->state;
+ 
+-- 
+2.17.1
 
-Tomeu
+
