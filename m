@@ -2,94 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EAEE2D3CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 04:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB1032D3E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 04:41:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbfE2C2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 22:28:14 -0400
-Received: from mail-eopbgr720043.outbound.protection.outlook.com ([40.107.72.43]:6272
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725816AbfE2C2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 22:28:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-Synaptics-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sNxWvouK3CV1UqrX8DkSdHTrL9wyGpZB/ogiRK1+X8o=;
- b=d83GOlWS+g4RYLncJ1G1zOLBnvBXUjcvn9vikguWPHoRn/RsyYD75nUi7RecSWh8D7E+ZnGhvomiJMYTdl7rz5voZDk98wDDBUHBCtM/44Qk3u+QnKsCE9olVQQAPWY6uaHqZKPYelXz2A3Q6xj8AKSv7n6gP0fyrfLJSkJBDhQ=
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.92.152) by
- BYAPR03MB4166.namprd03.prod.outlook.com (20.177.184.207) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1922.22; Wed, 29 May 2019 02:28:10 +0000
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::e484:f15c:c415:5ff9]) by BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::e484:f15c:c415:5ff9%7]) with mapi id 15.20.1922.021; Wed, 29 May 2019
- 02:28:10 +0000
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     David Miller <davem@davemloft.net>
-CC:     "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>,
-        "alexandre.torgue@st.com" <alexandre.torgue@st.com>,
-        "joabreu@synopsys.com" <joabreu@synopsys.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: stmmac: Switch to devm_alloc_etherdev_mqs
-Thread-Topic: [PATCH net-next] net: stmmac: Switch to devm_alloc_etherdev_mqs
-Thread-Index: AQHVFH3ChMvditMZqEGruBoCTIEsdKaA142AgACJQQA=
-Date:   Wed, 29 May 2019 02:28:10 +0000
-Message-ID: <20190529101908.4b40512e@xhacker.debian>
-References: <20190527190833.5955c851@xhacker.debian>
-        <20190528.110753.377345658167716646.davem@davemloft.net>
-In-Reply-To: <20190528.110753.377345658167716646.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [124.74.246.114]
-x-clientproxiedby: TYCPR01CA0032.jpnprd01.prod.outlook.com
- (2603:1096:405:1::20) To BYAPR03MB4773.namprd03.prod.outlook.com
- (2603:10b6:a03:134::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 241fa83d-d3a2-437d-4fb1-08d6e3dd4ab4
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR03MB4166;
-x-ms-traffictypediagnostic: BYAPR03MB4166:
-x-microsoft-antispam-prvs: <BYAPR03MB416628A812F3632FA3DDC004ED1F0@BYAPR03MB4166.namprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3631;
-x-forefront-prvs: 0052308DC6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(366004)(396003)(39860400002)(189003)(199004)(6512007)(486006)(26005)(186003)(316002)(6436002)(86362001)(11346002)(476003)(446003)(9686003)(66066001)(71200400001)(6486002)(256004)(6916009)(71190400001)(229853002)(1076003)(68736007)(6246003)(478600001)(81166006)(102836004)(6506007)(386003)(558084003)(76176011)(14454004)(99286004)(2906002)(25786009)(53936002)(54906003)(4326008)(3846002)(6116002)(72206003)(64756008)(50226002)(52116002)(73956011)(8936002)(7736002)(66946007)(66476007)(66556008)(305945005)(66446008)(5660300002)(8676002)(81156014)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB4166;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: synaptics.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YcUcEOcu54XzmykvC0bxSST5NcHmIheWn93jnKM2eIJVpQaFktHtMS85DjZWKTH33WNLi76GHAJoosNZ22bDRGPcNxvP2HkcPSo81Afonlt9YkrPUPG93lnG4AwRdzKwZd+MQYiytg+iWaRBgj2NQIVyWDS/yH5L3Ht1Q6Wc/dtGL/YL8RXtPQ8SFpxleoFVJGShsbaA/wqcZIckCVX1aR/P+zb7mtcYuEIlSb43V6VWM7TRGcDUBjwhsbARTjYi9irkGE+YYM9Ac+kTrIX3NGEb3i2cx3SPNfBwmRmeMDN/Ul9G8geM4E+pYgOSe0+J4qlR/1d2pBtzsO8laRcr0FnHn3SrK40NVGMXPxSJU+E2KXC7gMhYXxrdC4wE1/XL0JXiZ7zv+jiBF+908yQlBMS1d8/NzvAm51AqmKNROq8=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <BBF8F748863E0047912AC6ABA17B32BA@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726504AbfE2ClB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 22:41:01 -0400
+Received: from mga07.intel.com ([134.134.136.100]:34620 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725847AbfE2ClA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 22:41:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 19:41:00 -0700
+X-ExtLoop1: 1
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga004.jf.intel.com with ESMTP; 28 May 2019 19:40:57 -0700
+Cc:     baolu.lu@linux.intel.com, alex.williamson@redhat.com,
+        shameerali.kolothum.thodi@huawei.com, jean-philippe.brucker@arm.com
+Subject: Re: [PATCH v5 7/7] iommu/vt-d: Differentiate relaxable and non
+ relaxable RMRRs
+To:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
+        joro@8bytes.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dwmw2@infradead.org,
+        robin.murphy@arm.com
+References: <20190528115025.17194-1-eric.auger@redhat.com>
+ <20190528115025.17194-8-eric.auger@redhat.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <13a77738-5e85-ea62-aab1-384c75bde8bd@linux.intel.com>
+Date:   Wed, 29 May 2019 10:34:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 241fa83d-d3a2-437d-4fb1-08d6e3dd4ab4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2019 02:28:10.4459
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jiszha@synaptics.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB4166
+In-Reply-To: <20190528115025.17194-8-eric.auger@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 28 May 2019 11:07:53 -0700 David Miller wrote:
+Hi,
 
->=20
-> You never even tried to compiled this patch.
->=20
+On 5/28/19 7:50 PM, Eric Auger wrote:
+> Now we have a new IOMMU_RESV_DIRECT_RELAXABLE reserved memory
+> region type, let's report USB and GFX RMRRs as relaxable ones.
+> 
+> We introduce a new device_rmrr_is_relaxable() helper to check
+> whether the rmrr belongs to the relaxable category.
+> 
+> This allows to have a finer reporting at IOMMU API level of
+> reserved memory regions. This will be exploitable by VFIO to
+> define the usable IOVA range and detect potential conflicts
+> between the guest physical address space and host reserved
+> regions.
+> 
+> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
+> ---
+> 
+> v3 -> v4:
+> - introduce device_rmrr_is_relaxable and reshuffle the comments
+> ---
+>   drivers/iommu/intel-iommu.c | 55 +++++++++++++++++++++++++++----------
+>   1 file changed, 40 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 9302351818ab..01c82f848470 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -2920,6 +2920,36 @@ static bool device_has_rmrr(struct device *dev)
+>   	return false;
+>   }
+>   
+> +/*
+> + * device_rmrr_is_relaxable - Test whether the RMRR of this device
+> + * is relaxable (ie. is allowed to be not enforced under some conditions)
+> + *
+> + * @dev: device handle
+> + *
+> + * We assume that PCI USB devices with RMRRs have them largely
+> + * for historical reasons and that the RMRR space is not actively used post
+> + * boot.  This exclusion may change if vendors begin to abuse it.
+> + *
+> + * The same exception is made for graphics devices, with the requirement that
+> + * any use of the RMRR regions will be torn down before assigning the device
+> + * to a guest.
+> + *
+> + * Return: true if the RMRR is relaxable
+> + */
+> +static bool device_rmrr_is_relaxable(struct device *dev)
+> +{
+> +	struct pci_dev *pdev;
+> +
+> +	if (!dev_is_pci(dev))
+> +		return false;
+> +
+> +	pdev = to_pci_dev(dev);
+> +	if (IS_USB_DEVICE(pdev) || IS_GFX_DEVICE(pdev))
+> +		return true;
+> +	else
+> +		return false;
+> +}
 
-oops, my bad. I patched the another branch and tested the patch but when I
-manually patch net-next tree, I made a mistake. Sorry.
+I know this is only code refactoring. But strictly speaking, the rmrr of
+any USB host device is ignorable only if quirk_usb_early_handoff() has
+been called. There, the control of USB host controller will be handed
+over from BIOS to OS and the corresponding SMI are disabled.
 
+This function is registered in drivers/usb/host/pci-quirks.c
+
+DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_ANY_ID, PCI_ANY_ID,
+                         PCI_CLASS_SERIAL_USB, 8, quirk_usb_early_handoff);
+
+and only get compiled if CONFIG_USB_PCI is enabled.
+
+Hence, it's safer to say:
+
++#ifdef CONFIG_USB_PCI
++	if (IS_USB_DEVICE(pdev))
++		return true;
++#endif /* CONFIG_USB_PCI */
+
+I am okay if we keep this untouched and make this change within a
+separated patch.
+
+> +
+>   /*
+>    * There are a couple cases where we need to restrict the functionality of
+>    * devices associated with RMRRs.  The first is when evaluating a device for
+> @@ -2934,25 +2964,16 @@ static bool device_has_rmrr(struct device *dev)
+>    * We therefore prevent devices associated with an RMRR from participating in
+>    * the IOMMU API, which eliminates them from device assignment.
+>    *
+> - * In both cases we assume that PCI USB devices with RMRRs have them largely
+> - * for historical reasons and that the RMRR space is not actively used post
+> - * boot.  This exclusion may change if vendors begin to abuse it.
+> - *
+> - * The same exception is made for graphics devices, with the requirement that
+> - * any use of the RMRR regions will be torn down before assigning the device
+> - * to a guest.
+> + * In both cases, devices which have relaxable RMRRs are not concerned by this
+> + * restriction. See device_rmrr_is_relaxable comment.
+>    */
+>   static bool device_is_rmrr_locked(struct device *dev)
+>   {
+>   	if (!device_has_rmrr(dev))
+>   		return false;
+>   
+> -	if (dev_is_pci(dev)) {
+> -		struct pci_dev *pdev = to_pci_dev(dev);
+> -
+> -		if (IS_USB_DEVICE(pdev) || IS_GFX_DEVICE(pdev))
+> -			return false;
+> -	}
+> +	if (device_rmrr_is_relaxable(dev))
+> +		return false;
+>   
+>   	return true;
+>   }
+> @@ -5494,6 +5515,7 @@ static void intel_iommu_get_resv_regions(struct device *device,
+>   		for_each_active_dev_scope(rmrr->devices, rmrr->devices_cnt,
+>   					  i, i_dev) {
+>   			struct iommu_resv_region *resv;
+> +			enum iommu_resv_type type;
+>   			size_t length;
+>   
+>   			if (i_dev != device &&
+> @@ -5501,9 +5523,12 @@ static void intel_iommu_get_resv_regions(struct device *device,
+>   				continue;
+>   
+>   			length = rmrr->end_address - rmrr->base_address + 1;
+> +
+> +			type = device_rmrr_is_relaxable(device) ?
+> +				IOMMU_RESV_DIRECT_RELAXABLE : IOMMU_RESV_DIRECT;
+> +
+>   			resv = iommu_alloc_resv_region(rmrr->base_address,
+> -						       length, prot,
+> -						       IOMMU_RESV_DIRECT);
+> +						       length, prot, type);
+>   			if (!resv)
+>   				break;
+>   
+> 
+
+Other looks good to me.
+
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+
+Best regards,
+Baolu
