@@ -2,88 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 973012D572
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 08:23:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F016A2D57A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 08:25:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbfE2GXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 02:23:32 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40211 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbfE2GXb (ORCPT
+        id S1726304AbfE2GZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 02:25:24 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46879 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbfE2GZY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 02:23:31 -0400
-Received: by mail-lj1-f196.google.com with SMTP id q62so1214751ljq.7
-        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 23:23:30 -0700 (PDT)
+        Wed, 29 May 2019 02:25:24 -0400
+Received: by mail-lf1-f67.google.com with SMTP id l26so981202lfh.13
+        for <linux-kernel@vger.kernel.org>; Tue, 28 May 2019 23:25:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y1SBl/NhErMiMqrSROQABj44p6n5fylOaEGm2rxHFac=;
-        b=oqk/J0AF4QeADPOdicRdeDUwsHkDSXWjWx8dSgJe6kYqicSzaWT6We5F12PmUwMZ65
-         LMtry+PPgl9aZ+ehVfQ3aYUPdsUA+0G/0MxVYzVP3GQ7nbyVaWAFtqS14q9Cz/sXTVWw
-         WStWmxJlYuL0EZHA9ZLPC+k+8DEk47jsreW/64yj3ouY/mC8ANmDOehvx6T5ccr5eMGf
-         1WHWfK+w0dKIuRVlMUYtK5EJTnE70DhNt1doisAzvDA3kA4nYYZdqKIMaavmi3/4P3dM
-         OFEXNXqpmonqPRobjHOdNVf7Lw0XFzgEPkX3HUfI1XRrIa4g+PCInqe2zu8U3pN8pT/h
-         jBAg==
+         :cc:content-transfer-encoding;
+        bh=B3lbQE2t8tEmVgt9o6GAQQq8+7jHXGWM6mCYIQ8+ya0=;
+        b=wB0SFRtWdBS25FQwlxgDqoioG2JMCee1JO3trlXkUEQlwE8zKjg/0L5wXHjxb6GlVB
+         wCA675RduQm0PynujnXytmOLpubVnOiDtA1jsfD68ihLy3uycaOsC5prWWrpvaxXJHZB
+         p/pNvNjFXyXNSlYbSkE7FkEvK3p25Y/EocbjlC3XXWv7xYIEwAKk1Q58/2t9fVcmVpqJ
+         I1qPVajgcAQPWILGcRQ/Y+h9LmTK0hIhh5Fm+XFXBPzwVlZliQ+7TfXEd7oI4hUM6dO7
+         EAkyjLrzp7jk+zSRvQ4WqFup9N5s8CihTyK7soQmS41HjdWsVDe16OYsmbzhB4A1Hi2N
+         X1dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y1SBl/NhErMiMqrSROQABj44p6n5fylOaEGm2rxHFac=;
-        b=PO8TvKiU2efYlmnlX2jrnTjQXrYFSr3oWr/wwewQsa6D6AiCWQs+zz7AKv7seKH5tx
-         8mcXZkaMyGD26nRlIPL5TUQ/13nqQPUY5ycPSXfttAYZ6R75mtdjSHQ8tK1rzHEsmZ86
-         qPSSPG7Vq9kaRaoPXsxwR6IiReElkArLSIVTwSiOI8jcMoPzzlDm89Dg+ILJuN4UIt+6
-         Pm6+E26YwHVpFXW0fze0n8dpZKj9yzyJNBzufkh5hwrNxwHYeV51ub/QMenPzUS9BCiB
-         a1mX5BIQR4Dkzq/ZqUvyOsF7Y+7GU5N+Xmw+uVnLuriJKuGLp5cJJITX9jy2f1aFI1Lt
-         QnQQ==
-X-Gm-Message-State: APjAAAWE53w7qh1V2xXDJp7MJbVDNyWcnvLhfAccyITVp33ywzU5Mhef
-        MfverR8+trfbM1RqUDJnoD5NDapJwxeH4nuLk7eFwnE7brI=
-X-Google-Smtp-Source: APXvYqwIsl1wSDxK9EPcOc6HNZDGzaYIXxohtHwHpz4z0RvbNyq1y2+YZmevdVoB7By354baiJgjeTvrt9wKyS/5rzA=
-X-Received: by 2002:a2e:8997:: with SMTP id c23mr1321995lji.94.1559111009909;
- Tue, 28 May 2019 23:23:29 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=B3lbQE2t8tEmVgt9o6GAQQq8+7jHXGWM6mCYIQ8+ya0=;
+        b=m9xJRt4tDuMy4qqD3dMkKUBA5WkbmT1nBODvB3VwLYedAlUe29q8Rl67yvGbBJO+Eo
+         e5lxBBh5BVEpfIEPzyruJNS8Nx8kZTsy9FcufITW05GtBA/aHQdycLKe32C7hh1ljIx3
+         aDZppFIX8yiLjsVpqYsZmVDd3JcIFNmapEI5A8bmnHtDaiHezbNUN21ZMbUFrSs+7/gQ
+         NFAz3TVUavH2aZ0PXe7dsbafE7L3WBrIMfx9z9sJ1udqIHqQ0uHrRwC/HYB6SOpO9/Pa
+         SflpyCNMiJsiX3w1eBue34cVP8QDShAglUhTqd8e30IwaidKoC+pXfclK9YhbFisKEDJ
+         Yo0w==
+X-Gm-Message-State: APjAAAURMsLO02UjFCvWi21LdCj2cpXs2DcJQ51F3csIn+EjEWqv93G5
+        bTn9nXCwCi+cT05y02P4y5xJE5c/yeLVahDFEeR6Aw==
+X-Google-Smtp-Source: APXvYqyBA+PSZZeZoqBiwk392JIbs7Yf+lJ3Xxyzvxrpibt4Wud2QcvuMDANB9aB6ixnoZPeTgRp6Q+/XUyoyxxWkUw=
+X-Received: by 2002:a19:ae09:: with SMTP id f9mr1609906lfc.60.1559111122621;
+ Tue, 28 May 2019 23:25:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190509020352.14282-1-masneyb@onstation.org> <CACRpkda-7+ggoeMD9=erPX09OWteX0bt+qP60_Yv6=4XLqNDZQ@mail.gmail.com>
- <20190529011705.GA12977@basecamp>
-In-Reply-To: <20190529011705.GA12977@basecamp>
+References: <CACRpkdYFqcu=gz57H-+h5C3g_rvD-+XoRTw_A86PKDVA3=rfJg@mail.gmail.com>
+ <CAHk-=wgZBfGwnyRGjziYvPMssSf7XO+7L_FTGfkR9Gz031VAzw@mail.gmail.com>
+In-Reply-To: <CAHk-=wgZBfGwnyRGjziYvPMssSf7XO+7L_FTGfkR9Gz031VAzw@mail.gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 29 May 2019 08:23:17 +0200
-Message-ID: <CACRpkdZu5KxKTMqAM5rueWbrXbfPNorOOerezCAA3vgAR6cD5g@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 0/6] ARM: qcom: initial Nexus 5 display support
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        freedreno@lists.freedesktop.org, Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Rob Herring <robh@kernel.org>
+Date:   Wed, 29 May 2019 08:25:09 +0200
+Message-ID: <CACRpkdYP+i8VQBm_1wr+SrW4QQ-hHO4jNT3Ln-z67ngphuQgbw@mail.gmail.com>
+Subject: Re: [GIT PULL] pin control fixes for v5.2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Amelie Delaunay <amelie.delaunay@st.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 3:17 AM Brian Masney <masneyb@onstation.org> wrote:
+On Tue, May 28, 2019 at 6:44 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, May 28, 2019 at 1:44 AM Linus Walleij <linus.walleij@linaro.org> =
+wrote:
+> >
+> > The outstanding commits are the Intel fixes [..]
+>
+> Heh. Swedism? "Outstanding" in English means "exceptionally good". I
+> suspect you meant commits that "st=C3=A5r ut", which translates to "stand=
+s
+> out".
 
-> It's in low speed mode but its usable.
+Dammit it is a Swedishism of course, it happens when I'm stressed.
+Luckily there is another one on the other end.
 
-How low speed is that?
-
-> I assume that it's related to the
-> vblank events not working properly?
-
-They are only waiting for 50 ms before timing out, I raised it
-to 100ms in the -next kernel. I'm still suspicious about this
-even though I think you said this was not the problem.
-
-For a command mode panel in LP mode it will nevertheless
-be more than 100ms for sure, the update is visible to the
-naked eye.
-
-Raise it to 10000 ms or something and see what happens.
-drivers/gpu/drm/drm_atomic_helper.c:
- msecs_to_jiffies(50)
-
-Yours,
+Thanks,
 Linus Walleij
