@@ -2,134 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C65092E6A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78F892E688
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 22:54:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbfE2Uze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 16:55:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57470 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726871AbfE2Uzb (ORCPT
+        id S1726693AbfE2Uys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 16:54:48 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35447 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbfE2Uyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 16:55:31 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9554D61633; Wed, 29 May 2019 20:55:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559163330;
-        bh=B4EA6+W0bMBZWz+Img5LRozrErEZ8aBa+Kh0uCtpCTE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TcpYeA+J8rOgMttD2H3KglY6R7jLOe3K1UCH9fggHbm37SeKXGvlpRG3PHj1Amtse
-         tg1kso1o1UcmG9bSW6+S996oydlPzSl+6tvffjQhBMLvh2iZCB/OcCZlkezQ6bn/Ta
-         FSuHizi/9rAxav4AYWMWrNof19dPdqkHdvO7XXD8=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C08B1613A7;
-        Wed, 29 May 2019 20:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1559163326;
-        bh=B4EA6+W0bMBZWz+Img5LRozrErEZ8aBa+Kh0uCtpCTE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NygVLsg7o0398FQypBvm8OZaapigH9X5AOxMFZdT6auiW/ETsNUtUV7r6kU3X2gl1
-         TADVCcURJb6BUnGC1JAtZSaK8/2loVlhRuteIWQWUHegvJJCq8jrhQzgdoOJY4FRQQ
-         NTh2B7FxYdeI5aTT/fi1HfujDCisLEKiFF1h3aSU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C08B1613A7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     freedreno@lists.freedesktop.org
-Cc:     jean-philippe.brucker@arm.com, linux-arm-msm@vger.kernel.org,
-        hoegsberg@google.com, dianders@chromium.org,
-        Sean Paul <sean@poorly.run>, Kees Cook <keescook@chromium.org>,
-        Wen Yang <wen.yang99@zte.com.cn>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v3 07/16] drm/msm/adreno: Enable 64 bit mode by default on a5xx and a6xx targets
-Date:   Wed, 29 May 2019 14:54:43 -0600
-Message-Id: <1559163292-4792-8-git-send-email-jcrouse@codeaurora.org>
+        Wed, 29 May 2019 16:54:47 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d126so2423626pfd.2;
+        Wed, 29 May 2019 13:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=XEF+EmzNlq0iTdBffbmE28VfoH3p6+OLJWmtZrEIKfU=;
+        b=FewxfTwOlv1bo4k6KlkJJbPh119DvzZKYMIbK3W5FIEva+v82cWNDprr1QMBQn/dKv
+         JDkE4hlYb3l835iwltJmyWN+XLIKJ34j7Aul/uNV8rWU2geLEpk/MwP3qHSshS+RWXcW
+         Wb5GqqLD+UWknPNv4SSAZNcoehhJ8+NisPq6Pf+K+/Zosyx3U+58ygWQ56LVDsPQ58xc
+         BAOs5igw6inu1j1Sl00nLHnFkasiUa3Y1ZwR8laYpH5XpXYr0PqbDhRXVl1SDIvN4FsX
+         s6LkNfGn6Ml30lfF26EMIhy+Af4tssQ4WiTuzPYbpddXwqcQSw+fFqdQ4ws6q8xFJDse
+         1/oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=XEF+EmzNlq0iTdBffbmE28VfoH3p6+OLJWmtZrEIKfU=;
+        b=DL+OhrhGIiZMFWqLkgRtqUwZnPPwJHCJvnjLZW0EgsscMd1QwLxf3DS4CVA5VSsYxX
+         5erVaMONomRMEHv0JNqMe/ybhtkNXTWGcG5/9wdHuUJL9qYgEe4g/38///B3kBRcfRMo
+         2xhhWtYstmyGZkiBysWF60QYQiJgokCtZBJjAit4zeSK3eDTWFDSFLK7hvXUdcucKji7
+         efJYVKXd4aCl08nFXTbqX0novZcneHvGto7qqfD79G2Bcd+ghPIB44uuNLgu8Yc1GFBt
+         qcWzC112rufr07SbPA1fOJ9kl80sfyFijOJVBpzeteyoOage2u5dKMx6HMbdR4ZUJcdp
+         nkpg==
+X-Gm-Message-State: APjAAAVDUA8TRtQz8w/J9GqTuybL3GnwRESmI7HnAG6NQE44jwrZk9Zd
+        hFMPW0ehAwD1A7tMlyAh7jI=
+X-Google-Smtp-Source: APXvYqwIqDcbKzzi8om0kXep83lmfrBLBQfha8joO4BDBvWZ9dnjFPh2VPBxlm3Jku90/koOXGHbcA==
+X-Received: by 2002:a17:90a:36d0:: with SMTP id t74mr14734286pjb.4.1559163287158;
+        Wed, 29 May 2019 13:54:47 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id a30sm452373pje.4.2019.05.29.13.54.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 13:54:46 -0700 (PDT)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Minas Harutyunyan <hminas@synopsys.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Vardan Mikayelyan <mvardan@synopsys.com>,
+        John Youn <johnyoun@synopsys.com>,
+        Douglas Anderson <dianders@chromiun.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH] Revert "usb: dwc2: host: Setting qtd to NULL after freeing it"
+Date:   Wed, 29 May 2019 13:54:43 -0700
+Message-Id: <1559163283-2429-1-git-send-email-linux@roeck-us.net>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1559163292-4792-1-git-send-email-jcrouse@codeaurora.org>
-References: <1559163292-4792-1-git-send-email-jcrouse@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A5XX and newer GPUs can be run in either 32 or 64 bit mode. The GPU
-registers and the microcode use 64 bit virtual addressing in either
-case but the upper 32 bits are ignored if the GPU is in 32 bit mode.
-There is no performance disadvantage to remaining in 64 bit mode even
-if we are only generating 32 bit addresses so switch over now to prepare
-for using addresses above 4G for targets that support them.
+This reverts commit b0d659022e5c96ee5c4bd62d22d3da2d66de306b.
 
-Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+The reverted commit does nothing but adding two unnecessary lines
+of code.  It sets a local variable to NULL in two functions, but
+that variable is not used anywhere in the rest of those functions.
+This is just confusing, so let's remove it.
+
+Cc: Vardan Mikayelyan <mvardan@synopsys.com>
+Cc: John Youn <johnyoun@synopsys.com>
+Cc: Douglas Anderson <dianders@chromiun.org>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
+ drivers/usb/dwc2/hcd.c | 1 -
+ drivers/usb/dwc2/hcd.h | 1 -
+ 2 files changed, 2 deletions(-)
 
- drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 14 ++++++++++++++
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 14 ++++++++++++++
- 2 files changed, 28 insertions(+)
-
-diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-index e5fcefa..43a2b4a 100644
---- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-@@ -642,6 +642,20 @@ static int a5xx_hw_init(struct msm_gpu *gpu)
- 		REG_A5XX_RBBM_SECVID_TSB_TRUSTED_BASE_HI, 0x00000000);
- 	gpu_write(gpu, REG_A5XX_RBBM_SECVID_TSB_TRUSTED_SIZE, 0x00000000);
+diff --git a/drivers/usb/dwc2/hcd.c b/drivers/usb/dwc2/hcd.c
+index b50ec3714fd8..bca64b0d4d15 100644
+--- a/drivers/usb/dwc2/hcd.c
++++ b/drivers/usb/dwc2/hcd.c
+@@ -4676,7 +4676,6 @@ static int _dwc2_hcd_urb_enqueue(struct usb_hcd *hcd, struct urb *urb,
+ 	spin_unlock_irqrestore(&hsotg->lock, flags);
+ 	urb->hcpriv = NULL;
+ 	kfree(qtd);
+-	qtd = NULL;
+ fail1:
+ 	if (qh_allocated) {
+ 		struct dwc2_qtd *qtd2, *qtd2_tmp;
+diff --git a/drivers/usb/dwc2/hcd.h b/drivers/usb/dwc2/hcd.h
+index c089ffa1f0a8..f6bc48432b04 100644
+--- a/drivers/usb/dwc2/hcd.h
++++ b/drivers/usb/dwc2/hcd.h
+@@ -574,7 +574,6 @@ static inline void dwc2_hcd_qtd_unlink_and_free(struct dwc2_hsotg *hsotg,
+ {
+ 	list_del(&qtd->qtd_list_entry);
+ 	kfree(qtd);
+-	qtd = NULL;
+ }
  
-+	/* Put the GPU into 64 bit by default */
-+	gpu_write(gpu, REG_A5XX_CP_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A5XX_VSC_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A5XX_GRAS_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A5XX_RB_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A5XX_PC_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A5XX_HLSQ_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A5XX_VFD_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A5XX_VPC_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A5XX_UCHE_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A5XX_SP_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A5XX_TPL1_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A5XX_RBBM_SECVID_TSB_ADDR_MODE_CNTL, 0x1);
-+
- 	ret = adreno_hw_init(gpu);
- 	if (ret)
- 		return ret;
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index 1f9f4b0..be39cf0 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -391,6 +391,20 @@ static int a6xx_hw_init(struct msm_gpu *gpu)
- 		REG_A6XX_RBBM_SECVID_TSB_TRUSTED_BASE_HI, 0x00000000);
- 	gpu_write(gpu, REG_A6XX_RBBM_SECVID_TSB_TRUSTED_SIZE, 0x00000000);
- 
-+	/* Turn on 64 bit addressing for all blocks */
-+	gpu_write(gpu, REG_A6XX_CP_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A6XX_VSC_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A6XX_GRAS_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A6XX_RB_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A6XX_PC_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A6XX_HLSQ_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A6XX_VFD_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A6XX_VPC_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A6XX_UCHE_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A6XX_SP_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A6XX_TPL1_ADDR_MODE_CNTL, 0x1);
-+	gpu_write(gpu, REG_A6XX_RBBM_SECVID_TSB_ADDR_MODE_CNTL, 0x1);
-+
- 	/* enable hardware clockgating */
- 	a6xx_set_hwcg(gpu, true);
- 
+ /* Descriptor DMA support functions */
 -- 
 2.7.4
 
