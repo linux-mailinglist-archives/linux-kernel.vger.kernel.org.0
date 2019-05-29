@@ -2,95 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF5D82E430
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:11:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5C9F2E438
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 20:12:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbfE2SKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 14:10:41 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36426 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727589AbfE2SK0 (ORCPT
+        id S1727420AbfE2SMI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 14:12:08 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35532 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727195AbfE2SMI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 14:10:26 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4TI4h42064708
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 14:10:25 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ssvtbdscj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 14:10:24 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Wed, 29 May 2019 19:10:23 +0100
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 29 May 2019 19:10:18 +0100
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4TIAIWh26935658
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 May 2019 18:10:18 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DC19C112064;
-        Wed, 29 May 2019 18:10:17 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2D4EE112061;
-        Wed, 29 May 2019 18:10:17 +0000 (GMT)
-Received: from talon7.ibm.com (unknown [9.41.179.222])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 29 May 2019 18:10:17 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-aspeed@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, arnd@arndb.de, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org, joel@jms.id.au,
-        andrew@aj.id.au, Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH v3 8/8] ARM: dts: aspeed: witherspoon: Enable XDMA Engine
-Date:   Wed, 29 May 2019 13:10:08 -0500
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1559153408-31190-1-git-send-email-eajames@linux.ibm.com>
-References: <1559153408-31190-1-git-send-email-eajames@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19052918-0064-0000-0000-000003E68FF2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011180; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01210373; UDB=6.00635908; IPR=6.00991405;
- MB=3.00027105; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-29 18:10:21
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052918-0065-0000-0000-00003DA90AD9
-Message-Id: <1559153408-31190-9-git-send-email-eajames@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-29_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=739 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905290117
+        Wed, 29 May 2019 14:12:08 -0400
+Received: by mail-ot1-f65.google.com with SMTP id n14so3008870otk.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 11:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G+LiWYxMhAJfHLsG+v7LjjWofEdKFy9soNO63HkV+20=;
+        b=rm6Op6Is2WyS28sYE2LrvmC6hYEVlBfSDkJUVaKtEPXkpkcEEgwFZx9EaFMzxA7QHN
+         jGLyhbIH7d3TLdKtfCeO8OKvbDMjlklbUFMA1y1Fzv7/GietI7aZdu2oEsVBu6nVgRND
+         D8Pg4xBc/mwxRuJEOgG/C4KpUU6MF5i1lnkZLF+zkyEz7Jx20Jz5VQFv40woP8Itc/Vb
+         j9auqkQ5XEeP8zQAuW8EihZdk+7rwfnJdOzqFkabhy2air3lPgExNOXh8nOIvkDc2p7e
+         nwmhXppgGZ1QaQxGpM3UFjxRCl6MxPJt9OTN+C6ag2JF4pxEOtDBt//jHJ1wROrhskj/
+         /LIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G+LiWYxMhAJfHLsG+v7LjjWofEdKFy9soNO63HkV+20=;
+        b=ThMUWlfwDlp+DVToSc0sYw/eCZFeC4NCVEhJYna/gP0MO2u1aayBIXrvnfiOqDknRm
+         uTjMveaClPwU+2rQahHSomgvRrVEfEstjORUVXjQf3s/i9nEKugyCdEtrpT7l2KvLb9J
+         bjH3A8hfphorzMvJM/5wUk8rP65IaDNpM1gEi24puFokqPEjet4Qv45iohoXBhCwsbf1
+         E2F6PG8FUkX0LozzsXumZPG1N/x3oTbpTj/G/OFar5CQxXm8OyLwqgZtqD0jf5Pq+Qa3
+         Hnjj5UhUfVytVR60w8UsqFZ6YVTFdSHI9VdMOmHbKn8GoHM/HgCm3MHEGozlner9veR8
+         6dzQ==
+X-Gm-Message-State: APjAAAUd557AgCNRYxK6CKD5BSZPCNCsFCFUeZxLluSjDHC6Y5z2MdU8
+        MJMpGTDUFxIsWrRzaKxlL8aSi+5WcagDUTLWe+SzZw==
+X-Google-Smtp-Source: APXvYqw+3MUKe4d0cvSOyC631nuMT0M0/zG0ddXI9fhLgtQNKsQ1SVQlwExS86mDMdF/84VeJAo+Iz4GbbdE8HpYvNI=
+X-Received: by 2002:a9d:148:: with SMTP id 66mr30932226otu.32.1559153527342;
+ Wed, 29 May 2019 11:12:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAG48ez2rRh2_Kq_EGJs5k-ZBNffGs_Q=vkQdinorBgo58tbGpg@mail.gmail.com>
+ <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
+ <155905933492.7587.6968545866041839538.stgit@warthog.procyon.org.uk>
+ <14347.1559127657@warthog.procyon.org.uk> <312a138c-e5b2-4bfb-b50b-40c82c55773f@schaufler-ca.com>
+ <4552118F-BE9B-4905-BF0F-A53DC13D5A82@amacapital.net> <058f227c-71ab-a6f4-00bf-b8782b3b2956@schaufler-ca.com>
+In-Reply-To: <058f227c-71ab-a6f4-00bf-b8782b3b2956@schaufler-ca.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 29 May 2019 20:11:40 +0200
+Message-ID: <CAG48ez2S+i2wxpWXVGpEAprgY9gtjxyejLfbZtrqu5YOkQ81Nw@mail.gmail.com>
+Subject: Re: [PATCH 3/7] vfs: Add a mount-notification facility
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-block@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the XDMA engine node.
+On Wed, May 29, 2019 at 7:46 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 5/29/2019 10:13 AM, Andy Lutomirski wrote:
+> >> On May 29, 2019, at 8:53 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >>> On 5/29/2019 4:00 AM, David Howells wrote:
+> >>> Jann Horn <jannh@google.com> wrote:
+> >>>
+> >>>>> +void post_mount_notification(struct mount *changed,
+> >>>>> +                            struct mount_notification *notify)
+> >>>>> +{
+> >>>>> +       const struct cred *cred = current_cred();
+> >>>> This current_cred() looks bogus to me. Can't mount topology changes
+> >>>> come from all sorts of places? For example, umount_mnt() from
+> >>>> umount_tree() from dissolve_on_fput() from __fput(), which could
+> >>>> happen pretty much anywhere depending on where the last reference gets
+> >>>> dropped?
+> >>> IIRC, that's what Casey argued is the right thing to do from a security PoV.
+> >>> Casey?
+> >> You need to identify the credential of the subject that triggered
+> >> the event. If it isn't current_cred(), the cred needs to be passed
+> >> in to post_mount_notification(), or derived by some other means.
+> > Taking a step back, why do we care who triggered the event?  It seems to me that we should care whether the event happened and whether the *receiver* is permitted to know that.
+>
+> There are two filesystems, "dot" and "dash". I am not allowed
+> to communicate with Fred on the system, and all precautions have
+> been taken to ensure I cannot. Fred asks for notifications on
+> all mount activity. I perform actions that result in notifications
+> on "dot" and "dash". Fred receives notifications and interprets
+> them using Morse code. This is not OK. If Wilma, who *is* allowed
+> to communicate with Fred, does the same actions, he should be
+> allowed to get the messages via Morse.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts b/arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts
-index 85b9e40..ad7ccf1 100644
---- a/arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-opp-witherspoon.dts
-@@ -641,4 +641,8 @@
- 	status = "okay";
- };
- 
-+&xdma {
-+	status = "okay";
-+};
-+
- #include "ibm-power9-dual.dtsi"
--- 
-1.8.3.1
-
+In other words, a classic covert channel. You can't really prevent two
+cooperating processes from communicating through a covert channel on a
+modern computer. You can transmit information through the scheduler,
+through hyperthread resource sharing, through CPU data caches, through
+disk contention, through page cache state, through RAM contention, and
+probably dozens of other ways that I can't think of right now. There
+have been plenty of papers that demonstrated things like an SSH
+connection between two virtual machines without network access running
+on the same physical host (<https://gruss.cc/files/hello.pdf>),
+communication between a VM and a browser running on the host system,
+and so on.
