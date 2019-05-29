@@ -2,103 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4FD2D2A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 02:02:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D5FD2D2AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 02:09:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727535AbfE2AAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 20:00:40 -0400
-Received: from ozlabs.org ([203.11.71.1]:37685 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726683AbfE2AAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 20:00:39 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45D9pD4tq5z9sBb;
-        Wed, 29 May 2019 10:00:36 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1559088037;
-        bh=GZ0gAzbgJ+60g8ErhosKnQ3VNb9AmTQTKEt9SuzsKzg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=slXpqHLPimqX2oEkSgsk07NdCq3rdyVs/+gs5hqghSeMJs+NocykfGO+an1kDeKZX
-         VFB3V1q8RxxDH5WlFKmciegMK+toraXU/a+ELnGUlrfJhotQyd5TV3MK+EXNRUbBDC
-         WrSYARv037p+cX9jN9mJSttWg9+OqEBnEiX8AaFA48O/fkYJRIXFNEpd5be2OgUPU+
-         kwhTUWlSy4pwuV7lMp7pvL3RiAOg19YDcYLehjggCbPel/adBGoyzu3BpKsbj+LYBW
-         3YkidV6Lqdx5Qydz95rZil/oG2b8jZxSJcy5Wo2d1dCBsv4JaQd1fV+IEo2Lgfh0aN
-         MYPUMKZ6nKmtA==
-Date:   Wed, 29 May 2019 10:00:23 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhu Yingjiang <yingjiang.zhu@linux.intel.com>,
-        Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
-        Keyon Jie <yang.jie@linux.intel.com>,
-        Libin Yang <libin.yang@intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Subject: Re: linux-next: Fixes tags need some work in the sound-asoc tree
-Message-ID: <20190529100023.4a7cfacc@canb.auug.org.au>
-In-Reply-To: <44bbb3f1-5674-6431-5818-d8b5cca708dd@linux.intel.com>
-References: <20190529075614.150b1877@canb.auug.org.au>
-        <44bbb3f1-5674-6431-5818-d8b5cca708dd@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/F8gLjB5fcrXmqdy+Qe2tDr8"; protocol="application/pgp-signature"
+        id S1727092AbfE2AJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 20:09:37 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:54224 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbfE2AJg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 20:09:36 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::3d8])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id E8D5513FB671F;
+        Tue, 28 May 2019 17:09:35 -0700 (PDT)
+Date:   Tue, 28 May 2019 17:09:32 -0700 (PDT)
+Message-Id: <20190528.170932.1841104373899073742.davem@davemloft.net>
+To:     narmstrong@baylibre.com
+Cc:     netdev@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/2] net: stmmac: dwmac-meson: update with
+ SPDX Licence identifier
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190527134623.5673-1-narmstrong@baylibre.com>
+References: <20190527134623.5673-1-narmstrong@baylibre.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 28 May 2019 17:09:36 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/F8gLjB5fcrXmqdy+Qe2tDr8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Neil Armstrong <narmstrong@baylibre.com>
+Date: Mon, 27 May 2019 15:46:21 +0200
 
-Hi Pierre-Louis,
+> Update the SPDX Licence identifier for the Amlogic Meson6 and Meson8 dwmac
+> glue drivers.
 
-On Tue, 28 May 2019 17:22:40 -0500 Pierre-Louis Bossart <pierre-louis.bossa=
-rt@linux.intel.com> wrote:
->
-> On 5/28/19 4:56 PM, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > In commit
-> >=20
-> >    be1b577d0178 ("ASoC: SOF: Intel: hda: fix the hda init chip")
-> >=20
-> > Fixes tag
-> >=20
-> >    Fixes: 8a300c8fb17 ("ASoC: SOF: Intel: Add HDA controller for Intel =
-DSP") =20
->=20
-> Sorry about that, not sure how I managed to add an off-by-one in all=20
-> these tags. Checkpatch.pl --strict did not report any issues, something=20
-> must be broken either in my setup or the script.
-> Not sure how I can fix this now?
-
-Its not worth the rebase necessary to fix them.  Just use it as a
-learning experience.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/F8gLjB5fcrXmqdy+Qe2tDr8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzty5cACgkQAVBC80lX
-0GyG7Qf+MdPBfzF8R7UaulnuAKN1HfNFWuY3VXVToBvsKdOTLE0EfIQyDfEc2qxa
-fq8v+ZOA+rSSgsyxE6LJMy+KhVhm7jzQO7Uoxp+5dxTWVA5+XysKrDsgoe1p/7+i
-n0JUeguYaHwVam+YbWHNFRItx9qi/mMLIrnGSe0O+84rtrsQRGGPbVZE7Uv7CbLv
-lyeqDw/s7+NXMI2EKX4YolwkjAnonfPOsM8VZ1oBLE+FdtFl5cVWBgKm4YskzAPh
-CjCZVquLmrg2zvFbof6Oin4rU7fTpQimvXDaU2beoeW/fXkEmJyZrbpXtV+39R+f
-n6jHvA07GMDPyOyx/nVtQTDwgELNmA==
-=na2v
------END PGP SIGNATURE-----
-
---Sig_/F8gLjB5fcrXmqdy+Qe2tDr8--
+Series applied.
