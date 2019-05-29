@@ -2,142 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AE712E01E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:50:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 107952E018
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 16:49:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbfE2OuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 10:50:21 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:37242 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbfE2OuV (ORCPT
+        id S1726426AbfE2OtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 10:49:21 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52012 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726112AbfE2OtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 10:50:21 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TEmj59055774;
-        Wed, 29 May 2019 14:49:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : subject
- : from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=corp-2018-07-02;
- bh=bdiE7HWyHmzeDdhgcpTkxNwVwsKMW5J4u0bwenhkW2I=;
- b=vAYGK9KOQKh1ci+61dIXEhKr/6PuEl3w9nerHoG2o6KZcTmroHCycrPlXsSVYoCc1D9e
- u53Af15v96j6SPmPoJ+syGA6mCGI1yCiY2PcW+gMzZiVseWDKwRqdfQ/vA5LKK20Ou6S
- qqH1kgPXhEpgNiGNUtFLQ9cNrcGvNjpxe3Gfdd5qauvpSfl3hiaspyOm5mJhBkWRqvwm
- IYx2v4CAD32zNH3jZdsRIlmsjtuapA8CQI+GAGIf1qsl+aD1+DqMFhyfxIFAGNXJW+cz
- 9a5PK1sw72WXYdjOuDHWee7Q0Jai2TlWbMJfUWHm89DxiTdsjrZTZi400nmT0P2EZndw JQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2130.oracle.com with ESMTP id 2spu7djgus-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 May 2019 14:49:23 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4TEnL0O140618;
-        Wed, 29 May 2019 14:49:22 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 2ss1fngsh2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 29 May 2019 14:49:22 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x4TEnF2L021623;
-        Wed, 29 May 2019 14:49:16 GMT
-Received: from concerto-wl.internal (/24.9.64.241)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 29 May 2019 07:49:15 -0700
-Message-ID: <3ade20696cc772772f5362fea02ede81c4a0fad3.camel@oracle.com>
-Subject: Re: [PATCH v15 01/17] uaccess: add untagged_addr definition for
- other arches
-From:   Khalid Aziz <khalid.aziz@oracle.com>
-To:     Andrey Konovalov <andreyknvl@google.com>,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Date:   Wed, 29 May 2019 08:49:09 -0600
-In-Reply-To: <67ae3bd92e590d42af22ef2de0ad37b730a13837.1557160186.git.andreyknvl@google.com>
-References: <cover.1557160186.git.andreyknvl@google.com>
-         <67ae3bd92e590d42af22ef2de0ad37b730a13837.1557160186.git.andreyknvl@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1905290098
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1905290098
+        Wed, 29 May 2019 10:49:20 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f10so1895770wmb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 07:49:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=/di+Uq1BJj/mkx3thnH4knFOJUS1q/BsL8c4jSpHxow=;
+        b=clma4lEFs8bcSe2LzeJxwAOiHfHQaPUY6W7C8ogQFe+7nXs8TX76LKLtV7cVu3n+kM
+         P7KOV31F1uIyBDp1kIbDOIMTkGTC7M2l1pRlEFEFnM4x3PJpO+I51lafepNrhK1deNGd
+         U9rmWrfVOjBLyl1dStRxFuaOHofcjpqwDzzAjBcd2r/EmT+QkdlRIHakLaalEJoYb4BU
+         G5wHV/tSRq/05aOnlLVafm8BISCiwmz+o4Up2aab+nIaNKWozGknLYFTvJ5iZ27TFIA0
+         Pc6OFCV2bbYlAiM5+gqNOEMT15Utd2k/SnkwJ16lLW+p0NC+PkV1o5BpPBglkNKdplwa
+         /FIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=/di+Uq1BJj/mkx3thnH4knFOJUS1q/BsL8c4jSpHxow=;
+        b=P0PN2sqHACA4I4m9K/HLSlk86sQrRgwd5uzkMOZ3HzZt3F5qiyBXxN9hNvTJQCRxtW
+         IFaU2aX5FgPOWRppAo50omgtLWtqPYUhhzltRNZGtxabYmZxCBykzcAAZSIba639OUEM
+         oawhFA2j3K7WoXqfXwl24WRQQkTpXcXI+EyFifKZXAuxrwjD/fGwgDaq44K66HwpZG0h
+         moNQRxu2sTrHMj3KLQWiWgSg0L2D8SmzqTPDyg5fada0Emj8lQdCExe57OlDwnHB6vk5
+         AOBvl5JC/LqUhfX7hOLLFueXiVnt5eR5nXBWSJreZ47hnwdnBAWYYfGqQi1tPsh/e67h
+         fwjQ==
+X-Gm-Message-State: APjAAAXDdlDVf7Sku7eRSn6zv1kht0A42c/7SB05fsaP4EZW/wkLYAIV
+        uN4MlpPQy9GkAxxpFcxKLdAPVg==
+X-Google-Smtp-Source: APXvYqzju/6W6sadyPhgz8yiqp8zfCn/tPkWqgfcjWSsndWLj+YOlIwJkLQt3fugCXoelXNiGpWuxw==
+X-Received: by 2002:a05:600c:210c:: with SMTP id u12mr6863052wml.146.1559141358305;
+        Wed, 29 May 2019 07:49:18 -0700 (PDT)
+Received: from brauner.io ([212.91.227.56])
+        by smtp.gmail.com with ESMTPSA id z13sm13986343wrw.42.2019.05.29.07.49.17
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 29 May 2019 07:49:17 -0700 (PDT)
+Date:   Wed, 29 May 2019 16:49:16 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Brendan Gregg <brendan.d.gregg@gmail.com>,
+        Luis =?utf-8?Q?Cl=C3=A1udio_Gon=C3=A7alves?= 
+        <lclaudio@redhat.com>
+Subject: Re: [PATCH 17/41] perf trace beauty clone: Handle CLONE_PIDFD
+Message-ID: <20190529144915.xe5ug7r3u2efuzme@brauner.io>
+References: <20190529133605.21118-1-acme@kernel.org>
+ <20190529133605.21118-18-acme@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190529133605.21118-18-acme@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-05-06 at 18:30 +0200, Andrey Konovalov wrote:
-> To allow arm64 syscalls to accept tagged pointers from userspace, we
-> must
-> untag them when they are passed to the kernel. Since untagging is
-> done in
-> generic parts of the kernel, the untagged_addr macro needs to be
-> defined
-> for all architectures.
+On Wed, May 29, 2019 at 10:35:41AM -0300, Arnaldo Carvalho de Melo wrote:
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
 > 
-> Define it as a noop for architectures other than arm64.
+> In addition to the older flags. This will allow something like this to
+> be implemented in 'perf trace"
 > 
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+>   perf trace -e clone/PIDFD in flags/
+> 
+> I.e. ask for strace like tracing, system wide, looking for 'clone'
+> syscalls that have the CLONE_PIDFD bit set in the 'flags' arg.
+> 
+> For now we'll just see PIDFD if it is set in the 'flags' arg.
+> 
+> Cc: Christian Brauner <christian@brauner.io>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Link: https://lkml.kernel.org/n/tip-drq9h7s8gcv8b87064fp6lb0@git.kernel.org
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+Acked-by: Christian Brauner <christian@brauner.io>
+
 > ---
->  include/linux/mm.h | 4 ++++
->  1 file changed, 4 insertions(+)
-
-As discussed in the other thread Chris started, there is a generic need
-to untag addresses in kernel and this patch gets us ready for that.
-
-Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
-
+>  tools/perf/trace/beauty/clone.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 6b10c21630f5..44041df804a6 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -99,6 +99,10 @@ extern int mmap_rnd_compat_bits __read_mostly;
->  #include <asm/pgtable.h>
->  #include <asm/processor.h>
->  
-> +#ifndef untagged_addr
-> +#define untagged_addr(addr) (addr)
-> +#endif
-> +
->  #ifndef __pa_symbol
->  #define __pa_symbol(x)  __pa(RELOC_HIDE((unsigned long)(x), 0))
->  #endif
-
+> diff --git a/tools/perf/trace/beauty/clone.c b/tools/perf/trace/beauty/clone.c
+> index 6eb9a6636171..1a8d3be2030e 100644
+> --- a/tools/perf/trace/beauty/clone.c
+> +++ b/tools/perf/trace/beauty/clone.c
+> @@ -25,6 +25,7 @@ static size_t clone__scnprintf_flags(unsigned long flags, char *bf, size_t size,
+>  	P_FLAG(FS);
+>  	P_FLAG(FILES);
+>  	P_FLAG(SIGHAND);
+> +	P_FLAG(PIDFD);
+>  	P_FLAG(PTRACE);
+>  	P_FLAG(VFORK);
+>  	P_FLAG(PARENT);
+> -- 
+> 2.20.1
+> 
