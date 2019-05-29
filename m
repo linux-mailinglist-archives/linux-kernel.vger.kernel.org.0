@@ -2,52 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CCD12E796
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 23:45:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 158782E79F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 23:48:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726579AbfE2VpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 17:45:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726311AbfE2VpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 17:45:15 -0400
-Subject: Re: [GIT PULL] Fixes for sphinx 2.0 docs build failures
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559166315;
-        bh=MslAkn0MjKtReq/x6B4kRuRZHNL2td+pBIK0ZIkcHME=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=sIZqpnZVbBRDbZma5yyNI9XS7j8ZM5fZw2Rl+q440CLzSqv3/8XSjnwPr4vNoTMpW
-         2Bqnwzmwqd9dR6AJSwgzX1shvSmWBKMFgip0IdFJ+ewN9gotLvt9qRDaU/WD3ASEvd
-         tGp3Ik0XlJ2aeMim3VTHLL+sgg0OHO0CvhcZa3dM=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190529095408.1429a5ab@lwn.net>
-References: <20190529095408.1429a5ab@lwn.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190529095408.1429a5ab@lwn.net>
-X-PR-Tracked-Remote: git://git.lwn.net/linux.git tags/docs-5.2-fixes2
-X-PR-Tracked-Commit-Id: 551bd3368a7b3cfef01edaade8970948d178d40a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: bec7550cca106c3ccc061e3e625516af63054fe4
-Message-Id: <155916631500.28954.14280541442507821303.pr-tracker-bot@kernel.org>
-Date:   Wed, 29 May 2019 21:45:15 +0000
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org
+        id S1726520AbfE2VsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 17:48:04 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43316 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfE2VsE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 17:48:04 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u27so3304901lfg.10
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 14:48:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=yGZo23cWxl6g2KAaugpJu9muCFq+8s0tirfzRsyyzGc=;
+        b=aMPGcFBgYYRTPnCpwiwXYCAOjA5tmBAEQubH0ej1OKPl9D/K4Iv5piicsC7n7uPHPk
+         BOgpQCEQPa2iLxlhWnSMQoVSrIcT6LfZT8g0A/6n6kepICN+pizG12ldjZ/lSu2vLOh4
+         sJloAO4vIkII4y6RrJqrzPqX16Yz874Z/gjZ5HdsI+wGw+1eDXGXXtv0792pSxxrIjt2
+         tpHnvM18Uwsmwxfgh2yFXWI9gyrAjc1FpkP+V6ChRilOD86qHIO3Ls1bwbkcBMt5SsgN
+         nf4SNmuFw73Kib5QHeSJsGvz2T4dK4yOnNbrXxFqP2I0SACxgvlOKdYpkEjApP8BuIO3
+         Swbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yGZo23cWxl6g2KAaugpJu9muCFq+8s0tirfzRsyyzGc=;
+        b=TyqHI6SLYlLxX6FKNWNrFuRcXGlDND8dKEI+bDFwh5aYVU3e2gH3S+r06Y1O9V05Of
+         jrPCNp/J50CL9OLULCxwXvuEHGBB+Z5IrOFekUDgftEVv86p5zGZQLR+rsE3uopsDUAt
+         6DoxuGwu9MYhfnxoMMeEFUoTbnt6Fsmcs1NrsDZcrJI9ESarxp86gCdiiFFrrwAd91pH
+         jCGiEaUgwI6uFN8lisOpw4q5h9SMbYdmg0LfEAejsX9qQk90ekBEQAe71SE2DwYCJOz7
+         zB8Nxu04Q7PGwCvOMLvlwwmekq5/4NoWIZpXdshilsFk+G4Zz/pWvYPIYK2GiKchJAEB
+         oFZg==
+X-Gm-Message-State: APjAAAVlYSVhk4vC1JViLGGt/M8cbuqvSW5dlzlIrUc93twMtVsLyNZv
+        LhiqZbn/+p5OnHEmf/W7bOYY4st68j4=
+X-Google-Smtp-Source: APXvYqx1vuKE081CnhdNF6P+EfJ0Z1kQ9QcafIyaY+mcEKNOf4kj1tT15NdOOUlKeaEnHROoxsZh1A==
+X-Received: by 2002:a19:ca02:: with SMTP id a2mr104072lfg.88.1559166482478;
+        Wed, 29 May 2019 14:48:02 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id b29sm134846lfo.38.2019.05.29.14.48.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 14:48:01 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     grygorii.strashko@ti.com, davem@davemloft.net
+Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH] net: ethernet: ti: cpsw_ethtool: fix ethtool ring param set
+Date:   Thu, 30 May 2019 00:47:53 +0300
+Message-Id: <20190529214753.21804-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 29 May 2019 09:54:08 -0600:
+After adding ethtool ring param sanity check patch:
 
-> git://git.lwn.net/linux.git tags/docs-5.2-fixes2
+commit 37e2d99b59c4765112533a1d38174fea58d28a51 ("ethtool: Ensure new
+ring parameters are within bounds during SRINGPARAM")
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/bec7550cca106c3ccc061e3e625516af63054fe4
+cpsw has no ability to change rx descriptor numbers.
+But the reason - initially "tx_max_pending" was not correctly set
+while adding a patch:
 
-Thank you!
+commit be034fc14015c7fcabe62317d156e98b508a759b ("net: ethernet: ti:
+cpsw: add support for ringparam configuration")
 
+The issue appears after adding sanity check, so fix is for "sanity"
+patch.
+
+Fixes: 37e2d99b59c4765112533a1d38174fea58d28a51 ("ethtool: Ensure new
+ring parameters are within bounds during SRINGPARAM")
+
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+---
+
+Based on net/master
+
+ drivers/net/ethernet/ti/cpsw_ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/ti/cpsw_ethtool.c b/drivers/net/ethernet/ti/cpsw_ethtool.c
+index a4a7ec0d2531..6d1c9ebae7cc 100644
+--- a/drivers/net/ethernet/ti/cpsw_ethtool.c
++++ b/drivers/net/ethernet/ti/cpsw_ethtool.c
+@@ -643,7 +643,7 @@ void cpsw_get_ringparam(struct net_device *ndev,
+ 	struct cpsw_common *cpsw = priv->cpsw;
+ 
+ 	/* not supported */
+-	ering->tx_max_pending = 0;
++	ering->tx_max_pending = cpsw->descs_pool_size - CPSW_MAX_QUEUES;
+ 	ering->tx_pending = cpdma_get_num_tx_descs(cpsw->dma);
+ 	ering->rx_max_pending = cpsw->descs_pool_size - CPSW_MAX_QUEUES;
+ 	ering->rx_pending = cpdma_get_num_rx_descs(cpsw->dma);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.17.1
+
