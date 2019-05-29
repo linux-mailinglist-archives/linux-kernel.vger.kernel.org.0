@@ -2,81 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29F2D2D45F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 05:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5475D2D45D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 05:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbfE2D4l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 28 May 2019 23:56:41 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:39640 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725832AbfE2D4k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 28 May 2019 23:56:40 -0400
-Received: from callcc.thunk.org ([66.31.38.53])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x4T3uDxh003771
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 28 May 2019 23:56:14 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 30068420481; Tue, 28 May 2019 23:56:13 -0400 (EDT)
-Date:   Tue, 28 May 2019 23:56:13 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org,
-        ltp@lists.linux.it
-Subject: Re: [ext4] 079f9927c7: ltp.mmap16.fail
-Message-ID: <20190529035613.GA6210@mit.edu>
-Mail-Followup-To: Theodore Ts'o <tytso@mit.edu>,
-        kernel test robot <rong.a.chen@intel.com>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org,
-        ltp@lists.linux.it
-References: <20190529025256.GB22325@shao2-debian>
+        id S1726555AbfE2DzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 28 May 2019 23:55:19 -0400
+Received: from mga02.intel.com ([134.134.136.20]:44796 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725832AbfE2DzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 28 May 2019 23:55:19 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 May 2019 20:55:18 -0700
+X-ExtLoop1: 1
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by FMSMGA003.fm.intel.com with ESMTP; 28 May 2019 20:55:18 -0700
+Date:   Tue, 28 May 2019 20:56:19 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v2] mm/swap: Fix release_pages() when releasing devmap
+ pages
+Message-ID: <20190529035618.GA21745@iweiny-DESK2.sc.intel.com>
+References: <20190524173656.8339-1-ira.weiny@intel.com>
+ <20190527150107.GG1658@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190529025256.GB22325@shao2-debian>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190527150107.GG1658@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 10:52:56AM +0800, kernel test robot wrote:
-> FYI, we noticed the following commit (built with gcc-7):
+On Mon, May 27, 2019 at 05:01:07PM +0200, Michal Hocko wrote:
+> On Fri 24-05-19 10:36:56, ira.weiny@intel.com wrote:
+> > From: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > Device pages can be more than type MEMORY_DEVICE_PUBLIC.
+> > 
+> > Handle all device pages within release_pages()
+> > 
+> > This was found via code inspection while determining if release_pages()
+> > and the new put_user_pages() could be interchangeable.
 > 
-> commit: 079f9927c7bfa026d963db1455197159ebe5b534 ("ext4: gracefully handle ext4_break_layouts() failure during truncate")
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> Please expand more about who is such a user and why does it use
+> release_pages rather than put_*page API.
 
-Jan --- this is the old version of your patch, which I had dropped
-before sending a push request to Linus.  However, I forgot to reset
-the dev branch so it still had the old patch on it, and so it got
-picked up in linux-next.  Apologies for the confusion.
+Sorry for not being more clear.   The error was discovered while discussing a
+proposal to change a use of release_pages() to put_user_pages()[1]
 
-I've reset the dev branch on ext4.git, and the new version of your
-patch will show up there shortly, as I start reviewing patches for the
-next merge window.
+[1] https://lore.kernel.org/lkml/20190523172852.GA27175@iweiny-DESK2.sc.intel.com/
 
-Cheers,
+In that thread John was saying that release_pages() was functionally equivalent
+to a loop around put_page().  He also suggested implementing put_user_pages()
+by using release_pages().  On the surface they did not seem the same to me so I
+did a deep dive to make sure they were and found this error.
 
-					- Ted
+>
+> The above changelog doesn't
+> really help understanding what is the actual problem. I also do not
+> understand the fix and a failure mode from release_pages is just scary.
 
-> <<<test_start>>>
-> tag=mmap16 stime=1559078706
-> cmdline="mmap16"
-> contacts=""
-> analysis=exit
-> <<<test_output>>>
-> mke2fs 1.43.4 (31-Jan-2017)
-> mmap16      0  TINFO  :  Using test device LTP_DEV='/dev/loop0'
-> mmap16      0  TINFO  :  Formatting /dev/loop0 with ext4 opts='-b 1024' extra opts='10240'
-> mmap16      1  TFAIL  :  mmap16.c:85: Bug is reproduced!
-> <<<execution_status>>>
-> initiation_status="ok"
-> duration=8 termination_type=exited termination_id=1 corefile=no
-> cutime=11 cstime=345
-> <<<test_end>>>
+This is not failing release_pages().  The fix is that not all devmap pages are
+"public" type.  So previous to this change devmap pages of other types would
+not correctly be accounted for.
+
+The discussion about put_devmap_managed_page() "failing" is not about it
+failing directly but rather in how these pages should be accounted for.  Only
+devmap pages which require pagemap ops (specifically page_free()) require
+put_devmap_managed_page() processing.   Because of the optimized locking in
+release_pages() the zone device check is required to release the lock even if
+put_devmap_managed_page() does not handle the put.
+
+> It is basically impossible to handle the error case. So what is going on
+> here?
+
+I think what has happened is the code in release_pages() and put_page()
+diverged at some point.  I think it is worth a clean up in this area but I
+don't see way to do it at the moment which would be any cleaner than what is
+there.  So I've refrained from doing so.
+
+Does this help?  Would you like to roll a V3 with some of this in the commit
+message?
+
+Ira
+
+>
+>
+>
+> 
+> > Cc: Jérôme Glisse <jglisse@redhat.com>
+> > Cc: Michal Hocko <mhocko@suse.com>
+> > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> > Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > 
+> > ---
+> > Changes from V1:
+> > 	Add comment clarifying that put_devmap_managed_page() can still
+> > 	fail.
+> > 	Add Reviewed-by tags.
+> > 
+> >  mm/swap.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/mm/swap.c b/mm/swap.c
+> > index 9d0432baddb0..f03b7b4bfb4f 100644
+> > --- a/mm/swap.c
+> > +++ b/mm/swap.c
+> > @@ -740,15 +740,18 @@ void release_pages(struct page **pages, int nr)
+> >  		if (is_huge_zero_page(page))
+> >  			continue;
+> >  
+> > -		/* Device public page can not be huge page */
+> > -		if (is_device_public_page(page)) {
+> > +		if (is_zone_device_page(page)) {
+> >  			if (locked_pgdat) {
+> >  				spin_unlock_irqrestore(&locked_pgdat->lru_lock,
+> >  						       flags);
+> >  				locked_pgdat = NULL;
+> >  			}
+> > -			put_devmap_managed_page(page);
+> > -			continue;
+> > +			/*
+> > +			 * zone-device-pages can still fail here and will
+> > +			 * therefore need put_page_testzero()
+> > +			 */
+> > +			if (put_devmap_managed_page(page))
+> > +				continue;
+> >  		}
+> >  
+> >  		page = compound_head(page);
+> > -- 
+> > 2.20.1
+> > 
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
