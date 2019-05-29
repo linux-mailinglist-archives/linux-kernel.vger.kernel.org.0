@@ -2,118 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79F5A2D77C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:16:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60642D781
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfE2IQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 04:16:03 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33583 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfE2IQD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:16:03 -0400
-Received: by mail-ed1-f67.google.com with SMTP id n17so2416781edb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 01:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7YPMPnQHiZSTC9SMTzMeKs5svVKQA9+Mqdsa3E0VpUY=;
-        b=FCUeomwuDfmxN1h0D6lV5jxZ/wMPiVvSLh+6vD04triShbrg3N711tx0v+ndzNVEut
-         2qCPkBPgtAw9eb+yFx75vkwC6YOZW12ysDv0DmzpxYe3GlWLvMHwTwBbXbXcXXrCiOAg
-         jmEA6ghVGNubW01UhbwRBlGDePYEPq3Sngg6MkkbWzwmwzyjk+oeg5KHQEmsSQ+ZDDNY
-         wPehJjrTlpk+2DpeU0cq1Cthqz2lQIjBEF8L7C5av2+8fQx4JshBLGvtIDyM7otQGz9k
-         r8VWyntEcUUna8khcjBtK1Dst2OuhpzG0hg6YoSouQ3CZfrn3jcG0ZNtJ9i6O+pip3vy
-         G+EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7YPMPnQHiZSTC9SMTzMeKs5svVKQA9+Mqdsa3E0VpUY=;
-        b=bU/hkJik7NO3tqQbe2XPL1QXSKV++WprTRX+4jrtS2A/uEwNeFBGWzQUfhIcEjcfdE
-         tu+9YflXf/N6PVDfEUlTZ3M/Ik35obfhNN2Pz3SKCmu3Jdw+K6JH0cWUMBERuxfIMRjN
-         LBUU0NWqCT4UxVzHAKTzhgGJarS5eVKMIAPOW/ZNBtYrg2TzCl42vLjOmMCPp1wFaZeR
-         HpvZL7nj4/B5YQRNf7qF3qj769iK+oS69DYv5f2jEcx9kt4hIuVRBftluwkZ2dLLP7Kw
-         VRKlwq5K3Qn/afPlthSaq18+mwpgo2mUI5xF0oyi9nl78dpHV8ZL8CROCHNBeiNAXeUz
-         1azA==
-X-Gm-Message-State: APjAAAWSvmERJ7cgOvCm1rbDqojzQzzTW3/PJMh+2ZHSxI5POVFwrkkl
-        kMb1ycziMpRSoRsbm0bLjQQ=
-X-Google-Smtp-Source: APXvYqyKhTr9oxvChieY3z2xPala89CEJgfs4hhkYLjCMkL87W1gCcKCNRuP3pQL6cv2kPCr346y7A==
-X-Received: by 2002:a50:8e81:: with SMTP id w1mr134921402edw.271.1559117761693;
-        Wed, 29 May 2019 01:16:01 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f9:2b:2b15::2])
-        by smtp.gmail.com with ESMTPSA id a17sm4835118edt.63.2019.05.29.01.16.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 01:16:00 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Joerg Roedel <joro@8bytes.org>, Christoph Hellwig <hch@lst.de>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] iommu/dma: Fix condition check in iommu_dma_unmap_sg
-Date:   Wed, 29 May 2019 01:15:32 -0700
-Message-Id: <20190529081532.73585-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.22.0.rc1
+        id S1726867AbfE2IRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:17:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34218 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725956AbfE2IRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 04:17:17 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6A60781F12;
+        Wed, 29 May 2019 08:17:09 +0000 (UTC)
+Received: from carbon (ovpn-200-30.brq.redhat.com [10.40.200.30])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7F45760BDF;
+        Wed, 29 May 2019 08:17:01 +0000 (UTC)
+Date:   Wed, 29 May 2019 10:16:59 +0200
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Cc:     grygorii.strashko@ti.com, hawk@kernel.org, davem@davemloft.net,
+        ast@kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, xdp-newbies@vger.kernel.org,
+        ilias.apalodimas@linaro.org, netdev@vger.kernel.org,
+        daniel@iogearbox.net, jakub.kicinski@netronome.com,
+        john.fastabend@gmail.com, brouer@redhat.com
+Subject: Re: [PATCH net-next 3/3] net: ethernet: ti: cpsw: add XDP support
+Message-ID: <20190529101659.2aa714b8@carbon>
+In-Reply-To: <20190523182035.9283-4-ivan.khoronzhuk@linaro.org>
+References: <20190523182035.9283-1-ivan.khoronzhuk@linaro.org>
+        <20190523182035.9283-4-ivan.khoronzhuk@linaro.org>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 29 May 2019 08:17:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+On Thu, 23 May 2019 21:20:35 +0300
+Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org> wrote:
 
-drivers/iommu/dma-iommu.c:897:6: warning: logical not is only applied to
-the left hand side of this comparison [-Wlogical-not-parentheses]
-        if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
-            ^                                 ~~
-drivers/iommu/dma-iommu.c:897:6: note: add parentheses after the '!' to
-evaluate the comparison first
-        if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
-            ^
-             (                                    )
-drivers/iommu/dma-iommu.c:897:6: note: add parentheses around left hand
-side expression to silence this warning
-        if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
-            ^
-            (                                )
-1 warning generated.
+> +static struct page *cpsw_alloc_page(struct cpsw_common *cpsw)
+> +{
+> +	struct page_pool *pool = cpsw->rx_page_pool;
+> +	struct page *page, *prev_page = NULL;
+> +	int try = pool->p.pool_size << 2;
+> +	int start_free = 0, ret;
+> +
+> +	do {
+> +		page = page_pool_dev_alloc_pages(pool);
+> +		if (!page)
+> +			return NULL;
+> +
+> +		/* if netstack has page_pool recycling remove the rest */
+> +		if (page_ref_count(page) == 1)
+> +			break;
+> +
+> +		/* start free pages in use, shouldn't happen */
+> +		if (prev_page == page || start_free) {
+> +			/* dma unmap/puts page if rfcnt != 1 */
+> +			page_pool_recycle_direct(pool, page);
+> +			start_free = 1;
+> +			continue;
+> +		}
+> +
+> +		/* if refcnt > 1, page has been holding by netstack, it's pity,
+> +		 * so put it to the ring to be consumed later when fast cash is
+> +		 * empty. If ring is full then free page by recycling as above.
+> +		 */
+> +		ret = ptr_ring_produce(&pool->ring, page);
 
-Judging from the rest of the commit and the conditional in
-iommu_dma_map_sg, either
+This looks very wrong to me!  First of all you are manipulation
+directly with the internal pool->ring and not using the API, which
+makes this code un-maintainable.  Second this is wrong, as page_pool
+assume the in-variance that pages on the ring have refcnt==1.
 
-    if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+> +		if (ret) {
+> +			page_pool_recycle_direct(pool, page);
+> +			continue;
+> +		}
+> +
+> +		if (!prev_page)
+> +			prev_page = page;
+> +	} while (try--);
+> +
+> +	return page;
+> +}
 
-or
-    if ((attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
 
-was intended, not a combination of the two.
-
-I personally think that the former is easier to understand so use that.
-
-Fixes: 06d60728ff5c ("iommu/dma: move the arm64 wrappers to common code")
-Link: https://github.com/ClangBuiltLinux/linux/issues/497
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/iommu/dma-iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 0cd49c2d3770..0dee374fc64a 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -894,7 +894,7 @@ static void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
- 	struct scatterlist *tmp;
- 	int i;
- 
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC) == 0)
-+	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
- 		iommu_dma_sync_sg_for_cpu(dev, sg, nents, dir);
- 
- 	/*
 -- 
-2.22.0.rc1
-
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
