@@ -2,137 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48A462E4FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 21:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86C732E501
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 21:07:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbfE2THE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 15:07:04 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41745 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfE2THE (ORCPT
+        id S1726673AbfE2THr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 15:07:47 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:52057 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbfE2THq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 15:07:04 -0400
-Received: by mail-qt1-f194.google.com with SMTP id s57so3993332qte.8
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 12:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=2eusIL/nzSK2s9R9uc1xL5ZfmWg5RxkuxNc2ZFp/bBI=;
-        b=TuRLwggTqjMk7XmDlvWEFh9TFVyhGFcP7cAa/rG7hovF99AkCIp+gida+yKpx6zNRb
-         yxMzh2uQwoBuEv6qaVnjzfEhTgU7ZWKvASfjQabJ2eezbDEMvEagbhBL+Qqcv1GGVGTm
-         XxJ6fOaxTePIzwvUt0QyNMExAEKu6tLSeGZKX3InC/0HeGHLFG1Zkyf2cz7iWzgr50X4
-         tE0B31jOexY9fX8m7TLidU7CneRK3ddym1jAOkJOxpxRFiBvSWhwz+TtseXerHWOpYtQ
-         zzzyu61XjgMWMYkDQxCGgosvaoNbqOV4I80TH2d4+q+jsewB63jnJKbKK6duJswnTZZT
-         WUNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2eusIL/nzSK2s9R9uc1xL5ZfmWg5RxkuxNc2ZFp/bBI=;
-        b=bxOwnaipenvnxMshBKQsUtaLtIx+Wx7jYLvdfWEdJAQHeZdZ4bgHSTaN+FIzRkUQeK
-         rDlvD3nn7O5LIOrs/8l5L/D65msiYaQCjNm4QMztMADHm+w+QpC5UPwvDjuv7BPY+eDn
-         gPQJmxfo22o0bqvRyzMBIwsvBKagQHpIMk8UQjlGa61rTjEzHwat+uxikafgrQd2TMzd
-         T5E1sb1s7yR0GMeVxxp4rC0HcxrtjG47txr067r1ygoLfyJGmW8t62lx1MR3FQU72O80
-         wKGPdRDnY3oC3550HFI30pGTHNoPpaqQgcvjQEzd/xFKBcfTQi1enViEw7xqtyNXhkYz
-         eeuQ==
-X-Gm-Message-State: APjAAAUw7Zg2bjit9k8UcsMtqpsHymW7wg3l8chozeD1XOejrQO733lj
-        vJCXfxBfVRetKYZ0IxQVbNSDJg==
-X-Google-Smtp-Source: APXvYqxChkKR1X4fRnQAKSVqrxHnQmFnpt86QUnpPveJVHSvTdcVeXPOSAggtkZ1iv79Bum90D+Wgw==
-X-Received: by 2002:ac8:1608:: with SMTP id p8mr58204451qtj.81.1559156823359;
-        Wed, 29 May 2019 12:07:03 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id g124sm168098qkf.55.2019.05.29.12.07.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 12:07:02 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     axboe@kernel.dk, hch@lst.de, peterz@infradead.org, oleg@redhat.com,
-        gkohli@codeaurora.org, mingo@redhat.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH] mm/page_io: fix a crash in do_task_dead()
-Date:   Wed, 29 May 2019 15:06:53 -0400
-Message-Id: <1559156813-30681-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 29 May 2019 15:07:46 -0400
+Received: from cpe-2606-a000-111b-405a-0-0-0-162e.dyn6.twc.com ([2606:a000:111b:405a::162e] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1hW3vE-0003to-IG; Wed, 29 May 2019 15:07:39 -0400
+Date:   Wed, 29 May 2019 15:07:09 -0400
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc:     syzbot <syzbot+f7e9153b037eac9b1df8@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Subject: Re: memory leak in sctp_process_init
+Message-ID: <20190529190709.GE31099@hmswarspite.think-freely.org>
+References: <00000000000097abb90589e804fd@google.com>
+ <20190528013600.GM5506@localhost.localdomain>
+ <20190528111550.GA4658@hmswarspite.think-freely.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190528111550.GA4658@hmswarspite.think-freely.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Spam-Score: -2.9 (--)
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit 0619317ff8ba ("block: add polled wakeup task helper")
-replaced wake_up_process() with blk_wake_io_task() in
-end_swap_bio_read() which triggers a crash when running heavy swapping
-workloads.
+On Tue, May 28, 2019 at 07:15:50AM -0400, Neil Horman wrote:
+> On Mon, May 27, 2019 at 10:36:00PM -0300, Marcelo Ricardo Leitner wrote:
+> > On Mon, May 27, 2019 at 05:48:06PM -0700, syzbot wrote:
+> > > Hello,
+> > > 
+> > > syzbot found the following crash on:
+> > > 
+> > > HEAD commit:    9c7db500 Merge tag 'selinux-pr-20190521' of git://git.kern..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=10388530a00000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=61dd9e15a761691d
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=f7e9153b037eac9b1df8
+> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e32f8ca00000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177fa530a00000
+> > > 
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+f7e9153b037eac9b1df8@syzkaller.appspotmail.com
+> > > 
+> > >  0 to HW filter on device batadv0
+> > > executing program
+> > > executing program
+> > > executing program
+> > > BUG: memory leak
+> > > unreferenced object 0xffff88810ef68400 (size 1024):
+> > >   comm "syz-executor273", pid 7046, jiffies 4294945598 (age 28.770s)
+> > >   hex dump (first 32 bytes):
+> > >     1d de 28 8d de 0b 1b e3 b5 c2 f9 68 fd 1a 97 25  ..(........h...%
+> > >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> > >   backtrace:
+> > >     [<00000000a02cebbd>] kmemleak_alloc_recursive
+> > > include/linux/kmemleak.h:55 [inline]
+> > >     [<00000000a02cebbd>] slab_post_alloc_hook mm/slab.h:439 [inline]
+> > >     [<00000000a02cebbd>] slab_alloc mm/slab.c:3326 [inline]
+> > >     [<00000000a02cebbd>] __do_kmalloc mm/slab.c:3658 [inline]
+> > >     [<00000000a02cebbd>] __kmalloc_track_caller+0x15d/0x2c0 mm/slab.c:3675
+> > >     [<000000009e6245e6>] kmemdup+0x27/0x60 mm/util.c:119
+> > >     [<00000000dfdc5d2d>] kmemdup include/linux/string.h:432 [inline]
+> > >     [<00000000dfdc5d2d>] sctp_process_init+0xa7e/0xc20
+> > > net/sctp/sm_make_chunk.c:2437
+> > >     [<00000000b58b62f8>] sctp_cmd_process_init net/sctp/sm_sideeffect.c:682
+> > > [inline]
+> > >     [<00000000b58b62f8>] sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1384
+> > > [inline]
+> > >     [<00000000b58b62f8>] sctp_side_effects net/sctp/sm_sideeffect.c:1194
+> > > [inline]
+> > >     [<00000000b58b62f8>] sctp_do_sm+0xbdc/0x1d60
+> > > net/sctp/sm_sideeffect.c:1165
+> > 
+> > Note that this is on the client side. It was handling the INIT_ACK
+> > chunk, from sctp_sf_do_5_1C_ack().
+> > 
+> > I'm not seeing anything else other than sctp_association_free()
+> > releasing this memory. This means 2 things:
+> > - Every time the cookie is retransmitted, it leaks. As shown by the
+> >   repetitive leaks here.
+> > - The cookie remains allocated throughout the association, which is
+> >   also not good as that's a 1k that we could have released back to the
+> >   system right after the handshake.
+> > 
+> >   Marcelo
+> > 
+> If we have an INIT chunk bundled with a COOKIE_ECHO chunk in the same packet,
+> this might occur.  Processing for each chunk (via sctp_cmd_process_init and
+> sctp_sf_do_5_1D_ce both call sctp_process_init, which would cause a second write
+> to asoc->peer.cookie, leaving the first write (set via kmemdup), to be orphaned
+> and leak.  Seems like we should set a flag to determine if we've already cloned
+> the cookie, and free the old one if its set.  If we wanted to do that on the
+> cheap, we might be able to get away with checking asoc->stream->[in|out]cnt for
+> being non-zero as an indicator if we've already cloned the cookie
+> 
+> Neil
+> 
+> 
 
-[T114538] kernel BUG at kernel/sched/core.c:3462!
-[T114538] Process oom01 (pid: 114538, stack limit = 0x000000004f40e0c1)
-[T114538] Call trace:
-[T114538]  do_task_dead+0xf0/0xf8
-[T114538]  do_exit+0xd5c/0x10fc
-[T114538]  do_group_exit+0xf4/0x110
-[T114538]  get_signal+0x280/0xdd8
-[T114538]  do_notify_resume+0x720/0x968
-[T114538]  work_pending+0x8/0x10
+Completely untested, but can you give this patch a shot?
 
-This is because shortly after set_special_state(TASK_DEAD),
-end_swap_bio_read() is called from an interrupt handler that revive the
-task state to TASK_RUNNING causes __schedule() to return and trip the
-BUG() later.
 
-[  C206] Call trace:
-[  C206]  dump_backtrace+0x0/0x268
-[  C206]  show_stack+0x20/0x2c
-[  C206]  dump_stack+0xb4/0x108
-[  C206]  blk_wake_io_task+0x7c/0x80
-[  C206]  end_swap_bio_read+0x22c/0x31c
-[  C206]  bio_endio+0x3d8/0x414
-[  C206]  dec_pending+0x280/0x378 [dm_mod]
-[  C206]  clone_endio+0x128/0x2ac [dm_mod]
-[  C206]  bio_endio+0x3d8/0x414
-[  C206]  blk_update_request+0x3ac/0x924
-[  C206]  scsi_end_request+0x54/0x350
-[  C206]  scsi_io_completion+0xf0/0x6f4
-[  C206]  scsi_finish_command+0x214/0x228
-[  C206]  scsi_softirq_done+0x170/0x1a4
-[  C206]  blk_done_softirq+0x100/0x194
-[  C206]  __do_softirq+0x350/0x790
-[  C206]  irq_exit+0x200/0x26c
-[  C206]  handle_IPI+0x2e8/0x514
-[  C206]  gic_handle_irq+0x224/0x228
-[  C206]  el1_irq+0xb8/0x140
-[  C206]  _raw_spin_unlock_irqrestore+0x3c/0x74
-[  C206]  do_task_dead+0x88/0xf8
-[  C206]  do_exit+0xd5c/0x10fc
-[  C206]  do_group_exit+0xf4/0x110
-[  C206]  get_signal+0x280/0xdd8
-[  C206]  do_notify_resume+0x720/0x968
-[  C206]  work_pending+0x8/0x10
-
-Before the offensive commit, wake_up_process() will prevent this from
-happening by taking the pi_lock and bail out immediately if TASK_DEAD is
-set.
-
-if (!(p->state & TASK_NORMAL))
-	goto out;
-
-Fixes: 0619317ff8ba ("block: add polled wakeup task helper")
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- mm/page_io.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 2e8019d0e048..dc2d3e037ccf 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -140,7 +140,8 @@ static void end_swap_bio_read(struct bio *bio)
- 	unlock_page(page);
- 	WRITE_ONCE(bio->bi_private, NULL);
- 	bio_put(bio);
--	blk_wake_io_task(waiter);
-+	/* end_swap_bio_read() could be called from an interrupt handler. */
-+	wake_up_process(waiter);
- 	put_task_struct(waiter);
- }
+diff --git a/include/net/sctp/structs.h b/include/net/sctp/structs.h
+index 0767701ef362..a5772d72eb87 100644
+--- a/include/net/sctp/structs.h
++++ b/include/net/sctp/structs.h
+@@ -1701,6 +1701,7 @@ struct sctp_association {
+ 		__u8    sack_needed:1,     /* Do we need to sack the peer? */
+ 			sack_generation:1,
+ 			zero_window_announced:1;
++			cookie_allocated:1
+ 		__u32	sack_cnt;
  
--- 
-1.8.3.1
-
+ 		__u32   adaptation_ind;	 /* Adaptation Code point. */
+diff --git a/net/sctp/associola.c b/net/sctp/associola.c
+index 1999237ce481..b6e8fd7081b7 100644
+--- a/net/sctp/associola.c
++++ b/net/sctp/associola.c
+@@ -213,6 +213,7 @@ static struct sctp_association *sctp_association_init(
+ 	 */
+ 	asoc->peer.sack_needed = 1;
+ 	asoc->peer.sack_generation = 1;
++	asoc->cookie_allocated=0;
+ 
+ 	/* Assume that the peer will tell us if he recognizes ASCONF
+ 	 * as part of INIT exchange.
+diff --git a/net/sctp/sm_make_chunk.c b/net/sctp/sm_make_chunk.c
+index 92331e1195c1..e966a3cc78bf 100644
+--- a/net/sctp/sm_make_chunk.c
++++ b/net/sctp/sm_make_chunk.c
+@@ -2419,9 +2419,12 @@ int sctp_process_init(struct sctp_association *asoc, struct sctp_chunk *chunk,
+ 	/* Copy cookie in case we need to resend COOKIE-ECHO. */
+ 	cookie = asoc->peer.cookie;
+ 	if (cookie) {
++		if (asoc->peer.cookie_allocated)
++			kfree(cookie);
+ 		asoc->peer.cookie = kmemdup(cookie, asoc->peer.cookie_len, gfp);
+ 		if (!asoc->peer.cookie)
+ 			goto clean_up;
++		asoc->peer.cookie_allocated=1;
+ 	}
+ 
+ 	/* RFC 2960 7.2.1 The initial value of ssthresh MAY be arbitrarily
