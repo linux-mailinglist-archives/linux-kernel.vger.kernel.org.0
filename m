@@ -2,165 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B3532E118
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:31:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 263312E123
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 17:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbfE2PbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 11:31:01 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38595 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726012AbfE2PbA (ORCPT
+        id S1726820AbfE2PdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 11:33:19 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33565 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbfE2PdT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 11:31:00 -0400
-Received: by mail-lj1-f196.google.com with SMTP id o13so2915404lji.5;
-        Wed, 29 May 2019 08:30:58 -0700 (PDT)
+        Wed, 29 May 2019 11:33:19 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v19so4530674wmh.0;
+        Wed, 29 May 2019 08:33:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QNpp3+TXidOjskLGVibpmvR3MRh+7pSnFlPt1lVhXAg=;
-        b=NKA8q0dUoVO+aTq7Rqo9sd8x62qlwWNod/NJ5sZaeoRy8ZCEGzwWOoMC8Fuenf19nu
-         Bo7a7UuNPKal73cypz5P+XdcTFseO+8+KDypD6UuXhJpWUgg9UCbluRuzefcfzKdDXr/
-         uLzwYoYNbQxhxRTHR1GGO6MjPgR93dGZRisH0LHWPiNsytCk3dEz9mqSnLETXAWyERpq
-         +8FVfIafQRtKTL3ai8iTBXQ+7ZTRhibvIYcUjUwXEO3BxTu0yo5Q7pfkp54KK2rnJHru
-         B36vhsgeZ/G6pD88rwABCnIUs+g0rm38xl3AF4HmSoTSUPf+L1/eYk6BgGYWo5t2SQVq
-         hGxw==
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5W+VfwPfqMxuifytQsznT6sIYsecd+CfEiYRucHLtVw=;
+        b=Fpnbn0HNja35ikeRV50pnLDukXTvZ8yfSsbNwOK438ie6IyOvAPt5PvjCLxjq8MQPH
+         4ZYtaLQWPnexoXzWYmYAf+LDrMCMeB5hFGjSuNA1v4sKE9YbyBTGBXGGefd3ZITHm5F8
+         WrUISOoGcPku4R+wXfliDsxAVY3ZoCWnIuothVksR0yPYWp2Kw0hPCjGMEMjG8Y90UWz
+         fKWp4ZcWytL9/hIN5j+k0m7IgW+kIk+5VtEpQF92UFU2NJ1/lYs2Iwp6hRADpITIGMsB
+         9tjZ4JVWthW+Z2sjBQlKmp1JruLrcs0ok5Tb9xk/ZKaAiBAGyWlPgfaqmKXlDIzyDKAP
+         ZsNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QNpp3+TXidOjskLGVibpmvR3MRh+7pSnFlPt1lVhXAg=;
-        b=V69wezC6uXRH7dtOdgjOQIT519P2nV1zi8srIzHKM1wyycsT1NjlK3Et8aMZu+6iUb
-         78NSgTfT79shZb+/9HlshIboX/fFkf9RIniMQdWJ6JDQqS6viI2KAOtpR6eUPYaLnNAe
-         1L2nrdp3e9vSBv+F1PAmPkuBCuARxxjVYb2UlK7Oz0/yYQxXZSQ7lHHWbyVTsKSajEB/
-         ZeKf0SIsjRytbYRT1sRs8Dd8nZHtGEudOvI8iFkmHFUr87favI/RVj4N2TAQI2ecrPAj
-         NVRfB+84a1Ao49ptdVb6E9qLTnrS3vz8LGFGMHFLC7wJ7+xPFI3vgVpRwV/dsFVc406n
-         hhIA==
-X-Gm-Message-State: APjAAAUGsXPr6f0l1P07kegf5O4HnpWSdvoA1E2a+WQeZirl5G0Gsoz2
-        ZP2BXDlDM+3YrJoIk6t7g/ui9r4C
-X-Google-Smtp-Source: APXvYqxVea962JccPcGD+nidzhwVcdWpV3Mraq2NwASgddvLewsOBGWSeZUAHcTT2aBtS+2o2xTM0A==
-X-Received: by 2002:a2e:970e:: with SMTP id r14mr20439581lji.86.1559143857576;
-        Wed, 29 May 2019 08:30:57 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.35.141])
-        by smtp.googlemail.com with ESMTPSA id c10sm3497637lfh.79.2019.05.29.08.30.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 May 2019 08:30:56 -0700 (PDT)
-Subject: Re: [PATCH V2 02/12] pinctrl: tegra: add suspend and resume support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-References: <1559084936-4610-1-git-send-email-skomatineni@nvidia.com>
- <1559084936-4610-3-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <6273a790-d4b7-c501-3fec-d9816288b139@gmail.com>
-Date:   Wed, 29 May 2019 18:29:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=5W+VfwPfqMxuifytQsznT6sIYsecd+CfEiYRucHLtVw=;
+        b=it5T9wxR5On1WHr4EGg2//i3NnoV2WPDokVZo+s2bL7XTIbRR9gO2NtwMcVm8/1w64
+         VNEkA8hfOx+vtqhim95UBBR5Tj97f96gg3HRkKnSmewPBVyXxtu/9KkxJWqX7nD54MeM
+         9mtxnaMU3fGvkHCnblB/GcwU245683q/zxbW1mX1iBs1jGERVExxWggQOSY73iMMhaTD
+         TV5Or89hLz9foZ61+It0nGO4W+q5SdMzwS0nHvNqqomr0x0DDLoOd8tbAk5fJ7qZcuGP
+         6Y+gtPvznn/evcb0wcCH74/L/UbWc7GBMWbB8LEgtH6S7GXR2mb5xDMp8O49jKoVd65J
+         fobQ==
+X-Gm-Message-State: APjAAAVsVsdGuj+g7SEce+qP37zjRAC6DLeNC7h23Ftrj+jbvRtpOunO
+        k19z06cfMaHcmeeMEn3qgAHXY2gY
+X-Google-Smtp-Source: APXvYqwDY7MrR1G0Ebmbd/oGtnz/upe08lmQ74Ra2glmRchate4lPg8V3/LoNaUcg9HKRwxBBfDugQ==
+X-Received: by 2002:a7b:c8cb:: with SMTP id f11mr2194459wml.54.1559143991698;
+        Wed, 29 May 2019 08:33:11 -0700 (PDT)
+Received: from cizrna.lan ([109.72.12.156])
+        by smtp.gmail.com with ESMTPSA id c14sm19105489wrt.45.2019.05.29.08.33.10
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 29 May 2019 08:33:10 -0700 (PDT)
+From:   Tomeu Vizoso <tomeu.vizoso@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
+        sunXi SoC support),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH] arm64: dts: allwinner: Add GPU operating points for H6
+Date:   Wed, 29 May 2019 17:32:55 +0200
+Message-Id: <20190529153255.40038-1-tomeu.vizoso@collabora.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190521161102.29620-1-peron.clem@gmail.com>
+References: <20190521161102.29620-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1559084936-4610-3-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-29.05.2019 2:08, Sowjanya Komatineni пишет:
-> This patch adds suspend and resume support for Tegra pinctrl driver
-> and registers them to syscore so the pinmux settings are restored
-> before the devices resume.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c    | 68 +++++++++++++++++++++++++++++++-
->  drivers/pinctrl/tegra/pinctrl-tegra.h    |  3 ++
->  drivers/pinctrl/tegra/pinctrl-tegra114.c |  1 +
->  drivers/pinctrl/tegra/pinctrl-tegra124.c |  1 +
->  drivers/pinctrl/tegra/pinctrl-tegra20.c  |  1 +
->  drivers/pinctrl/tegra/pinctrl-tegra210.c |  1 +
->  drivers/pinctrl/tegra/pinctrl-tegra30.c  |  1 +
->  7 files changed, 75 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> index a5008c066bac..bdc47e62c457 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -28,11 +28,18 @@
->  #include <linux/pinctrl/pinmux.h>
->  #include <linux/pinctrl/pinconf.h>
->  #include <linux/slab.h>
-> +#include <linux/syscore_ops.h>
->  
->  #include "../core.h"
->  #include "../pinctrl-utils.h"
->  #include "pinctrl-tegra.h"
->  
-> +#define EMMC2_PAD_CFGPADCTRL_0			0x1c8
-> +#define EMMC4_PAD_CFGPADCTRL_0			0x1e0
-> +#define EMMC_DPD_PARKING			(0x1fff << 14)
-> +
-> +static struct tegra_pmx *pmx;
-> +
->  static inline u32 pmx_readl(struct tegra_pmx *pmx, u32 bank, u32 reg)
->  {
->  	return readl(pmx->regs[bank] + reg);
-> @@ -629,6 +636,50 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
->  	}
->  }
->  
-> +static int __maybe_unused tegra_pinctrl_suspend(void)
-> +{
-> +	u32 *backup_regs = pmx->backup_regs;
-> +	u32 *regs;
-> +	int i, j;
-> +
-> +	for (i = 0; i < pmx->nbanks; i++) {
-> +		regs = pmx->regs[i];
-> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
-> +			*backup_regs++ = readl(regs++);
-> +	}
-> +
-> +	return pinctrl_force_sleep(pmx->pctl);
-> +}
-> +
-> +static void __maybe_unused tegra_pinctrl_resume(void)
-> +{
-> +	u32 *backup_regs = pmx->backup_regs;
-> +	u32 *regs;
-> +	u32 val;
-> +	int i, j;
-> +
-> +	for (i = 0; i < pmx->nbanks; i++) {
-> +		regs = pmx->regs[i];
-> +		for (j = 0; j < pmx->reg_bank_size[i] / 4; j++)
-> +			writel(*backup_regs++, regs++);
-> +	}
-> +
-> +	if (pmx->soc->has_park_padcfg) {
-> +		val = pmx_readl(pmx, 0, EMMC2_PAD_CFGPADCTRL_0);
-> +		val &= ~EMMC_DPD_PARKING;
-> +		pmx_writel(pmx, val, 0, EMMC2_PAD_CFGPADCTRL_0);
-> +
-> +		val = pmx_readl(pmx, 0, EMMC4_PAD_CFGPADCTRL_0);
-> +		val &= ~EMMC_DPD_PARKING;
-> +		pmx_writel(pmx, val, 0, EMMC4_PAD_CFGPADCTRL_0);
-> +	}
-> +}
->
+The GPU driver needs them to change the clock frequency and regulator
+voltage depending on the load.
 
-But the CFGPADCTRL registers are already programmed by restoring the
-backup_regs and hence the relevant EMMC's are already unparked. Hence
-why do you need to force-unpark both of the EMMC's? What if EMMC is
-unpopulated on a board, why do you need to unpark it then?
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Clément Péron <peron.clem@gmail.com>
 
+---
+
+Feel free to pick up this patch if you are going to keep pushing this
+series forward.
+
+Thanks,
+
+Tomeu
+---
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 66 ++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index 6aad06095c40..decf7b56e2df 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -157,6 +157,71 @@
+ 			allwinner,sram = <&ve_sram 1>;
+ 		};
+ 
++		gpu_opp_table: opp-table2 {
++			compatible = "operating-points-v2";
++
++			opp00 {
++				opp-hz = /bits/ 64 <756000000>;
++				opp-microvolt = <1040000>;
++			};
++			opp01 {
++				opp-hz = /bits/ 64 <624000000>;
++				opp-microvolt = <950000>;
++			};
++			opp02 {
++				opp-hz = /bits/ 64 <576000000>;
++				opp-microvolt = <930000>;
++			};
++			opp03 {
++				opp-hz = /bits/ 64 <540000000>;
++				opp-microvolt = <910000>;
++			};
++			opp04 {
++				opp-hz = /bits/ 64 <504000000>;
++				opp-microvolt = <890000>;
++			};
++			opp05 {
++				opp-hz = /bits/ 64 <456000000>;
++				opp-microvolt = <870000>;
++			};
++			opp06 {
++				opp-hz = /bits/ 64 <432000000>;
++				opp-microvolt = <860000>;
++			};
++			opp07 {
++				opp-hz = /bits/ 64 <420000000>;
++				opp-microvolt = <850000>;
++			};
++			opp08 {
++				opp-hz = /bits/ 64 <408000000>;
++				opp-microvolt = <840000>;
++			};
++			opp09 {
++				opp-hz = /bits/ 64 <384000000>;
++				opp-microvolt = <830000>;
++			};
++			opp10 {
++				opp-hz = /bits/ 64 <360000000>;
++				opp-microvolt = <820000>;
++			};
++			opp11 {
++				opp-hz = /bits/ 64 <336000000>;
++				opp-microvolt = <810000>;
++			};
++			opp12 {
++				opp-hz = /bits/ 64 <312000000>;
++				opp-microvolt = <810000>;
++			};
++			opp13 {
++				opp-hz = /bits/ 64 <264000000>;
++				opp-microvolt = <810000>;
++			};
++			opp14 {
++				opp-hz = /bits/ 64 <216000000>;
++				opp-microvolt = <810000>;
++			};
++		};
++
+ 		gpu: gpu@1800000 {
+ 			compatible = "allwinner,sun50i-h6-mali",
+ 				     "arm,mali-t720";
+@@ -168,6 +233,7 @@
+ 			clocks = <&ccu CLK_GPU>, <&ccu CLK_BUS_GPU>;
+ 			clock-names = "core", "bus";
+ 			resets = <&ccu RST_BUS_GPU>;
++			operating-points-v2 = <&gpu_opp_table>;
+ 			status = "disabled";
+ 		};
+ 
 -- 
-Dmitry
+2.20.1
+
