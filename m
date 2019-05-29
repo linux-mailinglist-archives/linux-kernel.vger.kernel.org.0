@@ -2,120 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B8D42D759
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74C802D765
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 10:10:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbfE2IJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 04:09:10 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:32902 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725917AbfE2IJK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 04:09:10 -0400
-Received: by mail-io1-f65.google.com with SMTP id u13so1077555iop.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 01:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RxXvclxvtLO6JmXKyzZz4TtfqD6qqSQQNDFUnK5EdOE=;
-        b=dIAHLOYYCq5oAsIPqSqwXo7BO2qeHR7SZftiNljkQHJUJv80V0MatrM6Q3SkC/BoXo
-         2yM1PXXNJy2qg2EtCGlpBmJsNHMoswxau4JRWvZ9Vi+wqjT0Vy1KAUu496HRxp8Z2wTT
-         UipyxohvDO1db0DYXvIDnvgfESM3mBn8LbT8A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RxXvclxvtLO6JmXKyzZz4TtfqD6qqSQQNDFUnK5EdOE=;
-        b=Bznz38ychQxSS8QPaEHeVormPAOnkUPc1pb4YOISFST2c00NEjGp3xmOTsaYVYxZ47
-         2G0DRAwBgKegFrkplPb+IM5LUDpJyjzXu3+pJbZwR1075FVQen4ozIw1Li4hP0Tv56iZ
-         aOSvEsbb0Nw7u1w1YTHREwwDizR47gtDspUs+Iuef5nWBzKMfUlD1dVAm+UtlXSzJdgR
-         PjOocSfmVn3cwiIgs6aiscWNlRPa2Qr+9TjvkpePjRId884F+K+ffXCTn3kypQHKD1nq
-         GnJXo4VIqhzTG1EdMBAzV8W/WmZy7b2kiSl89ahxU9/39XBjVOmT2s+YjfPsuaSsPgx3
-         b2DQ==
-X-Gm-Message-State: APjAAAVAkEMp3UQdvr/wi+70yBz8wwiVMBOnNxkXwfCBa55oBczL9b8K
-        IxRuCIsqTNTICi+qu1j9yqlGAGj1/ZNI1AswyG08rw==
-X-Google-Smtp-Source: APXvYqwhgOrotS8jlyEYFxpVCtEt1jaGqmJaJ2Q6ogp9Ky0GdDMgFIIk9nOCTBuYSmaAcZn2/UUVPBw0wO8G5MlhJtY=
-X-Received: by 2002:a05:6602:2252:: with SMTP id o18mr5265330ioo.63.1559117349466;
- Wed, 29 May 2019 01:09:09 -0700 (PDT)
+        id S1726899AbfE2IKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 04:10:43 -0400
+Received: from muru.com ([72.249.23.125]:51648 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726005AbfE2IKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 04:10:42 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 851638027;
+        Wed, 29 May 2019 08:11:01 +0000 (UTC)
+Date:   Wed, 29 May 2019 01:10:38 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Keerthy <j-keerthy@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCHv6 0/4] omapdrm: DSI command mode panel support
+Message-ID: <20190529081038.GP5447@atomide.com>
+References: <20190523200756.25314-1-sebastian.reichel@collabora.com>
+ <60c45d23-de2f-d94a-c3d7-146a2bee538f@ti.com>
+ <20190527112122.GJ5447@atomide.com>
+ <e507c415-38de-86fe-9265-4b0aed0d7224@ti.com>
+ <20190528093952.GM5447@atomide.com>
+ <14c6c702-844b-756d-2d97-44e8f5a169df@ti.com>
+ <20190528101847.GN5447@atomide.com>
+ <ac487765-01a3-2c82-d86e-db00451563a9@ti.com>
 MIME-Version: 1.0
-References: <155905626142.1662.18430571708534506785.stgit@warthog.procyon.org.uk>
- <155905629702.1662.7233272785972036117.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155905629702.1662.7233272785972036117.stgit@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 29 May 2019 10:08:58 +0200
-Message-ID: <CAJfpegutheVtnmN6BFSjzrmz8p9+DpZxFoKa4CoShoh4MW+5gQ@mail.gmail.com>
-Subject: Re: [PATCH 04/25] vfs: Implement parameter value retrieval with
- fsinfo() [ver #13]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Miklos Szeredi <mszeredi@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac487765-01a3-2c82-d86e-db00451563a9@ti.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 28, 2019 at 5:11 PM David Howells <dhowells@redhat.com> wrote:
->
-> Implement parameter value retrieval with fsinfo() - akin to parsing
-> /proc/mounts.
->
-> This allows all the parameters to be retrieved in one go with:
->
->         struct fsinfo_params params = {
->                 .request        = FSINFO_ATTR_PARAMETER,
->         };
+* Tomi Valkeinen <tomi.valkeinen@ti.com> [190529 07:06]:
+> On 28/05/2019 13:18, Tony Lindgren wrote:
+> 
+> > > My board is x15 rev A3, attached to AM5 EVM. I've also attached my kernel
+> > > config.
+> > 
+> > Strange that this is not affecting other x15? I think timer12 would
+> > be blocked on HS devices though?
+> 
+> Seems that the kernel config affects. omap2plus_defconfig boots ok.
 
-Ah, here it is.
+OK, this line in your oops:
 
->
-> Each parameter comes as a pair of blobs with a length tacked on the front
-> rather than using separators, since any printable character that could be
-> used as a separator can be found in some value somewhere (including comma).
-> In fact, cifs allows the separator to be set using the "sep=" option in
-> parameter parsing.
->
-> The length on the front of each blob is 1-3 bytes long.  Each byte has a
-> flag in bit 7 that's set if there are more bytes and clear on the last
-> byte; bits 0-6 should be shifted and OR'd into the length count.  The bytes
-> are most-significant first.
->
-> For example, 0x83 0xf5 0x06 is the length (0x03<<14 | 0x75<<7 | 0x06).
+Unable to handle kernel paging request at virtual address 5a5a5a5a
 
-Sounds way too complicated.  What about fixed 4byte sizes?  Or using
-the nul charater as separator (and binary blobs be damned)?
+Probably means we hit some slab poison with DEBUG_SLAB set.
+Looks like your config boots fine with DEBUG_SLAB disabled
+for me.
 
-[...]
+As this only happens for timer12, I wonder if we're again
+hitting some uncompress issue with corrupted dtb. Changing
+u-boot ftdaddr higher up might possibly make it go away.
+Or else there's a bug elsewhere :)
 
-> +static void fsinfo_insert_sb_flag_parameters(struct path *path,
-> +                                            struct fsinfo_kparams *params)
-> +{
-> +       int s_flags = READ_ONCE(path->dentry->d_sb->s_flags);
-> +
-> +       if (s_flags & SB_DIRSYNC)
-> +               fsinfo_note_param(params, "dirsync", NULL);
-> +       if (s_flags & SB_LAZYTIME)
-> +               fsinfo_note_param(params, "lazytime", NULL);
-> +       if (s_flags & SB_MANDLOCK)
-> +               fsinfo_note_param(params, "mand", NULL);
-> +       if (s_flags & SB_POSIXACL)
-> +               fsinfo_note_param(params, "posixacl", NULL);
-> +       if (s_flags & SB_RDONLY)
-> +               fsinfo_note_param(params, "ro", NULL);
-> +       if (s_flags & SB_SYNCHRONOUS)
-> +               fsinfo_note_param(params, "sync", NULL);
+Regards,
 
-Again, don't blindly transform s_flags into options, because some of
-them may have been internally manipulated by the filesystem.
+Tony
 
-You could do a helper for filesystems that does the the common ones
-(ro/sync/dirsync) but all of that *should* go through the filesystem.
 
-Same goes for vfs_parse_sb_flag() btw.   It should be moved into each
-filesystem's ->parse_param() and not be a mandatory thing.
-
-Thanks,
-Miklos
