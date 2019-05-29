@@ -2,59 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1ED32D5A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 08:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D96782D5B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 May 2019 08:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbfE2Gpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 02:45:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48986 "EHLO mx1.redhat.com"
+        id S1726147AbfE2Grr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 02:47:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbfE2Gpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 02:45:50 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725879AbfE2Grq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 02:47:46 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6D48EC057E3C;
-        Wed, 29 May 2019 06:45:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-173.rdu2.redhat.com [10.10.120.173])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 23DCA5D9E1;
-        Wed, 29 May 2019 06:45:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAOQ4uxjC1M7jwjd9zSaSa6UW2dbEjc+ZbFSo7j9F1YHAQxQ8LQ@mail.gmail.com>
-References: <CAOQ4uxjC1M7jwjd9zSaSa6UW2dbEjc+ZbFSo7j9F1YHAQxQ8LQ@mail.gmail.com> <155905930702.7587.7100265859075976147.stgit@warthog.procyon.org.uk>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Ian Kent <raven@themaw.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-api@vger.kernel.org,
-        linux-block <linux-block@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [RFC][PATCH 0/7] Mount, FS, Block and Keyrings notifications
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <22970.1559112346.1@warthog.procyon.org.uk>
-Date:   Wed, 29 May 2019 07:45:46 +0100
-Message-ID: <22971.1559112346@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 29 May 2019 06:45:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03B5621670;
+        Wed, 29 May 2019 06:47:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559112465;
+        bh=xY1iAw/2N4nKPDxFqUZ+osggFL15pR2wiUbf/oD2RJI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=w+twq5wTNZfl465wcH4n7a5RMmightjumKr9p8BTphVOKp9KUxlJgWOXG/gDiayIf
+         ZlKk8OU+2oZat/FweumICAtZTk3F6og/XJlgpovEvLTGoCSf9t0duNxsWgH2qHZ3i7
+         xzetlptWYSWG0g3Km8R4pndBXghTAxZ08x/ZZ3WU=
+Date:   Wed, 29 May 2019 15:47:40 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Frank Ch. Eigler" <fche@redhat.com>
+Subject: Re: [RFC][PATCH 00/14 v2] function_graph: Rewrite to allow multiple
+ users
+Message-Id: <20190529154740.016517ff9225680f64961097@kernel.org>
+In-Reply-To: <20190522104027.1b2aabd8@gandalf.local.home>
+References: <20190520142001.270067280@goodmis.org>
+        <20190522231955.72899b0d606adb919e8716ff@kernel.org>
+        <20190522104027.1b2aabd8@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amir Goldstein <amir73il@gmail.com> wrote:
+On Wed, 22 May 2019 10:40:27 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> I am interested to know how you envision filesystem notifications would
-> look with this interface.
+> On Wed, 22 May 2019 23:19:55 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > >  void *fgraph_reserve_data(int size_in_bytes)
+> > > 
+> > >     Allows the entry function to reserve up to 4 words of data on
+> > >     the shadow stack. On success, a pointer to the contents is returned.
+> > >     This may be only called once per entry function.
+> > > 
+> > >  void *fgraph_retrieve_data(void)
+> > > 
+> > >     Allows the return function to retrieve the reserved data that was
+> > >     allocated by the entry function.  
+> > 
+> > Nice! this seems good for kretprobe too. I'll review and try to port
+> > kretprobe on this framework.
+> 
+> If you rather pull from my git repo and not download all the patches,
+> they are currently available in my ftrace/fgraph-multi branch.
 
-What sort of events are you thinking of by "filesystem notifications"?  You
-mean things like file changes?
+Hi Steve,
 
-David
+I found that these interfaces seem tightly coupled with fgraph_ops. But that
+cause a problem when I'm using it from kretprobe.
+
+kretprobe has 2 handlers, entry handler and return handler, and both need
+pt_regs. But fgraph_ops's entryfunc and retfunc do not pass the pt_regs.
+That is the biggest issue for me on these APIs.
+Can we expand fgraph_ops with regs parameter?
+
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
