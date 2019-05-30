@@ -2,118 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC31C2F6B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B64592F708
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 07:06:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389282AbfE3E6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:58:39 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40485 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389148AbfE3E6a (ORCPT
+        id S1727564AbfE3FGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 01:06:13 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39285 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbfE3FGN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 00:58:30 -0400
-Received: by mail-qt1-f194.google.com with SMTP id a15so3371464qtn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 21:58:30 -0700 (PDT)
+        Thu, 30 May 2019 01:06:13 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j2so3148438pfe.6
+        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 22:06:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rLmgEjHoFbZEgDIpNdCHV3eTKhj4yByl9zF5X6YEDyU=;
-        b=RPnZUCBgRQHtYNK14mI5pN632nIxFQ9nLcYN1I5h78/zyx3v50ePjNHdlKRtRu/G3C
-         hWbB0se/iWL0ROpD9gWbN28s4bBolC9R9WmpJRKZC2D8eoPKqSvW0def9L5GLi1i/Wry
-         /pDU7Y8f9zQecUtCv0HO2QRN3jWQE9FmsnMbyQOFm7EnrJeXK4zBTV7Hn3MZXpoe51Kq
-         iXtMHowwtmYgFLmJ7S19FxXG5pOdjdcZ/Is90S8cWSvOKjbufCIYwRFwMViwfBAhxYg0
-         Yt+jtrrJdpuLDcqwyEaSLafp6AHzuWRI7L9f2qdZE+jVHczQoWI41SvYEzs+Bx/Nuat3
-         gadg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=471RtXe1UXBWmO9V0tHQdL3qmf1+11dEHQ7BpybB+PE=;
+        b=RI7EzQb/M/CcAHTc8S4WrXUzCm+WIGyI3SftLZJJnbXwcZhXORjprHP60+53pX00Ey
+         rcnOE74/AAiNr3M3419C6MljaHWFaEriztx1L+8vNrMDfrLJwz6yRWbFvK0Sx2ZI6QzW
+         2/KfLiMzKdxmhWoepoiZrWSyFnJgeaFSaRnyA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rLmgEjHoFbZEgDIpNdCHV3eTKhj4yByl9zF5X6YEDyU=;
-        b=hnviHFsgbwbLGPPvlNCEPB7pTule4tlJyNMjLTVzmYmYAjdLNHHKdIyXGURNiI/8Z7
-         ffgbr6GC41GcLhv9b8Rpk8EEze6v+hN8yKb11d1KI91Z6G4+3BsO06gN205FVYmNJFCq
-         XG+VU6lhKMgjBv11DbbYy9qDBudDAFudga38VSVg5OAMAWeYl+r0IbJHvLGa8LZIqgoS
-         C1VVfAkIPNszuY8WNL6v17tV/iRJhgkseaQ2kdlBho2lowuBXlxUIYVY0fekyoxG79Br
-         bEtG7nZiut5llImhPINr/zdaOwmIU/CfEmN2je9kkFb6F9eZbn9Ev5zrYZdfZUhtzRHW
-         xZ8A==
-X-Gm-Message-State: APjAAAXD70yrDE2g854HHkSc8FSf1kVIBpIpk5jm2o+xMV9JvvvMUihD
-        EIYwt5r27f9nSfkzpTSxhgquX7jllj+g4SmF+M2EZw==
-X-Google-Smtp-Source: APXvYqykJVzyUNjoIJTxPOCOl5J357hUfTlOmm8qycXoUfA80/eqCZBpMHgAh/kbPPhBE08WD9UbtmZTxYfSv0n8FEA=
-X-Received: by 2002:a0c:be87:: with SMTP id n7mr1524590qvi.65.1559192309628;
- Wed, 29 May 2019 21:58:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=471RtXe1UXBWmO9V0tHQdL3qmf1+11dEHQ7BpybB+PE=;
+        b=MIR0u65/xLzXX+2OZKzwFInJIafil7ib4ue3R/2WSFD+twZ33e+AGkrdFAKoameUgi
+         qyX5Jy0rvi007ycgjOsaLpOzp79qPZCyAbVRUux29NiQ6zvoEGOBrFjbZ62Coo21d8Ge
+         Fuz9UJCjX530wjeaq5G1O2CHgU3LZE0AgS76PoV5wRnY03ebuWeGRwhVJGOKMATFasN+
+         fbppcVMsnU1cdDRv3ImQHz3IzmnnKFmK8vxfO8OL9PZ6XWvKahkm+512+0GXB9O2SwUR
+         b0glr9mxibscQiZXsQ7ePga379xf3PJMmt5op3MCidiKsgt3nOlB0FuK/VGWhbiPHcv2
+         p+xQ==
+X-Gm-Message-State: APjAAAVJUXIILrVWdtSpHVidc3BTX8x/9ScmTxJabzr34dZJbXpqtXXE
+        cJszns/UVLp/drw/T1tD1UbDmG7IHqk=
+X-Google-Smtp-Source: APXvYqwX7bem3flmwMHVAUUo8QOnTzGP+RQylHxKnMa94V6FQv9HForlf84NLP6f2VgM4WxUoPrKyA==
+X-Received: by 2002:a62:b40a:: with SMTP id h10mr1908195pfn.216.1559192772734;
+        Wed, 29 May 2019 22:06:12 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id h7sm1428273pfo.108.2019.05.29.22.06.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 May 2019 22:06:11 -0700 (PDT)
+Date:   Wed, 29 May 2019 22:06:10 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/kconfig: Fix neighboring typos
+Message-ID: <201905292203.CD000546EB@keescook>
 MIME-Version: 1.0
-References: <20190529050335.72061-1-chiu@endlessm.com> <5f5e262d-aadb-cca0-8576-879735366a73@lwfinger.net>
-In-Reply-To: <5f5e262d-aadb-cca0-8576-879735366a73@lwfinger.net>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Thu, 30 May 2019 12:58:18 +0800
-Message-ID: <CAB4CAwdB_8f-JZWWpXdYDghaGQv+Kc4H=G4UUrEK-_xbNg4Ctw@mail.gmail.com>
-Subject: Re: [RFC PATCH v3] rtl8xxxu: Improve TX performance of RTL8723BU on
- rtl8xxxu driver
-To:     Larry Finger <Larry.Finger@lwfinger.net>
-Cc:     Jes Sorensen <jes.sorensen@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        David Miller <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 2:22 AM Larry Finger <Larry.Finger@lwfinger.net> wrote:
->
-> On 5/29/19 12:03 AM, Chris Chiu wrote:
-> > We have 3 laptops which connect the wifi by the same RTL8723BU.
-> > The PCI VID/PID of the wifi chip is 10EC:B720 which is supported.
-> > They have the same problem with the in-kernel rtl8xxxu driver, the
-> > iperf (as a client to an ethernet-connected server) gets ~1Mbps.
-> > Nevertheless, the signal strength is reported as around -40dBm,
-> > which is quite good. From the wireshark capture, the tx rate for each
-> > data and qos data packet is only 1Mbps. Compare to the driver from
-> > https://github.com/lwfinger/rtl8723bu, the same iperf test gets ~12
-> > Mbps or more. The signal strength is reported similarly around
-> > -40dBm. That's why we want to improve.
->
-> The driver at GitHub was written by Realtek. I only published it in a prominent
-> location, and fix it for kernel API changes. I would say "the Realtek driver at
-> https://...", and every mention of "Larry's driver" should say "Realtek's
-> driver". That attribution is more correct.
+This fixes a couple typos I noticed in the slab Kconfig:
 
-Thanks. I'll modify this in next revision.
+	sacrifies -> sacrifices
+	accellerate -> accelerate
 
-> >
-> > After reading the source code of the rtl8xxxu driver and Larry's, the
-> > major difference is that Larry's driver has a watchdog which will keep
-> > monitoring the signal quality and updating the rate mask just like the
-> > rtl8xxxu_gen2_update_rate_mask() does if signal quality changes.
-> > And this kind of watchdog also exists in rtlwifi driver of some specific
-> > chips, ex rtl8192ee, rtl8188ee, rtl8723ae, rtl8821ae...etc. They have
-> > the same member function named dm_watchdog and will invoke the
-> > corresponding dm_refresh_rate_adaptive_mask to adjust the tx rate
-> > mask.
-> >
-> > With this commit, the tx rate of each data and qos data packet will
-> > be 39Mbps (MCS4) with the 0xF00000 as the tx rate mask. The 20th bit
-> > to 23th bit means MCS4 to MCS7. It means that the firmware still picks
-> > the lowest rate from the rate mask and explains why the tx rate of
-> > data and qos data is always lowest 1Mbps because the default rate mask
-> > passed is always 0xFFFFFFF ranges from the basic CCK rate, OFDM rate,
-> > and MCS rate. However, with Larry's driver, the tx rate observed from
-> > wireshark under the same condition is almost 65Mbps or 72Mbps.
-> >
-> > I believe the firmware of RTL8723BU may need fix. And I think we
-> > can still bring in the dm_watchdog as rtlwifi to improve from the
-> > driver side. Please leave precious comments for my commits and
-> > suggest what I can do better. Or suggest if there's any better idea
-> > to fix this. Thanks.
-> >
-> > Signed-off-by: Chris Chiu <chiu@endlessm.com>
->
-> I have not tested this patch, but I plan to soon.
->
-> Larry
->
->
+Seeing as no other instances of these typos are found elsewhere in the
+kernel and that I originally added one of the two, I can only assume
+working on slab must have caused damage to the spelling centers of
+my brain.
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ init/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/init/Kconfig b/init/Kconfig
+index 4592bf7997c0..2dfb3d7f8079 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1750,7 +1750,7 @@ config SLAB_FREELIST_HARDENED
+ 	help
+ 	  Many kernel heap attacks try to target slab cache metadata and
+ 	  other infrastructure. This options makes minor performance
+-	  sacrifies to harden the kernel slab allocator against common
++	  sacrifices to harden the kernel slab allocator against common
+ 	  freelist exploit methods.
+ 
+ config SLUB_CPU_PARTIAL
+@@ -1758,7 +1758,7 @@ config SLUB_CPU_PARTIAL
+ 	depends on SLUB && SMP
+ 	bool "SLUB per cpu partial cache"
+ 	help
+-	  Per cpu partial caches accellerate objects allocation and freeing
++	  Per cpu partial caches accelerate objects allocation and freeing
+ 	  that is local to a processor at the price of more indeterminism
+ 	  in the latency of the free. On overflow these caches will be cleared
+ 	  which requires the taking of locks that may cause latency spikes.
+-- 
+2.17.1
+
+
+-- 
+Kees Cook
