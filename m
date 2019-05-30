@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80EE82EB63
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:12:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BDDB2F3A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbfE3DM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:12:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49434 "EHLO mail.kernel.org"
+        id S1729730AbfE3Eal (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:30:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728301AbfE3DK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:57 -0400
+        id S1729626AbfE3DNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:54 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33DF6244C4;
-        Thu, 30 May 2019 03:10:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20E8B2455E;
+        Thu, 30 May 2019 03:13:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185857;
-        bh=CFHpKQ5oae7IeuktP+0eXItHEKAAiouHz0Wj9+kpRHU=;
+        s=default; t=1559186034;
+        bh=0qTx3l/7Ma5xkUz5EzJuuQo0VKTEYK0t0soS6lpaNVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OLPfDHOs/fvGKzYT4aJmppWl/MG4PJmymS6PZZdhQ5vjBwodZ8bOrXd7tvOSr4C+F
-         u1r6jWErLpmGSJak2/ngvmXgwj1lVeANPWn2wzuGxjUAnCqb7U50k7Ui1IOyHR8mgd
-         ZV6wtmbuUeZw4lttiiXkAHLGpncowOdj+6NlXXOI=
+        b=fJreSCdxbrPrSuKhC8On0dW7wcvxULbYHYB0Ac64nt8Dweu12Z4sAnbRlIi106qsi
+         2ZVSf2okp9z/6hW9wE5xFsolSkWaAsteqWqfDzYRTI2Ocphwk3YfcJpS8H3FiOlqzi
+         u+4kvLmDbrXU7vQ5OXHmPiwff+ZjZKnbdvO/XSAo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 185/405] phy: ti: usb2: fix OMAP_CONTROL_PHY dependency
+Subject: [PATCH 5.0 110/346] rsi: Fix NULL pointer dereference in kmalloc
 Date:   Wed, 29 May 2019 20:03:03 -0700
-Message-Id: <20190530030550.416501119@linuxfoundation.org>
+Message-Id: <20190530030546.674031942@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +44,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d41ce98a122c13ea77938af04ef06fb12ae0c69e ]
+[ Upstream commit d5414c2355b20ea8201156d2e874265f1cb0d775 ]
 
-With randconfig build testing on arm64, we can run into a configuration
-that has CONFIG_OMAP_CONTROL_PHY=m and CONFIG_OMAP_USB2=y, which in turn
-causes a link failure:
+kmalloc can fail in rsi_register_rates_channels but memcpy still attempts
+to write to channels. The patch replaces these calls with kmemdup and
+passes the error upstream.
 
-drivers/phy/ti/phy-omap-usb2.o: In function `omap_usb_phy_power':
-phy-omap-usb2.c:(.text+0x17c): undefined reference to `omap_control_phy_power'
-
-I could not come up with a good way to correctly describe the relation
-of the two symbols, but if we just select CONFIG_OMAP_CONTROL_PHY
-during compile testing, we can no longer run into the broken configuration.
-
-Fixes: 6777cee3a872 ("phy: ti: usb2: Add support for AM654 USB2 PHY")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/ti/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/rsi/rsi_91x_mac80211.c | 30 ++++++++++++---------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/phy/ti/Kconfig b/drivers/phy/ti/Kconfig
-index 103efc456a12e..022ac16f626cf 100644
---- a/drivers/phy/ti/Kconfig
-+++ b/drivers/phy/ti/Kconfig
-@@ -37,7 +37,7 @@ config OMAP_USB2
- 	depends on USB_SUPPORT
- 	select GENERIC_PHY
- 	select USB_PHY
--	select OMAP_CONTROL_PHY if ARCH_OMAP2PLUS
-+	select OMAP_CONTROL_PHY if ARCH_OMAP2PLUS || COMPILE_TEST
- 	help
- 	  Enable this to support the transceiver that is part of SOC. This
- 	  driver takes care of all the PHY functionality apart from comparator.
+diff --git a/drivers/net/wireless/rsi/rsi_91x_mac80211.c b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+index e56fc83faf0ef..2f604e8bc991b 100644
+--- a/drivers/net/wireless/rsi/rsi_91x_mac80211.c
++++ b/drivers/net/wireless/rsi/rsi_91x_mac80211.c
+@@ -188,27 +188,27 @@ bool rsi_is_cipher_wep(struct rsi_common *common)
+  * @adapter: Pointer to the adapter structure.
+  * @band: Operating band to be set.
+  *
+- * Return: None.
++ * Return: int - 0 on success, negative error on failure.
+  */
+-static void rsi_register_rates_channels(struct rsi_hw *adapter, int band)
++static int rsi_register_rates_channels(struct rsi_hw *adapter, int band)
+ {
+ 	struct ieee80211_supported_band *sbands = &adapter->sbands[band];
+ 	void *channels = NULL;
+ 
+ 	if (band == NL80211_BAND_2GHZ) {
+-		channels = kmalloc(sizeof(rsi_2ghz_channels), GFP_KERNEL);
+-		memcpy(channels,
+-		       rsi_2ghz_channels,
+-		       sizeof(rsi_2ghz_channels));
++		channels = kmemdup(rsi_2ghz_channels, sizeof(rsi_2ghz_channels),
++				   GFP_KERNEL);
++		if (!channels)
++			return -ENOMEM;
+ 		sbands->band = NL80211_BAND_2GHZ;
+ 		sbands->n_channels = ARRAY_SIZE(rsi_2ghz_channels);
+ 		sbands->bitrates = rsi_rates;
+ 		sbands->n_bitrates = ARRAY_SIZE(rsi_rates);
+ 	} else {
+-		channels = kmalloc(sizeof(rsi_5ghz_channels), GFP_KERNEL);
+-		memcpy(channels,
+-		       rsi_5ghz_channels,
+-		       sizeof(rsi_5ghz_channels));
++		channels = kmemdup(rsi_5ghz_channels, sizeof(rsi_5ghz_channels),
++				   GFP_KERNEL);
++		if (!channels)
++			return -ENOMEM;
+ 		sbands->band = NL80211_BAND_5GHZ;
+ 		sbands->n_channels = ARRAY_SIZE(rsi_5ghz_channels);
+ 		sbands->bitrates = &rsi_rates[4];
+@@ -227,6 +227,7 @@ static void rsi_register_rates_channels(struct rsi_hw *adapter, int band)
+ 	sbands->ht_cap.mcs.rx_mask[0] = 0xff;
+ 	sbands->ht_cap.mcs.tx_params = IEEE80211_HT_MCS_TX_DEFINED;
+ 	/* sbands->ht_cap.mcs.rx_highest = 0x82; */
++	return 0;
+ }
+ 
+ /**
+@@ -1985,11 +1986,16 @@ int rsi_mac80211_attach(struct rsi_common *common)
+ 	wiphy->available_antennas_rx = 1;
+ 	wiphy->available_antennas_tx = 1;
+ 
+-	rsi_register_rates_channels(adapter, NL80211_BAND_2GHZ);
++	status = rsi_register_rates_channels(adapter, NL80211_BAND_2GHZ);
++	if (status)
++		return status;
+ 	wiphy->bands[NL80211_BAND_2GHZ] =
+ 		&adapter->sbands[NL80211_BAND_2GHZ];
+ 	if (common->num_supp_bands > 1) {
+-		rsi_register_rates_channels(adapter, NL80211_BAND_5GHZ);
++		status = rsi_register_rates_channels(adapter,
++						     NL80211_BAND_5GHZ);
++		if (status)
++			return status;
+ 		wiphy->bands[NL80211_BAND_5GHZ] =
+ 			&adapter->sbands[NL80211_BAND_5GHZ];
+ 	}
 -- 
 2.20.1
 
