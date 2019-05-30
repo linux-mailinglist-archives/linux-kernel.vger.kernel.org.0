@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B44222EE1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C7D02F1D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732764AbfE3Doc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:44:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60724 "EHLO mail.kernel.org"
+        id S1730395AbfE3EQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:16:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730758AbfE3DU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:58 -0400
+        id S1729539AbfE3DPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:50 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 838042499B;
-        Thu, 30 May 2019 03:20:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F264524580;
+        Thu, 30 May 2019 03:15:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186457;
-        bh=J4uwusvLtrICANSHTWdP5KgOtyuG4ox8q63z/IbzCHk=;
+        s=default; t=1559186150;
+        bh=d4nY/VhsQDHC+8KC5BHkFPOCTt/TPbxIy52XXQEdmIg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tGennvvxGFBzagrk2FPdwK6hqR+/grPIQ22Wf3t9q1zIGKh37mtHyLc1Fm3kTG2Al
-         /jXBdbgY/A1Kc2XqnTO7J97C2fk6TYLIFHtqZH7Zw7ALdQpHCiSPVTTKvnU/wM88o8
-         YuiWOBaJk8QBx+vAdzduYPf9MZQfIyLF6cCTEijg=
+        b=dLFOLPeU4hLUlZmFon8jubV69Gnc4BebUybhhHozC405p9HU577idGAhPYLxImtcV
+         7sMvoRg3B5bHklFemyj4RKE0kkxn2D/OsEljm1kbYL1TBQymU7TdkucsTrPD2HSgWs
+         urjxQhgpsD8FBbloiSK1KexdBp0Uf0Vj0+Qyy9Jc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 072/128] hwmon: (vt1211) Use request_muxed_region for Super-IO accesses
-Date:   Wed, 29 May 2019 20:06:44 -0700
-Message-Id: <20190530030447.663914726@linuxfoundation.org>
+Subject: [PATCH 5.0 332/346] regulator: wm831x: Fix notifier mutex lock warning
+Date:   Wed, 29 May 2019 20:06:45 -0700
+Message-Id: <20190530030557.576059664@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,68 +47,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 14b97ba5c20056102b3dd22696bf17b057e60976 ]
+[ Upstream commit 119c4f5085c45b60cb23c5595e45d06135b89518 ]
 
-Super-IO accesses may fail on a system with no or unmapped LPC bus.
+The mutex for the regulator_dev must be controlled by the caller of
+the regulator_notifier_call_chain(), as described in the comment
+for that function.
 
-Also, other drivers may attempt to access the LPC bus at the same time,
-resulting in undefined behavior.
+Failure to mutex lock and unlock surrounding the notifier call results
+in a kernel WARN_ON_ONCE() which will dump a backtrace for the
+regulator_notifier_call_chain() when that function call is first made.
+The mutex can be controlled using the regulator_lock/unlock() API.
 
-Use request_muxed_region() to ensure that IO access on the requested
-address space is supported, and to ensure that access by multiple drivers
-is synchronized.
-
-Fixes: 2219cd81a6cd ("hwmon/vt1211: Add probing of alternate config index port")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: e4ee831f949a ("regulator: Add WM831x DC-DC buck convertor support")
+Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/vt1211.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/regulator/wm831x-dcdc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/hwmon/vt1211.c b/drivers/hwmon/vt1211.c
-index 3a6bfa51cb94f..95d5e8ec8b7fc 100644
---- a/drivers/hwmon/vt1211.c
-+++ b/drivers/hwmon/vt1211.c
-@@ -226,15 +226,21 @@ static inline void superio_select(int sio_cip, int ldn)
- 	outb(ldn, sio_cip + 1);
- }
- 
--static inline void superio_enter(int sio_cip)
-+static inline int superio_enter(int sio_cip)
+diff --git a/drivers/regulator/wm831x-dcdc.c b/drivers/regulator/wm831x-dcdc.c
+index 5a5bc4bb08d26..4f5461ad7b629 100644
+--- a/drivers/regulator/wm831x-dcdc.c
++++ b/drivers/regulator/wm831x-dcdc.c
+@@ -183,9 +183,11 @@ static irqreturn_t wm831x_dcdc_uv_irq(int irq, void *data)
  {
-+	if (!request_muxed_region(sio_cip, 2, DRVNAME))
-+		return -EBUSY;
-+
- 	outb(0x87, sio_cip);
- 	outb(0x87, sio_cip);
-+
-+	return 0;
+ 	struct wm831x_dcdc *dcdc = data;
+ 
++	regulator_lock(dcdc->regulator);
+ 	regulator_notifier_call_chain(dcdc->regulator,
+ 				      REGULATOR_EVENT_UNDER_VOLTAGE,
+ 				      NULL);
++	regulator_unlock(dcdc->regulator);
+ 
+ 	return IRQ_HANDLED;
  }
- 
- static inline void superio_exit(int sio_cip)
+@@ -194,9 +196,11 @@ static irqreturn_t wm831x_dcdc_oc_irq(int irq, void *data)
  {
- 	outb(0xaa, sio_cip);
-+	release_region(sio_cip, 2);
+ 	struct wm831x_dcdc *dcdc = data;
+ 
++	regulator_lock(dcdc->regulator);
+ 	regulator_notifier_call_chain(dcdc->regulator,
+ 				      REGULATOR_EVENT_OVER_CURRENT,
+ 				      NULL);
++	regulator_unlock(dcdc->regulator);
+ 
+ 	return IRQ_HANDLED;
  }
- 
- /* ---------------------------------------------------------------------
-@@ -1282,11 +1288,14 @@ static int __init vt1211_device_add(unsigned short address)
- 
- static int __init vt1211_find(int sio_cip, unsigned short *address)
- {
--	int err = -ENODEV;
-+	int err;
- 	int devid;
- 
--	superio_enter(sio_cip);
-+	err = superio_enter(sio_cip);
-+	if (err)
-+		return err;
- 
-+	err = -ENODEV;
- 	devid = force_id ? force_id : superio_inb(sio_cip, SIO_VT1211_DEVID);
- 	if (devid != SIO_VT1211_ID)
- 		goto EXIT;
 -- 
 2.20.1
 
