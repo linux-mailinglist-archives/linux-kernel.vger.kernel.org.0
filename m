@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3B132EE1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACBA92EF02
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:52:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732508AbfE3DoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:44:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60756 "EHLO mail.kernel.org"
+        id S1733128AbfE3Dvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:51:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732394AbfE3DU6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:58 -0400
+        id S1730397AbfE3DTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:45 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 268B52499E;
-        Thu, 30 May 2019 03:20:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDF97248C3;
+        Thu, 30 May 2019 03:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186458;
-        bh=Ss3/1aNf6BV0NDPMl7bx6++BVlpIDWzqubpvj80s7W0=;
+        s=default; t=1559186384;
+        bh=l9B/OIDn8cuAVE8HO0aG3+J5d3MKu0EY/omgxsB3MUE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cxqAmzoyRO51MFf9jtADJg5ED6e922qULqC9s6x8EQZI0ZnoGa2gI9lruZgLZ9TwF
-         Uj/ZEDIvMeltX8CwfLssZlvyZuqy1Scv7Elh7mzTT1bnS942ick8H9OEXX9vybIaCt
-         4juDNdLsT2PZ8I8gRcuty5Xztpwi9i+eTPrEsKFg=
+        b=DX+sfQTjKtQxzoAr0eZRDCGnj/8vhP/Z+qZ/pJNQP8xt0Z3Ud8bFT5O9fXOhtXIDa
+         TQFR/y0Asl3RUh2s9A0GvYl4vFM9dcViySqnHU9Y+n/s8zkT9P4S3uWBQ6a0QJxv3S
+         +K8BrLiNJcgsVBASGXcHBc4w9e/9wYRKzxqvXQzs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 073/128] hwmon: (smsc47m1) Use request_muxed_region for Super-IO accesses
+Subject: [PATCH 4.14 151/193] arm64: cpu_ops: fix a leaked reference by adding missing of_node_put
 Date:   Wed, 29 May 2019 20:06:45 -0700
-Message-Id: <20190530030447.790366676@linuxfoundation.org>
+Message-Id: <20190530030509.250581004@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,91 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d6410408ad2a798c4cc685252c1baa713be0ad69 ]
+[ Upstream commit 92606ec9285fb84cd9b5943df23f07d741384bfc ]
 
-Super-IO accesses may fail on a system with no or unmapped LPC bus.
+The call to of_get_next_child returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Also, other drivers may attempt to access the LPC bus at the same time,
-resulting in undefined behavior.
+Detected by coccinelle with the following warnings:
+  ./arch/arm64/kernel/cpu_ops.c:102:1-7: ERROR: missing of_node_put;
+  acquired a node pointer with refcount incremented on line 69, but
+  without a corresponding object release within this function.
 
-Use request_muxed_region() to ensure that IO access on the requested
-address space is supported, and to ensure that access by multiple drivers
-is synchronized.
-
-Fixes: 8d5d45fb1468 ("I2C: Move hwmon drivers (2/3)")
-Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Reported-by: John Garry <john.garry@huawei.com>
-Cc: John Garry <john.garry@huawei.com>
-Acked-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/smsc47m1.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ arch/arm64/kernel/cpu_ops.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/hwmon/smsc47m1.c b/drivers/hwmon/smsc47m1.c
-index 5d323186d2c10..d24df0c50bea4 100644
---- a/drivers/hwmon/smsc47m1.c
-+++ b/drivers/hwmon/smsc47m1.c
-@@ -73,16 +73,21 @@ superio_inb(int reg)
- /* logical device for fans is 0x0A */
- #define superio_select() superio_outb(0x07, 0x0A)
- 
--static inline void
-+static inline int
- superio_enter(void)
- {
-+	if (!request_muxed_region(REG, 2, DRVNAME))
-+		return -EBUSY;
-+
- 	outb(0x55, REG);
-+	return 0;
- }
- 
- static inline void
- superio_exit(void)
- {
- 	outb(0xAA, REG);
-+	release_region(REG, 2);
- }
- 
- #define SUPERIO_REG_ACT		0x30
-@@ -531,8 +536,12 @@ static int __init smsc47m1_find(struct smsc47m1_sio_data *sio_data)
- {
- 	u8 val;
- 	unsigned short addr;
-+	int err;
-+
-+	err = superio_enter();
-+	if (err)
-+		return err;
- 
--	superio_enter();
- 	val = force_id ? force_id : superio_inb(SUPERIO_REG_DEVID);
- 
- 	/*
-@@ -608,13 +617,14 @@ static int __init smsc47m1_find(struct smsc47m1_sio_data *sio_data)
- static void smsc47m1_restore(const struct smsc47m1_sio_data *sio_data)
- {
- 	if ((sio_data->activate & 0x01) == 0) {
--		superio_enter();
--		superio_select();
--
--		pr_info("Disabling device\n");
--		superio_outb(SUPERIO_REG_ACT, sio_data->activate);
--
--		superio_exit();
-+		if (!superio_enter()) {
-+			superio_select();
-+			pr_info("Disabling device\n");
-+			superio_outb(SUPERIO_REG_ACT, sio_data->activate);
-+			superio_exit();
-+		} else {
-+			pr_warn("Failed to disable device\n");
-+		}
- 	}
- }
- 
+diff --git a/arch/arm64/kernel/cpu_ops.c b/arch/arm64/kernel/cpu_ops.c
+index d16978213c5b3..e2a9d04d05175 100644
+--- a/arch/arm64/kernel/cpu_ops.c
++++ b/arch/arm64/kernel/cpu_ops.c
+@@ -85,6 +85,7 @@ static const char *__init cpu_read_enable_method(int cpu)
+ 				pr_err("%pOF: missing enable-method property\n",
+ 					dn);
+ 		}
++		of_node_put(dn);
+ 	} else {
+ 		enable_method = acpi_get_enable_method(cpu);
+ 		if (!enable_method) {
 -- 
 2.20.1
 
