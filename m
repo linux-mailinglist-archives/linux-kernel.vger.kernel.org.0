@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3400B2F539
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0FB32F281
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:22:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388525AbfE3EpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:45:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52678 "EHLO mail.kernel.org"
+        id S1730439AbfE3EWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:22:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728717AbfE3DLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:52 -0400
+        id S1730100AbfE3DPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:05 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 107B124503;
-        Thu, 30 May 2019 03:11:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7337024595;
+        Thu, 30 May 2019 03:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185912;
-        bh=kSDMB93qouo8XN377zhespyfUO9e7dXJqdZ0dU7pCV4=;
+        s=default; t=1559186104;
+        bh=KFjWdcM0j1PIjGo1SD5vVsinYegNqV/OwabGD7l4Pfo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B747tFAMcIwJszqD6SM7cZR/qKAIS07in9JS3YaqV6MXDxfZJMvChZuCXaUeW71ar
-         l6j4M/jgn6PfIf97F91uQzf5OnHdnyMYcDE46lAwdew8D0Q5mFGjrNAaNXz7px1i3K
-         qdSnF178Nq+zi+Z1eTX5WTk/T2XJ236kPspVHfV4=
+        b=Pq5rW2Cxe4u1bomJp/fvhgQbmHXyVVlHJQoFi3v2yq97ugK/RH7zSNz5Fjq5U2aXC
+         +/CsUkV3sIdFaMZECOHvWfo/4UUs8QMF9/nCBzevz9w0Rpie9BngF+r/1UBQHF7zBH
+         WUEM/I0ZPcLNB/36vA8EPonitOHaipfdhKpKhqPA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oded Gabbay <oded.gabbay@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 284/405] habanalabs: prevent CPU soft lockup on Palladium
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 209/346] cpufreq: kirkwood: fix possible object reference leak
 Date:   Wed, 29 May 2019 20:04:42 -0700
-Message-Id: <20190530030555.249995994@linuxfoundation.org>
+Message-Id: <20190530030551.716687141@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,44 +45,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e850b89f50d2c1439f58d547b888ee6e43312dea ]
+[ Upstream commit 7c468966f05ac9c17bb5948275283d34e6fe0660 ]
 
-Unmapping ptes in the device MMU on Palladium can take a long time, which
-can cause a kernel BUG of CPU soft lockup.
+The call to of_get_child_by_name returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-This patch minimize the chances for this bug by sleeping a little between
-unmapping ptes.
+Detected by coccinelle with the following warnings:
+./drivers/cpufreq/kirkwood-cpufreq.c:127:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 118, but without a corresponding object release within this function.
+./drivers/cpufreq/kirkwood-cpufreq.c:133:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 118, but without a corresponding object release within this function.
 
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+and also do some cleanup:
+- of_node_put(np);
+- np = NULL;
+...
+of_node_put(np);
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/habanalabs/memory.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/cpufreq/kirkwood-cpufreq.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
-index ce1fda40a8b81..fadaf557603f5 100644
---- a/drivers/misc/habanalabs/memory.c
-+++ b/drivers/misc/habanalabs/memory.c
-@@ -1046,10 +1046,17 @@ static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
+diff --git a/drivers/cpufreq/kirkwood-cpufreq.c b/drivers/cpufreq/kirkwood-cpufreq.c
+index c2dd43f3f5d8a..8d63a6dc8383c 100644
+--- a/drivers/cpufreq/kirkwood-cpufreq.c
++++ b/drivers/cpufreq/kirkwood-cpufreq.c
+@@ -124,13 +124,14 @@ static int kirkwood_cpufreq_probe(struct platform_device *pdev)
+ 	priv.cpu_clk = of_clk_get_by_name(np, "cpu_clk");
+ 	if (IS_ERR(priv.cpu_clk)) {
+ 		dev_err(priv.dev, "Unable to get cpuclk\n");
+-		return PTR_ERR(priv.cpu_clk);
++		err = PTR_ERR(priv.cpu_clk);
++		goto out_node;
+ 	}
  
- 	mutex_lock(&ctx->mmu_lock);
+ 	err = clk_prepare_enable(priv.cpu_clk);
+ 	if (err) {
+ 		dev_err(priv.dev, "Unable to prepare cpuclk\n");
+-		return err;
++		goto out_node;
+ 	}
  
--	for (i = 0 ; i < phys_pg_pack->npages ; i++, next_vaddr += page_size)
-+	for (i = 0 ; i < phys_pg_pack->npages ; i++, next_vaddr += page_size) {
- 		if (hl_mmu_unmap(ctx, next_vaddr, page_size))
- 			dev_warn_ratelimited(hdev->dev,
--				"unmap failed for vaddr: 0x%llx\n", next_vaddr);
-+			"unmap failed for vaddr: 0x%llx\n", next_vaddr);
-+
-+		/* unmapping on Palladium can be really long, so avoid a CPU
-+		 * soft lockup bug by sleeping a little between unmapping pages
-+		 */
-+		if (hdev->pldm)
-+			usleep_range(500, 1000);
+ 	kirkwood_freq_table[0].frequency = clk_get_rate(priv.cpu_clk) / 1000;
+@@ -161,20 +162,22 @@ static int kirkwood_cpufreq_probe(struct platform_device *pdev)
+ 		goto out_ddr;
+ 	}
+ 
+-	of_node_put(np);
+-	np = NULL;
+-
+ 	err = cpufreq_register_driver(&kirkwood_cpufreq_driver);
+-	if (!err)
+-		return 0;
++	if (err) {
++		dev_err(priv.dev, "Failed to register cpufreq driver\n");
++		goto out_powersave;
 +	}
  
- 	hdev->asic_funcs->mmu_invalidate_cache(hdev, true);
+-	dev_err(priv.dev, "Failed to register cpufreq driver\n");
++	of_node_put(np);
++	return 0;
  
++out_powersave:
+ 	clk_disable_unprepare(priv.powersave_clk);
+ out_ddr:
+ 	clk_disable_unprepare(priv.ddr_clk);
+ out_cpu:
+ 	clk_disable_unprepare(priv.cpu_clk);
++out_node:
+ 	of_node_put(np);
+ 
+ 	return err;
 -- 
 2.20.1
 
