@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 573852ECA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2196B2F232
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:19:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733195AbfE3DX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:23:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48276 "EHLO mail.kernel.org"
+        id S1731348AbfE3ETa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:19:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731232AbfE3DRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:44 -0400
+        id S1728484AbfE3DP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:26 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77C0524718;
-        Thu, 30 May 2019 03:17:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53959245B3;
+        Thu, 30 May 2019 03:15:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186263;
-        bh=h6RD0XrIUGUFlXCbqTq82P9JrHx74Vu8RSZ0eccIifc=;
+        s=default; t=1559186125;
+        bh=qWwad4BUKaij/skN+7yXHYUmBvbU4q5h/cwNL4vySvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sBWqDKvr0gBXhBEGMFpC7pNTe1BrbAD8PxByIOlkuZzgDFDwe9F2gtLGDHf/k1spz
-         JSpVj2wM2Cgf85aw26RK8Em4Cx9MEz/qvh9hS4UEgQJA3fFjDVETMxpurypSP49rm5
-         W9uDTdxSjOrgZW6L3MjMp0L57B/p172BPTUlQYd0=
+        b=QeVYmyGcbtaFVjrmRlrRqaMDXApqL/EHuR4PT97S1xG6VdfVlw6a4hlnNedBd02zS
+         qwHbgkRbkC0PwZiFIfagoWTZVoDlNeOY98PW4hnaxpz7YxrhI4zduOn5NGquUMwZbf
+         BQ2XDQB2NirRNHsDwYwLPi76D0WZID74NDHroia8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Piotr Figiel <p.figiel@camlintechnologies.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Pu Wen <puwen@hygon.cn>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Yazen Ghannam <yazen.ghannam@amd.com>, x86-ml <x86@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 198/276] brcmfmac: fix Oops when bringing up interface during USB disconnect
+Subject: [PATCH 5.0 283/346] x86/CPU/hygon: Fix phys_proc_id calculation logic for multi-die processors
 Date:   Wed, 29 May 2019 20:05:56 -0700
-Message-Id: <20190530030537.497757144@linuxfoundation.org>
+Message-Id: <20190530030555.256553683@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,128 +48,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 24d413a31afaee9bbbf79226052c386b01780ce2 ]
+[ Upstream commit e0ceeae708cebf22c990c3d703a4ca187dc837f5 ]
 
-Fix a race which leads to an Oops with NULL pointer dereference.  The
-dereference is in brcmf_config_dongle() when cfg_to_ndev() attempts to get
-net_device structure of interface with index 0 via if2bss mapping. This
-shouldn't fail because of check for bus being ready in brcmf_netdev_open(),
-but it's not synchronised with USB disconnect and there is a race: after
-the check the bus can be marked down and the mapping for interface 0 may be
-gone.
+The Hygon family 18h multi-die processor platform supports 1, 2 or
+4-Dies per socket. The topology looks like this:
 
-Solve this by modifying disconnect handling so that the removal of mapping
-of ifidx to brcmf_if structure happens after netdev removal (which is
-synchronous with brcmf_netdev_open() thanks to rtln being locked in
-devinet_ioctl()). This assures brcmf_netdev_open() returns before the
-mapping is removed during disconnect.
+  System View (with 1-Die 2-Socket):
+             |------------|
+           ------       -----
+   SOCKET0 | D0 |       | D1 |  SOCKET1
+           ------       -----
 
-Unable to handle kernel NULL pointer dereference at virtual address 00000008
-pgd = bcae2612
-[00000008] *pgd=8be73831
-Internal error: Oops: 17 [#1] PREEMPT SMP ARM
-Modules linked in: brcmfmac brcmutil nf_log_ipv4 nf_log_common xt_LOG xt_limit
-iptable_mangle xt_connmark xt_tcpudp xt_conntrack nf_conntrack nf_defrag_ipv6
-nf_defrag_ipv4 iptable_filter ip_tables x_tables usb_f_mass_storage usb_f_rndis
-u_ether usb_serial_simple usbserial cdc_acm smsc95xx usbnet ci_hdrc_imx ci_hdrc
-usbmisc_imx ulpi 8250_exar 8250_pci 8250 8250_base libcomposite configfs
-udc_core [last unloaded: brcmutil]
-CPU: 2 PID: 24478 Comm: ifconfig Not tainted 4.19.23-00078-ga62866d-dirty #115
-Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-PC is at brcmf_cfg80211_up+0x94/0x29c [brcmfmac]
-LR is at brcmf_cfg80211_up+0x8c/0x29c [brcmfmac]
-pc : [<7f26a91c>]    lr : [<7f26a914>]    psr: a0070013
-sp : eca99d28  ip : 00000000  fp : ee9c6c00
-r10: 00000036  r9 : 00000000  r8 : ece4002c
-r7 : edb5b800  r6 : 00000000  r5 : 80f08448  r4 : edb5b968
-r3 : ffffffff  r2 : 00000000  r1 : 00000002  r0 : 00000000
-Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-Control: 10c5387d  Table: 7ca0c04a  DAC: 00000051
-Process ifconfig (pid: 24478, stack limit = 0xd9e85a0e)
-Stack: (0xeca99d28 to 0xeca9a000)
-9d20:                   00000000 80f873b0 0000000d 80f08448 eca99d68 50d45f32
-9d40: 7f27de94 ece40000 80f08448 80f08448 7f27de94 ece4002c 00000000 00000036
-9d60: ee9c6c00 7f27262c 00001002 50d45f32 ece40000 00000000 80f08448 80772008
-9d80: 00000001 00001043 00001002 ece40000 00000000 50d45f32 ece40000 00000001
-9da0: 80f08448 00001043 00001002 807723d0 00000000 50d45f32 80f08448 eca99e58
-9dc0: 80f87113 50d45f32 80f08448 ece40000 ece40138 00001002 80f08448 00000000
-9de0: 00000000 80772434 edbd5380 eca99e58 edbd5380 80f08448 ee9c6c0c 80805f70
-9e00: 00000000 ede08e00 00008914 ece40000 00000014 ee9c6c0c 600c0013 00001043
-9e20: 0208a8c0 ffffffff 00000000 50d45f32 eca98000 80f08448 7ee9fc38 00008914
-9e40: 80f68e40 00000051 eca98000 00000036 00000003 80808b9c 6e616c77 00000030
-9e60: 00000000 00000000 00001043 0208a8c0 ffffffff 00000000 80f08448 00000000
-9e80: 00000000 816d8b20 600c0013 00000001 ede09320 801763d4 00000000 50d45f32
-9ea0: eca98000 80f08448 7ee9fc38 50d45f32 00008914 80f08448 7ee9fc38 80f68e40
-9ec0: ed531540 8074721c 00000800 00000001 00000000 6e616c77 00000030 00000000
-9ee0: 00000000 00001002 0208a8c0 ffffffff 00000000 50d45f32 80f08448 7ee9fc38
-9f00: ed531560 ec8fc900 80285a6c 80285138 edb910c0 00000000 ecd91008 ede08e00
-9f20: 80f08448 00000000 00000000 816d8b20 600c0013 00000001 ede09320 801763d4
-9f40: 00000000 50d45f32 00021000 edb91118 edb910c0 80f08448 01b29000 edb91118
-9f60: eca99f7c 50d45f32 00021000 ec8fc900 00000003 ec8fc900 00008914 7ee9fc38
-9f80: eca98000 00000036 00000003 80285a6c 00086364 7ee9fe1c 000000c3 00000036
-9fa0: 801011c4 80101000 00086364 7ee9fe1c 00000003 00008914 7ee9fc38 00086364
-9fc0: 00086364 7ee9fe1c 000000c3 00000036 0008630c 7ee9fe1c 7ee9fc38 00000003
-9fe0: 000a42b8 7ee9fbd4 00019914 76e09acc 600c0010 00000003 00000000 00000000
-[<7f26a91c>] (brcmf_cfg80211_up [brcmfmac]) from [<7f27262c>] (brcmf_netdev_open+0x74/0xe8 [brcmfmac])
-[<7f27262c>] (brcmf_netdev_open [brcmfmac]) from [<80772008>] (__dev_open+0xcc/0x150)
-[<80772008>] (__dev_open) from [<807723d0>] (__dev_change_flags+0x168/0x1b4)
-[<807723d0>] (__dev_change_flags) from [<80772434>] (dev_change_flags+0x18/0x48)
-[<80772434>] (dev_change_flags) from [<80805f70>] (devinet_ioctl+0x67c/0x79c)
-[<80805f70>] (devinet_ioctl) from [<80808b9c>] (inet_ioctl+0x210/0x3d4)
-[<80808b9c>] (inet_ioctl) from [<8074721c>] (sock_ioctl+0x350/0x524)
-[<8074721c>] (sock_ioctl) from [<80285138>] (do_vfs_ioctl+0xb0/0x9b0)
-[<80285138>] (do_vfs_ioctl) from [<80285a6c>] (ksys_ioctl+0x34/0x5c)
-[<80285a6c>] (ksys_ioctl) from [<80101000>] (ret_fast_syscall+0x0/0x28)
-Exception stack(0xeca99fa8 to 0xeca99ff0)
-9fa0:                   00086364 7ee9fe1c 00000003 00008914 7ee9fc38 00086364
-9fc0: 00086364 7ee9fe1c 000000c3 00000036 0008630c 7ee9fe1c 7ee9fc38 00000003
-9fe0: 000a42b8 7ee9fbd4 00019914 76e09acc
-Code: e5970328 eb002021 e1a02006 e3a01002 (e5909008)
----[ end trace 5cbac2333f3ac5df ]---
+  System View (with 2-Die 2-socket):
+             --------------------
+             |     -------------|------
+             |     |            |     |
+           ------------       ------------
+   SOCKET0 | D1 -- D0 |       | D3 -- D2 | SOCKET1
+           ------------       ------------
 
-Signed-off-by: Piotr Figiel <p.figiel@camlintechnologies.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+  System View (with 4-Die 2-Socket) :
+             --------------------
+             |     -------------|------
+             |     |            |     |
+           ------------       ------------
+           | D1 -- D0 |       | D7 -- D6 |
+           | |  \/ |  |       | |  \/ |  |
+   SOCKET0 | |  /\ |  |       | |  /\ |  | SOCKET1
+           | D2 -- D3 |       | D4 -- D5 |
+           ------------       ------------
+             |     |            |     |
+             ------|------------|     |
+                   --------------------
+
+Currently
+
+  phys_proc_id = initial_apicid >> bits
+
+calculates the physical processor ID from the initial_apicid by shifting
+*bits*.
+
+However, this does not work for 1-Die and 2-Die 2-socket systems.
+
+According to document [1] section 2.1.11.1, the bits is the value of
+CPUID_Fn80000008_ECX[12:15]. The possible values are 4, 5 or 6 which
+mean:
+
+  4 - 1 die
+  5 - 2 dies
+  6 - 3/4 dies.
+
+Hygon programs the initial ApicId the same way as AMD. The ApicId is
+read from CPUID_Fn00000001_EBX (see section 2.1.11.1 of referrence [1])
+and the definition is as below (see section 2.1.10.2.1.3 of [1]):
+
+      -------------------------------------------------
+  Bit |     6     |   5  4  |    3   |    2   1   0   |
+      |-----------|---------|--------|----------------|
+  IDs | Socket ID | Node ID | CCX ID | Core/Thread ID |
+      -------------------------------------------------
+
+So for 3/4-Die configurations, the bits variable is 6, which is the same
+as the ApicID definition field.
+
+For 1-Die and 2-Die configurations, bits is 4 or 5, which will cause the
+right shifted result to not be exactly the value of socket ID.
+
+However, the socket ID should be obtained from ApicId[6]. To fix the
+problem and match the ApicID field definition, set the shift bits to 6
+for all Hygon family 18h multi-die CPUs.
+
+Because AMD doesn't have 2-Socket systems with 1-Die/2-Die processors
+(see reference [2]), this doesn't need to be changed on the AMD side but
+only for Hygon.
+
+[1] https://www.amd.com/system/files/TechDocs/54945_PPR_Family_17h_Models_00h-0Fh.pdf
+[2] https://www.amd.com/en/products/specifications/processors
+
+ [bp: heavily massage commit message. ]
+
+Signed-off-by: Pu Wen <puwen@hygon.cn>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Lendacky <Thomas.Lendacky@amd.com>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/1553355740-19999-1-git-send-email-puwen@hygon.cn
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/wireless/broadcom/brcm80211/brcmfmac/core.c    | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/x86/kernel/cpu/hygon.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
-index 09c5f67f4089e..36a04c1144e5d 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/core.c
-@@ -784,17 +784,17 @@ static void brcmf_del_if(struct brcmf_pub *drvr, s32 bsscfgidx,
- 			 bool rtnl_locked)
- {
- 	struct brcmf_if *ifp;
-+	int ifidx;
+diff --git a/arch/x86/kernel/cpu/hygon.c b/arch/x86/kernel/cpu/hygon.c
+index cf25405444ab3..415621ddb8a23 100644
+--- a/arch/x86/kernel/cpu/hygon.c
++++ b/arch/x86/kernel/cpu/hygon.c
+@@ -19,6 +19,8 @@
  
- 	ifp = drvr->iflist[bsscfgidx];
--	drvr->iflist[bsscfgidx] = NULL;
- 	if (!ifp) {
- 		brcmf_err("Null interface, bsscfgidx=%d\n", bsscfgidx);
- 		return;
- 	}
- 	brcmf_dbg(TRACE, "Enter, bsscfgidx=%d, ifidx=%d\n", bsscfgidx,
- 		  ifp->ifidx);
--	if (drvr->if2bss[ifp->ifidx] == bsscfgidx)
--		drvr->if2bss[ifp->ifidx] = BRCMF_BSSIDX_INVALID;
-+	ifidx = ifp->ifidx;
-+
- 	if (ifp->ndev) {
- 		if (bsscfgidx == 0) {
- 			if (ifp->ndev->netdev_ops == &brcmf_netdev_ops_pri) {
-@@ -822,6 +822,10 @@ static void brcmf_del_if(struct brcmf_pub *drvr, s32 bsscfgidx,
- 		brcmf_p2p_ifp_removed(ifp, rtnl_locked);
- 		kfree(ifp);
- 	}
-+
-+	drvr->iflist[bsscfgidx] = NULL;
-+	if (drvr->if2bss[ifidx] == bsscfgidx)
-+		drvr->if2bss[ifidx] = BRCMF_BSSIDX_INVALID;
- }
+ #include "cpu.h"
  
- void brcmf_remove_interface(struct brcmf_if *ifp, bool rtnl_locked)
++#define APICID_SOCKET_ID_BIT 6
++
+ /*
+  * nodes_per_socket: Stores the number of nodes per socket.
+  * Refer to CPUID Fn8000_001E_ECX Node Identifiers[10:8]
+@@ -87,6 +89,9 @@ static void hygon_get_topology(struct cpuinfo_x86 *c)
+ 		if (!err)
+ 			c->x86_coreid_bits = get_count_order(c->x86_max_cores);
+ 
++		/* Socket ID is ApicId[6] for these processors. */
++		c->phys_proc_id = c->apicid >> APICID_SOCKET_ID_BIT;
++
+ 		cacheinfo_hygon_init_llc_id(c, cpu, node_id);
+ 	} else if (cpu_has(c, X86_FEATURE_NODEID_MSR)) {
+ 		u64 value;
 -- 
 2.20.1
 
