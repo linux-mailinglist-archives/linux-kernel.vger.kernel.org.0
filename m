@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 532B92EC9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA6072EF53
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:54:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733048AbfE3DXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:23:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46214 "EHLO mail.kernel.org"
+        id S1731851AbfE3DTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:19:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731079AbfE3DRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:22 -0400
+        id S1730153AbfE3DPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:11 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7F702463F;
-        Thu, 30 May 2019 03:17:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8CB72458A;
+        Thu, 30 May 2019 03:15:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186242;
-        bh=B3DhlEJ4ntR8egRJP5RlZfeyVV2zTNXwZoWVRbGKFCE=;
+        s=default; t=1559186111;
+        bh=1V1WhftugwMezEaFfpMWEiLrO2VrcXMxFnnXubo/O/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yvvINWwa7TkoOxfxqMbQDJoQYKY+wx0nwIwBK8HaIG6MjOBct5meD37BIbvIOlkOr
-         +ud3nDxZHVmj4tCoFyBUMCCKi7Ka91OGZKXUjPNOFhVrmBLVWsqdxaaKQxIGKSez/a
-         2/Z9+K7u1KGfuz87vRnvAHA8VXqs/IHehDIpwORo=
+        b=xcaofg7JtsAs8mLjhjGP8xTZ0MPyzB4mu30XZfQlh8LVYlR7lw/vyjW5n1gQGOZkO
+         MTG6sY3ra2hfV7DSoMkWu1L3ai6NpaDXp01G3HI4QFvjCASPEQ+PtBgPt3cOvg6bws
+         YqVQFYL8q6pUKe3SjC940A4+bjKiR1f+FHVPHfy8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        clang-built-linux@googlegroups.com, x86-ml <x86@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 128/276] media: pvrusb2: Prevent a buffer overflow
+Subject: [PATCH 5.0 213/346] x86/build: Keep local relocations with ld.lld
 Date:   Wed, 29 May 2019 20:04:46 -0700
-Message-Id: <20190530030533.803120908@linuxfoundation.org>
+Message-Id: <20190530030551.900409084@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,58 +48,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c1ced46c7b49ad7bc064e68d966e0ad303f917fb ]
+[ Upstream commit 7c21383f3429dd70da39c0c7f1efa12377a47ab6 ]
 
-The ctrl_check_input() function is called from pvr2_ctrl_range_check().
-It's supposed to validate user supplied input and return true or false
-depending on whether the input is valid or not.  The problem is that
-negative shifts or shifts greater than 31 are undefined in C.  In
-practice with GCC they result in shift wrapping so this function returns
-true for some inputs which are not valid and this could result in a
-buffer overflow:
+The LLVM linker (ld.lld) defaults to removing local relocations, which
+causes KASLR boot failures. ld.bfd and ld.gold already handle this
+correctly. This adds the explicit instruction "--discard-none" during
+the link phase. There is no change in output for ld.bfd and ld.gold,
+but ld.lld now produces an image with all the needed relocations.
 
-    drivers/media/usb/pvrusb2/pvrusb2-ctrl.c:205 pvr2_ctrl_get_valname()
-    warn: uncapped user index 'names[val]'
-
-The cptr->hdw->input_allowed_mask mask is configured in pvr2_hdw_create()
-and the highest valid bit is BIT(4).
-
-Fixes: 7fb20fa38caa ("V4L/DVB (7299): pvrusb2: Improve logic which handles input choice availability")
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: clang-built-linux@googlegroups.com
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190404214027.GA7324@beast
+Link: https://github.com/ClangBuiltLinux/linux/issues/404
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 2 ++
- drivers/media/usb/pvrusb2/pvrusb2-hdw.h | 1 +
- 2 files changed, 3 insertions(+)
+ arch/x86/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-index a8519da0020bf..673fdca8d2dac 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-@@ -666,6 +666,8 @@ static int ctrl_get_input(struct pvr2_ctrl *cptr,int *vp)
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index c0c7291d4ccf5..2cf52617a1e70 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -47,7 +47,7 @@ export REALMODE_CFLAGS
+ export BITS
  
- static int ctrl_check_input(struct pvr2_ctrl *cptr,int v)
- {
-+	if (v < 0 || v > PVR2_CVAL_INPUT_MAX)
-+		return 0;
- 	return ((1 << v) & cptr->hdw->input_allowed_mask) != 0;
- }
+ ifdef CONFIG_X86_NEED_RELOCS
+-        LDFLAGS_vmlinux := --emit-relocs
++        LDFLAGS_vmlinux := --emit-relocs --discard-none
+ endif
  
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
-index 25648add77e58..bd2b7a67b7322 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
-@@ -50,6 +50,7 @@
- #define PVR2_CVAL_INPUT_COMPOSITE 2
- #define PVR2_CVAL_INPUT_SVIDEO 3
- #define PVR2_CVAL_INPUT_RADIO 4
-+#define PVR2_CVAL_INPUT_MAX PVR2_CVAL_INPUT_RADIO
- 
- enum pvr2_config {
- 	pvr2_config_empty,    /* No configuration */
+ #
 -- 
 2.20.1
 
