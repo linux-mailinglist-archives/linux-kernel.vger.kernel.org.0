@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D49B82F62D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D58322F3A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389079AbfE3Exo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:53:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47846 "EHLO mail.kernel.org"
+        id S2388119AbfE3Eah (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:30:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727882AbfE3DKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:33 -0400
+        id S1729623AbfE3DNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:13:54 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBED424481;
-        Thu, 30 May 2019 03:10:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B62522456F;
+        Thu, 30 May 2019 03:13:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185832;
-        bh=bZizr1t6BzbjwN0yJ7fX+f7uZ1SGbNSRud942rvWzQM=;
+        s=default; t=1559186033;
+        bh=d0ynFPtdGmt3C0L85voa+MD7+1VbO0i7QBEovZkzBqw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AhvY8kfDVRi1O1i9Q1vCCIg93nBV3Wju0Xyf2hZlrNKfvYGS4S/0URDMM8ZNx2BoM
-         d3nvx2Q4U3a51V44pxyDRrDLeonkFrtYAUbJqOkrNvTRA/vn7l2EId9y5dYGrztKgR
-         04w1xv3g4Rkfb6hILI08FYPxT+MqADI6yKOjKBjY=
+        b=s1mDPA1Tb2rAmidHWrkkkR1pLn06YJw5ZDxMBtvgH2+Wuhh8wkUqyuL5LYjVWqSgi
+         nDIUEUsVecKkGPeO7lV2s2iGb5S6ERE+joUMxP8tt9SYlGLYJdvYDHP8+XZekC52t7
+         tdEd8QV6HqktlgTESFhYhfaR6e1im3nho+KD5jxs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Farhan Ali <alifm@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
+        stable@vger.kernel.org, Mac Chiang <mac.chiang@intel.com>,
+        Benson Leung <bleung@chromium.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 136/405] vfio-ccw: Release any channel program when releasing/removing vfio-ccw mdev
-Date:   Wed, 29 May 2019 20:02:14 -0700
-Message-Id: <20190530030547.976593396@linuxfoundation.org>
+Subject: [PATCH 5.0 062/346] ASoC: Intel: kbl_da7219_max98357a: Map BTN_0 to KEY_PLAYPAUSE
+Date:   Wed, 29 May 2019 20:02:15 -0700
+Message-Id: <20190530030544.209404528@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,92 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b49bdc8602b7c9c7a977758bee4125683f73e59f ]
+[ Upstream commit 16ec5dfe0327ddcf279957bffe4c8fe527088c63 ]
 
-When releasing the vfio-ccw mdev, we currently do not release
-any existing channel program and its pinned pages. This can
-lead to the following warning:
+On kbl_rt5663_max98927, commit 38a5882e4292
+    ("ASoC: Intel: kbl_rt5663_max98927: Map BTN_0 to KEY_PLAYPAUSE")
+    This key pair mapping to play/pause when playing Youtube
 
-[1038876.561565] WARNING: CPU: 2 PID: 144727 at drivers/vfio/vfio_iommu_type1.c:1494 vfio_sanity_check_pfn_list+0x40/0x70 [vfio_iommu_type1]
+The Android 3.5mm Headset jack specification mentions that BTN_0 should
+be mapped to KEY_MEDIA, but this is less logical than KEY_PLAYPAUSE,
+which has much broader userspace support.
 
-....
+For example, the Chrome OS userspace now supports KEY_PLAYPAUSE to toggle
+play/pause of videos and audio, but does not handle KEY_MEDIA.
 
-1038876.561921] Call Trace:
-[1038876.561935] ([<00000009897fb870>] 0x9897fb870)
-[1038876.561949]  [<000003ff8013bf62>] vfio_iommu_type1_detach_group+0xda/0x2f0 [vfio_iommu_type1]
-[1038876.561965]  [<000003ff8007b634>] __vfio_group_unset_container+0x64/0x190 [vfio]
-[1038876.561978]  [<000003ff8007b87e>] vfio_group_put_external_user+0x26/0x38 [vfio]
-[1038876.562024]  [<000003ff806fc608>] kvm_vfio_group_put_external_user+0x40/0x60 [kvm]
-[1038876.562045]  [<000003ff806fcb9e>] kvm_vfio_destroy+0x5e/0xd0 [kvm]
-[1038876.562065]  [<000003ff806f63fc>] kvm_put_kvm+0x2a4/0x3d0 [kvm]
-[1038876.562083]  [<000003ff806f655e>] kvm_vm_release+0x36/0x48 [kvm]
-[1038876.562098]  [<00000000003c2dc4>] __fput+0x144/0x228
-[1038876.562113]  [<000000000016ee82>] task_work_run+0x8a/0xd8
-[1038876.562125]  [<000000000014c7a8>] do_exit+0x5d8/0xd90
-[1038876.562140]  [<000000000014d084>] do_group_exit+0xc4/0xc8
-[1038876.562155]  [<000000000015c046>] get_signal+0x9ae/0xa68
-[1038876.562169]  [<0000000000108d66>] do_signal+0x66/0x768
-[1038876.562185]  [<0000000000b9e37e>] system_call+0x1ea/0x2d8
-[1038876.562195] 2 locks held by qemu-system-s39/144727:
-[1038876.562205]  #0: 00000000537abaf9 (&container->group_lock){++++}, at: __vfio_group_unset_container+0x3c/0x190 [vfio]
-[1038876.562230]  #1: 00000000670008b5 (&iommu->lock){+.+.}, at: vfio_iommu_type1_detach_group+0x36/0x2f0 [vfio_iommu_type1]
-[1038876.562250] Last Breaking-Event-Address:
-[1038876.562262]  [<000003ff8013aa24>] vfio_sanity_check_pfn_list+0x3c/0x70 [vfio_iommu_type1]
-[1038876.562272] irq event stamp: 4236481
-[1038876.562287] hardirqs last  enabled at (4236489): [<00000000001cee7a>] console_unlock+0x6d2/0x740
-[1038876.562299] hardirqs last disabled at (4236496): [<00000000001ce87e>] console_unlock+0xd6/0x740
-[1038876.562311] softirqs last  enabled at (4234162): [<0000000000b9fa1e>] __do_softirq+0x556/0x598
-[1038876.562325] softirqs last disabled at (4234153): [<000000000014e4cc>] irq_exit+0xac/0x108
-[1038876.562337] ---[ end trace 6c96d467b1c3ca06 ]---
+Furthermore, Android itself now supports KEY_PLAYPAUSE equivalently, as the
+new USB headset spec requires KEY_PLAYPAUSE for BTN_0.
+https://source.android.com/devices/accessories/headset/usb-headset-spec
 
-Similarly we do not free the channel program when we are removing
-the vfio-ccw device. Let's fix this by resetting the device and freeing
-the channel program and pinned pages in the release path. For the remove
-path we can just quiesce the device, since in the remove path the mediated
-device is going away for good and so we don't need to do a full reset.
+The same fix is required on Chrome kbl_da7219_max98357a.
 
-Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-Message-Id: <ae9f20dc8873f2027f7b3c5d2aaa0bdfe06850b8.1554756534.git.alifm@linux.ibm.com>
-Acked-by: Eric Farman <farman@linux.ibm.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Mac Chiang <mac.chiang@intel.com>
+Reviewed-by: Benson Leung <bleung@chromium.org>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/cio/vfio_ccw_ops.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ sound/soc/intel/boards/kbl_da7219_max98357a.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/s390/cio/vfio_ccw_ops.c b/drivers/s390/cio/vfio_ccw_ops.c
-index f673e106c0415..dc5ff47de3fee 100644
---- a/drivers/s390/cio/vfio_ccw_ops.c
-+++ b/drivers/s390/cio/vfio_ccw_ops.c
-@@ -130,11 +130,12 @@ static int vfio_ccw_mdev_remove(struct mdev_device *mdev)
+diff --git a/sound/soc/intel/boards/kbl_da7219_max98357a.c b/sound/soc/intel/boards/kbl_da7219_max98357a.c
+index 38f6ab74709d0..07491a0f8fb8b 100644
+--- a/sound/soc/intel/boards/kbl_da7219_max98357a.c
++++ b/sound/soc/intel/boards/kbl_da7219_max98357a.c
+@@ -188,7 +188,7 @@ static int kabylake_da7219_codec_init(struct snd_soc_pcm_runtime *rtd)
  
- 	if ((private->state != VFIO_CCW_STATE_NOT_OPER) &&
- 	    (private->state != VFIO_CCW_STATE_STANDBY)) {
--		if (!vfio_ccw_mdev_reset(mdev))
-+		if (!vfio_ccw_sch_quiesce(private->sch))
- 			private->state = VFIO_CCW_STATE_STANDBY;
- 		/* The state will be NOT_OPER on error. */
- 	}
+ 	jack = &ctx->kabylake_headset;
  
-+	cp_free(&private->cp);
- 	private->mdev = NULL;
- 	atomic_inc(&private->avail);
- 
-@@ -158,6 +159,14 @@ static void vfio_ccw_mdev_release(struct mdev_device *mdev)
- 	struct vfio_ccw_private *private =
- 		dev_get_drvdata(mdev_parent_dev(mdev));
- 
-+	if ((private->state != VFIO_CCW_STATE_NOT_OPER) &&
-+	    (private->state != VFIO_CCW_STATE_STANDBY)) {
-+		if (!vfio_ccw_mdev_reset(mdev))
-+			private->state = VFIO_CCW_STATE_STANDBY;
-+		/* The state will be NOT_OPER on error. */
-+	}
-+
-+	cp_free(&private->cp);
- 	vfio_unregister_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
- 				 &private->nb);
- }
+-	snd_jack_set_key(jack->jack, SND_JACK_BTN_0, KEY_MEDIA);
++	snd_jack_set_key(jack->jack, SND_JACK_BTN_0, KEY_PLAYPAUSE);
+ 	snd_jack_set_key(jack->jack, SND_JACK_BTN_1, KEY_VOLUMEUP);
+ 	snd_jack_set_key(jack->jack, SND_JACK_BTN_2, KEY_VOLUMEDOWN);
+ 	snd_jack_set_key(jack->jack, SND_JACK_BTN_3, KEY_VOICECOMMAND);
 -- 
 2.20.1
 
