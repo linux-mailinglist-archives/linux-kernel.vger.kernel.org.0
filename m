@@ -2,130 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1538E2F603
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:53:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 925F32F65E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:55:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389047AbfE3EwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:52:01 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:34157 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728364AbfE3EwA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 00:52:00 -0400
-Received: by mail-qk1-f196.google.com with SMTP id t64so3071729qkh.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 May 2019 21:51:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sHOf1/WDs1TjZmoF3swY2gMBdaFm4kQJB8zDdbqYUtY=;
-        b=f825F3Seg4ieVRUakmG+2nGqhhygBqwqBaEc1iOc0MaaO0sTSgNmD0hr/deWGkkk8D
-         oSBHHzB7EF7mqP05QR1/t5lDvwyi/eGEyhi4RZ0QM2XtWegAbglgw2jrHuJxJtGEE+U9
-         VnJmOLG9LhCt2JYLoUxhPWPUkW3FUk81O7cn3GOxPEAw18lba1Uv+HZVT2yS5fqk0gPm
-         jFk18XIsCuviYZzfzpUXg5AH9TqFYqgcps9uvKOir++7jxxwIY/nuYgf5ONNA4hBYvl3
-         1KlZphriIqtMRf/ZEXrcrdiDzkzZi/lXz4lIkn2ZlRqLkse/MEEdkcMY3XsfRpUhX9bW
-         0tjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sHOf1/WDs1TjZmoF3swY2gMBdaFm4kQJB8zDdbqYUtY=;
-        b=EDAQkyfe1NWzMN7nouKB1gfKe81C3zhgRb7IpHdxCPaHRLIZe5S3xkqf9e4y/PjA1n
-         nujfX7OLAFnlX4qqxzj42G70wZ6qzMMImonkoCViaY20nDOEIlGY2Ct7z/8QXhum2zU3
-         Y/mjE5QBhFEfrdRf17eHmVexQK7Luc/8m1jXUJ3+L1wHXw4X5UETA3HYrJn3fcXD1upj
-         dK7ShJtD/oQtJWYvocWAOh1+7uaLIsaeDA0YJidv8GnZK/FDpsFzg5yVcXD4srBmstFc
-         tMroUcKqZUEiNMGbG+PA/j3XeflwQ6PUrFmX/+O6zl/bWm5lHMkOW0lOY9+vqjddt7hW
-         CuLw==
-X-Gm-Message-State: APjAAAWelJ+LXPPle834eYRaFY34Zuu5vmY0k2+lII9y5y1gpzCFwv/F
-        iIesNhPhWDiHJZKjKlzTPj8NbeN/1Hd9PSAv4KVvLA==
-X-Google-Smtp-Source: APXvYqwJqY9emE8P8Vz0UaW1tHbFbmoM/x5fzvRbbHX2yA78QWUp92wyAA0LNjazNuKGR/CZ3jZwhs+os92Tr1JE+Ug=
-X-Received: by 2002:a37:48c4:: with SMTP id v187mr1318465qka.314.1559191919082;
- Wed, 29 May 2019 21:51:59 -0700 (PDT)
+        id S2389168AbfE3Eze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:55:34 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:48881 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389159AbfE3Ez2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 00:55:28 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45DwHy1HfMz9s5c;
+        Thu, 30 May 2019 14:55:26 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1559192126;
+        bh=u6qX2YcuuXUCj/6CtLWX3CJivrXavFG+g3vTC3MYfAc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=MwFQC0UI8ucaEuuFqT5vif7bsig8REJxHLJjTwdpysfmXDzHBsd+c90jQQ9Eeu3xj
+         mJCgs3itT/0eovrlyNSDloRzfbglDsAJCSOqJCFo1vAmAHtlmFWizmY0j3ft8sW+Vz
+         CDqY54mnIT5cucBWn8DtEfK12V+vo5KkHLk0AlXNe/SwGPj/d6BcpvBMDhxi/9YQqW
+         DCkSyR9DPw3U/CYlPmyYdatHaJQpiDQFxtODblzgk4UUWctpnROXOk/CoyDMj8ILiv
+         jl1N814XoOGvgsd4K3CSiHrGWM7zJraRNlXHseqXzXMLA5ZuPqE7K9Ep6PkM5a6BwA
+         tYfg6n6xDcefA==
+Date:   Thu, 30 May 2019 14:55:25 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matteo Croce <mcroce@redhat.com>
+Subject: linux-next: build warning after merge of the akpm-current tree
+Message-ID: <20190530145525.3cca17cb@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20190529050335.72061-1-chiu@endlessm.com> <CAD8Lp46on32VgWtCe7WsGHXp3Jk16qTh6saf0Vj0Y4Ry5z1n7g@mail.gmail.com>
-In-Reply-To: <CAD8Lp46on32VgWtCe7WsGHXp3Jk16qTh6saf0Vj0Y4Ry5z1n7g@mail.gmail.com>
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Thu, 30 May 2019 12:51:47 +0800
-Message-ID: <CAB4CAwfVDfphWNAN5L1f9BCT9Oo3AQwL19BOUTNJNFM=QR7rjQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3] rtl8xxxu: Improve TX performance of RTL8723BU on
- rtl8xxxu driver
-To:     Daniel Drake <drake@endlessm.com>
-Cc:     Jes Sorensen <jes.sorensen@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        David Miller <davem@davemloft.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8aSEcKm1n18JLWopbjCv0hG"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 30, 2019 at 2:12 AM Daniel Drake <drake@endlessm.com> wrote:
->
-> Hi Chris,
->
-> On Tue, May 28, 2019 at 11:03 PM Chris Chiu <chiu@endlessm.com> wrote:
-> > +       /*
-> > +        * Single virtual interface permitted since the driver supports STATION
-> > +        * mode only.
->
-> I think you can be a bit more explicit by saying e.g.:
->
-> Only one virtual interface permitted because only STA mode is
-> supported and no iface_combinations are provided.
->
-> > diff --git a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> > index 039e5ca9d2e4..2d612c2df5b2 100644
-> > --- a/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> > +++ b/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c
-> > @@ -4345,7 +4345,7 @@ void rtl8xxxu_gen2_update_rate_mask(struct rtl8xxxu_priv *priv,
-> >         h2c.b_macid_cfg.ramask3 = (ramask >> 24) & 0xff;
-> >
-> >         h2c.ramask.arg = 0x80;
-> > -       h2c.b_macid_cfg.data1 = 0;
-> > +       h2c.b_macid_cfg.data1 = priv->ratr_index;
->
-> I think ratr_index can be moved to be a function parameter of the
-> update_rate_mask function. It looks like all callsites already know
-> which value they want to set. Then you don't have to store it in the
-> priv structure.
->
+--Sig_/8aSEcKm1n18JLWopbjCv0hG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-You mean moving the ratr_index to be the 4th function parameter of
-update_rate_mask which has 2 candidates rtl8xxxu_update_rate_mask
-and rtl8xxxu_gen2_update_rate_mask? I was planning to keep the
-rtl8xxxu_update_rate_mask the same because old chips seems don't
-need the rate index when invoking H2C command to change rate mask.
-And rate index is not a common phrase/term for rate adaptive. Theoretically
-we just need packet error rate, sgi and other factors to determine the rate
-mask. This rate index seems to be only specific to newer Realtek drivers
-or firmware for rate adaptive algorithm.  I'd like to keep this for gen2 but
-I admit it's ugly to put it in the priv structure. Any suggestion is
-appreciated.
-Thanks
+Hi all,
 
-> > @@ -5471,6 +5509,10 @@ static int rtl8xxxu_add_interface(struct ieee80211_hw *hw,
-> >
-> >         switch (vif->type) {
-> >         case NL80211_IFTYPE_STATION:
-> > +               if (!priv->vif)
-> > +                       priv->vif = vif;
-> > +               else
-> > +                       return -EOPNOTSUPP;
-> >                 rtl8xxxu_stop_tx_beacon(priv);
->
-> rtl8xxxu_remove_interface should also set priv->vif back to NULL.
->
-> > @@ -6183,6 +6259,8 @@ static void rtl8xxxu_disconnect(struct usb_interface *interface)
-> >         mutex_destroy(&priv->usb_buf_mutex);
-> >         mutex_destroy(&priv->h2c_mutex);
-> >
-> > +       cancel_delayed_work_sync(&priv->ra_watchdog);
->
-> Given that the work was started in rtl8xxxu_start, I think it should
-> be cancelled in rtl8xxxu_stop() instead.
->
-> Daniel
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
+
+net/tipc/sysctl.c:42:12: warning: 'one' defined but not used [-Wunused-vari=
+able]
+ static int one =3D 1;
+            ^~~
+net/tipc/sysctl.c:41:12: warning: 'zero' defined but not used [-Wunused-var=
+iable]
+ static int zero;
+            ^~~~
+
+Introduced by commit
+
+  6a33853c5773 ("proc/sysctl: add shared variables for range check")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/8aSEcKm1n18JLWopbjCv0hG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlzvYj0ACgkQAVBC80lX
+0GwB6wgAmmW1oDLUmcW6Jc2Q79FQC0TF/nrsmwrnrFajk64ae3ZfZYJpfRZn++9p
+QyqqPNyEIKbIeFEZ2TG30LPZ6NgKStitxF4MhgnUr25NEmp1WjoCbniZhxNy4YG/
+7VezifgRRiWkaTEHWutSDvdyiq3y6lR9K6flYYr2oQhpCnvqlAWLVyn6gJNTh9Vu
+boELoEuJsePyiayxjK/Hryp4QW2b2QVMlU3uooueo7mVRUsxzeNd/nwiEgLFmmEO
+e/3rDYA8yhCNKSy2zWw+40bSjpVY5MTm0moLBOM9Gnw4aTZcVyPtG+Pq4fpnED+T
+w8ClR4AEddix/9uKLHAAw4mDvuSQFA==
+=kH6a
+-----END PGP SIGNATURE-----
+
+--Sig_/8aSEcKm1n18JLWopbjCv0hG--
