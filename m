@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13A372EF20
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:53:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9430F2ECBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732409AbfE3DxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:53:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55430 "EHLO mail.kernel.org"
+        id S2387511AbfE3DZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:25:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730912AbfE3DTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:33 -0400
+        id S1731535AbfE3DSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:18:25 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CC2F2489F;
-        Thu, 30 May 2019 03:19:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 716282479B;
+        Thu, 30 May 2019 03:18:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186373;
-        bh=WeE25g83ma4VNVN8TPBWVGA/qrGdFQKGMw85tuQEoYk=;
+        s=default; t=1559186304;
+        bh=0BK1sgaU5LR/sd1M8lx0WjOwW1JgDyFaTY3j81AsQKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r/tNuhO/YBbYtJimVfXt0n5xMF3ZDqXSlPjBmgXk9BtWbAK8z5uCuT0JUDU14Fts0
-         PwcK9NxY7/h1Llhk6+86Xco678GSc+7YbRIZPoNSXJdWvevinvERc0JZ8d2R+AUvka
-         9r5LZsHFZ28qBNZGRf+O6GVwyFp7UThi6STeVbrQ=
+        b=b58sU1oWAf4t95IbV9yYFl1RbyZC6dbqtTro3mlYefI70qWQ839tmGlOaYPuCXX65
+         axuNOF9+JRBjwb8hUhymKOwpCqThKHvPDiuqQx9Zqthedwu0dIJpHXuWNTNbstZTZW
+         646Q/mnV61P5nrmWyoz74x8HWOUG17uStbZBBJCY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-pm@vger.kernel.org,
+        stable@vger.kernel.org, siliu@redhat.com,
+        Pankaj Gupta <pagupta@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 131/193] cpufreq/pasemi: fix possible object reference leak
-Date:   Wed, 29 May 2019 20:06:25 -0700
-Message-Id: <20190530030506.693074332@linuxfoundation.org>
+Subject: [PATCH 4.19 228/276] virtio_console: initialize vtermno value for ports
+Date:   Wed, 29 May 2019 20:06:26 -0700
+Message-Id: <20190530030539.365627657@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a9acc26b75f652f697e02a9febe2ab0da648a571 ]
+[ Upstream commit 4b0a2c5ff7215206ea6135a405f17c5f6fca7d00 ]
 
-The call to of_get_cpu_node returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+For regular serial ports we do not initialize value of vtermno
+variable. A garbage value is assigned for non console ports.
+The value can be observed as a random integer with [1].
 
-Detected by coccinelle with the following warnings:
-./drivers/cpufreq/pasemi-cpufreq.c:212:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 147, but without a corresponding object release within this function.
-./drivers/cpufreq/pasemi-cpufreq.c:220:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 147, but without a corresponding object release within this function.
+[1] vim /sys/kernel/debug/virtio-ports/vport*p*
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+This patch initialize the value of vtermno for console serial
+ports to '1' and regular serial ports are initiaized to '0'.
+
+Reported-by: siliu@redhat.com
+Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/pasemi-cpufreq.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/char/virtio_console.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
-index b257fc7d52041..8456492124f0c 100644
---- a/drivers/cpufreq/pasemi-cpufreq.c
-+++ b/drivers/cpufreq/pasemi-cpufreq.c
-@@ -146,6 +146,7 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 5b5b5d72eab7f..c55f6aeb4227a 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -75,7 +75,7 @@ struct ports_driver_data {
+ 	/* All the console devices handled by this driver */
+ 	struct list_head consoles;
+ };
+-static struct ports_driver_data pdrvdata;
++static struct ports_driver_data pdrvdata = { .next_vtermno = 1};
  
- 	cpu = of_get_cpu_node(policy->cpu, NULL);
+ static DEFINE_SPINLOCK(pdrvdata_lock);
+ static DECLARE_COMPLETION(early_console_added);
+@@ -1405,6 +1405,7 @@ static int add_port(struct ports_device *portdev, u32 id)
+ 	port->async_queue = NULL;
  
-+	of_node_put(cpu);
- 	if (!cpu)
- 		goto out;
+ 	port->cons.ws.ws_row = port->cons.ws.ws_col = 0;
++	port->cons.vtermno = 0;
  
+ 	port->host_connected = port->guest_connected = false;
+ 	port->stats = (struct port_stats) { 0 };
 -- 
 2.20.1
 
