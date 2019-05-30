@@ -2,136 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DC082F8BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22C852F8BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:51:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfE3IuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 04:50:07 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:18052 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726439AbfE3IuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 04:50:06 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 19FCA99016C98BE4DA14;
-        Thu, 30 May 2019 16:50:04 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Thu, 30 May 2019
- 16:49:54 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <bleung@chromium.org>, <enric.balletbo@collabora.com>,
-        <groeck@chromium.org>
-CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH v2 -next] platform/chrome: cros_ec: Make some symbols static
-Date:   Thu, 30 May 2019 16:49:32 +0800
-Message-ID: <20190530084932.2576-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190529150749.8032-1-yuehaibing@huawei.com>
-References: <20190529150749.8032-1-yuehaibing@huawei.com>
+        id S1727007AbfE3Ivb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 04:51:31 -0400
+Received: from mail-pg1-f173.google.com ([209.85.215.173]:33489 "EHLO
+        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726439AbfE3Ivb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 04:51:31 -0400
+Received: by mail-pg1-f173.google.com with SMTP id h17so1637665pgv.0;
+        Thu, 30 May 2019 01:51:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9yPNki8tFmIgDjX+2v/i+yBX4YbiShnd6bPfUYaPNcY=;
+        b=bFXjyuJzEziH0nuuB8bYDwiEuyEkZjkBk3ZzpHUpSMKjUkJc5ctwmzPPoENpZjfGcn
+         QF8I2/ImQRSTLJjjiCAP2YDQY65pWycuP2uBDtqLC1AbrfAZVOMutCwt4KZdbBfJvxr6
+         DvrQZUsDKo3N2h3X0l6CVvmyj9r685BsnPXNFky/0ppnTK76TyBUE+idc9175k1zCLL+
+         e06KDeKwzf6F5y1aaTmg6A7dAYabxHhGCDAUEOQknBEyXwDPybZ6AilZdIoD+/IqAy8d
+         EVp5FzU1vntuD/LgnzC71HcgqzMhJGNW+BTSzlnKP6aog68gQEu91tYV8idhS1mE+h5j
+         u43A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9yPNki8tFmIgDjX+2v/i+yBX4YbiShnd6bPfUYaPNcY=;
+        b=PIhXSHTxSpNBc9T9V4XrgTBB6IjjTPEsnPwyMSxQZCnil8/jr+AEF3OVcuZburTTQ9
+         rr2YiWoqhKUfzvSLhQDhmsGyj3LtQuNYgCPWxVQ7caFxlAvVzVaRxmVwGKH6cfKWS9ek
+         PW65EbwRRO77s9yH91LnxEDM9lO+8XXl7HtXby9qtgNgAkKX6YqKYOS8axuMBXjSNDvX
+         fwFFAqHTgSgAt6pnC3LgZHPpoJr/0jvyH9HYQKmknLcukRBKXVFHy/YVQF1Lc3XSkCIc
+         OLY6WK0K1KwkQ3cv2qJccxp/xXSlI8Huw5gUN6c1aB9fnpHJaZKMgVdGUWuOGxp9pPtn
+         7fyg==
+X-Gm-Message-State: APjAAAXWnS0QuESdwizwIriuE5D0A2s/y6Hs87Y9oR5sIEuYejzYhREq
+        lUd0fOaBQKFHSyXWBjxFhOI=
+X-Google-Smtp-Source: APXvYqx9XdArytw1HgFQ+Cty8TFXJEMG9A1YWtTO99CkXPQIYGmKOANGeO5dkNBHfkmV5Tnue+57Dw==
+X-Received: by 2002:a65:62d8:: with SMTP id m24mr2755254pgv.141.1559206290397;
+        Thu, 30 May 2019 01:51:30 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id q28sm2405694pfn.106.2019.05.30.01.51.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 May 2019 01:51:29 -0700 (PDT)
+Date:   Thu, 30 May 2019 16:51:06 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>, tony.luck@intel.com,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        bpf@vger.kernel.org
+Subject: [PATCH v2] hooks: fix a missing-check bug in
+ selinux_sb_eat_lsm_opts()
+Message-ID: <20190530085106.GA2711@zhanggen-UX430UQ>
+References: <20190530035310.GA9127@zhanggen-UX430UQ>
+ <CAFqZXNv-54DJhd8gyUhwDo6RvmjFGSHo=+s-BVsL87S+u0cQxQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqZXNv-54DJhd8gyUhwDo6RvmjFGSHo=+s-BVsL87S+u0cQxQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warning:
+In selinux_sb_eat_lsm_opts(), 'arg' is allocated by kmemdup_nul(). It
+returns NULL when fails. So 'arg' should be checked.
 
-drivers/platform/chrome/cros_ec_debugfs.c:256:30: warning: symbol 'cros_ec_console_log_fops' was not declared. Should it be static?
-drivers/platform/chrome/cros_ec_debugfs.c:265:30: warning: symbol 'cros_ec_pdinfo_fops' was not declared. Should it be static?
-drivers/platform/chrome/cros_ec_lightbar.c:550:24: warning: symbol 'cros_ec_lightbar_attr_group' was not declared. Should it be static?
-drivers/platform/chrome/cros_ec_sysfs.c:338:24: warning: symbol 'cros_ec_attr_group' was not declared. Should it be static?
-drivers/platform/chrome/cros_ec_vbc.c:104:24: warning: symbol 'cros_ec_vbc_attr_group' was not declared. Should it be static?
-drivers/platform/chrome/cros_ec_lpc.c:408:25: warning: symbol 'cros_ec_lpc_pm_ops' was not declared. Should it be static?
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+Fixes: 99dbbb593fe6 ("selinux: rewrite selinux_sb_eat_lsm_opts()")
 ---
-v2: fix patch title
----
- drivers/platform/chrome/cros_ec_debugfs.c  | 4 ++--
- drivers/platform/chrome/cros_ec_lightbar.c | 2 +-
- drivers/platform/chrome/cros_ec_lpc.c      | 2 +-
- drivers/platform/chrome/cros_ec_sysfs.c    | 2 +-
- drivers/platform/chrome/cros_ec_vbc.c      | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
-index 4c2a27f6a6d0..4578eb3e0731 100644
---- a/drivers/platform/chrome/cros_ec_debugfs.c
-+++ b/drivers/platform/chrome/cros_ec_debugfs.c
-@@ -241,7 +241,7 @@ static ssize_t cros_ec_pdinfo_read(struct file *file,
- 				       read_buf, p - read_buf);
- }
- 
--const struct file_operations cros_ec_console_log_fops = {
-+static const struct file_operations cros_ec_console_log_fops = {
- 	.owner = THIS_MODULE,
- 	.open = cros_ec_console_log_open,
- 	.read = cros_ec_console_log_read,
-@@ -250,7 +250,7 @@ const struct file_operations cros_ec_console_log_fops = {
- 	.release = cros_ec_console_log_release,
- };
- 
--const struct file_operations cros_ec_pdinfo_fops = {
-+static const struct file_operations cros_ec_pdinfo_fops = {
- 	.owner = THIS_MODULE,
- 	.open = simple_open,
- 	.read = cros_ec_pdinfo_read,
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index d30a6650b0b5..23a82ee4c785 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -547,7 +547,7 @@ static struct attribute *__lb_cmds_attrs[] = {
- 	NULL,
- };
- 
--struct attribute_group cros_ec_lightbar_attr_group = {
-+static struct attribute_group cros_ec_lightbar_attr_group = {
- 	.name = "lightbar",
- 	.attrs = __lb_cmds_attrs,
- };
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index c9c240fbe7c6..aaa21803633a 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -405,7 +405,7 @@ static int cros_ec_lpc_resume(struct device *dev)
- }
- #endif
- 
--const struct dev_pm_ops cros_ec_lpc_pm_ops = {
-+static const struct dev_pm_ops cros_ec_lpc_pm_ops = {
- 	SET_LATE_SYSTEM_SLEEP_PM_OPS(cros_ec_lpc_suspend, cros_ec_lpc_resume)
- };
- 
-diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index fe0b7614ae1b..3edb237bf8ed 100644
---- a/drivers/platform/chrome/cros_ec_sysfs.c
-+++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -335,7 +335,7 @@ static umode_t cros_ec_ctrl_visible(struct kobject *kobj,
- 	return a->mode;
- }
- 
--struct attribute_group cros_ec_attr_group = {
-+static struct attribute_group cros_ec_attr_group = {
- 	.attrs = __ec_attrs,
- 	.is_visible = cros_ec_ctrl_visible,
- };
-diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
-index 8392a1ec33a7..2aaefed87eb4 100644
---- a/drivers/platform/chrome/cros_ec_vbc.c
-+++ b/drivers/platform/chrome/cros_ec_vbc.c
-@@ -101,7 +101,7 @@ static struct bin_attribute *cros_ec_vbc_bin_attrs[] = {
- 	NULL
- };
- 
--struct attribute_group cros_ec_vbc_attr_group = {
-+static struct attribute_group cros_ec_vbc_attr_group = {
- 	.name = "vbc",
- 	.bin_attrs = cros_ec_vbc_bin_attrs,
- };
--- 
-2.17.1
-
-
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 3ec702c..5a9e959 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2635,6 +2635,8 @@ static int selinux_sb_eat_lsm_opts(char *options, void **mnt_opts)
+ 						*q++ = c;
+ 				}
+ 				arg = kmemdup_nul(arg, q - arg, GFP_KERNEL);
++				if (!arg)
++					return -ENOMEM;
+ 			}
+ 			rc = selinux_add_opt(token, arg, mnt_opts);
+ 			if (unlikely(rc)) {
