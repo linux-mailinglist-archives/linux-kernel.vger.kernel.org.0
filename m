@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E2332F57D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65C042ED88
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:40:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388754AbfE3Eri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:47:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51072 "EHLO mail.kernel.org"
+        id S1732820AbfE3DWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:22:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728562AbfE3DL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:11:28 -0400
+        id S1729583AbfE3DQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:43 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E81E24482;
-        Thu, 30 May 2019 03:11:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C697E245DA;
+        Thu, 30 May 2019 03:16:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185888;
-        bh=nyhqGap/iyJMPD77u2UuwgDx27f3z3dDq4hCBzjurb0=;
+        s=default; t=1559186202;
+        bh=0CbJ8rpWm3HT9n56a02/4rzdQVexT5uxY+2zHGbKtZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uSq/31tMFpItNmjRKZB81yuy9i2X7BUbK1ZblS3pB+ySvvQQgF/vQnPyWnJ62TaTH
-         ZfirzvMeX4VjkYo9HNfppaxGZzruhOo9Lgv0fvW2WTBuLfcz4g78f1rUxqCIbhPZFJ
-         klLwZJNuCAATiqxoJQxVchZd/qJTj6CFvMR/mByo=
+        b=Ntcn1jHYC9VVXoIa2ptZCZdIdy30OQDxpPOnnLAN2/B7RfVxFwzcq4osEZZft1DAm
+         hOabBOYOxazxRPbbz8yF9O4Wx+2ARDAT0bNt2I+sjB/YeJDdpDVstbB+9tKA6bFJFA
+         OoBLw6ijXxQVggg80PnxGfaZEOPQWKwVc7b7Udpk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 247/405] rtlwifi: fix a potential NULL pointer dereference
+Subject: [PATCH 4.19 087/276] s390/kexec_file: Fix detection of text segment in ELF loader
 Date:   Wed, 29 May 2019 20:04:05 -0700
-Message-Id: <20190530030553.485242665@linuxfoundation.org>
+Message-Id: <20190530030531.697773045@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 765976285a8c8db3f0eb7f033829a899d0c2786e ]
+[ Upstream commit 729829d775c9a5217abc784b2f16087d79c4eec8 ]
 
-In case alloc_workqueue fails, the fix reports the error and
-returns to avoid NULL pointer dereference.
+To register data for the next kernel (command line, oldmem_base, etc.) the
+current kernel needs to find the ELF segment that contains head.S. This is
+currently done by checking ifor 'phdr->p_paddr == 0'. This works fine for
+the current kernel build but in theory the first few pages could be
+skipped. Make the detection more robust by checking if the entry point lies
+within the segment.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Philipp Rudo <prudo@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/realtek/rtlwifi/base.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/s390/kernel/kexec_elf.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
-index 217d2a7a43c74..ac746c322554b 100644
---- a/drivers/net/wireless/realtek/rtlwifi/base.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/base.c
-@@ -448,6 +448,11 @@ static void _rtl_init_deferred_work(struct ieee80211_hw *hw)
- 	/* <2> work queue */
- 	rtlpriv->works.hw = hw;
- 	rtlpriv->works.rtl_wq = alloc_workqueue("%s", 0, 0, rtlpriv->cfg->name);
-+	if (unlikely(!rtlpriv->works.rtl_wq)) {
-+		pr_err("Failed to allocate work queue\n");
-+		return;
-+	}
-+
- 	INIT_DELAYED_WORK(&rtlpriv->works.watchdog_wq,
- 			  (void *)rtl_watchdog_wq_callback);
- 	INIT_DELAYED_WORK(&rtlpriv->works.ips_nic_off_wq,
+diff --git a/arch/s390/kernel/kexec_elf.c b/arch/s390/kernel/kexec_elf.c
+index 5a286b012043b..602e7cc26d118 100644
+--- a/arch/s390/kernel/kexec_elf.c
++++ b/arch/s390/kernel/kexec_elf.c
+@@ -19,10 +19,15 @@ static int kexec_file_add_elf_kernel(struct kimage *image,
+ 	struct kexec_buf buf;
+ 	const Elf_Ehdr *ehdr;
+ 	const Elf_Phdr *phdr;
++	Elf_Addr entry;
+ 	int i, ret;
+ 
+ 	ehdr = (Elf_Ehdr *)kernel;
+ 	buf.image = image;
++	if (image->type == KEXEC_TYPE_CRASH)
++		entry = STARTUP_KDUMP_OFFSET;
++	else
++		entry = ehdr->e_entry;
+ 
+ 	phdr = (void *)ehdr + ehdr->e_phoff;
+ 	for (i = 0; i < ehdr->e_phnum; i++, phdr++) {
+@@ -35,7 +40,7 @@ static int kexec_file_add_elf_kernel(struct kimage *image,
+ 		buf.mem = ALIGN(phdr->p_paddr, phdr->p_align);
+ 		buf.memsz = phdr->p_memsz;
+ 
+-		if (phdr->p_paddr == 0) {
++		if (entry - phdr->p_paddr < phdr->p_memsz) {
+ 			data->kernel_buf = buf.buffer;
+ 			data->memsz += STARTUP_NORMAL_OFFSET;
+ 
 -- 
 2.20.1
 
