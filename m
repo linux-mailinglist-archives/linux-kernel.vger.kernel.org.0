@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 227C62ED6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:36:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C86562F1C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:15:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730768AbfE3DY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:24:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50626 "EHLO mail.kernel.org"
+        id S1730871AbfE3EPt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:15:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731497AbfE3DSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:17 -0400
+        id S1730542AbfE3DP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:57 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B67282479C;
-        Thu, 30 May 2019 03:18:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDE7724590;
+        Thu, 30 May 2019 03:15:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186296;
-        bh=3UP0FFFWZDARpnNLGfXOHDI/BlZiCOPye2tYjL/MbkU=;
+        s=default; t=1559186156;
+        bh=txu5ml5e8wsR91hAxef7653W3qboAitQk1dj//Hsdek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S5AXBFW2etrCo0IIT1RdwyQXVBcu74wRWt76p0V3MpL9xiVCiXtIBDTnptJeovYLK
-         e3HmhDFrggGS5biO0QOv4edhV5n5ibeJru1MD3AmYy/asQpUvcIFyCnE09/q1QwA8E
-         2sOY1WGhAxKgSogJdsuXeg4APHYmLVYP1/lQASME=
+        b=yr/x8Hzo/VlZrXVt7L9ZruTYiGJjInfS8SGEUu1aanW1WRwnT0J1dsanvuBtgKH+Z
+         Zn9KsLrUQ3NdOmsdoDf6O6/8dHdLZaMxO32fZVbxw3s5GAiOJWbgILW0bLsNmCrv+/
+         Lv/HGK2qEomdPAWHSBYYUX4py62uDLIVLHf5Vzxg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Brett Creeley <brett.creeley@intel.com>,
+        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 259/276] media: vimc: zero the media_device on probe
+Subject: [PATCH 5.0 344/346] ice: Put __ICE_PREPARED_FOR_RESET check in ice_prepare_for_reset
 Date:   Wed, 29 May 2019 20:06:57 -0700
-Message-Id: <20190530030541.379975194@linuxfoundation.org>
+Message-Id: <20190530030558.150540246@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f74267b51cb36321f777807b2e04ca02167ecc08 ]
+[ Upstream commit 5abac9d7e1bb9a373673811154774d4c89a7f85e ]
 
-The media_device is part of a static global vimc_device struct.
-The media framework expects this to be zeroed before it is
-used, however, since this is a global this is not the case if
-vimc is unbound and then bound again.
+Currently we check if the __ICE_PREPARED_FOR_RESET bit is set prior to
+calling ice_prepare_for_reset in ice_reset_subtask(), but we aren't
+checking that bit in ice_do_reset() before calling
+ice_prepare_for_reset(). This is not consistent and can cause issues if
+ice_prepare_for_reset() is called prior to ice_do_reset(). Fix this by
+checking if the __ICE_PREPARED_FOR_RESET bit is set internal to
+ice_prepare_for_reset().
 
-So call memset to ensure any left-over values are cleared.
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Brett Creeley <brett.creeley@intel.com>
+Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vimc/vimc-core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/intel/ice/ice_main.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/vimc/vimc-core.c b/drivers/media/platform/vimc/vimc-core.c
-index 9246f265de31b..27db8835c2410 100644
---- a/drivers/media/platform/vimc/vimc-core.c
-+++ b/drivers/media/platform/vimc/vimc-core.c
-@@ -303,6 +303,8 @@ static int vimc_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+index 43064b4176d38..f8801267502af 100644
+--- a/drivers/net/ethernet/intel/ice/ice_main.c
++++ b/drivers/net/ethernet/intel/ice/ice_main.c
+@@ -342,6 +342,10 @@ ice_prepare_for_reset(struct ice_pf *pf)
+ {
+ 	struct ice_hw *hw = &pf->hw;
  
- 	dev_dbg(&pdev->dev, "probe");
- 
-+	memset(&vimc->mdev, 0, sizeof(vimc->mdev));
++	/* already prepared for reset */
++	if (test_bit(__ICE_PREPARED_FOR_RESET, pf->state))
++		return;
 +
- 	/* Create platform_device for each entity in the topology*/
- 	vimc->subdevs = devm_kcalloc(&vimc->pdev.dev, vimc->pipe_cfg->num_ents,
- 				     sizeof(*vimc->subdevs), GFP_KERNEL);
+ 	/* Notify VFs of impending reset */
+ 	if (ice_check_sq_alive(hw, &hw->mailboxq))
+ 		ice_vc_notify_reset(pf);
+@@ -424,8 +428,7 @@ static void ice_reset_subtask(struct ice_pf *pf)
+ 		/* return if no valid reset type requested */
+ 		if (reset_type == ICE_RESET_INVAL)
+ 			return;
+-		if (!test_bit(__ICE_PREPARED_FOR_RESET, pf->state))
+-			ice_prepare_for_reset(pf);
++		ice_prepare_for_reset(pf);
+ 
+ 		/* make sure we are ready to rebuild */
+ 		if (ice_check_reset(&pf->hw)) {
 -- 
 2.20.1
 
