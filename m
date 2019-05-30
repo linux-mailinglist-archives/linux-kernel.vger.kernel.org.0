@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80DDE2ECBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:25:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD4C2F310
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:26:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387579AbfE3DZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:25:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
+        id S1732283AbfE3E0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:26:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731572AbfE3DSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:31 -0400
+        id S1729910AbfE3DOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:35 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8559424790;
-        Thu, 30 May 2019 03:18:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E46AB24595;
+        Thu, 30 May 2019 03:14:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186310;
-        bh=08yPMXvX6Vggu36cK+hjFz+G6AYDSqGXrMEMxqNi2Ac=;
+        s=default; t=1559186075;
+        bh=xTl7DyP7IZ2wKvEoH3w3lHCjyDnJbp8ZoM3fWE65GKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YIaWTc/56qE4vXjzvprByRMOPxKCaAHkrR8WGQioRAIdB3fB1oWAkp/XMLI48ukSF
-         5CIUlyS6Q4blhPbRihcZj5OFqBu6s+dChMvjJDerAZaA3Ta6YXc1Fii9rRdE58/7HP
-         extZWm02Wfq8M4ollFIzIqzV8VOKj07eRwS1QQYA=
+        b=XUhb0vslaKE/ARWph1mku+kFuQCz8UfjxBnvzy6S4fRp1OkQiI7R2NVh2zu4DM7AJ
+         DhZnRLqdgnvTqcLo2Tv1Fb8PT/cME5/9ZrCgvkBXIYhJeHdWke2LC9NASrc5OJJaGU
+         frRbeqgiq6/vubQY295ZIiWTWe6tYMbUVyrLIla8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Trac Hoang <trac.hoang@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.14 010/193] mmc: sdhci-iproc: Set NO_HISPD bit to fix HS50 data hold time problem
+        stable@vger.kernel.org, Peng Li <lipeng321@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.0 191/346] net: hns3: free the pending skb when clean RX ring
 Date:   Wed, 29 May 2019 20:04:24 -0700
-Message-Id: <20190530030448.838388806@linuxfoundation.org>
+Message-Id: <20190530030550.749358221@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trac Hoang <trac.hoang@broadcom.com>
+[ Upstream commit cc5ff6e90f808f9a4c8229bf2f1de0dfe5d7931c ]
 
-commit ec0970e0a1b2c807c908d459641a9f9a1be3e130 upstream.
+If there is pending skb in RX flow when close the port, and the
+pending buffer is not cleaned, the new packet will be added to
+the pending skb when the port opens again, and the first new
+packet has error data.
 
-The iproc host eMMC/SD controller hold time does not meet the
-specification in the HS50 mode.  This problem can be mitigated
-by disabling the HISPD bit; thus forcing the controller output
-data to be driven on the falling clock edges rather than the
-rising clock edges.
+This patch cleans the pending skb when clean RX ring.
 
-Stable tag (v4.12+) chosen to assist stable kernel maintainers so that
-the change does not produce merge conflicts backporting to older kernel
-versions. In reality, the timing bug existed since the driver was first
-introduced but there is no need for this driver to be supported in kernel
-versions that old.
-
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Trac Hoang <trac.hoang@broadcom.com>
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-iproc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/mmc/host/sdhci-iproc.c
-+++ b/drivers/mmc/host/sdhci-iproc.c
-@@ -209,7 +209,8 @@ static const struct sdhci_iproc_data ipr
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index ecadd280ab28d..fb5cb15aea9ec 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -3871,6 +3871,13 @@ static int hns3_clear_rx_ring(struct hns3_enet_ring *ring)
+ 		ring_ptr_move_fw(ring, next_to_use);
+ 	}
  
- static const struct sdhci_pltfm_data sdhci_iproc_pltfm_data = {
- 	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
--		  SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
-+		  SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12 |
-+		  SDHCI_QUIRK_NO_HISPD_BIT,
- 	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN,
- 	.ops = &sdhci_iproc_ops,
- };
++	/* Free the pending skb in rx ring */
++	if (ring->skb) {
++		dev_kfree_skb_any(ring->skb);
++		ring->skb = NULL;
++		ring->pending_buf = 0;
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
+
 
 
