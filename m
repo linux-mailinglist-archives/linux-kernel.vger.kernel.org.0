@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29DA02F02E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:02:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E353B2F1EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:17:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731889AbfE3EBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:01:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50040 "EHLO mail.kernel.org"
+        id S1731280AbfE3EQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:16:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731423AbfE3DSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:08 -0400
+        id S1728137AbfE3DPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:47 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FA3C24771;
-        Thu, 30 May 2019 03:18:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16C0523D83;
+        Thu, 30 May 2019 03:15:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186287;
-        bh=5ElLYnLfkLhauHZub2TH9Ya+NEKWLjkjJYPVLRslO9Q=;
+        s=default; t=1559186147;
+        bh=TETZA24t7uL7Mp8Hggm+NyLlfjgX4EOyMnQP1rEwnSM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jbz0LiDGeJWTcF0/OVQGwvZAesVGUsP8KGmDxU6sEAVQBaiM7RNDytP0QeH4SJPYG
-         45jn7t7OJ3fFFGdwye5ZMvMAbxEmTYAECwaQS6KtKt8qfFWLoffqR2SgQ64jeemwMn
-         FfCOYv7wqnKAP87Tf0de3FGzlMfOQvagirlkql4s=
+        b=TL0P6c61oc5RIpaLc5J002fmsc8Rbfo+dQlip33gV1BjFMM75N1rKKeDWosmPENMg
+         EO3aIYWUlRvTkAeFzKTBgih/appKaEg6z5hgftG/0ommd+Rp4xnOPAN4fhSRn61Gth
+         4xoIguBlMP9A7JgPOt0Hn6WUgXUYRokLtiOkDsTU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        stable@vger.kernel.org,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Steve Twiss <stwiss.opensource@diasemi.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 242/276] thunderbolt: Fix to check return value of ida_simple_get
-Date:   Wed, 29 May 2019 20:06:40 -0700
-Message-Id: <20190530030540.267984249@linuxfoundation.org>
+Subject: [PATCH 5.0 328/346] regulator: lp8755: Fix notifier mutex lock warning
+Date:   Wed, 29 May 2019 20:06:41 -0700
+Message-Id: <20190530030557.392734958@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +46,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9aabb68568b473bf2f0b179d053b403961e42e4d ]
+[ Upstream commit 89b2758c192c35068b07766a6830433bfbdc1f44 ]
 
-In enumerate_services, ida_simple_get on failure can return an error and
-leaks memory. The patch ensures that the dev_set_name is set on non
-failure cases, and releases memory during failure.
+The mutex for the regulator_dev must be controlled by the caller of
+the regulator_notifier_call_chain(), as described in the comment
+for that function.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Failure to mutex lock and unlock surrounding the notifier call results
+in a kernel WARN_ON_ONCE() which will dump a backtrace for the
+regulator_notifier_call_chain() when that function call is first made.
+The mutex can be controlled using the regulator_lock/unlock() API.
+
+Fixes: b59320cc5a5e ("regulator: lp8755: new driver for LP8755")
+Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thunderbolt/xdomain.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/regulator/lp8755.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/thunderbolt/xdomain.c b/drivers/thunderbolt/xdomain.c
-index db8bece633270..befe754906979 100644
---- a/drivers/thunderbolt/xdomain.c
-+++ b/drivers/thunderbolt/xdomain.c
-@@ -743,6 +743,7 @@ static void enumerate_services(struct tb_xdomain *xd)
- 	struct tb_service *svc;
- 	struct tb_property *p;
- 	struct device *dev;
-+	int id;
- 
- 	/*
- 	 * First remove all services that are not available anymore in
-@@ -771,7 +772,12 @@ static void enumerate_services(struct tb_xdomain *xd)
- 			break;
- 		}
- 
--		svc->id = ida_simple_get(&xd->service_ids, 0, 0, GFP_KERNEL);
-+		id = ida_simple_get(&xd->service_ids, 0, 0, GFP_KERNEL);
-+		if (id < 0) {
-+			kfree(svc);
-+			break;
+diff --git a/drivers/regulator/lp8755.c b/drivers/regulator/lp8755.c
+index 244822bb63cd6..d82d3077f3b82 100644
+--- a/drivers/regulator/lp8755.c
++++ b/drivers/regulator/lp8755.c
+@@ -372,10 +372,13 @@ static irqreturn_t lp8755_irq_handler(int irq, void *data)
+ 	for (icnt = 0; icnt < LP8755_BUCK_MAX; icnt++)
+ 		if ((flag0 & (0x4 << icnt))
+ 		    && (pchip->irqmask & (0x04 << icnt))
+-		    && (pchip->rdev[icnt] != NULL))
++		    && (pchip->rdev[icnt] != NULL)) {
++			regulator_lock(pchip->rdev[icnt]);
+ 			regulator_notifier_call_chain(pchip->rdev[icnt],
+ 						      LP8755_EVENT_PWR_FAULT,
+ 						      NULL);
++			regulator_unlock(pchip->rdev[icnt]);
 +		}
-+		svc->id = id;
- 		svc->dev.bus = &tb_bus_type;
- 		svc->dev.type = &tb_service_type;
- 		svc->dev.parent = &xd->dev;
+ 
+ 	/* read flag1 register */
+ 	ret = lp8755_read(pchip, 0x0E, &flag1);
+@@ -389,18 +392,24 @@ static irqreturn_t lp8755_irq_handler(int irq, void *data)
+ 	/* send OCP event to all regualtor devices */
+ 	if ((flag1 & 0x01) && (pchip->irqmask & 0x01))
+ 		for (icnt = 0; icnt < LP8755_BUCK_MAX; icnt++)
+-			if (pchip->rdev[icnt] != NULL)
++			if (pchip->rdev[icnt] != NULL) {
++				regulator_lock(pchip->rdev[icnt]);
+ 				regulator_notifier_call_chain(pchip->rdev[icnt],
+ 							      LP8755_EVENT_OCP,
+ 							      NULL);
++				regulator_unlock(pchip->rdev[icnt]);
++			}
+ 
+ 	/* send OVP event to all regualtor devices */
+ 	if ((flag1 & 0x02) && (pchip->irqmask & 0x02))
+ 		for (icnt = 0; icnt < LP8755_BUCK_MAX; icnt++)
+-			if (pchip->rdev[icnt] != NULL)
++			if (pchip->rdev[icnt] != NULL) {
++				regulator_lock(pchip->rdev[icnt]);
+ 				regulator_notifier_call_chain(pchip->rdev[icnt],
+ 							      LP8755_EVENT_OVP,
+ 							      NULL);
++				regulator_unlock(pchip->rdev[icnt]);
++			}
+ 	return IRQ_HANDLED;
+ 
+ err_i2c:
 -- 
 2.20.1
 
