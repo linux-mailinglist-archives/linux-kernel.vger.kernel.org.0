@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 611522EE48
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:46:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D9B82ECE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:28:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733004AbfE3Dp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:45:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59372 "EHLO mail.kernel.org"
+        id S2388170AbfE3D21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:28:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732308AbfE3DUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:44 -0400
+        id S1731332AbfE3DT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:56 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3E6D24949;
-        Thu, 30 May 2019 03:20:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F1EB248ED;
+        Thu, 30 May 2019 03:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186443;
-        bh=uyi+1lq5vvacIA/VMarduBu1VAQb4Nkn4Nvt7+hkaO8=;
+        s=default; t=1559186395;
+        bh=4qFf+ReEGAlxmB+u/dhYnW1b0I/eQL6fC26LheLmXMg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MN6f9QSHF0n9+GZ1ZTk1k5W0xyTbsh8K89d5+3xigVE/Zv8eOUp++bs4zIL0jBVsB
-         8ZqhLVHS43o/75h0eMjq44MmnENpjCTlyMcgRjkSUTLTsKnsuHO+YIsPMr8RB1idzU
-         7+WXR8imD52rSTtMNL6SaxZ1wei5RJ8jkfC3Bbjo=
+        b=quch1U7DmT5Le3JIkUPV6steBia4OQNSlWwCZN2nEDaB5mZTAxLbG3cojcwRSseBz
+         Ge+9iGVkpAOenmIliE2R+ZDu3YaDOANNvKFf28S+UYrTJIuOBesRxpk5m8QrkFBVkF
+         XUG9PHMbVM4oDnQIS1l0/4alnUBp12Nj+eGWeRDQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Coly Li <colyli@suse.de>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 048/128] bcache: add failure check to run_cache_set() for journal replay
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 126/193] clk: rockchip: Make rkpwm a critical clock on rk3288
 Date:   Wed, 29 May 2019 20:06:20 -0700
-Message-Id: <20190530030443.350479226@linuxfoundation.org>
+Message-Id: <20190530030506.055879300@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,89 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ce3e4cfb59cb382f8e5ce359238aa580d4ae7778 ]
+[ Upstream commit dfe7fb21cd9e730230d55a79bc72cf2ece67cdd5 ]
 
-Currently run_cache_set() has no return value, if there is failure in
-bch_journal_replay(), the caller of run_cache_set() has no idea about
-such failure and just continue to execute following code after
-run_cache_set().  The internal failure is triggered inside
-bch_journal_replay() and being handled in async way. This behavior is
-inefficient, while failure handling inside bch_journal_replay(), cache
-register code is still running to start the cache set. Registering and
-unregistering code running as same time may introduce some rare race
-condition, and make the code to be more hard to be understood.
+Most rk3288-based boards are derived from the EVB and thus use a PWM
+regulator for the logic rail.  However, most rk3288-based boards don't
+specify the PWM regulator in their device tree.  We'll deal with that
+by making it critical.
 
-This patch adds return value to run_cache_set(), and returns -EIO if
-bch_journal_rreplay() fails. Then caller of run_cache_set() may detect
-such failure and stop registering code flow immedidately inside
-register_cache_set().
+NOTE: it's important to make it critical and not just IGNORE_UNUSED
+because all PWMs in the system share the same clock.  We don't want
+another PWM user to turn the clock on and off and kill the logic rail.
 
-If journal replay fails, run_cache_set() can report error immediately
-to register_cache_set(). This patch makes the failure handling for
-bch_journal_replay() be in synchronized way, easier to understand and
-debug, and avoid poetential race condition for register-and-unregister
-in same time.
+This change is in preparation for actually having the PWMs in the
+rk3288 device tree actually point to the proper PWM clock.  Up until
+now they've all pointed to the clock for the old IP block and they've
+all worked due to the fact that rkpwm was IGNORE_UNUSED and that the
+clock rates for both clocks were the same.
 
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/super.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ drivers/clk/rockchip/clk-rk3288.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index 362efc8dd16fb..9f2588eaaf5f8 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1561,7 +1561,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
- 	return NULL;
- }
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index c6cd6d28af56f..64191694ff6e9 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -676,7 +676,7 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+ 	GATE(PCLK_TZPC, "pclk_tzpc", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 3, GFLAGS),
+ 	GATE(PCLK_UART2, "pclk_uart2", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 9, GFLAGS),
+ 	GATE(PCLK_EFUSE256, "pclk_efuse_256", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 10, GFLAGS),
+-	GATE(PCLK_RKPWM, "pclk_rkpwm", "pclk_cpu", CLK_IGNORE_UNUSED, RK3288_CLKGATE_CON(11), 11, GFLAGS),
++	GATE(PCLK_RKPWM, "pclk_rkpwm", "pclk_cpu", 0, RK3288_CLKGATE_CON(11), 11, GFLAGS),
  
--static void run_cache_set(struct cache_set *c)
-+static int run_cache_set(struct cache_set *c)
- {
- 	const char *err = "cannot allocate memory";
- 	struct cached_dev *dc, *t;
-@@ -1653,7 +1653,9 @@ static void run_cache_set(struct cache_set *c)
- 		if (j->version < BCACHE_JSET_VERSION_UUID)
- 			__uuid_write(c);
+ 	/* ddrctrl [DDR Controller PHY clock] gates */
+ 	GATE(0, "nclk_ddrupctl0", "ddrphy", CLK_IGNORE_UNUSED, RK3288_CLKGATE_CON(11), 4, GFLAGS),
+@@ -817,6 +817,8 @@ static const char *const rk3288_critical_clocks[] __initconst = {
+ 	"pclk_pd_pmu",
+ 	"pclk_pmu_niu",
+ 	"pmu_hclk_otg0",
++	/* pwm-regulators on some boards, so handoff-critical later */
++	"pclk_rkpwm",
+ };
  
--		bch_journal_replay(c, &journal);
-+		err = "bcache: replay journal failed";
-+		if (bch_journal_replay(c, &journal))
-+			goto err;
- 	} else {
- 		pr_notice("invalidating existing data");
- 
-@@ -1721,11 +1723,13 @@ static void run_cache_set(struct cache_set *c)
- 	flash_devs_run(c);
- 
- 	set_bit(CACHE_SET_RUNNING, &c->flags);
--	return;
-+	return 0;
- err:
- 	closure_sync(&cl);
- 	/* XXX: test this, it's broken */
- 	bch_cache_set_error(c, "%s", err);
-+
-+	return -EIO;
- }
- 
- static bool can_attach_cache(struct cache *ca, struct cache_set *c)
-@@ -1789,8 +1793,11 @@ static const char *register_cache_set(struct cache *ca)
- 	ca->set->cache[ca->sb.nr_this_dev] = ca;
- 	c->cache_by_alloc[c->caches_loaded++] = ca;
- 
--	if (c->caches_loaded == c->sb.nr_in_set)
--		run_cache_set(c);
-+	if (c->caches_loaded == c->sb.nr_in_set) {
-+		err = "failed to run cache set";
-+		if (run_cache_set(c) < 0)
-+			goto err;
-+	}
- 
- 	return NULL;
- err:
+ static void __iomem *rk3288_cru_base;
 -- 
 2.20.1
 
