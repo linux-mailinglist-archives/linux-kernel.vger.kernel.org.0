@@ -2,126 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 679F22F74C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 07:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A35BF2F758
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 08:01:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbfE3Fz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 01:55:27 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15712 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbfE3Fz0 (ORCPT
+        id S1727171AbfE3GBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 02:01:38 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:39903 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725961AbfE3GBh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 01:55:26 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5cef704c0000>; Wed, 29 May 2019 22:55:24 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 29 May 2019 22:55:25 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 29 May 2019 22:55:25 -0700
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 May
- 2019 05:55:25 +0000
-Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 May
- 2019 05:55:24 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 30 May 2019 05:55:24 +0000
-Received: from dhcp-10-19-65-14.client.nvidia.com (Not Verified[10.19.65.14]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5cef704a0001>; Wed, 29 May 2019 22:55:24 -0700
-From:   Bitan Biswas <bbiswas@nvidia.com>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Shardar Mohammed <smohammed@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        "Bitan Biswas" <bbiswas@nvidia.com>
-Subject: [PATCH V1] i2c: busses: tegra: Add suspend-resume support
-Date:   Wed, 29 May 2019 22:55:18 -0700
-Message-ID: <1559195718-6693-1-git-send-email-bbiswas@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Thu, 30 May 2019 02:01:37 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id B2ABE220C3;
+        Thu, 30 May 2019 02:01:36 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 30 May 2019 02:01:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=eCakL384zMTCpVZkURCZ5qsUo9h
+        k+pUOlpeRS6gbT+U=; b=TN/YiQjQWUsoQU0Ha08Nx01TZQhDPqY4mOo08RR3wKL
+        14s9bOMTOOAUcLSR9X5MNwkhrucp921SgYt8eKIlPpvoARbRjLSQfencP+c0Kv0e
+        HTfP1aMUZggm4zPrbd3Qyli58WikqV8Dsu+MqIE5Xd8481jUx/4eNaDaejPdIvM7
+        /HL2GzL6nZWp6nr2lWe5GfmgK3S0YV2LiIH7naZcf3pr+BxJ5Qv2cqEYHNtlVunn
+        7rc0+BaePmGZyY7E68wVYJBnCOEa/PqbrzSxz2KIyEgMpJgX7qPRFZUt7dnZCYGo
+        Xcd7YeB1k2tIWZRN4mITb61wny8b90bZtt2uXCuFgaw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=eCakL3
+        84zMTCpVZkURCZ5qsUo9hk+pUOlpeRS6gbT+U=; b=py0C4DD0GGD8+o80IIh4uo
+        IgLnWHuzqpiNJWiZICIAW/ZZ3LLUnCYeiM8zsxwItBc7/+7sxcKQmbms64CFzmka
+        X0SCSUk/NAE1f8a01KMjYsDKIGDlWIsYg5qN4Dfv860bmA2D1jtZqxF/U/AQjo9a
+        kc7RsDDXoVSoNveVRKPsHS+f8Hplv52aQx2a0ZGp4SyJCne5pKjBI3unScFwkZut
+        FFySNOtUd20q3OL/QxosrODigq35dClXGSqhmIX55Aql+CQjBvIPBLEiG3nIIxxq
+        F0pSix0+p/pQnIWC/ZV/K0UKVZ8oePtzePDrFJhkFMEMWvLYKFGNSkvPYNuLPL4w
+        ==
+X-ME-Sender: <xms:v3HvXKLfe7nhbx7utOcf5lvo3wQXgHRhBPyJT-pv_1vGXu_S-r1MzQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduuddruddvkedguddtudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enfghrlhcuvffnffculdduhedmnecujfgurhepfffhvffukfhfgggtuggjofgfsehttder
+    tdforedvnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhgfdcuoehmvgesth
+    hosghinhdrtggtqeenucfkphepuddvgedrudejuddrfedurddugeegnecurfgrrhgrmhep
+    mhgrihhlfhhrohhmpehmvgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:v3HvXKQBKsR03OmxOLM97vnrKFC1ITG7c-hWGZLSDhhCVoFZsR6oIg>
+    <xmx:v3HvXDRuJsPWMYIjrpe62IUEgbLL2WCT-qkS5EmxkEsOaF00rv-OrQ>
+    <xmx:v3HvXK4cRJ1jMdSJTqBJEUKXuiViDyLuEFXcU4c56N5sOLvJSb2VYQ>
+    <xmx:wHHvXAnGM5HD9n3U86goR9McOHwIl9nJwZzGvyQ-7Rrjd7fXa2Y6-w>
+Received: from localhost (124-171-31-144.dyn.iinet.net.au [124.171.31.144])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4EF6F8005B;
+        Thu, 30 May 2019 02:01:34 -0400 (EDT)
+Date:   Thu, 30 May 2019 16:01:30 +1000
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Neil Brown <neilb@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/9] docs: Convert VFS doc to RST
+Message-ID: <20190530060130.GB11021@caerus>
+References: <20190515002913.12586-1-tobin@kernel.org>
+ <20190529163052.6ce91581@lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1559195725; bh=EPpj67COYGBhlkWdKr0QIR/atWxow2EbLdfTiuxH0u4=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=dtfcl42/jEs/OXvHlq4hBtfPuB3IDVKkqtZfI4Ftr9JxH50H7V46TkhmITkqasE+E
-         pMufthNmo6PssZsCRY5rvx/8QcH9rcpJ/epYtgsDMj0doWmg6AAsCUBsRlBCDFmplG
-         5fXvPLY9I/+cBh6tIp3EGJk58ZXMJExWnnrLKL6uEcCQaeCWmF7jA6PJCJHvjIywTA
-         QIrbwOzpguAeDvEWbnCXvZp2oPjrCwUytpZPHkQ5bJgSO1pCMGZ70vLOm7E3ZR7bHr
-         mu96qnxP/IP0iVYnk4iS2DC9WhpnEQJuHydfF+SAWOPMDbLk2O2tJYe5GdMYBZcvwn
-         w6xC3/2wOx7hw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190529163052.6ce91581@lwn.net>
+X-Mailer: Mutt 1.9.4 (2018-02-28)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Post suspend I2C registers have power on reset values. Before any
-transfer initialize I2C registers to prevent I2C transfer timeout
-and implement suspend and resume callbacks needed. Fix below errors
-post suspend:
+On Wed, May 29, 2019 at 04:30:52PM -0600, Jonathan Corbet wrote:
+> On Wed, 15 May 2019 10:29:04 +1000
+> "Tobin C. Harding" <tobin@kernel.org> wrote:
+> 
+> > Here is an updated version of the VFS doc conversion.  This series in no
+> > way represents a final point for the VFS documentation rather it is a
+> > small step towards getting VFS docs updated.  This series does not
+> > update the content of vfs.txt, only does formatting.
+> 
+> I've finally gotten to this, sorry for taking so long.  Applying it to
+> docs-next turned out to be a bit of a chore; there have been intervening
+> changes to vfs.txt that we didn't want to lose.  But I did it.
+> 
+> Unfortunately, there's still a remaining issue.  You did a lot of list
+> conversions like this:
+> 
+> > -  struct file_system_type *fs_type: describes the filesystem, partly initialized
+> > +``struct file_system_type *fs_type``: describes the filesystem, partly initialized
+> >  	by the specific filesystem code
+> 
+> but that does not render the way you would like, trust me.  You really
+> want to use the list format, something like:
+> 
+>     ``struct file_system_type *fs_type``
+> 	 describes the filesystem, partly initialized by the specific
+> 	 filesystem code
 
-1) Tegra I2C transfer timeout during jetson tx2 resume:
+Ouch!  Yes I knew this was sub-optimal, I thought the HTML looked ok.
+I'll fix them up as suggested.
 
-[   27.520613] pca953x 1-0074: calling pca953x_resume+0x0/0x1b0 @ 2939, parent: i2c-1
-[   27.633623] tegra-i2c 3160000.i2c: i2c transfer timed out
-[   27.639162] pca953x 1-0074: Unable to sync registers 0x3-0x5. -110
-[   27.645336] pca953x 1-0074: Failed to sync GPIO dir registers: -110
-[   27.651596] PM: dpm_run_callback(): pca953x_resume+0x0/0x1b0 returns -110
-[   27.658375] pca953x 1-0074: pca953x_resume+0x0/0x1b0 returned -110 after 127152 usecs
-[   27.666194] PM: Device 1-0074 failed to resume: error -110
+> There are, unfortunately, a lot of these to fix...  I bet it could be done
+> with an elisp function, but I don't have time to beat my head against that
+> wall right now.
 
-2) Tegra I2C transfer timeout error on jetson Xavier post resume.
+oh really?  That would actually make doing this much more enticing, I've
+already done all these multiple times manually - learning nothing, some
+elisp games would actually teach me something.  Cheers.
 
-Signed-off-by: Bitan Biswas <bbiswas@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> Any chance you would have time to send me a followup patch fixing these
+> up?  I'll keep my branch with this set for now so there's no need to
+> rebase those.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index ebaa78d..f6a377f 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1687,9 +1687,33 @@ static int tegra_i2c_remove(struct platform_device *pdev)
- }
- 
- #ifdef CONFIG_PM_SLEEP
-+static int tegra_i2c_suspend(struct device *dev)
-+{
-+	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-+
-+	i2c_mark_adapter_suspended(&i2c_dev->adapter);
-+
-+	return 0;
-+}
-+
-+static int tegra_i2c_resume(struct device *dev)
-+{
-+	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-+	int ret;
-+
-+	i2c_lock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
-+	ret = tegra_i2c_init(i2c_dev, false);
-+	i2c_unlock_bus(&i2c_dev->adapter, I2C_LOCK_ROOT_ADAPTER);
-+	if (!ret)
-+		i2c_mark_adapter_resumed(&i2c_dev->adapter);
-+
-+       return ret;
-+}
-+
- static const struct dev_pm_ops tegra_i2c_pm = {
- 	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resume,
- 			   NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
- };
- #define TEGRA_I2C_PM	(&tegra_i2c_pm)
- #else
--- 
-2.7.4
+Sure thing, patches to come.
 
+Cheers,
+Tobin.
