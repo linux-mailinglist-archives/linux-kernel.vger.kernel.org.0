@@ -2,86 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5B692EB56
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F6CF2EAE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:01:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbfE3DLx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:11:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47936 "EHLO mail.kernel.org"
+        id S1726722AbfE3DBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:01:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728151AbfE3DKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:35 -0400
-Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
+        id S1725821AbfE3DBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:01:41 -0400
+Received: from localhost (15.sub-174-234-174.myvzw.com [174.234.174.15])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08247244AE;
-        Thu, 30 May 2019 03:10:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 092AA24450;
+        Thu, 30 May 2019 03:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185835;
-        bh=baUWZtZsxQSldKk1601Ynm8AxfPykkInrWffQPTcdj8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W31J/QBY8QcQfixDSy9jRbZHlev+r/w6E9P0n248d76I3pI0kl2RKiwNcmo7sEqRJ
-         mBgg4WbJkszVVDfoBoHYooS9fZ4tigTO4eBaY8vyhky1qI4cbeKUbNiP7iQKg59oCw
-         2PxzYCorGNcANkqMxe+C2cERA+4ObLomrBgKK6dM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 100/405] rtc: 88pm860x: prevent use-after-free on device remove
-Date:   Wed, 29 May 2019 20:01:38 -0700
-Message-Id: <20190530030546.087701453@linuxfoundation.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
-User-Agent: quilt/0.66
+        s=default; t=1559185301;
+        bh=xlqT1K7enlVKZFkAxENutch544Oi7NgY9tj2XmaoiWw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I5+SJ2uqpNOjnl2C+mRPUPxSGXxyfjQ7/UwswpuCqSZLJkQqw1TJuTJCSsYsAzN20
+         1gE6UZMcN4fgGmQfnZ/R5cK1l2+vedMmQ1+8YnuSNwbtpkRFh75+Fv8RILpzeivwmF
+         vVE+nFxRchNor7LwweEqGZRFd7QNrTgygN0AXoXY=
+Date:   Wed, 29 May 2019 22:01:39 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Changbin Du <changbin.du@gmail.com>, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mchehab+samsung@kernel.org
+Subject: Re: [PATCH v6 00/12] Include linux PCI docs into Sphinx TOC tree
+Message-ID: <20190530030139.GI28250@google.com>
+References: <20190514144734.19760-1-changbin.du@gmail.com>
+ <20190520061014.qtq6tc366pnnqcio@mail.google.com>
+ <20190529163510.3dd4dc2d@lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190529163510.3dd4dc2d@lwn.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f22b1ba15ee5785aa028384ebf77dd39e8e47b70 ]
+On Wed, May 29, 2019 at 04:35:10PM -0600, Jonathan Corbet wrote:
+> On Mon, 20 May 2019 06:10:15 +0000
+> Changbin Du <changbin.du@gmail.com> wrote:
+> 
+> > Bjorn and Jonathan,
+> > Could we consider to merge this serias now? Thanks.
+> 
+> Somewhat belatedly, but I think we could.  Bjorn, do you have a preference
+> for which tree this goes through?  I don't remember if we'd come to an
+> agreement on that or not, sorry...
 
-The device's remove() attempts to shut down the delayed_work scheduled
-on the kernel-global workqueue by calling flush_scheduled_work().
+Actually, let me at least take a look at these.  I noticed that
+renames caused some of the ACPI docs to end up with lines >80 columns,
+and I'd prefer to avoid that.  So maybe I'll take these after all if
+that's OK.
 
-Unfortunately, flush_scheduled_work() does not prevent the delayed_work
-from re-scheduling itself. The delayed_work might run after the device
-has been removed, and touch the already de-allocated info structure.
-This is a potential use-after-free.
-
-Fix by calling cancel_delayed_work_sync() during remove(): this ensures
-that the delayed work is properly cancelled, is no longer running, and
-is not able to re-schedule itself.
-
-This issue was detected with the help of Coccinelle.
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/rtc/rtc-88pm860x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-88pm860x.c b/drivers/rtc/rtc-88pm860x.c
-index d25282b4a7dd1..73697e4b18a9d 100644
---- a/drivers/rtc/rtc-88pm860x.c
-+++ b/drivers/rtc/rtc-88pm860x.c
-@@ -421,7 +421,7 @@ static int pm860x_rtc_remove(struct platform_device *pdev)
- 	struct pm860x_rtc_info *info = platform_get_drvdata(pdev);
- 
- #ifdef VRTC_CALIBRATION
--	flush_scheduled_work();
-+	cancel_delayed_work_sync(&info->calib_work);
- 	/* disable measurement */
- 	pm860x_set_bits(info->i2c, PM8607_MEAS_EN2, MEAS2_VRTC, 0);
- #endif	/* VRTC_CALIBRATION */
--- 
-2.20.1
-
-
-
+Bjorn
