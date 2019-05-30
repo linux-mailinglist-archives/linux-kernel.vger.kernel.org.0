@@ -2,68 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AA292F8C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54D552F8D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 10:55:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbfE3Ix3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 04:53:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45162 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726753AbfE3Ix3 (ORCPT
+        id S1727317AbfE3IzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 04:55:15 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44648 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbfE3IzN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 04:53:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=7aH335K8bkoHEjqmekfUR/dxSx+60OHumVq1hGf49IM=; b=dQ4HCu1qVgISjGAbLPD/Q3rw8v
-        1foKw4rPUo8IVyIavrr82ZM8Z//0KK+u3uEp7R1+o6P8b9DIpr9mXpyYgdRuT/KMvuG/DxNnEG5o2
-        AwI1mmuVei2+4lTWig4t4cbY40g/AR/A42JqFdVkZRC1S4imIWKR91C0Rfpd0N4faVUvhTy2WAQC2
-        sxc5Qo9A3V3TUyG1Vgp6fglA6LE/DpeXRovD2++zTKiqSO23a27Rid5l34b5jfalO5y5/IW9yYaZA
-        uYzOoV/0bu0TIboplGAVRAayDwpRVRXAgXejY9+5b2+ROH9ztyUWOetv/V6YewC/kHoo3jcphtnu4
-        br8X/bvQ==;
-Received: from 089144193064.atnat0002.highway.a1.net ([89.144.193.64] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hWGoO-0002lZ-N8; Thu, 30 May 2019 08:53:25 +0000
-Date:   Thu, 30 May 2019 10:53:21 +0200
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Joel Becker <jlbec@evilplan.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] configfs fix for 5.2
-Message-ID: <20190530085321.GA24647@infradead.org>
+        Thu, 30 May 2019 04:55:13 -0400
+Received: by mail-pl1-f194.google.com with SMTP id c5so2274871pll.11;
+        Thu, 30 May 2019 01:55:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KvjM4bsTfrcq2cHYj0Oc8PDr1CJFW5mpcAz8/WiY3E0=;
+        b=PJIRhFYa2F4McFzf+xGE3gUTho75opN9ktQ1NXCUdCcGydnK/sgVU70hxfve2x1Om4
+         y7lXw5PIyHReB38bZ9+AUHhktIyjgnChQ1AXedGWj9Iwsd4CH+wIcTPLIovd3faUjsFP
+         1/NFvpt8TeW6wPHTiPHSQftQHiNxAGSVvR0mn2DfIEfNNIc5LcWfkblavemxfWL+ETP+
+         mT7HFpTnW3wrY5Re/8uPNraDblHqA3cuWX1OYHHYuH7ferAoRnqP7p3DhZjOVoy7eu3R
+         qjwSINqsn2QOGRvm48tJuDzLp18JlNJja60GkZ5u3oe8eyI6/jP2dnLtGMuypw8YhldW
+         ITMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KvjM4bsTfrcq2cHYj0Oc8PDr1CJFW5mpcAz8/WiY3E0=;
+        b=mFuPBaZ8Bvl/S7hzfUnehpx6k667wUS6GWFsx4H5ouyUEB+lTEZYeL9+TCP1m7FO5g
+         xRvdGsJepV1hhCs3dz/J3VRoEc4wDj2LpKbN075XbsQbUZ7ylHoGlbZ01ZwL7mPcwAnf
+         CQJH4R1ExeFnZby+T7HWq075czI9ElY1xCcSzxa4qaAxmY2kvdC7lHpjz1bO75esSkl0
+         eJA6WkwSb5HmsL+HZ8V4qWUuP3IeS7lFHM+LqzicwUMwlNArhi9RhNxnMsX9rEzEGwUu
+         yUDvB/iEOBhUYG4TcHohiDyDz50SFT7I9P2ORC9IOZ5HQ76M8OTD8eoWfQ5G1K3c/qDm
+         BnbQ==
+X-Gm-Message-State: APjAAAWTk9j5tVC1j/ZMIV1UwjwhY0b7S3yyBFM/OppUzLevj0OzQYu2
+        zZGmmmvjLZs4j5dd08sXy8M=
+X-Google-Smtp-Source: APXvYqyXQwgtIekLk3xQBUwVq8/Hu5IaSkI+omKRnrbiDa6+jwZFpuFkY3MoIYdDQJrZpNi5kKmOkg==
+X-Received: by 2002:a17:902:324:: with SMTP id 33mr2735283pld.284.1559206513206;
+        Thu, 30 May 2019 01:55:13 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id o15sm921189pfh.53.2019.05.30.01.54.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 May 2019 01:55:12 -0700 (PDT)
+Date:   Thu, 30 May 2019 16:54:38 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>, ccross@android.com,
+        selinux@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        netdev@vger.kernel.org
+Subject: [PATCH v2] hooks: fix a missing-check bug in selinux_add_mnt_opt()
+Message-ID: <20190530085438.GA2862@zhanggen-UX430UQ>
+References: <20190530080602.GA3600@zhanggen-UX430UQ>
+ <CAFqZXNtX1R1VDFxm7Jco3BZ=pVnNiHU3-C=d8MhCVV1XSUQ8bw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAFqZXNtX1R1VDFxm7Jco3BZ=pVnNiHU3-C=d8MhCVV1XSUQ8bw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit cd6c84d8f0cdc911df435bb075ba22ce3c605b07:
+In selinux_add_mnt_opt(), 'val' is allcoted by kmemdup_nul(). It returns
+NULL when fails. So 'val' should be checked.
 
-  Linux 5.2-rc2 (2019-05-26 16:49:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/users/hch/configfs.git tags/configfs-for-5.2-2
-
-for you to fetch changes up to f6122ed2a4f9c9c1c073ddf6308d1b2ac10e0781:
-
-  configfs: Fix use-after-free when accessing sd->s_dentry (2019-05-28 08:11:58 +0200)
-
-----------------------------------------------------------------
-configs fix for 5.2
-
- - fix a use after free in configfs_d_iput (Sahitya Tummala)
-
-----------------------------------------------------------------
-Sahitya Tummala (1):
-      configfs: Fix use-after-free when accessing sd->s_dentry
-
- fs/configfs/dir.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+Fixes: 757cbe597fe8 ("LSM: new method: ->sb_add_mnt_opt()")
+---
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 3ec702c..4797c63 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -1052,8 +1052,11 @@ static int selinux_add_mnt_opt(const char *option, const char *val, int len,
+ 	if (token == Opt_error)
+ 		return -EINVAL;
+ 
+-	if (token != Opt_seclabel)
+-		val = kmemdup_nul(val, len, GFP_KERNEL);
++	if (token != Opt_seclabel) {
++			val = kmemdup_nul(val, len, GFP_KERNEL);
++			if (!val)
++				return -ENOMEM;
++	}
+ 	rc = selinux_add_opt(token, val, mnt_opts);
+ 	if (unlikely(rc)) {
+ 		kfree(val);
