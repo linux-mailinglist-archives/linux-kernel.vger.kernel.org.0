@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 651812EF17
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:52:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A79EF2F243
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:20:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733272AbfE3Dwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:52:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55842 "EHLO mail.kernel.org"
+        id S1730236AbfE3DPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:15:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731093AbfE3DTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:35 -0400
+        id S1729202AbfE3DMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:45 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2442E248AE;
-        Thu, 30 May 2019 03:19:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D621721BE2;
+        Thu, 30 May 2019 03:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186375;
-        bh=Gv/H9w26YDcwmv+8qt2Uilgf7kakDx6hJzrcUwNIk4g=;
+        s=default; t=1559185964;
+        bh=6UtnZmZDRPIFFWnnzeD6y6Zq1E3Ghsj/Yw4UQV/JS48=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vzq3xVzzlzVSz/0+p4xKE1bSedd9VegYplGxZfHSlwwTbZh5eGvbsdftSkCXVfF41
-         hyLsaAec4VH5QjWclmuBsL77+0Qwzlf5n4vxnH+A1Qj67XidDFIX4UkEYl+G6XMkA0
-         FYo7r4vTUSGUGBw5bKR7wjozxa3VtzuLJTw2TvIU=
+        b=x8DTziGX1y2ai0MFARK5sMOm4SpRovgJU6Fw3qp0OZq6BZ62HNALlHmbP+JYCuJEn
+         fQd8DKz2d6Y0P6G2/6f52A2fwp7XyTRqQMhlMnFHcEepVbwi4B8nFT+rHa9Mue7fkq
+         0i+1bQgzAZvp6S5VgDTFxk0wKv+EeJVpNUiy6HR4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        clang-built-linux@googlegroups.com, x86-ml <x86@kernel.org>,
+        stable@vger.kernel.org, Chris Lesiak <chris.lesiak@licor.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 135/193] x86/build: Keep local relocations with ld.lld
+Subject: [PATCH 5.1 391/405] spi: Fix zero length xfer bug
 Date:   Wed, 29 May 2019 20:06:29 -0700
-Message-Id: <20190530030507.215882392@linuxfoundation.org>
+Message-Id: <20190530030600.410751588@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,42 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7c21383f3429dd70da39c0c7f1efa12377a47ab6 ]
+[ Upstream commit 5442dcaa0d90fc376bdfc179a018931a8f43dea4 ]
 
-The LLVM linker (ld.lld) defaults to removing local relocations, which
-causes KASLR boot failures. ld.bfd and ld.gold already handle this
-correctly. This adds the explicit instruction "--discard-none" during
-the link phase. There is no change in output for ld.bfd and ld.gold,
-but ld.lld now produces an image with all the needed relocations.
+This fixes a bug for messages containing both zero length and
+unidirectional xfers.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: clang-built-linux@googlegroups.com
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190404214027.GA7324@beast
-Link: https://github.com/ClangBuiltLinux/linux/issues/404
+The function spi_map_msg will allocate dummy tx and/or rx buffers
+for use with unidirectional transfers when the hardware can only do
+a bidirectional transfer.  That dummy buffer will be used in place
+of a NULL buffer even when the xfer length is 0.
+
+Then in the function __spi_map_msg, if he hardware can dma,
+the zero length xfer will have spi_map_buf called on the dummy
+buffer.
+
+Eventually, __sg_alloc_table is called and returns -EINVAL
+because nents == 0.
+
+This fix prevents the error by not using the dummy buffer when
+the xfer length is zero.
+
+Signed-off-by: Chris Lesiak <chris.lesiak@licor.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index eb1f8f249dc35..b4c72da8a7adb 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -48,7 +48,7 @@ export REALMODE_CFLAGS
- export BITS
- 
- ifdef CONFIG_X86_NEED_RELOCS
--        LDFLAGS_vmlinux := --emit-relocs
-+        LDFLAGS_vmlinux := --emit-relocs --discard-none
- endif
- 
- #
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 6cb72287eac82..a83fcddf1dadc 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1041,6 +1041,8 @@ static int spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+ 		if (max_tx || max_rx) {
+ 			list_for_each_entry(xfer, &msg->transfers,
+ 					    transfer_list) {
++				if (!xfer->len)
++					continue;
+ 				if (!xfer->tx_buf)
+ 					xfer->tx_buf = ctlr->dummy_tx;
+ 				if (!xfer->rx_buf)
 -- 
 2.20.1
 
