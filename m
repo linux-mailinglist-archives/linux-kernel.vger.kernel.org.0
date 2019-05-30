@@ -2,55 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB0802F255
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:21:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C27A42F29C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:23:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731595AbfE3EUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:20:48 -0400
-Received: from smtprelay0033.hostedemail.com ([216.40.44.33]:37168 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731287AbfE3EUl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 00:20:41 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id C3C53182251B2;
-        Thu, 30 May 2019 04:20:39 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:421:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1381:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:1963:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3867:3868:3871:3872:3873:3874:4321:5007:9040:10004:10400:10848:11658:11914:12048:12740:12760:12895:13069:13160:13229:13311:13357:13439:14659:21080:21627:21789:30012:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:31,LUA_SUMMARY:none
-X-HE-Tag: nose55_5a26eccd8617
-X-Filterd-Recvd-Size: 1484
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 30 May 2019 04:20:38 +0000 (UTC)
-Message-ID: <a47d7093b10d671ae89fa6f6962d69d6913a30f7.camel@perches.com>
-Subject: Re: [PATCH v2] drivers/media/dvb-frontends: Implement probe/remove
- for stv6110x
-From:   Joe Perches <joe@perches.com>
-To:     Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        mchehab@kernel.org, sean@mess.org
-Date:   Wed, 29 May 2019 21:20:37 -0700
-In-Reply-To: <d1afd4d3-0dc5-718d-f7b4-f763f367ca1e@mni.thm.de>
-References: <20190509195118.23027-1-tobias.johannes.klausmann@mni.thm.de>
-         <20190529165633.8779-1-tobias.johannes.klausmann@mni.thm.de>
-         <bcd12350374533ef090ae911be444e702e85134b.camel@perches.com>
-         <d1afd4d3-0dc5-718d-f7b4-f763f367ca1e@mni.thm.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
+        id S1731500AbfE3EXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:23:42 -0400
+Received: from foss.arm.com ([217.140.101.70]:57936 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730049AbfE3EXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 00:23:37 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 105F1374;
+        Wed, 29 May 2019 21:23:37 -0700 (PDT)
+Received: from [10.162.40.143] (p8cg001049571a15.blr.arm.com [10.162.40.143])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED62B3F5AF;
+        Wed, 29 May 2019 21:23:30 -0700 (PDT)
+Subject: Re: [PATCH V5 0/3] arm64/mm: Enable memory hot remove
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, mark.rutland@arm.com, mhocko@suse.com,
+        ira.weiny@intel.com, david@redhat.com, cai@lca.pw,
+        logang@deltatee.com, james.morse@arm.com, cpandya@codeaurora.org,
+        arunks@codeaurora.org, dan.j.williams@intel.com,
+        mgorman@techsingularity.net, osalvador@suse.de,
+        ard.biesheuvel@arm.com
+References: <1559121387-674-1-git-send-email-anshuman.khandual@arm.com>
+ <20190529150611.fc27dee202b4fd1646210361@linux-foundation.org>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <c6e3af6e-27f4-ec3e-5ced-af4f62a9cdff@arm.com>
+Date:   Thu, 30 May 2019 09:53:43 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190529150611.fc27dee202b4fd1646210361@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-05-29 at 21:03 +0200, Tobias Klausmann wrote:
-> thanks for the comments! If really desired i can change the code 
-> further, adapting to your comments, but note that the code was 
-> essentially just moved around to cater to both _probe() and attach(), 
-> intentionally leaving it as it was before the patch!
 
-Up to you.
-My general preference is for human intelligible and simple code.
 
+On 05/30/2019 03:36 AM, Andrew Morton wrote:
+> On Wed, 29 May 2019 14:46:24 +0530 Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> 
+>> This series enables memory hot remove on arm64 after fixing a memblock
+>> removal ordering problem in generic __remove_memory() and one possible
+>> arm64 platform specific kernel page table race condition. This series
+>> is based on latest v5.2-rc2 tag.
+> 
+> Unfortunately this series clashes syntactically and semantically with
+> David Hildenbrand's series "mm/memory_hotplug: Factor out memory block
+> devicehandling".  Could you and David please figure out what we should
+> do here?
+> 
+
+Hello Andrew,
+
+I was able to apply the above mentioned V3 series [1] from David with some changes
+listed below which tests positively on arm64. These changes assume that the arm64
+hot-remove series (current V5) gets applied first.
+
+Changes to David's series
+
+A) Please drop (https://patchwork.kernel.org/patch/10962565/) [v3,04/11]
+
+	- arch_remove_memory() is already being added through hot-remove series
+
+B) Rebase (https://patchwork.kernel.org/patch/10962575/) [v3, 06/11]
+
+	- arm64 hot-remove series adds CONFIG_MEMORY_HOTREMOVE wrapper around
+	  arch_remove_memory() which can be dropped in the rebased patch
+
+C) Rebase (https://patchwork.kernel.org/patch/10962589/) [v3, 09/11]
+
+	- hot-remove series moves arch_remove_memory() before memblock_[free|remove]()
+	- So remove_memory_block_devices() should be moved before arch_remove_memory()
+	  in it's new position
+
+David,
+
+Please do let me know if the plan sounds good or you have some other suggestions.
+
+- Anshuman
+
+[1] https://patchwork.kernel.org/project/linux-mm/list/?series=123133 
