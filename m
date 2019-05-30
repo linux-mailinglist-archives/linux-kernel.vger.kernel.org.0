@@ -2,45 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 760CA2EE22
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:44:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFD4F2F224
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:19:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732873AbfE3Dol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:44:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60480 "EHLO mail.kernel.org"
+        id S1730308AbfE3DP2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:15:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732380AbfE3DU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:56 -0400
+        id S1729263AbfE3DMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:51 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 582EC2498D;
-        Thu, 30 May 2019 03:20:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBC7E244E8;
+        Thu, 30 May 2019 03:12:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186455;
-        bh=Ff4fiUhKF78asIqhF4O+7RlfmrvJnhFpQLyghkBMiuQ=;
+        s=default; t=1559185971;
+        bh=pBp0MadGZ6iq4Rn25Lwz6Ox1cKj7Tsg+bto5JUfxHtg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K6PNh9Jnt+FmxYuQqUhP/vs14ff2m3AJ7RJUc3pfwJoJirYNjR9jI7C55G9bN2u42
-         yY0whLGJ1gMF6XMGc4GQfNylBFEumLt0H1qba53zh2Uq+ZHrse+4oB/I4t6A9r2UuW
-         iPjrpXBCS8RInF3oqYGdSBCWDk8IpKtE857Z0zzA=
+        b=nK5dPtAK2GhZMz0I+TaPDw4DsliUuBH3BSXe8SkJf3Sk6QBRMIcG3migqLbCYG1LS
+         kNP9o/QgnfpM9xdIZVNZUyRiwAf5uuWudZ48y11S+pAt0Y0A4JZT/YA37coH5NhCkK
+         cM109w/fB0JU7LbTh6IWbB0svTCcx7Q7WVzo7s/s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Mitsuo Hayasaka <mitsuo.hayasaka.hu@hitachi.com>,
-        Nicolai Stange <nstange@suse.de>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 068/128] x86/irq/64: Limit IST stack overflow check to #DB stack
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 402/405] extcon: axp288: Add a depends on ACPI to the Kconfig entry
 Date:   Wed, 29 May 2019 20:06:40 -0700
-Message-Id: <20190530030446.997261154@linuxfoundation.org>
+Message-Id: <20190530030600.887026935@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,80 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7dbcf2b0b770eeb803a416ee8dcbef78e6389d40 ]
+[ Upstream commit fa3c098c2d52a268f6372fa053932e11f50cecb1 ]
 
-Commit
+As Hans de Goede pointed, using this driver without ACPI
+makes little sense, so add ACPI dependency to Kconfig entry
+to fix a build error while CONFIG_ACPI is not set.
 
-  37fe6a42b343 ("x86: Check stack overflow in detail")
+drivers/extcon/extcon-axp288.c: In function 'axp288_extcon_probe':
+drivers/extcon/extcon-axp288.c:363:20: error: dereferencing pointer to incomplete type
+    put_device(&adev->dev);
 
-added a broad check for the full exception stack area, i.e. it considers
-the full exception stack area as valid.
-
-That's wrong in two aspects:
-
- 1) It does not check the individual areas one by one
-
- 2) #DF, NMI and #MCE are not enabling interrupts which means that a
-    regular device interrupt cannot happen in their context. In fact if a
-    device interrupt hits one of those IST stacks that's a bug because some
-    code path enabled interrupts while handling the exception.
-
-Limit the check to the #DB stack and consider all other IST stacks as
-'overflow' or invalid.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Mitsuo Hayasaka <mitsuo.hayasaka.hu@hitachi.com>
-Cc: Nicolai Stange <nstange@suse.de>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190414160143.682135110@linutronix.de
+Fixes: 0cf064db948a ("extcon: axp288: Convert to use acpi_dev_get_first_match_dev()")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Suggested-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/irq_64.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/extcon/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/irq_64.c b/arch/x86/kernel/irq_64.c
-index bcd1b82c86e81..005e9a77a664e 100644
---- a/arch/x86/kernel/irq_64.c
-+++ b/arch/x86/kernel/irq_64.c
-@@ -25,9 +25,18 @@ int sysctl_panic_on_stackoverflow;
- /*
-  * Probabilistic stack overflow check:
-  *
-- * Only check the stack in process context, because everything else
-- * runs on the big interrupt stacks. Checking reliably is too expensive,
-- * so we just check from interrupts.
-+ * Regular device interrupts can enter on the following stacks:
-+ *
-+ * - User stack
-+ *
-+ * - Kernel task stack
-+ *
-+ * - Interrupt stack if a device driver reenables interrupts
-+ *   which should only happen in really old drivers.
-+ *
-+ * - Debug IST stack
-+ *
-+ * All other contexts are invalid.
-  */
- static inline void stack_overflow_check(struct pt_regs *regs)
- {
-@@ -52,8 +61,8 @@ static inline void stack_overflow_check(struct pt_regs *regs)
- 		return;
+diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
+index 540e8cd16ee6e..db3bcf96b98fb 100644
+--- a/drivers/extcon/Kconfig
++++ b/drivers/extcon/Kconfig
+@@ -30,7 +30,7 @@ config EXTCON_ARIZONA
  
- 	oist = this_cpu_ptr(&orig_ist);
--	estack_top = (u64)oist->ist[0] - EXCEPTION_STKSZ + STACK_TOP_MARGIN;
--	estack_bottom = (u64)oist->ist[N_EXCEPTION_STACKS - 1];
-+	estack_bottom = (u64)oist->ist[DEBUG_STACK];
-+	estack_top = estack_bottom - DEBUG_STKSZ + STACK_TOP_MARGIN;
- 	if (regs->sp >= estack_top && regs->sp <= estack_bottom)
- 		return;
- 
+ config EXTCON_AXP288
+ 	tristate "X-Power AXP288 EXTCON support"
+-	depends on MFD_AXP20X && USB_SUPPORT && X86
++	depends on MFD_AXP20X && USB_SUPPORT && X86 && ACPI
+ 	select USB_ROLE_SWITCH
+ 	help
+ 	  Say Y here to enable support for USB peripheral detection
 -- 
 2.20.1
 
