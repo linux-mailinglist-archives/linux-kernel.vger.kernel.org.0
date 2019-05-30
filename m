@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FA5A2F225
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:19:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F9F12F08F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:05:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730455AbfE3ES7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:18:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38826 "EHLO mail.kernel.org"
+        id S1731681AbfE3EFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:05:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730306AbfE3DP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:29 -0400
+        id S1731252AbfE3DRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:48 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C06224547;
-        Thu, 30 May 2019 03:15:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1AC824725;
+        Thu, 30 May 2019 03:17:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186128;
-        bh=SnqwmFzw03K1gcPmMYOzxHxxvJbpotaVF5rgolxW8i4=;
+        s=default; t=1559186267;
+        bh=UJiPpQOR8Dhm936UzxmqRdc9QwzhXyAeIt40ybzJZ4E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nspBsodjbrLd/8/s9iJpVKZg+LJz0J/qZFSauCBNZl/oIYei4WQhXfgBwJ94j2Abw
-         1wz7EXb9M3rMDRn5AAC05iLogzpsS1/A+fUMnbUn2MskbpErLZWTro/g0bPr4bvh4i
-         AdHSJe2ZABGg54JEOhlBGoFeCu57ubIYRyGNIpBg=
+        b=0LKpMCeGDvyyGVWBzoVbciG3u4dWMuxt0J3awRe4XbjaS4rVrVGsEaHj5m5Twyn9l
+         3Kdzs6BGaCPKbI2HnQNr1kIYLoU4D5/shIca0qnywLQnB0aGldFSKC0k9Rw2/Z3CTZ
+         3RkZDATVrXyVgvZYlzsuu/Diz5j8ak9RbFwfN+z4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Samson Tam <Samson.Tam@amd.com>,
-        Aric Cyr <Aric.Cyr@amd.com>, Anthony Koo <Anthony.Koo@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 289/346] drm/amd/display: Link train only when link is DP and backend is enabled
+Subject: [PATCH 4.19 204/276] arm64: cpu_ops: fix a leaked reference by adding missing of_node_put
 Date:   Wed, 29 May 2019 20:06:02 -0700
-Message-Id: <20190530030555.524480172@linuxfoundation.org>
+Message-Id: <20190530030537.889697689@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,57 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 66acd4418d7de131ef3831e52a8af3d2480e5b15 ]
+[ Upstream commit 92606ec9285fb84cd9b5943df23f07d741384bfc ]
 
-[Why]
-In certain cases we do link training when we don't have a backend.
+The call to of_get_next_child returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-[How]
-In dc_link_set_preferred_link_settings(), store preferred link settings
-first and then verify that the link is DP and the link stream's backend is
-enabled.  If either is false, then we will not do any link retraining.
+Detected by coccinelle with the following warnings:
+  ./arch/arm64/kernel/cpu_ops.c:102:1-7: ERROR: missing of_node_put;
+  acquired a node pointer with refcount incremented on line 69, but
+  without a corresponding object release within this function.
 
-Signed-off-by: Samson Tam <Samson.Tam@amd.com>
-Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
-Acked-by: Anthony Koo <Anthony.Koo@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/cpu_ops.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
-index 5af2ea1f201d3..68529acba015f 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -524,6 +524,14 @@ void dc_link_set_preferred_link_settings(struct dc *dc,
- 	struct dc_stream_state *link_stream;
- 	struct dc_link_settings store_settings = *link_setting;
- 
-+	link->preferred_link_setting = store_settings;
-+
-+	/* Retrain with preferred link settings only relevant for
-+	 * DP signal type
-+	 */
-+	if (!dc_is_dp_signal(link->connector_signal))
-+		return;
-+
- 	for (i = 0; i < MAX_PIPES; i++) {
- 		pipe = &dc->current_state->res_ctx.pipe_ctx[i];
- 		if (pipe->stream && pipe->stream->sink
-@@ -539,7 +547,10 @@ void dc_link_set_preferred_link_settings(struct dc *dc,
- 
- 	link_stream = link->dc->current_state->res_ctx.pipe_ctx[i].stream;
- 
--	link->preferred_link_setting = store_settings;
-+	/* Cannot retrain link if backend is off */
-+	if (link_stream->dpms_off)
-+		return;
-+
- 	if (link_stream)
- 		decide_link_settings(link_stream, &store_settings);
- 
+diff --git a/arch/arm64/kernel/cpu_ops.c b/arch/arm64/kernel/cpu_ops.c
+index ea001241bdd47..00f8b8612b69f 100644
+--- a/arch/arm64/kernel/cpu_ops.c
++++ b/arch/arm64/kernel/cpu_ops.c
+@@ -85,6 +85,7 @@ static const char *__init cpu_read_enable_method(int cpu)
+ 				pr_err("%pOF: missing enable-method property\n",
+ 					dn);
+ 		}
++		of_node_put(dn);
+ 	} else {
+ 		enable_method = acpi_get_enable_method(cpu);
+ 		if (!enable_method) {
 -- 
 2.20.1
 
