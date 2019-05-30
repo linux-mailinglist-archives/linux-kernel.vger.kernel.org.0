@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F01CA2EE6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:47:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB4C2F4B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732916AbfE3DrM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:47:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58956 "EHLO mail.kernel.org"
+        id S2388643AbfE3Eka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:40:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732255AbfE3DUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:35 -0400
+        id S1729092AbfE3DMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:32 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B92524923;
-        Thu, 30 May 2019 03:20:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 165CE21BE2;
+        Thu, 30 May 2019 03:12:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186435;
-        bh=kB/h9OSGZn7xh4Eb8ehn9ecumyzZ8ps3aIb2htEVavY=;
+        s=default; t=1559185952;
+        bh=R/jHQoHhzUBZoo0xB8dbxQm1qlSAWS2p063ehpSGLWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sdY0VFoj8f1lqnk2jPd6PuwaM4CdRR7acoHQUXrciX5KqegRmUg4Lcd487bem1PPA
-         Z9A/IvJ++wQ2f336GSbd2eEv4Nf12EybCHMojVIUBhJwsXgCWNTy5dQsrLVPG/kxaM
-         OtoP8ns3XniwdKGcr4L1Nkal/fy1VoIs5BspeBuE=
+        b=NSh0Zymtk6Tf43+QsqcaPPXVkBYrKw/ZKEhVz+dC7Ej2mDlKt+PbqpTuMZm33pNk/
+         zgQylh0fXRG0xiOWFORbg1VjfLQRnLYsUb0yDr6u5vbnzG4pq1aYgywJRxOvn5iczC
+         kKOMEoS7+P5jS2Wwo+np1ZPzVIqQFhGGxw2wKZMw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Mark Brown <broonie@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 030/128] ASoC: imx: fix fiq dependencies
-Date:   Wed, 29 May 2019 20:06:02 -0700
-Message-Id: <20190530030440.030167336@linuxfoundation.org>
+Subject: [PATCH 5.1 365/405] media: saa7146: avoid high stack usage with clang
+Date:   Wed, 29 May 2019 20:06:03 -0700
+Message-Id: <20190530030559.069104642@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +46,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ea751227c813ab833609afecfeedaf0aa26f327e ]
+[ Upstream commit 03aa4f191a36f33fce015387f84efa0eee94408e ]
 
-During randconfig builds, I occasionally run into an invalid configuration
-of the freescale FIQ sound support:
+Two saa7146/hexium files contain a construct that causes a warning
+when built with clang:
 
-WARNING: unmet direct dependencies detected for SND_SOC_IMX_PCM_FIQ
-  Depends on [m]: SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_IMX_SOC [=m]
-  Selected by [y]:
-  - SND_SOC_FSL_SPDIF [=y] && SOUND [=y] && !UML && SND [=y] && SND_SOC [=y] && SND_IMX_SOC [=m]!=n && (MXC_TZIC [=n] || MXC_AVIC [=y])
+drivers/media/pci/saa7146/hexium_orion.c:210:12: error: stack frame size of 2272 bytes in function 'hexium_probe'
+      [-Werror,-Wframe-larger-than=]
+static int hexium_probe(struct saa7146_dev *dev)
+           ^
+drivers/media/pci/saa7146/hexium_gemini.c:257:12: error: stack frame size of 2304 bytes in function 'hexium_attach'
+      [-Werror,-Wframe-larger-than=]
+static int hexium_attach(struct saa7146_dev *dev, struct saa7146_pci_extension_data *info)
+           ^
 
-sound/soc/fsl/imx-ssi.o: In function `imx_ssi_remove':
-imx-ssi.c:(.text+0x28): undefined reference to `imx_pcm_fiq_exit'
-sound/soc/fsl/imx-ssi.o: In function `imx_ssi_probe':
-imx-ssi.c:(.text+0xa64): undefined reference to `imx_pcm_fiq_init'
+This one happens regardless of KASAN, and the problem is that a
+constructor to initialize a dynamically allocated structure leads
+to a copy of that structure on the stack, whereas gcc initializes
+it in place.
 
-The Kconfig warning is a result of the symbol being defined inside of
-the "if SND_IMX_SOC" block, and is otherwise harmless. The link error
-is more tricky and happens with SND_SOC_IMX_SSI=y, which may or may not
-imply FIQ support. However, if SND_SOC_FSL_SSI is set to =m at the same
-time, that selects SND_SOC_IMX_PCM_FIQ as a loadable module dependency,
-which then causes a link failure from imx-ssi.
+Link: https://bugs.llvm.org/show_bug.cgi?id=40776
 
-The solution here is to make SND_SOC_IMX_PCM_FIQ built-in whenever
-one of its potential users is built-in.
-
-Fixes: ff40260f79dc ("ASoC: fsl: refine DMA/FIQ dependencies")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+[hverkuil-cisco@xs4all.nl: fix checkpatch warnings]
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/fsl/Kconfig | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/media/pci/saa7146/hexium_gemini.c | 5 ++---
+ drivers/media/pci/saa7146/hexium_orion.c  | 5 ++---
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
-index a732b3a065c92..8a2873a7899a7 100644
---- a/sound/soc/fsl/Kconfig
-+++ b/sound/soc/fsl/Kconfig
-@@ -172,16 +172,17 @@ config SND_MPC52xx_SOC_EFIKA
+diff --git a/drivers/media/pci/saa7146/hexium_gemini.c b/drivers/media/pci/saa7146/hexium_gemini.c
+index 5817d9cde4d0c..6d8e4afe9673a 100644
+--- a/drivers/media/pci/saa7146/hexium_gemini.c
++++ b/drivers/media/pci/saa7146/hexium_gemini.c
+@@ -270,9 +270,8 @@ static int hexium_attach(struct saa7146_dev *dev, struct saa7146_pci_extension_d
+ 	/* enable i2c-port pins */
+ 	saa7146_write(dev, MC1, (MASK_08 | MASK_24 | MASK_10 | MASK_26));
  
- endif # SND_POWERPC_SOC
+-	hexium->i2c_adapter = (struct i2c_adapter) {
+-		.name = "hexium gemini",
+-	};
++	strscpy(hexium->i2c_adapter.name, "hexium gemini",
++		sizeof(hexium->i2c_adapter.name));
+ 	saa7146_i2c_adapter_prepare(dev, &hexium->i2c_adapter, SAA7146_I2C_BUS_BIT_RATE_480);
+ 	if (i2c_add_adapter(&hexium->i2c_adapter) < 0) {
+ 		DEB_S("cannot register i2c-device. skipping.\n");
+diff --git a/drivers/media/pci/saa7146/hexium_orion.c b/drivers/media/pci/saa7146/hexium_orion.c
+index 0a05176c18ab6..a794f9e5f9908 100644
+--- a/drivers/media/pci/saa7146/hexium_orion.c
++++ b/drivers/media/pci/saa7146/hexium_orion.c
+@@ -231,9 +231,8 @@ static int hexium_probe(struct saa7146_dev *dev)
+ 	saa7146_write(dev, DD1_STREAM_B, 0x00000000);
+ 	saa7146_write(dev, MC2, (MASK_09 | MASK_25 | MASK_10 | MASK_26));
  
-+config SND_SOC_IMX_PCM_FIQ
-+	tristate
-+	default y if SND_SOC_IMX_SSI=y && (SND_SOC_FSL_SSI=m || SND_SOC_FSL_SPDIF=m) && (MXC_TZIC || MXC_AVIC)
-+	select FIQ
-+
- if SND_IMX_SOC
- 
- config SND_SOC_IMX_SSI
- 	tristate
- 	select SND_SOC_FSL_UTILS
- 
--config SND_SOC_IMX_PCM_FIQ
--	tristate
--	select FIQ
--
- comment "SoC Audio support for Freescale i.MX boards:"
- 
- config SND_MXC_SOC_WM1133_EV1
+-	hexium->i2c_adapter = (struct i2c_adapter) {
+-		.name = "hexium orion",
+-	};
++	strscpy(hexium->i2c_adapter.name, "hexium orion",
++		sizeof(hexium->i2c_adapter.name));
+ 	saa7146_i2c_adapter_prepare(dev, &hexium->i2c_adapter, SAA7146_I2C_BUS_BIT_RATE_480);
+ 	if (i2c_add_adapter(&hexium->i2c_adapter) < 0) {
+ 		DEB_S("cannot register i2c-device. skipping.\n");
 -- 
 2.20.1
 
