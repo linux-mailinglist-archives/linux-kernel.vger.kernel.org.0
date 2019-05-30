@@ -2,46 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 746E82FE91
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D4282FE8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 16:54:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbfE3Oxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 10:53:53 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53946 "EHLO
+        id S1727048AbfE3OxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 10:53:18 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54350 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726375AbfE3Oxw (ORCPT
+        by vger.kernel.org with ESMTP id S1725934AbfE3OxR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 10:53:52 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UEprCg062082
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 10:53:50 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2stfmbdr6h-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 10:53:50 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 30 May 2019 15:53:50 +0100
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 30 May 2019 15:53:46 +0100
+        Thu, 30 May 2019 10:53:17 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4UEq1mx068069;
+        Thu, 30 May 2019 10:52:33 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2stgm223uy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 May 2019 10:52:33 -0400
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x4UEqWcQ070369;
+        Thu, 30 May 2019 10:52:32 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2stgm223u5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 May 2019 10:52:32 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x4UCslRK014806;
+        Thu, 30 May 2019 12:55:04 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma01dal.us.ibm.com with ESMTP id 2spwb96ny7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 May 2019 12:55:04 +0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UEqUJo34865584
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4UEqUA542336570
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 30 May 2019 14:52:30 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6085FB205F;
-        Thu, 30 May 2019 14:52:30 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id EF7B1B206E;
+        Thu, 30 May 2019 14:52:29 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D491CB206A;
+        by IMSVA (Postfix) with ESMTP id D3444B2065;
         Thu, 30 May 2019 14:52:29 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.216])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu, 30 May 2019 14:52:29 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 53C5616C5D9E; Thu, 30 May 2019 07:52:31 -0700 (PDT)
+        id 5974916C5D9F; Thu, 30 May 2019 07:52:31 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -50,124 +56,66 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 08/12] rcu: Avoid self-IPI in sync_sched_exp_online_cleanup()
-Date:   Thu, 30 May 2019 07:52:25 -0700
+        kernel-team@android.com,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 09/12] lockdep: Add assertion to check if in an interrupt
+Date:   Thu, 30 May 2019 07:52:26 -0700
+Message-Id: <20190530145229.29565-9-paulmck@linux.ibm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190530145204.GA28526@linux.ibm.com>
 References: <20190530145204.GA28526@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19053014-0064-0000-0000-000003E70D94
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011185; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000286; SDB=6.01210783; UDB=6.00636156; IPR=6.00991817;
- MB=3.00027120; MTD=3.00000008; XFM=3.00000015; UTC=2019-05-30 14:53:49
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19053014-0065-0000-0000-00003DAB9879
-Message-Id: <20190530145229.29565-8-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-30_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=967 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1905300106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sync_sched_exp_online_cleanup() is invoked at online time to handle
-the case where the start of an expedited grace period ran concurrently
-with a CPU being taken offline and then immediately being placed online.
-It checks to see if RCU needs an expedited quiescent state from the
-incoming CPU, sending it an IPI if so.  However, it is quite possible
-that sync_sched_exp_online_cleanup() is running on that CPU, in which
-case it is considerably less overhead to simply request the quiescent
-state locally instead of simulating a self-IPI.
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-This commit therefore places the last few lines of rcu_exp_handler()
-into a new rcu_exp_need_qs() function, which is invoked both by
-rcu_exp_handler() and by sync_sched_exp_online_cleanup() in the self-IPI
-case.
+In rcu_rrupt_from_idle, we want to check if it is called from within an
+interrupt, but want to do such checking only for debug builds. lockdep
+already tracks when we enter an interrupt. Let us expose it as an
+assertion macro so it can be used to assert this.
 
-This also reduces the rcu_exp_handler() function's state space by
-removing the direct call that this smp_call_function_single() uses to
-emulate the requested self-IPI.  This in turn will allow tighter error
-checking in rcu_is_cpu_rrupt_from_idle().
-
+Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+Cc: kernel-team@android.com
+Cc: rcu@vger.kernel.org
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- kernel/rcu/tree_exp.h | 35 +++++++++++++++++++++++++++++------
- 1 file changed, 29 insertions(+), 6 deletions(-)
+ include/linux/lockdep.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index 5390618787b6..de1b4acf6979 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -699,6 +699,16 @@ static int rcu_print_task_exp_stall(struct rcu_node *rnp)
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 6e2377e6c1d6..e8eef38b2213 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -632,11 +632,18 @@ do {									\
+ 			  "IRQs not disabled as expected\n");		\
+ 	} while (0)
  
- #else /* #ifdef CONFIG_PREEMPT_RCU */
- 
-+/* Request an expedited quiescent state. */
-+static void rcu_exp_need_qs(void)
-+{
-+	__this_cpu_write(rcu_data.cpu_no_qs.b.exp, true);
-+	/* Store .exp before .rcu_urgent_qs. */
-+	smp_store_release(this_cpu_ptr(&rcu_data.rcu_urgent_qs), true);
-+	set_tsk_need_resched(current);
-+	set_preempt_need_resched();
-+}
++#define lockdep_assert_in_irq() do {					\
++		WARN_ONCE(debug_locks && !current->lockdep_recursion &&	\
++			  !current->hardirq_context,			\
++			  "Not in hardirq as expected\n");		\
++	} while (0)
 +
- /* Invoked on each online non-idle CPU for expedited quiescent state. */
- static void rcu_exp_handler(void *unused)
- {
-@@ -714,25 +724,38 @@ static void rcu_exp_handler(void *unused)
- 		rcu_report_exp_rdp(this_cpu_ptr(&rcu_data));
- 		return;
- 	}
--	__this_cpu_write(rcu_data.cpu_no_qs.b.exp, true);
--	/* Store .exp before .rcu_urgent_qs. */
--	smp_store_release(this_cpu_ptr(&rcu_data.rcu_urgent_qs), true);
--	set_tsk_need_resched(current);
--	set_preempt_need_resched();
-+	rcu_exp_need_qs();
- }
+ #else
+ # define might_lock(lock) do { } while (0)
+ # define might_lock_read(lock) do { } while (0)
+ # define lockdep_assert_irqs_enabled() do { } while (0)
+ # define lockdep_assert_irqs_disabled() do { } while (0)
++# define lockdep_assert_in_irq() do { } while (0)
+ #endif
  
- /* Send IPI for expedited cleanup if needed at end of CPU-hotplug operation. */
- static void sync_sched_exp_online_cleanup(int cpu)
- {
-+	unsigned long flags;
-+	int my_cpu;
- 	struct rcu_data *rdp;
- 	int ret;
- 	struct rcu_node *rnp;
- 
- 	rdp = per_cpu_ptr(&rcu_data, cpu);
- 	rnp = rdp->mynode;
--	if (!(READ_ONCE(rnp->expmask) & rdp->grpmask))
-+	my_cpu = get_cpu();
-+	/* Quiescent state either not needed or already requested, leave. */
-+	if (!(READ_ONCE(rnp->expmask) & rdp->grpmask) ||
-+	    __this_cpu_read(rcu_data.cpu_no_qs.b.exp)) {
-+		put_cpu();
- 		return;
-+	}
-+	/* Quiescent state needed on current CPU, so set it up locally. */
-+	if (my_cpu == cpu) {
-+		local_irq_save(flags);
-+		rcu_exp_need_qs();
-+		local_irq_restore(flags);
-+		put_cpu();
-+		return;
-+	}
-+	/* Quiescent state needed on some other CPU, send IPI. */
- 	ret = smp_call_function_single(cpu, rcu_exp_handler, NULL, 0);
-+	put_cpu();
- 	WARN_ON_ONCE(ret);
- }
- 
+ #ifdef CONFIG_LOCKDEP
 -- 
 2.17.1
 
