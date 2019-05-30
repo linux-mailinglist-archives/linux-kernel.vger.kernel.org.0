@@ -2,103 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B10A2FA41
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 12:27:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2FCC2FA4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 12:30:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728009AbfE3K1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 06:27:46 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38723 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbfE3K1q (ORCPT
+        id S1726579AbfE3KaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 06:30:01 -0400
+Received: from smtprelay-out1.synopsys.com ([198.182.47.102]:33224 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726029AbfE3KaB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 06:27:46 -0400
-Received: by mail-wm1-f65.google.com with SMTP id t5so3490439wmh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 03:27:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ufaJ69bV1ZdV2vK3Yvd7HZfDeRwHgRdBfrRRr7OPOt8=;
-        b=o3iCfb2a2fgrc7idEDwrALlVpAwduBjxCYeRlqlQkPKhTL0i4dgSRBVrAbwNhkQXYL
-         Wdisx4CZcMfJA1CKl52jrH6KIDjWYnob6ln8s1SZ9bd8j3g3fVOVVBupwADv2jHTWO3M
-         T8BthkgIHqS8ZrGi8WnTvMsMq6R87vVTXjwoen7KfNFqi9y+hLFucC0FCuYKAt34r0pg
-         rNXUxJKWt4kWVWF4YTT+uid/6Cx/Aoe1b2b2XoWslX3ryPN5a6vBJyXiPb3N+zDIAjc1
-         gAeTjXU9avSePSUOtbFOtKQIaS9jzkksbhPpNDGtEPT9G7+4hlbFjFbK+cqfQJInxMYu
-         b4FA==
-X-Gm-Message-State: APjAAAWrLRa6ARum5bf//JwDt/OkyomeTNrLDfAE+q+v1oMJwqslej6F
-        2sZI5vni6XxTwjlCmiX61EQ7gg==
-X-Google-Smtp-Source: APXvYqwCZoROfm1dwQ0BbuZ4fQ3gtir9ydTTXaC6tZ+Z2VET1TLknia55mcrtyiStuIylOJjK8wEIA==
-X-Received: by 2002:a05:600c:1051:: with SMTP id 17mr1836219wmx.10.1559212064154;
-        Thu, 30 May 2019 03:27:44 -0700 (PDT)
-Received: from steredhat.homenet.telecomitalia.it (host253-229-dynamic.248-95-r.retail.telecomitalia.it. [95.248.229.253])
-        by smtp.gmail.com with ESMTPSA id f3sm1958585wre.93.2019.05.30.03.27.42
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 30 May 2019 03:27:43 -0700 (PDT)
-Date:   Thu, 30 May 2019 12:27:40 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        stefanha@redhat.com, mst@redhat.com
-Subject: Re: [PATCH 1/4] vsock/virtio: fix locking around 'the_virtio_vsock'
-Message-ID: <20190530102740.nyg6akggvy2asikt@steredhat.homenet.telecomitalia.it>
-References: <20190528105623.27983-1-sgarzare@redhat.com>
- <20190528105623.27983-2-sgarzare@redhat.com>
- <20190529.212852.1077585415381753122.davem@davemloft.net>
+        Thu, 30 May 2019 06:30:01 -0400
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 7DE91C00FD;
+        Thu, 30 May 2019 10:30:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1559212209; bh=gg8NunW7XsIUu7tJ+B+7jsvCIrIgnJylMlUTpkU5OaY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=JfaWrNGvxdfq5OVVVJUOyO/WniWH1ZwTN88+4vua73kUXzL+7qBWFF4VvxP0SXF7R
+         vxQjdu0KVs1Tuuwno7OB+6Ufbk6tjwcyfOw2xBn/O4AlQXpjfEGhUUV/6S9ZWzpPcI
+         Oov+LRE4fSq+mNF7PsYoBoM+aa4YJHfuFBj2ooWsjX57ZWkf/7lwWP9dXcClip586m
+         Xwp6kOvJX7K/v24iT7FH19sv9lHOMXui32/58RRgG/6/pTEmLEBEUhgspLymjgdggT
+         UI3i3awQlpTBf89CwDeFIV54HuaagwcEC/EFy2QyxuFBiFksAibqVvfsmU7jTsb9EW
+         MDh6ofLlrzIig==
+Received: from [10.116.70.206] (hminas-7480.internal.synopsys.com [10.116.70.206])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPSA id 62570A0093;
+        Thu, 30 May 2019 10:29:56 +0000 (UTC)
+Subject: Re: [PATCH] usb: dwc2: Fix DMA cache alignment issues
+To:     Doug Anderson <dianders@chromium.org>,
+        Martin Schiller <ms@dev.tdt.de>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QW50dGkgU2VwcMOkbMOk?= <a.seppala@gmail.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>
+References: <20190218063730.26870-1-ms@dev.tdt.de>
+ <CAD=FV=Viag00jL-QRLsnyDoXWT5KFyZ3TnMdTPSJ-dbuNNiFVQ@mail.gmail.com>
+From:   Minas Harutyunyan <Minas.Harutyunyan@synopsys.com>
+Message-ID: <7bf6f5dd-6f0f-4470-51c7-d024fc8ef4df@synopsys.com>
+Date:   Thu, 30 May 2019 14:29:31 +0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190529.212852.1077585415381753122.davem@davemloft.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAD=FV=Viag00jL-QRLsnyDoXWT5KFyZ3TnMdTPSJ-dbuNNiFVQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 09:28:52PM -0700, David Miller wrote:
-> From: Stefano Garzarella <sgarzare@redhat.com>
-> Date: Tue, 28 May 2019 12:56:20 +0200
+On 5/29/2019 10:31 PM, Doug Anderson wrote:
+> Hi,
 > 
-> > @@ -68,7 +68,13 @@ struct virtio_vsock {
-> >  
-> >  static struct virtio_vsock *virtio_vsock_get(void)
-> >  {
-> > -	return the_virtio_vsock;
-> > +	struct virtio_vsock *vsock;
-> > +
-> > +	mutex_lock(&the_virtio_vsock_mutex);
-> > +	vsock = the_virtio_vsock;
-> > +	mutex_unlock(&the_virtio_vsock_mutex);
-> > +
-> > +	return vsock;
+> On Sun, Feb 17, 2019 at 10:37 PM Martin Schiller <ms@dev.tdt.de> wrote:
+>>
+>> Insert a padding between data and the stored_xfer_buffer pointer to
+>> ensure they are not on the same cache line.
+>>
+>> Otherwise, the stored_xfer_buffer gets corrupted for IN URBs on
+>> non-cache-coherent systems. (In my case: Lantiq xRX200 MIPS)
+>>
+>> Fixes: 3bc04e28a030 ("usb: dwc2: host: Get aligned DMA in a more supported way")
+>> Fixes: 56406e017a88 ("usb: dwc2: Fix DMA alignment to start at allocated boundary")
+>> Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+>> ---
+>>   drivers/usb/dwc2/hcd.c | 10 +++++++---
+>>   1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> This doesn't do anything as far as I can tell.
+> This patch has been in the back of my mind for a while bug I never got
+> around to it.  Today I was debugging memory corruption problems when
+> using a webcam on dwc2 on rk3288-veyron-jerry.  This patch appears to
+> solve my problems nicely.  Thanks!
 > 
-> No matter what, you will either get the value before it's changed or
-> after it's changed.
+> Tested-by: Douglas Anderson <dianders@chromium.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Cc: <stable@vger.kernel.org>
 > 
-> Since you should never publish the pointer by assigning it until the
-> object is fully initialized, this can never be a problem even without
-> the mutex being there.
-> 
-> Even if you sampled the the_virtio_sock value right before it's being
-> set to NULL by the remove function, that still can happen with the
-> mutex held too.
-
-Yes, I found out when I was answering Jason's question [1]. :(
-
-I proposed to use RCU to solve this issue, do you agree?
-Let me know if there is a better way.
-
-> 
-> This function is also terribly named btw, it implies that a reference
-> count is being taken.  But that's not what this function does, it
-> just returns the pointer value as-is.
-
-What do you think if I remove the function, using directly the_virtio_vsock?
-(should be easier to use with RCU API)
-
-Thanks,
-Stefano
-
-[1] https://lore.kernel.org/netdev/20190529105832.oz3sagbne5teq3nt@steredhat
+Acked-by: Minas Harutyunyan <hminas@synopsys.com>
