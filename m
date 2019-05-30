@@ -2,43 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C12DD2F60F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:53:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2157C2F1B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:15:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389069AbfE3Ewh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:52:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48818 "EHLO mail.kernel.org"
+        id S1731080AbfE3EPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:15:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728232AbfE3DKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:10:49 -0400
+        id S1728521AbfE3DQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:16:02 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1403F2447F;
-        Thu, 30 May 2019 03:10:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BF612449A;
+        Thu, 30 May 2019 03:16:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185848;
-        bh=QVNWfYZwzxl9bw2yAAO6T7NG2zjG5e8grcLVRUtlrrI=;
+        s=default; t=1559186162;
+        bh=jf+s4SK7RpMzJsq9FgaAX31/M1NUE6wB1p0wg35hEgQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WuQ6PRafi1LkXoxtMN+K+c7/FtxUZZJsSvKNKLBCfO+Nvxx2NTCQn3+l8bF1niqc7
-         TEWzvUCH4FFf6KqURqavp5d40stiTv/du8HGsGGDeTrTH9ZI68N7k+SaoNq/abcprQ
-         8VCBPym+4q/5XBrwDZTiXVQkR3HC1S9gJMpH1AiY=
+        b=UKlK3c6Tqq8I7Ft7DCuW9JYFIkUeCcLlwIMeWhTx8EKJWlTg3YjfgmyK9urPx+hPs
+         6bNf2NwY1yPMn8HLMYs8DF6FvUjGibopV4zCb2jWF4i0MLet7zlMGAoHglTB4o7IJg
+         eBXykRml0/zFu5OY9kUyU6D3Tude4TGv3Xn9K5Q4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 169/405] sched/rt: Check integer overflow at usec to nsec conversion
-Date:   Wed, 29 May 2019 20:02:47 -0700
-Message-Id: <20190530030549.678437762@linuxfoundation.org>
+        stable@vger.kernel.org, Trac Hoang <trac.hoang@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.19 010/276] mmc: sdhci-iproc: cygnus: Set NO_HISPD bit to fix HS50 data hold time problem
+Date:   Wed, 29 May 2019 20:02:48 -0700
+Message-Id: <20190530030524.206336704@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,57 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1a010e29cfa00fee2888fd2fd4983f848cbafb58 ]
+From: Trac Hoang <trac.hoang@broadcom.com>
 
-Example of unhandled overflows:
+commit b7dfa695afc40d5396ed84b9f25aa3754de23e39 upstream.
 
- # echo 18446744073709651 > cpu.rt_runtime_us
- # cat cpu.rt_runtime_us
- 99
+The iproc host eMMC/SD controller hold time does not meet the
+specification in the HS50 mode. This problem can be mitigated
+by disabling the HISPD bit; thus forcing the controller output
+data to be driven on the falling clock edges rather than the
+rising clock edges.
 
- # echo 18446744073709900 > cpu.rt_period_us
- # cat cpu.rt_period_us
- 348
+This change applies only to the Cygnus platform.
 
-After this patch they will fail with -EINVAL.
+Stable tag (v4.12+) chosen to assist stable kernel maintainers so that
+the change does not produce merge conflicts backporting to older kernel
+versions. In reality, the timing bug existed since the driver was first
+introduced but there is no need for this driver to be supported in kernel
+versions that old.
 
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/155125501739.293431.5252197504404771496.stgit@buzz
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Trac Hoang <trac.hoang@broadcom.com>
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- kernel/sched/rt.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/mmc/host/sdhci-iproc.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 90fa23d36565d..1e6b909dca367 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -2555,6 +2555,8 @@ int sched_group_set_rt_runtime(struct task_group *tg, long rt_runtime_us)
- 	rt_runtime = (u64)rt_runtime_us * NSEC_PER_USEC;
- 	if (rt_runtime_us < 0)
- 		rt_runtime = RUNTIME_INF;
-+	else if ((u64)rt_runtime_us > U64_MAX / NSEC_PER_USEC)
-+		return -EINVAL;
+--- a/drivers/mmc/host/sdhci-iproc.c
++++ b/drivers/mmc/host/sdhci-iproc.c
+@@ -185,7 +185,8 @@ static const struct sdhci_ops sdhci_ipro
+ };
  
- 	return tg_set_rt_bandwidth(tg, rt_period, rt_runtime);
- }
-@@ -2575,6 +2577,9 @@ int sched_group_set_rt_period(struct task_group *tg, u64 rt_period_us)
- {
- 	u64 rt_runtime, rt_period;
- 
-+	if (rt_period_us > U64_MAX / NSEC_PER_USEC)
-+		return -EINVAL;
-+
- 	rt_period = rt_period_us * NSEC_PER_USEC;
- 	rt_runtime = tg->rt_bandwidth.rt_runtime;
- 
--- 
-2.20.1
-
+ static const struct sdhci_pltfm_data sdhci_iproc_cygnus_pltfm_data = {
+-	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
++	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
++		  SDHCI_QUIRK_NO_HISPD_BIT,
+ 	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN | SDHCI_QUIRK2_HOST_OFF_CARD_ON,
+ 	.ops = &sdhci_iproc_32only_ops,
+ };
 
 
