@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C96F22EC59
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECF5C2ECFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:30:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732140AbfE3DUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:20:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40184 "EHLO mail.kernel.org"
+        id S2388453AbfE3D3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:29:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730497AbfE3DPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:48 -0400
+        id S1732390AbfE3DU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:20:57 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17CA324595;
-        Thu, 30 May 2019 03:15:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2698C24986;
+        Thu, 30 May 2019 03:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186148;
-        bh=QQtSQFa9MxCbMXvIROQN59cBbxs72+r/F/Fi9pUI/No=;
+        s=default; t=1559186457;
+        bh=V5ybFUQ7mgHxpcAmowZsiBRQ2RSIJZL5rVuS2pWA+kw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=twBiDTEqCD1xqbOuqCf5vF6SKblaL2LiyBEShqKM4t+yixDaXoXGF/L0uujjRCHCo
-         5RZV50Sv85eu5Y1JMKeCHgypRIEHwpWIh1G7D2NUbaOesEu1zpuNZCZSBjkEozwsCL
-         xGt2+JckZ2JKZl0Ry5vMNoVRJ2I7kneVkjTzRqZc=
+        b=lT7MSW4d+s2MB1hVkb8Y21Hpkvm+1qoCImT0PA4h/mu3ZYtELNn0cFG4xHuuGj/K6
+         P9DeoWI9oIqWwLZ+9XD4UHt6rrD6eKpNkNm7Fqi6Hl8jFdwx+4XFq8iN3nx0Q1StMK
+         p5eUQYKGVe0W4K6VmPEw9AKUMUnbIL29Q+dpnSiI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Potnuri Bharat Teja <bharat@chelsio.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 330/346] regulator: da9063: Fix notifier mutex lock warning
+Subject: [PATCH 4.9 071/128] RDMA/cxgb4: Fix null pointer dereference on alloc_skb failure
 Date:   Wed, 29 May 2019 20:06:43 -0700
-Message-Id: <20190530030557.487183461@linuxfoundation.org>
+Message-Id: <20190530030447.468743696@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,44 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 29d40b4a5776ec4727c9f0e00a884423dd5e3366 ]
+[ Upstream commit a6d2a5a92e67d151c98886babdc86d530d27111c ]
 
-The mutex for the regulator_dev must be controlled by the caller of
-the regulator_notifier_call_chain(), as described in the comment
-for that function.
+Currently if alloc_skb fails to allocate the skb a null skb is passed to
+t4_set_arp_err_handler and this ends up dereferencing the null skb.  Avoid
+the NULL pointer dereference by checking for a NULL skb and returning
+early.
 
-Failure to mutex lock and unlock surrounding the notifier call results
-in a kernel WARN_ON_ONCE() which will dump a backtrace for the
-regulator_notifier_call_chain() when that function call is first made.
-The mutex can be controlled using the regulator_lock/unlock() API.
-
-Fixes: 69ca3e58d178 ("regulator: da9063: Add Dialog DA9063 voltage regulators support.")
-Suggested-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Signed-off-by: Steve Twiss <stwiss.opensource@diasemi.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Addresses-Coverity: ("Dereference null return")
+Fixes: b38a0ad8ec11 ("RDMA/cxgb4: Set arp error handler for PASS_ACCEPT_RPL messages")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Potnuri Bharat Teja <bharat@chelsio.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/da9063-regulator.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/cxgb4/cm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
-index 8cbcd2a3eb205..d3ea73ab59209 100644
---- a/drivers/regulator/da9063-regulator.c
-+++ b/drivers/regulator/da9063-regulator.c
-@@ -615,9 +615,12 @@ static irqreturn_t da9063_ldo_lim_event(int irq, void *data)
- 		if (regl->info->oc_event.reg != DA9063_REG_STATUS_D)
- 			continue;
- 
--		if (BIT(regl->info->oc_event.lsb) & bits)
-+		if (BIT(regl->info->oc_event.lsb) & bits) {
-+		        regulator_lock(regl->rdev);
- 			regulator_notifier_call_chain(regl->rdev,
- 					REGULATOR_EVENT_OVER_CURRENT, NULL);
-+		        regulator_unlock(regl->rdev);
-+		}
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index a2322b2dbd82c..e5752352e0fb1 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -455,6 +455,8 @@ static struct sk_buff *get_skb(struct sk_buff *skb, int len, gfp_t gfp)
+ 		skb_reset_transport_header(skb);
+ 	} else {
+ 		skb = alloc_skb(len, gfp);
++		if (!skb)
++			return NULL;
  	}
- 
- 	return IRQ_HANDLED;
+ 	t4_set_arp_err_handler(skb, NULL, NULL);
+ 	return skb;
 -- 
 2.20.1
 
