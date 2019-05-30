@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C60E52F170
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:13:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30C362F5AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:49:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729752AbfE3EMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:12:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42806 "EHLO mail.kernel.org"
+        id S1733079AbfE3EtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:49:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730695AbfE3DQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:30 -0400
+        id S1727669AbfE3DLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:14 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82F5B245EA;
-        Thu, 30 May 2019 03:16:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 271ED244A0;
+        Thu, 30 May 2019 03:11:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186189;
-        bh=d0ynFPtdGmt3C0L85voa+MD7+1VbO0i7QBEovZkzBqw=;
+        s=default; t=1559185874;
+        bh=ZnKmzH2d36q/ebULNOmESAOuV8j+Oxu0N0V/yWvpEL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2TMeZUwWv7hnmnuNJoO6JwzqZCTZ+zjjtwItb55mHfiZbD8U8v7WALT018M9V4rUx
-         sQrOSdHvqZEo8XFZjzR7Dz5EuXnYkvk3XZWD/SnNCbsvTVI3SLyBhpP7UcCop2ssdU
-         rA/cNHT8CJtVGR4CFT6TeLRgaKBgZ8QMZKMWOxrI=
+        b=pw53CBt9YKPtL/I56ZGfztDLl22s3oQyQADqgveaq+ETDbdMRaUHdxUm1wmu3m9aF
+         W0JD7TdmWy9E0OtIe6x9R5svlNC1UO1VJaPOqrlkAoXbWhRKFFruF21F/WhGlEo6jN
+         5AVozNzwLH420vvAppClBlVwHIGPbppucZ/tQFZw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mac Chiang <mac.chiang@intel.com>,
-        Benson Leung <bleung@chromium.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Thomas Huth <thuth@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 058/276] ASoC: Intel: kbl_da7219_max98357a: Map BTN_0 to KEY_PLAYPAUSE
+Subject: [PATCH 5.1 218/405] s390/mm: silence compiler warning when compiling without CONFIG_PGSTE
 Date:   Wed, 29 May 2019 20:03:36 -0700
-Message-Id: <20190530030529.129690606@linuxfoundation.org>
+Message-Id: <20190530030552.107241744@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 16ec5dfe0327ddcf279957bffe4c8fe527088c63 ]
+[ Upstream commit 81a8f2beb32a5951ecf04385301f50879abc092b ]
 
-On kbl_rt5663_max98927, commit 38a5882e4292
-    ("ASoC: Intel: kbl_rt5663_max98927: Map BTN_0 to KEY_PLAYPAUSE")
-    This key pair mapping to play/pause when playing Youtube
+If CONFIG_PGSTE is not set (e.g. when compiling without KVM), GCC complains:
 
-The Android 3.5mm Headset jack specification mentions that BTN_0 should
-be mapped to KEY_MEDIA, but this is less logical than KEY_PLAYPAUSE,
-which has much broader userspace support.
+  CC      arch/s390/mm/pgtable.o
+arch/s390/mm/pgtable.c:413:15: warning: ‘pmd_alloc_map’ defined but not
+ used [-Wunused-function]
+ static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
+               ^~~~~~~~~~~~~
 
-For example, the Chrome OS userspace now supports KEY_PLAYPAUSE to toggle
-play/pause of videos and audio, but does not handle KEY_MEDIA.
+Wrap the function with "#ifdef CONFIG_PGSTE" to silence the warning.
 
-Furthermore, Android itself now supports KEY_PLAYPAUSE equivalently, as the
-new USB headset spec requires KEY_PLAYPAUSE for BTN_0.
-https://source.android.com/devices/accessories/headset/usb-headset-spec
-
-The same fix is required on Chrome kbl_da7219_max98357a.
-
-Signed-off-by: Mac Chiang <mac.chiang@intel.com>
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/intel/boards/kbl_da7219_max98357a.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/mm/pgtable.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/sound/soc/intel/boards/kbl_da7219_max98357a.c b/sound/soc/intel/boards/kbl_da7219_max98357a.c
-index 38f6ab74709d0..07491a0f8fb8b 100644
---- a/sound/soc/intel/boards/kbl_da7219_max98357a.c
-+++ b/sound/soc/intel/boards/kbl_da7219_max98357a.c
-@@ -188,7 +188,7 @@ static int kabylake_da7219_codec_init(struct snd_soc_pcm_runtime *rtd)
+diff --git a/arch/s390/mm/pgtable.c b/arch/s390/mm/pgtable.c
+index 8485d6dc27549..9ebd01219812c 100644
+--- a/arch/s390/mm/pgtable.c
++++ b/arch/s390/mm/pgtable.c
+@@ -410,6 +410,7 @@ static inline pmd_t pmdp_flush_lazy(struct mm_struct *mm,
+ 	return old;
+ }
  
- 	jack = &ctx->kabylake_headset;
++#ifdef CONFIG_PGSTE
+ static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
+ {
+ 	pgd_t *pgd;
+@@ -427,6 +428,7 @@ static pmd_t *pmd_alloc_map(struct mm_struct *mm, unsigned long addr)
+ 	pmd = pmd_alloc(mm, pud, addr);
+ 	return pmd;
+ }
++#endif
  
--	snd_jack_set_key(jack->jack, SND_JACK_BTN_0, KEY_MEDIA);
-+	snd_jack_set_key(jack->jack, SND_JACK_BTN_0, KEY_PLAYPAUSE);
- 	snd_jack_set_key(jack->jack, SND_JACK_BTN_1, KEY_VOLUMEUP);
- 	snd_jack_set_key(jack->jack, SND_JACK_BTN_2, KEY_VOLUMEDOWN);
- 	snd_jack_set_key(jack->jack, SND_JACK_BTN_3, KEY_VOICECOMMAND);
+ pmd_t pmdp_xchg_direct(struct mm_struct *mm, unsigned long addr,
+ 		       pmd_t *pmdp, pmd_t new)
 -- 
 2.20.1
 
