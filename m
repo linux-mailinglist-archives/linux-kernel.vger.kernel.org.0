@@ -2,70 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 942BF2FC63
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 15:32:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5BCE2FC65
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 15:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbfE3NcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 09:32:01 -0400
-Received: from mga14.intel.com ([192.55.52.115]:47737 "EHLO mga14.intel.com"
+        id S1727210AbfE3NcV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 09:32:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726253AbfE3NcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 09:32:01 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 May 2019 06:32:00 -0700
-X-ExtLoop1: 1
-Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.6])
-  by orsmga001.jf.intel.com with ESMTP; 30 May 2019 06:31:58 -0700
-Date:   Thu, 30 May 2019 21:32:15 +0800
-From:   kernel test robot <rong.a.chen@intel.com>
-To:     dsterba@suse.cz, Johannes Thumshirn <jthumshirn@suse.de>,
-        lkp@01.org, Linus Torvalds <torvalds@linux-foundation.org>,
-        Nikolay Borisov <nborisov@suse.com>, WenRuo Qu <wqu@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [btrfs] 2996e1f8bc: aim7.jobs-per-min -13.2% regression
-Message-ID: <20190530133215.GC22325@shao2-debian>
-References: <20190527091719.GS19312@shao2-debian>
- <20190527114914.GG15290@suse.cz>
+        id S1726253AbfE3NcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 09:32:21 -0400
+Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A85D0259B8;
+        Thu, 30 May 2019 13:32:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1559223140;
+        bh=6bTBp+WOjfsPhCq3IwAUB9bCrZwGkgQM1ytUSu7ur/o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=E/UqNYGgr+xj7a2UDunARGNf4Sed7f9pJLs6OAIF+7fdUHxlf3jLiTIY6b8QS8khq
+         Dw6r28XvpW0vlPZvRXV04amvDmExxn8L9z6MM6v6PLVPK3Mrnyo82aMcQu8qx8FWqr
+         elz0tRMcPXYtLsBTsnyuCVQO95ODyHP4naLO+UGE=
+Date:   Thu, 30 May 2019 06:32:20 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.1 000/405] 5.1.6-stable review
+Message-ID: <20190530133220.GB21642@kroah.com>
+References: <20190530030540.291644921@linuxfoundation.org>
+ <0f0f1d03-64c9-7197-c82d-1ca27142be00@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190527114914.GG15290@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <0f0f1d03-64c9-7197-c82d-1ca27142be00@nvidia.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 27, 2019 at 01:49:14PM +0200, David Sterba wrote:
-> On Mon, May 27, 2019 at 05:17:19PM +0800, kernel test robot wrote:
-> > Greeting,
+On Thu, May 30, 2019 at 02:23:11PM +0100, Jon Hunter wrote:
+> 
+> On 30/05/2019 03:59, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.1.6 release.
+> > There are 405 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > FYI, we noticed a -13.2% regression of aim7.jobs-per-min due to commit:
+> > Responses should be made by Sat 01 Jun 2019 03:01:59 AM UTC.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.1.6-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.1.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> That's interesting and worth an investigation. This should not happen,
-> the code is almost the same, moved from one function to another and the
-> call is direct. I'd suspect some low-level causes like cache effects or
-> branching, the perf-stats.i.* show some differences.
+> All tests are passing for Tegra ...
 > 
-> Other stats say (slabinfo.*extent_buffer) that there was less work over
-> the period. The slab object counter says that the object reuse was
-> higher in the bad case.
+> Test results for stable-v5.1:
+>     12 builds:	12 pass, 0 fail
+>     22 boots:	22 pass, 0 fail
+>     32 tests:	32 pass, 0 fail
 > 
-> And there are many stats that show two digit difference, I'm trying to
-> make some sense of that, eg. if memory placement on NUMA nodes can
-> affect the speed of checksumming (changed by the patch)
+> Linux version:	5.1.6-rc1-g6df8e06
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra20-ventana,
+>                 tegra210-p2371-2180, tegra30-cardhu-a04
 > 
-> So I wonder how reliable the test is and if it really does the same
-> thing in both cases or if there's some subtle change in the patch that
-> we've missed.
 
-Hi,
+Wonderful, thanks for testing all of these and letting me know.
 
-The test is unstable, we can't reproduce the issue. It's probably a false
-positive, sorry for the inconvenience.
-
-Best Regards,
-Rong Chen
+greg k-h
