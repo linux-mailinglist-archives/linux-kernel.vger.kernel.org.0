@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BB8D2F509
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA4EA2F283
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:22:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388067AbfE3Ent (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:43:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53628 "EHLO mail.kernel.org"
+        id S1731731AbfE3EWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:22:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728840AbfE3DMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:08 -0400
+        id S1730089AbfE3DPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:04 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8769244E8;
-        Thu, 30 May 2019 03:12:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3B892457B;
+        Thu, 30 May 2019 03:15:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185927;
-        bh=giia1H8fV3MI0n0b6NEl9yVmTOqXajqyIE74fhzbvmw=;
+        s=default; t=1559186103;
+        bh=bGWh8woQtXz5m+43YaRhu03gvWUMuFyE+qLFTPAiZ50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bDgbuE5MiK0P6olwkawb4cbuDP0Y1D7kWvhJXPH+4CSQB9akouI/UMHbFYEzVP9m+
-         YjbDoUJXmdu8imdztCz5OJEByBvQS7ykOSWr/ZMr3HP0HhUg31JIQLp5fWc95AVTBj
-         Znsi9TZG1GMHsWG0HODjoXvY1iAmSYmWysFN8YFI=
+        b=bJq2LPSahOZVIkPuPqXwv30AtT+Qe0JD6+N8P35TR929JEwaBuZJj9eF+eaY7nQ7d
+         1cxw/7GBQCRH9yd2InX3t0K+5gTEei99UPHudzG9N5Cwuca1E82/f7w6P8uXJDlqkh
+         vfF+16TjkMJPDibkrcy8uCDMMuZGF/I4+aBLhK/E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 319/405] selinux: avoid uninitialized variable warning
+Subject: [PATCH 5.0 244/346] chardev: add additional check for minor range overlap
 Date:   Wed, 29 May 2019 20:05:17 -0700
-Message-Id: <20190530030556.904947838@linuxfoundation.org>
+Message-Id: <20190530030553.382956498@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,76 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 98bbbb76f2edcfb8fb2b8f4b3ccc7b6e99d64bd8 ]
+[ Upstream commit de36e16d1557a0b6eb328bc3516359a12ba5c25c ]
 
-clang correctly points out a code path that would lead
-to an uninitialized variable use:
+Current overlap checking cannot correctly handle
+a case which is baseminor < existing baseminor &&
+baseminor + minorct > existing baseminor + minorct.
 
-security/selinux/netlabel.c:310:6: error: variable 'addr' is used uninitialized whenever 'if' condition is false
-      [-Werror,-Wsometimes-uninitialized]
-        if (ip_hdr(skb)->version == 4) {
-            ^~~~~~~~~~~~~~~~~~~~~~~~~
-security/selinux/netlabel.c:322:40: note: uninitialized use occurs here
-        rc = netlbl_conn_setattr(ep->base.sk, addr, &secattr);
-                                              ^~~~
-security/selinux/netlabel.c:310:2: note: remove the 'if' if its condition is always true
-        if (ip_hdr(skb)->version == 4) {
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-security/selinux/netlabel.c:291:23: note: initialize the variable 'addr' to silence this warning
-        struct sockaddr *addr;
-                             ^
-                              = NULL
-
-This is probably harmless since we should not see ipv6 packets
-of CONFIG_IPV6 is disabled, but it's better to rearrange the code
-so this cannot happen.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-[PM: removed old patchwork link, fixed checkpatch.pl style errors]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/selinux/netlabel.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ fs/char_dev.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/security/selinux/netlabel.c b/security/selinux/netlabel.c
-index 186e727b737b9..6fd9954e1c085 100644
---- a/security/selinux/netlabel.c
-+++ b/security/selinux/netlabel.c
-@@ -288,11 +288,8 @@ int selinux_netlbl_sctp_assoc_request(struct sctp_endpoint *ep,
- 	int rc;
- 	struct netlbl_lsm_secattr secattr;
- 	struct sk_security_struct *sksec = ep->base.sk->sk_security;
--	struct sockaddr *addr;
- 	struct sockaddr_in addr4;
--#if IS_ENABLED(CONFIG_IPV6)
- 	struct sockaddr_in6 addr6;
--#endif
- 
- 	if (ep->base.sk->sk_family != PF_INET &&
- 				ep->base.sk->sk_family != PF_INET6)
-@@ -310,16 +307,15 @@ int selinux_netlbl_sctp_assoc_request(struct sctp_endpoint *ep,
- 	if (ip_hdr(skb)->version == 4) {
- 		addr4.sin_family = AF_INET;
- 		addr4.sin_addr.s_addr = ip_hdr(skb)->saddr;
--		addr = (struct sockaddr *)&addr4;
--#if IS_ENABLED(CONFIG_IPV6)
--	} else {
-+		rc = netlbl_conn_setattr(ep->base.sk, (void *)&addr4, &secattr);
-+	} else if (IS_ENABLED(CONFIG_IPV6) && ip_hdr(skb)->version == 6) {
- 		addr6.sin6_family = AF_INET6;
- 		addr6.sin6_addr = ipv6_hdr(skb)->saddr;
--		addr = (struct sockaddr *)&addr6;
--#endif
-+		rc = netlbl_conn_setattr(ep->base.sk, (void *)&addr6, &secattr);
-+	} else {
-+		rc = -EAFNOSUPPORT;
+diff --git a/fs/char_dev.c b/fs/char_dev.c
+index a279c58fe3606..8a63cfa290053 100644
+--- a/fs/char_dev.c
++++ b/fs/char_dev.c
+@@ -159,6 +159,12 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
+ 			ret = -EBUSY;
+ 			goto out;
+ 		}
++
++		if (new_min < old_min && new_max > old_max) {
++			ret = -EBUSY;
++			goto out;
++		}
++
  	}
  
--	rc = netlbl_conn_setattr(ep->base.sk, addr, &secattr);
- 	if (rc == 0)
- 		sksec->nlbl_state = NLBL_LABELED;
- 
+ 	cd->next = *cp;
 -- 
 2.20.1
 
