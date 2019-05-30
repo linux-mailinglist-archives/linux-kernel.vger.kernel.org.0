@@ -2,82 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 374792F90D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:12:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E2792F917
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 11:16:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfE3JMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 05:12:00 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34503 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfE3JMA (ORCPT
+        id S1727223AbfE3JQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 05:16:47 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:54923 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbfE3JQq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 05:12:00 -0400
-Received: by mail-lf1-f66.google.com with SMTP id v18so4439985lfi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 02:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=voAp2WtjCrorqQ5ljFVovFNN+W4jtil5Y8wsKYlsKkY=;
-        b=AljnxgrcoViOjePLPkPD/RTOG6RAXos1o39z1MBQxUJXhCIvWU2t+ZVa8IUEWmSojD
-         J7PdDiDHIaJT0U5E9J6N1bWJPMWoBHMHvxTGmK/s/+/qTiGjAMiVg7HgX6YdtenYpSeT
-         TqfBLc2tsAHrhgq5uZHORqxAB4XQPHVUD+9j556B6kymMdNLVUqe9B76zgGqMqN/bCLv
-         T27ZgOA5hKVXKudSC1VVCtYLuf5W5U1zD20ts5kTaAmZRFqubrCyf4JQqHaNcma+TETC
-         v4dIfV3XTVN3pnw1IlDpaZduN+QmY1RzkCRPSbKBtAqFRQEOv6wOtwO4OMAEKokE8tzJ
-         jK9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=voAp2WtjCrorqQ5ljFVovFNN+W4jtil5Y8wsKYlsKkY=;
-        b=rXzLm4iydXILbwhLFH7VFO0tKliSpvpi0+Ndx1h8I1SSZp0+C2MW/ApvxBrUbedxhY
-         YT/heuE7p0tIyz7UueFW5kn8Abrjxrzz2X5sHaw3dUMFKblG/7x1ykbHtZ2kgAzGGhk0
-         fTWJcBwV6TZ1Kb7T8zyoCUtDijtBy74lR53BGIANAj2E+Uo4cO/BJcs4kf+APoXuWtO/
-         8e5gxOwMcLF6GhW6BzBD7+NFpws6XclV2vZvZ69K9NkwTrnoKq7P+34nQIcWCJkFRuVG
-         pTR0y9wGqwUwyLOlFSBvrTDFuJmW52TN10B7IxwfwFi7cRfZ35/rBQKyPLFpJ27NXakd
-         IseQ==
-X-Gm-Message-State: APjAAAXA0/ykGld7km4+Hd0X6M6EmcZdgqyWf29AlroBlQNRXBEJDIAU
-        wbP8yPae4Riztx4OnrFzxjWYBw==
-X-Google-Smtp-Source: APXvYqzERZfjp5gyfdJ4vSHm7vKm0QHcmqOfCD42yB/j3rJj12bVGfN/kYvcSIKAQCASMC6KDMuRpQ==
-X-Received: by 2002:ac2:514b:: with SMTP id q11mr1533656lfd.33.1559207518496;
-        Thu, 30 May 2019 02:11:58 -0700 (PDT)
-Received: from [192.168.0.199] ([31.173.85.229])
-        by smtp.gmail.com with ESMTPSA id t13sm352381lji.47.2019.05.30.02.11.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 30 May 2019 02:11:57 -0700 (PDT)
-Subject: Re: [PATCH] hooks: fix a missing-check bug in selinux_add_mnt_opt()
-To:     Gen Zhang <blackgod016574@gmail.com>, paul@paul-moore.com,
-        sds@tycho.nsa.gov, eparis@parisplace.org, ccross@android.com
-Cc:     selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <20190530080602.GA3600@zhanggen-UX430UQ>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <e92b727a-bf5f-669a-18d8-7518a248c04c@cogentembedded.com>
-Date:   Thu, 30 May 2019 12:11:33 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20190530080602.GA3600@zhanggen-UX430UQ>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 30 May 2019 05:16:46 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190530091644epoutp03f72bd859a780f0ea79a4dfc0e626630d~jazzRiOHC2935829358epoutp03Y
+        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 09:16:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190530091644epoutp03f72bd859a780f0ea79a4dfc0e626630d~jazzRiOHC2935829358epoutp03Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1559207804;
+        bh=McVYQpKiUaxv/paH3JqRdWPw30RiaWGNCyNP7DPucCI=;
+        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+        b=nC5wH4n78rIaUUcgBq6DYRpSgYQNc+iR6oRgPz3tqMgmKGir/fX4F+GuDUnotzTVc
+         N9O0FXLGpuWkqqDGxYms7yP4SgehzfBBgs8N6FdafZ/E+TIBwMCzk0dmEJqvr3ezca
+         G9VX+mRKbAxFyi1QpWoiaDmqGHi+/D3Dqp0CR1GM=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.40.198]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20190530091643epcas5p1008816f8f76a0dab210033426317a653~jazxpL5mn1222212222epcas5p1n;
+        Thu, 30 May 2019 09:16:43 +0000 (GMT)
+X-AuditID: b6c32a4a-973ff70000000fe2-73-5cef9f7b9482
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        32.55.04066.B7F9FEC5; Thu, 30 May 2019 18:16:43 +0900 (KST)
+Mime-Version: 1.0
+Subject: RE: [PATCH 1/2] zstd: pass pointer rathen than structure to
+ functions
+Reply-To: v.narang@samsung.com
+From:   Vaneet Narang <v.narang@samsung.com>
+To:     Maninder Singh <maninder1.s@samsung.com>,
+        "terrelln@fb.com" <terrelln@fb.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "gustavo@embeddedor.com" <gustavo@embeddedor.com>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        AMIT SAHRAWAT <a.sahrawat@samsung.com>,
+        PANKAJ MISHRA <pankaj.m@samsung.com>,
+        Vaneet Narang <v.narang@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <1557468704-3014-1-git-send-email-maninder1.s@samsung.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20190530091327epcms5p11a7725e9c01286b1a7c023737bf4e448@epcms5p1>
+Date:   Thu, 30 May 2019 14:43:27 +0530
+X-CMS-MailID: 20190530091327epcms5p11a7725e9c01286b1a7c023737bf4e448
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAJsWRmVeSWpSXmKPExsWy7bCmlm71/PcxBv8/slpc3J1qMed8C4vF
+        1j2qFt2vZCzOdOda3L/3k8ni8q45bBaH57exWNx7s5XJ4tW/a2wWh07OZXTg9pjdcJHFY8vK
+        m0we6w6qekxsfsfuse2AqkffllWMHp83yQWwR+XYZKQmpqQWKaTmJeenZOal2yp5B8c7x5ua
+        GRjqGlpamCsp5CXmptoqufgE6Lpl5gCdp6RQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUot
+        SMkpMDQq0CtOzC0uzUvXS87PtTI0MDAyBapMyMl43PmAueAuZ8XrmWwNjFs5uxg5OSQETCSu
+        3vrE3sXIxSEksJtRYtan56xdjBwcvAKCEn93CIPUCAsESBza2cYKYgsJyEkcv7GbESKuI3Fi
+        3hpGkHI2AS2Jjy3hIGERgeVMEruOWIKMZBb4xShxfvU5JohdvBIz2p+yQNjSEtuXbwWbwyng
+        LrFj72k2iLioxM3Vb9lh7PfH5jNC2CISrffOMkPYghIPfu4G2yshICOx6604yC4JgW5GiQnn
+        lrNCODMYJU71voFqMJc4f3I+mM0r4CuxfO4VsGUsAqoS32/fglrgItE89wrYk8wC2hLLFr5m
+        BlnALKApsX6XPkSJrMTUU+uYIEr4JHp/P4H7a8c8GFtJ4tzBnVC/SEg86ZwJdYKHxLvuM0yQ
+        cO5jlLh28hDLBEaFWYignoVk8yyEzQsYmVcxSqYWFOempxabFhjlpZYjx+8mRnBq1fLawbjs
+        nM8hRgEORiUe3gn572KEWBPLiitzDzFKcDArifD+XA4U4k1JrKxKLcqPLyrNSS0+xGgKDIOJ
+        zFKiyfnAtJ9XEm9oamRmZmBpYGpsYWaoJM47ifVqjJBAemJJanZqakFqEUwfEwenVAPj6hWS
+        np6iCb/3F3glFHOrnE997q4S6a6RXBDB7GrOVHqttkelYlV/TYXd4qM7j27isjBul/3y8eqT
+        mzcv2nj+7r5Z3Ou3/l4r9xKtXZrLD11/k5tiHVlXymS/qc0/w+XKTPfSD5uFYie+aF7PedR5
+        anTN0TfR6byt2+Y9TDbc5Fsxoe/2nFtKLMUZiYZazEXFiQC/8OP5wwMAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190510061311epcas5p19e9bf3d08319ac99890e03e0bd59e478
+References: <1557468704-3014-1-git-send-email-maninder1.s@samsung.com>
+        <CGME20190510061311epcas5p19e9bf3d08319ac99890e03e0bd59e478@epcms5p1>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+=5BReminder=5D Any updates ?
 
-On 30.05.2019 11:06, Gen Zhang wrote:
-
-> In selinux_add_mnt_opt(), 'val' is allcoted by kmemdup_nul(). It returns
-
-    Allocated?
-
-> NULL when fails. So 'val' should be checked.
-> 
-> Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
-[...]
-
-MBR, Sergei
+> currently=C2=A0params=C2=A0structure=C2=A0is=C2=A0passed=C2=A0in=C2=A0all=
+=C2=A0functions,=C2=A0which=C2=A0increases=0D=0A>=20stack=C2=A0usage=C2=A0i=
+n=C2=A0all=C2=A0the=C2=A0function=C2=A0and=C2=A0lead=C2=A0to=C2=A0stack=C2=
+=A0overflow=C2=A0on=C2=A0target=C2=A0like=0D=0A>=20ARM=C2=A0with=C2=A0kerne=
+l=C2=A0stack=C2=A0size=C2=A0of=C2=A08=C2=A0KB=C2=A0so=C2=A0better=C2=A0to=
+=C2=A0pass=C2=A0pointer.=0D=0A=C2=A0=0D=0A>=20Checked=C2=A0for=C2=A0ARM:=0D=
+=0A=C2=A0=0D=0A=0D=0A>=20(ZSTD_compressContinue_internal)->=C2=A0136=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0->=C2=A088=0D=0A>=20(ZSTD_compressCCtx)=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0->=C2=
+=A0192=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0->=C2=A064=0D=0A>=20(zstd_compress)=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0->=C2=A0144=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0->=
+=C2=A096=0D=0A=0D=0ARegards,=0D=0AVaneet=20Narang
