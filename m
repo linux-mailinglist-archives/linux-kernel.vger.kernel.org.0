@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EB7C2EE0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13F102F1D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:16:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732657AbfE3Dnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:43:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60932 "EHLO mail.kernel.org"
+        id S1731047AbfE3EQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:16:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726530AbfE3DVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:21:02 -0400
+        id S1729356AbfE3DPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:53 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3873F249AC;
-        Thu, 30 May 2019 03:21:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44D7823D83;
+        Thu, 30 May 2019 03:15:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186461;
-        bh=xtr9FyCyYuh1vDgHAA3Us6eSHVJzX4IPMyILi2cJ2Pw=;
+        s=default; t=1559186153;
+        bh=xEQL8cLkJontcf8UKMDxuTMBWccBYxd86576sMJ/CxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=flDmjz93tKxuHSSb2zz9R6Bg8QMMwffs2uu64acqslQFA7WkT07A9c8HcwhoVCHGk
-         gsZHhcgKo7Io32qEToiJK2CEr8x8mwbX+3DLIQaToMLJ+wVro5KFkZPNIfyriK3Y+y
-         Oymno0NPRZrUIf/8xiKmYPN1BkBVdou5kCduTp9A=
+        b=x3iDBf75DvkDSDKr8dPvc2Ma0gk0pdOBgpcyKcKl+RMb/ulfB9W9O1b0aqBbbbDXW
+         Et0i3asJ34+TMFzBXUCD8Ts54i079fTcTWAUEmCtrZqvpISg1+CIv18ite3uIyB1pm
+         oVB9ttUk60oEGU1JNURJZasorBB+yBrGpTQlvtKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrea Merello <andrea.merello@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 078/128] mmc: core: make pwrseq_emmc (partially) support sleepy GPIO controllers
-Date:   Wed, 29 May 2019 20:06:50 -0700
-Message-Id: <20190530030448.700414775@linuxfoundation.org>
+Subject: [PATCH 5.0 338/346] ASoC: ti: fix davinci_mcasp_probe dependencies
+Date:   Wed, 29 May 2019 20:06:51 -0700
+Message-Id: <20190530030557.856939634@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,114 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 002ee28e8b322d4d4b7b83234b5d0f4ebd428eda ]
+[ Upstream commit 7d7b25d05ef1c5a1a9320190e1eeb55534847558 ]
 
-pwrseq_emmc.c implements a HW reset procedure for eMMC chip by driving a
-GPIO line.
+The SND_SOC_DAVINCI_MCASP driver can use either edma or sdma as
+a back-end, and it takes the presence of the respective dma engine
+drivers in the configuration as an indication to which ones should be
+built. However, this is flawed in multiple ways:
 
-It registers the .reset() cb on mmc_pwrseq_ops and it registers a system
-restart notification handler; both of them perform reset by unconditionally
-calling gpiod_set_value().
+- With CONFIG_TI_EDMA=m and CONFIG_SND_SOC_DAVINCI_MCASP=y,
+  is enabled as =m, and we get a link error:
+  sound/soc/ti/davinci-mcasp.o: In function `davinci_mcasp_probe':
+  davinci-mcasp.c:(.text+0x930): undefined reference to `edma_pcm_platform_register'
 
-If the eMMC reset line is tied to a GPIO controller whose driver can sleep
-(i.e. I2C GPIO controller), then the kernel would spit warnings when trying
-to reset the eMMC chip by means of .reset() mmc_pwrseq_ops cb (that is
-exactly what I'm seeing during boot).
+- When CONFIG_SND_SOC_DAVINCI_MCASP=m has already been selected by
+  another driver, the same link error appears even if CONFIG_TI_EDMA
+  is disabled
 
-Furthermore, on system reset we would gets to the system restart
-notification handler with disabled interrupts - local_irq_disable() is
-called in machine_restart() at least on ARM/ARM64 - and we would be in
-trouble when the GPIO driver tries to sleep (which indeed doesn't happen
-here, likely because in my case the machine specific code doesn't call
-do_kernel_restart(), I guess..).
+There are possibly other issues here, but it seems that the only reasonable
+solution is to always build both SND_SOC_TI_EDMA_PCM and
+SND_SOC_TI_SDMA_PCM as a dependency here. Both are fairly small and
+do not have any other compile-time dependencies, so the cost is
+very small, and makes the configuration stage much more consistent.
 
-This patch fixes the .reset() cb to make use of gpiod_set_value_cansleep(),
-so that the eMMC gets reset on boot without complaints, while, since there
-isn't that much we can do, we avoid register the restart handler if the
-GPIO controller has a sleepy driver (and we spit a dev_notice() message to
-let people know)..
-
-This had been tested on a downstream 4.9 kernel with backported
-commit 83f37ee7ba33 ("mmc: pwrseq: Add reset callback to the struct
-mmc_pwrseq_ops") and commit ae60fb031cf2 ("mmc: core: Don't do eMMC HW
-reset when resuming the eMMC card"), because I couldn't boot my board
-otherwise. Maybe worth to RFT.
-
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: f2055e145f29 ("ASoC: ti: Merge davinci and omap directories")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/core/pwrseq_emmc.c | 38 ++++++++++++++++++----------------
- 1 file changed, 20 insertions(+), 18 deletions(-)
+ sound/soc/ti/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/core/pwrseq_emmc.c b/drivers/mmc/core/pwrseq_emmc.c
-index adc9c0c614fb1..4493c299d85ee 100644
---- a/drivers/mmc/core/pwrseq_emmc.c
-+++ b/drivers/mmc/core/pwrseq_emmc.c
-@@ -30,19 +30,14 @@ struct mmc_pwrseq_emmc {
+diff --git a/sound/soc/ti/Kconfig b/sound/soc/ti/Kconfig
+index 4bf3c15d4e514..ee7c202c69b77 100644
+--- a/sound/soc/ti/Kconfig
++++ b/sound/soc/ti/Kconfig
+@@ -21,8 +21,8 @@ config SND_SOC_DAVINCI_ASP
  
- #define to_pwrseq_emmc(p) container_of(p, struct mmc_pwrseq_emmc, pwrseq)
- 
--static void __mmc_pwrseq_emmc_reset(struct mmc_pwrseq_emmc *pwrseq)
--{
--	gpiod_set_value(pwrseq->reset_gpio, 1);
--	udelay(1);
--	gpiod_set_value(pwrseq->reset_gpio, 0);
--	udelay(200);
--}
--
- static void mmc_pwrseq_emmc_reset(struct mmc_host *host)
- {
- 	struct mmc_pwrseq_emmc *pwrseq =  to_pwrseq_emmc(host->pwrseq);
- 
--	__mmc_pwrseq_emmc_reset(pwrseq);
-+	gpiod_set_value_cansleep(pwrseq->reset_gpio, 1);
-+	udelay(1);
-+	gpiod_set_value_cansleep(pwrseq->reset_gpio, 0);
-+	udelay(200);
- }
- 
- static int mmc_pwrseq_emmc_reset_nb(struct notifier_block *this,
-@@ -50,8 +45,11 @@ static int mmc_pwrseq_emmc_reset_nb(struct notifier_block *this,
- {
- 	struct mmc_pwrseq_emmc *pwrseq = container_of(this,
- 					struct mmc_pwrseq_emmc, reset_nb);
-+	gpiod_set_value(pwrseq->reset_gpio, 1);
-+	udelay(1);
-+	gpiod_set_value(pwrseq->reset_gpio, 0);
-+	udelay(200);
- 
--	__mmc_pwrseq_emmc_reset(pwrseq);
- 	return NOTIFY_DONE;
- }
- 
-@@ -72,14 +70,18 @@ static int mmc_pwrseq_emmc_probe(struct platform_device *pdev)
- 	if (IS_ERR(pwrseq->reset_gpio))
- 		return PTR_ERR(pwrseq->reset_gpio);
- 
--	/*
--	 * register reset handler to ensure emmc reset also from
--	 * emergency_reboot(), priority 255 is the highest priority
--	 * so it will be executed before any system reboot handler.
--	 */
--	pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
--	pwrseq->reset_nb.priority = 255;
--	register_restart_handler(&pwrseq->reset_nb);
-+	if (!gpiod_cansleep(pwrseq->reset_gpio)) {
-+		/*
-+		 * register reset handler to ensure emmc reset also from
-+		 * emergency_reboot(), priority 255 is the highest priority
-+		 * so it will be executed before any system reboot handler.
-+		 */
-+		pwrseq->reset_nb.notifier_call = mmc_pwrseq_emmc_reset_nb;
-+		pwrseq->reset_nb.priority = 255;
-+		register_restart_handler(&pwrseq->reset_nb);
-+	} else {
-+		dev_notice(dev, "EMMC reset pin tied to a sleepy GPIO driver; reset on emergency-reboot disabled\n");
-+	}
- 
- 	pwrseq->pwrseq.ops = &mmc_pwrseq_emmc_ops;
- 	pwrseq->pwrseq.dev = dev;
+ config SND_SOC_DAVINCI_MCASP
+ 	tristate "Multichannel Audio Serial Port (McASP) support"
+-	select SND_SOC_TI_EDMA_PCM if TI_EDMA
+-	select SND_SOC_TI_SDMA_PCM if DMA_OMAP
++	select SND_SOC_TI_EDMA_PCM
++	select SND_SOC_TI_SDMA_PCM
+ 	help
+ 	  Say Y or M here if you want to have support for McASP IP found in
+ 	  various Texas Instruments SoCs like:
 -- 
 2.20.1
 
