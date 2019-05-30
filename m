@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC7492F298
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:23:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB46C2F20C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:18:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730054AbfE3DPB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:15:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54138 "EHLO mail.kernel.org"
+        id S1731300AbfE3ESE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:18:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728935AbfE3DMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:12:18 -0400
+        id S1730389AbfE3DPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:15:36 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 856A7244D4;
-        Thu, 30 May 2019 03:12:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F78F24569;
+        Thu, 30 May 2019 03:15:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559185937;
-        bh=n5kjA7fjbOwqd5N27ytYvPLS2ALxClmy4UA9vMmx6Oc=;
+        s=default; t=1559186136;
+        bh=PNE72Y90NjeYrdoAhrh6HuTrK0cQq448Gs2BahbnUj8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IwB42shWgQqL01jbE5OMNPkTBM37wxqSEBJ22y2gvjeoTUYMUOxEdYD8ZBd3e6b4V
-         NuayEhYKwHLwp6VyeO5uxt5VTd07fvi7ICUoz5meb5n9dmVY6ExKD3CH1XlwXggKcF
-         lkIDlPueMSims2Pqr2rAoqH/pjw9c5Hdz9HOlPRY=
+        b=MP3ArAkd1gfnr/6mOr/JAutADsxZ21Y1p95+vpjH/clWl05p/Ivc30m/QfrDChytl
+         BM1MstoR9w35fgWeiVSmb9CoGTnGI2C7oXbljdODEN3+99Z/9tHfRLp1VSd4J80Z8S
+         Kjvkwc2HjXFh0a/3PjM30oAxwQ4DHYJv1FQrfRLA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Francis <David.Francis@amd.com>,
-        Nicholas Kazlauskas <Nicholas.Kazlauskas@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.1 332/405] drm/amd/display: Update ABM crtc state on non-modeset
-Date:   Wed, 29 May 2019 20:05:30 -0700
-Message-Id: <20190530030557.522308546@linuxfoundation.org>
+Subject: [PATCH 5.0 258/346] media: wl128x: prevent two potential buffer overflows
+Date:   Wed, 29 May 2019 20:05:31 -0700
+Message-Id: <20190530030554.056393842@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
-References: <20190530030540.291644921@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b05e2c5e81f9a0be4a145e0926b1dfe62f6347d4 ]
+[ Upstream commit 9c2ccc324b3a6cbc865ab8b3e1a09e93d3c8ade9 ]
 
-[Why]
-Somewhere in the atomic check reshuffle ABM got lost.
-ABM is a crtc property (copied from a connector property).
-It can change without a modeset, just like underscan.
+Smatch marks skb->data as untrusted so it warns that "evt_hdr->dlen"
+can copy up to 255 bytes and we only have room for two bytes.  Even
+if this comes from the firmware and we trust it, the new policy
+generally is just to fix it as kernel hardenning.
 
-[How]
-In the skip_modeset branch of atomic check crtc updates,
-copy over the abm property.
+I can't test this code so I tried to be very conservative.  I considered
+not allowing "evt_hdr->dlen == 1" because it doesn't initialize the
+whole variable but in the end I decided to allow it and manually
+initialized "asic_id" and "asic_ver" to zero.
 
-Signed-off-by: David Francis <David.Francis@amd.com>
-Reviewed-by: Nicholas Kazlauskas <Nicholas.Kazlauskas@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: e8454ff7b9a4 ("[media] drivers:media:radio: wl128x: FM Driver Common sources")
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/radio/wl128x/fmdrv_common.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 66f19d1864b17..c212bff457eec 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -5661,6 +5661,9 @@ static int dm_update_crtc_state(struct amdgpu_display_manager *dm,
- 		update_stream_scaling_settings(
- 			&new_crtc_state->mode, dm_new_conn_state, dm_new_crtc_state->stream);
+diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
+index 800d69c3f80b8..1cf4019689a56 100644
+--- a/drivers/media/radio/wl128x/fmdrv_common.c
++++ b/drivers/media/radio/wl128x/fmdrv_common.c
+@@ -489,7 +489,8 @@ int fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
+ 		return -EIO;
+ 	}
+ 	/* Send response data to caller */
+-	if (response != NULL && response_len != NULL && evt_hdr->dlen) {
++	if (response != NULL && response_len != NULL && evt_hdr->dlen &&
++	    evt_hdr->dlen <= payload_len) {
+ 		/* Skip header info and copy only response data */
+ 		skb_pull(skb, sizeof(struct fm_event_msg_hdr));
+ 		memcpy(response, skb->data, evt_hdr->dlen);
+@@ -583,6 +584,8 @@ static void fm_irq_handle_flag_getcmd_resp(struct fmdev *fmdev)
+ 		return;
  
-+	/* ABM settings */
-+	dm_new_crtc_state->abm_level = dm_new_conn_state->abm_level;
-+
- 	/*
- 	 * Color management settings. We also update color properties
- 	 * when a modeset is needed, to ensure it gets reprogrammed.
+ 	fm_evt_hdr = (void *)skb->data;
++	if (fm_evt_hdr->dlen > sizeof(fmdev->irq_info.flag))
++		return;
+ 
+ 	/* Skip header info and copy only response data */
+ 	skb_pull(skb, sizeof(struct fm_event_msg_hdr));
+@@ -1308,7 +1311,7 @@ static int load_default_rx_configuration(struct fmdev *fmdev)
+ static int fm_power_up(struct fmdev *fmdev, u8 mode)
+ {
+ 	u16 payload;
+-	__be16 asic_id, asic_ver;
++	__be16 asic_id = 0, asic_ver = 0;
+ 	int resp_len, ret;
+ 	u8 fw_name[50];
+ 
 -- 
 2.20.1
 
