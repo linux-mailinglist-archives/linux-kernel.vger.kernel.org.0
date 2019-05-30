@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9812ED40
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8F532ECA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:24:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387881AbfE3D1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:27:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54450 "EHLO mail.kernel.org"
+        id S1733177AbfE3DXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:23:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731848AbfE3DTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:19:15 -0400
+        id S1731214AbfE3DRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:17:42 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0744F2485E;
-        Thu, 30 May 2019 03:19:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60C4724590;
+        Thu, 30 May 2019 03:17:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186355;
-        bh=zmCdAn9dAnPcSZ07GrUCxCZ+in2QjZV2IqkciN5z/vw=;
+        s=default; t=1559186261;
+        bh=dFVTRMQShWSKyV+DNlr1H0V44BM6jzEICjqpG4UeNmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wd/JYJcgAiHS06LPrErkBzXNUc+E1gNfoyaTHCD0I4PjvrzqPbQpBS3PVRRGiGZCF
-         dd13RFkR4tkLCQn6sIAx6R2uLwgqGHS1tf4XIM/LGnXNScGEkYvG9/E+nzGXe8i7vj
-         LD/MGO9kReAw/etr+xC5slhfwqMH6uhUM6AyrffQ=
+        b=tzeT2aWAgpj08yCSnLgIPPUCeu/hD3+0nFDLvDGPlh2TNS/LCF1fvY9QaFbJZK5cr
+         mp05z5rSeGLYv9BUqu3PEdChQS/oGf3wTBjxnj827u0SAabpuSzrwvPMBDZ+MyMHDI
+         0ttkE1eexmMOfnGarNNQC0ceAZ5UCJdv2C1lG97o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell Currey <ruscur@russell.cc>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 097/193] powerpc/64: Fix booting large kernels with STRICT_KERNEL_RWX
-Date:   Wed, 29 May 2019 20:05:51 -0700
-Message-Id: <20190530030502.511689011@linuxfoundation.org>
+Subject: [PATCH 4.19 194/276] b43: shut up clang -Wuninitialized variable warning
+Date:   Wed, 29 May 2019 20:05:52 -0700
+Message-Id: <20190530030537.266079756@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
+References: <20190530030523.133519668@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,40 +46,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 56c46bba9bbfe229b4472a5be313c44c5b714a39 ]
+[ Upstream commit d825db346270dbceef83b7b750dbc29f1d7dcc0e ]
 
-With STRICT_KERNEL_RWX enabled anything marked __init is placed at a 16M
-boundary.  This is necessary so that it can be repurposed later with
-different permissions.  However, in kernels with text larger than 16M,
-this pushes early_setup past 32M, incapable of being reached by the
-branch instruction.
+Clang warns about what is clearly a case of passing an uninitalized
+variable into a static function:
 
-Fix this by setting the CTR and branching there instead.
+drivers/net/wireless/broadcom/b43/phy_lp.c:1852:23: error: variable 'gains' is uninitialized when used here
+      [-Werror,-Wuninitialized]
+                lpphy_papd_cal(dev, gains, 0, 1, 30);
+                                    ^~~~~
+drivers/net/wireless/broadcom/b43/phy_lp.c:1838:2: note: variable 'gains' is declared here
+        struct lpphy_tx_gains gains, oldgains;
+        ^
+1 error generated.
 
-Fixes: 1e0fc9d1eb2b ("powerpc/Kconfig: Enable STRICT_KERNEL_RWX for some configs")
-Signed-off-by: Russell Currey <ruscur@russell.cc>
-[mpe: Fix it to work on BE by using DOTSYM()]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+However, this function is empty, and its arguments are never evaluated,
+so gcc in contrast does not warn here. Both compilers behave in a
+reasonable way as far as I can tell, so we should change the code
+to avoid the warning everywhere.
+
+We could just eliminate the lpphy_papd_cal() function entirely,
+given that it has had the TODO comment in it for 10 years now
+and is rather unlikely to ever get done. I'm doing a simpler
+change here, and just pass the 'oldgains' variable in that has
+been initialized, based on the guess that this is what was
+originally meant.
+
+Fixes: 2c0d6100da3e ("b43: LP-PHY: Begin implementing calibration & software RFKILL support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/head_64.S | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/broadcom/b43/phy_lp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
-index ff8511d6d8ead..4f2e18266e34a 100644
---- a/arch/powerpc/kernel/head_64.S
-+++ b/arch/powerpc/kernel/head_64.S
-@@ -961,7 +961,9 @@ start_here_multiplatform:
+diff --git a/drivers/net/wireless/broadcom/b43/phy_lp.c b/drivers/net/wireless/broadcom/b43/phy_lp.c
+index 6922cbb99a044..5a0699fb4b9ab 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_lp.c
++++ b/drivers/net/wireless/broadcom/b43/phy_lp.c
+@@ -1834,7 +1834,7 @@ static void lpphy_papd_cal(struct b43_wldev *dev, struct lpphy_tx_gains gains,
+ static void lpphy_papd_cal_txpwr(struct b43_wldev *dev)
+ {
+ 	struct b43_phy_lp *lpphy = dev->phy.lp;
+-	struct lpphy_tx_gains gains, oldgains;
++	struct lpphy_tx_gains oldgains;
+ 	int old_txpctl, old_afe_ovr, old_rf, old_bbmult;
  
- 	/* Restore parameters passed from prom_init/kexec */
- 	mr	r3,r31
--	bl	early_setup		/* also sets r13 and SPRG_PACA */
-+	LOAD_REG_ADDR(r12, DOTSYM(early_setup))
-+	mtctr	r12
-+	bctrl		/* also sets r13 and SPRG_PACA */
+ 	lpphy_read_tx_pctl_mode_from_hardware(dev);
+@@ -1848,9 +1848,9 @@ static void lpphy_papd_cal_txpwr(struct b43_wldev *dev)
+ 	lpphy_set_tx_power_control(dev, B43_LPPHY_TXPCTL_OFF);
  
- 	LOAD_REG_ADDR(r3, start_here_common)
- 	ld	r4,PACAKMSR(r13)
+ 	if (dev->dev->chip_id == 0x4325 && dev->dev->chip_rev == 0)
+-		lpphy_papd_cal(dev, gains, 0, 1, 30);
++		lpphy_papd_cal(dev, oldgains, 0, 1, 30);
+ 	else
+-		lpphy_papd_cal(dev, gains, 0, 1, 65);
++		lpphy_papd_cal(dev, oldgains, 0, 1, 65);
+ 
+ 	if (old_afe_ovr)
+ 		lpphy_set_tx_gains(dev, oldgains);
 -- 
 2.20.1
 
