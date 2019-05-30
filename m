@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C78422EFDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:59:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFC8D2F38B
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732225AbfE3D6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:58:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52164 "EHLO mail.kernel.org"
+        id S1729591AbfE3DNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:13:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729926AbfE3DSk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:40 -0400
+        id S1727829AbfE3DLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:39 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9C8F24773;
-        Thu, 30 May 2019 03:18:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F08AC244EA;
+        Thu, 30 May 2019 03:11:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186319;
-        bh=jf+s4SK7RpMzJsq9FgaAX31/M1NUE6wB1p0wg35hEgQ=;
+        s=default; t=1559185899;
+        bh=N70H1+R5SeViVNqndvuL3AyU8G493F/y+Q0HGRBG2lk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M9A2KlnZTfWCor6J9I0NzNpkKQqCxOpUmvOX+50KDKdLzZpV9MiT8kEs6kxHXnCni
-         eIx0r3E057RHIExRIm9qR5ajLq/DFNQIjrXUusdFCzNLtxkWw6xghnAv+obxA/bOXT
-         phCZDquopq0CedgDqmcqqS8+qPQHdSGov6aiPou4=
+        b=Bw0jiVKwe8YWGQi6AOF7bcbpWNuwNjmZvAG5UCC+mmtVtqwbGCrg+UOwFb7MwcgVj
+         H2HeSObD3uDGdQPKyacCD/tacLcKSuXrcr1YSvHE706Ls/U3XeBkt7Et6rd61/Tu4r
+         YNRJlaPA9cMuWQabMnEvCG/N//QfJGfYrQdwsPgA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Trac Hoang <trac.hoang@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.14 009/193] mmc: sdhci-iproc: cygnus: Set NO_HISPD bit to fix HS50 data hold time problem
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 265/405] x86/uaccess, ftrace: Fix ftrace_likely_update() vs. SMAP
 Date:   Wed, 29 May 2019 20:04:23 -0700
-Message-Id: <20190530030448.503973559@linuxfoundation.org>
+Message-Id: <20190530030554.342021224@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +49,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trac Hoang <trac.hoang@broadcom.com>
+[ Upstream commit 4a6c91fbdef846ec7250b82f2eeeb87ac5f18cf9 ]
 
-commit b7dfa695afc40d5396ed84b9f25aa3754de23e39 upstream.
+For CONFIG_TRACE_BRANCH_PROFILING=y the likely/unlikely things get
+overloaded and generate callouts to this code, and thus also when
+AC=1.
 
-The iproc host eMMC/SD controller hold time does not meet the
-specification in the HS50 mode. This problem can be mitigated
-by disabling the HISPD bit; thus forcing the controller output
-data to be driven on the falling clock edges rather than the
-rising clock edges.
+Make it safe.
 
-This change applies only to the Cygnus platform.
-
-Stable tag (v4.12+) chosen to assist stable kernel maintainers so that
-the change does not produce merge conflicts backporting to older kernel
-versions. In reality, the timing bug existed since the driver was first
-introduced but there is no need for this driver to be supported in kernel
-versions that old.
-
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Trac Hoang <trac.hoang@broadcom.com>
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci-iproc.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/trace/trace_branch.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/mmc/host/sdhci-iproc.c
-+++ b/drivers/mmc/host/sdhci-iproc.c
-@@ -185,7 +185,8 @@ static const struct sdhci_ops sdhci_ipro
- };
+diff --git a/kernel/trace/trace_branch.c b/kernel/trace/trace_branch.c
+index 4ad967453b6fb..3ea65cdff30d5 100644
+--- a/kernel/trace/trace_branch.c
++++ b/kernel/trace/trace_branch.c
+@@ -205,6 +205,8 @@ void trace_likely_condition(struct ftrace_likely_data *f, int val, int expect)
+ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ 			  int expect, int is_constant)
+ {
++	unsigned long flags = user_access_save();
++
+ 	/* A constant is always correct */
+ 	if (is_constant) {
+ 		f->constant++;
+@@ -223,6 +225,8 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+ 		f->data.correct++;
+ 	else
+ 		f->data.incorrect++;
++
++	user_access_restore(flags);
+ }
+ EXPORT_SYMBOL(ftrace_likely_update);
  
- static const struct sdhci_pltfm_data sdhci_iproc_cygnus_pltfm_data = {
--	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
-+	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-+		  SDHCI_QUIRK_NO_HISPD_BIT,
- 	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN | SDHCI_QUIRK2_HOST_OFF_CARD_ON,
- 	.ops = &sdhci_iproc_32only_ops,
- };
+-- 
+2.20.1
+
 
 
