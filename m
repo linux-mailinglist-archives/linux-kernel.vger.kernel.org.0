@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA4022F00B
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 247F72F560
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:47:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731661AbfE3D7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:59:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
+        id S1728833AbfE3Eqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:46:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731578AbfE3DSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:32 -0400
+        id S1728646AbfE3DLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:41 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74BBF24790;
-        Thu, 30 May 2019 03:18:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00D8424508;
+        Thu, 30 May 2019 03:11:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186311;
-        bh=SZYgzCSl2InSQyrNHF2tnU1aOYnCmJ61nTCrd7r9g6A=;
+        s=default; t=1559185901;
+        bh=dCVDXips007izB5sZEkFSjcUty+mk+m6uZJDYn5+XbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BQUAR/xqK6RxP3+NV4Qk8g+1rTEZBQ+ber4m0W7tVWbUdwZd8o1tBssMQGin41ONj
-         gJVfqoUZ+0o8Rap3t0q1P7e6ixyXCsNGjDpEAzXIe2ZAHTPiiFgBg4/sLdCxhe3jPm
-         TuHnDV72249WK0Bk4yR+EEn3pXhuVwyc4EJW01wo=
+        b=yj9v8sioykoumAB+eSIOXR/Mlu8jgSMGcv5NiHMLBL+LgQkMzJxA6j2FasGCFm96m
+         EnQQ8Ul8pYqBp/7NfOjyN5++C9K46iJ56+y2xJKIYiF4aqezNXrP3lqHdUrkX6qDkH
+         /O5um5iHm1JxzD4Psp9k2/hlor8IvSq93203AXmY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jeff Smits <jeff.smits@intel.com>
-Subject: [PATCH 4.14 012/193] libnvdimm/pmem: Bypass CONFIG_HARDENED_USERCOPY overhead
-Date:   Wed, 29 May 2019 20:04:26 -0700
-Message-Id: <20190530030449.639898524@linuxfoundation.org>
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 269/405] x86/uaccess: Fix up the fixup
+Date:   Wed, 29 May 2019 20:04:27 -0700
+Message-Id: <20190530030554.526258149@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,72 +48,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Williams <dan.j.williams@intel.com>
+[ Upstream commit b69656fa7ea2f75e47d7bd5b9430359fa46488af ]
 
-commit 52f476a323f9efc959be1c890d0cdcf12e1582e0 upstream.
+New tooling got confused about this:
 
-Jeff discovered that performance improves from ~375K iops to ~519K iops
-on a simple psync-write fio workload when moving the location of 'struct
-page' from the default PMEM location to DRAM. This result is surprising
-because the expectation is that 'struct page' for dax is only needed for
-third party references to dax mappings. For example, a dax-mapped buffer
-passed to another system call for direct-I/O requires 'struct page' for
-sending the request down the driver stack and pinning the page. There is
-no usage of 'struct page' for first party access to a file via
-read(2)/write(2) and friends.
+  arch/x86/lib/memcpy_64.o: warning: objtool: .fixup+0x7: return with UACCESS enabled
 
-However, this "no page needed" expectation is violated by
-CONFIG_HARDENED_USERCOPY and the check_copy_size() performed in
-copy_from_iter_full_nocache() and copy_to_iter_mcsafe(). The
-check_heap_object() helper routine assumes the buffer is backed by a
-slab allocator (DRAM) page and applies some checks.  Those checks are
-invalid, dax pages do not originate from the slab, and redundant,
-dax_iomap_actor() has already validated that the I/O is within bounds.
-Specifically that routine validates that the logical file offset is
-within bounds of the file, then it does a sector-to-pfn translation
-which validates that the physical mapping is within bounds of the block
-device.
+While the code isn't wrong, it is tedious (if at all possible) to
+figure out what function a particular chunk of .fixup belongs to.
 
-Bypass additional hardened usercopy overhead and call the 'no check'
-versions of the copy_{to,from}_iter operations directly.
+This then confuses the objtool uaccess validation. Instead of
+returning directly from the .fixup, jump back into the right function.
 
-Fixes: 0aed55af8834 ("x86, uaccess: introduce copy_from_iter_flushcache...")
-Cc: <stable@vger.kernel.org>
-Cc: Jeff Moyer <jmoyer@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Matthew Wilcox <willy@infradead.org>
-Reported-and-tested-by: Jeff Smits <jeff.smits@intel.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvdimm/pmem.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/x86/lib/memcpy_64.S | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -256,10 +256,16 @@ static long pmem_dax_direct_access(struc
- 	return __pmem_direct_access(pmem, pgoff, nr_pages, kaddr, pfn);
- }
+diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
+index 3b24dc05251c7..9d05572370edc 100644
+--- a/arch/x86/lib/memcpy_64.S
++++ b/arch/x86/lib/memcpy_64.S
+@@ -257,6 +257,7 @@ ENTRY(__memcpy_mcsafe)
+ 	/* Copy successful. Return zero */
+ .L_done_memcpy_trap:
+ 	xorl %eax, %eax
++.L_done:
+ 	ret
+ ENDPROC(__memcpy_mcsafe)
+ EXPORT_SYMBOL_GPL(__memcpy_mcsafe)
+@@ -273,7 +274,7 @@ EXPORT_SYMBOL_GPL(__memcpy_mcsafe)
+ 	addl	%edx, %ecx
+ .E_trailing_bytes:
+ 	mov	%ecx, %eax
+-	ret
++	jmp	.L_done
  
-+/*
-+ * Use the 'no check' versions of copy_from_iter_flushcache() and
-+ * copy_to_iter_mcsafe() to bypass HARDENED_USERCOPY overhead. Bounds
-+ * checking, both file offset and device offset, is handled by
-+ * dax_iomap_actor()
-+ */
- static size_t pmem_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff,
- 		void *addr, size_t bytes, struct iov_iter *i)
- {
--	return copy_from_iter_flushcache(addr, bytes, i);
-+	return _copy_from_iter_flushcache(addr, bytes, i);
- }
- 
- static const struct dax_operations pmem_dax_ops = {
+ 	/*
+ 	 * For write fault handling, given the destination is unaligned,
+-- 
+2.20.1
+
 
 
