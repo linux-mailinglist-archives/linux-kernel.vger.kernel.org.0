@@ -2,87 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 130B72EEF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F832EF32
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:53:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387492AbfE3DvR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:51:17 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44268 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729901AbfE3DvQ (ORCPT
+        id S2387710AbfE3Dxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:53:34 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34226 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730214AbfE3Dx3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:51:16 -0400
-Received: by mail-pf1-f196.google.com with SMTP id g9so3017340pfo.11;
-        Wed, 29 May 2019 20:51:15 -0700 (PDT)
+        Wed, 29 May 2019 23:53:29 -0400
+Received: by mail-pl1-f194.google.com with SMTP id w7so1967875plz.1;
+        Wed, 29 May 2019 20:53:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3ZN60qwibmbZGc7THAFZZ2/hms+fJLyOqOJKZuQflBE=;
-        b=ZwE5b0ZFm4ynttpd5kMK35jDuC/dWIl6rZ0AxFpXFbRUHfeUb3Ml4ENGatP4aD5RYY
-         23QXnN+HULJJo7Z0UhYGmuaxLPnpaRVa1K6vrK7hBSYlYRoPf3+MRGMrcHZctNVs2l7s
-         MWnplg0pNOxJyuwEHim48WgIsJ8M34bNmyeWk77XoRJMgZ7hYTE29jVGu7e52b6cyvuY
-         85NFO7nLtWYbAWcqCcdsXVQDcE42kdoeBG6an2HXAE2yfDQB/mDnsJH19IzaFxI4Dztz
-         evh3apIabkns36LhHDLSdQuHyDDRE5vAqSe6IXSbg7XWRvLelGBRmVcEwgDSIOAe+gLK
-         fawQ==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=PVfUudKZSSRsgWLDDlu5rIq5+aEI9z+7kir93gGSu98=;
+        b=tPv1I7AiMzaxAGH4/ZoChIkGQ3P2y1P/f01B88UfmUpt5K4YIFhOL/2QXthU21+tjP
+         cJT1BX2t2CxeGhzfwtQv2i58rjBM3dbgtdfWH10Zw8wlVMOV1REPIelee09FG4UfU4Pd
+         aNtAShasXOBXpsArZArkGPuakpdvt2bHU83plT3kdJh6/euluuYf5vraJ6167kodvBUt
+         34gpl3HAPza+zE1Wn0wabvnqYsIDwLWTu8Zoh9EJAaWLoaYvrdJbq1oXXJmWU6Urb5Vl
+         sWcLuvS3sf+GLl/ZbqnVvoyiR6ANXlhn6wVtjd2v5B2qFXzJBZYtJpOHtS2PpAvVaAPM
+         ZSnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3ZN60qwibmbZGc7THAFZZ2/hms+fJLyOqOJKZuQflBE=;
-        b=JyqgRdABbw4vJfzfKBxLEHXev6urFxjQO0rQvzqJWOqgBOGtgkZBwxx66gTkrxc6jS
-         bleT4+M2td3xXGMK8jFsuH+oCPCGetlpbOHSqpD85mEdU6yJmAcGcBef6U2RlhVhgMLI
-         FF3lb38wF+R6bKLhwB/mN8MzQJKqasfdE73QZaQwB1SbKHGK6Syxf1K+aUnWISIQ4NfG
-         4Co3YaZMejtbWAMHdddDQEZ/fPV1aPSD0R3dfOAf7TJwgJPz1uJWrZ+MVBW3CE/RkE09
-         2ifBUXnUylOoIAUfSn35X06ubZ/rWp4zRFFlca1D/Uo1i467EYJOn2S0Nvcc06hqlKJn
-         LlRg==
-X-Gm-Message-State: APjAAAVjoaFMtSpl6zItSe+LQxIUiSDSxDAlKKUgRr9jF4P6jTjAZt46
-        EdohhNYGa9l+8PkMURe99rw=
-X-Google-Smtp-Source: APXvYqytd5fkdlkjvOUabmuc2c4XXV8pyR+vCkOalg3TJkjUC1ShJDnM9GkbvULv9oAxmWggsceYnw==
-X-Received: by 2002:a63:d150:: with SMTP id c16mr1778481pgj.439.1559188275085;
-        Wed, 29 May 2019 20:51:15 -0700 (PDT)
-Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
-        by smtp.gmail.com with ESMTPSA id t124sm989859pfb.80.2019.05.29.20.51.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 29 May 2019 20:51:14 -0700 (PDT)
-Date:   Wed, 29 May 2019 20:51:12 -0700
-From:   Richard Cochran <richardcochran@gmail.com>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next 3/5] net: dsa: mv88e6xxx: Let taggers specify a
- can_timestamp function
-Message-ID: <20190530035112.qbn3nnoxrgum7anz@localhost>
-References: <20190528235627.1315-1-olteanv@gmail.com>
- <20190528235627.1315-4-olteanv@gmail.com>
- <20190529044912.cyg44rqvdo73oeiu@localhost>
- <CA+h21hoNrhcpAONTvJra5Ekk+yJ6xP0VAaPSygaLOw31qsGPTg@mail.gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=PVfUudKZSSRsgWLDDlu5rIq5+aEI9z+7kir93gGSu98=;
+        b=NJ1U7z2mbbmYsOUIpFem3bXXJ0EQnDORjKIl/ZsV6dxkBqVgBjvJWyqtNx3iIXu70N
+         e0nYZtnye6xzJ02+Ltp5fiK1JAq87EyGL2Sn01ENgE+502egTPnraJILJs6z8SMT6Csw
+         rgyd85lCQMXPAXneCQ5YR1dJQkNWhD9OqzxJ+W2Q3k9psbZHKSlWNNpcNMJMeoeylmhW
+         PAoNmTobJmwzTpWODiuwdcB9Fr7J1PlxE6SoXD+c1FcurPdTlml36ciH065Uol0kp1Ry
+         UPaXn8rgD4qesGMSli0TESVN3SRsmvFDaK7fU1nplY0ZCqDfjQb4L9NeRf06lyXNM4tw
+         J3JQ==
+X-Gm-Message-State: APjAAAW1U8+Tu+ROwy6hEH0d2DvM490SMf26eMC2ggr28fzwe+YLH7ij
+        Cg8XwrDYQPgfON6qcvf6xZc=
+X-Google-Smtp-Source: APXvYqwDN5x7+LKfvN4qyptzzHadmPubjlm09Mj0UgbtZAc95XvDBB8w+2Kwu03lAHVtqh5lm2OCAA==
+X-Received: by 2002:a17:902:b204:: with SMTP id t4mr1747622plr.285.1559188408845;
+        Wed, 29 May 2019 20:53:28 -0700 (PDT)
+Received: from zhanggen-UX430UQ ([66.42.35.75])
+        by smtp.gmail.com with ESMTPSA id m2sm745431pgq.48.2019.05.29.20.53.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 May 2019 20:53:28 -0700 (PDT)
+Date:   Thu, 30 May 2019 11:53:10 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     paul@paul-moore.com, tony.luck@intel.com, sds@tycho.nsa.gov,
+        eparis@parisplace.org
+Cc:     selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH] hooks: fix a missing-check bug in selinux_sb_eat_lsm_opts()
+Message-ID: <20190530035310.GA9127@zhanggen-UX430UQ>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+h21hoNrhcpAONTvJra5Ekk+yJ6xP0VAaPSygaLOw31qsGPTg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 29, 2019 at 11:33:31PM +0300, Vladimir Oltean wrote:
-> I would like to avoid keeping meta frames in their own RX queue,
-> because then I'm complicating (or rather put, making impossible) the
-> association between a meta frame and the frame it holds a timestamp
-> of.
+In selinux_sb_eat_lsm_opts(), 'arg' is allocated by kmemdup_nul(). It
+returns NULL when fails. So 'arg' should be checked.
 
-We have an example of how a driver can match meta time stamp packets
-with received packets.  See drivers/net/phy/dp83640.c to see how it
-can be done completely within the driver.
-
-Thanks,
-Richard
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+---
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 3ec702c..5a9e959 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2635,6 +2635,8 @@ static int selinux_sb_eat_lsm_opts(char *options, void **mnt_opts)
+ 						*q++ = c;
+ 				}
+ 				arg = kmemdup_nul(arg, q - arg, GFP_KERNEL);
++				if (!arg)
++					return 0;
+ 			}
+ 			rc = selinux_add_opt(token, arg, mnt_opts);
+ 			if (unlikely(rc)) {
