@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8FE52F3D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A71FC2F61D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:53:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388325AbfE3Ecs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:32:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58866 "EHLO mail.kernel.org"
+        id S2389015AbfE3ExS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 00:53:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729519AbfE3DNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:13:34 -0400
+        id S1728176AbfE3DKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:10:39 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CDD724526;
-        Thu, 30 May 2019 03:13:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33EAA24476;
+        Thu, 30 May 2019 03:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186014;
-        bh=KKm8tQobGgirNLVNYlyF73ua17hZpMFCc1GhanWrZdE=;
+        s=default; t=1559185839;
+        bh=UmEJHAfWIK7VkVI/uteN4bC2ybQ8chuCJEsEv4rU13A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HIZxu/6dr49+BNrMcpC4gXQ6FRHosrra9NCeNkh77LfZpyH/lP2PR4ngBB6FfAxS6
-         fFRuQ8PYwWlsPfEr3OMQ+EFXXtLqka5OU7sB15M1Hclb08gwgf9M9ZdmY2wJJi9/qJ
-         uI1XImaTyGyNp52tiXZiM8nmTt/LUJ4wZf8HTZ3w=
+        b=eHCtpbgXPSfoumZgH32U7ahvgv4hzRNyaMYAIiD/3Zh5xZPhqEIj+uC/XXw5F3Tga
+         UKJ2z+tkbkucLqwpbSQNYKv7zwsHkalBT0nXhHifZX7oJfMgP3MN9Id7TVbi6Qv5c5
+         IasyRSkIW9foB7xPUSxTw6cI27l3jg8JSlWJm0ZI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 078/346] arm64: Fix compiler warning from pte_unmap() with -Wunused-but-set-variable
-Date:   Wed, 29 May 2019 20:02:31 -0700
-Message-Id: <20190530030545.066155392@linuxfoundation.org>
+Subject: [PATCH 5.1 154/405] media: ov6650: Move v4l2_clk_get() to ov6650_video_probe() helper
+Date:   Wed, 29 May 2019 20:02:32 -0700
+Message-Id: <20190530030548.941784142@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 74dd022f9e6260c3b5b8d15901d27ebcc5f21eda ]
+[ Upstream commit ccdd85d518d8b9320ace1d87271f0ba2175f21fa ]
 
-When building with -Wunused-but-set-variable, the compiler shouts about
-a number of pte_unmap() users, since this expands to an empty macro on
-arm64:
+In preparation for adding asynchronous subdevice support to the driver,
+don't acquire v4l2_clk from the driver .probe() callback as that may
+fail if the clock is provided by a bridge driver which may be not yet
+initialized.  Move the v4l2_clk_get() to ov6650_video_probe() helper
+which is going to be converted to v4l2_subdev_internal_ops.registered()
+callback, executed only when the bridge driver is ready.
 
-  | mm/gup.c: In function 'gup_pte_range':
-  | mm/gup.c:1727:16: warning: variable 'ptem' set but not used
-  | [-Wunused-but-set-variable]
-  | mm/gup.c: At top level:
-  | mm/memory.c: In function 'copy_pte_range':
-  | mm/memory.c:821:24: warning: variable 'orig_dst_pte' set but not used
-  | [-Wunused-but-set-variable]
-  | mm/memory.c:821:9: warning: variable 'orig_src_pte' set but not used
-  | [-Wunused-but-set-variable]
-  | mm/swap_state.c: In function 'swap_ra_info':
-  | mm/swap_state.c:641:15: warning: variable 'orig_pte' set but not used
-  | [-Wunused-but-set-variable]
-  | mm/madvise.c: In function 'madvise_free_pte_range':
-  | mm/madvise.c:318:9: warning: variable 'orig_pte' set but not used
-  | [-Wunused-but-set-variable]
-
-Rewrite pte_unmap() as a static inline function, which silences the
-warnings.
-
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/pgtable.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/i2c/ov6650.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index de70c1eabf336..74ebe96937141 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -478,6 +478,8 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
- 	return __pmd_to_phys(pmd);
+diff --git a/drivers/media/i2c/ov6650.c b/drivers/media/i2c/ov6650.c
+index f9359b11fa5cb..de7d9790f0542 100644
+--- a/drivers/media/i2c/ov6650.c
++++ b/drivers/media/i2c/ov6650.c
+@@ -810,9 +810,16 @@ static int ov6650_video_probe(struct i2c_client *client)
+ 	u8		pidh, pidl, midh, midl;
+ 	int		ret;
+ 
++	priv->clk = v4l2_clk_get(&client->dev, NULL);
++	if (IS_ERR(priv->clk)) {
++		ret = PTR_ERR(priv->clk);
++		dev_err(&client->dev, "v4l2_clk request err: %d\n", ret);
++		return ret;
++	}
++
+ 	ret = ov6650_s_power(&priv->subdev, 1);
+ 	if (ret < 0)
+-		return ret;
++		goto eclkput;
+ 
+ 	msleep(20);
+ 
+@@ -849,6 +856,11 @@ static int ov6650_video_probe(struct i2c_client *client)
+ 
+ done:
+ 	ov6650_s_power(&priv->subdev, 0);
++	if (!ret)
++		return 0;
++eclkput:
++	v4l2_clk_put(priv->clk);
++
+ 	return ret;
  }
  
-+static inline void pte_unmap(pte_t *pte) { }
-+
- /* Find an entry in the third-level page table. */
- #define pte_index(addr)		(((addr) >> PAGE_SHIFT) & (PTRS_PER_PTE - 1))
+@@ -991,18 +1003,9 @@ static int ov6650_probe(struct i2c_client *client,
+ 	priv->code	  = MEDIA_BUS_FMT_YUYV8_2X8;
+ 	priv->colorspace  = V4L2_COLORSPACE_JPEG;
  
-@@ -486,7 +488,6 @@ static inline phys_addr_t pmd_page_paddr(pmd_t pmd)
+-	priv->clk = v4l2_clk_get(&client->dev, NULL);
+-	if (IS_ERR(priv->clk)) {
+-		ret = PTR_ERR(priv->clk);
+-		goto eclkget;
+-	}
+-
+ 	ret = ov6650_video_probe(client);
+-	if (ret) {
+-		v4l2_clk_put(priv->clk);
+-eclkget:
++	if (ret)
+ 		v4l2_ctrl_handler_free(&priv->hdl);
+-	}
  
- #define pte_offset_map(dir,addr)	pte_offset_kernel((dir), (addr))
- #define pte_offset_map_nested(dir,addr)	pte_offset_kernel((dir), (addr))
--#define pte_unmap(pte)			do { } while (0)
- #define pte_unmap_nested(pte)		do { } while (0)
- 
- #define pte_set_fixmap(addr)		((pte_t *)set_fixmap_offset(FIX_PTE, addr))
+ 	return ret;
+ }
 -- 
 2.20.1
 
