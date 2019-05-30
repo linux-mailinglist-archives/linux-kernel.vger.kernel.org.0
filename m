@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECF5C2ECFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ADA02F21C
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:18:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388453AbfE3D3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:29:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60698 "EHLO mail.kernel.org"
+        id S1730320AbfE3DPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:15:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732390AbfE3DU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:20:57 -0400
+        id S1729282AbfE3DMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:12:52 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2698C24986;
-        Thu, 30 May 2019 03:20:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C2D521BE2;
+        Thu, 30 May 2019 03:12:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186457;
-        bh=V5ybFUQ7mgHxpcAmowZsiBRQ2RSIJZL5rVuS2pWA+kw=;
+        s=default; t=1559185972;
+        bh=2HFrA1Syu5LHtOeNK0QxU2MnJ/8ZxGAovQXoZHNkB6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lT7MSW4d+s2MB1hVkb8Y21Hpkvm+1qoCImT0PA4h/mu3ZYtELNn0cFG4xHuuGj/K6
-         P9DeoWI9oIqWwLZ+9XD4UHt6rrD6eKpNkNm7Fqi6Hl8jFdwx+4XFq8iN3nx0Q1StMK
-         p5eUQYKGVe0W4K6VmPEw9AKUMUnbIL29Q+dpnSiI=
+        b=sErnmPBZiHV+R/GWr2NwDccq2eupqocwlMiU40S6H0LK3NHM8xliNZ5pPvuwBW4qx
+         DNbHRFM3UweZ7eF/O+cE/+GUMvcveWkZe8IXCuOzVgWq51sFsRfscJlss6Z9mtfE7u
+         HEZNr3QbS3ky2BWRjoJgSR6pY82hL6VsHRPT7eKg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Potnuri Bharat Teja <bharat@chelsio.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        syzbot+228a82b263b5da91883d@syzkaller.appspotmail.com,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 071/128] RDMA/cxgb4: Fix null pointer dereference on alloc_skb failure
+Subject: [PATCH 5.1 405/405] NFS: Fix a double unlock from nfs_match,get_client
 Date:   Wed, 29 May 2019 20:06:43 -0700
-Message-Id: <20190530030447.468743696@linuxfoundation.org>
+Message-Id: <20190530030601.022642520@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
-References: <20190530030432.977908967@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a6d2a5a92e67d151c98886babdc86d530d27111c ]
+[ Upstream commit c260121a97a3e4df6536edbc2f26e166eff370ce ]
 
-Currently if alloc_skb fails to allocate the skb a null skb is passed to
-t4_set_arp_err_handler and this ends up dereferencing the null skb.  Avoid
-the NULL pointer dereference by checking for a NULL skb and returning
-early.
+Now that nfs_match_client drops the nfs_client_lock, we should be
+careful
+to always return it in the same condition: locked.
 
-Addresses-Coverity: ("Dereference null return")
-Fixes: b38a0ad8ec11 ("RDMA/cxgb4: Set arp error handler for PASS_ACCEPT_RPL messages")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Potnuri Bharat Teja <bharat@chelsio.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 950a578c6128 ("NFS: make nfs_match_client killable")
+Reported-by: syzbot+228a82b263b5da91883d@syzkaller.appspotmail.com
+Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/cxgb4/cm.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/nfs/client.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
-index a2322b2dbd82c..e5752352e0fb1 100644
---- a/drivers/infiniband/hw/cxgb4/cm.c
-+++ b/drivers/infiniband/hw/cxgb4/cm.c
-@@ -455,6 +455,8 @@ static struct sk_buff *get_skb(struct sk_buff *skb, int len, gfp_t gfp)
- 		skb_reset_transport_header(skb);
- 	} else {
- 		skb = alloc_skb(len, gfp);
-+		if (!skb)
-+			return NULL;
- 	}
- 	t4_set_arp_err_handler(skb, NULL, NULL);
- 	return skb;
+diff --git a/fs/nfs/client.c b/fs/nfs/client.c
+index 350cfa561e0e8..dfb796eab9121 100644
+--- a/fs/nfs/client.c
++++ b/fs/nfs/client.c
+@@ -299,9 +299,9 @@ static struct nfs_client *nfs_match_client(const struct nfs_client_initdata *dat
+ 			spin_unlock(&nn->nfs_client_lock);
+ 			error = nfs_wait_client_init_complete(clp);
+ 			nfs_put_client(clp);
++			spin_lock(&nn->nfs_client_lock);
+ 			if (error < 0)
+ 				return ERR_PTR(error);
+-			spin_lock(&nn->nfs_client_lock);
+ 			goto again;
+ 		}
+ 
 -- 
 2.20.1
 
