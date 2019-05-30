@@ -2,40 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CB962F176
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:13:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E64DF2EC03
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:17:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730878AbfE3ENM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:13:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41614 "EHLO mail.kernel.org"
+        id S1731182AbfE3DRh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:17:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730665AbfE3DQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:16:24 -0400
+        id S1728760AbfE3DOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:14:03 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CC482458C;
-        Thu, 30 May 2019 03:16:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21AB124557;
+        Thu, 30 May 2019 03:14:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186183;
-        bh=xLK+GB7522f2QXrf/TUYNcfRXdrfcjqNLXPFEZK22mE=;
+        s=default; t=1559186043;
+        bh=pVWxZxbNvKqIRiN5qwRTrLrmotdfRvBhYgFWEWGfkok=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KnYLYhKgdBZ8dE7tlWrzhlFfVn4yeQDjv+JuqwGFsv17INrVZfrRx6nU5c+e7OLbl
-         OzjzIoy5r8TbxQBjYFUjsMUJ2Qlwt2TFSOwxMqQfKo/2qcArj51nLci3/7KHZH3CFy
-         6aJPJtXyfXX7CCYytcxCV016WZy8/g7ql5oMYGmo=
+        b=VmwfPrhgLGujd47vAC2h9li5bz++ZPEm+sOVseiDUyC640ZltbTSugdywWSWL0FaN
+         s3PHL5MPUFnvpJd5qbWI8J6nRQlS2fHab9uqYJA7YpWwWH3ucjeVD0/7YtYtivbIVg
+         iVyFwzGC5AnQs6mSq7C2Ypv0G1Uc/q3JhiaTj0yE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Avri Altman <avri.altman@wdc.com>,
-        Raul E Rangel <rrangel@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 049/276] mmc: core: Verify SD bus width
+Subject: [PATCH 5.0 134/346] pinctrl: samsung: fix leaked of_node references
 Date:   Wed, 29 May 2019 20:03:27 -0700
-Message-Id: <20190530030527.953816859@linuxfoundation.org>
+Message-Id: <20190530030547.903130825@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
+References: <20190530030540.363386121@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,53 +49,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9e4be8d03f50d1b25c38e2b59e73b194c130df7d ]
+[ Upstream commit 44b9f86cd41db6c522effa5aec251d664a52fbc0 ]
 
-The SD Physical Layer Spec says the following: Since the SD Memory Card
-shall support at least the two bus modes 1-bit or 4-bit width, then any SD
-Card shall set at least bits 0 and 2 (SD_BUS_WIDTH="0101").
+The call to of_find_compatible_node returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-This change verifies the card has specified a bus width.
+Detected by coccinelle with the following warnings:
+./drivers/pinctrl/samsung/pinctrl-exynos-arm.c:76:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
+./drivers/pinctrl/samsung/pinctrl-exynos-arm.c:82:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 66, but without a corresponding object release within this function.
 
-AMD SDHC Device 7806 can get into a bad state after a card disconnect
-where anything transferred via the DATA lines will always result in a
-zero filled buffer. Currently the driver will continue without error if
-the HC is in this condition. A block device will be created, but reading
-from it will result in a zero buffer. This makes it seem like the SD
-device has been erased, when in actuality the data is never getting
-copied from the DATA lines to the data buffer.
-
-SCR is the first command in the SD initialization sequence that uses the
-DATA lines. By checking that the response was invalid, we can abort
-mounting the card.
-
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
-Signed-off-by: Raul E Rangel <rrangel@chromium.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/core/sd.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/pinctrl/samsung/pinctrl-exynos-arm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-index d0d9f90e7cdfb..cfb8ee24eaba1 100644
---- a/drivers/mmc/core/sd.c
-+++ b/drivers/mmc/core/sd.c
-@@ -216,6 +216,14 @@ static int mmc_decode_scr(struct mmc_card *card)
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+index 44c6b753f692a..85ddf49a51885 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm.c
+@@ -71,6 +71,7 @@ s5pv210_retention_init(struct samsung_pinctrl_drv_data *drvdata,
+ 	}
  
- 	if (scr->sda_spec3)
- 		scr->cmds = UNSTUFF_BITS(resp, 32, 2);
-+
-+	/* SD Spec says: any SD Card shall set at least bits 0 and 2 */
-+	if (!(scr->bus_widths & SD_SCR_BUS_WIDTH_1) ||
-+	    !(scr->bus_widths & SD_SCR_BUS_WIDTH_4)) {
-+		pr_err("%s: invalid bus width\n", mmc_hostname(card->host));
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- }
- 
+ 	clk_base = of_iomap(np, 0);
++	of_node_put(np);
+ 	if (!clk_base) {
+ 		pr_err("%s: failed to map clock registers\n", __func__);
+ 		return ERR_PTR(-EINVAL);
 -- 
 2.20.1
 
