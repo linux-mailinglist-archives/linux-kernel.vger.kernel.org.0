@@ -2,174 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 209F8302BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 21:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A8183032E
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 22:15:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbfE3TWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 15:22:16 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:32931 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbfE3TWP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 30 May 2019 15:22:15 -0400
-Received: by mail-qt1-f201.google.com with SMTP id r40so5871345qtk.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 May 2019 12:22:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=KfHgTGg/JNwEVGFgmhHSyJz3/wBu2D+Qm1I3WpfuIqQ=;
-        b=R0dkl/E3g/fEkV02Bx8k1+qVBP+rGhJ2PPH8UHVuKZnR2qC526HpFcoS5lEQDvsFwW
-         F0kYkiOvskR4qdw8V9lDdfKO0yX5+AkcJeoORYcQ1T+zcSRL4d6DCrrU4gWj4O41HOOk
-         N8jqjmD0KTjAHExyTgXSHtD5hL92FBUevn+NVCB56pLVtvKoCUDQjZDclnttOFjkRfV+
-         si6eLoc4SF7zXS0NtTu+7TzhxHCo/E51b7FG+MG/zm2y0RxOfIj46btBHlXonDja4Tbc
-         5uDHcmwgPD5WbuRmoeNAgnhB29jdFc3KzKSqUdrfS5kwDxGPPtGMoxhYxBbpqCtLrPQe
-         yj4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=KfHgTGg/JNwEVGFgmhHSyJz3/wBu2D+Qm1I3WpfuIqQ=;
-        b=m6EDHjwUUuSpi3x2ZM8yYwWE+86vuOYVcjmB4CjWAq5vA/POwUHIVsztPavjzjXnAg
-         AcRFzvljxGFrbsXEiCMXUI0Il7Ykw3hb0fwVpuXGTppAyXmimL0DgY06dFbFCdSaHi6v
-         O+/ag1bCaA+KET0IAZJHlReUhBYtuec5xr/7Tav9U+r/etl7PbvlJPMJwYRO7dA8ve3V
-         zRfEKzfKBgy4PIQHIwnw2xCOZcSuimIqCMGu4wuu1pwH5wJkD2w9k3aspaXtLde6Wxoc
-         F1f8c018VqK7I2z4JCALN3D7DVCYQX75oFFClRcjY2L3E3xv7kjuxTIqwZEIXqaeS8bZ
-         x2Tw==
-X-Gm-Message-State: APjAAAXnLls9bM7HG6iaT0eSEsB3wFXeZfgVrfkJnfcKoiO9flsXqXJM
-        QHl5VGB0uMFKa6uK6ukN93afGyOZU8E=
-X-Google-Smtp-Source: APXvYqzspoWYLggt9WHuBZTaWcFuKbKtq8viGUrnhm7jJyPchxxoQjLKY1+rI4zWi8i2KKqwXjPTD1qDuXk=
-X-Received: by 2002:ac8:704:: with SMTP id g4mr5009978qth.207.1559244134330;
- Thu, 30 May 2019 12:22:14 -0700 (PDT)
-Date:   Thu, 30 May 2019 12:22:08 -0700
-In-Reply-To: <20190529224350.6460-1-mikewu@google.com>
-Message-Id: <20190530192208.99773-1-mikewu@google.com>
-Mime-Version: 1.0
-References: <20190529224350.6460-1-mikewu@google.com>
-X-Mailer: git-send-email 2.22.0.rc1.257.g3120a18244-goog
-Subject: [PATCH v2] Allow to exclude specific file types in LoadPin
-From:   Ke Wu <mikewu@google.com>
-To:     Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Ke Wu <mikewu@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726609AbfE3UPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 30 May 2019 16:15:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52520 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726079AbfE3UPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 30 May 2019 16:15:45 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1CFD2300740E;
+        Thu, 30 May 2019 20:15:44 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-13.gru2.redhat.com [10.97.112.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B405E87B1;
+        Thu, 30 May 2019 20:15:42 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id 6E04E105193;
+        Thu, 30 May 2019 16:23:34 -0300 (BRT)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id x4UJNUG8027096;
+        Thu, 30 May 2019 16:23:30 -0300
+Date:   Thu, 30 May 2019 16:23:29 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Anna-Maria Gleixner <anna-maria@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Luiz Capitulino <lcapitulino@redhat.com>,
+        Haris Okanovic <haris.okanovic@ni.com>
+Subject: Re: [patch 1/3] timers: raise timer softirq on
+ __mod_timer/add_timer_on
+Message-ID: <20190530192326.GA23199@amt.cnet>
+References: <20190415201213.600254019@amt.cnet>
+ <20190415201429.342103190@amt.cnet>
+ <alpine.DEB.2.21.1905291652480.1395@somnus>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1905291652480.1395@somnus>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 30 May 2019 20:15:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linux kernel already provide MODULE_SIG and KEXEC_VERIFY_SIG to
-make sure loaded kernel module and kernel image are trusted. This
-patch adds a kernel command line option "loadpin.exclude" which
-allows to exclude specific file types from LoadPin. This is useful
-when people want to use different mechanisms to verify module and
-kernel image while still use LoadPin to protect the integrity of
-other files kernel loads.
+Hi Anna-Maria,
 
-Signed-off-by: Ke Wu <mikewu@google.com>
----
-Changelog since v1:
-- Mark ignore_read_file_id with __ro_after_init.
-- Mark parse_exclude() with __init.
-- Use ARRAY_SIZE(ignore_read_file_id) instead of READING_MAX_ID.
+On Wed, May 29, 2019 at 04:53:05PM +0200, Anna-Maria Gleixner wrote:
+> On Mon, 15 Apr 2019, Marcelo Tosatti wrote:
+> 
+> [...]
+> 
+> > The patch "timers: do not raise softirq unconditionally" from Thomas
+> > attempts to address that by checking, in the sched tick, whether its
+> > necessary to raise the timer softirq. 
+
+https://lore.kernel.org/patchwork/patch/446045/
+
+>> Unfortunately, it attempts to grab
+> > the tvec base spinlock which generates the issue described in the patch
+> > "Revert "timers: do not raise softirq unconditionally"".
+
+https://lore.kernel.org/patchwork/patch/552474/
+
+> Both patches are not available in the version your patch set is based
+> on. Better pointers would be helpful.
+
+See above.
+
+> 
+> > tvec_base->lock protects addition of timers to the wheel versus
+> > timer interrupt execution.
+> 
+> The timer_base->lock (formally known as tvec_base->lock), synchronizes all
+> accesses to timer_base and not only addition of timers versus timer
+> interrupt execution. Deletion of timers, getting the next timer interrupt,
+> forwarding the base clock and migration of timers are protected as well by
+> timer_base->lock.
+
+Right.
+
+> > This patch does not grab the tvec base spinlock from irq context,
+> > but rather performs a lockless access to base->pending_map.
+> 
+> I cannot see where this patch performs a lockless access to
+> timer_base->pending_map.
+
+[patch 2/3] timers: do not raise softirq unconditionally (spinlockless
+version)
+
+> > It handles the the race between timer addition and timer interrupt
+> > execution by unconditionally (in case of isolated CPUs) raising the
+> > timer softirq after making sure the updated bitmap is visible 
+> > on remote CPUs.
+> 
+> So after modifying a timer on a non housekeeping timer base, the timer
+> softirq is raised - even if there is no pending timer in the next
+> bucket. Only with this patch, this shouldn't be a problem - but it is an
+> additional raise of timer softirq and an overhead when adding a timer,
+> because the normal timer softirq is raised from sched tick anyway.
+
+It should be clear why this is necessary when reading
+
+[patch 2/3] timers: do not raise softirq unconditionally (spinlockless
+version)
+
+> 
+> > Signed-off-by: Marcelo Tosatti <mtosatti@redhat.com>
+> > 
+> > ---
+> >  kernel/time/timer.c |   38 ++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 38 insertions(+)
+> > 
+> > Index: linux-rt-devel/kernel/time/timer.c
+> > ===================================================================
+> > --- linux-rt-devel.orig/kernel/time/timer.c	2019-04-15 13:56:06.974210992 -0300
+> > +++ linux-rt-devel/kernel/time/timer.c	2019-04-15 14:21:02.788704354 -0300
+> > @@ -1056,6 +1063,17 @@
+> >  		internal_add_timer(base, timer);
+> >  	}
+> >  
+> > +	if (!housekeeping_cpu(base->cpu, HK_FLAG_TIMER) &&
+> > +	    !(timer->flags & TIMER_DEFERRABLE)) {
+> > +		call_single_data_t *c;
+> > +
+> > +		c = per_cpu_ptr(&raise_timer_csd, base->cpu);
+> > +
+> > +		/* Make sure bitmap updates are visible on remote CPUs */
+> > +		smp_wmb();
+> > +		smp_call_function_single_async(base->cpu, c);
+> > +	}
+> > +
+> >  out_unlock:
+> >  	raw_spin_unlock_irqrestore(&base->lock, flags);
+> >
+> 
+> Could you please explain me, why you decided to use the above
+> implementation for raising the timer softirq after modifying a timer?
+
+Because of the following race condition which is open after
+
+"[patch 2/3] timers: do not raise softirq unconditionally (spinlockless
+version)": 
 
 
- Documentation/admin-guide/LSM/LoadPin.rst | 10 ++++++
- security/loadpin/loadpin.c                | 38 +++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
+CPU-0				CPU-1
 
-diff --git a/Documentation/admin-guide/LSM/LoadPin.rst b/Documentation/admin-guide/LSM/LoadPin.rst
-index 32070762d24c..716ad9b23c9a 100644
---- a/Documentation/admin-guide/LSM/LoadPin.rst
-+++ b/Documentation/admin-guide/LSM/LoadPin.rst
-@@ -19,3 +19,13 @@ block device backing the filesystem is not read-only, a sysctl is
- created to toggle pinning: ``/proc/sys/kernel/loadpin/enabled``. (Having
- a mutable filesystem means pinning is mutable too, but having the
- sysctl allows for easy testing on systems with a mutable filesystem.)
-+
-+It's also possible to exclude specific file types from LoadPin using kernel
-+command line option "``loadpin.exclude``". By default, all files are
-+included, but they can be excluded using kernel command line option such
-+as "``loadpin.exclude=kernel-module,kexec-image``". This allows to use
-+different mechanisms such as ``CONFIG_MODULE_SIG`` and
-+``CONFIG_KEXEC_VERIFY_SIG`` to verify kernel module and kernel image while
-+still use LoadPin to protect the integrity of other files kernel loads. The
-+full list of valid file types can be found in ``kernel_read_file_str``
-+defined in ``include/linux/fs.h``.
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index 055fb0a64169..d5f064644c54 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -45,6 +45,8 @@ static void report_load(const char *origin, struct file *file, char *operation)
- }
- 
- static int enforce = IS_ENABLED(CONFIG_SECURITY_LOADPIN_ENFORCE);
-+static char *exclude_read_files[READING_MAX_ID];
-+static int ignore_read_file_id[READING_MAX_ID] __ro_after_init;
- static struct super_block *pinned_root;
- static DEFINE_SPINLOCK(pinned_root_spinlock);
- 
-@@ -129,6 +131,13 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
- 	struct super_block *load_root;
- 	const char *origin = kernel_read_file_id_str(id);
- 
-+	/* If the file id is excluded, ignore the pinning. */
-+	if ((unsigned int)id < ARRAY_SIZE(ignore_read_file_id) &&
-+	    ignore_read_file_id[id]) {
-+		report_load(origin, file, "pinning-excluded");
-+		return 0;
-+	}
-+
- 	/* This handles the older init_module API that has a NULL file. */
- 	if (!file) {
- 		if (!enforce) {
-@@ -187,10 +196,37 @@ static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(kernel_load_data, loadpin_load_data),
- };
- 
-+static void __init parse_exclude(void)
-+{
-+	int i, j;
-+	char *cur;
-+
-+	for (i = 0; i < ARRAY_SIZE(exclude_read_files); i++) {
-+		cur = exclude_read_files[i];
-+		if (!cur)
-+			break;
-+		if (*cur == '\0')
-+			continue;
-+
-+		for (j = 0; j < ARRAY_SIZE(kernel_read_file_str); j++) {
-+			if (strcmp(cur, kernel_read_file_str[j]) == 0) {
-+				pr_info("excluding: %s\n",
-+					kernel_read_file_str[j]);
-+				ignore_read_file_id[j] = 1;
-+				/*
-+				 * Can not break, because one read_file_str
-+				 * may map to more than on read_file_id.
-+				 */
-+			}
-+		}
-+	}
-+}
-+
- static int __init loadpin_init(void)
- {
- 	pr_info("ready to pin (currently %senforcing)\n",
- 		enforce ? "" : "not ");
-+	parse_exclude();
- 	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
- 	return 0;
- }
-@@ -203,3 +239,5 @@ DEFINE_LSM(loadpin) = {
- /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
- module_param(enforce, int, 0);
- MODULE_PARM_DESC(enforce, "Enforce module/firmware pinning");
-+module_param_array_named(exclude, exclude_read_files, charp, NULL, 0);
-+MODULE_PARM_DESC(exclude, "Exclude pinning specific read file types");
--- 
-2.22.0.rc1.257.g3120a18244-goog
+				jiffies=99
+runs
+add_timer_on, with 
+timer->expires=100
+				jiffies=100
+				run_softirq(), sees pending bitmap clear
+
+add_timer_on 
+returns and 
+timer was not executed
+
+P)
+
+
+This race did not exist before. 
+
+So by raising a softirq on the remote CPU 
+at point P), its ensured the timer will 
+be executed ASAP.
+
 
