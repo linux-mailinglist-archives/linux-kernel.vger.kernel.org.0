@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A77852EE5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:47:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0E022EDDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:42:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732264AbfE3DUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:20:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40694 "EHLO mail.kernel.org"
+        id S1732712AbfE3Dlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:41:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730539AbfE3DP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:15:57 -0400
+        id S1732510AbfE3DVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:21:18 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6609424585;
-        Thu, 30 May 2019 03:15:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE451249F3;
+        Thu, 30 May 2019 03:21:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186156;
-        bh=g7WW4hCAqoz9YrVrGwYWvImdBx87C0/YOTv7ftVL5F0=;
+        s=default; t=1559186478;
+        bh=/9gO1owKbVSEM1J1l/p0XqI3NOncT/RkO+xEAx1EsGc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2vJka0/UIKeWIqcwMLJIg7i+mNoU8Pm1M5TEBRVXeB+06BTGmwq3WveuWsn8neLrT
-         KXqxqaZ0gYiP+OrLqBiw8e1h/0kLadWlA/o1FfSUcrSel4hfahP2oBX30ub3+omZQC
-         xMZ/GP6NsNofh6IB2zDake4LU7PSpWC3kHbkp4is=
+        b=wwuaWOmxzENEUpXKR3lido7JPqhYt1jHyYmNXIrv+Gcj3AhQ4NTzSgTMmZiwoBM/q
+         JJhGAZHZhwahFop7mRt06pEWPuXCcX78cMVbA6+LRZES5MJ5KicL90bG5AQYgev2r+
+         21sYWr1uML63F4xsNZ8N8nG7GeWZhipmFyNMEow0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Farman <farman@linux.ibm.com>,
-        Farhan Ali <alifm@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.0 343/346] vfio-ccw: Prevent quiesce function going into an infinite loop
-Date:   Wed, 29 May 2019 20:06:56 -0700
-Message-Id: <20190530030558.107327907@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 085/128] cpufreq: ppc_cbe: fix possible object reference leak
+Date:   Wed, 29 May 2019 20:06:57 -0700
+Message-Id: <20190530030450.106887084@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030540.363386121@linuxfoundation.org>
-References: <20190530030540.363386121@linuxfoundation.org>
+In-Reply-To: <20190530030432.977908967@linuxfoundation.org>
+References: <20190530030432.977908967@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,87 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d1ffa760d22aa1d8190478e5ef555c59a771db27 ]
+[ Upstream commit 233298032803f2802fe99892d0de4ab653bfece4 ]
 
-The quiesce function calls cio_cancel_halt_clear() and if we
-get an -EBUSY we go into a loop where we:
-	- wait for any interrupts
-	- flush all I/O in the workqueue
-	- retry cio_cancel_halt_clear
+The call to of_get_cpu_node returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-During the period where we are waiting for interrupts or
-flushing all I/O, the channel subsystem could have completed
-a halt/clear action and turned off the corresponding activity
-control bits in the subchannel status word. This means the next
-time we call cio_cancel_halt_clear(), we will again start by
-calling cancel subchannel and so we can be stuck between calling
-cancel and halt forever.
+Detected by coccinelle with the following warnings:
+./drivers/cpufreq/ppc_cbe_cpufreq.c:89:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 76, but without a corresponding object release within this function.
+./drivers/cpufreq/ppc_cbe_cpufreq.c:89:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 76, but without a corresponding object release within this function.
 
-Rather than calling cio_cancel_halt_clear() immediately after
-waiting, let's try to disable the subchannel. If we succeed in
-disabling the subchannel then we know nothing else can happen
-with the device.
-
-Suggested-by: Eric Farman <farman@linux.ibm.com>
-Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-Message-Id: <4d5a4b98ab1b41ac6131b5c36de18b76c5d66898.1555449329.git.alifm@linux.ibm.com>
-Reviewed-by: Eric Farman <farman@linux.ibm.com>
-Acked-by: Halil Pasic <pasic@linux.ibm.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/cio/vfio_ccw_drv.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+ drivers/cpufreq/ppc_cbe_cpufreq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
-index 64bb121ba5987..9e84d8a971ad9 100644
---- a/drivers/s390/cio/vfio_ccw_drv.c
-+++ b/drivers/s390/cio/vfio_ccw_drv.c
-@@ -40,26 +40,30 @@ int vfio_ccw_sch_quiesce(struct subchannel *sch)
- 	if (ret != -EBUSY)
- 		goto out_unlock;
+diff --git a/drivers/cpufreq/ppc_cbe_cpufreq.c b/drivers/cpufreq/ppc_cbe_cpufreq.c
+index 5a4c5a639f618..2eaeebcc93afe 100644
+--- a/drivers/cpufreq/ppc_cbe_cpufreq.c
++++ b/drivers/cpufreq/ppc_cbe_cpufreq.c
+@@ -86,6 +86,7 @@ static int cbe_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	if (!cbe_get_cpu_pmd_regs(policy->cpu) ||
+ 	    !cbe_get_cpu_mic_tm_regs(policy->cpu)) {
+ 		pr_info("invalid CBE regs pointers for cpufreq\n");
++		of_node_put(cpu);
+ 		return -EINVAL;
+ 	}
  
-+	iretry = 255;
- 	do {
--		iretry = 255;
- 
- 		ret = cio_cancel_halt_clear(sch, &iretry);
--		while (ret == -EBUSY) {
--			/*
--			 * Flush all I/O and wait for
--			 * cancel/halt/clear completion.
--			 */
--			private->completion = &completion;
--			spin_unlock_irq(sch->lock);
- 
--			wait_for_completion_timeout(&completion, 3*HZ);
-+		if (ret == -EIO) {
-+			pr_err("vfio_ccw: could not quiesce subchannel 0.%x.%04x!\n",
-+			       sch->schid.ssid, sch->schid.sch_no);
-+			break;
-+		}
-+
-+		/*
-+		 * Flush all I/O and wait for
-+		 * cancel/halt/clear completion.
-+		 */
-+		private->completion = &completion;
-+		spin_unlock_irq(sch->lock);
- 
--			private->completion = NULL;
--			flush_workqueue(vfio_ccw_work_q);
--			spin_lock_irq(sch->lock);
--			ret = cio_cancel_halt_clear(sch, &iretry);
--		};
-+		if (ret == -EBUSY)
-+			wait_for_completion_timeout(&completion, 3*HZ);
- 
-+		private->completion = NULL;
-+		flush_workqueue(vfio_ccw_work_q);
-+		spin_lock_irq(sch->lock);
- 		ret = cio_disable_subchannel(sch);
- 	} while (ret == -EBUSY);
- out_unlock:
 -- 
 2.20.1
 
