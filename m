@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F1502EFE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B5552EB8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:14:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387938AbfE3D7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 29 May 2019 23:59:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51820 "EHLO mail.kernel.org"
+        id S1729618AbfE3DNw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:13:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731589AbfE3DSe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:18:34 -0400
+        id S1728653AbfE3DLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:11:45 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C23392471D;
-        Thu, 30 May 2019 03:18:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39DF224496;
+        Thu, 30 May 2019 03:11:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186313;
-        bh=zZUEUR7MHqIXZruyeWmGbOLnjfwhXe3hcr2a0Mc43Mc=;
+        s=default; t=1559185903;
+        bh=0nkLdu9uf9xRYIRUglcYtarLubKkn17vhOoynGRZVsk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yDhzYZ8m2hew1HkZliBh9qYMrgTuwpixh7LYgISa72Q/PFB9bfqoIBlQogGy0c8h5
-         zWpzRDadXfl/+i7VF0PJLSLOK58tqPZrE8ddceGfGEPpcVv6JYLXVHNvVRGtnbWouv
-         6k22lInfQUI0nQ/C4VzMl7u0zVIvZyptBGmJeJ+U=
+        b=Anl71trqkxIzfNwwkIuoYLJhco6w2YUlt7XNkxqQWtTSfnNqknhrJ1Nd4BY9k7XjM
+         UEY6G6iK0vJF131J3iyjQpbTREMzwh+1tVlmqTglstoQn6vnRr7eryRWnhs8zFzAd9
+         dQZ4IF3HEZM1qaOdWebyZ7jXaJHfprUytfSf1ZiM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 017/193] Btrfs: avoid fallback to transaction commit during fsync of files with holes
+        stable@vger.kernel.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Terry Junge <terry.junge@poly.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.1 273/405] HID: core: move Usage Page concatenation to Main item
 Date:   Wed, 29 May 2019 20:04:31 -0700
-Message-Id: <20190530030450.700719072@linuxfoundation.org>
+Message-Id: <20190530030554.710991889@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
-References: <20190530030446.953835040@linuxfoundation.org>
+In-Reply-To: <20190530030540.291644921@linuxfoundation.org>
+References: <20190530030540.291644921@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,84 +46,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+[ Upstream commit 58e75155009cc800005629955d3482f36a1e0eec ]
 
-commit ebb929060aeb162417b4c1307e63daee47b208d9 upstream.
+As seen on some USB wireless keyboards manufactured by Primax, the HID
+parser was using some assumptions that are not always true. In this case
+it's s the fact that, inside the scope of a main item, an Usage Page
+will always precede an Usage.
 
-When we are doing a full fsync (bit BTRFS_INODE_NEEDS_FULL_SYNC set) of a
-file that has holes and has file extent items spanning two or more leafs,
-we can end up falling to back to a full transaction commit due to a logic
-bug that leads to failure to insert a duplicate file extent item that is
-meant to represent a hole between the last file extent item of a leaf and
-the first file extent item in the next leaf. The failure (EEXIST error)
-leads to a transaction commit (as most errors when logging an inode do).
+The spec is not pretty clear as 6.2.2.7 states "Any usage that follows
+is interpreted as a Usage ID and concatenated with the Usage Page".
+While 6.2.2.8 states "When the parser encounters a main item it
+concatenates the last declared Usage Page with a Usage to form a
+complete usage value." Being somewhat contradictory it was decided to
+match Window's implementation, which follows 6.2.2.8.
 
-For example, we have the two following leafs:
+In summary, the patch moves the Usage Page concatenation from the local
+item parsing function to the main item parsing function.
 
-Leaf N:
-
-  -----------------------------------------------
-  | ..., ..., ..., (257, FILE_EXTENT_ITEM, 64K) |
-  -----------------------------------------------
-  The file extent item at the end of leaf N has a length of 4Kb,
-  representing the file range from 64K to 68K - 1.
-
-Leaf N + 1:
-
-  -----------------------------------------------
-  | (257, FILE_EXTENT_ITEM, 72K), ..., ..., ... |
-  -----------------------------------------------
-  The file extent item at the first slot of leaf N + 1 has a length of
-  4Kb too, representing the file range from 72K to 76K - 1.
-
-During the full fsync path, when we are at tree-log.c:copy_items() with
-leaf N as a parameter, after processing the last file extent item, that
-represents the extent at offset 64K, we take a look at the first file
-extent item at the next leaf (leaf N + 1), and notice there's a 4K hole
-between the two extents, and therefore we insert a file extent item
-representing that hole, starting at file offset 68K and ending at offset
-72K - 1. However we don't update the value of *last_extent, which is used
-to represent the end offset (plus 1, non-inclusive end) of the last file
-extent item inserted in the log, so it stays with a value of 68K and not
-with a value of 72K.
-
-Then, when copy_items() is called for leaf N + 1, because the value of
-*last_extent is smaller then the offset of the first extent item in the
-leaf (68K < 72K), we look at the last file extent item in the previous
-leaf (leaf N) and see it there's a 4K gap between it and our first file
-extent item (again, 68K < 72K), so we decide to insert a file extent item
-representing the hole, starting at file offset 68K and ending at offset
-72K - 1, this insertion will fail with -EEXIST being returned from
-btrfs_insert_file_extent() because we already inserted a file extent item
-representing a hole for this offset (68K) in the previous call to
-copy_items(), when processing leaf N.
-
-The -EEXIST error gets propagated to the fsync callback, btrfs_sync_file(),
-which falls back to a full transaction commit.
-
-Fix this by adjusting *last_extent after inserting a hole when we had to
-look at the next leaf.
-
-Fixes: 4ee3fad34a9c ("Btrfs: fix fsync after hole punching when using no-holes feature")
-Cc: stable@vger.kernel.org # 4.14+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Reviewed-by: Terry Junge <terry.junge@poly.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/tree-log.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/hid/hid-core.c | 36 ++++++++++++++++++++++++------------
+ include/linux/hid.h    |  1 +
+ 2 files changed, 25 insertions(+), 12 deletions(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -4012,6 +4012,7 @@ fill_holes:
- 							       *last_extent, 0,
- 							       0, len, 0, len,
- 							       0, 0, 0);
-+				*last_extent += len;
- 			}
- 		}
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 860e21ec6a492..63a43726cce0f 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -218,13 +218,14 @@ static unsigned hid_lookup_collection(struct hid_parser *parser, unsigned type)
+  * Add a usage to the temporary parser table.
+  */
+ 
+-static int hid_add_usage(struct hid_parser *parser, unsigned usage)
++static int hid_add_usage(struct hid_parser *parser, unsigned usage, u8 size)
+ {
+ 	if (parser->local.usage_index >= HID_MAX_USAGES) {
+ 		hid_err(parser->device, "usage index exceeded\n");
+ 		return -1;
  	}
+ 	parser->local.usage[parser->local.usage_index] = usage;
++	parser->local.usage_size[parser->local.usage_index] = size;
+ 	parser->local.collection_index[parser->local.usage_index] =
+ 		parser->collection_stack_ptr ?
+ 		parser->collection_stack[parser->collection_stack_ptr - 1] : 0;
+@@ -486,10 +487,7 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
+ 			return 0;
+ 		}
+ 
+-		if (item->size <= 2)
+-			data = (parser->global.usage_page << 16) + data;
+-
+-		return hid_add_usage(parser, data);
++		return hid_add_usage(parser, data, item->size);
+ 
+ 	case HID_LOCAL_ITEM_TAG_USAGE_MINIMUM:
+ 
+@@ -498,9 +496,6 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
+ 			return 0;
+ 		}
+ 
+-		if (item->size <= 2)
+-			data = (parser->global.usage_page << 16) + data;
+-
+ 		parser->local.usage_minimum = data;
+ 		return 0;
+ 
+@@ -511,9 +506,6 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
+ 			return 0;
+ 		}
+ 
+-		if (item->size <= 2)
+-			data = (parser->global.usage_page << 16) + data;
+-
+ 		count = data - parser->local.usage_minimum;
+ 		if (count + parser->local.usage_index >= HID_MAX_USAGES) {
+ 			/*
+@@ -533,7 +525,7 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
+ 		}
+ 
+ 		for (n = parser->local.usage_minimum; n <= data; n++)
+-			if (hid_add_usage(parser, n)) {
++			if (hid_add_usage(parser, n, item->size)) {
+ 				dbg_hid("hid_add_usage failed\n");
+ 				return -1;
+ 			}
+@@ -547,6 +539,22 @@ static int hid_parser_local(struct hid_parser *parser, struct hid_item *item)
+ 	return 0;
+ }
+ 
++/*
++ * Concatenate Usage Pages into Usages where relevant:
++ * As per specification, 6.2.2.8: "When the parser encounters a main item it
++ * concatenates the last declared Usage Page with a Usage to form a complete
++ * usage value."
++ */
++
++static void hid_concatenate_usage_page(struct hid_parser *parser)
++{
++	int i;
++
++	for (i = 0; i < parser->local.usage_index; i++)
++		if (parser->local.usage_size[i] <= 2)
++			parser->local.usage[i] += parser->global.usage_page << 16;
++}
++
+ /*
+  * Process a main item.
+  */
+@@ -556,6 +564,8 @@ static int hid_parser_main(struct hid_parser *parser, struct hid_item *item)
+ 	__u32 data;
+ 	int ret;
+ 
++	hid_concatenate_usage_page(parser);
++
+ 	data = item_udata(item);
+ 
+ 	switch (item->tag) {
+@@ -765,6 +775,8 @@ static int hid_scan_main(struct hid_parser *parser, struct hid_item *item)
+ 	__u32 data;
+ 	int i;
+ 
++	hid_concatenate_usage_page(parser);
++
+ 	data = item_udata(item);
+ 
+ 	switch (item->tag) {
+diff --git a/include/linux/hid.h b/include/linux/hid.h
+index f9707d1dcb584..ac0c70b4ce10a 100644
+--- a/include/linux/hid.h
++++ b/include/linux/hid.h
+@@ -417,6 +417,7 @@ struct hid_global {
+ 
+ struct hid_local {
+ 	unsigned usage[HID_MAX_USAGES]; /* usage array */
++	u8 usage_size[HID_MAX_USAGES]; /* usage size array */
+ 	unsigned collection_index[HID_MAX_USAGES]; /* collection index array */
+ 	unsigned usage_index;
+ 	unsigned usage_minimum;
+-- 
+2.20.1
+
 
 
