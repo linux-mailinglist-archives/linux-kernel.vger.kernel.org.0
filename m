@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DE172F09E
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 06:05:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC2C62EF55
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 May 2019 05:54:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfE3EFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 30 May 2019 00:05:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48242 "EHLO mail.kernel.org"
+        id S2387564AbfE3Dyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 29 May 2019 23:54:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731230AbfE3DRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 29 May 2019 23:17:43 -0400
+        id S1731857AbfE3DTS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 29 May 2019 23:19:18 -0400
 Received: from localhost (ip67-88-213-2.z213-88-67.customer.algx.net [67.88.213.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06905245D7;
-        Thu, 30 May 2019 03:17:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA02424849;
+        Thu, 30 May 2019 03:19:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559186263;
-        bh=dls/P3crLuJWs0pBybzZw2BlVJdJ0xY47HhhRswb3LI=;
+        s=default; t=1559186357;
+        bh=27AnvQp6V1UBvA8YUZr5d1qzCcobTE+49gHKQuYrNho=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yKQFJyLIs3M46g7RwojrS+FSGSxvNYxSXjX2xxrmhkjHaT8sQ4PMKEn0E5YTcXGJw
-         QcKRIJmRszfNUGrp89POfUCUs5hdVAoQsj/g/9D8wTOJCqzR8xYuZuoP3eyDqgYJ15
-         bj1pcVVQ/SIycZz7QiUMTOl3zYMzBAGpSyipYA+c=
+        b=X9nqEoAGNFATa2OcGFF+HQCe+235D/PgGdtQ/CzZ8mQgUt6cLEtfo0ostAGMcLCr6
+         HBT058KCY3jG6RoKJmpRfHY2HOg8c00UeBPFgC99jXY5nuA+TkoAEY2Ps0jWN9IZDt
+         NOhQUHqiWWTr3Gt6VoJ2dNRtB88UAtjR12GH++hs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Piotr Figiel <p.figiel@camlintechnologies.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 197/276] brcmfmac: fix race during disconnect when USB completion is in progress
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 101/193] sched/rt: Check integer overflow at usec to nsec conversion
 Date:   Wed, 29 May 2019 20:05:55 -0700
-Message-Id: <20190530030537.432656546@linuxfoundation.org>
+Message-Id: <20190530030502.959142662@linuxfoundation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190530030523.133519668@linuxfoundation.org>
-References: <20190530030523.133519668@linuxfoundation.org>
+In-Reply-To: <20190530030446.953835040@linuxfoundation.org>
+References: <20190530030446.953835040@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,89 +48,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit db3b9e2e1d58080d0754bdf9293dabf8c6491b67 ]
+[ Upstream commit 1a010e29cfa00fee2888fd2fd4983f848cbafb58 ]
 
-It was observed that rarely during USB disconnect happening shortly after
-connect (before full initialization completes) usb_hub_wq would wait
-forever for the dev_init_lock to be unlocked. dev_init_lock would remain
-locked though because of infinite wait during usb_kill_urb:
+Example of unhandled overflows:
 
-[ 2730.656472] kworker/0:2     D    0   260      2 0x00000000
-[ 2730.660700] Workqueue: events request_firmware_work_func
-[ 2730.664807] [<809dca20>] (__schedule) from [<809dd164>] (schedule+0x4c/0xac)
-[ 2730.670587] [<809dd164>] (schedule) from [<8069af44>] (usb_kill_urb+0xdc/0x114)
-[ 2730.676815] [<8069af44>] (usb_kill_urb) from [<7f258b50>] (brcmf_usb_free_q+0x34/0xa8 [brcmfmac])
-[ 2730.684833] [<7f258b50>] (brcmf_usb_free_q [brcmfmac]) from [<7f2517d4>] (brcmf_detach+0xa0/0xb8 [brcmfmac])
-[ 2730.693557] [<7f2517d4>] (brcmf_detach [brcmfmac]) from [<7f251a34>] (brcmf_attach+0xac/0x3d8 [brcmfmac])
-[ 2730.702094] [<7f251a34>] (brcmf_attach [brcmfmac]) from [<7f2587ac>] (brcmf_usb_probe_phase2+0x468/0x4a0 [brcmfmac])
-[ 2730.711601] [<7f2587ac>] (brcmf_usb_probe_phase2 [brcmfmac]) from [<7f252888>] (brcmf_fw_request_done+0x194/0x220 [brcmfmac])
-[ 2730.721795] [<7f252888>] (brcmf_fw_request_done [brcmfmac]) from [<805748e4>] (request_firmware_work_func+0x4c/0x88)
-[ 2730.731125] [<805748e4>] (request_firmware_work_func) from [<80141474>] (process_one_work+0x228/0x808)
-[ 2730.739223] [<80141474>] (process_one_work) from [<80141a80>] (worker_thread+0x2c/0x564)
-[ 2730.746105] [<80141a80>] (worker_thread) from [<80147bcc>] (kthread+0x13c/0x16c)
-[ 2730.752227] [<80147bcc>] (kthread) from [<801010b4>] (ret_from_fork+0x14/0x20)
+ # echo 18446744073709651 > cpu.rt_runtime_us
+ # cat cpu.rt_runtime_us
+ 99
 
-[ 2733.099695] kworker/0:3     D    0  1065      2 0x00000000
-[ 2733.103926] Workqueue: usb_hub_wq hub_event
-[ 2733.106914] [<809dca20>] (__schedule) from [<809dd164>] (schedule+0x4c/0xac)
-[ 2733.112693] [<809dd164>] (schedule) from [<809e2a8c>] (schedule_timeout+0x214/0x3e4)
-[ 2733.119621] [<809e2a8c>] (schedule_timeout) from [<809dde2c>] (wait_for_common+0xc4/0x1c0)
-[ 2733.126810] [<809dde2c>] (wait_for_common) from [<7f258d00>] (brcmf_usb_disconnect+0x1c/0x4c [brcmfmac])
-[ 2733.135206] [<7f258d00>] (brcmf_usb_disconnect [brcmfmac]) from [<8069e0c8>] (usb_unbind_interface+0x5c/0x1e4)
-[ 2733.143943] [<8069e0c8>] (usb_unbind_interface) from [<8056d3e8>] (device_release_driver_internal+0x164/0x1fc)
-[ 2733.152769] [<8056d3e8>] (device_release_driver_internal) from [<8056c078>] (bus_remove_device+0xd0/0xfc)
-[ 2733.161138] [<8056c078>] (bus_remove_device) from [<8056977c>] (device_del+0x11c/0x310)
-[ 2733.167939] [<8056977c>] (device_del) from [<8069cba8>] (usb_disable_device+0xa0/0x1cc)
-[ 2733.174743] [<8069cba8>] (usb_disable_device) from [<8069507c>] (usb_disconnect+0x74/0x1dc)
-[ 2733.181823] [<8069507c>] (usb_disconnect) from [<80695e88>] (hub_event+0x478/0xf88)
-[ 2733.188278] [<80695e88>] (hub_event) from [<80141474>] (process_one_work+0x228/0x808)
-[ 2733.194905] [<80141474>] (process_one_work) from [<80141a80>] (worker_thread+0x2c/0x564)
-[ 2733.201724] [<80141a80>] (worker_thread) from [<80147bcc>] (kthread+0x13c/0x16c)
-[ 2733.207913] [<80147bcc>] (kthread) from [<801010b4>] (ret_from_fork+0x14/0x20)
+ # echo 18446744073709900 > cpu.rt_period_us
+ # cat cpu.rt_period_us
+ 348
 
-It was traced down to a case where usb_kill_urb would be called on an URB
-structure containing more or less random data, including large number in
-its use_count. During the debugging it appeared that in brcmf_usb_free_q()
-the traversal over URBs' lists is not synchronized with operations on those
-lists in brcmf_usb_rx_complete() leading to handling
-brcmf_usbdev_info structure (holding lists' head) as lists' element and in
-result causing above problem.
+After this patch they will fail with -EINVAL.
 
-Fix it by walking through all URBs during brcmf_cancel_all_urbs using the
-arrays of requests instead of linked lists.
-
-Signed-off-by: Piotr Figiel <p.figiel@camlintechnologies.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Acked-by: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/155125501739.293431.5252197504404771496.stgit@buzz
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ kernel/sched/rt.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-index 5aeb401d9a024..44ead0fea7c61 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c
-@@ -684,12 +684,18 @@ static int brcmf_usb_up(struct device *dev)
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index cb9a5b8532fa5..cc7dd1aaf08e3 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2533,6 +2533,8 @@ int sched_group_set_rt_runtime(struct task_group *tg, long rt_runtime_us)
+ 	rt_runtime = (u64)rt_runtime_us * NSEC_PER_USEC;
+ 	if (rt_runtime_us < 0)
+ 		rt_runtime = RUNTIME_INF;
++	else if ((u64)rt_runtime_us > U64_MAX / NSEC_PER_USEC)
++		return -EINVAL;
  
- static void brcmf_cancel_all_urbs(struct brcmf_usbdev_info *devinfo)
- {
-+	int i;
-+
- 	if (devinfo->ctl_urb)
- 		usb_kill_urb(devinfo->ctl_urb);
- 	if (devinfo->bulk_urb)
- 		usb_kill_urb(devinfo->bulk_urb);
--	brcmf_usb_free_q(&devinfo->tx_postq, true);
--	brcmf_usb_free_q(&devinfo->rx_postq, true);
-+	if (devinfo->tx_reqs)
-+		for (i = 0; i < devinfo->bus_pub.ntxq; i++)
-+			usb_kill_urb(devinfo->tx_reqs[i].urb);
-+	if (devinfo->rx_reqs)
-+		for (i = 0; i < devinfo->bus_pub.nrxq; i++)
-+			usb_kill_urb(devinfo->rx_reqs[i].urb);
+ 	return tg_set_rt_bandwidth(tg, rt_period, rt_runtime);
  }
+@@ -2553,6 +2555,9 @@ int sched_group_set_rt_period(struct task_group *tg, u64 rt_period_us)
+ {
+ 	u64 rt_runtime, rt_period;
  
- static void brcmf_usb_down(struct device *dev)
++	if (rt_period_us > U64_MAX / NSEC_PER_USEC)
++		return -EINVAL;
++
+ 	rt_period = rt_period_us * NSEC_PER_USEC;
+ 	rt_runtime = tg->rt_bandwidth.rt_runtime;
+ 
 -- 
 2.20.1
 
